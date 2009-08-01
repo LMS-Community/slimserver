@@ -55,7 +55,7 @@ sub startScan {
 
 	if (!defined $dir || !-d $dir) {
 
-		$log->info("Skipping music folder scan - audiodir is undefined. [$dir]");
+		main::INFOLOG && $log->info("Skipping music folder scan - audiodir is undefined. [$dir]");
 
 		doneScanning();
 		return;
@@ -63,7 +63,7 @@ sub startScan {
 
 	if ($class->stillScanning) {
 
-		$log->info("Scan already in progress. Restarting");
+		main::INFOLOG && $log->info("Scan already in progress. Restarting");
 
 		$class->stillScanning(0);
 	}
@@ -74,8 +74,8 @@ sub startScan {
 		$recurse = 1;
 	}
 
-	$log->info("Starting music folder scan in $dir");
-
+	main::INFOLOG && $log->info("Starting music folder scan in $dir");
+	
 	Slim::Utils::Scanner->scanDirectory({
 		'url'       => $dir,
 		'recursive' => $recurse,
@@ -84,7 +84,7 @@ sub startScan {
 		'progress'  => 1,
 	});
 
-	$log->info("Finished background scan of music folder.");
+	main::INFOLOG && $log->info("Finished background scan of music folder.");
 
 	$class->stillScanning(0);
 

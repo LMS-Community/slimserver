@@ -16,9 +16,9 @@ package Slim::Player::Squeezebox2;
 use strict;
 use base qw(Slim::Player::Squeezebox);
 
-use File::Spec::Functions qw(:ALL);
-use File::Temp;
-use IO::Socket;
+use File::Spec::Functions qw(catdir);
+use File::Temp ();
+use IO::Socket ();
 use MIME::Base64;
 use Scalar::Util qw(blessed);
 
@@ -316,7 +316,7 @@ sub upgradeFirmware {
 	
 	$client->stop();
 
-	$log->info("Using new update mechanism: $file");
+	main::INFOLOG && $log->info("Using new update mechanism: $file");
 	
 	$client->isUpgrading(1);
 	
@@ -416,7 +416,7 @@ sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
 
-	$directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
+	main::INFOLOG && $directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
 	my $controller = $client->controller()->songStreamController();
 	my $handler    = $controller ? $controller->protocolHandler() : undef;
@@ -486,18 +486,18 @@ sub directHeaders {
 			my $bitrate;
 			my $body;
 
-			if ( $directlog->is_info ) {
+			if ( main::INFOLOG && $directlog->is_info ) {
 				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
 			if ($songHandler && $songHandler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
-				$directlog->info("Calling $songHandler ::parseDirectHeaders");
+				main::INFOLOG && $directlog->info("Calling $songHandler ::parseDirectHeaders");
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) 
 					= $songHandler->parseDirectHeaders($client, $controller->song()->currentTrack(), @headers);
 			} elsif ($handler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
-				$directlog->info("Calling $handler ::parseDirectHeaders");
+				main::INFOLOG && $directlog->info("Calling $handler ::parseDirectHeaders");
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);
 			}
 
@@ -507,7 +507,7 @@ sub directHeaders {
 			
 			# Always prefer the title returned in the headers of a radio station
 			if ( $title ) {
-				$directlog->is_info && $directlog->info( "Setting new title for $url, $title" );
+				main::INFOLOG && $directlog->is_info && $directlog->info( "Setting new title for $url, $title" );
 				Slim::Music::Info::setCurrentTitle( $url, $title );
 				
 				# Bug 7979, Only update the database title if this item doesn't already have a title
@@ -550,7 +550,7 @@ sub directHeaders {
 				}
 			}
 
-			$directlog->is_info && $directlog->info("Got a stream type: $contentType bitrate: $bitrate title: $title");
+			main::INFOLOG && $directlog->is_info && $directlog->info("Got a stream type: $contentType bitrate: $bitrate title: ", ($title || 'undef'));
 
 			if ($contentType eq 'wma') {
 				@guids = Slim::Player::Protocols::MMS::metadataGuids($client);
@@ -558,25 +558,25 @@ sub directHeaders {
 
 			if ($redir) {
 
-				$directlog->info("Redirecting to: $redir" . (defined($controller->song->{'seekdata'}) ? ' with seekdata' : ''));
+				main::INFOLOG && $directlog->info("Redirecting to: $redir" . (defined($controller->song->seekdata()) ? ' with seekdata' : ''));
 				
 				# Store the old URL so we can update its bitrate/content-type/etc
 				$redirects->{ $redir } = $url;			
 				
 				$client->stop();
 
-				$controller->song->{'streamUrl'} = $redir;
+				$controller->song->streamUrl($redir);
 				$client->play({
 					'paused'     => ($client->isSynced(1)), 
 					'format'     => ($client->master())->streamformat(), 
 					'url'        => $redir,
 					'controller' => $controller,
-					'seekdata'   => $controller->song->{'seekdata'},
+					'seekdata'   => $controller->song->seekdata(),
 				});
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 
-				$directlog->info("Direct stream is list, get body to explode");
+				main::INFOLOG && $directlog->info("Direct stream is list, get body to explode");
 
 				$client->directBody(undef);
 
@@ -588,7 +588,7 @@ sub directHeaders {
 				# If we redirected (Live365), update the original URL with the metadata from the real URL
 				if ( my $oldURL = delete $redirects->{ $url } ) {
 
-					$controller->song->{'bitrate'} = $bitrate if $bitrate;
+					$controller->song->bitrate($bitrate) if $bitrate;
 
 					Slim::Music::Info::setContentType( $oldURL, $contentType ) if $contentType;
 					Slim::Music::Info::setBitrate( $oldURL, $bitrate ) if $bitrate;
@@ -598,7 +598,7 @@ sub directHeaders {
 					Slim::Music::Info::setTitle( $url, $title ) if $title;
 				}
 
-				$directlog->is_info && $directlog->info("Beginning direct stream!");
+				main::INFOLOG && $directlog->is_info && $directlog->info("Beginning direct stream!");
 
 				my $loop = $client->shouldLoop($length);
 				
@@ -607,7 +607,7 @@ sub directHeaders {
 				if ( $loop ) {
 					Slim::Music::Info::setDuration( $url, 0 );
 					
-					$directlog->info('Using infinite loop mode');
+					main::INFOLOG && $directlog->info('Using infinite loop mode');
 				}
 
 				$client->streamformat($contentType);
@@ -630,7 +630,14 @@ sub directHeaders {
 sub sendContCommand {
 	my ($client, $metaint, $loop, @guids) = @_;
 	
-	$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, scalar @guids, @guids)));
+	$metaint ||= 0;
+	
+	if ( main::DEBUGLOG ) {
+		my $log = logger('player.streaming.direct');
+		$log->is_debug && $log->debug("Sending cont frame: metaint $metaint, loop $loop");
+	}
+	
+	$client->sendFrame('cont', \(pack('NCnC*', $metaint, $loop, scalar @guids, @guids)));
 }
 
 sub directBodyFrame {
@@ -676,7 +683,7 @@ sub directBodyFrame {
 
 	} else {
 
-		if ( $directlog->is_info ) {
+		if ( main::INFOLOG && $directlog->is_info ) {
 			$directlog->info("Empty body means we should parse what we have for " . $url);
 		}
 
@@ -878,7 +885,7 @@ sub getPlayerSetting {
 	my $client = shift;
 	my $pref   = shift;
 
-	$prefslog->is_info && $prefslog->info("Getting pref: [$pref]");
+	main::INFOLOG && $prefslog->is_info && $prefslog->info("Getting pref: [$pref]");
 
 	my $currpref = $pref_settings->{$pref};
 
@@ -927,7 +934,7 @@ sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;
 	
-	my $isInfo = $prefslog->is_info;
+	my $isInfo = main::INFOLOG && $prefslog->is_info;
 
 	my $id = unpack('C', $$data_ref);
 
@@ -938,6 +945,7 @@ sub playerSettingsFrame {
 		}
 		
 		# We've received a response, so remove waiting status from this pref
+		$client->pendingPrefChanges()->{$pref} ||= 0;
 		$client->pendingPrefChanges()->{$pref} &= ~SETD_WAITING;
 
 		my $value = (unpack('C'.$currpref->{pack}, $$data_ref))[1];
@@ -1017,7 +1025,7 @@ sub playPoint {
 sub startAt {
 	my ($client, $at) = @_;
 	
-	$synclog->is_debug && $synclog->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
+	main::DEBUGLOG && $synclog->is_debug && $synclog->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
 
 	$client->stream( 'u', { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } );
 	return 1;

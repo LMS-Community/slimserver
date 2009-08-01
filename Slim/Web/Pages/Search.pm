@@ -13,7 +13,6 @@ use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -24,8 +23,8 @@ use Slim::Utils::Prefs;
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction( qr/^search\.(?:htm|xml)/, \&basicSearch );
-	Slim::Web::HTTP::addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
+	Slim::Web::Pages->addPageFunction( qr/^search\.(?:htm|xml)/, \&basicSearch );
+	Slim::Web::Pages->addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
 	
 	Slim::Web::Pages->addPageLinks("search", {'SEARCHMUSIC' => "search.html?liveSearch=1"});
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
@@ -192,18 +191,21 @@ sub advancedSearch {
 		$query{$newKey} = $params->{$key};
 	}
 
-	# Turn our conversion list into a nice type => name hash.
-	my %types  = ();
-
-	for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
-
-		$type = (split /-/, $type)[0];
-
-		$types{$type} = string($type);
+	# XXX - need another way to get this list if not transcoding
+	if (main::TRANSCODING) {
+		# Turn our conversion list into a nice type => name hash.
+		my %types  = ();
+		
+		for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
+	
+			$type = (split /-/, $type)[0];
+	
+			$types{$type} = string($type);
+		}
+	
+		$params->{'fileTypes'} = \%types;
 	}
-
-	$params->{'fileTypes'} = \%types;
-
+	
 	# load up the genres we know about.
 	$params->{'genres'}    = Slim::Schema->search('Genre', undef, { 'order_by' => 'namesort' });
 
@@ -335,7 +337,7 @@ sub fillInSearchResults {
 		my $offset = ($params->{'start'} || 0);
 		my $limit  = $offset + ($params->{'itemsPerPage'} || 10) - 1;
 
-		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+		$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 
 			'itemCount'    => $params->{'numresults'},
 			'path'         => $params->{'path'},

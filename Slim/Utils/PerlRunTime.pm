@@ -8,7 +8,6 @@ package Slim::Utils::PerlRunTime;
 # version 2.
 
 use strict;
-use Devel::Peek;
 
 use Slim::Utils::Log;
 
@@ -106,6 +105,8 @@ Use L<Devel::Peek> find the original name of a non-anonymous $coderef.
 
 sub realNameForCodeRef {
 	my $coderef = shift;
+	
+	require Devel::Peek;
 
 	my $gv   = Devel::Peek::CvGV($coderef);
 	my $name = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'}) || 'ANON';

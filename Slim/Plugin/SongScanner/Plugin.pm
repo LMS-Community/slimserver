@@ -26,7 +26,6 @@ use Slim::Utils::Timers;
 use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Utils::Strings qw (string);
-use File::Spec::Functions qw(:ALL);
 use Time::HiRes;
 
 use vars qw($VERSION);
@@ -160,11 +159,11 @@ sub _scannerExitHandler {
 	if ($exittype eq 'PLAY' || $exittype eq 'RIGHT' || $exittype eq 'LEFT' || $exittype eq 'PUSH') {
 		my $playmode = Slim::Player::Source::playmode($client);
 		
-		$log->debug('Exiting...');
+		main::DEBUGLOG && $log->debug('Exiting...');
 
 		# Apply any pending change in song position
 		if ($client->master->pluginData('lastUpdateTime')) {
-			$log->debug('Applying pending update');
+			main::DEBUGLOG && $log->debug('Applying pending update');
 			Slim::Player::Source::gototime($client, $client->master->pluginData('offset'));
 
 			#my $lines = $client->currentSongLines();
@@ -172,7 +171,7 @@ sub _scannerExitHandler {
 			#$client->showBriefly($lines, {block => 1});
 		}
 		if ($exittype eq 'PLAY' && $playmode =~ /pause/) {
-				$log->debug('Resuming playback');
+				main::DEBUGLOG && $log->debug('Resuming playback');
 				Slim::Player::Source::playmode($client, 'resume');
 		}
 

@@ -9,7 +9,7 @@ use DynaLoader();
 use Carp ();
 @ISA = qw(DynaLoader);
 
-$VERSION = '3.0002';
+$VERSION = '4.011';
 
 bootstrap DBD::mysql $VERSION;
 
@@ -25,12 +25,12 @@ sub driver{
     $class .= "::dr";
 
     # not a 'my' since we use it above to prevent multiple drivers
-    $drh = DBI::_new_drh($class, 
-        { 'Name' => 'mysql',
-        'Version' => $VERSION,
-        'Err'    => \$DBD::mysql::err,
-        'Errstr' => \$DBD::mysql::errstr,
-        'Attribution' => 'DBD::mysql by Rudy Lippan and Patrick Galbraith' });
+    $drh = DBI::_new_drh($class, { 'Name' => 'mysql',
+				   'Version' => $VERSION,
+				   'Err'    => \$DBD::mysql::err,
+				   'Errstr' => \$DBD::mysql::errstr,
+				   'Attribution' => 'DBD::mysql by Patrick Galbraith'
+				 });
 
     $drh;
 }
@@ -98,6 +98,7 @@ sub AUTOLOAD {
 package DBD::mysql::dr; # ====== DRIVER ======
 use strict;
 use DBI qw(:sql_types);
+use DBI::Const::GetInfoType;
 
 sub connect {
     my($drh, $dsn, $username, $password, $attrhash) = @_;
@@ -109,6 +110,7 @@ sub connect {
     # Avoid warnings for undefined values
     $username ||= '';
     $password ||= '';
+    $attrhash ||= {};
 
     # create a 'blank' dbh
     my($this, $privateAttrHash) = (undef, $attrhash);
@@ -251,38 +253,134 @@ sub _SelectDB ($$) {
     die "_SelectDB is removed from this module; use DBI->connect instead.";
 }
 
-{
-    my $names = ['TABLE_CAT', 'TABLE_SCHEM', 'TABLE_NAME',
-		 'TABLE_TYPE', 'REMARKS'];
+sub table_info ($) {
+  my ($dbh, $catalog, $schema, $table, $type, $attr) = @_;
+  $dbh->{mysql_server_prepare}||= 0;
+  my $mysql_server_prepare_save= $dbh->{mysql_server_prepare};
+  $dbh->{mysql_server_prepare}= 0;
+  my @names = qw(TABLE_CAT TABLE_SCHEM TABLE_NAME TABLE_TYPE REMARKS);
+  my @rows;
 
-    sub table_info ($) {
-	my $dbh = shift;
-	my $sth = $dbh->prepare("SHOW TABLES");
-	return undef unless $sth;
-	if (!$sth->execute()) {
-	  return DBI::set_err($dbh, $sth->err(), $sth->errstr());
-        }
-	my @tables;
-	while (my $ref = $sth->fetchrow_arrayref()) {
-	  push(@tables, [ undef, undef, $ref->[0], 'TABLE', undef ]);
-        }
-	my $dbh2;
-	if (!($dbh2 = $dbh->{'~dbd_driver~_sponge_dbh'})) {
-	    $dbh2 = $dbh->{'~dbd_driver~_sponge_dbh'} =
-		DBI->connect("DBI:Sponge:");
-	    if (!$dbh2) {
-	        DBI::set_err($dbh, 1, $DBI::errstr);
-		return undef;
-	    }
-	}
-	my $sth2 = $dbh2->prepare("SHOW TABLES", { 'rows' => \@tables,
-						   'NAME' => $names,
-						   'NUM_OF_FIELDS' => 5 });
-	if (!$sth2) {
-	    DBI::set_err($sth2, $dbh2->err(), $dbh2->errstr());
-	}
-	$sth2;
+  my $sponge = DBI->connect("DBI:Sponge:", '','')
+    or return $dbh->DBI::set_err($DBI::err, "DBI::Sponge: $DBI::errstr");
+
+# Return the list of catalogs
+  if (defined $catalog && $catalog eq "%" &&
+      (!defined($schema) || $schema eq "") &&
+      (!defined($table) || $table eq ""))
+  {
+    @rows = (); # Empty, because MySQL doesn't support catalogs (yet)
+  }
+  # Return the list of schemas
+  elsif (defined $schema && $schema eq "%" &&
+      (!defined($catalog) || $catalog eq "") &&
+      (!defined($table) || $table eq ""))
+  {
+    my $sth = $dbh->prepare("SHOW DATABASES")
+      or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+          return undef);
+
+    $sth->execute()
+      or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+        return DBI::set_err($dbh, $sth->err(), $sth->errstr()));
+
+    while (my $ref = $sth->fetchrow_arrayref())
+    {
+      push(@rows, [ undef, $ref->[0], undef, undef, undef ]);
     }
+  }
+  # Return the list of table types
+  elsif (defined $type && $type eq "%" &&
+      (!defined($catalog) || $catalog eq "") &&
+      (!defined($schema) || $schema eq "") &&
+      (!defined($table) || $table eq ""))
+  {
+    @rows = (
+        [ undef, undef, undef, "TABLE", undef ],
+        [ undef, undef, undef, "VIEW",  undef ],
+        );
+  }
+  # Special case: a catalog other than undef, "", or "%"
+  elsif (defined $catalog && $catalog ne "" && $catalog ne "%")
+  {
+    @rows = (); # Nothing, because MySQL doesn't support catalogs yet.
+  }
+  # Uh oh, we actually have a meaty table_info call. Work is required!
+  else
+  {
+    my @schemas;
+    # If no table was specified, we want them all
+    $table ||= "%";
+
+    # If something was given for the schema, we need to expand it to
+    # a list of schemas, since it may be a wildcard.
+    if (defined $schema && $schema ne "")
+    {
+      my $sth = $dbh->prepare("SHOW DATABASES LIKE " .
+          $dbh->quote($schema))
+        or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+        return undef);
+      $sth->execute()
+        or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+        return DBI::set_err($dbh, $sth->err(), $sth->errstr()));
+
+      while (my $ref = $sth->fetchrow_arrayref())
+      {
+        push @schemas, $ref->[0];
+      }
+    }
+    # Otherwise we want the current database
+    else
+    {
+      push @schemas, $dbh->selectrow_array("SELECT DATABASE()");
+    }
+
+    # Figure out which table types are desired
+    my ($want_tables, $want_views);
+    if (defined $type && $type ne "")
+    {
+      $want_tables = ($type =~ m/table/i);
+      $want_views  = ($type =~ m/view/i);
+    }
+    else
+    {
+      $want_tables = $want_views = 1;
+    }
+
+    for my $database (@schemas)
+    {
+      my $sth = $dbh->prepare("SHOW /*!50002 FULL*/ TABLES FROM " .
+          $dbh->quote_identifier($database) .
+          " LIKE " .  $dbh->quote($table))
+          or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+          return undef);
+
+      $sth->execute() or
+          ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save &&
+          return DBI::set_err($dbh, $sth->err(), $sth->errstr()));
+
+      while (my $ref = $sth->fetchrow_arrayref())
+      {
+        my $type = (defined $ref->[1] &&
+            $ref->[1] =~ /view/i) ? 'VIEW' : 'TABLE';
+        next if $type eq 'TABLE' && not $want_tables;
+        next if $type eq 'VIEW'  && not $want_views;
+        push @rows, [ undef, $database, $ref->[0], $type, undef ];
+      }
+    }
+  }
+
+  my $sth = $sponge->prepare("table_info",
+  {
+    rows          => \@rows,
+    NUM_OF_FIELDS => scalar @names,
+    NAME          => \@names,
+  }) 
+    or ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save && 
+      return $dbh->DBI::set_err($sponge->err(), $sponge->errstr()));
+
+  $dbh->{mysql_server_prepare}= $mysql_server_prepare_save;
+  return $sth;
 }
 
 sub _ListTables {
@@ -295,142 +393,331 @@ sub _ListTables {
 
 
 sub column_info {
-    my ($dbh, $catalog, $schema, $table, $column) = @_;
-    return $dbh->set_err(1, "column_info doesn't support table wildcard")
-	if $table !~ /^\w+$/;
-    return $dbh->set_err(1, "column_info doesn't support column selection")
-	if $column ne "%";
+  my ($dbh, $catalog, $schema, $table, $column) = @_;
+  $dbh->{mysql_server_prepare}||= 0;
+  my $mysql_server_prepare_save= $dbh->{mysql_server_prepare};
+  $dbh->{mysql_server_prepare}= 0;
 
-    my $table_id = $dbh->quote_identifier($catalog, $schema, $table);
+  # ODBC allows a NULL to mean all columns, so we'll accept undef
+  $column = '%' unless defined $column;
 
-    my @names = qw(
-	TABLE_CAT TABLE_SCHEM TABLE_NAME COLUMN_NAME
-	DATA_TYPE TYPE_NAME COLUMN_SIZE BUFFER_LENGTH DECIMAL_DIGITS
-	NUM_PREC_RADIX NULLABLE REMARKS COLUMN_DEF
-	SQL_DATA_TYPE SQL_DATETIME_SUB CHAR_OCTET_LENGTH
-	ORDINAL_POSITION IS_NULLABLE CHAR_SET_CAT
-	CHAR_SET_SCHEM CHAR_SET_NAME COLLATION_CAT COLLATION_SCHEM COLLATION_NAME
-	UDT_CAT UDT_SCHEM UDT_NAME DOMAIN_CAT DOMAIN_SCHEM DOMAIN_NAME
-	SCOPE_CAT SCOPE_SCHEM SCOPE_NAME MAX_CARDINALITY
-	DTD_IDENTIFIER IS_SELF_REF
-	mysql_is_pri_key mysql_type_name mysql_values
-    );
-    my %col_info;
+  my $ER_NO_SUCH_TABLE= 1146;
 
-    local $dbh->{FetchHashKeyName} = 'NAME_lc';
-    my $desc_sth = $dbh->prepare("DESCRIBE $table_id");
-    my $desc = $dbh->selectall_arrayref($desc_sth, { Columns=>{} });
-    my $ordinal_pos = 0;
-    foreach my $row (@$desc) {
-	my $type = $row->{type};
-	$type =~ m/^(\w+)(?:\((.*?)\))?\s*(.*)/;
-	my $basetype = lc($1);
+  my $table_id = $dbh->quote_identifier($catalog, $schema, $table);
 
-	my $info = $col_info{ $row->{field} } = {
-	    TABLE_CAT   => $catalog,
-	    TABLE_SCHEM => $schema,
-	    TABLE_NAME  => $table,
-	    COLUMN_NAME => $row->{field},
-	    NULLABLE    => ($row->{null} eq 'YES') ? 1 : 0,
-	    IS_NULLABLE => ($row->{null} eq 'YES') ? "YES" : "NO",
-	    TYPE_NAME   => uc($basetype),
-	    COLUMN_DEF  => $row->{default},
-	    ORDINAL_POSITION => ++$ordinal_pos,
-	    mysql_is_pri_key => ($row->{key}  eq 'PRI'),
-	    mysql_type_name  => $row->{type},
-	};
-	# This code won't deal with a pathalogical case where a value
-	# contains a single quote followed by a comma, and doesn't unescape
-	# any escaped values. But who would use those in an enum or set?
-	my @type_params = ($2 && index($2,"'")>=0)
-			? ("$2," =~ /'(.*?)',/g)  # assume all are quoted
-			: split /,/, $2||'';      # no quotes, plain list
-	s/''/'/g for @type_params;                # undo doubling of quotes
-	my @type_attr = split / /, $3||'';
-	#warn "$type: $basetype [@type_params] [@type_attr]\n";
+  my @names = qw(
+      TABLE_CAT TABLE_SCHEM TABLE_NAME COLUMN_NAME
+      DATA_TYPE TYPE_NAME COLUMN_SIZE BUFFER_LENGTH DECIMAL_DIGITS
+      NUM_PREC_RADIX NULLABLE REMARKS COLUMN_DEF
+      SQL_DATA_TYPE SQL_DATETIME_SUB CHAR_OCTET_LENGTH
+      ORDINAL_POSITION IS_NULLABLE CHAR_SET_CAT
+      CHAR_SET_SCHEM CHAR_SET_NAME COLLATION_CAT COLLATION_SCHEM COLLATION_NAME
+      UDT_CAT UDT_SCHEM UDT_NAME DOMAIN_CAT DOMAIN_SCHEM DOMAIN_NAME
+      SCOPE_CAT SCOPE_SCHEM SCOPE_NAME MAX_CARDINALITY
+      DTD_IDENTIFIER IS_SELF_REF
+      mysql_is_pri_key mysql_type_name mysql_values
+      mysql_is_auto_increment
+      );
+  my %col_info;
 
-	$info->{DATA_TYPE} = SQL_VARCHAR();
-	if ($basetype =~ /^(char|varchar|\w*text|\w*blob)/) {
-	    $info->{DATA_TYPE} = SQL_CHAR() if $basetype eq 'char';
-	    if ($type_params[0]) {
-		$info->{COLUMN_SIZE} = $type_params[0];
-	    }
-	    else {
-		$info->{COLUMN_SIZE} = 65535;
-		$info->{COLUMN_SIZE} = 255        if $basetype =~ /^tiny/;
-		$info->{COLUMN_SIZE} = 16777215   if $basetype =~ /^medium/;
-		$info->{COLUMN_SIZE} = 4294967295 if $basetype =~ /^long/;
-	    }
-	}
-	elsif ($basetype =~ /^(binary|varbinary)/) {
-	    $info->{COLUMN_SIZE} = $type_params[0];
+  local $dbh->{FetchHashKeyName} = 'NAME_lc';
+  # only ignore ER_NO_SUCH_TABLE in internal_execute if issued from here
+  my $desc_sth = $dbh->prepare("DESCRIBE $table_id " . $dbh->quote($column));
+  my $desc = $dbh->selectall_arrayref($desc_sth, { Columns=>{} });
+
+  #return $desc_sth if $desc_sth->err();
+  if (my $err = $desc_sth->err())
+  {
+    # return the error, unless it is due to the table not 
+    # existing per DBI spec
+    if ($err != $ER_NO_SUCH_TABLE)
+    {
+      $dbh->{mysql_server_prepare}= $mysql_server_prepare_save;
+      return undef;
+    }
+    $dbh->set_err(undef,undef);
+    $desc = [];
+  }
+
+  my $ordinal_pos = 0;
+  for my $row (@$desc)
+  {
+    my $type = $row->{type};
+    $type =~ m/^(\w+)(?:\((.*?)\))?\s*(.*)/;
+    my $basetype  = lc($1);
+    my $typemod   = $2;
+    my $attr      = $3;
+
+    my $info = $col_info{ $row->{field} }= {
+	    TABLE_CAT               => $catalog,
+	    TABLE_SCHEM             => $schema,
+	    TABLE_NAME              => $table,
+	    COLUMN_NAME             => $row->{field},
+	    NULLABLE                => ($row->{null} eq 'YES') ? 1 : 0,
+	    IS_NULLABLE             => ($row->{null} eq 'YES') ? "YES" : "NO",
+	    TYPE_NAME               => uc($basetype),
+	    COLUMN_DEF              => $row->{default},
+	    ORDINAL_POSITION        => ++$ordinal_pos,
+	    mysql_is_pri_key        => ($row->{key}  eq 'PRI'),
+	    mysql_type_name         => $row->{type},
+      mysql_is_auto_increment => ($row->{extra} =~ /auto_increment/i ? 1 : 0),
+    };
+    #
+	  # This code won't deal with a pathalogical case where a value
+	  # contains a single quote followed by a comma, and doesn't unescape
+	  # any escaped values. But who would use those in an enum or set?
+    #
+	  my @type_params= ($typemod && index($typemod,"'")>=0) ?
+      ("$typemod," =~ /'(.*?)',/g)  # assume all are quoted
+			: split /,/, $typemod||'';      # no quotes, plain list
+	  s/''/'/g for @type_params;                # undo doubling of quotes
+
+	  my @type_attr= split / /, $attr||'';
+
+  	$info->{DATA_TYPE}= SQL_VARCHAR();
+    if ($basetype =~ /^(char|varchar|\w*text|\w*blob)/)
+    {
+      $info->{DATA_TYPE}= SQL_CHAR() if $basetype eq 'char';
+      if ($type_params[0])
+      {
+        $info->{COLUMN_SIZE} = $type_params[0];
+      }
+      else
+      {
+        $info->{COLUMN_SIZE} = 65535;
+        $info->{COLUMN_SIZE} = 255        if $basetype =~ /^tiny/;
+        $info->{COLUMN_SIZE} = 16777215   if $basetype =~ /^medium/;
+        $info->{COLUMN_SIZE} = 4294967295 if $basetype =~ /^long/;
+      }
+    }
+	  elsif ($basetype =~ /^(binary|varbinary)/)
+    {
+      $info->{COLUMN_SIZE} = $type_params[0];
 	    # SQL_BINARY & SQL_VARBINARY are tempting here but don't match the
 	    # semantics for mysql (not hex). SQL_CHAR &  SQL_VARCHAR are correct here.
 	    $info->{DATA_TYPE} = ($basetype eq 'binary') ? SQL_CHAR() : SQL_VARCHAR();
-	}
-	elsif ($basetype =~ /^(enum|set)/) {
-	    if ($basetype eq 'set') {
-		$info->{COLUMN_SIZE} = length(join ",", @type_params);
+    }
+    elsif ($basetype =~ /^(enum|set)/)
+    {
+	    if ($basetype eq 'set')
+      {
+		    $info->{COLUMN_SIZE} = length(join ",", @type_params);
 	    }
-	    else {
-		my $max_len = 0;
-		length($_) > $max_len and $max_len = length($_) for @type_params;
-		$info->{COLUMN_SIZE} = $max_len;
+	    else
+      {
+        my $max_len = 0;
+        length($_) > $max_len and $max_len = length($_) for @type_params;
+        $info->{COLUMN_SIZE} = $max_len;
 	    }
 	    $info->{"mysql_values"} = \@type_params;
-	}
-	elsif ($basetype =~ /int/) { # big/medium/small/tiny etc + unsigned?
+    }
+    elsif ($basetype =~ /int/)
+    { 
+      # big/medium/small/tiny etc + unsigned?
 	    $info->{DATA_TYPE} = SQL_INTEGER();
 	    $info->{NUM_PREC_RADIX} = 10;
 	    $info->{COLUMN_SIZE} = $type_params[0];
-	}
-	elsif ($basetype =~ /^decimal/) {
-	    $info->{DATA_TYPE} = SQL_DECIMAL();
-	    $info->{NUM_PREC_RADIX} = 10;
-	    $info->{COLUMN_SIZE}    = $type_params[0];
-	    $info->{DECIMAL_DIGITS} = $type_params[1];
-	}
-	elsif ($basetype =~ /^(float|double)/) {
+    }
+    elsif ($basetype =~ /^decimal/)
+    {
+      $info->{DATA_TYPE} = SQL_DECIMAL();
+      $info->{NUM_PREC_RADIX} = 10;
+      $info->{COLUMN_SIZE}    = $type_params[0];
+      $info->{DECIMAL_DIGITS} = $type_params[1];
+    }
+    elsif ($basetype =~ /^(float|double)/)
+    {
 	    $info->{DATA_TYPE} = ($basetype eq 'float') ? SQL_FLOAT() : SQL_DOUBLE();
 	    $info->{NUM_PREC_RADIX} = 2;
 	    $info->{COLUMN_SIZE} = ($basetype eq 'float') ? 32 : 64;
-	}
-	elsif ($basetype =~ /date|time/) { # date/datetime/time/timestamp
-	    if ($basetype eq 'time' or $basetype eq 'date') {
-		$info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TYPE_TIME() : SQL_TYPE_DATE();
-		$info->{COLUMN_SIZE} = ($basetype eq 'time') ? 8 : 10;
+    }
+    elsif ($basetype =~ /date|time/)
+    { 
+      # date/datetime/time/timestamp
+	    if ($basetype eq 'time' or $basetype eq 'date')
+      {
+		    #$info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TYPE_TIME() : SQL_TYPE_DATE();
+        $info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TIME() : SQL_DATE(); 
+        $info->{COLUMN_SIZE} = ($basetype eq 'time') ? 8 : 10;
+      }
+	    else
+      {
+        # datetime/timestamp
+        #$info->{DATA_TYPE}     = SQL_TYPE_TIMESTAMP();
+		    $info->{DATA_TYPE}        = SQL_TIMESTAMP();
+		    $info->{SQL_DATA_TYPE}    = SQL_DATETIME();
+        $info->{SQL_DATETIME_SUB} = $info->{DATA_TYPE} - ($info->{SQL_DATA_TYPE} * 10);
+        $info->{COLUMN_SIZE}      = ($basetype eq 'datetime') ? 19 : $type_params[0] || 14;
 	    }
-	    else { # datetime/timestamp
-		$info->{DATA_TYPE}     = SQL_TYPE_TIMESTAMP();
-		$info->{SQL_DATA_TYPE} = SQL_DATETIME();
-	        $info->{SQL_DATETIME_SUB} = $info->{DATA_TYPE} - ($info->{SQL_DATA_TYPE} * 10);
-		$info->{COLUMN_SIZE}   = ($basetype eq 'datetime') ? 19 : $type_params[0] || 14;
-	    }
-	    $info->{DECIMAL_DIGITS} = 0; # no fractional seconds
-	}
-	elsif ($basetype eq 'year') {	# no close standard so treat as int
-	    $info->{DATA_TYPE} = SQL_INTEGER();
+	    $info->{DECIMAL_DIGITS}= 0; # no fractional seconds
+    }
+    elsif ($basetype eq 'year')
+    {	
+      # no close standard so treat as int
+	    $info->{DATA_TYPE}      = SQL_INTEGER();
 	    $info->{NUM_PREC_RADIX} = 10;
-	    $info->{COLUMN_SIZE} = 4;
-	}
-	else {
+	    $info->{COLUMN_SIZE}    = 4;
+	  }
+	  else
+    {
 	    Carp::carp("column_info: unrecognized column type '$basetype' of $table_id.$row->{field} treated as varchar");
-	}
-	$info->{SQL_DATA_TYPE} ||= $info->{DATA_TYPE};
-	#warn Dumper($info);
+    }
+    $info->{SQL_DATA_TYPE} ||= $info->{DATA_TYPE};
+    #warn Dumper($info);
+  }
+
+  my $sponge = DBI->connect("DBI:Sponge:", '','')
+    or (  $dbh->{mysql_server_prepare}= $mysql_server_prepare_save &&
+          return $dbh->DBI::set_err($DBI::err, "DBI::Sponge: $DBI::errstr"));
+
+  my $sth = $sponge->prepare("column_info $table", {
+      rows          => [ map { [ @{$_}{@names} ] } values %col_info ],
+      NUM_OF_FIELDS => scalar @names,
+      NAME          => \@names,
+      }) or
+  return ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save &&
+          $dbh->DBI::set_err($sponge->err(), $sponge->errstr()));
+
+  $dbh->{mysql_server_prepare}= $mysql_server_prepare_save;
+  return $sth;
+}
+
+
+sub primary_key_info {
+  my ($dbh, $catalog, $schema, $table) = @_;
+  $dbh->{mysql_server_prepare}||= 0;
+  my $mysql_server_prepare_save= $dbh->{mysql_server_prepare};
+
+  my $table_id = $dbh->quote_identifier($catalog, $schema, $table);
+
+  my @names = qw(
+      TABLE_CAT TABLE_SCHEM TABLE_NAME COLUMN_NAME KEY_SEQ PK_NAME
+      );
+  my %col_info;
+
+  local $dbh->{FetchHashKeyName} = 'NAME_lc';
+  my $desc_sth = $dbh->prepare("SHOW KEYS FROM $table_id");
+  my $desc= $dbh->selectall_arrayref($desc_sth, { Columns=>{} });
+  my $ordinal_pos = 0;
+  for my $row (grep { $_->{key_name} eq 'PRIMARY'} @$desc)
+  {
+    $col_info{ $row->{column_name} }= {
+      TABLE_CAT   => $catalog,
+      TABLE_SCHEM => $schema,
+      TABLE_NAME  => $table,
+      COLUMN_NAME => $row->{column_name},
+      KEY_SEQ     => $row->{seq_in_index},
+      PK_NAME     => $row->{key_name},
+    };
+  }
+
+  my $sponge = DBI->connect("DBI:Sponge:", '','')
+    or 
+     ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save &&
+      return $dbh->DBI::set_err($DBI::err, "DBI::Sponge: $DBI::errstr"));
+
+  my $sth= $sponge->prepare("primary_key_info $table", {
+      rows          => [ map { [ @{$_}{@names} ] } values %col_info ],
+      NUM_OF_FIELDS => scalar @names,
+      NAME          => \@names,
+      }) or 
+       ($dbh->{mysql_server_prepare}= $mysql_server_prepare_save &&
+        return $dbh->DBI::set_err($sponge->err(), $sponge->errstr()));
+
+  $dbh->{mysql_server_prepare}= $mysql_server_prepare_save;
+
+  return $sth;
+}
+
+
+sub foreign_key_info {
+    my ($dbh,
+        $pk_catalog, $pk_schema, $pk_table,
+        $fk_catalog, $fk_schema, $fk_table,
+       ) = @_;
+
+    # INFORMATION_SCHEMA.KEY_COLUMN_USAGE was added in 5.0.6
+    my ($maj, $min, $point) = _version($dbh);
+    return if $maj < 5 || ($maj == 5 && $point < 6);
+
+    my $sql = <<'EOF';
+SELECT NULL AS PKTABLE_CAT,
+       A.REFERENCED_TABLE_SCHEMA AS PKTABLE_SCHEM,
+       A.REFERENCED_TABLE_NAME AS PKTABLE_NAME,
+       A.REFERENCED_COLUMN_NAME AS PKCOLUMN_NAME,
+       A.TABLE_CATALOG AS FKTABLE_CAT,
+       A.TABLE_SCHEMA AS FKTABLE_SCHEM,
+       A.TABLE_NAME AS FKTABLE_NAME,
+       A.COLUMN_NAME AS FKCOLUMN_NAME,
+       A.ORDINAL_POSITION AS KEY_SEQ,
+       NULL AS UPDATE_RULE,
+       NULL AS DELETE_RULE,
+       A.CONSTRAINT_NAME AS FK_NAME,
+       NULL AS PK_NAME,
+       NULL AS DEFERABILITY,
+       NULL AS UNIQUE_OR_PRIMARY
+  FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE A,
+       INFORMATION_SCHEMA.TABLE_CONSTRAINTS B
+ WHERE A.TABLE_SCHEMA = B.TABLE_SCHEMA AND A.TABLE_NAME = B.TABLE_NAME
+   AND A.CONSTRAINT_NAME = B.CONSTRAINT_NAME AND B.CONSTRAINT_TYPE IS NOT NULL
+EOF
+
+    my @where;
+    my @bind;
+
+    # catalogs are not yet supported by MySQL
+
+#    if (defined $pk_catalog) {
+#        push @where, 'A.REFERENCED_TABLE_CATALOG = ?';
+#        push @bind, $pk_catalog;
+#    }
+
+    if (defined $pk_schema) {
+        push @where, 'A.REFERENCED_TABLE_SCHEMA = ?';
+        push @bind, $pk_schema;
     }
 
-    my $sponge = DBI->connect("DBI:Sponge:", '','')
-	or return $dbh->DBI::set_err($DBI::err, "DBI::Sponge: $DBI::errstr");
-    my $sth = $sponge->prepare("column_info $table", {
-	rows => [ map { [ @{$_}{@names} ] } values %col_info ],
-	NUM_OF_FIELDS => scalar @names,
-	NAME => \@names,
-    }) or return $dbh->DBI::set_err($sponge->err(), $sponge->errstr());
+    if (defined $pk_table) {
+        push @where, 'A.REFERENCED_TABLE_NAME = ?';
+        push @bind, $pk_table;
+    }
+
+#    if (defined $fk_catalog) {
+#        push @where, 'A.TABLE_CATALOG = ?';
+#        push @bind,  $fk_schema;
+#    }
+
+    if (defined $fk_schema) {
+        push @where, 'A.TABLE_SCHEMA = ?';
+        push @bind,  $fk_schema;
+    }
+
+    if (defined $fk_table) {
+        push @where, 'A.TABLE_NAME = ?';
+        push @bind,  $fk_table;
+    }
+
+    if (@where) {
+        $sql .= ' AND ';
+        $sql .= join ' AND ', @where;
+    }
+    $sql .= " ORDER BY A.TABLE_SCHEMA, A.TABLE_NAME, A.ORDINAL_POSITION";
+
+    local $dbh->{FetchHashKeyName} = 'NAME_uc';
+    my $sth = $dbh->prepare($sql);
+    $sth->execute(@bind);
 
     return $sth;
 }
 
+
+sub _version {
+    my $dbh = shift;
+
+    return
+        $dbh->get_info($DBI::Const::GetInfoType::GetInfoType{SQL_DBMS_VER})
+            =~ /(\d+)\.(\d+)\.(\d+)/;
+}
 
 
 ####################
@@ -473,7 +760,7 @@ DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
     @databases = DBI->data_sources("mysql");
        or
     @databases = DBI->data_sources("mysql",
-				   {"host" => $host, "port" => $port});
+      {"host" => $host, "port" => $port, "user" => $user, password => $pass});
 
     $sth = $dbh->prepare("SELECT * FROM foo WHERE bla");
        or
@@ -590,7 +877,7 @@ statement handle with:
 This statement handle can be used for multiple things. First of all
 you can retreive a row of data:
 
-  my $row = $sth->fetchow_hashref();
+  my $row = $sth->fetchrow_hashref();
 
 If your table has columns ID and NAME, then $row will be hash ref with
 keys ID and NAME. See L<STATEMENT HANDLES> below for more details on
@@ -621,15 +908,18 @@ A C<database> must always be specified.
 
 =item port
 
-The hostname, if not specified or specified as '', will default to an
-MySQL daemon running on the local machine on the default port
-for the UNIX socket.
+The hostname, if not specified or specified as '' or 'localhost', will
+default to a MySQL server running on the local machine using the default for
+the UNIX socket. To connect to a MySQL server on the local machine via TCP,
+you must specify the loopback IP address (127.0.0.1) as the host.
 
-Should the MySQL daemon be running on a non-standard port number,
+Should the MySQL server be running on a non-standard port number,
 you may explicitly state the port number to connect to in the C<hostname>
 argument, by concatenating the I<hostname> and I<port number> together
 separated by a colon ( C<:> ) character or by using the  C<port> argument.
 
+To connect to a MySQL server on localhost using TCP/IP, you must specify the
+hostname as 127.0.0.1 (with the optional port).
 
 =item mysql_client_found_rows
 
@@ -738,24 +1028,40 @@ in the MySQL client library by default. If your DSN contains the option
 this option is *ineffective* if the server has also been configured to
 disallow LOCAL.)
 
+=item mysql_multi_statements
+
+As of MySQL 4.1, support for multiple statements seperated by a semicolon
+(;) may be enabled by using this option. Enabling this option may cause
+problems if server-side prepared statements are also enabled.
+
 =item Prepared statement support (server side prepare)
+
+As of 3.0002_1, server side prepare statements were on by default (if your
+server was >= 4.1.3). As of 3.0009, they were off by default again due to 
+issues with the prepared statement API (all other mysql connectors are
+set this way until C API issues are resolved). The requirement to use
+prepared statements still remains that you have a server >= 4.1.3
 
 To use server side prepared statements, all you need to do is set the variable 
 mysql_server_prepare in the connect:
 
 $dbh = DBI->connect(
-                    "DBI:mysql:database=test;host=localhost:mysql_server_prepare=1",
+                    "DBI:mysql:database=test;host=localhost;mysql_server_prepare=1",
                     "",
                     "",
                     { RaiseError => 1, AutoCommit => 1 }
                     );
 
+* Note: delimiter for this param is ';'
+
+There are many benefits to using server side prepare statements, mostly if you are 
+performing many inserts because of that fact that a single statement is prepared 
+to accept multiple insert values.
+
 To make sure that the 'make test' step tests whether server prepare works, you just
 need to export the env variable MYSQL_SERVER_PREPARE:
 
 export MYSQL_SERVER_PREPARE=1
-
-Test first without server side prepare, then with.
 
 
 =item mysql_embedded_options
@@ -765,7 +1071,12 @@ options to embedded server.
 
 Example:
 
+use DBI;
 $testdsn="DBI:mysqlEmb:database=test;mysql_embedded_options=--help,--verbose";
+$dbh = DBI->connect($testdsn,"a","b");
+
+This would cause the command line help to the embedded MySQL server library
+to be printed.
 
 
 =item mysql_embedded_groups
@@ -795,16 +1106,11 @@ $testdsn="DBI:mysqlEmb:database=test;mysql_embedded_groups=embedded_server,commo
     @dbs = $drh->func($hostname, $port, '_ListDBs');
     @dbs = $dbh->func('_ListDBs');
 
-Returns a list of all databases managed by the MySQL daemon
-running on C<$hostname>, port C<$port>. This method
-is rarely needed for databases running on C<localhost>: You should
-use the portable method
+Returns a list of all databases managed by the MySQL server
+running on C<$hostname>, port C<$port>. This is a legacy
+method.  Instead, you should use the portable method
 
     @dbs = DBI->data_sources("mysql");
-
-whenever possible. It is a design problem of this method, that there's
-no way of supplying a host name or port number to C<data_sources>, that's
-the only reason why we still support C<ListDBs>. :-(
 
 =back
 
@@ -879,7 +1185,7 @@ The DBD::mysql driver supports the following attributes of database
 handles (read only):
 
   $errno = $dbh->{'mysql_errno'};
-  $error = $dbh->{'mysql_error};
+  $error = $dbh->{'mysql_error'};
   $info = $dbh->{'mysql_hostinfo'};
   $info = $dbh->{'mysql_info'};
   $insertid = $dbh->{'mysql_insertid'};
@@ -951,6 +1257,50 @@ for $dbh using several ways:
 
 It is possible to set/unset the C<mysql_use_result> attribute after 
 creation of statement handle. See below.
+
+=item mysql_enable_utf8
+
+This attribute determines whether DBD::mysql should assume strings
+stored in the database are utf8.  This feature defaults to off.
+
+When set, a data retrieved from a textual column type (char, varchar,
+etc) will have the UTF-8 flag turned on if necessary.  This enables
+character semantics on that string.  You will also need to ensure that
+your database / table / column is configured to use UTF8.  See Chapter
+10 of the mysql manual for details.
+
+Additionally, turning on this flag tells MySQL that incoming data should
+be treated as UTF-8.  This will only take effect if used as part of the
+call to connect().  If you turn the flag on after connecting, you will
+need to issue the command C<SET NAMES utf8> to get the same effect.
+
+This option is experimental and may change in future versions.
+
+=item mysql_bind_type_guessing
+
+This attribute causes the driver (emulated prepare statements) 
+to attempt to guess if a value being bound is a numeric value,
+and if so, doesn't quote the value.  This was created by 
+Dragonchild and is one way to deal with the performance issue 
+of using quotes in a statement that is inserting or updating a
+large numeric value. This was previously called 
+C<unsafe_bind_type_guessing> because it is experimental. I have 
+successfully run the full test suite with this option turned on,
+the name can now be simply C<mysql_bind_type_guessing>. 
+
+See bug: https://rt.cpan.org/Ticket/Display.html?id=43822
+
+C<mysql_bind_type_guessing> can be turned on via 
+
+ - through DSN 
+
+  my $dbh= DBI->connect('DBI:mysql:test', 'username', 'pass',
+  { mysql_bind_type_guessing => 1})
+
+  - OR after handle creation
+
+  $dbh->{mysql_bind_type_guessing} = 1;
+
 
 
 =head1 STATEMENT HANDLES
@@ -1097,8 +1447,11 @@ DBI::SQL_SMALLINT() or DBI::SQL_VARCHAR().
 Similar to mysql, but type names and not numbers are returned.
 Whenever possible, the ANSI SQL name is preferred.
 
-=back
+=item mysql_warning_count
 
+The number of warnings generated during execution of the SQL statement.
+
+=back
 
 =head1 TRANSACTION SUPPORT
 
@@ -1190,350 +1543,67 @@ indication of such loss.
 
 =back
 
-
-=head1 SQL EXTENSIONS
-
-Certain metadata functions of MySQL that are available on the
-C API level, haven't been implemented here. Instead they are implemented
-as "SQL extensions" because they return in fact nothing else but the
-equivalent of a statement handle. These are:
-
 =over
 
-=item LISTFIELDS $table
-
-Returns a statement handle that describes the columns of $table.
-Ses the docs of mysql_list_fields (C API) for details.
-
-=back
-
-
-
-=head1 COMPATIBILITY ALERT
-
-The statement attribute I<TYPE> has changed its meaning, as of
-DBD::mysql 2.0119. Formerly it used to be the an array
-of native engine's column types, but it is now an array of
-portable SQL column types. The old attribute is still available
-as I<mysql_type>.
-
-DBD::mysql is a moving target, due to a number of reasons:
-
-=over
-
-=item -
-
-Of course we have to conform the DBI guidelines and developments.
-
-=item -
-
-We have to keep track with the latest MySQL developments.
-
-=item -
-
-And, surprisingly, we have to be as close to ODBC as possible: This is
-due to the current direction of DBI.
-
-=item -
-
-And, last not least, as any tool it has a little bit life of its own.
-
-=back
-
-This means that a lot of things had to and have to be changed.
-As I am not interested in maintaining a lot of compatibility kludges,
-which only increase the drivers code without being really usefull,
-I did and will remove some features, methods or attributes.
-
-To ensure a smooth upgrade, the following policy will be applied:
-
-=over
-
-=item Obsolete features
-
-The first step is to declare something obsolete. This means, that no code
-is changed, but the feature appears in the list of obsolete features. See
-L<Obsolete Features> below.
-
-=item Deprecated features
-
-If the feature has been obsolete for quite some time, typically in the
-next major stable release, warnings will be inserted in the code. You
-can suppress these warnings by setting
-
-    $DBD::mysql = 1;
-
-In the docs the feature will be moved from the list of obsolete features
-to the list of deprecated features. See L<Deprecated Features> below.
-
-=item Removing features
-
-Finally features will be removed silently in the next major stable
-release. The feature will be shown in the list of historic features.
-See L<Historic Features> below.
-
-=back
-
-Example: The statement handle attribute
-
-    $sth->{'LENGTH'}
-
-was declared obsolete in DBD::mysql 2.00xy. It was considered
-deprecated in DBD::mysql 2.02xy and removed in 2.04xy.
-
-
-=head2 Obsolete Features
-
-=over
-
-=item Database handle attributes
-
-The following database handle attributes are declared obsolete
-in DBD::mysql 2.09. They will be deprecated in 2.11 and removed
-in 2.13.
-
-=over
-
-=item C<$dbh->{'errno'}>
-
-Replaced by C<$dbh->{'mysql_errno'}>
-
-=item C<$dbh->{'errmsg'}>
-
-Replaced by C<$dbh->{'mysql_error'}>
-
-=item C<$dbh->{'hostinfo'}>
-
-Replaced by C<$dbh->{'mysql_hostinfo'}>
-
-=item C<$dbh->{'info'}>
-
-Replaced by C<$dbh->{'mysql_info'}>
-
-=item C<$dbh->{'protoinfo'}>
-
-Replaced by C<$dbh->{'mysql_protoinfo'}>
-
-=item C<$dbh->{'serverinfo'}>
-
-Replaced by C<$dbh->{'mysql_serverinfo'}>
-
-=item C<$dbh->{'stats'}>
-
-Replaced by C<$dbh->{'mysql_stat'}>
-
-=item C<$dbh->{'thread_id'}>
-
-Replaced by C<$dbh->{'mysql_thread_id'}>
-
-=back
-
-=back
-
-
-=head2 Deprecated Features
-
-=over
-
-=item _ListTables
-
-Replace with the standard DBI method C<$dbh->tables()>. See also
-C<$dbh->table_info()>. Portable applications will prefer
-
-    @tables = map { $_ =~ s/.*\.//; $_ } $dbh->tables()
-
-because, depending on the engine, the string "user.table" will be
-returned, user being the table owner. The method will be removed
-in DBD::mysql version 2.11xy.
-
-=back
-
-
-=head2 Historic Features
-
-=over
-
-=item _CreateDB
-
-=item _DropDB
-
-The methods
-
-    $dbh->func($db, '_CreateDB');
-    $dbh->func($db, '_DropDB');
-
-have been used for creating or dropping databases. They have been removed
-in 1.21_07 in favour of
-
-    $drh->func("createdb", $dbname, $host, "admin")
-    $drh->func("dropdb", $dbname, $host, "admin")
-
-=item _ListFields
-
-The method
-
-    $sth = $dbh->func($table, '_ListFields');
-
-has been used to list a tables columns names, types and other attributes.
-This method has been removed in 1.21_07 in favour of
-
-    $sth = $dbh->prepare("LISTFIELDS $table");
-
-=item _ListSelectedFields
-
-The method
-
-    $sth->func('_ListSelectedFields');
-
-use to return a hash ref of attributes like 'IS_NUM', 'IS_KEY' and so
-on. These attributes are now accessible via
-
-    $sth->{'mysql_is_num'};
-    $sth->{'mysql_is_key'};
-
-and so on. Thus the method has been removed in 1.21_07.
-
-=item _NumRows
-
-The method
-
-    $sth->func('_NumRows');
-
-used to be equivalent to
-
-    $sth->rows();
-
-and has been removed in 1.21_07.
-
-=item _InsertID
-
-The method
-
-    $dbh->func('_InsertID');
-
-used to be equivalent with
-
-    $dbh->{'mysql_insertid'};
-
-=item Statement handle attributes
-
-=over
-
-=item affected_rows
-
-Replaced with $sth->{'mysql_affected_rows'} or the result
-of $sth->execute().
-
-=item format_default_size
-
-Replaced with $sth->{'PRECISION'}.
-
-=item format_max_size
-
-Replaced with $sth->{'mysql_max_length'}.
-
-=item format_type_name
-
-Replaced with $sth->{'TYPE'} (portable) or
-$sth->{'mysql_type_name'} (MySQL specific).
-
-=item format_right_justify
-
-Replaced with $sth->->{'TYPE'} (portable) or
-$sth->{'mysql_is_num'} (MySQL specific).
-
-=item insertid
-
-Replaced with $sth->{'mysql_insertid'}.
-
-=item IS_BLOB
-
-Replaced with $sth->{'TYPE'} (portable) or
-$sth->{'mysql_is_blob'} (MySQL specific).
-
-=item is_blob
-
-Replaced with $sth->{'TYPE'} (portable) or
-$sth->{'mysql_is_blob'} (MySQL specific).
-
-=item IS_PRI_KEY
-
-Replaced with $sth->{'mysql_is_pri_key'}.
-
-=item is_pri_key
-
-Replaced with $sth->{'mysql_is_pri_key'}.
-
-=item IS_NOT_NULL
-
-Replaced with $sth->{'NULLABLE'} (do not forget to invert
-the boolean values).
-
-=item is_not_null
-
-Replaced with $sth->{'NULLABLE'} (do not forget to invert
-the boolean values).
-
-=item IS_NUM
-
-Replaced with $sth->{'TYPE'} (portable) or
-$sth->{'mysql_is_num'} (MySQL specific).
-
-=item is_num
-
-Replaced with $sth->{'TYPE'} (portable) or
-$sth->{'mysql_is_num'} (MySQL specific).
-
-=item IS_KEY
-
-Replaced with $sth->{'mysql_is_key'}.
-
-=item is_key
-
-Replaced with $sth->{'mysql_is_key'}.
-
-=item MAXLENGTH
-
-Replaced with $sth->{'mysql_max_length'}.
-
-=item maxlength
-
-Replaced with $sth->{'mysql_max_length'}.
-
-=item LENGTH
-
-Replaced with $sth->{'PRECISION'} (portable) or
-$sth->{'mysql_length'} (MySQL specific)
-
-=item length
-
-Replaced with $sth->{'PRECISION'} (portable) or
-$sth->{'mysql_length'} (MySQL specific)
-
-=item NUMFIELDS
-
-Replaced with $sth->{'NUM_OF_FIELDS'}.
-
-=item numfields
-
-Replaced with $sth->{'NUM_OF_FIELDS'}.
-
-=item NUMROWS
-
-Replaced with the result of $sth->execute() or
-$sth->{'mysql_affected_rows'}.
-
-=item TABLE
-
-Replaced with $sth->{'mysql_table'}.
-
-=item table
-
-Replaced with $sth->{'mysql_table'}.
-
-=back
-
-=back
+=head1 MULTIPLE RESULT SETS
+
+As of version 3.0002_5, DBD::mysql supports multiple result sets (Thanks
+to Guy Harrison!). This is the first release of this functionality, so 
+there may be issues. Please report bugs if you run into them!
+
+The basic usage of multiple result sets is
+
+  do 
+  {
+    while (@row= $sth->fetchrow_array())
+    {
+      do stuff;
+    }
+  } while ($sth->more_results)
+
+An example would be:
+
+  $dbh->do("drop procedure if exists someproc") or print $DBI::errstr;
+
+  $dbh->do("create procedure somproc() deterministic
+   begin
+   declare a,b,c,d int;
+   set a=1;
+   set b=2;
+   set c=3;
+   set d=4;
+   select a, b, c, d;
+   select d, c, b, a;
+   select b, a, c, d;
+   select c, b, d, a;
+  end") or print $DBI::errstr;
+
+  $sth=$dbh->prepare('call someproc()') || 
+  die $DBI::err.": ".$DBI::errstr;
+
+  $sth->execute || die DBI::err.": ".$DBI::errstr; $rowset=0;
+  do {
+    print "\nRowset ".++$i."\n---------------------------------------\n\n";
+    foreach $colno (0..$sth->{NUM_OF_FIELDS}) {
+      print $sth->{NAME}->[$colno]."\t";
+    }
+    print "\n";
+    while (@row= $sth->fetchrow_array())  {
+      foreach $field (0..$#row) {
+        print $row[$field]."\t";
+      }
+      print "\n";
+    }
+  } until (!$sth->more_results)
+ 
+For more examples, please see the eg/ directory. This is where helpful
+DBD::mysql code snippits will be added in the future.
+
+=head2 Issues with Multiple result sets
+
+So far, the main issue is if your result sets are "jagged", meaning, the
+number of columns of your results vary. Varying numbers of columns could
+result in your script crashing. This is something that will be fixed soon.
 
 
 =head1 MULTITHREADING
@@ -1583,36 +1653,35 @@ you a lot of questions. If you finally receive the CPAN prompt, enter
 If this fails (which may be the case for a number of reasons, for
 example because you are behind a firewall or don't have network
 access), you need to do a manual installation. First of all you
-need to fetch the archives from any CPAN mirror, for example
+need to fetch the modules from CPAN search
 
-  ftp://ftp.funet.fi/pub/languages/perl/CPAN/modules/by-module
+   http://search.cpan.org/ 
 
-The following archives are required (version numbers may have
-changed, I choose those which are current as of this writing):
+The following modules are required
 
-  DBI/DBI-1.15.tar.gz
-  Data/Data-ShowTable-3.3.tar.gz
-  DBD/DBD-mysql-2.1001.tar.gz
+  DBI
+  Data::ShowTable
+  DBD::mysql
 
-Then enter the following commands:
+Then enter the following commands (note - versions are just examples):
 
-  gzip -cd DBI-1.15.tar.gz | tar xf -
-  cd DBI-1.15
+  gzip -cd DBI-(version).tar.gz | tar xf -
+  cd DBI-(version)
   perl Makefile.PL
   make
   make test
   make install
 
   cd ..
-  gzip -cd Data-ShowTable-3.3.tar.gz | tar xf -
+  gzip -cd Data-ShowTable-(version).tar.gz | tar xf -
   cd Data-ShowTable-3.3
   perl Makefile.PL
   make
-  make install  # Don't try make test, the test suite is broken
+  make install
 
   cd ..
-  gzip -cd DBD-mysql-2.1001.tar.gz | tar xf -
-  cd DBD-mysql-2.1001
+  gzip -cd DBD-mysql-(version)-tar.gz | tar xf -
+  cd DBD-mysql-(version)
   perl Makefile.PL
   make
   make test
@@ -1649,10 +1718,9 @@ Otherwise you definitely *need* a C compiler. And it *must* be the same
 compiler that was being used for compiling Perl itself. If you don't
 have a C compiler, the file README.win32 from the Perl source
 distribution tells you where to obtain freely distributable C compilers
-like egcs or gcc. The Perl sources are available on any CPAN mirror in
-the src directory, for example
+like egcs or gcc. The Perl sources are available via CPAN search
 
-    ftp://ftp.funet.fi/pub/languages/perl/CPAN/src/latest.tar.gz
+  http://search.cpan.org
 
 I recommend using the win32clients package for installing DBD::mysql
 under Win32, available for download on www.tcx.se. The following steps
@@ -1766,10 +1834,9 @@ in the PPM program.
 
 The current version of B<DBD::mysql> is almost completely written
 by Jochen Wiedmann, and is now being maintained by
-Rudy Lippan (I<rlippan@remotelinux.com>). The first version's author
-was Alligator Descartes (I<descarte@symbolstone.org>), who has been
-aided and abetted by Gary Shea, Andreas König and Tim Bunce
-amongst others.
+Patrick Galbraith (I<patg@mysql.com>). 
+The first version's author was Alligator Descartes, who was aided
+and abetted by Gary Shea, Andreas König and Tim Bunce amongst others.
 
 The B<Mysql> module was originally written by Andreas König
 <koenig@kulturbox.de>. The current version, mainly an emulation
@@ -1779,7 +1846,9 @@ layer, is from Jochen Wiedmann.
 =head1 COPYRIGHT
 
 
-This module is Copyright (c) 2003 Rudolf Lippan; Large Portions 
+This module is 
+Large Portions Copyright (c) 2004-2006 MySQL Patrick Galbraith, Alexey Stroganov,
+Large Portions Copyright (c) 2003-2005 Rudolf Lippan; Large Portions 
 Copyright (c) 1997-2003 Jochen Wiedmann, with code portions 
 Copyright (c)1994-1997 their original authors This module is
 released under the same license as Perl itself. See the Perl README
@@ -1792,37 +1861,33 @@ This module is maintained and supported on a mailing list,
 
     perl@lists.mysql.com
 
-To subscribe to this list, send a mail to
+To subscribe to this list, go to
 
-    perl-subscribe@lists.mysql.com
-
-or
-
-    perl-digest-subscribe@lists.mysql.com
+http://lists.mysql.com/perl?sub=1
 
 Mailing list archives are available at
 
-    http://www.progressive-comp.com/Lists/?l=msql-mysql-modules
-
+http://lists.mysql.com/perl
 
 Additionally you might try the dbi-user mailing list for questions about
 DBI and its modules in general. Subscribe via
 
-    http://www.fugue.com/dbi
+dbi-users-subscribe@perl.org
 
 Mailing list archives are at
 
-     http://www.rosat.mpe-garching.mpg.de/mailing-lists/PerlDB-Interest/
-     http://outside.organic.com/mail-archives/dbi-users/
-     http://www.coe.missouri.edu/~faq/lists/dbi.html
+http://groups.google.com/group/perl.dbi.users?hl=en&lr=
 
+Also, the main DBI site is at
+
+http://dbi.perl.org/
 
 =head1 ADDITIONAL DBI INFORMATION
 
 Additional information on the DBI project can be found on the World
 Wide Web at the following URL:
 
-    http://www.symbolstone.org/technology/perl/DBI
+    http://dbi.perl.org
 
 where documentation, pointers to the mailing lists and mailing list
 archives and pointers to the most current versions of the modules can
@@ -1833,6 +1898,16 @@ Information on the DBI interface itself can be gained by typing:
     perldoc DBI
 
 right now!
+
+
+=head1 BUG REPORTING, ENHANCEMENT/FEATURE REQUESTS
+
+Please report bugs, including all the information needed
+such as DBD::mysql version, MySQL version, OS type/version, etc
+to this link:
+
+http://bugs.mysql.com/
+
 
 =cut
 

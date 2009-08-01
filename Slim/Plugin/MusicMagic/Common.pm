@@ -18,7 +18,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 my $os  = Slim::Utils::OSDetect::OS();
-*escape = Slim::Utils::OSDetect::isWindows() ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
+*escape = main::ISWINDOWS ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
 
 my $log = logger('plugin.musicip');
 
@@ -105,11 +105,11 @@ sub _gotFilters {
 
 		if ($log->is_debug && scalar @filters) {
 
-			$log->debug("Found filters:");
+			main::DEBUGLOG && $log->debug("Found filters:");
 
 			for my $filter (@filters) {
 
-				$log->debug("\t$filter");
+				main::DEBUGLOG && $log->debug("\t$filter");
 			}
 		}
 	}

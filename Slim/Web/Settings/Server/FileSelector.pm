@@ -14,7 +14,7 @@ use Slim::Utils::Misc qw(readDirectory);
 use File::Spec::Functions qw(:ALL);
 
 BEGIN {
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 		require Slim::Utils::OS::Win32;
 	}
 }
@@ -35,33 +35,33 @@ sub handler {
 	my @subdirs;
 	my $currDir = $paramRef->{'currDir'};
 
-	if (Slim::Utils::OSDetect::isWindows()) {
+	if (main::ISWINDOWS) {
 		$currDir = undef if ($currDir =~ /^\\+$/);
 	}
 
 	# a correct folder	
 	if (-d $currDir) {
-		$log->debug('regular folder: ' . $currDir);
+		main::DEBUGLOG && $log->debug('regular folder: ' . $currDir);
 		@subdirs = _mapDirectories($currDir);
 	}
 
 	# something else...
 	elsif ($currDir) {
-		$log->debug('unknown folder: ' . $currDir);
+		main::DEBUGLOG && $log->debug('unknown folder: ' . $currDir);
 
 		# partial file/foldernames - filter the list of the parent folder
 		my ($parent, $file);
-		if (Slim::Utils::OSDetect::isWindows() && $currDir =~ /^(\\\\\w.*)\\.+/) {
+		if (main::ISWINDOWS && $currDir =~ /^(\\\\\w.*)\\.+/) {
 			$parent = $1;
 		}
 		else {
 			(my $vol, $parent, $file) = eval { splitpath($currDir) };
 			$parent = $vol . $parent;
-			$log->debug("path elements: '$vol', '$parent', '$file'");
+			main::DEBUGLOG && $log->debug("path elements: '$vol', '$parent', '$file'");
 		}
 
 		if ($parent && $parent ne '.' && -d $parent) {
-			$log->debug("getting subfolders for: $parent");
+			main::DEBUGLOG && $log->debug("getting subfolders for: $parent");
 			my $d = $currDir;
 			$d =~ s/\\/\\\\/g;
 			@subdirs = grep m|^$d|i, _mapDirectories($parent);
@@ -69,8 +69,8 @@ sub handler {
 		}
 
 		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
-		if (Slim::Utils::OSDetect::isWindows() && !@subdirs) {
-			$log->debug('getting Windows drive list');
+		if (main::ISWINDOWS && !@subdirs) {
+			main::DEBUGLOG && $log->debug('getting Windows drive list');
 			@subdirs = Slim::Utils::OS::Win32->getDrives();
 		}
 		elsif (!@subdirs && !$parent) {

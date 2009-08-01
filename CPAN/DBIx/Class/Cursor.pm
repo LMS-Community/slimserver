@@ -38,7 +38,8 @@ sub new {
 
 =head2 next
 
-Virtual method. Advances the cursor to the next row.
+Virtual method. Advances the cursor to the next row. Returns an array of
+column values (the result of L<DBI/fetchrow_array> method).
 
 =cut
 

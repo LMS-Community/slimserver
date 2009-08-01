@@ -15,57 +15,12 @@ use Slim::Networking::SqueezeNetwork;
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 
-use constant FEED_VERSION => 2; # bump this number when changing the defaults below
-
-sub DEFAULT_FEEDS {
-	[
-	{
-		name  => 'Odeo',
-		value => 'http://'
-			. Slim::Networking::SqueezeNetwork->get_server("content")
-			. '/opml/odeo.opml',
-	},
-	{
-		name  => 'PodcastAlley Top 50',
-		value => 'http://podcastalley.com/PodcastAlleyTop50.opml'
-	},
-	{
-		name  => 'PodcastAlley 10 Newest',
-		value => 'http://podcastalley.com/PodcastAlley10Newest.opml'
-	},
-	];
-}
-
-# migrate old prefs across
-$prefs->migrate(1, sub {
-	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names') || [] };
-	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_feeds') || [] };
-	my @feeds;
-
-	for my $name (@names) {
-		push @feeds, { 'name' => $name, 'value' => shift @values };
-	}
-
-	if (@feeds) {
-		$prefs->set('feeds', \@feeds);
-		$prefs->set('modified', 1);
-	}
-
-	1;
-});
-
-# migrate to latest version of default feeds if they have not been modified
-$prefs->migrate(FEED_VERSION, sub {
-	$prefs->set('feeds', DEFAULT_FEEDS()) unless $prefs->get('modified');
-	1;
-});
-
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_PODCAST');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_PODCAST');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/Podcast/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/Podcast/settings/basic.html');
 }
 
 sub handler {
@@ -73,10 +28,10 @@ sub handler {
 
 	if ( $params->{reset} ) {
 
-		$prefs->set( feeds => DEFAULT_FEEDS() );
+		$prefs->set( feeds => Slim::Plugin::Podcast::Plugin::DEFAULT_FEEDS() );
 		$prefs->set( modified => 0 );
 
-		Slim::Plugin::Podcast::Plugin::updateOPMLCache(DEFAULT_FEEDS());
+		Slim::Plugin::Podcast::Plugin::updateOPMLCache(Slim::Plugin::Podcast::Plugin::DEFAULT_FEEDS());
 	}
 	
 	my @feeds = @{ $prefs->get('feeds') };
@@ -119,7 +74,7 @@ sub saveSettings {
 	
 	my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
 
-	for my $deleteItem (@delete) {
+	for my $deleteItem  (@delete ) {
 		
 		next unless defined $deleteItem;
 		

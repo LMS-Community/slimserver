@@ -1,4 +1,4 @@
-# $Id: ODBC.pm 8696 2007-01-24 23:12:38Z timbo $
+# $Id: ODBC.pm 11373 2008-06-02 19:01:33Z timbo $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -35,7 +35,7 @@ The API for this module is private and subject to change.
 =cut
 
 my
-$VERSION = sprintf("2.%06d", q$Revision: 8696 $ =~ /(\d+)/o);
+$VERSION = sprintf("2.%06d", q$Revision: 11373 $ =~ /(\d+)/o);
 
 
 %InfoTypes =
@@ -541,9 +541,6 @@ $ReturnValues{SQL_ALTER_TABLE} =
 $ReturnValues{SQL_ASYNC_MODE} =
 {
   SQL_AM_NONE                               => 0
-, SQL_AM_CONNECTION                         => 1
-, SQL_AM_STATEMENT                          => 2
-, SQL_AM_NONE                               => 0
 , SQL_AM_CONNECTION                         => 1
 , SQL_AM_STATEMENT                          => 2
 };

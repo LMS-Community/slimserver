@@ -16,7 +16,6 @@ use strict;
 
 use YAML::Syck;
 use FindBin qw($Bin);
-use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Log;
 
 my $log = logger('prefs');
@@ -70,7 +69,7 @@ sub _oldPrefs {
 
 		if (!$@ && ref $oldprefs eq 'HASH') {
 
-			$log->info("loaded $path");
+			main::INFOLOG && $log->info("loaded $path");
 
 			return $oldprefs;
 

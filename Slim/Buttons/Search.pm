@@ -21,8 +21,6 @@ INPUT.Text mode.
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Utils::Prefs;
 

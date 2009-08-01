@@ -232,7 +232,7 @@ sub changeAccount {
 	# Clear session
 	clearSession($client);
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Changing account for player " . $client->id . " to $account" );
 	}
 }
@@ -286,7 +286,7 @@ sub handshake {
 		},
 	);
 	
-	$log->debug("Handshaking with Last.fm: $url");
+	main::DEBUGLOG && $log->debug("Handshaking with Last.fm: $url");
 	
 	$http->get( $url );
 }
@@ -302,7 +302,7 @@ sub _handshakeOK {
 	if ( $content =~ /^OK/ ) {
 		my (undef, $session_id, $now_playing_url, $submit_url) = split /\n/, $content, 4;
 		
-		$log->debug( "Handshake OK, session id: $session_id, np URL: $now_playing_url, submit URL: $submit_url" );
+		main::DEBUGLOG && $log->debug( "Handshake OK, session id: $session_id, np URL: $now_playing_url, submit URL: $submit_url" );
 		
 		if ( $client ) {
 			$client->master->pluginData( session_id      => $session_id );
@@ -435,7 +435,7 @@ sub newsongCallback {
 	# If this is a radio track (no track length) and contains a playlist index value
 	# it is the newsong notification from the station title, which we want to ignore
 	if ( !$duration && defined $request->getParam('_p3') ) {
-		$log->debug( 'Ignoring radio station newsong notification' );
+		main::DEBUGLOG && $log->debug( 'Ignoring radio station newsong notification' );
 		return;
 	}
 	
@@ -445,7 +445,7 @@ sub newsongCallback {
 	if ( scalar @{$queue} ) {
 		# before we submit now playing, submit all queued tracks, so that
 		# a scrobbled track doesn't clobber the now playing data
-		$log->debug( 'Submitting scrobble queue before now playing track' );
+		main::DEBUGLOG && $log->debug( 'Submitting scrobble queue before now playing track' );
 		
 		submitScrobble( $client, {
 			cb => sub {
@@ -469,7 +469,7 @@ sub newsongCallback {
 	
 	# Track must be > 30 seconds
 	if ( $duration && $duration < 30 ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
 		}
 		
@@ -487,15 +487,15 @@ sub newsongCallback {
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
-				$log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
+				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
 				return;
 			}
 
 			# Save the title in the track object so we can compare it in checkScrobble
-			$track->{_plugin_title} = $title;
+			$track->stash->{_plugin_title} = $title;
 		}
 		else {
-			$log->debug("Ignoring remote URL $url");
+			main::DEBUGLOG && $log->debug("Ignoring remote URL $url");
 			return;
 		}
 	}
@@ -510,7 +510,7 @@ sub newsongCallback {
 		$checktime = 30;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
 	}
 	
@@ -541,7 +541,7 @@ sub submitNowPlaying {
 		return;
 	}
 	
-	my $artist   = $track->artist ? $track->artist->name : '';
+	my $artist   = $track->artistName || '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	my $tracknum = $track->tracknum || '';
@@ -560,12 +560,12 @@ sub submitNowPlaying {
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
-				$log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
+				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
 				return;
 			}
 		}
 		else {
-			$log->debug( 'Ignoring remote URL ' . $track->url );
+			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
 			return;
 		}
 	}
@@ -578,7 +578,7 @@ sub submitNowPlaying {
 		. '&n=' . $tracknum
 		. '&m=' . ( $track->musicbrainz_id || '' );
 	
-	$log->debug("Submitting Now Playing track to Last.fm: $post");
+	main::DEBUGLOG && $log->debug("Submitting Now Playing track to Last.fm: $post");
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_submitNowPlayingOK,
@@ -606,17 +606,17 @@ sub _submitNowPlayingOK {
 	my $retry   = $http->params('retry');
 	
 	if ( $content =~ /^OK/ ) {
-		$log->debug('Now Playing track submitted successfully');
+		main::DEBUGLOG && $log->debug('Now Playing track submitted successfully');
 	}
 	elsif ( $content =~ /^BADSESSION/ ) {
-		$log->debug('Now Playing failed to submit: bad session');
+		main::DEBUGLOG && $log->debug('Now Playing failed to submit: bad session');
 		
 		# Re-handshake and retry once
 		handshake( {
 			client => $client,
 			cb     => sub {
 				if ( !$retry ) {
-					$log->debug('Retrying failed Now Playing submission');				
+					main::DEBUGLOG && $log->debug('Retrying failed Now Playing submission');				
 					submitNowPlaying( $client, $track, 'retry' );
 				}
 			},
@@ -641,11 +641,11 @@ sub _submitNowPlayingError {
 	my $retry  = $http->params('retry');
 	
 	if ( $retry ) {
-		$log->debug("Now Playing track failed to submit after retry: $error, giving up");
+		main::DEBUGLOG && $log->debug("Now Playing track failed to submit after retry: $error, giving up");
 		return;
 	}
 	
-	$log->debug("Now Playing track failed to submit: $error, retrying in 5 seconds");
+	main::DEBUGLOG && $log->debug("Now Playing track failed to submit: $error, retrying in 5 seconds");
 	
 	# Retry once after 5 seconds
 	Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
@@ -665,14 +665,14 @@ sub checkScrobble {
 	
 	# Make sure player is either playing or paused
 	if ( $client->isStopped() ) {
-		$log->debug( $client->id . ' no longer playing or paused, not scrobbling' );
+		main::DEBUGLOG && $log->debug( $client->id . ' no longer playing or paused, not scrobbling' );
 		return;
 	}
 	
 	# Make sure the track is still the currently playing track
 	my $cururl = Slim::Player::Playlist::url($client);
 	
-	my $artist   = $track->artist ? $track->artist->name : '';
+	my $artist   = $track->artistName || '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	my $tracknum = $track->tracknum || '';
@@ -692,13 +692,13 @@ sub checkScrobble {
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
-				$log->debug( "Protocol Handler didn't return an artist and title for $cururl, ignoring" );
+				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for $cururl, ignoring" );
 				return;
 			}
 			
 			# Make sure user is still listening to the same track
-			if ( $track->{_plugin_title} && $title ne $track->{_plugin_title} ) {
-				$log->debug( $track->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
+			if ( $track->stash->{_plugin_title} && $title ne $track->stash->{_plugin_title} ) {
+				main::DEBUGLOG && $log->debug( $track->stash->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
 				return;
 			}
 			
@@ -716,19 +716,19 @@ sub checkScrobble {
 						$include_radio = $prefs->get('include_radio');
 					}
 					if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
-						$log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
+						main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
 						return;
 					}
 				}
 			}
 		}
 		else {
-			$log->debug( 'Ignoring remote URL ' . $cururl );
+			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $cururl );
 			return;
 		}
 	}
 	elsif ( $cururl ne $track->url ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( $track->title . ' - Currently playing track has changed, not scrobbling' );
 		}
 		
@@ -740,7 +740,7 @@ sub checkScrobble {
 	if ( $songtime < $checktime ) {
 		my $diff = $checktime - $songtime;
 		
-		$log->debug( "$title - Not yet reached $checktime playback seconds, waiting $diff more seconds" );
+		main::DEBUGLOG && $log->debug( "$title - Not yet reached $checktime playback seconds, waiting $diff more seconds" );
 		
 		Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 		Slim::Utils::Timers::setTimer(
@@ -755,7 +755,7 @@ sub checkScrobble {
 		return;
 	}
 	
-	$log->debug( "$title - Queueing track for scrobbling in $checktime seconds" );
+	main::DEBUGLOG && $log->debug( "$title - Queueing track for scrobbling in $checktime seconds" );
 	
 	my $queue = getQueue($client);
 	
@@ -813,7 +813,7 @@ sub submitScrobble {
 	# Abort if the user disabled scrobbling for this player
 	my $account = $prefs->client($client)->get('account');
 	if ( !$account ) {
-		$log->debug( 'User disabled scrobbling for this player, wiping queue and not submitting' );
+		main::DEBUGLOG && $log->debug( 'User disabled scrobbling for this player, wiping queue and not submitting' );
 		
 		setQueue( $client, [] );
 		
@@ -831,7 +831,7 @@ sub submitScrobble {
 		return;
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
 		#$log->debug( Data::Dump::dump($queue) );
 	}
@@ -853,7 +853,7 @@ sub submitScrobble {
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
 		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
-			$log->debug( "Track " . $item->{t} . " is still playing, not submitting" );
+			main::DEBUGLOG && $log->debug( "Track " . $item->{t} . " is still playing, not submitting" );
 			$current_item = $item;
 			next;
 		}
@@ -891,7 +891,7 @@ sub submitScrobble {
 	setQueue( $client, $queue );
 	
 	if ( @tmpQueue ) {
-		$log->debug( "Submitting: $post" );
+		main::DEBUGLOG && $log->debug( "Submitting: $post" );
 	
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
 			\&_submitScrobbleOK,
@@ -916,7 +916,7 @@ sub submitScrobble {
 sub stillPlaying {
 	my ( $client, $track, $item ) = @_;
 	
-	my $artist   = $track->artist ? $track->artist->name : '';
+	my $artist   = $track->artistName || '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	
@@ -957,7 +957,7 @@ sub _submitScrobbleOK {
 	my $client   = $http->params('client');
 	
 	if ( $content =~ /^OK/ ) {
-		$log->debug( 'Scrobble submit successful' );
+		main::DEBUGLOG && $log->debug( 'Scrobble submit successful' );
 		
 		# If we had a callback on success, call it now
 		if ( $params->{cb} ) {
@@ -972,7 +972,7 @@ sub _submitScrobbleOK {
 		
 		setQueue( $client, $queue );
 		
-		$log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
+		main::DEBUGLOG && $log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
 		
 		# re-handshake, this will cause a submit to occur after success
 		handshake( { client => $client } );
@@ -1006,13 +1006,13 @@ sub _submitScrobbleError {
 	
 	if ( $params->{retry} == 3 ) {
 		# after 3 failures, give up and handshake
-		$log->debug( "Scrobble submit failed after 3 tries, re-handshaking" );
+		main::DEBUGLOG && $log->debug( "Scrobble submit failed after 3 tries, re-handshaking" );
 		handshake( { client => $client } );
 		return;
 	}
 	
 	my $tries = 3 - $params->{retry};
-	$log->debug( "Scrobble submit failed: $error, will retry in 5 seconds ($tries tries left)" );
+	main::DEBUGLOG && $log->debug( "Scrobble submit failed: $error, will retry in 5 seconds ($tries tries left)" );
 	
 	# Retry after a short delay
 	$params->{retry}++;
@@ -1043,7 +1043,7 @@ sub loveTrack {
 	
 	return unless $enable_scrobbling;
 	
-	$log->debug( "Loved: $url" );
+	main::DEBUGLOG && $log->debug( "Loved: $url" );
 	
 	# Look through the queue and update the item we want to love
 	my $queue = getQueue($client);
@@ -1092,11 +1092,11 @@ sub submitLoveTrack {
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
-			$log->debug( 'Love track response: ' . $http->content );
+			main::DEBUGLOG && $log->debug( 'Love track response: ' . $http->content );
 		},
 		sub {
 			my $http = shift;
-			$log->debug( 'Love track error: ' . $http->error );
+			main::DEBUGLOG && $log->debug( 'Love track error: ' . $http->error );
 		},
 		{
 			client => $client,
@@ -1111,7 +1111,7 @@ sub submitLoveTrack {
 		. '&track='     . $item->{t}
 	);
 	
-	$log->debug( 'Submitting loved track to Last.fm' );
+	main::DEBUGLOG && $log->debug( 'Submitting loved track to Last.fm' );
 	
 	$http->get( $url );
 }
@@ -1143,7 +1143,7 @@ sub banTrack {
 	
 	return unless $enable_scrobbling;
 
-	$log->debug( "Banned: $url" );
+	main::DEBUGLOG && $log->debug( "Banned: $url" );
 	
 	# Look through the queue and update the item we want to ban
 	my $queue = getQueue($client);
@@ -1324,7 +1324,7 @@ sub jiveSettingsCommand {
 	my $client  = $request->client();
 	my $account = $request->getParam('user');
 
-	$log->debug('Setting account to: ' . $account);
+	main::DEBUGLOG && $log->debug('Setting account to: ' . $account);
 	changeAccount( $client, $account );
 
 	$request->setStatusDone();

@@ -27,10 +27,10 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->{streamUrl} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	my $track     = $song->pluginData();
 	
-	$log->is_debug && $log->debug( 'Remote streaming Mediafly track: ' . $streamUrl );
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Remote streaming Mediafly track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -72,7 +72,7 @@ sub isRepeatingStream {
 	my ( $class, $song ) = @_;
 	
 	# Channels repeat, individual episodes do not
-	return $song->{track}->url =~ m{^mediafly://channel};
+	return $song->track()->url =~ m{^mediafly://channel};
 }
 
 sub getNextTrack {
@@ -119,7 +119,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug("Getting next track from mysqueezebox.com for $slug");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Getting next track from SqueezeNetwork for $slug");
 	
 	$http->get( $trackURL );
 }
@@ -147,13 +147,13 @@ sub gotNextTrack {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got Mediafly track: ' . Data::Dump::dump($track) );
 	}
 	
 	# If this was a redirect request, change channels
 	if ( my $redir = $track->{redirect} ) {
-		$log->is_debug && $log->debug( 'Redirecting to ' . $redir->{url} );
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Redirecting to ' . $redir->{url} );
 		
 		$http->params->{errorCallback}->('PLUGIN_MEDIAFLY_CHANGING_CHANNELS');
 		
@@ -163,7 +163,7 @@ sub gotNextTrack {
 	
 	# Save metadata for this track
 	$song->pluginData( $track );
-	$song->{streamUrl} = $track->{url};
+	$song->streamUrl($track->{url});
 
 	$http->params->{callback}->();
 }
@@ -208,8 +208,8 @@ sub parseDirectHeaders {
 		$length = $rangelength;
 	}
 	
-	$client->streamingSong->{bitrate}  = $bitrate;
-	$client->streamingSong->{duration} = $track->{secs};
+	$client->streamingSong->bitrate($bitrate);
+	$client->streamingSong->duration($track->{secs});
 	
 	# Start a timer to post experience every 30 seconds
 	Slim::Utils::Timers::killTimers( $client, \&postExperience );
@@ -228,7 +228,7 @@ sub parseDirectHeaders {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->info("Direct stream failed: $url [$response] $status_line");
+	main::INFOLOG && $log->info("Direct stream failed: $url [$response] $status_line");
 	
 	$client->controller()->playerStreamingFailed( $client, 'PLUGIN_MEDIAFLY_STREAM_FAILED' );
 }
@@ -238,7 +238,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->{streamUrl}, $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 }
 
 # Track Info menu
@@ -331,7 +331,7 @@ sub getIcon {
 sub onStop {
 	my ($class, $song) = @_;
 	
-	$log->is_debug && $log->debug("onStop, posting experience");
+	main::DEBUGLOG && $log->is_debug && $log->debug("onStop, posting experience");
 	
 	postExperience( $song->master(), $song->pluginData()->{slug} );
 }
@@ -339,7 +339,7 @@ sub onStop {
 sub onPlayout {
 	my ($class, $song) = @_;
 	
-	$log->is_debug && $log->debug("onPlayout, posting experience");
+	main::DEBUGLOG && $log->is_debug && $log->debug("onPlayout, posting experience");
 	
 	postExperience( $song->master(), $song->pluginData()->{slug}, 1 );
 }
@@ -352,7 +352,7 @@ sub postExperience {
 	
 	# Make sure we haven't changed tracks
 	if ( !$track || !$slug || $track->{slug} ne $slug ) {
-		$log->is_debug && $log->debug( "Not posting experience for $slug, no longer playing" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Not posting experience for $slug, no longer playing" );
 		return;
 	}
 	
@@ -376,13 +376,13 @@ sub postExperience {
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $http = shift;
 				$log->debug( "Post experience returned: " . $http->content );
 			}
 		},
 		sub {
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $http = shift;
 				$log->debug( "Post experience returned error: " . $http->error );
 			}
@@ -392,13 +392,13 @@ sub postExperience {
 		},
 	);
 
-	$log->debug("Posting experience: $time/$length seconds for $slug");
+	main::DEBUGLOG && $log->debug("Posting experience: $time/$length seconds for $slug");
 
 	$http->get( $logURL );
 	
 	# Post again in 30 seconds unless we're done
 	if ( !$end ) {
-		$log->is_debug && $log->debug( "Will post experience for $slug again in 30 seconds" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Will post experience for $slug again in 30 seconds" );
 		
 		Slim::Utils::Timers::killTimers( $client, \&postExperience );
 		Slim::Utils::Timers::setTimer(
@@ -417,7 +417,7 @@ sub reinit {
 
 	my $url = $song->currentTrack->url();
 	
-	$log->debug("Re-init Mediafly - $url");
+	main::DEBUGLOG && $log->debug("Re-init Mediafly - $url");
 
 	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
@@ -444,7 +444,7 @@ sub reinit {
 	}
 	else {
 		# No data, just restart the current station
-		$log->debug("No data about playing track, restarting station");
+		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
 
 		$client->execute( [ 'playlist', 'play', $url ] );
 	}

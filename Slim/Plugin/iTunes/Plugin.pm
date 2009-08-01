@@ -25,6 +25,65 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.itunes');
 
+$prefs->migrate(1, sub {
+	$prefs->set('itunes',          Slim::Utils::Prefs::OldPrefs->get('itunes'));
+	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('itunesscaninterval')   || 3600      );
+	$prefs->set('ignore_disabled', Slim::Utils::Prefs::OldPrefs->get('ignoredisableditunestracks') || 0   );
+	$prefs->set('xml_file',        Slim::Utils::Prefs::OldPrefs->get('itunes_library_xml_path')           );
+	$prefs->set('music_path',      Slim::Utils::Prefs::OldPrefs->get('itunes_library_music_path')         );
+	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('iTunesplaylistprefix') || '');
+	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('iTunesplaylistsuffix') || ''        );
+	1;
+});
+
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0 }, 'scan_interval');
+$prefs->setValidate('file', 'xml_file');
+$prefs->setValidate('dir', 'music_path');
+
+$prefs->setChange(
+	sub {
+		my $value = $_[1];
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Plugin', $value);
+
+		for my $c (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($c);
+		}
+		
+		# Default TPE2 as Album Artist pref if using iTunes
+		if ( $value ) {
+			preferences('server')->set( useTPE2AsAlbumArtist => 1 );
+		}
+	},
+'itunes');
+
+$prefs->setChange(
+	sub {
+		Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::iTunes::Plugin::checker);
+
+		my $interval = int( $prefs->get('scan_interval') );
+
+		if ($interval) {
+			
+			main::INFOLOG && $log->info("re-setting checker for $interval seconds from now.");
+	
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::iTunes::Plugin::checker);
+		}
+		
+		else {
+			
+			main::INFOLOG && $log->info("disabling checker - interval set to '$interval'");
+		}
+	},
+'scan_interval');
+
+$prefs->setChange(
+	sub {
+		Slim::Control::Request::executeRequest(undef, ['rescan']);
+	},
+'ignore_playlists');
+
+
 sub getDisplayName {
 	return 'SETUP_ITUNES';
 }
@@ -98,7 +157,7 @@ sub checker {
 
 	if ($interval) {
 		
-		$log->info("setting checker for $interval seconds from now.");
+		main::INFOLOG && $log->info("setting checker for $interval seconds from now.");
 	
 		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&checker);
 	}

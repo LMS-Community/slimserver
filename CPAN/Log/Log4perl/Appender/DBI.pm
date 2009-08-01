@@ -133,35 +133,61 @@ sub query_execute {
     my($self, $sth, @qmarks) = @_;
 
     for my $attempt (0..$self->{reconnect_attempts}) {
+        #warn "Exe: @qmarks"; # TODO
         if(! $sth->execute(@qmarks)) {
-                # Exe failed
+
+                # Exe failed -- was it because we lost the DB
+                # connection?
+                if($self->{dbh}->ping()) {
+                    # No, the connection is ok, we failed because there's
+                    # something wrong with the execute(): Bad SQL or 
+                    # missing parameters or some such). Abort.
+                    croak "Log4perl: DBI appender error: '" .
+                          $self->{dbh}->errstr() . 
+                          "'";
+                }
+
                 # warn "Log4perl: DBI->execute failed $DBI::errstr, \n".
                 #                  "on $self->{SQL}\n@qmarks";
+                #warn "Exe: failed: $DBI::errstr"; # TODO
                 if($attempt == $self->{reconnect_attempts}) {
-                    croak "Log4perl: DBI appender failed to reconnect to database " .
-                          "after $self->{reconnect_attempts} attempt" .
-                          ($self->{reconnect_attempts} == 1 ? "" : "s");
+                    croak "Log4perl: DBI appender failed to " .
+                          ($self->{reconnect_attempts} == 1 ? "" : "re") .
+                          "connect " .
+                          "to database after " .
+                          "$self->{reconnect_attempts} attempt" .
+                          ($self->{reconnect_attempts} == 1 ? "" : "s") .
+                          " (last error error was [" .
+                          $self->{dbh}->errstr() . 
+                          "])";
                 }
             if(! $self->{dbh}->ping()) {
                 # Ping failed, try to reconnect
                 if($attempt) {
+                    #warn "Sleeping"; # TODO
                     sleep($self->{reconnect_sleep}) if $self->{reconnect_sleep};
                 }
 
                 eval {
-                    #warn "Reconnecting to DB";
+                    #warn "Reconnecting to DB"; # TODO
                     $self->{dbh} = $self->{connect}->();
                 };
+            }
 
+            if ($self->{usePreparedStmt}) {
                 $sth = $self->create_statement($self->{SQL});
                 $self->{sth} = $sth if $self->{sth};
-                next;
+            } else {
+                #warn "Pending stmt: $self->{pending_stmt}"; #TODO
+                $sth = $self->create_statement($self->{pending_stmt});
             }
+
+            next;
         }
         return 1;
     }
     croak "Log4perl: DBI->execute failed $DBI::errstr, \n".
-          "on $self->{SQL}\n@qmarks";
+          "on $self->{SQL}\n @qmarks";
 }
 
 sub calculate_bind_values {
@@ -248,6 +274,8 @@ sub check_buffer {
 
         while (@{$self->{BUFFER}}) {
             my ($stmt, $qmarks) = splice (@{$self->{BUFFER}},0,2);
+
+            $self->{pending_stmt} = $stmt;
 
                 #reuse the sth if the stmt doesn't change
             if ($stmt ne $prev_stmt) {

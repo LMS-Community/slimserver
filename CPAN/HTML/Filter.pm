@@ -6,7 +6,7 @@ use vars qw(@ISA $VERSION);
 require HTML::Parser;
 @ISA=qw(HTML::Parser);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.11 $ =~ /(\d+)\.(\d+)/);
+$VERSION = "3.57";
 
 sub declaration { $_[0]->output("<!$_[1]>")     }
 sub process     { $_[0]->output($_[2])          }

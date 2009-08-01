@@ -86,8 +86,9 @@ sub menu {
 
 	# Get playlist object if necessary
 	if ( !blessed($playlist) ) {
-		$playlist = Slim::Schema->rs('Playlist')->objectForUrl( {
+		$playlist = Slim::Schema->objectForUrl( {
 			url => $url,
+			playlist => 1,
 		} );
 		if ( !blessed($playlist) ) {
 			$log->error( "No playlist object found for $url" );

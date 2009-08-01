@@ -11,6 +11,7 @@ use strict;
 use bytes;
 
 use Slim::Player::Source;
+use Slim::Player::SB1SliMP3Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
@@ -88,7 +89,7 @@ to handle the buffering.
 sub newStream {
 	my ($client, $paused) = @_;
 	
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info($client->id, " new stream: ", ($paused ? "paused" : ""));
 	}
 
@@ -143,7 +144,7 @@ Pauses playback (but keep filling the buffer)
 sub pause {
 	my ($client, $interval) = @_;
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info( $client->id, " pause" . ($interval ? " for $interval" : '') );
 	}
 	
@@ -170,7 +171,7 @@ sub pause {
 
 	if ($streamState{$client} ne 'play' && $streamState{$client} ne 'buffering') {
 
-		$log->info("Attempted to pause a $streamState{$client} stream.");
+		main::INFOLOG && $log->info("Attempted to pause a $streamState{$client} stream.");
 
 		return 0;
 	}
@@ -196,13 +197,13 @@ Halts playback completely
 sub stop {
 	my ($client) = @_;
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info($client->id, " stream stop");
 	}
 
 	if (!$streamState{$client} || $streamState{$client}  eq 'stop') {
 
-		$log->info("Attempted to stop an already stopped stream.");
+		main::INFOLOG && $log->info("Attempted to stop an already stopped stream.");
 
 		return 0;
 	}
@@ -230,7 +231,7 @@ take effect until it has filled sufficiently.
 sub unpause {
 	my ($client, $at) = @_;
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info($client->id, " unpause");
 	}
 
@@ -301,7 +302,7 @@ my %streamControlCodes = (
 sub isPlaying {
 	my $client = shift;
 	my $state = $streamState{$client};
-	return $state eq 'play';
+	return $state && $state eq 'play';
 }
 
 # send a packet
@@ -318,7 +319,7 @@ sub sendStreamPkt {
 	
 	if (($streamState eq 'stop') || ($bytesSent{$client} == 0)) {
 
-		$log->debug("reset");
+		main::DEBUGLOG && $log->debug("reset");
 
 		$control = $streamControlCodes{'reset'};
 		
@@ -349,7 +350,7 @@ sub sendStreamPkt {
 		$control = $streamControlCodes{'stop'};
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			$client->id() . 
 			" sending stream: seq:$seq, len:$len, wptr:$wptr, state:". 
@@ -398,7 +399,7 @@ sub timeout {
 
 	return unless ($dataPktInFlight{$client} || $emptyPktInFlight{$client});
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug($client->id, " Timeout on seq: $seq");
 	}
 	
@@ -461,7 +462,7 @@ sub gotAck {
 	my $pktLatency = $packet
 		? int(($msgTimeStamp - $packet->{'sendTimeStamp'})*1000000/2) : -1;
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			$client->id() . " gotAck: wptr:$wptr rptr:$rptr seq:$seq " .
 			"inflight:$bytesInFlight fullness:$fullness{$client} latency:$pktLatency us"
@@ -469,7 +470,7 @@ sub gotAck {
 	}
 
 	if ( !$packet ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			if ( ($seq{$client} - $seq) % $SEQ_LIMIT > 2) {
 				$log->debug($client->id() . " ***Missing or unexpected packet acked: $seq");
 			}
@@ -493,14 +494,14 @@ sub gotAck {
 		my $medianLatency;
 		if (   $client->isSynced(1)
 			&& ($streamState{$client} eq 'play' || $streamState{$client} eq 'eof')
-			&& $msgTimeStamp > $samplePlayPointAfter{$client}
+			&& $msgTimeStamp > ($samplePlayPointAfter{$client} || 0)
 			&& defined($medianLatency = getMedianLatencyMicroSeconds($client))
 		) {
 			if ($pktLatency <= $medianLatency) {
 				my $statusTime = $msgTimeStamp - $pktLatency / 1000000;
-				my $apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
+				my $apparentStreamStartTime = Slim::Player::SB1SliMP3Sync::apparentStreamStartTime($client, $statusTime);
 
-				$client->publishPlayPoint($statusTime, $apparentStreamStartTime, $pauseUntil{$client});
+				$client->publishPlayPoint($statusTime, $apparentStreamStartTime, $pauseUntil{$client}) if $apparentStreamStartTime;
 
 				# only do this again after a short interval
 				$samplePlayPointAfter{$client} = $msgTimeStamp + PLAY_POINT_SAMPLE_INTERVAL;
@@ -511,7 +512,7 @@ sub gotAck {
 	my $state = $streamState{$client};
 
 	if ( $fullness <= 512 && !$sentUnderrun{$client} && ($state eq 'play' || $state eq 'eof') ) {
-		$log->debug("***Stream underrun: $fullness");
+		main::DEBUGLOG && $log->debug("***Stream underrun: $fullness");
 		$sentUnderrun{$client} = 1;	
 		$client->underrun(); # xxx - need to send this only once
 	}
@@ -520,7 +521,7 @@ sub gotAck {
 
 			$streamState{$client} ='play';
 	
-			$log->info($client->id, " Buffer full, starting playback");
+			main::INFOLOG && $log->info($client->id, " Buffer full, starting playback");
 	
 			$client->currentplayingsong(Slim::Player::Playlist::song($client));
 			$client->remoteStreamStartTime(time());
@@ -572,7 +573,7 @@ sub sendNextChunk {
 
 	# if there's a packet in flight, come back later and try again...
 	if ($dataPktInFlight{$client} || $emptyPktInFlight{$client}) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(
 				$client->id() . "- $streamState - " .
 				($dataPktInFlight{$client} ? "data" : "empty") 
@@ -599,7 +600,7 @@ sub sendNextChunk {
 	
 	if ($fullness > $BUFFER_FULL_THRESHOLD) {
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug($client->id, "- $streamState - Buffer full, need to poll to see if there is space");
 		}
 
@@ -645,7 +646,7 @@ sub sendNextChunk {
 	}
 	
 	elsif (!length($$chunkRef)) {
-		$log->info($client->id, " stream play out");
+		main::INFOLOG && $log->info($client->id, " stream play out");
 		$streamState{$client} = 'eof';
 	}
 	
@@ -686,7 +687,7 @@ sub sendNextChunk {
 sub sendEmptyChunk {
 	my $client = shift;
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug($client->id, ' sendEmptyChunk');
 	}
 	

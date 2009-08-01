@@ -16,19 +16,11 @@ package Slim::Player::SqueezeSlave;
 use strict;
 use base qw(Slim::Player::Squeezebox);
 
-use File::Spec::Functions qw(:ALL);
-use File::Temp;
-use IO::Socket;
 use MIME::Base64;
 use Scalar::Util qw(blessed);
 
-use Slim::Formats::Playlists;
-use Slim::Player::Player;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');

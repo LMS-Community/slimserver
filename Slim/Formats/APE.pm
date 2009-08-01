@@ -27,16 +27,14 @@ Extract and return audio information & any embedded metadata found.
 
 =head1 SEE ALSO
 
-L<Slim::Formats>, L<Audio::APETags>, L<Audio::APE>, L<MP3::Info>
+L<Slim::Formats>
 
 =cut
 
 use strict;
 use base qw(Slim::Formats);
 
-use Audio::APETags;
-use Audio::APE;
-use MP3::Info ();
+use Audio::Scan;
 
 my %tagMapping = (
 	'TRACK'	       => 'TRACKNUM',
@@ -50,47 +48,35 @@ my %tagMapping = (
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
+	
+	my $s = Audio::Scan->scan($file);
 
-	my $mac = Audio::APE->new($file);
-
-	my $tags = $mac->tags() || {};
+	my $info = $s->{info};
+	my $tags = $s->{tags};
 
 	# Check for the presence of the info block here
-	unless (defined $mac->{'bitRate'}) {
-		return undef;
-	}
-
-	# There should be a TITLE tag if the APE tags are to be trusted
-	if (defined $tags->{'TITLE'}) {
-
-		# map the existing tag names to the expected tag names
-		while (my ($old,$new) = each %tagMapping) {
-			if (exists $tags->{$old}) {
-				$tags->{$new} = $tags->{$old};
-				delete $tags->{$old};
-			}
-		}
-	}
-
-	# add more information to these tags
-	# these are not tags, but calculated values from the streaminfo
-	$tags->{'SIZE'}    = $mac->{'fileSize'};
-	$tags->{'BITRATE'} = $mac->{'bitRate'};
-	$tags->{'SECS'} = $mac->{'duration'};
-#	$tags->{'OFFSET'}  = $mac->{'startAudioData'};
-
-	# Add the stuff that's stored in the Streaminfo Block
-	#my $mpcInfo = $mac->info();
-	$tags->{'RATE'}     = $mac->{'sampleRate'};
-	$tags->{'CHANNELS'} = $mac->{'Channels'};
-
-	# stolen from MP3::Info
-	$tags->{'MM'}	    = int $tags->{'SECS'} / 60;
-	$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
-	$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
-	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
+	return unless $info->{song_length_ms};
+	
+	# Add info
+	$tags->{SIZE}     = $info->{file_size};
+	$tags->{BITRATE}  = $info->{bitrate};
+	$tags->{SECS}     = $info->{song_length_ms} / 1000;
+	$tags->{RATE}     = $info->{samplerate};
+	$tags->{CHANNELS} = $info->{channels};
+	
+	$class->doTagMapping($tags);
 
 	return $tags;
+}
+
+sub doTagMapping {
+	my ( $class, $tags ) = @_;
+	
+	while ( my ($old, $new) = each %tagMapping ) {
+		if ( exists $tags->{$old} ) {
+			$tags->{$new} = delete $tags->{$old};
+		}
+	}
 }
 
 1;

@@ -13,19 +13,12 @@ use Slim::Utils::DateTime;
 
 my $prefs = preferences('plugin.rescan');
 
-$prefs->migrate(1, sub {
-	$prefs->set('time',      Slim::Utils::Prefs::OldPrefs->get('rescan-time')      || 9 * 60 * 60 );
-	$prefs->set('scheduled', Slim::Utils::Prefs::OldPrefs->get('rescan-scheduled') || 0           );
-	$prefs->set('type',      Slim::Utils::Prefs::OldPrefs->get('rescan-type')      || '1rescan'   );
-	1;
-});
-
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_RESCAN_MUSIC_LIBRARY');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_RESCAN_MUSIC_LIBRARY');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/Rescan/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/Rescan/settings/basic.html');
 }
 
 sub prefs {

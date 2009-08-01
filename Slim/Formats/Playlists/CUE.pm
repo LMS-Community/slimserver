@@ -11,8 +11,8 @@ package Slim::Formats::Playlists::CUE;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
+use Audio::Scan;
 use File::Slurp;
-use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
@@ -35,7 +35,7 @@ sub parse {
 	my $cuesheet  = {};
 	my $tracks    = {};
 
-	$log->info("baseDir: [$baseDir]");
+	main::INFOLOG && $log->info("baseDir: [$baseDir]");
 
 	if (!@$lines) {
 
@@ -183,7 +183,7 @@ sub parse {
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos && $filename) {
 
-		$log->info("Reading tags to get ending time of $filename");
+		main::INFOLOG && $log->info("Reading tags to get ending time of $filename");
 
 		my $tags = Slim::Formats->readTags($filename);
 
@@ -252,7 +252,7 @@ sub parse {
 		# Don't use $track->{'URL'} or the db will break
 		$track->{'URI'} = "$file#".$track->{'START'}."-".$track->{'END'};
 
-		$log->debug("    URL: $track->{'URI'}");
+		main::DEBUGLOG && $log->debug("    URL: $track->{'URI'}");
 
 		# Ensure that we have a CONTENT_TYPE
 		if (!defined $track->{'CONTENT_TYPE'}) {
@@ -261,14 +261,14 @@ sub parse {
 
 		$track->{'TRACKNUM'} = $key;
 
-		$log->debug("    TRACKNUM: $track->{'TRACKNUM'}");
+		main::DEBUGLOG && $log->debug("    TRACKNUM: $track->{'TRACKNUM'}");
 
 		for my $attribute (Slim::Schema::Contributor->contributorRoles,
 			qw(TITLE ALBUM YEAR GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
 
 			if (exists $track->{$attribute}) {
 
-				$log->debug("    $attribute: $track->{$attribute}");
+				main::DEBUGLOG && $log->debug("    $attribute: $track->{$attribute}");
 			}
 		}
 
@@ -279,7 +279,7 @@ sub parse {
 
 				$track->{$attribute} = $cuesheet->{$attribute};
 
-				$log->debug("    $attribute: $track->{$attribute}");
+				main::DEBUGLOG && $log->debug("    $attribute: $track->{$attribute}");
 			}
 		}
 
@@ -289,7 +289,7 @@ sub parse {
 	
 	# Bug 8443, if no tracks contain a URI element, it's an invalid cue
 	if ( !grep { defined $tracks->{$_}->{URI} } keys %{$tracks} ) {
-		$log->debug('Invalid cue sheet detected');
+		main::DEBUGLOG && $log->debug('Invalid cue sheet detected');
 		return;
 	}
 
@@ -302,7 +302,7 @@ sub read {
 	my $baseDir = shift;
 	my $url     = shift;
 
-	$log->info("Reading CUE: $url");
+	main::INFOLOG && $log->info("Reading CUE: $url");
 
 	my @items  = ();
 	my @lines  = read_file($file);
@@ -331,9 +331,9 @@ sub read {
 		# Grab data from the base file to pass on to our individual tracks.
 		if (!defined $basetrack || $basetrack->url ne $track->{'FILENAME'}) {
 
-			$log->info("Creating new track for: $track->{'FILENAME'}");
+			main::INFOLOG && $log->info("Creating new track for: $track->{'FILENAME'}");
 
-			$basetrack = Slim::Schema->rs('Track')->updateOrCreate({
+			$basetrack = Slim::Schema->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
 				'attributes' => {
 					'CONTENT_TYPE'    => 'cur',
@@ -373,14 +373,14 @@ sub read {
 
 		# Do the actual data store
 		# Skip readTags since we'd just be reading the same file over and over
-		Slim::Schema->rs('Track')->updateOrCreate({
+		Slim::Schema->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # no need to read tags, since we did it for the base file
 		});
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("    returning: " . scalar(@items) . " items");
 	}
 
@@ -442,10 +442,10 @@ sub processAnchor {
 			
 			# We need to skip past the LAME header so the first chunk
 			# doesn't get truncated by the firmware thinking it needs to remove encoder padding
-			seek $fh, $header, 0;
-			my $next = MPEG::Audio::Frame->read( $fh, 1 );
-			if ( $next && $next->content =~ /Info|LAME/ ) {
-				$attributesHash->{'AUDIO_OFFSET'} += $next->length;
+			my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
+			if ( $s->{info}->{lame_encoder_version} ) {
+				my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );
+				$attributesHash->{'AUDIO_OFFSET'} += $next;
 			}
 		}
 		
@@ -465,7 +465,7 @@ sub processAnchor {
 	
 	$attributesHash->{'SECS'} = $duration;
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf(
 			"New virtual track ($start-$end): start: %d, end: %d, size: %d, length: %d",
 			$attributesHash->{'AUDIO_OFFSET'},

@@ -3,6 +3,7 @@ package Log::Log4perl::Layout;
 
 use Log::Log4perl::Layout::SimpleLayout;
 use Log::Log4perl::Layout::PatternLayout;
+use Log::Log4perl::Layout::PatternLayout::Multiline;
 
 
 ####################################################

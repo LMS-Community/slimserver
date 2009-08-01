@@ -6,7 +6,7 @@ use strict;
 use vars qw( $VERSION @ISA );
 
 BEGIN {
-    $VERSION = '1.26';
+    $VERSION = '1.29';
     @ISA     = qw( Archive::Zip );
 }
 
@@ -19,7 +19,7 @@ use Archive::Zip qw(
 );
 
 use Time::Local ();
-use Compress::Zlib qw( Z_OK Z_STREAM_END MAX_WBITS );
+use Compress::Raw::Zlib qw( Z_OK Z_STREAM_END MAX_WBITS );
 use File::Path;
 use File::Basename;
 
@@ -45,19 +45,52 @@ sub _newFromZipFile {
 
 sub newFromString {
     my $class = shift;
-    my $self  = $class->STRINGMEMBERCLASS->_newFromString(@_);
+
+    my ( $stringOrStringRef, $fileName );
+    if ( ref( $_[0] ) eq 'HASH' ) {
+        $stringOrStringRef = $_[0]->{string};
+        $fileName          = $_[0]->{zipName};
+    }
+    else {
+        ( $stringOrStringRef, $fileName ) = @_;
+    }
+
+    my $self  = $class->STRINGMEMBERCLASS->_newFromString( $stringOrStringRef,
+        $fileName );
     return $self;
 }
 
 sub newFromFile {
     my $class = shift;
-    my $self  = $class->NEWFILEMEMBERCLASS->_newFromFileNamed(@_);
+
+    my ( $fileName, $zipName );
+    if ( ref( $_[0] ) eq 'HASH' ) {
+        $fileName = $_[0]->{fileName};
+        $zipName  = $_[0]->{zipName};
+    }
+    else {
+        ( $fileName, $zipName ) = @_;
+    }
+
+    my $self = $class->NEWFILEMEMBERCLASS->_newFromFileNamed( $fileName,
+      $zipName );
     return $self;
 }
 
 sub newDirectoryNamed {
     my $class = shift;
-    my $self  = $class->DIRECTORYMEMBERCLASS->_newNamed(@_);
+
+    my ( $directoryName, $newName );
+    if ( ref( $_[0] ) eq 'HASH' ) {
+        $directoryName = $_[0]->{directoryName};
+        $newName       = $_[0]->{zipName};
+    }
+    else {
+        ( $directoryName, $newName ) = @_;
+    }
+
+    my $self  = $class->DIRECTORYMEMBERCLASS->_newNamed( $directoryName,
+        $newName );
     return $self;
 }
 
@@ -81,6 +114,7 @@ sub new {
         'crc32'                    => 0,
         'compressedSize'           => 0,
         'uncompressedSize'         => 0,
+        'isSymbolicLink'           => 0,
         @_
     };
     bless( $self, $class );
@@ -105,9 +139,15 @@ sub versionMadeBy {
 }
 
 sub fileAttributeFormat {
-    ( $#_ > 0 )
-      ? ( $_[0]->{'fileAttributeFormat'} = $_[1] )
-      : $_[0]->{'fileAttributeFormat'};
+    my $self = shift;
+
+    if (@_) {
+        $self->{fileAttributeFormat} = ( ref( $_[0] ) eq 'HASH' )
+        ? $_[0]->{format} : $_[0];
+    }
+    else {
+        return $self->{fileAttributeFormat};
+    }
 }
 
 sub versionNeededToExtract {
@@ -115,7 +155,19 @@ sub versionNeededToExtract {
 }
 
 sub bitFlag {
-    shift->{'bitFlag'};
+    my $self = shift;
+
+    # Set General Purpose Bit Flags according to the desiredCompressionLevel setting
+    if ( $self->desiredCompressionLevel == 1 || $self->desiredCompressionLevel == 2 ) {
+        $self->{'bitFlag'} = DEFLATING_COMPRESSION_FAST;
+    } elsif ( $self->desiredCompressionLevel == 3 || $self->desiredCompressionLevel == 4
+          || $self->desiredCompressionLevel == 5 || $self->desiredCompressionLevel == 6
+          || $self->desiredCompressionLevel == 7 ) {
+        $self->{'bitFlag'} = DEFLATING_COMPRESSION_NORMAL;
+    } elsif ( $self->desiredCompressionLevel == 8 || $self->desiredCompressionLevel == 9 ) {
+        $self->{'bitFlag'} = DEFLATING_COMPRESSION_MAXIMUM;
+    }
+    $self->{'bitFlag'};
 }
 
 sub compressionMethod {
@@ -123,8 +175,9 @@ sub compressionMethod {
 }
 
 sub desiredCompressionMethod {
-    my $self                        = shift;
-    my $newDesiredCompressionMethod = shift;
+    my $self = shift;
+    my $newDesiredCompressionMethod =
+      ( ref( $_[0] ) eq 'HASH' ) ? shift->{compressionMethod} : shift;
     my $oldDesiredCompressionMethod = $self->{'desiredCompressionMethod'};
     if ( defined($newDesiredCompressionMethod) ) {
         $self->{'desiredCompressionMethod'} = $newDesiredCompressionMethod;
@@ -140,8 +193,9 @@ sub desiredCompressionMethod {
 }
 
 sub desiredCompressionLevel {
-    my $self                       = shift;
-    my $newDesiredCompressionLevel = shift;
+    my $self = shift;
+    my $newDesiredCompressionLevel =
+      ( ref( $_[0] ) eq 'HASH' ) ? shift->{compressionLevel} : shift;
     my $oldDesiredCompressionLevel = $self->{'desiredCompressionLevel'};
     if ( defined($newDesiredCompressionLevel) ) {
         $self->{'desiredCompressionLevel'}  = $newDesiredCompressionLevel;
@@ -294,8 +348,11 @@ sub _mapPermissionsToUnix {
 sub unixFileAttributes {
     my $self     = shift;
     my $oldPerms = $self->_mapPermissionsToUnix;
+
+    my $perms;
     if ( @_ ) {
-        my $perms = shift;
+        $perms = ( ref( $_[0] ) eq 'HASH' ) ? $_[0]->{attributes} : $_[0];
+
         if ( $self->isDirectory ) {
             $perms &= ~FILE_ATTRIB;
             $perms |= DIRECTORY_ATTRIB;
@@ -305,17 +362,32 @@ sub unixFileAttributes {
         }
         $self->{externalFileAttributes} = $self->_mapPermissionsFromUnix($perms);
     }
+
     return $oldPerms;
 }
 
 sub localExtraField {
-    ( $#_ > 0 )
-      ? ( $_[0]->{'localExtraField'} = $_[1] )
-      : $_[0]->{'localExtraField'};
+    my $self = shift;
+
+    if (@_) {
+        $self->{localExtraField} = ( ref( $_[0] ) eq 'HASH' )
+          ? $_[0]->{field} : $_[0];
+    }
+    else {
+        return $self->{localExtraField};
+    }
 }
 
 sub cdExtraField {
-    ( $#_ > 0 ) ? ( $_[0]->{'cdExtraField'} = $_[1] ) : $_[0]->{'cdExtraField'};
+    my $self = shift;
+
+    if (@_) {
+        $self->{cdExtraField} = ( ref( $_[0] ) eq 'HASH' )
+          ? $_[0]->{field} : $_[0];
+    }
+    else {
+        return $self->{cdExtraField};
+    }
 }
 
 sub extraFields {
@@ -324,9 +396,15 @@ sub extraFields {
 }
 
 sub fileComment {
-    ( $#_ > 0 )
-      ? ( $_[0]->{'fileComment'} = pack( 'C0a*', $_[1] ) )
-      : $_[0]->{'fileComment'};
+    my $self = shift;
+
+    if (@_) {
+        $self->{fileComment} = ( ref( $_[0] ) eq 'HASH' )
+          ? pack( 'C0a*', $_[0]->{comment} ) : pack( 'C0a*', $_[0] );
+    }
+    else {
+        return $self->{fileComment};
+    }
 }
 
 sub hasDataDescriptor {
@@ -367,7 +445,7 @@ sub isTextFile {
     my $self = shift;
     my $bit  = $self->internalFileAttributes() & IFA_TEXT_FILE_MASK;
     if (@_) {
-        my $flag = shift;
+        my $flag = ( ref( $_[0] ) eq 'HASH' ) ? shift->{flag} : shift;
         $self->{'internalFileAttributes'} &= ~IFA_TEXT_FILE_MASK;
         $self->{'internalFileAttributes'} |=
           ( $flag ? IFA_TEXT_FILE: IFA_BINARY_FILE );
@@ -389,17 +467,51 @@ sub isBinaryFile {
 
 sub extractToFileNamed {
     my $self = shift;
-    my $name = shift;    # local FS name
-    return _error("encryption unsupported") if $self->isEncrypted();
-    mkpath( dirname($name) );    # croaks on error
-    my ( $status, $fh ) = _newFileHandle( $name, 'w' );
-    return _ioError("Can't open file $name for write") unless $status;
+
+    # local FS name
+    my $name = ( ref( $_[0] ) eq 'HASH' ) ? $_[0]->{name} : $_[0];
+    $self->{'isSymbolicLink'} = 0;
+
+    # Check if the file / directory is a symbolic link or not
+    if ( $self->{'externalFileAttributes'} == 0xA1FF0000 ) {
+        $self->{'isSymbolicLink'} = 1;
+        $self->{'newName'} = $name;
+        my ( $status, $fh ) = _newFileHandle( $name, 'r' );
+        my $retval = $self->extractToFileHandle($fh);
+        $fh->close();
+    } else {
+        #return _writeSymbolicLink($self, $name) if $self->isSymbolicLink();
+        return _error("encryption unsupported") if $self->isEncrypted();
+        mkpath( dirname($name) );    # croaks on error
+        my ( $status, $fh ) = _newFileHandle( $name, 'w' );
+        return _ioError("Can't open file $name for write") unless $status;
+        my $retval = $self->extractToFileHandle($fh);
+        $fh->close();
+        chmod ($self->unixFileAttributes(), $name)
+            or return _error("Can't chmod() ${name}: $!");
+        utime( $self->lastModTime(), $self->lastModTime(), $name );
+        return $retval;
+    }
+}
+
+sub _writeSymbolicLink {
+    my $self = shift;
+    my $name = shift;
+    my $chunkSize = $Archive::Zip::ChunkSize;
+    #my ( $outRef, undef ) = $self->readChunk($chunkSize);
+    my $fh;
     my $retval = $self->extractToFileHandle($fh);
-    $fh->close();
-    chmod ($self->unixFileAttributes(), $name)
-        or return _error("Can't chmod() ${name}: $!");
-    utime( $self->lastModTime(), $self->lastModTime(), $name );
-    return $retval;
+    my ( $outRef, undef ) = $self->readChunk(100);
+}
+
+sub isSymbolicLink {
+    my $self = shift;
+    if ( $self->{'externalFileAttributes'} == 0xA1FF0000 ) {
+        $self->{'isSymbolicLink'} = 1;
+    } else {
+        return 0;
+    }
+    1;
 }
 
 sub isDirectory {
@@ -538,7 +650,9 @@ sub _writeLocalFileHeader {
     );
 
     $self->_print($fh, $header) or return _ioError("writing local header");
-    if ( $self->fileName() ) {
+
+    # Check for a valid filename or a filename equal to a literal `0'
+    if ( $self->fileName() || $self->fileName eq '0' ) {
         $self->_print($fh, $self->fileName() )
           or return _ioError("writing local header filename");
     }
@@ -656,7 +770,8 @@ sub _refreshLocalFileHeader {
 }
 
 sub readChunk {
-    my ( $self, $chunkSize ) = @_;
+    my $self = shift;
+    my $chunkSize = ( ref( $_[0] ) eq 'HASH' ) ? $_[0]->{chunkSize} : $_[0];
 
     if ( $self->readIsDone() ) {
         $self->endRead();
@@ -713,11 +828,11 @@ sub _copyChunk {
 # ( $outputRef, $status) = $self->_deflateChunk( \$buffer );
 sub _deflateChunk {
     my ( $self, $buffer ) = @_;
-    my ( $out,  $status ) = $self->_deflater()->deflate($buffer);
+    my ( $status ) = $self->_deflater()->deflate( $buffer, my $out );
 
     if ( $self->_readDataRemaining() == 0 ) {
         my $extraOutput;
-        ( $extraOutput, $status ) = $self->_deflater()->flush();
+        ( $status ) = $self->_deflater()->flush($extraOutput);
         $out .= $extraOutput;
         $self->endRead();
         return ( \$out, AZ_STREAM_END );
@@ -736,7 +851,7 @@ sub _deflateChunk {
 # ( $outputRef, $status) = $self->_inflateChunk( \$buffer );
 sub _inflateChunk {
     my ( $self, $buffer ) = @_;
-    my ( $out,  $status ) = $self->_inflater()->inflate($buffer);
+    my ( $status ) = $self->_inflater()->inflate( $buffer, my $out );
     my $retval;
     $self->endRead() unless $status == Z_OK;
     if ( $status == Z_OK || $status == Z_STREAM_END ) {
@@ -769,7 +884,7 @@ sub rewindData {
     if (    $self->compressionMethod() == COMPRESSION_STORED
         and $self->desiredCompressionMethod() == COMPRESSION_DEFLATED )
     {
-        ( $self->{'deflater'}, $status ) = Compress::Zlib::deflateInit(
+        ( $self->{'deflater'}, $status ) = Compress::Raw::Zlib::Deflate->new(
             '-Level'      => $self->desiredCompressionLevel(),
             '-WindowBits' => -MAX_WBITS(),                     # necessary magic
             '-Bufsize'    => $Archive::Zip::ChunkSize,
@@ -782,7 +897,7 @@ sub rewindData {
     elsif ( $self->compressionMethod() == COMPRESSION_DEFLATED
         and $self->desiredCompressionMethod() == COMPRESSION_STORED )
     {
-        ( $self->{'inflater'}, $status ) = Compress::Zlib::inflateInit(
+        ( $self->{'inflater'}, $status ) = Compress::Raw::Zlib::Inflate->new(
             '-WindowBits' => -MAX_WBITS(),               # necessary magic
             '-Bufsize'    => $Archive::Zip::ChunkSize,
             @_
@@ -869,7 +984,7 @@ sub contents {
 sub extractToFileHandle {
     my $self = shift;
     return _error("encryption unsupported") if $self->isEncrypted();
-    my $fh = shift;
+    my $fh = ( ref( $_[0] ) eq 'HASH' ) ? shift->{fileHandle} : shift;
     _binmode($fh);
     my $oldCompression = $self->desiredCompressionMethod(COMPRESSION_STORED);
     my $status         = $self->rewindData(@_);
@@ -887,7 +1002,7 @@ sub _writeToFileHandle {
     my $offset       = shift;
 
     return _error("no member name given for $self")
-      unless $self->fileName();
+      if $self->fileName() eq '';
 
     $self->{'writeLocalHeaderRelativeOffset'} = $offset;
     $self->{'wasWritten'}                     = 0;
@@ -933,22 +1048,30 @@ sub _writeData {
     my $self    = shift;
     my $writeFh = shift;
 
-    return AZ_OK if ( $self->uncompressedSize() == 0 );
-    my $status;
-    my $chunkSize = $Archive::Zip::ChunkSize;
-    while ( $self->_readDataRemaining() > 0 ) {
-        my $outRef;
-        ( $outRef, $status ) = $self->readChunk($chunkSize);
-        return $status if ( $status != AZ_OK and $status != AZ_STREAM_END );
+    # If symbolic link, just create one if the operating system is Linux, Unix, BSD or VMS
+    # TODO: Add checks for other operating systems
+    if ( $self->{'isSymbolicLink'} == 1 && $^O eq 'linux' ) {
+        my $chunkSize = $Archive::Zip::ChunkSize;
+        my ( $outRef, $status ) = $self->readChunk($chunkSize);
+        symlink $$outRef, $self->{'newName'};
+    } else {
+        return AZ_OK if ( $self->uncompressedSize() == 0 );
+        my $status;
+        my $chunkSize = $Archive::Zip::ChunkSize;
+        while ( $self->_readDataRemaining() > 0 ) {
+            my $outRef;
+            ( $outRef, $status ) = $self->readChunk($chunkSize);
+            return $status if ( $status != AZ_OK and $status != AZ_STREAM_END );
 
-        if ( length($$outRef) > 0 ) {
-            $self->_print($writeFh, $$outRef)
-              or return _ioError("write error during copy");
+            if ( length($$outRef) > 0 ) {
+                $self->_print($writeFh, $$outRef)
+                  or return _ioError("write error during copy");
+            }
+
+            last if $status == AZ_STREAM_END;
         }
-
-        last if $status == AZ_STREAM_END;
+        $self->{'compressedSize'} = $self->_writeOffset();
     }
-    $self->{'compressedSize'} = $self->_writeOffset();
     return AZ_OK;
 }
 

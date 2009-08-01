@@ -108,7 +108,7 @@ sub loadStrings {
 		# check cache for consitency
 		my $cacheOK = 1;
 
-		$log->info("Retrieving string data from string cache: $stringCache");
+		main::INFOLOG && $log->info("Retrieving string data from string cache: $stringCache");
 
 		eval { $strings = retrieve($stringCache); };
 
@@ -145,7 +145,7 @@ sub loadStrings {
 
 		return if $cacheOK;
 
-		$log->info("String cache contains old data - reparsing string files");
+		main::INFOLOG && $log->info("String cache contains old data - reparsing string files");
 	}
 
 	# otherwise reparse all string files
@@ -164,14 +164,14 @@ sub loadStrings {
 
 	for my $file (@$files) {
 
-		$log->info("Loading string file: $file");
+		main::INFOLOG && $log->info("Loading string file: $file");
 
 		loadFile($file, $args);
 
 	}
 
 	unless ($args->{'dontSave'}) {
-		$log->info("Storing string cache: $stringCache");
+		main::INFOLOG && $log->info("Storing string cache: $stringCache");
 		store($strings, $stringCache);
 	}
 
@@ -187,7 +187,7 @@ sub loadAdditional {
 	}
 	
 	for my $file ( @{ $strings->{files} } ) {
-		$log->info("Loading string file for additional language $lang: $file");
+		main::INFOLOG && $log->info("Loading string file for additional language $lang: $file");
 		
 		my $args = {
 			storeString => sub {
@@ -211,10 +211,12 @@ sub stringsFiles {
 
 	# server string file
 	my $serverPath = Slim::Utils::OSDetect::dirsFor('strings');
+	my @pluginDirs = Slim::Utils::PluginManager->dirsFor('strings');
+
 	push @files, catdir($serverPath, 'strings.txt');
 
 	# plugin string files
-	for my $path ( Slim::Utils::PluginManager->pluginRootDirs() ) {
+	for my $path ( @pluginDirs ) {
 		push @files, catdir($path, 'strings.txt');
 	}
 
@@ -222,7 +224,7 @@ sub stringsFiles {
 	push @files, catdir($serverPath, 'custom-strings.txt');
 
 	# plugin custom string files
-	for my $path ( Slim::Utils::PluginManager->pluginRootDirs() ) {
+	for my $path ( @pluginDirs ) {
 		push @files, catdir($path, 'custom-strings.txt');
 	}
 	
@@ -346,7 +348,7 @@ sub storeString {
 
 	if ($log->is_info && defined $strings->{$currentLang}->{$name} && defined $curString->{$currentLang} && 
 			$strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
-		$log->info("redefined string: $name in $file");
+		main::INFOLOG && $log->info("redefined string: $name in $file");
 	}
 
 	if (defined $curString->{$currentLang}) {
@@ -354,7 +356,7 @@ sub storeString {
 
 	} elsif (defined $curString->{$failsafeLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$failsafeLang};
-		$log->debug("Language $currentLang using $failsafeLang for $name in $file");
+		main::DEBUGLOG && $log->debug("Language $currentLang using $failsafeLang for $name in $file");
 	}
 
 	if ($args->{'storeFailsafe'} && defined $curString->{$failsafeLang}) {
@@ -445,7 +447,7 @@ sub setString {
 	my $token = uc(shift);
 	my $string = shift;
 
-	$log->debug("setString token: $token to $string");
+	main::DEBUGLOG && $log->debug("setString token: $token to $string");
 	$defaultStrings->{$token} = $string;
 }
 
@@ -507,7 +509,7 @@ sub clientStrings {
 	if (storeFailsafe() && ($display->isa('Slim::Display::Text') || $display->isa('Slim::Display::SqueezeboxG')) ) {
 
 		unless ($strings->{$failsafeLang}) {
-			$log->info("Reparsing strings as client requires failsafe language");
+			main::INFOLOG && $log->info("Reparsing strings as client requires failsafe language");
 			loadStrings({'ignoreCache' => 1});
 		}
 
@@ -535,7 +537,7 @@ sub checkChangedStrings {
 
 	for my $file (@{$strings->{'files'}}) {
 		if ((stat($file))[9] > $lastChange) {
-			$log->info("$file updated - reparsing");
+			main::INFOLOG && $log->info("$file updated - reparsing");
 			loadFile($file);
 			$reload ||= time;
 		}
@@ -549,7 +551,7 @@ sub checkChangedStrings {
 }
 
 sub setLocale {
-	my $locale = string('LOCALE' . (Slim::Utils::OSDetect::isWindows() ? '_WIN' : '') );
+	my $locale = string('LOCALE' . (main::ISWINDOWS ? '_WIN' : '') );
 	$locale .= Slim::Utils::Unicode::currentLocale() =~ /utf8/i ? '.UTF-8' : '';
 
 	setlocale( LC_TIME, $locale );

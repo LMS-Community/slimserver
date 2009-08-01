@@ -7,10 +7,8 @@ package Slim::Control::Jive;
 
 use strict;
 
-use POSIX;
+use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
-use File::Spec::Functions qw(:ALL);
-use File::Basename;
 use URI;
 
 use Slim::Utils::Log;
@@ -38,7 +36,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
-my %itemsToDelete      = ();
 my @pluginMenus        = ();
 my @recentSearches     = ();
 
@@ -52,14 +49,14 @@ sub init {
 
 	# register our functions
 	
-       #        |requires Client
+       #        |requires Client (2 == set disconnected client to clientid if client does not exist)
        #        |  |is a Query
        #        |  |  |has Tags
        #        |  |  |  |Function to call
        #        C  Q  T  F
 
 	Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
-		[0, 1, 1, \&menuQuery]);
+		[2, 1, 1, \&menuQuery]);
 
 	Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], 
 		[1, 1, 1, \&alarmSettingsQuery]);
@@ -158,17 +155,27 @@ sub init {
 		# Re-build the caches after a rescan
 		Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
 	}
+	
+	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+}
+
+sub _libraryChanged {
+	foreach ( Slim::Player::Client::clients() ) {
+		myMusicMenu(0, $_);
+	}
 }
 
 sub buildCaches {
-	$log->debug("Begin function");
+	main::DEBUGLOG && $log->debug("Begin function");
+	
+	return if !Slim::Schema::hasLibrary();
 
 	my $sort    = $prefs->get('jivealbumsort') || 'album';
 
 	for my $partymode ( 0..1 ) {
 		# Pre-cache albums query
 		if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
-			$log->debug( "Pre-caching $numAlbums album items for partymode:$partymode" );
+			main::DEBUGLOG && $log->debug( "Pre-caching $numAlbums album items for partymode:$partymode" );
 			Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "useContextMenu:1", "sort:$sort", 'menu:track', 'cache:1', "party:$partymode" ] );
 		}
 		
@@ -176,13 +183,13 @@ sub buildCaches {
 		if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
 			# Add one since we may have a VA item
 			$numArtists++;
-			$log->debug( "Pre-caching $numArtists artist items for partymode:$partymode." );
+			main::DEBUGLOG && $log->debug( "Pre-caching $numArtists artist items for partymode:$partymode." );
 			Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, "useContextMenu:1", 'menu:album', 'cache:1', "party:$partymode" ] );
 		}
 		
 		# Genres
 		if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-			$log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
+			main::DEBUGLOG && $log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
 			Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, "useContextMenu:1", 'menu:artist', 'cache:1', "party:$partymode" ] );
 		}
 	}
@@ -205,7 +212,7 @@ sub menuQuery {
 
 	my $request = shift;
 
-	$log->info("Begin menuQuery function");
+	main::INFOLOG && $log->info("Begin menuQuery function");
 
 	if ($request->isNotQuery([['menu']])) {
 		$request->setStatusBadDispatch();
@@ -269,7 +276,7 @@ sub menuQuery {
 
 sub mainMenu {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	
 	unless ($client && $client->isa('Slim::Player::Client')) {
@@ -277,7 +284,7 @@ sub mainMenu {
 		return;
 	}
  
-	$log->info("Begin Function");
+	main::INFOLOG && $log->info("Begin Function");
  
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
@@ -477,7 +484,7 @@ sub jiveSetAlbumSort {
 }
 
 sub playlistModeSettings {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 
 	my $client       = shift;
 	my $batch        = shift;
@@ -537,7 +544,7 @@ sub playlistModeSettings {
 
 
 sub albumSortSettingsMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client = $request->client;
 	my $sort    = $prefs->get('jivealbumsort');
@@ -569,7 +576,7 @@ sub albumSortSettingsMenu {
 }
 
 sub albumSortSettingsItem {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my $batch = shift;
 
@@ -603,7 +610,7 @@ sub albumSortSettingsItem {
 
 # allow a plugin to add a node to the menu
 sub registerPluginNode {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $nodeRef = shift;
 	my $client = shift || undef;
 	unless (ref($nodeRef) eq 'HASH') {
@@ -612,7 +619,7 @@ sub registerPluginNode {
 	}
 
 	$nodeRef->{'isANode'} = 1;
-	$log->info("Registering node menu item from plugin");
+	main::INFOLOG && $log->info("Registering node menu item from plugin");
 
 	# notify this menu to be added
 	my $id = _clientId($client);
@@ -625,7 +632,7 @@ sub registerPluginNode {
 
 # send plugin menus array as a notification to Jive
 sub refreshPluginMenus {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift || undef;
 	_notifyJive(\@pluginMenus, $client);
 }
@@ -650,11 +657,10 @@ sub registerPluginMenu {
 		}
 	}
 
-	$log->info("Registering menus from plugin");
+	main::INFOLOG && $log->info("Registering menus from plugin");
 
 	# notify this menu to be added
-	my $id = _clientId($client);
-	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuArray, 'add', $id ] );
+	_notifyJive($menuArray, $client);
 
 	# now we want all of the items in $menuArray to go into @pluginMenus, but we also
 	# don't want duplicate items (specified by 'id'), 
@@ -669,7 +675,7 @@ sub registerPluginMenu {
 		my $node = $href->{'node'};
 		if ($id) {
 			if (!$seen{$id}) {
-				$log->info("registering menuitem " . $id . " to " . $node );
+				main::INFOLOG && $log->info("registering menuitem " . $id . " to " . $node );
 				push @new, $href;
 			}
 			$seen{$id}++;
@@ -686,17 +692,34 @@ sub registerPluginMenu {
 }
 
 # allow a plugin to delete an item from the Jive menu based on the id of the menu item
+# if the item is a node, then delete its immediate children too
 sub deleteMenuItem {
 	my $menuId = shift;
 	my $client = shift || undef;
 	return unless $menuId;
-	$log->warn($menuId . " menu id slated for deletion");
+	main::INFOLOG && $log->is_warn && $log->warn($menuId . " menu id slated for deletion");
+	
 	# send a notification to delete
-	my @menuDelete = ( { id => $menuId } );
-	my $id = _clientId($client);
-	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', \@menuDelete, 'remove', $id ] );
 	# but also remember that this id is not to be sent
-	$itemsToDelete{$menuId}++;
+	my @menuDelete;
+	my @new;
+	for my $href (reverse @pluginMenus) {
+		next if !$href;
+		if (($href->{'id'} && $href->{'id'} eq $menuId)
+			|| ($href->{'node'} && $href->{'node'} eq $menuId))
+		{
+			main::INFOLOG && $log->info("deregistering menuitem ",  $href->{'id'});
+			push @menuDelete, $href;
+		} else {
+			push @new, $href;
+		}
+	}
+	
+	push @menuDelete, { id => $menuId };
+
+	_notifyJive(\@menuDelete, $client, 'remove');
+
+	@pluginMenus = reverse @new;
 }
 
 sub _purgeMenu {
@@ -704,13 +727,8 @@ sub _purgeMenu {
 	my @menu = @$menu;
 	my @purgedMenu = ();
 	for my $i (0..$#menu) {
-		my $menuId = defined($menu[$i]->{id}) ? $menu[$i]->{id} : ($menu[$i]->{stringToken} ? $menu[$i]->{stringToken} : $menu[$i]->{text});
 		last unless (defined($menu[$i]));
-		if ($itemsToDelete{$menuId}) {
-			$log->warn("REMOVING " . $menuId . " FROM Jive menu");
-		} else {
-			push @purgedMenu, $menu[$i];
-		}
+		push @purgedMenu, $menu[$i];
 	}
 	return \@purgedMenu;
 }
@@ -718,7 +736,7 @@ sub _purgeMenu {
 
 sub alarmSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 
@@ -1093,7 +1111,7 @@ sub alarmVolumeSettings {
 
 sub syncSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request           = shift;
 	my $client            = $request->client();
 	my $playersToSyncWith = getPlayersToSyncWith($client);
@@ -1141,7 +1159,7 @@ sub endOfTrackSleepCommand {
 
 sub sleepSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $val     = $client->currentSleepTime();
@@ -1187,7 +1205,7 @@ sub sleepSettingsQuery {
 
 sub stereoXLQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request        = shift;
 	my $client         = $request->client();
 	my $currentSetting = $client->stereoxl();
@@ -1215,7 +1233,7 @@ sub stereoXLQuery {
 
 sub lineOutQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request        = shift;
 	my $client         = $request->client();
 	my $currentSetting = $prefs->client($client)->get('analogOutMode');
@@ -1243,7 +1261,7 @@ sub lineOutQuery {
 
 sub toneSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request        = shift;
 	my $client         = $request->client();
 	my $tone           = $request->getParam('cmd');
@@ -1278,7 +1296,7 @@ sub toneSettingsQuery {
 
 sub crossfadeSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $val     = $prefs->client($client)->get('transitionType');
@@ -1301,7 +1319,7 @@ sub crossfadeSettingsQuery {
 
 sub replaygainSettingsQuery {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $val     = $prefs->client($client)->get('replayGainMode');
@@ -1343,7 +1361,7 @@ sub sliceAndShip {
 
 # returns a single item for the homeMenu if radios is a valid command
 sub internetRadioMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my @command = ('radios', 0, 200, 'menu:radio');
 
@@ -1380,7 +1398,7 @@ sub internetRadioMenu {
 
 # returns a single item for the homeMenu if music_services is a valid command
 sub musicServicesMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my @command = ('music_services', 0, 200, 'menu:music_services');
 
@@ -1417,7 +1435,7 @@ sub musicServicesMenu {
 
 # returns a single item for the homeMenu if music_stores is a valid command
 sub musicStoresMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my @command = ('music_stores', 0, 200, 'menu:music_stores');
 
@@ -1453,7 +1471,7 @@ sub musicStoresMenu {
 
 sub playerSettingsMenu {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my $batch = shift;
 
@@ -1917,7 +1935,7 @@ sub playerTextMenu {
 }
 
 sub browseMusicFolder {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
 	my $batch = shift;
 
@@ -1926,7 +1944,7 @@ sub browseMusicFolder {
 
 	my $return = 0;
 	if (defined($audiodir) && -d $audiodir) {
-		$log->info("Adding Browse Music Folder");
+		main::INFOLOG && $log->info("Adding Browse Music Folder");
 		$return = {
 				text           => $client->string('BROWSE_MUSIC_FOLDER'),
 				id             => 'myMusicMusicFolder',
@@ -1946,7 +1964,7 @@ sub browseMusicFolder {
 			};
 	} else {
 		# if it disappeared, send a notification to get rid of it if it exists
-		$log->info("Removing Browse Music Folder from Jive menu via notification");
+		main::INFOLOG && $log->info("Removing Browse Music Folder from Jive menu via notification");
 		deleteMenuItem('myMusicMusicFolder', $client);
 	}
 
@@ -2043,11 +2061,12 @@ sub _clientId {
 }
 	
 sub _notifyJive {
-	my $menu = shift;
-	my $client = shift || undef;
+	my ($menu, $client, $action) = @_;
+	$action ||= 'add';
+	
 	my $id = _clientId($client);
-	my $menuForExport = _purgeMenu($menu);
-	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, 'add', $id ] );
+	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, $action, $id ] );
 }
 
 sub howManyPlayersToSyncWith {
@@ -2111,17 +2130,17 @@ sub getPlayersToSyncWith() {
 	my @players  = Slim::Player::Client::clients();
 
 	# construct the list
-	my $syncList;
+	my @syncList;
 	my $currentlySyncedWith = 0;
 	
 	# the logic is a little tricky here...first make a pass at any sync groups that include $client
 	if ($client->isSynced()) {
-		my $snCheckOk = _syncSNCheck($userid, $client);
-		if ($snCheckOk) {
-			$syncList->[$cnt]->{'id'}           = $client->id();
-			$syncList->[$cnt]->{'name'}         = $client->syncedWithNames(0);
+		if (_syncSNCheck($userid, $client)) {
+			$syncList[$cnt] = {};
+			$syncList[$cnt]->{'id'}           = $client->id();
+			$syncList[$cnt]->{'name'}         = $client->syncedWithNames(0);
 			$currentlySyncedWith                = $client->syncedWithNames(0);
-			$syncList->[$cnt]->{'isSyncedWith'} = 1;
+			$syncList[$cnt]->{'isSyncedWith'} = 1;
 			$cnt++;
 		}
 	}
@@ -2131,27 +2150,27 @@ sub getPlayersToSyncWith() {
 		for my $eachclient (@players) {
 			next if !$eachclient->isPlayer();
 			next if $eachclient->isSyncedWith($client);
-			my $snCheckOk = _syncSNCheck($userid, $eachclient);
-			next unless $snCheckOk;
-
+			next unless _syncSNCheck($userid, $eachclient);
 			if ($eachclient->isSynced() && Slim::Player::Sync::isMaster($eachclient)) {
-				$syncList->[$cnt]->{'id'}           = $eachclient->id();
-				$syncList->[$cnt]->{'name'}         = $eachclient->syncedWithNames(1);
-				$syncList->[$cnt]->{'isSyncedWith'} = 0;
+				$syncList[$cnt] = {};
+				$syncList[$cnt]->{'id'}           = $eachclient->id();
+				$syncList[$cnt]->{'name'}         = $eachclient->syncedWithNames(1);
+				$syncList[$cnt]->{'isSyncedWith'} = 0;
 				$cnt++;
 
 			# then players which are not synced
 			} elsif (! $eachclient->isSynced && $eachclient != $client ) {
-				$syncList->[$cnt]->{'id'}           = $eachclient->id();
-				$syncList->[$cnt]->{'name'}         = $eachclient->name();
-				$syncList->[$cnt]->{'isSyncedWith'} = 0;
+				$syncList[$cnt] = {};
+				$syncList[$cnt]->{'id'}           = $eachclient->id();
+				$syncList[$cnt]->{'name'}         = $eachclient->name();
+				$syncList[$cnt]->{'isSyncedWith'} = 0;
 				$cnt++;
 
 			}
 		}
 	}
 
-	for my $syncOption (sort { $a->{name} cmp $b->{name} } @$syncList) {
+	for my $syncOption (sort { $a->{name} cmp $b->{name} } @syncList) {
 		push @return, { 
 			text  => $syncOption->{name},
 			radio => ($syncOption->{isSyncedWith} == 1) + 0,
@@ -2423,7 +2442,7 @@ sub playerPower {
 }
 
 sub sleepInXHash {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my ($client, $val, $sleepTime) = @_;
 	my $text = $sleepTime == 0 ? 
 		$client->string("SLEEP_CANCEL") :
@@ -2474,12 +2493,16 @@ sub replayGainHash {
 }
 
 sub myMusicMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
 	my $batch = shift;
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
 	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
-	my @myMusicMenu = (
+	my @myMusicMenu = ();
+	
+	if (Slim::Schema::hasLibrary()) {
+		
+		@myMusicMenu = (
 			{
 				text           => $client->string('BROWSE_BY_ARTIST'),
 				homeMenuText   => $client->string('BROWSE_ARTISTS'),
@@ -2606,29 +2629,50 @@ sub myMusicMenu {
 				window         => { titleStyle => 'search', },
 			},
 		);
-	# add the items for under mymusicSearch
-	my $searchMenu = searchMenu(1, $client);
-	@myMusicMenu = (@myMusicMenu, @$searchMenu);
-
-	if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
-		push @myMusicMenu, $browseMusicFolder;
+		# add the items for under mymusicSearch
+		my $searchMenu = searchMenu(1, $client);
+		@myMusicMenu = (@myMusicMenu, @$searchMenu);
+	
+		if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
+			push @myMusicMenu, $browseMusicFolder;
+		}
 	}
 
 	if ($batch) {
 		return \@myMusicMenu;
 	} else {
+		_emptyMyMusicMenu($client);
 		_notifyJive(\@myMusicMenu, $client);
 	}
 
 }
 
+sub _emptyMyMusicMenu {
+	main::INFOLOG && $log->info("Begin function");
+	my $client = shift;
+		
+	my @myMusicMenu = map +{id => $_, node => 'myMusic'},
+		qw(
+			myMusicArtists
+			myMusicAlbums
+			myMusicGenres
+			myMusicYears
+			myMusicNewMusic
+			myMusicPlaylists
+			myMusicSearch
+			myMusicMusicFolder
+		);
+
+	_notifyJive(\@myMusicMenu, $client, 'remove');
+}
+
 sub searchMenu {
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
 	my $party = ( $client && Slim::Player::Playlist::playlistMode($client) eq 'party' );
 	my @searchMenu = (
-		{
+	{
 		text           => $client->string('ARTISTS'),
 		homeMenuText   => $client->string('ARTIST_SEARCH'),
 		id             => 'myMusicSearchArtists',
@@ -2772,18 +2816,19 @@ sub searchMenu {
 }
 # send a notification for menustatus
 sub menuNotification {
-	$log->warn("Menustatus notification sent.");
 	# the lines below are needed as menu notifications are done via notifyFromArray, but
 	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
 	my $request  = shift;
 	my $dataRef          = $request->getParam('_data')   || return;
 	my $action   	     = $request->getParam('_action') || 'add';
-#	$log->warn(Data::Dump::dump($dataRef));
+	my $client           = $request->clientid();
+	main::INFOLOG && $log->is_info && $log->info("Menustatus notification sent:", $action, '->', ($client || 'all'));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
 }
 
 sub jivePlayTrackAlbumCommand {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 
 	my $request    = shift;
 	my $client     = $request->client || return;
@@ -2818,7 +2863,7 @@ sub jivePlayTrackAlbumCommand {
 			url => $folder,
 		} );
 
-		$log->info("Playing all in folder, starting with $listIndex");
+		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
 
 		my @playlist = ();
 
@@ -2831,7 +2876,7 @@ sub jivePlayTrackAlbumCommand {
 
 			if (!Slim::Music::Info::isSong($items->[$i])) {
 
-				$log->info("Dropping $items->[$i] from play all in folder at index $i");
+				main::INFOLOG && $log->info("Dropping $items->[$i] from play all in folder at index $i");
 
 				if ($i < $listIndex) {
 					$listIndex--;
@@ -2843,7 +2888,7 @@ sub jivePlayTrackAlbumCommand {
 			unshift (@playlist, $items->[$i]);
 		}
 
-		$log->info("Load folder playlist, now starting at index: $listIndex");
+		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
 
 		$client->execute(['playlist', 'clear']);
 		$client->execute(['playlist', 'addtracks', 'listref', \@playlist]);
@@ -2859,7 +2904,7 @@ sub jivePlayTrackAlbumCommand {
 
 sub jivePlaylistsCommand {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request    = shift;
 	my $client     = $request->client || return;
 	my $title      = $request->getParam('title');
@@ -2922,7 +2967,7 @@ sub jiveUnmixableMessage {
 
 sub jiveFavoritesCommand {
 
-	$log->info("Begin function");
+	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client || shift;
 	my $title   = $request->getParam('title');
@@ -3064,7 +3109,7 @@ sub recentSearchMenu {
 sub jiveRecentSearchQuery {
 
 	my $request = shift;
-	$log->info("Begin Function");
+	main::INFOLOG && $log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['jiverecentsearches']])) {
@@ -3106,7 +3151,7 @@ sub registerExtensionProvider {
 	my $name     = shift;
 	my $provider = shift;
 
-	$log->info("adding extension provider $name $provider");
+	main::INFOLOG && $log->info("adding extension provider $name $provider");
 
 	$extensionProviders{ $name } = $provider;
 }
@@ -3114,7 +3159,7 @@ sub registerExtensionProvider {
 sub removeExtensionProvider {
 	my $name = shift;
 
-	$log->info("deleting extension provider $name");
+	main::INFOLOG && $log->info("deleting extension provider $name");
 
 	delete $extensionProviders{ $name };
 }
@@ -3151,6 +3196,7 @@ sub extensionsQuery {
 				'target' => $target,
 				'version'=> $version, 
 				'lang'   => $language,
+				'details'=> 1,
 				'cb'     => \&_extensionsQueryCB,
 				'pt'     => [ $request ]
 			});

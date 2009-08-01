@@ -2,7 +2,7 @@ package Slim::Plugin::JiveExtras::Plugin;
 
 # This plugin enables custom wallpapers and sound effects to be defined by the user
 # These appear on the settings menu on jive.  The wallpaper/sound file is either
-# a remote url or a local file which is servered via Slim::Web::HTTP::addRawDownload
+# a remote url or a local file which is servered via Slim::Web::Pages->addRawDownload
 
 use strict;
 
@@ -29,7 +29,7 @@ sub initPlugin {
 
 	Slim::Control::Jive::registerExtensionProvider('jiveextras', \&getExtensions);
 
-	Slim::Web::HTTP::addRawDownload('^jive(wallpaper|sound)/', \&downloadFile, 'binary');
+	Slim::Web::Pages->addRawDownload('^jive(wallpaper|sound)/', \&downloadFile, 'binary');
 }
 
 sub getExtensions {

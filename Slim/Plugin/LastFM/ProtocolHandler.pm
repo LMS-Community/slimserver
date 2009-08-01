@@ -28,9 +28,9 @@ sub new {
 	my $args   = shift;
 
 	my $song   = $args->{'song'};
-	my $track  = $song->{'pluginData'} || {};
+	my $track  = $song->pluginData() || {};
 	
-	$log->debug( 'Remote streaming Last.fm track: ' . $track->{location} );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Last.fm track: ' . $track->{location} );
 
 	return unless $track->{location};
 
@@ -66,7 +66,7 @@ sub isRepeatingStream {
 sub audioScrobblerSource {
 	my ( $class, $client, $url ) = @_;
 	
-	my $track = $client->streamingSong()->{'pluginData'};
+	my $track = $client->streamingSong()->pluginData();
 	
 	if ( $track ) {
 		return 'L' . $track->{extension}->{trackauth};
@@ -131,7 +131,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting next track from mysqueezebox.com ($trackURL)");
+	main::DEBUGLOG && $log->debug("Getting next track from SqueezeNetwork ($trackURL)");
 	
 	$http->get( $trackURL );
 }
@@ -154,12 +154,12 @@ sub _gotNextTrack {
 		return;
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got Last.fm track: ' . Data::Dump::dump($track) );
 	}
 	
 	# Save metadata for this track
-	$params->{'song'}->{'pluginData'} = $track;
+	$params->{'song'}->pluginData($track);
 	
 	$params->{'callback'}->();
 }
@@ -195,7 +195,7 @@ sub parseDirectHeaders {
 		}
 	}	
 	
-	$client->streamingSong->{'duration'} = $length * 8 / $bitrate;
+	$client->streamingSong->duration($length * 8 / $bitrate);
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
@@ -205,7 +205,7 @@ sub parseDirectHeaders {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->info("Direct stream failed: [$response] $status_line");
+	main::INFOLOG && $log->info("Direct stream failed: [$response] $status_line");
 	
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_LFM_ERROR', $client->string('PLUGIN_LFM_STREAM_FAILED'));
 }
@@ -214,7 +214,7 @@ sub handleDirectError {
 sub canSkip {
 	my $client = shift;
 	
-	if ( my $track = $client->playingSong->{'pluginData'} ) {
+	if ( my $track = $client->playingSong->pluginData() ) {
 		return $track->{canSkip};
 	}
 	
@@ -232,7 +232,7 @@ sub canDoAction {
 
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
-		$log->debug("Last.fm: Skip limit exceeded, disallowing skip");
+		main::DEBUGLOG && $log->debug("Last.fm: Skip limit exceeded, disallowing skip");
 
 		my $line1 = $client->string('PLUGIN_LFM_MODULE_NAME');
 		my $line2 = $client->string('PLUGIN_LFM_SKIPS_EXCEEDED');
@@ -264,7 +264,7 @@ sub canDoAction {
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 	
-	my $track = $song->{'pluginData'} || {};
+	my $track = $song->pluginData() || {};
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
@@ -304,7 +304,7 @@ sub trackInfoURL {
 	my $account = $prefs->client($client)->get('account');
 	
 	# Get the current track
-	my $currentTrack = $client->currentSongForUrl($url)->{'pluginData'};
+	my $currentTrack = $client->currentSongForUrl($url)->pluginData();
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
@@ -325,7 +325,7 @@ sub getMetadataFor {
 	
 	my $icon = $class->getIcon();
 	
-	if ( my $track = $song->{pluginData} ) {
+	if ( my $track = $song->pluginData() ) {
 		return {
 			artist      => $track->{creator},
 			album       => $track->{album},
@@ -384,7 +384,7 @@ sub reinit {
 	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
 		
-		$log->debug("Re-init Last.fm");
+		main::DEBUGLOG && $log->debug("Re-init Last.fm");
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
@@ -408,7 +408,7 @@ sub reinit {
 	}
 	else {
 		# No data, just restart the current station
-		$log->debug("No data about playing track, restarting station");
+		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
 
 		$client->execute( [ 'playlist', 'play', $song->currentTrack->url() ] );
 	}

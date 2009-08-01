@@ -5,11 +5,28 @@ use strict;
 use warnings;
 
 use base qw/DBIx::Class/;
+use Scalar::Util qw/blessed/;
+use Carp::Clan qw/^DBIx::Class/;
 
 sub iterator_class  { shift->result_source_instance->resultset_class(@_) }
 sub resultset_class { shift->result_source_instance->resultset_class(@_) }
 sub result_class { shift->result_source_instance->result_class(@_) }
-sub source_name { shift->result_source_instance->source_name(@_) }
+sub source_info { shift->result_source_instance->source_info(@_) }
+
+sub set_inherited_ro_instance {
+    my $self = shift;
+
+    croak "Cannot set @{[shift]} on an instance" if blessed $self;
+
+    return $self->set_inherited(@_);
+}
+
+sub get_inherited_ro_instance {
+    return shift->get_inherited(@_);
+}
+
+__PACKAGE__->mk_group_accessors('inherited_ro_instance' => 'source_name');
+
 
 sub resultset_attributes {
   shift->result_source_instance->resultset_attributes(@_);
@@ -32,6 +49,10 @@ sub has_column {
 
 sub column_info {
   shift->result_source_instance->column_info(@_);
+}
+
+sub column_info_from_storage {
+  shift->result_source_instance->column_info_from_storage(@_);
 }
 
 sub columns {

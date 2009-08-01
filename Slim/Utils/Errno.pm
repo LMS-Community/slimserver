@@ -39,7 +39,7 @@ use Exporter::Lite;
 our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
 
 BEGIN {
-        if ($^O =~ /Win32/) {
+        if (main::ISWINDOWS) {
                 *EINTR       = sub () { 10004 };
                 *EBADF       = sub () { 10009 };
                 *ECHILD      = sub () { 10010 };

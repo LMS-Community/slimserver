@@ -28,11 +28,11 @@ sub new {
 }
 
 sub name {
-	return Slim::Web::HTTP::protectName('ALARM');
+	return Slim::Web::HTTP::CSRF->protectName('ALARM');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/player/alarm.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/player/alarm.html');
 }
 
 sub needsClient {

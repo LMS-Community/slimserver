@@ -36,8 +36,10 @@ use utf8;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
+use constant RESIZER      => 0;
 use constant DEBUG        => 1;
-use constant ISWINDOWS    => ( ($^O =~ /Win32/) ? 1 : 0 );
+use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 
 # load these later, don't need them right now
 require File::Path;
@@ -50,7 +52,7 @@ require Slim::Utils::Light;
 our $VERSION = '7.4';
 
 BEGIN {
-	if ($^O =~ /win/i) {
+	if (ISWINDOWS) {
 		eval { require Wx::Perl::Packager; }
 	}
 }

@@ -67,7 +67,9 @@ Each key-value pair provided in a hashref will be used as C<AND>ed conditions.
 To add an C<OR>ed condition, use an arrayref of hashrefs. See the
 L<SQL::Abstract> documentation for more details.
 
-In addition to standard result set attributes, the following attributes are also valid:
+In addition to the
+L<standard ResultSet attributes|DBIx::Class::ResultSet/ATTRIBUTES>,
+the following attributes are also valid:
 
 =over 4
 
@@ -101,6 +103,39 @@ C<multi> (when there can be many), and C<filter> (for when there is a single
 related object, but you also want the relationship accessor to double as
 a column accessor). For C<multi> accessors, an add_to_* method is also
 created, which calls C<create_related> for the relationship.
+
+=item is_foreign_key_constraint
+
+If you are using L<SQL::Translator> to create SQL for you and you find that it
+is creating constraints where it shouldn't, or not creating them where it 
+should, set this attribute to a true or false value to override the detection
+of when to create constraints.
+
+=item on_delete / on_update
+
+If you are using L<SQL::Translator> to create SQL for you, you can use these
+attributes to explicitly set the desired C<ON DELETE> or C<ON UPDATE> constraint 
+type. If not supplied the SQLT parser will attempt to infer the constraint type by 
+interrogating the attributes of the B<opposite> relationship. For any 'multi'
+relationship with C<< cascade_delete => 1 >>, the corresponding belongs_to 
+relationship will be created with an C<ON DELETE CASCADE> constraint. For any 
+relationship bearing C<< cascade_copy => 1 >> the resulting belongs_to constraint
+will be C<ON UPDATE CASCADE>. If you wish to disable this autodetection, and just
+use the RDBMS' default constraint type, pass C<< on_delete => undef >> or 
+C<< on_delete => '' >>, and the same for C<on_update> respectively.
+
+=item is_deferrable
+
+Tells L<SQL::Translator> that the foreign key constraint it creates should be
+deferrable. In other words, the user may request that the constraint be ignored
+until the end of the transaction. Currently, only the PostgreSQL producer
+actually supports this.
+
+=item add_fk_index
+
+Tells L<SQL::Translator> to add an index for this constraint. Can also be
+specified globally in the args to L<DBIx::Class::Schema/deploy> or
+L<DBIx::Class::Schema/create_ddl_dir>. Default is on, set to 0 to disable.
 
 =back
 
@@ -153,16 +188,36 @@ sub related_resultset {
       if (@_ > 1 && (@_ % 2 == 1));
     my $query = ((@_ > 1) ? {@_} : shift);
 
-    my $cond = $self->result_source->resolve_condition(
+    my $source = $self->result_source;
+    my $cond = $source->_resolve_condition(
       $rel_obj->{cond}, $rel, $self
     );
+    if ($cond eq $DBIx::Class::ResultSource::UNRESOLVABLE_CONDITION) {
+      my $reverse = $source->reverse_relationship_info($rel);
+      foreach my $rev_rel (keys %$reverse) {
+        if ($reverse->{$rev_rel}{attrs}{accessor} eq 'multi') {
+          $attrs->{related_objects}{$rev_rel} = [ $self ];
+          Scalar::Util::weaken($attrs->{related_object}{$rev_rel}[0]);
+        } else {
+          $attrs->{related_objects}{$rev_rel} = $self;
+          Scalar::Util::weaken($attrs->{related_object}{$rev_rel});
+        }
+      }
+    }
     if (ref $cond eq 'ARRAY') {
-      $cond = [ map { my $hash;
-        foreach my $key (keys %$_) {
-          my $newkey = $key =~ /\./ ? "me.$key" : $key;
-          $hash->{$newkey} = $_->{$key};
-        }; $hash } @$cond ];
-    } else {
+      $cond = [ map {
+        if (ref $_ eq 'HASH') {
+          my $hash;
+          foreach my $key (keys %$_) {
+            my $newkey = $key !~ /\./ ? "me.$key" : $key;
+            $hash->{$newkey} = $_->{$key};
+          }
+          $hash;
+        } else {
+          $_;
+        }
+      } @$cond ];
+    } elsif (ref $cond eq 'HASH') {
       foreach my $key (grep { ! /\./ } keys %$cond) {
         $cond->{"me.$key"} = delete $cond->{$key};
       }
@@ -194,7 +249,7 @@ sub search_related {
   ( $objects_rs ) = $rs->search_related_rs('relname', $cond, $attrs);
 
 This method works exactly the same as search_related, except that 
-it garauntees a restultset, even in list context.
+it guarantees a restultset, even in list context.
 
 =cut
 
@@ -281,7 +336,8 @@ L<DBIx::Class::Row/insert> on it.
 
 sub find_or_new_related {
   my $self = shift;
-  return $self->find_related(@_) || $self->new_related(@_);
+  my $obj = $self->find_related(@_);
+  return defined $obj ? $obj : $self->new_related(@_);
 }
 
 =head2 find_or_create_related
@@ -317,11 +373,15 @@ sub update_or_create_related {
 =head2 set_from_related
 
   $book->set_from_related('author', $author_obj);
+  $book->author($author_obj);                      ## same thing
 
 Set column values on the current object, using related values from the given
 related object. This is used to associate previously separate objects, for
 example, to set the correct author for a book, find the Author object, then
 call set_from_related on the book.
+
+This is called internally when you pass existing objects as values to
+L<DBIx::Class::ResultSet/create>, or pass an object to a belongs_to acessor.
 
 The columns are only set in the local copy of the object, call L</update> to
 set them in the storage.
@@ -339,12 +399,12 @@ sub set_from_related {
     (ref $cond ? ref $cond : 'plain scalar')
   ) unless ref $cond eq 'HASH';
   if (defined $f_obj) {
-    my $f_class = $self->result_source->schema->class($rel_obj->{class});
+    my $f_class = $rel_obj->{class};
     $self->throw_exception( "Object $f_obj isn't a ".$f_class )
       unless Scalar::Util::blessed($f_obj) and $f_obj->isa($f_class);
   }
   $self->set_columns(
-    $self->result_source->resolve_condition(
+    $self->result_source->_resolve_condition(
        $rel_obj->{cond}, $f_obj, $rel));
   return 1;
 }
@@ -410,25 +470,33 @@ B<Currently only available for C<many-to-many> relationships.>
 
 =over 4
 
-=item Arguments: (@hashrefs |  @objs)
+=item Arguments: (\@hashrefs | \@objs), $link_vals?
 
 =back
 
   my $actor = $schema->resultset('Actor')->find(1);
   my @roles = $schema->resultset('Role')->search({ role => 
-     { '-in' -> ['Fred', 'Barney'] } } );
+     { '-in' => ['Fred', 'Barney'] } } );
 
-  $actor->set_roles(@roles);
-     # Replaces all of $actors previous roles with the two named
+  $actor->set_roles(\@roles);
+     # Replaces all of $actor's previous roles with the two named
 
-Replace all the related objects with the given list of objects. This does a
-C<delete> B<on the link table resultset> to remove the association between the
-current object and all related objects, then calls C<add_to_$rel> repeatedly to
-link all the new objects.
+  $actor->set_roles(\@roles, { salary => 15_000_000 });
+     # Sets a column in the link table for all roles
+
+
+Replace all the related objects with the given reference to a list of
+objects. This does a C<delete> B<on the link table resultset> to remove the
+association between the current object and all related objects, then calls
+C<add_to_$rel> repeatedly to link all the new objects.
 
 Note that this means that this method will B<not> delete any objects in the
 table on the right side of the relation, merely that it will delete the link
 between them.
+
+Due to a mistake in the original implementation of this method, it will also
+accept a list of objects or hash references. This is B<deprecated> and will be
+removed in a future version.
 
 =head2 remove_from_$rel
 

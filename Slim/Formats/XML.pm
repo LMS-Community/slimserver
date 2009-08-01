@@ -60,7 +60,7 @@ sub getFeedAsync {
 
 	if ( $feed ) {
 
-		$log->info("Got cached XML data for $url");
+		main::INFOLOG && $log->is_info && $log->info("Got cached XML data for $url");
 
 		return $cb->( $feed, $params );
 	}
@@ -97,7 +97,7 @@ sub getFeedAsync {
 			'Timeout' => $params->{'timeout'},
 	});
 
-	$log->info("Async request: $url");
+	main::INFOLOG && $log->is_info && $log->info("Async request: $url");
 	
 	# Bug 3165
 	# Override user-agent and Icy-Metadata headers so we appear to be a web browser
@@ -141,7 +141,7 @@ sub getFeedAsync {
 		
 		# Don't require SN session for public URLs
 		if ( $url !~ /public/ ) {
-			$log->info("URL requires mysqueezebox.com session");
+			main::INFOLOG && $log->is_info && $log->info("URL requires SqueezeNetwork session");
 		
 			# Sometimes from the web we won't have a client, so pick a random one
 			# (Never use random client on SN)
@@ -164,7 +164,7 @@ sub getFeedAsync {
 				$headers{Cookie} = $snCookie;
 			}
 			else {
-				$log->info("Logging in to mysqueezebox.com to obtain session ID");
+				main::INFOLOG && $log->is_info && $log->info("Logging in to SqueezeNetwork to obtain session ID");
 		
 				# Login and get a session ID
 				Slim::Networking::SqueezeNetwork->login(
@@ -173,7 +173,7 @@ sub getFeedAsync {
 						if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie( $params->{client} ) ) {
 							$headers{Cookie} = $snCookie;
 
-							$log->info('Got mysqueezebox.com session ID');
+							main::INFOLOG && $log->is_info && $log->info('Got SqueezeNetwork session ID');
 						}
 				
 						$http->get( $url, %headers );
@@ -199,7 +199,7 @@ sub gotViaHTTP {
 	
 	my $ct = $http->headers()->content_type;
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("Got ", $http->url);
 		$log->debug("Content type is $ct");
 	}
@@ -207,7 +207,7 @@ sub gotViaHTTP {
 	# Try and turn the content we fetched into a parsed data structure.
 	if (my $parser = $params->{'params'}->{'parser'}) {
 
-		$log->info("Parsing with parser $parser");
+		main::INFOLOG && $log->is_info && $log->info("Parsing with parser $parser");
 
 		my $parserParams;
 
@@ -225,7 +225,7 @@ sub gotViaHTTP {
 
 			my $url = $feed->{'url'};
 
-			$log->info("Redirected to $url");
+			main::INFOLOG && $log->is_info && $log->info("Redirected to $url");
 
 			$params->{'params'}->{'url'} = $url;
 
@@ -266,7 +266,7 @@ sub gotViaHTTP {
 
 		if ( !$feed->{'nocache'} ) {
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info("Caching parsed XML for " . $http->url . " for $expires seconds");
 			}
 
@@ -274,7 +274,7 @@ sub gotViaHTTP {
 
 		} elsif ( !$cache->get( $http->url() ) ) {
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info("Caching raw response for " . $http->url . " for $expires seconds - not previously cached");
 			}
 
@@ -285,7 +285,7 @@ sub gotViaHTTP {
 	}
 	else {
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("Not caching parsed XML for %s, appears to be a local resource",
 				$http->url,
 			));
@@ -326,7 +326,7 @@ sub parseXMLIntoFeed {
 	# convert XML into data structure
 	if ($xml && $xml->{'body'}) {
 
-		$log->debug("Parsing body as OPML");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Parsing body as OPML");
 
 		# its OPML outline
 		return parseOPML($xml);
@@ -338,7 +338,7 @@ sub parseXMLIntoFeed {
 
 	} elsif ($xml) {
 
-		$log->debug("Parsing body as RSS");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Parsing body as RSS");
 
 		# its RSS or podcast
 		return parseRSS($xml);
@@ -644,7 +644,7 @@ sub xmlToHash {
 
 		if (defined $content && ref($content) eq 'SCALAR') {
 
-			if ($log->is_debug && length $$content < 50000) {
+			if ( main::DEBUGLOG && $log->is_debug && length $$content < 50000 ) {
 				$log->debug("Here's the bad feed:\n[$$content]\n");
 			}
 

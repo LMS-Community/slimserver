@@ -277,7 +277,7 @@ sub getInfoOrdering {
 	
 	if ( !scalar @{ $infoOrdering{$class->name} || [] } ) {
 		
-		$log->debug(sprintf("Creating order for %s menu", $class->name));
+		main::DEBUGLOG && $log->debug(sprintf("Creating order for %s menu", $class->name));
 		
 		# We don't know what order the entries should be in,
 		# so work that out.

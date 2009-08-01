@@ -57,7 +57,7 @@ sub new {
 				
 				if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
 					
-					$log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
+					main::INFOLOG && $log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
 					
 					if ( main::SLIM_SERVICE ) {
 						# Store _version in the database on SN

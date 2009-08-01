@@ -5,8 +5,6 @@ use warnings;
 
 use DBIx::Class::ResultSet;
 
-use Carp qw/croak/;
-
 use base qw/DBIx::Class/;
 __PACKAGE__->load_components(qw/ResultSource/);
 

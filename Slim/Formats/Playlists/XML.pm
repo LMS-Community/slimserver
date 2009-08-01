@@ -28,7 +28,7 @@ my $log = logger('formats.playlists');
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
-	$log->info("Parsing: $file");
+	main::INFOLOG && $log->info("Parsing: $file");
 
 	my $content = read_file($file);
 	my $xml     = Slim::Formats::XML::xmlToHash(\$content);
@@ -56,7 +56,7 @@ sub read {
 
 		if ($item->{'title'}) {
 
-			$log->debug("Found title for enclosure: [$item->{'title'}]");
+			main::DEBUGLOG && $log->debug("Found title for enclosure: [$item->{'title'}]");
 
 			push @urls, $class->_updateMetaData( $enclosure->{'url'}, {
 				'TITLE' => $item->{'title'},
@@ -64,7 +64,7 @@ sub read {
 
 		} else {
 
-			$log->debug("Found url for enclosure: [$enclosure->{'url'}]");
+			main::DEBUGLOG && $log->debug("Found url for enclosure: [$enclosure->{'url'}]");
 
 			push @urls, $enclosure->{'url'};
 

@@ -17,36 +17,36 @@
 #   of Stash.pm (based on TT2.02) that:
 #   
 #     - supports the special op "scalar" that forces scalar context on
-#   	function calls, eg:
+#       function calls, eg:
 #   
-#   	    cgi.param("foo").scalar
+#           cgi.param("foo").scalar
 #   
-#   	calls cgi.param("foo") in scalar context (unlike my wimpy
-#   	scalar op from last night).  Array context is the default.
+#       calls cgi.param("foo") in scalar context (unlike my wimpy
+#       scalar op from last night).  Array context is the default.
 #   
-#   	With non-function operands, scalar behaves like the perl
-#   	version (eg: no-op for scalar, size for arrays, etc).
+#       With non-function operands, scalar behaves like the perl
+#       version (eg: no-op for scalar, size for arrays, etc).
 #   
 #     - supports the special op "ref" that behaves like the perl ref.
-#   	If applied to a function the function is not called.  Eg:
+#       If applied to a function the function is not called.  Eg:
 #   
-#   	    cgi.param("foo").ref
+#           cgi.param("foo").ref
 #   
-#   	does *not* call cgi.param and evaluates to "CODE".  Similarly,
-#   	HASH.ref, ARRAY.ref return what you expect.
+#       does *not* call cgi.param and evaluates to "CODE".  Similarly,
+#       HASH.ref, ARRAY.ref return what you expect.
 #   
 #     - adds a new scalar and list op called "array" that is a no-op for
-#   	arrays and promotes scalars to one-element arrays.
+#       arrays and promotes scalars to one-element arrays.
 #   
 #     - allows scalar ops to be applied to arrays and hashes in place,
-#   	eg: ARRAY.repeat(3) repeats each element in place.
+#       eg: ARRAY.repeat(3) repeats each element in place.
 #   
 #     - allows list ops to be applied to scalars by promoting the scalars
-#   	to one-element arrays (like an implicit "array").  So you can
-#   	do things like SCALAR.size, SCALAR.join and get a useful result.
+#       to one-element arrays (like an implicit "array").  So you can
+#       do things like SCALAR.size, SCALAR.join and get a useful result.
 #   
-#   	This also means you can now use x.0 to safely get the first element
-#   	whether x is an array or scalar.
+#       This also means you can now use x.0 to safely get the first element
+#       whether x is an array or scalar.
 #   
 #   The new Stash.pm passes the TT2.02 test suite.  But I haven't tested the
 #   new features very much.  One nagging implementation problem is that the
@@ -63,21 +63,16 @@
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
 #
-#----------------------------------------------------------------------------
-#
-# $Id: Context.pm,v 1.60 2006/01/30 20:06:15 abw Exp $
-#
 #============================================================================
 
 package Template::Stash::Context;
 
-require 5.004;
-
 use strict;
-use Template::Stash;
-use vars qw( $VERSION $DEBUG $ROOT_OPS $SCALAR_OPS $HASH_OPS $LIST_OPS );
+use warnings;
+use base 'Template::Stash';
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.60 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = 1.63;
+our $DEBUG   = 0 unless defined $DEBUG;
 
 
 #========================================================================
@@ -88,24 +83,24 @@ $VERSION = sprintf("%d.%02d", q$Revision: 1.60 $ =~ /(\d+)\.(\d+)/);
 # copy virtual methods from those in the regular Template::Stash
 #------------------------------------------------------------------------
 
-$ROOT_OPS = { 
+our $ROOT_OPS = { 
     %$Template::Stash::ROOT_OPS,
     defined $ROOT_OPS ? %$ROOT_OPS : (),
 };
 
-$SCALAR_OPS = { 
+our $SCALAR_OPS = { 
     %$Template::Stash::SCALAR_OPS,
     'array' => sub { return [$_[0]] },
     defined $SCALAR_OPS ? %$SCALAR_OPS : (),
 };
 
-$LIST_OPS = { 
+our $LIST_OPS = { 
     %$Template::Stash::LIST_OPS,
     'array' => sub { return $_[0] },
     defined $LIST_OPS ? %$LIST_OPS : (),
 };
-		    
-$HASH_OPS = { 
+                    
+our $HASH_OPS = { 
     %$Template::Stash::HASH_OPS,
     defined $HASH_OPS ? %$HASH_OPS : (),
 };
@@ -131,10 +126,11 @@ sub new {
     my $params = ref $_[0] eq 'HASH' ? shift(@_) : { @_ };
 
     my $self   = {
-	global  => { },
-	%$params,
-	%$ROOT_OPS,
-	'_PARENT' => undef,
+        global  => { },
+        %$params,
+        %$ROOT_OPS,
+        '_PARENT' => undef,
+        '_CLASS'  => $class,
     };
 
     bless $self, $class;
@@ -170,26 +166,26 @@ sub clone {
     # look out for magical 'import' argument which imports another hash
     my $import = $params->{ import };
     if (defined $import && UNIVERSAL::isa($import, 'HASH')) {
-	delete $params->{ import };
+        delete $params->{ import };
     }
     else {
-	undef $import;
+        undef $import;
     }
 
     my $clone = bless { 
-	%$self,			# copy all parent members
-	%$params,		# copy all new data
+        %$self,                 # copy all parent members
+        %$params,               # copy all new data
         '_PARENT' => $self,     # link to parent
     }, ref $self;
     
     # perform hash import if defined
     &{ $HASH_OPS->{ import }}($clone, $import)
-	if defined $import;
+        if defined $import;
 
     return $clone;
 }
 
-	
+        
 #------------------------------------------------------------------------
 # declone($export) 
 #
@@ -228,32 +224,34 @@ sub get {
     $root = $self;
 
     if (ref $ident eq 'ARRAY'
-	|| ($ident =~ /\./) 
-	&& ($ident = [ map { s/\(.*$//; ($_, 0) } split(/\./, $ident) ])) {
-	my $size = $#$ident;
+        || ($ident =~ /\./) 
+        && ($ident = [ map { s/\(.*$//; ($_, 0) } split(/\./, $ident) ])) {
+        my $size = $#$ident;
 
-	# if $ident is a list reference, then we evaluate each item in the 
-	# identifier against the previous result, using the root stash 
-	# ($self) as the first implicit 'result'...
+        # if $ident is a list reference, then we evaluate each item in the 
+        # identifier against the previous result, using the root stash 
+        # ($self) as the first implicit 'result'...
 
-	foreach (my $i = 0; $i <= $size; $i += 2) {
-	    if ( $i + 2 <= $size && ($ident->[$i+2] eq "scalar"
+        foreach (my $i = 0; $i <= $size; $i += 2) {
+            if ( $i + 2 <= $size && ($ident->[$i+2] eq "scalar"
                                     || $ident->[$i+2] eq "ref") ) {
                 $result = $self->_dotop($root, @$ident[$i, $i+1], 0,
                                         $ident->[$i+2]);
                 $i += 2;
-	    } else {
+            } else {
                 $result = $self->_dotop($root, @$ident[$i, $i+1]);
             }
-	    last unless defined $result;
-	    $root = $result;
-	}
+            last unless defined $result;
+            $root = $result;
+        }
     }
     else {
-	$result = $self->_dotop($root, $ident, $args);
+        $result = $self->_dotop($root, $ident, $args);
     }
 
-    return defined $result ? $result : '';
+    return defined $result 
+        ? $result 
+        : $self->undefined($ident, $args);
 }
 
 
@@ -279,29 +277,29 @@ sub set {
     $root = $self;
 
     ELEMENT: {
-	if (ref $ident eq 'ARRAY'
-	    || ($ident =~ /\./) 
-	    && ($ident = [ map { s/\(.*$//; ($_, 0) }
-			   split(/\./, $ident) ])) {
+        if (ref $ident eq 'ARRAY'
+            || ($ident =~ /\./) 
+            && ($ident = [ map { s/\(.*$//; ($_, 0) }
+                           split(/\./, $ident) ])) {
 
-	    # a compound identifier may contain multiple elements (e.g. 
-	    # foo.bar.baz) and we must first resolve all but the last, 
-	    # using _dotop() with the $lvalue flag set which will create 
-	    # intermediate hashes if necessary...
-	    my $size = $#$ident;
-	    foreach (my $i = 0; $i < $size - 2; $i += 2) {
-		$result = $self->_dotop($root, @$ident[$i, $i+1], 1);
-		last ELEMENT unless defined $result;
-		$root = $result;
-	    }
+            # a compound identifier may contain multiple elements (e.g. 
+            # foo.bar.baz) and we must first resolve all but the last, 
+            # using _dotop() with the $lvalue flag set which will create 
+            # intermediate hashes if necessary...
+            my $size = $#$ident;
+            foreach (my $i = 0; $i < $size - 2; $i += 2) {
+                $result = $self->_dotop($root, @$ident[$i, $i+1], 1);
+                last ELEMENT unless defined $result;
+                $root = $result;
+            }
 
-	    # then we call _assign() to assign the value to the last element
-	    $result = $self->_assign($root, @$ident[$size-1, $size], 
-				     $value, $default);
-	}
-	else {
-	    $result = $self->_assign($root, $ident, 0, $value, $default);
-	}
+            # then we call _assign() to assign the value to the last element
+            $result = $self->_assign($root, @$ident[$size-1, $size], 
+                                     $value, $default);
+        }
+        else {
+            $result = $self->_assign($root, $ident, 0, $value, $default);
+        }
     }
 
     return defined $result ? $result : '';
@@ -322,26 +320,26 @@ sub getref {
     $root = $self;
 
     if (ref $ident eq 'ARRAY') {
-	my $size = $#$ident;
+        my $size = $#$ident;
 
-	foreach (my $i = 0; $i <= $size; $i += 2) {
-	    ($item, $args) = @$ident[$i, $i + 1]; 
-	    last if $i >= $size - 2;  # don't evaluate last node
-	    last unless defined 
-		($root = $self->_dotop($root, $item, $args));
-	}
+        foreach (my $i = 0; $i <= $size; $i += 2) {
+            ($item, $args) = @$ident[$i, $i + 1]; 
+            last if $i >= $size - 2;  # don't evaluate last node
+            last unless defined 
+                ($root = $self->_dotop($root, $item, $args));
+        }
     }
     else {
-	$item = $ident;
+        $item = $ident;
     }
 
     if (defined $root) {
         return sub { my @args = (@{$args||[]}, @_);
-		     $self->_dotop($root, $item, \@args);
-		 }
+                     $self->_dotop($root, $item, \@args);
+                 }
     }
     else {
-	return sub { '' };
+        return sub { '' };
     }
 }
 
@@ -361,8 +359,8 @@ sub update {
     # look out for magical 'import' argument to import another hash
     my $import = $params->{ import };
     if (defined $import && UNIVERSAL::isa($import, 'HASH')) {
-	@$self{ keys %$import } = values %$import;
-	delete $params->{ import };
+        @$self{ keys %$import } = values %$import;
+        delete $params->{ import };
     }
 
     @$self{ keys %$params } = values %$params;
@@ -408,12 +406,12 @@ sub _dotop {
     $lvalue ||= 0;
 
 #    print STDERR "_dotop(root=$root, item=$item, args=[@$args])\n"
-#	if $DEBUG;
+#       if $DEBUG;
 
     # return undef without an error if either side of the dot is unviable
     # or if an attempt is made to access a private member, starting _ or .
     return undef
-	unless defined($root) and defined($item) and $item !~ /^[\._]/;
+        unless defined($root) and defined($item) and $item !~ /^[\._]/;
 
     if (ref(\$root) eq "SCALAR" && !$lvalue &&
             (($value = $LIST_OPS->{ $item }) || $item =~ /^-?\d+$/) ) {
@@ -423,62 +421,62 @@ sub _dotop {
         $rootref = 'ARRAY';
         $root = [$root];
     }
-    if ($rootref eq __PACKAGE__ || $rootref eq 'HASH') {
+    if ($rootref eq $self->{_CLASS} || $rootref eq 'HASH') {
 
-	# if $root is a regular HASH or a Template::Stash kinda HASH (the 
-	# *real* root of everything).  We first lookup the named key 
-	# in the hash, or create an empty hash in its place if undefined
-	# and the $lvalue flag is set.  Otherwise, we check the HASH_OPS
-	# pseudo-methods table, calling the code if found, or return undef.
+        # if $root is a regular HASH or a Template::Stash kinda HASH (the 
+        # *real* root of everything).  We first lookup the named key 
+        # in the hash, or create an empty hash in its place if undefined
+        # and the $lvalue flag is set.  Otherwise, we check the HASH_OPS
+        # pseudo-methods table, calling the code if found, or return undef.
 
-	if (defined($value = $root->{ $item })) {
+        if (defined($value = $root->{ $item })) {
             ($ret, $retVal, @result) = _dotop_return($value, $args, $returnRef,
                                                      $scalarContext);
             return $retVal if ( $ret );                     ## RETURN
         }
-	elsif ($lvalue) {
-	    # we create an intermediate hash if this is an lvalue
-	    return $root->{ $item } = { };		    ## RETURN
-	}
-	elsif ($value = $HASH_OPS->{ $item }) {
-	    @result = &$value($root, @$args);		    ## @result
-	}
-	elsif (ref $item eq 'ARRAY') {
-	    # hash slice
-	    return [@$root{@$item}];                       ## RETURN
-	}
-	elsif ($value = $SCALAR_OPS->{ $item }) {
-	    #
-	    # Apply scalar ops to every hash element, in place.
-	    #
-	    foreach my $key ( keys %$root ) {
+        elsif ($lvalue) {
+            # we create an intermediate hash if this is an lvalue
+            return $root->{ $item } = { };                  ## RETURN
+        }
+        elsif ($value = $HASH_OPS->{ $item }) {
+            @result = &$value($root, @$args);               ## @result
+        }
+        elsif (ref $item eq 'ARRAY') {
+            # hash slice
+            return [@$root{@$item}];                       ## RETURN
+        }
+        elsif ($value = $SCALAR_OPS->{ $item }) {
+            #
+            # Apply scalar ops to every hash element, in place.
+            #
+            foreach my $key ( keys %$root ) {
                 $root->{$key} = &$value($root->{$key}, @$args);
             }
-	}
+        }
     }
     elsif ($rootref eq 'ARRAY') {
 
-	# if root is an ARRAY then we check for a LIST_OPS pseudo-method 
-	# (except for l-values for which it doesn't make any sense)
-	# or return the numerical index into the array, or undef
+        # if root is an ARRAY then we check for a LIST_OPS pseudo-method 
+        # (except for l-values for which it doesn't make any sense)
+        # or return the numerical index into the array, or undef
 
-	if (($value = $LIST_OPS->{ $item }) && ! $lvalue) {
-	    @result = &$value($root, @$args);		    ## @result
-	}
-	elsif (($value = $SCALAR_OPS->{ $item }) && ! $lvalue) {
-	    #
-	    # Apply scalar ops to every array element, in place.
-	    #
-	    for ( my $i = 0 ; $i < @$root ; $i++ ) {
+        if (($value = $LIST_OPS->{ $item }) && ! $lvalue) {
+            @result = &$value($root, @$args);               ## @result
+        }
+        elsif (($value = $SCALAR_OPS->{ $item }) && ! $lvalue) {
+            #
+            # Apply scalar ops to every array element, in place.
+            #
+            for ( my $i = 0 ; $i < @$root ; $i++ ) {
                 $root->[$i] = &$value($root->[$i], @$args); ## @result
             }
-	}
-	elsif ($item =~ /^-?\d+$/) {
-	    $value = $root->[$item];
+        }
+        elsif ($item =~ /^-?\d+$/) {
+            $value = $root->[$item];
             ($ret, $retVal, @result) = _dotop_return($value, $args, $returnRef,
                                                      $scalarContext);
             return $retVal if ( $ret );                     ## RETURN
-	}
+        }
         elsif (ref $item eq 'ARRAY' ) {
             # array slice
             return [@$root[@$item]];                        ## RETURN
@@ -491,53 +489,53 @@ sub _dotop {
 
     elsif (ref($root) && UNIVERSAL::can($root, 'can')) {
 
-	# if $root is a blessed reference (i.e. inherits from the 
-	# UNIVERSAL object base class) then we call the item as a method.
-	# If that fails then we try to fallback on HASH behaviour if 
-	# possible.
+        # if $root is a blessed reference (i.e. inherits from the 
+        # UNIVERSAL object base class) then we call the item as a method.
+        # If that fails then we try to fallback on HASH behaviour if 
+        # possible.
         return ref $root->can($item) if ( $returnRef );       ## RETURN
-	eval {
+        eval {
             @result = $scalarContext ? scalar $root->$item(@$args)
                                      : $root->$item(@$args);  ## @result
         };
 
-	if ($@) {
-	    # failed to call object method, so try some fallbacks
-	    if (UNIVERSAL::isa($root, 'HASH')
+        if ($@) {
+            # failed to call object method, so try some fallbacks
+            if (UNIVERSAL::isa($root, 'HASH')
                     && defined($value = $root->{ $item })) {
                 ($ret, $retVal, @result) = _dotop_return($value, $args,
                                                     $returnRef, $scalarContext);
                 return $retVal if ( $ret );                     ## RETURN
-	    }
-	    elsif (UNIVERSAL::isa($root, 'ARRAY') 
-		   && ($value = $LIST_OPS->{ $item })) {
-		@result = &$value($root, @$args);
-	    }
-	    else {
-		@result = (undef, $@);
-	    }
-	}
+            }
+            elsif (UNIVERSAL::isa($root, 'ARRAY') 
+                   && ($value = $LIST_OPS->{ $item })) {
+                @result = &$value($root, @$args);
+            }
+            else {
+                @result = (undef, $@);
+            }
+        }
     }
     elsif (($value = $SCALAR_OPS->{ $item }) && ! $lvalue) {
 
-	# at this point, it doesn't look like we've got a reference to
-	# anything we know about, so we try the SCALAR_OPS pseudo-methods
-	# table (but not for l-values)
+        # at this point, it doesn't look like we've got a reference to
+        # anything we know about, so we try the SCALAR_OPS pseudo-methods
+        # table (but not for l-values)
 
-	@result = &$value($root, @$args);		    ## @result
+        @result = &$value($root, @$args);                   ## @result
     }
     elsif ($self->{ _DEBUG }) {
-	die "don't know how to access [ $root ].$item\n";   ## DIE
+        die "don't know how to access [ $root ].$item\n";   ## DIE
     }
     else {
-	@result = ();
+        @result = ();
     }
 
     # fold multiple return items into a list unless first item is undef
     if (defined $result[0]) {
-	return ref(@result > 1 ? [ @result ] : $result[0])
+        return ref(@result > 1 ? [ @result ] : $result[0])
                                             if ( $returnRef );  ## RETURN
-	if ( $scalarContext ) {
+        if ( $scalarContext ) {
             return scalar @result if ( @result > 1 );           ## RETURN
             return scalar(@{$result[0]}) if ( ref $result[0] eq "ARRAY" );
             return scalar(%{$result[0]}) if ( ref $result[0] eq "HASH" );
@@ -547,10 +545,10 @@ sub _dotop {
         }
     }
     elsif (defined $result[1]) {
-	die $result[1];					    ## DIE
+        die $result[1];                                     ## DIE
     }
     elsif ($self->{ _DEBUG }) {
-	die "$item is undefined\n";			    ## DIE
+        die "$item is undefined\n";                         ## DIE
     }
 
     return undef;
@@ -562,6 +560,7 @@ sub _dotop {
 #
 # Handle the various return processing for _dotop
 #------------------------------------------------------------------------
+
 sub _dotop_return
 {
     my($value, $args, $returnRef, $scalarContext) = @_;
@@ -601,34 +600,29 @@ sub _assign {
 
 #    print(STDERR "_assign(root=$root, item=$item, args=[@$args], \n",
 #                         "value=$value, default=$default)\n")
-#	if $DEBUG;
+#       if $DEBUG;
 
     # return undef without an error if either side of the dot is unviable
     # or if an attempt is made to update a private member, starting _ or .
-    return undef						## RETURN
-	unless $root and defined $item and $item !~ /^[\._]/;
+    return undef                                                ## RETURN
+        unless $root and defined $item and $item !~ /^[\._]/;
     
-    if ($rootref eq 'HASH' || $rootref eq __PACKAGE__) {
-#	if ($item eq 'IMPORT' && UNIVERSAL::isa($value, 'HASH')) {
-#	    # import hash entries into root hash
-#	    @$root{ keys %$value } = values %$value;
-#	    return '';						## RETURN
-#	}
-	# if the root is a hash we set the named key
-	return ($root->{ $item } = $value)			## RETURN
-	    unless $default && $root->{ $item };
+    if ($rootref eq 'HASH' || $rootref eq $self->{_CLASS}) {
+        # if the root is a hash we set the named key
+        return ($root->{ $item } = $value)                      ## RETURN
+            unless $default && $root->{ $item };
     }
     elsif ($rootref eq 'ARRAY' && $item =~ /^-?\d+$/) {
-	# or set a list item by index number
-	return ($root->[$item] = $value)			## RETURN
-	    unless $default && $root->{ $item };
+            # or set a list item by index number
+            return ($root->[$item] = $value)                    ## RETURN
+                unless $default && $root->{ $item };
     }
     elsif (UNIVERSAL::isa($root, 'UNIVERSAL')) {
-	# try to call the item as a method of an object
-	return $root->$item(@$args, $value);			## RETURN
+        # try to call the item as a method of an object
+        return $root->$item(@$args, $value);                    ## RETURN
     }
     else {
-	die "don't know how to assign to [$root].[$item]\n";	## DIE
+        die "don't know how to assign to [$root].[$item]\n";    ## DIE
     }
 
     return undef;
@@ -654,21 +648,21 @@ sub _dump {
 
 
     return $text . "...excessive recursion, terminating\n"
-	if $indent > 32;
+        if $indent > 32;
 
     foreach $key (keys %$self) {
 
-	$value = $self->{ $key };
-	$value = '<undef>' unless defined $value;
+        $value = $self->{ $key };
+        $value = '<undef>' unless defined $value;
 
-	if (ref($value) eq 'ARRAY') {
-	    $value = "$value [@$value]";
-	}
-	$text .= sprintf("$pad%-8s => $value\n", $key);
-	next if $key =~ /^\./;
-	if (UNIVERSAL::isa($value, 'HASH')) {
-	    $text .= _dump($value, $indent + 1);
-	}
+        if (ref($value) eq 'ARRAY') {
+            $value = "$value [@$value]";
+        }
+        $text .= sprintf("$pad%-8s => $value\n", $key);
+        next if $key =~ /^\./;
+        if (UNIVERSAL::isa($value, 'HASH')) {
+            $text .= _dump($value, $indent + 1);
+        }
     }
     $text;
 }
@@ -677,18 +671,6 @@ sub _dump {
 1;
 
 __END__
-
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
 
 =head1 NAME
 
@@ -765,13 +747,13 @@ L<http://wardley.org/|http://wardley.org/>
 
 =head1 VERSION
 
-1.60, distributed as part of the
-Template Toolkit version 2.15, released on 26 May 2006.
+1.63, distributed as part of the
+Template Toolkit version 2.19, released on 27 April 2007.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+  Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
+
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

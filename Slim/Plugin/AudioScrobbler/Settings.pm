@@ -17,11 +17,11 @@ my $prefs = preferences('plugin.audioscrobbler');
 my $log   = logger('plugin.audioscrobbler');
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_AUDIOSCROBBLER_MODULE_NAME');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_AUDIOSCROBBLER_MODULE_NAME');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/AudioScrobbler/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/AudioScrobbler/settings/basic.html');
 }
 
 sub prefs {
@@ -47,7 +47,7 @@ sub handler {
 			for my $account ( @{ $params->{pref_accounts} } ) {
 				for my $todelete ( @{$delete} ) {
 					if ( $todelete eq $account->{username} ) {
-						$log->debug( "Deleting account $todelete" );
+						main::DEBUGLOG && $log->debug( "Deleting account $todelete" );
 						next ACCOUNT;
 					}
 				}
@@ -78,7 +78,7 @@ sub handler {
 						password => $params->{pref_password},
 					};
 
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
 					}
 
@@ -99,7 +99,7 @@ sub handler {
 					# Callback for any errors
 					my $error = shift;
 
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
 					}
 					

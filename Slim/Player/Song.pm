@@ -11,12 +11,22 @@ use bytes;
 use strict;
 use warnings;
 
+use base qw(Slim::Utils::Accessor);
+
+use Fcntl qw(SEEK_CUR SEEK_SET);
+
 use Slim::Utils::Log;
 use Slim::Schema;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Player::SongStreamController;
-use Slim::Player::Pipeline;
+use Slim::Player::CapabilitiesHelper;
+
+BEGIN {
+	if (main::TRANSCODING) {
+		require Slim::Player::Pipeline;
+	}
+}
 
 use Scalar::Util qw(blessed);
 
@@ -31,6 +41,39 @@ my $prefs = preferences('server');
 
 my $_liveCount = 0;
 
+my @_playlistCloneAttributes = qw(
+	index
+	_track _currentTrack _currentTrackHandler
+	streamUrl
+	owner
+	_playlist _scanDone
+	
+	_pluginData wmaMetadataStream wmaMetaData scanData
+);
+
+{
+	__PACKAGE__->mk_accessor('ro', qw(
+		handler
+	) );
+	
+	__PACKAGE__->mk_accessor('rw', 
+		@_playlistCloneAttributes,
+		
+		qw(
+			_status
+	
+			startOffset
+			seekdata initialAudioBlock
+			_canSeek _canSeekError
+	
+			_duration _bitrate _streambitrate _streamFormat
+			_transcoded directstream
+			
+			samplerate samplesize channels totalbytes offset blockalign
+		),
+	);
+}
+
 sub new {
 	my ($class, $owner, $index, $seekdata) = @_;
 
@@ -41,14 +84,14 @@ sub new {
 	# Bug: 3390 - reload the track if it's changed.
 	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
 	
- 	my $track    = Slim::Schema->rs('Track')->objectForUrl({
+ 	my $track    = Slim::Schema->objectForUrl({
 		'url'      => $url,
 		'readTags' => 1
 	});
 
 	if (!blessed($track) || !$track->can('url')) {
 		# Try and create the track if we weren't able to fetch it.
-		$track = Slim::Schema->rs('Track')->objectForUrl({
+		$track = Slim::Schema->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1
@@ -61,7 +104,7 @@ sub new {
 	
 	$url = $track->url;
 
-	$log->info("index $index -> $url");
+	main::INFOLOG && $log->info("index $index -> $url");
 
 # XXX - thsi test does not work with last.fm - not sure why it was here in the first place
 #	if (!Slim::Music::Info::isURL($url)) {
@@ -76,29 +119,34 @@ sub new {
 		logError("Could not find handler for $url!");
 		return undef;
 	}
-		
-	my $self = {
+	
+	my $self = $class->SUPER::new;
+	
+	$self->init_accessor(
 		index           => $index,
-		status          => STATUS_READY,
+		_status         => STATUS_READY,
 		owner           => $owner,
-		playlist        => Slim::Music::Info::isPlaylist($track, $track->content_type ) ? 1 : 0,
+		_playlist       => Slim::Music::Info::isPlaylist($track, $track->content_type ) ? 1 : 0,
 							# 0 = simple stream, 1 = playlist, 2 = repeating stream
 		startOffset     => 0,
 		handler         => $handler,
-		track           => $track,
+		_track          => $track,
 		streamUrl       => $url,	# May get updated later, either here or in handler
-	};
-	$self->{'seekdata'} = $seekdata if $seekdata;
+	);
 	
-
-	bless $self, $class;
-
-	if ($handler->can('isRepeatingStream') && $handler->isRepeatingStream($self)) {
-		$self->{'playlist'} = 2;
+	$self->seekdata($seekdata) if $seekdata;
+	
+	if ($handler->can('isRepeatingStream')) {
+		my $type = $handler->isRepeatingStream($self);
+		if ($type > 2) {
+			$self->_playlist($type);
+		} elsif ($type) {
+			$self->_playlist(2);
+		}
 	}
 
 	$_liveCount++;
-	if ($log->is_debug)	{
+	if (main::DEBUGLOG && $log->is_debug)	{
 		$log->debug("live=$_liveCount");
 	}
 		
@@ -108,8 +156,8 @@ sub new {
 sub DESTROY {
 	my $self = shift;
 	$_liveCount--;
-	if ($log->is_debug)	{
-		$log->debug(sprintf("DESTROY($self) live=$_liveCount: index=%d, url=%s", $self->{'index'}, $self->{'track'}->url));
+	if (main::DEBUGLOG && $log->is_debug)	{
+		$log->debug(sprintf("DESTROY($self) live=$_liveCount: index=%d, url=%s", $self->index(), $self->_track()->url));
 	}
 }
 
@@ -118,53 +166,55 @@ sub clonePlaylistSong {
 	
 	assert($old->isPlaylist());
 	
-	my %new = %{$old};
-	$new{'status'}        = STATUS_READY;
-	$new{'startOffset'}   = 0;
-	$new{'seekdata'}      = undef;
-	$new{'duration'}      = undef;
-	$new{'bitrate'}       = undef;
-	$new{'transcoded'}    = undef;
-	$new{'canSeek'}       = undef;
-	$new{'canSeekError'}  = undef;
-	delete $new{'streambitrate'};
+	my $new = (ref $old)->SUPER::new;
+	
+	$new->init_accessor(
+		_status           => STATUS_READY,
+		startOffset       => 0,
+	);
+	
+	foreach ('handler', @_playlistCloneAttributes) {
+		$new->init_accessor($_ => $old->$_());
+	}
 		
-	my $self = \%new;
-	bless $self, ref $old;
-
 	$_liveCount++;
-	if ($log->is_debug)	{
+	if (main::DEBUGLOG && $log->is_debug)	{
 		$log->debug("live=$_liveCount");
 	}
 
-	my $next = $self->_getNextPlaylistTrack();
+	my $next = $new->_getNextPlaylistTrack();
 	return undef unless $next;
 	
-	return $self;	
+	return $new;	
 }
 
 sub resetSeekdata {
-	$_[0]->{'seekdata'} = undef;
+	$_[0]->seekdata(undef);
 }
 
 sub _getNextPlaylistTrack {
 	my ($self) = @_;
 	
-	if ($self->{'playlist'} == 2) {
-		# leave it to the protocol handler
-		$self->{'currentTrack'} = $self->{'track'};
-		return $self->{'track'};
+	if ($self->_playlist() >= 2) {
+		# leave it to the protocol handler in getNextTrack()
+		
+		# Old handlers expect this
+		if ($self->_playlist() == 2) {
+			$self->_currentTrack($self->_track());
+		}
+		
+		return $self->_track();
 	}
 	
 	# Get the next good audio track
-	my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( {url => $self->{'track'}->url} );
-	$log->debug( "Getting next audio URL from playlist" );	
-	my $track = $playlist->getNextEntry($self->{'currentTrack'} ? {after => $self->{'currentTrack'}} : undef);
+	my $playlist = Slim::Schema->objectForUrl( {url => $self->_track()->url, playlist => 1} );
+	main::DEBUGLOG && $log->debug( "Getting next audio URL from playlist" );	
+	my $track = $playlist->getNextEntry($self->_currentTrack() ? {after => $self->_currentTrack()} : undef);
 	if ($track) {
-		$self->{'currentTrack'}        = $track;
-		$self->{'currentTrackHandler'} = Slim::Player::ProtocolHandlers->handlerForURL($track->url);
-		$self->{'streamUrl'}           = $track->url;
-		$log->info( "Got next URL from playlist; track is: " . $track->url );	
+		$self->_currentTrack($track);
+		$self->_currentTrackHandler(Slim::Player::ProtocolHandlers->handlerForURL($track->url));
+		$self->streamUrl($track->url);
+		main::INFOLOG && $log->info( "Got next URL from playlist; track is: " . $track->url );	
 		
 	}
 	return $track;
@@ -175,15 +225,15 @@ sub getNextSong {
 
 	my $handler = $self->currentTrackHandler();
 	
-	$log->info($self->currentTrack()->url);
+	main::INFOLOG && $log->info($self->currentTrack()->url);
 
 	#	if (playlist and no-track and (scanned or not scannable)) {
-	if (!$self->{'currentTrack'}
+	if (!$self->_currentTrack()
 		&& $self->isPlaylist()
-		&& ($self->{'scanDone'} || !$handler->can('scanUrl')))
+		&& ($self->_scanDone() || !$handler->can('scanUrl')))
 	{
 		if (!$self->_getNextPlaylistTrack()) {
-			&$failCb('PLAYLIST_NO_ITEMS_FOUND', $self->{'track'}->url);
+			&$failCb('PLAYLIST_NO_ITEMS_FOUND', $self->_track()->url);
 			return;
 		}
 		$handler = $self->currentTrackHandler();
@@ -195,9 +245,9 @@ sub getNextSong {
 	
 	# If we have (a) a scannable playlist track,
 	# or (b) a scannable track that is not yet scanned and could be a playlist ...
-	if ($handler->can('scanUrl') && !$self->{'scanDone'}) {
-		$self->{'scanDone'} = 1;
-		$log->info("scanning URL $url");
+	if ($handler->can('scanUrl') && !$self->_scanDone()) {
+		$self->_scanDone(1);
+		main::INFOLOG && $log->info("scanning URL $url");
 		$handler->scanUrl($url, {
 			client => $client,
 			song   => $self,
@@ -208,11 +258,11 @@ sub getNextSong {
 					
 					if ($track != $newTrack) {
 					
-						if ($self->{'track'} == $track) {
+						if ($self->_track() == $track) {
 							# Update of original track, by playlist or redirection
-							$self->{'track'} = $newTrack;
+							$self->_track($newTrack);
 							
-							$log->info("Track updated by scan: $url -> " . $newTrack->url);
+							main::INFOLOG && $log->info("Track updated by scan: $url -> " . $newTrack->url);
 							
 							# Replace the item on the playlist so it has the new track/URL
 							my $i = 0;
@@ -224,12 +274,12 @@ sub getNextSong {
 								}
 								$i++;
 							}
-						} elsif ($self->{'currentTrack'} && $self->{'currentTrack'} == $track) {
+						} elsif ($self->_currentTrack() && $self->_currentTrack() == $track) {
 							# The current, playlist track got updated, maybe by redirection
 							# Probably should not happen as redirection should have been
 							# resolved during recursive scan of playlist.
 							
-							# Cannot update $self->{'currentTrack'} as would mess up playlist traversal
+							# Cannot update $self->_currentTrack() as would mess up playlist traversal
 							$log->warn("Unexpected update of playlist track: $url -> " . $newTrack->url);
 						}
 					
@@ -237,14 +287,13 @@ sub getNextSong {
 					}
 										
 					# maybe we just found or scanned a playlist
-					if (!$self->{'currentTrack'} && !$self->{'playlist'}) {
-						$self->{'playlist'} = 
-							Slim::Music::Info::isPlaylist($track, $track->content_type) ? 1 : 0;
+					if (!$self->_currentTrack() && !$self->_playlist()) {
+						$self->_playlist(Slim::Music::Info::isPlaylist($track, $track->content_type) ? 1 : 0);
 					}
 					
 					# if we just found a playlist					
-					if (!$self->{'currentTrack'} && $self->isPlaylist()) {
-						$log->info("Found a playlist");
+					if (!$self->_currentTrack() && $self->isPlaylist()) {
+						main::INFOLOG && $log->info("Found a playlist");
 						$self->getNextSong($successCb, $failCb);	# recurse
 					} else {
 						$self->getNextSong($successCb, $failCb);	# recurse
@@ -268,10 +317,10 @@ sub getNextSong {
 	# Hooks for unconverted handlers
 	elsif ($handler->can('onDecoderUnderrun') || $handler->can('onJump')) {
 		if ($handler->can('onJump') && 
-			!($self->{'owner'}->{'playingState'} != Slim::Player::StreamingController::STOPPED()
+			!($self->owner()->{'playingState'} != Slim::Player::StreamingController::STOPPED()
 			&& $handler->can('onDecoderUnderrun')))
 		{
-			$handler->onJump(master($self), $url, $self->{'seekdata'}, $successCb);
+			$handler->onJump(master($self), $url, $self->seekdata(), $successCb);
 		} else {
 			$handler->onDecoderUnderrun(master($self), $url, $successCb);
 		}			
@@ -284,6 +333,12 @@ sub getNextSong {
 
 }
 
+# Some 'native' formats are streamed with a different format to their container
+my %streamFormatMap = (
+	wav => 'pcm',
+	mp4 => 'aac',
+);
+
 sub open {
 	my ($self, $seekdata) = @_;
 	
@@ -294,14 +349,16 @@ sub open {
 	my $url     = $track->url;
 	
 	# Reset seekOffset - handlers will set this if necessary
-	$self->{'startOffset'} = 0;
+	$self->startOffset(0);
 	
 	# Restart direct-stream
-	$self->{'directstream'} = 0;
+	$self->directstream(0);
 	
-	$log->info($url);
+	main::INFOLOG && $log->info($url);
 	
-	$self->{'seekdata'} = $seekdata if $seekdata;
+	$self->seekdata($seekdata) if $seekdata;
+	my $sock;
+	my $format = Slim::Music::Info::contentType($track);
 	
 	# get transcoding command & stream-mode
 	# IF command == '-' AND canDirectStream THEN
@@ -317,43 +374,68 @@ sub open {
 	#	ENDIF
 	# ENDIF
 	
-	my $sock;
-	my $format = Slim::Music::Info::contentType($track);
-	
-	$log->info("seek=", ($self->{'seekdata'} ? 'true' : 'false'), ' time=', ($self->{'seekdata'} ? $self->{'seekdata'}->{'timeOffset'} : 0),
+	main::INFOLOG && $log->info("seek=", ($self->seekdata() ? 'true' : 'false'), ' time=', ($self->seekdata() ? $self->seekdata()->{'timeOffset'} : 0),
 		 ' canSeek=', $self->canSeek());
 		 
-	my $wantTranscoderSeek = $self->{'seekdata'} && $self->{'seekdata'}->{'timeOffset'} && $self->canSeek() == 2;
-	my @wantOptions;
-	push (@wantOptions, 'T') if ($wantTranscoderSeek);
+	my $transcoder;
+	my $error;
 	
-	my @streamFormats;
-	push (@streamFormats, 'I') if (! $wantTranscoderSeek);
-	
-	push @streamFormats, ($handler->isRemote ? 'R' : 'F');
-	
-	my ($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
-		$self,
-		$format,
-		\@streamFormats, [], \@wantOptions);
-	
-	if (! $transcoder) {
-		logError("Couldn't create command line for $format playback for [$url]");
-		return (undef, ($error || 'PROBLEM_CONVERT_FILE'), $url);
-	} elsif ($log->is_info) {
-		$log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
-	}
-	
-	if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
-		$transcoder->{'start'} = $self->{'startOffset'} = $self->{'seekdata'}->{'timeOffset'};
-	}
+	if (main::TRANSCODING) {
+		my $wantTranscoderSeek = $self->seekdata() && $self->seekdata()->{'timeOffset'} && $self->canSeek() == 2;
+		my @wantOptions;
+		push (@wantOptions, 'T') if ($wantTranscoderSeek);
+		
+		my @streamFormats;
+		push (@streamFormats, 'I') if (! $wantTranscoderSeek);
+		
+		push @streamFormats, ($handler->isRemote ? 'R' : 'F');
+		
+		($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
+			$self,
+			$format,
+			\@streamFormats, [], \@wantOptions);
+		
+		if (! $transcoder) {
+			logError("Couldn't create command line for $format playback for [$url]");
+			return (undef, ($error || 'PROBLEM_CONVERT_FILE'), $url);
+		} elsif (main::INFOLOG && $log->is_info) {
+			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
+		}
+		
+		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
+			$transcoder->{'start'} = $self->startOffset($self->seekdata()->{'timeOffset'});
+		}
+	} else {
+		require Slim::Player::CapabilitiesHelper;
+		
+		# Is format supported by all players?
+		if (!grep {$_ eq $format} Slim::Player::CapabilitiesHelper::supportedFormats($client)) {
+			$error = 'PROBLEM_CONVERT_FILE';
+		}
+		# Is samplerate supported by all players?
+		elsif (Slim::Player::CapabilitiesHelper::samplerateLimit($self)) {
+			$error = 'UNSUPPORTED_SAMPLE_RATE';
+		}
 
+		if ($error) {
+			logError("$error [$url]");
+			return (undef, $error, $url);
+		}
+		
+		$transcoder = {
+			command => '-',
+			streamformat => ($streamFormatMap{$format} || $format),
+			streamMode => 'I',
+			rateLimit => 0,
+		};
+	}
+	
 	# TODO work this out for each player in the sync-group
 	my $directUrl;
 	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {
-		$log->info( "URL supports direct streaming [$url->$directUrl]" );
-		$self->{'directstream'} = 1;
-		$self->{'streamUrl'} = $directUrl;
+		main::INFOLOG && $log->info( "URL supports direct streaming [$url->$directUrl]" );
+		$self->directstream(1);
+		$self->streamUrl($directUrl);
 	}
 	
 	else {
@@ -361,7 +443,7 @@ sub open {
 			&& $handler->can('canHandleTranscode') && $handler->canHandleTranscode($self);
 
 		if ($transcoder->{'streamMode'} eq 'I' || $handlerWillTranscode) {
-			$log->info("Opening stream (no direct streaming) using $handler [$url]");
+			main::INFOLOG && $log->info("Opening stream (no direct streaming) using $handler [$url]");
 		
 			$sock = $handler->new({
 				url        => $url, # it is just easier if we always include the URL here
@@ -372,7 +454,7 @@ sub open {
 		
 			if (!$sock) {
 				logWarning("stream failed to open [$url].");
-				$self->{'status'} = STATUS_FAILED;
+				$self->status(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
 			}
 					
@@ -382,7 +464,7 @@ sub open {
 			# either directly, or via transcoding.
 			if (Slim::Music::Info::isSong($track, $contentType)) {
 	
-				$log->info("URL is a song (audio): $url, type=$contentType");
+				main::INFOLOG && $log->info("URL is a song (audio): $url, type=$contentType");
 	
 				if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
 					logError("Can't set nonblocking for url: [$url]");
@@ -390,13 +472,13 @@ sub open {
 				}
 				
 				if ($handlerWillTranscode) {
-					$self->{'transcoded'} = 1;
-					$self->{'streambitrate'} = $sock->getStreamBitrate($transcoder->{'rateLimit'});
+					$self->_transcoded(1);
+					$self->_streambitrate($sock->getStreamBitrate($transcoder->{'rateLimit'}) || 0);
 				}
 				
 				# If the protocol handler has the bitrate set use this
 				if ($sock->can('bitrate') && $sock->bitrate) {
-					$self->{'bitrate'} = $sock->bitrate;
+					$self->_bitrate($sock->bitrate);
 				}
 			}	
 			# if it's one of our playlists, parse it...
@@ -420,7 +502,7 @@ sub open {
 	
 				Slim::Player::Source::explodeSong($client, \@items);
 	
-				my $new = $self->new ($self->{'owner'}, $self->{'index'});
+				my $new = $self->new ($self->owner(), $self->index());
 				%$self = %$new;
 				
 				# try to open the first item in the list, if there is one.
@@ -435,65 +517,67 @@ sub open {
 				$sock->close();
 				$sock = undef;
 
-				$self->{'status'} = STATUS_FAILED;
+				$self->status(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
 			}		
 		}	
 
-		if ($transcoder->{'command'} ne '-' && ! $handlerWillTranscode) {
-			# Need to transcode
+		if (main::TRANSCODING) {
+			if ($transcoder->{'command'} ne '-' && ! $handlerWillTranscode) {
+				# Need to transcode
+					
+				my $quality = $prefs->client($client)->get('lameQuality');
 				
-			my $quality = $prefs->client($client)->get('lameQuality');
-			
-			# use a pipeline on windows when remote as we need socketwrapper to ensure we get non blocking IO
-			my $usepipe = (defined $sock || ($handler->isRemote && Slim::Utils::OSDetect::OS() eq 'win')) ? 1 : undef;
+				# use a pipeline on windows when remote as we need socketwrapper to ensure we get non blocking IO
+				my $usepipe = (defined $sock || (main::ISWINDOWS && $handler->isRemote)) ? 1 : undef;
+		
+				my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
+					$transcoder, $sock ? '-' : $track->path, $self->streamUrl(), $usepipe, $quality
+				);
 	
-			my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, $usepipe, $quality
-			);
-
-			if (!defined($command)) {
-				logError("Couldn't create command line for $format playback for [$self->{'streamUrl'}]");
-				return (undef, 'PROBLEM_CONVERT_FILE', $url);
-			}
-
-			$log->info("Tokenized command $command");
-
-			my $pipeline;
-			
-			# Bug 10451: only use Pipeline when really necessary 
-			# and indicate if local or remote source
-			if ($usepipe) { 
-				$pipeline = Slim::Player::Pipeline->new($sock, $command, !$handler->isRemote);
-			} else {
-				# Bug: 4318
-				# On windows ensure a child window is not opened if $command includes transcode processes
-				if (Slim::Utils::OSDetect::OS() eq 'win') {
-					Win32::SetChildShowWindow(0);
-					$pipeline =  new FileHandle $command;
-					Win32::SetChildShowWindow();
+				if (!defined($command)) {
+					logError("Couldn't create command line for $format playback for [$self->streamUrl()]");
+					return (undef, 'PROBLEM_CONVERT_FILE', $url);
+				}
+	
+				main::INFOLOG && $log->info("Tokenized command $command");
+	
+				my $pipeline;
+				
+				# Bug 10451: only use Pipeline when really necessary 
+				# and indicate if local or remote source
+				if ($usepipe) { 
+					$pipeline = Slim::Player::Pipeline->new($sock, $command, !$handler->isRemote);
 				} else {
-					$pipeline =  new FileHandle $command;
-				}
-
-				if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {
-					logError("Can't set nonblocking for url: [$url]");
-					return (undef, 'PROBLEM_OPENING', $url);
-				}
-			}
-
-			if (!defined($pipeline)) {
-				logError("$!: While creating conversion pipeline for: ", $self->{'streamUrl'});
-				$sock->close() if $sock;
-				return (undef, 'PROBLEM_CONVERT_STREAM', $url);
-			}
+					# Bug: 4318
+					# On windows ensure a child window is not opened if $command includes transcode processes
+					if (main::ISWINDOWS) {
+						Win32::SetChildShowWindow(0);
+						$pipeline =  new FileHandle $command;
+						Win32::SetChildShowWindow();
+					} else {
+						$pipeline =  new FileHandle $command;
+					}
 	
-			$sock = $pipeline;
-			
-			$self->{'transcoded'} = 1;
+					if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {
+						logError("Can't set nonblocking for url: [$url]");
+						return (undef, 'PROBLEM_OPENING', $url);
+					}
+				}
+	
+				if (!defined($pipeline)) {
+					logError("$!: While creating conversion pipeline for: ", $self->streamUrl());
+					$sock->close() if $sock;
+					return (undef, 'PROBLEM_CONVERT_STREAM', $url);
+				}
+		
+				$sock = $pipeline;
 				
-			$self->{'streambitrate'} = guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'});
-		}
+				$self->_transcoded(1);
+					
+				$self->_streambitrate(guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'}) || 0);
+			}
+		} # ENDIF main::TRANSCODING
 			
 		$client->remoteStreamStartTime(Time::HiRes::time());
 		$client->pauseTime(0);
@@ -503,26 +587,31 @@ sub open {
 	
 	######################
 	# make sure the filehandle was actually set
-	if ($sock || $self->{'directstream'}) {
+	if ($sock || $self->directstream()) {
 
 		if ($sock && $sock->opened()) {
+			
+			# binmode() can mess with the file position but, since we cannot
+			# rely on all possible protocol handlers to have set binmode,
+			# we need to try to preserve the seek position if it is set.
+			my $position = $sock->sysseek(0, SEEK_CUR) if $sock->can('sysseek');
 			binmode($sock);
+			$sock->sysseek($position, SEEK_SET) if $position;
 		}
 
 		if ( !main::SLIM_SERVICE ) {
 			# XXXX - this really needs to happen in the caller!
 			# No database access here. - dsully
 			# keep track of some stats for this track
-			if ( $track->persistent ) {
-				$track->persistent->set( playcount  => ( $track->persistent->playcount || 0 ) + 1 );
-				$track->persistent->set( lastplayed => time() );
-				$track->persistent->update;
-				Slim::Schema->forceCommit();
+			if ( my $persistent = $track->retrievePersistent ) {
+				$persistent->set( playcount  => ( $persistent->playcount || 0 ) + 1 );
+				$persistent->set( lastplayed => time() );
+				$persistent->update;
 			}
 		}
 		
-		$self->{'streamFormat'} = $transcoder->{'streamformat'};
-		$client->streamformat($self->{'streamFormat'}); # XXX legacy
+		$self->_streamFormat($transcoder->{'streamformat'});
+		$client->streamformat($self->_streamFormat()); # XXX legacy
 
 		$streamControler = Slim::Player::SongStreamController->new($self, $sock);
 
@@ -534,7 +623,7 @@ sub open {
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'open', $url]);
 
-	$self->{'status'} = STATUS_STREAMING;
+	$self->status(STATUS_STREAMING);
 	
 	$client->metaTitle(undef);
 	
@@ -564,26 +653,26 @@ sub pluginData {
 	my $ret;
 	my $dirty = 0;
 	
-	if ( !defined $self->{'pluginData'} ) {
-		$self->{'pluginData'} = {};
+	if ( !defined $self->_pluginData() ) {
+		$self->_pluginData({});
 	}
 	
 	if ( !defined $key ) {
-		return $self->{'pluginData'};
+		return $self->_pluginData();
 	}
 	
 	if ( ref $key eq 'HASH' ) {
 		# Assign an entire hash to pluginData
-		$ret = $self->{'pluginData'} = $key;
+		$ret = $self->_pluginData($key);
 		$dirty = 1;
 	}
 	else {
 		if ( defined $value ) {
-			$self->{'pluginData'}->{$key} = $value;
+			$self->_pluginData()->{$key} = $value;
 			$dirty = 1;
 		}
 		
-		$ret = $self->{'pluginData'}->{$key};
+		$ret = $self->_pluginData()->{$key};
 	}
 	
 	if ( main::SLIM_SERVICE && $dirty ) {
@@ -596,20 +685,20 @@ sub pluginData {
 }
 
 
-sub isActive            {return $_[0]->{'status'} < STATUS_FAILED;}
-sub master              {return $_[0]->{'owner'}->master();}
-sub currentTrack        {return $_[0]->{'currentTrack'}        || $_[0]->{'track'};}
-sub currentTrackHandler {return $_[0]->{'currentTrackHandler'} || $_[0]->{'handler'};}
+sub isActive            {return $_[0]->_status() < STATUS_FAILED;}
+sub master              {return $_[0]->owner()->master();}
+sub track               {return $_[0]->_track();}
+sub currentTrack        {return $_[0]->_currentTrack()        || $_[0]->_track();}
+sub currentTrackHandler {return $_[0]->_currentTrackHandler() || $_[0]->handler();}
 sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}  
-sub duration            {return $_[0]->{'duration'} || Slim::Music::Info::getDuration($_[0]->currentTrack()->url);}
-sub bitrate             {return $_[0]->{'bitrate'} || Slim::Music::Info::getBitrate($_[0]->currentTrack()->url);}
-sub streamformat        {return $_[0]->{'streamFormat'} || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
-sub isPlaylist          {return $_[0]->{'playlist'};}
+sub streamformat        {return $_[0]->_streamFormat() || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
+sub isPlaylist          {return $_[0]->_playlist();}
+sub status              {return $_[0]->_status();}
 
 sub getSeekDataByPosition {
 	my ($self, $bytesReceived) = @_;
 	
-	return undef if $self->{'transcoded'};
+	return undef if $self->_transcoded();
 	
 	my $handler = $self->currentTrackHandler();
 	
@@ -620,18 +709,55 @@ sub getSeekDataByPosition {
 	}
 }
 
+sub getSeekData {
+	my ($self, $newtime) = @_;
+	
+	my $handler = $self->currentTrackHandler();
+	
+	if ($handler->can('getSeekData')) {
+		return $handler->getSeekData($self->master(), $self, $newtime);
+	} else {
+		return undef;
+	}
+}
+
+sub bitrate {
+	my $self = shift;
+	
+	if (scalar @_) {
+		return $self->_bitrate($_[0]);
+	}
+	return $self->_bitrate() || Slim::Music::Info::getBitrate($self->currentTrack()->url);
+}
+
+sub duration {
+	my $self = shift;
+	
+	if (scalar @_) {
+		return $self->_duration($_[0]);
+	}
+	return $self->_duration() || Slim::Music::Info::getDuration($self->currentTrack()->url);
+}
+
+
+
 sub streambitrate {
 	my $self = shift;
-	return (exists $self->{'streambitrate'} ? $self->{'streambitrate'} : $self->bitrate());
+	my $sb = $self->_streambitrate();
+	if (defined ($sb)) {
+		return $sb ? $sb : undef;
+	} else {
+		return $self->bitrate()
+	}
 }
 
 sub setStatus {
 	my ($self, $status) = @_;
-	$self->{'status'} = $status;
+	$self->_status($status);
 	
-	# Bug 11156 - we reset the seekability evaluation here in case we now now more after
+	# Bug 11156 - we reset the seekability evaluation here in case we now know more after
 	# parsing the actual stream headers or the background sanner has had time to finish.
-	$self->{'canSeek'} = undef;
+	$self->_canSeek(undef);
 }
 
 sub canSeek {
@@ -641,83 +767,136 @@ sub canSeek {
 	
 	return $canSeek if $canSeek;
 	
-	return wantarray ? ( $canSeek, @{$self->{'canSeekError'}} ) : $canSeek;
+	return wantarray ? ( $canSeek, @{$self->_canSeekError()} ) : $canSeek;
 }
 
 sub canDoSeek {
 	my $self = shift;
 	
-	return $self->{'canSeek'} if (defined $self->{'canSeek'});
-	
-	my $needEndSeek;
-	if (my $anchor = Slim::Utils::Misc::anchorFromURL($self->currentTrack->url())) {
-		$needEndSeek = ($anchor =~ /[\d.:]+-[\d.:]+/);
-	}
+	return $self->_canSeek() if (defined $self->_canSeek());
 	
 	my $handler = $self->currentTrackHandler();
 	
-	if (!$needEndSeek && $handler->can('canSeek')) {
-		if ($handler->canSeek( $self->master(), $self )) {
-			return $self->{'canSeek'} = 1 if $handler->isRemote();
-			
-			# If dealing with local file and transcoding then best let transcoder seek if it can
-			
-			# First see how we would stream without seeking question
-			my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
-				$self,
-				Slim::Music::Info::contentType($self->currentTrack),
-				['I', 'F'], [], []);
-				
-			if (! $transcoder) {
-				$self->{'canSeekError'} = [ 'SEEK_ERROR_TRANSCODED' ];
-				return $self->{'canSeek'} = 0;
-			}
-			
-			# Is this pass-through?
-			if ($transcoder->{'command'} eq '-') {
-				return $self->{'canSeek'} = 1; # nice simple case
-			}
-			
-			# no, then could we get a seeking transcoder?
-			if (Slim::Player::TranscodingHelper::getConvertCommand2(
-				$self,
-				Slim::Music::Info::contentType($self->currentTrack),
-				['I', 'F'], ['T'], []))
-			{
-				return $self->{'canSeek'} = 2;
-			}
-			
-			# no, then did the transcoder accept stdin?
-			if ($transcoder->{'streamMode'} eq 'I') {
-				return $self->{'canSeek'} = 1;
-			} else {
-				$self->{'canSeekError'} = [ 'SEEK_ERROR_TRANSCODED' ];
-				return $self->{'canSeek'} = 0;
-			}
-			
+	if (!main::TRANSCODING) {
+		
+		if ( $handler->can('canSeek') && $handler->canSeek( $self->master(), $self )) {
+			return $self->_canSeek(1);
 		} else {
-			$self->{'canSeekError'} = [$handler->can('canSeekError') 
-					? $handler->canSeekError( $self->master(), $self  )
-					: ('SEEK_ERROR_REMOTE')];
-			
-			# Note: this is intended to fall through to the below code
+			$self->_canSeekError([$handler->can('canSeekError') 
+						? $handler->canSeekError( $self->master(), $self  )
+						: ('SEEK_ERROR_TYPE_NOT_SUPPORTED')]);
+			return $self->_canSeek(0);
 		}
+
 	} 
 	
-	if (Slim::Player::TranscodingHelper::getConvertCommand2(
-			$self,
-			Slim::Music::Info::contentType($self->currentTrack),
-			[$handler->isRemote ? 'R' : 'F'], ['T'], []))
-	{
-		return $self->{'canSeek'} = 2;
+	else {
+
+		my $needEndSeek;
+		if (my $anchor = Slim::Utils::Misc::anchorFromURL($self->currentTrack->url())) {
+			$needEndSeek = ($anchor =~ /[\d.:]+-[\d.:]+/);
+		}
+		
+		if (!$needEndSeek && $handler->can('canSeek')) {
+			if ($handler->canSeek( $self->master(), $self )) {
+				return $self->_canSeek(1) if $handler->isRemote();
+				
+				# If dealing with local file and transcoding then best let transcoder seek if it can
+				
+				# First see how we would stream without seeking question
+				my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
+					$self,
+					Slim::Music::Info::contentType($self->currentTrack),
+					['I', 'F'], [], []);
+					
+				if (! $transcoder) {
+					$self->_canSeekError([ 'SEEK_ERROR_TRANSCODED' ]);
+					return $self->_canSeek(0);
+				}
+				
+				# Is this pass-through?
+				if ($transcoder->{'command'} eq '-') {
+					return $self->_canSeek(1); # nice simple case
+				}
+				
+				# no, then could we get a seeking transcoder?
+				if (Slim::Player::TranscodingHelper::getConvertCommand2(
+					$self,
+					Slim::Music::Info::contentType($self->currentTrack),
+					['I', 'F'], ['T'], []))
+				{
+					return $self->_canSeek(2);
+				}
+				
+				# no, then did the transcoder accept stdin?
+				if ($transcoder->{'streamMode'} eq 'I') {
+					return $self->_canSeek(1);
+				} else {
+					$self->_canSeekError([ 'SEEK_ERROR_TRANSCODED' ]);
+					return $self->_canSeek(0);
+				}
+				
+			} else {
+				$self->_canSeekError([$handler->can('canSeekError') 
+						? $handler->canSeekError( $self->master(), $self  )
+						: ('SEEK_ERROR_REMOTE')]);
+				
+				# Note: this is intended to fall through to the below code
+			}
+		} 
+		
+		if (Slim::Player::TranscodingHelper::getConvertCommand2(
+				$self,
+				Slim::Music::Info::contentType($self->currentTrack),
+				[$handler->isRemote ? 'R' : 'F'], ['T'], []))
+		{
+			return $self->_canSeek(2);
+		}
+		
+		if (!$self->_canSeekError()) {
+			$self->_canSeekError([ 'SEEK_ERROR_REMOTE' ]);
+		}
+		
+		return $self->_canSeek(0);
 	}
-	
-	if (!$self->{'canSeekError'}) {
-		$self->{'canSeekError'} = [ 'SEEK_ERROR_REMOTE' ];
-	}
-	
-	return $self->{'canSeek'} = 0;
 }
 
+# This is a prototype, that just falls back to protocol-handler providers (pull) for now.
+# It is planned to move the actual metadata maintenance into this module where the 
+# protocol-handlers will push the data.
+
+sub metadata {
+	my ($self) = @_;
+	
+	my $handler;
+	
+	if (($handler = $self->_currentTrackHandler()) && $handler->can('songMetadata')
+		|| ($handler = $self->handler()) && $handler->can('songMetadata') )
+	{
+		return $handler->songMetadata($self);
+	} 
+	elsif (($handler = $self->_currentTrackHandler()) && $handler->can('getMetadataFor')
+		|| ($handler = $self->handler()) && $handler->can('getMetadataFor') )
+	{
+		return $handler->songMetadata($self->master, $self->currentTrackHandler()->url, 0);
+	}
+	
+	return undef;
+}
+
+sub icon {
+	my $self = shift;
+	my $client = $self->master();
+	
+	my $icon = Slim::Player::ProtocolHandlers->iconForURL($self->currentTrack()->url, $client);
+	
+	$icon ||= Slim::Player::ProtocolHandlers->iconForURL($self->track()->url, $client);
+	
+	if (!$icon && $self->currentTrack()->isa('Slim::Schema::Track')) {
+		$icon = '/music/' . $self->currentTrack()->id . '/cover.jpg'
+	}
+	
+	return $icon;
+}
 
 1;

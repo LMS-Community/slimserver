@@ -13,11 +13,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.favorites');
 
 sub name {
-	return Slim::Web::HTTP::protectName('FAVORITES');
+	return Slim::Web::HTTP::CSRF->protectName('FAVORITES');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/Favorites/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/Favorites/settings/basic.html');
 }
 
 sub prefs {

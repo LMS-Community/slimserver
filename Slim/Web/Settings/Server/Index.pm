@@ -11,7 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/index.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/index.html');
 }
 
 sub handler {

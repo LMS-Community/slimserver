@@ -32,7 +32,7 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath();
 
-	my @paths = (split(/:/, $ENV{'PATH'} || ''), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
+	my @paths = (split(/:/, ($ENV{'PATH'} || '/sbin:/usr/sbin:/bin:/usr/bin')), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 }
@@ -68,8 +68,8 @@ sub dirsFor {
 
 		push @dirs, '';
 
-	# we don't want these values to return a value
-	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
+	# we don't want these values to return a(nother) value
+	} elsif ($dir =~ /^(?:libpath|mysql-language|updates)$/) {
 
 	} elsif ($dir eq 'prefs' && $::prefsdir) {
 		

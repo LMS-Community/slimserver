@@ -16,6 +16,11 @@ sub has_many {
       "${class} has more"
     ) if $too_many;
 
+    $class->throw_exception(
+      "has_many needs a primary key to infer a join; ".
+      "${class} has none"
+    ) if !defined $pri && (!defined $cond || !length $cond);
+
     my ($f_key,$guess);
     if (defined $cond && length $cond) {
       $f_key = $cond;

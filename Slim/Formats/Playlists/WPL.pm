@@ -27,7 +27,7 @@ sub read {
 
 	my @items = ();
 
-	$log->info("Parsing: $file ($url)");
+	main::INFOLOG && $log->info("Parsing: $file ($url)");
 
 	# Handles version 1.0 WPL Windows Medial Playlist files...
 	my $content = eval { XMLin($file) };
@@ -55,21 +55,21 @@ sub read {
 
 			my $entry = $entry_info->{'src'};
 
-			$log->debug("  entry from file: $entry");
+			main::DEBUGLOG && $log->debug("  entry from file: $entry");
 
 			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 			if ($class->playlistEntryIsValid($entry, $url)) {
 
-				$log->debug("    entry: $entry");
+				main::DEBUGLOG && $log->debug("    entry: $entry");
 
 				push @items, $class->_updateMetaData($entry);
 			}
 		}
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Parsed " . scalar(@items) . " items from WPL");
 	}
 

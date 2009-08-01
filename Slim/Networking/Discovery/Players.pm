@@ -112,7 +112,7 @@ sub _players_done {
 		return _players_error( $http );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got list of players: " . Data::Dump::dump( $res->{result}->{players_loop} ) );
 	}
 
@@ -136,7 +136,7 @@ sub _players_error {
 	
 	# don't report errors when querying access protected server etc.
 	if ($error =~ /(?:401\b)/) {
-		$log->info( "Unable to get players: $error" );
+		main::INFOLOG && $log->info( "Unable to get players: $error" );
 		return;
 	}
 

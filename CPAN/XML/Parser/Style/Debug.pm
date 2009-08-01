@@ -1,4 +1,4 @@
-# $Id: Debug.pm 1692 2005-01-11 04:21:17Z dsully $
+# $Id: Debug.pm,v 1.1 2003/07/27 16:07:49 matt Exp $
 
 package XML::Parser::Style::Debug;
 use strict;

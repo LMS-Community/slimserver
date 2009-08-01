@@ -2,8 +2,6 @@ package Log::Log4perl::JavaMap::JDBCAppender;
 
 use Carp;
 use strict;
-use Log::Dispatch::File;
-
 
 sub new {
     my ($class, $appender_name, $data) = @_;

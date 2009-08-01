@@ -27,7 +27,11 @@ my $dirtyCount = 0;
 }
 
 sub update {
-	my $self  = shift;
+	my $self = shift;
+
+	if ( !main::SCANNER ) {
+		return $self->SUPER::update;
+	}
 
 	if ($self->is_changed) {
 
@@ -63,7 +67,7 @@ sub removeStaleDBEntries {
 
 	my $log     = logger('scan.import');
 
-	$log->info("Starting stale cleanup for class $class / $foreign");
+	main::INFOLOG && $log->info("Starting stale cleanup for class $class / $foreign");
 
 	my $rs   = Slim::Schema->search($class, undef, { 'prefetch' => $foreign });
 	my $vaId = Slim::Schema->variousArtistsObject->id;
@@ -78,7 +82,7 @@ sub removeStaleDBEntries {
 
 		if ($obj->search_related($foreign)->count == 0) {
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("DB garbage collection - removing $class: %s - no more $foreign!", $obj->name));
 			}
 
@@ -88,7 +92,7 @@ sub removeStaleDBEntries {
 		}
 	}
 
-	$log->info("Finished stale cleanup for class $class / $foreign");
+	main::INFOLOG && $log->info("Finished stale cleanup for class $class / $foreign");
 }
 
 1;

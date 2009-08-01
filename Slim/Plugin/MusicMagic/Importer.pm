@@ -29,8 +29,6 @@ my $initialized = 0;
 my $MMMVersion  = 0;
 my $MMSport;
 
-my $isWin = Slim::Utils::OSDetect::isWindows();
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
@@ -70,7 +68,7 @@ sub useMusicMagic {
 
 	Slim::Music::Import->useImporter($class, $use);
 
-	$log->info("Using musicip: $use");
+	main::INFOLOG && $log->info("Using musicip: $use");
 
 	return $use;
 }
@@ -90,7 +88,7 @@ sub initPlugin {
 
 	$MMSport = $prefs->get('port');
 
-	$log->info("Testing for API on localhost:$MMSport");
+	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
 	
 	my $initialized = get( "http://localhost:$MMSport/api/version", 5 );
 
@@ -99,7 +97,7 @@ sub initPlugin {
 		# Note: Check version restrictions if any
 		chomp($initialized);
 
-		$log->info($initialized);
+		main::INFOLOG && $log->info($initialized);
 
 		($MMMVersion) = ($initialized =~ /Version ([\d\.]+)$/);
 
@@ -115,12 +113,12 @@ sub initPlugin {
 
 		$initialized = 0;
 
-		$log->info("Cannot Connect");
+		main::INFOLOG && $log->info("Cannot Connect");
 	}
 
 	# supported file formats differ on platforms
 	# http://www.musicip.com/mixer/mixerfaq.jsp#1
-	if ($isWin) {
+	if (main::ISWINDOWS) {
 		@supportedFormats = ('alc', 'm4a', 'mp3', 'wma', 'ogg', 'flc', 'wav');
 	}
 	elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
@@ -135,7 +133,7 @@ sub initPlugin {
 
 sub resetState {
 
-	$log->debug("Resetting Last Library Change Time.");
+	main::DEBUGLOG && $log->debug("Resetting Last Library Change Time.");
 
 	Slim::Music::Import->setLastScanTime('MMMLastLibraryChange', 0);
 }
@@ -147,7 +145,7 @@ sub startScan {
 		return;
 	}
 		
-	$log->debug("Start export");
+	main::DEBUGLOG && $log->debug("Start export");
 
 	if (Slim::Music::Import->scanPlaylistsOnly) {
 
@@ -164,7 +162,7 @@ sub startScan {
 sub doneScanning {
 	my $class = shift;
 
-	$log->info("Done Scanning");
+	main::INFOLOG && $log->info("Done Scanning");
 
 	my $lastDate = get("http://localhost:$MMSport/api/cacheid?contents");
 
@@ -194,7 +192,7 @@ sub exportSongs {
 	my $fullRescan = $::wipe ? 1 : 0;
 
 	if ($fullRescan == 1 || $prefs->get('musicip') == 1) {
-		$log->info("MusicIP mixable status full scan");
+		main::INFOLOG && $log->info("MusicIP mixable status full scan");
 
 		my $count = get("http://localhost:$MMSport/api/getSongCount");
 		if ($count) {
@@ -203,7 +201,7 @@ sub exportSongs {
 			$count += 0;
 		}
 
-		$log->info("Got $count song(s).");
+		main::INFOLOG && $log->info("Got $count song(s).");
 
 		my $progress = Slim::Utils::Progress->new({ 
 			'type'  => 'importer', 
@@ -216,9 +214,9 @@ sub exportSongs {
 		# down the entire library, separated by $LF$LF - this allows us to make
 		# 1 HTTP request, and the process the file.
 		if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5') >= 0) {
-			$log->info("Fetching ALL song data via songs/extended..");
+			main::INFOLOG && $log->info("Fetching ALL song data via songs/extended..");
 
-			my $MMMSongData = catdir( preferences('server')->get('cachedir'), 'mmm-song-data.txt' );
+			my $MMMSongData = catdir( preferences('server')->get('librarycachedir'), 'mmm-song-data.txt' );
 			my $MMMDataURL  = "http://localhost:$MMSport/api/songs?extended";
 
 			getstore($MMMDataURL, $MMMSongData);
@@ -233,7 +231,7 @@ sub exportSongs {
 				return;
 			};
 
-			$log->info("Finished fetching - processing.");
+			main::INFOLOG && $log->info("Finished fetching - processing.");
 
 			local $/ = "$LF$LF";
 
@@ -264,7 +262,7 @@ sub exportSongs {
 		$progress->final($count) if $progress;
 	}
 	else {
-		$log->info("MusicIP mixable status scan for all songs not currently mixable");
+		main::INFOLOG && $log->info("MusicIP mixable status scan for all songs not currently mixable");
 
 		my @notMixableTracks = Slim::Schema->rs('Track')->search({
 			'audio' => '1', 
@@ -274,7 +272,7 @@ sub exportSongs {
 		});
 
 		my $count = @notMixableTracks;
-		$log->info("Got $count song(s).");
+		main::INFOLOG && $log->info("Got $count song(s).");
 
 		my $progress = Slim::Utils::Progress->new({ 
 			'type'  => 'importer', 
@@ -286,7 +284,7 @@ sub exportSongs {
 		for my $track (@notMixableTracks) {
 			my $trackurl = $track->url;
 
-			$log->debug("trackurl: $trackurl");
+			main::DEBUGLOG && $log->debug("trackurl: $trackurl");
 
 			# Convert $track->url to a path and call MusicIP
 			my $path = Slim::Utils::Misc::pathFromFileURL($trackurl);
@@ -300,7 +298,7 @@ sub exportSongs {
 
 				my $mixable = $1;
 				if ($mixable eq 1) {
-					$log->debug("track: $path is mixable");
+					main::DEBUGLOG && $log->debug("track: $path is mixable");
 					$class->setSongMixable($track);
 				}
 				else {
@@ -344,14 +342,14 @@ sub setMixable {
 	if ($active eq 'yes') {
 		my $fileurl = Slim::Utils::Misc::fileURLFromPath($file);
 	
-		my $track = Slim::Schema->rs('Track')->objectForUrl($fileurl)
+		my $track = Slim::Schema->objectForUrl($fileurl)
 		|| do {
 			$log->warn("Couldn't get track for $fileurl");
 			$progress->update($file);
 			return;
 		};
 
-		$log->debug("track: $file is mixable");
+		main::DEBUGLOG && $log->debug("track: $file is mixable");
 		$class->setSongMixable($track);
 	}
 
@@ -414,7 +412,7 @@ sub processSong {
 	# This breaks Linux however, so only do it on Windows & OS X
 	my @keys  = qw(album artist genre name);
 
-	if ($isWin) {
+	if (main::ISWINDOWS) {
 
 		push @keys, 'file';
 	}
@@ -438,11 +436,11 @@ sub processSong {
 	# need conversion to the current charset.
 	$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 
-	$log->debug("Exporting song: $songInfo{'file'}");
+	main::DEBUGLOG && $log->debug("Exporting song: $songInfo{'file'}");
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
-	my $track   = Slim::Schema->rs('Track')->updateOrCreate({
+	my $track   = Slim::Schema->updateOrCreate({
 
 		'url'        => $fileurl,
 		'attributes' => \%attributes,
@@ -507,7 +505,7 @@ sub exportPlaylists {
 		my $playlist = get("http://localhost:$MMSport/api/getPlaylist?index=$i") || next;
 		my @songs    = split(/\n/, $playlist);
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("Got playlist %s with %d items", $listname, scalar @songs));
 		}
 		
@@ -524,13 +522,13 @@ sub exportDuplicates {
 		return;
 	}
 
-	$log->info("Checking for duplicates.");
+	main::INFOLOG && $log->info("Checking for duplicates.");
 
 	my @songs = split(/\n/, get("http://localhost:$MMSport/api/duplicates"));
 
 	$class->_updatePlaylist(string('MUSICIP_DUPLICATES'), \@songs);
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Finished export (%d records)", scalar @songs));
 	}
 }
@@ -556,7 +554,7 @@ sub _updatePlaylist {
 
 	for my $song (@$songs) {
 
-		if ($isWin) {
+		if (main::ISWINDOWS) {
 			$song = Slim::Plugin::MusicMagic::Common::decode($song);
 		}
 

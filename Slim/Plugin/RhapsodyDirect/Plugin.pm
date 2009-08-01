@@ -81,7 +81,7 @@ sub initPlugin {
 	
 	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/rhapsodydirect/trackinfo.html',
 			sub {
 				my $client = $_[0];
@@ -124,7 +124,7 @@ sub initPlugin {
 		onDNS   => sub {
 			my $ip = shift;
 			
-			$log->debug( "secure-direct.rhapsody.com is $ip" );
+			main::DEBUGLOG && $log->debug( "secure-direct.rhapsody.com is $ip" );
 			
 			if ( $ip ne '207.188.0.25' ) {
 				$SECURE_IP = $ip;
@@ -181,7 +181,7 @@ sub myLibraryMode {
 sub handleError {
 	my ( $error, $client ) = @_;
 	
-	$log->debug("Error during request: $error");
+	main::DEBUGLOG && $log->debug("Error during request: $error");
 	
 	# Strip long number string from front of error
 	$error =~ s/\d+( : )?//;
@@ -220,7 +220,7 @@ sub createPlaylist {
 	my @trackIds = split /,/, $request->getParam('_trackIds');
 	
 	if ( !$name || !scalar @trackIds ) {
-		$log->debug( 'createplaylist requires name and trackIds params' );
+		main::DEBUGLOG && $log->debug( 'createplaylist requires name and trackIds params' );
 		$request->setStatusBadParams();
 		return;
 	}
@@ -256,7 +256,7 @@ sub gotCreatePlaylist {
 	my $http    = shift;
 	my $request = $http->params->{request};
 	
-	$log->debug('Playlist created OK');
+	main::DEBUGLOG && $log->debug('Playlist created OK');
 	
 	$request->setStatusDone();
 }
@@ -266,7 +266,7 @@ sub gotCreatePlaylistError {
 	my $request = $http->params->{request};
 	my $error   = $http->error;
 	
-	$log->debug( "Playlist creation failed: $error" );
+	main::DEBUGLOG && $log->debug( "Playlist creation failed: $error" );
 	
 	$request->setStatusBadParams();
 }
@@ -280,7 +280,7 @@ sub trackInfoMenu {
 	
 	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'rhapsody' );
 	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	
@@ -306,8 +306,8 @@ sub trackInfoMenu {
 sub rpds_handler {
 	my ( $client, $data_ref ) = @_;
 	
-	if ( $log->is_warn ) {
-		$log->warn( $client->id . " Got RPDS packet: " . Data::Dump::dump($data_ref) );
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug( $client->id . " Got RPDS packet: " . Data::Dump::dump($data_ref) );
 	}
 	
 	my $got_cmd = unpack 'C', $$data_ref;

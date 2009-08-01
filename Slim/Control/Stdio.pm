@@ -35,11 +35,11 @@ sub init {
 	$stdin = shift;
 	$stdout = shift;
 
-	if (Slim::Utils::OSDetect::isWindows()) {
+	if (main::ISWINDOWS) {
 		return;
 	}
 
-	$log->info("Adding \$stdin to select loop");
+	main::INFOLOG && $log->info("Adding \$stdin to select loop");
 
 	Slim::Networking::Select::addRead($stdin, \&processRequest);
 
@@ -58,11 +58,11 @@ sub processRequest {
 		# process the commands
 		chomp $firstline; 
 
-		$log->info("Got line: $firstline");
+		main::INFOLOG && $log->info("Got line: $firstline");
 
 		my $message = executeCmd($firstline);
 
-		$log->info("Response is: $message");
+		main::INFOLOG && $log->info("Response is: $message");
 
 		$stdout->print("$message\n");
 	}

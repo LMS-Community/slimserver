@@ -34,12 +34,13 @@ sub commentTagTodB {
 
 		my $comment = $tags->{'COMMENT'}->[$i];
 
-		if ($comment =~ /^iTunNORM/) {
+		if ($comment && ref $comment eq 'ARRAY' && $comment->[2] eq 'iTunNORM') {
 			
-			if ( my $gain = normStringTodB($comment) ) {
+			if ( my $gain = normStringTodB($comment->[3]) ) {
 				# Bug 3207, if we already have a known gain value,
-				# combine it with the iTunNORM value	
+				# combine it with the iTunNORM value
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} ||= 0;
+				$tags->{'REPLAYGAIN_TRACK_GAIN'} =~ s/\s*dB//gi;
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} =~ s/[^-\d\.]//g;
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} += $gain;
 			}

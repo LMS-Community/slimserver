@@ -106,7 +106,7 @@ sub checkClientActivity {
 		if ( Slim::Music::Import->stillScanning() || _hasResumed($currenttime) || _playersBusy() ) {
 			
 			$hasbeenidle = 0;
-			$log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
 		}
 		
 		else {
@@ -114,7 +114,7 @@ sub checkClientActivity {
 			$hasbeenidle++;
 			
 			if ($hasbeenidle < $idletime) {
-				$log->is_debug && $log->debug("Incrementing idle counter. " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
 			}
 		}
 	}
@@ -127,13 +127,13 @@ sub checkClientActivity {
 		
 		if (defined $SetThreadExecutionState) {
 			
-			$log->is_info && $log->info("Preventing System Standby...");
+			main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
 			$SetThreadExecutionState->Call(1);
 		}
 	}
 	
 	else {
-		$log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
+		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
 	}
 
 	$lastchecktime = $currenttime;
@@ -155,12 +155,12 @@ sub _playersBusy {
 	for my $client (Slim::Player::Client::clients()) {
 		
 		if ($checkpower && $client->power()) {
-			$log->is_debug && $log->debug("Player " . $client->name() . " is powered " . ($client->power() ? "on" : "off") . "...");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is powered " . ($client->power() ? "on" : "off") . "...");
 			return 1;
 		}
 		
 		if ( $client->isUpgrading() || $client->isPlaying() ) {
-			$log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
 			return 1;
 		}
 	}
@@ -175,7 +175,7 @@ sub _hasResumed {
 	
 	if ( $currenttime > ($lastchecktime + (INTERVAL * 2)) || $currenttime < $lastchecktime ) {
 		
-		$log->debug("System has resumed...");
+		main::DEBUGLOG && $log->debug("System has resumed...");
 		return 1;
 	}
 	
@@ -188,7 +188,7 @@ sub idletime_change {
 	
 	$value ||= 0;
 
-	$log->debug("Pref $pref changed to $value. Resetting idle counter.");
+	main::DEBUGLOG && $log->debug("Pref $pref changed to $value. Resetting idle counter.");
 
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
@@ -205,7 +205,7 @@ sub checkpower_change {
 	
 	$value ||= 0;
 
-	$log->debug("Pref $pref changed to $value. Resetting idle counter.");
+	main::DEBUGLOG && $log->debug("Pref $pref changed to $value. Resetting idle counter.");
 
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;

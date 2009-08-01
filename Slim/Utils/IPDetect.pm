@@ -8,7 +8,7 @@ package Slim::Utils::IPDetect;
 # version 2.
 
 use strict;
-use Socket;
+use Socket qw(inet_aton inet_ntoa sockaddr_in pack_sockaddr_in PF_INET SOCK_DGRAM INADDR_ANY);
 use Symbol;
 use Slim::Utils::Log;
 

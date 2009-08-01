@@ -7,354 +7,59 @@
 #   variables for the Template Toolkit. 
 #
 # AUTHOR
-#   Andy Wardley   <abw@cpan.org>
+#   Andy Wardley   <abw@wardley.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-#   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
+#   Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
-#----------------------------------------------------------------------------
-#
-# $Id: Stash.pm,v 2.102 2006/05/25 11:23:35 abw Exp $
 #
 #============================================================================
 
 package Template::Stash;
 
-require 5.004;
-
 use strict;
+use warnings;
+use Template::VMethods;
+use Template::Exception;
+use Scalar::Util qw( blessed reftype );
 
-our $VERSION = sprintf("%d.%02d", q$Revision: 2.102 $ =~ /(\d+)\.(\d+)/);
-our $DEBUG   = 0 unless defined $DEBUG;
-our $PRIVATE = qr/^[_.]/;
+our $VERSION    = 2.91;
+our $DEBUG      = 0 unless defined $DEBUG;
+our $PRIVATE    = qr/^[_.]/;
+our $UNDEF_TYPE = 'var.undef';
+our $UNDEF_INFO = 'undefined variable: %s';
 
+# alias _dotop() to dotop() so that we have a consistent method name
+# between the Perl and XS stash implementations
+*dotop = \&_dotop;
 
-#========================================================================
-#                    -- PACKAGE VARIABLES AND SUBS --
-#========================================================================
 
 #------------------------------------------------------------------------
-# Definitions of various pseudo-methods.  ROOT_OPS are merged into all
-# new Template::Stash objects, and are thus default global functions.
-# SCALAR_OPS are methods that can be called on a scalar, and ditto 
-# respectively for LIST_OPS and HASH_OPS
+# Virtual Methods
+#
+# If any of $ROOT_OPS, $SCALAR_OPS, $HASH_OPS or $LIST_OPS are already
+# defined then we merge their contents with the default virtual methods
+# define by Template::VMethods.  Otherwise we can directly alias the 
+# corresponding Template::VMethod package vars.
 #------------------------------------------------------------------------
 
-our $ROOT_OPS = {
-    'inc'  => sub { local $^W = 0; my $item = shift; ++$item }, 
-    'dec'  => sub { local $^W = 0; my $item = shift; --$item }, 
-#    import => \&hash_import,
-    defined $ROOT_OPS ? %$ROOT_OPS : (),
-};
+our $ROOT_OPS = defined $ROOT_OPS 
+    ? { %{$Template::VMethods::ROOT_VMETHODS}, %$ROOT_OPS }
+    : $Template::VMethods::ROOT_VMETHODS;
 
-our $SCALAR_OPS = {
-    'item'    => sub {   $_[0] },
-    'list'    => sub { [ $_[0] ] },
-    'hash'    => sub { { value => $_[0] } },
-    'length'  => sub { length $_[0] },
-    'size'    => sub { return 1 },
-    'defined' => sub { return 1 },
-    'match' => sub {
-        my ($str, $search, $global) = @_;
-        return $str unless defined $str and defined $search;
-        my @matches = $global ? ($str =~ /$search/g)
-                              : ($str =~ /$search/);
-        return @matches ? \@matches : '';
-    },
-    'search'  => sub { 
-        my ($str, $pattern) = @_;
-        return $str unless defined $str and defined $pattern;
-        return $str =~ /$pattern/;
-    },
-    'repeat'  => sub { 
-        my ($str, $count) = @_;
-        $str = '' unless defined $str;  
-        return '' unless $count;
-        $count ||= 1;
-        return $str x $count;
-    },
-    'replace' => sub {
-        my ($text, $pattern, $replace, $global) = @_;
-        $text    = '' unless defined $text;
-        $pattern = '' unless defined $pattern;
-        $replace = '' unless defined $replace;
-        $global  = 1  unless defined $global;
+our $SCALAR_OPS = defined $SCALAR_OPS 
+    ? { %{$Template::VMethods::TEXT_VMETHODS}, %$SCALAR_OPS }
+    : $Template::VMethods::TEXT_VMETHODS;
 
-        if ($replace =~ /\$\d+/) {
-            # replacement string may contain backrefs
-            my $expand = sub {
-                my ($chunk, $start, $end) = @_;
-                $chunk =~ s{ \\(\\|\$) | \$ (\d+) }{
-                    $1 ? $1
-                        : ($2 > $#$start || $2 == 0) ? '' 
-                        : substr($text, $start->[$2], $end->[$2] - $start->[$2]);
-                }exg;
-                $chunk;
-            };
-            if ($global) {
-                $text =~ s{$pattern}{ &$expand($replace, [@-], [@+]) }eg;
-            } 
-            else {
-                $text =~ s{$pattern}{ &$expand($replace, [@-], [@+]) }e;
-            }
-        }
-        else {
-            if ($global) {
-                $text =~ s/$pattern/$replace/g;
-            } 
-            else {
-                $text =~ s/$pattern/$replace/;
-            }
-        }
-        return $text;
-    },
-    'remove'  => sub { 
-        my ($str, $search) = @_;
-        return $str unless defined $str and defined $search;
-        $str =~ s/$search//g;
-        return $str;
-    },
-    'split' => sub {
-        my ($str, $split, $limit) = @_;
-        $str = '' unless defined $str;
+our $HASH_OPS = defined $HASH_OPS 
+    ? { %{$Template::VMethods::HASH_VMETHODS}, %$HASH_OPS }
+    : $Template::VMethods::HASH_VMETHODS;
 
-        # we have to be very careful about spelling out each possible 
-        # combination of arguments because split() is very sensitive
-        # to them, for example C<split(' ', ...)> behaves differently 
-        # to C<$space=' '; split($space, ...)>
-
-        if (defined $limit) {
-            return [ defined $split 
-                     ? split($split, $str, $limit)
-                     : split(' ', $str, $limit) ];
-        }
-        else {
-            return [ defined $split 
-                     ? split($split, $str)
-                     : split(' ', $str) ];
-        }
-    },
-    'chunk' => sub {
-        my ($string, $size) = @_;
-        my @list;
-        $size ||= 1;
-        if ($size < 0) {
-            # sexeger!  It's faster to reverse the string, search
-            # it from the front and then reverse the output than to 
-            # search it from the end, believe it nor not!
-            $string = reverse $string;
-            $size = -$size;
-            unshift(@list, scalar reverse $1) 
-                while ($string =~ /((.{$size})|(.+))/g);
-        }
-        else {
-            push(@list, $1) while ($string =~ /((.{$size})|(.+))/g);
-        }
-        return \@list;
-    },
-    'substr' => sub {
-        my ($text, $offset, $length, $replacement) = @_;
-        $offset ||= 0;
-
-        if(defined $length) {
-            if (defined $replacement) {
-                substr( $text, $offset, $length, $replacement );
-                return $text;
-            }
-            else {
-                return substr( $text, $offset, $length );
-            }
-        }
-        else {
-            return substr( $text, $offset );
-        }
-    },
-
-    defined $SCALAR_OPS ? %$SCALAR_OPS : (),
-};
-
-our $HASH_OPS = {
-    'item'   => sub { 
-        my ($hash, $item) = @_; 
-        $item = '' unless defined $item;
-        return if $PRIVATE && $item =~ /$PRIVATE/;
-        $hash->{ $item };
-    },
-    'hash'   => sub { $_[0] },
-    'size'   => sub { scalar keys %{$_[0]} },
-    'each'   => sub { # this will be changed in TT3 to do what pairs does
-                      [        %{ $_[0] } ] },
-    'keys'   => sub { [ keys   %{ $_[0] } ] },
-    'values' => sub { [ values %{ $_[0] } ] },
-    'items'  => sub { [        %{ $_[0] } ] },
-    'pairs'  => sub { [ map   { { key => $_ , value => $_[0]->{ $_ } } }
-                        sort keys %{ $_[0] } ] },
-    'list'   => sub { 
-        my ($hash, $what) = @_;  
-        $what ||= '';
-        return ($what eq 'keys')   ? [   keys %$hash ]
-            :  ($what eq 'values') ? [ values %$hash ]
-            :  ($what eq 'each')   ? [        %$hash ]
-            :  # for now we do what pairs does but this will be changed 
-               # in TT3 to return [ $hash ] by default
-               [ map { { key => $_ , value => $hash->{ $_ } } }
-                 sort keys %$hash 
-               ];
-    },
-    'exists'  => sub { exists $_[0]->{ $_[1] } },
-    'defined' => sub { 
-        # return the item requested, or 1 if no argument 
-        # to indicate that the hash itself is defined
-        my $hash = shift;
-        return @_ ? defined $hash->{ $_[0] } : 1;
-    },
-    'delete'  => sub { 
-        my $hash = shift; 
-        delete $hash->{ $_ } for @_;
-    },
-    'import'  => \&hash_import,
-    'sort'    => sub {
-        my ($hash) = @_;
-        [ sort { lc $hash->{$a} cmp lc $hash->{$b} } (keys %$hash) ];
-    },
-    'nsort'    => sub {
-        my ($hash) = @_;
-        [ sort { $hash->{$a} <=> $hash->{$b} } (keys %$hash) ];
-    },
-    defined $HASH_OPS ? %$HASH_OPS : (),
-};
-
-our $LIST_OPS = {
-    'item'    => sub { $_[0]->[ $_[1] || 0 ] },
-    'list'    => sub { $_[0] },
-    'hash'    => sub { 
-        my $list = shift;
-        if (@_) {
-            my $n = shift || 0;
-            return { map { ($n++, $_) } @$list }; 
-        }
-        no warnings;
-        return { @$list };
-    },
-    'push'    => sub { my $list = shift; push(@$list, @_); return '' },
-    'pop'     => sub { my $list = shift; pop(@$list) },
-    'unshift' => sub { my $list = shift; unshift(@$list, @_); return '' },
-    'shift'   => sub { my $list = shift; shift(@$list) },
-    'max'     => sub { local $^W = 0; my $list = shift; $#$list; },
-    'size'    => sub { local $^W = 0; my $list = shift; $#$list + 1; },
-    'defined' => sub { 
-        # return the item requested, or 1 if no argument to 
-        # indicate that the hash itself is defined
-        my $list = shift;
-        return @_ ? defined $list->[$_[0]] : 1;
-    },
-    'first'   => sub {
-        my $list = shift;
-        return $list->[0] unless @_;
-        return [ @$list[0..$_[0]-1] ];
-    },
-    'last'    => sub {
-        my $list = shift;
-        return $list->[-1] unless @_;
-        return [ @$list[-$_[0]..-1] ];
-    },
-    'reverse' => sub { my $list = shift; [ reverse @$list ] },
-    'grep'    => sub { 
-        my ($list, $pattern) = @_;
-        $pattern ||= '';
-        return [ grep /$pattern/, @$list ];
-    },
-    'join'    => sub { 
-        my ($list, $joint) = @_; 
-        join(defined $joint ? $joint : ' ', 
-             map { defined $_ ? $_ : '' } @$list) 
-        },
-    'sort'    => sub {
-        $^W = 0;
-        my ($list, $field) = @_;
-        return $list unless @$list > 1;     # no need to sort 1 item lists
-        return [
-            $field                          # Schwartzian Transform 
-            ?  map  { $_->[0] }             # for case insensitivity
-               sort { $a->[1] cmp $b->[1] }
-               map  { [ $_, lc(ref($_) eq 'HASH' 
-                   ? $_->{ $field } : 
-                   UNIVERSAL::can($_, $field)
-                   ? $_->$field() : $_) ] } 
-               @$list 
-            :  map  { $_->[0] }
-               sort { $a->[1] cmp $b->[1] }
-               map  { [ $_, lc $_ ] } 
-               @$list,
-       ];
-   },
-   'nsort'    => sub {
-        my ($list, $field) = @_;
-        return $list unless @$list > 1;     # no need to sort 1 item lists
-        return [ 
-            $field                          # Schwartzian Transform 
-            ?  map  { $_->[0] }             # for case insensitivity
-               sort { $a->[1] <=> $b->[1] }
-               map  { [ $_, lc(ref($_) eq 'HASH' 
-                   ? $_->{ $field } : 
-                   UNIVERSAL::can($_, $field)
-                   ? $_->$field() : $_) ] } 
-               @$list 
-            :  map  { $_->[0] }
-               sort { $a->[1] <=> $b->[1] }
-               map  { [ $_, lc $_ ] } 
-               @$list,
-        ];
-    },
-    'unique'  => sub { my %u; [ grep { ++$u{$_} == 1 } @{$_[0]} ] },
-    'import'  => sub {
-        my $list = shift;
-        push(@$list, grep defined, map ref eq 'ARRAY' ? @$_ : undef, @_);
-        return $list;
-    },
-    'merge'   => sub {
-        my $list = shift;
-        return [ @$list, grep defined, map ref eq 'ARRAY' ? @$_ : undef, @_ ];
-    },
-    'slice' => sub {
-        my ($list, $from, $to) = @_;
-        $from ||= 0;
-        $to = $#$list unless defined $to;
-        return [ @$list[$from..$to] ];
-    },
-    'splice'  => sub {
-        my ($list, $offset, $length, @replace) = @_;
-        if (@replace) {
-            # @replace can contain a list of multiple replace items, or 
-            # be a single reference to a list
-            @replace = @{ $replace[0] }
-            if @replace == 1 && ref $replace[0] eq 'ARRAY';
-            return [ splice @$list, $offset, $length, @replace ];
-        }
-        elsif (defined $length) {
-            return [ splice @$list, $offset, $length ];
-        }
-        elsif (defined $offset) {
-            return [ splice @$list, $offset ];
-        }
-        else {
-            return [ splice(@$list) ];
-        }
-    },
-
-    defined $LIST_OPS ? %$LIST_OPS : (),
-};
-
-sub hash_import { 
-    my ($hash, $imp) = @_;
-    $imp = {} unless ref $imp eq 'HASH';
-    @$hash{ keys %$imp } = values %$imp;
-    return '';
-}
+our $LIST_OPS = defined $LIST_OPS 
+    ? { %{$Template::VMethods::LIST_VMETHODS}, %$LIST_OPS }
+    : $Template::VMethods::LIST_VMETHODS;
 
 
 #------------------------------------------------------------------------
@@ -446,7 +151,7 @@ sub clone {
 
     # look out for magical 'import' argument which imports another hash
     my $import = $params->{ import };
-    if (defined $import && UNIVERSAL::isa($import, 'HASH')) {
+    if (defined $import && ref $import eq 'HASH') {
         delete $params->{ import };
     }
     else {
@@ -460,7 +165,7 @@ sub clone {
     }, ref $self;
     
     # perform hash import if defined
-    &{ $HASH_OPS->{ import }}($clone, $import)
+    &{ $HASH_OPS->{ import } }($clone, $import)
         if defined $import;
 
     return $clone;
@@ -523,7 +228,9 @@ sub get {
         $result = $self->_dotop($root, $ident, $args);
     }
 
-    return defined $result ? $result : $self->undefined($ident, $args);
+    return defined $result 
+        ? $result 
+        : $self->undefined($ident, $args);
 }
 
 
@@ -630,7 +337,7 @@ sub update {
 
     # look out for magical 'import' argument to import another hash
     my $import = $params->{ import };
-    if (defined $import && UNIVERSAL::isa($import, 'HASH')) {
+    if (defined $import && ref $import eq 'HASH') {
         @$self{ keys %$import } = values %$import;
         delete $params->{ import };
     }
@@ -647,8 +354,39 @@ sub update {
 #------------------------------------------------------------------------
 
 sub undefined {
-    my ($self, $ident, $args);
-    return '';
+    my ($self, $ident, $args) = @_;
+
+    if ($self->{ _STRICT }) {
+        # Sorry, but we can't provide a sensible source file and line without
+        # re-designing the whole architecure of TT (see TT3)
+        die Template::Exception->new(
+            $UNDEF_TYPE, 
+            sprintf(
+                $UNDEF_INFO, 
+                $self->_reconstruct_ident($ident)
+            )
+        ) if $self->{ _STRICT };
+    }
+    else {
+        # There was a time when I thought this was a good idea. But it's not.
+        return '';
+    }
+}
+
+sub _reconstruct_ident {
+    my ($self, $ident) = @_;
+    my ($name, $args, @output);
+    my @input = ref $ident eq 'ARRAY' ? @$ident : ($ident);
+
+    while (@input) {
+        $name = shift @input;
+        $args = shift @input || 0;
+        $name .= '(' . join(', ', map { /^\d+$/ ? $_ : "'$_'" } @$args) . ')'
+            if $args && ref $args eq 'ARRAY';
+        push(@output, $name);
+    }
+    
+    return join('.', @output);
 }
 
 
@@ -682,7 +420,7 @@ sub undefined {
 sub _dotop {
     my ($self, $root, $item, $args, $lvalue) = @_;
     my $rootref = ref $root;
-    my $atroot  = ($root eq $self);
+    my $atroot  = (blessed $root && $root->isa(ref $self));
     my ($value, @result);
 
     $args ||= [ ];
@@ -743,7 +481,9 @@ sub _dotop {
     # doesn't appear to work with CGI, returning true for the first call
     # and false for all subsequent calls. 
     
-    elsif (ref($root) && UNIVERSAL::can($root, 'can')) {
+    # UPDATE: that doesn't appear to be the case any more
+    
+    elsif (blessed($root) && $root->can('can')) {
 
         # if $root is a blessed reference (i.e. inherits from the 
         # UNIVERSAL object base class) then we call the item as a method.
@@ -761,7 +501,7 @@ sub _dotop {
             die $@ if ref($@) || ($@ !~ /Can't locate object method "\Q$item\E" via package "\Q$class\E"/);
 
             # failed to call object method, so try some fallbacks
-            if (UNIVERSAL::isa($root, 'HASH') ) {
+            if (reftype $root eq 'HASH') {
                 if( defined($value = $root->{ $item })) {
                     return $value unless ref $value eq 'CODE';      ## RETURN
                     @result = &$value(@$args);
@@ -769,8 +509,11 @@ sub _dotop {
                 elsif ($value = $HASH_OPS->{ $item }) {
                     @result = &$value($root, @$args);
                 }
+                elsif ($value = $LIST_OPS->{ $item }) {
+                    @result = &$value([$root], @$args);
+                }
             }
-            elsif (UNIVERSAL::isa($root, 'ARRAY') ) {
+            elsif (reftype $root eq 'ARRAY') {
                 if( $value = $LIST_OPS->{ $item }) {
                    @result = &$value($root, @$args);
                 }
@@ -864,7 +607,7 @@ sub _assign {
         return ($root->[$item] = $value)            ## RETURN
             unless $default && $root->{ $item };
     }
-    elsif (UNIVERSAL::isa($root, 'UNIVERSAL')) {
+    elsif (blessed($root)) {
         # try to call the item as a method of an object
         
         return $root->$item(@$args, $value)         ## RETURN
@@ -943,18 +686,6 @@ sub _dump_frame {
 
 __END__
 
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
-
 =head1 NAME
 
 Template::Stash - Magical storage for template variables
@@ -962,41 +693,41 @@ Template::Stash - Magical storage for template variables
 =head1 SYNOPSIS
 
     use Template::Stash;
-
+    
     my $stash = Template::Stash->new(\%vars);
-
+    
     # get variable values
     $value = $stash->get($variable);
     $value = $stash->get(\@compound);
-
+    
     # set variable value
     $stash->set($variable, $value);
     $stash->set(\@compound, $value);
-
+    
     # default variable value
     $stash->set($variable, $value, 1);
     $stash->set(\@compound, $value, 1);
-
+    
     # set variable values en masse
     $stash->update(\%new_vars)
-
+    
     # methods for (de-)localising variables
     $stash = $stash->clone(\%new_vars);
     $stash = $stash->declone();
 
 =head1 DESCRIPTION
 
-The Template::Stash module defines an object class which is used to store
+The C<Template::Stash> module defines an object class which is used to store
 variable values for the runtime use of the template processor.  Variable
 values are stored internally in a hash reference (which itself is blessed 
-to create the object) and are accessible via the get() and set() methods.
+to create the object) and are accessible via the L<get()> and L<set()> methods.
 
 Variables may reference hash arrays, lists, subroutines and objects
 as well as simple values.  The stash automatically performs the right
 magic when dealing with variables, calling code or object methods,
 indexing into lists, hashes, etc.
 
-The stash has clone() and declone() methods which are used by the
+The stash has L<clone()> and L<declone()> methods which are used by the
 template processor to make temporary copies of the stash for
 localising changes made to variables.
 
@@ -1004,8 +735,8 @@ localising changes made to variables.
 
 =head2 new(\%params)
 
-The new() constructor method creates and returns a reference to a new
-Template::Stash object.  
+The C<new()> constructor method creates and returns a reference to a new
+C<Template::Stash> object.  
 
     my $stash = Template::Stash->new();
 
@@ -1013,11 +744,11 @@ A hash reference may be passed to provide variables and values which
 should be used to initialise the stash.
 
     my $stash = Template::Stash->new({ var1 => 'value1', 
-				       var2 => 'value2' });
+                                       var2 => 'value2' });
 
 =head2 get($variable)
 
-The get() method retrieves the variable named by the first parameter.
+The C<get()> method retrieves the variable named by the first parameter.
 
     $value = $stash->get('var1');
 
@@ -1025,15 +756,15 @@ Dotted compound variables can be retrieved by specifying the variable
 elements by reference to a list.  Each node in the variable occupies
 two entries in the list.  The first gives the name of the variable
 element, the second is a reference to a list of arguments for that 
-element, or 0 if none.
+element, or C<0> if none.
 
     [% foo.bar(10).baz(20) %]
-
+    
     $stash->get([ 'foo', 0, 'bar', [ 10 ], 'baz', [ 20 ] ]);
 
 =head2 set($variable, $value, $default)
 
-The set() method sets the variable name in the first parameter to the 
+The C<set()> method sets the variable name in the first parameter to the 
 value specified in the second.
 
     $stash->set('var1', 'value1');
@@ -1043,70 +774,59 @@ set only if it did not have a true value before.
 
     $stash->set('var2', 'default_value', 1);
 
-Dotted compound variables may be specified as per get() above.
+Dotted compound variables may be specified as per L<get()> above.
 
     [% foo.bar = 30 %]
-
+    
     $stash->set([ 'foo', 0, 'bar', 0 ], 30);
 
-The magical variable 'IMPORT' can be specified whose corresponding
+The magical variable 'C<IMPORT>' can be specified whose corresponding
 value should be a hash reference.  The contents of the hash array are
 copied (i.e. imported) into the current namespace.
 
     # foo.bar = baz, foo.wiz = waz
     $stash->set('foo', { 'bar' => 'baz', 'wiz' => 'waz' });
-
+    
     # import 'foo' into main namespace: bar = baz, wiz = waz
     $stash->set('IMPORT', $stash->get('foo'));
 
 =head2 clone(\%params)
 
-The clone() method creates and returns a new Template::Stash object which
-represents a localised copy of the parent stash.  Variables can be
-freely updated in the cloned stash and when declone() is called, the
-original stash is returned with all its members intact and in the
-same state as they were before clone() was called.
+The C<clone()> method creates and returns a new C<Template::Stash> object
+which represents a localised copy of the parent stash. Variables can be freely
+updated in the cloned stash and when L<declone()> is called, the original stash
+is returned with all its members intact and in the same state as they were
+before C<clone()> was called.
 
-For convenience, a hash of parameters may be passed into clone() which 
+For convenience, a hash of parameters may be passed into C<clone()> which 
 is used to update any simple variable (i.e. those that don't contain any 
-namespace elements like 'foo' and 'bar' but not 'foo.bar') variables while 
-cloning the stash.  For adding and updating complex variables, the set() 
-method should be used after calling clone().  This will correctly resolve
+namespace elements like C<foo> and C<bar> but not C<foo.bar>) variables while 
+cloning the stash.  For adding and updating complex variables, the L<set()> 
+method should be used after calling C<clone().>  This will correctly resolve
 and/or create any necessary namespace hashes.
 
 A cloned stash maintains a reference to the stash that it was copied 
-from in its '_PARENT' member.
+from in its C<_PARENT> member.
 
 =head2 declone()
 
-The declone() method returns the '_PARENT' reference and can be used to
+The C<declone()> method returns the C<_PARENT> reference and can be used to
 restore the state of a stash as described above.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@wardley.orgE<gt>
-
-L<http://wardley.org/|http://wardley.org/>
-
-
-
-
-=head1 VERSION
-
-2.102, distributed as part of the
-Template Toolkit version 2.15, released on 26 May 2006.
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Template|Template>, L<Template::Context|Template::Context>
+L<Template>, L<Template::Context>
 
 =cut
 

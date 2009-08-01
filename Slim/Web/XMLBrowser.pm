@@ -89,7 +89,7 @@ sub handleWebIndex {
 		# get passthrough params if supplied
 		my $pt = $item->{'passthrough'} || [];
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($feed);
 			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
@@ -125,7 +125,7 @@ sub handleWebIndex {
 		else {
 			my $cache = Slim::Utils::Cache->new;
 			if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
-				$log->is_debug && $log->debug( "Using cached session $sid" );
+				main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
 				
 				handleFeed( $cached, $params );
 				return;
@@ -184,7 +184,7 @@ sub handleFeed {
 	} );
 	
 	# Persist search query from top level item
-	if ( $params->{type} eq 'search' ) {
+	if ( $params->{type} && $params->{type} eq 'search' ) {
 		$crumb[0]->{index} = '_' . $stash->{q};
 	};
 
@@ -200,7 +200,7 @@ sub handleFeed {
 	
 	if ( $sid ) {
 		# Cache the feed structure for this session
-		$log->is_debug && $log->debug( "Caching session $sid" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid" );
 		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME ) };
 		
@@ -317,7 +317,7 @@ sub handleFeed {
 					# get passthrough params if supplied
 					my $pt = $subFeed->{'passthrough'} || [];
 
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
 						$log->debug( "Fetching OPML from coderef $cbname" );
 					}
@@ -328,7 +328,7 @@ sub handleFeed {
 				
 				# Check for a cached version of this subfeed URL
 				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
-					$log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
+					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
 					handleSubFeed( $cached, $args );
 				}
 				else {
@@ -412,7 +412,7 @@ sub handleFeed {
 		
 		if ( $url ) {
 
-			$log->info("Playing/adding $url");
+			main::INFOLOG && $log->info("Playing/adding $url");
 			
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
@@ -469,7 +469,7 @@ sub handleFeed {
 		
 		if ( @urls ) {
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 			}
 			
@@ -507,7 +507,7 @@ sub handleFeed {
 			$otherParams = '&query=' . $stash->{'query'} . $otherParams;
 		}
 			
-		$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+		$stash->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 				'itemCount'   => $itemCount,
 				'path'        => $params->{'path'} || 'index.html',
 				'otherParams' => $otherParams,
@@ -696,7 +696,7 @@ sub handleSubFeed {
 	# a new Pandora radio station
 	if ( $feed->{'command'} && $client ) {
 		my @p = map { uri_unescape($_) } split / /, $feed->{command};
-		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 	}
 	

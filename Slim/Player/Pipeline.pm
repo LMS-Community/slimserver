@@ -33,7 +33,7 @@ sub new {
 	my $self = $class->SUPER::new();
 	my ($reader, $writer);
 
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 
 		my $listenReader = IO::Socket::INET->new(
 
@@ -90,7 +90,7 @@ sub new {
 
 		$newcommand .=  '-o ' . $readerPort . ' -c "' .  $command . '"';
 
-		$log->info("Launching process with command: $newcommand");
+		main::INFOLOG && $log->info("Launching process with command: $newcommand");
 
 		my $processObj;
 
@@ -173,65 +173,69 @@ sub new {
 }
 
 sub acceptReader {
-	my $listener = shift;
-	my $pipeline = ${*$listener}{'pipeline'};
+	if (main::ISWINDOWS) {
+		my $listener = shift;
+		my $pipeline = ${*$listener}{'pipeline'};
 
-	my $reader = $listener->accept();
+		my $reader = $listener->accept();
 
-	if (!defined($reader)) {
+		if (!defined($reader)) {
 
-		logError("Accepting on reader listener: $!");
+			logError("Accepting on reader listener: $!");
 
-		${*$pipeline}{'pipeline_error'} = 1;
+			${*$pipeline}{'pipeline_error'} = 1;
 
-		return;		
+			return;		
+		}
+
+		if (!defined(Slim::Utils::Network::blocking($reader, 0))) {
+
+			logError("Cannot set pipe line reader to nonblocking");
+
+			${*$pipeline}{'pipeline_error'} = 1;
+
+			return;		
+		}
+
+		main::INFOLOG && $log->info("Pipeline reader connected");
+
+		binmode($reader);
+
+		${*$pipeline}{'pipeline_reader'} = $reader;
 	}
-
-	if (!defined(Slim::Utils::Network::blocking($reader, 0))) {
-
-		logError("Cannot set pipe line reader to nonblocking");
-
-		${*$pipeline}{'pipeline_error'} = 1;
-
-		return;		
-	}
-
-	$log->info("Pipeline reader connected");
-
-	binmode($reader);
-
-	${*$pipeline}{'pipeline_reader'} = $reader;
 }
 
 sub acceptWriter {
-	my $listener = shift;
-	my $pipeline = ${*$listener}{'pipeline'};
+	if (main::ISWINDOWS) {
+		my $listener = shift;
+		my $pipeline = ${*$listener}{'pipeline'};
 
-	my $writer = $listener->accept();
+		my $writer = $listener->accept();
 
-	if (!defined($writer)) {
+		if (!defined($writer)) {
 
-		logError("Accepting on writer listener: $!");
+			logError("Accepting on writer listener: $!");
 
-		${*$pipeline}{'pipeline_error'} = 1;
+			${*$pipeline}{'pipeline_error'} = 1;
 
-		return;
+			return;
+		}
+
+		if (!defined(Slim::Utils::Network::blocking($writer, 0))) {
+
+			logError("Cannot set pipe line writer to nonblocking");
+
+			${*$pipeline}{'pipeline_error'} = 1;
+
+			return;
+		}
+
+		main::INFOLOG && $log->info("Pipeline writer connected");
+
+		binmode($writer);
+
+		${*$pipeline}{'pipeline_writer'} = $writer;
 	}
-
-	if (!defined(Slim::Utils::Network::blocking($writer, 0))) {
-
-		logError("Cannot set pipe line writer to nonblocking");
-
-		${*$pipeline}{'pipeline_error'} = 1;
-
-		return;
-	}
-
-	$log->info("Pipeline writer connected");
-
-	binmode($writer);
-
-	${*$pipeline}{'pipeline_writer'} = $writer;
 }
 
 sub selectError {
@@ -272,14 +276,14 @@ sub sysread {
 
 		if (!$pendingSize) {
 
-			$log->debug("Pipeline doesn't have pending bytes - trying to get some from source");
+			main::DEBUGLOG && $log->debug("Pipeline doesn't have pending bytes - trying to get some from source");
 
 			my $socketReadlen = $source->sysread($pendingBytes, $chunksize);
 
 			if (!$socketReadlen) {
 				if (defined $socketReadlen) {
 					# EOF
-					$log->info("EOF on source stream");
+					main::INFOLOG && $log->info("EOF on source stream");
 					undef $source;
 					delete ${*$self}{'pipeline_source'};
 					$writer->close();
@@ -294,13 +298,13 @@ sub sysread {
 			$pendingSize = $socketReadlen;
 		}
 
-		$log->debug("Attempting to write to pipeline writer");
+		main::DEBUGLOG && $log->debug("Attempting to write to pipeline writer");
 
 		my $writelen = $writer->syswrite($pendingBytes, $pendingSize);
 
 		if ($writelen) {
 
-			$log->debug("Wrote $writelen bytes to pipeline writer");
+			main::DEBUGLOG && $log->debug("Wrote $writelen bytes to pipeline writer");
 
 			if ($writelen != $pendingSize) {
 				${*$self}{'pipeline_pending_bytes'} = substr($pendingBytes, $writelen);
@@ -352,28 +356,31 @@ sub close {
 		$writer->close();
 	}
 
-	my $listenReader = ${*$self}{'pipeline_listen_reader'};
+	if (main::ISWINDOWS) {
 
-	if (defined($listenReader)) {
+		my $listenReader = ${*$self}{'pipeline_listen_reader'};
 
-		Slim::Networking::Select::removeRead($listenReader);
-		Slim::Networking::Select::removeError($listenReader);
+		if (defined($listenReader)) {
 
-		${*$listenReader}{'pipeline'} = undef;
+			Slim::Networking::Select::removeRead($listenReader);
+			Slim::Networking::Select::removeError($listenReader);
 
-		$listenReader->close();
-	}
+			${*$listenReader}{'pipeline'} = undef;
 
-	my $listenWriter = ${*$self}{'pipeline_listen_writer'};
+			$listenReader->close();
+		}
 
-	if (defined($listenWriter)) {
+		my $listenWriter = ${*$self}{'pipeline_listen_writer'};
 
-		Slim::Networking::Select::removeRead($listenWriter);
-		Slim::Networking::Select::removeError($listenWriter);
+		if (defined($listenWriter)) {
 
-		${*$listenWriter}{'pipeline'} = undef;
+			Slim::Networking::Select::removeRead($listenWriter);
+			Slim::Networking::Select::removeError($listenWriter);
 
-		$listenWriter->close();
+			${*$listenWriter}{'pipeline'} = undef;
+
+			$listenWriter->close();
+		}
 	}
 
 	my $source = ${*$self}{'pipeline_source'};

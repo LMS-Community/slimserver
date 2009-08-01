@@ -11,57 +11,49 @@
 
 package Template::Stash::XS;
 
+use strict;
+use warnings;
 use Template;
 use Template::Stash;
 
-BEGIN {
-  require DynaLoader;
-  @Template::Stash::XS::ISA = qw( DynaLoader Template::Stash );
+our $AUTOLOAD;
 
-  eval {
-    bootstrap Template::Stash::XS $Template::VERSION;
-  };
-  if ($@) {
-    die "Couldn't load Template::Stash::XS $Template::VERSION:\n\n$@\n";
-  }
+BEGIN {
+    require DynaLoader;
+    @Template::Stash::XS::ISA = qw( DynaLoader Template::Stash );
+
+    eval {
+        bootstrap Template::Stash::XS $Template::VERSION;
+    };
+    if ($@) {
+        die "Couldn't load Template::Stash::XS $Template::VERSION:\n\n$@\n";
+    }
 }
 
-
 sub DESTROY {
-  # no op
-  1;
+    # no op
+    1;
 }
 
 
 # catch missing method calls here so perl doesn't barf 
 # trying to load *.al files 
+
 sub AUTOLOAD {
-  my ($self, @args) = @_;
-  my @c             = caller(0);
-  my $auto	    = $AUTOLOAD;
+    my ($self, @args) = @_;
+    my @c             = caller(0);
+    my $auto	    = $AUTOLOAD;
 
-  $auto =~ s/.*:://;
-  $self =~ s/=.*//;
+    $auto =~ s/.*:://;
+    $self =~ s/=.*//;
 
-  die "Can't locate object method \"$auto\"" .
-      " via package \"$self\" at $c[1] line $c[2]\n";
+    die "Can't locate object method \"$auto\"" .
+        " via package \"$self\" at $c[1] line $c[2]\n";
 }
 
 1;
 
 __END__
-
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
 
 =head1 NAME
 
@@ -129,27 +121,17 @@ templates@template-toolkit.org
 
 =head1 AUTHORS
 
-Andy Wardley E<lt>abw@tt2.orgE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
 
 Doug Steinwand E<lt>dsteinwand@citysearch.comE<gt>
 
-=head1 VERSION
-
-Template Toolkit version 2.15, released on 26 May 2006.
-
-
-
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+Copyright (C) 1996-2009 Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-
-
 =head1 SEE ALSO
 
-L<Template::Stash|Template::Stash>
-
+L<Template::Stash>

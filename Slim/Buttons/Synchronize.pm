@@ -19,8 +19,6 @@ for synchronizing groups of players, and reporting the current status of sync gr
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 
 our %functions = ();
 

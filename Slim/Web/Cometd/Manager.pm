@@ -16,7 +16,6 @@ use Tie::RegexpHash;
 
 use Slim::Utils::Log;
 use Slim::Utils::Timers;
-use Slim::Web::HTTP;
 
 my $log = logger('network.cometd');
 
@@ -41,7 +40,7 @@ sub add_client {
 	# The per-client event hash holds one pending event per channel
 	$self->{events}->{$clid} = {};
 	
-	$log->debug("add_client: $clid");
+	main::DEBUGLOG && $log->debug("add_client: $clid");
 	
 	return $clid;
 }
@@ -52,7 +51,7 @@ sub register_connection {
 	
 	$self->{conn}->{$clid} = $conn;
 	
-	$log->debug("register_connection: $clid");
+	main::DEBUGLOG && $log->debug("register_connection: $clid");
 }
 
 sub remove_connection {
@@ -60,7 +59,7 @@ sub remove_connection {
 	
 	delete $self->{conn}->{$clid};
 
-	$log->debug("remove_connection: $clid");
+	main::DEBUGLOG && $log->debug("remove_connection: $clid");
 }
 
 sub get_connection {
@@ -91,7 +90,7 @@ sub remove_client {
 	
 	$self->remove_channels( $clid );
 	
-	$log->debug("remove_client: $clid");
+	main::DEBUGLOG && $log->debug("remove_client: $clid");
 }
 
 sub is_valid_clid {
@@ -120,7 +119,7 @@ sub add_channels {
 		$self->{channels}->{$re_sub} ||= {};
 		$self->{channels}->{$re_sub}->{$clid} = 1;
 		
-		$log->debug("add_channels: $sub ($re_sub)");
+		main::DEBUGLOG && $log->debug("add_channels: $sub ($re_sub)");
 	}
 	
 	return 1;
@@ -140,7 +139,7 @@ sub remove_channels {
 						delete $self->{channels}->{$channel};
 					}
 					
-					$log->debug("remove_channels for $clid: $channel");
+					main::DEBUGLOG && $log->debug("remove_channels for $clid: $channel");
 				}
 			}
 		}
@@ -170,7 +169,7 @@ sub remove_channels {
 				}
 			}
 		
-			$log->debug("remove_channels for $clid: $sub ($re_sub)");
+			main::DEBUGLOG && $log->debug("remove_channels for $clid: $sub ($re_sub)");
 		}
 	}
 	
@@ -212,7 +211,7 @@ sub deliver_events {
 			for my $clid ( keys %{ $self->{channels}->{$channel} } ) {
 				push @to_send, $clid;
 			
-				$log->debug("Sending event on channel $channel to $clid");
+				main::DEBUGLOG && $log->debug("Sending event on channel $channel to $clid");
 			}
 		}
 	}
@@ -226,7 +225,7 @@ sub deliver_events {
 			# Add any pending events
 			push @{$events}, ( $self->get_pending_events( $clid ) );
 		
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 
 					  "Delivering events to $clid:\n"
 					. Data::Dump::dump( $events )
@@ -239,7 +238,7 @@ sub deliver_events {
 			# queue the event for later
 			$self->{events}->{$clid}->{ $events->[0]->{channel} } = $events->[0];
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'Queued ' . scalar @{$events} . " event(s) for $clid" );
 			}
 		}

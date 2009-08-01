@@ -13,11 +13,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.preventstandby');
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_PREVENTSTANDBY');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_PREVENTSTANDBY');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/PreventStandby/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/PreventStandby/settings/basic.html');
 }
 
 sub prefs {

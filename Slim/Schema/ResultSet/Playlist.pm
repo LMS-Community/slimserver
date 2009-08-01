@@ -118,15 +118,6 @@ sub getPlaylists {
 	return wantarray ? $rs->all : $rs;
 }
 
-sub getPlaylistForClient {
-	my $self   = shift;
-	my $client = shift;
-
-	return $self->single({
-		'url' => sprintf('clientplaylist://%s', $client->id),
-	});
-}
-
 sub objectForUrl {
 	my $self = shift;
 	my $args = shift;

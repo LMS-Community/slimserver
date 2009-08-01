@@ -1,4 +1,5 @@
-package DBIx::Class::PK::Auto::Oracle;
+package # hide package from pause
+  DBIx::Class::PK::Auto::Oracle;
 
 use strict;
 use warnings;

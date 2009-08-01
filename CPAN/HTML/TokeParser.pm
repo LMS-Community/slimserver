@@ -1,10 +1,8 @@
 package HTML::TokeParser;
 
-# $Id: TokeParser.pm,v 2.35 2005/12/02 16:08:17 gisle Exp $
-
 require HTML::PullParser;
 @ISA=qw(HTML::PullParser);
-$VERSION = sprintf("%d.%02d", q$Revision: 2.35 $ =~ /(\d+)\.(\d+)/);
+$VERSION = "3.57";
 
 use strict;
 use Carp ();
@@ -163,6 +161,7 @@ HTML::TokeParser - Alternative HTML::Parser interface
  require HTML::TokeParser;
  $p = HTML::TokeParser->new("index.html") ||
       die "Can't open: $!";
+ $p->empty_element_tags(1);  # configure its behaviour
 
  while (my $token = $p->get_token) {
      #...
@@ -179,14 +178,16 @@ The following methods are available:
 
 =over 4
 
-=item $p = HTML::TokeParser->new( $filename );
+=item $p = HTML::TokeParser->new( $filename, %opt );
 
-=item $p = HTML::TokeParser->new( $filehandle );
+=item $p = HTML::TokeParser->new( $filehandle, %opt );
 
-=item $p = HTML::TokeParser->new( \$document );
+=item $p = HTML::TokeParser->new( \$document, %opt );
 
 The object constructor argument is either a file name, a file handle
-object, or the complete document to be parsed.
+object, or the complete document to be parsed.  Extra options can be
+provided as key/value pairs and are processed as documented by the base
+classes.
 
 If the argument is a plain scalar, then it is taken as the name of a
 file to be opened and parsed.  If the file can't be opened for
@@ -205,7 +206,8 @@ EOF, but not closed.
 A newly constructed C<HTML::TokeParser> differ from its base classes
 by having the C<unbroken_text> attribute enabled by default. See
 L<HTML::Parser> for a description of this and other attributes that
-influence how the document is parsed.
+influence how the document is parsed. It is often a good idea to enable
+C<empty_element_tags> behaviour.
 
 Note that the parsing result will likely not be valid if raw undecoded
 UTF-8 is used as a source.  When parsing UTF-8 encoded files turn

@@ -28,7 +28,7 @@ use Slim::Utils::Log;
 sub showBriefly {
 	my $display = shift;
 
-	if (logger('player.display')->is_info) {
+	if (main::INFOLOG && logger('player.display')->is_info) {
 		my ($line, $subr) = (caller(1))[2,3];
 		($line, $subr) = (caller(2))[2,3] if $subr eq 'Slim::Player::Player::showBriefly';
 		logger('player.display')->info(sprintf "caller %s (%d) notifyLevel=%d ", $subr, $line, $display->notifyLevel);

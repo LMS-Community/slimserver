@@ -8,7 +8,7 @@ package Slim::Networking::Discovery::Server;
 # version 2.
 
 use strict;
-use IO::Socket;
+use IO::Socket qw(SO_BROADCAST sockaddr_in inet_aton inet_ntoa);
 use Net::IP;
 
 use Slim::Networking::UDP;
@@ -66,7 +66,7 @@ sub fetch_servers {
 
 	_purge_server_list();
 
-	# broadcast command to discover SlimServers
+	# broadcast command to discover servers
 	my $opt = $udpsock->sockopt(SO_BROADCAST);
 	$udpsock->sockopt(SO_BROADCAST, 1);
 
@@ -159,7 +159,7 @@ sub gotTLVResponse {
 		return;
 	}
 
-	$log->info("discovery response packet:");
+	main::INFOLOG && $log->info("discovery response packet:");
 
 	# chop of leading character
 	$msg = substr($msg, 1);
@@ -175,7 +175,7 @@ sub gotTLVResponse {
 		$len2 = unpack("xxxxC", $msg);
 		$val  = $len2 ? substr($msg, 5, $len2) : undef;
 
-		$log->debug(" TLV: $tag len: $len2, $val");
+		main::DEBUGLOG && $log->debug(" TLV: $tag len: $len2, $val");
 
 		$server->{$tag} = $val;
 
@@ -195,7 +195,7 @@ sub gotTLVResponse {
 #		}
 	}
 
-	if ($log->is_debug) {	
+	if (main::DEBUGLOG && $log->is_debug) {	
 		$log->debug(" Discovered server $server->{NAME} ($server->{IP}), using port $server->{JSON}");
 	}
 

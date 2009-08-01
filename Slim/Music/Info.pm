@@ -21,7 +21,7 @@ use strict;
 
 use File::Path;
 use File::Basename;
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir splitdir);
 use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
@@ -71,11 +71,6 @@ my $prefs = preferences('server');
 
 sub init {
 
-	# Allow external programs to use Slim::Utils::Misc, without needing
-	# the entire DBI stack.
-	require Slim::Schema;
-	Slim::Schema->init;
-
 	if (!Slim::Music::TitleFormatter::init()) {
 		return 0;
 	}
@@ -94,7 +89,7 @@ sub init {
 sub loadTypesConfig {
 	my @typesFiles = ();
 
-	$log->info("Loading config file...");
+	main::INFOLOG && $log->info("Loading config file...");
 
 	# custom types file allowed at server root or root of plugin directories
 	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
@@ -103,7 +98,7 @@ sub loadTypesConfig {
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
 
-	foreach my $baseDir (Slim::Utils::PluginManager->pluginRootDirs()) {
+	foreach my $baseDir (Slim::Utils::PluginManager->dirsFor('types')) {
 
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
@@ -160,12 +155,6 @@ sub loadTypesConfig {
 	return 0;
 }
 
-sub playlistForClient {
-	my $client = shift;
-
-	return Slim::Schema->rs('Playlist')->getPlaylistForClient($client);
-}
-
 sub clearFormatDisplayCache {
 	my $format = shift; # if set only clear cached formats including this string
 
@@ -204,7 +193,7 @@ sub updateCacheEntry {
 	if (!defined($url)) {
 
 		logBacktrace("No URL passed!");
-		Data::Dump::dump($cacheEntryHash) if !$::quiet;
+		Data::Dump::dump($cacheEntryHash) if main::DEBUGLOG && !$::quiet;
 		return;
 	}
 
@@ -216,8 +205,9 @@ sub updateCacheEntry {
 
 	my $list = $cacheEntryHash->{'LIST'} || [];
 
-	my $playlist = Slim::Schema->rs('Playlist')->updateOrCreate({
+	my $playlist = Slim::Schema->updateOrCreate({
 		'url'        => $url,
+		'playlist'   => 1,
 		'attributes' => $cacheEntryHash,
 	});
 
@@ -239,7 +229,7 @@ sub setContentType {
 	if ($type =~ /(.*);(.*)/) {
 
 		# content type has ";" followed by encoding
-		$log->info("Truncating content type. Was: $type, now: $1");
+		main::INFOLOG && $log->info("Truncating content type. Was: $type, now: $1");
 
 		# TODO: remember encoding as it could be useful later
 		$type = $1; # truncate at ";"
@@ -267,10 +257,10 @@ sub setContentType {
 	# Update the cache set by typeFrompath as well.
 	$urlToTypeCache{$url} = $type;
 	
-	$log->info("Content-Type for $url is cached as $type");
+	main::INFOLOG && $log->info("Content-Type for $url is cached as $type");
 
 	# Commit, since we might use it again right away.
-	return Slim::Schema->rs('Track')->updateOrCreate({
+	return Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'CT' => $type },
 		'commit'     => 1,
@@ -283,7 +273,7 @@ sub title {
 
 	# Use objectForUrl, as updateOrCreate() without an attribute hash will
 	# guess tags on files, which is incorrect.
-	my $track = Slim::Schema->rs('Track')->objectForUrl({
+	my $track = Slim::Schema->objectForUrl({
 		'url'      => $url,
 		'create'   => 1,
 		'commit'   => 1,
@@ -297,11 +287,11 @@ sub setTitle {
 	my $url = shift;
 	my $title = shift;
 
-	$log->info("Adding title $title for $url");
+	main::INFOLOG && $log->info("Adding title $title for $url");
 
 	# Only readTags if we're not a remote URL. Otherwise, we'll
 	# overwrite the title with the URL.
-	return Slim::Schema->rs('Track')->updateOrCreate({
+	return Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
@@ -322,7 +312,7 @@ sub getCurrentBitrate {
 sub getBitrate {
 	my $url = shift || return undef;
 	
-	my $track = Slim::Schema->rs('Track')->objectForUrl({
+	my $track = Slim::Schema->objectForUrl({
 		'url' => $url,
 	});
 	
@@ -334,7 +324,7 @@ sub setBitrate {
 	my $bitrate = shift;
 	my $vbr     = shift || undef;
 
-	my $track   = Slim::Schema->rs('Track')->updateOrCreate({
+	my $track   = Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'readTags'   => 1,
 		'commit'     => 1,
@@ -354,7 +344,7 @@ sub setDuration {
 	my $url      = shift;
 	my $duration = shift;
 
-	Slim::Schema->rs('Track')->updateOrCreate({
+	Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'readTags'   => 1,
 		'commit'     => 1,
@@ -367,7 +357,7 @@ sub setDuration {
 sub getDuration {
 	my $url = shift;
 	
-	my $track = Slim::Schema->rs('Track')->objectForUrl({
+	my $track = Slim::Schema->objectForUrl({
 		'url' => $url,
 	});
 	
@@ -391,7 +381,7 @@ sub setRemoteMetadata {
 	if ( my $type = $meta->{ct} ) {
 		if ( $type =~ /(.*);(.*)/ ) {
 			# content type has ";" followed by encoding
-			$log->info("Truncating content type. Was: $type, now: $1");
+			main::INFOLOG && $log->info("Truncating content type. Was: $type, now: $1");
 			# TODO: remember encoding as it could be useful later
 			$type = $1; # truncate at ";"
 		}
@@ -437,11 +427,11 @@ sub setRemoteMetadata {
 		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Updating metadata for $url: " . Data::Dump::dump($attr) );
 	}
 
-	my $track = Slim::Schema->rs('Track')->updateOrCreate( {
+	my $track = Slim::Schema->updateOrCreate( {
 		url        => $url,
 		attributes => $attr,
 		readTags   => 0,
@@ -569,7 +559,7 @@ sub setDelayedTitle {
 			$delay = 0;
 		}
 		
-		$log->info("Delaying metadata title set by $delay secs ($newTitle)");
+		main::INFOLOG && $log->info("Delaying metadata title set by $delay secs ($newTitle)");
 		
 		$client->metaTitle( $newTitle );
 		
@@ -592,7 +582,7 @@ sub setDelayedTitle {
 				# For some purposes, a change of title is a newsong...
 				Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'newsong', $newTitle ] );
 
-				$log->info("Setting title for $url to $newTitle");
+				main::INFOLOG && $log->info("Setting title for $url to $newTitle");
 			},
 		);
 	}
@@ -606,7 +596,7 @@ sub setDelayedCallback {
 	my $delay = getStreamDelay($client, $outputDelayOnly);
 	
 	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
-	$log->is_info && $log->info("Delaying callback by $delay secs");
+	main::INFOLOG && $log->is_info && $log->info("Delaying callback by $delay secs");
 	
 	Slim::Utils::Timers::setTimer(
 		$client,
@@ -631,7 +621,7 @@ sub plainTitle {
 
 	my $title = "";
 
-	$log->info("Plain title for: $file");
+	main::INFOLOG && $log->info("Plain title for: $file");
 
 	if (isRemoteURL($file)) {
 
@@ -651,7 +641,7 @@ sub plainTitle {
 		$title =~ s/_/ /g;
 	}
 	
-	$log->info(" is $title");
+	main::INFOLOG && $log->info(" is $title");
 
 	return $title;
 }
@@ -670,12 +660,11 @@ sub standardTitle {
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	# XXX - exception should go here. comming soon.
-	my $blessed   = blessed($pathOrObj);
 	my $track     = $pathOrObj;
 
-	if (!$blessed || !($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
+	if (!Slim::Schema::isaTrack($pathOrObj)) {
 
-		$track = Slim::Schema->rs('Track')->objectForUrl({
+		$track = Slim::Schema->objectForUrl({
 			'url'      => $pathOrObj,
 			'create'   => 1,
 			'readTags' => 1
@@ -784,7 +773,7 @@ sub guessTags {
 	
 	my $file = $filename;
 
-	$log->info("Guessing tags for: $file");
+	main::INFOLOG && $log->info("Guessing tags for: $file");
 
 	# Rip off from plainTitle()
 	if (isRemoteURL($file)) {
@@ -823,7 +812,7 @@ sub guessTags {
 		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
 		$pat =~ s/($Slim::Music::TitleFormatter::elemRegex)/\(\[^\\\/\]\+\)/g;
 
-		$log->info("Using format \"$guess\" = /$pat/...");
+		main::INFOLOG && $log->info("Using format \"$guess\" = /$pat/...");
 
 		$pat = qr/$pat$/;
 
@@ -832,7 +821,7 @@ sub guessTags {
 
 		if (@matches = $file =~ $pat) {
 
-			$log->info("Format string $guess matched $file");
+			main::INFOLOG && $log->info("Format string $guess matched $file");
 
 			my @tags = $guess =~ /($Slim::Music::TitleFormatter::elemRegex)/g;
 
@@ -840,7 +829,7 @@ sub guessTags {
 
 			foreach my $match (@matches) {
 
-				$log->info("$tags[$i] => $match");
+				main::INFOLOG && $log->info("$tags[$i] => $match");
 
 				$match =~ tr/_/ / if (defined $match);
 
@@ -885,11 +874,11 @@ sub fileName {
 	} else {
 
 		# display full name if we got a Windows 8.3 file name
-		if (Slim::Utils::OSDetect::isWindows() && $j =~ /~/) {
+		if (main::ISWINDOWS && $j =~ /~/) {
 			
 			if (my $n = Win32::GetLongPathName($j)) {
 				$n = File::Basename::basename($n);
-				$log->info("Expand short name returned by readdir() to full name: $j -> $n");
+				main::INFOLOG && $log->info("Expand short name returned by readdir() to full name: $j -> $n");
 			
 				$j = $n;
 			}		
@@ -1001,7 +990,7 @@ sub splitTag {
 
 				if (!scalar @temp <= 1) {
 
-					if ( $log->is_info ) {
+					if ( main::INFOLOG && $log->is_info ) {
 						$log->info("Splitting $tag by $splitOn = @temp");
 					}
 				}
@@ -1040,7 +1029,7 @@ sub isFile {
 
 	my $stat = ((-f $fullpath && -r _) ? 1 : 0);
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(sprintf("isFile(%s) == %d", $fullpath, (1 * $stat)));
 	}
 
@@ -1148,9 +1137,7 @@ sub _isContentTypeHelper {
 	if (!defined $type) {
 
 		# XXX - exception should go here. comming soon.
-		if (blessed($pathOrObj) && $pathOrObj->can('content_type')) {
-
-			$type = $pathOrObj->content_type;
+		if (blessed($pathOrObj) && $pathOrObj->can('content_type') && ($type = $pathOrObj->content_type))  {
 
 		} elsif ($pathOrObj) {
 
@@ -1161,7 +1148,7 @@ sub _isContentTypeHelper {
 	return $type;
 }
 
-sub isType {
+sub _isType {
 	my $pathOrObj = shift;
 	my $testType  = shift;
 	my $type      = shift;
@@ -1180,57 +1167,21 @@ sub isType {
 sub isDigitalInput {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'src', @_);
+	return _isType($pathOrObj, 'src', @_);
 }
 
 sub isLineIn {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'src', @_);
+	return _isType($pathOrObj, 'src', @_);
 }
 
 sub isWinShortcut {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'lnk', @_);
+	return _isType($pathOrObj, 'lnk', @_);
 }
 
-sub isMP3 {
-	my $pathOrObj = shift;
-	my $type      = shift;
-
-	return isType($pathOrObj, 'mp3', $type) || isType($pathOrObj, 'mp2', $type);
-}
-
-sub isOgg {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'ogg', @_);
-}
-
-sub isWav {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'wav', @_);
-}
-
-sub isMOV {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'mov', @_);
-}
-
-sub isFLAC {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'flc', @_);
-}
-
-sub isAIFF {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'aif', @_);
-}
 
 sub isSong {
 	my $pathOrObj = shift;
@@ -1248,33 +1199,27 @@ sub isSong {
 sub isDir {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'dir', @_);
+	return _isType($pathOrObj, 'dir', @_);
 }
 
 sub isM3U {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'm3u', @_);
-}
-
-sub isPLS {
-	my $pathOrObj = shift;
-
-	return isType($pathOrObj, 'pls', @_);
+	return _isType($pathOrObj, 'm3u', @_);
 }
 
 sub isCUE {
 	my $pathOrObj = shift;
 	my $type      = shift;
 
-	return isType($pathOrObj, 'cue', $type) || isType($pathOrObj, 'fec', $type);
+	return _isType($pathOrObj, 'cue', $type) || _isType($pathOrObj, 'fec', $type);
 }
 
 sub isKnownType {
 	my $pathOrObj = shift;
 	my $type      = shift;
 
-	return !isType($pathOrObj, 'unk', $type);
+	return !_isType($pathOrObj, 'unk', $type);
 }
 
 sub isList {
@@ -1337,13 +1282,17 @@ sub validTypeExtensions {
 
 	# Always look for Windows shortcuts - but only on Windows machines.
 	# We can't parse them. Bug: 2654
-	if (Slim::Utils::OSDetect::isWindows() && !$disabled->{'lnk'}) {
+	if (main::ISWINDOWS && !$disabled->{'lnk'}) {
 		push @extensions, 'lnk';
 	}
 
 	# Always look for cue sheets when looking for audio.
 	if ($findTypes eq 'audio' && !$disabled->{'cue'}) {
 		push @extensions, 'cue';
+	}
+	
+	if ( wantarray ) {
+		return @extensions;
 	}
 
 	my $regex = join('|', @extensions);
@@ -1468,7 +1417,7 @@ sub typeFromPath {
 
 			if (-f $filepath) {
 
-				if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::isWindows()) {
+				if (main::ISWINDOWS && $filepath =~ /\.lnk$/i) {
 
 					if (Win32::Shortcut->new($filepath)) {
 						$type = 'lnk';
@@ -1514,7 +1463,7 @@ sub typeFromPath {
 		$urlToTypeCache{$fullpath} = $type;
 	}
 
-	$log->debug("$type file type for $fullpath");
+	main::DEBUGLOG && $log->debug("$type file type for $fullpath");
 
 	return $type;
 }

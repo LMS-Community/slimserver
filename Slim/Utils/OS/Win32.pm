@@ -6,6 +6,7 @@ package Slim::Utils::OS::Win32;
 # version 2.
 
 use strict;
+use Cwd;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 use Sys::Hostname qw(hostname);
@@ -354,10 +355,11 @@ sub installPath {
 			$installDir = File::Spec->catdir($programFolder, $ourFolder);
 			last PF if (-d $installDir);
 
+			$installDir = '';
 		}
 	}
 
-	return $installDir if -d $installDir;
+	return $installDir || getcwd();
 	
 	return '';
 }
@@ -484,11 +486,15 @@ sub pathFromShortcut {
 		} else {
 
 			Slim::Utils::Log::logger('os.files')->error("Bad path in $fullpath - path was: [$path]");
+			
+			return;
 		}
 
 	} else {
 
 		Slim::Utils::Log::logger('os.files')->error("Shortcut $fullpath is invalid");
+		
+		return;
 	}
 
 	return $path;

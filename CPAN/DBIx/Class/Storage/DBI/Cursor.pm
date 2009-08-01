@@ -36,18 +36,16 @@ Returns a new L<DBIx::Class::Storage::DBI::Cursor> object.
 
 sub new {
   my ($class, $storage, $args, $attrs) = @_;
-  #use Data::Dumper; warn Dumper(@_);
   $class = ref $class if ref $class;
+
   my $new = {
     storage => $storage,
     args => $args,
     pos => 0,
     attrs => $attrs,
-    pid => $$,
+    _dbh_gen => $storage->{_dbh_gen},
   };
 
-  $new->{tid} = threads->tid if $INC{'threads.pm'};
-  
   return bless ($new, $class);
 }
 
@@ -61,14 +59,15 @@ sub new {
 
 =back
 
-Advances the cursor to the next row and returns an arrayref of column values.
+Advances the cursor to the next row and returns an array of column
+values (the result of L<DBI/fetchrow_array> method).
 
 =cut
 
-sub next {
-  my ($self) = @_;
+sub _dbh_next {
+  my ($storage, $dbh, $self) = @_;
 
-  $self->_check_forks_threads;
+  $self->_check_dbh_gen;
   if ($self->{attrs}{rows} && $self->{pos} >= $self->{attrs}{rows}) {
     $self->{sth}->finish if $self->{sth}->{Active};
     delete $self->{sth};
@@ -76,7 +75,7 @@ sub next {
   }
   return if $self->{done};
   unless ($self->{sth}) {
-    $self->{sth} = ($self->{storage}->_select(@{$self->{args}}))[1];
+    $self->{sth} = ($storage->_select(@{$self->{args}}))[1];
     if ($self->{attrs}{software_limit}) {
       if (my $offset = $self->{attrs}{offset}) {
         $self->{sth}->fetch for 1 .. $offset;
@@ -91,6 +90,11 @@ sub next {
     $self->{done} = 1;
   }
   return @row;
+}
+
+sub next {
+  my ($self) = @_;
+  $self->{storage}->dbh_do($self->can('_dbh_next'), $self);
 }
 
 =head2 all
@@ -108,15 +112,23 @@ L<DBIx::Class::ResultSet>.
 
 =cut
 
-sub all {
-  my ($self) = @_;
+sub _dbh_all {
+  my ($storage, $dbh, $self) = @_;
 
-  $self->_check_forks_threads;
-  return $self->SUPER::all if $self->{attrs}{rows};
+  $self->_check_dbh_gen;
   $self->{sth}->finish if $self->{sth}->{Active};
   delete $self->{sth};
-  my ($rv, $sth) = $self->{storage}->_select(@{$self->{args}});
+  my ($rv, $sth) = $storage->_select(@{$self->{args}});
   return @{$sth->fetchall_arrayref};
+}
+
+sub all {
+  my ($self) = @_;
+  if ($self->{attrs}{software_limit}
+        && ($self->{attrs}{offset} || $self->{attrs}{rows})) {
+    return $self->next::method;
+  }
+  $self->{storage}->dbh_do($self->can('_dbh_all'), $self);
 }
 
 =head2 reset
@@ -128,8 +140,8 @@ Resets the cursor to the beginning of the L<DBIx::Class::ResultSet>.
 sub reset {
   my ($self) = @_;
 
-  $self->_check_forks_threads;
-  $self->{sth}->finish if $self->{sth}->{Active};
+  # No need to care about failures here
+  eval { $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active} };
   $self->_soft_reset;
 }
 
@@ -137,30 +149,26 @@ sub _soft_reset {
   my ($self) = @_;
 
   delete $self->{sth};
-  $self->{pos} = 0;
   delete $self->{done};
+  $self->{pos} = 0;
   return $self;
 }
 
-sub _check_forks_threads {
+sub _check_dbh_gen {
   my ($self) = @_;
 
-  if($INC{'threads.pm'} && $self->{tid} != threads->tid) {
-      $self->_soft_reset;
-      $self->{tid} = threads->tid;
-  }
-
-  if($self->{pid} != $$) {
-      $self->_soft_reset;
-      $self->{pid} = $$;
+  if($self->{_dbh_gen} != $self->{storage}->{_dbh_gen}) {
+    $self->{_dbh_gen} = $self->{storage}->{_dbh_gen};
+    $self->_soft_reset;
   }
 }
 
 sub DESTROY {
   my ($self) = @_;
 
-  $self->_check_forks_threads;
-  $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active};
+  # None of the reasons this would die matter if we're in DESTROY anyways
+  local $@;
+  eval { $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active} };
 }
 
 1;

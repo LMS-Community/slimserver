@@ -10,70 +10,73 @@ package Slim::Formats::WMA;
 use strict;
 use base qw(Slim::Formats);
 
-use Audio::WMA;
+use Slim::Utils::Log;
+
+use Audio::Scan;
+
+my $sourcelog = logger('player.source');
 
 my %tagMapping = (
-	'TRACKNUMBER'        => 'TRACKNUM',
-	'ALBUMTITLE'         => 'ALBUM',
-	'AUTHOR'             => 'ARTIST',
-	'VBR'                => 'VBR_SCALE',
-	'PARTOFACOMPILATION' => 'COMPILATION',
-	'DESCRIPTION'        => 'COMMENT',
-	'GAIN_TRACK_GAIN'    => 'REPLAYGAIN_TRACK_GAIN',
-	'GAIN_TRACK_PEAK'    => 'REPLAYGAIN_TRACK_PEAK',
-	'GAIN_ALBUM_GAIN'    => 'REPLAYGAIN_ALBUM_GAIN',
-	'GAIN_ALBUM_PEAK'    => 'REPLAYGAIN_ALBUM_PEAK',
-	'PARTOFSET'          => 'DISC',
-	'ARTISTSORTORDER'    => 'ARTISTSORT',
-	'COMMENTS'           => 'COMMENT',
+	'Author'                => 'ARTIST',
+	'Title'                 => 'TITLE',
+	'WM/AlbumArtist'        => 'ALBUMARTIST',
+	'WM/AlbumTitle'         => 'ALBUM',
+	'WM/Composer'           => 'COMPOSER',
+	'WM/Genre'              => 'GENRE',
+	'WM/TrackNumber'        => 'TRACKNUM',
+	'WM/PartOfACompilation' => 'COMPILATION',
+	'Description'           => 'COMMENT',
+	'replaygain_track_gain' => 'REPLAYGAIN_TRACK_GAIN',
+	'replaygain_track_peak' => 'REPLAYGAIN_TRACK_PEAK',
+	'replaygain_album_gain' => 'REPLAYGAIN_ALBUM_GAIN',
+	'replaygain_album_peak' => 'REPLAYGAIN_ALBUM_PEAK',
+	'WM/PartOfSet'          => 'DISC',
+	'WM/ArtistSortOrder'    => 'ARTISTSORT',
+	'WM/Comments'           => 'COMMENT',
 );
-
-{
-	# WMA tags are stored as UTF-16 by default.
-	if ($] > 5.007) {
-		Audio::WMA->setConvertTagsToUTF8(1);
-	}
-}
 
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
-
-	# This hash will map the keys in the tag to their values.
-	my $tags = {};
-
-	my $wma  = Audio::WMA->new($file) || return $tags;
-
-	# We can have stacked tags for multple artists.
-	if ($wma->tags) {
-		foreach my $key (keys %{$wma->tags}) {
-			$tags->{uc $key} = $wma->tags($key);
-		}
-	}
 	
-	# Map tags onto Squeezebox Server's preferred.
-	while (my ($old,$new) = each %tagMapping) {
+	my $s = Audio::Scan->scan($file);
+	
+	my $info = $s->{info};
+	my $tags = $s->{tags};
+	
+	return unless $info->{song_length_ms};
 
-		if (exists $tags->{$old}) {
-			$tags->{$new} = $tags->{$old};
-			delete $tags->{$old};
+	# Map tags onto Squeezebox Server's preferred.
+	while ( my ($old, $new) = each %tagMapping ) {
+		if ( exists $tags->{$old} ) {
+			$tags->{$new} = delete $tags->{$old};
 		}
 	}
 
 	# Add additional info
-	$tags->{'SIZE'}	    = -s $file;
-	$tags->{'SECS'}	    = $wma->info('playtime_seconds');
-	$tags->{'RATE'}	    = $wma->info('sample_rate');
-
-	# WMA bitrate is reported in bps
-	$tags->{'BITRATE'}  = $wma->info('bitrate');
+	my $stream = $info->{streams}->[0];
 	
-	$tags->{'DRM'}      = $wma->info('drm');
-
-	$tags->{'CHANNELS'} = $wma->info('channels');
-	$tags->{'LOSSLESS'} = $wma->info('lossless') ? 1 : 0;
-
-	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
+	$tags->{SIZE}	   = $info->{file_size};
+	$tags->{SECS}	   = $info->{song_length_ms} / 1000;
+	$tags->{RATE}	   = $stream->{samplerate};
+	$tags->{BITRATE}   = $info->{max_bitrate};
+	$tags->{DRM}       = $stream->{encrypted};
+	$tags->{CHANNELS}  = $stream->{channels};
+	$tags->{LOSSLESS}  = $info->{lossless};
+	$tags->{STEREO}    = $tags->{CHANNELS} == 2 ? 1 : 0;
+	
+	if ( $tags->{IsVBR} ) {
+		$tags->{VBR_SCALE} = 1;
+	}
+	
+	if ( grep (/Professional/, map ($_->{'name'}, @{$info->{'codec_list'}})) ) {
+		$tags->{CONTENT_TYPE} = 'wmap';
+	} elsif ( $tags->{LOSSLESS} ) {
+		$tags->{CONTENT_TYPE} = 'wmal';
+	}
+	
+	# Flag if we have embedded cover art
+	$tags->{HAS_COVER} = 1 if $tags->{'WM/Picture'};
 	
 	return $tags;
 }
@@ -81,15 +84,51 @@ sub getTag {
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
-
-	my $tags = $class->getTag($file);
-
-	if (ref($tags) eq 'HASH' && defined $tags->{'PICTURE'}) {
-
-		return $tags->{'PICTURE'}->{'DATA'};
+	
+	my $s = Audio::Scan->scan_tags($file);
+	
+	if ( my $pic = $s->{tags}->{'WM/Picture'} ) {
+		if ( ref $pic eq 'ARRAY' ) {
+			# return image with lowest image_type value
+			return ( sort { $a->{image_type} <=> $b->{image_type} } @{$pic} )[0]->{image};
+		}
+		else {
+			return $pic->{image};
+		}
 	}
-
-	return undef;
+	
+	return;
 }
+
+sub getInitialAudioBlock {
+	my ($class, $fh) = @_;
+	
+	open my $localFh, '<&=', $fh;
+	
+	seek $localFh, 0, 0;
+	
+	my $s = Audio::Scan->scan_fh( asf => $localFh );
+	
+	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug( 'Reading initial audio block: length ' . $s->{info}->{audio_offset} );
+	
+	seek $localFh, 0, 0;
+	read $localFh, my $buffer, $s->{info}->{audio_offset};
+	
+	close $localFh;
+	
+	return $buffer;
+}
+
+sub findFrameBoundaries {
+	my ($class, $fh, $offset, $time) = @_;
+
+	if (!defined $fh || !defined $time) {
+		return 0;
+	}
+	
+	return Audio::Scan->find_frame_fh( asf => $fh, int($time * 1000) );
+}
+
+sub canSeek { 1 }
 
 1;

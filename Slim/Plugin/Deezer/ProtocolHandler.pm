@@ -36,9 +36,9 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->{streamUrl} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	
-	$log->debug( 'Remote streaming Deezer track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Deezer track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -93,7 +93,7 @@ sub parseDirectHeaders {
 
 	foreach my $header (@headers) {
 
-		$log->debug("Deezer header: $header");
+		main::DEBUGLOG && $log->debug("Deezer header: $header");
 
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
@@ -106,7 +106,7 @@ sub parseDirectHeaders {
 	
 	my $bitrate = 128_000;
 
-	$client->streamingSong->{bitrate} = $bitrate;
+	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
@@ -118,7 +118,7 @@ sub shouldLoop { 0 }
 sub isRepeatingStream {
 	my ( undef, $song ) = @_;
 	
-	return $song->{track}->url =~ /\.dzr$/;
+	return $song->track()->url =~ /\.dzr$/;
 }
 
 # Check if player is allowed to skip, using canSkip value from SN
@@ -153,7 +153,7 @@ sub canDoAction {
 		}
 		
 		# Smart Radio tracks have a skip limit
-		$log->debug("Deezer: Skip limit exceeded, disallowing skip");
+		main::DEBUGLOG && $log->debug("Deezer: Skip limit exceeded, disallowing skip");
 		
 		my $line1 = $client->string('PLUGIN_DEEZER_ERROR');
 		my $line2 = $client->string('PLUGIN_DEEZER_SKIPS_EXCEEDED');
@@ -180,7 +180,7 @@ sub canDoAction {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->debug("Direct stream failed: [$response] $status_line\n");
+	main::DEBUGLOG && $log->debug("Direct stream failed: [$response] $status_line\n");
 	
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_DEEZER_STREAM_FAILED');
 }
@@ -202,7 +202,7 @@ sub getNextTrack {
 	my ( $class, $song, $successCb, $errorCb ) = @_;
 	
 	my $client = $song->master();
-	my $url    = $song->{track}->url;
+	my $url    = $song->track()->url;
 	
 	$song->pluginData( radioTrackURL => undef );
 	$song->pluginData( radioTitle    => undef );
@@ -244,7 +244,7 @@ sub _getNextRadioTrack {
 		},
 	);
 	
-	$log->debug("Getting next radio track from mysqueezebox.com");
+	main::DEBUGLOG && $log->debug("Getting next radio track from SqueezeNetwork");
 	
 	$http->get( $radioURL );
 }
@@ -254,18 +254,18 @@ sub _gotNextRadioTrack {
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
 	my $song   = $params->{song};
-	my $url    = $song->{track}->url;
+	my $url    = $song->track()->url;
 	
 	my $track = eval { from_json( $http->content ) };
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
 	}
 	
 	if ( $track->{error} ) {
 		# We didn't get the next track to play
 		
-		my $error = ( $client->isPlaying(1) && $client->playingSong()->{track}->url =~ /\.dzr/ )
+		my $error = ( $client->isPlaying(1) && $client->playingSong()->track()->url =~ /\.dzr/ )
 					? 'PLUGIN_DEEZER_NO_NEXT_TRACK'
 					: 'PLUGIN_DEEZER_NO_TRACK';
 		
@@ -336,14 +336,14 @@ sub _getTrack {
 			my $http = shift;
 			my $info = eval { from_json( $http->content ) };
 			if ( $@ || $info->{error} ) {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrack failed: ' . ( $@ || $info->{error} ) );
 				}
 				
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
 				}
 				
@@ -353,7 +353,7 @@ sub _getTrack {
 		sub {
 			my $http  = shift;
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'getTrack failed: ' . $http->error );
 			}
 			
@@ -364,7 +364,7 @@ sub _getTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug('Getting next track playback info from SN');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN');
 	
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
@@ -381,7 +381,7 @@ sub _gotTrack {
     return if $song->pluginData('abandonSong');
 	
 	# Save the media URL for use in strm
-	$song->{streamUrl} = $info->{url};
+	$song->streamUrl($info->{url});
 
 	# Save all the info
 	$song->pluginData( info => $info );
@@ -409,7 +409,7 @@ sub _gotTrack {
 sub _gotTrackError {
 	my ( $error, $client, $params ) = @_;
 	
-	$log->debug("Error during getTrackInfo: $error");
+	main::DEBUGLOG && $log->debug("Error during getTrackInfo: $error");
 
 	return if $params->{song}->pluginData('abandonSong');
 
@@ -429,7 +429,7 @@ sub _playlistCallback {
 	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
 		# User stopped playing Deezer 
 
-		$log->debug( "Stopped Deezer, unsubscribing from playlistCallback" );
+		main::DEBUGLOG && $log->debug( "Stopped Deezer, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
 		
 		return;
@@ -440,9 +440,9 @@ sub _playlistCallback {
 		
 		my $title = $song->pluginData('radioTitle');
 		
-		$log->debug("Setting title for radio station to $title");
+		main::DEBUGLOG && $log->debug("Setting title for radio station to $title");
 		
-		Slim::Music::Info::setCurrentTitle( $song->{track}->url, $title );
+		Slim::Music::Info::setCurrentTitle( $song->track()->url, $title );
 	}
 }
 
@@ -451,7 +451,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->{streamUrl}, $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 }
 
 # URL used for CLI trackinfo queries
@@ -499,7 +499,7 @@ sub trackInfo {
 		url      => $trackInfoURL,
 	);
 	
-	$log->debug( "Getting track information for $url" );
+	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
@@ -546,7 +546,7 @@ sub getMetadataFor {
 			}
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
@@ -595,7 +595,7 @@ sub _gotBulkMetadata {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 	
@@ -649,9 +649,9 @@ sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
-	my $currentURL = $song->{streamUrl};
+	my $currentURL = $song->streamUrl();
 	
-	$log->debug("Re-init Deezer - $currentURL");
+	main::DEBUGLOG && $log->debug("Re-init Deezer - $currentURL");
 	
 	if ( my $length = $client->master->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet

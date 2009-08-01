@@ -5,6 +5,8 @@ package Slim::Schema::Year;
 use strict;
 use base 'Slim::Schema::DBI';
 
+use Slim::Schema::ResultSet::Year;
+
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -61,8 +63,8 @@ sub displayAsHTML {
 sub cleanupStaleYears {
 	my $class = shift;
 	
-	Slim::Schema->storage->dbh->do( qq{
-		DELETE years y
+	my $sth = Slim::Schema->storage->dbh->prepare_cached( qq{
+		SELECT id
 		FROM   years y
 		LEFT JOIN (
 			SELECT DISTINCT year FROM albums a
@@ -72,6 +74,28 @@ sub cleanupStaleYears {
 		ON     y.id = z.year
 		WHERE  z.year is NULL
 	} );
+	
+	$sth->execute;
+	
+	my $sta = Slim::Schema->storage->dbh->prepare_cached( qq{
+		DELETE FROM years WHERE id = ?
+	} );
+	
+	while ( my ($year) = $sth->fetchrow_array ) {
+		$sta->execute($year);
+	}
+}
+
+# Rescan this year.  Make sure at least 1 track from this year exists, otherwise
+# delete the year.
+sub rescan {
+	my $self = shift;
+	
+	my $count = Slim::Schema->rs('Track')->search( year => $self->id )->count;
+	
+	if ( !$count ) {
+		$self->delete;
+	}
 }
 
 1;

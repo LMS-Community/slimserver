@@ -15,7 +15,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Player::Playlist;
 use Slim::Player::Source;
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
@@ -25,8 +24,8 @@ my $prefs = preferences('server');
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction(qr/^status_header\.(?:htm|xml)/,\&status_header);
-	Slim::Web::HTTP::addPageFunction(qr/^status\.(?:htm|xml)/,\&status);
+	Slim::Web::Pages->addPageFunction(qr/^status_header\.(?:htm|xml)/,\&status_header);
+	Slim::Web::Pages->addPageFunction(qr/^status\.(?:htm|xml)/,\&status);
 }
 
 # Send the status page (what we're currently playing, contents of the playlist)
@@ -41,7 +40,7 @@ sub status_header {
 sub status {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
-	Slim::Web::Pages->addPlayerList($client, $params);
+	Slim::Web::Pages::Common->addPlayerList($client, $params);
 
 	$params->{'refresh'} = $prefs->get('refreshRate');
 	
@@ -129,7 +128,7 @@ sub status {
 		$params->{'songcount'}   = $songcount;
 		Slim::Player::Playlist::song($client)->displayAsHTML($params);
 		
-		Slim::Web::Pages->addSongInfo($client, $params, 1);
+		Slim::Web::Pages::Common->addSongInfo($client, $params, 1);
 
 		my ($song, $sourcebitrate, $streambitrate);
 		

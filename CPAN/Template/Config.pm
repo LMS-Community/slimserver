@@ -6,16 +6,13 @@
 #   Template Toolkit configuration module.
 #
 # AUTHOR
-#   Andy Wardley   <abw@cpan.org>
+#   Andy Wardley   <abw@wardley.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
-# REVISION
-#   $Id: Config.pm,v 2.70 2006/02/01 09:12:40 abw Exp $
 #
 #========================================================================
  
@@ -23,13 +20,13 @@ package Template::Config;
 
 use strict;
 use warnings;
-use base qw( Template::Base );
+use base 'Template::Base';
 use vars qw( $VERSION $DEBUG $ERROR $INSTDIR
              $PARSER $PROVIDER $PLUGINS $FILTERS $ITERATOR 
              $LATEX_PATH $PDFLATEX_PATH $DVIPS_PATH
              $STASH $SERVICE $CONTEXT $CONSTANTS @PRELOAD );
 
-$VERSION   = sprintf("%d.%02d", q$Revision: 2.70 $ =~ /(\d+)\.(\d+)/);
+$VERSION   = 2.75;
 $DEBUG     = 0 unless defined $DEBUG;
 $ERROR     = '';
 $CONTEXT   = 'Template::Context';
@@ -39,7 +36,7 @@ $PARSER    = 'Template::Parser';
 $PLUGINS   = 'Template::Plugins';
 $PROVIDER  = 'Template::Provider';
 $SERVICE   = 'Template::Service';
-$STASH     = 'Template::Stash';
+$STASH     = 'Template::Stash::XS';
 $CONSTANTS = 'Template::Namespace::Constants';
 
 @PRELOAD   = ( $CONTEXT, $FILTERS, $ITERATOR, $PARSER,
@@ -48,11 +45,6 @@ $CONSTANTS = 'Template::Namespace::Constants';
 # the following is set at installation time by the Makefile.PL 
 $INSTDIR  = '';
 
-# LaTeX executable paths set at installation time by the Makefile.PL
-# Empty strings cause the latex(pdf|dvi|ps) filters to throw an error.
-$LATEX_PATH    = '';
-$PDFLATEX_PATH = '';
-$DVIPS_PATH    = '';
 
 #========================================================================
 #                       --- CLASS METHODS ---
@@ -87,11 +79,7 @@ sub load {
     my ($class, $module) = @_;
     $module =~ s[::][/]g;
     $module .= '.pm';
-#    print STDERR "loading $module\n"
-#	if $DEBUG;
-    eval {
-	require $module;
-    };
+    eval { require $module; };
     return $@ ? $class->error("failed to load $module: $@") : 1;
 }
 
@@ -108,12 +96,12 @@ sub load {
 
 sub parser {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH')
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH'
+               ? shift : { @_ };
 
     return undef unless $class->load($PARSER);
     return $PARSER->new($params) 
-	|| $class->error("failed to create parser: ", $PARSER->error);
+        || $class->error("failed to create parser: ", $PARSER->error);
 }
 
 
@@ -126,8 +114,8 @@ sub parser {
 
 sub provider {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($PROVIDER);
     return $PROVIDER->new($params) 
@@ -145,13 +133,13 @@ sub provider {
 
 sub plugins {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($PLUGINS);
     return $PLUGINS->new($params)
-	|| $class->error("failed to create plugin provider: ",
-			 $PLUGINS->error);
+        || $class->error("failed to create plugin provider: ",
+                         $PLUGINS->error);
 }
 
 
@@ -164,13 +152,13 @@ sub plugins {
 
 sub filters {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($FILTERS);
     return $FILTERS->new($params)
-	|| $class->error("failed to create filter provider: ",
-			 $FILTERS->error);
+        || $class->error("failed to create filter provider: ",
+                         $FILTERS->error);
 }
 
 
@@ -187,7 +175,7 @@ sub iterator {
 
     return undef unless $class->load($ITERATOR);
     return $ITERATOR->new($list, @_)
-	|| $class->error("failed to create iterator: ", $ITERATOR->error);
+        || $class->error("failed to create iterator: ", $ITERATOR->error);
 }
 
 
@@ -200,12 +188,12 @@ sub iterator {
 
 sub stash {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($STASH);
     return $STASH->new($params) 
-	|| $class->error("failed to create stash: ", $STASH->error);
+        || $class->error("failed to create stash: ", $STASH->error);
 }
 
 
@@ -218,12 +206,12 @@ sub stash {
 
 sub context {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($CONTEXT);
     return $CONTEXT->new($params) 
-	|| $class->error("failed to create context: ", $CONTEXT->error);
+        || $class->error("failed to create context: ", $CONTEXT->error);
 }
 
 
@@ -236,12 +224,12 @@ sub context {
 
 sub service {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($SERVICE);
     return $SERVICE->new($params) 
-	|| $class->error("failed to create context: ", $SERVICE->error);
+        || $class->error("failed to create context: ", $SERVICE->error);
 }
 
 
@@ -255,13 +243,13 @@ sub service {
 
 sub constants {
     my $class  = shift;
-    my $params = defined($_[0]) && UNIVERSAL::isa($_[0], 'HASH') 
-	       ? shift : { @_ };
+    my $params = defined($_[0]) && ref($_[0]) eq 'HASH' 
+               ? shift : { @_ };
 
     return undef unless $class->load($CONSTANTS);
     return $CONSTANTS->new($params) 
-	|| $class->error("failed to create constants namespace: ", 
-			 $CONSTANTS->error);
+        || $class->error("failed to create constants namespace: ", 
+                         $CONSTANTS->error);
 }
 
 
@@ -275,24 +263,12 @@ sub constants {
 sub instdir {
     my ($class, $dir) = @_;
     my $inst = $INSTDIR 
-	|| return $class->error("no installation directory");
+        || return $class->error("no installation directory");
     $inst =~ s[/$][]g;
     $inst .= "/$dir" if $dir;
     return $inst;
 }
 
-#------------------------------------------------------------------------
-# latexpaths()
-#
-# Returns a reference to a three element array:
-#    [latex_path,  pdf2latex_path, dvips_path]
-# These values are determined by Makefile.PL at installation time
-# and are used by the latex(pdf|dvi|ps) filters.
-#------------------------------------------------------------------------
-
-sub latexpaths {
-    return [$LATEX_PATH, $PDFLATEX_PATH, $DVIPS_PATH];
-}
 
 #========================================================================
 # This should probably be moved somewhere else in the long term, but for
@@ -323,18 +299,6 @@ sub PRINT {
 
 __END__
 
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
-
 =head1 NAME
 
 Template::Config - Factory module for instantiating other TT2 modules
@@ -350,65 +314,76 @@ other modules that comprise the Template Toolkit.  It provides a consistent
 way to create toolkit components and allows custom modules to be used in 
 place of the regular ones.
 
-Package variables such as $STASH, $SERVICE, $CONTEXT, etc., contain
-the default module/package name for each component (Template::Stash,
-Template::Service and Template::Context, respectively) and are used by
-the various factory methods (stash(), service() and context()) to load
-the appropriate module.  Changing these package variables will cause
-subsequent calls to the relevant factory method to load and instantiate
-an object from the new class.
+Package variables such as C<$STASH>, C<$SERVICE>, C<$CONTEXT>, etc., contain
+the default module/package name for each component (L<Template::Stash>,
+L<Template::Service> and L<Template::Context>, respectively) and are used by
+the various factory methods (L<stash()>, L<service()> and L<context()>) to
+load the appropriate module. Changing these package variables will cause
+subsequent calls to the relevant factory method to load and instantiate an
+object from the new class.
 
 =head1 PUBLIC METHODS
 
 =head2 load($module)
 
-Load a module via require().  Any occurences of '::' in the module name
-are be converted to '/' and '.pm' is appended.  Returns 1 on success
-or undef on error.  Use $class-E<gt>error() to examine the error string.
+Load a module using Perl's L<require()>. Any occurences of 'C<::>' in the module
+name are be converted to 'C</>', and 'C<.pm>' is appended. Returns 1 on success or
+undef on error.  Use C<$class-E<gt>error()> to examine the error string.
 
 =head2 preload()
 
-This method preloads all the other Template::* modules that are likely
-to be used.  It is called by the Template module when running under 
-mod_perl ($ENV{MOD_PERL} is set).
+This method preloads all the other C<Template::*> modules that are likely to
+be used. It is called automatically by the L<Template> module when running
+under mod_perl (C<$ENV{MOD_PERL}> is set).
 
 =head2 parser(\%config)
 
 Instantiate a new parser object of the class whose name is denoted by
-the package variable $PARSER (default: Template::Parser).  Returns
+the package variable C<$PARSER> (default: L<Template::Parser>).  Returns
 a reference to a newly instantiated parser object or undef on error.
 
 =head2 provider(\%config)
 
-Instantiate a new template provider object (default: Template::Provider).
+Instantiate a new template provider object (default: L<Template::Provider>).
 Returns an object reference or undef on error, as above.
 
 =head2 plugins(\%config)
 
-Instantiate a new plugins provider object (default: Template::Plugins).
+Instantiate a new plugins provider object (default: L<Template::Plugins>).
 Returns an object reference or undef on error, as above.
 
 =head2 filters(\%config)
 
-Instantiate a new filter provider object (default: Template::Filters).
+Instantiate a new filter provider object (default: L<Template::Filters>).
 Returns an object reference or undef on error, as above.
 
 =head2 stash(\%vars)
 
-Instantiate a new stash object (Template::Stash or Template::Stash::XS
-depending on the default set at installation time) using the contents
-of the optional hash array passed by parameter as initial variable
-definitions.  Returns an object reference or undef on error, as above.
+Instantiate a new stash object (L<Template::Stash> or L<Template::Stash::XS>
+depending on the default set at installation time) using the contents of the
+optional hash array passed by parameter as initial variable definitions.
+Returns an object reference or undef on error, as above.
 
 =head2 context(\%config)
 
-Instantiate a new template context object (default: Template::Context).
+Instantiate a new template context object (default: L<Template::Context>).
 Returns an object reference or undef on error, as above.
 
 =head2 service(\%config)
 
-Instantiate a new template service object (default: Template::Service).
+Instantiate a new template service object (default: L<Template::Service>).
 Returns an object reference or undef on error, as above.
+
+=head2 iterator(\%config)
+
+Instantiate a new template iterator object (default: L<Template::Iterator>).
+Returns an object reference or undef on error, as above.
+
+=head2 constants(\%config)
+
+Instantiate a new namespace handler for compile time constant folding
+(default: L<Template::Namespace::Constants>). Returns an object reference or
+undef on error, as above.
 
 =head2 instdir($dir)
 
@@ -418,40 +393,29 @@ as an argument will be appended to the returned directory.
 
     # e.g. returns '/usr/local/tt2'
     my $ttroot = Template::Config->instdir()
-	|| die "$Template::Config::ERROR\n";
+        || die "$Template::Config::ERROR\n";
 
     # e.g. returns '/usr/local/tt2/templates'
     my $template = Template::Config->instdir('templates')
-	|| die "$Template::Config::ERROR\n";
+        || die "$Template::Config::ERROR\n";
 
-Returns undef and sets $Template::Config::ERROR appropriately if the 
+Returns C<undef> and sets C<$Template::Config::ERROR> appropriately if the 
 optional components of the Template Toolkit have not been installed.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@wardley.orgE<gt>
-
-L<http://wardley.org/|http://wardley.org/>
-
-
-
-
-=head1 VERSION
-
-2.70, distributed as part of the
-Template Toolkit version 2.15, released on 26 May 2006.
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Template|Template>
+L<Template>
 
 =cut
 

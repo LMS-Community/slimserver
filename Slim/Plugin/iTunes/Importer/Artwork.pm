@@ -31,14 +31,14 @@ sub startArtworkScan {
 	
 	# Export all downloaded artwork to cache directory
 	# This full export is only performed once per 'wipe'
-	my $cachedir = catdir( preferences('server')->get('cachedir'), 'iTunesArtwork' );
+	my $cachedir = catdir( preferences('server')->get('librarycachedir'), 'iTunesArtwork' );
 	if ( !-d $cachedir ) {
 		mkpath($cachedir) or do {
 			logError("Unable to create iTunes artwork cache dir $cachedir");
 			return;
 		};
 	
-		$log->debug("Exporting iTunes artwork to $cachedir");
+		main::DEBUGLOG && $log->debug("Exporting iTunes artwork to $cachedir");
 	
 		$class->exportDownloadedArtwork($cachedir);
 	

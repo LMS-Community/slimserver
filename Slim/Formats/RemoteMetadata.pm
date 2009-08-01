@@ -82,7 +82,7 @@ sub registerProvider {
 	
 	$providers{ $params{match} } = $params{func};
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata provider for " . $params{match} . ": $name" );
 	}
@@ -137,7 +137,7 @@ sub registerParser {
 	
 	$parsers{ $params{match} } = $params{func};
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $params{func} );
 		$log->debug( "Registered new metadata parser for " . $params{match} . ": $name" );
 	}

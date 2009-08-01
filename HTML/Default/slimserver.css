@@ -441,7 +441,7 @@ div.pagetitleWithIcon {
 }
 
 
-.disclosure_home {
+.disclosure_home, .disclosure_repos {
 	width: 14px;
 	height: 11px;
 	background: transparent url(html/images/disclosure_home.gif) no-repeat 0 0;
@@ -1164,6 +1164,10 @@ body.settingsMenu {
 	padding: 0 22px;
 	margin-bottom: 15px;
 	margin-top: 15px;
+}
+
+.settingsSmallIndention .settingSection {
+	padding-left: 18px;
 }
 
 .settingSection p {

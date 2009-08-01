@@ -17,10 +17,17 @@ sub _has_one {
   unless (ref $cond) {
     $class->ensure_class_loaded($f_class);
     my ($pri, $too_many) = $class->primary_columns;
+
     $class->throw_exception(
       "might_have/has_one can only infer join for a single primary key; ".
       "${class} has more"
     ) if $too_many;
+
+    $class->throw_exception(
+      "might_have/has_one needs a primary key  to infer a join; ".
+      "${class} has none"
+    ) if !defined $pri && (!defined $cond || !length $cond);
+
     my $f_class_loaded = eval { $f_class->columns };
     my ($f_key,$guess);
     if (defined $cond && length $cond) {

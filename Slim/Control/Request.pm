@@ -191,6 +191,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlist        pause                       <0|1>
  Y    playlist        stop
  N    rescan          done
+ N    library         changed               	  <0|1>
  Y    unknownir       <ircode>                    <timestamp>
  N    prefset         <namespace>                 <prefname>                  <newvalue>
  Y    alarm           sound                       <id>
@@ -328,7 +329,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
       my $cmd = $request->getRequestString();
 
-      $log->info("myCallbackFunction called for cmd $cmd\n");
+      main::INFOLOG && $log->info("myCallbackFunction called for cmd $cmd\n");
  }
 
 
@@ -447,8 +448,6 @@ my $listenerSuperRE = qr/::/;   # regexp to screen out request which no listener
 
 my $alwaysUseIxHashes = 0;      # global flag which is set when we need to use tied IxHashes
                                 # this is set when a cli subscription is active
-
-our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('control.command');
 
@@ -642,6 +641,7 @@ sub init {
 	addDispatch(['playlist',       'pause',          '_newvalue'],                                     [1, 0, 0, undef]);
 	addDispatch(['playlist',       'stop'],                                                            [1, 0, 0, undef]);
 	addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
+	addDispatch(['library',        'changed',        '_newvalue'],                                     [0, 0, 0, undef]);
 	addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
 	addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
 	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
@@ -675,14 +675,14 @@ sub init {
 	# not intended for use via the web interface!
 	#
 	# protect some commands regardless of args passed to them
-	Slim::Web::HTTP::protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
+	Slim::Web::HTTP::CSRF->protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
 					playlistcontrol playlists stop stopserver restartserver wipecache prefset mode
 					power rescan sleep sync time gototime
 					mixer playerpref pref|]);
 	# protect changing setting for command + 1-arg ("?" query always allowed -- except "?" is "%3F" once escaped)
-	#Slim::Web::HTTP::protectCommand(['power', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');	
+	#Slim::Web::HTTP::CSRF->protectCommand(['power', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');	
 	# protect changing setting for command + 2 args, 2nd as new value ("?" query always allowed)
-	#Slim::Web::HTTP::protectCommand(['mixer', 'playerpref', 'pref'],'.*','[^\?].*');	# protect changing volume ("?" query always allowed)
+	#Slim::Web::HTTP::CSRF->protectCommand(['mixer', 'playerpref', 'pref'],'.*','[^\?].*');	# protect changing volume ("?" query always allowed)
 
 }
 
@@ -768,7 +768,7 @@ sub addDispatch {
 	# FIXME - should we check the params for the replacement are the same?
 	my $prevFunc = defined $entry->[$query] ? $entry->[$query]->[4] : undef;
 
-	$log->is_info && $log->info("Adding dispatch: [", join(' ', @$arrayCmdRef) . "]");
+	main::INFOLOG && $log->is_info && $log->info("Adding dispatch: [", join(' ', @$arrayCmdRef) . "]");
 
 	$entry->[$query] = [ \@params, @$arrayDataRef ];
 
@@ -791,7 +791,7 @@ sub subscribe {
 	# rebuild the super regexp for the current list of listeners
 	__updateListenerSuperRE();
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf(
 			"Request from: %s - (%d listeners)\n",
 			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
@@ -815,7 +815,7 @@ sub unsubscribe {
 	# rebuild the super regexp for the current list of listeners
 	__updateListenerSuperRE();
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf(
 			"Request from: %s - (%d listeners)\n",
 			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
@@ -830,7 +830,7 @@ sub notifyFromArray {
 	my $client         = shift;     # client, if any, to which the query applies
 	my $requestLineRef = shift;     # reference to an array containing the query verbs
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("(%s)", join(" ", @{$requestLineRef})));
 	}
 
@@ -995,12 +995,6 @@ sub new {
 		return $self;
 	}
 	
-	# Special case to handle menu requests that contain a disconnected client
-	# Used by SP to obtain a player-specific menu even if player is not connected
-	if ( $requestLineRef->[1] eq 'menu' && $requestLineRef->[0] =~ /:/ ) {
-		$self->{_disconnected_clientid} = shift @{$requestLineRef};
-	}
-
 	# parse the line
 	my $i = 0;
 	my $found;
@@ -1018,7 +1012,7 @@ sub new {
 		# choose the parameter array based on whether last param is '?'
 		# 1 = array for queries ending in ?, 0 otherwise
 
-		if ($requestLineRef->[-1] ne '?') {
+		if (!defined $requestLineRef->[-1] || $requestLineRef->[-1] ne '?') {
 
 			$found = $search->{'::'}->[0];
 
@@ -1071,10 +1065,18 @@ sub new {
 			# Mark as not dispatachable as no function or we ran out of params
 			$self->{'_status'} = 104;
 
-		} elsif ($found->[1] && !$Slim::Player::Client::clientHash{$clientid}) {
-			# Mark as not dispatchable as no client
-			$self->{'_status'} = 103;
+		} elsif ($found->[1] && (!$clientid || !$Slim::Player::Client::clientHash{$clientid})) {
+
 			$self->{'_clientid'} = undef;
+
+			if ($found->[1] == 2 && $clientid) {
+				# Special case where there is a clientid but there is no attached client
+				$self->{'_disconnected_clientid'} = $clientid;
+				$self->{'_status'} = 1;
+			} else {
+				# Mark as not dispatchable as no client
+				$self->{'_status'} = 103;
+			}
 
 		} else {
 			# Mark as dispatchable
@@ -1091,7 +1093,7 @@ sub new {
 			$params{"_p$i"} = $requestLineRef->[$i];
 		}
 
-		if ($log->is_info) {
+		if (main::INFOLOG && $log->is_info) {
 			$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
 		}
 	}
@@ -1286,7 +1288,7 @@ sub removeAutoExecuteCallback {
 	my $cleanup     = $self->autoExecuteCleanup();
 	my $request2del = $subscribers{$cnxid}{$name}{$clientid};
 	
-	$log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
+	main::DEBUGLOG && $log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
 
 	delete $subscribers{$cnxid}{$name}{$clientid};
 	
@@ -1642,7 +1644,7 @@ sub sliceResultLoop {
 		if ($start) {
 			splice ( @{${$self->{'_results'}}{$loop}} , 0, $start);
 		}
-		if ($quantity) {
+		if ($quantity && $quantity < scalar @{${$self->{'_results'}}{$loop}}) {
 			splice ( @{${$self->{'_results'}}{$loop}} , $quantity);
 		}
 	}
@@ -1675,7 +1677,7 @@ sub sortResultLoop {
 	if (defined ${$self->{'_results'}}{$loop}) {
 		my @data;
 		
-		if ($field == 'weight') {
+		if ($field eq 'weight') {
 			@data = sort { $a->{$field} <=> $b->{$field} } @{${$self->{'_results'}}{$loop}};
 		} else {
 			@data = sort { $a->{$field} cmp $b->{$field} } @{${$self->{'_results'}}{$loop}};
@@ -1873,11 +1875,11 @@ sub normalize {
 sub execute {
 	my $self = shift;
 
-	if ($log->is_info) {
+	if (main::INFOLOG && $log->is_info) {
 		$self->dump("Request");
 	}
 
-	$::perfmon && (my $now = Time::HiRes::time());
+	main::PERFMON && (my $now = AnyEvent->time);
 
 	# some time may have elapsed between the request creation
 	# and its execution, and the client, f.e., could have disappeared
@@ -1919,7 +1921,7 @@ sub execute {
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
 
-	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now, "Execute: ", $self->{'_func'});
+	main::PERFMON && $now && Slim::Utils::PerfMon->check('request', AnyEvent->time - $now, undef, $self->{'_func'});
 }
 
 # perform end of execution, calling the callback etc...
@@ -1943,7 +1945,7 @@ sub executeDone {
 		}
 	}
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug($self->dump('Request'));
 	}
@@ -2003,7 +2005,7 @@ sub callback {
 		
 		if (defined(my $funcPtr = $self->callbackFunction())) {
 
-			$log->info("Calling callback function");
+			main::INFOLOG && $log->info("Calling callback function");
 
 			my $args = $self->callbackArguments();
 		
@@ -2041,7 +2043,7 @@ sub callback {
 
 	} else {
 
-		$log->info("Callback disabled");
+		main::INFOLOG && $log->info("Callback disabled");
 	}
 }
 
@@ -2050,7 +2052,7 @@ sub notify {
 	my $self = shift || return;
 	my $specific = shift; # specific target of notify if we have a single known target
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(sprintf("Notifying %s", $self->getRequestString()));
 	}
 
@@ -2070,12 +2072,12 @@ sub notify {
 			# If this listener is client-specific, ignore unless we have that client
 			if ( $clientid ) {
 				unless ( blessed( $self->client ) && $self->client->id eq $clientid ) {
-					$log->debug( "Skipping notification, only wanted for $clientid" );
+					main::DEBUGLOG && $log->debug( "Skipping notification, only wanted for $clientid" );
 					next;
 				}
 			}
 
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $funcName = $listener;
 				
 				if ( ref($notifyFuncRef) eq 'CODE' ) {
@@ -2087,7 +2089,7 @@ sub notify {
 								   ));
 			}
 			
-			$::perfmon && (my $now = Time::HiRes::time());
+			main::PERFMON && (my $now = AnyEvent->time);
 			
 			eval { &$notifyFuncRef($self) };
 			
@@ -2100,7 +2102,7 @@ sub notify {
 				}
 			}
 			
-			$::perfmon && $requestTask->log(Time::HiRes::time() - $now, "Notify: ", $notifyFuncRef);
+			main::PERFMON && Slim::Utils::PerfMon->check('notify', AnyEvent->time - $now, undef, $notifyFuncRef);
 		}
 	}
 	
@@ -2165,7 +2167,7 @@ sub registerAutoExecute{
 	my $filterFunc = shift;
 	my $cleanupFunc = shift;
 	
-	$log->debug("registerAutoExecute()");
+	main::DEBUGLOG && $log->debug("registerAutoExecute()");
 	
 	# we shall be a query
 	return unless $self->{'_isQuery'};
@@ -2193,7 +2195,7 @@ sub registerAutoExecute{
 
 	if (defined $oldrequest) {
 
-		$log->info("Old friend: $cnxid - $name - $clientid");
+		main::INFOLOG && $log->info("Old friend: $cnxid - $name - $clientid");
 
 		delete $subscribers{$cnxid}{$name}{$clientid};
 
@@ -2207,13 +2209,13 @@ sub registerAutoExecute{
 		Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
 	}
 	else {
-		$log->info("New buddy: $cnxid - $name - $clientid");
+		main::INFOLOG && $log->info("New buddy: $cnxid - $name - $clientid");
 	}
 	
 	# store the new subscription if this is what is asked of us
 	if ($timeout ne '-') {
 		
-		$log->debug(".. set ourself up");
+		main::DEBUGLOG && $log->debug(".. set ourself up");
 
 		# copy the request
 		my $request = $self->virginCopy();
@@ -2221,7 +2223,7 @@ sub registerAutoExecute{
 		$subscribers{$cnxid}{$name}{$clientid} = $request;
 
 		if ($timeout > 0) {
-			$log->debug(".. starting timer: $timeout");
+			main::DEBUGLOG && $log->debug(".. starting timer: $timeout");
 			# start the timer
 			Slim::Utils::Timers::setTimer($request, 
 				Time::HiRes::time() + $timeout,
@@ -2399,11 +2401,11 @@ sub dump {
 
 	$str .= ' (' . $self->getStatusText() . ")";
 
-	$log->info($str);
+	main::INFOLOG && $log->info($str);
 
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
-			$log->info("   Param: [$key] = [$val]");
+			main::INFOLOG && $log->info("   Param: [$key] = [$val]");
  	}
 
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
@@ -2412,7 +2414,7 @@ sub dump {
 
 			my $count = scalar @{${$self->{'_results'}}{$key}};
 
-			$log->info("   Result: [$key] is loop with $count elements:");
+			main::INFOLOG && $log->info("   Result: [$key] is loop with $count elements:");
 
 			# loop over each elements
 			for (my $i = 0; $i < $count; $i++) {
@@ -2420,12 +2422,12 @@ sub dump {
 				my $hash = ${$self->{'_results'}}{$key}->[$i];
 
 				while (my ($key2, $val2) = each %{$hash}) {
-					$log->info("   Result:   $i. [$key2] = [$val2]");
+					main::INFOLOG && $log->info("   Result:   $i. [$key2] = [$val2]");
 				}	
 			}
 
 		} else {
-			$log->info("   Result: [$key] = [$val]");
+			main::INFOLOG && $log->info("   Result: [$key] = [$val]");
 		}
  	}
 }
@@ -2443,7 +2445,7 @@ sub __matchingRequest {
 
 	for my $names (@{$_[1]}) {
 		my $req = $request->[$i++];
-		if (!grep($_ eq $req, @$names)) {
+		if (!$req || !grep($_ eq $req, @$names)) {
 			return 0;
 		}
 	}
@@ -2490,7 +2492,7 @@ sub __updateListenerSuperRE {
 
 	$listenerSuperRE = qr /$regexp/;
 
-	$log->debug("updated listener superRE: $listenerSuperRE");
+	main::DEBUGLOG && $log->debug("updated listener superRE: $listenerSuperRE");
 }
 
 # returns a string corresponding to the notification filter, used for 
@@ -2519,7 +2521,7 @@ sub __filterString {
 sub __autoexecute{
 	my $self = shift;
 	
-	$log->debug("__autoexecute()");
+	main::DEBUGLOG && $log->debug("__autoexecute()");
 	
 	# we shall have somewhere to callback to
 	my $funcPtr = $self->autoExecuteCallback() || return;
@@ -2558,7 +2560,7 @@ sub __autoexecute{
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
 		my $request2del = delete $subscribers{$cnxid}{$name}{$clientid};
-		$log->debug("__autoexecute: deleting $cnxid - $name - $clientid");
+		main::DEBUGLOG && $log->debug("__autoexecute: deleting $cnxid - $name - $clientid");
 		if (my $cleanup = $self->autoExecuteCleanup()) {
 			eval { &{$cleanup}($self, $cnxid) };
 		}

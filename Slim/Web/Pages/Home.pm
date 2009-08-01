@@ -26,10 +26,10 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 	
-	Slim::Web::HTTP::addPageFunction(qr/^$/, sub {$class->home(@_)});
-	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
-	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
-	Slim::Web::HTTP::addPageFunction(qr/^switchserver\.(?:htm|xml)/, sub {$class->switchServer(@_)});
+	Slim::Web::Pages->addPageFunction(qr/^$/, sub {$class->home(@_)});
+	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
+	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
+	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, sub {$class->switchServer(@_)});
 
 	$class->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html"});
 	$class->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
@@ -37,7 +37,6 @@ sub init {
 	$class->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
 
-	$class->addPageLinks("plugins", { 'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	$class->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
 
 	$class->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
@@ -78,18 +77,25 @@ sub home {
 	$params->{'nosetup'}  = 1 if $::nosetup;
 	$params->{'noserver'} = 1 if $::noserver;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
+	$params->{'newVersion'} ||= Slim::Utils::PluginManager->message;
 
-	if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
-		$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&amp;level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&amp;level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&amp;level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&amp;level=0"});
-		$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&amp;level=0"});
-	}
-
-	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
-		$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
-		$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+	if (Slim::Schema::hasLibrary()) {
+		if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
+			$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&amp;level=0"});
+			$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&amp;level=0"});
+			$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&amp;level=0"});
+			$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&amp;level=0"});
+			$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&amp;level=0"});
+		}
+	
+		if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
+			$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
+			$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+		}
+		
+		$params->{'hasLibrary'} = 1;
+	} else {
+		$params->{'hasLibrary'} = 0;
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
@@ -111,7 +117,7 @@ sub home {
 	}
 
 	# Show playlists if any exists
-	if ($prefs->get('playlistdir') || Slim::Schema->rs('Playlist')->getPlaylists->count) {
+	if ($prefs->get('playlistdir') || (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count)) {
 
 		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&amp;level=0"});
 	}
@@ -196,9 +202,8 @@ sub home {
 		};
 	}
 
-	$class->addPlayerList($client, $params);
-	
-	$class->addLibraryStats($params);
+	Slim::Web::Pages::Common->addPlayerList($client, $params);
+	Slim::Web::Pages::Common->addLibraryStats($params);
 
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }

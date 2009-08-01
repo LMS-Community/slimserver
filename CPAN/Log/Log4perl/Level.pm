@@ -11,6 +11,7 @@ use Carp;
 # this seems less optimal, as more logging would imply a higher
 # level. But oh well. Probably some brokenness that has persisted. :)
 use constant ALL_INT   => 0;
+use constant TRACE_INT =>  5000;
 use constant DEBUG_INT => 10000;
 use constant INFO_INT  => 20000;
 use constant WARN_INT  => 30000;
@@ -61,7 +62,8 @@ add_priority("ERROR", ERROR_INT,  3, 4);
 add_priority("WARN",  WARN_INT,   4, 3);
 add_priority("INFO",  INFO_INT,   6, 1);
 add_priority("DEBUG", DEBUG_INT,  7, 0);
-add_priority("ALL",   ALL_INT,    7, 0);
+add_priority("TRACE", TRACE_INT,  8, 0);
+add_priority("ALL",   ALL_INT,    8, 0);
 
 # we often sort numerically, so a helper func for readability
 sub numerically {$a <=> $b}
@@ -174,7 +176,7 @@ sub get_higher_level {
     my $new_priority = 0;
 
     foreach (1..$delta){
-        #so the list is DEBUG, INFO, WARN, ERROR, FATAL
+        #so the list is TRACE, DEBUG, INFO, WARN, ERROR, FATAL
       # but remember, the numbers go in reverse order!
         foreach my $p (sort numerically keys %LEVELS){
             if ($p > $old_priority) {
@@ -195,7 +197,7 @@ sub get_lower_level {
     my $new_priority = 0;
 
     foreach (1..$delta){
-        #so the list is FATAL, ERROR, WARN, INFO, DEBUG
+        #so the list is FATAL, ERROR, WARN, INFO, DEBUG, TRACE
       # but remember, the numbers go in reverse order!
         foreach my $p (reverse sort numerically keys %LEVELS){
             if ($p < $old_priority) {
@@ -257,6 +259,7 @@ C<Log::Log4perl>. The following scalars are defined:
     $WARN
     $INFO
     $DEBUG
+    $TRACE
     $ALL
 
 C<Log::Log4perl> also exports these constants into the caller's namespace
@@ -279,7 +282,31 @@ it can be provided with the C<use> command:
 After this C<$MyNameSpace::ERROR>, C<$MyNameSpace::INFO> etc. 
 will be defined accordingly.
 
-=head1 SEE ALSO
+=head2 Numeric levels and Strings
+
+Level variables like $DEBUG or $WARN have numeric values that are 
+internal to Log4perl. Transform them to strings that can be used
+in a Log4perl configuration file, use the c<to_level()> function
+provided by Log::Log4perl::Level:
+
+    use Log::Log4perl qw(:easy);
+    use Log::Log4perl::Level;
+
+        # prints "DEBUG"
+    print Log::Log4perl::Level::to_level( $DEBUG ), "\n";
+
+To perform the reverse transformation, which takes a string like
+"DEBUG" and converts it into a constant like C<$DEBUG>, use the
+to_priority() function:
+
+    use Log::Log4perl qw(:easy);
+    use Log::Log4perl::Level;
+
+    my $numval = Log::Log4perl::Level::to_priority( "DEBUG" );
+
+after which $numval could be used where a numerical value is required:
+
+    Log::Log4perl->easy_init( $numval );
 
 =head1 AUTHOR
 
@@ -287,7 +314,7 @@ Mike Schilli, E<lt>m@perlmeister.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2002 by Mike Schilli
+Copyright 2002-2008 by Mike Schilli
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

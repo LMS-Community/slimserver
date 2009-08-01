@@ -5,111 +5,17 @@
 <div class="helpsection">
 
 <p>
-SoftSqueeze emulates the Squeezebox and Transporter on Windows, Mac OSX and Unix computers. You can find instructions on how to run SoftSqueeze using Java Web Start or as a Java applet below.
+SoftSqueeze emulates the Squeezebox and Transporter on Windows, Mac OSX and Unix computers.
 </p>
-
-<p><a href="softsqueeze.jnlp"><img src="icons/screenshot.png" align="middle" alt="" title="" /></a></p>
-
-
-<h4>SoftSqueeze using Java Web Start</h4>
 
 <p>
-You'll be able to run SoftSqueeze on your local machine by following one or two
-simple steps, depending on whether Java is already installed on your machine.
+In Squeezebox Server 7.4 SoftSqueeze has been replaced with 
+<a href="http://downloads.slimdevices.com/nightly/?ver=7.4" target="_blank">SqueezePlay</a>. 
+SoftSqueeze is still being developed and maintained by the Squeezebox community.
+For more information on SoftSqueeze please visit the 
+<a href="http://softsqueeze.sourceforge.net/" target="_blank">SoftSqueeze page on Sourceforge</a>. 
 </p>
 
-<SCRIPT TYPE="text/javascript">
-var javawsInstalled = 0;
-var javaws12Installed = 0;
-
-isIE = "false";
-
-if (navigator.mimeTypes && navigator.mimeTypes.length) {
-  x = navigator.mimeTypes['application/x-java-jnlp-file'];
-  if (x) {
-     javawsInstalled = 1;
-     javaws12Installed = 1;
-  }
-} else {
-  isIE = "true";
-}
-</SCRIPT>
-
-<SCRIPT TYPE="text/vbscript">
-on error resume next
-If isIE = "true" Then
-  If Not(IsObject(CreateObject("JavaWebStart.isInstalled"))) Then
-     javawsInstalled = 0
-  Else
-     javawsInstalled = 1
-  End If
-  If Not(IsObject(CreateObject("JavaWebStart.isInstalled.2"))) Then
-     javaws12Installed = 0
-  Else
-     javaws12Installed = 1
-  End If
-End If
-</SCRIPT>
- 
-<!-- This initializes the navigator.family object -->
-<SCRIPT TYPE="text/javascript">
-<!-- Developers should be aware that for Gecko-based browsers (NS 6.x) -->
-<!-- Java Web Start might not be installed                             -->
-if (javawsInstalled) {
-<!--StartFragment -->
-document.write("<table>");
-document.write("<td valign='top'><img src='icons/checked.gif'></td>");
-document.write("<td>It appears that Java is already installed (good!), so you can go on to step 2.");
-document.write("<br><i>(In case of problems, you can <a href=\"http://www.java.com/en/download/windows_automatic.jsp\" onClick=\"window.open('http://www.java.com/en/download/windows_automatic.jsp', null,'toolbar=no, directories=no, location=no, status=yes, menubar=no, resizable=no, scrollbars=no, width=800, height=600'); return false\">click here</a> to re-install the Java environment that is required by SoftSqueeze.)</i><br>&nbsp;");
-document.write("</td><tr>");
-
-document.write("<tr><td valign='top'><a href=softsqueeze.jnlp><img src='icons/unchecked.gif'></a></td>");
-document.write("<td><a href=softsqueeze.jnlp>Click to install and run SoftSqueeze.</a><br>You will notice some delay the first time you run SoftSqueeze due to the need to download the entire SoftSqueeze application. Future uses of the software will only download parts of the application that have been changed, if any, and should start much quicker.<br>You <i>may</i> also be prompted to update your version of Java before SoftSqueeze itself is started.");
-document.write("</td><tr>");
-document.write("</table>");
-}
-else {
-
-document.write("<p>We have detected that Java software needs to be installed before you can proceed.");
-document.write("This is a simple two step process and you will only need to perform <i>the first step once.</i>");
-document.write("Once you start the first step, an install window will pop up and you will be guided through the installation.");
-document.write("This install process is simple and should take only a few minutes.</p>");
-
-document.write("<table>");
-document.write("<td valign='top'><img src='icons/unchecked.gif'></td><td>");
-document.write("<a href=\"http://www.java.com/en/download/windows_automatic.jsp\" onClick=\"window.open('http://www.java.com/en/download/windows_automatic.jsp', null,'toolbar=no, directories=no, location=no, status=yes, menubar=no, resizable=no, scrollbars=no, width=800, height=600'); return false\"> Click here</a> to install the Java environment that is required by SoftSqueeze.<br>&nbsp;");
-document.write("</td><tr>");
-
-document.write("<tr><td valign='top'><img src='icons/unchecked.gif'></td>");
-document.write("<td><a href=softsqueeze.jnlp>Click here</a> to install and run SoftSqueeze.<br>You will notice some delay the first time you run SoftSqueeze due to the need to download the entire SoftSqueeze application. Future uses of the software will only download parts of the application that have been changed, if any, and should start much quicker.<br>You <i>may</i> also be prompted to update your version of Java before SoftSqueeze itself is started.");
-document.write("</td><tr>");
-document.write("</table>");
-
-}
-
-</SCRIPT>
-
-<!--  <h4>SoftSqueeze as an applet</h4>  -->
-
-<SCRIPT TYPE="text/javascript">
-<!--
-function popup(mylink, windowname)
-{
-if (! window.focus)return true;
-var href;
-if (typeof(mylink) == 'string')
-   href=mylink;
-else
-   href=mylink.href;
-window.open(href, windowname, 'width=534,height=290,scrollbars=yes');
-return false;
-}
-//-->
-</SCRIPT>
-
-<!--  <p>If you have Java installed in your web browser you can also run SoftSqueeze as an applet by <A HREF="applet.html" onClick="return popup(this, 'ssapplet')">clicking here</A>.</p>
- -->
-</div>
 
 [% PROCESS pagefooter.html %]
 

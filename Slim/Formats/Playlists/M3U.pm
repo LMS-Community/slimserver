@@ -28,10 +28,27 @@ sub read {
 	my @items  = ();
 	my ($secs, $artist, $album, $title);
 	my $foundBOM = 0;
+	my $fh;
 
-	$log->info("Parsing M3U: $url");
+	if (defined $file && ref $file) {
+		$fh = $file;	# filehandle passed
+	} else {
+		if (!defined $file) {
+			$file = Slim::Utils::Misc::pathFromFileURL($url);
+			if (!$file) {
+				$log->warn("Cannot get filepath from $url");
+				return @items;
+			}
+		}
+		open($fh, $file) || do {
+			$log->warn("Cannot open $file: $!");
+			return @items;
+		};
+	}
+	
+	main::INFOLOG && $log->info("Parsing M3U: $url");
 
-	while (my $entry = <$file>) {
+	while (my $entry = <$fh>) {
 
 		chomp($entry);
 
@@ -59,7 +76,7 @@ sub read {
 
 		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 
-		$log->debug("  entry from file: $entry");
+		main::DEBUGLOG && $log->debug("  entry from file: $entry");
 
 		if ($entry =~ /^#EXTINF\:(.*?),<(.*?)> - <(.*?)> - <(.*?)>/) {
 
@@ -68,7 +85,7 @@ sub read {
 			$album  = $3;
 			$title  = $4;
 
-			$log->debug("  found secs: $secs, title: $title, artist: $artist, album: $album");
+			main::DEBUGLOG && $log->debug("  found secs: $secs, title: $title, artist: $artist, album: $album");
 
 		}
 		elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
@@ -76,12 +93,12 @@ sub read {
 			$secs  = $1;
 			$title = $2;	
 
-			$log->debug("  found secs: $secs, title: $title");
+			main::DEBUGLOG && $log->debug("  found secs: $secs, title: $title");
 		}
 		elsif ( $entry =~ /^#EXTINF:(.*?)$/ ) {
 			$title = $1;
 			
-			$log->debug("  found title: $title");
+			main::DEBUGLOG && $log->debug("  found title: $title");
 		}
 
 		next if $entry =~ /^#/;
@@ -94,7 +111,7 @@ sub read {
 
 		if ($class->playlistEntryIsValid($entry, $url)) {
 
-			$log->debug("    entry: $entry");
+			main::DEBUGLOG && $log->debug("    entry: $entry");
 
 			push @items, $class->_updateMetaData( $entry, {
 				'TITLE'  => $title,
@@ -108,11 +125,11 @@ sub read {
 		}
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Parsed " . scalar(@items) . " items in playlist");
 	}
 
-	close($file);
+	close($fh);
 
 	return @items;
 }
@@ -131,7 +148,7 @@ sub readCurTrackForM3U {
  
 	if ($line =~ /#CURTRACK (\d+)$/) {
 
-		$log->info("Found track: $1");
+		main::INFOLOG && $log->info("Found track: $1");
 
 		return $1;
 	}
@@ -144,7 +161,7 @@ sub writeCurTrackForM3U {
 	my $path  = shift || return 0;
 	my $track = shift || 0;
 
-	$log->info("Writing out: $path");
+	main::INFOLOG && $log->info("Writing out: $path");
 
 	# do nothing to the index if we can't open the list
 	open(IN, $path) || return 0;
@@ -179,7 +196,7 @@ sub write {
 	my $addTitles    = shift;
 	my $resumetrack  = shift;
 
-	$log->info("Writing out: $filename");
+	main::INFOLOG && $log->info("Writing out: $filename");
 
 	my $string = '';
 	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
@@ -189,7 +206,7 @@ sub write {
 
 	for my $item (@{$listref}) {
 
-		my $track = Slim::Schema->rs('Track')->objectForUrl($item);
+		my $track = Slim::Schema->objectForUrl($item);
 	
 		if (!blessed($track) || !$track->can('title')) {
 	

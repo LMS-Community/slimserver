@@ -22,11 +22,6 @@ Slim::Utils::Scheduler::remove_task(\&scanFunction);
 
  This module implements a simple scheduler for cooperative multitasking 
 
- XXXXX - The main server does not use this code anymore, since scanning has
- been split into a separate process. 3rd party plugins, such as LazySearch &
- Trackstat, which need to do background processing of the database set tasks
- for the scheduler. XXXX
-
  If you need to do something that will run for more than a few milliseconds,
  write it as a function which works on the task incrementally, returning 1 when
  it has more work to do, 0 when finished.
@@ -43,7 +38,6 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::PerfMon;
 
 my $curtask = 0;            # the next task to run
 my @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
@@ -51,7 +45,7 @@ my $lastpass = 0;
 
 my $log = logger('server.scheduler');
 
-our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
+use constant BLOCK_LIMIT => 0.01; # how long we are allowed to block the server
 
 =head1 METHODS
 
@@ -66,7 +60,7 @@ our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 
 sub add_task {
 	my @task = @_;
 
-	$log->info("Adding task: @task");
+	main::INFOLOG && $log->is_info && $log->info("Adding task: @task");
 
 	push @background_tasks, \@task;
 }
@@ -92,7 +86,7 @@ sub remove_task {
 
 		if ($taskref eq $subref) {
 
-			$log->info("Removing taskptr $i: $taskref");
+			main::INFOLOG && $log->is_info && $log->info("Removing taskptr $i: $taskref");
 
 			splice @background_tasks, $i, 1; 
 		}
@@ -116,9 +110,13 @@ sub remove_task {
 
 sub run_tasks {
 	return 0 unless @background_tasks;
-
-	my $busy = 0;
-	my $now  = Time::HiRes::time();
+	
+	# Don't recurse more than 10 times
+	my $count = shift || 1;
+	return 1 if $count > 10;
+	
+	my $busy  = 0;
+	my $now   = AnyEvent->now;
 	
 	# run tasks at least once half second.
 	if (($now - $lastpass) < 0.5) {
@@ -148,7 +146,7 @@ sub run_tasks {
 		if ($@ || !$cont) {
 
 			# the task has finished. Remove it from the list.
-			$log->info("Task finished: $subptr");
+			main::INFOLOG && $log->is_info && $log->info("Task finished: $subptr");
 
 			splice(@background_tasks, $curtask, 1);
 
@@ -164,7 +162,14 @@ sub run_tasks {
 			$curtask = 0;
 		}
 
-		$::perfmon && $schedulerTask->log(Time::HiRes::time() - $now, undef, $subptr);
+		main::PERFMON && Slim::Utils::PerfMon->check('scheduler', AnyEvent->time - $now, undef, $subptr);
+	}
+	
+	# Run again if we haven't yet reached the blocking limit
+	# Note $now will remain the same across multiple calls
+	if ( @background_tasks && ( AnyEvent->time - $now < BLOCK_LIMIT ) ) {
+		run_tasks( ++$count );
+		main::idleStreams();
 	}
 
 	return 1;

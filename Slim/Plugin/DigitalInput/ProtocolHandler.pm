@@ -21,7 +21,7 @@ my $log = logger('player.source');
 sub overridePlayback {
 	my ( $class, $client, $url ) = @_;
 	
-	$log->debug( "Switching to digital input $url" );
+	main::DEBUGLOG && $log->debug( "Switching to digital input $url" );
 	
 	$client->setDigitalInput($url);
 

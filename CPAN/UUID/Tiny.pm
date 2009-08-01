@@ -8,7 +8,7 @@ use Digest::MD5;
 use Digest::SHA1;
 use MIME::Base64;
 use Time::HiRes;
-use POSIX;
+use POSIX ();
 
 
 =head1 NAME

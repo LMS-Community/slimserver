@@ -72,7 +72,7 @@ sub load {
 
 		if (defined $class->{'opml'}) {
 
-			$log->info("Loaded OPML from $filename");
+			main::INFOLOG && $log->info("Loaded OPML from $filename");
 
 			return $class->{'opml'};
 
@@ -113,7 +113,7 @@ sub save {
 
 		if (defined($ret)){
 
-			$log->info( "OPML saved to file tempfile: $tmpfilename" );
+			main::INFOLOG && $log->info( "OPML saved to file tempfile: $tmpfilename" );
 
 			if ( -e $filename && !rename($filename, $filename . ".backup") ) {
 
@@ -122,7 +122,7 @@ sub save {
 
 			if ( rename($tmpfilename, $filename)) {
 
-				$log->info("Renamed $tmpfilename to $filename");
+				main::INFOLOG && $log->info("Renamed $tmpfilename to $filename");
 
 				$class->{'error'} = undef;
 

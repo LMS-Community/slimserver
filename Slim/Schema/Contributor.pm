@@ -4,9 +4,15 @@ package Slim::Schema::Contributor;
 
 use strict;
 use base 'Slim::Schema::DBI';
+
 use Scalar::Util qw(blessed);
+use Tie::Cache::LRU;
+
+use Slim::Schema::ResultSet::Contributor;
 
 use Slim::Utils::Misc;
+
+use constant CACHE_SIZE => 50;
 
 our %contributorToRoleMap = (
 	'ARTIST'      => 1,
@@ -16,6 +22,9 @@ our %contributorToRoleMap = (
 	'ALBUMARTIST' => 5,
 	'TRACKARTIST' => 6,
 );
+
+# Small LRU cache of id => contributor object mapping, to improve scanner performance
+tie my %CACHE, 'Tie::Cache::LRU', CACHE_SIZE;
 
 {
 	my $class = __PACKAGE__;
@@ -121,6 +130,9 @@ sub add {
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
+	
+	# Using native DBI here to improve performance during scanning
+	my $dbh = Slim::Schema->storage->dbh;
 
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 
@@ -128,32 +140,69 @@ sub add {
 		my $name   = $artistList[$i];
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
-
-		my $contributorObj = Slim::Schema->resultset('Contributor')->find_or_create({ 
-			'namesearch'     => $search,
-			'name'           => $name,
-			'namesort'       => $sort,
-			'musicbrainz_id' => $brainzID,
-		}, { 'key' => 'namesearch' });
-
-		if ($contributorObj && $search ne $sort) {
-
-			# Bug 3069: update the namesort only if it's different than namesearch
-			$contributorObj->namesort($sort);
-			$contributorObj->update;
+		
+		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE namesearch = ?' );
+		$sth->execute($search);
+		my ($id) = $sth->fetchrow_array;
+		$sth->finish;
+		
+		if ( !$id ) {
+			$sth = $dbh->prepare_cached( qq{
+				INSERT INTO contributors
+				(name, namesort, namesearch, musicbrainz_id)
+				VALUES
+				(?, ?, ?, ?)
+			} );
+			$sth->execute( $name, $sort, $search, $brainzID );
+			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
-
-		# Create a contributor <-> track mapping table.
-		Slim::Schema->resultset('ContributorTrack')->find_or_create({
-			'track'       => (ref $track ? $track->id : $track),
-			'contributor' => $contributorObj->id,
-			'role'        => $role,
-		});
-
-		push @contributors, $contributorObj;
+		else {
+			# Bug 3069: update the namesort only if it's different than namesearch
+			if ( $search ne $sort ) {
+				$sth = $dbh->prepare_cached('UPDATE contributors SET namesort = ? WHERE id = ?');
+				$sth->execute( $sort, $id );
+			}
+		}
+		
+		$sth = $dbh->prepare_cached( qq{
+			REPLACE INTO contributor_track
+			(role, contributor, track)
+			VALUES
+			(?, ?, ?)
+		} );
+		$sth->execute( $role, $id, (ref $track ? $track->id : $track) );
+		
+		# We need to return a DBIC object, which is really slow, use a cache
+		# to help out a bit
+		if ( !exists $CACHE{$id} ) {
+			$CACHE{$id} = Slim::Schema->rs('Contributor')->find($id);
+		}
+		push @contributors, $CACHE{$id};
 	}
 
 	return wantarray ? @contributors : $contributors[0];
+}
+
+# Rescan this contributor, this simply means to make sure at least 1 track
+# from this contributor still exists in the database.  If not, delete the contributor.
+# XXX native DBI
+sub rescan {
+	my $self = shift;
+	
+	my $count = Slim::Schema->rs('ContributorTrack')->search( contributor => $self->id )->count;
+	
+	if ( !$count ) {
+		delete $CACHE{ $self->id };
+		
+		$self->delete;
+	}
+}
+
+sub wipeCaches {
+	my $class = shift;
+	
+	tied(%CACHE)->max_size(0);
+	tied(%CACHE)->max_size(CACHE_SIZE);
 }
 
 1;

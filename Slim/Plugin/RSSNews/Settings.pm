@@ -14,64 +14,12 @@ use Slim::Utils::Prefs;
 my $log   = logger('plugin.rssnews');
 my $prefs = preferences('plugin.rssnews');
 
-use constant FEED_VERSION => 3; # bump this number when changing the defaults below
-
-# Default feed list
-my @default_feeds = (
-	{
-		name  => 'BBC News World Edition',
-		value => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
-	},
-	{
-		name  => 'CNET News.com',
-		value => 'http://news.com.com/2547-1_3-0-5.xml',
-	},
-	{
-		name  => 'New York Times Home Page',
-		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
-	},
-	{
-		name  => 'Slashdot',
-		value => 'http://rss.slashdot.org/Slashdot/slashdot',
-	},
-	{
-		name  => 'Yahoo! News: Business',
-		value => 'http://rss.news.yahoo.com/rss/business',
-	},
-);
-
-# migrate old prefs across
-$prefs->migrate(1, sub {
-	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names') || [] };
-	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds') || [] };
-	my @feeds;
-
-	for my $name (@names) {
-		push @feeds, { 'name' => $name, 'value' => shift @values };
-	}
-
-	if (@feeds) {
-		$prefs->set('feeds', \@feeds);
-		$prefs->set('modified', 1);
-	}
-
-	$prefs->set('items_per_feed', Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_items_per_feed') || 3);
-
-	1;
-});
-
-# migrate to latest version of default feeds if they have not been modified
-$prefs->migrate(FEED_VERSION, sub {
-	$prefs->set('feeds', \@default_feeds) unless $prefs->get('modified');
-	1;
-});
-
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_RSSNEWS');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_RSSNEWS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/RSSNews/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/RSSNews/settings/basic.html');
 }
 
 sub prefs {
@@ -83,10 +31,10 @@ sub handler {
 
 	if ( $params->{reset} ) {
 
-		$prefs->set( feeds => \@default_feeds );
+		$prefs->set( feeds => Slim::Plugin::RSSNews::DEFAULT_FEEDS() );
 		$prefs->set( modified => 0 );
 
-		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(\@default_feeds);
+		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(Slim::Plugin::RSSNews::DEFAULT_FEEDS());
 	}
 	
 	my @feeds = @{ $prefs->get('feeds') };
@@ -155,7 +103,7 @@ sub saveSettings {
 sub validateFeed {
 	my ( $url, $args ) = @_;
 
-	$log->info("validating $url...");
+	main::INFOLOG && $log->info("validating $url...");
 
 	Slim::Formats::XML->getFeedAsync(
 		\&_validateDone,
@@ -174,7 +122,7 @@ sub _validateDone {
 	
 	my $title = $feed->{title} || $params->{url};
 	
-	$log->info( "Verified feed $params->{url}, title: $title" );
+	main::INFOLOG && $log->info( "Verified feed $params->{url}, title: $title" );
 		
 	$params->{cb}->( $title );
 }

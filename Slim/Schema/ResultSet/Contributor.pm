@@ -14,9 +14,9 @@ sub pageBarResults {
 	my $name  = "$table.namesort";
 
 	$self->search(undef, {
-		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
+		'select'     => [ \"SUBSTR($name, 1, 1)", { count => \"DISTINCT($table.id)" } ],
 		as           => [ 'letter', 'count' ],
-		group_by     => \"LEFT($name, 1)",
+		group_by     => \"SUBSTR($name, 1, 1)",
 		result_class => 'Slim::Schema::PageBar',
 	});
 }
@@ -115,8 +115,9 @@ sub descendAlbum {
 		$sort = $rs->fixupSortKeys($sort);
 
 	} else {
-
-		$sort = "concat('0', album.titlesort), album.disc";
+		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+		
+		$sort = $sqlHelperClass->prepend0("album.titlesort") . ", album.disc";
 	}
 
 	my $attr = {

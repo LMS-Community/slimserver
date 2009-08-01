@@ -5,10 +5,10 @@ use vars qw($VERSION);	# set $VERSION early so we don't confuse PAUSE/CPAN etc
 
 # don't use Revision here because that's not in svn:keywords so that the
 # examples that use it below won't be messed up
-$VERSION = sprintf("12.%06d", q$Id: DBD.pm 10405 2007-12-11 10:00:19Z mjevans $ =~ /(\d+)/o);
+$VERSION = sprintf("12.%06d", q$Id: DBD.pm 11723 2008-09-02 10:09:51Z mjevans $ =~ /(\d+)/o);
 
 
-# $Id: DBD.pm 10405 2007-12-11 10:00:19Z mjevans $
+# $Id: DBD.pm 11723 2008-09-02 10:09:51Z mjevans $
 #
 # Copyright (c) 1997-2006 Jonathan Leffler, Jochen Wiedmann, Steffen
 # Goeldner and Tim Bunce
@@ -90,11 +90,11 @@ The primary web-site for locating B<DBI> software and information is
 
   http://dbi.perl.org/
 
-There are two main and one auxilliary mailing lists for people working
+There are two main and one auxiliary mailing lists for people working
 with B<DBI>.  The primary lists are I<dbi-users@perl.org> for general users
 of B<DBI> and B<DBD> drivers, and I<dbi-dev@perl.org> mainly for B<DBD> driver
 writers (don't join the I<dbi-dev> list unless you have a good reason).
-The auxilliary list is I<dbi-announce@perl.org> for announcing new
+The auxiliary list is I<dbi-announce@perl.org> for announcing new
 releases of B<DBI> or B<DBD> drivers.
 
 You can join these lists by accessing the web-site L<http://dbi.perl.org/>.
@@ -465,7 +465,7 @@ numbers.
 If your driver depends upon external software (it usually will), you
 will need to add code to ensure that your environment is workable
 before the call to C<WriteMakefile()>. If you need to check for the
-existance of an external library and perhaps modify I<INC> to include
+existence of an external library and perhaps modify I<INC> to include
 the paths to where the external library header files are located and
 you cannot find the library or header files make sure you output a
 message saying they cannot be found but C<exit 0> (success) B<before>
@@ -474,7 +474,7 @@ external library is not found.
 
 A full-fledged I<Makefile.PL> can be quite large (for example, the
 files for B<DBD::Oracle> and B<DBD::Informix> are both over 1000 lines
-long, and the Informix one uses - and creates - auxilliary modules
+long, and the Informix one uses - and creates - auxiliary modules
 too).
 
 See also L<ExtUtils::MakeMaker> and L<ExtUtils::MM_Unix>. Consider using
@@ -815,7 +815,7 @@ before using install_method().
 =head4 The CLONE special subroutine
 
 Also needed here, in the B<DBD::Driver> package, is a C<CLONE()> method
-that will be called by perl when an intrepreter is cloned. All your
+that will be called by perl when an interpreter is cloned. All your
 C<CLONE()> method needs to do, currently, is clear the cached I<$drh> so
 the new interpreter won't start using the cached I<$drh> from the old
 interpreter:
@@ -1370,7 +1370,7 @@ For DBI versions prior to 1.54 you'll also need to explicitly adjust the
 number of elements in the row buffer array (C<DBIc_FIELDS_AV(imp_sth)>)
 to match the new result set. Fill any new values with newSV(0) not &sv_undef.
 Alternatively you could free DBIc_FIELDS_AV(imp_sth) and set it to null,
-but that would mean bind_columns() woudn't work across result sets.
+but that would mean bind_columns() wouldn't work across result sets.
 
 
 =head4 Statement attributes
@@ -1594,17 +1594,28 @@ the XS system manages the differences for you.
   }
 
 This is mostly the same as in the pure Perl case, the exception being
-the use of the private C<_login()> callback, which is the function that
-will really connect to the database. It is implemented in F<Driver.xst>
-(you should not implement it) and calls C<dbd_db_login6()> from
-F<dbdimp.c>. See below for details.
+the use of the private C<_login()> callback, which is the function
+that will really connect to the database. It is implemented in
+F<Driver.xst> (you should not implement it) and calls
+C<dbd_db_login6()> or C<dbd_db_login6_sv> from F<dbdimp.c>. See below
+for details.
 
- *FIX ME* Discuss removing attributes from hash reference as an optimization
- to skip later calls to $dbh->STORE made by DBI->connect.
+If your driver has driver-specific attributes which may be passed in the
+connect method and hence end up in C<$attr> in C<dbd_db_login6> then it
+is best to delete any you process so DBI does not send them again
+via STORE after connect. You can do this in C like this:
+
+  DBD_ATTRIB_DELETE(attr, "my_attribute_name",
+                    strlen("my_attribute_name"));
+
+However, prior to DBI subversion version 11605 (and fixed post 1.607)
+DBD_ATTRIB_DELETE segfaulted so if you cannot guarantee the DBI version
+will be post 1.607 you need to use:
+
+  hv_delete((HV*)SvRV(attr), "my_attribute_name",
+                     strlen("my_attribute_name"), G_DISCARD);
 
  *FIX ME* Discuss removing attributes in Perl code.
-
- *FIX ME* Discuss removing attributes in C code.
 
 =head3 The disconnect_all method
 
@@ -1724,14 +1735,14 @@ F<Driver.h> is very simple and the operational contents should look like this:
 The F<DBIXS.h> header defines most of the interesting information that
 the writer of a driver needs.
 
-The file F<dbd_xsh.h> header provides prototype declarations for the
-C functions that you might decide to implement. Note that you should
-normally only define one of C<dbd_db_login()> and C<dbd_db_login6()>
-unless you are intent on supporting really old versions of B<DBI>
-(prior to B<DBI> 1.06) as well as modern versions. The only standard,
-B<DBI>-mandated functions that you need write are those specified in the
-F<dbd_xsh.h> header. You might also add extra driver-specific functions
-in F<Driver.xs>.
+The file F<dbd_xsh.h> header provides prototype declarations for the C
+functions that you might decide to implement. Note that you should
+normally only define one of C<dbd_db_login()>, C<dbd_db_login6()> or
+C<dbd_db_login6_sv> unless you are intent on supporting really old
+versions of B<DBI> (prior to B<DBI> 1.06) as well as modern
+versions. The only standard, B<DBI>-mandated functions that you need
+write are those specified in the F<dbd_xsh.h> header. You might also
+add extra driver-specific functions in F<Driver.xs>.
 
 The F<dbivport.h> file should be I<copied> from the latest B<DBI> release
 into your distribution each time you modify your driver. Its job is to
@@ -1802,6 +1813,12 @@ Since B<DBI> v1.06, if a C<dbd_db_login6()> macro is defined (for a function
 with 6 arguments), it will be used instead with the attribute hash
 passed as the sixth argument.
 
+Since B<DBI> post v1.607, if a C<dbd_db_login6_sv()> macro is defined (for
+a function like dbd_db_login6 but with scalar pointers for the dbname,
+username and password), it will be used instead. This will allow your
+login6 function to see if there are any unicode characters in the
+dbname.
+
 People used to just pick Oracle's F<dbdimp.c> and use the same names,
 structures and types. I strongly recommend against that. At first glance
 this saves time, but your implementation will be less readable. It was
@@ -1833,9 +1850,9 @@ of code. (Of course keep an eye on other people's work.)
 
   /*  Rename functions for avoiding name clashes; prototypes are  */
   /*  in dbd_xst.h                                                */
-  #define dbd_init         drv_dr_init
-  #define dbd_db_login6    drv_db_login
-  #define dbd_db_do        drv_db_do
+  #define dbd_init            drv_dr_init
+  #define dbd_db_login6_sv    drv_db_login_sv
+  #define dbd_db_do           drv_db_do
   ... many more here ...
 
 These structures implement your private part of the handles.
@@ -1879,12 +1896,13 @@ names in the source code which makes it a little easier to compare code
 between drivers and eases discussions on the I<dbi-dev> mailing list.
 The majority of the code fragments here will use the unmapped names.
 
-Ultimately, you should provide implementations for most fo the functions
-listed in the F<dbd_xsh.h> header. The exceptions are optional functions
-(such as C<dbd_st_rows()>) and those functions with alternative
-signatures, such as C<dbd_db_login6()> and I<dbd_db_login()>. Then you
-should only implement one of the alternatives, and generally the newer
-one of the alternatives.
+Ultimately, you should provide implementations for most of the
+functions listed in the F<dbd_xsh.h> header. The exceptions are
+optional functions (such as C<dbd_st_rows()>) and those functions with
+alternative signatures, such as C<dbd_db_login6_sv>,
+C<dbd_db_login6()> and I<dbd_db_login()>. Then you should only
+implement one of the alternatives, and generally the newer one of the
+alternatives.
 
 =head3 The dbd_init method
 
@@ -2018,6 +2036,11 @@ and uses C<#define>'d constants for the array sizes.
 
 =head3 The dbd_db_login6 method
 
+  int dbd_db_login6_sv(SV* dbh, imp_dbh_t* imp_dbh, SV* dbname,
+                       SV* user, SV* auth, SV *attr);
+
+  or
+
   int dbd_db_login6(SV* dbh, imp_dbh_t* imp_dbh, char* dbname,
                    char* user, char* auth, SV *attr);
 
@@ -2041,10 +2064,22 @@ which can be up to 12 characters long excluding null terminator:
 
   if ( (svp = DBD_ATTRIB_GET_SVP(attr, "drv_hostname", 12)) && SvTRUE(*svp)) {
       hostname = SvPV(*svp, len);
-      DBD__ATTRIB_DELETE(attr, "drv_hostname", 12); /* avoid later STORE */
+      DBD_ATTRIB_DELETE(attr, "drv_hostname", 12); /* avoid later STORE */
   } else {
       hostname = "localhost";
   }
+
+If you handle any driver specific attributes in the dbd_db_login6
+method you probably want to delete them from C<attr> (as above with
+DBD_ATTRIB_DELETE). If you don't delete your handled attributes DBI
+will call C<STORE> for each attribute after the connect/login and this
+is at best redundant for attributes you have already processed.
+
+B<Note: Until revision 11605 (post DBI 1.607), there was a problem with
+DBD_ATTRIBUTE_DELETE so unless you require a DBI version after 1.607
+you need to replace each DBD_ATTRIBUTE_DELETE call with:>
+
+  hv_delete((HV*)SvRV(attr), key, key_len, G_DISCARD)
 
 Note that you can also obtain standard attributes such as I<AutoCommit> and
 I<ChopBlanks> from the attributes parameter, using C<DBD_ATTRIB_GET_IV> for
@@ -2097,6 +2132,8 @@ Drivers implemented long ago may define the five-argument function
 C<dbd_db_login()> instead of C<dbd_db_login6()>. The missing argument is
 the attributes. There are ways to work around the missing attributes,
 but they are ungainly; it is much better to use the 6-argument form.
+Even later drivers will use C<dbd_db_login6_sv()> which provides the
+dbname, username and password as SVs.
 
 =head3 The dbd_db_commit and dbd_db_rollback methods
 
@@ -2415,7 +2452,7 @@ Outline example:
 
 The from_destroy parameter is true if C<dbd_st_finish3()> is being called
 from C<DESTROY()> - and so the statement is about to be destroyed.
-For many drivers there's no point in doing anything more than turing of
+For many drivers there is no point in doing anything more than turning off
 the I<Active> flag in this case.
 
 The function returns I<TRUE> for success, I<FALSE> otherwise, but there isn't
@@ -2632,8 +2669,8 @@ database.
 
 With the pre-requisites in place, you might type:
 
-    perl -MDBI::DBD::Metadata -e write_getinfo_pm \
-            dbi:ODBC:foo_db username password Driver
+    perl -MDBI::DBD::Metadata -we \
+       "write_getinfo_pm (qw{ dbi:ODBC:foo_db username password Driver })"
 
 The procedure writes to standard output the code that should be added to
 your F<Driver.pm> file and the code that should be written to
@@ -2652,13 +2689,13 @@ You examine the documentation for C<write_typeinfo_pm()> using:
 
     perldoc DBI::DBD::Metadata
 
-The setup is exactly analogous to the mechanism descibed in
+The setup is exactly analogous to the mechanism described in
 L</Generating the get_info method>.
 
 With the pre-requisites in place, you might type:
 
-    perl -MDBI::DBD::Metadata -e write_typeinfo \
-            dbi:ODBC:foo_db username password Driver
+    perl -MDBI::DBD::Metadata -we \
+       "write_typeinfo (qw{ dbi:ODBC:foo_db username password Driver })"
 
 The procedure writes to standard output the code that should be added to
 your F<Driver.pm> file and the code that should be written to
@@ -2853,6 +2890,99 @@ ignores that.
 
 This sample implementation also ignores the single-argument variant of
 the method.
+
+=head1 TRACING
+
+Tracing in DBI is controlled with a combination of a trace level and a
+set of flags which together are known as the trace settings. The trace
+settings are stored in a single integer and divided into levels and
+flags by a set of masks (C<DBIc_TRACE_LEVEL_MASK> and
+C<DBIc_TRACE_FLAGS_MASK>).
+
+Each handle has it's own trace settings and so does the DBI. When you
+call a method the DBI merges the handles settings into its own for the
+duration of the call: the trace flags of the handle are OR'd into the
+trace flags of the DBI, and if the handle has a higher trace level
+then the DBI trace level is raised to match it. The previous DBI trace
+setings are restored when the called method returns.
+
+=head2 Trace Level
+
+The trace level is the first 4 bits of the trace settings (masked by
+C<DBIc_TRACE_FLAGS_MASK>) and represents trace levels of 1 to 15. Do
+not output anything at trace levels less than 3 as they are reserved
+for DBI.
+
+For advice on what to output at each level see "Trace Levels" in
+L<DBI>.
+
+To test for a trace level you can use the C<DBIc_TRACE_LEVEL> macro
+like this:
+
+  if (DBIc_TRACE_LEVEL(imp_xxh) >= 2) {
+      PerlIO_printf(DBIc_LOGPIO(imp_xxh), "foobar");
+  }
+
+Also B<note> the use of PerlIO_printf which you should always use for
+tracing and never the C C<stdio.h> I/O functions.
+
+=head2 Trace Flags
+
+Trace flags are used to enable tracing of specific activities within
+the DBI and drivers. The DBI defines some trace flags and drivers can
+define others. DBI trace flag names begin with a capital letter and
+driver specific names begin with a lowercase letter. For a list of DBI
+defined trace flags see "Trace Flags" in L<DBI>.
+
+If you want to use private trace flags you'll probably want to be able
+to set them by name. Drivers are expected to override the
+parse_trace_flag (note the singular) and check if $trace_flag_name is
+a driver specific trace flags and, if not, then call the DBIs default
+parse_trace_flag(). To do that you'll need to define a
+parse_trace_flag() method like this:
+
+  sub parse_trace_flag {
+      my ($h, $name) = @_;
+      return 0x01000000 if $name eq 'foo';
+      return 0x02000000 if $name eq 'bar';
+      return 0x04000000 if $name eq 'baz';
+      return 0x08000000 if $name eq 'boo';
+      return 0x10000000 if $name eq 'bop';
+      return $h->SUPER::parse_trace_flag($name);
+  }
+
+All private flag names must be lowercase, and all private flags must
+be in the top 8 of the 32 bits of C<DBIc_TRACE_FLAGS(imp)> i.e.,
+0xFF000000.
+
+If you've defined a parse_trace_flag() method in ::db you'll also want
+it in ::st, so just alias it in:
+
+  *parse_trace_flag = \&DBD::foo:db::parse_trace_flag;
+
+You may want to act on the current 'SQL' trace flag that DBI defines
+to output SQL prepared/executed as DBI currently does not do SQL
+tracing.
+
+=head2 Trace Macros
+
+Access to the trace level and trace flags is via a set of macros.
+
+  DBIc_TRACE_SETTINGS(imp) returns the trace settings
+  DBIc_TRACE_LEVEL(imp) returns the trace level
+  DBIc_TRACE_FLAGS(imp) returns the trace flags
+  DBIc_TRACE(imp, flags, flaglevel, level)
+
+  e.g.,
+
+  DBIc_TRACE(imp, 0, 0, 4)
+    if level >= 4
+
+  DBIc_TRACE(imp, DBDtf_FOO, 2, 4)
+    if tracing DBDtf_FOO & level>=2 or level>=4
+
+  DBIc_TRACE(imp, DBDtf_FOO, 2, 0)
+    as above but never trace just due to level
 
 =head1 WRITING AN EMULATION LAYER FOR AN OLD PERL INTERFACE
 

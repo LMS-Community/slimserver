@@ -1,4 +1,4 @@
-# $Id: Objects.pm 1692 2005-01-11 04:21:17Z dsully $
+# $Id: Objects.pm,v 1.1 2003/08/18 20:20:51 matt Exp $
 
 package XML::Parser::Style::Objects;
 use strict;

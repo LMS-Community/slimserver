@@ -37,9 +37,13 @@ BEGIN {
 		$hasXS = 0;
 		eval {
 			require Class::XSAccessor::Array;
-			die if $Class::XSAccessor::Array::VERSION ne '0.05';
+			die if $Class::XSAccessor::Array::VERSION lt '1.04';
 			$hasXS = 1;
 		};
+		
+		if ( $@ ) {
+			warn "NOTE: Class::XSAccessor::Array not found, install it for better performance\n";
+		}
 	
 		return $hasXS;
 	}
@@ -94,7 +98,7 @@ sub mk_accessor {
 		if ($type eq 'rw') {
 			
 			if ( hasXS() ) {
-				Class::XSAccessor::Array::_generate_accessor(
+				Class::XSAccessor::Array::_generate_method(
 					$class,	$field,	$n, 0, 0, 'accessor',
 				);
 			}
@@ -108,7 +112,7 @@ sub mk_accessor {
 		} elsif ($type eq 'ro') {
 			
 			if ( hasXS() ) {
-				Class::XSAccessor::Array::_generate_accessor(
+				Class::XSAccessor::Array::_generate_method(
 					$class,	$field,	$n, 0, 0, 'getter',
 				);
 			}

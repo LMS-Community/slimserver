@@ -45,7 +45,7 @@ sub parser {
 	# This metadata is read by HTTP's getMetadataFor
 	$client->playingSong->pluginData( wmaMeta => $meta );
 	
-	$log->is_debug && $log->debug( "YALP metadata: " . Data::Dump::dump($meta) );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "YALP metadata: " . Data::Dump::dump($meta) );
 	
 	return 1;
 }

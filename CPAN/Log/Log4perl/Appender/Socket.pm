@@ -16,6 +16,7 @@ sub new {
     my $self = {
         name            => "unknown name",
         silent_recovery => 0,
+        no_warning      => 0,
         PeerAddr        => "localhost",
         Proto           => 'tcp',
         Timeout         => 5,
@@ -24,15 +25,20 @@ sub new {
 
     bless $self, $class;
 
-    unless($self->connect(@options)) {
-        if($self->{silent_recovery}) {
-            warn "Connect to $self->{PeerAddr}:$self->{PeerPort} failed: $!";
-            return $self;
+    unless ($self->{defer_connection}){
+        unless($self->connect(@options)) {
+            if($self->{silent_recovery}) {
+                if( ! $self->{no_warning}) {
+                    warn "Connect to $self->{PeerAddr}:$self->{PeerPort} failed: $!";
+                }
+               return $self;
+            }
+            die "Connect to $self->{PeerAddr}:$self->{PeerPort} failed: $!";
         }
-        die "Connect to $self->{PeerAddr}:$self->{PeerPort} failed: $!";
-    }
 
-    $self->{socket}->autoflush(1);
+        $self->{socket}->autoflush(1); 
+        #autoflush has been the default behavior since 1997
+    }
 
     return $self;
 }
@@ -52,11 +58,12 @@ sub log {
 ##################################################
     my($self, %params) = @_;
 
+
     {
             # If we were never able to establish
             # a connection, try to establish one 
             # here. If it fails, return.
-        if($self->{silent_recovery} and 
+        if(($self->{silent_recovery} or $self->{defer_connection}) and 
            !defined $self->{socket}) {
             if(! $self->connect(%$self)) {
                 return undef;
@@ -68,7 +75,7 @@ sub log {
              };
 
         if($@) {
-            warn "Send to " . ref($self) . " failed ($@)";
+            warn "Send to " . ref($self) . " failed ($@), retrying once...";
             if($self->connect(%$self)) {
                 redo;
             }
@@ -133,6 +140,15 @@ set to a true value, the behaviour is different: If the socket connection
 can't be established at initialization time, a single warning is issued.
 Every log attempt will then try to establish the connection and 
 discard the message silently if it fails.
+If you don't even want the warning, set the C<no_warning> option to
+a true value.
+
+Connecting at initialization time may not be the best option when
+running under Apache1 Apache2/prefork, because the parent process creates
+the socket and the connections are shared among the forked children--all
+the children writing to the same socket could intermingle messages.  So instead
+of that, you can use C<defer_connection> which will put off making the
+connection until the first log message is sent.
 
 =head1 EXAMPLE
 

@@ -67,6 +67,8 @@ sub validateFonts {
 	my $height = $display->displayHeight;
 
 	my $fontsOK = 1;
+	
+	Slim::Display::Lib::Fonts::init();
 
 	foreach my $font (@{$prefs->client($client)->get('activeFont')}, @{$prefs->client($client)->get('idleFont')}) {
 		my $fontheight = Slim::Display::Lib::Fonts::fontheight($font.".2");

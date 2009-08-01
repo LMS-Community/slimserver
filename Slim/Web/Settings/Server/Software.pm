@@ -14,11 +14,11 @@ use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
 sub name {
-	return Slim::Web::HTTP::protectName('SETUP_CHECKVERSION');
+	return Slim::Web::HTTP::CSRF->protectName('SETUP_CHECKVERSION');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/server/software.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/server/software.html');
 }
 
 sub prefs {

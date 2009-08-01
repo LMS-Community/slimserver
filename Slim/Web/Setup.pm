@@ -35,7 +35,6 @@ sub initSetup {
 		Behavior 
 		Debugging 
 		FileSelector 
-		FileTypes 
 		Index 
 		Network 
 		Performance 
@@ -49,6 +48,10 @@ sub initSetup {
 		Wizard
 	);
 	
+	if (main::TRANSCODING) {
+		push @classes, 'Slim::Web::Settings::Server::FileTypes';
+	}
+
 	for my $class (@classes) {
 		eval "use $class";
 

@@ -19,8 +19,6 @@ and out of screensaver modes.
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
@@ -81,7 +79,7 @@ sub screenSaver {
 
 	assert($mode);
 
-	if ( $timerslog->is_info ) {
+	if ( main::INFOLOG && $timerslog->is_info ) {
 
 		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $cprefs->get('screensavertimeout');
 
@@ -270,7 +268,7 @@ sub wakeup {
 sub setMode {
 	my $client = shift;
 
-	$log->is_debug && $log->debug("Going into screensaver mode.");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Going into screensaver mode.");
 
 	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
 

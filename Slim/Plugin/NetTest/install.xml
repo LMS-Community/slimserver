@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<extension>
+  <name>PLUGIN_NETTEST</name>
+  <module>Slim::Plugin::NetTest::Plugin</module>
+  <version>1.0</version>
+  <description>PLUGIN_NETTEST_DESC</description>
+  <creator>Triode</creator>
+  <email>triode1@btinternet.com</email>
+
+  <defaultState>enabled</defaultState>
+        
+  <homepageURL>http://www.slimdevices.com/</homepageURL>
+  <type>2</type><!-- type=extension -->
+  <targetApplication>
+  	<id>Squeezebox Server</id>
+    <minVersion>7.4</minVersion>
+    <maxVersion>*</maxVersion>
+  </targetApplication>
+
+</extension>

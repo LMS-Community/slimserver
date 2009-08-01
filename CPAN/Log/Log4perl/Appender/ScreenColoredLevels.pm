@@ -43,6 +43,8 @@ sub color {
     my($level, $message) = @_;
 
     if(0) {
+    } elsif($level eq "TRACE") {
+        return YELLOW . $message . RESET;
     } elsif($level eq "DEBUG") {
         return $message;
     } elsif($level eq "INFO") {

@@ -1,4 +1,5 @@
-package DBIx::Class::PK::Auto::MySQL;
+package # hide package from pause
+  DBIx::Class::PK::Auto::MySQL;
 
 use strict;
 use warnings;

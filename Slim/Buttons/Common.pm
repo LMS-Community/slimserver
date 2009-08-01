@@ -181,7 +181,7 @@ sub addSaver {
 	my $type = shift || 'PLAY-IDLE-OFF-ALARM';
 	my $valid = shift;
 
-	logger('player.ui')->info("Registering screensaver $displayName $type");
+	main::INFOLOG && logger('player.ui')->info("Registering screensaver $displayName $type");
 
 	$savers->{$name} = {
 		'name'  => $displayName,
@@ -563,7 +563,7 @@ our %functions = (
 			}
 		}
 
-		$log->info("Brightness using $brightmode during mode: $mode");
+		main::INFOLOG && $log->info("Brightness using $brightmode during mode: $mode");
 
 		my $newBrightness;
 
@@ -620,7 +620,7 @@ our %functions = (
 
 		if ($buttonarg eq 'toggle') {
 
-			$log->info("Switching to playlist view.");
+			main::INFOLOG && $log->info("Switching to playlist view.");
 
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'playlist');
@@ -670,6 +670,11 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp = undef;
 
+		if (!Slim::Schema::hasLibrary()) {
+			$client->bumpRight();
+			return;
+		}
+
 		# Repeat presses of 'search' will step through search menu while in the top level search menu
 		if (($client->modeParam('header') eq 'SEARCH' || 
 				$client->curSelection($client->curDepth) eq 'SEARCH') && mode($client) eq 'INPUT.List') {
@@ -689,6 +694,11 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
+		
+		if (!Slim::Schema::hasLibrary()) {
+			$client->bumpRight();
+			return;
+		}
 
 		# Repeat presses of 'browse' will step through browse menu
 		if ($client->curDepth eq '-BROWSE_MUSIC' && mode($client) eq 'INPUT.List') {
@@ -820,7 +830,7 @@ our %functions = (
 
 					$log->error("Error: No valid url found, not adding favorite!");
 
-					if ($obj) {
+					if (main::DEBUGLOG && $obj) {
 						$log->error(Data::Dump::dump($obj));
 					} else {
 						$log->logBacktrace;
@@ -964,7 +974,7 @@ our %functions = (
 		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 		if (defined $currentAlarm) {
 			
-			$log->info("Alarm Active: sleep function override for snooze");
+			main::INFOLOG && $log->info("Alarm Active: sleep function override for snooze");
 			$currentAlarm->snooze;
 			return;
 		}
@@ -1206,7 +1216,7 @@ our %functions = (
 
 		if ($client->modeParam('HOME-MENU')) {
 
-			$log->info("Switching to playlist view.");
+			main::INFOLOG && $log->info("Switching to playlist view.");
 
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
@@ -1224,7 +1234,7 @@ our %functions = (
 
 		} else {
 
-			$log->info("Switching to home menu.");
+			main::INFOLOG && $log->info("Switching to home menu.");
 
 			Slim::Buttons::Common::setMode($client, 'home');
 
@@ -1932,7 +1942,7 @@ sub pushMode {
 	my $setmode = shift;
 	my $paramHashRef = shift;
 
-	$log->info("Pushing button mode: $setmode");
+	main::INFOLOG && $log->info("Pushing button mode: $setmode");
 
 	my $oldscreen2 = $client->modeParam('screen2active');
 
@@ -2035,7 +2045,7 @@ sub popMode {
 
 		$client->updateKnob(1);
 
-		$log->info("Nothing on the modeStack - updatingKnob & returning.");
+		main::INFOLOG && $log->info("Nothing on the modeStack - updatingKnob & returning.");
 
 		return undef;
 	}
@@ -2087,7 +2097,7 @@ sub popMode {
 		}
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Popped to button mode: " . (mode($client) || 'empty!'));
 	}
 

@@ -31,8 +31,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
+use Audio::Scan;
 use MIME::Base64 qw(decode_base64);
-use Ogg::Vorbis::Header::PurePerl;
 
 my $log       = logger('scan.scanner');
 my $sourcelog = logger('player.source');
@@ -65,100 +65,57 @@ Extract and return audio information & any embedded metadata found.
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
+	
+	my $s = Audio::Scan->scan($file);
+	
+	my $info = $s->{info};
+	my $tags = $s->{tags};
+	
+	return unless $info->{song_length_ms};
+	
+	# Map tags
+	while ( my ($old, $new) = each %tagMapping ) {
 
-	# This hash will map the keys in the tag to their values.
-	my $tags = {};
-	my $ogg  = undef;
-
-	# some ogg files can blow up - especially if they are invalid.
-	eval {
-		local $^W = 0;
-		$ogg = Ogg::Vorbis::Header::PurePerl->new($file);
-	};
-
-	if (!$ogg or $@) {
-
-		logWarning("Warning Can't open Ogg file $file: [$@]");
-
-		return $tags;
-	}
-
-	if (!$ogg->info('length')) {
-
-		logWarning("Length for Ogg file: $file is 0 - skipping.");
-
-		return $tags;
-	}
-
-	# Tags can be stacked, in an array.
-	foreach my $key ($ogg->comment_tags) {
-
-		my $ucKey  = uc($key);
-		my @values = $ogg->comment($key);
-		my $count  = scalar @values;
-
-		for my $value (@values) {
-
-			if ($] > 5.007) {
-				$value = Slim::Utils::Unicode::utf8decode($value, 'utf8');
-			} else {
-				$value = Slim::Utils::Unicode::utf8toLatin1($value);
-			}
-
-			if ($count == 1) {
-
-				$tags->{$ucKey} = $value;
-
-			} else {
-
-				push @{$tags->{$ucKey}}, $value;
-			}
-		}
-	}
-
-	# Correct ogginfo tags
-	while (my ($old,$new) = each %tagMapping) {
-
-		if (exists $tags->{$old}) {
-
+		if ( exists $tags->{$old} ) {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
 
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
-	if (defined $tags->{'DATE'} && !defined $tags->{'YEAR'}) {
-		($tags->{'YEAR'} = $tags->{'DATE'}) =~ s/.*(\d\d\d\d).*/$1/;
+	if (defined $tags->{DATE} && !defined $tags->{YEAR}) {
+		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
 	}
 
 	# Add additional info
-	$tags->{'SIZE'}	    = -s $file;
+	$tags->{SIZE}	  = $info->{file_size};
+	$tags->{SECS}	  = $info->{song_length_ms} / 1000;
+	$tags->{BITRATE}  = $info->{bitrate_average} || $info->{bitrate_nominal};
+	$tags->{STEREO}   = $info->{channels} == 2 ? 1 : 0;
+	$tags->{CHANNELS} = $info->{channels};
+	$tags->{RATE}	  = $info->{samplerate};
 
-	$tags->{'SECS'}	    = $ogg->info('length');
-	$tags->{'BITRATE'}  = $ogg->info('bitrate_average') || $ogg->info('bitrate_nominal');
-	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
-	$tags->{'CHANNELS'} = $ogg->info('channels');
-	$tags->{'RATE'}	    = $ogg->info('rate');
-
-	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
-
-		if ($ogg->info('bitrate_upper') != $ogg->info('bitrate_lower')) {
-
-			$tags->{'VBR_SCALE'} = 1;
-		} else {
-			$tags->{'VBR_SCALE'} = 0;
+	if ( defined $info->{bitrate_upper} && defined $info->{bitrate_lower} ) {
+		if ( $info->{bitrate_upper} != $info->{bitrate_lower} ) {
+			$tags->{VBR_SCALE} = 1;
 		}
-
-	} else {
-
-		$tags->{'VBR_SCALE'} = 0;
+		else {
+			$tags->{VBR_SCALE} = 0;
+		}
+	}
+	else {
+		$tags->{VBR_SCALE} = 0;
 	}
 
-	$tags->{'OFFSET'}   =  0; # the header is an important part of the file. don't skip it
+	$tags->{OFFSET} = 0; # the header is an important part of the file. don't skip it
 	
 	# Read cover art if available
-	if ( $tags->{'COVERART'} ) {
-		$tags->{'ARTWORK'} = decode_base64( delete $tags->{'COVERART'} );
+	if ( $tags->{COVERART} ) {
+		# XXX: do we need to decode this here?
+		$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
+		
+		# Flag if we have embedded cover art
+		$tags->{HAS_COVER} = 1;
 	}
 
 	return $tags;
@@ -174,23 +131,10 @@ sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
 	
-	my $ogg;
+	my $s = Audio::Scan->scan_tags($file);
 
-	# some ogg files can blow up - especially if they are invalid.
-	eval {
-		local $^W = 0;
-		$ogg = Ogg::Vorbis::Header::PurePerl->new( $file );
-	};
-
-	if ( !$ogg || $@ ) {
-		logWarning("Unable to parse Ogg stream");
-		return;
-	}
-	
-	my ($coverart) = $ogg->comment('coverart');
-
-	if ( $coverart ) {
-		$coverart = eval { decode_base64( $coverart ) };
+	if ( $s->{tags}->{COVERART} ) {
+		my $coverart = eval { decode_base64( $s->{tags}->{COVERART} ) };
 		return if $@;
 		return $coverart;
 	}
@@ -214,51 +158,39 @@ sub scanBitrate {
 	
 	my $isDebug = $log->is_debug;
 	
-	my $ogg;
+	my $s = Audio::Scan->scan_fh( ogg => $fh );
 	
-	# some ogg files can blow up - especially if they are invalid.
-	eval {
-		local $^W = 0;
-		$ogg = Ogg::Vorbis::Header::PurePerl->new( $fh );
-	};
+	if ( !$s->{info}->{audio_offset} ) {
 
-	if ( !$ogg || $@ ) {
-
-		logWarning("Unable to parse Ogg stream $@");
+		logWarning('Unable to parse Ogg stream');
 
 		return (-1, undef);
 	}
 	
+	my $info = $s->{info};
+	my $tags = $s->{tags};
+	
 	# Save tag data if available
-	if ( my $title = $ogg->comment('title') ) {
-		my $artist = $ogg->comment('artist');
-		my $album  = $ogg->comment('album');
-		my $date   = $ogg->comment('date');
-		my $genre  = $ogg->comment('genre');
-		
+	if ( my $title = $tags->{TITLE} ) {		
 		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
 		# so we have to format our title info manually.
-		my $track = Slim::Schema->rs('Track')->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate( {
 			url        => $url,
 			attributes => {
-				TITLE   => $title,
-				ARTIST  => $artist,
-				ALBUM   => $album,
-				YEAR    => $date,
-				GENRE   => $genre,
+				TITLE => $title,
 			},
-		});
+		} );
 
-		$isDebug && $log->debug("Read Ogg tags from stream: " . Data::Dump::dump( $ogg->{COMMENTS} ));
+		main::DEBUGLOG && $isDebug && $log->debug("Read Ogg tags from stream: " . Data::Dump::dump($tags));
 		
-		$title .= ' ' . string('BY') . ' ' . $artist if $artist;
-		$title .= ' ' . string('FROM') . ' ' . $album if $album;
+		$title .= ' ' . string('BY') . ' ' . $tags->{ARTIST} if $tags->{ARTIST};
+		$title .= ' ' . string('FROM') . ' ' . $tags->{ALBUM} if $tags->{ALBUM};
 
 		Slim::Music::Info::setCurrentTitle( $url, $title );
 
 		# Save artwork if found
 		# Read cover art if available
-		if ( my $coverart = $ogg->comment('coverart') ) {
+		if ( my $coverart = $tags->{COVERART} ) {
 			$coverart = decode_base64($coverart);
 
 			$track->cover(1);
@@ -266,29 +198,27 @@ sub scanBitrate {
 
 			my $data = {
 				image => $coverart,
-				type  => $ogg->comment('coverartmime') || 'image/jpeg',
+				type  => $tags->{COVERARTMIME} || 'image/jpeg',
 			};
 
 			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
 
-			$isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
+			main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
 	}
 	
 	my $vbr = 0;
 
-	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
-
-		if ($ogg->info('bitrate_upper') != $ogg->info('bitrate_lower')) {
-
+	if ( defined $info->{bitrate_upper} && defined $info->{bitrate_lower} ) {
+		if ( $info->{bitrate_upper} != $info->{bitrate_lower} ) {
 			$vbr = 1;
 		}
 	}
 	
-	if ( my $bitrate = $ogg->info('bitrate_nominal') ) {
+	if ( my $bitrate = ( $info->{bitrate_average} || $info->{bitrate_nominal} ) ) {
 
-		$isDebug && $log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
+		main::DEBUGLOG && $isDebug && $log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
 
 		return ( $bitrate, $vbr );
 	}
@@ -301,16 +231,18 @@ sub scanBitrate {
 sub getInitialAudioBlock {
 	my ($class, $fh) = @_;
 	
-	open(my $localFh, '<&=', $fh);
+	open my $localFh, '<&=', $fh;
 	
-	seek($localFh, 0, 0);
-	my $ogg = Ogg::Vorbis::Header::PurePerl->new($localFh);
+	seek $localFh, 0, 0;
 	
-	seek($localFh, 0, 0);
-	logger('player.source')->debug('Reading initial audio block: length ' . ($ogg->info('offset')));
-	read ($localFh, my $buffer, $ogg->info('offset'));
+	my $s = Audio::Scan->scan_fh( ogg => $localFh );
 	
-	close($localFh);
+	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug( 'Reading initial audio block: length ' . $s->{info}->{audio_offset} );
+	
+	seek $localFh, 0, 0;
+	read $localFh, my $buffer, $s->{info}->{audio_offset};
+	
+	close $localFh;
 	
 	return $buffer;
 }
@@ -328,116 +260,15 @@ The only caller is L<Slim::Player::Source> at this time.
 =cut
 
 sub findFrameBoundaries {
-	my ($class, $fh, $offset, $seek) = @_;
+	my ($class, $fh, $offset) = @_;
 
 	if (!defined $fh || !defined $offset) {
-		logError("Invalid arguments!");
-		return wantarray ? (0, 0) : 0;
-	}
-
-	my $start = $class->_seekNextFrame($fh, $offset, 1);
-	my $end   = 0;
-
-	if (defined $seek) {
-		$end = $class->_seekNextFrame($fh, $offset + $seek, 1);
-		return ($start, $end);
-	}
-
-	return wantarray ? ($start, $end) : $start;
-}
-
-my $HEADERLEN   = 28; # minumum
-my $MAXDISTANCE = 255 * 255 + 26 + 256;
-
-# seekNextFrame:
-#
-# when scanning forward ($direction=1), simply detects the next frame header.
-#
-# when scanning backwards ($direction=-1), returns the next frame header whose
-# frame length is within the distance scanned (so that when scanning backwards 
-# from EOF, it skips any truncated frame at the end of block.
-
-sub _seekNextFrame {
-	my ($class, $fh, $startoffset, $direction) = @_;
-	
-	my $isDebug = $sourcelog->is_debug;
-
-	use bytes;
-
-	if (!defined $fh || !defined $startoffset || !defined $direction) {
-		logError("Invalid arguments!");
 		return 0;
 	}
-
-	my $filelen = -s $fh;
-	if ($startoffset > $filelen) {
-		$startoffset = $filelen;
-	}
-
-	# TODO: MAXDISTANCE is far too far to seek backwards in most cases, so we don't
-	# use negative direction for the moment.
-	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
-
-	$isDebug && $sourcelog->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
-
-	sysseek($fh, $seekto, SEEK_SET);
-	sysread($fh, my $buf, $MAXDISTANCE, 0);
-
-	my $len = length($buf);
-
-	if ($len < $HEADERLEN) {
-		$sourcelog->warn("Got less than $HEADERLEN bytes");
-		return 0;
-	}
-
-	my ($start, $end) = (0, 0);
-
-	if ($direction == 1) {
-		$start = 0;
-		$end   = $len - $HEADERLEN;
-	} else {
-		$start = $len - $HEADERLEN;
-		$end   = 0;
-	}
-
- 	$isDebug && $sourcelog->debug("Scanning: len = $len, start = $start, end = $end");
-
-	for (my $pos = $start; $pos != $end; $pos += $direction) {
-
-		my $head = substr($buf, $pos, $HEADERLEN);
-
-		if (!_isOggPageHeader($head)) {
-			next;
-		}
-
-		my $found_at_offset = $seekto + $pos;
-
-		$isDebug && $sourcelog->debug("Found frame header at $found_at_offset");
-
-		return $found_at_offset;
-	}
-
-	$sourcelog->warn("Couldn't find any frame header");
-
-	return 0;
+	
+	return Audio::Scan->find_frame_fh( ogg => $fh, $offset );
 }
 
-# This is a pretty minimal test, liable to false positives
-# but it does not really matter as the player decoder will
-# resync properly if need be (as it has to anyway because 
-# of the non-coincidence or page and packet boundaries).
-sub _isOggPageHeader {
-	my $buffer = shift;
-	
-	if (substr($buffer, 0, 4) ne 'OggS') {return 0;}
-	
-	if (ord(substr($buffer, 4, 1)) != 0) {return 0;}
-	
-	if (ord(substr($buffer, 5, 1)) & ~5) {return 0;}
-	
-	return 1;
-}
-
-sub canSeek {1}
+sub canSeek { 1 }
 
 1;

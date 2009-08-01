@@ -1,6 +1,6 @@
 #!/opt/sdi/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2009 Logitech.
+# Squeezebox Server Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -26,14 +26,27 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
 # Enable SlimService mode
-use constant SLIM_SERVICE => 1;
-use constant SCANNER => 0;
+use constant SLIM_SERVICE  => 1;
+use constant SCANNER       => 0;
+use constant RESIZER       => 0;
+use constant TRANSCODING   => 0;
+use constant PERFMON       => 0;
+use constant DEBUGLOG      => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
+use constant INFOLOG       => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
+use constant SB1SLIMP3SYNC => 0;
+use constant ISWINDOWS     => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISMAC         => ( $^O =~ /darwin/i ) ? 1 : 0;
 
 my $sn_config;
 our $SN_PATH; # path to squeezenetwork directory
 
 BEGIN {
 	my @SlimINC = ($Bin);
+	
+	# Force poll backend on Linux
+	if ( $^O =~ /linux/ ) {
+		$ENV{LIBEV_FLAGS} = 2;
+	}
 	
 	# SLIM_SERVICE
 	# Get path to SN modules
@@ -125,7 +138,6 @@ $XML::Simple::PREFERRED_PARSER = 'XML::Parser';
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
-use Slim::Utils::PerfMon;
 use Slim::Buttons::Common;
 use Slim::Buttons::Home;
 use Slim::Buttons::Power;
@@ -176,6 +188,15 @@ use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Control::Jive;
 use Slim::Formats::RemoteMetadata;
 
+if ( DEBUGLOG ) {
+	require Data::Dump;
+	require Slim::Utils::PerlRunTime;
+}
+
+my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+eval "use $sqlHelperClass";
+die $@ if $@;
+
 our @AUTHORS = (
 	'Sean Adams',
 	'Vidur Apparao',
@@ -202,7 +223,7 @@ my $prefs        = preferences('server');
 
 our $VERSION     = '7.4-sn';
 our $REVISION    = undef;
-our $audiodir    = undef
+our $audiodir    = undef;
 our $playlistdir = undef;
 our $httpport    = undef;
 
@@ -242,10 +263,12 @@ our (
 	$checkstrings,
 	$d_startup, # Needed for Slim::bootstrap
 	$sigINTcalled,
+	$inInit,
 );
 
 sub init {
-
+	$inInit = 1;
+	
 	# initialize the process and daemonize, etc...
 	srand();
 
@@ -276,9 +299,9 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->info("SlimServer OS Specific init...");
+	main::INFOLOG && $log->info("SlimServer OS Specific init...");
 
-	unless (Slim::Utils::OSDetect::isWindows()) {
+	unless (main::ISWINDOWS) {
 		$SIG{'HUP'} = \&initSettings;
 	}		
 
@@ -330,37 +353,38 @@ sub init {
 	};
 =cut
 
-	$log->info("SlimServer strings init...");
-	Slim::Utils::Strings::init();
+	# Find plugins and process any new ones now so we can load their strings
+	main::INFOLOG && $log->info("Squeezebox Server PluginManager init...");
+	Slim::Utils::PluginManager->init();
 
-	$log->info("SlimServer Info init...");
+	main::INFOLOG && $log->info("SlimServer strings init...");
+	Slim::Utils::Strings::init();
+	
+	main::INFOLOG && $log->info("SlimServer Info init...");
 	Slim::Music::Info::init();
 
-	$log->info("SlimServer IR init...");
+	main::INFOLOG && $log->info("SlimServer IR init...");
 	Slim::Hardware::IR::init();
 
-	$log->info("SlimServer Request init...");
+	main::INFOLOG && $log->info("SlimServer Request init...");
 	Slim::Control::Request::init();
 	
-	$log->info("SlimServer Buttons init...");
+	main::INFOLOG && $log->info("SlimServer Buttons init...");
 	Slim::Buttons::Common::init();
 
-	$log->info("SlimServer Graphic Fonts init...");
+	main::INFOLOG && $log->info("SlimServer Graphic Fonts init...");
 	Slim::Display::Lib::Fonts::init();
 
-	$log->info("Slimproto Init...");
+	main::INFOLOG && $log->info("Slimproto Init...");
 	Slim::Networking::Slimproto::init();
 
-	$log->info("Async DNS init...");
+	main::INFOLOG && $log->info("Async DNS init...");
 	Slim::Networking::Async::DNS->init;
 
-	$log->info("Async HTTP init...");
+	main::INFOLOG && $log->info("Async HTTP init...");
 	Slim::Networking::SimpleAsyncHTTP->init;
-
-	$log->info("Source conversion init..");
-	Slim::Player::Source::init();
 	
-	$log->info('Menu init...');
+	main::INFOLOG && $log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
 	Slim::Menu::AlbumInfo->init();
 	Slim::Menu::ArtistInfo->init();
@@ -369,16 +393,17 @@ sub init {
 	Slim::Menu::SystemInfo->init();
 	Slim::Menu::PlaylistInfo->init();
 	
-	$log->info('Squeezebox Server Alarms init...');
+	main::INFOLOG && $log->info('Squeezebox Server Alarms init...');
 	Slim::Utils::Alarm->init();
 
-	$log->info("SlimServer Plugins init...");
-	Slim::Utils::PluginManager->init();
+	# load plugins before Jive init so MusicIP hooks to cached artist/genre queries from Jive->init() will take root
+	main::INFOLOG && $log->info("Squeezebox Server Load Plugins...");
+	Slim::Utils::PluginManager->load();
 	
-	$log->info("Squeezebox Server Jive init...");
+	main::INFOLOG && $log->info("Squeezebox Server Jive init...");
 	Slim::Control::Jive->init();
 	
-	$log->info("Remote Metadata init...");
+	main::INFOLOG && $log->info("Remote Metadata init...");
 	Slim::Formats::RemoteMetadata->init();
 
 	if ( SLIM_SERVICE ) {
@@ -408,8 +433,10 @@ sub init {
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
+	
+	$inInit = 0;
 
-	$log->info("SlimServer done init...");
+	main::INFOLOG && $log->info("SlimServer done init...");
 }
 
 sub main {
@@ -425,15 +452,13 @@ sub main {
 }
 
 sub idle {
-	my ($queuedIR, $queuedNotifications);
+	# No idle processing during startup
+	return if $inInit;
 
-	my $now = Time::HiRes::time();
+	my $now = EV::now;
 
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
-	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {
-
-		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
-		
+	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {		
 		# For all clients that support RTC, we need to adjust their clocks
 		for my $client ( Slim::Player::Client::clients() ) {
 			if ( $client->hasRTCAlarm ) {
@@ -443,63 +468,30 @@ sub idle {
 	}
 
 	$lastlooptime = $now;
-
-	my $select_time = 0; # default to not waiting in select
-
-	# empty IR queue
-	if (!Slim::Hardware::IR::idle()) {
-
-		# empty notifcation queue
-		if (!Slim::Control::Request::checkNotifications()) {
-
-			my $timer_due = Slim::Utils::Timers::nextTimer();		
-
-			if (!defined($timer_due) || $timer_due > 0) {
-
-				# run scheduled task if no timers overdue
-				# Don't need Scheduler on SN
-				if ( SLIM_SERVICE || !Slim::Utils::Scheduler::run_tasks()) {
-
-					# set select time if no scheduled task
-					$select_time = $timer_due;
-
-					if (!defined $select_time) {
-						$select_time = 30;
-					}
-				}
-			}
+	
+	# empty notifcation queue
+	if ( !Slim::Control::Request::checkNotifications() ) {
+		# run scheduled tasks
+		# XXX: need a way to not call this unless someone is using Scheduler
+		if ( !main::SLIM_SERVICE ) {
+			Slim::Utils::Scheduler::run_tasks();
 		}
 	}
-
-	# call select and process any IO
-	Slim::Networking::Select::select($select_time);
-
-	# check the timers for any new tasks
-	Slim::Utils::Timers::checkTimers();
+	
+	# Loop once
+	Slim::Networking::IO::Select::loop( EV::LOOP_ONESHOT );
 
 	return $::stop;
 }
 
 sub idleStreams {
 	my $timeout = shift || 0;
-
-	my $select_time = 0;
-	my $check_timers = 1;
-	my $to;
-
-	if ($timeout) {
-		$select_time = Slim::Utils::Timers::nextTimer();
-		if ( !defined($select_time) || $select_time > $timeout ) {
-			$check_timers = 0;
-			$select_time = $timeout;
-		}
-	}
-
-	Slim::Networking::Select::select($select_time, 1);
-
-	if ( $check_timers ) {
-		Slim::Utils::Timers::checkTimers();
-	}
+	
+	# No idle processing during startup
+	return if $inInit;
+	
+	# Loop once without blocking
+	Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
 }
 
 sub showUsage {

@@ -28,10 +28,10 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->{streamUrl} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	my $track     = $song->pluginData();
 	
-	$log->is_debug && $log->debug( 'Remote streaming Classical track: ' . $streamUrl );
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Remote streaming Classical track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -85,7 +85,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug("Getting track from mysqueezebox.com for $id");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Getting track from SqueezeNetwork for $id");
 	
 	$http->get( $trackURL );
 }
@@ -113,13 +113,13 @@ sub gotNextTrack {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got Classical track: ' . Data::Dump::dump($track) );
 	}
 	
 	# Save metadata for this track
 	$song->pluginData( $track );
-	$song->{streamUrl} = $track->{URL};
+	$song->streamUrl($track->{URL});
 	
 	# Cache metadata
 	my $meta = {
@@ -175,7 +175,7 @@ sub parseDirectHeaders {
 		$length = $rangelength;
 	}
 	
-	$client->streamingSong->{duration} = $track->{Length};
+	$client->streamingSong->duration($track->{Length});
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
@@ -185,7 +185,7 @@ sub parseDirectHeaders {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->info("Direct stream failed: $url [$response] $status_line");
+	main::INFOLOG && $log->info("Direct stream failed: $url [$response] $status_line");
 	
 	$client->controller()->playerStreamingFailed( $client, 'PLUGIN_CLASSICAL_STREAM_FAILED' );
 }
@@ -195,7 +195,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->{streamUrl}, $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 }
 
 # Track Info menu
@@ -265,7 +265,7 @@ sub getMetadataFor {
 			}
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
@@ -314,7 +314,7 @@ sub _gotBulkMetadata {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 		
@@ -368,7 +368,7 @@ sub reinit {
 
 	my $url = $song->currentTrack->url();
 	
-	$log->debug("Re-init Classical - $url");
+	main::DEBUGLOG && $log->debug("Re-init Classical - $url");
 
 	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song

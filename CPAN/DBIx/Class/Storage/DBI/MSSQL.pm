@@ -5,8 +5,9 @@ use warnings;
 
 use base qw/DBIx::Class::Storage::DBI/;
 
-sub last_insert_id {
-  my( $id ) = $_[0]->_dbh->selectrow_array('SELECT @@IDENTITY' );
+sub _dbh_last_insert_id {
+  my ($self, $dbh, $source, $col) = @_;
+  my ($id) = $dbh->selectrow_array('SELECT SCOPE_IDENTITY()');
   return $id;
 }
 
@@ -15,7 +16,19 @@ sub build_datetime_parser {
   my $type = "DateTime::Format::Strptime";
   eval "use ${type}";
   $self->throw_exception("Couldn't load ${type}: $@") if $@;
-  return $type->new( pattern => '%m/%d/%Y %H:%M:%S' );
+  return $type->new( pattern => '%Y-%m-%d %H:%M:%S' );  # %F %T
+}
+
+sub sqlt_type { 'SQLServer' }
+
+sub _sql_maker_opts {
+    my ( $self, $opts ) = @_;
+
+    if ( $opts ) {
+        $self->{_sql_maker_opts} = { %$opts };
+    }
+
+    return { limit_dialect => 'Top', %{$self->{_sql_maker_opts}||{}} };
 }
 
 1;
@@ -37,6 +50,17 @@ one of the other DBD-specific MSSQL classes, such as
 L<DBIx::Class::Storage::DBI::Sybase::MSSQL>.  These classes will
 merge this class with a DBD-specific class to obtain fully
 correct behavior for your scenario.
+
+=head1 METHODS
+
+=head2 last_insert_id
+
+=head2 sqlt_type
+
+=head2 build_datetime_parser
+
+The resulting parser handles the MSSQL C<DATETIME> type, but is almost
+certainly not sufficient for the other MSSQL 2008 date/time types.
 
 =head1 AUTHORS
 

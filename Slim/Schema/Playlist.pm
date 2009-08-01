@@ -5,6 +5,8 @@ package Slim::Schema::Playlist;
 use strict;
 use base 'Slim::Schema::Track';
 
+use Slim::Schema::ResultSet::Playlist;
+
 use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
 
@@ -22,67 +24,68 @@ use Slim::Utils::Log;
 sub tracks {
 	my $self = shift;
 
-	return $self->playlist_tracks(undef, { 'order_by' => 'me.position' })->search_related('track' => @_);
+	return $self->playlist_tracks(undef, { order_by => 'me.position'});
 }
 
 sub setTracks {
 	my $self   = shift;
 	my $tracks = shift;
 
-	# With playlists in the database - we want to make sure the playlist is consistent to the user.
-	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+	# Do not turn change autocommit.
 
-	if ($autoCommit) {
-		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
-	}
-
+	my $work = sub {
+		# Remove the old tracks associated with this playlist.
+		$self->playlist_tracks->delete;
+		$self->_addTracksToPlaylist($tracks, 0);
+	};
+	
+	# Bug 12091: Only use a txn_do() if autocommit is on
 	eval {
-		Slim::Schema->txn_do(sub {
-
-			# Remove the old tracks associated with this playlist.
-			$self->playlist_tracks->delete;
-
-			$self->_addTracksToPlaylist($tracks, 0);
-		});
+		if (Slim::Schema->storage->dbh->{'AutoCommit'}) {
+			Slim::Schema->txn_do($work);
+		} else {
+			&$work;
+		}
 	};
 
 	if ($@) {
 		logError("Failed to add tracks to playlist: [$@]");
 	}
 
-	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 sub appendTracks {
 	my $self   = shift;
 	my $tracks = shift;
 
-	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+	# Do not turn change autocommit.
 
-	if ($autoCommit) {
-		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
-	}
+	my $work = sub {
 
+		# Get the current max track in the DB
+		my $max = $self->search_related('playlist_tracks', undef, {
+
+			'select' => [ \'MAX(position)' ],
+			'as'     => [ 'maxPosition' ],
+
+		})->single->get_column('maxPosition');
+
+		$self->_addTracksToPlaylist($tracks, $max+1);
+	};
+	
+	# Bug 12091: Only use a txn_do() if autocommit is on
 	eval {
-		Slim::Schema->txn_do(sub {
-
-			# Get the current max track in the DB
-			my $max = $self->search_related('playlist_tracks', undef, {
-
-				'select' => [ \'MAX(position)' ],
-				'as'     => [ 'maxPosition' ],
-
-			})->single->get_column('maxPosition');
-
-			$self->_addTracksToPlaylist($tracks, $max+1);
-		});
+		if (Slim::Schema->storage->dbh->{'AutoCommit'}) {
+			Slim::Schema->txn_do($work);
+		} else {
+			&$work;
+		}
 	};
 
 	if ($@) {
 		logError("Failed to add tracks to playlist: [$@]");
 	}
 
-	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 sub _addTracksToPlaylist {
@@ -96,20 +99,20 @@ sub _addTracksToPlaylist {
 
 		# If tracks are being added via Browse Music Folder -
 		# which still deals with URLs - get the objects to add.
-		if (!blessed($track) || !$track->can('id')) {
+		if (!blessed($track) || !$track->can('url')) {
 
-			$track = Slim::Schema->rs('Track')->objectForUrl({
+			$track = Slim::Schema->objectForUrl({
 				'url'      => $track,
 				'create'   => 1,
 				'readTags' => 1,
 			});
 		}
 
-		if (blessed($track) && $track->can('id')) {
+		if (blessed($track) && $track->can('url')) {
 
 			Slim::Schema->rs('PlaylistTrack')->create({
 				playlist => $self,
-				track    => $track,
+				track    => $track->url,
 				position => $position++
 			});
 		}
@@ -120,6 +123,7 @@ sub _addTracksToPlaylist {
 }
 
 # Return the next audio URL from a remote playlist
+# XXX probably obsolete
 sub getNextEntry {
 	my ( $self, $args ) = @_;
 	
@@ -130,7 +134,7 @@ sub getNextEntry {
 	for my $track ( $playlist->tracks ) {
 		my $type = $track->content_type;
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Considering " . $track->url . " ($type)" );
 		}
 		
@@ -139,28 +143,29 @@ sub getNextEntry {
 			if ( $args->{after} ) {
 				if ( $args->{after}->url eq $track->url ) {
 					# We are looking for the track after this one
-					$log->debug( "Skipping " . $track->url . ", we want the one after" );
+					main::DEBUGLOG && $log->debug( "Skipping " . $track->url . ", we want the one after" );
 					delete $args->{after};
 				}
 				else {
-					$log->debug( "Skipping" . $track->url . ", haven't seen " . $args->{after}->url . " yet" );
+					main::DEBUGLOG && $log->debug( "Skipping" . $track->url . ", haven't seen " . $args->{after}->url . " yet" );
 				}
 			}
 			else {
-				$log->debug( "Next playlist entry is " . $track->url );
+				main::DEBUGLOG && $log->debug( "Next playlist entry is " . $track->url );
 				return $track;
 			}
 		}
 		elsif ( Slim::Music::Info::isPlaylist( $track, $type ) ) {
 			# A nested playlist, recurse into it
-			$log->debug( 'Looking in nested playlist ' . $track->url );
+			main::DEBUGLOG && $log->debug( 'Looking in nested playlist ' . $track->url );
 			
-			$track = Slim::Schema->rs('Playlist')->objectForUrl( {
+			$track = Slim::Schema->objectForUrl( {
 				url => $track->url,
-			} );
+				playlist => 1,
+			} ) unless $track->isRemoteURL();
 			
 			if ( my $result = $self->getNextEntry( { %{$args}, playlist => $track } ) ) {
-				$log->debug( 'Found audio URL in nested playlist: ' . $result->url );
+				main::DEBUGLOG && $log->debug( 'Found audio URL in nested playlist: ' . $result->url );
 				return $result;
 			}
 		}

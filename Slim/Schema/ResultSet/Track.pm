@@ -25,10 +25,11 @@ sub pageBarResults {
 	my $table = $self->{'attrs'}{'alias'};
 	my $name  = "$table.titlesort";
 
+	# SUBSTR() is supported by both MySQL and SQLite
 	$self->search(undef, {
-		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
+		'select'     => [ \"SUBSTR($name, 1, 1)", { count => \"DISTINCT($table.id)" } ],
 		as           => [ 'letter', 'count' ],
-		group_by     => \"LEFT($name, 1)",
+		group_by     => \"SUBSTR($name, 1, 1)",
 		result_class => 'Slim::Schema::PageBar',
 	});
 }
@@ -78,8 +79,10 @@ sub browse {
 		if ($sort =~ /album\./) {
 			$join = 'album';
 		}
-
-		$sort =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
+		
+		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+		
+		$sort =~ s/(\w+?.\w+?sort)/$sqlHelperClass->prepend0($1)/eg;
 	}
 
 	# Join on album
@@ -112,12 +115,42 @@ sub allTracksAsPaths {
 	my $path  = shift || '';
 
 	my $dbh   = $self->result_source->storage->dbh;
-	my $urls  = $dbh->selectcol_arrayref("SELECT url FROM tracks WHERE url LIKE 'file://$path%'");
+	my $sth   = $dbh->prepare("SELECT url FROM tracks WHERE url LIKE '$path%'");
 	my @paths = ();
+	
+	$sth->execute;
 
-	for my $url (@$urls) {
-
+	while ( my ($url) = $sth->fetchrow_array ) {
 		push @paths, Slim::Utils::Misc::pathFromFileURL($url, 1);
+	}
+
+	return \@paths;
+}
+
+# XXX: replace above method after scanner is fully refactored
+sub allTracksAsPathsWithMTime {
+	my $self  = shift;
+	my $path  = shift || '';
+	
+	if ( $path !~ /^file/ ) {
+		$path = Slim::Utils::Misc::fileURLFromPath($path);
+	}
+
+	my $dbh   = $self->result_source->storage->dbh;
+	my $sth   = $dbh->prepare( qq{
+		SELECT   url, timestamp, filesize
+		FROM     tracks
+		WHERE    url LIKE '$path%' 
+		AND      content_type != 'dir'
+		ORDER BY url
+	} );
+	
+	my @paths = ();
+	
+	$sth->execute;
+
+	while ( my ($url, $mtime, $size) = $sth->fetchrow_array ) {
+		push @paths, [ Slim::Utils::Misc::pathFromFileURL($url, 1), $mtime, $size ];
 	}
 
 	return \@paths;

@@ -13,16 +13,15 @@ my $prefs = preferences('plugin.extensions');
 my $log   = logger('plugin.extensions');
 
 my $os   = Slim::Utils::OSDetect->getOS();
-my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret') )->hexdigest;
-
-my $needsRestart;
+my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret'), time )->hexdigest;
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_EXTENSIONS');
+	# we override the main server plugin setup page
+	return Slim::Web::HTTP::CSRF->protectName('SETUP_PLUGINS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/Extensions/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/Extensions/settings/basic.html');
 }
 
 sub handler {
@@ -39,7 +38,12 @@ sub handler {
 
 	if ($params->{'saveSettings'}) {
 
-		# handle changes to repos immediately before we search repos
+		# handle changes to auto mode
+
+		my $auto = $params->{'auto'} ? 1 : 0;
+		$prefs->set('auto', $auto) if $auto != $prefs->get('auto');
+
+		# handle changes to repos
 
 		my @new = grep { $_ =~ /^http:\/\/.*\.xml/ } (ref $params->{'repos'} eq 'ARRAY' ? @{$params->{'repos'}} : $params->{'repos'});
 
@@ -49,260 +53,228 @@ sub handler {
 
 		for my $repo (keys %new) {
 			if (!$current{$repo}) {
+				Slim::Plugin::Extensions::Plugin->addRepo({ repo => $repo });
 				$changed = 1;
-				Slim::Plugin::Extensions::Plugin->addRepo($repo);
 			}
 		}
 		
 		for my $repo (keys %current) {
 			if (!$new{$repo}) {
+				Slim::Plugin::Extensions::Plugin->removeRepo({ repo => $repo });
 				$changed = 1;
-				Slim::Plugin::Extensions::Plugin->removeRepo($repo);
 			}
 		}
 
 		$prefs->set('repos', \@new) if $changed;
+
+		if ($params->{'otherrepo'} && !$prefs->get('otherrepo')) {
+
+			Slim::Plugin::Extensions::Plugin->addRepo({ other => 1 });
+			$prefs->set('otherrepo', 1);
+
+		} elsif (!$params->{'otherrepo'} && $prefs->get('otherrepo')) {
+
+			Slim::Plugin::Extensions::Plugin->removeRepo({ other => 1 });
+			$prefs->set('otherrepo', 0);
+		}
+
+		# set policy for which plugins are installed/uninstalled etc
+
+		my $plugin = $prefs->get('plugin');
+		undef $changed;
+
+		for my $param (keys %$params) {
+
+			if ($param =~ /^manual:(.*)/) {
+				$params->{$1} ? Slim::Utils::PluginManager->enablePlugin($1) : Slim::Utils::PluginManager->disablePlugin($1);
+			}
+
+			if ($param =~ /^install:(.*)/) {
+				if ($params->{$1} && !$plugin->{$1}) {
+					$plugin->{$1} = 1;
+					$changed = 1;
+				} elsif (!$params->{$1} && $plugin->{$1}) {
+					delete $plugin->{$1};
+					$changed = 1;
+				}
+			}
+		}
+		
+		$prefs->set('plugin', $plugin) if $changed;
 	}
 
 	# get plugin info from defined repos
+	my $repos = Slim::Plugin::Extensions::Plugin->repos;
 
-	Slim::Plugin::Extensions::Plugin->getPlugins( \&_gotPluginInfo, [ $class, $client, $params, $callback, \@args ] );
-}
+	my $data = { remaining => scalar keys %$repos, results => {}, errors => {} };
 
-sub _gotPluginInfo {
-	my ($class, $client, $params, $callback, $args, $plugins, $errors) = @_;
-
-	if ($params->{'saveSettings'}) {
-
-		# handle plugins for removal
-
-		if (my $remove = $params->{'remove'}) {
-
-			for my $remove ( ref $remove ? @$remove : ( $remove ) ) {
-
-				my ($name, $version, $title) = $remove =~ /(.*?):(.*?):(.*)/;
-
-				Slim::Plugin::Extensions::PluginDownloader->remove( { 
-					name    => $name,
-					title   => $title,
-					version => $version,
-				} );
-			}
-		}
-
-		# handle plugins for installation
-
-		my @install;
-
-		if (my $install = $params->{'install'}) {
-
-			for my $install ( ref $install ? @$install : ( $install ) ) {
-
-				my ($name, $version) = $install =~ /(.*):(.*)/;
-
-				FIND: for my $repo (keys %$plugins) {
-
-					for my $plugin (@{ $plugins->{ $repo }->{'items'} }) {
-						
-						if ($plugin->{'name'} eq $name && $plugin->{'version'} eq $version) {
-
-							push @install, $plugin;
-
-							last FIND;
-						}
-					}
-				}
-			}
-		}
-
-		my $downloads = { remaining => scalar @install };
-
-		for my $plugin (@install) {
-			
-			Slim::Plugin::Extensions::PluginDownloader->download( {
-				name    => $plugin->{'name'},
-				title   => $plugin->{'title'},
-				url     => $plugin->{'url'},
-				version => $plugin->{'version'},
-				digest  => $plugin->{'sha'},
-				cb      => \&_downloadDone,
-				pt      => [ $class, $client, $params, $callback, $args, $plugins, $errors, $downloads ]
-			} );
-		}
-
-		return if @install; # wait for download(s) to complete page build
+	for my $repo (keys %$repos) {
+		Slim::Plugin::Extensions::Plugin::getExtensions({
+			'name'   => $repo, 
+			'type'   => 'plugin', 
+			'target' => Slim::Utils::OSDetect::OS(),
+			'version'=> $::VERSION, 
+			'lang'   => $Slim::Utils::Strings::currentLang,
+			'details'=> 1,
+			'cb'     => \&_getReposCB,
+			'pt'     => [ $class, $client, $params, $callback, \@args, $data, $repos->{$repo} ],
+			'onError'=> sub { $data->{'errors'}->{ $_[0] } = $_[1] },
+		});
 	}
 
-	my $body = $class->_addInfo($client, $params, $plugins, $errors);
-
-	$callback->( $client, $params, $body, @$args );
+	if (!keys %$repos) {
+		_getReposCB( $class, $client, $params, $callback, \@args, $data, undef, {}, {} );
+	}
 }
 
-sub _downloadDone {
-	my ($class, $client, $params, $callback, $args, $plugins, $errors, $downloads) = @_;
+sub _getReposCB {
+	my ($class, $client, $params, $callback, $args, $data, $weight, $res, $info) = @_;
 
-	# wait for all downloads to complete before returning the page
-	if (--$downloads->{'remaining'}) {
-		return;
+	if (scalar @$res) {
+
+		$data->{'results'}->{ $info->{'name'} } = {
+			'title'   => $info->{'title'},
+			'entries' => $res,
+			'weight'  => $weight,
+		};
 	}
 
-	my $body = $class->_addInfo($client, $params, $plugins, $errors);
+	if ( --$data->{'remaining'} <= 0 ) {
 
-	$callback->( $client, $params, $body, @$args );
+		$callback->($client, $params, $class->_addInfo($client, $params, $data), @$args);
+	}
 }
 
 sub _addInfo {
-	my ($class, $client, $params, $plugins, $errors) = @_;
+	my ($class, $client, $params, $data) = @_;
 
-	my $status = Slim::Plugin::Extensions::PluginDownloader->status;
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	my $states  = preferences('plugin.state');
 
-	my %installed; # plugins installed by downloader
-	my %manual;    # plugins manually installed by other means
+	my $seen = {};
+	my $current = {};
 
-	for my $module (keys %{Slim::Utils::PluginManager->allPlugins}) {
+	# create entries for built in plugins and those already installed
+	my @active;
+	my @inactive;
+	my @updates;
 
-		my $basedir = Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'};
-		my $name;
+	for my $plugin (keys %$plugins) {
 
-		if ($module =~ /^Plugins::(.*)::/) {
+		my $entry = $plugins->{$plugin};
+		my $state = $states->get($plugin);
 
-			$name = $1;
+		my $entry = {
+			name    => $plugin,
+			title   => Slim::Utils::Strings::getString($entry->{'name'}),
+			desc    => Slim::Utils::Strings::getString($entry->{'description'}),
+			error   => Slim::Utils::PluginManager->getErrorString($plugin),
+			creator => $entry->{'creator'},
+			email   => $entry->{'email'},
+			version => $entry->{'version'},
+			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
+			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
+			enforce => $entry->{'enforce'},
+		};
 
-		} elsif ($module =~ /^Slim::Plugin::(.*)::/) {
+		if ($state =~ /enabled/) {
 
-			$name = $1;
+			push @active, $entry;
 
-		} elsif ($module =~ /.*[\/|\\](.*)[\/|\\]install.xml/) {
+			if (!$entry->{'manual'}) {
+				$current->{ $plugin } = $entry->{'version'};
+			}
 
-			$name = $1;
+		} elsif ($state =~ /disabled/) {
+
+			push @inactive, $entry;
 		}
 
-		if ($name) {
+		$seen->{$plugin} = 1;
+	}
 
-			if ($basedir =~ /InstalledPlugins/) {
+	my @results = sort { $a->{'weight'} !=  $b->{'weight'} ?
+						 $a->{'weight'} <=> $b->{'weight'} : 
+						 $a->{'title'} cmp $b->{'title'} } values %{$data->{'results'}};
 
-				$installed{$name} = $module;
+	my @res;
+
+	for my $res (@results) {
+		push @res, @{$res->{'entries'}};
+	}
+
+	# find update actions and handle
+
+	my $actions = Slim::Plugin::Extensions::Plugin::findUpdates(\@res, $current, $prefs->get('plugin'), 'info');
+
+	for my $plugin (keys %$actions) {
+
+		my $entry = $actions->{$plugin};
+
+		if ($entry->{'action'} eq 'install' && $entry->{'url'} && $entry->{'sha'}) {
+
+			if (!defined $current->{$plugin} || $prefs->get('auto') || ($params->{'saveSettings'} && $params->{"update:$plugin"}) ) {
+
+				# install now if not installed, in auto mode or update has been explicitly selected
+				main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
+
+				Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => $entry->{'sha'} });
 
 			} else {
 
-				$manual{$name} = $basedir;
+				# add to update list
+				push @updates, $entry->{'info'};
 			}
+							 
+		} elsif ($entry->{'action'} eq 'uninstall') {
+
+			main::INFOLOG && $log->info("uninstalling $plugin");
+
+			Slim::Utils::PluginDownloader->uninstall($plugin);
 		}
 	}
 
-	my $upgrade = {};
-	my $install = {};
-	my @remove;
-	my %removeInfo;
-	my $installedManually;
+	Slim::Utils::PluginManager->message(undef);
 
-	for my $repoName (keys %$plugins) {
+	# prune out duplicate entries, favour repos later in the list so that entries get pruned from the 3rd party and other repos
 
-		for my $plugin (@{ $plugins->{ $repoName }->{'items'} }) {
-
-			my $module = $installed{ $plugin->{'name'} };
-
-			if ($status->{ $plugin->{'name'} }) {
-				# plugin has already been installed/removed so remove from lists until restart
+	for my $repo (reverse @results) {
+		my $i = 0;
+		while (my $entry = $repo->{'entries'}->[$i]) {
+			if ($seen->{$entry->{'name'}}) {
+				splice @{$repo->{'entries'}}, $i, 1;
 				next;
 			}
-
-			if ($manual{ $plugin->{'name'} }) {
-
-				$installedManually->{ $plugin->{'name'} } = $plugin;
-				$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
-					
-					next;
-			}
-			
-			if ($module) {
-
-				my $existingData = Slim::Utils::PluginManager->dataForPlugin($module);
-				
-				$plugin->{'current'} = $existingData->{'version'};
-
-				if (Slim::Utils::Versions->compareVersions($plugin->{'version'}, $plugin->{'current'}) > 0 || $existingData->{'error'} eq 'INSTALLERROR_INVALID_VERSION') {
-					
-					$upgrade->{ "$plugin->{name}-$plugin->{version}" } = $plugin;
-				}
-				
-				$removeInfo{ $plugin->{'name'} } = $plugin;
-				
-			} else {
-				
-				unless ($install->{ $repoName }) {
-					$install->{ $repoName } = {
-						title => $plugins->{ $repoName }->{'title'},
-						name  => $repoName,
-						type  => $plugins->{ $repoName }->{'type'},
-						items => [],
-					};
-				}
-				
-				push @{ $install->{$repoName}->{items} }, $plugin;
-			}
-		}
-	}
-
-	my @upgrade = sort { $a->{title} cmp $b->{title} } values (%$upgrade);
-
-	# sort plugins in the type order: logitech, master, others (sorted by title) 
-	my @install = sort { $a->{type} eq $b->{type} ? $a->{title} cmp $b->{title} : $a->{type} cmp $b->{type} } values(%$install);
-
-	for my $plugin (keys %installed) {
-		
-		if (!$status->{ $plugin }) {
-
-			my $instData = Slim::Utils::PluginManager->dataForPlugin($installed{$plugin});
-			my $repoData = $removeInfo{ $plugin } || {};
-
-			push @remove, { 
-				name    => $plugin,
-				current => $instData->{'version'},
-				title   => Slim::Utils::Strings::getString($instData->{'name'}) || $repoData->{'title'}, 
-				desc    => Slim::Utils::Strings::getString($instData->{'description'}) || $repoData->{'desc'}, 
-				link    => $instData->{'homepageURL'} || $repoData->{'link'},
-				creator => $instData->{'creator'} || $repoData->{'creator'},
-				email   => $instData->{'email'} || $repoData->{'email'},
-			};
+			$seen->{$entry->{'name'}} = 1;
+			$i++;
 		}
 	}
 
 	my @repos = ( @{$prefs->get('repos')}, '' );
 
-	$params->{'repos'}   = \@repos;
-	$params->{'upgrade'} = \@upgrade;
-	$params->{'install'} = \@install;
-	$params->{'remove'}  = \@remove;
-	$params->{'manual'}  = $installedManually;
-	$params->{'rand'}    = $rand;
-	$params->{'warning'} = '';
+	$params->{'updates'}  = \@updates;
+	$params->{'active'}   = \@active;
+	$params->{'inactive'} = \@inactive;
+	$params->{'avail'}    = \@results;
+	$params->{'repos'}    = \@repos;
+	$params->{'otherrepo'}= $prefs->get('otherrepo');
+	$params->{'auto'}     = $prefs->get('auto');
+	$params->{'rand'}     = $rand;
 
-	for my $error (keys %$errors) {
-		$params->{'warning'} .= Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_REPO_ERROR") . " $error - $errors->{$error}<p/>";
+	my $needsRestart = Slim::Utils::PluginManager->needsRestart || Slim::Utils::PluginDownloader->downloading;
+
+	$params->{'warning'} = $needsRestart ? Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") : '';
+
+	# show a link/button to restart SC if this is supported by this platform
+	if ($needsRestart) {
+		$params = Slim::Web::Settings::Server::Plugins->getRestartMessage($params, Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG"));
 	}
 
-	if (keys %$status) {
+	$params = Slim::Web::Settings::Server::Plugins->restartServer($params, $needsRestart);
 
-		my $restart;
-
-		for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } (values %$status)) {
-
-			$params->{'warning'} .= "$plugin->{title} (v$plugin->{version})  -  " . 
-				                    Slim::Utils::Strings::string ('PLUGIN_EXTENSIONS_' . $plugin->{'status'} ) . "<p/>";
-
-			$restart ||= ( $plugin->{'status'} =~ /extracted|removed|bad_extraction/ ? 1 : 0 );
-		}
-
-		# show a link/button to restart SC if this is supported by this platform
-		if ($restart) {
-			$params = Slim::Web::Settings::Server::Plugins->getRestartMessage($params, Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG"));
-			$needsRestart = 1;
-		}
-
+	for my $repo (keys %{$data->{'errors'}}) {
+		$params->{'warning'} .= Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_REPO_ERROR") . " $repo - $data->{errors}->{$repo}<p/>";
 	}
-
-	$params = Slim::Web::Settings::Server::Plugins->restartServer($params, $needsRestart);	
 
 	return $class->SUPER::handler($client, $params);
 }

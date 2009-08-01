@@ -40,7 +40,7 @@ sub canSeek {
 	my ( $class, $client, $song ) = @_;
 	
 	# No seeking on radio tracks
-	if ( $song->{track}->url =~ /\.rdr$/ ) {
+	if ( $song->track()->url =~ /\.rdr$/ ) {
 		return 0;
 	}
 	
@@ -57,9 +57,9 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->{'streamUrl'} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	
-	$log->debug( 'Remote streaming Rhapsody track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Rhapsody track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -127,7 +127,7 @@ sub parseDirectHeaders {
 
 	foreach my $header (@headers) {
 
-		$log->debug("RhapsodyDirect header: $header");
+		main::DEBUGLOG && $log->debug("RhapsodyDirect header: $header");
 
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
@@ -144,9 +144,9 @@ sub parseDirectHeaders {
 	# Save length for reinit and seeking
 	$client->master->pluginData( length => $length );
 	
-	my $bitrate = $client->streamingSong()->{'streamUrl'} =~ /\.mp3$/ ? 128_000 : 192_000;
+	my $bitrate = $client->streamingSong()->streamUrl() =~ /\.mp3$/ ? 128_000 : 192_000;
 
-	$client->streamingSong->{'bitrate'} = $bitrate;
+	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
@@ -158,7 +158,7 @@ sub shouldLoop { 0 }
 sub isRepeatingStream {
 	my (undef, $song) = @_;
 	
-	return $song->{'track'}->url =~ /\.rdr$/;
+	return $song->track()->url =~ /\.rdr$/;
 }
 
 sub canDoAction {
@@ -177,7 +177,7 @@ sub canDoAction {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->debug("Direct stream failed: [$response] $status_line\n");
+	main::DEBUGLOG && $log->debug("Direct stream failed: [$response] $status_line\n");
 	
 	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
@@ -205,7 +205,7 @@ sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
 	my $client = $song->master();
-	my $url    = $song->{'track'}->url;
+	my $url    = $song->track()->url;
 	
 	$song->pluginData( radioTrackURL => undef );
 	$song->pluginData( radioTitle    => undef );
@@ -287,7 +287,7 @@ sub _getNextRadioTrack {
 		},
 	);
 	
-	$log->debug("Getting next radio track from mysqueezebox.com");
+	main::DEBUGLOG && $log->debug("Getting next radio track from SqueezeNetwork");
 	
 	$http->get( $radioURL );
 }
@@ -298,18 +298,18 @@ sub _gotNextRadioTrack {
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
 	my $song   = $params->{'song'};
-	my $url    = $song->{'track'}->url;
+	my $url    = $song->track()->url;
 	
 	my $track = eval { from_json( $http->content ) };
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
 	}
 	
 	if ( $track->{error} ) {
 		# We didn't get the next track to play
 		
-		my $error = ( $client->isPlaying(1) && $client->playingSong()->{'track'}->url =~ /\.rdr/ )
+		my $error = ( $client->isPlaying(1) && $client->playingSong()->track()->url =~ /\.rdr/ )
 					? 'PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK'
 					: 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK';
 		
@@ -390,14 +390,14 @@ sub _getTrackInfo {
 			my $http = shift;
 			my $info = eval { from_json( $http->content ) };
 			if ( $@ || $info->{error} ) {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrackInfo failed: ' . ( $@ || $info->{error} ) );
 				}
 				
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrackInfo ok: ' . Data::Dump::dump($info) );
 				}
 				
@@ -409,7 +409,7 @@ sub _getTrackInfo {
 		sub {
 			my $http  = shift;
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'getTrackInfo failed: ' . $http->error );
 			}
 			
@@ -420,7 +420,7 @@ sub _getTrackInfo {
 		},
 	);
 	
-	$log->is_debug && $log->debug('Getting next track playback info from SN');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN');
 	
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
@@ -438,7 +438,7 @@ sub _gotTrackInfo {
     return if $song->pluginData('abandonSong');
 	
 	# Save the media URL for use in strm
-	$song->{'streamUrl'} = $info->{mediaUrl};
+	$song->streamUrl($info->{mediaUrl});
 
 	# Save all the info so we can use it for sending the playback session info
 	$song->pluginData( info => $info );
@@ -467,7 +467,7 @@ sub _gotTrackInfo {
 sub _gotTrackError {
 	my ( $error, $client, $params ) = @_;
 	
-	$log->debug("Error during getTrackInfo: $error");
+	main::DEBUGLOG && $log->debug("Error during getTrackInfo: $error");
 
 	return if $params->{'song'}->pluginData('abandonSong');
     
@@ -485,7 +485,7 @@ sub onStream {
 	
 	# If IP has changed, send this info
 	if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
-		$log->debug( $client->id . " Sending updated secure-direct IP: $ip" );
+		main::DEBUGLOG && $log->debug( $client->id . " Sending updated secure-direct IP: $ip" );
 		
 		$ip = Net::IP->new($ip);
 		my $data = pack( 'cNn', 0, $ip->intip, 443 );
@@ -494,7 +494,7 @@ sub onStream {
 	
 	my $info = $song->pluginData('info');
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 
 			$client->id . ' Sending playback information: ' . $info->{trackMetadata}->{trackId}
 			. ' / ' . $info->{account}->{logon} 
@@ -513,10 +513,10 @@ sub onStream {
 	);
 	$client->sendFrame( rpds => \$data );
 
-	if (my $seekdata = $song->{'seekdata'}) {
+	if (my $seekdata = $song->seekdata()) {
 		# Send special seek information
 		my $data = pack( 'cNN', 7, $seekdata->{'eaoffset'}, $seekdata->{'ealength'} );
-		$log->is_debug && $log->debug( $client->id . " Sending seek data:", $seekdata->{'eaoffset'}, '/', $seekdata->{'ealength'} );
+		main::DEBUGLOG && $log->is_debug && $log->debug( $client->id . " Sending seek data:", $seekdata->{'eaoffset'}, '/', $seekdata->{'ealength'} );
 		
 		$client->sendFrame( rpds => \$data );
 	}
@@ -562,7 +562,7 @@ sub getMetadataFor {
 			}
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
@@ -611,7 +611,7 @@ sub _gotBulkMetadata {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 	
@@ -663,7 +663,7 @@ sub _playlistCallback {
 	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
 		# User stopped playing Rhapsody, 
 
-		$log->debug( "Stopped Rhapsody, unsubscribing from playlistCallback" );
+		main::DEBUGLOG && $log->debug( "Stopped Rhapsody, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
 		
 		return;
@@ -674,9 +674,9 @@ sub _playlistCallback {
 		
 		my $title = $song->pluginData('radioTitle');
 		
-		$log->debug("Setting title for radio station to $title");
+		main::DEBUGLOG && $log->debug("Setting title for radio station to $title");
 		
-		Slim::Music::Info::setCurrentTitle( $song->{'track'}->url, $title );
+		Slim::Music::Info::setCurrentTitle( $song->track()->url, $title );
 	}
 }
 
@@ -685,7 +685,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
+	return $class->SUPER::canDirectStream($client, $song->streamUrl(), $class->getFormatForURL());
 }
 
 # URL used for CLI trackinfo queries
@@ -731,7 +731,7 @@ sub trackInfo {
 		url      => $trackInfoURL,
 	);
 	
-	$log->debug( "Getting track information for $url" );
+	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
@@ -748,7 +748,7 @@ sub getIcon {
 sub onStop {
 	my ($class, $song) = @_;
 	
-	$log->is_debug && $log->debug("onStop, logging playback");
+	main::DEBUGLOG && $log->is_debug && $log->debug("onStop, logging playback");
 	
 	_doLog(Slim::Player::Source::songTime($song->master()), $song);
 }
@@ -756,7 +756,7 @@ sub onStop {
 sub onPlayout {
 	my ($class, $song) = @_;
 	
-	$log->is_debug && $log->debug("onPlayout, logging playback");
+	main::DEBUGLOG && $log->is_debug && $log->debug("onPlayout, logging playback");
 	
 	_doLog($song->duration(), $song);
 }
@@ -770,9 +770,9 @@ sub _doLog {
 	my $stationId;
 	my $trackId;
 
-	if ( ($stationId) = $song->{track}->url =~ m{rhapd://(.+)\.rdr} ) {
+	if ( ($stationId) = $song->track()->url =~ m{rhapd://(.+)\.rdr} ) {
 		# logMeteringInfoForStationTrackPlay
-		$song = $song->master()->currentSongForUrl( $song->{track}->url );
+		$song = $song->master()->currentSongForUrl( $song->track()->url );
 		
 		my $url = $song->pluginData('radioTrackURL');
 		
@@ -781,7 +781,7 @@ sub _doLog {
 	else {
 		# logMeteringInfo
 		$stationId = '';
-		($trackId) = $song->{track}->url =~ m{rhapd://(.+)\.mp3};
+		($trackId) = $song->track()->url =~ m{rhapd://(.+)\.mp3};
 	}
 	
 	my $logURL = Slim::Networking::SqueezeNetwork->url(
@@ -790,13 +790,13 @@ sub _doLog {
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $http = shift;
 				$log->debug( "Logging returned: " . $http->content );
 			}
 		},
 		sub {
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $http = shift;
 				$log->debug( "Logging returned error: " . $http->error );
 			}
@@ -806,7 +806,7 @@ sub _doLog {
 		},
 	);
 	
-	$log->debug("Logging track playback: $time seconds, trackId: $trackId, stationId: $stationId");
+	main::DEBUGLOG && $log->debug("Logging track playback: $time seconds, trackId: $trackId, stationId: $stationId");
 	
 	$http->get( $logURL );
 }
@@ -816,7 +816,7 @@ sub getSeekData {
 	my ( $class, $client, $song, $newtime ) = @_;
 	
 	# Determine byte offset and song length in bytes
-	my $meta = $class->getMetadataFor( $client, $song->{track}->url );
+	my $meta = $class->getMetadataFor( $client, $song->track()->url );
 	
 	my $duration = $meta->{duration} || return;
 	
@@ -847,9 +847,9 @@ sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
-	my $currentURL = $song->{streamUrl};
+	my $currentURL = $song->streamUrl();
 	
-	$log->debug("Re-init Rhapsody - $currentURL");
+	main::DEBUGLOG && $log->debug("Re-init Rhapsody - $currentURL");
 	
 	if ( my $length = $client->master->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet

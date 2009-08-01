@@ -17,61 +17,51 @@ well, as is the case with L<DBD::Sybase>
 
 =head1 METHODS
 
-=head2 sth
+=head2 connect_info
 
-Uses C<prepare> instead of the usual C<prepare_cached>, seeing as we can't cache very effectively without bind variables.
+We can't cache very effectively without bind variables, so force the C<disable_sth_caching> setting to be turned on when the connect info is set.
 
 =cut
 
-sub sth {
-  my ($self, $sql) = @_;
-  return $self->dbh->prepare($sql);
+sub connect_info {
+    my $self = shift;
+    my $retval = $self->next::method(@_);
+    $self->disable_sth_caching(1);
+    $retval;
 }
 
-=head2 _execute
+=head2 _prep_for_execute
 
-Manually subs in the values for the usual C<?> placeholders before calling L</sth> on the generated SQL.
+Manually subs in the values for the usual C<?> placeholders.
 
 =cut
 
-sub _execute {
-  my ($self, $op, $extra_bind, $ident, @args) = @_;
-  my ($sql, @bind) = $self->sql_maker->$op($ident, @args);
-  unshift(@bind, @$extra_bind) if $extra_bind;
-  if ($self->debug) {
-    my @debug_bind = map { defined $_ ? qq{'$_'} : q{'NULL'} } @bind;
-    $self->debugobj->query_start($sql, @debug_bind);
-  }
+sub _prep_for_execute {
+  my $self = shift;
 
-  while(my $bvar = shift @bind) {
-    $bvar = $self->dbh->quote($bvar);
-    $sql =~ s/\?/$bvar/;
-  }
+  my ($op, $extra_bind, $ident) = @_;
 
-  my $sth = eval { $self->sth($sql,$op) };
+  my ($sql, $bind) = $self->next::method(@_);
 
-  if (!$sth || $@) {
-    $self->throw_exception(
-      'no sth generated via sql (' . ($@ || $self->_dbh->errstr) . "): $sql"
-    );
-  }
+  # stringify args, quote via $dbh, and manually insert
 
-  my $rv;
-  if ($sth) {
-    my $time = time();
-    $rv = eval { $sth->execute };
+  my @sql_part = split /\?/, $sql;
+  my $new_sql;
 
-    if ($@ || !$rv) {
-      $self->throw_exception("Error executing '$sql': ".($@ || $sth->errstr));
+  foreach my $bound (@$bind) {
+    my $col = shift @$bound;
+    my $datatype = 'FIXME!!!';
+    foreach my $data (@$bound) {
+        if(ref $data) {
+            $data = ''.$data;
+        }
+        $data = $self->_dbh->quote($data);
+        $new_sql .= shift(@sql_part) . $data;
     }
-  } else {
-    $self->throw_exception("'$sql' did not generate a statement.");
   }
-  if ($self->debug) {
-    my @debug_bind = map { defined $_ ? qq{`$_'} : q{`NULL'} } @bind;
-    $self->debugobj->query_end($sql, @debug_bind);
-  }
-  return (wantarray ? ($rv, $sth, @bind) : $rv);
+  $new_sql .= join '', @sql_part;
+
+  return ($new_sql, []);
 }
 
 =head1 AUTHORS

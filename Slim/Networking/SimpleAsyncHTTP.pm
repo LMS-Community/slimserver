@@ -22,7 +22,7 @@ package Slim::Networking::SimpleAsyncHTTP;
 use strict;
 use warnings;
 
-use base 'Class::Data::Accessor';
+use base qw(Slim::Utils::Accessor);
 
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
@@ -32,14 +32,12 @@ use Slim::Utils::Prefs;
 use HTTP::Date ();
 use HTTP::Request;
 
-our $callbackTask = Slim::Utils::PerfMon->new('Async Callback', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
-
 my $prefs = preferences('server');
 
 my $log = logger('network.asynchttp');
 
-__PACKAGE__->mk_classaccessors( qw(
-	cb ecb type url error code mess headers contentRef cacheTime cachedResponse async
+__PACKAGE__->mk_accessor( rw => qw(
+	cb ecb _params type url error code mess headers contentRef cacheTime cachedResponse
 ) );
 
 BEGIN {
@@ -56,43 +54,43 @@ BEGIN {
 		
 		$hasZlib = 0;
 		eval { 
-			require Compress::Zlib;
+			require Compress::Raw::Zlib;
+			require IO::Compress::Gzip::Constants;
 			$hasZlib = 1;
 		};
 	}
 }
 
 sub init {
+=pod
 	Slim::Networking::Slimproto::addHandler( HTTP => \&playerHTTPResponse );
 	Slim::Networking::Slimproto::addHandler( HTTE => \&playerHTTPError );
+=cut
 }
 
 sub new {
-	my $class    = shift;
-	my $callback = shift;
-	my $errorcb  = shift;
-	my $params   = shift || {};
-
-	my $self = {
-		cb     => $callback,
-		ecb    => $errorcb,
-		params => $params,
-	};
-
-	return bless $self, ref($class) || $class;
+	my $class = shift;
+	
+	my $self = $class->SUPER::new();
+	
+	$self->cb(shift);
+	$self->ecb(shift);
+	$self->_params( shift || {} );
+	
+	return $self;
 }
 
 sub params {
 	my ($self, $key, $value) = @_;
 
 	if ( !defined $key ) {
-		return $self->{params};
+		return $self->_params;
 	}
 	elsif ( $value ) {
-		$self->{params}->{$key} = $value;
+		$self->_params->{$key} = $value;
 	}
 	else {
-		return $self->{params}->{$key};
+		return $self->_params->{$key};
 	}
 }
 
@@ -114,11 +112,13 @@ sub _createHTTPRequest {
 
 	$self->type( $type );
 	$self->url( $url );
-
-	$log->debug("${type}ing $url");
+	
+	my $params = $self->_params;
+	
+	main::DEBUGLOG && $log->debug("${type}ing $url");
 	
 	# Check for cached response
-	if ( $self->{params}->{cache} ) {
+	if ( $params->{cache} ) {
 		
 		my $cache = Slim::Utils::Cache->new();
 		
@@ -130,7 +130,7 @@ sub _createHTTPRequest {
 			# UI experience
 			if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
 				
-				$log->debug("Using cached response [$url]");
+				main::DEBUGLOG && $log->debug("Using cached response [$url]");
 				
 				return $self->sendCachedResponse();
 			}
@@ -138,8 +138,8 @@ sub _createHTTPRequest {
 	}
 	
 	my $timeout 
-		=  $self->{params}->{Timeout}
-		|| $self->{params}->{timeout}
+		=  $params->{Timeout}
+		|| $params->{timeout}
 		|| $prefs->get('remotestreamtimeout')
 		|| 10;
 		
@@ -150,7 +150,7 @@ sub _createHTTPRequest {
 	}
 	
 	# If cached, add If-None-Match and If-Modified-Since headers
-	if ( my $data = $self->{cachedResponse} ) {			
+	if ( my $data = $self->cachedResponse ) {			
 		unshift @_, (
 			'If-None-Match'     => $data->{headers}->header('ETag') || undef,
 			'If-Modified-Since' => $data->{headers}->last_modified || undef,
@@ -158,9 +158,9 @@ sub _createHTTPRequest {
 	}
 
 	# request compressed data if we have zlib
-	if ( hasZlib() && !$self->{params}->{saveAs} ) {
+	if ( hasZlib() && !$params->{saveAs} ) {
 		unshift @_, (
-			'Accept-Encoding' => 'gzip, deflate',
+			'Accept-Encoding' => 'deflate, gzip', # deflate is less overhead than gzip
 		);
 	}
 	
@@ -168,7 +168,7 @@ sub _createHTTPRequest {
 	my $lang = $prefs->get('language') || 'en';
 	
 	if ( main::SLIM_SERVICE ) {
-		if ( my $client = $self->{params}->{params}->{client} ) {
+		if ( my $client = $params->{params}->{client} ) {
 			$lang = $prefs->client($client)->get('language');
 		}
 	}
@@ -181,8 +181,9 @@ sub _createHTTPRequest {
 		$request->header( @_ );
 	}
 	
+=pod
 	# Use the player for making the HTTP connection if requested
-	if ( my $client = $self->{params}->{usePlayer} ) {
+	if ( my $client = $params->{usePlayer} ) {
 		# We still have to do DNS lookups in SC unless
 		# we have an IP host
 		if ( Net::IP::ip_is_ipv4( $request->uri->host ) ) {
@@ -199,12 +200,13 @@ sub _createHTTPRequest {
 		}
 		return;
 	}
+=cut
 	
 	my $http = Slim::Networking::Async::HTTP->new;
 	$http->send_request( {
 		request     => $request,
-		maxRedirect => $self->{params}->{maxRedirect},
-		saveAs      => $self->{params}->{saveAs},
+		maxRedirect => $params->{maxRedirect},
+		saveAs      => $params->{saveAs},
 		Timeout     => $timeout,
 		onError     => \&onError,
 		onBody      => \&onBody,
@@ -230,11 +232,11 @@ sub onError {
 	
 	$self->error( $error );
 
-	$::perfmon && (my $now = Time::HiRes::time());
+	main::PERFMON && (my $now = AnyEvent->time);
 	
 	$self->ecb->( $self, $error );
 
-	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->ecb);
+	main::PERFMON && $now && Slim::Utils::PerfMon->check('async', AnyEvent->time - $now, undef, $self->ecb);
 	
 	return;
 }
@@ -245,7 +247,7 @@ sub onBody {
 	my $req = $http->request;
 	my $res = $http->response;
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(sprintf("status for %s is %s", $self->url, $res->status_line ));
 	}
 	
@@ -258,7 +260,7 @@ sub onBody {
 		# Check if we are cached and got a "Not Modified" response
 		if ( $self->cachedResponse && $res->code == 304) {
 		
-			$log->debug("Remote file not modified, using cached content");
+			main::DEBUGLOG && $log->debug("Remote file not modified, using cached content");
 		
 			# update the cache time so we get another 5 minutes with no revalidation
 			my $cache = Slim::Utils::Cache->new();
@@ -273,34 +275,28 @@ sub onBody {
 	
 		# unzip if necessary
 		if ( hasZlib() ) {
-
+			
 			if ( my $ce = $res->header('Content-Encoding') ) {
 
+				my ($x, $status) = Compress::Raw::Zlib::Inflate->new( {
+					-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
+				} );
+				
 				if ( $ce eq 'gzip' ) {
-
-					$log->debug("Decompressing gzip'ed content");
-
-					# Formats::XML requires a scalar ref
-					$self->contentRef( \Compress::Zlib::memGunzip( $res->content_ref ) );
+					_removeGzipHeader( $res->content_ref );
 				}
-				elsif ( $ce eq 'deflate' ) {
-
-					$log->debug("Decompressing deflated content");
-
-					my $i = Compress::Zlib::inflateInit(
-						-WindowBits => -Compress::Zlib::MAX_WBITS(),
-					);
-
-					my $output = $i->inflate( $res->content_ref );
-
-					# Formats::XML requires a scalar ref
-					$self->contentRef( \$output );
-				}
+					
+				my $output = '';
+				$status = $x->inflate( $res->content_ref, $output );
+				
+				# Formats::XML requires a scalar ref
+				$self->contentRef( \$output );
 			}
 		}
 		
 		# cache the response if requested
-		if ( $self->{params}->{cache} ) {
+		my $params = $self->_params;
+		if ( $params->{cache} ) {
 		
 			if ( Slim::Utils::Misc::shouldCacheURL( $self->url ) ) {
 
@@ -311,9 +307,9 @@ sub onBody {
 				my $expires;
 				my $no_revalidate;
 				
-				if ( $self->{params}->{expires} ) {
+				if ( $params->{expires} ) {
 					# An explicit expiration time from the caller
-					$expires = $self->{params}->{expires};
+					$expires = $params->{expires};
 				}
 				else {			
 					# If we see max-age or an Expires header, use them
@@ -347,7 +343,7 @@ sub onBody {
 					$self->cacheResponse( $expires, $no_revalidate );
 				}
 				else {
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
 					}
 				}
@@ -355,13 +351,13 @@ sub onBody {
 		}
 	}
 	
-	$log->debug("Done");
+	main::DEBUGLOG && $log->debug("Done");
 
-	$::perfmon && (my $now = Time::HiRes::time());
+	main::PERFMON && (my $now = AnyEvent->time);
 	
 	$self->cb->( $self );
 
-	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->cb);
+	main::PERFMON && $now && Slim::Utils::PerfMon->check('async', AnyEvent->time - $now, undef, $self->cb);
 
 	return;
 }
@@ -369,7 +365,7 @@ sub onBody {
 sub cacheResponse {
 	my ( $self, $expires, $norevalidate ) = @_;
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
 	}
 
@@ -391,7 +387,7 @@ sub cacheResponse {
 sub sendCachedResponse {
 	my $self = shift;
 	
-	my $data = $self->{cachedResponse};
+	my $data = $self->cachedResponse;
 	
 	# populate the object with cached data			
 	$self->code( $data->{code} );
@@ -399,15 +395,16 @@ sub sendCachedResponse {
 	$self->headers( $data->{headers} );
 	$self->contentRef( \$data->{content} );
 
-	$::perfmon && (my $now = Time::HiRes::time());
+	main::PERFMON && (my $now = AnyEvent->time);
 	
 	$self->cb->( $self );
 
-	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->cb);
+	main::PERFMON && $now && Slim::Utils::PerfMon->check('async', AnyEvent->time - $now, undef, $self->cb);
 	
 	return;
 }
 
+=pod
 sub sendPlayerRequest {
 	my ( $ip, $self, $client, $request ) = @_;
 	
@@ -461,7 +458,7 @@ sub sendPlayerRequest {
 	
 	$client->sendFrame( http => \$data );
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			  "Using player " . $client->id 
 			. " to send request to $ip:$port (limit $limit):\n" . $request->as_string
@@ -476,7 +473,7 @@ sub gotPlayerResponse {
 		# Buffer body chunks
 		$self->{_body} .= $$body_ref;
 		
-		$log->is_debug && $log->debug('Buffered ' . length($$body_ref) . ' bytes of player HTTP response');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Buffered ' . length($$body_ref) . ' bytes of player HTTP response');
 	}
 	else {
 		# Response done
@@ -523,7 +520,7 @@ sub playerHTTPError {
 	
 	# Retry if connection was in use
 	if ( $reason == 255 ) {
-		$log->is_debug && $log->debug( "Player HTTP connection was in use, retrying..." );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Player HTTP connection was in use, retrying..." );
 		
 		Slim::Utils::Timers::setTimer(
 			undef,
@@ -544,16 +541,77 @@ sub playerHTTPError {
 		return;
 	}
 	
-	$log->is_debug && $log->debug( "Player HTTP error: $error [$reason]" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Player HTTP error: $error [$reason]" );
 	
 	$self->error( $error );
 	
 	$self->ecb->( $self, $error );
 }
+=cut
 
 sub content { ${ shift->contentRef || \'' } }
 
 sub close { }
+
+# From Compress::Zlib, to avoid having to include all
+# of new Compress::Zlib and IO::* compress modules
+sub _removeGzipHeader($)
+{
+    my $string = shift ;
+
+    return Compress::Raw::Zlib::Z_DATA_ERROR() 
+        if length($$string) < IO::Compress::Gzip::Constants::GZIP_MIN_HEADER_SIZE();
+
+    my ($magic1, $magic2, $method, $flags, $time, $xflags, $oscode) = 
+        unpack ('CCCCVCC', $$string);
+
+    return Compress::Raw::Zlib::Z_DATA_ERROR()
+        unless $magic1 == IO::Compress::Gzip::Constants::GZIP_ID1() and $magic2 == IO::Compress::Gzip::Constants::GZIP_ID2() and
+           $method == Compress::Raw::Zlib::Z_DEFLATED() and !($flags & IO::Compress::Gzip::Constants::GZIP_FLG_RESERVED()) ;
+    substr($$string, 0, IO::Compress::Gzip::Constants::GZIP_MIN_HEADER_SIZE()) = '' ;
+
+    # skip extra field
+    if ($flags & IO::Compress::Gzip::Constants::GZIP_FLG_FEXTRA())
+    {
+        return Compress::Raw::Zlib::Z_DATA_ERROR()
+            if length($$string) < IO::Compress::Gzip::Constants::GZIP_FEXTRA_HEADER_SIZE();
+
+        my ($extra_len) = unpack ('v', $$string);
+        $extra_len += IO::Compress::Gzip::Constants::GZIP_FEXTRA_HEADER_SIZE();
+        return Compress::Raw::Zlib::Z_DATA_ERROR()
+            if length($$string) < $extra_len ;
+
+        substr($$string, 0, $extra_len) = '';
+    }
+
+    # skip orig name
+    if ($flags & IO::Compress::Gzip::Constants::GZIP_FLG_FNAME())
+    {
+        my $name_end = index ($$string, IO::Compress::Gzip::Constants::GZIP_NULL_BYTE());
+        return Compress::Raw::Zlib::Z_DATA_ERROR()
+           if $name_end == -1 ;
+        substr($$string, 0, $name_end + 1) =  '';
+    }
+
+    # skip comment
+    if ($flags & IO::Compress::Gzip::Constants::GZIP_FLG_FCOMMENT())
+    {
+        my $comment_end = index ($$string, IO::Compress::Gzip::Constants::GZIP_NULL_BYTE());
+        return Compress::Raw::Zlib::Z_DATA_ERROR()
+            if $comment_end == -1 ;
+        substr($$string, 0, $comment_end + 1) = '';
+    }
+
+    # skip header crc
+    if ($flags & IO::Compress::Gzip::Constants::GZIP_FLG_FHCRC())
+    {
+        return Compress::Raw::Zlib::Z_DATA_ERROR()
+            if length ($$string) < IO::Compress::Gzip::Constants::GZIP_FHCRC_SIZE();
+        substr($$string, 0, IO::Compress::Gzip::Constants::GZIP_FHCRC_SIZE()) = '';
+    }
+    
+    return Compress::Raw::Zlib::Z_OK();
+}
 
 1;
 

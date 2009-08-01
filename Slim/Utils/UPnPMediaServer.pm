@@ -34,7 +34,7 @@ my $prefs = preferences('server');
 my $IGNORE_RE = qr{Rhapsody}i;
 
 sub init {
-	$log->info('UPnP: Starting up');
+	main::INFOLOG && $log->info('UPnP: Starting up');
 	
 	Slim::Buttons::BrowseUPnPMediaServer::init();
 	Slim::Web::UPnPMediaServer::init();
@@ -47,12 +47,12 @@ sub init {
 }
 
 sub shutdown {
-	$log->info('UPnP: Shutting down');
+	main::INFOLOG && $log->info('UPnP: Shutting down');
 	
 	Slim::Networking::UPnP::ControlPoint->shutdown();
 	
 	while ( my ($udn, $device) = each %devices ) {
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info( sprintf( "UPnP: Removing device %s", $device->getfriendlyname ) );
 		}
 		
@@ -71,7 +71,7 @@ sub foundDevice {
 		
 		if ( $event eq 'add' ) {
 
-			$log->info("Adding new media server: $menuName");
+			main::INFOLOG && $log->info("Adding new media server: $menuName");
 			
 			$devices{ $device->getudn } = $device;
 		
@@ -99,7 +99,7 @@ sub foundDevice {
 	}
 	else {
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("%s is a %s %s (%s), ignoring",
 				$device->getfriendlyname,
 				$device->getmanufacturer,
@@ -115,7 +115,7 @@ sub registerCallback {
 	
 	push @{$registeredCallbacks}, $callback;
 	
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		my $func = Slim::Utils::PerlRunTime::realNameForCodeRef( $callback );
 

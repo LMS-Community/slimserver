@@ -58,6 +58,27 @@ my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
 # for catching stdout/stderr
 my ($out, $err, $oldout, $olderr);
 
+sub init {
+	Slim::Web::Pages->addPageFunction(qr/^memoryusage\.html.*/, sub {
+		my ($client, $params) = @_;
+	
+		my $item    = $params->{'item'};
+		my $type    = $params->{'type'};
+		my $command = $params->{'command'};
+	
+		unless ($item && $command) {
+	
+			return Slim::Utils::MemoryUsage->status_memory_usage();
+		}
+	
+		if (defined $item && defined $command && Slim::Utils::MemoryUsage->can($command)) {
+	
+			return Slim::Utils::MemoryUsage->$command($item, $type);
+		}
+	});
+}
+		
+
 sub UNIVERSAL::op_size {
 	$opcount++;
 	my $size = shift->size;

@@ -116,7 +116,7 @@ sub shutdown {
 sub removeDevice {
 	my ( $device, $callback ) = @_;
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("Device went away: " . $device->getfriendlyname);
 	}
 
@@ -161,7 +161,7 @@ sub _readResult {
 		if ( my $retry = $failedDevices->{ $dev_location } ) {
 			if ( time < $retry ) {
 
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug(sprintf("Notify from previously failed device at %s, ignoring for %s seconds",
 						$dev_location,
 						$retry - time,
@@ -193,7 +193,7 @@ sub _readResult {
 					my $device = Net::UPnP::Device->new();
 					$device->setssdp( $ssdp_res_msg );
 					
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug(sprintf("Notify from new device [%s at %s]", $USN, $dev_location));
 					}
 		
@@ -260,7 +260,7 @@ sub _gotDeviceDescription {
 	# is it new?
 	if ( !$devices->{ $udn } ) {
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(sprintf("New device found: %s [%s]",
 				$device->getfriendlyname,
 				$device->getlocation,

@@ -49,7 +49,7 @@ sub new {
 
 	if ($class->can('page') && $class->can('handler') && $class->page) {
 
-		Slim::Web::HTTP::addPageFunction($class->page, $class);
+		Slim::Web::Pages->addPageFunction($class->page, $class);
 	}
 
 	if ($class->can('page') && $class->can('name') && $class->page && $class->name) {

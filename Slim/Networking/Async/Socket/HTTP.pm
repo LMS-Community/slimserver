@@ -14,7 +14,10 @@ use warnings;
 
 use base qw(Net::HTTP::NB Slim::Networking::Async::Socket);
 
-use Socket qw(:DEFAULT);
+# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
+use Exporter qw(import);
+
+use Socket qw(pack_sockaddr_in sockaddr_in);
 
 # IO::Socket::INET's connect method blocks, so we use our own connect method 
 # which is non-blocking.  Based on: http://www.perlmonks.org/?node_id=66135

@@ -214,11 +214,11 @@ sub init {
 			my $listIndex = $client->modeParam('listIndex');
 			my $log       = logger('player.ui');
 
-			$log->debug("Got a knob event for the bar: knobpos: $knobPos listindex: $listIndex");
+			main::DEBUGLOG && $log->debug("Got a knob event for the bar: knobpos: $knobPos listindex: $listIndex");
 
 			changePos($client, $knobPos - $listIndex, $funct);
 
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug("New listindex: ", $client->modeParam('listIndex'));
 			}
 		},

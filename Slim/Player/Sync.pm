@@ -48,7 +48,7 @@ sub syncname {
 				
 	my @names = map {$_->name() || $_->id()} @newbuddies;
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("syncname for %s is %s", $client->id, (join ' & ',@names)));
 	}
 
@@ -65,16 +65,27 @@ sub syncname {
 # Restore Sync Operation
 sub restoreSync {
 	my $client = shift;
-	my $masterID = ($prefs->client($client)->get('syncgroupid'));
-
-	if ($masterID) {
+	my $syncgroupid = shift;
+	
+	if ($client->controller()->allPlayers() > 1) {
+		# already synced (this can get called more than once when a player first connects)
+		return;
+	}
+	
+	if ($syncgroupid) {
+		$prefs->client($client)->set('syncgroupid', $syncgroupid);
+	} else {
+		$syncgroupid = ($prefs->client($client)->get('syncgroupid'));
+	}
+	
+	if ($syncgroupid) {
 		foreach my $other (Slim::Player::Client::clients()) {
 
 			next if ($other eq $client);
 
 			my $othermasterID = $prefs->client($other)->get('syncgroupid');
 
-			if ($othermasterID && ($othermasterID eq $masterID)) {
+			if ($othermasterID && ($othermasterID eq $syncgroupid)) {
 				$other->execute( [ 'sync', $client->id ] );
 				last;
 			}

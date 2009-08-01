@@ -8,6 +8,11 @@ use DBIx::Class::Schema;
 use DBIx::Class::Storage::DBI;
 use DBIx::Class::ClassResolver::PassThrough;
 use DBI;
+use Scalar::Util;
+
+unless ($INC{"DBIx/Class/CDBICompat.pm"}) {
+  warn "IMPORTANT: DBIx::Class::DB is DEPRECATED AND *WILL* BE REMOVED. DO NOT USE.\n";
+}
 
 __PACKAGE__->load_components(qw/ResultSetProxy/);
 
@@ -23,29 +28,15 @@ sub storage { shift->schema_instance(@_)->storage; }
 
 DBIx::Class::DB - (DEPRECATED) classdata schema component
 
-=head1 SYNOPSIS
-
-  package MyDB;
-
-  use base qw/DBIx::Class/;
-  __PACKAGE__->load_components('DB');
-
-  __PACKAGE__->connection('dbi:...', 'user', 'pass', \%attrs);
-
-  package MyDB::MyTable;
-
-  use base qw/MyDB/;
-  __PACKAGE__->load_components('Core'); # just load this in MyDB if it will
-                                        # always be there
-
-  ...
-
 =head1 DESCRIPTION
 
 This class is designed to support the Class::DBI connection-as-classdata style
 for DBIx::Class. You are *strongly* recommended to use a DBIx::Class::Schema
 instead; DBIx::Class::DB will not undergo new development and will be moved
-to being a CDBICompat-only component before 1.0.
+to being a CDBICompat-only component before 1.0. In order to discourage further
+use, documentation has been removed as of 0.08000
+
+=begin HIDE_BECAUSE_THIS_CLASS_IS_DEPRECATED
 
 =head1 METHODS
 
@@ -150,13 +141,61 @@ native L<DBIx::Class::ResultSet> system.
 =cut
 
 sub resultset_instance {
-  my $class = ref $_[0] || $_[0];
-  my $source = $class->result_source_instance;
-  if ($source->result_class ne $class) {
-    $source = $source->new($source);
-    $source->result_class($class);
+  $_[0]->result_source_instance->resultset
+}
+
+=head2 result_source_instance
+
+Returns an instance of the result source for this class
+
+=cut
+
+__PACKAGE__->mk_classdata('_result_source_instance' => []);
+
+# Yep. this is horrific. Basically what's happening here is that
+# (with good reason) DBIx::Class::Schema copies the result source for
+# registration. Because we have a retarded setup order forced on us we need
+# to actually make our ->result_source_instance -be- the source used, and we
+# need to get the source name and schema into ourselves. So this makes it
+# happen.
+
+sub _maybe_attach_source_to_schema {
+  my ($class, $source) = @_;
+  if (my $meth = $class->can('schema_instance')) {
+    if (my $schema = $class->$meth) {
+      $schema->register_class($class, $class);
+      my $new_source = $schema->source($class);
+      %$source = %$new_source;
+      $schema->source_registrations->{$class} = $source;
+    }
   }
-  return $source->resultset;
+}
+
+sub result_source_instance {
+  my $class = shift;
+  $class = ref $class || $class;
+  
+  if (@_) {
+    my $source = $_[0];
+    $class->_result_source_instance([$source, $class]);
+    $class->_maybe_attach_source_to_schema($source);
+    return $source;
+  }
+
+  my($source, $result_class) = @{$class->_result_source_instance};
+  return unless Scalar::Util::blessed($source);
+
+  if ($result_class ne $class) {  # new class
+    # Give this new class it's own source and register it.
+    $source = $source->new({ 
+        %$source, 
+        source_name  => $class,
+        result_class => $class
+    } );
+    $class->_result_source_instance([$source, $class]);
+    $class->_maybe_attach_source_to_schema($source);
+  }
+  return $source;
 }
 
 =head2 resolve_class
@@ -176,6 +215,8 @@ Alias for L<txn_commit>
 ****DEPRECATED****
 
 Alias for L<txn_rollback>
+
+=end HIDE_BECAUSE_THIS_CLASS_IS_DEPRECATED
 
 =head1 AUTHORS
 

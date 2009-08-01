@@ -34,7 +34,7 @@
 			[% option = "" %]
 			<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
 	
 			</select>
@@ -46,7 +46,7 @@
 			[% option = "" %]
 			<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% IF options.$option; options.$option | getstring; END %]</option>
 			[%- END -%]
 	
 			</select>

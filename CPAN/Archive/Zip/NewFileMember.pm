@@ -4,7 +4,7 @@ use strict;
 use vars qw( $VERSION @ISA );
 
 BEGIN {
-    $VERSION = '1.26';
+    $VERSION = '1.29';
     @ISA     = qw ( Archive::Zip::FileMember );
 }
 
@@ -22,7 +22,7 @@ sub _newFromFileNamed {
     $newName = _asZipDirName($fileName) unless defined($newName);
     return undef unless ( stat($fileName) && -r _ && !-d _ );
     my $self = $class->new(@_);
-    $self->fileName($newName);
+    $self->{'fileName'} = $newName;
     $self->{'externalFileName'}  = $fileName;
     $self->{'compressionMethod'} = COMPRESSION_STORED;
     my @stat = stat(_);

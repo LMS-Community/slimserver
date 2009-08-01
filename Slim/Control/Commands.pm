@@ -306,18 +306,26 @@ sub clientConnectCommand {
 			$host = $ip->intip;
 		}
 		
-		$packed = pack 'N', $host;
+		if ($client->controller()->allPlayers() > 1) {
+			my $syncgroupid = $prefs->client($client)->get('syncgroupid') || 0;		
+			$packed = pack 'NA10', $host, sprintf('%010d', $syncgroupid);
+		} else {
+			$packed = pack 'N', $host;
+		}
 		
 		$client->execute([ 'stop' ]);
 		
-		$client->sendFrame( serv => \$packed );
+		foreach ($client->controller()->allPlayers()) {
 		
-		if ( main::SLIM_SERVICE ) {
-			# Bug 7973, forget client immediately
-			$client->forgetClient;
-		}
-		else {
-			$client->execute([ 'client', 'forget' ]);
+			$_->sendFrame( serv => \$packed );
+			
+			if ( main::SLIM_SERVICE ) {
+				# Bug 7973, forget client immediately
+				$_->forgetClient;
+			}
+			else {
+				$_->execute([ 'client', 'forget' ]);
+			}
 		}
 	}
 	
@@ -339,7 +347,7 @@ sub clientForgetCommand {
 	# Bug 6508
 	# Can have a timing race with client reconnecting before this command get executed
 	if ($client->connected()) {
-		$log->info($client->id . ': not forgetting as connected again');
+		main::INFOLOG && $log->info($client->id . ': not forgetting as connected again');
 		return;
 	}
 	
@@ -409,7 +417,7 @@ sub disconnectCommand {
 	# leave the SN case to its own command
 	if ( $server =~ /^www.squeezenetwork.com$/i || $server =~ /^www.test.squeezenetwork.com$/i ) {
 
-		$log->debug("Sending disconnect request for $remoteClient to $server");
+		main::DEBUGLOG && $log->debug("Sending disconnect request for $remoteClient to $server");
 		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
 	}
 
@@ -429,7 +437,7 @@ sub disconnectCommand {
 			params => [ $remoteClient, ['connect', Slim::Utils::Network::hostAddr()] ]
 		});
 
-		$log->debug("Sending connect request to $server: $postdata");
+		main::DEBUGLOG && $log->debug("Sending connect request to $server: $postdata");
 
 		$http->get( $server . 'jsonrpc.js', $postdata);
 
@@ -576,7 +584,7 @@ sub mixerCommand {
 			if ($newvalue == 0) {
 
 				# need to un-mute volume
-				$log->info("Unmuting, volume is [$vol]");
+				main::INFOLOG && $log->info("Unmuting, volume is [$vol]");
 
 				$prefs->client($client)->set('mute', 0);
 				$fade = 0.3125;
@@ -584,7 +592,7 @@ sub mixerCommand {
 			} else {
 
 				# need to mute volume
-				$log->info("Muting, volume is [$vol]");
+				main::INFOLOG && $log->info("Muting, volume is [$vol]");
 
 				$prefs->client($client)->set('mute', 1);
 				$fade = -0.3125;
@@ -658,7 +666,7 @@ sub nameCommand {
 	}	
 
 	if ($newValue ne "0") {
-		$log->debug("PLAYERNAMECHANGE: " . $newValue);
+		main::DEBUGLOG && $log->debug("PLAYERNAMECHANGE: " . $newValue);
 		$prefs->client($client)->set('playername', $newValue);
 		# refresh Jive menu
 		Slim::Control::Jive::playerSettingsMenu($client);
@@ -735,9 +743,7 @@ sub playcontrolCommand {
 			# through playlist jump - this will include a showBriefly to give feedback
 			my $index = Slim::Player::Source::playingSongIndex($client);
 			
-			my @verbs = ('playlist', 'jump', $index);
-			push (@verbs, $fadeIn) if defined $fadeIn;
-			$client->execute(\@verbs);
+			$client->execute(['playlist', 'jump', $index, $fadeIn]);
 		}
 		else {
 			# set new playmode
@@ -773,17 +779,6 @@ sub playlistClearCommand {
 		Slim::Player::Playlist::playlistMode($client, 'off');
 	}
 
-	my $playlistObj = Slim::Music::Info::playlistForClient($client);
-
-	if (blessed($playlistObj)) {
-
-		$playlistObj->playlist_tracks->delete;
-		$playlistObj->update;
-	}
-
-	# called by Slim::Player::Playlist::stopAndClear above
-	# $client->currentPlaylist(undef);
-	
 	# called by currentPlaylistUpdateTime below
 	# $client->currentPlaylistChangeTime(Time::HiRes::time());
 	
@@ -881,7 +876,7 @@ sub playlistDeleteitemCommand {
 	
 	} else {
 
-		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl({ 'url' => $item });
+		my $playlist = Slim::Schema->objectForUrl({ 'url' => $item, playlist => 1 });
 
 		if ($playlist) {
 			$contents = [ map { $_->url } $playlist->tracks ];
@@ -957,7 +952,6 @@ sub playlistJumpCommand {
 		
 		if (!$isStopped) {
 			my $handler = $client->playingSong()->currentTrackHandler();
-			my $url     = $client->playingSong()->currentTrack()->url();
 			
 			if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
 				# User is trying to restart the current track
@@ -976,7 +970,7 @@ sub playlistJumpCommand {
 		}
 		
 		$newIndex = Slim::Player::Source::playingSongIndex($client) + $index;
-		$log->info("Jumping by $index");
+		main::INFOLOG && $log->info("Jumping by $index");
 		
 		# Handle skip in repeat mode
 		if ( $newIndex >= $songcount ) {
@@ -991,7 +985,7 @@ sub playlistJumpCommand {
 		
 	} else {
 		$newIndex = $index if defined $index;
-		$log->info("Jumping to $index");
+		main::INFOLOG && $log->info("Jumping to $newIndex");
 	}
 	
 	# Check for wrap-around
@@ -1004,7 +998,7 @@ sub playlistJumpCommand {
 	if ($noplay && $isStopped) {
 		Slim::Player::Source::streamingSongIndex($client, $newIndex, 1);
 	} else {
-		$log->info("playing $index");
+		main::INFOLOG && $log->info("playing $newIndex");
 		$client->controller()->play($newIndex, $seekdata, $fadeIn);
 	}	
 
@@ -1092,12 +1086,12 @@ sub playlistSaveCommand {
 
 	$title = Slim::Utils::Misc::cleanupFilename($title);
 
-	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
+	my $playlistObj = Slim::Schema->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
 			catfile( $prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
 		),
-
+		'playlist' => 1,
 		'attributes' => {
 			'TITLE' => $title,
 			'CT'    => 'ssp',
@@ -1272,7 +1266,7 @@ sub playlistXitemCommand {
 		return;
 	}
 
-	$log->info("cmd: $cmd, item: $item, title: $title, fadeIn: ", ($fadeIn ? $fadeIn : 'undef'));
+	main::INFOLOG && $log->info("cmd: $cmd, item: $item, title: $title, fadeIn: ", ($fadeIn ? $fadeIn : 'undef'));
 
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
@@ -1310,7 +1304,7 @@ sub playlistXitemCommand {
 	$url =~ s/^\s*//;
 	$url =~ s/\s*$//;
 
-	$log->info("url: $url");
+	main::INFOLOG && $log->info("url: $url");
 
 	my $path = $url;
 	
@@ -1327,10 +1321,7 @@ sub playlistXitemCommand {
 	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
-			
-            my @verbs = ('playlist', $cmd . 'tracks' , 'listRef', \@tracks);
-            push (@verbs, $fadeIn) if defined $fadeIn;
-			$client->execute(\@verbs);
+			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
 			$request->setStatusDone();
 			return;
 		}
@@ -1362,7 +1353,7 @@ sub playlistXitemCommand {
 		$path = Slim::Utils::Misc::unescape($path);
 	}
 
-	$log->info("path: $path");
+	main::INFOLOG && $log->info("path: $path");
 
 	if ($cmd =~ /^(play|load|resume)$/) {
 
@@ -1370,7 +1361,7 @@ sub playlistXitemCommand {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
 		}
 
@@ -1381,7 +1372,7 @@ sub playlistXitemCommand {
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 		$client->currentPlaylistModified(1);
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
 		}
 
@@ -1394,7 +1385,7 @@ sub playlistXitemCommand {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($path);
 
-		$log->info("path: $path");
+		main::INFOLOG && $log->info("path: $path");
 	}
 
 	if ($cmd =~ /^(play|load)$/) { 
@@ -1406,7 +1397,7 @@ sub playlistXitemCommand {
 		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("jumpToIndex: %s", (defined $jumpToIndex ? $jumpToIndex : 'undef')));
 	}
 
@@ -1415,7 +1406,7 @@ sub playlistXitemCommand {
 		my $playListSize = Slim::Player::Playlist::count($client);
 		my @dirItems     = ();
 
-		$log->info("inserting, playListSize: $playListSize");
+		main::INFOLOG && $log->info("inserting, playListSize: $playListSize");
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
@@ -1515,7 +1506,7 @@ sub playlistXitemCommand {
 		$request->setStatusProcessing();
 	}
 
-	$log->debug("done.");
+	main::DEBUGLOG && $log->debug("done.");
 }
 
 # Called after insert/load async callbacks are finished
@@ -1640,9 +1631,7 @@ sub playlistXtracksCommand {
 			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
 		
-		my @verbs = ('playlist', 'jump', $jumpToIndex);
-		push (@verbs, $fadeIn) if defined $fadeIn;
-		$client->execute(\@verbs);
+		$client->execute(['playlist', 'jump', $jumpToIndex, $fadeIn]);
 		
 		$client->currentPlaylistModified(0);
 	}
@@ -1682,10 +1671,11 @@ sub playlistZapCommand {
 		Slim::Control::Request::executeRequest($client, ["playlist", "delete", $zapindex]);
 	}
 
-	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
+	my $playlistObj = Slim::Schema->updateOrCreate({
 		'url'        => Slim::Utils::Misc::fileURLFromPath(
 			catfile( $prefs->get('playlistdir'), $zapped . '.m3u')
 		),
+		'playlist'   => 1,
 
 		'attributes' => {
 			'TITLE' => $zapped,
@@ -1709,7 +1699,7 @@ sub playlistZapCommand {
 sub playlistcontrolCommand {
 	my $request = shift;
 	
-	$log->info("Begin Function");
+	main::INFOLOG && $log->info("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlistcontrol']])) {
@@ -1866,7 +1856,7 @@ sub playlistcontrolCommand {
 				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id]
 			);
 
-			$request->addResult( 'count', $playlist->tracks->count() );
+			$request->addResult( 'count', scalar ($playlist->tracks) );
 
 			$request->setStatusDone();
 			
@@ -2074,7 +2064,7 @@ sub playlistsEditCommand {
 
 		if ($url) {
 
-			my $playlistTrack = Slim::Schema->rs('Track')->updateOrCreate({
+			my $playlistTrack = Slim::Schema->updateOrCreate({
 				'url'      => $url,
 				'readTags' => 1,
 				'commit'   => 1,
@@ -2110,14 +2100,14 @@ sub playlistsEditCommand {
 
 		my $log = logger('player.playlist');
 
-		$log->info("Playlist has changed via editing - saving new list of tracks.");
+		main::INFOLOG && $log->info("Playlist has changed via editing - saving new list of tracks.");
 
 		$playlist->setTracks(\@items);
 		$playlist->update;
 
 		if ($playlist->content_type eq 'ssp') {
 
-			$log->info("Writing out playlist to disk..");
+			main::INFOLOG && $log->info("Writing out playlist to disk..");
 
 			Slim::Formats::Playlists->writeList(\@items, undef, $playlist->url);
 		}
@@ -2210,8 +2200,9 @@ sub playlistsNewCommand {
 		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
 	);
 
-	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
+	my $existingPlaylist = Slim::Schema->objectForUrl({
 		'url' => $newUrl,
+		'playlist' => 1,
 	});
 
 	if (blessed($existingPlaylist)) {
@@ -2221,9 +2212,10 @@ sub playlistsNewCommand {
 	}
 	else {
 
-		my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
+		my $playlistObj = Slim::Schema->updateOrCreate({
 
 			'url' => $newUrl,
+			'playlist' => 1,
 
 			'attributes' => {
 				'TITLE' => $title,
@@ -2280,8 +2272,9 @@ sub playlistsRenameCommand {
 		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($newName) . '.m3u')
 	);
 
-	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
+	my $existingPlaylist = Slim::Schema->objectForUrl({
 		'url' => $newUrl,
+		'playlist' => 1,
 	});
 
 	if (blessed($existingPlaylist)) {
@@ -2791,7 +2784,7 @@ sub ratingCommand {
 	}
 
 	if ( defined $rating ) {
-		$log->info("Setting rating for $item to $rating");
+		main::INFOLOG && $log->info("Setting rating for $item to $rating");
 	}
 
 	my $track = blessed($item);
@@ -2799,18 +2792,18 @@ sub ratingCommand {
 	if ( !$track ) {
 		# Look for track based on ID or URL
 		if ( $item =~ /^\d+$/ ) {
-			$track = Slim::Schema->resultset('Track')->find($item);
+			$track = Slim::Schema->rs('Track')->find($item);
 		}
 		else {
 			my $url = Slim::Utils::Misc::fileURLFromPath($item);
 			if ( $url ) {
-				$track = Slim::Schema->rs('Track')->objectForUrl( { url => $url } );
+				$track = Slim::Schema->objectForUrl( { url => $url } );
 			}
 		}
 	}
 
-	if ( !blessed($track) || $track->audio != 1 ) {
-		$log->warn("Can't find track: $item");
+	if ( !blessed($track) || $track->audio != 1 || track->remote ) {
+		$log->warn("Can't find local track: $item");
 		$request->setStatusBadParams();
 		return;
 	}
@@ -2873,9 +2866,7 @@ sub _playlistXitem_load_done {
 	}
 
 	if (defined($index)) {
-		my @verbs = ('playlist', 'jump', $index);
-		push (@verbs, $fadeIn) if defined $fadeIn;
-		$client->execute(\@verbs);
+		$client->execute(['playlist', 'jump', $index, $fadeIn]);
 	}
 
 	# XXX: this should not be calling a request callback directly!
@@ -2963,11 +2954,16 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my ($sort, $limit, $offset);
 
 	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
-	my $albumSort = "concat(album.titlesort, '0'), me.disc, me.tracknum, concat(me.titlesort, '0')";
-	my $trackSort = "me.disc, me.tracknum, concat(me.titlesort, '0')";
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
-	if ( main::SLIM_SERVICE ) {
-		# XXX: this should never be called on SN, but have seen it happen
+	my $albumSort 
+		= $sqlHelperClass->append0("album.titlesort") 
+		. ', me.disc, me.tracknum, '
+		. $sqlHelperClass->append0("me.titlesort");
+		
+	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort");
+	
+	if ( main::SLIM_SERVICE || !Slim::Schema::hasLibrary()) {
 		return ();
 	}
 
@@ -3162,7 +3158,7 @@ sub _playlistXtracksCommand_constructTrackList {
 	my @list = split /,/, $list;
 	my @tracks = ();
 	for my $url ( @list ) {
-		my $track = Slim::Schema->rs('Track')->objectForUrl($url);
+		my $track = Slim::Schema->objectForUrl($url);
 		push @tracks, $track if blessed($track) && $track->id;
 	}
 

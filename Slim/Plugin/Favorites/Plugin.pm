@@ -51,6 +51,8 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin(@_);
 	
+	Slim::Plugin::Favorites::OpmlFavorites->migrate();
+	
 	if ( main::SLIM_SERVICE ) {
 		Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::SqueezeNetwork');
 	}
@@ -212,7 +214,7 @@ sub playFavorite {
 
 		if ($entry->{'parser'} || $entry->{'type'} eq 'playlist') {
 
-			$log->info("Playing favorite number $digit $title $url via xmlbrowser");
+			main::INFOLOG && $log->info("Playing favorite number $digit $title $url via xmlbrowser");
 
 			my $item = {
 				'url'   => $url,
@@ -225,7 +227,7 @@ sub playFavorite {
 
 		} else {
 
-			$log->info("Playing favorite number $digit $title $url");
+			main::INFOLOG && $log->info("Playing favorite number $digit $title $url");
 
 			Slim::Music::Info::setTitle($url, $title);
 			
@@ -236,7 +238,7 @@ sub playFavorite {
 
 	} else {
 
-		$log->info("Can't play favorite number $digit - not an audio entry");
+		main::INFOLOG && $log->info("Can't play favorite number $digit - not an audio entry");
 
 		$client->showBriefly({
 			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
@@ -247,8 +249,8 @@ sub playFavorite {
 sub webPages {
 	my $class = shift;
 
-	Slim::Web::HTTP::addPageFunction('plugins/Favorites/favcontrol.html', \&toggleButtonHandler);
-	Slim::Web::HTTP::addPageFunction('plugins/Favorites/index.html', \&indexHandler);
+	Slim::Web::Pages->addPageFunction('plugins/Favorites/favcontrol.html', \&toggleButtonHandler);
+	Slim::Web::Pages->addPageFunction('plugins/Favorites/index.html', \&indexHandler);
 
 	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
 
@@ -312,7 +314,7 @@ sub indexHandler {
 
 		$sessId = $params->{'sess'};
 
-		$log->info("existing editing session [$sessId]");
+		main::INFOLOG && $log->info("existing editing session [$sessId]");
 
 		$opml     = $sessions{ $sessId }->{'opml'};
 		$deleted  = $sessions{ $sessId }->{'deleted'};
@@ -328,20 +330,20 @@ sub indexHandler {
 
 		if (Slim::Music::Info::isURL($url)) {
 
-			$log->info("new opml editting session [$sessId] - opening $url");
+			main::INFOLOG && $log->info("new opml editting session [$sessId] - opening $url");
 
 			$opml = Slim::Plugin::Favorites::Opml->new({ 'url' => $url });
 
 		} else {
 
-			$log->info("new opml editing session [$sessId]");
+			main::INFOLOG && $log->info("new opml editing session [$sessId]");
 
 			$opml = Slim::Plugin::Favorites::Opml->new();
 		}
 
 	} else {
 
-		$log->info("new favorites editing session");
+		main::INFOLOG && $log->info("new favorites editing session");
 
 		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 		$deleted  = undef;
@@ -356,7 +358,7 @@ sub indexHandler {
 
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		# also pass through play/add to reuse xmlbrowser handling of playall etc
-		$log->info("passing through to xmlbrowser");
+		main::INFOLOG && $log->info("passing through to xmlbrowser");
 			
 		return Slim::Web::XMLBrowser->handleWebIndex( {
 			client => $client,
@@ -544,7 +546,7 @@ sub indexHandler {
 						
 					} elsif (!$params->{'fetched'}) {
 						
-						$log->info("checking content type for $url");
+						main::INFOLOG && $log->info("checking content type for $url");
 						
 						Slim::Networking::Async::HTTP->new()->send_request( {
 							'request'     => HTTP::Request->new( GET => $url ),
@@ -562,24 +564,24 @@ sub indexHandler {
 
 						if ($type) {
 
-							$log->info("got mime type $mime");
+							main::INFOLOG && $log->info("got mime type $mime");
 
 						} else {
 
-							$log->info("unknown mime type $mime, inferring from url");
+							main::INFOLOG && $log->info("unknown mime type $mime, inferring from url");
 
 							$type = Slim::Music::Info::typeFromPath($url);
 						}
 
 						if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
 							
-							$log->info("content type $type - treating as audio");
+							main::INFOLOG && $log->info("content type $type - treating as audio");
 							
 							$entry->{'type'} = 'audio';
 							
 						} else {
 							
-							$log->info("content type $type - treating as non audio");
+							main::INFOLOG && $log->info("content type $type - treating as non audio");
 
 							delete $entry->{'type'};
 						}
@@ -594,7 +596,7 @@ sub indexHandler {
 
 					if (!defined $hotkey || $hotkey eq '') {
 
-						$log->info("removing hotkey from entry");
+						main::INFOLOG && $log->info("removing hotkey from entry");
 
 						delete $entry->{'hotkey'};
 
@@ -607,7 +609,7 @@ sub indexHandler {
 							$opml->setHotkey($oldindex, undef);
 						}
 
-						$log->info("setting hotkey for entry to $hotkey");
+						main::INFOLOG && $log->info("setting hotkey for entry to $hotkey");
 
 						$entry->{'hotkey'} = $hotkey;
 					}
@@ -874,7 +876,7 @@ sub cliAdd {
 		
 		if ( $command eq 'add' && defined $title && defined $url ) {
 
-			$log->info("adding entry $title - $url");
+			main::INFOLOG && $log->info("adding entry $title - $url");
 			
 			my $index = $favs->add( $url, $title );
 
@@ -914,7 +916,7 @@ sub cliAdd {
 
 		if ($command eq 'add' && defined $title && defined $url) {
 
-			$log->info("adding entry $title $url at index $index");
+			main::INFOLOG && $log->info("adding entry $title $url at index $index");
 
 			$entry = {
 				'text' => $title,
@@ -927,7 +929,7 @@ sub cliAdd {
 
 		} elsif ($command eq 'addlevel' && defined $title) {
 
-			$log->info("adding new level $title at index $index");
+			main::INFOLOG && $log->info("adding new level $title at index $index");
 
 			$entry = {
 				'text'    => $title,
@@ -938,7 +940,7 @@ sub cliAdd {
 
 		} else {
 
-			$log->info("can't perform $command bad title or url");
+			main::INFOLOG && $log->info("can't perform $command bad title or url");
 
 			$request->setStatusBadParams();
 			return;
@@ -974,7 +976,7 @@ sub cliAdd {
 
 	} else {
 
-		$log->info("index $index invalid");
+		main::INFOLOG && $log->info("index $index invalid");
 
 		$request->setStatusBadParams();
 	}
@@ -1043,7 +1045,7 @@ sub cliRename {
 		return;
 	}
 
-	$log->info("rename index $index to $title");
+	main::INFOLOG && $log->info("rename index $index to $title");
 
 	$favs->entry($index)->{'text'} = $title;
 	$favs->save;
@@ -1073,7 +1075,7 @@ sub cliMove {
 		return;
 	}
 
-	$log->info("moving item from index $from to index $to");
+	main::INFOLOG && $log->info("moving item from index $from to index $to");
 
 	splice @$toLevel, $toIndex, 0, (splice @$fromLevel, $fromIndex, 1);
 	
@@ -1112,7 +1114,7 @@ sub _objectInfoHandler {
 	}
 	if ( !defined $index ) {
 
-		$log->debug( "Item is not a favorite [$url]" );
+		main::DEBUGLOG && $log->debug( "Item is not a favorite [$url]" );
 
 		if ( $tags->{menuMode} ) {
 			my $actions = {
@@ -1143,7 +1145,7 @@ sub _objectInfoHandler {
 	}
 	else {
 
-		$log->debug( "Item is a favorite [$url]" );
+		main::DEBUGLOG && $log->debug( "Item is a favorite [$url]" );
 
 		if ( $tags->{menuMode} ) {
 			my $actions = {

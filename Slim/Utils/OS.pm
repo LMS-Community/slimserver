@@ -11,7 +11,8 @@ package Slim::Utils::OS;
 
 use strict;
 use Config;
-use File::Spec::Functions qw(catdir);
+use File::Path;
+use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
 use constant MAX_LOGSIZE => 1024 * 1024 * 100;
@@ -35,6 +36,11 @@ sub details {
 }
 
 sub initPrefs {};
+
+sub sqlHelperClass { 'Slim::Utils::MySQLHelper' }
+
+# Skip obsolete plugins, they should be deleted by installers
+sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters));}
 
 =head2 initSearchPath( )
 
@@ -236,6 +242,7 @@ sub localeDetails {
 	# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
 	# Otherwise, normalize the codeset part of the locale.
 	if ($lc_ctype eq 'C' || $lc_ctype eq 'POSIX') {
+		warn "Your locale was detected as $lc_ctype, you may have problems with non-Latin filenames.  Consider changing your LANG variable to the correct locale, i.e. en_US.utf8\n";
 		$lc_ctype = 'iso-8859-1';
 	} else {
 		$lc_ctype = lc((split(/\./, $lc_ctype))[1]);
@@ -300,8 +307,13 @@ Get a list of values from the osDetails list
 sub get {
 	my $class = shift;
 	
-	return map { $class->{osDetails}->{$_} } 
-	       grep { $class->{osDetails}->{$_} } @_;
+	if ( wantarray ) {	
+		return map { $class->{osDetails}->{$_} } 
+		       grep { $class->{osDetails}->{$_} } @_;
+	}
+	else {
+		return $class->{osDetails}->{+shift};
+	}
 }
 
 

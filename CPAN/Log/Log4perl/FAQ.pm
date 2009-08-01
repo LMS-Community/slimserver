@@ -365,6 +365,11 @@ C<$SIG{__DIE__}> pseudo signal handler
     use Log::Log4perl qw(get_logger);
 
     $SIG{__DIE__} = sub {
+        if($^S) {
+            # We're in an eval {} and don't want log
+            # this message but catch it later
+            return;
+        }
         $Log::Log4perl::caller_depth++;
         my $logger = get_logger("");
         $logger->fatal(@_);
@@ -372,7 +377,8 @@ C<$SIG{__DIE__}> pseudo signal handler
     };
 
 This will catch every C<die()>-Exception of your
-application or the modules it uses. It
+application or the modules it uses. In case you want to 
+It
 will fetch a root logger and pass on the C<die()>-Message to it.
 If you make sure you've configured with a root logger like this:
 
@@ -534,7 +540,7 @@ package:
     sub l4p_wrapper {
         my($prio, @message) = @_;
         $Log::Log4perl::caller_depth += 2;
-        get_logger(caller(1))->log($prio, @message);
+        get_logger(scalar caller(1))->log($prio, @message);
         $Log::Log4perl::caller_depth -= 2;
     }
 
@@ -1441,19 +1447,46 @@ and a false value if not.
 =head2 How can I synchronize access to an appender?
 
 If you're using the same instance of an appender in multiple processes, 
-each passing on messages to it in parallel, you might end up with 
-overlapping log entries.
+and each process is passing on messages to the appender in parallel,
+you might end up with overlapping log entries.
 
-Imagine a file appender that you create in the main program, and which
-will then be shared between the parent and a forked child process. When
-it comes to logging, Log::Log4perl won't synchronize access to it.
-Depending on your operating system's flush mechanism, buffer size and the size
-of your messages, there's a small chance of an overlap.
+Typical scenarios include a file appender that you create in the main 
+program, and which will then be shared between the parent and a 
+forked child process. Or two separate processes, each initializing a
+Log4perl file appender on the same logfile.
 
-A guaranteed way of having messages separated is putting a
-Log::Log4perl::Appender::Synchronized composite appender in 
-between Log::Log4perl and the real appender. It will make sure to
-let messages pass through this virtual gate one by one only. 
+Log::Log4perl won't synchronize access to the shared logfile by
+default. Depending on your operating system's flush mechanism,
+buffer size and the size of your messages, there's a small chance of
+an overlap.
+
+The easiest way to prevent overlapping messages in logfiles written to
+by multiple processes is setting the 
+file appender's C<syswrite> flag along with a file write mode of C<"append">. 
+This makes sure that
+C<Log::Log4perl::Appender::File> uses C<syswrite()> (which is guaranteed
+to run uninterrupted) instead of C<print()> which might buffer
+the message or get interrupted by the OS while it is writing. And in
+C<"append"> mode, the OS kernel ensures that multiple processes share
+one end-of-file marker, ensuring that each process writes to the I<real> 
+end of the file. (The value of C<"append"> 
+for the C<mode> parameter is the default setting in Log4perl's file 
+appender so you don't have to set it explicitely.)
+
+      # Guarantees atomic writes
+
+    log4perl.category.Bar.Twix          = WARN, Logfile
+
+    log4perl.appender.Logfile           = Log::Log4perl::Appender::File
+    log4perl.appender.Logfile.mode      = append
+    log4perl.appender.Logfile.syswrite  = 1
+    log4perl.appender.Logfile.filename  = test.log
+    log4perl.appender.Logfile.layout    = SimpleLayout
+
+Another guaranteed way of having messages separated with any kind of
+appender is putting a Log::Log4perl::Appender::Synchronized composite
+appender in between Log::Log4perl and the real appender. It will make
+sure to let messages pass through this virtual gate one by one only.
 
 Here's a sample configuration to synchronize access to a file appender:
 
@@ -1663,6 +1696,11 @@ If, on the other hand, catching C<die()> and friends is
 required, a C<__DIE__> handler is appropriate:
 
     $SIG{__DIE__} = sub {
+        if($^S) {
+            # We're in an eval {} and don't want log
+            # this message but catch it later
+            return;
+        }
         $Log::Log4perl::caller_depth++;
         LOGDIE @_;
     };
@@ -1708,6 +1746,8 @@ a trapper module like
         $Log::Log4perl::caller_depth--;
     }
 
+    1;
+
 and a C<tie> command in the main program to tie STDERR to the trapper
 module along with regular Log::Log4perl initialization:
 
@@ -1723,7 +1763,7 @@ module along with regular Log::Log4perl initialization:
          layout => "%d %M: %m%n",
         });
 
-    tie *STDERR, Trapper;
+    tie *STDERR, "Trapper";
     
 Make sure not to use STDERR as Log::Log4perl's file appender
 here (which would be the default in C<:easy> mode), because it would 
@@ -1958,7 +1998,12 @@ set to utf-8 mode:
     file  => ":utf8> test.log" 
   } );
 
-If the complaining appender is a screen appender, C<binmode> does the trick:
+If the complaining appender is a screen appender, set its C<utf8> option:
+
+      log4perl.appender.Screen.stderr = 1
+      log4perl.appender.Screen.utf8   = 1
+
+Alternatively, C<binmode> does the trick:
 
       # Either STDOUT ...
     binmode(STDOUT, ":utf8);
@@ -2026,7 +2071,7 @@ What you want to do instead, is this:
     log4perl.appender.ScreenApp.stderr   = 0
     log4perl.appender.ScreenApp.layout   = SimpleLayout
        ### limiting output to ERROR messages
-    log4perl.appender.Screenapp.Threshold = ERROR
+    log4perl.appender.ScreenApp.Threshold = ERROR
        ###
 
 Note that without the second appender's C<Threshold> setting, both appenders
@@ -2163,7 +2208,7 @@ However, this is fairly expensive. A better approach is to define
 a signal handler:
 
     log4perl.appender.Logfile.recreate = 1
-    log4perl.appender.Logfile.recreate_signal  = USR1
+    log4perl.appender.Logfile.recreate_check_signal  = USR1
     log4perl.appender.Logfile.recreate_pid_write = /tmp/myappid
 
 As a service for C<newsyslog> users, Log4perl's file appender writes
@@ -2257,6 +2302,289 @@ Remote-controlling logging in the hierarchical parts of an application
 via Log4perl's categories is one of its most distinguished features.
 It allows for enabling high debug levels in specified areas without
 noticable performance impact.
+
+=head2 I want to use UTC instead of the local time!
+
+If a layout defines a date, Log::Log4perl uses local time to populate it.
+If you want UTC instead, set
+
+    $Log::Log4perl::DateFormat::GMTIME = 1;
+
+in your program before the first log statement.
+
+=head2 Can Log4perl intercept messages written to a filehandle?
+
+You have a function that prints to a filehandle. You want to tie
+into that filehandle and forward all arriving messages to a
+Log4perl logger.
+
+First, let's write a package that ties a file handle and forwards it
+to a Log4perl logger:
+
+    package FileHandleLogger;
+    use Log::Log4perl qw(:levels get_logger);
+
+    sub TIEHANDLE {
+       my($class, %options) = @_;
+
+       my $self = {
+           level    => $DEBUG,
+           category => '',
+           %options
+       };
+
+       $self->{logger} = get_logger($self->{category}),
+       bless $self, $class;
+    }
+
+    sub PRINT {
+        my($self, @rest) = @_;
+        $Log::Log4perl::caller_depth++;
+        $self->{logger}->log($self->{level}, @rest);
+        $Log::Log4perl::caller_depth--;
+    }
+
+    sub PRINTF {
+        my($self, $fmt, @rest) = @_;
+        $Log::Log4perl::caller_depth++;
+        $self->PRINT(sprintf($fmt, @rest));
+        $Log::Log4perl::caller_depth--;
+    }
+
+    1;
+
+Now, if you have a function like
+
+    sub function_printing_to_fh {
+        my($fh) = @_;
+        printf $fh "Hi there!\n";
+    }
+
+which takes a filehandle and prints something to it, it can be used
+with Log4perl:
+
+    use Log::Log4perl qw(:easy);
+    usa FileHandleLogger;
+
+    Log::Log4perl->easy_init($DEBUG);
+
+    tie *SOMEHANDLE, 'FileHandleLogger' or
+        die "tie failed ($!)";
+
+    function_printing_to_fh(*SOMEHANDLE);
+        # prints "2007/03/22 21:43:30 Hi there!"
+
+If you want, you can even specify a different log level or category:
+
+    tie *SOMEHANDLE, 'FileHandleLogger',
+        level => $INFO, category => "Foo::Bar" or die "tie failed ($!)";
+
+=head2 I want multiline messages rendered line-by-line!
+
+With the standard C<PatternLayout>, if you send a multiline message to
+an appender as in
+
+    use Log::Log4perl qw(:easy);
+    Log
+
+it gets rendered this way:
+
+    2007/04/04 23:23:39 multi
+    line
+    message
+
+If you want each line to be rendered separately according to
+the layout use C<Log::Log4perl::Layout::PatternLayout::Multiline>:
+
+    use Log::Log4perl qw(:easy);
+
+    Log::Log4perl->init(\<<EOT);
+      log4perl.category         = DEBUG, Screen
+      log4perl.appender.Screen = Log::Log4perl::Appender::Screen
+      log4perl.appender.Screen.layout = \\
+        Log::Log4perl::Layout::PatternLayout::Multiline
+      log4perl.appender.Screen.layout.ConversionPattern = %d %m %n
+    EOT
+    
+    DEBUG "some\nmultiline\nmessage";
+
+and you'll get 
+
+    2007/04/04 23:23:39 some 
+    2007/04/04 23:23:39 multiline 
+    2007/04/04 23:23:39 message 
+
+instead.
+
+=head2 I'm on Windows and I'm getting all these 'redefined' messages!
+
+If you're on Windows and are getting warning messages like
+
+  Constant subroutine Log::Log4perl::_INTERNAL_DEBUG redefined at
+    C:/Programme/Perl/lib/constant.pm line 103.
+  Subroutine import redefined at
+    C:/Programme/Perl/site/lib/Log/Log4Perl.pm line 69.
+  Subroutine initialized redefined at
+    C:/Programme/Perl/site/lib/Log/Log4Perl.pm line 207.
+
+then chances are that you're using 'Log::Log4Perl' (wrong uppercase P) 
+instead of the correct 'Log::Log4perl'. Perl on Windows doesn't
+handle this error well and spits out a slew of confusing warning
+messages. But now you know, just use the correct module name and
+you'll be fine.
+
+=head2 Log4perl complains that no initialization happened during shutdown!
+
+If you're using Log4perl log commands in DESTROY methods of your objects,
+you might see confusing messages like
+
+    Log4perl: Seems like no initialization happened. Forgot to call init()?
+    Use of uninitialized value in subroutine entry at
+    /home/y/lib/perl5/site_perl/5.6.1/Log/Log4perl.pm line 134 during global
+    destruction. (in cleanup) Undefined subroutine &main:: called at
+    /home/y/lib/perl5/site_perl/5.6.1/Log/Log4perl.pm line 134 during global
+    destruction.
+
+when the program shuts down. What's going on? 
+
+This phenomenon happens if you have circular references in your objects, 
+which perl can't clean up when an object goes out of scope but waits
+until global destruction instead. At this time, however, Log4perl has
+already shut down, so you can't use it anymore.
+
+For example, here's a simple class which uses a logger in its DESTROY
+method:
+
+    package A;
+    use Log::Log4perl qw(:easy);
+    sub new { bless {}, shift }
+    sub DESTROY { DEBUG "Waaah!"; }
+
+Now, if the main program creates a self-referencing object, like in
+
+    package main;
+    use Log::Log4perl qw(:easy);
+    Log::Log4perl->easy_init($DEBUG);
+
+    my $a = A->new();
+    $a->{selfref} = $a;
+
+then you'll see the error message shown above during global destruction.
+How to tackle this problem?
+
+First, you should clean up your circular references before global 
+destruction. They will not only cause objects to be destroyed in an order
+that's hard to predict, but also eat up memory until the program shuts
+down.
+
+So, the program above could easily be fixed by putting
+
+    $a->{selfref} = undef;
+
+at the end or in an END handler. If that's hard to do, use weak references:
+
+    package main;
+    use Scalar::Util qw(weaken);
+    use Log::Log4perl qw(:easy);
+    Log::Log4perl->easy_init($DEBUG);
+
+    my $a = A->new();
+    $a->{selfref} = weaken $a;
+
+This allows perl to clean up the circular reference when the object 
+goes out of scope, and doesn't wait until global destruction.
+
+=head2 How can I access POE heap values from Log4perl's layout?
+
+POE is a framework for creating multitasked applications running in a
+single process and a single thread. POE's threads equivalents are
+'sessions' and since they run quasi-simultaneously, you can't use
+Log4perl's global NDC/MDC to hold session-specific data.
+
+However, POE already maintains a data store for every session. It is called
+'heap' and is just a hash storing session-specific data in key-value pairs.
+To access this per-session heap data from a Log4perl layout, define a
+custom cspec and reference it with the newly defined pattern in the layout:
+
+    use strict;
+    use POE;
+    use Log::Log4perl qw(:easy);
+
+    Log::Log4perl->init( \ q{
+        log4perl.logger = DEBUG, Screen
+        log4perl.appender.Screen = Log::Log4perl::Appender::Screen
+        log4perl.appender.Screen.layout = PatternLayout
+        log4perl.appender.Screen.layout.ConversionPattern = %U %m%n
+        log4perl.PatternLayout.cspec.U = \
+            sub { POE::Kernel->get_active_session->get_heap()->{ user } }
+    } );
+
+    for (qw( Huey Lewey Dewey )) {
+        POE::Session->create(
+            inline_states => {
+                _start    => sub {
+                    $_[HEAP]->{user} = $_;
+                    POE::Kernel->yield('hello');
+                },
+                hello     => sub {
+                    DEBUG "I'm here now";
+                }
+            }
+        );
+    }
+
+    POE::Kernel->run();
+    exit;
+
+The code snippet above defines a new layout placeholder (called
+'cspec' in Log4perl) %U which calls a subroutine, retrieves the active
+session, gets its heap and looks up the entry specified ('user').
+
+Starting with Log::Log4perl 1.20, cspecs also support parameters in 
+curly braces, so you can say
+
+    log4perl.appender.Screen.layout.ConversionPattern = %U{user} %U{id} %m%n
+    log4perl.PatternLayout.cspec.U = \
+            sub { POE::Kernel->get_active_session-> \
+                  get_heap()->{ $_[0]->{curlies} } }
+
+and print the POE session heap entries 'user' and 'id' with every logged
+message. For more details on cpecs, read the PatternLayout manual.
+
+=head2 I want to print something unconditionally!
+
+Sometimes it's a script that's supposed to log messages regardless if
+Log4perl has been initialized or not. Or there's a logging statement that's
+not going to be suppressed under any circumstances -- many people want to
+have the final word, make the executive decision, because it seems like
+the only logical choice.
+
+But think about it:
+First off, if a messages is supposed to be printed, where is it supposed
+to end up at? STDOUT? STDERR? And are you sure you want to set in stone
+that this message needs to be printed, while someone else might
+find it annoying and wants to get rid of it?
+
+The truth is, there's always going to be someone who wants to log a 
+messages at all cost, but also another person who wants to suppress it
+with equal vigilance. There's no good way to serve these two conflicting 
+desires, someone will always want to win at the cost of leaving 
+the other party dissappointed.
+
+So, the best Log4perl offers is the ALWAYS level for a message that even
+fires if the system log level is set to $OFF:
+
+    use Log::Log4perl qw(:easy);
+
+    Log::Log4perl->easy_init( $OFF );
+    ALWAYS "This gets logged always. Well, almost always";
+
+The logger won't fire, though, if Log4perl hasn't been initialized or
+if someone defines a custom log hurdle that's higher than $OFF. 
+
+Bottom line: Leave the setting of the logging level to the initial Perl 
+script -- let their owners decided what they want, no matter how tempting
+it may be to decide it for them.
 
 =cut
 

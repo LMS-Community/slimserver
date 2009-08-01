@@ -70,7 +70,7 @@ sub cleanup {
             exists $APPENDER_BY_NAME{$appendername}->{appender}) {
                 # Destroy the specific appender
             my $appref = $APPENDER_BY_NAME{$appendername}->{appender};
-            eval { $appref->DESTROY() };
+            $appref->DESTROY() if $appref->can("DESTROY");
                 # Destroy L4p::Appender
             $APPENDER_BY_NAME{$appendername}->DESTROY();
             delete $APPENDER_BY_NAME{$appendername}->{appender};
@@ -95,7 +95,7 @@ sub DESTROY {
 ##################################################
 sub reset {
 ##################################################
-    $ROOT_LOGGER        = __PACKAGE__->_new("", $DEBUG);
+    $ROOT_LOGGER        = __PACKAGE__->_new("", $OFF);
 #    $LOGGERS_BY_NAME    = {};  #leave this alone, it's used by 
                                 #reset_all_output_methods when 
                                 #the config changes
@@ -231,12 +231,12 @@ sub set_output_methods {
                   if _INTERNAL_DEBUG;
             $self->{$levelname}      = $coderef;
             $self->{"is_$levelname"} = 1;
-            #$self->{"is_$levelname"} = sub { 1 };
+            print "Setting is_$levelname to 1\n" if _INTERNAL_DEBUG;
         }else{
             print "  ($priority{$levelname} > $level)\n" if _INTERNAL_DEBUG;
             $self->{$levelname}      = $noop;
             $self->{"is_$levelname"} = 0;
-            #$self->{"is_$levelname"} = sub { 0 };
+            print "Setting is_$levelname to 0\n" if _INTERNAL_DEBUG;
         }
 
         print("  Setting [$self] $self->{category}.$levelname to ",
@@ -297,7 +297,7 @@ sub generate_coderef {
       foreach my \$a (\@\$appenders) {   #note the closure here
           my (\$appender_name, \$appender) = \@\$a;
 
-          print("  Sending message '<\$message>' (\$level) " .
+          print("  Sending message '<\$message->[0]>' (\$level) " .
                 "to \$appender_name\n") if _INTERNAL_DEBUG;
                 
           \$appender->log(
@@ -394,7 +394,15 @@ sub generate_watch_code {
 
     return <<EOL;
         print "exe_watch_code:\n" if _INTERNAL_DEBUG;
-                       
+
+       if(_INTERNAL_DEBUG) {
+           print "Next check: ",
+             "\$Log::Log4perl::Config::Watch::NEXT_CHECK_TIME ",
+             " Now: ", time(), " Mod: ",
+             (stat(\$Log::Log4perl::Config::WATCHER->file()))[9],
+             "\n";
+       }
+
         # more closures here
         if($cond) {
             if(!defined \$logger) {
@@ -402,7 +410,19 @@ sub generate_watch_code {
                 \$level   = pop;
             }
            
-            Log::Log4perl->init_and_watch();
+            my \$init_permitted = 1;
+
+            if(exists \$Log::Log4perl::Config::OPTS->{ preinit_callback } ) {
+                print "Calling preinit_callback\n" if _INTERNAL_DEBUG;
+                \$init_permitted = 
+                    \$Log::Log4perl::Config::OPTS->{ preinit_callback }->( 
+                        Log::Log4perl::Config->watcher()->file() );
+                print "Callback returned \$init_permitted\n" if _INTERNAL_DEBUG;
+            }
+
+            if( \$init_permitted ) {
+                Log::Log4perl->init_and_watch();
+            }
                        
             my \$methodname = lc(\$level);
 
@@ -414,6 +434,10 @@ sub generate_watch_code {
             \$logger->\$methodname(\@_); # send the message
                                          # to the new configuration
             return;        #and return, we're done with this incarnation
+        } else {
+            if(_INTERNAL_DEBUG) {
+                print "Conditional returned false\n";
+            }
         }
 EOL
 }
@@ -428,7 +452,6 @@ sub generate_watch_conditional {
         return q{$Log::Log4perl::Config::Watch::SIGNAL_CAUGHT};
     }
 
-    # In this mode, we check if the config file has been modified
     return q{time() > $Log::Log4perl::Config::Watch::NEXT_CHECK_TIME 
               and $Log::Log4perl::Config::WATCHER->change_detected()};
   
@@ -568,8 +591,6 @@ sub add_appender {
 ##################################################
     my($self, $appender, $dont_reset_all) = @_;
 
-    my $not_to_dispatcher = 0;
-
         # We take this as an indicator that we're initialized.
     $INITIALIZED = 1;
 
@@ -577,18 +598,15 @@ sub add_appender {
 
     $self->{num_appenders}++;  #should this be inside the unless?
 
+      # Add newly created appender to the end of the appender array
     unless (grep{$_ eq $appender_name} @{$self->{appender_names}}){
         $self->{appender_names} = [sort @{$self->{appender_names}}, 
                                         $appender_name];
     }
 
-    if ($APPENDER_BY_NAME{$appender_name}) {
-        $not_to_dispatcher = 1;
-    }else{
-        $APPENDER_BY_NAME{$appender_name} = $appender;
-    }
+    $APPENDER_BY_NAME{$appender_name} = $appender;
 
-    &reset_all_output_methods
+    reset_all_output_methods
                 unless $dont_reset_all;  # keep us from getting overworked
                                          # if it's  the config file calling us
 
@@ -819,30 +837,20 @@ sub init_warn {
 # call me from a sub-func to spew the sub-func's caller
 #######################################################
 sub callerline {
-  # the below could all be just:
-  # my ($pack, $file, $line) = caller(2);
-  # but if we every bury this further, it'll break. So we do this
-  # little trick stolen and paraphrased from Carp/Heavy.pm
-  my($message) = @_;
+  my $message = join ('', @_);
 
-  my $i = 0;
-  my (undef, $localfile, undef) = caller($i++);
-  my ($pack, $file, $line);
-  do {
-    ($pack, $file, $line) = caller($i++);
-  } while ($file && $file eq $localfile);
+  my ($pack, $file, $line) = caller($Log::Log4perl::caller_depth + 1);
 
-  my $has_newline;
+  if (not chomp $message) {     # no newline
+    $message .= " at $file line $line";
 
-  $has_newline++ if chomp $message;
-
-  $message .= " at $file line $line" if !$has_newline;
-
-  # Someday, we'll use Threads. Really.
-  if (defined &Thread::tid) {
-    my $tid = Thread->self->tid;
-    $message .= " thread $tid" if $tid and !$has_newline;
+    # Someday, we'll use Threads. Really.
+    if (defined &Thread::tid) {
+      my $tid = Thread->self->tid;
+      $message .= " thread $tid" if $tid;
+    }
   }
+
   return ($message, "\n");
 }
 
@@ -850,15 +858,14 @@ sub callerline {
 sub and_warn {
 #######################################################
   my $self = shift;
-  my $msg = join("", @_[0 .. $#_]);
-  CORE::warn(callerline($self->warning_render(@_[0 .. $#_])));
+  CORE::warn(callerline($self->warning_render(@_)));
 }
 
 #######################################################
 sub and_die {
 #######################################################
   my $self = shift;
-  die(callerline($self->warning_render(@_[0 .. $#_])));
+  die(callerline($self->warning_render(@_)));
 }
 
 ##################################################
@@ -922,11 +929,11 @@ sub logcluck {
 
   if ($self->is_warn()) {
     my $message = Carp::longmess($msg);
-    local $Log::Log4perl::caller_depth = 
-          $Log::Log4perl::caller_depth + 1;
+    $Log::Log4perl::caller_depth++;
     foreach (split(/\n/, $message)) {
       $self->warn("$_\n");
     }
+    $Log::Log4perl::caller_depth--;
     Carp::cluck($msg);
   }
 }
@@ -941,11 +948,11 @@ sub logcarp {
 
   if ($self->is_warn()) {
     my $message = Carp::shortmess($msg);
-    local $Log::Log4perl::caller_depth = 
-          $Log::Log4perl::caller_depth + 1;
+    $Log::Log4perl::caller_depth++;
     foreach (split(/\n/, $message)) {
       $self->warn("$_\n");
     }
+    $Log::Log4perl::caller_depth--;
     Carp::carp($msg) if $Log::Log4perl::LOGDIE_MESSAGE_ON_STDERR;
   }
 }
@@ -960,13 +967,13 @@ sub logcroak {
   local $Carp::CarpLevel = $Carp::CarpLevel + 1;
   my $msg = $self->warning_render(@_);
 
-  my $message = Carp::shortmess($msg);
-  local $Log::Log4perl::caller_depth = 
-        $Log::Log4perl::caller_depth + 1;
   if ($self->is_fatal()) {
+    my $message = Carp::shortmess($msg);
+    $Log::Log4perl::caller_depth++;
     foreach (split(/\n/, $message)) {
       $self->fatal("$_\n");
     }
+    $Log::Log4perl::caller_depth--;
   }
 
   $Log::Log4perl::LOGDIE_MESSAGE_ON_STDERR ? 
@@ -979,16 +986,16 @@ sub logconfess {
 ##################################################
   my $self = shift;
 
+  local $Carp::CarpLevel = $Carp::CarpLevel + 1;
   my $msg = $self->warning_render(@_);
-  local $Carp::CarpLevel = 2;
 
-  my $message = Carp::longmess($msg);
-  local $Log::Log4perl::caller_depth = 
-        $Log::Log4perl::caller_depth + 1;
   if ($self->is_fatal()) {
+    my $message = Carp::longmess($msg);
+    $Log::Log4perl::caller_depth++;
     foreach (split(/\n/, $message)) {
       $self->fatal("$_\n");
     }
+    $Log::Log4perl::caller_depth--;
   }
 
   $Log::Log4perl::LOGDIE_MESSAGE_ON_STDERR ? 
@@ -1003,7 +1010,9 @@ sub error_warn {
 ##################################################
   my $self = shift;
   if ($self->is_error()) {
+    $Log::Log4perl::caller_depth++;
     $self->error(@_);
+    $Log::Log4perl::caller_depth--;
     $self->and_warn(@_);
   }
 }

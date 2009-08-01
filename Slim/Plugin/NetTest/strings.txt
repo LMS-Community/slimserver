@@ -1,0 +1,83 @@
+# String file for NetTest plugin
+
+# $Id$
+
+PLUGIN_NETTEST
+	CS	Test sítě
+	DA	Test af netværk
+	DE	Netzwerktest
+	EN	Network Test
+	ES	Prueba de red
+	FI	Verkkotesti
+	FR	Test réseau
+	HE	בדיקת הרשת
+	IT	Verifica rete
+	NL	Netwerktest
+	NO	Nettverkstest
+	PL	Test sieci
+	RU	Сетевой тест
+	SV	Nätverkstest
+
+PLUGIN_NETTEST_DESC
+	CS	Test sítě
+	DA	Test af netværk
+	DE	Netzwerktest
+	EN	Network Test
+	ES	Prueba de red
+	FI	Verkkotesti
+	FR	Test réseau
+	HE	בדיקת הרשת
+	IT	Verifica rete
+	NL	Netwerktest
+	NO	Nettverkstest
+	PL	Test sieci
+	RU	Сетевой тест
+	SV	Nätverkstest
+
+PLUGIN_NETTEST_SELECT_RATE
+	CS	Ke zvolení rychlosti stiskněte Nahoru/Dolů
+	DA	Tryk på Op/Ned for at vælge hastighed
+	DE	Drücken Sie zum Ändern der Rate OBEN/UNTEN
+	EN	Press Up/Down to select rate
+	ES	Pulse Arriba/Abajo para seleccionar velocidad
+	FI	Valitse nopeus liikkumalla ylös- tai alaspäin
+	FR	Haut/Bas pour changer le taux
+	HE	לחץ על למעלה/למטה לבחירת קצב
+	IT	Per selezionare la velocità, premere il pulsante Su/Giù
+	NL	Druk op omhoog/omlaag om de snelheid te selecteren
+	NO	Trykk på opp/ned-knappene for å velge hastighet
+	PL	Naciśnij przycisk w górę/w dół, aby wybrać szybkość
+	RU	Для выбора скорости используйте кнопки ВВЕРХ/ВНИЗ
+	SV	Välj hastighet genom att trycka på Upp / Ner.
+
+PLUGIN_NETTEST_TESTING_TO
+	CS	Testovat
+	DA	Tester
+	DE	Test für
+	EN	Testing To
+	ES	Probando a
+	FI	Testataan
+	FR	Test de
+	IT	Esecuzione verifica su
+	NL	Testen van
+	NO	Tester mot
+	PL	Testowanie do
+	RU	Тестирование
+	SV	Testar med
+
+PLUGIN_NETTEST_NOT_SUPPORTED
+	CS	Tento přehrávač nepodporuje
+	DA	Ikke understøttet af denne afspiller
+	DE	Auf diesem Player nicht unterstützt
+	EN	Not Supported on this Player
+	ES	No se admite en este reproductor
+	FI	Ei tueta tässä soittimessa
+	FR	Non pris en charge par cette platine
+	HE	לא נתמך בנגן זה
+	IT	Non supportato in questo lettore
+	NL	Niet ondersteund op dit muzieksysteem
+	NO	Ikke støttet på denne spilleren
+	PL	Nieobsługiwane w tym odtwarzaczu
+	RU	Не поддерживается в этом плеере
+	SV	Stöds inte på den här spelaren
+

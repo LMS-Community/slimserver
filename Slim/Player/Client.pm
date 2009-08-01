@@ -23,7 +23,6 @@ use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
-use Slim::Utils::PerfMon;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Timers;
@@ -125,7 +124,6 @@ use constant KNOB_NOACCELERATION => 0x02;
 								jiffiesEpoch jiffiesOffsetList
 								_tempVolume musicInfoTextCache metaTitle languageOverride password currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
-								signalStrengthLog bufferFullnessLog slimprotoQLenLog
 								alarmData knobData
 								modeStack modeParameterStack playlist chunks
 								shufflelist syncSelections searchTerm
@@ -156,15 +154,15 @@ sub new {
 
 	my $client = $class->SUPER::new;
 
-	logger('network.protocol')->info("New client connected: $id");
+	main::INFOLOG && logger('network.protocol')->info("New client connected: $id");
 
 	assert(!defined(getClient($id)));
 
 	# Ignore UUID if all zeros (bug 6899)
-	if ( $uuid && $uuid eq '0' x 32 ) {
+	if ( defined $uuid && $uuid eq '0' x 32 ) {
 		$uuid = undef;
 	}
-
+	
 	$client->init_accessor(
 
 		# device identify
@@ -270,12 +268,6 @@ sub new {
 		jiffiesEpoch            => undef,
 		jiffiesOffsetList       => [],                 # array tracking the relative deviations relative to our clock
 		
-
-		# perfmon logs
-		signalStrengthLog       => Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]),
-		bufferFullnessLog       => Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]),
-		slimprotoQLenLog        => Slim::Utils::PerfMon->new("Slimproto QLen ($id)",  [1, 2, 5, 10, 20]),
-
 		# alarm state
 		alarmData		=> {},			# Stored alarm data for this client.  Private.
 		
@@ -503,7 +495,7 @@ Log a debug message for this client.
 sub debug {
 	my $self = shift;
 
-	logger('player')->debug(sprintf("%s : ", $self->name), @_);
+	main::DEBUGLOG && logger('player')->debug(sprintf("%s : ", $self->name), @_);
 }
 
 # If the ID is undef, that means we have a new client.
@@ -569,34 +561,12 @@ sub forgetClient {
 
 sub startup {
 	my $client = shift;
+	my $syncgroupid = shift;
 
-	Slim::Player::Sync::restoreSync($client);
+	Slim::Player::Sync::restoreSync($client, $syncgroupid);
 	
-	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!$client->isSynced() && $prefs->get('persistPlaylists')) {
-
-		my $playlist = Slim::Music::Info::playlistForClient($client);
-		my $currsong = $prefs->client($client)->get('currentSong');
-
-		if (blessed($playlist)) {
-
-			my $tracks = [ $playlist->tracks ];
-
-			# Only add on to the playlist if there are tracks.
-			if (scalar @$tracks && defined $tracks->[0] && blessed($tracks->[0]) && $tracks->[0]->id) {
-
-				$client->debug("found nowPlayingPlaylist - will loadtracks");
-
-				# We don't want to re-setTracks on load - so mark a flag.
-				$client->startupPlaylistLoading(1);
-
-				$client->execute(
-					['playlist', 'addtracks', 'listref', $tracks ],
-					\&initial_add_done, [$client, $currsong],
-				);
-			}
-		}
-	}
+	# restore the old playlist
+	Slim::Player::Playlist::loadClientPlaylist($client, \&initial_add_done)
 }
 
 sub initial_add_done {
@@ -1137,7 +1107,7 @@ sub streamingProgressBar {
 	my $bitrate = $args->{'bitrate'};
 	my $length  = $args->{'length'};
 	
-	if ($log->is_info) {
+	if (main::INFOLOG && $log->is_info) {
 		$log->info(sprintf("url=%s, duration=%s, bitrate=%s, contentLength=%s",
 			$url,
 			(defined($duration) ? $duration : 'undef'),
@@ -1169,9 +1139,9 @@ sub streamingProgressBar {
 	# Set the duration so the progress bar appears
 	if ( my $song = $client->streamingSong()) {
 
-		$song->{'duration'} = $secs;
+		$song->duration($secs);
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			if ( $duration ) {
 
 				$log->info("Duration of stream set to $duration seconds");
@@ -1182,7 +1152,7 @@ sub streamingProgressBar {
 			}
 		}
 	} else {
-		$log->info("not setting duration as no current song!");
+		main::INFOLOG && $log->info("not setting duration as no current song!");
 	}
 }
 

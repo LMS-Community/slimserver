@@ -34,7 +34,7 @@ sub initPlugin {
 	
 	if ( !main::SLIM_SERVICE ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/deezer/trackinfo.html',
 			sub {
 				my $client = $_[0];

@@ -3882,6 +3882,9 @@ INSTALLERROR_INCOMPATIBLE_PLATFORM
 	RU	Плагин несовместим с данной платформой.
 	SV	Plugin-programmet är inte kompatibelt med din plattform.
 
+INSTALLERROR_FAILED_TO_LOAD
+	EN	Plugin failed to load
+
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátu souborů
 	DA	Indstillinger for konvertering mellem filformater
@@ -6326,6 +6329,18 @@ SETUP_PLAYLISTRESCAN
 	RU	Повтор сканирования только плей-листов
 	SV	Sök bara igenom spellistorna på nytt
 	ZH_CN	重新扫描播放表而已。
+
+SETUP_AUTO_RESCAN
+	EN	Automatically detect changes
+
+SETUP_AUTO_RESCAN_DESC
+	EN	Squeezebox Server can watch your music folder and automatically detect changes.  New and changed files should appear in your library within several minutes.
+
+SETUP_AUTO_RESCAN_ENABLE
+	EN	Enabled, watch for changes automatically
+
+SETUP_AUTO_RESCAN_DISABLE
+	EN	Disabled, manually scan for new music
 
 RESCANNING
 	CS	Squeezebox Server nyní znovu prohledává vaši hudební knihovnu.
@@ -10993,6 +11008,12 @@ WMA
 	PL	Windows Media
 	RU	Windows Media
 	SV	Windows Media
+
+WMAL
+	EN	WMA Lossless
+
+WMAP
+	EN	WMAPro
 
 MMS
 	CS	Microsoft Media Server
@@ -19319,6 +19340,9 @@ DEBUG_SCAN_IMPORT
 	RU	Ведение журнала импорта метаданных файлов и плей-листов
 	SV	Loggning av metadataimport från filer och spellistor
 
+DEBUG_SCAN_AUTO
+	EN	Automatic Music & Playlist Scanning
+
 DEBUG_WIZARD
 	CS	Protokolování činnosti Průvodce nastavením
 	DA	Logføring af konfigurationsguidens aktivitet
@@ -19652,6 +19676,24 @@ DIRECTORY_PROGRESS
 	PL	Przeszukiwanie katalogu
 	RU	Сканирование каталога
 	SV	Mappsökning
+
+DIRECTORY_DELETED_PROGRESS
+	EN	Remove deleted files
+
+DIRECTORY_NEW_PROGRESS
+	EN	Scan new files
+
+DIRECTORY_CHANGED_PROGRESS
+	EN	Scanning changed files
+
+PLAYLIST_DELETED_PROGRESS
+	EN	Remove deleted playlists
+
+PLAYLIST_NEW_PROGRESS
+	EN	Scan new playlists
+
+PLAYLIST_CHANGED_PROGRESS
+	EN	Scanning changed playlists
 
 PLAYLIST_PROGRESS
 	CS	Prohledání seznamu skladeb
@@ -22328,3 +22370,11 @@ DECODE_ERROR_201
 	RU	WMA Lossless не поддерживается
 	SV	Förlustfri WMA stöds inte
 
+PLUGINS_UPDATES_AVAILABLE
+	EN	Plugin updates are available
+
+PLUGINS_RESTART_MSG
+	EN	Plugins have been updated - Restart Required
+
+NO_LIBRARY
+	EN	No music library configured

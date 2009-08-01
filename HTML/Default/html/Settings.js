@@ -545,8 +545,79 @@ Settings.Page = function(){
 				location = url;
 			}
 			return true;
-		}
+		},
 
+		initCollapsableItems : function(){
+			var el;
+			var items = Ext.DomQuery.select('div.collapsableSection');
+	
+			// collapse/expand items - collapse by default
+			for(var i = 0; i < items.length; i++) {
+				el = Ext.get(items[i]);
+				
+				var panel;
+				if (el) {
+					panel = el.id;
+					panel = panel.replace(/_Header/, '');
+
+					if (panel = Ext.get(panel)) {
+					
+						el.on("click", function(ev, target) {
+							// if the triangle image was clicked, get the parent div
+							if (target.tagName == 'IMG')
+								target = Ext.get(target).parent('div');
+							
+							var subPanel = target.id;
+							subPanel = subPanel.replace(/_Header/, '');
+
+							this.toggleItem(Ext.get(target), subPanel);
+						}, this);
+	
+						panel.enableDisplayMode('block');
+	
+						if (SqueezeJS.getCookie('Squeezebox-expanded-' + panel.id) == '0')
+							this.collapseItem(el, panel);
+		
+						else
+							this.expandItem(el, panel);
+					}
+				}
+			}
+		},
+
+		toggleItem : function(heading, panel){
+			var el = Ext.get(panel);
+
+			if (el) {
+				if (el.isVisible())
+					this.collapseItem(heading, el);
+				else
+					this.expandItem(heading, el);
+			}
+		},
+	
+		expandItem : function(heading, panel){
+			SqueezeJS.setCookie('Squeezebox-expanded-' + panel.id, '1');
+
+			var icon = heading.child('img:first', true);
+			if (icon)
+				Ext.get(icon).addClass('disclosure_expanded');
+
+			if (panel) {
+				panel.setVisible(true);
+			}
+		},
+	
+		collapseItem : function(heading, panel){
+			SqueezeJS.setCookie('Squeezebox-expanded-' + panel.id, '0');
+	
+			if (icon = heading.child('img:first', true))
+				Ext.get(icon).removeClass('disclosure_expanded');
+
+			if (panel){
+				panel.setVisible(false);
+			}
+		}
 	};
 }();
 

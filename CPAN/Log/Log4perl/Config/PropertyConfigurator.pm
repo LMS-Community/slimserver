@@ -11,6 +11,7 @@ our %NOT_A_MULT_VALUE = map { $_ => 1 }
 
 #poor man's export
 *eval_if_perl = \&Log::Log4perl::Config::eval_if_perl;
+*compile_if_perl = \&Log::Log4perl::Config::compile_if_perl;
 *unlog4j      = \&Log::Log4perl::Config::unlog4j;
 
 use constant _INTERNAL_DEBUG => 0;
@@ -58,8 +59,13 @@ sub parse {
             $val =~ s/\${(.*?)}/
                       Log::Log4perl::Config::var_subst($1, \%var_subst)/gex;
 
-            $val = eval_if_perl($val) if 
-                $key !~ /\.(cspec\.)|warp_message|filter/;
+            # for triggers, we want to compile them but not run them
+            # (is this worth putting into metadata somewhere?)
+            if ($key =~ /\.trigger$/ ){ 
+                $val = compile_if_perl($val)
+            }elsif ( $key !~ /\.(cspec\.)|warp_message|filter/){
+                $val = eval_if_perl($val)
+            }
             $key = unlog4j($key);
 
             my $how_deep = 0;
@@ -99,7 +105,36 @@ sub parse {
             }
         }
     }
+    $self->{data} = $data;
     return $data;
+}
+
+################################################
+sub value {
+################################################
+  my($self, $path) = @_;
+
+  $path = unlog4j($path);
+
+  my @p = split /::/, $path;
+
+  my $found = 0;
+  my $r = $self->{data};
+
+  while (my $n = shift @p) {
+      if (exists $r->{$n}) {
+          $r = $r->{$n};
+          $found = 1;
+      } else {
+          $found = 0;
+      }
+  }
+
+  if($found and exists $r->{value}) {
+      return $r->{value};
+  } else {
+      return undef;
+  }
 }
 
 1;
@@ -112,9 +147,21 @@ Log::Log4perl::Config::PropertyConfigurator - reads properties file
 
 =head1 SYNOPSIS
 
-This is an internal class.
+    # This class is used internally by Log::Log4perl
 
-    Log::Log4perl::Config::PropertyConfigurator::parse($text);
+    use Log::Log4perl::Config::PropertyConfigurator;
+
+    my $conf = Log::Log4perl::Config::PropertyConfigurator->new();
+    $conf->file("l4p.conf");
+    $conf->parse(); # will die() on error
+
+    my $value = $conf->value("log4perl.appender.LOGFILE.filename");
+   
+    if(defined $value) {
+        printf("The appender's file name is $value\n");
+    } else {
+        printf("The appender's file name is not defined.\n");
+    }
 
 =head1 DESCRIPTION
 
@@ -143,5 +190,6 @@ Log::Log4perl::Config::LDAPConfigurator (tbd!)
 =head1 AUTHOR
 
 Kevin Goess, <cpan@goess.org> Jan-2003
+Mike Schilli, <cpan@perlmeister.com>, 2007
 
 =cut

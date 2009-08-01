@@ -165,7 +165,7 @@ sub vfdUpdate {
 		$lang =~ s/[^-]*-(.*)/$1/;
 	}
 
-	$log->debug("vfdUpdate $lang\nline1: $line1\nline2: $line2\n");
+	main::DEBUGLOG && $log->debug("vfdUpdate $lang\nline1: $line1\nline2: $line2\n");
 	
 	my $brightness = $client->brightness();
 
@@ -274,17 +274,17 @@ sub vfdUpdate {
 
 		} else { # No space left; use a space
 
-			$log->debug("no space left: [$custom]");
+			main::DEBUGLOG && $log->debug("no space left: [$custom]");
 
 			if ($gracefulmap{$custom}) {
 
-				$log->debug("graceful: $custom -> $gracefulmap{$custom}");
+				main::DEBUGLOG && $log->debug("graceful: $custom -> $gracefulmap{$custom}");
 
 				$line =~ s/$encodedCustom/$gracefulmap{$custom}/g;
 
 			} else {
 
-				$log->debug("ungraceful");
+				main::DEBUGLOG && $log->debug("ungraceful");
 
 				$line =~ s/$encodedCustom/ /g;
 			}
@@ -1069,7 +1069,7 @@ sub doubleSize {
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
 	
-	$log->info("doubling: $line2");
+	main::INFOLOG && $log->info("doubling: $line2");
 
 	$line2 =~ tr/\x{00E6}\x{00F8}\x{00F0}/\x{00C6}\x{00D8}\x{00D0}/;
 	$line2 =~ tr/\x{00C5}\x{00E5}/AA/;

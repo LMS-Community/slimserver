@@ -15,7 +15,7 @@ use Storable;
 
 our @ISA = qw(Log::Log4perl::Appender);
 
-our $CVSVERSION   = '$Revision: 1.6 $';
+our $CVSVERSION   = '$Revision: 1.7 $';
 our ($VERSION)    = ($CVSVERSION =~ /(\d+\.\d+)/);
 
 ###########################################
@@ -259,7 +259,8 @@ to flush all accumulated messages. Don't mix with C<max_until_flushed>.
 If the appender attached to C<Limit> uses C<PatternLayout> with a timestamp
 specifier, you will notice that the message timestamps are reflecting the
 original log event, not the time of the message rendering in the
-attached appender. Major trickery has applied to accomplish this (Cough!).
+attached appender. Major trickery has been applied to accomplish 
+this (Cough!).
 
 =head1 DEVELOPMENT NOTES
 

@@ -6,7 +6,6 @@ package Slim::Utils::OS::Debian;
 # version 2.
 
 use strict;
-use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
 use base qw(Slim::Utils::OS::Linux);

@@ -1,4 +1,5 @@
-package DBIx::Class::PK::Auto::SQLite;
+package # hide package from pause
+  DBIx::Class::PK::Auto::SQLite;
 
 use strict;
 use warnings;

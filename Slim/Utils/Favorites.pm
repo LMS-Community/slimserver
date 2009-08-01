@@ -14,7 +14,7 @@ sub registerFavoritesClassName {
 
 	if ( !Slim::bootstrap::tryModuleLoad($favsClassName) ) {
 
-		$log->info("Favorites handers set to $favsClassName");
+		main::INFOLOG && $log->info("Favorites handers set to $favsClassName");
 
 	} else {
 

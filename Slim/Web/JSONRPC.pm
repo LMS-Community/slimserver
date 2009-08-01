@@ -12,7 +12,7 @@ package Slim::Web::JSONRPC;
 
 use strict;
 
-use HTTP::Status;
+use HTTP::Status qw(RC_OK);
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 
@@ -37,7 +37,7 @@ my %methods = (
 sub init {
 
 	# register our URI handler
-	Slim::Web::HTTP::addRawFunction('jsonrpc.js', \&handleURI);
+	Slim::Web::Pages->addRawFunction('jsonrpc.js', \&handleURI);
 	
 	# register our close handler
 	# we want to be called if a connection closes to clear our context
@@ -51,7 +51,7 @@ sub handleClose {
 	my $httpClient = shift || return;
 
 	if (defined $contexts{$httpClient}) {
-		$log->debug("Closing any subscriptions for $httpClient");
+		main::DEBUGLOG && $log->debug("Closing any subscriptions for $httpClient");
 	
 		# remove any subscription management
 		Slim::Control::Request::unregisterAutoExecute($httpClient);
@@ -70,7 +70,7 @@ sub handleClose {
 sub handleURI {
 	my ($httpClient, $httpResponse) = @_;
 
-	$log->debug("handleURI($httpClient)");
+	main::DEBUGLOG && $log->debug("handleURI($httpClient)");
 	
 	# make sure we're connected
 	if (!$httpClient->connected()) {
@@ -105,7 +105,7 @@ sub handleURI {
 		return;
 	}
 
-	$log->info("POST data: [$input]");
+	main::INFOLOG && $log->info("POST data: [$input]");
 
 	# Parse the input
 	# Convert JSON to Perl
@@ -123,7 +123,7 @@ sub handleURI {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
 	}
 	
@@ -186,7 +186,7 @@ sub handleURI {
 		$httpClient->proto_ge('1.1') &&
 		$httpResponse->header('Connection') !~ /close/i) {
 	
-		$log->info("Operating in x-jive mode for procedure $method and client $httpClient");
+		main::INFOLOG && $log->info("Operating in x-jive mode for procedure $method and client $httpClient");
 		$context->{'x-jive'} = 1;
 		$httpResponse->header('X-Jive' => 'Jive')
 	}
@@ -204,7 +204,7 @@ sub handleURI {
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		if ( $log->is_error ) {
 			$log->error("While trying to run function coderef [$funcName]: [$@]");
-			$log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
+			main::DEBUGLOG && $log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
 		}
 		Slim::Web::HTTP::closeHTTPSocket($httpClient);
 		return;
@@ -221,7 +221,7 @@ sub writeResponse {
 	my $httpClient   = $context->{'httpClient'};
 	my $httpResponse = $context->{'httpResponse'};
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "JSON response: " . Data::Dump::dump($responseRef) );
 	}
 	
@@ -234,7 +234,7 @@ sub writeResponse {
 	# convert Perl object into JSON
 	my $jsonResponse = to_json($responseRef);
 
-	$log->info("JSON raw response: [$jsonResponse]");
+	main::INFOLOG && $log->info("JSON raw response: [$jsonResponse]");
 
 	$httpResponse->code(RC_OK);
 	
@@ -260,7 +260,7 @@ sub writeResponse {
 	
 	if ($sendheaders) {
 	
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug("Response headers: [\n" . $httpResponse->as_string . "]");
 		}
 	}
@@ -275,7 +275,7 @@ sub generateJSONResponse {
 	my $context = shift;
 	my $result = shift;
 
-	$log->debug("generateJSONResponse()");
+	main::DEBUGLOG && $log->debug("generateJSONResponse()");
 
 	# create an object for the response
 	my $response = {};
@@ -305,7 +305,7 @@ sub requestMethod {
 	# get the JSON-RPC params
 	my $reqParams = $context->{'procedure'}->{'params'};
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "requestMethod(" . Data::Dump::dump($reqParams) . ")" );
 	}
 	
@@ -329,7 +329,7 @@ sub requestMethod {
 	
 	if ($clientid) {
 
-		$log->info("Parsing command: Found client [$clientid]");
+		main::INFOLOG && $log->info("Parsing command: Found client [$clientid]");
 	}
 
 	# create a request
@@ -349,7 +349,7 @@ sub requestMethod {
 			$request->autoExecuteCallback(\&requestWrite);
 		}	
 		
-		$log->info("Dispatching...");
+		main::INFOLOG && $log->info("Dispatching...");
 
 		$request->execute();
 		
@@ -367,7 +367,7 @@ sub requestMethod {
  			# handle async commands
  			if ($request->isStatusProcessing()) {
  				
- 				$log->info("Request is async: will be back");
+ 				main::INFOLOG && $log->info("Request is async: will be back");
  						
  				# add our write routine as a callback
  				$request->callbackParameters(\&requestWrite);
@@ -395,7 +395,7 @@ sub requestWrite {
 	my $httpClient = shift;
 	my $context = shift;
 
-	$log->debug("requestWrite()");
+	main::DEBUGLOG && $log->debug("requestWrite()");
 	
 	if (!$httpClient) {
 		
@@ -422,7 +422,7 @@ sub requestWrite {
 
 	# this should never happen, we've normally been forwarned by the closeHandler
 	if (!$httpClient->connected()) {
-		$log->info("Client no longer connected in requestWrite");
+		main::INFOLOG && $log->info("Client no longer connected in requestWrite");
 		handleClose($httpClient);
 		return;
 	}

@@ -136,7 +136,7 @@ sub init {
 
 				$client->execute(['playlist', 'clear']);
 
-				$log->info("Playing all in folder, starting with $listIndex");
+				main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
 
 				my @playlist = ();
 
@@ -149,7 +149,7 @@ sub init {
 
 					if (!Slim::Music::Info::isSong($items->[$i])) {
 
-						$log->info("Dropping $items->[$i] from play all in folder at index $i");
+						main::INFOLOG && $log->info("Dropping $items->[$i] from play all in folder at index $i");
 
 						if ($i < $listIndex) {
 							$listIndex--;
@@ -161,7 +161,7 @@ sub init {
 					unshift (@playlist, $items->[$i]);
 				}
 
-				$log->info("Load folder playlist, now starting at index: $listIndex");
+				main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
 
 				$client->execute(['playlist', 'addtracks','listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
@@ -202,7 +202,7 @@ sub init {
 
 			if (scalar @mixers == 1) {
 
-				logger('server.plugin')->info("Running Mixer $mixers[0]");
+				main::INFOLOG && logger('server.plugin')->info("Running Mixer $mixers[0]");
 
 				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
 
@@ -320,13 +320,13 @@ sub browseTreeItemName {
 		my $url = Slim::Utils::Misc::fixPath($item, $client->modeParam('topLevelPath')) || return;
 		my $name;
 
-		if (Slim::Utils::OSDetect::isWindows() && Slim::Music::Info::isWinShortcut($url)) {
+		if (main::ISWINDOWS && Slim::Music::Info::isWinShortcut($url)) {
 			($name, $url) = Slim::Utils::OS::Win32->getShortcut($url);
 		}
 
 		my $items = $client->modeParam('listRef');
 
-		my $track = Slim::Schema->rs('Track')->objectForUrl({
+		my $track = Slim::Schema->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,

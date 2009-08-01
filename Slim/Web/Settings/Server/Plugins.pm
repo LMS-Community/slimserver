@@ -16,77 +16,64 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect->getOS();
-my $needsRestart;
 
 sub name {
-	return Slim::Web::HTTP::protectName('SETUP_PLUGINS');
+	return Slim::Web::HTTP::CSRF->protectName('SETUP_PLUGINS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/server/plugins.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/server/plugins.html');
 }
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
-
-	my @changed = ();
 
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
 	my $pluginState = preferences('plugin.state')->all();
 	
 	for my $plugin (keys %{$plugins}) {
 
-		my $name     = $plugins->{$plugin}->{'name'};
-		my $module   = $plugins->{$plugin}->{'module'};
+		my $name = $plugins->{$plugin}->{'name'};
 
 		$plugins->{$plugin}->{errorDesc} = Slim::Utils::PluginManager->getErrorString($plugin);
 
-		# XXXX - handle install / uninstall / enable / disable
 		if ( $paramRef->{'saveSettings'} ) {
-			# don't handle enforced plugins
-			next if $plugins->{$plugin}->{'enforce'} || $plugins->{$plugin}->{error} < 0;
 
-			if (!$paramRef->{$name} && $pluginState->{$plugin}) {
-				push @changed, Slim::Utils::Strings::string($name);
-				Slim::Utils::PluginManager->disablePlugin($module);
+			next if $plugins->{$plugin}->{'enforce'};
+
+			if (!$paramRef->{$name} && $pluginState->{$plugin} eq 'enabled') {
+				Slim::Utils::PluginManager->disablePlugin($plugin);
 			}
 	
-			if ($paramRef->{$name} && !$pluginState->{$plugin}) {
-				push @changed, Slim::Utils::Strings::string($name);
-				Slim::Utils::PluginManager->enablePlugin($module);
+			if ($paramRef->{$name} && $pluginState->{$plugin} eq 'disabled') {
+				Slim::Utils::PluginManager->enablePlugin($plugin);
 			}
 		}
 
 	}
 
-	if (@changed) {
+	if (Slim::Utils::PluginManager->needsRestart) {
 		
-		#Slim::Utils::PluginManager->runPendingOperations;
-		Slim::Utils::PluginManager->writePluginCache;
-
-		$paramRef = $class->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED') . '<br>' . join('<br>',@changed));
-		
-		$needsRestart = 1;
+		$paramRef = $class->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
 	}
 
-
-	$paramRef = $class->restartServer($paramRef, $needsRestart);
+	$paramRef = $class->restartServer($paramRef, Slim::Utils::PluginManager->needsRestart);
 
 	$paramRef->{plugins}     = $plugins;
-	$paramRef->{pluginState} = preferences('plugin.state')->all();
 	$paramRef->{failsafe}    = $main::failsafe;
 
-	# only show plugins with perl modules
-	my @keys = ();
-	for my $key (keys %$plugins) {
-		push @keys, $key if $plugins->{$key}->{module};
-	};
+	$paramRef->{pluginState} = preferences('plugin.state')->all();
+
+	# FIXME: temp remap new states to binary value:
+	for my $plugin (keys %{$paramRef->{pluginState}}) {
+		$paramRef->{pluginState}->{$plugin} = $paramRef->{pluginState}->{$plugin} =~ /enabled/;
+	}
 
 	my @sortedPlugins = 
 		map { $_->[1] }
 		sort { $a->[0] cmp $b->[0] }
-		map { [ uc( Slim::Utils::Strings::string($plugins->{$_}->{name}) ), $_ ] } 
-		@keys;
+		map { [ uc( Slim::Utils::Strings::getString($plugins->{$_}->{name}) ), $_ ] } 
+		keys %$plugins;
 
 	$paramRef->{sortedPlugins} = \@sortedPlugins;
 
@@ -129,13 +116,22 @@ sub restartServer {
 			. '</span>';
 		
 		# delay the restart a few seconds to return the page to the client first
-		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
-			$os->restartServer();
-		});
-				
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, \&_restartServer);
 	}
 	
 	return $paramRef;
+}
+
+sub _restartServer {
+
+	if (Slim::Utils::PluginDownloader->downloading) {
+
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, \&_restartServer);
+
+	} else {
+
+		$os->restartServer();
+	}
 }
 
 1;

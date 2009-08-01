@@ -10,7 +10,6 @@ package Slim::Player::Protocols::File;
 use strict;
 use base qw(IO::File);
 
-use File::Spec::Functions qw(:ALL);
 use IO::String;
 
 use Slim::Music::Info;
@@ -54,7 +53,7 @@ sub open {
 	my $track    = $song->currentTrack();
 	my $url      = $track->url;
 	my $client   = $args->{'client'};
-	my $seekdata = $args->{'song'}->{'seekdata'};
+	my $seekdata = $args->{'song'}->seekdata();
 	
 	my $seekoffset = 0;
 
@@ -67,7 +66,7 @@ sub open {
 	if (!-p $filepath) {
 
 		$size       = $track->audio_size() || -s $filepath;
-		$duration   = $track->durationSeconds();
+		$duration   = $track->secs();
 		$offset     = $track->audio_offset() || 0;
 		$samplerate = $track->samplerate() || 0;
 		$samplesize = $track->samplesize() || 0;
@@ -76,24 +75,24 @@ sub open {
 		$endian     = $track->endian() || '';
 		$drm        = $track->drm();
 		
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("duration: [$duration] size: [$size] endian [$endian] offset: [$offset] for $url");
 		}
 
 		if ($drm) {
 			logWarning("[$url] has DRM. Skipping.");
-			Slim::Player::Source::errorOpening($client, 'PROBLEM_DRM');
+			$client->controller()->playerStreamingFailed($client, 'PROBLEM_DRM');
 			return undef;
 		}
 
 		if (!$size && !$duration) {
 			logWarning("[$url] not bothering opening file with zero size or duration");
-			Slim::Player::Source::errorOpening($client);
+			$client->controller()->playerStreamingFailed($client, 'PROBLEM_OPENING');
 			return undef;
 		}
 	}
 
-	$log->info("Opening file $filepath");
+	main::INFOLOG && $log->info("Opening file $filepath");
 
 	my $sock = $class->SUPER::new();
 	if (!$sock->SUPER::open($filepath)) {
@@ -101,17 +100,20 @@ sub open {
 		return undef;
 	}
 	
+	binmode($sock);
+	
+	${*$sock}{'url'}      = $url;
 	${*$sock}{'position'} = 0;
 	${*$sock}{'logicalEndOfStream'} = $size + $offset;
 
-	$song->{'samplerate'} = $samplerate if ($samplerate);
-	$song->{'samplesize'} = $samplesize if ($samplesize);
-	$song->{'channels'}   = $channels if ($channels);
+	$song->samplerate($samplerate) if ($samplerate);
+	$song->samplesize($samplesize) if ($samplesize);
+	$song->channels($channels) if ($channels);
 
-	$song->{'totalbytes'} = $size;
-	$song->{'duration'}   = $duration;
-	$song->{'offset'}     = $offset;
-	$song->{'blockalign'} = $blockalign;
+	$song->totalbytes($size);
+	$song->duration($duration);
+	$song->offset($offset);
+	$song->blockalign($blockalign);
 	
 	my $format = Slim::Music::Info::contentType($track);
 	
@@ -138,7 +140,7 @@ sub open {
 
 	# Bug 6836 - support CUE files for Ogg
 	# Also used for Xing frame in MP3 when seeking
-	# and WAV header
+	# WAV header, and ASF header
 	${*$sock}{'initialAudioBlockRemaining'} = 0;
 
 	${*$sock}{'streamFormat'} = $args->{'transcoder'}->{'streamformat'};
@@ -146,38 +148,40 @@ sub open {
 	if ( $seekoffset ) {
 		my $streamClass = _streamClassForFormat($format);
 
-		if (!defined($song->{'initialAudioBlock'}) && 
+		if (!defined($song->initialAudioBlock()) && 
 			$streamClass && $streamClass->can('getInitialAudioBlock'))
 		{
 			# We stash the initial audio block in the song because we may well want it
 			# multiple times.
-			$song->{'initialAudioBlock'} = $streamClass->getInitialAudioBlock($sock, $track, $seekdata->{'timeOffset'});
+			$song->initialAudioBlock($streamClass->getInitialAudioBlock($sock, $track, $seekdata->{'timeOffset'}));
 		}
 		
-		if ($song->{'initialAudioBlock'}) {
-			my $length = length($song->{'initialAudioBlock'});
-			$log->debug("Got initial audio block of size $length");
+		if ($song->initialAudioBlock()) {
+			my $length = length($song->initialAudioBlock());
+			main::DEBUGLOG && $log->debug("Got initial audio block of size $length");
 			if ($seekoffset <= $length) {
 				# Might as well just play from the start normally
 				$offset = $seekoffset = 0;
 			} else {
 				${*$sock}{'initialAudioBlockRemaining'} = $length;
-				${*$sock}{'initialAudioBlockRef'} = \$song->{'initialAudioBlock'};
+				${*$sock}{'initialAudioBlockRef'} = \($song->initialAudioBlock());
 			}
 		}
 	}
 	
 	if ($seekoffset) {
-		$log->info("Seeking in $seekoffset into $filepath");
+		main::INFOLOG && $log->info("Seeking in $seekoffset into $filepath");
 		if (!defined(sysseek($sock, $seekoffset, 0))) {
 			logError("could not seek to $seekoffset for $filepath: $!");
 		} else {
-			$client->songBytes($seekoffset);
+			$client->songBytes($seekoffset - ${*$sock}{'initialAudioBlockRemaining'});
 			${*$sock}{'position'} = $seekoffset;
 			if ($seekoffset > $offset && $seekdata && $seekdata->{'timeOffset'}) {
-				$song->{'startOffset'} = $seekdata->{'timeOffset'};
+				$song->startOffset($seekdata->{'timeOffset'});
 			}
 		}
+	} else {
+		$client->songBytes(0);
 	}
 
 	return $sock;
@@ -192,7 +196,7 @@ sub sysread {
 		my $chunkLength = $length;
 		my $chunkref;
 		
-		$log->debug("getting initial audio block of size $length");
+		main::DEBUGLOG && $log->debug("getting initial audio block of size $length");
 		
 		if ($length > $n || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
 			$chunkLength = $length > $n ? $n : $length;
@@ -258,10 +262,10 @@ sub _timeToOffset {
 	my $song     = shift;
 	my $time     = shift;
 	
-	my $offset   = $song->{'offset'} || 0;
-	my $size     = $song->{'totalbytes'};
-	my $duration = $song->{'duration'};
-	my $align    = $song->{'blockalign'};
+	my $offset   = $song->offset() || 0;
+	my $size     = $song->totalbytes();
+	my $duration = $song->duration();
+	my $align    = $song->blockalign();
 
 	# Short circuit the computation if the time for which we're asking
 	# is outside the song boundaries
@@ -277,13 +281,18 @@ sub _timeToOffset {
 	my $streamClass = _streamClassForFormat($format);
 
 	if ($streamClass && $streamClass->can('findFrameBoundaries')) {
-		$seekoffset  = $streamClass->findFrameBoundaries($sock, $seekoffset + $offset);
+		$seekoffset  = $streamClass->findFrameBoundaries($sock, $seekoffset + $offset, $time);
 	} else {
 		$seekoffset -= $seekoffset % $align;
 		$seekoffset += $offset;
 	}
 	
-	$log->info("$time -> $seekoffset (align: $align size: $size duration: $duration)");
+	# Some modules may return -1 to indicate they couldn't find a frame
+	if ( $seekoffset < 1 ) {
+		$seekoffset = 0;
+	}
+	
+	main::INFOLOG && $log->info("$time -> $seekoffset (align: $align size: $size duration: $duration)");
 
 	return $seekoffset;
 }
@@ -329,7 +338,7 @@ sub getIcon {
 
 	if (Slim::Music::Info::isSong($url)) {
 		
-		my $track = Slim::Schema->rs('Track')->objectForUrl({
+		my $track = Slim::Schema->objectForUrl({
 			'url' => $url,
 		});
 

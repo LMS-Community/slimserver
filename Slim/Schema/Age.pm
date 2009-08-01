@@ -5,6 +5,8 @@ package Slim::Schema::Age;
 use strict;
 use base 'Slim::Schema::Album';
 
+use Slim::Schema::ResultSet::Age;
+
 use Slim::Utils::Misc;
 
 {

@@ -187,10 +187,17 @@ my $cp1252re = qr/(\x{0152}|\x{0153}|\x{0160}|\x{0161}|\x{0178}|\x{017D}|\x{017E
 
 my $log = logger('player.fonts');
 
+my $initialized = 0;
+
 sub init {
+	
+	return if $initialized;
+	
+	$initialized = 1;
+	
 	loadFonts();
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Trying to load GD Library for TTF support: %s", $canUseGD ? 'ok' : 'not ok!'));
 	}
 
@@ -224,7 +231,7 @@ sub init {
 			
 		if ($useTTF) {
 
-			$log->info("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]");
+			main::INFOLOG && $log->info("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]");
 	
 			$useTTFCache = 1;
 			%TTFCache    = ();
@@ -246,7 +253,7 @@ sub init {
 
 	} else { 
 
-		$log->info("Error while trying to load GD Library: [$gdError]");
+		main::INFOLOG && $log->info("Error while trying to load GD Library: [$gdError]");
 	}
 }
 
@@ -305,7 +312,7 @@ sub loadExtent {
 	
 	$fonts->{extents}->{$fontname} = $extent;
 	
-	$log->debug(" extent of: $fontname is $extent");
+	main::DEBUGLOG && $log->debug(" extent of: $fontname is $extent");
 }
 
 sub string {
@@ -541,7 +548,7 @@ sub graphicsDirs {
 	# graphics files allowed in Graphics dir and root directory of plugins
 	return (
 		Slim::Utils::OSDetect::dirsFor('Graphics'), 
-		Slim::Utils::PluginManager->pluginRootDirs(), 
+		Slim::Utils::PluginManager->dirsFor('Graphics'), 
 	); 
 }
 
@@ -574,7 +581,7 @@ sub fontfiles {
 				
 				$mtimesum += (stat($file))[9]; 
 
-				$log->debug(" found: $file");
+				main::DEBUGLOG && $log->debug(" found: $file");
 
 			} elsif ($file =~ /corefonts.bin$/) {
 
@@ -587,13 +594,13 @@ sub fontfiles {
 
 		if ($mtimesum / scalar keys %fonts != (stat($defcache))[9]) {
 
-			$log->debug(" ignoring prebuild cache - different mtime from files");
+			main::DEBUGLOG && $log->debug(" ignoring prebuild cache - different mtime from files");
 
 			$defcache = undef;
 			
 		} else {
 
-			$log->debug(" prebuild cache is valid");
+			main::DEBUGLOG && $log->debug(" prebuild cache is valid");
 		}
 	}
 
@@ -602,7 +609,9 @@ sub fontfiles {
 
 sub loadFonts {
 	my $forceParse = shift;
-
+	
+	init() if !$initialized;
+	
 	my ($defcache, $mtimesum, %fontfiles) = fontfiles();
 
 	my $fontCache = fontCacheFile();
@@ -617,7 +626,7 @@ sub loadFonts {
 
 		my $cache = $defcache || $fontCache;
 
-		$log->info("Retrieving font data from font cache: $cache");
+		main::INFOLOG && $log->info("Retrieving font data from font cache: $cache");
 
 		eval { $fonts = retrieve($cache); };
 
@@ -669,7 +678,7 @@ sub loadFonts {
 			return;
 		}
 
-		$log->info("Font cache contains old data - reparsing fonts");
+		main::INFOLOG && $log->info("Font cache contains old data - reparsing fonts");
 	}
 
 	# otherwise clear data and parse all font files
@@ -677,11 +686,11 @@ sub loadFonts {
 
 	foreach my $font (keys %fontfiles) {
 
-		$log->debug("Now parsing: $font");
+		main::DEBUGLOG && $log->debug("Now parsing: $font");
 
 		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
 
-		$log->debug(" height of: $font is " . ($height - 1));
+		main::DEBUGLOG && $log->debug(" height of: $font is " . ($height - 1));
 
 		# store height and then skip font if never seen a player requiring it
 		$fonts->{'height'}->{$font} = $height - 1;
@@ -689,7 +698,7 @@ sub loadFonts {
 		next if ($height == 17 && !$prefs->get('loadFontsSqueezeboxG'));
 		next if ($height == 33 && !$prefs->get('loadFontsSqueezebox2'));
 
-		$log->debug("loading...");
+		main::DEBUGLOG && $log->debug("loading...");
 
 		if ($font =~ m/(.*?).(\d)/i) {
 			$fonts->{hash}->{$1}->{line}[$2-1] = $font;
@@ -705,7 +714,7 @@ sub loadFonts {
 	$fontheight  = $fonts->{'height'};
 	$fontextents = $fonts->{'extents'};
 
-	$log->info("Writing font cache: $fontCache");
+	main::INFOLOG && $log->info("Writing font cache: $fontCache");
 
 	$fonts->{'version'} = $fontCacheVersion;
 	$fonts->{'mtimesum'} = $mtimesum;

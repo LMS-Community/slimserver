@@ -106,17 +106,17 @@ sub processCoverArtRequest {
 	my $transparentRequest = 0;
 	if ($suffix =~ /gd/) { 
 		if ($bgColor eq '') {
-			$log->info('this is a transparent gd request');
+			main::INFOLOG && $log->info('this is a transparent gd request');
 			$transparentRequest = 'gd';
 		}
 	} elsif ($suffix =~ /png/) { 
 		if ($bgColor eq '') {
-			$log->info('this is a transparent png request');
+			main::INFOLOG && $log->info('this is a transparent png request');
 			$transparentRequest = 'png';
 		}
 	} elsif ($suffix =~ /gif/) { 
 		if ($bgColor eq '') {
-			$log->info('this is a transparent gif request');
+			main::INFOLOG && $log->info('this is a transparent gif request');
 			$transparentRequest = 'gif';
 		}
 	} else {
@@ -178,14 +178,14 @@ sub processCoverArtRequest {
 				if ( $artworkFile && -r $artworkFile ) {
 					my $origMtime = (stat _)[9];
 					if ( $cachedImage->{'mtime'} != $origMtime ) {
-						$log->info( "  artwork mtime $origMtime differs from cached mtime " . $cachedImage->{'mtime'} );
+						main::INFOLOG && $log->info( "  artwork mtime $origMtime differs from cached mtime " . $cachedImage->{'mtime'} );
 						$cachedImage = undef;
 					}
 				}
 		
 				if ( $cachedImage ) {
 
-					if ( $log->is_info ) {
+					if ( main::INFOLOG && $log->is_info ) {
 						my $type = $cachedImage->{contentType};
 						my $size = length( ${$cachedImage->{body}} );
 						$log->info( "  returning cached artwork image, $type ($size bytes)" );
@@ -194,7 +194,7 @@ sub processCoverArtRequest {
 					return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 				}
 			} else {
-				$log->info(" cached image not usable because 'orig' undef");
+				main::INFOLOG && $log->info(" cached image not usable because 'orig' undef");
 			}
 		}
 	}
@@ -219,7 +219,7 @@ sub processCoverArtRequest {
 		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Asking for trackid: $trackid - $image" . 
 			($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : ""));
 	}
@@ -229,14 +229,14 @@ sub processCoverArtRequest {
 		if (!defined $actualContentType || $actualContentType eq '') {
 			$actualContentType = $requestedContentType;
 		}
-		$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
+		main::INFOLOG && $log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
 	}
 
 	# if $obj->coverArt didn't send back data, then fill with the station icon
 	if ( !$imageData && $trackid eq 'current' && blessed($obj) && $obj->url
 		&& (my $image = Slim::Player::ProtocolHandlers->iconForURL($obj->url, $client))) {
 
-		$log->info("  looking up artwork $image.");
+		main::INFOLOG && $log->info("  looking up artwork $image.");
 
 		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
 
@@ -244,7 +244,7 @@ sub processCoverArtRequest {
 		
 		if ( $cachedImage ) {
 
-			$log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
+			main::INFOLOG && $log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
 
 			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 		}
@@ -256,14 +256,14 @@ sub processCoverArtRequest {
 
 			$imageData = ${$cachedImage->{body}};
 
-			$log->info( "  found cached remote artwork image" );
+			main::INFOLOG && $log->info( "  found cached remote artwork image" );
 
 		}
 
 		# need to fetch remote artwork
 		elsif (Slim::Music::Info::isRemoteURL($image)) {
 
-			$log->info( "  catching remote artwork image" );
+			main::INFOLOG && $log->info( "  catching remote artwork image" );
 			my $http = Slim::Networking::SimpleAsyncHTTP->new(
 				\&_gotRemoteArtwork,
 				\&_errorGettingRemoteArtwork, 
@@ -295,7 +295,7 @@ sub processCoverArtRequest {
 
 		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
 		
-		$log->info("  missing artwork replaced by placeholder.");
+		main::INFOLOG && $log->info("  missing artwork replaced by placeholder.");
 
 		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
 
@@ -303,7 +303,7 @@ sub processCoverArtRequest {
 		
 		if ( $cachedImage ) {
 
-			$log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
+			main::INFOLOG && $log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
 
 			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 		}
@@ -313,7 +313,7 @@ sub processCoverArtRequest {
 		$imageData = $$body;
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("  got cover art image $actualContentType of ". length($imageData) . " bytes");
 	}
 
@@ -335,7 +335,7 @@ sub processCoverArtRequest {
 
 			# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
 			# XXX: Remove this when we get a newer build of GD
-			if ( $actualContentType eq 'image/jpeg' && Slim::Utils::OSDetect::isWindows() ) {
+			if ( main::ISWINDOWS && $actualContentType eq 'image/jpeg' ) {
 				require Imager;
 				my $img = Imager->new;
 				eval {
@@ -357,7 +357,7 @@ sub processCoverArtRequest {
 				
 				# If no extension was given optimize for the common case: square JPEG cover art
 				if ( $autoType && $actualContentType eq 'image/jpeg' && ($origImage->width == $origImage->height || $resizeMode eq "original") ) {
-					$log->info( "  No file type requested, returning jpeg for square image" );
+					main::INFOLOG && $log->info( "  No file type requested, returning jpeg for square image" );
 					$requestedContentType = 'image/jpeg';
 					$transparentRequest   = 0;
 				}
@@ -430,7 +430,7 @@ sub processCoverArtRequest {
 				# the image needs to be processed if the sizes differ, or the image is a png
 				if ($requestedContentType =~ /image\/(png|gd)/ || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
-					if ( $log->is_info ) {
+					if ( main::INFOLOG && $log->is_info ) {
 						$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
 							 " to $returnedWidth x $returnedHeight using $resizeMode");
 					}
@@ -502,13 +502,13 @@ sub processCoverArtRequest {
 
 					# PNG/GD with 7 bit transparency
 					if ($transparentRequest =~ /png|gd/) {
-						$log->info("Set alpha for transparent $transparentRequest");
+						main::INFOLOG && $log->info("Set alpha for transparent $transparentRequest");
 						$newImage->saveAlpha(1);
 						$newImage->alphaBlending(0);
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0x7f000000);
 					# GIF with 1-bit transparency
 					} elsif ($transparentRequest eq 'gif') {
-						$log->info("This is a gif with transparency");
+						main::INFOLOG && $log->info("This is a gif with transparency");
 						# a transparent gif has to choose a color to be transparent, so let's pick one at random
 
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0xaaaaaa);
@@ -524,7 +524,7 @@ sub processCoverArtRequest {
 					# use faster Resize algorithm on slower machines
 					if (preferences('server')->get('resampleArtwork')) {
 
-						$log->info("Resampling file for better quality");
+						main::INFOLOG && $log->info("Resampling file for better quality");
 						$newImage->copyResampled(
 							$origImage,
 							$destX, $destY,
@@ -535,7 +535,7 @@ sub processCoverArtRequest {
 
 					} else {
 
-						$log->info("Resizing file for faster processing");
+						main::INFOLOG && $log->info("Resizing file for faster processing");
 						$newImage->copyResized(
 							$origImage,
 							$destX, $destY,
@@ -570,7 +570,7 @@ sub processCoverArtRequest {
 						$requestedContentType = 'image/jpeg';
 					}
 
-					if ( $log->is_info ) {
+					if ( main::INFOLOG && $log->is_info ) {
 						$log->info("  outputting cover art image $requestedContentType of ". length($newImageData) . " bytes");
 					}
 					
@@ -578,19 +578,19 @@ sub processCoverArtRequest {
 
 				} else {
 
-					$log->info("  not resizing");
+					main::INFOLOG && $log->info("  not resizing");
 					$body = \$imageData;
 				}
 
 			} else {
 
-				$log->info("GD wouldn't create image object from $path");
+				main::INFOLOG && $log->info("GD wouldn't create image object from $path");
 				$body = \$imageData;
 			}
 
 		} else {
 
-			$log->info("No need to process image for $path");
+			main::INFOLOG && $log->info("No need to process image for $path");
 			$body = \$imageData;
 		}
 
@@ -621,7 +621,7 @@ sub processCoverArtRequest {
 			'size'        => $size,
 		};
 
-		$log->info("  caching result key: $cacheKey, orig=$imageFilePath");
+		main::INFOLOG && $log->info("  caching result key: $cacheKey, orig=$imageFilePath");
 
 		$cache->set( $cacheKey, $cached, $Cache::Cache::EXPIRES_NEVER );
 	}
@@ -635,7 +635,7 @@ sub _gotRemoteArtwork {
 	my $imageData = $http->content();
 	my $url       = $http->url();
 
-	$log->info( "got remote artwork from $url, size " . length($imageData) );
+	main::INFOLOG && $log->info( "got remote artwork from $url, size " . length($imageData) );
 
 	my $cached = {
 		'body'        => \$imageData,
@@ -657,7 +657,7 @@ sub _gotRemoteArtwork {
 sub _errorGettingRemoteArtwork {
 	my $http = shift;
 
-	$log->info("  failure looking up remote artwork - using placeholder.");
+	main::INFOLOG && $log->info("  failure looking up remote artwork - using placeholder.");
 
 	my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/radio.png", $http->params('params'));
 

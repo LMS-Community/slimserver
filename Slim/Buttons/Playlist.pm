@@ -23,8 +23,6 @@ on a player display.
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Control::Request;
 use Slim::Utils::Log;
@@ -75,7 +73,7 @@ sub init {
 					playlistNowPlaying($client, 0);
 				}
 
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug(
 						"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
 						browseplaylistindex($client)
@@ -382,7 +380,7 @@ sub jump {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 	
-		$playlistlog->info("Jumping to song index: $pos");
+		main::INFOLOG && $playlistlog->info("Jumping to song index: $pos");
 	
 		browseplaylistindex($client,$pos);
 	}
@@ -561,8 +559,7 @@ The optional argument, $playlistindex sets the zero-based position for browsing 
 sub browseplaylistindex {
 	my $client = shift;
 
-	if ( @_ && $playlistlog->is_debug ) {
-
+	if ( main::DEBUGLOG && @_ && $playlistlog->is_debug ) {
 		$log->debug("New playlistindex: $_[0]");
 	}
 	

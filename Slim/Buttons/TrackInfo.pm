@@ -25,7 +25,6 @@ use Scalar::Util qw(blessed);
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Menu::TrackInfo;
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::Log;
 use Slim::Utils::Favorites;
 

@@ -7,14 +7,12 @@ no warnings 'qw';
 use base qw/DBIx::Class/;
 
 __PACKAGE__->load_components(qw/
-  Serialize::Storable
-  InflateColumn
   Relationship
+  InflateColumn
   PK::Auto
   PK
   Row
-  ResultSourceProxy::Table
-  AccessorGroup/);
+  ResultSourceProxy::Table/);
 
 1;
 
@@ -49,8 +47,6 @@ The core modules currently are:
 =item L<DBIx::Class::Row>
 
 =item L<DBIx::Class::ResultSourceProxy::Table>
-
-=item L<DBIx::Class::AccessorGroup>
 
 =back
 

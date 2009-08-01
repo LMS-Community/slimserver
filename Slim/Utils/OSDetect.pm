@@ -24,7 +24,7 @@ L<Slim::Utils::OSDetect> handles Operating System Specific details.
 use strict;
 use FindBin qw($Bin);
 
-my ($os, $isWindows, $isMac);
+my ($os, $isWindows, $isMac, $isLinux);
 
 =head1 METHODS
 
@@ -112,6 +112,11 @@ sub init {
                 require Slim::Utils::OS::Synology;
                 $os = Slim::Utils::OS::Synology->new();
 
+			} elsif ($os =~ /squeezeos/i) {
+				
+				require Slim::Utils::OS::SqueezeOS;
+				$os = Slim::Utils::OS::SqueezeOS->new();
+				
 			} else {
 	
 				$os = Slim::Utils::OS::Linux->new();
@@ -128,6 +133,7 @@ sub init {
 	$os->initDetails();
 	$isWindows = $os->name eq 'win';
 	$isMac     = $os->name eq 'mac';
+	$isLinux   = $os->get('os') eq 'Linux';
 }
 
 sub getOS {
@@ -152,6 +158,10 @@ sub getProxy {
 	return $os->getProxy();
 }
 
+sub skipPlugins {
+	return $os->skipPlugins();
+}
+
 =head2 isDebian( )
 
  The Debian package has some specific differences for file locations.
@@ -168,12 +178,20 @@ sub isRHorSUSE {
 	return $os->get('isRedHat', 'isSuse');
 }
 
+sub isSqueezeOS {
+	return $os->get('isSqueezeOS');
+}
+
 sub isWindows {
 	return $isWindows;
 }
 
 sub isMac {
 	return $isMac;
+}
+
+sub isLinux {
+	return $isLinux;
 }
 
 1;

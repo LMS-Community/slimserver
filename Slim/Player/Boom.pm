@@ -194,7 +194,7 @@ sub init {
 
 	}
 
-	$client->SUPER::init();
+	$client->SUPER::init(@_);
 }
 
 sub initPrefs {
@@ -332,7 +332,7 @@ sub play {
 			return 1;
 		}
 		else {
-			logger('player.source')->info("Setting LineIn to 0 for [$url]");
+			main::INFOLOG && logger('player.source')->info("Setting LineIn to 0 for [$url]");
 			$client->setLineIn(0);
 		}
 	}
@@ -403,7 +403,7 @@ sub setLineIn {
 	# convert a source: url to a number, otherwise, just use the number
 	if (Slim::Music::Info::isLineIn($input)) {
 	
-		$log->info("Got source: url: [$input]");
+		main::INFOLOG && $log->info("Got source: url: [$input]");
 
 		if ($INC{'Slim/Plugin/LineIn/Plugin.pm'}) {
 
@@ -424,7 +424,7 @@ sub setLineIn {
 		$input = 1;
 	}
 
-	$log->info("Switching to line in $input");
+	main::INFOLOG && $log->info("Switching to line in $input");
 
 	$prefs->client($client)->set('lineIn', $input);
 	$client->sendFrame('audp', \pack('C', $input));
@@ -434,7 +434,7 @@ sub setLineInLevel {
 	my $level = $_[1];
 	my $client = $_[2];
 	
-	logger('player.source')->info("Setting line in level to $level");
+	main::INFOLOG && logger('player.source')->info("Setting line in level to $level");
 	
 	# map level to volume:
 	my $newGain = 0;
@@ -629,48 +629,48 @@ sub sendBDACFrame {
 
 	if ($type eq 'DACRESET') {
 
-		$log->info("Sending BDAC DAC RESET");
+		main::INFOLOG && $log->info("Sending BDAC DAC RESET");
 
 		$buf = pack('C',0);
 
 	} elsif($type eq 'DACI2CDATA') {
 		my $length = length($data)/9;
 
-		$log->debug("Sending BDAC DAC I2C DATA $length chunks");
+		main::DEBUGLOG && $log->debug("Sending BDAC DAC I2C DATA $length chunks");
 
 		$buf = pack('C',1).pack('C',$length).$data;
 
 	} elsif($type eq 'DACI2CDATAEND') {
 
-		$log->info("Sending BDAC DAC I2C DATA COMPLETE");
+		main::INFOLOG && $log->info("Sending BDAC DAC I2C DATA COMPLETE");
 
 		$buf = pack('C',2);
 
 	} elsif($type eq 'DACDEFAULT') {
 
-		$log->info("Sending BDAC DAC DEFAULT");
+		main::INFOLOG && $log->info("Sending BDAC DAC DEFAULT");
 
 		$buf = pack('C',3);
 
 	} elsif($type eq 'DACI2CGEN') {
 		my $length = length($data);
 
-		$log->info("Sending BDAC I2C GENERAL DATA $length chunks");
+		main::INFOLOG && $log->info("Sending BDAC I2C GENERAL DATA $length chunks");
 
 		$buf = pack('C',4).pack('C',$length).$data;
 	} elsif($type eq 'DACALSFLOOD') {
-		$log->info("Starting Lightsensor flood");
+		main::INFOLOG && $log->info("Starting Lightsensor flood");
 		$buf = pack('C',5);
 	} elsif($type eq 'DACWOOFERBQ') {
-		$log->info("Updating the BDAC bass_eq volume table");
+		main::INFOLOG && $log->info("Updating the BDAC bass_eq volume table");
 		my $count = @$data;
 		$buf = pack('C',6).pack('C',$count).pack("N$count", @$data);
 	} elsif($type eq 'DACWOOFERBQSUB') {
-		$log->info("Updating the BDAC bass_eq volume table for the subwoofer");
+		main::INFOLOG && $log->info("Updating the BDAC bass_eq volume table for the subwoofer");
 		my $count = @$data;
 		$buf = pack('C',7).pack('C',$count).pack("N$count", @$data);
 	} elsif ($type eq 'DACLINEINGAIN') {
-		$log->info("Setting line in gain");
+		main::INFOLOG && $log->info("Setting line in gain");
 		$buf = pack('C',8).pack('N',$data);
 	} 
 	
@@ -719,7 +719,7 @@ sub upgradeDAC {
 
 	$client->sendBDACFrame('DACRESET');
 
-	$log->info("Updating DAC: Sending $size bytes");
+	main::INFOLOG && $log->info("Updating DAC: Sending $size bytes");
 
 	eval {
 		while ($bytesread = read(FS, my $buf, 36)) {
@@ -730,7 +730,7 @@ sub upgradeDAC {
 
 			$totalbytesread += $bytesread;
 
-			$log->debug("Updating DAC: $totalbytesread / $size bytes");
+			main::DEBUGLOG && $log->debug("Updating DAC: $totalbytesread / $size bytes");
 	
 			my $fraction = $totalbytesread / $size;
 
@@ -760,7 +760,7 @@ sub upgradeDAC {
 		$client->sendBDACFrame('DACDEFAULT');
 		$client->unblock();
 
-		$log->info("Updating DAC: Restore default image");
+		main::INFOLOG && $log->info("Updating DAC: Restore default image");
 
 		$client->showBriefly({
 			'line'    => [ undef, $client->string("UPDATE_DSP_FAILURE_RESTORE")],
@@ -773,7 +773,7 @@ sub upgradeDAC {
 		$client->sendBDACFrame('DACI2CDATAEND');
 		$client->unblock();
 
-		$log->info("Updating DAC: successfully completed");
+		main::INFOLOG && $log->info("Updating DAC: successfully completed");
 		return 1;
 	}
 }
@@ -816,7 +816,7 @@ sub boomI2C {
 	
 	$msg .= "]";
 	
-	$log->debug($msg);
+	main::DEBUGLOG && $log->debug($msg);
 	
 	$client->sendFrame('bdac', \$data);
 	

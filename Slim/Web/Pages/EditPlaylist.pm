@@ -17,10 +17,10 @@ use Slim::Player::Playlist;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
-use Slim::Web::HTTP;
+use Slim::Web::Pages;
 
 sub init {
-	Slim::Web::HTTP::addPageFunction(qr/^edit_playlist\.(?:htm|xml)/, \&editplaylist);
+	Slim::Web::Pages->addPageFunction(qr/^edit_playlist\.(?:htm|xml)/, \&editplaylist);
 }
 
 sub editplaylist {

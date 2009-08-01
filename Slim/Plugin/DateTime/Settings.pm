@@ -12,34 +12,6 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.datetime');
 
-$prefs->migrate(1, sub {
-	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '');
-	$prefs->set('dateformat', Slim::Utils::Prefs::OldPrefs->get('screensaverDateFormat') || '');
-	1;
-});
-
-$prefs->migrateClient(2, sub {
-	my ($clientprefs, $client) = @_;
-	$clientprefs->set('timeformat', $prefs->get('timeformat') || '');
-	$clientprefs->set('dateformat', $prefs->get('dateformat') || ($client->isa('Slim::Player::Boom') ? $client->string('SETUP_LONGDATEFORMAT_DEFAULT_N') : ''));
-	1;
-});
-
-$prefs->migrateClient(3, sub {
-	my ($clientprefs, $client) = @_;
-	$clientprefs->set('timeFormat', $clientprefs->get('timeformat') || '');
-	$clientprefs->set('dateFormat', $clientprefs->get('dateformat'));
-	1;
-});
-
-$prefs->setChange( sub {
-	my $client = $_[2];
-	if ($client->isa("Slim::Player::Boom")) {
-		$client->setRTCTime();
-	}		
-}, 'timeFormat');
-
-
 my $timeFormats = Slim::Utils::DateTime::timeFormats();
 
 my $dateFormats = {
@@ -48,11 +20,11 @@ my $dateFormats = {
 };
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_SCREENSAVER_DATETIME');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_SCREENSAVER_DATETIME');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/DateTime/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/DateTime/settings/basic.html');
 }
 
 sub prefs {

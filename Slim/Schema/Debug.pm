@@ -12,32 +12,38 @@ package Slim::Schema::Debug;
 use strict;
 
 use Slim::Utils::Log;
-use Slim::Utils::PerfMon;
 
 my $log = logger('database.sql');
-
-our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $start;
 
 sub query_start {
     my ($self, $string, @bind) = @_;
 
-	$log->info(sub { "$string: ".join(', ', @bind) });
+	main::INFOLOG && $log->info( "$string: " . join(', ', @bind) );
 
-	$::perfmon && ($start = Time::HiRes::time());
+	main::PERFMON && ($start = AnyEvent->time);
 }
 
 sub query_end {
     my ($self, $string, @bind) = @_;
 
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $start, sub { "$string: ".join(', ', @bind) });
+	main::PERFMON && Slim::Utils::PerfMon->check('dbaccess', AnyEvent->time - $start, sub { "$string: ".join(', ', @bind) });
 }
 
 sub debugfh {}
-sub txn_begin {}
-sub txn_rollback {}
-sub txn_commit {}
+
+sub txn_begin {
+	main::INFOLOG && $log->info('BEGIN WORK');
+}
+
+sub txn_rollback {
+	main::INFOLOG && $log->info('ROLLBACK');
+}
+
+sub txn_commit {
+	main::INFOLOG && $log->info('COMMIT');
+}
 
 1;
 

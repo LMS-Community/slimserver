@@ -41,7 +41,7 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 
-	my $url    = $args->{'song'}->{'streamUrl'};
+	my $url    = $args->{'song'}->streamUrl();
 	
 	return unless $url;
 	
@@ -101,7 +101,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting channel info from mysqueezebox.com for " . $channelId );
+	main::DEBUGLOG && $log->debug("Getting channel info from SqueezeNetwork for " . $channelId );
 	
 	$http->get( $infoURL );
 }
@@ -120,7 +120,7 @@ sub gotChannelInfo {
 		};
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got Sirius channel info: " . Data::Dump::dump($info) );
 	}
 	
@@ -148,15 +148,15 @@ sub gotChannelInfo {
 	$streamURL =~ s/^http/mms/;
 	
 	# Save metadata for this track
-	$song->{'streamUrl'} = $streamURL;
-	$song->{'bitrate'}   = $bitrate;
+	$song->streamUrl($streamURL);
+	$song->bitrate($bitrate);
 	$song->pluginData( coverArt => $info->{logo} );
 	
 	# Include the metadata sub-stream for this station
-	$song->{'wmaMetadataStream'} = 2;
+	$song->wmaMetadataStream(2);
 	
 	# Start a timer to check status at the defined interval
-	$log->debug( 'Polling status in ' . $info->{status}->{PollingInterval} . ' seconds' );
+	main::DEBUGLOG && $log->debug( 'Polling status in ' . $info->{status}->{PollingInterval} . ' seconds' );
 	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 	Slim::Utils::Timers::setTimer( 
 		$song,
@@ -166,7 +166,7 @@ sub gotChannelInfo {
 	);
 
 	# Start a timer to make sure the user remains active
-	$log->debug( "Checking activity in $activityInterval seconds" );
+	main::DEBUGLOG && $log->debug( "Checking activity in $activityInterval seconds" );
 	Slim::Utils::Timers::killTimers( $song, \&checkActivity );
 	Slim::Utils::Timers::setTimer(
 		$song,
@@ -196,7 +196,7 @@ sub gotChannelInfoError {
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 	
-	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
+	return $class->SUPER::canDirectStream($client, $song->streamUrl(), $class->getFormatForURL());
 }
 
 sub parseDirectHeaders {
@@ -206,7 +206,7 @@ sub parseDirectHeaders {
 #	my @headers = @_;
 	
 	my $contentType = 'wma';
-	my $bitrate     = $client->streamingSong()->{'bitrate'};
+	my $bitrate     = $client->streamingSong()->bitrate();
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, undef, undef);
@@ -218,7 +218,7 @@ sub pollStatus {
 	# Make sure we're still playing Sirius
 	return if !$song->isActive();
 	
-	$log->debug("Polling status...");
+	main::DEBUGLOG && $log->debug("Polling status...");
 
 	my $statusURL = Slim::Networking::SqueezeNetwork->url(
 		"/api/sirius/v1/playback/streamStatus?content=" . uri_escape( $status->{content} )
@@ -250,7 +250,7 @@ sub gotPollStatus {
 		};
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got Sirius stream status: " . Data::Dump::dump($info) );
 	}
 	
@@ -276,7 +276,7 @@ sub gotPollStatus {
 	# Add the status URL, for some reason it's not included in the status response
 	$info->{content} = $status->{content};
 	
-	$log->debug( "Sirius stream status OK, polling again in " . $info->{PollingInterval} );
+	main::DEBUGLOG && $log->debug( "Sirius stream status OK, polling again in " . $info->{PollingInterval} );
 	
 	# Stream is OK, setup next poll
 	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
@@ -318,12 +318,12 @@ sub checkActivity {
 	my $now          = Time::HiRes::time();
 	my $lastActivity = $song->master()->lastActivityTime();
 	if ( $now - $lastActivity >= $interval ) {
-		$log->debug("User has been inactive for at least $interval seconds, stopping");
+		main::DEBUGLOG && $log->debug("User has been inactive for at least $interval seconds, stopping");
 		stopStreaming( $song, 'PLUGIN_SIRIUS_STOPPING_INACTIVE' );
 		return;
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		my $inactive  = $now - $lastActivity;
 		my $nextCheck = $interval - $inactive;
 		$log->debug( "User has been inactive for only $inactive seconds, next check in $nextCheck" );
@@ -423,8 +423,8 @@ sub getMetadataFor {
 	my $bitrate;
 	my $logo;
 	
-	if ($song && $song->currentTrack()->url eq $url || $song->{'streamUrl'} eq $url) {
-		$bitrate = $song->bitrate / 1000;
+	if ($song && ($song->currentTrack()->url eq $url || $song->streamUrl() eq $url)) {
+		$bitrate = ($song->bitrate || 0) / 1000;
 		$logo    = $song->pluginData('coverArt');
 	}
 	
@@ -460,14 +460,14 @@ sub reinit {
 	# * Restart pollStatus timer
 	# * Restart checkActivity timer
 	
-	$log->is_debug && $log->debug( "Reinit Sirius for $url" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Reinit Sirius for $url" );
 	
 	# Ignore the check for playing status
 	$client->ignoreCheckPlayingStatus(1);
 	
 	if ( my $status = $song->pluginData('status') ) {
 		# Start a timer to check status at the defined interval
-		$log->debug( 'Polling status in ' . $status->{PollingInterval} . ' seconds' );
+		main::DEBUGLOG && $log->debug( 'Polling status in ' . $status->{PollingInterval} . ' seconds' );
 		Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 		Slim::Utils::Timers::setTimer( 
 			$song,
@@ -478,7 +478,7 @@ sub reinit {
 
 		# Start a timer to make sure the user remains active
 		if ( my $activityInterval = $song->pluginData('activityInterval') ) {
-			$log->debug( "Checking activity in $activityInterval seconds" );
+			main::DEBUGLOG && $log->debug( "Checking activity in $activityInterval seconds" );
 			Slim::Utils::Timers::killTimers( $song, \&checkActivity );
 			Slim::Utils::Timers::setTimer(
 				$song,

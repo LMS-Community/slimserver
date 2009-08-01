@@ -49,7 +49,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
 	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
-	Slim::Web::HTTP::protectCommand('rs232');
+	Slim::Web::HTTP::CSRF->protectCommand('rs232');
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 
 	# Initialize settings classes
@@ -137,7 +137,7 @@ sub rs232rxCallback {
 	
 	my $data = $request->getParam('_data');
 
-	$log->debug( "RS232: rx data: " . $data . "\n");
+	main::DEBUGLOG && $log->debug( "RS232: rx data: " . $data . "\n");
 
 	# When the first character on RS232 is received we open a socket connection to CLI (localhost)
 	if( !defined( $gSocket{$client})) {
@@ -148,7 +148,7 @@ sub rs232rxCallback {
 	}
 	# Check if socket was opened successful
 	if( !defined( $gSocket{$client})) {
-		$log->debug( "RS232: Cannot connect to CLI!\n");
+		main::DEBUGLOG && $log->debug( "RS232: Cannot connect to CLI!\n");
 	}
 	# If we have a socket connection
 	if( defined( $gSocket{$client})) {
@@ -185,7 +185,7 @@ sub relayAnswer {
 	# Read 1 byte from the socket (CLI)
 	my $bytes_read = $socket->sysread( $indata, 1);
 
-	$log->debug( "RS232: byte: " . $indata . "\n");
+	main::DEBUGLOG && $log->debug( "RS232: byte: " . $indata . "\n");
 
 	# Relay 1 byte back over RS232
 	Slim::Control::Request::executeRequest( $client, ['rs232', 'tx', $indata]);

@@ -4,11 +4,8 @@ use warnings;
 
 use base qw/DBIx::Class::Storage::DBI::ODBC/;
 
-sub last_insert_id
-{
-    my ($self) = @_;
-
-    my $dbh = $self->_dbh;
+sub _dbh_last_insert_id {
+    my ($self, $dbh, $source, $col) = @_;
 
     # get the schema/table separator:
     #    '.' when SQL naming is active
@@ -26,10 +23,14 @@ sub last_insert_id
 sub _sql_maker_opts {
     my ($self) = @_;
     
-    return {
-        limit_dialect => 'FetchFirst',
-        name_sep => $self->_dbh->get_info(41)
-    };
+    $self->dbh_do(sub {
+        my ($self, $dbh) = @_;
+
+        return {
+            limit_dialect => 'FetchFirst',
+            name_sep => $dbh->get_info(41)
+        };
+    });
 }
 
 1;
@@ -55,7 +56,7 @@ for connections using either SQL naming or System naming.
 
 =head1 AUTHORS
 
-Marc Mims C<< <marc@sssonline.com> >>
+Marc Mims C<< <marc@questright.com> >>
 
 Based on DBIx::Class::Storage::DBI::DB2 by Jess Robinson.
 

@@ -45,7 +45,7 @@ Set the passed socket to be blocking (1) or non-blocking (0)
 sub blocking {   
 	my $sock = shift;
 
- 	return $sock->blocking(@_) unless $^O =~ /Win32/;
+ 	return $sock->blocking(@_) unless main::ISWINDOWS;
 
 	my $nonblocking = $_[0] ? "0" : "1";
 	my $retval = ioctl($sock, 0x8004667e, \$nonblocking);

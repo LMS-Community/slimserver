@@ -37,7 +37,7 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing");
+	main::INFOLOG && $log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
 
@@ -275,10 +275,10 @@ sub updateLineIn {
 	$name =~ s/[{}]//g;
 	$name = $client->string($name);
 
-	$log->info("Calling addtracks on [$name] ($url)");
+	main::INFOLOG && $log->info("Calling addtracks on [$name] ($url)");
 
 	# Create an object in the database for this meta source: url.
-	my $obj = Slim::Schema->rs('Track')->updateOrCreate({
+	my $obj = Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'create'     => 1,
 		'readTags'   => 0,
@@ -360,7 +360,7 @@ sub webPages {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => undef });
 	}
 
-	Slim::Web::HTTP::addPageFunction($url, \&handleSetting);
+	Slim::Web::Pages->addPageFunction($url, \&handleSetting);
 }
 
 sub handleSetting {
@@ -385,7 +385,7 @@ sub _liosCallback {
 	
 	my $enabled = $request->getParam('_state');
 	
-	$log->debug( 'Line In state changed: ' . $enabled );
+	main::DEBUGLOG && $log->debug( 'Line In state changed: ' . $enabled );
 	
 	if ($enabled) {
 		# XXX - not sure it's a good idea to delete current playlist?

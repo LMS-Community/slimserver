@@ -9,6 +9,13 @@ use warnings;
 
 sub belongs_to {
   my ($class, $rel, $f_class, $cond, $attrs) = @_;
+
+  # assume a foreign key contraint unless defined otherwise
+  $attrs->{is_foreign_key_constraint} = 1 
+    if not exists $attrs->{is_foreign_key_constraint};
+  $attrs->{undef_on_null_fk} = 1
+    if not exists $attrs->{undef_on_null_fk};
+
   # no join condition or just a column name
   if (!ref $cond) {
     $class->ensure_class_loaded($f_class);
@@ -41,20 +48,25 @@ sub belongs_to {
     );
   }
   # explicit join condition
-  elsif (ref $cond eq 'HASH') {
-    my $cond_rel;
-    for (keys %$cond) {
-      if (m/\./) { # Explicit join condition
-        $cond_rel = $cond;
-        last;
+  elsif (ref $cond) {
+    if (ref $cond eq 'HASH') { # ARRAY is also valid
+      my $cond_rel;
+      for (keys %$cond) {
+        if (m/\./) { # Explicit join condition
+          $cond_rel = $cond;
+          last;
+        }
+        $cond_rel->{"foreign.$_"} = "self.".$cond->{$_};
       }
-      $cond_rel->{"foreign.$_"} = "self.".$cond->{$_};
+      $cond = $cond_rel;
     }
-    my $acc_type = (keys %$cond_rel == 1 and $class->has_column($rel))
-      ? 'filter'
-      : 'single';
+    my $acc_type = ((ref $cond eq 'HASH')
+                       && keys %$cond == 1
+                       && $class->has_column($rel))
+                     ? 'filter'
+                     : 'single';
     $class->add_relationship($rel, $f_class,
-      $cond_rel,
+      $cond,
       { accessor => $acc_type, %{$attrs || {}} }
     );
   }
@@ -67,12 +79,14 @@ sub belongs_to {
   return 1;
 }
 
-=head1 AUTHORS
+# Attempt to remove the POD so it (maybe) falls off the indexer
 
-Alexander Hartmaier <Alexander.Hartmaier@t-systems.at>
-
-Matt S. Trout <mst@shadowcatsystems.co.uk>
-
-=cut
+#=head1 AUTHORS
+#
+#Alexander Hartmaier <Alexander.Hartmaier@t-systems.at>
+#
+#Matt S. Trout <mst@shadowcatsystems.co.uk>
+#
+#=cut
 
 1;

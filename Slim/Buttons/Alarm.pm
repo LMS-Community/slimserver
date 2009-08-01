@@ -210,7 +210,7 @@ sub saveAlarm {
 
 	my $alarm = shift || $client->modeParam('alarm_alarm');
 
-	$log->debug('Saving alarm...');
+	main::DEBUGLOG && $log->debug('Saving alarm...');
 
 	if (defined $alarm->time) {
 		my $newAlarm = ! $alarm->id; # Unsaved alarms don't have an id
@@ -220,7 +220,7 @@ sub saveAlarm {
 		buildTopMenu($client, $alarm->id);
 
 	} else {
-		$log->debug('Alarm has no time set.  Not saving');
+		main::DEBUGLOG && $log->debug('Alarm has no time set.  Not saving');
 	}
 }
 
@@ -232,7 +232,7 @@ sub toggleDay {
 	my $alarm = $client->modeParam('alarm_alarm');
 	my $day = $item->{params}->{day};
 
-	$log->debug("toggleDay called for day: $day");
+	main::DEBUGLOG && $log->debug("toggleDay called for day: $day");
 
 	if ($day eq 'all') {
 		$alarm->everyDay($alarm->everyDay() ? 0 : 1); 
@@ -279,7 +279,7 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 	
-	$log->debug("setMode called.  method is $method");
+	main::DEBUGLOG && $log->debug("setMode called.  method is $method");
 
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
@@ -470,7 +470,7 @@ sub exitHandler {
 	my $client = shift;
 	my $exitType = shift;
 
-	$log->debug("exitHandler called with exit type $exitType");
+	main::DEBUGLOG && $log->debug("exitHandler called with exit type $exitType");
 
 	if ($exitType eq 'right') {
 		my $valueRef = $client->modeParam('valueRef');
@@ -486,7 +486,7 @@ sub exitHandler {
 
 		# Call callback if requested
 		if (defined $callback) {
-			$log->debug('Calling callback');
+			main::DEBUGLOG && $log->debug('Calling callback');
 			$callback->($client);
 		}
 		Slim::Buttons::Common::popModeRight($client);
@@ -504,7 +504,7 @@ sub exitRightHandler {
 
 	my $type = $item->{type};
 	if (defined $type) {
-		$log->debug("Menu item type: '$type'");
+		main::DEBUGLOG && $log->debug("Menu item type: '$type'");
 		my $nextMode;
 		my %modeParams = ();
 		if ($type eq 'menu') {	
@@ -537,7 +537,7 @@ sub exitRightHandler {
 				$modeParams{alarm_alarm} = $client->modeParam('alarm_alarm');
 			} else {
 				# TODO: Create new alarm only when entering Add Alarm and probably do it elsewhere
-				$log->debug('creating new alarm');
+				main::DEBUGLOG && $log->debug('creating new alarm');
 				$modeParams{alarm_alarm} = Slim::Utils::Alarm->new($client);
 			}
 
@@ -593,12 +593,12 @@ sub exitRightHandler {
 		}
 
 		if (defined $nextMode) {
-			$log->debug("Pushing into $nextMode");
+			main::DEBUGLOG && $log->debug("Pushing into $nextMode");
 			$modeParams{alarm_depth} = $client->modeParam('alarm_depth') + 1;
 			Slim::Buttons::Common::pushModeLeft($client, $nextMode, \%modeParams); 
 		}
 	} else {
-		$log->debug('Undefined menu item type');
+		main::DEBUGLOG && $log->debug('Undefined menu item type');
 
 		# Call any requested right handler
 		my $rightFunc = $item->{rightFunc};
@@ -616,7 +616,7 @@ sub exitRightHandler {
 sub timeExitHandler {
 	my ($client, $exittype) = @_;
 
-	$log->debug("exit type: $exittype");
+	main::DEBUGLOG && $log->debug("exit type: $exittype");
 	
 	my $callbackFunct = $client->modeParam('alarm_timeCallback');
 	my $alarm = $client->modeParam('alarm_alarm');

@@ -18,8 +18,6 @@ to select, set, and read player preferences.
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Alarm;
 use Slim::Utils::Misc;

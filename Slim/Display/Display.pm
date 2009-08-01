@@ -233,7 +233,7 @@ sub showBriefly {
 		return;
 	}
 
-	if ($log->is_info) {
+	if (main::INFOLOG && $log->is_info) {
 		my ($line, $subr) = (caller(1))[2,3];
 		($line, $subr) = (caller(2))[2,3] if $subr eq 'Slim::Player::Player::showBriefly';
 		$log->info(sprintf "caller %s (%d) %s ", $subr, $line, $display->updateMode() == 2 ? '[Blocked]' : '');
@@ -249,7 +249,7 @@ sub showBriefly {
 		return;
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( Data::Dump::dump($parts) );
 	}
 
@@ -495,7 +495,7 @@ sub curLines {
 		}
 	}
 
-	if ($log->is_info) {
+	if (main::INFOLOG && $log->is_info) {
 
 		my $source = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
 		my ($line, $sub, @subs);
@@ -506,8 +506,8 @@ sub curLines {
 			push @subs, $sub;
 		} while ($sub && $sub =~ /Slim::Display|Slim::Player::Player::update|Slim::Player::Player::push/);
 
-		$log->info(sprintf "lines $source [%s($line)]", join(", ", @subs));
-		$log->debug( Data::Dump::dump($parts) );
+		main::INFOLOG && $log->info(sprintf "lines $source [%s($line)]", join(", ", @subs));
+		main::DEBUGLOG && $log->debug( Data::Dump::dump($parts) );
 	}
 
 	return $parts;

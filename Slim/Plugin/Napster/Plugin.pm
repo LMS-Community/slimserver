@@ -69,9 +69,9 @@ sub initPlugin {
 		);
 	}
 	
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/napster/trackinfo.html',
 			sub {
 				my $client = $_[0];
@@ -152,7 +152,7 @@ sub trackInfoMenu {
 	
 	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'napster' );
 	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	

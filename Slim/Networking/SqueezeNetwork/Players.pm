@@ -67,7 +67,7 @@ sub shutdown {
 	
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 	
-	$log->info( "mysqueezebox.com player list shutdown" );
+	main::INFOLOG && $log->info( "SqueezeNetwork player list shutdown" );
 }
 
 sub fetch_players {
@@ -92,7 +92,7 @@ sub _players_done {
 		return _players_error( $http );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
 		$log->debug( "Got list of active services: " . Data::Dump::dump( $res->{active_services} ));
 		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
@@ -117,7 +117,7 @@ sub _players_done {
 		my $cur = complex_to_query( $prefs->get('sn_active_services') || {} );
 		
 		if ( $cur ne $new ) {
-			$log->debug( 'Updating active services from SN' );
+			main::DEBUGLOG && $log->debug( 'Updating active services from SN' );
 			$prefs->set( sn_active_services => $res->{active_services} );
 		}
 	}
@@ -223,7 +223,7 @@ sub _disconnect_player_done {
 		return _disconnect_player_error( $http );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Disconect SN player response: " . Data::Dump::dump( $res ) );
 	}
 	

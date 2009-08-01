@@ -173,7 +173,7 @@ sub new {
 
 	unless (defined $cacheVersion && $cacheVersion eq $version) {
 
-		$log->info("Version changed for cache: $namespace - clearing out old entries");
+		main::INFOLOG && $log->info("Version changed for cache: $namespace - clearing out old entries");
 		$self->clear();
 		$self->set('Slim::Utils::Cache-version', $version, 'never');
 
@@ -243,7 +243,7 @@ sub cleanup {
 		unless ($lastpurge && ($now - $lastpurge) < $PURGE_INTERVAL) {
 			my $start = $now;
 			
-			if ( !Slim::Utils::OSDetect::isWindows() ) {
+			if ( !main::ISWINDOWS && !Slim::Utils::OSDetect::isSqueezeOS() ) {
 				# Fork a child to purge the cache, as it's a slow operation
 				if ( my $pid = fork ) {
 					# parent
@@ -264,11 +264,11 @@ sub cleanup {
 			
 			$cache->set('Slim::Utils::Cache-purgetime', $start, 'never');
 			$now = Time::HiRes::time();
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
 			}
 		} else {
-			$log->info("Cache purge: $namespace - skipping, purged recently");
+			main::INFOLOG && $log->info("Cache purge: $namespace - skipping, purged recently");
 		}
 	}
 

@@ -32,9 +32,9 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['mediafly', 'skipTrack'],
 		[0, 1, 1, \&skipTrack]);
 	
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/mediafly/trackinfo.html',
 			sub {
 				my $client = $_[0];
@@ -69,7 +69,7 @@ sub skipTrack {
 	my $url = $song->currentTrack()->url;
 	return unless $url =~ /^mediafly/;
 		
-	$log->debug("Mediafly: Skip requested");
+	main::DEBUGLOG && $log->debug("Mediafly: Skip requested");
 		
 	$client->execute( [ "playlist", "jump", "+1" ] );
 	

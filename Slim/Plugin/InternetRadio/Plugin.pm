@@ -7,7 +7,7 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use File::Basename qw(basename);
 use File::Path qw(mkpath);
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir catfile);
 use HTTP::Date;
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
@@ -254,7 +254,7 @@ sub cacheIcon {
 	
 	my $iconpath = catfile( $icondir, basename($icon) );
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching remote icon $icon as $iconpath" );
 	}
 	

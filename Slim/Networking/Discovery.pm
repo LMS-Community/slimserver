@@ -8,7 +8,6 @@ package Slim::Networking::Discovery;
 # version 2.
 
 use strict;
-use IO::Socket;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -58,7 +57,7 @@ sub serverHostname {
 	# pad it out to 17 characters total
 	$hostname .= pack('C', 0) x (17 - (length $hostname));
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(" calculated $hostname length: " . length($hostname));
 	}
 
@@ -76,7 +75,7 @@ Send the client on the other end of the $udpsock a hello packet.
 sub sayHello {
 	my ($udpsock, $paddr) = @_;
 
-	$log->info(" Saying hello!");	
+	main::INFOLOG && $log->info(" Saying hello!");	
 
 	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
@@ -92,30 +91,30 @@ sub gotDiscoveryRequest {
 
 	$revision = join('.', int($revision / 16), ($revision % 16));
 
-	$log->info("gotDiscoveryRequest: deviceid = $deviceid, revision = $revision, MAC = $mac");
+	main::INFOLOG && $log->info("gotDiscoveryRequest: deviceid = $deviceid, revision = $revision, MAC = $mac");
 
 	my $response = undef;
 
 	if ($deviceid == 1) {
 
-		$log->info("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).");
+		main::INFOLOG && $log->info("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).");
 
 		$response = 'D'. pack('C', 0) x 17; 
 
 	} elsif ($deviceid >= 2 || $deviceid <= 4) {  ## FIXME always true
 
-		$log->info("It's a Squeezebox");
+		main::INFOLOG && $log->info("It's a Squeezebox");
 
 		$response = 'D'. serverHostname(); 
 
 	} else {
 
-		$log->info("Unknown device.");
+		main::INFOLOG && $log->info("Unknown device.");
 	}
 
 	$udpsock->send($response, 0, $clientpaddr);
 
-	$log->info("gotDiscoveryRequest: Sent discovery response.");
+	main::INFOLOG && $log->info("gotDiscoveryRequest: Sent discovery response.");
 }
 
 my %TLVhandlers = (
@@ -127,7 +126,7 @@ my %TLVhandlers = (
 	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
 	'VERS' => sub { $::VERSION },			   # send server version
 	# Info only
-	'JVID' => sub { $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
+	'JVID' => sub { main::INFOLOG && $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
 );
 
 =head2 addTLVHandler( $hash )
@@ -164,7 +163,7 @@ sub gotTLVRequest {
 		return;
 	}
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 		$log->debug("discovery packet:" . Data::Dump::dump($msg));
 	}
 
@@ -181,7 +180,7 @@ sub gotTLVRequest {
 		$l = unpack("xxxxC", $msg);
 		$v = $l ? substr($msg, 5, $l) : undef;
 
-		$log->debug(" TLV: $t len: $l");
+		main::DEBUGLOG && $log->debug(" TLV: $t len: $l");
 
 		if ($TLVhandlers{$t}) {
 			if (my $r = $TLVhandlers{$t}->($v)) {
@@ -202,7 +201,7 @@ sub gotTLVRequest {
 		return;
 	}
 
-	$log->info("sending response");
+	main::INFOLOG && $log->info("sending response");
 
 	$udpsock->send($response, 0, $clientpaddr);
 }

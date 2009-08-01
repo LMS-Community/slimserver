@@ -67,6 +67,7 @@ my %CapabilitiesMap = (
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
 	Rhap                    => 'canDecodeRhapsody',
+	SyncgroupID             => undef,
 
 	# deprecated
 	model                   => '_model',
@@ -95,11 +96,11 @@ sub init {
 
 
 sub reconnect {
-	my ($client, $paddr, $revision, $tcpsock, $reconnect, $bytes_received, $capabilities) = @_;
+	my ($client, $paddr, $revision, $tcpsock, $reconnect, $bytes_received, $syncgroupid, $capabilities) = @_;
 	
 	$client->updateCapabilities($capabilities);
 	
-	$client->SUPER::reconnect($paddr, $revision, $tcpsock, $reconnect, $bytes_received);
+	$client->SUPER::reconnect($paddr, $revision, $tcpsock, $reconnect, $bytes_received, $syncgroupid);
 }
 
 sub updateCapabilities {
@@ -111,7 +112,7 @@ sub updateCapabilities {
 		my @formats;
 		
 		for my $cap (split(/,/, $capabilities)) {
-			if ($cap =~ /^[a-z][a-z0-9]{1,3}$/) {
+			if ($cap =~ /^[a-z][a-z0-9]{1,4}$/) {
 				push(@formats, $cap);
 			} else {
 				my $value;
@@ -126,16 +127,16 @@ sub updateCapabilities {
 					my $f = $CapabilitiesMap{$cap};
 					$client->$f($value);
 				
-				} else {
+				} elsif (!exists($CapabilitiesMap{$cap})) {
 					
 					# It could be possible to have a completely generic mechanism here
-					# but I have not does that for the moment
+					# but I have not done that for the moment
 					$log->warn("unknown capability: $cap=$value, ignored");
 				}
 			}
 		}
 		
-		$log->is_info && $log->info('formats: ', join(',', @formats));
+		main::INFOLOG && $log->is_info && $log->info('formats: ', join(',', @formats));
 		$client->myFormats([@formats]);
 	}
 }

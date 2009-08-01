@@ -15,11 +15,11 @@ my $prefs = preferences('plugin.rs232');
 $prefs->setChange(\&Slim::Plugin::RS232::Plugin::cliOverRS232Change, 'clioverrs232enable');
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_RS232_NAME');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_RS232_NAME');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/RS232/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/RS232/settings/basic.html');
 }
 
 sub prefs {

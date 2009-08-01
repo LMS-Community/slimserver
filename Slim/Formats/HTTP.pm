@@ -26,6 +26,7 @@ use HTTP::Request;
 use IO::Socket qw(:crlf);
 use MIME::Base64;
 
+use Slim::Networking::Async::HTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
@@ -133,7 +134,7 @@ sub requestString {
 		
 		if (defined $seekdata->{timeOffset}) {
 			# Fix progress bar
-			$client->master()->currentsongqueue()->[-1]->{startOffset} = $seekdata->{timeOffset};
+			$client->master()->currentsongqueue()->[-1]->startOffset($seekdata->{timeOffset});
 			$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
 		}
 	}
@@ -191,7 +192,7 @@ sub parseHeaders {
 
 	for my $header (@headers) {
 
-		$log->info("Header: $header");
+		main::INFOLOG && $log->info("Header: $header");
 
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)$CRLF$/i) {
 
@@ -200,7 +201,7 @@ sub parseHeaders {
 			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
 
 				# Always prefer the title returned in the headers of a radio station
-				$log->info( "Setting new title for $url, " . ${*$self}{'title'} );
+				main::INFOLOG && $log->info( "Setting new title for $url, " . ${*$self}{'title'} );
 				Slim::Music::Info::setTitle( $url, ${*$self}{'title'} );
 				Slim::Music::Info::setCurrentTitle( $url, ${*$self}{'title'} );
 			}
@@ -215,7 +216,7 @@ sub parseHeaders {
 				Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
 			}
 			
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Bitrate for %s set to %d",
 					$self->infoUrl,
 					$self->bitrate,
@@ -260,7 +261,7 @@ sub parseHeaders {
 
 		elsif ($header eq $CRLF) { 
 
-			$log->info("Recieved final blank line...");
+			main::INFOLOG && $log->info("Recieved final blank line...");
 			last; 
 		}
 		
@@ -289,7 +290,7 @@ sub parseHeaders {
 	}
 	else {
 	
-		if ( $self->bitrate > 0 && $self->contentLength > 0 ) {
+		if ( $self->bitrate > 0 && defined $self->contentLength && $self->contentLength > 0 ) {
 			# if we know the bitrate and length of a stream, display a progress bar
 			if ( $self->bitrate < 1000 ) {
 				${*$self}{'bitrate'} *= 1000;

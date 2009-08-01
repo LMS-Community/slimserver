@@ -29,6 +29,51 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.podcast');
 
+use constant FEED_VERSION => 2; # bump this number when changing the defaults below
+
+sub DEFAULT_FEEDS {
+	[
+	{
+		name  => 'Odeo',
+		value => 'http://'
+			. Slim::Networking::SqueezeNetwork->get_server("content")
+			. '/opml/odeo.opml',
+	},
+	{
+		name  => 'PodcastAlley Top 50',
+		value => 'http://podcastalley.com/PodcastAlleyTop50.opml'
+	},
+	{
+		name  => 'PodcastAlley 10 Newest',
+		value => 'http://podcastalley.com/PodcastAlley10Newest.opml'
+	},
+	];
+}
+
+# migrate old prefs across
+$prefs->migrate(1, sub {
+	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names') || [] };
+	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_feeds') || [] };
+	my @feeds;
+
+	for my $name (@names) {
+		push @feeds, { 'name' => $name, 'value' => shift @values };
+	}
+
+	if (@feeds) {
+		$prefs->set('feeds', \@feeds);
+		$prefs->set('modified', 1);
+	}
+
+	1;
+});
+
+# migrate to latest version of default feeds if they have not been modified
+$prefs->migrate(FEED_VERSION, sub {
+	$prefs->set('feeds', DEFAULT_FEEDS()) unless $prefs->get('modified');
+	1;
+});
+
 if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::Podcast::Settings;
 }
@@ -38,7 +83,7 @@ my $cli_next;
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing.");
+	main::INFOLOG && $log->info("Initializing.");
 
 	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::Podcast::Settings->new;
@@ -58,7 +103,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['podcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug("Feed Info:");
 
@@ -170,9 +215,9 @@ sub webPages {
 	
 	Slim::Web::Pages->addPageLinks('plugins', { $title => $url });
 	
-	Slim::Web::HTTP::protectURI($url);
+	Slim::Web::HTTP::CSRF->protectURI($url);
 
-	Slim::Web::HTTP::addPageFunction(
+	Slim::Web::Pages->addPageFunction(
 		$url => sub {
 			my $client = $_[0];
 			
@@ -192,7 +237,7 @@ sub webPages {
 sub cliQuery {
 	my $request = shift;
 	
-	$log->debug('Enter');
+	main::DEBUGLOG && $log->debug('Enter');
 	
 	if ( main::SLIM_SERVICE ) {
 		my $client = $request->client;

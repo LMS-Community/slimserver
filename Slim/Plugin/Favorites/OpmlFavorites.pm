@@ -51,16 +51,31 @@ sub new {
 	return $favs;
 }
 
-sub filename {
+sub migrate {
 	my $class = shift;
 
-	my $dir = $prefsServer->get('playlistdir');
-
-	if (!-w $dir) {
-
-		$dir = $prefsServer->get('cachedir');
+	my $file = $class->filename();
+	if (! -f $file) {
+		foreach ($prefsServer->get('playlistdir'), $prefsServer->get('cachedir')) {
+			my $oldfile = $class->filename($_);
+			if (-f $oldfile) {
+				require File::Copy;
+				File::Copy::move($oldfile, $file);
+				last;
+			}
+		}
 	}
+}
 
+sub filename {
+	my $class = shift;
+	my $dir = shift;
+	
+	# Shortcut if filename supplied
+	return $dir if ($dir && -f $dir);
+
+	$dir ||= Slim::Utils::OSDetect::dirsFor('prefs');
+	
 	return catdir($dir, "favorites.opml");
 }
 
@@ -132,7 +147,7 @@ sub _loadOldFavorites {
 
 	my $toplevel = $class->toplevel;
 
-	$log->info("No opml favorites file found - loading old favorites");
+	main::INFOLOG && $log->info("No opml favorites file found - loading old favorites");
 
 	my @urls   = @{Slim::Utils::Prefs::OldPrefs->get('favorite_urls')   || []};
 	my @titles = @{Slim::Utils::Prefs::OldPrefs->get('favorite_titles') || []} ;
@@ -213,7 +228,7 @@ sub add {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("url: %s title: %s type: %s parser: %s hotkey: %s icon: %s", $url, $title, $type, $parser, $hotkey, $icon));
 	}
 
@@ -223,7 +238,7 @@ sub add {
 		my $index = $class->{'url-index'}->{ $url };
 		my $entry = $class->entry($index);
 
-		$log->info("Url already exists in favorites as index $index");
+		main::INFOLOG && $log->info("Url already exists in favorites as index $index");
 
 		return wantarray ? ($index, $entry->{'hotkey'}) : $index;
 	}
@@ -279,12 +294,12 @@ sub findUrl {
 
 	if (defined $index) {
 
-		$log->info("Match $url at index $index");
+		main::INFOLOG && $log->info("Match $url at index $index");
 
 		return wantarray ? ($index, $hotkey) : $index;
 	}
 
-	$log->info("No match for $url");
+	main::INFOLOG && $log->info("No match for $url");
 
 	return undef;
 }
@@ -319,7 +334,7 @@ sub deleteIndex {
 
 		splice @{$pos}, $i, 1;
 
-		$log->info("Removed entry at index $index");
+		main::INFOLOG && $log->info("Removed entry at index $index");
 
 		$class->save;
 	}
@@ -367,13 +382,13 @@ sub setHotkey {
 			
 			@{$pos}[ $i ]->{'hotkey'} = $key;
 
-			$log->info("Setting hotkey $key for index $index");
+			main::INFOLOG && $log->info("Setting hotkey $key for index $index");
 
 		} else {
 
 			delete @{$pos}[ $i ]->{'hotkey'};
 
-			$log->info("Deleting hotkey for index $index");
+			main::INFOLOG && $log->info("Deleting hotkey for index $index");
 		}
 
 		$class->save;

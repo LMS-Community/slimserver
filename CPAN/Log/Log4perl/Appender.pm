@@ -253,6 +253,10 @@ sub AUTOLOAD {
 
     $AUTOLOAD =~ s/.*:://;
 
+    if(! defined $self->{appender}) {
+        die "Can't locate object method $AUTOLOAD() in ", __PACKAGE__;
+    }
+
     return $self->{appender}->$AUTOLOAD(@_);
 }
 
@@ -432,7 +436,7 @@ as log messages. If a statement like
 
     $logger->debug($ip, $user, "signed in");
 
-causes an off-the-shelf C<Log::Log4perl::Screen> 
+causes an off-the-shelf C<Log::Log4perl::Appender::Screen> 
 appender to fire, the appender will 
 just concatenate the three message chunks passed to it
 in order to form a single string.
@@ -515,6 +519,98 @@ The subroutine above will add an ever increasing counter
 as an additional first field to 
 every message passed to the C<SomeApp> appender -- but not to
 any other appender in the system.
+
+=head2 Composite Appenders
+
+Composite appenders relay their messages to sub-appenders after providing
+some filtering or synchronizing functionality on incoming messages. 
+Examples are 
+Log::Log4perl::Appender::Synchronized,
+Log::Log4perl::Appender::Limit, and
+Log::Log4perl::Appender::Buffer. Check their manual pages for details.
+
+Composite appender objects are regular Log::Log4perl::Appender objects, 
+but they have the composite flag set:
+
+    $app->composite(1);
+
+and they define a post_init() method, which sets the appender it relays
+its messages to:
+
+    ###########################################
+    sub post_init {
+    ############################################
+        my($self) = @_;
+    
+        if(! exists $self->{appender}) {
+            die "No appender defined for " . __PACKAGE__;
+        }
+    
+        my $appenders = Log::Log4perl->appenders();
+        my $appender = Log::Log4perl->appenders()->{$self->{appender}};
+    
+        if(! defined $appender) {
+            die "Appender $self->{appender} not defined (yet) when " .
+                __PACKAGE__ . " needed it";
+        }
+    
+        $self->{app} = $appender;
+    }
+
+The reason for this post-processing step is that the relay appender
+might not be defined yet when the composite appender gets defined.
+This can happen if Log4perl is initialized with a configuration file
+(which is the most common way to initialize Log4perl), because
+appenders spring into existance in unpredictable order.
+
+For example, if you define a Synchronized appender like
+
+    log4perl.appender.Syncer            = Log::Log4perl::Appender::Synchronized
+    log4perl.appender.Syncer.appender   = Logfile
+
+then Log4perl will set the appender's C<appender> attribute to the
+I<name> of the appender to finally relay messages to. After the
+Log4perl configuration file has been processed, Log4perl will remember to 
+call the composite appender's post_init() method, which will grab
+the relay appender instance referred to by the name (Logfile) 
+and set it in its C<app> attribute. This is exactly what the
+code snippet above does.
+
+But if you initialize Log4perl by its API, you need to remember to
+perform these steps. Here's the lineup:
+
+    use Log::Log4perl qw(get_logger :levels);
+    
+    my $fileApp = Log::Log4perl::Appender->new(
+    		'Log::Log4perl::Appender::File',
+    		name     => 'MyFileApp',
+    		filename => 'mylog',
+    		mode     => 'append',
+    		);
+    $fileApp->layout(
+    		Log::Log4perl::Layout::PatternLayout::Multiline->new(
+    			'%d{yyyy-MM-dd HH:mm:ss} %p [%c] #%P> %m%n')
+    		);
+      # Make the appender known to the system (without assigning it to
+      # any logger
+    Log::Log4perl->add_appender( $fileApp );
+    
+    my $syncApp = Log::Log4perl::Appender->new(
+    		'Log::Log4perl::Appender::Synchronized',
+    		name       => 'MySyncApp',
+    		appender   => 'MyFileApp',
+    		key        => 'nem',
+    		);
+    $syncApp->post_init();
+    $syncApp->composite(1);
+
+
+      # The Synchronized appender is now ready, assign it to a logger
+      # and start logging.
+    get_logger("")->add_appender($syncApp);
+
+    get_logger("")->level($DEBUG);
+    get_logger("wonk")->debug("waah!");
 
 =head1 SEE ALSO
 

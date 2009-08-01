@@ -15,11 +15,11 @@ use Slim::Utils::Strings qw(string);
 my $prefs = preferences('server');
 
 sub name {
-	return Slim::Web::HTTP::protectName('SETUP_SYNCHRONIZE');
+	return Slim::Web::HTTP::CSRF->protectName('SETUP_SYNCHRONIZE');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/player/synchronization.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/player/synchronization.html');
 }
 
 sub needsClient {

@@ -35,7 +35,7 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing");
+	main::INFOLOG && $log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
 
@@ -243,10 +243,10 @@ sub updateDigitalInput {
 	$name =~ s/[{}]//g;
 	$name = $client->string($name);
 
-	$log->info("Calling addtracks on [$name] ($url)");
+	main::INFOLOG && $log->info("Calling addtracks on [$name] ($url)");
 
 	# Create an object in the database for this meta source: url.
-	my $obj = Slim::Schema->rs('Track')->updateOrCreate({
+	my $obj = Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'create'     => 1,
 		'readTags'   => 0,
@@ -330,8 +330,8 @@ sub webPages {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => undef });
 	}
 
-	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
-	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);
+	Slim::Web::Pages->addPageFunction("$urlBase/list.html", \&handleWebList);
+	Slim::Web::Pages->addPageFunction("$urlBase/set.html", \&handleSetting);
 }
 
 # Draws the plugin's web page

@@ -24,6 +24,10 @@ my $versionFile = catfile( scalar($os->dirsFor('updates')), 'server.version' );
 
 if (main::ISWINDOWS) {
 	require Win32::Process;
+
+	if (0) {
+		require 'auto/Win32/Process/List/autosplit.ix';
+	}
 }
 
 my %checkboxes;

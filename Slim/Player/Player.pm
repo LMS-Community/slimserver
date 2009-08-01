@@ -121,15 +121,16 @@ sub new {
 
 sub init {
 	my $client = shift;
+	my (undef, undef, $syncgroupid) = @_;
 
-	$client->SUPER::init();
+	$client->SUPER::init(@_);
 
 	Slim::Hardware::IR::initClient($client);
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
 	$client->power($prefs->client($client)->get('power'));
-	$client->startup();
+	$client->startup($syncgroupid);
 
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
@@ -926,14 +927,14 @@ sub trackJiffiesEpoch {
 	my $offset      = $timestamp - $jiffiesTime;
 	my $epoch       = $client->jiffiesEpoch || 0;
 
-	if ( $nplog->is_debug ) {
+	if ( main::DEBUGLOG && $nplog->is_debug ) {
 		$nplog->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
 	}
 
 	if (   $offset < $epoch			# simply a better estimate, or
 		|| $offset - $epoch > 50	# we have had wrap-around (or first time)
 	) {
-		if ( $synclog->is_debug ) {
+		if ( main::DEBUGLOG && $synclog->is_debug ) {
 			if ( abs($offset - $epoch) > 0.001 ) {
 				$synclog->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
 			}
@@ -957,7 +958,7 @@ sub trackJiffiesEpoch {
 			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
 				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
 			}
-			if ( $synclog->is_debug ) {
+			if ( main::DEBUGLOG && $synclog->is_debug ) {
 				$synclog->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
 			}
 			$client->jiffiesEpoch($epoch += $min_diff);
@@ -979,43 +980,6 @@ sub jiffiesToTimestamp {
 	return $client->jiffiesEpoch + $jiffies / $client->ticspersec - $client->packetLatency();
 }
 	
-# Only works for SliMP3s and (maybe) SB1s
-sub apparentStreamStartTime {
-	my ($client, $statusTime) = @_;
-
-	my $bytesPlayed = $client->bytesReceived()
-						- $client->bufferFullness()
-						- ($client->model() eq 'slimp3' ? 2000 : 2048);
-
-	my $format = $client->master()->streamformat() || '';
-
-	my $timePlayed;
-
-	if ( $format eq 'mp3' ) {
-		$timePlayed = Slim::Player::Source::findTimeForOffset($client, $bytesPlayed) or return;
-	}
-	elsif ( $format =~ /wav|aif|pcm/ ) {
-		$timePlayed = $bytesPlayed * 8 / ($client->streamingSong()->streambitrate() or return);
-	}
-	else {
-		return;
-	}
-
-	my $apparentStreamStartTime = $statusTime - $timePlayed;
-
-	if ( $synclog->is_debug ) {
-		$synclog->debug(
-			$client->id()
-			. " apparentStreamStartTime: $apparentStreamStartTime @ $statusTime \n"
-			. "timePlayed:$timePlayed (bytesReceived:" . $client->bytesReceived()
-			. " bufferFullness:" . $client->bufferFullness()
-			.")"
-		);
-	}
-
-	return $apparentStreamStartTime;
-}
-
 use constant PLAY_POINT_LIST_SIZE		=> 8;		# how many to keep
 use constant MAX_STARTTIME_VARIATION	=> 0.015;	# latest apparent-stream-start-time estimate
 													# must be this close to the average
@@ -1029,7 +993,7 @@ sub publishPlayPoint {
 
 	# remove all old and excessive play-points
 	pop @{$playPoints} if ( @{$playPoints} > PLAY_POINT_LIST_SIZE );
-	while( @{$playPoints} && $playPoints->[-1][0] < $cutoffTime ) {
+	while( $cutoffTime && @{$playPoints} && $playPoints->[-1][0] < $cutoffTime ) {
 		pop @{$playPoints};
 	}
 
@@ -1046,7 +1010,7 @@ sub publishPlayPoint {
 			$client->playPoint( [$statusTime, $meanStartTime] );
 			
 			if ( 0 && $synclog->is_debug ) {
-				$synclog->debug(
+				main::DEBUGLOG && $synclog->debug(
 					$client->id()
 					. " publishPlayPoint: $meanStartTime @ $statusTime"
 				);
@@ -1063,6 +1027,7 @@ sub isReadyToStream {
 sub rebuffer {
 	my ($client) = @_;
 	my $threshold = 80 * 1024; # 5 seconds of 128k
+	my $outputThreshold = 5 * 44100 * 2 * 4; # 5 seconds, 2 channels, 32bits/sample
 
 	my $song = $client->playingSong() || return;
 	my $url = $song->currentTrack()->url;
@@ -1076,6 +1041,8 @@ sub rebuffer {
 		$threshold = 5 * ( int($bitrate / 8) );
 	}
 	
+	# We could calculate a more-accurate outputThreshold, but it really is not worth it
+	
 	if ($threshold > $client->bufferSize() - 4000) {
 		$threshold = $client->bufferSize() - 4000;	# cheating , really for SliMP3s
 	}
@@ -1084,7 +1051,7 @@ sub rebuffer {
 	# as the output buffer is not updated in pause mode.
 	my $fullness = $client->bufferFullness();
 	
-	$log->info( "Rebuffering: $fullness / $threshold" );
+	main::INFOLOG && $log->info( "Rebuffering: $fullness / $threshold" );
 	
 	$client->bufferReady(0);
 	
@@ -1094,7 +1061,7 @@ sub rebuffer {
 		$client,
 		Time::HiRes::time() + 0.125,
 		\&_buffering,
-		{threshold => $threshold, title => $title, cover => $cover}
+		{threshold => $threshold, outputThreshold => $outputThreshold, title => $title, cover => $cover}
 	);
 }
 
@@ -1126,6 +1093,7 @@ sub _buffering {
 	my $log = logger('player.source');
 	
 	my $threshold = $args->{'threshold'};
+	my $outputThreshold = $args->{'outputThreshold'};
 	
 	my $controller = $client->controller();
 	my $buffering = $controller->buffering();
@@ -1172,11 +1140,19 @@ sub _buffering {
 	}
 	
 	my $fullness = $client->bufferFullness();
+	my $outputFullness = $client->outputBufferFullness();
 	
-	$log->info("Buffering... $fullness / $threshold");
+	main::INFOLOG &&                                        $log->info("Buffering... $fullness / $threshold");
+	main::INFOLOG && $outputThreshold && $outputFullness && $log->info("  +output... $outputFullness / $outputThreshold");
 	
 	# Bug 1827, display better buffering feedback while we wait for data
-	my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
+	my $fraction = $fullness / $threshold;
+	
+	if ($outputThreshold && $outputFullness) {
+		$fraction += $outputFullness / $outputThreshold;
+	}
+	
+	my $percent = sprintf "%d", $fraction * 100;
 	
 	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
 	

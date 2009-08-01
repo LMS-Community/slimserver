@@ -28,6 +28,13 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.rescan');
 
+$prefs->migrate(1, sub {
+	$prefs->set('time',      Slim::Utils::Prefs::OldPrefs->get('rescan-time')      || 9 * 60 * 60 );
+	$prefs->set('scheduled', Slim::Utils::Prefs::OldPrefs->get('rescan-scheduled') || 0           );
+	$prefs->set('type',      Slim::Utils::Prefs::OldPrefs->get('rescan-type')      || '1rescan'   );
+	1;
+});
+
 our $interval = 1; # check every x seconds
 our @browseMenuChoices;
 our %functions;
@@ -97,7 +104,7 @@ sub setMode {
 		
 	} else {
 
-		if (Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all) {
+		if (Slim::Schema::hasLibrary() && Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all) {
 			push @browseMenuChoices, 'SETUP_VIEW_NOT_SCANNING'
 		}
 
@@ -259,8 +266,10 @@ sub progressUpdate {
 
 	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
 
-	@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
-
+	if (Slim::Schema::hasLibrary()) {
+		@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
+	}
+	
 	my $size;
 	
 	if (scalar @progress) {
@@ -481,7 +490,7 @@ sub executeRescan {
 
 	if (!Slim::Music::Import->stillScanning()) {
 
-		logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
+		main::INFOLOG && logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
 
 		Slim::Control::Request::executeRequest($client, $rescanType);
 	}

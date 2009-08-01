@@ -193,111 +193,6 @@ PLUGIN_EXTENSIONS_REPO_ERROR
 	RU	Неисправный репозиторий
 	SV	Felaktig databas
 
-PLUGIN_EXTENSIONS_REMOVED
-	CS	Odstraněno
-	DA	Fjernet
-	DE	Entfernt
-	EN	Removed
-	ES	Quitado
-	FI	Poistettu
-	FR	Supprimé
-	IT	Rimosso
-	NL	Verwijderd
-	NO	Fjernet
-	PL	Usunięto
-	RU	Удалено
-	SV	Borttaget
-
-PLUGIN_EXTENSIONS_DOWNLOADING
-	CS	Stahování
-	DA	Henter
-	DE	Daten werden heruntergeladen
-	EN	Downloading
-	ES	Descargando
-	FI	Ladataan
-	FR	Téléchargement en cours…
-	IT	Download in corso…
-	NL	Downloaden
-	NO	Laster ned
-	PL	Pobieranie
-	RU	Загрузка
-	SV	Hämtar
-
-PLUGIN_EXTENSIONS_BAD_DIGEST
-	CS	Chyba při stahování (kontrolní součet souboru neodpovídá)
-	DA	Installationen mislykkedes (filens kontrolsum er forkert)
-	DE	Installation fehlgeschlagen (Datei-Prüfsumme stimmt nicht überein)
-	EN	Failed to install (file checksum does not match)
-	ES	Error al instalar (la suma de comprobación de archivo no coincide)
-	FI	Asennus epäonnistui (tiedoston tarkistussumma ei täsmää)
-	FR	Echec de l'installation (contrôle de parité non valide pour le fichier)
-	IT	Installazione non eseguita (mancata corrispondenza del checksum del file)
-	NL	Kan niet worden geïnstalleerd (controlesom van bestand komt niet overeen)
-	NO	Innstallering mislyktes (kontrollsummen for filen stemmer ikke overens)
-	PL	Instalacja nie powiodła się (suma kontrolna pliku nie jest zgodna)
-	RU	Установка не выполнена (контрольные суммы файлов не совпадают)
-	SV	Installationen misslyckades (filens kontrollsumma är felaktig)
-
-PLUGIN_EXTENSIONS_BAD_ZIP
-	CS	Chyba při instalaci (narušený zip soubor)
-	DA	Installationen mislykkedes (zip-filen er beskadiget)
-	DE	Installation fehlgeschlagen (Zip-Datei beschädigt)
-	EN	Failed to install (corrupt zip file)
-	ES	Error al instalar (archivo zip dañado)
-	FI	Asennus epäonnistui (vaurioitunut Zip-tiedosto)
-	FR	Echec de l'installation, fichier zip corrompu.
-	IT	Installazione non eseguita (file zip danneggiato)
-	NL	Kan niet worden geïnstalleerd (beschadigd zip-bestand)
-	NO	Installering mislyktes (korrupt zip-fil)
-	PL	Instalacja nie powiodła się (uszkodzony plik zip)
-	RU	Установка не выполнена (поврежденный файл ZIP)
-	SV	Det gick inte att installera (zip-filen är skadad)
-
-PLUGIN_EXTENSIONS_EXTRACTED
-	CS	Instalován
-	DA	Installeret
-	DE	Installiert
-	EN	Installed
-	ES	Instalada
-	FI	Asennettu
-	FR	Installé
-	IT	Installato
-	NL	Geïnstalleerd
-	NO	Installert
-	PL	Zainstalowane
-	RU	Установлено
-	SV	Installerad
-
-PLUGIN_EXTENSIONS_BAD_EXTRACTION
-	CS	Chyba při instalaci (není možné extrahovat zip soubor)
-	DA	Installationen mislykkedes (zip-filen kunne ikke pakkes ud)
-	DE	Installation fehlgeschlagen (Zip-Datei konnte nicht extrahiert werden)
-	EN	Failed to install (zip file could not be extracted)
-	ES	Error al instalar (no se pudo extraer el archivo zip)
-	FI	Asennus epäonnistui (Zip-tiedostoa ei voitu purkaa)
-	FR	Echec de l'installation, le fichier zip n'a pas pu être extrait.
-	IT	Installazione non eseguita (impossibile estrarre il file zip)
-	NL	Kan niet worden geïnstalleerd (zip-bestand kan niet worden geëxtraheerd)
-	NO	Installering mislyktes (zip-filen kunne ikke pakkes ut)
-	PL	Instalacja nie powiodła się (nie można wyodrębnić pliku zip)
-	RU	Установка не выполнена (не удалось распаковать файл ZIP)
-	SV	Det gick inte att installera (zip-filen kunde inte packas upp)
-
-PLUGIN_EXTENSIONS_BAD_DOWNLOAD
-	CS	Instalace selhala (nebylo možné stáhnout soubor)
-	DA	Installationen mislykkedes (filen blev ikke hentet)
-	DE	Installation fehlgeschlagen (Datei konnte nicht heruntergeladen werden)
-	EN	Failed to install (could not download file)
-	ES	Error al instalar (no se pudo descargar el archivo)
-	FI	Asennus epäonnistui (tiedostoa ei voitu ladata)
-	FR	Echec de l'installation, le fichier n'a pas pu être téléchargé.
-	IT	Installazione non eseguita (impossibile scaricare il file)
-	NL	Kan niet worden geïnstalleerd (kan bestand niet downloaden)
-	NO	Installering mislyktes (kunne ikke laste ned fil)
-	PL	Instalacja nie powiodła się (nie można pobrać pliku)
-	RU	Установка не выполнена (не удалось загрузить файл)
-	SV	Installationen misslyckades (filen kunde inte laddas ner)
-
 PLUGIN_EXTENSIONS_AUTHOR
 	CS	Autor
 	DA	Lavet af
@@ -343,3 +238,26 @@ PLUGIN_EXTENSIONS_WARNING_POPUP2
 	RU	Устанавливайте расширения только проверенных авторов. Вредоносное ПО может повредить компьютер или нарушить конфиденциальность данных.
 	SV	Installera endast tillägg som utvecklats av personer eller organisationer som du litar på. Skadliga program kan förstöra datorn och leda till att dina personuppgifter sprids.
 
+PLUGIN_EXTENSIONS_ACTIVE
+	EN	Active plugins
+
+PLUGIN_EXTENSIONS_INACTIVE
+	EN	Inactive plugins
+
+PLUGIN_EXTENSIONS_UPDATES
+	EN	Updated plugins available
+
+PLUGIN_EXTENSIONS_AUTO
+	EN	Update plugins automatically
+
+PLUGIN_EXTENSIONS_AUTO_DESC
+	EN	Allow the Squeezebox server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
+
+PLUGIN_EXTENSIONS_OTHERREPO
+	EN	Show all 3rd party plugins
+
+PLUGIN_EXTENSIONS_OTHERREPO_DESC
+	EN	Show all other 3rd party plugins contributed by members of the Squeezebox community.  Note these plugins are unsupported and should be used at your own risk.
+
+PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
+	EN	Please note that 3rd party plugins are unsupported by Logitech and should be used at your own risk.  Please contact plugin authors for support.

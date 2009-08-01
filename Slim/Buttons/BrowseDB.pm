@@ -303,7 +303,7 @@ sub init {
 
 			if (scalar @mixers == 1) {
 				
-				logger('server.plugin')->info("Running Mixer $mixers[0]");
+				main::INFOLOG && logger('server.plugin')->info("Running Mixer $mixers[0]");
 
 				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
 				
@@ -358,7 +358,7 @@ sub mixerExitHandler {
 
 		if (defined $Imports->{$mixer}->{'mixer'}) {
 
-			logger('server.plugin')->info("Running Mixer $mixer");
+			main::INFOLOG && logger('server.plugin')->info("Running Mixer $mixer");
 
 			&{$Imports->{$mixer}->{'mixer'}}($client);
 
@@ -712,7 +712,7 @@ sub setMode {
 	my $search    = $client->modeParam('search');
 	my $log       = logger('database.info');
 
-	$log->debug("hierarchy: $hierarchy level: $level");
+	main::DEBUGLOG && $log->debug("hierarchy: $hierarchy level: $level");
 
 	# Parse the hierarchy list into an array
 	my @levels   = split(',', $hierarchy);
@@ -886,7 +886,7 @@ sub setMode {
 		$selectionKey = join(':', $hierarchy, $level, Storable::freeze($find));
 		$listIndex    = $client->lastID3Selection($selectionKey) || 0;
 
-		$log->debug("last position from selection key $selectionKey is $listIndex");
+		main::DEBUGLOG && $log->debug("last position from selection key $selectionKey is $listIndex");
 	}
 
 	my %params = (

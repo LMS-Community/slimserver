@@ -27,7 +27,7 @@ use constant CACHE_TIME => 300;
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist );
+	Slim::Web::Pages->addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist );
 }
 
 sub playlist {
@@ -70,13 +70,13 @@ sub playlist {
 
 	if ($log->is_debug && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
-		$log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
-		$log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
-		$log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
-		$log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
+		main::DEBUGLOG && $log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
+		main::DEBUGLOG && $log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
+		main::DEBUGLOG && $log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
+		main::DEBUGLOG && $log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
 
-		$log->debug("skinOverride: $params->{'skinOverride'}");
-		$log->debug("start: $params->{'start'}");
+		main::DEBUGLOG && $log->debug("skinOverride: $params->{'skinOverride'}");
+		main::DEBUGLOG && $log->debug("start: $params->{'start'}");
 	}
 
 	# Only build if we need to - try to return cached html or build page from cached info
@@ -93,7 +93,7 @@ sub playlist {
 
 		if ($cachedRender->[5]) {
 
-			$log->info("Returning cached playlist html - not modified.");
+			main::INFOLOG && $log->info("Returning cached playlist html - not modified.");
 
 			# reset cache timer to forget cached html
 			Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
@@ -103,7 +103,7 @@ sub playlist {
 
 		} else {
 
-			$log->info("Rebuilding playlist from cached params.");
+			main::INFOLOG && $log->info("Rebuilding playlist from cached params.");
 
 			if ($prefs->get('playlistdir')) {
 				$params->{'cansave'} = 1;
@@ -125,7 +125,7 @@ sub playlist {
 
 	$params->{'cansave'} = 1;
 	
-	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+	$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 				'itemCount'    => $songcount,
 				'currentItem'  => Slim::Player::Source::playingSongIndex($client),
 				'path'         => $params->{'path'},
@@ -161,7 +161,7 @@ sub playlist {
 
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
-			$track = Slim::Schema->rs('Track')->objectForUrl($objOrUrl) || do {
+			$track = Slim::Schema->objectForUrl($objOrUrl) || do {
 
 				logError("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!");
 				next;
@@ -221,7 +221,7 @@ sub playlist {
 		main::idleStreams();
 	}
 
-	$log->info("End playlist build.");
+	main::INFOLOG && $log->info("End playlist build.");
 
 	my $page = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
@@ -244,7 +244,7 @@ sub playlist {
 			$cacheHtml ? $page : undef,
 		]);
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info( sprintf("Caching playlist as %s.", $cacheHtml ? 'html' : 'params') );
 		}
 
@@ -261,7 +261,7 @@ sub playlist {
 sub flushCachedHTML {
 	my $client = shift;
 
-	$log->info("Flushing playlist html cache for client.");
+	main::INFOLOG && $log->info("Flushing playlist html cache for client.");
 	$client->currentPlaylistRender(undef);
 }
 

@@ -152,7 +152,7 @@ sub getFromDB { if ( main::SLIM_SERVICE ) { # optimize out for SC
 		# nothing found
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf( 
 			"getFromDB: retrieved client pref %s-%s = %s",
 			$client->id, $key, (defined($value) ? $value : 'undef')
@@ -232,7 +232,7 @@ sub set {
 
 	if ( $valid && ( main::SLIM_SERVICE || $pref !~ /^_/ ) ) {
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(
 				sprintf(
 					"setting %s:%s:%s to %s",
@@ -288,7 +288,7 @@ sub set {
 
 			if ( (my $obj = $class->_obj) || !main::SLIM_SERVICE ) {
 				for my $func ( @{$change} ) {
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
 					}
 				
@@ -312,7 +312,8 @@ sub set {
 			$log->warn(
 				sprintf(
 					"attempting to set %s:%s:%s to %s - invalid value",
-					$namespace, $clientid, $pref, defined $new ? Data::Dump::dump($new) : 'undef'
+					$namespace, $clientid, $pref, 
+						main::DEBUGLOG ? (defined $new ? Data::Dump::dump($new) : 'undef') : ''
 				)
 			);
 		}
@@ -355,7 +356,7 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 					my $change = $root->{onchange}->{ $pref };
 					for my $func ( @{$change} ) {
 						push @ret, sub {
-							$log->is_debug && $log->debug(
+							main::DEBUGLOG && $log->is_debug && $log->debug(
 								'executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func)
 							);
 							
@@ -388,7 +389,7 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 		eval { $func->(); };
 		if ( $@ && $log->is_debug ) {
 			my $handler = Slim::Utils::PerlRunTime::realNameForCodeRef($func);
-			$log->debug( "Error running bulkSet change handler $handler: $@" );
+			main::DEBUGLOG && $log->debug( "Error running bulkSet change handler $handler: $@" );
 			Slim::Utils::Misc::bt();
 		}
 	}
@@ -430,7 +431,7 @@ sub init {
 				$value = $hash->{ $pref };
 			}
 
-			if ( $log->is_info ) {
+			if ( main::DEBUGLOG && $log->is_info ) {
 				$log->info(
 					"init " . $class->_root->{'namespace'} . ":" 
 					. ($class->{'clientid'} || '') . ":" . $pref 
@@ -462,7 +463,7 @@ sub remove {
 
 	while (my $pref  = shift) {
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(
 				"removing " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref
 			);
@@ -579,7 +580,7 @@ sub AUTOLOAD {
 
 	if ($optimiseAccessors) {
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(
 				  "creating accessor for " 
 				. $class->_root->{'namespace'} . ":" 

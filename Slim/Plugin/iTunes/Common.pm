@@ -69,7 +69,7 @@ sub useiTunesLibrary {
 
 	Slim::Music::Import->useImporter($class, $use && $can);
 
-	$log->info("Using iTunes library: $use");
+	main::INFOLOG && $log->info("Using iTunes library: $use");
 
 	return $use && $can;
 }
@@ -115,54 +115,52 @@ sub findLibraryFromPlist {
 }
 
 sub findLibraryFromRegistry {
-	my $class = shift;
-	my $path  = undef;
+	if (main::ISWINDOWS) {
+		my $class = shift;
+		my $path  = undef;
 
-	unless (Slim::Utils::OSDetect::isWindows()) {
-		return;
-	}
+		Slim::bootstrap::tryModuleLoad('Win32::TieRegistry');
 
-	Slim::bootstrap::tryModuleLoad('Win32::TieRegistry');
+		if (!$@) {
 
-	if (!$@) {
+			require Win32::TieRegistry;
 
-		require Win32::TieRegistry;
-
-		$Win32::TieRegistry::Registry->Delimiter('/');
-		$Win32::TieRegistry::Registry->ArrayValues(0);
-		
-		if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
-				."/CurrentVersion/Explorer/Shell Folders/My Music"}) {
+			$Win32::TieRegistry::Registry->Delimiter('/');
+			$Win32::TieRegistry::Registry->ArrayValues(0);
 			
-			$path = $folder . '\\iTunes\\iTunes Music Library.xml';
+			if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+					."/CurrentVersion/Explorer/Shell Folders/My Music"}) {
 				
-			if (! -r $path) {
-				$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
+				$path = $folder . '\\iTunes\\iTunes Music Library.xml';
+					
+				if (! -r $path) {
+					$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
+				}
+				
+				main::INFOLOG && $log->info("Searching 'My Music' here: $folder for $path");
+
+				if ($path && -r $path) {
+
+					return $path;
+
+				}
 			}
 			
-			$log->info("Searching 'My Music' here: $folder for $path");
+			if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+					."/CurrentVersion/Explorer/Shell Folders/Personal"}) {
 
-			if ($path && -r $path) {
-
-				return $path;
-
+				$path = $folder . '\\My Music\\iTunes\\iTunes Music Library.xml';
+				
+				if (! -r $path) {
+					$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
+				}
+				
+				main::INFOLOG && $log->info("Searching 'Personal' here: $folder for $path");
 			}
 		}
-		
-		if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
-				."/CurrentVersion/Explorer/Shell Folders/Personal"}) {
 
-			$path = $folder . '\\My Music\\iTunes\\iTunes Music Library.xml';
-			
-			if (! -r $path) {
-				$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
-			}
-			
-			$log->info("Searching 'Personal' here: $folder for $path");
-		}
+		return $path;
 	}
-
-	return $path;
 }
 
 sub findMusicLibraryFile {
@@ -185,7 +183,7 @@ sub findMusicLibraryFile {
 		}
 	}
 
-	$log->info("Attempting to locate iTunes Music Library.xml automatically");
+	main::INFOLOG && $log->info("Attempting to locate iTunes Music Library.xml automatically");
 
 	my $base = $ENV{'HOME'} || '';
 
@@ -193,7 +191,7 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 
-		$log->info("Found path via iTunes preferences at: $path");
+		main::INFOLOG && $log->info("Found path via iTunes preferences at: $path");
 
 		$prefs->set('xml_file', $path );
 
@@ -204,7 +202,7 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 
-		$log->info("Found path via Windows registry at: $path");
+		main::INFOLOG && $log->info("Found path via Windows registry at: $path");
 
 		$prefs->set('xml_file', $path );
 
@@ -239,13 +237,13 @@ sub findMusicLibraryFile {
 		
 		if ($path && -r $path) {
 
-			$log->info("Found path via directory search at: $path");
+			main::INFOLOG && $log->info("Found path via directory search at: $path");
 
 			return $path;
 		}
 	}
 
-	$log->info("Unable to find iTunes Music Library.xml");
+	main::INFOLOG && $log->info("Unable to find iTunes Music Library.xml");
 
 	return undef;
 }
@@ -287,7 +285,7 @@ sub isMusicLibraryFileChanged {
 
 		my $scanInterval = $prefs->get('scan_interval');
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug("lastiTunesChange: " . scalar localtime($lastiTunesChange));
 			$log->debug("lastScanTime    : $lastScanTime");
 			$log->debug("scanInterval    : $scanInterval");
@@ -296,27 +294,27 @@ sub isMusicLibraryFileChanged {
 		if (!$scanInterval) {
 
 			# only scan if itunesscaninterval is non-zero.
-			$log->info("Scan Interval set to 0, rescanning disabled.");
+			main::INFOLOG && $log->info("Scan Interval set to 0, rescanning disabled.");
 
 			return 0;
 		}
 
 		if (!$lastScanTime) {
 
-			$log->info("lastScanTime is 0: Will start scanning.");
+			main::INFOLOG && $log->info("lastScanTime is 0: Will start scanning.");
 
 			return 1;
 		}
 
 		if ((time - $lastScanTime) > $scanInterval) {
 
-			$log->info("(time - lastScanTime) > scanInterval: Will start scanning.");
+			main::INFOLOG && $log->info("(time - lastScanTime) > scanInterval: Will start scanning.");
 
 			return 1;
 
 		} else {
 
-			$log->info("Waiting for $scanInterval seconds to pass before rescanning");
+			main::INFOLOG && $log->info("Waiting for $scanInterval seconds to pass before rescanning");
 		}
 	}
 
@@ -354,7 +352,7 @@ sub normalize_location {
 
 	$url =~ s/file:\/\/localhost\//file:\/\/\//;
 
-	$log->debug("Normalized $location to $url");
+	main::DEBUGLOG && $log->debug("Normalized $location to $url");
 
 	return $url;
 }

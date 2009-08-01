@@ -157,10 +157,23 @@ my %attempted_to_load;
 # library keys that are image file formats
 my %file_formats = map { $_ => 1 } qw/tiff pnm gif png jpeg raw bmp tga/;
 
+# image pixel combine types
+my @combine_types = 
+  qw/none normal multiply dissolve add subtract diff lighten darken
+     hue saturation value color/;
+my %combine_types;
+@combine_types{@combine_types} = 0 .. $#combine_types;
+$combine_types{mult} = $combine_types{multiply};
+$combine_types{'sub'}  = $combine_types{subtract};
+$combine_types{sat}  = $combine_types{saturation};
+
+# this will be used to store global defaults at some point
+my %defaults;
+
 BEGIN {
   require Exporter;
   @ISA = qw(Exporter);
-  $VERSION = '0.62';
+  $VERSION = '0.67';
   eval {
     require XSLoader;
     XSLoader::load(Imager => $VERSION);
@@ -173,13 +186,8 @@ BEGIN {
 }
 
 BEGIN {
-  i_init_fonts(); # Initialize font engines
   Imager::Font::__init();
   for(i_list_formats()) { $formats{$_}++; }
-
-  if ($formats{'t1'}) {
-    i_t1_set_aa(1);
-  }
 
   if (!$formats{'t1'} and !$formats{'tt'} 
       && !$formats{'ft2'} && !$formats{'w32'}) {
@@ -561,6 +569,22 @@ sub _color {
   }
 
   return $result;
+}
+
+sub _combine {
+  my ($self, $combine, $default) = @_;
+
+  if (!defined $combine && ref $self) {
+    $combine = $self->{combine};
+  }
+  defined $combine or $combine = $defaults{combine};
+  defined $combine or $combine = $default;
+
+  if (exists $combine_types{$combine}) {
+    $combine = $combine_types{$combine};
+  }
+  
+  return $combine;
 }
 
 sub _valid_image {
@@ -1173,7 +1197,7 @@ sub _get_reader_io {
   }
   elsif ($input->{fh}) {
     my $fd = fileno($input->{fh});
-    unless ($fd) {
+    unless (defined $fd) {
       $self->_set_error("Handle in fh option not opened");
       return;
     }
@@ -1224,7 +1248,7 @@ sub _get_writer_io {
   }
   elsif ($input->{fh}) {
     my $fd = fileno($input->{fh});
-    unless ($fd) {
+    unless (defined $fd) {
       $self->_set_error("Handle in fh option not opened");
       return;
     }
@@ -1569,6 +1593,9 @@ my %obsolete_opts =
    gif_loop_count => 'gif_loop',
   );
 
+# options that should be converted to colors
+my %color_opts = map { $_ => 1 } qw/i_background/;
+
 sub _set_opts {
   my ($self, $opts, $prefix, @imgs) = @_;
 
@@ -1589,6 +1616,13 @@ sub _set_opts {
     }
     next unless $tagname =~ /^\Q$prefix/;
     my $value = $opts->{$opt};
+    if ($color_opts{$opt}) {
+      $value = _color($value);
+      unless ($value) {
+	$self->_set_error($Imager::ERRSTR);
+	return;
+      }
+    }
     if (ref $value) {
       if (UNIVERSAL::isa($value, "Imager::Color")) {
         my $tag = sprintf("color(%d,%d,%d,%d)", $value->rgba);
@@ -2041,6 +2075,14 @@ sub scale_calculate {
 
   my %opts = ('type'=>'max', @_);
 
+  # none of these should be references
+  for my $name (qw/xpixels ypixels xscalefactor yscalefactor width height/) {
+    if (defined $opts{$name} && ref $opts{$name}) {
+      $self->_set_error("scale_calculate: $name parameter cannot be a reference");
+      return;
+    }
+  }
+
   my ($x_scale, $y_scale);
   my $width = $opts{width};
   my $height = $opts{height};
@@ -2144,12 +2186,12 @@ sub scale {
   if ($opts{qtype} eq 'normal') {
     $tmp->{IMG} = i_scaleaxis($self->{IMG}, $x_scale, 0);
     if ( !defined($tmp->{IMG}) ) { 
-      $self->{ERRSTR} = 'unable to scale image';
+      $self->{ERRSTR} = 'unable to scale image: ' . $self->_error_as_msg;
       return undef;
     }
     $img->{IMG}=i_scaleaxis($tmp->{IMG}, $y_scale, 1);
     if ( !defined($img->{IMG}) ) { 
-      $self->{ERRSTR}='unable to scale image'; 
+      $self->{ERRSTR}='unable to scale image: ' . $self->_error_as_msg; 
       return undef;
     }
 
@@ -2166,7 +2208,7 @@ sub scale {
   elsif ($opts{'qtype'} eq 'mixing') {
     $img->{IMG} = i_scale_mixing($self->{IMG}, $new_width, $new_height);
     unless ($img->{IMG}) {
-      $self->_set_error(Imager->_error_as_meg);
+      $self->_set_error(Imager->_error_as_msg);
       return;
     }
     return $img;
@@ -2410,7 +2452,7 @@ sub transform2 {
 
 sub rubthrough {
   my $self=shift;
-  my %opts=(tx => 0,ty => 0, @_);
+  my %opts= @_;
 
   unless ($self->{IMG}) { 
     $self->{ERRSTR}='empty input image'; 
@@ -2427,15 +2469,108 @@ sub rubthrough {
 	   src_maxy => $opts{src}->getheight(),
 	   %opts);
 
-  unless (i_rubthru($self->{IMG}, $opts{src}->{IMG}, $opts{tx}, $opts{ty},
+  my $tx = $opts{tx};
+  defined $tx or $tx = $opts{left};
+  defined $tx or $tx = 0;
+
+  my $ty = $opts{ty};
+  defined $ty or $ty = $opts{top};
+  defined $ty or $ty = 0;
+
+  unless (i_rubthru($self->{IMG}, $opts{src}->{IMG}, $tx, $ty,
                     $opts{src_minx}, $opts{src_miny}, 
                     $opts{src_maxx}, $opts{src_maxy})) {
     $self->_set_error($self->_error_as_msg());
     return undef;
   }
+
   return $self;
 }
 
+sub compose {
+  my $self = shift;
+  my %opts =
+    ( 
+     opacity => 1.0,
+     mask_left => 0,
+     mask_top => 0,
+     @_
+    );
+
+  unless ($self->{IMG}) {
+    $self->_set_error("compose: empty input image");
+    return;
+  }
+
+  unless ($opts{src}) {
+    $self->_set_error("compose: src parameter missing");
+    return;
+  }
+  
+  unless ($opts{src}{IMG}) {
+    $self->_set_error("compose: src parameter empty image");
+    return;
+  }
+  my $src = $opts{src};
+
+  my $left = $opts{left};
+  defined $left or $left = $opts{tx};
+  defined $left or $left = 0;
+
+  my $top = $opts{top};
+  defined $top or $top = $opts{ty};
+  defined $top or $top = 0;
+
+  my $src_left = $opts{src_left};
+  defined $src_left or $src_left = $opts{src_minx};
+  defined $src_left or $src_left = 0;
+
+  my $src_top = $opts{src_top};
+  defined $src_top or $src_top = $opts{src_miny};
+  defined $src_top or $src_top = 0;
+
+  my $width = $opts{width};
+  if (!defined $width && defined $opts{src_maxx}) {
+    $width = $opts{src_maxx} - $src_left;
+  }
+  defined $width or $width = $src->getwidth() - $src_left;
+
+  my $height = $opts{height};
+  if (!defined $height && defined $opts{src_maxy}) {
+    $height = $opts{src_maxy} - $src_top;
+  }
+  defined $height or $height = $src->getheight() - $src_top;
+
+  my $combine = $self->_combine($opts{combine}, 'normal');
+
+  if ($opts{mask}) {
+    unless ($opts{mask}{IMG}) {
+      $self->_set_error("compose: mask parameter empty image");
+      return;
+    }
+
+    my $mask_left = $opts{mask_left};
+    defined $mask_left or $mask_left = $opts{mask_minx};
+    defined $mask_left or $mask_left = 0;
+    
+    my $mask_top = $opts{mask_top};
+    defined $mask_top or $mask_top = $opts{mask_miny};
+    defined $mask_top or $mask_top = 0;
+
+    i_compose_mask($self->{IMG}, $src->{IMG}, $opts{mask}{IMG}, 
+		   $left, $top, $src_left, $src_top,
+		   $mask_left, $mask_top, $width, $height, 
+		   $combine, $opts{opacity})
+      or return;
+  }
+  else {
+    i_compose($self->{IMG}, $src->{IMG}, $left, $top, $src_left, $src_top,
+	      $width, $height, $combine, $opts{opacity})
+      or return;
+  }
+
+  return $self;
+}
 
 sub flip {
   my $self  = shift;
@@ -3620,6 +3755,10 @@ sub def_guess_type {
   return ();
 }
 
+sub combines {
+  return @combine_types;
+}
+
 # get the minimum of a list
 
 sub _min {
@@ -3867,7 +4006,8 @@ This example creates a completely black image of width 400 and height
 
 =head1 ERROR HANDLING
 
-In general a method will return false when it fails, if it does use the errstr() method to find out why:
+In general a method will return false when it fails, if it does use
+the errstr() method to find out why:
 
 =over
 
@@ -3915,6 +4055,10 @@ box() - L<Imager::Draw/box>
 circle() - L<Imager::Draw/circle>
 
 colorcount() - L<Imager::Draw/colorcount>
+
+combines() - L<Imager::Draw/combines>
+
+compose() - L<Imager::Transformations/compose>
 
 convert() - L<Imager::Transformations/"Color transformations"> -
 transform the color space

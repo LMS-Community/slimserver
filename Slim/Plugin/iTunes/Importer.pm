@@ -80,7 +80,7 @@ sub initPlugin {
 		'use'          => $prefs->get('itunes'),
 	});
 	
-	if ( Slim::Utils::OSDetect::isWindows() ) {
+	if ( main::ISWINDOWS ) {
 		require Win32;
 		require Slim::Plugin::iTunes::Importer::Artwork::Win32;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::Win32', {
@@ -106,7 +106,7 @@ sub initPlugin {
 # This will be called when wipeDB is run - we always want to rescan at that point.
 sub resetState {
 
-	$log->info("wipedb called - resetting lastITunesMusicLibraryDate");
+	main::INFOLOG && $log->info("wipedb called - resetting lastITunesMusicLibraryDate");
 
 	$lastITunesMusicLibraryDate = -1;
 
@@ -114,7 +114,7 @@ sub resetState {
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChecksum', '');
 	
 	# Delete the iTunes artwork cache
-	my $cachedir = catdir( preferences('server')->get('cachedir'), 'iTunesArtwork' );
+	my $cachedir = catdir( preferences('server')->get('librarycachedir'), 'iTunesArtwork' );
 	if ( -d $cachedir ) {
 		rmtree $cachedir;
 	}
@@ -170,7 +170,7 @@ sub startScan {
 	# Set the last change time for the next go-round.
 	$currentITunesMusicLibraryDate = (stat($file))[9];
 
-	$log->info("Parsing file: $file");
+	main::INFOLOG && $log->info("Parsing file: $file");
 
 	if (!defined $file) {
 
@@ -202,7 +202,7 @@ sub startScan {
 
 	$iTunesParser->parsefile($file);
 
-	$log->info("Finished scanning iTunes XML");
+	main::INFOLOG && $log->info("Finished scanning iTunes XML");
 
 	$class->doneScanning;
 }
@@ -212,11 +212,11 @@ sub doneScanning {
 
 	$progress->final($class->getTotalPlaylistCount);
 
-	$log->info("Finished Scanning");
+	main::INFOLOG && $log->info("Finished Scanning");
 
 	$lastMusicLibraryFinishTime = time();
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
 	}
 	
@@ -273,13 +273,13 @@ sub handleTrack {
 				logError("[$@]");
 			}
 
-			if (Slim::Utils::OSDetect::isWindows() && !-e $file) {
+			if (main::ISWINDOWS && !-e $file) {
 
 				# bug 7966: try the short (8.3) file name for unreadable unicode file names
 				$file2 = Slim::Utils::Unicode::utf8decode( Slim::Utils::Unicode::recomposeUnicode($file2) );
 				
 				if ( ($file2 = Win32::GetANSIPathName($file2)) && -e $file2 ) {
-					$log->debug("Falling back to DOS style 8.3 filename: $file2");
+					main::DEBUGLOG && $log->debug("Falling back to DOS style 8.3 filename: $file2");
 					$file = $file2;
 				}
 			}
@@ -318,7 +318,7 @@ sub handleTrack {
 	# skip track if Disabled in iTunes
 	if ($curTrack->{'Disabled'} && !$prefs->get('ignore_disabled')) {
 
-		$log->info("Deleting disabled track $url");
+		main::INFOLOG && $log->info("Deleting disabled track $url");
 
 		Slim::Schema->search('Track', { 'url' => $url })->delete;
 
@@ -364,7 +364,7 @@ sub handleTrack {
 		    ($mtime && $mtime < $lastITunesMusicLibraryDate) &&
 		    Slim::Schema->count('Track', { 'url' => $url })) {
 
-			$log->debug("Not updated, skipping: $file");
+			main::DEBUGLOG && $log->debug("Not updated, skipping: $file");
 
 			return 1;
 		}
@@ -376,7 +376,7 @@ sub handleTrack {
 		return 1;
 	}
 
-	$log->debug("Got a track named $curTrack->{'Name'} location: $url");
+	main::DEBUGLOG && $log->debug("Got a track named $curTrack->{'Name'} location: $url");
 
 	if ($filetype) {
 
@@ -450,7 +450,7 @@ sub handleTrack {
 		$cacheEntry{'AUDIO'} = 1;
 
 		# Only read tags if we don't have a music folder defined.
-		my $track = Slim::Schema->rs('Track')->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate({
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
@@ -493,7 +493,7 @@ sub handlePlaylist {
 	# Always update the progress.
 	$progress->update($name);
 
-	$log->info("Got a playlist ($url) named $name");
+	main::INFOLOG && $log->info("Got a playlist ($url) named $name");
 
 	# add this playlist to our playlist library
 	# 'LIST',  # list items (array)
@@ -507,7 +507,7 @@ sub handlePlaylist {
 
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Playlist now has " . scalar @{$cacheEntry->{'LIST'}} . " items.");
 	}
 }
@@ -558,7 +558,7 @@ sub handleCharElement {
 
 		$class->iTunesLibraryBasePath( $class->strip_automounter($value) );
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info("Found the music folder: ", $class->iTunesLibraryBasePath);
 		}
 
@@ -593,13 +593,13 @@ sub handleCharElement {
 
 		if (defined($tracks{$value})) {
 
-			$log->debug("Pushing $value on to list: $tracks{$value}");
+			main::DEBUGLOG && $log->debug("Pushing $value on to list: $tracks{$value}");
 
 			push @{$item{'LIST'}}, $tracks{$value};
 
 		} else {
 
-			$log->debug("NOT pushing $value on to list, it's missing (or disabled).");
+			main::DEBUGLOG && $log->debug("NOT pushing $value on to list, it's missing (or disabled).");
 		}
 	}
 }
@@ -621,7 +621,7 @@ sub handleEndElement {
 
 		if ($currentKey eq 'Tracks') {
 
-			$log->debug("Starting track parsing.");
+			main::DEBUGLOG && $log->debug("Starting track parsing.");
 
 			$inTracks = 1;
 		}
@@ -630,7 +630,7 @@ sub handleEndElement {
 
 			Slim::Schema->rs('Playlist')->clearExternalPlaylists('itunesplaylist:');
 
-			$log->debug("Starting playlist parsing, cleared old playlists");
+			main::DEBUGLOG && $log->debug("Starting playlist parsing, cleared old playlists");
 
 			$inTracks = 0;
 			$inPlaylists = 1;
@@ -682,7 +682,7 @@ sub handleEndElement {
 
 		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:$ignoreList)$/i) {
 
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug("Got a playlist array of " . scalar(@{$item{'LIST'}}) . " items.");
 			}
 

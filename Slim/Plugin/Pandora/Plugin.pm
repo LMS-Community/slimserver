@@ -73,7 +73,7 @@ sub initPlugin {
 	
 	if ( !main::SLIM_SERVICE && !$::noweb) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/pandora/trackinfo.html',
 			sub {
 				my $client = $_[0];
@@ -112,14 +112,14 @@ sub rateTrack {
 	my $rating = $request->getParam('_rating');
 	
 	if ( $rating !~ /^[01]$/ ) {
-		$log->debug('Invalid Pandora rating, must be 0 or 1');
+		main::DEBUGLOG && $log->debug('Invalid Pandora rating, must be 0 or 1');
 		return;
 	}
 	
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
 	# Get the current track
-	my $currentTrack = $song->{'pluginData'} || return;
+	my $currentTrack = $song->pluginData() || return;
 	
 	my $trackId = $currentTrack->{trackToken};
 	
@@ -130,7 +130,7 @@ sub rateTrack {
 		. '&rating=' . $rating
 	);
 	
-	$log->debug("Pandora: rateTrack: $rating ($ratingURL)");
+	main::DEBUGLOG && $log->debug("Pandora: rateTrack: $rating ($ratingURL)");
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_rateTrackOK,
@@ -156,15 +156,15 @@ sub _rateTrackOK {
 	my $rating       = $request->getParam('_rating');
 	my $currentTrack = $http->params('currentTrack');
 	
-	$log->debug('Rating submit OK');
+	main::DEBUGLOG && $log->debug('Rating submit OK');
 	
 	# If rating was negative and skip is allowed, skip the track
 	if ( !$rating && $currentTrack->{canSkip} ) {
-		$log->debug('Rating was negative, skipping track');
+		main::DEBUGLOG && $log->debug('Rating was negative, skipping track');
 		$client->execute( [ "playlist", "jump", "+1" ] );
 	}
 	elsif ( !$rating ) {
-		$log->debug('Rating was negative but no more skips allowed');
+		main::DEBUGLOG && $log->debug('Rating was negative but no more skips allowed');
 	}
 	
 	# Parse the text out of the JSON
@@ -180,7 +180,7 @@ sub _rateTrackError {
 	my $client  = $http->params('client');
 	my $request = $http->params('request');
 	
-	$log->debug( "Rating submit error: $error" );
+	main::DEBUGLOG && $log->debug( "Rating submit error: $error" );
 	
 	# Not sure what status to use here
 	$request->setStatusBadParams();
@@ -197,7 +197,7 @@ sub skipTrack {
 	my $url = $song->currentTrack()->url;
 	return unless $url =~ /^pandora/;
 		
-	$log->debug("Pandora: Skip requested");
+	main::DEBUGLOG && $log->debug("Pandora: Skip requested");
 		
 	$client->execute( [ "playlist", "jump", "+1" ] );
 	
@@ -213,7 +213,7 @@ sub trackInfoMenu {
 	
 	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' );
 	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
@@ -272,7 +272,7 @@ sub stationDeleted {
 	
 	# If user was playing this station, stop the player
 	if ( $url eq "pandora://${stationId}.mp3" ) {
-		$log->debug( 'Currently playing station was deleted, stopping playback' );
+		main::DEBUGLOG && $log->debug( 'Currently playing station was deleted, stopping playback' );
 		
 		Slim::Player::Source::playmode( $client, 'stop' );
 	}

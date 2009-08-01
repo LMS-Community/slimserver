@@ -122,7 +122,7 @@ sub exportSingleArtwork {
 					
 							$artwork->SaveArtworkToFile($filename);
 						
-							$log->is_debug && $log->debug( "Exporting single artwork for ID $pid: " . $track->Album );
+							main::DEBUGLOG && $log->is_debug && $log->debug( "Exporting single artwork for ID $pid: " . $track->Album );
 							
 							return $filename;
 						}

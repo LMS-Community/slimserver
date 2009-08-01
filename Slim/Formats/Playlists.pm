@@ -8,7 +8,7 @@ package Slim::Formats::Playlists;
 # under the terms of the GNU General Public License, version 2.
 
 use strict;
-use FileHandle;
+use FileHandle ();
 use File::Slurp;
 use IO::String;
 use Scalar::Util qw(blessed);
@@ -24,7 +24,7 @@ my $log = logger('formats.playlists');
 sub registerParser {
 	my ($class, $type, $playlistClass) = @_;
 
-	$log->info("Registering external parser for type $type - class: $playlistClass");
+	main::INFOLOG && $log->info("Registering external parser for type $type - class: $playlistClass");
 
 	$Slim::Formats::tagClasses{$type} = $playlistClass;
 }
@@ -50,7 +50,7 @@ sub parseList {
 		return wantarray ? () : undef;
 	}
 
-	$log->info("Type: $type for: $url");
+	main::INFOLOG && $log->info("Type: $type for: $url");
 
 	my @results = ();
 	my $closeFH = 0;

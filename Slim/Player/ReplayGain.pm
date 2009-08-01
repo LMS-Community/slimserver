@@ -108,10 +108,10 @@ sub trackAlbumMatch {
 
 	# Get the track objects
 	my $current_url   = Slim::Player::Playlist::song($client, $current_index);
-	my $current_track = Slim::Schema->rs('Track')->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
+	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
 	
 	my $compare_url   = Slim::Player::Playlist::song($client, $compare_index);
-	my $compare_track = Slim::Schema->rs('Track')->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
+	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
@@ -164,6 +164,7 @@ sub trackAlbumMatch {
 	# Check for album and tracknum matches as expected
 	if ($compare_track->albumid && $current_track->albumid &&
 		($compare_track->albumid == $current_track->albumid) && 
+		defined $current_track->tracknum && defined $compare_track->tracknum &&
 		(($current_track->tracknum + $offset) == $compare_track->tracknum)) {
 
 		return 1;

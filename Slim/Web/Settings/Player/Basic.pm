@@ -17,11 +17,11 @@ use Slim::Utils::Strings qw(string cstring);
 my $prefs = preferences('server');
 
 sub name {
-	return Slim::Web::HTTP::protectName('BASIC_PLAYER_SETTINGS');
+	return Slim::Web::HTTP::CSRF->protectName('BASIC_PLAYER_SETTINGS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/player/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/player/basic.html');
 }
 
 sub needsClient {

@@ -13,11 +13,11 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Prefs;
 
 sub name {
-	return Slim::Web::HTTP::protectName('PERFORMANCE_SETTINGS');
+	return Slim::Web::HTTP::CSRF->protectName('PERFORMANCE_SETTINGS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/server/performance.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/server/performance.html');
 }
 
 sub prefs {

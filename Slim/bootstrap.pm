@@ -53,10 +53,11 @@ use Slim::Utils::OSDetect;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(version Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser JSON::XS Compress::Zlib Digest::SHA1 YAML::Syck GD);
+my @default_required_modules = qw(version Time::HiRes DBI DBD::mysql EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::Syck GD Sub::Name);
 my @default_optional_modules = qw(Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
+my $noweb                    = (grep { /noweb/ }     @ARGV) ? 1 : 0;
 
 my $sigINTcalled             = 0;
 
@@ -210,6 +211,11 @@ sub loadModules {
 		exit;
 	}
 	
+	# Load PerfMon if enabled
+	if ( main::PERFMON ) {
+		require Slim::Utils::PerfMon;
+	}
+	
 	sub REAPER {
 		my $kid;
 		
@@ -335,7 +341,7 @@ sub check_valid_versions {
 	my $failed = {};
 
 	# Don't load all these modules in the scanner
-	return $failed if main::SCANNER;
+	return $failed if main::SCANNER || main::RESIZER;
 	
 	# don't check validity on Windows binary - it's all built in
 	return $failed if $0 =~ /scanner\.exe/i;
@@ -347,6 +353,9 @@ sub check_valid_versions {
 	close $fh;
 
 	for my $line ( split /\n/, $modules ) {
+		
+		next if $noweb && $line =~ /Template/;
+		
 		next unless $line =~ /^\w+/;
 		chomp $line;
 		

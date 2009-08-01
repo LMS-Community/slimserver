@@ -14,9 +14,9 @@ sub pageBarResults {
 	my $name  = "$table.namesort";
 
 	$self->search(undef, {
-		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
+		'select'     => [ \"SUBSTR($name, 1, 1)", { count => \"DISTINCT($table.id)" } ],
 		as           => [ 'letter', 'count' ],
-		group_by     => \"LEFT($name, 1)",
+		group_by     => \"SUBSTR($name, 1, 1)",
 		result_class => 'Slim::Schema::PageBar',
 	});
 }

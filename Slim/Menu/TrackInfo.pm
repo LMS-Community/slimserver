@@ -215,7 +215,7 @@ sub menu {
 	
 	# Get track object if necessary
 	if ( !blessed($track) ) {
-		$track = Slim::Schema->rs('Track')->objectForUrl( {
+		$track = Slim::Schema->objectForUrl( {
 			url => $url,
 		} );
 		if ( !blessed($track) ) {
@@ -676,7 +676,6 @@ sub infoGenres {
 	
 	for my $genre ( $track->genres ) {
 		my $id = $genre->id;
-		my $artist = $track->artist;
 		
 		my $db = {
 			hierarchy         => 'genre,contributor,album,track',
@@ -687,7 +686,7 @@ sub infoGenres {
 			selectionCriteria => {
 				'track.id'       => $track->id,
 				'album.id'       => $track->albumid,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
+				'contributor.id' => $track->artistid,
 			},
 		};
 		
@@ -755,7 +754,6 @@ sub infoYear {
 	my $item;
 	
 	if ( my $year = $track->year ) {
-		my $artist = $track->artist;
 		
 		my $db = {
 			hierarchy         => 'year,album,track',
@@ -766,7 +764,7 @@ sub infoYear {
 			selectionCriteria => {
 				'track.id'       => $track->id,
 				'album.id'       => $track->albumid,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
+				'contributor.id' => $track->artistid,
 			},
 		};
 

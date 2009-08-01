@@ -46,7 +46,9 @@ sub new {
 	);
 
 	my $iTunes = getPref('iTunes', 'state.prefs');
-	my $useItunesStr = Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES');
+	my $useItunesStr = ($svcMgr->checkServiceState() == SC_STATE_RUNNING)
+		? Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES')
+		: {};
 	
 	if ($useItunesStr && $useItunesStr->{USE_ITUNES} && (!$iTunes || $iTunes !~ /disabled/i)) {
 

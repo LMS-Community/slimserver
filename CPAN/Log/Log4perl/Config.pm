@@ -1,7 +1,6 @@
 ##################################################
 package Log::Log4perl::Config;
 ##################################################
-
 use 5.006;
 use strict;
 use warnings;
@@ -20,20 +19,9 @@ our $CONFIG_FILE_READS       = 0;
 our $CONFIG_INTEGRITY_CHECK  = 1;
 our $CONFIG_INTEGRITY_ERROR  = undef;
 
-# How to map lib4j levels to Log::Dispatch levels
-my @LEVEL_MAP_A = qw(
- DEBUG  debug
- INFO   info
- INFO   notice
- WARN   warning
- ERROR  error
- FATAL  critical
- FATAL  alert
- FATAL  emergency
-);
-
 our $WATCHER;
 our $DEFAULT_WATCH_DELAY = 60; # seconds
+our $OPTS = {};
 our $OLD_CONFIG;
 our $LOGGERS_DEFINED;
 
@@ -42,13 +30,21 @@ sub init {
 ###########################################
     Log::Log4perl::Logger->reset();
 
+    undef $WATCHER; # just in case there's a one left over (e.g. test cases)
+
     return _init(@_);
+}
+
+###########################################
+sub watcher {
+###########################################
+    return $WATCHER;
 }
 
 ###########################################
 sub init_and_watch {
 ###########################################
-    my ($class, $config, $delay) = @_;
+    my ($class, $config, $delay, $opts) = @_;
         # delay can be a signal name - in this case we're gonna
         # set up a signal handler.
 
@@ -86,6 +82,11 @@ sub init_and_watch {
                           check_interval => $delay,
                           l4p_internal   => 1,
                    );
+    }
+
+    if(defined $opts) {
+        die "Parameter $opts needs to be a hash ref" if ref($opts) ne "HASH";
+        $OPTS = $opts;
     }
 
     eval { _init($class, $config); };
@@ -497,9 +498,9 @@ sub get_appender_by_name {
 ###########################################
     my($data, $name, $appenders_created) = @_;
 
-    if ($appenders_created->{$name}) {
+    if (exists $appenders_created->{$name}) {
         return $appenders_created->{$name};
-    }else{
+    } else {
         return $data->{appender}->{$name}->{value};
     }
 }
@@ -553,19 +554,23 @@ sub config_read {
 
     if (ref($config) eq 'HASH') {   # convert the hashref into a list 
                                     # of name/value pairs
+        print "Reading config from hash\n" if _INTERNAL_DEBUG;
         @text = map { $_ . '=' . $config->{$_} } keys %{$config};
 
     } elsif (ref $config eq 'SCALAR') {
+        print "Reading config from scalar\n" if _INTERNAL_DEBUG;
         @text = split(/\n/,$$config);
 
     } elsif (ref $config eq 'GLOB' or 
              ref $config eq 'IO::File') {
             # If we have a file handle, just call the reader
+        print "Reading config from file handle\n" if _INTERNAL_DEBUG;
         config_file_read($config, \@text);
 
     } elsif (ref $config) {
             # Caller provided a config parser object, which already
             # knows which file (or DB or whatever) to parse.
+        print "Reading config from parser object\n" if _INTERNAL_DEBUG;
         $data = $config->parse();
         return $data;
 
@@ -609,13 +614,19 @@ sub config_read {
                      $res->message." ";
             }
         }else{
+            print "Reading config from file '$config'\n" if _INTERNAL_DEBUG;
             open FILE, "<$config" or die "Cannot open config file '$config'";
+            print "Reading ", -s $config, " bytes.\n" if _INTERNAL_DEBUG;
             config_file_read(\*FILE, \@text);
             close FILE;
         }
     }
     
     print "Reading $config: [@text]\n" if _INTERNAL_DEBUG;
+
+    if(! grep /\S/, @text) {
+        return $data;
+    }
 
     if ($text[0] =~ /^<\?xml /) {
 
@@ -656,6 +667,7 @@ sub unlog4j {
 
     $string =~ s#^org\.apache\.##;
     $string =~ s#^log4j\.##;
+    $string =~ s#^l4p\.##;
     $string =~ s#^log4perl\.##i;
 
     $string =~ s#\.#::#g;
@@ -1045,8 +1057,8 @@ Here's some examples of often-used Log4perl configuration files:
 
     log4perl.category.Bar.Twix      = WARN, Screen
     log4perl.appender.Screen        = Log::Log4perl::Appender::Screen
-    log4perl.appender.Screen.layout = \
     log4perl.appender.Screen.stderr = 0
+    log4perl.appender.Screen.layout = \
         Log::Log4perl::Layout::PatternLayout
     log4perl.appender.Screen.layout.ConversionPattern = %d %m %n
 

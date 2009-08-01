@@ -10,7 +10,7 @@ use Carp;
 require DynaLoader;
 
 @ISA = qw(DynaLoader);
-$VERSION = "2.34" ;
+$VERSION = "2.36" ;
 
 $have_File_Spec = $INC{'File/Spec.pm'} || do 'File/Spec.pm';
 
@@ -452,7 +452,6 @@ sub parse {
     else {
       require IO::Handle;
       eval {
-	no strict 'refs';
         no strict 'refs';
         $ioref = *{$arg}{IO} if defined *{$arg};
       };
@@ -691,7 +690,7 @@ XML::Parser::Expat - Lowlevel access to James Clark's expat XML parser
    $p->setHandlers('Char' => \&ch)  # Special elements won't contain
      if ($el eq 'special');         # other special elements
    ...
- }
+ } 
 
 =head1 DESCRIPTION
 

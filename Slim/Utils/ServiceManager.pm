@@ -35,16 +35,15 @@ sub new {
 	my $class = shift;
 
 	my $svcMgr;
-	my $os = Slim::Utils::OSDetect::getOS();
 
-	if ($os->name eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 
 		require Slim::Utils::ServiceManager::Win32;
 		$svcMgr = Slim::Utils::ServiceManager::Win32->init();
 
 	}
 
-	elsif ($os->name eq 'mac') {
+	elsif (Slim::Utils::OSDetect::isMac()) {
 
 		require Slim::Utils::ServiceManager::OSX;
 		$svcMgr = Slim::Utils::ServiceManager::OSX->init();

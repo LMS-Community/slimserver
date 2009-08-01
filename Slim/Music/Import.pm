@@ -41,6 +41,7 @@ use strict;
 use base qw(Class::Data::Inheritable);
 
 use Config;
+use File::Spec::Functions;
 use FindBin qw($Bin);
 use Proc::Background;
 use Scalar::Util qw(blessed);
@@ -51,9 +52,10 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
+use Slim::Player::Client;
 
 {
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 		require Win32;
 	}
 }
@@ -75,6 +77,8 @@ my $folderScanClass = 'Slim::Music::MusicFolderScan';
 my $log             = logger('scan.import');
 my $prefs           = preferences('server');
 
+my $ABORT = 0;
+
 =head2 launchScan( \%args )
 
 Launch the external (forked) scanning process.
@@ -85,6 +89,11 @@ Launch the external (forked) scanning process.
 
 sub launchScan {
 	my ($class, $args) = @_;
+	
+	# Don't launch the scanner unless there is something to scan
+	if (!$class->countImporters()) {
+		return 1;
+	}
 
 	# Pass along the prefsfile & logfile flags to the scanner.
 	if (defined $::prefsfile && -r $::prefsfile) {
@@ -152,7 +161,7 @@ sub launchScan {
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
-
+	
 	# Clear progress info so scan progress displays are blank
 	$class->clearProgressInfo;
 
@@ -251,6 +260,9 @@ sub lastScanTime {
 	my $class = shift;
 	my $name  = shift || 'lastRescanTime';
 
+	# May not have a DB
+	return 0 if !Slim::Schema::hasLibrary();
+	
 	my $last  = Slim::Schema->single('MetaInformation', { 'name' => $name });
 
 	return blessed($last) ? $last->value : 0;
@@ -266,16 +278,16 @@ sub setLastScanTime {
 	my $class = shift;
 	my $name  = shift || 'lastRescanTime';
 	my $value = shift || time;
+	
+	# May not have a DB to store this in
+	return if !Slim::Schema::hasLibrary();
+	
+	my $last = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => $name
+	} );
 
-	eval { Slim::Schema->txn_do(sub {
-
-		my $last = Slim::Schema->rs('MetaInformation')->find_or_create({
-			'name' => $name
-		});
-
-		$last->value($value);
-		$last->update;
-	}) };
+	$last->value($value);
+	$last->update;
 }
 
 =head2 setIsScanning( )
@@ -288,24 +300,23 @@ sub setIsScanning {
 	my $class = shift;
 	my $value = shift;
 
+	# May not have a DB to store this in
+	return if !Slim::Schema::hasLibrary();
+	
 	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
 
 	if ($autoCommit) {
 		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 	}
 
-	eval { Slim::Schema->txn_do(sub {
+	my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
+		'name' => 'isScanning'
+	});
 
-		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
-			'name' => 'isScanning'
-		});
-
-		$isScanning->value($value);
-		$isScanning->update;
-	}) };
+	$isScanning->value($value);
+	$isScanning->update;
 
 	if ($@) {
-
 		logError("Failed to update isScanning: [$@]");
 	}
 
@@ -320,7 +331,10 @@ Clear importer progress info stored in the database.
 
 sub clearProgressInfo {
 	my $class = shift;
-
+	
+	# May not have a DB to store this in
+	return if !Slim::Schema::hasLibrary();
+	
 	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
 		$prog->delete;
 	}
@@ -392,8 +406,11 @@ finding artwork, cleaning stale db entries, and optimizing the database.
 sub runScanPostProcessing {
 	my $class  = shift;
 
+	# May not have a DB to store this in
+	return 1 if !Slim::Schema::hasLibrary();
+	
 	# Auto-identify VA/Compilation albums
-	$log->info("Starting mergeVariousArtistsAlbums().");
+	$log->error("Starting merge of various artists albums");
 
 	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
 
@@ -401,7 +418,7 @@ sub runScanPostProcessing {
 
 	# Post-process artwork, so we can use title formats, and use a generic
 	# image to speed up artwork loading.
-	$log->info("Starting findArtwork().");
+	$log->error("Starting artwork scan");
 
 	$importsRunning{'findArtwork'} = Time::HiRes::time();
 
@@ -424,6 +441,8 @@ sub runScanPostProcessing {
 		$class->cleanupDatabase(0);
 
 		$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
+		
+		$log->error("Starting cleanup of stale track entries");
 
 		Slim::Schema->cleanupStaleTrackEntries;
 	}
@@ -435,7 +454,7 @@ sub runScanPostProcessing {
 	$class->useFolderImporter(0);
 
 	# Always run an optimization pass at the end of our scan.
-	$log->info("Starting Database optimization.");
+	$log->error("Starting Database optimization.");
 
 	$importsRunning{'dbOptimize'} = Time::HiRes::time();
 
@@ -443,7 +462,7 @@ sub runScanPostProcessing {
 
 	$class->endImporter('dbOptimize');
 
-	$log->info("Finished background scanning.");
+	main::INFOLOG && $log->info("Finished background scanning.");
 
 	return 1;
 }
@@ -458,6 +477,8 @@ sub deleteImporter {
 	my ($class, $importer) = @_;
 
 	delete $Importers{$importer};
+	
+	$class->_checkLibraryStatus();
 }
 
 =head2 addImporter( $importer, \%params )
@@ -496,7 +517,9 @@ sub addImporter {
 
 	$Importers{$importer} = $params;
 
-	$log->info("Adding $importer Scan");
+	main::INFOLOG && $log->info("Adding $importer Scan");
+	
+	$class->_checkLibraryStatus();
 }
 
 =head2 runImporter( $importer )
@@ -539,7 +562,7 @@ sub runArtworkImporter {
 		$importsRunning{$importer} = Time::HiRes::time();
 
 		# rescan each enabled Import, or scan the newly enabled Import
-		$log->info("Starting $importer artwork scan");
+		$log->error("Starting $importer artwork scan");
 		
 		$importer->startArtworkScan;
 
@@ -551,8 +574,7 @@ sub runArtworkImporter {
 
 =head2 countImporters( )
 
-Returns a count of all added and available importers. Excludes
-L<Slim::Music::MusicFolderScan>, as it is our base importer.
+Returns a count of all added and available importers.
 
 =cut
 
@@ -562,10 +584,9 @@ sub countImporters {
 
 	for my $importer (keys %Importers) {
 		
-		# Don't count Folder Scan for this since we use this as a test to see if any other importers are in use
-		if ($Importers{$importer}->{'use'} && $importer ne $folderScanClass) {
+		if ($Importers{$importer}->{'use'}) {
 
-			$log->info("Found importer: $importer");
+			main::INFOLOG && $log->info("Found importer: $importer");
 
 			$count++;
 		}
@@ -627,6 +648,12 @@ sub useImporter {
 
 		$Importers{$importer}->{'use'} = $newValue;
 
+		if ( $newValue ) {
+			$class->_checkLibraryStatus();
+		}
+
+		return $newValue;
+
 	} else {
 
 		return exists $Importers{$importer} ? $Importers{$importer} : 0;
@@ -665,19 +692,12 @@ Returns scan type string token if the server is still scanning your library. Fal
 =cut
 
 sub stillScanning {
-	my $class    = shift;
+	my $class = __PACKAGE__;
 	
 	return 0 if main::SLIM_SERVICE;
+	return 0 if !Slim::Schema::hasLibrary();
 	
 	my $imports  = scalar keys %importsRunning;
-
-	# NB: Some plugins call this, but haven't updated to use class based calling.
-	if (!$class) {
-
-		$class = __PACKAGE__;
-
-		logBacktrace("Caller needs to be updated to use ->stillScanning, not ::stillScanning()!");
-	}
 
 	# Check and see if there is a flag in the database, and the process is alive.
 	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
@@ -690,6 +710,21 @@ sub stillScanning {
 	}
 
 	return 0;
+}
+
+sub _checkLibraryStatus {
+	my $class = shift;
+	
+	if ($class->countImporters()) {
+		Slim::Schema->init() if !Slim::Schema::hasLibrary();
+	} else {
+		Slim::Schema->disconnect() if Slim::Schema::hasLibrary();
+	}
+	
+	return if main::SCANNER;
+	
+	# Tell everyone who needs to know
+	Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
 }
 
 =head1 SEE ALSO

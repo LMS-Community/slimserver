@@ -7,18 +7,17 @@
 #   instantiation of plugin objects.
 #
 # AUTHORS
-#   Andy Wardley <abw@kfs.org>
+#   Andy Wardley <abw@wardley.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2000 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
 #   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
 #
-#----------------------------------------------------------------------------
-#
-# $Id: Plugins.pm,v 2.74 2006/01/30 20:04:54 abw Exp $
+# REVISION
+#   $Id: Plugins.pm 1179 2008-12-09 19:29:21Z abw $
 #
 #============================================================================
 
@@ -29,10 +28,11 @@ use warnings;
 use base 'Template::Base';
 use Template::Constants;
 
-our $VERSION = sprintf("%d.%02d", q$Revision: 2.74 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = 2.77;
 our $DEBUG   = 0 unless defined $DEBUG;
 our $PLUGIN_BASE = 'Template::Plugin';
 our $STD_PLUGINS = {
+    'assert'     => 'Template::Plugin::Assert',
     'autoformat' => 'Template::Plugin::Autoformat',
     'cgi'        => 'Template::Plugin::CGI',
     'datafile'   => 'Template::Plugin::Datafile',
@@ -46,11 +46,14 @@ our $STD_PLUGINS = {
     'html'       => 'Template::Plugin::HTML',
     'image'      => 'Template::Plugin::Image',
     'iterator'   => 'Template::Plugin::Iterator',
+    'latex'      => 'Template::Plugin::Latex',
     'pod'        => 'Template::Plugin::Pod',
+    'scalar'     => 'Template::Plugin::Scalar',
     'table'      => 'Template::Plugin::Table',
     'url'        => 'Template::Plugin::URL',
     'view'       => 'Template::Plugin::View',
     'wrap'       => 'Template::Plugin::Wrap',
+    'xml'        => 'Template::Plugin::XML',
     'xmlstyle'   => 'Template::Plugin::XML::Style',
 };
 
@@ -290,18 +293,6 @@ sub _dump {
 
 __END__
 
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
-
 =head1 NAME
 
 Template::Plugins - Plugin provider module
@@ -309,14 +300,14 @@ Template::Plugins - Plugin provider module
 =head1 SYNOPSIS
 
     use Template::Plugins;
-
+    
     $plugin_provider = Template::Plugins->new(\%options);
-
+    
     ($plugin, $error) = $plugin_provider->fetch($name, @args);
 
 =head1 DESCRIPTION
 
-The Template::Plugins module defines a provider class which can be used
+The C<Template::Plugins> module defines a provider class which can be used
 to load and instantiate Template Toolkit plugin modules.
 
 =head1 METHODS
@@ -324,70 +315,64 @@ to load and instantiate Template Toolkit plugin modules.
 =head2 new(\%params) 
 
 Constructor method which instantiates and returns a reference to a
-Template::Plugins object.  A reference to a hash array of configuration
+C<Template::Plugins> object.  A reference to a hash array of configuration
 items may be passed as a parameter.  These are described below.  
 
-Note that the Template.pm front-end module creates a Template::Plugins
+Note that the L<Template> front-end module creates a C<Template::Plugins>
 provider, passing all configuration items.  Thus, the examples shown
 below in the form:
 
     $plugprov = Template::Plugins->new({
-	PLUGIN_BASE => 'MyTemplate::Plugin',
+        PLUGIN_BASE => 'MyTemplate::Plugin',
         LOAD_PERL   => 1,
-	...
+        ...
     });
 
-can also be used via the Template module as:
+can also be used via the L<Template> module as:
 
     $ttengine = Template->new({
-	PLUGIN_BASE => 'MyTemplate::Plugin',
+        PLUGIN_BASE => 'MyTemplate::Plugin',
         LOAD_PERL   => 1,
-	...
+        ...
     });
 
 as well as the more explicit form of:
 
     $plugprov = Template::Plugins->new({
-	PLUGIN_BASE => 'MyTemplate::Plugin',
+        PLUGIN_BASE => 'MyTemplate::Plugin',
         LOAD_PERL   => 1,
-	...
+        ...
     });
-
+    
     $ttengine = Template->new({
-	LOAD_PLUGINS => [ $plugprov ],
+        LOAD_PLUGINS => [ $plugprov ],
     });
 
 =head2 fetch($name, @args)
 
-Called to request that a plugin of a given name be provided.  The relevant 
-module is first loaded (if necessary) and the load() class method called 
-to return the factory class name (usually the same package name) or a 
-factory object (a prototype).  The new() method is then called as a 
-class or object method against the factory, passing all remaining
-parameters.
+Called to request that a plugin of a given name be provided. The relevant
+module is first loaded (if necessary) and the
+L<load()|Template::Plugin#load()> class method called to return the factory
+class name (usually the same package name) or a factory object (a prototype).
+The L<new()|Template::Plugin#new()> method is then called as a class or object
+method against the factory, passing all remaining parameters.
 
-Returns a reference to a new plugin object or ($error, STATUS_ERROR)
-on error.  May also return (undef, STATUS_DECLINED) to decline to
-serve the request.  If TOLERANT is set then all errors will be
+Returns a reference to a new plugin object or C<($error, STATUS_ERROR)>
+on error.  May also return C<(undef, STATUS_DECLINED)> to decline to
+serve the request.  If C<TOLERANT> is set then all errors will be
 returned as declines.
 
 =head1 CONFIGURATION OPTIONS
 
-The following list details the configuration options that can be provided
-to the Template::Plugins new() constructor.
+The following list summarises the configuration options that can be provided
+to the C<Template::Plugins> L<new()> constructor.  Please consult 
+L<Template::Manual::Config> for further details and examples of each 
+configuration option in use.
 
-=over 4
+=head2 PLUGINS
 
-
-
-
-=item PLUGINS
-
-The PLUGINS options can be used to provide a reference to a hash array
-that maps plugin names to Perl module names.  A number of standard
-plugins are defined (e.g. 'table', 'cgi', 'dbi', etc.) which map to
-their corresponding Template::Plugin::* counterparts.  These can be
-redefined by values in the PLUGINS hash.
+The L<PLUGINS|Template::Manual::Config#PLUGINS> option can be used to provide
+a reference to a hash array that maps plugin names to Perl module names.
 
     my $plugins = Template::Plugins->new({
         PLUGINS => {
@@ -397,487 +382,78 @@ redefined by values in the PLUGINS hash.
         },  
     }); 
 
-The recommended convention is to specify these plugin names in lower
-case.  The Template Toolkit first looks for an exact case-sensitive
-match and then tries the lower case conversion of the name specified.
+=head2 PLUGIN_BASE
 
-    [% USE Foo %]      # look for 'Foo' then 'foo'
+If a plugin is not defined in the L<PLUGINS|Template::Manual::Config#PLUGINS>
+hash then the L<PLUGIN_BASE|Template::Manual::Config#PLUGIN_BASE> is used to
+attempt to construct a correct Perl module name which can be successfully
+loaded.
 
-If you define all your PLUGINS with lower case names then they will be
-located regardless of how the user specifies the name in the USE
-directive.  If, on the other hand, you define your PLUGINS with upper
-or mixed case names then the name specified in the USE directive must
-match the case exactly.  
-
-The USE directive is used to create plugin objects and does so by
-calling the plugin() method on the current Template::Context object.
-If the plugin name is defined in the PLUGINS hash then the
-corresponding Perl module is loaded via require().  The context then
-calls the load() class method which should return the class name 
-(default and general case) or a prototype object against which the 
-new() method can be called to instantiate individual plugin objects.
-
-If the plugin name is not defined in the PLUGINS hash then the
-PLUGIN_BASE and/or LOAD_PERL options come into effect.
-
-
-
-
-
-=item PLUGIN_BASE
-
-If a plugin is not defined in the PLUGINS hash then the PLUGIN_BASE is used
-to attempt to construct a correct Perl module name which can be successfully 
-loaded.  
-
-The PLUGIN_BASE can be specified as a reference to an array of module
-namespaces, or as a single value which is automatically converted to a
-list.  The default PLUGIN_BASE value ('Template::Plugin') is then added
-to the end of this list.
-
-example 1:
-
+    # single value PLUGIN_BASE
     my $plugins = Template::Plugins->new({
         PLUGIN_BASE => 'MyOrg::Template::Plugin',
     });
 
-    [% USE Foo %]    # => MyOrg::Template::Plugin::Foo
-                       or        Template::Plugin::Foo 
-
-example 2:
-
+    # multiple value PLUGIN_BASE
     my $plugins = Template::Plugins->new({
         PLUGIN_BASE => [   'MyOrg::Template::Plugin',
                            'YourOrg::Template::Plugin'  ],
     });
 
-    [% USE Foo %]    # =>   MyOrg::Template::Plugin::Foo
-                       or YourOrg::Template::Plugin::Foo 
-                       or          Template::Plugin::Foo 
+=head2 LOAD_PERL
 
-If you don't want the default Template::Plugin namespace added to the
-end of the PLUGIN_BASE, then set the $Template::Plugins::PLUGIN_BASE
-variable to a false value before calling the Template::Plugins new()
-constructor method.  This is shown in the example below where the
-'Foo' is located as 'My::Plugin::Foo' or 'Your::Plugin::Foo' but not 
-as 'Template::Plugin::Foo'.
+The L<LOAD_PERL|Template::Manual::Config#LOAD_PERL> option can be set to allow
+you to load regular Perl modules (i.e. those that don't reside in the
+C<Template::Plugin> or another user-defined namespace) as plugins.
 
-example 3:
+If a plugin cannot be loaded using the
+L<PLUGINS|Template::Manual::Config#PLUGINS> or
+L<PLUGIN_BASE|Template::Manual::Config#PLUGIN_BASE> approaches then,
+if the L<LOAD_PERL|Template::Manual::Config#LOAD_PERL> is set, the
+provider will make a final attempt to load the module without prepending any
+prefix to the module path. 
 
-    use Template::Plugins;
-    $Template::Plugins::PLUGIN_BASE = '';
+Unlike regular plugins, modules loaded using L<LOAD_PERL|Template::Manual::Config#LOAD_PERL>
+do not receive a L<Template::Context> reference as the first argument to the 
+C<new()> constructor method.
 
-    my $plugins = Template::Plugins->new({
-        PLUGIN_BASE => [   'My::Plugin',
-                           'Your::Plugin'  ],
-    });
+=head2 TOLERANT
 
-    [% USE Foo %]    # =>   My::Plugin::Foo
-                       or Your::Plugin::Foo 
+The L<TOLERANT|Template::Manual::Config#TOLERANT> flag can be set to indicate
+that the C<Template::Plugins> module should ignore any errors encountered while
+loading a plugin and instead return C<STATUS_DECLINED>.
 
+=head2 DEBUG
 
-
-
-
-
-=item LOAD_PERL
-
-If a plugin cannot be loaded using the PLUGINS or PLUGIN_BASE
-approaches then the provider can make a final attempt to load the
-module without prepending any prefix to the module path.  This allows
-regular Perl modules (i.e. those that don't reside in the
-Template::Plugin or some other such namespace) to be loaded and used
-as plugins.
-
-By default, the LOAD_PERL option is set to 0 and no attempt will be made
-to load any Perl modules that aren't named explicitly in the PLUGINS
-hash or reside in a package as named by one of the PLUGIN_BASE
-components.  
-
-Plugins loaded using the PLUGINS or PLUGIN_BASE receive a reference to
-the current context object as the first argument to the new()
-constructor.  Modules loaded using LOAD_PERL are assumed to not
-conform to the plugin interface.  They must provide a new() class
-method for instantiating objects but it will not receive a reference
-to the context as the first argument.  Plugin modules should provide a
-load() class method (or inherit the default one from the
-Template::Plugin base class) which is called the first time the plugin
-is loaded.  Regular Perl modules need not.  In all other respects,
-regular Perl objects and Template Toolkit plugins are identical.
-
-If a particular Perl module does not conform to the common, but not
-unilateral, new() constructor convention then a simple plugin wrapper
-can be written to interface to it.
-
-
-
-
-=item TOLERANT
-
-The TOLERANT flag is used by the various Template Toolkit provider
-modules (Template::Provider, Template::Plugins, Template::Filters) to
-control their behaviour when errors are encountered.  By default, any
-errors are reported as such, with the request for the particular
-resource (template, plugin, filter) being denied and an exception
-raised.  When the TOLERANT flag is set to any true values, errors will
-be silently ignored and the provider will instead return
-STATUS_DECLINED.  This allows a subsequent provider to take
-responsibility for providing the resource, rather than failing the
-request outright.  If all providers decline to service the request,
-either through tolerated failure or a genuine disinclination to
-comply, then a 'E<lt>resourceE<gt> not found' exception is raised.
-
-
-
-
-=item DEBUG
-
-The DEBUG option can be used to enable debugging messages from the
-Template::Plugins module by setting it to include the DEBUG_PLUGINS
-value.
+The L<DEBUG|Template::Manual::Config#DEBUG> option can be used to enable
+debugging messages for the C<Template::Plugins> module by setting it to
+include the C<DEBUG_PLUGINS> value.
 
     use Template::Constants qw( :debug );
-
+    
     my $template = Template->new({
-	DEBUG => DEBUG_FILTERS | DEBUG_PLUGINS,
+        DEBUG => DEBUG_FILTERS | DEBUG_PLUGINS,
     });
-
-
-
-
-=back
-
-
 
 =head1 TEMPLATE TOOLKIT PLUGINS
 
-The following plugin modules are distributed with the Template
-Toolkit.  Some of the plugins interface to external modules (detailed
-below) which should be downloaded from any CPAN site and installed
-before using the plugin.
-
-=head2 Autoformat
-
-The Autoformat plugin is an interface to Damian Conway's Text::Autoformat 
-Perl module which provides advanced text wrapping and formatting.  See
-L<Template::Plugin::Autoformat> and L<Text::Autoformat> for further 
-details.
-
-    [% USE autoformat(left=10, right=20) %]
-    [% autoformat(mytext) %]	    # call autoformat sub
-    [% mytext FILTER autoformat %]  # or use autoformat filter
-
-The Text::Autoformat module is available from CPAN:
-
-    http://www.cpan.org/modules/by-module/Text/
-
-=head2 CGI
-
-The CGI plugin is a wrapper around Lincoln Stein's 
-E<lt>lstein@genome.wi.mit.eduE<gt> CGI.pm module.  The plugin is 
-distributed with the Template Toolkit (see L<Template::Plugin::CGI>)
-and the CGI module itself is distributed with recent versions Perl,
-or is available from CPAN.
-
-    [% USE CGI %]
-    [% CGI.param('param_name') %]
-    [% CGI.start_form %]
-    [% CGI.popup_menu( Name   => 'color', 
-                       Values => [ 'Green', 'Brown' ] ) %]
-    [% CGI.end_form %]
-
-=head2 Datafile
-
-Provides an interface to data stored in a plain text file in a simple
-delimited format.  The first line in the file specifies field names
-which should be delimiter by any non-word character sequence.
-Subsequent lines define data using the same delimiter as in the first
-line.  Blank lines and comments (lines starting '#') are ignored.  See
-L<Template::Plugin::Datafile> for further details.
-
-/tmp/mydata:
-
-    # define names for each field
-    id : email : name : tel
-    # here's the data
-    fred : fred@here.com : Fred Smith : 555-1234
-    bill : bill@here.com : Bill White : 555-5678
-
-example:
-
-    [% USE userlist = datafile('/tmp/mydata') %]
-
-    [% FOREACH user = userlist %]
-       [% user.name %] ([% user.id %])
-    [% END %]
-
-=head2 Date
-
-The Date plugin provides an easy way to generate formatted time and date
-strings by delegating to the POSIX strftime() routine.   See
-L<Template::Plugin::Date> and L<POSIX> for further details.
-
-    [% USE date %]
-    [% date.format %]		# current time/date
-
-    File last modified: [% date.format(template.modtime) %]
-
-=head2 Directory
-
-The Directory plugin provides a simple interface to a directory and
-the files within it.  See L<Template::Plugin::Directory> for further
-details.
-
-    [% USE dir = Directory('/tmp') %]
-    [% FOREACH file = dir.files %]
-        # all the plain files in the directory
-    [% END %]
-    [% FOREACH file = dir.dirs %]
-        # all the sub-directories
-    [% END %]
-
-=head2 DBI
-
-The DBI plugin is no longer distributed as part of the Template Toolkit
-(as of version 2.15).  It is now available as a separate Template-Plugin-DBI 
-distribution from CPAN.
-
-=head2 Dumper
-
-The Dumper plugin provides an interface to the Data::Dumper module.  See
-L<Template::Plugin::Dumper> and L<Data::Dumper> for futher details.
-
-    [% USE dumper(indent=0, pad="<br>") %]
-    [% dumper.dump(myvar, yourvar) %]
-
-=head2 File
-
-The File plugin provides a general abstraction for files and can be
-used to fetch information about specific files within a filesystem.
-See L<Template::Plugin::File> for further details.
-
-    [% USE File('/tmp/foo.html') %]
-    [% File.name %]     # foo.html
-    [% File.dir %]      # /tmp
-    [% File.mtime %]    # modification time
-
-=head2 Filter
-
-This module implements a base class plugin which can be subclassed
-to easily create your own modules that define and install new filters.
-
-    package MyOrg::Template::Plugin::MyFilter;
-
-    use Template::Plugin::Filter;
-    use base qw( Template::Plugin::Filter );
-
-    sub filter {
-	my ($self, $text) = @_;
-
-	# ...mungify $text...
-
-	return $text;
-    }
-
-    # now load it...
-    [% USE MyFilter %]
-
-    # ...and use the returned object as a filter
-    [% FILTER $MyFilter %]
-      ...
-    [% END %]
-
-See L<Template::Plugin::Filter> for further details.
-
-=head2 Format
-
-The Format plugin provides a simple way to format text according to a
-printf()-like format.   See L<Template::Plugin::Format> for further 
-details.
-
-    [% USE bold = format('<b>%s</b>') %]
-    [% bold('Hello') %]
-
-=head2 GD
-
-The GD plugins are no longer part of the core Template Toolkit distribution.
-They are now available in a separate Template-GD distribution.
-
-=head2 HTML
-
-The HTML plugin is very basic, implementing a few useful
-methods for generating HTML.  It is likely to be extended in the future
-or integrated with a larger project to generate HTML elements in a generic
-way (as discussed recently on the mod_perl mailing list).
-
-    [% USE HTML %]
-    [% HTML.escape("if (a < b && c > d) ..." %]
-    [% HTML.attributes(border => 1, cellpadding => 2) %]
-    [% HTML.element(table => { border => 1, cellpadding => 2 }) %]
-
-See L<Template::Plugin::HTML> for further details.
-
-=head2 Iterator
-
-The Iterator plugin provides a way to create a Template::Iterator
-object to iterate over a data set.  An iterator is created
-automatically by the FOREACH directive and is aliased to the 'loop'
-variable.  This plugin allows an iterator to be explicitly created
-with a given name, or the default plugin name, 'iterator'.  See
-L<Template::Plugin::Iterator> for further details.
-
-    [% USE iterator(list, args) %]
-
-    [% FOREACH item = iterator %]
-       [% '<ul>' IF iterator.first %]
-       <li>[% item %]
-       [% '</ul>' IF iterator.last %]
-    [% END %]
-
-=head2 Pod
-
-This plugin provides an interface to the L<Pod::POM|Pod::POM> module
-which parses POD documents into an internal object model which can
-then be traversed and presented through the Template Toolkit.
-
-    [% USE Pod(podfile) %]
-
-    [% FOREACH head1 = Pod.head1;
-	 FOREACH head2 = head1/head2;
-	   ...
-         END;
-       END
-    %]
-
-=head2 String
-
-The String plugin implements an object-oriented interface for 
-manipulating strings.  See L<Template::Plugin::String> for further 
-details.
-
-    [% USE String 'Hello' %]
-    [% String.append(' World') %]
-
-    [% msg = String.new('Another string') %]
-    [% msg.replace('string', 'text') %]
-
-    The string "[% msg %]" is [% msg.length %] characters long.
-
-=head2 Table
-
-The Table plugin allows you to format a list of data items into a 
-virtual table by specifying a fixed number of rows or columns, with 
-an optional overlap.  See L<Template::Plugin::Table> for further 
-details.
-
-    [% USE table(list, rows=10, overlap=1) %]
-
-    [% FOREACH item = table.col(3) %]
-       [% item %]
-    [% END %]
-
-=head2 URL
-
-The URL plugin provides a simple way of contructing URLs from a base
-part and a variable set of parameters.  See L<Template::Plugin::URL>
-for further details.
-
-    [% USE mycgi = url('/cgi-bin/bar.pl', debug=1) %]
-
-    [% mycgi %]
-       # ==> /cgi/bin/bar.pl?debug=1
-
-    [% mycgi(mode='submit') %]
-       # ==> /cgi/bin/bar.pl?mode=submit&debug=1
-
-=head2 Wrap
-
-The Wrap plugin uses the Text::Wrap module by David Muir Sharnoff 
-E<lt>muir@idiom.comE<gt> (with help from Tim Pierce and many many others)
-to provide simple paragraph formatting.  See L<Template::Plugin::Wrap>
-and L<Text::Wrap> for further details.
-
-    [% USE wrap %]
-    [% wrap(mytext, 40, '* ', '  ') %]	# use wrap sub
-    [% mytext FILTER wrap(40) -%]	# or wrap FILTER
-
-The Text::Wrap module is available from CPAN:
-
-    http://www.cpan.org/modules/by-module/Text/
-
-=head2 XML::Style
-
-This plugin defines a filter for performing simple stylesheet based 
-transformations of XML text.  
-
-    [% USE xmlstyle 
-           table = { 
-               attributes = { 
-                   border      = 0
-                   cellpadding = 4
-                   cellspacing = 1
-               }
-           }
-    %]
-
-    [% FILTER xmlstyle %]
-    <table>
-    <tr>
-      <td>Foo</td> <td>Bar</td> <td>Baz</td>
-    </tr>
-    </table>
-    [% END %]
-
-See L<Template::Plugin::XML::Style> for further details.
-
-=head2 XML
-
-The XML::DOM, XML::RSS, XML::Simple and XML::XPath plugins are no
-longer distributed with the Template Toolkit as of version 2.15
-
-They are now available in a separate Template-XML distribution.
-
-
-
-=head1 BUGS / ISSUES
-
-=over 4
-
-=item *
-
-It might be worthwhile being able to distinguish between absolute
-module names and those which should be applied relative to PLUGIN_BASE
-directories.  For example, use 'MyNamespace::MyModule' to denote
-absolute module names (e.g. LOAD_PERL), and 'MyNamespace.MyModule' to
-denote relative to PLUGIN_BASE.
-
-=back
+Please see L<Template::Manual::Plugins> For a complete list of all the plugin 
+modules distributed with the Template Toolkit.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@wardley.orgE<gt>
-
-L<http://wardley.org/|http://wardley.org/>
-
-
-
-
-=head1 VERSION
-
-2.74, distributed as part of the
-Template Toolkit version 2.15, released on 26 May 2006.
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Template|Template>, L<Template::Plugin|Template::Plugin>, L<Template::Context|Template::Context>
+L<Template::Manual::Plugins>, L<Template::Plugin>, L<Template::Context>, L<Template>.
 
 =cut
 

@@ -24,44 +24,40 @@ sub name {
 
 sub initDetails {
 	my $class = shift;
-
-	eval {
-		require Mac::Files;
-		require Mac::Resources;
-		$canFollowAlias = 1;
-	};
 	
-	# Once for OS Version, then again for CPU Type.
-	open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
+	if ( !main::RESIZER ) {
+		# Once for OS Version, then again for CPU Type.
+		open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
 
-	while (<SYS>) {
+		while (<SYS>) {
 
-		if (/System Version: (.+)/) {
+			if (/System Version: (.+)/) {
 
-			$class->{osDetails}->{'osName'} = $1;
-			last;
+				$class->{osDetails}->{'osName'} = $1;
+				last;
+			}
 		}
-	}
 
-	close SYS;
+		close SYS;
 
-	# CPU Type / Processor Name
-	open(SYS, '/usr/sbin/system_profiler SPHardwareDataType |') or return;
+		# CPU Type / Processor Name
+		open(SYS, '/usr/sbin/system_profiler SPHardwareDataType |') or return;
 
-	while (<SYS>) {
+		while (<SYS>) {
 
-		if (/Intel/i) {
+			if (/Intel/i) {
 
-			$class->{osDetails}->{'osArch'} = 'x86';
-			last;
+				$class->{osDetails}->{'osArch'} = 'x86';
+				last;
 
-		} elsif (/PowerPC/i) {
+			} elsif (/PowerPC/i) {
 
-			$class->{osDetails}->{'osArch'} = 'ppc';
+				$class->{osDetails}->{'osArch'} = 'ppc';
+			}
 		}
-	}
 
-	close SYS;
+		close SYS;
+	}
 
 	$class->{osDetails}->{'os'}  = 'Darwin';
 	$class->{osDetails}->{'uid'} = getpwuid($>);
@@ -91,7 +87,19 @@ sub initPrefs {
 	chomp($prefs->{libraryname});
 }
 
-sub canFollowAlias { $canFollowAlias };
+sub canFollowAlias { 
+	return $canFollowAlias if defined $canFollowAlias;
+	
+	eval {
+		require Mac::Files;
+		require Mac::Resources;
+		$canFollowAlias = 1;
+	};
+	
+	if ( $@ ) {
+		$canFollowAlias = 0;
+	}
+}
 
 sub initSearchPath {
 	my $class = shift;
@@ -168,8 +176,8 @@ sub dirsFor {
 		my $musicDir = catdir($ENV{'HOME'}, 'Music');
 
 		# bug 1361 expand music folder if it's an alias, or SC won't start
-		if ($class->isMacAlias($musicDir)) {
-			$musicDir = $class->pathFromMacAlias($musicDir);
+		if ( my $alias = $class->pathFromMacAlias($musicDir) ) {
+			$musicDir = $alias;
 		}
 
 		push @dirs, $musicDir;
@@ -271,65 +279,45 @@ sub ignoredItems {
 
 =head2 pathFromMacAlias( $path )
 
-Return the filepath for a given Mac Alias
+Return the filepath for a given Mac Alias. Returns undef if $path is not an alias.
 
 =cut
 
+# Keep a cache of alias lookups to avoid double-lookup during scan
+# INIT block is needed because this module is loaded before CPAN dir is setup
+my %aliases;
+INIT {
+	require Tie::Cache::LRU;
+	tie %aliases, 'Tie::Cache::LRU', 128;
+}
+
 sub pathFromMacAlias {
 	my ($class, $fullpath) = @_;
-	my $path = '';
+	
+	return unless $fullpath && canFollowAlias();
+	
+	my $path;
+	
+	$fullpath = Slim::Utils::Misc::pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
+	
+	if ( exists $aliases{$fullpath} ) {
+		return $aliases{$fullpath};
+	}
 
-	return $path unless $fullpath && $canFollowAlias;
-
-	if ($class->isMacAlias($fullpath)) {
-
-		$fullpath = Slim::Utils::Misc::pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-
-		if (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0)) {
+	if (-f $fullpath && -r _ && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
+		
+		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
 			
-			if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
-				
-				$path = Mac::Files::ResolveAlias($alis);
-
-				Mac::Resources::ReleaseResource($alis);
-			}
-
-			Mac::Resources::CloseResFile($rsc);
+			$path = $aliases{$fullpath} = Mac::Files::ResolveAlias($alis);
+			
+			Mac::Resources::ReleaseResource($alis);
 		}
+		
+		Mac::Resources::CloseResFile($rsc);
 	}
 
 	return $path;
 }
-
-=head2 isMacAlias( $path )
-
-Return the filepath for a given Mac Alias
-
-=cut
-
-sub isMacAlias {
-	my ($class, $fullpath) = @_;
-	my $isAlias  = 0;
-
-	return unless $fullpath && $canFollowAlias;
-
-	$fullpath = Slim::Utils::Misc::pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-
-	if (-f $fullpath && -r _ && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
-
-		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
-
-			$isAlias = 1;
-
-			Mac::Resources::ReleaseResource($alis);
-		}
-
-		Mac::Resources::CloseResFile($rsc);
-	}
-
-	return $isAlias;
-}
-
 
 sub initUpdate {
 	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 30, \&signalUpdateReady);
@@ -396,5 +384,13 @@ sub canAutoUpdate { 1 }
 
 sub installerExtension { 'dmg' }; 
 sub installerOS { 'osx' }
+
+sub restartServer {
+	my $class  = shift;
+	my $helper = Slim::Utils::Misc::findbin('restart-server.sh');
+
+	system("'$helper' &") if $helper;
+}
+
 
 1;

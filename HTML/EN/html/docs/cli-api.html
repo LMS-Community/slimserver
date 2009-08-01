@@ -2297,9 +2297,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	Supported values are:
 	<ul>
 		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
-		<li><strong>www.mysqueezebox.com</strong> - Connect to mysqueezebox.com.</li>
-		<li><strong>www.test.mysqueezebox.com</strong> - Connect to mysqueezebox.com test.</li>
+		<li><strong>www.squeezenetwork.com</strong> - Connect to SqueezeNetwork.</li>
+		<li><strong>www.test.squeezenetwork.com</strong> - Connect to SqueezeNetwork test.</li>
 	</ul>
+<p>
+	If the player is currently a member of a sync-group, then all players in the sync-group
+	will be instructed to switch to the new server and reestablish the sync-group.
 <p>
 	Example:
 </p>
@@ -6183,6 +6186,7 @@ in the saved playlists folder.</p>
   playing by index. When setting, a zero-based value may be used to indicate which 
   song to play. An explicitly positive or negative number may be used to jump 
   to a song relative to the currently playing song.
+  The index can only be set if the playlist is not empty.
   If an index parameter is set then &quot;fadeInSecs&quot; may be passed to specify fade-in period.
   The value of the current song 
   index may be obtained by passing in &quot;?&quot; as a parameter.</p>
@@ -7567,6 +7571,21 @@ in the saved playlists folder.</p>
 	This signals the end of a &quot;<a href="#rescan">rescan</a>&quot;
 	or &quot;<a href="#wipecache">wipecache</a>&quot;.
 </p>
+
+<br>
+<p id="library changed">
+	<strong>
+		<code>
+			library
+			changed
+			&lt;0|1&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This signals the presence or absence of a library has changed.
+</p>
+
 
 <br>
 <p id="unknownir">

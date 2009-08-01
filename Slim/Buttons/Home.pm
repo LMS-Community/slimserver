@@ -28,7 +28,6 @@ navigating a configurable multilevel menu structure.
 =cut
 
 use strict;
-use File::Spec::Functions qw(:ALL);
 
 use Slim::Buttons::BrowseDB;
 use Slim::Buttons::BrowseTree;
@@ -168,6 +167,15 @@ sub init {
 			Slim::Buttons::Input::List::exitInput($client, 'right');		
 		},
 	);
+
+	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+}
+
+sub _libraryChanged {
+	foreach ( Slim::Player::Client::clients() ) {
+		updateMenu($_);
+		$_->update();
+	}
 }
 
 =head2 forgetClient ( $client )
@@ -201,7 +209,7 @@ sub addSubMenu {
 
 	if (!exists $home{$menu} && defined $submenuref) {
 
-		$log->info("$menu does not exist. creating...");
+		main::INFOLOG && $log->info("$menu does not exist. creating...");
 
 		addMenuOption($menu);
 	}
@@ -231,7 +239,7 @@ Takes two strings, deleting the menu indicated by $submenuname from the menu nam
 sub delSubMenu {
 	my ($menu, $name) = @_;
 	
-	$log->info("Deleting $name from $menu");
+	main::INFOLOG && $log->info("Deleting $name from $menu");
 	
 	if (!exists $home{$menu}{'submenus'}) {
 
@@ -894,6 +902,10 @@ sub updateMenu {
 	}
 	
 	for my $menuItem ( @{$menuItem} ) {
+		if ($menuItem eq 'BROWSE_MUSIC' && !Slim::Schema::hasLibrary()) {
+			next;
+		}
+		
 		# more leakage of the LineIn plugin..
 		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
 			next;

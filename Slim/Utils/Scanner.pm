@@ -28,7 +28,7 @@ they say and no more.
 
 use strict;
 
-use FileHandle;
+use FileHandle ();
 use File::Basename qw(basename);
 use File::Next;
 use IO::String;
@@ -93,7 +93,7 @@ sub scanPathOrURL {
 		}
 
 		# Always let the user know what's going on..
-		$log->info("Finding valid files in: $pathOrUrl");
+		main::INFOLOG && $log->info("Finding valid files in: $pathOrUrl");
 
 		# Non-async directory scan
 		my $foundItems = $class->scanDirectory( $args, 'return' );
@@ -114,13 +114,11 @@ sub findFilesMatching {
 	my $topDir = shift;
 	my $args   = shift;
 
-	my $isWin  = Slim::Utils::OSDetect::isWindows();
 	my $types  = Slim::Music::Info::validTypeExtensions($args->{'types'});
 
 	my $descend_filter = sub {
-		
 		return 0 if defined $args->{'recursive'} && !$args->{'recursive'};
-
+		
 		return Slim::Utils::Misc::folderFilter($File::Next::dir);
 	};
 
@@ -138,10 +136,9 @@ sub findFilesMatching {
 	my $found = $args->{'foundItems'} || [];
 
 	while (my $file = $iter->()) {
-
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
-		if ($isWin && $file =~ /\.lnk$/i) {
+		if (main::ISWINDOWS && $file =~ /\.lnk$/i) {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($file);
 
@@ -162,7 +159,7 @@ sub findFilesMatching {
 			# Recurse into additional shortcuts and directories.
 			if ($file =~ /\.lnk$/i || -d $file) {
 
-				$log->info("Following Windows Shortcut to: $url");
+				main::INFOLOG && $log->info("Following Windows Shortcut to: $url");
 
 				# Bug 4027 - pass along the types & recursion
 				# flags. The perils of recursive methods.
@@ -186,7 +183,7 @@ sub findFilesMatching {
 			# Recurse into additional shortcuts and directories.
 			if (-d $file) {
 
-				$log->info("Following Mac Alias to: $file");
+				main::INFOLOG && $log->info("Following Mac Alias to: $file");
 
 				$class->findFilesMatching($file, {
 					'foundItems' => $found,
@@ -216,12 +213,14 @@ sub findFilesForRescan {
 	my $class  = shift;
 	my $topDir = shift;
 	my $args   = shift;
+	
+	my $path = Slim::Utils::Misc::fileURLFromPath($topDir);
 
-	$log->info("Generating file list from disk & database...");
+	main::INFOLOG && $log->info("Generating file list from disk & database for $path...");
 
 	my $onDisk = $class->findFilesMatching($topDir, $args);
-	my $inDB   = Slim::Schema->rs('Track')->allTracksAsPaths;
-
+	my $inDB   = Slim::Schema->rs('Track')->allTracksAsPaths($path);
+	
 	return $class->findNewAndChangedFiles($onDisk, $inDB);
 }
 
@@ -236,7 +235,7 @@ sub findNewAndChangedFiles {
 	my $onDisk = shift;
 	my $inDB   = shift;
 
-	$log->info("Comparing file list between disk & database to generate rescan list...");
+	main::INFOLOG && $log->info("Comparing file list between disk & database to generate rescan list...");
 
 	# When rescanning: we need to find files:
 	#
@@ -246,13 +245,13 @@ sub findNewAndChangedFiles {
 	# Generate a list of files that are on disk, but are not in the database.
 	my $last  = Slim::Music::Import->lastScanTime;
 	my $found = Slim::Utils::Misc::arrayDiff($onDisk, $inDB);
+	
+	# XXX: report progress for this?
 
 	# Check the file list against the last rescan time to determine changed files.
 	for my $file (@{$onDisk}) {
-
 		# Only rescan the file if it's changed since our last scan time.
 		if ($last && -r $file && (stat(_))[9] > $last) {
-
 			$found->{$file} = 1;
 		}
 	}
@@ -281,7 +280,7 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("About to look for files in $topDir");
 		$log->info("For files with extensions in: ", Slim::Music::Info::validTypeExtensions($args->{'types'}));
 	}
@@ -312,10 +311,8 @@ sub scanDirectory {
 		return $foundItems;
 
 	} else {
-
-		if ( $log->is_info ) {
-			$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
-		}
+		
+		$log->error( sprintf( "Found %d files in %s\n", scalar @{$files}, $topDir ) );
 	}
 
 	$progress->total( scalar @{$files} ) if $progress;
@@ -324,14 +321,23 @@ sub scanDirectory {
 	my $method   = $::wipe ? 'newTrack' : 'updateOrCreate';
 
 	for my $file (@{$files}) {
+		
+		# Skip client playlists
+		next if $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
+		
+		if ( main::SCANNER && !$main::progress ) {
+			$log->error("Scanning: $file");
+		}
 
 		$progress->update($file) if $progress;
+		
+		Slim::Schema->clearLastError;
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
 
 		if (Slim::Music::Info::isSong($url)) {
 
-			$log->debug("Adding $url to database.");
+			main::DEBUGLOG && $log->debug("Adding $url to database.");
 
 			my $track = Slim::Schema->$method({
 				'url'        => $url,
@@ -342,12 +348,16 @@ sub scanDirectory {
 			if ( defined $track && $return ) {
 				push @{$foundItems}, $track;
 			}
+			
+			if ( !defined $track ) {
+				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
+			}
 
 		} elsif (Slim::Music::Info::isCUE($url) || 
 			(Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url))) {
 
 			# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
-			$log->debug("Adding playlist $url to database.");
+			main::DEBUGLOG && $log->debug("Adding playlist $url to database.");
 
 			# Bug: 3761 - readTags, so the title is properly decoded with the locale.
 			my $playlist = Slim::Schema->$method({
@@ -394,7 +404,7 @@ sub scanPlaylistFileHandle {
 		#XXX There is another method that comes close if this shouldn't be used.
 		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($playlist->path)->parent );
 
-		$log->debug("Will scan $url, base: $parentDir");
+		main::DEBUGLOG && $log->debug("Will scan $url, base: $parentDir");
 	}
 
 	my @playlistTracks = Slim::Formats::Playlists->parseList(
@@ -437,7 +447,7 @@ sub scanPlaylistFileHandle {
 	my $ct = Slim::Schema->contentType($playlist);
 
 	if (Slim::Music::Info::isFileURL($url) && Slim::Utils::Misc::inPlaylistFolder($url)) {
-		$log->debug( "Playlist item $url changed from $ct to ssp content-type" );
+		main::DEBUGLOG && $log->debug( "Playlist item $url changed from $ct to ssp content-type" );
 		$ct = 'ssp';
 	}
 
@@ -452,14 +462,14 @@ sub scanPlaylistFileHandle {
 				$track->title( $playlist->title );
 				$track->update;
 				
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'Playlist item ' . $track->url . ' given title ' . $track->title );
 				}
 			}
 		}
 	}
 	
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug(sprintf("Found %d items in playlist: ", scalar @playlistTracks));
 
@@ -471,30 +481,6 @@ sub scanPlaylistFileHandle {
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
 }
-
-=head2 scanBitrate( $fh, $contentType, $url )
-
-Scan a remote stream for bitrate information using a temporary file.
-
-Currently supports MP3, Ogg, and FLAC streams (any format class that implements 'scanBitrate')
-
-=cut
-
-sub scanBitrate {
-	my ( $fh, $contentType, $url ) = @_;
-
-	my $formatClass = Slim::Formats->classForFormat($contentType);
-
-	if ($formatClass && Slim::Formats->loadTagFormatForType($contentType) && $formatClass->can('scanBitrate')) {
-
-		return $formatClass->scanBitrate( $fh, $url );
-	}
-
-	$log->warn("Unable to scan content-type: $contentType");
-
-	return (-1, undef);
-}
-
 
 1;
 

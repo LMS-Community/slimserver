@@ -27,6 +27,10 @@ sub getFlavor {
 
 		return 'Netgear RAIDiator';
 			
+	} elsif (-f '/etc/squeezeos.version') {
+	
+		return 'SqueezeOS';
+	
 	} elsif (-f '/etc/debian_version') {
 	
 		return 'Debian';

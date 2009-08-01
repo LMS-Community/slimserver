@@ -3,7 +3,7 @@ package # hide from PAUSE
 
 use strict;
 use warnings;
-
+use Sub::Name ();
 use base qw/DBIx::Class/;
 
 sub register_relationship {
@@ -20,7 +20,8 @@ sub proxy_to_related {
   no strict 'refs';
   no warnings 'redefine';
   foreach my $proxy (@proxy) {
-    *{"${class}::${proxy}"} =
+    my $name = join '::', $class, $proxy;
+    *$name = Sub::Name::subname $name,
       sub {
         my $self = shift;
         my $val = $self->$rel;

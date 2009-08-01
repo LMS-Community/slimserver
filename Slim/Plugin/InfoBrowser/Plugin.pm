@@ -44,7 +44,7 @@ use strict;
 
 use base qw(Slim::Plugin::Base);
 
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -75,15 +75,14 @@ sub initPlugin {
 		Slim::Plugin::InfoBrowser::Settings->new($class);
 	}
 
-	$class->SUPER::initPlugin;
-
 	if ( !main::SLIM_SERVICE ) {
 		$menuUrl    = $class->_menuUrl;
 		@searchDirs = $class->_searchDirs;
 		
 		$class->importNewMenuFiles;
 	}
-	
+
+	$class->SUPER::initPlugin;
 
 	Slim::Control::Request::addDispatch(['infobrowser', 'items', '_index', '_quantity'],
 		[0, 1, 1, \&cliQuery]);
@@ -150,7 +149,7 @@ sub importNewMenuFiles {
 		$clear = 'clear';
 	}
 
-	$log->info($clear ? "clearing old menu" : "searching for new menu files to import");
+	main::INFOLOG && $log->info($clear ? "clearing old menu" : "searching for new menu files to import");
 
 	my @files = ();
 	my $iter  = File::Next::files(
@@ -187,7 +186,7 @@ sub _import {
 
 	for my $file (sort @$files) {
 
-		$log->info("importing $file");
+		main::INFOLOG && $log->info("importing $file");
 	
 		my $import = Slim::Plugin::Favorites::Opml->new({ 'url' => $file });
 
@@ -230,7 +229,7 @@ sub _menuUrl {
 	if (-r $file) {
 
 		if (-w $file) {
-			$log->info("infobrowser menu file: $file");
+			main::INFOLOG && $log->info("infobrowser menu file: $file");
 
 		} else {
 			$log->warn("unable to write to infobrowser menu file: $file");
@@ -238,7 +237,7 @@ sub _menuUrl {
 
 	} else {
 
-		$log->info("creating infobrowser menu file: $file");
+		main::INFOLOG && $log->info("creating infobrowser menu file: $file");
 
 		my $newopml = Slim::Plugin::Favorites::Opml->new;
 		$newopml->title(Slim::Utils::Strings::string('PLUGIN_INFOBROWSER'));
@@ -259,6 +258,8 @@ sub _searchDirs {
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 
 	for my $dir (@pluginDirs) {
+
+		next unless -d $dir;
 
 		opendir(DIR, $dir);
 

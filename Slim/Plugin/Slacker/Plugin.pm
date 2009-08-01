@@ -56,7 +56,7 @@ sub initPlugin {
 	
 	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/slacker/trackinfo.html',
 			sub {
 				my $client = $_[0];
@@ -93,7 +93,7 @@ sub rateTrack {
 	my $rating = $request->getParam('_rating');
 	
 	if ( $rating !~ /^[FUB]$/ ) {
-		$log->debug('Invalid Slacker rating, must be F, U, or B');
+		main::DEBUGLOG && $log->debug('Invalid Slacker rating, must be F, U, or B');
 		return;
 	}
 	
@@ -111,7 +111,7 @@ sub rateTrack {
 		. '&rating=' . $rating
 	);
 	
-	$log->debug("Slacker: rateTrack: $rating ($ratingURL)");
+	main::DEBUGLOG && $log->debug("Slacker: rateTrack: $rating ($ratingURL)");
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_rateTrackOK,
@@ -137,15 +137,15 @@ sub _rateTrackOK {
 	my $rating       = $request->getParam('_rating');
 	my $currentTrack = $http->params('currentTrack');
 	
-	$log->debug('Rating submit OK');
+	main::DEBUGLOG && $log->debug('Rating submit OK');
 	
 	# If rating was negative and skip is allowed, skip the track
 	if ( $rating eq 'B' && $currentTrack->{skip} eq 'yes' ) {
-		$log->debug('Rating was negative, skipping track');
+		main::DEBUGLOG && $log->debug('Rating was negative, skipping track');
 		$client->execute( [ "playlist", "jump", "+1" ] );
 	}
 	elsif ( $rating eq 'B' ) {
-		$log->debug('Rating was negative but no more skips allowed');
+		main::DEBUGLOG && $log->debug('Rating was negative but no more skips allowed');
 	}
 	
 	# For a change in rating, adjust our cached track data
@@ -173,7 +173,7 @@ sub _rateTrackError {
 	my $client  = $http->params('client');
 	my $request = $http->params('request');
 	
-	$log->debug( "Rating submit error: $error" );
+	main::DEBUGLOG && $log->debug( "Rating submit error: $error" );
 	
 	# Not sure what status to use here
 	$request->setStatusBadParams();
@@ -201,7 +201,7 @@ sub playStation {
 	my $url   = $request->getParam('_url');
 	my $title = $request->getParam('_title');
 	
-	$log->debug("Playing Slacker station $url - $title"); 
+	main::DEBUGLOG && $log->debug("Playing Slacker station $url - $title"); 
 	
 	Slim::Music::Info::setTitle( $url, $title );
 	
@@ -220,7 +220,7 @@ sub deleteStation {
 	my $url = Slim::Player::Playlist::url($client) || return;
 	
 	if ( $url =~ /$sid/ ) {
-		$log->debug( 'Station was deleted, stopping' );
+		main::DEBUGLOG && $log->debug( 'Station was deleted, stopping' );
 		$client->execute( [ 'playlist', 'clear' ] );
 	}
 }
@@ -234,7 +234,7 @@ sub trackInfoMenu {
 	
 	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' );
 	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/slacker/v1/opml/search?q=' . uri_escape_utf8($artist)

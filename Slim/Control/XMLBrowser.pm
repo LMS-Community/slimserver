@@ -38,7 +38,7 @@ my $log = logger('formats.xml');
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 	
-	$log->info("cliQuery($query)");
+	main::INFOLOG && $log->info("cliQuery($query)");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
@@ -88,7 +88,7 @@ sub cliQuery {
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		
-		$log->debug("Feed is already XML data!");
+		main::DEBUGLOG && $log->debug("Feed is already XML data!");
 		_cliQuery_done( $feed, {
 			'request'    => $request,
 			'client'     => $request->client,
@@ -124,12 +124,12 @@ sub cliQuery {
 			my $newsid = Slim::Utils::Misc::createUUID();
 			
 			$itemId =~ s/^$sid/$newsid/;
-			$request->addParam( item_id => $itemId );
+			$request->addParam( item_id => "$itemId" ); # stringify for JSON
 		}
 		
 		my $cache = Slim::Utils::Cache->new;
 		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
-			$log->is_debug && $log->debug( "Using cached session $sid" );
+			main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
 				
 			_cliQuery_done( $cached, {
 				'request' => $request,
@@ -143,7 +143,7 @@ sub cliQuery {
 		}
 	}
 
-	$log->debug("Asynchronously fetching feed $feed - will be back!");
+	main::DEBUGLOG && $log->debug("Asynchronously fetching feed $feed - will be back!");
 	
 	Slim::Formats::XML->getFeedAsync(
 		\&_cliQuery_done,
@@ -164,7 +164,7 @@ sub cliQuery {
 sub _cliQuery_done {
 	my ( $feed, $params ) = @_;
 
-	$log->info("_cliQuery_done()");
+	main::INFOLOG && $log->info("_cliQuery_done()");
 
 	my $request    = $params->{'request'};
 	my $query      = $params->{'query'};
@@ -239,7 +239,7 @@ sub _cliQuery_done {
 	
 	if ( $sid ) {
 		# Cache the feed structure for this session
-		$log->is_debug && $log->debug( "Caching session $sid" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid" );
 		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME ) };
 		
@@ -253,7 +253,7 @@ sub _cliQuery_done {
 		# descend to the selected item
 		my $depth = 0;
 		for my $i ( @index ) {
-			$log->debug("Considering item $i");
+			main::DEBUGLOG && $log->debug("Considering item $i");
 
 			$depth++;
 			
@@ -289,14 +289,14 @@ sub _cliQuery_done {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
+			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				if ( $i =~ /(?:\d+)?_(.+)/ ) {
 					$search = $1;
 				}
 				
 				# Rewrite the URL if it was a search request
-				if ( $subFeed->{type} eq 'search' ) {
+				if ( $subFeed->{type} && $subFeed->{type} eq 'search' ) {
 					$subFeed->{url} =~ s/{QUERY}/$search/g;
 				}
 				
@@ -319,7 +319,7 @@ sub _cliQuery_done {
 				# Check for a cached version of this subfeed URL
 				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
 					
-					$log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
+					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
 					_cliQuerySubFeed_done( $cached, $args );
 				}
 				
@@ -346,7 +346,7 @@ sub _cliQuery_done {
 						
 						my $pt = $subFeed->{passthrough} || [];
 
-						if ( $log->is_debug ) {
+						if ( main::DEBUGLOG && $log->is_debug ) {
 							my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
 							$log->debug( "Fetching OPML from coderef $cbname" );
 						}
@@ -354,7 +354,7 @@ sub _cliQuery_done {
 						return $subFeed->{url}->( $request->client, $callback, @{$pt} );
 					}
 								
-					$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
+					main::DEBUGLOG && $log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
 
 					Slim::Formats::XML->getFeedAsync(
 						\&_cliQuerySubFeed_done,
@@ -370,13 +370,13 @@ sub _cliQuery_done {
 			# This is a leaf item, so show as much info as we have and go packing after that.		
 			if (	$isItemQuery &&
 					(
-						$subFeed->{'type'} eq 'audio' || 
+						($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') || 
 						$subFeed->{'enclosure'} ||
 						$subFeed->{'description'}	
 					)
 				) {
 				
-				$log->debug("Adding results for audio or enclosure subfeed");
+				main::DEBUGLOG && $log->debug("Adding results for audio or enclosure subfeed");
 
 				if ($menuMode) {
 
@@ -392,21 +392,21 @@ sub _cliQuery_done {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'play'],
 								'params' => {
-									'item_id' => $item_id,
+									'item_id' => "$item_id", # stringify for JSON
 								},
 							},
 							'add' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'add'],
 								'params' => {
-									'item_id' => $item_id,
+									'item_id' => "$item_id", # stringify for JSON
 								},
 							},
 							'add-hold' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'insert'],
 								'params' => {
-									'item_id' => $item_id,
+									'item_id' => "$item_id", # stringify for JSON
 								},
 							},
 						},
@@ -426,7 +426,7 @@ sub _cliQuery_done {
 					# create an ordered hash to store this stuff...
 					tie (my %hash, "Tie::IxHash");
 
-					$hash{'id'} = $item_id;
+					$hash{'id'} = "$item_id"; # stringify for JSON
 					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
 					$hash{'title'} = $subFeed->{'title'} if defined $subFeed->{'title'};
 					
@@ -477,14 +477,14 @@ sub _cliQuery_done {
 									'player' => 0,
 									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
 									'params' => {
-										'item_id' => $item_id,
+										'item_id' => "$item_id", # stringify for JSON
 									},
 								},
 								'play' => {
 									'player' => 0,
 									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
 									'params' => {
-										'item_id' => $item_id,
+										'item_id' => "$item_id", # stringify for JSON
 									},
 								},
 								# add always adds
@@ -492,14 +492,14 @@ sub _cliQuery_done {
 									'player' => 0,
 									'cmd'    => [$query, 'playlist', 'add'],
 									'params' => {
-										'item_id' => $item_id,
+										'item_id' => "$item_id", # stringify for JSON
 									},
 								},
 								'add-hold' => {
 									'player' => 0,
 									'cmd'    => [$query, 'playlist', 'insert'],
 									'params' => {
-										'item_id' => $item_id,
+										'item_id' => "$item_id", # stringify for JSON
 									},
 								},						};
 							$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
@@ -608,7 +608,7 @@ sub _cliQuery_done {
 								},
 							};
 							$actions->{'go'}{'params'}{'icon'} = $hash{image} if defined($hash{image});
-							$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+							$actions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
 							my $string = $request->string($token);
 							$request->addResultLoop($loopname, $cnt, 'text', $string);
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
@@ -636,7 +636,7 @@ sub _cliQuery_done {
 		my $client = $request->client();
 		my $method = $request->getParam('_method');
 
-		$log->info("Play an item ($method).");
+		main::INFOLOG && $log->info("Play an item ($method).");
 
 		if ($client && $method =~ /^(add|addall|play|playall|insert|load)$/i) {
 			# single item
@@ -659,7 +659,7 @@ sub _cliQuery_done {
 	
 				if ( $url ) {
 
-					$log->info("$method $url");
+					main::INFOLOG && $log->info("$method $url");
 					
 					# Set metadata about this URL
 					Slim::Music::Info::setRemoteMetadata( $url, {
@@ -707,7 +707,7 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					if ( $log->is_info ) {
+					if ( main::INFOLOG && $log->is_info ) {
 						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					}
 					
@@ -730,7 +730,7 @@ sub _cliQuery_done {
 
 	elsif ($isItemQuery) {
 
-		$log->info("Get items.");
+		main::INFOLOG && $log->info("Get items.");
 		
 		# Bug 7024, display an "Empty" item instead of returning an empty list
 		if ( $menuMode && ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) ) {
@@ -844,8 +844,8 @@ sub _cliQuery_done {
 							},
 						};
 						
-					$actions->{go}->{params}->{item_id}  = $item_id;
-					$actions->{add}->{params}->{item_id} = $item_id;
+					$actions->{go}->{params}->{item_id}  = "$item_id"; # stringify for JSON
+					$actions->{add}->{params}->{item_id} = "$item_id"; # stringify for JSON
 					
 					$actions->{play} = $actions->{go};
 						
@@ -952,14 +952,13 @@ sub _cliQuery_done {
 						my $isPlayable = (
 							   $item->{play} 
 							|| $item->{playlist} 
-							|| $item->{type} eq 'audio'
-							|| $item->{type} eq 'playlist'
+							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
 						);
 						
 						my $itemParams = {};
 						my $id = $hash{id};
 						
-						if ( $item->{type} ne 'text' ) {							
+						if ( !$item->{type} || $item->{type} ne 'text' ) {							
 							$itemParams = {
 								item_id => "$id", #stringify, make sure it's a string
 							};
@@ -1004,7 +1003,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 
-						if ( $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
+						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
@@ -1019,7 +1018,7 @@ sub _cliQuery_done {
 							}
 						}
 						
-						elsif ( $item->{type} eq 'search' ) {
+						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
@@ -1138,7 +1137,7 @@ sub _cliQuerySubFeed_done {
 		my @p = map { uri_unescape($_) } split / /, $feed->{command};
 		my $client = $params->{request}->client();
 		
-		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 	}
 	

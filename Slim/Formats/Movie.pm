@@ -10,96 +10,85 @@ package Slim::Formats::Movie;
 use strict;
 use base qw(Slim::Formats);
 
-use MP4::Info;
+use Audio::Scan;
 
+use Slim::Formats::MP3;
 use Slim::Utils::Log;
 use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
-	'AART'      => 'ALBUMARTIST',	# bug 10724 - support aART as Album Artist
-	'WRT'       => 'COMPOSER',
-	'CPIL'      => 'COMPILATION',
-	'COVR'      => 'PIC',
-	'ENCRYPTED' => 'DRM',
-	'SONM'      => 'TITLESORT',
-	'SOAR'      => 'ARTISTSORT',
-	'SOAL'      => 'ALBUMSORT',
+	AART => 'ALBUMARTIST',	# bug 10724 - support aART as Album Artist
+	ALB  => 'ALBUM',
+	ART  => 'ARTIST',
+	CMT  => 'COMMENT',
+	COVR => 'ARTWORK',
+	CPIL => 'COMPILATION',
+	DAY  => 'YEAR',
+	GNRE => 'GENRE',
+	GEN  => 'GENRE',
+	LYR  => 'LYRICS',
+	NAM  => 'TITLE',
+	SOAA => 'ALBUMARTISTSORT',
+	SOAL => 'ALBUMSORT',
+	SOAR => 'ARTISTSORT',
+	SOCO => 'COMPOSERSORT',
+	SONM => 'TITLESORT',
+	TMPO => 'BPM',
+	TRKN => 'TRACKNUM',
+	WRT  => 'COMPOSER',
+	
+	'MusicBrainz Album Artist' => 'ALBUMARTIST',
+	'MusicBrainz Track Id'     => 'MUSICBRAINZ_ID',
+	'MusicBrainz Sortname'     => 'ARTISTSORT',
 );
-
-if ($] > 5.007) {
-
-	MP4::Info::use_mp4_utf8(1)
-}
 
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
-
-	my $tags = MP4::Info::get_mp4tag($file) || {};
-
-	while (my ($old,$new) = each %tagMapping) {
-
-		if (exists $tags->{$old}) {
-
-			$tags->{$new} = delete $tags->{$old};
-		}
-	}
-
-	$tags->{'OFFSET'} = 0;
-
-	# bitrate is in bits per second, not kbits per second.
-	$tags->{'BITRATE'} = $tags->{'BITRATE'}   * 1000 if $tags->{'BITRATE'};
-	$tags->{'RATE'}    = $tags->{'FREQUENCY'} * 1000 if $tags->{'FREQUENCY'};
-
-	# If encoding is alac, the file is lossless.
-	if ($tags->{'ENCODING'} && $tags->{'ENCODING'} eq 'alac') {
-
-		$tags->{'LOSSLESS'}     = 1;
-		$tags->{'VBR_SCALE'}    = 1;
-		$tags->{'CONTENT_TYPE'} = 'alc';
-	}
-
-	# Unroll the disc info.
-	if ($tags->{'DISK'} && ref($tags->{'DISK'}) eq 'ARRAY') {
-
-		($tags->{'DISC'}, $tags->{'DISCC'}) = @{$tags->{'DISK'}};
-	}
-
-	# Check for aacgain or iTunes SoundCheck data stuffed in the '----' atom.
-	if ($tags->{'META'} && ref($tags->{'META'}) eq 'ARRAY') {
-
-		for my $meta (@{$tags->{'META'}}) {
-
-			if ($meta->{'NAME'} =~ /replaygain/i) {
-
-				$tags->{ uc($meta->{'NAME'}) } = $meta->{'DATA'};
-			}
-
-			elsif ($meta->{'NAME'} eq 'iTunNORM') {
-
-				$tags->{'REPLAYGAIN_TRACK_GAIN'} = Slim::Utils::SoundCheck::normStringTodB($meta->{'DATA'});
-			}
-			
-			elsif ($meta->{'NAME'} eq 'MusicBrainz Track Id') {
-				
-				$tags->{'MUSICBRAINZ_ID'} = $meta->{'DATA'};
-			}
-			
-			elsif ($meta->{'NAME'} eq 'MusicBrainz Album Artist') {
-				
-				# bug 10724 - support now obsolete MusicBrainz Album Artist
-				# usage of aART overrules this (MB Picard, iTunes, Tag&Rename use aART)
-				$tags->{'ALBUMARTIST'} = $meta->{'DATA'} if not defined $tags->{'ALBUMARTIST'};
-			}
-			
-			elsif ($meta->{'NAME'} eq 'MusicBrainz Sortname') {
-				
-				$tags->{'ARTISTSORT'} = $meta->{'DATA'};
-			}
-		}
-	}
 	
-	delete $tags->{'META'};
+	my $s = Audio::Scan->scan( $file );
+	
+	my $info = $s->{info};
+	my $tags = $s->{tags};
+	
+	return unless $info->{song_length_ms};
+	
+	# map the existing tag names to the expected tag names
+	$class->_doTagMapping($tags);
+
+	$tags->{OFFSET} = 0;
+	$tags->{SIZE}   = $info->{file_size};
+	$tags->{SECS}   = $info->{song_length_ms} / 1000;
+	
+	if ( my $track = $info->{tracks}->[0] ) {
+		# MP4 file	
+		$tags->{BITRATE}  = $track->{avg_bitrate};
+		$tags->{RATE}     = $track->{samplerate};
+		$tags->{CHANNELS} = $track->{channels};
+
+		# If encoding is alac, the file is lossless.
+		if ( $track->{encoding} eq 'alac' ) {
+			$tags->{LOSSLESS}     = 1;
+			$tags->{VBR_SCALE}    = 1;
+			$tags->{CONTENT_TYPE} = 'alc';
+		}
+		elsif ( $track->{encoding} eq 'drms' ) {
+			$tags->{DRM} = 1;
+		}
+	}
+	elsif ( $info->{bitrate} ) {
+		# ADTS file
+		$tags->{OFFSET}   = $info->{audio_offset}; # ID3v2 tags may be present
+		$tags->{BITRATE}  = $info->{bitrate};
+		$tags->{RATE}     = $info->{samplerate};
+		$tags->{CHANNELS} = $info->{channels};
+		
+		if ( $info->{id3_version} ) {
+			$tags->{TAGVERSION} = $info->{id3_version};
+		    
+			Slim::Formats::MP3->doTagMapping($tags);
+		}
+	}
 
 	return $tags;
 }
@@ -107,15 +96,76 @@ sub getTag {
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
+	
+	my $s = Audio::Scan->scan_tags($file);
+	
+	return $s->{tags}->{COVR};
+}
 
-	my $tags = MP4::Info::get_mp4tag($file) || {};
+sub _doTagMapping {
+	my ($class, $tags) = @_;
 
-	if (defined $tags && ref($tags) eq 'HASH') {
-
-		return $tags->{'COVR'};
+	# map the existing tag names to the expected tag names
+	while ( my ($old, $new) = each %tagMapping ) {
+		if ( exists $tags->{$old} ) {
+			$tags->{$new} = delete $tags->{$old};
+		}
 	}
 
-	logError("Got invalid tag data back from file: [$file]");
+	# Special handling for DATE tags
+	# Parse the date down to just the year, for compatibility with other formats
+	if ( defined $tags->{YEAR} ) {
+		$tags->{YEAR} =~ s/.*(\d\d\d\d).*/$1/;
+	}
+	
+	# Unroll the disc info.
+	if ( $tags->{DISK} ) {
+		($tags->{DISC}, $tags->{DISCC}) = split /\//, delete $tags->{DISK};
+	}
+	
+	# Look for iTunes SoundCheck data, unless we have a TXXX track gain tag
+	if ( !$tags->{REPLAYGAIN_TRACK_GAIN} ) {
+		if ( $tags->{ITUNNORM} ) {
+			$tags->{REPLAYGAIN_TRACK_GAIN} = Slim::Utils::SoundCheck::normStringTodB( delete $tags->{ITUNNORM} );
+		}
+	}
+	
+	# Flag if we have embedded cover art
+	$tags->{HAS_COVER} = 1 if $tags->{COVR};
 }
+
+sub getInitialAudioBlock {
+	my ($class, $fh) = @_;
+	
+	my $sourcelog = logger('player.source');
+	
+	open my $localFh, '<&=', $fh;
+	
+	seek $localFh, 0, 0;
+	
+	my $s = Audio::Scan->scan_fh( mp4 => $localFh );
+	
+	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug( 'Reading initial audio block: length ' . $s->{info}->{audio_offset} );
+	
+	seek $localFh, 0, 0;
+	read $localFh, my $buffer, $s->{info}->{audio_offset};
+	
+	close $localFh;
+	
+	return $buffer;
+}
+
+sub findFrameBoundaries {
+	my ($class, $fh, $offset, $time) = @_;
+
+	if (!defined $fh || !defined $time) {
+		return 0;
+	}
+	
+	return Audio::Scan->find_frame_fh( mp4 => $fh, int($time * 1000) );
+}
+
+# XXX support while transcoding?
+sub canSeek { 1 }
 
 1;

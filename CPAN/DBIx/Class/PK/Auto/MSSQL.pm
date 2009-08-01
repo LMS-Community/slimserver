@@ -1,4 +1,5 @@
-package DBIx::Class::PK::Auto::MSSQL;
+package # hide package from pause
+  DBIx::Class::PK::Auto::MSSQL;
 
 use strict;
 use warnings;

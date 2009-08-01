@@ -12,7 +12,14 @@ package Slim::Formats::RemoteStream;
 use strict;
 use base qw(IO::Socket::INET);
 
-use IO::Socket qw(:DEFAULT :crlf);
+# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
+use Exporter qw(import);
+
+use IO::Socket qw(
+	:crlf
+	pack_sockaddr_in
+	inet_aton
+);
 use IO::Select;
 
 use Slim::Music::Info;
@@ -58,10 +65,10 @@ sub open {
 		$peeraddr = $proxy;
 		($server, $port) = split /:/, $proxy;
 
-		$log->info("Opening connection using proxy $proxy");
+		main::INFOLOG && $log->info("Opening connection using proxy $proxy");
 	}
 
-	$log->info("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]");
+	main::INFOLOG && $log->info("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]");
 
 	my $sock = $class->SUPER::new(
 		LocalAddr => $main::localStreamAddr,
@@ -131,21 +138,21 @@ sub request {
 	my $post    = $args->{'post'};
 
 	my $class   = ref $self;
-	my $request = $self->requestString($args->{'client'}, $url, $post, $args->{'song'} ? $args->{'song'}->{'seekdata'} : undef);
+	my $request = $self->requestString($args->{'client'}, $url, $post, $args->{'song'} ? $args->{'song'}->seekdata() : undef);
 	
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'create'}  = $args->{'create'};
 	${*$self}{'bitrate'} = $args->{'bitrate'};
 	${*$self}{'infoUrl'} = $args->{'infoUrl'};
 	
-	$log->info("Request: $request");
+	main::INFOLOG && $log->info("Request: $request");
 
 	$self->syswrite($request);
 
 	my $timeout  = $self->timeout();
 	my $response = Slim::Utils::Network::sysreadline($self, $timeout);
 
-	$log->info("Response: $response");
+	main::INFOLOG && $log->info("Response: $response");
 
 	if (!$response || $response !~ / (\d\d\d)/) {
 
@@ -194,7 +201,7 @@ sub request {
 		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
 
-		$log->info("Redirect to: $redir");
+		main::INFOLOG && $log->info("Redirect to: $redir");
 
 		return $class->open({
 			'url'     => $redir,
@@ -206,7 +213,7 @@ sub request {
 		});
 	}
 
-	$log->info("Opened stream!");
+	main::INFOLOG && $log->info("Opened stream!");
 
 	return $self;
 }
@@ -322,8 +329,8 @@ sub DESTROY {
 
 		my $class = ref($self);
 
-		$log->debug(sprintf("%s - in DESTROY", $class));
-		$log->debug(sprintf("%s About to close socket to: [%s]", $class, ${*$self}{'url'}));
+		main::DEBUGLOG && $log->debug(sprintf("%s - in DESTROY", $class));
+		main::DEBUGLOG && $log->debug(sprintf("%s About to close socket to: [%s]", $class, ${*$self}{'url'}));
 	}
 
 	$self->close;

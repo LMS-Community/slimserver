@@ -36,14 +36,27 @@ use File::BOM;
 use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
-# This works better than Encode::Guess
-use Encode::Detect::Detector;
-
 use Slim::Utils::Log;
+
+BEGIN {
+	my $hasEDD;
+
+	sub hasEDD {
+		return $hasEDD if defined $hasEDD;
+	
+		$hasEDD = 0;
+		eval {
+			require Encode::Detect::Detector;
+			$hasEDD = 1;
+		};
+	
+		return $hasEDD;
+	}
+}
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
-	$lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
+	$lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
 	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE
 );
 
@@ -53,6 +66,7 @@ our (
 	require Encode::Guess;
 	
 	$FB_QUIET = Encode::FB_QUIET();
+	$FB_CROAK = Encode::FB_CROAK();
 
 	$bomRE = qr/^(?:
 		\xef\xbb\xbf     |
@@ -75,8 +89,9 @@ our (
 	}
 	         
 	# Create a regex for looks_like_utf8()
-	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
-
+	# Latin1 range + Combining Diacritical Marks + Combining Diacritical Marks Supplement
+	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (128..255, 0x300..0x36F, 0x1DC0..0x1DFF);
+	
 	$recomposeTable = {
 		"o\x{30c}" => "\x{1d2}",
 		"e\x{302}" => "\x{ea}",
@@ -362,7 +377,6 @@ sub utf8decode_guess {
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string) || Encode::is_utf8($string)) {
-
 		return $string;
 	}
 
@@ -406,7 +420,8 @@ sub utf8decode_locale {
 
 	if ($string && !Encode::is_utf8($string)) {
 
-		$string = Encode::decode($lc_ctype, $string, $FB_QUIET);
+		my $decoded = eval { Encode::decode($lc_ctype, $string, $FB_CROAK) };
+		$string = $@ ? $string : $decoded;
 	}
 
 	return $string;
@@ -438,7 +453,7 @@ sub utf8encode {
 
 	} elsif ($string) {
 
-		Encode::_utf8_off($string);
+		$string = Encode::encode('UTF-8', $string);
 	}
 
 	return $string;
@@ -459,38 +474,30 @@ sub utf8encode_locale {
 
 =head2 utf8off( $string )
 
-Turns off Perl's internal UTF-8 flag for the string.
+Alias for Encode::encode('UTF-8', $string)
 
 Returns the new string.
 
 =cut
 
 sub utf8off {
-	my $string = shift;
-
-	if ($string) {
-		Encode::_utf8_off($string);
-	}
-
-	return $string;
+	my $string = shift || return;
+	
+	return Encode::encode('UTF-8', $string);
 }
 
 =head2 utf8on( $string )
 
-Turns on Perl's internal UTF-8 flag for the string.
+Alias for Encode::decode('UTF-8', $string)
 
 Returns the new string.
 
 =cut
 
 sub utf8on {
-	my $string = shift;
-
-	if ($string && looks_like_utf8($string)) {
-		Encode::_utf8_on($string);
-	}
-
-	return $string;
+	my $string = shift || return;
+	
+	return Encode::decode('UTF-8', $string);
 }
 
 =head2 looks_like_ascii( $string )
@@ -550,7 +557,8 @@ Returns false otherwise.
 sub looks_like_utf8 {
 	use bytes;
 
-	return 1 if $_[0] =~ /^\xef\xbb\xbf/;
+	return 1 if $_[0] =~ /^\xEF\xBB\xBF/;
+	return 0 if $_[0] =~ /\xC0|\xC1|\xF5|\xF6|\xF7|\xF8|\xF9|\xFA|\xFB|\xFC|\xFD|\xFE|\xFF/;
 	return 1 if $_[0] =~ /($utf8_re_bits)/o;
 	return 0;
 }
@@ -653,14 +661,26 @@ sub encodingFromString {
 	} elsif (looks_like_utf8($_[0])) {
 	
 		return 'utf8';
+		
+	} elsif (looks_like_latin1($_[0])) {
+	
+		return 'iso-8859-1';
+
+	} elsif (looks_like_cp1252($_[0])) {
+	
+		return 'cp1252';
+	}
+	
+	if ( !hasEDD() ) {
+		return 'raw';
 	}
 
 	# Check Encode::Detect::Detector before ISO-8859-1, as it can find
 	# overlapping charsets.
 	my $charset = Encode::Detect::Detector::detect($_[0]);
 
-	# Encode::Detect::Detector is mislead to to return Big5 with some characters
-	# In these cases Encode::Guess does a better job... (bug 9553)
+#	# Encode::Detect::Detector is mislead to to return Big5 with some characters
+#	# In these cases Encode::Guess does a better job... (bug 9553)
 	if ($charset =~ /^(?:big5|euc-jp|euc-kr|euc-cn|euc-tw)$/i) {
 
 		eval {
@@ -670,12 +690,13 @@ sub encodingFromString {
 
 		# Bug 10671: sometimes Encode::Guess returns ambiguous results like "ascii or utf8"
 		if ($@) {
+			logError($@);
+
 			if ($charset =~ /utf8/i) {
 				$charset = 'utf8';
-				logWarning("$@   -> Falling back to: $charset");
+				logError("Falling back to: $charset");
 			}
 			else {
-				logError($@);
 				$charset = '';
 			}
 		}
@@ -688,14 +709,7 @@ sub encodingFromString {
 		return lc($charset);
 	}
 
-	if (looks_like_latin1($_[0])) {
-	
-		return 'iso-8859-1';
 
-	} elsif (looks_like_cp1252($_[0])) {
-	
-		return 'cp1252';
-	}
 
 	return 'raw';
 }

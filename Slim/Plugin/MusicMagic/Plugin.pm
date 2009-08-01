@@ -33,14 +33,125 @@ my $initialized = 0;
 my $MMSport;
 my $canPowerSearch;
 
-my $isWin = Slim::Utils::OSDetect::isWindows();
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
 });
 
 my $prefs = preferences('plugin.musicip');
+
+$prefs->migrate(1, sub {
+	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || 3600            );
+	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0                    );
+	$prefs->set('port',            Slim::Utils::Prefs::OldPrefs->get('MMSport') || 10002                          );
+	$prefs->set('mix_filter',      Slim::Utils::Prefs::OldPrefs->get('MMMFilter')                                 );
+	$prefs->set('reject_size',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectSize') || 0                        );
+	$prefs->set('reject_type',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectType')                             );
+	$prefs->set('mix_genre',       Slim::Utils::Prefs::OldPrefs->get('MMMMixGenre')                               );
+	$prefs->set('mix_variety',     Slim::Utils::Prefs::OldPrefs->get('MMMVariety') || 0                           );
+	$prefs->set('mix_style',       Slim::Utils::Prefs::OldPrefs->get('MMMStyle') || 0                             );
+	$prefs->set('mix_type',        Slim::Utils::Prefs::OldPrefs->get('MMMMixType')                                );
+	$prefs->set('mix_size',        Slim::Utils::Prefs::OldPrefs->get('MMMSize') || 12                             );
+	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || ''   );
+	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistsuffix') || ''            );
+
+	$prefs->set('musicmagic', 0) unless defined $prefs->get('musicmagic'); # default to on if not previously set
+	
+	# use new naming of the old default wasn't changed
+	if ($prefs->get('playlist_prefix') eq 'MusicMagic: ') {
+		$prefs->set('playlist_prefix', 'MusicIP: ');
+	}
+	1;
+});
+
+$prefs->migrate(2, sub {
+	my $oldPrefs = preferences('plugin.musicmagic'); 
+
+	$prefs->set('musicip',         $oldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   $oldPrefs->get('scan_interval') || 3600          );
+	$prefs->set('player_settings', $oldPrefs->get('player_settings') || 0           );
+	$prefs->set('port',            $oldPrefs->get('port') || 10002                  );
+	$prefs->set('mix_filter',      $oldPrefs->get('mix_filter')                     );
+	$prefs->set('reject_size',     $oldPrefs->get('reject_size') || 0               );
+	$prefs->set('reject_type',     $oldPrefs->get('reject_type')                    );
+	$prefs->set('mix_genre',       $oldPrefs->get('mix_genre')                      );
+	$prefs->set('mix_variety',     $oldPrefs->get('mix_variety') || 0               );
+	$prefs->set('mix_style',       $oldPrefs->get('mix_style') || 0                 );
+	$prefs->set('mix_type',        $oldPrefs->get('mix_type')                       );
+	$prefs->set('mix_size',        $oldPrefs->get('mix_size') || 12                 );
+	$prefs->set('playlist_prefix', $oldPrefs->get('playlist_prefix') || '' );
+	$prefs->set('playlist_suffix', $oldPrefs->get('playlist_suffix') || ''          );
+
+	my $prefix = $prefs->get('playlist_prefix');
+	if ($prefix =~ /MusicMagic/) {
+		$prefix =~ s/MusicMagic/MusicIP/g;
+		$prefs->set('playlist_prefix', $prefix);
+	}
+
+	$prefs->remove('musicmagic');
+	1;
+});
+
+$prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
+
+$prefs->setChange(
+	sub {
+		my $newval = $_[1];
+		
+		if ($newval) {
+			Slim::Plugin::MusicMagic::Plugin->initPlugin();
+		}
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
+
+		for my $c (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($c);
+		}
+	},
+	'musicip',
+);
+
+$prefs->setChange(
+	sub {
+			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
+			
+			my $interval = $prefs->get('scan_interval') || 3600;
+			
+			main::INFOLOG && $log->info("re-setting checker for $interval seconds from now.");
+			
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::MusicMagic::Plugin::checker);
+	},
+'scan_interval');
+
+$prefs->migrateClient(1, sub {
+	my ($clientprefs, $client) = @_;
+	
+	$clientprefs->set('mix_filter',  Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMFilter')     );
+	$clientprefs->set('reject_size', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectSize') );
+	$clientprefs->set('reject_type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectType') );
+	$clientprefs->set('mix_genre',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixGenre')   );
+	$clientprefs->set('mix_variety', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMVariety')    );
+	$clientprefs->set('mix_style',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMStyle')      );
+	$clientprefs->set('mix_type',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixType')    );
+	$clientprefs->set('mix_size',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMSize')       );
+	1;
+});
+
+$prefs->migrateClient(2, sub {
+	my ($clientprefs, $client) = @_;
+	
+	my $oldPrefs = preferences('plugin.musicmagic');
+	$clientprefs->set('mix_filter',  $oldPrefs->client($client)->get($client, 'mix_filter')  );
+	$clientprefs->set('reject_size', $oldPrefs->client($client)->get($client, 'reject_size') );
+	$clientprefs->set('reject_type', $oldPrefs->client($client)->get($client, 'reject_type') );
+	$clientprefs->set('mix_genre',   $oldPrefs->client($client)->get($client, 'mix_genre')   );
+	$clientprefs->set('mix_variety', $oldPrefs->client($client)->get($client, 'mix_variety') );
+	$clientprefs->set('mix_style',   $oldPrefs->client($client)->get($client, 'mix_style')   );
+	$clientprefs->set('mix_type',    $oldPrefs->client($client)->get($client, 'mix_type')    );
+	$clientprefs->set('mix_size',    $oldPrefs->client($client)->get($client, 'mix_size')    );
+	1;
+});
 
 our %mixMap  = (
 	'add.single' => 'play_1',
@@ -86,7 +197,7 @@ sub useMusicMagic {
 	
 	$use = $prefs->get('musicip') && $can;
 
-	$log->info("Using musicip: $use");
+	main::INFOLOG && $log->info("Using musicip: $use");
 
 	return $use;
 }
@@ -143,7 +254,7 @@ sub initPlugin {
 
 	my $response = _syncHTTPRequest("/api/version");
 
-	$log->info("Testing for API on localhost:$MMSport");
+	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
 
 	if ($response->is_error) {
 
@@ -157,7 +268,7 @@ sub initPlugin {
 
 		my $content = $response->content;
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			$log->info($content);
 		}
 
@@ -172,7 +283,7 @@ sub initPlugin {
 		if ($response->is_success && $response->content !~ /MusicIP API error/i) {
 			$canPowerSearch = 1;
 
-			$log->info('Power Search enabled');
+			main::INFOLOG && $log->info('Power Search enabled');
 		}
 
 		Slim::Plugin::MusicMagic::PlayerSettings::init();
@@ -293,8 +404,8 @@ sub initPlugin {
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 
 	if (!$::noweb) {
-		Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
-		Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
+		Slim::Web::Pages->addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
+		Slim::Web::Pages->addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
 	}
 
 	return $initialized;
@@ -365,7 +476,7 @@ sub _statusOK {
 	my $content = $http->content;
 	chomp($content);
 	
-	$log->debug( "Read status $content" );
+	main::DEBUGLOG && $log->debug( "Read status $content" );
 		
 	my $fileMTime = $params->{fileMTime};
 
@@ -380,7 +491,7 @@ sub _statusOK {
 
 		my $scanInterval = $prefs->get('scan_interval');
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug("MusicIP: music library has changed!");
 			$log->debug("Details:");
 			$log->debug("\tCurrCacheID  - $fileMTime");
@@ -392,7 +503,7 @@ sub _statusOK {
 		if (!$scanInterval) {
 
 			# only scan if scaninterval is non-zero.
-			$log->info("Scan Interval set to 0, rescanning disabled");
+			main::INFOLOG && $log->info("Scan Interval set to 0, rescanning disabled");
 
 			return 0;
 		}
@@ -400,7 +511,7 @@ sub _statusOK {
 		if ($content !~ /idle/i) {
 
 			# only scan if MIP is idle, not while it's analyzing
-			$log->info("MusicIP is busy analyzing your music, skipping rescan");
+			main::INFOLOG && $log->info("MusicIP is busy analyzing your music, skipping rescan");
 
 			return 0;
 		}
@@ -410,7 +521,7 @@ sub _statusOK {
 			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 
-		$log->info("Waiting for $scanInterval seconds to pass before rescanning");
+		main::INFOLOG && $log->info("Waiting for $scanInterval seconds to pass before rescanning");
 	}
 
 	return 0;
@@ -442,7 +553,7 @@ sub _cacheidOK {
 	my $content = $http->content;
 	chomp($content);
 	
-	$log->debug( "Read cacheid of $content" );
+	main::DEBUGLOG && $log->debug( "Read cacheid of $content" );
 		
 	$params->{fileMTime} = $content;
 	
@@ -506,11 +617,11 @@ sub grabMoods {
 
 		if ($log->is_debug && scalar @moods) {
 
-			$log->debug("Found moods:");
+			main::DEBUGLOG && $log->debug("Found moods:");
 
 			for my $mood (@moods) {
 
-				$log->debug("\t$mood");
+				main::DEBUGLOG && $log->debug("\t$mood");
 			}
 		}
 	}
@@ -693,7 +804,7 @@ sub mixerlink {
 		$form->{'mmmixable_not_descend'} = 1;
 	}
 
-	Slim::Web::HTTP::protectURI('plugins/MusicMagic/.*\.html');
+	Slim::Web::HTTP::CSRF->protectURI('plugins/MusicMagic/.*\.html');
 	# only add link if enabled and usable
 	if (canUseMusicMagic() && $prefs->get('musicip')) {
 
@@ -800,7 +911,7 @@ sub getMix {
 
 		$filter = Slim::Utils::Unicode::utf8decode_locale($filter);
 
-		$log->debug("Filter $filter in use.");
+		main::DEBUGLOG && $log->debug("Filter $filter in use.");
 
 		$args{'filter'} = Slim::Plugin::MusicMagic::Common::escape($filter);
 	}
@@ -809,14 +920,14 @@ sub getMix {
 
 	if (!$validMixTypes{$for}) {
 
-		$log->debug("No valid type specified for mix");
+		main::DEBUGLOG && $log->debug("No valid type specified for mix");
 
 		return undef;
 	}
 
-	$log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
+	main::DEBUGLOG && $log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
 
-	if (!$isWin && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ) {
+	if (!main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ) {
 
 		# need to decode the file path when a file is used as seed
 		$id = Slim::Utils::Unicode::utf8decode_locale($id);
@@ -827,7 +938,7 @@ sub getMix {
 	# url encode the request, but not the argstring
 	$mixArgs = Slim::Plugin::MusicMagic::Common::escape($mixArgs);
 	
-	$log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
+	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
 
@@ -849,7 +960,7 @@ sub getMix {
 		if ($response->is_error) {
 			
 			$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
-			$log->debug($response->as_string);
+			main::DEBUGLOG && $log->debug($response->as_string);
 	
 			return \@mix;
 		}
@@ -861,7 +972,7 @@ sub getMix {
 	for (my $j = 0; $j < $count; $j++) {
 
 		# Bug 4281 - need to convert from UTF-8 on Windows.
-		if ($isWin) {
+		if (main::ISWINDOWS) {
 
 			my $enc = Slim::Utils::Unicode::encodingFromString($songs[$j]);
 
@@ -929,7 +1040,7 @@ sub musicmagic_mix {
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
+		my $trackObj = Slim::Schema->objectForUrl($item);
 
 		if (!blessed($trackObj) || !$trackObj->can('id')) {
 
@@ -1125,7 +1236,7 @@ sub cliMix {
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
+		my $trackObj = Slim::Schema->objectForUrl($item);
 
 		if (!blessed($trackObj) || !$trackObj->can('id')) {
 
@@ -1261,7 +1372,7 @@ sub _prepare_mix {
 		
 	} else {
 
-		$log->debug("No/unknown type specified for mix");
+		main::DEBUGLOG && $log->debug("No/unknown type specified for mix");
 
 		# allow a valid page return, but report an empty mix
 		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');

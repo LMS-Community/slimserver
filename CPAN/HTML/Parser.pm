@@ -1,6 +1,6 @@
 package HTML::Parser;
 
-# Copyright 1996-2005, Gisle Aas.
+# Copyright 1996-2008, Gisle Aas.
 # Copyright 1999-2000, Michael A. Chase.
 #
 # This library is free software; you can redistribute it and/or
@@ -9,7 +9,7 @@ package HTML::Parser;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '3.48';  # $Date: 2005/12/02 17:37:06 $
+$VERSION = "3.60";
 
 require HTML::Entities;
 
@@ -253,7 +253,7 @@ $p->parse() will return a FALSE value.
 If a code reference is passed as the argument to be parsed, then the
 chunks to be parsed are obtained by invoking this function repeatedly.
 Parsing continues until the function returns an empty (or undefined)
-result.  When this happens $p->eof is automatically signalled.
+result.  When this happens $p->eof is automatically signaled.
 
 Parsing will also abort if one of the event handlers calls $p->eof.
 
@@ -329,6 +329,14 @@ By default, the C<attr> and C<@attr> argspecs will have general
 entities for attribute values decoded.  Enabling this attribute leaves
 entities alone.
 
+=item $p->backquote
+
+=item $p->backquote( $bool )
+
+By default, only ' and " are recognized as quote characters around
+attribute values.  MSIE also recognizes backquotes for some reason.
+Enabling this attribute provides compatibility with this behaviour.
+
 =item $p->boolean_attribute_value( $val )
 
 This method sets the value reported for boolean attributes inside HTML
@@ -351,14 +359,14 @@ By default, "plaintext" element can never be closed. Everything up to
 the end of the document is parsed in CDATA mode.  This historical
 behaviour is what at least MSIE does.  Enabling this attribute makes
 closing "</plaintext>" tag effective and the parsing process will resume
-after seeing this tag.  This emulates gecko-based browsers.
+after seeing this tag.  This emulates early gecko-based browsers.
 
 =item $p->empty_element_tags
 
 =item $p->empty_element_tags( $bool )
 
 By default, empty element tags are not recognized as such and the "/"
-before ">" is just treated like a nomal name character (unless
+before ">" is just treated like a normal name character (unless
 C<strict_names> is enabled).  Enabling this attribute make
 C<HTML::Parser> recognize these tags.
 
@@ -367,7 +375,7 @@ sequence "/>" instead of ">".  When recognized by C<HTML::Parser> they
 cause an artificial end event in addition to the start event.  The
 C<text> for the artificial end event will be empty and the C<tokenpos>
 array will be undefined even though the the token array will have one
-element containg the tag name.
+element containing the tag name.
 
 =item $p->marked_sections
 
@@ -609,7 +617,7 @@ C<end> events), call C<report_tags> without an argument.
 
 Internally, the system has two filter lists, one for C<report_tags>
 and one for C<ignore_tags>, and both filters are applied.  This
-effectivly gives C<ignore_tags> precendence over C<report_tags>.
+effectively gives C<ignore_tags> precedence over C<report_tags>.
 
 Examples:
 
@@ -682,7 +690,7 @@ The first column on a line is 0.
 Dtext causes the decoded text to be passed.  General entities are
 automatically decoded unless the event was inside a CDATA section or
 was between literal start and end tags (C<script>, C<style>,
-C<xmp>, and C<plaintext>).
+C<xmp>, C<iframe> and C<plaintext>).
 
 The Unicode character set is assumed for entity decoding.  With Perl
 version 5.6 or earlier only the Latin-1 range is supported, and
@@ -701,7 +709,7 @@ C<comment>, C<process>, C<start_document> or C<end_document>.
 
 Is_cdata causes a TRUE value to be passed if the event is inside a CDATA
 section or between literal start and end tags (C<script>,
-C<style>, C<xmp>, and C<plaintext>).
+C<style>, C<xmp>, C<iframe> and C<plaintext>).
 
 if the flag is FALSE for a text event, then you should normally
 either use C<dtext> or decode the entities yourself before the text is
@@ -1114,7 +1122,7 @@ It was either deleted, or not created when the object was created.
 =item API version %s not supported by HTML::Parser %s
 
 (F) The constructor option 'api_version' with an argument greater than
-or equal to 4 is reserved for future extentions.
+or equal to 4 is reserved for future extensions.
 
 =item Bad constructor option '%s'
 
@@ -1192,7 +1200,7 @@ has been opened in ":utf8" mode.
 The parser can process raw undecoded UTF-8 sanely if the C<utf8_mode>
 is enabled or if the "attr", "@attr" or "dtext" argspecs is avoided.
 
-=item Parsing string decoded with wrong endianess
+=item Parsing string decoded with wrong endianness
 
 (W) The first character in the document is U+FFFE.  This is not a
 legal Unicode character but a byte swapped BOM.  The result of parsing
@@ -1224,7 +1232,7 @@ be found at C<http://www.sgml.u-net.com/book/sgml-8.htm>.
 
 =head1 COPYRIGHT
 
- Copyright 1996-2005 Gisle Aas. All rights reserved.
+ Copyright 1996-2008 Gisle Aas. All rights reserved.
  Copyright 1999-2000 Michael A. Chase.  All rights reserved.
 
 This library is free software; you can redistribute it and/or

@@ -25,26 +25,38 @@ sub _ident_values {
   return (map { $self->{_column_data}{$_} } $self->primary_columns);
 }
 
-=head2 discard_changes
+=head2 discard_changes ($attrs)
 
 Re-selects the row from the database, losing any changes that had
 been made.
 
+This method can also be used to refresh from storage, retrieving any
+changes made since the row was last read from storage.
+
+$attrs is expected to be a hashref of attributes suitable for passing as the
+second argument to $resultset->search($cond, $attrs);
+
 =cut
 
 sub discard_changes {
-  my ($self) = @_;
+  my ($self, $attrs) = @_;
   delete $self->{_dirty_columns};
   return unless $self->in_storage; # Don't reload if we aren't real!
-  my ($reload) = $self->result_source->resultset->find
-    (map { $self->$_ } $self->primary_columns);
-  unless ($reload) { # If we got deleted in the mean-time
+  
+  if( my $current_storage = $self->get_from_storage($attrs)) {
+  	
+    # Set $self to the current.
+  	%$self = %$current_storage;
+  	
+    # Avoid a possible infinite loop with
+    # sub DESTROY { $_[0]->discard_changes }
+    bless $current_storage, 'Do::Not::Exist';
+    
+    return $self;  	
+  } else {
     $self->in_storage(0);
-    return $self;
+    return $self;  	
   }
-  delete @{$self}{keys %$self};
-  @{$self}{keys %$reload} = values %$reload;
-  return $self;
 }
 
 =head2 id
@@ -99,8 +111,8 @@ Produces a condition hash to locate a row based on the primary key(s).
 sub ident_condition {
   my ($self, $alias) = @_;
   my %cond;
-  $cond{(defined $alias ? "${alias}.$_" : $_)} = $self->get_column($_)
-    for $self->primary_columns;
+  my $prefix = defined $alias ? $alias.'.' : '';
+  $cond{$prefix.$_} = $self->get_column($_) for $self->primary_columns;
   return \%cond;
 }
 

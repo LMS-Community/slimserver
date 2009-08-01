@@ -38,6 +38,58 @@ if ( !main::SLIM_SERVICE && !$::noweb ) {
 
 my $prefs = preferences('plugin.rssnews');
 
+use constant FEED_VERSION => 3; # bump this number when changing the defaults below
+
+# Default feed list
+sub DEFAULT_FEEDS {[
+	{
+		name  => 'BBC News World Edition',
+		value => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
+	},
+	{
+		name  => 'CNET News.com',
+		value => 'http://news.com.com/2547-1_3-0-5.xml',
+	},
+	{
+		name  => 'New York Times Home Page',
+		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+	},
+	{
+		name  => 'Slashdot',
+		value => 'http://rss.slashdot.org/Slashdot/slashdot',
+	},
+	{
+		name  => 'Yahoo! News: Business',
+		value => 'http://rss.news.yahoo.com/rss/business',
+	},
+];}
+
+# migrate old prefs across
+$prefs->migrate(1, sub {
+	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names') || [] };
+	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds') || [] };
+	my @feeds;
+
+	for my $name (@names) {
+		push @feeds, { 'name' => $name, 'value' => shift @values };
+	}
+
+	if (@feeds) {
+		$prefs->set('feeds', \@feeds);
+		$prefs->set('modified', 1);
+	}
+
+	$prefs->set('items_per_feed', Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_items_per_feed') || 3);
+
+	1;
+});
+
+# migrate to latest version of default feeds if they have not been modified
+$prefs->migrate(FEED_VERSION, sub {
+	$prefs->set('feeds', DEFAULT_FEEDS()) unless $prefs->get('modified');
+	1;
+});
+
 # $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
 my $refresh_sec = 60 * 60;
@@ -48,7 +100,7 @@ my $savers = {};
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing.");
+	main::INFOLOG && $log->info("Initializing.");
 
 	$class->SUPER::initPlugin();
 
@@ -79,7 +131,7 @@ if ( !main::SLIM_SERVICE && !$::noweb ) {
 		return;
 	}
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug("RSS Feed Info:");
 
@@ -143,7 +195,7 @@ sub setMode {
 sub cliQuery {
 	my $request = shift;
 	
-	$log->info("Begin Function");
+	main::INFOLOG && $log->info("Begin Function");
 	
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
@@ -225,7 +277,7 @@ sub leaveScreenSaverRssNews {
 
 	delete $savers->{$client};
 	
-	$log->info("Leaving screensaver mode");
+	main::INFOLOG && $log->info("Leaving screensaver mode");
 }
 
 sub tickerUpdate {
@@ -265,7 +317,7 @@ sub getNextFeed {
 	
 	my $url = $feeds[$index - 1]->{'value'};
 	
-	$log->info("Fetching next feed: $url");
+	main::INFOLOG && $log->info("Fetching next feed: $url");
 	
 	if ( !$savers->{$client}->{current_feed} ) {
 		$client->update( {
@@ -478,7 +530,7 @@ sub tickerLines {
 
 			$line2 = substr $line2, 0, $screensaver_chars_per_item;
 
-			$log->debug("Screensaver character limit exceeded - truncating.");
+			main::DEBUGLOG && $log->debug("Screensaver character limit exceeded - truncating.");
 		}
 
 		$current_items->{$url}->{'next_item'} = $i + 1;

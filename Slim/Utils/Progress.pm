@@ -11,7 +11,7 @@ use strict;
 use Slim::Schema;
 use Slim::Utils::Unicode;
 
-use constant UPDATE_DB_INTERVAL  => 1;
+use constant UPDATE_DB_INTERVAL  => 5;
 use constant UPDATE_BAR_INTERVAL => 0.3;
 
 =head2 new
@@ -46,7 +46,7 @@ Set to make the progress object update the database for every call to update (ra
 
 =item bar [optional]
 
-Set to display a progress bar on STDOUT (used by scanner.pl and will only do so if $::perfmon is set).
+Set to display a progress bar on STDOUT (used by scanner.pl and will only do so if main::PERFMON is set).
 
 =back
 
@@ -59,17 +59,19 @@ sub new {
 	my $obj;
 	my $now = Time::HiRes::time();
 
-	$obj = Slim::Schema->rs('Progress')->find_or_create({
-		'type' => $args->{'type'}  || 'NOTYPE',
-		'name' => $args->{'name'}  || 'NONAME',
-	});
-
-	$obj->total($args->{'total'});
-	$obj->done(0);
-	$obj->start ( time() );
-	$obj->active(1);
-
-	$obj->update;
+	if (Slim::Schema::hasLibrary()) {
+		$obj = Slim::Schema->rs('Progress')->find_or_create({
+			'type' => $args->{'type'}  || 'NOTYPE',
+			'name' => $args->{'name'}  || 'NONAME',
+		});
+	
+		$obj->total($args->{'total'});
+		$obj->done(0);
+		$obj->start ( time() );
+		$obj->active(1);
+	
+		$obj->update;
+	}
 
 	my $ref = {
 		'total' => $args->{'total'},
@@ -111,8 +113,10 @@ sub total {
 
 	$class->{'total'} = $total;
 
-	$class->{'obj'}->total( $total );
-	$class->{'obj'}->update;
+	if ($class->{'obj'}) {
+		$class->{'obj'}->total( $total );
+		$class->{'obj'}->update;
+	}
 
 	if ($class->{'bar'}) {
 		# bar only times duration of progress after total set to get accurate tracks/sec
@@ -186,9 +190,12 @@ sub final {
 	my $class = shift;
 
 	my $obj = $class->{'obj'} || return;
+	
+	my $done   = $class->{total};
+	my $finish = time();
 
-	$obj->done( $class->{'total'} );
-	$obj->finish( time() );
+	$obj->done( $done );
+	$obj->finish( $finish );
 	$obj->active(0);
 	$obj->info( undef );
 
@@ -286,8 +293,8 @@ sub _initBar {
 
 	my @chars = (' ') x $self->{'bar_size'};
 
-	print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %sm%ss LEFT",
-		    0, join('', @chars), 0, '--', '--');
+	print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %s:%s:%s LEFT",
+		    0, join('', @chars), 0, '--', '--', '--');
 }
 
 sub _updateBar {
@@ -338,12 +345,12 @@ sub _updateBar {
 		# using the overall_rate here seems to provide much smoother eta numbers
 		my $eta = ($self->{'total'} - $num_done)/$overall_rate;
 
-		# we make the assumption that we will never run > 1 hour, maybe this is bad
-		my $min = int($eta/60) % 60;
-		my $sec = int($eta % 60);
+		my $hour = int($eta/3600);
+		my $min  = int($eta/60) % 60;
+		my $sec  = int($eta % 60);
 
-		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02dm%02ds LEFT",
-				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $min, $sec);
+		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
+				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
 
 	} else {
 
@@ -378,8 +385,9 @@ sub _finalBar {
 
 	my $msgs_per_sec = $num_done / $time_taken;
 
-	my $min = int($time_taken/60) % 60;
-	my $sec = $time_taken % 60;
+	my $hour = int($time_taken/3600);
+	my $min  = int($time_taken/60) % 60;
+	my $sec  = $time_taken % 60;
 
 	if ( $self->{'term'} && $self->{'total'} ) {
 
@@ -390,8 +398,8 @@ sub _finalBar {
 			$chars[$_] = '=';
 		}
 
-		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02dm%02ds DONE\n",
-		      $percentage, join('', @chars), $msgs_per_sec, $min, $sec);
+		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d DONE\n",
+		      $percentage, join('', @chars), $msgs_per_sec, $hour, $min, $sec);
 
 	} else {
 

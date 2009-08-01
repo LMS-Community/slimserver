@@ -14,11 +14,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 
 sub name {
-	return Slim::Web::HTTP::protectName('DEBUGGING_SETTINGS');
+	return Slim::Web::HTTP::CSRF->protectName('DEBUGGING_SETTINGS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/server/debugging.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/server/debugging.html');
 }
 
 sub handler {
@@ -81,8 +81,8 @@ sub handler {
 sub getLogs {
 	return [
 		{SERVER  => Slim::Utils::Log->serverLogFile},
-		{SCANNER => Slim::Utils::Log->scannerLogFile},
-		{PERFMON => ($::perfmon ? Slim::Utils::Log->perfmonLogFile : undef )},
+		{SCANNER => (Slim::Schema::hasLibrary() ? Slim::Utils::Log->scannerLogFile : undef)},
+		{PERFMON => (main::PERFMON ? Slim::Utils::Log->perfmonLogFile : undef )},
 	]
 }
 

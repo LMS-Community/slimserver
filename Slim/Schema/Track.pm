@@ -7,6 +7,8 @@ use base 'Slim::Schema::DBI';
 
 use Scalar::Util qw(blessed);
 
+use Slim::Schema::ResultSet::Track;
+
 use Slim::Music::Artwork;
 use Slim::Music::Info;
 use Slim::Utils::DateTime;
@@ -15,9 +17,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
+my $log = logger('database.info');
 
 our @allColumns = (qw(
-	id url content_type title titlesort titlesearch album tracknum
+	id url content_type title titlesort titlesearch album primary_artist tracknum
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
@@ -53,7 +56,7 @@ if ( main::SLIM_SERVICE ) {
 	if ( !main::SLIM_SERVICE ) {
 		# setup our relationships
 		$class->belongs_to('album' => 'Slim::Schema::Album');
-		$class->might_have('persistent'      => 'Slim::Schema::TrackPersistent' => 'track');
+		$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
 		
 		$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
 		$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
@@ -117,6 +120,12 @@ sub albumid {
 	return $self->get_column('album');
 }
 
+sub albumname {
+	if (my $album = shift->album) {
+		return $album->title;
+	}
+}
+
 # Partly, this is a placehold for a later, more-efficient caching implementation
 sub artistName {
 	my $self = shift;
@@ -128,14 +137,39 @@ sub artistName {
 	return undef;
 }
 
+sub artistid {
+	my $self = shift;
+	
+	return if main::SLIM_SERVICE;
+	
+	my $id = undef;
+
+	if (defined ($id = $self->get_column('primary_artist'))) {
+		main::INFOLOG && $log->info("Using cached primary artist");
+		return wantarray ? ($id, $self->primary_artist) : $id;
+	}
+
+	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
+	my $artist = $self->contributorsOfType('ARTIST')->single ||
+				 $self->contributorsOfType('TRACKARTIST')->single;
+
+	if ($artist) {
+		$self->set_column('primary_artist', $id = $artist->id);
+		$self->update;
+		main::INFOLOG && $log->info("Track ", $self->id, " caching primary artist $id -> ", $artist->name);
+	}
+	
+	return wantarray ? ($id, $artist) : $id;
+}
+
 sub artist {
 	my $self = shift;
 	
 	return if main::SLIM_SERVICE;
-
-	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
-	return $self->contributorsOfType('ARTIST')->single ||
-	       $self->contributorsOfType('TRACKARTIST')->single;
+	
+	my ($id, $artist) = $self->artistid;
+	
+	return $artist;
 }
 
 sub artists {
@@ -229,12 +263,6 @@ sub duration {
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs;
 }
 
-sub durationSeconds {
-	my $self = shift;
-
-	return $self->secs;
-}
-
 sub modificationTime {
 	my $self = shift;
 
@@ -306,7 +334,7 @@ sub coverArt {
 	return undef if defined $cover && !$cover;
 	
 	# Remote files may have embedded cover art
-	if ( $self->remote && $cover ) {
+	if ( $cover && $self->remote ) {
 		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 		my $image = $cache->get( 'cover_' . $self->url );
 		if ( $image ) {
@@ -334,7 +362,7 @@ sub coverArt {
 	my $url = Slim::Utils::Misc::stripAnchorFromURL($self->url);
 	my $log = logger('artwork');
 
-	$log->info("Retrieving artwork for: $url");
+	main::INFOLOG && $log->info("Retrieving artwork for: $url");
 
 	# A value of 1 indicate the cover art is embedded in the file's
 	# metdata tags.
@@ -347,7 +375,7 @@ sub coverArt {
 
 		if ($body && $contentType) {
 
-			$log->info("Found cached file: $cover");
+			main::INFOLOG && $log->info("Found cached file: $cover");
 
 			$path = $cover;
 		}
@@ -394,7 +422,7 @@ sub coverArtMtime {
 	my $artwork = $self->cover;
 
 	if ($artwork && -r $artwork) {
-		return (stat($artwork))[9];
+		return (stat(_))[9];
 	}
 
 	return -1;
@@ -489,17 +517,17 @@ sub displayAsHTML {
 	}
 }
 
-sub _retrievePersistent {
+sub retrievePersistent {
 	my $self = shift;
 
 	my $trackPersistent;
 	
 	# Match on musicbrainz_id first
 	if ( $self->musicbrainz_id ) {
-		$trackPersistent = Slim::Schema->resultset('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
+		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
 	}
 	else {
-		$trackPersistent = Slim::Schema->resultset('TrackPersistent')->single( { url => $self->url } );
+		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { url => $self->url } );
 	}
 
 	if ( blessed($trackPersistent) ) {
@@ -514,34 +542,46 @@ sub _retrievePersistent {
 sub playcount { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val && $self->persistent ) {
-		$self->persistent->set( playcount => $val );
-		$self->persistent->update;
+	if ( my $persistent = $self->retrievePersistent ) {
+		if ( defined $val ) {
+			$persistent->set( playcount => $val );
+			$persistent->update;
+		}
+		
+		return $persistent->playcount;
 	}
 	
-	return $self->persistent ? $self->persistent->playcount : undef;
+	return;
 }
 
 sub rating { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val && $self->persistent ) {
-		$self->persistent->set( rating => $val );
-		$self->persistent->update;
+	if ( my $persistent = $self->retrievePersistent ) {
+		if ( defined $val ) {
+			$persistent->set( rating => $val );
+			$persistent->update;
+		}
+		
+		return $persistent->rating;
 	}
 	
-	return $self->persistent ? $self->persistent->rating : undef;
+	return;
 }
 
 sub lastplayed { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val && $self->persistent ) {
-		$self->persistent->set( lastplayed => $val );
-		$self->persistent->update;
+	if ( my $persistent = $self->retrievePersistent ) {
+		if ( defined $val ) {
+			$persistent->set( lastplayed => $val );
+			$persistent->update;
+		}
+		
+		return $persistent->lastplayed;
 	}
 	
-	return $self->persistent ? $self->persistent->lastplayed : undef;
+	return;
 }
 
 1;

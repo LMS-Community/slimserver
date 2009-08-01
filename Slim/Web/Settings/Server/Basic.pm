@@ -10,19 +10,23 @@ package Slim::Web::Settings::Server::Basic;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use MIME::Base64 qw(decode_base64);
+
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub name {
-	return Slim::Web::HTTP::protectName('BASIC_SERVER_SETTINGS');
+	return Slim::Web::HTTP::CSRF->protectName('BASIC_SERVER_SETTINGS');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('settings/server/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('settings/server/basic.html');
 }
 
 sub prefs {
-	return (preferences('server'), qw(language audiodir playlistdir libraryname) );
+	return ($prefs, qw(language audiodir playlistdir libraryname) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...
@@ -39,6 +43,13 @@ sub handler {
 
 	# prefs setting handled by SUPER::handler
 
+	# Use the base64 versions to avoid any encoding issues
+	for my $pref (qw(audiodir playlistdir)) {
+		if ( $paramRef->{"pref_${pref}_b64"} ) {
+			$paramRef->{"pref_$pref"} = decode_base64( $paramRef->{"pref_${pref}_b64"} );
+		}
+	}
+
 	if ($paramRef->{'pref_rescan'}) {
 
 		my $rescanType = ['rescan'];
@@ -53,8 +64,8 @@ sub handler {
 		}
 
 		for my $pref (qw(audiodir playlistdir)) {
-	
-			my (undef, $ok) = preferences('server')->set($pref, $paramRef->{"pref_$pref"});
+
+			my (undef, $ok) = $prefs->set($pref, $paramRef->{"pref_$pref"});
 
 			if ($ok) {
 				$paramRef->{'validated'}->{$pref} = 1; 
@@ -65,15 +76,15 @@ sub handler {
 			}
 		}
 
-		if ( logger('scan.scanner')->is_info ) {
+		if ( main::INFOLOG && logger('scan.scanner')->is_info ) {
 			logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
 		}
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
 	}
-
+	
 	if ( $paramRef->{'saveSettings'} ) {
-		my $curLang = preferences('server')->get('language');
+		my $curLang = $prefs->get('language');
 		my $lang    = $paramRef->{'pref_language'};
 
 		# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
@@ -95,8 +106,8 @@ sub handler {
 			}
 
 			# use Classic instead of Default skin if the server's language is set to Hebrew
-			if ($lang eq 'HE' && preferences('server')->get('skin') eq 'Default') {
-				preferences('server')->set('skin', 'Classic');
+			if ($lang eq 'HE' && $prefs->get('skin') eq 'Default') {
+				$prefs->set('skin', 'Classic');
 				$paramRef->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("SETUP_SKIN_OK") . '</span>';
 			}	
 

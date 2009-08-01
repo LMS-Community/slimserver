@@ -40,7 +40,8 @@ sub descendAlbum {
 	my $rs = $self->result_source->resultset;
 
 	# Handle sorts from the web UI.
-	$sort ||= "concat('0', album.titlesort), album.disc";
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	$sort ||= $sqlHelperClass->prepend0("album.titlesort") . ", album.disc";
 
 	my @join;
 

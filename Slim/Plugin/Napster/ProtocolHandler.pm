@@ -34,7 +34,7 @@ sub canSeek {
 	my ( $class, $client, $song ) = @_;
 	
 	# No seeking on radio tracks
-	if ( $song->{track}->url =~ /\.nsr$/ ) {
+	if ( $song->track()->url =~ /\.nsr$/ ) {
 		return 0;
 	}
 	
@@ -49,9 +49,9 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->{streamUrl} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	
-	$log->debug( 'Remote streaming Napster track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Napster track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -105,7 +105,7 @@ sub parseDirectHeaders {
 	
 	my $bitrate = 128_000;
 
-	$client->streamingSong->{bitrate} = $bitrate;
+	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'wma', $length, undef);
@@ -117,7 +117,7 @@ sub shouldLoop { 0 }
 sub isRepeatingStream {
 	my ( undef, $song ) = @_;
 	
-	return $song->{track}->url =~ /\.nsr$/;
+	return $song->track()->url =~ /\.nsr$/;
 }
 
 sub canDoAction {
@@ -136,7 +136,7 @@ sub canDoAction {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->debug("Direct stream failed: [$response] $status_line\n");
+	main::DEBUGLOG && $log->debug("Direct stream failed: [$response] $status_line\n");
 	
 	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
@@ -164,7 +164,7 @@ sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
 	my $client = $song->master();
-	my $url    = $song->{track}->url;
+	my $url    = $song->track()->url;
 	
 	$song->pluginData( radioTrackURL => undef );
 	$song->pluginData( radioTitle    => undef );
@@ -211,7 +211,7 @@ sub _getNextRadioTrack {
 		},
 	);
 	
-	$log->debug("Getting next radio track from mysqueezebox.com");
+	main::DEBUGLOG && $log->debug("Getting next radio track from SqueezeNetwork");
 	
 	$http->get( $radioURL );
 }
@@ -222,18 +222,18 @@ sub _gotNextRadioTrack {
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
 	my $song   = $params->{song};
-	my $url    = $song->{track}->url;
+	my $url    = $song->track()->url;
 	
 	my $track = eval { from_json( $http->content ) };
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
 	}
 	
 	if ( $track->{error} ) {
 		# We didn't get the next track to play
 		
-		my $error = ( $client->isPlaying(1) && $client->playingSong()->{track}->url =~ /\.nsr/ )
+		my $error = ( $client->isPlaying(1) && $client->playingSong()->track()->url =~ /\.nsr/ )
 					? 'PLUGIN_NAPSTER_NO_NEXT_TRACK'
 					: 'PLUGIN_NAPSTER_NO_TRACK';
 		
@@ -315,14 +315,14 @@ sub _getTrackInfo {
 			my $http = shift;
 			my $info = eval { from_json( $http->content ) };
 			if ( $@ || $info->{error} ) {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrackInfo failed: ' . ( $@ || $info->{error} ) );
 				}
 				
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrackInfo ok: ' . Data::Dump::dump($info) );
 				}
 				
@@ -332,7 +332,7 @@ sub _getTrackInfo {
 		sub {
 			my $http  = shift;
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'getTrackInfo failed: ' . $http->error );
 			}
 			
@@ -343,7 +343,7 @@ sub _getTrackInfo {
 		},
 	);
 	
-	$log->is_debug && $log->debug('Getting next track playback info from SN');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN');
 	
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
@@ -361,7 +361,7 @@ sub _gotTrackInfo {
     return if $song->pluginData('abandonSong');
 	
 	# Save the media URL for use in strm
-	$song->{streamUrl} = delete $info->{url};
+	$song->streamUrl(delete $info->{url});
 	
 	$params->{successCb}->();
 	return;
@@ -380,7 +380,7 @@ sub _gotTrackInfo {
 sub _gotTrackError {
 	my ( $error, $client, $params ) = @_;
 	
-	$log->debug("Error during getTrackInfo: $error");
+	main::DEBUGLOG && $log->debug("Error during getTrackInfo: $error");
 
 	return if $params->{song}->pluginData('abandonSong');
 
@@ -427,7 +427,7 @@ sub getMetadataFor {
 			}
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
@@ -476,7 +476,7 @@ sub _gotBulkMetadata {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 		
@@ -528,7 +528,7 @@ sub _playlistCallback {
 	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
 		# User stopped playing Napster 
 
-		$log->debug( "Stopped Napster, unsubscribing from playlistCallback" );
+		main::DEBUGLOG && $log->debug( "Stopped Napster, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
 		
 		return;
@@ -539,9 +539,9 @@ sub _playlistCallback {
 		
 		my $title = $song->pluginData('radioTitle');
 		
-		$log->debug("Setting title for radio station to $title");
+		main::DEBUGLOG && $log->debug("Setting title for radio station to $title");
 		
-		Slim::Music::Info::setCurrentTitle( $song->{track}->url, $title );
+		Slim::Music::Info::setCurrentTitle( $song->track()->url, $title );
 	}
 }
 
@@ -550,7 +550,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream( $client, $song->{streamUrl}, $class->getFormatForURL() );
+	return $class->SUPER::canDirectStream( $client, $song->streamUrl(), $class->getFormatForURL() );
 }
 
 # URL used for CLI trackinfo queries
@@ -596,7 +596,7 @@ sub trackInfo {
 		url      => $trackInfoURL,
 	);
 	
-	$log->debug( "Getting track information for $url" );
+	main::DEBUGLOG && $log->debug( "Getting track information for $url" );
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
@@ -613,7 +613,7 @@ sub getSeekData {
 	my ( $class, $client, $song, $newtime ) = @_;
 	
 	# Determine byte offset and song length in bytes
-	my $meta = $class->getMetadataFor( $client, $song->{track}->url );
+	my $meta = $class->getMetadataFor( $client, $song->track()->url );
 	
 	my $duration = $meta->{duration} || return;
 	
@@ -636,9 +636,9 @@ sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
-	my $currentURL = $song->{streamUrl};
+	my $currentURL = $song->streamUrl();
 	
-	$log->debug("Re-init Napster - $currentURL");
+	main::DEBUGLOG && $log->debug("Re-init Napster - $currentURL");
 	
 	if ( my $length = $client->master->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet

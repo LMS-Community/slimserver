@@ -44,9 +44,9 @@ sub processMessage {
 		# extract the IR code and the timestamp for the IR message
 		my ($irTime, $irCodeBytes) = unpack 'xxNxxH8', $msg;
 		
-		$client->trackJiffiesEpoch($irTime, $msgTimeStamp);	
+		$client->trackJiffiesEpoch($irTime, $msgTimeStamp);
 		
-		Slim::Hardware::IR::enqueue($client, $irCodeBytes, $irTime);
+		Slim::Hardware::IR::handler($client, $irCodeBytes, $irTime);
 
 	} elsif ($type eq 'h') {
 
@@ -95,7 +95,7 @@ sub getUdpClient {
 			if ($revision >= 2.2)  { $id = $mac }
 			if ($deviceid != 0x01) { return undef }
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info("$id ($msgtype) deviceid: $deviceid revision: $revision address: ",
 					Slim::Utils::Network::paddr2ipaddress($clientpaddr)
 				);

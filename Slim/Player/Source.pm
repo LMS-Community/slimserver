@@ -12,20 +12,13 @@ use strict;
 use warnings;
 
 use Fcntl qw(SEEK_CUR);
-use File::Spec::Functions qw(:ALL);
-use FileHandle;
-use FindBin qw($Bin);
-use MPEG::Audio::Frame;
 use Time::HiRes;
 
 use Slim::Formats;
 use Slim::Formats::Playlists;
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Network;
-use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 
 my $log = logger('player.source');
@@ -35,11 +28,6 @@ my $prefs = preferences('server');
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('sysseek');
 }
-
-sub init {
-	Slim::Player::TranscodingHelper::loadConversionTables();
-}
-
 
 # fractional progress (0 - 1.0) of playback in the current song.
 sub progress {
@@ -57,74 +45,7 @@ sub progress {
 }
 
 sub songTime {
-
-	my $client = shift->master();
-
-	my $songtime    = $client->songElapsedSeconds();
-	my $song     	= playingSong($client) || return 0;
-	my $startStream = $song->{startOffset} || 0;
-	my $duration	= $song->duration();
-	
-	if (defined($songtime)) {
-		$songtime = $startStream + $songtime;
-		
-		# limit check
-		if ($songtime < 0) {
-			$songtime = 0;
-		} elsif ($duration && $songtime > $duration) {
-			$songtime = $duration;
-		}
-		
-		return $songtime;
-	}
-	
-	#######
-	# All the remaining code is to deal with players which do not report songElapsedSeconds,
-	# specifically SliMP3s and SB1s; maybe also web clients?
-
-	my $byterate	  	= ($song->streambitrate() || 0)/8 || ($duration ? ($song->{totalbytes} / $duration) : 0);
-	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
-	my $fullness	  	= $client->bufferFullness() || 0;
-		
-	# If $fullness > $bytesReceived, then we are playing out previous song
-	my $bytesPlayed = $bytesReceived - $fullness;
-	
-	# If negative, then we are playing out previous song
-	if ($bytesPlayed < 0) {
-		if ($duration && $byterate) {
-			$songtime = $duration + $bytesPlayed / $byterate;
-		} else {
-			# not likley to happen as it would mean that we are streaming one song after another
-			# without knowing the duration and bitrate of the previous song
-			$songtime = 0;
-		}
-	} else {
-		
-		$songtime = $byterate ? ($bytesPlayed / $byterate + $startStream) : 0;
-	}
-	
-	# This assumes that remote streaming is real-time - not always true but, for the common
-	# cases when it is, it will be better than nothing.
-	if ($songtime == 0) {
-
-		my $startTime = $client->remoteStreamStartTime();
-		my $endTime   = $client->pauseTime() || Time::HiRes::time();
-		
-		$songtime = ($startTime ? $endTime - $startTime : 0);
-	}
-
-	if ( $log->is_debug ) {
-		$log->debug("songtime=$songtime from byterate=$byterate, duration=$duration, bytesReceived=$bytesReceived, fullness=$fullness, startStream=$startStream");
-	}
-
-	# limit check
-	if ($songtime < 0) {
-		$songtime = 0;
-	} elsif ($duration && $songtime > $duration) {
-		$songtime = $duration;
-	}
-
-	return $songtime;
+	return shift->controller->playingSongElapsed();
 }
 
 sub _returnPlayMode {
@@ -169,7 +90,7 @@ sub playmode {
 	
 	my $return = _returnPlayMode($controller, $client);
 	
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info($client->id() . ": Current playmode: $return\n");
 	}
 		
@@ -231,35 +152,7 @@ sub nextChunk {
 				# And save the data for analysis, if we are synced.
 				# Only really need to do this if we have any SliMP3s or SB1s in the
 				# sync group.
-				
-				if ($controller->activePlayers() > 1) {
-					if (my $buf = $controller->initialStreamBuffer()) {
-						$$buf .= $$chunk;
-
-						# Safety check - just make sure that we are not in the process
-						# of slurping up a perhaps-infinite stream without using it.
-						# We assume min frame size of 72 bytes (24kb/s, 48000 samples/s)
-						# which gives us at most 45512 frames in the decode buffer (25Mb)
-						# and 355 samples in the output buffer (also 25Mb) at 1152 samples/frame
-						if (length($$buf) > 3_500_000 ||
-							defined($controller->frameData) && @{$controller->frameData} > 50_000)
-						{
-							$log->warn('Discarding saved stream & frame data used for synchronization as appear to be collecting it but not using it');
-							resetFrameData($master);
-						}
-					} elsif ($master->streamformat() eq 'mp3' && $master->streamBytes() <= $len) {
-						# do we need to save frame data?
-						my $needFrameData = 0;
-						foreach ($controller->activePlayers()) {
-							my $model = $_->model();
-							last if $needFrameData = ($model eq 'slimp3' || $model eq 'squeezebox');
-						}
-						if ($needFrameData) {		
-							my $savedChunk = $$chunk; 	# copy
-							$controller->initialStreamBuffer(\$savedChunk);
-						}
-					}
-				}
+				main::SB1SLIMP3SYNC && Slim::Player::SB1SliMP3Sync::saveStreamData($controller, $chunk);
 			}
 		} else {
 			if ($callback) {
@@ -307,17 +200,17 @@ sub streamingSongIndex {
 	my $queue = $client->currentsongqueue();
 	if (defined($index)) {
 
-		$log->info("Adding song index $index to song queue");
+		main::INFOLOG && $log->info("Adding song index $index to song queue");
 
 		if ($clear || $client->isSynced()) {
 
-			$log->info("Clearing out song queue first");
+			main::INFOLOG && $log->info("Clearing out song queue first");
 
 			$#{$queue} = -1;
 		}
 		
 		if (defined($song)) {
-			$log->info("adding existing song: index=", ($song->{'index'} ? $song->{'index'} : 'undef'));
+			main::INFOLOG && $log->info("adding existing song: index=", ($song->index() ? $song->index() : 'undef'));
 			unshift(@{$queue}, $song);
 
 		} else {
@@ -327,8 +220,8 @@ sub streamingSongIndex {
 			
 		}
 
-		if ( $log->is_info ) {
-			$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+		if ( main::INFOLOG && $log->is_info ) {
+			$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
 		}
 		
 	}
@@ -339,7 +232,7 @@ sub streamingSongIndex {
 		return 0;
 	}
 
-	return $song->{'index'};
+	return $song->index();
 }
 
 sub playingSongIndex {
@@ -347,7 +240,7 @@ sub playingSongIndex {
 	if (!defined($song)) {
 		return 0;
 	}
-	return $song->{'index'};
+	return $song->index();
 }
 
 sub playingSong {
@@ -378,14 +271,6 @@ sub _markStreamingTrackAsPlayed {
 	}
 }
 
-
-sub errorOpening {
-	my ( $client, $error ) = @_;
-	
-	$error ||= 'PROBLEM_OPENING';
-		
-	$client->controller()->playerStreamingFailed($client, $error);
-}
 
 sub explodeSong {
 	my $client = shift->master();
@@ -438,7 +323,7 @@ sub _readNextChunk {
 		
 		my $len = length($chunk);
 		
-		$log->debug("Sending $len bytes of silence.");
+		main::DEBUGLOG && $log->debug("Sending $len bytes of silence.");
 		
 		$client->streamBytes($len);
 		
@@ -463,17 +348,17 @@ sub _readNextChunk {
 					}
 					return undef;	
 				} elsif ($! == EINTR) {
-					$log->debug("Got EINTR, will try again later.");
+					main::DEBUGLOG && $log->debug("Got EINTR, will try again later.");
 					return undef;
 				} elsif ($! == ECHILD) {
-					$log->debug("Got ECHILD - will try again later.");
+					main::DEBUGLOG && $log->debug("Got ECHILD - will try again later.");
 					return undef;
 				} else {
-					$log->debug("readlen undef: ($!) " . ($! + 0));
+					main::DEBUGLOG && $log->debug("readlen undef: ($!) " . ($! + 0));
 					$endofsong = 1; 
 				}	
 			} elsif ($readlen == 0) { 
-				$log->debug("Read to end of file or pipe");  
+				main::DEBUGLOG && $log->debug("Read to end of file or pipe");  
 				$endofsong = 1;
 			} else {
 				# too verbose
@@ -491,10 +376,10 @@ sub _readNextChunk {
 bail:
 	if ($endofsong) {
 
-		if ( $log->is_info ) {
+		if ( main::INFOLOG && $log->is_info ) {
 			my $msg = "end of file or error on socket, song pos: " . $client->songBytes;
 			$msg .= ", tell says: " . systell($fd) . ", totalbytes: "
-					 . $client->controller()->songStreamController()->song()->{'totalbytes'}
+					 . $client->controller()->songStreamController()->song()->totalbytes()
 				if $fd->isa('Slim::Player::Protocols::File');
 			$log->info($msg);
 		}
@@ -503,14 +388,14 @@ bail:
 
 			# If we haven't streamed any bytes, then it is most likely an error
 
-			$log->info("Didn't stream any bytes for this song; mark it as failed");
+			main::INFOLOG && $log->info("Didn't stream any bytes for this song; mark it as failed");
 			$client->controller()->playerStreamingFailed($client);
 			return;
 		}
 		
 		# Mark the end of stream
 		for my $buddy ($client->syncGroupActiveMembers()) {
-			$log->info($buddy->id() . " mark end of stream");
+			main::INFOLOG && $log->info($buddy->id() . " mark end of stream");
 			push @{$buddy->chunks}, \'';
 		}
 
@@ -533,7 +418,7 @@ sub _wakeupOnReadable {
 	my ($fd, $master) = @_;
 	my $cb;
 	
-	$log->debug($master->id);
+	main::DEBUGLOG && $log->debug($master->id);
 	
 	Slim::Networking::Select::removeRead($fd);
 	
@@ -545,131 +430,5 @@ sub _wakeupOnReadable {
 	}
 }
 
-use constant FRAME_BYTE_OFFSET => 0;
-use constant FRAME_TIME_OFFSET => 1;
-
-sub resetFrameData {
-	my ($client) = @_;
-	return unless Slim::Player::Sync::isMaster($client);
-
-	$client->controller()->initialStreamBuffer(undef);
-	$client->controller()->frameData(undef);
-}
-	
-sub purgeOldFrames {
-	my $frames     = $_[0]->controller()->frameData() or return;
-	my $timeOffset = $_[1];
-
-	my ($i, $j, $k) = (0, @{$frames} - 1);
-
-	# sanity checks
-	return if $timeOffset < $frames->[$i][FRAME_TIME_OFFSET];
-	if ( $timeOffset > $frames->[$j][FRAME_TIME_OFFSET] ) {
-		$log->debug("purgeOldFrames: timeOffset $timeOffset beyond last entry: $frames->[$j][FRAME_TIME_OFFSET]");
-		return;
-	}
-
-	# weighted binary chop
-	while ( ($j - $i) > 1 ) {
-		$k = int ( ($i + $j) / 2 );
-		# $k = $i + (int(($timeOffset - $frames->[$i][FRAME_TIME_OFFSET]) / ($frames->[$j][FRAME_TIME_OFFSET] - $frames->[$i][FRAME_TIME_OFFSET]) * ($j - $i)) || 1);
-		if ( $timeOffset < $frames->[$k][FRAME_TIME_OFFSET] ) {
-			$j = $k;
-		}
-		else {
-			$i = $k;
-		}
-	}
-	
-	if ( $log->is_debug ) {
-		$log->debug(
-			"purgeOldFrames: timeOffset $timeOffset; removing "
-			. ($j+1) . " frames from total " . scalar(@{$frames}) 
-		);
-	}
-	
-	splice @{$frames}, 0, $j+1;	
-}
-
-sub findTimeForOffset {
-	my $client     = $_[0]->master();
-	my $byteOffset = $_[1];
-	my $buffer     = $client->controller()->initialStreamBuffer() or return;
-	my $frames     = $client->controller()->frameData();
-
-	return unless $byteOffset;
-
-	# check if there are any frames to analyse
-	if ( length($$buffer) > 1500 ) { # make it worth our while
-	
-		my $pos = 0;
-
-		while ( my ($length, $nextPos, $seconds) = MPEG::Audio::Frame->read_ref($buffer, $pos) ) {
-			last unless ($length);
-			# Note: $length may not equal ($nextPos - $pos) if tag data has been skipped
-			if ( !defined($frames) ) {
-				$client->controller()->frameData( $frames = [[$nextPos - $length, 0]] );
-				push @{$frames}, [$nextPos, $seconds];
-			}
-			else {
-				my $off = $frames->[-1][FRAME_BYTE_OFFSET] + $nextPos - $pos;
-				my $tim = $frames->[-1][FRAME_TIME_OFFSET] + $seconds;
-				push @{$frames}, [$off, $tim];
-			}
-			
-			if ( $log->is_info && ($length != $nextPos - $pos) ) {
-				$log->info("recordFrameOffset: ", $nextPos - $pos - $length, " bytes skipped");
-			}
-			$pos = $nextPos;
-
-			if ( $log->is_debug ) {
-				$log->debug("recordFrameOffset: $frames->[-1][FRAME_BYTE_OFFSET] -> $frames->[-1][FRAME_TIME_OFFSET]");
-			}
-		}
-
-		if ($pos) {
-			my $newBuffer = substr $$buffer, $pos;
-			$client->controller()->initialStreamBuffer(\$newBuffer);
-		} else {
-			$log->info("recordFrameOffset: found no frames in buffer length ", length($$buffer));
-		}
-	}
-
-	return unless ( defined @{$frames} && @{$frames} > 1 );
-
-	my ($i, $j, $k) = (0, @{$frames} - 1);
-
-	# sanity check
-	unless ($frames->[$i][FRAME_BYTE_OFFSET] <= $byteOffset && $byteOffset <= $frames->[$j][FRAME_BYTE_OFFSET]) {
-		$log->debug("findTimeForOffset: byteOffset $byteOffset outside frame range: $frames->[$i][FRAME_BYTE_OFFSET] .. $frames->[$j][FRAME_BYTE_OFFSET]");
-		return;
-	}
-
-	# weighted binary chop
-	while ( ($j - $i) > 1 ) {
-		$k = int ( ($i + $j) / 2 );
-		use integer;
-		# $k = $i + (int(($j - $i) * ($byteOffset - $frames->[$i][FRAME_BYTE_OFFSET]) / ($frames->[$j][FRAME_BYTE_OFFSET] - $frames->[$i][FRAME_BYTE_OFFSET])) || 1);
-		if ( $byteOffset < $frames->[$k][FRAME_BYTE_OFFSET] ) {
-			$j = $k;
-		}
-		else {
-			$i = $k;
-		}
-	}
-	
-	my $frameByteOffset = $frames->[$i][FRAME_BYTE_OFFSET];
-	my $timeOffset = $frames->[$i][FRAME_TIME_OFFSET];
-	if ( $byteOffset > $frameByteOffset && @{$frames} - 1 > $i ) {
-		# interpolate within a frame
-		$timeOffset += ($byteOffset - $frameByteOffset) /
-			  ($frames->[$i+1][FRAME_BYTE_OFFSET] - $frameByteOffset)
-			* ($frames->[$i+1][FRAME_TIME_OFFSET] - $timeOffset);
-	}
-
-	$log->debug("findTimeForOffset: $byteOffset -> $timeOffset");
-
-	return $timeOffset;
-}
 
 1;

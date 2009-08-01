@@ -51,12 +51,14 @@ sub handler {
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
 
-	# skeleton for the progress update
-	$paramRef->{progress} = ${ Slim::Web::Pages::Progress::progress($client, {
-		ajaxUpdate => 1,
-		type       => 'importer',
-		webroot    => $paramRef->{webroot}
-	}) };
+	if (Slim::Schema::hasLibrary()) {
+		# skeleton for the progress update
+		$paramRef->{progress} = ${ Slim::Web::Pages::Progress::progress($client, {
+			ajaxUpdate => 1,
+			type       => 'importer',
+			webroot    => $paramRef->{webroot}
+		}) };
+	}
 
 	return $class->SUPER::handler($client, $paramRef);
 }

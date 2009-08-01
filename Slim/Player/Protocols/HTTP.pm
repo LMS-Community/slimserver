@@ -10,13 +10,11 @@ package Slim::Player::Protocols::HTTP;
 use strict;
 use base qw(Slim::Formats::HTTP);
 
-use File::Spec::Functions qw(:ALL);
 use IO::String;
 use Scalar::Util qw(blessed);
 
 use Slim::Formats::RemoteMetadata;
 use Slim::Music::Info;
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -85,7 +83,7 @@ sub readMetaData {
 	$metadataSize = ord($metadataSize) * 16;
 	
 	if ($metadataSize > 0) {
-		$log->debug("Metadata size: $metadataSize");
+		main::DEBUGLOG && $log->debug("Metadata size: $metadataSize");
 		
 		my $metadata;
 		my $metadatapart;
@@ -112,7 +110,7 @@ sub readMetaData {
 
 		} while ($metadataSize > 0);			
 
-		$log->info("Metadata: $metadata");
+		main::INFOLOG && $log->info("Metadata: $metadata");
 
 		${*$self}{'title'} = __PACKAGE__->parseMetadata($client, $self->url, $metadata);
 
@@ -138,7 +136,7 @@ sub parseMetadata {
 	# See if there is a parser for this stream
 	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 	if ( $parser ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( 'Trying metadata parser ' . Slim::Utils::PerlRunTime::realNameForCodeRef($parser) );
 		}
 		
@@ -180,7 +178,7 @@ sub parseMetadata {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
 			
-			$directlog->is_debug && $directlog->debug("Ogg comment: $value");
+			main::DEBUGLOG && $directlog->is_debug && $directlog->debug("Ogg comment: $value");
 			
 			# Look for artist/title/album
 			if ( $value =~ /ARTIST=(.+)/i ) {
@@ -226,7 +224,7 @@ sub parseMetadata {
 					my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 					$cache->set( "remote_image_$url", $metaUrl, 3600 );
 					
-					$directlog->debug("Updating stream artwork to $metaUrl");
+					main::DEBUGLOG && $directlog->debug("Updating stream artwork to $metaUrl");
 				},
 			);
 		}
@@ -243,7 +241,7 @@ sub canDirectStream {
 		# stream for all players
 		if ( $client->isSynced(1) ) {
 
-			if ( $directlog->is_info ) {
+			if ( main::INFOLOG && $directlog->is_info ) {
 				$directlog->info(sprintf(
 					"[%s] Not direct streaming because player is synced", $client->id
 				));
@@ -255,7 +253,7 @@ sub canDirectStream {
 		# Allow user pref to select the method for streaming
 		if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
 			if ( $method == 1 ) {
-				$directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
+				main::DEBUGLOG && $directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
 				return 0;
 			}
 		}
@@ -300,7 +298,7 @@ sub sysread {
 
 		} elsif ($metaPointer > $metaInterval) {
 
-			$log->debug("The shoutcast metadata overshot the interval.");
+			main::DEBUGLOG && $log->debug("The shoutcast metadata overshot the interval.");
 		}	
 	}
 
@@ -310,7 +308,7 @@ sub sysread {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
-	my $isDebug = $directlog->is_debug;
+	my $isDebug = main::DEBUGLOG && $directlog->is_debug;
 	
 	# May get a track object
 	if ( blessed($url) ) {
@@ -318,6 +316,7 @@ sub parseDirectHeaders {
 	}
 	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+	my ($rangeLength, $startOffset);
 	
 	foreach my $header (@headers) {
 	
@@ -348,10 +347,33 @@ sub parseDirectHeaders {
 			$length = $1;
 		}
 		
+		elsif ($header =~ m%^Content-Range:\s+bytes\s+(\d+)-(\d+)/(\d+)%i) {
+			$rangeLength = $3;
+			$startOffset = $1;
+		}
+		
 		# mp3tunes metadata, this is a bit of hack but creating
 		# an mp3tunes protocol handler is overkill
 		elsif ( $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
 			Slim::Plugin::MP3tunes::Plugin->setLockerInfo( $client, $url, $1 );
+		}
+	}
+	
+	# Content-Range: has predecence over Content-Length:
+	if ($rangeLength) {
+		$length = $rangeLength;
+	}
+	
+	# However we got here, we want to know that we did not start at the beginning, if possible
+	if ($startOffset && $length) {
+		
+		# Assume saved duration is more accurate that by calculating from length and bitrate
+		my $duration = Slim::Music::Info::getDuration($url);
+		$duration ||= $length * 8 / $bitrate if $bitrate;
+		
+		if ($duration) {
+			main::INFOLOG && $directlog->info("Setting startOffest based on Content-Range to ", $duration * ($startOffset/$length));
+			$client->controller()->songStreamController()->song()->startOffset($duration * ($startOffset/$length));
 		}
 	}
 
@@ -369,25 +391,6 @@ sub parseDirectHeaders {
 
 sub scanUrl {
 	my ( $class, $url, $args ) = @_;
-	
-	my $callersCallback = $args->{'cb'};
-	
-	$args->{'cb'} = sub {
-		my ( $track ) = @_;
-		if ( $track ) {
-			# An HTTP URL may really be an MMS URL,
-			# check now and if so, change the URL before playback
-			if ( $track->content_type eq 'wma' ) {
-				$log->debug( "Changing URL to MMS protocol: " . $track->url);
-				my $mmsURL = $track->url;
-				$mmsURL =~ s/^http/mms/i;
-				$track->url( $mmsURL );
-				$track->update;
-			}
-		}
-		
-		$callersCallback->(@_);
-	};
 	
 	Slim::Utils::Scanner::Remote->scanURL($url, $args);
 }
@@ -474,7 +477,7 @@ sub getMetadataFor {
 	
 	# Remote streams may include ID3 tags with embedded artwork
 	# Example: http://downloads.bbc.co.uk/podcasts/radio4/excessbag/excessbag_20080426-1217.mp3
-	my $track = Slim::Schema->rs('Track')->objectForUrl( {
+	my $track = Slim::Schema->objectForUrl( {
 		url => $url,
 	} );
 	
@@ -483,6 +486,8 @@ sub getMetadataFor {
 	if ( $track->cover ) {
 		$cover = '/music/' . $track->id . '/cover.jpg';
 	}
+	
+	$artist ||= $track->artistName;
 	
 	if ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.+/lma/| ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
@@ -577,7 +582,7 @@ sub canSeekError {
 	} 
 	
 	if ( !$song->bitrate() ) {
-		$log->info("bitrate unknown for: " . $url);
+		main::INFOLOG && $log->info("bitrate unknown for: " . $url);
 		return 'SEEK_ERROR_MP3_UNKNOWN_BITRATE';
 	}
 	elsif ( !$song->duration() ) {
@@ -595,7 +600,7 @@ sub getSeekData {
 		
 	$bitrate /= 1000;
 		
-	$log->info( "Trying to seek $newtime seconds into $bitrate kbps" );
+	main::INFOLOG && $log->info( "Trying to seek $newtime seconds into $bitrate kbps" );
 	
 	return {
 		sourceStreamOffset   => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
@@ -613,7 +618,7 @@ sub getSeekDataByPosition {
 sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
-	$log->debug("Re-init HTTP");
+	main::DEBUGLOG && $log->debug("Re-init HTTP");
 	
 	# Back to Now Playing
 	Slim::Buttons::Common::pushMode( $client, 'playlist' );
@@ -621,7 +626,7 @@ sub reinit {
 	# Trigger event logging timer for this stream
 	Slim::Control::Request::notifyFromArray(
 		$client,
-		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $song->{streamUrl} ), 0 ]
+		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $song->streamUrl() ), 0 ]
 	);
 	
 	return 1;

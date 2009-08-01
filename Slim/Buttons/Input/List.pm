@@ -173,7 +173,7 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);

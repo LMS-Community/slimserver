@@ -32,7 +32,7 @@ sub read {
 	# First try for version 3.0 ASX
 	if ($content =~ /<ASX/i) {
 		
-		$log->info("Parsing ASX 3.0: $file url: [$url]");
+		main::INFOLOG && $log->info("Parsing ASX 3.0: $file url: [$url]");
 		
 		# Deal with the common parsing problem of unescaped ampersands 	 
 		# found in many ASX files on the web. 	 
@@ -50,7 +50,7 @@ sub read {
 		
 		# Make sure playlist is UTF-8
 		my $encoding = Slim::Utils::Unicode::encodingFromString( $content );
-		$log->debug( "Encoding of ASX playlist: $encoding" );
+		main::DEBUGLOG && $log->debug( "Encoding of ASX playlist: $encoding" );
 		
 		if ( $encoding ne 'utf8' ) {		
 			$content = Slim::Utils::Unicode::utf8decode_guess( $content );
@@ -89,15 +89,18 @@ sub read {
 			}
 			else {
 				# It's a normal entry tag
-				my $title = $entry->{TITLE};
-				my $refs  = $entry->{REF} || [];
+				my $title    = $entry->{TITLE} || $parsed->{TITLE};
+				my $author   = $entry->{AUTHOR} || $parsed->{AUTHOR};
+				my $duration = $entry->{DURATION};
+				my $refs     = $entry->{REF} || [];
 			
 				for my $ref ( @{$refs} ) {
 					if ( my $href = $ref->{HREF} ) {
 						next if $href !~ /^(http|mms)/i;
 						push @entries, {
-							title => $title,
-							href  => $href,
+							title  => $title,
+							author => $author,
+							href   => $href,
 						};
 						
 						# XXX: Including multiple ref entries per entry is not exactly
@@ -112,8 +115,10 @@ sub read {
 		my %seenhref = ();
 		for my $entry ( @entries ) {
 		
-			my $title = $entry->{title};
-			my $href  = $entry->{href};
+			my $title    = $entry->{title};
+			my $author   = $entry->{author};
+			my $duration = $entry->{duration};
+			my $href     = $entry->{href};
 			
 			if ( ref $title ) {
 				$title = undef;
@@ -131,7 +136,7 @@ sub read {
 			next if defined ($seenhref{$href}) ;
 			$seenhref{$href} = 1;
 
-			$log->info("Found an entry: $href, title $title");
+			main::INFOLOG && $log->info("Found an entry: $href, title ", $title || '');
 
 			# We've found URLs in ASX files that should be
 			# escaped to be legal - specifically, they contain
@@ -143,14 +148,23 @@ sub read {
 			$href = Slim::Utils::Misc::fixPath($href, $baseDir);
 
 			if ($class->playlistEntryIsValid($href, $url)) {
-
+			
+				my $secs;
+				if ($duration) {
+					my @F = split(':', $duration);
+					my $secs = $F[-1] + $F[-2] * 60;
+					if (@F > 2) {$secs += $F[-3] * 3600;}
+				}
+				
 				push @items, $class->_updateMetaData( $href, {
-					TITLE => $title,
+					TITLE      => $title,
+					ARTISTNAME => $author,
+					SECS       => $secs,					
 				} );
 			}
 		}
 		
-		if ( $log->is_info ) {
+		if ( main::DEBUGLOG && $log->is_info ) {
 			if ( scalar @items == 0 ) {
 				$log->info( "Input ASX we didn't parse:\n$content\n" . Data::Dump::dump($parsed) );
 			}
@@ -160,7 +174,7 @@ sub read {
 	# Next is version 2.0 ASX
 	elsif ($content =~ /\[Reference\]/i) {
 
-		$log->info("Parsing ASX 2.0: $file url: [$url]");
+		main::INFOLOG && $log->info("Parsing ASX 2.0: $file url: [$url]");
 
 		while ($content =~ /^Ref(\d+)=(.*)$/gm) {
 
@@ -183,7 +197,7 @@ sub read {
 	# And finally version 1.0 ASX
 	else {
 
-		$log->info("Parsing ASX 1.0: $file url: [$url]");
+		main::INFOLOG && $log->info("Parsing ASX 1.0: $file url: [$url]");
 
 		while ($content =~ /^(.*)$/gm) {
 
@@ -196,7 +210,7 @@ sub read {
 		}
 	}
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("parsed " . scalar(@items) . " items out of ASX");
 	}		
 

@@ -9,14 +9,16 @@ package Slim::Networking::IO::Select;
 
 use strict;
 
+use EV;
 use Exporter::Lite;
 
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::PerfMon;
 
-our @EXPORT = qw(addRead addWrite addError removeRead removeWrite removeError select);
+our @EXPORT = qw(addRead addWrite addError removeRead removeWrite removeError);
+
+my $depth = 0;
 
 =head1 NAME
 
@@ -38,24 +40,6 @@ Usually, you'll want to use higher such as L<Slim::Networking::Async::HTTP>.
 
 my $log = logger('server.select');
 
-our $callbacks  = {};
-
-our $selects = {
-	'read'     => IO::Select->new, # vectors used for normal select
-	'write'    => IO::Select->new,
-	'error'    => IO::Select->new,
-	'is_read'  => IO::Select->new, # alternatives for select within idleStreams
-	'is_write' => IO::Select->new,
-	'is_error' => IO::Select->new,
-};
-
-our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
-our $selectTask = Slim::Utils::PerfMon->new('Select Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
-
-my $endSelectTime;
-
-my $selectInstance = 0;
-
 =head2 addRead( $sock, $callback )
 
 Add a socket to the select loop for reading.
@@ -65,8 +49,7 @@ $callback will be notified when the socket is readable.
 =cut
 
 sub addRead {
-
-	_updateSelect('read', @_);
+	_add( EV::READ() => @_ );
 }
 
 =head2 removeRead( $sock )
@@ -76,8 +59,7 @@ Remove a socket from the select loop and callback notification for reading.
 =cut
 
 sub removeRead {
-	
-	_updateSelect('read', shift);
+	_remove( EV::READ() => shift );
 }
 
 =head2 addWrite( $sock, $callback )
@@ -89,8 +71,7 @@ $callback will be notified when the socket is writable..
 =cut
 
 sub addWrite {
-
-	_updateSelect('write', @_);
+	_add( EV::WRITE() => @_ );
 }
 
 =head2 removeWrite( $sock )
@@ -100,197 +81,116 @@ Remove a socket from the select loop and callback notification for write.
 =cut
 
 sub removeWrite {
-	
-	_updateSelect('write', shift);
+	_remove( EV::WRITE() => shift );
 }
 
-=head2 addError( $sock, $callback )
+sub addError {}
+sub removeError {}
 
-Add a socket to the select loop for error checking.
-
-$callback will be notified when the socket has an error.
-
-=cut
-
-sub addError {
-
-	_updateSelect('error', @_);
-}
-
-=head2 removeError( $sock )
-
-Remove a socket from the select loop and callback notification for errors.
-
-=cut
-
-sub removeError {
+sub _add {
+	my ( $mode, $fh, $cb, $idle ) = @_;
 	
-	_updateSelect('error', shift);
-}
-
-sub _updateSelect {
-	my ($type, $sock, $callback, $idle) = @_;
-	
-	if (!defined $sock) {
-
-		return;
+	if(main::DEBUGLOG && $log->is_debug) {
+		$log->debug(
+			sprintf('fh=>%s(%d), mode=%s, cb=%s, idle=%d',
+				defined($fh) ? $fh : 'undef', defined($fh) ? fileno($fh) : -1,
+				$mode == EV::READ ? 'READ' : $mode == EV::WRITE ? 'WRITE' : "??-$mode",
+				Slim::Utils::PerlRunTime::realNameForCodeRef($cb),
+				$idle || -1));
+		if (!defined $fh || !fileno($fh)) {
+			logBacktrace('Invalid FH');
+		}
 	}
-
-	if ($callback) {
-
-		$callbacks->{$type}->{$sock} = $callback;
-
-		if (!$selects->{$type}->exists($sock)) {
-
-			$selects->{$type}->add($sock);
-
-			$selects->{'is_'.$type}->add($sock) if $idle;
-
-			if ( $log->is_info ) {
-				$log->info(sprintf("fileno: [%s] Adding %s -> %s",
-					fileno($sock),
-					$type,
-					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-				));
+	
+	return unless defined $fh;
+	
+	my $w = EV::io(
+		fileno($fh),
+		$mode,
+		sub {
+			# If we've recursed into the loop via idleStreams, ignore
+			# non-idle filehandles
+			if ( $depth == 2 && !$idle ) {
+				return;
 			}
-		}
-		else {
 
-			if ( $log->is_info ) {
-				$log->info(sprintf("fileno: [%d] Not adding %s -> %s, already exists",
-					fileno($sock),
-					$type,
-					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-				));
+			main::PERFMON && (my $now = AnyEvent->time);
+					
+			eval { 
+				# This die handler lets us get a correct backtrace if callback crashes
+				local $SIG{__DIE__} = main::SLIM_SERVICE ? sub {
+					my $msg = shift;
+									
+					# Only notify if eval_depth is 2, this avoids emailing for errors inside
+					# nested evals
+					
+					if ( _eval_depth() == 2 ) {
+						my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
+						SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
+					}
+				} : 'DEFAULT';
+				
+				$cb->( $fh, @{ ${*$fh}{passthrough} || [] } );
+			};
+
+			main::PERFMON && Slim::Utils::PerfMon->check('io', AnyEvent->time - $now, undef, $cb);
+			
+			if ( $@ ) {
+				my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
+				logError("Select task failed calling $func: $@; fh=$fh");
 			}
-		}
-
-	} else {
-
-		delete $callbacks->{$type}->{$sock};
-
-		if ($selects->{$type}->exists($sock)) {
-
-			$selects->{$type}->remove($sock);
-		}
-
-		if ($selects->{'is_'.$type}->exists($sock)) {
-
-			$selects->{'is_'.$type}->remove($sock);
-		}
-		
-		if ( $log->is_info ) {
-			$log->info(sprintf("fileno: [%d] Removing $type", fileno($sock) || 0));
-		}
-	}
-}
-
-=head2 select( $selectTime, [ $idleStreams ] )
-
-Services all sockets currently in the select loop. Callbacks will be notified
-when a socket is readable, writable or has an error.
-
-The only callers are slimserver.pl::idle() and slimserver.pl::idleStreams()
-
-=cut
-
-sub select {
-	my $select_time = shift;
-	my $idleStreams = shift; # called from idleStreams
-	
-	if ( $log->is_info ) {
-		$log->info( "select( $select_time )" );
-	}
-
-	$::perfmon && $endSelectTime && $responseTime->log(Time::HiRes::time() - $endSelectTime);
-
-	$! = 0;
-	my ($r, $w, $e) = ( $idleStreams )
-		? IO::Select->select($selects->{'is_read'}, $selects->{'is_write'}, $selects->{'is_error'}, $select_time)
-		: IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
-
-	$::perfmon && ($endSelectTime = Time::HiRes::time());
-
-	# catch EBADF and clear
-	if (!($r || $w || $e) && $! == EBADF) {
-		foreach my $sock (IO::Select::handles($idleStreams ? $selects->{'is_error'} : $selects->{'error'}),
-						  IO::Select::handles($idleStreams ? $selects->{'is_read'} : $selects->{'read'}))
-		{
-			$! = 0;
-			IO::Select->new($sock)->has_exception(0);
-			if ($! == EBADF) {
-				$e = [$sock];
-				removeRead($e);
-				removeWrite($e);
-				removeError($e);
-				$log->error("Clearing bad handle: " . fileno($sock));
-				last;
-			}
-		}
-	}
-
-	# return now if nothing to service - optimisation for most common case
-	return unless ( $r || $w || $e );
-
-	$selectInstance = ($selectInstance + 1) % 1000;
-
-	my $thisInstance = $selectInstance;
-
-	my $count   = 0;
-
-	my %handles = (
-		'read'  => $r,
-		'write' => $w,
-		'error' => $e,
+		},
 	);
 
-	while (my ($type, $handle) = each %handles) {
+	my $slot = $mode == EV::READ ? '_ev_r' : '_ev_w';
+	
+	${*$fh}{$slot} = $w;
+}
 
-		foreach my $sock (@$handle) {
+sub _remove {
+	my ( $mode, $fh ) = @_;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug(
+		sprintf('fh=>%s(%d), mode=%s',
+			defined($fh) ? $fh : 'undef', defined($fh) ? fileno($fh) : -1,
+			$mode == EV::READ ? 'READ' : $mode == EV::WRITE ? 'WRITE' : "??-$mode"));
+	
+	return unless defined $fh;
 
-			my $callback = $callbacks->{$type}->{$sock};
+	my $slot = $mode == EV::READ ? '_ev_r' : '_ev_w';
+	
+	my $w = ${*$fh}{$slot} || return;
+	
+	$w->stop;
+	
+	delete ${*$fh}{$slot};
+}
 
-			if (defined $callback && ref($callback) eq 'CODE') {
-				
-				$::perfmon && (my $now = Time::HiRes::time());
-				
-				if ( $log->is_info ) {
-					$log->info(sprintf("fileno [%s] %s, calling %s",
-						fileno($sock),
-						$type,
-						Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-					));
-				}
+sub loop {
+	my $type = shift;
+	
+	# Don't recurse more than once into the loop
+	return if $depth == 2;
+	
+	$depth++;
+	
+	EV::loop( $type );
+	
+	$depth--;
+}
 
-				# the socket may have passthrough arguments set
-				my $passthrough = ${*$sock}{'passthrough'} || [];
-				
-				eval { $callback->( $sock, @{$passthrough} ) };
+sub _eval_depth { if ( main::SLIM_SERVICE ) {
+	my $eval_depth = 0;
+	my $frame      = 0;
 
-				if ($@) {
-					logError("Select task failed: $@");
-					
-					if ( main::SLIM_SERVICE ) {
-						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
-						SDI::Service::Control->mailError( "IO callback crash: $name", $@ );
-					}
-				}
-
-				$::perfmon && $now && $selectTask->log(Time::HiRes::time() - $now, undef, $callback);
-			}
-
-			$count++;
-
-			# Conditionally readUDP if there are SLIMP3's connected.
-			Slim::Networking::UDP::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
-
-			# return if select has been run more recently than thisInstance (if run inside callback)
-			return $count if ($thisInstance != $selectInstance);
+	while ( my @caller_info = caller( $frame++ ) ) {
+		if ( $caller_info[3] eq '(eval)' ) {
+			$eval_depth++;
 		}
 	}
 
-	return $count;
-}
+	return $eval_depth;
+} }
 
 =head1 SEE ALSO
 

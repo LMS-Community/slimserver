@@ -13,6 +13,8 @@ HTML::HeadParser - Parse <HEAD> section of a HTML document
  $p->header('Title')          # to access <title>....</title>
  $p->header('Content-Base')   # to access <base href="http://...">
  $p->header('Foo')            # to access <meta http-equiv="Foo" content="...">
+ $p->header('X-Meta-Author')  # to access <meta name="author" content="...">
+ $p->header('X-Meta-Charset') # to access <meta charset="...">
 
 =head1 DESCRIPTION
 
@@ -52,9 +54,18 @@ given it will have '?' as the value.
 
 =item X-Meta-Foo:
 
-All E<lt>meta> elements will initialize headers with the prefix
-"C<X-Meta->" on the name.  If the E<lt>meta> element contains a
-C<http-equiv> attribute, then it will be honored as the header name.
+All E<lt>meta> elements containing a C<name> attribute will result in
+headers using the prefix C<X-Meta-> appended with the value of the
+C<name> attribute as the name of the header, and the value of the
+C<content> attribute as the pushed header value.
+
+E<lt>meta> elements containing a C<http-equiv> attribute will result
+in headers as in above, but without the C<X-Meta-> prefix in the
+header name.
+
+E<lt>meta> elements containing a C<charset> attribute will result in
+an C<X-Meta-Charset> header, using the value of the C<charset>
+attribute as the pushed header value.
 
 =back
 
@@ -76,7 +87,7 @@ use HTML::Entities ();
 use strict;
 use vars qw($VERSION $DEBUG);
 #$DEBUG = 1;
-$VERSION = sprintf("%d.%02d", q$Revision: 2.22 $ =~ /(\d+)\.(\d+)/);
+$VERSION = "3.60";
 
 =item $hp = HTML::HeadParser->new
 
@@ -85,7 +96,7 @@ $VERSION = sprintf("%d.%02d", q$Revision: 2.22 $ =~ /(\d+)\.(\d+)/);
 The object constructor.  The optional $header argument should be a
 reference to an object that implement the header() and push_header()
 methods as defined by the C<HTTP::Headers> class.  Normally it will be
-of some class that isa or delegates to the C<HTTP::Headers> class.
+of some class that is a or delegates to the C<HTTP::Headers> class.
 
 If no $header is given C<HTML::HeadParser> will create an
 C<HTTP::Header> object by itself (initially empty).
@@ -157,7 +168,14 @@ sub flush_text   # internal
 #                            SCRIPT* & META* & LINK*">
 #
 # <!ELEMENT HEAD O O  (%head.content)>
-
+#
+# From HTML 4.01:
+#
+# <!ENTITY % head.misc "SCRIPT|STYLE|META|LINK|OBJECT">
+# <!ENTITY % head.content "TITLE & BASE?">
+# <!ELEMENT HEAD O O (%head.content;) +(%head.misc;)>
+#
+# Added in HTML 5: noscript, eventsource, command
 
 sub start
 {
@@ -167,8 +185,15 @@ sub start
     if ($tag eq 'meta') {
 	my $key = $attr->{'http-equiv'};
 	if (!defined($key) || !length($key)) {
-	    return unless $attr->{'name'};
-	    $key = "X-Meta-\u$attr->{'name'}";
+	    if ($attr->{name}) {
+		$key = "X-Meta-\u$attr->{name}";
+	    } elsif ($attr->{charset}) { # HTML 5 <meta charset="...">
+		$key = "X-Meta-Charset";
+		$self->{header}->push_header($key => $attr->{charset});
+		return;
+	    } else {
+		return;
+	    }
 	}
 	$self->{'header'}->push_header($key => $attr->{content});
     } elsif ($tag eq 'base') {
@@ -178,7 +203,8 @@ sub start
 	# This is a non-standard header.  Perhaps we should just ignore
 	# this element
 	$self->{'header'}->push_header(Isindex => $attr->{prompt} || '?');
-    } elsif ($tag =~ /^(?:title|script|style)$/) {
+    } elsif ($tag =~ /^(?:title|(?:no)?script|style|object
+		      |eventsource|command)$/x) {
 	# Just remember tag.  Initialize header when we see the end tag.
 	$self->{'tag'} = $tag;
     } elsif ($tag eq 'link') {
@@ -186,6 +212,7 @@ sub start
 	# <link href="http:..." rel="xxx" rev="xxx" title="xxx">
 	my $h_val = "<" . delete($attr->{href}) . ">";
 	for (sort keys %{$attr}) {
+	    next if $_ eq "/";  # XHTML junk
 	    $h_val .= qq(; $_="$attr->{$_}");
 	}
 	$self->{'header'}->push_header(Link => $h_val);
@@ -208,8 +235,17 @@ sub end
 sub text
 {
     my($self, $text) = @_;
-    $text =~ s/\x{FEFF}//;  # drop Unicode BOM if found
     print "TEXT[$text]\n" if $DEBUG;
+    unless ($self->{first_chunk}) {
+	# drop Unicode BOM if found
+	if ($self->utf8_mode) {
+	    $text =~ s/^\xEF\xBB\xBF//;
+	}
+	else {
+	    $text =~ s/^\x{FEFF}//;
+	}
+	$self->{first_chunk}++;
+    }
     my $tag = $self->{tag};
     if (!$tag && $text =~ /\S/) {
 	# Normal text means start of body
@@ -218,6 +254,10 @@ sub text
     }
     return if $tag ne 'title';
     $self->{'text'} .= $text;
+}
+
+BEGIN {
+    *utf8_mode = sub { 1 } unless HTML::Entities::UNICODE_SUPPORT;;
 }
 
 1;

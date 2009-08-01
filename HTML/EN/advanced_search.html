@@ -142,14 +142,16 @@
 	</tr>
 -->
 
-[% WRAPPER field title='TYPE' %]
-	<select name="search.content_type">
-		<option value="">[% "ANY_TYPE" | string %]</option>
-
-		[% FOREACH type = fileTypes.keys %]
-			<option value="[% type %]" [% IF search.content_type.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
-		[%- END %]
-	</select>
+[% IF fileTypes %]
+	[% WRAPPER field title='TYPE' %]
+		<select name="search.content_type">
+			<option value="">[% "ANY_TYPE" | string %]</option>
+	
+			[% FOREACH type = fileTypes.keys %]
+				<option value="[% type %]" [% IF search.content_type.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
+			[%- END %]
+		</select>
+	[% END %]
 [% END %]
 
 [% WRAPPER field title='FILELENGTH' %]

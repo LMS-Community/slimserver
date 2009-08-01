@@ -14,6 +14,9 @@ use warnings;
 
 use base qw(IO::Socket::INET Slim::Networking::Async::Socket);
 
+# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
+use Exporter qw(import);
+
 use Socket;
 use Slim::Utils::Log;
 

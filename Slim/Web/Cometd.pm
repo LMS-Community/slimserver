@@ -48,7 +48,7 @@ use constant HTTP_CLIENT      => 0;
 use constant HTTP_RESPONSE    => 1;
 
 sub init {
-	Slim::Web::HTTP::addRawFunction( '/cometd', \&webHandler );
+	Slim::Web::Pages->addRawFunction( '/cometd', \&webHandler );
 	Slim::Web::HTTP::addCloseHandler( \&webCloseHandler );
 }
 
@@ -130,7 +130,7 @@ sub handler {
 	
 	if ( ref $objs ne 'ARRAY' ) {
 		if ( $log->is_warn ) {
-			$log->warn( 'Got Cometd request that is not an array: ' . Data::Dump::dump($objs) );
+			$log->warn( 'Got Cometd request that is not an array: ', main::DEBUGLOG ? Data::Dump::dump($objs) : '' );
 		}
 		
 		sendResponse( 
@@ -140,7 +140,7 @@ sub handler {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Cometd request: " . Data::Dump::dump( $objs ) );
 	}
 	
@@ -272,7 +272,7 @@ sub handler {
 			else {
 				# Valid clientId, reconnect them
 				
-				$log->debug( "Client reconnected: $clid" );
+				main::DEBUGLOG && $log->debug( "Client reconnected: $clid" );
 				
 				push @{$events}, {
 					channel    => '/meta/reconnect',
@@ -298,7 +298,7 @@ sub handler {
 					# Bug 8707, Find previous streaming connection using the
 					# same clientId and mark it as 'old'
 					if ( my $old = $manager->get_connection( $clid ) ) {
-						$log->debug( 'Marking connection ' . $old->[HTTP_CLIENT] . ' as old' );
+						main::DEBUGLOG && $log->debug( 'Marking connection ' . $old->[HTTP_CLIENT] . ' as old' );
 						$old->[HTTP_CLIENT]->transport( 'streaming-old' );
 					}
 				
@@ -505,7 +505,7 @@ sub handler {
 			# If this subscription was a normal subscribe, we can unsubscribe now
 			if ( my $callback = delete $subCallbacks{$unsub} ) {
 				# this was a normal subscribe, so we have to call unsubscribe()
-				$log->debug( "Request::unsubscribe( $callback )" );
+				main::DEBUGLOG && $log->debug( "Request::unsubscribe( $callback )" );
 
 				Slim::Control::Request::unsubscribe( $callback );
 			}
@@ -566,7 +566,7 @@ sub handler {
 					# If the caller does not want the response, id will be undef
 					if ( !$id ) {
 						# do nothing
-						$log->debug('Not sending response to request, caller does not want it');
+						main::DEBUGLOG && $log->debug('Not sending response to request, caller does not want it');
 					}
 					else {
 						# This response is optional, but we do it anyway
@@ -659,7 +659,7 @@ sub sendHTTPResponse {
 		$sendheaders = 1;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		if ( $sendheaders ) {
 			$log->debug( "Sending Cometd Response:\n" 
 				. $httpResponse->as_string . $out
@@ -683,7 +683,7 @@ sub sendCLIResponse {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Sending Cometd CLI chunk:\n" . $out );
 	}
 	
@@ -715,7 +715,7 @@ sub handleRequest {
 				$cmd = [ $cmd->[1] ];
 			}
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
 			}
 		
@@ -738,7 +738,7 @@ sub handleRequest {
 			
 			Slim::Control::Request::subscribe( $callback, $cmd );
 		
-			$log->debug( "Subscribed for $response, callback $callback" );
+			main::DEBUGLOG && $log->debug( "Subscribed for $response, callback $callback" );
 		
 			return { ok => 1 };
 		}
@@ -757,11 +757,11 @@ sub handleRequest {
 		
 		# Special case, allow menu requests with a disconnected client
 		if ( !$clientid && $args->[0] eq 'menu' ) {
-			# MAC as first arg on a menu request will trigger special handling in S::C::Request
-			unshift @{$args}, $mac;
+			# set the clientid anyway, will trigger special handling in S::C::Request to store as diconnected clientid
+			$clientid = $mac;
 		}
 		
-		if ( $clientid ) {
+		if ( $client ) {
 			# Update the client's last activity time, since they did something through Comet
 			$client->lastActivityTime( Time::HiRes::time() );
 		}
@@ -798,7 +798,7 @@ sub handleRequest {
 		
 		# If user doesn't care about the response, return nothing
 		if ( !$id ) {
-			$log->debug( "Request for $response, but caller does not care about the response" );
+			main::DEBUGLOG && $log->debug( "Request for $response, but caller does not care about the response" );
 			
 			return { ok => 1 };
 		}
@@ -808,7 +808,7 @@ sub handleRequest {
 			# Only set a callback if the caller wants a response
 			$request->callbackParameters( \&requestCallback );
 			
-			$log->debug( "Request for $response / $id is async, will callback" );
+			main::DEBUGLOG && $log->debug( "Request for $response / $id is async, will callback" );
 			
 			return { ok => 1 };
 		}
@@ -819,7 +819,7 @@ sub handleRequest {
 		}
 		
 		# the request was successful and is not async
-		$log->debug( "Request for $response / $id is not async" );
+		main::DEBUGLOG && $log->debug( "Request for $response / $id is not async" );
 		
 		return {
 			channel => $response,
@@ -840,7 +840,7 @@ sub requestCallback {
 	
 	my ($channel, $id, $priority) = split /\|/, $request->source, 3;
 	
-	$log->debug( "requestCallback got results for $channel / $id" );
+	main::DEBUGLOG && $log->debug( "requestCallback got results for $channel / $id" );
 	
 	# Remove language override, request done
 	# XXX: what about subscriptions?
@@ -850,7 +850,7 @@ sub requestCallback {
 	
 	# Do we need to unsubscribe from this request?
 	if ( delete $toUnsubscribe{ $channel } ) {
-		$log->debug( "requestCallback: unsubscribing from $channel" );
+		main::DEBUGLOG && $log->debug( "requestCallback: unsubscribing from $channel" );
 		
 		$request->removeAutoExecuteCallback();
 		
@@ -885,7 +885,7 @@ sub webCloseHandler {
 	if ( my $clid = $httpClient->clid ) {
 		my $transport = $httpClient->transport;
 			
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
 		}
@@ -908,7 +908,7 @@ sub cliCloseHandler {
 	my $clid = $manager->clid_for_connection( $socket );
 	
 	if ( $clid ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $socket->peerhost . ':' . $socket->peerport;
 			$log->debug( "Lost CLI connection from $peer, clid: $clid" );
 		}
@@ -922,7 +922,7 @@ sub cliCloseHandler {
 		);
 	}
 	else {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $socket->peerhost . ':' . $socket->peerport;
 			$log->debug( "No clid found for CLI connection from $peer" );
 		}
@@ -934,12 +934,12 @@ sub disconnectClient {
 	
 	# Clean up this client's data
 	if ( $manager->is_valid_clid( $clid) ) {
-		$log->debug( "Disconnect for $clid, removing subscriptions" );
+		main::DEBUGLOG && $log->debug( "Disconnect for $clid, removing subscriptions" );
 	
 		# Remove any subscriptions for this client, 
 		Slim::Control::Request::unregisterAutoExecute( $clid );
 			
-		$log->debug("Unregistered all auto-execute requests for client $clid");
+		main::DEBUGLOG && $log->debug("Unregistered all auto-execute requests for client $clid");
 		
 		# Remove any normal subscriptions for this client
 		for my $channel ( keys %subCallbacks ) {
@@ -947,7 +947,7 @@ sub disconnectClient {
 				my $callback = delete $subCallbacks{ $channel };
 				Slim::Control::Request::unsubscribe( $callback );
 				
-				$log->debug( "Unsubscribed from callback $callback for $channel" );
+				main::DEBUGLOG && $log->debug( "Unsubscribed from callback $callback for $channel" );
 			}
 		}
 	

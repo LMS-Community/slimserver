@@ -75,11 +75,14 @@ sub fixupSortKeys {
 	}
 
 	my $fixed = join(',', @keys);
-
+	
 	# Always turn namesearch into the concat version.
-	if ($fixed =~ /\w+?.\w+?sort/ && $fixed !~ /concat/) {
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $concatFunction = $sqlHelperClass->concatFunction();
+	
+	if ($fixed =~ /\w+?.\w+?sort/ && $fixed !~ /$concatFunction/) {
 
-		$fixed =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
+		$fixed =~ s/(\w+?.\w+?sort)/$sqlHelperClass->prepend0($1)/eg;
 	}
 
 	# Always append disc for albums & tracks.
@@ -88,8 +91,8 @@ sub fixupSortKeys {
 		$fixed .= ',me.disc';
 	}
 
-	$log->debug("fixupSortKeys: fixed: [$sort]\n");
-	$log->debug("fixupSortKeys  into : [$fixed]\n");
+	main::DEBUGLOG && $log->debug("fixupSortKeys: fixed: [$sort]\n");
+	main::DEBUGLOG && $log->debug("fixupSortKeys  into : [$fixed]\n");
 
 	return $fixed;
 }
@@ -137,7 +140,7 @@ sub generateConditionsFromFilters {
 		$filters{$param} = $value;
 	}
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug("levelMap: ", Data::Dump::dump(\%levelMap));
 		$log->debug("filters : ", Data::Dump::dump(\%filters));
@@ -172,7 +175,7 @@ sub generateConditionsFromFilters {
 			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
 		}
 
-		$log->debug("Working on levelname: [$levelName]");
+		main::DEBUGLOG && $log->debug("Working on levelname: [$levelName]");
 
 		if (exists $levelMap{$levelName} && defined $levelMap{$levelName}) {
 
@@ -186,7 +189,7 @@ sub generateConditionsFromFilters {
 		}
 	}
 
-	if ($log->is_debug) {
+	if (main::DEBUGLOG && $log->is_debug) {
 
 		$log->debug("find: ", Data::Dump::dump(\%find));
 	}
@@ -199,7 +202,7 @@ sub descend {
 
 	my $rs = $self;
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug(sprintf("\$self->result_class: [%s]", $self->result_class));
 	}
 
@@ -220,7 +223,7 @@ sub descend {
 
 		$level           = ucfirst($level);
 
-		if ($log->is_debug) {
+		if (main::DEBUGLOG && $log->is_debug) {
 
 			$log->debug("Working on level: [$level]");
 
@@ -232,7 +235,7 @@ sub descend {
 		# If we're at the top level for a Level, just browse.
 		if ($self->result_class eq $self->result_source->schema->source($level)->result_class) {
 
-			$log->debug("Calling method: [browse]");
+			main::DEBUGLOG && $log->debug("Calling method: [browse]");
 
 			$rs = $rs->browse($find, $condForLevel, $sortForLevel);
 
@@ -240,7 +243,7 @@ sub descend {
 
 			my $method = "descend${level}";
 
-			$log->debug("Calling method: [$method]");
+			main::DEBUGLOG && $log->debug("Calling method: [$method]");
 
 			$rs = $rs->$method($find, $condForLevel, $sortForLevel);
 		}

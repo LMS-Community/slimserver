@@ -15,8 +15,17 @@ sub new {
     my $self = {
         name   => "unknown name",
         stderr => 1,
+        utf8   => undef,
         @options,
     };
+
+    if( $self->{utf8} ) {
+        if( $self->{stderr} ) {
+            binmode STDERR, ":utf8";
+        } else {
+            binmode STDOUT, ":utf8";
+        }
+    }
 
     bless $self, $class;
 }
@@ -47,6 +56,7 @@ Log::Log4perl::Appender::Screen - Log to STDOUT/STDERR
 
     my $app = Log::Log4perl::Appender::Screen->new(
       stderr    => 0,
+      utf8      => 1,
     );
 
     $file->log(message => "Log me\n");
@@ -56,15 +66,30 @@ Log::Log4perl::Appender::Screen - Log to STDOUT/STDERR
 This is a simple appender for writing to STDOUT or STDERR.
 
 The constructor C<new()> take an optional parameter C<stderr>,
-if set to a true value, the appender will log to STDERR. If C<stderr>
-is set to a false value, it will log to STDOUT. The default setting
-for C<stderr> is 1, so messages will be logged to STDERR by default.
+if set to a true value, the appender will log to STDERR. 
+The default setting for C<stderr> is 1, so messages will be logged to 
+STDERR by default.
+
+If C<stderr>
+is set to a false value, it will log to STDOUT (or, more accurately,
+whichever file handle is selected via C<select()>, STDOUT by default). 
 
 Design and implementation of this module has been greatly inspired by
 Dave Rolsky's C<Log::Dispatch> appender framework.
 
+To enable printing wide utf8 characters, set the utf8 option to a true
+value:
+
+    my $app = Log::Log4perl::Appender::Screen->new(
+      stderr    => 1,
+      utf8      => 1,
+    );
+
+This will issue the necessary binmode command to the selected output
+channel (stderr/stdout).
+
 =head1 AUTHOR
 
-Mike Schilli <log4perl@perlmeister.com>, 2003
+Mike Schilli <log4perl@perlmeister.com>, 2009
 
 =cut

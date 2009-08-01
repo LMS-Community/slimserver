@@ -53,6 +53,8 @@ sub init {
 		'wav' => 'Slim::Formats::Wav',
 		'aif' => 'Slim::Formats::AIFF',
 		'wma' => 'Slim::Formats::WMA',
+		'wmap' => 'Slim::Formats::WMA',
+		'wmal' => 'Slim::Formats::WMA',
 		'mov' => 'Slim::Formats::Movie',
 		'alc' => 'Slim::Formats::Movie',
 		'aac' => 'Slim::Formats::Movie',
@@ -75,7 +77,6 @@ sub init {
 
 		# Remote types
 		'http' => 'Slim::Formats::HTTP',
-		'mms'  => 'Slim::Formats::MMS',
 	);
 
 	$init = 1;
@@ -94,27 +95,20 @@ Example: Slim::Formats->loadTagFormatForType('flc');
 =cut
 
 sub loadTagFormatForType {
-	my $class = shift;
-	my $type  = shift;
-
-	if ($loadedTagClasses{$type}) {
-		return 1;
-	}
-
-	$class->init;
-
-	$log->info("Trying to load $tagClasses{$type}");
-
-	if (!Slim::bootstrap::tryModuleLoad($tagClasses{$type}) && $@) {
-
+	my ( $class, $type ) = @_;
+	
+	return 1 if $loadedTagClasses{$type};
+	
+	eval "use $tagClasses{$type}";
+	
+	if ( $@ ) {
 		logBacktrace("Couldn't load module: $tagClasses{$type} : [$@]");
 		return 0;
-
-	} else {
-
-		$loadedTagClasses{$type} = 1;
-		return 1;
 	}
+	
+	$loadedTagClasses{$type} = 1;
+	
+	return 1;
 }
 
 =head2 classForFormat( $type )
@@ -142,6 +136,8 @@ sub readTags {
 	my $class = shift;
 	my $file  = shift || return {};
 
+	my $isDebug = $log->is_debug;
+
 	my ($filepath, $tags, $anchor);
 
 	if (Slim::Music::Info::isFileURL($file)) {
@@ -165,21 +161,29 @@ sub readTags {
 		}
 
 		# Extract tag and audio info per format
-		if (my $tagReaderClass = $class->classForFormat($type)) {
+		eval {
+			if (my $tagReaderClass = $class->classForFormat($type)) {
+				if ( !$loadedTagClasses{$type} ) {
+					eval "use $tagReaderClass";
+					if ( $@ ) {
+						logError("Unable to load $tagReaderClass: $@");
+						return {};
+					}
+				}
 
-			# Dynamically load the module in.
-			$class->loadTagFormatForType($type);
-
-			$tags = eval { $tagReaderClass->getTag($filepath, $anchor) };
-		}
+				$tags = $tagReaderClass->getTag($filepath, $anchor);
+				
+				$loadedTagClasses{$type} = 1;
+			}
+		};
 
 		if ($@) {
 			logBacktrace("While trying to ->getTag($filepath) : $@");
 		}
 
 		if (!defined $tags) {
-
-			$log->info("No tags found for $filepath");
+			main::INFOLOG && $log->is_info && $log->info("No tags found for $filepath");
+			return {};
 		}
 
 		# Return early if we have a DRM track
@@ -197,21 +201,10 @@ sub readTags {
 
 		if (!defined $tags->{'TITLE'}) {
 
-			$log->info("No title found, using plain title for $file");
+			main::INFOLOG && $log->is_info && $log->info("No title found, using plain title for $file");
 
 			#$tags->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 			Slim::Music::Info::guessTags($file, $type, $tags);
-		}
-
-		# fix the genre
-		if (defined($tags->{'GENRE'}) && $tags->{'GENRE'} =~ /^\((\d+)\)$/) {
-
-			# some programs (SoundJam) put their genres in as text digits surrounded by parens.
-			# in this case, look it up in the table and use the real value...
-			if ($INC{'MP3/Info.pm'} && defined($MP3::Info::mp3_genres[$1])) {
-
-				$tags->{'GENRE'} = $MP3::Info::mp3_genres[$1];
-			}
 		}
 
 		# Mark it as audio in the database.
@@ -230,7 +223,7 @@ sub readTags {
 	# Last resort
 	if (!defined $tags->{'TITLE'} || $tags->{'TITLE'} =~ /^\s*$/) {
 
-		$log->info("No title found, calculating title from url for $file");
+		main::INFOLOG && $log->is_info && $log->info("No title found, calculating title from url for $file");
 
 		$tags->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
@@ -249,8 +242,10 @@ sub readTags {
 	# Only set if we couldn't read it from the file.
 	$tags->{'CONTENT_TYPE'} ||= $type;
 
-	$log->debug("Report for $file:");
-
+	$isDebug && $log->debug("Report for $file:");
+	
+	# XXX: can Audio::Scan make these regexes unnecessary?
+	
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls
 	# Bug: 3998 - Strip UTF-16 BOMs from multiple genres (or other values).
@@ -275,7 +270,7 @@ sub readTags {
 			}
 		}
 		
-		$value && $log->debug(". $tag : $value");
+		$isDebug && $value && $log->debug(". $tag : $value");
 	}
 
 	return $tags;

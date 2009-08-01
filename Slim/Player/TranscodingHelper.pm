@@ -9,9 +9,10 @@ package Slim::Player::TranscodingHelper;
 
 use strict;
 
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 use Scalar::Util qw(blessed);
 
+use Slim::Player::CapabilitiesHelper;
 use Slim::Music::Info;
 use Slim::Player::Sync;
 use Slim::Utils::DateTime;
@@ -22,9 +23,13 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 {
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 		require Win32;
 	}
+}
+
+sub init {
+	loadConversionTables();
 }
 
 our %commandTable = ();
@@ -43,7 +48,7 @@ sub loadConversionTables {
 
 	my @convertFiles = ();
 
-	$log->info("Loading conversion config files...");
+	main::INFOLOG && $log->info("Loading conversion config files...");
 
 	# custom convert files allowed at server root or root of plugin directories
 	for my $baseDir (Slim::Utils::OSDetect::dirsFor('convert')) {
@@ -55,7 +60,7 @@ sub loadConversionTables {
 		);
 	}
 
-	foreach my $baseDir (Slim::Utils::PluginManager->pluginRootDirs()) {
+	foreach my $baseDir (Slim::Utils::PluginManager->dirsFor('convert')) {
 
 		push @convertFiles, catdir($baseDir, 'custom-convert.conf');
 	}
@@ -106,7 +111,7 @@ sub loadConversionTables {
 				$command =~ s/^\s*//o;
 				$command =~ s/\s*$//o;
 
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug(
 						"input: '$inputtype' output: '$outputtype' clienttype: " .
 						"'$clienttype': clientid: '$clientid': '$command'"
@@ -191,7 +196,7 @@ sub isEnabled {
 sub enabledFormat {
 	my $profile = shift;
 
-	$log->debug("Checking to see if $profile is enabled");
+	main::DEBUGLOG && $log->debug("Checking to see if $profile is enabled");
 
 	my @disabled = @{ $prefs->get('disabledformats') };
 
@@ -199,17 +204,17 @@ sub enabledFormat {
 		return 1;
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("There are " . scalar @disabled . " disabled formats...");
 	}
 	
 	for my $format (@disabled) {
 
-		$log->debug("Testing $format vs $profile");
+		main::DEBUGLOG && $log->debug("Testing $format vs $profile");
 
 		if ($format eq $profile) {
 
-			$log->debug("** $profile Disabled **");
+			main::DEBUGLOG && $log->debug("** $profile Disabled **");
 
 			return 0;
 		}
@@ -224,7 +229,7 @@ sub checkBin {
 
 	my $command;
 
-	$log->debug("Checking formats for: $profile");
+	main::DEBUGLOG && $log->debug("Checking formats for: $profile");
 
 	# get the command for this profile
 	$command = $commandTable{$profile};
@@ -232,10 +237,10 @@ sub checkBin {
 	# if the user's disabled the profile, then skip it unless we're changing the prefs...
 	return undef unless $command && ( defined($ignoreprefsettings) || enabledFormat($profile) );
 
-	$log->debug("   enabled");
+	main::DEBUGLOG && $log->debug("   enabled");
 
 	if ($command) {
-		$log->debug("  Found command: $command");
+		main::DEBUGLOG && $log->debug("  Found command: $command");
 	}
 
 	# if we don't have one or more of the requisite binaries, then move on.
@@ -270,19 +275,18 @@ sub getConvertCommand2 {
 	my $track  = $song->currentTrack();
 	$type ||= Slim::Music::Info::contentType($track);
 
-	my $client = $song->master();
-	my $player;
-	my $clientid;
-	my $transcoder  = undef;
+	my $client     = $song->master();
+	my $player     = $client->model();
+	my $clientid   = $client->id();
+	my $transcoder = undef;
 	my $error;
 	my $backupTranscoder  = undef;
-	my $url      = blessed($track) && $track->can('url') ? $track->url : $track;
+	my $url      = $track->url;
 
 	my @supportedformats = ();
-	my %formatcounter    = ();
 	
 	# Check if we need to ratelimit
-	my $rateLimit = rateLimit($client, $url, $type);
+	my $rateLimit = _rateLimit($client, $type, $track->bitrate);
 	RATELIMIT: if ($rateLimit) {
 		foreach (@$want) {
 			last RATELIMIT if /B/;
@@ -291,7 +295,7 @@ sub getConvertCommand2 {
 	}
 	
 	# Check if we need to downsample
-	my $samplerateLimit = samplerateLimit($song);
+	my $samplerateLimit = Slim::Player::CapabilitiesHelper::samplerateLimit($song);
 	SAMPLELIMIT: if ($samplerateLimit) {
 		foreach (@$need) {
 			last SAMPLELIMIT if /D/;
@@ -314,42 +318,15 @@ sub getConvertCommand2 {
 		push @$need, 'U' if ! $foundU;
 	}
 	
-	if (defined($client)) {
-
-		my @playergroup = $client->syncGroupActiveMembers();
-
-		$player   = $client->model();
-		$clientid = $client->id();	
-
-		$log->debug("rateLimit = $rateLimit, type = $type, $player = $clientid");
-	
-		# make sure we only test formats that are supported.
-		foreach my $everyclient (@playergroup) {
-								
-			foreach my $supported ($everyclient->formats()) {
-				$formatcounter{$supported}++;
-			}
-		}
-		
-		foreach my $testformat ($client->formats()) {
-			
-			if ($formatcounter{$testformat} == @playergroup) {
-				push @supportedformats, $testformat;
-			}
-		}
-
-	} else {
-
-		$rateLimit = 0;
-		@supportedformats = qw(aif wav mp3);
-	}
+	# make sure we only test formats that are supported.
+	@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
 	
 	# Switch Apple Lossless files from a CT of 'aac' to 'alc' for
 	# conversion purposes, so we can use 'alac' if it's available.
 	# 
 	# Bug: 2095, 10602
 	if (($type eq 'mov' || $type eq 'mp4' || $type eq 'aac') && blessed($track) && $track->lossless) {
-		$log->debug("Track is alac - updating type!");
+		main::DEBUGLOG && $log->debug("Track is alac - updating type!");
 		$type = 'alc';
 	}
 
@@ -357,13 +334,11 @@ sub getConvertCommand2 {
 	my @profiles = ();
 	foreach my $checkFormat (@supportedformats) {
 
-		if ($client) {
-			push @profiles, (
-				"$type-$checkFormat-$player-$clientid",
-				"$type-$checkFormat-*-$clientid",
-				"$type-$checkFormat-$player-*"
-			);
-		}
+		push @profiles, (
+			"$type-$checkFormat-$player-$clientid",
+			"$type-$checkFormat-*-$clientid",
+			"$type-$checkFormat-$player-*"
+		);
 
 		push @profiles, "$type-$checkFormat-*-*";
 		
@@ -388,7 +363,7 @@ sub getConvertCommand2 {
 			}
 		}
 		if (! $streamMode) {
-			$log->is_debug
+			main::DEBUGLOG && $log->is_debug
 				&& $log->debug("Rejecting $command because no available stream mode supported: ",
 							(join(',', @$streamModes)));
 			next PROFILE;
@@ -397,7 +372,7 @@ sub getConvertCommand2 {
 		# Check for mandatory capabilities
 		foreach (@$need) {
 			if (! $caps->{$_}) {
-				$log->is_debug
+				main::DEBUGLOG && $log->is_debug
 					&& $log->debug("Rejecting $command because required capability $_ not supported: ");
 				if ($_ eq 'D') {
 					$error ||= 'UNSUPPORTED_SAMPLE_RATE';
@@ -453,9 +428,9 @@ sub getConvertCommand2 {
 	}
 
 	if (! $transcoder) {
-		$log->info("Error: Didn't find any command matches for type: $type");
+		main::INFOLOG && $log->info("Error: Didn't find any command matches for type: $type");
 	} else {
-		$log->is_info && $log->info("Matched: $type->", $transcoder->{'streamformat'}, " via: ", $transcoder->{'command'});
+		main::INFOLOG && $log->is_info && $log->info("Matched: $type->", $transcoder->{'streamformat'}, " via: ", $transcoder->{'command'});
 	}
 
 	return wantarray ? ($transcoder, $error) : $transcoder;
@@ -504,7 +479,7 @@ sub tokenizeConvertCommand2 {
 	# escape $ and * in file names and URLs.
 	# Except on Windows where $ and ` shouldn't be escaped and "
 	# isn't allowed in filenames.
-	if (!Slim::Utils::OSDetect::isWindows()) {
+	if (!main::ISWINDOWS) {
 		$filepath =~ s/([\$\"\`])/\\$1/g;
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
@@ -554,19 +529,17 @@ sub tokenizeConvertCommand2 {
 	$command =~ s/\s+\$\w+\$//g;
 	
 	if (!defined($noPipe)) {
-		$command .= (Slim::Utils::OSDetect::isWindows()) ? '' : ' &';
+		$command .= (main::ISWINDOWS) ? '' : ' &';
 		$command .= ' |';
 	}
 
-	$log->debug("Using command for conversion: $command");
+	main::DEBUGLOG && $log->debug("Using command for conversion: $command");
 
 	return $command;
 }
 
-sub rateLimit {
-	my $client     = shift;
-	my $fullpath   = shift;
-	my $type       = shift || Slim::Music::Info::contentType($fullpath);
+sub _rateLimit {
+	my ($client, $type, $bitrate) = @_;
 
 	my $maxRate = 0;
 	
@@ -583,42 +556,10 @@ sub rateLimit {
 	# input bitrate is under the maximum.
 	# We presume that we won't choose an output format that violates the rate limit.
 	if (defined($type) && ($type eq 'mp3' || $type eq 'wma')) {
-
-		my $track = Slim::Schema->rs('Track')->objectForUrl($fullpath);
-		my $rate  = 0;
-
-		if (blessed($track) && $track->can('bitrate')) {
-			$rate = ($track->bitrate || 0)/1000;
-		}
-
-		return 0 if ($maxRate >= $rate);
+		return 0 if ($maxRate >= ($bitrate || 0)/1000);
 	}
 	
 	return $maxRate;
-}
-
-sub samplerateLimit {
-	my $song     = shift;
-	
-	return undef if ! $song->currentTrack()->samplerate;
-
-	my $maxRate = 0;
-	
-	foreach ($song->{'owner'}->activePlayers()) {
-		my $rate = $_->maxSupportedSamplerate();
-		if ($rate && ($maxRate && $maxRate > $rate || !$maxRate)) {
-			$maxRate = $rate;
-		}
-	}
-	
-	if ($maxRate && $maxRate < $song->currentTrack()->samplerate) {
-		if (($maxRate % 12000) == 0 && ($song->currentTrack()->samplerate % 11025) == 0) {
-			$maxRate = int($maxRate * 11025 / 12000);
-		}
-		return $maxRate;
-	}
-	
-	return undef;
 }
 
 1;

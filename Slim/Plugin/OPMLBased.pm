@@ -299,7 +299,7 @@ sub webPages {
 		Slim::Web::Pages->addPageCondition( $title, sub { $class->condition(shift); } );
 	}
 
-	Slim::Web::HTTP::addPageFunction( $url, sub {
+	Slim::Web::Pages->addPageFunction( $url, sub {
 		my $client = $_[0];
 		
 		Slim::Web::XMLBrowser->handleWebIndex( {

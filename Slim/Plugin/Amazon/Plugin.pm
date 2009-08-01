@@ -35,7 +35,7 @@ sub trackInfoMenu {
 	
 	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Amazon' );
 	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	

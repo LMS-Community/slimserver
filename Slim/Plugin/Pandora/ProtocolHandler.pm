@@ -32,9 +32,9 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{'song'};
-	my $streamUrl = $song->{'streamUrl'} || return;
+	my $streamUrl = $song->streamUrl() || return;
 	
-	$log->debug( 'Remote streaming Pandora track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming Pandora track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
@@ -80,7 +80,7 @@ sub transitionType {
 	return unless $song && $playingSong && $song ne $playingSong;
 	
 	if ( $song->pluginData->{ad} || $playingSong->pluginData->{ad} ) {
-		$log->is_debug && $log->debug('Disabling transition because of audio ad');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Disabling transition because of audio ad');
 		return 0;
 	}
 
@@ -91,7 +91,7 @@ sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
 	my $client = $song->master();
-	my $url    = $song->currentTrack()->url;
+	my $url    = $song->track()->url;
 	
 	# Get next track
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
@@ -113,7 +113,7 @@ sub getNextTrack {
 			},
 		);
 
-		$log->debug('Reporting station change to mysqueezebox.com');
+		main::DEBUGLOG && $log->debug('Reporting station change to SqueezeNetwork');
 		$http->get( $snURL );
 	}
 
@@ -134,7 +134,7 @@ sub getNextTrack {
 		}
 	
 		if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
-			$log->debug('Idle time reached, stopping playback');
+			main::DEBUGLOG && $log->debug('Idle time reached, stopping playback');
 			
 			$client->playingSong()->pluginData( {
 				songName => $client->string('PLUGIN_PANDORA_IDLE_STOPPING'),
@@ -162,7 +162,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting next track from mysqueezebox.com for stationid=$stationId");
+	main::DEBUGLOG && $log->debug("Getting next track from SqueezeNetwork for stationid=$stationId");
 	
 	$http->get( $trackURL );
 }
@@ -171,7 +171,6 @@ sub gotNextTrack {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	my $song   = $http->params->{'song'};	
-	my $url    = $song->currentTrack()->url;
 	my $track  = eval { from_json( $http->content ) };
 	
 	if ( $@ || $track->{error} ) {
@@ -188,13 +187,13 @@ sub gotNextTrack {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got Pandora track: ' . Data::Dump::dump($track) );
 	}
 	
 	# Save metadata for this track
 	$song->pluginData( $track );
-	$song->{'streamUrl'} = $track->{'audioUrl'};
+	$song->streamUrl($track->{'audioUrl'});
 	$client->master->pluginData('trackToken' => $track->{'trackToken'});
 	
 	# Bug 8781, Seek if instructed by SN
@@ -255,8 +254,8 @@ sub parseDirectHeaders {
 		}
 	}
 	
-	$client->streamingSong->{'bitrate'} = $bitrate;
-	$client->streamingSong->{'duration'} = $length * 8 / $bitrate; 
+	$client->streamingSong->bitrate($bitrate);
+	$client->streamingSong->duration($length * 8 / $bitrate); 
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
@@ -266,11 +265,11 @@ sub parseDirectHeaders {
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
-	$log->info("Direct stream failed: $url [$response] $status_line");
+	main::INFOLOG && $log->info("Direct stream failed: $url [$response] $status_line");
 		
 	# Report the audio failure to Pandora
 	my $song         = $client->streamingSong();
-	my ($stationId)  = $song->currentTrack()->url =~ m{^pandora://([^.]+)\.mp3};
+	my ($stationId)  = $song->track()->url =~ m{^pandora://([^.]+)\.mp3};
 
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/v1/opml/playback/audioError?stationId=' . $stationId 
@@ -319,7 +318,7 @@ sub canDoAction {
 	
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
-		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
+		main::DEBUGLOG && $log->debug("Pandora: Skip limit exceeded, disallowing skip");
 		
 		my $track = $client->playingSong->pluginData();
 		return 0 if $track->{ad};
@@ -351,7 +350,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
+	return $class->SUPER::canDirectStream($client, $song->streamUrl(), $class->getFormatForURL());
 }
 
 # Override replaygain to always use the supplied gain value
@@ -360,7 +359,7 @@ sub trackGain {
 	
 	my $gain = $client->streamingSong()->pluginData('trackGain') || 0;
 	
-	$log->info("Using replaygain value of $gain for Pandora track");
+	main::INFOLOG && $log->info("Using replaygain value of $gain for Pandora track");
 	
 	return $gain;
 }
@@ -472,9 +471,9 @@ sub getIcon {
 sub reinit {
 	my ( $class, $client, $song ) = @_;
 
-	my $url = $song->currentTrack->url();
+	my $url = $song->track->url();
 	
-	$log->debug("Re-init Pandora - $url");
+	main::DEBUGLOG && $log->debug("Re-init Pandora - $url");
 
 	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
@@ -501,7 +500,7 @@ sub reinit {
 	}
 	else {
 		# No data, just restart the current station
-		$log->debug("No data about playing track, restarting station");
+		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
 
 		$client->execute( [ 'playlist', 'play', $url ] );
 	}

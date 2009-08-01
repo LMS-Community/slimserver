@@ -113,7 +113,7 @@ sub lines {
 			$line2 = $context{$client};
 		}
 
-	} elsif (Slim::Schema->rs('Track')->objectForUrl($newUrl)) {
+	} elsif (Slim::Schema->objectForUrl($newUrl)) {
 		
 		# Special text for overwriting an existing playlist
 		# if large text, make sure we show the message instead of the playlist name

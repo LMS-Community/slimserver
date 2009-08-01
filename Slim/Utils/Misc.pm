@@ -19,7 +19,7 @@ msg("This is a log message\n");
 
 =head1 EXPORTS
 
-assert, bt, msg, msgf, watchDog, errorMsg, specified
+assert, bt, msg, msgf, errorMsg, specified
 
 =head1 DESCRIPTION
 
@@ -31,11 +31,10 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified validMacAddress);
+our @EXPORT = qw(assert bt msg msgf errorMsg specified);
 
 use Config;
-use Cwd ();
-use File::Basename;
+use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use File::Slurp;
@@ -69,7 +68,7 @@ my $scannerlog = logger('scan.scanner');
 my $canFollowAlias = 0;
 
 if ( !main::SLIM_SERVICE ) {
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 		require Win32::File;
 		require Slim::Utils::OS::Win32;
 	}
@@ -100,11 +99,9 @@ sub findbin {
 
 	my $log = logger('os.paths');
 
-	$log->debug("Looking for executable: [$executable]");
+	main::DEBUGLOG && $log->debug("Looking for executable: [$executable]");
 
-	my $isWin = Slim::Utils::OSDetect::isWindows();
-
-	if ($isWin && $executable !~ /\.\w{3}$/) {
+	if (main::ISWINDOWS && $executable !~ /\.\w{3}$/) {
 
 		$executable .= '.exe';
 	}
@@ -113,26 +110,26 @@ sub findbin {
 
 		my $path = catdir($search, $executable);
 
-		$log->debug("Checking for $executable in $path");
+		main::DEBUGLOG && $log->debug("Checking for $executable in $path");
 
 		if (-x $path) {
 
-			$log->info("Found binary $path for $executable");
+			main::INFOLOG && $log->info("Found binary $path for $executable");
 
 			return $path;
 		}
 	}
 
 	# For Windows we don't include the path in @findBinPaths so now search this
-	if ($isWin && (my $path = File::Which::which($executable))) {
+	if (main::ISWINDOWS && (my $path = File::Which::which($executable))) {
 
-		$log->info("Found binary $path for $executable");
+		main::INFOLOG && $log->info("Found binary $path for $executable");
 
 		return $path;
 
 	} else {
 
-		$log->info("Didn't find binary for $executable");
+		main::INFOLOG && $log->info("Didn't find binary for $executable");
 
 		return undef;
 	}
@@ -151,13 +148,13 @@ sub addFindBinPaths {
 
 		if (-d $path) {
 
-			$log->info("adding $path");
+			main::INFOLOG && $log->info("adding $path");
 
 			push @findBinPaths, $path;
 
 		} else {
 
-			$log->info("not adding $path - does not exist");
+			main::INFOLOG && $log->info("not adding $path - does not exist");
 		}
 	}
 }
@@ -196,21 +193,6 @@ sub pathFromMacAlias {
 	return $path unless $fullpath && $canFollowAlias;
 	
 	return Slim::Utils::OS::OSX->pathFromMacAlias($fullpath);
-}
-
-=head2 isMacAlias( $path )
-
-Return the filepath for a given Mac Alias
-
-=cut
-
-sub isMacAlias {
-	my $fullpath = shift;
-	my $isAlias  = 0;
-
-	return unless $fullpath && $canFollowAlias;
-
-	return Slim::Utils::OS::OSX->isMacAlias($fullpath);
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
@@ -267,14 +249,14 @@ sub pathFromFileURL {
 
 	if (Slim::Utils::Log->isInitialized) {
 
-		$log->info("Got $path from file url $url");
+		main::INFOLOG && $log->info("Got $path from file url $url");
 	}
 
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
 		# Bug 10199 - need to ensure that the perl-internal UTF8 flag is set if necessary
 		# (this should really be done by URI::file)
-		$file = fixPathCase(Slim::Utils::Unicode::utf8on($uri->file));
+		$file = fixPathCase( $uri->file );
 	}
 
 	if (Slim::Utils::Log->isInitialized) {
@@ -282,7 +264,7 @@ sub pathFromFileURL {
 		if (!defined($file))  {
 			$log->warn("Bad file: url $url");
 		} else {
-			$log->info("Extracted: $file from $url");
+			main::INFOLOG && $log->info("Extracted: $file from $url");
 		}
 	}
 
@@ -311,9 +293,16 @@ sub fileURLFromPath {
 	}
 
 	return $path if (Slim::Music::Info::isURL($path));
+	
+	$path = fixPathCase($path);
+	
+	# Encode to UTF-8 before URI-escaping, if needed
+	if ( utf8::is_utf8($path) ) {
+		utf8::encode($path);
+	}
 
-	my $uri  = URI::file->new( fixPathCase($path) );
-	   $uri->host('');
+	my $uri = URI::file->new($path);
+	$uri->host('');
 
 	my $file = $uri->as_string;
 
@@ -404,7 +393,7 @@ sub crackURL {
 
 	my $log = logger('os.paths');
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("Cracked: $string with [$host],[$port],[$path]");
 		$log->debug("   user: [$user]") if $user;
 		$log->debug("   pass: [$pass]") if $pass;
@@ -420,6 +409,13 @@ sub crackURL {
 
 =cut
 
+sub fixPathCase { $_[0] }
+
+=pod
+XXX The old fixPathCase can cause breakage where getcwd() returns a recomposed
+UTF-8 filename while readdir may return a decomposed filename.  Since there is no
+bug number, I'm not sure we need it at all. -andy
+
 sub fixPathCase {
 	my $path = shift;
 	my $orig = $path;
@@ -427,14 +423,35 @@ sub fixPathCase {
 	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
 	# But don't for the bogus path we use with embedded cue sheets.
 	if ($^O eq 'darwin' && $path !~ m|^/BOGUS/PATH|) {
-		$path = Cwd::abs_path($path);
+		# Use fast_abs_path if XS version of abs_path isn't available
+		# PP version of abs_path is horribly slow
+		$path = hasXSCwd() ? Cwd::abs_path($path) : Cwd::fast_abs_path($path);
+		
+		# Cwd brings back the original file path, we need to decode again
+		$path = Slim::Utils::Unicode::utf8decode_locale($path);
 	}
 
 	# At that point, we'd return a bogus value, and start crawling at the
 	# top of the directory tree, which isn't what we want.
 	return $path || $orig;
 }
-		
+
+my $hasXSCwd;
+sub hasXSCwd {
+	return $hasXSCwd if defined $hasXSCwd;
+	
+	require Cwd;
+
+	if ( \&Cwd::abs_path == \&Cwd::_perl_abs_path ) {
+		$hasXSCwd = 0;
+	}
+	else {
+		$hasXSCwd = 1;
+	}
+	
+	return $hasXSCwd;
+}
+=cut
 
 =head2 fixPath( $file, $base)
 
@@ -478,7 +495,7 @@ sub fixPath {
 
 	# People sometimes use playlists generated on Windows elsewhere.
 	# See Bug 236
-	unless (Slim::Utils::OSDetect::isWindows()) {
+	unless (main::ISWINDOWS) {
 
 		$file =~ s/^[C-Z]://i;
 		$file =~ s/\\/\//g;
@@ -505,7 +522,7 @@ sub fixPath {
 
 		if (file_name_is_absolute($file)) {
 
-			if (Slim::Utils::OSDetect::isWindows()) {
+			if (main::ISWINDOWS) {
 
 				my ($volume) = splitpath($file);
 
@@ -519,7 +536,7 @@ sub fixPath {
 
 		} else {
 
-			if (Slim::Utils::OSDetect::isWindows()) {
+			if (main::ISWINDOWS) {
 
 				# rel2abs will convert ../../ paths correctly only for windows
 				$fixed = fixPath(rel2abs($file,$base));
@@ -557,10 +574,10 @@ sub fixPath {
 
 	if ($file ne $fixed) {
 
-		logger('os.paths')->info("Fixed: $file to $fixed");
+		main::INFOLOG && logger('os.paths')->info("Fixed: $file to $fixed");
 
 		if ($base) {
-			logger('os.paths')->info("Base: $base");
+			main::INFOLOG && logger('os.paths')->info("Base: $base");
 		}
 	}
 
@@ -574,13 +591,13 @@ sub fixPath {
 sub stripRel {
 	my $file = shift;
 	
-	logger('os.paths')->info("Original: $file");
+	main::INFOLOG && logger('os.paths')->info("Original: $file");
 
 	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
 		$file =~ s#[^\/\\]+[\/\\]\.\.[\/\\]##sg;
 	}
 	
-	logger('os.paths')->info("Stripped: $file");
+	main::INFOLOG && logger('os.paths')->info("Stripped: $file");
 
 	return $file;
 }
@@ -642,9 +659,10 @@ $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
 =cut
 
 sub fileFilter {
-	my $dirname = Slim::Utils::Unicode::utf8off(shift);
+	my $dirname = shift;
 	my $item    = shift;
 	my $validRE = shift || Slim::Music::Info::validTypeExtensions();
+	my $hasStat = shift || 0;
 
 	if (my $filter = $_ignoredItems{$item}) {
 		
@@ -664,17 +682,17 @@ sub fileFilter {
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
 	return 0 if $item =~ /^__\S+\.m3u$/o;
-	return 0 if ($item =~ /^\./o && !Slim::Utils::OSDetect::isWindows());
+	return 0 if ($item =~ /^\./o && !main::ISWINDOWS);
 
 	if ((my $ignore = $prefs->get('ignoreDirRE') || '') ne '') {
 		return 0 if $item =~ /$ignore/;
 	}
 
 	# BUG 7111: don't catdir if the $item is already a full path.
-	my $fullpath = $dirname ? catdir(Slim::Utils::Unicode::utf8off($dirname), $item) : $item;
-
+	my $fullpath = $dirname ? catdir($dirname, $item) : $item;
+	
 	# Don't display hidden/system files on Windows
-	if (Slim::Utils::OSDetect::isWindows()) {
+	if (main::ISWINDOWS) {
 		my $attributes;
 		Win32::File::GetAttributes($fullpath, $attributes);
 		return 0 if ($attributes & Win32::File::HIDDEN()) || ($attributes & Win32::File::SYSTEM());
@@ -684,8 +702,11 @@ sub fileFilter {
 	# We only want files, directories and symlinks Bug #441
 	# Otherwise we'll try and read them, and bad things will happen.
 	# symlink must come first so an lstat() is done.
-	return 0 unless (-l $fullpath || -d _ || -f _);
-
+	if ( !$hasStat ) {
+		lstat($fullpath);
+	}
+	
+	return 0 unless (-l _ || -d _ || -f _);
 
 	# Make sure we can read the file.
 	return 0 if !-r _;
@@ -693,7 +714,7 @@ sub fileFilter {
 	my $target;
  
 	# a file can be an Alias on Mac
-	if (Slim::Utils::OSDetect::OS() eq "mac" && -f _ && $validRE && ($target = pathFromMacAlias($fullpath))) {
+	if (main::ISMAC && -f _ && (stat _)[7] == 0 && $validRE && ($target = pathFromMacAlias($fullpath))) {
 		unless (-d $target) {
 			return 0;
 		}
@@ -711,7 +732,7 @@ sub fileFilter {
 		}
 	}
 	
-	return 1
+	return 1;
 }
 
 =head2 folderFilter( $dirname )
@@ -722,9 +743,11 @@ sub fileFilter {
 
 sub folderFilter {
 	my @path = splitdir(shift);
-	my $folder = pop @path; 
+	my $folder = pop @path;
+	
+	my $hasStat = shift || 0;
 
-	return fileFilter(catdir(@path), $folder);
+	return fileFilter(catdir(@path), $folder, undef, $hasStat);
 }
 
 
@@ -758,12 +781,12 @@ sub readDirectory {
 	my @diritems = ();
 	my $log      = logger('os.files');
 
-	if (Slim::Utils::OSDetect::isWindows()) {
+	if (main::ISWINDOWS) {
 		my ($volume) = splitpath($dirname);
 
 		if ($volume && isWinDrive($volume) && !Slim::Utils::OS::Win32->isDriveReady($volume)) {
 			
-			$log->debug("drive [$dirname] not ready");
+			main::DEBUGLOG && $log->debug("drive [$dirname] not ready");
 
 			return @diritems;
 		}
@@ -771,15 +794,14 @@ sub readDirectory {
 
 	opendir(DIR, $dirname) || do {
 
-		$log->debug("opendir on [$dirname] failed: $!");
+		main::DEBUGLOG && $log->debug("opendir on [$dirname] failed: $!");
 
 		return @diritems;
 	};
 
-	$log->info("Reading directory: $dirname");
+	main::INFOLOG && $log->info("Reading directory: $dirname");
 
 	for my $item (readdir(DIR)) {
-
 		# call idle streams to service timers - used for blocking animation.
 		if (scalar @diritems % 3) {
 			main::idleStreams();
@@ -792,7 +814,7 @@ sub readDirectory {
 
 	closedir(DIR);
 
-	if ( $log->is_info ) {
+	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Directory contains " . scalar(@diritems) . " items");
 	}
 
@@ -836,7 +858,7 @@ sub findAndScanDirectoryTree {
 			$url = Slim::Utils::Misc::fileURLFromPath($prefs->get('audiodir'));
 		}
 
-		$topLevelObj = Slim::Schema->rs('Track')->objectForUrl({
+		$topLevelObj = Slim::Schema->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,
@@ -847,10 +869,10 @@ sub findAndScanDirectoryTree {
 	if (Slim::Utils::OSDetect::OS() eq 'mac' && blessed($topLevelObj) && $topLevelObj->can('path')) {
 		my $topPath = $topLevelObj->path;
 
-		if (Slim::Utils::Misc::isMacAlias($topPath)) {
+		if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($topPath) ) {
 	
-			$topLevelObj = Slim::Schema->rs('Track')->objectForUrl({
-				'url'      => Slim::Utils::Misc::pathFromMacAlias($topPath),
+			$topLevelObj = Slim::Schema->objectForUrl({
+				'url'      => $alias,
 				'create'   => 1,
 				'readTags' => 1,
 				'commit'   => 1,
@@ -872,11 +894,11 @@ sub findAndScanDirectoryTree {
 	my $fsMTime = (stat($path))[9] || 0;
 	my $dbMTime = $topLevelObj->timestamp || 0;
 	
-	$scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
+	main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
 
 	if ($fsMTime != $dbMTime) {
 
-		if ( $scannerlog->is_info ) {
+		if ( main::INFOLOG && $scannerlog->is_info ) {
 			$scannerlog->info("mtime db: $dbMTime : " . localtime($dbMTime));
 			$scannerlog->info("mtime fs: $fsMTime : " . localtime($fsMTime));
 		}
@@ -942,7 +964,7 @@ No low-level check is done whether the drive actually exists.
 sub isWinDrive {
 	my $path = shift;
 
-	return 0 if (!Slim::Utils::OSDetect::isWindows() || length($path) > 3);
+	return 0 if (!main::ISWINDOWS || length($path) > 3);
 
 	return $path =~ /^[a-z]{1}:[\\]?$/i;
 }
@@ -1034,13 +1056,15 @@ sub settingsDiagString {
 		$Config{'archname'},
 	);
 	
-	my $mysqlVersion = Slim::Utils::MySQLHelper->mysqlVersionLong( Slim::Schema->storage->dbh );
-	push @diagString, sprintf("%s%s %s",
+	if ( my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass ) {
+		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh );
+		push @diagString, sprintf("%s%s %s",
 	
-		Slim::Utils::Strings::string('MYSQL_VERSION'),
-		Slim::Utils::Strings::string('COLON'),
-		$mysqlVersion,
-	);
+			Slim::Utils::Strings::string('MYSQL_VERSION'),
+			Slim::Utils::Strings::string('COLON'),
+			$sqlVersion,
+		);
+	}
 
 	return wantarray ? @diagString : join ( ', ', @diagString );
 }
@@ -1280,37 +1304,6 @@ sub validMacAddress {
 	}
 
 	return 0;
-}
-
-=head2 detectBrowser ( )
-
-Attempts to figure out what the browser is by user-agent string identification
-
-=cut
-
-sub detectBrowser {
-
-	my $request = shift;
-	my $return = 'unknown';
-	return $return unless $request->header('user-agent');
-
-	if ($request->header('user-agent') =~ /Firefox/) {
-		$return = 'Firefox';
-	} elsif ($request->header('user-agent') =~ /Opera/) {
-		$return = 'Opera';
-	} elsif ($request->header('user-agent') =~ /Safari/) {
-		$return = 'Safari';
-	} elsif ($request->header('user-agent') =~ /MSIE 7/) {
-		$return = 'IE7';
-	} elsif (
-	$request->header('user-agent') =~ /MSIE/   && # does it think it's IE
-        $request->header('user-agent') !~ /Opera/  && # make sure it's not Opera
-        $request->header('user-agent') !~ /Linux/  && # make sure it's not Linux
-        $request->header('user-agent') !~ /arm/)      # make sure it's not a Nokia tablet
-	{
-		$return = 'IE';
-	}
-	return $return;
 }
 
 =head2 createUUID ( )

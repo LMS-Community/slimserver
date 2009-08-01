@@ -1,14 +1,12 @@
-#!/usr/bin/perl
-###########################################
-use warnings;
-use strict;
-
 package Log::Log4perl::Config::Watch;
 
 use constant _INTERNAL_DEBUG => 0;
 
 our $NEXT_CHECK_TIME;
 our $SIGNAL_CAUGHT;
+
+our $L4P_TEST_CHANGE_DETECTED;
+our $L4P_TEST_CHANGE_CHECKED;
 
 ###########################################
 sub new {
@@ -31,9 +29,8 @@ sub new {
         print "Setting up signal handler for '$self->{signal}'\n" if
             _INTERNAL_DEBUG;
         $SIG{$self->{signal}} = sub { 
-            $self->{signal_caught} = 1; 
             print "Caught signal\n" if _INTERNAL_DEBUG;
-            $SIGNAL_CAUGHT = 1 if $self->{l4p_internal};
+            $self->force_next_check();
         };
             # Reset the marker. The handler is going to modify it.
         $self->{signal_caught} = 0;
@@ -45,6 +42,29 @@ sub new {
     }
 
     return $self;
+}
+
+###########################################
+sub force_next_check {
+###########################################
+    my($self) = @_;
+
+    $self->{signal_caught}   = 1;
+    $self->{next_check_time} = 0;
+
+    if( $self->{l4p_internal} ) {
+        $SIGNAL_CAUGHT = 1;
+        $NEXT_CHECK_TIME = 0;
+    }
+}
+
+###########################################
+sub force_next_check_reset {
+###########################################
+    my($self) = @_;
+
+    $self->{signal_caught} = 0;
+    $SIGNAL_CAUGHT = 0 if $self->{l4p_internal};
 }
 
 ###########################################
@@ -113,12 +133,15 @@ sub change_detected {
         my @stat = stat($self->{file});
         my $new_timestamp = $stat[9];
 
+        $L4P_TEST_CHANGE_CHECKED = 1;
+
         if(! defined $new_timestamp) {
             if($self->{l4p_internal}) {
                 # The file is gone? Let it slide, we don't want L4p to re-read
                 # the config now, it's gonna die.
                 return undef;
             }
+            $L4P_TEST_CHANGE_DETECTED = 1;
             return 1;
         }
 
@@ -126,6 +149,7 @@ sub change_detected {
             $self->{_last_timestamp} = $new_timestamp;
             print "Change detected (file=$self->{file} store=$new_timestamp)\n"
                   if _INTERNAL_DEBUG;
+            $L4P_TEST_CHANGE_DETECTED = 1;
             return 1; # Has changed
         }
            
@@ -143,6 +167,13 @@ sub check {
     my($self, $time, $task, $force) = @_;
 
     $time = time() unless defined $time;
+
+    if( $self->{signal_caught} or $SIGNAL_CAUGHT ) {
+       $force = 1;
+       $self->force_next_check_reset();
+       print "Caught signal, forcing check\n" if _INTERNAL_DEBUG;
+
+    }
 
     print "Soft check (file=$self->{file} time=$time)\n" if _INTERNAL_DEBUG;
 
@@ -185,14 +216,14 @@ Log::Log4perl::Config::Watch - Detect file changes
     while(1) {
         if($watcher->change_detected()) {
             print "Change detected!\n";
-            sleep(1);
         }
+        sleep(1);
     }
 
 =head1 DESCRIPTION
 
 This module helps detecting changes in files. Although it comes with the
-C<Log::Log4perl> distribution, it can be used independly.
+C<Log::Log4perl> distribution, it can be used independently.
 
 The constructor defines the file to be watched and the check interval 
 in seconds. Subsequent calls to C<change_detected()> will 
@@ -248,10 +279,38 @@ to set up a signal handler. If you call the constructor like
                   );
 
 then a signal handler will be installed, setting the object's variable 
-C<$self-E<gt>{signal_caught}>
-to a true value when
-the signal arrives. Comes with all the problems that signal handlers
-go along with.
+C<$self-E<gt>{signal_caught}> to a true value when the signal arrives.
+Comes with all the problems that signal handlers go along with.
+
+=head2 TRIGGER CHECKS
+
+To trigger a physical file check on the next call to C<change_detected()>
+regardless if C<check_interval> has expired or not, call
+
+    $watcher->force_next_check();
+
+on the watcher object.
+
+=head2 DETECT MOVED FILES
+
+The watcher can also be used to detect files that have moved. It will 
+not only detect if a watched file has disappeared, but also if it has
+been replaced by a new file in the meantime.
+
+    my $watcher = Log::Log4perl::Config::Watch->new(
+        file           => "/data/my.conf",
+        check_interval => 30,
+    );
+
+    while(1) {
+        if($watcher->file_has_moved()) {
+            print "File has moved!\n";
+        }
+        sleep(1);
+    }
+
+The parameters C<check_interval> and C<signal> limit the number of physical 
+file system checks, simililarily as with C<change_detected()>.
 
 =head1 SEE ALSO
 

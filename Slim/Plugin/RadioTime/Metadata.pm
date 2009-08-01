@@ -52,7 +52,7 @@ sub parser {
 	if ( $metadata =~ /StreamTitle=\'([^']+)\'/ ) {
 		if ( $1 ) {
 			if ( $client->master->pluginData('metadata' ) ) {
-				$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
+				main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 				$client->master->pluginData( metadata => undef );
@@ -68,7 +68,7 @@ sub parser {
 	# provided by RadioTime
 	elsif ( $metadata =~ /(?:CAPTION|artist|type=SONG)/ ) {
 		if ( $client->master->pluginData('metadata' ) ) {
-			$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
+			main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
 			
 			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 			$client->master->pluginData( metadata => undef );
@@ -124,7 +124,7 @@ sub fetchMetadata {
 	
 	# Make sure client is still playing this station
 	if ( Slim::Player::Playlist::url($client) ne $url ) {
-		$log->is_debug && $log->debug( $client->id . " no longer playing $url, stopping metadata fetch" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( $client->id . " no longer playing $url, stopping metadata fetch" );
 		return;
 	}
 	
@@ -145,7 +145,7 @@ sub fetchMetadata {
 		$metaUrl .= '&username=' . uri_escape_utf8($username);
 	}
 	
-	$log->is_debug && $log->debug( "Fetching RadioTime metadata from $metaUrl" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Fetching RadioTime metadata from $metaUrl" );
 	
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotMetadata,
@@ -183,7 +183,7 @@ sub _gotMetadata {
 	
 	$client->master->pluginData( fetchingMeta => 0 );
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Raw RadioTime metadata: " . Data::Dump::dump($feed) );
 	}
 	
@@ -220,13 +220,13 @@ sub _gotMetadata {
 		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Saved RadioTime metadata: " . Data::Dump::dump($meta) );
 	}
 	
 	$client->master->pluginData( metadata => $meta );
 	
-	$log->is_debug && $log->debug( "Will check metadata again in $ttl seconds" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Will check metadata again in $ttl seconds" );
 	
 	Slim::Utils::Timers::setTimer(
 		$client,
@@ -242,7 +242,7 @@ sub _gotMetadataError {
 	my $url    = $http->params('url');
 	my $error  = $http->error;
 	
-	$log->is_debug && $log->debug( "Error fetching RadioTime metadata: $error" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Error fetching RadioTime metadata: $error" );
 	
 	$client->master->pluginData( fetchingMeta => 0 );
 	

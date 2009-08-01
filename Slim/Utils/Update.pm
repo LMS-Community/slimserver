@@ -36,7 +36,7 @@ sub checkVersion {
 	
 	if ( isUpToDate($installer) ) {
 		
-		$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
+		main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
 		
 		$::newVersion = undef;
 		setUpdateInstaller();
@@ -54,7 +54,7 @@ sub checkVersion {
 
 		if (($delta > 0) && ($delta < $prefs->get('checkVersionInterval'))) {
 
-			if ( $log->is_info ) {
+			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Checking version in %s seconds",
 					($lastTime + $prefs->get('checkVersionInterval') + 2 - Time::HiRes::time())
 				));
@@ -66,7 +66,7 @@ sub checkVersion {
 		}
 	}
 
-	$log->info("Checking version now.");
+	main::INFOLOG && $log->info("Checking version now.");
 
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("sn")
@@ -80,7 +80,7 @@ sub checkVersion {
 			$prefs->get('server_uuid'),
 		);
 		
-	$log->debug("Using URL: $url");
+	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
 
@@ -96,12 +96,12 @@ sub checkVersionCB {
 	my $http = shift;
 
 	# store result in global variable, to be displayed by browser
-	if ($http->{code} =~ /^2\d\d/) {
+	if ($http->code =~ /^2\d\d/) {
 
 		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($version);
 		
-		$log->debug($version || 'No new Squeezebox Server version available');
+		main::DEBUGLOG && $log->debug($version || 'No new Squeezebox Server version available');
 
 		# reset the update flag
 		setUpdateInstaller();
@@ -109,7 +109,7 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 			
-			$log->info('Triggering automatic Squeezebox Server update download...');
+			main::INFOLOG && $log->info('Triggering automatic Squeezebox Server update download...');
 			getUpdate($version);
 		}
 		
@@ -119,7 +119,7 @@ sub checkVersionCB {
 	}
 	else {
 		$::newVersion = 0;
-		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}));
+		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->code));
 	}
 }
 
@@ -145,14 +145,14 @@ sub getUpdate {
 
 	if ( $url && Slim::Music::Info::isURL($url) ) {
 		
-		$log->info("URL to download update from: $url");
+		main::INFOLOG && $log->info("URL to download update from: $url");
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
 
 		# don't re-download if we're up to date
 		if (isUpToDate($file)) {
-			$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
+			main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
 			
 			setUpdateInstaller();
 			return;
@@ -162,7 +162,7 @@ sub getUpdate {
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
-			$log->info("We already have the latest installer file: $file");
+			main::INFOLOG && $log->info("We already have the latest installer file: $file");
 			
 			setUpdateInstaller($file);
 			return;
@@ -241,7 +241,7 @@ sub setUpdateInstaller {
 	
 	if ($file && open(UPDATEFLAG, ">$versionFile")) {
 		
-		$log->debug("Setting update version file to: $file");
+		main::DEBUGLOG && $log->debug("Setting update version file to: $file");
 		
 		print UPDATEFLAG $file;
 		close UPDATEFLAG;
@@ -261,7 +261,7 @@ sub setUpdateInstaller {
 
 sub getUpdateInstaller {
 	
-	$log->debug("Reading update installer path from $versionFile");
+	main::DEBUGLOG && $log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || do {
 		$log->debug("No '$versionFile' available.");
@@ -282,7 +282,7 @@ sub getUpdateInstaller {
 		
 	close UPDATEFLAG;
 	
-	$log->debug("Found update installer path: '$updateInstaller'");
+	main::DEBUGLOG && $log->debug("Found update installer path: '$updateInstaller'");
 	
 	return $updateInstaller;
 }

@@ -7,6 +7,7 @@ our @ISA = qw(Log::Log4perl::Appender);
 use warnings;
 use strict;
 use Log::Log4perl::Config::Watch;
+use Fcntl;
 use constant _INTERNAL_DEBUG => 0;
 
 ##################################################
@@ -20,15 +21,22 @@ sub new {
         owner     => undef,
         group     => undef,
         autoflush => 1,
+        syswrite  => 0,
         mode      => "append",
         binmode   => undef,
         utf8      => undef,
         recreate  => 0,
         recreate_check_interval => 30,
-        recreate_signal         => undef,
+        recreate_check_signal   => undef,
         recreate_pid_write      => undef,
+        create_at_logtime       => 0,
+        header_text             => undef,
         @options,
     };
+
+    if($self->{create_at_logtime}) {
+        $self->{recreate}  = 1;
+    }
 
     if(defined $self->{umask} and $self->{umask} =~ /^0/) {
             # umask value is a string, meant to be an oct value
@@ -50,7 +58,7 @@ sub new {
     }
 
         # This will die() if it fails
-    $self->file_open();
+    $self->file_open() unless $self->{create_at_logtime};
 
     return $self;
 }
@@ -68,14 +76,18 @@ sub file_open {
 ##################################################
     my($self) = @_;
 
-    my $arrows = ">";
+    my $arrows  = ">";
+    my $sysmode = (O_CREAT|O_WRONLY);
 
     my $old_umask = umask();
 
     if($self->{mode} eq "append") {
-        $arrows = ">>";
+        $arrows   = ">>";
+        $sysmode |= O_APPEND;
     } elsif ($self->{mode} eq "pipe") {
         $arrows = "|";
+    } else {
+        $sysmode |= O_TRUNC;
     }
 
     my $fh = do { local *FH; *FH; };
@@ -84,8 +96,13 @@ sub file_open {
 
     my $didnt_exist = ! -f $self->{filename};
 
-    open $fh, "$arrows$self->{filename}" or
-        die "Can't open $self->{filename} ($!)";
+    if($self->{syswrite}) {
+        sysopen $fh, "$self->{filename}", $sysmode or
+            die "Can't sysopen $self->{filename} ($!)";
+    } else {
+        open $fh, "$arrows$self->{filename}" or
+            die "Can't open $self->{filename} ($!)";
+    }
 
     if($didnt_exist and 
          ( defined $self->{owner} or defined $self->{group} )
@@ -103,9 +120,9 @@ sub file_open {
     if($self->{recreate}) {
         $self->{watcher} = Log::Log4perl::Config::Watch->new(
             file           => $self->{filename},
-            ($self->{recreate_check_interval} ?
+            (defined $self->{recreate_check_interval} ?
               (check_interval => $self->{recreate_check_interval}) : ()),
-            ($self->{recreate_check_signal} ?
+            (defined $self->{recreate_check_signal} ?
               (signal => $self->{recreate_check_signal}) : ()),
         );
     }
@@ -114,7 +131,7 @@ sub file_open {
 
     $self->{fh} = $fh;
 
-    if ($self->{autoflush}) {
+    if ($self->{autoflush} and ! $self->{syswrite}) {
         my $oldfh = select $self->{fh}; 
         $| = 1; 
         select $oldfh;
@@ -126,6 +143,14 @@ sub file_open {
 
     if (defined $self->{utf8}) {
         binmode $self->{fh}, ":utf8";
+    }
+
+    if(defined $self->{header_text}) {
+        if( $self->{header_text} !~ /\n\Z/ ) {
+            $self->{header_text} .= "\n";
+        }
+        my $fh = $self->{fh};
+        print $fh $self->{header_text};
     }
 }
 
@@ -199,7 +224,8 @@ sub log {
                 $self->file_switch($self->{filename});
             }
         } else {
-            if($self->{watcher}->file_has_moved()) {
+            if(!$self->{watcher} or
+                $self->{watcher}->file_has_moved()) {
                 $self->file_switch($self->{filename});
             }
         }
@@ -207,8 +233,13 @@ sub log {
 
     my $fh = $self->{fh};
 
-    print $fh $params{message} or
-        die "Cannot write to '$self->{filename}': $!";
+    if($self->{syswrite}) {
+        syswrite $fh, $params{message} or
+            die "Cannot syswrite to '$self->{filename}': $!";
+    } else {
+        print $fh $params{message} or
+            die "Cannot write to '$self->{filename}': $!";
+    }
 }
 
 ##################################################
@@ -276,6 +307,15 @@ as executable to pipe output to. Default mode is C<"append">.
 
 C<autoflush>, if set to a true value, triggers flushing the data
 out to the file on every call to C<log()>. C<autoflush> is on by default.
+
+=item syswrite
+
+C<syswrite>, if set to a true value, makes sure that the appender uses
+syswrite() instead of print() to log the message. C<syswrite()> usually
+maps to the operating system's C<write()> function and makes sure that
+no other process writes to the same log file while C<write()> is busy.
+Might safe you from having to use other syncronisation measures like
+semaphores (see: Synchronized appender).
 
 =item umask
 
@@ -350,10 +390,10 @@ This obviously means that the appender will continue writing to
 a moved file until the next check occurs, in the worst case
 this will happen C<recreate_check_interval> seconds after the file
 has been moved or deleted. If this is undesirable,
-setting C<recreate_check_interval> to 0 will have the appender
+setting C<recreate_check_interval> to 0 will have the
 appender check the file with I<every> call to C<log()>.
 
-=item recreate_signal
+=item recreate_check_signal
 
 In C<recreate> mode, if this option is set to a signal name
 (e.g. "USR1"), the appender will recreate a missing logfile
@@ -370,6 +410,29 @@ been rotated. This option expects a path to a file where the pid
 of the currently running application gets written to.
 Check the FAQ for using this option with the log rotating 
 utility C<newsyslog>.
+
+=item create_at_logtime
+
+The file appender typically creates its logfile in its constructor, i.e. 
+at Log4perl C<init()> time. This is desirable for most use cases, because
+it makes sure that file permission problems get detected right away, and 
+not after days/weeks/months of operation when the appender suddenly needs
+to log something and fails because of a problem that was obvious at
+startup.
+
+However, there are rare use cases where the file shouldn't be created
+at Log4perl C<init()> time, e.g. if the appender can't be used by the current
+user although it is defined in the configuration file. If you set
+C<create_at_logtime> to a true value, the file appender will try to create
+the file at log time. Note that this setting lets permission problems
+sit undetected until log time, which might be undesirable.
+
+=item header_text
+
+If you want Log4perl to print a header into every newly opened
+(or re-opened) logfile, set C<header_text> to either a string
+or a subroutine returning a string. If the message doesn't have a newline,
+a newline at the end of the header will be provided.
 
 =back
 

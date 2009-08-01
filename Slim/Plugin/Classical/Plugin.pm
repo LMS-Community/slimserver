@@ -27,9 +27,9 @@ sub initPlugin {
 		weight => 38,
 	);
 	
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		# Add a function to view trackinfo in the web
-		Slim::Web::HTTP::addPageFunction( 
+		Slim::Web::Pages->addPageFunction( 
 			'plugins/classical/trackinfo.html',
 			sub {
 				my $client = $_[0];

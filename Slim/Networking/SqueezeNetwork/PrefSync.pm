@@ -51,7 +51,7 @@ sub _init_done {
 		@{ $res }
 	};
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("Got list of SN prefs to sync: " . scalar(@{$res}) . " prefs");
 	}
 	
@@ -100,7 +100,7 @@ sub clientEvent {
 	# If the event was for a new client, sync down now
 	my $event = $request->getRequest(1);
 	if ( $event =~ /(?:new|reconnect)/ ) {
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( $client->id . ": Got client $event event, syncing prefs from SN" );
 		}
 		
@@ -108,7 +108,7 @@ sub clientEvent {
 	}
 	elsif ( $event eq 'disconnect' ) {
 		# Client is gone, kill any pending syncUp event (syncDown killed above)
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( $client->id . ': Got client disconnect event, disabling sync' );
 		}
 		
@@ -145,7 +145,7 @@ sub shutdown {
 	Slim::Utils::Timers::killTimers( undef, \&syncUpGlobal );
 	Slim::Utils::Timers::killTimers( undef, \&syncDownGlobal );
 	
-	$log->info( "mysqueezebox.com pref sync shutdown" );
+	main::INFOLOG && $log->info( "SqueezeNetwork pref sync shutdown" );
 }
 
 sub syncDown {
@@ -170,7 +170,7 @@ sub syncDown {
 		since    => $prefs->client($client)->get('snLastSyncDown'),
 	};
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Requesting sync down from SN: " . Data::Dump::dump($sync) );
 	}
 	
@@ -193,7 +193,7 @@ sub syncDownGlobal {
 		since => $prefs->get('snLastSyncDown'),
 	};
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Requesting global sync down from SN: " . Data::Dump::dump($sync) );
 	}
 	
@@ -216,7 +216,7 @@ sub _syncDown_done {
 		return _syncDown_error( $http );
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Sync down data from SN: ' . Data::Dump::dump($content) );
 	}
 
@@ -232,7 +232,7 @@ sub _syncDown_done {
 		# Sync name if different
 		if ( $content->{name} && ( $content->{name} ne $client->name ) ) {
 			$client->name( $content->{name} );
-			$log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
+			main::DEBUGLOG && $log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
 		}
 		
 		while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
@@ -245,7 +245,7 @@ sub _syncDown_done {
 				
 				# compare timestamps
 				if ( $data->{ts} > $rprefs->client($client)->timestamp($prefname) ) {
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug("Synced " . $client->id . " ${ns}.${prefname} to: " . Data::Dump::dump( $data->{value} ) );
 					}
 
@@ -273,7 +273,7 @@ sub _syncDown_done {
 						$data->{value} = [ map { catfile( $dir, $_ ) } @{ $data->{value} } ];
 					}			
 
-					if ( $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_debug ) {
 						$log->debug("Synced " . $client->id . " $pref to: " . Data::Dump::dump( $data->{value} ) );
 					}
 
@@ -293,7 +293,7 @@ sub _syncDown_done {
 
 		$client->update;
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( 'Synced prefs from SN for player ' . $client->id );
 		}
 
@@ -328,7 +328,7 @@ sub _syncDown_done {
 					}
 				}
 				
-				if ( $log->is_debug ) {
+				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug("Synced ${ns}.${prefname} to: " . Data::Dump::dump( $data->{value} ) );
 				}
 
@@ -394,7 +394,7 @@ sub prefEvent {
 			return;
 		}
 	
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Client prefEvent to sync: " . $client->id . " / $ns / $pref / " . Data::Dump::dump($value) );
 		}
 	
@@ -421,7 +421,7 @@ sub prefEvent {
 			return;
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Global prefEvent to sync: $ns / $pref / " . Data::Dump::dump($value) );
 		}
 		
@@ -476,7 +476,7 @@ sub syncUp {
 		}
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Syncing client prefs up to SN: ' . Data::Dump::dump($sync) );
 	}
 	
@@ -528,7 +528,7 @@ sub syncUpGlobal {
 		}
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Syncing global prefs up to SN: ' . Data::Dump::dump($sync) );
 	}
 	
@@ -558,7 +558,7 @@ sub _syncUp_done {
 		return _syncUp_error( $http );
 	}
 	
-	$log->info( 'Sync OK' );
+	main::INFOLOG && $log->info( 'Sync OK' );
 }
 
 sub _syncUp_error {

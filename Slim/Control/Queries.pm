@@ -32,13 +32,13 @@ L<Slim::Control::Queries> implements most Squeezebox Server queries and is desig
 use strict;
 
 use Data::URIEncode qw(complex_to_query);
-use Data::Dump;
 use Storable;
 use JSON::XS::VersionOneAndTwo;
+use MIME::Base64 qw(encode_base64 decode_base64);
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
-use Slim::Utils::Misc qw( specified validMacAddress );
+use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
@@ -46,7 +46,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Text;
 
 {
-	if ($^O =~ /Win32/) {
+	if (main::ISWINDOWS) {
 		require Slim::Utils::OS::Win32;
 	}
 }
@@ -159,6 +159,11 @@ sub alarmsQuery {
 		return;
 	}
 
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
@@ -223,6 +228,11 @@ sub albumsQuery {
 		return;
 	}
 
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my %favorites;
 	$favorites{'url'}    = $request->getParam('favorites_url');
@@ -240,7 +250,7 @@ sub albumsQuery {
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
-	my $party         = $request->getParam('party');
+	my $party         = $request->getParam('party') || 0;
 	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
@@ -278,22 +288,22 @@ sub albumsQuery {
 
 		} elsif ($sort && $sort eq 'artflow') {
 
-			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('contributor.namesort,album.year,album.titlesort');
+			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('contributor.namesort,album.year,album.titlesort');
 			push @{$attr->{'join'}}, 'contributor';
 
 		} elsif ($sort && $sort eq 'artistalbum') {
 
-			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('contributor.namesort,album.titlesort');
+			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('contributor.namesort,album.titlesort');
 			push @{$attr->{'join'}}, 'contributor';
 
 		} elsif ($sort && $sort eq 'yearartistalbum') {
 
-			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('album.year,contributor.namesort,album.titlesort');
+			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('album.year,contributor.namesort,album.titlesort');
 			push @{$attr->{'join'}}, 'contributor';
 
 		} elsif ($sort && $sort eq 'yearalbum') {
 
-			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('album.year,album.titlesort');
+			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('album.year,album.titlesort');
 
 		}
 
@@ -337,7 +347,9 @@ sub albumsQuery {
 	
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
-		push @{ $attr->{'join'} }, 'contributor';
+		if ( !grep { /^contributor$/ } @{ $attr->{'join'} } ) {
+			push @{ $attr->{'join'} }, 'contributor';
+		}
 		
 		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable disc discc ) ];
 	}
@@ -639,6 +651,11 @@ sub artistsQuery {
 		return;
 	}
 
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
@@ -1152,7 +1169,7 @@ sub displaystatusQuery_filter {
 sub displaystatusQuery {
 	my $request = shift;
 	
-	$log->info("displaystatusQuery()");
+	main::INFOLOG && $log->info("displaystatusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['displaystatus']])) {
@@ -1220,7 +1237,7 @@ sub displaystatusQuery {
 
 		my $client = $request->client;
 
-		$log->info("adding displaystatus subscription $subs");
+		main::INFOLOG && $log->info("adding displaystatus subscription $subs");
 
 		if ($subs eq 'bits') {
 
@@ -1249,7 +1266,7 @@ sub displaystatusQuery {
 				$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
 					$client->display->widthOverride(1, undef);
 					if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
-						$log->info("last listener - suppressing display notify");
+						main::INFOLOG && $log->info("last listener - suppressing display notify");
 						$client->display->notifyLevel(0);
 					}
 					$client->update;
@@ -1262,7 +1279,7 @@ sub displaystatusQuery {
 		} else {
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
 				if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
-					$log->info("last listener - suppressing display notify");
+					main::INFOLOG && $log->info("last listener - suppressing display notify");
 					$client->display->notifyLevel(0);
 				}
 			});
@@ -1285,7 +1302,7 @@ sub _displaystatusCleanupEmulated {
 	my $client  = $request->client;
 
 	if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
-		$log->info("last listener - swapping back to NoDisplay class");
+		main::INFOLOG && $log->info("last listener - swapping back to NoDisplay class");
 		$client->display->forgetDisplay();
 		$client->display( Slim::Display::NoDisplay->new($client) );
 		$client->display->init;
@@ -1302,6 +1319,11 @@ sub genresQuery {
 		return;
 	}
 
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
@@ -1392,7 +1414,7 @@ sub genresQuery {
 		}
 	}
 
-	my $rs = Slim::Schema->resultset('Genre')->browse->search($where, $attr);
+	my $rs = Slim::Schema->rs('Genre')->browse->search($where, $attr);
 
 	my $count = $rs->count;
 
@@ -1568,6 +1590,11 @@ sub infoTotalQuery {
 		return;
 	}
 	
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my $entity = $request->getRequest(2);
 
@@ -1674,7 +1701,7 @@ sub modeQuery {
 sub musicfolderQuery {
 	my $request = shift;
 	
-	$log->info("musicfolderQuery()");
+	main::INFOLOG && $log->info("musicfolderQuery()");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['musicfolder']])) {
@@ -1819,17 +1846,18 @@ sub musicfolderQuery {
 			# Amazingly, this just works. :)
 			# Do the cheap compare for osName first - so non-windows users
 			# won't take the penalty for the lookup.
-			if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
+			if (main::ISWINDOWS && Slim::Music::Info::isWinShortcut($url)) {
 
 				($realName, $url) = Slim::Utils::OS::Win32->getShortcut($url);
 			}
 			
-			elsif ($osName eq 'mac' && Slim::Utils::Misc::isMacAlias($url)) {
-				
-				$url = Slim::Utils::Misc::pathFromMacAlias($url);
+			elsif (main::ISMAC) {
+				if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($url) ) {
+					$url = $alias;
+				}
 			}
 	
-			my $item = Slim::Schema->rs('Track')->objectForUrl({
+			my $item = Slim::Schema->objectForUrl({
 				'url'      => $url,
 				'create'   => 1,
 				'readTags' => 1,
@@ -2754,7 +2782,7 @@ sub prefValidateQuery {
 sub readDirectoryQuery {
 	my $request = shift;
 
-	$log->info("readDirectoryQuery");
+	main::INFOLOG && $log->info("readDirectoryQuery");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['readdirectory']])) {
@@ -2763,16 +2791,21 @@ sub readDirectoryQuery {
 	}
 
 	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	my $folder   = Slim::Utils::Unicode::utf8off($request->getParam('folder'));
-	my $filter   = $request->getParam('filter');
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	my $folder     = $request->getParam('folder');
+	my $folder_b64 = $request->getParam('folder_b64');
+	my $filter     = $request->getParam('filter');
 
 	use File::Spec::Functions qw(catdir);
 	my @fsitems;		# raw list of items 
 	my %fsitems;		# meta data cache
 
-	if ($folder eq '/' && Slim::Utils::OSDetect::isWindows()) {
+	if ( $folder_b64 ) {
+		$folder = decode_base64($folder_b64);
+	}
+
+	if (main::ISWINDOWS && $folder eq '/') {
 		@fsitems = sort map {
 			$fsitems{"$_"} = {
 				d => 1,
@@ -2846,12 +2879,13 @@ sub readDirectoryQuery {
 				my $name = $item;
 
 				# display full name if we got a Windows 8.3 file name
-				if (Slim::Utils::OSDetect::isWindows() && $name =~ /~\d/) {
+				if (main::ISWINDOWS && $name =~ /~\d/) {
 					$name = Slim::Music::Info::fileName($path);
 				}
 
-				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode($path));
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode($name));
+				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
+				$request->addResultLoop('fsitems_loop', $cnt, 'path_b64', encode_base64($path, ''));
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode_locale($name));
 				
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
 
@@ -2936,9 +2970,11 @@ sub rescanprogressQuery {
 	} else {
 		$request->addResult('rescan', 0);
 
-		# inform if the scan has failed
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
-			_scanFailed($request, $p->info);
+		if (Slim::Schema::hasLibrary()) {
+			# inform if the scan has failed
+			if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
+				_scanFailed($request, $p->info);
+			}
 		}
 	}
 
@@ -2978,41 +3014,46 @@ sub searchQuery {
 	my @types      = Slim::Schema->searchTypes;
 
 	# Ugh - we need two loops here, as "count" needs to come first.
-	for my $type (@types) {
+	
+	if (Slim::Schema::hasLibrary()) {
+		for my $type (@types) {
 
-		my $rs      = Slim::Schema->rs($type)->searchNames($search);
-		my $count   = $rs->count || 0;
-
-		$results{$type}->{'rs'}    = $rs;
-		$results{$type}->{'count'} = $count;
-
-		$totalCount += $count;
+			my $rs      = Slim::Schema->rs($type)->searchNames($search);
+			my $count   = $rs->count || 0;
+	
+			$results{$type}->{'rs'}    = $rs;
+			$results{$type}->{'count'} = $count;
+	
+			$totalCount += $count;
+		}
 	}
 
 	$totalCount += 0;
 	$request->addResult('count', $totalCount);
 
-	for my $type (@types) {
-
-		my $count = $results{$type}->{'count'};
-
-		$count += 0;
-
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-		if ($valid) {
-			$request->addResult("${type}s_count", $count);
+	if (Slim::Schema::hasLibrary()) {
+		for my $type (@types) {
 	
-			my $loopName  = "${type}s_loop";
-			my $loopCount = 0;
+			my $count = $results{$type}->{'count'};
 	
-			for my $result ($results{$type}->{'rs'}->slice($start, $end)) {
+			$count += 0;
 	
-				# add result to loop
-				$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
-				$request->addResultLoop($loopName, $loopCount, $type, $result->name);
+			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 	
-				$loopCount++;
+			if ($valid) {
+				$request->addResult("${type}s_count", $count);
+		
+				my $loopName  = "${type}s_loop";
+				my $loopCount = 0;
+		
+				for my $result ($results{$type}->{'rs'}->slice($start, $end)) {
+		
+					# add result to loop
+					$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
+					$request->addResultLoop($loopName, $loopCount, $type, $result->name);
+		
+					$loopCount++;
+				}
 			}
 		}
 	}
@@ -3064,7 +3105,7 @@ sub serverstatusQuery_filter {
 sub serverstatusQuery {
 	my $request = shift;
 	
-	$log->info("serverstatusQuery()");
+	main::INFOLOG && $log->info("serverstatusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['serverstatus']])) {
@@ -3072,34 +3113,38 @@ sub serverstatusQuery {
 		return;
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', "1");
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
-
-			$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
-			$request->addResult('progressdone', $p->done);
-			$request->addResult('progresstotal', $p->total);
+	if (Slim::Schema::hasLibrary()) {
+		if (Slim::Music::Import->stillScanning()) {
+			$request->addResult('rescan', "1");
+			if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+	
+				$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
+				$request->addResult('progressdone', $p->done);
+				$request->addResult('progresstotal', $p->total);
+			}
 		}
-	}
-
-	elsif (my @p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer' }, { 'order_by' => 'start,id' })->all) {
-		
-		$request->addResult('lastscan', $p[-1]->finish);
-		
-		if ($p[-1]->name eq 'failure') {
-			_scanFailed($request, $p[-1]->info);
+	
+		elsif (my @p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer' }, { 'order_by' => 'start,id' })->all) {
+			
+			$request->addResult('lastscan', $p[-1]->finish);
+			
+			if ($p[-1]->name eq 'failure') {
+				_scanFailed($request, $p[-1]->info);
+			}
 		}
 	}
 	
 	# add version
 	$request->addResult('version', $::VERSION);
 
-	# add totals
-	$request->addResult("info total albums", Slim::Schema->count('Album'));
-	$request->addResult("info total artists", Slim::Schema->rs('Contributor')->browse->count);
-	$request->addResult("info total genres", Slim::Schema->count('Genre'));
-	$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
-
+	if (Slim::Schema::hasLibrary()) {
+		# add totals
+		$request->addResult("info total albums", Slim::Schema->count('Album'));
+		$request->addResult("info total artists", Slim::Schema->rs('Contributor')->browse->count);
+		$request->addResult("info total genres", Slim::Schema->count('Genre'));
+		$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
+	}
+	
 	my %savePrefs;
 	if (defined(my $pref_list = $request->getParam('prefs'))) {
 
@@ -3361,7 +3406,7 @@ sub statusQuery_filter {
 sub statusQuery {
 	my $request = shift;
 	
-	$log->info("statusQuery()");
+	main::INFOLOG && $log->info("statusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -3520,7 +3565,7 @@ sub statusQuery {
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
-		$log->debug("statusQuery(): setup base for jive");
+		main::DEBUGLOG && $log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
@@ -3563,7 +3608,7 @@ sub statusQuery {
 	
 	if ($songCount > 0) {
 	
-		$log->debug("statusQuery(): setup non-zero player response");
+		main::DEBUGLOG && $log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
 		my $tags     = $request->getParam('tags');
 		my $index    = $request->getParam('_index');
@@ -3687,7 +3732,7 @@ sub statusQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$log->debug("statusQuery(): setting up subscription");
+		main::DEBUGLOG && $log->debug("statusQuery(): setting up subscription");
 	
 		# register ourselves to be automatically re-executed on timeout or filter
 		$request->registerAutoExecute($timeout, \&statusQuery_filter);
@@ -3732,7 +3777,7 @@ sub songinfoQuery {
 
 		if ( defined $url ){
 
-			$track = Slim::Schema->rs('Track')->objectForUrl($url);
+			$track = Slim::Schema->objectForUrl($url);
 		}
 	}
 	
@@ -3955,7 +4000,9 @@ sub titlesQuery {
 			$tags = $tags . "t";
 		}
 
-		$attr->{'order_by'} =  "me.disc, me.tracknum, concat('0', me.titlesort)";
+		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+		
+		$attr->{'order_by'} =  "me.disc, me.tracknum, " . $sqlHelperClass->prepend0('me.titlesort');
 	}
 	else {
 		$attr->{'order_by'} =  "me.titlesort";
@@ -4225,12 +4272,17 @@ sub yearsQuery {
 		return;
 	}
 
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
 	# get our parameters
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
-	my $party         = $request->getParam('party');
+	my $party         = $request->getParam('party') || 0;
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
@@ -4246,7 +4298,7 @@ sub yearsQuery {
 		'distinct' => 'me.id'
 	};
 
-	my $rs = Slim::Schema->resultset('Year')->browse->search($where, $attr);
+	my $rs = Slim::Schema->rs('Year')->browse->search($where, $attr);
 
 	my $count = $rs->count;
 
@@ -4952,7 +5004,7 @@ sub _songData {
 
 
 	# figure out the track object
-	my $track     = Slim::Schema->rs('Track')->objectForUrl($pathOrObj);
+	my $track     = Slim::Schema->objectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -4996,6 +5048,15 @@ sub _songData {
 		}
 	}
 	
+	my $parentTrack;
+	if (my $song = $request->client->currentSongForUrl($track->url)) {
+		my $t = $song->currentTrack();
+		if ($t->url ne $track->url) {
+			$parentTrack = $track;
+			$track = $t;
+		}
+	}
+	
 	# define an ordered hash for our results
 	tie (my %returnHash, "Tie::IxHash");
 
@@ -5009,7 +5070,9 @@ sub _songData {
 		  'o' => ['type',             'TYPE',          'content_type'],     #content_type
 		                                                                    #titlesort 
 		                                                                    #titlesearch 
+		  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
 		  'e' => ['album_id',         '',              'albumid'],          #album 
+		  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
 		  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 		  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
 		  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
@@ -5042,15 +5105,18 @@ sub _songData {
 		  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
 		                                                                    #replay_peak
 
+		  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
+		  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
+		  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
+		  'N' => ['remote_title'],                                          # remote stream title
+
 
 		# Tag    Tag name              Token              Relationship     Method          Track relationship
 		#--------------------------------------------------------------------------------------------------
-		  'a' => ['artist',            'ARTIST',          'artist',        'name'],         #->contributors
 		  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
 		  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
 		  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
                                                                             
-		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
 		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
 		  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
 		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
@@ -5062,44 +5128,25 @@ sub _songData {
 		  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
                                                                             
 		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
-		  'K' => [''],                                                                      # artwork URL, not in db
-		  'B' => [''],                                                                      # radio stream special buttons
-		  'L' => [''],                                                                      # special trackinfo link for i.e. Pandora
-		  'N' => [''],                                                                      # remote stream title
 
 	);
 	
 	# loop so that stuff is returned in the order given...
 	for my $tag (split //, $tags) {
 		
-		# special case, artwork URL for remote tracks
-		if ($tag eq 'K') {
-			if ( my $meta = $remoteMeta->{$tag} ) {
-				$returnHash{artwork_url} = $meta;
-			}
-		}
-
-		# special case, button handling for remote tracks
-		elsif ($tag eq 'B') {
-			if ( my $meta = $remoteMeta->{$tag} ) {
-				$returnHash{buttons} = $meta;
-			}
-		}
-
+		my $tagref = $tagMap{$tag} or next;
+		
 		# special case, remote stream name
-		elsif ($tag eq 'N' && $track->remote && !$track->secs && $remoteMeta->{title} && !$remoteMeta->{album} ) {
-			if ( my $meta = $track->title ) {
-				$returnHash{remote_title} = $meta;
+		if ($tag eq 'N') {
+			if ($parentTrack) {
+				$returnHash{$tagref->[0]} = $parentTrack->title;
+			} elsif ( $track->remote && !$track->secs && $remoteMeta->{title} && !$remoteMeta->{album} ) {
+				if (my $meta = $track->title) {
+					$returnHash{$tagref->[0]} = $meta;
+				}
 			}
 		}
 		
-		# special case, info_link for remote tracks
-		elsif ($tag eq 'L') {
-			if ( my $meta = $remoteMeta->{$tag} ) {
-				$returnHash{info_link} = $meta;
-			}
-		}
-
 		# special case artists (tag A and S)
 		elsif ($tag eq 'A' || $tag eq 'S') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
@@ -5107,14 +5154,15 @@ sub _songData {
 				next;
 			}
 			
-			if ( defined(my $submethod = $tagMap{$tag}->[3]) && !main::SLIM_SERVICE ) {
+			if ( defined(my $submethod = $tagref->[3]) && !main::SLIM_SERVICE ) {
 				
 				my $postfix = ($tag eq 'S')?"_ids":"";
 			
 				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
 						
 					my $key = lc($type) . $postfix;
-					my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
+					my $contributors = $track->contributorsOfType($type) or next;
+					my $value = join(', ', map { $_ = $_->$submethod() } $contributors->all);
 			
 					if (defined $value && $value ne '') {
 
@@ -5126,53 +5174,50 @@ sub _songData {
 		}
 
 		# if we have a method/relationship for the tag
-		elsif (defined(my $method = $tagMap{$tag}->[2])) {
+		elsif (defined(my $method = $tagref->[2])) {
 			
-			if ($method ne '') {
+			my $value;
+			my $key = $tagref->[0];
+			
+			# Override with remote track metadata if available
+			if ( defined $remoteMeta->{$tag} ) {
+				$value = $remoteMeta->{$tag};
+			}
+			
+			elsif ($method eq '' || !$track->can($method)) {
+				next;
+			}
 
-				my $value;
-				my $key = $tagMap{$tag}->[0];
-				
-				# Override with remote track metadata if available
-				if ( defined $remoteMeta->{$tag} ) {
-					$value = $remoteMeta->{$tag};
-				}
+			# tag with submethod
+			elsif (defined(my $submethod = $tagref->[3])) {
 
-				# tag with submethod
-				elsif (defined(my $submethod = $tagMap{$tag}->[3])) {
-
-					# call submethod
-					if (defined(my $related = $track->$method)) {
-						
-						# array returned/genre
-						if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
-
-							$value = join(', ', map { $_ = $_->$submethod() } $related->all);
-						}
-
-						else {
-
-							$value = $related->$submethod();
-						}
+				# call submethod
+				if (defined(my $related = $track->$method)) {
+					
+					# array returned/genre
+					if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
+						$value = join(', ', map { $_ = $_->$submethod() } $related->all);
+					} else {
+						$value = $related->$submethod();
 					}
 				}
-				
-				# simple track method
-				else {
-					$value = $track->$method();
-				}
-				
-				# correct values
-				if (($tag eq 'R' || $tag eq 'x') && $value == 0) {
-					$value = undef;
-				}
-				
-				# if we have a value
-				if (defined $value && $value ne '') {
+			}
+			
+			# simple track method
+			else {
+				$value = $track->$method();
+			}
+			
+			# correct values
+			if (($tag eq 'R' || $tag eq 'x') && $value == 0) {
+				$value = undef;
+			}
+			
+			# if we have a value
+			if (defined $value && $value ne '') {
 
-					# add the tag to the result
-					$returnHash{$key} = $value;
-				}
+				# add the tag to the result
+				$returnHash{$key} = $value;
 			}
 		}
 	}
@@ -5347,7 +5392,7 @@ sub _playAll {
 # this is a silly little sub that allows jive cover art to be rendered in a large window
 sub showArtwork {
 
-	$log->info("Begin showArtwork Function");
+	main::INFOLOG && $log->info("Begin showArtwork Function");
 	my $request = shift;
 
 	# get our parameters

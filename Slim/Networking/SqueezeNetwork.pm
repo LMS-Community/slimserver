@@ -77,7 +77,7 @@ sub get_server {
 sub init {
 	my $class = shift;
 	
-	$log->info('mysqueezebox.com Init');
+	main::INFOLOG && $log->info('SqueezeNetwork Init');
 	
 	# Convert old non-hashed password
 	if ( my $password = $prefs->get('sn_password') ) {
@@ -85,7 +85,7 @@ sub init {
 		$prefs->set( sn_password_sha => $password );
 		$prefs->remove('sn_password');
 			
-		$log->debug('Converted SN password to hashed version');
+		main::DEBUGLOG && $log->debug('Converted SN password to hashed version');
 	}
 	
 	Slim::Utils::Timers::setTimer(
@@ -115,7 +115,7 @@ sub _init_done {
 	
 	my $diff = $snTime - time();
 	
-	$log->info("Got mysqueezebox.com server time: $snTime, diff: $diff");
+	main::INFOLOG && $log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
 	$prefs->set( sn_timediff => $diff );
 	
@@ -130,14 +130,14 @@ sub _init_done {
 			# Remove disabled plugins from player UI and web UI
 			for my $plugin ( @{ $json->{disabled_plugins} } ) {
 				my $pclass = "Slim::Plugin::${plugin}::Plugin";
-				if ( $pclass->can('setMode') ) {
+				if ( $pclass->can('setMode') && $pclass->playerMenu) {
 					Slim::Buttons::Home::delSubMenu( $pclass->playerMenu, $pclass->getDisplayName );
-					$log->debug( "Removing $plugin from player UI, service not allowed in country" );
+					main::DEBUGLOG && $log->debug( "Removing $plugin from player UI, service not allowed in country" );
 				}
 				
 				if ( $pclass->can('webPages') && $pclass->can('menu') ) {
 					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->getDisplayName );
-					$log->debug( "Removing $plugin from web UI, service not allowed in country" );
+					main::DEBUGLOG && $log->debug( "Removing $plugin from web UI, service not allowed in country" );
 				}
 			}
 		}
@@ -271,11 +271,11 @@ sub login {
 			? $client->string('SQUEEZENETWORK_NO_LOGIN')
 			: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
 			
-		$log->info( $error );
+		main::INFOLOG && $log->info( $error );
 		return $params{ecb}->( undef, $error );
 	}
 	
-	$log->info("Logging in to SN as $username");
+	main::INFOLOG && $log->info("Logging in to SN as $username");
 	
 	my $self = $class->new(
 		\&_login_done,
@@ -367,7 +367,7 @@ sub _createHTTPRequest {
 	}
 	
 	if ( !$cookie && $url !~ m{api/v1/(login|radio)|public|update} ) {
-		$log->info("Logging in to mysqueezebox.com to obtain session ID");
+		main::INFOLOG && $log->info("Logging in to SqueezeNetwork to obtain session ID");
 	
 		# Login and get a session ID
 		$self->login(
@@ -376,7 +376,7 @@ sub _createHTTPRequest {
 				if ( my $cookie = $self->getCookie( $self->params('client') ) ) {
 					unshift @args, 'Cookie', $cookie;
 		
-					$log->info('Got mysqueezebox.com session ID');
+					main::INFOLOG && $log->info('Got SqueezeNetwork session ID');
 				}
 		
 				$self->SUPER::_createHTTPRequest( $type, $url, @args );
@@ -412,7 +412,7 @@ sub _login_done {
 		$prefs->set( sn_session => $sid );
 	}
 	
-	$log->debug("Logged into SN OK");
+	main::DEBUGLOG && $log->debug("Logged into SN OK");
 	
 	$params->{cb}->( $self, $json );
 }

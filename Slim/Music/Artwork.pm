@@ -21,7 +21,6 @@ use strict;
 
 use File::Basename qw(dirname);
 use File::Slurp;
-use File::Spec::Functions qw(:ALL);
 use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
@@ -133,7 +132,7 @@ sub getImageContentAndType {
 		return ($content, $class->_imageContentType(\$content));
 	}
 
-	$log->is_debug && $log->debug("Image File empty or couldn't read: $path : $! [$@]");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Image File empty or couldn't read: $path : $! [$@]");
 
 	return undef;
 }
@@ -268,7 +267,7 @@ sub _readCoverArtFiles {
 	
 			$isInfo && $log->info("Variable cover: $artwork from $1");
 	
-			if (Slim::Utils::OSDetect::isWindows()) {
+			if (main::ISWINDOWS) {
 				# Remove illegal characters from filename.
 				$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
 			}

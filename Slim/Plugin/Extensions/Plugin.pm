@@ -1,30 +1,5 @@
 package Slim::Plugin::Extensions::Plugin;
 
-# Plugin to allow server Plugins and extensions for Jive to be maintained via one or more repository xml files
-# which define available plugins/applets/wallpapers/sounds which can then be selected by the user for installation.
-#
-# This is implemented in a plugin for the moment so it can be verified and to allow it to be disabled.
-# Once proven it may move to the core server.
-#
-# Operation:
-# The plugin maintains a list of urls for XML repository files.  This is used by Slim::Contoller::Jive and
-# Slim::Plugins::Extensions::Settings to maintain a list of available extensions. When jive or the plugin downloader
-# makes a request for available extensions these are fetched and parsed to create the list of available extensions.
-# The list is filtered by the criteria passed to it so that only extensions which are relavent to the platform are returned.
-# The main repository file will be served by slimdevices.com and will contain details verified 3rd party extensions.
-# Most users will only have this defined.  For power users and extension authors, there is also the ability to define
-# additional XML repository urls.  These will not be verified so users defining additional repositories must trust them.
-#
-# Security discussion:
-# This plugin provides the ability to link to executable code (perl plugins, lua applets and binaries) which will be
-# automatically downloaded and installed on the server or jive controllers/desktop versions of squeezeplay without
-# users verifying the source or contents of the code themselves.  The security model is based on trusting
-# the integrity of the hosted repository files.  For this reason it is expected that normal users will only use
-# the repository file hosted on slimdevices.com which will only contain links to trusted extensions.  Users adding
-# additional respository locations should trust the integrity of the respository owner.  For plugins, each downloaded file
-# is verified by a sha1 digest which is stored in the repo file to ensure that the downloaded file matches the original
-# created by the author and referred to in the repo file.  This enforces the trust model of relying on the repo file.
-#
 # Repository XML format:
 #
 # Each repository file may contain entries for applets, wallpapers, sounds (and in future plugins):
@@ -102,10 +77,6 @@ package Slim::Plugin::Extensions::Plugin;
 #
 # <sound     name="SoundName"     url="url for sound file"     />
 #
-# TODO:
-# an additional element: <action>remove</action> may be included if it is desired to automatically remove an installed
-# applet/plugin matching the version defined (to be used if it causes instability or is found to cause undesireable effects...)
-#
 
 use strict;
 
@@ -120,7 +91,6 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-use Slim::Plugin::Extensions::PluginDownloader;
 if ( !main::SLIM_SERVICE && !$::noweb ) {
 	require Slim::Plugin::Extensions::Settings;
 }
@@ -132,103 +102,185 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $prefs = preferences('plugin.extensions');
-$prefs->init({ 'repos' => [] });
 
-my $masterRepo   = Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml');
-my $logitechRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml');
+$prefs->migrate(2, sub { $prefs->remove(qw(plugin applet)); 1 });
 
-my %repos = ();
+$prefs->init({ repos => [], plugin => {}, auto => 0, otherrepo => 0 });
+
+my %repos = (
+	# default repos mapped to weight which defines the order they are sorted in
+	Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml')   => 1,
+	Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml') => 2,
+);
+
+my $otherRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/other.xml');
 
 sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin;
 
-	for my $repo ( $logitechRepo, $masterRepo, @{$prefs->get('repos')} ) {
-		if ($repo) {
-			$repos{$repo} = 1;
-			Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
-		}
+	if ($prefs->get('otherrepo')) {
+		$class->addRepo({ other => 1 });
 	}
 
-	Slim::Plugin::Extensions::PluginDownloader->init;
+	for my $repo ( @{$prefs->get('repos')} ) {
+		$class->addRepo({ repo => $repo });
+	}
 
 	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::Extensions::Settings->new;
 	}
+
+	Slim::Control::Request::addDispatch(['appsquery'], [0, 1, 1, \&appsQuery]);
 }
 
 sub addRepo {
 	my $class = shift;
-	my $repo  = shift;
+	my $args = shift;
 
-	$log->info("adding repository $repo");
+	my $repo   = $args->{'other'} ? $otherRepo : $args->{'repo'};
+	my $weight = $args->{'other'} ? 5 : 10;
 
-	$repos{$repo} = 1;
+	main::INFOLOG && $log->info("adding repository $repo weight $weight");
+
+	$repos{$repo} = $weight;
 	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
 }
 
 sub removeRepo {
 	my $class = shift;
-	my $repo  = shift;
+	my $args = shift;
 
-	$log->info("removing repository $repo");
+	my $repo = $args->{'other'} ? $otherRepo : $args->{'repo'};
+
+	main::INFOLOG && $log->info("removing repository $repo");
 
 	delete $repos{$repo};
 	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
 }
 
-sub getPlugins {
-	my $class = shift;
-	my $cb    = shift;
-	my $pt    = shift || [];
+sub repos {
+	return \%repos;
+}
 
-	my $data = { remaining => scalar keys %repos, results => {}, errors => {} };
+
+# This query compares the list of provided apps to the policy setting for apps which should be installed
+# If an app is in the wrong state it sends back an action with details of what to change
+
+sub appsQuery {
+	my $request = shift;
+
+	if ($request->isNotQuery([['appsquery']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $args = $request->getParam('args');
+
+	my $data = { remaining => scalar keys %repos, results => [] };
 
 	for my $repo (keys %repos) {
+
 		getExtensions({
 			'name'   => $repo, 
-			'type'   => 'plugin', 
-			'target' => Slim::Utils::OSDetect::OS(),
-			'version'=> $::VERSION, 
-			'lang'   => $Slim::Utils::Strings::currentLang,
-			'cb'     => \&_getPluginsCB,
-			'pt'     => [ $data, $cb, $pt ],
-			'onError'=> sub { $data->{'errors'}->{ $_[0] } = $_[1] },
+			'type'   => $args->{'type'}, 
+			'target' => $args->{'targetPlat'},
+			'version'=> $args->{'targetVers'},, 
+			'lang'   => $args->{'lang'},
+			'cb'     => \&_appsQueryCB,
+			'pt'     => [ $request, $data ],
 		});
 	}
 
-	if (!keys %repos) {
-		$cb->( @$pt, {}, {} );
+	if (!scalar keys %repos) {
+
+		_appsQueryCB($request, $data, []);
+	}
+
+	if (!$request->isStatusDone()) {
+
+		$request->setStatusProcessing();
 	}
 }
 
-sub _getPluginsCB {
-	my $data  = shift;
-	my $cb    = shift;
-	my $pt    = shift;
-	my $res   = shift;
-	my $info  = shift;
+sub _appsQueryCB {
+	my $request = shift;
+	my $data    = shift;
+	my $res     = shift;
 
-	if ($info->{'name'}) {
+	push @{$data->{'results'}}, @$res;
 
-		# set type, nb this is chosen so we can sort on it logitech < master < other
-		my $type;
-		$type =   'logitech' if $info->{'name'} eq $logitechRepo;
-		$type =   'master'   if $info->{'name'} eq $masterRepo;
-		$type ||= 'other';
+	return if (--$data->{'remaining'} > 0);
 
-		$data->{'results'}->{ $info->{'name'} } = {
-			'title' => $info->{'title'},
-			'type'  => $type,
-			'items' => $res,
-		};
+	my $args = $request->getParam('args');
+
+	my $actions = findUpdates($data->{'results'}, $args->{'current'}, $prefs->get($args->{'type'}) || {});
+
+	if ($prefs->get('auto')) {
+
+		$request->addResult('actions', $actions);
+
+	} else {
+
+		$request->addResult('updates', scalar keys %$actions);
 	}
 
-	if ( ! --$data->{'remaining'} ) {
+	$request->setStatusDone();
+}
 
-		$cb->( @$pt, $data->{'results'}, $data->{'errors'} );
+sub findUpdates {
+	my $results = shift;
+	my $current = shift;
+	my $install = shift || {};
+	my $info    = shift;
+	my $apps    = {};
+	my $actions = {};
+
+	# find the latest version of each app we are interested in installing
+	for my $res (@$results) {
+		my $app = $res->{'name'};
+
+		if ($install->{ $app }) {
+
+			if (!$apps->{ $app } || Slim::Utils::Versions->compareVersions($res->{'version'}, $apps->{ $app }->{'version'}) > 0) {
+
+				$apps->{ $app } = $res;
+			}
+		}
 	}
+
+	# find any apps which need install/upgrade
+	for my $app (keys %$apps) {
+
+		if (!defined $current->{ $app } || Slim::Utils::Versions->compareVersions($apps->{ $app }->{'version'}, $current->{ $app }) > 0){
+
+			main::INFOLOG && $log->info("$app action install version " . $apps->{ $app }->{'version'} . 
+										($current->{ $app } ? (" from " . $current->{ $app }) : ''));
+
+			$actions->{ $app } = { action => 'install', url => $apps->{ $app }->{'url'}, sha => $apps->{ $app }->{'sha'} };
+
+			$actions->{ $app }->{'info'} = $apps->{ $app } if $info;
+		}
+	}
+
+	# find any apps which need uninstall
+	for my $app (keys %$current) {
+
+		if (!$install->{ $app }) {
+
+			main::INFOLOG && $log->info("$app action uninstall");
+
+			$actions->{ $app } = { action => 'uninstall' };
+		}
+	}
+
+	if (scalar keys %$actions == 0) {
+
+		main::INFOLOG && $log->info("no action required");
+	}
+
+	return $actions;
 }
 
 sub getExtensions {
@@ -238,13 +290,13 @@ sub getExtensions {
 
 	if ( my $cached = $cache->get( $args->{'name'} . '_XML' ) ) {
 
-		$log->debug("using cached extensions xml $args->{name}");
+		main::DEBUGLOG && $log->debug("using cached extensions xml $args->{name}");
 	
 		_parseXML($args, $cached);
 
 	} else {
 	
-		$log->debug("fetching extensions xml $args->{name}");
+		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
 
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse, \&_noResponse, { 'args' => $args, 'cache' => 1 }
@@ -260,7 +312,7 @@ sub _parseResponse {
 
 	eval { 
 		$xml = XMLin($http->content,
-			SuppressEmpty => 1,
+			SuppressEmpty => undef,
 			KeyAttr     => { 
 				title   => 'lang', 
 				desc    => 'lang', 
@@ -313,32 +365,18 @@ sub _parseXML {
 	my $target  = $args->{'target'};
 	my $version = $args->{'version'};
 	my $lang    = $args->{'lang'};
+	my $details = $args->{'details'};
 
 	my $targetRE = $target ? qr/$target/ : undef;
 
-	my $debug = $log->is_debug;
+	my $debug = main::DEBUGLOG && $log->is_debug;
 
 	my $repoTitle;
 	
-	if ( $xml->{details} && $xml->{details}->{title} 
-		&& ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
-			
-		$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
-		
-	} else {
-		
-		# fall back to repo's URL if no title is provided
-		$repoTitle = $args->{name};
-	}
-
-	my $info = {
-		'name' => $args->{'name'},
-		'title'=> $repoTitle,
-	};
-
-	$debug && $log->debug("searching $info->{name} title: $info->{title} for type: $type target: $target version: $version");
+	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
 
 	my @res = ();
+	my $info;
 
 	if ($xml->{ $type . 's' } && ref $xml->{ $type . 's' } eq 'ARRAY') {
 
@@ -357,39 +395,62 @@ sub _parseXML {
 			}
 
 			my $new = {
-				'name' => $entry->{'name'},
-				'url'  => $entry->{'url'},
+				'name'    => $entry->{'name'},
+				'url'     => $entry->{'url'},
+				'version' => $entry->{'version'},
+				'sha'     => $entry->{'sha'},
 			};
 
-			if ($entry->{'title'} && ref $entry->{'title'} eq 'HASH') {
-				$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' };
-			} else {
-				$new->{'title'} = $entry->{'name'};
-			}
+			$debug && $log->debug("entry $new->{name} vers: $new->{version} url: $new->{url}");
 
-			if ($entry->{'desc'} && ref $entry->{'desc'} eq 'HASH') {
-				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
-			}
+			if ($details) {
 
-			if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
-				$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
-			}
+				if ($entry->{'title'} && ref $entry->{'title'} eq 'HASH') {
+					$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' };
+				} else {
+					$new->{'title'} = $entry->{'name'};
+				}
+				
+				if ($entry->{'desc'} && ref $entry->{'desc'} eq 'HASH') {
+					$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
+				}
+				
+				if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
+					$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
+				}
 
-			$new->{'version'} = $entry->{'version'} if $entry->{'version'};
-			$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
-			$new->{'sha'}     = $entry->{'sha'}     if $entry->{'sha'};
-			$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
-			$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
-			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
+				$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
+				$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
+				$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
+
+			}
 
 			push @res, $new;
-
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url}");
 		}
 
 	} else {
 
 		$debug && $log->debug("no $type entry in $args->{name}");
+	}
+
+	if ($details) {
+
+		if ( $xml->{details} && $xml->{details}->{title} 
+				 && ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
+			
+			$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
+			
+		} else {
+			
+			# fall back to repo's URL if no title is provided
+			$repoTitle = $args->{name};
+		}
+		
+		$info = {
+			'name'   => $args->{'name'},
+			'title'  => $repoTitle,
+		};
+		
 	}
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");

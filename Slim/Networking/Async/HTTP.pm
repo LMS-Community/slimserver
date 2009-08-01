@@ -41,7 +41,7 @@ use HTTP::Response;
 use HTTP::Cookies;
 use MIME::Base64 qw(encode_base64);
 use URI;
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 
 use Slim::Networking::Async::Socket::HTTP;
 use Slim::Utils::Log;
@@ -49,21 +49,18 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use constant BUFSIZE   => 16 * 1024;
+use constant MAX_REDIR => 7;
+
 my $prefs = preferences('server');
 
 my $cookieJar;
 
 my $log = logger('network.asynchttp');
 
-__PACKAGE__->mk_classaccessors( qw(
-	uri request response saveAs fh timeout
+__PACKAGE__->mk_accessor( rw => qw(
+	uri request response saveAs fh timeout maxRedirect
 ) );
-
-# Body buffer size
-__PACKAGE__->mk_classaccessor( bufsize => 16 * 1024 );
-
-# Max redirects to follow
-__PACKAGE__->mk_classaccessor( maxRedirect => 7 );
 
 sub init {
 	$cookieJar = HTTP::Cookies->new( file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
@@ -74,7 +71,7 @@ sub new_socket {
 	
 	if ( my $proxy = $self->use_proxy ) {
 
-		$log->info("Using proxy $proxy to connect");
+		main::INFOLOG && $log->info("Using proxy $proxy to connect");
 	
 		my ($pserver, $pport) = split /:/, $proxy;
 	
@@ -126,9 +123,7 @@ sub use_proxy {
 sub send_request {
 	my ( $self, $args ) = @_;
 	
-	if ( $args->{maxRedirect} ) {
-		$self->maxRedirect( $args->{maxRedirect} );
-	}
+	$self->maxRedirect( $args->{maxRedirect} || MAX_REDIR );
 	
 	if ( $args->{Timeout} ) {
 		$self->timeout( $args->{Timeout} );
@@ -197,7 +192,7 @@ sub add_headers {
 	}
 
 	# Add cookies
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 		$cookieJar->add_cookie_header( $self->request );
 	}
 }
@@ -323,7 +318,7 @@ sub _http_read {
 			$cookieJar->extract_cookies( $self->response );
 		}
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 
 			$log->debug("Headers read. code: $code status: $mess");
 			$log->debug( Data::Dump::dump( $self->response->headers ) );
@@ -349,7 +344,7 @@ sub _http_read {
 					URI->new_abs( $location, $self->request->uri )
 				);
 				
-				if ( $log->is_info ) {
+				if ( main::INFOLOG && $log->is_info ) {
 					$log->info(sprintf("Redirecting to %s", $self->request->uri->as_string));
 				}
 				
@@ -407,10 +402,10 @@ sub _http_read_body {
 	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
 	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
 	
-	my $result = $socket->read_entity_body( my $buf, $self->bufsize );
+	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
 
 	if ( $result ) {
-		$log->debug("Read body: [$result] bytes");
+		main::DEBUGLOG && $log->debug("Read body: [$result] bytes");
 	}
 	
 	# Are we saving directly to a file?
@@ -421,7 +416,7 @@ sub _http_read_body {
 
 		binmode $fh;
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug("Writing response directly to " . $self->saveAs);
 		}
 		
@@ -455,7 +450,7 @@ sub _http_read_body {
 		# close and remove the socket
 		$self->disconnect;
 		
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
 		}
 		
@@ -472,7 +467,7 @@ sub _http_read_body {
 		$self->fh->close if $self->fh;
 		$self->disconnect;
 		
-		$log->debug("Body read");
+		main::DEBUGLOG && $log->debug("Body read");
 		
 		if ( my $cb = $args->{onBody} ) {
 			my $passthrough = $args->{passthrough} || [];

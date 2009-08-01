@@ -25,11 +25,11 @@ sub new {
 	my $song   = $args->{'song'};
 	my $self;
 	
-	my $realURL = $args->{'song'}->{'streamUrl'};
+	my $realURL = $args->{'song'}->streamUrl();
 
 	if ( $url =~ m{^live365://} && $realURL ) {
 
-		$log->info("Requested: $url, streaming real URL $realURL");
+		main::INFOLOG && $log->info("Requested: $url, streaming real URL $realURL");
 
 		$self = $class->SUPER::new( { 
 			url     => $realURL,
@@ -75,9 +75,9 @@ sub gotURL {
 		return gotURLError( $http );
 	}
 	
-	$log->debug( "Got Live365 URL from SN: " . $info->{url} );
+	main::DEBUGLOG && $log->debug( "Got Live365 URL from SN: " . $info->{url} );
 	
-	$song->{'streamUrl'} = $info->{url};
+	$song->streamUrl($info->{url});
 	
 	$params->{callback}->();
 }
@@ -121,7 +121,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug( "Getting audio URL for $nextURL from SN" );
+	main::DEBUGLOG && $log->debug( "Getting audio URL for $nextURL from SN" );
 
 	$http->get( $getAudioURL );
 }
@@ -129,7 +129,7 @@ sub getNextTrack {
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 	
-	my $streamUrl = $song->{'streamUrl'} || return undef;
+	my $streamUrl = $song->streamUrl() || return undef;
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
@@ -153,7 +153,7 @@ sub getPlaylist {
 	my $url    = $song->currentTrack()->url;
 
 	if ( $song != $client->streamingSong() ||  $client->isStopped() ) {
-		$log->debug( "Track changed, stopping playlist fetch" );
+		main::DEBUGLOG && $log->debug( "Track changed, stopping playlist fetch" );
 		return;
 	}
 	
@@ -174,7 +174,7 @@ sub getPlaylist {
 		},
 	);
 	
-	$log->debug("Getting playlist from mysqueezebox.com");
+	main::DEBUGLOG && $log->debug("Getting playlist from SqueezeNetwork");
 	
 	$http->get( $playlistURL );
 }
@@ -187,7 +187,7 @@ sub gotPlaylist {
 	
 	my $track = eval { from_json( $http->content ) };
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Got current track: " . Data::Dump::dump($track) );
 	}
 	
@@ -201,7 +201,7 @@ sub gotPlaylist {
 		return;
 	}
 	
-	$song->{'pluginData'} = $track;
+	$song->pluginData($track);
 
 	my $newTitle = $track->{title};
 	
@@ -237,7 +237,7 @@ sub gotPlaylistError {
 		
 	$log->error( "Error getting current track: $error, will retry in 30 seconds" );
 	
-	$song->{'pluginData'} = undef;
+	$song->pluginData(undef);
 	
 	# Display the station name
 	my $title = Slim::Music::Info::title($url);
@@ -255,7 +255,7 @@ sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
 	my $song = $client->currentSongForUrl($url);
-	my $track = $song->{'pluginData'} if $song;
+	my $track = $song->pluginData() if $song;
 	
 	my $icon = $class->getIcon();
 	
@@ -282,7 +282,7 @@ sub reinit {
 	
 	my $url = $song->currentTrack->url();
 	
-	$log->debug("Re-init Live365 - $url");
+	main::DEBUGLOG && $log->debug("Re-init Live365 - $url");
 	
 	# Back to Now Playing
 	Slim::Buttons::Common::pushMode( $client, 'playlist' );

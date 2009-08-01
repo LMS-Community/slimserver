@@ -1,4 +1,5 @@
-package DBIx::Class::PK::Auto::DB2;
+package # hide package from pause
+  DBIx::Class::PK::Auto::DB2;
 
 use strict;
 use warnings;

@@ -17,21 +17,19 @@ use strict;
 use base qw(Slim::Player::Squeezebox);
 
 use File::Spec::Functions qw(catdir);
+use Socket;
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
-use IO::Socket;
+
+# Not actually referenced in this module but we need to ensure that it is loaded.
+use Slim::Player::SB1SliMP3Sync;
 
 my $prefs = preferences('server');
 
 
 # We inherit new() completely from our parent class.
-
-sub init {
-	my $client = shift;
-
-	$client->SUPER::init();
-}
 
 sub model {
 	return 'squeezebox';
@@ -239,7 +237,7 @@ sub sendPitch {
 				Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
 		);
 
-		logger('player')->debug("Pitch frequency set to $freq ($freqHex)");
+		main::DEBUGLOG && logger('player')->debug("Pitch frequency set to $freq ($freqHex)");
 	}
 }
 	
@@ -351,7 +349,7 @@ sub upgradeFirmware {
 
 	if ((!ref $client) || ($client->revision <= 10)) {
 
-		$log->info("Using old update mechanism");
+		main::INFOLOG && $log->info("Using old update mechanism");
 
 		# not calling as a client method, because it might just be an
 		# IP address, if triggered from the web page.
@@ -359,7 +357,7 @@ sub upgradeFirmware {
 
 	} else {
 
-		$log->info("Using new update mechanism");
+		main::INFOLOG && $log->info("Using new update mechanism");
 
 		$err = $client->upgradeFirmware_SDK5($file);
 	}
@@ -410,7 +408,7 @@ sub _upgradeFirmware_SDK4 {
 	my $size = -s $filename;	
 	my $log  = logger('player.firmware');
 
-	$log->info("Updating firmware: Sending $size bytes");
+	main::INFOLOG && $log->info("Updating firmware: Sending $size bytes");
 	
 	my $bytesread      = 0;
 	my $totalbytesread = 0;
@@ -421,10 +419,10 @@ sub _upgradeFirmware_SDK4 {
 
 		$totalbytesread += $bytesread;
 
-		$log->info("Updating firmware: $totalbytesread / $size");
+		main::INFOLOG && $log->info("Updating firmware: $totalbytesread / $size");
 	}
 	
-	$log->info("Firmware updated successfully.");
+	main::INFOLOG && $log->info("Firmware updated successfully.");
 
 	close (SOCK) || return("Couldn't close socket to player.");
 

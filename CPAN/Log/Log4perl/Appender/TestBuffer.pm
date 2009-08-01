@@ -107,14 +107,13 @@ Log::Log4perl::Appender::TestBuffer - Appender class for testing
 
   my $appender = Log::Log4perl::Appender::TestBuffer->new( 
       name      => 'buffer',
-      min_level => 'debug',
-      );
+  );
 
       # Append to the buffer
-  $appender->log_message( 
+  $appender->log( 
       level =  > 'alert', 
       message => "I'm searching the city for sci-fi wasabi\n" 
-      );
+  );
 
       # Retrieve the result
   my $result = $appender->buffer();

@@ -6,7 +6,7 @@
 #   Factory module for constructing templates from Perl code.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@wardley.org>
 #
 # WARNING
 #   Much of this module is hairy, even furry in places.  It needs
@@ -17,35 +17,26 @@
 #   debugging.
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2000 Andy Wardley.  All Rights Reserved.
-#   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
+#   Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
-#----------------------------------------------------------------------------
-#
-# $Id: Directive.pm,v 2.19 2004/05/20 08:46:54 abw Exp $
 #
 #============================================================================
 
 package Template::Directive;
 
-require 5.004;
-
 use strict;
-use Template::Base;
+use warnings;
+use base 'Template::Base';
 use Template::Constants;
 use Template::Exception;
 
-use base qw( Template::Base );
-use vars qw( $VERSION $DEBUG $PRETTY $WHILE_MAX $OUTPUT );
-
-$VERSION = sprintf("%d.%02d", q$Revision: 2.19 $ =~ /(\d+)\.(\d+)/);
-
-$WHILE_MAX = 1000 unless defined $WHILE_MAX;
-$PRETTY    = 0 unless defined $PRETTY;
-$OUTPUT    = '$output .= ';
+our $VERSION   = 2.20;
+our $DEBUG     = 0 unless defined $DEBUG;
+our $WHILE_MAX = 1000 unless defined $WHILE_MAX;
+our $PRETTY    = 0 unless defined $PRETTY;
+our $OUTPUT    = '$output .= ';
 
 
 sub _init {
@@ -83,14 +74,14 @@ sub {
     my \$context = shift || die "template sub called without context\\n";
     my \$stash   = \$context->stash;
     my \$output  = '';
-    my \$error;
+    my \$_tt_error;
     
     eval { BLOCK: {
 $block
     } };
     if (\$@) {
-        \$error = \$context->catch(\$@, \\\$output);
-        die \$error unless \$error->type eq 'return';
+        \$_tt_error = \$context->catch(\$@, \\\$output);
+        die \$_tt_error unless \$_tt_error->type eq 'return';
     }
 
     return \$output;
@@ -112,14 +103,14 @@ sub anon_block {
 # BLOCK
 $OUTPUT do {
     my \$output  = '';
-    my \$error;
+    my \$_tt_error;
     
     eval { BLOCK: {
 $block
     } };
     if (\$@) {
-        \$error = \$context->catch(\$@, \\\$output);
-        die \$error unless \$error->type eq 'return';
+        \$_tt_error = \$context->catch(\$@, \\\$output);
+        die \$_tt_error unless \$_tt_error->type eq 'return';
     }
 
     \$output;
@@ -189,13 +180,13 @@ sub ident {
     # does the first element of the identifier have a NAMESPACE
     # handler defined?
     if (ref $class && @$ident > 2 && ($ns = $class->{ NAMESPACE })) {
-	my $key = $ident->[0];
-	$key =~ s/^'(.+)'$/$1/s;
-	if ($ns = $ns->{ $key }) {
-	    return $ns->ident($ident);
-	}
+        my $key = $ident->[0];
+        $key =~ s/^'(.+)'$/$1/s;
+        if ($ns = $ns->{ $key }) {
+            return $ns->ident($ident);
+        }
     }
-	
+        
     if (scalar @$ident <= 2 && ! $ident->[1]) {
         $ident = $ident->[0];
     }
@@ -409,16 +400,16 @@ sub foreach {
 
     my ($loop_save, $loop_set, $loop_restore, $setiter);
     if ($target) {
-        $loop_save    = 'eval { $oldloop = ' . &ident($class, ["'loop'"]) . ' }';
-        $loop_set     = "\$stash->{'$target'} = \$value";
-        $loop_restore = "\$stash->set('loop', \$oldloop)";
+        $loop_save    = 'eval { $_tt_oldloop = ' . &ident($class, ["'loop'"]) . ' }';
+        $loop_set     = "\$stash->{'$target'} = \$_tt_value";
+        $loop_restore = "\$stash->set('loop', \$_tt_oldloop)";
     }
     else {
         $loop_save    = '$stash = $context->localise()';
-#       $loop_set     = "\$stash->set('import', \$value) "
+#       $loop_set     = "\$stash->set('import', \$_tt_value) "
 #                       . "if ref \$value eq 'HASH'";
-        $loop_set     = "\$stash->get(['import', [\$value]]) "
-                        . "if ref \$value eq 'HASH'";
+        $loop_set     = "\$stash->get(['import', [\$_tt_value]]) "
+                        . "if ref \$_tt_value eq 'HASH'";
         $loop_restore = '$stash = $context->delocalise()';
     }
     $block = pad($block, 3) if $PRETTY;
@@ -427,28 +418,28 @@ sub foreach {
 
 # FOREACH 
 do {
-    my (\$value, \$error, \$oldloop);
-    my \$list = $list;
+    my (\$_tt_value, \$_tt_error, \$_tt_oldloop);
+    my \$_tt_list = $list;
     
-    unless (UNIVERSAL::isa(\$list, 'Template::Iterator')) {
-        \$list = Template::Config->iterator(\$list)
+    unless (UNIVERSAL::isa(\$_tt_list, 'Template::Iterator')) {
+        \$_tt_list = Template::Config->iterator(\$_tt_list)
             || die \$Template::Config::ERROR, "\\n"; 
     }
 
-    (\$value, \$error) = \$list->get_first();
+    (\$_tt_value, \$_tt_error) = \$_tt_list->get_first();
     $loop_save;
-    \$stash->set('loop', \$list);
+    \$stash->set('loop', \$_tt_list);
     eval {
-LOOP:   while (! \$error) {
+LOOP:   while (! \$_tt_error) {
             $loop_set;
 $block;
-            (\$value, \$error) = \$list->get_next();
+            (\$_tt_value, \$_tt_error) = \$_tt_list->get_next();
         }
     };
     $loop_restore;
     die \$@ if \$@;
-    \$error = 0 if \$error && \$error eq Template::Constants::STATUS_DONE;
-    die \$error if \$error;
+    \$_tt_error = 0 if \$_tt_error && \$_tt_error eq Template::Constants::STATUS_DONE;
+    die \$_tt_error if \$_tt_error;
 };
 EOF
 }
@@ -461,7 +452,7 @@ EOF
 
 sub next {
     return <<EOF;
-(\$value, \$error) = \$list->get_next();
+(\$_tt_value, \$_tt_error) = \$_tt_list->get_next();
 next LOOP;
 EOF
 }
@@ -539,13 +530,13 @@ sub while {
 
 # WHILE
 do {
-    my \$failsafe = $WHILE_MAX;
+    my \$_tt_failsafe = $WHILE_MAX;
 LOOP:
-    while (--\$failsafe && ($expr)) {
+    while (--\$_tt_failsafe && ($expr)) {
 $block
     }
     die "WHILE loop terminated (> $WHILE_MAX iterations)\\n"
-        unless \$failsafe;
+        unless \$_tt_failsafe;
 };
 EOF
 }
@@ -571,9 +562,9 @@ sub switch {
         $block = $case->[1];
         $block = pad($block, 1) if $PRETTY;
         $caseblock .= <<EOF;
-\$match = $match;
-\$match = [ \$match ] unless ref \$match eq 'ARRAY';
-if (grep(/^\$result\$/, \@\$match)) {
+\$_tt_match = $match;
+\$_tt_match = [ \$_tt_match ] unless ref \$_tt_match eq 'ARRAY';
+if (grep(/^\\Q\$_tt_result\\E\$/, \@\$_tt_match)) {
 $block
     last SWITCH;
 }
@@ -588,8 +579,8 @@ return <<EOF;
 
 # SWITCH
 do {
-    my \$result = $expr;
-    my \$match;
+    my \$_tt_result = $expr;
+    my \$_tt_match;
     SWITCH: {
 $caseblock
     }
@@ -616,7 +607,7 @@ sub try {
     $block = pad($block, 2) if $PRETTY;
     $final = pop @catch;
     $final = "# FINAL\n" . ($final ? "$final\n" : '')
-           . 'die $error if $error;' . "\n" . '$output;';
+           . 'die $_tt_error if $_tt_error;' . "\n" . '$output;';
     $final = pad($final, 1) if $PRETTY;
 
     $n = 0;
@@ -629,14 +620,14 @@ sub try {
         $mblock = pad($mblock, 1) if $PRETTY;
         push(@$handlers, "'$match'");
         $catchblock .= $n++ 
-            ? "elsif (\$handler eq '$match') {\n$mblock\n}\n" 
-               : "if (\$handler eq '$match') {\n$mblock\n}\n";
+            ? "elsif (\$_tt_handler eq '$match') {\n$mblock\n}\n" 
+               : "if (\$_tt_handler eq '$match') {\n$mblock\n}\n";
     }
-    $catchblock .= "\$error = 0;";
+    $catchblock .= "\$_tt_error = 0;";
     $catchblock = pad($catchblock, 3) if $PRETTY;
     if ($default) {
         $default = pad($default, 1) if $PRETTY;
-        $default = "else {\n    # DEFAULT\n$default\n    \$error = '';\n}";
+        $default = "else {\n    # DEFAULT\n$default\n    \$_tt_error = '';\n}";
     }
     else {
         $default = '# NO DEFAULT';
@@ -649,16 +640,16 @@ return <<EOF;
 # TRY
 $OUTPUT do {
     my \$output = '';
-    my (\$error, \$handler);
+    my (\$_tt_error, \$_tt_handler);
     eval {
 $block
     };
     if (\$@) {
-        \$error = \$context->catch(\$@, \\\$output);
-        die \$error if \$error->type =~ /^return|stop\$/;
-        \$stash->set('error', \$error);
-        \$stash->set('e', \$error);
-        if (defined (\$handler = \$error->select_handler($handlers))) {
+        \$_tt_error = \$context->catch(\$@, \\\$output);
+        die \$_tt_error if \$_tt_error->type =~ /^return|stop\$/;
+        \$stash->set('error', \$_tt_error);
+        \$stash->set('e', \$_tt_error);
+        if (defined (\$_tt_handler = \$_tt_error->select_handler($handlers))) {
 $catchblock
         }
 $default
@@ -785,15 +776,15 @@ sub view {
 # VIEW
 do {
     my \$output = '';
-    my \$oldv = \$stash->get('view');
-    my \$view = \$context->view($hash);
-    \$stash->set($name, \$view);
-    \$stash->set('view', \$view);
+    my \$_tt_oldv = \$stash->get('view');
+    my \$_tt_view = \$context->view($hash);
+    \$stash->set($name, \$_tt_view);
+    \$stash->set('view', \$_tt_view);
 
 $block
 
-    \$stash->set('view', \$oldv);
-    \$view->seal();
+    \$stash->set('view', \$_tt_oldv);
+    \$_tt_view->seal();
 #    \$output;     # not used - commented out to avoid warning
 };
 EOF
@@ -822,14 +813,14 @@ $block
     local(\$Template::Perl::context) = \$context;
     local(\$Template::Perl::stash)   = \$stash;
 
-    my \$result = '';
-    tie *Template::Perl::PERLOUT, 'Template::TieString', \\\$result;
-    my \$save_stdout = select *Template::Perl::PERLOUT;
+    my \$_tt_result = '';
+    tie *Template::Perl::PERLOUT, 'Template::TieString', \\\$_tt_result;
+    my \$_tt_save_stdout = select *Template::Perl::PERLOUT;
 
     eval \$output;
-    select \$save_stdout;
+    select \$_tt_save_stdout;
     \$context->throw(\$@) if \$@;
-    \$result;
+    \$_tt_result;
 };
 EOF
 }
@@ -889,12 +880,12 @@ sub filter {
 # FILTER
 $OUTPUT do {
     my \$output = '';
-    my \$filter = \$context->filter($name)
+    my \$_tt_filter = \$context->filter($name)
               || \$context->throw(\$context->error);
 
 $block
     
-    &\$filter(\$output);
+    &\$_tt_filter(\$output);
 };
 EOF
 }
@@ -942,21 +933,21 @@ sub macro {
         my $nargs = scalar @$args;
         $args = join(', ', map { "'$_'" } @$args);
         $args = $nargs > 1 
-            ? "\@args{ $args } = splice(\@_, 0, $nargs)"
-            : "\$args{ $args } = shift";
+            ? "\@_tt_args{ $args } = splice(\@_, 0, $nargs)"
+            : "\$_tt_args{ $args } = shift";
 
         return <<EOF;
 
 # MACRO
 \$stash->set('$ident', sub {
     my \$output = '';
-    my (%args, \$params);
+    my (%_tt_args, \$_tt_params);
     $args;
-    \$params = shift;
-    \$params = { } unless ref(\$params) eq 'HASH';
-    \$params = { \%args, %\$params };
+    \$_tt_params = shift;
+    \$_tt_params = { } unless ref(\$_tt_params) eq 'HASH';
+    \$_tt_params = { \%_tt_args, %\$_tt_params };
 
-    my \$stash = \$context->localise(\$params);
+    my \$stash = \$context->localise(\$_tt_params);
     eval {
 $block
     };
@@ -972,10 +963,10 @@ EOF
 
 # MACRO
 \$stash->set('$ident', sub {
-    my \$params = \$_[0] if ref(\$_[0]) eq 'HASH';
+    my \$_tt_params = \$_[0] if ref(\$_[0]) eq 'HASH';
     my \$output = '';
 
-    my \$stash = \$context->localise(\$params);
+    my \$stash = \$context->localise(\$_tt_params);
     eval {
 $block
     };
@@ -1001,4 +992,45 @@ sub debug {
 1;
 
 __END__
+
+=head1 NAME
+
+Template::Directive - Perl code generator for template directives
+
+=head1 SYNOPSIS
+
+    # no user serviceable parts inside
+
+=head1 DESCRIPTION
+
+The C<Template::Directive> module defines a number of methods that
+generate Perl code for the runtime representation of the various 
+Template Toolkit directives.
+
+It is used internally by the L<Template::Parser> module.
+
+=head1 AUTHOR
+
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
+
+=head1 COPYRIGHT
+
+Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<Template::Parser>
+
+=cut
+
+# Local Variables:
+# mode: perl
+# perl-indent-level: 4
+# indent-tabs-mode: nil
+# End:
+#
+# vim: expandtab shiftwidth=4:
 

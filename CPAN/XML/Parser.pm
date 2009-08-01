@@ -12,9 +12,9 @@ use Carp;
 
 BEGIN {
   require XML::Parser::Expat;
-  $VERSION = '2.34';
+  $VERSION = '2.36';
   die "Parser.pm and Expat.pm versions don't match"
-    unless $XML::Parser::Expat::VERSION && $VERSION eq $XML::Parser::Expat::VERSION;
+    unless $VERSION eq $XML::Parser::Expat::VERSION;
 }
 
 use strict;
@@ -336,7 +336,7 @@ XML::Parser - A perl module for parsing XML documents
 =head1 SYNOPSIS
 
   use XML::Parser;
-
+  
   $p1 = new XML::Parser(Style => 'Debug');
   $p1->parsefile('REC-xml-19980210.xml');
   $p1->parse('<foo id="me">Hello World</foo>');

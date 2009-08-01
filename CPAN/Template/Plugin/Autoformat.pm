@@ -9,33 +9,27 @@
 #   Robert McArthur <mcarthur@dstc.edu.au>
 #     - original plugin code
 #
-#   Andy Wardley    <abw@kfs.org>
+#   Andy Wardley    <abw@wardley.org>
 #     - added FILTER registration, support for forms and some additional
 #       documentation
 #
 # COPYRIGHT
-#   Copyright (C) 2000 Robert McArthur & Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 2000-2007 Robert McArthur, Andy Wardley.  
+#   All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
-#----------------------------------------------------------------------------
-#
-# $Id: Autoformat.pm,v 2.67 2006/01/30 20:05:46 abw Exp $
 #
 #============================================================================
 
 package Template::Plugin::Autoformat;
 
-require 5.004;
-
 use strict;
-use vars qw( $VERSION );
-use base qw( Template::Plugin );
-use Template::Plugin;
+use warnings;
+use base 'Template::Plugin';
 use Text::Autoformat;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.67 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = 2.70;
 
 sub new {
     my ($class, $context, $options) = @_;
@@ -43,35 +37,35 @@ sub new {
     my $plugin;
 
     if ($options) {
-	# create a closure to generate filters with additional options
-	$filter_factory = sub {
-	    my $context = shift;
-	    my $filtopt = ref $_[-1] eq 'HASH' ? pop : { };
-	    @$filtopt{ keys %$options } = values %$options;
-	    return sub {
-		tt_autoformat(@_, $filtopt);
-	    };
-	};
+        # create a closure to generate filters with additional options
+        $filter_factory = sub {
+            my $context = shift;
+            my $filtopt = ref $_[-1] eq 'HASH' ? pop : { };
+            @$filtopt{ keys %$options } = values %$options;
+            return sub {
+                tt_autoformat(@_, $filtopt);
+            };
+        };
 
-	# and a closure to represent the plugin
-	$plugin = sub {
-	    my $plugopt = ref $_[-1] eq 'HASH' ? pop : { };
-	    @$plugopt{ keys %$options } = values %$options;
-	    tt_autoformat(@_, $plugopt);
-	};
+        # and a closure to represent the plugin
+        $plugin = sub {
+            my $plugopt = ref $_[-1] eq 'HASH' ? pop : { };
+            @$plugopt{ keys %$options } = values %$options;
+            tt_autoformat(@_, $plugopt);
+        };
     }
     else {
-	# simple filter factory closure (no legacy options from constructor)
-	$filter_factory = sub {
-	    my $context = shift;
-	    my $filtopt = ref $_[-1] eq 'HASH' ? pop : { };
-	    return sub {
-		tt_autoformat(@_, $filtopt);
-	    };
-	};
+        # simple filter factory closure (no legacy options from constructor)
+        $filter_factory = sub {
+            my $context = shift;
+            my $filtopt = ref $_[-1] eq 'HASH' ? pop : { };
+            return sub {
+                tt_autoformat(@_, $filtopt);
+            };
+        };
 
-	# plugin without options can be static
-	$plugin = \&tt_autoformat;
+        # plugin without options can be static
+        $plugin = \&tt_autoformat;
     }
 
     # now define the filter and return the plugin
@@ -83,23 +77,13 @@ sub tt_autoformat {
     my $options = ref $_[-1] eq 'HASH' ? pop : { };
     my $form = $options->{ form };
     my $out = $form ? Text::Autoformat::form($options, $form, @_)
-		    : Text::Autoformat::autoformat(join('', @_), $options);
+                    : Text::Autoformat::autoformat(join('', @_), $options);
     return $out;
 }
 
+1;
+
 __END__
-
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
 
 =head1 NAME
 
@@ -108,9 +92,9 @@ Template::Plugin::Autoformat - Interface to Text::Autoformat module
 =head1 SYNOPSIS
 
     [% USE autoformat(options) %]
-
+    
     [% autoformat(text, more_text, ..., options) %]
-
+    
     [% FILTER autoformat(options) %]
        a block of text
     [% END %]
@@ -126,7 +110,7 @@ Template::Plugin::Autoformat - Interface to Text::Autoformat module
     # pass options to constructor...
     [% USE autoformat(case => 'upper') %]
     [% autoformat(text) %]
-
+    
     # and/or pass options to the autoformat subroutine itself
     [% USE autoformat %]
     [% autoformat(text, case => 'upper') %]
@@ -144,11 +128,11 @@ Template::Plugin::Autoformat - Interface to Text::Autoformat module
        Be not afeard.  The isle is full of noises, sounds and sweet 
        airs that give delight but hurt not.
     [% END %]
-    
+
     # another FILTER example, defining a 'poetry' filter alias
     [% USE autoformat %]
     [% text FILTER poetry = autoformat(left => 20, right => 40) %]
-
+    
     # reuse the 'poetry' filter alias
     [% text FILTER poetry %]
 
@@ -161,11 +145,11 @@ Template::Plugin::Autoformat - Interface to Text::Autoformat module
 
 =head1 DESCRIPTION
 
-The autoformat plugin is an interface to Damian Conway's Text::Autoformat 
+The autoformat plugin is an interface to Damian Conway's C<Text::Autoformat>
 Perl module which provides advanced text wrapping and formatting.  
 
 Configuration options may be passed to the plugin constructor via the 
-USE directive.
+C<USE> directive.
 
     [% USE autoformat(right => 30) %]
 
@@ -180,20 +164,20 @@ constructor.
 
     [% autoformat(text, left => 20) %]
 
-Configuration options are passed directly to the Text::Autoformat plugin.
+Configuration options are passed directly to the C<Text::Autoformat> plugin.
 At the time of writing, the basic configuration items are:
 
-    left	left margin (default: 1)
-    right	right margin (default 72)
-    justify 	justification as one of 'left', 'right', 'full'
+    left        left margin (default: 1)
+    right       right margin (default 72)
+    justify     justification as one of 'left', 'right', 'full'
                 or 'centre' (default: left)
     case        case conversion as one of 'lower', 'upper',
                 'sentence', 'title', or 'highlight' (default: none)
-    squeeze 	squeeze whitespace (default: enabled)
+    squeeze     squeeze whitespace (default: enabled)
 
-The plugin also accepts a 'form' item which can be used to define a 
+The plugin also accepts a C<form> item which can be used to define a 
 format string.  When a form is defined, the plugin will call the 
-underlying form() subroutine in preference to autoformat().
+underlying C<form()> subroutine in preference to C<autoformat()>.
 
     [% USE autoformat(form => '>>>>.<<') %]
     [% autoformat(123.45, 666, 3.14) %]
@@ -207,35 +191,28 @@ These can also be passed directly to the autoformat subroutine.
 
     [% USE autoformat %]
     [% autoformat( 123.45, 666, 3.14,
-		   form    => '>>>>.<<', 
-		   numeric => 'AllPlaces' )
+                   form    => '>>>>.<<', 
+                   numeric => 'AllPlaces' )
     %]
 
 See L<Text::Autoformat> for further details.
 
 =head1 AUTHORS
 
-Robert McArthur E<lt>mcarthur@dstc.edu.auE<gt> wrote the original plugin 
-code, with some modifications and additions from Andy Wardley 
-E<lt>abw@wardley.orgE<gt>.
+Robert McArthur wrote the original plugin code, with some modifications and
+additions from Andy Wardley.
 
-Damian Conway E<lt>damian@conway.orgE<gt> wrote the Text::Autoformat 
-module (in his copious spare time :-) which does all the clever stuff.
-
-=head1 VERSION
-
-Template Toolkit version 2.15, released on 26 May 2006.
-
-
+Damian Conway wrote the L<Text::Autoformat> module which does all the clever
+stuff.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2000 Robert McArthur & Andy Wardley.  All Rights Reserved.
+Copyright (C) 2000-2007 Robert McArthur & Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Template::Plugin|Template::Plugin>, L<Text::Autoformat|Text::Autoformat>
+L<Template::Plugin>, L<Text::Autoformat>
 

@@ -12,15 +12,17 @@ package Slim::Schema::Storage;
 use strict;
 use vars qw(@ISA);
 
+use Slim::Utils::OSDetect;
+my $sqlHelperClass;
+
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require DBIx::Class::Storage::DBI::SQLite;
-		push @ISA, qw(DBIx::Class::Storage::DBI::SQLite);
-	}
-	else {
-		require DBIx::Class::Storage::DBI::mysql;
-		push @ISA, qw(DBIx::Class::Storage::DBI::mysql);
-	}
+	$sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	
+	my $storageClass = $sqlHelperClass->storageClass();
+	eval "use $storageClass";
+	die $@ if $@;
+	
+	push @ISA, $storageClass;
 }
 
 use Carp::Clan qw/DBIx::Class/;
@@ -29,7 +31,6 @@ use File::Spec;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::MySQLHelper;
 use Slim::Utils::Prefs;
 
 sub dbh {
@@ -43,7 +44,7 @@ sub dbh {
 	# Try and bring up the database if we can't connect.
 	if ($@ && $@ =~ /Connection failed/) {
 
-		my $lockFile = File::Spec->catdir(preferences('server')->get('cachedir'), 'mysql.startup');
+		my $lockFile = File::Spec->catdir(preferences('server')->get('librarycachedir'), 'mysql.startup');
 
 		if (!-f $lockFile) {
 
@@ -53,7 +54,7 @@ sub dbh {
 
 			$@ = '';
 
-			if (Slim::Utils::MySQLHelper->init) {
+			if ( $sqlHelperClass && $sqlHelperClass->init( $self->_dbh ) ) {
 
 				eval { $self->ensure_connected };
 

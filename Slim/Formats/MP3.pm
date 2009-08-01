@@ -26,10 +26,9 @@ Read tags & metadata embedded in MP3 files.
 use strict;
 use base qw(Slim::Formats);
 
+use Audio::Scan;
+
 use Fcntl qw(:seek);
-use IO::String;
-use MP3::Info;
-use MPEG::Audio::Frame;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -44,7 +43,6 @@ my $scannerlog = logger('scan.scanner');
 my $sourcelog  = logger('player.source');
 
 my %tagMapping = (
-	'Unique file identifier'            => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ ALBUM ARTIST'          => 'ALBUMARTIST',
 	'MUSICBRAINZ ALBUM ARTIST ID'       => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MUSICBRAINZ ALBUM ID'              => 'MUSICBRAINZ_ALBUM_ID',
@@ -61,65 +59,44 @@ my %tagMapping = (
 
 	# bug 10724 - foobar2000 users like to use "ALBUM ARTIST" (instead of "ALBUMARTIST")
 	'ALBUM ARTIST'                      => 'ALBUMARTIST',
-);
-
-# Constant Bitrates
-our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
-
-{
-	# Don't try and convert anything to latin1
-	if ($] > 5.007) {
-
-		MP3::Info::use_mp3_utf8(1);
-	}
-
-	#
-	MP3::Info::use_winamp_genres();
-
-	# also get the album, performer and title sort information
-	$MP3::Info::v2_to_v1_names{'TSOA'} = 'ALBUMSORT';
-	$MP3::Info::v2_to_v1_names{'TSOP'} = 'ARTISTSORT';
-	$MP3::Info::v2_to_v1_names{'XSOP'} = 'ARTISTSORT';
-	$MP3::Info::v2_to_v1_names{'TSOT'} = 'TITLESORT';
-
-	# get composers
-	$MP3::Info::v2_to_v1_names{'TCM'}  = 'COMPOSER';
-	$MP3::Info::v2_to_v1_names{'TCOM'} = 'COMPOSER';
-
-	# get band/orchestra
-	$MP3::Info::v2_to_v1_names{'TP2'}  = 'BAND';
-	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
-
-	# get artwork
-	$MP3::Info::v2_to_v1_names{'PIC'}  = 'PIC';
-	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
-
-	# Set info
-	$MP3::Info::v2_to_v1_names{'TPA'}  = 'SET';
-	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SET';	
-
-	# get conductors
-	$MP3::Info::v2_to_v1_names{'TP3'}  = 'CONDUCTOR';
-	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
 	
-	$MP3::Info::v2_to_v1_names{'TBP'}  = 'BPM';
-	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
-
-	$MP3::Info::v2_to_v1_names{'ULT'}  = 'LYRICS';
-	$MP3::Info::v2_to_v1_names{'USLT'} = 'LYRICS';
-
-	# Pull the Relative Volume Adjustment tags
-	$MP3::Info::v2_to_v1_names{'RVA'}  = 'RVAD';
-	$MP3::Info::v2_to_v1_names{'RVAD'} = 'RVAD';
-	$MP3::Info::v2_to_v1_names{'RVA2'} = 'RVA2';
-
-	# TDRC is a valid field for a year.
-	$MP3::Info::v2_to_v1_names{'TDRC'} = 'YEAR';
-
-	# iTunes writes out it's own tag denoting a compilation
-	$MP3::Info::v2_to_v1_names{'TCP'}  = 'COMPILATION';
-	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
-}
+	# ID3v2 frame ID mapping to our keywords
+	# Notes:
+	# Audio::Scan via libid3tag already converts everything to ID3v2.4 IDs
+	# so that's all we have to worry about here.
+	# Non-standard v2.3 tags are prefixed with 'Y'
+	COMM => "COMMENT",
+	TALB => "ALBUM",
+	TBPM => "BPM",
+	TCOM => "COMPOSER",
+	TCMP => "COMPILATION",
+	YTCP => "COMPILATION", # non-standard v2.3 frame
+	TCON => "GENRE",
+	TYER => "YEAR",
+	TDRC => "YEAR",
+	TDOR => "YEAR",
+	XDOR => "YEAR",
+	TIT2 => "TITLE",
+	TPE1 => "ARTIST",
+	TPE2 => "BAND",
+	TPE3 => "CONDUCTOR",
+	TPOS => "SET",
+	TRCK => "TRACKNUM",
+	TSOA => "ALBUMSORT",
+	YTSA => 'ALBUMSORT',
+	TSOP => "ARTISTSORT",
+	YTSP => "ARTISTSORT",      # non-standard iTunes tag
+	TSOT => "TITLESORT",
+	YTST => "TITLESORT",       # non-standard iTunes tag
+	'TST ' => "TITLESORT",     # broken iTunes tag
+	TSO2 => "ALBUMARTISTSORT",
+	YTS2 => "ALBUMARTISTSORT", # non-standard iTunes tag
+	YTSC => "COMPOSERSORT",    # non-standard iTunes tag
+	YRVA => "RVAD",
+	UFID => "MUSICBRAINZ_ID",
+	USLT => "LYRICS",
+	XSOP => "ARTISTSORT",
+);
 
 =head2 getTag( $filename )
 
@@ -134,213 +111,39 @@ sub getTag {
 	my $isDebug = $log->is_debug;
 
 	if (!$file) {
-
 		$log->error("No file was passed!");
 		return {};
 	}
-
-	open(my $fh, $file) or do {
-
-		$log->error("Couldn't open file: [$file] $!");
-		return {};
-	};
 	
-	# Bug 8001, remap TPE2 if user wants it to mean Album Artist
-	if ( $prefs->get('useTPE2AsAlbumArtist') ) {
-		$MP3::Info::v2_to_v1_names{'TPE2'} = 'ALBUMARTIST';
-	}
-	else {
-		$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';
-	}
-
-	# Bug: 4071 - Windows is lame.
-	binmode($fh);
-
-	# This is somewhat messy - Use a customized version of MP3::Info's
-	# get_mp3tag, as we need custom logic.
-	my (%tags, %ape) = ();
-
-	$isDebug && $log->debug("Trying to read ID3v2 tags from $file");
-
-	# Always take a v2 tag if we have it.
-	MP3::Info::_get_v2tag($fh, 2, 0, \%tags);
-
-	# If the only tag is TAGVERSION, that means we didn't parse the ID3v2
-	# tag properly, or it's bogus. Look for a ID3v1 tag.
-	if ((!scalar keys %tags) || (scalar keys %tags == 1 && defined $tags{'TAGVERSION'})) {
-
-		$isDebug && $log->debug("Didn't find any ID3v2 tags, trying v1 tags.");
-
-		# Only use v1 tags if there are no v2 tags.
-		MP3::Info::_get_v1tag($fh, \%tags);
-	}
-
-	# Always add on any APE tags at the end. It may have ReplayGain data.
-	if (MP3::Info::_parse_ape_tag($fh, -s $file, \%ape)) {
-
-		if (scalar keys %ape) {
-
-			$isDebug && $log->debug("Found APE tags as well.");
-
-			%tags = (%tags, %ape);
-		}
-	}
-
-	# Now fetch the audio header information.
-	my $info = MP3::Info::get_mp3info($fh);
-
-	# Some MP3 files don't have their header information readily
-	# accessable. So try seeking in a bit further.
-	if (!scalar keys %$info) {
-
-		$isDebug && $log->debug("Didn't find audio information in first pass - trying harder.");
-
-		$MP3::Info::try_harder = 6;
-
-		$info = MP3::Info::get_mp3info($fh);
-
-		$MP3::Info::try_harder = 0;
-	}
-
-	doTagMapping(\%tags);
-
-	# we'll always have $info, as it's machine generated.
-	if (scalar keys %tags && scalar keys %{$info}) {
-		%$info = (%tags, %$info);
-	}
-
-	# Strip out any nulls.
-	for my $key (keys %{$info}) {
-
-		if (defined $info->{$key}) {
-			$info->{$key} =~ s/\000+.*//g;
-			$info->{$key} =~ s/\s+$//;
-		}
-	}
-
-	# sometimes we don't get this back correctly
-	$info->{'OFFSET'} += 0;
-
-	if (!$info->{'SIZE'}) {
-		return undef;
-	}
-
-	my ($start, $end) = $class->findFrameBoundaries($fh, $info->{'OFFSET'}, $info->{'SIZE'});
-
-	if ( defined $start ) {
-		$info->{'OFFSET'} = $start;
-
-		if ($end) {
-			$info->{'SIZE'} = $end - $start + 1;
-		}
-	}
-
-	close($fh);
-
-	# when scanning we brokenly align by bytes.  
-	$info->{'BLOCKALIGN'} = 1;
-
-	# bitrate is in bits per second, not kbits per second.
-	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
-
-	# same with sample rate
-	$info->{'RATE'} = $info->{'FREQUENCY'} * 1000 if ($info->{'FREQUENCY'});
-
-	# Pull out Relative Volume Adjustment information
-	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
-
-		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
-
-			$info->{"RVA_$type"} = $info->{'RVAD'}->{'RIGHT'}->{$type};
-		}
-
-		delete $info->{'RVAD'};
-
-	} elsif ($info->{'RVA2'}) {
-
-		if ($info->{'RVA2'}->{'MASTER'}) {
-
-			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'MASTER'}}) {
-
-				$info->{"RVA_$type"} = $gain;
-			}
-
-		} elsif ($info->{'RVA2'}->{'FRONT_RIGHT'} && $info->{'RVA2'}->{'FRONT_LEFT'}) {
-
-			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'FRONT_RIGHT'}}) {
-
-				$info->{"RVA_$type"} = $gain;
-			}		
-		}
-
-		delete $info->{'RVA2'};
-	}
-
-	# Look for iTunes SoundCheck data
+	my $s = Audio::Scan->scan( $file );
 	
-	# Logic used here is:
-	# If there is an iTunNORM tag and an RVA tag:
-	#   Gain values are added together
-	# If there is an iTunNORM tag and a TXXX track gain tag
-	#   Only the iTunNORM value is used
-	# If there is no iTunNORM tag, the value used is RVA if available, or TXXX
-	# See bug 6890 for more info
+	my $info = $s->{info};
+	my $tags = $s->{tags};
 	
-	# Sometimes iTunNORM is not in the comment tag?
-	if ( $info->{'ITUNNORM'} ) {
-		$info->{'COMMENT'} ||= [];
-		push @{ $info->{'COMMENT'} }, 'iTunNORM  ' . delete $info->{'ITUNNORM'};
-	}
-	
-	if ( $info->{'COMMENT'} ) {
-		my $rva_gain  = delete $info->{'RVA_REPLAYGAIN_TRACK_GAIN'} || 0;
-		my $txxx_gain = delete $info->{'REPLAYGAIN_TRACK_GAIN'};
-		
-		# use RVA track gain for combining with iTunNORM
-		$info->{'REPLAYGAIN_TRACK_GAIN'} = $rva_gain;
-		
-		Slim::Utils::SoundCheck::commentTagTodB($info);
-		
-		if ( $info->{'REPLAYGAIN_TRACK_GAIN'} == $rva_gain ) {
-			# SoundCheck did not find a gain value, restore previous value
-			$info->{'REPLAYGAIN_TRACK_GAIN'} = $rva_gain || $txxx_gain;
-			
-			$isDebug && $log->debug( 
-				'No iTunNORM SoundCheck data found, track gain set to '
-				. $info->{'REPLAYGAIN_TRACK_GAIN'}
-				. ' from '
-				. ( $rva_gain ? 'RVA tag' : 'TXXX tag' )
-			);
-		}
-		else {
-			$isDebug && $log->debug( 'iTunNORM SoundCheck data found, track gain set to ' . $info->{'REPLAYGAIN_TRACK_GAIN'} );
-		}
-	}
-	
-	# Move RVA_ tags back to their proper name
-	for my $tag ( keys %{$info} ) {
-		if ( $tag =~ /^RVA_(.+)/ ) {
-			$info->{$1} = delete $info->{$tag};
-		}
-	}
-	
-	# We only want a 4-digit year
-	if ( defined $info->{'YEAR'} ) {
-		my $year = $info->{'YEAR'};
+	return unless $info->{song_length_ms};
 
-		# In the case where multiple YEAR elements are 
-		# present (eg multi-value ID3v2.4) we only use
-		# the first.
-		$year = $year->[0] if ref $year eq 'ARRAY';
-		
-		if ( $year =~ /(\d\d\d\d)/ ) {
-			$year = $1;
-		}
-		
-		$info->{'YEAR'} = $year;
+	# map the existing tag names to the expected tag names
+	$class->doTagMapping($tags);
+	
+	# Map info into tags
+	$tags->{TAGVERSION} = $info->{id3_version};
+	$tags->{OFFSET}     = $info->{audio_offset};
+	$tags->{SIZE}       = $info->{audio_offset} + $info->{audio_size}; # XXX: not really correct, leaves off id3v1 size
+	$tags->{SECS}       = $info->{song_length_ms} / 1000;
+	$tags->{BITRATE}    = $info->{bitrate};
+	$tags->{STEREO}     = $info->{stereo};
+	$tags->{CHANNELS}   = $info->{stereo} ? 2 : 1;
+	$tags->{RATE}       = $info->{samplerate};
+	
+	if ( $info->{vbr} ) {
+		$tags->{VBR_SCALE} = 1;
 	}
 
-	return $info;
+	# when scanning we brokenly align by bytes.
+	# XXX: needed?
+	$tags->{BLOCKALIGN} = 1;
+
+	return $tags;
 }
 
 =head2 getCoverArt( $filename )
@@ -352,130 +155,60 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
-
-	my $tags = MP3::Info::get_mp3tag($file, 2) || {};
-
-	if (defined $tags->{'PIC'} && defined $tags->{'PIC'}->{'DATA'}) {
-
-		return $tags->{'PIC'}->{'DATA'};
+	
+	my $s = Audio::Scan->scan_tags($file);
+	
+	my $tags = $s->{tags};
+	
+	if ( my $pic = $tags->{APIC} ) {
+		if ( ref $pic->[0] eq 'ARRAY' ) {
+			# multiple images, return image with lowest image_type value
+			return ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4];
+		}
+		else {
+			return $pic->[4];
+		}
 	}
 
 	return undef;
 }
 
-=head2 doTagMapping( $tags )
-
-Map bad tag names to correct ones.
-
-=cut
-
-sub doTagMapping {
-	my $tags = shift;
-
-	# map the existing tag names to the expected tag names
-	while (my ($old,$new) = each %tagMapping) {
-		if (exists $tags->{$old}) {
-			$tags->{$new} = delete $tags->{$old};
-		}
-	}
+# Read the initial audio frame, this supports seeking while preserving
+# the Xing header needed for gapless playback
+sub getInitialAudioBlock {
+	my ( $class, $fh, $track, $timeOffset ) = @_;
+	
+	# Only bother if not playing from the start
+	return if !$timeOffset;
+	
+	open my $localFh, '<&=', $fh;
+	
+	# Find the location of the next frame past the audio offset
+	my $second_frame = Audio::Scan->find_frame_fh( mp3 => $localFh, $track->audio_offset + 1 );
+	
+	seek $localFh, $track->audio_offset, 0;
+	
+	read $localFh, my $buffer, $second_frame - $track->audio_offset;
+	
+	close $localFh;
+	
+	return $buffer;
 }
 
-=head2 findFrameBoundaries( $fh, $offset, $seek )
+=head2 findFrameBoundaries( $fh, $offset, $time )
 
 Locate MP3 frame boundaries when seeking through a file.
 
 =cut
 
 sub findFrameBoundaries {
-	my ($class, $fh, $offset, $seek) = @_;
+	my ( $class, $fh, $offset, $time ) = @_;
 	
-	binmode $fh;
-
-	my ($start, $end) = (0, 0);
-
 	if (!defined $fh || !defined $offset) {
-
-		logError("Invalid arguments!");
-
-		return wantarray ? ($start, $end) : $start;
+		return 0;
 	}
-
-	my $filelen   = -s $fh;
-	if ($offset > $filelen) {
-		$offset = $filelen;
-	}
-
-	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
-	open(my $mpeg, '<&=', $fh) or do {
-
-		logError("Couldn't dup filehandle!");
-
-		return wantarray ? ($start, $end) : $start;
-	};
-
-	seek($mpeg, $offset, SEEK_SET);
-
-	# Find the first frame.
-	my $frame1 = MPEG::Audio::Frame->read($mpeg, 1);
-
-	if (defined $frame1) {
-		$start = $frame1->offset;
-	}
-
-	# If the caller (Source.pm) has requested a seek position, that means we want to look backwards.
-	if (defined $seek && defined $frame1) {
-
-		seek($mpeg, ($start - ($frame1->length * 1.5) + $seek), SEEK_SET);
-
-		while (my $frame2 = MPEG::Audio::Frame->read($mpeg, 1)) {
-
-			if (($frame2->offset + ($frame2->length * 2)) > $start + $seek) {
-
-				$end = $frame2->offset + $frame2->length - 1;
-				last;
-			}
-		}
-	}
-
-	close($mpeg);
-
-	$sourcelog->is_debug && $sourcelog->debug("start: [$start] end: [$end]");
-
-	if (defined $seek) {
-		return ($start, $end);
-	} else {
-		return wantarray ? ($start, $end) : $start;
-	}
-}
-
-=head2 getFrame( $fh )
-
-Returns the first MPEG::Audio::Frame object found in the given filehandle.
-
-=cut
-
-sub getFrame {
-	my ( $class, $fh ) = @_;
-
-	binmode $fh;
 	
-	my $offset = sysseek($fh, 0, 1);
-		
-	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
-	open(my $mpeg, '<&=', $fh) or do {
-
-		logError("Couldn't dup filehandle!");
-		return;
-	};
-	
-	my $frame = MPEG::Audio::Frame->read($mpeg);
-	
-	# Seek back to where we started
-	sysseek ($fh, $offset, 0);
-	
-	close $mpeg;
-	
-	return $frame;
+	return Audio::Scan->find_frame_fh( mp3 => $fh, $offset );
 }
 
 =head2 scanBitrate( $fh )
@@ -490,62 +223,50 @@ We also look for any ID3 tags and set the title based on any that are found.
 =cut
 
 sub scanBitrate {
-	my $class = shift;
-	my $fh    = shift;
-	my $url   = shift;
+	my ( $class, $fh, $url ) = @_;
 	
-	# We can also read ID3 tags from this header to use for title information
-	my %tags  = ();
-
-	if ( !MP3::Info::_get_v2tag( $fh, 2, 0, \%tags ) ) {
-
-		# Only use v1 tags if there are no v2 tags.
-		MP3::Info::_get_v1tag( $fh, \%tags );
-	}
+	# Scan the header for info/tags
+	my $s = Audio::Scan->scan_fh( mp3 => $fh );
 	
-	if ( $tags{TITLE} ) {
-		
-		# Strip out any nulls.
-		for my $key ( keys %tags ) {
-
-			if ( defined $tags{$key} ) {
-				$tags{$key} =~ s/\000+.*//g;
-				$tags{$key} =~ s/\s+$//;
-			}
-		}
+	my $info = $s->{info};
+	my $tags = $s->{tags};
+	
+	$class->doTagMapping($tags);
+	
+	if ( $tags->{TITLE} ) {
 		
 		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
 		# so we have to format our title info manually.
-		my $track = Slim::Schema->rs('Track')->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate({
 			url        => $url,
 			attributes => {
-				TITLE   => $tags{TITLE},
-				ARTIST  => $tags{ARTIST},
-				ALBUM   => $tags{ALBUM},
-				YEAR    => $tags{YEAR},
-				GENRE   => $tags{GENRE},
-				COMMENT => $tags{COMMENT},
+				TITLE => $tags->{TITLE},
 			},
 		});
 		
-		if ( $scannerlog->is_debug ) {
-			$scannerlog->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
+		if ( main::DEBUGLOG && $scannerlog->is_debug ) {
+			$scannerlog->debug("Read ID3 tags from stream: " . Data::Dump::dump($tags));
 		}
 		
-		my $title = $tags{TITLE};
-		$title .= ' ' . string('BY') . ' ' . $tags{ARTIST} if $tags{ARTIST};
-		$title .= ' ' . string('FROM') . ' ' . $tags{ALBUM}  if $tags{ALBUM};
+		my $title = $tags->{TITLE};
+		$title .= ' ' . string('BY') . ' ' . $tags->{ARTIST} if $tags->{ARTIST};
+		$title .= ' ' . string('FROM') . ' ' . $tags->{ALBUM}  if $tags->{ALBUM};
 		
 		Slim::Music::Info::setCurrentTitle( $url, $title );
 		
 		# Save artwork if found
-		if ( defined $tags{PIC} && defined $tags{PIC}->{DATA}) {
+		if ( my $pic = $tags->{APIC} ) {
+			if ( ref $pic->[0] eq 'ARRAY' ) {
+				# multiple images, use image with lowest image_type value
+				$pic = ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0];
+			}
+			
 			$track->cover(1);
 			$track->update;
 			
 			my $data = {
-				image => $tags{PIC}->{DATA},
-				type  => $tags{PIC}->{FORMAT} || 'image/jpeg',
+				image => $pic->[4],
+				type  => $pic->[1] || 'image/jpeg',
 			};
 			
 			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
@@ -557,101 +278,135 @@ sub scanBitrate {
 				$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
 			}
 			
-			$scannerlog->is_debug && $scannerlog->debug( 'Found embedded cover art, saving for ' . $track->url );
+			main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
-	}
-
-	# Check if first audio frame has a Xing VBR header
-	# This will allow full files streamed from places like LMA or UPnP servers
-	# to have accurate bitrate/length information
-	my $frame = MPEG::Audio::Frame->read( $fh );
-	if ( $frame && $frame->content =~ /(?:Xing|Info)(.{12})/s ) {
-		my $header = $1;		
-		my $xing = IO::String->new( $header );
-		my $vbr  = {};
-		
-		# Xing parsing code from MP3::Info
-		my $unpack_head = sub { unpack('l', pack('L', unpack('N', $_[0]))) };
-
-		read $xing, my $flags, 4;
-		$vbr->{flags} = $unpack_head->($flags);
-		
-		if ( $vbr->{flags} & 1 ) {
-			read $xing, my $bytes, 4;
-			$vbr->{frames} = $unpack_head->($bytes);
-		}
-
-		if ( $vbr->{flags} & 2 ) {
-			read $xing, my $bytes, 4;
-			$vbr->{bytes} = $unpack_head->($bytes);
-		}
-		
-		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
-		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
-		
-		$scannerlog->is_debug && $scannerlog->debug("Found Xing VBR header in stream, bitrate: $bitrate kbps VBR");
-		
-		return ($bitrate * 1000, 1);
 	}
 	
-	# No Xing header, take an average of frame bitrates
-
-	my @bitrates;
-	my ($avg, $sum) = (0, 0);
+	main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug(
+		"Scanned bitrate from stream: " . $info->{bitrate} . ' ' . ( $info->{vbr} ? 'VBR' : 'CBR' )
+	);
 	
-	seek $fh, 0, 0;
-	while ( my $frame = MPEG::Audio::Frame->read( $fh ) ) {
-		
-		# Sample all frames to try to see if we're VBR or not
-		if ( $frame->bitrate ) {
-			push @bitrates, $frame->bitrate;
-			$sum += $frame->bitrate;
-			$avg = int( $sum / @bitrates );
-		}
-	}
-
-	if ( $avg ) {			
-		my $vbr = undef;
-
-		if ( !$cbr{$avg} ) {
-			$vbr = 1;
-		}
-		
-		if ( $scannerlog->is_debug ) {
-			$scannerlog->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
-		}
-		
-		return ($avg * 1000, $vbr);
-	}
-	
-	$scannerlog->warn("Unable to find any MP3 frames in stream!");
-
-	return (-1, undef);
+	return wantarray ? ( $info->{bitrate}, $info->{vbr} ) : $info->{bitrate};
 }
 
-sub canSeek {1}	
-
-# Read the initial audio frame, this supports seeking while preserving
-# the Xing header needed for gapless playback
-sub getInitialAudioBlock {
-	my ( $class, $fh, $track, $timeOffset ) = @_;
+sub doTagMapping {
+	my ( $class, $tags ) = @_;
 	
-	# Only bother if not playing from the start
-	unless ($timeOffset) {return undef;}
-	
-	open my $localFh, '<&=', $fh;
-	seek $localFh, ($track->audio_offset() || 0), 0;
-	
-	my $frame = MPEG::Audio::Frame->read( $localFh );
-	seek($localFh, 0, 0);
-	close $localFh;
-	
-	# check that we have an Xing frame
-	if ($frame->content !~ /Xing|Info/) {
-		return ''; # The empty string will be cached
+	# Bug 8001, remap TPE2 if user wants it to mean Album Artist
+	# XXX: move this out to another function, no need to call it on every tag scan
+	if ( $prefs->get('useTPE2AsAlbumArtist') ) {
+		$tagMapping{TPE2} = 'ALBUMARTIST';
+	}
+	else {
+		$tagMapping{TPE2} = 'BAND';
 	}
 	
-	return $frame->asbin;
+	while ( my ($old, $new) = each %tagMapping ) {
+		if ( exists $tags->{$old} ) {
+			$tags->{$new} = delete $tags->{$old};
+		}
+	}
+	
+	# Special handling for UFID, pull out ID from array
+	if ( exists $tags->{MUSICBRAINZ_ID} && ref $tags->{MUSICBRAINZ_ID} eq 'ARRAY' ) {
+		# Sometimes UFID might be swapped, check every element
+		for my $id ( @{ delete $tags->{MUSICBRAINZ_ID} } ) {
+			if ( length($id) == 36 ) {
+				$tags->{MUSICBRAINZ_ID} = $id;
+				last;
+			}
+		}
+	}
+
+	# Look for iTunes SoundCheck data, unless we have a TXXX track gain tag
+	if ( !$tags->{REPLAYGAIN_TRACK_GAIN} ) {
+		# Pull out Relative Volume Adjustment information
+		if ( my $rvad = delete $tags->{RVAD} ) {
+			# Assume right/left channels are the same
+			$tags->{REPLAYGAIN_TRACK_GAIN} = $rvad->[0];
+		}
+		elsif ( my $rva2 = delete $tags->{RVA2} ) {
+			if ( ref $rva2->[0] eq 'ARRAY' ) {
+				# Multiple RVA2 tags, they look like this:
+				# RVA2 => [
+				#	 ["track", 1, "-7.478516 dB", "1.172028 dB"],
+				#	 ["album", 1, "-7.109375 dB", "1.258026 dB"],
+				#  ],
+				for my $rva ( @{$rva2} ) {
+					if ( lc( $rva->[0] ) eq 'track' ) {
+						$tags->{REPLAYGAIN_TRACK_GAIN} = $rva->[2];
+						$tags->{REPLAYGAIN_TRACK_PEAK} = $rva->[3];
+					}
+					elsif ( lc( $rva->[0] ) eq 'album' ) {
+						$tags->{REPLAYGAIN_ALBUM_GAIN} = $rva->[2];
+						$tags->{REPLAYGAIN_ALBUM_PEAK} = $rva->[3];
+					}
+				}
+			}
+			else {	
+				$tags->{REPLAYGAIN_TRACK_GAIN} = $rva2->[2];
+				$tags->{REPLAYGAIN_TRACK_PEAK} = $rva2->[3];
+			}
+		}
+	
+		# Logic used here is:
+		# If there is an iTunNORM tag and an RVA tag:
+		#   Gain values are added together
+		# If there is no iTunNORM tag, the value used is RVA if available
+		# See bug 6890 for more info
+	
+		# Sometimes iTunNORM is not in a comment tag
+		if ( $tags->{ITUNNORM} ) {
+			$tags->{COMMENT} ||= [];
+			push @{ $tags->{COMMENT} }, [ 0, 'eng', 'iTunNORM', delete $tags->{ITUNNORM} ];
+		}
+	
+		if ( $tags->{COMMENT} ) {
+			Slim::Utils::SoundCheck::commentTagTodB($tags);
+		}
+	}
+	
+	# We only want a 4-digit year
+	if ( defined $tags->{YEAR} ) {
+		my $year = $tags->{YEAR};
+
+		# In the case where multiple YEAR elements are 
+		# present (eg multi-value ID3v2.4) we only use
+		# the first.
+		$year = $year->[0] if ref $year eq 'ARRAY';
+		
+		if ( $year =~ /(\d\d\d\d)/ ) {
+			$year = $1;
+		}
+		
+		$tags->{YEAR} = $year;
+	}
+	
+	# Clean up comments
+	if ( $tags->{COMMENT} && ref $tags->{COMMENT} eq 'ARRAY' ) {
+		my $fixed = [];
+		
+		if ( ref $tags->{COMMENT}->[0] eq 'ARRAY' ) {
+			for my $comment ( @{ $tags->{COMMENT} } ) {
+				push @{$fixed}, ( $comment->[2] || '' ) . $comment->[3];
+			}
+		}
+		else {
+			push @{$fixed}, ( $tags->{COMMENT}->[2] || '' ) . $tags->{COMMENT}->[3];
+		}
+		
+		$tags->{COMMENT} = $fixed;
+	}
+	
+	# Clean up lyrics
+	if ( $tags->{LYRICS} && ref $tags->{LYRICS} eq 'ARRAY' ) {
+		$tags->{LYRICS} = $tags->{LYRICS}->[3];
+	}
+	
+	# Flag if we have embedded cover art
+	$tags->{HAS_COVER} = 1 if $tags->{APIC};
 }
+
+sub canSeek { 1 }
 
 1;

@@ -11,14 +11,12 @@ package Slim::Networking::Async;
 # by Squeezebox Server.
 
 use strict;
-use warnings;
 
-use base qw(Class::Data::Accessor);
+use base qw(Slim::Utils::Accessor);
 
-use Data::Dump ();	# because Data::Dump is able to dump typeglob objects (sockets)
 use Net::IP;
 use Scalar::Util qw(blessed weaken);
-use Socket;
+use Socket qw(inet_ntoa);
 
 use Slim::Networking::Async::DNS;
 use Slim::Networking::Async::Socket::HTTP;
@@ -27,15 +25,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-__PACKAGE__->mk_classaccessors( 'socket' );
-
 my $log = logger('network.asynchttp');
 
-sub new {
-	my $class = shift;
-	
-	return bless {}, $class;
-}
+__PACKAGE__->mk_accessor( rw => 'socket' );
 
 sub open {
 	my ( $self, $args ) = @_;
@@ -70,7 +62,6 @@ sub open {
 	# Perform an async DNS lookup
 	Slim::Networking::Async::DNS->resolve( {
 		host    => $args->{Host},
-		timeout => $args->{Timeout},
 		cb      => \&_dns_ok,
 		ecb     => \&_dns_error,
 		pt      => [ $self, $args ],
@@ -115,7 +106,7 @@ sub connect {
 	my $host = $args->{Host};
 	my $port = $args->{PeerPort};
 
-	$log->debug("Connecting to $host:$port");
+	main::DEBUGLOG && $log->debug("Connecting to $host:$port");
 
 	my $socket = $self->new_socket( %{$args} );
 	
@@ -188,7 +179,7 @@ sub _async_connect {
 	
 	$self->socket( $socket );
 	
-	$log->debug("connected, ready to write request");
+	main::DEBUGLOG && $log->is_debug && $log->debug($self->socket, ' => ', fileno($self->socket), " connected, ready to write request");
 
 	if ( my $cb = $args->{onConnect} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -218,7 +209,7 @@ sub write_async {
 		$content_ref = $content_ref->( $self );
 	}
 
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("Sending: [" . $$content_ref . "]");
 	}
 
@@ -243,8 +234,11 @@ sub disconnect {
 	my $self = shift;
 	
 	if ( $self->socket ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Close ", $self->socket, ' => ', fileno($self->socket));
 		$self->socket->close;
-		undef $self->{socket};
+		
+		# Bug 12276: undef the socket so that tests for its presence will fail
+		$self->socket(undef);
 	}
 }
 

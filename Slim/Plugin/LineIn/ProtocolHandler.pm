@@ -21,7 +21,7 @@ my $log = logger('player.source');
 sub overridePlayback {
 	my ( $class, $client, $url ) = @_;
 	
-	$log->debug( "Switching to line in $url" );
+	main::DEBUGLOG && $log->debug( "Switching to line in $url" );
 	
 	$client->setLineIn($url);
 

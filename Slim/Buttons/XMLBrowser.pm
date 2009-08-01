@@ -139,7 +139,7 @@ sub setMode {
 			# get passthrough params if supplied
 			my $pt = $item->{'passthrough'} || [];
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
 				$log->debug( "Fetching OPML from coderef $cbname" );
 			}
@@ -390,7 +390,7 @@ sub gotOPML {
 	# a new Pandora radio station
 	if ( $opml->{'command'} ) {
 		my @p = map { uri_unescape($_) } split / /, $opml->{'command'};
-		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 		
 		# Abort after the command if requested (allows OPML to execute i.e. button home)
@@ -523,7 +523,7 @@ sub gotOPML {
 								my $valueRef  = $choice->{listRef}->[ $listIndex ];
 								$choice->{valueRef} = \$valueRef;
 							
-								$log->debug('Refreshed menu');
+								main::DEBUGLOG && $log->debug('Refreshed menu');
 							
 								$client->update;
 							} );
@@ -544,7 +544,7 @@ sub gotOPML {
 		return;
 	}
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		if ( $opml->{sorted} ) {
 			$log->debug( 'Treating list as sorted' );
 		}
@@ -610,11 +610,11 @@ sub gotOPML {
 					# Submit the URL in the background
 					$client->block();
 					
-					$log->debug("Submitting $itemURL in the background for radio selection");
+					main::DEBUGLOG && $log->debug("Submitting $itemURL in the background for radio selection");
 				
 					Slim::Formats::XML->getFeedAsync(
 						sub { 
-							$log->debug("Status OK for $itemURL");
+							main::DEBUGLOG && $log->debug("Status OK for $itemURL");
 							
 							# Change the default value in all other radio items
 							for my $sibling ( @{ $opml->{items} } ) {
@@ -639,7 +639,7 @@ sub gotOPML {
 			elsif ( $item->{'type'} && $item->{'type'} eq 'text' ) {
 				$client->bumpRight();
 			}
-			elsif ( $item->{'type'} eq 'search' ) {
+			elsif ( $item->{'type'} && $item->{'type'} eq 'search' ) {
 				
 				# Search elements may include alternate title
 				my $title = $item->{title} || $item->{name};
@@ -793,7 +793,7 @@ sub handleSearch {
 		# Don't allow null search string
 		return $client->bumpRight if $searchString eq '';
 		
-		$log->info("Search query [$searchString]");
+		main::INFOLOG && $log->info("Search query [$searchString]");
 			
 		# Replace {QUERY} with search query
 		$searchURL =~ s/{QUERY}/$searchString/g;
@@ -1062,7 +1062,7 @@ sub playItem {
 		} 
 	}
 	
-	$log->debug("Playing item, action: $action, type: $type, $url");
+	main::DEBUGLOG && $log->debug("Playing item, action: $action, type: $type, $url");
 	
 	if ( $type =~ /audio/i ) {
 
@@ -1196,7 +1196,7 @@ sub playItem {
 			# get passthrough params if supplied
 			my $pt = $item->{'passthrough'} || [];
 			
-			if ( $log->is_debug ) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
 				$log->debug( "Fetching OPML playlist from coderef $cbname" );
 			}

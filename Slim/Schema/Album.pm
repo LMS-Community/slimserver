@@ -5,6 +5,8 @@ package Slim::Schema::Album;
 use strict;
 use base 'Slim::Schema::DBI';
 
+use Slim::Schema::ResultSet::Album;
+
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -200,7 +202,7 @@ sub artists {
 
 	} elsif (scalar @artists == 0) {
 
-		if ( $log->is_debug ) {
+		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
 		}
 
@@ -248,6 +250,19 @@ sub contributorid {
 	return $self->get_column('contributor');
 }
 
+# Rescan this album, this simply means to make sure at least 1 track
+# from this album still exists in the database.  If not, delete the album.
+# XXX: should also look for changes to things like album gain.
+# XXX native DBI
+sub rescan {
+	my $self = shift;
+	
+	my $count = Slim::Schema->rs('Track')->search( album => $self->id )->count;
+	
+	if ( !$count ) {
+		$self->delete;
+	}
+}
 
 1;
 

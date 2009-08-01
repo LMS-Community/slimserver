@@ -13,9 +13,9 @@ use base 'SQL::Abstract';
 
 SQL::Abstract::Limit - portable LIMIT emulation
 
-=cut
+=cut    
 
-our $VERSION = '0.11';
+our $VERSION = '0.141';
 
 # additions / error reports welcome !
 our %SyntaxMap = (  mssql    => 'Top',
@@ -25,7 +25,7 @@ our %SyntaxMap = (  mssql    => 'Top',
                     db2      => 'FetchFirst',
                     ingres   => '',
                     adabasd  => '',
-                    informix => 'First',
+                    informix => 'Skip',
     
                     # asany    => '',
     
@@ -110,7 +110,7 @@ settings in method calls, this just sets the default. Possible values are:
     Top             SQL/Server, MS Access
     RowNum          Oracle
     FetchFirst      DB2
-    First           Informix    # not implemented yet
+    Skip            Informix
     GenericSubQ     Sybase, plus any databases not recognised by this module
 
     $dbh            a DBI database handle
@@ -284,7 +284,7 @@ sub _find_syntax
 {
     my ($self, $syntax) = @_;
     
-    # $syntax is a dialect name, $dbh, or CDBI class or object
+    # $syntax is a dialect name, database name, $dbh, or CDBI class or object
 
     Carp::croak('no syntax') unless $syntax;
     
@@ -953,6 +953,9 @@ across 200th place.
 
 =end notes
 
+
+=begin notes
+
 =item First
 
 =over 8
@@ -968,7 +971,6 @@ Informix
 
 =back
 
-=cut
 
 sub _First {
     my ( $self, $sql, $order, $rows, $offset ) = @_;
@@ -979,6 +981,43 @@ sub _First {
     # might need to add to regex in 'where' method
 
 }
+
+=end notes
+
+=cut
+
+=item Skip
+
+=over 8 
+
+=item Syntax
+
+  select skip 5 limit 5 * from customer
+
+which will take rows 6 through 10 in the select.
+  
+=item Databases
+
+Informix
+
+=back
+
+=cut
+
+sub _Skip {
+    my ( $self, $sql, $order, $rows, $offset ) = @_;
+
+    my $last = $rows + $offset;
+    
+    my ( $order_by_up, $order_by_down ) = $self->_order_directions( $order );
+
+    $sql =~ s/^\s*(SELECT|select)//;
+
+    $sql = "select skip $offset limit $rows ".$sql." ".$self->_order_by( $order );
+
+    return $sql;
+}
+
 
 
 1;
@@ -1060,6 +1099,8 @@ just plug this module in and move on to your next task.
 Thanks to Aaron Johnson for the Top syntax model (SQL/Server and MS Access).
 
 Thanks to Emanuele Zeppieri for the IBM DB2 syntax model.
+
+Thanks to Paul Falbe for the Informix implementation.
 
 =head1 TODO
 

@@ -84,8 +84,6 @@ use Slim::Utils::Log;
 
 our @EXPORT = qw(preferences);
 
-my $DEFAULT_DBSOURCE = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
-
 my $log   = logger('prefs');
 
 my $path; # path to directory where preferences are stored
@@ -101,7 +99,7 @@ $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 my $prefs = preferences('server');
 
 # make sure these server prefs has the utf8flag turned off before they get used
-$prefs->setUtf8Off(qw(audiodir playlistdir cachedir coverArt));
+$prefs->setUtf8Off(qw(audiodir playlistdir cachedir librarycachedir coverArt));
 
 
 =head2 preferences( $namespace )
@@ -129,13 +127,17 @@ sub namespaces {
 }
 
 sub init {
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $default_dbsource = $sqlHelperClass->default_dbsource();
+	
 	my %defaults = (
 		# Server Prefs not settable from web pages
 		'bindAddress'           => '127.0.0.1',            # Default MySQL bind address
-		'dbsource'              => $DEFAULT_DBSOURCE,
+		'dbsource'              => $default_dbsource,
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
 		'cachedir'              => \&defaultCacheDir,
+		'librarycachedir'       => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,
 		'ignoreDirRE'           => '',
 		# My Music menu ordering
@@ -328,15 +330,20 @@ sub init {
 			
 			1;
 		} );
+		
+		$prefs->migrate( 4, sub {
+			$prefs->set('librarycachedir', $prefs->get('cachedir'));
+			1;
+		} );
 	}
 
 	# migrate client prefs to version 2 - sync prefs changed
 	$prefs->migrateClient(2, sub {
 		my $cprefs = shift;
 		my $defaults = $Slim::Player::Player::defaultPrefs;
-		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
-		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
-		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
+		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if (defined $cprefs->get('syncBufferThreshold') && $cprefs->get('syncBufferThreshold') > 255);
+		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if (defined $cprefs->get('minSyncAdjust') && $cprefs->get('minSyncAdjust') < 1);
+		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if (defined $cprefs->get('packetLatency') && $cprefs->get('packetLatency') < 1);
 		1;
 	});
 
@@ -539,11 +546,11 @@ sub init {
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
 									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
-	$prefs->setValidate( 'dir',   qw(cachedir playlistdir audiodir artfolder) );
+	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir audiodir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
 	# allow users to set a port below 1024 on windows which does not require admin for this
-	my $minP = Slim::Utils::OSDetect::isWindows() ? 1 : 1024;
+	my $minP = main::ISWINDOWS ? 1 : 1024;
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=>  65535 }, 'httpport'    );
 	
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
@@ -624,11 +631,13 @@ sub init {
 
 	$prefs->setChange( sub {
 		Slim::Buttons::BrowseTree->init;
+		require Slim::Music::MusicFolderScan;
 		Slim::Music::MusicFolderScan->init;
 		Slim::Control::Request::executeRequest(undef, ['wipecache']);
 	}, 'audiodir');
 
 	$prefs->setChange( sub {
+		require Slim::Music::PlaylistFolderScan;
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
 		for my $client (Slim::Player::Client::clients()) {
@@ -694,7 +703,7 @@ sub init {
 				$cookieJar->clear( '127.0.0.1' );
 			}
 			$cookieJar->save();
-			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
+			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
 		
 		$prefs->setChange( sub {
@@ -791,7 +800,7 @@ sub makeSecuritySecret {
 	my $secret = $hash->hexdigest();
 
 	if ($log) {
-		$log->debug("Creating a securitySecret for this installation.");
+		main::DEBUGLOG && $log->debug("Creating a securitySecret for this installation.");
 	}
 
 	$prefs->set('securitySecret', $secret);
@@ -843,12 +852,12 @@ sub defaultCacheDir {
 	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
 		$CacheDir = undef;
 	}
-
+	
 	return $CacheDir;
 }
 
 sub makeCacheDir {
-	my $cacheDir = $prefs->get('cachedir') || defaultCacheDir();
+	my $cacheDir = shift || $prefs->get('cachedir') || defaultCacheDir();
 
 	if (defined $cacheDir && !-d $cacheDir) {
 
@@ -900,7 +909,7 @@ sub maxRate {
 	}
 
 	if ( $rate != 0 && logger('player.source')->is_debug ) {
-		logger('player.source')->debug(sprintf("Setting maxBitRate for %s to: %d", $client->name, $rate));
+		main::DEBUGLOG && logger('player.source')->debug(sprintf("Setting maxBitRate for %s to: %d", $client->name, $rate));
 	}
 	
 	# if we're the master, make sure we return the lowest common denominator bitrate.

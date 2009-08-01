@@ -1,10 +1,8 @@
 package HTML::PullParser;
 
-# $Id: PullParser.pm,v 2.8 2005/09/12 14:26:17 gisle Exp $
-
 require HTML::Parser;
 @ISA=qw(HTML::Parser);
-$VERSION = sprintf("%d.%02d", q$Revision: 2.8 $ =~ /(\d+)\.(\d+)/);
+$VERSION = "3.57";
 
 use strict;
 use Carp ();
@@ -161,8 +159,8 @@ to a scalar.  If a reference is passed then the value of this scalar
 should not be changed before all tokens have been extracted.
 
 Next the information to be returned for the different token types must
-be set up.  This is done by simply assosiating an argspec (as defined
-in L<HTML::Parser>) with the events you have an interrest in.  For
+be set up.  This is done by simply associating an argspec (as defined
+in L<HTML::Parser>) with the events you have an interest in.  For
 instance, if you want C<start> tokens to be reported as the string
 C<'S'> followed by the tagname and the attributes you might pass an
 C<start>-option like this:

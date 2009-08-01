@@ -17,8 +17,8 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
 sub init {
-	Slim::Web::HTTP::addPageFunction( qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP );
-	Slim::Web::HTTP::addPageFunction( qr/^upnpinfo\.(?:htm|xml)/, \&browseUPnP );
+	Slim::Web::Pages->addPageFunction( qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP );
+	Slim::Web::Pages->addPageFunction( qr/^upnpinfo\.(?:htm|xml)/, \&browseUPnP );
 }
 
 sub browseUPnP {
@@ -109,7 +109,7 @@ sub gotContainer {
 		# Get the itemCount value from the TotalMatches field
 		my $totalMatches = Slim::Utils::UPnPMediaServer::getTotalMatches( $device, $levels[-1] );
 		
-		$params->{pageinfo} = Slim::Web::Pages->pageInfo( {
+		$params->{pageinfo} = Slim::Web::Pages::Common->pageInfo( {
 			itemCount   => $totalMatches || scalar @{$items},
 			path        => $params->{path},
 			otherParams => $otherparams,

@@ -206,6 +206,18 @@ sub _getPlayerInfo {
 sub infoLibrary {
 	my $client = shift;
 	
+	if (!Slim::Schema::hasLibrary()) {
+		return {
+			name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
+			items => [
+				{
+					type => 'text',
+					name => cstring($client, 'NO_LIBRARY'),
+				},
+			],
+		};
+	}
+	
 	return Slim::Music::Import->stillScanning 
 	? {
 		name => cstring($client, 'RESCANNING_SHORT'),
@@ -264,72 +276,76 @@ sub infoServer {
 	my $menu   = $tags->{menuMode};
 		
 	my $osDetails = Slim::Utils::OSDetect::details();
+	
+	my $items = [
+		{
+			type => 'text',
+			name => sprintf("%s%s %s - %s @ %s",
+						cstring($client, 'INFORMATION_VERSION'),
+						cstring($client, 'COLON'),
+						$::VERSION,
+						'r' . $::REVISION,
+						$::BUILDDATE),
+		},
+		
+		{
+			type => 'text',
+			name => cstring($client, 'INFORMATION_HOSTNAME') . cstring($client, 'COLON') . ' '
+						. Slim::Utils::Network::hostName(),
+		}, 
+		
+		{
+			type => 'text',
+			name => cstring($client, 'INFORMATION_SERVER_IP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
+						. Slim::Utils::Network::serverAddr(),
+		}, 
+		
+		{
+			type => 'text',
+			name => cstring($client, 'INFORMATION_SERVER_HTTP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
+						. $prefs->get('httpport'),
+		}, 
+	
+		{
+			type => 'text',
+			name => sprintf("%s%s %s - %s - %s ", 
+						cstring($client, 'INFORMATION_OPERATINGSYSTEM' . ($menu ? '_ABBR' : '')),
+						cstring($client, 'COLON'),
+						$osDetails->{'osName'},
+						$prefs->get('language'),
+						Slim::Utils::Unicode::currentLocale()),
+		},
+		
+		{
+			type => 'text',
+			name => cstring($client, 'INFORMATION_ARCHITECTURE' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
+						. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
+		},
+		
+		{
+			type => 'text',
+			name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
+						. $Config{'version'} . ' - ' . $Config{'archname'},
+		},
+	];
+	
+	if ( Slim::Utils::OSDetect->getOS->sqlHelperClass =~ /MySQL/ ) {
+		push @{$items},	{
+			type => 'text',
+			name => cstring($client, 'MYSQL_VERSION') . cstring($client, 'COLON') . ' '
+						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh ),
+		};
+	}
+	
+	push @{$items},	{
+		type => 'text',
+		name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
+					. Slim::Player::Client::clientCount,
+	};
 
 	return {
-		name => cstring($client, 'INFORMATION_MENU_SERVER'),
-		items => [
-			{
-				type => 'text',
-				name => sprintf("%s%s %s - %s @ %s",
-							cstring($client, 'INFORMATION_VERSION'),
-							cstring($client, 'COLON'),
-							$::VERSION,
-							'r' . $::REVISION,
-							$::BUILDDATE),
-			},
-			
-			{
-				type => 'text',
-				name => cstring($client, 'INFORMATION_HOSTNAME') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Network::hostName(),
-			}, 
-			
-			{
-				type => 'text',
-				name => cstring($client, 'INFORMATION_SERVER_IP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Network::serverAddr(),
-			}, 
-			
-			{
-				type => 'text',
-				name => cstring($client, 'INFORMATION_SERVER_HTTP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
-							. $prefs->get('httpport'),
-			}, 
-		
-			{
-				type => 'text',
-				name => sprintf("%s%s %s - %s - %s ", 
-							cstring($client, 'INFORMATION_OPERATINGSYSTEM' . ($menu ? '_ABBR' : '')),
-							cstring($client, 'COLON'),
-							$osDetails->{'osName'},
-							$prefs->get('language'),
-							Slim::Utils::Unicode::currentLocale()),
-			},
-			
-			{
-				type => 'text',
-				name => cstring($client, 'INFORMATION_ARCHITECTURE' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
-							. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
-			},
-			
-			{
-				type => 'text',
-				name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
-							. $Config{'version'} . ' - ' . $Config{'archname'},
-			},
-
-			{
-				type => 'text',
-				name => cstring($client, 'MYSQL_VERSION') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::MySQLHelper->mysqlVersionLong( Slim::Schema->storage->dbh ),
-			},
-
-			{
-				type => 'text',
-				name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
-							. Slim::Player::Client::clientCount,
-			},
-		]
+		name  => cstring($client, 'INFORMATION_MENU_SERVER'),
+		items => $items,
 	};
 }
 

@@ -68,10 +68,6 @@ sub new {
     my $options       = ref $_[0] eq "HASH" ? shift : {};
     my $layout_string = @_ ? shift : '%m%n';
     
-    if(exists $options->{ConversionPattern}->{value}) {
-        $layout_string = $options->{ConversionPattern}->{value};
-    }
-
     my $self = {
         time_function         => \&current_time,
         format                => undef,
@@ -80,6 +76,17 @@ sub new {
         CSPECS                => $CSPECS,
         dontCollapseArrayRefs => $options->{dontCollapseArrayRefs}{value},
     };
+
+    if(exists $options->{ConversionPattern}->{value}) {
+        $layout_string = $options->{ConversionPattern}->{value};
+    }
+
+    if(exists $options->{message_chomp_before_newline}) {
+        $self->{message_chomp_before_newline} = 
+          $options->{message_chomp_before_newline}->{value};
+    } else {
+        $self->{message_chomp_before_newline} = 1;
+    }
 
     if(exists $options->{time_function}) {
         $self->{time_function} = $options->{time_function};
@@ -113,7 +120,7 @@ sub define {
         # If the message contains a %m followed by a newline,
         # make a note of that so that we can cut a superfluous 
         # \n off the message later on
-    if($format =~ /%m%n/) {
+    if($self->{message_chomp_before_newline} and $format =~ /%m%n/) {
         $self->{message_chompable} = 1;
     } else {
         $self->{message_chompable} = 0;
@@ -254,17 +261,20 @@ sub render {
         # As long as they're not implemented yet ..
     $info{t} = "N/A";
 
-    foreach my $cspec (keys %{$self->{USER_DEFINED_CSPECS}}){
-        next unless $self->{info_needed}->{$cspec};
-        $info{$cspec} = $self->{USER_DEFINED_CSPECS}->{$cspec}->($self, 
-                              $message, $category, $priority, $caller_level+1);
-    }
-
         # Iterate over all info fields on the stack
     for my $e (@{$self->{stack}}) {
         my($op, $curlies) = @$e;
-        if(exists $info{$op}) {
-            my $result = $info{$op};
+
+        my $result;
+
+        if(exists $self->{USER_DEFINED_CSPECS}->{$op}) {
+            next unless $self->{info_needed}->{$op};
+            $self->{curlies} = $curlies;
+            $result = $self->{USER_DEFINED_CSPECS}->{$op}->($self, 
+                              $message, $category, $priority, 
+                              $caller_level+1);
+        } elsif(exists $info{$op}) {
+            $result = $info{$op};
             if($curlies) {
                 $result = $self->curly_action($op, $curlies, $info{$op});
             } else {
@@ -273,12 +283,13 @@ sub render {
                     $result = $info{$op}->format($self->{time_function}->());
                 }
             }
-            $result = "[undef]" unless defined $result;
-            push @results, $result;
         } else {
             warn "Format %'$op' not implemented (yet)";
-            push @results, "FORMAT-ERROR";
+            $result = "FORMAT-ERROR";
         }
+
+        $result = "[undef]" unless defined $result;
+        push @results, $result;
     }
 
     #print STDERR "sprintf $self->{printformat}--$results[0]--\n";
@@ -299,6 +310,12 @@ sub curly_action {
         $data = Log::Log4perl::MDC->get($curlies);
     } elsif($ops eq "d") {
         $data = $curlies->format($self->{time_function}->());
+    } elsif($ops eq "M") {
+        $data = shrink_category($data, $curlies);
+    } elsif($ops eq "m") {
+        if($curlies eq "chomp") {
+            chomp $data;
+        }
     } elsif($ops eq "F") {
         my @parts = File::Spec->splitdir($data);
             # Limit it to max curlies entries
@@ -468,6 +485,7 @@ replaced by the logging engine when it's time to log the message:
        parentheses.
     %L Line number within the file where the log statement was issued
     %m The message to be logged
+    %m{chomp} The message to be logged, stripped off a trailing newline
     %M Method or function where the logging request was issued
     %n Newline (OS-independent)
     %p Priority of the logging event
@@ -484,6 +502,14 @@ and L<Log::Log4perl/"Mapped Diagnostic Context (MDC)">.
 
 The granularity of time values is milliseconds if Time::HiRes is available.
 If not, only full seconds are used.
+
+Every once in a while, someone uses the "%m%n" pattern and
+additionally provides an extra newline in the log message (e.g.
+C<-E<gt>log("message\n")>. To avoid printing an extra newline in
+this case, the PatternLayout will chomp the message, printing only
+one newline. This option can be controlled by PatternLayout's
+C<message_chomp_before_newline> option. See L<Advanced options>
+for details.
 
 =head2 Quantify placeholders
 
@@ -512,6 +538,10 @@ with content after them:
     %F{1}  Just display filename
     %F{2}  Display filename and last path component (dir/test.log)
     %F{3}  Display filename and last two path components (d1/d2/test.log)
+
+    %M     Display fully qualified method/function name
+    %M{1}  Just display method name (foo)
+    %M{2}  Display method name and last path component (main::foo)
 
 In this way, you're able to shrink the displayed category or
 limit file/path components to save space in your logs.
@@ -611,6 +641,24 @@ Please note that the subroutines you're defining in this way are going
 to be run in the C<main> namespace, so be sure to fully qualify functions
 and variables if they're located in different packages.
 
+With Log4perl 1.20 and better, cspecs can be written with parameters in
+curly braces. Writing something like
+
+    log4perl.appender.Screen.layout.ConversionPattern = %U{user} %U{id} %m%n
+
+will cause the cspec function defined for %U to be called twice, once
+with the parameter 'user' and then again with the parameter 'id', 
+and the placeholders in the cspec string will be replaced with
+the respective return values.
+
+The parameter value is available in the 'curlies' entry of the first
+parameter passed to the subroutine (the layout object reference). 
+So, if you wanted to map %U{xxx} to entries in the POE session hash, 
+you'd write something like:
+
+   log4perl.PatternLayout.cspec.U = sub { \
+     POE::Kernel->get_active_session->get_heap()->{ $_[0]->{curlies} } }
+                                          
 B<SECURITY NOTE>
   
 This feature means arbitrary perl code can be embedded in the config file. 
@@ -646,7 +694,48 @@ fields, either in seconds
 since the epoch or as a reference to an array, carrying seconds and 
 microseconds, just like C<Time::HiRes::gettimeofday> does.
 
+=item message_chomp_before_newline
+
+If a layout contains the pattern "%m%n" and the message ends with a newline,
+PatternLayout will chomp the message, to prevent printing two newlines. 
+If this is not desired, and you want two newlines in this case, 
+the feature can be turned off by setting the
+C<message_chomp_before_newline> option to a false value:
+
+  my $layout = Log::Log4perl::Layout::PatternLayout->new(
+      { message_chomp_before_newline => 0
+      }, 
+      "%d (%F:%L)> %m%n");
+
+In a Log4perl configuration file, the feature can be turned off like this:
+
+    log4perl.appender.App.layout   = PatternLayout
+    log4perl.appender.App.layout.ConversionPattern = %d %m%n
+      # Yes, I want two newlines
+    log4perl.appender.App.layout.message_chomp_before_newline = 0
+
 =back
+
+=head2 Getting rid of newlines
+
+If your code contains logging statements like 
+
+      # WRONG, don't do that!
+    $logger->debug("Some message\n");
+
+then it's usually best to strip the newlines from these calls. As explained
+in L<Log::Log4perl/Logging newlines>, logging statements should never contain
+newlines, but rely on appender layouts to add necessary newlines instead.
+
+If changing the code is not an option, use the special PatternLayout 
+placeholder %m{chomp} to refer to the message excluding a trailing 
+newline:
+
+    log4perl.appender.App.layout.ConversionPattern = %d %m{chomp}%n
+
+This will add a single newline to every message, regardless if it
+complies with the Log4perl newline guidelines or not (thanks to 
+Tim Bunce for this idea).
 
 =head1 SEE ALSO
 

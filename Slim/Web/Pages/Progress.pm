@@ -6,7 +6,7 @@ use Slim::Schema;
 use Slim::Utils::Strings qw(string);
 
 sub init {
-	Slim::Web::HTTP::addPageFunction(qr/^progress\.(?:htm|xml)/,\&progress);
+	Slim::Web::Pages->addPageFunction(qr/^progress\.(?:htm|xml)/,\&progress);
 }
 
 sub progress {
@@ -15,6 +15,8 @@ sub progress {
 	if ($params->{'abortScan'}) {
 		Slim::Music::Import->abortScan();
 	}
+	
+	return undef if !Slim::Schema::hasLibrary();
 
 	my $total_time = 0;
 	my $barLen = $params->{'barlen'} || 40;

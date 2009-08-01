@@ -6,24 +6,19 @@
 #   Definition of constants for the Template Toolkit.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@wardley.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-#   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
+#   Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
-# REVISION
-#   $Id: Constants.pm,v 2.71 2006/05/25 11:23:35 abw Exp $
 #
 #============================================================================
  
 package Template::Constants;
 
 require Exporter;
-
 use strict;
 use warnings;
 use base 'Exporter';
@@ -31,7 +26,7 @@ use base 'Exporter';
 use vars qw( @EXPORT_OK %EXPORT_TAGS );
 use vars qw( $DEBUG_OPTIONS @STATUS @ERROR @CHOMP @DEBUG);
 
-our $VERSION = sprintf("%d.%02d", q$Revision: 2.71 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = 2.75;
 
 
 #========================================================================
@@ -160,18 +155,6 @@ sub debug_flags {
 
 __END__
 
-
-#------------------------------------------------------------------------
-# IMPORTANT NOTE
-#   This documentation is generated automatically from source
-#   templates.  Any changes you make here may be lost.
-# 
-#   The 'docsrc' documentation source bundle is available for download
-#   from http://www.template-toolkit.org/docs.html and contains all
-#   the source templates, XML files, scripts, etc., from which the
-#   documentation for the Template Toolkit is built.
-#------------------------------------------------------------------------
-
 =head1 NAME
 
 Template::Constants - Defines constants for the Template Toolkit
@@ -182,103 +165,91 @@ Template::Constants - Defines constants for the Template Toolkit
 
 =head1 DESCRIPTION
 
-The Template::Constants modules defines, and optionally exports into the
-caller's namespace, a number of constants used by the Template package.
+The C<Template::Constants> modules defines, and optionally exports into the
+caller's namespace, a number of constants used by the L<Template> package.
 
-Constants may be used by specifying the Template::Constants package 
+Constants may be used by specifying the C<Template::Constants> package 
 explicitly:
 
     use Template::Constants;
-
     print Template::Constants::STATUS_DECLINED;
 
 Constants may be imported into the caller's namespace by naming them as 
 options to the C<use Template::Constants> statement:
 
     use Template::Constants qw( STATUS_DECLINED );
-
     print STATUS_DECLINED;
 
 Alternatively, one of the following tagset identifiers may be specified
-to import sets of constants; :status, :error, :all.
+to import sets of constants: 'C<:status>', 'C<:error>', 'C<:all>'.
 
     use Template::Constants qw( :status );
-
     print STATUS_DECLINED;
 
-See L<Exporter> for more information on exporting variables.
+Consult the documentation for the C<Exporter> module for more information 
+on exporting variables.
 
 =head1 EXPORTABLE TAG SETS
 
 The following tag sets and associated constants are defined: 
 
-  :status
-    STATUS_OK                 # no problem, continue
-    STATUS_RETURN             # ended current block then continue (ok)
-    STATUS_STOP               # controlled stop (ok) 
-    STATUS_DONE               # iterator is all done (ok)
-    STATUS_DECLINED           # provider declined to service request (ok)
-    STATUS_ERROR              # general error condition (not ok)
+    :status
+        STATUS_OK             # no problem, continue
+        STATUS_RETURN         # ended current block then continue (ok)
+        STATUS_STOP           # controlled stop (ok) 
+        STATUS_DONE           # iterator is all done (ok)
+        STATUS_DECLINED       # provider declined to service request (ok)
+        STATUS_ERROR          # general error condition (not ok)
 
-  :error
-    ERROR_RETURN              # return a status code (e.g. 'stop')
-    ERROR_FILE                # file error: I/O, parse, recursion
-    ERROR_UNDEF               # undefined variable value used
-    ERROR_PERL                # error in [% PERL %] block
-    ERROR_FILTER              # filter error
-    ERROR_PLUGIN              # plugin error
+    :error
+        ERROR_RETURN          # return a status code (e.g. 'stop')
+        ERROR_FILE            # file error: I/O, parse, recursion
+        ERROR_UNDEF           # undefined variable value used
+        ERROR_PERL            # error in [% PERL %] block
+        ERROR_FILTER          # filter error
+        ERROR_PLUGIN          # plugin error
 
-  :chomp                      # for PRE_CHOMP and POST_CHOMP
-    CHOMP_NONE                # do not remove whitespace
-    CHOMP_ONE                 # remove whitespace to newline
-    CHOMP_ALL                 # old name for CHOMP_ONE (deprecated)
-    CHOMP_COLLAPSE            # collapse whitespace to a single space
-    CHOMP_GREEDY              # remove all whitespace including newlines
+    :chomp                  # for PRE_CHOMP and POST_CHOMP
+        CHOMP_NONE            # do not remove whitespace
+        CHOMP_ONE             # remove whitespace to newline
+        CHOMP_ALL             # old name for CHOMP_ONE (deprecated)
+        CHOMP_COLLAPSE        # collapse whitespace to a single space
+        CHOMP_GREEDY          # remove all whitespace including newlines
 
-  :debug
-    DEBUG_OFF                 # do nothing
-    DEBUG_ON                  # basic debugging flag
-    DEBUG_UNDEF               # throw undef on undefined variables
-    DEBUG_VARS                # general variable debugging
-    DEBUG_DIRS                # directive debugging
-    DEBUG_STASH               # general stash debugging
-    DEBUG_CONTEXT             # context debugging
-    DEBUG_PARSER              # parser debugging
-    DEBUG_PROVIDER            # provider debugging
-    DEBUG_PLUGINS             # plugins debugging
-    DEBUG_FILTERS             # filters debugging
-    DEBUG_SERVICE             # context debugging
-    DEBUG_ALL                 # everything
-    DEBUG_CALLER              # add caller file/line info
-    DEBUG_FLAGS               # bitmap used internally
+    :debug
+        DEBUG_OFF             # do nothing
+        DEBUG_ON              # basic debugging flag
+        DEBUG_UNDEF           # throw undef on undefined variables
+        DEBUG_VARS            # general variable debugging
+        DEBUG_DIRS            # directive debugging
+        DEBUG_STASH           # general stash debugging
+        DEBUG_CONTEXT         # context debugging
+        DEBUG_PARSER          # parser debugging
+        DEBUG_PROVIDER        # provider debugging
+        DEBUG_PLUGINS         # plugins debugging
+        DEBUG_FILTERS         # filters debugging
+        DEBUG_SERVICE         # context debugging
+        DEBUG_ALL             # everything
+        DEBUG_CALLER          # add caller file/line info
+        DEBUG_FLAGS           # bitmap used internally
 
-  :all         All the above constants.
+    :all
+        All the above constants.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@wardley.orgE<gt>
-
-L<http://wardley.org/|http://wardley.org/>
-
-
-
-
-=head1 VERSION
-
-2.71, distributed as part of the
-Template Toolkit version 2.15, released on 26 May 2006.
+Andy Wardley E<lt>abw@wardley.orgE<gt> L<http://wardley.org/>
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
-  Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
+Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Template|Template>, L<Exporter|Exporter>
+L<Template>, C<Exporter>
 
 =cut
 

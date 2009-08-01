@@ -124,7 +124,7 @@ sub init {
 		# Add our default root logger
 		my @levels = ('ERROR', $logtype);
 
-		if ($::daemon || !$::quiet) {
+		if (!$::daemon || !$::quiet) {
 			push @levels, 'screen';
 		}
 
@@ -132,9 +132,16 @@ sub init {
 	}
 	
 	# Make sure recreate option is set if user has an existing log.conf
-	if ( !Slim::Utils::OSDetect::isWindows() && !$ENV{NYTPROF} ) {
+	if ( !main::ISWINDOWS && !$ENV{NYTPROF} ) {
 		$config{'log4perl.appender.server.recreate'}              = 1;
 		$config{'log4perl.appender.server.recreate_check_signal'} = 'USR1';
+	}
+	
+	# Change to syslog if requested
+	if ( $args->{logfile} && $args->{logfile} eq 'syslog' ) {
+		delete $config{$_} for grep { /^log4perl.appender/ } keys %config;
+		
+		%config = (%config, $class->_syslogAppenders);
 	}
 
 	# Set so we can access later.
@@ -252,7 +259,7 @@ sub logWarning {
 
 	$Log::Log4perl::caller_depth++;
 
-	$self->warn('Warning: ', @_);
+	$self->error('Warning: ', @_);
 
 	$Log::Log4perl::caller_depth--;
 }
@@ -957,12 +964,56 @@ sub _defaultAppenders {
 		},
 	);
 
-	if ( !Slim::Utils::OSDetect::isWindows() && !$ENV{NYTPROF} ) {
+	if ( !main::ISWINDOWS && !$ENV{NYTPROF} ) {
 		$defaultAppenders{server}->{recreate}              = 1;
 		$defaultAppenders{server}->{recreate_check_signal} = 'USR1';
 	}
 
 	return $class->_fixupAppenders(\%defaultAppenders);
+}
+
+sub _syslogAppenders {
+	my $class = shift;
+	
+	eval { require Log::Dispatch::Syslog };
+	if ( $@ ) {
+		die "Unable to enable syslog support: $@\n";
+	}
+
+	my %syslogAppenders = (
+
+		screen => {
+			appender => 'Log::Log4perl::Appender::Screen',
+			stderr   => 0,
+		},
+
+		'screen-raw' => {
+			appender => 'Log::Log4perl::Appender::Screen',
+			stderr   => 0,
+			layout   => 'raw',
+		},
+
+		server => {
+			appender  => 'Log::Dispatch::Syslog',
+			facility  => 'daemon',
+			min_level => 'debug',
+		},
+
+		scanner => {
+			appender  => 'Log::Dispatch::Syslog',
+			facility  => 'daemon',
+			min_level => 'debug',
+		},
+
+		perfmon => {
+			appender  => 'Log::Dispatch::Syslog',
+			facility  => 'daemon',
+			layout    => 'raw',
+			min_level => 'debug',
+		},
+	);
+
+	return $class->_fixupAppenders(\%syslogAppenders);
 }
 
 sub _fixupAppenders {
@@ -985,7 +1036,7 @@ sub _fixupAppenders {
 
 	my %baseProperties = (
 		'utf8'   => 1,
-		'layout' => 'PatternLayout',
+		'layout' => 'Log::Log4perl::Layout::PatternLayout',
 	);
 
 	# Make sure everyone has these properties
@@ -1054,6 +1105,9 @@ sub PRINT {
 
 	$Log::Log4perl::caller_depth--;
 }
+
+# Allow untie() without a warning
+sub UNTIE {}
 
 1;
 

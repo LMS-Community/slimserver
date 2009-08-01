@@ -45,6 +45,12 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.xpl');
 
+$prefs->migrate(1, sub {
+	$prefs->set('interval', Slim::Utils::Prefs::OldPrefs->get('xplinterval') || 5);
+	$prefs->set('ir', Slim::Utils::Prefs::OldPrefs->get('xplir') || 'none');
+	1;
+});
+
 ################################################################################
 # PLUGIN CODE
 ################################################################################
@@ -308,7 +314,7 @@ sub sendXplHBeatMsg {
 	if ($client->isPlaying()) {
 		$playmode = "playing";
 
-		my $track = Slim::Schema->rs('Track')->objectForUrl({
+		my $track = Slim::Schema->objectForUrl({
 			'url'      => Slim::Player::Playlist::song($client),
 			'create'   => 1,
 			'readTags' => 1,
@@ -399,7 +405,7 @@ sub sendxplmsg {
 		logError("Caught exception when trying to ->send: [$@]");
 	}
 
-	$log->debug("Sending [$msg]");
+	main::DEBUGLOG && $log->debug("Sending [$msg]");
 
 	close $sockUDP;
 }
@@ -588,21 +594,21 @@ sub xplExecuteCallback {
 
 	if ($request->isCommand([['client'], ['new']])) {
 
-		$log->debug("Got new client.");
+		main::DEBUGLOG && $log->debug("Got new client.");
 		
 		sendXplHBeatMsg($client);
 	}
 	
 	elsif ($request->isCommand([['power']])) {
 
-		$log->debug("Callback for power.");
+		main::DEBUGLOG && $log->debug("Callback for power.");
 		
 		sendXplHBeatMsg($client, 1);
 	}
 	
 	elsif ($request->isCommand([['button']]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 
-		$log->debug("Callback for button.");
+		main::DEBUGLOG && $log->debug("Callback for button.");
 
 		my $param = $request->getParam('_buttoncode');
 
@@ -611,7 +617,7 @@ sub xplExecuteCallback {
 	
 	elsif ($request->isCommand([['ir']]) && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
 
-		$log->debug("Callback for IR.");
+		main::DEBUGLOG && $log->debug("Callback for IR.");
 		
 		my $param = $request->getParam('_ircode');
 
@@ -620,14 +626,14 @@ sub xplExecuteCallback {
 
 	elsif ($request->isCommand([['playlist'], ['newsong']])) {
 
-		$log->debug("Callback for newsong.");
+		main::DEBUGLOG && $log->debug("Callback for newsong.");
 
 		sendXplHBeatMsg($client, 1);
 	}
 
 	elsif ($request->isCommand([['stop']]) || $request->isCommand([['mode'], ['stop']])) {
 
-		$log->debug("Callback for stop.");
+		main::DEBUGLOG && $log->debug("Callback for stop.");
 
 		sendXplHBeatMsg($client, 1);
 	}

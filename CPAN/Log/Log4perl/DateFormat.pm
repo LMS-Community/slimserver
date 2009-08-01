@@ -4,6 +4,8 @@ package Log::Log4perl::DateFormat;
 use warnings;
 use strict;
 
+use Carp qw( croak );
+
 our $GMTIME = 0;
 
 my @MONTH_NAMES = qw(
@@ -11,7 +13,7 @@ January February March April May June July
 August September October November December);
 
 my @WEEK_DAYS = qw(
-Sunday Monday Tuesday Wednesday Thursday Friday);
+Sunday Monday Tuesday Wednesday Thursday Friday Saturday);
 
 ###########################################
 sub new {
@@ -48,9 +50,41 @@ sub prepare {
 ###########################################
     my($self, $format) = @_;
 
-    $format =~ s/(([GyMdhHmsSEDFwWakKzZ])\2*)/rep($self, $1)/ge;
+    # the actual DateTime spec allows for literal text delimited by
+    # single quotes; a single quote can be embedded in the literal
+    # text by using two single quotes.
+    #
+    # my strategy here is to split the format into active and literal
+    # "chunks"; active chunks are prepared using $self->rep() as
+    # before, while literal chunks get transformed to accomodate
+    # single quotes and to protect percent signs.
+    #
+    # motivation: the "recommended" ISO-8601 date spec for a time in
+    # UTC is actually:
+    #
+    #     YYYY-mm-dd'T'hh:mm:ss.SSS'Z'
 
-    $self->{fmt} = $format; 
+    my $fmt = "";
+
+    foreach my $chunk ( split /('(?:''|[^'])*')/, $format ) {
+        if ( $chunk =~ /\A'(.*)'\z/ ) {
+              # literal text
+            my $literal = $1;
+            $literal =~ s/''/'/g;
+            $literal =~ s/\%/\%\%/g;
+            $fmt .= $literal;
+        } elsif ( $chunk =~ /'/ ) {
+              # single quotes should always be in a literal
+            croak "bad date format \"$format\": " .
+                  "unmatched single quote in chunk \"$chunk\"";
+        } else {
+            # handle active chunks just like before
+            $chunk =~ s/(([GyMdhHmsSEDFwWakKzZ])\2*)/$self->rep($1)/ge;
+            $fmt .= $chunk;
+        }
+    }
+
+    return $self->{fmt} = $fmt;
 }
 
 ###########################################
@@ -192,7 +226,7 @@ sub rep {
 ######################
     } elsif($first eq "D") {
         push @{$self->{stack}}, [7, sub { $_[0] + 1}];
-        return "%${len}s";
+        return "%0" . $len . "d";
 
 ######################
 #a - am/pm marker    #
