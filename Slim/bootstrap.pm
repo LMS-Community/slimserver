@@ -176,8 +176,15 @@ sub loadModules {
 		my $failed = join(' ', @required_really_failed);
 
 		print "The following modules failed to load: $failed\n\n";
-
-		print "To download and compile them, please run: $libPath/Bin/build-perl-modules.pl $failed\n\n";
+		
+		if ( main::ISWINDOWS ) {
+			print "To run from source on Windows, please install ActivePerl 5.10.  ActivePerl 5.8.8 is no longer supported.\n";
+			print "http://www.activestate.com/activeperl/\n\n";
+		}
+		else {
+			print "To download and compile them, please run: $libPath/Bin/build-perl-modules.pl $failed\n\n";
+		}
+		
 		print "Exiting..\n";
 
 		exit;
