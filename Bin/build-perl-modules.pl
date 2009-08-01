@@ -26,21 +26,25 @@ my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
 my %packages = (
-	'Class::XSAccessor::Array' => 'Class-XSAccessor-Array-0.05.tar.gz',
-	'Compress::Zlib'           => 'Compress-Zlib-1.41.tar.gz',
-	'DBI'                      => 'DBI-1.604.tar.gz',
-	'DBD::mysql'               => 'DBD-mysql-3.0002.tar.gz',
+	'Audio::Scan'              => 'Audio-Scan-0.26.tar.gz',
+	'AutoXS::Header'           => 'AutoXS-Header-1.02.tar.gz',
+	'Class::C3::XS'            => 'Class-C3-XS-0.11.tar.gz',
+	'Class::XSAccessor'        => 'Class-XSAccessor-1.03.tar.gz',
+	'Class::XSAccessor::Array' => 'Class-XSAccessor-Array-1.04.tar.gz',
+	'Compress::Raw::Zlib'      => 'Compress-Raw-Zlib-2.017.tar.gz',
+	'DBI'                      => 'DBI-1.608.tar.gz',
+	'DBD::mysql'               => 'DBD-mysql-4.011.tar.gz',
 	'Digest::SHA1'             => 'Digest-SHA1-2.11.tar.gz',
 	'Encode::Detect'           => 'Encode-Detect-1.00.tar.gz',
-	'JSON::XS'                 => 'JSON-XS-1.5.tar.gz',
-	'HTML::Parser'             => 'HTML-Parser-3.48.tar.gz',
-	'POE::XS::Queue::Array'    => 'POE-XS-Queue-Array-0.002.tar.gz',
-	'Template'                 => 'Template-Toolkit-2.15.tar.gz',
-	'Time::HiRes'              => 'Time-HiRes-1.86.tar.gz',
-	'XML::Parser::Expat'       => 'XML-Parser-2.34.tar.gz',
-	'YAML::Syck'               => 'YAML-Syck-0.64.tar.gz',
-	'GD'                       => 'GD-2.35.tar.gz',
+	'EV'                       => 'EV-3.6.tar.gz',
+	'GD'                       => 'GD-2.41.tar.gz',
+	'HTML::Parser'             => 'HTML-Parser-3.60.tar.gz',
+	'JSON::XS'                 => 'JSON-XS-2.232.tar.gz',
 	'Sub::Name'                => 'Sub-Name-0.04.tar.gz',
+	'Template'                 => 'Template-Toolkit-2.21.tar.gz',
+	'Time::HiRes'              => 'Time-HiRes-1.86.tar.gz',
+	'XML::Parser::Expat'       => 'XML-Parser-2.36.tar.gz',
+	'YAML::Syck'               => 'YAML-Syck-1.05.tar.gz',
 );
 
 # Don't need Class::C3::XS if you're running 5.10
@@ -50,7 +54,7 @@ if ( $] > 5.009_004 ) {
 
 # Options for specific packages
 my %packageOptions = (
-	'Template-Toolkit-2.15' => {
+	'Template-Toolkit-2.21' => {
 
 		'Makefile.PL' => join(' ', qw(
 			TT_DOCS=n
@@ -66,9 +70,9 @@ my %packageOptions = (
 		)),
 	},
 
-	'DBD-mysql-3.0002' => {
+	'DBD-mysql-4.011' => {
 
-		'env' => [qw(DBI-1.604/blib/lib: DBI-1.604/blib/arch)],
+		'env' => [qw(DBI-1.608/blib/lib: DBI-1.608/blib/arch)],
 	},
 );
 
