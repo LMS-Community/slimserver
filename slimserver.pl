@@ -213,6 +213,10 @@ if ( DEBUGLOG ) {
 	require Slim::Utils::PerlRunTime;
 }
 
+my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+eval "use $sqlHelperClass";
+die $@ if $@;
+
 our @AUTHORS = (
 	'Sean Adams',
 	'Vidur Apparao',
@@ -303,10 +307,6 @@ sub init {
 			warn "Dumping objects...\n";
 		};
 	}
-	
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	eval "use $sqlHelperClass";
-	die $@ if $@;
 	
 	# initialize the process and daemonize, etc...
 	srand();
@@ -1054,9 +1054,7 @@ sub cleanup {
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 
-	if ( my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass() ) {
-		$sqlHelperClass->cleanup;
-	}
+	$sqlHelperClass->cleanup;
 
 	remove_pid_file();
 }
