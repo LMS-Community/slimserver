@@ -103,9 +103,19 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.extensions');
 
-$prefs->migrate(2, sub { $prefs->remove(qw(plugin applet)); 1 });
-
 $prefs->init({ repos => [], plugin => {}, auto => 0, otherrepo => 0 });
+
+$prefs->migrate(2, 
+				sub {
+					# find any plugins already installed via previous version of extension downloader and
+					# this should avoid trying to remove existing plugins when this version is first loaded
+					for my $plugin (Slim::Utils::PluginManager->installedPlugins) {
+						if (Slim::Utils::PluginManager->allPlugins->{$plugin}->{'basedir'} =~ /InstalledPlugins/) {
+							$prefs->set($plugin, 1);
+						}
+					}
+					1;
+				});
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
