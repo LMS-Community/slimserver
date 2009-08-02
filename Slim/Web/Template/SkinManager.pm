@@ -1,6 +1,6 @@
 package Slim::Web::Template::SkinManager;
 
-# $Id: $
+# $Id$
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@ use Slim::Utils::Unicode;
 BEGIN {
 	# Use our custom Template::Context subclass
 	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
+	$Template::Provider::MAX_DIRS = 128;
 }
 
 use constant baseSkin => 'EN';
