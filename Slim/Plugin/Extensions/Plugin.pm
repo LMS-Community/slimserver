@@ -107,7 +107,7 @@ $prefs->init({ repos => [], plugin => {}, auto => 0, otherrepo => 0 });
 
 $prefs->migrate(2, 
 				sub {
-					# find any plugins already installed via previous version of extension downloader and
+					# find any plugins already installed via previous version of extension downloader and save as selected
 					# this should avoid trying to remove existing plugins when this version is first loaded
 					for my $plugin (Slim::Utils::PluginManager->installedPlugins) {
 						if (Slim::Utils::PluginManager->allPlugins->{$plugin}->{'basedir'} =~ /InstalledPlugins/) {
