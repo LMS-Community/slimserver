@@ -17,6 +17,7 @@ use FindBin qw($Bin);
 use Path::Class qw(dir);
 use XML::Simple;
 use YAML::Syck;
+use Config;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -214,7 +215,7 @@ sub load {
 		my $loadModule = 0;
 
 		# Look for a lib dir that has a PAR file or otherwise.
-		if (-d catdir($baseDir, 'lib')) {
+		if (-d (my $lib = catdir($baseDir, 'lib')) ) {
 
 			my $dir = dir( catdir($baseDir, 'lib') );
 
@@ -231,20 +232,28 @@ sub load {
 				}
 
 				if ($file =~ /\.pm$/) {
-
 					$loadModule = 1;
-					unshift @INC, catdir($baseDir, 'lib');
-
 					last;
 				}
 
 				if ($file =~ /.*Plugins$/ && -d $file) {
 					$loadModule = 1;
-					unshift @INC, catdir($baseDir, 'lib');
-
 					last;
 				}
 			}
+
+			unshift @INC, $lib;
+
+			# allow plugins to include architecture specific modules
+ 			my $arch = $Config::Config{'archname'};
+			$arch =~ s/^i[3456]86-/i386-/;
+			$arch =~ s/gnu-//;
+
+			my $perlmajorversion = $Config{'version'};
+			$perlmajorversion =~ s/\.\d+$//;
+
+			unshift @INC, catdir($lib, $perlmajorversion, $arch, 'auto') if -d catdir($lib, $perlmajorversion, $arch, 'auto');
+			unshift @INC, catdir($lib, $perlmajorversion, $arch)         if -d catdir($lib, $perlmajorversion, $arch);
 		}
 
 		if (-f catdir($baseDir, 'Plugin.pm')) {
