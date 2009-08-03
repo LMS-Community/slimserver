@@ -23,6 +23,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use Tie::IxHash;
 use URI::Escape qw(uri_unescape);
+use List::Util qw(min);
 
 use Slim::Control::Request;
 use Slim::Formats::XML;
@@ -240,9 +241,11 @@ sub _cliQuery_done {
 	if ( $sid ) {
 		# Cache the feed structure for this session
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid" );
+
+		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
 		
-		eval { $cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME ) };
-		
+		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
+
 		if ( $@ && $log->is_warn ) {
 			$log->warn("Session not cached: $@");
 		}
@@ -1180,7 +1183,11 @@ sub _cliQuerySubFeed_done {
 	}
 
 	$subFeed->{'fetched'} = 1;
-	
+
+	if (defined $feed->{'cachetime'}) {
+		$parent->{'cachetime'} = min( $parent->{'cachetime'} || CACHE_TIME, $feed->{'cachetime'} );
+	}
+			
 	_cliQuery_done( $parent, $params );
 }
 
