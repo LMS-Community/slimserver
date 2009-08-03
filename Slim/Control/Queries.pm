@@ -5053,11 +5053,13 @@ sub _songData {
 	}
 	
 	my $parentTrack;
-	if (my $song = $request->client->currentSongForUrl($track->url)) {
-		my $t = $song->currentTrack();
-		if ($t->url ne $track->url) {
-			$parentTrack = $track;
-			$track = $t;
+	if ( $request->client ) { # Bug 13062, songinfo may be called without a client
+		if (my $song = $request->client->currentSongForUrl($track->url)) {
+			my $t = $song->currentTrack();
+			if ($t->url ne $track->url) {
+				$parentTrack = $track;
+				$track = $t;
+			}
 		}
 	}
 	
