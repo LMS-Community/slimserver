@@ -331,6 +331,25 @@ sub getPref {
 	return $value;
 }
 
+sub string {
+	my ($self, $stringToken) = @_;
+
+	my $string = Slim::Utils::Light::string($stringToken);
+	
+	# if SC is running, use the CLI, otherwise read the prefs file from disk
+	if ($string eq $stringToken && $svcMgr->isRunning()) {
+	
+		my $response = $self->serverRequest('getstring', $stringToken);
+
+		if (ref $response eq 'HASH' && $response->{$stringToken} && $response->{$stringToken} ne $stringToken) {
+			$string = $response->{$stringToken};
+			Slim::Utils::Light::setString($stringToken, $string);
+		}
+	}
+	
+	return $string;
+}
+
 
 sub serverRequest {
 	my $self = shift;
@@ -343,10 +362,10 @@ sub serverRequest {
 	return if $@ || !$postdata;
 
 	my $baseUrl = $self->getBaseUrl();
+	$baseUrl =~ s|^http://||;
 
 	my $req = HTTP::Request->new( 
-		'POST',
-		"http://$baseUrl/jsonrpc.js",
+		'POST' => "http://$baseUrl/jsonrpc.js",
 	);
 	$req->header('Content-Type' => 'text/plain');
 

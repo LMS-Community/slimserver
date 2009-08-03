@@ -364,7 +364,7 @@ sub showProgress {
 				
 		my $step = $steps[-1];
 		$progressBar->SetValue($progress->{$step}) if $progress->{$steps[-1]};
-		$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
+		$progressLabel->SetLabel( @steps . '. ' . Slim::GUI::ControlPanel->string(uc($step) . '_PROGRESS') );
 		$progressTime->SetLabel($progress->{totaltime});
 				
 	}

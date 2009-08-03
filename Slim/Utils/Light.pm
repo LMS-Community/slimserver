@@ -136,6 +136,15 @@ sub loadStrings {
 	close STRINGS;
 }
 
+sub setString {
+	my ($stringname, $string) = @_;
+
+	$language ||= getPref('language') || $os->getSystemLanguage();
+
+	$strings{$stringname}->{$language} = $string;	
+}
+
+
 # Read pref from the server preference file - lighter weight than loading YAML
 # don't call this too often, it's in no way optimized for speed
 sub getPref {
