@@ -3137,6 +3137,9 @@ sub serverstatusQuery {
 	# add version
 	$request->addResult('version', $::VERSION);
 
+=pod 
+	# XXX Bug 13199, these queries are expensive and don't seem to be used by anything.
+	# If they are really needed, rewrite using native DBI
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
 		$request->addResult("info total albums", Slim::Schema->count('Album'));
@@ -3144,7 +3147,8 @@ sub serverstatusQuery {
 		$request->addResult("info total genres", Slim::Schema->count('Genre'));
 		$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
 	}
-	
+=cut
+
 	my %savePrefs;
 	if (defined(my $pref_list = $request->getParam('prefs'))) {
 
