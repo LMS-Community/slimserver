@@ -696,7 +696,7 @@ sub getUpdateParams {
 	return if main::SLIM_SERVICE || main::SCANNER;
 	
 	if (!$PerlSvc::VERSION) {
-		Slim::Utils::Log::logger('server.update')->error("Running Squeezebox Server from the source - don't download the update.");
+		Slim::Utils::Log::logger('server.update')->info("Running Squeezebox Server from the source - don't download the update.");
 		return;
 	}
 	
@@ -740,11 +740,11 @@ sub installerOS {
 sub restartServer {
 	my $class = shift;
 
-	my $log = Slim::Utils::Log::logger('database.mysql');
+	my $log = Slim::Utils::Log::logger('server.update');
 	
 
 	if (!$class->canRestartServer()) {
-		$log->error("On Windows Squeezebox Server can't be restarted when run from the perl source.");
+		$log->warn("Squeezebox Server can't be restarted automatically on Windows if run from the perl source.");
 		return;
 	}
 	
