@@ -18695,6 +18695,10 @@ DEBUG_SERVER_PLUGINS
 	RU	Загрузка плагина
 	SV	Inläsning av plugin-moduler
 
+DEBUG_SERVER_UPDATE
+	DE	Informationen über automatische Software Update Downloads
+	EN	Information about automatic software update downloads
+
 DEBUG_PREFS
 	CS	Nastavení a uložení předvoleb
 	DA	Vælg og gem indstillinger
