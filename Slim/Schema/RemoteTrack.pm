@@ -35,7 +35,7 @@ my @allAttributes = (qw(
 	
 	rating lastplayed playcount
 	
-	comment
+	comment genre
 	
 	stash
 ));
@@ -48,7 +48,6 @@ my @allAttributes = (qw(
 		# Emulate absent relationships
 		qw(
 			artist
-			genre
 			albumid
 		),
 	);
