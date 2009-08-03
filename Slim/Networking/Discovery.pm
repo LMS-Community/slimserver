@@ -47,9 +47,11 @@ sub serverHostname {
 		$hostname =~ s/\..*//;
 	}
 	
-	# Hostname may contain Unicode chars
-	# XXX: these won't display properly on players
-	utf8::encode($hostname);
+	# Bug 13217, replace Unicode quote with ASCII version (commonly used in Mac server name)
+	$hostname =~ s/\x{2019}/'/g;
+	
+	# Hostname needs to be in ISO-8859-1 encoding to support the ip3k firmware font
+	$hostname = Slim::Utils::Unicode::encode('iso-8859-1', $hostname);
 
 	# just take the first 16 characters, since that's all the space we have 
 	$hostname = substr $hostname, 0, 16;
