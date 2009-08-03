@@ -217,7 +217,7 @@ sub gotViaHTTP {
 
 		eval "use $parser";
 
-		$log->warn("$@") if $@;
+		$log->error("$@") if $@;
 
 		$feed = eval { $parser->parse($http, $parserParams) };
 
