@@ -275,7 +275,8 @@ sub handleFeed {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} &&
+					 !( $stash->{'action'} && $stash->{'action'} !~ /favadd|favdel/ && $depth == $levels ) ) {
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
@@ -649,8 +650,8 @@ sub handleFeed {
 					$item->{'name'}, 
 					$type, 
 					$item->{'parser'}, 
-					undef, 
-					$item->{'image'} || Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
+					1, 
+					$item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
 				);
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
