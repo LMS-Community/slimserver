@@ -3140,6 +3140,9 @@ sub serverstatusQuery {
 	# add version
 	$request->addResult('version', $::VERSION);
 
+	# add server_uuid
+	$request->addResult('uuid', $prefs->get('server_uuid'));
+
 =pod 
 	# XXX Bug 13199, these queries are expensive and don't seem to be used by anything.
 	# If they are really needed, rewrite using native DBI
