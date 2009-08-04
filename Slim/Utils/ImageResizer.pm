@@ -198,15 +198,15 @@ sub resize {
 			# For resize mode 'm', maintain the original aspect ratio.
 			# Return the largest image which fits within the size specified
 
-			if ( $requestedWidth / $sourceWidth < $requestedHeight / $sourceHeight ) {
+			if ( $out_width / $sourceWidth < $out_height / $sourceHeight ) {
 				
-				$destWidth  = $requestedWidth;
-				$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
+				$destWidth  = $out_width;
+				$destHeight = $sourceHeight / ( $sourceWidth / $out_height );
 				
 			} else {
 				
-				$destWidth  = $sourceWidth / ( $sourceHeight / $requestedHeight );
-				$destHeight = $requestedHeight;
+				$destWidth  = $sourceWidth / ( $sourceHeight / $out_height );
+				$destHeight = $out_height;
 			}
 			
 			$out_width  = $destWidth;
