@@ -91,7 +91,7 @@ sub processCoverArtRequest {
 	# delimiter on "fields" is an underscore '_'
 	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)  # image name is first string before resizing parameters
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
-			(?:_([sSfFpco]))?        # resizeMode, given by a single character
+			(?:_([sSfFpcom]))?       # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
 			(?:\.(jpg|png|gif|gd))?$ # optional file suffixes allowed are jpg png gif gd [libgd uncompressed]
 			/ix;	
@@ -158,6 +158,8 @@ sub processCoverArtRequest {
 		$resizeMode = "squash";
 	} elsif ($resizeMode eq "o") {
 		$resizeMode = "original";
+	} elsif ($resizeMode eq "m") {
+		$resizeMode = "max";
 	} elsif ($resizeMode eq "s" || $requestedWidth) {
 		$resizeMode = "stretch";
 	} else {
@@ -483,7 +485,28 @@ sub processCoverArtRequest {
 						else {
 							$destWidth = $destHeight = $requestedWidth;
 						}
+					} elsif ($resizeMode eq "max") {
+						$destX = $sourceX = 0;
+						$destY = $sourceY = 0;
+						
+						$sourceWidth  = $origImage->width;
+						$sourceHeight = $origImage->height;
+	
+						# For max mode 'm', maintain the original aspect ratio.
+						# Return the largest image which fits in the size specified
+
+						if ( $requestedWidth / $sourceWidth < $requestedHeight / $sourceHeight ) {
+
+							$destWidth  = $requestedWidth;
+							$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
+
+						} else {
+
+							$destWidth  = $sourceWidth / ( $sourceHeight / $requestedHeight );
+							$destHeight = $requestedHeight;
+						}
 					}
+
 					
 					# GD doesn't round correctly
 					$destHeight =     Slim::Utils::Misc::round($destHeight);
@@ -493,7 +516,7 @@ sub processCoverArtRequest {
 					
 					my $newImage;
 					
-					if ( $resizeMode eq 'original' ) {
+					if ( $resizeMode eq 'original' || $resizeMode eq 'max' ) {
 						$newImage = GD::Image->new($destWidth, $destHeight);
 					}
 					else {
@@ -516,7 +539,7 @@ sub processCoverArtRequest {
 
 					# not transparent
 					} else {
-						if ( $resizeMode ne 'original' ) {
+						if ( $resizeMode eq 'original' || $resizeMode eq 'max' ) {
 							$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
 						}
 					}
