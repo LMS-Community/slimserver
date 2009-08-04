@@ -152,6 +152,8 @@ sub getInitialAudioBlock {
 	
 	close $localFh;
 	
+	# XXX: need to construct a new mdat atom for the seeked data
+	
 	return $buffer;
 }
 
@@ -166,6 +168,6 @@ sub findFrameBoundaries {
 }
 
 # XXX support while transcoding?
-sub canSeek { 1 }
+sub canSeek { 0 }
 
 1;
