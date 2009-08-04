@@ -534,8 +534,14 @@ sub cli_process {
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
 	
 	my $clientid = blessed($client) ? $client->id() : undef;
+	
+	# Special case, allow menu requests with a disconnected client
+	if ( !$clientid && $arrayRef->[1] eq 'menu' ) {
+		# set the clientid anyway, will trigger special handling in S::C::Request to store as diconnected clientid
+		$clientid = shift @{$arrayRef};
+	}
 
-	if ($clientid) {
+	if ($client) {
 
 		main::INFOLOG && $log->info("Parsing command: Found client [$clientid]");
 		

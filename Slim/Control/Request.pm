@@ -1350,8 +1350,13 @@ sub validate {
 	if (ref($self->{'_func'}) ne 'CODE') {
 
 		$self->{'_status'}   = 104;
-
-	} elsif ($self->{'_needClient'} && !$Slim::Player::Client::clientHash{$self->{'_clientid'}}){
+		
+	}
+	elsif ( $self->{_needClient} == 2 ) {
+		# Allowed as a disconnected client
+		$self->{_status} = 1;
+	}
+ 	elsif ($self->{'_needClient'} && !$Slim::Player::Client::clientHash{$self->{'_clientid'}}){
 
 		$self->{'_status'}   = 103;
 		$self->{'_clientid'} = undef;
