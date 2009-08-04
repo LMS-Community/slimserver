@@ -63,12 +63,19 @@ sub appendTracks {
 	my $work = sub {
 
 		# Get the current max track in the DB
-		my $max = $self->search_related('playlist_tracks', undef, {
-
-			'select' => [ \'MAX(position)' ],
-			'as'     => [ 'maxPosition' ],
-
-		})->single->get_column('maxPosition');
+		
+		# Bug 13185, I don't think we can do this with DBIC due to inflate_result
+		my $max = 0;
+		
+		my $dbh = Slim::Schema->storage->dbh;
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT MAX(position) FROM playlist_track WHERE playlist = ? LIMIT 1
+		} );
+		$sth->execute( $self->id );
+		if ( my ($pos) = $sth->fetchrow_array ) {
+			$max = $pos;
+		}
+		$sth->finish;
 
 		$self->_addTracksToPlaylist($tracks, $max+1);
 	};
