@@ -201,11 +201,11 @@ sub resize {
 			if ( $out_width / $sourceWidth < $out_height / $sourceHeight ) {
 				
 				$destWidth  = $out_width;
-				$destHeight = $sourceHeight / ( $sourceWidth / $out_height );
+				$destHeight = $sourceHeight / ( $sourceWidth / $out_width );
 				
 			} else {
 				
-				$destWidth  = $sourceWidth / ( $sourceHeight / $out_height );
+				$destWidth  = $sourceWidth / ( $sourceHeight / $out_width );
 				$destHeight = $out_height;
 			}
 			
