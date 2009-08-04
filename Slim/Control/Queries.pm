@@ -2439,12 +2439,13 @@ sub playlistsTracksQuery {
 
 	if (defined $iterator) {
 
-		my $totalCount = $iterator->count();
-		$totalCount += 0;
+		my $count = $iterator->count();
+		$count += 0;
+		my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 		
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $totalCount);
 
-		if ($valid) {
+		if ($valid || $start == $end) {
 
 
 			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
@@ -2480,21 +2481,23 @@ sub playlistsTracksQuery {
 				$chunkCount++;
 			}
 
-
 			my $lastChunk;
-			if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') ) {
+			if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') || $start == $end) {
 				$lastChunk = 1;
 			}
 
-                        # add a favorites link below play/add links
-                        #Add another to result count
-                        my %favorites;
-                        $favorites{'title'} = $playlistObj->name;
-                        $favorites{'url'} = $playlistObj->url;
+			# add a favorites link below play/add links
+			#Add another to result count
+			my %favorites;
+			$favorites{'title'} = $playlistObj->name;
+			$favorites{'url'} = $playlistObj->url;
 
 			($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
-			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
-
+			
+			if ($valid) {
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+			}
+			
 		}
 		$request->addResult("count", $totalCount);
 
@@ -4910,8 +4913,10 @@ sub _jiveDeletePlaylist {
 	my $playlistID    = $args{'playlistID'};
 
 	return ($chunkCount, $listCount) unless $loopname && $playlistURL;
-	return ($chunkCount, $listCount) if $start == 0 && $end == 0;
 	
+	# Bug 10646, need to support deleting an empty playlist
+	#return ($chunkCount, $listCount) if $start == 0 && $end == 0;
+
 	# We always bump listCount to indicate this request list will contain one more item at the end
 	$listCount++;
 
