@@ -253,6 +253,9 @@ sub _addInfoTags {
 	$tags->{RATE}      = $info->{samplerate};
 	$tags->{CHANNELS}  = $info->{channels};
 	$tags->{LOSSLESS}  = 1;
+	
+	# Bug 13198, workaround for bogus negative bitrate
+	$tags->{BITRATE} = abs( $tags->{BITRATE} );
 }
 
 sub _addArtworkTags {
