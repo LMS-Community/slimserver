@@ -24,6 +24,7 @@ Supported args:
 						  #   F: fitsquash
 						  #   c: crop
 						  #   o: original
+						  #   m: max
 	format   => $format   # Optional, output format (png, jpg, gif)
 	                      #   Defaults to jpg if source is jpg, otherwise png
 	width    => $width    # Output size.  One of width or height is required
@@ -193,6 +194,27 @@ sub resize {
 
 			$debug && warn "original mode using ${destWidth}x${destHeight}\n";
 		}
+		elsif ( $mode eq 'm' ) { # max
+			# For resize mode 'm', maintain the original aspect ratio.
+			# Return the largest image which fits within the size specified
+
+			if ( $requestedWidth / $sourceWidth < $requestedHeight / $sourceHeight ) {
+				
+				$destWidth  = $requestedWidth;
+				$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
+				
+			} else {
+				
+				$destWidth  = $sourceWidth / ( $sourceHeight / $requestedHeight );
+				$destHeight = $requestedHeight;
+			}
+			
+			$out_width  = $destWidth;
+			$out_height = $destHeight;
+
+			$debug && warn "max mode using ${destWidth}x${destHeight}\n";
+		}
+
 
 		# GD doesn't round correctly
 		$destHeight = _round($destHeight);
