@@ -18,8 +18,8 @@ sub initDetails {
 	# package specific addition to @INC to cater for plugin locations
 	$class->{osDetails}->{isDebian} = 1 ;
 
-	unshift @INC, '/usr/share/squeezecenter';
-	unshift @INC, '/usr/share/squeezecenter/CPAN';
+	unshift @INC, '/usr/share/squeezebox';
+	unshift @INC, '/usr/share/squeezebox/CPAN';
 	
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	unlink("$Bin/CPAN/MP3/Info.pm");
@@ -48,20 +48,20 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
-		push @dirs, "/usr/share/squeezecenter/$dir";
+		push @dirs, "/usr/share/squeezebox/$dir";
 
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
-		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezecenter/Plugins";
+		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezebox/Plugins";
 		
 	} elsif ($dir =~ /^(?:strings|revision)$/) {
 
-		push @dirs, "/usr/share/squeezecenter";
+		push @dirs, "/usr/share/squeezebox";
 
 	} elsif ($dir eq 'libpath') {
 
-		push @dirs, "/usr/share/squeezecenter";
+		push @dirs, "/usr/share/squeezebox";
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
@@ -71,19 +71,19 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 
-		push @dirs, "/etc/squeezecenter";
+		push @dirs, "/etc/squeezebox";
 
 	} elsif ($dir =~ /^(?:prefs)$/) {
 
-		push @dirs, $::prefsdir || "/var/lib/squeezecenter/prefs";
+		push @dirs, $::prefsdir || "/var/lib/squeezebox/prefs";
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || "/var/log/squeezecenter";
+		push @dirs, $::logdir || "/var/log/squeezebox";
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || "/var/lib/squeezecenter/cache";
+		push @dirs, $::cachedir || "/var/lib/squeezebox/cache";
 
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
@@ -103,7 +103,7 @@ sub decodeExternalHelperPath {
 }
 
 sub scanner {
-	return '/usr/sbin/squeezecenter-scanner';
+	return '/usr/sbin/squeezebox-scanner';
 }
 
 

@@ -89,8 +89,8 @@ sub init {
 
 	my $cacheDir = $prefs->get('librarycachedir');
 
-	$class->socketFile( catdir($cacheDir, 'squeezecenter-mysql.sock') ),
-	$class->pidFile(    catdir($cacheDir, 'squeezecenter-mysql.pid') );
+	$class->socketFile( catdir($cacheDir, 'squeezebox-mysql.sock') ),
+	$class->pidFile(    catdir($cacheDir, 'squeezebox-mysql.pid') );
 
 	$class->confFile( $class->createConfig($cacheDir) );
 

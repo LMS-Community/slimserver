@@ -92,17 +92,17 @@ sub init {
 				$os = Slim::Utils::OS::ReadyNAS->new();
 				
 			# we only differentiate Debian/Suse/Red Hat if they've been installed from a package
-			} elsif ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezecenter}) {
+			} elsif ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezebox}) {
 		
 				require Slim::Utils::OS::Debian;
 				$os = Slim::Utils::OS::Debian->new();
 		
-			} elsif ($os =~ /red hat/i && $0 =~ m{^/usr/libexec/squeezecenter}) {
+			} elsif ($os =~ /red hat/i && $0 =~ m{^/usr/libexec/squeezebox}) {
 		
 				require Slim::Utils::OS::RedHat;
 				$os = Slim::Utils::OS::RedHat->new();
 		
-			} elsif ($os =~ /suse/i && $0 =~ m{^/usr/libexec/squeezecenter}) {
+			} elsif ($os =~ /suse/i && $0 =~ m{^/usr/libexec/squeezebox}) {
 				
 				require Slim::Utils::OS::Suse;
 				$os = Slim::Utils::OS::Suse->new();
