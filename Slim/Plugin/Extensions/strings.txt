@@ -14,7 +14,19 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
+	CS	Extension Downloader (stahovač doplňků) může stáhnout a nainstalovat různé doplňky k vašemu systému Squeezebox system.
+	DA	Du kan hente en række udvidelser til dit Squeezebox-system.
+	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren.
 	EN	Extension downloader allows automated download and installation of optional features for Squeezebox server.
+	ES	El Descargador de extensiones puede descargar e instalar diversos complementos para el sistema Squeezebox.
+	FI	Squeezebox Server saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.
+	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox.
+	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi.
+	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren.
+	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.
+	PL	Moduł pobierania dodatków może pobrać i zainstalować różne rozszerzenia w systemie Squeezebox.
+	RU	Загрузчик расширений может загружать и устанавливать различные надстройки для системы Squeezebox.
+	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox.
 
 PLUGIN_EXTENSIONS_REPOS
 	CS	Doplňkové archívy
