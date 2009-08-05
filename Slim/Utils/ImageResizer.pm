@@ -343,6 +343,23 @@ sub resize {
 	return ($origref, $in_format);
 }
 
+sub getSize {
+	my $class = shift;
+	my $ref   = shift;
+
+	my $in_format = _content_type($ref);
+
+	if (my $constructor = $typeToMethod{$in_format}) {
+
+		if (my $image = GD::Image->$constructor($$ref)) {
+
+			return ($image->width, $image->height);
+		}
+	}
+
+	return (0, 0);
+}
+
 sub _content_type {
 	my $dataref = shift;
 	
