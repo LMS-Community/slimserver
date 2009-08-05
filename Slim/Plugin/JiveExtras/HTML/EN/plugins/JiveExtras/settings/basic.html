@@ -20,7 +20,9 @@
 		<table>
 		[% FOREACH entry IN wallpaper; idx = loop.index %]
 			<tr>
-				<td class="firstColumn">[% IF wallpaper_served.$idx %]<img src=[% wallpaper_served.$idx %] alt="" width="120px" height="160px"></div>[% END %]&nbsp;</td>
+				<td class="firstColumn">[% IF wallpaper_served.$idx %]<img src=[% wallpaper_served.$idx %] alt="" ></div>
+					<div>[% mysize = entry.target %] [% IF sizes.$mysize %][% sizes.$mysize %][% ELSE %][% 'PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE' | string %][% END %] ([% mysize %])</div>
+					[% END %]&nbsp;</td>
 				<td>
 					<input id=[% "wallpaper_name" _ idx %] type="text" class="stdedit" name=[% "wallpaper_name" _ idx %] value="[% entry.name %]">
 					<input id=[% "wallpaper" _ idx %] type="text" class="stdedit selectFile selectFile_png selectFile_jpg selectFile_jpeg selectFile_bmp" name=[% "wallpaper" _ idx %] value="[% entry.url %]">

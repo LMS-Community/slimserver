@@ -118,3 +118,5 @@ PLUGIN_JIVEEXTRAS_FILEORURL
 	RU	Введите файл или URL
 	SV	Ange filnamn eller webbadress
 
+PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE
+	EN	Unknown Size

@@ -35,10 +35,14 @@ sub initPlugin {
 sub getExtensions {
 	my $args = shift;
 
+	my $target = $args->{'target'};
+
 	my @res = ();
 	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $serverprefs->get('httpport') . "/jive$args->{type}";
 
 	for my $opt (@{ $prefs->get($args->{'type'}) || [] }) {
+
+		next if ($opt->{'target'} && $opt->{'target'} ne $target);
 
 		my $new = {
 			'name'  => $opt->{'key'},
