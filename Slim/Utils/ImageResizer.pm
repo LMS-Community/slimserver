@@ -59,6 +59,11 @@ sub resize {
 		return ($origref, $in_format);
 	}
 	
+	# Abort if invalid params
+	if ( ($width && $width !~ /^\d+$/) || ($height && $height !~ /^\d+$/) ) {
+		return ($origref, $in_format);
+	}
+	
 	if ( !$bgcolor ) {
 		$bgcolor = 'FFFFFF';
 	}
@@ -197,24 +202,34 @@ sub resize {
 		elsif ( $mode eq 'm' ) { # max
 			# For resize mode 'm', maintain the original aspect ratio.
 			# Return the largest image which fits within the size specified
-
-			if ( $out_width / $sourceWidth < $out_height / $sourceHeight ) {
-				
-				$destWidth  = $out_width;
-				$destHeight = $sourceHeight / ( $sourceWidth / $out_width );
-				
-			} else {
-				
-				$destWidth  = $sourceWidth / ( $sourceHeight / $out_width );
-				$destHeight = $out_height;
-			}
 			
-			$out_width  = $destWidth;
-			$out_height = $destHeight;
+			# Check what resize would be if width was used
+			($destX, $destY, $destWidth, $destHeight) = 
+				_getResizeCoords($in_width, $in_height, $out_width, $in_height / $in_width * $width);
+				
+			$debug && warn "if width was used: ${destWidth}x${destHeight} @ ($destX, $destY)\n";
+			
+			if ( $destWidth > $out_width || $destHeight > $out_height ) {
+				$debug && warn "width mode is too large\n";
+			
+				# Check was resize would be if height was used
+				($destX, $destY, $destWidth, $destHeight) = 
+					_getResizeCoords($in_width, $in_height, $in_width / $in_height * $height, $out_height);
+				
+				$debug && warn "if height was used: ${destWidth}x${destHeight} @ ($destX, $destY)\n";
+				
+				# use height
+				$out_width  = $in_width / $in_height * $height;
+				$out_height = $destHeight;
+			}
+			else {
+				# use width
+				$out_width  = $destWidth;
+				$out_height = $in_height / $in_width * $width;
+			}
 
 			$debug && warn "max mode using ${destWidth}x${destHeight}\n";
 		}
-
 
 		# GD doesn't round correctly
 		$destHeight = _round($destHeight);
