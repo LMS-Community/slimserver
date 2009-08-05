@@ -14,19 +14,7 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
-	CS	Extension Downloader (stahovač doplňků) může stáhnout a nainstalovat různé doplňky k vašemu systému Squeezebox system. Kvůli podpoře doplňků třetích stran kontaktujte autora uvedeného níže nebo se připojte na adresu <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
-	DA	Du kan hente en række udvidelser til dit Squeezebox-system. Hvis du har brug for hjælp i forbindelse med udvidelsesmodulerne fra tredjepart, kan du kontakte den som har lavet modulet, eller melde dig til vores <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
-	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren. Unterstützung für Erweiterungen von Drittanbietern erhalten Sie bei den Autoren (siehe Liste) oder in den <a href="http://forums.slimdevices.com/forumdisplay.php">Squeezebox Foren</a>.
-	EN	The Extension Downloader can download and install a variety of add-ons to your Squeezebox system.  For support for third-party extensions, contact the author listed below or join in at the <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
-	ES	El Descargador de extensiones puede descargar e instalar diversos complementos para el sistema Squeezebox. Para obtener asistencia para extensiones de otros fabricantes, póngase en contacto con el autor citado a continuación o inscríbase en los foros <a href="http://forums.slimdevices.com/forumdisplay.php?f=4"></a>.
-	FI	Squeezebox Server saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.  Kolmansien osapuolien laajennusten tukea varten ota yhteyttä alla mainittuun tekijään tai liity <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">foorumeihin</a>.
-	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox. Pour obtenir du support veuillez contacter l'auteur de l'extension tiers affiché ci-dessous ou rejoignez les <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
-	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi. Per assistenza in merito alle estensioni di terzi, rivolgersi all'autore elencato di seguito o partecipare ai <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
-	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning bij uitbreidingen van derden kun je contact opnemen met de auteur of je aansluiten bij de <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
-	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.  Hvis du trenger hjelp med tredjepartsutvidelser, må du ta kontakt med forfatteren som oppgis nedenfor, eller bli med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumene</a>.
-	PL	Moduł pobierania dodatków może pobrać i zainstalować różne rozszerzenia w systemie Squeezebox.  Aby uzyskać pomoc techniczną dotyczącą rozszerzeń innych firm, należy skontaktować się z autorami wymienionymi poniżej lub zapisać się na <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
-	RU	Загрузчик расширений может загружать и устанавливать различные надстройки для системы Squeezebox. Сведения о поддержке сторонних расширений можно получить у автора, который указан ниже, или на <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">форумах</a>.
-	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox. Om du vill ha support för tredjepartsprogram bör du kontakta upphovsmannen (se nedan) eller gå med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumen</a>.
+	EN	Extension downloader allows automated download and installation of optional features for Squeezebox server.
 
 PLUGIN_EXTENSIONS_REPOS
 	CS	Doplňkové archívy

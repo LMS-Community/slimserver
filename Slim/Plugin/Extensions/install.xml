@@ -3,11 +3,12 @@
 <extension>
 	<name>PLUGIN_EXTENSIONS</name>
 	<module>Slim::Plugin::Extensions::Plugin</module>
-	<version>0.1</version>
+	<version>1.0</version>
 	<description>PLUGIN_EXTENSIONS_DESC</description>
+    <creator>Slim Devices/Logitech</creator>
+    <email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
-	<type>2</type><!-- type=extension -->
 	<targetApplication>
 		<id>Squeezebox Server</id>
 		<minVersion>7.3</minVersion>
