@@ -619,7 +619,9 @@ sub idleStreams {
 
 sub showUsage {
 	print <<EOF;
-Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath|syslog>]
+Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
+          [--logdir <logpath>]
+          [--logfile <logfilepath|syslog>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -637,6 +639,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --cachedir       => Directory for Squeezebox Server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.
                         Also slows down library processing considerably
+    --logdir         => Specify folder location for log file
     --logfile        => Specify a file for error logging.  Specify 'syslog' to log to syslog.
     --noLogTimestamp => Don't add timestamp to log output
     --daemon         => Run the server in the background.
