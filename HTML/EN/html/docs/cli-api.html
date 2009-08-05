@@ -1186,9 +1186,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#mixer pitch">mixer pitch</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#rate">rate</a></code></strong>
-	</li>
-	<li>
 		<strong><code><a href="#show">show</a></code></strong>
 	</li>
 	<li>
@@ -1869,36 +1866,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p id="rate">
-	<strong>
-		<code>
-			&lt;playerid&gt; 
-			rate 
-			&lt;rate|?&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;rate&quot; command returns or sets the current play rate for the 
-	player. 1 is normal, 2 is 2x fast forward, 0 is paused, -1 is rewind, etc.
-</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;04:20:00:12:23:45 rate ?&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;04:20:00:12:23:45 rate 1&lt;LF&gt;&quot;
-	</p>
-	<p>
-		Request: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
