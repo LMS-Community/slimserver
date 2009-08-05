@@ -119,4 +119,6 @@ PLUGIN_JIVEEXTRAS_FILEORURL
 	SV	Ange filnamn eller webbadress
 
 PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE
+	DE	Grösse unbekannt
 	EN	Unknown Size
+	FR	Taille inconnue
