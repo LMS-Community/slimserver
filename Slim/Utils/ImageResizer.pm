@@ -12,19 +12,21 @@ my %typeToMethod = (
 	'png' => 'newFromPngData',
 );
 
+# XXX: see if we can remove all modes besides pad/max
+
 =head1 ($dataref, $format) = resize( %args )
 
 Supported args:
 	original => $dataref, # Required, original image data as a scalar ref
 	mode     => $mode     # Optional, resize mode:
-						  #   p: pad         (default if width & height specified)
-						  #   s: stretch     (default if only width specified)
-						  #   S: squash      (default if no width/height)
+						  #   m: max         (default)
+						  #   p: pad         (same as max)
+						  #   s: stretch
+						  #   S: squash
 						  #   f: fitstretch
 						  #   F: fitsquash
 						  #   c: crop
 						  #   o: original
-						  #   m: max
 	format   => $format   # Optional, output format (png, jpg, gif)
 	                      #   Defaults to jpg if source is jpg, otherwise png
 	width    => $width    # Output size.  One of width or height is required
@@ -75,16 +77,8 @@ sub resize {
 	$bgcolor = hex $bgcolor;
 	
 	if ( !$mode ) {
-		# if both width and height are given but no resize mode, mode is pad
-		if ( $width && $height ) {
-			$mode = 'p';
-		}
-		elsif ( $width ) {
-			$mode = 's';
-		}
-		else {
-			$mode = 'S';
-		}
+		# default mode is always max
+		$mode = 'm';
 	}
 	
 	# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
@@ -162,18 +156,6 @@ sub resize {
 		if ( $mode =~ /[sSfF]/ ) { # stretch or squash
 			# no change
 		}
-		elsif ( $mode eq 'p' ) { # pad
-			($destX, $destY, $destWidth, $destHeight) = 
-				_getResizeCoords($in_width, $in_height, $out_width, $out_height);
-
-			$debug && warn "padded to ${destWidth}x${destHeight} @ ($destX, $destY)\n";
-			
-			# Switch to png if there is any blank padded space
-			if ( !$explicit_format && ( $out_width != $destWidth || $out_height != $destHeight ) ) {
-				$debug && warn "switched to png output due to blank padding\n";
-				$format = 'png';
-			}
-		}
 		elsif ( $mode eq 'c' ) { # crop
 			($sourceX, $sourceY, $sourceWidth, $sourceHeight) = 
 				_getResizeCoords($out_width, $out_height, $in_width, $in_height);
@@ -199,36 +181,27 @@ sub resize {
 
 			$debug && warn "original mode using ${destWidth}x${destHeight}\n";
 		}
-		elsif ( $mode eq 'm' ) { # max
+		elsif ( $mode eq 'm' || $mode eq 'p' ) { # max
 			# For resize mode 'm', maintain the original aspect ratio.
 			# Return the largest image which fits within the size specified
-			
-			# Check what resize would be if width was used
 			($destX, $destY, $destWidth, $destHeight) = 
-				_getResizeCoords($in_width, $in_height, $out_width, $in_height / $in_width * $width);
-				
-			$debug && warn "if width was used: ${destWidth}x${destHeight} @ ($destX, $destY)\n";
+				_getResizeCoords($in_width, $in_height, $out_width, $out_height);
 			
-			if ( $destWidth > $out_width || $destHeight > $out_height ) {
-				$debug && warn "width mode is too large\n";
+			$debug && warn "max mode: ${destWidth}x${destHeight} @ ($destX, $destY)\n";
 			
-				# Check was resize would be if height was used
-				($destX, $destY, $destWidth, $destHeight) = 
-					_getResizeCoords($in_width, $in_height, $in_width / $in_height * $height, $out_height);
-				
-				$debug && warn "if height was used: ${destWidth}x${destHeight} @ ($destX, $destY)\n";
-				
-				# use height
-				$out_width  = $in_width / $in_height * $height;
-				$out_height = $destHeight;
+			# Switch to png if there is any blank padded space
+			if ( !$explicit_format ) {
+				# Maintain jpeg if source is jpeg and output is square with no padding
+				if ( $in_format eq 'jpg' && $out_width == $out_height && !$destX && !$destY ) {
+					$debug && warn "keeping jpeg due to square output\n";
+					$format = 'jpg';
+				}
+				# Switch to png if there is any blank padded space
+				elsif ( $out_width != $destWidth || $out_height != $destHeight ) {
+					$debug && warn "switched to png output due to blank padding\n";
+					$format = 'png';
+				}
 			}
-			else {
-				# use width
-				$out_width  = $destWidth;
-				$out_height = $in_height / $in_width * $width;
-			}
-
-			$debug && warn "max mode using ${destWidth}x${destHeight}\n";
 		}
 
 		# GD doesn't round correctly
