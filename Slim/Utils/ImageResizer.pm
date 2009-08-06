@@ -56,6 +56,10 @@ sub resize {
 	# Format of original image
 	my $in_format = _content_type($origref);
 	
+	# Ignore width/height of 'X'
+	$width  = undef if $width eq 'X';
+	$height = undef if $height eq 'X';
+	
 	# Short-circuit if no width/height specified, return original image
 	if ( !$width && !$height ) {
 		return ($origref, $in_format);

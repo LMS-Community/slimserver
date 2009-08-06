@@ -9,41 +9,23 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
+use Slim::Utils::ImageResizer;
 use Slim::Utils::Prefs;
 use File::Basename;
 use File::Spec::Functions qw(:ALL);
 
 my $prefs = preferences('server');
 
-my %typeToMethod = (
-	'image/gif'  => 'newFromGifData',
-	'image/jpeg' => 'newFromJpegData',
-	'image/png'  => 'newFromPngData',
-);
-
 my $log = logger('artwork');
 
-my $canUseGD = 0;
 my $cache;
 
 sub init {
-	# Artwork resizing support by using GD, requires JPEG support built in
-	$canUseGD = eval {
-		require GD;
-		if (GD::Image->can('jpeg')) {
-			return 1;
-		} else {
-			return 0;
-		}
-	};
-
 	# create cache for artwork which is not purged periodically due to potential size of cache
 	$cache = Slim::Utils::Cache->new('Artwork', 1, 1);
 }
 
-sub serverResizesArt {
-	return $canUseGD;
-}
+sub serverResizesArt { 1 }
 
 sub processCoverArtRequest {
 	my ($client, $path, $params, $callback, @args) = @_;
@@ -93,7 +75,7 @@ sub processCoverArtRequest {
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
 			(?:_([sSfFpcom]))?       # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
-			(?:\.(jpg|png|gif|gd))?$ # optional file suffixes allowed are jpg png gif gd [libgd uncompressed]
+			(?:\.(jpg|png|gif))?$ # optional file suffixes allowed are jpg png gif
 			/ix;	
 
 	my $image               = $1;
@@ -101,77 +83,16 @@ sub processCoverArtRequest {
 	my $requestedHeight     = $3; # it's ok if it didn't match and we get undef
 	my $resizeMode          = $4; # fitstretch, fitsquash, pad, stretch, crop, squash, or frappe
 	my $bgColor             = defined($5) ? $5 : '';
-
-	# if the image is a png and bgColor wasn't explicitly sent, image should be transparent
-	my $transparentRequest = 0;
-	if ($suffix =~ /gd/) { 
-		if ($bgColor eq '') {
-			main::INFOLOG && $log->info('this is a transparent gd request');
-			$transparentRequest = 'gd';
-		}
-	} elsif ($suffix =~ /png/) { 
-		if ($bgColor eq '') {
-			main::INFOLOG && $log->info('this is a transparent png request');
-			$transparentRequest = 'png';
-		}
-	} elsif ($suffix =~ /gif/) { 
-		if ($bgColor eq '') {
-			main::INFOLOG && $log->info('this is a transparent gif request');
-			$transparentRequest = 'gif';
-		}
-	} else {
-		if ($bgColor eq '') {
-			$bgColor = 'FFFFFF';
-		}
-	}
-
-	my @bgColor = split(//, $bgColor);
-
-	# allow for slop in the bg color request-- if the correct amount of chars weren't set, default to white
-	if ($bgColor ne '' && !$transparentRequest && scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
-		$log->error("BG color for $imgName was not defined correctly. Defaulting to FFFFFF (white)");
-		$bgColor = 'FFFFFF';
-	}
-
-	my $requestedBackColour = hex $bgColor; # bg color used when padding
-
-	if (!defined $resizeMode) {
-		# if both width and height are given but no resize mode, resizeMode is pad
-		if ($requestedWidth && $requestedHeight) {
-			$resizeMode = 'p';
-		# otherwise let the logic below handle it
-		} else {
-			$resizeMode = '';
-		}
-	}
-
-	# If a size is specified then default to stretch, else default to squash
-	if ($resizeMode eq "f") {
-		$resizeMode = "fitstretch";
-	}elsif ($resizeMode eq "F") {
-		$resizeMode = "fitsquash"
-	}elsif ($resizeMode eq "p") {
-		$resizeMode = "pad";
-	} elsif ($resizeMode eq "c") {
-		$resizeMode = "crop";
-	} elsif ($resizeMode eq "S") {
-		$resizeMode = "squash";
-	} elsif ($resizeMode eq "o") {
-		$resizeMode = "original";
-	} elsif ($resizeMode eq "m") {
-		$resizeMode = "max";
-	} elsif ($resizeMode eq "s" || $requestedWidth) {
-		$resizeMode = "stretch";
-	} else {
-		$resizeMode = "squash";
-	}
+	$suffix                 = $6;
 
 	my ($obj, $imageData, $cachedImage, $cacheKey);
 	
+	$cacheKey = $path;
+	
+	main::INFOLOG && $log->info("artwork cache key: $cacheKey");
+	
 	# Check for a cached resize
 	if ( $trackid ne 'current' ) {
-		$cacheKey = $path;
-		
 		if ( $cachedImage = $cache->get($cacheKey) ) {
 			my $artworkFile = $cachedImage->{'orig'};
 		
@@ -240,8 +161,6 @@ sub processCoverArtRequest {
 
 		main::INFOLOG && $log->info("  looking up artwork $image.");
 
-		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
-
 		$cachedImage = $cache->get($cacheKey);
 		
 		if ( $cachedImage ) {
@@ -299,8 +218,6 @@ sub processCoverArtRequest {
 		
 		main::INFOLOG && $log->info("  missing artwork replaced by placeholder.");
 
-		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
-
 		$cachedImage = $cache->get($cacheKey);
 		
 		if ( $cachedImage ) {
@@ -318,311 +235,17 @@ sub processCoverArtRequest {
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("  got cover art image $actualContentType of ". length($imageData) . " bytes");
 	}
-
-	if ($canUseGD && $typeToMethod{$actualContentType}) {
-
-		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
-		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
-		# can be passed straight through.
-		if ($image eq "thumb" || $requestedWidth || ($requestedContentType =~ /image\/(png|gd)/ && ($transparentRequest eq 'png' || ($requestedBackColour >> 24) != 0x7F))) {
-
-			# Bug: 3850 - new() can't auto-identify the
-			# ContentType (for things like non-JFIF JPEGs) - but
-			# we already have. So use the proper constructor for
-			# the CT. Set the image to true color.
-
-			GD::Image->trueColor(1);
-
-			my $constructor = $typeToMethod{$actualContentType};
-
-			# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
-			# XXX: Remove this when we get a newer build of GD
-			if ( main::ISWINDOWS && $actualContentType eq 'image/jpeg' ) {
-				require Imager;
-				my $img = Imager->new;
-				eval {
-					$img->read( data => $imageData ) or die $img->errstr;
-					$img->write( data => \$imageData, type => 'jpeg', jpegquality => 100 ) or die $img->errstr;
-				};
-				if ( $@ ) {
-					$log->error( "Unable to process JPEG image using Imager: $@" );
-					$body = \$imageData;
-					$requestedContentType = $actualContentType;
-					return ($body, $mtime, $inode, $size, $requestedContentType);
-				}
-			}
-
-			my $origImage   = GD::Image->$constructor($imageData);
-
-			if ($origImage) {
-				
-				
-				# If no extension was given optimize for the common case: square JPEG cover art
-				if ( $autoType && $actualContentType eq 'image/jpeg' && ($origImage->width == $origImage->height || $resizeMode eq "original") ) {
-					main::INFOLOG && $log->info( "  No file type requested, returning jpeg for square image" );
-					$requestedContentType = 'image/jpeg';
-					$transparentRequest   = 0;
-				}
-
-				# deterime the size and of type image to be returned
-				my $returnedWidth;
-				my $returnedHeight;
-				my ($returnedType) = $requestedContentType =~ /\/(\w+)/;
-				$returnedType =~ s/jpg/jpeg/i;
-
-				# if an X is supplied for the width (height) then the returned image's width (height)
-				# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
-				# a resize mode of 'stretch' or 'squash'
-				if ($requestedWidth eq "X") {
-
-					if ($requestedHeight eq "X") {
-
-						$returnedWidth  = $origImage->width;
-						$returnedHeight = $origImage->height;
-
-					} else {
-
-						$returnedWidth  = $origImage->width / $origImage->height * $requestedHeight;
-						$returnedHeight = $requestedHeight;
-					}
-
-				} elsif ($requestedHeight eq "X") {
-
-					$returnedWidth  = $requestedWidth;
-					$returnedHeight = $origImage->height / $origImage->width * $requestedWidth;
-
-				} else {
-
-					if ($image eq "cover") {
-
-						$returnedWidth  = $requestedWidth  || $origImage->width;
-						$returnedHeight = $requestedHeight || $origImage->height;
-
-					} else {
-
-						$returnedWidth  = $requestedWidth;
-						$returnedHeight = $requestedHeight;
-
-						# don't cache if width or height not set so pref can be changed
-						unless (defined($returnedWidth)) {
-							$returnedWidth = $prefs->get('thumbSize') || 100;
-							$cacheKey = undef;
-						}
-						unless (defined($returnedHeight)) {
-							$returnedHeight = $prefs->get('thumbSize') || 100;
-							$cacheKey = undef;
-						}
-
-					}
-
-					if ($resizeMode =~ /^fit/) {
-						my @r = getResizeCoords($origImage->width, $origImage->height, $returnedWidth, $returnedHeight);
-						($returnedWidth, $returnedHeight) = ($r[2], $r[3]);
-					}
-				}
-
-				# if the image is a png, it still needs to be processed in case it has an alpha channel
-				# hence, if we're squashing the image, the size of the returned image needs to be corrected
-				if ($resizeMode =~ /squash$/ && $returnedWidth > $origImage->width && $returnedHeight > $origImage->height) {
-
-					$returnedWidth  = $origImage->width;
-					$returnedHeight = $origImage->height;
-				}
-
-				# the image needs to be processed if the sizes differ, or the image is a png
-				if ($requestedContentType =~ /image\/(png|gd)/ || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
-
-					if ( main::INFOLOG && $log->is_info ) {
-						$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
-							 " to $returnedWidth x $returnedHeight using $resizeMode");
-					}
-
-					# determine source and destination upper left corner and width / height
-					my ($sourceX, $sourceY, $sourceWidth, $sourceHeight);
-					my ($destX, $destY, $destWidth, $destHeight);
-
-					if ($resizeMode =~ /(stretch|squash)$/) {
-
-						$sourceX = 0; $sourceY = 0;
-						$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
-
-						$destX = 0; $destY = 0;
-						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
-
-					} elsif ($resizeMode eq "pad") {
-
-						$sourceX = 0; $sourceY = 0;
-						$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
-
-						($destX, $destY, $destWidth, $destHeight) = 
-							getResizeCoords($origImage->width, $origImage->height, $returnedWidth, $returnedHeight);
-
-					} elsif ($resizeMode eq "crop") {
-
-						$destX = 0; $destY = 0;
-						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
-
-						($sourceX, $sourceY, $sourceWidth, $sourceHeight) = 
-							getResizeCoords($returnedWidth, $returnedHeight, $origImage->width, $origImage->height);
-					} elsif ($resizeMode eq "original") {
-						$destX = $sourceX = 0;
-						$destY = $sourceY = 0;
-						
-						$sourceWidth  = $origImage->width;
-						$sourceHeight = $origImage->height;
 	
-						# For resize mode 'o', maintain the original aspect ratio.
-						# The requested height value is not used in this case
-
-						if ( $sourceWidth > $sourceHeight ) {
-							$destWidth  = $requestedWidth;
-							$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
-						}
-						elsif ( $sourceHeight > $sourceWidth ) {
-							$destWidth  = $sourceWidth / ( $sourceHeight / $requestedWidth );
-							$destHeight = $requestedWidth;
-						}
-						else {
-							$destWidth = $destHeight = $requestedWidth;
-						}
-					} elsif ($resizeMode eq "max") {
-						$destX = $sourceX = 0;
-						$destY = $sourceY = 0;
-						
-						$sourceWidth  = $origImage->width;
-						$sourceHeight = $origImage->height;
+	($body, $requestedContentType) = Slim::Utils::ImageResizer->resize(
+		original => $imageData ? \$imageData : $body,
+		mode     => $resizeMode,
+		width    => $requestedWidth,
+		height   => $requestedHeight,
+		bgcolor  => $bgColor,
+	);
 	
-						# For max mode 'm', maintain the original aspect ratio.
-						# Return the largest image which fits in the size specified
-
-						if ( $requestedWidth / $sourceWidth < $requestedHeight / $sourceHeight ) {
-
-							$destWidth  = $requestedWidth;
-							$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
-
-						} else {
-
-							$destWidth  = $sourceWidth / ( $sourceHeight / $requestedHeight );
-							$destHeight = $requestedHeight;
-						}
-					}
-
-					
-					# GD doesn't round correctly
-					$destHeight =     Slim::Utils::Misc::round($destHeight);
-					$destWidth =      Slim::Utils::Misc::round($destWidth);
-					$returnedHeight = Slim::Utils::Misc::round($returnedHeight);
-					$returnedWidth =  Slim::Utils::Misc::round($returnedWidth);
-					
-					my $newImage;
-					
-					if ( $resizeMode eq 'original' || $resizeMode eq 'max' ) {
-						$newImage = GD::Image->new($destWidth, $destHeight);
-					}
-					else {
-						$newImage = GD::Image->new($returnedWidth, $returnedHeight);
-					}
-
-					# PNG/GD with 7 bit transparency
-					if ($transparentRequest =~ /png|gd/) {
-						main::INFOLOG && $log->info("Set alpha for transparent $transparentRequest");
-						$newImage->saveAlpha(1);
-						$newImage->alphaBlending(0);
-						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0x7f000000);
-					# GIF with 1-bit transparency
-					} elsif ($transparentRequest eq 'gif') {
-						main::INFOLOG && $log->info("This is a gif with transparency");
-						# a transparent gif has to choose a color to be transparent, so let's pick one at random
-
-						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0xaaaaaa);
-						$newImage->transparent(0xaaaaaa) or $log->warn("COULD NOT SET TRANSPARENCY");
-
-					# not transparent
-					} else {
-						if ( $resizeMode eq 'original' || $resizeMode eq 'max' ) {
-							$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
-						}
-					}
-
-					# use faster Resize algorithm on slower machines
-					if (preferences('server')->get('resampleArtwork')) {
-
-						main::INFOLOG && $log->info("Resampling file for better quality");
-						$newImage->copyResampled(
-							$origImage,
-							$destX, $destY,
-							$sourceX, $sourceY,
-							$destWidth, $destHeight,
-							$sourceWidth, $sourceHeight
-						);
-
-					} else {
-
-						main::INFOLOG && $log->info("Resizing file for faster processing");
-						$newImage->copyResized(
-							$origImage,
-							$destX, $destY,
-							$sourceX, $sourceY,
-							$destWidth, $destHeight,
-							$sourceWidth, $sourceHeight
-						);
-					}
-
-					my $newImageData;
-
-					# if the source image was a png and GD can output png data
-					# then return a png, else return a jpg
-					if ($transparentRequest eq 'gd') {
-
-						$newImageData = $newImage->gd;
-						$requestedContentType = 'image/gd';
-						
-					} elsif (($returnedType eq "png" || $transparentRequest eq 'png') && GD::Image->can('png') ) {
-
-						$newImageData = $newImage->png;
-						$requestedContentType = 'image/png';
-
-					} elsif (($returnedType eq "gif" || $transparentRequest eq 'gif') && GD::Image->can('gif') ) {
-
-						$newImageData = $newImage->gif;
-						$requestedContentType = 'image/gif';
-
-					} else {
-
-						$newImageData = $newImage->jpeg(90);
-						$requestedContentType = 'image/jpeg';
-					}
-
-					if ( main::INFOLOG && $log->is_info ) {
-						$log->info("  outputting cover art image $requestedContentType of ". length($newImageData) . " bytes");
-					}
-					
-					$body = \$newImageData;
-
-				} else {
-
-					main::INFOLOG && $log->info("  not resizing");
-					$body = \$imageData;
-				}
-
-			} else {
-
-				main::INFOLOG && $log->info("GD wouldn't create image object from $path");
-				$body = \$imageData;
-			}
-
-		} else {
-
-			main::INFOLOG && $log->info("No need to process image for $path");
-			$body = \$imageData;
-		}
-
-	} else {
-
-		$log->warn("Can't use GD for $actualContentType ($path)");
-		$body = \$imageData;
-		$requestedContentType = $actualContentType;
-	}
+	$requestedContentType = 'image/' . $requestedContentType;
+	$requestedContentType =~ s/jpg/jpeg/;
 
 	if ($cacheKey) {
 		
@@ -690,32 +313,6 @@ sub _errorGettingRemoteArtwork {
 		$body,
 		@{$http->params('args')},
 	);
-}
-
-sub getResizeCoords {
-	my $sourceImageWidth = shift;
-	my $sourceImageHeight = shift;
-	my $destImageWidth = shift;
-	my $destImageHeight = shift;
-
-	my $sourceImageAR = 1.0 * $sourceImageWidth / $sourceImageHeight;
-	my $destImageAR = 1.0 * $destImageWidth / $destImageHeight;
-
-	my ($destX, $destY, $destWidth, $destHeight);
-
-	if ($sourceImageAR >= $destImageAR) {
-		$destX = 0;
-		$destWidth = $destImageWidth;
-		$destHeight = $destImageWidth / $sourceImageAR;
-		$destY = ($destImageHeight - $destHeight) / 2
-	} else {
-		$destY = 0;
-		$destHeight = $destImageHeight;
-		$destWidth = $destImageHeight * $sourceImageAR;
-		$destX = ($destImageWidth - $destWidth) / 2
-	}
-
-	return ($destX, $destY, $destWidth, $destHeight);
 }
 
 1;
