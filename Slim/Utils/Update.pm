@@ -31,22 +31,20 @@ sub checkVersion {
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
-	# reset update download status in case our system is up to date
 	my $installer = getUpdateInstaller() || '';
 	
-	if ( isUpToDate($installer) ) {
+	# reset update download status in case our system is up to date
+	if ( $installer && installerIsUpToDate($installer) ) {
 		
-		main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
+		main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
 		
 		$::newVersion = undef;
 		setUpdateInstaller();
-		
-		return unless $prefs->get('checkVersion');
 	}
-
-	my $lastTime = $prefs->get('checkVersionLastTime');
 	
 	$os->initUpdate() if $os->canAutoUpdate() && $prefs->get('autoDownloadUpdate');
+
+	my $lastTime = $prefs->get('checkVersionLastTime');
 
 	if ($lastTime) {
 
@@ -75,7 +73,7 @@ sub checkVersion {
 			$::VERSION, 
 			$::REVISION, 
 			Slim::Utils::Strings::getLanguage(),
-			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '',
+			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
 			$os->installerOS(),
 			$prefs->get('server_uuid'),
 		);
@@ -113,7 +111,8 @@ sub checkVersionCB {
 			getUpdate($version);
 		}
 		
-		elsif ($version) {
+		# if we got an update mit download URL, display it in the web UI et al.
+		elsif ($version && $version =~ /a href=/i) {
 			$::newVersion = $version;
 		}
 	}
@@ -151,7 +150,7 @@ sub getUpdate {
 		($a, $b, $file) = splitpath($file);
 
 		# don't re-download if we're up to date
-		if (isUpToDate($file)) {
+		if (installerIsUpToDate($file)) {
 			main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
 			
 			setUpdateInstaller();
@@ -261,6 +260,8 @@ sub setUpdateInstaller {
 
 sub getUpdateInstaller {
 	
+	return unless $prefs->get('autoDownloadUpdate');
+	
 	main::DEBUGLOG && $log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || do {
@@ -287,8 +288,11 @@ sub getUpdateInstaller {
 	return $updateInstaller;
 }
 
-sub isUpToDate {
-	my $installer = shift;
+sub installerIsUpToDate {
+	
+	return unless $prefs->get('autoDownloadUpdate');
+
+	my $installer = shift || '';
 
 	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
 		|| ($installer !~ /\d{5,}/ && $installer =~ /$::VERSION/)			# no revision number, but same version
