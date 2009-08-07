@@ -647,6 +647,8 @@ sub registerPluginMenu {
 		$log->error("Incorrect data type");
 		return;
 	}
+	
+	my $isInfo = $log->is_info;
 
 	if ($node) {
 		my @menuArray = @$menuArray;
@@ -657,7 +659,7 @@ sub registerPluginMenu {
 		}
 	}
 
-	main::INFOLOG && $log->info("Registering menus from plugin");
+	main::INFOLOG && $isInfo && $log->info("Registering menus from plugin");
 
 	# notify this menu to be added
 	_notifyJive($menuArray, $client);
@@ -675,7 +677,7 @@ sub registerPluginMenu {
 		my $node = $href->{'node'};
 		if ($id) {
 			if (!$seen{$id}) {
-				main::INFOLOG && $log->info("registering menuitem " . $id . " to " . $node );
+				main::INFOLOG && $isInfo && $log->info("registering menuitem " . $id . " to " . $node );
 				push @new, $href;
 			}
 			$seen{$id}++;
