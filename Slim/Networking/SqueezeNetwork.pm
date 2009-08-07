@@ -32,7 +32,8 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn      => 'www.squeezenetwork.com',
+#	sn      => 'www.squeezenetwork.com',
+	sn      => 'test.squeezenetwork.com', # XXX temporary for testing
 	content => 'content.squeezenetwork.com',
 	update  => 'update.squeezenetwork.com',
 	test    => 'www.test.squeezenetwork.com',
