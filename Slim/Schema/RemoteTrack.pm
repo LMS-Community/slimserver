@@ -277,7 +277,7 @@ sub duration {
 
 	my $secs = $self->secs;
 
-	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs;
+	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs && $secs > 0;
 }
 
 
