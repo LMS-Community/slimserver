@@ -995,7 +995,7 @@ sub cli_subscribe_notification {
 		if (defined $connections{$client_socket}{'subscribe'}{'listen'}) {
 
 			# don't echo twice to the sender
-			if (!($request->source() eq 'CLI' && 
+			if (!($request->source() && $request->source() eq 'CLI' && 
 				  $request->connectionID() eq $client_socket)) {
 
 				# assume no array in {'listen'}: we send everything
