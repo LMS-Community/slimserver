@@ -471,15 +471,18 @@ sub idle {
 	
 	# empty notifcation queue
 	if ( !Slim::Control::Request::checkNotifications() ) {
-		# run scheduled tasks
-		# XXX: need a way to not call this unless someone is using Scheduler
 		if ( !main::SLIM_SERVICE ) {
+			# run scheduled tasks
+			# XXX: need a way to not call this unless someone is using Scheduler
 			Slim::Utils::Scheduler::run_tasks();
 		}
+		
+		Slim::Networking::IO::Select::loop( EV::LOOP_ONESHOT );
 	}
-	
-	# Loop once
-	Slim::Networking::IO::Select::loop( EV::LOOP_ONESHOT );
+	else {
+		# Some notifications are still pending, run the loop in non-blocking mode
+		Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
+	}
 
 	return $::stop;
 }

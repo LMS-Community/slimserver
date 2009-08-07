@@ -846,14 +846,16 @@ sub notifyFromArray {
 # sends notifications for first entry in queue - called once per idle loop
 sub checkNotifications {
 	
-	return 0 if (!scalar @notificationQueue);
+	my $count = scalar @notificationQueue;
+	
+	return 0 if !$count;
 
 	# notify first entry on queue
 	my $request = shift @notificationQueue;
 
 	$request->notify();
 
-	return 1;
+	return $count - 1;
 }
 
 # convenient function to execute a request from an array, with optional
