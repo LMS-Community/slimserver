@@ -39,8 +39,6 @@ sub initPlugin {
 						uri_prefix => 'http://' . Slim::Networking::SqueezeNetwork->get_server('sn'),
 					);
 					
-					warn Data::Dump::dump($menus) . "\n";
-					
 					$class->buildMenus( $menus );
 					
 					return;
