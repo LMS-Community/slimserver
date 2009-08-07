@@ -31,22 +31,35 @@ sub initPlugin {
 			undef,
 			time(),
 			sub {
+				if ( main::SLIM_SERVICE ) {
+					# On SN, fetch the list of radio menu items directly
+					require SDI::Util::RadioMenus;
+					
+					my $menus = SDI::Util::RadioMenus->menus(
+						uri_prefix => 'http://' . Slim::Networking::SqueezeNetwork->get_server('sn'),
+					);
+					
+					warn Data::Dump::dump($menus) . "\n";
+					
+					$class->buildMenus( $menus );
+					
+					return;
+				}
+				
 				if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
 					# Do nothing, menu is returned via SN login
 				}
 				else {
-					# Initialize radio menu for non-SN user and on SN
+					# Initialize radio menu for non-SN user
 					my $http = Slim::Networking::SqueezeNetwork->new(
 						\&_gotRadio,
 						\&_gotRadioError,
+						{
+							Timeout => 30,
+						},
 					);
 					
 					my $url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio');
-					
-					if ( main::SLIM_SERVICE ) {
-						# Get all possible menu items on SN, they are filtered by user later
-						$url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio/all');
-					}
 					
 					$http->get($url);
 				}
@@ -240,6 +253,8 @@ sub icon { '$icon' }
 	}
 	
 	$subclass = "${package}::${subclass}";
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug("Creating radio plugin: $subclass");
 	
 	$subclass->initPlugin();
 }
