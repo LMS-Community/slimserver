@@ -253,12 +253,6 @@ sub _addInfoTags {
 	$tags->{RATE}      = $info->{samplerate};
 	$tags->{CHANNELS}  = $info->{channels};
 	$tags->{LOSSLESS}  = 1;
-	
-	# Bug 13198, workaround for bogus negative bitrate
-	if ( $tags->{BITRATE} < 0 ) {
-		$tags->{BITRATE} = abs( $tags->{BITRATE} );
-		$log->error('Error determining FLAC bitrate, please see http://bugs.slimdevices.com/show_bug.cgi?id=13198');
-	}
 }
 
 sub _addArtworkTags {
