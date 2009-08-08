@@ -661,8 +661,10 @@ sub registerPluginMenu {
 
 	main::INFOLOG && $isInfo && $log->info("Registering menus from plugin");
 
-	# notify this menu to be added
-	_notifyJive($menuArray, $client);
+	if ( $client ) {
+		# notify this menu to be added
+		_notifyJive($menuArray, $client);
+	}
 
 	# now we want all of the items in $menuArray to go into @pluginMenus, but we also
 	# don't want duplicate items (specified by 'id'), 
