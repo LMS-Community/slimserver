@@ -72,6 +72,12 @@ if ( main::SLIM_SERVICE ) {
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
+	
+	$class->might_have(
+		persistent => 'Slim::Schema::TrackPersistent',
+		{ 'foreign.url' => 'self.url' },
+		{ cascade_delete => 0 },
+	);
 
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');

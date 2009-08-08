@@ -460,7 +460,7 @@ sub findAndAdd {
 				push @joins, 'genreTracks';
 			}
 			
-			if ( $find->{'persistent.lastPlayed'} ) {
+			if ( $find->{'persistent.lastplayed'} ) {
 				push @joins, 'persistent';
 			}
 
@@ -468,7 +468,7 @@ sub findAndAdd {
 
 			if ($find->{'genreTracks.genre'}) {
 				
-				if ( $find->{'persistent.lastPlayed'} ) {
+				if ( $find->{'persistent.lastplayed'} ) {
 					push @joins, { 'tracks' => [ 'genreTracks', 'persistent' ] };
 				}
 				else {
@@ -477,7 +477,7 @@ sub findAndAdd {
 
 			} else {
 
-				if ( $find->{'persistent.lastPlayed'} ) {
+				if ( $find->{'persistent.lastplayed'} ) {
 					push @joins, { 'tracks' => 'persistent' };
 				}
 				else {
@@ -489,7 +489,7 @@ sub findAndAdd {
 
 			if ($find->{'genreTracks.genre'}) {
 
-				if ( $find->{'persistent.lastPlayed'} ) {
+				if ( $find->{'persistent.lastplayed'} ) {
 					push @joins, { 'contributorTracks' => { 'track' => [ 'genreTracks', 'persistent' ] } };
 				}
 				else {
@@ -498,7 +498,7 @@ sub findAndAdd {
 
 			} else {
 
-				if ( $find->{'persistent.lastPlayed'} ) {
+				if ( $find->{'persistent.lastplayed'} ) {
 					push @joins, { 'contributorTracks' => { 'track' => 'persistent' } };
 				}
 				else {
@@ -511,7 +511,7 @@ sub findAndAdd {
 
 		if (!$rs->count) {
 			# we've gone through all songs - start looping
-			delete $find->{'persistent.lastPlayed'}; 
+			delete $find->{'persistent.lastplayed'}; 
 	
 			$rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
 		}
@@ -768,7 +768,7 @@ sub playRandom {
 		# This fails when multiple clients are playing random mixes. -- Max
 		if ($mixInfo{$client->master()->id}->{'startTime'}) {
 
-			$find->{'persistent.lastPlayed'} = [
+			$find->{'persistent.lastplayed'} = [
 				{ '=' => undef },
 				{ '<' => $mixInfo{$client->master()->id}->{'startTime'} }
 			];
