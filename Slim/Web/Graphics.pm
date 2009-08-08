@@ -236,13 +236,23 @@ sub processCoverArtRequest {
 		$log->info("  got cover art image $actualContentType of ". length($imageData) . " bytes");
 	}
 	
-	($body, $requestedContentType) = Slim::Utils::ImageResizer->resize(
-		original => $imageData ? \$imageData : $body,
-		mode     => $resizeMode,
-		width    => $requestedWidth,
-		height   => $requestedHeight,
-		bgcolor  => $bgColor,
-	);
+	eval {
+		($body, $requestedContentType) = Slim::Utils::ImageResizer->resize(
+			original => $imageData ? \$imageData : $body,
+			mode     => $resizeMode,
+			width    => $requestedWidth,
+			height   => $requestedHeight,
+			bgcolor  => $bgColor,
+		);
+	};
+	
+	if ( $@ ) {
+		logError("Unable to resize $path: $@");
+		
+		my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png", $params);
+
+		return ($body, $mtime, $inode, $size, 'image/png');
+	}
 	
 	$requestedContentType = 'image/' . $requestedContentType;
 	$requestedContentType =~ s/jpg/jpeg/;
