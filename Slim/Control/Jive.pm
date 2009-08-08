@@ -142,7 +142,10 @@ sub init {
 	# setup the menustatus dispatch and subscription
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'],
 		[0, 0, 0, sub { warn "menustatus query\n" }]);
-	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
+	
+	if ( $log->is_info ) {
+		Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
+	}
 	
 	# setup a cli command for jive that returns nothing; can be useful in some situations
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
