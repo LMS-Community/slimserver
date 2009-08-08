@@ -287,8 +287,6 @@ sub mainMenu {
 		return;
 	}
  
-	main::INFOLOG && $log->info("Begin Function");
- 
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
 
@@ -2070,6 +2068,9 @@ sub _clientId {
 sub _notifyJive {
 	my ($menu, $client, $action) = @_;
 	$action ||= 'add';
+	
+	# No need to send menustatus for a disconnected request
+	return if $client && $client->isa('Slim::Player::Disconnected');
 	
 	my $id = _clientId($client);
 	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
