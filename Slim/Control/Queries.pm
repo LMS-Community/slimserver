@@ -4724,6 +4724,10 @@ sub _addJiveSong {
 	}
 	elsif ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
+	# send radio placeholder art for remote tracks with no art
+	} 
+	elsif ( $track->remote ) {
+		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/radio.png');
 	}
 
 	# split to three discrete elements for NP screen
