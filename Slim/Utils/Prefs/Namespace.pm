@@ -211,7 +211,19 @@ $prefs->client($client)->get('pref1');
 sub client {
 	# opimised due to frequency of being called
 	return unless $_[1];
-	return $_[0]->{'clients'}->{ $_[1]->id } ||= Slim::Utils::Prefs::Client->new($_[0], $_[1]);
+	
+	if ( $_[0]->{'clients'}->{ $_[1]->id } ) {
+		return $_[0]->{'clients'}->{ $_[1]->id };
+	}
+	
+	my $cprefs = Slim::Utils::Prefs::Client->new($_[0], $_[1]);
+	
+	# This avoids an infinite loop if migration callbacks happen to call $prefs->client($client)
+	$_[0]->{'clients'}->{ $_[1]->id } = $cprefs;
+	
+	$cprefs->migrate($_[1]);
+	
+	return $cprefs;
 }
 
 =head2 allClients()
