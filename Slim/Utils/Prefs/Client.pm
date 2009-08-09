@@ -49,7 +49,7 @@ sub new {
 
 	if (!$nomigrate) {
 		
-		my $cversion = $class->get( '_version', 'force' ); # On SN, force _version to come from the DB
+		my $cversion = $class->get( '_version', 'force' ) || 0; # On SN, force _version to come from the DB
 
 		for my $version (sort keys %{$parent->{'migratecb'}}) {
 			
