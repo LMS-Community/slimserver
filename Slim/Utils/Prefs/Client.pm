@@ -63,9 +63,8 @@ sub new {
 						# Store _version in the database on SN
 						$class->set( '_version' => $version );
 					}
-					else {
-						$class->{'prefs'}->{'_version'} = $version;
-					}
+
+					$class->{'prefs'}->{'_version'} = $version;
 					
 				} else {
 					
