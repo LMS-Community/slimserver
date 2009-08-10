@@ -215,9 +215,9 @@ sub processCoverArtRequest {
 	# if $obj->coverArt didn't send back data, then fill with a placeholder
 	if ( !$imageData ) {
 
-		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
+		my $image = ( blessed($obj) && $obj->remote ) || $trackid =~ /^-[0-9]+$/ ? 'radio' : 'cover';
 		
-		main::INFOLOG && $log->info("  missing artwork replaced by placeholder.");
+		main::INFOLOG && $log->info("  missing artwork replaced by $image placeholder");
 
 		$cachedImage = $cache->get($cacheKey);
 		
@@ -249,8 +249,15 @@ sub processCoverArtRequest {
 	
 	if ( $@ ) {
 		logError("Unable to resize $path: $@");
+
+		my $staticImg;
+		if ($trackid =~ /^-[0-9]+$/) {
+			$staticImg = 'html/images/radio.png';
+		} else {
+			$staticImg = 'html/images/cover.png';
+		}
 		
-		my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png", $params);
+		my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($staticImg, $params);
 
 		return ($body, $mtime, $inode, $size, 'image/png');
 	}
