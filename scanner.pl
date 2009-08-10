@@ -45,7 +45,7 @@ BEGIN {
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(version Time::HiRes DBD::mysql DBI HTML::Parser XML::Parser::Expat YAML::Syck)], []);
+	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI DBD::mysql HTML::Parser XML::Parser::Expat YAML::Syck)], []);
 	
 	require File::Basename;
 	require File::Copy;
