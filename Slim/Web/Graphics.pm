@@ -33,8 +33,9 @@ sub processCoverArtRequest {
 	my ($body, $mtime, $inode, $size, $actualContentType, $autoType); 
 
 	# Allow the client to specify dimensions, etc.
-	$path =~ /music\/(\w+)\//;
+	$path =~ /music\/(-*\w+)\//;
 	my $trackid = $1;
+	main::INFOLOG && $log->info("trackid has been parsed from path as: $trackid");
 
 	my $imgName = File::Basename::basename($path);
 	my ($imgBasename, $dirPath, $suffix)  = File::Basename::fileparse($path, '\..*');
@@ -56,7 +57,7 @@ sub processCoverArtRequest {
 	# need to excavate real path to the static image here
 	if ($path !~ /^music\//) {
 		$trackid = 'notCoverArt';
-		$imgBasename =~ s/([A-Za-z0-9]+)_.*/$1/;
+		$imgBasename =~ s/(-*[A-Za-z0-9]+)_.*/$1/;
 		$actualPathToImage = $path;
 		$actualPathToImage =~ s/$imgName/$imgBasename$suffix/;
 	}
