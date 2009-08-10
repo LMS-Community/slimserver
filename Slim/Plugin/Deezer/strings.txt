@@ -86,7 +86,7 @@ PLUGIN_DEEZER_NO_NEXT_TRACK
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
-	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
+	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_DEEZER_SKIPS_EXCEEDED

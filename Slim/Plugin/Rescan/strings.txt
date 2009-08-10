@@ -15,7 +15,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	NL	Muziekcollectie opnieuw scannen
 	NO	Søk gjennom musikkbiblioteket
 	PL	Przeszukaj ponownie bibliotekę muzyki
-	RU	Повторно проверить медиатеку
+	RU	Повторно сканировать медиатеку
 	SV	Sök igenom musikbiblioteket igen
 
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC

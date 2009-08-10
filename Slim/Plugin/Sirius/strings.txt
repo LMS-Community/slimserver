@@ -105,6 +105,6 @@ PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED
 	NL	Als je Sirius wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Sirius.
 	PL	Aby korzystać z usługi Sirius, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu zaktualizowania oprogramowania układowego.
-	RU	Чтобы использовать Sirius, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
+	RU	Чтобы использовать SIRIUS, нажмите и удерживайте кнопку яркости для обновления микропрограммного обеспечения.
 	SV	Om du vill använda Sirius uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
 

@@ -297,7 +297,7 @@ PLUGIN_PANDORA_ADD_FAVORITES
 	NL	Station aan favorieten toevoegen
 	NO	Legg til stasjon i favoritter
 	PL	Dodaj stację do ulubionych
-	RU	Добавить станцию в выбранное
+	RU	Добавить станцию в избранное
 	SV	Lägg till stationen i favoriter
 
 PLUGIN_PANDORA_DEL_FAVORITES
@@ -313,7 +313,7 @@ PLUGIN_PANDORA_DEL_FAVORITES
 	NL	Station uit favorieten verwijderen
 	NO	Fjern stasjonen fra favoritter
 	PL	Usuń stację z ulubionych
-	RU	Удалить станцию из выбранного
+	RU	Удалить станцию из избранного
 	SV	Ta bort stationen från favoriter
 
 PLUGIN_PANDORA_DELETE_STATION
@@ -649,7 +649,7 @@ PLUGIN_PANDORA_SONG
 	NL	liedje
 	NO	sang
 	PL	utwór
-	RU	песня
+	RU	Песня
 	SV	låt
 
 PLUGIN_PANDORA_BY
@@ -713,7 +713,7 @@ PLUGIN_PANDORA_I_LIKE
 	NL	Ik vind dit een leuk liedje
 	NO	Jeg liker denne sangen
 	PL	Lubię ten utwór
-	RU	Песня нравится
+	RU	Песня мне нравится
 	SV	Jag tycker om den här låten
 
 PLUGIN_PANDORA_I_DONT_LIKE
@@ -729,7 +729,7 @@ PLUGIN_PANDORA_I_DONT_LIKE
 	NL	Ik vind dit geen leuk liedje
 	NO	Jeg liker ikke denne sangen
 	PL	Nie lubię tego utworu
-	RU	Песня не нравится
+	RU	Песня мне не нравится
 	SV	Jag tycker inte om den här låten
 
 PLUGIN_PANDORA_BOOKMARK_SONG
@@ -889,7 +889,7 @@ PLUGIN_PANDORA_RATING_POSITIVE_LINE2
 	NL	Cool, we zullen proberen zulke liedjes te spelen.
 	NO	Ok, da skal vi prøve å spille liknende musikk.
 	PL	Świetnie, będziemy odtwarzać podobne utwory.
-	RU	Отлично, мы попробуем воспроизвести подобные песни.
+	RU	Отлично, мы постараемся ставить подобные песни.
 	SV	OK. Vi försöker spela liknande låtar i framtiden.
 
 PLUGIN_PANDORA_RATING_NEGATIVE
@@ -1049,7 +1049,7 @@ PLUGIN_PANDORA_NO_TRACKS
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
-	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
+	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_PANDORA_PLAYLIST_END
@@ -1065,7 +1065,7 @@ PLUGIN_PANDORA_PLAYLIST_END
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
-	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
+	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Play om du vill försöka igen.
 
 PLUGIN_PANDORA_IDLE_STOPPING
@@ -1097,7 +1097,7 @@ PLUGIN_PANDORA_READONLY_MODE
 	NL	Pandora is in alleen-lezen modus. Probeer je verzoek later opnieuw.
 	NO	Pandora er i skrivebeskyttet modus, prøv å sende forespørselen igjen senere.
 	PL	Usługa Pandora działa w trybie tylko do odczytu; spróbuj wysłać żądanie ponownie później.
-	RU	Служба Pandora находится в режиме только для чтения. Повторите запрос позже.
+	RU	Служба Pandora находится в режиме "только для чтения". Повторите запрос позже.
 	SV	Pandora är i skrivskyddat läge. Försök igen senare.
 
 PLUGIN_PANDORA_MAINTENANCE_MODE

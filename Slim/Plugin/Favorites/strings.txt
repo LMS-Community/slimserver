@@ -568,7 +568,13 @@ PLUGIN_FAVORITES_URL
 	SV	Webbadress
 
 PLUGIN_FAVORITES_SAVE
+	CS	Uložit do Oblíbených
+	DE	In Favoriten speichern
 	EN	Save to Favorites
+	ES	Guardar en favoritos
+	FR	Enregistrer dans les favoris
+	PL	Zapisz w ulubionych
+	RU	Сохранить в избранном
 
 PLUGIN_FAVORITES_REMOVE
 	CS	Odstranit z Oblíbených položek

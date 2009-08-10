@@ -27,7 +27,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	NL	Deze plug-in houd je Squeezebox-systemen in de gaten en voorkomt dat het systeem naar energiebesparende stand-bymodus gaat terwijl er bijvoorbeeld muziek speelt, Squeezebox Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-bymodus gaat twee minuten na wake-on-lan.
 	NO	Denne plugin-modulen overvåker SqueezeBox-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens Squeezebox Server søker, mens spillere oppdateres osv. Den forhindrer også at systemet går i for tidlig hvilemodus to minutter etter at det har blitt startet opp via et LAN.
 	PL	Ten dodatek monitoruje odtwarzacze SqueezeBox i zapobiega przejściu systemu do trybu wstrzymania w celu oszczędzania energii, kiedy odtwarzana jest muzyka, program Squeezebox Server wykonuje przeszukiwanie, trwa aktualizacja odtwarzaczy itp. Dodatek uniemożliwi także przedwczesne przejście do trybu wstrzymania po upływie dwóch minut od zadziałania funkcji wake-on-lan.
-	RU	Этот плагин выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Squeezebox Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.
+	RU	Этот подключаемый модуль выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Squeezebox Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.
 	SV	Detta plugin-program övervakar SqueezeBox-spelarna och förhindrar att systemet försätts i viloläge när du spelar musik, när sökning sker, spelare uppdateras o.s.v. Det förhindrar även att systemet automatiskt försätts i viloläge två minuter efter wake-on-lan.
 
 PLUGIN_PREVENTSTANDBY_IDLETIME
@@ -57,7 +57,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
 	NL	Voer het aantal minuten in (nadat afspelen is gestopt of het systeem is hervat) waarna de plug-in weer toestaat dat het systeem stand-by gaat. Voer 0 (nul) in om automatische stand-by op dit systeem volledig te verhinderen.
 	NO	Angi hvor mange minutter (etter avspillingen stopper eller systemet starter opp) det skal gå før plugin-modulen tillater systemet å gå i hvilemodus. Hvis du angir 0 (null), går systemet aldri i automatisk hvilemodus.
 	PL	Wprowadź liczbę minut (od zakończenia odtwarzania lub wznowienia pracy systemu), po upływie których dodatek umożliwi systemowi ponowne przejście do trybu wstrzymania. Wprowadź wartość 0 (zero), aby całkowicie wyłączyć automatyczne przechodzenie w tryb wstrzymania w tym systemie.
-	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых плагин вновь разрешит переход в режим ожидания. Чтобы полностью запретить автоматический переход в режим ожидания, введите 0 (ноль).
+	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых подключаемый модуль вновь разрешит переход в режим ожидания. Чтобы полностью запретить автоматический переход в режим ожидания, введите 0 (ноль).
 	SV	Ange antal minuter (efter att spelaren stoppas eller systemet återupptas) som ska förflyta innan systemet åter kan försättas i viloläge. Ange 0 (noll) om du inte vill att det ska försättas i viloläge.
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON

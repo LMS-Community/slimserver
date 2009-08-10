@@ -220,7 +220,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
-	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
+	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
@@ -310,6 +310,6 @@ PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
 	PL	Aby użyć usługi Rhapsody, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
-	RU	Чтобы использовать Rhapsody, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
+	RU	Чтобы использовать Rhapsody, нажмите и удерживайте кнопку яркости для обновления микропрограммного обеспечения.
 	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
 

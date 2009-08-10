@@ -40,6 +40,6 @@ PLUGIN_MP3TUNES_MODULE_NAME_DESC
 	NL	Roep muziek vanuit je MP3tunes-muziekkluis op. Voor deze extra is een mysqueezebox.com-account vereist.
 	NO	Hent musikk fra MP3tunes Music Locker. Du må ha en konto på mysqueezebox.com for å kunne bruke denne plugin-modulen.
 	PL	Uzyskaj dostęp do muzyki w usłudze MP3tunes Music Locker. Ten dodatek wymaga konta w usłudze mysqueezebox.com.
-	RU	Получайте доступ к песням в своем музыкальном архиве MP3tunes. Для этого плагина требуется учетная запись mysqueezebox.com.
+	RU	Получайте доступ к песням в своем музыкальном архиве MP3tunes. Для этого подключаемого модуля требуется учетная запись mysqueezebox.com.
 	SV	Få tillgång till musiken i ditt MP3tunes-arkiv. Det här plugin-programmet kräver ett mysqueezebox.com-konto.
 
