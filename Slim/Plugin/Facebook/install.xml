@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<extension>
+	<id>44F50575-FC7B-4517-A811-C5EB1AED59C0</id>
+	<name>PLUGIN_FACEBOOK_MODULE_NAME</name>
+	<module>Slim::Plugin::Facebook::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_FACEBOOK_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Facebook/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
