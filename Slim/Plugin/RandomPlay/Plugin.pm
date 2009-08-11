@@ -354,6 +354,9 @@ sub chooseGenre {
 	# set the exclude_genres pref to all disabled genres 
 	$prefs->set('exclude_genres', [@excluded]);
 
+	# need to reset mix list when changing genres
+	$mixInfo{$client->master()->id}->{'idList'} = undef;
+
 	$request->setStatusDone();
 }
 
