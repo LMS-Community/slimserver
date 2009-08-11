@@ -393,7 +393,6 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	SV	Import av omslag som lagts till av användaren från iTunes
 
 # The following string refers to some special playlist names.
-# These terms have to correspond to the translation used in iTunes, or the filter will fail
 # "kMusicLibraryPrimaryPlaylistName" = "Library";
 # "9000.032" = "Videos";
 # "9000.035" = "Movies";
@@ -404,6 +403,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 # "9000.043" = "Rented Movies";
 
 ITUNES_IGNORED_PLAYLISTS_DEFAULTS
+# SLT: These terms have to correspond to the translation used in iTunes, or the filter will fail
 	CS	Knihovna, videa, filmy, televizní show, hudba, koupené, půjčené filmy
 	DA	Bibliotek, Videoklip, Film, Tv-udsendelser, Musik, Købt, Lejede film
 	DE	Musiksammlung, Videos, Filme, TV-Sendungen, Musik, Gekauft, Ausgeliehene Filme
