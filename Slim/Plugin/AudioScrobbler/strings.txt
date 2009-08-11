@@ -284,19 +284,19 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
-	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí rozhlasové stanice.	to.  Based on your taste, Last.fm provides customized radio stations,
-	DA	Musiktjenesten Last.fm kan opbygge en personlig musikprofil ved at registrere hvilke numre du lytter til.	to.  Based on your taste, Last.fm provides customized radio stations,
-	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören.	to.  Based on your taste, Last.fm provides customized radio stations,
+	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí rozhlasové stanice.
+	DA	Musiktjenesten Last.fm kan opbygge en personlig musikprofil ved at registrere hvilke numre du lytter til.
+	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören.
 	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,
-	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha.	to.  Based on your taste, Last.fm provides customized radio stations,
-	FI	Last.fm on musiikkipalvelu, joka rakentaa sinulle henkilökohtaisen musiikkiprofiilin seuraamalla, mitä musiikkia kuuntelet.	to.  Based on your taste, Last.fm provides customized radio stations,
-	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez.	to.  Based on your taste, Last.fm provides customized radio stations,
-	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta.	to.  Based on your taste, Last.fm provides customized radio stations,
-	NL	Last.fm: een muziekservice die je persoonlijke muziekprofiel opbouwt door bij te houden naar welke muziek je luistert.	to.  Based on your taste, Last.fm provides customized radio stations,
-	NO	Last.fm er en musikktjeneste som bygger opp en personlig musikkprofil for deg ved å spore musikken du spiller.	to.  Based on your taste, Last.fm provides customized radio stations,
-	PL	Usługa muzyczna Last.fm tworzy osobisty profil muzyczny użytkownika, śledząc informacje o słuchanej muzyce	to.  Based on your taste, Last.fm provides customized radio stations,
-	RU	Last.fm — музыкальная служба, создающая ваш персональный профиль путем отслеживания музыки, которую вы слушаете.	to.  Based on your taste, Last.fm provides customized radio stations,
-	SV	Last.fm är en musiktjänst som bygger upp en personlig musikprofil för dig genom att registrera vad du lyssnar på.	to.  Based on your taste, Last.fm provides customized radio stations,
+	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha.
+	FI	Last.fm on musiikkipalvelu, joka rakentaa sinulle henkilökohtaisen musiikkiprofiilin seuraamalla, mitä musiikkia kuuntelet.
+	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez.
+	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta.
+	NL	Last.fm: een muziekservice die je persoonlijke muziekprofiel opbouwt door bij te houden naar welke muziek je luistert.
+	NO	Last.fm er en musikktjeneste som bygger opp en personlig musikkprofil for deg ved å spore musikken du spiller.
+	PL	Usługa muzyczna Last.fm tworzy osobisty profil muzyczny użytkownika, śledząc informacje o słuchanej muzyce
+	RU	Last.fm — музыкальная служба, создающая ваш персональный профиль путем отслеживания музыки, которую вы слушаете.
+	SV	Last.fm är en musiktjänst som bygger upp en personlig musikprofil för dig genom att registrera vad du lyssnar på.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	CS	Poznámka: Ke konfiguraci vašeho účtu u Last.fm klikněte na Pokročilé a poté zvolte položku Last.fm Audioscrobbler.

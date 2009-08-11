@@ -569,10 +569,13 @@ PLUGIN_FAVORITES_URL
 
 PLUGIN_FAVORITES_SAVE
 	CS	Uložit do Oblíbených
+	DA	Føj til favoritter
 	DE	In Favoriten speichern
 	EN	Save to Favorites
 	ES	Guardar en favoritos
 	FR	Enregistrer dans les favoris
+	NL	In favorieten opslaan
+	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
 	RU	Сохранить в избранном
 
