@@ -146,7 +146,6 @@ sub _screensaver_request {
 
 sub _screensaver_ok {
 	my $http    = shift;
-	my $client  = $http->params('client');
 	my $request = $http->params('request');
 	
 	my $data = eval { from_json( $http->content ) };
@@ -156,9 +155,7 @@ sub _screensaver_ok {
 		return;
 	}
 	
-	$request->addResult( image   => $data->{image} );
-	$request->addResult( caption => $data->{caption} );
-	$request->addResult( date    => $data->{date} );
+	$request->addResult( data => [ $data ] );
 	
 	$request->setStatusDone();
 }
@@ -166,7 +163,6 @@ sub _screensaver_ok {
 sub _screensaver_error {
 	my $http    = shift;
 	my $error   = $http->error;
-	my $client  = $http->params('client');
 	my $request = $http->params('request');
 	
 	# Not sure what status to use here
