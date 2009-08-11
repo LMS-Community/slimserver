@@ -276,7 +276,7 @@ sub handleFeed {
 			# current cached feed
 			$subFeed->{'type'} ||= '';
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} &&
-					 !( $stash->{'action'} && $stash->{'action'} !~ /favadd|favdel/ && $depth == $levels ) ) {
+					 !( $stash->{'action'} && $stash->{'action'} =~ /favadd|favdel/ && $depth == $levels ) ) {
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
