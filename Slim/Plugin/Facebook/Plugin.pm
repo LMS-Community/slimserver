@@ -158,6 +158,7 @@ sub _screensaver_ok {
 	
 	$request->addResult( image   => $data->{image} );
 	$request->addResult( caption => $data->{caption} );
+	$request->addResult( date    => $data->{date} );
 	
 	$request->setStatusDone();
 }
