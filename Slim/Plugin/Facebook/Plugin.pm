@@ -39,12 +39,12 @@ sub initCLI {
 	
 	Slim::Control::Request::addDispatch(
 		[ $args{tag}, 'screensaver_news' ],
-	    [ 1, 1, 1, \&screensaver_news ]
+		[ 1, 1, 1, \&screensaver_news ]
 	);
 	
 	Slim::Control::Request::addDispatch(
 		[ $args{tag}, 'screensaver_photos' ],
-	    [ 1, 1, 1, \&screensaver_photos ]
+		[ 1, 1, 1, \&screensaver_photos ]
 	);
 }
 

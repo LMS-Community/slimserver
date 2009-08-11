@@ -295,6 +295,14 @@ sub mainMenu {
 
 	my @menu = map {
 		$_->{text} = $client->string(delete $_->{stringToken}) if $_->{stringToken};
+		
+		# call string() for screensaver titles
+		if ( $_->{screensavers} ) {
+			for my $s ( @{ $_->{screensavers} } ) {
+				$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
+			}
+		}
+		
 		$_;
 	}(
 		main::SLIM_SERVICE ? () : {
