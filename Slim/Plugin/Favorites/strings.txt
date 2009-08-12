@@ -573,12 +573,14 @@ PLUGIN_FAVORITES_SAVE
 	DE	In Favoriten speichern
 	EN	Save to Favorites
 	ES	Guardar en favoritos
+	FI	Tallenna suosikkeihin
 	FR	Enregistrer dans les favoris
 	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
 	RU	Сохранить в избранном
+	SV	Spara i Favoriter
 
 PLUGIN_FAVORITES_REMOVE
 	CS	Odstranit z Oblíbených položek
