@@ -1595,23 +1595,22 @@ sub infoTotalQuery {
 		return;
 	}
 	
+	my $totals = Slim::Schema->totals;
+	
 	# get our parameters
 	my $entity = $request->getRequest(2);
 
 	if ($entity eq 'albums') {
-		$request->addResult("_$entity", Slim::Schema->count('Album'));
+		$request->addResult("_$entity", $totals->{album});
 	}
-
-	if ($entity eq 'artists') {
-		$request->addResult("_$entity", Slim::Schema->rs('Contributor')->browse->count);
+	elsif ($entity eq 'artists') {
+		$request->addResult("_$entity", $totals->{contributor});
 	}
-
-	if ($entity eq 'genres') {
-		$request->addResult("_$entity", Slim::Schema->count('Genre'));
+	elsif ($entity eq 'genres') {
+		$request->addResult("_$entity", $totals->{genre});
 	}
-
-	if ($entity eq 'songs') {
-		$request->addResult("_$entity", Slim::Schema->rs('Track')->browse->count);
+	elsif ($entity eq 'songs') {
+		$request->addResult("_$entity", $totals->{track});
 	}
 	
 	$request->setStatusDone();
@@ -3143,17 +3142,15 @@ sub serverstatusQuery {
 	# add server_uuid
 	$request->addResult('uuid', $prefs->get('server_uuid'));
 
-=pod 
-	# XXX Bug 13199, these queries are expensive and don't seem to be used by anything.
-	# If they are really needed, rewrite using native DBI
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
-		$request->addResult("info total albums", Slim::Schema->count('Album'));
-		$request->addResult("info total artists", Slim::Schema->rs('Contributor')->browse->count);
-		$request->addResult("info total genres", Slim::Schema->count('Genre'));
-		$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
+		my $totals = Slim::Schema->totals;
+		
+		$request->addResult("info total albums", $totals->{album});
+		$request->addResult("info total artists", $totals->{contributor});
+		$request->addResult("info total genres", $totals->{genre});
+		$request->addResult("info total songs", $totals->{track});
 	}
-=cut
 
 	my %savePrefs;
 	if (defined(my $pref_list = $request->getParam('prefs'))) {

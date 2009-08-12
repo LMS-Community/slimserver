@@ -99,6 +99,9 @@ my $LAST_ERROR = 'Unknown Error';
 # Cache the basic top-level ResultSet objects
 my %RS_CACHE = ();
 
+# Cache library totals
+my %TOTAL_CACHE = ();
+
 =head1 METHODS
 
 All methods below are class methods on L<Slim::Schema>. Please see
@@ -1546,6 +1549,8 @@ sub wipeCaches {
 	$self->forceCommit;
 
 	%contentTypeCache = ();
+	
+	%TOTAL_CACHE = ();
 
 	# clear the references to these singletons
 	$vaObj          = undef;
@@ -2977,6 +2982,25 @@ sub clearLastError {
 }
 
 sub lastError { $LAST_ERROR }
+
+sub totals {
+	my $class = shift;
+	
+	if ( !exists $TOTAL_CACHE{album} ) {
+		$TOTAL_CACHE{album} = $class->count('Album');
+	}
+	if ( !exists $TOTAL_CACHE{contributor} ) {
+		$TOTAL_CACHE{contributor} = $class->rs('Contributor')->browse->count;
+	}
+	if ( !exists $TOTAL_CACHE{genre} ) {
+		$TOTAL_CACHE{genre} = $class->count('Genre');
+	}
+	if ( !exists $TOTAL_CACHE{track} ) {
+		$TOTAL_CACHE{track} = $class->rs('Track')->browse->count;
+	}
+	
+	return \%TOTAL_CACHE;
+}
 
 =head1 SEE ALSO
 
