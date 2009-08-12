@@ -239,13 +239,17 @@ sub menuQuery {
 			$disconnected = 1;
 		}
 	}
+	
+	my $direct = ( $disconnected || $request->getParam('direct') ) ? 1 : 0;
 
 	# send main menu notification
-	my $menu = mainMenu($client);
+	my $menu = mainMenu($client, $direct);
 	
 	# Return results directly and destroy the client if it is disconnected
 	# Also return the results directly if param 'direct' is set
-	if ( $disconnected || $request->getParam('direct') ) {
+	if ( $direct ) {
+		$log->is_info && $log->info('Sending direct menu response');
+		
 		$request->setRawResults( {
 			count     => scalar @{$menu},
 			offset    => 0,
@@ -281,6 +285,7 @@ sub mainMenu {
 
 	main::INFOLOG && $log->info("Begin function");
 	my $client = shift;
+	my $direct = shift;
 	
 	unless ($client && $client->isa('Slim::Player::Client')) {
 		# if this isn't a player, no menus should get sent
@@ -477,7 +482,9 @@ sub mainMenu {
 	}
 =cut
 
-	_notifyJive(\@menu, $client);
+	if ( !$direct ) {
+		_notifyJive(\@menu, $client);
+	}
 	
 	return \@menu;
 }
@@ -2076,9 +2083,6 @@ sub _clientId {
 sub _notifyJive {
 	my ($menu, $client, $action) = @_;
 	$action ||= 'add';
-	
-	# No need to send menustatus for a disconnected request
-	return if $client && $client->isa('Slim::Player::Disconnected');
 	
 	my $id = _clientId($client);
 	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
