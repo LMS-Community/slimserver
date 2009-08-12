@@ -870,7 +870,22 @@ sub _cliQuery_done {
 						$subitem->{_slim_id} = $cnt2++;
 					}
 				}
-				
+				# If we have a slideshow param, return all items without chunking, and only
+				# include image and caption data
+				if ( $request->getParam('slideshow') ) {
+					my $images = [];
+					for my $item ( @{ $subFeed->{items} } ) {
+						push @{$images}, {
+							image   => $item->{image},
+							caption => $item->{name},
+						};
+					}
+
+					$request->addResult( data => $images );
+					$request->setStatusDone();
+					return;
+				}
+
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 									
 					# create an ordered hash to store this stuff...
