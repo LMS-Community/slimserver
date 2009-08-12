@@ -62,9 +62,10 @@ sub getTag {
 	
 	if ( my $track = $info->{tracks}->[0] ) {
 		# MP4 file	
-		$tags->{BITRATE}  = $track->{avg_bitrate};
-		$tags->{RATE}     = $track->{samplerate};
-		$tags->{CHANNELS} = $track->{channels};
+		$tags->{BITRATE}    = $track->{avg_bitrate};
+		$tags->{RATE}       = $track->{samplerate};
+		$tags->{SAMPLESIZE} = $track->{bits_per_sample};
+		$tags->{CHANNELS}   = $track->{channels};
 
 		# If encoding is alac, the file is lossless.
 		if ( $track->{encoding} eq 'alac' ) {

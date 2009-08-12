@@ -245,14 +245,15 @@ sub _addInfoTags {
 	my $info = $s->{info};
 	
 	# Add info tags
-	$tags->{SIZE}      = $info->{file_size};
-	$tags->{SECS}      = $info->{song_length_ms} / 1000;
-	$tags->{OFFSET}    = 0; # the header is an important part of the file. don't skip it
-	$tags->{BITRATE}   = sprintf "%d", $info->{bitrate};
-	$tags->{VBR_SCALE} = 1;
-	$tags->{RATE}      = $info->{samplerate};
-	$tags->{CHANNELS}  = $info->{channels};
-	$tags->{LOSSLESS}  = 1;
+	$tags->{SIZE}       = $info->{file_size};
+	$tags->{SECS}       = $info->{song_length_ms} / 1000;
+	$tags->{OFFSET}     = 0; # the header is an important part of the file. don't skip it
+	$tags->{BITRATE}    = sprintf "%d", $info->{bitrate};
+	$tags->{VBR_SCALE}  = 1;
+	$tags->{RATE}       = $info->{samplerate};
+	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
+	$tags->{CHANNELS}   = $info->{channels};
+	$tags->{LOSSLESS}   = 1;
 }
 
 sub _addArtworkTags {
