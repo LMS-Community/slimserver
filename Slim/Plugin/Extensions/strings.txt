@@ -245,6 +245,7 @@ PLUGIN_EXTENSIONS_ACTIVE
 	EN	Active plugins
 	ES	Complementos activos
 	FR	Plugins activés
+	IT	Plugin attivi
 	NL	Actieve plug-ins
 	NO	Aktive plugin-moduler
 	PL	Włączone dodatki
@@ -257,6 +258,7 @@ PLUGIN_EXTENSIONS_INACTIVE
 	EN	Inactive plugins
 	ES	Complementos inactivos
 	FR	Plugins non activés
+	IT	Plugin disattivi
 	NL	Inactieve plug-ins
 	NO	Inaktive plugin-moduler
 	PL	Wyłączone dodatki
@@ -269,6 +271,7 @@ PLUGIN_EXTENSIONS_UPDATES
 	EN	Updated plugins available
 	ES	Hay complementos actualizados disponibles
 	FR	Plugins mis à jour disponibles
+	IT	Sono disponibili plugin aggiornati
 	NL	Er zijn bijgewerkte plug-ins beschikbaar
 	NO	Oppdaterte plugin-moduler er tilgjengelige
 	PL	Dostępne są zaktualizowane dodatki.
@@ -281,6 +284,7 @@ PLUGIN_EXTENSIONS_AUTO
 	EN	Update plugins automatically
 	ES	Actualizar complementos automáticamente
 	FR	Mettre à jour les plugins automatiquement
+	IT	Aggiorna plugin automaticamente
 	NL	Plug-ins automatisch bijwerken
 	NO	Oppdater plugin-moduler automatisk
 	PL	Automatycznie aktualizuj dodatki
@@ -293,6 +297,7 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	EN	Allow the Squeezebox server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
 	ES	Permite a Squeezebox Server buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
 	FR	Autoriser le Squeezebox Server à rechercher automatiquement les mises à jour des plugins installés et à les télécharger de manière à être appliqués au redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
+	IT	Consente a Squeezebox Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
 	NL	Squeezebox Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je plug-ins handmatig bijwerken via deze instellingenpagina.
 	NO	La Squeezebox Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
 	PL	Zezwala serwerowi Squeezebox na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
@@ -305,6 +310,7 @@ PLUGIN_EXTENSIONS_OTHERREPO
 	EN	Show all 3rd party plugins
 	ES	Mostrar todos los complementos de terceros
 	FR	Afficher tous les plugins tiers
+	IT	Mostra tutti i plugin di terzi
 	NL	Alle plug-ins van derden weergeven
 	NO	Vis alle tredjeparts plugin-moduler
 	PL	Pokaż wszystkie dodatki innych firm
@@ -317,6 +323,7 @@ PLUGIN_EXTENSIONS_OTHERREPO_DESC
 	EN	Show all other 3rd party plugins contributed by members of the Squeezebox community.  Note these plugins are unsupported and should be used at your own risk.
 	ES	Muestra los complementos de terceros proporcionados por los miembros de la comunidad de Squeezebox. Tenga en cuenta que estos complementos no son compatibles y que usted los utiliza por su cuenta y riesgo.
 	FR	Afficher tous les autres plugins tiers provenant de membres de la communauté Squeezebox. Notez que ces plugins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
+	IT	Mostra tutti gli altri plugin di terzi forniti dai membri della community Squeezebox. Tenere presente che tali plugin non sono supportati e pertanto vanno utilizzati a proprio rischio.
 	NL	Alle andere plug-ins van derden weergeven die leden van de Squeezebox-community hebben bijgedragen. N.B. Deze plug-ins worden niet ondersteund en worden op eigen risico gebruikt.
 	NO	Vis alle andre tredjeparts plugin-moduler som er laget av Squeezebox-brukere. Merk: disse plugin-modulene støttes ikke, og du bruker dem på egen risiko.
 	PL	Wyświetla wszystkie pozostałe dodatki innych firm opracowane przez społeczność usługi Squeezebox. Należy pamiętać, że te dodatki są nieobsługiwane i powinny być używane na własną odpowiedzialność.
@@ -329,6 +336,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	EN	Please note that 3rd party plugins are unsupported by Logitech and should be used at your own risk.  Please contact plugin authors for support.
 	ES	Tenga en cuenta que Logitech no admite complementos de terceros; usted los utiliza por su cuenta y riesgo. Para obtener ayuda, póngase en contacto con los autores de los complementos.
 	FR	Veuillez noter que les plugins tiers ne sont pas pris en charge par Logitech et que vous les utilisez à vos propres risques. Veuillez contacter les auteurs des plugins pour obtenir de l'aide.
+	IT	Tenere presente che i plugin di terzi non sono supportati da Logitech e pertanto vanno utilizzati a proprio rischio. Per assistenza, rivolgersi all'autore del plugin.
 	NL	Plug-ins van derden worden niet ondersteund door Logitech en gebruik hiervan is op eigen risico. Neem contact op met de auteur van de plug-in voor ondersteuning.
 	NO	Merk: Logitech støtter ikke plugin-moduler fra tredjeparter, du bruker disse på egen risiko. Du kan kontakte de som laget modulen for støtte.
 	PL	Uwaga! Dodatki innych firm są nieobsługiwane przez oprogramowanie firmy Logitech i powinny być używane na własną odpowiedzialność. W celu uzyskania pomocy skontaktuj się z autorem dodatku.

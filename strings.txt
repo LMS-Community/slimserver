@@ -584,7 +584,7 @@ MY_MUSIC
 	ES	Mi música
 	FI	Musiikkikirjasto
 	FR	Ma musique
-	IT	Libreria musicale
+	IT	Musica
 	NL	Mijn muziek
 	NO	Min musikk
 	PL	Moja muzyka
@@ -647,13 +647,16 @@ CURRENT_PLAYLIST
 	CS	Aktuální seznam skladeb
 	DA	Aktiv afspilningsliste
 	DE	Aktuelle Wiedergabeliste
-	EN	Current Playlist
+	EN	The current playlist
 	ES	Lista de reproducción actual
+	FI	Nykyinen soittoluettelo.
 	FR	Liste de lecture en cours
+	IT	Elenco di riproduzione in uso
 	NL	De huidige playlist
 	NO	Aktiv spilleliste
 	PL	Aktualna lista odtwarzania
 	RU	Текущий плей-лист
+	SV	Aktuell spellista
 
 PLAYLISTS
 	CS	Seznamy skladeb
@@ -1140,6 +1143,7 @@ PLAYLIST_CANT_WRITE
 	EN	Playlist could not be saved.
 	ES	No se ha podido guardar la lista de reproducción.
 	FR	La liste de lecture n'a pas pu être enregistrée.
+	IT	Impossibile salvare elenco di riproduzione.
 	NL	Kan playlist niet opslaan.
 	NO	Kunne ikke lagre spillelisten.
 	PL	Nie można zapisać listy odtwarzania.
@@ -3908,6 +3912,7 @@ INSTALLERROR_FAILED_TO_LOAD
 	EN	Plugin failed to load
 	ES	No se ha podido cargar el complemento
 	FR	Echec de chargement du plugin
+	IT	Caricamento plugin non riuscito
 	NL	Plug-in kan niet worden geladen
 	NO	Plugin-modulen ble ikke lastet inn
 	PL	Załadowanie dodatku nie powiodło się
@@ -5136,7 +5141,7 @@ SETUP_MAXBITRATE_DESC
 	FI	Squeezebox Server voi muuntaa musiikkitiedostot automaattisesti WAV/AIFF- tai MP3-tiedostoiksi. Tämä alentaa soittimeen virtautetun datan bittinopeutta.  Tämä on hyödyllistä, jos yhdistät soittimesi palvelimeen internetin välityksellä tai jos langattoman verkon kanssa on ajoittaisia ongelmia.  Voit valita enimmäisbittinopeuden, jolla Squeezebox Server virtauttaa soittimeen.  Alla olevaa bittinopeutta hitaammalla bittinopeudella koodattuja MP3-tiedostoja ei muunneta.  Jos valitset Ei rajoitusta, palvelin virtauttaa MP3-tiedostot muuntamattomina ja muut tiedostotyypit pakkamaattomina PCM-tiedostoina.
 	FR	Le Squeezebox Server peut convertir automatiquement et à la volée vos fichiers de musique en WAV/AIFF ou MP3 afin de limiter le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au serveur par Internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximal envoyé par le Squeezebox Server à votre platine. Les fichiers MP3 encodés à un débit inférieur à celui maximal ne seront pas transcodés. Si vous choisissez Pas de limite, le serveur enverra les fichiers MP3 sans transcodage et les autres types de fichiers au format PCM audio non compressé.
 	HE	Squeezebox Server יכול להמיר קובצי מוסיקה לתבנית WAV/AIFF או MP3 באופן אוטומטי במהלך השמעת שירים כדי להוריד את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-Squeezebox Server דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו Squeezebox Server יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו. אם תבחר את האפשרות 'ללא הגבלה', Squeezebox Server יפעיל זרימות של קובצי MP3 מבלי להמירם ויפעיל את יתר סוגי הקבצים כשמע PCM לא דחוס.
-	IT	In Squeezebox Server è possibile eseguire rapidamente la conversione automatica dei file musicali WAV/AIFF o MP3 in modo da ridurre il bitrate dei dati inviati al lettore. Questa operazione può essere utile se si collega il lettore al server tramite Internet o se si verificano interruzioni saltuarie con una rete senza fili. È possibile impostare il bitrate massimo con cui inviare lo stream audio al lettore. I brani MP3 codificati a un bitrate inferiore a quello indicato sotto non vengono convertiti. Se si sceglie Nessun limite, il server invia i file MP3 senza convertirli e gli altri tipi di file come audio PCM non compresso.
+	IT	In Squeezebox Server è possibile eseguire rapidamente la conversione automatica dei file musicali WAV/AIFF o MP3 in modo da ridurre il bitrate dei dati inviati al lettore. Questa operazione può essere utile se si collega il lettore a un server tramite Internet o se si verificano interruzioni saltuarie con una rete senza fili. È possibile impostare il bitrate massimo con cui inviare lo stream audio al lettore. I brani MP3 codificati a un bitrate inferiore a quello massimo non vengono convertiti. Se si sceglie Nessun limite, il server trasferisce i file MP3 senza convertirli e gli altri tipi di file come audio PCM non compresso.
 	JA	Squeezebox Serverは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	NL	Squeezebox Server kan je muziekbestanden direct automatisch naar WAV/AIFF of MP3 converteren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als je systeem via het internet met Squeezebox Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Squeezebox Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd. Als je 'Geen limiet' kiest, streamt Squeezebox Server MP3-bestanden zonder conversie en andere bestandstypen als niet-gecomprimeerde PCM-audio.
 	NO	Squeezebox Server kan automatisk konvertere musikkfilene til wav/aiff eller mp3 under avspilling, for å begrense bithastigheten på datastrømmen til spilleren. Dette kan være nyttig hvis du kopler spilleren til serveren over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for strømmingen til spilleren fra Squeezebox Server. Mp3-filer som er kodet med en lavere bithastighet enn maksimumhastigheten, blir ikke konvertert. Hvis du velger Ubegrenset, strømmer serveren mp3-filer uten konvertering, og andre filtyper som ukomprimert pcm-lyd.
@@ -5154,7 +5159,7 @@ SETUP_MP3BITRATE_DESC
 	FI	Squeezebox Server voi muuntaa musiikkitiedostot automaattisesti MP3-tiedostoiksi. Tämä mahdollistaa muiden kuin MP3-muotoisten tiedostojen käytön soittimessa.  Squeezebox Server voi myös uudelleenpakata MP3-tiedostot soittimeen virtautetun datan bittinopeuden laskemiseksi.  Tämä on hyödyllistä, jos yhdistät soittimesi palvelimeen internetin välityksellä tai jos langattoman verkon kanssa on ajoittain ongelmia.  Voit valita enimmäisbittinopeuden, jolla Squeezebox Server virtauttaa soittimeen.  Alla olevaa bittinopeutta hitaammalla bittinopeudella koodattuja MP3-tiedostoja ei muunneta.
 	FR	Le Squeezebox Server peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3. Il peut également ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au serveur par Internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximal envoyé par le Squeezebox Server à votre platine. Les fichiers MP3 encodés à un débit inférieur à celui maximal ne seront pas transcodés.
 	HE	Squeezebox Server יכול להמיר את קובצי המוסיקה שלך באופן אוטומטי ל-MP3 במהלך השמעה של תבניות שאינן MP3. Squeezebox Server גם יכול לדחוס את קובצי ה-MP3 כדי לצמצם את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-Squeezebox Server דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו Squeezebox Server יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו.
-	IT	Squeezebox Server consente di convertire automaticamente i file musicali in MP3 in modo rapido per riprodurre formati diversi da MP3. Consente inoltre di ricomprimere i file MP3 per ridurre il bitrate dei dati inviati al lettore. Questa funzione risulta utile se si connette il lettore al server tramite Internet o se si verificano occasionali interruzioni con una rete senza fili. È possibile scegliere il bitrate massimo con cui inviare lo stream audio al lettore tramite Squeezebox Server. I brani MP3 codificati a un bitrate inferiore a quello indicato non vengono convertiti.
+	IT	Squeezebox Server consente di convertire automaticamente i file musicali in MP3 in modo rapido per riprodurre formati diversi da MP3. Consente inoltre di ricomprimere i file MP3 per ridurre il bitrate dei dati inviati al lettore. Questa funzione risulta utile se si connette il lettore a un server tramite Internet o se si verificano occasionali interruzioni con una rete senza fili. È possibile scegliere il bitrate massimo con cui inviare lo stream audio al lettore tramite Squeezebox Server. I brani MP3 codificati a un bitrate inferiore a quello massimo non vengono convertiti.
 	JA	Squeezebox Serverは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
 	NL	Squeezebox Server kan je muziekbestanden direct automatisch naar MP3 converteren om andere formaten dan MP3 af te spelen. Squeezebox Server kan je MP3-bestanden ook opnieuw comprimeren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als het systeem via het internet met Squeezebox Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Squeezebox Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan de maximale bitsnelheid, worden niet geconverteerd.
 	NO	Squeezebox Server kan automatisk konvertere musikkfiler til mp3 under avspilling, slik at du kan spille av andre formater enn mp3. Squeezebox Server kan også komprimere mp3-filene dine, for å senke bithastigheten for data som strømmes til spilleren. Dette kan være nyttig hvis du kopler spilleren til serveren over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for strømmingen til spilleren fra Squeezebox Server. Mp3-filer som er kodet med en bithastighet som er lavere enn maksimumshastigheten, blir ikke konvertert.
@@ -6365,6 +6370,7 @@ SETUP_AUTO_RESCAN
 	EN	Automatically detect changes
 	ES	Detectar cambios automáticamente
 	FR	Détecter automatiquement les modifications
+	IT	Rileva modifiche automaticamente
 	NL	Wijzigingen automatisch detecteren
 	NO	Registrer endringer automatisk
 	PL	Automatycznie wykrywaj zmiany
@@ -6377,6 +6383,7 @@ SETUP_AUTO_RESCAN_DESC
 	EN	Squeezebox Server can watch your music folder and automatically detect changes.  New and changed files should appear in your library within several minutes.
 	ES	Squeezebox Server puede examinar la carpeta de música y detectar los cambios automáticamente. Los archivos nuevos y modificados aparecen en la biblioteca tras varios minutos.
 	FR	Squeezebox Server peut surveiller vos dossiers de musique et y détecter automatiquement toute modification. Tout fichier ajouté ou modifié s'affiche dans votre collection en l'espace de quelques minutes.
+	IT	Squeezebox Server può monitorare la cartella della musica a rilevare automaticamente le modifiche. I file nuovi o modificati appariranno nella libreria nel giro di qualche minuto.
 	NL	Squeezebox Server kan je muziekmap in de gaten houden en automatisch wijzigingen detecteren. Nieuwe en gewijzigde bestanden moeten binnen een paar minuten in je collectie verschijnen.
 	NO	Squeezebox Server kan holde et øye med musikkmappen, og oppdage endringer automatisk. Nye og endrede filer skal da komme opp i biblioteket innen få minutter.
 	PL	Program Squeezebox Server może monitorować folder z muzyką i automatycznie wykrywać zmiany. Nowe i zmienione pliki powinny pojawiać się w bibliotece w ciągu kilku minut.
@@ -6389,6 +6396,7 @@ SETUP_AUTO_RESCAN_ENABLE
 	EN	Enabled, watch for changes automatically
 	ES	Activado, detectar cambios automáticamente
 	FR	Activé ; détection automatique des modifications
+	IT	Attivato. Verifica modifiche automaticamente.
 	NL	Ingeschakeld, automatisch op wijzigingen controleren
 	NO	Aktivert, se etter endringer automatisk
 	PL	Włączone – automatycznie wykrywaj zmiany
@@ -6401,6 +6409,7 @@ SETUP_AUTO_RESCAN_DISABLE
 	EN	Disabled, manually scan for new music
 	ES	Desactivado, examinar música nueva manualmente
 	FR	Désactivé, analyse manuelle des nouveaux morceaux
+	IT	Disattivato. Analisi manuale della nuova musica.
 	NL	Uitgeschakeld, handmatig scannen naar nieuwe muziek
 	NO	Deaktivert, søk etter ny musikk manuelt
 	PL	Wyłączone – przeszukuj nową muzykę ręcznie
@@ -8015,7 +8024,7 @@ SETUP_ITEMSPERPAGE_DESC
 	FI	Tällä asetuksella määrätään kuinka monta kohdetta kullakin sivulla näytetään.
 	FR	Cette option permet de contrôler le nombre d'éléments affichés par page.
 	HE	אפשרות זו שולטת במספר הפריטים המוצגים בכל דף באינטרנט.
-	IT	Questa opzione consente di impostare il numero di voci visualizzate in ciascuna pagina Web.
+	IT	Questa opzione consente di impostare il numero di voci visualizzate in ciascuna pagina.
 	JA	このオプションは、ウェブ上で1ページに表示されるアイテムの数を設定します。
 	NL	Met deze optie kun je instellen hoeveel items er per pagina worden weergegeven.
 	NO	Dette valget kontrollerer antallet elementer som skal vises på hver side.
@@ -8872,9 +8881,9 @@ SETUP_NO_JAVASCRIPT
 	ES	Para acceder a Squeezebox Server, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7 o posterior, Opera 9 o posterior) con la opción JavaScript activada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (optimizada para pantallas pequeñas).
 	FI	Squeezebox Serverin käyttö edellyttää, että käytät uutta selainta (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 ja uudemmat) ja että JavaScript on käytössä selaimessa. Vaihtoehtoisesti voit käyttää yksinkertaisempaa olemusta, esimerkiksi <a href="/Classic/?skipWizard=1">Classic</a> tai <a href="/Handheld/?skipWizard=1">Handheld</a> (optimoitu pienille näytöille).
 	FR	Pour accéder au Squeezebox Server, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 ou version ultérieure) et activez JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1">Classic</a> ou <a href="/Handheld/?skipWizard=1">Handheld</a> (optimisée pour les écrans de petite taille).
-	IT	Per accedere a Squeezebox Server, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare una skin quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
+	IT	Per accedere a Squeezebox Server, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7 o versioni successive, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare una skin quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
 	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 of later) en JavaScript in je browser inschakelen om Squeezebox Server te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1">Classic</a> of <a href="/Handheld/?skipWizard=1">Handheld</a> (geoptimaliseerd voor kleine schermen).
-	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7, Opera 9 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på Squeezebox Server. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (laget for små skjermer).
+	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på Squeezebox Server. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (laget for små skjermer).
 	PL	Aby uzyskać dostęp do programu Squeezebox Server, sprawdź czy korzystasz z najnowszej przeglądarki (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7, Opera 9 lub nowszej), a obsługa skryptów JavaScript w przeglądarce jest włączona. Można także użyć prostej karnacji, takiej jak <a href="/Classic/?skipWizard=1">Klasyczna</a> lub <a href="/Handheld/?skipWizard=1">Urządzenie przenośne</a> (zoptymalizowana dla małych ekranów).
 	RU	Для доступа к Squeezebox Server необходим современный обозреватель (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 или более поздние версии), в котором включен JavaScript. Либо можно использовать упрощенную оболочку, например <a href="/Classic/?skipWizard=1">Classic</a> или <a href="/Handheld/?skipWizard=1">Handheld</a> (специально для устройств с маленьким экраном).
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Squeezebox Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
@@ -10594,6 +10603,7 @@ ADD_TO_PLAYLIST
 	EN	Add to Current Playlist
 	ES	Agregar a la lista de reproducción actual
 	FR	Ajouter à la liste de lecture en cours
+	IT	Aggiungi a elenco di riproduzione corrente
 	NL	Aan huidige playlist toevoegen
 	NO	Legg til i gjeldende spilleliste
 	PL	Dodaj do aktualnej listy odtwarzania
@@ -11089,6 +11099,7 @@ WMAL
 	EN	WMA Lossless
 	ES	WMA Lossless
 	FR	WMA Lossless
+	IT	WMA Lossless
 	NL	WMA Lossless
 	NO	WMA Lossless
 	PL	Bezstratny WMA
@@ -11101,6 +11112,7 @@ WMAP
 	EN	WMAPro
 	ES	WMAPro
 	FR	WMAPro
+	IT	WMAPro
 	NL	WMAPro
 	NO	WMAPro
 	PL	WMAPro
@@ -14604,6 +14616,7 @@ SEARCHRESULTS
 	EN	Search Results
 	ES	Resultados de búsqueda
 	FR	Résultats de la recherche
+	IT	Risultati ricerca
 	NL	Zoekresultaten
 	NO	Søkeresultater
 	PL	Wyniki wyszukiwania
@@ -15623,6 +15636,7 @@ JIVE_SQUEEZEBOX_INFORMATION
 	EN	Squeezebox Information
 	ES	Información de Squeezebox
 	FR	Informations sur la Squeezebox
+	IT	Informazioni su Squeezebox
 	NL	Squeezebox-informatie
 	NO	Informasjon om Squeezebox
 	PL	Squeezebox – informacje
@@ -15733,7 +15747,7 @@ INFORMATION_PLAYER_NAME
 	ES	Nombre de Squeezebox
 	FI	Soittimen nimi
 	FR	Nom de la Squeezebox
-	IT	Nome lettore
+	IT	Nome Squeezebox
 	NL	Squeezebox-naam
 	NO	Navn på Squeezebox
 	PL	Nazwa usługi Squeezebox
@@ -19460,6 +19474,7 @@ DEBUG_SCAN_AUTO
 	EN	Automatic Music & Playlist Scanning
 	ES	Examen automático de listas de reproducción y música
 	FR	Analyse automatique des morceaux et des listes de lecture
+	IT	Analisi automatica di musica ed elenchi di riproduzione
 	NL	Automatisch scannen naar muziek en playlists
 	NO	Automatisk søk etter musikk og spillelister
 	PL	Automatyczne przeszukiwanie muzyki i list odtwarzania
@@ -19806,6 +19821,7 @@ DIRECTORY_DELETED_PROGRESS
 	EN	Remove deleted files
 	ES	Quitar archivos eliminados
 	FR	Enlever les fichiers supprimés
+	IT	Rimuovi file eliminati
 	NL	Verwijderde bestanden weghalen
 	NO	Fjern slettede filer
 	PL	Kasuj usunięte pliki
@@ -19818,6 +19834,7 @@ DIRECTORY_NEW_PROGRESS
 	EN	Scan new files
 	ES	Examinar archivos nuevos
 	FR	Analyse des nouveaux fichiers
+	IT	Analizza i nuovi file
 	NL	Nieuwe bestanden scannen
 	NO	Søk i nye filer
 	PL	Przeszukuj nowe pliki
@@ -19830,6 +19847,7 @@ DIRECTORY_CHANGED_PROGRESS
 	EN	Scanning changed files
 	ES	Examinando archivos modificados
 	FR	Analyse des fichiers modifiés
+	IT	Analisi file modificati in corso
 	NL	Gewijzigde bestanden worden gescand
 	NO	Søker i endrede filer
 	PL	Przeszukiwanie zmienionych plików
@@ -19842,6 +19860,7 @@ PLAYLIST_DELETED_PROGRESS
 	EN	Remove deleted playlists
 	ES	Quitar listas de reproducción eliminadas
 	FR	Enlever les listes de lecture supprimées
+	IT	Rimuovi elenchi di riproduzione eliminati
 	NL	Verwijderde playlists weghalen
 	NO	Fjern slettede spillelister
 	PL	Kasuj usunięte listy odtwarzania
@@ -19854,6 +19873,7 @@ PLAYLIST_NEW_PROGRESS
 	EN	Scan new playlists
 	ES	Examinar listas de reproducción nuevas
 	FR	Analyser les nouvelles listes de lecture
+	IT	Analizza nuovi elenchi di riproduzione
 	NL	Nieuwe playlists scannen
 	NO	Søk i nye spillelister
 	PL	Przeszukuj nowe listy odtwarzania
@@ -19866,6 +19886,7 @@ PLAYLIST_CHANGED_PROGRESS
 	EN	Scanning changed playlists
 	ES	Examinando listas de reproducción modificadas
 	FR	Analyse des listes de lecture modifiées
+	IT	Analisi elenchi di riproduzione modificati in corso
 	NL	Gewijzigde playlists worden gescand
 	NO	Søker i endrede spillelister
 	PL	Przeszukiwanie zmienionych list odtwarzania
@@ -20359,6 +20380,7 @@ JIVE_SAVE_TO_FAVORITES
 	EN	Save to Favorites
 	ES	Guardar en favoritos
 	FR	Enregistrer dans les favoris
+	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
@@ -20371,6 +20393,7 @@ JIVE_ADD_THIS_SONG
 	EN	Add to Current Playlist
 	ES	Agregar a la lista de reproducción actual
 	FR	Ajouter à la liste de lecture en cours
+	IT	Aggiungi a elenco di riproduzione corrente
 	NL	Aan huidige playlist toevoegen
 	NO	Legg til i gjeldende spilleliste
 	PL	Dodaj do aktualnej listy odtwarzania
@@ -20398,6 +20421,7 @@ ADD_TO_END
 	EN	Add to End
 	ES	Agregar al final
 	FR	Ajouter à la fin
+	IT	Aggiungi alla fine
 	NL	Aan eind toevoegen
 	NO	Legg til på slutten
 	PL	Dodaj na końcu
@@ -20410,6 +20434,7 @@ SAVE_TO_FAVORITES
 	EN	Save to Favorites
 	ES	Guardar en favoritos
 	FR	Enregistrer dans les favoris
+	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
@@ -21339,7 +21364,7 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	ES	Control remoto por Web
 	FI	Squeezeboxin kaukosäädin
 	FR	Télécommande Web
-	IT	Telecomando Squeezebox
+	IT	Telecomando Web
 	NL	Afstandsbediening voor web
 	NO	Fjernkontroll
 	PL	Pilot zdalnego sterowania
@@ -21428,6 +21453,7 @@ PREFPANE_UPDATE_AVAILABLE
 	EN	An updated version of Squeezebox Server is available and ready to install. Visit the Squeezebox Server in System Preferences to start the upgrade.
 	ES	Hay disponible una versión actualizada de Squeezebox Server y está lista para instalar. Visite Squeezebox Server en Preferencias del sistema para iniciar la actualización.
 	FR	Une version mise à jour de Squeezebox Server est disponible et peut être installée. Accédez à Squeezebox Server dans les Préférences système pour démarrer la mise à niveau.
+	IT	È disponibile una versione aggiornata di Squeezebox Server, pronta per essere installata. Per avviare l'aggiornamento, accedere a Squeezebox Server in Preferenze di Sistema.
 	NL	Er is een bijgewerkte versie van Squeezebox Server beschikbaar voor installatie. Ga naar Squeezebox Server in Systeemvoorkeuren om de upgrade te starten.
 	NO	En oppdatert versjon av Squeezebox Server er tilgjengelig og klar til installering. Du kan starte oppgraderingen fra Squeezebox Server i Systemvalg.
 	PL	Zaktualizowana wersja programu Squeezebox Server jest gotowa i dostępna do zainstalowania. Aby rozpocząć uaktualnianie, otwórz ekran programu Squeezebox Server w programie Preferencje systemowe.
@@ -21725,6 +21751,7 @@ CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
 	EN	ESET Antivirus or Smart Security can cause problems starting Squeezebox Server. If you experience failure starting Squeezebox Server, then make sure you have unchecked port filtering for SqueezeboxSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	ES	ESET Antivirus o Smart Security pueden producir problemas a la hora de iniciar Squeezebox Server. Si no puede iniciar Squeezebox Server, asegúrese de no tener seleccionada la opción de filtrado de puertos para SqueezeboxSvr.exe en ESET: Configuración avanzada/Antivirus y antiespía/Protección del tráfico de Internet/HTTP, HTTPS/Navegadores de Internet.
 	FR	L'antivirus ESET ou Smart Security peut être à l'origine de difficultés au démarrage de Squeezebox Server. En cas d'échec du démarrage de Squeezebox Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeboxSvr.exe sous ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
+	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Squeezebox Server. Se Squeezebox Server non si avvia, deselezionare il filtraggio delle porte per SqueezeboxSvr.exe in impostazioni avanzate/antivirus e antispyware/protezione dell'accesso Web/HTTP di ESET e nei browser HTTPS/Web.
 	NL	ESET Antivirus of Smart Security kan problemen veroorzaken bij het opstarten van Squeezebox Server. Controleer in dit geval of je het filteren van poorten hebt uitgeschakeld voor SqueezeboxSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	NO	ESET Antivirus og Smart Security kan skape problemer med oppstarten av Squeezebox Server. Hvis du ikke får til å starte Squeezebox Server, må du sikre at du ikke har merket av for portfiltrering for SqueezeboxSvr.exe i ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	PL	Program ESET Antivirus lub Smart Security może powodować problemy z uruchomieniem programu Squeezebox Server. W przypadku napotkania problemu z uruchomieniem programu Squeezebox Server należy sprawdzić, czy wyłączono opcję filtrowania portów dla programu SqueezeboxSvr.exe w ustawieniach zaawansowanych funkcji antywirusowych i anti-spyware programu ESET, a także w ustawieniach zabezpieczeń dostępu do sieci Web oraz protokołów HTTP/HTTPS przeglądarki internetowej.
@@ -22520,7 +22547,7 @@ DECODE_ERROR_101
 	ES	No hay memoria suficiente
 	FI	Liian vähän muistia
 	FR	Mémoire épuisée
-	IT	memoria insufficiente
+	IT	Memoria insufficiente
 	NL	Onvoldoende geheugen
 	NO	Ikke nok minne
 	PL	Za mało pamięci
@@ -22610,6 +22637,7 @@ PLUGINS_UPDATES_AVAILABLE
 	EN	Plugin updates are available
 	ES	Hay actualizaciones de complementos disponibles
 	FR	Des mises à jour des plugins sont disponibles
+	IT	Sono disponibili aggiornamenti per il plugin
 	NL	Er zijn plug-inupdates beschikbaar
 	NO	Oppdateringer til plugin-moduler er tilgjengelige
 	PL	Dostępne są nowe aktualizacje.
@@ -22622,6 +22650,7 @@ PLUGINS_RESTART_MSG
 	EN	Plugins have been updated - Restart Required
 	ES	Se han actualizado los complementos. Es necesario reiniciar.
 	FR	Les plugins ont été mis à jour. Vous devez redémarrer le serveur.
+	IT	Sono stati aggiornati dei plugin. È necessario riavviare.
 	NL	Plug-ins zijn bijgewerkt - Opnieuw opstarten vereist
 	NO	Plugin-modulene er oppdatert. Du må starte programmet på nytt.
 	PL	Dodatki zostały zaktualizowane – wymagane jest ponowne uruchomienie.
@@ -22634,6 +22663,7 @@ NO_LIBRARY
 	EN	No music library configured
 	ES	No hay ninguna biblioteca de música configurada
 	FR	Aucune collection musicale n'a été configurée
+	IT	Nessuna libreria musicale configurata
 	NL	Er is geen muziekcollectie geconfigureerd
 	NO	Ingen musikkbiblioteker er konfigurert
 	PL	Nie skonfigurowano biblioteki muzyki

@@ -26,7 +26,7 @@ PLUGIN_RSSNEWS_DESC
 	ES	Acceso a fuentes RSS nuevas
 	FI	RSS-uutissyötteiden käyttö
 	FR	Accès aux flux d'informations RSS
-	IT	Accesso ai nuovi feed RSS
+	IT	Accesso ai news feed RSS
 	NL	Toegang tot RSS-nieuwskanalen
 	NO	Tilgang til nyhets-feeder på rss
 	PL	Dostęp do nowych źródeł wiadomości RSS

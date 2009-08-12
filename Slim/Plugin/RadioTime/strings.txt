@@ -46,7 +46,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	NL	radiotime
 	NO	radiotime
 	PL	radiotime
-	RU	radiotime
+	RU	RadioTime
 	SV	radiotime
 
 PLUGIN_RADIOTIME_LOADING

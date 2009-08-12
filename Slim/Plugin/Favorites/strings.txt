@@ -574,6 +574,7 @@ PLUGIN_FAVORITES_SAVE
 	EN	Save to Favorites
 	ES	Guardar en favoritos
 	FR	Enregistrer dans les favoris
+	IT	Salva nei preferiti
 	NL	In favorieten opslaan
 	NO	Lagre i favoritter
 	PL	Zapisz w ulubionych
