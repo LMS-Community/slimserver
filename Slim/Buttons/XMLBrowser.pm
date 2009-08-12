@@ -463,6 +463,12 @@ sub gotOPML {
 			}
 		}
 		
+		# Check for a 'hide' param, if it's 'ip3k' skip the item in this UI
+		if ( $item->{hide} && $item->{hide} =~ /ip3k/ ) {
+			splice @{ $opml->{items} }, $index, 1;
+			next;
+		}
+		
 		# Wrap text if needed
 		if ( $item->{'wrap'} ) {
 			my ($curline, @lines) = _breakItemIntoLines( $client, $item );
