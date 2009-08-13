@@ -870,6 +870,7 @@ sub _cliQuery_done {
 						$subitem->{_slim_id} = $cnt2++;
 					}
 				}
+				
 				# If we have a slideshow param, return all items without chunking, and only
 				# include image and caption data
 				if ( $request->getParam('slideshow') ) {
