@@ -111,7 +111,6 @@ sub trackInfoMenu {
 # {
 #   image   => 'http://...',
 #   caption => 'text',
-#   date    => '3 hours ago'
 # } 
 
 sub screensaver_news {
