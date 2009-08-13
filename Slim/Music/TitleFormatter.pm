@@ -20,6 +20,7 @@ L<Slim::Music::TitleFormatter>
 use strict;
 
 use Scalar::Util qw(blessed);
+use File::Spec::Functions qw(splitpath);
 
 use Slim::Music::Info;
 use Slim::Utils::DateTime;
