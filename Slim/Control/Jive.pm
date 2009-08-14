@@ -817,7 +817,7 @@ sub alarmSettingsQuery {
 				},
 			},
 		},
-		nextWindow => 'parent',
+		nextWindow => 'refresh',
 		window         => { titleStyle => 'settings' },
 	};
 	push @menu, $addAlarm;
@@ -895,7 +895,7 @@ sub alarmUpdateMenu {
 				},
 			},
 		},
-		nextWindow => 'grandparent',
+		nextWindow => 'parent',
 		window         => { titleStyle => 'settings' },
 	};
 	push @menu, $setTime;
