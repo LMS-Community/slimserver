@@ -3011,7 +3011,13 @@ sub jiveFavoritesCommand {
 			$request->setStatusBadDispatch();
 			return;
 		}
-		Slim::Control::Request::executeRequest( $client, [ 'favorites', 'add', "hotkey:$preset", "title:$title", "url:$url", "icon:$icon", "type:$type" ] );
+		
+		$client->setPreset( {
+			slot => $preset + 1, # set_preset is 0-based
+			URL  => $url,
+			text => $title,
+			type => $type,
+		} );
 	} else {
 
 		my @favorites_menu = (

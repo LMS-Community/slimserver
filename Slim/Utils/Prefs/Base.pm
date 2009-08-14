@@ -131,9 +131,8 @@ sub getFromDB { if ( main::SLIM_SERVICE ) { # optimize out for SC
 		if ( !defined $value ) {
 			# NULL in DB is indicates empty string
 			$value = '';
-		}
-			
-		if ( $value =~ s/^json:// ) {
+		}	
+		elsif ( $value =~ s/^json:// ) {
 			$value = eval { from_json($value) };
 			if ( $@ ) {
 				$log->error( $client->id . " Bad JSON pref $key: $@" );
@@ -145,7 +144,19 @@ sub getFromDB { if ( main::SLIM_SERVICE ) { # optimize out for SC
 		# array pref
 		$value = [];
 		for my $pref ( @prefs ) {
-			$value->[ $pref->idx ] = $pref->value;
+			my $pv = $pref->value;
+			if ( !defined $pv ) {
+				$pv = '';
+			}
+			elsif ( $pv =~ s/^json:// ) {
+				$pv = eval { from_json($pv) };
+				if ( $@ ) {
+					$log->error( $client->id . " Bad JSON pref $key: $@" );
+					$pv = ''
+				}
+			}
+			
+			$value->[ $pref->idx ] = $pv;
 		}
 	}
 	else {
@@ -277,9 +288,6 @@ sub set {
 					if ( ref $new eq 'ARRAY' ) {
 						SDI::Service::Model::PlayerPref->quick_update_array( $client->playerData, $nspref, $new );
 					}
-					elsif ( ref $new eq 'HASH' ) {
-						SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $nspref, 'json:' . to_json( $new ) );
-					}
 					else {
 						SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $nspref, $new );
 					}
@@ -345,6 +353,19 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 		
 		if ( $valid ) {
 			my $old = $class->{prefs}->{ $pref };
+			
+			if ( ref $new eq 'ARRAY' ) {
+				for ( @{$new} ) {
+					if ( s/^json:// ) {
+						$_ = eval { from_json($_) };
+						$_ = '' if $@;
+					}
+				}
+			}
+			elsif ( $new =~ s/^json:// ) {
+				$new = eval { from_json($new) };
+				$new = '' if $@;
+			}
 			
 			# If old pref was an array but new is not, force it to stay an array
 			if ( ref $old eq 'ARRAY' && !ref $new ) {

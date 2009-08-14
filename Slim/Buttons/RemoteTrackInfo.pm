@@ -62,7 +62,7 @@ sub setMode {
 	# 
 	# Only allow adding to favorites if the URL is something we can play.
 
-	my ($favIndex, $favHotkey);
+	my $favIndex;
 
 	if ( $url && Slim::Utils::Favorites->enabled ) {
 
@@ -72,7 +72,6 @@ sub setMode {
 				my $client = shift;
 
 				my $index = $client->modeParam('favorite');
-				my $hotkey= $client->modeParam('hotkey');
 				if (defined $index) {
 					return "{PLUGIN_FAVORITES_REMOVE}";
 				} else {
@@ -84,7 +83,6 @@ sub setMode {
 				my $client = shift;
 				my $favorites = Slim::Utils::Favorites->new($client) || return;
 				my $index = $client->modeParam('favorite');
-				my $hotkey= $client->modeParam('hotkey');
 				my $icon  = $client->modeParam('icon');
 
 				if (defined $index) {
@@ -93,14 +91,12 @@ sub setMode {
 					Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 						title => $title,
 						index => $index,
-						hotkey=> $hotkey,
 						depth => 2,
 					} );
 
 				} else {
-					($index, $hotkey) = $favorites->add($url, $title, undef, undef, 'hotkey', $icon);
+					$index = $favorites->add($url, $title, undef, undef, undef, $icon);
 					$client->modeParam('favorite', $index);
-					$client->modeParam('hotkey', $hotkey);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]
 					});
@@ -109,7 +105,7 @@ sub setMode {
 			overlayRef => [ undef, $client->symbols('rightarrow') ],
 		};
 
-		($favIndex, $favHotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
+		$favIndex = Slim::Utils::Favorites->new($client)->findUrl($url);
 	}
 
 	# now use another mode for the heavy lifting
@@ -120,7 +116,6 @@ sub setMode {
 		'url'      => $url,
 		'title'    => $title,
 		'favorite' => $favIndex,
-		'hotkey'   => $favHotkey,
 		'icon'     => $client->modeParam('item') ? $client->modeParam('item')->{'image'} : undef,
 
 		# play music when play is pressed

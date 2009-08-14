@@ -35,30 +35,6 @@ function(){
 						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td>
-					[% IF favorites AND entry.audio %]
-						[% IF useExtJS %]
-							<input type="hidden" name="entryhotkey" id="entryhotkey" value="[% entry.hotkey %]">
-							<span id="hotkey"></span>
-							<script type="text/javascript">
-								Ext.onReady(function(){
-									Favorites.initHotkeyList(new Array(
-									[% FOREACH k IN hotkeys %]
-										'[% k.key _ (k.title ? '&nbsp;-&nbsp;' _ k.title : '') | replace("'", "%27") %]'[% UNLESS loop.last; ','; END %]
-									[% END %]
-									), '[% entry.hotkey %]', 'hotkey', 'entryhotkey')
-								}, Favorites);
-							</script>
-						[% ELSE %]
-							<select size="1" name="entryhotkey" id="entryhotkey">
-								<option value=""></option>
-								[% FOREACH k IN hotkeys %]
-									<option [% IF k.key == entry.hotkey %]selected[% END %] value="[% k.key %]">[% k.key %][% IF k.title %] [% k.title %][% END %]</option>
-								[% END %]
-							</select>
-						[% END %]
-					[% END %]
-					</td>
-					<td>
 					[% IF useAJAX %]
 						<input type="button" class="stdclick" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
 						<input type="button" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
@@ -146,7 +122,7 @@ function(){
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' itemobj.id = entry.index %]
 		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
-			<span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %][% IF entry.hotkey.defined %] [ [% entry.hotkey %] ] [% END %]</span>
+			<span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %]</span>
 		</a>
 	[% END -%]
 [% END %]
@@ -180,7 +156,6 @@ function(){
 	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/Favorites.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
-		[% PROCESS jsString id='FAVORITES_HOTKEYS' jsId='' %]
 		Ext.onReady([% initCall %]);
 	</script>
 [% END; END %]

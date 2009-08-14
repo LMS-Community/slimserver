@@ -18,22 +18,6 @@ FAVORITES
 	RU	Выбранное
 	SV	Favoriter
 
-FAVORITES_NOT_DEFINED
-	CS	Oblíbená položka #%s není definována.
-	DA	Favorit nr. %s er ikke defineret.
-	DE	Favorit Nr. %s existiert nicht
-	EN	Favorite #%s not defined.
-	ES	No se ha definido el favorito nº %s.
-	FI	Suosikkia #%s ei määritetty.
-	FR	Favori n°%s non défini
-	HE	פריט מועדף ‎#%s לא מוגדר.
-	IT	Preferito #%s non definito.
-	NL	Favoriet #%s niet gedefinieerd.
-	NO	Favoritt nr. %s er ikke angitt.
-	PL	Ulubiony nr %s nie zdefiniowany.
-	RU	Выбранное #%s не определено.
-	SV	Favorit nr %s finns inte.
-
 FAVORITES_NONE_DEFINED
 	CS	Neexistují žádné Oblíbené položky
 	DA	Der findes ingen favoritter

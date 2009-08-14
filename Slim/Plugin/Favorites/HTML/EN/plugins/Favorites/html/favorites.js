@@ -108,19 +108,6 @@ function editSave(id, session) {
 		params     = params + '&entryurl=' + newURL
 	}
 
-	if ($('entryhotkey')) {
-		var hk = $('entryhotkey'); 
-
-		var newHotkey = escape(hk.value);
-		params        = params + '&entryhotkey=' + newHotkey
-		
-		// if we're overwriting an existing hotkey, we'll have to reload the page
-		if (newHotkey > 0 && hk.options[newHotkey].text > newHotkey
-			&& hk.options[newHotkey].text.indexOf(newTitle.value) == -1)
-			reload = true;
-
-	}
-
 	showElements(['defaultform']);
 	
 	// get an update of the edited line item

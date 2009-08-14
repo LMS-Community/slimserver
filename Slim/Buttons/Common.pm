@@ -723,7 +723,7 @@ our %functions = (
 
 		if (defined $buttonarg && $buttonarg =~ /^add$|^add(\d+)/) {
 
-			my $hotkey = $1;
+			my $preset = $1;
 
 			# First lets try for a listRef from INPUT.*
 			my $list = $client->modeParam('listRef');
@@ -804,19 +804,19 @@ our %functions = (
 
 			if ($url && $title && $favs) {
 
-				if (defined $hotkey) {
-					
-					my $oldindex = $favs->hasHotkey($hotkey);
-
-					$favs->setHotkey($oldindex, undef) if defined $oldindex;
-
-					my $newindex = $favs->add($url, $title, $type || 'audio', $parser);
-
-					$favs->setHotkey($newindex, $hotkey);
+				if (defined $preset) {
+					# Add/overwrite preset for this slot
+					$client->setPreset( {
+						slot   => $preset,
+						URL    => $url,
+						text   => $title,
+						type   => $type || 'audio',
+						parser => $parser,
+					} );
 
 				} else {
 
-					my (undef, $hotkey) = $favs->add($url, $title, $type || 'audio', $parser, 'hotkey', $icon);
+					$favs->add($url, $title, $type || 'audio', $parser, undef, $icon);
 				}
 
 				$client->showBriefly( {
@@ -843,6 +843,52 @@ our %functions = (
 			setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'FAVORITES');
 			Slim::Buttons::Common::pushModeLeft($client, 'FAVORITES');
+		}
+	},
+	
+	# Play preset
+	'playPreset' => sub {
+		my ( $client, $button, $digit ) = @_;
+		
+		if ( $digit == 0 ) {
+			$digit = 10;
+		}
+		
+		my $preset = $prefs->client($client)->get('presets')->[ $digit - 1 ];
+		
+		if ( $preset && $preset->{type} =~ /audio|playlist/ ) {
+			my $url   = $preset->{URL};
+			my $title = $preset->{text};
+
+			if ( $preset->{parser} || $preset->{type} eq 'playlist' ) {
+
+				main::INFOLOG && $log->info("Playing preset number $digit $title $url via xmlbrowser");
+
+				my $item = {
+					url    => $url,
+					title  => $title,
+					type   => $preset->{type},
+					parser => $preset->{parser},
+				};
+
+				Slim::Buttons::XMLBrowser::playItem($client, $item);
+			}
+			else {
+				main::INFOLOG && $log->info("Playing preset number $digit $title $url");
+
+				Slim::Music::Info::setTitle($url, $title);
+
+				$client->showBriefly($client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) }));
+
+				$client->execute(['playlist', 'play', $url]);
+			}
+		}
+		else {
+			main::INFOLOG && $log->info("Can't play preset number $digit - not an audio entry");
+
+			$client->showBriefly( {
+				 line => [ sprintf($client->string('PRESETS_NOT_DEFINED'), $digit) ],
+			} );
 		}
 	},
 

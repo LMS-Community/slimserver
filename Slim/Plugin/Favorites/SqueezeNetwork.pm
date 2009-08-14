@@ -169,52 +169,26 @@ sub entry {
 	return;
 }
 
-sub hasHotkey {
-	my ( $self, $digit ) = @_;
-	
-	my ($fav) = SDI::Service::Model::Favorite->search(
-		userid => $self->{userid},
-		hotkey => $digit,
-	);
-	
-	if ( $fav ) {
-		return $fav->num - 1;
-	}
-	
-	return;
-}
+# legacy method to support migration to presets
+sub hotkeys {
+	my $self = shift;
 
-sub setHotkey {
-	my ( $self, $index, $key ) = @_;
-	
-	if ( defined $key ) {
-		# Bug 10129, if this hotkey is assigned to another favorite, clear it
-		my @others = SDI::Service::Model::Favorite->search(
+	my @keys;
+
+	for my $key (1..9,0) {
+		my ($item) = SDI::Service::Model::Favorite->search(
 			userid => $self->{userid},
 			hotkey => $key,
 		);
-	
-		for my $other ( @others ) {
-			$other->hotkey( undef );
-			$other->update;
-		
-			main::DEBUGLOG && $log->is_debug && $log->debug( "Removed old hotkey $key on " . $other->url );
-		}
+		push @keys, {
+			key   => $key,
+			used  => $item ? 1 : 0,
+			title => $item ? $item->title : undef,
+			index => $item ? $item->num - 1 : undef,
+		};
 	}
-	
-	my ($fav) = SDI::Service::Model::Favorite->search(
-		userid => $self->{userid},
-		num    => $index + 1,
-	);
-	
-	if ( $fav ) {
-		$fav->hotkey( $key );
-		$fav->update;
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug("Set hotkey for index $index to $key");
-	}
-	
-	return 1;
+
+	return \@keys;
 }
 
 1;

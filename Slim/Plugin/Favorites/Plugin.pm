@@ -65,9 +65,6 @@ sub initPlugin {
 		Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::OpmlFavorites');
 	}
 
-	# register handler for playing favorites by remote hot button
-	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
-
 	# register cli handlers
 	Slim::Control::Request::addDispatch(['favorites', 'items', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
 	Slim::Control::Request::addDispatch(['favorites', 'add'], [0, 0, 1, \&cliAdd]);
@@ -147,7 +144,6 @@ sub deleteMode {
 	
 	my $title = $client->modeParam('title'); # title to display
 	my $index = $client->modeParam('index'); # favorite index to delete
-	my $hotkey= $client->modeParam('hotkey');# favorite hotkey
 	my $depth = $client->modeParam('depth'); # number of levels to pop out of when done
 	
 	# Bug 6177, Menu to confirm favorite removal
@@ -194,56 +190,6 @@ sub deleteMode {
 		],
 		overlayRef => [ undef, $client->symbols('rightarrow') ],
 	} );
-}
-
-sub playFavorite {
-	my $client = shift;
-	my $button = shift;
-	my $digit  = shift;
-
-	my $favs  = Slim::Utils::Favorites->new($client);
-
-	# play the favorite with the hotkey of $digit, or if not set the favorite with index $digit
-	my $index = $favs->hasHotkey($digit);
-	my $entry = defined $index ? $favs->entry($index) : $favs->entry($digit ? $digit-1 : 9);
-
-	if (defined $entry && $entry->{'type'} && $entry->{'type'} =~ /audio|playlist/) {
-
-		my $url   = $entry->{'URL'} || $entry->{'url'};
-		my $title = $entry->{'text'};
-
-		if ($entry->{'parser'} || $entry->{'type'} eq 'playlist') {
-
-			main::INFOLOG && $log->info("Playing favorite number $digit $title $url via xmlbrowser");
-
-			my $item = {
-				'url'   => $url,
-				'title' => $title,
-				'type'  => $entry->{'type'},
-				'parser'=> $entry->{'parser'},
-			};
-
-			Slim::Buttons::XMLBrowser::playItem($client, $item);
-
-		} else {
-
-			main::INFOLOG && $log->info("Playing favorite number $digit $title $url");
-
-			Slim::Music::Info::setTitle($url, $title);
-			
-			$client->showBriefly($client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) }));
-			
-			$client->execute(['playlist', 'play', $url]);
-		}
-
-	} else {
-
-		main::INFOLOG && $log->info("Can't play favorite number $digit - not an audio entry");
-
-		$client->showBriefly({
-			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
-		});
-	}
 }
 
 sub webPages {
@@ -589,31 +535,6 @@ sub indexHandler {
 
 					$entry->{'URL'} = $url;
 				}
-
-				if (!$favs) {
-
-					my $hotkey = $params->{'entryhotkey'};
-
-					if (!defined $hotkey || $hotkey eq '') {
-
-						main::INFOLOG && $log->info("removing hotkey from entry");
-
-						delete $entry->{'hotkey'};
-
-					} else {
-
-						my $oldindex = $opml->hasHotkey($hotkey);
-
-						if (defined $oldindex) {
-
-							$opml->setHotkey($oldindex, undef);
-						}
-
-						main::INFOLOG && $log->info("setting hotkey for entry to $hotkey");
-
-						$entry->{'hotkey'} = $hotkey;
-					}
-				}
 			}
 
 			$changed = 1;
@@ -631,11 +552,6 @@ sub indexHandler {
 			my $entry = @$level[$indexLevel];
 
 			$favs->deleteUrl( $entry->{'URL'} );
-		}
-
-		if ($action eq 'hotkey' && defined $params->{'index'} && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
-
-			$opml->setHotkey( $params->{'index'}, $params->{'hotkey'} ne '' ? $params->{'hotkey'} : undef );
 		}
 	}
 
@@ -720,21 +636,12 @@ sub indexHandler {
 			$entry->{'favorites'} = $favs->hasUrl($entry->{'url'}) ? 2 : 1;
 		}
 
-		if (!$favs && defined $opmlEntry->{'hotkey'}) {
-			$entry->{'hotkey'} = $opmlEntry->{'hotkey'};
-		}
-
 		push @entries, $entry;
 	}
 
 	$params->{'entries'}       = \@entries;
 	$params->{'levelindex'}    = join '.', @indexPrefix;
 	$params->{'indexOnLevel'}  = $indexLevel;
-
-	# for favorites add the currently used hotkeys
-	if (!$favs) {
-		$params->{'hotkeys'}   = $opml->hotkeys;
-	}
 
 	# add the top level title to pwd_list
 	push @{$params->{'pwd_list'}}, {
@@ -879,12 +786,6 @@ sub cliAdd {
 			main::INFOLOG && $log->info("adding entry $title - $url");
 			
 			my $index = $favs->add( $url, $title );
-
-			if (defined $hotkey) {
-				my $oldindex = $favs->hasHotkey($hotkey);
-				$favs->setHotkey($oldindex, undef) if defined $oldindex;
-				$favs->setHotkey($index, $hotkey);
-			}
 			
 			$request->addResult( 'count', 1 );
 			
@@ -957,10 +858,9 @@ sub cliAdd {
 
 		$favs->save;
 
-		if (defined $hotkey && (my $index = $favs->findUrl($url))) {
-			my $oldindex = $favs->hasHotkey($hotkey);
-			$favs->setHotkey($oldindex, undef) if defined $oldindex;
-			$favs->setHotkey($index, $hotkey);
+		# XXX: leave this around in case people are using this to set hotkeys
+		if (defined $hotkey ) {
+			$log->error('hotkeys (presets) can no longer be set with this command');
 		}
 
 		# show feedback to jive
@@ -1103,7 +1003,7 @@ sub _objectInfoHandler {
 	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
 	$tags ||= {};
 	
-	my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
+	my $index = Slim::Utils::Favorites->new($client)->findUrl($url);
 	
 	my $jive;
 	my $title;
@@ -1185,12 +1085,12 @@ sub objectInfoAddFavorite {
 	
 	my $favorites = Slim::Utils::Favorites->new($client);
 	
-	my ($favIndex, $hotKey) = $favorites->add(
+	my $favIndex = $favorites->add(
 		$obj,
 		$obj->title || $obj->url,
 		undef,
 		undef,
-		'hotkey',
+		undef,
 	);
 	
 	my $menu = {
@@ -1230,7 +1130,7 @@ sub objectInfoRemoveFavorite {
 				my $callback = $_[1];
 				
 				my $favorites = Slim::Utils::Favorites->new($client);
-				my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl( $obj->url );
+				my $index = Slim::Utils::Favorites->new($client)->findUrl( $obj->url );
 				
 				$favorites->deleteIndex($index);
 				

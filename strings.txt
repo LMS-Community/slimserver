@@ -22723,3 +22723,15 @@ NO_LIBRARY
 	RU	Нет настроенных медиатек
 	SV	Inget musikbibliotek konfigurerat
 
+PRESETS_NOT_DEFINED
+	EN	Preset #%s not defined.
+	ES	No se ha definido el favorito nº %s.
+	FI	Suosikkia #%s ei määritetty.
+	FR	Favori n°%s non défini
+	HE	פריט מועדף ‎#%s לא מוגדר.
+	IT	Preferito #%s non definito.
+	NL	Favoriet #%s niet gedefinieerd.
+	NO	Favoritt nr. %s er ikke angitt.
+	PL	Ulubiony nr %s nie zdefiniowany.
+	RU	Выбранное #%s не определено.
+	SV	Favorit nr %s finns inte.

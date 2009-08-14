@@ -439,7 +439,6 @@ sub browsedbExitCallback {
 
 			my $favorites = Slim::Utils::Favorites->new($client);
 			my $index = $client->modeParam('favorite');
-			my $hotkey = $client->modeParam('hotkey');
 			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist.id'});
 
 			if (!blessed($track) || !$track->can('title')) {
@@ -455,14 +454,13 @@ sub browsedbExitCallback {
 
 			if ( !defined $index ) {
 
-				($index, $hotkey) = $favorites->add($track, $track->title, undef, undef, 'hotkey');
+				$index = $favorites->add($track, $track->title, undef, undef, undef);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title ]
 				});
 
 				$client->modeParam('favorite', $index);
-				$client->modeParam('hotkey', $hotkey);
 
 			} else {
 				
@@ -470,7 +468,6 @@ sub browsedbExitCallback {
 				Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 					title => $track->title,
 					index => $index,
-					hotkey=> $hotkey,
 					depth => 2,
 				} );
 				
@@ -560,7 +557,6 @@ sub browsedbItemName {
 	if (!$blessed && $item eq 'FAVORITE') {
 
 		my $index = $client->modeParam('favorite');
-		my $hotkey = $client->modeParam('hotkey');
 
 		if (defined $index) {
 			return $client->string('PLUGIN_FAVORITES_REMOVE');
@@ -846,10 +842,9 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 
-			my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($track->url);
+			my $index = Slim::Utils::Favorites->new($client)->findUrl($track->url);
 
 			$client->modeParam('favorite', $index);
-			$client->modeParam('hotkey', $hotkey);
 
 			push @items, 'FAVORITE';
 		}
@@ -913,7 +908,6 @@ sub setMode {
 		findCriteria      => $filters,
 		selectionCriteria => $selectionCriteria,
 		favorite          => $client->modeParam('favorite'),
-		hotkey            => $client->modeParam('hotkey'),
 	);
 
 	# If this is a list of containers (e.g. albums, artists, genres)

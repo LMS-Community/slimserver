@@ -52,6 +52,7 @@ our $defaultPrefs = {
 	'titleFormat'          => [5, 1, 3, 6, 0],
 	'titleFormatCurr'      => 4,
 	'playlistmode'         => 'disabled',
+	'presets'              => [],
 };
 
 $prefs->setChange( sub {
@@ -1281,6 +1282,54 @@ sub isBufferReady {
 	return $client->bufferReady();
 }
 
+=head2 setPreset( $client, \%args )
+
+Set a preset for this player.  Arguments:
+
+=over 4
+
+=item slot 
+
+Which preset to set.  Valid values are from 1-10.
+
+=item URL
+
+URL (remote or local)
+
+=item text
+
+The preset title.
+
+=item type
+
+The type (audio, link, playlist, etc)
+
+=item parser
+
+Optional.  XMLBrowser parser.
+
+=back
+
+=cut
+
+sub setPreset {
+	my ( $client, $args ) = @_;
+	
+	return unless $args->{slot} && $args->{URL} && $args->{text};
+	
+	my $preset = {
+		URL  => $args->{URL},
+		text => $args->{text},
+		type => $args->{type} || 'audio',
+	};
+	
+	$preset->{parser} = $args->{parser} if $args->{parser};		
+	
+	my $cprefs = $prefs->client($client);
+	my $presets = $cprefs->get('presets');
+	$presets->[ $args->{slot} - 1 ] = $preset;
+	$cprefs->set( presets => $presets );
+}
 
 ##############################################################
 # Methods to delegate to our StreamingController.
