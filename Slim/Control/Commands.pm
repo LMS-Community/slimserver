@@ -2626,8 +2626,9 @@ sub sleepCommand {
 		my $will_sleep_in_minutes = int( $will_sleep_in / 60 );
 		$client->showBriefly({
 			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ $client->string('SLEEPING_IN_X_MINUTES', $will_sleep_in_minutes ) ],
+				'type'    => 'icon',
+				'style'   => 'sleep_' . $will_sleep_in_minutes,
+				'text'    => [ $will_sleep_in_minutes ],
 			}
 		});
 		
@@ -2639,8 +2640,9 @@ sub sleepCommand {
 
 		$client->showBriefly({
 			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ $client->string('CANCEL_SLEEP' ) ],
+				'type'    => 'icon',
+				'style'	  => 'sleep_cancel',
+				'text'    => [ '' ],
 			}
 		});
 	
