@@ -482,6 +482,7 @@ sub _cliQuery_done {
 									'params' => {
 										'item_id' => "$item_id", # stringify for JSON
 									},
+									'nextWindow' => 'parent',
 								},
 								'play' => {
 									'player' => 0,
@@ -607,6 +608,7 @@ sub _cliQuery_done {
 									params => {
 										title   => $title,
 										url     => $url,
+										isContextMenu => 1,
 									},
 								},
 							};
@@ -1001,7 +1003,7 @@ sub _cliQuery_done {
 						}
 
 
-						if ( $item->{isContextMenu} ) {
+						if ( $isPlayable ) {
 							$itemParams->{'isContextMenu'} = 1;
 						}
 

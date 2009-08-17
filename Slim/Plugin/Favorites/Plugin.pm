@@ -1024,6 +1024,7 @@ sub _objectInfoHandler {
 					params => {
 						title   => $title,
                                                 url     => $obj->url,
+						isContextMenu => 1,
 					},
 				},
 			};
@@ -1056,6 +1057,7 @@ sub _objectInfoHandler {
 						title   => $title,
                                                 url     => $obj->url,
 						item_id => $index,
+						isContextMenu => 1,
 					},
 				},
 			};

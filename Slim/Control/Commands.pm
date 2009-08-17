@@ -1936,7 +1936,7 @@ sub playlistcontrolCommand {
 			my $string = $client->string($token, $info[0]);
 			$client->showBriefly({ 
 				'jive' => { 
-					'type'    => defined $artwork ? 'song' : 'popupplay',
+					'type'    => defined $artwork ? 'popupalbum' : 'popupplay',
 					'text'    => [ $string ],
 					'icon-id' => $artwork,
 				}

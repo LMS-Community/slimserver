@@ -56,17 +56,25 @@ sub registerDefaultInfoProviders {
 	
 	$class->SUPER::registerDefaultInfoProviders();
 
-	$class->registerInfoProvider( playyear => (
+	$class->registerInfoProvider( addyear => (
 		menuMode  => 1,
 		after    => 'top',
+		func      => \&addYearEnd,
+	) );
+
+	$class->registerInfoProvider( addyearnext => (
+		menuMode  => 1,
+		after    => 'addyear',
+		func      => \&addYearNext,
+	) );
+
+
+	$class->registerInfoProvider( playyear => (
+		menuMode  => 1,
+		after    => 'addyearnext',
 		func      => \&playYear,
 	) );
 
-	$class->registerInfoProvider( addyear => (
-		menuMode  => 1,
-		after    => 'playyear',
-		func      => \&addYear,
-	) );
 
 }
 
@@ -201,14 +209,29 @@ sub playYear {
 	
 	return $items;
 }
-	
-sub addYear {
+
+sub addYearEnd {
 	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
+	my $add_string   = cstring($client, 'ADD_TO_END');
+	my $cmd = 'add';
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd ); 
+}
+
+
+sub addYearNext {
+	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
+	my $add_string   = cstring($client, 'PLAY_NEXT');
+	my $cmd = 'insert';
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd ); 
+}
+
+
+sub addYear {
+	my ( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd ) = @_;
 
 	my $items = [];
 	my $jive;
 	
-	my $add_string   = cstring($client, 'ADD_TO_END');
 
 	my $actions = {
 		go => {
@@ -216,16 +239,7 @@ sub addYear {
 			cmd => [ 'playlistcontrol' ],
 			params => {
 				year => $year,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				year => $year,
-				cmd => 'insert',
+				cmd => $cmd,
 			},
 			nextWindow => 'parent',
 		},

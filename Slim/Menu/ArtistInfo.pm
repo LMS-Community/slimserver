@@ -56,17 +56,22 @@ sub registerDefaultInfoProviders {
 	
 	$class->SUPER::registerDefaultInfoProviders();
 
-	$class->registerInfoProvider( playartist => (
+	$class->registerInfoProvider( addartist => (
 		menuMode  => 1,
 		after    => 'top',
+		func      => \&addArtistEnd,
+	) );
+	$class->registerInfoProvider( addartistnext => (
+		menuMode  => 1,
+		after    => 'addartist',
+		func      => \&addArtistNext,
+	) );
+	$class->registerInfoProvider( playartist => (
+		menuMode  => 1,
+		after    => 'addartistnext',
 		func      => \&playArtist,
 	) );
 
-	$class->registerInfoProvider( addartist => (
-		menuMode  => 1,
-		after    => 'playartist',
-		func      => \&addArtist,
-	) );
 
 }
 
@@ -211,14 +216,28 @@ sub playArtist {
 	
 	return $items;
 }
-	
-sub addArtist {
+
+sub addArtistEnd {
 	my ( $client, $url, $artist, $remoteMeta, $tags ) = @_;
+	my $add_string   = cstring($client, 'ADD_TO_END');
+	my $cmd = 'add';
+	addArtist( $client, $url, $artist, $remoteMeta, $tags, $add_string, $cmd );
+}
+
+
+sub addArtistNext {
+	my ( $client, $url, $artist, $remoteMeta, $tags ) = @_;
+	my $add_string   = cstring($client, 'PLAY_NEXT');
+	my $cmd = 'insert';
+	addArtist( $client, $url, $artist, $remoteMeta, $tags, $add_string, $cmd );
+}
+
+sub addArtist {
+	my ( $client, $url, $artist, $remoteMeta, $tags, $add_string, $cmd ) = @_;
 
 	my $items = [];
 	my $jive;
 	
-	my $add_string   = cstring($client, 'ADD_TO_END');
 
 	my $actions = {
 		go => {
@@ -226,16 +245,7 @@ sub addArtist {
 			cmd => [ 'playlistcontrol' ],
 			params => {
 				artist_id => $artist->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				artist_id => $artist->id,
-				cmd => 'insert',
+				cmd => $cmd,
 			},
 			nextWindow => 'parent',
 		},

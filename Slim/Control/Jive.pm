@@ -2995,7 +2995,7 @@ sub jiveFavoritesCommand {
 	my $icon    = $request->getParam('icon');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
-	my $action = $command eq 'add' ? 'parent' : 'grandparent';
+	my $action = 'grandparent';
 	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
 
 	if ( $command eq 'set_preset' ) {
