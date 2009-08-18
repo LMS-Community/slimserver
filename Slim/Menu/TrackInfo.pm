@@ -74,7 +74,6 @@ sub registerDefaultInfoProviders {
 
 	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
-		#after    => 'addtracknext',
 		before    => 'contributors',
 		func      => \&playTrack,
 	) );
@@ -514,9 +513,10 @@ sub addTrackNext {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $string = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
-	if ( $tags->{menuContext} ne 'playlist' ) {
-		addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	if ( $tags->{menuContext} eq 'playlist' ) {
+		$cmd = 'playlistnext';
 	}
+	addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
 }
 
 sub addTrackEnd {
@@ -540,6 +540,7 @@ sub addTrack {
 	my $jive;
 	
 	my $actions;
+	# remove from playlist
 	if ( $cmd eq 'delete' ) {
 		$string  = cstring($client, 'REMOVE_FROM_PLAYLIST');
 		$actions = {
@@ -553,6 +554,25 @@ sub addTrack {
 		$actions->{play} = $actions->{go};
 		$actions->{add} = $actions->{go};
 		$actions->{'add-hold'} = $actions->{go};
+
+	# play next in the playlist context
+	} elsif ( $cmd eq 'playlistnext' ) {
+		my $moveTo = Slim::Player::Source::playingSongIndex($client) || 0;
+		if ( $tags->{playlistIndex} > $moveTo ) {
+			$moveTo = $moveTo + 1;
+		}
+		$actions = {
+			go => {
+				player     => 0,
+				cmd        => [ 'playlist', 'move', $tags->{playlistIndex}, $moveTo ],
+				nextWindow => 'parent',
+			},
+		};
+		# play, add and add-hold all have the same behavior for this item
+		$actions->{play} = $actions->{go};
+		$actions->{add} = $actions->{go};
+		$actions->{'add-hold'} = $actions->{go};
+
 
 	# typical "Add Song" item
 	} else {
