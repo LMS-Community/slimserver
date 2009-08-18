@@ -244,6 +244,7 @@ sub processCoverArtRequest {
 			width    => $requestedWidth,
 			height   => $requestedHeight,
 			bgcolor  => $bgColor,
+			faster   => !$prefs->get('resampleArtwork'),
 		);
 	};
 	
