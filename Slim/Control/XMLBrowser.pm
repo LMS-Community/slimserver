@@ -1073,17 +1073,12 @@ sub _cliQuery_done {
 									'cmd' => [ $query, 'items' ],
 									'params' => \%merged,
 								},
-								'play' => {
-									'cmd' => [ $query, 'items' ],
-									'params' => \%merged,
-								},
 								'add' => {
 									'cmd' => [ $query, 'items' ],
 									'params' => \%merged,
 								},
 							};
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
 						elsif ( $touchToPlay ) {
