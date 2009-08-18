@@ -18,8 +18,8 @@ sub initDetails {
 	# package specific addition to @INC to cater for plugin locations
 	$class->{osDetails}->{isDebian} = 1 ;
 
-	unshift @INC, '/usr/share/squeezebox';
-	unshift @INC, '/usr/share/squeezebox/CPAN';
+	unshift @INC, '/usr/share/squeezeboxserver';
+	unshift @INC, '/usr/share/squeezeboxserver/CPAN';
 	
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	unlink("$Bin/CPAN/MP3/Info.pm");
@@ -48,20 +48,20 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
-		push @dirs, "/usr/share/squeezebox/$dir";
+		push @dirs, "/usr/share/squeezeboxserver/$dir";
 
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
-		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezebox/Plugins";
+		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezeboxserver/Plugins";
 		
 	} elsif ($dir =~ /^(?:strings|revision)$/) {
 
-		push @dirs, "/usr/share/squeezebox";
+		push @dirs, "/usr/share/squeezeboxserver";
 
 	} elsif ($dir eq 'libpath') {
 
-		push @dirs, "/usr/share/squeezebox";
+		push @dirs, "/usr/share/squeezeboxserver";
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
@@ -71,19 +71,19 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 
-		push @dirs, "/etc/squeezebox";
+		push @dirs, "/etc/squeezeboxserver";
 
 	} elsif ($dir =~ /^(?:prefs)$/) {
 
-		push @dirs, $::prefsdir || "/var/lib/squeezebox/prefs";
+		push @dirs, $::prefsdir || "/var/lib/squeezeboxserver/prefs";
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || "/var/log/squeezebox";
+		push @dirs, $::logdir || "/var/log/squeezeboxserver";
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || "/var/lib/squeezebox/cache";
+		push @dirs, $::cachedir || "/var/lib/squeezeboxserver/cache";
 
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
@@ -103,7 +103,7 @@ sub decodeExternalHelperPath {
 }
 
 sub scanner {
-	return '/usr/sbin/squeezebox-scanner';
+	return '/usr/sbin/squeezeboxserver-scanner';
 }
 
 
