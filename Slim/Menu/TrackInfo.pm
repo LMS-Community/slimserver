@@ -514,13 +514,22 @@ sub addTrackNext {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $string = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
-	addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	if ( $tags->{menuContext} ne 'playlist' ) {
+		addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	}
 }
 
 sub addTrackEnd {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+
 	my $string = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
+
+	# "Add Song" in current playlist context is 'delete'
+	if ( $tags->{menuContext} eq 'playlist' ) {
+		$string = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		$cmd = 'delete';
+	}
 	addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
 }
 
@@ -531,8 +540,7 @@ sub addTrack {
 	my $jive;
 	
 	my $actions;
-	# "Add Song" in current playlist context is 'delete'
-	if ( $tags->{menuContext} eq 'playlist' ) {
+	if ( $cmd eq 'delete' ) {
 		$string  = cstring($client, 'REMOVE_FROM_PLAYLIST');
 		$actions = {
 			go => {
@@ -928,7 +936,6 @@ sub infoMoreInfo {
 	return {
 		name => cstring($client, 'MOREINFO'),
 		isContextMenu => 1,
-
 		web  => {
 			group  => 'moreinfo',
 			unfold => 1,
