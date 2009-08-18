@@ -1003,7 +1003,7 @@ sub _cliQuery_done {
 						}
 
 
-						if ( $isPlayable ) {
+						if ( $isPlayable || $item->{isContextMenu} ) {
 							$itemParams->{'isContextMenu'} = 1;
 						}
 
