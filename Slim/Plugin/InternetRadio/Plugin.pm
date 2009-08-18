@@ -304,12 +304,15 @@ sub cacheIconError {
 # Some RadioTime-specific code to add formats param if Alien is installed
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
+
+	# RadioTime's listing defaults to giving us mp3 and wma streams only,
+	# but we support a few more
+	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
+	$feed .= 'formats=aac,mp3,wma,wmpro,wmvoice,wmvideo,ogg';
 	
-	# RadioTime's listing defaults to giving us mp3 and wma streams.
 	# If AlienBBC is installed we can ask for Real streams too.
 	if ( exists $INC{'Plugins/Alien/Plugin.pm'} ) {
-		$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
-		$feed .= 'formats=mp3,wma,real';
+		$feed .= ',real';
 	}
 	
 	return $feed;
