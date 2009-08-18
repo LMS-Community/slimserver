@@ -69,7 +69,7 @@ sub registerDefaultInfoProviders {
 	) );
 
 
-	$class->registerInfoProvider( playyear => (
+	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
 		after    => 'addyearnext',
 		func      => \&playYear,

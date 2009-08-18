@@ -66,7 +66,7 @@ sub registerDefaultInfoProviders {
 		after    => 'addartist',
 		func      => \&addArtistNext,
 	) );
-	$class->registerInfoProvider( playartist => (
+	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
 		after    => 'addartistnext',
 		func      => \&playArtist,

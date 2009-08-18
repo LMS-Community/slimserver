@@ -68,7 +68,7 @@ sub registerDefaultInfoProviders {
 		func      => \&addPlaylistNext,
 	) );
 
-	$class->registerInfoProvider( playplaylist => (
+	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
 		after    => 'addplaylistnext',
 		func      => \&playPlaylist,

@@ -83,17 +83,17 @@ sub initPlugin {
 	
 	# Track Info handler
 	Slim::Menu::TrackInfo->registerInfoProvider( favorites => (
-		after => 'bottom',
+		after => 'playitem',
 		func  => \&trackInfoHandler,
 	) );
 	# Album Info handler
 	Slim::Menu::AlbumInfo->registerInfoProvider( favorites => (
-		after => 'bottom',
+		after => 'playitem',
 		func  => \&albumInfoHandler,
 	) );
 	# Artist Info handler
 	Slim::Menu::ArtistInfo->registerInfoProvider( favorites => (
-		after => 'bottom',
+		after => 'playitem',
 		func  => \&artistInfoHandler,
 	) );
 }

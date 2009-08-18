@@ -68,11 +68,11 @@ sub registerDefaultInfoProviders {
 
 	$class->registerInfoProvider( addtracknext => (
 		menuMode  => 1,
-		before    => 'playtrack',
+		before    => 'playitem',
 		func      => \&addTrackNext,
 	) );
 
-	$class->registerInfoProvider( playtrack => (
+	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
 		#after    => 'addtracknext',
 		before    => 'contributors',

@@ -69,7 +69,7 @@ sub registerDefaultInfoProviders {
 	) );
 
 
-	$class->registerInfoProvider( playgenre => (
+	$class->registerInfoProvider( playitem => (
 		menuMode  => 1,
 		after    => 'addgenrenext',
 		func      => \&playGenre,
