@@ -148,6 +148,10 @@ sub init2 {
 	}
 }
 
+sub getSkinManager {
+	return $skinMgr;
+}
+
 sub openport {
 	my ($listenerport, $listeneraddr) = @_;
 

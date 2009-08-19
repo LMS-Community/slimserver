@@ -18,11 +18,21 @@ my $prefs = preferences('server');
 
 my $log = logger('artwork');
 
+my $skinMgr;
+
 my $cache;
 
 sub init {
 	# create cache for artwork which is not purged periodically due to potential size of cache
 	$cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+
+	if (main::SCANNER) {
+		require Slim::Web::Template::NoWeb;
+		$skinMgr = Slim::Web::Template::NoWeb->new();
+	}
+	else {
+		$skinMgr = Slim::Web::HTTP::getSkinManager();
+	}
 }
 
 sub serverResizesArt { 1 }
@@ -129,13 +139,13 @@ sub processCoverArtRequest {
 
 	} elsif ($trackid eq 'all_items') {
 
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent('html/images/albums.png', $params);
+		($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', 'html/images/albums.png', $params);
 		$imageData = $$body if defined $body;
 		
 
 	} elsif ($trackid eq 'notCoverArt') {
 
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage, $params);
+		($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', $actualPathToImage, $params);
 		$imageData = $$body if defined $body;
 		
 	} else {
@@ -205,7 +215,7 @@ sub processCoverArtRequest {
 
 		else {
 			
-			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("$image", $params);		
+			($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', "$image", $params);		
 			$imageData = $$body;
 		}
 
@@ -228,7 +238,7 @@ sub processCoverArtRequest {
 			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 		}
 
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png", $params);
+		($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', "html/images/$image.png", $params);
 		$actualContentType = 'image/png';
 		$imageData = $$body;
 	}
@@ -258,7 +268,7 @@ sub processCoverArtRequest {
 			$staticImg = 'html/images/cover.png';
 		}
 		
-		my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($staticImg, $params);
+		my ($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', $staticImg, $params);
 
 		return ($body, $mtime, $inode, $size, 'image/png');
 	}
@@ -275,7 +285,7 @@ sub processCoverArtRequest {
 			# Cache the path to a non-cover icon image
 			my $skin = $params->{'skinOverride'} || $prefs->get('skin');
 			
-			$imageFilePath = Slim::Web::HTTP::fixHttpPath($skin, $actualPathToImage) || $actualPathToImage;
+			$imageFilePath = $skinMgr->fixHttpPath($skin, $actualPathToImage) || $actualPathToImage;			
 		}
 		
 		my $cached = {
@@ -324,7 +334,7 @@ sub _errorGettingRemoteArtwork {
 
 	main::INFOLOG && $log->info("  failure looking up remote artwork - using placeholder.");
 
-	my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/radio.png", $http->params('params'));
+	my ($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', "html/images/radio.png", $http->params('params'));
 
 	$http->params('callback')->( 
 		$http->params('client'),
