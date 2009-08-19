@@ -358,21 +358,30 @@ sub precacheArtwork {
 		# Pre-cache this artwork resized to our commonly-used sizes/formats
 		# 1. user's thumb size or 100x100_o (large web artwork)
 		# 2. 50x50_o (small web artwork)
-		# 3. 56x56_o.jpg (Jive artwork - OAR JPG)
+		# 3+ SqueezePlay/Jive size artwork
 
 		my $coversize = $prefs->get('thumbSize') || 100;
 	
-		my %dims = (
-			50 => '_o',
-			$coversize => '_o',
-			56 => '_o.jpg',
+		my @dims = (
+			"${coversize}x${coversize}_o",
+			'50x50_o',
+			'40x40_m',
+			'41x41_m',
+			'64x64_m',
+#			'300x143_m',
+#			'180x180_m',
+#			'240x240_m',
+#			'470x153_m',
+#			'470x170_m',
 		);
 	
-		for my $dim ( keys %dims ) {
-			$isDebug && $importlog->debug( "Pre-caching artwork for trackid $id at size ${dim}x${dim}$dims{$dim}" );
+		for my $dim ( @dims ) {
+			$isDebug && $importlog->debug( "Pre-caching artwork for trackid $id at size $dim" );
 			eval {
-				Slim::Web::Graphics::processCoverArtRequest( undef, "music/$id/cover_${dim}x${dim}$dims{$dim}" );
+				Slim::Web::Graphics::processCoverArtRequest( undef, "music/$id/cover_$dim" );
 			};
+			
+			$log->error("Pre-caching failed for trackid $id at size $dim: $@") if $@;
 		}
 	}
 }
