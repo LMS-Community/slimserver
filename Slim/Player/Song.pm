@@ -454,7 +454,7 @@ sub open {
 		
 			if (!$sock) {
 				logWarning("stream failed to open [$url].");
-				$self->status(STATUS_FAILED);
+				$self->setStatus(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
 			}
 					
@@ -517,7 +517,7 @@ sub open {
 				$sock->close();
 				$sock = undef;
 
-				$self->status(STATUS_FAILED);
+				$self->setStatus(STATUS_FAILED);
 				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
 			}		
 		}	
@@ -623,7 +623,7 @@ sub open {
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'open', $url]);
 
-	$self->status(STATUS_STREAMING);
+	$self->setStatus(STATUS_STREAMING);
 	
 	$client->metaTitle(undef);
 	
