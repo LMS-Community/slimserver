@@ -802,10 +802,27 @@ sub logGroups {
 				'scan.scanner'           => 'DEBUG',
 				'scan.import'            => 'DEBUG',
 				'artwork'                => 'DEBUG',
+				'plugin.itunes'          => 'DEBUG',
+				'plugin.musicip'         => 'DEBUG',
 			},
 			label => 'DEBUG_SCANNER_CHOOSE',
 		},
 	};
+}
+
+# logging options we want to pass to the scanner
+sub getScannerLogOptions {
+	my $class = shift;
+	
+	my $options = $class->logGroups()->{SCANNER}->{categories};
+	
+	foreach my $key (keys %$options) {
+
+		$options->{$key} = $runningConfig{"log4perl.logger.$key"};
+		
+	}
+	
+	return $options;
 }
 
 sub setLogGroup {

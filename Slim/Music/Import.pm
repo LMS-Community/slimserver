@@ -154,8 +154,20 @@ sub launchScan {
 	}
 	
 	# Pass debug flags to scanner
+	my $debugArgs = '';
+	my $scannerLogOptions = Slim::Utils::Log->getScannerLogOptions();
+	 
+	foreach (keys %$scannerLogOptions) {
+		$debugArgs .= $_ . '=' . $scannerLogOptions->{$_} . ',';
+	}
+	
 	if ( $main::debug ) {
-		push @scanArgs, '--debug', $main::debug;
+		$debugArgs .= $main::debug;
+	}
+	
+	if ( $debugArgs ) {
+		$debugArgs =~ s/,$//;
+		push @scanArgs, '--debug', $debugArgs;
 	}
 	
 	$class->scanningProcess(
