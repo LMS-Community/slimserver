@@ -1080,8 +1080,6 @@ sub _Stream {				# play -> Buffering, Streaming
 		return;
 	}
 	
-	main::INFOLOG && $log->info($self->{masterId} . ": preparing to stream song index " .  $song->index());
-	
 	my $queue = $self->{'songqueue'};
 
 	# bug 10510 - remove old songs from queue before adding new one
@@ -1099,6 +1097,14 @@ sub _Stream {				# play -> Buffering, Streaming
 	if (main::INFOLOG && $log->is_info) {	
 		$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
 	}
+	
+	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
+	# and on very short tracks we may get multiple decoder underrun events during playback of a single
+	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
+	# Check that we are not trying to stream too many tracks (test moved from _StreamIfReady)
+	return if scalar @$queue > 2;
+	
+	main::INFOLOG && $log->info($self->{masterId} . ": preparing to stream song index " .  $song->index());
 	
 	# Allow protocol handler to override playback and do something else,
 	# used by Random Play, MusicIP, to provide URLs
@@ -1218,17 +1224,6 @@ sub _StreamIfReady {		# IF [allReadyToStream] THEN play -> Streaming ENDIF
 	
 	my $song = $self->{'nextTrack'};
 	if (!$song) {return;}
-	
-	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
-	# and on very short tracks we may get multiple decoder underrun events during playback of a single
-	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
-	
-	# Bug 10841: Bug check that the first song is not the one we want to play
-	
-	my $queue = $self->{'songqueue'};
-	if (scalar @{$queue} > 1 && $queue->[0]->status() != Slim::Player::Song::STATUS_READY) {
-		return;
-	}
 	
 	my $ready = 1;
 	foreach my $player (@{$self->{'players'}})	{
