@@ -2885,33 +2885,23 @@ sub jivePlayTrackAlbumCommand {
 
 		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
 
-		my @playlist = ();
+		# filter out folders
+		@{$items} = grep { Slim::Music::Info::isSong($_) }
+		# make sure we get a valid path
+		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $folder) }
+		@$items;
 
-		# iterate through list in reverse order, so that dropped items don't affect the index as we subtract.
-		for my $i (reverse (0..scalar @{$items}-1)) {
-
-			if (!ref $items->[$i]) {
-				$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $folder);
-			}
-
-			if (!Slim::Music::Info::isSong($items->[$i])) {
-
-				main::INFOLOG && $log->info("Dropping $items->[$i] from play all in folder at index $i");
-
-				if ($i < $listIndex) {
-					$listIndex--;
-				}
-
-				next;
-			}
-
-			unshift (@playlist, $items->[$i]);
+		if ($listIndex < scalar @$items) {
+			@$items = splice @$items, $listIndex;
 		}
+		else {
+			$items = [];
+		} 
 
 		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
 
 		$client->execute(['playlist', 'clear']);
-		$client->execute(['playlist', 'addtracks', 'listref', \@playlist]);
+		$client->execute(['playlist', 'addtracks', 'listref', $items]);
 		$client->execute(['playlist', 'jump', $listIndex]);
 
 		if ($wasShuffled) {
