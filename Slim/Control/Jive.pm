@@ -2891,13 +2891,6 @@ sub jivePlayTrackAlbumCommand {
 		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $folder) }
 		@$items;
 
-		if ($listIndex < scalar @$items) {
-			@$items = splice @$items, $listIndex;
-		}
-		else {
-			$items = [];
-		} 
-
 		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
 
 		$client->execute(['playlist', 'clear']);
