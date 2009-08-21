@@ -1203,7 +1203,7 @@ sub cliMix {
 		$request->addResult('offset', 0);
 		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
 		my $thisWindow = {
-				'windowStyle' => 'text_list',
+				'windowStyle' => 'icon_list',
 				'text'       => $request->string('MUSICMAGIC_MIX'),
 		};
 		$request->addResult('window', $thisWindow);
