@@ -1337,7 +1337,13 @@ sub cliQuery {
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
 	
-
+	# special case-- playlist_index given but no trackId
+	if ($playlist_index && ! $trackId ) {
+		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
+		$trackId = $song->id;
+		$url     = $song->url;
+	}
+		
 	my $tags = {
 		menuMode      => $menuMode,
 		menuContext   => $menuContext,
