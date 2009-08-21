@@ -901,9 +901,9 @@ sub changeEffectiveUserAndGroup {
 
 	# Don't allow the server to be started as root.
 	# MySQL can't be run as root, and it's generally a bad idea anyways.
-	# Try starting as 'slimserver' instead.
+	# Try starting as 'squeezeboxserver' instead.
 	if (!defined($user)) {
-		$user = 'slimserver';
+		$user = 'squeezeboxserver';
 		print STDERR "Squeezebox Server must not be run as root!  Trying user $user instead.\n";
 	}
 
