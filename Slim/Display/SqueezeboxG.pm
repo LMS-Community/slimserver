@@ -188,6 +188,10 @@ sub pushLeft {
 
 	$display->killAnimation();
 	$display->pushUpdate([\$allbits, 0, $display->screenBytes() / 8, $display->screenBytes(),  0.025]);
+
+	if ($display->notifyLevel == 2) {
+		$display->notify('update');
+	}
 }
 
 sub pushRight {
@@ -202,6 +206,10 @@ sub pushRight {
 	
 	$display->killAnimation();
 	$display->pushUpdate([\$allbits, $display->screenBytes(), 0 - $display->screenBytes() / 8, 0, 0.025]);
+
+	if ($display->notifyLevel == 2) {
+		$display->notify('update');
+	}
 }
 
 sub pushUp {

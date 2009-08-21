@@ -450,6 +450,10 @@ sub pushLeft {
 
 	$display->killAnimation();
 	$display->pushUpdate([\$line1, \$line2, 0, 4, $display->displayWidth,  0.02]);
+
+	if ($display->notifyLevel == 2) {
+		$display->notify('update');
+	}
 }
 
 sub pushRight {
@@ -467,6 +471,10 @@ sub pushRight {
 
 	$display->killAnimation();
 	$display->pushUpdate([\$line1, \$line2, $display->displayWidth, -4, 0,  0.02]);
+
+	if ($display->notifyLevel == 2) {
+		$display->notify('update');
+	}
 }
 
 sub pushUp {
