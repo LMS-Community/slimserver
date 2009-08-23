@@ -1079,6 +1079,15 @@ sub _Stream {				# play -> Buffering, Streaming
 		_NextIfMore($self, $event);
 		return;
 	}
+
+	# Allow protocol hander to update $song before streaming - used when song url contains params which may become stale 
+	# updateOnStream will return true if we should stream now, or false if it will callback later after updating $song
+	if ( $song->currentTrackHandler()->can('updateOnStream') && !$params->{'callback'}) {
+		main::DEBUGLOG && $log->debug("Protocol Handler for " . $song->currentTrack()->url . " updateOnStream");
+		return if $song->currentTrackHandler()->updateOnStream($song,
+			sub { _Stream($self, $event, { seekdata => $seekdata, song => $song, reconnect => $reconnect, callback => 1 }); }
+		);
+	}
 	
 	my $queue = $self->{'songqueue'};
 
