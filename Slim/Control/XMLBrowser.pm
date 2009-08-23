@@ -998,6 +998,7 @@ sub _cliQuery_done {
 								$itemParams->{favorites_url} = $item->{playlist};
 							}
 							$itemParams->{type} = $item->{type} if $item->{type};
+							$itemParams->{parser} = $item->{parser} if $item->{parser};
 							$presetFavSet = 1;
 
 						}

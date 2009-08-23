@@ -2986,6 +2986,7 @@ sub jiveFavoritesCommand {
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
 		my $type   = $request->getParam('type');
+		my $parser = $request->getParam('parser');
 		# favorite needs to be saved as either a playlist or default to audio
 		if ( defined($type) && $type ne 'playlist' ) {
 			$type = 'audio';
@@ -2996,10 +2997,11 @@ sub jiveFavoritesCommand {
 		}
 		
 		$client->setPreset( {
-			slot => $preset + 1, # set_preset is 0-based
-			URL  => $url,
-			text => $title,
-			type => $type,
+			slot   => $preset + 1, # set_preset is 0-based
+			URL    => $url,
+			text   => $title,
+			type   => $type,
+			parser => $parser,
 		} );
 	} else {
 
