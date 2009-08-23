@@ -692,6 +692,12 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		}
 	);
 	
+	_showTrackwaitStatus($self, $song);
+}
+
+sub _showTrackwaitStatus {
+	my ($self, $song) = @_;
+	
 	# Show getting-track-info message if still in TRACKWAIT & STOPPED
 	if ($self->{'playingState'} == STOPPED && $self->{'streamingState'} == TRACKWAIT) {
 
@@ -704,10 +710,10 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		_playersMessage($self, $song->currentTrack->url,
 			$remoteMeta, $song->isPlaylist() ? 'GETTING_TRACK_DETAILS' : 'GETTING_STREAM_INFO', $icon, 0, 30);
 	}
-	
 }
+
 sub _nextTrackReady {
-	my ($self, $id, $song) = @_;
+	my ($self, $id, $song, $params) = @_;
 	
 	if ($self->{'nextTrackCallbackId'} != $id) {
 		main::INFOLOG && $log->info($self->{'masterId'} . ": discarding unexpected nextTrackCallbackId $id, expected " . 
@@ -718,7 +724,7 @@ sub _nextTrackReady {
 	$self->{'nextTrack'} = $song;
 	main::INFOLOG && $log->info($self->{'masterId'} . ": nextTrack will be index ". $song->index());
 	
-	_eventAction($self, 'NextTrackReady');
+	_eventAction($self, 'NextTrackReady', $params);
 }
 
 sub _nextTrackError {
@@ -1081,12 +1087,27 @@ sub _Stream {				# play -> Buffering, Streaming
 	}
 
 	# Allow protocol hander to update $song before streaming - used when song url contains params which may become stale 
-	# updateOnStream will return true if we should stream now, or false if it will callback later after updating $song
-	if ( $song->currentTrackHandler()->can('updateOnStream') && !$params->{'callback'}) {
-		main::DEBUGLOG && $log->debug("Protocol Handler for " . $song->currentTrack()->url . " updateOnStream");
-		return if $song->currentTrackHandler()->updateOnStream($song,
-			sub { _Stream($self, $event, { seekdata => $seekdata, song => $song, reconnect => $reconnect, callback => 1 }); }
+	# updateOnStream will call either the success or fail callbacks, either immediately or later
+	if ( $song->currentTrackHandler()->can('updateOnStream') && !$params->{'updateOnStreamCallback'}) {
+		main::DEBUGLOG && $log->debug("Protocol Handler for ", $song->currentTrack()->url, " updateOnStream");
+		
+		my $id = ++$self->{'nextTrackCallbackId'};
+		$self->{'nextTrack'} = undef;
+		_setStreamingState($self, TRACKWAIT);
+		
+		$song->currentTrackHandler()->updateOnStream (
+			$song,
+			sub {	# success
+				_nextTrackReady($self, $id, $song, {%$params, song => $song, updateOnStreamCallback => 1});
+			},
+			sub {	# fail
+				_nextTrackError($self, $id, $song, @_);
+			}
 		);
+
+		_showTrackwaitStatus($self, $song);
+		
+		return;
 	}
 	
 	my $queue = $self->{'songqueue'};
