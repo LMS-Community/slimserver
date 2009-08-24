@@ -60,8 +60,6 @@ sub new {
 		
 	});
 
-	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
-
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZEBOX_SERVER'));
 
@@ -70,14 +68,14 @@ sub new {
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 		$btnStartStop->SetSize( $btnStartStop->GetBestSize() );
 	});
-	$startBtnSizer->Add($btnStartStop, 0);
+	$statusSizer->Add($btnStartStop, 0);
 
 	my $cbStartSafeMode = Wx::CheckBox->new($self, -1, string('RUN_FAILSAFE'));
 	$parent->addStatusListener($cbStartSafeMode, sub {
 		$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
 	});
-	$startBtnSizer->AddSpacer(10);
-	$startBtnSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP, 5);
+	$statusSizer->AddSpacer(5);
+	$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 5);
 
 	@startupOptions = map { string($_) } @startupOptions;	
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
@@ -99,7 +97,6 @@ sub new {
 		}
 	});
 
-	$statusSizer->Add($startBtnSizer, 0, wxLEFT | wxBOTTOM | wxGROW, 10);
 	$mainSizer->Add($statusSizer, 0, wxALL | wxGROW, 10);
 
 
