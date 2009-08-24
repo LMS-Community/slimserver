@@ -18,10 +18,7 @@ use base qw(Slim::Plugin::Base);
 my $FRAME_LEN_SB1 =  560; # test frame len - SB1 can't support longer frames
 my $FRAME_LEN_SB2 = 1400; # test frame len for SB2 and later
 
-our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 );
-
-my $defaultSB  = 1000;
-my $defaultSB2 = 2000;
+my $defaultRate   = 1000; # default test rate
 
 sub initPlugin {
 	my $class = shift;
@@ -134,6 +131,8 @@ sub setMode {
 
 	$client->lines(\&lines);
 
+	my @testRates = testRates($target);
+
 	if ($client->isa('Slim::Player::Transporter')) {
 		$client->modeParam('listLen', scalar(@testRates));
 		$client->modeParam('listIndex', 0);
@@ -223,6 +222,8 @@ sub setTest {
 	my $params = shift;
 	my $test = shift;
 	my $rate = shift;
+
+	my @testRates = testRates($params->{'target'});
 
 	if (defined($test)) {
 
@@ -374,11 +375,13 @@ sub cliQuery {
 		return;
 	}
 
+	my @testRates = testRates($client);
+
 	if ($query && $query eq 'rates') {
 		for my $i (0..$#testRates) {
 			$request->addResultLoop('rates_loop', $i, $i, $testRates[$i]);
 		}
-		$request->addResult('default', $client->isa('Slim::Player::Squeezebox2') ? $defaultSB2 : $defaultSB);
+		$request->addResult('default', $defaultRate);
 	}
 
 	if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
@@ -455,6 +458,19 @@ sub systemInfoMenu {
 			hide => 1
 		},
 	};
+}
+
+sub testRates {
+	my $client = shift;
+
+	if ($client->isa('Slim::Player::SqueezePlay') || !$client->isa('Slim::Player::Squeezebox2')) {
+		# Squeezeplay and Squeezebox1 can't support high bitrates over the slimproto connection so restrict it
+		return ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000 );
+
+	} else {
+
+		return ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 );
+	}
 }
 
 1;
