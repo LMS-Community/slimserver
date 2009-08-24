@@ -9698,7 +9698,7 @@ PLAY_NEXT
 	CS	Přehrát další
 	DA	Spil næste
 	DE	Nächsten wiedergeben
-	EN	Play next
+	EN	Play Next
 	ES	Reproducir a continuación
 	FI	Soita seuraava
 	FR	Lire à la suite
@@ -9708,6 +9708,9 @@ PLAY_NEXT
 	PL	Odtwórz następny
 	RU	След. дорожка
 	SV	Spela härnäst
+
+PLAY_NOW
+	EN	Play Now
 
 SHUFFLE
 	CS	Náhodně
