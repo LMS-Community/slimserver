@@ -95,6 +95,7 @@ use Slim::Utils::Strings qw(string);
 
 if ( INFOLOG || DEBUGLOG ) {
     require Data::Dump;
+	require Slim::Utils::PerlRunTime;
 }
 
 our $VERSION     = '7.4';
