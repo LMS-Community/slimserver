@@ -468,6 +468,9 @@ sub albumsQuery {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('album');
 		}
+		if ( $search ) {
+			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
+		}
 
 		$request->addResult('base', $base);
 	}
@@ -859,6 +862,9 @@ sub artistsQuery {
 		if ( $useContextMenu ) {
 			# + is more
 			$base->{'actions'}->{'more'} = _contextMenuBase('artist');
+		}
+		if ( $search ) {
+			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
 		}
 		$request->addResult('base', $base);
 	}
@@ -1470,6 +1476,9 @@ sub genresQuery {
 		if ($useContextMenu) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('genre');
+		}
+		if ( $search ) {
+			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
 		}
 		$request->addResult('base', $base);
 
@@ -2586,6 +2595,9 @@ sub playlistsQuery {
 			# context menu for 'more' action
 			$base->{'actions'}{'more'} = _contextMenuBase('playlist');
 		}
+		if ( $search ) {
+			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -3434,6 +3446,8 @@ sub statusQuery {
 	my $shuffle      = Slim::Player::Playlist::shuffle($client);
 	my $songCount    = Slim::Player::Playlist::count($client);
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
+	my $alarmComing  = Slim::Utils::Alarm->alarmInNextDay($client) ? 1 : 0;
+
 	my $idx = 0;
 
 
@@ -3451,6 +3465,9 @@ sub statusQuery {
 		$request->addResult('player_is_upgrading', "1");
 	}
 	
+	# alarm indicator
+	$request->addResult('alarm_set', $alarmComing );
+
 	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
@@ -4094,6 +4111,9 @@ sub titlesQuery {
 			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('track');
+		}
+		if ( $search ) {
+			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
 		}
 
 
