@@ -309,6 +309,16 @@ sub mainMenu {
 			}
 		}
 		
+		# call string() for input text if necessary
+		if ( my $input = $_->{input} ) {
+			if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
+				$input->{title}        = $client->string( $input->{title} );
+				$input->{help}->{text} = $client->string( $input->{help}->{text} );
+				$input->{softbutton1}  = $client->string( $input->{softbutton1} );
+				$input->{softbutton2}  = $client->string( $input->{softbutton2} );
+			}
+		}
+		
 		$_;
 	}(
 		main::SLIM_SERVICE ? () : {

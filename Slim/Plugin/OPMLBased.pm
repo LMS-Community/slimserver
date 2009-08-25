@@ -88,6 +88,20 @@ sub initJive {
 			},
 		},
 	} );
+	
+	# Bug 12336, additional items for type=search
+	if ( $args{type} eq 'search' ) {
+		$jiveMenu[0]->{actions}->{go}->{params}->{search} = '__TAGGEDINPUT__';
+		$jiveMenu[0]->{input} = {
+			len  => 1,
+			help => {
+				text => 'JIVE_SEARCHFOR_HELP',
+			},
+			softbutton1 => 'INSERT',
+			softbutton2 => 'DELETE',
+			title       => $name,
+		};
+	}
 
 	return \@jiveMenu;
 }
