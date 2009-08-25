@@ -36,7 +36,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
-my @pluginMenus        = ();
+my @appMenus           = (); # all available apps
+my @pluginMenus        = (); # all non-app plugins
 my @recentSearches     = ();
 
 =head1 METHODS
@@ -367,7 +368,7 @@ sub mainMenu {
 		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
 		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
 		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
-		@{homeMenuApps($client, 1)},
+		@{appMenus($client, 1)},
 	);
 	
 =pod
@@ -623,6 +624,7 @@ sub albumSortSettingsItem {
 }
 
 # allow a plugin to add a node to the menu
+# XXX what uses this?
 sub registerPluginNode {
 	main::INFOLOG && $log->info("Begin function");
 	my $nodeRef = shift;
@@ -642,6 +644,40 @@ sub registerPluginNode {
 	# but also remember this structure as part of the plugin menus
 	push @pluginMenus, $nodeRef;
 
+}
+
+sub registerAppMenu {
+	my $menuArray = shift;
+	
+	# now we want all of the items in $menuArray to go into @pluginMenus, but we also
+	# don't want duplicate items (specified by 'id'), 
+	# so we want the ids from $menuArray to stomp on ids from @pluginMenus, 
+	# thus getting the "newest" ids into the @pluginMenus array of items
+	# we also do not allow any hash without an id into the array, and will log an error if that happens
+
+	my $isInfo = $log->is_info;
+
+	my %seen;
+	my @new;
+
+	for my $href (@$menuArray, reverse @appMenus) {
+		my $id = $href->{id};
+		if ($id) {
+			if ( !$seen{$id} ) {
+				main::INFOLOG && $isInfo && $log->info("registering app menu " . $id);
+				push @new, $href;
+			}
+			$seen{$id}++;
+		}
+		else {
+			$log->error("Menu items cannot be added without an id");
+		}
+	}
+
+	# @new is the new @appMenus
+	# we do this in reverse so we get previously initialized nodes first 
+	# you can't add an item to a node that doesn't exist :)
+	@appMenus = reverse @new;
 }
 
 # send plugin menus array as a notification to Jive
@@ -3168,7 +3204,7 @@ sub _extensionsQueryCB {
 	}
 }
 
-sub homeMenuApps {
+sub appMenus {
 	my $client = shift;
 	my $batch  = shift;
 	
@@ -3185,20 +3221,22 @@ sub homeMenuApps {
 	}
 	
 	# We want to add nodes for the following items:
-	# Home menu apps (home_menu => 1)
-	# If a home menu app is not already defined in @pluginMenus,
+	# My Apps (node = null)
+	# Home menu apps (node = home)
+	# If a home menu app is not already defined in @appMenus,
 	# i.e. pure OPML apps such as SomaFM
 	# create one for it using the generic OPML handler
 	
 	for my $app ( keys %{$apps} ) {
 		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
-		next if $apps->{$app}->{home_menu} != 1; # non-home-menu item
 		
 		# Does this app exist in our global plugin list?
-		if ( my ($plugin) = grep { $_->{id} =~ /$app/ } @pluginMenus ) {
-			# Clone the existing plugin and change the node to home
+		if ( my ($plugin) = grep { $_->{id} =~ /$app/ } @appMenus ) {
+			# Clone the existing plugin and set the node
 			my $clone = Storable::dclone($plugin);
-			$clone->{node} = 'home';
+			
+			# Set node to home or null
+			$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
 			
 			# Use title from app list
 			delete $clone->{stringToken};
@@ -3217,6 +3255,8 @@ sub homeMenuApps {
 					? $apps->{$app}->{icon} 
 					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
 				
+				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+				
 				push @{$menu}, {
 					actions => {
 						go => {
@@ -3230,16 +3270,13 @@ sub homeMenuApps {
 					},
 					displayWhenOff => 0,
 					id             => 'opml' . $app,
-					node           => 'home',
+					node           => $node,
 					text           => $apps->{$app}->{title},
 					window         => {
 						'icon-id'  => $icon,
 						titleStyle => 'album',
 					},
 				};
-			}
-			elsif ( $apps->{$app}->{type} eq 'squeezeplay' ) {
-				# XXX: SqueezePlay-only apps such as Flickr
 			}
 		}
 	}

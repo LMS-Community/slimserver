@@ -119,7 +119,6 @@ sub initPlugin {
 			stringToken    => getDisplayName(),
 			weight         => 20,
 			id             => 'podcast',
-			node           => 'extras',
 			'icon-id'      => $class->_pluginDataFor('icon'),
 			displayWhenOff => 0,
 			window         => { 
@@ -136,7 +135,7 @@ sub initPlugin {
 			},
 		});
 
-	Slim::Control::Jive::registerPluginMenu(\@item);
+	Slim::Control::Jive::registerAppMenu(\@item);
 	
 	if ( main::SLIM_SERVICE ) {
 		# Feeds are per-client on SN, so don't try to load global feeds

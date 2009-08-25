@@ -16,9 +16,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed   => Slim::Networking::SqueezeNetwork->url( '/api/facebook/v1/opml' ),
 		tag    => 'facebook',
-		node   => '',
-		#menu   => '',
-		#weight => 30,
+		is_app => 1,
 	);
 	
 	# Track Info item

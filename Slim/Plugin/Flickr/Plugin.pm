@@ -16,9 +16,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed   => Slim::Networking::SqueezeNetwork->url( '/api/flickr/v1/opml' ),
 		tag    => 'flickr',
-		node   => '',
-		#menu   => '',
-		#weight => 30,
+		is_app => 1,
 	);
 	
 =pod TODO

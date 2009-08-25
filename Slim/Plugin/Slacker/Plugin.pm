@@ -52,6 +52,7 @@ sub initPlugin {
 		tag    => 'slacker',
 		menu   => 'music_services',
 		weight => 30,
+		is_app => 1,
 	);
 	
 	if ( !main::SLIM_SERVICE && !$::noweb ) {

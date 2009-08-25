@@ -52,6 +52,7 @@ sub initPlugin {
 		tag    => 'lfm',
 		menu   => 'music_services',
 		weight => 40,
+		is_app => 1,
 	);
 	
 	if ( main::SLIM_SERVICE ) {

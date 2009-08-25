@@ -40,7 +40,12 @@ sub initPlugin {
 	$class->initCLI( %args );
 	
 	if ( my $menu = $class->initJive( %args ) ) {
-		Slim::Control::Jive::registerPluginMenu($menu);
+		if ( $args{is_app} ) {
+			Slim::Control::Jive::registerAppMenu($menu);
+		}
+		else {
+			Slim::Control::Jive::registerPluginMenu($menu);
+		}
 	}
 
 	$class->SUPER::initPlugin();

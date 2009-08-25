@@ -49,6 +49,7 @@ sub initPlugin {
 		tag    => 'rhapsodydirect',
 		menu   => 'music_services',
 		weight => 20,
+		is_app => 1,
 	);
 	
 	if ( main::SLIM_SERVICE ) {

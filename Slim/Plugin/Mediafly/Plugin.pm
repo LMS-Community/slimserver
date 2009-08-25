@@ -26,6 +26,7 @@ sub initPlugin {
 		tag    => 'mediafly',
 		menu   => 'music_services',
 		weight => 55,
+		is_app => 1,
 	);
 	
 	# Commands init

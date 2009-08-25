@@ -15,6 +15,7 @@ sub initPlugin {
 		tag    => 'amazon',
 		menu   => 'music_stores',
 		weight => 30,
+		is_app => 1,
 	);
 	
 	# Track Info item

@@ -27,6 +27,7 @@ sub initPlugin {
 		tag    => 'deezer',
 		menu   => 'music_services',
 		weight => 35,
+		is_app => 1,
 	);
 	
 	# Note: Deezer does not wish to be included in context menus

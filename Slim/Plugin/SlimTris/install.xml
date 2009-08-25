@@ -1,24 +1,20 @@
 <?xml version="1.0"?>
-
 <extension>
-        <id>6D96B9BB-832E-4E4A-8C00-0742AF7A117A</id>
-        <name>SLIMTRIS</name>
-        <module>Slim::Plugin::SlimTris::Plugin</module>
-        <version>1.0</version>
+	<id>6D96B9BB-832E-4E4A-8C00-0742AF7A117A</id>
+	<name>SLIMTRIS</name>
+	<module>Slim::Plugin::SlimTris::Plugin</module>
+	<version>1.0</version>
 	<playerMenu>GAMES</playerMenu>
-        <description>SLIMTRIS_DESC</description>
-        <creator>Slim Devices/Logitech</creator>
+	<description>SLIMTRIS_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
-
-	<defaultState>enabled</defaultState>
-        
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
-	<type>2</type><!-- type=extension -->
-
-        <targetApplication>
-  	        <id>Squeezebox Server</id>
-                <minVersion>7.0a</minVersion>
-                <maxVersion>*</maxVersion>
-        </targetApplication>
-
+	<defaultState>disabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+<!-- type=extension -->
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
 </extension>

@@ -22,6 +22,7 @@ sub initPlugin {
 	
 	# Initialize metadata handler
 	Slim::Plugin::RadioTime::Metadata->init();
+
 }
 
 sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }

@@ -23,6 +23,7 @@ sub initPlugin {
 		tag            => 'mp3tunes',
 		menu           => 'music_services',
 		weight         => 50,
+		is_app         => 1,
 	);
 	
 	Slim::Formats::RemoteMetadata->registerProvider(

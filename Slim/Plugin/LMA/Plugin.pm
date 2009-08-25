@@ -23,6 +23,7 @@ sub initPlugin {
 		menu      => 'music_services',
 		style     => 'albumcurrent',
 		weight    => 60,
+		is_app    => 1,
 	);
 }
 

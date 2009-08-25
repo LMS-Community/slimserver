@@ -19,6 +19,12 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		sirius => 'Slim::Plugin::Sirius::ProtocolHandler'
 	);
+	
+	$class->SUPER::initPlugin(
+		feed   => Slim::Networking::SqueezeNetwork->url('/api/sirius/v1/opml'),
+		tag    => 'sirius',
+		is_app => 1,
+	);
 }
 
 sub getDisplayName () {
