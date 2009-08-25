@@ -1096,6 +1096,12 @@ sub _cliQuery_done {
 									params      => $itemParams,
 									nextWindow  => 'nowPlaying',
 								},
+								'add' => {
+									player      => 0,
+									cmd         => [$query, 'playlist', 'add'],
+									itemsParams => 'params',
+									params      => $itemParams,
+								},
 								'add-hold' => {
 									player      => 0,
 									cmd         => [$query, 'playlist', 'insert'],
@@ -1103,10 +1109,8 @@ sub _cliQuery_done {
 									params      => $itemParams,
 								}
 							};
-							$actions->{'add'} = $actions->{'more'};
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
-							$request->addResultLoop( $loopname, $cnt, 'addAction', 'more');
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
 

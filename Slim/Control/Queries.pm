@@ -467,8 +467,6 @@ sub albumsQuery {
 		if ( $useContextMenu ) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('album');
-			# add is more
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 
 		$request->addResult('base', $base);
@@ -861,8 +859,6 @@ sub artistsQuery {
 		if ( $useContextMenu ) {
 			# + is more
 			$base->{'actions'}->{'more'} = _contextMenuBase('artist');
-			# add is more
-			$base->{'actions'}->{'add'} = $base->{'actions'}{'more'};
 		}
 		$request->addResult('base', $base);
 	}
@@ -1474,8 +1470,6 @@ sub genresQuery {
 		if ($useContextMenu) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('genre');
-			# add is more
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 		$request->addResult('base', $base);
 
@@ -1944,7 +1938,6 @@ sub musicfolderQuery {
 					if ($useContextMenu) {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
-						$actions->{'addAction'} = 'more';
 						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
@@ -1996,7 +1989,6 @@ sub musicfolderQuery {
 					if ($useContextMenu) {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
-						$actions->{'addAction'} = 'more';
 						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 					}
 				# not sure
@@ -2593,8 +2585,6 @@ sub playlistsQuery {
 		if ($useContextMenu) {
 			# context menu for 'more' action
 			$base->{'actions'}{'more'} = _contextMenuBase('playlist');
-			# "+ is more"
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 		$request->addResult('base', $base);
 	}
@@ -3590,8 +3580,6 @@ sub statusQuery {
 			$base->{'actions'}{'more'} = _contextMenuBase('track');
 			# this is the current playlist, so tell SC the context of this menu
 			$base->{'actions'}{'more'}{'params'}{'context'} = 'playlist';
-			# "+ is more"
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		} else {
 			$base = {
 				actions => {
@@ -4048,6 +4036,14 @@ sub titlesQuery {
 						},
 					itemsParams => 'params',
 				},
+				more => {
+					cmd => [ 'trackinfo', 'items', ],
+						params => {
+							menu => $nextMenu,
+							useContextMenu => 1,
+						},
+					itemsParams => 'params',
+				},
 				play => {
 					player => 0,
 					cmd => ['playlistcontrol'],
@@ -4080,8 +4076,6 @@ sub titlesQuery {
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		# this is a temporary flag to ensure backwards compatibility between SC and Squeezeplay
-		$base->{'addAction'} = 'more';
 		
 		# Bug 5981
 		# special play handler for "play all tracks in album
@@ -4100,8 +4094,6 @@ sub titlesQuery {
 			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('track');
-			# add is more
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 
 
@@ -4372,8 +4364,6 @@ sub yearsQuery {
 		if ($useContextMenu) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('year');
-			# add is more
-			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 		$request->addResult('base', $base);
 	}
