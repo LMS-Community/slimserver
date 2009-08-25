@@ -988,7 +988,7 @@ sub _cliQuery_done {
 						my $presetFavSet     = undef;
 						my $favorites_url    = $item->{play} || $item->{url};
 						my $favorites_title  = $item->{title} || $item->{name};
-						if ( $favorites_url && $favorites_title ) {
+						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
 							$itemParams->{favorites_url} = $favorites_url;
 							$itemParams->{favorites_title} = $favorites_title;
 							if ( $item->{image} ) {
