@@ -364,8 +364,6 @@ sub mainMenu {
 			}
 		},
 		@{internetRadioMenu($client)},
-		@{musicServicesMenu($client)},
-		@{musicStoresMenu($client)},
 		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
 		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
 		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
@@ -1414,79 +1412,6 @@ sub internetRadioMenu {
 
 	return \@menu;
 
-}
-
-# returns a single item for the homeMenu if music_services is a valid command
-sub musicServicesMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-	my @command = ('music_services', 0, 200, 'menu:music_services');
-
-	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
-	my $validQuery = $test_request->isValidQuery();
-
-	my @menu = ();
-	
-	if ($validQuery && $test_request->getResult('count')) {
-		push @menu, 
-		{
-			text           => $client->string('MUSIC_SERVICES'),
-			id             => 'music_services',
-			node           => 'home',
-			weight         => 30,
-			actions => {
-				go => {
-					cmd => ['music_services'],
-					params => {
-						menu => 'music_services',
-					},
-				},
-			},
-			window        => {
-					menuStyle => 'album',
-					titleStyle => 'internetradio',
-			},
-		};
-	}
-
-	return \@menu;
-
-}
-
-# returns a single item for the homeMenu if music_stores is a valid command
-sub musicStoresMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-	my @command = ('music_stores', 0, 200, 'menu:music_stores');
-
-	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
-	my $validQuery = $test_request->isValidQuery();
-
-	my @menu = ();
-	
-	if ($validQuery && $test_request->getResult('count')) {
-		push @menu, 
-		{
-			text           => $client->string('MUSIC_STORES'),
-			id             => 'music_stores',
-			node           => 'home',
-			weight         => 35,
-			actions => {
-				go => {
-					cmd => ['music_stores'],
-					params => {
-						menu => 'music_stores',
-					},
-				},
-			},
-			window        => {
-					menuStyle => 'album',
-					titleStyle => 'internetradio',
-			},
-		};
-	}
-
-	return \@menu;
 }
 
 sub playerSettingsMenu {
