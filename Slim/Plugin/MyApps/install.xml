@@ -11,6 +11,7 @@
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<icon>plugins/MyApps/html/images/icon.png</icon>
 	<type>2</type>
+	<enforce>1</enforce>
 	<targetApplication>
 		<id>Squeezebox Server</id>
 		<minVersion>7.4</minVersion>
