@@ -59,6 +59,9 @@ sub getDisplayName () {
 	return 'PLUGIN_MEDIAFLY_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 sub skipTrack {
 	my $request = shift;
 	my $client  = $request->client();

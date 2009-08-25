@@ -3,7 +3,6 @@
 	<id>F7230FE1-EA90-48F6-9FDC-4C2670F6D886</id>
 	<name>PLUGIN_LFM_MODULE_NAME</name>
 	<module>Slim::Plugin::LastFM::Plugin</module>
-	<playerMenu>MUSIC_SERVICES</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_LFM_MODULE_NAME_DESC</description>
 	<creator>Slim Devices/Logitech</creator>

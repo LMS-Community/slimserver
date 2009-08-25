@@ -45,6 +45,9 @@ sub getDisplayName {
 	return 'PLUGIN_SOUNDS_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 # Called by Slim::Utils::Alarm to get the playlists that should be presented as options
 # for an alarm playlist.
 sub getAlarmPlaylists {

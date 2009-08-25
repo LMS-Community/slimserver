@@ -3,7 +3,6 @@
 	<id>FDED34DE-2691-4096-8E25-752E2BFEA8DC</id>
 	<name>PLUGIN_SIRIUS_MODULE_NAME</name>
 	<module>Slim::Plugin::Sirius::Plugin</module>
-	<playerMenu>RADIO</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_SIRIUS_MODULE_NAME</description>
 	<creator>Slim Devices/Logitech</creator>

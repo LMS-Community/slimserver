@@ -28,6 +28,9 @@ sub initPlugin {
 =cut
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 sub initCLI {
 	my ( $class, %args ) = @_;
 	

@@ -22,11 +22,11 @@ sub initPlugin {
 	
 	# Initialize metadata handler
 	Slim::Plugin::RadioTime::Metadata->init();
-
 }
 
 sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
 
-sub playerMenu { undef }
+# Don't add this item to any menu
+sub playerMenu { }
 
 1;

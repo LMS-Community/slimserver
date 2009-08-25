@@ -955,6 +955,65 @@ sub updateMenu {
 
 		push @home, 'NOW_PLAYING';
 	}
+	
+	# Add home menu apps between Internet Radio and My Apps
+	my $apps    = $client->apps;
+	my $appMenu = [];
+	
+	for my $app ( keys %{$apps} ) {
+		# Skip non home-menu apps
+		next unless $apps->{$app}->{home_menu} == 1;
+		
+		if ( my $mode = $apps->{$app}->{mode} ) {
+			# Apps with a predefined mode name (maps to a plugin)	
+			push @{$appMenu}, {
+				mode => $mode,
+				text => $client->string($mode),
+			};
+		}
+		elsif ( $apps->{$app}->{type} eq 'opml' ) {
+			# for type=opml without a mode, use generic OPML plugin
+			my $title = $apps->{$app}->{title};
+			push @{$appMenu}, {
+				mode => $title,
+				text => $title,
+			};
+			
+			my $url = $apps->{$app}->{url} =~ /^http/
+				? $apps->{$app}->{url} 
+				: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
+			
+			# Create new XMLBrowser mode for this item
+			if ( !exists $home{$title} ) {
+				addMenuOption( $title => {
+					useMode => sub {
+						my $client = shift;
+					
+						my %params = (
+							header   => $title,
+							modeName => $title,
+							url      => $url,
+							title    => $title,
+							timeout  => 35,
+						);
+					
+						Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+					
+						$client->modeParam( handledTransition => 1 );
+					},
+				} );
+			}
+		}
+	}
+	
+	# Sort app menu after localization
+	my @sorted =
+	 	map { $_->{mode} } 
+		sort { $a->{text} cmp $b->{text} }
+		@{$appMenu};
+	
+	# Insert app menu after radio
+	splice @home, 3, 0, @sorted;
 
 	$homeChoices{$client} = \@home;
 

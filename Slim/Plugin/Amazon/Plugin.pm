@@ -29,6 +29,9 @@ sub getDisplayName {
 	return 'PLUGIN_AMAZON_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	

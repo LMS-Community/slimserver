@@ -98,6 +98,9 @@ sub getDisplayName () {
 	return 'PLUGIN_PANDORA_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 sub rateTrack {
 	my $request = shift;
 	my $client  = $request->client();

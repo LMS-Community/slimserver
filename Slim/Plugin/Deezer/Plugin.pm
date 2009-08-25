@@ -75,4 +75,7 @@ sub getDisplayName {
 	return 'PLUGIN_DEEZER_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 1;

@@ -3,7 +3,6 @@
 	<id>1B354CB1-0CFF-46BF-840A-715A036C6264</id>
 	<name>PLUGIN_NAPSTER_MODULE_NAME</name>
 	<module>Slim::Plugin::Napster::Plugin</module>
-	<playerMenu>MUSIC_SERVICES</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_NAPSTER_MODULE_NAME</description>
 	<creator>Logitech</creator>

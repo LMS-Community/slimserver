@@ -1427,4 +1427,21 @@ sub canDecodeRhapsody { 0 };
 
 sub hidden { 0 }
 
+sub apps {
+	my $client = shift;
+	
+	my $apps;
+	
+	if ( main::SLIM_SERVICE ) {
+		if ( $client->playerData ) {
+			$apps = $client->playerData->apps( sub { $client->string(@_) } );
+		}
+	}
+	else {
+		$apps = $prefs->client($client)->get('apps') || {};
+	}
+	
+	return $apps;
+}
+
 1;

@@ -93,6 +93,9 @@ sub getDisplayName () {
 	return 'PLUGIN_LFM_MODULE_NAME';
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 sub feed {
 	my ( $class, $client ) = @_;
 	

@@ -31,6 +31,7 @@ sub getDisplayName () {
 	return 'PLUGIN_SIRIUS_MODULE_NAME';
 }
 
-sub playerMenu { undef }
+# Don't add this item to any menu
+sub playerMenu { }
 
 1;

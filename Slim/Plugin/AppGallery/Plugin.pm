@@ -16,4 +16,7 @@ sub initPlugin {
 	);
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 1;

@@ -71,6 +71,8 @@ sub shutdown {
 }
 
 sub fetch_players {
+	# XXX: may want to improve this for client new/disconnect/reconnect/forget to only fetch
+	# player into for that single player
 	
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 	
@@ -129,10 +131,12 @@ sub _players_done {
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
 			$cprefs->set( apps => $player->{apps} );
 			
-			# XXX: refresh home menus for connected players?
-			
-			# Refresh Jive menu
+			# Refresh ip3k and Jive menu
 			if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
+				if ( !$client->isa('Slim::Player::SqueezePlay') ) {
+					Slim::Buttons::Home::updateMenu($client);
+				}
+				
 				Slim::Control::Jive::appMenus($client);
 			}
 		}

@@ -3098,17 +3098,8 @@ sub appMenus {
 	my $client = shift;
 	my $batch  = shift;
 	
-	my $apps = {};
+	my $apps = $client->apps;
 	my $menu = [];
-	
-	if ( main::SLIM_SERVICE ) {
-		if ( $client->playerData ) {
-			$apps = $client->playerData->apps( sub { $client->string(@_) } );
-		}
-	}
-	else {
-		$apps = $prefs->client($client)->get('apps') || {};
-	}
 	
 	# We want to add nodes for the following items:
 	# My Apps (node = null)

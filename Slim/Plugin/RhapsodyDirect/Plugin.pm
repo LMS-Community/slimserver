@@ -143,13 +143,12 @@ sub initPlugin {
 	);
 }
 
-sub playerMenu () {
-	return 'MUSIC_SERVICES';
-}
-
 sub getDisplayName () {
 	return 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME';
 }
+
+# Don't add this item to any menu
+sub playerMenu { }
 
 # SLIM_SERVICE
 sub myLibraryMode {

@@ -15,6 +15,9 @@ sub initPlugin {
 	);
 }
 
+# No ip3k menu for this plugin
+sub modeName { }
+
 # No SP menus are created by this plugin
 sub initJive { }
 

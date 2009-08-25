@@ -23,9 +23,6 @@ sub initPlugin {
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
 	
-	# If a plugin does not define a playerMenu, ignore it
-	return unless $menu;
-	
 	if ( $class->can('weight') ) {
 		$WEIGHTS->{ $name } = $class->weight;
 	}
@@ -34,7 +31,7 @@ sub initPlugin {
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
 	# ambiguous function name if there ever was) in a closure so that it
 	# can be called as class method.
-	if ($class->can('setMode') && !main::SCANNER) {
+	if ( !main::SCANNER && $class->can('setMode') && $class->modeName ) {
 
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
@@ -49,20 +46,21 @@ sub initPlugin {
 		# Add toplevel info for the option of having a plugin at the top level.
 		Slim::Buttons::Home::addMenuOption($name, \%params);
 
-		Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
+		# If a plugin does not define a playerMenu, don't add it to any menu
+		if ( $menu ) {
+			Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
 
-		# Add new submenus to Extras but only if they aren't main top-level menus
-		my $topLevel = {
-			HOME           => 1,
-			BROWSE_MUSIC   => 1,
-			RADIO          => 1,
-			MUSIC_SERVICES => 1,
-			SETTINGS       => 1,
-		};
+			# Add new submenus to Extras but only if they aren't main top-level menus
+			my $topLevel = {
+				HOME         => 1,
+				BROWSE_MUSIC => 1,
+				RADIO        => 1,
+				SETTINGS     => 1,
+			};
 		
-		if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
-
-			Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
+			if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
+				Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
+			}
 		}
 	}
 
