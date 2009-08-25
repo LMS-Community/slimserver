@@ -321,7 +321,7 @@ sub init {
 
 		$prefs->migrate( 3, sub {
 			
-			if ($prefs->get('cachedir') =~ /SqueezeCenter/i) {
+			if ($prefs->exists('cachedir') && $prefs->get('cachedir') =~ /SqueezeCenter/i) {
 				
 				$prefs->set('cachedir', defaultCacheDir());
 				makeCacheDir();
