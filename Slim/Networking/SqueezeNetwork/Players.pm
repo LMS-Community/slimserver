@@ -39,6 +39,12 @@ sub init {
 		['squeezenetwork', 'disconnect', '_id'],
 		[0, 1, 0, \&disconnect_player]
 	);
+	
+	# CLI command to trigger a player fetch
+	Slim::Control::Request::addDispatch(
+		['squeezenetwork', 'fetch_players', '_id'],
+		[0, 1, 0, \&fetch_players],
+	);
 
 	# Subscribe to player connect/disconnect messages
 	Slim::Control::Request::subscribe(
