@@ -144,31 +144,12 @@ sub alarmCommand {
 	
 	if ($params->{cmd} eq 'add') {
 		$alarm = Slim::Utils::Alarm->new($client);
-		$client->showBriefly({
-			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ $client->string('ALARM_SAVING') ],
-			}
-		});
 	}
 	elsif ($params->{cmd} eq 'enableall') {
 		$prefs->client($client)->alarmsEnabled(1);
-		$client->showBriefly({
-			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ $client->string('ALARM_ALL_ALARMS_ENABLED') ],
-			}
-		});
-
 	}
 	elsif ($params->{cmd} eq 'disableall') {
 		$prefs->client($client)->alarmsEnabled(0);
-		$client->showBriefly({
-			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ $client->string('ALARM_ALL_ALARMS_DISABLED') ],
-			}
-		});
 	}
 	elsif ($params->{cmd} eq 'defaultvolume') {
 		# set the volume
@@ -181,14 +162,7 @@ sub alarmCommand {
 	if (defined $alarm) {
 
 		if ($params->{cmd} eq 'delete') {
-
 			$alarm->delete;
-			$client->showBriefly({
-				'jive' => { 
-					'type'    => 'popupplay',
-					'text'    => [ $client->string('ALARM_DELETING') ],
-				}
-			});
 		}
 
 		else {
