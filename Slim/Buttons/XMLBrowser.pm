@@ -48,7 +48,12 @@ sub setMode {
 	my $method = shift;
 
 	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
+		if ( $client->modeParam('blockPop') ) {
+			$client->bumpLeft();
+			return;
+		}
+		
+		Slim::Buttons::Common::popMode($client);		
 		return;
 	}
 
@@ -334,7 +339,9 @@ sub gotRSS {
 			? undef : "XMLBrowser:$url",
 		'header'   => $feed->{'title'},
 		'headerAddCount' => 1,
-
+		
+		'blockPop' => $client->modeParam('blockPop'),
+		
 		# TODO: we show only items here, we skip the description of the entire channel
 		'listRef'  => $feed->{'items'},
 
@@ -570,6 +577,8 @@ sub gotOPML {
 		'header'     => $title,
 		'headerAddCount' => 1,
 		'listRef'    => $opml->{'items'},
+		
+		'blockPop'   => $client->modeParam('blockPop'),
 
 		'isSorted'   => $opml->{sorted} || 0,
 		'lookupRef'  => sub {

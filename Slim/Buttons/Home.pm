@@ -341,6 +341,7 @@ sub setMode {
 				url      => Slim::Networking::SqueezeNetwork->url('/api/register/v1/opml'),
 				title    => '',
 				timeout  => 35,
+				blockPop => 1, # don't allow user to exit the menu
 			);
 			
 			Slim::Buttons::Common::setMode( $client, 'xmlbrowser', \%params );

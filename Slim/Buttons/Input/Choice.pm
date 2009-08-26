@@ -647,7 +647,12 @@ sub exitInput {
 
 		} elsif ($exitType eq 'left') {
 
-			Slim::Buttons::Common::popModeRight($client);
+			if ( $client->modeParam('blockPop') ) {
+				$client->bumpLeft();
+			}
+			else {
+				Slim::Buttons::Common::popModeRight($client);
+			}
 
 		} else {
 
