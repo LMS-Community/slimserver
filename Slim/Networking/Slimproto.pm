@@ -266,6 +266,8 @@ sub slimproto_close {
 		if ( !$reconnect ) {
 			# check client not forgotten and this is the active slimproto socket for this client
 			if ( Slim::Player::Client::getClient( $client->id ) ) {
+				
+				$client->disconnected(1);
 			
 				# notify of disconnect
 				Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
@@ -1225,6 +1227,7 @@ sub _hello_handler {
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received, $syncgroupid, $capabilities);
 
 		# notify of reconnect
+		$client->disconnected(0);
 		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 
 	}
