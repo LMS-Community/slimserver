@@ -710,11 +710,12 @@ sub checkScrobble {
 				if ( !defined $rating || $rating ne 'L' ) {
 					my $include_radio;
 					if ( main::SLIM_SERVICE ) {
-						$include_radio = $prefs->client($client)->get('include_radio');
+						$include_radio = $prefs->client($client)->get( 'include_radio', undef, 'UserPref' );
 					}
 					else {
 						$include_radio = $prefs->get('include_radio');
 					}
+					
 					if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
 						main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
 						return;
