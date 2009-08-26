@@ -2462,6 +2462,16 @@ sub setSNCredentialsCommand {
 	my $sync     = $request->getParam('sync');
 	my $client   = $request->client;
 	
+	# Sync can be toggled without username/password
+	if ( defined $sync ) {
+		$prefs->set('sn_sync', $sync);
+	
+		Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+		if ( $sync ) {
+			Slim::Networking::SqueezeNetwork::PrefSync->init();
+		}
+	}
+	
 	if (!$username || !$password) {
 		$request->setStatusBadParams();
 		return;
@@ -2485,8 +2495,6 @@ sub setSNCredentialsCommand {
 		
 			$prefs->set('sn_email', $username);
 			$prefs->set('sn_password_sha', $password);
-			
-			$prefs->set('sn_sync', $sync) if defined $sync;
 			
 			# Start it up again if the user enabled it
 			Slim::Networking::SqueezeNetwork->init();

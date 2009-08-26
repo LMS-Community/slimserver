@@ -45,6 +45,17 @@ sub handler {
 
 	if ( $params->{saveSettings} ) {
 		
+		if ( defined $params->{pref_sn_sync} ) {
+			$prefs->set( 'sn_sync', $params->{pref_sn_sync} );
+
+			Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			if ( $params->{pref_sn_sync} ) {
+				Slim::Networking::SqueezeNetwork::PrefSync->init();
+			}
+			
+			$params->{prefs}->{pref_sn_sync} = $params->{pref_sn_sync};
+		}
+		
 		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
 		
 			# Verify username/password
@@ -54,7 +65,6 @@ sub handler {
 					'setsncredentials', 
 					$params->{pref_sn_email}, 
 					$params->{pref_sn_password_sha},
-					'sync:' . $params->{pref_sn_sync},
 				],
 				sub {
 					my $request = shift;
