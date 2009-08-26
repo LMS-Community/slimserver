@@ -813,15 +813,18 @@ our %functions = (
 						type   => $type || 'audio',
 						parser => $parser,
 					} );
-
-				} else {
-
-					$favs->add($url, $title, $type || 'audio', $parser, undef, $icon);
+					
+					$client->showBriefly( {
+						'line' => [ $client->string('PRESET_ADDING', $preset), $title ]
+					} );
 				}
-
-				$client->showBriefly( {
-					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
-				} );
+				else {
+					$favs->add($url, $title, $type || 'audio', $parser, undef, $icon);
+					
+					$client->showBriefly( {
+						'line' => [ $client->string('FAVORITES_ADDING'), $title ]
+					} );
+				}
 
 			# if all of that fails, send the debug with a best guess helper for tracing back
 			} else {
