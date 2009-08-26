@@ -89,6 +89,8 @@ sub init {
 	my ($model, $capabilities) = @_;
 	
 	$client->updateCapabilities($capabilities);
+
+	$client->sequenceNumber(0);
 	
 	# Do this at end so that any resync that happens has the capabilities already set
 	$client->SUPER::init(@_);
@@ -139,6 +141,32 @@ sub updateCapabilities {
 		main::INFOLOG && $log->is_info && $log->info('formats: ', join(',', @formats));
 		$client->myFormats([@formats]);
 	}
+}
+
+##
+# Copy of Boom curve
+# Special Volume control for Boom.
+#
+# Boom is an oddball because it requires extremes in volume adjustment, from
+# dead-of-night-time listening to shower time.
+# Additionally, we want 50% volume to be reasonable
+#
+# So....  A total dynamic range of 74dB over 100 steps is okay, the problem is how to
+# distribute those steps.  When distributed evenly, center volume is way too quiet.
+# So, This algorithm moves what would be 50% (i.e. -76*.5=38dB) and moves it to the 25%
+# position.
+#
+# This is simply a mapping function from 0-100, with 2 straight lines with different slopes.
+#
+sub getVolumeParameters
+{
+	my $params =
+	{
+		totalVolumeRange => -74,       # dB
+		stepPoint        => 25,        # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
+		stepFraction     => .5,        # fraction of totalVolumeRange where alternate volume ramp kicks in.
+	};
+	return $params;
 }
 
 sub hasIR() { return 0; }

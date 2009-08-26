@@ -108,6 +108,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								irRefTime irRefTimeStored ircodes irmaps lastirtime lastircode lastircodebytes lastirbutton
 								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
 								knobPos knobTime knobSync
+								sequenceNumber
 								controller
 								bufferReady readyToStream streamStartTimestamp
 								streamformat streamingsocket remoteStreamStartTime
@@ -201,7 +202,11 @@ sub new {
 		knobPos                 => undef,
 		knobTime                => undef,
 		knobSync                => 0,
-		
+
+		#The sequenceNumber is sent by the player for certain locally maintained player parameters like volume and power.
+		#It is used to allow the player to act as the master for the locally maintained parameter.
+		sequenceNumber          => 0,
+
 		# streaming control
 		controller              => undef,
 		bufferReady             => 0,

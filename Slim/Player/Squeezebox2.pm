@@ -266,7 +266,13 @@ sub volume {
 		
 		my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
-		my $data = pack('NNCCNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain);
+		my $data;
+		if (defined($client->sequenceNumber())) {
+			$data = pack('NNCCNNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain, $client->sequenceNumber());
+		}
+		else {
+			$data = pack('NNCCNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain);
+		}
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;

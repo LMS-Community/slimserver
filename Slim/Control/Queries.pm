@@ -3203,7 +3203,11 @@ sub serverstatusQuery {
 					'ip', $eachclient->ipport());
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
-				$request->addResultLoop('players_loop', $cnt, 
+				if (defined $eachclient->sequenceNumber()) {
+					$request->addResultLoop('players_loop', $cnt,
+						'seq_no', $eachclient->sequenceNumber());
+				}
+				$request->addResultLoop('players_loop', $cnt,
 					'model', $eachclient->model(1));
 				$request->addResultLoop('players_loop', $cnt, 
 					'power', $eachclient->power());
@@ -3559,7 +3563,11 @@ sub statusQuery {
 	$request->addResult("playlist shuffle", $shuffle); 
 
 	$request->addResult("playlist mode", $playlistMode);
-	
+
+	if (defined $client->sequenceNumber()) {
+		$request->addResult("seq_no", $client->sequenceNumber());
+	}
+
 	if (defined (my $playlistObj = $client->currentPlaylist())) {
 		$request->addResult("playlist_id", $playlistObj->id());
 		$request->addResult("playlist_name", $playlistObj->title());

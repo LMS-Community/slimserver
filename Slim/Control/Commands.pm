@@ -562,6 +562,11 @@ sub mixerCommand {
 	my $entity   = $request->getRequest(1);
 	my $newvalue = $request->getParam('_newvalue');
 
+	my $sequenceNumber = $request->getParam('seq_no');
+	if (defined $sequenceNumber) {
+		$client->sequenceNumber($sequenceNumber)
+	}
+
 	my @buddies;
 
 	# if we're sync'd, get our buddies
@@ -2329,7 +2334,11 @@ sub powerCommand {
 	my $client   = $request->client();
 	my $newpower = $request->getParam('_newvalue');
 	my $noplay   = $request->getParam('_noplay');
-	
+	my $sequenceNumber = $request->getParam('seq_no');
+	if (defined $sequenceNumber) {
+		$client->sequenceNumber($sequenceNumber)
+	}
+
 	# handle toggle
 	if (!defined $newpower) {
 		$newpower = $client->power() ? 0 : 1;
