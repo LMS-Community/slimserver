@@ -734,7 +734,7 @@ sub alarmSettingsQuery {
 	my $addAlarm = {
 		text           => $client->string("ALARM_ADD"),
 		input   => {
-			initialText  => 0, # this will need to be formatted correctly
+			initialText  => 25200, # default is 7:00
 			_inputStyle  => 'time',
 			len          => 1,
 			help         => {
