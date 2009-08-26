@@ -22,7 +22,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use Tie::IxHash;
-use URI::Escape qw(uri_unescape);
+use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use List::Util qw(min);
 
 use Slim::Control::Request;
@@ -231,10 +231,10 @@ sub _cliQuery_done {
 	# Add top-level search to index
 	if ( $search && !scalar @index ) {
 		if ( $sid ) {
-			@crumbIndex = ( $sid . '_' . $search );
+			@crumbIndex = ( $sid . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
 		}
 		else {
-			@crumbIndex = ( '_' . $search );
+			@crumbIndex = ( '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
 		}
 	}
 	
@@ -260,11 +260,13 @@ sub _cliQuery_done {
 
 			$depth++;
 			
-			$subFeed = $subFeed->{'items'}->[$i];
+			my ($in) = $i =~ /^(\d+)/;
+			$subFeed = $subFeed->{'items'}->[$in];
 
 			# Add search query to crumb list
 			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
-				push @crumbIndex, $i . '_' . $search;
+				# Escape periods in the search string
+				push @crumbIndex, $i . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
 			}
 			else {
 				push @crumbIndex, $i;
@@ -295,7 +297,7 @@ sub _cliQuery_done {
 			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				if ( $i =~ /(?:\d+)?_(.+)/ ) {
-					$search = $1;
+					$search = uri_unescape($1);
 				}
 				
 				# Rewrite the URL if it was a search request
