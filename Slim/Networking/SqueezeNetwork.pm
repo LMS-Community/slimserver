@@ -9,6 +9,7 @@ use base qw(Slim::Networking::SimpleAsyncHTTP);
 
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
+use MIME::Base64 qw(encode_base64);
 use URI::Escape qw(uri_escape);
 
 if ( !main::SLIM_SERVICE && !main::SCANNER ) {
@@ -318,6 +319,11 @@ sub getHeaders {
 		if ( $client->deviceid ) {
 			push @headers, 'X-Player-DeviceInfo', $client->deviceid . ':' . $client->revision;
 		}
+		
+		# Add player name
+		my $name = $client->name;
+		utf8::encode($name);
+		push @headers, 'X-Player-Name', encode_base64( $name, '' );
 		
 		# Request JSON instead of XML, it is much faster to parse
 		push @headers, 'Accept', 'text/x-json, text/xml';
