@@ -571,6 +571,8 @@ sub init {
 			}
 			$prefs->client($client)->set( presets => $presets );
 		}
+		
+		1;
 	} );
 	
 	if ( !main::SLIM_SERVICE ) {
