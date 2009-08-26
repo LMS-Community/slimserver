@@ -976,18 +976,6 @@ sub init {
 			'pref'         => 'longdateFormat',
 		};
 		
-		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_PLAYER_CODE'} = {
-			'useMode'      => 'INPUT.Choice',
-			'condition'    => sub { 1 },
-			'listRef'      => [ 'foo' ],
-			'name'         => sub {
-				my ($client, $item) = @_;
-				return sprintf($client->string('SQUEEZENETWORK_PIN'), $client->pin);
-			},
-			'header'       => '{SQUEEZENETWORK_SIGNUP}',
-		};
-		
 		# Delete menu items we don't want on SN
 		delete $menuParams{'SETTINGS'}->{'submenus'}->{'AUDIO_SETTINGS'}->{'submenus'}->{'REPLAYGAIN'};
 	}
