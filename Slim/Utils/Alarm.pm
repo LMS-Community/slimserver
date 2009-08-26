@@ -1517,7 +1517,7 @@ sub alarmInNextDay {
 
 	my $alarmSet = undef;
 	if ( defined($nextAlarm) ) {
-		my $now = time;
+		my $now = CORE::time();
 		my $then = $nextAlarm->nextDue();
 		if ( $then - $now <= 86400 ) {
 			# alarm is set to go off in next 24h
