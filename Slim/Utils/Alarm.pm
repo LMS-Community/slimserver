@@ -1503,6 +1503,31 @@ sub defaultVolumeChanged {
 	$class->setRTCAlarm($client);
 }
 
+=head2 alarmInNextDay ( $client )
+
+Returns 1 if an alarm for a given client is enabled and set to fire in the next 24h, otherwise undef
+
+=cut
+
+sub alarmInNextDay {
+	my $class = shift;
+	my $client = shift;
+
+	my $nextAlarm = $class->getNextAlarm($client);
+
+	my $alarmSet = undef;
+	if ( defined($nextAlarm) ) {
+		my $now = time;
+		my $then = $nextAlarm->nextDue();
+		if ( $then - $now <= 86400 ) {
+			# alarm is set to go off in next 24h
+			$alarmSet = 1;
+		}
+	}
+	return $alarmSet;
+}
+
+
 =head2 alarmsEnabled ( [0/1] )
 
 Sets/returns whether alarms are enabled for a given client.
