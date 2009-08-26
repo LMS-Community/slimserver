@@ -770,11 +770,11 @@ sub playRandom {
 		# Prevent items that have already been played from being played again
 		# This fails when multiple clients are playing random mixes. -- Max
 		if ($mixInfo{$client->master()->id}->{'startTime'}) {
-
-			$find->{'persistent.lastplayed'} = [
-				{ '=' => undef },
-				{ '<' => $mixInfo{$client->master()->id}->{'startTime'} }
-			];
+			# XXX Bug 13233, this causes a very slow MySQL query, needs optimization
+			#$find->{'persistent.lastplayed'} = [
+			#	{ '=' => undef },
+			#	{ '<' => $mixInfo{$client->master()->id}->{'startTime'} }
+			#];
 		}
 
 		if ($type eq 'track' || $type eq 'year') {
