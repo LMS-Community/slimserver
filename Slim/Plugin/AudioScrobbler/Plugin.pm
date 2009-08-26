@@ -1297,7 +1297,7 @@ sub infoLoveTrackSubmit {
 	$callback->( {
 		type        => 'text',
 		name        => $client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
-		showBriefly => 1,
+		showBriefly => 0,
 		favorites   => 0,
 	} );
 }
