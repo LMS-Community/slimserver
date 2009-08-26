@@ -165,6 +165,7 @@ sub syncDown {
 		client   => $client->id,
 		uuid     => $client->uuid,
 		deviceid => $client->deviceid,
+		model    => $client->model,
 		rev      => $client->revision,
 		name     => $client->name,
 		since    => $prefs->client($client)->get('snLastSyncDown'),
