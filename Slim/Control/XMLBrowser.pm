@@ -753,6 +753,7 @@ sub _cliQuery_done {
 		# now build the result
 	
 		my $hasImage = 0;
+		my $windowStyle;
 		
 		if ($count) {
 		
@@ -965,6 +966,11 @@ sub _cliQuery_done {
 							next;
 						}
 						
+						# Bug 13175, support custom windowStyle
+						if ( $item->{style} ) {
+							$windowStyle = $item->{style};
+						}
+						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
 						if ( $item->{autoplays} ) {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
@@ -1132,9 +1138,8 @@ sub _cliQuery_done {
 		$request->addResult('count', $count);
 		
 		if ($menuMode) {
-
-
-			$window->{'windowStyle'} = 'text_list';
+			
+			$window->{'windowStyle'} = $windowStyle || 'text_list';
 
 			# send any window parameters we've gathered, if we've gathered any
 			if ($window) {
