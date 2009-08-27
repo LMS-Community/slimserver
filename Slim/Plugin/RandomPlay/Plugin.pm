@@ -844,6 +844,7 @@ sub playRandom {
 			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 				$client->showBriefly( {
+					jive   => undef,
 					'line' => [ string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'), $string ]
 				}, 2, undef, undef, 1);
 			}
@@ -865,6 +866,7 @@ sub playRandom {
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 			$client->showBriefly( {
+				jive => undef,
 				'line' => [ string('PLUGIN_RANDOMPLAY'), string('PLUGIN_RANDOM_DISABLED') ]
 			} );
 		}

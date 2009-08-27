@@ -84,27 +84,8 @@ $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
 
 $prefs->setChange( sub { $_[2]->volume( $_[2]->volume ); }, 'digitalVolumeControl');
 
-$prefs->setChange( sub { 
-	my $client = $_[2];
-	$client->showBriefly({
-		'jive' => {
-			type    => 'popupplay',
-			text    => [ $client->string('BASS') . $client->string('COLON') . " $_[1]" ],
-		}
-	});
-	$client->bass($_[1]); 
-}, 'bass');
-
-$prefs->setChange( sub { 
-	my $client = $_[2];
-	$client->showBriefly({
-		'jive' => {
-			type    => 'popupplay',
-			text    => [ $client->string('treble') . $client->string('COLON') . " $_[1]" ],
-		}
-	});
-	$client->treble($_[1]);
-}, 'treble');
+$prefs->setChange( sub { my $client = $_[2]; $client->bass($_[1]); }, 'bass');
+$prefs->setChange( sub { my $client = $_[2]; $client->treble($_[1]); }, 'treble');
 
 $prefs->setChange( sub { $_[2]->pitch($_[1]); }, 'pitch');
 
