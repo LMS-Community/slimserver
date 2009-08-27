@@ -259,13 +259,19 @@ sub _addInfoTags {
 sub _addArtworkTags {
 	my ($class, $s, $tags) = @_;
 
-	# Standard picture block, use the first one
+	# Standard picture block, try to find the front cover first
 	if ( $tags->{ALLPICTURES} ) {
-		# return image with lowest picture_type value
-		$tags->{ARTWORK} = (
-			sort { $a->{picture_type} <=> $b->{picture_type} }
-			@{ $tags->{ALLPICTURES} }
-		)[0]->{image_data};
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+				@{ $tags->{ALLPICTURES} };
+				
+		if ( my @frontcover = grep ($_->{picture_type} == 3,@allpics)) {
+			# in case of many type 3 (front cover) just use the first one
+			$tags->{ARTWORK} = $frontcover[0]->{image_data};
+		} else {
+			# fall back to use lowest type image found
+			$tags->{ARTWORK} = $allpics[0]->{image_data};
+		}
+		
 	}
 
 	# As seen in J.River Media Center FLAC files.
