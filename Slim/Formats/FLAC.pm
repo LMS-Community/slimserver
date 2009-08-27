@@ -261,7 +261,11 @@ sub _addArtworkTags {
 
 	# Standard picture block, use the first one
 	if ( $tags->{ALLPICTURES} ) {
-		$tags->{ARTWORK} = $tags->{ALLPICTURES}->[0]->{image_data};
+		# return image with lowest picture_type value
+		$tags->{ARTWORK} = (
+			sort { $a->{picture_type} <=> $b->{picture_type} }
+			@{ $tags->{ALLPICTURES} }
+		)[0]->{image_data};
 	}
 
 	# As seen in J.River Media Center FLAC files.
