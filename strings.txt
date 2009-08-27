@@ -101,6 +101,38 @@ COPYRIGHT
 	RU	© Logitech, 2001-2009. Версия 7.4.0
 	SV	© 2001–2009 Logitech Version 7.4.0
 
+COPYRIGHT_LOGITECH
+	CS	© 2001-2009 Logitech
+	DA	© 2001-2009 Logitech
+	DE	© 2001-2009 Logitech
+	EN	© 2001-2009 Logitech
+	ES	© 2001-2009 Logitech
+	FI	© 2001-2009 Logitechin
+	FR	© 2001-2009 Logitech
+	IT	© 2001-2009 Logitech
+	NL	© 2001-2009 Logitech
+	NO	© 2001–2009 Logitech
+	PL	© 2001-2009 Logitech
+	RU	© Logitech, 2001-2009.
+	SV	© 2001–2009 Logitech
+
+
+VERSION
+	CS	Verze 7.4 / %s
+	DA	Version 7.4 / %s
+	DE	Version 7.4 / r%s
+	EN	Version 7.4 / r%s
+	ES	Versión 7.4 / r%s
+	FI	Versio 7.4 / %s
+	FR	Version 7.4 / r%s
+	IT	Versione 7.4 / r%s
+	NL	Versie 7.4 / %s
+	NO	Versjon 7.4 / %s
+	PL	Wersja 7.4 / %s
+	RU	Версия 7.4 / %s
+	SV	Version 7.4 / %s
+
+
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
 	DA	Vælg sprog

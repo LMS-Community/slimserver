@@ -10,6 +10,7 @@ use base 'Wx::Frame';
 
 use Slim::Utils::Light;
 use File::Spec::Functions;
+use File::Slurp;
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
@@ -132,8 +133,12 @@ sub new {
 
 	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL); 
 	$footerSizer2->Add($btnsizer, 0, wxEXPAND);
-	$footerSizer2->AddSpacer(20);
-	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
+	$footerSizer2->AddSpacer(7);
+	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT_LOGITECH')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
+	
+	my ($version) = parseRevision();
+	$version = sprintf(string('VERSION'), $version);
+	$footerSizer2->Add(Wx::StaticText->new($panel, -1, $version), 0, wxALIGN_RIGHT | wxRIGHT, 3);
 
 	$footerSizer->Add($footerSizer2, wxEXPAND);
 	$mainSizer->Add($footerSizer, 0, wxLEFT | wxRIGHT | wxGROW, 8);
@@ -177,6 +182,17 @@ sub _fixIcon {
 	}
 
 	return $file if -f $file;
+}
+
+# stolen from Slim::Utils::Misc
+sub parseRevision {
+	# The revision file may not exist for svn copies.
+	my $tempBuildInfo = eval { File::Slurp::read_file(
+		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
+	) } || "TRUNK\nUNKNOWN";
+
+	# Once we've read the file, split it up so we have the Revision and Build Date
+	return split (/\n/, $tempBuildInfo);
 }
 
 1;
