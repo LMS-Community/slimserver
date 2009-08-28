@@ -1140,9 +1140,9 @@ our %functions = (
 		$client->showBriefly( {
 			'line' => [ '', $line ],
 			jive => {
-				text => [ '', $line ],
-				type => 'popupplay',
-				special => 'shuffle' . Slim::Player::Playlist::shuffle($client),
+				text  => [ '', $line ],
+				type  => 'icon',
+				style => 'shuffle' . Slim::Player::Playlist::shuffle($client),
 			}
 		});
 
