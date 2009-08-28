@@ -1913,21 +1913,26 @@ sub playlistcontrolCommand {
 
 			$info[0] ||= $tracks[0]->title;
 			my $token;
+			my $showBriefly = 1;
 			if ($add) {
 				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
 			} elsif ($insert) {
 				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
 			} else {
 				$token = 'JIVE_POPUP_NOW_PLAYING';
+				$showBriefly = undef;
 			}
-			my $string = $client->string($token, $info[0]);
-			$client->showBriefly({ 
-				'jive' => { 
-					'type'    => defined $artwork ? 'popupalbum' : 'popupplay',
-					'text'    => [ $string ],
-					'icon-id' => $artwork,
-				}
-			});
+			# not to be shown for now playing, as we're pushing to now playing screen now and no need for showBriefly
+			if ($showBriefly) {
+				my $string = $client->string($token, $info[0]);
+				$client->showBriefly({ 
+					'jive' => { 
+						'type'    => defined $artwork ? 'popupalbum' : 'popupplay',
+						'text'    => [ $string ],
+						'icon-id' => $artwork,
+					}
+				});
+			}
 
 		}
 

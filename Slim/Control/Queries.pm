@@ -427,6 +427,7 @@ sub albumsQuery {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
+					'nextWindow'  => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -824,7 +825,8 @@ sub artistsQuery {
 					'params' => {
 						'cmd' => 'load',
 					},
-					'itemsParams' => 'params'
+					'itemsParams' => 'params',
+					'nextWindow'  => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -1448,6 +1450,7 @@ sub genresQuery {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
+					'nextWindow'  => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -2018,6 +2021,7 @@ sub musicfolderQuery {
 							'params' => {
 								'cmd' => 'load',
 							},
+							'nextWindow' => 'nowPlaying',
 							'itemsParams' => 'params',
 						},
 						'add' => {
@@ -2410,6 +2414,7 @@ sub playlistsTracksQuery {
 					'params' => {
 						'cmd' => 'load',
 					},
+					'nextWindow'  => 'nowPlaying',
 					'itemsParams' => 'params',
 				},
 				'add' => {
@@ -2566,6 +2571,7 @@ sub playlistsQuery {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
+					'nextWindow'  => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -4357,6 +4363,7 @@ sub yearsQuery {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
+					'nextWindow'  => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -5268,8 +5275,6 @@ sub _playAll {
 	my $includeArt = $args{'includeArt'};
 	my $allSongs   = $args{'allSongs'} || 0;
 	my $artist     = $args{'artist'} || '';
-	# this isn't in use, but if an addAll flag is sent this will add an item for "Add All"
-	my $addAll     = $args{'addAll'} || 0;
 
 	# insert first item if needed
 	if ($start == 0 && $end == 0) {
@@ -5288,22 +5293,8 @@ sub _playAll {
 					'addCmd'      => [ 'playlistcontrol' ],
 					'addHoldCmd'      => [ 'playlistcontrol' ],
 					'params'      => { 
-						'play' =>  { 'cmd' => 'load', },
+						'play' =>  { cmd => 'load', },
 						'add'  =>  { 'cmd' => 'add',  },
-						'add-hold'  =>  { 'cmd' => 'insert',  },
-					},
-			},
-			'add' => { 
-					'string'     => $request->string('JIVE_ADD_ALL'),
-					'style'      => 'itemadd',
-					'playAction' => 'addtracks',
-					'addAction'  => 'addtracks',
-					'playCmd'    => [ 'playlistcontrol' ],
-					'addCmd'     => [ 'playlistcontrol' ],
-					'addHoldCmd'     => [ 'playlistcontrol' ],
-					'params'     => { 
-						'play' =>  { 'cmd' => 'add', },
-						'add'  =>  { 'cmd' => 'add', },
 						'add-hold'  =>  { 'cmd' => 'insert',  },
 					},
 			},
@@ -5326,8 +5317,6 @@ sub _playAll {
 		);
 
 		my @items = qw/ play /;
-		# addAll currently dormant
-		push @items, 'add' if $addAll;
 
 		if ($allSongs) {
 			@items = ( 'allSongs' );
@@ -5385,6 +5374,7 @@ sub _playAll {
 			'play' => {
 				'player' => 0,
 				'cmd'    => $items{$mode}{'playCmd'},
+				'nextWindow' => 'nowPlaying',
 				'params' => $items{$mode}{'params'}{'play'},
 			},
 			'add' => {
