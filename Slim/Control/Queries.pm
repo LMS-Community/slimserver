@@ -3456,7 +3456,8 @@ sub statusQuery {
 	my $shuffle      = Slim::Player::Playlist::shuffle($client);
 	my $songCount    = Slim::Player::Playlist::count($client);
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-	my $alarmComing  = Slim::Utils::Alarm->alarmInNextDay($client) ? 1 : 0;
+	my $alarmComing  = Slim::Utils::Alarm->alarmInNextDay($client) ? 'set' : 'none';
+	my $alarmCurrent = Slim::Utils::Alarm->getCurrentAlarm($client);
 
 	my $idx = 0;
 
@@ -3475,8 +3476,15 @@ sub statusQuery {
 		$request->addResult('player_is_upgrading', "1");
 	}
 	
-	# alarm indicator
-	$request->addResult('alarm_set', $alarmComing );
+	# alarm_state
+	# 'active': means alarm currently going off
+	# 'set':    alarm set to go off in next 24h on this player
+	# 'none':   alarm set to go off in next 24h on this player
+	if (defined($alarmCurrent)) {
+		$request->addResult('alarm_state', 'active');
+	} else {
+		$request->addResult('alarm_state', $alarmComing);
+	}
 
 	# add player info...
 	$request->addResult("player_name", $client->name());
