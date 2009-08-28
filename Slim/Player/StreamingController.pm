@@ -862,16 +862,11 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN coninue
 			&& $song->duration() > ($elapsed + $stillToPlay + 10)
 			&& $song->canSeek)
 		{
-			$elapsed += $stillToPlay;
-				
 			if (my $seekdata = $song->getSeekData($elapsed + $stillToPlay)) {
 				_Stream($self, $event, {song => $song, seekdata => $seekdata});
-			} else {
-				_JumpToTime($self, $event, {newtime => $elapsed});
+				return;
 			}
-
-			return;
-
+			# else fall
 		} elsif (!$song->duration()) {	# unknown duration => assume radio
 			_Stream($self, $event, {song => $song});
 			return;
