@@ -399,6 +399,7 @@ sub _cliQuery_done {
 								'params' => {
 									'item_id' => "$item_id", # stringify for JSON
 								},
+								'nextWindow' => 'nowPlaying',
 							},
 							'add' => {
 								'player' => 0,
@@ -817,6 +818,7 @@ sub _cliQuery_done {
 								'cmd' => [$query, 'playlist', 'play'],
 								'itemsParams' => 'params',
 								'params' => $params,
+								'nextWindow' => 'nowPlaying',
 							},
 							'add' => {
 								'player' => 0,
