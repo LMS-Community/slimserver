@@ -471,6 +471,7 @@ sub currentSongLines {
 	my $onScreen2        = $args->{'screen2'};         # return as screen2
 	my $suppressDisplay  = $args->{'suppressDisplay'}; # suppress both displays [leaving just jive hash]
 	my $retrieveMetadata = $args->{'retrieveMetadata'} || 0;
+	my $jiveIconStyle    = $args->{'jiveIconStyle'} || undef;   # an icon style to send to squeezeplay (used for fwd and rew icons)
 
 	my $parts;
 	my $status;
@@ -481,6 +482,8 @@ sub currentSongLines {
 	
 	my $playmode    = Slim::Player::Source::playmode($client);
 	my $playlistlen = Slim::Player::Playlist::count($client);
+
+	$jiveIconStyle = $jiveIconStyle ? $jiveIconStyle : $playmode;
 
 	if ($playlistlen < 1) {
 
@@ -621,7 +624,7 @@ sub currentSongLines {
 		$jive = {
 			'type' => 'icon',
 			'text' => [ $status, $song ? $song->title : undef ],
-			'style' => $playmode,
+			'style' => $jiveIconStyle,
 		};
 		
 		if ( $imgKey ) {

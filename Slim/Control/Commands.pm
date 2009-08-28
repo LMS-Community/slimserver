@@ -919,8 +919,9 @@ sub playlistJumpCommand {
 	}
 
 	my $showStatus = sub {
+		my $jiveIconStyle = shift || undef;
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
+			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client), jiveIconStyle => $jiveIconStyle });
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
 			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 		}
@@ -935,13 +936,13 @@ sub playlistJumpCommand {
 			if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
 				# User is trying to restart the current track
 				$client->controller()->jumpToTime(0, 1);
-				$showStatus->();
+				$showStatus->('rew');
 				$request->setStatusDone();
 				return;	
 			} elsif ($index eq '+1') {
 				# User is trying to skip to the next track
 				$client->controller()->skip();
-				$showStatus->();
+				$showStatus->('fwd');
 				$request->setStatusDone();
 				return;	
 			}
@@ -984,7 +985,14 @@ sub playlistJumpCommand {
 	# Does the above change the playlist?
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
-	$showStatus->();
+	# if we're jumping +1/-1 in the index let squeezeplay know this showBriefly is to be styled accordingly
+	my $jiveIconStyle = undef;
+	if ($index eq '-1') {
+		$jiveIconStyle = 'rew';
+	} elsif ($index eq '+1')  {
+		$jiveIconStyle = 'fwd';
+	}
+	$showStatus->($jiveIconStyle);
 		
 	$request->setStatusDone();
 }
