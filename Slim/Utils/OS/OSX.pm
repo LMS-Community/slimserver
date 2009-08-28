@@ -41,6 +41,7 @@ sub initDetails {
 
 		if (/Intel/i) {
 
+			# XXX find some way to indicate if we're running in 64-bit mode or not
 			$class->{osDetails}->{'osArch'} = 'x86';
 			last;
 

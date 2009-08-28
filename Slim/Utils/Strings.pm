@@ -40,6 +40,8 @@ use Exporter::Lite;
 
 our @EXPORT_OK = qw(string cstring clientString);
 
+use Config;
+use Digest::SHA1 qw(sha1_hex);
 use POSIX qw(setlocale LC_TIME);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
@@ -97,7 +99,11 @@ sub loadStrings {
 	my ($newest, $sum, $files) = stringsFiles();
 
 	my $stringCache = catdir( $prefs->get('cachedir'),
-		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings.bin');
+		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings');
+	
+	# Add the system cflags to the cache file name, to avoid crashes when going
+	# between 32-bit and 64-bit perl for example
+	$stringCache .= '.' . substr( sha1_hex( $Config{ccflags} ), 0, 4 ) . '.bin';
 
 	my $stringCacheVersion = 2; # Version number for cache file
 	# version 2 - include the sum of string file mtimes as an additional validation check
