@@ -1342,6 +1342,8 @@ sub cliQuery {
 		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
 		$trackId = $song->id;
 		$url     = $song->url;
+		$request->addParam('track_id', $trackId);
+		$request->addParam('url', $url);
 	}
 		
 	my $tags = {
