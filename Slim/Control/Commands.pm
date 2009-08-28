@@ -2628,13 +2628,23 @@ sub sleepCommand {
 		$client->currentSleepTime($will_sleep_in / 60); 
 
 		my $will_sleep_in_minutes = int( $will_sleep_in / 60 );
-		$client->showBriefly({
-			'jive' => { 
-				'type'    => 'icon',
-				'style'   => 'sleep_' . $will_sleep_in_minutes,
-				'text'    => [ $will_sleep_in_minutes ],
-			}
-		});
+		# only show a showBriefly if $will_sleep_in_minutes has a style on SP side
+		my $validSleepStyles = {
+			'15' => 1,
+			'30' => 1,
+			'45' => 1,
+			'60' => 1,
+			'90' => 1,
+		};
+		if ($validSleepStyles->{$will_sleep_in_minutes}) {
+			$client->showBriefly({
+				'jive' => { 
+					'type'    => 'icon',
+					'style'   => 'sleep_' . $will_sleep_in_minutes,
+					'text'    => [ $will_sleep_in_minutes ],
+				}
+			});
+		}
 		
 	} else {
 
