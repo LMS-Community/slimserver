@@ -261,7 +261,9 @@ sub gotPlaylist {
 		
 	if ( $action eq 'play' ) {
 		$client->execute([ 'playlist', 'play', \@urls ]);
-		Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		if (Slim::Buttons::Common::mode($client) ne 'playlist') {
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		}
 	}
 	else {
 		my $cmd = $action eq 'insert' ? 'inserttracks' : 'addtracks';
@@ -1102,7 +1104,9 @@ sub playItem {
 				$duration = 10;
 			}
 
-			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+			if (Slim::Buttons::Common::mode($client) ne 'playlist') {
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+			}
 		}
 
 		$client->showBriefly( {
