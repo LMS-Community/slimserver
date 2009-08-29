@@ -47,7 +47,15 @@ sub initDetails {
 
 			if (/Intel/i) {
 
+				# Determine if we are running as 32-bit or 64-bit
+				my $bits = length( pack 'L!', 1 ) == 8 ? 64 : 32;
+			
 				$class->{osDetails}->{'osArch'} = 'x86';
+			
+				if ( $bits == 64 ) {
+					$class->{osDetails}->{'osArch'} = 'x86_64';
+				}
+			
 				last;
 
 			} elsif (/PowerPC/i) {
