@@ -524,7 +524,7 @@ sub init {
 	addDispatch(['name',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::nameCommand]);
 	addDispatch(['name',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::nameQuery]);
 	addDispatch(['path',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['pause',          '_newvalue',      '_fadein'],                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+	addDispatch(['pause',          '_newvalue',      '_fadein', '_suppressShowBriefly'],               [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
 	addDispatch(['play',           '_fadein'],                                                         [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
 	addDispatch(['player',         'address',        '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'count',          '?'],                                             [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);

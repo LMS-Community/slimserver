@@ -231,7 +231,7 @@ sub power {
 			
 			if ($playing && ($resumeOff eq 'Pause')) {
 				# Pause client mid track
-				$client->execute(["pause", 1]);
+				$client->execute(["pause", 1, undef, 1]);
 			} elsif ($controller->isPaused() && ($resumeOff eq 'Pause')) {
 				# already paused, do nothing
 			} else {

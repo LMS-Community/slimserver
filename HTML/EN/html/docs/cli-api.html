@@ -5599,6 +5599,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			pause
 			&lt;0|1|&gt;
 			&lt;fadeInSecs&gt;
+			&lt;suppressShowBriefly&gt;
 		</code>
 	</strong>
 </p>
@@ -5610,6 +5611,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
 	toggle the pause state.
 	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period when unpausing.
+	The &quot;showBriefly&quot; parameter may be passed to specify not to show a pause icon on squeezeplay-based devices (as is the case with hitting 'power off' on the SBController, which pauses play but should not display an icon, see bug 13521)
 </p>
 <blockquote> 
 	<p>

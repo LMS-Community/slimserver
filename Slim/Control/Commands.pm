@@ -673,6 +673,7 @@ sub playcontrolCommand {
 	my $param  = $request->getRequest(1);
 	my $newvalue = $request->getParam('_newvalue');
 	my $fadeIn = $request->getParam('_fadein');
+	my $suppressShowBriefly = $request->getParam('_suppressShowBriefly');
 	
 	# which state are we in?
 	my $curmode = Slim::Player::Source::playmode($client);
@@ -731,6 +732,9 @@ sub playcontrolCommand {
 			# give user feedback of new mode and current song
 			if ($client->isPlayer()) {
 				my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
+				if ($suppressShowBriefly) {
+					$parts->{jive} = undef;
+				}
 				$client->showBriefly($parts) if $parts;
 			}
 		}
