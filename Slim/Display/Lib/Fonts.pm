@@ -545,8 +545,14 @@ sub graphicsDirs {
 }
 
 sub fontCacheFile {
-	return catdir( $prefs->get('cachedir'),
-		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts.bin');
+	my $file = catdir( $prefs->get('cachedir'),
+		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts');
+	
+	# Add the os arch to the cache file name, to avoid crashes when going
+	# between 32-bit and 64-bit perl for example
+	$file .= '.' . Slim::Utils::OSDetect::details()->{osArch} . '.bin';
+	
+	return $file;
 }
 
 # returns a hash of filenames/external names and the sum of mtimes as a cache verification key

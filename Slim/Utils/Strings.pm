@@ -101,9 +101,9 @@ sub loadStrings {
 	my $stringCache = catdir( $prefs->get('cachedir'),
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings');
 	
-	# Add the system cflags to the cache file name, to avoid crashes when going
+	# Add the os arch to the cache file name, to avoid crashes when going
 	# between 32-bit and 64-bit perl for example
-	$stringCache .= '.' . substr( sha1_hex( $Config{ccflags} ), 0, 4 ) . '.bin';
+	$stringCache .= '.' . Slim::Utils::OSDetect::details()->{osArch} . '.bin';
 
 	my $stringCacheVersion = 2; # Version number for cache file
 	# version 2 - include the sum of string file mtimes as an additional validation check
