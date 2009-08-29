@@ -735,6 +735,7 @@ sub alarmSettingsQuery {
 		text           => $client->string("ALARM_ADD"),
 		input   => {
 			initialText  => 25200, # default is 7:00
+			title => $client->string('ALARM_ADD'),
 			_inputStyle  => 'time',
 			len          => 1,
 			help         => {
@@ -752,7 +753,6 @@ sub alarmSettingsQuery {
 			},
 		},
 		nextWindow => 'refresh',
-		window         => { titleStyle => 'settings' },
 	};
 	push @menu, $addAlarm;
 
