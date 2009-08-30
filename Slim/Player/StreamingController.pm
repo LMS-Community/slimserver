@@ -845,7 +845,7 @@ sub nextsong {
 # We have to have played at least 10 seconds and there must be at least 10 seconds more expected
 # in order to try to restart.
 #
-sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN coninue
+sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 						#			ELSIF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	_setStreamingState($self, IDLE);
@@ -863,11 +863,14 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN coninue
 			&& $song->canSeek)
 		{
 			if (my $seekdata = $song->getSeekData($elapsed + $stillToPlay)) {
+				main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ', duration=', $song->duration(), ' at time offset ', $elapsed + $stillToPlay);
 				_Stream($self, $event, {song => $song, seekdata => $seekdata});
 				return;
 			}
 			# else fall
+			main::INFOLOG && $log->is_info && $log->info('Unable to re-stream ', $song->currentTrack()->url, ', duration=', $song->duration(), ' at time offset ', $elapsed + $stillToPlay);
 		} elsif (!$song->duration()) {	# unknown duration => assume radio
+			main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ' after time ', $elapsed);
 			_Stream($self, $event, {song => $song});
 			return;
 		}
