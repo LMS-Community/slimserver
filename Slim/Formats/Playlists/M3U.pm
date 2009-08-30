@@ -217,9 +217,10 @@ sub write {
 		if ($addTitles) {
 			
 			my $title = Slim::Utils::Unicode::utf8decode( $track->title );
+			my $secs = int($track->secs || -1);
 
 			if ($title) {
-				print $output "#EXTINF:-1,$title\n";
+				print $output "#EXTINF:$secs,$title\n";
 			}
 		}
 
