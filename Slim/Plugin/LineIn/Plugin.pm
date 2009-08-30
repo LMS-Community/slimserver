@@ -101,6 +101,12 @@ sub lineInItem {
 	if ($notify) {
 		if ($client->lineInConnected) {
 			Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', [ $lineInItem ], 'add',    $client->id() ] );
+			$client->showBriefly({
+				'jive' => {
+					type    => 'icon',
+					style   => 'lineIn',
+				},
+			});
 		} else {
 			Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', [ $lineInItem ], 'remove', $client->id() ] );
 		}
