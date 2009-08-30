@@ -895,6 +895,41 @@ our %functions = (
 		}
 	},
 
+	# preset - IR remote (play or store depending on how long the button is held for)
+	'preset' => sub {
+		my ( $client, $button, $digit ) = @_;
+
+		my $release = $digit =~ /release/;
+		$digit =~ s/release//;
+		my $num = $digit ? $digit : 10;
+
+		if (!$release) {
+
+			my $display = $client->curLines;
+
+			if ($client->linesPerScreen == 1) {
+				$display->{'line'}[1] = sprintf($client->string('PRESET'), $digit) ;
+			} else {
+				$display->{'line'}[0] = sprintf($client->string('PRESET_HOLD_TO_SAVE'), $digit) ;
+			}
+			$display->{'jive'} = undef;
+
+			$client->showBriefly($display, { duration => 3, callback => sub {
+				if (Slim::Hardware::IR::holdTime($client) > 3 ) {
+					# do this on a timer so it happens after showBriefly ends and we can see any screen updates which result
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Hardware::IR::executeButton, "favorites_add$digit", $client->lastirtime, undef, 1);
+				}
+			} });
+
+		} else {
+
+			if (Slim::Hardware::IR::holdTime($client) < 3 ) {
+				Slim::Hardware::IR::executeButton($client, "playPreset_$digit", $client->lastirtime, undef, 1);
+			}
+		}
+
+	},
+
 	# pressing recall toggles the repeat.
 	'repeat' => sub  {
 		my $client    = shift;

@@ -22787,3 +22787,10 @@ PRESET_ADDING
 	RU	Сохранение выбранного...
 	SV	Sparar favoriter ...
 	ZH_CN	保存最喜爱的...
+
+PRESET_HOLD_TO_SAVE
+	EN	Preset #%s (hold to save)
+
+PRESET
+	EN	Preset #%s
+
