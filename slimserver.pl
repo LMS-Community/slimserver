@@ -29,8 +29,6 @@ use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use Config;
 my %check_inc;
 $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
-       
-my @original_args = @ARGV;
 
 # This package section is used for the windows service version of the application, 
 # as built with ActiveState's PerlSvc
@@ -115,6 +113,8 @@ package main;
 use FindBin qw($Bin);
 use lib $Bin;
 
+our @argv;
+
 BEGIN {
 	# With EV, only use select backend
 	# I have seen segfaults with poll, and epoll is not stable
@@ -123,6 +123,9 @@ BEGIN {
 	# set the AnyEvent model to our subclassed version when PERFMON is enabled
 	$ENV{PERL_ANYEVENT_MODEL} = 'PerfMonEV' if main::PERFMON;
 	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
+
+	# save argv
+	@argv = @ARGV;
         
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
@@ -254,7 +257,6 @@ our $playlistdir = undef;
 our $httpport    = undef;
 
 our (
-	@argv,
 	$inInit,
 	$cachedir,
 	$user,
@@ -562,8 +564,6 @@ sub init {
 }
 
 sub main {
-	# save argv
-	@argv = @ARGV;
 	
 	# command line options
 	initOptions();
@@ -1018,7 +1018,7 @@ sub stopServer {
 		&& Slim::Utils::OSDetect->getOS()->canRestartServer() 
 		&& !main::ISWINDOWS)
 	{
-		exec($^X, $0, @original_args);
+		exec($^X, $0, @argv);
 	}
 
 	exit();
