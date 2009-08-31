@@ -32,7 +32,7 @@ sub initSearchPath {
 
 	$class->SUPER::initSearchPath();
 
-	my @paths = (split(/:/, ($ENV{'PATH'} || '/sbin:/usr/sbin:/bin:/usr/bin')), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
+	my @paths = (split(/:/, ($ENV{'PATH'} || '/sbin:/usr/sbin:/bin:/usr/bin')), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin /opt/bin));
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 }

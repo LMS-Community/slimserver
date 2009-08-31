@@ -45,8 +45,8 @@ sub getFlavor {
 
 	} elsif (-f '/etc/synoinfo.conf' || -f '/etc.defaults/synoinfo.conf') {
 
-        return 'Synology DiskStation';
-    }
+		return 'Synology DiskStation';
+	}
 
 	return 'Linux';
 }
