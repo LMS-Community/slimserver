@@ -391,7 +391,7 @@ sub _createHTTPRequest {
 			ecb    => sub {
 				my ( $http, $error ) = @_;
 				$self->error( $error ); 
-				$self->{ecb}->( $self, $error );
+				$self->ecb->( $self, $error );
 			},
 		);
 		
