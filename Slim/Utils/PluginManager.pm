@@ -610,6 +610,11 @@ sub _parseInstallManifest {
 
 		my $state = delete $installManifest->{'defaultState'};
 
+		if (ref $state eq 'HASH') {
+
+			$state = $state->{ Slim::Utils::OSDetect::OS() } || $state->{ 'other' };
+		}
+
 		if ($state && $state eq 'disabled') {
 
 			$prefs->set($pluginName, 'disabled');
