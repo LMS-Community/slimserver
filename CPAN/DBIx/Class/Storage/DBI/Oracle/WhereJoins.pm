@@ -1,9 +1,10 @@
 package DBIx::Class::Storage::DBI::Oracle::WhereJoins;
 
-use base qw( DBIx::Class::Storage::DBI::Oracle::Generic );
-
 use strict;
 use warnings;
+
+use base qw( DBIx::Class::Storage::DBI::Oracle::Generic );
+use mro 'c3';
 
 __PACKAGE__->sql_maker_class('DBIx::Class::SQLAHacks::OracleJoins');
 

@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'DBIx::Class::Storage::DBI';
+use mro 'c3';
 
 =head1 NAME 
 

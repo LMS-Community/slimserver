@@ -4,6 +4,11 @@ package # hide from PAUSE
 use strict;
 use warnings;
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::HasMany' => 'DBIx::Class::Relationship' }
+  );
+
 sub has_many {
   my ($class, $rel, $f_class, $cond, $attrs) = @_;
 
@@ -35,7 +40,7 @@ sub has_many {
     $class->throw_exception(
       "No such column ${f_key} on foreign class ${f_class} ($guess)"
     ) if $f_class_loaded && !$f_class->has_column($f_key);
-      
+
     $cond = { "foreign.${f_key}" => "self.${pri}" };
   }
 

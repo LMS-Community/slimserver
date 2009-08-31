@@ -162,10 +162,8 @@ sub new {
   if ($attrs) {
     $new->throw_exception("attrs must be a hashref")
       unless ref($attrs) eq 'HASH';
-    
+
     my ($related,$inflated);
-    ## Pretend all the rels are actual objects, unset below if not, for insert() to fix
-    $new->{_rel_in_storage} = 1;
 
     foreach my $key (keys %$attrs) {
       if (ref $attrs->{$key}) {
@@ -181,9 +179,9 @@ sub new {
           }
 
           if ($rel_obj->in_storage) {
+            $new->{_rel_in_storage}{$key} = 1;
             $new->set_from_related($key, $rel_obj);
           } else {
-            $new->{_rel_in_storage} = 0;
             MULTICREATE_DEBUG and warn "MC $new uninserted $key $rel_obj\n";
           }
 
@@ -202,13 +200,11 @@ sub new {
             }
 
             if ($rel_obj->in_storage) {
-              $new->set_from_related($key, $rel_obj);
+              $rel_obj->throw_exception ('A multi relationship can not be pre-existing when doing multicreate. Something went wrong');
             } else {
-              $new->{_rel_in_storage} = 0;
               MULTICREATE_DEBUG and
                 warn "MC $new uninserted $key $rel_obj (${\($idx+1)} of $total)\n";
             }
-            $new->set_from_related($key, $rel_obj) if $rel_obj->in_storage;
             push(@objects, $rel_obj);
           }
           $related->{$key} = \@objects;
@@ -221,8 +217,10 @@ sub new {
           if(!Scalar::Util::blessed($rel_obj)) {
             $rel_obj = $new->__new_related_find_or_new_helper($key, $rel_obj);
           }
-          unless ($rel_obj->in_storage) {
-            $new->{_rel_in_storage} = 0;
+          if ($rel_obj->in_storage) {
+            $new->{_rel_in_storage}{$key} = 1;
+          }
+          else {
             MULTICREATE_DEBUG and warn "MC $new uninserted $key $rel_obj";
           }
           $inflated->{$key} = $rel_obj;
@@ -235,7 +233,7 @@ sub new {
       }
       $new->throw_exception("No such column $key on $class")
         unless $class->has_column($key);
-      $new->store_column($key => $attrs->{$key});          
+      $new->store_column($key => $attrs->{$key});
     }
 
     $new->{_relationship_data} = $related if $related;
@@ -283,30 +281,24 @@ sub insert {
   my $rollback_guard;
 
   # Check if we stored uninserted relobjs here in new()
-  my %related_stuff = (%{$self->{_relationship_data} || {}}, 
+  my %related_stuff = (%{$self->{_relationship_data} || {}},
                        %{$self->{_inflated_column} || {}});
 
-  if(!$self->{_rel_in_storage}) {
+  # insert what needs to be inserted before us
+  my %pre_insert;
+  for my $relname (keys %related_stuff) {
+    my $rel_obj = $related_stuff{$relname};
 
-    # The guard will save us if we blow out of this scope via die
-    $rollback_guard = $source->storage->txn_scope_guard;
+    if (! $self->{_rel_in_storage}{$relname}) {
+      next unless (Scalar::Util::blessed($rel_obj)
+                    && $rel_obj->isa('DBIx::Class::Row'));
 
-    ## Should all be in relationship_data, but we need to get rid of the
-    ## 'filter' reltype..
-    ## These are the FK rels, need their IDs for the insert.
+      next unless $source->_pk_depends_on(
+                    $relname, { $rel_obj->get_columns }
+                  );
 
-    my @pri = $self->primary_columns;
-
-    REL: foreach my $relname (keys %related_stuff) {
-
-      my $rel_obj = $related_stuff{$relname};
-
-      next REL unless (Scalar::Util::blessed($rel_obj)
-                       && $rel_obj->isa('DBIx::Class::Row'));
-
-      next REL unless $source->_pk_depends_on(
-                        $relname, { $rel_obj->get_columns }
-                      );
+      # The guard will save us if we blow out of this scope via die
+      $rollback_guard ||= $source->storage->txn_scope_guard;
 
       MULTICREATE_DEBUG and warn "MC $self pre-reconstructing $relname $rel_obj\n";
 
@@ -315,10 +307,19 @@ sub insert {
                     ->related_source($relname)
                     ->resultset
                     ->find_or_create($them);
+
       %{$rel_obj} = %{$re};
-      $self->set_from_related($relname, $rel_obj);
-      delete $related_stuff{$relname};
+      $self->{_rel_in_storage}{$relname} = 1;
     }
+
+    $self->set_from_related($relname, $rel_obj);
+    delete $related_stuff{$relname};
+  }
+
+  # start a transaction here if not started yet and there is more stuff
+  # to insert after us
+  if (keys %related_stuff) {
+    $rollback_guard ||= $source->storage->txn_scope_guard
   }
 
   MULTICREATE_DEBUG and do {
@@ -332,13 +333,12 @@ sub insert {
 
   ## PK::Auto
   my @auto_pri = grep {
-                   !defined $self->get_column($_) || 
-                   ref($self->get_column($_)) eq 'SCALAR'
+                  (not defined $self->get_column($_))
+                    ||
+                  (ref($self->get_column($_)) eq 'SCALAR')
                  } $self->primary_columns;
 
   if (@auto_pri) {
-    #$self->throw_exception( "More than one possible key found for auto-inc on ".ref $self )
-    #  if defined $too_many;
     MULTICREATE_DEBUG and warn "MC $self fetching missing PKs ".join(', ', @auto_pri)."\n";
     my $storage = $self->result_source->storage;
     $self->throw_exception( "Missing primary key but Storage doesn't support last_insert_id" )
@@ -353,47 +353,47 @@ sub insert {
   $self->{_dirty_columns} = {};
   $self->{related_resultsets} = {};
 
-  if(!$self->{_rel_in_storage}) {
-    ## Now do the relationships that need our ID (has_many etc.)
-    foreach my $relname (keys %related_stuff) {
-      my $rel_obj = $related_stuff{$relname};
-      my @cands;
-      if (Scalar::Util::blessed($rel_obj)
-          && $rel_obj->isa('DBIx::Class::Row')) {
-        @cands = ($rel_obj);
-      } elsif (ref $rel_obj eq 'ARRAY') {
-        @cands = @$rel_obj;
-      }
-      if (@cands) {
-        my $reverse = $source->reverse_relationship_info($relname);
-        foreach my $obj (@cands) {
-          $obj->set_from_related($_, $self) for keys %$reverse;
-          my $them = { %{$obj->{_relationship_data} || {} }, $obj->get_inflated_columns };
-          if ($self->__their_pk_needs_us($relname, $them)) {
-            if (exists $self->{_ignore_at_insert}{$relname}) {
-              MULTICREATE_DEBUG and warn "MC $self skipping post-insert on $relname";
-            } else {
-              MULTICREATE_DEBUG and warn "MC $self re-creating $relname $obj";
-              my $re = $self->result_source
-                            ->related_source($relname)
-                            ->resultset
-                            ->find_or_create($them);
-              %{$obj} = %{$re};
-              MULTICREATE_DEBUG and warn "MC $self new $relname $obj";
-            }
+  foreach my $relname (keys %related_stuff) {
+    next unless $source->has_relationship ($relname);
+
+    my @cands = ref $related_stuff{$relname} eq 'ARRAY'
+      ? @{$related_stuff{$relname}}
+      : $related_stuff{$relname}
+    ;
+
+    if (@cands
+          && Scalar::Util::blessed($cands[0])
+            && $cands[0]->isa('DBIx::Class::Row')
+    ) {
+      my $reverse = $source->reverse_relationship_info($relname);
+      foreach my $obj (@cands) {
+        $obj->set_from_related($_, $self) for keys %$reverse;
+        my $them = { %{$obj->{_relationship_data} || {} }, $obj->get_inflated_columns };
+        if ($self->__their_pk_needs_us($relname, $them)) {
+          if (exists $self->{_ignore_at_insert}{$relname}) {
+            MULTICREATE_DEBUG and warn "MC $self skipping post-insert on $relname";
           } else {
-            MULTICREATE_DEBUG and warn "MC $self post-inserting $obj";
-            $obj->insert();
+            MULTICREATE_DEBUG and warn "MC $self re-creating $relname $obj";
+            my $re = $self->result_source
+                          ->related_source($relname)
+                          ->resultset
+                          ->create($them);
+            %{$obj} = %{$re};
+            MULTICREATE_DEBUG and warn "MC $self new $relname $obj";
           }
+        } else {
+          MULTICREATE_DEBUG and warn "MC $self post-inserting $obj";
+          $obj->insert();
         }
       }
     }
-    delete $self->{_ignore_at_insert};
-    $rollback_guard->commit;
   }
 
   $self->in_storage(1);
-  undef $self->{_orig_ident};
+  delete $self->{_orig_ident};
+  delete $self->{_ignore_at_insert};
+  $rollback_guard->commit if $rollback_guard;
+
   return $self;
 }
 
@@ -413,7 +413,7 @@ sub insert {
 Indicates whether the object exists as a row in the database or
 not. This is set to true when L<DBIx::Class::ResultSet/find>,
 L<DBIx::Class::ResultSet/create> or L<DBIx::Class::ResultSet/insert>
-are used. 
+are used.
 
 Creating a row object using L<DBIx::Class::ResultSet/new>, or calling
 L</delete> on one, sets it to false.
@@ -519,14 +519,14 @@ values to locate the row.
 
 The object is still perfectly usable, but L</in_storage> will
 now return 0 and the object must be reinserted using L</insert>
-before it can be used to L</update> the row again. 
+before it can be used to L</update> the row again.
 
 If you delete an object in a class with a C<has_many> relationship, an
 attempt is made to delete all the related objects as well. To turn
 this behaviour off, pass C<< cascade_delete => 0 >> in the C<$attr>
 hashref of the relationship, see L<DBIx::Class::Relationship>. Any
 database-level cascade or restrict will take precedence over a
-DBIx-Class-based cascading delete. 
+DBIx-Class-based cascading delete.
 
 If you delete an object within a txn_do() (see L<DBIx::Class::Storage/txn_do>)
 and the transaction subsequently fails, the row object will remain marked as
@@ -600,7 +600,7 @@ sub get_column {
   return $self->{_column_data}{$column} if exists $self->{_column_data}{$column};
   if (exists $self->{_inflated_column}{$column}) {
     return $self->store_column($column,
-      $self->_deflated_column($column, $self->{_inflated_column}{$column}));   
+      $self->_deflated_column($column, $self->{_inflated_column}{$column}));
   }
   $self->throw_exception( "No such column '${column}'" ) unless $self->has_column($column);
   return undef;
@@ -702,7 +702,7 @@ sub get_dirty_columns {
 Throws an exception if the column does not exist.
 
 Marks a column as having been changed regardless of whether it has
-really changed.  
+really changed.
 
 =cut
 sub make_column_dirty {
@@ -710,7 +710,21 @@ sub make_column_dirty {
 
   $self->throw_exception( "No such column '${column}'" )
     unless exists $self->{_column_data}{$column} || $self->has_column($column);
+
+  # the entire clean/dirty code relies on exists, not on true/false
+  return 1 if exists $self->{_dirty_columns}{$column};
+
   $self->{_dirty_columns}{$column} = 1;
+
+  # if we are just now making the column dirty, and if there is an inflated
+  # value, force it over the deflated one
+  if (exists $self->{_inflated_column}{$column}) {
+    $self->store_column($column,
+      $self->_deflated_column(
+        $column, $self->{_inflated_column}{$column}
+      )
+    );
+  }
 }
 
 =head2 get_inflated_columns
@@ -773,7 +787,10 @@ sub set_column {
   $self->store_column($column, $new_value);
 
   my $dirty;
-  if (defined $old_value xor defined $new_value) {
+  if (!$self->in_storage) { # no point tracking dirtyness on uninserted data
+    $dirty = 1;
+  }
+  elsif (defined $old_value xor defined $new_value) {
     $dirty = 1;
   }
   elsif (not defined $old_value) {  # both undef
@@ -785,8 +802,8 @@ sub set_column {
   else {  # do a numeric comparison if datatype allows it
     my $colinfo = $self->column_info ($column);
 
-    # cache for speed
-    if (not defined $colinfo->{is_numeric}) {
+    # cache for speed (the object may *not* have a resultsource instance)
+    if (not defined $colinfo->{is_numeric} && $self->_source_handle) {
       $colinfo->{is_numeric} =
         $self->result_source->schema->storage->is_datatype_numeric ($colinfo->{data_type})
           ? 1
@@ -815,7 +832,7 @@ sub set_column {
 
   $row->set_columns({ $col => $val, ... });
 
-=over 
+=over
 
 =item Arguments: \%columndata
 
@@ -850,7 +867,7 @@ sub set_columns {
 =back
 
 Sets more than one column value at once. Any inflated values are
-deflated and the raw values stored. 
+deflated and the raw values stored.
 
 Any related values passed as Row objects, using the relation name as a
 key, are reduced to the appropriate foreign key values and stored. If
@@ -894,7 +911,7 @@ sub set_inflated_columns {
       }
     }
   }
-  $self->set_columns($upd);    
+  $self->set_columns($upd);
 }
 
 =head2 copy
@@ -911,7 +928,11 @@ sub set_inflated_columns {
 
 Inserts a new row into the database, as a copy of the original
 object. If a hashref of replacement data is supplied, these will take
-precedence over data in the original.
+precedence over data in the original. Also any columns which have
+the L<column info attribute|DBIx::Class::ResultSource/add_columns>
+C<< is_auto_increment => 1 >> are explicitly removed before the copy,
+so that the database can insert its own autoincremented values into
+the new object.
 
 Relationships will be followed by the copy procedure B<only> if the
 relationship specifes a true value for its
@@ -936,7 +957,7 @@ sub copy {
   $new->set_inflated_columns($changes);
   $new->insert;
 
-  # Its possible we'll have 2 relations to the same Source. We need to make 
+  # Its possible we'll have 2 relations to the same Source. We need to make
   # sure we don't try to insert the same row twice esle we'll violate unique
   # constraints
   my $rels_copied = {};
@@ -945,7 +966,7 @@ sub copy {
     my $rel_info = $self->result_source->relationship_info($rel);
 
     next unless $rel_info->{attrs}{cascade_copy};
-  
+
     my $resolved = $self->result_source->_resolve_condition(
       $rel_info->{cond}, $rel, $new
     );
@@ -957,7 +978,7 @@ sub copy {
       $copied->{$id_str} = 1;
       my $rel_copy = $related->copy($resolved);
     }
- 
+
   }
   return $new;
 }
@@ -1032,7 +1053,6 @@ sub inflate_result {
   my $new = {
     _source_handle => $source_handle,
     _column_data => $me,
-    _in_storage => 1
   };
   bless $new, (ref $class || $class);
 
@@ -1044,14 +1064,25 @@ sub inflate_result {
       unless $pre_source;
     if (ref($pre_val->[0]) eq 'ARRAY') { # multi
       my @pre_objects;
-      foreach my $pre_rec (@$pre_val) {
-        unless ($pre_source->primary_columns == grep { exists $pre_rec->[0]{$_}
-           and defined $pre_rec->[0]{$_} } $pre_source->primary_columns) {
-          next;
+
+      for my $me_pref (@$pre_val) {
+
+        # the collapser currently *could* return bogus elements with all
+        # columns set to undef
+        my $has_def;
+        for (values %{$me_pref->[0]}) {
+          if (defined $_) {
+            $has_def++;
+            last;
+          }
         }
-        push(@pre_objects, $pre_source->result_class->inflate_result(
-                             $pre_source, @{$pre_rec}));
+        next unless $has_def;
+
+        push @pre_objects, $pre_source->result_class->inflate_result(
+          $pre_source, @$me_pref
+        );
       }
+
       $new->related_resultset($pre)->set_cache(\@pre_objects);
     } elsif (defined $pre_val->[0]) {
       my $fetched;
@@ -1069,11 +1100,13 @@ sub inflate_result {
       } elsif ($accessor eq 'filter') {
         $new->{_inflated_column}{$pre} = $fetched;
       } else {
-       $class->throw_exception("Prefetch not supported with accessor '$accessor'");
+       $class->throw_exception("Implicit prefetch (via select/columns) not supported with accessor '$accessor'");
       }
       $new->related_resultset($pre)->set_cache([ $fetched ]);
     }
   }
+
+  $new->in_storage (1);
   return $new;
 }
 
@@ -1242,13 +1275,52 @@ sub get_from_storage {
     my $self = shift @_;
     my $attrs = shift @_;
     my $resultset = $self->result_source->resultset;
-    
+
     if(defined $attrs) {
-    	$resultset = $resultset->search(undef, $attrs);
+      $resultset = $resultset->search(undef, $attrs);
     }
-    
+
     return $resultset->find($self->{_orig_ident} || $self->ident_condition);
 }
+
+=head2 discard_changes ($attrs)
+
+Re-selects the row from the database, losing any changes that had
+been made.
+
+This method can also be used to refresh from storage, retrieving any
+changes made since the row was last read from storage.
+
+$attrs is expected to be a hashref of attributes suitable for passing as the
+second argument to $resultset->search($cond, $attrs);
+
+=cut
+
+sub discard_changes {
+  my ($self, $attrs) = @_;
+  delete $self->{_dirty_columns};
+  return unless $self->in_storage; # Don't reload if we aren't real!
+
+  # add a replication default to read from the master only
+  $attrs = { force_pool => 'master', %{$attrs||{}} };
+
+  if( my $current_storage = $self->get_from_storage($attrs)) {
+
+    # Set $self to the current.
+    %$self = %$current_storage;
+
+    # Avoid a possible infinite loop with
+    # sub DESTROY { $_[0]->discard_changes }
+    bless $current_storage, 'Do::Not::Exist';
+
+    return $self;
+  }
+  else {
+    $self->in_storage(0);
+    return $self;
+  }
+}
+
 
 =head2 throw_exception
 
@@ -1298,6 +1370,13 @@ local changes made.
 This method can also be used to refresh from storage, retrieving any
 changes made since the row was last read from storage. Actually
 implemented in L<DBIx::Class::PK>
+
+Note: If you are using L<DBIx::Class::Storage::DBI::Replicated> as your
+storage, please kept in mind that if you L</discard_changes> on a row that you
+just updated or created, you should wrap the entire bit inside a transaction.
+Otherwise you run the risk that you insert or update to the master database
+but read from a replicant database that has not yet been updated from the
+master.  This will result in unexpected results.
 
 =cut
 

@@ -174,7 +174,7 @@ sub _maybe_attach_source_to_schema {
 sub result_source_instance {
   my $class = shift;
   $class = ref $class || $class;
-  
+
   if (@_) {
     my $source = $_[0];
     $class->_result_source_instance([$source, $class]);
@@ -186,7 +186,7 @@ sub result_source_instance {
   return unless Scalar::Util::blessed($source);
 
   if ($result_class ne $class) {  # new class
-    # Give this new class it's own source and register it.
+    # Give this new class its own source and register it.
     $source = $source->new({ 
         %$source, 
         source_name  => $class,

@@ -4,6 +4,11 @@ package # hide from PAUSE
 use strict;
 use warnings;
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::HasOne' => 'DBIx::Class::Relationship' }
+  );
+
 sub might_have {
   shift->_has_one('LEFT' => @_);
 }

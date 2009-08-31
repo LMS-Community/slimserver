@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use base qw/DBIx::Class::Storage::DBI::ODBC/;
+use mro 'c3';
 
 sub _dbh_last_insert_id {
     my ($self, $dbh, $source, $col) = @_;
@@ -22,7 +23,7 @@ sub _dbh_last_insert_id {
 
 sub _sql_maker_opts {
     my ($self) = @_;
-    
+
     $self->dbh_do(sub {
         my ($self, $dbh) = @_;
 

@@ -7,6 +7,11 @@ package # hide from PAUSE
 use strict;
 use warnings;
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::BelongsTo' => 'DBIx::Class::Relationship' }
+  );
+
 sub belongs_to {
   my ($class, $rel, $f_class, $cond, $attrs) = @_;
 

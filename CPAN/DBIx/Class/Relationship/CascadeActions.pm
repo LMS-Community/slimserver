@@ -4,6 +4,11 @@ package # hide from PAUSE
 use strict;
 use warnings;
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::CascadeActions' => 'DBIx::Class::Relationship' }
+  );
+
 sub delete {
   my ($self, @rest) = @_;
   return $self->next::method(@rest) unless ref $self;

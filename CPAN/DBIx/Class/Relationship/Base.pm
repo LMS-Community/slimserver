@@ -83,18 +83,18 @@ command immediately before C<JOIN>.
 
 An arrayref containing a list of accessors in the foreign class to create in
 the main class. If, for example, you do the following:
-  
+
   MyDB::Schema::CD->might_have(liner_notes => 'MyDB::Schema::LinerNotes',
     undef, {
       proxy => [ qw/notes/ ],
     });
-  
+
 Then, assuming MyDB::Schema::LinerNotes has an accessor named notes, you can do:
 
   my $cd = MyDB::Schema::CD->find(1);
   $cd->notes('Notes go here'); # set notes -- LinerNotes object is
                                # created if it doesn't exist
-  
+
 =item accessor
 
 Specifies the type of accessor that should be created for the relationship.
@@ -176,13 +176,13 @@ sub related_resultset {
   $self->throw_exception("Can't call *_related as class methods")
     unless ref $self;
   my $rel = shift;
-  my $rel_obj = $self->relationship_info($rel);
+  my $rel_info = $self->relationship_info($rel);
   $self->throw_exception( "No such relationship ${rel}" )
-    unless $rel_obj;
-  
+    unless $rel_info;
+
   return $self->{related_resultsets}{$rel} ||= do {
     my $attrs = (@_ > 1 && ref $_[$#_] eq 'HASH' ? pop(@_) : {});
-    $attrs = { %{$rel_obj->{attrs} || {}}, %$attrs };
+    $attrs = { %{$rel_info->{attrs} || {}}, %$attrs };
 
     $self->throw_exception( "Invalid query: @_" )
       if (@_ > 1 && (@_ % 2 == 1));
@@ -190,7 +190,7 @@ sub related_resultset {
 
     my $source = $self->result_source;
     my $cond = $source->_resolve_condition(
-      $rel_obj->{cond}, $rel, $self
+      $rel_info->{cond}, $rel, $self
     );
     if ($cond eq $DBIx::Class::ResultSource::UNRESOLVABLE_CONDITION) {
       my $reverse = $source->reverse_relationship_info($rel);
@@ -390,22 +390,22 @@ set them in the storage.
 
 sub set_from_related {
   my ($self, $rel, $f_obj) = @_;
-  my $rel_obj = $self->relationship_info($rel);
-  $self->throw_exception( "No such relationship ${rel}" ) unless $rel_obj;
-  my $cond = $rel_obj->{cond};
+  my $rel_info = $self->relationship_info($rel);
+  $self->throw_exception( "No such relationship ${rel}" ) unless $rel_info;
+  my $cond = $rel_info->{cond};
   $self->throw_exception(
     "set_from_related can only handle a hash condition; the ".
     "condition for $rel is of type ".
     (ref $cond ? ref $cond : 'plain scalar')
   ) unless ref $cond eq 'HASH';
   if (defined $f_obj) {
-    my $f_class = $rel_obj->{class};
+    my $f_class = $rel_info->{class};
     $self->throw_exception( "Object $f_obj isn't a ".$f_class )
       unless Scalar::Util::blessed($f_obj) and $f_obj->isa($f_class);
   }
   $self->set_columns(
     $self->result_source->_resolve_condition(
-       $rel_obj->{cond}, $f_obj, $rel));
+       $rel_info->{cond}, $f_obj, $rel));
   return 1;
 }
 

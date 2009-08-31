@@ -2,35 +2,35 @@ package DBIx::Class::Storage::DBI::Replicated;
 
 BEGIN {
   use Carp::Clan qw/^DBIx::Class/;
-	
+
   ## Modules required for Replication support not required for general DBIC
   ## use, so we explicitly test for these.
-	
+
   my %replication_required = (
-    Moose => '0.77',
-    MooseX::AttributeHelpers => '0.12',
-    MooseX::Types => '0.10',
-    namespace::clean => '0.11',
-    Hash::Merge => '0.11'
+    'Moose' => '0.87',
+    'MooseX::AttributeHelpers' => '0.21',
+    'MooseX::Types' => '0.16',
+    'namespace::clean' => '0.11',
+    'Hash::Merge' => '0.11'
   );
-	
+
   my @didnt_load;
-  
+
   for my $module (keys %replication_required) {
 	eval "use $module $replication_required{$module}";
 	push @didnt_load, "$module $replication_required{$module}"
 	 if $@;
   }
-	
+
   croak("@{[ join ', ', @didnt_load ]} are missing and are required for Replication")
-    if @didnt_load;  	
+    if @didnt_load;
 }
 
 use Moose;
 use DBIx::Class::Storage::DBI;
 use DBIx::Class::Storage::DBI::Replicated::Pool;
 use DBIx::Class::Storage::DBI::Replicated::Balancer;
-use DBIx::Class::Storage::DBI::Replicated::Types 'BalancerClassNamePart';
+use DBIx::Class::Storage::DBI::Replicated::Types qw/BalancerClassNamePart DBICSchema DBICStorageDBI/;
 use MooseX::Types::Moose qw/ClassName HashRef Object/;
 use Scalar::Util 'reftype';
 use Carp::Clan qw/^DBIx::Class/;
@@ -48,33 +48,45 @@ The Following example shows how to change an existing $schema to a replicated
 storage type, add some replicated (readonly) databases, and perform reporting
 tasks.
 
-  ## Change storage_type in your schema class
+You should set the 'storage_type attribute to a replicated type.  You should
+also define your arguments, such as which balancer you want and any arguments
+that the Pool object should get.
+
   $schema->storage_type( ['::DBI::Replicated', {balancer=>'::Random'}] );
-  
-  ## Add some slaves.  Basically this is an array of arrayrefs, where each
-  ## arrayref is database connect information
-  
+
+Next, you need to add in the Replicants.  Basically this is an array of 
+arrayrefs, where each arrayref is database connect information.  Think of these
+arguments as what you'd pass to the 'normal' $schema->connect method.
+
   $schema->storage->connect_replicants(
     [$dsn1, $user, $pass, \%opts],
     [$dsn2, $user, $pass, \%opts],
     [$dsn3, $user, $pass, \%opts],
   );
-  
-  ## Now, just use the $schema as normal
+
+Now, just use the $schema as you normally would.  Automatically all reads will
+be delegated to the replicants, while writes to the master.
+
   $schema->resultset('Source')->search({name=>'etc'});
-  
-  ## You can force a given query to use a particular storage using the search
-  ### attribute 'force_pool'.  For example:
-  
+
+You can force a given query to use a particular storage using the search
+attribute 'force_pool'.  For example:
+
   my $RS = $schema->resultset('Source')->search(undef, {force_pool=>'master'});
-  
-  ## Now $RS will force everything (both reads and writes) to use whatever was
-  ## setup as the master storage.  'master' is hardcoded to always point to the
-  ## Master, but you can also use any Replicant name.  Please see:
-  ## L<DBIx::Class::Storage::Replicated::Pool> and the replicants attribute for
-  ## More. Also see transactions and L</execute_reliably> for alternative ways
-  ## to force read traffic to the master.
-  
+
+Now $RS will force everything (both reads and writes) to use whatever was setup
+as the master storage.  'master' is hardcoded to always point to the Master, 
+but you can also use any Replicant name.  Please see:
+L<DBIx::Class::Storage::DBI::Replicated::Pool> and the replicants attribute for more.
+
+Also see transactions and L</execute_reliably> for alternative ways to
+force read traffic to the master.  In general, you should wrap your statements
+in a transaction when you are reading and writing to the same tables at the
+same time, since your replicants will often lag a bit behind the master.
+
+See L<DBIx::Class::Storage::DBI::Replicated::Instructions> for more help and
+walkthroughs.
+
 =head1 DESCRIPTION
 
 Warning: This class is marked BETA.  This has been running a production
@@ -100,7 +112,7 @@ selected algorithm.  The default algorithm is random weighted.
 =head1 NOTES
 
 The consistancy betweeen master and replicants is database specific.  The Pool
-gives you a method to validate it's replicants, removing and replacing them
+gives you a method to validate its replicants, removing and replacing them
 when they fail/pass predefined criteria.  Please make careful use of the ways
 to force a query to run against Master when needed.
 
@@ -108,12 +120,12 @@ to force a query to run against Master when needed.
 
 Replicated Storage has additional requirements not currently part of L<DBIx::Class>
 
-  Moose => 0.77
-  MooseX::AttributeHelpers => 0.12 
-  MooseX::Types => 0.10
-  namespace::clean => 0.11
-  Hash::Merge => 0.11
-  
+  Moose => '0.87',
+  MooseX::AttributeHelpers => '0.20',
+  MooseX::Types => '0.16',
+  namespace::clean => '0.11',
+  Hash::Merge => '0.11'
+
 You will need to install these modules manually via CPAN or make them part of the
 Makefile for your distribution.
 
@@ -129,7 +141,7 @@ The underlying L<DBIx::Class::Schema> object this storage is attaching
 
 has 'schema' => (
     is=>'rw',
-    isa=>'DBIx::Class::Schema',
+    isa=>DBICSchema,
     weak_ref=>1,
     required=>1,
 );
@@ -153,7 +165,7 @@ has 'pool_type' => (
 =head2 pool_args
 
 Contains a hashref of initialized information to pass to the Balancer object.
-See L<DBIx::Class::Storage::Replicated::Pool> for available arguments.
+See L<DBIx::Class::Storage::DBI::Replicated::Pool> for available arguments.
 
 =cut
 
@@ -186,7 +198,7 @@ has 'balancer_type' => (
 =head2 balancer_args
 
 Contains a hashref of initialized information to pass to the Balancer object.
-See L<DBIx::Class::Storage::Replicated::Balancer> for available arguments.
+See L<DBIx::Class::Storage::DBI::Replicated::Balancer> for available arguments.
 
 =cut
 
@@ -242,7 +254,7 @@ pool of databases that is allowed to handle write traffic.
 
 has 'master' => (
   is=> 'ro',
-  isa=>'DBIx::Class::Storage::DBI',
+  isa=>DBICStorageDBI,
   lazy_build=>1,
 );
 
@@ -288,7 +300,8 @@ has 'write_handler' => (
     create_ddl_dir
     deployment_statements
     datetime_parser
-    datetime_parser_type        
+    datetime_parser_type  
+    build_datetime_parser      
     last_insert_id
     insert
     insert_bulk
@@ -303,10 +316,19 @@ has 'write_handler' => (
     sth
     deploy
     with_deferred_fk_checks
-
+	dbh_do
     reload_row
+	with_deferred_fk_checks
     _prep_for_execute
-    
+
+	backup
+	is_datatype_numeric
+	_count_select
+	_subq_count_select
+	_subq_update_delete 
+	svp_rollback
+	svp_begin
+	svp_release
   /],
 );
 
@@ -381,7 +403,7 @@ This class defines the following methods.
 
 =head2 BUILDARGS
 
-L<DBIx::Class::Schema> when instantiating it's storage passed itself as the
+L<DBIx::Class::Schema> when instantiating its storage passed itself as the
 first argument.  So we need to massage the arguments a bit so that all the
 bits get put into the correct places.
 
@@ -389,7 +411,7 @@ bits get put into the correct places.
 
 sub BUILDARGS {
   my ($class, $schema, $storage_type_args, @args) = @_;	
-  
+
   return {
   	schema=>$schema, 
   	%$storage_type_args,
@@ -546,24 +568,24 @@ inserted something and need to get a resultset including it, etc.
 
 sub execute_reliably {
   my ($self, $coderef, @args) = @_;
-  
+
   unless( ref $coderef eq 'CODE') {
     $self->throw_exception('Second argument must be a coderef');
   }
-  
+
   ##Get copy of master storage
   my $master = $self->master;
-  
+
   ##Get whatever the current read hander is
   my $current = $self->read_handler;
-  
+
   ##Set the read handler to master
   $self->read_handler($master);
-  
+
   ## do whatever the caller needs
   my @result;
   my $want_array = wantarray;
-  
+
   eval {
     if($want_array) {
       @result = $coderef->(@args);
@@ -573,13 +595,13 @@ sub execute_reliably {
       $coderef->(@args);
     }       
   };
-  
+
   ##Reset to the original state
   $self->read_handler($current); 
-  
+
   ##Exception testing has to come last, otherwise you might leave the 
   ##read_handler set to master.
-  
+
   if($@) {
     $self->throw_exception("coderef returned an error: $@");
   } else {
@@ -591,14 +613,14 @@ sub execute_reliably {
 
 Sets the current $schema to be 'reliable', that is all queries, both read and
 write are sent to the master
-  
+
 =cut
 
 sub set_reliable_storage {
   my $self = shift @_;
   my $schema = $self->schema;
   my $write_handler = $self->schema->storage->write_handler;
-  
+
   $schema->storage->read_handler($write_handler);
 }
 
@@ -606,29 +628,16 @@ sub set_reliable_storage {
 
 Sets the current $schema to be use the </balancer> for all reads, while all
 writea are sent to the master only
-  
+
 =cut
 
 sub set_balanced_storage {
   my $self = shift @_;
   my $schema = $self->schema;
-  my $write_handler = $self->schema->storage->balancer;
-  
-  $schema->storage->read_handler($write_handler);
+  my $balanced_handler = $self->schema->storage->balancer;
+
+  $schema->storage->read_handler($balanced_handler);
 }
-
-=head2 around: txn_do ($coderef)
-
-Overload to the txn_do method, which is delegated to whatever the
-L<write_handler> is set to.  We overload this in order to wrap in inside a
-L</execute_reliably> method.
-
-=cut
-
-around 'txn_do' => sub {
-  my($txn_do, $self, $coderef, @args) = @_;
-  $self->execute_reliably(sub {$self->$txn_do($coderef, @args)}); 
-};
 
 =head2 connected
 
@@ -802,7 +811,7 @@ sub cursor_class {
   }
   $self->master->cursor_class;
 }
-  
+
 =head1 GOTCHAS
 
 Due to the fact that replicants can lag behind a master, you must take care to
@@ -836,7 +845,7 @@ using the Schema clone method.
 
   my $new_schema = $schema->clone;
   $new_schema->set_reliable_storage;
-  
+
   ## $new_schema will use only the Master storage for all reads/writes while
   ## the $schema object will use replicated storage.
 

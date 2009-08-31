@@ -1,9 +1,9 @@
 package DBIx::Class::Storage::DBI::Cursor;
 
-use base qw/DBIx::Class::Cursor/;
-
 use strict;
 use warnings;
+
+use base qw/DBIx::Class::Cursor/;
 
 =head1 NAME
 
@@ -68,7 +68,11 @@ sub _dbh_next {
   my ($storage, $dbh, $self) = @_;
 
   $self->_check_dbh_gen;
-  if ($self->{attrs}{rows} && $self->{pos} >= $self->{attrs}{rows}) {
+  if (
+    $self->{attrs}{software_limit}
+      && $self->{attrs}{rows}
+        && $self->{pos} >= $self->{attrs}{rows}
+  ) {
     $self->{sth}->finish if $self->{sth}->{Active};
     delete $self->{sth};
     $self->{done} = 1;
@@ -128,6 +132,7 @@ sub all {
         && ($self->{attrs}{offset} || $self->{attrs}{rows})) {
     return $self->next::method;
   }
+
   $self->{storage}->dbh_do($self->can('_dbh_all'), $self);
 }
 

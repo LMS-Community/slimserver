@@ -4,11 +4,12 @@ use strict;
 use warnings;
 
 use base qw/DBIx::Class::Storage::DBI/;
+use mro 'c3';
 
 sub _rebless {
     my ($self) = @_;
 
-    my $version = eval { $self->dbh->get_info(18); };
+    my $version = eval { $self->_get_dbh->get_info(18); };
 
     if ( !$@ ) {
         my ($major, $minor, $patchlevel) = split(/\./, $version);

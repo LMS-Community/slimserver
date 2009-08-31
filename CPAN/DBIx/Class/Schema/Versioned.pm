@@ -308,7 +308,7 @@ sub upgrade
   # here to be sure.
   # XXX - just fix it
   $self->storage->sqlt_type;
-  
+
   my $upgrade_file = $self->ddl_filename(
                                          $self->storage->sqlt_type,
                                          $self->schema_version,

@@ -12,7 +12,7 @@ sub insert {
   my $self = shift;
 
   my $table = $_[0];
-  $table = $self->_quote($table) unless ref($table);
+  $table = $self->_quote($table);
 
   if (! $_[1] or (ref $_[1] eq 'HASH' and !keys %{$_[1]} ) ) {
     return "INSERT INTO ${table} () VALUES ()"

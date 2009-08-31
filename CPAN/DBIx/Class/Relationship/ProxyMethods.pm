@@ -6,6 +6,11 @@ use warnings;
 use Sub::Name ();
 use base qw/DBIx::Class/;
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::ProxyMethods' => 'DBIx::Class::Relationship' }
+  );
+
 sub register_relationship {
   my ($class, $rel, $info) = @_;
   if (my $proxy_list = $info->{attrs}{proxy}) {

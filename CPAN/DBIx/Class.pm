@@ -3,10 +3,11 @@ package DBIx::Class;
 use strict;
 use warnings;
 
+use MRO::Compat;
+
 use vars qw($VERSION);
 use base qw/DBIx::Class::Componentised Class::Accessor::Grouped/;
 use DBIx::Class::StartupCheck;
-
 
 sub mk_classdata {
   shift->mk_classaccessor(@_);
@@ -24,7 +25,7 @@ sub component_base_class { 'DBIx::Class' }
 # i.e. first release of 0.XX *must* be 0.XX000. This avoids fBSD ports
 # brain damage and presumably various other packaging systems too
 
-$VERSION = '0.08107';
+$VERSION = '0.08109';
 
 $VERSION = eval $VERSION; # numify for warning-free dev releases
 
@@ -72,8 +73,10 @@ Create a schema class called MyDB/Schema.pm:
 
   1;
 
-Create a table class to represent artists, who have many CDs, in
+Create a result class to represent artists, who have many CDs, in
 MyDB/Schema/Result/Artist.pm:
+
+See L<DBIx::Class::ResultSource> for docs on defining result classes.
 
   package MyDB::Schema::Result::Artist;
   use base qw/DBIx::Class/;
@@ -86,7 +89,7 @@ MyDB/Schema/Result/Artist.pm:
 
   1;
 
-A table class to represent a CD, which belongs to an artist, in
+A result class to represent a CD, which belongs to an artist, in
 MyDB/Schema/Result/CD.pm:
 
   package MyDB::Schema::Result::CD;
@@ -108,8 +111,16 @@ Then you can use these classes in your application's code:
 
   # Query for all artists and put them in an array,
   # or retrieve them as a result set object.
+  # $schema->resultset returns a DBIx::Class::ResultSet
   my @all_artists = $schema->resultset('Artist')->all;
   my $all_artists_rs = $schema->resultset('Artist');
+
+  # Output all artists names
+  # $artist here is a DBIx::Class::Row, which has accessors 
+  # for all its columns. Rows are also subclasses of your Result class.
+  foreach $artist (@artists) {
+    print $artist->name, "\n";
+  }
 
   # Create a result set to search for artists.
   # This does not query the DB.
@@ -300,6 +311,8 @@ plu: Johannes Plunien <plu@cpan.org>
 quicksilver: Jules Bean
 
 rafl: Florian Ragwitz <rafl@debian.org>
+
+rbuels: Robert Buels <rmb32@cornell.edu>
 
 rdj: Ryan D Johnson <ryan@innerfence.com>
 

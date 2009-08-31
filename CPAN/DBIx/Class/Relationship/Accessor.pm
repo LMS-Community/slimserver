@@ -6,6 +6,11 @@ use warnings;
 use Sub::Name ();
 use Class::Inspector ();
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::Accessor' => 'DBIx::Class::Relationship' }
+  );
+
 sub register_relationship {
   my ($class, $rel, $info) = @_;
   if (my $acc_type = $info->{attrs}{accessor}) {

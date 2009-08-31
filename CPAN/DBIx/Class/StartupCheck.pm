@@ -7,7 +7,7 @@ DBIx::Class::StartupCheck - Run environment checks on startup
 =head1 SYNOPSIS
 
   use DBIx::Class::StartupCheck;
-  
+
 =head1 DESCRIPTION
 
 This module used to check for, and if necessary issue a warning for, a

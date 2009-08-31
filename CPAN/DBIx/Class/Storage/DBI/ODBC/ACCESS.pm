@@ -2,8 +2,10 @@ package DBIx::Class::Storage::DBI::ODBC::ACCESS;
 use strict;
 use warnings;
 
-use DBI;
 use base qw/DBIx::Class::Storage::DBI/;
+use mro 'c3';
+
+use DBI;
 
 my $ERR_MSG_START = __PACKAGE__ . ' failed: ';
 
@@ -38,11 +40,11 @@ sub last_insert_id {
 
 sub bind_attribute_by_data_type {
     my $self = shift;
-    
+
     my ( $data_type ) = @_;
-    
+
     return { TYPE => $data_type } if $data_type == DBI::SQL_LONGVARCHAR;
-    
+
     return;
 }
 

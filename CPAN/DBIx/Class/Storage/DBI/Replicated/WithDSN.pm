@@ -13,7 +13,7 @@ information in trace output
 =head1 SYNOPSIS
 
 This class is used internally by L<DBIx::Class::Storage::DBI::Replicated>.
-    
+
 =head1 DESCRIPTION
 
 This role adds C<DSN: > info to storage debugging output.
@@ -31,7 +31,10 @@ Add C<DSN: > to debugging output.
 around '_query_start' => sub {
   my ($method, $self, $sql, @bind) = @_;
   my $dsn = $self->_dbi_connect_info->[0];
-  $self->$method("DSN: $dsn SQL: $sql", @bind);
+  my($op, $rest) = (($sql=~m/^(\w+)(.+)$/),'NOP', 'NO SQL');
+  my $storage_type = $self->can('active') ? 'REPLICANT' : 'MASTER';
+
+  $self->$method("$op [DSN_$storage_type=$dsn]$rest", @bind);
 };
 
 =head1 ALSO SEE

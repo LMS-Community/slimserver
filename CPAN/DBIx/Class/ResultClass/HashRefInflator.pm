@@ -73,8 +73,15 @@ $mk_hash = sub {
 
         # if there is at least one defined column consider the resultset real
         # (and not an emtpy has_many rel containing one empty hashref)
+        # an empty arrayref is an empty multi-sub-prefetch - don't consider
+        # those either
         for (values %$hash) {
-            return $hash if defined $_;
+            if (ref $_ eq 'ARRAY') {
+              return $hash if @$_;
+            }
+            elsif (defined $_) {
+              return $hash;
+            }
         }
 
         return undef;
@@ -115,6 +122,12 @@ following:
 C<$first> will B<not> be a hashref, it will be a normal CD row since 
 HashRefInflator only affects resultsets at inflation time, and prefetch causes
 relations to be inflated when the master C<$artist> row is inflated.
+
+=item *
+
+Column value inflation, e.g., using modules like
+L<DBIx::Class::InflateColumn::DateTime>, is not performed.
+The returned hash contains the raw database values.
 
 =back
 

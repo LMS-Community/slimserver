@@ -61,7 +61,7 @@ sub throw {
     else {
         $msg = Carp::longmess($msg);
     }
-    
+
     my $self = { msg => $msg };
     bless $self => $class;
 

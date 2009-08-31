@@ -106,7 +106,7 @@ L<DBIx::Class::Relationship::Base>.
 All helper methods are called similar to the following template:
 
   __PACKAGE__->$method_name('relname', 'Foreign::Class', \%cond | \@cond, \%attrs);
-  
+
 Both C<$cond> and C<$attrs> are optional. Pass C<undef> for C<$cond> if
 you want to use the default value for it, but still want to set C<\%attrs>.
 
@@ -297,7 +297,7 @@ OR condition.
     'My::DBIC::Schema::Book', 
     { 'foreign.author_id' => 'self.id' },
   );
-  
+
   # OR (similar result, assuming related_class is storing our PK, in "author")
   # (the "author" is guessed at from "Author" in the class namespace)
   My::DBIC::Schema::Author->has_many(

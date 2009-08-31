@@ -77,7 +77,7 @@ sub STORABLE_freeze {
     my ($self, $cloning) = @_;
 
     my $to_serialize = { %$self };
-    
+
     my $class = $self->schema->class($self->source_moniker);
     $to_serialize->{schema} = $class;
     return (Storable::freeze($to_serialize));

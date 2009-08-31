@@ -25,7 +25,7 @@ DBIx::Class::UTF8Columns - Force UTF8 (Unicode) flag on columns
     package Artist;
     __PACKAGE__->load_components(qw/UTF8Columns Core/);
     __PACKAGE__->utf8_columns(qw/name description/);
-    
+
     # then belows return strings with utf8 flag
     $artist->name;
     $artist->get_column('description');

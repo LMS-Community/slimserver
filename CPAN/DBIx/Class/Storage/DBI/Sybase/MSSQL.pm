@@ -15,6 +15,7 @@ carp 'Setting of storage_type is redundant as connections through DBD::Sybase'
 
 
 use base qw/DBIx::Class::Storage::DBI::Sybase::Microsoft_SQL_Server/;
+use mro 'c3';
 
 1;
 

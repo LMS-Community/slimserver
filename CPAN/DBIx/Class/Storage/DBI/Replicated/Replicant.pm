@@ -14,7 +14,7 @@ DBIx::Class::Storage::DBI::Replicated::Replicant - A replicated DBI Storage Role
 =head1 SYNOPSIS
 
 This class is used internally by L<DBIx::Class::Storage::DBI::Replicated>.
-    
+
 =head1 DESCRIPTION
 
 Replicants are DBI Storages that follow a master DBI Storage.  Typically this

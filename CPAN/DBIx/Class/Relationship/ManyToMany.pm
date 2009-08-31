@@ -7,6 +7,11 @@ use warnings;
 use Carp::Clan qw/^DBIx::Class/;
 use Sub::Name ();
 
+our %_pod_inherit_config = 
+  (
+   class_map => { 'DBIx::Class::Relationship::ManyToMany' => 'DBIx::Class::Relationship' }
+  );
+
 sub many_to_many {
   my ($class, $meth, $rel, $f_rel, $rel_attrs) = @_;
 
@@ -107,7 +112,14 @@ EOW
         "{$set_meth} needs a list of objects or hashrefs"
       );
       my @to_set = (ref($_[0]) eq 'ARRAY' ? @{ $_[0] } : @_);
-      $self->search_related($rel, {})->delete;
+      # if there is a where clause in the attributes, ensure we only delete
+      # rows that are within the where restriction
+      if ($rel_attrs && $rel_attrs->{where}) {
+        $self->search_related( $rel, $rel_attrs->{where},{join => $f_rel})->delete;
+      } else {
+        $self->search_related( $rel, {} )->delete;
+      }
+      # add in the set rel objects
       $self->$add_meth($_, ref($_[1]) ? $_[1] : {}) for (@to_set);
     };
 

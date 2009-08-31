@@ -12,7 +12,7 @@ DBIx::Class::Storage::DBI::Replicated::Balancer::First - Just get the First Bala
 
 This class is used internally by L<DBIx::Class::Storage::DBI::Replicated>.  You
 shouldn't need to create instances of this class.
-    
+
 =head1 DESCRIPTION
 
 Given a pool (L<DBIx::Class::Storage::DBI::Replicated::Pool>) of replicated

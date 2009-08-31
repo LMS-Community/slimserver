@@ -2,11 +2,13 @@ package DBIx::Class::Storage::DBI::SQLite;
 
 use strict;
 use warnings;
+
+use base qw/DBIx::Class::Storage::DBI/;
+use mro 'c3';
+
 use POSIX 'strftime';
 use File::Copy;
 use File::Spec;
-
-use base qw/DBIx::Class::Storage::DBI/;
 
 sub _dbh_last_insert_id {
   my ($self, $dbh, $source, $col) = @_;

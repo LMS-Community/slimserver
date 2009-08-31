@@ -3,17 +3,21 @@ use strict;
 use warnings;
 
 use base qw/DBIx::Class::Storage::DBI/;
+use mro 'c3';
 
 sub _rebless {
     my ($self) = @_;
 
-    my $dbtype = eval { $self->dbh->get_info(17) };
+    my $dbtype = eval { $self->_get_dbh->get_info(17) };
+
     unless ( $@ ) {
         # Translate the backend name into a perl identifier
         $dbtype =~ s/\W/_/gi;
-        my $class = "DBIx::Class::Storage::DBI::ODBC::${dbtype}";
-        eval "require $class";
-        bless $self, $class unless $@;
+        my $subclass = "DBIx::Class::Storage::DBI::ODBC::${dbtype}";
+        if ($self->load_optional_class($subclass) && !$self->isa($subclass)) {
+            bless $self, $subclass;
+            $self->_rebless;
+        }
     }
 }
 

@@ -3,7 +3,8 @@ package DBIx::Class::Storage::DBI::Replicated::Balancer;
 use Moose::Role;
 requires 'next_storage';
 use MooseX::Types::Moose qw/Int/;
-
+use DBIx::Class::Storage::DBI::Replicated::Pool;
+use DBIx::Class::Storage::DBI::Replicated::Types qw/DBICStorageDBI/;
 use namespace::clean -except => 'meta';
 
 =head1 NAME
@@ -13,7 +14,7 @@ DBIx::Class::Storage::DBI::Replicated::Balancer - A Software Load Balancer
 =head1 SYNOPSIS
 
 This role is used internally by L<DBIx::Class::Storage::DBI::Replicated>.
-    
+
 =head1 DESCRIPTION
 
 Given a pool (L<DBIx::Class::Storage::DBI::Replicated::Pool>) of replicated
@@ -48,7 +49,7 @@ ultimate fallback.
 
 has 'master' => (
   is=>'ro',
-  isa=>'DBIx::Class::Storage::DBI',
+  isa=>DBICStorageDBI,
   required=>1,
 );
 
@@ -74,13 +75,13 @@ databases is going to help you to scale traffic.
 
 This attribute returns the next slave to handle a read request.  Your L</pool>
 attribute has methods to help you shuffle through all the available replicants
-via it's balancer object.
+via its balancer object.
 
 =cut
 
 has 'current_replicant' => (
   is=> 'rw',
-  isa=>'DBIx::Class::Storage::DBI',
+  isa=>DBICStorageDBI,
   lazy_build=>1,
   handles=>[qw/
     select
@@ -169,10 +170,12 @@ the load evenly (hopefully) across existing capacity.
 
 around 'select' => sub {
   my ($select, $self, @args) = @_;
-  
+
   if (my $forced_pool = $args[-1]->{force_pool}) {
     delete $args[-1]->{force_pool};
     return $self->_get_forced_pool($forced_pool)->select(@args); 
+  } elsif($self->master->{transaction_depth}) {
+    return $self->master->select(@args);
   } else {
     $self->increment_storage;
     return $self->$select(@args);
@@ -189,10 +192,12 @@ the load evenly (hopefully) across existing capacity.
 
 around 'select_single' => sub {
   my ($select_single, $self, @args) = @_;
-  
+
   if (my $forced_pool = $args[-1]->{force_pool}) {
     delete $args[-1]->{force_pool};
     return $self->_get_forced_pool($forced_pool)->select_single(@args); 
+  } elsif($self->master->{transaction_depth}) {
+    return $self->master->select_single(@args);
   } else {
     $self->increment_storage;
     return $self->$select_single(@args);
@@ -224,7 +229,7 @@ sub _get_forced_pool {
     return $forced_pool;
   } elsif($forced_pool eq 'master') {
     return $self->master;
-  } elsif(my $replicant = $self->pool->replicants($forced_pool)) {
+  } elsif(my $replicant = $self->pool->replicants->{$forced_pool}) {
     return $replicant;
   } else {
     $self->master->throw_exception("$forced_pool is not a named replicant.");
@@ -233,7 +238,7 @@ sub _get_forced_pool {
 
 =head1 AUTHOR
 
-John Napiorkowski <john.napiorkowski@takkle.com>
+John Napiorkowski <jjnapiork@cpan.org>
 
 =head1 LICENSE
 
