@@ -9928,6 +9928,7 @@ CLEAR_PLAYLIST
 	ZH_CN	清除播放表
 
 SHOW_ARTWORK
+# SLT: please use plural here (if appropriate) - this is being used to turn on/off display of the cover arts when browsing albums
 	CS	Zobrazit předlohu
 	DA	Vis albumcovere
 	DE	Plattenhüllen anzeigen
@@ -9935,6 +9936,22 @@ SHOW_ARTWORK
 	ES	Mostrar carátula de álbum
 	FI	Näytä kansitaide
 	FR	Afficher les pochettes
+	IT	Mostra copertina
+	NL	Hoesafbeeldingen weergeven
+	NO	Vis albumomslag
+	PL	Pokaż okładkę
+	RU	Показать обложку
+	SV	Visa albumomslag
+
+SHOW_ARTWORK_SINGLE
+# SLT: please use singular here - this is being used in cases where we refer to the one single cover art of an album
+	CS	Zobrazit předlohu
+	DA	Vis albumcovere
+	DE	Plattenhülle anzeigen
+	EN	Show Artwork
+	ES	Mostrar carátula de álbum
+	FI	Näytä kansitaide
+	FR	Afficher la pochette
 	IT	Mostra copertina
 	NL	Hoesafbeeldingen weergeven
 	NO	Vis albumomslag

@@ -433,7 +433,7 @@ sub showArtwork {
 
 	push @{$items}, {
 		type => 'text',
-		name => cstring($client, 'SHOW_ARTWORK'),
+		name => cstring($client, 'SHOW_ARTWORK_SINGLE'),
 		jive => $jive, 
 	};
 	
