@@ -125,6 +125,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveplaytrackalbum'],
 		[1, 0, 1, \&jivePlayTrackAlbumCommand]);
 
+	Slim::Control::Request::addDispatch(['jiveplaytrackplaylist'],
+		[1, 0, 1, \&jivePlayTrackPlaylistCommand]);
+
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 1, \&dateQuery]);
 
@@ -2707,6 +2710,30 @@ sub menuNotification {
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
 }
 
+sub jivePlayTrackPlaylistCommand {
+
+	main::INFOLOG && $log->info("Begin function");
+
+	my $request    = shift;
+	my $client     = $request->client || return;
+	my $playlistID = $request->getParam('playlist_id');
+	my $listIndex  = $request->getParam('list_index');
+	
+	$client->execute( ["playlist", "clear"] );
+
+	if ( !defined ($playlistID) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# load the playlist
+	$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
+	# jump to the correct index
+	$client->execute( ["playlist", "jump", $listIndex] );
+
+	$request->setStatusDone();
+}
+
 sub jivePlayTrackAlbumCommand {
 
 	main::INFOLOG && $log->info("Begin function");
@@ -2715,6 +2742,7 @@ sub jivePlayTrackAlbumCommand {
 	my $client     = $request->client || return;
 	my $albumID    = $request->getParam('album_id');
 	my $trackID    = $request->getParam('track_id');
+	my $playlistID = $request->getParam('playlist_id');
 	my $folder     = $request->getParam('folder')|| undef;
 	my $listIndex  = $request->getParam('list_index');
  	my $mode       = Slim::Player::Playlist::playlistMode($client);
@@ -2724,14 +2752,21 @@ sub jivePlayTrackAlbumCommand {
 		$client->execute( ['playlistcontrol', 'cmd:load', "track_id:$trackID" ] );
 		return;
 	}
+
 	$client->execute( ["playlist", "clear"] );
 
 	# Database album browse is the simple case
 	if ( $albumID ) {
-
 		$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
 		$client->execute( ["playlist", "jump", $listIndex] );
 
+	}
+
+	elsif ( $playlistID ) {
+		# load the playlist
+		$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
+		# jump to the correct index
+		$client->execute( ["playlist", "jump", $listIndex] );
 	}
 
 	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item

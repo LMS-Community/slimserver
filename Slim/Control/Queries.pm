@@ -2372,10 +2372,11 @@ sub playlistsTracksQuery {
 	}
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
+	my $useContextMenu = $request->getParam('useContextMenu');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $insertAll = $menuMode && defined $insert && !$useContextMenu;
 		
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
@@ -2410,9 +2411,10 @@ sub playlistsTracksQuery {
 				},
 				'play' => {
 					'player' => 0,
-					'cmd' => ['playlistcontrol'],
+					'cmd' => ['jiveplaytrackplaylist'],
 					'params' => {
 						'cmd' => 'load',
+						'playlist_id' => $playlistID,
 					},
 					'nextWindow'  => 'nowPlaying',
 					'itemsParams' => 'params',
@@ -2435,6 +2437,12 @@ sub playlistsTracksQuery {
 				},
 			},
 		};
+		if ( $useContextMenu ) {
+			# go is play
+			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase('track');
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -2459,10 +2467,11 @@ sub playlistsTracksQuery {
 			my $chunkCount = 0;
 			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 			
-			if ($insertAll) {
+			if ( $insertAll && !$useContextMenu ) {
 				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 			}
 
+			my $list_index = 0;
 			for my $eachitem ($iterator->slice($start, $end)) {
 
 				if ($menuMode) {
@@ -2473,9 +2482,13 @@ sub playlistsTracksQuery {
 					$id += 0;
 					my $params = {
 						'track_id' =>  $id, 
+						'list_index' => $list_index,
 					};
+					$list_index++;
 					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-
+					if ( $useContextMenu ) {
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+					}
 				}
 				else {
 					_addSong($request, $loopname, $chunkCount, $eachitem, $tags, 
