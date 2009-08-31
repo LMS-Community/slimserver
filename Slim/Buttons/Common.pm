@@ -914,8 +914,8 @@ our %functions = (
 			}
 			$display->{'jive'} = undef;
 
-			$client->showBriefly($display, { duration => 3, callback => sub {
-				if (Slim::Hardware::IR::holdTime($client) > 3 ) {
+			$client->showBriefly($display, { duration => 5, callback => sub {
+				if (Slim::Hardware::IR::holdTime($client) > 5 ) {
 					# do this on a timer so it happens after showBriefly ends and we can see any screen updates which result
 					Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Hardware::IR::executeButton, "favorites_add$digit", $client->lastirtime, undef, 1);
 				}
@@ -923,7 +923,7 @@ our %functions = (
 
 		} else {
 
-			if (Slim::Hardware::IR::holdTime($client) < 3 ) {
+			if (Slim::Hardware::IR::holdTime($client) < 5 ) {
 				Slim::Hardware::IR::executeButton($client, "playPreset_$digit", $client->lastirtime, undef, 1);
 			}
 		}
