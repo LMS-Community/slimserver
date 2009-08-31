@@ -2996,7 +2996,12 @@ sub totals {
 		$TOTAL_CACHE{genre} = $class->count('Genre');
 	}
 	if ( !exists $TOTAL_CACHE{track} ) {
-		$TOTAL_CACHE{track} = $class->rs('Track')->browse->count;
+		# Bug 13215, this used to be $class->rs('Track')->browse->count but this generates a slow query
+		my $dbh = Slim::Schema->storage->dbh;
+		my $sth = $dbh->prepare_cached('SELECT COUNT(*) FROM tracks WHERE audio = 1');
+		$sth->execute;
+		($TOTAL_CACHE{track}) = $sth->fetchrow_array;
+		$sth->finish;
 	}
 	
 	return \%TOTAL_CACHE;
