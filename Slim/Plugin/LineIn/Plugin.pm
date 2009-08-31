@@ -202,16 +202,6 @@ sub lineInLevelCommand {
 	my $value   = $request->getParam('value');
 
 	$prefs->client($client)->set('lineInLevel', $value);
-
-	my $string = $client->string("LINE_IN_LEVEL") . ": " . $value;
-
-	$client->showBriefly({
-		'jive' => {
-			type    => 'popupplay',
-			text    => [ $string ],
-		}
-	});
-
 	$request->setStatusDone();
 }
 
