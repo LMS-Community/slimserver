@@ -282,6 +282,7 @@ sub slimproto_close {
 
 				# set timer to forget client
 				if ( $forget_disconnected_time ) {
+					main::INFOLOG && $log->is_info && $log->info("setting timer to forget client in $forget_disconnected_time secs");
 					Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
 				}
 				else {

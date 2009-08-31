@@ -1268,6 +1268,34 @@ sub getAlarm {
 	return $client->alarmData->{alarms}->{$id};
 }
 
+=head2 forgetClient( $client )
+
+Clear alarms for a given client and unschedule the next alarm. This should be called
+whenever a client is forgotten.
+
+=cut
+
+sub forgetClient {
+	my $class = shift;
+	my $client = shift;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug('Forgetting saved alarms for ' . $client->name);
+
+	$client->alarmData->{alarms} = {};
+
+	# Now that alarm list is cleared, this should handle clearing the
+	# nextAlarm and removing the timer
+	$class->scheduleNext($client);
+
+	# Clear any existing RTC timers
+	my $timerRef = $client->alarmData->{_rtcTimerRef};
+	if (defined $timerRef) {
+		# Kill previous rtc alarm timer
+		Slim::Utils::Timers::killSpecific($timerRef);
+		delete $client->alarmData->{_rtcTimerRef};
+	}
+}
+
 =head2 loadAlarms( $client )
 
 Load the alarms for a given client and schedule the next alarm.  This should be called

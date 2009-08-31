@@ -554,6 +554,7 @@ sub forgetClient {
 		Slim::Buttons::Input::Choice::forgetClient($client);
 		Slim::Buttons::Playlist::forgetClient($client);
 		Slim::Buttons::Search::forgetClient($client);
+		Slim::Utils::Alarm->forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		
 		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
