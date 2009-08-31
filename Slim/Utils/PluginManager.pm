@@ -33,6 +33,7 @@ my $prefs = preferences('plugin.state'); # per plugin state or pending state
 
 my $plugins   = {};
 my $loaded    = {};
+my $disabled  = {};
 my $cacheInfo = {};
 my $message;
 my $downloader;
@@ -178,6 +179,18 @@ sub load {
 	for my $name (sort keys %$plugins) {
 		
 		my $state = $prefs->get($name);
+		
+		my $manifest = $plugins->{$name};
+
+		# Skip plugins with no perl module.
+		next unless $manifest->{'module'};
+		
+		my $baseDir    = $manifest->{'basedir'};
+		my $module     = $manifest->{'module'};
+		
+		# Initialize all plugins into the disabled list, they are removed below
+		# if they are loaded
+		$disabled->{$module} = $plugins->{$name};
 
 		if ( main::SLIM_SERVICE && $name =~ /^Plugins/ ) {
 			# Skip 3rd party plugins on SN
@@ -197,11 +210,6 @@ sub load {
 			next;
 		}
 
-		my $manifest = $plugins->{$name};
-
-		# Skip plugins with no perl module.
-		next unless $manifest->{'module'};
-
 		# Skip plugins that can't be loaded.
 		if ($manifest->{'error'} ne 'INSTALLERROR_SUCCESS') {
 			$log->error(sprintf("Couldn't load $name. Error: %s\n", $class->getErrorString($name)));
@@ -210,8 +218,6 @@ sub load {
 
 		main::INFOLOG && $log->info("Loading plugin: $name");
 
-		my $baseDir    = $manifest->{'basedir'};
-		my $module     = $manifest->{'module'};
 		my $loadModule = 0;
 
 		# Look for a lib dir that has a PAR file or otherwise.
@@ -273,6 +279,8 @@ sub load {
 			} else {
 
 				$loaded->{$module} = $plugins->{$name};
+				
+				delete $disabled->{$module};
 			}
 		}
 		
@@ -414,6 +422,13 @@ sub enabledPlugins {
 	my $class = shift;
 
 	return keys %$loaded;
+}
+
+# this returns all plugins which are disabled
+sub disabledPlugins {
+	my $class = shift;
+	
+	return $disabled;
 }
 
 # this returns plugins if a plugin module is currently loaded (i.e. enabled and successfully loaded)

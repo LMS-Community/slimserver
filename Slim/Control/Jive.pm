@@ -3111,6 +3111,9 @@ sub appMenus {
 	my $apps = $client->apps;
 	my $menu = [];
 	
+	my $disabledPlugins = Slim::Utils::PluginManager->disabledPlugins();
+	my @disabled = map { $disabledPlugins->{$_}->{name} } keys %{$disabledPlugins};
+	
 	# We want to add nodes for the following items:
 	# My Apps (node = null)
 	# Home menu apps (node = home)
@@ -3122,7 +3125,8 @@ sub appMenus {
 		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
 		
 		# Does this app exist in our global plugin list?
-		if ( my ($plugin) = grep { $_->{id} =~ /$app/ } @appMenus ) {
+		my $mode = $apps->{$app}->{mode};
+		if ( my ($plugin) = grep { $_->{text} eq $mode } @appMenus ) {
 			# Clone the existing plugin and set the node
 			my $clone = Storable::dclone($plugin);
 			
@@ -3136,6 +3140,13 @@ sub appMenus {
 			push @{$menu}, $clone;
 		}
 		else {
+			# Bug 13627, Make sure the app is not for a plugin that has been disabled.
+			# We could browse menus for a disabled plugin like Last.fm, but playback
+			# would be impossible.
+			if ( grep { $apps->{$app}->{mode} } @disabled ) {
+				next;
+			}
+			
 			# For type=opml, use generic handler
 			if ( $apps->{$app}->{type} eq 'opml' ) {
 				my $url = $apps->{$app}->{url} =~ /^http/
