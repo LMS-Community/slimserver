@@ -36,7 +36,7 @@ use vars qw(
 );
 
 # $Id$
-($REVISION) = ' $Revision: 23862 $ ' =~ /\$Revision:\s+([^\s]+)/;
+($REVISION) = ' $Revision$ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.24';
 
 # JRF: Whether we're debugging the ID3v2.4 support
