@@ -139,12 +139,12 @@ sub handler {
 		}
 
 		# Disable iTunes and MusicIP plugins if they aren't being used
-		if ( !$paramRef->{useiTunes} ) {
-			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::iTunes::Plugin');
+		if ( !$paramRef->{useiTunes} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') ) {
+			Slim::Utils::PluginManager->disablePlugin('iTunes');
 		}
 		
-		if ( !$paramRef->{useMusicIP} ) {
-			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::MusicMagic::Plugin');
+		if ( !$paramRef->{useMusicIP} && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
+			Slim::Utils::PluginManager->disablePlugin('MusicMagic');
 		}
 	}
 	
