@@ -50,7 +50,12 @@ sub cliQuery {
 	$request->setStatusProcessing();
 	
 	# cache SBC queries for "Recent Search" menu
-	if ( $request->isQuery([[$query], ['items']]) && defined($request->getParam('menu')) && defined($request->getParam('search')) ) {
+	if (
+		   $request->isQuery([[$query], ['items']]) 
+		&& defined($request->getParam('menu')) 
+		&& defined($request->getParam('search'))
+		&& $request->getParam('cachesearch') # Bug 13044, allow some searches to not be cached
+	) {
 		
 		# make a best effort to make a labeled title for the search
 		my $queryTypes = {
@@ -1058,9 +1063,10 @@ sub _cliQuery_done {
 								go => {
 									cmd    => [ $query, 'items' ],
 									params => {
-										item_id => "$id",
-										menu    => $query,
-										search  => '__TAGGEDINPUT__',
+										item_id     => "$id",
+										menu        => $query,
+										search      => '__TAGGEDINPUT__',
+										cachesearch => defined $item->{cachesearch} ? $item->{cachesearch} : 1, # Bug 13044, can this search be cached or not?
 									},
 								},
 							};									
