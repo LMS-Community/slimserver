@@ -9,7 +9,11 @@
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>
+		<osx>enabled</osx>
+		<win>enabled</win>
+		<other>disabled</other>
+	</defaultState>
 
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<icon>plugins/MusicMagic/html/images/icon.png</icon>
