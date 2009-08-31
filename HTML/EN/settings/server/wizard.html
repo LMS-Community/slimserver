@@ -288,9 +288,9 @@
 					<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
 						<select name="language" id="language">
 		
-							[% FOREACH option = languageoptions %]
-								[% IF !option.value.search('\*') %]
-									<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
+							[% FOREACH option = languageoptions.sort %]
+								[% IF !languageoptions.$option.search('\*') %]
+									<option [% IF prefs.language == option %]selected="selected" [% preferredLanguage=1;END %]value="[% option %]">[% languageoptions.$option %]</option>
 								[% END %]
 							[%- END -%]
 		

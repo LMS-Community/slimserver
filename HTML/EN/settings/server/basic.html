@@ -15,8 +15,8 @@
 	[% WRAPPER setting title="SETUP_LANGUAGE" desc="SETUP_LANGUAGE_DESC" %]
 		<select class="stdedit" name="pref_language" id="language">
 
-		[% FOREACH option = languageoptions %]
-			<option [% IF prefs.pref_language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+		[% FOREACH option = languageoptions.sort %]
+			<option [% IF prefs.pref_language == option %]selected="selected" [% END %]value="[% option %]">[% languageoptions.$option %]</option>
 		[%- END -%]
 		
 		</select>
