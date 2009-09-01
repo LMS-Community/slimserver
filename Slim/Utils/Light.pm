@@ -17,7 +17,7 @@ use Exporter::Lite;
 
 use Config;
 use FindBin qw($Bin);
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(catfile catdir);
 
 our @EXPORT = qw(string getPref);
 my ($os, $language, %strings);
@@ -65,7 +65,8 @@ BEGIN {
 	$os = Slim::Utils::OSDetect->getOS();
 }
 
-my $serverPrefFile = catdir($os->dirsFor('prefs'), 'server.prefs');
+my $serverPrefFile = catfile( scalar($os->dirsFor('prefs')), 'server.prefs' );
+my $versionFile    = catfile( scalar($os->dirsFor('updates')), 'server.version' );
 
 # return localised version of string token
 sub string {
@@ -184,5 +185,30 @@ sub getPref {
 
 loadStrings();
 
+
+sub checkForUpdate {
+	
+	open(UPDATEFLAG, $versionFile) || return '';
+	
+	my $installer = '';
+	
+	while ( <UPDATEFLAG> ) {
+
+		chomp;
+		
+		if (/(?:Squeezebox|SqueezeCenter).*/) {
+			$installer = $_;
+			last;
+		}
+	}
+		
+	close UPDATEFLAG;
+	
+	return $installer if ($installer && -r $installer);	
+}
+
+sub resetUpdateCheck {
+	unlink $versionFile if $versionFile && -r $versionFile;
+}
 
 1;

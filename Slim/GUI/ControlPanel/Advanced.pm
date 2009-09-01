@@ -20,7 +20,6 @@ use Slim::Utils::ServiceManager;
 use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect::getOS();
-my $versionFile = catfile( scalar($os->dirsFor('updates')), 'server.version' );
 
 if (main::ISWINDOWS) {
 	require Win32::Process;
@@ -56,7 +55,9 @@ sub new {
 
 		EVT_BUTTON( $self, $btnUpdate, sub {
 			
-			if (my $installer = _checkForUpdate()) {
+			if (my $installer = Slim::Utils::Light->checkForUpdate()) {
+
+				Slim::Utils::Light->resetUpdateCheck();
 
 				my $processObj;
 				Win32::Process::Create(
@@ -78,7 +79,7 @@ sub new {
 
 		my $updateChecker = Wx::Timer->new($self, 1);
 		EVT_TIMER( $self, 1, sub {
-			my $ready = $self->_checkForUpdate();
+			my $ready = Slim::Utils::Light->checkForUpdate();
 			$updateLabel->SetLabel( string($ready ? 'CONTROLPANEL_UPDATE_AVAILABLE' : 'CONTROLPANEL_NO_UPDATE_AVAILABLE') );
 			$btnUpdate->Enable($ready);
 
@@ -193,27 +194,6 @@ sub doCleanup {
 
 		$self->{args}->{cleanCB}($folders) if $folders;
 	}
-}
-
-sub _checkForUpdate {
-	
-	open(UPDATEFLAG, $versionFile) || return '';
-	
-	my $installer = '';
-	
-	while ( <UPDATEFLAG> ) {
-
-		chomp;
-		
-		if (/(?:Squeezebox|SqueezeCenter).*/) {
-			$installer = $_;
-			last;
-		}
-	}
-		
-	close UPDATEFLAG;
-	
-	return $installer && -e $installer ? $installer : 0;
 }
 
 1;
