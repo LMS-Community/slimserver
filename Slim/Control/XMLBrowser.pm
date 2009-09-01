@@ -944,7 +944,7 @@ sub _cliQuery_done {
 						if ($item->{nowPlaying}) {
 							$request->addResult('goNow', 'nowPlaying');
 						}
-						
+									
 						# wrap = 1 and type = textarea render in the single textarea area above items
 						my $textarea;
 						if ( $item->{wrap} && $item->{name} ) {
@@ -1069,7 +1069,12 @@ sub _cliQuery_done {
 										cachesearch => defined $item->{cachesearch} ? $item->{cachesearch} : 1, # Bug 13044, can this search be cached or not?
 									},
 								},
-							};									
+							};
+							
+							# Allow search results to become a slideshow
+							if ( defined $item->{slideshow} ) {
+								$actions->{go}->{params}->{slideshow} = $item->{slideshow};
+							}
 							
 							my $input = {
 								len  => 1,
