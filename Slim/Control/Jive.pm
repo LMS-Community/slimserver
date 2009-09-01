@@ -3143,6 +3143,8 @@ sub appMenus {
 	my $client = shift;
 	my $batch  = shift;
 	
+	my $isInfo = main::INFOLOG && $log->is_info;
+	
 	my $apps = $client->apps;
 	my $menu = [];
 	
@@ -3161,9 +3163,11 @@ sub appMenus {
 		
 		# Does this app exist in our global plugin list?
 		my $mode = $apps->{$app}->{mode};
-		if ( my ($plugin) = grep { $_->{text} eq $mode } @appMenus ) {
+		if ( my ($plugin) = grep { defined $mode && $_->{text} eq $mode } @appMenus ) {
 			# Clone the existing plugin and set the node
 			my $clone = Storable::dclone($plugin);
+			
+			main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin " . $plugin->{text} );
 			
 			# Set node to home or null
 			$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
@@ -3178,12 +3182,15 @@ sub appMenus {
 			# Bug 13627, Make sure the app is not for a plugin that has been disabled.
 			# We could browse menus for a disabled plugin like Last.fm, but playback
 			# would be impossible.
-			if ( grep { $apps->{$app}->{mode} } @disabled ) {
+			if ( $mode && grep { $mode } @disabled ) {
+				main::INFOLOG && $isInfo && $log->info( "App: $app, not displaying because plugin is disabled" );
 				next;
 			}
 			
 			# For type=opml, use generic handler
 			if ( $apps->{$app}->{type} eq 'opml' ) {
+				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
+				
 				my $url = $apps->{$app}->{url} =~ /^http/
 					? $apps->{$app}->{url} 
 					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
