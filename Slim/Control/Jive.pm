@@ -92,6 +92,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
 		[1, 1, 1, \&jiveDummyCommand]);
 
+	Slim::Control::Request::addDispatch(['jivealarm'],
+		[1, 0, 1, \&jiveAlarmCommand]);
+
 	Slim::Control::Request::addDispatch(['jiveendoftracksleep', '_index', '_quantity' ],
 		[1, 1, 1, \&endOfTrackSleepCommand]);
 
@@ -2862,6 +2865,29 @@ sub jiveUnmixableMessage {
 		}
 	);
         $request->setStatusDone();
+}
+
+sub jiveAlarmCommand {
+	main::INFOLOG && $log->info("Begin function");
+
+	my $request    = shift;
+	my $client     = $request->client || return;
+
+	# this command can issue either a snooze or a cancel
+	my $snooze      = $request->getParam('snooze') ? 1 : undef;
+	my $stop_alarm  = $request->getParam('stop_alarm') ? 1 : undef;
+
+	my $alarm       = Slim::Utils::Alarm->getCurrentAlarm($client);
+
+	if ( defined($alarm) ) {
+		if ( defined($snooze) ) {
+			Slim::Utils::Alarm->snooze($alarm);
+		} elsif ( defined($stop_alarm) ) {
+			Slim::Utils::Alarm->stop($alarm);
+		}
+	}
+
+	$request->setStatusDone();
 }
 
 sub jiveFavoritesCommand {
