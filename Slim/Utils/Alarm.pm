@@ -674,6 +674,7 @@ sub sound {
 			$client->showBriefly({
 				line => [ $line1, $line2 ],
 				duration => $showBrieflyDur,
+				jive => undef,
 			});
 		} );
 
@@ -768,6 +769,7 @@ sub snooze {
 		$client->showBriefly({
 			line => [$client->string('ALARM_SNOOZE')],
 			duration => $SHOW_BRIEFLY_DUR,
+			jive => undef,
 		});
 	}
 
@@ -812,6 +814,7 @@ sub stopSnooze {
 	$client->showBriefly({
 		line     => [$client->string('ALARM_SNOOZE_ENDED')],
 		duration => $SHOW_BRIEFLY_DUR,
+		jive     => undef,
 	});
 	
 	# Reset the subscription to end the alarm on user activity
