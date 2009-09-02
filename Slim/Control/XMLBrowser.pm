@@ -1309,10 +1309,7 @@ sub hasAudio {
 
 sub touchToPlay {
 	my $item = shift;
-	if ( $item->{'play'} ) {
-		return $item->{'play'};
-	}
-	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio)$/ ) {
+	if ( $item->{'type'} && $item->{'type'} =~ /^(?:audio)$/ ) {
 		return $item->{'url'} || scalar @{ $item->{outline} || [] };
 	}
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:playlist)$/ && $item->{'parser'} ) {
