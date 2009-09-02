@@ -2867,6 +2867,7 @@ sub jiveUnmixableMessage {
         $request->setStatusDone();
 }
 
+# currently just for snooze but this could be extended with other tagged params as needed
 sub jiveAlarmCommand {
 	main::INFOLOG && $log->info("Begin function");
 
@@ -2875,15 +2876,12 @@ sub jiveAlarmCommand {
 
 	# this command can issue either a snooze or a cancel
 	my $snooze      = $request->getParam('snooze') ? 1 : undef;
-	my $stop_alarm  = $request->getParam('stop_alarm') ? 1 : undef;
 
 	my $alarm       = Slim::Utils::Alarm->getCurrentAlarm($client);
 
 	if ( defined($alarm) ) {
 		if ( defined($snooze) ) {
-			Slim::Utils::Alarm->snooze($alarm);
-		} elsif ( defined($stop_alarm) ) {
-			Slim::Utils::Alarm->stop($alarm);
+			$alarm->snooze();
 		}
 	}
 
