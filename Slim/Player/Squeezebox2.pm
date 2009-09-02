@@ -884,7 +884,11 @@ our $pref_settings = {
 	},
 };
 
-$prefs->setChange( sub { my ($pref, $val, $client) = @_; $client->setPlayerSetting($pref, $val); }, keys %{$pref_settings});
+$prefs->setChange( sub {
+	my ($pref, $val, $client) = @_;
+	$val = Slim::Utils::Unicode::utf8encode($val) if $pref eq 'playername';
+	$client->setPlayerSetting($pref, $val);
+}, keys %{$pref_settings});
 
 # Request a pref from the player firmware
 sub getPlayerSetting {
