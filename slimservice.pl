@@ -115,7 +115,6 @@ use Locale::Hebrew;
 use XML::Parser;
 use HTML::Parser;
 use Compress::LZF ();
-use Compress::Zlib ();
 use Digest::SHA1;
 
 $SIG{'CHLD'} = 'DEFAULT';
