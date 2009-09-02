@@ -283,7 +283,7 @@ sub cleanup {
 			print "-> $_\n" if (-e $_ && !$useWx);
 
 			if (-d $_) {
-				File::Path::rmtree $_;
+				File::Path::rmtree($_);
 			}
 			
 			elsif (-f $_) {
