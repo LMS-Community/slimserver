@@ -1493,7 +1493,7 @@ sub _syncHTTPRequest {
 	
 	my $http = LWP::UserAgent->new;
 
-	$http->timeout(5);
+	$http->timeout($prefs->get('timeout') || 5);
 
 	return $http->get("http://localhost:$MMSport$url");
 }
