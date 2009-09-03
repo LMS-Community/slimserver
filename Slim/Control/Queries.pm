@@ -3609,8 +3609,14 @@ sub statusQuery {
 		# 'active': means alarm currently going off
 		# 'set':    alarm set to go off in next 24h on this player
 		# 'none':   alarm set to go off in next 24h on this player
+		# 'snooze': alarm is active but currently snoozing
 		if (defined($alarmCurrent)) {
-			$request->addResult('alarm_state', 'active');
+			my $snoozing     = $alarmCurrent->snoozeActive();
+			if ($snoozing) {
+				$request->addResult('alarm_state', 'snooze');
+			} else {
+				$request->addResult('alarm_state', 'active');
+			}
 		} else {
 			$request->addResult('alarm_state', $alarmComing);
 		}
