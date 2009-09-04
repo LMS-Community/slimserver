@@ -3190,8 +3190,7 @@ sub appMenus {
 				$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
 
 				# Use title from app list
-				delete $clone->{stringToken};
-				$clone->{text} = $apps->{$app}->{title};
+				$clone->{stringToken} = $apps->{$app}->{title};
 
 				push @{$menu}, $clone;
 			}
@@ -3268,7 +3267,7 @@ sub _localizeMenuItemText {
 	if ( $item->{text} && $item->{text} eq uc( $item->{text} ) ) {
 		$item->{text} = $client->string( $item->{text} );
 	}
-	elsif ( $item->{stringToken} ) {	
+	elsif ( $item->{stringToken} ) {
 		$item->{text} = $client->string( delete $item->{stringToken} );
 	}
 	
