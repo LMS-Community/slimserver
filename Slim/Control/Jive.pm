@@ -238,6 +238,8 @@ sub menuQuery {
 			require Slim::Player::Disconnected;
 			$client = Slim::Player::Disconnected->new($id);
 			$disconnected = 1;
+			
+			main::INFOLOG && $log->is_info && $log->info("Player $id not connected, using disconnected menu mode");
 		}
 		else {
 			# XXX temporary workaround for requests without a playerid

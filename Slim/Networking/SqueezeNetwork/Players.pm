@@ -148,6 +148,13 @@ sub _players_done {
 		}
 	}
 	
+	# SN can provide string translations for new menu items
+	if ( $res->{strings} ) {
+		for my $string ( @{ $res->{strings} } ) {
+			Slim::Utils::Strings::storeString( $string->{token}, $string->{strings} );
+		}
+	}
+	
 	# Clear error count if any
 	if ( $prefs->get('snPlayersErrors') ) {
 		$prefs->remove('snPlayersErrors');

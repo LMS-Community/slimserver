@@ -974,7 +974,7 @@ sub updateMenu {
 		}
 		elsif ( $apps->{$app}->{type} eq 'opml' ) {
 			# for type=opml without a mode, use generic OPML plugin
-			my $title = $apps->{$app}->{title};
+			my $title = $client->string( $apps->{$app}->{title} );
 			push @{$appMenu}, {
 				mode => $title,
 				text => $title,
