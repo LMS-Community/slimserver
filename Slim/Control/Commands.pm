@@ -795,17 +795,6 @@ sub playlistDeleteCommand {
 
 	my $song = Slim::Player::Playlist::song($client, $index);
 
-	# show feedback if this action came from jive cometd session
-	if ($request->source && $request->source =~ /\/slim\/request/) {
-		$client->showBriefly({
-			'jive' => { 
-				'type'    => 'song',
-				'text'    => [ $client->string('JIVE_POPUP_REMOVING_FROM_PLAYLIST', $song->title) ],
-				'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
-			}
-		});
-	}
-
 	Slim::Player::Playlist::removeTrack($client, $index);
 
 	$client->currentPlaylistModified(1);
@@ -1919,21 +1908,22 @@ sub playlistcontrolCommand {
 			my $token;
 			my $showBriefly = 1;
 			if ($add) {
-				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
+				$token = 'JIVE_POPUP_ADDING';
 			} elsif ($insert) {
-				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
+				$token = 'JIVE_POPUP_TO_PLAY_NEXT';
 			} else {
 				$token = 'JIVE_POPUP_NOW_PLAYING';
 				$showBriefly = undef;
 			}
 			# not to be shown for now playing, as we're pushing to now playing screen now and no need for showBriefly
 			if ($showBriefly) {
-				my $string = $client->string($token, $info[0]);
+				my $string = $client->string($token);
 				$client->showBriefly({ 
 					'jive' => { 
-						'type'    => defined $artwork ? 'popupalbum' : 'popupplay',
-						'text'    => [ $string ],
-						'icon-id' => $artwork,
+						'type'    => 'mixed',
+						'style'   => 'add',
+						'text'    => [ $string, $info[0] ],
+						'icon-id' => defined $artwork ? $artwork : '/html/music/cover.png',
 					}
 				});
 			}

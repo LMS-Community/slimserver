@@ -865,11 +865,15 @@ sub cliAdd {
 
 		# show feedback to jive
 		$client->showBriefly({
-			'jive' => { 
-			'text' => [ $client->string('FAVORITES_ADDING'),
+			jive => { 
+			type => 'mixed',
+			style => 'favorite',
+			#'icon-id' => $icon ? $icon : '/html/images/cover.png',
+			'icon' => $icon || $favs->icon($url),
+			text => [ $client->string('FAVORITES_ADDING'),
 					$title,
 				   ],
-			}
+			},
 		});
 
 		$request->setStatusDone();
