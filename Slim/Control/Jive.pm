@@ -233,9 +233,20 @@ sub menuQuery {
 	my $disconnected;
 	
 	if ( !$client ) {
+		require Slim::Player::Disconnected;
+		
 		# Check if this is a disconnected player request
 		if ( my $id = $request->disconnectedClientID ) {
-			require Slim::Player::Disconnected;
+			# On SN, if the player does not exist in the database this is a fatal error
+			if ( main::SLIM_SERVICE ) {
+				my ($player) = SDI::Service::Model::Player->search( { mac => $id } );
+				if ( !$player ) {
+					main::INFOLOG && $log->is_info && $log->info("Player $id does not exist in SN database");
+					$request->setStatusBadDispatch();
+					return;
+				}
+			}
+			
 			$client = Slim::Player::Disconnected->new($id);
 			$disconnected = 1;
 			
@@ -243,9 +254,10 @@ sub menuQuery {
 		}
 		else {
 			# XXX temporary workaround for requests without a playerid
-			require Slim::Player::Disconnected;
 			$client = Slim::Player::Disconnected->new( '_dummy_' . Time::HiRes::time() );
 			$disconnected = 1;
+			
+			$log->error("Menu requests without a client are deprecated, using disconnected menu mode");
 		}
 	}
 	
