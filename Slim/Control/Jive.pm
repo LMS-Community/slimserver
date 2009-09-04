@@ -3179,20 +3179,20 @@ sub appMenus {
 			# Make sure it's enabled
 			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
 				# Get the predefined menu for this plugin
-				my ($globalMenu) = grep { $_->{text} eq $pluginInfo->{name} } @appMenus;
+				if ( my ($globalMenu) = grep { $_->{text} eq $pluginInfo->{name} } @appMenus ) {				
+					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
 				
-				main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
-				
-				# Clone the existing menu and set the node
-				my $clone = Storable::dclone($globalMenu);
+					# Clone the existing menu and set the node
+					my $clone = Storable::dclone($globalMenu);
 
-				# Set node to home or null
-				$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+					# Set node to home or null
+					$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
 
-				# Use title from app list
-				$clone->{stringToken} = $apps->{$app}->{title};
+					# Use title from app list
+					$clone->{stringToken} = $apps->{$app}->{title};
 
-				push @{$menu}, $clone;
+					push @{$menu}, $clone;
+				}
 			}
 			else {
 				# Bug 13627, Make sure the app is not for a plugin that has been disabled.
