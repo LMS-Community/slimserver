@@ -1945,6 +1945,7 @@ sub musicfolderQuery {
 								list_index => $index + $listIndex,
 								folder     => $topPath,
 							},
+							nextWindow => 'nowPlaying',
 						};
 					}
 					if ($useContextMenu) {
