@@ -37,7 +37,7 @@ PLUGIN_CLI_DESC
 SETUP_CLIPORT
 	CS	Číslo portu Command Line Interface (Povelové rozhraní)
 	DA	Portnummer til kommandolinjegrænsefladen
-	DE	Anschlussnummer der BefehlszeilenSchnittstelle
+	DE	Anschlussnummer der Befehlszeilenschnittstelle
 	EN	Command Line Interface Port Number
 	ES	Número de puerto de la interfaz de línea de comandos
 	FI	Komentorivikäyttöliittymän portin numero

@@ -119,6 +119,16 @@ PLUGIN_JIVEEXTRAS_FILEORURL
 	SV	Ange filnamn eller webbadress
 
 PLUGIN_JIVEEXTRAS_UNKNOWN_SIZE
-	DE	Grösse unbekannt
+	DA	Ukendt størrelse
+	DE	Größe unbekannt
 	EN	Unknown Size
+	ES	Tamaño desconocido
+	FI	Tuntematon koko
 	FR	Taille inconnue
+	IT	Dimensione sconosciuta
+	NL	Onbekende grootte
+	NO	Ukjent størrelse
+	PL	Nieznany rozmiar
+	RU	Неизвестный размер
+	SV	Okänd storlek
+

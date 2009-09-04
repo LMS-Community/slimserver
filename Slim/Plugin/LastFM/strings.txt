@@ -9,7 +9,7 @@ PLUGIN_LFM_MODULE_NAME
 	IT	Radio Last.fm
 	NL	Last.fm-radio
 	NO	Last.fm radio
-	PL	Stacja radiowa Last.fm
+	PL	Last.fm Radio
 	RU	Радиостанция Last.fm
 	SV	Last.fm-radio
 

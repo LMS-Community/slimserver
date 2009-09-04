@@ -12,3 +12,4 @@ PLUGIN_MY_APPS_MODULE_NAME
 	PL	Moje aplikacje
 	RU	Мои приложения
 	SV	Mina program
+

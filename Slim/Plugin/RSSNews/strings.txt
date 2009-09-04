@@ -84,7 +84,7 @@ PLUGIN_RSSNEWS_ERROR
 PLUGIN_RSSNEWS_NO_TITLE
 	CS	Titul není dostupný
 	DA	Titlen er ikke tilgængelig
-	DE	Kein Titel verfübar
+	DE	Kein Titel verfügbar
 	EN	Title not available
 	ES	Título no disponible
 	FI	Kappale ei ole käytettävissä
@@ -136,7 +136,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	EN	RSS News Screensaver Settings
 	ES	Configuración de protector de pantalla de noticias RSS
 	FI	RSS News -näytönsäästäjän asetukset
-	FR	Paramètres Ecran de veille Aggrégateur RSS
+	FR	Paramètres Ecran de veille Agrégateur RSS
 	HE	הגדרות שומר המסך של RSS של חדשות
 	IT	Impostazioni screen saver RSS News
 	NL	Instellingen van RSS-nieuwsschermbeveiliger
@@ -184,7 +184,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	EN	Use RSS News as current screensaver
 	ES	Usar noticias RSS como protector de pantalla actual
 	FI	Käytä RSS Newsiä nykyisenä näytönsäästäjänä
-	FR	Utiliser l'aggrégateur RSS comme écran de veille
+	FR	Utiliser l'agrégateur RSS comme écran de veille
 	HE	השתמש ב-RSS של חדשות כשומר המסך הנוכחי
 	IT	Usa RSS News come screen saver corrente
 	NL	RSS-nieuws als huidige schermbeveiliger gebruiken
@@ -200,7 +200,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
 	EN	Use default screensaver (not RSS News)
 	ES	Usar protector de pantalla predeterminado (no noticias RSS)
 	FI	Käytä oletusnäytönsäästäjää (älä RSS Newsiä)
-	FR	Utiliser l'écran de veille par défaut (hors aggrégateur RSS)
+	FR	Utiliser l'écran de veille par défaut (hors agrégateur RSS)
 	HE	השתמש בשומר המסך הנוכחי (לא RSS של חדשות)
 	IT	Usa lo screen saver predefinito (non RSS News)
 	NL	Standaardschermbeveiliger gebruiken (niet RSS-nieuws)
@@ -216,7 +216,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	EN	Activating ticker as current screensaver
 	ES	Activando teletipo como nuevo protector de pantalla
 	FI	Lennätinnauha aktivoidaan nykyisenä näytönsäästäjänä
-	FR	Activation de l'aggrégateur RSS comme écran de veille
+	FR	Activation de l'agrégateur RSS comme écran de veille
 	HE	מפעיל את הטיקר כשומר המסך הנוכחי
 	IT	Attivazione del ticker come screen saver corrente
 	NL	RSS-nieuwsberichten worden als schermbeveiliger ingeschakeld
@@ -280,7 +280,7 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 	ES	El complemento de teletipo de noticias RSS se puede usar para examinar y mostrar elementos de fuentes RSS. Las preferencias siguientes se pueden usar para determinar qué fuentes RSS se deben usar y para controlar cómo deben mostrarse. Haga clic en el botón Cambiar cuando haya finalizado.
 	FI	RSS News Ticker -laajennuksen avulla voidaan selata ja näyttää RSS-syötteiden kohteita. Alla olevilla asetuksilla voidaan määrittää, mitä RSS-syötteitä käytetään ja miten syötteet näytetään. Kun olet valmis, valitse Muuta.
-	FR	Le plugin Aggrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les modifications effectuées.
+	FR	Le plugin Agrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les modifications effectuées.
 	HE	ניתן להשתמש ביישום ה-Plugin 'טיקר RSS של חדשות' לעיון בפריטים מהזנות RSS ולהצגתם. ניתן להשתמש בהעדפות שלהלן כדי לקבוע באילו הזנות RSS להשתמש וכדי לשלוט באופן ההצגה שלהן. לסיום, לחץ על הלחצן 'שנה'.
 	IT	È possibile utilizzare il plugin RSS News Ticker per sfogliare e visualizzare argomenti dei feed RSS. Per specificare i feed RSS da utilizzare e impostarne il tipo di visualizzazione, utilizzare le preferenze indicate di seguito. Al termine delle operazioni, fare clic sul pulsante Cambia.
 	NL	Met de plug-in voor RSS-nieuwsberichten kun je items van RSS-kanalen bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS-kanalen je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop 'Veranderen' wanneer je klaar bent.

@@ -106,7 +106,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
 PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
 	CS	Přehrávač nebyl schopen komunikace s Rhapsody.
 	DA	Afspilleren kunne ikke kommunikere med Rhapsody.
-	DE	Player konnnte keine Verbindung mit Rhapsody herstellen.
+	DE	Player konnte keine Verbindung mit Rhapsody herstellen.
 	EN	Player was unable to communicate with Rhapsody.
 	ES	El reproductor no se pudo comunicar con Rhapsody.
 	FI	Soitin ei voinut kommunikoida Rhapsodyn kanssa.
@@ -310,6 +310,6 @@ PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
 	PL	Aby użyć usługi Rhapsody, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu aktualizacji oprogramowania układowego.
-	RU	Чтобы использовать Rhapsody, нажмите и удерживайте кнопку яркости для обновления микропрограммного обеспечения.
+	RU	Чтобы использовать Rhapsody, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
 	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
 

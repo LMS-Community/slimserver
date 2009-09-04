@@ -297,7 +297,7 @@ PLUGIN_PANDORA_ADD_FAVORITES
 	NL	Station aan favorieten toevoegen
 	NO	Legg til stasjon i favoritter
 	PL	Dodaj stację do ulubionych
-	RU	Добавить станцию в избранное
+	RU	Добавить станцию в выбранное
 	SV	Lägg till stationen i favoriter
 
 PLUGIN_PANDORA_DEL_FAVORITES
@@ -313,7 +313,7 @@ PLUGIN_PANDORA_DEL_FAVORITES
 	NL	Station uit favorieten verwijderen
 	NO	Fjern stasjonen fra favoritter
 	PL	Usuń stację z ulubionych
-	RU	Удалить станцию из избранного
+	RU	Удалить станцию из выбранного
 	SV	Ta bort stationen från favoriter
 
 PLUGIN_PANDORA_DELETE_STATION
@@ -889,7 +889,7 @@ PLUGIN_PANDORA_RATING_POSITIVE_LINE2
 	NL	Cool, we zullen proberen zulke liedjes te spelen.
 	NO	Ok, da skal vi prøve å spille liknende musikk.
 	PL	Świetnie, będziemy odtwarzać podobne utwory.
-	RU	Отлично, мы постараемся ставить подобные песни.
+	RU	Отлично, мы попробуем воспроизвести подобные песни.
 	SV	OK. Vi försöker spela liknande låtar i framtiden.
 
 PLUGIN_PANDORA_RATING_NEGATIVE

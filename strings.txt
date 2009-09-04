@@ -3470,7 +3470,7 @@ SETUP_GROUP_BRIGHTNESS
 SETUP_GROUP_BRIGHTNESS_DESC
 	CS	Jas displeje přehrávače lze nastavit, je-li zapnutý, vypnutý nebo nečinný (spořič). Rovněž jej lze upravit automaticky, když stisknete libovolné tlačítko, začnete přehrávat skladbu nebo jej chvíli necháte. Tuto automatickou funkci můžete zakázat.
 	DA	Lysstyrken på afspillerens display kan indstilles forskelligt alt efter om den er tændt, slukket eller ikke i brug (pauseskærm). Lysstyrken kan også justeres automatisk når du trykker på en knap, begynder at spille et nummer eller ikke bruger den i et stykke tid. Du kan også deaktivere den automatiske regulering.
-	DE	Sie können die Helligkeit des Display für die drei Zustände 'ein', 'aus' und 'Bildschirmschoner' festlegen. Außerdem können Sie bestimen, dass sie automatisch angepasst wird, wenn eine Taste gedrückt bzw. ein Titel wiedergegeben wird oder eine Weile lang nichts geschieht. Sie können diese automatische Funktion auch deaktivieren.
+	DE	Sie können die Helligkeit des Display für die drei Zustände 'ein', 'aus' und 'Bildschirmschoner' festlegen. Außerdem können Sie bestimmen, dass sie automatisch angepasst wird, wenn eine Taste gedrückt bzw. ein Titel wiedergegeben wird oder eine Weile lang nichts geschieht. Sie können diese automatische Funktion auch deaktivieren.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	Se puede establecer el brillo de la pantalla del reproductor cuando está encendido, apagado o inactivo (protector de pantalla). También se puede ajustar automáticamente cuando se pulsa un botón, se inicia la reproducción de una canción o se deja inactivo un tiempo. Se puede optar por desactivar este comportamiento automático.
 	FI	Soittimen näytön kirkkaus voidaan asettaa erikseen soittimen eri tiloja varten: kun soitin on päällä, kun soitin ei ole päällä, kun soitinta ei käytetä (näytönsäästäjä). Soitin voi myös säätää kirkkautta automaattisesti, kun painiketta painetaan, kun kappaleen soitto käynnistetään tai kun soitin on käyttämättä jonkin aikaa.  Kirkkauden automaattinen säätäminen on mahdollista poistaa käytöstä.
@@ -3683,14 +3683,14 @@ SETUP_DOUBLESIZE
 	NO	Tekststørrelse
 	PL	Rozmiar tekstu
 	PT	Tamanho do Texto
-	RU	Размер шрифта
+	RU	Размер текста
 	SV	Textstorlek
 	ZH_CN	字体大小
 
 SETUP_DOUBLESIZE_DESC
 	CS	Zvolte velikost textu pro displej přehrávače
 	DA	Vælg tekststørrelse til afspillerens display
-	DE	Wählen Sie die Schriftgrösse für die Anzeige
+	DE	Wählen Sie die Schriftgröße für die Anzeige
 	EN	Choose the size of text for player display
 	ES	Elija el tamaño en el que se mostrará el texto
 	FI	Valitse tekstin koko soittimen näyttöä varten
@@ -3708,7 +3708,7 @@ SETUP_DOUBLESIZE_DESC
 SETUP_OFFDISPLAYSIZE
 	CS	Velikost textu v pohotovosti
 	DA	Tekststørrelse ved standby
-	DE	Textgrösse im Standbymodus
+	DE	Textgröße im Standbymodus
 	EN	Standby Text Size
 	ES	Tamaño de texto para modo de espera
 	FI	Tekstin koko valmiustilassa
@@ -4796,7 +4796,7 @@ SETUP_PREAMPVOLUMECONTROL
 SETUP_PREAMPVOLUMECONTROL_DESC
 	CS	Toto je sekundární ovladač hlasitosti, který ovlivňuje pouze analogové výstupy ve Squeezebox. Zadejte hladinu útlumu v decibelech. Rozsah je 0,0 až 63,0 v 0,5 db krocích. Výchozí nastavení je 0 (pro plnou hlasitost). VÝSTRAHA: pokud je váš zesilovač dost silný na to, aby poškodil vaše reproduktory, přijímač, předzesilovač nebo spojení, měl by být utlumovač použit jako bezpečnostní opatření!
 	DA	Dette er den sekundære volumenknap og bruges kun til at justere lydstyrken fra de analoge udgange på Squeezebox. Angiv dæmpningen i decibel. Det gyldige interval er fra 0,0 til 63,0 i trin på 0,5. Standard er 0 (der er skruet helt op). Advarsel: Hvis forstærkeren er kraftig nok til at sprænge højtalerne, bør du benytte en receiver, en forforstærker eller en dæmpningsenhed for en sikkerheds skyld.
-	DE	Diese Lautstärkeregelung gilt nur für die analogen Ausgänge von Squeezebox. Geben Sie die Dämpfung in Dezibel ein. Der gültige Bereich liegt zwischen 0,0 und 63,0 in 0,5-db-Schritten. Der Standardwert ist 0 (maximale Lautstärke). Warnung: Ist der Verstärker stark genug, um Schäden an Lautsprechern zu verurschen, sollten Sie als Sicherheitsmaßnahme einen Empfänger, Vorverstärker oder Dämpfer verwenden.
+	DE	Diese Lautstärkeregelung gilt nur für die analogen Ausgänge von Squeezebox. Geben Sie die Dämpfung in Dezibel ein. Der gültige Bereich liegt zwischen 0,0 und 63,0 in 0,5-db-Schritten. Der Standardwert ist 0 (maximale Lautstärke). Warnung: Ist der Verstärker stark genug, um Schäden an Lautsprechern zu verursachen, sollten Sie als Sicherheitsmaßnahme einen Empfänger, Vorverstärker oder Dämpfer verwenden.
 	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
 	ES	Éste es un control de volumen secundario que sólo es aplicable a las salidas analógicas de Squeezebox. Introduzca el valor de atenuación en decibelios. El intervalo está entre 0,0 y 63,0 en pasos de 0,5 db. El valor predeterminado es 0 (para volumen máximo). ADVERTENCIA: Si la potencia del amplificador puede reventar los altavoces, conviene usar un atenuador de línea, preamplificador o receptor como medida de seguridad.
 	FI	Tämä on toissijainen äänenvoimakkuuden säädin, joka ohjaa vain Squeezeboxin analogisia lähtöjä. Kirjoita vaimennuksen määrä desibeleinä. Alue on 0,0–63,0 puolen desibelin välein. Oletusarvo on 0 (täysi äänenvoimakkuus). VAROITUS: jos vahvistimesi on riittävän tehokas vaurioittamaan kaiuttimia, suojana tulisi yhä käyttää vastaanotinta, esivahvistinta tai linjavaimenninta.
@@ -5474,7 +5474,7 @@ REPLAYGAIN_SMART_GAIN
 	NL	Slimme versterking
 	NO	Smart gain
 	PL	Inteligentne wzmocnienie
-	RU	Интеллект. выравнивание
+	RU	Интеллектуальное усиление
 	SV	Smart volymjustering
 	ZH_CN	智慧型增益选择
 
@@ -7757,7 +7757,7 @@ SETUP_SPLITLIST_DESC
 	EN	Squeezebox Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	Squeezebox Server puede extraer múltiples artistas, títulos de álbumes y géneros de las etiquetas dentro de los archivos de música. Si Squeezebox Server encuentra cualquiera de las palabras o caracteres siguientes en las etiquetas, creará listas individuales para cada elemento. Por ejemplo, si se coloca un punto y coma en la lista siguiente, una canción con una etiqueta de artista de "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas para ambos, "J. S. Bach" y "Michael Tilson Thomas". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
 	FI	Squeezebox Server voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos palvelin löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
-	FR	Squeezebox Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque element. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Squeezebox Server peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si il détecte l'un des caractères ci-dessous dans les repères ID3, il créera une entrée différente pour chaque élément. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le repère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	Squeezebox Server יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם Squeezebox Server מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	Squeezebox Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Squeezebox Server kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
@@ -7956,7 +7956,7 @@ SETUP_SHORTDATEFORMAT
 SETUP_SHORTDATEFORMAT_DESC
 	CS	Tato volba udává formát pro krátké datum. V možnostech uvedených níže se používají následující konvence:<br>YYYY je čtyřmístný rok<br>YY je dvoumístný rok<br>MM měsíc v roce<br>DD je den v měsíci<br>Vše na konci v závorkách je pouze komentář a nebude zobrazeno.
 	DA	Denne indstilling bruges til at indstille det korte datoformat. Der anvendes følgende syntaks:<br>YYYY er den firecifrede angivelse af årstallet<br>YY er den tocifrede angivelse af årstallet<br>MM er måneden<br>DD er datoen<br>Alt i slutningen og i parentes er bare kommentarer og vises ikke.
-	DE	Diese Option definiert das Format für die Anzeige des kurzen Datums. Es gibt folgende Möglichkeiten:<br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist der Tag<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
+	DE	Diese Option definiert das Format für die Anzeige des kurzen Datums. Es gibt folgende Möglichkeiten:<br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist der Tag<br>Alles Folgende ist ausschließlich Kommentar und wird nicht angezeigt.
 	EN	This option determines the format used for short dates. The following conventions are used in the choices presented below:<br>YYYY is the four digit year<br>YY is the two digit year<br>MM is the month of the year<br>DD is the day of the month<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato usado para fechas cortas. En las opciones que se muestran a continuación se usan estas convenciones:<br>YYYY es el año en cuatro dígitos<br>YY es el año en dos dígitos<br>MM es el mes del año<br>DD es el día del mes<br>Cualquier texto al final entre paréntesis se considera un comentario y no se muestra.
 	FI	Tällä asetuksella määritetään lyhyissä päivämäärissä käytetty formaatti. Alla esitetyissä tapauksissa noudatetaan seuraavia käytäntöjä:<br>YYYY on nelinumeroinen vuosi<br>YY on kaksinumeroinen vuosi<br>MM on kuukausi<br>DD on päivä<br>Lopussa sulkeissa oleva on kommentti, jota ei näy näytössä.
@@ -8009,7 +8009,7 @@ SETUP_TIMEFORMAT
 SETUP_TIMEFORMAT_DESC
 	CS	Tato volba určuje formát používaný pro čas. V možnostech uvedených níže jsou použity následující konvence:<br>hh je hodina <br>h je hodina (bez nuly na začátku)<br>mm je minuta <br>ss je sekunda<br>pm je dopoledne (AM) nebo odpoledne (PM)<br>Cokoliv na konci v závorkách je pouze komentář a nezobrazuje se.
 	DA	Denne indstilling bruges til at indstille formatet som klokkeslættet vises i. Der anvendes følgende syntaks:<br>hh er timetallet<br>h er timetallet med det foranstillede nul fjernet<br>mm er minuttallet<br>ss er sekundtallet<br>pm er enten AM eller PM (bruges i engelsktalende lande)<br>Alt i slutningen og i parentes er bare kommentarer og vises ikke.
-	DE	Diese Option definiert das Format für die Anzeige der Uhrzeit. Es gibt folgende Möglichkeiten:<br>hh ist die Stunde<br>h ist die Stunde ohne führende Null<br>mm ist die Minute<br>ss ist die Sekunde<br>pm ist entweder AM oder PM (12-Stunden-Format)<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
+	DE	Diese Option definiert das Format für die Anzeige der Uhrzeit. Es gibt folgende Möglichkeiten:<br>hh ist die Stunde<br>h ist die Stunde ohne führende Null<br>mm ist die Minute<br>ss ist die Sekunde<br>pm ist entweder AM oder PM (12-Stunden-Format)<br>Alles Folgende ist ausschließlich Kommentar und wird nicht angezeigt.
 	EN	This option determines the format used for times. The following conventions are used in the choices presented below:<br>hh is the hour<br>h is the hour (leading zero removed)<br>mm is the minute<br>ss is the second<br>pm is either AM or PM<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato usado para las horas. En las opciones que se muestran a continuación se usan estas convenciones: <br>hh es la hora<br>h es la hora (sin el cero inicial)<br>mm son los minutos<br>ss son los segundos<br>pm es o bien AM o bien PM<br>Cualquier texto al final entre paréntesis se considera un comentario y no se muestra.
 	FI	Tällä asetuksella määritetään ajoissa käytetty formaatti. Alla esitetyissä tapauksissa noudatetaan seuraavia käytäntöjä:<br>hh on tunti<br>h on tunti (nolla poistettu edestä)<br>mm on minuutti<br>ss on sekunti<br>pm on joko AM tai PM (aamupäivä tai iltapäivä)<br>Lopussa sulkeissa oleva on kommentti, jota ei näy näytössä.
@@ -8156,7 +8156,7 @@ SETUP_WEBPROXY
 SETUP_WEBPROXY_DESC
 	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení Squeezebox Server k serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
 	DA	Du kan specificere IP-adresse og portnummer til en HTTP/Web-proxy som Squeezebox Server skal anvende når der tilsluttes servere udenfor dit lokale netværk. Anvend formatet xx.xx.xx.xx:yyyy, hvor xx.xx.xx.xx er proxyens IP-adresse og yyyy er proxyserverens portnummer. Lad feltet være tomt hvis du ikke ønsker at anvende en HTTP-proxy.
-	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Squeezebox Server verwenden soll, um auf Server ausserhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy wobei xx.xx.xx.xx die IP-Adresse des Proxy und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
+	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Squeezebox Server verwenden soll, um auf Server außerhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxys und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when Squeezebox Server connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
 	ES	Se puede especificar la dirección IP y el puerto de un proxy HTTP/Web para usarlo cuando Squeezebox Server se conecte a servidores fuera de la red local. Use el formato xx.xx.xx.xx:yyyy donde xx.xx.xx.xx es la dirección IP del proxy y donde yyyy es el número del puerto. Deje este campo en blanco si no usa un proxy Web HTTP.
 	FI	Voit määrittää IP-osoitteen ja portin, joita HTTP- tai WWW-välityspalvelin käyttää, kun Squeezebox Server muodostaa yhteyden paikallisen verkon ulkopuolella oleviin palvelimiin.  Käytä muotoa xx.xx.xx.xx:yyyy, jossa xx.xx.xx.xx on välityspalvelimen IP-osoite ja yyyy portin numero.  Jätä tämä kenttä tyhjäksi, jos et käytä HTTP-välityspalvelinta.
@@ -8553,7 +8553,7 @@ SETUP_REMOTESTREAMTIMEOUT
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	CS	Můžete zadat dobu, po kterou se Squeezebox Server bude pokoušet připojit k internetovému rádiu nebo jinému zdroji. Níže zadejte dobu v sekundách.
 	DA	Du kan angive hvor lang tid Squeezebox Server skal forsøge at etablere forbindelse til internetradiostationer eller andre kilder før der gives op. Angiv tidsrummet i sekunder nedenfor.
-	DE	Sie können festlegen, wie lange Squeezebox Server versucht, eine Verbindung zu einem Internetradiosender Stationen oder einer anderen Quelle herzustellen. Geben Sie die Wartezeit in Sekunden ein.
+	DE	Sie können festlegen, wie lange Squeezebox Server versucht, eine Verbindung zu einem Internetradiosender oder einer anderen Quelle herzustellen. Geben Sie die Wartezeit in Sekunden ein.
 	EN	You can set the length of time that Squeezebox Server will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
 	ES	Se puede establecer el tiempo en el que Squeezebox Server tratará de conectarse a una emisora de radio por Internet o a otro origen antes de abandonar. Introduzca el tiempo, en segundos, a continuación.
 	FI	Voit määrittää ajan, jonka Squeezebox Server yrittää muodostaa yhteyttä internet-radiokanavaan tai muuhun lähteeseen, ennen kuin se antaa periksi. Kirjoita aika sekunteina alle.
@@ -8875,17 +8875,17 @@ SETUP_SN_REPORT_STATS
 SETUP_SN_REPORT_STATS_DESC
 	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistiky o poslouchání internetového rádia a hudebních služeb. (Tyto informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,cz" target="_blank">politikou zachování soukromí</a>).
 	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne bruges samlet og er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
-	DE	Helfen Sie mit,  mysqueezebox.com zu verbessern, und melden Sie statistische Informationen über den Einsatz von Internetradio und -Musikdiensten. (Diese Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzbestimmungen</a>).
+	DE	Melden Sie zur Verbesserung von mysqueezebox.com Statistiken über den Einsatz von Internetradio und -Musikdiensten. (Diese anonymen Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzrichtlinien</a>).
 	EN	Help improve mysqueezebox.com by reporting statistics on internet radio and music service listening. (This anonymous information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
-	ES	Ayude a mejorar mysqueezebox, proporciónenos estadísticas sobre el uso de radio y música por Internet (dicha información se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=es,es" target="_blank">política de privacidad</a>).
-	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
+	ES	Ayude a mejorar mysqueezebox, proporciónenos estadísticas sobre el uso de radio y música por Internet (esta información anónima se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=es,es" target="_blank">política de privacidad</a>).
+	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään nimettömästi ja kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
 	FR	Pour améliorer mysqueezebox.com, nous collectons des informations sur les radios Internet et services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
-	IT	Al fine di migliorare mysqueezebox.com, è possibile segnalare statistiche sulle radio Internet e sui servizi di musica più ascoltati. Tali dati vengono raccolti collettivamente e il loro trattamento è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
-	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. (Deze informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.)
+	IT	Al fine di migliorare mysqueezebox.com, è possibile inviare dati statistici sull'ascolto di stazioni radio in Internet e sui servizi musicali utilizzati. Il trattamento di tali dai, raccolti collettivamente e in modo anonimo, è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
+	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. (Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.)
 	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
-	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Informacje te są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=pl,pl" target="_blank">zasady zachowania poufności informacji</a>).
-	RU	Позволяет улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная усредненная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>.)
-	SV	Varför inte göra mysqueezebox.com ännu bättre genom att tala om för oss hur webbradion och musiktjänsterna används? Informationen samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=se,sv" target="_blank">sekretesspolicy</a>.
+	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=pl,pl" target="_blank">zasady zachowania poufności informacji</a>).
+	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>).
+	SV	Varför inte hjälpa oss att göra mysqueezebox.com ännu bättre genom att berätta hur du använder webbradion och musiktjänsterna? Informationen samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=se,sv" target="_blank">sekretesspolicy</a>.
 
 SETUP_SN_REPORT_STATS_ENABLE
 	CS	Ano, pomoci zlepšovat mysqueezebox.com odesíláním statistik.
@@ -8938,7 +8938,7 @@ SETUP_WIZARD_SQN_PLEASE
 	DE	Melden Sie sich mit Ihrer mysqueezebox.com-E-mail-Adresse und Ihrem mysqueezebox.com-Kennwort an um fortzufahren.
 	EN	Please sign in with your mysqueezebox.com email and password to continue.
 	ES	Inicie sesión con su dirección de correo electrónico y su constraseña de mysqueezebox.com para continuar.
-	FI	Jatka kirjautumalla sisään mysqueezbox.com-verkossa rekisteröimälläsi sähköpostiosoitteella ja salasanalla.
+	FI	Jatka kirjautumalla sisään mysqueezebox.com-verkossa rekisteröimälläsi sähköpostiosoitteella ja salasanalla.
 	FR	Connectez-vous à l'aide de votre adresse électronique et de votre mot de passe mysqueezebox.com pour continuer.
 	IT	Per continuare, accedere con l'indirizzo di posta elettronica e la password di mysqueezebox.com.
 	NL	Meld je aan met je e-mailadres en wachtwoord voor mysqueezebox.com om verder te gaan.
@@ -9149,7 +9149,7 @@ SETUP_WIZARD_SKIP
 	EN	Skip
 	ES	Omitir
 	FI	Ohita
-	FR	Suivant
+	FR	Ignorer
 	IT	Salta
 	NL	Overslaan
 	NO	Hopp over
@@ -9160,7 +9160,7 @@ SETUP_WIZARD_SKIP
 SETUP_WIZARD_FINISH
 	CS	Dokončit
 	DA	Udfør
-	DE	Abschliessen
+	DE	Abschließen
 	EN	Finish
 	ES	Finalizar
 	FI	Valmis
@@ -9175,7 +9175,7 @@ SETUP_WIZARD_FINISH
 SETUP_WIZARD_CLOSE
 	CS	Zavřít
 	DA	Luk
-	DE	Schliessen
+	DE	Schließen
 	EN	Close
 	ES	Cerrar
 	FI	Sulje
@@ -9315,7 +9315,7 @@ SKIP
 	EN	Skip
 	ES	Omitir
 	FI	Ohita
-	FR	Suivant
+	FR	Ignorer
 	HE	דילוג
 	IT	Salta
 	JA	スキップ
@@ -9475,7 +9475,7 @@ STOP
 	NO	Stopp
 	PL	Zatrzymaj
 	PT	Parar
-	RU	Остановить
+	RU	Стоп
 	SV	Stopp
 	ZH_CN	停止
 
@@ -9742,7 +9742,18 @@ PLAY_NEXT
 	SV	Spela härnäst
 
 PLAY_NOW
+	DA	Afspil nu
+	DE	Jetzt abspielen
 	EN	Play Now
+	ES	Reproducir ahora
+	FI	Toista nyt
+	FR	Jouer maintenant
+	IT	Riproduci ora
+	NL	Nu afspelen
+	NO	Spill av nå
+	PL	Odtwórz teraz
+	RU	Воспроизвести
+	SV	Spela upp nu
 
 SHUFFLE
 	CS	Náhodně
@@ -10124,7 +10135,7 @@ TEXTSIZE
 OFFDISPLAYSIZE
 	CS	Velikost textu v pohotovosti
 	DA	Tekststørrelse ved standby
-	DE	Textgrösse im Standbymodus
+	DE	Textgröße im Standbymodus
 	EN	Standby Text Size
 	ES	Tamaño de texto para modo de espera
 	FI	Tekstin koko valmiustilassa
@@ -10313,7 +10324,7 @@ LIGHT
 THREELINE
 	CS	Trojlinka (Threeline)
 	DA	3 linjer
-	DE	3 Zeilig
+	DE	3-zeilig
 	EN	Threeline
 	ES	Tres líneas
 	FI	Kolmirivinen
@@ -10544,7 +10555,7 @@ PLAYLISTDIR_IS_NOW
 	JA	プレイリストが保存してあるフォルダーへのパスを指定してください。（プレイリストを保存しないのであればブランクで結構です）
 	NL	Je kunt het pad invoeren naar een map waarin je playlistbestanden op je vaste schijf moeten worden opgeslagen. (Je kunt dit leeg laten als je geen playlists wilt opslaan.)
 	NO	Her kan du angi banen til katalogen der du har lagret spillelistefilene dine på harddisken. (Du kan la dette feltet stå tomt hvis du ikke vil lagre spillelister.)
-	PL	Możliwe jest wprowadzenie ścieżki do katalogu przechowywania zapisanych list odtwarzania na dysku twardym (pole można zostawić puste, jeżeli listy odtwarzania nie mają być zapisywane).
+	PL	Możliwe jest wprowadzenie ścieżki do katalogu przechowywania zapisanych list odtwarzania na dysku twardym. (Pole można zostawić puste, jeżeli listy odtwarzania nie mają być zapisywane.)
 	PT	Escolha a directoria onde as playlist serão gravadas no disco. (Deixe vazio para desactivar esta opção)
 	RU	Можно ввести путь к каталогу жесткого диска, где находятся файлы сохраненных плей-листов. (Если сохранять плей-листы не требуется, это поле можно не заполнять.)
 	SV	Ange sökvägen till den mapp på hårddisken där dina spellistor finns. Lämna fältet tomt om du inte spara spellistor.
@@ -11430,7 +11441,7 @@ COVERART
 FILELENGTH
 	CS	Délka souboru
 	DA	Filstørrelse
-	DE	Dateigrösse
+	DE	Dateigröße
 	EN	File Length
 	ES	Longitud de archivo
 	FI	Tiedoston pituus
@@ -14289,7 +14300,7 @@ NO_PLAYER_DETAILS
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Squeezebox Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le Squeezebox Server en vous connectant à l'URL suivante: http://localhost:9000/stream.mp3.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Squeezebox Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Squeezebox Server tramite software per lettori MP3 (ad esempio WinAmp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Squeezebox Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
 	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je muzieksysteem op het netwerk is aangesloten en dat de netwerkinstellingen goed zijn. Klik op de knop Vernieuwen wanneer je systeem is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Squeezebox Server naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: http://localhost:9000/stream.mp3
 	NO	<b>Hvis du har en Squeezebox eller en Transporter:</b><ul><li>Kontroller at spilleren er plugget inn, og at nettverksinnstillingene stemmer. Klikk på Oppdater så snart spilleren er koplet til.</ul><p><b>Hvis du ikke har en Squeezebox eller en Transporter:</b><ul><li>Du kan lytte til musikkbiblioteket ditt med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvareversjon av Squeezebox.<li>Du kan bruke mp3-spiller-programvare (som Winamp eller iTunes) til å lytte til musikkbiblioteket ditt med Squeezebox Server ved å gå til denne url-en: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -14517,7 +14528,7 @@ CSRF_ERROR_INFO
 CSRF_ERROR_MEDIUM
 	CS	<p>Jelikož vaše úroveň ochrany CSRF je nasatvena na 'STŘEDNÍ', můžete použít stejnou &quot;;cauth=&quot; hodnotu pro libovolné URL; to znamená, že byste měli opatrnější na to, s kým sdílíte své URL.</p>
 	DA	<p>Da CSRF-beskyttelsesnivauet er sat til Mellem, kan du anvende den samme værdi for cauth= i alle internetadresser. Det betyder at du skal være forsigtig med hvem du deler dine adresser med.</p>
-	DE	<p>Da ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
+	DE	<p>Da Ihr CSRF-Schutzniveau auf 'Medium' (Mittel) gesetzt ist, können Sie denselben ';cauth' Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
 	ES	<p>Debido a que el nivel de protección CSRF se ha establecido como 'MEDIO', se puede usar el mismo valor "";cauth="" para cualquier URL. Esto significa que se deben extremar las precauciones si se comparten direcciones URL.</p>
 	FI	<p>Koska CSRF-suojaustasoksi on valittu NORMAALI, voit käyttää samaa &quot;;cauth=&quot; arvoa mille tahansa URL:lle. Tämä tarkoittaa sitä, että sinun tulee olla varovainen sen suhteen, kenen kanssa jaat URL-osoitteet.</p>
@@ -16961,7 +16972,7 @@ SETUP_SCROLLMODE_DESC
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
 	ES	Se puede seleccionar cómo un reproductor mostrará texto demasiado largo para la pantalla en la segunda línea. El modo de desplazamiento horizontal estándar esperará a que se cumpla el intervalo de pausa de desplazamiento y, a continuación, desplazará el texto para mostrar la línea completa. El desplazamiento continuará mientras el reproductor siga mostrando esta pantalla. Los modos alternativos permiten desplazar el texto una vez y detenerlo o no desplazarlo nunca.
 	FI	Voit valita, miten soitin näyttää näytön toisella rivillä olevan tekstin, jos teksti on liian pitkä mahtuakseen näyttöön.  Vakiotilassa näyttö odottaa vieritystauon ajan ja vierittää sitten tekstiä vaakasuunnassa, kunnes koko rivi tulee näkyviin.  Vieritys jatkuu niin kauan, kun soitin näyttää tämän näytön.  Muissa tiloissa näyttö vierittää tekstin kerran ja lopettaa, tai se ei vieritä tekstiä näkyviin ollenkaan.
-	FR	Vous pouvez modifier la façon dont la platine affichera un texte trop long pour tenir sur l'écran. Dans le mode de défilement par défaut, la platine attendra pendant la durée de Pause avant défilement puis fera défiler horizontalement le texte jusqu'à la fin. Le défilement se répètera tant que l'affichage de la platine n'est pas modifié. Vous pouvez choisir de ne faire défiler le texte qu'une fois ou de désactiver complètement le defilement.
+	FR	Vous pouvez modifier la façon dont la platine affichera un texte trop long pour tenir sur l'écran. Dans le mode de défilement par défaut, la platine attendra pendant la durée de Pause avant défilement puis fera défiler horizontalement le texte jusqu'à la fin. Le défilement se répètera tant que l'affichage de la platine n'est pas modifié. Vous pouvez choisir de ne faire défiler le texte qu'une fois ou de désactiver complètement le défilement.
 	HE	באפשרותך לבחור את האופן שבו נגן יציג טקסט בשורה השנייה של התצוגה כאשר הטקסט ארוך יותר מגודל המסך. מצב הגלילה האופקית הרגילה ימתין לפרק הזמן של השהיית הגלילה ולאחר מכן יגלול את הטקסט להצגת השורה כולה. הגלילה תמשיך כל עוד הנגן מציג את הטקסט. המצבים החלופיים תומכים בגלילת הטקסט פעם אחת ולאחריה עצירה, או שלא מתבצעת כלל גלילת טקסט.
 	IT	È possibile selezionare come il lettore visualizza il testo troppo lungo sulla seconda riga dello schermo. La modalità di scorrimento standard attende il tempo impostato in Pausa di scorrimento e quindi fa scorrere il testo per visualizzare la riga intera. Lo scorrimento continua per tutto il tempo che il lettore visualizza questa schermata. Le modalità alternative consentono di far scorrere il testo una sola volta o di non farlo scorrere.
 	NL	Je kunt selecteren hoe het muzieksysteem de tekst op de tweede regel weergeeft, als die te lang is om in één keer in het display te laten zien. De standaardoptie Tekst laten lopen wacht tot de pauze-interval voorbij is en laat de tekst dan verder lopen. De tekst blijft lopen zolang het systeem dit scherm weergeeft. In de alternatieve modi kun je tekst één keer laten doorlopen en dan stoppen, of de tekst helemaal niet laten lopen.
@@ -17250,7 +17261,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice Squeezebox Server. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat Squeezebox Serverin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
 	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que Squeezebox Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre collection musicale.
-	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in Squeezebox Server. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
+	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in Squeezebox Server. La modifica di questa impostazione avvierà l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Squeezebox Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Squeezebox Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
 	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program Squeezebox Server. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
@@ -17509,7 +17520,7 @@ SETUP_LARGETEXTFONT
 SETUP_LARGETEXTFONT_DESC
 	CS	Vyberte písmo, které bude zobrazovat velký text.
 	DA	Vælg hvilken skrifttype der skal bruges til visning af stor tekst.
-	DE	Wählen Sie, welche Schrift bei doppelter Grösse verwendet werden soll.
+	DE	Wählen Sie, welche Schrift bei doppelter Größe verwendet werden soll.
 	EN	Choose which font you would like to use when displaying large text.
 	ES	Elija la fuente que desea usar para mostrar texto grande.
 	FI	Valitse, mitä fonttia haluat käyttää, kun näytetään suurta tekstiä.
@@ -17577,7 +17588,7 @@ SORT_BY
 ALBUM_DISPLAY_OPTIONS
 	CS	Možnosti prohlížení alb
 	DA	Indstillinger for visning af album
-	DE	Albumansichts Einstellungen
+	DE	Albumansicht - Optionen
 	EN	Albumview options
 	ES	Opciones de visualización de álbum
 	FI	Levyn tarkasteluasetukset
@@ -17983,7 +17994,7 @@ SETUP_RESAMPLEARTWORK
 SETUP_RESAMPLEARTWORK_DESC
 	CS	U nenáročných zařízení, například u některých populárních zařízení NAS, převzorkování předlohy může být pomalé. Použitím jednodušší metody lze čas potřebný pro zpracování obalu alba zlepšit na úkor kvality obrazu. Pokud chcete urychlit zpracování obalu alba, zvolte "Změna velikosti" místo  "Převzorkování".
 	DA	På maskiner med lave specifikationer, fx visse populære NAS-enheder, kan det tage lang tid at behandle albumcovere. Behandlingstiden kan forkortes ved at bruge en enklere metode, men det går ud over billedkvaliteten. Du kan gøre behandlingen af albumcovere hurtigere hvis du vælger Tilpas størrelse i stedet for Genbehandling.
-	DE	Auf Rechnern mit niedriger Leistung (z.B. bestimmten beliebten NAS-Geräten) kann das Resampling von Plattenhüllen langsam sein. Wenn Sie ein einfacheres Verfahren wählen, wird der Vorgang schneller, worunder allerdings die Bildqualität leidet. Soll die Verarbeitung von Plattenhüllen schneller ablaufen, wählen Sie "Größe der Plattenhülle ändern" statt "Plattenhülle neu berechnen".
+	DE	Auf Rechnern mit niedriger Leistung (z.B. bestimmten beliebten NAS-Geräten) kann das Resampling von Plattenhüllen langsam sein. Wenn Sie ein einfacheres Verfahren wählen, wird der Vorgang schneller, worunter allerdings die Bildqualität leidet. Soll die Verarbeitung von Plattenhüllen schneller ablaufen, wählen Sie "Größe der Plattenhülle ändern" statt "Plattenhülle neu berechnen".
 	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling.
 	ES	Con aparatos de gama baja (p. ej. algunos dispositivos NAS de uso extendido) la repetición del muestreo de carátula puede ser un proceso lento. Un método más sencillo puede agilizar la tarea, aunque con una reducción de calidad de imagen. Para ello, seleccione "Cambiar tamaño" en lugar de "Nuevo muestreo".
 	FI	Tehottomammissa koneissa, esimerkiksi eräissä suosituissa NAS-laitteissa, kansitaiteen kuvan uudelleenluonti näytteistä saattaa olla hidasta. Yksinkertaisempaa menetelmää käyttämällä kuvien käsittelyyn tarvittavaa aikaa voidaan lyhentää kuvanlaadusta tinkimällä. Valitse "kuvan koon muuttaminen" äläkä "kuvan uudelleenluonti näytteistä", jos haluat nopeuttaa kuvien käsittelyä.
@@ -18326,7 +18337,7 @@ DIGITALOUTPUTENCODING_AESEBU
 AUDIO_SOURCE_BALANCED_AES
 	CS	Vyvážený AES/EBU
 	DA	Afbalanceret AES/EBU
-	DE	AES/BEU symmetrisch
+	DE	AES/EBU symmetrisch
 	EN	Balanced AES/EBU
 	ES	AES/EBU equilibrado
 	FI	Tasapainotettu AES/EBU
@@ -18354,7 +18365,7 @@ AUDIO_SOURCE_BNC_SPDIF
 	NO	BNC koaks S/PDIF
 	PL	BNC koncentryczne S/PDIF
 	RU	Коаксиальный BNC S/PDIF
-	SV	BNC Koaxial S/PDIF
+	SV	BNC-koaxial S/PDIF
 	ZH_CN	BNC S/PDIF电接口
 
 AUDIO_SOURCE_RCA_SPDIF
@@ -18893,8 +18904,18 @@ DEBUG_SERVER_PLUGINS
 	SV	Inläsning av plugin-moduler
 
 DEBUG_SERVER_UPDATE
-	DE	Informationen über automatische Software Update Downloads
+	DA	Oplysninger om automatisk hentede softwareopdateringer
+	DE	Informationen über das Herunterladen automatischer Software-Updates
 	EN	Information about automatic software update downloads
+	ES	Información sobre descargas de actualizaciones de software automáticas
+	FI	Tietoja automaattisesta ohjelmistopäivitysten latauksista
+	FR	Informations sur les téléchargements de mise à jour logicielle automatique
+	IT	Informazioni sui download automatici di aggiornamenti del software
+	NL	Informatie over automatische download van software-updates
+	NO	Informasjon om nedlasting av automatiske programvareoppdateringer
+	PL	Informacje o automatycznym pobieraniu aktualizacji oprogramowania
+	RU	Информация об автоматической загрузке обновлений программного обеспечения
+	SV	Information om automatisk nedladdning av programuppdateringar
 
 DEBUG_PREFS
 	CS	Nastavení a uložení předvoleb
@@ -19049,7 +19070,7 @@ DEBUG_NETWORK_PROTOCOL
 DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	CS	Protokol SlimProto (Squeezebox / Transporter)
 	DA	SlimProto-protokol (Squeezebox/Transporter)
-	DE	SlimProto (Squeezebox / Transporter) Protokol
+	DE	SlimProto (Squeezebox/Transporter) Protokoll
 	EN	SlimProto (Squeezebox / Transporter) Protocol
 	ES	Protocolo SlimProto (Squeezebox / Transporter)
 	FI	SlimProto-protokolla (Squeezebox/Transporter)
@@ -19064,7 +19085,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 DEBUG_NETWORK_PROTOCOL_SLIMP3
 	CS	Protokol SliMP3
 	DA	SliMP3-protokol
-	DE	SliMP3 Protokol
+	DE	SliMP3 Protokoll
 	EN	SliMP3 Protocol
 	ES	Protocolo SliMP3
 	FI	SliMP3-protokolla
@@ -19818,7 +19839,7 @@ SHRINK
 ENLARGE
 	CS	Zvětšit
 	DA	Forstør
-	DE	Grösser
+	DE	Größer
 	EN	Enlarge
 	ES	Ampliar
 	FI	Suurenna
@@ -19938,7 +19959,7 @@ DIRECTORY_CHANGED_PROGRESS
 PLAYLIST_DELETED_PROGRESS
 	CS	Odebrat smazané seznamy skladeb
 	DA	Fjern slettede afspilningslister
-	DE	Gelöschte Wiedergabellisten entfernen
+	DE	Gelöschte Wiedergabelisten entfernen
 	EN	Remove deleted playlists
 	ES	Quitar listas de reproducción eliminadas
 	FI	Poista poistetut soittoluettelot
@@ -20328,7 +20349,7 @@ SETUP_VIEW_NOT_SCANNING
 CLOSE
 	CS	Zavřít
 	DA	Luk
-	DE	Schliessen
+	DE	Schließen
 	EN	Close
 	ES	Cerrar
 	FI	Sulje
@@ -20563,13 +20584,13 @@ JIVE_SEARCHFOR_HELP
 	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om je zoekopdracht te starten.
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen på nytt for å starte søket.
 	PL	Użyj pokrętła, aby zmienić litery, a następnie naciśnij środkowy przycisk w celu wybrania litery. Naciśnij ponownie środkowy przycisk, aby rozpocząć wyszukiwanie.
-	RU	Прокручивайте колесико, пока не дойдете до нужной буквы, и нажимайте для выбора центральную кнопку. Затем нажмите центральную кнопку еще раз, чтобы начать поиск.
+	RU	Прокручивая колесико, дойдите до нужной буквы и нажмите центральную кнопку, чтобы выбрать букву. Затем нажмите центральную кнопку еще раз, чтобы запустить поиск.
 	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittenknappen för att välja bokstaven. Tryck på mittenknappen igen när du vill börja söka.
 
 JIVE_CHANGEPLAYERNAME_HELP
 	CS	Ke změně písmen použijte rolovací kolečko, k výběru stiskněte střední tlačítko. Opětovným stiskem středního tlačítka změňte název vašeho přehrávače.
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at ændre navnet på afspilleren.
-	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Ttaste erneut, um den Namen des Players zu ändern.
+	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Taste erneut, um den Namen des Players zu ändern.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para cambiar el nombre del reproductor.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Vaihda soittimen nimi painamalla keskipainiketta uudelleen.
@@ -21329,7 +21350,7 @@ CONTROLPANEL_STATUS_RUNNING
 	NL	Status: De server is actief
 	NO	Status: Serveren kjører
 	PL	Stan: Serwer działa
-	RU	Состояние: выполняется
+	RU	Состояние: сервер выполняется
 	SV	Status: Servern körs
 
 CONTROLPANEL_STATUS_STARTING
@@ -21560,7 +21581,7 @@ PREFPANE_UPDATE_AVAILABLE
 CONTROLPANEL_NO_UPDATE_AVAILABLE
 	CS	K dispozici není žádná aktualizovaná verze Squeezebox Server.
 	DA	Der findes ikke en nyere version af Squeezebox Server.
-	DE	Es ist keine aktualisierte Version des Squeezebox Server verfügbar.
+	DE	Es ist keine aktualisierte Version von Squeezebox Server verfügbar.
 	EN	There's no updated Squeezebox Server version available.
 	ES	No hay disponible ninguna versión actualizada de Squeezebox Server.
 	FI	Squeezebox Serveristä ei ole saatavilla päivitettyä versiota.
@@ -21739,7 +21760,7 @@ CONTROLPANEL_SN_FAILURE
 
 CONTROLPANEL_SN_FAILURE_DESC
 	CS	Může jít o přechodný problém internetu nebo o omezení zavedené vaším ISP. Pokud problém přetrvává, ujistěte se, že váš firewall neblokuje odchozí komunikaci.
-	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side.%n%nHvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
+	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side. Hvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
 	DE	Es handelt sich eventuell um ein zeitweiliges Internetproblem oder eine Einschränkung Ihres Internetanbieters. Wenn das Problem bestehen bleibt, vergewissern Sie sich, dass die Firewall den abgehenden Datenverkehr nicht blockiert.
 	EN	This might be a temporary internet issue, or a limitation imposed by your ISP. If the problem persists, please make sure your firewall is not blocking outgoing traffic.
 	ES	Puede tratarse de un problema de Internet temporal o de una limitación impuesta por su ISP. Si el problema continúa, asegúrese de que el servidor de seguridad no esté bloqueando el tráfico de salida.
@@ -21769,7 +21790,7 @@ CONTROLPANEL_PORTCONFLICT
 
 CONTROLPANEL_PORTBLOCKED
 	CS	Squeezebox Server je v provozu, ale nemůže se spojit s portem %s.
-	DA	Squeezebox Server kører men kan ikke kontaktes på port 9000
+	DA	Squeezebox Server kører men kan ikke kontaktes på port %s.
 	DE	Squeezebox Server wird ausgeführt, kann aber an Port %s nicht erreicht werden.
 	EN	Squeezebox Server is running but can't be contacted on port %s.
 	ES	Squeezebox Server está en ejecución pero no se puede contactar con él en el puerto %s.
@@ -22581,7 +22602,7 @@ HOWTO_PAUSE
 WHATS_NEXT
 	CS	Jsem zcela připraven - co dále?
 	DA	Jeg er klar, hvad nu?
-	DE	Alles eingerichtet - wie gehts weiter?
+	DE	Alles eingerichtet - wie geht's weiter?
 	EN	I'm all set up - what's next?
 	ES	Todo listo. ¿Qué más?
 	FI	Kaikki on valmista - mitä seuraavaksi?
@@ -22776,17 +22797,19 @@ NO_LIBRARY
 	SV	Inget musikbibliotek konfigurerat
 
 PRESETS_NOT_DEFINED
+	DA	Fast indstilling #%s er ikke defineret.
+	DE	Voreinstellung %s nicht definiert.
 	EN	Preset #%s not defined.
-	ES	No se ha definido el favorito nº %s.
-	FI	Suosikkia #%s ei määritetty.
-	FR	Favori n°%s non défini
+	ES	No se ha definido la memoria #%s.
+	FI	Esiasetusta #%s ei ole määritetty.
+	FR	Présélection n°%s non définie.
 	HE	פריט מועדף ‎#%s לא מוגדר.
-	IT	Preferito #%s non definito.
-	NL	Favoriet #%s niet gedefinieerd.
-	NO	Favoritt nr. %s er ikke angitt.
-	PL	Ulubiony nr %s nie zdefiniowany.
-	RU	Выбранное #%s не определено.
-	SV	Favorit nr %s finns inte.
+	IT	Preimpostazione #%s non definita.
+	NL	Voorinstelling #%s niet gedefinieerd.
+	NO	Forhåndsinnstilling nr. %s er ikke angitt.
+	PL	Ustawienie domyślne #%s nie zdefiniowane.
+	RU	Предустановки #%s не определены.
+	SV	Förinställningen #%s har inte angetts.
 
 PRESET_ADDING
 	CS	Ukládání Oblíbených položek...

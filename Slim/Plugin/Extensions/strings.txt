@@ -15,18 +15,18 @@ PLUGIN_EXTENSIONS
 
 PLUGIN_EXTENSIONS_DESC
 	CS	Extension Downloader (stahovač doplňků) může stáhnout a nainstalovat různé doplňky k vašemu systému Squeezebox system.
-	DA	Du kan hente en række udvidelser til dit Squeezebox-system.
-	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren.
+	DA	Du kan vælge om der automatisk skal hentes og installeres en række udvidelser til Squeezebox-serveren.
+	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Squeezebox Server automatisch heruntergeladen und installiert.
 	EN	Extension downloader allows automated download and installation of optional features for Squeezebox server.
-	ES	El Descargador de extensiones puede descargar e instalar diversos complementos para el sistema Squeezebox.
-	FI	Squeezebox Server saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.
-	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox.
-	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi.
-	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren.
-	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.
-	PL	Moduł pobierania dodatków może pobrać i zainstalować różne rozszerzenia w systemie Squeezebox.
-	RU	Загрузчик расширений может загружать и устанавливать различные надстройки для системы Squeezebox.
-	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox.
+	ES	El Descargador de extensiones permite descargar e instalar automáticamente funciones opcionales para el servidor Squeezebox.
+	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Squeezebox-palvelimelle.
+	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour Squeezebox Server.
+	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per Squeezebox Server.
+	NL	Met de extensiedownloader kunnen optionele functies voor Squeezebox Server automatisch worden gedownload en geïnstalleerd.
+	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for Squeezebox Server helt gratis og helt automatisk.
+	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji serwera Squeezebox.
+	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера Squeezebox.
+	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox Server.
 
 PLUGIN_EXTENSIONS_REPOS
 	CS	Doplňkové archívy
