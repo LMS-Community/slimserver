@@ -308,25 +308,7 @@ sub mainMenu {
 	# as a result, no item_loops, all submenus (setting, myMusic) are just elements of the big array that get sent
 
 	my @menu = map {
-		$_->{text} = $client->string(delete $_->{stringToken}) if $_->{stringToken};
-		
-		# call string() for screensaver titles
-		if ( $_->{screensavers} ) {
-			for my $s ( @{ $_->{screensavers} } ) {
-				$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
-			}
-		}
-		
-		# call string() for input text if necessary
-		if ( my $input = $_->{input} ) {
-			if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
-				$input->{title}        = $client->string( $input->{title} );
-				$input->{help}->{text} = $client->string( $input->{help}->{text} );
-				$input->{softbutton1}  = $client->string( $input->{softbutton1} );
-				$input->{softbutton2}  = $client->string( $input->{softbutton2} );
-			}
-		}
-		
+		_localizeMenuItemText( $client, $_ );	
 		$_;
 	}(
 		main::SLIM_SERVICE ? () : {
@@ -1955,6 +1937,11 @@ sub _notifyJive {
 	
 	my $id = _clientId($client);
 	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
+	
+	for ( @{$menuForExport} ) {
+		_localizeMenuItemText( $client, $_ );
+	}
+	
 	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, $action, $id ] );
 }
 
@@ -3187,32 +3174,36 @@ sub appMenus {
 	for my $app ( keys %{$apps} ) {
 		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
 		
-		# Does this app exist in our global plugin list?
-		my $mode = $apps->{$app}->{mode};
-		if ( my ($plugin) = grep { defined $mode && $_->{text} eq $mode } @appMenus ) {
-			# Clone the existing plugin and set the node
-			my $clone = Storable::dclone($plugin);
-			
-			main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin " . $plugin->{text} );
-			
-			# Set node to home or null
-			$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
-			
-			# Use title from app list
-			delete $clone->{stringToken};
-			$clone->{text} = $apps->{$app}->{title};
-			
-			push @{$menu}, $clone;
-		}
-		else {
-			# Bug 13627, Make sure the app is not for a plugin that has been disabled.
-			# We could browse menus for a disabled plugin like Last.fm, but playback
-			# would be impossible.
-			if ( $mode && grep { $mode } @disabled ) {
+		# Is this app supported by a local plugin?
+		if ( my $plugin = $apps->{$app}->{plugin} ) {
+			# Make sure it's enabled
+			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
+				# Get the predefined menu for this plugin
+				my ($globalMenu) = grep { $_->{text} eq $pluginInfo->{name} } @appMenus;
+				
+				main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
+				
+				# Clone the existing menu and set the node
+				my $clone = Storable::dclone($globalMenu);
+
+				# Set node to home or null
+				$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+
+				# Use title from app list
+				delete $clone->{stringToken};
+				$clone->{text} = $apps->{$app}->{title};
+
+				push @{$menu}, $clone;
+			}
+			else {
+				# Bug 13627, Make sure the app is not for a plugin that has been disabled.
+				# We could browse menus for a disabled plugin like Last.fm, but playback
+				# would be impossible.
 				main::INFOLOG && $isInfo && $log->info( "App: $app, not displaying because plugin is disabled" );
 				next;
 			}
-			
+		}
+		else {			
 			# For type=opml, use generic handler
 			if ( $apps->{$app}->{type} eq 'opml' ) {
 				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
@@ -3266,6 +3257,36 @@ sub appMenus {
 	}
 	else {
 		_notifyJive(\@sorted, $client);
+	}
+}
+
+sub _localizeMenuItemText {
+	my ( $client, $item ) = @_;
+	
+	return unless $client;
+	
+	if ( $item->{text} && $item->{text} eq uc( $item->{text} ) ) {
+		$item->{text} = $client->string( $item->{text} );
+	}
+	elsif ( $item->{stringToken} ) {	
+		$item->{text} = $client->string( delete $item->{stringToken} );
+	}
+	
+	# call string() for screensaver titles
+	if ( $item->{screensavers} ) {
+		for my $s ( @{ $item->{screensavers} } ) {
+			$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
+		}
+	}
+	
+	# call string() for input text if necessary
+	if ( my $input = $item->{input} ) {
+		if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
+			$input->{title}        = $client->string( $input->{title} );
+			$input->{help}->{text} = $client->string( $input->{help}->{text} );
+			$input->{softbutton1}  = $client->string( $input->{softbutton1} );
+			$input->{softbutton2}  = $client->string( $input->{softbutton2} );
+		}
 	}
 }
 

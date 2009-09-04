@@ -965,16 +965,20 @@ sub updateMenu {
 		# Skip non home-menu apps
 		next unless $apps->{$app}->{home_menu} == 1;
 		
-		if ( my $mode = $apps->{$app}->{mode} ) {
-			# Apps with a predefined mode name (maps to a plugin)	
-			push @{$appMenu}, {
-				mode => $mode,
-				text => $client->string($mode),
-			};
+		my $title = $client->string( $apps->{$app}->{title} );
+		
+		# Is this app supported by a built-in plugin?
+		if ( my $plugin = $apps->{$app}->{plugin} ) {
+			# Make sure it's enabled
+			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
+				push @{$appMenu}, {
+					mode => $pluginInfo->{name},
+					text => $title,
+				};
+			}
 		}
 		elsif ( $apps->{$app}->{type} eq 'opml' ) {
 			# for type=opml without a mode, use generic OPML plugin
-			my $title = $client->string( $apps->{$app}->{title} );
 			push @{$appMenu}, {
 				mode => $title,
 				text => $title,
