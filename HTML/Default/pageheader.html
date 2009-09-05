@@ -89,7 +89,11 @@
 
 			<div class="pagetitle [%- IF pageicon -%]pagetitleWithIcon[% END %]">
 				[%- IF pageicon -%]
-				<img src="[% webroot %][% pageicon.replace('.png', "_25x25_f.png") %]" class="pageicon" width="25" border="0" alt="[% pagetitle %]">
+					[% IF pageicon.match("^http") %]
+					<img src="[% pageicon | imageproxy(25, 25) %]" class="pageicon" width="25" border="0" alt="[% pagetitle %]">
+					[% ELSE %]
+					<img src="[% webroot %][% pageicon.replace('.png', "_25x25_f.png") %]" class="pageicon" width="25" border="0" alt="[% pagetitle %]">
+					[% END %]
 				[%- END -%]
 				<span>[% pagetitle %]&nbsp;</span>
 				[% UNLESS page == 'help' %]

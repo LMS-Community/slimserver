@@ -190,7 +190,11 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	<img [% style %] 
 		src=
 		[% IF item.image %]
-		"[% item.image %]"
+			[% IF item.image.match("^http") %]
+			"[% item.image | imageproxy(height, height) %]"
+			[% ELSE %]
+			"[% item.image %]"
+			[% END %]
 		[% ELSE %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% ELSIF browserType == 'IE' %].gif[% END %]"
 		[% END %]
