@@ -130,12 +130,19 @@ sub _players_done {
 		}
 	}
 	
+	# Make a list of all apps for the web UI
+	my $allApps = {};
+	
 	# Update enabled apps for each player
 	# This will create new pref entries for players this server has never seen
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
 			$cprefs->set( apps => $player->{apps} );
+			
+			for my $app ( keys %{ $player->{apps} } ) {
+				$allApps->{$app} = $player->{apps}->{$app};
+			}
 			
 			# Refresh ip3k and Jive menu
 			if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
@@ -152,6 +159,58 @@ sub _players_done {
 	if ( $res->{strings} ) {
 		for my $string ( @{ $res->{strings} } ) {
 			Slim::Utils::Strings::storeString( $string->{token}, $string->{strings} );
+		}
+	}
+	
+	# Setup apps for the web UI.
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		# Clear all existing my_apps items on the web, we'll build a new list
+		Slim::Web::Pages->delPageCategory('my_apps');
+		
+		for my $app ( keys %{$allApps} ) {
+			my $info = $allApps->{$app};
+			
+			# If this app is supported by a local plugin, we'll use the webpage already setup for it
+			# and just copy it to the my_apps list
+			if ( $info->{plugin} ) {
+				if ( my $plugin = Slim::Utils::PluginManager->isEnabled( $info->{plugin} ) ) {
+					my $url = Slim::Web::Pages->getPageLink( 'apps', $plugin->{name} );
+					Slim::Web::Pages->addPageLinks( 'my_apps', { $plugin->{name} => $url } );
+				}
+			}
+			elsif ( $info->{type} eq 'opml' ) {
+				# Setup a generic OPML menu for this app
+				my $url = 'apps/' . $app . '/index.html';
+				
+				Slim::Web::Pages->addPageLinks( 'my_apps', { $info->{title} => $url } );
+				
+				my $icon = $info->{icon};
+				if ( $icon !~ /^http/ ) {
+					# XXX: fix the template to use imageproxy to resize this icon
+					$icon = Slim::Networking::SqueezeNetwork->url($icon);
+				}
+				Slim::Web::Pages->addPageLinks( 'icons', { $info->{title} => $icon } );
+				
+				my $feed = $info->{url};
+				if ( $feed !~ /^http/ ) {
+					$feed = Slim::Networking::SqueezeNetwork->url($feed);
+				}
+				
+				Slim::Web::Pages->addPageFunction( $url, sub {
+					my $client = $_[0];
+					
+					warn "Call to $url for $client, using $feed\n";
+
+					Slim::Web::XMLBrowser->handleWebIndex( {
+						client  => $client,
+						feed    => $feed,
+						type    => 'link',
+						title   => $info->{title},
+						timeout => 35,
+						args    => \@_
+					} );
+				} );
+			}
 		}
 	}
 	

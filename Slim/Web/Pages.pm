@@ -94,10 +94,26 @@ sub addPageLinks {
 	}
 }
 
+sub getPageLink {
+	my ( $class, $category, $title ) = @_;
+	
+	if ( exists $additionalLinks{$category} ) {
+		return $additionalLinks{$category}->{$title};
+	}
+	
+	return;
+}
+
 sub delPageLinks {
 	my ( $class, $category, $title ) = @_;
 	
 	delete $additionalLinks{$category}->{$title};
+}
+
+sub delPageCategory {
+	my ( $class, $category ) = @_;
+	
+	delete $additionalLinks{$category};
 }
 
 sub addPageCondition {

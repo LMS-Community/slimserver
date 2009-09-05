@@ -21,6 +21,11 @@ my %cli_next = ();
 sub initPlugin {
 	my ( $class, %args ) = @_;
 	
+	if ( $args{is_app} ) {
+		# Put all apps in the apps menu
+		$args{menu} = 'apps';
+	}
+	
 	{
 		no strict 'refs';
 		*{$class.'::'.'feed'}   = sub { $args{feed} } if $args{feed};
@@ -308,6 +313,9 @@ sub cliRadiosQuery {
 
 sub webPages {
 	my $class = shift;
+	
+	# Only setup webpages here if a menu is defined by the plugin
+	return unless $class->menu;
 
 	my $title = $class->getDisplayName();
 	my $url   = 'plugins/' . $class->tag() . '/index.html';

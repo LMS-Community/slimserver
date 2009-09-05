@@ -91,22 +91,19 @@ ELSE %]
 		PROCESS menuItem link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
 
-	music_servicesItems = BLOCK;
-		FOREACH item = additionalLinkOrder.music_services;
-			IF additionalLinks.music_services.exists(item);
-				link.value = additionalLinks.music_services.$item;
+	my_appsItems = BLOCK;
+		FOREACH item = additionalLinkOrder.my_apps;
+			IF additionalLinks.my_apps.exists(item);
+				link.value = additionalLinks.my_apps.$item;
 				link.key = item;
 				PROCESS menuItem;
 			END;
 		END;
-		FOREACH link = additionalLinks.music_services;
-			IF !additionalLinkOrder.music_services.grep(link.key).size;
+		FOREACH link = additionalLinks.my_apps;
+			IF !additionalLinkOrder.my_apps.grep(link.key).size;
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				PROCESS menuItem;
 			END;
-		END;
-		IF additionalLinks.radios.exists('PLUGIN_PANDORA_MODULE_NAME');
-			PROCESS menuItem link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radios.PLUGIN_PANDORA_MODULE_NAME };
 		END;
 	END;
 
@@ -189,9 +186,9 @@ ELSE %]
 		[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
 		<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 	
-		[% IF additionalLinks.music_services %]
-			[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" noIcon=1 %]
-			<div id="MUSIC_SERVICES_expanded" class="expandableHomeMenuItem">[%- music_servicesItems -%]</div>
+		[% IF additionalLinks.my_apps %]
+			[% PROCESS menuItem link.key="PLUGIN_MY_APPS_MODULE_NAME" link.value="home.html?" expandable="my_apps" noIcon=1 %]
+			<div id="PLUGIN_MY_APPS_MODULE_NAME_expanded" class="expandableHomeMenuItem">[%- my_appsItems -%]</div>
 		[% END %]
 
 		[% IF favorites;
