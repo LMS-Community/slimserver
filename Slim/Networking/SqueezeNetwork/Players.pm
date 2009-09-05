@@ -198,8 +198,6 @@ sub _players_done {
 				
 				Slim::Web::Pages->addPageFunction( $url, sub {
 					my $client = $_[0];
-					
-					warn "Call to $url for $client, using $feed\n";
 
 					Slim::Web::XMLBrowser->handleWebIndex( {
 						client  => $client,
