@@ -31,10 +31,10 @@ sub handler {
 
 	if ( $params->{reset} ) {
 
-		$prefs->set( feeds => Slim::Plugin::RSSNews::DEFAULT_FEEDS() );
+		$prefs->set( feeds => Slim::Plugin::RSSNews::Plugin::DEFAULT_FEEDS() );
 		$prefs->set( modified => 0 );
 
-		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(Slim::Plugin::RSSNews::DEFAULT_FEEDS());
+		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(Slim::Plugin::RSSNews::Plugin::DEFAULT_FEEDS());
 	}
 	
 	my @feeds = @{ $prefs->get('feeds') };
