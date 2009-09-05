@@ -5562,6 +5562,17 @@ sub contextMenuQuery {
 		my $command = $menu . 'info';
 		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ $command, 'items', $index, $quantity, @requestParams ] );
 		
+		# Bug 13744, wrap async requests
+		if ( $proxiedRequest->isStatusProcessing ) {			
+			$proxiedRequest->callbackFunction( sub {
+				$request->setRawResults( $_[0]->getResults );
+				$request->setStatusDone();
+			} );
+			
+			$request->setStatusProcessing();
+			return;
+		}
+		
 	# if we get here, we punt
 	} else {
 		$request->setStatusBadParams();
