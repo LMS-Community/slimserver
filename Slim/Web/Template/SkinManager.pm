@@ -12,7 +12,7 @@ use base qw(Slim::Web::Template::NoWeb);
 use strict;
 use File::Spec::Functions qw(:ALL);
 use Template;
-use URI::Escape;
+use URI::Escape qw(uri_escape);
 use YAML::Syck qw(LoadFile);
 
 use Slim::Utils::Log;
@@ -220,6 +220,19 @@ sub addSkinTemplate {
 			'utf8encode'    => \&Slim::Utils::Unicode::utf8encode,
 			'utf8on'        => \&Slim::Utils::Unicode::utf8on,
 			'utf8off'       => \&Slim::Utils::Unicode::utf8off,
+			'imageproxy'    => [ sub {
+				my ( $context, $width, $height ) = @_;
+				
+				$height ||= '';
+				
+				return sub {
+					my $url = shift;
+					
+					return Slim::Networking::SqueezeNetwork->url(
+						"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
+					);
+				};
+			}, 1 ],
 		},
 
 		EVAL_PERL => 1,
