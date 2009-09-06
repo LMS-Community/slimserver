@@ -2924,6 +2924,13 @@ sub jiveFavoritesCommand {
 			type   => $type,
 			parser => $parser,
 		} );
+
+		$client->showBriefly({
+			jive => {
+				type     => 'popupplay',
+				text     => [ $client->string('PRESET_ADDING', $preset), $title ],
+			},
+		});
 	} else {
 
 		my @favorites_menu = (
