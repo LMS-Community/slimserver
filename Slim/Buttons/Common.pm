@@ -857,7 +857,7 @@ our %functions = (
 			$digit = 10;
 		}
 		
-		my $preset = $prefs->client($client)->get('presets')->[ $digit - 1 ];
+		my $preset = $prefs->client($client)->get('presets')->[ $digit ];
 		
 		if ( $preset && $preset->{type} =~ /audio|playlist/ ) {
 			my $url   = $preset->{URL};
