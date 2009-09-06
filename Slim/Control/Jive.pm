@@ -2918,7 +2918,7 @@ sub jiveFavoritesCommand {
 		}
 		
 		$client->setPreset( {
-			slot   => $preset + 1, # set_preset is 0-based
+			slot   => $preset,
 			URL    => $url,
 			text   => $title,
 			type   => $type,
