@@ -555,7 +555,7 @@ sub _updatePlaylist {
 	for my $song (@$songs) {
 
 		if (main::ISWINDOWS) {
-			$song = Slim::Plugin::MusicMagic::Common::decode($song);
+			$song = Slim::Utils::Unicode::utf8encode_locale($song);
 		}
 
 		$song = Slim::Utils::Misc::fileURLFromPath($song);

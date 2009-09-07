@@ -972,11 +972,10 @@ sub getMix {
 	for (my $j = 0; $j < $count; $j++) {
 
 		# Bug 4281 - need to convert from UTF-8 on Windows.
-		if (main::ISWINDOWS) {
-
-			my $enc = Slim::Utils::Unicode::encodingFromString($songs[$j]);
-
-			$songs[$j] = Slim::Utils::Unicode::utf8decode_guess($songs[$j], $enc);
+		if (main::ISWINDOWS && !-e $songs[$j] && -e Slim::Utils::Unicode::utf8encode_locale($songs[$j])) {
+			
+			$songs[$j] = Slim::Utils::Unicode::utf8encode_locale($songs[$j]);
+			
 		}
 
 		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
