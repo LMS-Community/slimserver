@@ -1,4 +1,5 @@
 PLUGIN_FACEBOOK_MODULE_NAME
+	CS	Facebook
 	DA	Facebook
 	DE	Facebook
 	EN	Facebook
@@ -13,6 +14,7 @@ PLUGIN_FACEBOOK_MODULE_NAME
 	SV	Facebook
 
 PLUGIN_FACEBOOK_ON_FACEBOOK
+	CS	Sdílet na Facebook
 	DA	Del dette på Facebook
 	DE	Auf Facebook veröffentlichen
 	EN	Share this on Facebook
@@ -27,6 +29,7 @@ PLUGIN_FACEBOOK_ON_FACEBOOK
 	SV	Dela med dig av det här på Facebook
 
 PLUGIN_FACEBOOK_SCREENSAVER_NEWS
+	CS	Moje kanály zpráv z Facebook
 	DA	Mine nyheder på Facebook
 	DE	Mein Facebook-News-Feed
 	EN	My Facebook News Feed
@@ -41,6 +44,7 @@ PLUGIN_FACEBOOK_SCREENSAVER_NEWS
 	SV	Mina nyheter på Facebook
 
 PLUGIN_FACEBOOK_SCREENSAVER_PHOTOS
+	CS	Moje fotky z Facebook
 	DA	Mine billeder på Facebook
 	DE	Meine Facebook-Fotos
 	EN	My Facebook Photos

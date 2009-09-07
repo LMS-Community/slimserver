@@ -14,7 +14,7 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
-	CS	Extension Downloader (stahovač doplňků) může stáhnout a nainstalovat různé doplňky k vašemu systému Squeezebox system.
+	CS	Stahovač doplňků umožňuje automatické stahování a instalaci volitelných vlastností Squezebox server.
 	DA	Du kan vælge om der automatisk skal hentes og installeres en række udvidelser til Squeezebox-serveren.
 	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Squeezebox Server automatisch heruntergeladen und installiert.
 	EN	Extension downloader allows automated download and installation of optional features for Squeezebox server.

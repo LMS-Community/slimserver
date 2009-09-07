@@ -3,7 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PODCAST
-	CS	Podcasts
+	CS	Podcasty
 	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
@@ -50,7 +50,7 @@ PODCAST_NOTHING_TO_PLAY
 	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
-	CS	Plugin prohlížeče Podcast vám umožňuje prohlížet a poslouchat podcast.
+	CS	Plugin Podcast Browser vám umožňuje prohlížet a poslouchat podcasty.
 	DA	Udvidelsesmodulet til podcasts giver dig mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
@@ -114,7 +114,7 @@ PODCAST_FEEDS_CHANGE
 	SV	Poddsändningslistan har ändrats.
 
 SETUP_PLUGIN_PODCAST_RESET
-	CS	Obnovit výchozí Podcasts
+	CS	Obnovit výchozí Podcasty
 	DA	Gendan standardpodcasts
 	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts

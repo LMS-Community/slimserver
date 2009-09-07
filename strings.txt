@@ -8873,7 +8873,7 @@ SETUP_SN_REPORT_STATS
 	SV	Rapportera statistik
 
 SETUP_SN_REPORT_STATS_DESC
-	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistiky o poslouchání internetového rádia a hudebních služeb. (Tyto informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,cz" target="_blank">politikou zachování soukromí</a>).
+	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistiky o poslechu internetového rádia a hudebních služeb. (Tyto anonymní informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,ce" target="_blank">strategií zachování soukromí</a>).
 	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne bruges samlet og er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
 	DE	Melden Sie zur Verbesserung von mysqueezebox.com Statistiken über den Einsatz von Internetradio und -Musikdiensten. (Diese anonymen Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzrichtlinien</a>).
 	EN	Help improve mysqueezebox.com by reporting statistics on internet radio and music service listening. (This anonymous information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
@@ -9742,6 +9742,7 @@ PLAY_NEXT
 	SV	Spela härnäst
 
 PLAY_NOW
+	CS	Přehrát nyní
 	DA	Afspil nu
 	DE	Jetzt abspielen
 	EN	Play Now
@@ -18250,7 +18251,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
-	CS	Nízká
+	CS	Nízký
 	DA	Lav
 	DE	Niedrig
 	EN	Low
@@ -18904,6 +18905,7 @@ DEBUG_SERVER_PLUGINS
 	SV	Inläsning av plugin-moduler
 
 DEBUG_SERVER_UPDATE
+	CS	Informace o automatických aktualizacích softwaru
 	DA	Oplysninger om automatisk hentede softwareopdateringer
 	DE	Informationen über das Herunterladen automatischer Software-Updates
 	EN	Information about automatic software update downloads
@@ -20137,7 +20139,7 @@ RUNNING
 	SV	Körs
 
 COMPLETE
-	CS	Popis Úplná instalace
+	CS	Dokončit
 	DA	Fuldstændig
 	DE	Beendet
 	EN	Complete
@@ -21594,7 +21596,7 @@ CONTROLPANEL_NO_UPDATE_AVAILABLE
 	SV	Det finns ingen uppdaterad version av Squeezebox Server tillgänglig.
 
 CONTROLPANEL_CHECK_UPDATE
-	CS	Hledat aktualizaci
+	CS	Hledat aktualizace
 	DA	Søg efter opdateringer
 	DE	Nach Update suchen
 	EN	Check for update
@@ -21744,7 +21746,7 @@ CONTROLPANEL_ALERTS
 	SV	Varningar
 
 CONTROLPANEL_SN_FAILURE
-	CS	Nebyli jsme schopni úspěšně komunikovat s mysqueezebox.com
+	CS	Nebyli jsme schopni úspěšně komunikovat se mysqueezebox.com
 	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
 	DE	Es konnte keine Verbindung zu mysqueezebox.com hergestellt werden.
 	EN	We were not able to successfully communicate with mysqueezebox.com
@@ -22797,6 +22799,7 @@ NO_LIBRARY
 	SV	Inget musikbibliotek konfigurerat
 
 PRESETS_NOT_DEFINED
+	CS	Přednastavené #%s nedefinováno.
 	DA	Fast indstilling #%s er ikke defineret.
 	DE	Voreinstellung %s nicht definiert.
 	EN	Preset #%s not defined.

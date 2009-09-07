@@ -1,4 +1,5 @@
 PLUGIN_FLICKR_MODULE_NAME
+	CS	Flickr
 	DA	Flickr
 	DE	Flickr
 	EN	Flickr
@@ -13,6 +14,7 @@ PLUGIN_FLICKR_MODULE_NAME
 	SV	Flickr
 
 PLUGIN_FLICKR_SCREENSAVER_INTERESTING
+	CS	Flickr: Zajímavé fotky
 	DA	Flickr: Interessante billeder
 	DE	Flickr: Interessanteste Fotos
 	EN	Flickr: Interesting Photos
@@ -27,6 +29,7 @@ PLUGIN_FLICKR_SCREENSAVER_INTERESTING
 	SV	Flickr: Intressanta bilder
 
 PLUGIN_FLICKR_SCREENSAVER_RECENT
+	CS	Flickr: Poslední fotky
 	DA	Flickr: Seneste billeder
 	DE	Flickr: Neueste Fotos
 	EN	Flickr: Recent Photos

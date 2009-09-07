@@ -243,7 +243,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	SV	Vanlig snö
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
-	CS	Automatické
+	CS	Automatický
 	DA	Automatisk
 	DE	Automatisch
 	EN	Automatic

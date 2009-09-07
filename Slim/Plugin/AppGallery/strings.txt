@@ -1,4 +1,5 @@
 PLUGIN_APP_GALLERY_MODULE_NAME
+	CS	Aplikační galerie
 	DA	Programgalleri
 	DE	Anwendungsgalerie
 	EN	App Gallery
