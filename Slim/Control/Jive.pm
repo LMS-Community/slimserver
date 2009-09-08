@@ -814,6 +814,7 @@ sub alarmUpdateMenu {
 		text           => $client->string("ALARM_SET_TIME"),
 		input   => {
 			initialText  => $params->{time}, # this will need to be formatted correctly
+			title => $client->string('ALARM_SET_TIME'),
 			_inputStyle  => 'time',
 			len          => 1,
 			help         => {
