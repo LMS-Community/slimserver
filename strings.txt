@@ -5371,7 +5371,7 @@ SETUP_REPLAYGAINMODE
 	FI	Äänenvoimakkuuden säätö/toiston äänenvoimakkuus
 	FR	Ajustement du volume (Replay Gain)
 	HE	כוונון עוצמת הקול/הגברה להשמעה חוזרת
-	IT	Regolazione del volume / Replay gain
+	IT	Correzione del volume / Replay gain
 	NL	Volumeaanpassing/Replay Gain
 	NO	Volumjustering (Replay Gain)
 	PL	Regulacja głośności/Wzmocnienie przy ponownym odtwarzaniu
@@ -5404,7 +5404,7 @@ REPLAYGAIN_DISABLED
 	FI	Ei äänenvoimakkuuden säätämistä
 	FR	Désactiver l'ajustement du volume
 	HE	השבתת האפשרות לכוונון עוצמת הקול
-	IT	Disattiva regolazione volume
+	IT	Disattiva correzione volume
 	NL	Volumeaanpassing uitschakelen
 	NO	Skru av volumkontroll
 	PL	Brak regulacji głośności
@@ -5487,7 +5487,7 @@ REPLAYGAIN
 	FI	Äänenvoimakkuuden säätö
 	FR	Ajustement volume
 	HE	כוונון עוצמת הקול
-	IT	Regolazione volume
+	IT	Correzione volume
 	NL	Volumeaanpassing
 	NO	Lydstyrkekontroll
 	PL	Regulacja głośności
@@ -5504,7 +5504,7 @@ ALBUMREPLAYGAIN
 	FI	Levyn äänenvoimakkuuden säätäminen
 	FR	Ajustement volume album
 	HE	כוונון עוצמת הקול של אלבומים
-	IT	Regolazione volume album
+	IT	Correzione volume album
 	NL	Volumeaanpassing voor albums
 	NO	Volumjustering for album
 	PL	Regulacja głośności dla albumu
@@ -6518,7 +6518,7 @@ SCAN_ABORTED
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca de música deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää musiikkikirjastoa täysin.
 	FR	L'analyse a été interrompue. Notez que vous devrez exécuter une nouvelle fois une analyse afin d'obtenir l'accès complet à votre collection musicale.
-	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi completa per avere accesso alla libreria musicale.
+	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi completa per avere accesso completo alla libreria musicale.
 	NL	De scan is afgebroken. Je moet opnieuw een scan uitvoeren om volledige toegang tot je muziekcollectie te verkrijgen.
 	NO	Søket ble avbrutt. Du må kjøre søket på nytt for å få full tilgang til musikkbiblioteket.
 	PL	Przeszukiwanie zostało przerwane. Należy pamiętać, że w celu uzyskania pełnego dostępu do biblioteki muzyki, konieczne będzie ponowne uruchomienie przeszukiwania.
@@ -11535,22 +11535,23 @@ NO_TITLE
 	ZH_CN	无标题
 
 THOUSANDS_SEP
-	CS	,
-	DA	,
-	DE	,
+# SLT: this is the separator used to separate thousands as in 10'000'000.00 ([[http://en.wikipedia.org/wiki/Thousands_separator]])
+	CS	.
+	DA	'
+	DE	'
 	EN	,
-	ES	,
-	FI	,
-	FR	,
+	ES	.
+	FI	.
+	FR	.
 	HE	,
-	IT	,
+	IT	'
 	JA	,
 	NL	,
-	NO	,
-	PL	,
-	PT	. 
+	NO	'
+	PL	.
+	PT	.
 	RU	,
-	SV	,
+	SV	'
 	ZH_CN	,
 
 BYTES
@@ -12081,7 +12082,7 @@ TO
 	FI	kohteeseen
 	FR	à
 	HE	אל
-	IT	in
+	IT	a
 	JA	へ
 	NL	tot
 	NO	til
@@ -13502,7 +13503,7 @@ DEBUG_SELECT_SET
 	ES	Seleccione un conjunto de registros...
 	FI	Valitse lokijoukko...
 	FR	Sélectionnez l'ensemble de journaux...
-	IT	Selezionare un gruppo di opzioni di accesso...
+	IT	Selezionare un gruppo di log...
 	NL	Selecteer een logboekset...
 	NO	Velg logg-sett ...
 	PL	Wybierz zestaw dzienników...
@@ -17213,7 +17214,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	FI	Jos levyllä on lauluja, jotka on merkitty jollekin tietylle yhtyeelle, levy voidaan sijoittaa yhtyeen nimen alle tai muiden samalla levyllä esiintyvien artistien alle.  Yhtyetunnus tunnetaan myös nimellä TPE2. Joissakin ohjelmistoissa se saattaa näkyä "levyartistina".
 	FR	Les albums qui contiennent des morceaux contenant les informations d'un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Les informations sur le groupe sont appelées TPE2 ou Artiste de l'album dans certains logiciels.
 	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
-	IT	Gli album che contengono brani con Gruppo nei tag possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come artista dell'album.
+	IT	Gli album con brani che contengono il tag "Gruppo" nei tag possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
 	NL	Albums met liedjes die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
 	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
 	PL	Albumy zawierające utwory z nazwą zespołu mogą być wymienione pod nazwą tego zespołu lub innych wykonawców tego albumu. Etykieta zespołu nosi także nazwę TPE2 i w niektórych programach może być widoczna jako „wykonawca albumu”.
@@ -17262,7 +17263,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice Squeezebox Server. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat Squeezebox Serverin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
 	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que Squeezebox Server doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre collection musicale.
-	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in Squeezebox Server. La modifica di questa impostazione avvierà l'analisi della libreria musicale.
+	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Squeezebox Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Squeezebox Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
 	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program Squeezebox Server. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
