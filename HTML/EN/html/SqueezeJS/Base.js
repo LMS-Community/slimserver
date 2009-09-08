@@ -482,6 +482,9 @@ function _init() {
 		},
 
 		getPlayer : function(){
+			if (SqueezeJS.Controller.player == null)
+				return;
+			
 			SqueezeJS.Controller.player = SqueezeJS.Controller.player.replace(/%3A/gi, ':');
 			return SqueezeJS.Controller.player;
 		}
