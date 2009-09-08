@@ -358,3 +358,19 @@ PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	RU	Следует помнить, что Logitech не предоставляет поддержку для подключаемых модулей сторонних изготовителей, ответственность за использование которых должен нести пользователь. За поддержкой обращайтесь к авторам подключаемого модуля.
 	SV	Observera att plugin-program från tredje part inte stöds av Logitech och används på egen risk. Kontakta författaren till plugin-programmen för support.
 
+PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
+# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+	DE	Empfohlene Erweiterungen anderer Anbieter
+	EN	Recommended 3rd party plugins
+	FR	Extensions recommandées
+
+PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
+# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+	DE	Weitere Erweiterungen anderer Anbieter
+	EN	Other 3rd party plugins
+
+PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
+# These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
+	DE	Logitech Erweiterungen
+	EN	Logitech Extensions
+	FR	Extensions Logitech
