@@ -43,7 +43,9 @@ our @EXPORT_OK = qw(string cstring clientString);
 use Config;
 use Digest::SHA1 qw(sha1_hex);
 use POSIX qw(setlocale LC_TIME);
+use File::Slurp qw(read_file write_file);
 use File::Spec::Functions qw(:ALL);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use Storable;
 
@@ -76,6 +78,18 @@ sub init {
 
 	if ($::checkstrings) {
 		checkChangedStrings();
+	}
+	
+	# Load cached extra strings
+	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
+	
+	my $cache = {};
+	if ( -e $extraCache ) {
+		$cache = eval { from_json( read_file($extraCache) ) };
+	}
+	
+	for my $string ( keys %{ $cache || {} } ) {
+		storeString( $string, $cache->{$string} );
 	}
 }
 
@@ -369,6 +383,38 @@ sub storeString {
 
 		$strings->{$failsafeLang}->{$name} = $curString->{$failsafeLang};
 	}
+}
+
+=head2 storeExtraStrings ( $arrayref )
+
+Cache and store additional strings.  This is used by SN to send additional
+strings for apps.
+
+=cut
+
+sub storeExtraStrings {
+	my $extra = shift;
+	
+	# Cache strings to disk so they work on restart
+	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
+	
+	my $cache = {};
+	if ( -e $extraCache ) {
+		$cache = eval { from_json( read_file($extraCache) ) };
+		if ( $@ ) {
+			$cache = {};
+		}
+	}
+	
+	# Turn into a hash
+	$extra = { map { $_->{token} => $_->{strings} } @{$extra} };
+	
+	for my $string ( keys %{$extra} ) {
+		storeString( $string, $extra->{$string} );
+		$cache->{$string} = $extra->{$string};
+	}
+	
+	eval { write_file( $extraCache, to_json($cache) ) };
 }
 
 # access strings

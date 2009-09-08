@@ -3295,7 +3295,12 @@ sub _localizeMenuItemText {
 	my $clone = Storable::dclone($item);
 	
 	if ( $clone->{stringToken} ) {
-		$clone->{text} = $client->string( delete $clone->{stringToken} );
+		if ( $clone->{stringToken} eq uc( $clone->{stringToken} ) ) {
+			$clone->{text} = $client->string( delete $clone->{stringToken} );
+		}
+		else {
+			$clone->{text} = delete $clone->{stringToken};
+		}
 	}
 	elsif ( $clone->{text} && $clone->{text} eq uc( $clone->{text} ) ) {
 		$clone->{text} = $client->string( $clone->{text} );

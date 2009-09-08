@@ -157,9 +157,9 @@ sub _players_done {
 	
 	# SN can provide string translations for new menu items
 	if ( $res->{strings} ) {
-		for my $string ( @{ $res->{strings} } ) {
-			Slim::Utils::Strings::storeString( $string->{token}, $string->{strings} );
-		}
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding SN-supplied strings: ' . Data::Dump::dump( $res->{strings} ) );
+		
+		Slim::Utils::Strings::storeExtraStrings( $res->{strings} );
 	}
 	
 	# Setup apps for the web UI.

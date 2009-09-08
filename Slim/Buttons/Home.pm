@@ -965,7 +965,10 @@ sub updateMenu {
 		# Skip non home-menu apps
 		next unless $apps->{$app}->{home_menu} == 1;
 		
-		my $title = $client->string( $apps->{$app}->{title} );
+		my $title = $apps->{$app}->{title};
+		if ( $title eq uc($title) ) {
+			$title = $client->string($title);
+		}
 		
 		# Is this app supported by a built-in plugin?
 		if ( my $plugin = $apps->{$app}->{plugin} ) {
