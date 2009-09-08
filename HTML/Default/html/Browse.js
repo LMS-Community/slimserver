@@ -147,3 +147,66 @@ Browse = {
 	}
 };
 
+Browse.XMLBrowser = {
+	template: new Ext.Template('{query}action={action}&index={index}&player={player}&sess={sess}&start={start}'),
+	
+	playLink: function(query, index, sess) {
+		this._playAddLink('play', query, index, sess, SqueezeJS.string('connecting_for'));
+	},
+	
+	playAllLink: function(query, index, sess) {
+		this._playAddLink('playall', query, index, sess, SqueezeJS.string('connecting_for'));
+	},
+	
+	addLink: function(query, index, sess) {
+		this._playAddLink('add', query, index, sess);
+	},
+	
+	addAllLink: function(query, index, sess) {
+		this._playAddLink('addall', query, index, sess);
+	},
+	
+	_playAddLink: function(action, query, index, sess, showBriefly) {
+		this._doRequest(this.template.apply({
+				action: action,
+				query: query,
+				player: encodeURIComponent(SqueezeJS.getPlayer()),
+				index: index,
+				sess: sess
+			}), 
+			false,
+			showBriefly
+		);
+	},
+		
+	toggleFavorite: function(self, index, start, sess) {
+		var img = Ext.get(self).child('img');
+		var action = 'favadd';
+		
+		if (img.dom.src.match(/remove/)) {
+			img.dom.src = img.dom.src.replace(/_remove/, '');
+			action = 'favdel';
+		}
+		else {
+			img.dom.src = img.dom.src.replace(/\.gif/, '_remove.gif');
+		}
+		
+		this._doRequest(this.template.apply({
+				action: action,
+				player: encodeURIComponent(SqueezeJS.getPlayer()),
+				index: index,
+				start: start,
+				sess: sess
+			})
+		);
+	},
+
+	_doRequest: function(query, refreshStatus, showBriefly) {
+		SqueezeJS.UI.setProgressCursor();
+		SqueezeJS.Controller.urlRequest(
+			location.pathname + '?' + query,
+			refreshStatus,
+			showBriefly
+		);
+	}
+}

@@ -62,8 +62,8 @@ END %]
 [% IF streaminfo %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
 	<div id="songInfoPlayLinks">
-		[% WRAPPER playlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-		[% WRAPPER addlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playLink('[% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
+		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addLink('[% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
 	</div>
 	[% END; END %]
 
@@ -92,11 +92,19 @@ END %]
 	</div>
 
 	[%- BLOCK gencontrol -%]
-		[% PROCESS favoritescontrol item.isFavorite = (item.favorites == 2) %]
+		[% IF item.favorites == 1 %]
+			[% WRAPPER favaddlink noTarget=1 %]
+				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
+			[% END %]
+		[% ELSIF item.favorites == 2 %]
+			[% WRAPPER favdellink noTarget=1 %]
+				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
+			[% END %]
+		[% END %]
 
 		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-			[% WRAPPER playlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-			[% WRAPPER addlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+			[% WRAPPER playlink %]onclick="Browse.XMLBrowser.play[% IF item.type == 'playlist' %]All[% END %]Link('[% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
+			[% WRAPPER addlink %]onclick="Browse.XMLBrowser.add[% IF item.type == 'playlist' %]All[% END %]Link('[% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
 		[% ELSE %]
 			[% PROCESS dummylink %]
 			[% PROCESS dummylink %]
@@ -142,8 +150,8 @@ END %]
 
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
-				[% WRAPPER playlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-				[% WRAPPER addlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+				[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 			[%- END %]
 			[%- WRAPPER contentitem controls = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
