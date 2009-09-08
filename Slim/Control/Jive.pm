@@ -320,8 +320,7 @@ sub mainMenu {
 	# as a result, no item_loops, all submenus (setting, myMusic) are just elements of the big array that get sent
 
 	my @menu = map {
-		_localizeMenuItemText( $client, $_ );	
-		$_;
+		_localizeMenuItemText( $client, $_ );
 	}(
 		main::SLIM_SERVICE ? () : {
 			stringToken    => 'MY_MUSIC',
@@ -1950,9 +1949,7 @@ sub _notifyJive {
 	my $id = _clientId($client);
 	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
 	
-	for ( @{$menuForExport} ) {
-		_localizeMenuItemText( $client, $_ );
-	}
+	$menuForExport = [ map { _localizeMenuItemText( $client, $_ ) } @{$menuForExport} ];
 	
 	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, $action, $id ] );
 }
@@ -3293,22 +3290,25 @@ sub _localizeMenuItemText {
 	
 	return unless $client;
 	
-	if ( $item->{text} && $item->{text} eq uc( $item->{text} ) ) {
-		$item->{text} = $client->string( $item->{text} );
+	# Don't alter the global data
+	my $clone = Storable::dclone($item);
+	
+	if ( $clone->{stringToken} ) {
+		$clone->{text} = $client->string( delete $clone->{stringToken} );
 	}
-	elsif ( $item->{stringToken} ) {
-		$item->{text} = $client->string( delete $item->{stringToken} );
+	elsif ( $clone->{text} && $clone->{text} eq uc( $clone->{text} ) ) {
+		$clone->{text} = $client->string( $clone->{text} );
 	}
 	
 	# call string() for screensaver titles
-	if ( $item->{screensavers} ) {
-		for my $s ( @{ $item->{screensavers} } ) {
+	if ( $clone->{screensavers} ) {
+		for my $s ( @{ $clone->{screensavers} } ) {
 			$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
 		}
 	}
 	
 	# call string() for input text if necessary
-	if ( my $input = $item->{input} ) {
+	if ( my $input = $clone->{input} ) {
 		if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
 			$input->{title}        = $client->string( $input->{title} );
 			$input->{help}->{text} = $client->string( $input->{help}->{text} );
@@ -3316,6 +3316,8 @@ sub _localizeMenuItemText {
 			$input->{softbutton2}  = $client->string( $input->{softbutton2} );
 		}
 	}
+	
+	return $clone;
 }
 
 1;
