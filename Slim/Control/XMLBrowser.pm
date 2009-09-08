@@ -837,6 +837,15 @@ sub _cliQuery_done {
 								'itemsParams' => 'params',
 								'params' => $params,
 							},
+							'more' => {
+								'player' => 0,
+								'cmd' => [ $query, 'items' ],
+								'itemsParams' => 'params',
+								'params' => $params,
+								window => {
+									isContextMenu => 1,
+								},
+							},
 						},
 					};
                 			$base->{'actions'} = _jivePresetBase($base->{'actions'});
