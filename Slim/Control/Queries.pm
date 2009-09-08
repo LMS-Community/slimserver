@@ -1898,6 +1898,7 @@ sub musicfolderQuery {
 					if ($partyMode || $party) {
 						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
 					}
+					# Bug 13855: there is no Slim::Menu::Folderinfo so no context menu is available here
 				# song
 				} elsif (Slim::Music::Info::isSong($item)) {
 					
@@ -1906,8 +1907,8 @@ sub musicfolderQuery {
 							'cmd' => ['trackinfo', 'items'],
 							'params' => {
 								'menu' => 'nowhere',
-								'useContextMenu' => 1,
 								'track_id' => $id,
+								isContextMenu => 1,
 							},
 						},
 						'play' => {
