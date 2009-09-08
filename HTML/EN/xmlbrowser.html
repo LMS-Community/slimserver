@@ -134,7 +134,7 @@
 				[% END %]
 			[%- END %]
 			
-			[% IF item.type == 'search' %]
+			[% IF item.type == 'search' && !item.weblink %]
 				<form name="searchForm[% item.index || index _ (start + loop.index) %]" id="searchForm[% item.index || index _ (start + loop.index) %]" method="GET">
 					[% item.name || item.title %]
 					<input type="text" name="q" value=""/>

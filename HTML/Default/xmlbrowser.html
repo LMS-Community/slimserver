@@ -162,7 +162,7 @@ END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
-			[% IF item.type == 'search';
+			[% IF item.type == 'search' && !item.weblink;
 				WRAPPER contentitem controls = xmlSearchControls;
 					IF artwork == 1;
 						itemobj.id = loop.count;
