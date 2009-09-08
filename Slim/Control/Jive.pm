@@ -1377,7 +1377,10 @@ sub playerSettingsMenu {
 	push @menu, shuffleSettings($client, 1);
 
 	# always add playlist mode
-	push @menu, playlistModeSettings($client, 1);
+	# Bugs: 13896, 13689, 8878
+	# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
+	# fix for bug 13689 will be the complete fix, but for now remove playlistModeSettings from SP menus entirely
+	# push @menu, playlistModeSettings($client, 1);
 
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {

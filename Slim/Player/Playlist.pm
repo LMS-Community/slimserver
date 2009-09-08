@@ -175,6 +175,11 @@ sub playlistMode {
 
 	$client     = $client->master();
 
+	# Bugs: 13896, 13689, 8878
+	# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
+	# fix for bug 13689 will be the complete fix, but for now ignore client pref and just always return 'off'
+	return 'off';
+
 	my $currentSetting = $prefs->client($client)->get('playlistmode');
 
 	if ( defined($mode) && $mode ne $currentSetting ) {

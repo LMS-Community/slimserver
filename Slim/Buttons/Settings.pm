@@ -764,37 +764,43 @@ sub init {
 					'subcommand'   => 'shuffle',
 				},
 	
-				'PLAYLIST_MODE'          => {
-					'useMode'      => 'INPUT.Choice',
-					'listRef'      => [
-						{
-							name   => '{PLAYLIST_MODE_DISABLED}',
-							value  => 'disabled',
-						},
-						{
-							name   => '{PLAYLIST_MODE_OFF}',
-							value  => 'off',
-						},
-						{
-							name   => '{PLAYLIST_MODE_ON}',
-							value  => 'on',
-						},
-						{
-							name   => '{PARTY_MODE_ON}',
-							value  => 'party',
-						},
-					],
-					'onPlay'        => \&executeCommand,
-					'onAdd'         => \&executeCommand,
-					'onRight'       => \&executeCommand,
-					'header'        => '{PLAYLIST_MODE}',
-					'headerAddCount'=> 1,
-					'condition'     => sub { 1 },
-					'pref'          => sub{ return Slim::Player::Playlist::playlistMode(shift)},
-					'initialValue'  => sub{ return Slim::Player::Playlist::playlistMode(shift)},
-					'command'       => 'playlistmode',
-					'subcommand'    => 'set',
-				},
+				
+				# Bugs: 13896, 13689, 8878
+				# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
+				# fix for bug 13689 will be the complete fix, but for now remove playlistModeSettings from ip3K menus entirely
+				#
+				# if/when playlist/party mode is taken out, so too can this commented code be stripped out
+				#'PLAYLIST_MODE'          => {
+				#	'useMode'      => 'INPUT.Choice',
+				#	'listRef'      => [
+				#		{
+				#			name   => '{PLAYLIST_MODE_DISABLED}',
+				#			value  => 'disabled',
+				#		},
+				#		{
+				#			name   => '{PLAYLIST_MODE_OFF}',
+				#			value  => 'off',
+				#		},
+				#		{
+				#			name   => '{PLAYLIST_MODE_ON}',
+				#			value  => 'on',
+				#		},
+				#		{
+				#			name   => '{PARTY_MODE_ON}',
+				#			value  => 'party',
+				#		},
+				#	],
+				#	'onPlay'        => \&executeCommand,
+				#	'onAdd'         => \&executeCommand,
+				#	'onRight'       => \&executeCommand,
+				#	'header'        => '{PLAYLIST_MODE}',
+				#	'headerAddCount'=> 1,
+				#	'condition'     => sub { 1 },
+				#	'pref'          => sub{ return Slim::Player::Playlist::playlistMode(shift)},
+				#	'initialValue'  => sub{ return Slim::Player::Playlist::playlistMode(shift)},
+				#	'command'       => 'playlistmode',
+				#	'subcommand'    => 'set',
+				#},
 		
 				'SYNCHRONIZE' => {
 					'useMode'   => 'synchronize',
