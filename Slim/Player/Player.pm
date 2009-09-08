@@ -581,6 +581,10 @@ sub currentSongLines {
 			if ( !$artwork ) {
 				$imgKey  = 'icon-id';
 				$artwork = '/html/images/radio.png';
+				
+				if ( main::SLIM_SERVICE ) {
+					$artwork = Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external');
+				}
 			}
 		}
 		else {

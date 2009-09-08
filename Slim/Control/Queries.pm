@@ -4668,9 +4668,13 @@ sub _addJivePlaylistControls {
 			nextWindow => 'home',
 		},
 	);
+	
+	my $clearicon = main::SLIM_SERVICE
+		? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playlistclear.png', 'external')
+		: '/html/images/playlistclear.png';
 
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/playlistclear.png');
+	$request->addResultLoop($loop, $count, 'icon-id', $clearicon);
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
@@ -4778,7 +4782,11 @@ sub _addJiveSong {
 	# send radio placeholder art for remote tracks with no art
 	} 
 	elsif ( $track->remote ) {
-		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/radio.png');
+		my $radioicon = main::SLIM_SERVICE
+			? Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
+			: '/html/images/radio.png';
+
+		$request->addResultLoop($loop, $count, 'icon-id', $radioicon);
 	}
 
 	# split to three discrete elements for NP screen
@@ -4945,7 +4953,11 @@ sub _jiveAddToFavorites {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
+			my $favicon = main::SLIM_SERVICE
+				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/favorites.png', 'external')
+				: '/html/images/favorites.png';
+				
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $favicon);
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		}
@@ -5052,8 +5064,12 @@ sub _jiveGenreAllAlbums {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
 
 		if ($includeArt) {
+			my $playallicon = main::SLIM_SERVICE
+				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
+				: '/html/images/playall.png';
+				
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		}
@@ -5357,8 +5373,12 @@ sub _playAll {
 		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
+			my $playallicon = main::SLIM_SERVICE
+				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
+				: '/html/images/playall.png';
+				
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
 		}
 
 		# get all our params

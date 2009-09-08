@@ -548,6 +548,10 @@ sub getIcon {
 	if ( ($handler = Slim::Player::ProtocolHandlers->iconHandlerForURL($url)) && ref $handler eq 'CODE' ) {
 		return &{$handler};
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		return Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external');
+	}
 
 	return 'html/images/radio.png';
 }
