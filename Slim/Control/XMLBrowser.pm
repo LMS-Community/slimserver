@@ -1064,6 +1064,11 @@ sub _cliQuery_done {
 							}
 						}
 						
+						# Bug 13247, support nextWindow param
+						if ( $item->{nextWindow} ) {
+							$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
+						}
+						
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
@@ -1162,6 +1167,11 @@ sub _cliQuery_done {
 		if ($menuMode) {
 			
 			$window->{'windowStyle'} = $windowStyle || 'text_list';
+			
+			# Bug 13247, support windowId param
+			if ( $subFeed->{windowId} ) {
+				$window->{windowId} = $subFeed->{windowId};
+			}
 
 			# send any window parameters we've gathered, if we've gathered any
 			if ($window) {
