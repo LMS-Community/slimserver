@@ -1440,4 +1440,10 @@ SB_ACCOUNT
 	SV	Squeezebox-konto
 
 MESSAGE_COUNT
+# SLT: %d will be replaced by the number of messages
+	DE	Mitteilungen (%d) 
 	EN	Messages (%d)
+	ES	Mensajes (%d)
+	EN	Messages (%d)
+	IT	Messaggi (%d)
+	
