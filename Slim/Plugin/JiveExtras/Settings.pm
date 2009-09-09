@@ -27,6 +27,8 @@ my %filetypes = (
 
 my %sizes = (
 	'240x320' => 'Controller',
+	'320x240' => 'Squeezebox Radio',
+	'480x272' => 'Squeezebox Touch',
 	# FIXME add desktop squeezeplay here?
 );
 
