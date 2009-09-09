@@ -576,6 +576,7 @@ sub gotOPML {
 		'modeName' => 
 			( defined $params->{remember} && $params->{remember} == 0 ) 
 			? undef : "XMLBrowser:$url:$title",
+		'windowId'   => $opml->{windowId} || '',
 		'header'     => $title,
 		'headerAddCount' => 1,
 		'listRef'    => $opml->{'items'},
@@ -602,6 +603,19 @@ sub gotOPML {
 			# Set itemURL to value, but only if value was not created from the name above
 			if (!defined $itemURL && $item->{'value'} && $item->{'value'} ne $item->{'name'}) {
 				$itemURL = $item->{'value'};
+			}
+			
+			# Bug 13247, if there is a nextWindow value, pop back until we
+			# find the mode with a matching windowId.
+			# XXX: refresh that item?
+			if ( my $nextWindow = $item->{nextWindow} ) {				
+				while ( Slim::Buttons::Common::mode($client) ) {
+					Slim::Buttons::Common::popModeRight($client);
+					if ( $client->modeParam('windowId') eq $nextWindow ) {
+						last;
+					}
+				}
+				return;
 			}
 			
 			# Type = 'redirect', hack to allow XMLBrowser items to push into

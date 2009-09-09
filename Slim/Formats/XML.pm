@@ -533,6 +533,11 @@ sub parseOPML {
 	if ( $xml->{sorted} ) {
 		$opml->{sorted} = $xml->{sorted};
 	}
+	
+	# Optional windowId to support nextWindow
+	if ( $xml->{head}->{windowId} ) {
+		$opml->{windowId} = $xml->{head}->{windowId};
+	}
 
 	$xml = undef;
 
