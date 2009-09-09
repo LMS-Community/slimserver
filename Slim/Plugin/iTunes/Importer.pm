@@ -88,7 +88,7 @@ sub initPlugin {
 			'use'  => $prefs->get('itunes'),
 		} );
 	}
-	elsif ( Slim::Utils::OSDetect::isMac() ) {
+	elsif ( main::ISMAC ) {
 		require Slim::Plugin::iTunes::Importer::Artwork::OSX;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::OSX', {
 			'type' => 'artwork',

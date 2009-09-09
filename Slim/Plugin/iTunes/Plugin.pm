@@ -44,7 +44,9 @@ $prefs->setChange(
 	sub {
 		my $value = $_[1];
 		
-		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Plugin', $value);
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer', $value);
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer::Artwork::OSX', $value) if main::ISMAC;
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Importer::Artwork::Win32', $value) if main::ISWINDOWS;
 
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
