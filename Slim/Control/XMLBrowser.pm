@@ -1064,12 +1064,7 @@ sub _cliQuery_done {
 							}
 						}
 						
-						# Bug 13247, support nextWindow param
-						if ( $item->{nextWindow} ) {
-							$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
-						}
-						
-						elsif ( $item->{type} && $item->{type} eq 'search' ) {
+						if ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
@@ -1114,6 +1109,10 @@ sub _cliQuery_done {
 									'params' => \%merged,
 								},
 							};
+							# Bug 13247, support nextWindow param
+							if ( $item->{nextWindow} ) {
+								$actions->{go}{nextWindow} = $item->{nextWindow};
+							}
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
