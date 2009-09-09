@@ -1423,3 +1423,21 @@ DISABLED_PLAYER
 
 ERROR_RATE_LIMITED
 	EN	You are requesting information too fast. Please try again later.
+
+SB_ACCOUNT
+	CS	Účet Squeezebox
+	DA	Squeezebox-konto
+	DE	Squeezebox-Konto
+	EN	Squeezebox Account
+	ES	Cuenta Squeezebox
+	FI	Squeezebox-tili
+	FR	Compte Squeezebox
+	IT	Account Squeezebox
+	NL	Squeezebox-account
+	NO	Squeezebox-konto
+	PL	Konto Squeezebox
+	RU	Учетная запись Squeezebox
+	SV	Squeezebox-konto
+
+MESSAGE_COUNT
+	EN	Messages (%d)

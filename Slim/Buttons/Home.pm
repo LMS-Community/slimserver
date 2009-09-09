@@ -105,6 +105,11 @@ sub init {
 				elsif ( $string eq 'SQUEEZENETWORK_PIN' ) {
 					return sprintf $client->string($string), $client->pin;
 				}
+				elsif ( $string eq 'MESSAGE_COUNT' ) {
+					my $count = $client->playerData->userid->messageCount;
+					
+					return sprintf $client->string($string), $count;
+				}
 			}
 
 			return ( uc($string) eq $string ) ? $client->string($string) : $string;
@@ -1022,6 +1027,34 @@ sub updateMenu {
 	
 	# Insert app menu after radio
 	splice @home, 3, 0, @sorted;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Bug 13230, display a one-time message to users about this menu change
+		my $mode = 'MESSAGE_COUNT';
+		if ( !exists $home{$mode} ) {
+			my $url = Slim::Networking::SqueezeNetwork->url('/api/messages/v1/opml');
+			
+			addMenuOption( $mode => sub {
+				my $client = shift;
+		
+				my %params = (
+					header   => $mode,
+					modeName => $mode,
+					url      => $url,
+					title    => $mode,
+					timeout  => 35,
+				);
+		
+				Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+		
+				$client->modeParam( handledTransition => 1 );
+			} );
+		}
+		
+		if ( $client->playerData->userid->messageCount ) {
+			unshift @home, 'MESSAGE_COUNT';
+		}
+	}
 
 	$homeChoices{$client} = \@home;
 
