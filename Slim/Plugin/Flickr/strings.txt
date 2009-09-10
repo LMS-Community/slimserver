@@ -13,6 +13,12 @@ PLUGIN_FLICKR_MODULE_NAME
 	RU	Flickr
 	SV	Flickr
 
+PLUGIN_FLICKR_SCREENSAVER_MINE
+	EN	Flickr: My Photos
+
+PLUGIN_FLICKR_SCREENSAVER_CONTACTS
+	EN	Flickr: My Contacts
+
 PLUGIN_FLICKR_SCREENSAVER_INTERESTING
 	CS	Flickr: Zajímavé fotky
 	DA	Flickr: Interessante billeder
@@ -43,3 +49,5 @@ PLUGIN_FLICKR_SCREENSAVER_RECENT
 	RU	Flickr: последние фото
 	SV	Flickr: Nya bilder
 
+PLUGIN_FLICKR_ON_FLICKR
+	EN	On Flickr

@@ -10,6 +10,15 @@ use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Networking::SqueezeNetwork;
 
+# SP screensavers
+# XXX these user-required screensavers should be defined some other way
+my @savers = qw(
+	mine
+	contacts
+	interesting
+	recent
+);
+
 sub initPlugin {
 	my $class = shift;
 
@@ -36,19 +45,14 @@ sub initCLI {
 	
 	$class->SUPER::initCLI( %args );
 	
-	# Flickr defines screensavers:
-	# Flickr: Interesting Photos
-	# Flickr: Recent Photos
-	
-	Slim::Control::Request::addDispatch(
-		[ $args{tag}, 'screensaver_interesting' ],
-		[ 1, 1, 1, \&screensaver_interesting ]
-	);
-	
-	Slim::Control::Request::addDispatch(
-		[ $args{tag}, 'screensaver_recent' ],
-		[ 1, 1, 1, \&screensaver_recent ]
-	);
+	for my $saver ( @savers ) {
+		Slim::Control::Request::addDispatch(
+			[ $args{tag}, 'screensaver_' . $saver ],
+			[ 1, 1, 1, sub {
+				_screensaver_request( "/api/flickr/v1/screensaver/$saver", @_ );
+			} ]
+		);
+	}
 }
 
 # Extend initJive to setup screensavers
@@ -57,16 +61,14 @@ sub initJive {
 	
 	my $menu = $class->SUPER::initJive( %args );
 	
-	$menu->[0]->{screensavers} = [
-		{
-			cmd         => [ $args{tag}, 'screensaver_interesting' ],
-			stringToken => 'PLUGIN_FLICKR_SCREENSAVER_INTERESTING',
-		},
-		{
-			cmd         => [ $args{tag}, 'screensaver_recent' ],
-			stringToken => 'PLUGIN_FLICKR_SCREENSAVER_RECENT',
-		},
-	];
+	$menu->[0]->{screensavers} = [];
+	
+	for my $saver ( @savers ) {
+		push @{ $menu->[0]->{screensavers} }, {
+			cmd         => [ $args{tag}, 'screensaver_' . $saver ],
+			stringToken => 'PLUGIN_FLICKR_SCREENSAVER_' . uc($saver),
+		};
+	}
 	
 	return $menu;
 }
@@ -115,14 +117,6 @@ sub trackInfoMenu {
 #   image   => 'http://...',
 #   caption => 'text',
 # } 
-
-sub screensaver_interesting {
-	_screensaver_request( '/api/flickr/v1/screensaver/interesting', @_ );
-}
-
-sub screensaver_recent { 
-	_screensaver_request( '/api/flickr/v1/screensaver/recent', @_ );
-}
 
 sub _screensaver_request {
 	my $url     = shift;
