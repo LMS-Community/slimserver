@@ -1549,10 +1549,12 @@ sub alarmInNextDay {
 	my $alarmSet = undef;
 	if ( defined($nextAlarm) ) {
 		my $now = CORE::time();
-		my $then = $nextAlarm->nextDue();
-		if ( $then - $now <= 86400 ) {
-			# alarm is set to go off in next 24h
-			$alarmSet = 1;
+		my $then = $nextAlarm->nextDue;
+		my $nextDue = $then - $now;
+		# alarm is set to go off in next 24h
+		if ( $nextDue > 0 && $nextDue <= 86400 ) {
+			# for SP fallback alarm, return # of seconds until alarm
+			$alarmSet = $nextDue;
 		}
 	}
 	return $alarmSet;

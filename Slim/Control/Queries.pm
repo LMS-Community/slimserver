@@ -3605,7 +3605,8 @@ sub statusQuery {
 	# give a count in menu mode no matter what
 	if ($menuMode) {
 		# send information about the alarm state to SP
-		my $alarmComing  = Slim::Utils::Alarm->alarmInNextDay($client) ? 'set' : 'none';
+		my $alarmNext    = Slim::Utils::Alarm->alarmInNextDay($client);
+		my $alarmComing  = $alarmNext ? 'set' : 'none';
 		my $alarmCurrent = Slim::Utils::Alarm->getCurrentAlarm($client);
 		# alarm_state
 		# 'active': means alarm currently going off
@@ -3616,11 +3617,14 @@ sub statusQuery {
 			my $snoozing     = $alarmCurrent->snoozeActive();
 			if ($snoozing) {
 				$request->addResult('alarm_state', 'snooze');
+				$request->addResult('alarm_next', 0);
 			} else {
 				$request->addResult('alarm_state', 'active');
+				$request->addResult('alarm_next', 0);
 			}
 		} else {
 			$request->addResult('alarm_state', $alarmComing);
+			$request->addResult('alarm_next', $alarmNext + 0);
 		}
 
 		main::DEBUGLOG && $log->debug("statusQuery(): setup base for jive");
