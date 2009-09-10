@@ -1064,7 +1064,7 @@ sub _cliQuery_done {
 							}
 						}
 						
-						if ( $item->{type} && $item->{type} eq 'search' ) {
+						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
