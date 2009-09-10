@@ -31,6 +31,7 @@ sub read {
 	my $fh;
 
 	if (defined $file && ref $file) {
+$log->error('filehandle');
 		$fh = $file;	# filehandle passed
 	} else {
 		if (!defined $file) {
@@ -40,6 +41,7 @@ sub read {
 				return @items;
 			}
 		}
+$log->error('open');
 		open($fh, $file) || do {
 			$log->warn("Cannot open $file: $!");
 			return @items;
@@ -106,7 +108,14 @@ sub read {
 		next if $entry eq "";
 
 		$entry =~ s|$LF||g;
-		$entry = Slim::Utils::Unicode::utf8encode_locale($entry);	
+
+		if (main::ISWINDOWS) {
+			$entry = Win32::GetANSIPathName($entry);	
+		}
+		else {
+			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);	
+		}
+
 		$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 		if ($class->playlistEntryIsValid($entry, $url)) {
