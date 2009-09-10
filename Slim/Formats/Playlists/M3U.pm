@@ -31,7 +31,6 @@ sub read {
 	my $fh;
 
 	if (defined $file && ref $file) {
-$log->error('filehandle');
 		$fh = $file;	# filehandle passed
 	} else {
 		if (!defined $file) {
@@ -41,7 +40,6 @@ $log->error('filehandle');
 				return @items;
 			}
 		}
-$log->error('open');
 		open($fh, $file) || do {
 			$log->warn("Cannot open $file: $!");
 			return @items;
