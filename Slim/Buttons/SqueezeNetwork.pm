@@ -134,10 +134,10 @@ sub connectSqueezeNetwork {
 		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 		my $packed;
 
-		if ( $host eq "www.squeezenetwork.com" ) {
+		if ( $host eq "www.(?:squeezenetwork|mysqueezebox).com" ) {
 			$packed = pack 'N', 1;
 		}
-		elsif ( $host eq "www.test.squeezenetwork.com" ) {
+		elsif ( $host eq "www.test.(?:squeezenetwork|mysqueezebox).com" ) {
 			$packed = pack 'N', 2;
 		}
 		else {

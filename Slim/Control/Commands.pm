@@ -261,10 +261,10 @@ sub clientConnectCommand {
 		my ($host, $packed);
 		$host = $request->getParam('_where');
 		
-		if ( $host =~ /^www.squeezenetwork.com$/i ) {
+		if ( $host =~ /^www.(?:squeezenetwork|mysqueezebox).com$/i ) {
 			$host = 1;
 		}
-		elsif ( $host =~ /^www.test.squeezenetwork.com$/i ) {
+		elsif ( $host =~ /^www.test.(?:squeezenetwork|mysqueezebox).com$/i ) {
 			$host = 2;
 		}
 		elsif ( $host eq '0' ) {
@@ -389,7 +389,7 @@ sub disconnectCommand {
 	}
 
 	# leave the SN case to its own command
-	if ( $server =~ /^www.squeezenetwork.com$/i || $server =~ /^www.test.squeezenetwork.com$/i ) {
+	if ( $server =~ /^www.(?:squeezenetwork|mysqueezebox).com$/i || $server =~ /^www.test.(?:squeezenetwork|mysqueezebox).com$/i ) {
 
 		main::DEBUGLOG && $log->debug("Sending disconnect request for $remoteClient to $server");
 		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
