@@ -85,6 +85,7 @@ sub setMode {
 		modeName  => 'TrackInfo',
 		opml      => $getMenu->( $client ),
 		onRefresh => $getMenu,
+		timeout   => 35,
 	);
 	
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );

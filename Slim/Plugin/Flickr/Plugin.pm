@@ -28,13 +28,11 @@ sub initPlugin {
 		is_app => 1,
 	);
 	
-=pod TODO
 	# Track Info item
 	Slim::Menu::TrackInfo->registerInfoProvider( flickr => (
 		after => 'middle',
 		func  => \&trackInfoMenu,
 	) );
-=cut
 }
 
 # Don't add this item to any menu
@@ -73,42 +71,32 @@ sub initJive {
 	return $menu;
 }
 
-=pod
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Flickr' );
+	# Only display on SP devices
+	# XXX should add a way to indicate if $client is ip3k but controlled by SP
+	return unless $client->isa('Slim::Player::SqueezePlay');
+	
+	# is app enabled?
+	return if !grep { 'flickr' } keys %{ $client->apps };
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
-	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
-	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	
-	my $snURL = '/api/flickr/v1/opml/context';
-	
-	# Search by artist/album/track
-	$snURL .= '?artist=' . uri_escape_utf8($artist)
-		  . '&album='    . uri_escape_utf8($album)
-		  . '&track='    . uri_escape_utf8($title)
-		  . '&upc='      . ( $remoteMeta->{upc} || '' );
-	
-	if ( my $amazon = $remoteMeta->{amazon} ) {
-		$snURL .= '&album_asin='         . $amazon->{album_asin}
-			  . '&album_asin_digital=' . $amazon->{album_asin_digital}
-			  . '&song_asin_digital='  . $amazon->{song_asin_digital};
-	}
-	
-	if ( $artist && ( $album || $title ) ) {
+	if ( $artist ) {
+		my $snURL = '/api/flickr/v1/opml/context';
+		$snURL .= '?artist=' . uri_escape_utf8($artist);
+		
 		return {
-			type      => 'link',
+			type      => 'slideshow',
 			name      => $client->string('PLUGIN_FLICKR_ON_FLICKR'),
 			url       => Slim::Networking::SqueezeNetwork->url($snURL),
 			favorites => 0,
 		};
 	}
 }
-=cut
 
 ### Screensavers
 
