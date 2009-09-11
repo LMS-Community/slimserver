@@ -900,6 +900,8 @@ sub _cliQuery_done {
 						push @{$images}, {
 							image   => $item->{image},
 							caption => $item->{name},
+							date    => $item->{date},
+							owner   => $item->{owner},
 						};
 					}
 
