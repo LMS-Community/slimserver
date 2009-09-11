@@ -5576,13 +5576,8 @@ sub contextMenuQuery {
 		push @requestParams, $key . ':' . $params->{$key};
 	}
 
-	# the first check is if this is for (what was) the original contextmenu command, which pushes a menu of "mixers"
-	# the common example of this is a user using MusicIP and CustomMix
 	my $proxiedRequest;
-	if ($menu eq '1' || !defined($menu)) {
-		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'mixermenu', $index, $quantity, @requestParams ] );
-
-	} elsif (defined($menu)) {
+	if (defined($menu)) {
 		# send the command to *info, where * is the param given to the menu command
 		my $command = $menu . 'info';
 		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ $command, 'items', $index, $quantity, @requestParams ] );
