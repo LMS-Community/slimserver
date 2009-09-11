@@ -1041,7 +1041,7 @@ sub _objectInfoHandler {
 		} else {
 			return {
 				type        => 'link',
-				name        => cstring($client, 'PLUGIN_FAVORITES_ADD'),
+				name        => cstring($client, 'PLUGIN_FAVORITES_SAVE'),
 				url         => \&objectInfoAddFavorite,
 				passthrough => [ $obj ],
 				favorites   => 0,
