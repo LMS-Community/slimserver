@@ -22833,8 +22833,10 @@ PRESET_ADDING
 	ZH_CN	保存最喜爱的...
 
 PRESET_HOLD_TO_SAVE
+# SLT: instruction for the user to hold the button if he wants to save that preset
 	EN	Preset #%s (hold to save)
 
 PRESET
+# SLT: a preset button on eg. the Radio
 	EN	Preset #%s
 
