@@ -3421,7 +3421,7 @@ DESCRIPTION
 	HE	תיאור
 	IT	Descrizione
 	NL	Beschrijving
-	No	Beskrivelse
+	NO	Beskrivelse
 	PL	Opis
 	RU	Описание
 	SV	Beskrivning
