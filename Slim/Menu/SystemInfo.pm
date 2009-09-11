@@ -329,7 +329,7 @@ sub infoServer {
 		},
 	];
 	
-	if ( Slim::Utils::OSDetect->getOS->sqlHelperClass =~ /MySQL/ ) {
+	if ( Slim::Schema::hasLibrary() && Slim::Utils::OSDetect->getOS->sqlHelperClass =~ /MySQL/ ) {
 		push @{$items},	{
 			type => 'text',
 			name => cstring($client, 'MYSQL_VERSION') . cstring($client, 'COLON') . ' '
