@@ -897,6 +897,7 @@ sub _cliQuery_done {
 				if ( $request->getParam('slideshow') ) {
 					my $images = [];
 					for my $item ( @{ $subFeed->{items} } ) {
+						next unless $item->{image};
 						push @{$images}, {
 							image   => $item->{image},
 							caption => $item->{name},
