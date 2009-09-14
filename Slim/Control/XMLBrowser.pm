@@ -1330,18 +1330,21 @@ sub hasAudio {
 
 sub touchToPlay {
 	my $item = shift;
+	
 	if ( $item->{'type'} && $item->{'type'} =~ /^(?:audio)$/ ) {
-		return $item->{'url'} || scalar @{ $item->{outline} || [] };
+		return 1;
+	}
+	elsif ( $item->{'on_select'} && $item->{'on_select'} eq 'play' ) {
+		return 1;
 	}
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:playlist)$/ && $item->{'parser'} ) {
-		return $item->{'url'};
+		return 1;
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
-		return $item->{'enclosure'}->{'url'};
+		return 1;
 	}
-	else {
-		return undef;
-	}
+
+	return;
 }
 
 sub hasLink {
