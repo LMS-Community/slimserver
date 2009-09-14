@@ -25,7 +25,7 @@ my @allAttributes = (qw(
 	bitrate
 	secs
 	
-	artistname albumname coverurl type info_link
+	artist artistname albumname coverurl type info_link
 	
 	title titlesort titlesearch album tracknum
 	timestamp filesize disc audio audio_size audio_offset year
@@ -47,7 +47,6 @@ my @allAttributes = (qw(
 
 		# Emulate absent relationships
 		qw(
-			artist
 			albumid
 		),
 	);
