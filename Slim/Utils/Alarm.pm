@@ -1714,7 +1714,7 @@ sub getPlaylists {
 		my @savedArray;
 		foreach my $playlist (@saved) {
 			push @savedArray, {
-					title => Slim::Music::Info::standardTitle($client, $playlist->url),
+					title => $playlist->title,
 					url => $playlist->url
 				};
 		}
@@ -1765,13 +1765,9 @@ sub getPlaylists {
 		
 		foreach my $playlist (@{$type->{items}}) {
 			# Stringify keys that are enclosed in curly braces
-			my ($stringTitle) = $playlist->{title} =~ /^{(.*)}$/; 
-			if (defined $stringTitle) {
-				$stringTitle = Slim::Utils::Strings::cstring($client, $stringTitle);
-			} else {
-				$stringTitle = $playlist->{title};
+			if ($playlist->{title} =~ /^{(.*)}$/) {
+				$playlist->{title} = Slim::Utils::Strings::cstring($client, $1);
 			}
-			$playlist->{title} = $stringTitle;
 		}
 	}
 
