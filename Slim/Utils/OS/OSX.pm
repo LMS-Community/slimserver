@@ -184,7 +184,11 @@ sub dirsFor {
 			
 	} elsif ($dir eq 'music') {
 
-		my $musicDir = catdir($ENV{'HOME'}, 'Music');
+		my $musicDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
+		
+		if (!-d $musicDir) {
+			$musicDir = catdir($ENV{'HOME'}, 'Music');
+		}
 
 		# bug 1361 expand music folder if it's an alias, or SC won't start
 		if ( my $alias = $class->pathFromMacAlias($musicDir) ) {
