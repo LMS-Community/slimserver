@@ -30,7 +30,7 @@ use Slim::Utils::Log;
 	$class->has_many('genreTracks' => 'Slim::Schema::GenreTrack' => 'genre');
 
 	if ($] > 5.007) {
-		$class->utf8_columns(qw/name namesort/);
+		$class->utf8_columns(qw/name namesort namesearch/);
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Genre');
