@@ -28,10 +28,10 @@ use AnyEvent (); BEGIN { AnyEvent::common_sense }
 
 use base 'Exporter';
 
-our @EXPORT = qw(fh_nonblocking guard fork_call portable_pipe portable_socketpair);
-our @EXPORT_OK = qw(AF_INET6 WSAEWOULDBLOCK WSAEINPROGRESS WSAEINVAL);
+our @EXPORT = qw(fh_nonblocking guard fork_call portable_pipe portable_socketpair run_cmd);
+our @EXPORT_OK = qw(AF_INET6 WSAEWOULDBLOCK WSAEINPROGRESS WSAEINVAL close_all_fds_except);
 
-our $VERSION = 4.86;
+our $VERSION = $AnyEvent::VERSION;
 
 BEGIN {
    my $af_inet6 = eval { local $SIG{__DIE__}; &Socket::AF_INET6 };
@@ -259,7 +259,7 @@ sub _fork_schedule {
 
          my $buf;
 
-         my $ww; $ww = AnyEvent->io (fh => $r, poll => 'r', cb => sub {
+         my $ww; $ww = AE::io $r, 0, sub {
             my $len = sysread $r, $buf, 65536, length $buf;
 
             if ($len <= 0) {
@@ -280,7 +280,7 @@ sub _fork_schedule {
                # clean up the pid
                waitpid $pid, 0;
             }
-         });
+         };
 
       } elsif (defined $pid) {
          # child
@@ -396,53 +396,331 @@ guard.
 
 =cut
 
-sub guard(&) {
-   if (!$ENV{PERL_ANYEVENT_AVOID_GUARD} && eval "use Guard 0.5 (); 1") {
-      warn "AnyEvent::Util: using Guard module to implement guards.\n" if $AnyEvent::VERBOSE >= 8;
-      *guard = \&Guard::guard;
-   } else {
-      warn "AnyEvent::Util: using pure-perl guard implementation.\n" if $AnyEvent::VERBOSE >= 8;
+if (!$ENV{PERL_ANYEVENT_AVOID_GUARD} && eval { require Guard; $Guard::VERSION >= 0.5 }) {
+   warn "AnyEvent::Util: using Guard module to implement guards.\n" if $AnyEvent::VERBOSE >= 8;
+   *guard = \&Guard::guard;
+} else {
+   warn "AnyEvent::Util: using pure-perl guard implementation.\n" if $AnyEvent::VERBOSE >= 8;
 
-      *AnyEvent::Util::guard::DESTROY = sub {
-         local $@;
+   *AnyEvent::Util::guard::DESTROY = sub {
+      local $@;
 
-         eval {
-            local $SIG{__DIE__};
-            ${$_[0]}->();
-         };
-
-         warn "runtime error in AnyEvent::guard callback: $@" if $@;
+      eval {
+         local $SIG{__DIE__};
+         ${$_[0]}->();
       };
 
-      *AnyEvent::Util::guard::cancel = sub ($) {
-         ${$_[0]} = sub { };
-      };
+      warn "runtime error in AnyEvent::guard callback: $@" if $@;
+   };
 
-      *guard = sub (&) {
-         bless \(my $cb = shift), "AnyEvent::Util::guard"
+   *AnyEvent::Util::guard::cancel = sub ($) {
+      ${$_[0]} = sub { };
+   };
+
+   *guard = sub (&) {
+      bless \(my $cb = shift), "AnyEvent::Util::guard"
+   };
+}
+
+=item AnyEvent::Util::close_all_fds_except @fds
+
+This rarely-used function simply closes all file descriptors (or tries to)
+of the current process except the ones given as arguments.
+
+When you want to start a long-running background server, then it is often
+beneficial to do this, as too many C-libraries are too stupid to mark
+their internal fd's as close-on-exec.
+
+The function expects to be called shortly before an C<exec> call.
+
+Example: close all fds except 0, 1, 2.
+
+   close_all_fds_except 0, 2, 1;
+
+=cut
+
+sub close_all_fds_except {
+   my %except; @except{@_} = ();
+
+   require POSIX;
+
+   # some OSes have a usable /dev/fd, sadly, very few
+   if ($^O =~ /(freebsd|cygwin|linux)/) {
+      # netbsd, openbsd, solaris have a broken /dev/fd
+      my $dir;
+      if (opendir $dir, "/dev/fd" or opendir $dir, "/proc/self/fd") {
+         my @fds = sort { $a <=> $b } grep /^\d+$/, readdir $dir;
+         # broken OS's have device nodes for 0..63 usually, solaris 0..255
+         if (@fds < 20 or "@fds" ne join " ", 0..$#fds) {
+            # assume the fds array is valid now
+            exists $except{$_} or POSIX::close ($_)
+               for @fds;
+            return;
+         }
       }
    }
 
-   goto &guard;
+   my $fd_max = eval { POSIX::sysconf (POSIX::_SC_OPEN_MAX ()) - 1 } || 1023;
+
+   exists $except{$_} or POSIX::close ($_)
+      for 0..$fd_max;
 }
 
-#############################################################################
+=item $cv = run_cmd $cmd, key => value...
 
-our %SIGNAME2NUM;
+Run a given external command, potentially redirecting file descriptors and
+return a condition variable that gets sent the exit status (like C<$?>)
+when the program exits I<and> all redirected file descriptors have been
+exhausted.
 
-sub sig2num($) {
-   return shift if $_[0] > 0;
+The C<$cmd> is either a single string, which is then passed to a shell, or
+an arrayref, which is passed to the C<execvp> function.
 
-   unless (scalar keys %SIGNAME2NUM) {
-      require Config;
+The key-value pairs can be:
 
-      @SIGNAME2NUM{ split ' ', $Config::Config{sig_name} }
-                  = split ' ', $Config::Config{sig_num};
+=over 4
+
+=item ">" => $filename
+
+Redirects program standard output into the specified filename, similar to C<<
+>filename >> in the shell.
+
+=item ">" => \$data
+
+Appends program standard output to the referenced scalar. The condvar will
+not be signalled before EOF was received.
+
+=item ">" => $filehandle
+
+Redirects program standard output to the given filehandle (or actualy its
+underlying file descriptor).
+
+=item ">" => $callback->($data)
+
+Calls the given callback each time standard output receives some data,
+passing it the data received. On EOF, the callback will be invoked once
+without any arguments.
+
+=item "fd>" => $see_above
+
+Like ">", but redirects the specified fd number instead.
+
+=item "<" => $see_above
+
+The same, but redirects the program's standard input instead. The same
+forms as for ">" are allowed.
+
+In the callback form, the callback is supposed to return data to be
+written, or the empty list or C<undef> or a zero-length scalar to signal
+EOF.
+
+=item "fd<" => $see_above
+
+Like "<", but redirects the specified file descriptor instead.
+
+=item on_prepare => $cb
+
+Specify a callback that is executed just before the comamnd is C<exec>'ed,
+in the child process. Be careful not to use any event handling or other
+services not available in the child.
+
+This can be useful to set up the environment in special ways, such as
+changing the priority of the command.
+
+=item close_all => $boolean
+
+When C<close_all> is enabled (default is disabled), then all extra file
+descriptors will be closed, except the ones that were redirected and C<0>,
+C<1> and C<2>.
+
+See C<close_all_fds_except> for more details.
+
+=back
+
+Example: run C<rm -rf />, redirecting standard input, output and error to
+F</dev/null>.
+
+   my $cv = run_cmd [qw(rm -rf /)],
+      "<", "/dev/null",
+      ">", "/dev/null",
+      "2>", "/dev/null";
+   $cv->recv and die "d'oh! something survived!"
+
+Example: run F<openssl> and create a self-signed certificate and key,
+storing them in C<$cert> and C<$key>. When finished, check the exit status
+in the callback and print key and certificate.
+
+   my $cv = run_cmd [qw(openssl req 
+                     -new -nodes -x509 -days 3650
+                     -newkey rsa:2048 -keyout /dev/fd/3
+                     -batch -subj /CN=AnyEvent
+                    )],
+      "<", "dev/null",
+      ">" , \my $cert,
+      "3>", \my $key,
+      "2>", "/dev/null";
+
+   $cv->cb (sub {
+      shift->recv and die "openssl failed";
+
+      print "$key\n$cert\n";
+   });
+
+=cut
+
+sub run_cmd {
+   my $cmd = shift;
+
+   require POSIX;
+
+   my $cv = AE::cv;
+
+   my %arg;
+   my %redir;
+   my @exe;
+
+   while (@_) {
+      my ($type, $ob) = splice @_, 0, 2;
+
+      my $fd = $type =~ s/^(\d+)// ? $1 : undef;
+
+      if ($type eq ">") {
+         $fd = 1 unless defined $fd;
+
+         if (defined eval { fileno $ob }) {
+            $redir{$fd} = $ob;
+         } elsif (ref $ob) {
+            my ($pr, $pw) = AnyEvent::Util::portable_pipe;
+            $cv->begin;
+            my $w; $w = AE::io $pr, 0,
+               "SCALAR" eq ref $ob
+                  ? sub {
+                       sysread $pr, $$ob, 16384, length $$ob
+                          and return;
+                       undef $w; $cv->end;
+                    }
+                  : sub {
+                       my $buf;
+                       sysread $pr, $buf, 16384
+                          and return $ob->($buf);
+                       undef $w; $cv->end;
+                       $ob->();
+                    }
+            ;
+            $redir{$fd} = $pw;
+         } else {
+            push @exe, sub {
+               open my $fh, ">", $ob
+                  or POSIX::_exit (125);
+               $redir{$fd} = $fh;
+            };
+         }
+
+      } elsif ($type eq "<") {
+         $fd = 0 unless defined $fd;
+
+         if (defined eval { fileno $ob }) {
+            $redir{$fd} = $ob;
+         } elsif (ref $ob) {
+            my ($pr, $pw) = AnyEvent::Util::portable_pipe;
+            $cv->begin;
+
+            my $data;
+            if ("SCALAR" eq ref $ob) {
+               $data = $$ob;
+               $ob = sub { };
+            } else {
+               $data = $ob->();
+            }
+
+            my $w; $w = AE::io $pw, 1, sub {
+               my $len = syswrite $pw, $data;
+
+               if ($len <= 0) {
+                  undef $w; $cv->end;
+               } else {
+                  substr $data, 0, $len, "";
+                  unless (length $data) {
+                     $data = $ob->();
+                     unless (length $data) {
+                        undef $w; $cv->end
+                     }
+                  }
+               }
+            };
+
+            $redir{$fd} = $pr;
+         } else {
+            push @exe, sub {
+               open my $fh, "<", $ob
+                  or POSIX::_exit (125);
+               $redir{$fd} = $fh;
+            };
+         }
+
+      } else {
+         $arg{$type} = $ob;
+      }
    }
 
-   $SIGNAME2NUM{+shift}
-}
+   my $pid = fork;
 
+   defined $pid
+      or Carp::croak "fork: $!";
+
+   unless ($pid) {
+      # step 1, execute
+      $_->() for @exe;
+
+      # step 2, move any existing fd's out of the way
+      # this also ensures that dup2 is never called with fd1==fd2
+      # so the cloexec flag is always cleared
+      my (@oldfh, @close);
+      for my $fh (values %redir) {
+         push @oldfh, $fh; # make sure we keep it open
+         $fh = fileno $fh; # we only want the fd
+
+         # dup if we are in the way
+         # if we "leak" fds here, they will be dup2'ed over later
+         defined ($fh = POSIX::dup ($fh)) or POSIX::_exit (124)
+            while exists $redir{$fh};
+      }
+
+      # step 3, execute redirects
+      while (my ($k, $v) = each %redir) {
+         defined POSIX::dup2 ($v, $k)
+            or POSIX::_exit (123);
+      }
+
+      # step 4, close everything else, except 0, 1, 2
+      if ($arg{close_all}) {
+         close_all_fds_except 0, 1, 2, keys %redir
+      } else {
+         POSIX::close ($_)
+            for values %redir;
+      }
+
+      eval { $arg{on_prepare}(); 1 } or POSIX::_exit (123)
+         if exists $arg{on_prepare};
+
+      ref $cmd
+         ? exec {$cmd->[0]} @$cmd
+         : exec $cmd;
+
+      POSIX::_exit (126);
+   }
+
+   %redir = (); # close child side of the fds
+
+   my $status;
+   $cv->begin (sub { shift->send ($status) });
+   my $cw; $cw = AE::child $pid, sub {
+      $status = $_[1];
+      undef $cw; $cv->end;
+   };
+
+   $cv
+}
 1;
 
 =back

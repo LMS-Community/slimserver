@@ -1,9 +1,9 @@
 =head1 NAME
 
-AnyEvent - events independent of event loop implementation
+AnyEvent - the DBI of event loop programming
 
-EV, Event, Glib, Tk, Perl, Event::Lib, Qt and POE are various supported
-event loops.
+EV, Event, Glib, Tk, Perl, Event::Lib, Irssi, rxvt-unicode, IO::Async, Qt
+and POE are various supported event loops/environments.
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ There is a mailinglist for discussing all things AnyEvent, and an IRC
 channel, too.
 
 See the AnyEvent project page at the B<Schmorpforge Ta-Sa Software
-Respository>, at L<http://anyevent.schmorp.de>, for more info.
+Repository>, at L<http://anyevent.schmorp.de>, for more info.
 
 =head1 WHY YOU SHOULD USE THIS MODULE (OR NOT)
 
@@ -183,6 +183,12 @@ declared.
 
 =head2 I/O WATCHERS
 
+   $w = AnyEvent->io (
+      fh   => <filehandle_or_fileno>,
+      poll => <"r" or "w">,
+      cb   => <callback>,
+   );
+
 You can create an I/O watcher by calling the C<< AnyEvent->io >> method
 with the following mandatory key-value pairs as arguments:
 
@@ -220,6 +226,14 @@ watcher.
    });
 
 =head2 TIME WATCHERS
+
+   $w = AnyEvent->timer (after => <seconds>, cb => <callback>);
+
+   $w = AnyEvent->timer (
+      after    => <fractional_seconds>,
+      interval => <fractional_seconds>,
+      cb       => <callback>,
+   );
 
 You can create a time watcher by calling the C<< AnyEvent->timer >>
 method with the following mandatory arguments:
@@ -357,6 +371,8 @@ Note that updating the time I<might> cause some events to be handled.
 
 =head2 SIGNAL WATCHERS
 
+   $w = AnyEvent->signal (signal => <uppercase_signal_name>, cb => <callback>);
+
 You can watch for signals using a signal watcher, C<signal> is the signal
 I<name> in uppercase and without any C<SIG> prefix, C<cb> is the Perl
 callback to be invoked whenever a signal occurs.
@@ -385,27 +401,34 @@ Example: exit on SIGINT
 =head3 Signal Races, Delays and Workarounds
 
 Many event loops (e.g. Glib, Tk, Qt, IO::Async) do not support attaching
-callbacks to signals in a generic way, which is a pity, as you cannot do
-race-free signal handling in perl. AnyEvent will try to do it's best, but
-in some cases, signals will be delayed. The maximum time a signal might
-be delayed is specified in C<$AnyEvent::MAX_SIGNAL_LATENCY> (default: 10
-seconds). This variable can be changed only before the first signal
-watcher is created, and should be left alone otherwise. Higher values
+callbacks to signals in a generic way, which is a pity, as you cannot
+do race-free signal handling in perl, requiring C libraries for
+this. AnyEvent will try to do it's best, which means in some cases,
+signals will be delayed. The maximum time a signal might be delayed is
+specified in C<$AnyEvent::MAX_SIGNAL_LATENCY> (default: 10 seconds). This
+variable can be changed only before the first signal watcher is created,
+and should be left alone otherwise. This variable determines how often
+AnyEvent polls for signals (in case a wake-up was missed). Higher values
 will cause fewer spurious wake-ups, which is better for power and CPU
-saving. All these problems can be avoided by installing the optional
-L<Async::Interrupt> module. This will not work with inherently broken
-event loops such as L<Event> or L<Event::Lib> (and not with L<POE>
-currently, as POE does it's own workaround with one-second latency). With
-those, you just have to suffer the delays.
+saving.
+
+All these problems can be avoided by installing the optional
+L<Async::Interrupt> module, which works with most event loops. It will not
+work with inherently broken event loops such as L<Event> or L<Event::Lib>
+(and not with L<POE> currently, as POE does it's own workaround with
+one-second latency). For those, you just have to suffer the delays.
 
 =head2 CHILD PROCESS WATCHERS
 
+   $w = AnyEvent->child (pid => <process id>, cb => <callback>);
+
 You can also watch on a child process exit and catch its exit status.
 
-The child process is specified by the C<pid> argument (if set to C<0>, it
-watches for any child process exit). The watcher will triggered only when
-the child process has finished and an exit status is available, not on
-any trace events (stopped/continued).
+The child process is specified by the C<pid> argument (one some backends,
+using C<0> watches for any child process exit, on others this will
+croak). The watcher will be triggered only when the child process has
+finished and an exit status is available, not on any trace events
+(stopped/continued).
 
 The callback will be called with the pid and exit status (as returned by
 waitpid), so unlike other watcher types, you I<can> rely on child watcher
@@ -456,6 +479,8 @@ Example: fork a process and wait for it
 
 =head2 IDLE WATCHERS
 
+   $w = AnyEvent->idle (cb => <callback>);
+
 Sometimes there is a need to do something, but it is not so important
 to do it instantly, but only when there is nothing better to do. This
 "nothing better to do" is usually defined to be "no other events need
@@ -490,6 +515,11 @@ program is otherwise idle:
    });
 
 =head2 CONDITION VARIABLES
+
+   $cv = AnyEvent->condvar;
+
+   $cv->send (<list>);
+   my @res = $cv->recv;
 
 If you are familiar with some event loops you will know that all of them
 require you to run some blocking "loop", "run" or similar function that
@@ -564,7 +594,7 @@ Example: wait for a timer.
    );
 
    # this "blocks" (while handling events) till the callback
-   # calls -<send
+   # calls ->send
    $result_ready->recv;
 
 Example: wait for a timer, but take advantage of the fact that condition
@@ -638,9 +668,10 @@ to use a condition variable for the whole process.
 
 Every call to C<< ->begin >> will increment a counter, and every call to
 C<< ->end >> will decrement it.  If the counter reaches C<0> in C<< ->end
->>, the (last) callback passed to C<begin> will be executed. That callback
-is I<supposed> to call C<< ->send >>, but that is not required. If no
-callback was set, C<send> will be called without any arguments.
+>>, the (last) callback passed to C<begin> will be executed, passing the
+condvar as first argument. That callback is I<supposed> to call C<< ->send
+>>, but that is not required. If no group callback was set, C<send> will
+be called without any arguments.
 
 You can think of C<< $cv->send >> giving you an OR condition (one call
 sends), while C<< $cv->begin >> and C<< $cv->end >> giving you an AND
@@ -677,7 +708,7 @@ begung can potentially be zero:
    my $cv = AnyEvent->condvar;
 
    my %result;
-   $cv->begin (sub { $cv->send (\%result) });
+   $cv->begin (sub { shift->send (\%result) });
 
    for my $host (@list_of_hosts) {
       $cv->begin;
@@ -762,10 +793,10 @@ C<croak> have been called.
 This is a mutator function that returns the callback set and optionally
 replaces it before doing so.
 
-The callback will be called when the condition becomes "true", i.e. when
-C<send> or C<croak> are called, with the only argument being the condition
-variable itself. Calling C<recv> inside the callback or at any later time
-is guaranteed not to block.
+The callback will be called when the condition becomes (or already was)
+"true", i.e. when C<send> or C<croak> are called (or were called), with
+the only argument being the condition variable itself. Calling C<recv>
+inside the callback or at any later time is guaranteed not to block.
 
 =back
 
@@ -778,12 +809,11 @@ The available backend classes are (every class has its own manpage):
 =item Backends that are autoprobed when no other event loop can be found.
 
 EV is the preferred backend when no other event loop seems to be in
-use. If EV is not installed, then AnyEvent will try Event, and, failing
-that, will fall back to its own pure-perl implementation, which is
-available everywhere as it comes with AnyEvent itself.
+use. If EV is not installed, then AnyEvent will fall back to its own
+pure-perl implementation, which is available everywhere as it comes with
+AnyEvent itself.
 
    AnyEvent::Impl::EV        based on EV (interface to libev, best choice).
-   AnyEvent::Impl::Event     based on Event, very stable, few glitches.
    AnyEvent::Impl::Perl      pure-perl implementation, fast and portable.
 
 =item Backends that are transparently being picked up when they are used.
@@ -794,10 +824,12 @@ them. This means that AnyEvent will automatically pick the right backend
 when the main program loads an event module before anything starts to
 create watchers. Nothing special needs to be done by the main program.
 
+   AnyEvent::Impl::Event     based on Event, very stable, few glitches.
    AnyEvent::Impl::Glib      based on Glib, slow but very stable.
    AnyEvent::Impl::Tk        based on Tk, very broken.
    AnyEvent::Impl::EventLib  based on Event::Lib, leaks memory and worse.
    AnyEvent::Impl::POE       based on POE, very slow, some limitations.
+   AnyEvent::Impl::Irssi     used when running within irssi.
 
 =item Backends with special needs.
 
@@ -881,8 +913,25 @@ and installs the global L<IO::AIO> watcher in a C<post_detect> block to
 avoid autodetecting the event module at load time.
 
 If called in scalar or list context, then it creates and returns an object
-that automatically removes the callback again when it is destroyed. See
-L<Coro::BDB> for a case where this is useful.
+that automatically removes the callback again when it is destroyed (or
+C<undef> when the hook was immediately executed). See L<AnyEvent::AIO> for
+a case where this is useful.
+
+Example: Create a watcher for the IO::AIO module and store it in
+C<$WATCHER>. Only do so after the event loop is initialised, though.
+
+   our WATCHER;
+
+   my $guard = AnyEvent::post_detect {
+      $WATCHER = AnyEvent->io (fh => IO::AIO::poll_fileno, poll => 'r', cb => \&IO::AIO::poll_cb);
+   };
+
+   # the ||= is important in case post_detect immediately runs the block,
+   # as to not clobber the newly-created watcher. assigning both watcher and
+   # post_detect guard to the same variable has the advantage of users being
+   # able to just C<undef $WATCHER> if the watcher causes them grief.
+
+   $WATCHER ||= $guard;
 
 =item @AnyEvent::post_detect
 
@@ -1059,8 +1108,8 @@ package AnyEvent;
 
 # basically a tuned-down version of common::sense
 sub common_sense {
-   # no warnings
-   ${^WARNING_BITS} ^= ${^WARNING_BITS};
+   # from common:.sense 1.0
+   ${^WARNING_BITS} = "\xfc\x3f\xf3\x00\x0f\xf3\xcf\xc0\xf3\xfc\x33\x03";
    # use strict vars subs
    $^H |= 0x00000600;
 }
@@ -1069,7 +1118,7 @@ BEGIN { AnyEvent::common_sense }
 
 use Carp ();
 
-our $VERSION = 4.86;
+our $VERSION = '5.2';
 our $MODEL;
 
 our $AUTOLOAD;
@@ -1104,14 +1153,15 @@ our %PROTOCOL; # (ipv4|ipv6) => (1|2), higher numbers are preferred
 }
 
 my @models = (
-   [EV::                   => AnyEvent::Impl::EV::],
-   [Event::                => AnyEvent::Impl::Event::],
-   [AnyEvent::Impl::Perl:: => AnyEvent::Impl::Perl::],
-   # everything below here will not be autoprobed
+   [EV::                   => AnyEvent::Impl::EV::   , 1],
+   [AnyEvent::Impl::Perl:: => AnyEvent::Impl::Perl:: , 1],
+   # everything below here will not (normally) be autoprobed
    # as the pureperl backend should work everywhere
    # and is usually faster
-   [Glib::                 => AnyEvent::Impl::Glib::],     # becomes extremely slow with many watchers
+   [Event::                => AnyEvent::Impl::Event::, 1],
+   [Glib::                 => AnyEvent::Impl::Glib:: , 1], # becomes extremely slow with many watchers
    [Event::Lib::           => AnyEvent::Impl::EventLib::], # too buggy
+   [Irssi::                => AnyEvent::Impl::Irssi::],    # Irssi has a bogus "Event" package
    [Tk::                   => AnyEvent::Impl::Tk::],       # crashes with many handles
    [Qt::                   => AnyEvent::Impl::Qt::],       # requires special main program
    [POE::Kernel::          => AnyEvent::Impl::POE::],      # lasciate ogni speranza
@@ -1121,9 +1171,10 @@ my @models = (
    # byzantine signal and broken child handling, among others.
    # IO::Async is rather hard to detect, as it doesn't have any
    # obvious default class.
-#   [IO::Async::            => AnyEvent::Impl::IOAsync::],  # requires special main program
-#   [IO::Async::Loop::      => AnyEvent::Impl::IOAsync::],  # requires special main program
-#   [IO::Async::Notifier::  => AnyEvent::Impl::IOAsync::],  # requires special main program
+   [IO::Async::               => AnyEvent::Impl::IOAsync::], # requires special main program
+   [IO::Async::Loop::         => AnyEvent::Impl::IOAsync::], # requires special main program
+   [IO::Async::Notifier::     => AnyEvent::Impl::IOAsync::], # requires special main program
+   [AnyEvent::Impl::IOAsync:: => AnyEvent::Impl::IOAsync::], # requires special main program
 );
 
 our %method = map +($_ => 1),
@@ -1137,7 +1188,7 @@ sub post_detect(&) {
    if ($MODEL) {
       $cb->();
 
-      1
+      undef
    } else {
       push @post_detect, $cb;
 
@@ -1179,15 +1230,17 @@ sub detect() {
          }
 
          unless ($MODEL) {
-            # try to load a model
-
+            # try to autoload a model
             for (@REGISTRY, @models) {
-               my ($package, $model) = @$_;
-               if (eval "require $package"
-                   and ${"$package\::VERSION"} > 0
-                   and eval "require $model") {
+               my ($package, $model, $autoload) = @$_;
+               if (
+                  $autoload
+                  and eval "require $package"
+                  and ${"$package\::VERSION"} > 0
+                  and eval "require $model"
+               ) {
                   $MODEL = $model;
-                  warn "AnyEvent: autoprobed model '$model', using it.\n" if $VERBOSE >= 2;
+                  warn "AnyEvent: autoloaded model '$model', using it.\n" if $VERBOSE >= 2;
                   last;
                }
             }
@@ -1238,11 +1291,61 @@ sub _dupfh($$;$$) {
    ($fh2, $rw)
 }
 
+=head1 SIMPLIFIED AE API
+
+Starting with version 5.0, AnyEvent officially supports a second, much
+simpler, API that is designed to reduce the calling, typing and memory
+overhead.
+
+See the L<AE> manpage for details.
+
+=cut
+
+package AE;
+
+our $VERSION = $AnyEvent::VERSION;
+
+sub io($$$) {
+   AnyEvent->io (fh => $_[0], poll => $_[1] ? "w" : "r", cb => $_[2])
+}
+
+sub timer($$$) {
+   AnyEvent->timer (after => $_[0], interval => $_[1], cb => $_[2])
+}
+
+sub signal($$) {
+   AnyEvent->signal (signal => $_[0], cb => $_[1])
+}
+
+sub child($$) {
+   AnyEvent->child (pid => $_[0], cb => $_[1])
+}
+
+sub idle($) {
+   AnyEvent->idle (cb => $_[0])
+}
+
+sub cv(;&) {
+   AnyEvent->condvar (@_ ? (cb => $_[0]) : ())
+}
+
+sub now() {
+   AnyEvent->now
+}
+
+sub now_update() {
+   AnyEvent->now_update
+}
+
+sub time() {
+   AnyEvent->time
+}
+
 package AnyEvent::Base;
 
 # default implementations for many methods
 
-sub _time {
+sub _time() {
    # probe for availability of Time::HiRes
    if (eval "use Time::HiRes (); Time::HiRes::time (); 1") {
       warn "AnyEvent: using Time::HiRes for sub-second timing accuracy.\n" if $VERBOSE >= 8;
@@ -1269,6 +1372,15 @@ sub condvar {
 # default implementation for ->signal
 
 our $HAVE_ASYNC_INTERRUPT;
+
+sub _have_async_interrupt() {
+   $HAVE_ASYNC_INTERRUPT = 1*(!$ENV{PERL_ANYEVENT_AVOID_ASYNC_INTERRUPT}
+                              && eval "use Async::Interrupt 1.02 (); 1")
+      unless defined $HAVE_ASYNC_INTERRUPT;
+
+   $HAVE_ASYNC_INTERRUPT
+}
+
 our ($SIGPIPE_R, $SIGPIPE_W, %SIG_CB, %SIG_EV, $SIG_IO);
 our (%SIG_ASY, %SIG_ASY_W);
 our ($SIG_COUNT, $SIG_TW);
@@ -1286,17 +1398,17 @@ sub _signal_exec {
    }
 }
 
-# install a dumym wakeupw atcher to reduce signal catching latency
+# install a dummy wakeup watcher to reduce signal catching latency
 sub _sig_add() {
    unless ($SIG_COUNT++) {
       # try to align timer on a full-second boundary, if possible
-      my $NOW = AnyEvent->now;
+      my $NOW = AE::now;
 
-      $SIG_TW = AnyEvent->timer (
-         after    => $MAX_SIGNAL_LATENCY - ($NOW - int $NOW),
-         interval => $MAX_SIGNAL_LATENCY,
-         cb       => sub { }, # just for the PERL_ASYNC_CHECK
-      );
+      $SIG_TW = AE::timer
+         $MAX_SIGNAL_LATENCY - ($NOW - int $NOW),
+         $MAX_SIGNAL_LATENCY,
+         sub { } # just for the PERL_ASYNC_CHECK
+      ;
    }
 }
 
@@ -1305,99 +1417,131 @@ sub _sig_del {
       unless --$SIG_COUNT;
 }
 
-sub _signal {
-   my (undef, %arg) = @_;
+our $_sig_name_init; $_sig_name_init = sub {
+   eval q{ # poor man's autoloading
+      undef $_sig_name_init;
 
-   my $signal = uc $arg{signal}
-      or Carp::croak "required option 'signal' is missing";
+      if (_have_async_interrupt) {
+         *sig2num  = \&Async::Interrupt::sig2num;
+         *sig2name = \&Async::Interrupt::sig2name;
+      } else {
+         require Config;
 
-   $SIG_CB{$signal}{$arg{cb}} = $arg{cb};
+         my %signame2num;
+         @signame2num{ split ' ', $Config::Config{sig_name} }
+                        = split ' ', $Config::Config{sig_num};
 
-   if ($HAVE_ASYNC_INTERRUPT) {
-      # async::interrupt
+         my @signum2name;
+         @signum2name[values %signame2num] = keys %signame2num;
 
-      $SIG_ASY{$signal} ||= do {
-         my $asy = new Async::Interrupt
-            cb     => sub { undef $SIG_EV{$signal} },
-            signal => $signal,
-            pipe   => [$SIGPIPE_R->filenos],
-         ;
-         $asy->pipe_autodrain (0);
+         *sig2num = sub($) {
+            $_[0] > 0 ? shift : $signame2num{+shift}
+         };
+         *sig2name = sub ($) {
+            $_[0] > 0 ? $signum2name[+shift] : shift
+         };
+      }
+   };
+   die if $@;
+};
 
-         $asy
-      };
-
-   } else {
-      # pure perl
-
-      $SIG{$signal} ||= sub {
-         local $!;
-         syswrite $SIGPIPE_W, "\x00", 1 unless %SIG_EV;
-         undef $SIG_EV{$signal};
-      };
-
-      # can't do signal processing without introducing races in pure perl,
-      # so limit the signal latency.
-      _sig_add;
-   }
-
-   bless [$signal, $arg{cb}], "AnyEvent::Base::signal"
-}
+sub sig2num ($) { &$_sig_name_init; &sig2num  }
+sub sig2name($) { &$_sig_name_init; &sig2name }
 
 sub signal {
-   # probe for availability of Async::Interrupt
-   if (!$ENV{PERL_ANYEVENT_AVOID_ASYNC_INTERRUPT} && eval "use Async::Interrupt 0.6 (); 1") {
-      warn "AnyEvent: using Async::Interrupt for race-free signal handling.\n" if $VERBOSE >= 8;
+   eval q{ # poor man's autoloading {}
+      # probe for availability of Async::Interrupt 
+      if (_have_async_interrupt) {
+         warn "AnyEvent: using Async::Interrupt for race-free signal handling.\n" if $VERBOSE >= 8;
 
-      $HAVE_ASYNC_INTERRUPT = 1;
-      $SIGPIPE_R = new Async::Interrupt::EventPipe;
-      $SIG_IO = AnyEvent->io (fh => $SIGPIPE_R->fileno, poll => "r", cb => \&_signal_exec);
+         $SIGPIPE_R = new Async::Interrupt::EventPipe;
+         $SIG_IO = AE::io $SIGPIPE_R->fileno, 0, \&_signal_exec;
 
-   } else {
-      warn "AnyEvent: using emulated perl signal handling with latency timer.\n" if $VERBOSE >= 8;
-
-      require Fcntl;
-
-      if (AnyEvent::WIN32) {
-         require AnyEvent::Util;
-
-         ($SIGPIPE_R, $SIGPIPE_W) = AnyEvent::Util::portable_pipe ();
-         AnyEvent::Util::fh_nonblocking ($SIGPIPE_R) if $SIGPIPE_R;
-         AnyEvent::Util::fh_nonblocking ($SIGPIPE_W) if $SIGPIPE_W; # just in case
       } else {
-         pipe $SIGPIPE_R, $SIGPIPE_W;
-         fcntl $SIGPIPE_R, &Fcntl::F_SETFL, &Fcntl::O_NONBLOCK if $SIGPIPE_R;
-         fcntl $SIGPIPE_W, &Fcntl::F_SETFL, &Fcntl::O_NONBLOCK if $SIGPIPE_W; # just in case
+         warn "AnyEvent: using emulated perl signal handling with latency timer.\n" if $VERBOSE >= 8;
 
-         # not strictly required, as $^F is normally 2, but let's make sure...
-         fcntl $SIGPIPE_R, &Fcntl::F_SETFD, &Fcntl::FD_CLOEXEC;
-         fcntl $SIGPIPE_W, &Fcntl::F_SETFD, &Fcntl::FD_CLOEXEC;
+         require Fcntl;
+
+         if (AnyEvent::WIN32) {
+            require AnyEvent::Util;
+
+            ($SIGPIPE_R, $SIGPIPE_W) = AnyEvent::Util::portable_pipe ();
+            AnyEvent::Util::fh_nonblocking ($SIGPIPE_R, 1) if $SIGPIPE_R;
+            AnyEvent::Util::fh_nonblocking ($SIGPIPE_W, 1) if $SIGPIPE_W; # just in case
+         } else {
+            pipe $SIGPIPE_R, $SIGPIPE_W;
+            fcntl $SIGPIPE_R, &Fcntl::F_SETFL, &Fcntl::O_NONBLOCK if $SIGPIPE_R;
+            fcntl $SIGPIPE_W, &Fcntl::F_SETFL, &Fcntl::O_NONBLOCK if $SIGPIPE_W; # just in case
+
+            # not strictly required, as $^F is normally 2, but let's make sure...
+            fcntl $SIGPIPE_R, &Fcntl::F_SETFD, &Fcntl::FD_CLOEXEC;
+            fcntl $SIGPIPE_W, &Fcntl::F_SETFD, &Fcntl::FD_CLOEXEC;
+         }
+
+         $SIGPIPE_R
+            or Carp::croak "AnyEvent: unable to create a signal reporting pipe: $!\n";
+
+         $SIG_IO = AE::io $SIGPIPE_R, 0, \&_signal_exec;
       }
 
-      $SIGPIPE_R
-         or Carp::croak "AnyEvent: unable to create a signal reporting pipe: $!\n";
+      *signal = sub {
+         my (undef, %arg) = @_;
 
-      $SIG_IO = AnyEvent->io (fh => $SIGPIPE_R, poll => "r", cb => \&_signal_exec);
-   }
+         my $signal = uc $arg{signal}
+            or Carp::croak "required option 'signal' is missing";
 
-   *signal = \&_signal;
+         if ($HAVE_ASYNC_INTERRUPT) {
+            # async::interrupt
+
+            $signal = sig2num $signal;
+            $SIG_CB{$signal}{$arg{cb}} = $arg{cb};
+
+            $SIG_ASY{$signal} ||= new Async::Interrupt
+               cb             => sub { undef $SIG_EV{$signal} },
+               signal         => $signal,
+               pipe           => [$SIGPIPE_R->filenos],
+               pipe_autodrain => 0,
+            ;
+
+         } else {
+            # pure perl
+
+            # AE::Util has been loaded in signal
+            $signal = sig2name $signal;
+            $SIG_CB{$signal}{$arg{cb}} = $arg{cb};
+
+            $SIG{$signal} ||= sub {
+               local $!;
+               syswrite $SIGPIPE_W, "\x00", 1 unless %SIG_EV;
+               undef $SIG_EV{$signal};
+            };
+
+            # can't do signal processing without introducing races in pure perl,
+            # so limit the signal latency.
+            _sig_add;
+         }
+
+         bless [$signal, $arg{cb}], "AnyEvent::Base::signal"
+      };
+
+      *AnyEvent::Base::signal::DESTROY = sub {
+         my ($signal, $cb) = @{$_[0]};
+
+         _sig_del;
+
+         delete $SIG_CB{$signal}{$cb};
+
+         $HAVE_ASYNC_INTERRUPT
+            ? delete $SIG_ASY{$signal}
+            : # delete doesn't work with older perls - they then
+              # print weird messages, or just unconditionally exit
+              # instead of getting the default action.
+              undef $SIG{$signal}
+            unless keys %{ $SIG_CB{$signal} };
+      };
+   };
+   die if $@;
    &signal
-}
-
-sub AnyEvent::Base::signal::DESTROY {
-   my ($signal, $cb) = @{$_[0]};
-
-   _sig_del;
-
-   delete $SIG_CB{$signal}{$cb};
-
-   $HAVE_ASYNC_INTERRUPT
-      ? delete $SIG_ASY{$signal}
-      : # delete doesn't work with older perls - they then
-        # print weird messages, or just unconditionally exit
-        # instead of getting the default action.
-        undef $SIG{$signal}
-      unless keys %{ $SIG_CB{$signal} };
 }
 
 # default implementation for ->child
@@ -1407,12 +1551,19 @@ our $CHLD_W;
 our $CHLD_DELAY_W;
 our $WNOHANG;
 
+sub _emit_childstatus($$) {
+   my (undef, $rpid, $rstatus) = @_;
+
+   $_->($rpid, $rstatus)
+      for values %{ $PID_CB{$rpid} || {} },
+          values %{ $PID_CB{0}     || {} };
+}
+
 sub _sigchld {
-   while (0 < (my $pid = waitpid -1, $WNOHANG)) {
-      $_->($pid, $?)
-         for values %{ $PID_CB{$pid} || {} },
-             values %{ $PID_CB{0}    || {} };
-   }
+   my $pid;
+
+   AnyEvent->_emit_childstatus ($pid, $?)
+      while ($pid = waitpid -1, $WNOHANG) > 0;
 }
 
 sub child {
@@ -1429,7 +1580,7 @@ sub child {
                 : eval { local $SIG{__DIE__}; require POSIX; &POSIX::WNOHANG } || 1;
 
    unless ($CHLD_W) {
-      $CHLD_W = AnyEvent->signal (signal => 'CHLD', cb => \&_sigchld);
+      $CHLD_W = AE::signal CHLD => \&_sigchld;
       # child could be a zombie already, so make at least one round
       &_sigchld;
    }
@@ -1465,7 +1616,7 @@ sub idle {
          $w = 0.0001 if $w < 0.0001;
          $w = 5      if $w > 5;
 
-         $w = AnyEvent->timer (after => $w, cb => $rcb);
+         $w = AE::timer $w, 0, $rcb;
       } else {
          # clean up...
          undef $w;
@@ -1473,7 +1624,7 @@ sub idle {
       }
    };
 
-   $w = AnyEvent->timer (after => 0.05, cb => $rcb);
+   $w = AE::timer 0.05, 0, $rcb;
 
    bless \\$cb, "AnyEvent::Base::idle"
 }
@@ -1537,8 +1688,14 @@ sub recv {
 }
 
 sub cb {
-   $_[0]{_ae_cb} = $_[1] if @_ > 1;
-   $_[0]{_ae_cb}
+   my $cv = shift;
+
+   @_
+      and $cv->{_ae_cb} = shift
+      and $cv->{_ae_sent}
+      and (delete $cv->{_ae_cb})->($cv);
+
+   $cv->{_ae_cb}
 }
 
 sub begin {
@@ -1757,16 +1914,9 @@ program when the user enters quit:
       },
    );
 
-   my $time_watcher; # can only be used once
-
-   sub new_timer {
-      $timer = AnyEvent->timer (after => 1, cb => sub {
-         warn "timeout\n"; # print 'timeout' about every second
-         &new_timer; # and restart the time
-      });
-   }
-
-   new_timer; # create first timer
+   my $time_watcher = AnyEvent->timer (after => 1, interval => 1, cb => sub {
+      warn "timeout\n"; # print 'timeout' at most every second
+   });
 
    $cv->recv; # wait until user enters /^q/i
 
@@ -1907,7 +2057,8 @@ timeout) and I/O watchers (watching STDOUT, a pty, to become writable,
 which it is), lets them fire exactly once and destroys them again.
 
 Source code for this benchmark is found as F<eg/bench> in the AnyEvent
-distribution.
+distribution. It uses the L<AE> interface, which makes a real difference
+for the EV and Perl backends only.
 
 =head3 Explanation of the columns
 
@@ -1938,18 +2089,18 @@ watcher.
 =head3 Results
 
           name watchers bytes create invoke destroy comment
-         EV/EV   400000   224   0.47   0.35    0.27 EV native interface
-        EV/Any   100000   224   2.88   0.34    0.27 EV + AnyEvent watchers
-    CoroEV/Any   100000   224   2.85   0.35    0.28 coroutines + Coro::Signal
-      Perl/Any   100000   452   4.13   0.73    0.95 pure perl implementation
-   Event/Event    16000   517  32.20  31.80    0.81 Event native interface
-     Event/Any    16000   590  35.85  31.55    1.06 Event + AnyEvent watchers
-   IOAsync/Any    16000   989  38.10  32.77   11.13 via IO::Async::Loop::IO_Poll
-   IOAsync/Any    16000   990  37.59  29.50   10.61 via IO::Async::Loop::Epoll
-      Glib/Any    16000  1357 102.33  12.31   51.00 quadratic behaviour
-        Tk/Any     2000  1860  27.20  66.31   14.00 SEGV with >> 2000 watchers
-     POE/Event     2000  6328 109.99 751.67   14.02 via POE::Loop::Event
-    POE/Select     2000  6027  94.54 809.13  579.80 via POE::Loop::Select
+         EV/EV   100000   223   0.47   0.43    0.27 EV native interface
+        EV/Any   100000   223   0.48   0.42    0.26 EV + AnyEvent watchers
+  Coro::EV/Any   100000   223   0.47   0.42    0.26 coroutines + Coro::Signal
+      Perl/Any   100000   431   2.70   0.74    0.92 pure perl implementation
+   Event/Event    16000   516  31.16  31.84    0.82 Event native interface
+     Event/Any    16000  1203  42.61  34.79    1.80 Event + AnyEvent watchers
+   IOAsync/Any    16000  1911  41.92  27.45   16.81 via IO::Async::Loop::IO_Poll
+   IOAsync/Any    16000  1726  40.69  26.37   15.25 via IO::Async::Loop::Epoll
+      Glib/Any    16000  1118  89.00  12.57   51.17 quadratic behaviour
+        Tk/Any     2000  1346  20.96  10.75    8.00 SEGV with >> 2000 watchers
+       POE/Any     2000  6951 108.97 795.32   14.24 via POE::Loop::Event
+       POE/Any     2000  6648  94.79 774.40  575.51 via POE::Loop::Select
 
 =head3 Discussion
 
@@ -1971,9 +2122,10 @@ EV, 3100 CPU cycles with AnyEvent's pure perl loop and almost 3000000 CPU
 cycles with POE.
 
 C<EV> is the sole leader regarding speed and memory use, which are both
-maximal/minimal, respectively. Even when going through AnyEvent, it uses
-far less memory than any other event loop and is still faster than Event
-natively.
+maximal/minimal, respectively. When using the L<AE> API there is zero
+overhead (when going through the AnyEvent API create is about 5-6 times
+slower, with other times being equal, so still uses far less memory than
+any other event loop and is still faster than Event natively).
 
 The pure perl implementation is hit in a few sweet spots (both the
 constant timeout and the use of a single fd hit optimisations in the perl
@@ -2057,7 +2209,8 @@ In this benchmark, we use 10000 socket pairs (20000 sockets), of which 100
 connections, most of which are idle at any one point in time.
 
 Source code for this benchmark is found as F<eg/bench2> in the AnyEvent
-distribution.
+distribution. It uses the L<AE> interface, which makes a real difference
+for the EV and Perl backends only.
 
 =head3 Explanation of the columns
 
@@ -2075,13 +2228,13 @@ a new one that moves the timeout into the future.
 =head3 Results
 
      name sockets create  request 
-       EV   20000  69.01    11.16 
-     Perl   20000  73.32    35.87 
-  IOAsync   20000 157.00    98.14 epoll
-  IOAsync   20000 159.31   616.06 poll
-    Event   20000 212.62   257.32 
-     Glib   20000 651.16  1896.30 
-      POE   20000 349.67 12317.24 uses POE::Loop::Event
+       EV   20000  62.66     7.99 
+     Perl   20000  68.32    32.64 
+  IOAsync   20000 174.06   101.15 epoll
+  IOAsync   20000 174.67   610.84 poll
+    Event   20000 202.69   242.91 
+     Glib   20000 557.01  1689.52 
+      POE   20000 341.54 12086.32 uses POE::Loop::Event
 
 =head3 Discussion
 
@@ -2217,13 +2370,13 @@ hand-optimised "raw sockets benchmark", while AnyEvent + its pure perl
 backend easily beats IO::Lambda and POE.
 
 And even the 100% non-blocking version written using the high-level (and
-slow :) L<AnyEvent::Handle> abstraction beats both POE and IO::Lambda by a
-large margin, even though it does all of DNS, tcp-connect and socket I/O
-in a non-blocking way.
+slow :) L<AnyEvent::Handle> abstraction beats both POE and IO::Lambda
+higher level ("unoptimised") abstractions by a large margin, even though
+it does all of DNS, tcp-connect and socket I/O in a non-blocking way.
 
 The two AnyEvent benchmarks programs can be found as F<eg/ae0.pl> and
 F<eg/ae2.pl> in the AnyEvent distribution, the remaining benchmarks are
-part of the IO::lambda distribution and were used without any changes.
+part of the IO::Lambda distribution and were used without any changes.
 
 
 =head1 SIGNALS
@@ -2322,8 +2475,8 @@ purely used for performance.
 
 =item L<JSON> and L<JSON::XS>
 
-This module is required when you want to read or write JSON data via
-L<AnyEvent::Handle>. It is also written in pure-perl, but can take
+One of these modules is required when you want to read or write JSON data
+via L<AnyEvent::Handle>. It is also written in pure-perl, but can take
 advantage of the ultra-high-speed L<JSON::XS> module when it is installed.
 
 In fact, L<AnyEvent::Handle> will use L<JSON::XS> by default if it is
@@ -2401,7 +2554,7 @@ L<Glib>, L<Tk>, L<Event::Lib>, L<Qt>, L<POE>.
 Implementations: L<AnyEvent::Impl::EV>, L<AnyEvent::Impl::Event>,
 L<AnyEvent::Impl::Glib>, L<AnyEvent::Impl::Tk>, L<AnyEvent::Impl::Perl>,
 L<AnyEvent::Impl::EventLib>, L<AnyEvent::Impl::Qt>,
-L<AnyEvent::Impl::POE>, L<AnyEvent::Impl::IOAsync>.
+L<AnyEvent::Impl::POE>, L<AnyEvent::Impl::IOAsync>, L<Anyevent::Impl::Irssi>.
 
 Non-blocking file handles, sockets, TCP clients and
 servers: L<AnyEvent::Handle>, L<AnyEvent::Socket>, L<AnyEvent::TLS>.

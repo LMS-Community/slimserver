@@ -1,19 +1,6 @@
-package AnyEvent::Handle;
-
-use Scalar::Util ();
-use Carp ();
-use Errno qw(EAGAIN EINTR);
-
-use AnyEvent (); BEGIN { AnyEvent::common_sense }
-use AnyEvent::Util qw(WSAEWOULDBLOCK);
-
 =head1 NAME
 
 AnyEvent::Handle - non-blocking I/O on file handles via AnyEvent
-
-=cut
-
-our $VERSION = 4.86;
 
 =head1 SYNOPSIS
 
@@ -46,8 +33,7 @@ our $VERSION = 4.86;
 =head1 DESCRIPTION
 
 This module is a helper module to make it easier to do event-based I/O on
-filehandles. For utility functions for doing non-blocking connects and accepts
-on sockets see L<AnyEvent::Util>.
+filehandles.
 
 The L<AnyEvent::Intro> tutorial contains some well-documented
 AnyEvent::Handle examples.
@@ -56,8 +42,40 @@ In the following, when the documentation refers to of "bytes" then this
 means characters. As sysread and syswrite are used for all I/O, their
 treatment of characters applies to this module as well.
 
+At the very minimum, you should specify C<fh> or C<connect>, and the
+C<on_error> callback.
+
 All callbacks will be invoked with the handle object as their first
 argument.
+
+=cut
+
+package AnyEvent::Handle;
+
+use Scalar::Util ();
+use List::Util ();
+use Carp ();
+use Errno qw(EAGAIN EINTR);
+
+use AnyEvent (); BEGIN { AnyEvent::common_sense }
+use AnyEvent::Util qw(WSAEWOULDBLOCK);
+
+our $VERSION = $AnyEvent::VERSION;
+
+sub _load_func($) {
+   my $func = $_[0];
+
+   unless (defined &$func) {
+      my $pkg = $func;
+      do {
+         $pkg =~ s/::[^:]+$//
+            or return;
+         eval "require $pkg";
+      } until defined &$func;
+   }
+
+   \&$func
+}
 
 =head1 METHODS
 
@@ -69,29 +87,68 @@ The constructor supports these arguments (all as C<< key => value >> pairs).
 
 =over 4
 
-=item fh => $filehandle [MANDATORY]
+=item fh => $filehandle     [C<fh> or C<connect> MANDATORY]
 
 The filehandle this L<AnyEvent::Handle> object will operate on.
-
 NOTE: The filehandle will be set to non-blocking mode (using
 C<AnyEvent::Util::fh_nonblocking>) by the constructor and needs to stay in
 that mode.
 
-=item on_eof => $cb->($handle)
+=item connect => [$host, $service]      [C<fh> or C<connect> MANDATORY]
 
-Set the callback to be called when an end-of-file condition is detected,
-i.e. in the case of a socket, when the other side has closed the
-connection cleanly, and there are no outstanding read requests in the
-queue (if there are read requests, then an EOF counts as an unexpected
-connection close and will be flagged as an error).
+Try to connect to the specified host and service (port), using
+C<AnyEvent::Socket::tcp_connect>. The C<$host> additionally becomes the
+default C<peername>.
 
-For sockets, this just means that the other side has stopped sending data,
-you can still try to write data, and, in fact, one can return from the EOF
-callback and continue writing data, as only the read part has been shut
-down.
+You have to specify either this parameter, or C<fh>, above.
 
-If an EOF condition has been detected but no C<on_eof> callback has been
-set, then a fatal error will be raised with C<$!> set to <0>.
+It is possible to push requests on the read and write queues, and modify
+properties of the stream, even while AnyEvent::Handle is connecting.
+
+When this parameter is specified, then the C<on_prepare>,
+C<on_connect_error> and C<on_connect> callbacks will be called under the
+appropriate circumstances:
+
+=over 4
+
+=item on_prepare => $cb->($handle)
+
+This (rarely used) callback is called before a new connection is
+attempted, but after the file handle has been created. It could be used to
+prepare the file handle with parameters required for the actual connect
+(as opposed to settings that can be changed when the connection is already
+established).
+
+The return value of this callback should be the connect timeout value in
+seconds (or C<0>, or C<undef>, or the empty list, to indicate the default
+timeout is to be used).
+
+=item on_connect => $cb->($handle, $host, $port, $retry->())
+
+This callback is called when a connection has been successfully established.
+
+The actual numeric host and port (the socket peername) are passed as
+parameters, together with a retry callback.
+
+When, for some reason, the handle is not acceptable, then calling
+C<$retry> will continue with the next connection target (in case of
+multi-homed hosts or SRV records there can be multiple connection
+endpoints). At the time it is called the read and write queues, eof
+status, tls status and similar properties of the handle will have been
+reset.
+
+In most cases, ignoring the C<$retry> parameter is the way to go.
+
+=item on_connect_error => $cb->($handle, $message)
+
+This callback is called when the connection could not be
+established. C<$!> will contain the relevant error code, and C<$message> a
+message describing it (usually the same as C<"$!">).
+
+If this callback isn't specified, then C<on_error> will be called with a
+fatal error instead.
+
+=back
 
 =item on_error => $cb->($handle, $fatal, $message)
 
@@ -103,7 +160,9 @@ Some errors are fatal (which is indicated by C<$fatal> being true). On
 fatal errors the handle object will be destroyed (by a call to C<< ->
 destroy >>) after invoking the error callback (which means you are free to
 examine the handle object). Examples of fatal errors are an EOF condition
-with active (but unsatisifable) read watchers (C<EPIPE>) or I/O errors.
+with active (but unsatisifable) read watchers (C<EPIPE>) or I/O errors. In
+cases where the other side can close the connection at their will it is
+often easiest to not report C<EPIPE> errors in this callback.
 
 AnyEvent::Handle tries to find an appropriate error code for you to check
 against, but in some cases (TLS errors), this does not work well. It is
@@ -145,6 +204,22 @@ doesn't mean you I<require> some data: if there is an EOF and there
 are outstanding read requests then an error will be flagged. With an
 C<on_read> callback, the C<on_eof> callback will be invoked.
 
+=item on_eof => $cb->($handle)
+
+Set the callback to be called when an end-of-file condition is detected,
+i.e. in the case of a socket, when the other side has closed the
+connection cleanly, and there are no outstanding read requests in the
+queue (if there are read requests, then an EOF counts as an unexpected
+connection close and will be flagged as an error).
+
+For sockets, this just means that the other side has stopped sending data,
+you can still try to write data, and, in fact, one can return from the EOF
+callback and continue writing data, as only the read part has been shut
+down.
+
+If an EOF condition has been detected but no C<on_eof> callback has been
+set, then a fatal error will be raised with C<$!> set to <0>.
+
 =item on_drain => $cb->($handle)
 
 This sets the callback that is called when the write buffer becomes empty
@@ -160,10 +235,21 @@ the file when the write queue becomes empty.
 
 =item timeout => $fractional_seconds
 
-If non-zero, then this enables an "inactivity" timeout: whenever this many
-seconds pass without a successful read or write on the underlying file
-handle, the C<on_timeout> callback will be invoked (and if that one is
-missing, a non-fatal C<ETIMEDOUT> error will be raised).
+=item rtimeout => $fractional_seconds
+
+=item wtimeout => $fractional_seconds
+
+If non-zero, then these enables an "inactivity" timeout: whenever this
+many seconds pass without a successful read or write on the underlying
+file handle (or a call to C<timeout_reset>), the C<on_timeout> callback
+will be invoked (and if that one is missing, a non-fatal C<ETIMEDOUT>
+error will be raised).
+
+There are three variants of the timeouts that work fully independent
+of each other, for both read and write, just read, and just write:
+C<timeout>, C<rtimeout> and C<wtimeout>, with corresponding callbacks
+C<on_timeout>, C<on_rtimeout> and C<on_wtimeout>, and reset functions
+C<timeout_reset>, C<rtimeout_reset>, and C<wtimeout_reset>.
 
 Note that timeout processing is also active when you currently do not have
 any outstanding read or write requests: If you plan to keep the connection
@@ -217,6 +303,38 @@ accomplishd by setting this option to a true value.
 The default is your opertaing system's default behaviour (most likely
 enabled), this option explicitly enables or disables it, if possible.
 
+=item keepalive => <boolean>
+
+Enables (default disable) the SO_KEEPALIVE option on the stream socket:
+normally, TCP connections have no time-out once established, so TCP
+connections, once established, can stay alive forever even when the other
+side has long gone. TCP keepalives are a cheap way to take down long-lived
+TCP connections whent he other side becomes unreachable. While the default
+is OS-dependent, TCP keepalives usually kick in after around two hours,
+and, if the other side doesn't reply, take down the TCP connection some 10
+to 15 minutes later.
+
+It is harmless to specify this option for file handles that do not support
+keepalives, and enabling it on connections that are potentially long-lived
+is usually a good idea.
+
+=item oobinline => <boolean>
+
+BSD majorly fucked up the implementation of TCP urgent data. The result
+is that almost no OS implements TCP according to the specs, and every OS
+implements it slightly differently.
+
+If you want to handle TCP urgent data, then setting this flag (the default
+is enabled) gives you the most portable way of getting urgent data, by
+putting it into the stream.
+
+Since BSD emulation of OOB data on top of TCP's urgent data can have
+security implications, AnyEvent::Handle sets this flag automatically
+unless explicitly specified. Note that setting this flag after
+establishing a connection I<may> be a bit too late (data loss could
+already have occured on BSD systems), but at least it will protect you
+from most attacks.
+
 =item read_size => <bytes>
 
 The default read block size (the amount of bytes this module will
@@ -259,7 +377,7 @@ C<undef>.
 =item tls => "accept" | "connect" | Net::SSLeay::SSL object
 
 When this parameter is given, it enables TLS (SSL) mode, that means
-AnyEvent will start a TLS handshake as soon as the conenction has been
+AnyEvent will start a TLS handshake as soon as the connection has been
 established and will transparently encrypt/decrypt data afterwards.
 
 All TLS protocol errors will be signalled as C<EPROTO>, with an
@@ -352,34 +470,95 @@ sub new {
    my $class = shift;
    my $self = bless { @_ }, $class;
 
-   $self->{fh} or Carp::croak "mandatory argument fh is missing";
+   if ($self->{fh}) {
+      $self->_start;
+      return unless $self->{fh}; # could be gone by now
+
+   } elsif ($self->{connect}) {
+      require AnyEvent::Socket;
+
+      $self->{peername} = $self->{connect}[0]
+         unless exists $self->{peername};
+
+      $self->{_skip_drain_rbuf} = 1;
+
+      {
+         Scalar::Util::weaken (my $self = $self);
+
+         $self->{_connect} =
+            AnyEvent::Socket::tcp_connect (
+               $self->{connect}[0],
+               $self->{connect}[1],
+               sub {
+                  my ($fh, $host, $port, $retry) = @_;
+
+                  if ($fh) {
+                     $self->{fh} = $fh;
+
+                     delete $self->{_skip_drain_rbuf};
+                     $self->_start;
+
+                     $self->{on_connect}
+                        and $self->{on_connect}($self, $host, $port, sub {
+                               delete @$self{qw(fh _tw _rtw _wtw _ww _rw _eof _queue rbuf _wbuf tls _tls_rbuf _tls_wbuf)};
+                               $self->{_skip_drain_rbuf} = 1;
+                               &$retry;
+                            });
+
+                  } else {
+                     if ($self->{on_connect_error}) {
+                        $self->{on_connect_error}($self, "$!");
+                        $self->destroy;
+                     } else {
+                        $self->_error ($!, 1);
+                     }
+                  }
+               },
+               sub {
+                  local $self->{fh} = $_[0];
+
+                  $self->{on_prepare}
+                     ?  $self->{on_prepare}->($self)
+                     : ()
+               }
+            );
+      }
+
+   } else {
+      Carp::croak "AnyEvent::Handle: either an existing fh or the connect parameter must be specified";
+   }
+
+   $self
+}
+
+sub _start {
+   my ($self) = @_;
 
    AnyEvent::Util::fh_nonblocking $self->{fh}, 1;
 
-   $self->{_activity} = AnyEvent->now;
-   $self->_timeout;
+   $self->{_activity}  =
+   $self->{_ractivity} =
+   $self->{_wactivity} = AE::now;
 
-   $self->no_delay (delete $self->{no_delay}) if exists $self->{no_delay};
+   $self->timeout   (delete $self->{timeout}  ) if $self->{timeout};
+   $self->rtimeout  (delete $self->{rtimeout} ) if $self->{rtimeout};
+   $self->wtimeout  (delete $self->{wtimeout} ) if $self->{wtimeout};
 
-   $self->starttls (delete $self->{tls}, delete $self->{tls_ctx})
+   $self->no_delay  (delete $self->{no_delay} ) if exists $self->{no_delay}  && $self->{no_delay};
+   $self->keepalive (delete $self->{keepalive}) if exists $self->{keepalive} && $self->{keepalive};
+
+   $self->oobinline (exists $self->{oobinline} ? delete $self->{oobinline} : 1);
+
+   $self->starttls  (delete $self->{tls}, delete $self->{tls_ctx})
       if $self->{tls};
 
-   $self->on_drain (delete $self->{on_drain}) if $self->{on_drain};
+   $self->on_drain  (delete $self->{on_drain}) if $self->{on_drain};
 
    $self->start_read
-      if $self->{on_read};
+      if $self->{on_read} || @{ $self->{_queue} };
 
-   $self->{fh} && $self
+   $self->_drain_wbuf;
 }
-
-#sub _shutdown {
-#   my ($self) = @_;
-#
-#   delete @$self{qw(_tw _rw _ww fh wbuf on_read _queue)};
-#   $self->{_eof} = 1; # tell starttls et. al to stop trying
-#
-#   &_freetls;
-#}
 
 sub _error {
    my ($self, $errno, $fatal, $message) = @_;
@@ -390,7 +569,7 @@ sub _error {
    if ($self->{on_error}) {
       $self->{on_error}($self, $fatal, $message);
       $self->destroy if $fatal;
-   } elsif ($self->{fh}) {
+   } elsif ($self->{fh} || $self->{connect}) {
       $self->destroy;
       Carp::croak "AnyEvent::Handle uncaught error: $message";
    }
@@ -426,15 +605,17 @@ sub on_eof {
 
 =item $handle->on_timeout ($cb)
 
-Replace the current C<on_timeout> callback, or disables the callback (but
-not the timeout) if C<$cb> = C<undef>. See the C<timeout> constructor
-argument and method.
+=item $handle->on_rtimeout ($cb)
+
+=item $handle->on_wtimeout ($cb)
+
+Replace the current C<on_timeout>, C<on_rtimeout> or C<on_wtimeout>
+callback, or disables the callback (but not the timeout) if C<$cb> =
+C<undef>. See the C<timeout> constructor argument and method.
 
 =cut
 
-sub on_timeout {
-   $_[0]{on_timeout} = $_[1];
-}
+# see below
 
 =item $handle->autocork ($boolean)
 
@@ -459,7 +640,59 @@ sub no_delay {
 
    eval {
       local $SIG{__DIE__};
-      setsockopt $_[0]{fh}, &Socket::IPPROTO_TCP, &Socket::TCP_NODELAY, int $_[1];
+      setsockopt $_[0]{fh}, Socket::IPPROTO_TCP (), Socket::TCP_NODELAY (), int $_[1]
+         if $_[0]{fh};
+   };
+}
+
+=item $handle->keepalive ($boolean)
+
+Enables or disables the C<keepalive> setting (see constructor argument of
+the same name for details).
+
+=cut
+
+sub keepalive {
+   $_[0]{keepalive} = $_[1];
+
+   eval {
+      local $SIG{__DIE__};
+      setsockopt $_[0]{fh}, Socket::SOL_SOCKET (), Socket::SO_KEEPALIVE (), int $_[1]
+         if $_[0]{fh};
+   };
+}
+
+=item $handle->oobinline ($boolean)
+
+Enables or disables the C<oobinline> setting (see constructor argument of
+the same name for details).
+
+=cut
+
+sub oobinline {
+   $_[0]{oobinline} = $_[1];
+
+   eval {
+      local $SIG{__DIE__};
+      setsockopt $_[0]{fh}, Socket::SOL_SOCKET (), Socket::SO_OOBINLINE (), int $_[1]
+         if $_[0]{fh};
+   };
+}
+
+=item $handle->keepalive ($boolean)
+
+Enables or disables the C<keepalive> setting (see constructor argument of
+the same name for details).
+
+=cut
+
+sub keepalive {
+   $_[0]{keepalive} = $_[1];
+
+   eval {
+      local $SIG{__DIE__};
+      setsockopt $_[0]{fh}, Socket::SOL_SOCKET (), Socket::SO_KEEPALIVE (), int $_[1]
+         if $_[0]{fh};
    };
 }
 
@@ -483,58 +716,99 @@ sub on_starttls {
    $_[0]{on_stoptls} = $_[1];
 }
 
+=item $handle->rbuf_max ($max_octets)
+
+Configures the C<rbuf_max> setting (C<undef> disables it).
+
+=cut
+
+sub rbuf_max {
+   $_[0]{rbuf_max} = $_[1];
+}
+
 #############################################################################
 
 =item $handle->timeout ($seconds)
 
+=item $handle->rtimeout ($seconds)
+
+=item $handle->wtimeout ($seconds)
+
 Configures (or disables) the inactivity timeout.
+
+=item $handle->timeout_reset
+
+=item $handle->rtimeout_reset
+
+=item $handle->wtimeout_reset
+
+Reset the activity timeout, as if data was received or sent.
+
+These methods are cheap to call.
 
 =cut
 
-sub timeout {
-   my ($self, $timeout) = @_;
+for my $dir ("", "r", "w") {
+   my $timeout    = "${dir}timeout";
+   my $tw         = "_${dir}tw";
+   my $on_timeout = "on_${dir}timeout";
+   my $activity   = "_${dir}activity";
+   my $cb;
 
-   $self->{timeout} = $timeout;
-   $self->_timeout;
-}
+   *$on_timeout = sub {
+      $_[0]{$on_timeout} = $_[1];
+   };
 
-# reset the timeout watcher, as neccessary
-# also check for time-outs
-sub _timeout {
-   my ($self) = @_;
+   *$timeout = sub {
+      my ($self, $new_value) = @_;
 
-   if ($self->{timeout}) {
-      my $NOW = AnyEvent->now;
+      $self->{$timeout} = $new_value;
+      delete $self->{$tw}; &$cb;
+   };
 
-      # when would the timeout trigger?
-      my $after = $self->{_activity} + $self->{timeout} - $NOW;
+   *{"${dir}timeout_reset"} = sub {
+      $_[0]{$activity} = AE::now;
+   };
 
-      # now or in the past already?
-      if ($after <= 0) {
-         $self->{_activity} = $NOW;
+   # main workhorse:
+   # reset the timeout watcher, as neccessary
+   # also check for time-outs
+   $cb = sub {
+      my ($self) = @_;
 
-         if ($self->{on_timeout}) {
-            $self->{on_timeout}($self);
-         } else {
-            $self->_error (Errno::ETIMEDOUT);
+      if ($self->{$timeout} && $self->{fh}) {
+         my $NOW = AE::now;
+
+         # when would the timeout trigger?
+         my $after = $self->{$activity} + $self->{$timeout} - $NOW;
+
+         # now or in the past already?
+         if ($after <= 0) {
+            $self->{$activity} = $NOW;
+
+            if ($self->{$on_timeout}) {
+               $self->{$on_timeout}($self);
+            } else {
+               $self->_error (Errno::ETIMEDOUT);
+            }
+
+            # callback could have changed timeout value, optimise
+            return unless $self->{$timeout};
+
+            # calculate new after
+            $after = $self->{$timeout};
          }
 
-         # callback could have changed timeout value, optimise
-         return unless $self->{timeout};
+         Scalar::Util::weaken $self;
+         return unless $self; # ->error could have destroyed $self
 
-         # calculate new after
-         $after = $self->{timeout};
+         $self->{$tw} ||= AE::timer $after, 0, sub {
+            delete $self->{$tw};
+            $cb->($self);
+         };
+      } else {
+         delete $self->{$tw};
       }
-
-      Scalar::Util::weaken $self;
-      return unless $self; # ->error could have destroyed $self
-
-      $self->{_tw} ||= AnyEvent->timer (after => $after, cb => sub {
-         delete $self->{_tw};
-         $self->_timeout;
-      });
-   } else {
-      delete $self->{_tw};
    }
 }
 
@@ -592,7 +866,7 @@ sub _drain_wbuf {
          if (defined $len) {
             substr $self->{wbuf}, 0, $len, "";
 
-            $self->{_activity} = AnyEvent->now;
+            $self->{_activity} = $self->{_wactivity} = AE::now;
 
             $self->{on_drain}($self)
                if $self->{low_water_mark} >= (length $self->{wbuf}) + (length $self->{_tls_wbuf})
@@ -608,13 +882,14 @@ sub _drain_wbuf {
       $cb->() unless $self->{autocork};
 
       # if still data left in wbuf, we need to poll
-      $self->{_ww} = AnyEvent->io (fh => $self->{fh}, poll => "w", cb => $cb)
+      $self->{_ww} = AE::io $self->{fh}, 1, $cb
          if length $self->{wbuf};
    };
 }
 
 our %WH;
 
+# deprecated
 sub register_write_type($$) {
    $WH{$_[0]} = $_[1];
 }
@@ -625,24 +900,27 @@ sub push_write {
    if (@_ > 1) {
       my $type = shift;
 
-      @_ = ($WH{$type} or Carp::croak "unsupported type passed to AnyEvent::Handle::push_write")
+      @_ = ($WH{$type} ||= _load_func "$type\::anyevent_write_type"
+            or Carp::croak "unsupported/unloadable type '$type' passed to AnyEvent::Handle::push_write")
            ->($self, @_);
    }
 
    if ($self->{tls}) {
       $self->{_tls_wbuf} .= $_[0];
-
-      &_dotls ($self);
+      &_dotls ($self)    if $self->{fh};
    } else {
-      $self->{wbuf} .= $_[0];
-      $self->_drain_wbuf;
+      $self->{wbuf}      .= $_[0];
+      $self->_drain_wbuf if $self->{fh};
    }
 }
 
 =item $handle->push_write (type => @args)
 
-Instead of formatting your data yourself, you can also let this module do
-the job by specifying a type and type-specific arguments.
+Instead of formatting your data yourself, you can also let this module
+do the job by specifying a type and type-specific arguments. You
+can also specify the (fully qualified) name of a package, in which
+case AnyEvent tries to load the package and then expects to find the
+C<anyevent_read_type> function inside (see "custom write types", below).
 
 Predefined types are (if you have ideas for additional types, feel free to
 drop by and tell us):
@@ -709,13 +987,17 @@ this line into their JSON decoder of choice.
 
 =cut
 
+sub json_coder() {
+   eval { require JSON::XS; JSON::XS->new->utf8 }
+      || do { require JSON; JSON->new->utf8 }
+}
+
 register_write_type json => sub {
    my ($self, $ref) = @_;
 
-   require JSON;
+   my $json = $self->{json} ||= json_coder;
 
-   $self->{json} ? $self->{json}->encode ($ref)
-                 : JSON::encode_json ($ref)
+   $json->encode ($ref)
 };
 
 =item storable => $reference
@@ -760,17 +1042,37 @@ sub push_shutdown {
    $self->on_drain (sub { shutdown $_[0]{fh}, 1 });
 }
 
-=item AnyEvent::Handle::register_write_type type => $coderef->($handle, @args)
+=item custom write types - Package::anyevent_write_type $handle, @args
 
-This function (not method) lets you add your own types to C<push_write>.
-Whenever the given C<type> is used, C<push_write> will invoke the code
-reference with the handle object and the remaining arguments.
+Instead of one of the predefined types, you can also specify the name of
+a package. AnyEvent will try to load the package and then expects to find
+a function named C<anyevent_write_type> inside. If it isn't found, it
+progressively tries to load the parent package until it either finds the
+function (good) or runs out of packages (bad).
 
-The code reference is supposed to return a single octet string that will
-be appended to the write buffer.
+Whenever the given C<type> is used, C<push_write> will the function with
+the handle object and the remaining arguments.
 
-Note that this is a function, and all types registered this way will be
-global, so try to use unique names.
+The function is supposed to return a single octet string that will be
+appended to the write buffer, so you cna mentally treat this function as a
+"arguments to on-the-wire-format" converter.
+
+Example: implement a custom write type C<join> that joins the remaining
+arguments using the first one.
+
+   $handle->push_write (My::Type => " ", 1,2,3);
+
+   # uses the following package, which can be defined in the "My::Type" or in
+   # the "My" modules to be auto-loaded, or just about anywhere when the
+   # My::Type::anyevent_write_type is defined before invoking it.
+
+   package My::Type;
+
+   sub anyevent_write_type {
+      my ($handle, $delim, @args) = @_;
+
+      join $delim, @args
+   }
 
 =cut
 
@@ -862,28 +1164,24 @@ C<unshift> another line-read. This line-read will be queued I<before> the
 sub _drain_rbuf {
    my ($self) = @_;
 
-   local $self->{_in_drain} = 1;
-
-   if (
-      defined $self->{rbuf_max}
-      && $self->{rbuf_max} < length $self->{rbuf}
-   ) {
-      $self->_error (Errno::ENOSPC, 1), return;
-   }
+   # avoid recursion
+   return if $self->{_skip_drain_rbuf};
+   local $self->{_skip_drain_rbuf} = 1;
 
    while () {
       # we need to use a separate tls read buffer, as we must not receive data while
       # we are draining the buffer, and this can only happen with TLS.
-      $self->{rbuf} .= delete $self->{_tls_rbuf} if exists $self->{_tls_rbuf};
+      $self->{rbuf} .= delete $self->{_tls_rbuf}
+         if exists $self->{_tls_rbuf};
 
       my $len = length $self->{rbuf};
 
       if (my $cb = shift @{ $self->{_queue} }) {
          unless ($cb->($self)) {
-            if ($self->{_eof}) {
-               # no progress can be made (not enough data and no data forthcoming)
-               $self->_error (Errno::EPIPE, 1), return;
-            }
+            # no progress can be made
+            # (not enough data and no data forthcoming)
+            $self->_error (Errno::EPIPE, 1), return
+               if $self->{_eof};
 
             unshift @{ $self->{_queue} }, $cb;
             last;
@@ -913,11 +1211,18 @@ sub _drain_rbuf {
    }
 
    if ($self->{_eof}) {
-      if ($self->{on_eof}) {
-         $self->{on_eof}($self)
-      } else {
-         $self->_error (0, 1, "Unexpected end-of-file");
-      }
+      $self->{on_eof}
+         ? $self->{on_eof}($self)
+         : $self->_error (0, 1, "Unexpected end-of-file");
+
+      return;
+   }
+
+   if (
+      defined $self->{rbuf_max}
+      && $self->{rbuf_max} < length $self->{rbuf}
+   ) {
+      $self->_error (Errno::ENOSPC, 1), return;
    }
 
    # may need to restart read watcher
@@ -939,7 +1244,7 @@ sub on_read {
    my ($self, $cb) = @_;
 
    $self->{on_read} = $cb;
-   $self->_drain_rbuf if $cb && !$self->{_in_drain};
+   $self->_drain_rbuf if $cb;
 }
 
 =item $handle->rbuf
@@ -996,12 +1301,13 @@ sub push_read {
    if (@_) {
       my $type = shift;
 
-      $cb = ($RH{$type} or Carp::croak "unsupported type passed to AnyEvent::Handle::push_read")
+      $cb = ($RH{$type} ||= _load_func "$type\::anyevent_read_type"
+             or Carp::croak "unsupported/unloadable type '$type' passed to AnyEvent::Handle::push_read")
             ->($self, $cb, @_);
    }
 
    push @{ $self->{_queue} }, $cb;
-   $self->_drain_rbuf unless $self->{_in_drain};
+   $self->_drain_rbuf;
 }
 
 sub unshift_read {
@@ -1015,9 +1321,8 @@ sub unshift_read {
             ->($self, $cb, @_);
    }
 
-
    unshift @{ $self->{_queue} }, $cb;
-   $self->_drain_rbuf unless $self->{_in_drain};
+   $self->_drain_rbuf;
 }
 
 =item $handle->push_read (type => @args, $cb)
@@ -1026,7 +1331,9 @@ sub unshift_read {
 
 Instead of providing a callback that parses the data itself you can chose
 between a number of predefined parsing formats, for chunks of data, lines
-etc.
+etc. You can also specify the (fully qualified) name of a package, in
+which case AnyEvent tries to load the package and then expects to find the
+C<anyevent_read_type> function inside (see "custom read types", below).
 
 Predefined types are (if you have ideas for additional types, feel free to
 drop by and tell us):
@@ -1276,9 +1583,7 @@ the C<json> write type description, above, for an actual example.
 register_read_type json => sub {
    my ($self, $cb) = @_;
 
-   my $json = $self->{json} ||=
-      eval { require JSON::XS; JSON::XS->new->utf8 }
-         || do { require JSON; JSON->new->utf8 };
+   my $json = $self->{json} ||= json_coder;
 
    my $data;
    my $rbuf = \$self->{rbuf};
@@ -1357,25 +1662,28 @@ register_read_type storable => sub {
 
 =back
 
-=item AnyEvent::Handle::register_read_type type => $coderef->($handle, $cb, @args)
+=item custom read types - Package::anyevent_read_type $handle, $cb, @args
 
-This function (not method) lets you add your own types to C<push_read>.
+Instead of one of the predefined types, you can also specify the name
+of a package. AnyEvent will try to load the package and then expects to
+find a function named C<anyevent_read_type> inside. If it isn't found, it
+progressively tries to load the parent package until it either finds the
+function (good) or runs out of packages (bad).
 
-Whenever the given C<type> is used, C<push_read> will invoke the code
-reference with the handle object, the callback and the remaining
-arguments.
+Whenever this type is used, C<push_read> will invoke the function with the
+handle object, the original callback and the remaining arguments.
 
-The code reference is supposed to return a callback (usually a closure)
-that works as a plain read callback (see C<< ->push_read ($cb) >>).
+The function is supposed to return a callback (usually a closure) that
+works as a plain read callback (see C<< ->push_read ($cb) >>), so you can
+mentally treat the function as a "configurable read type to read callback"
+converter.
 
-It should invoke the passed callback when it is done reading (remember to
-pass C<$handle> as first argument as all other callbacks do that).
+It should invoke the original callback when it is done reading (remember
+to pass C<$handle> as first argument as all other callbacks do that,
+although there is no strict requirement on this).
 
-Note that this is a function, and all types registered this way will be
-global, so try to use unique names.
-
-For examples, see the source of this module (F<perldoc -m AnyEvent::Handle>,
-search for C<register_read_type>)).
+For examples, see the source of this module (F<perldoc -m
+AnyEvent::Handle>, search for C<register_read_type>)).
 
 =item $handle->stop_read
 
@@ -1408,30 +1716,30 @@ sub start_read {
    unless ($self->{_rw} || $self->{_eof}) {
       Scalar::Util::weaken $self;
 
-      $self->{_rw} = AnyEvent->io (fh => $self->{fh}, poll => "r", cb => sub {
+      $self->{_rw} = AE::io $self->{fh}, 0, sub {
          my $rbuf = \($self->{tls} ? my $buf : $self->{rbuf});
          my $len = sysread $self->{fh}, $$rbuf, $self->{read_size} || 8192, length $$rbuf;
 
          if ($len > 0) {
-            $self->{_activity} = AnyEvent->now;
+            $self->{_activity} = $self->{_ractivity} = AE::now;
 
             if ($self->{tls}) {
                Net::SSLeay::BIO_write ($self->{_rbio}, $$rbuf);
 
                &_dotls ($self);
             } else {
-               $self->_drain_rbuf unless $self->{_in_drain};
+               $self->_drain_rbuf;
             }
 
          } elsif (defined $len) {
             delete $self->{_rw};
             $self->{_eof} = 1;
-            $self->_drain_rbuf unless $self->{_in_drain};
+            $self->_drain_rbuf;
 
          } elsif ($! != EAGAIN && $! != EINTR && $! != WSAEWOULDBLOCK) {
             return $self->_error ($!, 1);
          }
-      });
+      };
    }
 }
 
@@ -1496,7 +1804,7 @@ sub _dotls {
       }
 
       $self->{_tls_rbuf} .= $tmp;
-      $self->_drain_rbuf unless $self->{_in_drain};
+      $self->_drain_rbuf;
       $self->{tls} or return; # tls session might have gone away in callback
    }
 
@@ -1521,6 +1829,10 @@ Instead of starting TLS negotiation immediately when the AnyEvent::Handle
 object is created, you can also do that at a later time by calling
 C<starttls>.
 
+Starting TLS is currently an asynchronous operation - when you push some
+write data and then call C<< ->starttls >> then TLS negotiation will start
+immediately, after which the queued write data is then sent.
+
 The first argument is the same as the C<tls> constructor argument (either
 C<"connect">, C<"accept"> or an existing Net::SSLeay object).
 
@@ -1534,30 +1846,37 @@ context in C<< $handle->{tls_ctx} >> after this call and can be used or
 changed to your liking. Note that the handshake might have already started
 when this function returns.
 
-If it an error to start a TLS handshake more than once per
-AnyEvent::Handle object (this is due to bugs in OpenSSL).
+Due to bugs in OpenSSL, it might or might not be possible to do multiple
+handshakes on the same stream. Best do not attempt to use the stream after
+stopping TLS.
 
 =cut
 
 our %TLS_CACHE; #TODO not yet documented, should we?
 
 sub starttls {
-   my ($self, $ssl, $ctx) = @_;
+   my ($self, $tls, $ctx) = @_;
+
+   Carp::croak "It is an error to call starttls on an AnyEvent::Handle object while TLS is already active, caught"
+      if $self->{tls};
+
+   $self->{tls}     = $tls;
+   $self->{tls_ctx} = $ctx if @_ > 2;
+
+   return unless $self->{fh};
 
    require Net::SSLeay;
-
-   Carp::croak "it is an error to call starttls more than once on an AnyEvent::Handle object"
-      if $self->{tls};
 
    $ERROR_SYSCALL   = Net::SSLeay::ERROR_SYSCALL     ();
    $ERROR_WANT_READ = Net::SSLeay::ERROR_WANT_READ   ();
 
-   $ctx ||= $self->{tls_ctx};
+   $tls = delete $self->{tls};
+   $ctx = $self->{tls_ctx};
+
+   local $Carp::CarpLevel = 1; # skip ourselves when creating a new context or session
 
    if ("HASH" eq ref $ctx) {
       require AnyEvent::TLS;
-
-      local $Carp::CarpLevel = 1; # skip ourselves when creating a new context
 
       if ($ctx->{cache}) {
          my $key = $ctx+0;
@@ -1568,7 +1887,7 @@ sub starttls {
    }
    
    $self->{tls_ctx} = $ctx || TLS_CTX ();
-   $self->{tls}     = $ssl = $self->{tls_ctx}->_get_session ($ssl, $self, $self->{peername});
+   $self->{tls}     = $tls = $self->{tls_ctx}->_get_session ($tls, $self, $self->{peername});
 
    # basically, this is deep magic (because SSL_read should have the same issues)
    # but the openssl maintainers basically said: "trust us, it just works".
@@ -1585,12 +1904,14 @@ sub starttls {
 #   Net::SSLeay::CTX_set_mode ($ssl,
 #      (eval { local $SIG{__DIE__}; Net::SSLeay::MODE_ENABLE_PARTIAL_WRITE () } || 1)
 #      | (eval { local $SIG{__DIE__}; Net::SSLeay::MODE_ACCEPT_MOVING_WRITE_BUFFER () } || 2));
-   Net::SSLeay::CTX_set_mode ($ssl, 1|2);
+   Net::SSLeay::CTX_set_mode ($tls, 1|2);
 
    $self->{_rbio} = Net::SSLeay::BIO_new (Net::SSLeay::BIO_s_mem ());
    $self->{_wbio} = Net::SSLeay::BIO_new (Net::SSLeay::BIO_s_mem ());
 
-   Net::SSLeay::set_bio ($ssl, $self->{_rbio}, $self->{_wbio});
+   Net::SSLeay::BIO_write ($self->{_rbio}, delete $self->{rbuf});
+
+   Net::SSLeay::set_bio ($tls, $self->{_rbio}, $self->{_wbio});
 
    $self->{_on_starttls} = sub { $_[0]{on_starttls}(@_) }
       if $self->{on_starttls};
@@ -1603,8 +1924,8 @@ sub starttls {
 
 Shuts down the SSL connection - this makes a proper EOF handshake by
 sending a close notify to the other side, but since OpenSSL doesn't
-support non-blocking shut downs, it is not possible to re-use the stream
-afterwards.
+support non-blocking shut downs, it is not guarenteed that you can re-use
+the stream afterwards.
 
 =cut
 
@@ -1627,7 +1948,8 @@ sub _freetls {
 
    return unless $self->{tls};
 
-   $self->{tls_ctx}->_put_session (delete $self->{tls});
+   $self->{tls_ctx}->_put_session (delete $self->{tls})
+      if $self->{tls} > 0;
    
    delete @$self{qw(_rbio _wbio _tls_wbuf _on_starttls)};
 }
@@ -1639,13 +1961,13 @@ sub DESTROY {
 
    my $linger = exists $self->{linger} ? $self->{linger} : 3600;
 
-   if ($linger && length $self->{wbuf}) {
+   if ($linger && length $self->{wbuf} && $self->{fh}) {
       my $fh   = delete $self->{fh};
       my $wbuf = delete $self->{wbuf};
 
       my @linger;
 
-      push @linger, AnyEvent->io (fh => $fh, poll => "w", cb => sub {
+      push @linger, AE::io $fh, 1, sub {
          my $len = syswrite $fh, $wbuf, length $wbuf;
 
          if ($len > 0) {
@@ -1653,10 +1975,10 @@ sub DESTROY {
          } else {
             @linger = (); # end
          }
-      });
-      push @linger, AnyEvent->timer (after => $linger, cb => sub {
+      };
+      push @linger, AE::timer $linger, 0, sub {
          @linger = ();
-      });
+      };
    }
 }
 
@@ -1664,7 +1986,9 @@ sub DESTROY {
 
 Shuts down the handle object as much as possible - this call ensures that
 no further callbacks will be invoked and as many resources as possible
-will be freed. You must not call any methods on the object afterwards.
+will be freed. Any method you will call on the handle object after
+destroying it in this way will be silently ignored (and it will return the
+empty list).
 
 Normally, you can just "forget" any references to an AnyEvent::Handle
 object and it will simply shut down. This works in fatal error and EOF
@@ -1688,6 +2012,11 @@ sub destroy {
 
    $self->DESTROY;
    %$self = ();
+   bless $self, "AnyEvent::Handle::destroyed";
+}
+
+sub AnyEvent::Handle::destroyed::AUTOLOAD {
+   #nop
 }
 
 =item AnyEvent::Handle::TLS_CTX

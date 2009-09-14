@@ -27,7 +27,6 @@ use Carp qw(croak);
 use Fcntl ();
 
 use AnyEvent (); BEGIN { AnyEvent::common_sense }
-use AnyEvent::Util ();
 
 our @ISA;
 
@@ -99,7 +98,7 @@ sub signal {
       or croak "AnyEvent->signal called with illegal cb argument '$arg{cb}'";
    delete $arg{cb};
  
-   defined AnyEvent::Util::sig2num $arg{signal}
+   defined AnyEvent::Base::sig2num $arg{signal} and $arg{signal} == 0
       or croak "AnyEvent->signal called with illegal signal name '$arg{signal}'";
    delete $arg{signal};
  

@@ -47,7 +47,7 @@ use base 'Exporter';
 
 our @EXPORT = qw(
    getprotobyname
-   parse_hostport
+   parse_hostport format_hostport
    parse_ipv4 parse_ipv6
    parse_ip parse_address
    format_ipv4 format_ipv6
@@ -58,7 +58,19 @@ our @EXPORT = qw(
    tcp_connect
 );
 
-our $VERSION = 4.86;
+our $VERSION = $AnyEvent::VERSION;
+
+# used in cases where we may return immediately but want the
+# caller to do stuff first
+sub _postpone {
+   my ($cb, @args) = (@_, $!);
+
+   my $w; $w = AE::timer 0, 0, sub {
+      undef $w;
+      $! = pop @args;
+      $cb->(@args);
+   };
+}
 
 =item $ipn = parse_ipv4 $dotted_quad
 
@@ -229,7 +241,7 @@ C<parse_unix>).
 It also supports defaulting the service name in a simple way by using
 C<$default_service> if no service was detected. If neither a service was
 detected nor a default was specified, then this function returns the
-empty list. The same happens when a parse error weas detected, such as a
+empty list. The same happens when a parse error was detected, such as a
 hostname with a colon in it (the function is rather conservative, though).
 
 Example:
@@ -280,6 +292,22 @@ sub parse_hostport($;$) {
    return if $host =~ /:/ && !parse_ipv6 $host;
 
    ($host, $port)
+}
+
+=item $string = format_hostport $host, $port
+
+Takes a host (in textual form) and a port and formats in unambigiously in
+a way that C<parse_hostport> can parse it again. C<$port> can be C<undef>.
+
+=cut
+
+sub format_hostport($;$) {
+   my ($host, $port) = @_;
+
+   $port = ":$port"  if length $port;
+   $host = "[$host]" if $host =~ /:/;
+
+   "$host$port"
 }
 
 =item $sa_family = address_family $ipn
@@ -477,6 +505,12 @@ module (C<format_address> converts it to C<unix/>).
 
 =cut
 
+# perl contains a bug (imho) where it requires that the kernel always returns
+# sockaddr_un structures of maximum length (which is not, AFAICS, required
+# by any standard). try to 0-pad structures for the benefit of those platforms.
+
+my $sa_un_zero = eval { Socket::pack_sockaddr_un "" }; $sa_un_zero ^= $sa_un_zero;
+
 sub unpack_sockaddr($) {
    my $af = sockaddr_family $_[0];
 
@@ -485,7 +519,7 @@ sub unpack_sockaddr($) {
    } elsif ($af == AF_INET6) {
       unpack "x2 n x4 a16", $_[0]
    } elsif ($af == AF_UNIX) {
-      ((Socket::unpack_sockaddr_un $_[0]), pack "S", AF_UNIX)
+      ((Socket::unpack_sockaddr_un $_[0] ^ $sa_un_zero), pack "S", AF_UNIX)
    } else {
       Carp::croak "unpack_sockaddr: unsupported protocol family $af";
    }
@@ -579,7 +613,7 @@ sub resolve_sockaddr($$$$$$) {
    # resolve a records / provide sockaddr structures
    my $resolve = sub {
       my @res;
-      my $cv = AnyEvent->condvar (cb => sub {
+      my $cv = AE::cv {
          $cb->(
             map $_->[2],
             sort {
@@ -588,7 +622,7 @@ sub resolve_sockaddr($$$$$$) {
             }
             @res
          )
-      });
+      };
 
       $cv->begin;
       for my $idx (0 .. $#target) {
@@ -677,20 +711,24 @@ In either case, it will create a list of target hosts (e.g. for multihomed
 hosts or hosts with both IPv4 and IPv6 addresses) and try to connect to
 each in turn.
 
-If the connect is successful, then the C<$connect_cb> will be invoked with
-the socket file handle (in non-blocking mode) as first and the peer host
-(as a textual IP address) and peer port as second and third arguments,
-respectively. The fourth argument is a code reference that you can call
-if, for some reason, you don't like this connection, which will cause
-C<tcp_connect> to try the next one (or call your callback without any
-arguments if there are no more connections). In most cases, you can simply
-ignore this argument.
+After the connection is established, then the C<$connect_cb> will be
+invoked with the socket file handle (in non-blocking mode) as first and
+the peer host (as a textual IP address) and peer port as second and third
+arguments, respectively. The fourth argument is a code reference that you
+can call if, for some reason, you don't like this connection, which will
+cause C<tcp_connect> to try the next one (or call your callback without
+any arguments if there are no more connections). In most cases, you can
+simply ignore this argument.
 
    $cb->($filehandle, $host, $port, $retry)
 
 If the connect is unsuccessful, then the C<$connect_cb> will be invoked
 without any arguments and C<$!> will be set appropriately (with C<ENXIO>
 indicating a DNS resolution failure).
+
+The callback will I<never> be invoked before C<tcp_connect> returns, even
+if C<tcp_connect> was able to connect immediately (e.g. on unix domain
+sockets).
 
 The file handle is perfect for being plugged into L<AnyEvent::Handle>, but
 can be used as a normal perl file handle as well.
@@ -750,7 +788,7 @@ to 15 seconds.
 
          $handle->push_write ("GET / HTTP/1.0\015\012\015\012");
 
-         $handle->push_read_line ("\015\012\015\012", sub {
+         $handle->push_read (line => "\015\012\015\012", sub {
             my ($handle, $line) = @_;
 
             # print response header
@@ -793,7 +831,7 @@ sub tcp_connect($$$;$) {
          return unless exists $state{fh};
 
          my $target = shift @target
-            or return (%state = (), $connect->());
+            or return (%state = (), _postpone $connect);
 
          my ($domain, $type, $proto, $sockaddr) = @$target;
 
@@ -807,47 +845,44 @@ sub tcp_connect($$$;$) {
 
          $timeout ||= 30 if AnyEvent::WIN32;
 
-         $state{to} = AnyEvent->timer (after => $timeout, cb => sub {
+         $state{to} = AE::timer $timeout, 0, sub {
             $! = Errno::ETIMEDOUT;
             $state{next}();
-         }) if $timeout;
-
-         # called when the connect was successful, which,
-         # in theory, could be the case immediately (but never is in practise)
-         $state{connected} = sub {
-            # we are connected, or maybe there was an error
-            if (my $sin = getpeername $state{fh}) {
-               my ($port, $host) = unpack_sockaddr $sin;
-
-               delete $state{ww}; delete $state{to};
-
-               my $guard = guard { %state = () };
-
-               $connect->(delete $state{fh}, format_address $host, $port, sub {
-                  $guard->cancel;
-                  $state{next}();
-               });
-            } else {
-               # dummy read to fetch real error code
-               sysread $state{fh}, my $buf, 1 if $! == Errno::ENOTCONN;
-
-               return if $! == Errno::EAGAIN; # skip spurious wake-ups
-
-               delete $state{ww}; delete $state{to};
-
-               $state{next}();
-            }
-         };
+         } if $timeout;
 
          # now connect       
-         if (connect $state{fh}, $sockaddr) {
-            $state{connected}->();
-         } elsif ($! == Errno::EINPROGRESS # POSIX
-                  || $! == Errno::EWOULDBLOCK
-                  # WSAEINPROGRESS intentionally not checked - it means something else entirely
-                  || $! == AnyEvent::Util::WSAEINVAL # not convinced, but doesn't hurt
-                  || $! == AnyEvent::Util::WSAEWOULDBLOCK) {
-            $state{ww} = AnyEvent->io (fh => $state{fh}, poll => 'w', cb => $state{connected});
+         if (
+            (connect $state{fh}, $sockaddr)
+            || ($! == Errno::EINPROGRESS # POSIX
+                || $! == Errno::EWOULDBLOCK
+                # WSAEINPROGRESS intentionally not checked - it means something else entirely
+                || $! == AnyEvent::Util::WSAEINVAL # not convinced, but doesn't hurt
+                || $! == AnyEvent::Util::WSAEWOULDBLOCK)
+         ) {
+            $state{ww} = AE::io $state{fh}, 1, sub {
+               # we are connected, or maybe there was an error
+               if (my $sin = getpeername $state{fh}) {
+                  my ($port, $host) = unpack_sockaddr $sin;
+
+                  delete $state{ww}; delete $state{to};
+
+                  my $guard = guard { %state = () };
+
+                  $connect->(delete $state{fh}, format_address $host, $port, sub {
+                     $guard->cancel;
+                     $state{next}();
+                  });
+               } else {
+                  # dummy read to fetch real error code
+                  sysread $state{fh}, my $buf, 1 if $! == Errno::ENOTCONN;
+
+                  return if $! == Errno::EAGAIN; # skip spurious wake-ups
+
+                  delete $state{ww}; delete $state{to};
+
+                  $state{next}();
+               }
+            };
          } else {
             $state{next}();
          }
@@ -981,7 +1016,7 @@ sub tcp_server($$$;$) {
    listen $state{fh}, $len
       or Carp::croak "listen: $!";
 
-   $state{aw} = AnyEvent->io (fh => $state{fh}, poll => 'r', cb => sub {
+   $state{aw} = AE::io $state{fh}, 0, sub {
       # this closure keeps $state alive
       while (my $peer = accept my $fh, $state{fh}) {
          fh_nonblocking $fh, 1; # POSIX requires inheritance, the outside world does not
@@ -989,7 +1024,7 @@ sub tcp_server($$$;$) {
          my ($service, $host) = unpack_sockaddr $peer;
          $accept->($fh, format_address $host, $service);
       }
-   });
+   };
 
    defined wantarray
       ? guard { %state = () } # clear fh and watcher, which breaks the circular dependency

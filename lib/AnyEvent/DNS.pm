@@ -34,9 +34,13 @@ use Socket qw(AF_INET SOCK_DGRAM SOCK_STREAM);
 use AnyEvent (); BEGIN { AnyEvent::common_sense }
 use AnyEvent::Util qw(AF_INET6);
 
-our $VERSION = 4.86;
+our $VERSION = $AnyEvent::VERSION;
 
-our @DNS_FALLBACK = (v208.67.220.220, v208.67.222.222);
+# some public dns servers
+our @DNS_FALLBACK = (
+   v209.244.0.3, v209.244.0.4, # level3
+   v4.2.2.1, v4.2.2.3, v4.2.2.4, v4.2.2.5, v4.2.2.6, # vnsc-pri.sys.gtei.net
+);
 
 =item AnyEvent::DNS::a $domain, $cb->(@addrs)
 
@@ -378,9 +382,9 @@ sub _enc_name($) {
    pack "(C/a*)*", (split /\./, shift), ""
 }
 
-if ($[ < 5.008) {
+if ($] < 5.008) {
    # special slower 5.6 version
-   *_enc_name = sub {
+   *_enc_name = sub ($) {
       join "", map +(pack "C/a*", $_), (split /\./, shift), ""
    };
 }
@@ -765,11 +769,11 @@ sub new {
 
       AnyEvent::Util::fh_nonblocking $fh4, 1;
       $self->{fh4} = $fh4;
-      $self->{rw4} = AnyEvent->io (fh => $fh4, poll => "r", cb => sub {
+      $self->{rw4} = AE::io $fh4, 0, sub {
          if (my $peer = recv $fh4, my $pkt, MAX_PKT, 0) {
             $wself->_recv ($pkt, $peer);
          }
-      });
+      };
    }
 
    if (AF_INET6 && socket my $fh6, AF_INET6, &Socket::SOCK_DGRAM, 0) {
@@ -777,11 +781,11 @@ sub new {
 
       $self->{fh6} = $fh6;
       AnyEvent::Util::fh_nonblocking $fh6, 1;
-      $self->{rw6} = AnyEvent->io (fh => $fh6, poll => "r", cb => sub {
+      $self->{rw6} = AE::io $fh6, 0, sub {
          if (my $peer = recv $fh6, my $pkt, MAX_PKT, 0) {
             $wself->_recv ($pkt, $peer);
          }
-      });
+      };
    }
 
    $got_socket
@@ -813,9 +817,9 @@ sub parse_resolv_conf {
    my $attempts;
 
    for (split /\n/, $resolvconf) {
-      if (/^\s*#/) {
-         # comment
-      } elsif (/^\s*nameserver\s+(\S+)\s*$/i) {
+      s/#.*$//; # not quite legal, but many people insist
+
+      if (/^\s*nameserver\s+(\S+)\s*$/i) {
          my $ip = $1;
          if (my $ipn = AnyEvent::Socket::parse_address ($ip)) {
             push @{ $self->{server} }, $ipn;
@@ -1037,7 +1041,7 @@ sub _exec {
 
       my ($server, $timeout) = @$retry_cfg;
       
-      $self->{id}{$req->[2]} = [AnyEvent->timer (after => $timeout, cb => sub {
+      $self->{id}{$req->[2]} = [(AE::timer $timeout, 0, sub {
          $NOW = time;
 
          # timeout, try next
@@ -1109,10 +1113,10 @@ sub _scheduler {
 
       if (@{ $self->{reuse_q} } >= 30000) {
          # we ran out of ID's, wait a bit
-         $self->{reuse_to} ||= AnyEvent->timer (after => $self->{reuse_q}[0][0] - $NOW, cb => sub {
+         $self->{reuse_to} ||= AE::timer $self->{reuse_q}[0][0] - $NOW, 0, sub {
             delete $self->{reuse_to};
             $self->_scheduler;
-         });
+         };
          last;
       }
 
