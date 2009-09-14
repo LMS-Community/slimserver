@@ -277,7 +277,7 @@ sub login {
 		return $params{ecb}->( undef, $error );
 	}
 	
-	main::INFOLOG && $log->info("Logging in to SN as $username");
+	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as $username");
 	
 	my $self = $class->new(
 		\&_login_done,
