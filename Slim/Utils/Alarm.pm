@@ -1553,8 +1553,8 @@ sub alarmInNextDay {
 		my $nextDue = $then - $now;
 		# alarm is set to go off in next 24h
 		if ( $nextDue > 0 && $nextDue <= 86400 ) {
-			# for SP fallback alarm, return # of seconds until alarm
-			$alarmSet = $nextDue;
+			# for SP fallback alarm, return epoch secs of next alarm
+			$alarmSet = $then;
 		}
 	}
 	return $alarmSet;
