@@ -1263,6 +1263,11 @@ sub shouldCacheURL {
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
 	
+	if ( $ENV{SN_DEV} && $host eq '127.0.0.1' ) {
+		# Force caching in SN dev mode
+		return 1;
+	}
+	
 	if ( my $ip = Net::IP->new($host) ) {
 		return 0 if $ip->iptype eq 'PRIVATE';
 	}
