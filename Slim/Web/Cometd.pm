@@ -857,12 +857,6 @@ sub requestCallback {
 	
 	main::DEBUGLOG && $log->debug( "requestCallback got results for $channel / $id" );
 	
-	# Remove language override, request done
-	# XXX: what about subscriptions?
-	if ( $request->client ) {
-		$request->client->languageOverride( undef );
-	}
-	
 	# Do we need to unsubscribe from this request?
 	if ( delete $toUnsubscribe{ $channel } ) {
 		main::DEBUGLOG && $log->debug( "requestCallback: unsubscribing from $channel" );
