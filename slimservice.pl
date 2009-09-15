@@ -468,19 +468,30 @@ sub idle {
 
 	$lastlooptime = $now;
 	
-	# empty notifcation queue
-	if ( !Slim::Control::Request::checkNotifications() ) {
-		if ( !main::SLIM_SERVICE ) {
-			# run scheduled tasks
+	# This flag indicates we have pending IR or request events to handle
+	my $pendingEvents = 0;
+	
+	# process IR queue
+	$pendingEvents = Slim::Hardware::IR::idle();
+	
+	if ( !$pendingEvents ) {
+		# empty notifcation queue, only if no IR events are pending
+		$pendingEvents = Slim::Control::Request::checkNotifications();
+		
+		if ( !main::SLIM_SERVICE && !$pendingEvents ) {
+			# run scheduled tasks, only if no other events are pending
 			# XXX: need a way to not call this unless someone is using Scheduler
 			Slim::Utils::Scheduler::run_tasks();
 		}
-		
-		Slim::Networking::IO::Select::loop( EV::LOOP_ONESHOT );
 	}
-	else {
+	
+	if ( $pendingEvents ) {
 		# Some notifications are still pending, run the loop in non-blocking mode
 		Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
+	}
+	else {
+		# No events are pending, run the loop until we get a select event
+		Slim::Networking::IO::Select::loop( EV::LOOP_ONESHOT );
 	}
 
 	return $::stop;

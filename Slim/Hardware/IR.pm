@@ -17,8 +17,11 @@ L<Slim::Hardware::IR>
 
 Example Processing Pathway for an IR 'up' button command:
     Slimproto.pm receives a BUTN slimproto packet and dispatches to Slimproto::_button_handler
-    It calls Slim::Hardware::IR::handler with the button command, and time as reported by the player.
-    Slim::Hardware::IR::handler calculates the time difference between the server time and the time the IR command was sent.
+    It enqueue's an even to to Slim::Hardware::IR::enqueue with the button command, and time as reported by the player.
+    Slim::Hardware::IR::enque calculates the time difference between the server time and the time the IR command was sent. The IR Event is pushed onto an even stack.
+    Slim::Hardware::IR::idle    pulls events off the IR stack.  If it's been too long between the IR event and its processing, the whole IR queue is cleared.  Otherwise, idle() looks up the event handler and runs Client::execute('ir', <ircode>, <irtimefromclient>)
+    This calls Slim::Control::Request::execute, which looks up 'ir' in its dispatch table, and executes Slim::Control::Commands::irCommand as a result.
+    Slim::Control::Commands::irCommand calls Slim::Hardware::IR::processIR
     Slim::Hardware::IR::processIR does a little work, then looks up the client function to call with lookupFunction, then executes it with processCode.
     processCode calls $client->execute with the 'button' command, which once again goes back to Slim::Control::Request and looks up the 'button' function, and then calls Slim::Control::Commands::buttonCommand
     Slim::Control::Commands::buttonCommand calls Slim::Hardware::IR::executeButton with the client, button and time
@@ -44,6 +47,8 @@ use Slim::Utils::Misc;
 my %irCodes = ();
 my %irMap   = ();
 
+my @irQueue = ();
+
 my @buttonPressStyles = ('', '.single', '.double', '.repeat', '.hold', '.hold_release');
 my $defaultMapFile;
 
@@ -58,6 +63,11 @@ our $IRSINGLETIME = 0.256;
 
 # Max time an IR key code is queued for before being discarded [if server is busy]
 my $maxIRQTime = 3.0;
+
+my $irPerf;
+if ( main::PERFMON ) {
+	$irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
+}
 
 my $log = logger('player.ir');
 
@@ -77,7 +87,7 @@ sub init {
 	}
 }
 
-sub handler {
+sub enqueue {
 	my $client = shift;
 	my $irCodeBytes = shift;
 	my $clientTime = shift;
@@ -95,23 +105,60 @@ sub handler {
 		$ref = $client->irRefTime($offset);
 		$client->irRefTimeStored($now);
 	}
+
+	my $entry = {
+		'client' => $client,
+		'bytes'  => $irCodeBytes,
+		'irTime' => $irTime,
+		'estTime'=> $irTime + $ref,
+	};
+
+	push @irQueue, $entry;
+}
+
+sub idle {
+	# return 0 only if no IR in queue
+	my $entry = shift @irQueue || return 0;
+	my $client = $entry->{'client'};
+
+	my $now = Time::HiRes::time();
 	
-	if ( $now - ($irTime + $ref ) < $maxIRQTime ) {
+	main::PERFMON && $irPerf->log($now - $entry->{'estTime'});
+
+	if (($now - $entry->{'estTime'}) < $maxIRQTime) {
+
 		# process IR code
-		processIR($client, $irCodeBytes, $irTime);
-		
-		# This code used to go through Request to processIR which was a waste.
-		# Now just notify for an ir event.
-		Slim::Control::Request::notifyFromArray( $client, [ 'ir', $irCodeBytes, $irTime ] );
-	}
-	else {
-		# potentially stale event, ignore it
-		Slim::Utils::Timers::killTimers($client, \&checkRelease);
-		
+		$client->execute(['ir', $entry->{'bytes'}, $entry->{'irTime'}]);
+
+	} else {
+
+		# discard all queued IR for this client as they are potentially stale
+		forgetQueuedIR($client);
+
 		if ( main::INFOLOG && $log->is_info ) {
-			$log->info( 'Discarded stale IR for client: ' . $client->id );
+			$log->info(sprintf("Discarded stale IR for client: %s", $client->id));
+		}
+
+	}
+		
+	return 1;
+}
+
+sub forgetQueuedIR {
+	my $client = shift;
+
+	my $i = 0;
+
+	while ( my $entry = $irQueue[$i] ) {
+
+		if ( $entry->{'client'} eq $client ) {
+			splice @irQueue, $i, 1;
+		} else {
+			$i++;
 		}
 	}
+
+	Slim::Utils::Timers::killTimers($client, \&checkRelease);
 }
 
 sub IRFileDirs {
@@ -493,7 +540,7 @@ sub lookupFunction {
 # Checks to see if a button has been released, this sub is executed through timers
 sub checkRelease {
 	my ($client, $releaseType, $startIRTime, $startIRCodeBytes, $estIRTime) = @_;
-	
+
 	my $now = Time::HiRes::time();
 	
 	if ($startIRCodeBytes ne $client->lastircodebytes) {

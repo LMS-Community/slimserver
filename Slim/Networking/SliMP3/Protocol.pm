@@ -46,7 +46,7 @@ sub processMessage {
 		
 		$client->trackJiffiesEpoch($irTime, $msgTimeStamp);
 		
-		Slim::Hardware::IR::handler($client, $irCodeBytes, $irTime);
+		Slim::Hardware::IR::enqueue($client, $irCodeBytes, $irTime);
 
 	} elsif ($type eq 'h') {
 

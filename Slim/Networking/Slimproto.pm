@@ -514,7 +514,7 @@ sub _ir_handler {
 
 	my ($irTime, $irCode) = unpack('NxxH8', $$data_ref);
 
-	Slim::Hardware::IR::handler($client, $irCode, $irTime) if $client->irenable();
+	Slim::Hardware::IR::enqueue($client, $irCode, $irTime) if $client->irenable();
 
 	if ( main::DEBUGLOG && $faclog->is_debug ) {
 		$faclog->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));
@@ -1343,7 +1343,7 @@ sub _button_handler {
 	# handle hard buttons
 	my ($time, $button) = unpack( 'NH8', $$data_ref);
 
-	Slim::Hardware::IR::handler($client, $button, $time);
+	Slim::Hardware::IR::enqueue($client, $button, $time);
 
 	main::INFOLOG && $log->info("Hard button: $button time: $time");
 } 
