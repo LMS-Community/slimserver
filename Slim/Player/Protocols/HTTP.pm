@@ -149,6 +149,8 @@ sub parseMetadata {
 	}
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
+		
+		main::DEBUGLOG && $log->is_debug && $log->debug("Icy metadata received: $metadata");
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
