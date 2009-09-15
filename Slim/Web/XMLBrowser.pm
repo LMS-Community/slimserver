@@ -203,7 +203,10 @@ sub handleFeed {
 		# Cache the feed structure for this session
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid" );
 
-		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
+		# Bug 14033, we can't use the feed cachetime here because it may be 0, defeating the purpose
+		# of this session cache.  So always cache for CACHE_TIME
+		#my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
+		my $cachetime = CACHE_TIME;
 		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
 		
