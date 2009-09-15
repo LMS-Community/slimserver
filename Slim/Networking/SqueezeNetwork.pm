@@ -325,6 +325,11 @@ sub getHeaders {
 		utf8::encode($name);
 		push @headers, 'X-Player-Name', encode_base64( $name, '' );
 		
+		# Bug 13963, Add "controlled by" string so SN knows what kind of menu to return
+		if ( my $controller = $client->controlledBy ) {
+			push @headers, 'X-Controlled-By', $controller;
+		}
+		
 		# Request JSON instead of XML, it is much faster to parse
 		push @headers, 'Accept', 'text/x-json, text/xml';
 		

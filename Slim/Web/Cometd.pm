@@ -449,7 +449,7 @@ sub handler {
 					clid     => $responseClid,
 					type     => 'subscribe',
 					lang     => $lang,
-				} );
+				} ); 
 				
 				if ( $result->{error} ) {
 					push @errors, {
@@ -786,13 +786,27 @@ sub handleRequest {
 		}
 		
 		# Set language override for this request
-		if ( $lang && $client ) {
-			$client->languageOverride( $lang );
+		if ( $client ) {
+			if ( $lang ) {
+				$client->languageOverride( $lang );
+			}
+			
+			# XXX: this could be more specific, i.e. iPeng
+			$client->controlledBy('squeezeplay');
 		}
+		
+		# Finish is called when request is done to reset language and controlledBy
+		my $finish = sub {
+			if ( $client ) {
+				$client->languageOverride(undef);
+				$client->controlledBy(undef);
+			}
+		};
 		
 		$request->execute();
 		
 		if ( $request->isStatusError ) {
+			$finish->();
 			return { error => 'request failed with error: ' . $request->getStatusText };
 		}
 		
@@ -800,26 +814,27 @@ sub handleRequest {
 		if ( !$id ) {
 			main::DEBUGLOG && $log->debug( "Request for $response, but caller does not care about the response" );
 			
+			$finish->();
 			return { ok => 1 };
 		}
 		
 		# handle async commands
 		if ( $request->isStatusProcessing ) {
 			# Only set a callback if the caller wants a response
-			$request->callbackParameters( \&requestCallback );
+			$request->callbackParameters( sub {
+				requestCallback(@_);
+				$finish->();
+			} );
 			
 			main::DEBUGLOG && $log->debug( "Request for $response / $id is async, will callback" );
 			
 			return { ok => 1 };
 		}
 		
-		# Remove language override, request is done
-		if ( $client ) {
-			$client->languageOverride( undef );
-		}
-		
 		# the request was successful and is not async
 		main::DEBUGLOG && $log->debug( "Request for $response / $id is not async" );
+		
+		$finish->();
 		
 		return {
 			channel => $response,
