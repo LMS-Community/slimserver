@@ -1819,6 +1819,9 @@ sub pushAlarmScreensaver {
 
 	my $currentMode = Slim::Buttons::Common::mode($client);
 	my $alarmScreensaver = $class->alarmScreensaver;
+	if ($client->display->isa('Slim::Display::NoDisplay')) {
+		$alarmScreensaver = undef;
+	}
 
 	main::DEBUGLOG && $log->debug('Attempting to push into alarm screensaver: ' . (defined $alarmScreensaver ? $alarmScreensaver : undef)
 			. ". Current mode: $currentMode");
