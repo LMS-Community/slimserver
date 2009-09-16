@@ -22843,6 +22843,7 @@ PRESET_HOLD_TO_SAVE
 	FR	Présélection #%s (maintenir enfoncé pour enregistrer)
 	IT	Preimpostazione #%s (tenere premuto per salvare)
 	NL	Voorinstelling #%s (vasthouden om op te slaan)
+	NO	Forhåndsinnstilling nr. %s (hold nede knappen for å lagre)
 	PL	Zdefiniowane ustawienie #%s (przytrzymaj, aby zapisać)
 	RU	Установить #%s (для сохранения нажать и удерживать)
 	SV	Förinställning av #%s (håll ner för att spara)
@@ -22858,6 +22859,7 @@ PRESET
 	FR	Présélection #%s
 	IT	Preimpostazione #%s
 	NL	Voorinstelling #%s
+	NO	Forhåndsinnstilling nr. %s
 	PL	Zdefiniowane ustawienie #%s
 	RU	Установить #%s
 	SV	Förinställning av #%s
