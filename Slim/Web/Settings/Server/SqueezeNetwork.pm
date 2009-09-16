@@ -9,6 +9,7 @@ package Slim::Web::Settings::Server::SqueezeNetwork;
 
 use strict;
 use base qw(Slim::Web::Settings);
+use Digest::SHA1 qw(sha1_base64);
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw(string);
@@ -55,9 +56,11 @@ sub handler {
 			
 			$params->{prefs}->{pref_sn_sync} = $params->{pref_sn_sync};
 		}
-		
-		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
-		
+
+		# set credentials if mail changed or a password is defined and it has changed
+		if ( $params->{pref_sn_email} ne $params->{prefs}->{pref_sn_email}
+			|| ( $params->{pref_sn_password_sha} && sha1_base64($params->{pref_sn_password_sha}) ne $prefs->get('sn_password_sha') ) ) {
+	
 			# Verify username/password
 			Slim::Control::Request::executeRequest(
 				$client,
@@ -71,6 +74,8 @@ sub handler {
 					
 					my $validated = $request->getResult('validated');
 					my $warning   = $request->getResult('warning');
+
+					$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
 			
 					if ($params->{'AJAX'}) {
 						$params->{'warning'} = $warning;
@@ -81,9 +86,12 @@ sub handler {
 		
 						$params->{'warning'} .= $warning . '<br/>' unless $params->{'AJAX'};
 		
+						$params->{prefs}->{pref_sn_email} = $params->{pref_sn_email};
+
 						delete $params->{pref_sn_email};
 						delete $params->{pref_sn_password_sha};
 					}
+
 
 					my $body = $class->SUPER::handler($client, $params);
 					$callback->( $client, $params, $body, @args );
@@ -91,11 +99,6 @@ sub handler {
 			);
 
 			return;
-		}
-
-		elsif ( !$params->{pref_sn_email} && !$params->{pref_sn_password_sha} ) {
-			# Shut down SN if username/password were removed
-			Slim::Networking::SqueezeNetwork->shutdown();
 		}
 	}
 

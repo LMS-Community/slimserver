@@ -85,20 +85,20 @@ sub snCredentials {
 
 	$parent->addApplyHandler($username, sub {
 		
-		return unless $username->GetValue() && $password->GetValue();
-		
-		return if $password->GetValue() eq 'SN_PASSWORD_PLACEHOLDER';
-		
-		my $validated = Slim::GUI::ControlPanel->serverRequest(
-			'setsncredentials',
-			$username->GetValue(),
-			$password->GetValue(),
-		);
-
-		# validation failed
-		if (!$validated || !$validated->{validated}) {
-			my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
-			$msgbox->ShowModal();
+		if ( $username->GetValue() ne Slim::GUI::ControlPanel->getPref('sn_email')
+			|| ($password->GetValue() ne 'SN_PASSWORD_PLACEHOLDER') )
+		{
+			my $validated = Slim::GUI::ControlPanel->serverRequest(
+				'setsncredentials',
+				$username->GetValue(),
+				$password->GetValue(),
+			);
+	
+			# validation failed
+			if (!$validated || !$validated->{validated}) {
+				my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
+				$msgbox->ShowModal();
+			}
 		}
 	});
 }
