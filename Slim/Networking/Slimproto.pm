@@ -409,7 +409,9 @@ sub client_readable {
 								$handler_ref->( $client, \$data );
 							}
 							else {
-								$log->error( "Client not found for slimproto msg op: $op", ' from ', inet_ntoa($s->peeraddr) );
+								if ( $s->peeraddr ) {
+									$log->error( "Client not found for slimproto msg op: $op", ' from ', inet_ntoa($s->peeraddr) );
+								}
 								slimproto_close($s);
 							}
 						}
