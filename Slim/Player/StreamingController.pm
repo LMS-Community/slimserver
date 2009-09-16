@@ -220,7 +220,7 @@ ReadyToStream =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_NoOp,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_NoOp,		\&_NextIfMore,	\&_RetryOrNext,	\&_StreamIfReady],	# PLAYING
+	[	\&_NoOp,		\&_NextIfMore,	\&_NextIfMore,	\&_StreamIfReady],	# PLAYING # _RetryOrNext (when playing) reverted until algoritm made safer
 	[	\&_NoOp,		\&_NextIfMore,	\&_NextIfMore,	\&_StreamIfReady],	# PAUSED
 ],
 Stopped =>
@@ -840,6 +840,10 @@ sub nextsong {
 	return $nextsong;
 }
 
+# FIXME - this algorithm is not safe enough. 
+# (a) It may be that the Track object does not have a duration available for fixed-length stream;
+# (b) It may be that the duration is only a guess and not good enough for resuming.
+#
 # If we are playing a remote stream and it ends prematurely, either because it is radio
 # (no specific duration) or we have played less than expected, then try to restart.
 # We have to have played at least 10 seconds and there must be at least 10 seconds more expected
