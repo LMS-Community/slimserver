@@ -173,7 +173,7 @@ sub parseMetadata {
 	
 	# Check for Ogg metadata, which is formatted as a series of
 	# 2-byte length/string pairs.
-	elsif ( $metadata =~ /^Ogg(.+)/ ) {
+	elsif ( $metadata =~ /^Ogg(.+)/s ) {
 		my $comments = $1;
 		my $meta = {};
 		while ( $comments ) {
