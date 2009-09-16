@@ -39,7 +39,7 @@ use Slim::Utils::Log;
 sub url {
 	my $self = shift;
 
-	return sprintf('db:genre.namesearch=%s', URI::Escape::uri_escape($self->namesearch));
+	return sprintf('db:genre.namesearch=%s', URI::Escape::uri_escape_utf8($self->namesearch));
 }
 
 sub tracks {

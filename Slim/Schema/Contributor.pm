@@ -104,7 +104,7 @@ sub displayAsHTML {
 sub url {
 	my $self = shift;
 
-	return sprintf('db:contributor.namesearch=%s', URI::Escape::uri_escape($self->namesearch));
+	return sprintf('db:contributor.namesearch=%s', URI::Escape::uri_escape_utf8($self->namesearch));
 }
 
 sub add {
