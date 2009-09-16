@@ -22834,9 +22834,31 @@ PRESET_ADDING
 
 PRESET_HOLD_TO_SAVE
 # SLT: instruction for the user to hold the button if he wants to save that preset
+	CS	Přednastavit #%s (pro uložení přidržte)
+	DA	Fast indstilling #%s (hold knappen nede for at gemme)
+	DE	Voreinstellung #%s (zum Speichern gedrückt halten)
 	EN	Preset #%s (hold to save)
+	ES	Memoria #%s (mantener pulsado para guardar)
+	FI	Esiasetus #%s (tallenna pitämällä pohjassa)
+	FR	Présélection #%s (maintenir enfoncé pour enregistrer)
+	IT	Preimpostazione #%s (tenere premuto per salvare)
+	NL	Voorinstelling #%s (vasthouden om op te slaan)
+	PL	Zdefiniowane ustawienie #%s (przytrzymaj, aby zapisać)
+	RU	Установить #%s (для сохранения нажать и удерживать)
+	SV	Förinställning av #%s (håll ner för att spara)
 
 PRESET
 # SLT: a preset button on eg. the Radio
+	CS	Prednastavení #%s
+	DA	Fast indstilling #%s
+	DE	Voreinstellung #%s
 	EN	Preset #%s
+	ES	Memoria #%s
+	FI	Esiasetus #%s
+	FR	Présélection #%s
+	IT	Preimpostazione #%s
+	NL	Voorinstelling #%s
+	PL	Zdefiniowane ustawienie #%s
+	RU	Установить #%s
+	SV	Förinställning av #%s
 
