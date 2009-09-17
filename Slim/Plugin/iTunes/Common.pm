@@ -99,15 +99,23 @@ sub findLibraryFromPlist {
 	open (PLIST, catfile(@parts)) || return $path;
 
 	while (<PLIST>) {
-
 		if (/<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
 			$path = Slim::Utils::Misc::pathFromFileURL($1);
 			last;
 		}
-		if (/<string>(.*iTunes%20Library.xml)<\/string>$/) {
+		elsif (/<string>(.*iTunes%20Library.xml)<\/string>$/) {
 			$path = Slim::Utils::Misc::pathFromFileURL($1);
 			last;
-		}	}
+		}
+		elsif (/(file:\/\/localhost.*iTunes%20Music%20Library.xml)/) {
+			$path = Slim::Utils::Misc::pathFromFileURL($1);
+			last;
+		}
+		elsif (/(file:\/\/localhost.*iTunes%20Library.xml)/) {
+			$path = Slim::Utils::Misc::pathFromFileURL($1);
+			last;
+		}
+	}
 
 	close PLIST;
 
@@ -187,7 +195,7 @@ sub findMusicLibraryFile {
 
 	my $base = $ENV{'HOME'} || '';
 
-	my $path = findLibraryFromPlist($base);
+	my $path = $class->findLibraryFromPlist($base);
 
 	if ($path && -r $path) {
 
@@ -198,7 +206,7 @@ sub findMusicLibraryFile {
 		return $path;
 	}
 
-	$path = findLibraryFromRegistry();
+	$path = $class->findLibraryFromRegistry();
 
 	if ($path && -r $path) {
 
