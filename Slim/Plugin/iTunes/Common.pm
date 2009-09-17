@@ -408,7 +408,7 @@ sub checkDefaults {
 		$prefs->set('lastITunesMusicLibraryDate',0);
 	}
 
-	if (!defined $prefs->get('itunes') && defined findMusicLibraryFile()) {
+	if (!defined $prefs->get('itunes') && defined $class->findMusicLibraryFile()) {
 		$prefs->set('itunes', 1);
 	}
 	
