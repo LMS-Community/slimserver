@@ -101,7 +101,7 @@ sub handler {
 			elsif ( $lang eq 'ES' ) {
 				Slim::Schema->changeCollation( 'utf8_spanish_ci' );
 			}
-			else {
+			elsif ($curLang =~ /(?:CS|SV|DA|ES)/) {
 				Slim::Schema->changeCollation( 'utf8_general_ci' );
 			}
 
