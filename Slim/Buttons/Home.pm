@@ -102,13 +102,10 @@ sub init {
 					}
 					return $client->string($string) . $append;
 				}
-				elsif ( $string eq 'SQUEEZENETWORK_PIN' ) {
-					return sprintf $client->string($string), $client->pin;
-				}
 				elsif ( $string eq 'MESSAGE_COUNT' ) {
 					my $count = $client->playerData->userid->messageCount;
 					
-					return sprintf $client->string($string), $count;
+					return $client->string( $string, $count );
 				}
 			}
 
@@ -142,10 +139,6 @@ sub init {
 			'useMode'   => 'alarm',
 			'externRef' => sub {return 'test';},
 		};
-		
-		$home{SQUEEZENETWORK_PIN} = {
-			'useMode' => 'setup.pinhelp',
-		},
 	}
 
 	# Align actions as per Bug 8929 - in home menu add and play just go right.
@@ -944,14 +937,6 @@ sub updateMenu {
 			next if $hasSpecialMenu;
 			
 			next if exists $disabledMenus{$menuItem};
-			
-			if ( $menuItem eq 'PLUGIN_CHOOSESERVER' ) {
-				# Bug 3157, add PIN to main menu if the player isn't linked to a
-				# SN account
-				if ( $client->playerData->userid == 1 ) {
-					push @home, 'SQUEEZENETWORK_PIN';
-				}
-			}
 		}
 		
 		push @home, $menuItem;
