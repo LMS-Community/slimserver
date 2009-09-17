@@ -57,7 +57,13 @@ sub read {
 
 			main::DEBUGLOG && $log->debug("  entry from file: $entry");
 
-			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);
+			if (main::ISWINDOWS) {
+				$entry = Win32::GetANSIPathName($entry);	
+			}
+			else {
+				$entry = Slim::Utils::Unicode::utf8encode_locale($entry);	
+			}
+
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 			if ($class->playlistEntryIsValid($entry, $url)) {
