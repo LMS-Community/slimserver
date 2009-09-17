@@ -33,6 +33,7 @@ my %tagMapping = (
 	'WM/PartOfSet'          => 'DISC',
 	'WM/ArtistSortOrder'    => 'ARTISTSORT',
 	'WM/Comments'           => 'COMMENT',
+	'WM/Year'               => 'YEAR',
 );
 
 sub getTag {
