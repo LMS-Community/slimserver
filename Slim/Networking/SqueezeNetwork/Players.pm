@@ -118,18 +118,6 @@ sub _players_done {
 	$CONNECTED_PLAYERS = $res->{players};
 	$INACTIVE_PLAYERS  = $res->{inactive_players};
 	
-	# Update list of active music services
-	if ( $res->{active_services} ) {
-		# Avoid updating the pref unless things have changed
-		my $new = complex_to_query( $res->{active_services} );
-		my $cur = complex_to_query( $prefs->get('sn_active_services') || {} );
-		
-		if ( $cur ne $new ) {
-			main::DEBUGLOG && $log->debug( 'Updating active services from SN' );
-			$prefs->set( sn_active_services => $res->{active_services} );
-		}
-	}
-	
 	# Make a list of all apps for the web UI
 	my $allApps = {};
 	

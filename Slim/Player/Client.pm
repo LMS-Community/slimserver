@@ -1442,4 +1442,14 @@ sub apps {
 	return $prefs->client($client)->get('apps') || {};
 }
 
+sub isAppEnabled {
+	my ( $client, $app ) = @_;
+	
+	if ( grep { $_ eq lc($app) } keys %{ $client->apps } ) {
+		return 1;
+	}
+	
+	return;
+}
+
 1;

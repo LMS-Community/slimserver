@@ -147,10 +147,6 @@ sub _init_done {
 		$prefs->set( sn_disabled_plugins => $json->{disabled_plugins} || [] );
 	}
 	
-	if ( $json->{active_services} ) {
-		$prefs->set( sn_active_services => $json->{active_services} );
-	}
-	
 	# Init the Internet Radio menu
 	if ( $json->{radio_menu} ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') ) {
@@ -456,35 +452,6 @@ sub _construct_url {
 	}
 	
 	return $url;
-}
-
-sub hasAccount {
-	my ( $class, $client, $type ) = @_;
-		
-	if ( main::SLIM_SERVICE ) {
-		return $client->playerData->userid->hasServiceAccount( $type );
-	}
-	else {
-		my $services = $prefs->get('sn_active_services') || {};
-		
-		return $services->{$type};
-	}
-}
-
-sub isServiceEnabled {
-	my ( $class, $client, $service ) = @_;
-	
-	if ( main::SLIM_SERVICE ) {
-		return $client->playerData->userid->isAllowedService($service);
-	}
-	
-	my $disabled = $prefs->get('sn_disabled_plugins') || [];
-	
-	if ( grep { lc($_) eq lc($service) } @{$disabled} ) {
-		return 0;
-	}
-	
-	return 1;
 }
 
 1;

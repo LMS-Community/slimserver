@@ -229,9 +229,8 @@ sub trackInfoMenu {
 	
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'LFM' );
-	
-	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'lfm' );
+	# Only show if in the app list
+	return unless $client->isAppEnabled('lastfm');
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	

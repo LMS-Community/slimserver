@@ -234,9 +234,8 @@ sub trackInfoMenu {
 
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Slacker' );
-	
-	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' );
+	# Only show if in the app list
+	return unless $client->isAppEnabled('slacker');
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	

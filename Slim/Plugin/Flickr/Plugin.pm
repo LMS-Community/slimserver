@@ -77,11 +77,10 @@ sub trackInfoMenu {
 	return unless $client;
 	
 	# Only display on SP devices
-	# XXX should add a way to indicate if $client is ip3k but controlled by SP
-	return unless $client->isa('Slim::Player::SqueezePlay');
-	
-	# is app enabled?
-	return if !grep { 'flickr' } keys %{ $client->apps };
+	return unless $client->isa('Slim::Player::SqueezePlay') || $client->controlledBy eq 'squeezeplay';
+
+	# Only show if in the app list
+	return unless $client->isAppEnabled('flickr');
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	

@@ -213,9 +213,8 @@ sub trackInfoMenu {
 	
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Pandora' );
-	
-	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' );
+	# Only show if in the app list
+	return unless $client->isAppEnabled('pandora');
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
@@ -242,9 +241,8 @@ sub artistInfoMenu {
 	
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Pandora' );
-	
-	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' );
+	# Only show if in the app list
+	return unless $client->isAppEnabled('pandora');
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/pandora/v1/opml/search?q='

@@ -74,9 +74,8 @@ sub trackInfoMenu {
 	
 	return unless $client;
 	
-	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Facebook' );
-	
-	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'facebook' );
+	# Only show if in the app list
+	return unless $client->isAppEnabled('facebook');
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
