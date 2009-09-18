@@ -1593,6 +1593,25 @@ sub songqueue {
 	return $_[0]->{'songqueue'};
 }
 
+sub resetSongQueue {
+	my ($self, $index) = @_;
+
+	my $queue = $self->{'songqueue'};
+
+	$#{$queue} = -1;
+
+	if (defined($index)) {
+		my $song  = Slim::Player::Song->new($self, $index);
+		push(@{$queue}, $song) unless (!$song);
+	}
+
+	if ( main::INFOLOG && $log->is_info ) {
+		$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
+	}
+		
+	return $index || 0;	
+}
+
 sub currentSongForUrl {
 	my ($self, $url) = @_;
 	

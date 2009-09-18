@@ -97,20 +97,6 @@ sub playmode {
 	return $return;
 }
 
-# If there are no more tracks in the queue, or the track on the queue has
-# already been marked as invalid, stop.
-sub noMoreValidTracks {
-	my $client = shift;
-
-	my $count  = Slim::Player::Playlist::count($client);
-
-	if (streamingSongIndex($client) == ($count - 1) || !$count) {
-		return 1;
-	}
-
-	return 0;
-}
-
 # TODO - move to some stream-handler
 sub nextChunk {
 	my $client       = shift;
@@ -192,63 +178,15 @@ sub gototime {
 }
 
 sub streamingSongIndex {
-	my $client = shift->master();
-	my $index = shift;
-	my $clear = shift;
-	my $song = shift;
+	my $song = $_[0]->controller()->streamingSong();
 
-	my $queue = $client->currentsongqueue();
-	if (defined($index)) {
-
-		main::INFOLOG && $log->info("Adding song index $index to song queue");
-
-		if ($clear || $client->isSynced()) {
-
-			main::INFOLOG && $log->info("Clearing out song queue first");
-
-			$#{$queue} = -1;
-		}
-		
-		if (defined($song)) {
-			main::INFOLOG && $log->info("adding existing song: index=", ($song->index() ? $song->index() : 'undef'));
-			unshift(@{$queue}, $song);
-
-		} else {
-			
-			$song  = Slim::Player::Song->new($client->controller, $index);
-			unshift(@{$queue}, $song) unless (!$song);
-			
-		}
-
-		if ( main::INFOLOG && $log->is_info ) {
-			$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
-		}
-		
-	}
-
-	$song = $client->controller()->streamingSong();
-
-	if (!defined($song)) {
-		return 0;
-	}
-
-	return $song->index();
+	return $song ? $song->index() : 0;
 }
 
 sub playingSongIndex {
-	my $song = playingSong($_[0]);
-	if (!defined($song)) {
-		return 0;
-	}
-	return $song->index();
-}
+	my $song = $_[0]->controller()->playingSong();
 
-sub playingSong {
-	return $_[0]->controller()->playingSong();
-}
-
-sub playingSongDuration {
-	return $_[0]->controller()->playingSongDuration();
+	return $song ? $song->index() : 0;
 }
 
 sub flushStreamingSong {

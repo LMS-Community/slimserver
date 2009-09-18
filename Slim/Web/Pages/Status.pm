@@ -70,8 +70,8 @@ sub status {
 	
 		$params->{'songtime'} = int(Slim::Player::Source::songTime($client));
 
-		if (Slim::Player::Source::playingSong($client)) { 
-			my $dur = Slim::Player::Source::playingSongDuration($client);
+		if ($client->controller()->playingSong()) { 
+			my $dur = $client->controller()->playingSongDuration();
 			if ($dur) { $dur = int($dur); }
 			$params->{'durationseconds'} = $dur; 
 		}

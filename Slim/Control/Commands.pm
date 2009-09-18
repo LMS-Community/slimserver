@@ -969,7 +969,7 @@ sub playlistJumpCommand {
 	}
 	
 	if ($noplay && $isStopped) {
-		Slim::Player::Source::streamingSongIndex($client, $newIndex, 1);
+		$client->controller()->resetSongqueue($newIndex);
 	} else {
 		main::INFOLOG && $log->info("playing $newIndex");
 		$client->controller()->play($newIndex, $seekdata, $fadeIn);

@@ -197,7 +197,7 @@ sub requestString {
 	
 	# Fix progress bar if seeking
 	if ( $newtime ) {
-		$client->master()->currentsongqueue()->[-1]->startOffset($newtime);
+		$client->playingSong()->startOffset($newtime);
 		$client->master()->remoteStreamStartTime( Time::HiRes::time() - $newtime );
 	}
 

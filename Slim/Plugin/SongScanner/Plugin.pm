@@ -79,7 +79,7 @@ my %modeParams = (
 			}
 
 			# Display song position e.g. 1:32
-		    return _formatTime( $val ) . ' / -' . _formatTime( Slim::Player::Source::playingSongDuration($client) - $val );
+		    return _formatTime( $val ) . ' / -' . _formatTime( $client->controller()->playingSongDuration() - $val );
 		    	
 		}
 	,'overlayRefArgs' => 'CV'

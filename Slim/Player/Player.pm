@@ -715,7 +715,7 @@ sub nowPlayingModeLines {
 	my $displayWidth = $display->displayWidth($screen2 ? 2 : 1);
 	
 	# check if we don't know how long the track is...
-	if (!Slim::Player::Source::playingSongDuration($client)) {
+	if (!$client->controller()->playingSongDuration()) {
 		$showBar = 0;
 	}
 	
@@ -787,7 +787,7 @@ sub textSongTime {
 	my $delta = 0;
 	my $sign  = '';
 
-	my $duration = Slim::Player::Source::playingSongDuration($client) || 0;
+	my $duration = $client->controller()->playingSongDuration() || 0;
 
 	if (Slim::Player::Source::playmode($client) eq "stop") {
 		$delta = 0;

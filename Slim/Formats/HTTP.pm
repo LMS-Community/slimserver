@@ -134,7 +134,7 @@ sub requestString {
 		
 		if (defined $seekdata->{timeOffset}) {
 			# Fix progress bar
-			$client->master()->currentsongqueue()->[-1]->startOffset($seekdata->{timeOffset});
+			$client->playingSong()->startOffset($seekdata->{timeOffset});
 			$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
 		}
 	}

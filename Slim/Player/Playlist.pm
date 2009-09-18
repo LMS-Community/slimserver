@@ -213,7 +213,7 @@ sub copyPlaylist {
 	@{$toClient->playlist}    = @{$fromClient->playlist};
 	@{$toClient->shufflelist} = @{$fromClient->shufflelist};
 
-	Slim::Player::Source::streamingSongIndex($toClient, Slim::Player::Source::streamingSongIndex($fromClient), 1) unless $noQueueReset;
+	$toClient->controller()->resetSongqueue(Slim::Player::Source::streamingSongIndex($fromClient)) unless $noQueueReset;
 
 	$prefs->client($toClient)->set('shuffle', $prefs->client($fromClient)->get('shuffle'));
 	$prefs->client($toClient)->set('repeat',  $prefs->client($fromClient)->get('repeat'));
@@ -495,7 +495,7 @@ sub stopAndClear {
 	
 	# Bug 11447 - Have to stop player and clear song queue
 	$client->controller->stop();
-	@{$client->currentsongqueue()} = ();
+	$client->controller()->resetSongqueue();
 
 	@{playList($client)} = ();
 	$client->currentPlaylist(undef);

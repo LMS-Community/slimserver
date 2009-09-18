@@ -606,7 +606,7 @@ sub initial_add_done {
 		
 		$currsong = 0;
 		
-		Slim::Player::Source::streamingSongIndex($client,$currsong, 1);
+		$client->controller()->resetSongqueue($currsong);
 		
 	} elsif ($shuffleType eq 'album') {
 
@@ -624,7 +624,7 @@ sub initial_add_done {
 			$currsong = Slim::Player::Playlist::count($client) - 1;
 		}
 
-		Slim::Player::Source::streamingSongIndex($client, $currsong, 1);
+		$client->controller()->resetSongqueue($currsong);
 	}
 
 	$prefs->client($client)->set('currentSong', $currsong);
@@ -961,7 +961,7 @@ sub prettySleepTime {
 	my $sleeptime = $client->sleepTime() - Time::HiRes::time();
 	my $sleepstring = "";
 	
-	my $dur = Slim::Player::Source::playingSongDuration($client) || 0;
+	my $dur = $client->controller()->playingSongDuration() || 0;
 	my $remaining = 0;
 	
 	if ($dur) {
