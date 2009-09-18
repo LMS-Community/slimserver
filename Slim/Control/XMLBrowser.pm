@@ -728,13 +728,18 @@ sub _cliQuery_done {
 					}
 					
 					if ( $method =~ /play|load/i ) {
-						$client->execute([ 'playlist', 'play', \@urls ]);
+						$client->execute([ 'playlist', 'clear' ]);
 					}
-					else {
-						my $cmd = $method eq 'insert' ? 'inserttracks' : 'addtracks';
-						$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
-						_addingToPlaylist($client, $method);
-					}
+
+					my $cmd = $method =~ /add/ ? 'addtracks' : 'inserttracks';
+					
+					my $play_index = $request->getParam('play_index') || 0;
+
+					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+					$client->execute([ 'playlist', 'jump', $play_index ]);
+					
+					# XXX Ben: I don't think this showBriefly is right
+					_addingToPlaylist($client, $method);
 				}
 			}
 		}
@@ -1123,6 +1128,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
 						elsif ( $touchToPlay ) {
+							my $all = $item->{playall} ? 'all' : '';
 							my $actions = {
 								more => {
 									cmd         => [ $query, 'items' ],
@@ -1131,14 +1137,14 @@ sub _cliQuery_done {
 								},
 								go => {
 									player      => 0,
-									cmd         => [$query, 'playlist', 'play'],
+									cmd         => [ $query, 'playlist', 'play' . $all ],
 									itemsParams => 'params',
 									params      => $itemParams,
 									nextWindow  => 'nowPlaying',
 								},
 								'add' => {
 									player      => 0,
-									cmd         => [$query, 'playlist', 'add'],
+									cmd         => [ $query, 'playlist', 'add' . $all ],
 									itemsParams => 'params',
 									params      => $itemParams,
 								},
@@ -1149,6 +1155,23 @@ sub _cliQuery_done {
 									params      => $itemParams,
 								}
 							};
+							
+							if ( $item->{playall} ) {
+								# Clone params or we'll end up changing data for every action
+								my $cParams = Storable::dclone($itemParams);
+								
+								# Remember which item was pressed when playing so we can jump to it
+								my @ids = split /\./, $id;
+								$cParams->{play_index} = $ids[-1];
+								
+								# Rewrite item_id if in 'all' mode, so it plays/adds all the
+								# tracks from the current level, not the single item
+								$cParams->{item_id} = "$item_id";
+								
+								$actions->{go}->{params}  = $cParams;
+								$actions->{add}->{params} = $cParams;
+							}
+							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
