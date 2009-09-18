@@ -258,12 +258,12 @@ sub _cliQuery_done {
 	
 	if ( $sid ) {
 		# Cache the feed structure for this session
-		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid" );
 
-		# Bug 14033, we can't use the feed cachetime here because it may be 0, defeating the purpose
-		# of this session cache.  So always cache for CACHE_TIME
-		#my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
-		my $cachetime = CACHE_TIME;
+		# cachetime is only set by parsers which known the content is dynamic and so can't be cached
+		# for all other cases we always cache for CACHE_TIME to ensure the menu stays the same throughout the session
+		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
+
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid for $cachetime" );
 		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
 
@@ -1287,6 +1287,7 @@ sub _cliQuerySubFeed_done {
 
 	$subFeed->{'fetched'} = 1;
 
+	# cachetime will only be set by parsers which know their content is dynamic
 	if (defined $feed->{'cachetime'}) {
 		$parent->{'cachetime'} = min( $parent->{'cachetime'} || CACHE_TIME, $feed->{'cachetime'} );
 	}
