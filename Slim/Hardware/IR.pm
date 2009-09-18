@@ -64,11 +64,6 @@ our $IRSINGLETIME = 0.256;
 # Max time an IR key code is queued for before being discarded [if server is busy]
 my $maxIRQTime = 3.0;
 
-my $irPerf;
-if ( main::PERFMON ) {
-	$irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
-}
-
 my $log = logger('player.ir');
 
 my $prefs = preferences('server');
@@ -123,7 +118,7 @@ sub idle {
 
 	my $now = Time::HiRes::time();
 	
-	main::PERFMON && $irPerf->log($now - $entry->{'estTime'});
+	main::PERFMON && Slim::Utils::PerfMon->check('ir', $now - $entry->{'estTime'});
 
 	if (($now - $entry->{'estTime'}) < $maxIRQTime) {
 

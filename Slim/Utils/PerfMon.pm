@@ -23,6 +23,7 @@ my $monitors = {
 	template => 'Template',
 	dbaccess => 'DB Access',
 	web      => 'Page Build',
+	ir       => 'IR Delay',
 };
 
 my $thresh = {}; # thresholds per enabled monitor
