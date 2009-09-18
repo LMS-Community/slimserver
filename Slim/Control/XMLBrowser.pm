@@ -192,7 +192,15 @@ sub _cliQuery_done {
 
 	# get our parameters
 	my $index      = $request->getParam('_index');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split /:/, $index);
+		$index = 0;
+	}
 	my $quantity   = $request->getParam('_quantity');
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split /:/, $quantity);
+		$quantity = 200;
+	}
 	my $search     = $request->getParam('search');
 	my $want_url   = $request->getParam('want_url') || 0;
 	my $item_id    = $request->getParam('item_id');
@@ -736,10 +744,14 @@ sub _cliQuery_done {
 					my $play_index = $request->getParam('play_index') || 0;
 
 					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
-					$client->execute([ 'playlist', 'jump', $play_index ]);
-					
-					# XXX Ben: I don't think this showBriefly is right
-					_addingToPlaylist($client, $method);
+
+					# if we're adding or inserting, show a showBriefly
+					if ( $method =~ /add/ ) {
+						_addingToPlaylist($client, $method);
+					# if not, we jump to the correct track in the list
+					} else {
+						$client->execute([ 'playlist', 'jump', $play_index ]);
+					}
 				}
 			}
 		}
@@ -958,6 +970,7 @@ sub _cliQuery_done {
 											'text'    => [ $hash{name} || $hash{title} ],
 										},
 									});
+							next;
 						}
 
 						# if nowPlaying is 1, tell Jive to go to nowPlaying
