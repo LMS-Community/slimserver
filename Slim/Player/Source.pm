@@ -189,6 +189,14 @@ sub playingSongIndex {
 	return $song ? $song->index() : 0;
 }
 
+sub playingSong {
+	return $_[0]->controller()->playingSong(); 	 
+}
+
+sub playingSongDuration {
+	return $_[0]->controller()->playingSongDuration();
+}
+
 sub flushStreamingSong {
 	my $client = shift;
 	$client->controller()->flush($client);
