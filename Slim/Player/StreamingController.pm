@@ -1593,7 +1593,7 @@ sub songqueue {
 	return $_[0]->{'songqueue'};
 }
 
-sub resetSongQueue {
+sub resetSongqueue {
 	my ($self, $index) = @_;
 
 	my $queue = $self->{'songqueue'};
