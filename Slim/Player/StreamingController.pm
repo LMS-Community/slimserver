@@ -718,6 +718,7 @@ sub _nextTrackReady {
 	if ($self->{'nextTrackCallbackId'} != $id) {
 		main::INFOLOG && $log->info($self->{'masterId'} . ": discarding unexpected nextTrackCallbackId $id, expected " . 
 			$self->{'nextTrackCallbackId'});
+		$song->setStatus(Slim::Player::Song::STATUS_FINISHED) if (blessed $song);
 		return;
 	}
 
@@ -735,6 +736,7 @@ sub _nextTrackError {
 	my ($song, $index);
 	if (blessed $songOrIndex) {
 		$song = $songOrIndex;
+		$song->setStatus(Slim::Player::Song::STATUS_FAILED);
 	} else {
 		$index = $songOrIndex;
 	}
@@ -1114,7 +1116,7 @@ sub _Stream {				# play -> Buffering, Streaming
 	
 	my $queue = $self->{'songqueue'};
 
-	# bug 10510 - remove old songs from queue before adding new one
+	# bug 10510 - remove old songs from head of queue before adding new one
 	# (Note: did not just test for STATUS_PLAYING so as not to hardwire max-queue-length == 2 too often)
 	while (scalar @$queue && 
 		   ($queue->[-1]->status() == Slim::Player::Song::STATUS_FAILED || 
@@ -1125,16 +1127,31 @@ sub _Stream {				# play -> Buffering, Streaming
 		pop @$queue;
 	}
 	
-	unshift @$queue, $song unless scalar @$queue && $queue->[0] == $song;
-	if (main::INFOLOG && $log->is_info) {	
-		$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
+	# bug 12653: also remove inappropriate songs from tail of queue
+	while (scalar @$queue && 
+		   ($queue->[0]->status() == Slim::Player::Song::STATUS_FAILED || 
+			$queue->[0]->status() == Slim::Player::Song::STATUS_FINISHED || 
+			$queue->[0]->status() == Slim::Player::Song::STATUS_READY)
+		  ) {
+
+		shift @$queue;
 	}
 	
+	unshift @$queue, $song unless scalar @$queue && $queue->[0] == $song;
+
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
 	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
 	# Check that we are not trying to stream too many tracks (test moved from _StreamIfReady)
-	return if scalar @$queue > 2;
+	if (scalar @$queue > 2) {
+		main::INFOLOG && $log->info("aborting streaming because songqueue too long: ", scalar @$queue);
+		shift @$queue while (scalar @$queue > 2);
+		return;
+	}
+	
+	if (main::INFOLOG && $log->is_info) {	
+		$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
+	}
 	
 	main::INFOLOG && $log->info($self->{masterId} . ": preparing to stream song index " .  $song->index());
 	
