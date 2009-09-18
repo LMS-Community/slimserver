@@ -17,7 +17,7 @@ PLUGIN_FACEBOOK_ON_FACEBOOK
 	CS	Sdílet na Facebook
 	DA	Del dette på Facebook
 	DE	Auf Facebook veröffentlichen
-	EN	Share this on Facebook
+	EN	Share on Facebook
 	ES	Compartir en Facebook
 	FI	Jaa tämä Facebookissa
 	FR	Partager sur Facebook
