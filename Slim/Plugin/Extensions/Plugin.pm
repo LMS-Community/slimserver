@@ -142,6 +142,23 @@ sub initPlugin {
 		Slim::Plugin::Extensions::Settings->new;
 	}
 
+	# clean out plugin entries for plugins which are manually installed
+	# this can happen if a developer moves an automatically installed plugin to a manually installed location
+	my $installPlugins = $prefs->get('plugin');
+	my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
+
+	for my $plugin (keys %$installPlugins) {
+
+		if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
+
+			$log->warn("removing $plugin from install list as it is already manually installed");
+
+			delete $installPlugins->{ $plugin };
+
+			$prefs->set('plugin', $installPlugins);
+		}
+	}
+
 	Slim::Control::Request::addDispatch(['appsquery'], [0, 1, 1, \&appsQuery]);
 }
 
