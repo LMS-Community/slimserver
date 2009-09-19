@@ -133,6 +133,12 @@ sub cliQuery {
 			$request->addParam( item_id => "$itemId" ); # stringify for JSON
 		}
 		
+		if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
+			_playlistControlContextMenu({ request => $request, query => $query });
+
+			return;
+		}
+
 		my $cache = Slim::Utils::Cache->new;
 		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
@@ -744,15 +750,26 @@ sub _cliQuery_done {
 						$client->execute([ 'playlist', 'clear' ]);
 					}
 
-					my $cmd = $method =~ /add/ ? 'addtracks' : 'inserttracks';
-					
+					my $cmd;
+					if ($method =~ /add/) {
+						$cmd = 'addtracks';
+					# FIXME: insert command does not work for adding an album next (insertracks also does not work here)
+					} elsif ($method eq 'insert') {
+						$cmd = 'insert';
+					# inserttracks will play
+					} else {
+						$cmd = 'inserttracks';
+					}
+	
 					my $play_index = $request->getParam('play_index') || 0;
 
 					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
 
 					# if we're adding or inserting, show a showBriefly
-					if ( $method =~ /add/ ) {
-						_addingToPlaylist($client, $method);
+					if ( $method =~ /add/ || $method eq 'insert' ) {
+						my $icon = $request->getParam('icon');
+						my $title = $request->getParam('favorites_title');
+						_addingToPlaylist($client, $method, $title, $icon);
 					# if not, we jump to the correct track in the list
 					} else {
 						$client->execute([ 'playlist', 'jump', $play_index ]);
@@ -1298,20 +1315,24 @@ sub _cliQuerySubFeed_done {
 sub _addingToPlaylist {
 	my $client = shift;
 	my $action = shift || 'add';
+	my $title  = shift;
+	my $icon   = shift;
 
 	my $string = $action eq 'add'
 		? $client->string('ADDING_TO_PLAYLIST')
 		: $client->string('INSERT_TO_PLAYLIST');
 
 	my $jivestring = $action eq 'add' 
-		? $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', ' ') 
-		: $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', ' ');
+		? $client->string('JIVE_POPUP_ADDING')
+		: $client->string('JIVE_POPUP_TO_PLAY_NEXT');
 
 	$client->showBriefly( { 
 		line => [ $string ],
 		jive => {
-			type => 'popupplay',
-			text => [ $jivestring ],
+			type => 'mixed',
+			text => [ $jivestring, $title ],
+			style => 'add',
+			'icon-id' => defined $icon ? $icon : '/html/music/cover.png',
 		},
 	} );
 }
@@ -1427,4 +1448,67 @@ sub _jivePresetBase {
 	return $actions;
 }
 
+sub _playlistControlContextMenu {
+
+	my $args    = shift;
+	my $query   = $args->{'query'};
+	my $request = $args->{'request'};
+	my $client  = $request->client;
+	my $params  = $request->{_params};
+	my $itemParams = {
+		favorites_title => $params->{'favorites_title'},
+		menu => $params->{'menu'},
+		type => $params->{'type'},
+		icon => $params->{'icon'},
+		item_id => $params->{'item_id'},
+	};
+
+	my @contextMenu = (
+		{
+			text => $request->string('ADD_TO_END'),
+			actions => {
+				go => {
+				player => 0,
+					cmd    => [ $query, 'playlist', 'add'],
+					params => $itemParams,
+					nextWindow => 'parentNoRefresh',
+				},
+			},
+		},
+		{
+			text => $request->string('PLAY_NEXT'),
+			actions => {
+				go => {
+				player => 0,
+					cmd    => [ $query, 'playlist', 'insert'],
+					params => $itemParams,
+					nextWindow => 'parentNoRefresh',
+				},
+			},
+		},
+		{
+			text => $request->string('PLAY'),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ $query, 'playlist', 'play'],
+					params => $itemParams,
+					nextWindow => 'nowPlaying',
+				},
+			},
+		},
+	);
+	my $numItems = scalar(@contextMenu);
+	$request->addResult('count', $numItems);
+	$request->addResult('offset', 0);
+	my $cnt = 0;
+	for my $eachmenu (@contextMenu) {
+		$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+		$cnt++;
+	}
+
+	$request->setStatusDone();
+}
+
 1;
+
