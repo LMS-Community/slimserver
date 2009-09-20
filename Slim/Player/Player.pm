@@ -629,6 +629,8 @@ sub currentSongLines {
 			'type' => 'icon',
 			'text' => [ $status, $song ? $song->title : undef ],
 			'style' => $jiveIconStyle,
+			'play-mode' => $playmode,
+			'is-remote' => $song->isRemoteURL,
 		};
 		
 		if ( $imgKey ) {
