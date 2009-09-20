@@ -189,6 +189,8 @@ sub buildCaches {
 			Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "useContextMenu:1", "sort:$sort", 'menu:track', 'cache:1', "party:$partymode" ] );
 		}
 		
+		main::idleStreams();
+		
 		# Artists
 		if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
 			# Add one since we may have a VA item
@@ -197,11 +199,15 @@ sub buildCaches {
 			Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, "useContextMenu:1", 'menu:album', 'cache:1', "party:$partymode" ] );
 		}
 		
+		main::idleStreams();
+		
 		# Genres
 		if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
 			main::DEBUGLOG && $log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
 			Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, "useContextMenu:1", 'menu:artist', 'cache:1', "party:$partymode" ] );
 		}
+		
+		main::idleStreams();
 	}
 }
 

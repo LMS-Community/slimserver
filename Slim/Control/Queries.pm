@@ -587,6 +587,8 @@ sub albumsQuery {
 			}
 			
 			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
 		}
 
 		if ($menuMode) {
@@ -935,6 +937,8 @@ sub artistsQuery {
 			}
 
 			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
 		}
 		
 		if ($menuMode) {
@@ -1537,6 +1541,8 @@ sub genresQuery {
 				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
 		}
 	}
 
@@ -2499,6 +2505,8 @@ sub playlistsTracksQuery {
 				
 				$cur++;
 				$chunkCount++;
+				
+				main::idleStreams() if !($chunkCount % 5);
 			}
 
 			my $lastChunk;
@@ -2668,6 +2676,8 @@ sub playlistsQuery {
 					$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 				}
 				$chunkCount++;
+				
+				main::idleStreams() if !($chunkCount % 5);
 			}
 		}
 		if ($totalCount == 0 && $menuMode) {
@@ -3050,6 +3060,8 @@ sub searchQuery {
 			$results{$type}->{'count'} = $count;
 	
 			$totalCount += $count;
+			
+			main::idleStreams();
 		}
 	}
 
@@ -3078,6 +3090,8 @@ sub searchQuery {
 					$request->addResultLoop($loopName, $loopCount, $type, $result->name);
 		
 					$loopCount++;
+					
+					main::idleStreams() if !($loopCount % 5);
 				}
 			}
 		}
@@ -3749,9 +3763,7 @@ sub statusQuery {
 					$count++;
 					
 					# give peace a chance...
-					if ($count % 5) {
-						::idleStreams();
-					}
+					main::idleStreams() if !($count % 5);
 				}
 				
 				#we don't do that in menu mode!
@@ -3779,7 +3791,7 @@ sub statusQuery {
 								);
 
 								$count++;
-								::idleStreams() ;
+								main::idleStreams() if !($count % 5);
 							}
 						}
 					}
@@ -4275,9 +4287,7 @@ sub titlesQuery {
 			$listIndex++;
 			
 			# give peace a chance...
-			if ($chunkCount % 5) {
-				::idleStreams();
-			}
+			main::idleStreams() if !($chunkCount % 5);
 		}
 
 	}
@@ -4484,6 +4494,8 @@ sub yearsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
 			}
 			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
 		}
 	}
 
@@ -5222,7 +5234,7 @@ sub _songData {
 	);
 	
 	# loop so that stuff is returned in the order given...
-	for my $tag (split //, $tags) {
+	for my $tag (split (//, $tags)) {
 		
 		my $tagref = $tagMap{$tag} or next;
 		
