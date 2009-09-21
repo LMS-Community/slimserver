@@ -626,7 +626,7 @@ sub getSeekData {
 	my $bitrate = 128;
 	
 	return {
-		sourceStreamOffset => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+		sourceStreamOffset => ( ( $bitrate * 1000 ) / 8 ) * $newtime,
 		timeOffset         => $newtime,
 	};
 }

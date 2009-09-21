@@ -609,7 +609,7 @@ sub getSeekData {
 	main::INFOLOG && $log->info( "Trying to seek $newtime seconds into $bitrate kbps" );
 	
 	return {
-		sourceStreamOffset   => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+		sourceStreamOffset   => ( ( $bitrate * 1000 ) / 8 ) * $newtime,
 		timeOffset           => $newtime,
 	};
 }
