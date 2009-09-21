@@ -1295,11 +1295,6 @@ sub _cliQuerySubFeed_done {
 	else {
 		# otherwise insert items as subfeed
 		$subFeed->{'items'} = $feed->{'items'};
-		
-		# Update the title value in case it's different from the previous menu
-		if ( $feed->{'title'} ) {
-			$subFeed->{'name'} = $feed->{'title'};
-		}
 	}
 
 	$subFeed->{'fetched'} = 1;
