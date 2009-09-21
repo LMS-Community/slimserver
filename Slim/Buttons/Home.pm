@@ -1044,8 +1044,10 @@ sub updateMenu {
 	$homeChoices{$client} = \@home;
 
 	# this is only for top level, so shortcut out if player is not at top level
-	if ($client->curDepth()) {
-	
+	# Bug 14134, this used to check $client->curDepth() but it does not really return the current depth
+	# modeStack is a better way to determine where you are.  This checks for > 2 because on the home
+	# menu the modeStack is ["home", "INPUT.List"]
+	if ( scalar @{ $client->modeStack || [] } > 2 ) {
 		$client->update();
 		return;
 	}
