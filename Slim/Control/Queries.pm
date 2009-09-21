@@ -2424,7 +2424,6 @@ sub playlistsTracksQuery {
 						'cmd' => 'load',
 						'playlist_id' => $playlistID,
 					},
-					'nextWindow'  => 'nowPlaying',
 					'itemsParams' => 'params',
 				},
 				'add' => {
@@ -2486,6 +2485,7 @@ sub playlistsTracksQuery {
 					
 					my $text = Slim::Music::TitleFormatter::infoFormat($eachitem, $format, 'TITLE');
 					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
+					$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'nowPlaying');
 					my $id = $eachitem->id();
 					$id += 0;
 					my $params = {
