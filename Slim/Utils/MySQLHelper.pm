@@ -319,8 +319,7 @@ sub source {
 }
 
 sub on_connect_do {
-	# Nothing for MySQL
-	return [];
+	return [ 'SET NAMES UTF8' ];
 }
 
 sub changeCollation {
