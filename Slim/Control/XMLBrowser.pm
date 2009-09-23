@@ -753,11 +753,8 @@ sub _cliQuery_done {
 					my $cmd;
 					if ($method =~ /add/) {
 						$cmd = 'addtracks';
-					# FIXME: insert command does not work for adding an album next (insertracks also does not work here)
-					} elsif ($method eq 'insert') {
-						$cmd = 'insert';
-					# inserttracks will play
-					} else {
+					}
+					else {
 						$cmd = 'inserttracks';
 					}
 	
