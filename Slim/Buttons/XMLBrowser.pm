@@ -608,14 +608,17 @@ sub gotOPML {
 			# Bug 13247, if there is a nextWindow value, pop back until we
 			# find the mode with a matching windowId.
 			# XXX: refresh that item?
-			if ( my $nextWindow = $item->{nextWindow} ) {				
-				while ( Slim::Buttons::Common::mode($client) ) {
-					Slim::Buttons::Common::popModeRight($client);
-					if ( $client->modeParam('windowId') eq $nextWindow ) {
-						last;
+			if ( my $nextWindow = $item->{nextWindow} ) {
+				# Ignore special nextWindow values used by SP
+				if ( $nextWindow !~ /^(?:home|parent)$/ ) {		
+					while ( Slim::Buttons::Common::mode($client) ) {
+						Slim::Buttons::Common::popModeRight($client);
+						if ( $client->modeParam('windowId') eq $nextWindow ) {
+							last;
+						}
 					}
+					return;
 				}
-				return;
 			}
 			
 			# Type = 'redirect', hack to allow XMLBrowser items to push into
