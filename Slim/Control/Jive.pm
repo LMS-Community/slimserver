@@ -2167,6 +2167,9 @@ sub dateQuery {
 		$request->setStatusBadDispatch();
 		return;
 	}
+
+	# one concept of "now" for the whole func
+	my $time = time();
 	
 	if ( main::SLIM_SERVICE ) {
 		# Use timezone on user's account
@@ -2177,10 +2180,13 @@ sub dateQuery {
 			|| $client->playerData->userid->timezone 
 			|| 'America/Los_Angeles';
 		
-		my $datestr = DateTime->now( time_zone => $tz )->strftime("%Y-%m-%dT%H:%M:%S%z");
+		my $datestr = DateTime->from_epoch( epoch => $time, time_zone => $tz )->strftime("%Y-%m-%dT%H:%M:%S%z");
 		$datestr =~ s/(\d\d)$/:$1/; # change -0500 to -05:00
-		
 		$request->addResult( 'date', $datestr );
+
+		$datestr = DateTime->from_epoch( epoch => $time )->strftime("%Y-%m-%dT%H:%M:%S%z");
+		$datestr =~ s/(\d\d)$/:$1/; # change -0500 to -05:00
+		$request->addResult( 'date_utc', $datestr );
 		
 		$request->setStatusDone();
 		
@@ -2188,7 +2194,6 @@ sub dateQuery {
 	}
 	
 	# Calculate the time zone offset, taken from Time::Timezone
-	my $time = time();
 	my @l    = localtime($time);
 	my @g    = gmtime($time);
 
@@ -2230,7 +2235,8 @@ sub dateQuery {
 	$tzoff .= sprintf( "%s:%02d", $hour, int( $off % 3600 / 60 ) );
 
 	# Return time in http://www.w3.org/TR/NOTE-datetime format
-	$request->addResult( 'date', strftime("%Y-%m-%dT%H:%M:%S", localtime) . $tzoff );
+	$request->addResult( 'date', strftime("%Y-%m-%dT%H:%M:%S", @l) . $tzoff );
+	$request->addResult( 'date_utc', strftime("%Y-%m-%dT%H:%M:%S+00:00", @g));
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
