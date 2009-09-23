@@ -683,6 +683,22 @@ sub deleteMenuItem {
 	@pluginMenus = reverse @new;
 }
 
+# delete all menus items listed in @pluginMenus and @appMenus
+# This used to do menu refreshes when apps may have been removed
+sub deleteAllMenuItems {
+	my $client = shift || return;
+	
+	my @menuDelete;
+	
+	for my $menu ( @pluginMenus, @appMenus ) {
+		push @menuDelete, { id => $menu->{id} };
+	}
+	
+	main::INFOLOG && $log->is_info && $log->info( $client->id . ' removing menu items: ' . Data::Dump::dump(\@menuDelete) );
+	
+	_notifyJive( \@menuDelete, $client, 'remove' );
+}
+
 sub _purgeMenu {
 	my $menu = shift;
 	my @menu = @$menu;
