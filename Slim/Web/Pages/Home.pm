@@ -33,7 +33,7 @@ sub init {
 
 	$class->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html"});
 	$class->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	$class->addPageLinks("help", { 'FAQ' => "http://logitech-en-amr.custhelp.com/cgi-bin/logitech_en_amr.cfg/php/enduser/std_alp.php?p_sid=qUtsMMri&p_lva=&p_li=&p_accessibility=0&p_page=1&p_cv=&p_pv=2.1681&p_prods=844%2C1681&p_cats=&p_hidden_prods=&prod_lvl1=844&prod_lvl2=1681&prod_lvl3=0&p_new_search=1&p_search_type=answers.search_nl"},1);
+	$class->addPageLinks("help", { 'FAQ' => "http://mysqueezebox.com/support"},1);
 	$class->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
 
