@@ -68,14 +68,13 @@ sub new {
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 		$btnStartStop->SetSize( $btnStartStop->GetBestSize() );
 	});
-	$statusSizer->Add($btnStartStop, 0);
+	$statusSizer->Add($btnStartStop, 0, wxLEFT, 10);
 
 	my $cbStartSafeMode = Wx::CheckBox->new($self, -1, string('RUN_FAILSAFE'));
 	$parent->addStatusListener($cbStartSafeMode, sub {
 		$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
 	});
-	$statusSizer->AddSpacer(5);
-	$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 5);
+	$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 10);
 
 	@startupOptions = map { string($_) } @startupOptions;	
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
