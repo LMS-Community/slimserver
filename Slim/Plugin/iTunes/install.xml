@@ -10,7 +10,7 @@
 	
 	<defaultState>
 		<win>enabled</win>
-		<osx>enabled</osx>
+		<mac>enabled</mac>
 		<other>disabled</other>
 	</defaultState>
 	
