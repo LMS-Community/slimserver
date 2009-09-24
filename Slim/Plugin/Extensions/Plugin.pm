@@ -130,6 +130,10 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
+	for my $repo (keys %repos) {
+		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
+	}
+
 	if ($prefs->get('otherrepo')) {
 		$class->addRepo({ other => 1 });
 	}
