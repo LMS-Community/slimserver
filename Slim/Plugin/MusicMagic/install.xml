@@ -10,7 +10,7 @@
 	<email>support@slimdevices.com</email>
 
 	<defaultState>
-		<osx>enabled</osx>
+		<mac>enabled</mac>
 		<win>enabled</win>
 		<other>disabled</other>
 	</defaultState>

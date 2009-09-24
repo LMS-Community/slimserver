@@ -340,10 +340,8 @@ sub browseTreeItemName {
 		$client->modeParam('winShortcuts')->{$item->url} = $name if $name;
 	}
 
-	return Slim::Utils::Unicode::utf8on( 
-		Slim::Music::Info::fileName(
-			$client->modeParam('winShortcuts')->{$item->url} || $item->url 
-		)
+	return Slim::Music::Info::fileName(
+		$client->modeParam('winShortcuts')->{$item->url} || $item->url 
 	);
 }
 

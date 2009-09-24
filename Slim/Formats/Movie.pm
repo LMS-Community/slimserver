@@ -68,12 +68,12 @@ sub getTag {
 		$tags->{CHANNELS}   = $track->{channels};
 
 		# If encoding is alac, the file is lossless.
-		if ( $track->{encoding} eq 'alac' ) {
+		if ( $track->{encoding} && $track->{encoding} eq 'alac' ) {
 			$tags->{LOSSLESS}     = 1;
 			$tags->{VBR_SCALE}    = 1;
 			$tags->{CONTENT_TYPE} = 'alc';
 		}
-		elsif ( $track->{encoding} eq 'drms' ) {
+		elsif ( $track->{encoding} && $track->{encoding} eq 'drms' ) {
 			$tags->{DRM} = 1;
 		}
 	}

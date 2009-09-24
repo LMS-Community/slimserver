@@ -261,10 +261,15 @@ sub clientConnectCommand {
 		my ($host, $packed);
 		$host = $request->getParam('_where');
 		
-		if ( $host =~ /^www.(?:squeezenetwork|mysqueezebox).com$/i ) {
+		# Bug 14224, if we get jive/baby/fab4.squeezenetwork.com, use the configured prod SN hostname
+		if ( $host =~ /^(?:jive|baby|fab4)/i ) {
+			$host = Slim::Networking::SqueezeNetwork->get_server('sn');
+		}
+		
+		if ( $host =~ /^www\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
 			$host = 1;
 		}
-		elsif ( $host =~ /^www.test.(?:squeezenetwork|mysqueezebox).com$/i ) {
+		elsif ( $host =~ /^www\.test\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
 			$host = 2;
 		}
 		elsif ( $host eq '0' ) {
