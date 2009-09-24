@@ -21327,19 +21327,21 @@ CONTROLPANEL_TITLE
 	SV	Kontrollpanelen för Squeezebox Server
 
 CONTROLPANEL_SERVERSTATUS
-	CS	Status serveru
-	DA	Serverstatus
-	DE	Serverstatus
-	EN	Server Status
-	ES	Estado de servidor
-	FI	Palvelimen tila
-	FR	Etat du serveur
-	IT	Stato del server
-	NL	Serverstatus
-	NO	Server-status
-	PL	Stan serwera
-	RU	Состояние сервера
-	SV	Serverstatus
+	CS	Stav
+	DA	Status
+	DE	Status
+	EN	Status
+	ES	Estado
+	FI	Tila
+	FR	Etat
+	HE	מצב
+	IT	Stato
+	JA	ステータス
+	NL	Status
+	NO	Status
+	PL	Stan
+	RU	Статус
+	SV	Status
 
 CONTROLPANEL_STATUS_RUNNING
 	CS	Status: Server je spuštěn
@@ -21387,19 +21389,19 @@ CONTROLPANEL_STATUS_STOPPED
 	SV	Status: Servern har stoppats
 
 CONTROLPANEL_ACCOUNT
-	CS	Nastavení účtu
-	DA	Kontoindstillinger
-	DE	Kontoeinstellungen
-	EN	Account Settings
-	ES	Configuración de cuenta
-	FI	Tilin asetukset
-	FR	Paramètres du compte
-	IT	Impostazioni account
-	NL	Accountinstellingen
-	NO	Kontoinnstillinger
-	PL	Ustawienia konta
-	RU	Настройки учетной записи
-	SV	Kontoinställningar
+	CS	Účet
+	DA	Konto
+	DE	Konto
+	EN	Account
+	ES	Cuenta
+	FI	Tili
+	FR	Compte
+	IT	Account
+	NL	Account
+	NO	Konto
+	PL	Konto
+	RU	Учетная запись
+	SV	Konto
 
 CONTROLPANEL_SN_CREDENTIALS
 	CS	Zadejte informace o vašem účtu mysqueezebox.com
@@ -21432,19 +21434,19 @@ CONTROLPANEL_STARTUP_OPTIONS
 	SV	Startalternativ
 
 CONTROLPANEL_MUSIC_LIBRARY
-	CS	Knihovna hudby
-	DA	Musikbibliotek
-	DE	Musikbibliothek
-	EN	Music Library
-	ES	Biblioteca de música
-	FI	Musiikkikirjasto
-	FR	Collection musicale
-	IT	Libreria musicale
-	NL	Muziekcollectie
-	NO	Musikkbibliotek
-	PL	Biblioteka muzyki
-	RU	Медиатека
-	SV	Musikbibliotek
+	CS	Knihovna
+	DA	Bibliotek
+	DE	Bibliothek
+	EN	Library
+	ES	Biblioteca
+	FI	Kirjasto
+	FR	Bibliothèque
+	IT	Libreria
+	NL	Bibliotheek
+	NO	Bibliotek
+	PL	Biblioteka
+	RU	Библиотека
+	SV	Bibliotek
 
 CONTROLPANEL_AUTHENTICATION_REQUIRED
 	CS	Pro přístup do Squeezebox Server je vyžadována autentizace

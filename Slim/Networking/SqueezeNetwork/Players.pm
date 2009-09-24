@@ -125,20 +125,31 @@ sub _players_done {
 	# This will create new pref entries for players this server has never seen
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
-			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
-			$cprefs->set( apps => $player->{apps} );
-			
+			# Keep a list of all available apps for the web UI
 			for my $app ( keys %{ $player->{apps} } ) {
 				$allApps->{$app} = $player->{apps}->{$app};
 			}
 			
-			# Refresh ip3k and Jive menu
-			if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
-				if ( !$client->isa('Slim::Player::SqueezePlay') ) {
-					Slim::Buttons::Home::updateMenu($client);
+			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
+			
+			# Compare existing apps to new list
+			my $currentApps = complex_to_query( $cprefs->get('apps') || {} );
+			my $newApps     = complex_to_query( $player->{apps} );
+			
+			# Only refresh menus if the list has changed
+			if ( $currentApps ne $newApps ) {
+				$cprefs->set( apps => $player->{apps} );
+			
+				# Refresh ip3k and Jive menu
+				if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
+					if ( !$client->isa('Slim::Player::SqueezePlay') ) {
+						Slim::Buttons::Home::updateMenu($client);
+					}
+					
+					# Clear Jive menu and refresh with new main menu
+					Slim::Control::Jive::deleteAllMenuItems($client);
+					Slim::Control::Jive::mainMenu($client);
 				}
-				
-				Slim::Control::Jive::appMenus($client);
 			}
 		}
 	}

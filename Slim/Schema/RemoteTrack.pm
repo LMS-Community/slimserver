@@ -180,6 +180,16 @@ sub new {
 	return $self;
 }
 
+my %localTagMapping = (
+	artist      => 'artistname',
+	albumartist => 'artistname',
+	trackartist => 'artistname',
+	album       => 'albumname',
+	composer    => undef,
+	conductor   => undef,
+	band        => undef,
+);
+
 sub setAttributes {
 	my ($self, $attributes, $tagMapping) = @_;
 	
@@ -189,7 +199,8 @@ sub setAttributes {
 		next if !defined $value; # XXX not sure about this
 		$key = lc($key);
 		$key = $tagMapping->{$key} if $tagMapping && exists $tagMapping->{$key};
-		next if $key eq 'url';
+		$key = $localTagMapping{$key} if exists $localTagMapping{$key};
+		next if !defined($key) || $key eq 'url';
 		
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
 			$log->debug("$key: ", $self->$key(), "=>$value");
