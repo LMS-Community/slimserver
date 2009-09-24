@@ -281,6 +281,7 @@ sub _timeToOffset {
 	my $streamClass = _streamClassForFormat($format);
 
 	if ($streamClass && $streamClass->can('findFrameBoundaries')) {
+		main::INFOLOG && $log->is_info && $log->info("seeking using $streamClass findFrameBoundaries(" . ($seekoffset + $offset) . ", $time)");
 		$seekoffset  = $streamClass->findFrameBoundaries($sock, $seekoffset + $offset, $time);
 	} else {
 		$seekoffset -= $seekoffset % $align;
