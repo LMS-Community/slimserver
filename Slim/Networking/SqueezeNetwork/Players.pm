@@ -125,6 +125,11 @@ sub _players_done {
 	# This will create new pref entries for players this server has never seen
 	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
 		if ( exists $player->{apps} ) {
+			# Keep a list of all available apps for the web UI
+			for my $app ( keys %{ $player->{apps} } ) {
+				$allApps->{$app} = $player->{apps}->{$app};
+			}
+			
 			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
 			
 			# Compare existing apps to new list
@@ -134,10 +139,6 @@ sub _players_done {
 			# Only refresh menus if the list has changed
 			if ( $currentApps ne $newApps ) {
 				$cprefs->set( apps => $player->{apps} );
-			
-				for my $app ( keys %{ $player->{apps} } ) {
-					$allApps->{$app} = $player->{apps}->{$app};
-				}
 			
 				# Refresh ip3k and Jive menu
 				if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
