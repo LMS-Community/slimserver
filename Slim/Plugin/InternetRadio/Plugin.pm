@@ -154,6 +154,18 @@ sub generate {
 		$append = $item->{append};
 	}
 	
+	# Bug 14245, this class may already exist if it was created on startup with no SN account,
+	# and then we tried to re-create it after an SN account has been entered
+	my $pclass = "${package}::${subclass}";
+	if ( $pclass->can('initPlugin') ) {
+		# The plugin may have a new URL, we can change the URL in the existing plugin
+		$pclass->setFeed($feed);
+		
+		main::DEBUGLOG && $log->is_debug && $log->debug("$pclass already exists, changing URL to $feed");
+		
+		return;
+	}
+	
 	if ( $strings && uc($name) eq $name ) {
 		# Use SN-supplied translations
 		Slim::Utils::Strings::storeString( $name, $strings );
@@ -187,6 +199,8 @@ sub initPlugin {
 	        sub { return \$class->_pluginDataFor('icon'); }
 	    );
 	}
+	
+	\$class->setFeed('$feed');
 
 	\$class->SUPER::initPlugin(
 		tag    => '$tag',
@@ -226,13 +240,15 @@ sub feed {
 sub feed {
 	my \$class = shift;
 	
-	return \$class->radiotimeFeed( '$feed', \@_ );
+	my \$feed = getFeed();
+	
+	return \$class->radiotimeFeed( \$feed, \@_ );
 }
 };
 		}
 		else {
 			$code .= qq{
-sub feed { '$feed' }
+sub feed { getFeed() }
 };
 		}
 	}
@@ -240,6 +256,13 @@ sub feed { '$feed' }
 	$code .= qq{
 
 sub icon { '$icon' }
+
+# Provide a way to change the feed later
+my \$localFeed;
+
+sub getFeed { \$localFeed }
+
+sub setFeed { \$localFeed = \$_[1] }
 
 1;
 };

@@ -361,19 +361,24 @@ sub _gotTrackInfo {
     return if $song->pluginData('abandonSong');
 	
 	# Save the media URL for use in strm
-	$song->streamUrl(delete $info->{url});
+	$song->streamUrl( delete $info->{url} );
+	
+	# Cache the rest of the track's metadata
+	my $meta = {
+		artist    => $info->{artist},
+		album     => $info->{album},
+		title     => $info->{title},
+		cover     => $info->{cover},
+		bitrate   => '128k CBR',
+		type      => 'WMA (Napster)',
+		info_link => 'plugins/napster/trackinfo.html',
+		icon      => Slim::Plugin::Napster::Plugin->_pluginDataFor('icon'),
+	};
+	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'napster_meta_' . $info->{id}, $meta, 86400 );
 	
 	$params->{successCb}->();
-	return;
-	
-	# XXX: may not need the below code
-	
-	# Watch for playlist commands
-	Slim::Control::Request::subscribe( 
-		\&_playlistCallback, 
-		[['playlist'], ['newsong']],
-		$song->master(),
-	);
 }
 
 # 2.1b Get mediaURL 
