@@ -32,12 +32,12 @@ my $prefs = preferences('server');
 # This is a hashref of mysqueezebox.com server types
 #   and names.
 
+# XXX SN address is hardcoded here for now but eventually
+# this will change to be based on the reverse version number
 my $_Servers = {
-#	sn      => 'www.squeezenetwork.com',
-	sn      => 'www.test.squeezenetwork.com', # XXX temporary for testing
-	content => 'content.squeezenetwork.com',
-	update  => 'update.squeezenetwork.com',
-	test    => 'www.test.squeezenetwork.com',
+	sn      => '0.4.7.sbs.r.mysqueezebox.com',
+	update  => 'update.mysqueezebox.com',
+	test    => 'www.test.mysqueezebox.com',
 };
 
 # Used only on SN
