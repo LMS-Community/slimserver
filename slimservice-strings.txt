@@ -1444,6 +1444,5 @@ MESSAGE_COUNT
 	DE	Mitteilungen (%d) 
 	EN	Messages (%d)
 	ES	Mensajes (%d)
-	EN	Messages (%d)
 	IT	Messaggi (%d)
 	

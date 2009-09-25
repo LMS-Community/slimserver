@@ -1013,8 +1013,9 @@ sub updateMenu {
 	# Insert app menu after radio
 	splice @home, 3, 0, @sorted;
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && !$hasSpecialMenu ) {
 		# Bug 13230, display a one-time message to users about this menu change
+		# Not shown for users with a special menu
 		my $mode = 'MESSAGE_COUNT';
 		if ( !exists $home{$mode} ) {
 			my $url = Slim::Networking::SqueezeNetwork->url('/api/messages/v1/opml');

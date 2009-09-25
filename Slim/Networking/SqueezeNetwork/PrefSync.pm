@@ -230,12 +230,6 @@ sub _syncDown_done {
 	
 		$cprefs->remove('snSyncErrors');
 		
-		# Sync name if different
-		if ( $content->{name} && ( $content->{name} ne $client->name ) ) {
-			$client->name( $content->{name} );
-			main::DEBUGLOG && $log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
-		}
-		
 		while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
 			
 			if ( $pref =~ /\./ ) {
