@@ -70,6 +70,7 @@ sub initDetails {
 	$class->{osDetails}->{'os'}  = 'Darwin';
 	$class->{osDetails}->{'uid'} = getpwuid($>);
 
+	# XXX - do we still need this? They're empty on my system, and created if needed in some other place anyway
 	for my $dir (
 		'Library/Application Support/Squeezebox',
 		'Library/Application Support/Squeezebox/Plugins', 

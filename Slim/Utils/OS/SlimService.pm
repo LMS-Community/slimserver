@@ -65,6 +65,8 @@ sub dirsFor {
 
 sub getSystemLanguage { 'EN' }
 
+sub migratePrefsFolder {};
+
 sub skipPlugins {
 	my $class = shift;
 	
