@@ -799,6 +799,7 @@ sub _cliQuery_done {
 	
 		my $hasImage = 0;
 		my $windowStyle;
+		my $play_index = 0;
 		
 		if ($count) {
 		
@@ -1193,8 +1194,7 @@ sub _cliQuery_done {
 								my $cParams = Storable::dclone($itemParams);
 								
 								# Remember which item was pressed when playing so we can jump to it
-								my @ids = split /\./, $id;
-								$cParams->{play_index} = $ids[-1];
+								$cParams->{play_index} = $play_index++;
 								
 								# Rewrite item_id if in 'all' mode, so it plays/adds all the
 								# tracks from the current level, not the single item
