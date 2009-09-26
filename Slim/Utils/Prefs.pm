@@ -96,6 +96,10 @@ $::prefsdir = $path;
 
 $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 
+unless (-d $path) {
+	Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
+}
+
 my $prefs = preferences('server');
 
 # make sure these server prefs has the utf8flag turned off before they get used

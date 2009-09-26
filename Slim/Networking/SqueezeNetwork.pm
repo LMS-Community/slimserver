@@ -33,9 +33,7 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-#	sn      => 'www.squeezenetwork.com',
-	sn      => 'www.test.squeezenetwork.com', # XXX temporary for testing
-	content => 'content.squeezenetwork.com',
+	sn      => 'www.test.squeezenetwork.com', # XXX point to prod before release
 	update  => 'update.squeezenetwork.com',
 	test    => 'www.test.squeezenetwork.com',
 };

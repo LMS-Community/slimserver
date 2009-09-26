@@ -37,6 +37,16 @@ sub details {
 
 sub initPrefs {};
 
+=head2 migratePrefsFolder()
+
+Use this sub to migrate complete prefs files before they are read.
+To be used during product migrations like eg. SqueezeCenter -> Squeezebox Server
+Windows & OSX handle this in the installer
+
+=cut
+
+sub migratePrefsFolder {};
+
 sub sqlHelperClass { 'Slim::Utils::MySQLHelper' }
 
 # Skip obsolete plugins, they should be deleted by installers
