@@ -36,7 +36,7 @@ sub DEFAULT_FEEDS {
 	{
 		name  => 'Odeo',
 		value => 'http://'
-			. Slim::Networking::SqueezeNetwork->get_server("content")
+			. Slim::Networking::SqueezeNetwork->get_server('sn')
 			. '/opml/odeo.opml',
 	},
 	{

@@ -75,6 +75,14 @@ sub dirsFor {
 		
 		push @dirs, $::prefsdir;
 		
+	# SqueezeCenter <= 7.3 prefs
+	} elsif ($dir eq 'scprefs') {
+
+		my $oldpath = $class->dirsFor('prefs');
+		$oldpath =~ s/squeezebox(?:server)?/squeezecenter/i;
+
+		@dirs = ( $oldpath );
+
 	} elsif ($dir eq 'oldprefs') {
 	
 		if ($::prefsfile && -r $::prefsfile) {
@@ -101,6 +109,20 @@ sub dirsFor {
 	}
 
 	return wantarray() ? @dirs : $dirs[0];
+}
+
+sub migratePrefsFolder {
+	my ($class, $newdir) = @_;
+	
+	return if -d $newdir && -r _;
+	
+	# we only care about SqueezeCenter -> Squeezebox Server for now
+	my $olddir = $class->dirsFor('scprefs');	
+
+	return unless -d $olddir && -r _;
+
+	require File::Copy::Recursive;
+	File::Copy::Recursive::dircopy($olddir, $newdir);
 }
 
 # leave log rotation to the system

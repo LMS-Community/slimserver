@@ -13,7 +13,10 @@ package Slim::Player::SqueezePlay;
 use strict;
 use vars qw(@ISA);
 
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
+
+my $prefs = preferences('server');
 
 my $log = logger('network.protocol.slimproto');
 
@@ -173,6 +176,24 @@ sub hasIR() { return 0; }
 
 sub formats {
 	return @{shift->myFormats};
+}
+
+sub fade_volume {
+	my ($client, $fade, $callback, $callbackargs) = @_;
+
+	if (abs($fade) > 1 ) {
+		# for long fades do standard behavior so that sleep/alarm work
+		$client->SUPER::fade_volume($fade, $callback, $callbackargs);
+	} else {
+		#SP does local audio control for mute/pause/unpause so don't do fade in/out 
+		my $vol = abs($prefs->client($client)->get("volume"));
+		$vol = ($fade > 0) ? $vol : 0;
+		$client->volume($vol, 1);
+		if ($callback) {
+			&{$callback}(@{$callbackargs});
+		}
+
+	}
 }
 
 # Need to use weighted play-point?
