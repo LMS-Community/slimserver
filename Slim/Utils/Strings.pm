@@ -376,7 +376,7 @@ sub storeString {
 
 	} elsif (defined $curString->{$failsafeLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$failsafeLang};
-		main::DEBUGLOG && $log->debug("Language $currentLang using $failsafeLang for $name in $file");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Language $currentLang using $failsafeLang for $name in". defined $file ? $file : 'undefined');
 	}
 
 	if ($args->{'storeFailsafe'} && defined $curString->{$failsafeLang}) {

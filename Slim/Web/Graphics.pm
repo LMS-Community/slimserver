@@ -45,7 +45,7 @@ sub processCoverArtRequest {
 	# Allow the client to specify dimensions, etc.
 	$path =~ /music\/(-*\w+)\//;
 	my $trackid = $1;
-	main::INFOLOG && $log->info("trackid has been parsed from path as: $trackid");
+	main::INFOLOG && defined $trackid && $log->is_info && $log->info("trackid has been parsed from path as: $trackid");
 
 	my $imgName = File::Basename::basename($path);
 	my ($imgBasename, $dirPath, $suffix)  = File::Basename::fileparse($path, '\..*');
