@@ -556,8 +556,8 @@ sub mixerCommand {
 	if ($entity eq 'muting') {
 	
 		my $curmute = $prefs->client($client)->get('mute');
-	
-		if (!defined $newvalue) { # toggle
+
+		if ( !defined $newvalue || $newvalue eq 'toggle' ) { # toggle
 			$newvalue = !$curmute;
 		}
 		
