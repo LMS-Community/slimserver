@@ -3638,7 +3638,7 @@ sub statusQuery {
 			}
 		} else {
 			$request->addResult('alarm_state', $alarmComing);
-			$request->addResult('alarm_next', $alarmNext + 0);
+			$request->addResult('alarm_next', defined $alarmNext ? $alarmNext + 0 : 0);
 		}
 
 		main::DEBUGLOG && $log->debug("statusQuery(): setup base for jive");
