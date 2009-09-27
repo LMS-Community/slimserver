@@ -33,7 +33,7 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn      => 'www.test.squeezenetwork.com', # XXX point to prod before release
+	sn      => 'www.squeezenetwork.com',
 	update  => 'update.squeezenetwork.com',
 	test    => 'www.test.squeezenetwork.com',
 };
