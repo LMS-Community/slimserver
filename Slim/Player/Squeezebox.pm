@@ -907,6 +907,25 @@ sub stream_s {
 				$transitionType = $override;
 			}
 		}
+		
+		# Bug 13264, don't do transitions if the player is set to sleep at the end of the song
+		my $sleeptime = $client->sleepTime() - Time::HiRes::time();
+		my $dur = $client->controller()->playingSongDuration() || 0;
+		my $remaining = 0;
+		
+		if ($dur) {
+			$remaining = $dur - Slim::Player::Source::songTime($client);
+		}
+	
+		if ($client->sleepTime) {
+			
+			# check against remaining time to see if sleep time matches within a minute.
+			if (int($sleeptime/60 + 0.5) == int($remaining/60 + 0.5)) {
+				main::INFOLOG && $log->info('Overriding transition due to sleeping at end of song');
+				$transitionType = 0;
+			}
+		}
+
 	}
 	
 	if ($transitionDuration > $client->maxTransitionDuration()) {
