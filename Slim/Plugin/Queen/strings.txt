@@ -1,0 +1,33 @@
+PLUGIN_QUEEN_MODULE_NAME
+#SLT Do not translate
+	EN	Queen
+	
+PLUGIN_QUEEN_ERROR
+	CS	Chyba služby Queen
+	DA	Queen-fejl
+	DE	Queen-Fehler
+	EN	Queen Error
+	ES	Error de Queen
+	FI	Queen-virhe
+	FR	Erreur Queen
+	IT	Errore Queen
+	NL	Queen-fout
+	NO	Feil med Queen
+	PL	Błąd usługi Queen
+	RU	Ошибка Queen
+	SV	Queen-fel
+
+PLUGIN_QUEEN_NO_INFO
+	CS	Není možné načíst informace o proudu.
+	DA	Der kunne ikke hentes oplysninger om streamen.
+	DE	Stream-Info kann nicht abgerufen werden.
+	EN	Unable to retrieve stream info.
+	ES	Imposible obtener información de secuencia.
+	FI	Virran tietoja ei voi noutaa.
+	FR	Impossible de récupérer les informations sur le flux.
+	IT	Impossibile recuperare le informazioni sullo stream.
+	NL	Kan stroominfo niet ophalen.
+	NO	Kan ikke hente avspillingsinformasjon.
+	PL	Nie można pobrać informacji o strumieniu.
+	RU	Невозможно извлечь информацию о потоке.
+	SV	Det gick inte att hämta ströminformationen.
