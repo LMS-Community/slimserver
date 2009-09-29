@@ -787,7 +787,6 @@ sub alarmSettingsQuery {
 		push @menu, $defaultVolumeLevels;
 	}
 
-	$request->addResult('windowId', 'settingsAlarm');
 	sliceAndShip($request, $client, \@menu);
 
 }
@@ -1418,7 +1417,7 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
+			window         => { windowId => 'settingsAlarm' },
 		};
 	}
 
