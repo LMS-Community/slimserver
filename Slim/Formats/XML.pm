@@ -117,8 +117,6 @@ sub getFeedAsync {
 		my $b = $tb{ $params->{client}->ip };
 		if ( $b ) {
 			if ( !$b->conform(1) ) {
-				SDI::Service::Control->mailError( "XML rate exceeded: $url", $params->{client}->id, 1 );
-
 				# wipe bucket
 				delete $tb{ $params->{client}->ip };
 				
