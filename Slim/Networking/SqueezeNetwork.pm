@@ -48,10 +48,10 @@ if ( main::SLIM_SERVICE ) {
 	
 	my $sn_server = __PACKAGE__->get_server('sn');
 	
-	my $mysb_host = SDI::Util::SNConfig::get_config_value('use_sn_test')
+	my $mysb_host = SDI::Util::SNConfig::get_config_value('use_test_sn')
 		? 'www.test.mysqueezebox.com'
 		: 'www.mysqueezebox.com';
-	my $sn_host = SDI::Util::SNConfig::get_config_value('use_sn_test')
+	my $sn_host = SDI::Util::SNConfig::get_config_value('use_test_sn')
 		? 'www.test.squeezenetwork.com'
 		: 'www.squeezenetwork.com';
 	
