@@ -757,9 +757,12 @@ sub init {
 	# Clear SN cookies from the cookie jar if the session changes
 	if ( !main::SLIM_SERVICE ) {
 		$prefs->setChange( sub {
+			# XXX the sn.com hostnames can be removed later
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
 			$cookieJar->clear( 'www.squeezenetwork.com' );
 			$cookieJar->clear( 'www.test.squeezenetwork.com' );
+			$cookieJar->clear( 'www.mysqueezebox.com' );
+			$cookieJar->clear( 'www.test.mysqueezebox.com' );
 			if ( $ENV{SN_DEV} ) {
 				$cookieJar->clear( '127.0.0.1' );
 			}
