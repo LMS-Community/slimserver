@@ -787,6 +787,7 @@ sub alarmSettingsQuery {
 		push @menu, $defaultVolumeLevels;
 	}
 
+	$request->addResult('windowId', 'settingsAlarm');
 	sliceAndShip($request, $client, \@menu);
 
 }
