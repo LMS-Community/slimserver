@@ -1,4 +1,12 @@
-<h2><a name="v7.4" id="v7.4"></a>Version 7.4</h2>
+<h2><a name="v7.4.1" id="v7.4.1"></a>Version 7.4.1</h2>
+<ul>
+	<li>Bug Fixes:</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=13264">#13264</a> -  If sleeping at end of song, don't start crossfading the next track</li>
+	</ul>
+	<br />
+</ul>
+
+<h2><a name="v7.4.0" id="v7.4.0"></a>Version 7.4.0</h2>
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
@@ -15,6 +23,21 @@
 	</ul>
 	<br />
 	
+	<li>Scanner:</li>
+	<ul>
+		<li>The file format scanning modules have been completely rewritten in C as a <a href="http://search.cpan.org/dist/Audio-Scan/">standalone module</a> with comprehensive unit tests.</li>
+		<li>This reduces memory usage, improves scanning speed, and fixes many bugs.</li>
+		<li>Seeking in WMA files is now supported.</li>
+		<li>Seeking in VBR MP3 files is now more accurate.</li>
+	</ul>
+	<br />
+	
+	<li>System integration:</li>
+	<ul>
+		<li>New Control Panel for Windows, Console for Windows Home Server and Preference Pane for OSX as a shortcut to common activities</li>
+	</ul>
+	<br />
+	
 	<li>Preset Changes:</li>
 	<ul>
 		<li>Boom/IR presets are no longer associated with Favorites, and each player now has a separate preset list.</li>
@@ -22,6 +45,19 @@
 		<li>Presets are now synced with mysqueezebox.com (Favorites are still not synced).</li>
 		<li>Presets can no longer be set via the 'favorites add' command.</li>
 		<li>For more information, please see bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=13248">#13248</a>.</li>
+	</ul>
+	<br />
+	
+	<li>Resource Usage:</li>
+	<ul>
+		<li>Several features of Squeezebox Server can be disabled to reduce memory usage. The following command-line flags are available:</li>
+		<ul>
+			<li>--noweb - Disable web interface.</li>
+			<li>--notranscoding - Disable support for transcoding.</li>
+			<li>--nosb1slimp3sync - Disable support for SliMP3/SB1 syncing.</li>
+			<li>--noinfolog - Disable INFO-level logging.</li>
+			<li>--nodebuglog - Disable DEBUG-level logging.</li>
+		</ul>
 	</ul>
 	<br />
 
