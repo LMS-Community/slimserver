@@ -272,7 +272,15 @@ sub gotViaHTTP {
 		} else {
 
 			$expires = $XML_CACHE_TIME;
-		} 
+		}
+		
+		# Bug 14409, don't cache the RadioTime local menU on SN
+		if ( main::SLIM_SERVICE ) {
+			if ( $http->url =~ /radiotime.*local/ ) {
+				$feed->{nocache} = 1;
+				$expires = 0;
+			}
+		}
 
 		if ( !$feed->{'nocache'} ) {
 
@@ -282,7 +290,7 @@ sub gotViaHTTP {
 
 			$cache->set( $http->url() . '_parsedXML', $feed, $expires );
 
-		} elsif ( !$cache->get( $http->url() ) ) {
+		} elsif ( $expires && !$cache->get( $http->url() ) ) {
 
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info("Caching raw response for " . $http->url . " for $expires seconds - not previously cached");
