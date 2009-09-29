@@ -33,9 +33,9 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn      => 'www.test.squeezenetwork.com', # XXX point to prod before release
-	update  => 'update.squeezenetwork.com',
-	test    => 'www.test.squeezenetwork.com',
+	sn      => 'www.mysqueezebox.com',
+	update  => 'update.mysqueezebox.com',
+	test    => 'www.test.mysqueezebox.com',
 };
 
 # Used only on SN
@@ -46,9 +46,20 @@ my $_sn_hosts_re;
 if ( main::SLIM_SERVICE ) {
 	$internal_http_host = SDI::Util::SNConfig::get_config_value('internal_http_host');
 	
+	my $sn_server = __PACKAGE__->get_server('sn');
+	
+	my $mysb_host = SDI::Util::SNConfig::get_config_value('use_test_sn')
+		? 'www.test.mysqueezebox.com'
+		: 'www.mysqueezebox.com';
+	my $sn_host = SDI::Util::SNConfig::get_config_value('use_test_sn')
+		? 'www.test.squeezenetwork.com'
+		: 'www.squeezenetwork.com';
+	
 	$_sn_hosts = join(q{|},
 	        map { qr/\Q$_\E/ } (
-			__PACKAGE__->get_server('sn'),
+			$sn_server,
+			$mysb_host,
+			$sn_host,
 			$internal_http_host,
 			($ENV{SN_DEV} ? '127.0.0.1' : ())
 		)
@@ -242,7 +253,11 @@ sub isSNURL {
 	
 	my $snBase = $class->url();
 	
-	return $url =~ /^$snBase/;
+	# Allow old SN hostname to be seen as SN
+	my $oldBase = $snBase;
+	$oldBase =~ s/mysqueezebox/squeezenetwork/;
+	
+	return $url =~ /^$snBase/ || $url =~ /^$oldBase/;
 }
 
 # Login to SN and obtain a session ID
