@@ -50,7 +50,7 @@ sub migratePrefsFolder {};
 sub sqlHelperClass { 'Slim::Utils::MySQLHelper' }
 
 # Skip obsolete plugins, they should be deleted by installers
-sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters));}
+sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));}
 
 =head2 initSearchPath( )
 

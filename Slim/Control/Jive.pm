@@ -1417,7 +1417,6 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 	}
 

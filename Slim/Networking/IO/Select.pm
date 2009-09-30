@@ -16,6 +16,10 @@ use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
+if ( main::SLIM_SERVICE ) {
+	require SDI::Util::Syslog;
+}
+
 our @EXPORT = qw(addRead addWrite addError removeRead removeWrite removeError);
 
 my $depth = 0;
@@ -126,7 +130,10 @@ sub _add {
 					
 					if ( _eval_depth() == 2 ) {
 						my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
-						SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
+						
+						SDI::Util::Syslog::error("service:SS-IO method:${func} error:${msg}");
+						
+						#SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
 					}
 				} : 'DEFAULT';
 				

@@ -351,7 +351,7 @@ sub albumsQuery {
 			push @{ $attr->{'join'} }, 'contributor';
 		}
 		
-		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable disc discc ) ];
+		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable disc discc titlesearch) ];
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
@@ -539,7 +539,7 @@ sub albumsQuery {
 				# the favorites url to be sent to jive is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->title) );
+				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->titlesearch) );
 
 				my $params = {
 					'album_id'        => $id,

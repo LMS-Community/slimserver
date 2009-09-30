@@ -1008,7 +1008,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		main::SLIM_SERVICE ? 'mysqueezebox.com' : 'Squeezebox Server',
+		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'Squeezebox Server', # NOTE: please leave this as 'SqueezeNetwork'
 	);
 
 	return $userAgentString;
