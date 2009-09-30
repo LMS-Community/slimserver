@@ -1260,6 +1260,11 @@ sub shouldCacheURL {
 	
 	return 0 if $host !~ /\./;
 	
+	if ( main::SLIM_SERVICE ) {
+		# Don't cache URLs local to SN, it can break translations, etc
+		return 0 if $host =~ /(?:mysqueezebox|squeezenetwork)/;
+	}
+	
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
 	
