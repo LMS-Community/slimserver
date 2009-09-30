@@ -131,7 +131,7 @@ sub _add {
 					if ( _eval_depth() == 2 ) {
 						my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
 						
-						SDI::Util::Syslog::error("service:SS-IO method:${func} error:${msg}");
+						SDI::Util::Syslog::error("service=SS-IO method=${func} error=${msg}");
 						
 						#SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
 					}
