@@ -125,15 +125,13 @@ sub _add {
 				local $SIG{__DIE__} = main::SLIM_SERVICE ? sub {
 					my $msg = shift;
 									
-					# Only notify if eval_depth is 2, this avoids emailing for errors inside
+					# Only notify if eval_depth is 2, this avoids logging for errors inside
 					# nested evals
 					
 					if ( _eval_depth() == 2 ) {
 						my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
 						
 						SDI::Util::Syslog::error("service=SS-IO method=${func} error=${msg}");
-						
-						#SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
 					}
 				} : 'DEFAULT';
 				
