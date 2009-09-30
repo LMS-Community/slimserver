@@ -4598,7 +4598,7 @@ sub dynamicAutoQuery {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcptr);
-					SDI::Service::Control->mailError( "Queries crash: $name", $@ );
+					SDI::Util::Syslog::error("service=SS-Queries method=${name} error=$@");
 				}
 			}
 		}
