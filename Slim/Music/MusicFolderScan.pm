@@ -20,7 +20,7 @@ use base qw(Class::Data::Inheritable);
 
 use Slim::Music::Info;
 use Slim::Utils::Log;
-use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
 use Slim::Utils::Prefs;
 
 {
@@ -76,13 +76,7 @@ sub startScan {
 
 	main::INFOLOG && $log->info("Starting music folder scan in $dir");
 	
-	Slim::Utils::Scanner->scanDirectory({
-		'url'       => $dir,
-		'recursive' => $recurse,
-		'types'     => 'audio',
-		'scanName'  => 'directory',
-		'progress'  => 1,
-	});
+	main::INFOLOG && $log->info("Finished background scan of music folder.");
 
 	main::INFOLOG && $log->info("Finished background scan of music folder.");
 

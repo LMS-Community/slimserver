@@ -45,7 +45,16 @@ BEGIN {
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI DBD::mysql HTML::Parser XML::Parser::Expat YAML::Syck)], []);
+	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI DBD::SQLite HTML::Parser XML::Parser::Expat YAML::Syck)], []);
+	
+	require File::Basename;
+	require File::Copy;
+	require File::Slurp;
+	require HTTP::Request;
+	require JSON::XS::VersionOneAndTwo;
+	require LWP::UserAgent;
+	
+	import JSON::XS::VersionOneAndTwo;
 	
 	require File::Basename;
 	require File::Copy;
@@ -318,6 +327,10 @@ sub main {
 				logError("Failed to update lastRescanTime: [$@]");
 				logError("You may encounter problems next rescan!");
 			}
+			else {
+				# Notify server we are done scanning
+				notifyToServer('end');
+			}
 		}
 	}
 
@@ -427,6 +440,9 @@ sub cleanup {
 		
 		Slim::Schema->disconnect;
 	}
+	
+	# Notify server we are exiting
+	notifyToServer('exit');
 }
 
 sub END {

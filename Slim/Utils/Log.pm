@@ -799,6 +799,7 @@ sub logGroups {
 		SCANNER => {
 			categories => {
 				'scan'                   => 'DEBUG',
+				'scan.auto'              => 'DEBUG',
 				'scan.scanner'           => 'DEBUG',
 				'scan.import'            => 'DEBUG',
 				'artwork'                => 'DEBUG',
@@ -902,6 +903,7 @@ sub logLevels {
 		'player.ui'                  => 'ERROR',
 
 		'scan'                       => 'ERROR',
+		'scan.auto'                  => 'ERROR',
 		'scan.scanner'               => 'ERROR',
 		'scan.import'                => 'ERROR',
 

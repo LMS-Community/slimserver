@@ -141,6 +141,20 @@ use Time::HiRes;
 use EV;
 use AnyEvent;
 
+# Load AIO support if available
+my $HAS_AIO;
+sub HAS_AIO {
+	return $HAS_AIO if defined $HAS_AIO;
+		
+	eval {
+		require AnyEvent::AIO;
+		IO::AIO::max_poll_time( 0.1 ); # Make AIO play nice if there are a lot of requests
+		$HAS_AIO = 1;
+	};
+	
+	return $HAS_AIO;
+}
+
 # Force XML::Simple to use XML::Parser for speed. This is done
 # here so other packages don't have to worry about it. If we
 # don't have XML::Parser installed, we fall back to PurePerl.
@@ -505,6 +519,13 @@ sub init {
 	
 	main::INFOLOG && $log->info("Remote Metadata init...");
 	Slim::Formats::RemoteMetadata->init();
+	
+	if ( $prefs->get('autorescan') ) {
+		require Slim::Utils::AutoRescan;
+		
+		main::INFOLOG && $log->info('Auto-rescan init...');
+		Slim::Utils::AutoRescan->init();
+	}
 
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {

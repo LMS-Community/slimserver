@@ -166,6 +166,28 @@ sub update {
 		$obj->info(Slim::Utils::Unicode::utf8decode_locale($info)) if $info;
 
 		$obj->update();
+		
+		# If we're the scanner process, notify the server of our progress
+		if ( main::SCANNER ) {
+			my $start = $obj->start;
+			my $type  = $obj->type;
+			my $name  = $obj->name;
+			my $total = $obj->total;
+			
+			if ( $::json ) {
+				main::progressJSON( {
+					start  => $start,
+					type   => $type,
+					name   => $name,
+					done   => $done,
+					total  => $total,
+					finish => undef,
+				} );
+			}
+			else {
+				main::notifyToServer( "progress:${start}-${type}-${name}-${done}-${total}-" );
+			}
+		}
 	}
 
 	if ($class->{'bar'} && $now > $class->{'barup'} + UPDATE_BAR_INTERVAL) {
@@ -200,6 +222,28 @@ sub final {
 	$obj->info( undef );
 
 	$obj->update;
+	
+	# If we're the scanner process, notify the server of our progress
+	if ( main::SCANNER ) {
+		my $start  = $obj->start;
+		my $type   = $obj->type;
+		my $name   = $obj->name;
+		$done = 1 if !defined $done;
+		
+		if ( $::json ) {
+			main::progressJSON( {
+				start  => $start,
+				type   => $type,
+				name   => $name,
+				done   => $done,
+				total  => $done,
+				finish => $finish,
+			} );
+		}
+		else {
+			main::notifyToServer( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
+		}
+	}
 
 	if ($class->{'bar'}) {
 

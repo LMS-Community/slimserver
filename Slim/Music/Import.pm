@@ -174,24 +174,6 @@ sub launchScan {
 		Proc::Background->new($command, @scanArgs)
 	);
 	
-	# Clear progress info so scan progress displays are blank
-	$class->clearProgressInfo;
-
-	my $scanType = 'SETUP_STANDARDRESCAN';
-
-	if ($args->{"wipe"}) {
-		$scanType = 'SETUP_WIPEDB';
-
-	} elsif ($args->{"playlists"}) {
-		$scanType = 'SETUP_PLAYLISTRESCAN';
-	}
-
-	# Update a DB flag, so the server knows we're scanning.
-	$class->setIsScanning($scanType);
-
-	# Set a timer to check on the scanning process.
-	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
-
 	return 1;
 }
 
@@ -203,64 +185,19 @@ Stop the external (forked) scanning process.
 
 sub abortScan {
 	my $class = shift || __PACKAGE__;
-
-	if ($class->stillScanning) {
-
-		$class->scanningProcess->die();
-		
-		$class->checkScanningStatus();
-
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
-			$p->info('SCAN_ABORTED');
-			$p->update;
-		}
-	}
-}
-
-=head2 checkScanningStatus( )
-
-If we're still scanning, start a timer process to notify any subscribers of a
-'rescan done' status.
-
-=cut
-
-sub checkScanningStatus {
-	my $class = shift || __PACKAGE__;
-
-	Slim::Utils::Timers::killTimers(undef, \&checkScanningStatus);
-
-	# Run again if we're still scanning.
-	if ($class->stillScanning) {
-
-		Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
-
-	} else {
-
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
-		
-			$log->warn("scanner is not running, but no progress data available - scanner crashed");
 	
-			$p->finish( $p->finish || time() );
-			$p->active(0);
-			$p->update;
-
-			my $failure = Slim::Utils::Progress->new({
-				type => 'importer', 
-				name => 'failure',
-			});
-			
-			$failure->final;
-			
-			# we store the failed step's token to be used in UIs
-			$failure->update(uc($p->name || ''));
-		}
-
-		# Clear caches, like the vaObj, etc after scanning has been finished.
-		Slim::Schema->wipeCaches;
-
-		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
+	if ( $class->stillScanning ) {
+		# Tell scanner to shut down the next time
+		# we get a progress update
+		$ABORT = 1;
+		
+		$class->setIsScanning(0);
 	}
 }
+
+sub hasAborted { $ABORT }
+
+sub setAborted { shift; $ABORT = shift; }
 
 =head2 lastScanTime()
 
@@ -444,6 +381,17 @@ sub runScanPostProcessing {
 		}
 		
 		$class->runArtworkImporter($importer);
+	}
+	
+	# Look for and import persistent data migrated from 7.3.3
+	my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
+	my $json = catfile( $dir, 'tracks_persistent.json' );
+	if ( -e $json ) {
+		$log->error('Migrating persistent track information from MySQL');
+		
+		if ( Slim::Schema::TrackPersistent->import_json($json) ) {
+			unlink $json;
+		}
 	}
 	
 	# Remove and dangling references.
@@ -725,13 +673,7 @@ sub stillScanning {
 	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
 	my $scanning = blessed($scanRS) ? $scanRS->value : 0;
 
-	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
-
-	if ($running && $scanning) {
-		return $scanning;
-	}
-
-	return 0;
+	return $scanning;
 }
 
 sub _checkLibraryStatus {
@@ -748,6 +690,7 @@ sub _checkLibraryStatus {
 	# Tell everyone who needs to know
 	Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
 }
+
 
 =head1 SEE ALSO
 

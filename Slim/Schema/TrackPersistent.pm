@@ -5,7 +5,7 @@ package Slim::Schema::TrackPersistent;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use File::Slurp qw(write_file);
+use File::Slurp qw(read_file);
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 
@@ -45,31 +45,36 @@ sub addedTime {
 	return join( ', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time) );
 }
 
-sub export {
-	my ( $class, $file ) = @_;
+sub import_json {
+	if ( main::SCANNER ) {
+		my ( $class, $json ) = @_;
 	
-	my $export = [];
+		my $tracks = eval { from_json( read_file($json) ) };
+		if ( $@ ) {
+			logError($@);
+			return;
+		}
 	
-	# Only export items that have data
-	my $find = [
-		rating     => { '!=' => undef },
-		playcount  => { '!=' => undef },
-		lastplayed => { '!=' => undef },
-	];
+		for my $track ( @{$tracks} ) {
+			my $tp;
+			if ( $track->{mb} ) {
+				$tp = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $track->{mb} } );
+			}
+			else {
+				$tp = Slim::Schema->rs('TrackPersistent')->single( { url => $track->{url} } );
+			}
+		
+			next unless $tp;
+		
+			for my $key ( qw(lastplayed playcount rating) ) {
+				$tp->$key( $track->{$key} );
+			}
+		
+			$tp->update;
+		}
 	
-	my $rs = Slim::Schema->search( TrackPersistent => $find );
-	
-	while ( my $track = $rs->next ) {
-		push @{$export}, {
-			url        => $track->url,
-			mb         => $track->musicbrainz_id,
-			rating     => $track->rating,
-			playcount  => $track->playcount,
-			lastplayed => $track->lastplayed,
-		};
+		return 1;
 	}
-	
-	write_file( $file, to_json($export) );
 }
 
 1;

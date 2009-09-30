@@ -163,6 +163,7 @@ sub init {
 		'language'              => \&defaultLanguage,
 		'audiodir'              => \&defaultAudioDir,
 		'playlistdir'           => \&defaultPlaylistDir,
+		'autorescan'            => 1,
 		# Server Settings - Behaviour
 		'displaytexttimeout'    => 1,
 		'checkVersion'          => 1,

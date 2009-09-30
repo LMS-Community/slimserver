@@ -102,6 +102,17 @@ sub handler {
 				$client->currentPlaylistChangeTime(Time::HiRes::time());
 			}
 		}
+		
+		my $curAuto = $prefs->get('autorescan');
+		if ( $curAuto != $paramRef->{pref_autorescan} ) {
+			require Slim::Utils::AutoRescan;
+			if ( $paramRef->{pref_autorescan} == 1 ) {
+				Slim::Utils::AutoRescan->init;
+			}
+			else {
+				Slim::Utils::AutoRescan->shutdown;
+			}
+		}
 	}
 
 	$paramRef->{'newVersion'}  = $::newVersion;

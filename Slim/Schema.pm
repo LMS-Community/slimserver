@@ -44,7 +44,6 @@ use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::OSDetect;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
@@ -109,7 +108,7 @@ L<DBIx::Class::Schema> for methods on the superclass.
 
 =head2 init( )
 
-Connect to the database as defined by dbsource, dbusername & dbpassword in the
+Connect to the database as defined by sqlitesource, dbusername & dbpassword in the
 prefs file. Set via L<Slim::Utils::Prefs>.
 
 This method will also initialize the schema to the current version, and
@@ -256,6 +255,14 @@ sub init {
 		}
 
 		$prefs->set('migratedMovCT' => 1);
+	}
+	
+	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+		# Event handler for notifications from scanner process
+		Slim::Control::Request::addDispatch(
+			['scanner', 'notify', '_msg'],
+			[0, 0, 0, \&notifyFromScanner]
+		);
 	}
 
 	$initialized = 1;
@@ -439,6 +446,12 @@ sub optimizeDB {
 	if ($@) {
 		logError("Failed to optimize schema: [$@]");
 	}
+	
+	# Disconnect and reconnect to the database in order to run
+	# VACUUM and ANALYZE to compact the database file and optimize indices
+	my $dsn = "dbi:$driver:" . $class->storage->dbh->{Name};
+	$class->disconnect;
+	$class->init( $dsn, [ 'VACUUM', 'ANALYZE' ] );
 
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 }
