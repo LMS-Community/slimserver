@@ -399,6 +399,11 @@ sub cantOpen {
 			);
 		
 			$http->get($reportUrl);
+			
+			if ( main::SLIM_SERVICE ) {
+				# Let's log these on SN too
+				SDI::Util::Syslog::error("service=RadioTime-Error id=${id} message=\"${error}\"");
+			}
 		}
 	}
 }
