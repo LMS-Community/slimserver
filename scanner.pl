@@ -28,6 +28,7 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant HAS_AIO      => 0;
 
 # Tell PerlApp to bundle these modules
 if (0) {
@@ -421,6 +422,50 @@ sub initClass {
 		logError("Couldn't load $class: $@");
 	} else {
 		$class->initPlugin;
+	}
+}
+
+sub notifyToServer {
+	return if $serverDown;
+	
+	my $log = logger('database.info');
+	
+	# Scanner does not have an event loop, so use sync HTTP here
+	my $host = ( $prefs->get('httpaddr') || '127.0.0.1' ) . ':' . $prefs->get('httpport');
+	
+	my $ua = LWP::UserAgent->new(
+		timeout => 5,
+	);
+	
+	my $req = HTTP::Request->new( POST => "http://${host}/jsonrpc.js" );
+	
+	$req->content( to_json( {
+		id     => 1,
+		method => 'slim.request',
+		params => [ '', [ 'scanner', 'notify', @_ ] ],
+	} ) );
+	
+	main::INFOLOG && $log->is_info
+		&& $log->info( 'Notify to server: ' . Data::Dump::dump(\@_) );
+	
+	my $res = $ua->request($req);
+
+	if ( $res->is_success ) {
+		if ( $res->content =~ /abort/ ) {
+			logWarning('Server aborted scan, shutting down');
+			exit;
+		}
+		else {
+			main::INFOLOG && $log->is_info && $log->info('Notify to server OK');
+		}
+	}
+	else {
+		main::INFOLOG && $log->is_info && $log->info( 'Notify to server failed: ' . $res->status_line );
+		
+		if ( $res->content =~ /timeout/ ) {
+			# Server is down, avoid further requests
+			$serverDown = 1;
+		}
 	}
 }
 
