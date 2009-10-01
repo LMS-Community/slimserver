@@ -50,7 +50,7 @@ sub init {
 		my $text = File::Slurp::read_file( "$FindBin::Bin/SQL/slimservice/slimservice-sqlite.sql" );
 		
 		$text =~ s/\s*--.*$//g;
-		for my $sql ( split /;/, $text ) {
+		for my $sql ( split (/;/, $text) ) {
 			next unless $sql =~ /\w/;
 			$dbh->do($sql);
 		}
