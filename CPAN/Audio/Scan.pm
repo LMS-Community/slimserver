@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.38';
+our $VERSION = '0.39';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -119,6 +119,10 @@ Same as C<find_frame>, but with a filehandle.
 =head2 has_flac()
 
 Returns 1 if FLAC support was compiled in, or 0 if not.
+
+=head2 is_supported( $path )
+
+Returns 1 if the given path can be scanned by Audio::Scan, or 0 if not.
 
 =head1 MP3
 
