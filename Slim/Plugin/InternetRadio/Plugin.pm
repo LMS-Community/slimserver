@@ -402,7 +402,7 @@ sub cantOpen {
 			
 			if ( main::SLIM_SERVICE ) {
 				# Let's log these on SN too
-				SDI::Util::Syslog::error("service=RadioTime-Error id=${id} message=\"${error}\"");
+				SDI::Util::Syslog::error("service=RadioTime-Error rtid=${id} error=\"${error}\"");
 			}
 		}
 	}
