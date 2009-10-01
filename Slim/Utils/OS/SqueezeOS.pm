@@ -33,6 +33,7 @@ sub initPrefs {
 	
 }
 
+sub sqlHelperClass { 'Slim::Utils::SQLiteHelper' }
 
 =head2 dirsFor( $dir )
 
