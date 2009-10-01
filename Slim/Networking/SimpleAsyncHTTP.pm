@@ -317,7 +317,8 @@ sub onBody {
 						if ( $cc =~ /max-age=(-?\d+)/i ) {
 							$expires = $1;
 						}
-						elsif ( $cc =~ /no-cache|no-store|must-revalidate/i ) {
+						
+						if ( $cc =~ /no-cache|no-store|must-revalidate/i ) {
 							$expires = 0;
 						}
 					}			
