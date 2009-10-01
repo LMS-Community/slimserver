@@ -63,6 +63,12 @@ sub initPlugin {
 				}
 			},
 		);
+		
+		# Setup cant_open handler for RadioTime reporting
+		Slim::Control::Request::subscribe(
+			\&cantOpen,
+			[[ 'playlist','cant_open' ]],
+		);
 	}
 
 	if ( $class ne __PACKAGE__ ) {
@@ -356,6 +362,39 @@ sub _pluginDataFor {
 	# The Web::Graphics code will use this special URL to find the
 	# cached icon path.
 	return 'plugins/cache/icons/' . basename( $class->icon );
+}
+
+sub cantOpen {
+	my $request = shift;
+	
+	my $url   = $request->getParam('_url');
+	my $error = $request->getParam('_error');
+	
+	if ( $error && $url =~ /radiotime\.com/ ) {
+		my ($id) = $url =~ /id=([^&]+)/;
+		if ( $id ) {
+			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream'
+				. '&id=' . uri_escape_utf8($id)
+				. '&message=' . uri_escape_utf8($error);
+		
+			main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to RadioTime: $reportUrl");
+		
+			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+				sub {
+					main::INFOLOG && $log->is_info && $log->info("RadioTime failure report OK");
+				},
+				sub {
+					my $http = shift;
+					main::INFOLOG && $log->is_info && $log->info( "RadioTime failure report failed: " . $http->error );
+				},
+				{
+					timeout => 30,
+				},
+			);
+		
+			$http->get($reportUrl);
+		}
+	}
 }
 
 1;

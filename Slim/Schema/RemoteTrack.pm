@@ -38,6 +38,7 @@ my @allAttributes = (qw(
 	comment genre
 	
 	stash
+	error
 ));
 
 {
