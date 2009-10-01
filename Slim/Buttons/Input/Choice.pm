@@ -176,7 +176,7 @@ sub getExtVal {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($value);
-				SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+				SDI::Util::Syslog::error("service=SS-Choice method=${name} error=$@");
 			}
 			
 			return '';
@@ -245,7 +245,7 @@ my %functions = (
 					
 					if ( main::SLIM_SERVICE ) {
 						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($onChange);
-						SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+						SDI::Util::Syslog::error("service=SS-Choice method=${name} error=$@");
 					}
 				}
 			}
@@ -315,7 +315,7 @@ sub callCallback {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
-				SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+				SDI::Util::Syslog::error("service=SS-Choice method=${name} error=$@");
 			}
 		
 		} elsif (getParam($client,'pref')) {

@@ -312,8 +312,8 @@ sub showSplashScreen {
 
 		$splash = Wx::SplashScreen->new(
 			$bitmap, 
-			Wx::wxSPLASH_CENTRE_ON_SCREEN() | Wx::wxSPLASH_TIMEOUT(),
-			10000,
+			Wx::wxSPLASH_CENTRE_ON_SCREEN() | Wx::wxSPLASH_NO_TIMEOUT(),
+			0,
 			undef,
 			-1, [-1, -1], [-1, -1],
 			Wx::wxSIMPLE_BORDER() | Wx::wxSTAY_ON_TOP()

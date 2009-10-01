@@ -367,6 +367,8 @@ sub string {
 }
 
 
+my $needAuthentication;
+
 sub serverRequest {
 	my $self = shift;
 	my $postdata;
@@ -394,10 +396,15 @@ sub serverRequest {
 		$ua->credentials($baseUrl, "Squeezebox Server", $credentials->{username}, $credentials->{password});
 	}
 
+	return if $needAuthentication;
+
 	my $response = $ua->request($req);
 
 	# check whether authentication is needed
 	while ($response->code == 401) {
+		
+		$needAuthentication = 1;
+		
 		my $loginDialog = Slim::GUI::ControlPanel::LoginDialog->new();
 		
 		if ($loginDialog->ShowModal() == wxID_OK) {
@@ -418,6 +425,8 @@ sub serverRequest {
 		
 		$loginDialog->Destroy();
 	}
+
+	$needAuthentication = 0;
 	
 	my $content;
 	$content = $response->decoded_content if ($response);
@@ -454,11 +463,11 @@ sub new {
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('CONTROLPANEL_AUTHENTICATION_REQUIRED')), 0, wxALL, 10);
 
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
-	$username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [330, -1]);
+	$username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [320, -1]);
 	$mainSizer->Add($username, 0, wxALL, 10);
 	
 	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
-	$password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [330, -1], wxTE_PASSWORD);
+	$password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [320, -1], wxTE_PASSWORD);
 	$mainSizer->Add($password, 0, wxALL, 10);
 	
 	$mainSizer->AddStretchSpacer();
