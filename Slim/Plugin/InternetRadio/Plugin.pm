@@ -370,6 +370,12 @@ sub cantOpen {
 	my $url   = $request->getParam('_url');
 	my $error = $request->getParam('_error');
 	
+	if ( !main::SLIM_SERVICE ) {
+		# Do not report if the user has turned off stats reporting
+		# Reporting is always enabled on SN
+		return if $prefs->get('sn_disable_stats');
+	}
+	
 	if ( $error && $url =~ /radiotime\.com/ ) {
 		my ($id) = $url =~ /id=([^&]+)/;
 		if ( $id ) {
