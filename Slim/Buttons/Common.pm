@@ -2045,7 +2045,7 @@ sub pushMode {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
-					SDI::Service::Control->mailError( "Button crash: $exitFun", $@ );
+					SDI::Util::Syslog::error("service=SS-Common method=${name} error=$@");
 				}
 			}
 		}
@@ -2084,7 +2084,7 @@ sub pushMode {
 		
 		if ( main::SLIM_SERVICE ) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($newModeFunction);
-			SDI::Service::Control->mailError( "Button crash: $name", $@ );
+			SDI::Util::Syslog::error("service=SS-Common method=${name} error=$@");
 		}
 
 		pop @{$scrollClientHash->{$client}{scrollParamsStack}};
@@ -2151,7 +2151,7 @@ sub popMode {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
-					SDI::Service::Control->mailError( "Button crash: $name", $@ );
+					SDI::Util::Syslog::error("service=SS-Common method=${name} error=$@");
 				}
 			}
 		}
@@ -2176,7 +2176,7 @@ sub popMode {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($fun);
-				SDI::Service::Control->mailError( "Button crash: $name", $@ );
+				SDI::Util::Syslog::error("service=SS-Common method=${name} error=$@");
 			}
 		}
 	}
@@ -2437,7 +2437,7 @@ sub _periodicUpdate {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
-				SDI::Service::Control->mailError( "Button crash: $name", $@ );
+				SDI::Util::Syslog::error("service=SS-Common method=${name} error=$@");
 			}
 		}
 

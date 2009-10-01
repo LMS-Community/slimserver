@@ -434,7 +434,12 @@ sub processSong {
  	$attributes{'MUSICMAGIC_MIXABLE'} = 1       if $songInfo{'active'} eq 'yes';
 
 	# need conversion to the current charset.
-	$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+	if (main::ISWINDOWS) {
+		$songInfo{'file'} = Win32::GetANSIPathName($songInfo{'file'});
+	}
+	else {
+		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+	}
 
 	main::DEBUGLOG && $log->debug("Exporting song: $songInfo{'file'}");
 
@@ -555,7 +560,7 @@ sub _updatePlaylist {
 	for my $song (@$songs) {
 
 		if (main::ISWINDOWS) {
-			$song = Slim::Utils::Unicode::utf8encode_locale($song);
+			$song = Win32::GetANSIPathName($song);
 		}
 
 		$song = Slim::Utils::Misc::fileURLFromPath($song);
