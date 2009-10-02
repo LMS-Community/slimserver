@@ -691,8 +691,6 @@ sub canDoReplayGain { return 0; }
 
 sub canPowerOff { return 1; }
 
-sub maxTransitionInterval { 0 };
-
 =head2 mixerConstant( $client, $feature, $aspect )
 
 Returns the requested aspect of a given mixer feature.

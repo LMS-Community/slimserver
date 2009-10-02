@@ -1207,7 +1207,7 @@ sub _Stream {				# play -> Buffering, Streaming
 		}
 		
 		my $myFadeIn = $fadeIn;
-		if ($fadeIn > $player->maxTransitionInterval()) {
+		if ($fadeIn > $player->maxTransitionDuration()) {
 			$myFadeIn = 0;
 		}
 		
