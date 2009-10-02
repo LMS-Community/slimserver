@@ -118,19 +118,19 @@ COPYRIGHT_LOGITECH
 
 
 VERSION
-	CS	Verze 7.4 / %s
-	DA	Version 7.4 / %s
-	DE	Version 7.4 / r%s
-	EN	Version 7.4 / r%s
-	ES	Versión 7.4 / r%s
-	FI	Versio 7.4 / %s
-	FR	Version 7.4 / r%s
-	IT	Versione 7.4 / r%s
-	NL	Versie 7.4 / %s
-	NO	Versjon 7.4 / %s
-	PL	Wersja 7.4 / %s
-	RU	Версия 7.4 / %s
-	SV	Version 7.4 / %s
+	CS	Verze 7.4.1 / %s
+	DA	Version 7.4.1 / %s
+	DE	Version 7.4.1 / r%s
+	EN	Version 7.4.1 / r%s
+	ES	Versión 7.4.1 / r%s
+	FI	Versio 7.4.1 / %s
+	FR	Version 7.4.1 / r%s
+	IT	Versione 7.4.1 / r%s
+	NL	Versie 7.4.1 / %s
+	NO	Versjon 7.4.1 / %s
+	PL	Wersja 7.4.1 / %s
+	RU	Версия 7.4.1 / %s
+	SV	Version 7.4.1 / %s
 
 
 CHOOSE_A_LANGUAGE
