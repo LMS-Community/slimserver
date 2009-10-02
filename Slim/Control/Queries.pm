@@ -158,11 +158,6 @@ sub alarmsQuery {
 		$request->setStatusBadDispatch();
 		return;
 	}
-
-	if (!Slim::Schema::hasLibrary()) {
-		$request->setStatusNotDispatchable();
-		return;
-	}
 	
 	# get our parameters
 	my $client   = $request->client();
