@@ -1121,7 +1121,6 @@ sub playlistSaveCommand {
 	});
 
 	$request->addResult('__playlist_id', $playlistObj->id);
-	$request->addResult('__playlist_obj', $playlistObj);
 
 	$request->setStatusDone();
 }
