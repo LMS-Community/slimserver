@@ -490,7 +490,7 @@ sub curLines {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
-				SDI::Util::Syslog::error("service=SS-Display method=${name} error=$@");
+				SDI::Util::Syslog::error("service=SS-Display method=${name} error=\"$@\"");
 			}
 		}
 	}
