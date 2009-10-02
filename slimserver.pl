@@ -870,7 +870,7 @@ sub initSettings {
 		Slim::Utils::Prefs::makeCacheDir($cachedir);
 		
 		$prefs->set('cachedir',$cachedir);
-		$prefs->set('librarycachedir',$cachedir);
+		$prefs->set('librarycachedir',$cachedir) unless defined $prefs->get('librarycachedir');
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();	
