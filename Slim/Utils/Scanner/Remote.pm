@@ -227,6 +227,8 @@ sub scanURL {
 				if ( main::SLIM_SERVICE ) {
 					$client->logStreamEvent( 'failed-scan', { error => $error } );
 				}
+				
+				$track->error( $error );
 
 				return $cb->( undef, $error, @{$pt} );
 			},
@@ -874,10 +876,20 @@ sub parsePlaylist {
 					if ( !$ready ) {
 						main::DEBUGLOG && $log->is_debug && $log->debug( 'No audio tracks found in playlist' );
 						
+						# Get error of last item we tried in the playlist, or a generic error
+						my $error;
+						for my $track ( $playlist->tracks ) {
+							if ( $track->error ) {
+								$error = $track->error;
+							}
+						}
+						
+						$error ||= 'PLAYLIST_NO_ITEMS_FOUND';
+						
 						# Delete bad playlist
 						$playlist->delete;
 						
-						$cb->( undef, 'PLAYLIST_NO_ITEMS_FOUND', @{$pt} );
+						$cb->( undef, $error, @{$pt} );
 					}
 				}
 			},

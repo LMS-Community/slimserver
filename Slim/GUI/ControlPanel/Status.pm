@@ -71,7 +71,7 @@ sub _update {
 		
 		if ($svcMgr->isRunning()) {
 
-			my $status = get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1');
+			my $status = get(Slim::GUI::ControlPanel->getBaseUrl(1) . '/EN/settings/server/status.html?simple=1');
 			$status = decode("utf8", $status) if $status;
 	
 			$child->SetPage($status || string('CONTROLPANEL_NO_STATUS'));
