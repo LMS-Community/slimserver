@@ -395,12 +395,17 @@ sub trackInfoURL {
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
 	# Get the current track
-	my $currentTrack = $client->currentSongForUrl($url)->pluginData();
+	my $trackToken;
+	if ( my $currentSong = $client->currentSongForUrl($url) ) {
+		if ( my $currentTrack = $currentSong->pluginData() ) {
+			$trackToken = $currentTrack->{trackToken};
+		}
+	}		
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/v1/opml/trackinfo?stationId=' . $stationId 
-		. '&trackId=' . $currentTrack->{trackToken}
+		. '&trackId=' . $trackToken
 	);
 	
 	return $trackInfoURL;

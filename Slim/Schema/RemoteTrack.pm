@@ -38,6 +38,7 @@ my @allAttributes = (qw(
 	comment genre
 	
 	stash
+	error
 ));
 
 {
@@ -181,13 +182,17 @@ sub new {
 }
 
 my %localTagMapping = (
-	artist      => 'artistname',
-	albumartist => 'artistname',
-	trackartist => 'artistname',
-	album       => 'albumname',
-	composer    => undef,
-	conductor   => undef,
-	band        => undef,
+	artist                 => 'artistname',
+	albumartist            => 'artistname',
+	trackartist            => 'artistname',
+	album                  => 'albumname',
+	composer               => undef,
+	conductor              => undef,
+	band                   => undef,
+	replaygain_track_gain  => 'replay_gain',	# Bug 14468: iTunes
+												# Should really be handled by Schema::_preCheckAttributes
+												# but that is not called for remote tracks at present.
+	replaygain_track_peak  => 'replay_peak',	# Potentially used from tracks in CUE files.
 );
 
 sub setAttributes {

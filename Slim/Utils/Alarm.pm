@@ -1311,7 +1311,7 @@ sub loadAlarms {
 	my $client = shift;	
 	
 	main::DEBUGLOG && $log->debug('Loading saved alarms from prefs for ' . $client->name);
-	my $prefAlarms = $prefs->client($client)->alarms;
+	my $prefAlarms = $prefs->client($client)->alarms || {};
 
 	$client->alarmData->{alarms} = {};
 
@@ -1324,6 +1324,8 @@ sub loadAlarms {
 
 	foreach my $prefAlarm (keys %$prefAlarms) {
 		$prefAlarm = $prefAlarms->{$prefAlarm};
+		next unless ref $prefAlarm eq 'HASH';
+		
 		my $alarm = $class->new($client, $prefAlarm->{_time});
 		$alarm->{_days} = $prefAlarm->{_days};
 		$alarm->{_enabled} = $prefAlarm->{_enabled};

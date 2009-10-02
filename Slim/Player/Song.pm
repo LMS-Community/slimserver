@@ -301,7 +301,12 @@ sub getNextSong {
 					}
 				}
 				else {
+					# Notify of failure via cant_open, this is used to pick
+					# up the failure for automatic RadioTime reporting
+					Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'cant_open', $url, $error ] );
+					
 					$error ||= 'PROBLEM_OPENING_REMOTE_URL';
+					
 					$failCb->($error, $url);
 				}
 			},

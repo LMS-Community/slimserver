@@ -276,6 +276,7 @@ use Slim::Utils::ServiceManager;
 my $args;
 
 my $credentials = {};
+my $needAuthentication;
 
 sub new {
 	my $self = shift;
@@ -299,10 +300,15 @@ sub OnInit {
 my $baseUrl;
 sub getBaseUrl {
 	my $self = shift;
+	my $update = shift;
 
-	if (!$baseUrl || time() > $baseUrl->{ttl}) {
+	if ($update || !$baseUrl || time() > $baseUrl->{ttl}) {
 		$baseUrl = {
-			url => 'http://127.0.0.1:' . (Slim::Utils::Light::getPref('httpport') || 9000),
+			url => 'http://' . (
+				$credentials && $credentials->{username} && $credentials->{password}
+				? $credentials->{username} . ':' . $credentials->{password} . '@'
+				: ''
+			) . '127.0.0.1:' . (Slim::Utils::Light::getPref('httpport') || 9000),
 			ttl => time() + 15,
 		};
 	}
@@ -365,9 +371,6 @@ sub string {
 	
 	return $string;
 }
-
-
-my $needAuthentication;
 
 sub serverRequest {
 	my $self = shift;
