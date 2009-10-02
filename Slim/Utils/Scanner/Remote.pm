@@ -716,6 +716,7 @@ sub streamAudioData {
 		if ( $@ ) {
 			$log->error("Unable to scan bitrate for " . $track->url . ": $@");
 			if ( main::SLIM_SERVICE ) {
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=Audio-Scan method=scanBitrate error=\"$@ " . $track->url . "\"");
 			}
 			$bitrate = 0;

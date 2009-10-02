@@ -4598,6 +4598,7 @@ sub dynamicAutoQuery {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcptr);
+					$@ =~ s/"/'/g;
 					SDI::Util::Syslog::error("service=SS-Queries method=${name} error=\"$@\"");
 				}
 			}
