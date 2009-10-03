@@ -261,6 +261,7 @@ sub _makeTimer {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Timer method=${name} error=\"$@\"");
 			}
 		}

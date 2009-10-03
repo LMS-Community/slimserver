@@ -45,6 +45,7 @@
 <hr>
 <h4 id="7">Changes starting from Squeezebox Server 7.4</h4>
 <ul>
+	<li>The music_services command is now apps.</li>
 	<li>Added &quot;pause&quot; & &quot;stop&quot; subtypes to &quot;playlist&quot; notifications.</li>
 	<li>Added &quot;setsncredentials&quot; command.</li>
 	<li>Added &quot;logging&quot; command.</li>
@@ -7999,7 +8000,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<strong><code><a href="#radios">radios</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#radios">music_services</a></code></strong>
+		<strong><code><a href="#radios">apps</a></code></strong>
 	</li>
 	<li>
 		<strong><a href="#XMLBrowser">Live Music Archive, Live365, MP3tunes, Pandora, Podcasts, RadioIO, RadioTime, Rhapsody, Shoutcast, SIRIUS, Staff Picks, RSS</a></strong>
@@ -8019,7 +8020,7 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 <p id="radios">
 	<strong>
 		<code>
-			&lt;radios|music_services&gt;
+			&lt;radios|apps&gt;
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -8027,10 +8028,10 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 	</strong>
 </p>
 <p>
-	The &quot;radios&quot; and &quot;music_services&quot; queries return
+	The &quot;radios&quot; and &quot;apps&quot; queries return
 	all radio type plugins enabled in
 	the server. These commands enable the client to present a top level
-	&quot;Radio&quot; or &quot;Music Services&quot; respectively
+	&quot;Radio&quot; or &quot;My Apps&quot; respectively
 	menu easily, without hardcoding the plugins nor 
 	worrying about them being enabled.
 </p>
