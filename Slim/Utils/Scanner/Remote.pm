@@ -711,7 +711,16 @@ sub streamAudioData {
 	my $formatClass = Slim::Formats->classForFormat($type);
 	
 	if ( $formatClass && Slim::Formats->loadTagFormatForType($type) && $formatClass->can('scanBitrate') ) {
-		($bitrate, $vbr) = $formatClass->scanBitrate( $fh, $track->url );
+		($bitrate, $vbr) = eval { $formatClass->scanBitrate( $fh, $track->url ) };
+		
+		if ( $@ ) {
+			$log->error("Unable to scan bitrate for " . $track->url . ": $@");
+			if ( main::SLIM_SERVICE ) {
+				$@ =~ s/"/'/g;
+				SDI::Util::Syslog::error("service=Audio-Scan method=scanBitrate error=\"$@ " . $track->url . "\"");
+			}
+			$bitrate = 0;
+		}
 		
 		if ( $bitrate > 0 ) {
 			$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );

@@ -78,8 +78,16 @@ sub maxTreble { 50 };
 sub minTreble { 50 };
 sub maxPitch { 100 };
 sub minPitch { 100 };
-sub maxTransitionInterval { 10 };
+sub maxTransitionDuration { 10 };
 sub canDecodeRhapsody { 1 };
+sub hasPreAmp { 1 };
+sub hasDisableDac { 1 };
+sub hasServ { 1 }; 
+
+# SN only, this checks that the player's firmware version supports compression
+sub hasCompression {
+	return shift->revision >= 80;
+}
 
 sub model {
 	my $client       = shift;
@@ -337,9 +345,6 @@ sub upgradeFirmware {
 	}
 }
 
-sub maxTransitionDuration {
-	return 10;
-}
 
 sub requestStatus {
 	shift->stream('t');
@@ -825,22 +830,6 @@ sub canDoReplayGain {
 	return 0;
 }
 
-sub hasPreAmp {
-	return 1;
-}
-
-sub hasDisableDac() {
-	return 1;
-}
-
-sub hasServ {
-	return 1;
-}
-
-# SN only, this checks that the player's firmware version supports compression
-sub hasCompression {
-	return shift->revision >= 80;
-}
 
 sub audio_outputs_enable { 
 	my $client = shift;

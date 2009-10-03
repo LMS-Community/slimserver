@@ -40,6 +40,9 @@ BEGIN {
 		accuratePlayPoints
 		firmware
 		canDecodeRhapsody
+		hasDigitalOut
+		hasPreAmp
+		hasDisableDac
 	));
 }
 
@@ -56,6 +59,9 @@ sub new {
 		accuratePlayPoints      => 0,
 		firmware                => 0,
 		canDecodeRhapsody       => 0,
+		hasDigitalOut           => 0,
+		hasPreAmp               => 0,
+		hasDisableDac           => 0,
 	);
 
 	return $client;
@@ -70,6 +76,9 @@ my %CapabilitiesMap = (
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
 	Rhap                    => 'canDecodeRhapsody',
+	HasDigitalOut           => 'hasDigitalOut',
+	HasPreAmp               => 'hasPreAmp',
+	HasDisableDac           => 'hasDisableDac',
 	SyncgroupID             => undef,
 
 	# deprecated

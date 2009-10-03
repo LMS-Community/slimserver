@@ -2045,6 +2045,7 @@ sub pushMode {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
+					$@ =~ s/"/'/g;
 					SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
 				}
 			}
@@ -2084,6 +2085,7 @@ sub pushMode {
 		
 		if ( main::SLIM_SERVICE ) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($newModeFunction);
+			$@ =~ s/"/'/g;
 			SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
 		}
 
@@ -2151,6 +2153,7 @@ sub popMode {
 				
 				if ( main::SLIM_SERVICE ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
+					$@ =~ s/"/'/g;
 					SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
 				}
 			}
@@ -2176,6 +2179,7 @@ sub popMode {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($fun);
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
 			}
 		}
@@ -2437,6 +2441,7 @@ sub _periodicUpdate {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
 			}
 		}

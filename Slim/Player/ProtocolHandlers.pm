@@ -117,9 +117,12 @@ sub iconForURL {
 
 	if (my $handler = $class->handlerForURL($url)) {
 		if ($client && $handler->can('getMetadataFor')) {
-			return $handler->getMetadataFor($client, $url)->{cover};
+			if ( my $meta = $handler->getMetadataFor($client, $url) ) {
+				return $meta->{cover};
+			}
 		}
-		elsif ($handler->can('getIcon')) {
+		
+		if ($handler->can('getIcon')) {
 			return $handler->getIcon($url);
 		}
 	}

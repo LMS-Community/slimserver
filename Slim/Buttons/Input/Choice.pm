@@ -176,6 +176,7 @@ sub getExtVal {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($value);
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Choice method=${name} error=\"$@\"");
 			}
 			
@@ -245,6 +246,7 @@ my %functions = (
 					
 					if ( main::SLIM_SERVICE ) {
 						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($onChange);
+						$@ =~ s/"/'/g;
 						SDI::Util::Syslog::error("service=SS-Choice method=${name} error=\"$@\"");
 					}
 				}
@@ -315,6 +317,7 @@ sub callCallback {
 			
 			if ( main::SLIM_SERVICE ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
+				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Choice method=${name} error=\"$@\"");
 			}
 		
