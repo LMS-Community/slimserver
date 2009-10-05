@@ -406,10 +406,14 @@ sub infoPlugins {
 
 			my $name   = $plugins->{$plugin}->{'name'};
 			my $version = $plugins->{$plugin}->{'version'};
+			
+			if ( $name eq uc($name) ) {
+				$name = cstring($client, $name);
+			}
 
 			push @list, {
 				type => 'text',
-				name => cstring($client, $name) . ' - v' . $version,
+				name => $name . ' - v' . $version,
 			}
 		}
 	}
