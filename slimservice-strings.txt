@@ -262,16 +262,18 @@ SAVING_SELECTION
 	SV	Dina val sparas ...
 
 TIMEZONE
+	CS	Časové pásmo
 	DA	Tidszone
 	DE	Zeitzone
-	EN	Time Zone
+	EN	Timezone
 	ES	Zona horaria
 	FI	Aikavyöhyke
 	FR	Fuseau horaire
-	HE	אזור זמן
 	IT	Fuso orario
 	NL	Tijdzone
 	NO	Tidssone
+	PL	Strefa czasowa
+	RU	Часовой пояс
 	SV	Tidszon
 
 TZ_PACIFIC_APIA

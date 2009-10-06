@@ -96,9 +96,7 @@ $::prefsdir = $path;
 
 $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 
-unless (-d $path) {
-	Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
-}
+Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
 
 my $prefs = preferences('server');
 
