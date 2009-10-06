@@ -58,7 +58,10 @@ sub initDetails {
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
 	
-	$class->{osDetails}->{isVista} = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
+	# bug 14590 - what we're really interested in is whether we're running on Vista or later
+	# leaving isVista in in case somebody was using it
+	$class->{osDetails}->{'isWin6+'} = ($major >= 6);
+	$class->{osDetails}->{isVista}   = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
 
 	return $class->{osDetails};
 }
@@ -109,7 +112,7 @@ sub dirsFor {
 		
 		else {
 
-			if ($class->{osDetails}->{isVista} && -r catdir($class->writablePath(), 'slimserver.pref')) {
+			if ($class->{osDetails}->{'isWin6+'} && -r catdir($class->writablePath(), 'slimserver.pref')) {
 
 				push @dirs, catdir($class->writablePath(''), 'slimserver.pref');
 			}
