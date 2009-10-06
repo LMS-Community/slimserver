@@ -52,7 +52,7 @@ sub getStartupType {
 sub canSetStartupType {
 
 	# on Vista+ we can elevate privileges	
-	if ($os->get('isVista')) {
+	if ($os->get('isWin6+')) {
 		return 1;
 	}
 	
@@ -68,7 +68,7 @@ sub canSetStartupType {
 sub getStartupOptions {
 	my $class = shift;
 	
-	if (!$os->get('isVista') && !Win32::IsAdminUser()) {
+	if (!$os->get('isWin6+') && !Win32::IsAdminUser()) {
 		return ('CONTROLPANEL_NEED_ADMINISTRATOR', 'RUN_NEVER', 'RUN_AT_LOGIN');
 	}	
 
