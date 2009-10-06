@@ -113,8 +113,8 @@ sub dirsFor {
 
 sub migratePrefsFolder {
 	my ($class, $newdir) = @_;
-	
-	return if -d $newdir && -r _;
+
+	return if -d $newdir && -f catdir($newdir, 'server.prefs');
 	
 	# we only care about SqueezeCenter -> Squeezebox Server for now
 	my $olddir = $class->dirsFor('scprefs');	
