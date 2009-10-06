@@ -189,6 +189,7 @@ my %localTagMapping = (
 	composer               => undef,
 	conductor              => undef,
 	band                   => undef,
+	discc                  => undef,
 	replaygain_track_gain  => 'replay_gain',	# Bug 14468: iTunes
 												# Should really be handled by Schema::_preCheckAttributes
 												# but that is not called for remote tracks at present.
