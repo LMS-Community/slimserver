@@ -1366,7 +1366,7 @@ SLEEPING_IN_X_MINUTES
 	EN	Sleeping in %s minutes
 	ES	Suspensión dentro de %s minutos
 	FI	Unessa %s minuutin kuluttua
-	FR	Mise en veille dans %s minutes
+	FR	%s minutes avant la mise en veille
 	IT	Sospendi fra %s minuti
 	NL	Sluimermodus over %s minuten
 	NO	Hvilemodus om %s minutter
