@@ -87,19 +87,19 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2009 Logitech Verze 7.4.1
-	DA	© 2001-2009 Logitech - version 7.4.1
-	DE	© 2001-2009 Logitech Version 7.4.1
-	EN	© 2001-2009 Logitech Version 7.4.1
-	ES	© 2001-2009 Logitech Versión 7.4.1
-	FI	© 2001-2009 Logitechin versio 7.4.1
-	FR	© 2001-2009 Logitech Version 7.4.1
-	IT	© 2001-2009 Logitech Versione 7.4.1
-	NL	© 2001-2009 Logitech Versie 7.4.1
-	NO	© 2001–2009 Logitech versjon 7.4.1
-	PL	© 2001-2009 Logitech wersja 7.4.1
-	RU	© Logitech, 2001-2009. Версия 7.4.1
-	SV	© 2001–2009 Logitech Version 7.4.1
+	CS	© 2001-2009 Logitech Verze 7.5.0
+	DA	© 2001-2009 Logitech - version 7.5.0
+	DE	© 2001-2009 Logitech Version 7.5.0
+	EN	© 2001-2009 Logitech Version 7.5.0
+	ES	© 2001-2009 Logitech Versión 7.5.0
+	FI	© 2001-2009 Logitechin versio 7.5.0
+	FR	© 2001-2009 Logitech Version 7.5.0
+	IT	© 2001-2009 Logitech Versione 7.5.0
+	NL	© 2001-2009 Logitech Versie 7.5.0
+	NO	© 2001–2009 Logitech versjon 7.5.0
+	PL	© 2001-2009 Logitech wersja 7.5.0
+	RU	© Logitech, 2001-2009. Версия 7.5.0
+	SV	© 2001–2009 Logitech Version 7.5.0
 
 COPYRIGHT_LOGITECH
 	CS	© 2001-2009 Logitech
@@ -118,19 +118,19 @@ COPYRIGHT_LOGITECH
 
 
 VERSION
-	CS	Verze 7.4.1 / %s
-	DA	Version 7.4.1 / %s
-	DE	Version 7.4.1 / r%s
-	EN	Version 7.4.1 / r%s
-	ES	Versión 7.4.1 / r%s
-	FI	Versio 7.4.1 / %s
-	FR	Version 7.4.1 / r%s
-	IT	Versione 7.4.1 / r%s
-	NL	Versie 7.4.1 / %s
-	NO	Versjon 7.4.1 / %s
-	PL	Wersja 7.4.1 / %s
-	RU	Версия 7.4.1 / %s
-	SV	Version 7.4.1 / %s
+	CS	Verze 7.5.0 / %s
+	DA	Version 7.5.0 / %s
+	DE	Version 7.5.0 / r%s
+	EN	Version 7.5.0 / r%s
+	ES	Versión 7.5.0 / r%s
+	FI	Versio 7.5.0 / %s
+	FR	Version 7.5.0 / r%s
+	IT	Versione 7.5.0 / r%s
+	NL	Versie 7.5.0 / %s
+	NO	Versjon 7.5.0 / %s
+	PL	Wersja 7.5.0 / %s
+	RU	Версия 7.5.0 / %s
+	SV	Version 7.5.0 / %s
 
 
 CHOOSE_A_LANGUAGE
@@ -1366,7 +1366,7 @@ SLEEPING_IN_X_MINUTES
 	EN	Sleeping in %s minutes
 	ES	Suspensión dentro de %s minutos
 	FI	Unessa %s minuutin kuluttua
-	FR	Mise en veille dans %s minutes
+	FR	%s minutes avant la mise en veille
 	IT	Sospendi fra %s minuti
 	NL	Sluimermodus over %s minuten
 	NO	Hvilemodus om %s minutter
@@ -8766,6 +8766,21 @@ SETUP_SN_VALID_LOGIN
 	PL	Połączenie z usługą mysqueezebox.com powiodło się.
 	RU	Подключение к mysqueesebox.com успешно установлено.
 	SV	Ansluten till mysqueezebox.com
+
+SETUP_SN_VALIDATION_FAILED
+	CS	Chyba při validaci vašeho účtu mysqueezebox.com.
+	DA	Der opstod en fejl under valideringen af din mysqueezebox.com-konto.
+	DE	Unerwarteter Fehler beim Prüfen des mysqueezebox.com-Kontos. Bitte stellen Sie sicher, dass die Netzwerkverbindung in Ordnung ist.
+	EN	An unexpected error occurred while validating your mysqueezebox.com account. Please make sure network connectivity is working fine.
+	ES	Se ha producido un error al validar la cuenta mysqueezebox.com.
+	FI	Tapahtui virhe vahvistettaessa mysqueezebox.com-tiliä.
+	FR	Une erreur s'est produite lors de la validation de votre compte mysqueezebox.com.
+	IT	Si è verificato un errore durante la convalida dell'account mysqueezebox.com.
+	NL	Er is een fout opgetreden tijdens het valideren van je mysqueezebox.com-account.
+	NO	Det oppsto en feil under bekreftelsen av mysqueezebox.com-kontoen.
+	PL	Podczas sprawdzania poprawności konta w usłudze mysqueezebox.com wystąpił błąd.
+	RU	Произошла ошибка при проверке вашей учетной записи mysqueezebox.com.
+	SV	Ett fel uppstod vid valideringen av ditt mysqueezebox.com-konto.
 
 SETUP_SN_FORGOT_PASSWORD
 	CS	Zapomněl jsem své heslo

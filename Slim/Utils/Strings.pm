@@ -80,17 +80,8 @@ sub init {
 		checkChangedStrings();
 	}
 	
-	# Load cached extra strings
-	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
-	
-	my $cache = {};
-	if ( -e $extraCache ) {
-		$cache = eval { from_json( read_file($extraCache) ) };
-	}
-	
-	for my $string ( keys %{ $cache || {} } ) {
-		storeString( $string, $cache->{$string} );
-	}
+	# Load cached extra strings from mysb.com
+	loadExtraStrings();
 }
 
 =head2 loadStrings( [ $argshash ] )
@@ -220,6 +211,12 @@ sub loadAdditional {
 		
 		main::idleStreams();
 	}
+	
+	# extra strings delivered by SN
+	eval {
+		local $currentLang = $lang;
+		loadExtraStrings();
+	};
 	
 	return $strings->{$lang};
 }
@@ -408,7 +405,7 @@ sub storeExtraStrings {
 	
 	# Turn into a hash
 	$extra = { map { $_->{token} => $_->{strings} } @{$extra} };
-	
+
 	for my $string ( keys %{$extra} ) {
 		storeString( $string, $extra->{$string} );
 		$cache->{$string} = $extra->{$string};
@@ -416,6 +413,26 @@ sub storeExtraStrings {
 	
 	eval { write_file( $extraCache, to_json($cache) ) };
 }
+
+=head2 loadExtraStrings
+
+Load cached additional strings delivered from SN.
+
+=cut
+
+sub loadExtraStrings {
+	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
+	
+	my $cache = {};
+	if ( -e $extraCache ) {
+		$cache = eval { from_json( read_file($extraCache) ) };
+	}
+	
+	for my $string ( keys %{ $cache || {} } ) {
+		storeString( $string, $cache->{$string} );
+	}
+}
+
 
 # access strings
 

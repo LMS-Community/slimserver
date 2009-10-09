@@ -174,7 +174,10 @@ sub generate {
 	
 	if ( $strings && uc($name) eq $name ) {
 		# Use SN-supplied translations
-		Slim::Utils::Strings::storeString( $name, $strings );
+		Slim::Utils::Strings::storeExtraStrings([{
+			strings => $strings,
+			token   => $name,
+		}]);
 	}
 	
 	my $code = qq{

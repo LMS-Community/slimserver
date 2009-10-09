@@ -1761,7 +1761,6 @@ sub musicfolderQuery {
 	# create filtered data
 	
 	my $topPath = $topLevelObj->path;
-	my $osName  = Slim::Utils::OSDetect::OS();
 
 	# now build the result
 

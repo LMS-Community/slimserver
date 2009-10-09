@@ -866,7 +866,7 @@ sub findAndScanDirectoryTree {
 		});
 	}
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac' && blessed($topLevelObj) && $topLevelObj->can('path')) {
+	if (main::ISMAC && blessed($topLevelObj) && $topLevelObj->can('path')) {
 		my $topPath = $topLevelObj->path;
 
 		if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($topPath) ) {
