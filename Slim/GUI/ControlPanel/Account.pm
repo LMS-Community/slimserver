@@ -96,7 +96,7 @@ sub snCredentials {
 	
 			# validation failed
 			if (!$validated || !$validated->{validated}) {
-				my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
+				my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || string('SETUP_SN_VALIDATION_FAILED'), string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
 				$msgbox->ShowModal();
 			}
 		}

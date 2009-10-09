@@ -8767,6 +8767,21 @@ SETUP_SN_VALID_LOGIN
 	RU	Подключение к mysqueesebox.com успешно установлено.
 	SV	Ansluten till mysqueezebox.com
 
+SETUP_SN_VALIDATION_FAILED
+	CS	Chyba při validaci vašeho účtu mysqueezebox.com.
+	DA	Der opstod en fejl under valideringen af din mysqueezebox.com-konto.
+	DE	Unerwarteter Fehler beim Prüfen des mysqueezebox.com-Kontos. Bitte stellen Sie sicher, dass die Netzwerkverbindung in Ordnung ist.
+	EN	An unexpected error occurred while validating your mysqueezebox.com account. Please make sure network connectivity is working fine.
+	ES	Se ha producido un error al validar la cuenta mysqueezebox.com.
+	FI	Tapahtui virhe vahvistettaessa mysqueezebox.com-tiliä.
+	FR	Une erreur s'est produite lors de la validation de votre compte mysqueezebox.com.
+	IT	Si è verificato un errore durante la convalida dell'account mysqueezebox.com.
+	NL	Er is een fout opgetreden tijdens het valideren van je mysqueezebox.com-account.
+	NO	Det oppsto en feil under bekreftelsen av mysqueezebox.com-kontoen.
+	PL	Podczas sprawdzania poprawności konta w usłudze mysqueezebox.com wystąpił błąd.
+	RU	Произошла ошибка при проверке вашей учетной записи mysqueezebox.com.
+	SV	Ett fel uppstod vid valideringen av ditt mysqueezebox.com-konto.
+
 SETUP_SN_FORGOT_PASSWORD
 	CS	Zapomněl jsem své heslo
 	DA	Jeg har glemt mit adgangskode
