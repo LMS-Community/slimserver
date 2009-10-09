@@ -246,8 +246,8 @@ function(){
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input id="savefilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : 'PLUGIN_FAVORITES_SAVEFILE' | getstring %]" [% UNLESS filename %] onClick="this.value=''" [% END %]>
 		[% IF useAJAX || useExtJS %]
-			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'savefile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('savefilename').dom[% ELSE %]$('savefilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
-			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('savefile'); showElements(['defaultform']);" />
+			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'savefile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('savefilename').dom[% ELSE %]$('savefilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
+			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('savefile'); showElements(['defaultform']);" />
 		[% ELSE %]
 			<input type="submit" class="stdclick" name="savefile" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]">
 			<input type="submit" class="stdclick" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]">
@@ -268,8 +268,8 @@ function(){
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input id="importfilename" type="text" class="stdedit selectFile selectFile_opml selectFile_m3u selectFile_pls selectFile_asx selectFile_cue selectFile_xml selectFile_wpl" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
 		[% IF useAJAX || useExtJS %]
-			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('importfilename').dom[% ELSE %]$('importfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
-			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />
+			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('importfilename').dom[% ELSE %]$('importfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
+			<input type="button" class="stdclick" style="display: inline" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />
 		[% ELSE %]
 			<input type="submit" class="stdclick" name="importfile" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]">
 			<input type="submit" class="stdclick" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]">
