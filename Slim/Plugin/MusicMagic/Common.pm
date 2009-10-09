@@ -17,7 +17,6 @@ use Slim::Utils::Strings;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
-my $os  = Slim::Utils::OSDetect::OS();
 *escape = main::ISWINDOWS ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
 
 my $log = logger('plugin.musicip');

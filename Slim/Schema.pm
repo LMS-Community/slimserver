@@ -1888,7 +1888,7 @@ sub _hasChanged {
 				}
 			}
 		}
-		elsif ( Slim::Utils::OSDetect::OS() eq 'mac' ) {
+		elsif ( main::ISMAC ) {
 			# Mac, check if path is in /Volumes
 			if ( $filepath =~ m{^/Volumes/([^/]+)} ) {
 				if ( !-d "/Volumes/$1" ) {

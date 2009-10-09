@@ -121,7 +121,7 @@ sub initPlugin {
 	if (main::ISWINDOWS) {
 		@supportedFormats = ('alc', 'm4a', 'mp3', 'wma', 'ogg', 'flc', 'wav');
 	}
-	elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
+	elsif (main::ISMAC) {
 		@supportedFormats = ('alc', 'm4a', 'mp3', 'ogg', 'flc', 'wav');		
 	}
 	else {
