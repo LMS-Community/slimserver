@@ -34,14 +34,14 @@ sub new {
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT | wxTOP, 10);
 	$settingsSizer->AddSpacer(5);
 	$settingsSizer->Add(
-		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'),
+		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir', 'SETUP_AUDIODIR'),
 		0, wxEXPAND | wxLEFT | wxRIGHT, 10
 	);
 
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
 	$settingsSizer->AddSpacer(5);
 	$settingsSizer->Add(
-		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'),
+		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir', 'SETUP_PLAYLISTDIR'),
 		0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10
 	);
 
@@ -110,13 +110,13 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
 
 sub new {
-	my ($self, $page, $parent, $pref) = @_;
+	my ($self, $page, $parent, $pref, $title) = @_;
 
 	$self = $self->SUPER::new(
 		$page,
 		-1,
 		Slim::GUI::ControlPanel->getPref($pref) || '',
-		string('SETUP_PLAYLISTDIR'),
+		string($title),
 		wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST
 	);
 
