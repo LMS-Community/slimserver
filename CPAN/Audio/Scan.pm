@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.40';
+our $VERSION = '0.41';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -96,12 +96,12 @@ The offset value is different depending on the file type:
 
 =over 4
 
-=item MP3, Ogg, FLAC
+=item MP3, Ogg
 
 Offset is the byte offset to start searching from.  The byte offset to the first
 audio packet/frame past this point will be returned.
 
-=item ASF, MP4
+=item FLAC, ASF, MP4
 
 Offset is a timestamp in milliseconds.  The byte offset to the data packet
 containing this timestamp will be returned.
@@ -118,7 +118,7 @@ Same as C<find_frame>, but with a filehandle.
 
 =head2 has_flac()
 
-Returns 1 if FLAC support was compiled in, or 0 if not.
+Deprecated.  Always returns 1 now that FLAC is always enabled.
 
 =head2 is_supported( $path )
 
@@ -325,7 +325,7 @@ The following metadata about a file is returned:
     samplerate (in kHz)
     bitrate (in bps)
     file_size
-    audio_offset (byte offset to audio)
+    audio_offset (byte offset to first audio frame)
     song_length_ms (duration in milliseconds)
     bits_per_sample
     frames

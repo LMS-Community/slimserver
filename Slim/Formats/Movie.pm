@@ -76,6 +76,15 @@ sub getTag {
 		elsif ( $track->{encoding} && $track->{encoding} eq 'drms' ) {
 			$tags->{DRM} = 1;
 		}
+		
+		# Check for HD-AAC file, if the file has 2 tracks and AOTs of 2/37
+		if ( my $track2 = $info->{tracks}->[1] ) {
+			if ( $track->{audio_object_type} == 2 && $track2->{audio_object_type} == 37 ) {
+				$tags->{LOSSLESS}  = 1;
+				$tags->{VBR_SCALE} = 1;
+				# XXX: may want to use a different content-type for HD?
+			}
+		}
 	}
 	elsif ( $info->{bitrate} ) {
 		# ADTS file
