@@ -31,12 +31,10 @@
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_AUDIODIR" desc="SETUP_AUDIODIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="pref_audiodir" id="audiodir" value="[% prefs.pref_audiodir %]" size="40">
-			<input type="hidden" name="pref_audiodir_b64" id="audiodir_b64" value="[% prefs.pref_audiodir_b64 %]">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir %]" size="40">
-			<input type="hidden" name="pref_playlistdir_b64" id="playlistdir_b64" value="[% prefs.pref_playlistdir_b64 %]">
 		[% END %]
 	[% END %]
 

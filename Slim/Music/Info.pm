@@ -887,7 +887,7 @@ sub fileName {
 		$j = (splitdir($j))[-1] || $j;
 	}
 
-	return Slim::Utils::Unicode::utf8decode_locale($j);
+	return main::ISWINDOWS ? $j : Slim::Utils::Unicode::utf8decode_locale($j);
 }
 
 sub sortFilename {
