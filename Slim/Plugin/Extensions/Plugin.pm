@@ -117,6 +117,15 @@ $prefs->migrate(2,
 					1;
 				});
 
+$prefs->migrate(3,
+				sub {
+					# Bug: 14690 - remove any old format plugin pref (used temporarily during beta)
+					if (ref $prefs->get('plugin') ne 'HASH') {
+						$prefs->set('plugin', {});
+					}
+					1;
+				});
+
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
 	Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml')   => 1,
