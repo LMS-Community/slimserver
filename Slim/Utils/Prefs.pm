@@ -100,8 +100,8 @@ Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
 
 my $prefs = preferences('server');
 
-# make sure these server prefs has the utf8flag turned off before they get used
-$prefs->setUtf8Off(qw(audiodir playlistdir cachedir librarycachedir coverArt));
+# File paths need to be prepared in order to correctly read the file system
+$prefs->setFilepaths(qw(audiodir playlistdir cachedir librarycachedir coverArt));
 
 
 =head2 preferences( $namespace )

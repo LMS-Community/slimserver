@@ -25,6 +25,7 @@ use base qw(Slim::Utils::Prefs::Base);
 use File::Spec::Functions qw(:ALL);
 use YAML::Syck;
 
+use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs::Client;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
@@ -42,8 +43,8 @@ my $simpleValidators = {
 	'hash'     => sub { ref $_[1] eq 'HASH' },
 	'defined'  => sub { defined $_[1] },
 	'false'    => sub { 0 },
-	'file'     => sub { !$_[1] || -f $_[1] || -f Slim::Utils::Unicode::utf8encode_locale($_[1]) },
-	'dir'      => sub { !$_[1] || -d $_[1] || -d Slim::Utils::Unicode::utf8encode_locale($_[1]) },
+	'file'     => sub { !$_[1] || -f $_[1] || (main::ISWINDOWS && -f Win32::GetANSIPathName($_[1])) || -f Slim::Utils::Unicode::utf8encode_locale($_[1]) },
+	'dir'      => sub { !$_[1] || -d $_[1] || (main::ISWINDOWS && -d Win32::GetANSIPathName($_[1])) || -d Slim::Utils::Unicode::utf8encode_locale($_[1]) },
 	'intlimit' => sub { $_[1] =~ /^-?\d+$/ &&
 						(!defined $_[2]->{'low'}  || $_[1] >= $_[2]->{'low'} ) &&
 						(!defined $_[2]->{'high'} || $_[1] <= $_[2]->{'high'}) },
@@ -80,7 +81,7 @@ sub new {
 		'validparam'=> {},
 		'onchange'  => {},
 		'migratecb' => {},
-		'utf8off'   => {},
+		'filepathPrefs' => {},
 	}, $ref;
 
 	$class->{'prefs'} = $class->_load || {
@@ -168,13 +169,9 @@ sub setChange {
 }
 
 
-=head2 setUtf8off( list )
+=head2 setFilepaths( list )
 
-Turns off the utf8 flag for the preferences listed.  This is normally used for folder prefernces
-which may otherwise have the utf8 flag set when read in from YAML.
-
-This should be called as soon as a namespace is created before preferences are used to make sure
-utf8 is turned off after reading in the namespace preference file.
+Do some prefs manipulation for values storing a file or folder path.
 
 Only supports global (non client) prefs.
 
@@ -182,8 +179,10 @@ See bug: 7507
 
 =cut
 
-sub setUtf8Off {
+sub setFilepaths {
 	my $class = shift;
+
+	return unless main::ISWINDOWS;
 
 	while (my $pref = shift) {
 
@@ -192,10 +191,10 @@ sub setUtf8Off {
 		}
 
 		if ( $class->{'prefs'}->{ $pref } ) {
-			$class->{'prefs'}->{ $pref } = Slim::Utils::Unicode::utf8off($class->{'prefs'}->{ $pref });
+			$class->{'prefs'}->{ $pref } = Win32::GetANSIPathName($class->{'prefs'}->{ $pref });
 		}
 
-		$class->{'utf8off'}->{ $pref } = 1;
+		$class->{'filepathPrefs'}->{ $pref } = 1;
 	}
 }
 
@@ -264,9 +263,7 @@ sub _load {
 			main::INFOLOG && $log->info("can't read $class->{'file'} : $@");
 		}
 
-		foreach ( keys %{$class->{'utf8off'}} ) {
-			$prefs->{$_} = Slim::Utils::Unicode::utf8off($prefs->{$_});
-		}
+		$class->setFilepaths(keys %{$class->{'filepathPrefs'}});
 	}
 
 	return $prefs;

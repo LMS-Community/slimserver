@@ -258,9 +258,6 @@ Ext.extend(SqueezeJS.UI.FileTreeLoader, Ext.tree.TreeLoader, {
 
 		cliQuery.push("folder:" + node.id);
 
-		if (node.attributes.path_b64)
-			cliQuery.push("folder_b64:" + node.attributes.path_b64);
-
 		if (this.filter)
 			cliQuery.push("filter:" + this.filter);
 
@@ -343,10 +340,9 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 	onClick: function(node, e){
 		var input = Ext.get(this.input);
-		var input_b64 = Ext.get(this.input_b64);
+
 		if (input != null && input.getValue() != null) {
 			input.dom.value = node.id;
-			input_b64.dom.value = node.attributes.path_b64;
 		}
 	},
 
@@ -448,7 +444,7 @@ SqueezeJS.UI.FilesystemBrowser = {
 	init: function(){
 		var inputEl, btnEl, filter, classes, start;
 
-		var tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.string('browse') + '" onclick="SqueezeJS.UI.FilesystemBrowser.show(\'{inputField}\', \'{inputB64Field}\', \'{filter}\')">');
+		var tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.string('browse') + '" onclick="SqueezeJS.UI.FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
 		tpl.compile();
 
 		// try to get the filter expression from the input fields CSS class
@@ -477,11 +473,8 @@ SqueezeJS.UI.FilesystemBrowser = {
 						filter = "filetype:" + filter;
 				}
 
-				var inputElB64 = Ext.get(inputEl.id + '_b64');
-
 				btnEl = tpl.insertAfter(inputEl, {
 					inputField: inputEl.id,
-					inputB64Field: inputElB64 != null ? inputElB64.id : null,
 					filter: filter
 				});
 			}

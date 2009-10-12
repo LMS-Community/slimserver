@@ -128,8 +128,6 @@ sub browsetree {
 		my $descend = Slim::Music::Info::isList($item) 
 						|| ($item->content_type eq 'unk' && -d Slim::Utils::Misc::pathFromMacAlias($url));
 
-		# Turn the utf8 flag on for proper display - since this is
-		# coming directly from the filesystem.
 		my %form = (
 			'text'      => $name || Slim::Music::Info::fileName($url),
 			'hierarchy' => join('/', @levels, $item->id),
