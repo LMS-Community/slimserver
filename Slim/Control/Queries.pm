@@ -1825,6 +1825,8 @@ sub musicfolderQuery {
 		if ($party || $partyMode) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
+		# FIXME: working on BMF CM issue here
+		# $base->{'actions'}{'more'} = _contextMenuBase('folder');
 		$request->addResult('base', $base);
 
 		$request->addResult('window', { text => $topLevelObj->title } ) if $topLevelObj->title;
@@ -3139,7 +3141,7 @@ sub serverstatusQuery_filter {
 sub serverstatusQuery {
 	my $request = shift;
 	
-	main::INFOLOG && $log->info("serverstatusQuery()");
+	main::INFOLOG && $log->debug("serverstatusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['serverstatus']])) {
@@ -3635,6 +3637,18 @@ sub statusQuery {
 			$request->addResult('alarm_state', $alarmComing);
 			$request->addResult('alarm_next', defined $alarmNext ? $alarmNext + 0 : 0);
 		}
+
+		# send which presets are defined
+		my $presets = $prefs->client($client)->get('presets');
+		my $presetLoop;
+		for my $i (0..9) {
+			if (defined $presets->[$i] ) {
+				$presetLoop->[$i] = 1;
+			} else {
+				$presetLoop->[$i] = 0;
+			}
+		}
+		$request->addResult('preset_loop', $presetLoop);
 
 		main::DEBUGLOG && $log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
