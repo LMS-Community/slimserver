@@ -126,6 +126,11 @@ sub findFilesMatching {
 		return Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types);
 	};
 
+
+	if (utf8::is_utf8($topDir)) {
+		utf8::encode($topDir);
+	}
+
 	my $iter  = File::Next::files({
 		'file_filter'     => $file_filter,
 		'descend_filter'  => $descend_filter,

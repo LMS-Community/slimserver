@@ -259,6 +259,10 @@ sub set {
 			}
 		}
 
+		if (main::ISWINDOWS && $root->{'filepathPrefs'}->{ $pref }) {
+			$new = Win32::GetANSIPathName($new);
+		}
+
 		$class->{'prefs'}->{ $pref } = $new;
 		
 		if ( !main::SLIM_SERVICE ) { # SN's timestamps are stored automatically
