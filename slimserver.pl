@@ -811,32 +811,6 @@ sub initSettings {
 	if (defined($cliport)) {
 		preferences('plugin.cli')->set('cliport', $cliport);
 	}
-
-	# Bug: 583 - make sure we are using the actual case of the directories
-	# and that they do not end in / or \
-	# 
-	# Bug: 3760 - don't strip the trailing slash before going to fixPath
-
-	# FIXME - can these be done at pref set time rather than here which is once per startup
-	if (defined($prefs->get('playlistdir')) && $prefs->get('playlistdir') ne '') {
-
-		$playlistdir = $prefs->get('playlistdir');
-		$playlistdir = Slim::Utils::Misc::fixPath($playlistdir);
-		$playlistdir = Slim::Utils::Misc::pathFromFileURL($playlistdir);
-		$playlistdir =~ s|[/\\]$||;
-
-		$prefs->set('playlistdir',$playlistdir);
-	}
-
-	if (defined($prefs->get('audiodir')) && $prefs->get('audiodir') ne '') {
-
-		$audiodir = $prefs->get('audiodir');
-		$audiodir = Slim::Utils::Misc::fixPath($audiodir);
-		$audiodir = Slim::Utils::Misc::pathFromFileURL($audiodir);
-		$audiodir =~ s|[/\\]$||;
-
-		$prefs->set('audiodir',$audiodir);
-	}
 	
 	if (defined($prefs->get('cachedir')) && $prefs->get('cachedir') ne '') {
 
