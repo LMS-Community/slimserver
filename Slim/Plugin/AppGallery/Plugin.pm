@@ -12,7 +12,7 @@ sub initPlugin {
 		feed   => Slim::Networking::SqueezeNetwork->url( '/api/appgallery/v1/opml' ),
 		tag    => 'appgallery',
 		node   => 'home',
-		weight => 80,
+		weight => 90,
 	);
 }
 
