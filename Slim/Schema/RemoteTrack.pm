@@ -168,7 +168,7 @@ sub new {
 	
 	my $self = $class->SUPER::new;
 
-	main::DEBUGLOG && $log->debug("$class, $url");
+	main::DEBUGLOG && $log->is_debug && $log->debug("$class, $url");
 #	main::DEBUGLOG && $log->logBacktrace();
 	
 	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {});
@@ -230,7 +230,7 @@ sub updateOrCreate {
 		my $id = $idIndex{$self->id} if $self; # refresh ID index cache
 	}
 	
-	main::DEBUGLOG && $log->debug($url);
+	main::DEBUGLOG && $log->is_debug && $log->debug($url);
 	
 	if ($self) {
 		$self->setAttributes($attributes, $tagMapping);
@@ -249,7 +249,7 @@ sub fetch {
 	my $id = $idIndex{$self->id} if $self; # refresh ID index cache
 	
 	if ($self && $playlist && !$self->isa('Slim::Schema::RemotePlaylist')) {
-		main::DEBUGLOG && $log->debug("$url upcast to RemotePlaylist");
+		main::DEBUGLOG && $log->is_debug && $log->debug("$url upcast to RemotePlaylist");
 		bless $self, 'Slim::Schema::RemotePlaylist';
 	}
 	
@@ -265,7 +265,7 @@ sub fetchById {
 sub get {
 	my ($self, $attribute) = @_;
 
-	main::DEBUGLOG && $log->debug($self->_url, ', ', $attribute, '->', $self->$attribute());
+	main::DEBUGLOG && $log->is_debug && $log->debug($self->_url, ', ', $attribute, '->', $self->$attribute());
 	
 	return($self->$attribute());
 }
