@@ -635,7 +635,7 @@ sub idleStreams {
 
 sub showUsage {
 	print <<EOF;
-Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
+Usage: $0 [--diag] [--daemon] [--stdio]
           [--logdir <logpath>]
           [--logfile <logfilepath|syslog>]
           [--user <username>]
@@ -650,8 +650,6 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
-    --audiodir       => The path to a directory of your MP3 files.
-    --playlistdir    => The path to a directory of your playlist files.
     --cachedir       => Directory for Squeezebox Server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.
                         Also slows down library processing considerably
@@ -726,8 +724,6 @@ sub initOptions {
 		'debug=s'       => \$debug,
 		'logging=s'     => \$logging,
 		'LogTimestamp!' => \$LogTimestamp,
-		'audiodir=s'    => \$audiodir,
-		'playlistdir=s'	=> \$playlistdir,
 		'cachedir=s'    => \$cachedir,
 		'pidfile=s'     => \$pidfile,
 		'playeraddr=s'  => \$localClientNetAddr,
@@ -791,14 +787,6 @@ sub initSettings {
 	Slim::Utils::Prefs::init();
 
 	# options override existing preferences
-	if (defined($audiodir)) {
-		$prefs->set('audiodir', $audiodir);
-	}
-
-	if (defined($playlistdir)) {
-		$prefs->set('playlistdir', $playlistdir);
-	}
-	
 	if (defined($cachedir)) {
 		$prefs->set('cachedir', $cachedir);
 		$prefs->set('librarycachedir', $cachedir);
