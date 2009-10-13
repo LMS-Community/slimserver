@@ -369,6 +369,7 @@ sub _gotTrackInfo {
 		album     => $info->{album},
 		title     => $info->{title},
 		cover     => $info->{cover},
+		duration  => $info->{duration},
 		bitrate   => '128k CBR',
 		type      => 'WMA (Napster)',
 		info_link => 'plugins/napster/trackinfo.html',
