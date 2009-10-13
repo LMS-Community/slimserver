@@ -481,7 +481,7 @@ SqueezeJS.UI.FilesystemBrowser = {
 		}
 	},
 
-	show: function(inputField, inputB64Field, filter){
+	show: function(inputField, filter){
 		var filesystemDlg = new Ext.Window({
 			modal: true,
 			collapsible: false,
@@ -507,7 +507,6 @@ SqueezeJS.UI.FilesystemBrowser = {
 		new SqueezeJS.UI.FileSelector({
 			renderTo: 'filesystembrowser',
 			input: inputField,
-			input_b64: inputB64Field,
 			filter: filter
 		});
 	},

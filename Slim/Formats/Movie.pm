@@ -78,7 +78,7 @@ sub getTag {
 		}
 		
 		# Check for HD-AAC file, if the file has 2 tracks and AOTs of 2/37
-		if ( my $track2 = $info->{tracks}->[1] ) {
+		if ( defined $track->{audio_object_type} && (my $track2 = $info->{tracks}->[1]) ) {
 			if ( $track->{audio_object_type} == 2 && $track2->{audio_object_type} == 37 ) {
 				$tags->{LOSSLESS}  = 1;
 				$tags->{VBR_SCALE} = 1;
