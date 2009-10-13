@@ -334,6 +334,8 @@ sub getHeaders {
 		utf8::encode($name);
 		push @headers, 'X-Player-Name', encode_base64( $name, '' );
 		
+		push @headers, 'X-Player-Model', $client->model;
+		
 		# Bug 13963, Add "controlled by" string so SN knows what kind of menu to return
 		if ( my $controller = $client->controlledBy ) {
 			push @headers, 'X-Controlled-By', $controller;
