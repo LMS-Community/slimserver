@@ -328,7 +328,7 @@ sub scanDirectory {
 	for my $file (@{$files}) {
 		
 		# Skip client playlists
-		next if $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
+		next if $args->{types} && $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
 		
 		if ( main::SCANNER && !$main::progress ) {
 			$log->error("Scanning: $file");
