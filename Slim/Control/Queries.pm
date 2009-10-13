@@ -2826,16 +2826,11 @@ sub readDirectoryQuery {
 	my $index      = $request->getParam('_index');
 	my $quantity   = $request->getParam('_quantity');
 	my $folder     = $request->getParam('folder');
-	my $folder_b64 = $request->getParam('folder_b64');
 	my $filter     = $request->getParam('filter');
 
 	use File::Spec::Functions qw(catdir);
 	my @fsitems;		# raw list of items 
 	my %fsitems;		# meta data cache
-
-	if ( $folder_b64 ) {
-		$folder = decode_base64($folder_b64);
-	}
 
 	if (main::ISWINDOWS && $folder eq '/') {
 		@fsitems = sort map {
@@ -2915,8 +2910,7 @@ sub readDirectoryQuery {
 					$name = Slim::Music::Info::fileName($path);
 				}
 
-				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
-				$request->addResultLoop('fsitems_loop', $cnt, 'path_b64', encode_base64($path, ''));
+				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode_locale($path));
 				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode_locale($name));
 				
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
