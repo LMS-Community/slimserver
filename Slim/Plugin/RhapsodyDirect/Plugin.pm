@@ -119,10 +119,9 @@ sub initPlugin {
 	
 	# Lookup secure-direct.rhapsody.com.  In case it ever changes from the hardcoded
 	# value in the firmware (207.188.0.25), we need to inform the player.
-	my $dns = Slim::Networking::Async->new;
-	$dns->open( {
-		Host    => 'secure-direct.rhapsody.com',
-		onDNS   => sub {
+	Slim::Networking::Async::DNS->resolve( {
+		host => 'secure-direct.rhapsody.com',
+		cb   => sub {
 			my $ip = shift;
 			
 			main::DEBUGLOG && $log->debug( "secure-direct.rhapsody.com is $ip" );
@@ -131,7 +130,7 @@ sub initPlugin {
 				$SECURE_IP = $ip;
 			}
 		},
-		onError => sub {
+		ecb  => sub {
 			$log->error('Unable to resolve address for secure-direct.rhapsody.com');
 		},
 	} );
