@@ -874,14 +874,8 @@ sub fileName {
 	} else {
 
 		# display full name if we got a Windows 8.3 file name
-		if (main::ISWINDOWS && $j =~ /~/) {
-			
-			if (my $n = Win32::GetLongPathName($j)) {
-				$n = File::Basename::basename($n);
-				main::INFOLOG && $log->info("Expand short name returned by readdir() to full name: $j -> $n");
-			
-				$j = $n;
-			}		
+		if (main::ISWINDOWS) {
+			$j = Slim::Utils::OSDetect::getOS->getFileName($j);
 		}
 
 		$j = (splitdir($j))[-1] || $j;

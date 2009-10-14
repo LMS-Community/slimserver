@@ -15,6 +15,8 @@ use Win32::OLE;
 use Win32::OLE::NLS;
 use Win32::TieRegistry ('Delimiter' => '/');
 
+Win32::OLE->Option(CP => Win32::OLE::CP_UTF8);
+
 use base qw(Slim::Utils::OS);
 
 my $driveList  = {};
@@ -211,6 +213,47 @@ sub dirsFor {
 
 sub decodeExternalHelperPath {
 	return Win32::GetShortPathName($_[1]);
+}
+
+
+=head2 getFileName()
+
+Apply some magic to expand short file names, read non-latin names on non-western Windows etc.
+
+=cut
+
+sub getFileName {
+	my $class = shift;
+	my $path  = shift;
+
+	my $locale = Slim::Utils::Unicode->currentLocale();
+	my $fsObj = Win32::OLE->new('Scripting.FileSystemObject') || die "$@ wtf?!?";
+	
+	# display full name if we got a Windows 8.3 file name
+	if ($path =~ /~/) {
+
+		if (my $n = Win32::GetLongPathName($path)) {
+			$n = File::Basename::basename($n);
+			main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Expand short name returned by readdir() to full name: $path -> $n");
+			
+			$path = $n;
+		}
+
+	}
+
+	elsif ( $locale ne 'cp2152' && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
+
+		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert folder name: $path -> " . $folderObj->{Name});
+		$path = $folderObj->{Name};
+	}
+
+	elsif ( $locale ne 'cp2152' && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
+
+		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert file name: $path -> " . $fileObj->{Name});
+		$path = $fileObj->{Name};
+	}
+
+	return $path;	
 }
 
 sub scanner {
