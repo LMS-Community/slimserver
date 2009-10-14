@@ -994,9 +994,13 @@ sub _cliQuery_done {
 						my $presetFavSet     = undef;
 						my $favorites_url    = $item->{play} || $item->{url};
 						my $favorites_title  = $item->{title} || $item->{name};
+						my $favorites_type   = $item->{type} || 'audio';
+						
 						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
-							$itemParams->{favorites_url} = $favorites_url;
+							$itemParams->{favorites_url}   = $favorites_url;
 							$itemParams->{favorites_title} = $favorites_title;
+							$itemParams->{favorites_type}  = $favorites_type;
+							
 							if ( $item->{image} ) {
 								$itemParams->{icon} = $item->{image};
 							}
@@ -1006,9 +1010,7 @@ sub _cliQuery_done {
 							$itemParams->{type} = $item->{type} if $item->{type};
 							$itemParams->{parser} = $item->{parser} if $item->{parser};
 							$presetFavSet = 1;
-
 						}
-
 
 						if ( $isPlayable || $item->{isContextMenu} ) {
 							$itemParams->{'isContextMenu'} = 1;
@@ -1388,6 +1390,7 @@ sub _playlistControlContextMenu {
 	my $itemParams = {
 		favorites_title => $params->{'favorites_title'},
 		favorites_url   => $params->{'favorites_url'},
+		favorites_type  => $params->{'favorites_type'},
 		menu => $params->{'menu'},
 		type => $params->{'type'},
 		icon => $params->{'icon'},
@@ -1450,6 +1453,7 @@ sub _playlistControlContextMenu {
 			params => {
 				title   => $itemParams->{'favorites_title'},
 				url     => $itemParams->{'favorites_url'},
+				type    => $itemParams->{'favorites_type'},
 				isContextMenu => 1,
 			},
 		},
