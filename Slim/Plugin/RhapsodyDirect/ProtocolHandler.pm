@@ -487,9 +487,10 @@ sub onStream {
 	if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
 		main::DEBUGLOG && $log->debug( $client->id . " Sending updated secure-direct IP: $ip" );
 		
-		$ip = Net::IP->new($ip);
-		my $data = pack( 'cNn', 0, $ip->intip, 443 );
-		$client->sendFrame( rpds => \$data );
+		if ( $ip = Net::IP->new($ip) ) {
+			my $data = pack( 'cNn', 0, $ip->intip, 443 );
+			$client->sendFrame( rpds => \$data );
+		}
 	}
 	
 	my $info = $song->pluginData('info');
