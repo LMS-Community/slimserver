@@ -4200,6 +4200,11 @@ sub titlesQuery {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
+		# PLAY ALL item for search results
+		if ( $search && $insertAll ) {
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
+		}
+
 		my $listIndex = 0;
 
 		for my $item ($rs->slice($start, $end)) {
@@ -5327,6 +5332,7 @@ sub _playAll {
 						'add'  =>  { 'cmd' => 'add',  },
 						'add-hold'  =>  { 'cmd' => 'insert',  },
 					},
+					'nextWindow'  => 'nowPlaying',
 			},
 			allSongs => { 
 					string     => $request->string('JIVE_ALL_SONGS') . "\n" . $artist,
@@ -5362,7 +5368,6 @@ sub _playAll {
 				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
 				: '/html/images/playall.png';
 				
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
 		}
 
@@ -5434,6 +5439,9 @@ sub _playAll {
 				'cmd'    => $items{$mode}{'playCmd'},
 				'params' => $items{$mode}{'params'}{'play'},
 			};
+			if ($items{$mode}{'nextWindow'}) {
+				$actions->{'do'}{'nextWindow'} = $items{$mode}{'nextWindow'};
+			}			
 		}
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$chunkCount++;
