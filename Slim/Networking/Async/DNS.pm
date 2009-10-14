@@ -52,6 +52,14 @@ sub resolve {
 	AnyEvent::DNS::resolver->resolve( $host => 'a', sub {
 		my $res = shift;
 		
+		if ( !$res ) {
+			# Lookup failed
+			main::DEBUGLOG && $log->is_debug && $log->debug("Lookup failed for $host");
+			
+			$args->{ecb} && $args->{ecb}->( @{ $args->{pt} || [] } );
+			return;
+		}
+		
 		my $addr = $res->[3];
 		my $ttl	 = $res->[4];
 		
