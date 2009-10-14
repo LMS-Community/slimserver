@@ -1387,11 +1387,13 @@ sub _playlistControlContextMenu {
 	my $params  = $request->{_params};
 	my $itemParams = {
 		favorites_title => $params->{'favorites_title'},
+		favorites_url   => $params->{'favorites_url'},
 		menu => $params->{'menu'},
 		type => $params->{'type'},
 		icon => $params->{'icon'},
 		item_id => $params->{'item_id'},
 	};
+
 
 	my @contextMenu = (
 		{
@@ -1428,6 +1430,40 @@ sub _playlistControlContextMenu {
 			},
 		},
 	);
+
+	# Favorites handling
+	my $action = 'add';
+ 	my $favIndex = undef;
+	my $token = 'JIVE_SAVE_TO_FAVORITES';
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+		my $favs = Slim::Utils::Favorites->new($request->client);
+		$favIndex = $favs->findUrl($itemParams->{favorites_url});
+		if (defined($favIndex)) {
+			$action = 'delete';
+			$token = 'JIVE_DELETE_FROM_FAVORITES';
+		}
+	}
+	my $favoriteActions = {
+		'go' => {
+			player => 0,
+			cmd    => [ 'jivefavorites', $action ],
+			params => {
+				title   => $itemParams->{'favorites_title'},
+				url     => $itemParams->{'favorites_url'},
+				isContextMenu => 1,
+			},
+		},
+	};
+	$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
+	$favoriteActions->{'go'}{'params'}{'icon'}    = $itemParams->{icon} if defined($itemParams->{icon});
+
+	my $string = $request->string($token);
+
+	push @contextMenu, {
+		text => $request->string($token),
+		actions => $favoriteActions,
+	};
+
 	my $numItems = scalar(@contextMenu);
 	$request->addResult('count', $numItems);
 	$request->addResult('offset', 0);
@@ -1439,6 +1475,7 @@ sub _playlistControlContextMenu {
 
 	$request->setStatusDone();
 }
+
 
 1;
 

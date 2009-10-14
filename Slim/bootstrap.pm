@@ -182,7 +182,20 @@ sub loadModules {
 			print "http://www.activestate.com/activeperl/\n\n";
 		}
 		else {
-			print "To download and compile them, please run: $libPath/Bin/build-perl-modules.pl $failed\n\n";
+			print qq{
+*******
+
+NOTE:
+
+Please use the buildme.sh script located here:
+http://svn.slimdevices.com/repos/slim/7.4/trunk/vendor/CPAN/
+
+If 7.4 is outdated by the time you read this, Replace "7.4" with the major version
+of Squeezebox Server you are running.
+
+*******
+
+			\n};
 		}
 		
 		print "Exiting..\n";
