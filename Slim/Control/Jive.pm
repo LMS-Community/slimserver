@@ -2924,6 +2924,7 @@ sub jiveFavoritesCommand {
 	my $client  = $request->client || shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
+	my $type    = $request->getParam('type');
 	my $icon    = $request->getParam('icon');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
@@ -2931,10 +2932,11 @@ sub jiveFavoritesCommand {
 	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
 
 	if ( $command eq 'set_preset' ) {
+		# XXX: why do we use a favorites_ prefix here but not above?
 		my $preset = $request->getParam('key');
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
-		my $type   = $request->getParam('type');
+		my $type   = $request->getParam('favorites_type');
 		my $parser = $request->getParam('parser');
 
 		# if playlist_index is sent, that's for the current NP track, derive everything you need from it
@@ -2976,7 +2978,7 @@ sub jiveFavoritesCommand {
 				text    => $client->string('CANCEL'),
 				actions => {
 					go => {
-							player => 0,
+						player => 0,
 						cmd    => [ 'jiveblankcommand' ],
 					},
 				},
@@ -2990,8 +2992,9 @@ sub jiveFavoritesCommand {
 					player => 0,
 					cmd    => ['favorites', $command ],
 					params => {
-							title => $title,
-							url   => $url,
+						title => $title,
+						url   => $url,
+						type  => $type,
 					},
 				},
 			},
