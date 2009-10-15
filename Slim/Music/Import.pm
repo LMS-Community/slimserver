@@ -377,7 +377,12 @@ sub runScan {
 	}
 
 	# Check Import scanners
-	for my $importer (keys %Importers) {
+	# Bug 14758: make sure MusicIP is run last, or it will miss iTunes imported files
+	for my $importer (sort {
+		return 1 if $a =~ /MusicMagic/i;
+		return -1 if $b =~ /MusicMagic/i;
+		return 0;
+	} keys %Importers) {
 
 		# Don't rescan the music folder again.
 		if ($importer eq $folderScanClass) {
