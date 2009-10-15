@@ -111,6 +111,11 @@ sub loadModules {
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
+	
+	# Some ARM platforms use different arch strings
+	if ( $arch =~ /^armv5tej?l-linux-thread-multi$/ ) {
+		$arch = 'arm-linux-gnueabi-thread-multi';
+	}
 
 	my $perlmajorversion = $Config{'version'};
 	   $perlmajorversion =~ s/\.\d+$//;
