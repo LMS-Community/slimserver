@@ -86,7 +86,7 @@ var Favorites = function(){
 					index: index && index.length > 1 ? index[1] : ''
 				});
 			}
-		},
+		}
 	}
 }();
 
