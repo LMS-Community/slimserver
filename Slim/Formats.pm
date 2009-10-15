@@ -268,6 +268,18 @@ sub readTags {
 				$tags->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
 				$tags->{$tag} =~ s/\000$//;
 			}
+			
+			# Bug 14587, sanity check all MusicBrainz ID tags to ensure it is a UUID and nothing more
+			if ( $tag =~ /^MUSICBRAINZ.*ID$/ ) {
+				if ( $tags->{$tag} =~ /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
+					$tags->{$tag} = lc($1);
+				}
+				else {
+					$log->error("Invalid MusicBrainz tag found in $file: $tag -> $value");
+					delete $tags->{$tag};
+					next;
+				}
+			}
 		}
 		
 		$isDebug && $value && $log->debug(". $tag : $value");
