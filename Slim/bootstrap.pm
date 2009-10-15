@@ -112,9 +112,16 @@ sub loadModules {
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
 	
-	# Some ARM platforms use different arch strings
-	if ( $arch =~ /^armv5tej?l-linux-thread-multi$/ ) {
+	# Some ARM platforms use different arch strings, just assume any arm*linux system
+	# can run our binaries, this will fail for some people running invalid versions of Perl
+	# but that's OK, they'd be broken anyway.
+	if ( $arch =~ /^arm.*linux/ ) {
 		$arch = 'arm-linux-gnueabi-thread-multi';
+	}
+	
+	# Same thing with PPC
+	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
+		$arch = 'powerpc-linux-thread-multi';
 	}
 
 	my $perlmajorversion = $Config{'version'};
