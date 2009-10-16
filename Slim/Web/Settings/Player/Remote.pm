@@ -71,7 +71,7 @@ sub handler {
 			$prefs->client($client)->set('disabledirsets', \@disabled);
 		}
 
-		$paramRef->{'prefs'}->{'pref_disabledirsets'} = { map {$_ => 1} @{ $prefs->client($client)->get('disabledirsets') } };
+		$paramRef->{'prefs'}->{'pref_disabledirsets'} = { map {$_ => 1} @{ $prefs->client($client)->get('disabledirsets') || [] } };
 
 		$paramRef->{'irmapOptions'}   = { %{Slim::Hardware::IR::mapfiles()}};
 		$paramRef->{'irsetlist'}      = { map {$_ => Slim::Hardware::IR::irfileName($_)} sort(keys %{Slim::Hardware::IR::irfiles($client)})};
