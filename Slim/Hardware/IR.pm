@@ -403,7 +403,7 @@ sub initClient {
 	my $client = shift;
 
 	my @codes;
-	my %disabled = map { $_ => 1 } @{ $prefs->client($client)->get('disabledirsets') };
+	my %disabled = map { $_ => 1 } @{ $prefs->client($client)->get('disabledirsets') || [] };
 
 	for my $code (keys %irCodes) {
 		if (!$disabled{$code}) {
