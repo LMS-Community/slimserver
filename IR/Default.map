@@ -145,6 +145,11 @@ favorites.single		= favorites
 favorites.hold			= favorites_add
 visual					= visual_toggle
 
+favorites_2.single		= favorites
+favorites_2.hold		= favorites_add
+browse_2			= browse
+search_2			= search
+
 # menu shortcuts
 menu_playlist			= menu_playlist
 menu_browse_genre		= menu_browse_genre
@@ -161,6 +166,16 @@ menu_settings			= menu_settings
 menu_pop				= menu_pop
 menu_now_playing		= menu_now_playing
 menu_synchronize		= menu_synchronize
+
+# digital input
+digital_input_aes-ebu		= modefunction_Slim::Plugin::DigitalInput::Plugin->aes-ebu
+digital_input_bnc-spdif		= modefunction_Slim::Plugin::DigitalInput::Plugin->bnc-spdif
+digital_input_rca-spdif		= modefunction_Slim::Plugin::DigitalInput::Plugin->rca-spdif
+digital_input_toslink		= modefunction_Slim::Plugin::DigitalInput::Plugin->toslink
+
+# analog input
+analog_input_line_in		= modefunction_Slim::Plugin::LineIn::Plugin->linein
+
 
 [home]
 arrow_left.hold			= dead
@@ -219,6 +234,9 @@ shuffle_on				= dead
 search					= dead
 browse.*				= dead
 favorites.*				= dead
+search_2			= dead
+browse_2.*			= dead
+favorites_2.*			= dead
 sleep.single			= snooze
 sleep.hold				= dead
 snooze.single			= snooze
@@ -247,6 +265,12 @@ trebleup.*				= dead
 volumemode.*			= dead
 visual.*				= dead
 home.*					= dead
+digital_input_aes-ebu		= dead
+digital_input_bnc-spdif		= dead
+digital_input_rca-spdif		= dead
+digital_input_toslink		= dead
+analog_input_line_in		= dead
+
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead

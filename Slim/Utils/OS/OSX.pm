@@ -34,6 +34,7 @@ sub initDetails {
 			if (/System Version: (.+)/) {
 
 				$class->{osDetails}->{'osName'} = $1;
+				$class->{osDetails}->{'osName'} =~ s/ \(\w+?\)$//;
 				last;
 			}
 		}
