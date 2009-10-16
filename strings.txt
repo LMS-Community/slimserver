@@ -7905,9 +7905,10 @@ SETUP_LONGDATEFORMAT_DESC
 	ZH_CN	这个选项决定了显示完整日期所使用的格式（譬如在播放机关机状态时）。以下是各个选择所使用的惯例：<br>WWWW=星期（星期六、星期天、等）<br>WWW=简化的星期（六、日、等）<br>DD=日（主导零被去除）<br>MM=简化的月份<br>YY=两位数的年份<br>YYYY=四位数的年份
 
 SETUP_LONGDATEFORMAT_DEFAULT
+# SLT: a long date format description, eg. "22. Oktober 2009" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%A, %B |%d, %Y
 	DA	%A, %B |%d, %Y
-	DE	%A, %B |%d, %Y
+	DE	%A, |%d. %B %Y
 	EN	%A, %B |%d, %Y
 	ES	%A, %B |%d, %Y
 	FI	%A, %B |%d, %Y
@@ -7920,19 +7921,20 @@ SETUP_LONGDATEFORMAT_DEFAULT
 	SV	%A, %B |%d, %Y
 
 SETUP_LONGDATEFORMAT_DEFAULT_N
+# SLT: a long date format description, which should fit in to about 20 characters, eg. "22. Okt. 09" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%a, %b |%d, %Y
 	DA	%a %d. %b %Y
-	DE	%a, %b |%d, %Y
+	DE	%a, |%d. %b %Y
 	EN	%a, %b |%d, %Y
-	ES	%a, %d |%b, %Y
-	FI	%a, %b |%d, %Y
-	FR	%a, %b |%d, %Y
-	IT	%a %d %b %Y
-	NL	%a %d |%b %Y
-	NO	%a, %b |%d, %Y
+	ES	%d/%m/%Y
+	FI	%d/%m/%Y
+	FR	%d/%m/%Y
+	IT	%d/%m/%Y
+	NL	%d-%m-%Y
+	NO	%d/%m/%Y
 	PL	%a, %b |%d, %Y
 	RU	%a, %b |%d, %Y
-	SV	%a, %d |%b %Y
+	SV	%Y/%m/%d
 
 SETUP_SHORTDATEFORMAT
 	CS	Formát krátkého data
@@ -7973,15 +7975,16 @@ SETUP_SHORTDATEFORMAT_DESC
 	ZH_CN	这个选项决定了显示简化日期所使用的格式。以下是各个选择所使用的惯例：<br>YYYY=四位数的年份<br>YY=两位数的年份<br>MM=月份<br>DD=日<br>在末端括弧内的任何信息为备注而将不显示。
 
 SETUP_SHORTDATEFORMAT_DEFAULT
+# SLT: a short date format description, eg. 22.10.2009 ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%m/%d/%Y
 	DA	%m/%d/%Y
-	DE	%m/%d/%Y
+	DE	%m.%d.%y
 	EN	%m/%d/%Y
 	ES	%d/%m/%Y
 	FI	%d/%m/%Y
 	FR	%d/%m/%Y
-	IT	%m/%d/%Y
-	NL	%m/%d/%Y
+	IT	%d/%m/%Y
+	NL	%d-%m-%Y
 	NO	%d/%m/%Y
 	PL	%m/%d/%R
 	RU	%m/%d/%Y
@@ -8026,13 +8029,14 @@ SETUP_TIMEFORMAT_DESC
 	ZH_CN	这个选项决定了显示时间所使用的格式。以下是各个选择所使用的惯例：<br>hh=时<br>h=时（主导零被去除）<br>mm=分<br>ss=秒<br>pm=AM或PM<BR>在末端括弧内的任何信息为备注而将不显示。
 
 SETUP_TIMEFORMAT_DEFAULT
+# SLT: time format description ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	|%I:%M %p
 	DA	|%I:%M %p
 	DE	%H:%M
 	EN	|%I:%M %p
 	ES	|%H:%M
 	FI	|%I:%M %p
-	FR	|%I:%M %p
+	FR	%H:%M
 	IT	|%H.%M
 	NL	|%H:%M
 	NO	|%I:%M %p
