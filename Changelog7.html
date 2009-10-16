@@ -24,20 +24,36 @@
 
 <h2><a name="v7.4.1" id="v7.4.1"></a>Version 7.4.1</h2>
 <ul>
-	<li>Plugins:</li>
+	<li>Apps:</li>
 	<ul>
-		<li>Added Queen plugin.</li>
+		<li>Added Queen app.</li>
 	</ul>
 	<br />
 	
 	<li>Platform Support:</li>
 	<ul>
-		<li>Binaries are now included for the following platforms:
+		<li>Binaries and tarballs are now available for the following platforms:
 			<ul>
 				<li>i386 FreeBSD 7.2</li>
 				<li>ARM EABI Linux</li>
 			</ul>
 		</li>
+	</ul>
+	<br />
+	
+	<li>Scanner bug fixes and improvements:</li>
+	<ul>
+		<li>Improved speed of FLAC scanning.</li>
+		<li>Improved accuracy of FLAC seeking.</li>
+		<li>Re-added support for ID3v2 tags in FLAC files.</li>
+		<li>AIFF: Fixed error when reading ID3 chunks with a bad chunk size.</li>
+		<li>MP4: Fixed parsing of files with short TRKN tags.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14241">#14241</a> - Fixed Win32 crash when seeking in FLAC files</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14462">#14462</a> - Fixed reading of WAV files with 18-byte fmt chunks</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14476">#14476</a> - Fixed crashes when files contain very large cover art</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14658">#14658</a> - Fixed reading of MP4 tags on certain platforms</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14705">#14705</a> - Properly read ID3v2 frames in a file with a corrupt frame</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14728">#14728</a> - Try to work around broken taggers that write UTF-16 text to ID3v2.3 tags without a BOM</li>
 	</ul>
 	<br />
 	
@@ -47,7 +63,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=13892">#13892</a> - Can't store music folder with non-latin characters</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14068">#14068</a> - Installer should pause longer when shutting down SqueezeTray</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14230">#14230</a> - Pause, play, starts a new track. Intermittent</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14241">#14241</a> - Crashes while seeking in FLAC file</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14340">#14340</a> - missing strings on controller</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14444">#14444</a> - Cannot View music folder with Traditional / Simplified Chinese folder name</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14438">#14438</a> - Non-Default skins lack My Apps menu item</li>
@@ -56,6 +71,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14470">#14470</a> - Scan crashes on MusicIP (Windows) import when encountering non-latin path/file names</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14471">#14471</a> - Can't open Control Panel if SBS is password protected</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14472">#14472</a> - Document CLI change from music_services to apps</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14485">#14485</a> - After 7.4.0, IR doesn't work</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14476">#14476</a> - Scanner fails when files contain very large artwork</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14503">#14503</a> - Browse Music Folder broken</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14506">#14506</a> - Control panel does not show information on password protected server</li>
@@ -70,6 +86,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14594">#14594</a> - No FF and REW in Napster tracks</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14599">#14599</a> - Control Panel Opens When Starting Squeezebox Server</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14597">#14597</a> - AAC to MP3 fails because of bug in convert.conf file</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14745">#14745</a> - Wrong Date on Squeezebox Classic when in standby</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14758">#14758</a> - iTunes imported music is not mixable in MusicIP</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14762">#14762</a> - Cyrillic encoding is broken in Browse Music Folder</li>
 	</ul>
