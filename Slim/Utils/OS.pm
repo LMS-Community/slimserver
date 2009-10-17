@@ -70,6 +70,11 @@ sub initSearchPath {
 	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
 	}
+	
+	# Reduce PPC to powerpc-linux
+	if ( $class->{osDetails}->{'binArch'} =~ /^(?:ppc|powerpc).*linux/ ) {
+		$class->{osDetails}->{'binArch'} = 'powerpc-linux';
+	}
 
 	my @paths = ( catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'}), catdir($class->dirsFor('Bin'), $^O), $class->dirsFor('Bin') );
 	
