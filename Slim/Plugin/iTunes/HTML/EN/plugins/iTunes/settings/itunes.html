@@ -1,9 +1,14 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="ITUNES" desc="SETUP_ITUNES_DESC" %]
-		<input type="checkbox" [% IF prefs.pref_itunes %]checked [% END %] class="stdedit" name="pref_itunes" id="itunes" />
+		<input type="checkbox" [% IF prefs.pref_itunes %]checked="checked"[% END %] class="stdedit" name="pref_itunes" id="itunes" />
 		<label for="itunes" class="stdlabel">[% "USE_ITUNES" | string %]</label>
 	[% END %]
+	
+	[% WRAPPER setting title="SETUP_ITUNES_ARTWORK" desc="SETUP_ITUNES_ARTWORK_DESC" %]
+		<input type="checkbox" [% IF prefs.pref_extract_artwork %]checked="checked"[% END %] class="stdedit" name="pref_extract_artwork" id="extract_artwork" />
+		<label for="extract_artwork" class="stdlabel">[% "SETUP_ITUNES_EXTRACT_ARTWORK" | string %]</label>
+	[% END %]		
 
 	[% WRAPPER setting title="SETUP_ITUNESSCANINTERVAL" desc="SETUP_ITUNESSCANINTERVAL_DESC" %]
 		<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval %]" size="5">
