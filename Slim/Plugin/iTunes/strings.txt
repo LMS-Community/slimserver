@@ -448,3 +448,11 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	RU	Введите через запятую плей-листы iTunes, которые не нужно импортировать (например, "Видео, Покупки").
 	SV	Skapa en kommaavgränsad lista med iTunes-spellistor som du inte vill importera (t.ex. Videofilmer, köpta).
 
+SETUP_ITUNES_ARTWORK
+	EN	iTunes Artwork
+
+SETUP_ITUNES_ARTWORK_DESC
+	EN	Enable this option to extract artwork stored within iTunes. Note that this operation may take a long time as the interface with iTunes is slow.
+
+SETUP_ITUNES_EXTRACT_ARTWORK
+	EN	Extract iTunes Artwork (experimental)
