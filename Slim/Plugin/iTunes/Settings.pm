@@ -30,16 +30,23 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix ignore_playlists));
+	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix ignore_playlists extract_artwork));
 }
 
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	# Cleanup the checkbox
-	$params->{'pref_itunes'} = defined $params->{'pref_itunes'} ? 1 : 0;
+	# Cleanup the checkboxes
+	$params->{'pref_itunes'}          = defined $params->{'pref_itunes'} ? 1 : 0;
+	$params->{'pref_extract_artwork'} = defined $params->{'pref_extract_artwork'} ? 1 : 0;
 
-	return $class->SUPER::handler($client, $params);
+	my $ret = $class->SUPER::handler($client, $params);
+	
+	# We need to immediately write the prefs file to disk, or the scanner may launch and
+	# use the previous prefs
+	$prefs->savenow();
+	
+	return $ret;
 }
 
 1;

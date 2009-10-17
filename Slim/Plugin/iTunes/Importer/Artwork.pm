@@ -11,7 +11,8 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-my $log = logger('plugin.itunes');
+my $log   = logger('plugin.itunes');
+my $prefs = preferences('plugin.itunes');
 
 sub startArtworkScan {
 	my $class = shift;
@@ -19,6 +20,8 @@ sub startArtworkScan {
 	if ( !$class->useiTunesLibrary ) {
 		return;
 	}
+	
+	return if !$prefs->get('extract_artwork');
 	
 	$class->initArtworkExport;
 	
