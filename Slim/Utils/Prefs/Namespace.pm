@@ -297,6 +297,8 @@ sub save {
 	}
 
 	return if ($class->{'writepending'});
+	
+	return if $class->{readonly};
 
 	Slim::Utils::Timers::setTimer($class, time() + 10, \&savenow);
 
