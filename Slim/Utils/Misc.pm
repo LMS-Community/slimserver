@@ -58,7 +58,6 @@ require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Network ();
 
 my $prefs = preferences('server');
 
@@ -1027,6 +1026,8 @@ sub userAgentString {
 # XXXX - this sub is no longer used by SC core code, since system information is available in Slim::Menu::SystemInfo
 sub settingsDiagString {
 
+	require Slim::Utils::Network;
+	
 	my $osDetails = Slim::Utils::OSDetect::details();
 	
 	my @diagString;
@@ -1328,6 +1329,7 @@ Generate a new UUID and return it.
 =cut
 
 sub createUUID {
+	require Slim::Utils::Network;
 	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
