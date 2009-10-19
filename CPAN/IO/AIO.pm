@@ -188,13 +188,12 @@ package IO::AIO;
 
 use Carp ();
 
-no warnings;
-use strict 'vars';
+use common::sense;
 
 use base 'Exporter';
 
 BEGIN {
-   our $VERSION = '3.261';
+   our $VERSION = '3.3';
 
    our @AIO_REQ = qw(aio_sendfile aio_read aio_write aio_open aio_close
                      aio_stat aio_lstat aio_unlink aio_rmdir aio_readdir aio_readdirx
@@ -959,6 +958,9 @@ composite request intended to sync directories after directory operations
 specific effect, but usually it makes sure that directory changes get
 written to disc. It works for anything that can be opened for read-only,
 not just directories.
+
+Future versions of this function might fall back to other methods when
+C<fsync> on the directory fails (such as calling C<sync>).
 
 Passes C<0> when everything went ok, and C<-1> on error.
 
