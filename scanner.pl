@@ -50,7 +50,6 @@ BEGIN {
 	require File::Basename;
 	require File::Copy;
 	require File::Slurp;
-	require HTTP::Request;
 	
 	require JSON::XS::VersionOneAndTwo;
 	import JSON::XS::VersionOneAndTwo;
