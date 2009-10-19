@@ -40,7 +40,6 @@ use Tie::Cache::LRU::Expires;
 use URI;
 
 use Slim::Formats;
-use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
