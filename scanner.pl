@@ -74,8 +74,6 @@ if (!$@) {
 use Getopt::Long;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
-use EV;
-use AnyEvent;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
