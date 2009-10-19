@@ -51,9 +51,8 @@ BEGIN {
 	require File::Copy;
 	require File::Slurp;
 	require HTTP::Request;
-	require JSON::XS::VersionOneAndTwo;
-	require LWP::UserAgent;
 	
+	require JSON::XS::VersionOneAndTwo;
 	import JSON::XS::VersionOneAndTwo;
 };
 
@@ -200,6 +199,21 @@ sub main {
 		msg("Exiting!\n");
 		exit;
 	}
+	
+	# pull in the memory usage module if requested.
+	if (main::INFOLOG && logger('server.memory')->is_info) {
+		
+		Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage');
+
+		if ($@) {
+
+			logError("Couldn't load Slim::Utils::MemoryUsage: [$@]");
+
+		} else {
+
+			Slim::Utils::MemoryUsage->init();
+		}
+	}
 
 	if ($playlists) {
 
@@ -323,6 +337,10 @@ sub main {
 
 	# Wipe templates if they exist.
 	rmtree( catdir($prefs->get('cachedir'), 'templates') );
+	
+	# To debug scanner memory usage, uncomment this line and kill -USR2 the scanner process
+	# after it's finished scanning.
+	# while (1) { sleep 1 }
 }
 
 sub initializeFrameworks {
