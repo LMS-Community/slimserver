@@ -40,7 +40,6 @@ use File::Which ();
 use File::Slurp;
 use FindBin qw($Bin);
 use Log::Log4perl;
-use Net::IP;
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -1278,6 +1277,7 @@ sub shouldCacheURL {
 		return 1;
 	}
 	
+	require Net::IP;
 	if ( my $ip = Net::IP->new($host) ) {
 		return 0 if $ip->iptype eq 'PRIVATE';
 	}
