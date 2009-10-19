@@ -54,15 +54,6 @@ BEGIN {
 	
 	require JSON::XS::VersionOneAndTwo;
 	import JSON::XS::VersionOneAndTwo;
-	
-	require File::Basename;
-	require File::Copy;
-	require File::Slurp;
-	require HTTP::Request;
-	require JSON::XS::VersionOneAndTwo;
-	require LWP::UserAgent;
-	
-	import JSON::XS::VersionOneAndTwo;
 };
 
 # Force XML::Simple to use XML::Parser for speed. This is done
@@ -442,6 +433,9 @@ sub initClass {
 
 sub notifyToServer {
 	return if $serverDown;
+	
+	require LWP::UserAgent;
+	require HTTP::Request;
 	
 	my $log = logger('database.info');
 	
