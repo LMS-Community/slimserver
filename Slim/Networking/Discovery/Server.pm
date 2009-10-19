@@ -9,7 +9,6 @@ package Slim::Networking::Discovery::Server;
 
 use strict;
 use IO::Socket qw(SO_BROADCAST sockaddr_in inet_aton inet_ntoa);
-use Net::IP;
 
 use Slim::Networking::UDP;
 use Slim::Networking::Discovery::Players;
@@ -116,6 +115,8 @@ Return a server's IP address if available
 
 sub getServerAddress {
 	my $server = shift;
+	
+	require Net::IP;
 	my $ip = Net::IP->new($server);
 	$ip = $ip->ip if $ip;
 	

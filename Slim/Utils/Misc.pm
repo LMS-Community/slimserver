@@ -40,7 +40,6 @@ use File::Which ();
 use File::Slurp;
 use FindBin qw($Bin);
 use Log::Log4perl;
-use Net::IP;
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -59,7 +58,6 @@ require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Network ();
 
 my $prefs = preferences('server');
 
@@ -1028,6 +1026,8 @@ sub userAgentString {
 # XXXX - this sub is no longer used by SC core code, since system information is available in Slim::Menu::SystemInfo
 sub settingsDiagString {
 
+	require Slim::Utils::Network;
+	
 	my $osDetails = Slim::Utils::OSDetect::details();
 	
 	my @diagString;
@@ -1278,6 +1278,7 @@ sub shouldCacheURL {
 		return 1;
 	}
 	
+	require Net::IP;
 	if ( my $ip = Net::IP->new($host) ) {
 		return 0 if $ip->iptype eq 'PRIVATE';
 	}
@@ -1328,6 +1329,7 @@ Generate a new UUID and return it.
 =cut
 
 sub createUUID {
+	require Slim::Utils::Network;
 	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 

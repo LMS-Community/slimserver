@@ -51,7 +51,6 @@ use Cache::FileCache ();
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
-use Slim::Utils::Timers;
 
 my $DEFAULT_EXPIRES_TIME = '1 hour';
 
@@ -124,6 +123,7 @@ sub init {
 
 	if ( !main::SLIM_SERVICE ) {
 		# start purge routine in 10 seconds to purge all caches created during server and plugin startup
+		require Slim::Utils::Timers;
 		Slim::Utils::Timers::setTimer( undef, time() + 10, \&cleanup );
 	}
 }

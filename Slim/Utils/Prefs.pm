@@ -76,7 +76,6 @@ use Exporter::Lite;
 use File::Path qw(mkpath);
 use Getopt::Long qw(:config pass_through);
 use Storable;
-use Net::IP qw(ip_is_ipv4);
 
 use Slim::Utils::Prefs::Namespace;
 use Slim::Utils::Prefs::OldPrefs;
@@ -666,6 +665,8 @@ sub init {
 
 	$prefs->setValidate({
 		validator => sub {
+			require Net::IP;
+			
 			foreach (split (/,/, $_[1])) {
 				s/\s*//g; 
 

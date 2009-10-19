@@ -14,7 +14,6 @@ use strict;
 
 use base qw(Slim::Utils::Accessor);
 
-use Net::IP;
 use Scalar::Util qw(blessed weaken);
 use Socket qw(inet_ntoa);
 
@@ -47,6 +46,7 @@ sub open {
 	$args->{Timeout} ||= preferences('server')->get('remotestreamtimeout') || 10;
 
 	# Skip async DNS if we know the IP address or are using a proxy (skipDNS)
+	require Net::IP;
 	if ( $args->{skipDNS} || $args->{PeerAddr} || Net::IP::ip_is_ipv4( $args->{Host} ) ) {
 		
 		# If caller only wanted to lookup the DNS, callback now

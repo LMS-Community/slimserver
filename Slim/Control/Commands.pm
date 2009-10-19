@@ -30,7 +30,6 @@ use strict;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
-use Net::IP;
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 
@@ -276,6 +275,7 @@ sub clientConnectCommand {
 			# Squeezebox Server (used on SN)
 		}
 		else {
+			require Net::IP;
 			my $ip = Net::IP->new($host);
 			if ( !defined $ip ) {
 				$request->setStatusBadParams();
