@@ -112,9 +112,8 @@ sub new {
 		$setStartupMode = 0;
 	};
 
-	$parent->addStatusListener($lbStartupMode, sub {
-		$lbStartupMode->Enable($_[0] == SC_STATE_STOPPED);
-	});
+	# use dummy listener to allow setting startup mode whether server is running or not
+	$parent->addStatusListener($lbStartupMode, sub {});
 		
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
@@ -148,18 +147,6 @@ sub new {
 			$username->Enable($lbStartupMode->GetSelection() == 2);
 			$password->Enable($lbStartupMode->GetSelection() == 2);
 		};
-
-		$parent->addStatusListener('serviceLogon', sub {
-			my $svcState = shift;
-			
-			if ($svcState == SC_STATE_STOPPED) {
-				&$handler();
-			}
-			else {
-				$username->Enable(0);
-				$password->Enable(0);
-			}
-		});
 		
 		&$handler();
 		EVT_CHOICE($self, $lbStartupMode, sub {
