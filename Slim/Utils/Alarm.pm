@@ -378,7 +378,8 @@ sub title {
 		$self->{_title} = $newValue;
 	}
 	
-	return $self->{_title} || $self->{_playlist};
+	# bug 13622 - don't fall back to the url, as playlist titles aren't stored with the alarm
+	return $self->{_title} || '';
 }
 
 =head3 nextDue( )
