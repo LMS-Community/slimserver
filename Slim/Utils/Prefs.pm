@@ -204,7 +204,10 @@ sub init {
 		'precacheArtwork'       => 1,
 		# Server Settings - Security
 		'filterHosts'           => 0,
-		'allowedHosts'          => sub { join(',', Slim::Utils::Network::hostAddr()) },
+		'allowedHosts'          => sub {
+			require Slim::Utils::Network;
+			return join(',', Slim::Utils::Network::hostAddr());
+		},
 		'csrfProtectionLevel'   => 0,
 		'authorize'             => 0,
 		'username'              => '',
@@ -971,6 +974,8 @@ sub makeCacheDir {
 }
 
 sub homeURL {
+	require Slim::Utils::Network;
+	
 	my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
 	my $port = $prefs->get('httpport');
 
