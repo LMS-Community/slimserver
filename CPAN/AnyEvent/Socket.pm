@@ -1018,7 +1018,7 @@ sub tcp_server($$$;$) {
 
    $state{aw} = AE::io $state{fh}, 0, sub {
       # this closure keeps $state alive
-      while (my $peer = accept my $fh, $state{fh}) {
+      while ($state{fh} && (my $peer = accept my $fh, $state{fh})) {
          fh_nonblocking $fh, 1; # POSIX requires inheritance, the outside world does not
 
          my ($service, $host) = unpack_sockaddr $peer;

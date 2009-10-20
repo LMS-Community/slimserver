@@ -16,7 +16,7 @@ AnyEvent::Handle - non-blocking I/O on file handles via AnyEvent
          warn "got error $msg\n";
          $hdl->destroy;
          $cv->send;
-      );
+      };
 
    # send some request line
    $hdl->push_write ("getinfo\015\012");
@@ -712,7 +712,7 @@ Replace the current C<on_stoptls> callback (see the C<on_stoptls> constructor ar
 
 =cut
 
-sub on_starttls {
+sub on_stoptls {
    $_[0]{on_stoptls} = $_[1];
 }
 

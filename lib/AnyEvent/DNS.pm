@@ -898,6 +898,7 @@ sub os_config {
          # (all else).
 
          my $dns;
+         local $_;
          while (<$fh>) {
             if (s/^\s.*\bdns\b.*://i) {
                $dns = 1;

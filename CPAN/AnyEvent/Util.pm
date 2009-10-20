@@ -488,18 +488,20 @@ Redirects program standard output into the specified filename, similar to C<<
 =item ">" => \$data
 
 Appends program standard output to the referenced scalar. The condvar will
-not be signalled before EOF was received.
+not be signalled before EOF or an error is signalled.
 
 =item ">" => $filehandle
 
-Redirects program standard output to the given filehandle (or actualy its
+Redirects program standard output to the given filehandle (or actually its
 underlying file descriptor).
 
 =item ">" => $callback->($data)
 
 Calls the given callback each time standard output receives some data,
-passing it the data received. On EOF, the callback will be invoked once
-without any arguments.
+passing it the data received. On EOF or error, the callback will be
+invoked once without any arguments.
+
+The condvar will not be signalled before EOF or an error is signalled.
 
 =item "fd>" => $see_above
 
@@ -513,6 +515,10 @@ forms as for ">" are allowed.
 In the callback form, the callback is supposed to return data to be
 written, or the empty list or C<undef> or a zero-length scalar to signal
 EOF.
+
+Similarly, either the write data must be exhausted or an error is to be
+signalled before the condvar is signalled, for both string-reference and
+callback forms.
 
 =item "fd<" => $see_above
 
@@ -534,6 +540,15 @@ descriptors will be closed, except the ones that were redirected and C<0>,
 C<1> and C<2>.
 
 See C<close_all_fds_except> for more details.
+
+=item '$$' => \$pid
+
+A reference to a scalar which will receive the PID of the newly-created
+subprocess after C<run_cmd> returns.
+
+Note the the PID might already have been recycled and used by an unrelated
+process at the time C<run_cmd> returns, so it's not useful to send
+signals, use a unique key in data structures and so on.
 
 =back
 
@@ -709,6 +724,9 @@ sub run_cmd {
 
       POSIX::_exit (126);
    }
+
+   ${$arg{'$$'}} = $pid
+      if $arg{'$$'};
 
    %redir = (); # close child side of the fds
 
