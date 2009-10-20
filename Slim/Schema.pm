@@ -256,14 +256,6 @@ sub init {
 
 		$prefs->set('migratedMovCT' => 1);
 	}
-	
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
-		# Event handler for notifications from scanner process
-		Slim::Control::Request::addDispatch(
-			['scanner', 'notify', '_msg'],
-			[0, 0, 0, \&notifyFromScanner]
-		);
-	}
 
 	$initialized = 1;
 }
@@ -2985,104 +2977,6 @@ sub _buildValidHierarchies {
 	
 	%validHierarchies = map {lc($_) => $_} @hierarchies;
 }
-
-sub notifyFromScanner {
-	my $request = shift;
-	
-	my $class = __PACKAGE__;
-	
-	my $msg = $request->getParam('_msg');
-	
-	main::INFOLOG && $log->is_info && $log->info("Notify from scanner: $msg");
-	
-	# If user aborted the scan, return an abort message
-	if ( Slim::Music::Import->hasAborted ) {
-		$request->addResult( abort => 1 );
-		$request->setStatusDone();
-		
-		Slim::Music::Import->setAborted(0);
-		
-		return;
-	}
-	
-	if ( $msg eq 'start' ) {
-		# Scanner has started
-		$SCANNING = 1;
-		
-		Slim::Music::Import->clearProgressInfo;
-		
-		Slim::Music::Import->setIsScanning(1);
-		
-		# XXX if scanner doesn't report in with regular progress within a set time period
-		# assume scanner is dead.  This is hard to do, as scanner may block for an indefinite
-		# amount of time with slow network filesystems, or a large amount of files.
-	}
-	elsif ( $msg =~ /^progress:([^-]+)-([^-]+)-([^-]+)-([^-]*)-([^-]*)-([^-]+)?/ ) {
-		if ( $SCANNING  && $initialized ) {
-			# update progress
-			my ($start, $type, $name, $done, $total, $finish) = ($1, $2, $3, $4, $5, $6);
-		
-			$done  = 1 if !defined $done;
-			$total = 1 if !defined $total;
-			
-			my $progress = $class->rs('Progress')->find_or_create( {
-				type => $type,
-				name => $name,
-			} );
-		
-			$progress->set_columns( {
-				start  => $start,
-				total  => $total,
-				done   => $done,
-				active => $finish ? 1 : 0,
-			} );
-		
-			if ( $finish ) {
-				$progress->finish( $finish );
-			}
-		
-			$progress->update;
-		}
-	}
-	elsif ( $msg eq 'end' ) {
-		if ( $SCANNING ) {
-			# Scanner has finished.
-			$SCANNING = 0;
-		}
-	}
-	elsif ( $msg eq 'exit' ) {
-		# Scanner is exiting.  If we get this without an 'end' message
-		# the scanner aborted and we should throw away the scanner database
-		if ( $SCANNING ) {
-			my $db = $class->_dbFile('squeezecenter-scanner.db');
-			
-			if ( -e $db ) {
-				main::INFOLOG && $log->is_info && $log->info("Scanner aborted, removing $db");
-				unlink $db;
-			}
-			
-			$SCANNING = 0;
-			
-			Slim::Music::Import->setIsScanning(0);
-		}
-		else {
-			# Replace our database with the scanner database.
-			$class->replace_with('squeezecenter-scanner.db') if $initialized;
-			
-			# XXX handle players with track objects that are now outdated
-		
-			Slim::Music::Import->setIsScanning(0);
-			
-			# Clear caches, like the vaObj, etc after scanning has been finished.
-			$class->wipeCaches;
-
-			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
-		}
-	}
-	
-	$request->setStatusDone();
-}
-
 
 sub isaTrack {
 	my $obj = shift;
