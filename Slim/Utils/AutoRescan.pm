@@ -32,6 +32,9 @@ my $osclass;
 sub init {
 	my $class = shift;
 	
+	# XXX disabling auto-rescan for now
+	return;
+	
 	my $audiodir = $prefs->get('audiodir') || return;
 	
 	Slim::Schema->init();
