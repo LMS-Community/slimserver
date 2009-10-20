@@ -6,7 +6,7 @@ common::sense - save a tree AND a kitten, use common::sense!
 
  use common::sense;
 
- # roughly the same as, with much lower memory usage:
+ # supposed to be the same, with much lower memory usage, as:
  #
  # use strict qw(vars subs);
  # use feature qw(say state switch);
@@ -43,10 +43,10 @@ This is annoying, and doesn't shield against obvious mistakes such as
 using C<"">, so one would even have to write (at least for the time
 being):
 
-   @{ defined $var->[0] ? $var->[0] :  [] }
+   @{ defined $var->[0] ? $var->[0] : [] }
 
 ... which nobody with a bit of common sense would consider
-writing.
+writing: clear code is clearly something else.
 
 Curiously enough, sometimes perl is not so strict, as this works even with
 C<use strict> in scope:
@@ -141,9 +141,9 @@ often be modules that pull in the monster pragmas. But one can hope...
 
 package common::sense;
 
-our $VERSION = '2.0';
+our $VERSION = '2.01';
 
-# paste this into pelr to find bitmask
+# paste this into perl to find bitmask
 
 # no warnings;
 # use warnings qw(FATAL closed threads internal debugging pack substr malloc unopened portable prototype
@@ -156,7 +156,7 @@ our $VERSION = '2.0';
 
 sub import {
    # verified with perl 5.8.0, 5.10.0
-   ${^WARNING_BITS} = "\xfc\x3f\xf3\x00\x0f\xf3\xcf\xc0\xf3\xfc\x33\x03";
+   ${^WARNING_BITS} ^= ${^WARNING_BITS} ^ "\xfc\x3f\xf3\x00\x0f\xf3\xcf\xc0\xf3\xfc\x33\x03";
 
    # use strict vars subs
    $^H |= 0x00000600;
@@ -202,6 +202,12 @@ crab
 
    "i wonder how it would be if joerg schilling wrote perl modules."
 
+Adam Kennedy
+
+   "Very interesting, efficient, and potentially something I'd use all the time."
+   [...]
+   "So no common::sense for me, alas."
+
 H.Merijn Brand
 
    "Just one more reason to drop JSON::XS from my distribution list"
@@ -246,6 +252,82 @@ acme
 apeiron (meta-comment about us commenting^Wquoting his comment)
 
    How about quoting this: get a clue, you fucktarded amoeba.
+
+=head1 FREQUQNTLY ASKED QUESTIONS
+
+Or frequently-come-up confusions.
+
+=over 4
+
+=item Is this module meant to be serious?
+
+Yes, we would have put it under the C<Acme::> namespace otherwise.
+
+=item But the manpage is written in a funny/stupid/... way?
+
+This was meant to make it clear that our common sense is a subjective
+thing and other people can use their own notions, taking the steam out
+of anybody who might be offended (as some people are always offended no
+matter what you do).
+
+This was a failure.
+
+But we hope the manpage still is somewhat entertaining even though it
+explains boring rationale.
+
+=item Why do you impose your conventions on my code?
+
+For some reason people keep thinking that C<common::sense> imposes
+process-wide limits, even though the SYNOPSIS makes it clear that it works
+like other similar modules - only on the scope that uses them.
+
+So, no, we don't - nobody is forced to use this module, and using a module
+that relies on common::sense does not impose anything on you.
+
+=item Why do you think only your notion of common::sense is valid?
+
+Well, we don't, and have clearly written this in the documentation to
+every single release. We were just faster than anybody else w.r.t. to
+grabbing the namespace.
+
+=item But everybody knows that you have to use strict and use warnings,
+why do you disable them?
+
+Well, we don't do this either - we selectively disagree with the
+usefulness of some warnings over others. This module is aimed at
+experienced Perl programmers, not people migrating from other languages
+who might be surprised about stuff such as C<undef>.
+
+In fact, this module is considerably I<more> strict than the canonical
+C<use strict; use warnings>, as it makes all warnings fatal in nature, so
+you can get away with as many things as with the canonical approach.
+
+This was not implemented in version 1.0 because of the daunting number
+of warning categories and the difficulty in getting exactly the set of
+warnings you wish (i.e. look at the SYNOPSIS in how complicated it is to
+get a specific set of warnings - it is not reasonable to put this into
+every module, the maintainance effort would be enourmous).
+
+=item But many modules C<use strict> or C<use warnings>, so the memory
+savings do not apply?
+
+I am suddenly so sad.
+
+But yes, that's true. Fortunately C<common::sense> still uses only a
+miniscule amount of RAM.
+
+=item But it adds another dependency to your modules!
+
+It's a fact, yeah. But it's trivial to install, most popular modules have
+many more dependencies and we consider dependencies a good thing - it
+leads to better APIs, more thought about interworking of modules and so
+on.
+
+=item But! But!
+
+Yeah, we know.
+
+=back
 
 =head1 AUTHOR
 
