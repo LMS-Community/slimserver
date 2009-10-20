@@ -144,12 +144,37 @@ sub new {
 	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
 		my $state;
-		($snPort, $state) = checkPort(getSNAddress(), '3483', 1);
+
+		if (Slim::GUI::ControlPanel->getPref('webproxy')) {
+			$alertBox->AppendText(string('CONTROLPANEL_SN_PROXY') . "\n\n");
+			$state = string('CONTROLPANEL_FAILED');
+		}
+		
+		else {
+			($snPort, $state) = checkPort(getSNAddress(), '3483', 1);
+		}
+
 		return $state;
 	});
 	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
-		checkPort(getSNAddress(), '9000', 1);
+		my $proxy = Slim::GUI::ControlPanel->getPref('webproxy');
+
+		# only do the more expensive http request if using a proxy
+		if ($proxy) {
+			require LWP::UserAgent;
+
+			my $ua = LWP::UserAgent->new( timeout => 3 );
+			$ua->proxy('http', "http://$proxy");
+
+			my $result  = $ua->get('http://' . getSNAddress() . ':9000');
+
+			return string( $result->is_success ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED' );
+		}
+
+		else {
+			return checkPort(getSNAddress(), '9000', 1);
+		}
 	});
 	
 	push @checks, {

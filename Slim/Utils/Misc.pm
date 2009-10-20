@@ -816,7 +816,7 @@ sub readDirectory {
 		$log->info("Directory contains " . scalar(@diritems) . " items");
 	}
 
-	return sort(@diritems);
+	return Slim::Music::Info::sortFilename(@diritems);
 }
 
 =head2 findAndScanDirectoryTree($params)
@@ -927,7 +927,7 @@ sub findAndScanDirectoryTree {
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ Slim::Music::Info::sortFilename( readDirectory($path) ) ];
+	my $items = [ readDirectory($path) ];
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);
