@@ -107,6 +107,7 @@ sub rescan {
 			LEFT JOIN       tracks USING (url)
 			WHERE           tracks.url IS NULL
 			AND             scanned_files.url LIKE '$basedir%'
+			ORDER BY        scanned_files.url
 		};
 		
 		# 3. Files that have changed mtime or size.
@@ -122,6 +123,7 @@ sub rescan {
 			LEFT JOIN tracks USING (url, timestamp, filesize)
 			WHERE tracks.url IS NULL
 			AND a.url LIKE '$basedir%'
+			ORDER BY a.url
 		};
 		
 		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
