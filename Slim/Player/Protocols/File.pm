@@ -169,7 +169,7 @@ sub open {
 		}
 	}
 	
-	if ($seekoffset) {
+	if (defined $seekoffset) {
 		main::INFOLOG && $log->info("Seeking in $seekoffset into $filepath");
 		if (!defined(sysseek($sock, $seekoffset, 0))) {
 			logError("could not seek to $seekoffset for $filepath: $!");
