@@ -1880,7 +1880,7 @@ sub musicfolderQuery {
 			
 			$filename = $realName || Slim::Music::Info::fileName($url);
 
-			my $textKey = uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1));
+			my $textKey = uc(substr($filename, 0, 1));
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
