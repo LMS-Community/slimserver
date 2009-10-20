@@ -893,11 +893,9 @@ sub sortFilename {
 	# really, we shouldn't be doing any of this, but we'll ignore
 	# punctuation, and fold the case. DON'T strip articles.
 	my @nocase = map {
-		Slim::Utils::Text::ignorePunct(
-			uc(
-				Slim::Utils::Unicode::utf8encode_locale( 
-					fileName($_)
-				)
+		lc(
+			Slim::Utils::Unicode::utf8encode_locale( 
+				fileName($_)
 			)
 		)
 	} @_;
