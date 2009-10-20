@@ -272,23 +272,8 @@ PERL_VERSION
 	SV	Perl-version
 	ZH_CN	Perl版本
 
-MYSQL_VERSION
-	CS	Verze MySQL
-	DA	MySQL-version
-	DE	MySQL-Version
-	EN	MySQL Version
-	ES	Versión de MySQL
-	FI	MySQL-versio
-	FR	Version de MySQL
-	HE	גרסת MySQL‏
-	IT	Versione MySQL
-	NL	MySQL-versie
-	NO	MySQL-versjon
-	PL	Wersja MySQL
-	PT	Versão do MySQL
-	RU	Версия MySQL
-	SV	MySQL-version
-	ZH_CN	MySQLr版本
+DATABASE_VERSION
+	EN	Database Version
 
 PLAYER_VERSION
 	CS	Verze firmwaru přehrávače
