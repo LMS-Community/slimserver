@@ -89,9 +89,6 @@ my %ratingImplementations = (
 	'LOCAL_RATING_STORAGE' => \&_defaultRatingImplementation,
 );
 
-# Scanning flag is set during scanning
-my $SCANNING = 0;
-
 # Track the last error during scanning
 my $LAST_ERROR = 'Unknown Error';
 
