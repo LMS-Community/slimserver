@@ -184,6 +184,9 @@ sub find {
 								return;
 							}
 							
+							# Skip client playlists
+							return if $args->{types} && $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
+							
 							$count++;
 							
 							$sth->execute(
