@@ -223,7 +223,6 @@ sub set {
 
 	my $root  = $class->_root;
 	my $change = $root->{'onchange'}->{ $pref };
-	my $readonly  = $root->{'readonly'};
 	my $namespace = $root->{'namespace'};
 	my $clientid  = $class->{'clientid'} || '';
 
@@ -233,13 +232,6 @@ sub set {
 	}
 
 	my $valid = $class->validate($pref, $new);
-
-	if ($readonly) {
-
-		logBacktrace(sprintf "attempt to set %s:%s:%s while namespace is readonly", $namespace, $clientid, $pref);
-
-		return wantarray ? ($old, 0) : $old;
-	}
 
 	if ( $valid && ( main::SLIM_SERVICE || $pref !~ /^_/ ) ) {
 

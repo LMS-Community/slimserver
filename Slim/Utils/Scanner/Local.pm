@@ -93,47 +93,47 @@ sub rescan {
 		
 		# 1. Files that no longer exist on disk
 		my $inDBOnlySQL = qq{
-			SELECT url FROM tracks
-			WHERE  url LIKE '$basedir%'
-			EXCEPT
-			SELECT url FROM scanned_files
-			WHERE  url LIKE '$basedir%'
+			SELECT DISTINCT tracks.url
+			FROM            tracks
+			LEFT JOIN       scanned_files USING (url)
+			WHERE           scanned_files.url IS NULL
+			AND             tracks.url LIKE '$basedir%'
 		};
 		
+		# 2. Files that are new and not in the database.
 		my $onDiskOnlySQL = qq{
-			SELECT url FROM scanned_files
-			WHERE  url LIKE '$basedir%'
-			EXCEPT
-			SELECT url FROM tracks
-			WHERE  url LIKE '$basedir%'
+			SELECT DISTINCT scanned_files.url
+			FROM            scanned_files
+			LEFT JOIN       tracks USING (url)
+			WHERE           tracks.url IS NULL
+			AND             scanned_files.url LIKE '$basedir%'
 		};
 		
+		# 3. Files that have changed mtime or size.
 		my $changedOnlySQL = qq{
-			SELECT url, timestamp, filesize FROM scanned_files
-			WHERE  url IN (			
-				SELECT url FROM tracks
-				WHERE  url LIKE '$basedir%'
-				INTERSECT
-				SELECT url FROM scanned_files
-				WHERE  url LIKE '$basedir%'
-			)
-			EXCEPT
-			SELECT url, timestamp, filesize FROM tracks
-			WHERE  url LIKE '$basedir%'
+			SELECT a.url, a.timestamp, a.filesize FROM (
+				SELECT url, timestamp, filesize FROM scanned_files
+				WHERE  url IN (
+				  SELECT scanned_files.url
+				  FROM scanned_files INNER JOIN tracks
+				  USING (url)
+				)
+			) a
+			LEFT JOIN tracks USING (url, timestamp, filesize)
+			WHERE tracks.url IS NULL
+			AND a.url LIKE '$basedir%'
 		};
 		
 		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
-			SELECT COUNT(*) FROM ( $inDBOnlySQL )
+			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
 		} );
     	
-		# 2. Files that are new and not in the database.
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
-			SELECT COUNT(*) FROM ( $onDiskOnlySQL )
+			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 		
-		# 3. Files that have changed mtime or size.
 		my ($changedOnlyCount) = $dbh->selectrow_array( qq{
-			SELECT COUNT(*) FROM ( $changedOnlySQL )
+			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} );
 		
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
@@ -171,7 +171,7 @@ sub rescan {
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_DELETE );
+					markDone( $next => PENDING_DELETE ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					
@@ -222,7 +222,7 @@ sub rescan {
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_NEW );
+					markDone( $next => PENDING_NEW ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					
@@ -273,7 +273,7 @@ sub rescan {
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_CHANGED );
+					markDone( $next => PENDING_CHANGED ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					

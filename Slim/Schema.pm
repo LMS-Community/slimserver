@@ -61,8 +61,6 @@ my $prefs = preferences('server');
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
 
-my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-
 # Optimization to cache content type for track entries rather than look them up everytime.
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
 
@@ -284,6 +282,7 @@ sub _connect {
 	# For custom exceptions
 	$class->storage_type('Slim::Schema::Storage');
 	
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	my $on_connect_do = $sqlHelperClass->on_connect_do();
 	
 	$class->connection( $dsn || $source, $username, $password, { 
@@ -375,6 +374,8 @@ from the current settings.
 sub sourceInformation {
 	my $class = shift;
 
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	
 	my $source   = $sqlHelperClass->source();
 	my $username = $prefs->get('dbusername');
 	my $password = $prefs->get('dbpassword');
@@ -449,11 +450,8 @@ sub optimizeDB {
 		logError("Failed to optimize schema: [$@]");
 	}
 	
-	# Disconnect and reconnect to the database in order to run
-	# VACUUM and ANALYZE to compact the database file and optimize indices
-	my $dsn = "dbi:$driver:" . $class->storage->dbh->{Name};
-	$class->disconnect;
-	$class->init( $dsn, [ 'VACUUM', 'ANALYZE' ] );
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	$sqlHelperClass->postOptimize();
 
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 }
@@ -547,6 +545,8 @@ Change the collation for tables where sorting is important.
 
 sub changeCollation {
 	my ( $class, $collation ) = @_;
+	
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
 	$sqlHelperClass->changeCollation( $class->storage->dbh, $collation );
 }

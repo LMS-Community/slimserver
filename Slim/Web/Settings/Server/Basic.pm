@@ -24,7 +24,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language audiodir playlistdir libraryname) );
+	return ($prefs, qw(language audiodir playlistdir libraryname autorescan) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...

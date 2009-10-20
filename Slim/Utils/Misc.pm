@@ -1065,7 +1065,7 @@ sub settingsDiagString {
 		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh );
 		push @diagString, sprintf("%s%s %s",
 	
-			Slim::Utils::Strings::string('MYSQL_VERSION'),
+			Slim::Utils::Strings::string('DATABASE_VERSION'),
 			Slim::Utils::Strings::string('COLON'),
 			$sqlVersion,
 		);

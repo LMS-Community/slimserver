@@ -36,21 +36,10 @@ if (0) {
 }
 
 BEGIN {
-	# With EV, only use select backend
-	# I have seen segfaults with poll, and epoll is not stable
-	$ENV{LIBEV_FLAGS} = 1;
-
-	# set the AnyEvent model
-	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
-	
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI DBD::SQLite HTML::Parser XML::Parser::Expat YAML::Syck)], []);
-	
-	require File::Basename;
-	require File::Copy;
-	require File::Slurp;
+	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI HTML::Parser XML::Parser::Expat YAML::Syck)], []);
 	
 	require JSON::XS::VersionOneAndTwo;
 	import JSON::XS::VersionOneAndTwo;
@@ -102,9 +91,6 @@ our $BUILDDATE   = undef;
 our $prefs;
 our $progress;
 
-# Remember if the main server is running or not, to avoid LWP timeout delays
-my $serverDown = 0;
-
 my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 eval "use $sqlHelperClass";
 die $@ if $@;
@@ -112,7 +98,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $json, $logfile, $logdir, $logconf, $debug, $help);
+	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
 
 	our $LogTimestamp = 1;
 	our $noweb = 1;
@@ -141,12 +127,20 @@ sub main {
 		'debug=s'      => \$debug,
 		'quiet'        => \$quiet,
 		'json=s'       => \$json,
+		'dbtype=s'     => \$dbtype,
 		'LogTimestamp!'=> \$LogTimestamp,
 		'help'         => \$help,
 	);
 
 	if (defined $musicmagic && !defined $musicip) {
 		$musicip = $musicmagic;
+	}
+	
+	if ( $dbtype ) {
+		# For testing SQLite, can specify a different database type
+		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
+		eval "use $sqlHelperClass";
+		die $@ if $@;
 	}
 	
 	# Start a fresh scanner.log on every scan
@@ -188,6 +182,19 @@ sub main {
 		Slim::Utils::Misc::setPriority($priority);
 	} else {
 		Slim::Utils::Misc::setPriority( $prefs->get('scannerPriority') );
+	}
+	
+	# Load appropriate DB module
+	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
+	Slim::bootstrap::tryModuleLoad($dbModule);
+	if ( $@ ) {
+		logError("Couldn't load $dbModule [$@]");
+		exit;
+	}
+	
+	if ( $sqlHelperClass ) {
+		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
+		$sqlHelperClass->init();
 	}
 
 	if (!$force && Slim::Music::Import->stillScanning) {
@@ -236,6 +243,9 @@ sub main {
 	#checkDataSource();
 
 	main::INFOLOG && $log->info("Squeezebox Server Scanner done init...\n");
+	
+	# Perform pre-scan steps specific to the database type, i.e. SQLite needs to copy to a new file
+	$sqlHelperClass->beforeScan();
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
@@ -332,7 +342,7 @@ sub main {
 			}
 			else {
 				# Notify server we are done scanning
-				notifyToServer('end');
+				$sqlHelperClass->afterScan();
 			}
 		}
 	}
@@ -401,6 +411,7 @@ Command line options:
 	--musicip      Run the MusicIP Importer.
 	--progress     Show a progress bar of the scan.
 	--json FILE    Write progress information to a JSON file.
+	--dbtype TYPE  Force database type (valid values are MySQL or SQLite)
 	--prefsdir     Specify alternative preferences directory.
 	--priority     set process priority from -20 (high) to 20 (low)
 	--logfile      Send all debugging messages to the specified logfile.
@@ -431,56 +442,10 @@ sub initClass {
 	}
 }
 
-sub notifyToServer {
-	return if $serverDown;
-	
-	require LWP::UserAgent;
-	require HTTP::Request;
-	
-	my $log = logger('database.info');
-	
-	# Scanner does not have an event loop, so use sync HTTP here
-	my $host = ( $prefs->get('httpaddr') || '127.0.0.1' ) . ':' . $prefs->get('httpport');
-	
-	my $ua = LWP::UserAgent->new(
-		timeout => 5,
-	);
-	
-	my $req = HTTP::Request->new( POST => "http://${host}/jsonrpc.js" );
-	
-	$req->content( to_json( {
-		id     => 1,
-		method => 'slim.request',
-		params => [ '', [ 'scanner', 'notify', @_ ] ],
-	} ) );
-	
-	main::INFOLOG && $log->is_info
-		&& $log->info( 'Notify to server: ' . Data::Dump::dump(\@_) );
-	
-	my $res = $ua->request($req);
-
-	if ( $res->is_success ) {
-		if ( $res->content =~ /abort/ ) {
-			logWarning('Server aborted scan, shutting down');
-			exit;
-		}
-		else {
-			main::INFOLOG && $log->is_info && $log->info('Notify to server OK');
-		}
-	}
-	else {
-		main::INFOLOG && $log->is_info && $log->info( 'Notify to server failed: ' . $res->status_line );
-		
-		if ( $res->content =~ /timeout/ ) {
-			# Server is down, avoid further requests
-			$serverDown = 1;
-		}
-	}
-}
-
 sub progressJSON {
 	my $data = shift;
 	
+	require File::Slurp;
 	File::Slurp::write_file( $::json, to_json($data) );
 }
 
@@ -496,7 +461,7 @@ sub cleanup {
 	}
 	
 	# Notify server we are exiting
-	notifyToServer('exit');
+	$sqlHelperClass->exitScan();
 }
 
 sub END {

@@ -68,6 +68,12 @@ Initializes the entire MySQL subsystem - creates the config file, and starts the
 
 sub init {
 	my $class = shift;
+	
+	# Reset dbsource pref if it's not for MySQL
+	if ( $prefs->get('dbsource') !~ /^dbi:mysql/ ) {
+		$prefs->set( dbsource => default_dbsource() );
+		$prefs->set( dbsource => $class->source() );
+	}
 
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
@@ -607,8 +613,20 @@ sub sqlVersionLong {
 
 	my ($mysqlVersion) = $dbh->selectrow_array( 'SELECT version()' );
 
-	return $mysqlVersion || 0;
-}	
+	return 'MySQL ' . $mysqlVersion || 0;
+}
+
+sub checkDataSource { }
+
+sub beforeScan { }
+
+sub afterScan { }
+
+sub exitScan { }
+
+sub updateProgress { }
+
+sub postOptimize { }
 
 =head2 cleanup()
 

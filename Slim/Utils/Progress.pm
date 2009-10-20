@@ -185,7 +185,8 @@ sub update {
 				} );
 			}
 			else {
-				main::notifyToServer( "progress:${start}-${type}-${name}-${done}-${total}-" );
+				my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+				$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${total}-" );
 			}
 		}
 	}
@@ -241,7 +242,8 @@ sub final {
 			} );
 		}
 		else {
-			main::notifyToServer( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
+			my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
 		}
 	}
 

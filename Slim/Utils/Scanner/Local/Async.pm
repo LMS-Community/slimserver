@@ -26,7 +26,7 @@ my $log = logger('scan.scanner');
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
 	
-	main::DEBUGLOG && $log->is_debug && (my $start = AnyEvent->time);
+	main::DEBUGLOG && $log->is_debug && (my $start = Time::HiRes::time);
 	
 	my $basedir = Slim::Utils::Misc::fileURLFromPath($path);
 	
@@ -62,7 +62,7 @@ sub find {
 		if ( !defined $file ) {
 			# We've reached the end
 			if ( main::DEBUGLOG && $log->is_debug ) {
-				my $diff = sprintf "%.2f", AnyEvent->time - $start;
+				my $diff = sprintf "%.2f", Time::HiRes::time - $start;
 				$log->debug( "Async scanner found $count files in $diff sec" );
 			}
 			

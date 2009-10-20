@@ -308,6 +308,7 @@ our (
 	$failsafe,
 	$checkstrings,
 	$charset,
+	$dbtype,
 	$d_startup, # Needed for Slim::bootstrap
 );
 
@@ -339,6 +340,13 @@ sub init {
 
 	# force a charset from the command line
 	$Slim::Utils::Unicode::lc_ctype = $charset if $charset;
+	
+	if ( $dbtype ) {
+		# For testing SQLite, can specify a different database type
+		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
+		eval "use $sqlHelperClass";
+		die $@ if $@;
+	}
 
 	Slim::Utils::OSDetect::init();
 
@@ -717,6 +725,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --checkstrings   => Enable reloading of changed string files for plugin development
     --charset        => Force a character set to be used, eg. utf8 on Linux devices
                         which don't have full utf8 locale installed
+    --dbtype         => Force database type (valid values are MySQL or SQLite)
     --logging        => Enable logging for the specified comma separated categories
 
 Commands may be sent to the server through standard in and will be echoed via
@@ -766,6 +775,7 @@ sub initOptions {
 		'perfwarn=s'    => \$perfwarn,  # content parsed by PerfMon if set
 		'checkstrings'  => \$checkstrings,
 		'charset=s'     => \$charset,
+		'dbtype=s'      => \$dbtype,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	);
 
@@ -982,6 +992,8 @@ sub checkDataSource {
 	}
 
 	return if !Slim::Schema::hasLibrary();
+	
+	$sqlHelperClass->checkDataSource();
 
 	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
@@ -1019,18 +1031,6 @@ sub stopServer {
 }
 
 sub cleanup {
-	
-	# Bug 11827, export tracks_persistent data for future use
-	if ($INC{'Slim/Schema/TrackPersistent.pm'}) {
-
-		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
-		logger('')->info("Exporting persistent track data to $dir");
-
-		Slim::Schema::TrackPersistent->export(
-			catfile( $dir, 'tracks_persistent.json' )
-		);	
-	}
-	
 	logger('')->info("Squeezebox Server cleaning up.");
 	
 	$::stop = 1;

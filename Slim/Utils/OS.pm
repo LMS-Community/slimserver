@@ -47,7 +47,13 @@ Windows & OSX handle this in the installer
 
 sub migratePrefsFolder {};
 
-sub sqlHelperClass { 'Slim::Utils::MySQLHelper' }
+sub sqlHelperClass { 
+	if ( $main::dbtype ) {
+		return "Slim::Utils::${main::dbtype}Helper";
+	}
+	
+	return 'Slim::Utils::MySQLHelper';
+}
 
 # Skip obsolete plugins, they should be deleted by installers
 sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));}

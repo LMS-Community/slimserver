@@ -76,6 +76,13 @@ sub startScan {
 
 	main::INFOLOG && $log->info("Starting music folder scan in $dir");
 	
+	Slim::Utils::Scanner::Local->rescan( $dir, {
+		types    => 'audio',
+		scanName => 'directory',
+		no_async => 1,
+		progress => 1,
+	} );
+	
 	main::INFOLOG && $log->info("Finished background scan of music folder.");
 
 	main::INFOLOG && $log->info("Finished background scan of music folder.");
