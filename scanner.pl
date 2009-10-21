@@ -240,7 +240,7 @@ sub main {
 		initClass('Slim::Plugin::MusicMagic::Importer');
 	}
 
-	#checkDataSource();
+	checkDataSource();
 
 	main::INFOLOG && $log->info("Squeezebox Server Scanner done init...\n");
 	
@@ -462,6 +462,19 @@ sub cleanup {
 	
 	# Notify server we are exiting
 	$sqlHelperClass->exitScan();
+}
+
+sub checkDataSource {
+	my $audiodir = $prefs->get('audiodir');
+
+	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
+		$audiodir =~ s|[/\\]$||;
+		$prefs->set('audiodir',$audiodir);
+	}
+
+	return if !Slim::Schema::hasLibrary();
+	
+	$sqlHelperClass->checkDataSource();
 }
 
 sub END {
