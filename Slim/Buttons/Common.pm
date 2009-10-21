@@ -51,6 +51,11 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Block;
 use Slim::Utils::Prefs;
 
+if ( main::SLIM_SERVICE ) {
+	# needed for some SN-only modes
+	require SDI::Service::Buttons::SetupWizard;
+}
+
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
 
@@ -131,6 +136,10 @@ sub init {
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
 	Slim::Buttons::Volume::init();
+	
+	if ( main::SLIM_SERVICE ) {
+		SDI::Service::Buttons::SetupWizard::init();
+	}
 
 	addSaver('playlist', undef, undef, undef, 'SCREENSAVER_JUMP_TO_NOW_PLAYING', 'PLAY');
 }
