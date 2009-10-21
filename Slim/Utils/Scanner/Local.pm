@@ -164,11 +164,7 @@ sub rescan {
 				if ( $inDBOnly->fetch ) {
 					$progress && $progress->update($deleted);
 					
-					# XXX: ignore audio files if in playlist scan and vice-versa
-					# Should be handled better by searching based on content_type
-					if ( $deleted =~ $validRE ) {
-						deleted($deleted);
-					}
+					deleted($deleted);
 					
 					return 1;
 				}
@@ -215,11 +211,7 @@ sub rescan {
 				if ( $onDiskOnly->fetch ) {
 					$progress && $progress->update($new);
 				
-					# XXX: ignore audio files if in playlist scan and vice-versa
-					# Should be handled better by searching based on content_type
-					if ( $new =~ $validRE ) {
-						new($new);
-					}
+					new($new);
 					
 					return 1;
 				}
@@ -265,12 +257,8 @@ sub rescan {
 			my $handle_changed = sub {
 				if ( $changedOnly->fetch ) {
 					$progress && $progress->update($changed);
-				
-					# XXX: ignore audio files if in playlist scan and vice-versa
-					# Should be handled better by searching based on content_type
-					if ( $changed =~ $validRE ) {
-						changed($changed);
-					}
+					
+					changed($changed);
 					
 					return 1;
 				}
@@ -334,6 +322,7 @@ sub deleted {
 			my $album    = $track->album;
 			my @contribs = $track->contributors->all;
 			my $year     = $track->year;
+			my @genres   = map { $_->id } $track->genres;
 		
 			# delete() will cascade to:
 			#   contributor_track
@@ -351,6 +340,9 @@ sub deleted {
 			
 			# Tell Year to rescan
 			Slim::Schema->rs('Year')->find($year)->rescan if $year;
+			
+			# Tell Genre to rescan
+			Slim::Schema::Genre->rescan( @genres );
 			
 			# XXX Remove cached artwork for this track?
 		};
@@ -472,6 +464,7 @@ sub changed {
 		
 		my $work = sub {	
 			# Scan tags & update track row.
+			# XXX native DBI
 			my $track = Slim::Schema->updateOrCreate( {
 				url        => $url,
 				readTags   => 1,

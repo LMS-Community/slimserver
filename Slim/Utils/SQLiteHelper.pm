@@ -202,6 +202,8 @@ sub checkDataSource {
 			my ($lastMain)    = $dbh->selectrow_array("SELECT value FROM metainformation WHERE name = 'lastRescanTime'");
 			my ($lastScanner) = $dbh->selectrow_array("SELECT value FROM scannerdb.metainformation WHERE name = 'lastRescanTime'");
 			
+			$lastMain ||= 0;
+			
 			$dbh->do( 'DETACH scannerdb' );
 			
 			if ( $isScanning ) {
