@@ -2603,11 +2603,9 @@ sub _postCheckAttributes {
 
 			my $shortTag = lc($gainTag);
 			   $shortTag =~ s/^replaygain_album_(\w+)$/replay_$1/;
-
-			# Only update if the existing value is undefined.
-			if (defined $albumObj->$shortTag) {
-				next;
-			}
+			
+			# Bug 8034, this used to not change gain/peak values if they were already set,
+			# bug we do want to update album gain tags if they are changed.
 
 			if ($attributes->{$gainTag}) {
 
@@ -2713,7 +2711,7 @@ sub _postCheckAttributes {
 					$contributorObj->name, $contributorObj->id, $albumObj->name, $albumObj->id, $role
 				));
 			}
-		}
+		}		
 
 		$albumObj->update;
 	}
