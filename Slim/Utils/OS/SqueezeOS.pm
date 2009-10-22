@@ -29,7 +29,7 @@ sub initPrefs {
 	$prefs->{checkVersion} = 0;
 	
 	_checkMediaAtStartup();
-	Slim::Utils::Prefs::preferences('server')->setChange(\&_onAudiodirChange, 'audiodir');
+	Slim::Utils::Prefs::preferences('server')->setChange(\&_onAudiodirChange, 'audiodir', 'FIRST');
 	
 }
 
