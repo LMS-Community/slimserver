@@ -295,8 +295,7 @@ sub installerIsUpToDate {
 	my $installer = shift || '';
 
 	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
-		|| ($installer !~ /\d{5,}/ && $installer =~ /$::VERSION/)			# no revision number, but same version
-		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision
+		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision and revision
 	
 }
 
