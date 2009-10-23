@@ -29,6 +29,7 @@ use warnings;
 use base qw(DBIx::Class::Schema);
 
 use DBIx::Migration;
+use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Copy qw(move);
 use File::Spec::Functions qw(:ALL);
@@ -284,6 +285,8 @@ sub _connect {
 			@{$sql},
 		]
 	} ) || return;
+	
+	$sqlHelperClass->postConnect( $class->storage->dbh );
 	
 	return $class->storage->dbh;
 }
@@ -985,6 +988,7 @@ sub newTrack {
 	# Tag and rename set URL to the Amazon image path. Smack that.
 	# We don't use it anyways.
 	$columnValueHash->{'url'} = $url;
+	$columnValueHash->{'urlmd5'} = md5_hex($url);
 	
 	# Use an explicit record id if it was passed as an argument.
 	if ($id) {
@@ -1028,8 +1032,9 @@ sub newTrack {
 
 		# retrievePersistent will always return undef or a track metadata object
 		if ( !blessed $trackPersistent ) {
-			$persistentColumnValueHash->{added} = $track->timestamp;
-			$persistentColumnValueHash->{url}   = $track->url;
+			$persistentColumnValueHash->{added}  = $track->timestamp;
+			$persistentColumnValueHash->{url}    = $track->url;
+			$persistentColumnValueHash->{urlmd5} = $track->urlmd5;
 
 			# Create the track metadata object- or bail. ->throw_exception will emit a backtrace.
 			# XXX native DBI
@@ -1049,6 +1054,7 @@ sub newTrack {
 			}
 			
 			$trackPersistent->set_column( url => $track->url );
+			$trackPersistent->set_column( urlmd5 => $track->urlmd5 );
 			
 			$trackPersistent->update;
 		}

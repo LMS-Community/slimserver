@@ -17,7 +17,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 our @allColumns = ( qw(
-	id url musicbrainz_id added playcount lastplayed rating
+	id urlmd5 url musicbrainz_id added playcount lastplayed rating
 ) );
 
 {

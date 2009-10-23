@@ -19,6 +19,8 @@ Currently only used for SN
 =cut
 
 use strict;
+
+use Digest::MD5 qw(md5_hex);
 use File::Basename;
 use File::Copy ();
 use File::Path;
@@ -325,6 +327,18 @@ sub exitScan {
 	my $class = shift;
 	
 	$class->updateProgress('exit');
+}
+
+=head2 postConnect()
+
+Called immediately after connect.  Sets up MD5() function.
+
+=cut
+
+sub postConnect {
+	my ( $class, $dbh ) = @_;
+	
+	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
 }
 
 =head2 postOptimize()

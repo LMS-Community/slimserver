@@ -480,11 +480,8 @@ sub changed {
 			my $album = $track->album;
 			
 			# XXX
-			# Album gain is not changed if a value already exists (bug 8034)
-			#   Check all other tracks and only update if match?
-			#   Or, update on any change found.
-			#   See Slim::Schema line 2695
-			# Check for updated artwork.
+			# Check for updated artwork, newest track artwork should be set for the album art?
+			# Use different URLs for artwork in order to allow artwork to change immediately without cache issues
 			# Rescan comments
 			
 			# Rescan genre, to check for no longer used genres

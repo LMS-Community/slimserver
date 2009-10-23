@@ -20,7 +20,7 @@ my $prefs = preferences('server');
 my $log = logger('database.info');
 
 our @allColumns = (qw(
-	id url content_type title titlesort titlesearch album primary_artist tracknum
+	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
@@ -75,7 +75,7 @@ if ( main::SLIM_SERVICE ) {
 	
 	$class->might_have(
 		persistent => 'Slim::Schema::TrackPersistent',
-		{ 'foreign.url' => 'self.url' },
+		{ 'foreign.urlmd5' => 'self.urlmd5' },
 		{ cascade_delete => 0 },
 	);
 
@@ -533,7 +533,7 @@ sub retrievePersistent {
 		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
 	}
 	else {
-		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { url => $self->url } );
+		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
 	}
 
 	if ( blessed($trackPersistent) ) {
