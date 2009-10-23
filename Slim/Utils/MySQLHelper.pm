@@ -626,6 +626,8 @@ sub exitScan { }
 
 sub updateProgress { }
 
+sub postConnect { }
+
 sub postOptimize { }
 
 =head2 cleanup()
@@ -637,7 +639,7 @@ Shut down MySQL when Squeezebox Server is shut down.
 sub cleanup {
 	my $class = shift;
 
-	if ($class->pidFile) {
+	if ($class->processObj) {
 		$class->stopServer;
 	}
 }

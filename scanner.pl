@@ -462,6 +462,8 @@ sub cleanup {
 	
 	# Notify server we are exiting
 	$sqlHelperClass->exitScan();
+	
+	$sqlHelperClass->cleanup;
 }
 
 sub checkDataSource {
@@ -478,7 +480,6 @@ sub checkDataSource {
 }
 
 sub END {
-
 	Slim::bootstrap::theEND();
 }
 
