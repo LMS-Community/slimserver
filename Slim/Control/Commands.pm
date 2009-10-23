@@ -798,8 +798,6 @@ sub playlistDeleteCommand {
 		return;
 	}
 
-	my $song = Slim::Player::Playlist::song($client, $index);
-
 	Slim::Player::Playlist::removeTrack($client, $index);
 
 	$client->currentPlaylistModified(1);
@@ -1088,7 +1086,7 @@ sub playlistSaveCommand {
 	if ($prefs->get('saveShuffled')) {
 
 		for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
-			push @$annotatedList, @{Slim::Player::Playlist::playList($client)}[$shuffleitem];
+			push @$annotatedList, Slim::Player::Playlist::song($client, $shuffleitem, 0, 0);
 		}
 				
 	} else {
@@ -1387,10 +1385,7 @@ sub playlistXitemCommand {
 
 	if ($cmd =~ /^(insert|insertlist)$/) {
 
-		my $playListSize = Slim::Player::Playlist::count($client);
 		my @dirItems     = ();
-
-		main::INFOLOG && $log->info("inserting, playListSize: $playListSize");
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
@@ -1399,12 +1394,11 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my $foundItems = shift;
 
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
+				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, 1);
 
 				_insert_done(
 					$client,
-					$playListSize,
-					scalar @{$foundItems},
+					$added,
 					$request->callbackFunction,
 					$request->callbackArguments,
 				);
@@ -1467,13 +1461,13 @@ sub playlistXitemCommand {
 					$noShuffle = 1;
 				}
 
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
+				Slim::Player::Playlist::addTracks($client, $foundItems, 0);
 
 				_playlistXitem_load_done(
 					$client,
 					$jumpToIndex,
 					$request,
-					scalar @{Slim::Player::Playlist::playList($client)},
+					Slim::Player::Playlist::count($client),
 					$path,
 					$error,
 					$noShuffle,
@@ -1572,16 +1566,15 @@ sub playlistXtracksCommand {
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
 	}
 
-	my $size  = scalar(@tracks);
-	my $playListSize = Slim::Player::Playlist::count($client);
+	my $size;
 
 	# add or remove the found songs
 	if ($load || $add || $insert) {
-		push(@{Slim::Player::Playlist::playList($client)}, @tracks);
+		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert);
 	}
 
 	if ($insert) {
-		_insert_done($client, $playListSize, $size);
+		_insert_done($client, $size);
 		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') ) {
 			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
 				Slim::Player::Source::playmode($client, 'play');
@@ -1596,7 +1589,7 @@ sub playlistXtracksCommand {
 
 	if ($load || $add) {
 		Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
-		$request->addResult(index => $playListSize);	# does not mean much if shuffled
+		$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
 	}
 
 	if ($load) {
@@ -2905,40 +2898,11 @@ sub _playlistXitem_load_done {
 
 
 sub _insert_done {
-	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
-
-	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
-	my @reshuffled;
-
-	if (Slim::Player::Playlist::shuffle($client)) {
-
-		for (my $i = 0; $i < $size; $i++) {
-			push @reshuffled, ($listsize + $i);
-		};
-			
-		$client = $client->master();
-		
-		if (Slim::Player::Playlist::count($client) != $size) {	
-			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
-		}
-		else {
-			push @{$client->shufflelist}, @reshuffled;
-		}
-	} else {
-
-		if (Slim::Player::Playlist::count($client) != $size) {
-			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex, $size);
-		}
-
-		Slim::Player::Playlist::reshuffle($client);
-	}
-
-	Slim::Player::Playlist::refreshPlaylist($client);
+	my ($client, $size, $callbackf, $callbackargs) = @_;
 
 	$callbackf && (&$callbackf(@$callbackargs));
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
-
 }
 
 

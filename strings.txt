@@ -21254,6 +21254,19 @@ SETUP_SHOWCOUNT_TEMP
 	RU	При прокрутке
 	SV	Vid rullning
 
+SETUP_MAXPLAYLISTLENGTH
+	EN	Maximum Playlist Length
+
+SETUP_MAXPLAYLISTLENGTH_DESC
+	EN	In order to protect the server against excessive memory use the maximum length of a playlist, including the Now-Playing playlist, can be restricted. A value of 0 means no restriction. If set then the minimum value is 10.
+
+ERROR_PLAYLIST_FULL
+	EN	Playlist full; no tracks added
+	
+ERROR_PLAYLIST_ALMOST_FULL
+	EN	Playlist full: %s of %s tracks added
+
+
 SQUEEZEBOX_SERVER_CONNECT
 	CS	Připojit ke Squeezebox Server
 	DA	Etabler forbindelse til Squeezebox Server

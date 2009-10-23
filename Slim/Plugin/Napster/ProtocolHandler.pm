@@ -423,7 +423,7 @@ sub getMetadataFor {
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
 		
-		for my $track ( @{ $client->playlist } ) {
+		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 			if ( $trackURL =~ m{napster://(.+)\.wma} ) {
 				my $id = $1;

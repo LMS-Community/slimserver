@@ -21,7 +21,7 @@ sub page {
 }
 
 sub prefs {
- 	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority resampleArtwork precacheArtwork) );
+ 	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority resampleArtwork precacheArtwork maxPlaylistLength) );
 }
 
 sub handler {
