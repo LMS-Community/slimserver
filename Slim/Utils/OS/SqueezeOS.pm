@@ -26,7 +26,8 @@ sub initPrefs {
 	
 	require Slim::Utils::Prefs;
 	
-	$prefs->{checkVersion} = 0;
+	$prefs->{checkVersion}      = 0;
+	$prefs->{maxPlaylistLength} = 100;
 	
 	_checkMediaAtStartup();
 	Slim::Utils::Prefs::preferences('server')->setChange(\&_onAudiodirChange, 'audiodir');

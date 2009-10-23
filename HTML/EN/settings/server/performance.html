@@ -53,5 +53,9 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_MAXPLAYLISTLENGTH" desc="SETUP_MAXPLAYLISTLENGTH_DESC" %]
+		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength %]" size="15">
+	[% END %]
+
 [% PROCESS settings/footer.html %]
 

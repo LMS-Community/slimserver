@@ -202,6 +202,7 @@ sub init {
 		'scannerPriority'       => 0,
 		'resampleArtwork'       => 1,
 		'precacheArtwork'       => 1,
+		'maxPlaylistLength'     => 500,
 		# Server Settings - Security
 		'filterHosts'           => 0,
 		'allowedHosts'          => sub {
@@ -664,6 +665,12 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>   255 }, 'syncBufferThreshold');
 
 	$prefs->setValidate({ 'validator' => sub { $_[1] ne '' } }, 'playername');
+
+	$prefs->setValidate({ 'validator' => sub {
+											!$_[1]				# covers undefined, 0 or '' cases
+											|| ($_[1] =~ /^\d+$/ && $_[1] >= 10)
+										}
+						}, 'maxPlaylistLength');
 
 	$prefs->setValidate({
 		validator => sub {

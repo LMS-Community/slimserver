@@ -786,10 +786,10 @@ sub _playersMessage {
 		# Show an error message
 		$client->showBriefly( {
 			line => [ $line1, $line2 ],
-			jive => { type => 'song', text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
+			jive => { type => 'mixed', text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
 		}, {
 			scroll    => 1,
-			firstline => 1,
+			firstline => 0,
 			block     => $block,
 			duration  => $duration,
 		} );

@@ -30,6 +30,7 @@ our %shuffleTypes = (
 	2 => 'album',
 );
 
+my $log = logger('player.playlist');
 
 #
 # accessors for playlist information
@@ -53,9 +54,9 @@ sub shuffleType {
 
 sub song {
 
-	my $client  = shift;
-	my $index   = shift;
-	my $refresh = shift || 0;
+	my ($client, $index, $refresh, $useShuffled) = @_;
+	$refresh ||= 0;
+	$useShuffled = 1 unless defined $useShuffled;
 
 	if (count($client) == 0) {
 		return;
@@ -67,7 +68,7 @@ sub song {
 
 	my $objOrUrl;
 
-	if (defined ${shuffleList($client)}[$index]) {
+	if ($useShuffled && defined ${shuffleList($client)}[$index]) {
 
 		$objOrUrl = ${playList($client)}[${shuffleList($client)}[$index]];
 
@@ -134,6 +135,98 @@ sub playList {
 	$client = $client->master();
 	
 	return $client->playlist;
+}
+
+sub addTracks {
+	my ($client, $tracksRef, $insert) = @_;
+	
+	my $playlist = playList($client);
+	
+	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
+	
+	# How many tracks might we need to remove to make space?
+	my $need = $maxPlaylistLength ? (scalar @{$playlist} + scalar @{$tracksRef}) - $maxPlaylistLength : 0;
+	
+	if ($need > 0) {
+		# 1. If we have already-played stuff at the start of the playlist that we can remove, then remove that first
+		my $canRemove = Slim::Player::Source::playingSongIndex($client) || 0;
+		$canRemove = $need if $canRemove > $need;
+
+		if ($canRemove) {
+			main::INFOLOG && $log->info("Removing $canRemove tracks from start of playlist");
+			$need -= removeTrack($client, 0, $canRemove);
+		}
+	}
+		
+	if ($need > 0 && $insert) {
+		# 2. If inserting, then try to remove stuff from the end of the playlist
+		my $streamingSongIndex =Slim::Player::Source::streamingSongIndex($client) || 0;
+		my $canRemove = $#{$playlist} - $streamingSongIndex;
+		$canRemove = $need if $canRemove > $need;
+
+		if ($canRemove) {
+			main::INFOLOG && $log->info("Removing $canRemove tracks from end of playlist");
+			$need -= removeTrack($client, scalar @{$playlist} - $canRemove, $canRemove);
+		}
+	}
+	
+	my $canAdd;
+	my $errorMsg;
+	if ($need >= scalar @{$tracksRef}) {
+		# no space to add any tracks
+		$canAdd = 0;
+		$errorMsg = $client->string('ERROR_PLAYLIST_FULL');
+	} elsif ($need > 0) {
+		# can add some tracks
+		$canAdd = scalar @{$tracksRef} - $need;
+		push (@{$playlist}, @{$tracksRef}[ ( 0 .. ($canAdd - 1) ) ]);
+		$errorMsg = $client->string('ERROR_PLAYLIST_ALMOST_FULL', $canAdd, scalar @{$tracksRef});
+	} else {
+		# can simply add all tracks
+		$canAdd = scalar @{$tracksRef};
+		push (@{$playlist}, @{$tracksRef});
+	}
+	
+	if ($errorMsg) {
+		$client->showBriefly({
+			line => [ undef, $errorMsg ],
+			jive => {type => 'popupplay', text => [ $errorMsg ], style => 'add', duration => 5_000},
+		}, {
+			scroll    => 1,
+			firstline => 0,
+			duration  => 5,
+		});
+	}
+	
+	if ($insert) {
+		_insert_done($client, $canAdd);
+	}
+	
+	return $canAdd;
+}
+
+sub _insert_done {
+	my ($client, $size, $callbackf, $callbackargs) = @_;
+
+	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	my $moveFrom = count($client) - $size;
+
+	if (shuffle($client)) {
+		my @reshuffled = ($moveFrom .. ($moveFrom + $size - 1));
+		$client = $client->master();
+		if (count($client) != $size) {	
+			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
+		} else {
+			push @{$client->shufflelist}, @reshuffled;
+		}
+	} else {
+		if (count($client) != $size) {
+			moveSong($client, $moveFrom, $playlistIndex, $size);
+		}
+		reshuffle($client);
+	}
+
+	refreshPlaylist($client);
 }
 
 sub shuffle {
@@ -222,71 +315,87 @@ sub copyPlaylist {
 sub removeTrack {
 	my $client = shift->master();
 	my $tracknum = shift;
+	my $nTracks = shift || 1;
 	
-	my $playlistIndex = ${shuffleList($client)}[$tracknum];
+	my $log     = logger('player.source');
 
+	if ($tracknum > count($client) - 1) {
+		$log->warn("Attempting to remove track(s) $tracknum beyond end of playlist");
+		return 0;
+	}	
+	if ($tracknum + $nTracks > count($client)) {
+		$log->warn("Arrempting to remove too many tracks ($nTracks)");
+		$nTracks = count($client) - $tracknum;
+	}
+	
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
-	my $log     = logger('player.source');
 	
-	if (Slim::Player::Source::playingSongIndex($client) == $tracknum) {
+	# Stop playing track, if necessary, before cuting old track(s) out of playlist
+	# in case Playlist::song() is called while stopping
+	my $playingSongIndex = Slim::Player::Source::playingSongIndex($client);
+	if ($playingSongIndex >= $tracknum  && $playingSongIndex < $tracknum + $nTracks) {
 
 		main::INFOLOG && $log->info("Removing currently playing track.");
 
 		Slim::Player::Source::playmode($client, "stop");
-
 		$stopped = 1;
+	} 
 
-	} elsif (Slim::Player::Source::streamingSongIndex($client) == $tracknum) {
-
-		# If we're removing the streaming song (which is different from
-		# the playing song), get the client to flush out the current song
-		# from its audio pipeline.
-		main::INFOLOG && $log->info("Removing currently streaming track.");
-
-		Slim::Player::Source::flushStreamingSong($client);
-
+	# Remove old tracks from playlist
+	my $playlist = playList($client);
+	my $shufflelist = shuffleList($client);
+	if (shuffle($client)) {
+		
+		# We make a copy of the set of playlist-index values to remove here,
+		# so that they are stable while the inner loop may change the values in place.
+		my @playlistIndexes = @{$shufflelist}[$tracknum .. ($tracknum + $nTracks - 1)];
+		
+		foreach my $playlistindex (@playlistIndexes) {
+			splice(@$playlist, $playlistindex, 1);
+			foreach (@$shufflelist) {
+				if ($_ > $playlistindex) {
+					$_ -= 1;	# Modifies element of shufflelist array in place
+				}
+			}
+		}
+		splice(@$shufflelist, $tracknum, $nTracks);
 	} else {
-
-		my $queue = $client->currentsongqueue();
-
-		for my $song (@$queue) {
-
-			if ($tracknum < $song->index()) {
-				$song->index($song->index() - 1);
+		splice(@$playlist, $tracknum, $nTracks);
+		@$shufflelist = ( 0 .. $#{$playlist} );
+	}
+	
+	if (!$stopped) {
+		if (Slim::Player::Source::streamingSongIndex($client) >= $tracknum  && Slim::Player::Source::streamingSongIndex($client) < $tracknum + $nTracks) {
+			# If we're removing the streaming song (which is different from
+			# the playing song), get the client to flush out the current song
+			# from its audio pipeline.
+			main::INFOLOG && $log->info("Removing currently streaming track.");
+	
+			Slim::Player::Source::flushStreamingSong($client);
+	
+		} else {
+	
+			my $queue = $client->currentsongqueue();
+	
+			for my $song (@$queue) {
+	
+				if ($tracknum < $song->index()) {
+					$song->index($song->index() - $nTracks);
+				}
 			}
 		}
 	}
 	
-	splice(@{playList($client)}, $playlistIndex, 1);
-
-	my @reshuffled;
-	my $counter = 0;
-
-	for my $i (@{shuffleList($client)}) {
-
-		if ($i < $playlistIndex) {
-
-			push @reshuffled, $i;
-
-		} elsif ($i > $playlistIndex) {
-
-			push @reshuffled, ($i - 1);
-		}
-	}
-
-
-	@{$client->shufflelist} = @reshuffled;
-
 	if ($stopped) {
 
-		my $songcount = scalar(@{playList($client)});
+		my $songcount = scalar(@$playlist);
 
-		if ($tracknum >= $songcount) {
-			$tracknum = $songcount - 1;
+		if ($playingSongIndex >= $songcount) {
+			$playingSongIndex = $songcount - 1;
 		}
 		
-		$client->execute([ 'playlist', 'jump', $tracknum, undef, $oldMode ne "play" ]);
+		$client->execute([ 'playlist', 'jump', $playingSongIndex, undef, $oldMode ne "play" ]);
 	}
 
 	# browseplaylistindex could return a non-sensical number if we are not in playlist mode
@@ -296,6 +405,8 @@ sub removeTrack {
 			undef : 
 			Slim::Buttons::Playlist::browseplaylistindex($client)
 	);
+	
+	return $nTracks;
 }
 
 sub removeMultipleTracks {
@@ -530,7 +641,6 @@ sub reshuffle {
   
 	my $songcount = count($client);
 	my $listRef   = shuffleList($client);
-	my $log       = logger('player.playlist');
 
 	if (!$songcount) {
 
@@ -810,7 +920,6 @@ sub modifyPlaylistCallback {
 	my $request = shift;
 	
 	my $client  = $request->client();
-	my $log     = logger('player.playlist');
 
 	main::INFOLOG && $log->info("Checking if persistPlaylists is set..");
 
