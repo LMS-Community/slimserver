@@ -2748,26 +2748,15 @@ sub _postCheckAttributes {
 
 	if ( !main::SLIM_SERVICE ) {
 		# Add comments if we have them:
-		for my $comment (@{$attributes->{'COMMENT'}}) {
-			
-			my $sth = $dbh->prepare_cached('SELECT id FROM comments WHERE track = ?');
-			$sth->execute($trackId);
-			my ($id) = $sth->fetchrow_array;
-			$sth->finish;
-			
-			if ( !$id ) {
-				$sth = $dbh->prepare_cached( qq{
-					INSERT INTO comments
-					(track, value)
-					VALUES
-					(?, ?)
-				} );
-				$sth->execute( $trackId, $comment );
-			}
-			else {
-				$sth = $dbh->prepare_cached('UPDATE comments SET value = ? WHERE id = ?');
-				$sth->execute( $comment, $id );
-			}
+		my $sth = $dbh->prepare_cached( qq{
+			REPLACE INTO comments
+			(track, value)
+			VALUES
+			(?, ?)
+		} );
+		
+		for my $comment (@{$attributes->{'COMMENT'}}) {	
+			$sth->execute( $trackId, $comment );
 
 			main::DEBUGLOG && $isDebug && $log->debug("-- Track has comment '$comment'");
 		}
