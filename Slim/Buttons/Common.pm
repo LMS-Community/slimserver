@@ -917,23 +917,23 @@ our %functions = (
 			my $display = $client->curLines;
 
 			if ($client->linesPerScreen == 1) {
-				$display->{'line'}[1] = sprintf($client->string('PRESET'), $digit) ;
+				$display->{'line'}[1] = sprintf($client->string('PRESET'), $num);
 			} else {
-				$display->{'line'}[0] = sprintf($client->string('PRESET_HOLD_TO_SAVE'), $digit) ;
+				$display->{'line'}[0] = sprintf($client->string('PRESET_HOLD_TO_SAVE'), $num);
 			}
 			$display->{'jive'} = undef;
 
 			$client->showBriefly($display, { duration => 5, callback => sub {
 				if (Slim::Hardware::IR::holdTime($client) > 5 ) {
 					# do this on a timer so it happens after showBriefly ends and we can see any screen updates which result
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Hardware::IR::executeButton, "favorites_add$digit", $client->lastirtime, undef, 1);
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Hardware::IR::executeButton, "favorites_add$num", $client->lastirtime, undef, 1);
 				}
 			} });
 
 		} else {
 
 			if (Slim::Hardware::IR::holdTime($client) < 5 ) {
-				Slim::Hardware::IR::executeButton($client, "playPreset_$digit", $client->lastirtime, undef, 1);
+				Slim::Hardware::IR::executeButton($client, "playPreset_$num", $client->lastirtime, undef, 1);
 			}
 		}
 
