@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.44';
+our $VERSION = '0.45';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -123,6 +123,20 @@ Deprecated.  Always returns 1 now that FLAC is always enabled.
 =head2 is_supported( $path )
 
 Returns 1 if the given path can be scanned by Audio::Scan, or 0 if not.
+
+=head2 get_types()
+
+Returns an array of strings of the file types supported by Audio::Scan.
+
+=head2 extensions_for( $type )
+
+Returns an array of strings of the file extensions that are considered to
+be the file type I<$type>.
+
+=head2 type_for( $extension )
+
+Returns file type for a given extension. Returns I<undef> for unsupported
+extensions.
 
 =head1 MP3
 

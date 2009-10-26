@@ -39,7 +39,7 @@ sub getTag {
 	
 	# Add file info
 	$tags->{OFFSET}     = $info->{audio_offset};
-	$tags->{SIZE}       = $info->{file_size};
+	$tags->{SIZE}       = $info->{audio_size};
 	$tags->{SECS}       = $info->{song_length_ms} / 1000;
 	$tags->{RATE}       = $info->{samplerate};
 	$tags->{BITRATE}    = $info->{bitrate};
