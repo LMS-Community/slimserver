@@ -128,7 +128,7 @@ sub getTag {
 	# Map info into tags
 	$tags->{TAGVERSION} = $info->{id3_version};
 	$tags->{OFFSET}     = $info->{audio_offset};
-	$tags->{SIZE}       = $info->{audio_offset} + $info->{audio_size}; # XXX: not really correct, leaves off id3v1 size
+	$tags->{SIZE}       = $info->{audio_size};
 	$tags->{SECS}       = $info->{song_length_ms} / 1000;
 	$tags->{BITRATE}    = $info->{bitrate};
 	$tags->{STEREO}     = $info->{stereo};
@@ -388,11 +388,22 @@ sub doTagMapping {
 		
 		if ( ref $tags->{COMMENT}->[0] eq 'ARRAY' ) {
 			for my $comment ( @{ $tags->{COMMENT} } ) {
-				push @{$fixed}, ( $comment->[2] || '' ) . $comment->[3];
+				if ( $comment->[2] ) {
+					# Comment has a description
+					push @{$fixed}, $comment->[2] . ': ' . $comment->[3];
+				}
+				else {
+					push @{$fixed}, $comment->[3];
+				}
 			}
 		}
 		else {
-			push @{$fixed}, ( $tags->{COMMENT}->[2] || '' ) . $tags->{COMMENT}->[3];
+			if ( $tags->{COMMENT}->[2] ) {
+				push @{$fixed}, $tags->{COMMENT}->[2] . ': ' . $tags->{COMMENT}->[3];
+			}
+			else {
+				push @{$fixed}, $tags->{COMMENT}->[3];
+			}
 		}
 		
 		$tags->{COMMENT} = $fixed;

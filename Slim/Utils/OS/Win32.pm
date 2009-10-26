@@ -309,8 +309,9 @@ sub ignoredItems {
 	return (
 		# Items we should ignore  on a Windows volume
 		'System Volume Information' => '/',
-		'RECYCLER' => '/',
-		'Recycled' => '/',	
+		'RECYCLER'     => '/',
+		'Recycled'     => '/',
+		'$Recycle.Bin' => '/',	
 	);
 }
 
