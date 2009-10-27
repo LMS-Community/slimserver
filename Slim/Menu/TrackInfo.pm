@@ -206,6 +206,11 @@ sub registerDefaultInfoProviders {
 		func   => \&infoTagVersion,
 	) );
 	
+	$class->registerInfoProvider( tagdump => (
+		parent => 'moreinfo',
+		after  => 'tagversion',
+		func   => \&infoTagDump,
+	) );	
 }
 
 sub menu {
@@ -1257,6 +1262,95 @@ sub infoTagVersion {
 	return $item;
 }
 
+sub infoTagDump {
+	my ( $client, $url, $track ) = @_;
+	
+	my $item;
+	
+	if ( $track->audio ) {
+		$item = {
+			name        => cstring($client, 'VIEW_TAGS'),
+			url         => \&tagDump,
+			passthrough => [ $track->path ],
+		};
+	}
+	
+	return $item;
+}
+
+sub tagDump {
+	my ( $client, $callback, $path ) = @_;
+	
+	my $menu = [];
+	
+	require Audio::Scan;
+	my $s = eval { Audio::Scan->scan_tags($path) };
+	
+	if ( $@ ) {
+		$menu = {
+			type => 'text',
+			name => $@,
+		};
+	}
+	else {	
+		my $tags = $s->{tags};
+		
+		# Recursive handler for array-based tags
+		my $array_tag;
+		$array_tag = sub {
+			my $tag = shift;
+			
+			my @array;
+			
+			for my $x ( @{$tag} ) {
+				if ( ref $x eq 'ARRAY' ) {
+					my $a = $array_tag->($x);
+					$x = '[ ' . join( ', ', @{$a} ) . ' ]';
+				}
+				
+				if ( length($x) > 256 ) {
+					$x = '(' . length($x) . ' ' . cstring($client, 'BYTES') . ')';
+				}
+				
+				push @array, $x;
+			}
+			
+			return \@array;
+		};
+	
+		for my $k ( sort keys %{$tags} ) {
+			my $v = $tags->{$k};
+		
+			if ( ref $v eq 'ARRAY' ) {
+				my $a = $array_tag->($v);
+							
+				push @{$menu}, {
+					type => 'text',
+					name => $k . ': [ ' . join( ', ', @{$a} ) . ' ]',
+				};
+			}
+			else {
+				if ( length($v) > 256 ) {
+					$v = '(' . length($v) . ' ' . cstring($client, 'BYTES') . ')';
+				}
+			
+				push @{$menu}, {
+					type => 'text',
+					name => $k . ': ' . $v,
+				};
+			}
+		}
+	
+		if ( !scalar @{$menu} ) {
+			$menu = {
+				type => 'text',
+				name => cstring($client, 'NO_TAGS_FOUND'),
+			};
+		}
+	}
+	
+	$callback->( $menu );
+}
 
 sub _findDBCriteria {
 	my $db = shift;
