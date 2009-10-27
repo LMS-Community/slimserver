@@ -11791,6 +11791,12 @@ TAGVERSION
 	SV	ID3-taggversion
 	ZH_CN	ID3版本
 
+VIEW_TAGS
+	EN	View Tags
+
+NO_TAGS_FOUND
+	EN	No tags found
+
 LOCATION
 	CS	Umístění
 	DA	Placering
