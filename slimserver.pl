@@ -426,6 +426,14 @@ sub init {
 
 	main::INFOLOG && $log->info("Squeezebox Server strings init...");
 	Slim::Utils::Strings::init();
+	
+	# Load appropriate DB module
+	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
+	Slim::bootstrap::tryModuleLoad($dbModule);
+	if ( $@ ) {
+		logError("Couldn't load $dbModule [$@]");
+		exit;
+	}
 
 	if ( $sqlHelperClass ) {
 		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
