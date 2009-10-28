@@ -1,5 +1,7 @@
 package Path::Class::Dir;
 
+$VERSION = '0.17';
+
 use strict;
 use Path::Class::File;
 use Path::Class::Entity;
@@ -11,6 +13,13 @@ use File::Path ();
 
 sub new {
   my $self = shift->SUPER::new();
+
+  # If the only arg is undef, it's probably a mistake.  Without this
+  # special case here, we'd return the root directory, which is a
+  # lousy thing to do to someone when they made a mistake.  Return
+  # undef instead.
+  return if @_==1 && !defined($_[0]);
+
   my $s = $self->_spec;
   
   my $first = (@_ == 0     ? $s->curdir :
@@ -217,7 +226,7 @@ sub subsumes {
   
   my $i = 0;
   while ($i <= $#{ $self->{dirs} }) {
-    return 0 unless exists $other->{dirs}[$i];
+    return 0 if $i > $#{ $other->{dirs} };
     return 0 if $self->{dirs}[$i] ne $other->{dirs}[$i];
     $i++;
   }
@@ -247,11 +256,13 @@ Path::Class::Dir - Objects representing directories
   print "dir: $dir\n";
   
   if ($dir->is_absolute) { ... }
+  if ($dir->is_relative) { ... }
   
   my $v = $dir->volume; # Could be 'C:' on Windows, empty string
                         # on Unix, 'Macintosh HD:' on Mac OS
   
   $dir->cleanup; # Perform logical cleanup of pathname
+  $dir->resolve; # Perform physical cleanup of pathname
   
   my $file = $dir->file('file.txt'); # A file in this directory
   my $subdir = $dir->subdir('george'); # A subdirectory
@@ -330,6 +341,11 @@ C<dir()>) refers to the current directory (C<< File::Spec->curdir >>).
 To get the current directory as an absolute path, do C<<
 dir()->absolute >>.
 
+Finally, as another special case C<dir(undef)> will return undef,
+since that's usually an accident on the part of the caller, and
+returning the root directory would be a nasty surprise just asking for
+trouble a few lines later.
+
 =item $dir->stringify
 
 This method is called internally when a C<Path::Class::Dir> object is
@@ -355,12 +371,27 @@ return false, and C<Path::Class::Dir> objects always return true.
 Returns true or false depending on whether the directory refers to an
 absolute path specifier (like C</usr/local> or C<\Windows>).
 
+=item $dir->is_relative
+
+Returns true or false depending on whether the directory refers to a
+relative path specifier (like C<lib/foo> or C<./dir>).
+
 =item $dir->cleanup
 
 Performs a logical cleanup of the file path.  For instance:
 
   my $dir = dir('/foo//baz/./foo')->cleanup;
   # $dir now represents '/foo/baz/foo';
+
+=item $dir->resolve
+
+Performs a physical cleanup of the file path.  For instance:
+
+  my $dir = dir('/foo//baz/../foo')->resolve;
+  # $dir now represents '/foo/foo', assuming no symlinks
+
+This actually consults the filesystem to verify the validity of the
+path.
 
 =item $file = $dir->file( <dir1>, <dir2>, ..., <file> )
 

@@ -1,5 +1,7 @@
 package Path::Class::File;
 
+$VERSION = '0.17';
+
 use strict;
 use Path::Class::Dir;
 use Path::Class::Entity;
@@ -106,11 +108,13 @@ Path::Class::File - Objects representing files
   print "file: $file\n";
   
   if ($file->is_absolute) { ... }
+  if ($file->is_relative) { ... }
   
   my $v = $file->volume; # Could be 'C:' on Windows, empty string
                          # on Unix, 'Macintosh HD:' on Mac OS
   
   $file->cleanup; # Perform logical cleanup of pathname
+  $file->resolve; # Perform physical cleanup of pathname
   
   my $dir = $file->dir;  # A Path::Class::Dir object
   
@@ -190,12 +194,27 @@ return false, and C<Path::Class::Dir> objects always return true.
 Returns true or false depending on whether the file refers to an
 absolute path specifier (like C</usr/local/foo.txt> or C<\Windows\Foo.txt>).
 
+=item $file->is_absolute
+
+Returns true or false depending on whether the file refers to a
+relative path specifier (like C<lib/foo.txt> or C<.\Foo.txt>).
+
 =item $file->cleanup
 
 Performs a logical cleanup of the file path.  For instance:
 
   my $file = file('/foo//baz/./foo.txt')->cleanup;
   # $file now represents '/foo/baz/foo.txt';
+
+=item $dir->resolve
+
+Performs a physical cleanup of the file path.  For instance:
+
+  my $dir = dir('/foo/baz/../foo.txt')->resolve;
+  # $dir now represents '/foo/foo.txt', assuming no symlinks
+
+This actually consults the filesystem to verify the validity of the
+path.
 
 =item $dir = $file->dir
 

@@ -1,12 +1,16 @@
 package Path::Class::Entity;
 
+$VERSION = '0.17';
+
 use strict;
 use File::Spec;
 use File::stat ();
+use Cwd;
 
 use overload
   (
    q[""] => 'stringify',
+   'bool' => 'boolify',
    fallback => 1,
   );
 
@@ -36,16 +40,31 @@ sub new_foreign {
 }
 
 sub _spec { $_[0]->{file_spec_class} || 'File::Spec' }
+
+sub boolify { 1 }
   
 sub is_absolute { 
-    # 5.6.0 has a bug with regexes and stringification that's ticked by
-    # file_name_is_absolute().  Help it along.
-    $_[0]->_spec->file_name_is_absolute($_[0]->stringify) 
+  # 5.6.0 has a bug with regexes and stringification that's ticked by
+  # file_name_is_absolute().  Help it along with an explicit stringify().
+  $_[0]->_spec->file_name_is_absolute($_[0]->stringify) 
 }
+
+sub is_relative { ! $_[0]->is_absolute }
 
 sub cleanup {
   my $self = shift;
   my $cleaned = $self->new( $self->_spec->canonpath($self) );
+  %$self = %$cleaned;
+  return $self;
+}
+
+sub resolve {
+  my $self = shift;
+  my $cleaned = $self->new( Cwd::realpath($self->stringify) );
+
+  # realpath() always returns absolute path, kind of annoying
+  $cleaned = $cleaned->relative if $self->is_relative;
+
   %$self = %$cleaned;
   return $self;
 }
