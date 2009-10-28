@@ -53,6 +53,11 @@ my $SCANNING = 0;
 sub init {
 	my ( $class, $dbh ) = @_;
 	
+	# Make sure we're running the right version of DBD::SQLite
+	if ( $DBD::SQLite::VERSION lt 1.26 ) {
+		die "DBD::SQLite version 1.26_06 or higher required\n";
+	}
+	
 	if ( main::SLIM_SERVICE ) {
 		# Create new empty database every time we startup on SN
 		require File::Slurp;
