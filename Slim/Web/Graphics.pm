@@ -102,7 +102,7 @@ sub processCoverArtRequest {
 	
 	# Check for a cached resize
 	if ( $trackid ne 'current' ) {
-		if ( $trackid =~ /^\d+$/ && $trackid ne '0' ) {
+		if ( length($trackid) != 8 && $trackid =~ /^\d+$/ && $trackid ne '0' ) {
 			# Old-style /music/<id>/ request, throw a deprecated warning and lookup the coverid
 			$log->error("Warning: $path request is deprecated, use coverid instead of trackid");
 			
@@ -110,7 +110,7 @@ sub processCoverArtRequest {
 				$trackid = $track->coverid;
 			}
 			else {
-				$trackid = undef;
+				$trackid = 0;
 			}
 		}
 			
