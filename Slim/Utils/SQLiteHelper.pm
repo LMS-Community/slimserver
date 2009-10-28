@@ -253,6 +253,8 @@ sub replace_with {
 	if ( -e $src ) {
 		Slim::Schema->disconnect;
 		
+		# XXX use sqlite_backup_from_file instead
+		
 		if ( !File::Copy::move( $src, $dst ) ) {
 			die "Unable to replace_with from $src to $dst: $!";
 		}
@@ -289,6 +291,8 @@ sub beforeScan {
 	
 	if ( -e $dbname ) {
 		Slim::Schema->disconnect;
+		
+		# XXX use sqlite_backup_to_file instead
 		
 		if ( !File::Copy::copy( $dbname, $dest ) ) {
 			die "Unable to copy_and_switch from $dbname to $dest: $!";
