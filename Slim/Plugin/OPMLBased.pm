@@ -99,6 +99,9 @@ sub initJive {
 		$jiveMenu[0]->{actions}->{go}->{params}->{search} = '__TAGGEDINPUT__';
 		$jiveMenu[0]->{input} = {
 			len  => 1,
+			processingPopup => {
+				text => 'SEARCHING',
+			},
 			help => {
 				text => 'JIVE_SEARCHFOR_HELP',
 			},
