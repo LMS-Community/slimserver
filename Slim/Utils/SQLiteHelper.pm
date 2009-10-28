@@ -106,7 +106,6 @@ sub on_connect_do {
 	my $sql = [
 		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = MEMORY',
-		'PRAGMA temp_store = MEMORY',
 	];
 	
 	# Track Persistent data is in another file
