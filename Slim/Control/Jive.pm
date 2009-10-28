@@ -3199,9 +3199,39 @@ sub _extensionsQueryCB {
 
 	if ( ! --$data->{'remaining'} ) {
 
+		# create a list of entries with the duplicates removed, favoring higher version numbers
+
+		# pass 1 - find max versions
+		my $max = {};
+
+		for my $entry (@{$data->{'results'}}) {
+
+			my $name = $entry->{'name'};
+
+			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
+
+				$max->{$name} = $entry->{'version'};
+			}
+		}
+
+		# pass 2 - build list containing single entry for per extension
+		my @results = ();
+
+		for my $entry (@{$data->{'results'}}) {
+
+			my $name = $entry->{'name'};
+
+			if (defined $max->{$name} && $max->{$name} eq $entry->{'version'}) {
+
+				push @results, $entry;
+
+				delete $max->{$name};
+			}
+		}
+
 		my $cnt = 0;
 
-		for my $entry ( sort { $a->{'title'} cmp $b->{'title'} } @{$data->{'results'}} ) {
+		for my $entry ( sort { $a->{'title'} cmp $b->{'title'} } @results ) {
 
 			$request->setResultLoopHash('item_loop', $cnt++, $entry);
 		}
