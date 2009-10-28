@@ -9,11 +9,11 @@ File::Next - File-finding iterator
 
 =head1 VERSION
 
-Version 1.02
+Version 1.06
 
 =cut
 
-our $VERSION = '1.02';
+our $VERSION = '1.06';
 
 =head1 SYNOPSIS
 
@@ -194,6 +194,11 @@ such as Windows.  By default, this is true.
 Note that this filter does not apply to any of the I<@starting_points>
 passed in to the constructor.
 
+You should not set C<< follow_symlinks => 0 >> unless you specifically
+need that behavior.  Setting C<< follow_symlinks => 0 >> can be a
+speed hit, because File::Next must check to see if the file or
+directory you're about to follow is actually a symlink.
+
 =cut
 
 use File::Spec ();
@@ -218,6 +223,8 @@ BEGIN {
 
 
 sub files {
+    ($_[0] eq __PACKAGE__) && die 'File::Next::files must not be invoked as File::Next->files';
+
     my ($parms,@queue) = _setup( \%files_defaults, @_ );
     my $filter = $parms->{file_filter};
 
@@ -244,6 +251,8 @@ sub files {
 
 
 sub dirs {
+    ($_[0] eq __PACKAGE__) && die 'File::Next::dirs must not be invoked as File::Next->dirs';
+
     my ($parms,@queue) = _setup( \%files_defaults, @_ );
 
     return sub {
@@ -261,6 +270,8 @@ sub dirs {
 
 
 sub everything {
+    ($_[0] eq __PACKAGE__) && die 'File::Next::everything must not be invoked as File::Next->everything';
+
     my ($parms,@queue) = _setup( \%files_defaults, @_ );
     my $filter = $parms->{file_filter};
 
@@ -283,8 +294,8 @@ sub everything {
     }; # iterator
 }
 
-sub sort_standard($$)   { return $_[0]->[1] cmp $_[1]->[1] }; ## no critic (ProhibitSubroutinePrototypes)
-sub sort_reverse($$)    { return $_[1]->[1] cmp $_[0]->[1] }; ## no critic (ProhibitSubroutinePrototypes)
+sub sort_standard($$)   { return $_[0]->[1] cmp $_[1]->[1] } ## no critic (ProhibitSubroutinePrototypes)
+sub sort_reverse($$)    { return $_[1]->[1] cmp $_[0]->[1] } ## no critic (ProhibitSubroutinePrototypes)
 
 sub reslash {
     my $path = shift;
@@ -379,8 +390,7 @@ sub _candidate_files {
     my $follow_symlinks = $parms->{follow_symlinks};
     my $sort_sub = $parms->{sort_files};
 
-    while ( defined ( my $file = readdir $dh ) ) {
-        next if $skip_dirs{$file};
+    for my $file ( grep { !exists $skip_dirs{$_} } readdir $dh ) {
         my $has_stat;
 
         # Only do directory checking if we have a descend_filter
@@ -413,6 +423,14 @@ sub _candidate_files {
     return @newfiles;
 }
 
+=head1 SPEED TWEAKS
+
+=over 4
+
+=item * Don't set C<< follow_symlinks => 0 >> unless you need it.
+
+=back
+
 =head1 AUTHOR
 
 Andy Lester, C<< <andy at petdance.com> >>
@@ -420,8 +438,9 @@ Andy Lester, C<< <andy at petdance.com> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-Next>.  Note that
-File::Next does NOT use L<rt.cpan.org> for bug tracking.
+L<http://github.com/petdance/file-next/issues>.
+
+Note that File::Next does NOT use L<http://rt.cpan.org> for bug tracking.
 
 =head1 SUPPORT
 
@@ -435,7 +454,7 @@ You can also look for information at:
 
 =item * File::Next's bug queue
 
-L<http://code.google.com/p/file-next/issues/list>
+L<http://github.com/petdance/file-next/issues>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
@@ -449,9 +468,9 @@ L<http://cpanratings.perl.org/d/File-Next>
 
 L<http://search.cpan.org/dist/File-Next>
 
-=item * Subversion repository
+=item * Source code repository
 
-L<https://file-next.googlecode.com/svn/trunk>
+L<http://github.com/petdance/file-next/tree/master>
 
 =back
 
@@ -462,10 +481,20 @@ marvelous I<Higher Order Perl>, page 126.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006-2008 Andy Lester, all rights reserved.
+Copyright 2005-2009 Andy Lester.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify
+it under the terms of either:
+
+=over 4
+
+=item * the GNU General Public License as published by the Free
+Software Foundation; either version 1, or (at your option) any later
+version, or
+
+=item * the Artistic License version 2.0.
+
+=back
 
 =cut
 
