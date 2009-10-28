@@ -733,7 +733,7 @@ sub fileFilter {
 	return 1;
 }
 
-=head2 folderFilter( $dirname )
+=head2 folderFilter( $dirname, $hasStat, $validRE )
 
 	Verify whether we want to include a folder in our search.
 
@@ -744,8 +744,9 @@ sub folderFilter {
 	my $folder = pop @path;
 	
 	my $hasStat = shift || 0;
+	my $validRE = shift;
 
-	return fileFilter(catdir(@path), $folder, undef, $hasStat);
+	return fileFilter(catdir(@path), $folder, $validRE, $hasStat);
 }
 
 

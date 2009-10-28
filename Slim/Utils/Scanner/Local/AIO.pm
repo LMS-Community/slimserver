@@ -110,7 +110,7 @@ sub find {
 				$_[0] && die "stat of $file failed: $!";
 
 				if ( -d _ ) {
-					if ( Slim::Utils::Misc::folderFilter( $file, 1 ) ) {
+					if ( Slim::Utils::Misc::folderFilter( $file, 1, $types ) ) {
 						$todo++;
 						
 						if ( $args->{dirs} ) {

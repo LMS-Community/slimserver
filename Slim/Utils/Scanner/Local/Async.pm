@@ -53,7 +53,7 @@ sub find {
 	
 	my $iter = File::Next::files( {
 		file_filter     => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types) },
-		descend_filter  => sub { Slim::Utils::Misc::folderFilter($File::Next::dir) },
+		descend_filter  => sub { Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types) },
 	}, $path );
 	
 	my $walk = sub {
