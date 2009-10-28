@@ -3381,6 +3381,7 @@ sub _localizeMenuItemText {
 		if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
 			$input->{title}        = $client->string( $input->{title} );
 			$input->{help}->{text} = $client->string( $input->{help}->{text} );
+			$input->{processingPopup}->{text} = $client->string( $input->{processingPopup}->{text} );
 			$input->{softbutton1}  = $client->string( $input->{softbutton1} );
 			$input->{softbutton2}  = $client->string( $input->{softbutton2} );
 		}
