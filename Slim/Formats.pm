@@ -275,7 +275,9 @@ sub readTags {
 					$tags->{$tag} = lc($1);
 				}
 				else {
-					$log->error("Invalid MusicBrainz tag found in $file: $tag -> $value");
+					unless ( main::SCANNER && $main::progress ) {
+						$log->error("Invalid MusicBrainz tag found in $file: $tag -> $value");
+					}
 					delete $tags->{$tag};
 					next;
 				}
