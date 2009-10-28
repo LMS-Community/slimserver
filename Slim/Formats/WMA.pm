@@ -78,7 +78,9 @@ sub getTag {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{'WM/Picture'};
+	if ( $tags->{'WM/Picture'} ) {
+		$tags->{COVER_LENGTH} = length( $tags->{'WM/Picture'} );
+	}
 	
 	return $tags;
 }

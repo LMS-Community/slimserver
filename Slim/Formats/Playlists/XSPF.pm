@@ -120,7 +120,7 @@ sub write {
 
 		if ($homeURL && $obj->cover) {
 
-			$track->image(sprintf('%s/music/%d/cover.jpg', $homeURL, $obj->id));
+			$track->image(sprintf('%s/music/%s/cover.jpg', $homeURL, $obj->coverid));
 		}
 
 		$track->location($obj->url);

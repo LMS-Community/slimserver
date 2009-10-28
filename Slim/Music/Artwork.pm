@@ -29,6 +29,7 @@ use Slim::Formats;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -46,14 +47,12 @@ my $prefs = preferences('server');
 tie my %lastFile, 'Tie::Cache::LRU', 32;
 
 # Public class methods
+# XXX remove after BMF is moved to use Scanner::Local
 sub findArtwork {
 	my $class = shift;
 	my $track = shift;
 	
 	my $isDebug = $importlog->is_debug;
-	
-	# Initialize graphics resizing
-	Slim::Web::Graphics::init();
 
 	# Only look for track/album combos that don't already have artwork.
 	my $cond = {
@@ -65,6 +64,7 @@ sub findArtwork {
 	my $attr = {
 		'join'     => 'album',
 		'group_by' => 'album',
+		'prefetch' => 'album',
 	};
 
 	# If the user passed in a track (dir) object, match on that base directory.
@@ -90,22 +90,18 @@ sub findArtwork {
 	}
 
 	while (my $track = $tracks->next) {
-
 		my $album = $track->album;
+		
+		main::DEBUGLOG && !$main::progress && $isDebug && $importlog->debug( "Looking for cover file for " . $album->title );
 
 		if ($track->coverArtExists) {
-
-			if ( !$progress ) {
-				$isDebug && $importlog->debug(sprintf("Album [%s] has artwork.", $album->name));
-			}
-
-			$album->artwork($track->id);
+			$album->artwork($track->coverid);
 			$album->update;
 			
-			precacheArtwork( $track->id );
+			main::DEBUGLOG && !$main::progress && $isDebug && $importlog->debug( "Using cover from " . $track->cover );
 		}
 
-		$progress->update($album->name);
+		$progress->update( $album->title );
 	}
 
 	$progress->final($count) if $count;
@@ -221,7 +217,7 @@ sub _readCoverArtTags {
 			
 			$isInfo && $log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
 
-			return ($body, $contentType, 1);
+			return ($body, $contentType, length($body));
 		}
 
  	} else {
@@ -349,45 +345,96 @@ sub _readCoverArtFiles {
 	return undef;
 }
 
-sub precacheArtwork {
-	my $id = shift;
+sub precacheAllArtwork {
+	my $class = shift;
 	
-	my $isDebug = $log->is_debug;
+	my $isDebug = $importlog->is_debug;
 	
-	if ( $prefs->get('precacheArtwork') ) {
-		# Pre-cache this artwork resized to our commonly-used sizes/formats
-		# 1. user's thumb size or 100x100_o (large web artwork)
-		# 2. 50x50_o (small web artwork)
-		# 3+ SqueezePlay/Jive size artwork
+	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+	
+	# Initialize graphics resizing
+	Slim::Web::Graphics::init();
+	
+	# Pre-cache this artwork resized to our commonly-used sizes/formats
+	# 1. user's thumb size or 100x100_o (large web artwork)
+	# 2. 50x50_o (small web artwork)
+	# 3+ SqueezePlay/Jive size artwork
 
-		my $coversize = $prefs->get('thumbSize') || 100;
+	my $coversize = $prefs->get('thumbSize') || 100;
+
+	my @dims = (
+		"${coversize}x${coversize}_o",
+		'50x50_o',
+		'40x40_m',
+		'41x41_m',
+		'64x64_m',
+	);
 	
-		my @dims = (
-			"${coversize}x${coversize}_o",
-			'50x50_o',
-			'40x40_m',
-			'41x41_m',
-			'64x64_m',
-#			'300x143_m',
-#			'180x180_m',
-#			'240x240_m',
-#			'470x153_m',
-#			'470x170_m',
-		);
-	
-		for my $dim ( @dims ) {
-			$isDebug && $importlog->debug( "Pre-caching artwork for trackid $id at size $dim" );
-			eval {
-				Slim::Web::Graphics::processCoverArtRequest( undef, "music/$id/cover_$dim" );
-			};
+	# Find all albums with un-cached artwork
+	my $cond = {
+		'me.cover'        => { '!=' => undef },
+		'me.cover_cached' => { '=' => undef },
+		'album.artwork'   => { '!=' => undef },
+	};
+
+	my $attr = {
+		join     => 'album',
+		group_by => 'album',
+		prefetch => 'album',
+	};
+
+	# Find distinct albums to check for artwork.
+	my $tracks = Slim::Schema->search( Track => $cond, $attr );
+
+	if ( my $count = $tracks->count ) {
+		my $progress = Slim::Utils::Progress->new( { 
+			type  => 'importer',
+			name  => 'precacheArtwork',
+			total => $count, 
+			bar   => 1,
+		} );
+		
+		my $isEnabled = $prefs->get('precacheArtwork');
+		
+		while ( my $track = $tracks->next ) {
+			my $album = $track->album;
 			
-			$log->error("Pre-caching failed for trackid $id at size $dim: $@") if $@;
+			if ( my $coverid = $track->coverid ) {				
+				# Make sure album.artwork points to this track, as it may not
+				# be pointing there now because we did not join tracks via the
+				# artwork column.
+				if ( $album->artwork ne $coverid ) {
+					$album->artwork($coverid);
+					$album->update;
+				}
+				
+				# Do the actual pre-caching only if the pref for it is enabled
+				if ( $isEnabled ) {
+					for my $dim ( @dims ) {
+						main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $album->title . " at size $dim" );
+			
+						eval {
+							my $path = join( '/', 'music', $coverid, "cover_$dim" );
+							Slim::Web::Graphics::processCoverArtRequest( undef, $path );
+						};
+				
+						if ( $@ ) {
+							$log->error("Pre-caching failed for " . $album->title . " at size $dim: $@");
+						}
+					}
+					
+					$track->cover_cached(1);
+					$track->update;
+				}
+			}
+			
+			$progress->update( $album->title );
 		}
+
+		$progress->final($count);
 	}
+
+	Slim::Music::Import->endImporter('precacheArtwork');
 }
-
-=head1 SEE ALSO
-
-=cut
 
 1;

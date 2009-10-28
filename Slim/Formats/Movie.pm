@@ -141,7 +141,9 @@ sub _doTagMapping {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{COVR};
+	if ( $tags->{ARTWORK} ) {
+		$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+	}
 }
 
 sub getInitialAudioBlock {

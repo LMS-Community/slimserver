@@ -261,7 +261,7 @@ sub scanBitrate {
 				$pic = ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0];
 			}
 			
-			$track->cover(1);
+			$track->cover( length( $pic->[4] ) );
 			$track->update;
 			
 			my $data = {
@@ -415,7 +415,15 @@ sub doTagMapping {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{APIC};
+	if ( my $pic = $tags->{APIC} ) {
+		if ( ref $pic->[0] eq 'ARRAY' ) {
+			# multiple images, use image with lowest image_type value
+			$tags->{COVER_LENGTH} = length( ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4] );
+		}
+		else {
+			$tags->{COVER_LENGTH} = length( $pic->[4] );
+		}
+	}
 }
 
 sub canSeek { 1 }

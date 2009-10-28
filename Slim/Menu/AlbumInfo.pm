@@ -179,7 +179,7 @@ sub menu {
 		name  => $album->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
 		items => $items,
-		cover => '/music/' . $album->id . '/cover.jpg',
+		cover => '/music/' . $album->artwork . '/cover.jpg',
 	};
 }
 

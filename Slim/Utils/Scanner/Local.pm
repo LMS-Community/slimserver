@@ -9,10 +9,13 @@ package Slim::Utils::Scanner::Local;
 use strict;
 
 use File::Basename qw(basename dirname);
+use File::Next;
 use FileHandle;
 use Path::Class ();
 use Scalar::Util qw(blessed);
+use Tie::Cache::LRU;
 
+use Slim::Utils::Cache;
 use Slim::Utils::Misc ();
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -23,7 +26,8 @@ use constant PENDING_DELETE  => 0x01;
 use constant PENDING_NEW     => 0x02;
 use constant PENDING_CHANGED => 0x04;
 
-my $log = logger('scan.scanner');
+my $log   = logger('scan.scanner');
+my $prefs = preferences('server');
 
 my $findclass;
 if ( main::HAS_AIO ) {
@@ -36,6 +40,10 @@ eval "use $findclass";
 die $@ if $@;
 
 my %pending = ();
+
+# Small cache of path -> cover.jpg mapping to speed up
+# scans of files in the same directory
+tie my %findArtCache, 'Tie::Cache::LRU', 10;
 
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
@@ -93,37 +101,43 @@ sub rescan {
 		
 		# 1. Files that no longer exist on disk
 		my $inDBOnlySQL = qq{
-			SELECT DISTINCT tracks.url
+			SELECT DISTINCT url
 			FROM            tracks
-			LEFT JOIN       scanned_files USING (url)
-			WHERE           scanned_files.url IS NULL
-			AND             tracks.url LIKE '$basedir%'
+			WHERE           url NOT IN (
+				SELECT url FROM scanned_files
+			)
+			AND             url LIKE '$basedir%'
 		};
 		
 		# 2. Files that are new and not in the database.
+		# Sorted by URL to provide a cleaner scanner.log and also
+		# so that embedded artwork uses the earliest track on an album
+		# containing artwork.
 		my $onDiskOnlySQL = qq{
-			SELECT DISTINCT scanned_files.url
+			SELECT DISTINCT url
 			FROM            scanned_files
-			LEFT JOIN       tracks USING (url)
-			WHERE           tracks.url IS NULL
-			AND             scanned_files.url LIKE '$basedir%'
-			ORDER BY        scanned_files.url
+			WHERE           url NOT IN (
+				SELECT url FROM tracks
+			)
+			AND             url LIKE '$basedir%'
+			ORDER BY        url
 		};
 		
 		# 3. Files that have changed mtime or size.
+		# XXX can this query be optimized more?
 		my $changedOnlySQL = qq{
-			SELECT a.url, a.timestamp, a.filesize FROM (
-				SELECT url, timestamp, filesize FROM scanned_files
-				WHERE  url IN (
-				  SELECT scanned_files.url
-				  FROM scanned_files INNER JOIN tracks
-				  USING (url)
+			SELECT scanned_files.url
+			FROM scanned_files
+			JOIN tracks ON (
+				scanned_files.url = tracks.url
+				AND (
+					scanned_files.timestamp != tracks.timestamp
+					OR
+					scanned_files.filesize != tracks.filesize
 				)
-			) a
-			LEFT JOIN tracks USING (url, timestamp, filesize)
-			WHERE tracks.url IS NULL
-			AND a.url LIKE '$basedir%'
-			ORDER BY a.url
+			)
+			WHERE scanned_files.url LIKE '$basedir%'
+			ORDER BY scanned_files.url
 		};
 		
 		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
@@ -343,8 +357,6 @@ sub deleted {
 			
 			# Tell Genre to rescan
 			Slim::Schema::Genre->rescan( @genres );
-			
-			# XXX Remove cached artwork for this track?
 		};
 		
 		if ( Slim::Schema->storage->dbh->{AutoCommit} ) {
@@ -381,14 +393,24 @@ sub new {
 				return;
 			}
 			
-			# Link album cover to track cover
 			my $album = $track->album;
 			
-			if ( $album && $track->cover && $track->cover == 1 ) {
-				if ( !$album->artwork ) {
-					$album->artwork( $track->id );
-					$album->update;
-				}
+			# We now look for cover art at the same time as scanning files
+			if ( !$track->cover ) {
+				# Track did not have embedded artwork, look for standalone cover
+				findArtwork($track);
+			}
+			
+			# Initialize coverid column
+			$track->coverid;
+			
+			# Link album cover to track cover			
+			# XXX if an album has multiple images i.e. Ghosts,
+			# prefer cover.jpg instead of embedded artwork for album?
+			# Would require an additional cover column in the albums table
+			if ( $album && $track->cover ) {
+				$album->artwork( $track->coverid );
+				$album->update;
 			}
 			
 			if ( !main::SCANNER ) {
@@ -463,8 +485,7 @@ sub changed {
 		};
 		
 		my $work = sub {	
-			# Scan tags & update track row.
-			# XXX native DBI
+			# Scan tags & update track row
 			my $track = Slim::Schema->updateOrCreate( {
 				url        => $url,
 				readTags   => 1,
@@ -479,9 +500,23 @@ sub changed {
 			
 			my $album = $track->album;
 			
+			# XXX Check for newer cover.jpg here?
+			
+			# Add/replace coverid
+			$track->coverid(undef);
+			$track->cover_cached(undef);
+			$track->update;
+				
+			# Make sure album.artwork points to this track, so the album
+			# uses the newest available artwork
+			if ( my $coverid = $track->coverid ) {
+				if ( $album->artwork ne $coverid ) {
+					$album->artwork($coverid);
+					$album->update;
+				}
+			}
+			
 			# XXX
-			# Check for updated artwork, newest track artwork should be set for the album art?
-			# Use different URLs for artwork in order to allow artwork to change immediately without cache issues
 			# Rescan comments
 			
 			# Rescan genre, to check for no longer used genres
@@ -642,6 +677,64 @@ sub scanPlaylistFileHandle {
 	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
+}
+
+sub findArtwork {
+	my $track = shift;
+	
+	# return with nothing if this isn't a file.
+	if ( !$track->audio ) {
+		return;
+	}
+	
+	my $isInfo = main::INFOLOG && $log->is_info;
+	
+	my $file      = Path::Class::file( $track->path );
+	my $parentDir = $file->dir;
+	
+	my $art = $findArtCache{$parentDir};
+
+	if ( !defined $art ) {
+		main::INFOLOG && $isInfo && $log->info("Looking for image files in $parentDir");
+	
+		# XXX coverFormat/artworkdir support
+		my $coverFormat = $prefs->get('coverArt');
+	
+		# Find all image files in the file directory
+		my $files = File::Next::files( {
+			file_filter    => sub { $_ =~ /\.(?:jpe?g|png|gif)$/i },
+			descend_filter => sub { 0 },
+		}, $parentDir );
+	
+		my @found;
+		while ( my $image = $files->() ) {
+			push @found, $image;
+		}
+	
+		# Prefer cover/folder/album/thumb, then just take the first image
+		if ( my @preferred = grep { qr/^(?:cover|folder|album|thumb)/i } @found ) {
+			$art = $preferred[0];
+		}
+		else {
+			$art = $found[0] || 0;
+		}
+	
+		# Cache found artwork for this directory to speed up later tracks
+		$findArtCache{$parentDir} = $art;
+	}
+	
+	main::INFOLOG && $isInfo && $log->info("Using $parentDir/$art");
+	
+	if ($art) {
+		$track->cover($art);
+	}
+	else {
+		$track->cover(0);	# means known not to have artwork, don't ask again
+	}
+	
+	$track->update;
+	
+	return 1;
 }
 
 1;

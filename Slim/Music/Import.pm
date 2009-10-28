@@ -368,14 +368,6 @@ sub runScanPostProcessing {
 	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
 
 	Slim::Schema->mergeVariousArtistsAlbums;
-
-	# Post-process artwork, so we can use title formats, and use a generic
-	# image to speed up artwork loading.
-	$log->error("Starting artwork scan");
-
-	$importsRunning{'findArtwork'} = Time::HiRes::time();
-
-	Slim::Music::Artwork->findArtwork;
 	
 	# Run any artwork importers
 	for my $importer (keys %Importers) {		
@@ -386,6 +378,13 @@ sub runScanPostProcessing {
 		
 		$class->runArtworkImporter($importer);
 	}
+	
+	# Pre-cache resized artwork
+	$log->error("Starting artwork pre-cache");
+	
+	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
+	
+	Slim::Music::Artwork->precacheAllArtwork;
 	
 	# Look for and import persistent data migrated from 7.3.3
 	my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');

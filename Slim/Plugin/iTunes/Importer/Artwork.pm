@@ -63,13 +63,12 @@ sub startArtworkScan {
 					$isDebug && $log->debug( "Updating artwork for " . $track->album->title );
 				
 					$track->cover( catfile( $cachedir, $file ) );
+					$track->coverid(undef); # will be reset by next call to coverid
 					$track->update;
 				
 					my $album = $track->album;
-					$album->artwork( $track->id );
+					$album->artwork( $track->coverid );
 					$album->update;
-				
-					Slim::Music::Artwork::precacheArtwork( $track->id );
 				}
 				else {
 					$isDebug && $log->debug( "Album " . $track->album->title . " already has artwork" );
@@ -113,13 +112,12 @@ sub startArtworkScan {
 				$isDebug && $log->debug( "Updating artwork for " . $track->album->title );
 				
 				$track->cover( catfile( $cachedir, $file ) );
+				$track->coverid(undef); # will be reset by next call to coverid
 				$track->update;
 				
 				my $album = $track->album;
-				$album->artwork( $track->id );
+				$album->artwork( $track->coverid );
 				$album->update;
-			
-				Slim::Music::Artwork::precacheArtwork( $track->id );
 			}
 			else {
 				$isDebug && $log->debug( "Artwork not found for album " . $track->album->title );

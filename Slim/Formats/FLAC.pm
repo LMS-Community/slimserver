@@ -288,7 +288,9 @@ sub _addArtworkTags {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{ARTWORK};
+	if ( $tags->{ARTWORK} ) {
+		$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+	}
 
 	return $tags;
 }

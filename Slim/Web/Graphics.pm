@@ -100,10 +100,20 @@ sub processCoverArtRequest {
 	
 	$cacheKey = $path;
 	
-	main::INFOLOG && $log->info("artwork cache key: $cacheKey");
-	
 	# Check for a cached resize
 	if ( $trackid ne 'current' ) {
+		if ( $trackid =~ /^\d+$/ && $trackid ne '0' ) {
+			# Old-style /music/<id>/ request, throw a deprecated warning and lookup the coverid
+			$log->error("Warning: $path request is deprecated, use coverid instead of trackid");
+			
+			if ( my $track = Slim::Schema->rs('Track')->find($trackid) ) {
+				$trackid = $track->coverid;
+			}
+			else {
+				$trackid = undef;
+			}
+		}
+			
 		if ( $cachedImage = $cache->get($cacheKey) ) {
 			my $artworkFile = $cachedImage->{'orig'};
 		
@@ -148,9 +158,9 @@ sub processCoverArtRequest {
 		($body, $mtime, $inode, $size) = $skinMgr->_generateContentFromFile('get', $actualPathToImage, $params);
 		$imageData = $$body if defined $body;
 		
-	} else {
+	} elsif ( $trackid ) {
 
-		$obj = Slim::Schema->find('Track', $trackid);
+	 	($obj) = Slim::Schema->rs('Track')->single( { coverid => $trackid } );
 	}
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -279,7 +289,7 @@ sub processCoverArtRequest {
 	if ($cacheKey) {
 		
 		my $imageFilePath = blessed($obj) ? $obj->cover : 0;
-		$imageFilePath = $obj->path if $imageFilePath eq 1;
+		$imageFilePath = $obj->path if $imageFilePath && $imageFilePath =~ /^\d+$/;
 		
 		if ( $trackid eq 'notCoverArt' ) {
 			# Cache the path to a non-cover icon image
@@ -293,7 +303,7 @@ sub processCoverArtRequest {
 			'mtime'       => $mtime,
 			'body'        => $body,
 			'contentType' => $requestedContentType,
-			'size'        => $size,
+			'size'        => $size || length($$body),
 		};
 
 		main::INFOLOG && $log->info("  caching result key: $cacheKey, orig=$imageFilePath");

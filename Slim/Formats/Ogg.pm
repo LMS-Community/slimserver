@@ -111,11 +111,12 @@ sub getTag {
 	
 	# Read cover art if available
 	if ( $tags->{COVERART} ) {
-		# XXX: do we need to decode this here?
 		$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
 		
-		# Flag if we have embedded cover art
-		$tags->{HAS_COVER} = 1;
+		if ( !$@ ) {
+			# Flag if we have embedded cover art
+			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		}
 	}
 
 	return $tags;
@@ -191,20 +192,22 @@ sub scanBitrate {
 		# Save artwork if found
 		# Read cover art if available
 		if ( my $coverart = $tags->{COVERART} ) {
-			$coverart = decode_base64($coverart);
+			$coverart = eval { decode_base64($coverart) };
 
-			$track->cover(1);
-			$track->update;
+			if ( !$@ ) {
+				$track->cover( length($coverart) );
+				$track->update;
 
-			my $data = {
-				image => $coverart,
-				type  => $tags->{COVERARTMIME} || 'image/jpeg',
-			};
+				my $data = {
+					image => $coverart,
+					type  => $tags->{COVERARTMIME} || 'image/jpeg',
+				};
 
-			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
+				my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+				$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
 
-			main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
+				main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
+			}
 		}
 	}
 	

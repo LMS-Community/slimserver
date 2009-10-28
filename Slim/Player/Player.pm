@@ -1025,7 +1025,7 @@ sub rebuffer {
 	my $handler = $song->currentTrackHandler();
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
 	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || Slim::Music::Info::title($url);
-	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
+	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->coverid . '/cover.jpg';
 	
 	if ( my $bitrate = $song->streambitrate() ) {
 		$threshold = 5 * ( int($bitrate / 8) );
@@ -1064,7 +1064,7 @@ sub buffering {
 	my $handler = $song->currentTrackHandler();
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
 	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || Slim::Music::Info::title($url);
-	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
+	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->coverid . '/cover.jpg';
 	
 	# Set a timer for feedback during buffering
 	$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering

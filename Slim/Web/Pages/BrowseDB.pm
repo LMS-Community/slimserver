@@ -469,9 +469,8 @@ sub browsedb {
 			
 			if ($firstItem->can('coverArtExists') && $firstItem->coverArtExists) {
 
-				$params->{'coverArt'} = $firstItem->id;
 				if (!$album->artwork) {
-					$album->artwork($firstItem->id);
+					$album->artwork($firstItem->coverid);
 					$album->update;
 				}
 			}

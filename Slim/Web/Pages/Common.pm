@@ -263,7 +263,7 @@ sub addSongInfo {
 	
 		# handle artwork bits
 		if ($track->coverArt) {
-			$params->{'coverThumb'} = $track->id;
+			$params->{'coverThumb'} = $track->coverid;
 		}
 
 		if (Slim::Music::Info::isRemoteURL($url)) {
@@ -671,8 +671,8 @@ sub buildStatusHeaders {
 				$i = $track->secs();				
 				$headers{"x-playerduration"} = $i if $i;
 
-				if ($track->coverArt()) {
-					$headers{"x-playercoverart"} = "/music/" . $track->id() . "/cover.jpg";
+				if ($track->cover) {
+					$headers{"x-playercoverart"} = "/music/" . $track->coverid . "/cover.jpg";
 				}
 			}
 		}

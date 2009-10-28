@@ -297,5 +297,6 @@ sub duration {
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs && $secs > 0;
 }
 
+sub coverid { $_[0]->id }
 
 1;

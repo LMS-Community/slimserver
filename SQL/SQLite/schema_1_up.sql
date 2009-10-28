@@ -117,7 +117,7 @@ CREATE TABLE albums (
   customsearch text,
   compilation bool,
   year  smallint(5),
-  artwork int(10), -- pointer to a track id that contains artwork
+  artwork char(8), -- pointer to a track coverid that contains artwork
   disc  tinyint(1),
   discc  tinyint(1),
   replay_gain float,

@@ -686,15 +686,15 @@ SqueezeJS.SonginfoParser = {
 				coverart = result.playlist_loop[0].artwork_url;
 			}
 			else {
-				coverart = this.defaultCoverart(result.playlist_loop[0].id, width);
+				coverart = this.defaultCoverart(result.playlist_loop[0].coverid, width);
 			}
 		}
 
 		return coverart;
 	},
 	
-	defaultCoverart : function(id, width) {
-		return '/music/' + (id || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
+	defaultCoverart : function(coverid, width) {
+		return '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
 	}
 };
 

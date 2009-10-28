@@ -898,7 +898,7 @@ sub icon {
 	$icon ||= Slim::Player::ProtocolHandlers->iconForURL($self->track()->url, $client);
 	
 	if (!$icon && $self->currentTrack()->isa('Slim::Schema::Track')) {
-		$icon = '/music/' . $self->currentTrack()->id . '/cover.jpg'
+		$icon = '/music/' . $self->currentTrack()->coverid . '/cover.jpg'
 	}
 	
 	return $icon;

@@ -2130,8 +2130,10 @@ sub _preCheckAttributes {
 		}
 	}
 	
-	# Flag if embedded artwork was found
-	$attributes->{'COVER'} = 1 if $attributes->{'HAS_COVER'};
+	# If embedded artwork was found, store the length of the artwork
+	if ( $attributes->{'COVER_LENGTH'} ) {
+		$attributes->{'COVER'} = delete $attributes->{'COVER_LENGTH'};
+	}
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'DISC'} = $attributes->{'DISC'};

@@ -486,6 +486,7 @@ sub getMetadataFor {
 	return {} unless $track;
 	
 	if ( $track->cover ) {
+		# XXX should remote tracks use coverid?
 		$cover = '/music/' . $track->id . '/cover.jpg';
 	}
 	
