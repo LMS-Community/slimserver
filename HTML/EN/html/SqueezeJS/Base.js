@@ -340,7 +340,7 @@ function _init() {
 		getStatus : function(){
 			if (this.player) {
 				this.playerRequest({
-					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoKLN" ],
+					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLN" ],
 					failure: this._updateStatus,
 					success: this._updateStatus,
 					scope: this

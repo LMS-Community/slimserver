@@ -555,7 +555,6 @@ sub albumsQuery {
 				# artwork if we have it
 				if ($eachitem->title ne $noAlbumName &&
 				    defined(my $iconId = $eachitem->artwork())) {
-					$iconId += 0;
 					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
 
@@ -5180,6 +5179,7 @@ sub _songData {
 		  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
 		                                                                    #replay_peak
 
+		  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
 		  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
 		  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
 		  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora

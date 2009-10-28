@@ -592,7 +592,7 @@ sub currentSongLines {
 			
 			if ( my $album = $song->album ) {
 				$imgKey = 'icon-id';
-				$artwork = ( $album->artwork || 0 ) + 0;
+				$artwork = $album->artwork || 0;
 			}
 		}
 		
