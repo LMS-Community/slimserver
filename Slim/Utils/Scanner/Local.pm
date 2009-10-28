@@ -15,7 +15,6 @@ use Path::Class ();
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
-use Slim::Utils::Cache;
 use Slim::Utils::Misc ();
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
