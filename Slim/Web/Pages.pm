@@ -127,7 +127,7 @@ sub addPageFunction {
 	my ( $class, $regexp, $func ) = @_;
 	
 	if ( !ref $regexp ) {
-		$regexp = qr/^$regexp/;
+		$regexp = qr/$regexp/;
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Adding handler for regular expression /$regexp/");
