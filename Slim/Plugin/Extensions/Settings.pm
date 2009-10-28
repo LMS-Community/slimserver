@@ -151,7 +151,7 @@ sub _addInfo {
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
 	my $states  = preferences('plugin.state');
 
-	my $seen = {};
+	my $hide = {};
 	my $current = {};
 
 	# create entries for built in plugins and those already installed
@@ -190,7 +190,7 @@ sub _addInfo {
 			push @inactive, $entry;
 		}
 
-		$seen->{$plugin} = 1;
+		$hide->{$plugin} = 1;
 	}
 
 	my @results = sort { $a->{'weight'} !=  $b->{'weight'} ?
@@ -236,16 +236,28 @@ sub _addInfo {
 
 	Slim::Utils::PluginManager->message(undef);
 
-	# prune out duplicate entries, favour repos later in the list so that entries get pruned from the 3rd party and other repos
+	# prune out duplicate entries, favour favour higher version numbers
+	
+	# pass 1 - find the higher version numbers
+	my $max = {};
 
-	for my $repo (reverse @results) {
+	for my $repo (@results) {
+		for my $entry (@{$repo->{'entries'}}) {
+			my $name = $entry->{'name'};
+			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
+				$max->{$name} = $entry->{'version'};
+			}
+		}
+	}
+
+	# pass 2 - prune out lower versions or entries which are hidden as they are shown in enabled plugins
+	for my $repo (@results) {
 		my $i = 0;
 		while (my $entry = $repo->{'entries'}->[$i]) {
-			if ($seen->{$entry->{'name'}}) {
+			if ($hide->{$entry->{'name'}} || $max->{$entry->{'name'}} ne $entry->{'version'}) {
 				splice @{$repo->{'entries'}}, $i, 1;
 				next;
 			}
-			$seen->{$entry->{'name'}} = 1;
 			$i++;
 		}
 	}

@@ -41,6 +41,7 @@ use Exporter::Lite;
 our @EXPORT_OK = qw(string cstring clientString);
 
 use Config;
+use Data::URIEncode qw(complex_to_query);
 use Digest::SHA1 qw(sha1_hex);
 use POSIX qw(setlocale LC_TIME);
 use File::Slurp qw(read_file write_file);
@@ -395,12 +396,14 @@ sub storeExtraStrings {
 	# Cache strings to disk so they work on restart
 	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
 	
+	my $in;
 	my $cache = {};
 	if ( -e $extraCache ) {
 		$cache = eval { from_json( read_file($extraCache) ) };
 		if ( $@ ) {
 			$cache = {};
 		}
+		$in = complex_to_query($cache);
 	}
 	
 	# Turn into a hash
@@ -411,7 +414,12 @@ sub storeExtraStrings {
 		$cache->{$string} = $extra->{$string};
 	}
 	
-	eval { write_file( $extraCache, to_json($cache) ) };
+	# Only update the file on disk if the data has changed
+	my $out = complex_to_query($cache);
+	
+	if ( $out ne $in ) {
+		eval { write_file( $extraCache, to_json($cache) ) };
+	}
 }
 
 =head2 loadExtraStrings
