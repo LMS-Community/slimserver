@@ -92,8 +92,6 @@ sub rescan {
 		
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
-		my $validRE = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
-		
 		my $dbh = Slim::Schema->storage->dbh;
 		
 		# Generate 3 lists of files:
