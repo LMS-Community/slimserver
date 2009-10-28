@@ -164,7 +164,8 @@ sub handleQueue {
 		}
 	}
 	
-	$log->error( "Auto-rescanning: " . Data::Dump::dump(\%queue) );
+	$log->error( "Auto-rescanning: ");
+	main::DEBUGLOG && $log->is_debug && $log->debug( Data::Dump::dump(\%queue) );
 	
 	# Wait if scanner is currently running
 	if ( Slim::Music::Import->stillScanning ) {
