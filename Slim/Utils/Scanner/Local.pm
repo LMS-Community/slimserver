@@ -107,9 +107,6 @@ sub rescan {
 		};
 		
 		# 2. Files that are new and not in the database.
-		# Sorted by URL to provide a cleaner scanner.log and also
-		# so that embedded artwork uses the earliest track on an album
-		# containing artwork.
 		my $onDiskOnlySQL = qq{
 			SELECT DISTINCT url
 			FROM            scanned_files
@@ -117,7 +114,6 @@ sub rescan {
 				SELECT url FROM tracks
 			)
 			AND             url LIKE '$basedir%'
-			ORDER BY        url
 		};
 		
 		# 3. Files that have changed mtime or size.
@@ -134,7 +130,6 @@ sub rescan {
 				)
 			)
 			WHERE scanned_files.url LIKE '$basedir%'
-			ORDER BY scanned_files.url
 		};
 		
 		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
