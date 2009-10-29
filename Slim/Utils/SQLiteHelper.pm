@@ -409,7 +409,7 @@ sub updateProgress {
 	else {
 		main::INFOLOG && $log->is_info && $log->info( 'Notify to server failed: ' . $res->status_line );
 		
-		if ( $res->content =~ /timeout/ ) {
+		if ( $res->content =~ /timeout|refused/ ) {
 			# Server is down, avoid further requests
 			$serverDown = 1;
 		}
