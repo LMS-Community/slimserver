@@ -349,7 +349,7 @@ sub gotContainer {
 							# Cache artwork if any
 							if ( $props->{albumArtURI} ) {
 								my $artcache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-								$artcache->set( "remote_image_$url" => $props->{albumArtURI}, '1 hour' );
+								$artcache->set( "remote_image_$url" => $props->{albumArtURI}, '1 day' );
 							}
 
 							$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
