@@ -690,30 +690,70 @@ sub findArtwork {
 	my $parentDir = $file->dir;
 	
 	my $art = $findArtCache{$parentDir};
+	
+	# Files to look for
+	my @files = qw(cover folder album thumb);
 
 	if ( !defined $art ) {
-		main::INFOLOG && $isInfo && $log->info("Looking for image files in $parentDir");
-	
-		# XXX coverFormat/artworkdir support
-		my $coverFormat = $prefs->get('coverArt');
-	
-		# Find all image files in the file directory
-		my $files = File::Next::files( {
-			file_filter    => sub { $_ =~ /\.(?:jpe?g|png|gif)$/i },
-			descend_filter => sub { 0 },
-		}, $parentDir );
-	
-		my @found;
-		while ( my $image = $files->() ) {
-			push @found, $image;
+		# coverArt/artfolder pref support
+		if ( my $coverFormat = $prefs->get('coverArt') ) {
+			# If the user has specified a pattern to match the artwork on, we need
+			# to generate that pattern. This is nasty.
+			if ( $coverFormat && $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
+				my $suffix = $2 ? $2 : '.jpg';
+
+				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( $track, $1 ) ) {
+					$coverFormat = $prefix . $suffix;
+
+					if ( main::ISWINDOWS ) {
+						# Remove illegal characters from filename.
+						$coverFormat =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
+					}
+
+					my $artPath = $parentDir->file($coverFormat)->stringify;
+					
+					if ( my $artDir = $prefs->get('artfolder') ) {
+						$artDir  = Path::Class::dir($artDir);
+						$artPath = $artDir->file($coverFormat)->stringify;
+					}
+					
+					if ( -e $artPath ) {
+						main::INFOLOG && $isInfo && $log->info("Found variable cover $coverFormat from $1");
+						$art = $artPath;
+					}
+					else {
+						main::INFOLOG && $isInfo && $log->info("No variable cover $coverFormat found from $1");
+					}
+				}
+				else {
+				 	main::INFOLOG && $isInfo && $log->info("No variable cover match for $1");
+				}
+			}
+			elsif ( defined $coverFormat ) {
+				push @files, $coverFormat;
+			}
 		}
+		
+		if ( !$art ) {
+			# Find all image files in the file directory
+			my $files = File::Next::files( {
+				file_filter    => sub { $_ =~ /\.(?:jpe?g|png|gif)$/i },
+				descend_filter => sub { 0 },
+			}, $parentDir );
 	
-		# Prefer cover/folder/album/thumb, then just take the first image
-		if ( my @preferred = grep { qr/^(?:cover|folder|album|thumb)/i } @found ) {
-			$art = $preferred[0];
-		}
-		else {
-			$art = $found[0] || 0;
+			my @found;
+			while ( my $image = $files->() ) {
+				push @found, $image;
+			}
+	
+			# Prefer cover/folder/album/thumb, then just take the first image
+			my $filelist = join( '|', @files );
+			if ( my @preferred = grep { qr/^(?:$filelist)/i } @found ) {
+				$art = $preferred[0];
+			}
+			else {
+				$art = $found[0] || 0;
+			}
 		}
 	
 		# Cache found artwork for this directory to speed up later tracks
