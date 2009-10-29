@@ -31,6 +31,7 @@ use Fcntl qw(:seek);
 use File::Basename;
 use MIME::Base64 qw(decode_base64);
 
+use Slim::Formats::MP3;
 use Slim::Formats::Playlists::CUE;
 use Slim::Schema::Contributor;
 use Slim::Utils::Log;
@@ -212,11 +213,8 @@ sub _getStandardTag {
 
 	my $tags = $s->{tags} || {};
 
-	# Note: We used to read ID3v2 tags in FLAC here,
-	# but this is no longer supported.
-
-	$class->_doTagMapping($tags);
 	$class->_addInfoTags($s, $tags);
+	$class->_doTagMapping($tags);
 	$class->_addArtworkTags($s, $tags);
 
 	return $tags;
@@ -224,6 +222,11 @@ sub _getStandardTag {
 
 sub _doTagMapping {
 	my ($class, $tags) = @_;
+	
+	# Map ID3 tags first, so FLAC tags win out
+	if ( $tags->{TAGVERSION} ) {
+		Slim::Formats::MP3->doTagMapping($tags);
+	}
 
 	# map the existing tag names to the expected tag names
 	while ( my ($old, $new) = each %tagMapping ) {
@@ -254,6 +257,11 @@ sub _addInfoTags {
 	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
 	$tags->{CHANNELS}   = $info->{channels};
 	$tags->{LOSSLESS}   = 1;
+	
+	# Map ID3 tags if file has them
+	if ( $info->{id3_version} ) {
+		$tags->{TAGVERSION} = 'FLAC, ' . $info->{id3_version};
+	}
 }
 
 sub _addArtworkTags {

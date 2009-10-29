@@ -2080,7 +2080,8 @@ sub _preCheckAttributes {
 	}
 
 	# Look for tags we don't want to expose in comments, and splice them out.
-	for my $c(@$rawcomments) {
+	for my $c ( @{$rawcomments} ) {
+		next unless defined $c;
 
 		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
 		if ($c =~ /SoundJam_CDDB_/ ||
@@ -2091,6 +2092,7 @@ sub _preCheckAttributes {
 
 			next;
 		}
+		
 		push @$comments, $c;
 	}
 

@@ -390,35 +390,40 @@ strings for apps.
 
 =cut
 
+# Cache extra strings to avoid reading from disk
+my $extraStringsCache = {};
+
 sub storeExtraStrings {
 	my $extra = shift;
 	
 	# Cache strings to disk so they work on restart
 	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
 	
-	my $in;
-	my $cache = {};
-	if ( -e $extraCache ) {
-		$cache = eval { from_json( read_file($extraCache) ) };
+	if ( !scalar( keys %{$extraStringsCache} ) && -e $extraCache ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug('Reading extrastrings.json file');
+		
+		$extraStringsCache = eval { from_json( read_file($extraCache) ) };
 		if ( $@ ) {
-			$cache = {};
+			$extraStringsCache = {};
 		}
-		$in = complex_to_query($cache);
 	}
+	
+	my $in = complex_to_query($extraStringsCache);
 	
 	# Turn into a hash
 	$extra = { map { $_->{token} => $_->{strings} } @{$extra} };
 
 	for my $string ( keys %{$extra} ) {
 		storeString( $string, $extra->{$string} );
-		$cache->{$string} = $extra->{$string};
+		$extraStringsCache->{$string} = $extra->{$string};
 	}
 	
 	# Only update the file on disk if the data has changed
-	my $out = complex_to_query($cache);
+	my $out = complex_to_query($extraStringsCache);
 	
 	if ( $out ne $in ) {
-		eval { write_file( $extraCache, to_json($cache) ) };
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing updated extrastrings.json file');
+		eval { write_file( $extraCache, to_json($extraStringsCache) ) };
 	}
 }
 

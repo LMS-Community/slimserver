@@ -11788,23 +11788,23 @@ RATING
 	ZH_CN	评级
 
 TAGVERSION
-	CS	Verze tagů ID3
+	CS	Verze tagů
 	DA	ID3-version
-	DE	ID3-Tag-Version
-	EN	ID3 Tag Version
-	ES	Versión de etiqueta ID3
-	FI	ID3-tunnisteen versio
+	DE	Tag-Version
+	EN	Tag Version
+	ES	Versión de etiqueta
+	FI	Tunnisteen versio
 	FR	Version ID3
-	HE	גרסת תג ID3
-	IT	Versione tag ID3
-	JA	ID3タグ バージョン
-	NL	ID3-tagversie
-	NO	ID3-etikettversjon
-	PL	Wersja znacznika ID3
-	PT	Versão da Informação ID3
-	RU	Версия тега ID3
-	SV	ID3-taggversion
-	ZH_CN	ID3版本
+	HE	גרסת תג
+	IT	Versione tag
+	JA	タグ バージョン
+	NL	Tagversie
+	NO	Etikettversjon
+	PL	Wersja znacznika
+	PT	Versão da Informação
+	RU	Версия тега
+	SV	Taggversion
+	ZH_CN	版本
 
 VIEW_TAGS
 	EN	View Tags
