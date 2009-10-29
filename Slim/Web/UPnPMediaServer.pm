@@ -27,7 +27,7 @@ sub browseUPnP {
 	my $device    = $params->{device};
 	my $hierarchy = $params->{hierarchy};
 	my $player    = $params->{player};
-	my @levels    = map { uri_unescape($_) } split("/", $hierarchy);
+	my @levels    = map { uri_unescape($_) } split("__", $hierarchy);
 	
 	$params->{browseby} = uc( $params->{title} ) || 'BROWSE';
 
@@ -74,7 +74,7 @@ sub gotContainer {
 	my $device    = $params->{device};
 	my $hierarchy = $params->{hierarchy};
 	my $player    = $params->{player};
-	my @levels    = map { uri_unescape($_) } split("/", $hierarchy);
+	my @levels    = map { uri_unescape($_) } split("__", $hierarchy);
 
 	# Construct the pwd header
 	for (my $i = 0; $i < scalar @levels; $i++) {
@@ -82,7 +82,7 @@ sub gotContainer {
 		my $item = Slim::Utils::UPnPMediaServer::getItemInfo( $device, $levels[$i] );
 		next unless defined($item);
 
-		my $hierarchy = uri_escape( join( '/', @levels[0..$i] ) );
+		my $hierarchy = uri_escape( join( '__', @levels[0..$i] ) );
 		my $title     = HTML::Entities::decode( $item->{title} );
 		
 		my $href 
@@ -147,7 +147,7 @@ sub gotContainer {
 				
 		for my $item ( @{$items} ) {
 			
-			my $hier = uri_escape( join( '/', $hierarchy, $item->{id} ) );
+			my $hier = uri_escape( join( '__', $hierarchy, $item->{id} ) );
 			
 			my $args
 				= '?device=' . uri_escape($device)
