@@ -312,7 +312,7 @@ sub gotContainer {
 								# some Rhapsody titles contain '??'
 								$title =~ s/\?\?/ /g;
 							}
-							if ( $node =~ m{<upnp:class>([^<]+)</upnp:class>} ) {
+							if ( $node =~ m{<upnp:class[^>]*>([^<]+)</upnp:class>} ) {
 								$type = $1;
 							}
 							if ( $node =~ /id="([^"]+)"/ ) {
@@ -350,7 +350,7 @@ sub gotContainer {
 
 							push @children, $props;
 						}
-						elsif ( $chunk =~ m{<TotalMatches>([^<]+)</TotalMatches>} ) {
+						elsif ( $chunk =~ m{<TotalMatches[^>]*>([^<]+)</TotalMatches>} ) {
 							# total browse results, used for building pagination links
 							my $matches = $1;
 							my $id      = $args->{id};
@@ -358,7 +358,7 @@ sub gotContainer {
 						}
 					}
 				}
-				elsif ( $chunk =~ m{<TotalMatches>([^<]+)</TotalMatches>} ) {
+				elsif ( $chunk =~ m{<TotalMatches[^>]*>([^<]+)</TotalMatches>} ) {
 					# total browse results, used for building pagination links
 					my $matches = $1;
 					my $id      = $args->{id};
