@@ -99,6 +99,13 @@ my %RS_CACHE = ();
 # Cache library totals
 my %TOTAL_CACHE = ();
 
+# DB-handle cache
+my $_dbh;
+
+sub dbh {
+	return $_dbh || shift->storage->dbh;
+}
+
 =head1 METHODS
 
 All methods below are class methods on L<Slim::Schema>. Please see
@@ -3006,13 +3013,6 @@ sub totals {
 	}
 	
 	return \%TOTAL_CACHE;
-}
-
-# DB-handle cache
-my $_dbh;
-
-sub dbh {
-	return $_dbh || shift->storage->dbh;
 }
 
 =head1 SEE ALSO
