@@ -98,7 +98,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help);
+	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog);
 
 	our $LogTimestamp = 1;
 	our $noweb = 1;
@@ -119,6 +119,8 @@ sub main {
 		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
 		# prefsdir parsed by Slim::Utils::Prefs
+		'nodebuglog'   => \$nodebuglog,
+		'noinfolog'    => \$noinfolog,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,
@@ -432,6 +434,8 @@ Command line options:
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file
 	--logconfig    Specify pre-defined logging configuration file
+    --nodebuglog   Disable all debug-level logging (compiled out).
+    --noinfolog    Disable all debug-level & info-level logging (compiled out).
 	--debug        various debug options
 	--quiet        keep silent
 	
