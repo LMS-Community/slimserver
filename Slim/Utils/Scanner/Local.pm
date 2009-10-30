@@ -335,20 +335,40 @@ sub deleted {
 			#   genre_track
 			#   comments
 			$track->delete;
-
-			# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
-			$album->rescan if $album;
 			
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
 			for my $contrib ( @contribs ) {
 				$contrib->rescan;
+			}
+
+			# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
+			if ( $album ) {
+				$album->rescan;
+				
+				# Reset compilation status as it may have changed from VA -> non-VA
+				# due to this track being deleted.  Also checks in_storage in case
+				# the album was deleted by the $album->rescan.
+				if ( $album->in_storage && $album->compilation ) {
+					$album->compilation(undef);
+					
+					if ( !main::SCANNER ) {
+						# Re-check VA status for the album,
+						# this will also save the album
+						Slim::Schema->mergeSingleVAAlbum($album);
+					}
+					else {
+						# Save the album for now, it will be checked
+						# for VA status in mergeVA phase
+						$album->update;
+					}
+				}
 			}
 			
 			# Tell Year to rescan
 			Slim::Schema->rs('Year')->find($year)->rescan if $year;
 			
 			# Tell Genre to rescan
-			Slim::Schema::Genre->rescan( @genres );
+			Slim::Schema::Genre->rescan( @genres );				
 		};
 		
 		if ( Slim::Schema->storage->dbh->{AutoCommit} ) {
@@ -402,16 +422,23 @@ sub new {
 			# Would require an additional cover column in the albums table
 			if ( $album && $track->cover ) {
 				$album->artwork( $track->coverid );
-				$album->update;
 			}
 			
-			if ( !main::SCANNER ) {
-				# Merge VA (for this album only)
-				# Does not merge if the album was previously merged into a compilation
-				if ( $album && !$album->compilation ) {
+			# Reset negative compilation status on this album so mergeVA will re-check it
+			# as it may have just become a VA album from this new track
+			if ( $album && ( !defined($album->compilation) || $album->compilation == 0 ) ) {
+				$album->compilation(undef);
+				
+				if ( !main::SCANNER ) {
+					# Auto-rescan mode, immediately merge VA
 					Slim::Schema->mergeSingleVAAlbum($album);
 				}
+				else {
+					# Will be merged later during the mergeVA phase
+				}
 			}
+			
+			$album && $album->update;
 		};
 	}
 	elsif ( 
@@ -504,9 +531,23 @@ sub changed {
 			if ( my $coverid = $track->coverid ) {
 				if ( $album->artwork ne $coverid ) {
 					$album->artwork($coverid);
-					$album->update;
 				}
 			}
+			
+			# Reset compilation status as it may have changed
+			if ( $album ) {
+				$album->compilation(undef);
+				
+				if ( !main::SCANNER ) {
+					# Auto-rescan mode, immediately merge VA
+					Slim::Schema->mergeSingleVAAlbum($album);
+				}
+				else {
+					# Will be checked later during mergeVA phase
+				}
+			}
+			
+			$album && $album->update;
 			
 			# XXX
 			# Rescan comments
@@ -526,14 +567,6 @@ sub changed {
 				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
 				
 				Slim::Schema->rs('Year')->find( $orig->{year} )->rescan;
-			}
-		
-			if ( !main::SCANNER ) {
-				# Merge VA (for this album only)
-				# Does not merge if the album was previously merged into a compilation
-				if ( $album && !$album->compilation ) {
-					Slim::Schema->mergeSingleVAAlbum($album);
-				}
 			}
 		};
 		

@@ -1534,15 +1534,22 @@ sub mergeSingleVAAlbum {
 	}
 
 	if ($markAsCompilation) {
-
 		main::INFOLOG && $importlog->is_info && $importlog->info(sprintf("Import: Marking album: [%s] as a compilation.", $albumObj->title));
 
 		main::DEBUGLOG && $isDebug && $log->debug("--- Album is a VA");
 
 		$albumObj->compilation(1);
 		$albumObj->contributor($vaObjId);
-		$albumObj->update;
 	}
+	else {
+		# Cache that the album is not a compilation so it's not constantly
+		# checked during every mergeVA phase.  Scanner::Local will reset
+		# compilation to undef when a new/deleted/changed track requires
+		# a re-check of VA status
+		$albumObj->compilation(0);
+	}
+	
+	$albumObj->update;
 }
 
 =head2 wipeCaches()
