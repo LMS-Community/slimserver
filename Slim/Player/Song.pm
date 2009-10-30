@@ -604,7 +604,7 @@ sub open {
 			$sock->sysseek($position, SEEK_SET) if $position;
 		}
 
-		if ( !main::SLIM_SERVICE ) {
+		if ( main::STATISTICS ) {
 			# XXXX - this really needs to happen in the caller!
 			# No database access here. - dsully
 			# keep track of some stats for this track
