@@ -38,7 +38,7 @@ sub check {
 		WHERE  url LIKE '$basedir%'
 	};
 	
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 	
 	my ($count) = $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql )

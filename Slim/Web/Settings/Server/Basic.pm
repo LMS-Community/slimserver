@@ -139,10 +139,10 @@ sub changeCollation {
 	
 	if (Slim::Music::Import->stillScanning) {
 
-		my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+		my $autoCommit = Slim::Schema->dbh->{'AutoCommit'};
 	
 		if ($autoCommit) {
-			Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+			Slim::Schema->dbh->{'AutoCommit'} = 0;
 		}
 	
 		my $setCollation = Slim::Schema->rs('MetaInformation')->find_or_create({
@@ -152,7 +152,7 @@ sub changeCollation {
 		$setCollation->value($newCollation);
 		$setCollation->update;
 	
-		Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
+		Slim::Schema->dbh->{'AutoCommit'} = $autoCommit;
 	}
 	else {
 

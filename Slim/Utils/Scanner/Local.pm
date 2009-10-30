@@ -92,10 +92,11 @@ sub rescan {
 		
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
-		my $dbh = Slim::Schema->storage->dbh;
+		my $dbh = Slim::Schema->dbh;
 		
 		# Generate 3 lists of files:
 		
+		$log->error(`cat /proc/$$/statm`); 
 		# 1. Files that no longer exist on disk
 		my $inDBOnlySQL = qq{
 			SELECT DISTINCT url
@@ -106,6 +107,7 @@ sub rescan {
 			AND             url LIKE '$basedir%'
 		};
 		
+		$log->error(`cat /proc/$$/statm`); 
 		# 2. Files that are new and not in the database.
 		my $onDiskOnlySQL = qq{
 			SELECT DISTINCT url
@@ -116,6 +118,7 @@ sub rescan {
 			AND             url LIKE '$basedir%'
 		};
 		
+		$log->error(`cat /proc/$$/statm`); 
 		# 3. Files that have changed mtime or size.
 		# XXX can this query be optimized more?
 		my $changedOnlySQL = qq{
@@ -132,20 +135,24 @@ sub rescan {
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
 		
+		$log->error(`cat /proc/$$/statm`); 
 		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
 		} );
     	
+		$log->error(`cat /proc/$$/statm`); 
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 		
+		$log->error(`cat /proc/$$/statm`); 
 		my ($changedOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} );
 		
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
+		$log->error(`cat /proc/$$/statm`); 
 		if ( $inDBOnlyCount ) {
 			my $inDBOnly = $dbh->prepare_cached($inDBOnlySQL);
 			$inDBOnly->execute;
@@ -193,9 +200,12 @@ sub rescan {
 		
 		$log->error( "Scanning new files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
+		$log->error(`cat /proc/$$/statm`); 
 		if ( $onDiskOnlyCount ) {
 			my $onDiskOnly = $dbh->prepare_cached($onDiskOnlySQL);
+			$log->error(`cat /proc/$$/statm`); 
 			$onDiskOnly->execute;
+			$log->error(`cat /proc/$$/statm`); 
 			
 			my $new;
 			$onDiskOnly->bind_col(1, \$new);
@@ -371,7 +381,7 @@ sub deleted {
 			Slim::Schema::Genre->rescan( @genres );				
 		};
 		
-		if ( Slim::Schema->storage->dbh->{AutoCommit} ) {
+		if ( Slim::Schema->dbh->{AutoCommit} ) {
 			Slim::Schema->txn_do($work);
 		}
 		else {
@@ -472,7 +482,7 @@ sub new {
 	}
 	
 	if ( $work ) {
-		if ( Slim::Schema->storage->dbh->{AutoCommit} ) {
+		if ( Slim::Schema->dbh->{AutoCommit} ) {
 			Slim::Schema->txn_do($work);
 		}
 		else {
@@ -570,7 +580,7 @@ sub changed {
 			}
 		};
 		
-		if ( Slim::Schema->storage->dbh->{AutoCommit} ) {
+		if ( Slim::Schema->dbh->{AutoCommit} ) {
 			Slim::Schema->txn_do($work);
 		}
 		else {

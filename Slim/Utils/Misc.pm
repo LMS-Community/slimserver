@@ -1063,7 +1063,7 @@ sub settingsDiagString {
 	);
 	
 	if ( my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass ) {
-		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh );
+		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->dbh );
 		push @diagString, sprintf("%s%s %s",
 	
 			Slim::Utils::Strings::string('DATABASE_VERSION'),

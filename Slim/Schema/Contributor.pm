@@ -116,7 +116,6 @@ sub add {
 	my $brainzID   = $args->{'brainzID'};
 	my $role       = $args->{'role'}   || return;
 	my $track      = $args->{'track'}  || return;
-	my $artistSort = $args->{'sortBy'} || $artist;
 
 	my @contributors = ();
 
@@ -129,10 +128,10 @@ sub add {
 	#
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
-	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
+	my @sortedList   = $args->{'sortBy'} ? Slim::Music::Info::splitTag($args->{'sortBy'}) : @artistList;
 	
 	# Using native DBI here to improve performance during scanning
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 

@@ -185,6 +185,16 @@ sub sqlVersionLong {
 	return 'DBD::SQLite ' . $DBD::SQLite::VERSION . ' (sqlite ' . $dbh->{sqlite_version} . ')';
 }
 
+=head2 canCacheDBHandle( )
+
+Is it permitted to cache the DB handle for the period that the DB is open?
+
+=cut
+
+sub canCacheDBHandle {
+	return 1;
+}
+
 =head2 checkDataSource()
 
 Called to check the database, this is used to replace with a newer
@@ -198,7 +208,7 @@ sub checkDataSource {
 	my $scannerdb = $class->_dbFile('squeezebox-scanner.db');
 	
 	if ( -e $scannerdb ) {
-		my $dbh = Slim::Schema->storage->dbh;
+		my $dbh = Slim::Schema->dbh;
 		
 		logWarning('Scanner database found, checking for a newer scan...');
 		
@@ -363,7 +373,7 @@ sub postOptimize {
 	
 	# Disconnect and reconnect to the database in order to run
 	# VACUUM and ANALYZE to compact the database file and optimize indices
-	my $dsn = "dbi:$driver:" . Slim::Schema->storage->dbh->{Name};
+	my $dsn = "dbi:$driver:" . Slim::Schema->dbh->{Name};
 	
 	Slim::Schema->disconnect;
 	

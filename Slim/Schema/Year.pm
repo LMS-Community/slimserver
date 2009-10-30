@@ -63,7 +63,7 @@ sub displayAsHTML {
 sub cleanupStaleYears {
 	my $class = shift;
 	
-	my $sth = Slim::Schema->storage->dbh->prepare_cached( qq{
+	my $sth = Slim::Schema->dbh->prepare_cached( qq{
 		SELECT id
 		FROM   years y
 		LEFT JOIN (
@@ -77,7 +77,7 @@ sub cleanupStaleYears {
 	
 	$sth->execute;
 	
-	my $sta = Slim::Schema->storage->dbh->prepare_cached( qq{
+	my $sta = Slim::Schema->dbh->prepare_cached( qq{
 		DELETE FROM years WHERE id = ?
 	} );
 	

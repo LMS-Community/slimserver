@@ -127,6 +127,10 @@ sub init {
 		logBacktrace("Couldn't connect to database! Fatal error: [$!] Exiting!");
 		exit;
 	};
+	
+	if (Slim::Utils::OSDetect->getOS()->sqlHelperClass()->canCacheDBHandle()) {
+		$_dbh = $dbh;
+	}
 
 	# Bug: 4076
 	# If a user was using MySQL with 6.3.x (unsupported), their
@@ -841,7 +845,7 @@ sub objectForUrl {
 	return $track;
 }
 
-=head2 newTrack( $args )
+=head2 _newTrack( $args )
 
 Create a new track with the given attributes.
 
@@ -885,7 +889,7 @@ Returns a new L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object on succ
 
 =cut
 
-sub newTrack {
+sub _newTrack {
 	my $self = shift;
 	my $args = shift;
 	
@@ -997,7 +1001,7 @@ sub newTrack {
 
 	# Create the track - or bail. ->throw_exception will emit a backtrace.
 	# Using native DBI here to improve performance during scanning
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 	
 	my @cols      = keys %{$columnValueHash};
 	my $colstring = join( ',', @cols );
@@ -1233,7 +1237,7 @@ sub updateOrCreate {
 
 	} else {
 
-		$track = $self->newTrack({
+		$track = $self->_newTrack({
 			'url'        => $url,
 			'attributes' => $attributeHash,
 			'readTags'   => $readTags,
@@ -1820,7 +1824,7 @@ sub _checkValidity {
 		$track->delete;
 		
 		# Add the track back into database with the same id as the record deleted.
-		$track = $self->newTrack({
+		$track = $self->_newTrack({
 			'id'       => $oldid,
 			'url'      => $url,
 			'readTags' => 1,
@@ -1948,7 +1952,6 @@ sub _preCheckAttributes {
 	my $args = shift;
 
 	my $url    = $args->{'url'};
-	my $create = $args->{'create'} || 0;
 
 	my $deferredAttributes = {};
 
@@ -2157,13 +2160,9 @@ sub _preCheckAttributes {
 
 		while (my ($tag, $value) = each %{$attributes}) {
 
-			# Artwork dump is unreadable in logs, so replace with a text tag.  Mor thorough artwork
+			# Artwork dump is unreadable in logs, so replace with a text tag.  More thorough artwork
 			# debugging is available using artwork setting and this avoids pointless log bloat.
-			if ($tag eq 'ARTWORK') {
-				$log->debug(".. $tag : [Binary Image Data]") if defined $value;
-			} else {
-				$log->debug(".. $tag : $value") if defined $value;
-			}
+			$log->debug(".. $tag : ", ($tag eq 'ARTWORK' ? "[Binary Image Data]" : $value)) if defined $value;
 		}
 
 		$log->debug("* Deferred Attributes *");
@@ -2172,11 +2171,7 @@ sub _preCheckAttributes {
 
 			# Artwork dump is unreadable in logs, so replace with a text tag.  Mor thorough artwork
 			# debugging is available using artwork setting and this avoids pointless log bloat.
-			if ($tag eq 'ARTWORK') {
-				$log->debug(".. $tag : [Binary Image Data]") if defined $value;
-			} else {
-				$log->debug(".. $tag : $value") if defined $value;
-			}
+			$log->debug(".. $tag : ", ($tag eq 'ARTWORK' ? "[Binary Image Data]" : $value)) if defined $value;
 		}
 	}
 
@@ -2706,7 +2701,7 @@ sub _postCheckAttributes {
 		}
 		
 		# Using native DBI here to improve performance during scanning
-		my $dbh = Slim::Schema->storage->dbh;
+		my $dbh = Slim::Schema->dbh;
 
 		while (my ($role, $contributorList) = each %{$contributors}) {
 
@@ -2741,7 +2736,7 @@ sub _postCheckAttributes {
 	my $year = $track->year;
 	
 	# Using native DBI here to improve performance during scanning
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 
 	if (defined $year && $year =~ /^\d+$/ && 
 		$blessedAlbum && $albumObj->title ne string('NO_ALBUM')) {
@@ -3003,7 +2998,7 @@ sub totals {
 	}
 	if ( !exists $TOTAL_CACHE{track} ) {
 		# Bug 13215, this used to be $class->rs('Track')->browse->count but this generates a slow query
-		my $dbh = Slim::Schema->storage->dbh;
+		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('SELECT COUNT(*) FROM tracks WHERE audio = 1');
 		$sth->execute;
 		($TOTAL_CACHE{track}) = $sth->fetchrow_array;
@@ -3011,6 +3006,13 @@ sub totals {
 	}
 	
 	return \%TOTAL_CACHE;
+}
+
+# DB-handle cache
+my $_dbh;
+
+sub dbh {
+	return $_dbh || shift->storage->dbh;
 }
 
 =head1 SEE ALSO

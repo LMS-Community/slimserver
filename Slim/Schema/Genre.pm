@@ -71,7 +71,7 @@ sub add {
 	# Using native DBI here to improve performance during scanning
 	# and because DBIC objects are not needed here
 	# This is around 20x faster than using DBIC
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 

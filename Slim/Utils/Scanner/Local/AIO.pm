@@ -46,7 +46,7 @@ sub find {
 	}
 	
 	# Scanned files are stored in the database, use raw DBI to improve performance here
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 	
 	$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$basedir%'");
 	

@@ -616,6 +616,16 @@ sub sqlVersionLong {
 	return 'MySQL ' . $mysqlVersion || 0;
 }
 
+=head2 canCacheDBHandle( )
+
+Is it permitted to cache the DB handle for the period that the DB is open?
+
+=cut
+
+sub canCacheDBHandle {
+	return 0;
+}
+
 sub checkDataSource { }
 
 sub beforeScan { }

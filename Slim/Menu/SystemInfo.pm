@@ -333,7 +333,7 @@ sub infoServer {
 		push @{$items},	{
 			type => 'text',
 			name => cstring($client, 'DATABASE_VERSION') . cstring($client, 'COLON') . ' '
-						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh ),
+						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->dbh ),
 		};
 	}
 	
