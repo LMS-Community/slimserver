@@ -10,6 +10,7 @@ use Tie::Cache::LRU;
 
 use Slim::Schema::ResultSet::Contributor;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 use constant CACHE_SIZE => 50;
@@ -188,9 +189,13 @@ sub add {
 sub rescan {
 	my $self = shift;
 	
+	my $log = logger('scan.scanner');
+	
 	my $count = Slim::Schema->rs('ContributorTrack')->search( contributor => $self->id )->count;
 	
 	if ( !$count ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: " . $self->id . ' (' . $self->name . ')');
+		
 		delete $CACHE{ $self->id };
 		
 		$self->delete;

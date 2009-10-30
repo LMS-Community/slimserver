@@ -2819,6 +2819,11 @@ sub _mergeAndCreateContributors {
 			));
 		}
 	}
+	
+	# Wipe track contributors for this track, this is necessary to handle
+	# a changed track where contributors have been removed.  Current contributors
+	# will be re-added by Contributor->add() below
+	$self->dbh->do( 'DELETE FROM contributor_track WHERE track = ?', undef, $track->id );
 
 	my %contributors = ();
 

@@ -337,6 +337,7 @@ sub deleted {
 			$track->delete;
 			
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
+			# This will also remove entries from contributor_track and contributor_album
 			for my $contrib ( @contribs ) {
 				$contrib->rescan;
 			}
@@ -499,8 +500,9 @@ sub changed {
 		} );
 		
 		my $orig = {
-			year   => $origTrack->year,
-			genres => [ sort map { $_->id } $origTrack->genres ],
+			contribs => [ $origTrack->contributors->all ],
+			year     => $origTrack->year,
+			genres   => [ sort map { $_->id } $origTrack->genres ],
 		};
 		
 		my $work = sub {	
@@ -515,6 +517,12 @@ sub changed {
 			if ( !defined $track ) {
 				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
 				return;
+			}
+			
+			# Tell Contributors to rescan, if no other tracks left, remove contributor.
+			# This will also remove entries from contributor_track and contributor_album
+			for my $contrib ( @{ $orig->{contribs} } ) {
+				$contrib->rescan;
 			}
 			
 			my $album = $track->album;

@@ -400,6 +400,7 @@ sub runScanPostProcessing {
 	}
 	
 	# Remove and dangling references.
+	# XXX still needed?
 	if ($class->cleanupDatabase) {
 
 		# Don't re-enter
@@ -413,6 +414,7 @@ sub runScanPostProcessing {
 	}
 	
 	# Cleanup stale year entries
+	# XXX still needed?
 	Slim::Schema::Year->cleanupStaleYears;
 
 	# Reset
