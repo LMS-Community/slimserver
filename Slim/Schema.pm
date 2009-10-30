@@ -183,10 +183,10 @@ sub init {
 			PlaylistTrack
 			Rescan
 			Track
-			TrackPersistent
 			Year
 			Progress
 		/);
+		$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
 	}
 
 	# Build all our class accessors and populate them.
@@ -202,7 +202,7 @@ sub init {
 
 	$trackAttrs = Slim::Schema::Track->attributes;
 	
-	if ( !main::SLIM_SERVICE ) {
+	if ( main::STATISTICS ) {
 		$trackPersistentAttrs = Slim::Schema::TrackPersistent->attributes;
 	}
 
@@ -1021,7 +1021,7 @@ sub newTrack {
 		 $log->info(sprintf("Created track '%s' (id: [%d])", $track->title, $track->id));
 	}
 
-	if ( !main::SLIM_SERVICE && $track->audio ) {
+	if ( main::STATISTICS && $track->audio ) {
 		# Pull the track persistent object for the DB
 		my $trackPersistent = $track->retrievePersistent();
 
@@ -1175,7 +1175,7 @@ sub updateOrCreate {
 
 		# Pull the track metadata object for the DB if available
 		my $trackPersistent;
-		if ( !main::SLIM_SERVICE ) {
+		if ( main::STATISTICS ) {
 			$trackPersistent = $track->retrievePersistent();
 		}
 	
@@ -1212,7 +1212,7 @@ sub updateOrCreate {
 			}
 
 			# Metadata is only included if it contains a non zero value
-			if ( $val && blessed($trackPersistent) && exists $trackPersistentAttrs->{$key} ) {
+			if ( main::STATISTICS && $val && blessed($trackPersistent) && exists $trackPersistentAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating persistent $url : $key to $val");
 

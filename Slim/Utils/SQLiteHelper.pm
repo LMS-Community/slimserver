@@ -113,6 +113,7 @@ sub on_connect_do {
 		'PRAGMA journal_mode = MEMORY',
 	];
 	
+	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file
 	my $persistentdb = $class->_dbFile('squeezebox-persistent.db');
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";

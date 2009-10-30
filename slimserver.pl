@@ -22,6 +22,7 @@ use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
 use constant PERFMON      => ( grep { /--perfwarn/ } @ARGV ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
+use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
@@ -302,6 +303,7 @@ our (
 	$nodebuglog,
 	$noinfolog,
 	$nosb1slimp3sync,
+	$nostatistics,
 	$stdio,
 	$stop,
 	$perfwarn,
@@ -683,7 +685,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
-          [--notranscoding] [--nosb1slimp3sync]
+          [--notranscoding] [--nosb1slimp3sync] [--nostatistics]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -725,6 +727,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --noserver       => Disable web access server settings, but leave player settings accessible.
                         Settings changes are not preserved.
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
+    --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
@@ -775,6 +778,7 @@ sub initOptions {
 		'noinfolog'     => \$noinfolog,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
+		'nostatistics'  => \$nostatistics,
 		'noupnp'        => \$noupnp,
 		'nosb1slimp3sync'=> \$nosb1slimp3sync,
 		'notranscoding' => \$notranscoding,

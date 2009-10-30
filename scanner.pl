@@ -25,6 +25,7 @@ use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
+use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
@@ -98,7 +99,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog);
+	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
 
 	our $LogTimestamp = 1;
 	our $noweb = 1;
@@ -121,6 +122,7 @@ sub main {
 		# prefsdir parsed by Slim::Utils::Prefs
 		'nodebuglog'   => \$nodebuglog,
 		'noinfolog'    => \$noinfolog,
+		'nostatistics' => \$nostatistics,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,
@@ -436,6 +438,7 @@ Command line options:
 	--logconfig    Specify pre-defined logging configuration file
     --nodebuglog   Disable all debug-level logging (compiled out).
     --noinfolog    Disable all debug-level & info-level logging (compiled out).
+    --nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
 	--debug        various debug options
 	--quiet        keep silent
 	

@@ -386,14 +386,16 @@ sub runScanPostProcessing {
 	
 	Slim::Music::Artwork->precacheAllArtwork;
 	
-	# Look for and import persistent data migrated from 7.3.3
-	my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
-	my $json = catfile( $dir, 'tracks_persistent.json' );
-	if ( -e $json ) {
-		$log->error('Migrating persistent track information from MySQL');
-		
-		if ( Slim::Schema::TrackPersistent->import_json($json) ) {
-			unlink $json;
+	if (main::STATISTICS) {
+		# Look for and import persistent data migrated from MySQL
+		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
+		my $json = catfile( $dir, 'tracks_persistent.json' );
+		if ( -e $json ) {
+			$log->error('Migrating persistent track information from MySQL');
+			
+			if ( Slim::Schema::TrackPersistent->import_json($json) ) {
+				unlink $json;
+			}
 		}
 	}
 	

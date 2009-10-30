@@ -77,11 +77,13 @@ if ( main::SLIM_SERVICE ) {
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
 	
-	$class->might_have(
-		persistent => 'Slim::Schema::TrackPersistent',
-		{ 'foreign.urlmd5' => 'self.urlmd5' },
-		{ cascade_delete => 0 },
-	);
+	if (main::STATISTICS) {
+		$class->might_have(
+			persistent => 'Slim::Schema::TrackPersistent',
+			{ 'foreign.urlmd5' => 'self.urlmd5' },
+			{ cascade_delete => 0 },
+		);
+	}
 
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
@@ -530,18 +532,20 @@ sub displayAsHTML {
 sub retrievePersistent {
 	my $self = shift;
 
-	my $trackPersistent;
+	if (main::STATISTICS) {
+		my $trackPersistent;
+		
+		# Match on musicbrainz_id first
+		if ( $self->musicbrainz_id ) {
+			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
+		}
+		else {
+			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
+		}
 	
-	# Match on musicbrainz_id first
-	if ( $self->musicbrainz_id ) {
-		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
-	}
-	else {
-		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
-	}
-
-	if ( blessed($trackPersistent) ) {
-		return $trackPersistent;
+		if ( blessed($trackPersistent) ) {
+			return $trackPersistent;
+		}
 	}
 
 	return undef;
@@ -552,13 +556,15 @@ sub retrievePersistent {
 sub playcount { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( playcount => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( playcount => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->playcount;
 		}
-		
-		return $persistent->playcount;
 	}
 	
 	return;
@@ -567,13 +573,15 @@ sub playcount {
 sub rating { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( rating => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( rating => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->rating;
 		}
-		
-		return $persistent->rating;
 	}
 	
 	return;
@@ -582,13 +590,15 @@ sub rating {
 sub lastplayed { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( lastplayed => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( lastplayed => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->lastplayed;
 		}
-		
-		return $persistent->lastplayed;
 	}
 	
 	return;
