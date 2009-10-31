@@ -1446,39 +1446,96 @@ having more than one artist.
 sub mergeVariousArtistsAlbums {
 	my $self = shift;
 	
-	my $isDebug   = main::DEBUGLOG && $log->is_debug;
 	my $importlog = main::INFOLOG ? logger('scan.import') : undef;
+	my $isInfo    = main::INFOLOG && $importlog->is_info;
 
 	my $vaObjId = $self->variousArtistsObject->id;
 	my $role    = Slim::Schema::Contributor->typeToRole('ARTIST');
-
-	my $cursor  = $self->search('Album', {
-
-		'me.compilation' => undef,
-		
-		# BUG4193: allow processing 'no album' so we resolve the multiple artists
-		#'me.title'       => { '!=' => string('NO_ALBUM') },
-
-	})->distinct;
-
-	my $progress = undef;
-	my $count    = $cursor->count;
-
+	
+	# Get a list of albums that where:
+	# * Compilation is null
+	#
+	# For each album, if more than 1 contributor of type $role (ARTIST):
+	# * It's a compilation
+	# else
+	# * Set compilation = 0
+	my $sql = qq{
+		SELECT albums.id, albums.title, COUNT(contributor_album.contributor)
+		FROM   albums
+		JOIN   contributor_album ON (albums.id = contributor_album.album)
+		AND    albums.compilation IS NULL
+		AND    contributor_album.role = ?
+		GROUP BY albums.id
+	};
+	
+	my $progress;
+	my ($count) = $self->dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, $role );
+	
+	main::INFOLOG && $isInfo && $importlog->info("Checking compilation status for $count albums");
+	
 	if ($count) {
-		$progress = Slim::Utils::Progress->new({
-			'type' => 'importer', 'name' => 'mergeva', 'total' => $count, 'bar' => 1
-		});
-	}
-
-	# fetch one at a time to keep memory usage in check.
-	while (my $albumObj = $cursor->next) {
+		if ( main::SCANNER && $main::progress ) {
+			$progress = Slim::Utils::Progress->new( {
+				type  => 'importer',
+				name  => 'mergeva',
+				total => $count,
+				bar   => 1,
+			} );
+		}
 		
-		$self->mergeSingleVAAlbum( $albumObj, $vaObjId, $role );
+		my $sth = $self->dbh->prepare( $sql );
+		$sth->execute( $role );
 
-		$progress->update($albumObj->name);
+		# Might be a lot of albums so let's try to make this as fast as possible
+		my ($albumid, $title, $num_contribs);
+		$sth->bind_columns( \$albumid, \$title, \$num_contribs );
+		
+		my $comp_sth = $self->dbh->prepare( qq{
+			UPDATE albums
+			SET    compilation = 1, contributor = ?
+			WHERE  id = ?
+		} );
+		
+		my $not_comp_sth = $self->dbh->prepare( qq{
+			UPDATE albums
+			SET    compilation = 0
+			WHERE  id = ?
+		} );
+
+		while ( $sth->fetch ) {
+			if ( $num_contribs > 1 ) {
+				# Flag as a compilation, set primary contrib to Various Artists
+				$comp_sth->execute( $vaObjId, $albumid );
+							
+				main::INFOLOG && $isInfo && $importlog->info("Is a Comp : $title");
+			}
+			else {
+				$not_comp_sth->execute($albumid);
+				
+				main::INFOLOG && $isInfo && $importlog->info("Not a Comp: $title");
+			}
+			
+			$progress && $progress->update($title);
+		}
+		
+		$sth->finish;
+		
+		$progress && $progress->final($count);
 	}
-
-	$progress->final($count) if $count;
+	
+	# Run another query to automatically set all albums with an ARTIST contributor
+	# named "Various Artists" (id $vaObjId) to compilation = 1
+	$self->dbh->do( qq{
+		UPDATE albums
+		SET    compilation = 1
+		WHERE id IN (
+			SELECT album FROM contributor_album
+			WHERE role = ?
+			AND   contributor = ?
+		)
+	}, undef, $role, $vaObjId );
 
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
@@ -1490,77 +1547,53 @@ Merge a single VA album
 =cut
 
 sub mergeSingleVAAlbum {
-	my ( $self, $albumObj, $vaObjId, $role ) = @_;
+	my ( $class, $albumid ) = @_;
 	
-	my $isDebug   = main::DEBUGLOG && $log->is_debug;
 	my $importlog = main::INFOLOG ? logger('scan.import') : undef;
+	my $isInfo    = main::INFOLOG && $importlog->is_info;
 	
-	my %trackArtists      = ();
-	my $markAsCompilation = 0;
+	my $role = Slim::Schema::Contributor->typeToRole('ARTIST');
 	
-	if ( !$vaObjId ) {
-		$vaObjId = $self->variousArtistsObject->id;
-	}
+	main::INFOLOG && $isInfo && $importlog->info("Checking compilation status for album $albumid");
 	
-	if ( !$role ) {
-		$role = Slim::Schema::Contributor->typeToRole('ARTIST');
-	}
-
-	main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- VA postcheck for album '%s' (id: [%d])", $albumObj->name, $albumObj->id));
-
-	# Bug 2066: If the user has an explict Album Artist set -
-	# don't try to mark it as a compilation. So only fetch ARTIST roles.
-	my $tracks = $albumObj->tracks({ 'contributorTracks.role' => $role }, { 'prefetch' => 'contributorTracks' });
-
-	while (my $track = $tracks->next) {
-
-		# Don't inflate the contributor object.
-		my @contributors = sort map {
-			$_->get_column('contributor')
-		} $track->search_related('contributorTracks')->all;
-
-		# Create a composite of the artists for the track to compare below.
-		$trackArtists{ join(':', @contributors) } = 1;
-		
-		main::DEBUGLOG && $isDebug && $log->debug(sprintf("--- Album has composite artist '%s'", join(':', @contributors)));
-	}
-
-	# Bug 2418 was fixed here -- but we don't do it anymore
-	# (hardcoded artist of 'Various Artists' making the album a compilation)
-	if (scalar values %trackArtists > 1) {
-
-		$markAsCompilation = 1;
-
-	} else {
-
-		my ($artistId) = keys %trackArtists;
-
-		# Use eq here instead of ==, because the artistId
-		# might be a composite from above, if all of the
-		# tracks in an album have the same (multiple) artists.
-		if ($artistId && $artistId eq $vaObjId) {
-
-			$markAsCompilation = 1;
-		}
-	}
-
-	if ($markAsCompilation) {
-		main::INFOLOG && $importlog->is_info && $importlog->info(sprintf("Import: Marking album: [%s] as a compilation.", $albumObj->title));
-
-		main::DEBUGLOG && $isDebug && $log->debug("--- Album is a VA");
-
-		$albumObj->compilation(1);
-		$albumObj->contributor($vaObjId);
+	my $sth = $class->dbh->prepare_cached( qq{
+		SELECT COUNT(contributor)
+		FROM   contributor_album
+		WHERE  role = ?
+		AND    album = ?
+	} );
+	
+	my $comp_sth = $class->dbh->prepare_cached( qq{
+		UPDATE albums
+		SET    compilation = 1, contributor = ?
+		WHERE  id = ?
+	} );
+	
+	my $not_comp_sth = $class->dbh->prepare_cached( qq{
+		UPDATE albums
+		SET    compilation = 0
+		WHERE  id = ?
+	} );
+	
+	$sth->execute( $role, $albumid );
+	my ($num_contribs) = $sth->fetchrow_array();
+	$sth->finish;
+	
+	if ( $num_contribs > 1 ) {
+		# Flag as a compilation, set primary contrib to Various Artists
+		$comp_sth->execute( $class->variousArtistsObject->id, $albumid );
+					
+		main::INFOLOG && $isInfo && $importlog->info('Is a Comp');
 	}
 	else {
 		# Cache that the album is not a compilation so it's not constantly
 		# checked during every mergeVA phase.  Scanner::Local will reset
 		# compilation to undef when a new/deleted/changed track requires
 		# a re-check of VA status
-		$albumObj->compilation(0);
+		$not_comp_sth->execute($albumid);
+		
+		main::INFOLOG && $isInfo && $importlog->info('Not a Comp');
 	}
-	
-	$albumObj->update;
 }
 
 =head2 wipeCaches()

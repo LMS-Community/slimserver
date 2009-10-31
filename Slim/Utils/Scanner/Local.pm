@@ -351,16 +351,15 @@ sub deleted {
 				# the album was deleted by the $album->rescan.
 				if ( $album->in_storage && $album->compilation ) {
 					$album->compilation(undef);
+					$album->update;
 					
 					if ( !main::SCANNER ) {
 						# Re-check VA status for the album,
 						# this will also save the album
-						Slim::Schema->mergeSingleVAAlbum($album);
+						Slim::Schema->mergeSingleVAAlbum( $album->id );
 					}
 					else {
-						# Save the album for now, it will be checked
-						# for VA status in mergeVA phase
-						$album->update;
+						# Album will be checked for VA status in mergeVA phase
 					}
 				}
 			}
@@ -429,17 +428,16 @@ sub new {
 			# as it may have just become a VA album from this new track
 			if ( $album && ( !defined($album->compilation) || $album->compilation == 0 ) ) {
 				$album->compilation(undef);
+				$album->update;
 				
 				if ( !main::SCANNER ) {
 					# Auto-rescan mode, immediately merge VA
-					Slim::Schema->mergeSingleVAAlbum($album);
+					Slim::Schema->mergeSingleVAAlbum( $album->id );
 				}
 				else {
 					# Will be merged later during the mergeVA phase
 				}
 			}
-			
-			$album && $album->update;
 		};
 	}
 	elsif ( 
@@ -545,17 +543,16 @@ sub changed {
 			# Reset compilation status as it may have changed
 			if ( $album ) {
 				$album->compilation(undef);
+				$album->update;
 				
 				if ( !main::SCANNER ) {
 					# Auto-rescan mode, immediately merge VA
-					Slim::Schema->mergeSingleVAAlbum($album);
+					Slim::Schema->mergeSingleVAAlbum( $album->id );
 				}
 				else {
 					# Will be checked later during mergeVA phase
 				}
 			}
-			
-			$album && $album->update;
 			
 			# XXX
 			# Rescan comments
