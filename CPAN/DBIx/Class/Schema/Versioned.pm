@@ -520,13 +520,11 @@ sub _create_db_to_schema_diff {
     return;
   }
 
-  eval 'require SQL::Translator "0.09003"';
-  if ($@) {
-    $self->throw_exception("SQL::Translator 0.09003 required");
-  }
+  $self->throw_exception($self->storage->_sqlt_version_error)
+    if (not $self->storage->_sqlt_version_ok);
 
-  my $db_tr = SQL::Translator->new({ 
-                                    add_drop_table => 1, 
+  my $db_tr = SQL::Translator->new({
+                                    add_drop_table => 1,
                                     parser => 'DBI',
                                     parser_args => { dbh => $self->storage->dbh }
                                    });

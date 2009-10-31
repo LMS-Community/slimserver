@@ -14,30 +14,55 @@ __PACKAGE__->mk_group_accessors(simple => qw/
 
 __PACKAGE__->sql_maker_class('DBIx::Class::SQLAHacks::MSSQL');
 
+sub _set_identity_insert {
+  my ($self, $table) = @_;
+
+  my $sql = sprintf (
+    'SET IDENTITY_INSERT %s ON',
+    $self->sql_maker->_quote ($table),
+  );
+
+  my $dbh = $self->_get_dbh;
+  eval { $dbh->do ($sql) };
+  if ($@) {
+    $self->throw_exception (sprintf "Error executing '%s': %s",
+      $sql,
+      $dbh->errstr,
+    );
+  }
+}
+
+sub _unset_identity_insert {
+  my ($self, $table) = @_;
+
+  my $sql = sprintf (
+    'SET IDENTITY_INSERT %s OFF',
+    $self->sql_maker->_quote ($table),
+  );
+
+  my $dbh = $self->_get_dbh;
+  $dbh->do ($sql);
+}
+
 sub insert_bulk {
   my $self = shift;
   my ($source, $cols, $data) = @_;
 
-  my $identity_insert = 0;
+  my $is_identity_insert = (List::Util::first
+      { $source->column_info ($_)->{is_auto_increment} }
+      (@{$cols})
+  )
+     ? 1
+     : 0;
 
-  COLUMNS:
-  foreach my $col (@{$cols}) {
-    if ($source->column_info($col)->{is_auto_increment}) {
-      $identity_insert = 1;
-      last COLUMNS;
-    }
-  }
-
-  if ($identity_insert) {
-    my $table = $source->from;
-    $self->_get_dbh->do("SET IDENTITY_INSERT $table ON");
+  if ($is_identity_insert) {
+     $self->_set_identity_insert ($source->name);
   }
 
   $self->next::method(@_);
 
-  if ($identity_insert) {
-    my $table = $source->from;
-    $self->_get_dbh->do("SET IDENTITY_INSERT $table OFF");
+  if ($is_identity_insert) {
+     $self->_unset_identity_insert ($source->name);
   }
 }
 
@@ -47,7 +72,7 @@ sub insert {
   my $self = shift;
   my ($source, $to_insert) = @_;
 
-  my $updated_cols = {};
+  my $supplied_col_info = $self->_resolve_column_info($source, [keys %$to_insert] );
 
   my %guid_cols;
   my @pk_cols = $source->primary_columns;
@@ -55,10 +80,14 @@ sub insert {
   @pk_cols{@pk_cols} = ();
 
   my @pk_guids = grep {
+    $source->column_info($_)->{data_type}
+    &&
     $source->column_info($_)->{data_type} =~ /^uniqueidentifier/i
   } @pk_cols;
 
   my @auto_guids = grep {
+    $source->column_info($_)->{data_type}
+    &&
     $source->column_info($_)->{data_type} =~ /^uniqueidentifier/i
     &&
     $source->column_info($_)->{auto_nextval}
@@ -67,12 +96,27 @@ sub insert {
   my @get_guids_for =
     grep { not exists $to_insert->{$_} } (@pk_guids, @auto_guids);
 
+  my $updated_cols = {};
+
   for my $guid_col (@get_guids_for) {
     my ($new_guid) = $self->_get_dbh->selectrow_array('SELECT NEWID()');
     $updated_cols->{$guid_col} = $to_insert->{$guid_col} = $new_guid;
   }
 
+  my $is_identity_insert = (List::Util::first { $_->{is_auto_increment} } (values %$supplied_col_info) )
+     ? 1
+     : 0;
+
+  if ($is_identity_insert) {
+     $self->_set_identity_insert ($source->name);
+  }
+
   $updated_cols = { %$updated_cols, %{ $self->next::method(@_) } };
+
+  if ($is_identity_insert) {
+     $self->_unset_identity_insert ($source->name);
+  }
+
 
   return $updated_cols;
 }
@@ -87,7 +131,9 @@ sub _prep_for_execute {
 
     for my $col (keys %$fields) {
       # $ident is a result source object with INSERT/UPDATE ops
-      if ($ident->column_info ($col)->{data_type} =~ /^money\z/i) {
+      if ($ident->column_info ($col)->{data_type}
+         &&
+         $ident->column_info ($col)->{data_type} =~ /^money\z/i) {
         my $val = $fields->{$col};
         $fields->{$col} = \['CAST(? AS MONEY)', [ $col => $val ]];
       }
@@ -99,14 +145,6 @@ sub _prep_for_execute {
   if ($op eq 'insert') {
     $sql .= ';SELECT SCOPE_IDENTITY()';
 
-    my $col_info = $self->_resolve_column_info($ident, [map $_->[0], @{$bind}]);
-    if (List::Util::first { $_->{is_auto_increment} } (values %$col_info) ) {
-
-      my $table = $ident->from;
-      my $identity_insert_on = "SET IDENTITY_INSERT $table ON";
-      my $identity_insert_off = "SET IDENTITY_INSERT $table OFF";
-      $sql = "$identity_insert_on; $sql; $identity_insert_off";
-    }
   }
 
   return ($sql, $bind);
@@ -192,6 +230,8 @@ L<DBIx::Class::Storage::DBI::Sybase::Microsoft_SQL_Server>.
 
 =head1 IMPLEMENTATION NOTES
 
+=head2 IDENTITY information
+
 Microsoft SQL Server supports three methods of retrieving the IDENTITY
 value for inserted row: IDENT_CURRENT, @@IDENTITY, and SCOPE_IDENTITY().
 SCOPE_IDENTITY is used here because it is the safest.  However, it must
@@ -209,6 +249,16 @@ it will only be used if SCOPE_IDENTITY() fails.
 This is more dangerous, as inserting into a table with an on insert trigger that
 inserts into another table with an identity will give erroneous results on
 recent versions of SQL Server.
+
+=head2 identity insert
+
+Be aware that we have tried to make things as simple as possible for our users.
+For MSSQL that means that when a user tries to create a row, while supplying an
+explicit value for an autoincrementing column, we will try to issue the
+appropriate database call to make this possible, namely C<SET IDENTITY_INSERT
+$table_name ON>. Unfortunately this operation in MSSQL requires the
+C<db_ddladmin> privilege, which is normally not included in the standard
+write-permissions.
 
 =head1 AUTHOR
 

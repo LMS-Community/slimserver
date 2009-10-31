@@ -18,6 +18,7 @@ columns to be of the datetime, timestamp or date datatype.
   __PACKAGE__->load_components(qw/InflateColumn::DateTime Core/);
   __PACKAGE__->add_columns(
     starts_when => { data_type => 'datetime' }
+    create_date => { data_type => 'date' }
   );
 
 NOTE: You B<must> load C<InflateColumn::DateTime> B<before> C<Core>. See
@@ -69,13 +70,21 @@ one your code should continue to work without modification (though note
 that this feature is new as of 0.07, so it may not be perfect yet - bug
 reports to the list very much welcome).
 
+If the data_type of a field is C<date>, C<datetime> or C<timestamp> (or
+a derivative of these datatypes, e.g. C<timestamp with timezone>), this
+module will automatically call the appropriate parse/format method for
+deflation/inflation as defined in the storage class. For instance, for
+a C<datetime> field the methods C<parse_datetime> and C<format_datetime>
+would be called on deflation/inflation. If the storage class does not
+provide a specialized inflator/deflator, C<[parse|format]_datetime> will
+be used as a fallback. See L<DateTime::Format> for more information on
+date formatting.
+
 For more help with using components, see L<DBIx::Class::Manual::Component/USING>.
 
 =cut
 
 __PACKAGE__->load_components(qw/InflateColumn/);
-
-__PACKAGE__->mk_group_accessors('simple' => '__datetime_parser');
 
 =head2 register_column
 
@@ -213,12 +222,7 @@ sub _deflate_from_datetime {
 }
 
 sub _datetime_parser {
-  my $self = shift;
-  if (my $parser = $self->__datetime_parser) {
-    return $parser;
-  }
-  my $parser = $self->result_source->storage->datetime_parser(@_);
-  return $self->__datetime_parser($parser);
+  shift->result_source->storage->datetime_parser (@_);
 }
 
 1;

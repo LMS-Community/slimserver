@@ -814,7 +814,7 @@ sub connection {
 
   $storage_class = 'DBIx::Class::Storage'.$storage_class
     if $storage_class =~ m/^::/;
-  eval "require ${storage_class};";
+  eval { $self->ensure_class_loaded ($storage_class) };
   $self->throw_exception(
     "No arguments to load_classes and couldn't load ${storage_class} ($@)"
   ) if $@;

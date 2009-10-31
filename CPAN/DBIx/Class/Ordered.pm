@@ -434,10 +434,7 @@ if multiple grouping columns are in use.
 sub move_to_group {
     my( $self, $to_group, $to_position ) = @_;
 
-    $self->throw_exception ('move_to_group() expects a group specification')
-        unless defined $to_group;
-
-    # if we're given a string, turn it into a hashref
+    # if we're given a single value, turn it into a hashref
     unless (ref $to_group eq 'HASH') {
         my @gcols = $self->_grouping_columns;
 

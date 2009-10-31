@@ -5,7 +5,6 @@ use warnings;
 use base qw/DBIx::Class::Storage::DBI::MSSQL/;
 use mro 'c3';
 
-use Carp::Clan qw/^DBIx::Class/;
 use List::Util();
 use Scalar::Util ();
 
@@ -62,7 +61,7 @@ sub connect_call_use_dynamic_cursors {
   my $self = shift;
 
   if (ref($self->_dbi_connect_info->[0]) eq 'CODE') {
-    croak 'cannot set DBI attributes on a CODE ref connect_info';
+    $self->throw_exception ('cannot set DBI attributes on a CODE ref connect_info');
   }
 
   my $dbi_attrs = $self->_dbi_connect_info->[-1];
@@ -91,7 +90,7 @@ sub _set_dynamic_cursors {
     $dbh->do('SELECT @@IDENTITY');
   };
   if ($@) {
-    croak <<'EOF';
+    $self->throw_exception (<<'EOF');
 
 Your drivers do not seem to support dynamic cursors (odbc_cursortype => 2),
 if you're using FreeTDS, make sure to set tds_version to 8.0 or greater.
@@ -102,12 +101,18 @@ EOF
   $self->_identity_method('@@identity');
 }
 
-sub _rebless {
-  no warnings 'uninitialized';
+sub _init {
   my $self = shift;
 
-  if (ref($self->_dbi_connect_info->[0]) ne 'CODE' &&
-      eval { $self->_dbi_connect_info->[-1]{odbc_cursortype} } == 2) {
+  no warnings qw/uninitialized/;
+
+  if (
+    ref($self->_dbi_connect_info->[0]) ne 'CODE'
+      &&
+    ref ($self->_dbi_connect_info->[-1]) eq 'HASH'
+      &&
+    $self->_dbi_connect_info->[-1]{odbc_cursortype} == 2
+  ) {
     $self->_set_dynamic_cursors;
     return;
   }
@@ -159,7 +164,7 @@ sub connect_call_use_MARS {
   my $dsn = $self->_dbi_connect_info->[0];
 
   if (ref($dsn) eq 'CODE') {
-    croak 'cannot change the DBI DSN on a CODE ref connect_info';
+    $self->throw_exception('cannot change the DBI DSN on a CODE ref connect_info');
   }
 
   if ($dsn !~ /MARS_Connection=/) {

@@ -206,12 +206,6 @@ sub connect_call_datetime_setup {
 "alter session set nls_timestamp_tz_format='$timestamp_tz_format'");
 }
 
-sub _svp_begin {
-    my ($self, $name) = @_;
-
-    $self->_get_dbh->do("SAVEPOINT $name");
-}
-
 =head2 source_bind_attributes
 
 Handle LOB types in Oracle.  Under a certain size (4k?), you can get away
@@ -254,6 +248,12 @@ sub source_bind_attributes
 	}
 
 	return \%bind_attributes;
+}
+
+sub _svp_begin {
+    my ($self, $name) = @_;
+
+    $self->_get_dbh->do("SAVEPOINT $name");
 }
 
 # Oracle automatically releases a savepoint when you start another one with the

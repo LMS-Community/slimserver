@@ -19,10 +19,8 @@ sub _rebless {
           ? 'DBIx::Class::Storage::DBI::Oracle::WhereJoins'
           : 'DBIx::Class::Storage::DBI::Oracle::Generic';
 
-        # Load and rebless
-        eval "require $class";
-
-        bless $self, $class unless $@;
+        $self->ensure_class_loaded ($class);
+        bless $self, $class;
     }
 }
 

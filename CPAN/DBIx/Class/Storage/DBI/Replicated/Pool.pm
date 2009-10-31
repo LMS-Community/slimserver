@@ -5,6 +5,7 @@ use MooseX::AttributeHelpers;
 use DBIx::Class::Storage::DBI::Replicated::Replicant;
 use List::Util 'sum';
 use Scalar::Util 'reftype';
+use DBI ();
 use Carp::Clan qw/^DBIx::Class/;
 use MooseX::Types::Moose qw/Num Int ClassName HashRef/;
 
@@ -137,6 +138,16 @@ has 'replicants' => (
   },
 );
 
+has next_unknown_replicant_id => (
+  is => 'rw',
+  metaclass => 'Counter',
+  isa => Int,
+  default => 1,
+  provides => {
+    inc => 'inc_unknown_replicant_id'
+  },
+);
+
 =head1 METHODS
 
 This class defines the following methods.
@@ -158,16 +169,45 @@ sub connect_replicants {
     $connect_info = [ $connect_info ]
       if reftype $connect_info ne 'ARRAY';
 
-    croak "coderef replicant connect_info not supported"
-      if ref $connect_info->[0] && reftype $connect_info->[0] eq 'CODE';
+    my $connect_coderef =
+      (reftype($connect_info->[0])||'') eq 'CODE' ? $connect_info->[0]
+        : (reftype($connect_info->[0])||'') eq 'HASH' &&
+          $connect_info->[0]->{dbh_maker};
 
-    my $replicant = $self->connect_replicant($schema, $connect_info);
+    my $dsn;
+    my $replicant = do {
+# yes this is evil, but it only usually happens once (for coderefs)
+# this will fail if the coderef does not actually DBI::connect
+      no warnings 'redefine';
+      my $connect = \&DBI::connect;
+      local *DBI::connect = sub {
+        $dsn = $_[1];
+        goto $connect;
+      };
+      $self->connect_replicant($schema, $connect_info);
+    };
 
-    my $key = $connect_info->[0];
-    $key = $key->{dsn} if ref $key && reftype $key eq 'HASH';
-    ($key) = ($key =~ m/^dbi\:.+\:(.+)$/);
+    my $key;
 
-    $self->set_replicant( $key => $replicant);  
+    if (!$dsn) {
+      if (!$connect_coderef) {
+        $dsn = $connect_info->[0];
+        $dsn = $dsn->{dsn} if (reftype($dsn)||'') eq 'HASH';
+      }
+      else {
+        # all attempts to get the DSN failed
+        $key = "UNKNOWN_" . $self->next_unknown_replicant_id;
+        $self->inc_unknown_replicant_id;
+      }
+    }
+    if ($dsn) {
+      $replicant->dsn($dsn);
+      ($key) = ($dsn =~ m/^dbi\:.+\:(.+)$/i);
+    }
+
+    $replicant->id($key);
+    $self->set_replicant($key => $replicant);  
+
     push @newly_created, $replicant;
   }
 
