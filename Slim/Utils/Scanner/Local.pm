@@ -425,19 +425,14 @@ sub new {
 			}
 			
 			# Reset negative compilation status on this album so mergeVA will re-check it
-			# as it may have just become a VA album from this new track
-			if ( $album && ( !defined($album->compilation) || $album->compilation == 0 ) ) {
-				$album->compilation(undef);
-				$album->update;
-				
-				if ( !main::SCANNER ) {
-					# Auto-rescan mode, immediately merge VA
-					Slim::Schema->mergeSingleVAAlbum( $album->id );
-				}
-				else {
-					# Will be merged later during the mergeVA phase
-				}
+			# as it may have just become a VA album from this new track.  When run in
+			# the scanner, mergeVA will handle this later.
+			if ( !main::SCANNER && $album && !$album->compilation ) {				
+				# Auto-rescan mode, immediately merge VA
+				Slim::Schema->mergeSingleVAAlbum( $album->id );
 			}
+			
+			$album && $album->update;
 		};
 	}
 	elsif ( 
