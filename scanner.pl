@@ -238,6 +238,9 @@ sub main {
 			Slim::Utils::MemoryUsage->init();
 		}
 	}
+	
+	main::INFOLOG && $log->info("Cache init...");
+	Slim::Utils::Cache->init();
 
 	if ($playlists) {
 
