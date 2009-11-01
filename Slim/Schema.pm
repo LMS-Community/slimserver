@@ -2320,7 +2320,7 @@ sub _postCheckAttributes {
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
-	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation, $isLocal);
+	my $contributors     = $self->_mergeAndCreateContributors($trackId, $attributes, $isCompilation, $isLocal);
 	my $foundContributor = scalar keys %{$contributors};
 
 	main::DEBUGLOG && $isDebug && $log->debug("-- Track has $foundContributor contributor(s)");
@@ -2823,7 +2823,7 @@ sub _albumIsUnknownAlbum {
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $track, $attributes, $isCompilation, $isLocal) = @_;
+	my ($self, $trackId, $attributes, $isCompilation, $isLocal) = @_;
 
 	if (!$isLocal) {
 		return;
@@ -2855,7 +2855,7 @@ sub _mergeAndCreateContributors {
 	# Wipe track contributors for this track, this is necessary to handle
 	# a changed track where contributors have been removed.  Current contributors
 	# will be re-added by Contributor->add() below
-	$self->dbh->do( 'DELETE FROM contributor_track WHERE track = ?', undef, $track->id );
+	$self->dbh->do( 'DELETE FROM contributor_track WHERE track = ?', undef, $trackId );
 
 	my %contributors = ();
 
@@ -2870,7 +2870,7 @@ sub _mergeAndCreateContributors {
 			'artist'   => $contributor, 
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'role'     => Slim::Schema::Contributor->typeToRole($tag),
-			'track'    => $track,
+			'track'    => $trackId,
 			'sortBy'   => $attributes->{$tag.'SORT'},
 		});
 

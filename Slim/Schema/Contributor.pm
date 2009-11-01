@@ -116,7 +116,7 @@ sub add {
 	my $artist     = $args->{'artist'} || return;
 	my $brainzID   = $args->{'brainzID'};
 	my $role       = $args->{'role'}   || return;
-	my $track      = $args->{'track'}  || return;
+	my $trackId    = $args->{'track'}  || return;
 
 	my @contributors = ();
 
@@ -170,7 +170,7 @@ sub add {
 			VALUES
 			(?, ?, ?)
 		} );
-		$sth->execute( $role, $id, (ref $track ? $track->id : $track) );
+		$sth->execute( $role, $id, $trackId );
 		
 		# We need to return a DBIC object, which is really slow, use a cache
 		# to help out a bit
