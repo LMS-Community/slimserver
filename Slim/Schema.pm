@@ -956,7 +956,7 @@ sub _newTrack {
 	});
 
 	# Playlists don't have years.
-	if ($source eq 'Playlist') {
+	if ($playlist) {
 		delete $attributeHash->{'YEAR'};
 	}
 
@@ -1164,7 +1164,13 @@ sub updateOrCreate {
 	# Short-circuit for remote tracks
 	if (Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
-		return $class->updateOrCreate($track ? $track : $url, $attributeHash, \%tagMapping);
+
+		($attributeHash, undef) = $self->_preCheckAttributes({
+			'url'        => $url,
+			'attributes' => $attributeHash,
+		});
+		
+		return $class->updateOrCreate($track ? $track : $url, $attributeHash);
 	}
 
 	# Track will be defined or not based on the assignment above.
@@ -2022,35 +2028,39 @@ sub _preCheckAttributes {
 		}
 	}
 
-	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
-		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
+	if ($attributes->{'TITLE'}) {
+		# Create a canonical title to search against.
+		$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
+	
+		if (!$attributes->{'TITLESORT'}) {
+			$attributes->{'TITLESORT'} = $attributes->{'TITLESEARCH'};
+		} else {
+			# Always normalize the sort, as TITLESORT could come from a TSOT tag.
+			$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
+		}
 	}
-
-	if ($attributes->{'TITLE'} && $attributes->{'TITLESORT'}) {
-		# Always normalize the sort, as TITLESORT could come from a TSOT tag.
-		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
-	}
-
-	# Create a canonical title to search against.
-	$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
 
 	# Remote index.
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
 	# Some formats stick a DISC tag such as 1/2 or 1-2 into the field.
 	if ($attributes->{'DISC'} && $attributes->{'DISC'} =~ m|^(\d+)[-/](\d+)$|) {
-
 		$attributes->{'DISC'}  = $1;
+		$attributes->{'DISCC'} ||= $2;
+	}
 
-		if (!$attributes->{'DISCC'}) {
-
-			$attributes->{'DISCC'} = $2;
+	# Some tag formats - APE? store the type of channels instead of the number of channels.
+	if (defined $attributes->{'CHANNELS'}) { 
+		if ($attributes->{'CHANNELS'} =~ /stereo/i) {
+			$attributes->{'CHANNELS'} = 2;
+		} elsif ($attributes->{'CHANNELS'} =~ /mono/i) {
+			$attributes->{'CHANNELS'} = 1;
 		}
 	}
 
 	# Don't insert non-numeric or '0' YEAR fields into the database. Bug: 2610
 	# Same for DISC - Bug 2821
-	for my $tag (qw(YEAR DISC DISCC BPM)) {
+	for my $tag (qw(YEAR DISC DISCC BPM CHANNELS)) {
 
 		if ( 
 		    defined $attributes->{$tag} 
@@ -2063,41 +2073,16 @@ sub _preCheckAttributes {
 
 	# Bug 4823 - check boundaries set by our tinyint schema.
 	for my $tag (qw(DISC DISCC)) {
-
-		if (!defined $attributes->{$tag}) {
-			next;
-		}
-
-		if ($attributes->{$tag} > 254) {
-
-			$attributes->{$tag} = 254;
-		}
-
-		if ($attributes->{$tag} < 0) {
-
-			$attributes->{$tag} = 0;
-		}
+		next if (!defined $attributes->{$tag});
+		$attributes->{$tag} = 254 if ($attributes->{$tag} > 254);
+		$attributes->{$tag} = 0 if ($attributes->{$tag} < 0);
 	}
 
 	# Bug 3759 - Set undef years to 0, so they're included in the count.
 	# Bug 3643 - rating is specified as a tinyint - users running their
 	# own SQL server may have strict mode turned on.
 	for my $tag (qw(YEAR RATING)) {
-
 		$attributes->{$tag} ||= 0;
-	}
-
-	# Some tag formats - APE? store the type of channels instead of the number of channels.
-	if (defined $attributes->{'CHANNELS'}) { 
-
-		if ($attributes->{'CHANNELS'} =~ /stereo/i) {
-
-			$attributes->{'CHANNELS'} = 2;
-
-		} elsif ($attributes->{'CHANNELS'} =~ /mono/i) {
-
-			$attributes->{'CHANNELS'} = 1;
-		}
 	}
 
 	if (defined $attributes->{'TRACKNUM'}) {
@@ -2188,10 +2173,24 @@ sub _preCheckAttributes {
 	}
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
-	$deferredAttributes->{'DISC'} = $attributes->{'DISC'};
+	$deferredAttributes->{'DISC'} = $attributes->{'DISC'} if $attributes->{'DISC'};
 
 	# thumb has gone away, since we have GD resizing.
 	delete $attributes->{'THUMB'};
+	
+	# RemoteTrack also wants artist and album names
+	if ($attributes->{'REMOTE'}) {
+		foreach (qw/TRACKARTIST ARTIST ALBUMARTIST/) {
+			if (my $a = $deferredAttributes->{$_}) {
+				$a = join (' / ', @$a) if ref $a eq 'ARRAY';
+				$attributes->{'ARTISTNAME'} = $a;
+				last;
+			}
+		}
+		$attributes->{'ALBUMNAME'} = $deferredAttributes->{'ALBUM'} if $deferredAttributes->{'ALBUM'};
+		
+		# XXX maybe also want COMMENT & GENRE
+	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
 
@@ -2290,7 +2289,7 @@ sub _postCheckAttributes {
 
 		if (blessed($_unknownGenre) && $_unknownGenre->can('name')) {
 
-			Slim::Schema::Genre->add($_unknownGenre->name, $track);
+			Slim::Schema::Genre->add($_unknownGenre->name, $trackId);
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO GENRE (id: [%d])", $_unknownGenre->id));
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has no genre"));
@@ -2298,13 +2297,13 @@ sub _postCheckAttributes {
 
 	} elsif ($create && $isLocal && !$genre && blessed($_unknownGenre)) {
 
-		Slim::Schema::Genre->add($_unknownGenre->name, $track);
+		Slim::Schema::Genre->add($_unknownGenre->name, $trackId);
 
 		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has no genre"));
 
 	} elsif ($create && $isLocal && $genre) {
 
-		Slim::Schema::Genre->add($genre, $track);
+		Slim::Schema::Genre->add($genre, $trackId);
 
 		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has genre '$genre'"));
 
@@ -2314,7 +2313,7 @@ sub _postCheckAttributes {
 		# rescanning We need to remove the previous associations.
 		$track->genreTracks->delete_all;
 
-		Slim::Schema::Genre->add($genre, $track);
+		Slim::Schema::Genre->add($genre, $trackId);
 
 		main::DEBUGLOG && $isDebug && $log->debug("-- Deleted all previous genres for this track");
 		main::DEBUGLOG && $isDebug && $log->debug("-- Track has genre '$genre'");

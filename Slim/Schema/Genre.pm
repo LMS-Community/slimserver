@@ -66,7 +66,7 @@ sub displayAsHTML {
 sub add {
 	my $class = shift;
 	my $genre = shift;
-	my $track = shift;
+	my $trackId = shift;
 	
 	# Using native DBI here to improve performance during scanning
 	# and because DBIC objects are not needed here
@@ -102,7 +102,7 @@ sub add {
 			VALUES
 			(?, ?)
 		} );
-		$sth->execute( $id, $track->id );
+		$sth->execute( $id, $trackId );
 	}
 	
 	return;
