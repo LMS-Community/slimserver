@@ -225,7 +225,8 @@ sub _doTagMapping {
 	
 	# Map ID3 tags first, so FLAC tags win out
 	if ( $tags->{TAGVERSION} ) {
-		Slim::Formats::MP3->doTagMapping($tags);
+		# Tell MP3 tag mapper to not overwrite existing tags
+		Slim::Formats::MP3->doTagMapping( $tags, 1 );
 	}
 
 	# map the existing tag names to the expected tag names
