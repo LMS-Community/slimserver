@@ -44,7 +44,7 @@ sub init {
 }
 
 sub name {
-	return 'GENRE_INFO';
+	return 'PLAYLIST_INFO';
 }
 
 ##
