@@ -271,7 +271,12 @@ sub readTags {
 			
 			# Bug 14587, sanity check all MusicBrainz ID tags to ensure it is a UUID and nothing more
 			if ( $tag =~ /^MUSICBRAINZ.*ID$/ ) {
-				if ( $tags->{$tag} =~ /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
+
+				# DiscID has a different format:
+				# http://wiki.musicbrainz.org/Disc_ID_Calculation
+				if ( $tag eq 'MUSICBRAINZ_DISCID' && $tags->{$tag} =~ /^[0-9a-z_\.-]{28}$/i ) {
+					$tags->{$tag} = lc($1);
+				} elsif ( $tags->{$tag} =~ /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
 					$tags->{$tag} = lc($1);
 				}
 				else {
