@@ -1578,82 +1578,82 @@ sub scroll_dynamic {
 		
 	} else {
 	
-	if ($holdTime == 0) {
-		# define behavior for button press, before any acceleration
-		# kicks in.
-		
-		# if at the end of the list, and down is pushed, go to the beginning.
-		if ($currentPosition == $listlength-1  && $direction > 0) {
+		if ($holdTime == 0) {
+			# define behavior for button press, before any acceleration
+			# kicks in.
+			
 			# if at the end of the list, and down is pushed, go to the beginning.
-			$currentPosition = -1; # Will be added to later...
-			$scrollParams->{estimateStart} = 0;
-			$scrollParams->{estimateEnd}   = $listlength - 1;
-		} elsif ($currentPosition == 0 && $direction < 0) {
-			# if at the beginning of the list, and up is pushed, go to the end.
-			$currentPosition = $listlength;  # Will be subtracted from later.
-			$scrollParams->{estimateStart} = 0;
-			$scrollParams->{estimateEnd}   = $listlength - 1;
-		}
-		# Do the standard operation...
-		$scrollParams->{lastHoldTime} = 0;
-		$scrollParams->{V} = $scrollParams->{minimumVelocity} *
-			$direction;
-		$scrollParams->{A} = 0;
-		$result = $currentPosition + $direction;
-		if ($direction > 0) {
-			$scrollParams->{estimateStart} = $result;
-			if ($scrollParams->{estimateEnd} <
-				$scrollParams->{estimateStart}) {
-				$scrollParams->{estimateEnd} =
-					$scrollParams->{estimateStart} + 1; 
+			if ($currentPosition == $listlength-1  && $direction > 0) {
+				# if at the end of the list, and down is pushed, go to the beginning.
+				$currentPosition = -1; # Will be added to later...
+				$scrollParams->{estimateStart} = 0;
+				$scrollParams->{estimateEnd}   = $listlength - 1;
+			} elsif ($currentPosition == 0 && $direction < 0) {
+				# if at the beginning of the list, and up is pushed, go to the end.
+				$currentPosition = $listlength;  # Will be subtracted from later.
+				$scrollParams->{estimateStart} = 0;
+				$scrollParams->{estimateEnd}   = $listlength - 1;
 			}
+			# Do the standard operation...
+			$scrollParams->{lastHoldTime} = 0;
+			$scrollParams->{V} = $scrollParams->{minimumVelocity} *
+				$direction;
+			$scrollParams->{A} = 0;
+			$result = $currentPosition + $direction;
+			if ($direction > 0) {
+				$scrollParams->{estimateStart} = $result;
+				if ($scrollParams->{estimateEnd} <
+					$scrollParams->{estimateStart}) {
+					$scrollParams->{estimateEnd} =
+						$scrollParams->{estimateStart} + 1; 
+				}
+			} else {
+				$scrollParams->{estimateEnd} = $result;
+				if ($scrollParams->{estimateStart} >
+					$scrollParams->{estimateEnd}) {
+					$scrollParams->{estimateStart} =
+						$scrollParams->{estimateEnd} - 1;
+				}
+			}
+			scroll_resetScrollRange($result, $scrollParams, $listlength);
+			$scrollParams->{lastPosition} = $result;
+		} elsif ($holdTime < $holdTimeBeforeScroll) {
+			# Waiting until holdTimeBeforeScroll is exceeded
+			$result = $currentPosition;
 		} else {
-			$scrollParams->{estimateEnd} = $result;
-			if ($scrollParams->{estimateStart} >
-				$scrollParams->{estimateEnd}) {
-				$scrollParams->{estimateStart} =
-					$scrollParams->{estimateEnd} - 1;
-			}
+			# define behavior for scrolling, i.e. after the initial
+			# timeout.
+			$scrollParams->{A} = scroll_calculateAcceleration
+				(
+				 $direction, 
+				 $scrollParams->{estimateStart},
+				 $scrollParams->{estimateEnd},
+				 $scrollParams->{Tc}
+				 );
+			my $accel = $scrollParams->{A};
+			my $time = $holdTime - $scrollParams->{lastHoldTime};
+			my $velocity = $scrollParams->{A} * $time + $scrollParams->{V};
+			my $pos = ($scrollParams->{lastPositionReturned} == $currentPosition) ? 
+				$scrollParams->{lastPosition} : 
+				$currentPosition;
+			my $X = 
+				(0.5 * $scrollParams->{A} * $time * $time) +
+				($scrollParams->{V} * $time) + 
+				$pos;
+			$scrollParams->{lastPosition} = $X; # Retain the last floating
+			                                    # point value of $X
+			                                    # because it's needed to
+			                                    # maintain the proper
+			                                    # acceleration when
+			                                    # $minimumVelocity is
+			                                    # small and not much
+			                                    # motion happens between
+			                                    # successive calls.
+			$result = int(0.5 + $X);
+			scroll_resetScrollRange($result, $scrollParams, $listlength);
+			$scrollParams->{V} = $velocity;
+			$scrollParams->{lastHoldTime} = $holdTime;
 		}
-		scroll_resetScrollRange($result, $scrollParams, $listlength);
-		$scrollParams->{lastPosition} = $result;
-	} elsif ($holdTime < $holdTimeBeforeScroll) {
-		# Waiting until holdTimeBeforeScroll is exceeded
-		$result = $currentPosition;
-	} else {
-		# define behavior for scrolling, i.e. after the initial
-		# timeout.
-		$scrollParams->{A} = scroll_calculateAcceleration
-			(
-			 $direction, 
-			 $scrollParams->{estimateStart},
-			 $scrollParams->{estimateEnd},
-			 $scrollParams->{Tc}
-			 );
-		my $accel = $scrollParams->{A};
-		my $time = $holdTime - $scrollParams->{lastHoldTime};
-		my $velocity = $scrollParams->{A} * $time + $scrollParams->{V};
-		my $pos = ($scrollParams->{lastPositionReturned} == $currentPosition) ? 
-			$scrollParams->{lastPosition} : 
-			$currentPosition;
-		my $X = 
-			(0.5 * $scrollParams->{A} * $time * $time) +
-			($scrollParams->{V} * $time) + 
-			$pos;
-		$scrollParams->{lastPosition} = $X; # Retain the last floating
-		                                    # point value of $X
-		                                    # because it's needed to
-		                                    # maintain the proper
-		                                    # acceleration when
-		                                    # $minimumVelocity is
-		                                    # small and not much
-		                                    # motion happens between
-		                                    # successive calls.
-		$result = int(0.5 + $X);
-		scroll_resetScrollRange($result, $scrollParams, $listlength);
-		$scrollParams->{V} = $velocity;
-		$scrollParams->{lastHoldTime} = $holdTime;
-	}
 	}
 	if ($result >= $listlength) {
 		$result = $listlength - 1;
