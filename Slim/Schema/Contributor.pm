@@ -115,8 +115,6 @@ sub add {
 	# Pass args by name
 	my $artist     = $args->{'artist'} || return;
 	my $brainzID   = $args->{'brainzID'};
-	my $role       = $args->{'role'}   || return;
-	my $trackId    = $args->{'track'}  || return;
 
 	my @contributors = ();
 
@@ -164,20 +162,7 @@ sub add {
 			}
 		}
 		
-		$sth = $dbh->prepare_cached( qq{
-			REPLACE INTO contributor_track
-			(role, contributor, track)
-			VALUES
-			(?, ?, ?)
-		} );
-		$sth->execute( $role, $id, $trackId );
-		
-		# We need to return a DBIC object, which is really slow, use a cache
-		# to help out a bit
-		if ( !exists $CACHE{$id} ) {
-			$CACHE{$id} = Slim::Schema->rs('Contributor')->find($id);
-		}
-		push @contributors, $CACHE{$id};
+		push @contributors, $id;
 	}
 
 	return wantarray ? @contributors : $contributors[0];

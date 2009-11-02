@@ -2217,60 +2217,15 @@ sub _preCheckAttributes {
 	return ($attributes, $deferredAttributes);
 }
 
-sub _postCheckAttributes {
-	my $self = shift;
-	my $args = shift;
+sub _genre {
+	my ($self, $genre, $trackId, $create, $track) = @_;
+	# Passing $track is temporary until that bit below can be replaced by some direct DBI code
 	
-	my $isDebug = main::DEBUGLOG && $log->is_debug;
-
-	my $track      = $args->{'track'};
-	my $attributes = $args->{'attributes'};
-	my $create     = $args->{'create'} || 0;
-
-	# Don't bother with directories / lnks. This makes sure "No Artist",
-	# etc don't show up if you don't have any.
-	my %cols = $track->get_columns;
-
-	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = 
-		(@cols{qw/id url content_type audio remote/});
-
-	if (!defined $trackType || $trackType eq 'dir' || $trackType eq 'lnk') {
-
-		$track->update;
-
-		return undef;
-	}
-
-	# Make a local variable for COMPILATION, that is easier to handle
-	my $isCompilation = undef;
-
-	if (defined $attributes->{'COMPILATION'}) {
-
-		# Use eq instead of == here, otherwise perl will warn.
-		if ($attributes->{'COMPILATION'} =~ /^(?:yes|true)$/i || $attributes->{'COMPILATION'} eq 1) {
-
-			$isCompilation = 1;
-
-			main::DEBUGLOG && $isDebug && $log->debug("-- Track is a compilation");
-
-		} elsif ($attributes->{'COMPILATION'} =~ /^(?:no|false)$/i || $attributes->{'COMPILATION'} eq 0) {
-
-			$isCompilation = 0;
-
-			main::DEBUGLOG && $isDebug && $log->debug("-- Track is NOT a compilation");
-		}
-	}
-
-	# We don't want to add "No ..." entries for remote URLs, or meta
-	# tracks like iTunes playlists.
-	my $isLocal = $trackAudio && !$trackRemote ? 1 : 0;
-
-	main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track is a %s track", $isLocal ? 'local' : 'remote'));
-
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
-	my $genre = $attributes->{'GENRE'};
 
-	if ($create && $isLocal && !$genre && !blessed($_unknownGenre)) {
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	if ($create && !$genre && !blessed($_unknownGenre)) {
 
 		my $genreName = string('NO_GENRE');
 
@@ -2295,19 +2250,19 @@ sub _postCheckAttributes {
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has no genre"));
 		}
 
-	} elsif ($create && $isLocal && !$genre && blessed($_unknownGenre)) {
+	} elsif ($create && !$genre && blessed($_unknownGenre)) {
 
 		Slim::Schema::Genre->add($_unknownGenre->name, $trackId);
 
 		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has no genre"));
 
-	} elsif ($create && $isLocal && $genre) {
+	} elsif ($create && $genre) {
 
 		Slim::Schema::Genre->add($genre, $trackId);
 
 		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Track has genre '$genre'"));
 
-	} elsif (!$create && $isLocal && $genre && $genre ne $track->genres->single->name) {
+	} elsif (!$create && $genre && $genre ne $track->genres->single->name) {
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
@@ -2318,42 +2273,59 @@ sub _postCheckAttributes {
 		main::DEBUGLOG && $isDebug && $log->debug("-- Deleted all previous genres for this track");
 		main::DEBUGLOG && $isDebug && $log->debug("-- Track has genre '$genre'");
 	}
+}
 
-	# Walk through the valid contributor roles, adding them to the database for each track.
-	my $contributors     = $self->_mergeAndCreateContributors($trackId, $attributes, $isCompilation, $isLocal);
-	my $foundContributor = scalar keys %{$contributors};
+sub _postCheckAttributes {
+	my $self = shift;
+	my $args = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $isDebug && $log->debug("-- Track has $foundContributor contributor(s)");
+	my $track      = $args->{'track'};
+	my $attributes = $args->{'attributes'};
+	my $create     = $args->{'create'} || 0;
 
-	# Create a singleton for "No Artist"
-	if ($create && $isLocal && !$foundContributor) {
+	# Don't bother with directories / lnks. This makes sure "No Artist",
+	# etc don't show up if you don't have any.
+	my %cols = $track->get_columns;
 
-		if (!$_unknownArtist) {
-			$_unknownArtist = $self->rs('Contributor')->update_or_create({
-				'name'       => string('NO_ARTIST'),
-				'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
-				'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
-			}, { 'key' => 'namesearch' });
+	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = 
+		(@cols{qw/id url content_type audio remote/});
 
-			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO ARTIST (id: [%d])", $_unknownArtist->id));
-		}
-
-		Slim::Schema::Contributor->add({
-			'artist' => $_unknownArtist->name,
-			'role'   => Slim::Schema::Contributor->typeToRole('ARTIST'),
-			'track'  => $trackId,
-		});
-
-		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
-
-		main::DEBUGLOG && $isDebug && $log->debug("-- Track has no artist");
+	if (!defined $trackType || $trackType eq 'dir' || $trackType eq 'lnk') {
+		$track->update;
+		return undef;
+	}
+	
+	if ($trackRemote || !$trackAudio) {
+		$track->update;
+		return;
 	}
 
-	# The "primary" contributor
-	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
+	# Make a local variable for COMPILATION, that is easier to handle
+	my $isCompilation = undef;
 
-	if ( main::DEBUGLOG && $isDebug && blessed($contributor) ) {
-		$log->debug(sprintf("-- Track primary contributor is '%s' (id: [%d])", $contributor->name, $contributor->id));
+	if (defined $attributes->{'COMPILATION'}) {
+		# Use eq instead of == here, otherwise perl will warn.
+		if ($attributes->{'COMPILATION'} =~ /^(?:yes|true)$/i || $attributes->{'COMPILATION'} eq 1) {
+			$isCompilation = 1;
+			main::DEBUGLOG && $isDebug && $log->debug("-- Track is a compilation");
+		} elsif ($attributes->{'COMPILATION'} =~ /^(?:no|false)$/i || $attributes->{'COMPILATION'} eq 0) {
+			$isCompilation = 0;
+			main::DEBUGLOG && $isDebug && $log->debug("-- Track is NOT a compilation");
+		}
+	}
+
+	$self->_genre($attributes->{'GENRE'}, $trackId, $create, $track);
+	
+	# Walk through the valid contributor roles, adding them to the database for each track.
+	my $contributors = $self->_mergeAndCreateContributors($trackId, $attributes, $isCompilation, $create);
+
+	# The "primary" contributor
+	my $contributorId = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
+
+	if ( main::DEBUGLOG && $isDebug && defined $contributorId ) {
+		$log->debug("-- Track primary contributor is (id: [$contributorId])");
 	}
 
 	# Now handle Album creation
@@ -2379,7 +2351,7 @@ sub _postCheckAttributes {
 	# But mark it undef first - bug 3685
 	my $albumObj = undef;
 
-	if (!$create && $isLocal) {
+	if (!$create) {
 		$albumObj = $track->album;
 
 		# Bug: 4140
@@ -2395,7 +2367,7 @@ sub _postCheckAttributes {
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
-	if ($create && $isLocal && !$album) {
+	if ($create && !$album) {
 
 		my $string = string('NO_ALBUM');
 
@@ -2420,7 +2392,7 @@ sub _postCheckAttributes {
 
 		main::DEBUGLOG && $isDebug && $log->debug("-- Track has no album");
 
-	} elsif ($create && $isLocal && $album) {
+	} elsif ($create && $album) {
 
 		# Used for keeping track of the album name.
 		my $basename = dirname($trackUrl);
@@ -2497,12 +2469,12 @@ sub _postCheckAttributes {
 				# of the same name by the same artist. bug3254
 				$search->{'me.discc'} = $discc;
 				
-				if ( blessed($contributor) ) {
+				if ( defined $contributorId ) {
 					# Bug 4361, also match on contributor, so we don't group
 					# different multi-disc albums together just because they
 					# have the same title
-					my $contributor = $contributor->id;
-					if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+					my $contributor = $contributorId;
+					if ( $isCompilation && !$attributes->{'ALBUMARTIST'} ) {
 					    $contributor = $self->variousArtistsObject->id;
 				    }
 			    
@@ -2516,12 +2488,12 @@ sub _postCheckAttributes {
 				# multidisc _without_ having a discc set.
 				$search->{'me.disc'} = { '!=' => undef };
 				
-				if ( blessed($contributor) ) {
+				if ( defined $contributorId ) {
 					# Bug 4361, also match on contributor, so we don't group
 					# different multi-disc albums together just because they
 					# have the same title
-					my $contributor = $contributor->id;
-					if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+					my $contributor = $contributorId;
+					if ( $isCompilation && !$attributes->{'ALBUMARTIST'} ) {
 					    $contributor = $self->variousArtistsObject->id;
 				    }
 			    
@@ -2619,10 +2591,10 @@ sub _postCheckAttributes {
 			}
 		}
 	}
+	
+	assert $albumObj;
 
-	my $blessedAlbum = blessed($albumObj);
-
-	if ($blessedAlbum && !$self->_albumIsUnknownAlbum($albumObj)) {
+	if (!$self->_albumIsUnknownAlbum($albumObj)) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
@@ -2638,13 +2610,13 @@ sub _postCheckAttributes {
 		$set{'compilation'} = $isCompilation;
 
 		# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
-		if ($isCompilation && !scalar @{$contributors->{'ALBUMARTIST'}}) {
+		if ($isCompilation && !$attributes->{'ALBUMARTIST'}) {
 
 			$set{'contributor'} = $self->variousArtistsObject->id;
 
-		} elsif (blessed($contributor)) {
+		} elsif (defined $contributorId) {
 
-			$set{'contributor'} = $contributor->id;
+			$set{'contributor'} = $contributorId;
 		}
 
 		$set{'musicbrainz_id'} = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
@@ -2722,50 +2694,25 @@ sub _postCheckAttributes {
 	}
 
 	# Always do this, no matter if we don't have an Album title.
-	if ($blessedAlbum) {
 
-		# Don't add an album to container tracks - See bug 2337
-		if (!Slim::Music::Info::isContainer($track, $trackType)) {
+	# Don't add an album to container tracks - See bug 2337
+	if (!Slim::Music::Info::isContainer($track, $trackType)) {
 
-			$track->album($albumObj->id);
+		$track->album($albumObj->id);
 
-			main::INFOLOG && $log->is_info && $log->info(sprintf("-- Track has album '%s' (id: [%d])", $albumObj->name, $albumObj->id));
-		}
-
-		# Now create a contributors <-> album mapping
-		if (!$create && !$self->_albumIsUnknownAlbum($albumObj) && $album) {
-
-			# Update the album title - the user might have changed it.
-			$albumObj->title($album);
-		}
-		
-		# Using native DBI here to improve performance during scanning
-		my $dbh = Slim::Schema->dbh;
-
-		while (my ($role, $contributorList) = each %{$contributors}) {
-
-			for my $contributorObj (@{$contributorList}) {
-
-				# Bug 4882 - Don't remove contributor <-> album mappings here as its impossible to remove only stale ones
-				# Instead recreate this table post scan in the sql optimise script so we can base it on all tracks in an album
-
-				# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
-				my $sth = $dbh->prepare_cached( qq{
-					REPLACE INTO contributor_album
-					(role, contributor, album)
-					VALUES
-					(?, ?, ?)
-				} );
-				$sth->execute( Slim::Schema::Contributor->typeToRole($role), $contributorObj->id, $albumObj->id );
-
-				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' (id: [%d]) linked to album '%s' (id: [%d]) with role: '%s'",
-					$contributorObj->name, $contributorObj->id, $albumObj->name, $albumObj->id, $role
-				));
-			}
-		}		
-
-		$albumObj->update;
+		main::INFOLOG && $log->is_info && $log->info(sprintf("-- Track has album '%s' (id: [%d])", $albumObj->name, $albumObj->id));
 	}
+
+	# Now create a contributors <-> album mapping
+	if (!$create && !$self->_albumIsUnknownAlbum($albumObj) && $album) {
+
+		# Update the album title - the user might have changed it.
+		$albumObj->title($album);
+	}
+		
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumObj->id);	
+
+	$albumObj->update;
 
 	# Save any changes - such as album.
 	$track->update;
@@ -2777,8 +2724,7 @@ sub _postCheckAttributes {
 	# Using native DBI here to improve performance during scanning
 	my $dbh = Slim::Schema->dbh;
 
-	if (defined $year && $year =~ /^\d+$/ && 
-		$blessedAlbum && $albumObj->title ne string('NO_ALBUM')) {
+	if (defined $year && $year =~ /^\d+$/ && $albumObj->title ne string('NO_ALBUM')) {
 			
 		my $sth = $dbh->prepare_cached('SELECT 1 FROM years WHERE id = ?');
 		$sth->execute($year);
@@ -2823,12 +2769,8 @@ sub _albumIsUnknownAlbum {
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $trackId, $attributes, $isCompilation, $isLocal) = @_;
+	my ($self, $trackId, $attributes, $isCompilation, $create) = @_;
 
-	if (!$isLocal) {
-		return;
-	}
-	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	# Bug: 2317 & 2638
@@ -2869,15 +2811,73 @@ sub _mergeAndCreateContributors {
 		push @{ $contributors{$tag} }, Slim::Schema::Contributor->add({
 			'artist'   => $contributor, 
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
-			'role'     => Slim::Schema::Contributor->typeToRole($tag),
-			'track'    => $trackId,
 			'sortBy'   => $attributes->{$tag.'SORT'},
 		});
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
 	}
+	
+	main::DEBUGLOG && $isDebug && $log->debug("-- Track has ", scalar (keys %contributors), " contributor(s)");
 
+	# Create a singleton for "No Artist"
+	if ($create && !scalar (keys %contributors)) {
+
+		if (!$_unknownArtist) {
+			my $name        = string('NO_ARTIST');
+			my $namesort    = Slim::Utils::Text::ignoreCaseArticles($name);
+			$_unknownArtist = $self->rs('Contributor')->update_or_create({
+				'name'       => $name,
+				'namesort'   => $namesort,
+				'namesearch' => $namesort,
+			}, { 'key' => 'namesearch' });
+
+			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO ARTIST (id: [%d])", $_unknownArtist->id));
+		}
+
+		Slim::Schema::Contributor->add({
+			'artist' => $_unknownArtist->name,
+		});
+
+		push @{ $contributors{'ARTIST'} }, $_unknownArtist->id;
+
+		main::DEBUGLOG && $isDebug && $log->debug("-- Track has no artist");
+	}
+	
 	return \%contributors;
+}
+
+sub _createContributorRoleRelationships {
+	
+	my ($self, $contributors, $trackId, $albumId) = @_;
+	
+	# Using native DBI here to improve performance during scanning
+	
+	my $sth_track = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_track
+		(role, contributor, track)
+		VALUES
+		(?, ?, ?)
+	} );
+	
+	my $sth_album = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_album
+		(role, contributor, album)
+		VALUES
+		(?, ?, ?)
+	} );
+	
+	while (my ($role, $contributorList) = each %{$contributors}) {
+		my $roleId = Slim::Schema::Contributor->typeToRole($role);
+		for my $contributor (@{$contributorList}) {
+			$sth_track->execute( $roleId, $contributor, $trackId );
+
+			# Bug 4882 - Don't remove contributor <-> album mappings here as its impossible to remove only stale ones
+			# Instead recreate this table post scan in the sql optimise script so we can base it on all tracks in an album
+
+			# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
+			$sth_album->execute( $roleId, $contributor, $albumId );
+		}
+	}
 }
 
 sub _validTrackOrURL {
