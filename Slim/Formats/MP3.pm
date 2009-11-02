@@ -290,7 +290,7 @@ sub scanBitrate {
 }
 
 sub doTagMapping {
-	my ( $class, $tags ) = @_;
+	my ( $class, $tags, $no_overwrite ) = @_;
 	
 	# Bug 8001, remap TPE2 if user wants it to mean Album Artist
 	# XXX: move this out to another function, no need to call it on every tag scan
@@ -303,6 +303,10 @@ sub doTagMapping {
 	
 	while ( my ($old, $new) = each %tagMapping ) {
 		if ( exists $tags->{$old} ) {
+			# Caller can set $no_overwrite if ID3 tags should not replace
+			# existing tags, i.e. FLAC tags
+			next if $no_overwrite && exists $tags->{$new};
+				
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
