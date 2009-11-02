@@ -4221,6 +4221,9 @@ sub titlesQuery {
 				if ( $playalbum && $albumID ) {
 					$params->{'album_id'}   = $albumID;
 					$params->{'list_index'} = $listIndex;
+					if ($contributorID) {
+						$params->{'artist_id'}   = $contributorID;
+					}
 				}
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
