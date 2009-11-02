@@ -196,6 +196,9 @@ Return any cover art embedded in the FLAC file's metadata.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
+
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan($file);
 	
@@ -298,7 +301,13 @@ sub _addArtworkTags {
 	
 	# Flag if we have embedded cover art
 	if ( $tags->{ARTWORK} ) {
-		$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			# In 'no artwork' mode, ARTWORK is the length
+			$tags->{COVER_LENGTH} = $tags->{ARTWORK};
+		}
+		else {
+			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		}
 	}
 
 	return $tags;

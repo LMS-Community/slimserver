@@ -156,6 +156,9 @@ sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
 	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
+	
 	my $s = Audio::Scan->scan_tags($file);
 	
 	my $tags = $s->{tags};
@@ -224,6 +227,8 @@ We also look for any ID3 tags and set the title based on any that are found.
 
 sub scanBitrate {
 	my ( $class, $fh, $url ) = @_;
+	
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	# Scan the header for info/tags
 	my $s = Audio::Scan->scan_fh( mp3 => $fh );
@@ -422,10 +427,15 @@ sub doTagMapping {
 	if ( my $pic = $tags->{APIC} ) {
 		if ( ref $pic->[0] eq 'ARRAY' ) {
 			# multiple images, use image with lowest image_type value
-			$tags->{COVER_LENGTH} = length( ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4] );
+			# In 'no artwork' mode, ARTWORK is the length
+			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK} 
+				? ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4]
+				: length( ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4] );
 		}
 		else {
-			$tags->{COVER_LENGTH} = length( $pic->[4] );
+			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK}
+				? $pic->[4]
+				: length( $pic->[4] );
 		}
 	}
 }

@@ -124,6 +124,10 @@ BEGIN {
 	# set the AnyEvent model to our subclassed version when PERFMON is enabled
 	$ENV{PERL_ANYEVENT_MODEL} = 'PerfMonEV' if main::PERFMON;
 	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
+	
+	# By default, tell Audio::Scan not to get artwork to save memory
+	# Where needed, this is locally changed to 0.
+	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
 
 	# save argv
 	@argv = @ARGV;

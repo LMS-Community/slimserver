@@ -111,11 +111,17 @@ sub getTag {
 	
 	# Read cover art if available
 	if ( $tags->{COVERART} ) {
-		$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
+		# In 'no artwork' mode, ARTWORK is the length
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			$tags->{COVER_LENGTH} = $tags->{COVERART};
+		}
+		else {
+			$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
 		
-		if ( !$@ ) {
-			# Flag if we have embedded cover art
-			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+			if ( !$@ ) {
+				# Flag if we have embedded cover art
+				$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+			}
 		}
 	}
 
@@ -131,6 +137,9 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
+	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_tags($file);
 
@@ -158,6 +167,8 @@ sub scanBitrate {
 	my $url   = shift;
 	
 	my $isDebug = $log->is_debug;
+	
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_fh( ogg => $fh );
 	

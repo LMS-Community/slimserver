@@ -44,6 +44,10 @@ BEGIN {
 	
 	require JSON::XS::VersionOneAndTwo;
 	import JSON::XS::VersionOneAndTwo;
+	
+	# By default, tell Audio::Scan not to get artwork to save memory
+	# Where needed, this is locally changed to 0.
+	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
 };
 
 # Force XML::Simple to use XML::Parser for speed. This is done

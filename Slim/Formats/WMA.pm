@@ -78,8 +78,19 @@ sub getTag {
 	}
 	
 	# Flag if we have embedded cover art
-	if ( $tags->{'WM/Picture'} ) {
-		$tags->{COVER_LENGTH} = length( $tags->{'WM/Picture'} );
+	if ( my $pic = $tags->{'WM/Picture'} ) {
+		if ( ref $pic eq 'ARRAY' ) {
+			# multiple images, use image with lowest image_type value
+			# In 'no artwork' mode, ARTWORK is the length
+			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK} 
+				? ( sort { $a->{image_type} <=> $b->{image_type} } @{$pic} )[0]->{image}
+				: length( ( sort { $a->{image_type} <=> $b->{image_type} } @{$pic} )[0]->{image} );
+		}
+		else {
+			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK}
+				? $pic->{image}
+				: length( $pic->{image} );
+		}
 	}
 	
 	return $tags;
@@ -88,6 +99,9 @@ sub getTag {
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
+	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_tags($file);
 	
