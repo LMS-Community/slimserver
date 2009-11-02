@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.46';
+our $VERSION = '0.47';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -40,6 +40,13 @@ Audio::Scan - XS parser for MP3, MP4, Ogg Vorbis, FLAC, ASF, WAV, AIFF, Musepack
 
     # Just tags
     my $tags = Audio::Scan->scan_tags('/path/to/file.mp3');
+    
+    # Scan without reading (possibly large) artwork into memory.
+    # Instead of binary artwork data, the size of the artwork will be returned instead.
+    {
+        local $ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
+        my $data = Audio::Scan->scan('/path/to/file.mp3');
+    }
     
     # Scan a filehandle
     open my $fh, '<', 'my.mp3';
