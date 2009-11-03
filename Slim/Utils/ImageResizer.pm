@@ -337,6 +337,49 @@ sub getSize {
 	return (0, 0);
 }
 
+=head1 resizeSeries( %args )
+
+Supported args:
+	... same as resize() ...
+	series => [
+		{ width => X, height => Y, mode => Z },
+		...
+	],
+
+Resize the same image multiple times in descending size order,
+using the result of the previous resize as input for the next.
+Can dramatically speed up the creation of different sized thumbnails.
+
+Returns arrayref of [ resized image data as a scalar ref, image format ].
+
+=cut
+
+sub resizeSeries {
+	my ( $class, %args ) = @_;
+	
+	my $origref = $args{original};
+	my @series  = sort { $b->{width} <=> $a->{width} } @{ delete $args{series} };
+	my $debug   = $args{debug} || 0;
+	
+	my @ret;
+	
+	for my $next ( @series ) {
+		$args{width}  = $next->{width};
+		$args{height} = $next->{height} if $next->{height};
+		$args{mode}   = $next->{mode}   if $next->{mode};
+			
+		$debug && warn "Resizing series: " . $args{width} . 'x' . $args{height} . "\n";
+			
+		my ($resized_ref, $format) = $class->resize( %args );
+		
+		$args{original} = $resized_ref;
+		
+		push @ret, [ $resized_ref, $format, $args{width}, $args{height} ];
+	}
+	
+	return wantarray ? @ret : \@ret;
+}
+
 sub _content_type {
 	my $dataref = shift;
 	
