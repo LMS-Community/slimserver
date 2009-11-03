@@ -31,7 +31,6 @@ use base qw(DBIx::Class::Schema);
 use DBIx::Migration;
 use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
-use File::Copy qw(move);
 use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
 use Path::Class;
