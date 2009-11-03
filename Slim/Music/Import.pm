@@ -380,10 +380,7 @@ sub runScanPostProcessing {
 	}
 	
 	# Pre-cache resized artwork
-	$log->error("Starting artwork pre-cache");
-	
 	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
-	
 	Slim::Music::Artwork->precacheAllArtwork;
 	
 	if (main::STATISTICS) {

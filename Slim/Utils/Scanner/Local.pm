@@ -790,14 +790,8 @@ sub findArtwork {
 	
 	main::INFOLOG && $isInfo && $log->info("Using $parentDir/$art");
 	
-	if ($art) {
-		$track->cover($art);
-	}
-	else {
-		$track->cover(0);	# means known not to have artwork, don't ask again
-	}
-	
-	$track->update;
+	# XXX get rid of all DBIC in here
+	$track->cover( $art || 0 );
 	
 	return 1;
 }

@@ -352,6 +352,8 @@ sub precacheAllArtwork {
 	
 	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
 	
+	my $dbh = Slim::Schema->dbh;
+	
 	# Initialize graphics resizing
 	Slim::Web::Graphics::init();
 	
@@ -370,23 +372,44 @@ sub precacheAllArtwork {
 		'64x64_m',
 	);
 	
-	# Find all albums with un-cached artwork
-	my $cond = {
-		'me.cover'        => { '!=' => undef },
-		'me.cover_cached' => { '=' => undef },
-		'album.artwork'   => { '!=' => undef },
-	};
+	# Find all tracks with un-cached artwork:
+	# * All distinct cover values where cover isn't 0 and cover_cached is null
+	# * Tracks share the same cover art when the cover field is the same
+	#   (same path or same embedded art length).
+	my $sql = qq{
+		SELECT tracks.cover,
+			tracks.coverid,
+			albums.id AS albumid,
+			albums.title AS album_title,
+			albums.artwork AS album_artwork
+		FROM   tracks
+		JOIN   albums ON (tracks.album = albums.id)
+		WHERE  tracks.cover != '0'
+		AND    tracks.coverid IS NOT NULL
+		AND    tracks.cover_cached IS NULL
+		GROUP BY tracks.cover
+ 	};
 
-	my $attr = {
-		join     => 'album',
-		group_by => 'album',
-		prefetch => 'album',
-	};
+	my $sth_update_tracks = $dbh->prepare( qq{
+	    UPDATE tracks
+	    SET    coverid = ?, cover_cached = 1
+	    WHERE  album = ?
+	    AND    cover = ?
+	} );
+	
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
 
-	# Find distinct albums to check for artwork.
-	my $tracks = Slim::Schema->search( Track => $cond, $attr );
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	} );
+	
+	$log->error("Starting precacheArtwork for $count albums");
 
-	if ( my $count = $tracks->count ) {
+	if ( $count ) {
 		my $progress = Slim::Utils::Progress->new( { 
 			type  => 'importer',
 			name  => 'precacheArtwork',
@@ -396,39 +419,38 @@ sub precacheAllArtwork {
 		
 		my $isEnabled = $prefs->get('precacheArtwork');
 		
-		while ( my $track = $tracks->next ) {
-			my $album = $track->album;
-			
-			if ( my $coverid = $track->coverid ) {				
-				# Make sure album.artwork points to this track, as it may not
-				# be pointing there now because we did not join tracks via the
-				# artwork column.
-				if ( $album->artwork ne $coverid ) {
-					$album->artwork($coverid);
-					$album->update;
-				}
+		my $sth = $dbh->prepare($sql);
+		$sth->execute;
+		
+		while ( my $track = $sth->fetchrow_hashref ) {
+			# Make sure album.artwork points to this track, as it may not
+			# be pointing there now because we did not join tracks via the
+			# artwork column.
+			if ( $track->{album_artwork} ne $track->{coverid} ) {
+				$sth_update_albums->execute( $track->{coverid}, $track->{albumid} );
+			}
 				
-				# Do the actual pre-caching only if the pref for it is enabled
-				if ( $isEnabled ) {
-					for my $dim ( @dims ) {
-						main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $album->title . " at size $dim" );
+			# Do the actual pre-caching only if the pref for it is enabled
+			if ( $isEnabled ) {
+				for my $dim ( @dims ) {
+					main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " at size $dim" );
+		
+					eval {
+						my $path = join( '/', 'music', $track->{coverid}, "cover_$dim" );
+						Slim::Web::Graphics::processCoverArtRequest( undef, $path );
+					};
 			
-						eval {
-							my $path = join( '/', 'music', $coverid, "cover_$dim" );
-							Slim::Web::Graphics::processCoverArtRequest( undef, $path );
-						};
-				
-						if ( $@ ) {
-							$log->error("Pre-caching failed for " . $album->title . " at size $dim: $@");
-						}
+					if ( $@ ) {
+						$log->error("Pre-caching failed for " . $track->{album_title} . " at size $dim: $@");
 					}
-					
-					$track->cover_cached(1);
-					$track->update;
 				}
+				
+				# Update the rest of the tracks on this album
+				# to use the same coverid and cover_cached status
+				$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
 			}
 			
-			$progress->update( $album->title );
+			$progress->update( $track->{album_title} );
 		}
 
 		$progress->final($count);
