@@ -67,11 +67,14 @@ sub resize {
 	
 	# Load image data from tags if necessary
 	if ( $file && $file !~ /\.(?:jpe?g|gif|png)$/i ) {
-		$origref = _read_tag($file);
-		$file = undef;
+		# Double-check that this isn't an image file
+		if ( !_content_type_file($file, 1) ) {
+			$origref = _read_tag($file);
+			$file = undef;
 		
-		if ( !$origref ) {
-			die "Unable to find any image tag in $file\n";
+			if ( !$origref ) {
+				die "Unable to find any image tag in $file\n";
+			}
 		}
 	}
 	
@@ -489,11 +492,11 @@ sub _content_type_file {
 	sysread $fh, my $buf, 8;
 	close $fh;
 	
-	return _content_type(\$buf);
+	return _content_type(\$buf, @_);
 }
 
 sub _content_type {
-	my $dataref = shift;
+	my ( $dataref, $silent ) = @_;
 	
 	my $ct;
 	
@@ -509,8 +512,12 @@ sub _content_type {
 	}
 	else {
 		# Unknown file type, don't try to resize
-		require Data::Dump;
-		die "Can't resize unknown type, magic: " . Data::Dump::dump($magic) . "\n";
+		if ( !$silent ) {
+			require Data::Dump;
+			die "Can't resize unknown type, magic: " . Data::Dump::dump($magic) . "\n";
+		}
+		
+		return;
 	}
 	
 	return $ct;

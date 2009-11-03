@@ -25,11 +25,12 @@ use Getopt::Long;
 use Slim::Utils::ImageResizer;
 
 my $help;
-our ($file, @spec, $cacheroot, $cachekey, $faster, $debug);
+our ($file, $url, @spec, $cacheroot, $cachekey, $faster, $debug);
 
 my $ok = GetOptions(
 	'help|?'      => \$help,
 	'file=s'      => \$file,
+	'url=s'       => \$url,
 	'spec=s'      => \@spec,
 	'cacheroot=s' => \$cacheroot,
 	'cachekey=s'  => \$cachekey,
@@ -37,9 +38,29 @@ my $ok = GetOptions(
 	'debug'       => \$debug,
 );
 
-if ( !$ok || $help || !$file || !@spec ) {
+if ( !$ok || $help || ( !$file && !$url ) || !@spec ) {
 	require Pod::Usage;
 	Pod::Usage::pod2usage(1);
+}
+
+# Download URL to a temp file
+my $fh;
+if ( $url ) {
+	require File::Temp;
+	require LWP::UserAgent;
+	
+	$fh = File::Temp->new();
+	$file = $fh->filename;
+	
+	my $ua = LWP::UserAgent->new( timeout => 5 );
+	
+	$debug && warn "Downloading URL to $file\n";
+	
+	my $res = $ua->get( $url, ':content_file' => $file );
+	
+	if ( !$res->is_success ) {
+		die "Unable to download $url: " . $res->status_line . "\n";
+	}
 }
 
 # Setup cache
@@ -168,6 +189,8 @@ Options:
     Supported file types:
       Images: jpg, jpeg, gif, png
       Audio:  see Audio::Scan documentation
+
+  --url http://...
 
   --spec <width>x<height>_<mode> ...
     Mode is one of:
