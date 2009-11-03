@@ -12,12 +12,22 @@ my %typeToMethod = (
 	'png' => 'newFromPngData',
 );
 
+my %typeToFileMethod = (
+	'gif' => 'newFromGif',
+	'jpg' => 'newFromJpeg',
+	'png' => 'newFromPng',
+);
+
 # XXX: see if we can remove all modes besides pad/max
 
 =head1 ($dataref, $format) = resize( %args )
 
 Supported args:
-	original => $dataref, # Required, original image data as a scalar ref
+	original => $dataref  # Optional, original image data as a scalar ref
+	file     => $path     # Optional, File path to resize from. May be an image or audio file.
+	                      #   If an audio file, artwork is extracted from tags based on the
+	                      #   file extension.
+	                      # One of original or file is required.
 	mode     => $mode     # Optional, resize mode:
 						  #   m: max         (default)
 						  #   p: pad         (same as max)
@@ -43,6 +53,7 @@ sub resize {
 	my ( $class, %args ) = @_;
 	
 	my $origref = $args{original};
+	my $file    = $args{file};
 	my $format  = $args{format};
 	my $width   = $args{width};
 	my $height  = $args{height};
@@ -50,11 +61,25 @@ sub resize {
 	my $mode    = $args{mode};
 	my $debug   = $args{debug} || 0;
 	
+	if ( $file && !-e $file ) {
+		die "Unable to resize from $file: File does not exist\n";
+	}
+	
+	# Load image data from tags if necessary
+	if ( $file && $file !~ /\.(?:jpe?g|gif|png)$/i ) {
+		$origref = _read_tag($file);
+		$file = undef;
+		
+		if ( !$origref ) {
+			die "Unable to find any image tag in $file\n";
+		}
+	}
+	
 	# Remember if user requested a specific format
 	my $explicit_format = $format;
 	
 	# Format of original image
-	my $in_format = _content_type($origref);
+	my $in_format = $file ? _content_type_file($file) : _content_type($origref);
 	
 	# Ignore width/height of 'X'
 	$width  = undef if $width eq 'X';
@@ -91,7 +116,13 @@ sub resize {
 		require Imager;
 		my $img = Imager->new;
 		eval {
-			$img->read( data => $$origref ) or die $img->errstr;
+			if ( $file ) {
+				$img->read( file => $file ) or die $img->errstr;
+				$file = undef;
+			}
+			else {
+				$img->read( data => $$origref ) or die $img->errstr;
+			}
 			$img->write( data => $origref, type => 'jpeg', jpegquality => 100 ) or die $img->errstr;
 		};
 		if ( $@ ) {
@@ -100,9 +131,13 @@ sub resize {
 	}
 	
 	GD::Image->trueColor(1);
+	
+	if ( $debug && $file ) {
+		warn "Loading image from $file\n";
+	}
 
-	my $constructor = $typeToMethod{$in_format};
-	my $origImage   = GD::Image->$constructor($$origref);
+	my $constructor = $file ? $typeToFileMethod{$in_format} : $typeToMethod{$in_format};
+	my $origImage   = GD::Image->$constructor($file || $$origref);
 	
 	my ($in_width, $in_height) = ($origImage->width, $origImage->height);
 
@@ -357,7 +392,6 @@ Returns arrayref of [ resized image data as a scalar ref, image format ].
 sub resizeSeries {
 	my ( $class, %args ) = @_;
 	
-	my $origref = $args{original};
 	my @series  = sort { $b->{width} <=> $a->{width} } @{ delete $args{series} };
 	my $debug   = $args{debug} || 0;
 	
@@ -372,12 +406,90 @@ sub resizeSeries {
 			
 		my ($resized_ref, $format) = $class->resize( %args );
 		
+		delete $args{file};
 		$args{original} = $resized_ref;
 		
 		push @ret, [ $resized_ref, $format, $args{width}, $args{height} ];
 	}
 	
 	return wantarray ? @ret : \@ret;
+}
+
+sub _read_tag {
+	my $file = shift;
+	
+	require Audio::Scan;
+	
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
+	
+	my $s = eval { Audio::Scan->scan_tags($file) };
+	if ( $@ ) {
+		die "Unable to read image tag from $file: $@\n";
+	}
+	
+	my $tags = $s->{tags};
+	
+	# MP3, other files with ID3v2
+	if ( my $pic = $tags->{APIC} ) {
+		if ( ref $pic->[0] eq 'ARRAY' ) {
+			# multiple images, return image with lowest image_type value
+			return \(( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4]);
+		}
+		else {
+			return \($pic->[4]);
+		}
+	}
+	
+	# FLAC picture block
+	if ( $tags->{ALLPICTURES} ) {
+		return \($tags->{ALLPICTURES}->[0]->{image_data});
+	}
+	
+	# FLAC/Ogg base64 coverart
+	if ( $tags->{COVERART} ) {
+		require MIME::Base64;
+		my $artwork = eval { MIME::Base64::decode_base64( $tags->{COVERART} ) };
+		if ( $@ ) {
+			die "Unable to read image tag from $file: $@\n";
+		}
+		return \$artwork;
+	}
+	
+	# ALAC/M4A
+	if ( $tags->{COVR} ) {
+		return \($tags->{COVR});
+	}
+	
+	# WMA
+	if ( my $pic = $tags->{'WM/Picture'} ) {
+		if ( ref $pic eq 'ARRAY' ) {
+			# return image with lowest image_type value
+			return \(( sort { $a->{image_type} <=> $b->{image_type} } @{$pic} )[0]->{image});
+		}
+		else {
+			return \($pic->{image});
+		}
+	}
+	
+	# Escient artwork app block (who uses this??)
+	if ( $tags->{APPLICATION} && $tags->{APPLICATION}->{1163084622} ) {
+		my $artwork = $tags->{APPLICATION}->{1163084622};
+		if ( substr($artwork, 0, 4, '') eq 'PIC1' ) {
+			return \$artwork;
+		}
+	}
+	
+	return;
+}
+
+sub _content_type_file {
+	my $file = shift;
+	
+	open my $fh, '<', $file;
+	sysread $fh, my $buf, 8;
+	close $fh;
+	
+	return _content_type(\$buf);
 }
 
 sub _content_type {
