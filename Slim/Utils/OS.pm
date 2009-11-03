@@ -224,6 +224,10 @@ sub scanner {
 	return "$Bin/scanner.pl";
 }
 
+sub gdresize {
+	return "$Bin/gdresize.pl";
+}
+
 sub dontSetUserAndGroup { 0 }
 
 =head2 getProxy( )

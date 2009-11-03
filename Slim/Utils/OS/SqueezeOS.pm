@@ -113,6 +113,10 @@ sub scanner {
 	return '/usr/squeezecenter/scanner.pl';
 }
 
+sub gdresize {
+	return '/usr/squeezecenter/gdresize.pl';
+}
+
 sub skipPlugins {
 	my $class = shift;
 	

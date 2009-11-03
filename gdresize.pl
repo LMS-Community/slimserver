@@ -39,7 +39,7 @@ my $ok = GetOptions(
 
 if ( !$ok || $help || !$file || !@spec ) {
 	require Pod::Usage;
-	Pod::Usage::pod2usage(0);
+	Pod::Usage::pod2usage(1);
 }
 
 # Setup cache
@@ -133,6 +133,8 @@ else {
 		_cache( $cachekey, $ref, $ct );
 	}
 }
+
+exit 0;
 
 sub _cache {
 	my ( $key, $imgref, $ct ) = @_;

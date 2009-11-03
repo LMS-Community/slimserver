@@ -30,7 +30,6 @@ use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Cache;
-use Slim::Utils::ImageResizer;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -409,14 +408,16 @@ sub precacheAllArtwork {
 		my $isEnabled = $prefs->get('precacheArtwork');
 		my $resample  = $prefs->get('resampleArtwork');
 		my $thumbSize = $prefs->get('thumbSize') || 100;
+		my $cachedir  = $prefs->get('cachedir');
+		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresize();
 
-		my $dims = [
-			{ width => $thumbSize, mode => 'o' },
-			{ width => 64,         mode => 'm' },
-			{ width => 50,         mode => 'o' },
-			{ width => 41,         mode => 'm' },
-			{ width => 40,         mode => 'm' },
-		];
+		my @specs = map { ("--spec" => $_) } (
+			"${thumbSize}x${thumbSize}_o",
+			'64x64_m',
+			'50x50_o',
+			'41x41_m',
+			'40x40_m',
+		);
 		
 		my $sth = $dbh->prepare($sql);
 		$sth->execute;
@@ -430,7 +431,9 @@ sub precacheAllArtwork {
 			}
 				
 			# Do the actual pre-caching only if the pref for it is enabled
-			if ( $isEnabled ) {				
+			if ( $isEnabled ) {
+				require Proc::Background;
+						
 				# Image to resize is either a cover path or the audio file
 				my $path = $track->{cover} =~ /^\d+$/
 					? Slim::Utils::Misc::pathFromFileURL( $track->{url} )
@@ -438,47 +441,45 @@ sub precacheAllArtwork {
 				
 				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " from $path" );
 				
-				my $series = eval {
-					Slim::Utils::ImageResizer->resizeSeries(
-						file   => $path,
-						faster => !$resample,
-						series => $dims,
-					);
+				# Launch standalone gdresize script, we use a new process
+				# to avoid GD taking a big chunk of memory to resize large files.
+				
+				my @cmd = (
+					$gdresize,
+					'--file', $path,
+					@specs,
+					'--cacheroot', $cachedir,
+					'--cachekey', 'music/' . $track->{coverid} . '/cover_',
+				);
+				
+				if ( !$resample ) {
+					push @cmd, '--faster';
+				}
+				
+				eval {
+					my $process = Proc::Background->new(@cmd) || die "Could not launch gdresize command\n";
+					
+					my $exitcode = $process->wait;
+					
+					if ( $exitcode >> 8 != 0 ) {
+						die "gdresize failed\n";
+					}
 				};
 				
 				if ( $@ ) {
-					$importlog->error($@);
+					$log->error($@);
 				}
-				else {
-					
-					my $cached = {
-						orig  => $path,
-						mtime => (stat $path)[9],
-					};
-					
-					for my $s ( @{$series} ) {
-						my $ct = 'image/' . $s->[1];
-						$ct =~ s/jpg/jpeg/;
-						
-						$cached->{size}        = length( ${$s->[0]} );
-						$cached->{body}        = $s->[0];
-						$cached->{contentType} = $ct;
-						
-						my $width = $s->[2];
-						my $mode  = $s->[4];
-						my $cacheKey = 'music/' . $track->{coverid} . "/cover_${width}x${width}_${mode}";
-
-						$cache->set( $cacheKey, $cached, $Cache::Cache::EXPIRES_NEVER );
-					}
+				else {				
+					# Update the rest of the tracks on this album
+					# to use the same coverid and cover_cached status
+					$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
 				}
-				
-				# Update the rest of the tracks on this album
-				# to use the same coverid and cover_cached status
-				$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
 			}
 			
 			$progress->update( $track->{album_title} );
 		}
+		
+		$sth->finish;
 
 		$progress->final($count);
 	}
