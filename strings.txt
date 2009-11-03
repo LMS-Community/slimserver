@@ -20044,20 +20044,8 @@ MERGEVA_PROGRESS
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
 
-ARTWORK_PROGRESS
-	CS	Hledání obalů alb
-	DA	Søg efter covere
-	DE	Suche Plattenhüllen
-	EN	Artwork Scan
-	ES	Examen de carátula de álbum
-	FI	Kansitaiteen haku
-	FR	Analyse de pochettes
-	IT	Analisi copertine
-	NL	Hoesafbeeldingen scannen
-	NO	Søk etter albumomslag
-	PL	Przeszukiwanie okładek
-	RU	Сканирование обложек
-	SV	Sökning efter albumomslag
+PRECACHEARTWORK_PROGRESS
+	EN	Pre-caching Artwork
 
 CLEANUP1_PROGRESS
 	CS	Čištění databáze č.1
