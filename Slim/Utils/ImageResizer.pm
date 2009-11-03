@@ -55,8 +55,8 @@ sub resize {
 	my $origref = $args{original};
 	my $file    = $args{file};
 	my $format  = $args{format};
-	my $width   = $args{width};
-	my $height  = $args{height};
+	my $width   = $args{width}  || 'X';
+	my $height  = $args{height} || 'X';
 	my $bgcolor = $args{bgcolor};
 	my $mode    = $args{mode};
 	my $debug   = $args{debug} || 0;
@@ -276,7 +276,7 @@ sub resize {
 			. "bgcolor $bgcolor\n";
 
 		if ( $args{faster} ) {
-			# copyResampled is very ugly but fast
+			# copyResized is very ugly but fast
 			$newImage->copyResized(
 				$origImage,
 				$destX, $destY,
@@ -385,7 +385,7 @@ Resize the same image multiple times in descending size order,
 using the result of the previous resize as input for the next.
 Can dramatically speed up the creation of different sized thumbnails.
 
-Returns arrayref of [ resized image data as a scalar ref, image format ].
+Returns arrayref of [ resized image data as a scalar ref, image format, width, height, mode ].
 
 =cut
 
@@ -409,7 +409,7 @@ sub resizeSeries {
 		delete $args{file};
 		$args{original} = $resized_ref;
 		
-		push @ret, [ $resized_ref, $format, $args{width}, $args{height} ];
+		push @ret, [ $resized_ref, $format, $args{width}, $args{height}, $args{mode} ];
 	}
 	
 	return wantarray ? @ret : \@ret;

@@ -30,12 +30,12 @@ use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Cache;
+use Slim::Utils::ImageResizer;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
-use Slim::Web::Graphics;
 
 # Global caches:
 my $artworkDir = '';
@@ -353,31 +353,15 @@ sub precacheAllArtwork {
 	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
 	
 	my $dbh = Slim::Schema->dbh;
-	
-	# Initialize graphics resizing
-	Slim::Web::Graphics::init();
-	
-	# Pre-cache this artwork resized to our commonly-used sizes/formats
-	# 1. user's thumb size or 100x100_o (large web artwork)
-	# 2. 50x50_o (small web artwork)
-	# 3+ SqueezePlay/Jive size artwork
-
-	my $coversize = $prefs->get('thumbSize') || 100;
-
-	my @dims = (
-		"${coversize}x${coversize}_o",
-		'50x50_o',
-		'40x40_m',
-		'41x41_m',
-		'64x64_m',
-	);
-	
+		
 	# Find all tracks with un-cached artwork:
 	# * All distinct cover values where cover isn't 0 and cover_cached is null
 	# * Tracks share the same cover art when the cover field is the same
 	#   (same path or same embedded art length).
 	my $sql = qq{
-		SELECT tracks.cover,
+		SELECT
+			tracks.url,
+			tracks.cover,
 			tracks.coverid,
 			albums.id AS albumid,
 			albums.title AS album_title,
@@ -417,7 +401,22 @@ sub precacheAllArtwork {
 			bar   => 1,
 		} );
 		
+		# Pre-cache this artwork resized to our commonly-used sizes/formats
+		# 1. user's thumb size or 100x100_o (large web artwork)
+		# 2. 50x50_o (small web artwork)
+		# 3+ SqueezePlay/Jive size artwork
+		
 		my $isEnabled = $prefs->get('precacheArtwork');
+		my $resample  = $prefs->get('resampleArtwork');
+		my $thumbSize = $prefs->get('thumbSize') || 100;
+
+		my $dims = [
+			{ width => $thumbSize, mode => 'o' },
+			{ width => 64,         mode => 'm' },
+			{ width => 50,         mode => 'o' },
+			{ width => 41,         mode => 'm' },
+			{ width => 40,         mode => 'm' },
+		];
 		
 		my $sth = $dbh->prepare($sql);
 		$sth->execute;
@@ -431,17 +430,45 @@ sub precacheAllArtwork {
 			}
 				
 			# Do the actual pre-caching only if the pref for it is enabled
-			if ( $isEnabled ) {
-				for my $dim ( @dims ) {
-					main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " at size $dim" );
-		
-					eval {
-						my $path = join( '/', 'music', $track->{coverid}, "cover_$dim" );
-						Slim::Web::Graphics::processCoverArtRequest( undef, $path );
+			if ( $isEnabled ) {				
+				# Image to resize is either a cover path or the audio file
+				my $path = $track->{cover} =~ /^\d+$/
+					? Slim::Utils::Misc::pathFromFileURL( $track->{url} )
+					: $track->{cover};
+				
+				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " from $path" );
+				
+				my $series = eval {
+					Slim::Utils::ImageResizer->resizeSeries(
+						file   => $path,
+						faster => !$resample,
+						series => $dims,
+					);
+				};
+				
+				if ( $@ ) {
+					$importlog->error($@);
+				}
+				else {
+					
+					my $cached = {
+						orig  => $path,
+						mtime => (stat $path)[9],
 					};
-			
-					if ( $@ ) {
-						$log->error("Pre-caching failed for " . $track->{album_title} . " at size $dim: $@");
+					
+					for my $s ( @{$series} ) {
+						my $ct = 'image/' . $s->[1];
+						$ct =~ s/jpg/jpeg/;
+						
+						$cached->{size}        = length( ${$s->[0]} );
+						$cached->{body}        = $s->[0];
+						$cached->{contentType} = $ct;
+						
+						my $width = $s->[2];
+						my $mode  = $s->[4];
+						my $cacheKey = 'music/' . $track->{coverid} . "/cover_${width}x${width}_${mode}";
+
+						$cache->set( $cacheKey, $cached, $Cache::Cache::EXPIRES_NEVER );
 					}
 				}
 				
