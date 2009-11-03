@@ -451,8 +451,13 @@ sub scrollTime {
 	} elsif ($ampm && $c == 2) { 
 		# Scrolling on am/pm simply alters the hour value by +-12
 		my $p = $h > 11 ? 1 : 0;
-		$p = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
-		$h = ($h + ($p ? 12 : -12)) % 24; 
+		
+		my $newp = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
+		
+		# Bug 12756: recalculate the hours if $p has changed.
+		if ($p != $newp) {
+			$h = ($h + ($p ? 12 : -12)) % 24;
+		}
 	}
 
 	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m);
