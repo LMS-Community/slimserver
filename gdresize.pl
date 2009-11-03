@@ -20,7 +20,6 @@ BEGIN {
 	Slim::bootstrap->loadModules( ['GD'], [] );
 };
 
-use Data::Dump qw(dump); # XXX remove
 use Getopt::Long;
 
 use Slim::Utils::ImageResizer;
