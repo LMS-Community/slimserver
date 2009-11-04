@@ -321,6 +321,7 @@ sub deleted {
 	my $file = Slim::Utils::Misc::pathFromFileURL($url);   
 	$log->error("Handling deleted track $file") unless main::SCANNER && $main::progress;
 
+	# XXX no DBIC objects
 	my $track = Slim::Schema->rs('Track')->search( url => $url )->single;
 		
 	if ( $track ) {
@@ -365,6 +366,7 @@ sub deleted {
 			}
 			
 			# Tell Year to rescan
+			# XXX no DBIC objects
 			Slim::Schema->rs('Year')->find($year)->rescan if $year;
 			
 			# Tell Genre to rescan
@@ -392,6 +394,7 @@ sub new {
 		
 		$work = sub {
 			# Scan tags & create track row and other related rows.
+			# XXX no DBIC objects, use updateOrCreateBase
 			my $track = Slim::Schema->updateOrCreate( {
 				url        => $url,
 				readTags   => 1,
@@ -443,7 +446,8 @@ sub new {
 		# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
 		$log->error("Handling new playlist $file") unless main::SCANNER && $main::progress;
 		
-		$work = sub {		
+		$work = sub {
+			# XXX no DBIC objects
 			my $playlist = Slim::Schema->updateOrCreate( {
 				url        => $url,
 				readTags   => 1,
@@ -486,6 +490,7 @@ sub changed {
 	
 	if ( Slim::Music::Info::isSong($url) ) {
 		# Fetch the original track record
+		# XXX no DBIC objects
 		my $origTrack = Slim::Schema->objectForUrl( {
 			url        => $url,
 			readTags   => 0,
@@ -500,6 +505,7 @@ sub changed {
 		
 		my $work = sub {	
 			# Scan tags & update track row
+			# XXX no DBIC objects
 			my $track = Slim::Schema->updateOrCreate( {
 				url        => $url,
 				readTags   => 1,
@@ -566,6 +572,7 @@ sub changed {
 			if ( $orig->{year} != $track->year ) {
 				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
 				
+				# XXX no DBIC objects
 				Slim::Schema->rs('Year')->find( $orig->{year} )->rescan;
 			}
 		};
