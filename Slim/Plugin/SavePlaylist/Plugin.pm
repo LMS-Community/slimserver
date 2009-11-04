@@ -60,15 +60,16 @@ sub setMode {
 	if (!$prefsServer->get('playlistdir')) {
 		# do nothing if there is no playlist folder defined.
 		
-	} elsif ($push ne 'push') {
-
+	} elsif ($push eq 'pop') {
+		
+		# back out one more step since we've saved the playlist and are only partly backed out.
+		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($client->modeParam('playlist') ne '') {
-
 		# don't do anything if we have a playlist name, since this
 		# means we've done the text entry
-	
+
 	} else {
-	
+
 		# default to the existing title for a known playlist, otherwise just start with 'A'
 		$context{$client} = $client->currentPlaylist ? 
 			Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 'A';
@@ -146,9 +147,17 @@ sub savePlaylist {
 
 	$client->execute(['playlist', 'save', $playlistfile]);
 
-	$client->showBriefly( {
-		'line' => [ $client->string('PLAYLIST_SAVING'), $playlistfile ]
-	});
+	$client->showBriefly(
+			{
+				line => [ $client->string('PLAYLIST_SAVING'), $playlistfile ]
+			},
+			{
+				callback =>  sub {
+						Slim::Buttons::Common::popModeRight($client);
+						Slim::Buttons::Common::popModeRight($client);
+				},
+			},
+	);
 }
 
 sub getFunctions {
@@ -200,7 +209,6 @@ sub initPlugin {
 			if ($playlistfile ne Slim::Utils::Misc::cleanupFilename($playlistfile)) {
 				$client->bumpRight();
 			} else {
-				Slim::Buttons::Common::setMode($client, 'playlist');
 				savePlaylist($client,$playlistfile);
 			}
 		},
