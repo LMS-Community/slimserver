@@ -457,12 +457,14 @@ sub precacheAllArtwork {
 				}
 				
 				eval {
+					main::DEBUGLOG && $isDebug && $importlog->debug( "  Running: " . join( " ", @cmd ) );
+					
 					my $process = Proc::Background->new(@cmd) || die "Could not launch gdresize command\n";
 					
 					my $exitcode = $process->wait;
 					
 					if ( $exitcode >> 8 != 0 ) {
-						die "gdresize failed\n";
+						die "gdresize failed with exit code " . ($exitcode >> 8) . "\n";
 					}
 				};
 				
