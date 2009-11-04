@@ -61,8 +61,6 @@ my $noweb                    = (grep { /noweb/ }     @ARGV) ? 1 : 0;
 
 my $sigINTcalled             = 0;
 
-my $sigCHLD                  = {};
-
 sub loadModules {
 	my ($class, $required_modules, $optional_modules, $libPath) = @_;
 
@@ -248,38 +246,10 @@ of Squeezebox Server you are running.
 		require Slim::Utils::PerfMon;
 	}
 	
-	sub REAPER {
-		my $kid;
-		
-		# Reap all dead children
-		while (($kid = waitpid(-1, WNOHANG)) > 0) {
-			if ( exists $sigCHLD->{$kid} ) {
-				
-				my $cb = $sigCHLD->{$kid}->{cb};
-				my $pt = $sigCHLD->{$kid}->{pt} || [];
-				$cb->( @{$pt} );
-				
-				delete $sigCHLD->{$kid};
-			}
-		}
-		
-		$SIG{'CHLD'} = \&REAPER;
-	}
-	$SIG{'CHLD'} = \&REAPER;
-	
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'TERM'} = \&sigterm;
 	$SIG{'INT'}  = \&sigint;
 	$SIG{'QUIT'} = \&sigquit;
-}
-
-sub sigCHLDCallback {
-	my ( $pid, $cb, @args ) = @_;
-	
-	$sigCHLD->{$pid} = {
-		cb => $cb,
-		pt => \@args,
-	};
 }
 
 sub tryModuleLoad {
