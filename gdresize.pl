@@ -116,6 +116,7 @@ if ( @spec > 1 ) {
 			my $ct = 'image/' . $s->[1];
 			$ct =~ s/jpg/jpeg/;
 		
+			# Series-based resize has to append to the cache key
 			my $key = $cachekey;
 			$key .= "${width}x${height}_${mode}";
 		
@@ -124,11 +125,15 @@ if ( @spec > 1 ) {
 	}
 }
 else {
-	my ($width, $height, $mode) = $spec[0] =~ /^([^x]+)x([^_]+)_(\w)$/;
+	my ($width, $height, $mode, $ext) = $spec[0] =~ /^([^x]+)x([^_]+)_(\w)\.?(\w+)?$/;
 	
 	if ( !$width || !$height || !$mode ) {
 		die "Invalid spec: $spec[0]\n";
 	}
+	
+	# XXX If cache is available, pull pre-cached size values from cache
+	# to see if we can use a smaller version of this image than the source
+	# to reduce resizing time.
 	
 	my ($ref, $format) = eval {
 		Slim::Utils::ImageResizer->resize(
@@ -138,6 +143,7 @@ else {
 			width  => $width,
 			height => $height,
 			mode   => $mode,
+			format => $ext || undef,
 		);
 	};
 	
@@ -149,7 +155,7 @@ else {
 		my $ct = 'image/' . $format;
 		$ct =~ s/jpg/jpeg/;
 		
-		$cachekey .= $spec[0];
+		# When doing a single resize, the cachekey passed in is all we store
 		
 		_cache( $cachekey, $ref, $ct );
 	}
@@ -192,7 +198,7 @@ Options:
 
   --url http://...
 
-  --spec <width>x<height>_<mode> ...
+  --spec <width>x<height>_<mode>[.ext] ...
     Mode is one of:
 	  m: max         (default)
 	  p: pad         (same as max)
@@ -208,7 +214,8 @@ Options:
   --faster                 Use ugly but fast copyResized function
   --cacheroot [dir]        Cache resulting image in a FileCache called
                            'Artwork' located in dir
-  --cachekey [key]         Use this key prefix for the cache data.
-                           Spec value will be appended.
+  --cachekey [key]         Use this key for the cached data.
+                           Note: spec value will be appended to the cachekey
+                           if multiple spec values were supplied.
 
 =cut
