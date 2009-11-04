@@ -408,7 +408,7 @@ sub precacheAllArtwork {
 		my $isEnabled = $prefs->get('precacheArtwork');
 		my $resample  = $prefs->get('resampleArtwork');
 		my $thumbSize = $prefs->get('thumbSize') || 100;
-		my $cachedir  = $prefs->get('cachedir');
+		my $cachedir  = $prefs->get('librarycachedir');
 		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresize();
 
 		my @specs = map { ("--spec" => $_) } (
