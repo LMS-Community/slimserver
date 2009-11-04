@@ -2183,75 +2183,20 @@ sub dateQuery {
 		return;
 	}
 
-	# one concept of "now" for the whole func
-	my $time = time();
-	
-	if ( main::SLIM_SERVICE ) {
-		# Use timezone on user's account
-		my $client = $request->client;
-		
-		my $tz 
-			=  preferences('server')->client($client)->get('timezone')
-			|| $client->playerData->userid->timezone 
-			|| 'America/Los_Angeles';
-		
-		my $datestr = DateTime->from_epoch( epoch => $time, time_zone => $tz )->strftime("%Y-%m-%dT%H:%M:%S%z");
-		$datestr =~ s/(\d\d)$/:$1/; # change -0500 to -05:00
-		$request->addResult( 'date', $datestr );
+	# 7.5+ SP devices use epoch time now, much simpler
+	$request->addResult( 'date_epoch', time() );
 
-		$datestr = DateTime->from_epoch( epoch => $time )->strftime("%Y-%m-%dT%H:%M:%S%z");
-		$datestr =~ s/(\d\d)$/:$1/; # change -0500 to -05:00
-		$request->addResult( 'date_utc', $datestr );
-		
-		$request->setStatusDone();
-		
-		return;
-	}
-	
-	# Calculate the time zone offset, taken from Time::Timezone
-	my @l    = localtime($time);
-	my @g    = gmtime($time);
-
-	my $off 
-		= $l[0] - $g[0]
-		+ ( $l[1] - $g[1] ) * 60
-		+ ( $l[2] - $g[2] ) * 3600;
-
-	# subscript 7 is yday.
-
-	if ( $l[7] == $g[7] ) {
-		# done
-	}
-	elsif ( $l[7] == $g[7] + 1 ) {
-		$off += 86400;
-	}
-	elsif ( $l[7] == $g[7] - 1 ) {
-			$off -= 86400;
-	} 
-	elsif ( $l[7] < $g[7] ) {
-		# crossed over a year boundry!
-		# localtime is beginning of year, gmt is end
-		# therefore local is ahead
-		$off += 86400;
-	}
-	else {
-		$off -= 86400;
-	}
-
-	my $hour = int($off / 3600);
-	if ( $hour > -10 && $hour < 10 ) {
-		$hour = "0" . abs($hour);
-	}
-	else {
-		$hour = abs($hour);
-	}
-
-	my $tzoff = ( $off >= 0 ) ? '+' : '-';
-	$tzoff .= sprintf( "%s:%02d", $hour, int( $off % 3600 / 60 ) );
-
-	# Return time in http://www.w3.org/TR/NOTE-datetime format
-	$request->addResult( 'date', strftime("%Y-%m-%dT%H:%M:%S", @l) . $tzoff );
-	$request->addResult( 'date_utc', strftime("%Y-%m-%dT%H:%M:%S+00:00", @g));
+	# This is the field 7.3 and earlier players expect.
+	#  7.4 is smart enough to take no action when missing
+	#  the date_utc field it expects.
+	# If they are hitting 7.5 SN/SC code, they're about to
+	#  be upgraded anyways, but we should avoid mucking
+	#  with their clock in the meantime.  These crafted "all-zeros"
+	#  responses will avoid Lua errors, but the "date"
+	#  command implemented by busybox will fail out on this
+	#  data and take no action due to it resulting in a
+	#  negative time_t value.
+	$request->addResult( 'date', '0000-00-00T00:00:00+00:00' );
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
