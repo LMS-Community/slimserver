@@ -1324,44 +1324,43 @@ sub _createTrack {
 	### Create TrackPersistent row
 	
 	if ( main::STATISTICS && $columnValueHash->{'audio'} ) {
-		# XXX: this is pretty slow
-		my $track = Slim::Schema->rs($source)->find($id);
-		
-		# Pull the track persistent object for the DB
-		my $trackPersistent = $track->retrievePersistent();
-
-		# We only want to store real musicbrainz_id's (conversion programs sometimes generate invalid musicbrainz_id's during conversion)
-		if ( exists $persistentColumnValueHash->{musicbrainz_id} && length( $persistentColumnValueHash->{musicbrainz_id} ) != 36 ) {
-			delete $persistentColumnValueHash->{musicbrainz_id};
-		}
+		# Pull the track persistent data
+		my $trackPersistentHash = Slim::Schema::TrackPersistent->findhash(
+			$columnValueHash->{musicbrainz_id},
+			$columnValueHash->{urlmd5},
+		);
 
 		# retrievePersistent will always return undef or a track metadata object
-		if ( !blessed $trackPersistent ) {
+		if ( !$trackPersistentHash ) {
 			$persistentColumnValueHash->{added}  = $columnValueHash->{timestamp};
 			$persistentColumnValueHash->{url}    = $columnValueHash->{url};
 			$persistentColumnValueHash->{urlmd5} = $columnValueHash->{urlmd5};
+			
+			# Create a new persistent row
+			my @pcols      = keys %{$persistentColumnValueHash};
+			my $pcolstring = join( ',', @pcols );
+			my $pph        = join( ',', map { '?' } @pcols );
 
-			# Create the track metadata object- or bail. ->throw_exception will emit a backtrace.
-			# XXX native DBI
-			$trackPersistent = Slim::Schema->rs('TrackPersistent')->create($persistentColumnValueHash);
-	
-			if ( $@ || !blessed $trackPersistent ) {
-		
-				logError("Failed to create TrackPersistent for ", $columnValueHash->{url}, ": $@");
-				return $id;
-			}
+			my $sth = $dbh->prepare_cached("INSERT INTO tracks_persistent ($pcolstring) VALUES ($pph)");
+			$sth->execute( map { $persistentColumnValueHash->{$_} } @pcols );
 		}
 		else {
 			while ( my ($key, $val) = each %{$persistentColumnValueHash} ) {
-
 				main::INFOLOG && $log->is_info && $log->info("Updating persistent ", $columnValueHash->{url}, " : $key to $val");
-				$trackPersistent->set_column( $key => $val );
+				$trackPersistentHash->{$key} = $val;
 			}
 			
-			$trackPersistent->set_column( url => $columnValueHash->{url} );
-			$trackPersistent->set_column( urlmd5 => $columnValueHash->{urlmd5} );
+			# Always update url/urlmd5 as these values may have changed if we looked up using musicbrainz_id
+			$trackPersistentHash->{url}    = $columnValueHash->{url};
+			$trackPersistentHash->{urlmd5} = $columnValueHash->{urlmd5};
 			
-			$trackPersistent->update;
+			my $pid = delete $trackPersistentHash->{id};
+			
+			my @pcols      = keys %{$trackPersistentHash};
+			my $pcolstring = join( ', ', map { $_ . ' = ?' } @pcols );
+			
+			my $sth = $dbh->prepare_cached("UPDATE tracks_persistent SET $pcolstring WHERE id = ?");
+			$sth->execute( map { $trackPersistentHash->{$_} } @pcols, $pid );
 		}
 	}
 	
@@ -1710,6 +1709,7 @@ sub updateOrCreateBase {
 		# Pull the track metadata object for the DB if available
 		my $trackPersistent;
 		if ( main::STATISTICS ) {
+			# XXX native DBI
 			$trackPersistent = $track->retrievePersistent();
 		}
 	

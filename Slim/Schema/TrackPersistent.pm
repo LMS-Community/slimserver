@@ -77,6 +77,25 @@ sub import_json {
 	}
 }
 
+# Faster return of data as a hash
+sub findhash {
+	my ( $class, $mbid, $urlmd5 ) = @_;
+	
+	my $sth = Slim::Schema->dbh->prepare_cached( qq{
+		SELECT *
+		FROM tracks_persistent
+		WHERE (	musicbrainz_id = ? OR urlmd5 = ? )
+	} );
+	
+	$sth->execute( $mbid, $urlmd5 );
+			
+	my $hash = $sth->fetchrow_hashref;
+	
+	$sth->finish;
+	
+	return $hash;
+}
+
 1;
 
 __END__
