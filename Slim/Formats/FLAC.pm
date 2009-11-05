@@ -915,6 +915,8 @@ so we use this to set the track duaration value.
 sub scanBitrate {
 	my ( $class, $fh, $url ) = @_;
 	
+	seek $fh, 0, 0;
+	
 	my $s = Audio::Scan->scan_fh( flac => $fh );
 	
 	my $info = $s->{info};

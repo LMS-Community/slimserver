@@ -170,6 +170,8 @@ sub scanBitrate {
 	
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
+	seek $fh, 0, 0;
+	
 	my $s = Audio::Scan->scan_fh( ogg => $fh );
 	
 	if ( !$s->{info}->{audio_offset} ) {
