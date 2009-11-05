@@ -2916,7 +2916,8 @@ sub _resolved_attrs {
   # subquery (since a group_by is present)
   if (delete $attrs->{distinct}) {
     if ($attrs->{group_by}) {
-      carp ("Useless use of distinct on a grouped resultset ('distinct' is ignored when a 'group_by' is present)");
+      # XXX comment this out, we have some queries that have both distinct and group_by -andy
+      #carp ("Useless use of distinct on a grouped resultset ('distinct' is ignored when a 'group_by' is present)");
     }
     else {
       $attrs->{group_by} = [ grep { !ref($_) || (ref($_) ne 'HASH') } @{$attrs->{select}} ];
