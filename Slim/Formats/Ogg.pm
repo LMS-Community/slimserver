@@ -158,6 +158,8 @@ sub scanBitrate {
 	
 	my $isDebug = $log->is_debug;
 	
+	seek $fh, 0, 0;
+	
 	my $s = Audio::Scan->scan_fh( ogg => $fh );
 	
 	if ( !$s->{info}->{audio_offset} ) {

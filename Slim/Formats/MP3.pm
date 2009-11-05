@@ -226,6 +226,8 @@ sub scanBitrate {
 	my ( $class, $fh, $url ) = @_;
 	
 	# Scan the header for info/tags
+	seek $fh, 0, 0;
+	
 	my $s = Audio::Scan->scan_fh( mp3 => $fh );
 	
 	my $info = $s->{info};
