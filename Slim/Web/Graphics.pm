@@ -118,7 +118,6 @@ sub artworkRequest {
 	# * Fire off an async process running gdresize.pl
 	# * When gdresize is done, read newly cached image and callback
 	
-	# XXX bgcolor support
 	# XXX remote URLs (from protocol handler icon)
 	
 	# Check cache for this path
@@ -140,8 +139,8 @@ sub artworkRequest {
 	my $no_cache;
 	
 	# Parse out spec from path
-	# WxH_m[.ext]
-	my ($spec) = $path =~ /_([^x]+x[^_]+_(\w)(?:\.\w+)?)$/;
+	# WxH[_m][_bg][.ext]
+	my ($spec) = $path =~ /_([^x]+x[^_]+(?:_(\w))?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
 	
 	# Special cases:
 	# /music/current/cover.jpg (mentioned in CLI docs)
@@ -257,7 +256,7 @@ sub artworkRequest {
 	}
 	
 	if ( $fullpath && -e $fullpath ) {
-		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath");
+		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
 		
 		# Setup async call to gdresize script
 		my @cmd = (

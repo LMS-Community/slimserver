@@ -125,9 +125,9 @@ if ( @spec > 1 ) {
 	}
 }
 else {
-	my ($width, $height, $mode, $ext) = $spec[0] =~ /^([^x]+)x([^_]+)_(\w)\.?(\w+)?$/;
+	my ($width, $height, $mode, $bgcolor, $ext) = $spec[0] =~ /^([^x]+)x([^_]+)(?:_(\w))?(?:_([\da-fA-F]+))?\.?(\w+)?$/;
 	
-	if ( !$width || !$height || !$mode ) {
+	if ( !$width || !$height ) {
 		die "Invalid spec: $spec[0]\n";
 	}
 	
@@ -137,13 +137,14 @@ else {
 	
 	my ($ref, $format) = eval {
 		Slim::Utils::ImageResizer->resize(
-			file   => $file,
-			debug  => $debug,
-			faster => $faster,
-			width  => $width,
-			height => $height,
-			mode   => $mode,
-			format => $ext || undef,
+			file    => $file,
+			debug   => $debug,
+			faster  => $faster,
+			width   => $width,
+			height  => $height,
+			mode    => $mode,
+			bgcolor => $bgcolor,
+			format  => $ext,
 		);
 	};
 	
