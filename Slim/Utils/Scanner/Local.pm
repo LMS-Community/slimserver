@@ -80,6 +80,8 @@ sub rescan {
 		Slim::Music::Import->setIsScanning(1);
 	}
 	
+	$log->error("Discovering files in $next");
+	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
