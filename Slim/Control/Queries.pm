@@ -4801,7 +4801,6 @@ sub _addJiveSong {
 	}
 	
 	if ( defined $iconId ) {
-		$iconId += 0;
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
 	elsif ( defined($songData->{artwork_url}) ) {
