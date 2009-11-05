@@ -132,7 +132,7 @@ sub init {
 	$parsedFormats{'ARTIST'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{artist} || '';
+			return $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || '';
 		}
 
 		my @output  = ();
@@ -598,6 +598,12 @@ sub infoFormat {
 	
 	# Short-circuit if we have metadata
 	if ( $meta ) {
+		# Make sure all keys in meta are lowercase for format lookups
+		my @uckeys = grep { $_ =~ /[A-Z]/ } keys %{$meta};
+		for my $key ( @uckeys ) {
+			$meta->{lc($key)} = delete $meta->{$key};
+		}
+		
 		$output = $format->($meta) if ref($format) eq 'CODE';
 	}
 	else {

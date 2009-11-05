@@ -13,7 +13,6 @@ use File::Next;
 use FileHandle;
 use Path::Class ();
 use Scalar::Util qw(blessed);
-use Tie::Cache::LRU;
 
 use Slim::Utils::Misc ();
 use Slim::Utils::Log;
@@ -39,10 +38,6 @@ eval "use $findclass";
 die $@ if $@;
 
 my %pending = ();
-
-# Small cache of path -> cover.jpg mapping to speed up
-# scans of files in the same directory
-tie my %findArtCache, 'Tie::Cache::LRU', 10;
 
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
@@ -395,7 +390,7 @@ sub new {
 		$work = sub {
 			# Scan tags & create track row and other related rows.
 			# XXX no DBIC objects, use updateOrCreateBase
-			my $track = Slim::Schema->updateOrCreate( {
+			my $trackid = Slim::Schema->updateOrCreateBase( {
 				url        => $url,
 				readTags   => 1,
 				new        => 1,
@@ -403,30 +398,13 @@ sub new {
 				commit     => 0,
 			} );
 			
-			if ( !defined $track ) {
+			if ( !defined $trackid ) {
 				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
 				return;
 			}
 			
-			my $album = $track->album;
-			
-			# We now look for cover art at the same time as scanning files
-			if ( !$track->cover ) {
-				# Track did not have embedded artwork, look for standalone cover
-				findArtwork($track);
-			}
-			
-			# Initialize coverid column
-			$track->coverid;
-			
-			# Link album cover to track cover			
-			# XXX if an album has multiple images i.e. Ghosts,
-			# prefer cover.jpg instead of embedded artwork for album?
-			# Would require an additional cover column in the albums table
-			if ( $album && $track->cover ) {
-				$album->artwork( $track->coverid );
-			}
-			
+=pod
+			# XXX
 			# Reset negative compilation status on this album so mergeVA will re-check it
 			# as it may have just become a VA album from this new track.  When run in
 			# the scanner, mergeVA will handle this later.
@@ -434,8 +412,7 @@ sub new {
 				# Auto-rescan mode, immediately merge VA
 				Slim::Schema->mergeSingleVAAlbum( $album->id );
 			}
-			
-			$album && $album->update;
+=cut
 		};
 	}
 	elsif ( 
@@ -709,98 +686,6 @@ sub scanPlaylistFileHandle {
 	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
-}
-
-sub findArtwork {
-	my $track = shift;
-	
-	# return with nothing if this isn't a file.
-	if ( !$track->audio ) {
-		return;
-	}
-	
-	my $isInfo = main::INFOLOG && $log->is_info;
-	
-	my $file      = Path::Class::file( $track->path );
-	my $parentDir = $file->dir;
-	
-	my $art = $findArtCache{$parentDir};
-	
-	# Files to look for
-	my @files = qw(cover folder album thumb);
-
-	if ( !defined $art ) {
-		# coverArt/artfolder pref support
-		if ( my $coverFormat = $prefs->get('coverArt') ) {
-			# If the user has specified a pattern to match the artwork on, we need
-			# to generate that pattern. This is nasty.
-			if ( $coverFormat && $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
-				my $suffix = $2 ? $2 : '.jpg';
-
-				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( $track, $1 ) ) {
-					$coverFormat = $prefix . $suffix;
-
-					if ( main::ISWINDOWS ) {
-						# Remove illegal characters from filename.
-						$coverFormat =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
-					}
-
-					my $artPath = $parentDir->file($coverFormat)->stringify;
-					
-					if ( my $artDir = $prefs->get('artfolder') ) {
-						$artDir  = Path::Class::dir($artDir);
-						$artPath = $artDir->file($coverFormat)->stringify;
-					}
-					
-					if ( -e $artPath ) {
-						main::INFOLOG && $isInfo && $log->info("Found variable cover $coverFormat from $1");
-						$art = $artPath;
-					}
-					else {
-						main::INFOLOG && $isInfo && $log->info("No variable cover $coverFormat found from $1");
-					}
-				}
-				else {
-				 	main::INFOLOG && $isInfo && $log->info("No variable cover match for $1");
-				}
-			}
-			elsif ( defined $coverFormat ) {
-				push @files, $coverFormat;
-			}
-		}
-		
-		if ( !$art ) {
-			# Find all image files in the file directory
-			my $files = File::Next::files( {
-				file_filter    => sub { $_ =~ /\.(?:jpe?g|png|gif)$/i },
-				descend_filter => sub { 0 },
-			}, $parentDir );
-	
-			my @found;
-			while ( my $image = $files->() ) {
-				push @found, $image;
-			}
-	
-			# Prefer cover/folder/album/thumb, then just take the first image
-			my $filelist = join( '|', @files );
-			if ( my @preferred = grep { qr/^(?:$filelist)/i } @found ) {
-				$art = $preferred[0];
-			}
-			else {
-				$art = $found[0] || 0;
-			}
-		}
-	
-		# Cache found artwork for this directory to speed up later tracks
-		$findArtCache{$parentDir} = $art;
-	}
-	
-	main::INFOLOG && $isInfo && $log->info("Using $parentDir/$art");
-	
-	# XXX get rid of all DBIC in here
-	$track->cover( $art || 0 );
-	
-	return 1;
 }
 
 1;

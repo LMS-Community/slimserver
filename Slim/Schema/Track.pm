@@ -625,29 +625,44 @@ sub coverid {
 	if ( !defined $val ) {
 		# Initialize coverid value
 		if ( $self->cover ) {
-			my $mtime;
-			my $size;
-				
-			if ( $self->cover =~ /^\d+$/ ) {
-				# Cache is based on mtime/size of the file containing embedded art
-				$mtime = $self->timestamp;
-				$size  = $self->filesize;
-			}
-			elsif ( -e $self->cover ) {
-				# Cache is based on mtime/size of artwork file
-				($size, $mtime) = (stat _)[7, 9];
-			}
-		
-			if ( $mtime && $size ) {
-				$val = substr( md5_hex( $self->url . $mtime . $size ), 0, 8 );
-				
-				$self->_coverid($val);
-				$self->update;
-			}
+			my $coverid = $self->generateCoverId( {
+				cover => $self->cover,
+				url   => $self->url,
+				mtime => $self->timestamp,
+				size  => $self->filesize,
+			} );
+			
+			$self->_coverid($coverid);
+			$self->update;
 		}
 	}
 	
 	return $val;
+}
+
+# Cover ID can be generated without a Track object, so this is a class method
+sub generateCoverId {
+	my ( $classOrSelf, $args ) = @_;
+	
+	my $coverid;
+ 	my $mtime;
+	my $size;
+		
+	if ( $args->{cover} =~ /^\d+$/ ) {
+		# Cache is based on mtime/size of the file containing embedded art
+		$mtime = $args->{mtime};
+		$size  = $args->{size};
+	}
+	elsif ( -e $args->{cover} ) {
+		# Cache is based on mtime/size of artwork file
+		($size, $mtime) = (stat _)[7, 9];
+	}
+
+	if ( $mtime && $size ) {
+		$coverid = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+	}
+	
+	return $coverid;
 }
 
 1;

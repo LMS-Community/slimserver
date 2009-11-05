@@ -1213,6 +1213,14 @@ sub _createOrUpdateAlbum {
 			# Update the album title - the user might have changed it.
 			$set{'title'} = $title;
 		}
+		
+		# Link album cover to track cover			
+		# Future TODO: if an album has multiple images i.e. Ghosts,
+		# prefer cover.jpg instead of embedded artwork for album?
+		# Would require an additional cover column in the albums table
+		if ( $trackColumns->{'coverid'} ) {
+			$set{'artwork'} = $trackColumns->{'coverid'};
+		}
 
 		$albumObj->set_columns(\%set);
 
@@ -1521,10 +1529,10 @@ sub _newTrack {
 
 	if (defined $compilation) {
 		# Use eq instead of == here, otherwise perl will warn.
-		if ($compilation =~ /^(?:yes|true)$/i || $compilation eq 1) {
+		if ($compilation =~ /^(?:1|yes|true)$/i) {
 			$isCompilation = 1;
 			main::DEBUGLOG && $isDebug && $log->debug("-- Track is a compilation");
-		} elsif ($compilation =~ /^(?:no|false)$/i || $compilation eq 0) {
+		} elsif ($compilation =~ /^(?:0|no|false)$/i) {
 			$isCompilation = 0;
 			main::DEBUGLOG && $isDebug && $log->debug("-- Track is NOT a compilation");
 		}
@@ -1534,8 +1542,25 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 	
-	### Find artwork column values for Track and Album
-	# XXX
+	### Find artwork column values for the Track
+	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
+		# Track does not have embedded artwork, look for standalone cover
+		# findStandaloneArtwork returns either a full path to cover art or 0
+		# to indicate no artwork was found.
+		my $cover = Slim::Music::Artwork->findStandaloneArtwork( \%columnValueHash, $deferredAttributes );
+		
+		$columnValueHash{cover} = $cover;
+	}
+	
+	if ( $columnValueHash{cover} ) {
+		# Generate coverid value based on artwork, mtime, filesize
+		$columnValueHash{coverid} = Slim::Schema::Track->generateCoverId( {
+			cover => $columnValueHash{cover},
+			url   => $url,
+			mtime => $columnValueHash{timestamp},
+			size  => $columnValueHash{filesize},
+		} );
+	}
 
 	### Create Album row
 	my $albumId = $self->_createOrUpdateAlbum($deferredAttributes, 

@@ -45,7 +45,99 @@ my $prefs = preferences('server');
 
 tie my %lastFile, 'Tie::Cache::LRU', 32;
 
+# Small cache of path -> cover.jpg mapping to speed up
+# scans of files in the same directory
+tie my %findArtCache, 'Tie::Cache::LRU', 32;
+
 # Public class methods
+sub findStandaloneArtwork {
+	my ( $class, $trackAttributes, $deferredAttributes ) = @_;
+	
+	my $isInfo = main::INFOLOG && $log->is_info;
+	
+	my $file      = Path::Class::file( Slim::Utils::Misc::pathFromFileURL( $trackAttributes->{url} ) );
+	my $parentDir = $file->dir;
+	
+	my $art = $findArtCache{$parentDir};
+	
+	# Files to look for
+	my @files = qw(cover folder album thumb);
+
+	if ( !defined $art ) {
+		# coverArt/artfolder pref support
+		if ( my $coverFormat = $prefs->get('coverArt') ) {
+			# If the user has specified a pattern to match the artwork on, we need
+			# to generate that pattern. This is nasty.
+			if ( $coverFormat && $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
+				my $suffix = $2 ? $2 : '.jpg';
+
+				# Merge attributes to use with TitleFormatter
+				# XXX This may break for some people as it's not using a Track object anymore
+				my $meta = { %{$trackAttributes}, %{$deferredAttributes} };
+				
+				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( undef, $1, undef, $meta ) ) {
+					$coverFormat = $prefix . $suffix;
+
+					if ( main::ISWINDOWS ) {
+						# Remove illegal characters from filename.
+						$coverFormat =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
+					}
+
+					my $artPath = $parentDir->file($coverFormat)->stringify;
+					
+					if ( my $artDir = $prefs->get('artfolder') ) {
+						$artDir  = Path::Class::dir($artDir);
+						$artPath = $artDir->file($coverFormat)->stringify;
+					}
+					
+					if ( -e $artPath ) {
+						main::INFOLOG && $isInfo && $log->info("Found variable cover $coverFormat from $1");
+						$art = $artPath;
+					}
+					else {
+						main::INFOLOG && $isInfo && $log->info("No variable cover $coverFormat found from $1");
+					}
+				}
+				else {
+				 	main::INFOLOG && $isInfo && $log->info("No variable cover match for $1");
+				}
+			}
+			elsif ( defined $coverFormat ) {
+				push @files, $coverFormat;
+			}
+		}
+		
+		if ( !$art ) {
+			# Find all image files in the file directory
+			my $files = File::Next::files( {
+				file_filter    => sub { $_ =~ /\.(?:jpe?g|png|gif)$/i },
+				descend_filter => sub { 0 },
+			}, $parentDir );
+	
+			my @found;
+			while ( my $image = $files->() ) {
+				push @found, $image;
+			}
+	
+			# Prefer cover/folder/album/thumb, then just take the first image
+			my $filelist = join( '|', @files );
+			if ( my @preferred = grep { qr/^(?:$filelist)/i } @found ) {
+				$art = $preferred[0];
+			}
+			else {
+				$art = $found[0] || 0;
+			}
+		}
+	
+		# Cache found artwork for this directory to speed up later tracks
+		$findArtCache{$parentDir} = $art;
+	}
+	
+	main::INFOLOG && $isInfo && $log->info("Using $art");
+	
+	return $art || 0;
+}
+
 # XXX remove after BMF is moved to use Scanner::Local
 sub findArtwork {
 	my $class = shift;
