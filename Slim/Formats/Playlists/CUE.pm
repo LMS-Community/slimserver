@@ -442,6 +442,7 @@ sub processAnchor {
 			
 			# We need to skip past the LAME header so the first chunk
 			# doesn't get truncated by the firmware thinking it needs to remove encoder padding
+			seek $fh, 0, 0;
 			my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
 			if ( $s->{info}->{lame_encoder_version} ) {
 				my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );

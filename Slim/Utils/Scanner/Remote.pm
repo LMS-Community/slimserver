@@ -541,6 +541,7 @@ sub parseWMAHeader {
 	# WMA file is not a live stream
 	my $fh = File::Temp->new();
 	$fh->write( $header, length($header) );
+	$fh->seek(0, 0);
 	
 	my $wma = Audio::Scan->scan_fh( asf => $fh );
 	
