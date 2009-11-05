@@ -113,6 +113,10 @@ sub powerTurnOffLED {
 	Slim::Hardware::TriLED::setTriLED( $client, $OFF_COLOR, 1);
 }
 
+sub hasPreAmp {
+	return 0;
+}
+
 1;
 
 __END__
