@@ -155,6 +155,12 @@ sub artworkRequest {
 		# Poor choice of special names...
 		$spec =~ s{^items/[^_]+_}{};
 		$path = 'html/images/albums_' . $spec;
+		
+		# Make sure we have an extension
+		if ( $path !~ /\./ ) {
+			$path .= '.png';
+		}
+		
 		main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
 	}
 	
