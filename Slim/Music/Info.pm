@@ -63,7 +63,9 @@ our %currentTitleCallbacks = ();
 tie our %isFile, 'Tie::Cache::LRU', 16;
 
 # No need to do this over and over again either.
-tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
+# Don't use Tie::Cache::LRU as it is a bit too expensive in the scanner
+our %urlToTypeCache;
+use constant URLTYPECACHESIZE => 16;
 
 my $log = logger('database.info');
 
@@ -255,6 +257,7 @@ sub setContentType {
 	}
 
 	# Update the cache set by typeFrompath as well.
+	%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
 	$urlToTypeCache{$url} = $type;
 	
 	main::INFOLOG && $log->info("Content-Type for $url is cached as $type");
@@ -403,6 +406,7 @@ sub setRemoteMetadata {
 		}
 
 		# Update the cache set by typeFrompath as well.
+		%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
 		$urlToTypeCache{$url} = $type;
 		
 		$attr->{CT} = $type;
@@ -949,6 +953,9 @@ sub addDiscNumberToAlbumTitle {
 	return $title;
 }
 
+# Cache this preference, which may be undef
+my ($_splitList, $_gotSplitList);
+
 sub splitTag {
 	my $tag = shift;
 
@@ -964,12 +971,16 @@ sub splitTag {
 	}
 
 	my @splitTags = ();
-	my $splitList = $prefs->get('splitList');
-
+	
+	if (!$_gotSplitList) {
+		$_splitList = $prefs->get('splitList');
+		$_gotSplitList = 1;
+	}
+	
 	# only bother if there are some characters in the pref
-	if ($splitList) {
+	if ($_splitList) {
 
-		for my $splitOn (split(/\s+/, $splitList),'\x00') {
+		for my $splitOn (split(/\s+/, $_splitList),'\x00') {
 
 			my @temp = ();
 
@@ -1366,17 +1377,11 @@ sub typeFromPath {
 	if ($fullpath && $fullpath !~ /\x00/) {
 
 		# Return quickly if we have it in the cache.
-		if (defined $urlToTypeCache{$filepath}) {
-
-			$type = $urlToTypeCache{$filepath};
-			
+		if (defined ($type = $urlToTypeCache{$filepath})) {
 			return $type if $type ne 'unk';
-
 		}
 		elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
-
 			$type = $suffixes{$1};
-
 		} 
 		elsif ( $fullpath =~ /^(?:radioio|live365)/ ) {
 			# Force mp3 for protocol handlers
@@ -1451,7 +1456,7 @@ sub typeFromPath {
 
 	# Don't cache remote URL types, as they may change.
 	if (!isRemoteURL($fullpath)) {
-
+		%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
 		$urlToTypeCache{$filepath} = $type;
 	}
 

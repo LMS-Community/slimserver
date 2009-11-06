@@ -384,10 +384,8 @@ sub new {
 	
 	my $work;
 	
-	my $file = Slim::Utils::Misc::pathFromFileURL($url);
-		
 	if ( Slim::Music::Info::isSong($url) ) {
-		$log->error("Handling new track $file") unless main::SCANNER && $main::progress;
+		$log->error("Handling new track $url") unless main::SCANNER && $main::progress;
 		
 		$work = sub {
 			# Scan tags & create track row and other related rows.
@@ -401,7 +399,7 @@ sub new {
 			} );
 			
 			if ( !defined $trackid ) {
-				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
 				return;
 			}
 			
@@ -423,7 +421,7 @@ sub new {
 		( Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url) )
 	) {
 		# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
-		$log->error("Handling new playlist $file") unless main::SCANNER && $main::progress;
+		$log->error("Handling new playlist $url") unless main::SCANNER && $main::progress;
 		
 		$work = sub {
 			# XXX no DBIC objects
@@ -440,11 +438,11 @@ sub new {
 			} );
 		
 			if ( !defined $playlist ) {
-				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
 				return;
 			}
 
-			scanPlaylistFileHandle( $playlist, FileHandle->new($file) );
+			scanPlaylistFileHandle( $playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($url)) );
 		};
 	}
 	

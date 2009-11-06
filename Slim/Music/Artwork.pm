@@ -47,23 +47,23 @@ tie my %lastFile, 'Tie::Cache::LRU', 32;
 
 # Small cache of path -> cover.jpg mapping to speed up
 # scans of files in the same directory
-tie my %findArtCache, 'Tie::Cache::LRU', 32;
+# Don't use Tie::Cache::LRU as it is a bit too expensive in the scanner
+my %findArtCache;
 
 # Public class methods
 sub findStandaloneArtwork {
-	my ( $class, $trackAttributes, $deferredAttributes ) = @_;
+	my ( $class, $trackAttributes, $deferredAttributes, $dirname ) = @_;
 	
 	my $isInfo = main::INFOLOG && $log->is_info;
 	
-	my $file      = Path::Class::file( Slim::Utils::Misc::pathFromFileURL( $trackAttributes->{url} ) );
-	my $parentDir = $file->dir;
-	
-	my $art = $findArtCache{$parentDir};
+	my $art = $findArtCache{$dirname};
 	
 	# Files to look for
 	my @files = qw(cover folder album thumb);
 
 	if ( !defined $art ) {
+		my $parentDir = Path::Class::dir($dirname);
+		
 		# coverArt/artfolder pref support
 		if ( my $coverFormat = $prefs->get('coverArt') ) {
 			# If the user has specified a pattern to match the artwork on, we need
@@ -130,7 +130,8 @@ sub findStandaloneArtwork {
 		}
 	
 		# Cache found artwork for this directory to speed up later tracks
-		$findArtCache{$parentDir} = $art;
+		%findArtCache = () if scalar keys %findArtCache > 32;
+		$findArtCache{$dirname} = $art;
 	}
 	
 	main::INFOLOG && $isInfo && $log->info("Using $art");

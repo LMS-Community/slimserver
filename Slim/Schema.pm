@@ -855,7 +855,7 @@ sub objectForUrl {
 }
 
 sub _createOrUpdateAlbum {
-	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track) = @_;
+	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename) = @_;
 	
 	# Now handle Album creation
 	my $title     = $attributes->{'ALBUM'};
@@ -887,7 +887,7 @@ sub _createOrUpdateAlbum {
 	}
 
 	# Used for keeping track of the album name.
-	my $basename = dirname($trackColumns->{'url'});
+	$basename ||= dirname($trackColumns->{'url'});
 
 	my $noAlbum = string('NO_ALBUM');
 	
@@ -1123,7 +1123,7 @@ sub _createOrUpdateAlbum {
 	
 	assert($albumObj);
 
-	if (!$self->_albumIsUnknownAlbum($albumObj)) {
+	if ($noAlbum ne $albumObj->get_column('title')) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $title);
 
@@ -1249,8 +1249,8 @@ sub _createOrUpdateAlbum {
 	# and I don't really know. 
 	$lastAlbum = {
 		dirname   => $basename,
-		title     => $albumObj->rawtitle,
-		disc      => $albumObj->disc,
+		title     => $title,
+		disc      => $disc,
 		albumObj  => $albumObj,
 		albumId   => $albumObj->id,
 	};
@@ -1424,12 +1424,14 @@ sub _newTrack {
 	my $playlist      = $args->{'playlist'} || 0;
 	my $source        = $playlist ? 'Playlist' : 'Track';
 
-	my $deferredAttributes = {};
 
 	if (!$url) {
 		logBacktrace("Null track request! Returning undef");
 		return undef;
 	}
+
+	my $dirname            = dirname($url);
+	my $deferredAttributes = {};
 
 	main::INFOLOG && $isInfo && $log->info("\nNew $source: [$url]");
 
@@ -1546,7 +1548,7 @@ sub _newTrack {
 		# Track does not have embedded artwork, look for standalone cover
 		# findStandaloneArtwork returns either a full path to cover art or 0
 		# to indicate no artwork was found.
-		my $cover = Slim::Music::Artwork->findStandaloneArtwork( \%columnValueHash, $deferredAttributes );
+		my $cover = Slim::Music::Artwork->findStandaloneArtwork( \%columnValueHash, $deferredAttributes, $dirname );
 		
 		$columnValueHash{cover} = $cover;
 	}
@@ -1569,6 +1571,7 @@ sub _newTrack {
 		$contributors->{'ALBUMARTIST'},											# hasAlbumAtrist
 		1,																		# create
 		undef,																	# Track
+		$dirname,
 	);
 	
 	### Create Track row
@@ -2517,6 +2520,7 @@ sub _preCheckAttributes {
 	my $deferredAttributes = {};
 
 	# Copy the incoming hash, so we don't modify it
+	# XXX why do we need to copy?
 	my $attributes = { %{ $args->{'attributes'} } };
 
 	# Normalize attribute names
@@ -2863,17 +2867,6 @@ sub _postCheckAttributes {
 	
 	# refcount--
 	%{$contributors} = ();
-}
-
-sub _albumIsUnknownAlbum {
-	my ($self, $albumObj) = @_;
-
-	if ($_unknownAlbum && $albumObj->get_column('title') eq $_unknownAlbum->get_column('title')) {
-
-		return 1;
-	}
-
-	return 0;
 }
 
 sub _mergeAndCreateContributors {
