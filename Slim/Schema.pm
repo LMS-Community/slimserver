@@ -59,7 +59,7 @@ my $log = logger('database.info');
 my $prefs = preferences('server');
 
 # Singleton objects for Unknowns
-our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
+our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', 0);
 
 # Hash of stuff about the last Album created
 our $lastAlbum;
@@ -857,12 +857,14 @@ sub objectForUrl {
 sub _createOrUpdateAlbum {
 	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename) = @_;
 	
+	my $dbh = $self->dbh;
+	
 	# Now handle Album creation
-	my $title     = $attributes->{'ALBUM'};
-	my $disc      = $attributes->{'DISC'};
-	my $discc     = $attributes->{'DISCC'};
+	my $title     = $attributes->{ALBUM};
+	my $disc      = $attributes->{DISC};
+	my $discc     = $attributes->{DISCC};
 	# Bug 10583 - Also check for MusicBrainz Album Id
-	my $brainzId  = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
+	my $brainzId  = $attributes->{MUSICBRAINZ_ALBUM_ID};
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
@@ -877,60 +879,63 @@ sub _createOrUpdateAlbum {
 	#	$log->debug( '-- Ignoring useless DISCC tag value of 1' );
 	#	$disc = $discc = undef;
 	#}
-
-	# we may have an album object already..
-	# But mark it undef first - bug 3685
-	my $albumObj = undef;
+	
+	my $albumId;
+	my $albumHash = {};
 	
 	if ($track && !$trackColumns) {
 		$trackColumns = { $track->get_columns };
 	}
 
-	# Used for keeping track of the album name.
-	$basename ||= dirname($trackColumns->{'url'});
-
 	my $noAlbum = string('NO_ALBUM');
 	
-	if (!$create) {
+	if ( !$create ) {
 		assert($track);
-		$albumObj = $track->album;
+		$albumHash = Slim::Schema::Album->findhash( $track->id );
 
 		# Bug: 4140
 		# If the track is from a FLAC cue sheet, the original entry
 		# will have a 'No Album' album. See if we have a real album name.
-		if ($title && $albumObj->title eq $noAlbum && $title ne $noAlbum) {
-
+		if ( $title && $albumHash->{title} && $albumHash->{title} eq $noAlbum && $title ne $noAlbum ) {
 			$create = 1;
 		}
 	}
 	
-	# Create a singleton for "No Album"
-	# Album should probably have an add() method
-	if ($create && !$title) {
-
+	# If the album does not have a title, use the singleton "No Album" album
+	if ( $create && !$title ) {
 		# let the external scanner make an attempt to find any existing "No Album" in the 
 		# database before we assume there are none from previous scans
-		if (!$_unknownAlbum) {
-			$_unknownAlbum = Slim::Schema->rs('album')->searchNames($noAlbum)->first;
+		if ( !$_unknownAlbumId ) {
+			$_unknownAlbumId = $dbh->selectrow_array( qq{
+				SELECT id FROM albums WHERE title = ?
+			}, undef, $noAlbum );
 		}
 		
-		if (!$_unknownAlbum) {
-			$_unknownAlbum = $self->rs('Album')->update_or_create({
-				'title'       => $noAlbum,
-				'titlesort'   => Slim::Utils::Text::ignoreCaseArticles($noAlbum),
-				'titlesearch' => Slim::Utils::Text::ignoreCaseArticles($noAlbum),
-				'compilation' => $isCompilation,
-				'year'        => 0,
-			}, { 'key' => 'titlesearch' });
+		if ( !$_unknownAlbumId ) {
+			my $sortkey = Slim::Utils::Text::ignoreCaseArticles($noAlbum);
+			
+			$albumHash = {
+				title       => $noAlbum,
+				titlesort   => $sortkey,
+				titlesearch => $sortkey,
+				compilation => $isCompilation, # XXX why set compilation?
+				year        => 0,
+			};
+			
+			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
 
-			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO ALBUM as id: [%d]", $_unknownAlbum->id));
+			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO ALBUM as id: [%d]", $_unknownAlbumId));
 		}
 
-		$albumObj = $_unknownAlbum;
-
 		main::DEBUGLOG && $isDebug && $log->debug("-- Track has no album");
-
-	} elsif ($create && $title) {
+		
+		return $_unknownAlbumId;
+	}
+	
+	# Used for keeping track of the album name.
+	$basename ||= dirname($trackColumns->{'url'});
+	
+	if ($create) {
 
 		# Calculate once if we need/want to test for disc
 		# Check only if asked to treat discs as separate and
@@ -958,50 +963,56 @@ sub _createOrUpdateAlbum {
 		# get() doesn't run the UTF-8 trigger, and ->title() calls
 		# Slim::Schema::Album->title() which has different behavior.
 
-		my ($a); # temp vars to make the conditional sane
-		if (
-			($a = $lastAlbum) && 
-			$a->{'dirname'} eq $basename &&
-			$a->{'title'} eq $title &&
-			(!$checkDisc || (($disc || '') eq ($a->{'disc'} || 0)))
+		if ( 
+			   $lastAlbum->{_dirname}
+			&& $lastAlbum->{_dirname} eq $basename
+			&& $lastAlbum->{title} eq $title
+			&& (!$checkDisc || (($disc || '') eq ($lastAlbum->{disc} || 0)))
+		) {
+			delete $lastAlbum->{_dirname};
+			$albumHash = $lastAlbum;
 
-			) {
-
-			$albumObj = $a->{'albumObj'};
-
-			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Same album '%s' (id: [%d]) as previous track", $title, $albumObj->id));
-
-		} else {
-
+			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Same album '%s' (id: [%d]) as previous track", $title, $lastAlbum->{id}));
+		}
+		else {
+			# Construct SQL to search for this album.  A bit uglier than using DBIC but much, much faster
+			my $search = [];
+			my $values = [];
+			my $join;
+			
 			# Don't use year as a search criteria. Compilations in particular
 			# may have different dates for each track...
 			# If re-added here then it should be checked also above, otherwise
 			# the server behaviour changes depending on the track order!
 			# Maybe we need a preference?
-			my $search = {
-				'me.title' => $title,
-				#'year'  => $trackColumns{'year'},
-			};
+			# This used to do: #'year'  => $trackColumns{'year'},
+			
+			push @{$search}, 'albums.title = ?';
+			push @{$values}, $title;
 
 			# Add disc to the search criteria if needed
 			if ($checkDisc) {
-
-				$search->{'me.disc'} = $disc;
+				if ($disc) {
+					push @{$search}, 'albums.disc = ?';
+					push @{$values}, $disc;
+				}
 
 				# Bug 10583 - Also check musicbrainz_id if defined.
 				# Can't be used in groupdiscs mode since id is unique per disc, not per set.
 				if (defined $brainzId) {
-					$search->{'me.musicbrainz_id'} = $brainzId;
+					push @{$search}, 'albums.musicbrainz_id = ?';
+					push @{$values}, $brainzId;
 					main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $brainzId));
 				}
-
-			} elsif ($discc) {
-
+			}
+			elsif ($discc) {
 				# If we're not checking discs - ie: we're in
 				# groupdiscs mode, check discc if it exists,
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
-				$search->{'me.discc'} = $discc;
+				
+				push @{$search}, 'albums.discc = ?';
+				push @{$values}, $discc;
 				
 				if ( defined $contributorId ) {
 					# Bug 4361, also match on contributor, so we don't group
@@ -1009,18 +1020,19 @@ sub _createOrUpdateAlbum {
 					# have the same title
 					my $contributor = $contributorId;
 					if ( $isCompilation && !$hasAlbumArtist ) {
-					    $contributor = $self->variousArtistsObject->id;
-				    }
-			    
-					$search->{'me.contributor'} = $contributor;
+						$contributor = $self->variousArtistsObject->id;
+					}
+					
+					push @{$search}, 'albums.contributor = ?';
+					push @{$values}, $contributor;
 				}
-
-			} elsif (defined $disc && !defined $discc) {
+			}
+			elsif ( defined $disc && !defined $discc ) {
 
 				# Bug 3920 - In the case where there's two
 				# albums of the same name, but one is
 				# multidisc _without_ having a discc set.
-				$search->{'me.disc'} = { '!=' => undef };
+				push @{$search}, 'albums.disc IS NOT NULL';
 				
 				if ( defined $contributorId ) {
 					# Bug 4361, also match on contributor, so we don't group
@@ -1028,31 +1040,33 @@ sub _createOrUpdateAlbum {
 					# have the same title
 					my $contributor = $contributorId;
 					if ( $isCompilation && !$hasAlbumArtist ) {
-					    $contributor = $self->variousArtistsObject->id;
-				    }
-			    
-					$search->{'me.contributor'} = $contributor;
+						$contributor = $self->variousArtistsObject->id;
+					}
+					
+					push @{$search}, 'albums.contributor = ?';
+					push @{$values}, $contributor;
 				}
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
 			# values are undefined.
-			$search->{'me.disc'}  = undef if !defined $disc; 
-			$search->{'me.discc'} = undef if !defined $disc && !defined $discc;
+			if ( !defined $disc ) {
+				push @{$search}, 'albums.disc IS NULL';
+				
+				if ( !defined $discc ) {
+					push @{$search}, 'albums.discc IS NULL';
+				}
+			}
 
 			# If we have a compilation bit set - use that instead
 			# of trying to match on the artist. Having the
 			# compilation bit means that this is 99% of the time a
 			# Various Artist album, so a contributor match would fail.
-			if (defined $isCompilation) {
-
+			if ( defined $isCompilation ) {
 				# in the database this is 0 or 1
-				$search->{'me.compilation'} = $isCompilation;
+				push @{$search}, 'albums.compilation = ?';
+				push @{$values}, $isCompilation;
 			}
-
-			my $attr = {
-				'group_by' => 'me.id',
-			};
 
 			# Bug 10583 - If we had the MUSICBRAINZ_ALBUM_ID in the tracks table,
 			# we could join on it here ...
@@ -1071,27 +1085,29 @@ sub _createOrUpdateAlbum {
 				# When not checking discs (i.e., "Group Discs" mode), try "same folder"
 				# as a last resort if both DISC and DISCC are unknown.
 				(!$checkDisc && !defined $disc && !defined $discc)
-				) {
-
-				$search->{'tracks.url'} = { 'like' => "$basename%" };
-
-				$attr->{'join'} = 'tracks';
+			) {
+				push @{$search}, 'tracks.url LIKE ?';
+				push @{$values}, "$basename%";
+				$join = 1;
 			}
-
-			# XXX: can return multiple objects
-			# XXX native DBI
-			$albumObj = $self->search('Album', $search, $attr)->single;
-
-			if (main::DEBUGLOG && $isDebug) {
-				$log->debug("-- Searching for an album with:");
-				while (my ($tag, $value) = each %{$search}) {
-					$log->debug(sprintf("--- $tag : %s", Data::Dump::dump($value)));
-				}
-				if ($albumObj) {
-					$log->debug(sprintf("-- Found the album id: [%d]", $albumObj->id));
-				}
-			}
-
+			
+			main::DEBUGLOG && $isDebug && $log->debug( "-- Searching for an album with: " . Data::Dump::dump($search, $values) );
+			
+			my $sql = 'SELECT albums.* FROM albums ';
+			$sql   .= 'JOIN tracks ON (albums.id = tracks.album) ' if $join;
+			$sql   .= 'WHERE ';
+			$sql   .= join( ' AND ', @{$search} );
+			$sql   .= ' LIMIT 1';
+			
+			my $sth = $dbh->prepare_cached($sql);
+			$sth->execute( @{$values} );
+			
+			$albumHash = $sth->fetchrow_hashref || {};
+			
+			$sth->finish;
+			
+			main::DEBUGLOG && $isDebug && $albumHash->{id} && $log->debug(sprintf("-- Found the album id: [%d]", $albumHash->{id}));
+			
 			# We've found an album above - and we're not looking
 			# for a multi-disc or compilation album; check to see
 			# if that album already has a track number that
@@ -1099,146 +1115,148 @@ sub _createOrUpdateAlbum {
 			# the other track is not in our current directory.
 			# If so, then we need to create a new album.
 			# If not, the album object is valid.
-			if ($albumObj && $checkDisc && !defined $isCompilation) {
+			if ( $albumHash->{id} && $checkDisc && !defined $isCompilation ) {
+				$sth = $dbh->prepare_cached( qq{
+					SELECT url
+					FROM   tracks
+					WHERE  album = ?
+					AND    tracknum = ?
+					LIMIT 1
+				} );
 				
-				# XXX native DBI
-				my $matchTrack = $albumObj->tracks({ 'tracknum' => $trackColumns->{'tracknum'} })->first;
+				$sth->execute( $albumHash->{id}, $trackColumns->{tracknum} );
+				my ($matchTrack) = $sth->fetchrow_array;
+				$sth->finish;
 				
-				if (defined $matchTrack && dirname($matchTrack->url) ne $basename) {
-					main::INFOLOG && $log->is_info && $log->info(sprintf("-- Track number mismatch with album id: [%d]", $albumObj->id));
-					$albumObj = undef;
+				if ( $matchTrack && dirname($matchTrack) ne $basename ) {
+					main::INFOLOG && $log->is_info && $log->info(sprintf("-- Track number mismatch with album id: [%d]", $albumHash->{id}));
+					$albumHash = {};
 				}
 			}
 
-			# Didn't match anything? It's a new album - create it.
-			if (!$albumObj) {
-
-				# XXX native DBI
-				$albumObj = $self->rs('Album')->create({ 'title' => $title });
-
-				main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created album '%s' (id: [%d])", $title, $albumObj->id));
+			# Didn't match anything? It's a new album, start populating albumHash
+			if ( !$albumHash->{id} ) {
+				$albumHash->{title} = $title;
 			}
 		}
 	}
 	
-	assert($albumObj);
+	# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
+	$albumHash->{titlesort} = Slim::Utils::Text::ignoreCaseArticles( $attributes->{ALBUMSORT} || $title );
 
-	if ($noAlbum ne $albumObj->get_column('title')) {
+	# And our searchable version.
+	$albumHash->{titlesearch} = Slim::Utils::Text::ignoreCaseArticles($title);
 
-		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $title);
+	# Bug 2393 - was fixed here (now obsolete due to further code rework)
+	$albumHash->{compilation} = $isCompilation;
 
-		my %set = ();
+	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
+	if ( $isCompilation && !$hasAlbumArtist ) {
+		$albumHash->{contributor} = $self->variousArtistsObject->id;
+	}
+	elsif ( defined $contributorId ) {
+		$albumHash->{contributor} = $contributorId;
+	}
 
-		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
-		$set{'titlesort'}   = $sortable_title;
+	$albumHash->{musicbrainz_id} = $attributes->{MUSICBRAINZ_ALBUM_ID};
 
-		# And our searchable version.
-		$set{'titlesearch'} = Slim::Utils::Text::ignoreCaseArticles($title);
-
-		# Bug 2393 - was fixed here (now obsolete due to further code rework)
-		$set{'compilation'} = $isCompilation;
-
-		# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
-		if ($isCompilation && !$hasAlbumArtist) {
-
-			$set{'contributor'} = $self->variousArtistsObject->id;
-
-		} elsif (defined $contributorId) {
-
-			$set{'contributor'} = $contributorId;
-		}
-
-		$set{'musicbrainz_id'} = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
-
-		# Handle album gain tags.
-		for my $gainTag (qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
-
-			my $shortTag = lc($gainTag);
-			   $shortTag =~ s/^replaygain_album_(\w+)$/replay_$1/;
-			
-			# Bug 8034, this used to not change gain/peak values if they were already set,
-			# bug we do want to update album gain tags if they are changed.
-
-			if ($attributes->{$gainTag}) {
-
-				$attributes->{$gainTag} =~ s/\s*dB//gi;
-				$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
-
-				$set{$shortTag} = $attributes->{$gainTag};
-
-			} else {
-
-				$set{$shortTag} = undef;
-			}
-		}
-
-		# Make sure we have a good value for DISCC if grouping
-		# or if one is supplied
-		if ($prefs->get('groupdiscs') || $discc) {
-
-			$discc = max(($disc || 0), ($discc || 0), ($albumObj->discc || 0));
-
-			if ($discc == 0) {
-				$discc = undef;
-			}
-		}
-
-		# Check that these are the correct types. Otherwise MySQL will not accept the values.
-		if (defined $disc && $disc =~ /^\d+$/) {
-			$set{'disc'} = $disc;
-		} else {
-			$set{'disc'} = undef;
-		}
-
-		if (defined $discc && $discc =~ /^\d+$/) {
-			$set{'discc'} = $discc;
-		} else {
-			$set{'discc'} = undef;
-		}
-
-		if (defined $trackColumns->{'year'} && $trackColumns->{'year'} =~ /^\d+$/) {
-			$set{'year'} = $trackColumns->{'year'};
-		} else {
-			$set{'year'} = undef;
-		}
+	# Handle album gain tags.
+	for my $gainTag ( qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK) ) {
+		my $shortTag = lc($gainTag);
+		   $shortTag =~ s/^replaygain_album_(\w+)$/replay_$1/;
 		
-		# Bug 7731, filter out duplicate keys that end up as array refs
-		while ( my ($tag, $value) = each %set ) {
-			if ( ref $value eq 'ARRAY' ) {
-				$set{$tag} = $value->[0];
-			}
+		# Bug 8034, this used to not change gain/peak values if they were already set,
+		# bug we do want to update album gain tags if they are changed.
+		if ( $attributes->{$gainTag} ) {
+			$attributes->{$gainTag} =~ s/\s*dB//gi;
+			$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
+
+			$albumHash->{$shortTag} = $attributes->{$gainTag};
 		}
-
-		if (!$create && $title) {
-			# Update the album title - the user might have changed it.
-			$set{'title'} = $title;
+		else {
+			$albumHash->{$shortTag} = undef;
 		}
-		
-		# Link album cover to track cover			
-		# Future TODO: if an album has multiple images i.e. Ghosts,
-		# prefer cover.jpg instead of embedded artwork for album?
-		# Would require an additional cover column in the albums table
-		if ( $trackColumns->{'coverid'} ) {
-			$set{'artwork'} = $trackColumns->{'coverid'};
+	}
+
+	# Make sure we have a good value for DISCC if grouping
+	# or if one is supplied
+	if ( $discc || $prefs->get('groupdiscs') ) {
+		$discc = max( ($disc || 0), ($discc || 0), ($albumHash->{discc} || 0) );
+
+		if ($discc == 0) {
+			$discc = undef;
 		}
+	}
 
-		$albumObj->set_columns(\%set);
+	# Check that these are the correct types. Otherwise MySQL will not accept the values.
+	if ( defined $disc && $disc =~ /^\d+$/ ) {
+		$albumHash->{disc} = $disc;
+	}
+	else {
+		$albumHash->{disc} = undef;
+	}
 
-		if (main::DEBUGLOG && $isDebug) {
+	if ( defined $discc && $discc =~ /^\d+$/ ) {
+		$albumHash->{discc} = $discc;
+	}
+	else {
+		$albumHash->{discc} = undef;
+	}
 
-			$log->debug(sprintf("-- Updating album '$title' (id: [%d]) with columns:", $albumObj->id));
-
-			while (my ($tag, $value) = each %set) {
-
-				$log->debug("--- $tag : $value") if defined $value;
-			}
-		}
-		
-		# Bug: 3911 - don't add years for tracks without albums.
-		$self->_createYear($set{'year'});
+	if ( defined $trackColumns->{year} && $trackColumns->{year} =~ /^\d+$/ ) {
+		$albumHash->{year} = $trackColumns->{year};
+	}
+	else {
+		$albumHash->{year} = undef;
 	}
 	
-	$albumObj->update;
+	# Bug 7731, filter out duplicate keys that end up as array refs
+	while ( my ($tag, $value) = each %{$albumHash} ) {
+		if ( ref $value eq 'ARRAY' ) {
+			$albumHash->{$tag} = $value->[0];
+		}
+	}
+
+	if ( !$create && $title ) {
+		# Update the album title - the user might have changed it.
+		$albumHash->{title} = $title;
+	}
+	
+	# Link album cover to track cover			
+	# Future TODO: if an album has multiple images i.e. Ghosts,
+	# prefer cover.jpg instead of embedded artwork for album?
+	# Would require an additional cover column in the albums table
+	if ( $trackColumns->{coverid} ) {
+		$albumHash->{artwork} = $trackColumns->{coverid};
+	}
+
+	if ( main::DEBUGLOG && $isDebug ) {
+		if ( $albumHash->{id} ) {
+			$log->debug(sprintf("-- Updating album '$title' (id: [%d]) with columns:", $albumHash->{id}));
+		}
+		else {
+			$log->debug("-- Creating album '$title' with columns:");
+		}
+
+		while (my ($tag, $value) = each %{$albumHash}) {
+			$log->debug("--- $tag : $value") if defined $value;
+		}
+	}
+	
+	# Bug: 3911 - don't add years for tracks without albums.
+	$self->_createYear( $albumHash->{year} );
+	
+	# XXX create/update album
+	if ( $albumHash->{id} ) {
+		# Update the existing album
+		$self->_updateHash( albums => $albumHash, 'id' );
+	}
+	else {
+		# Create a new album
+		$albumHash->{id} = $self->_insertHash( albums => $albumHash );
+		
+		main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created album (id: [%d])", $albumHash->{id}));
+	}
 	
 	# Just cache some stuff about the last Album so we can find it
 	# again cheaply when we add the next track.
@@ -1247,15 +1265,10 @@ sub _createOrUpdateAlbum {
 	# perhaps even LRU, although LRU is surprisingly costly.
 	# This depends on whether we need to cope with out-of-order scans
 	# and I don't really know. 
-	$lastAlbum = {
-		dirname   => $basename,
-		title     => $title,
-		disc      => $disc,
-		albumObj  => $albumObj,
-		albumId   => $albumObj->id,
-	};
+	$lastAlbum = $albumHash;
+	$lastAlbum->{_dirname} = $basename;
 
-	return $albumObj->id;
+	return $albumHash->{id};
 }
 
 # Years have their own lookup table.
@@ -1308,14 +1321,7 @@ sub _createTrack {
 	# Using native DBI here to improve performance during scanning
 	my $dbh = $self->dbh;
 	
-	my @cols      = keys %{$columnValueHash};
-	my $colstring = join( ',', @cols );
-	my $ph        = join( ',', map { '?' } @cols );
-	
-	my $sth = $self->dbh->prepare_cached("INSERT INTO tracks ($colstring) VALUES ($ph)");
-	$sth->execute( map { $columnValueHash->{$_} } @cols );
-	
-	my $id = $dbh->last_insert_id(undef, undef, undef, undef);
+	my $id = $self->_insertHash( tracks => $columnValueHash );
 	
 	if ( main::INFOLOG && $log->is_info && $columnValueHash->{'title'} ) {
 		 $log->info(sprintf("Created track '%s' (id: [%d])", $columnValueHash->{'title'}, $id));
@@ -1354,13 +1360,7 @@ sub _createTrack {
 			$trackPersistentHash->{url}    = $columnValueHash->{url};
 			$trackPersistentHash->{urlmd5} = $columnValueHash->{urlmd5};
 			
-			my $pid = delete $trackPersistentHash->{id};
-			
-			my @pcols      = keys %{$trackPersistentHash};
-			my $pcolstring = join( ', ', map { $_ . ' = ?' } @pcols );
-			
-			my $sth = $dbh->prepare_cached("UPDATE tracks_persistent SET $pcolstring WHERE id = ?");
-			$sth->execute( map { $trackPersistentHash->{$_} } @pcols, $pid );
+			$self->_updateHash( tracks_persistent => $trackPersistentHash, 'id' );
 		}
 	}
 	
@@ -2138,7 +2138,7 @@ sub wipeCaches {
 	$vaObj          = undef;
 	$_unknownArtist = '';
 	$_unknownGenre  = '';
-	$_unknownAlbum  = '';
+	$_unknownAlbumId = 0;
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
@@ -2843,7 +2843,7 @@ sub _postCheckAttributes {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($attributes, $isCompilation, $create);
 
-	### Create Album row
+	### Update Album row
 	my $albumId = $self->_createOrUpdateAlbum($attributes, 
 		\%cols,																	# trackColumns
 		$isCompilation,
@@ -3151,6 +3151,37 @@ sub totals {
 	}
 	
 	return \%TOTAL_CACHE;
+}
+
+sub _insertHash {
+	my ( $class, $table, $hash ) = @_;
+	
+	my $dbh = $class->dbh;
+	
+	my @cols      = keys %{$hash};
+	my $colstring = join( ',', @cols );
+	my $ph        = join( ',', map { '?' } @cols );
+	
+	my $sth = $dbh->prepare_cached("INSERT INTO $table ($colstring) VALUES ($ph)");
+	$sth->execute( map { $hash->{$_} } @cols );
+	
+	return $dbh->last_insert_id(undef, undef, undef, undef);
+}
+
+sub _updateHash {
+	my ( $class, $table, $hash, $pk ) = @_;
+	
+	my $id = delete $hash->{$pk};
+	
+	my @cols      = keys %{$hash};
+	my $colstring = join( ', ', map { $_ . ' = ?' } @cols );
+	
+	my $sth = $class->dbh->prepare_cached("UPDATE $table SET $colstring WHERE $pk = ?");
+	$sth->execute( map { $hash->{$_} } @cols, $id );
+	
+	$hash->{$pk} = $id;
+	
+	return 1;
 }
 
 =head1 SEE ALSO

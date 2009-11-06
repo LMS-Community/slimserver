@@ -520,6 +520,7 @@ sub changed {
 			
 			# Reset compilation status as it may have changed
 			if ( $album ) {
+				# XXX no longer works after album code ported to native DBI
 				$album->compilation(undef);
 				$album->update;
 				

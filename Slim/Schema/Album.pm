@@ -250,6 +250,20 @@ sub contributorid {
 	return $self->get_column('contributor');
 }
 
+sub findhash {
+	my ( $class, $id ) = @_;
+	
+	my $sth = Slim::Schema->dbh->prepare_cached( qq{
+		SELECT * FROM albums WHERE id = ?
+	} );
+	
+	$sth->execute($id);
+	my $hash = $sth->fetchrow_hashref;
+	$sth->finish;
+	
+	return $hash || {};
+}
+
 # Rescan this album, this simply means to make sure at least 1 track
 # from this album still exists in the database.  If not, delete the album.
 # XXX: should also look for changes to things like album gain.
