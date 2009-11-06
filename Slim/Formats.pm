@@ -136,7 +136,7 @@ sub readTags {
 	my $class = shift;
 	my $file  = shift || return {};
 
-	my $isDebug = $log->is_debug;
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my ($filepath, $tags, $anchor);
 
@@ -242,7 +242,7 @@ sub readTags {
 	# Only set if we couldn't read it from the file.
 	$tags->{'CONTENT_TYPE'} ||= $type;
 
-	$isDebug && $log->debug("Report for $file:");
+	main::DEBUGLOG && $isDebug && $log->debug("Report for $file:");
 	
 	# XXX: can Audio::Scan make these regexes unnecessary?
 	
@@ -289,7 +289,7 @@ sub readTags {
 			}
 		}
 		
-		$isDebug && $value && $log->debug(". $tag : $value");
+		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
 	}
 
 	return $tags;
