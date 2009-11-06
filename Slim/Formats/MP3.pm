@@ -108,8 +108,6 @@ sub getTag {
 	my $class = shift;
 	my $file  = shift;
 	
-	my $isDebug = $log->is_debug;
-
 	if (!$file) {
 		$log->error("No file was passed!");
 		return {};
