@@ -1547,6 +1547,9 @@ sub prepareResponseForSending {
 	my ($client, $params, $body, $httpClient, $response) = @_;
 
 	use bytes;
+	
+	# Trap empty content
+	$body ||= \'';
 
 	# Set the Content-Length - valid for either HEAD or GET
 	$response->content_length(length($$body));
