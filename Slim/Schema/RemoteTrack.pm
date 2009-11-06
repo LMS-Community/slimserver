@@ -188,6 +188,7 @@ my %localTagMapping = (
 	composer               => undef,
 	conductor              => undef,
 	band                   => undef,
+	remote                 => undef,
 );
 
 sub setAttributes {
