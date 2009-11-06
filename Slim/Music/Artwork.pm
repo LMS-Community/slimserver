@@ -519,7 +519,7 @@ sub precacheAllArtwork {
 			# Make sure album.artwork points to this track, as it may not
 			# be pointing there now because we did not join tracks via the
 			# artwork column.
-			if ( $track->{album_artwork} ne $track->{coverid} ) {
+			if ( $track->{album_artwork} && $track->{album_artwork} ne $track->{coverid} ) {
 				$sth_update_albums->execute( $track->{coverid}, $track->{albumid} );
 			}
 				
