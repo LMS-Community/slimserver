@@ -52,17 +52,17 @@ my %findArtCache;
 
 # Public class methods
 sub findStandaloneArtwork {
-	my ( $class, $trackAttributes, $deferredAttributes, $dirname ) = @_;
+	my ( $class, $trackAttributes, $deferredAttributes, $dirurl ) = @_;
 	
 	my $isInfo = main::INFOLOG && $log->is_info;
 	
-	my $art = $findArtCache{$dirname};
+	my $art = $findArtCache{$dirurl};
 	
 	# Files to look for
 	my @files = qw(cover folder album thumb);
 
 	if ( !defined $art ) {
-		my $parentDir = Path::Class::dir($dirname);
+		my $parentDir = Path::Class::dir( Slim::Utils::Misc::pathFromFileURL($dirurl) );
 		
 		# coverArt/artfolder pref support
 		if ( my $coverFormat = $prefs->get('coverArt') ) {
@@ -131,7 +131,7 @@ sub findStandaloneArtwork {
 	
 		# Cache found artwork for this directory to speed up later tracks
 		%findArtCache = () if scalar keys %findArtCache > 32;
-		$findArtCache{$dirname} = $art;
+		$findArtCache{$dirurl} = $art;
 	}
 	
 	main::INFOLOG && $isInfo && $log->info("Using $art");
