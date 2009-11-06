@@ -1350,18 +1350,25 @@ sub typeFromSuffix {
 }
 
 sub typeFromPath {
-	my $fullpath = shift;
+	my $fullpath = shift;		# either a file path or a URL (even for files)
 	my $defaultType = shift || 'unk';
 
 	# Remove the anchor if we're checking the suffix.
 	my ($type, $anchorlessPath, $filepath);
 
+	# Process raw path
+	if (isFileURL($fullpath)) {
+		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+	} else {
+		$filepath = $fullpath;
+	}
+
 	if ($fullpath && $fullpath !~ /\x00/) {
 
 		# Return quickly if we have it in the cache.
-		if (defined $urlToTypeCache{$fullpath}) {
+		if (defined $urlToTypeCache{$filepath}) {
 
-			$type = $urlToTypeCache{$fullpath};
+			$type = $urlToTypeCache{$filepath};
 			
 			return $type if $type ne 'unk';
 
@@ -1388,14 +1395,7 @@ sub typeFromPath {
 		}
 	}
 
-	# Process raw path, sanity check for folders
-	if (isFileURL($fullpath)) {
-		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-
-	} else {
-		$filepath = $fullpath;
-	}
-
+	# sanity check for folders
 	if ($filepath && -d $filepath) {
 		$type = 'dir';
 	}
