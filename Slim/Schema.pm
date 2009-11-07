@@ -59,7 +59,7 @@ my $log = logger('database.info');
 my $prefs = preferences('server');
 
 # Singleton objects for Unknowns
-our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', 0);
+our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', undef);
 
 # Hash of stuff about the last Album created
 our $lastAlbum;
@@ -890,7 +890,6 @@ sub _createOrUpdateAlbum {
 	my $noAlbum = string('NO_ALBUM');
 	
 	if ( !$create && $track ) {
-		assert($track);
 		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
 
 		# Bug: 4140
@@ -905,13 +904,13 @@ sub _createOrUpdateAlbum {
 	if ( $create && !$title ) {
 		# let the external scanner make an attempt to find any existing "No Album" in the 
 		# database before we assume there are none from previous scans
-		if ( !$_unknownAlbumId ) {
+		if ( !defined $_unknownAlbumId ) {
 			$_unknownAlbumId = $dbh->selectrow_array( qq{
 				SELECT id FROM albums WHERE title = ?
 			}, undef, $noAlbum );
 		}
 		
-		if ( !$_unknownAlbumId ) {
+		if ( !defined $_unknownAlbumId ) {
 			my $sortkey = Slim::Utils::Text::ignoreCaseArticles($noAlbum);
 			
 			$albumHash = {
@@ -2138,7 +2137,7 @@ sub wipeCaches {
 	$vaObj          = undef;
 	$_unknownArtist = '';
 	$_unknownGenre  = '';
-	$_unknownAlbumId = 0;
+	$_unknownAlbumId = undef;
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
