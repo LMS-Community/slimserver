@@ -6,14 +6,11 @@ use strict;
 use base 'Slim::Schema::DBI';
 
 use Scalar::Util qw(blessed);
-use Tie::Cache::LRU;
 
 use Slim::Schema::ResultSet::Contributor;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-
-use constant CACHE_SIZE => 50;
 
 our %contributorToRoleMap = (
 	'ARTIST'      => 1,
@@ -23,9 +20,6 @@ our %contributorToRoleMap = (
 	'ALBUMARTIST' => 5,
 	'TRACKARTIST' => 6,
 );
-
-# Small LRU cache of id => contributor object mapping, to improve scanner performance
-tie my %CACHE, 'Tie::Cache::LRU', CACHE_SIZE;
 
 {
 	my $class = __PACKAGE__;
@@ -170,28 +164,26 @@ sub add {
 
 # Rescan this contributor, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
-# XXX native DBI
 sub rescan {
-	my $self = shift;
+	my ( $class, $id ) = @_;
 	
 	my $log = logger('scan.scanner');
 	
-	my $count = Slim::Schema->rs('ContributorTrack')->search( contributor => $self->id )->count;
+	my $dbh = Slim::Schema->dbh;
+	
+	my $sth = $dbh->prepare_cached( qq{
+		SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
+	} );
+	$sth->execute($id);
+	my ($count) = $sth->fetchrow_array;
+	$sth->finish;
 	
 	if ( !$count ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: " . $self->id . ' (' . $self->name . ')');
-		
-		delete $CACHE{ $self->id };
-		
-		$self->delete;
-	}
-}
+		main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
 
-sub wipeCaches {
-	my $class = shift;
-	
-	tied(%CACHE)->max_size(0);
-	tied(%CACHE)->max_size(CACHE_SIZE);
+		# This will cascade within the database to contributor_album and contributor_track
+		$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
+	}
 }
 
 1;

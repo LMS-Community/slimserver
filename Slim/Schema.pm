@@ -889,9 +889,9 @@ sub _createOrUpdateAlbum {
 
 	my $noAlbum = string('NO_ALBUM');
 	
-	if ( !$create ) {
+	if ( !$create && $track ) {
 		assert($track);
-		$albumHash = Slim::Schema::Album->findhash( $track->id );
+		$albumHash = Slim::Schema::Album->findhash( $track->album->id );
 
 		# Bug: 4140
 		# If the track is from a FLAC cue sheet, the original entry
@@ -1246,7 +1246,7 @@ sub _createOrUpdateAlbum {
 	# Bug: 3911 - don't add years for tracks without albums.
 	$self->_createYear( $albumHash->{year} );
 	
-	# XXX create/update album
+	# create/update album
 	if ( $albumHash->{id} ) {
 		# Update the existing album
 		$self->_updateHash( albums => $albumHash, 'id' );
@@ -2142,8 +2142,6 @@ sub wipeCaches {
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
-	
-	Slim::Schema::Contributor->wipeCaches();
 	
 	# Wipe cached data used for Jive, i.e. albums query data
 	if (!main::SCANNER) {	
@@ -3173,11 +3171,12 @@ sub _updateHash {
 	
 	my $id = delete $hash->{$pk};
 	
+	# Construct SQL with placeholders for non-null values and NULL for null values
 	my @cols      = keys %{$hash};
-	my $colstring = join( ', ', map { $_ . ' = ?' } @cols );
+	my $colstring = join( ', ', map { $_ . (defined $hash->{$_} ? ' = ?' : ' = NULL') } @cols );
 	
 	my $sth = $class->dbh->prepare_cached("UPDATE $table SET $colstring WHERE $pk = ?");
-	$sth->execute( map { $hash->{$_} } @cols, $id );
+	$sth->execute( (grep { defined $_ } map { $hash->{$_} } @cols), $id );
 	
 	$hash->{$pk} = $id;
 	

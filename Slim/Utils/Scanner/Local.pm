@@ -337,7 +337,7 @@ sub deleted {
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
 			# This will also remove entries from contributor_track and contributor_album
 			for my $contrib ( @contribs ) {
-				$contrib->rescan;
+				Slim::Schema::Contributor->rescan( $contrib->id );
 			}
 
 			# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
@@ -389,7 +389,6 @@ sub new {
 		
 		$work = sub {
 			# Scan tags & create track row and other related rows.
-			# XXX no DBIC objects, use updateOrCreateBase
 			my $trackid = Slim::Schema->updateOrCreateBase( {
 				url        => $url,
 				readTags   => 1,
@@ -461,26 +460,44 @@ sub changed {
 	
 	my $isDebug = $log->is_debug;
 	
-	my $file = Slim::Utils::Misc::pathFromFileURL($url);
-	
-	$log->error("Handling changed track $file") unless main::SCANNER && $main::progress;
+	$log->error("Handling changed track $url") unless main::SCANNER && $main::progress;
 	
 	if ( Slim::Music::Info::isSong($url) ) {
-		# Fetch the original track record
-		# XXX no DBIC objects
-		my $origTrack = Slim::Schema->objectForUrl( {
-			url        => $url,
-			readTags   => 0,
-			checkMTime => 0,
-		} );
-		
-		my $orig = {
-			contribs => [ $origTrack->contributors->all ],
-			year     => $origTrack->year,
-			genres   => [ sort map { $_->id } $origTrack->genres ],
-		};
-		
-		my $work = sub {	
+		my $work = sub {
+			my $dbh = Slim::Schema->dbh;
+			
+			# Fetch some original track, album, contributors, and genre information
+			# so we can compare with the new data and decide what other data needs to be refreshed
+			my $sth = $dbh->prepare_cached( qq{
+				SELECT tracks.id, tracks.year, albums.id AS album_id, albums.artwork
+				FROM   tracks
+				JOIN   albums ON (tracks.album = albums.id)
+				WHERE  tracks.url = ?
+			} );
+			$sth->execute($url);
+			my $origTrack = $sth->fetchrow_hashref;
+			$sth->finish;
+			
+			my $orig = {
+				year => $origTrack->{year},
+			};
+			
+			# Fetch all contributor IDs used on the original track
+			$sth = $dbh->prepare_cached( qq{
+				SELECT DISTINCT(contributor) FROM contributor_track WHERE track = ?
+			} );
+			$sth->execute( $origTrack->{id} );
+			$orig->{contribs} = $sth->fetchall_arrayref;
+			$sth->finish;
+			
+			# Fetch all genres used on the original track
+			$sth = $dbh->prepare_cached( qq{
+				SELECT genre FROM genre_track WHERE track = ?
+			} );
+			$sth->execute( $origTrack->{id} );
+			$orig->{genres} = $sth->fetchall_arrayref;
+			$sth->finish;
+			
 			# Scan tags & update track row
 			# XXX no DBIC objects
 			my $track = Slim::Schema->updateOrCreate( {
@@ -491,20 +508,20 @@ sub changed {
 			} );
 			
 			if ( !defined $track ) {
-				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
 				return;
 			}
 			
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
 			# This will also remove entries from contributor_track and contributor_album
 			for my $contrib ( @{ $orig->{contribs} } ) {
-				$contrib->rescan;
+				Slim::Schema::Contributor->rescan( $contrib->[0] );
 			}
 			
 			my $album = $track->album;
 			
 			# XXX Check for newer cover.jpg here?
-			
+					
 			# Add/replace coverid
 			$track->coverid(undef);
 			$track->cover_cached(undef);
@@ -537,7 +554,7 @@ sub changed {
 			# Rescan comments
 			
 			# Rescan genre, to check for no longer used genres
-			my $origGenres = join( ',', @{ $orig->{genres} } );
+			my $origGenres = join( ',', sort map { $_->[0] } @{ $orig->{genres} } );
 			my $newGenres  = join( ',', sort map { $_->id } $track->genres );
 			
 			if ( $origGenres ne $newGenres ) {
