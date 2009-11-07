@@ -5,20 +5,19 @@ use strict;
 use warnings;
 use Carp qw/croak/;
 
-our $VERSION = '1.04';
+our $VERSION = '1.04_04';
 
-require XSLoader;
-XSLoader::load('Class::XSAccessor::Array', $VERSION);
+require Class::XSAccessor;
+require Class::XSAccessor::Heavy;
 
 sub import {
   my $own_class = shift;
   my ($caller_pkg) = caller();
 
-  my %opts = @_;
-  $caller_pkg = $opts{class} if defined $opts{class};
+  # Support both { getters => ... } and plain getters => ...
+  my %opts = ref($_[0]) eq 'HASH' ? %{$_[0]} : @_;
 
-  my $replace = $opts{replace} || 0;
-  my $chained = $opts{chained} || 0;
+  $caller_pkg = $opts{class} if defined $opts{class};
 
   my $read_subs      = $opts{getters} || {};
   my $set_subs       = $opts{setters} || {};
@@ -29,76 +28,46 @@ sub import {
   my $false_subs     = $opts{false} || [];
 
 
-  foreach my $subname (keys %$read_subs) {
-    my $arrayIndex = $read_subs->{$subname};
-    _generate_method($caller_pkg, $subname, $arrayIndex, $replace, $chained, "getter");
-  }
-
-  foreach my $subname (keys %$set_subs) {
-    my $arrayIndex = $set_subs->{$subname};
-    _generate_method($caller_pkg, $subname, $arrayIndex, $replace, $chained, "setter");
-  }
-
-  foreach my $subname (keys %$acc_subs) {
-    my $arrayIndex = $acc_subs->{$subname};
-    _generate_method($caller_pkg, $subname, $arrayIndex, $replace, $chained, "accessor");
-  }
-
-  foreach my $subname (keys %$pred_subs) {
-    my $arrayIndex = $pred_subs->{$subname};
-    _generate_method($caller_pkg, $subname, $arrayIndex, $replace, $chained, "predicate");
+  foreach my $subtype ( ["getter", $read_subs],
+                        ["setter", $set_subs],
+                        ["accessor", $acc_subs],
+                        ["pred_subs", $pred_subs] )
+  {
+    my $subs = $subtype->[1];
+    foreach my $subname (keys %$subs) {
+      my $array_index = $subs->{$subname};
+      _generate_method($caller_pkg, $subname, $array_index, \%opts, $subtype->[0]);
+    }
   }
    
-  foreach my $subname (@$construct_subs) {
-    _generate_method($caller_pkg, $subname, "", $replace, $chained, "constructor");
-  }
-  
-  foreach my $subname (@$true_subs) {
-    _generate_method($caller_pkg, $subname, "", $replace, $chained, "true");
-  }
-
-  foreach my $subname (@$false_subs) {
-    _generate_method($caller_pkg, $subname, "", $replace, $chained, "false");
+  foreach my $subtype ( ["constructor", $construct_subs],
+                        ["true", $true_subs],
+                        ["false", $false_subs] )
+  {
+    foreach my $subname (@{$subtype->[1]}) {
+      _generate_method($caller_pkg, $subname, "", \%opts, $subtype->[0]);
+    }
   }
 }
 
 sub _generate_method {
-  my ($caller_pkg, $subname, $arrayIndex, $replace, $chained, $type) = @_;
+  my ($caller_pkg, $subname, $array_index, $opts, $type) = @_;
 
-  if (not defined $arrayIndex) {
-    croak("Cannot use undef as a array index for generating an XS $type accessor. (Sub: $subname)");
-  }
+  croak("Cannot use undef as a array index for generating an XS $type accessor. (Sub: $subname)")
+    if not defined $array_index;
 
-  if ($subname !~ /::/) {
-    $subname = "${caller_pkg}::$subname";
-  }
+  $subname = "${caller_pkg}::$subname" if $subname !~ /::/;
 
-  if (not $replace) {
-    my $sub_package = $subname;
-    $sub_package =~ s/([^:]+)$// or die;
-    my $bare_subname = $1;
-    
-    my $sym;
-    {
-      no strict 'refs';
-      $sym = \%{"$sub_package"};
-    }
-    no warnings;
-    local *s = $sym->{$bare_subname};
-    my $coderef = *s{CODE};
-    if ($coderef) {
-      croak("Cannot replace existing subroutine '$bare_subname' in package '$sub_package' with XS method of type '$type'. If you wish to force a replacement, add the 'replace => 1' parameter to the arguments of 'use ".__PACKAGE__."'.");
-    }
-  }
+  Class::XSAccessor::Heavy::check_sub_existence($subname) if not $opts->{replace};
 
   if ($type eq 'getter') {
-    newxs_getter($subname, $arrayIndex);
+    newxs_getter($subname, $array_index);
   }
   elsif ($type eq 'setter') {
-    newxs_setter($subname, $arrayIndex, $chained);
+    newxs_setter($subname, $array_index, $opts->{chained}||0);
   }
   elsif ($type eq 'predicate') {
-    newxs_predicate($subname, $arrayIndex);
+    newxs_predicate($subname, $array_index);
   }
   elsif ($type eq 'constructor') {
     newxs_constructor($subname);
@@ -110,12 +79,12 @@ sub _generate_method {
     newxs_boolean($subname, 0);
   }
   else {
-    newxs_accessor($subname, $arrayIndex, $chained);
+    newxs_accessor($subname, $array_index, $opts->{chained}||0);
   }
 }
 
-
 1;
+
 __END__
 
 =head1 NAME
@@ -148,6 +117,19 @@ Class::XSAccessor::Array - Generate fast XS accessors without runtime compilatio
   
   # normal class code here.
 
+As of version 1.05, some alternative syntax forms are available:
+
+  package MyClass;
+  
+  # Options can be passed as a HASH reference if you prefer it,
+  # which can also help PerlTidy to flow the statement correctly.
+  use Class::XSAccessor {
+    getters => {
+      get_foo => 0,
+      get_bar => 1,
+    },
+  };
+
 =head1 DESCRIPTION
 
 The module implements fast XS accessors both for getting at and
@@ -166,7 +148,7 @@ Since version 0.10, the module can also generate simple constructors
 (implemented in XS) for you. Simply supply the
 C<constructor =E<gt> 'constructor_name'> option or the
 C<constructors =E<gt> ['new', 'create', 'spawn']> option.
-These constructors do the equivalent of the following perl code:
+These constructors do the equivalent of the following Perl code:
 
   sub new {
     my $class = shift;
@@ -189,8 +171,8 @@ synopsis, you could have written C<MyClass::get_foo> instead
 of C<get_foo>. This way, you can install methods in classes other
 than the current class. See also: The C<class> option below.
 
-Since version 1.01, you can generate extremely simply methods which
-simply return true or false (and always do so). If that seems like a
+Since version 1.01, you can generate extremely simple methods which
+just return true or false (and always do so). If that seems like a
 really superfluous thing to you, then think of a large class hierarchy
 with interfaces such as PPI. This is implemented as the C<true>
 and C<false> options, see synopsis.
@@ -260,7 +242,7 @@ L<AutoXS>
 
 =head1 AUTHOR
 
-Steffen Mueller, E<lt>smueller@cpan.orgE<gt>
+Steffen Mueller E<lt>smueller@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
