@@ -19,7 +19,7 @@ L<Slim::Music::Artwork>
 
 use strict;
 
-use File::Basename qw(dirname);
+use File::Basename qw(basename dirname);
 use File::Slurp;
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -118,10 +118,10 @@ sub findStandaloneArtwork {
 			while ( my $image = $files->() ) {
 				push @found, $image;
 			}
-	
+			
 			# Prefer cover/folder/album/thumb, then just take the first image
 			my $filelist = join( '|', @files );
-			if ( my @preferred = grep { qr/^(?:$filelist)/i } @found ) {
+			if ( my @preferred = grep { basename($_) =~ qr/^(?:$filelist)/i } @found ) {
 				$art = $preferred[0];
 			}
 			else {
