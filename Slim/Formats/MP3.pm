@@ -91,6 +91,7 @@ my %tagMapping = (
 	'TST ' => "TITLESORT",     # broken iTunes tag
 	TSO2 => "ALBUMARTISTSORT",
 	YTS2 => "ALBUMARTISTSORT", # non-standard iTunes tag
+	TSOC => "COMPOSERSORT",
 	YTSC => "COMPOSERSORT",    # non-standard iTunes tag
 	YRVA => "RVAD",
 	UFID => "MUSICBRAINZ_ID",
