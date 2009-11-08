@@ -2,7 +2,7 @@ PLUGIN_JIVEEXTRAS
 	CS	Upravit ovladač
 	DA	Tilpasning af Controller
 	DE	Controller anpassen
-	EN	Customize Controller
+	EN	Customize Device
 	ES	Personalizar controlador
 	FI	Mukauta kaukosäädin
 	FR	Personnaliser le contrôleur
@@ -17,7 +17,7 @@ PLUGIN_JIVEEXTRAS_DESC
 	CS	Můžete upravit ovladač Squeezebox výběrem dodatečných tapet a zvukových efektů, které budou pro váš ovladač dostupné v menu nastavení.
 	DA	Du kan tilpasse Squeezebox Controller ved at vælge andre baggrundsbilleder og lydeffekter som kan vælges i menuen Indstillinger på din Controller.
 	DE	Sie können den Squeezebox Controller anpassen, indem Sie zusätzliche Hintergrundbilder und Soundeffekte, die in den Einstellungsmenüs des Controllers verfügbar werden, auswählen.
-	EN	You may customize your Squeezebox Controller by selecting additional wallpaper images and sound effects which will become available on the settings menus for your Controller.
+	EN	You may customize your Squeezebox Controller by selecting additional wallpaper images and sound effects which will become available on the settings menus for your Squeezebox Controller, Radio or Touch device.
 	ES	Puede personalizar Squeezebox Controller seleccionando imágenes de papel tapiz y efectos de sonido adicionales que encontrará en los menús de configuración del controlador.
 	FI	Voit mukauttaa Squeezebox-kaukosäädintä valitsemalla eri taustakuvia ja äänitehosteita, jotka tulevat valittaviin kaukosäätimen asetusvalikossa.
 	FR	Vous pouvez personnaliser le contrôleur Squeezebox Controller en sélectionnant d'autres images d'arrière-plan et d'autres effets sonores auxquels vous pourrez accéder par le biais des menus de réglage de votre contrôleur.
