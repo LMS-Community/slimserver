@@ -3221,7 +3221,7 @@ sub _extensionsQueryCB {
 
 			my $name = $entry->{'name'};
 
-			if (defined $max->{$name} && $max->{$name} eq $entry->{'version'}) {
+			if (exists $max->{$name} && (!defined $max->{$name} || $max->{$name} eq $entry->{'version'})) {
 
 				push @results, $entry;
 
