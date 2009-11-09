@@ -1519,8 +1519,7 @@ sub _newTrack {
 	
 	# For simple (odd) cases, just create the Track row and return
 	if (!defined $ct || $ct eq 'dir' || $ct eq 'lnk' || !$columnValueHash{'audio'}) {
-		$self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
-		return undef;
+		return $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 	}
 	
 	# Make a local variable for COMPILATION, that is easier to handle
