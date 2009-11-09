@@ -88,14 +88,16 @@ sub resize {
 	$width  = undef if $width eq 'X';
 	$height = undef if $height eq 'X';
 	
-	# Short-circuit if no width/height specified, return original image
+	# Short-circuit if no width/height specified, and formats match, return original image
 	if ( !$width && !$height ) {
-		return ($origref, $in_format);
+		if ( !$explicit_format || ($explicit_format eq $in_format) ) {
+			return $file ? (_slurp($file), $in_format) : ($origref, $in_format);
+		}
 	}
 	
 	# Abort if invalid params
 	if ( ($width && $width !~ /^\d+$/) || ($height && $height !~ /^\d+$/) ) {
-		return ($origref, $in_format);
+		return $file ? (_slurp($file), $in_format) : ($origref, $in_format);
 	}
 	
 	if ( !$bgcolor ) {
@@ -160,7 +162,12 @@ sub resize {
 	# if no value is supplied for the width (height) then the returned image's width (height)
 	# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
 	# a resize mode of 'stretch' or 'squash'
-	if ( !$width ) {
+	if ( !$width && !$height ) {
+		# no size specified, retain original size
+		$out_width  = $in_width;
+		$out_height = $in_height;
+	}
+	elsif ( !$width ) {
 		# only height specified
 		$out_width  = $in_width / $in_height * $height;
 		$out_height = $height;
@@ -553,6 +560,15 @@ sub _getResizeCoords {
 sub _round {
 	my $number = shift;
 	return int($number + .5 * ($number <=> 0));
+}
+
+sub _slurp {
+	my $file = shift;
+	
+	require File::Slurp;
+	
+	my $data = File::Slurp::read_file($file);
+	return \$data;
 }
 
 1;
