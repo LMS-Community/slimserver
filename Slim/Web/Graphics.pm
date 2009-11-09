@@ -242,10 +242,12 @@ sub artworkRequest {
 		$fullpath = $path;
 	}
 	
-	# Strip spec off fullpath if necessary, keeping the file extension
-	my ($ext) = $spec =~ /(\.\w+)$/;
-	$ext ||= '';
-	$fullpath =~ s/_${spec}/$ext/;
+	if ( $spec ) {
+		# Strip spec off fullpath if necessary, keeping the file extension
+		my ($ext) = $spec =~ /(\.\w+)$/;
+		$ext ||= '';
+		$fullpath =~ s/_${spec}/$ext/;
+	}
 	
 	# Resolve full path if it's not already a full path
 	# XXX windows?

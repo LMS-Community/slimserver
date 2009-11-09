@@ -129,10 +129,6 @@ if ( @spec > 1 ) {
 else {
 	my ($width, $height, $mode, $bgcolor, $ext) = $spec[0] =~ /^([^x]+)x([^_]+)(?:_(\w))?(?:_([\da-fA-F]+))?\.?(\w+)?$/;
 	
-	if ( !$width || !$height ) {
-		die "Invalid spec: $spec[0]\n";
-	}
-	
 	# XXX If cache is available, pull pre-cached size values from cache
 	# to see if we can use a smaller version of this image than the source
 	# to reduce resizing time.
