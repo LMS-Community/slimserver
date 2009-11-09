@@ -401,10 +401,17 @@ sub parseMetadata {
 			
 				main::DEBUGLOG && $log->is_debug && $log->debug('Parsed WMA metadata from CAPTION string');
 			}
-			elsif ( $metadata =~ /(artist=[^\0]+)/ ) {
+			elsif ( $metadata =~ /(artist=[^\0]+)/i ) {
 				require URI::QueryParam;
 				my $uri  = URI->new( '?' . $1 );
 				my $meta = $uri->query_form_hash;
+				
+				# Make sure query params are lowercase
+				for my $k ( keys %{$meta} ) {
+					if ( $k ne lc($k) ) {
+						$meta->{ lc($k) } = delete $meta->{$k};
+					}
+				}				
 				
 				main::DEBUGLOG && $log->is_debug && $log->debug('Parsed WMA metadata from artist-style query string');
 			
