@@ -1,14 +1,17 @@
 package Class::XSAccessor;
 
 use 5.006;
+
 use strict;
 use warnings;
+
 use Carp qw/croak/;
 
-our $VERSION = '1.04_04';
+our $VERSION = '1.04_05';
 
 require XSLoader;
 XSLoader::load('Class::XSAccessor', $VERSION);
+
 require Class::XSAccessor::Heavy;
 
 sub _make_hash {
@@ -144,11 +147,11 @@ As of version 1.05, some alternative syntax forms are available:
 
   package MyClass;
   
-  # Options can be passed as a HASH reference if you prefer it,
-  # which can also help PerlTidy to flow the statement correctly.
+  # Options can be passed as a HASH reference, if preferred,
+  # which can also help Perl::Tidy to format the statement correctly.
   use Class::XSAccessor {
      # If the name => key values are always identical,
-     # you can use the following shorthand.
+     # the following shorthand can be used.
      accessors => [ 'foo', 'bar' ],
   };
 
@@ -162,7 +165,7 @@ L<Class::XSAccessor::Array> implements the same interface for objects
 that use arrays for their internal representation.
 
 Since version 0.10, the module can also generate simple constructors
-(implemented in XS) for you. Simply supply the
+(implemented in XS). Simply supply the
 C<constructor =E<gt> 'constructor_name'> option or the
 C<constructors =E<gt> ['new', 'create', 'spawn']> option.
 These constructors do the equivalent of the following Perl code:
@@ -176,32 +179,32 @@ That means they can be called on objects and classes but will not
 clone objects entirely. Parameters to C<new()> are added to the
 object.
 
-The XS accessor methods are between 2.6 and 3.4 times faster than typical
-pure-perl accessors in some simple benchmarking.
+The XS accessor methods are between 2 and 3 times faster than typical
+pure-Perl accessors in some simple benchmarking.
 The lower factor applies to the potentially slightly obscure
 C<sub set_foo_pp {$_[0]-E<gt>{foo} = $_[1]}>, so if you usually
-write clear code, a factor of two speed-up is a good estimate.
+write clear code, a factor of 2.5 speed-up is a good estimate.
 
-The method names may be fully qualified. In the example of the
-synopsis, you could have written C<MyClass::get_foo> instead
-of C<get_foo>. This way, you can install methods in classes other
-than the current class. See also: The C<class> option below.
+The method names may be fully qualified. The example in the synopsis could
+have been written as C<MyClass::get_foo> instead
+of C<get_foo>. This way, methods can be installed in classes other
+than the current class. See also: the C<class> option below.
 
-By default, the setters return the new value that was set
-and the accessors (mutators) do the same. You can change this behaviour
-with the C<chained> option, see below. The predicates obviously return a boolean.
+By default, the setters return the new value that was set,
+and the accessors (mutators) do the same. This behaviour can be changed
+with the C<chained> option - see below. The predicates return a boolean.
 
-Since version 1.01, you can generate extremely simple methods which
+Since version 1.01, C<Class::XSAccessor> can generate extremely simple methods which
 just return true or false (and always do so). If that seems like a
 really superfluous thing to you, then consider a large class hierarchy
-with interfaces such as L<PPI>. This is implemented as the C<true>
-and C<false> options, see synopsis.
+with interfaces such as L<PPI>. These methods are provided by the C<true>
+and C<false> options - see the synopsis.
 
 =head1 OPTIONS
 
-In addition to specifying the types and names of accessors, you can add options
-which modify behaviour. The options are specified as key/value pairs just as the
-accessor declaration. Example:
+In addition to specifying the types and names of accessors, additional options
+can be supplied which modify behaviour. The options are specified as key/value pairs
+in the same manner as the accessor declaration. For example:
 
   use Class::XSAccessor
     getters => {
@@ -229,36 +232,38 @@ in the same C<use Class::XSAccessor ...> statement.
 
 =head2 class
 
-By default, the accessors are generated in the calling class. Using
-the C<class> option, you can explicitly specify where the methods
-are to be generated.
+By default, the accessors are generated in the calling class. The
+the C<class> option allows the target class to be specified.
 
 =head1 CAVEATS
 
-Probably wouldn't work if your objects are I<tied> hashes. But that's a strange thing to do anyway.
+Probably won't work for objects based on I<tied> hashes. But that's a strange thing to do anyway.
 
 Scary code exploiting strange XS features.
 
 If you think writing an accessor in XS should be a laughably simple exercise, then
 please contemplate how you could instantiate a new XS accessor for a new hash key
-that's only known at run-time. Note that compiling C code at run-time a la Inline::C
+that's only known at run-time. Note that compiling C code at run-time a la L<Inline::C|Inline::C>
 is a no go.
 
-Threading. With version 1.00, a memory leak has been B<fixed> that would leak a small amount of
-memory if you loaded C<Class::XSAccessor>-based classes in a subthread that hadn't been loaded
-in the "main" thread before. If the subthread then terminated, a hash key and an int per
-associated method used ot be lost. Note that this mattered only if classes were B<only> loaded
+Threading. With version 1.00, a memory leak has been B<fixed>. Previously, a small amount of
+memory would leak if C<Class::XSAccessor>-based classes were loaded in a subthread without having
+been loaded in the "main" thread. If the subthread then terminated, a hash key and an int per
+associated method used to be lost. Note that this mattered only if classes were B<only> loaded
 in a sort of throw-away thread.
 
-In the new implementation as of 1.00, the memory will not be released again either in the above
-situation. But it will be recycled when the same class or a similar class is loaded
-again in B<any> thread.
+In the new implementation, as of 1.00, the memory will still not be released, in the same situation,
+but it will be recycled when the same class, or a similar class, is loaded again in B<any> thread.
 
 =head1 SEE ALSO
 
-L<Class::XSAccessor::Array>
+=over
 
-L<AutoXS>
+=item * L<Class::XSAccessor::Array>
+
+=item * L<AutoXS>
+
+=back
 
 =head1 AUTHOR
 
@@ -275,4 +280,3 @@ it under the same terms as Perl itself, either Perl version 5.8 or,
 at your option, any later version of Perl 5 you may have available.
 
 =cut
-
