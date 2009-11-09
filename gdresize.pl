@@ -7,6 +7,8 @@
 #
 
 use strict;
+use FindBin qw($Bin);
+use lib $Bin;
 
 use constant RESIZER      => 1;
 use constant SLIM_SERVICE => 0;
