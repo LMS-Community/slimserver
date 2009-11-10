@@ -142,7 +142,23 @@ sub resize {
 	}
 
 	my $constructor = $file ? $typeToFileMethod{$in_format} : $typeToMethod{$in_format};
-	my $origImage   = GD::Image->$constructor($file || $$origref);
+	
+	my $origImage;
+	
+	# Use JPEG scaling if available
+	# Tests if an XS-only method is available so that the presence of our custom GD::Image won't break things
+	if ( $in_format eq 'jpg' && ($width || $height) ) {
+		if ( GD::Image->can('_newFromJpegScaled') ) {
+			$debug && warn "  Using JPEG scaling (target ${width}x${height})\n";
+			my $constructor_scaled = $constructor . 'Scaled';
+			$origImage = GD::Image->$constructor_scaled($file || $$origref, $width, $height);
+			$debug && warn "  Got pre-scaled image of size " . $origImage->width . "x" . $origImage->height . "\n";
+		}
+	}
+	
+	if ( !$origImage ) {
+		$origImage = GD::Image->$constructor($file || $$origref);
+	}
 	
 	my ($in_width, $in_height) = ($origImage->width, $origImage->height);
 
