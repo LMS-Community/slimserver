@@ -5,7 +5,7 @@ use strict;
 use GD;
 use Symbol 'gensym','qualify_to_ref';
 use vars '$VERSION';
-$VERSION = '2.27';
+$VERSION = '2.38';
 
 =head1 NAME
 
@@ -149,6 +149,7 @@ sub _image_type {
   return 'Png'  if $magic eq "\x89PNG";
   return 'Jpeg' if $magic eq "\377\330\377\340";
   return 'Jpeg' if $magic eq "\377\330\377\341";
+  return 'Jpeg' if $magic eq "\377\330\377\355";
   return 'Jpeg' if $magic eq "\377\330\377\356";
   return 'Gif'  if $magic eq "GIF8";
   return 'Gd2'  if $magic eq "gd2\000";
@@ -183,6 +184,15 @@ sub newFromJpeg {
     my $fh = $class->_make_filehandle($f);
     binmode($fh);
     $class->_newFromJpeg($fh,@_);
+}
+
+sub newFromJpegScaled {
+    croak("Usage: newFromJpeg(class,filehandle,target_width,target_height,[truecolor])") unless @_>=4;
+    my($class) = shift;
+    my($f)     = shift;
+    my $fh = $class->_make_filehandle($f);
+    binmode($fh);
+    $class->_newFromJpegScaled($fh,@_);
 }
 
 sub newFromGif {

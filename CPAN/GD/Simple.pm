@@ -166,6 +166,7 @@ our $AUTOLOAD;
 
 my %COLORS;
 my $IMAGECLASS = 'GD::Image';
+my $TRANSPARENT;
 
 sub AUTOLOAD {
   my $self = shift;
@@ -747,7 +748,8 @@ Get or set the pen's foreground color.  The current pen color can be
 set by (1) using an (r,g,b) triple; (2) using a previously-allocated
 color from the GD palette; or (3) by using a symbolic color name such
 as "chartreuse."  The list of color names can be obtained using
-color_names().
+color_names(). The special color name 'transparent' will create a
+completely transparent color.
 
 =cut
 
@@ -763,7 +765,8 @@ Get or set the pen's background color.  The current pen color can be
 set by (1) using an (r,g,b) triple; (2) using a previously-allocated
 color from the GD palette; or (3) by using a symbolic color name such
 as "chartreuse."  The list of color names can be obtained using
-color_names().
+color_names(). The special color name 'transparent' will create a
+completely transparent color.
 
 =cut
 
@@ -790,7 +793,11 @@ sub translate_color {
   }
   elsif (@_ == 3) {  # (rgb triplet)
     ($r,$g,$b) = @_;
-  } else {
+  }
+  elsif (lc $_[0] eq 'transparent') {
+      return $TRANSPARENT ||= $self->alphaColor('white',127);
+  } 
+  else {
     $self->read_color_table unless %COLORS;
     die "unknown color" unless exists $COLORS{lc $_[0]};
     ($r,$g,$b) = @{$COLORS{lc $_[0]}};
