@@ -18,9 +18,11 @@ use Socket qw(:crlf);
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
-my $log = logger('formats.playlists');
+my $log   = logger('formats.playlists');
+my $prefs = preferences('server');
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
@@ -29,6 +31,7 @@ sub read {
 	my ($secs, $artist, $album, $title);
 	my $foundBOM = 0;
 	my $fh;
+	my $audiodir;
 
 	if (defined $file && ref $file) {
 		$fh = $file;	# filehandle passed
@@ -110,17 +113,14 @@ sub read {
 		if (main::ISWINDOWS) {
 			$entry = Win32::GetANSIPathName($entry);	
 		}
-		else {
-			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);	
-		}
 
-		$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
+		my $fullentry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
-		if ($class->playlistEntryIsValid($entry, $url)) {
+		if ($class->playlistEntryIsValid($fullentry, $url)) {
 
-			main::DEBUGLOG && $log->debug("    entry: $entry");
+			main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
 
-			push @items, $class->_updateMetaData( $entry, {
+			push @items, $class->_updateMetaData( $fullentry, {
 				'TITLE'  => $title,
 				'ALBUM'  => $album,
 				'ARTIST' => $artist,
@@ -129,6 +129,27 @@ sub read {
 
 			# reset the title
 			$title = undef;
+		}
+		else {
+			# Check if the playlist entry is relative to audiodir
+			$audiodir ||= $prefs->get('audiodir');
+			
+			$fullentry = Slim::Utils::Misc::fixPath($entry, $audiodir);
+			
+			if ($class->playlistEntryIsValid($fullentry, $url)) {
+
+				main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
+
+				push @items, $class->_updateMetaData( $fullentry, {
+					'TITLE'  => $title,
+					'ALBUM'  => $album,
+					'ARTIST' => $artist,
+					'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
+				} );
+
+				# reset the title
+				$title = undef;
+			}
 		}
 	}
 
