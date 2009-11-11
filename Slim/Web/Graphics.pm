@@ -83,6 +83,7 @@ sub _cmd_schedule {
 		main::INFOLOG && $isInfo && $log->info("Running resize job $cmds");
 		
 		# XXX this may not work in Windows
+		# XXX fork/exec too expensive, need another solution
 		my $cv = AnyEvent::Util::run_cmd( $job->[0] );
 		$cv->cb( sub {
 			if ( main::INFOLOG && $isInfo ) {

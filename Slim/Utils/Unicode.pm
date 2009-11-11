@@ -56,7 +56,7 @@ BEGIN {
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
-	$lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
+	$lc_ctype, $lc_time, $utf8_re_bits, $comb_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
 	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE
 );
 
@@ -87,6 +87,10 @@ our (
 
 		Encode::Guess->add_suspects($lc_ctype);	 
 	}
+	
+	# Regex for determining if a string contains combining marks and needs to be decomposed
+	# Combining Diacritical Marks + Combining Diacritical Marks Supplement
+	$comb_re_bits = join "|", map { latin1toUTF8(chr($_)) } (0x300..0x36F, 0x1DC0..0x1DFF);
 	         
 	# Create a regex for looks_like_utf8()
 	# Latin1 range + Combining Diacritical Marks + Combining Diacritical Marks Supplement
@@ -559,7 +563,7 @@ sub looks_like_utf8 {
 
 	return 1 if $_[0] =~ /^\xEF\xBB\xBF/;
 	return 0 if $_[0] =~ /\xC0|\xC1|\xF5|\xF6|\xF7|\xF8|\xF9|\xFA|\xFB|\xFC|\xFD|\xFE|\xFF/;
-	return 1 if $_[0] =~ /($utf8_re_bits)/o;
+	return 1 if $_[0] =~ /(?:$utf8_re_bits)/o;
 	return 0;
 }
 
@@ -862,6 +866,16 @@ sub decomposeUnicode {
 	$string = Encode::encode('utf8', $string);
 
 	return $string;
+}
+
+=head2 hasCombiningMarks( $string )
+
+Returns 1 if the string contains any characters that are combining marks.
+
+=cut
+
+sub hasCombiningMarks {
+	return $_[0] =~ /(?:$comb_re_bits)/o ? 1 : 0;
 }
 
 =head2 stripBOM( $string )

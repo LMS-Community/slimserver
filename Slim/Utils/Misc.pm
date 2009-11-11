@@ -298,6 +298,13 @@ sub fileURLFromPath {
 	if ( utf8::is_utf8($path) ) {
 		utf8::encode($path);
 	}
+	
+	# If the path contains any combining characters, we need
+	# to recompose it.  This happens most often on HFS+ filesystems
+	# but can also be an issue in playlists.
+	if ( Slim::Utils::Unicode::hasCombiningMarks($path) ) {
+		$path = Slim::Utils::Unicode::recomposeUnicode($path);
+	}
 
 	my $uri = URI::file->new($path);
 	$uri->host('');
