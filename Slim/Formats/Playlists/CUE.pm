@@ -465,6 +465,9 @@ sub processAnchor {
 	}
 	
 	$attributesHash->{'SECS'} = $duration;
+	
+	# Remove existing TITLESORT value as it won't match the title for the cue entry
+	delete $attributesHash->{TITLESORT};
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf(
