@@ -723,10 +723,10 @@ sub stream_s {
 		# '4' (rawpkts), '5' (mp4ff), '6' (latm within rawpkts)
 		#
 		# This is a hack that assumes:
-		# (1) If the original content-type of the track is MP4 then we are streaming an MP4 file (without any transcoding);
+		# (1) If the original content-type of the track is MP4 or SLS then we are streaming an MP4 file (without any transcoding);
 		# (2) All other AAC streams will be adts.
 		
-		$pcmsamplesize   = Slim::Music::Info::contentType($track) eq 'mp4' ? '5' : '2';
+		$pcmsamplesize   = Slim::Music::Info::contentType($track) =~ /^(?:mp4|sls)$/ ? '5' : '2';
 		
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';

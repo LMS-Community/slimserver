@@ -82,7 +82,7 @@ sub getTag {
 			if ( $track->{audio_object_type} == 2 && $track2->{audio_object_type} == 37 ) {
 				$tags->{LOSSLESS}     = 1;
 				$tags->{VBR_SCALE}    = 1;
-				$tags->{CONTENT_TYPE} = 'mp4';
+				$tags->{CONTENT_TYPE} = 'sls';
 			}
 		}
 	}
