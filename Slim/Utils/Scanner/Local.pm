@@ -94,6 +94,7 @@ sub rescan {
 		# Generate 3 lists of files:
 		
 		# 1. Files that no longer exist on disk
+		#    and are not virtual (from a cue sheet)
 		my $inDBOnlySQL = qq{
 			SELECT DISTINCT url
 			FROM            tracks
@@ -101,6 +102,7 @@ sub rescan {
 				SELECT url FROM scanned_files
 			)
 			AND             url LIKE '$basedir%'
+			AND             virtual IS NULL
 		};
 		
 		# 2. Files that are new and not in the database.

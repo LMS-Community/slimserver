@@ -165,6 +165,9 @@ sub getTag {
 
 		# Allow FLACs with embedded cue sheets to have a date.
 		$track->{AGE} = $fileage;
+		
+		# Mark track as virtual
+		$track->{VIRTUAL} = 1;
 
 		next unless exists $track->{URI};
 
