@@ -57,13 +57,13 @@ sub getTag {
 	$class->_doTagMapping($tags);
 
 	$tags->{OFFSET} = 0;
+	$tags->{RATE}   = $info->{samplerate};
 	$tags->{SIZE}   = $info->{file_size};
 	$tags->{SECS}   = $info->{song_length_ms} / 1000;
 	
 	if ( my $track = $info->{tracks}->[0] ) {
 		# MP4 file	
 		$tags->{BITRATE}    = $track->{avg_bitrate};
-		$tags->{RATE}       = $track->{samplerate};
 		$tags->{SAMPLESIZE} = $track->{bits_per_sample};
 		$tags->{CHANNELS}   = $track->{channels};
 
@@ -90,7 +90,6 @@ sub getTag {
 		# ADTS file
 		$tags->{OFFSET}   = $info->{audio_offset}; # ID3v2 tags may be present
 		$tags->{BITRATE}  = $info->{bitrate};
-		$tags->{RATE}     = $info->{samplerate};
 		$tags->{CHANNELS} = $info->{channels};
 		
 		if ( $info->{id3_version} ) {
