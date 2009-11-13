@@ -437,8 +437,6 @@ sub _readCoverArtFiles {
 	return undef;
 }
 
-my ($gdresizein, $gdresizeout, $gdresizeproc);
-
 sub precacheAllArtwork {
 	my $class = shift;
 	
@@ -501,9 +499,7 @@ sub precacheAllArtwork {
 		# 3+ SqueezePlay/Jive size artwork
 		
 		my $isEnabled = $prefs->get('precacheArtwork');
-		my $resample  = $prefs->get('resampleArtwork');
 		my $thumbSize = $prefs->get('thumbSize') || 100;
-		my $cachedir  = $prefs->get('librarycachedir');
 
 		my @specs = (
 			"${thumbSize}x${thumbSize}_o",
@@ -514,7 +510,7 @@ sub precacheAllArtwork {
 		);
 		
 		if ($isEnabled) {
-			_start_gdresized($cachedir, $resample);
+			require Slim::Utils::ImageResizer;
 		}
 		
 		my $sth = $dbh->prepare($sql);
@@ -538,7 +534,7 @@ sub precacheAllArtwork {
 				
 				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " from $path" );
 				
-				if (_gdresize($path, join(',', @specs), 'music/' . $track->{coverid} . '/cover_')) {				
+				if ( Slim::Utils::ImageResizer->resize($path, 'music/' . $track->{coverid} . '/cover_', join(',', @specs), undef) ) {				
 					# Update the rest of the tracks on this album
 					# to use the same coverid and cover_cached status
 					$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
@@ -554,56 +550,6 @@ sub precacheAllArtwork {
 	}
 
 	Slim::Music::Import->endImporter('precacheArtwork');
-}
-
-sub _start_gdresized {
-	my ($cachedir, $resample) = @_;
-	
-	if (!defined $gdresizeproc || eof($gdresizein) ) {
-		require IPC::Open2;
-		
-		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresized();
-		
-		my @cmd = (
-			$gdresize,
-			'--cacheroot', $cachedir,
-		);
-		
-		push @cmd, '--faster' if !$resample;
-		
-		eval {
-			if (main::DEBUGLOG && $importlog->is_debug) {
-				push @cmd, '--debug';
-				$importlog->debug( "  Running: " . join( " ", @cmd ) );
-			}
-			($gdresizeout, $gdresizein) = (undef, undef);
-			$gdresizeproc = IPC::Open2::open2($gdresizein, $gdresizeout, @cmd) || die "Could not launch gdresized command\n";
-		};
-		
-		if ( $@ ) {
-			$log->error($@);
-		}
-	}
-}
-
-sub _gdresize {
-	my ($file, $spec, $cachekey) = @_;
-	my $c  = pack('Z*Z*Z*', $file, $spec, $cachekey);
-	my $cl = pack('CL', ord('R'), length($c));
-	
-	main::DEBUGLOG && $importlog->is_debug && $importlog->debug("Command length ", length($c), ": $c");
-	
-	syswrite($gdresizeout, $cl, 5) == 5 or return 0;
-	syswrite($gdresizeout, $c, length($c)) == length($c) or return 0;
-	
-	my $result;
-	sysread($gdresizein, $result, 1);
-	
-	if ($result && $result eq 'K') {
-		return 1;
-	} else {
-		return 0;
-	}
 }
 
 1;

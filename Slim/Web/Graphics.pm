@@ -9,6 +9,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
+use Slim::Utils::ImageResizer;
 
 use constant ONE_DAY  => 86400;
 use constant ONE_YEAR => ONE_DAY * 365;
@@ -19,10 +20,6 @@ my $log   = logger('artwork');
 my $skinMgr;
 
 my $cache;
-
-my $cmds = 0;
-my @cmd_queue;
-my $MAX_CMDS = 5; # max number of resize processes to allow at once
 
 sub init {
 	# create cache for artwork which is not purged periodically due to potential size of cache
@@ -70,37 +67,6 @@ sub _cached {
 	return;
 }
 
-# Avoid running more than MAX_CMDS resize commands at once
-sub _cmd_schedule {
-	my $isInfo = main::INFOLOG && $log->is_info;
-	
-	while ( $cmds < $MAX_CMDS ) {
-		my $job = shift @cmd_queue or last;
-		
-		$cmds++;
-		
-		main::INFOLOG && $isInfo && (my $start = AnyEvent->time);
-		main::INFOLOG && $isInfo && $log->info("Running resize job $cmds");
-		
-		# XXX this may not work in Windows
-		# XXX fork/exec too expensive, need another solution
-		my $cv = AnyEvent::Util::run_cmd( $job->[0] );
-		$cv->cb( sub {
-			if ( main::INFOLOG && $isInfo ) {
-				my $diff = AnyEvent->time - $start;
-				$log->info("Resize job finished in $diff");
-			}
-			
-			# Start another job if necessary
-			$cmds--;
-			_cmd_schedule();
-			
-			# Call the job's callback
-			$job->[1]->();
-		} );
-	}
-}
-
 sub artworkRequest {
 	my ( $client, $path, $params, $callback, @args ) = @_;
 	
@@ -116,8 +82,8 @@ sub artworkRequest {
 	# * If so, use it
 	# * If not:
 	# * Determine the absolute path to the requested object
-	# * Fire off an async process running gdresize.pl
-	# * When gdresize is done, read newly cached image and callback
+	# * Fire off an async resize call
+	# * When resize is done, read newly cached image and callback
 	
 	# XXX remote URLs (from protocol handler icon)
 	
@@ -260,21 +226,8 @@ sub artworkRequest {
 	
 	if ( $fullpath && -e $fullpath ) {
 		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
-		
-		# Setup async call to gdresize script
-		my @cmd = (
-			Slim::Utils::OSDetect::getOS->gdresize(),
-			'--file', $fullpath,
-			'--spec', $spec,
-			'--cacheroot', $prefs->get('librarycachedir'),
-			'--cachekey', $path,
-		);
-	
-		if ( !$prefs->get('resampleArtwork') ) {
-			push @cmd, '--faster';
-		}
-	
-		push @cmd_queue, [ \@cmd, sub {
+			
+		Slim::Utils::ImageResizer->resize($fullpath, $path, $spec, sub {
 			# Resized image should now be in cache
 			my $body;
 		
@@ -309,9 +262,8 @@ sub artworkRequest {
 			}
 		
 			$callback->( $client, $params, $body, @args );
-		} ];
+		} );
 	
-		_cmd_schedule();
 	}
 	else {
 		# File does not exist, return 404
