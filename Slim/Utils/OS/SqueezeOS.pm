@@ -117,6 +117,10 @@ sub gdresize {
 	return '/usr/squeezecenter/gdresize.pl';
 }
 
+sub gdresized {
+	return '/usr/squeezecenter/gdresized.pl';
+}
+
 sub skipPlugins {
 	my $class = shift;
 	

@@ -437,6 +437,8 @@ sub _readCoverArtFiles {
 	return undef;
 }
 
+my ($gdresizein, $gdresizeout, $gdresizeproc);
+
 sub precacheAllArtwork {
 	my $class = shift;
 	
@@ -502,15 +504,18 @@ sub precacheAllArtwork {
 		my $resample  = $prefs->get('resampleArtwork');
 		my $thumbSize = $prefs->get('thumbSize') || 100;
 		my $cachedir  = $prefs->get('librarycachedir');
-		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresize();
 
-		my @specs = map { ("--spec" => $_) } (
+		my @specs = (
 			"${thumbSize}x${thumbSize}_o",
 			'64x64_m',
 			'50x50_o',
 			'41x41_m',
 			'40x40_m',
 		);
+		
+		if ($isEnabled) {
+			_start_gdresized($cachedir, $resample);
+		}
 		
 		my $sth = $dbh->prepare($sql);
 		$sth->execute;
@@ -525,7 +530,6 @@ sub precacheAllArtwork {
 				
 			# Do the actual pre-caching only if the pref for it is enabled
 			if ( $isEnabled ) {
-				require Proc::Background;
 						
 				# Image to resize is either a cover path or the audio file
 				my $path = $track->{cover} =~ /^\d+$/
@@ -534,37 +538,7 @@ sub precacheAllArtwork {
 				
 				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " from $path" );
 				
-				# Launch standalone gdresize script, we use a new process
-				# to avoid GD taking a big chunk of memory to resize large files.
-				
-				my @cmd = (
-					$gdresize,
-					'--file', $path,
-					@specs,
-					'--cacheroot', $cachedir,
-					'--cachekey', 'music/' . $track->{coverid} . '/cover_',
-				);
-				
-				if ( !$resample ) {
-					push @cmd, '--faster';
-				}
-				
-				eval {
-					main::DEBUGLOG && $isDebug && $importlog->debug( "  Running: " . join( " ", @cmd ) );
-					
-					my $process = Proc::Background->new(@cmd) || die "Could not launch gdresize command\n";
-					
-					my $exitcode = $process->wait;
-					
-					if ( $exitcode >> 8 != 0 ) {
-						die "gdresize failed with exit code " . ($exitcode >> 8) . "\n";
-					}
-				};
-				
-				if ( $@ ) {
-					$log->error($@);
-				}
-				else {				
+				if (_gdresize($path, join(',', @specs), 'music/' . $track->{coverid} . '/cover_')) {				
 					# Update the rest of the tracks on this album
 					# to use the same coverid and cover_cached status
 					$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
@@ -580,6 +554,56 @@ sub precacheAllArtwork {
 	}
 
 	Slim::Music::Import->endImporter('precacheArtwork');
+}
+
+sub _start_gdresized {
+	my ($cachedir, $resample) = @_;
+	
+	if (!defined $gdresizeproc || eof($gdresizein) ) {
+		require IPC::Open2;
+		
+		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresized();
+		
+		my @cmd = (
+			$gdresize,
+			'--cacheroot', $cachedir,
+		);
+		
+		push @cmd, '--faster' if !$resample;
+		
+		eval {
+			if (main::DEBUGLOG && $importlog->is_debug) {
+				push @cmd, '--debug';
+				$importlog->debug( "  Running: " . join( " ", @cmd ) );
+			}
+			($gdresizeout, $gdresizein) = (undef, undef);
+			$gdresizeproc = IPC::Open2::open2($gdresizein, $gdresizeout, @cmd) || die "Could not launch gdresized command\n";
+		};
+		
+		if ( $@ ) {
+			$log->error($@);
+		}
+	}
+}
+
+sub _gdresize {
+	my ($file, $spec, $cachekey) = @_;
+	my $c  = pack('Z*Z*Z*', $file, $spec, $cachekey);
+	my $cl = pack('CL', ord('R'), length($c));
+	
+	main::DEBUGLOG && $importlog->is_debug && $importlog->debug("Command length ", length($c), ": $c");
+	
+	syswrite($gdresizeout, $cl, 5) == 5 or return 0;
+	syswrite($gdresizeout, $c, length($c)) == length($c) or return 0;
+	
+	my $result;
+	sysread($gdresizein, $result, 1);
+	
+	if ($result && $result eq 'K') {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 1;

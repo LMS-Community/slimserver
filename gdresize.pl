@@ -77,106 +77,23 @@ if ( $cacheroot && $cachekey ) {
 	} );
 }
 
-if ( @spec > 1 ) {
-	# Resize in series
-	
-	# Construct spec hashes
-	my $specs = [];
-	for my $s ( @spec ) {
-		my ($width, $height, $mode) = $s =~ /^([^x]+)x([^_]+)_(\w)$/;
-		
-		if ( !$width || !$height || !$mode ) {
-			die "Invalid spec: $s\n";
-		}
-		
-		push @{$specs}, {
-			width  => $width,
-			height => $height,
-			mode   => $mode,
-		};
-	}
-		
-	my $series = eval {
-		Slim::Utils::ImageResizer->resizeSeries(
-			file   => $file,
-			debug  => $debug,
-			faster => $faster,
-			series => $specs,
-		);
-	};
-	
-	if ( $@ ) {
-		die "$@\n";
-	}
-	
-	if ( $cacheroot && $cachekey ) {
-		for my $s ( @{$series} ) {
-			my $width  = $s->[2];
-			my $height = $s->[3];
-			my $mode   = $s->[4];
-			
-			my $ct = 'image/' . $s->[1];
-			$ct =~ s/jpg/jpeg/;
-		
-			# Series-based resize has to append to the cache key
-			my $key = $cachekey;
-			$key .= "${width}x${height}_${mode}";
-		
-			_cache( $key, $s->[0], $ct );
-		}
-	}
-}
-else {
-	my ($width, $height, $mode, $bgcolor, $ext) = $spec[0] =~ /^([^x]+)x([^_]+)(?:_(\w))?(?:_([\da-fA-F]+))?\.?(\w+)?$/;
-	
-	# XXX If cache is available, pull pre-cached size values from cache
-	# to see if we can use a smaller version of this image than the source
-	# to reduce resizing time.
-	
-	my ($ref, $format) = eval {
-		Slim::Utils::ImageResizer->resize(
-			file    => $file,
-			debug   => $debug,
-			faster  => $faster,
-			width   => $width,
-			height  => $height,
-			mode    => $mode,
-			bgcolor => $bgcolor,
-			format  => $ext,
-		);
-	};
-	
-	if ( $@ ) {
-		die "$@\n";
-	}
-	
-	if ( $cacheroot && $cachekey ) {
-		my $ct = 'image/' . $format;
-		$ct =~ s/jpg/jpeg/;
-		
-		# When doing a single resize, the cachekey passed in is all we store
-		
-		_cache( $cachekey, $ref, $ct );
-	}
+eval {
+	Slim::Utils::ImageResizer->gdresize(
+		file     => $file,
+		debug    => $debug,
+		faster   => $faster,
+		cache    => $cache,
+		cachekey => $cachekey,
+		spec     => \@spec,
+	);
+};
+
+if ( $@ ) {
+	die "$@\n";
 }
 
 exit 0;
 
-sub _cache {
-	my ( $key, $imgref, $ct ) = @_;
-	
-	my $cached = {
-		orig        => $file,
-		mtime       => (stat $file)[9],
-		size        => length($$imgref),
-		body        => $imgref,
-		contentType => $ct,
-	};
-
-	$cache->set( $key, $cached, $Cache::Cache::EXPIRES_NEVER );
-	
-	$debug && warn "Cached $key (" . $cached->{size} . " bytes)\n";
-}
 
 __END__
 

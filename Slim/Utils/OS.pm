@@ -52,7 +52,7 @@ sub sqlHelperClass {
 		return "Slim::Utils::${main::dbtype}Helper";
 	}
 	
-	return 'Slim::Utils::MySQLHelper';
+	return 'Slim::Utils::SQLiteHelper';
 }
 
 # Skip obsolete plugins, they should be deleted by installers
@@ -226,6 +226,10 @@ sub scanner {
 
 sub gdresize {
 	return "$Bin/gdresize.pl";
+}
+
+sub gdresized {
+	return "$Bin/gdresized.pl";
 }
 
 sub dontSetUserAndGroup { 0 }

@@ -18,6 +18,8 @@ my %typeToFileMethod = (
 	'png' => 'newFromPng',
 );
 
+my $debug;
+
 # XXX: see if we can remove all modes besides pad/max
 
 =head1 ($dataref, $format) = resize( %args )
@@ -59,7 +61,8 @@ sub resize {
 	my $height  = $args{height} || 'X';
 	my $bgcolor = $args{bgcolor};
 	my $mode    = $args{mode};
-	my $debug   = $args{debug} || 0;
+	
+	$debug      = $args{debug} if defined $args{debug};
 	
 	if ( $file && !-e $file ) {
 		die "Unable to resize from $file: File does not exist\n";
@@ -419,13 +422,14 @@ sub resizeSeries {
 	my ( $class, %args ) = @_;
 	
 	my @series  = sort { $b->{width} <=> $a->{width} } @{ delete $args{series} };
-	my $debug   = $args{debug} || 0;
+
+	$debug      = $args{debug} if defined $args{debug};
 	
 	my @ret;
 	
 	for my $next ( @series ) {
 		$args{width}  = $next->{width};
-		$args{height} = $next->{height} if $next->{height};
+		$args{height} = $next->{height} || $next->{width};
 		$args{mode}   = $next->{mode}   if $next->{mode};
 			
 		$debug && warn "Resizing series: " . $args{width} . 'x' . $args{height} . "\n";
@@ -585,6 +589,114 @@ sub _slurp {
 	
 	my $data = File::Slurp::read_file($file);
 	return \$data;
+}
+
+sub gdresize {
+	my ($class, %args) = @_;
+	
+	my $file     = $args{'file'};
+	my $spec     = $args{'spec'};
+	my $cache    = $args{'cache'};
+	my $cachekey = $args{'cachekey'};
+	
+	$debug       = $args{'debug'};
+	
+	if ( @$spec > 1 ) {
+		# Resize in series
+		
+		# Construct spec hashes
+		my $specs = [];
+		for my $s ( @$spec ) {
+			my ($width, $height, $mode) = $s =~ /^([^x]+)x([^_]+)_(\w)$/;
+			
+			if ( !$width || !$height || !$mode ) {
+				die "Invalid spec: $s\n";
+			}
+			
+			push @{$specs}, {
+				width  => $width,
+				height => $height,
+				mode   => $mode,
+			};
+		}
+			
+		my $series = eval {
+			$class->resizeSeries(
+				file   => $file,
+				series => $specs,
+				faster => $args{'faster'},
+			);
+		};
+		
+		if ( $@ ) {
+			die "$@\n";
+		}
+		
+		if ( $cache && $cachekey ) {
+			for my $s ( @{$series} ) {
+				my $width  = $s->[2];
+				my $height = $s->[3];
+				my $mode   = $s->[4];
+				
+				my $ct = 'image/' . $s->[1];
+				$ct =~ s/jpg/jpeg/;
+			
+				# Series-based resize has to append to the cache key
+				my $key = $cachekey;
+				$key .= "${width}x${height}_${mode}";
+			
+				_cache( $cache, $key, $s->[0], $file, $ct );
+			}
+		}
+	}
+	else {
+		my ($width, $height, $mode, $bgcolor, $ext) = $spec->[0] =~ /^([^x]+)x([^_]+)(?:_(\w))?(?:_([\da-fA-F]+))?\.?(\w+)?$/;
+		
+		# XXX If cache is available, pull pre-cached size values from cache
+		# to see if we can use a smaller version of this image than the source
+		# to reduce resizing time.
+		
+		my ($ref, $format) = eval {
+			$class->resize(
+				file    => $file,
+				faster  => $args{'faster'},
+				width   => $width,
+				height  => $height,
+				mode    => $mode,
+				bgcolor => $bgcolor,
+				format  => $ext,
+			);
+		};
+		
+		if ( $@ ) {
+			die "$@\n";
+		}
+		
+		if ( $cache && $cachekey ) {
+			my $ct = 'image/' . $format;
+			$ct =~ s/jpg/jpeg/;
+			
+			# When doing a single resize, the cachekey passed in is all we store
+			
+			_cache( $cache, $cachekey, $ref, $file, $ct );
+		}
+	}
+}
+
+sub _cache {
+	my ( $cache, $key, $imgref, $file, $ct ) = @_;
+	
+	my $cached = {
+		orig        => $file,
+		mtime       => (stat $file)[9],
+		size        => length($$imgref),
+		body        => $imgref,
+		contentType => $ct,
+	};
+
+	$cache->set( $key, $cached, $Cache::Cache::EXPIRES_NEVER );
+	
+	$debug && warn "Cached $key (" . $cached->{size} . " bytes)\n";
 }
 
 1;
