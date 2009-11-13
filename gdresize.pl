@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Stand-alone interface to ImageResizer
+# Stand-alone interface to GDResizer
 #
 # TODO:
 # Better error handling
@@ -24,7 +24,7 @@ BEGIN {
 
 use Getopt::Long;
 
-use Slim::Utils::ImageResizer;
+use Slim::Utils::GDResizer;
 
 my $help;
 our ($file, $url, @spec, $cacheroot, $cachekey, $faster, $debug);
@@ -78,7 +78,7 @@ if ( $cacheroot && $cachekey ) {
 }
 
 eval {
-	Slim::Utils::ImageResizer->gdresize(
+	Slim::Utils::GDResizer->gdresize(
 		file     => $file,
 		debug    => $debug,
 		faster   => $faster,

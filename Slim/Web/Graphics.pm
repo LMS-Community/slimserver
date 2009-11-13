@@ -551,7 +551,7 @@ sub processCoverArtRequest {
 	}
 	
 	eval {
-		($body, $requestedContentType) = Slim::Utils::ImageResizer->resize(
+		($body, $requestedContentType) = Slim::Utils::GDResizer->resize(
 			original => $imageData ? \$imageData : $body,
 			mode     => $resizeMode,
 			width    => $requestedWidth,

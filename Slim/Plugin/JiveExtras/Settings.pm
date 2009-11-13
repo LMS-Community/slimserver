@@ -168,9 +168,9 @@ sub _asyncImageCB {
 
 		eval {
 		
-			require Slim::Utils::ImageResizer;
+			require Slim::Utils::GDResizer;
 
-			my ($w, $h) = Slim::Utils::ImageResizer->getSize(\$content);
+			my ($w, $h) = Slim::Utils::GDResizer->getSize(\$content);
 
 			$cbdata->{'sizes'}->{ $opt->{'key'} } = "${w}x${h}";
 			
