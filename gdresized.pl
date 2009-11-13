@@ -58,9 +58,15 @@ binmode(STDOUT);
 
 while (1) {
 	
-	# XXX get command
+	# get command
 	my $buf;
-	read (STDIN, $buf, 5) == 5 or	die 'No command';
+	if (read (STDIN, $buf, 5) != 5) {
+		if (eof(STDIN)) {
+			exit 0;
+		} else {
+			die 'No command';
+		}
+	}	
 
 	my ($c, $l) = unpack 'CL', $buf;
 	
@@ -86,12 +92,12 @@ while (1) {
 	};
 	
 	if ( $@ ) {
+		# For now, just die
 		die "$@\n";
 	}
 	
-	# XXX send result
-	
-	$buf = 'K';
+	# send result
+	$buf = 'K';		# K ==> 'OK'
 	syswrite(STDOUT, $buf, 1);
 	
 }
