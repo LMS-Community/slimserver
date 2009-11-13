@@ -50,7 +50,7 @@ sub dirsFor {
 
 	my @dirs = ();
 	
-	if ($dir =~ /^(?:oldprefs|updates)$/) {
+	if ($dir =~ /^(?:scprefs|oldprefs|updates)$/) {
 
 		push @dirs, $class->SUPER::dirsFor($dir);
 
