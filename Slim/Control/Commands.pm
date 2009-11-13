@@ -1879,7 +1879,7 @@ sub playlistcontrolCommand {
 			$what->{'album.id'} = $album_id;
 			my $album = Slim::Schema->find('Album', $album_id);
 			@info    = ( $album->title, $album->contributors->first->name );
-			$artwork = $album->artwork +0;
+			$artwork = $album->artwork || 0;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
