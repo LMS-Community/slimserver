@@ -22,16 +22,18 @@ sub initDetails {
 
 
 sub initPrefs {
-	my ($class, $prefs) = @_;
+	my ($class, $defaults) = @_;
 	
-	require Slim::Utils::Prefs;
+	$defaults->{checkVersion}      = 0;
+	$defaults->{maxPlaylistLength} = 100;
+}
+
+sub postInitPrefs {
+	my ( $class, $prefs ) = @_;
 	
-	$prefs->{checkVersion}      = 0;
-	$prefs->{maxPlaylistLength} = 100;
+	_checkMediaAtStartup($prefs);
 	
-	_checkMediaAtStartup();
-	Slim::Utils::Prefs::preferences('server')->setChange(\&_onAudiodirChange, 'audiodir', 'FIRST');
-	
+	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
 }
 
 sub sqlHelperClass { 'Slim::Utils::SQLiteHelper' }
@@ -147,7 +149,7 @@ sub skipPlugins {
 }
 
 sub _setupMediaDir {
-	my $path = shift;
+	my ( $path, $prefs ) = @_;
 	
 	# Is audiodir defined, mounted and writable?
 	if ($path && $path =~ m{^/media/[^/]+} && -w $path) {
@@ -168,7 +170,8 @@ sub _setupMediaDir {
 			};
 		}
 		
-		Slim::Utils::Prefs::preferences('server')->set('librarycachedir', "$path/.Squeezebox/cache");
+		$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
+		
 		return 1;
 	}
 	
@@ -176,11 +179,13 @@ sub _setupMediaDir {
 }
 
 sub _onAudiodirChange {
-	my $prefs    = Slim::Utils::Prefs::preferences('server');
+	require Slim::Utils::Prefs;
+	my $prefs = Slim::Utils::Prefs::preferences('server');
+    
 	my $audiodir = $prefs->get('audiodir');
 	
 	if ($audiodir) {
-		if (_setupMediaDir($audiodir)) {
+		if (_setupMediaDir($audiodir, $prefs)) {
 			# hunky dory
 			return;
 		} else {
@@ -192,10 +197,11 @@ sub _onAudiodirChange {
 }
 
 sub _checkMediaAtStartup {
-	my $prefs    = Slim::Utils::Prefs::preferences('server');
+	my $prefs = shift;
+	
 	my $audiodir = $prefs->get('audiodir');
 	
-	if (_setupMediaDir($audiodir)) {
+	if (_setupMediaDir($audiodir, $prefs)) {
 		# hunky dory
 		return;
 	}
@@ -207,7 +213,7 @@ sub _checkMediaAtStartup {
 		my ($path, $rw) = $line =~ /on ([^ ]+) type [^ ]+ \((\w{2})/;
 		next if $rw ne 'rw';
 		
-		if (_setupMediaDir($path)) {
+		if (_setupMediaDir($path, $prefs)) {
 			$prefs->set('audiodir', $path);
 			return;
 		}

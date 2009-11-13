@@ -643,6 +643,9 @@ sub init {
 
 	# initialise any new prefs
 	$prefs->init(\%defaults);
+	
+	# perform OS-specific post-init steps
+	Slim::Utils::OSDetect::getOS->postInitPrefs($prefs);
 
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 

@@ -35,7 +35,9 @@ sub details {
 	return shift->{osDetails};
 }
 
-sub initPrefs {};
+sub initPrefs {}
+
+sub postInitPrefs {}
 
 =head2 migratePrefsFolder()
 
@@ -45,7 +47,7 @@ Windows & OSX handle this in the installer
 
 =cut
 
-sub migratePrefsFolder {};
+sub migratePrefsFolder {}
 
 sub sqlHelperClass { 
 	if ( $main::dbtype ) {
