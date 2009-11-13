@@ -903,7 +903,8 @@ sub packetLatency {
 	return $prefs->client(shift)->get('packetLatency') / 1000;
 }
 
-use constant JIFFIES_OFFSET_TRACKING_LIST_SIZE => 10;
+use constant JIFFIES_OFFSET_TRACKING_LIST_SIZE => 50;	# Must be this big for large forward jumps
+use constant JIFFIES_OFFSET_TRACKING_LIST_MIN  => 10;	# Must be this big to use at all
 use constant JIFFIES_EPOCH_MIN_ADJUST          => 0.001;
 use constant JIFFIES_EPOCH_MAX_ADJUST          => 0.005;
 
@@ -941,12 +942,15 @@ sub trackJiffiesEpoch {
 		if (@{$jiffiesOffsetList} > JIFFIES_OFFSET_TRACKING_LIST_SIZE);
 
 	if (   $diff > 0.001
-		&& (@{$jiffiesOffsetList} == JIFFIES_OFFSET_TRACKING_LIST_SIZE)
+		&& (@{$jiffiesOffsetList} >= JIFFIES_OFFSET_TRACKING_LIST_MIN)
 	) {
 		my $min_diff = Math::VecStat::min($jiffiesOffsetList);
 		if ( $min_diff > JIFFIES_EPOCH_MIN_ADJUST ) {
-			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
-				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
+			
+			# We only make jumps larger than JIFFIES_EPOCH_MAX_ADJUST if we have a full sequence of offsets.
+			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST  && @{$jiffiesOffsetList} < JIFFIES_OFFSET_TRACKING_LIST_SIZE ) {
+				# wait until we have a full list
+				return $diff;
 			}
 			if ( main::DEBUGLOG && $synclog->is_debug ) {
 				$synclog->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
