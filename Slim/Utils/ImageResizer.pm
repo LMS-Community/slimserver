@@ -16,9 +16,29 @@ my ($gdresizein, $gdresizeout, $gdresizeproc);
 sub resize {
 	my ($class, $file, $cachekey, $specs, $callback) = @_;
 	
-	_start_gdresized();
+	my $ret;
 	
-	my $ret = _gdresize($file, $specs, $cachekey);
+	if (1) {
+		require Slim::Utils::GDResizer;
+		
+		my @spec = split(',', $specs);
+		eval {
+			Slim::Utils::GDResizer->gdresize(
+				file      => $file,
+				spec      => \@spec,
+				cache     => Slim::Utils::Cache->new('Artwork'),
+				cachekey  => $cachekey,
+				debug     => main::DEBUGLOG && $log->is_debug,
+				faster    => $prefs->get('resampleArtwork'),
+			);
+		};
+		
+		$ret =  ( $@ ) ? 0 : 1;
+	}
+	
+	else {
+		$ret = _gdresize($file, $specs, $cachekey);
+	}
 	
 	if ($callback) {
 		$callback->();
