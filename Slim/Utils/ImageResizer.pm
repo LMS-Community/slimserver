@@ -54,7 +54,7 @@ sub _gdresize {
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Command length ", length($c), ": $c");
 	
-	if (syswrite($gdresizeout, $cl, 5) != 5) {
+	if (!defined $gdresizeproc || syswrite($gdresizeout, $cl, 5) != 5) {
 		if (!defined $gdresizeproc || eof($gdresizein)) {
 			$gdresizeproc = undef;
 			_start_gdresized();
