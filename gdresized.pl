@@ -17,28 +17,77 @@ use constant SCANNER      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant DEBUG        => ( grep { /--debug/ } @ARGV ) ? 1 : 0;
 
+# Copied from Slim::bootstrap to reduce memory overhead of unnecessary stuff
 BEGIN {
-	use Slim::bootstrap ();
-	Slim::bootstrap->loadModules( ['GD'], [] );
-};
+	use Config;
+	use File::Spec::Functions qw(catdir);
+	use Slim::Utils::OSDetect;	# XXX would be nice to do without this
+	
+	my $libPath = $Bin;
+	my @SlimINC = ();
+	
+	Slim::Utils::OSDetect::init();
+	
+	if (my $libs = Slim::Utils::OSDetect::dirsFor('libpath')) {
+		# On Debian, RH and SUSE, our CPAN directory is located in the same dir as strings.txt
+		$libPath = $libs;
+	}
 
-use Getopt::Long;
+	# NB: The user may be on a platform who's perl reports a
+	# different x86 version than we've supplied - but it may work
+	# anyways.
+	my $arch = $Config::Config{'archname'};
+	   $arch =~ s/^i[3456]86-/i386-/;
+	   $arch =~ s/gnu-//;
+	
+	# Some ARM platforms use different arch strings, just assume any arm*linux system
+	# can run our binaries, this will fail for some people running invalid versions of Perl
+	# but that's OK, they'd be broken anyway.
+	if ( $arch =~ /^arm.*linux/ ) {
+		$arch = 'arm-linux-gnueabi-thread-multi';
+	}
+	
+	# Same thing with PPC
+	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
+		$arch = 'powerpc-linux-thread-multi';
+	}
+
+	my $perlmajorversion = $Config{'version'};
+	   $perlmajorversion =~ s/\.\d+$//;
+
+	@SlimINC = (
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'lib'), 
+		catdir($libPath,'CPAN'), 
+		$libPath,
+	);
+
+	# This works like 'use lib'
+	# prepend our directories to @INC so we look there first.
+	unshift @INC, @SlimINC;
+};
 
 use Slim::Utils::GDResizer;
 
-my $help;
-our ($file, $url, @spec, $cacheroot, $cachekey, $faster, $debug);
+our ($cacheroot, $faster, $debug);
 
-my $ok = GetOptions(
-	'help|?'      => \$help,
-	'cacheroot=s' => \$cacheroot,
-	'faster'      => \$faster,
-	'debug'       => \$debug,
-);
-
-if ( !$ok || $help ) {
-	require Pod::Usage;
-	Pod::Usage::pod2usage(1);
+while ($_ = shift @ARGV) {
+	if ($_ eq '--cacheroot') {
+		$cacheroot = shift @ARGV;
+	} elsif ($_ eq '--faster') {
+		$faster = 1;
+	} elsif ($_ eq '--debug') {
+		$debug = 1;
+	} else {
+		require Pod::Usage;
+		Pod::Usage::pod2usage(1);
+	}
 }
 
 # Setup cache
@@ -77,7 +126,7 @@ while (1) {
 	my ($file, $spec, $cachekey) = unpack 'Z*Z*Z*', $buf;
 	$debug && warn("file=$file, spec=$spec, cachekey=$cachekey");
 	
-	@spec = split(',', $spec);
+	my @spec = split(',', $spec);
 	
 	# do resize
 	eval {
