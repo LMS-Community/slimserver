@@ -127,9 +127,9 @@ sub getFormatForURL {
 }
 
 sub parseMetadata {
-	my ( $class, $client, $url, $metadata ) = @_;
+	my ( $class, $client, undef, $metadata ) = @_;
 
-	$url = Slim::Player::Playlist::url(
+	my $url = Slim::Player::Playlist::url(
 		$client, Slim::Player::Source::streamingSongIndex($client)
 	);
 	

@@ -752,16 +752,7 @@ sub directMetadata {
 	# Will also get called for proxy streaming
 	# unless ($controller && $controller->isDirect()) {return;}
 
-	my $url = $controller->streamUrl();
-	
-	my $type = Slim::Music::Info::contentType($url);
-	
-	if ( $type eq 'wma' ) {
-		$controller->song()->currentTrackHandler()->parseMetadata( $client, $controller->song(), $metadata );
-	}
-	else {
-		Slim::Player::Protocols::HTTP->parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );
-	}
+	$controller->song()->currentTrackHandler()->parseMetadata( $client, $controller->song(), $metadata );
 	
 	# new song, so reset counters
 	$client->songBytes(0);
