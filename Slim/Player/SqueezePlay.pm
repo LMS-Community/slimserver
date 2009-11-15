@@ -40,6 +40,7 @@ BEGIN {
 		accuratePlayPoints
 		firmware
 		canDecodeRhapsody
+		canDecodeRtmp
 		hasDigitalOut
 		hasPreAmp
 		hasDisableDac
@@ -59,6 +60,7 @@ sub new {
 		accuratePlayPoints      => 0,
 		firmware                => 0,
 		canDecodeRhapsody       => 0,
+		canDecodeRtmp           => 0,
 		hasDigitalOut           => 0,
 		hasPreAmp               => 0,
 		hasDisableDac           => 0,
@@ -76,6 +78,7 @@ my %CapabilitiesMap = (
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
 	Rhap                    => 'canDecodeRhapsody',
+	Rtmp                    => 'canDecodeRtmp',
 	HasDigitalOut           => 'hasDigitalOut',
 	HasPreAmp               => 'hasPreAmp',
 	HasDisableDac           => 'hasDisableDac',

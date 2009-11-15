@@ -858,8 +858,12 @@ sub stream_s {
 	my $flags = 0;
 	$flags |= 0x40 if $params->{reconnect};
 	$flags |= 0x80 if $params->{loop};
-	$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
-		
+	$flags |= 0x03 & ($prefs->client($client)->get('polarityInversion') || 0);
+
+	if ($handler->can('slimprotoFlags')) {
+		$flags |= $handler->slimprotoFlags($client, $url, $isDirect);
+	}
+
 	my $replayGain = $client->canDoReplayGain($params->{replay_gain});
 		
 	# Reduce buffer threshold if a file is really small
