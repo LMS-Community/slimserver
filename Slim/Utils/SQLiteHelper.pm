@@ -111,6 +111,7 @@ sub on_connect_do {
 	my $sql = [
 		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = MEMORY',
+		'PRAGMA foreign_keys = ON',
 	];
 	
 	# We create this even if main::STATISTICS is not false so that the SQL always works
