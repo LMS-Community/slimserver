@@ -413,7 +413,7 @@ sub open {
 	} else {
 		require Slim::Player::CapabilitiesHelper;
 		
-		# Set the correct foramt for WAV/AAC playback
+		# Set the correct format for WAV/AAC playback
 		if ( exists $streamFormatMap{$format} ) {
 			$format = $streamFormatMap{$format};
 		}
