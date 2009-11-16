@@ -2656,10 +2656,11 @@ sub playlistsQuery {
 
 				if ($menuMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->title);
-
 					my $params = {
 						'playlist_id' =>  $id, 
 						'textkey' => $textKey,
+						'favorites_url'   => $eachitem->url,
+						'favorites_title' => $eachitem->name,
 					};
 
 					_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
