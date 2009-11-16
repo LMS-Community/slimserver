@@ -10,7 +10,7 @@ use vars qw{$err $errstr $drh $sqlite_version};
 use vars qw{%COLLATION};
 
 BEGIN {
-    $VERSION = '1.26_06';
+    $VERSION = '1.26_07';
     @ISA     = 'DynaLoader';
 
     # Initialize errors
@@ -117,12 +117,12 @@ sub connect {
     DBD::SQLite::db::_login($dbh, $real, $user, $auth, $attr) or return undef;
 
     # Register the on-demand collation installer
-    $DBI::VERSION >= 1.608 
+    $DBI::VERSION >= 1.608
       ? $dbh->sqlite_collation_needed(\&install_collation)
       : $dbh->func(\&install_collation, "collation_needed");
 
-    # Register the REGEXP function 
-    $DBI::VERSION >= 1.608 
+    # Register the REGEXP function
+    $DBI::VERSION >= 1.608
       ? $dbh->sqlite_create_function("REGEXP", 2, \&regexp)
       : $dbh->func("REGEXP", 2, \&regexp, "create_function");
 
@@ -140,7 +140,7 @@ sub install_collation {
     my ($dbh, $collation_name) = @_;
     my $collation = $DBD::SQLite::COLLATION{$collation_name}
         or die "can't install, unknown collation : $collation_name";
-    $DBI::VERSION >= 1.608 
+    $DBI::VERSION >= 1.608
         ? $dbh->sqlite_create_collation($collation_name => $collation)
         : $dbh->func($collation_name => $collation, "create_collation");
 }
@@ -148,7 +148,7 @@ sub install_collation {
 # default implementation for sqlite 'REGEXP' infix operator.
 # Note : args are reversed, i.e. "a REGEXP b" calls REGEXP(b, a)
 # (see http://www.sqlite.org/vtab.html#xfindfunction)
-sub regexp { 
+sub regexp {
     use locale;
     return scalar($_[1] =~ $_[0]);
 }
@@ -582,7 +582,7 @@ DBD::SQLite - Self-contained RDBMS in a DBI Driver
 SQLite is a public domain file-based relational database engine that
 you can find at L<http://www.sqlite.org/>.
 
-B<DBD::SQLite> is a Perl DBI driver for SQLite, that includes 
+B<DBD::SQLite> is a Perl DBI driver for SQLite, that includes
 the entire thing in the distribution.
 So in order to get a fast transaction capable RDBMS working for your
 perl project you simply have to install this module, and B<nothing>
@@ -629,7 +629,7 @@ connection string (as a database C<name>):
   my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
 
 The file is opened in read/write mode, and will be created if
-it does not exist yet. 
+it does not exist yet.
 
 Although the database is stored in a single file, the directory
 containing the database file must be writable by SQLite because the
@@ -734,16 +734,45 @@ This is somewhat weird, but works anyway.
 
 =head2 Foreign Keys
 
-Since SQLite 3.6.19 (released on Oct 14, 2009; bundled with
-DBD::SQLite 1.26_05), foreign key constraints are supported (though
-with some limitations). See L<http://www.sqlite.org/foreignkeys.html>
-for details. Though SQLite does NOT enable this feature by default yet (for backward compatibility), DBD::SQLite enables it internally. If you don't want this feature, issue a pragma to disable the feature.
+B<BE PREPARED! WOLVES APPROACH!!>
+
+SQLite has started supporting foreign key constraints since 3.6.19
+(released on Oct 14, 2009; bundled with DBD::SQLite 1.26_05).
+To be exact, SQLite has long been able to parse a schema with foreign
+keys, but the constraints has not been enforced. Now you can issue
+a pragma actually to enable this feature and enforce the constraints.
+
+To do this, issue the following pragma (see below), preferably as
+soon as you connect to a database and you're not in a transaction:
+
+  $dbh->do("PRAGMA foreign_keys = ON");
+
+And you can explicitly disable the feature whenever you like by
+turning the pragma off:
 
   $dbh->do("PRAGMA foreign_keys = OFF");
 
+As of this writing, this feature is disabled by default by the
+sqlite team, and by us, to secure backward compatibility, as
+this feature may break your applications, and actually broke
+some for us. If you have used a schema with foreign key constraints
+but haven't cared them much and supposed they're always ignored for
+SQLite, be prepared, and B<please do extensive testing to ensure
+that your applications will continue to work when the foreign keys
+support is enabled by default>. It is very likely that the sqlite
+team will turn it default-on in the future, and we plan to do it
+NO LATER THAN they do so.
+
+See L<http://www.sqlite.org/foreignkeys.html> for details.
+
 =head2 Pragma
 
-SQLite has a set of "Pragma"s to modifiy its operation or to query for its internal data. These are specific to SQLite and are not likely to work with other DBD libraries, but you may find some of these are quite useful. DBD::SQLite actually sets some (like C<foreign_keys> above) for you when you connect to a database. See L<http://www.sqlite.org/pragma.html> for details.
+SQLite has a set of "Pragma"s to modifiy its operation or to query
+for its internal data. These are specific to SQLite and are not
+likely to work with other DBD libraries, but you may find some of
+these are quite useful. DBD::SQLite actually sets some (like
+C<foreign_keys> above) for you when you connect to a database.
+See L<http://www.sqlite.org/pragma.html> for details.
 
 =head2 Performance
 
@@ -767,7 +796,7 @@ switching his log analysis code to use this little speed demon!
 
 Oh yeah, and that was with no indexes on the table, on a 400MHz PIII.
 
-For best performance be sure to tune your hdparm settings if you 
+For best performance be sure to tune your hdparm settings if you
 are using linux. Also you might want to set:
 
   PRAGMA default_synchronous = OFF
@@ -818,7 +847,9 @@ updates:
 
 Defining the column type as C<BLOB> in the DDL is B<not> sufficient.
 
-As of version 1.26_06, C<unicode> is renamed to C<sqlite_unicode> for integrity. Old C<unicode> attribute is still accessible but will be deprecated in the near future.
+This attribute was originally named as C<unicode>, and renamed to
+C<sqlite_unicode> for integrity since version 1.26_06. Old C<unicode>
+attribute is still accessible but will be deprecated in the near future.
 
 =back
 
@@ -961,12 +992,12 @@ The driver will check that this is a proper sorting function.
 
 This method manually registers a callback function that will
 be invoked whenever an undefined collation sequence is required
-from an SQL statement. The callback is invoked as 
+from an SQL statement. The callback is invoked as
 
   $code_ref->($dbh, $collation_name)
 
-and should register the desired collation using 
-L</"sqlite_create_collation">. 
+and should register the desired collation using
+L</"sqlite_create_collation">.
 
 An initial callback is already registered by C<DBD::SQLite>,
 so for most common cases it will be simpler to just
@@ -1234,7 +1265,7 @@ sqlite3 extensions. After the call, you can load extensions like this:
 
 A subset of SQLite C constants are made available to Perl,
 because they may be needed when writing
-hooks or authorizer callbacks. For accessing such constants, 
+hooks or authorizer callbacks. For accessing such constants,
 the C<DBD::Sqlite> module must be explicitly C<use>d at compile
 time. For example, an authorizer that forbids any
 DELETE operation would be written as follows :
@@ -1246,8 +1277,8 @@ DELETE operation would be written as follows :
                                                : DBD::SQLite::OK;
   });
 
-The list of constants implemented in C<DBD::SQLite> is given 
-below; more information can be found ad 
+The list of constants implemented in C<DBD::SQLite> is given
+below; more information can be found ad
 at L<http://www.sqlite.org/c3ref/constlist.html>.
 
 =head2 Authorizer Return Codes
@@ -1261,8 +1292,8 @@ at L<http://www.sqlite.org/c3ref/constlist.html>.
 The L</set_authorizer> method registers a callback function that is
 invoked to authorize certain SQL statement actions. The first
 parameter to the callback is an integer code that specifies what
-action is being authorized. The second and third parameters to the 
-callback are strings, the meaning of which varies according to the 
+action is being authorized. The second and third parameters to the
+callback are strings, the meaning of which varies according to the
 action code. Below is the list of action codes, together with their
 associated strings.
 
@@ -1336,7 +1367,7 @@ The same as binary, except that trailing space characters are ignored.
 
 =back
 
-In addition, C<DBD::SQLite> automatically installs the 
+In addition, C<DBD::SQLite> automatically installs the
 following collation sequences :
 
 =over
@@ -1367,25 +1398,25 @@ or
 
 =head2 Unicode handling
 
-If the attribute C<< $dbh->{unicode} >> is set, strings coming from
+If the attribute C<< $dbh->{sqlite_unicode} >> is set, strings coming from
 the database and passed to the collation function will be properly
 tagged with the utf8 flag; but this only works if the
-C<unicode> attribute is set B<before> the first call to
+C<sqlite_unicode> attribute is set B<before> the first call to
 a perl collation sequence . The recommended way to activate unicode
 is to set the parameter at connection time :
 
   my $dbh = DBI->connect(
       "dbi:SQLite:dbname=foo", "", "",
       {
-          RaiseError => 1,
-          unicode    => 1,
+          RaiseError     => 1,
+          sqlite_unicode => 1,
       }
   );
 
 
 =head2 Adding user-defined collations
 
-The native SQLite API for adding user-defined collations is 
+The native SQLite API for adding user-defined collations is
 exposed through methods L</"sqlite_create_collation"> and
 L</"sqlite_collation_needed">.
 
@@ -1418,7 +1449,7 @@ hence there is a risk of undesired side-effects. Therefore, to
 prevent action at distance, the hash is implemented as a "write-only"
 hash, that will happily accept new entries, but will raise an
 exception if any attempt is made to override or delete a existing
-entry (including the builtin C<perl> and C<perllocale>).  
+entry (including the builtin C<perl> and C<perllocale>).
 
 If you really, really need to change or delete an entry, you can
 always grab the tied object underneath C<%DBD::SQLite::COLLATION> ---
@@ -1426,7 +1457,7 @@ but don't do that unless you really know what you are doing. Also
 observe that changes in the global hash will not modify existing
 collations in existing database handles: it will only affect new
 I<requests> for collations. In other words, if you want to change
-the behaviour of a collation within an existing C<$dbh>, you 
+the behaviour of a collation within an existing C<$dbh>, you
 need to call the L</create_collation> method directly.
 
 
@@ -1462,7 +1493,9 @@ Bugs should be reported via the CPAN bug tracker at
 
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=DBD-SQLite>
 
-Note that bugs of bundled sqlite library (i.e. bugs in C<sqlite3.[ch]>) should be reported to the sqlite developers at sqlite.org via their bug tracker or via their mailing list.
+Note that bugs of bundled sqlite library (i.e. bugs in C<sqlite3.[ch]>)
+should be reported to the sqlite developers at sqlite.org via their bug
+tracker or via their mailing list.
 
 =head1 AUTHORS
 
