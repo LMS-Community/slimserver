@@ -413,9 +413,9 @@ sub open {
 	} else {
 		require Slim::Player::CapabilitiesHelper;
 		
-		# Allow WAV playback without transcoding support
-		if ( $format eq 'wav' ) {
-			$format = 'pcm';
+		# Set the correct foramt for WAV/AAC playback
+		if ( exists $streamFormatMap{$format} ) {
+			$format = $streamFormatMap{$format};
 		}
 		
 		# Is format supported by all players?
