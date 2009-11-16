@@ -413,6 +413,11 @@ sub open {
 	} else {
 		require Slim::Player::CapabilitiesHelper;
 		
+		# Allow WAV playback without transcoding support
+		if ( $format eq 'wav' ) {
+			$format = 'pcm';
+		}
+		
 		# Is format supported by all players?
 		if (!grep {$_ eq $format} Slim::Player::CapabilitiesHelper::supportedFormats($client)) {
 			$error = 'PROBLEM_CONVERT_FILE';
