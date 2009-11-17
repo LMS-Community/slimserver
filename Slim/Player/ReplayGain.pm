@@ -178,7 +178,7 @@ sub trackAlbumMatch {
 sub preventClipping {
 	my ( $gain, $peak ) = @_;
 	
-	if ( $peak > 0 ) {
+	if ( defined $peak && defined $gain && $peak > 0 ) {
 		my $noclip = -20 * ( log($peak) / log(10) );
 		if ( $noclip < $gain ) {
 			return $noclip;
