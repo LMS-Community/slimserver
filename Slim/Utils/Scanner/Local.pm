@@ -317,62 +317,79 @@ sub rescan {
 sub deleted {
 	my $url = shift;
 	
-	my $file = Slim::Utils::Misc::pathFromFileURL($url);   
-	$log->error("Handling deleted track $file") unless main::SCANNER && $main::progress;
+	my $dbh = Slim::Schema->dbh;
+	
+	my $work;
+	
+	if ( Slim::Music::Info::isSong($url) ) {
+		$log->error("Handling deleted track $url") unless main::SCANNER && $main::progress;
 
-	# XXX no DBIC objects
-	my $track = Slim::Schema->rs('Track')->search( url => $url )->single;
+		# XXX no DBIC objects
+		my $track = Slim::Schema->rs('Track')->search( url => $url )->single;
 		
-	if ( $track ) {
-		my $work = sub {
-			my $album    = $track->album;
-			my @contribs = $track->contributors->all;
-			my $year     = $track->year;
-			my @genres   = map { $_->id } $track->genres;
+		if ( $track ) {
+			$work = sub {
+				my $album    = $track->album;
+				my @contribs = $track->contributors->all;
+				my $year     = $track->year;
+				my @genres   = map { $_->id } $track->genres;
 		
-			# delete() will cascade to:
-			#   contributor_track
-			#   genre_track
-			#   comments
-			$track->delete;
+				# delete() will cascade to:
+				#   contributor_track
+				#   genre_track
+				#   comments
+				$track->delete;
 			
-			# Tell Contributors to rescan, if no other tracks left, remove contributor.
-			# This will also remove entries from contributor_track and contributor_album
-			for my $contrib ( @contribs ) {
-				Slim::Schema::Contributor->rescan( $contrib->id );
-			}
+				# Tell Contributors to rescan, if no other tracks left, remove contributor.
+				# This will also remove entries from contributor_track and contributor_album
+				for my $contrib ( @contribs ) {
+					Slim::Schema::Contributor->rescan( $contrib->id );
+				}
 
-			# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
-			if ( $album ) {
-				$album->rescan;
+				# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
+				if ( $album ) {
+					$album->rescan;
 				
-				# Reset compilation status as it may have changed from VA -> non-VA
-				# due to this track being deleted.  Also checks in_storage in case
-				# the album was deleted by the $album->rescan.
-				if ( $album->in_storage && $album->compilation ) {
-					$album->compilation(undef);
-					$album->update;
+					# Reset compilation status as it may have changed from VA -> non-VA
+					# due to this track being deleted.  Also checks in_storage in case
+					# the album was deleted by the $album->rescan.
+					if ( $album->in_storage && $album->compilation ) {
+						$album->compilation(undef);
+						$album->update;
 					
-					if ( !main::SCANNER ) {
-						# Re-check VA status for the album,
-						# this will also save the album
-						Slim::Schema->mergeSingleVAAlbum( $album->id );
-					}
-					else {
-						# Album will be checked for VA status in mergeVA phase
+						if ( !main::SCANNER ) {
+							# Re-check VA status for the album,
+							# this will also save the album
+							Slim::Schema->mergeSingleVAAlbum( $album->id );
+						}
+						else {
+							# Album will be checked for VA status in mergeVA phase
+						}
 					}
 				}
-			}
 			
-			# Tell Year to rescan
-			# XXX no DBIC objects
-			Slim::Schema->rs('Year')->find($year)->rescan if $year;
+				# Tell Year to rescan
+				# XXX no DBIC objects
+				Slim::Schema->rs('Year')->find($year)->rescan if $year;
 			
-			# Tell Genre to rescan
-			Slim::Schema::Genre->rescan( @genres );				
+				# Tell Genre to rescan
+				Slim::Schema::Genre->rescan( @genres );				
+			};
+		}
+	}
+	else {
+		$log->error("Handling deleted playlist $url") unless main::SCANNER && $main::progress;
+
+		$work = sub {
+			my $sth = $dbh->prepare_cached( qq{
+				DELETE FROM tracks WHERE url = ?
+			} );
+			$sth->execute($url);
 		};
-		
-		if ( Slim::Schema->dbh->{AutoCommit} ) {
+	}
+	
+	if ( $work ) {
+		if ( $dbh->{AutoCommit} ) {
 			Slim::Schema->txn_do($work);
 		}
 		else {

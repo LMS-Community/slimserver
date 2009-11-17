@@ -57,22 +57,6 @@ sub clearExternalPlaylists {
 	Slim::Schema->forceCommit;
 }
 
-sub clearInternalPlaylists {
-	my $self = shift;
-
-	for my $track ($self->getPlaylists('internal')) {
-
-		# XXX - exception should go here. Comming soon.
-		if (!blessed($track) || !$track->can('delete')) {
-			next;
-		}
-
-		$track->delete;
-	}
-
-	Slim::Schema->forceCommit;
-}
-
 # Get the playlists
 # param $type is 'all' for all playlists, 'internal' for internal playlists
 # 'external' for external playlists. Default is 'all'.
