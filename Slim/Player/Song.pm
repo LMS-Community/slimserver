@@ -434,7 +434,7 @@ sub open {
 		
 		$transcoder = {
 			command => '-',
-			streamformat => ($streamFormatMap{$format} || $format),
+			streamformat => $format,
 			streamMode => 'I',
 			rateLimit => 0,
 		};
