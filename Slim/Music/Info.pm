@@ -1262,7 +1262,7 @@ sub validTypeExtensions {
 	my $findTypes  = shift || qr/(?:list|audio)/;
 
 	my @extensions = ();
-	my $disabled   = disabledExtensions($findTypes);
+	my $disabled   = disabledExtensions();
 
 	while (my ($ext, $type) = each %slimTypes) {
 
