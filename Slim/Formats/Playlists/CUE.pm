@@ -93,7 +93,7 @@ sub parse {
 
 		} elsif ($line =~ /^FILE\s+\"(.*)\"/i) {
 
-			$filename = $1;
+			$filename = $embedded || $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 			
 			# Watch out for cue sheets with multiple FILE entries
@@ -103,7 +103,7 @@ sub parse {
 
 			# Some cue sheets may not have quotes. Allow that, but
 			# the filenames can't have any spaces in them.
-			$filename = $1;
+			$filename = $embedded || $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 			
 			$filesSeen++;

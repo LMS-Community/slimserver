@@ -894,6 +894,15 @@ our %functions = (
 
 				$client->execute(['playlist', 'play', $url]);
 			}
+			$client->showBriefly( 
+	                        {
+              				         'jive' =>
+	                                {
+              			                         'type'    => 'popupplay',
+                              			         'text'    => [ $client->string('PRESET', $digit), $title ],
+	                                },
+				}
+			);
 		}
 		else {
 			main::INFOLOG && $log->info("Can't play preset number $digit - not an audio entry");
