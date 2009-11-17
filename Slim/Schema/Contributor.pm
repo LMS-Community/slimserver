@@ -162,27 +162,29 @@ sub add {
 	return wantarray ? @contributors : $contributors[0];
 }
 
-# Rescan this contributor, this simply means to make sure at least 1 track
+# Rescan list of contributors, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
 sub rescan {
-	my ( $class, $id ) = @_;
+	my ( $class, @ids ) = @_;
 	
 	my $log = logger('scan.scanner');
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	my $sth = $dbh->prepare_cached( qq{
-		SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
-	} );
-	$sth->execute($id);
-	my ($count) = $sth->fetchrow_array;
-	$sth->finish;
+	for my $id ( @ids ) {
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
 	
-	if ( !$count ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
+		if ( !$count ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
 
-		# This will cascade within the database to contributor_album and contributor_track
-		$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
+			# This will cascade within the database to contributor_album and contributor_track
+			$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
+		}
 	}
 }
 

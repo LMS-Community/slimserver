@@ -264,17 +264,27 @@ sub findhash {
 	return $hash || {};
 }
 
-# Rescan this album, this simply means to make sure at least 1 track
+# Rescan list of albums, this simply means to make sure at least 1 track
 # from this album still exists in the database.  If not, delete the album.
-# XXX: should also look for changes to things like album gain.
-# XXX native DBI
 sub rescan {
-	my $self = shift;
+	my ( $class, @ids ) = @_;
 	
-	my $count = Slim::Schema->rs('Track')->search( album => $self->id )->count;
+	my $slog = logger('scan.scanner');
 	
-	if ( !$count ) {
-		$self->delete;
+	my $dbh = Slim::Schema->dbh;
+	
+	for my $id ( @ids ) {	
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM tracks WHERE album = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+	
+		if ( !$count ) {
+			main::DEBUGLOG && $slog->is_debug && $slog->debug("Removing unused album: $id");	
+			$dbh->do( "DELETE FROM albums WHERE id = ?", undef, $id );
+		}
 	}
 }
 

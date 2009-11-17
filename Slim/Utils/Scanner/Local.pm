@@ -348,7 +348,7 @@ sub deleted {
 
 				# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
 				if ( $album ) {
-					$album->rescan;
+					Slim::Schema::Album->rescan( $album->id );
 				
 					# Reset compilation status as it may have changed from VA -> non-VA
 					# due to this track being deleted.  Also checks in_storage in case
@@ -369,8 +369,9 @@ sub deleted {
 				}
 			
 				# Tell Year to rescan
-				# XXX no DBIC objects
-				Slim::Schema->rs('Year')->find($year)->rescan if $year;
+				if ( $year ) {
+					Slim::Schema::Year->rescan($year);
+				}
 			
 				# Tell Genre to rescan
 				Slim::Schema::Genre->rescan( @genres );				
@@ -381,10 +382,87 @@ sub deleted {
 		$log->error("Handling deleted playlist $url") unless main::SCANNER && $main::progress;
 
 		$work = sub {
+			# Get the playlist details
+			my $ptracks;
+			
 			my $sth = $dbh->prepare_cached( qq{
-				DELETE FROM tracks WHERE url = ?
+				SELECT * FROM tracks WHERE url = ?
 			} );
 			$sth->execute($url);
+			my ($playlist) = $sth->fetchrow_hashref;
+			$sth->finish;
+			
+			# If this was a cue sheet, we need to do some extra work
+			if ( $playlist->{content_type} eq 'cue' ) {
+				# Get the list of all virtual tracks from the cue sheet
+				# This has to be done before deleting the playlist because
+				# it cascades to deleting the playlist_track entries
+				$sth = $dbh->prepare_cached( qq{
+					SELECT id, album, year FROM tracks
+					WHERE url IN (
+						SELECT track
+						FROM playlist_track
+						WHERE playlist = ?
+					)
+				} );
+				$sth->execute( $playlist->{id} );
+				$ptracks = $sth->fetchall_arrayref( {} );
+				$sth->finish;
+			}
+			
+			# Delete the playlist
+			# This will cascade to remove the playlist_track entries
+			$sth = $dbh->prepare_cached( qq{
+				DELETE FROM tracks WHERE id = ?
+			} );
+			$sth->execute( $playlist->{id} );
+			
+			# Continue cue handling after playlist/playlist_tracks have been deleted
+			if ( $ptracks ) {
+				# Get contributors for tracks before we delete them
+				my $ids = join( ',', map { $_->{id} } @{$ptracks} );
+				my $contribs = $dbh->selectall_arrayref( qq{
+					SELECT DISTINCT(contributor)
+					FROM contributor_track
+					WHERE track IN ($ids)
+				}, { Slice => {} } );
+				
+				# Get genres for tracks before we delete them
+				my $genres = $dbh->selectall_arrayref( qq{
+					SELECT DISTINCT(genre)
+					FROM genre_track
+					WHERE track IN ($ids)
+				}, { Slice => {} } );
+				
+				# 1. Delete the virtual tracks from this cue sheet
+				# This will cascade to:
+				#   contributor_track
+				#   genre_track
+				#   comments
+				$sth = $dbh->prepare_cached( qq{
+					DELETE FROM tracks WHERE id = ?
+				} );
+				for my $ptrack ( @{$ptracks} ) {
+					$sth->execute( $ptrack->{id} );
+				}
+				$sth->finish;
+				
+				# 2. Rescan the album(s) created from the cue sheet
+				my %seen;
+				my @albums = grep { defined $_ && !$seen{$_}++ } map { $_->{album} } @{$ptracks};
+				Slim::Schema::Album->rescan( @albums );
+				
+				# 3. Rescan contributors created from the cue sheet
+				Slim::Schema::Contributor->rescan( map { $_->{contributor} } @{$contribs} );
+				
+				# 3. Rescan genres created from the cue sheet
+				Slim::Schema::Genre->rescan( map { $_->{genre} } @{$genres} );
+							
+				# 5. Rescan years created from the cue sheet
+				%seen = ();
+				my @years = grep { defined $_ && !$seen{$_}++ } map { $_->{year} } @{$ptracks};
+				Slim::Schema::Year->rescan( @years );
+			}
 		};
 	}
 	
@@ -586,8 +664,7 @@ sub changed {
 			if ( $orig->{year} != $track->year ) {
 				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
 				
-				# XXX no DBIC objects
-				Slim::Schema->rs('Year')->find( $orig->{year} )->rescan;
+				Slim::Schema::Year->rescan( $orig->{year} );
 			}
 		};
 		

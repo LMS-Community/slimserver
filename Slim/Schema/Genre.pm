@@ -108,18 +108,25 @@ sub add {
 	return;
 }
 
-# XXX native DBI
 sub rescan {
 	my ( $class, @ids ) = @_;
+	
+	my $dbh = Slim::Schema->dbh;
 	
 	my $log = logger('scan.scanner');
 	
 	for my $id ( @ids ) {
-		my $count = Slim::Schema->rs('GenreTrack')->search( genre => $id )->count;
-		
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM genre_track WHERE genre = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+				
 		if ( !$count ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused genre: $id");
-			Slim::Schema->rs('Genre')->find($id)->delete;
+			
+			$dbh->do( "DELETE FROM genres WHERE id = ?", undef, $id );
 		}
 	}
 }

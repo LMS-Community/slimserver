@@ -7,6 +7,7 @@ use base 'Slim::Schema::DBI';
 
 use Slim::Schema::ResultSet::Year;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -89,12 +90,24 @@ sub cleanupStaleYears {
 # Rescan this year.  Make sure at least 1 track from this year exists, otherwise
 # delete the year.
 sub rescan {
-	my $self = shift;
+	my ( $class, @ids ) = @_;
 	
-	my $count = Slim::Schema->rs('Track')->search( year => $self->id )->count;
+	my $dbh = Slim::Schema->dbh;
 	
-	if ( !$count ) {
-		$self->delete;
+	my $log = logger('scan.scanner');
+	
+	for my $id ( @ids ) {
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM tracks WHERE year = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+	
+		if ( !$count ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused year: $id");	
+			$dbh->do( "DELETE FROM years WHERE id = ?", undef, $id );
+		}
 	}
 }
 
