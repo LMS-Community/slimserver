@@ -176,9 +176,9 @@ sub trackAlbumMatch {
 # Bug 5119
 # Reduce the gain value if necessary to avoid clipping
 sub preventClipping {
-	my ( defined $peak && defined $gain && $gain, $peak ) = @_;
+	my ( $gain, $peak ) = @_;
 	
-	if ( $peak > 0 ) {
+	if ( defined $peak && defined $gain && $peak > 0 ) {
 		my $noclip = -20 * ( log($peak) / log(10) );
 		if ( $noclip < $gain ) {
 			return $noclip;
