@@ -233,6 +233,8 @@ sub wakeup {
 	
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 
+	return if !defined $display->maxBrightness();
+	
 	my $curBrightnessPref;
 	
 	my $cprefs = $prefs->client($client);

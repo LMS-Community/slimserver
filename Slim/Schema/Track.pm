@@ -149,7 +149,7 @@ sub artistName {
 	return undef;
 }
 
-sub artistid {
+sub _artistid {
 	my $self = shift;
 	
 	return if main::SLIM_SERVICE;
@@ -174,12 +174,18 @@ sub artistid {
 	return wantarray ? ($id, $artist) : $id;
 }
 
+sub artistid {
+	my $artistid = shift->_artistid();
+	
+	return $artistid;
+}
+
 sub artist {
 	my $self = shift;
 	
 	return if main::SLIM_SERVICE;
 	
-	my ($id, $artist) = $self->artistid;
+	my ($id, $artist) = $self->_artistid;
 	
 	return $artist;
 }
