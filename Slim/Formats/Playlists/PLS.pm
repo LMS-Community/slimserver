@@ -63,7 +63,7 @@ sub read {
 		$line =~ s/\s*$//;
 
 		if ($line =~ m|File(\d+)=(.*)|i) {
-			$urls[$1] = Slim::Utils::Unicode::utf8encode_locale($2);
+			$urls[$1] = $2;
 			next;
 		}
 
