@@ -29,7 +29,7 @@ sub resize {
 				cache     => Slim::Utils::Cache->new('Artwork'),
 				cachekey  => $cachekey,
 				debug     => main::DEBUGLOG && $log->is_debug,
-				faster    => $prefs->get('resampleArtwork'),
+				faster    => !$prefs->get('resampleArtwork'),
 			);
 		};
 		
