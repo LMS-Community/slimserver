@@ -2418,7 +2418,7 @@ sub dump {
 
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
-			main::INFOLOG && $log->info("   Param: [$key] = [$val]");
+			main::INFOLOG && $log->info("   Param: [$key] = ", (defined $val ? "[$val]" : 'undef'));
  	}
 
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
