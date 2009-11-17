@@ -1336,6 +1336,36 @@ sub playlistXitemCommand {
 	}
 
 	main::INFOLOG && $log->info("path: $path");
+	
+	# bug 14760 - just continue where we already were if what we are about to play is the
+	# same as the single thing we are already playing
+	if ( $cmd =~ /^(play|load)$/
+		&& Slim::Player::Playlist::count($client) == 1
+		&& $path eq $client->playingSong()->track()->url() )
+	{
+		if ( Slim::Player::Source::playmode($client) eq 'pause' ) {
+			Slim::Player::Source::playmode($client, 'resume');
+		} elsif ( Slim::Player::Source::playmode($client) ne 'play' ) {
+			Slim::Player::Source::playmode($client, 'play');
+		}
+		
+		# XXX: this should not be calling a request callback directly!
+		# It should be handled by $request->setStatusDone
+		if ( my $callbackf = $request->callbackFunction ) {
+			if ( my $callbackargs = $request->callbackArguments ) {
+				$callbackf->( @{$callbackargs} );
+			}
+			else {
+				$callbackf->( $request );
+			}
+		}
+		
+		playlistXitemCommand_done($client, $request, $path);
+		
+		main::DEBUGLOG && $log->debug("done.");
+		
+		return;
+	}
 
 	if ($cmd =~ /^(play|load|resume)$/) {
 
