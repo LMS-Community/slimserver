@@ -163,8 +163,9 @@ sub getTag {
 
 		my $track = $tracks->{$key};
 
-		# Allow FLACs with embedded cue sheets to have a date.
+		# Allow FLACs with embedded cue sheets to have a date and size
 		$track->{AGE} = $fileage;
+		$track->{FS}  = $tags->{SIZE};
 		
 		# Mark track as virtual
 		$track->{VIRTUAL} = 1;
