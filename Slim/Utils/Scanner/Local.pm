@@ -455,7 +455,7 @@ sub deleted {
 				# 3. Rescan contributors created from the cue sheet
 				Slim::Schema::Contributor->rescan( map { $_->{contributor} } @{$contribs} );
 				
-				# 3. Rescan genres created from the cue sheet
+				# 4. Rescan genres created from the cue sheet
 				Slim::Schema::Genre->rescan( map { $_->{genre} } @{$genres} );
 							
 				# 5. Rescan years created from the cue sheet
@@ -538,7 +538,10 @@ sub new {
 				return;
 			}
 
-			scanPlaylistFileHandle( $playlist, FileHandle->new(Slim::Utils::Misc::pathFromFileURL($url)) );
+			scanPlaylistFileHandle(
+				$playlist,
+				FileHandle->new( Slim::Utils::Misc::pathFromFileURL($url) ),
+			);
 		};
 	}
 	

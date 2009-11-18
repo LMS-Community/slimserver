@@ -56,7 +56,7 @@ BEGIN {
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
-	$lc_ctype, $lc_time, $utf8_re_bits, $comb_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
+	$lc_ctype, $lc_time, $comb_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
 	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE
 );
 
@@ -91,10 +91,6 @@ our (
 	# Regex for determining if a string contains combining marks and needs to be decomposed
 	# Combining Diacritical Marks + Combining Diacritical Marks Supplement
 	$comb_re_bits = join "|", map { latin1toUTF8(chr($_)) } (0x300..0x36F, 0x1DC0..0x1DFF);
-	         
-	# Create a regex for looks_like_utf8()
-	# Latin1 range + Combining Diacritical Marks + Combining Diacritical Marks Supplement
-	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (128..255, 0x300..0x36F, 0x1DC0..0x1DFF);
 	
 	$recomposeTable = {
 		"o\x{30c}" => "\x{1d2}",
@@ -559,11 +555,19 @@ Returns false otherwise.
 =cut
 
 sub looks_like_utf8 {
-	use bytes;
+	# From http://keithdevens.com/weblog/archive/2004/Jun/29/UTF-8.regex
+	# with a fix for the ASCII part
+	return 1 if $_[0] =~ /^(?:
+	     [\x00-\x7E]                        # ASCII
+	   | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+	   |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
+	   | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
+	   |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
+	   |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
+	   | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
+	   |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
+	)*$/x;
 
-	return 1 if $_[0] =~ /^\xEF\xBB\xBF/;
-	return 0 if $_[0] =~ /\xC0|\xC1|\xF5|\xF6|\xF7|\xF8|\xF9|\xFA|\xFB|\xFC|\xFD|\xFE|\xFF/;
-	return 1 if $_[0] =~ /(?:$utf8_re_bits)/o;
 	return 0;
 }
 
