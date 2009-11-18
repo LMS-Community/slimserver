@@ -5072,6 +5072,75 @@ sub _jiveGenreAllAlbums {
 	return ($chunkCount, $listCount);
 }
 
+my %tagMap = (
+	# Tag    Tag name             Token            Track method         Track field
+	#------------------------------------------------------------------------------
+	  'u' => ['url',              'LOCATION',      'url'],              #url
+	  'o' => ['type',             'TYPE',          'content_type'],     #content_type
+	                                                                    #titlesort 
+	                                                                    #titlesearch 
+	  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
+	  'e' => ['album_id',         '',              'albumid'],          #album 
+	  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
+	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
+	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
+	  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
+	                                                                    #tag 
+	  'i' => ['disc',             'DISC',          'disc'],             #disc
+	  'j' => ['coverart',         'SHOW_ARTWORK',  'coverArtExists'],   #cover
+	  'x' => ['remote',           '',              'remote'],           #remote 
+	                                                                    #audio 
+	                                                                    #audio_size 
+	                                                                    #audio_offset
+	  'y' => ['year',             'YEAR',          'year'],             #year
+	  'd' => ['duration',         'LENGTH',        'secs'],             #secs
+	                                                                    #vbr_scale 
+	  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
+	  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
+	  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
+	                                                                    #channels 
+	                                                                    #block_alignment
+	                                                                    #endian 
+	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
+	  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
+	# 'z' => ['drm',              '',              'drm'],              #drm
+	                                                                    #musicmagic_mixable
+	                                                                    #musicbrainz_id 
+	                                                                    #playcount 
+	                                                                    #lastplayed 
+	                                                                    #lossless 
+	  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
+	  'R' => ['rating',           'RATING',        'rating'],           #rating 
+	  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
+	                                                                    #replay_peak
+
+	  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
+	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
+	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
+	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
+	  'N' => ['remote_title'],                                          # remote stream title
+
+
+	# Tag    Tag name              Token              Relationship     Method          Track relationship
+	#--------------------------------------------------------------------------------------------------
+	  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
+	  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
+	  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
+                                                                            
+	  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
+	  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
+	  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
+	  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
+                                                                            
+	  'g' => ['genre',             'GENRE',           'genre',         'name'],         #->genre_track->genre.name
+	  'p' => ['genre_id',          '',                'genre',         'id'],           #->genre_track->genre.id
+	  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
+	  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
+                                                                            
+	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+
+);
+
 sub _songData {
 	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
@@ -5099,9 +5168,10 @@ sub _songData {
 	
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
-	if ( $track->remote ) {
-		my $url = $track->url;
-
+	my $isRemote = $track->remote;
+	my $url = $track->url;
+	
+	if ( $isRemote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		
 		if ( $handler && $handler->can('getMetadataFor') ) {
@@ -5124,12 +5194,13 @@ sub _songData {
 	}
 	
 	my $parentTrack;
-	if ( $request->client ) { # Bug 13062, songinfo may be called without a client
-		if (my $song = $request->client->currentSongForUrl($track->url)) {
+	if ( my $client = $request->client ) { # Bug 13062, songinfo may be called without a client
+		if (my $song = $client->currentSongForUrl($url)) {
 			my $t = $song->currentTrack();
-			if ($t->url ne $track->url) {
+			if ($t->url ne $url) {
 				$parentTrack = $track;
 				$track = $t;
+				$isRemote = $track->remote;
 			}
 		}
 	}
@@ -5139,75 +5210,6 @@ sub _songData {
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
-
-	my %tagMap = (
-		# Tag    Tag name             Token            Track method         Track field
-		#------------------------------------------------------------------------------
-		  'u' => ['url',              'LOCATION',      'url'],              #url
-		  'o' => ['type',             'TYPE',          'content_type'],     #content_type
-		                                                                    #titlesort 
-		                                                                    #titlesearch 
-		  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
-		  'e' => ['album_id',         '',              'albumid'],          #album 
-		  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
-		  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
-		  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
-		  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
-		                                                                    #tag 
-		  'i' => ['disc',             'DISC',          'disc'],             #disc
-		  'j' => ['coverart',         'SHOW_ARTWORK',  'coverArtExists'],   #cover
-		  'x' => ['remote',           '',              'remote'],           #remote 
-		                                                                    #audio 
-		                                                                    #audio_size 
-		                                                                    #audio_offset
-		  'y' => ['year',             'YEAR',          'year'],             #year
-		  'd' => ['duration',         'LENGTH',        'secs'],             #secs
-		                                                                    #vbr_scale 
-		  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
-		  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
-		  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
-		                                                                    #channels 
-		                                                                    #block_alignment
-		                                                                    #endian 
-		  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
-		  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
-		# 'z' => ['drm',              '',              'drm'],              #drm
-		                                                                    #musicmagic_mixable
-		                                                                    #musicbrainz_id 
-		                                                                    #playcount 
-		                                                                    #lastplayed 
-		                                                                    #lossless 
-		  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
-		  'R' => ['rating',           'RATING',        'rating'],           #rating 
-		  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
-		                                                                    #replay_peak
-
-		  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
-		  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
-		  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
-		  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
-		  'N' => ['remote_title'],                                          # remote stream title
-
-
-		# Tag    Tag name              Token              Relationship     Method          Track relationship
-		#--------------------------------------------------------------------------------------------------
-		  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
-		  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
-		  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
-                                                                            
-		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
-		  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
-		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
-		  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
-                                                                            
-		  'g' => ['genre',             'GENRE',           'genre',         'name'],         #->genre_track->genre.name
-		  'p' => ['genre_id',          '',                'genre',         'id'],           #->genre_track->genre.id
-		  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
-		  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
-                                                                            
-		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
-
-	);
 	
 	# loop so that stuff is returned in the order given...
 	for my $tag (split (//, $tags)) {
@@ -5218,7 +5220,7 @@ sub _songData {
 		if ($tag eq 'N') {
 			if ($parentTrack) {
 				$returnHash{$tagref->[0]} = $parentTrack->title;
-			} elsif ( $track->remote && !$track->secs && $remoteMeta->{title} && !$remoteMeta->{album} ) {
+			} elsif ( $isRemote && !$track->secs && $remoteMeta->{title} && !$remoteMeta->{album} ) {
 				if (my $meta = $track->title) {
 					$returnHash{$tagref->[0]} = $meta;
 				}
