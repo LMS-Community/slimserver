@@ -504,6 +504,7 @@ sub precacheAllArtwork {
 		if ($isEnabled) {
 			if (Slim::Utils::OSDetect::isSqueezeOS()) {
 				@specs = (
+					'75x75_p',  # iPeng
 					'64x64_m',	# Fab4 10'-UI Album list
 					'41x41_m',	# Jive/Baby Album list
 					'40x40_m',	# Fab4 Album list
@@ -511,11 +512,12 @@ sub precacheAllArtwork {
 			} else {
 				my $thumbSize = $prefs->get('thumbSize') || 100;
 				@specs = (
-					"${thumbSize}x${thumbSize}_o",
-					'64x64_m',
-					'50x50_o',
-					'41x41_m',
-					'40x40_m',
+					"${thumbSize}x${thumbSize}_o", # Web UI large thumbnails
+					'75x75_p',	# iPeng
+					'64x64_m',	# Fab4 10'-UI Album list
+					'50x50_o',	# Web UI small thumbnails
+					'41x41_m',	# Jive/Baby Album list
+					'40x40_m',	# Fab4 Album list
 				);
 			}
 			
