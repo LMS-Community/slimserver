@@ -130,6 +130,7 @@ sub skipPlugins {
 		qw(
 			Amazon
 			Classical Deezer LMA Mediafly MP3tunes Napster Pandora Slacker Sounds
+			Queen
 			Podcast
 			InfoBrowser RSSNews
 			
