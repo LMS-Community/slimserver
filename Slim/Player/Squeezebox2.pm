@@ -897,7 +897,7 @@ sub setPlayerSetting {
 
 	my $currpref = $pref_settings->{$pref};
 	
-	my $status = $client->pendingPrefChanges()->{$pref};
+	my $status = $client->pendingPrefChanges()->{$pref} || 0;
 
 	# Only send a setd packet to the player if it is stopped and we are not
 	# still waiting for a response to a previous setd packet for this pref
