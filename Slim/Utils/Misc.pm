@@ -1352,6 +1352,21 @@ sub round {
 	return int($number + .5 * ($number <=> 0));
 }
 
+=head2 min ( )
+
+Return the minimum value from a list supplied as an array reference
+
+=cut
+
+# Smaller and faster than Math::VecStat::min
+
+sub min {
+  my $v = $_[0];
+  my $m = $v->[0];
+  foreach (@$v) { $m = $_ if $_ < $m; }
+  return $m;
+}
+
 =head1 SEE ALSO
 
 L<Slim::Music::Info>

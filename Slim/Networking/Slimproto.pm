@@ -14,7 +14,6 @@ use FindBin qw($Bin);
 use Socket qw(inet_ntoa SOMAXCONN);
 use IO::Socket qw(sockaddr_in);
 use Sys::Hostname;
-use Math::VecStat;
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::Select;
@@ -750,7 +749,7 @@ sub _stat_handler {
 		push (@{$latencyList{$client}}, $latency) if ($latency >= 0 && $latency < 1000);
 		shift(@{$latencyList{$client}}) if (@{$latencyList{$client}} > LATENCY_LIST_MAX);
 
-		$latency{$client} = Math::VecStat::min($latencyList{$client}) if (@{$latencyList{$client}} >= LATENCY_LIST_MIN);
+		$latency{$client} = Slim::Utils::Misc::min($latencyList{$client}) if (@{$latencyList{$client}} >= LATENCY_LIST_MIN);
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug(
