@@ -4233,18 +4233,11 @@ sub titlesQuery {
 			
 				# open a window with icon etc...
 			
-
 				my $text = $item->title;
-				my $album;
-				my $albumObj = $item->album();
+				my $album = $item->albumname;
 				
 				# Bug 7443, check for a track cover before using the album cover
-				my $iconId = $item->coverArtExists ? $id : 0;
-				
-				if(defined($albumObj)) {
-					$album = $albumObj->title();
-					$iconId ||= $albumObj->artwork();
-				}
+				my $iconId = $item->coverid;
 				
 				my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 				my $window = {
