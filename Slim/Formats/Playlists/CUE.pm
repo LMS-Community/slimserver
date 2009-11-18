@@ -369,9 +369,6 @@ sub read {
 		# Mark track as virtual
 		$track->{VIRTUAL} = 1;
 
-		# Remove the old track from the DB - this will remove spurious artists, etc.
-		Slim::Schema->search('Track', { 'url' => $track->{'FILENAME'} })->delete_all;
-
 		$class->processAnchor($track);
 
 		# Do the actual data store
