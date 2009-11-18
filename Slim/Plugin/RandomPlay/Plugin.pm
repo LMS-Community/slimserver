@@ -1167,7 +1167,8 @@ sub commandCallback {
 			}
 		}
 
-		playRandom($client, $mixInfo{$client->master()->id}->{'type'}, 1);
+		Slim::Utils::Timers::killTimers($client, \&_addTracksLater);
+		Slim::Utils::Timers::setTimer($client, time() + 15, \&_addTracksLater);
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
@@ -1176,6 +1177,14 @@ sub commandCallback {
 		}
 
 		playRandom($client, 'disable');
+	}
+}
+
+sub _addTracksLater {
+	my $client = shift;
+	
+	if (defined $mixInfo{$client->master()->id}) {
+		playRandom($client, $mixInfo{$client->master()->id}->{'type'}, 1);
 	}
 }
 
