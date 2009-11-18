@@ -4761,7 +4761,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'alKNJ',			# tags needed for our entities
+		'alKNc',			# tags needed for our entities
 	);
 	
 	my $isRemote = $track->remote;
@@ -4797,11 +4797,7 @@ sub _addJiveSong {
 	$text .= "\n" . $secondLine;
 
 	# Bug 7443, check for a track cover before using the album cover
-	my $iconId = $songData->{artwork_track_id};
-	
-	if ( !defined $iconId && (my $albumObj = $track->album()) ) {
-		$iconId ||= $albumObj->artwork();
-	}
+	my $iconId = $songData->{coverid};
 	
 	if ( defined $iconId ) {
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
