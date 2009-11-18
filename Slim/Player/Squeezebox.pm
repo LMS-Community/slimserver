@@ -586,14 +586,7 @@ sub stream_s {
 	# autostart off when pausing, otherwise 75%
 	my $autostart = $params->{'paused'} ? 0 : 1;
 
-	my $bufferThreshold;
-
-	if ($params->{'paused'}) {
-		$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('syncBufferThreshold');
-	}
-	else {
-		$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('bufferThreshold');
-	}
+	my $bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('bufferThreshold');
 	
 	my $formatbyte;
 	my $pcmsamplesize;

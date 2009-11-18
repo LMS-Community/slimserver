@@ -346,7 +346,6 @@ sub init {
 	$prefs->migrateClient(2, sub {
 		my $cprefs = shift;
 		my $defaults = $Slim::Player::Player::defaultPrefs;
-		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if (defined $cprefs->get('syncBufferThreshold') && $cprefs->get('syncBufferThreshold') > 255);
 		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if (defined $cprefs->get('minSyncAdjust') && $cprefs->get('minSyncAdjust') < 1);
 		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if (defined $cprefs->get('packetLatency') && $cprefs->get('packetLatency') < 1);
 		1;
@@ -662,7 +661,6 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0,                 }, 'playDelay'   );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0, 'high' =>  1000 }, 'packetLatency');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   10, 'high' =>  1000 }, 'minSyncAdjust');
-	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>   255 }, 'syncBufferThreshold');
 
 	$prefs->setValidate({ 'validator' => sub { $_[1] ne '' } }, 'playername');
 

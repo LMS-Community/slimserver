@@ -64,7 +64,6 @@ our $defaultPrefs = {
 	'syncVolume'           => 0,
 	'treble'               => 50,
 	'volume'               => 50,
-	'syncBufferThreshold'  => 4, 	# KB, 1/4s @ 128kb/s
 	'bufferThreshold'      => 255,	# KB
 	'powerOnResume'        => 'PauseOff-NoneOn',
 	'maintainSync'         => 1,

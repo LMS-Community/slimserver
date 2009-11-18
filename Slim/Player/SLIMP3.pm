@@ -26,7 +26,7 @@ my $log = logger('network.protocol.slimp3');
 our $SLIMP3Connected = 0;
 
 our $defaultPrefs = {
-	syncBufferThreshold => 15,	# KB
+	bufferThreshold => 40,	# KB
 };
 
 sub new {
