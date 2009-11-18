@@ -516,6 +516,7 @@ sub precacheAllArtwork {
 		my $sth = $dbh->prepare($sql);
 		$sth->execute;
 		
+		my $i = 0;
 		while ( my $track = $sth->fetchrow_hashref ) {
 			# Make sure album.artwork points to this track, as it may not
 			# be pointing there now because we did not join tracks via the
@@ -542,6 +543,10 @@ sub precacheAllArtwork {
 			}
 			
 			$progress->update( $track->{album_title} );
+			
+			if (++$i % 50 == 0) {
+				Slim::Schema->forceCommit;
+			}
 		}
 		
 		$sth->finish;

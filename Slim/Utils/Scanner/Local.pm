@@ -183,7 +183,12 @@ sub rescan {
 			};
 			
 			if ( $args->{no_async} ) {
-				while ( $handle_deleted->() ) {}
+				my $i = 0;
+				while ( $handle_deleted->() ) {
+					if (++$i % 200 == 0) {
+						Slim::Schema->forceCommit;
+					}
+				}
 			}
 			else {
 				Slim::Utils::Scheduler::add_task( $handle_deleted );
@@ -230,7 +235,12 @@ sub rescan {
 			};
 			
 			if ( $args->{no_async} ) {
-				while ( $handle_new->() ) {}
+				my $i = 0;
+				while ( $handle_new->() ) {
+					if (++$i % 200 == 0) {
+						Slim::Schema->forceCommit;
+					}
+				}
 			}
 			else {
 				Slim::Utils::Scheduler::add_task( $handle_new );
@@ -277,7 +287,12 @@ sub rescan {
 			};
 			
 			if ( $args->{no_async} ) {
-				while ( $handle_changed->() ) {}
+				my $i = 0;
+				while ( $handle_changed->() ) {
+					if (++$i % 200 == 0) {
+						Slim::Schema->forceCommit;
+					}
+				}
 			}
 			else {
 				Slim::Utils::Scheduler::add_task( $handle_changed );
@@ -482,7 +497,9 @@ sub new {
 	my $work;
 	
 	if ( Slim::Music::Info::isSong($url) ) {
-		$log->error("Handling new track $url") unless main::SCANNER && $main::progress;
+		
+		# This costs too much to do all the time, and it fills the log
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new track $url");
 		
 		$work = sub {
 			# Scan tags & create track row and other related rows.
@@ -558,7 +575,7 @@ sub new {
 sub changed {
 	my $url = shift;
 	
-	my $isDebug = $log->is_debug;
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
 	$log->error("Handling changed track $url") unless main::SCANNER && $main::progress;
 	
