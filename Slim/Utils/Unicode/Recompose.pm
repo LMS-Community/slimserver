@@ -1922,7 +1922,7 @@ our %table = (
   "\xF0\xAF\xA7\xBF\xE9\xA0\x8B"                     => "\xF0\xAF\xA7\xBE",
 );
 
-our $regex = join '|', reverse sort keys %table;
+our $regex = join '|', sort keys %table;
 $regex = qr/($regex)/o;
 
 1;
