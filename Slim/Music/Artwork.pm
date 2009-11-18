@@ -499,17 +499,26 @@ sub precacheAllArtwork {
 		# 3+ SqueezePlay/Jive size artwork
 		
 		my $isEnabled = $prefs->get('precacheArtwork');
-		my $thumbSize = $prefs->get('thumbSize') || 100;
-
-		my @specs = (
-			"${thumbSize}x${thumbSize}_o",
-			'64x64_m',
-			'50x50_o',
-			'41x41_m',
-			'40x40_m',
-		);
+		my @specs;
 		
 		if ($isEnabled) {
+			if (Slim::Utils::OSDetect::isSqueezeOS()) {
+				@specs = (
+					'64x64_m',	# Fab4 10'-UI Album list
+					'41x41_m',	# Jive/Baby Album list
+					'40x40_m',	# Fab4 Album list
+				);
+			} else {
+				my $thumbSize = $prefs->get('thumbSize') || 100;
+				@specs = (
+					"${thumbSize}x${thumbSize}_o",
+					'64x64_m',
+					'50x50_o',
+					'41x41_m',
+					'40x40_m',
+				);
+			}
+			
 			require Slim::Utils::ImageResizer;
 		}
 		
