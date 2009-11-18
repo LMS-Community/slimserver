@@ -4764,14 +4764,16 @@ sub _addJiveSong {
 		'alKNJ',			# tags needed for our entities
 	);
 	
-	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
+	my $isRemote = $track->remote;
+	
+	$request->addResultLoop($loop, $count, 'trackType', $isRemote ? 'radio' : 'local');
 	
 	my $text   = $songData->{title};
 	my $title  = $text;
 	my $album  = $songData->{album};
 	my $artist = $songData->{artist};
 	
-	if ( $track->remote && $text && $album && $artist ) {
+	if ( $isRemote && $text && $album && $artist ) {
 		$request->addResult('current_title');
 	}
 
@@ -4785,7 +4787,7 @@ sub _addJiveSong {
 
 	# Special case for Internet Radio streams, if the track is remote, has no duration,
 	# has title metadata, and has no album metadata, display the station title as line 1 of the text
-	if ( $songData->{remote_title} && !$album && $track->remote && !$track->secs ) {
+	if ( $songData->{remote_title} && !$album && $isRemote && !$track->secs ) {
 		push @secondLine, $songData->{remote_title};
 		$album = $songData->{remote_title};
 		$request->addResult('current_title');
@@ -4808,7 +4810,7 @@ sub _addJiveSong {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
 	# send radio placeholder art for remote tracks with no art
 	} 
-	elsif ( $track->remote ) {
+	elsif ( $isRemote ) {
 		my $radioicon = main::SLIM_SERVICE
 			? Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
 			: '/html/images/radio.png';
@@ -4835,7 +4837,7 @@ sub _addJiveSong {
 	# deliver as one formatted multi-line string for NP playlist screen
 	$request->addResultLoop($loop, $count, 'text', $text);
 
-	if ( ! $track->remote ) {
+	if ( ! $isRemote ) {
 		my $actions;
 		$actions->{'play-hold'} = _mixerItemHandler(obj => $track, request => $request, chunkCount => $count, 'obj_param' => 'track_id', loopname => $loop );
 		$request->addResultLoop( $loop, $count, 'actions', $actions );
