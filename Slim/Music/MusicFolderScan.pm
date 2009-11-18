@@ -85,8 +85,6 @@ sub startScan {
 	
 	main::INFOLOG && $log->info("Finished background scan of music folder.");
 
-	main::INFOLOG && $log->info("Finished background scan of music folder.");
-
 	$class->stillScanning(0);
 
 	Slim::Music::Import->endImporter($class);
