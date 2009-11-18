@@ -2501,7 +2501,7 @@ sub playlistsTracksQuery {
 				$cur++;
 				$chunkCount++;
 				
-				main::idleStreams() if !($chunkCount % 5);
+				main::idleStreams();
 			}
 
 			my $lastChunk;
@@ -3765,7 +3765,7 @@ sub statusQuery {
 					$count++;
 					
 					# give peace a chance...
-					main::idleStreams() if !($count % 5);
+					main::idleStreams();
 				}
 				
 				#we don't do that in menu mode!
@@ -3793,7 +3793,7 @@ sub statusQuery {
 								);
 
 								$count++;
-								main::idleStreams() if !($count % 5);
+								main::idleStreams();
 							}
 						}
 					}
@@ -4297,7 +4297,7 @@ sub titlesQuery {
 			$listIndex++;
 			
 			# give peace a chance...
-			main::idleStreams() if !($chunkCount % 5);
+			main::idleStreams();
 		}
 
 	}
