@@ -336,7 +336,9 @@ sub deleted {
 	
 	my $work;
 	
-	if ( Slim::Music::Info::isSong($url) ) {
+	my $content_type = _content_type($url);
+	
+	if ( Slim::Music::Info::isSong($url, $content_type) ) {
 		$log->error("Handling deleted track $url") unless main::SCANNER && $main::progress;
 
 		# XXX no DBIC objects
@@ -393,13 +395,91 @@ sub deleted {
 			};
 		}
 	}
-	else {
+	elsif ( Slim::Music::Info::isCUE($url, $content_type) ) {
+		$log->error("Handling deleted cue sheet $url") unless main::SCANNER && $main::progress;
+		
+		$work = sub {
+			my $sth = $dbh->prepare_cached( qq{
+				SELECT * FROM tracks WHERE url = ?
+			} );
+			$sth->execute($url);
+			my ($playlist) = $sth->fetchrow_hashref;
+			$sth->finish;
+		
+			# Get the list of all virtual tracks from the cue sheet
+			# This has to be done before deleting the playlist because
+			# it cascades to deleting the playlist_track entries
+			$sth = $dbh->prepare_cached( qq{
+				SELECT id, album, year FROM tracks
+				WHERE url IN (
+					SELECT track
+					FROM playlist_track
+					WHERE playlist = ?
+				)
+			} );
+			$sth->execute( $playlist->{id} );
+			my $ptracks = $sth->fetchall_arrayref( {} );
+			$sth->finish;
+		
+			# Delete the playlist
+			# This will cascade to remove the playlist_track entries
+			$sth = $dbh->prepare_cached( qq{
+				DELETE FROM tracks WHERE id = ?
+			} );
+			$sth->execute( $playlist->{id} );
+		
+			# Continue cue handling after playlist/playlist_tracks have been deleted
+
+			# Get contributors for tracks before we delete them
+			my $ids = join( ',', map { $_->{id} } @{$ptracks} );
+			my $contribs = $dbh->selectall_arrayref( qq{
+				SELECT DISTINCT(contributor)
+				FROM contributor_track
+				WHERE track IN ($ids)
+			}, { Slice => {} } );
+		
+			# Get genres for tracks before we delete them
+			my $genres = $dbh->selectall_arrayref( qq{
+				SELECT DISTINCT(genre)
+				FROM genre_track
+				WHERE track IN ($ids)
+			}, { Slice => {} } );
+		
+			# 1. Delete the virtual tracks from this cue sheet
+			# This will cascade to:
+			#   contributor_track
+			#   genre_track
+			#   comments
+			$sth = $dbh->prepare_cached( qq{
+				DELETE FROM tracks WHERE id = ?
+			} );
+			for my $ptrack ( @{$ptracks} ) {
+				$sth->execute( $ptrack->{id} );
+			}
+			$sth->finish;
+		
+			# 2. Rescan the album(s) created from the cue sheet
+			my %seen;
+			my @albums = grep { defined $_ && !$seen{$_}++ } map { $_->{album} } @{$ptracks};
+			Slim::Schema::Album->rescan( @albums );
+		
+			# 3. Rescan contributors created from the cue sheet
+			Slim::Schema::Contributor->rescan( map { $_->{contributor} } @{$contribs} );
+		
+			# 4. Rescan genres created from the cue sheet
+			Slim::Schema::Genre->rescan( map { $_->{genre} } @{$genres} );
+					
+			# 5. Rescan years created from the cue sheet
+			%seen = ();
+			my @years = grep { defined $_ && !$seen{$_}++ } map { $_->{year} } @{$ptracks};
+			Slim::Schema::Year->rescan( @years );
+		};
+	}
+	elsif ( Slim::Music::Info::isList($url, $content_type) ) {
 		$log->error("Handling deleted playlist $url") unless main::SCANNER && $main::progress;
 
 		$work = sub {
 			# Get the playlist details
-			my $ptracks;
-			
 			my $sth = $dbh->prepare_cached( qq{
 				SELECT * FROM tracks WHERE url = ?
 			} );
@@ -407,77 +487,12 @@ sub deleted {
 			my ($playlist) = $sth->fetchrow_hashref;
 			$sth->finish;
 			
-			# If this was a cue sheet, we need to do some extra work
-			if ( $playlist->{content_type} eq 'cue' ) {
-				# Get the list of all virtual tracks from the cue sheet
-				# This has to be done before deleting the playlist because
-				# it cascades to deleting the playlist_track entries
-				$sth = $dbh->prepare_cached( qq{
-					SELECT id, album, year FROM tracks
-					WHERE url IN (
-						SELECT track
-						FROM playlist_track
-						WHERE playlist = ?
-					)
-				} );
-				$sth->execute( $playlist->{id} );
-				$ptracks = $sth->fetchall_arrayref( {} );
-				$sth->finish;
-			}
-			
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries
 			$sth = $dbh->prepare_cached( qq{
 				DELETE FROM tracks WHERE id = ?
 			} );
 			$sth->execute( $playlist->{id} );
-			
-			# Continue cue handling after playlist/playlist_tracks have been deleted
-			if ( $ptracks ) {
-				# Get contributors for tracks before we delete them
-				my $ids = join( ',', map { $_->{id} } @{$ptracks} );
-				my $contribs = $dbh->selectall_arrayref( qq{
-					SELECT DISTINCT(contributor)
-					FROM contributor_track
-					WHERE track IN ($ids)
-				}, { Slice => {} } );
-				
-				# Get genres for tracks before we delete them
-				my $genres = $dbh->selectall_arrayref( qq{
-					SELECT DISTINCT(genre)
-					FROM genre_track
-					WHERE track IN ($ids)
-				}, { Slice => {} } );
-				
-				# 1. Delete the virtual tracks from this cue sheet
-				# This will cascade to:
-				#   contributor_track
-				#   genre_track
-				#   comments
-				$sth = $dbh->prepare_cached( qq{
-					DELETE FROM tracks WHERE id = ?
-				} );
-				for my $ptrack ( @{$ptracks} ) {
-					$sth->execute( $ptrack->{id} );
-				}
-				$sth->finish;
-				
-				# 2. Rescan the album(s) created from the cue sheet
-				my %seen;
-				my @albums = grep { defined $_ && !$seen{$_}++ } map { $_->{album} } @{$ptracks};
-				Slim::Schema::Album->rescan( @albums );
-				
-				# 3. Rescan contributors created from the cue sheet
-				Slim::Schema::Contributor->rescan( map { $_->{contributor} } @{$contribs} );
-				
-				# 4. Rescan genres created from the cue sheet
-				Slim::Schema::Genre->rescan( map { $_->{genre} } @{$genres} );
-							
-				# 5. Rescan years created from the cue sheet
-				%seen = ();
-				my @years = grep { defined $_ && !$seen{$_}++ } map { $_->{year} } @{$ptracks};
-				Slim::Schema::Year->rescan( @years );
-			}
 		};
 	}
 	
@@ -502,6 +517,13 @@ sub new {
 		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new track $url");
 		
 		$work = sub {
+			# We need to make a quick check to make sure this track has not already
+			# been entered due to being referenced in a cue sheet.
+			if ( _content_type($url) eq 'cur' ) { # cur = cue referenced
+				main::INFOLOG && $log->is_info && $log->info("Skipping track because it's referenced by a cue sheet");
+				return;
+			}
+			
 			# Scan tags & create track row and other related rows.
 			my $trackid = Slim::Schema->updateOrCreateBase( {
 				url        => $url,
@@ -575,14 +597,16 @@ sub new {
 sub changed {
 	my $url = shift;
 	
+	my $dbh = Slim::Schema->dbh;
+	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
-	$log->error("Handling changed track $url") unless main::SCANNER && $main::progress;
+	my $content_type = _content_type($url);
 	
-	if ( Slim::Music::Info::isSong($url) ) {
+	if ( Slim::Music::Info::isSong($url, $content_type) ) {
+		$log->error("Handling changed track $url") unless main::SCANNER && $main::progress;
+		
 		my $work = sub {
-			my $dbh = Slim::Schema->dbh;
-			
 			# Fetch some original track, album, contributors, and genre information
 			# so we can compare with the new data and decide what other data needs to be refreshed
 			my $sth = $dbh->prepare_cached( qq{
@@ -695,8 +719,20 @@ sub changed {
 			$work->();
 		}
 	}
-	
-	# XXX changed playlist
+	elsif ( Slim::Music::Info::isCUE($url, $content_type) ) {
+		$log->error("Handling changed cue sheet $url") unless main::SCANNER && $main::progress;
+		
+		# XXX could probably be more intelligent but this works for now
+		deleted($url);
+		new($url);
+	}
+	elsif ( Slim::Music::Info::isList($url, $content_type) ) {
+		$log->error("Handling changed playlist $url") unless main::SCANNER && $main::progress;
+		
+		# For a changed playlist, just delete it and then re-scan it
+		deleted($url);
+		new($url);
+	}
 }
 
 # Check if we're done with all our rescan tasks
@@ -820,6 +856,19 @@ sub scanPlaylistFileHandle {
 	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
+}
+
+sub _content_type {
+	my $url = shift;
+	
+	my $sth = Slim::Schema->dbh->prepare_cached( qq{
+		SELECT content_type FROM tracks WHERE url = ?
+	} );
+	$sth->execute($url);
+	my ($content_type) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $content_type || '';
 }
 
 1;
