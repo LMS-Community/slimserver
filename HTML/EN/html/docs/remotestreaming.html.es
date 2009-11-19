@@ -23,6 +23,6 @@
 </ol>
 <p>La m&uacute;sica tambi&eacute;n se puede transmitir por secuencias a un reproductor de m&uacute;sica en red Squeezebox o Transporter para escucharla en un equipo est&eacute;reo. Para consultar m&aacute;s informaci&oacute;n sobre este producto o las preguntas habituales, visite <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
 
-<p>Si tiene alguna pregunta o problema, p&oacute;ngase en contacto con support@slimdevices.com o visite nuestro foro de usuarios en <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
+<p>Si tiene alguna pregunta o problema, p&oacute;ngase en contacto con www.mysqueezebox.com/support o visite nuestro foro de usuarios en <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
 
 [% PROCESS helpfooter.html %]

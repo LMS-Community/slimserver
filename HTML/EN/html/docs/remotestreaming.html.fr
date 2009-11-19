@@ -23,6 +23,6 @@
 </ol>
 <p>Vous pouvez &eacute;galement diffuser la musique vers une Squeezebox ou un dispositif Transporter pour &eacute;couter les morceaux sur une platine st&eacute;r&eacute;o.  Pour en savoir plus sur ce produit et sur les Questions fr&eacute;quentes, rendez-vous sur <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
 
-<p>En cas de probl&egrave;me ou si vous avez des questions, envoyez un message &eacute;lectronique &agrave; l'adresse support@slimdevices.com ou visitez les forums pour utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>.
+<p>En cas de probl&egrave;me ou si vous avez des questions, visitez l'adresse www.mysqueezebox.com/support ou visitez les forums pour utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>.
 
 [% PROCESS helpfooter.html %]
