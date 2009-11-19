@@ -396,20 +396,6 @@ sub runScanPostProcessing {
 		}
 	}
 	
-	# Remove and dangling references.
-	# XXX still needed?
-	if ($class->cleanupDatabase) {
-
-		# Don't re-enter
-		$class->cleanupDatabase(0);
-
-		$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
-		
-		$log->error("Starting cleanup of stale track entries");
-
-		Slim::Schema->cleanupStaleTrackEntries;
-	}
-	
 	# Cleanup stale year entries
 	# XXX still needed?
 	Slim::Schema::Year->cleanupStaleYears;
