@@ -1304,17 +1304,17 @@ SQUEEZENETWORK_ERROR
 	SV	mysqueezebox.com-fel
 
 INVALID_MAC
-	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte support@slimdevices.com for at få hjælp.
-	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Wenden Sie sich an support@slimdevices.com.
-	EN	Problem: Your player needs to have its MAC address reset. Please contact support@slimdevices.com for assistance.
-	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con support@slimdevices.com para solicitar asistencia.
-	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen support@slimdevices.com.
-	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse support@slimdevices.com.
-	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל support@slimdevices.com לקבלת סיוע.
-	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare support@slimdevices.com.
-	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via support@slimdevices.com voor hulp.
-	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt support@slimdevices.com for hjelp.
-	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (support@slimdevices.com).
+	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte www.mysqueezebox.com/support for at få hjælp.
+	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Besuchen Sie bitte www.mysqueezebox.com/support.
+	EN	Problem: Your player needs to have its MAC address reset. Please visit www.mysqueezebox.com/support for assistance.
+	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con www.mysqueezebox.com/support para solicitar asistencia.
+	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen www.mysqueezebox.com/support.
+	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse www.mysqueezebox.com/support.
+	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל www.mysqueezebox.com/support לקבלת סיוע.
+	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare www.mysqueezebox.com/support.
+	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via www.mysqueezebox.com/support voor hulp.
+	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt www.mysqueezebox.com/support for hjelp.
+	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (www.mysqueezebox.com/support).
 
 PLAYLIST_NO_ITEMS_FOUND
 	CS	Chyba: V seznamu skladeb nebyly nalezeny žádné položky
