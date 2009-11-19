@@ -1747,13 +1747,9 @@ sub sendResponse {
 		$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 	}
 
-	if ($! == EWOULDBLOCK) {
-
+	if (!defined $sentbytes && $! == EWOULDBLOCK) {
 		main::INFOLOG && $log->is_info && $log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}:$port");
-
-		if (!defined $sentbytes) {
-			$sentbytes = 0;
-		}
+		$sentbytes = 0;
 	}
 
 	if (!defined($sentbytes)) {
@@ -1887,8 +1883,9 @@ sub sendStreamingResponse {
 	
 	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
 	# assert($client);
-
-	my $segment = shift(@{$outbuf{$httpClient}});
+	
+	my $outbuf = $outbuf{$httpClient};
+	my $segment = shift(@$outbuf);
 	my $streamingFile = $streamingFiles{$httpClient};
 
 	my $silence = 0;
@@ -1905,36 +1902,19 @@ sub sendStreamingResponse {
 		main::DEBUGLOG && $log->is_debug && $log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
 	}
 
-	if ($client && 
-			$client->isa("Slim::Player::Squeezebox") && 
-			defined($httpClient) &&
-			(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())
-		) {
-
-		if ( main::INFOLOG && $isInfo ) {
-			$log->info($client->id . " We're done streaming this socket to client");
-		}
-
-		closeStreamingSocket($httpClient);
-		return;
-	}
-	
-	if (!$httpClient->connected()) {
+	if (   !$httpClient->connected()
+		|| ($client && $client->isa("Slim::Player::Squeezebox")
+			&& (   !defined($client->streamingsocket())
+			    || $httpClient != $client->streamingsocket()
+				|| (!$streamingFile && $client->isStopped()) # XXX is the !$streamingFile test superfluous
+				)
+			)
+		)
+	{
+		main::INFOLOG && $isInfo &&
+			$log->info(($client ? $client->id : ''), " Streaming connection closed");
 
 		closeStreamingSocket($httpClient);
-
-		main::INFOLOG && $isInfo && $log->info("Streaming client closed connection...");
-
-		return undef;
-	}
-	
-	if (!$streamingFile && $client && $client->isa("Slim::Player::Squeezebox") && 
-		$client->isStopped()) {
-
-		closeStreamingSocket($httpClient);
-
-		main::INFOLOG && $isInfo && $log->info("Squeezebox closed connection...");
-
 		return undef;
 	}
 	
@@ -1970,7 +1950,7 @@ sub sendStreamingResponse {
 				'length' => length($$silence)
 			);
 
-			unshift @{$outbuf{$httpClient}}, \%segment;
+			unshift @$outbuf, \%segment;
 
 		} else {
 			my $chunkRef;
@@ -2028,11 +2008,12 @@ sub sendStreamingResponse {
 						'length' => length($$chunkRef)
 					);
 	
-					unshift @{$outbuf{$httpClient}},\%segment;
+					unshift @$outbuf,\%segment;
 					
 				} else {
 					main::INFOLOG && $log->info("Found an empty chunk on the queue - dropping the streaming connection.");
 					forgetClient($client);
+					return undef;
 				}
 
 			} else {
@@ -2044,14 +2025,12 @@ sub sendStreamingResponse {
 				
 				Slim::Networking::Select::removeWrite($httpClient);
 				
-				if ( $httpClient->connected() ) {
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
-				}
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
 			}
 		}
 
 		# try again...
-		$segment = shift(@{$outbuf{$httpClient}});
+		$segment = shift(@$outbuf);
 	}
 	
 	# try to send metadata, if appropriate
@@ -2062,7 +2041,7 @@ sub sendStreamingResponse {
 
 		if ($metaDataBytes{$httpClient} == METADATAINTERVAL) {
 
-			unshift @{$outbuf{$httpClient}}, $segment;
+			unshift @$outbuf, $segment;
 
 			my $url = Slim::Player::Playlist::url($client);
 
@@ -2101,7 +2080,7 @@ sub sendStreamingResponse {
 			$splitsegment{'offset'} += $splitpoint;
 			$splitsegment{'length'} -= $splitpoint;
 			
-			unshift @{$outbuf{$httpClient}}, \%splitsegment;
+			unshift @$outbuf, \%splitsegment;
 			
 			#only send the first part
 			$segment->{'length'} = $splitpoint;
@@ -2117,15 +2096,15 @@ sub sendStreamingResponse {
 		}
 	}
 
-	if (defined($segment) && $httpClient->connected()) {
+	if (defined($segment)) {
 
 		use bytes;
 
 		my $prebytes = $segment->{'length'};
 		$sentbytes   = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 
-		if ($! == EWOULDBLOCK) {
-			$sentbytes = 0 unless defined $sentbytes;
+		if (!defined $sentbytes && $! == EWOULDBLOCK) {
+			$sentbytes = 0;
 		}
 
 		if (defined($sentbytes)) {
@@ -2141,7 +2120,7 @@ sub sendStreamingResponse {
 				$segment->{'length'} -= $sentbytes;
 				$segment->{'offset'} += $sentbytes;
 
-				unshift @{$outbuf{$httpClient}},$segment;
+				unshift @$outbuf,$segment;
 			}
 
 		} else {
