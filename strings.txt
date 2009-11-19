@@ -6899,23 +6899,23 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	Squeezebox Server se každý den může automaticky připojit k www.slimdevices.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Squeezebox Server se zobrazí zpráva.
-	DA	Squeezebox Server kan automatisk etablere forbindelse til www.slimdevices.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Squeezebox Servers webbaserede brugerflade.
-	DE	Squeezebox Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Squeezebox Server gemeldet.
-	EN	Squeezebox Server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Squeezebox Server's web interface.
-	ES	Squeezebox Server se puede conectar automáticamente a www.slimdevices.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Squeezebox Server.
-	FI	Squeezebox Server voi muodostaa automaattisesti yhteyden sivustoon www.slimdevices.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, Squeezebox Serverin internet-liittymään tulee ilmoitus siitä.
-	FR	Le serveur peut se connecter tous les jours automatiquement à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
-	HE	השרת יכול להתחבר באופן אוטומטי לכתובת www.slimdevices.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של Squeezebox Server.
-	IT	Squeezebox Server può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di Squeezebox Server.
-	JA	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
-	NL	Squeezebox Server kan elke dag automatisch verbinding maken met 'www.slimdevices.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Squeezebox Server.
-	NO	Squeezebox Server kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
-	PL	Program Squeezebox Server może codziennie automatycznie łączyć się z witryną www.slimdevices.com w celu sprawdzenia dostępności zaktualizowanej wersji oprogramowania. Jeżeli będzie ono dostępne, w interfejsie internetowym programu Squeezebox Server zostanie wyświetlony komunikat.
-	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
-	RU	Squeezebox Server может каждый день автоматически подключаться к сайту www.slimdevices.com и проверять наличие обновленных версий программы. При обнаружении новой версии в веб-интерфейсе Squeezebox Server появится соответствующее сообщение.
-	SV	Squeezebox Server kan automatiskt kopplas upp mot www.slimdevices.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
-	ZH_CN	服务器能够每天自动地连接到www.slimdevices.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在Squeezebox Server的网界面。
+	CS	Squeezebox Server se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní Squeezebox Server se zobrazí zpráva.
+	DA	Squeezebox Server kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i Squeezebox Servers webbaserede brugerflade.
+	DE	Squeezebox Server kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von Squeezebox Server gemeldet.
+	EN	Squeezebox Server can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in Squeezebox Server's web interface.
+	ES	Squeezebox Server se puede conectar automáticamente a mysqueezebox.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de Squeezebox Server.
+	FI	Squeezebox Server voi muodostaa automaattisesti yhteyden sivustoon mysqueezebox.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, Squeezebox Serverin internet-liittymään tulee ilmoitus siitä.
+	FR	Le serveur peut se connecter tous les jours automatiquement à mysqueezebox.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
+	HE	השרת יכול להתחבר באופן אוטומטי לכתובת mysqueezebox.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של Squeezebox Server.
+	IT	Squeezebox Server può collegarsi automaticamente al sito mysqueezebox.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di Squeezebox Server.
+	JA	サーバーソフトウェアは、毎日mysqueezebox.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
+	NL	Squeezebox Server kan elke dag automatisch verbinding maken met 'mysqueezebox.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Squeezebox Server.
+	NO	Squeezebox Server kan automatisk sjekke mysqueezebox.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
+	PL	Program Squeezebox Server może codziennie automatycznie łączyć się z witryną mysqueezebox.com w celu sprawdzenia dostępności zaktualizowanej wersji oprogramowania. Jeżeli będzie ono dostępne, w interfejsie internetowym programu Squeezebox Server zostanie wyświetlony komunikat.
+	PT	O servidor poderá ligar-se automaticamente a mysqueezebox.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
+	RU	Squeezebox Server может каждый день автоматически подключаться к сайту mysqueezebox.com и проверять наличие обновленных версий программы. При обнаружении новой версии в веб-интерфейсе Squeezebox Server появится соответствующее сообщение.
+	SV	Squeezebox Server kan automatiskt kopplas upp mot mysqueezebox.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
+	ZH_CN	服务器能够每天自动地连接到mysqueezebox.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在Squeezebox Server的网界面。
 
 SETUP_CHECKVERSION_1
 	CS	Automaticky kontrolovat aktualizace softwaru
