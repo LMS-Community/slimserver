@@ -2162,7 +2162,7 @@ sub tryStreamingLater {
 	my $client     = shift;
 	my $httpClient = shift;
 
-	if ( $httpClient == $client->streamingsocket() ) {
+	if ( defined $client->streamingsocket() && $httpClient == $client->streamingsocket() ) {
 
 		# Bug 10085 - This might be a callback for an old connection  
 		# which we decided to close after establishing the timer, so
