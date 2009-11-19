@@ -171,6 +171,7 @@ sub _addInfo {
 			error   => Slim::Utils::PluginManager->getErrorString($plugin),
 			creator => $entry->{'creator'},
 			email   => $entry->{'email'},
+			homepage=> $entry->{'homepageURL'},
 			version => $entry->{'version'},
 			settings=> Slim::Utils::PluginManager->isEnabled($entry->{'module'}) ? $entry->{'optionsURL'} : undef,
 			manual  => $entry->{'basedir'} !~ /InstalledPlugins/ ? 1 : 0,
