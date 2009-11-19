@@ -365,6 +365,13 @@ might affect timers and time-outs.
 When this is the case, you can call this method, which will update the
 event loop's idea of "current time".
 
+A typical example would be a script in a web server (e.g. C<mod_perl>) -
+when mod_perl executes the script, then the event loop will have the wrong
+idea about the "current time" (being potentially far in the past, when the
+script ran the last time). In that case you should arrange a call to C<<
+AnyEvent->now_update >> each time the web server process wakes up again
+(e.g. at the start of your script, or in a handler).
+
 Note that updating the time I<might> cause some events to be handled.
 
 =back
@@ -1118,15 +1125,13 @@ BEGIN { AnyEvent::common_sense }
 
 use Carp ();
 
-our $VERSION = '5.202';
+our $VERSION = '5.21';
 our $MODEL;
 
 our $AUTOLOAD;
 our @ISA;
 
 our @REGISTRY;
-
-our $WIN32;
 
 our $VERBOSE;
 
@@ -1388,7 +1393,7 @@ our ($SIG_COUNT, $SIG_TW);
 sub _signal_exec {
    $HAVE_ASYNC_INTERRUPT
       ? $SIGPIPE_R->drain
-      : sysread $SIGPIPE_R, my $dummy, 9;
+      : sysread $SIGPIPE_R, (my $dummy), 9;
 
    while (%SIG_EV) {
       for (keys %SIG_EV) {
