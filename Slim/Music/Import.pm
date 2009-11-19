@@ -395,10 +395,6 @@ sub runScanPostProcessing {
 			}
 		}
 	}
-	
-	# Cleanup stale year entries
-	# XXX still needed?
-	Slim::Schema::Year->cleanupStaleYears;
 
 	# Reset
 	$class->useFolderImporter(0);

@@ -60,33 +60,6 @@ sub displayAsHTML {
 	}
 }
 
-# Cleanup years that are no longer used by albums or tracks
-sub cleanupStaleYears {
-	my $class = shift;
-	
-	my $sth = Slim::Schema->dbh->prepare_cached( qq{
-		SELECT id
-		FROM   years y
-		LEFT JOIN (
-			SELECT DISTINCT year FROM albums a
-			UNION
-			SELECT DISTINCT year FROM tracks t
-		) z 
-		ON     y.id = z.year
-		WHERE  z.year is NULL
-	} );
-	
-	$sth->execute;
-	
-	my $sta = Slim::Schema->dbh->prepare_cached( qq{
-		DELETE FROM years WHERE id = ?
-	} );
-	
-	while ( my ($year) = $sth->fetchrow_array ) {
-		$sta->execute($year);
-	}
-}
-
 # Rescan this year.  Make sure at least 1 track from this year exists, otherwise
 # delete the year.
 sub rescan {
