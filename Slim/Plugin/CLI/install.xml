@@ -6,13 +6,12 @@
 	<module>Slim::Plugin::CLI::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_CLI_DESC</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
 	<enforce>1</enforce>
         
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/CLI/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 

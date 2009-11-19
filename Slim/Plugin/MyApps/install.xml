@@ -5,10 +5,9 @@
 	<module>Slim::Plugin::MyApps::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_MY_APPS_MODULE_NAME</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/MyApps/html/images/icon.png</icon>
 	<type>2</type>
 	<enforce>1</enforce>

@@ -5,11 +5,10 @@
 	<module>Slim::Plugin::Live365::Plugin</module>
 	<version>2.1</version>
 	<description>PLUGIN_LIVE365_MODULE_NAME_DESC</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
 	<icon>plugins/Live365/html/images/icon.png</icon>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/Live365</homepageURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
 		<id>Squeezebox Server</id>

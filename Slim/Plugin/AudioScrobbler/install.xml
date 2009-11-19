@@ -5,11 +5,10 @@
 	<module>Slim::Plugin::AudioScrobbler::Plugin</module>
 	<version>1.0</version>
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>        
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/LastFM</homepageURL>
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>
 	<type>2</type>
 	<targetApplication>

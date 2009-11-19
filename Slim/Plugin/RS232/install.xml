@@ -6,12 +6,11 @@
         <module>Slim::Plugin::RS232::Plugin</module>
         <version>1.1</version>
         <description>PLUGIN_RS232_NAME_DESC</description>
-        <creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+        <creator>Logitech</creator>
 
 	<defaultState>disabled</defaultState>
         
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/RS232/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 
