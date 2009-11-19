@@ -370,6 +370,9 @@ Called after schema_optimize.  Used to perform SQLite-specific VACUUM and ANALYZ
 sub postOptimize {
 	my $class = shift;
 	
+	# VACUUM takes too much memory to run on TinySC
+	return if Slim::Utils::OSDetect::isSqueezeOS();
+	
 	my ($driver) = Slim::Schema->sourceInformation;
 	
 	# Disconnect and reconnect to the database in order to run
