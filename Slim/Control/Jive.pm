@@ -178,6 +178,9 @@ sub _libraryChanged {
 sub buildCaches {
 	main::DEBUGLOG && $log->debug("Begin function");
 	
+	# TinySC cannot afford the memory-footprint of these cached queries
+	return if Slim::Utils::OSDetect::isSqueezeOS();
+	
 	return if !Slim::Schema::hasLibrary();
 
 	my $sort    = $prefs->get('jivealbumsort') || 'album';
