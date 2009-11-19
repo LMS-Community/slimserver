@@ -5,10 +5,9 @@
 	<module>Slim::Plugin::OPMLGeneric::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_OPML_GENERIC_MODULE_NAME</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type>
 	<targetApplication>
 		<id>Squeezebox Server</id>

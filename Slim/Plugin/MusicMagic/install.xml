@@ -6,8 +6,7 @@
 	<module>Slim::Plugin::MusicMagic::Plugin</module>
 	<version>1.0</version>
 	<description>MUSICMAGIC_DESC</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 
 	<defaultState>
 		<mac>enabled</mac>
@@ -15,7 +14,7 @@
 		<other>disabled</other>
 	</defaultState>
 
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/MusicMagic/html/images/icon.png</icon>
 	<optionsURL>plugins/MusicMagic/settings/musicmagic.html</optionsURL>
 	<type>2</type><!-- type=extension -->

@@ -6,12 +6,11 @@
         <module>Slim::Plugin::DateTime::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_DATETIME_DESC</description>
-        <creator>Slim Devices/Logitech</creator>
-        <email>support@slimdevices.com</email>
+        <creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
         
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
+        <homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/DateTime/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 

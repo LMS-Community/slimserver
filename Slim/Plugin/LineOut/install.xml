@@ -4,12 +4,11 @@
 	<module>Slim::Plugin::LineOut::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_LINE_OUT_DESC</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 
 	<defaultState>disabled</defaultState>
         
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/LineOut/html/images/icon.png</icon>
 	<type>2</type>
 

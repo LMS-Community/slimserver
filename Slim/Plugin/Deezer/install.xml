@@ -5,10 +5,9 @@
 	<module>Slim::Plugin::Deezer::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_DEEZER_MODULE_NAME</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/Deezer</homepageURL>
 	<icon>plugins/Deezer/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>

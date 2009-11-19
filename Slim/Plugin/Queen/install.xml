@@ -5,10 +5,9 @@
 	<module>Slim::Plugin::Queen::Plugin</module>
 	<version>1.0</version>
 	<description>Queen</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/Queen</homepageURL>
 	<icon>plugins/Queen/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>

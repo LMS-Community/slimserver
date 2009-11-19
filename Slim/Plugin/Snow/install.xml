@@ -6,12 +6,11 @@
 	<module>Slim::Plugin::Snow::Plugin</module>
 	<version>1.1</version>
 	<description>PLUGIN_SCREENSAVER_SNOW</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 	<defaultState>disabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>
 
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 
 	<targetApplication>

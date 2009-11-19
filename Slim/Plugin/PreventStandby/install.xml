@@ -7,11 +7,10 @@
 		<version>2.0</version>
 		<description>PLUGIN_PREVENTSTANDBY_DESC</description>
 		<creator>Gordon Harris, Julian Neil, Slim Devices/Logitech</creator>
-		<email>support@slimdevices.com</email>
 
 		<defaultState>enabled</defaultState>
 
-		<homepageURL>http://www.slimdevices.com/</homepageURL>
+		<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 		<optionsURL>plugins/PreventStandby/settings/basic.html</optionsURL>
 		<type>2</type><!-- type=extension -->
 

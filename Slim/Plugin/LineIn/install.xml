@@ -5,12 +5,11 @@
 	<module>Slim::Plugin::LineIn::Plugin</module>
 	<version>1.0</version>
 	<description>PLUGIN_LINE_IN_DESC</description>
-	<creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
         
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<icon>plugins/LineIn/html/images/icon.png</icon>
 	<type>2</type>
 

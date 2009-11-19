@@ -6,12 +6,11 @@
         <module>Slim::Plugin::Visualizer::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_VISUALIZER</description>
-        <creator>Slim Devices/Logitech</creator>
-	<email>support@slimdevices.com</email>
+        <creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
         
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>
