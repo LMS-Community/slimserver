@@ -21,7 +21,7 @@
 
 <li>Si vous utilisez un mot de passe pour le Squeezebox Server, vous devez sp&eacute;cifier une URL du type http://nom_d'utilisateur:mot_de_passe@localhost:9000/stream.mp3.
 </ol>
-<p>Vous pouvez &eacute;galement diffuser la musique vers une Squeezebox ou un dispositif Transporter pour &eacute;couter les morceaux sur une platine st&eacute;r&eacute;o.  Pour en savoir plus sur ce produit et sur les Questions fr&eacute;quentes, rendez-vous sur <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
+<p>Vous pouvez &eacute;galement diffuser la musique vers une Squeezebox ou un dispositif Transporter pour &eacute;couter les morceaux sur une platine st&eacute;r&eacute;o.  Pour en savoir plus sur ce produit et sur les Questions fr&eacute;quentes, rendez-vous sur <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a>.
 
 <p>En cas de probl&egrave;me ou si vous avez des questions, visitez l'adresse www.mysqueezebox.com/support ou visitez les forums pour utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>.
 

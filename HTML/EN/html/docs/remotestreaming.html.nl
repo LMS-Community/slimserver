@@ -21,7 +21,7 @@
 
 <li>Als je de wachtwoordbeveiliging van de Squeezebox Server gebruikt, moet je een enigszins gewijzigde URL gebruiken zoals deze: http://username:password@localhost:9000/stream.mp3
 </ol>
-<p>De muziek kan ook naar een Squeezebox- of Transporter-netwerkmuziekspeler gestroomd worden, zodat je er op een stereo naar kunt luisteren.  Ga naar <a href="http://www.slimdevices.com/">www.slimdevices.com</a> voor meer informatie over dit product en veelgestelde vragen.
+<p>De muziek kan ook naar een Squeezebox- of Transporter-netwerkmuziekspeler gestroomd worden, zodat je er op een stereo naar kunt luisteren.  Ga naar <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a> voor meer informatie over dit product en veelgestelde vragen.
 
 <p>Heb je een vraag of probleem, neem dan contact op via 'www.mysqueezebox.com/support' of ga naar ons gebruikersforum op <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
 

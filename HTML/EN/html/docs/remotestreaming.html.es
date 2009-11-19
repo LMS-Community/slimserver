@@ -21,7 +21,7 @@
 
 <li>Si usa la seguridad mediante contrase&ntilde;a de Squeezebox Server, deber&aacute; usar una URL ligeramente modificada, como: http://nombre_de_usuario:contrase&ntilde;a@localhost:9000/stream.mp3
 </ol>
-<p>La m&uacute;sica tambi&eacute;n se puede transmitir por secuencias a un reproductor de m&uacute;sica en red Squeezebox o Transporter para escucharla en un equipo est&eacute;reo. Para consultar m&aacute;s informaci&oacute;n sobre este producto o las preguntas habituales, visite <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
+<p>La m&uacute;sica tambi&eacute;n se puede transmitir por secuencias a un reproductor de m&uacute;sica en red Squeezebox o Transporter para escucharla en un equipo est&eacute;reo. Para consultar m&aacute;s informaci&oacute;n sobre este producto o las preguntas habituales, visite <a href="http://www.mysqueezebox.com/support">www.mysqueezebox.com</a>.
 
 <p>Si tiene alguna pregunta o problema, p&oacute;ngase en contacto con www.mysqueezebox.com/support o visite nuestro foro de usuarios en <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
 
