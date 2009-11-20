@@ -51,7 +51,6 @@ sub new {
 	my $self = $class->open($args);
 
 	if (defined($self)) {
-		${*$self}{'song'}    = $args->{'song'};
 		${*$self}{'client'}  = $args->{'client'};
 		${*$self}{'url'}     = $args->{'url'};
 	}
@@ -220,7 +219,10 @@ sub parseHeaders {
 
 	${*$self}{'contentType'} = $contentType if $contentType;
 	${*$self}{'redirect'} = $redir;
+
 	${*$self}{'contentLength'} = $length if $length;
+	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
+	# XXX maybe should (also) check $song->scanData()->{$url}->{metadata}->{info}->{broadcast} here.
 
 	return;
 }

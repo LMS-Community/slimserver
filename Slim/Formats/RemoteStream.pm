@@ -118,16 +118,11 @@ sub open {
 			return undef;
 		};
 	};
+	
+	${*$sock}{'song'} = $args->{'song'};
 
-	# When reading metadata, the caller doesn't want to immediately request data.
-	if (!$args->{'readTags'}) {
+	return $sock->request($args);
 
-		return $sock->request($args);
-
-	} else {
-
-		return $sock;
-	}
 }
 
 sub request {

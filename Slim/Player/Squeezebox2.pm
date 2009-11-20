@@ -511,6 +511,10 @@ sub directHeaders {
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);
 			}
 
+			$controller->song()->isLive($length ? 0 : 1) if !$redir;
+			# XXX maybe should (also) check $song->scanData()->{$url}->{metadata}->{info}->{broadcast}
+			# for WMA streams here.
+			
 			# update bitrate, content-type title for this URL...
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;

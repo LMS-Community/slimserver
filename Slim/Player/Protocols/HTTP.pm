@@ -46,7 +46,6 @@ sub new {
 	my $self = $class->open($args);
 
 	if (defined($self)) {
-		${*$self}{'song'}    = $args->{'song'};
 		${*$self}{'client'}  = $args->{'client'};
 		${*$self}{'url'}     = $args->{'url'};
 	}
@@ -435,6 +434,7 @@ sub parseHeaders {
 	${*$self}{'redirect'} = $redir;
 	
 	${*$self}{'contentLength'} = $length if $length;
+	${*$self}{'song'}->isLive($length ? 0 : 1) if !$redir;
 
 	# Always prefer the title returned in the headers of a radio station
 	if ( $title ) {
