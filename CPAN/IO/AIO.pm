@@ -193,7 +193,7 @@ use common::sense;
 use base 'Exporter';
 
 BEGIN {
-   our $VERSION = '3.3';
+   our $VERSION = '3.31';
 
    our @AIO_REQ = qw(aio_sendfile aio_read aio_write aio_open aio_close
                      aio_stat aio_lstat aio_unlink aio_rmdir aio_readdir aio_readdirx
@@ -636,7 +636,7 @@ sub aio_load($$;$) {
 
 Try to copy the I<file> (directories not supported as either source or
 destination) from C<$srcpath> to C<$dstpath> and call the callback with
-the C<0> (error) or C<-1> ok.
+a status of C<0> (ok) or C<-1> (error, see C<$!>).
 
 This is a composite request that creates the destination file with
 mode 0200 and copies the contents of the source file into it using
@@ -658,7 +658,7 @@ sub aio_copy($$;$) {
    aioreq_pri $pri;
    add $grp aio_open $src, O_RDONLY, 0, sub {
       if (my $src_fh = $_[0]) {
-         my @stat = stat $src_fh; # hmm, might bock over nfs?
+         my @stat = stat $src_fh; # hmm, might block over nfs?
 
          aioreq_pri $pri;
          add $grp aio_open $dst, O_CREAT | O_WRONLY | O_TRUNC, 0200, sub {
@@ -715,7 +715,7 @@ sub aio_copy($$;$) {
 
 Try to move the I<file> (directories not supported as either source or
 destination) from C<$srcpath> to C<$dstpath> and call the callback with
-the C<0> (error) or C<-1> ok.
+a status of C<0> (ok) or C<-1> (error, see C<$!>).
 
 This is a composite request that tries to rename(2) the file first; if
 rename fails with C<EXDEV>, it copies the file with C<aio_copy> and, if
