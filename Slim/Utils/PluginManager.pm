@@ -443,7 +443,7 @@ sub isConfiguredEnabled {
 	my $class = shift;
 	my $plugin = shift;
 
-    return $prefs->get($plugin) =~ /needs-enable|enabled/;
+    return $prefs->get($plugin) && $prefs->get($plugin) =~ /needs-enable|enabled/;
 }
 
 sub enablePlugin {
