@@ -75,9 +75,6 @@ sub init {
 		'wpl' => 'Slim::Formats::Playlists::WPL',
 		'xml' => 'Slim::Formats::Playlists::XML',
 		'xpf' => 'Slim::Formats::Playlists::XSPF',
-
-		# Remote types
-		'http' => 'Slim::Formats::HTTP',
 	);
 
 	$init = 1;

@@ -217,7 +217,6 @@ sub parseHeaders {
 	my $self    = shift;
 	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $self->parseDirectHeaders($self->client, $self->url, @_);
-	my @headers = @_;
 
 	${*$self}{'contentType'} = $contentType if $contentType;
 	${*$self}{'redirect'} = $redir;
