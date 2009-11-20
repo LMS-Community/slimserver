@@ -347,6 +347,11 @@ sub init {
 	# force a charset from the command line
 	$Slim::Utils::Unicode::lc_ctype = $charset if $charset;
 	
+	# If dbsource has been changed via settings, it overrides the default
+	if ( $prefs->get('dbtype') ) {
+		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
+	}
+    
 	if ( $dbtype ) {
 		# For testing SQLite, can specify a different database type
 		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
@@ -442,7 +447,7 @@ sub init {
 	}
 
 	if ( $sqlHelperClass ) {
-		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
+		main::INFOLOG && $log->info("Squeezebox Server SQL init ($sqlHelperClass)...");
 		$sqlHelperClass->init();
 	}
 	

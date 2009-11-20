@@ -7784,6 +7784,18 @@ SETUP_BROWSEAGELIMIT_DESC
 	RU	Выберите число последних альбомов, отображаемых при просмотре новой музыки. По умолчанию — 100
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
 
+SETUP_DBTYPE
+	EN	Database
+
+SETUP_DBTYPE_DESC
+	EN	Squeezebox Server supports SQLite and MySQL Server. SQLite is recommended for embedded systems and those with less memory, and also offers faster scanner performance. MySQL may offer better library browsing performance and is recommended for faster systems with more memory. Changing this setting requires a server restart.
+
+SETUP_DBTYPE_SQLITE
+	EN	SQLite
+
+SETUP_DBTYPE_MYSQL
+	EN	MySQL Server
+
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
 	DA	Statistik for musikbibliotek
