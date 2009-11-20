@@ -471,11 +471,20 @@ sub initClass {
 	}
 }
 
+my $progress_step = 0;
+my $progress_json = [];
 sub progressJSON {
 	my $data = shift;
 	
+	splice @{$progress_json}, $progress_step, 1, $data;
+	
+	# Append each new progress step to the array
+	if ( $data->{finish} ) {
+		$progress_step++;
+	}
+	
 	require File::Slurp;
-	File::Slurp::write_file( $::json, to_json($data) );
+	File::Slurp::write_file( $::json, to_json($progress_json) );
 }
 
 sub cleanup {
