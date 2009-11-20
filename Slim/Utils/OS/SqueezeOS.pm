@@ -40,13 +40,58 @@ sub initPrefs {
 	$defaults->{maxPlaylistLength} = 100;
 }
 
+my ($i, $w);
 sub postInitPrefs {
 	my ( $class, $prefs ) = @_;
 	
 	_checkMediaAtStartup($prefs);
 	
 	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
+
+	eval {
+		require Linux::Inotify2;
+		import Linux::Inotify2;
+
+		$i = Linux::Inotify2->new() or die "Unable to start Inotify watcher: $!";
+	
+		$i->watch('/etc/squeezeplay/userpath/settings/', IN_MOVED_TO(), \&_syncPrefs)
+			or die "Unable to add Inotify watcher: $!";
+	
+		$w = AnyEvent->io(
+			fh => $i->fileno,
+			poll => 'r',
+			cb => sub { $i->poll },
+		);
+	};
+	
+	Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
 }
+
+
+my $prefSyncHandlers = {
+	'SetupLanguage.lua' => sub {
+		my $data = shift;
+        
+		if ($$data && $$data =~ /locale="([A-Z][A-Z])"/) {
+			Slim::Utils::Prefs::preferences('server')->set('language', uc($1));
+		}
+	},
+                                                        
+};
+
+sub _syncPrefs {
+	my $ev = shift;
+
+	if (defined $ev->fullname && defined $ev->name && $prefSyncHandlers->{$ev->name} && -r $ev->fullname ) {
+
+		require File::Slurp;
+
+		my $data = File::Slurp::read_file($ev->fullname);
+
+		&{ $prefSyncHandlers->{$ev->name} }(\$data);
+	}
+}
+
 
 sub sqlHelperClass { 'Slim::Utils::SQLiteHelper' }
 
