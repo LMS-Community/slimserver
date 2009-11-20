@@ -83,7 +83,7 @@ sub new {
 
 	bless $ref, $class;
 
-	if ($args->{'bar'} && $::progress) {
+	if ($args->{'bar'}) {
 
 		$ref->{'bar'} = 1;
 		$ref->{'barup'} = 0;
@@ -181,6 +181,7 @@ sub update {
 					name   => $name,
 					done   => $done,
 					total  => $total,
+					eta    => $class->{eta},
 					finish => undef,
 				} );
 			}
@@ -238,6 +239,7 @@ sub final {
 				name   => $name,
 				done   => $done,
 				total  => $done,
+				eta    => 0,
 				finish => $finish,
 			} );
 		}
@@ -391,17 +393,23 @@ sub _updateBar {
 		# using the overall_rate here seems to provide much smoother eta numbers
 		my $eta = ($self->{'total'} - $num_done)/$overall_rate;
 
-		my $hour = int($eta/3600);
-		my $min  = int($eta/60) % 60;
-		my $sec  = int($eta % 60);
+		$self->{eta} = int($eta);
 
-		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
-				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
+		if ( $::progress ) {
+			my $hour = int($eta/3600);
+			my $min  = int($eta/60) % 60;
+			my $sec  = int($eta % 60);
+			
+			print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
+					$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
+		}
 
 	} else {
 
-		# we have no term, so fake it
-		print $fh '.' x $msgs_since;
+		if ( $::progress ) {
+			# we have no term, so fake it
+			print $fh '.' x $msgs_since;
+		}
 	}
 
 	$self->{'prev_time'}     = $time_now;
