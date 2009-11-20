@@ -198,23 +198,17 @@ sub parseHeaders {
 
 			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
-
-				# Always prefer the title returned in the headers of a radio station
-				main::INFOLOG && $log->info( "Setting new title for $url, " . ${*$self}{'title'} );
-				Slim::Music::Info::setTitle( $url, ${*$self}{'title'} );
-				Slim::Music::Info::setCurrentTitle( $url, ${*$self}{'title'} );
-			}
+			# Always prefer the title returned in the headers of a radio station
+			main::INFOLOG && $log->info( "Setting new title for $url, " . ${*$self}{'title'} );
+			Slim::Music::Info::setTitle( $url, ${*$self}{'title'} );
+			Slim::Music::Info::setCurrentTitle( $url, ${*$self}{'title'} );
 		}
 
 		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'bitrate'} = $1 * 1000;
 
-			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
-
-				Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
-			}
+			Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
 			
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Bitrate for %s set to %d",
@@ -247,11 +241,7 @@ sub parseHeaders {
 			
 			${*$self}{'contentType'} = $contentType;
 
-			# If create => 0 was passed, don't set the CT.
-			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
-
-				Slim::Music::Info::setContentType( $self->url, $self->contentType );
-			}
+			Slim::Music::Info::setContentType( $self->url, $self->contentType );
 		}
 		
 		elsif ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {

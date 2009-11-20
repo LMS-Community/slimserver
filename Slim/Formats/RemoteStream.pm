@@ -141,7 +141,6 @@ sub request {
 	my $request = $self->requestString($args->{'client'}, $url, $post, $args->{'song'} ? $args->{'song'}->seekdata() : undef);
 	
 	${*$self}{'client'}  = $args->{'client'};
-	${*$self}{'create'}  = $args->{'create'};
 	${*$self}{'bitrate'} = $args->{'bitrate'};
 	${*$self}{'infoUrl'} = $args->{'infoUrl'};
 	
