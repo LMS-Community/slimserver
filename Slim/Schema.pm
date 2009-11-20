@@ -796,6 +796,7 @@ sub objectForUrl {
 	my $commit     = 0;
 	my $playlist   = 0;
 	my $checkMTime = 1;
+	my $playlistId;
 
 	if (@_) {
 
@@ -811,6 +812,7 @@ sub objectForUrl {
 		$commit     = $args->{'commit'};
 		$playlist   = $args->{'playlist'};
 		$checkMTime = $args->{'checkMTime'} if defined $args->{'checkMTime'};
+		$playlistId = $args->{'playlistId'};
 	}
 
 	# Confirm that the URL itself isn't an object (see bug 1811)
@@ -834,9 +836,20 @@ sub objectForUrl {
 
 	# Pull the track object for the DB
 	my $track = $self->_retrieveTrack($url, $playlist);
+	
+	# Bug 14648: Check to see if we have a playlist with remote tracks
+	if (!$track && defined $playlistId && Slim::Music::Info::isRemoteURL($url)) {
+		my $playlistObj = $self->find('Playlist', $playlistId);
+
+		# Parse the playlist file to cause the RemoteTrack objects to be created
+		Slim::Formats::Playlists->parseList($playlistObj->url);
+		
+		# try again
+		$track = $self->_retrieveTrack($url, $playlist);
+	}
 
 	# _retrieveTrack will always return undef or a track object
-	if ($track && $checkMTime && !$create && !$playlist) {
+	elsif ($track && $checkMTime && !$create && !$playlist) {
 		$track = $self->_checkValidity($track);
 	}
 

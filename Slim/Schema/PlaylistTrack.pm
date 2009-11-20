@@ -23,15 +23,16 @@ use Slim::Schema::ResultSet::PlaylistTrack;
 	$class->resultset_class('Slim::Schema::ResultSet::PlaylistTrack');
 }
 
-# The relationskip to the Track objects is done here
+# The relationship to the Track objects is done here
 
 sub inflate_result {
 	my ($class, $source, $me, $prefetch) = @_;
 	
 	return Slim::Schema->objectForUrl({
-				'url'      => $me->{track},
-				'create'   => 1,
-				'readTags' => 1,
+				'url'        => $me->{track},
+				'create'     => 1,
+				'readTags'   => 1,
+				'playlistId' => $me->{playlist},
 			});
 }
 
