@@ -256,7 +256,7 @@ sub canDirectStream {
 		}
 
 		# Allow user pref to select the method for streaming
-		if ( my $method = $prefs->get('server')->client($client)->get('mp3StreamingMethod') ) {
+		if ( my $method = $prefs->client($client)->get('mp3StreamingMethod') ) {
 			if ( $method == 1 ) {
 				main::DEBUGLOG && $directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
 				return 0;
@@ -311,7 +311,7 @@ sub sysread {
 }
 
 sub parseDirectHeaders {
-	my ( $class, $client, $url, @headers ) = @_;
+	my ( $self, $client, $url, @headers ) = @_;
 	
 	my $isDebug = main::DEBUGLOG && $directlog->is_debug;
 	
@@ -377,8 +377,16 @@ sub parseDirectHeaders {
 		$duration ||= $length * 8 / $bitrate if $bitrate;
 		
 		if ($duration) {
-			main::INFOLOG && $directlog->info("Setting startOffest based on Content-Range to ", $duration * ($startOffset/$length));
-			$client->controller()->songStreamController()->song()->startOffset($duration * ($startOffset/$length));
+			my $song = ${*self}{'song'} if blessed $self;
+			
+			if (!$song && $client->controller()->songStreamController()) {
+				$song = $client->controller()->songStreamController()->song();
+			}
+			
+			if ($song) {
+				main::INFOLOG && $directlog->info("Setting startOffest based on Content-Range to ", $duration * ($startOffset/$length));
+				$song->startOffset($duration * ($startOffset/$length));
+			}
 		}
 	}
 
@@ -392,6 +400,103 @@ sub parseDirectHeaders {
 	}
 		
 	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+}
+
+=head2 parseHeaders( @headers )
+
+Parse the response headers from an HTTP request, and set instance variables
+based on items in the response, eg: bitrate, content type.
+
+Updates the client's streamingProgressBar with the correct duration.
+
+=cut
+
+# XXX Still a lot of duplication here with Squeezebox2::directHeaders()
+
+sub parseHeaders {
+	my $self    = shift;
+	my $url     = $self->url;
+	my $client  = $self->client;
+	
+	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $self->parseDirectHeaders($client, $url, @_);
+
+	if ($contentType) {
+		if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
+			# webservers often lie about playlists.  This will
+			# make it guess from the suffix.  (unless text/xml)
+			$contentType = '';
+		}
+			
+		${*$self}{'contentType'} = $contentType;
+
+		Slim::Music::Info::setContentType( $url, $contentType );
+	}
+	
+	${*$self}{'redirect'} = $redir;
+	
+	${*$self}{'contentLength'} = $length if $length;
+
+	# Always prefer the title returned in the headers of a radio station
+	if ( $title ) {
+		main::INFOLOG && $log->is_info && $log->info( "Setting new title for $url, $title" );
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+		
+		# Bug 7979, Only update the database title if this item doesn't already have a title
+		my $curTitle = Slim::Music::Info::title($url);
+		if ( !$curTitle || $curTitle =~ /^(?:http|mms)/ ) {
+			Slim::Music::Info::setTitle( $url, $title );
+		}
+	}
+
+	if ($bitrate) {
+		main::INFOLOG && $log->is_info &&
+				$log->info(sprintf("Bitrate for %s set to %d",
+					$self->infoUrl,
+					$bitrate,
+				));
+		
+		${*$self}{'bitrate'} = $bitrate;
+		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate );
+	} elsif ( !$self->bitrate ) {
+		# Bitrate may have been set in Scanner by reading the mp3 stream
+		$bitrate = ${*$self}{'bitrate'} = Slim::Music::Info::getBitrate( $url );
+	}
+	
+	
+	if ($metaint) {
+		${*$self}{'metaInterval'} = $metaint;
+		${*$self}{'metaPointer'}  = 0;
+	}
+	
+	# See if we have an existing track object with duration info for this stream.
+	if ( my $secs = Slim::Music::Info::getDuration( $url ) ) {
+		
+		# Display progress bar
+		$client->streamingProgressBar( {
+			'url'      => $url,
+			'duration' => $secs,
+		} );
+	}
+	else {
+	
+		if ( $bitrate > 0 && defined $self->contentLength && $self->contentLength > 0 ) {
+			# if we know the bitrate and length of a stream, display a progress bar
+			if ( $bitrate < 1000 ) {
+				${*$self}{'bitrate'} *= 1000;
+			}
+			$client->streamingProgressBar( {
+				'url'     => $url,
+				'bitrate' => $self->bitrate,
+				'length'  => $self->contentLength,
+			} );
+		}
+	}
+		
+	# Bug 6482, refresh the cached Track object in the client playlist from the database
+	# so it picks up any changed data such as title, bitrate, etc
+	Slim::Player::Playlist::refreshTrack( $client, $url );
+
+	return;
 }
 
 =head2 requestString( $client, $url, [ $post, [ $seekdata ] ] )
@@ -496,132 +601,6 @@ sub requestString {
 	}
 
 	return $request;
-}
-
-=head2 parseHeaders( @headers )
-
-Parse the response headers from an HTTP request, and set instance variables
-based on items in the response, eg: bitrate, content type.
-
-Updates the client's streamingProgressBar with the correct duration.
-
-=cut
-
-sub parseHeaders {
-	my $self    = shift;
-	my @headers = @_;
-
-	my $log = logger('player.streaming.remote');
-	
-	my $client = $self->client;
-	my $url    = $self->url;
-
-	for my $header (@headers) {
-
-		main::INFOLOG && $log->info("Header: $header");
-
-		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)$CRLF$/i) {
-
-			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
-
-			# Always prefer the title returned in the headers of a radio station
-			main::INFOLOG && $log->info( "Setting new title for $url, " . ${*$self}{'title'} );
-			Slim::Music::Info::setTitle( $url, ${*$self}{'title'} );
-			Slim::Music::Info::setCurrentTitle( $url, ${*$self}{'title'} );
-		}
-
-		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
-
-			${*$self}{'bitrate'} = $1 * 1000;
-
-			Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
-			
-			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("Bitrate for %s set to %d",
-					$self->infoUrl,
-					$self->bitrate,
-				));
-			}
-		}
-		
-		elsif ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
-
-			${*$self}{'metaInterval'} = $1;
-			${*$self}{'metaPointer'}  = 0;
-		}
-		
-		elsif ($header =~ /^Location:\s*(.*)$CRLF$/i) {
-
-			${*$self}{'redirect'} = $1;
-		}
-
-		elsif ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
-
-			my $contentType = $1;
-
-			if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
-				# webservers often lie about playlists.  This will
-				# make it guess from the suffix.  (unless text/xml)
-				$contentType = '';
-			}
-			
-			${*$self}{'contentType'} = $contentType;
-
-			Slim::Music::Info::setContentType( $self->url, $self->contentType );
-		}
-		
-		elsif ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
-
-			${*$self}{'contentLength'} = $1;
-		}
-
-		elsif ($header eq $CRLF) { 
-
-			main::INFOLOG && $log->info("Recieved final blank line...");
-			last; 
-		}
-		
-		# mp3tunes metadata, this is a bit of hack but creating
-		# an mp3tunes protocol handler is overkill
-		elsif ( $client && $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
-			Slim::Plugin::MP3tunes::Plugin->setLockerInfo( $client, $url, $1 );
-		}
-	}
-	
-	# Bitrate may have been set in Scanner by reading the mp3 stream
-	if ( !$self->bitrate ) {
-		${*$self}{'bitrate'} = Slim::Music::Info::getBitrate( $self->url );
-	}
-	
-	return unless $client;
-	
-	# See if we have an existing track object with duration info for this stream.
-	if ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
-		
-		# Display progress bar
-		$client->streamingProgressBar( {
-			'url'      => $self->url,
-			'duration' => $secs,
-		} );
-	}
-	else {
-	
-		if ( $self->bitrate > 0 && defined $self->contentLength && $self->contentLength > 0 ) {
-			# if we know the bitrate and length of a stream, display a progress bar
-			if ( $self->bitrate < 1000 ) {
-				${*$self}{'bitrate'} *= 1000;
-			}
-			$client->streamingProgressBar( {
-				'url'     => $self->url,
-				'bitrate' => $self->bitrate,
-				'length'  => $self->contentLength,
-			} );
-		}
-	}
-		
-	# Bug 6482, refresh the cached Track object in the client playlist from the database
-	# so it picks up any changed data such as title, bitrate, etc
-	Slim::Player::Playlist::refreshTrack( $client, $self->url );
 }
 
 sub scanUrl {
