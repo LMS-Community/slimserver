@@ -327,6 +327,9 @@ Debugging is normally disabled, but must be enabled if either logging for databa
 sub updateDebug {
 	my $class  = shift;
 	
+	# May not have a DB
+	return if !hasLibrary();
+	
 	my $debug  = (main::INFOLOG && logger('database.sql')->is_info) || main::PERFMON;
 
 	$class->storage->debug($debug);
