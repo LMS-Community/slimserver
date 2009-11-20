@@ -559,7 +559,7 @@ sub processHTTP {
 		# to parse out like this.
 		if ($query) {
 
-			foreach my $param (split /\&/, $query) {
+			foreach my $param (split (/\&/, $query)) {
 
 				if ($param =~ /([^=]+)=(.*)/) {
 
