@@ -123,6 +123,8 @@ sub gdresized {
 	return '/usr/squeezecenter/gdresized.pl';
 }
 
+# See corresponding list in SqueezeOS SbS build file: squeezecenter_svn.bb
+# Only file listed there in INCLUDED_PLUGINS are actually installed 
 sub skipPlugins {
 	my $class = shift;
 	
