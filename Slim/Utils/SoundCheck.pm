@@ -21,11 +21,10 @@ sub commentTagTodB {
 	if (ref($tags) ne 'HASH' || !$tags->{'COMMENT'}) {
 		return;
 	}
-
+	
 	# Normalize all comments to array refs
-	if (!ref($tags->{'COMMENT'})) {
-
-		$tags->{'COMMENT'} = [ $tags->{'COMMENT'} ];
+	if ( !ref $tags->{COMMENT}->[0] ) {
+		$tags->{COMMENT} = [ $tags->{COMMENT} ];
 	}
 
 	# Look for the iTunNORM tag. If this is the only comment we
