@@ -256,7 +256,7 @@ sub canDirectStream {
 		}
 
 		# Allow user pref to select the method for streaming
-		if ( my $method = $prefs->get('server')->client($client)->get('mp3StreamingMethod') ) {
+		if ( my $method = $prefs->client($client)->get('mp3StreamingMethod') ) {
 			if ( $method == 1 ) {
 				main::DEBUGLOG && $directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
 				return 0;
