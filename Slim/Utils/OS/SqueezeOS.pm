@@ -20,6 +20,18 @@ sub initDetails {
 	return $class->{osDetails};
 }
 
+sub ignoredItems {
+	my $class = shift;
+	
+	my %ignoredItems = $class->SUPER::ignoredItems();
+
+	# ignore some Windows special folders which exist on external disks too
+	# can't ignore Recycler though... http://www.lastfm.de/music/Recycler
+	$ignoredItems{'System Volume Information'} = 1;
+	$ignoredItems{'$Recycle.Bin'} = 1;
+
+	return %ignoredItems;
+}
 
 sub initPrefs {
 	my ($class, $defaults) = @_;
