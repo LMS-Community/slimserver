@@ -215,9 +215,19 @@ sub gotViaHTTP {
 
 		eval "use $parser";
 
-		$log->error("$@") if $@;
+		if ($@) {
 
-		$feed = eval { $parser->parse($http, $parserParams) };
+			$log->error("$@");
+
+		} else {
+
+			$feed = eval { $parser->parse($http, $parserParams) };
+
+			if ($@) {
+
+				$log->error("$@");
+			}
+		}
 
 		if ($feed->{'type'} && $feed->{'type'} eq 'redirect') {
 
