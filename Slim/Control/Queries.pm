@@ -4268,7 +4268,6 @@ sub titlesQuery {
 				}
 			
 				if (defined($iconId)) {
-					$iconId += 0;
 					$window->{'icon-id'} = $iconId;
 					# show icon if we're doing press-to-play behavior
 					if ($menuStyle eq 'album' && $useContextMenu) {
