@@ -62,7 +62,7 @@ sub postInitPrefs {
 			poll => 'r',
 			cb => sub { $i->poll },
 		);
-	};
+	} if !main::SCANNER;
 	
 	Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
 }
