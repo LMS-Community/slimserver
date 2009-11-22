@@ -429,7 +429,7 @@ sub infoPlugins {
 sub infoLogs {
 	my $client = shift;
 	
-	my $logs = Slim::Web::Settings::Server::Debugging::getLogs();
+	my $logs = Slim::Utils::Log->getLogFiles();
 	
 	my $item = {
 		name  => cstring($client, 'SETUP_DEBUG_SERVER_LOG'),
