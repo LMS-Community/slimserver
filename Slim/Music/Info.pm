@@ -832,13 +832,15 @@ sub guessTags {
 			my $i = 0;
 
 			foreach my $match (@matches) {
+				# $match is from a raw filename and needs to be utf8-decoded
+				utf8::decode($match);
 
 				main::INFOLOG && $log->info("$tags[$i] => $match");
 
 				$match =~ tr/_/ / if (defined $match);
 
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
-				$taghash->{$tags[$i++]} = Slim::Utils::Unicode::utf8decode_locale($match);
+				$taghash->{$tags[$i++]} = $match;
 			}
 
 			return;
