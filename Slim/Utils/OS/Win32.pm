@@ -227,7 +227,11 @@ sub getFileName {
 	my $path  = shift;
 
 	my $locale = Slim::Utils::Unicode->currentLocale();
-	my $fsObj = Win32::OLE->new('Scripting.FileSystemObject') || die "$@ - cannot load Scripting.FileSystemObject?!?";
+	my $fsObj;
+	
+	if ($locale ne 'cp1252') {
+		$fsObj = Win32::OLE->new('Scripting.FileSystemObject') or Slim::Utils::Log::logger('database.info')->error("$@ - cannot load Scripting.FileSystemObject?!?");
+	}
 	
 	# display full name if we got a Windows 8.3 file name
 	if ($path =~ /~/) {
@@ -241,13 +245,13 @@ sub getFileName {
 
 	}
 
-	elsif ( $locale ne 'cp2152' && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
+	elsif ( $locale ne 'cp1252' && $fsObj && -d $path && (my $folderObj = $fsObj->GetFolder($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert folder name: $path -> " . $folderObj->{Name});
 		$path = $folderObj->{Name};
 	}
 
-	elsif ( $locale ne 'cp2152' && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
+	elsif ( $locale ne 'cp1252' && $fsObj && -f $path && (my $fileObj = $fsObj->GetFile($path)) ) {
 
 		main::INFOLOG && Slim::Utils::Log::logger('database.info')->info("Running Windows with non-Western codepage, trying to convert file name: $path -> " . $fileObj->{Name});
 		$path = $fileObj->{Name};
