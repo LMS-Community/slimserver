@@ -95,6 +95,7 @@ our $BUILDDATE   = undef;
 
 our $prefs;
 our $progress;
+our $pidfile;
 
 my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 eval "use $sqlHelperClass";
@@ -123,6 +124,7 @@ sub main {
 		'musicip'      => \$musicip,
 		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
+		'pidfile=s'    => \$pidfile,
 		# prefsdir parsed by Slim::Utils::Prefs
 		'nodebuglog'   => \$nodebuglog,
 		'noinfolog'    => \$noinfolog,
@@ -139,6 +141,8 @@ sub main {
 		'LogTimestamp!'=> \$LogTimestamp,
 		'help'         => \$help,
 	);
+
+	save_pid_file();
 
 	if (defined $musicmagic && !defined $musicip) {
 		$musicip = $musicmagic;
@@ -502,6 +506,8 @@ sub cleanup {
 	$sqlHelperClass->exitScan();
 	
 	$sqlHelperClass->cleanup;
+
+	remove_pid_file();
 }
 
 sub checkDataSource {
@@ -515,6 +521,19 @@ sub checkDataSource {
 	return if !Slim::Schema::hasLibrary();
 	
 	$sqlHelperClass->checkDataSource();
+}
+
+sub save_pid_file {
+	if (defined $pidfile) {
+		logger('')->info("Scanner saving pid file.");
+		File::Slurp::write_file($pidfile, $$);
+	}
+}
+
+sub remove_pid_file {
+	if (defined $pidfile) {
+		unlink $pidfile;
+	}
 }
 
 sub END {
