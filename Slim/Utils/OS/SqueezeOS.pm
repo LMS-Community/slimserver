@@ -230,7 +230,11 @@ sub _setupMediaDir {
 			};
 		}
 		
-		$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
+		# Set librarycachedir to the media path, unless it is already set
+		# (This is needed for the test suite to use a different library cache dir)
+		if ( !$prefs->get('librarycachedir') ) {
+			$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
+		}
 		
 		return 1;
 	}
