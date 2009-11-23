@@ -40,6 +40,20 @@ sub initPrefs {
 	$defaults->{maxPlaylistLength} = 100;
 }
 
+
+use constant SQUEEZEPLAY_PREFS => '/etc/squeezeplay/userpath/settings/';
+
+my %prefSyncHandlers = (
+	SQUEEZEPLAY_PREFS . 'SetupLanguage.lua' => sub {
+		my $data = shift;
+
+		if ($$data && $$data =~ /locale="([A-Z][A-Z])"/) {
+			Slim::Utils::Prefs::preferences('server')->set('language', uc($1));
+		}
+	},
+
+);
+
 my ($i, $w);
 sub postInitPrefs {
 	my ( $class, $prefs ) = @_;
@@ -48,47 +62,52 @@ sub postInitPrefs {
 	
 	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
 
-	eval {
-		require Linux::Inotify2;
-		import Linux::Inotify2;
+     if (!main::SCANNER) {
 
-		$i = Linux::Inotify2->new() or die "Unable to start Inotify watcher: $!";
-	
-		$i->watch('/etc/squeezeplay/userpath/settings/', IN_MOVED_TO(), \&_syncPrefs)
-			or die "Unable to add Inotify watcher: $!";
-	
-		$w = AnyEvent->io(
-			fh => $i->fileno,
-			poll => 'r',
-			cb => sub { $i->poll },
-		);
-	} if !main::SCANNER;
-	
-	Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
+		# sync up prefs in case they were changed while Squeezebox Server wasn't running
+          foreach (keys %prefSyncHandlers) {
+               _syncPrefs($_);
+		}
+
+		# initialize prefs syncing between Squeezeplay and Squeezebox Server
+		eval {
+			require Linux::Inotify2;
+			import Linux::Inotify2;
+
+			$i = Linux::Inotify2->new() or die "Unable to start Inotify watcher: $!";
+
+			$i->watch(SQUEEZEPLAY_PREFS, IN_MOVE() | IN_MODIFY(), sub {
+				my $ev = shift;
+				my $file = $ev->fullname || '';
+				
+				# $ev->fullname sometimes adds duplicate slashes
+				$file =~ s|//|/|g;
+
+				_syncPrefs($file);
+				
+			}) or die "Unable to add Inotify watcher: $!";
+
+			$w = AnyEvent->io(
+				fh => $i->fileno,
+				poll => 'r',
+				cb => sub { $i->poll },
+			);
+		};
+
+		Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
+	}
 }
 
-
-my $prefSyncHandlers = {
-	'SetupLanguage.lua' => sub {
-		my $data = shift;
-        
-		if ($$data && $$data =~ /locale="([A-Z][A-Z])"/) {
-			Slim::Utils::Prefs::preferences('server')->set('language', uc($1));
-		}
-	},
-                                                        
-};
-
 sub _syncPrefs {
-	my $ev = shift;
+	my $file = shift;
 
-	if (defined $ev->fullname && defined $ev->name && $prefSyncHandlers->{$ev->name} && -r $ev->fullname ) {
+	if ($file && $prefSyncHandlers{$file} && -r $file ) {
 
 		require File::Slurp;
 
-		my $data = File::Slurp::read_file($ev->fullname);
+		my $data = File::Slurp::read_file($file);
 
-		&{ $prefSyncHandlers->{$ev->name} }(\$data);
+		&{ $prefSyncHandlers{$file} }(\$data);
 	}
 }
 
@@ -230,11 +249,7 @@ sub _setupMediaDir {
 			};
 		}
 		
-		# Set librarycachedir to the media path, unless it is already set
-		# (This is needed for the test suite to use a different library cache dir)
-		if ( !$prefs->get('librarycachedir') ) {
-			$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
-		}
+		$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
 		
 		return 1;
 	}
