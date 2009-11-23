@@ -289,7 +289,7 @@ sub _initBar {
 
 	$self->{'prev_time'}  = $self->{'start_time'};
 
-	return unless $self->{'term'};
+	return unless $self->{'term'} && $::progress;
 
 	my $term_size = undef;
 
@@ -366,6 +366,18 @@ sub _updateBar {
 		$time_since = 1;
 	}
 
+	my $overall_rate = $num_done/($time_now-$self->{'start_time'});
+
+	# using the overall_rate here seems to provide much smoother eta numbers
+	my $eta = ($self->{'total'} - $num_done)/$overall_rate;
+
+	$self->{'eta'}           = int($eta);
+	$self->{'prev_time'}     = $time_now;
+	$self->{'prev_num_done'} = $num_done;
+	$self->{'num_done'}      = $num_done;
+
+	return unless $::progress;
+
 	if ($self->{'term'}) {
 
 		my $percentage = $num_done != 0 ? int(($num_done / $self->{'total'}) * 100) : 0;
@@ -378,7 +390,6 @@ sub _updateBar {
 		}
 
 		my $rate         = $msgs_since/$time_since;
-		my $overall_rate = $num_done/($time_now-$self->{'start_time'});
 
 		# semi-complicated calculation here so that we get the avg msg per sec over time
 		if (defined $self->{'avg_msgs_per_sec'}) {
@@ -390,35 +401,23 @@ sub _updateBar {
 			$self->{'avg_msgs_per_sec'} = $msgs_since / $time_since;
 		}
 
-		# using the overall_rate here seems to provide much smoother eta numbers
-		my $eta = ($self->{'total'} - $num_done)/$overall_rate;
-
-		$self->{eta} = int($eta);
-
-		if ( $::progress ) {
-			my $hour = int($eta/3600);
-			my $min  = int($eta/60) % 60;
-			my $sec  = int($eta % 60);
-			
-			print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
-					$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
-		}
+		my $hour = int($eta/3600);
+		my $min  = int($eta/60) % 60;
+		my $sec  = int($eta % 60);
+		
+		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
+				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
 
 	} else {
-
-		if ( $::progress ) {
-			# we have no term, so fake it
-			print $fh '.' x $msgs_since;
-		}
+		# we have no term, so fake it
+		print $fh '.' x $msgs_since;
 	}
-
-	$self->{'prev_time'}     = $time_now;
-	$self->{'prev_num_done'} = $num_done;
-	$self->{'num_done'}      = $num_done;
 }
 
 sub _finalBar {
 	my ($self, $num_done) = @_;
+	
+	return unless $::progress;
 
 	# passing in $num_done is optional, and will most likely rarely be used,
 	# we should generally favor the data that has been passed in to update()
