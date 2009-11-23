@@ -227,7 +227,7 @@ sub getFileName {
 	my $path  = shift;
 
 	my $locale = Slim::Utils::Unicode->currentLocale();
-	my $fsObj = Win32::OLE->new('Scripting.FileSystemObject') || die "$@ wtf?!?";
+	my $fsObj = Win32::OLE->new('Scripting.FileSystemObject') || die "$@ - cannot load Scripting.FileSystemObject?!?";
 	
 	# display full name if we got a Windows 8.3 file name
 	if ($path =~ /~/) {
