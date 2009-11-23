@@ -56,8 +56,8 @@ my %prefSyncHandlers = (
 		my $data = shift;
 
 		if ($$data) {
-		     my $prefs = Slim::Utils::Prefs::preferences('server');
-		     
+			my $prefs = Slim::Utils::Prefs::preferences('server');
+		
 			if ($$data =~ /dateformat="(.*?)"/) {
 				$prefs->set('longdateFormat', $1);
 			}
@@ -73,7 +73,19 @@ my %prefSyncHandlers = (
 			foreach ( Slim::Player::Client::clients() ) {
 				$prefs->client($_)->set('dateFormat', '');
 				$prefs->client($_)->set('timeFormat', '');
-   			}
+			}
+		}
+	},
+	
+	SQUEEZEPLAY_PREFS . 'Playback.lua' => sub {
+		my $data = shift;
+		
+		if ($$data && $$data =~ /playerInit={([^}]+)}/i) {
+			my $playerInit = $1;
+			
+			if ($playerInit =~ /name="(.*?)"/i) {
+				Slim::Utils::Prefs::preferences('server')->set('libraryname', $1);
+			}
 		}
 	},
 );
@@ -86,11 +98,11 @@ sub postInitPrefs {
 	
 	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
 
-     if (!main::SCANNER) {
+	if (!main::SCANNER) {
 
 		# sync up prefs in case they were changed while Squeezebox Server wasn't running
-          foreach (keys %prefSyncHandlers) {
-               _syncPrefs($_);
+		foreach (keys %prefSyncHandlers) {
+			_syncPrefs($_);
 		}
 
 		# initialize prefs syncing between Squeezeplay and Squeezebox Server
