@@ -28,6 +28,7 @@ sub ignoredItems {
 	# ignore some Windows special folders which exist on external disks too
 	# can't ignore Recycler though... http://www.lastfm.de/music/Recycler
 	$ignoredItems{'System Volume Information'} = 1;
+	$ignoredItems{'RECYCLER'} = 1;
 	$ignoredItems{'$Recycle.Bin'} = 1;
 
 	return %ignoredItems;
