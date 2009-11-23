@@ -134,8 +134,19 @@ sub utf8decode_guess {
 	my @preferedEncodings = @_;
 
 	# Bail early if it's just ascii
-	if (looks_like_ascii($string) || Encode::is_utf8($string)) {
+	if (looks_like_ascii($string) || utf8::is_utf8($string)) {
 		return $string;
+	}
+	
+	if ( @preferedEncodings ) {
+		for my $encoding (@preferedEncodings) {
+
+			$string = eval { Encode::decode($encoding, $string, $FB_QUIET) };
+
+			if ( !$@ && utf8::is_utf8($string) ) {
+				return $string;
+			}
+		}
 	}
 
 	my $charset = encodingFromString($string);
@@ -146,17 +157,6 @@ sub utf8decode_guess {
 		if (($encoding = Encode::find_encoding($charset)) && ref $encoding) {
 
 			return $encoding->decode($string, $FB_QUIET);
-		}
-
-	}
-
-	for my $encoding (@preferedEncodings) {
-
-		$string = eval { Encode::decode($encoding, $string, $FB_QUIET) };
-
-		if (Encode::is_utf8($string)) {
-
-			last;
 		}
 	}
 
@@ -176,7 +176,7 @@ Return the newly decoded string.
 sub utf8decode_locale {
 	my $string = shift;
 
-	if ($string && !Encode::is_utf8($string)) {
+	if ($string && !utf8::is_utf8($string)) {
 
 		my $decoded = eval { Encode::decode($lc_ctype, $string, $FB_CROAK) };
 		$string = $@ ? $string : $decoded;
