@@ -152,7 +152,8 @@ sub getTag {
 	$tags->{AUDIO} = 0;
 
 	# set a resonable "title" for the bare file
-	$tags->{TITLE} = $tags->{ALBUM};
+	# First choice: TITLE value from the cue sheet (stored in $tracks->{ALBUM}), or ALBUM tag
+	$tags->{TITLE} = $tracks->{1}->{ALBUM} || $tags->{ALBUM};
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($file) . "#$anchor";
 	my $fileage = (stat($file))[9];
