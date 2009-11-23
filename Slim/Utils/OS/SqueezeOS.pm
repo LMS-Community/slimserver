@@ -88,7 +88,7 @@ my %prefSyncHandlers = (
 			}
 		}
 	},
-);
+) unless main::SCANNER;
 
 my ($i, $w);
 sub postInitPrefs {
