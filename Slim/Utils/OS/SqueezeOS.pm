@@ -56,37 +56,23 @@ my %prefSyncHandlers = (
 		my $data = shift;
 
 		if ($$data) {
-		     my ($longdateFormat, $shortdateFormat, $timeFormat);
-		     
 		     my $prefs = Slim::Utils::Prefs::preferences('server');
 		     
 			if ($$data =~ /dateformat="(.*?)"/) {
-				$longdateFormat = $1;
-				$prefs->set('longdateFormat', $longdateFormat);
+				$prefs->set('longdateFormat', $1);
 			}
 
 			if ($$data =~ /shortdateformat="(.*?)"/) {
-				$shortdateFormat = $1;
-				$prefs->set('shortdateFormat', $shortdateFormat);
+				$prefs->set('shortdateFormat', $1);
 			}
 
 			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Squeezebox Server
-			$$data =~ /hours="(12|24)"/;
-			
-			if ($1 eq '24') {
-				$timeFormat = '%H:%M';
-			}
-			else {
-				$timeFormat = '|%I:%M %p';
-			}
-			$prefs->set('timeFormat', $timeFormat);
+			$prefs->set('timeFormat', $$data =~ /hours="24"/ ? '%H:%M' : '|%I:%M %p');
 
-			# update the DateTime screensaver's settings for all connected players...
 			$prefs = Slim::Utils::Prefs::preferences('plugin.datetime');
-
 			foreach ( Slim::Player::Client::clients() ) {
-				$prefs->client($_)->set('dateFormat', $longdateFormat || $shortdateFormat) if ($longdateFormat || $shortdateFormat);
-				$prefs->client($_)->set('timeFormat', $timeFormat) if $timeFormat;
+				$prefs->client($_)->set('dateFormat', '');
+				$prefs->client($_)->set('timeFormat', '');
    			}
 		}
 	},
