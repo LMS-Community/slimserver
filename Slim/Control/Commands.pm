@@ -1341,6 +1341,7 @@ sub playlistXitemCommand {
 	# same as the single thing we are already playing
 	if ( $cmd =~ /^(play|load)$/
 		&& Slim::Player::Playlist::count($client) == 1
+		&& $client->playingSong()	
 		&& $path eq $client->playingSong()->track()->url() )
 	{
 		if ( Slim::Player::Source::playmode($client) eq 'pause' ) {
