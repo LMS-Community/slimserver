@@ -73,7 +73,7 @@ sub handler {
 	$paramRef->{'logLevels'}  = \@validLogLevels;
 	$paramRef->{'persist'}    = Slim::Utils::Log->persist;
 
-	$paramRef->{'logs'} = Slim::Utils::Log->getLogs();
+	$paramRef->{'logs'} = Slim::Utils::Log->getLogFiles();
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }
