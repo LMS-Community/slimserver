@@ -10,7 +10,7 @@ use vars qw{$err $errstr $drh $sqlite_version};
 use vars qw{%COLLATION};
 
 BEGIN {
-    $VERSION = '1.26_07';
+    $VERSION = '1.27';
     @ISA     = 'DynaLoader';
 
     # Initialize errors
