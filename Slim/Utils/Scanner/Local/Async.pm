@@ -71,7 +71,7 @@ sub find {
 		}
 		
 		# Skip client playlists
-		return if $args->{types} && $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
+		return if $args->{types} && $args->{types} =~ /list/ && $file =~ /clientplaylist.*\.m3u$/;
 		
 		if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
 			my $orig = $file;

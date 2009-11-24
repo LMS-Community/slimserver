@@ -109,9 +109,13 @@ sub init {
 	# On startup, perform a rescan in case any files have changed while server was off
 	# Only do this if we have files in the database
 	my $rescanning = 0;
-	if ( my $count = Slim::Schema->rs('Track')->search()->count ) {
+	if ( my ($count) = Slim::Schema->dbh->selectrow_array("SELECT COUNT(*) FROM tracks") ) {
 		if ( !Slim::Music::Import->stillScanning ) {
-			Slim::Utils::Scanner::Local->rescan( $audiodir );
+			# Start async rescan
+			Slim::Utils::Scanner::Local->rescan(
+				$audiodir,
+				{ types => qr/(?:list|audio)/ },
+			);
 			$rescanning = 1;
 		}
 	}
@@ -164,8 +168,9 @@ sub handleQueue {
 		}
 	}
 	
-	$log->error( "Auto-rescanning: ");
-	main::DEBUGLOG && $log->is_debug && $log->debug( Data::Dump::dump(\%queue) );
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug( "Auto-rescanning: " . Data::Dump::dump(\%queue) );
+	}
 	
 	# Wait if scanner is currently running
 	if ( Slim::Music::Import->stillScanning ) {
@@ -177,7 +182,10 @@ sub handleQueue {
 	$osclass->shutdown();
 	
 	# Rescan tree
-	Slim::Utils::Scanner::Local->rescan( [ sort keys %queue ] );
+	Slim::Utils::Scanner::Local->rescan(
+		[ sort keys %queue ],
+		{ types => qr/(?:list|audio)/ },
+	);
 	
 	%queue = ();
 	

@@ -132,7 +132,7 @@ sub find {
 				else {
 					# Make sure we want this file
 					if ( !$args->{dirs} ) {
-						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 1 ) ) {					
+						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 1 ) ) {			
 							if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
 								my $orig = $file;
 								
@@ -185,7 +185,7 @@ sub find {
 							}
 							
 							# Skip client playlists
-							return if $args->{types} && $args->{types} eq 'list' && $file =~ /clientplaylist.*\.m3u$/;
+							return if $args->{types} && $args->{types} =~ /list/ && $file =~ /clientplaylist.*\.m3u$/;
 							
 							$count++;
 							
