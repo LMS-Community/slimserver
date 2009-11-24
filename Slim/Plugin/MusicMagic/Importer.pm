@@ -412,7 +412,7 @@ sub processSong {
 	# This breaks Linux however, so only do it on Windows & OS X
 	my @keys  = qw(album artist genre name);
 
-	if (main::ISWINDOWS) {
+	if (main::ISWINDOWS || main::ISMAC) {
 
 		push @keys, 'file';
 	}
