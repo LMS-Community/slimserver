@@ -16,6 +16,26 @@ sub initDetails {
 	# package specific addition to @INC to cater for plugin locations
 	$class->{osDetails}->{isSqueezeOS} = 1 ;
 	$::noweb = 1;
+	
+	if ( !main::SCANNER && -r '/proc/cpuinfo' ) {
+		# Read MAC/UUID from cpuinfo
+		open my $fh, '<', '/proc/cpuinfo' or die "Unable to read /proc/cpuinfo: $!";
+		while ( <$fh> ) {
+			if ( /^Serial\s+:\s+([0-9a-f]+)/ ) {
+				my $serial = $1;
+				my $mac = '000420' . substr( $serial, -6, 6 );
+				$mac =~ s/(.{2})/$1:/g;
+				$mac =~ s/:$//;
+				$class->{osDetails}->{mac} = $mac;
+			}
+			elsif ( /^UUID\s+:\s+([0-9a-f-]+)/ ) {
+				my $uuid = $1;
+				$uuid =~ s/-//g;
+				$class->{osDetails}->{uuid} = $uuid;
+			}
+		}
+		close $fh;
+	}
 
 	return $class->{osDetails};
 }
