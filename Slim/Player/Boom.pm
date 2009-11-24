@@ -210,6 +210,10 @@ sub model {
 	return 'boom';
 }
 
+sub modelName {
+	return 'Squeezebox Boom';
+}
+
 sub hasFrontPanel {
 	return 1;
 }

@@ -44,6 +44,10 @@ sub model {
 	return 'receiver';
 }
 
+sub modelName {
+	return 'Squeezebox Receiver';
+}
+
 sub hasIR() { return 0; }
 
 sub reconnect {

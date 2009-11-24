@@ -105,6 +105,16 @@ sub model {
 	return 'squeezebox2';
 }
 
+sub modelName {
+	my $client = shift;
+	
+	if ($client->model(1) eq 'squeezebox3') {
+		return 'Squeezebox Classic';
+	}
+
+	return 'Squeezebox2';
+}
+
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
 	my $client = shift;
