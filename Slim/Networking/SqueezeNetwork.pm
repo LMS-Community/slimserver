@@ -103,7 +103,11 @@ sub init {
 		undef,
 		time(),
 		sub {
-			if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
+			if (
+				( $prefs->get('sn_email') && $prefs->get('sn_password_sha') )
+				||
+				Slim::Utils::OSDetect::isSqueezeOS()
+			) {
 				# Login to SN
 				$class->login(
 					cb  => \&_init_done,
@@ -268,25 +272,50 @@ sub login {
 	
 	my $client = $params{client};
 	
-	my $username = $params{username};
-	my $password = $params{password};
+	my $time = time();
+	my $login_params;
 	
-	if ( !$username || !$password ) {
-		$username = $prefs->get('sn_email');
-		$password = $prefs->get('sn_password_sha');
+	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+		# login using MAC/UUID on TinySBS
+		my $osDetails = Slim::Utils::OSDetect::details();
+		
+		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as " . $osDetails->{mac});
+		
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			m => $osDetails->{mac},
+			t => $time,
+			a => sha1_base64( $osDetails->{uuid} . $time ),
+		};
 	}
+	else {		
+		my $username = $params{username};
+		my $password = $params{password};
 	
-	# Return if we don't have any SN login information
-	if ( !$username || !$password ) {
-		my $error = $client 
-			? $client->string('SQUEEZENETWORK_NO_LOGIN')
-			: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
+		if ( !$username || !$password ) {
+			$username = $prefs->get('sn_email');
+			$password = $prefs->get('sn_password_sha');
+		}
+	
+		# Return if we don't have any SN login information
+		if ( !$username || !$password ) {
+			my $error = $client 
+				? $client->string('SQUEEZENETWORK_NO_LOGIN')
+				: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
 			
-		main::INFOLOG && $log->info( $error );
-		return $params{ecb}->( undef, $error );
-	}
+			main::INFOLOG && $log->info( $error );
+			return $params{ecb}->( undef, $error );
+		}
 	
-	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as $username");
+		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as $username");
+		
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			u => $username,
+			t => $time,
+			a => sha1_base64( $password . $time ),
+		};
+	}
 	
 	my $self = $class->new(
 		\&_login_done,
@@ -296,17 +325,10 @@ sub login {
 			Timeout => 30,
 		},
 	);
-		
-	my $time = time();
 	
 	my $url = $self->_construct_url(
 		'login',
-		{
-			v => 'sc' . $::VERSION,
-			u => $username,
-			t => $time,
-			a => sha1_base64( $password . $time ),
-		},
+		$login_params,
 	);
 	
 	$self->get( $url );
