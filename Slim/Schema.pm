@@ -1935,7 +1935,6 @@ sub mergeVariousArtistsAlbums {
 		GROUP BY albums.id
 	};
 	
-	my $progress;
 	my ($count) = $self->dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, $role );
@@ -1943,15 +1942,6 @@ sub mergeVariousArtistsAlbums {
 	main::INFOLOG && $isInfo && $importlog->info("Checking compilation status for $count albums");
 	
 	if ($count) {
-		if ( main::SCANNER && $main::progress ) {
-			$progress = Slim::Utils::Progress->new( {
-				type  => 'importer',
-				name  => 'mergeva',
-				total => $count,
-				bar   => 1,
-			} );
-		}
-		
 		my $sth = $self->dbh->prepare( $sql );
 		$sth->execute( $role );
 
@@ -1983,13 +1973,9 @@ sub mergeVariousArtistsAlbums {
 				
 				main::INFOLOG && $isInfo && $importlog->info("Not a Comp: $title");
 			}
-			
-			$progress && $progress->update($title);
 		}
 		
 		$sth->finish;
-		
-		$progress && $progress->final($count);
 	}
 	
 	# Run another query to automatically set all albums with an ARTIST contributor
