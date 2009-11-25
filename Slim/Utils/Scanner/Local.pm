@@ -49,8 +49,7 @@ sub find {
 	my $file = Slim::Utils::Misc::fileURLFromPath($path);	
 	$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
 	
-	# Not an lstat because we want symlinks to individual files to be handled as files
-	stat $path;
+	lstat $path;
 	
 	if ( -f _ ) {
 		# A single file was passed in, handle it directly here
