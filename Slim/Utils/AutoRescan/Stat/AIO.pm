@@ -12,6 +12,7 @@ use strict;
 
 use File::Basename qw(dirname);
 use IO::AIO;
+use POSIX qw(ENOENT);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -70,9 +71,17 @@ sub check {
 			my ($mtime, $size) = ($timestamp, $filesize);
 			
 			$grp->add( aio_lstat( $bfile, sub {
-				$_[0] && die "stat of $file failed: $!";
+				if ( $_[0] ) {
+					# stat failed
+					if ( $! == ENOENT ) {
+						# File was deleted
+						$cb->( dirname($file) );
+						return;
+					}
+					die "stat of $file failed: $!\n";
+				}
 				
-				# XXX: Doesn't handle deleted files well, or find new files
+				# XXX: Doesn't find new files
 				
 				if ( $mtime != (stat _)[9] || $size != (stat _)[7] ) {
 					# Callback to AutoRescan for directory containing this file
