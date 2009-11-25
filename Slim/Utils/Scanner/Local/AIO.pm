@@ -67,7 +67,7 @@ sub find {
 		my $childgrp = $grp->add( aio_group( sub {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", AnyEvent->time - $start;
-				$log->debug( "AIO scanner found $count files in $diff sec" );
+				$log->debug( "AIO scanner found $count files/dirs in $diff sec" );
 			}
 			
 			if ( $args->{dirs} ) {
@@ -112,9 +112,16 @@ sub find {
 				if ( -d _ ) {
 					if ( Slim::Utils::Misc::folderFilter( $file, 1, $types ) ) {
 						$todo++;
+						$count++;
+						
+						# Save the dir entry in the database
+						$sth->execute(
+							Slim::Utils::Misc::fileURLFromPath($file),
+							(stat _)[9], # mtime
+							0,           # size, 0 for dirs
+						);
 						
 						if ( $args->{dirs} ) {
-							$count++;
 							push @dirs, $file;
 						}
 						

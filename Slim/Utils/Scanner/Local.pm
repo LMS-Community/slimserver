@@ -100,6 +100,7 @@ sub rescan {
 			FROM            tracks
 			WHERE           url NOT IN (
 				SELECT url FROM scanned_files
+				WHERE filesize != 0
 			)
 			AND             url LIKE '$basedir%'
 			AND             virtual IS NULL
@@ -113,6 +114,7 @@ sub rescan {
 				SELECT url FROM tracks
 			)
 			AND             url LIKE '$basedir%'
+			AND             filesize != 0
 		};
 		
 		# 3. Files that have changed mtime or size.

@@ -51,9 +51,16 @@ sub find {
 	
 	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 	
-	my $iter = File::Next::files( {
-		file_filter     => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types) },
-		descend_filter  => sub { Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types) },
+	# Find all files and directories.
+	# We save directories for use in various auto-rescan modules
+	my $iter = File::Next::everything( {
+		file_filter    => sub { 
+			-f _ && $_ ? Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types)
+			           : Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types)
+		},
+		descend_filter => sub {
+			Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types)
+		},
 	}, $path );
 	
 	my $walk = sub {
@@ -63,7 +70,7 @@ sub find {
 			# We've reached the end
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", Time::HiRes::time - $start;
-				$log->debug( "Async scanner found $count files in $diff sec" );
+				$log->debug( "Async scanner found $count files/dirs in $diff sec" );
 			}
 			
 			$cb->($count, $others);
@@ -131,7 +138,7 @@ sub find {
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),
 			(stat _)[9], # mtime
-			(stat _)[7], # size
+			-d _ ? 0 : (stat _)[7], # size, 0 for directories
 		);
 		
 		return 1;
