@@ -547,13 +547,6 @@ sub init {
 	main::INFOLOG && $log->info("Remote Metadata init...");
 	Slim::Formats::RemoteMetadata->init();
 	
-	if ( $prefs->get('autorescan') ) {
-		require Slim::Utils::AutoRescan;
-		
-		main::INFOLOG && $log->info('Auto-rescan init...');
-		Slim::Utils::AutoRescan->init();
-	}
-
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
 
@@ -562,6 +555,13 @@ sub init {
 
 	main::INFOLOG && $log->info("Squeezebox Server checkDataSource...");
 	checkDataSource();
+	
+	if ( $prefs->get('autorescan') ) {
+		require Slim::Utils::AutoRescan;
+		
+		main::INFOLOG && $log->info('Auto-rescan init...');
+		Slim::Utils::AutoRescan->init();
+	}
 
 	# regular server has a couple more initial operations.
 	main::INFOLOG && $log->info("Squeezebox Server persist playlists...");
@@ -1015,6 +1015,9 @@ sub checkDataSource {
 	return if !Slim::Schema::hasLibrary();
 	
 	$sqlHelperClass->checkDataSource();
+	
+	# Don't start scanning if auto-rescan is enabled
+	#return if $prefs->get('autorescan');
 
 	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
