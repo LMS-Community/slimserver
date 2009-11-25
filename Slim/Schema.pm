@@ -1600,6 +1600,11 @@ sub _newTrack {
 	
 	### Create Comment rows
 	$self->_createComments($deferredAttributes->{'COMMENT'}, $trackId);
+	
+	### Merge VA if this track is being added in the main server
+	if ( !main::SCANNER && $albumId && !$isCompilation ) {	
+		Slim::Schema->mergeSingleVAAlbum( $albumId );
+	}
 
 	$self->forceCommit if $args->{'commit'};
 

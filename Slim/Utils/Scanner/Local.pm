@@ -363,10 +363,8 @@ sub deleted {
 					Slim::Schema::Contributor->rescan( $contrib->id );
 				}
 
-				# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
-				if ( $album ) {
-					Slim::Schema::Album->rescan( $album->id );
 				
+				if ( $album ) {
 					# Reset compilation status as it may have changed from VA -> non-VA
 					# due to this track being deleted.  Also checks in_storage in case
 					# the album was deleted by the $album->rescan.
@@ -383,6 +381,9 @@ sub deleted {
 							# Album will be checked for VA status in mergeVA phase
 						}
 					}
+					
+					# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
+					Slim::Schema::Album->rescan( $album->id );
 				}
 			
 				# Tell Year to rescan
@@ -537,17 +538,6 @@ sub new {
 				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
 				return;
 			}
-			
-=pod
-			# XXX
-			# Reset negative compilation status on this album so mergeVA will re-check it
-			# as it may have just become a VA album from this new track.  When run in
-			# the scanner, mergeVA will handle this later.
-			if ( !main::SCANNER && $album && !$album->compilation ) {				
-				# Auto-rescan mode, immediately merge VA
-				Slim::Schema->mergeSingleVAAlbum( $album->id );
-			}
-=cut
 		};
 	}
 	elsif ( 
