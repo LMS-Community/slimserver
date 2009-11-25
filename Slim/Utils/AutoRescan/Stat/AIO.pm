@@ -74,8 +74,10 @@ sub check {
 				if ( $_[0] ) {
 					# stat failed
 					if ( $! == ENOENT ) {
-						# File was deleted
-						$cb->( dirname($file) );
+						# File/dir was deleted
+						main::DEBUGLOG && $log->is_debug && $log->debug("Stat failed (item was deleted): $file");
+						
+						$cb->($file);
 						return;
 					}
 					die "stat of $file failed: $!\n";
@@ -83,7 +85,7 @@ sub check {
 				
 				# If mtime has changed, or if filesize has changed (unless it's a dir where size=0)
 				if ( $mtime != (stat _)[9] || ( $size && $size != (stat _)[7] ) ) {
-					main::INFOLOG && $log->is_info && $log->info(
+					main::DEBUGLOG && $log->is_debug && $log->debug(
 						  "Stat change: $file (cur mtime " . (stat _)[9] . ", db $mtime, "
 						. "cur size: " . (stat _)[7] . ", db $size)"
 					);
