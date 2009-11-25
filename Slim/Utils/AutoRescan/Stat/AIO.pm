@@ -58,7 +58,7 @@ sub check {
 	$grp->limit(MAX_REQS);
 	
 	$grp->feed( sub {
-		if ( $sth->fetch ) {
+		if ( $sth && $sth->fetch ) {
 			my $file = Slim::Utils::Misc::pathFromFileURL($url);
 			my $bfile = $file;
 			

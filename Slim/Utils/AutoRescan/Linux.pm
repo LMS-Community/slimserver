@@ -19,6 +19,9 @@ my $log = logger('scan.auto');
 my $i;
 my $w;
 
+# sth is global to support cancel
+my $sth;
+
 sub canWatch {
 	my ( $class, $dir ) = @_;
 	
@@ -91,6 +94,8 @@ sub event {
 	
 	if ( $e->IN_CREATE && $e->IN_ISDIR ) {
 		# New directory was created, watch it
+		# This is done so that copying in a new directory structure won't trigger rescan
+		# too soon because we only got one event for the directory
 		main::DEBUGLOG && $log->is_debug && $log->debug('New directory ' . $e->fullname . ' created, watching it');
 		
 		_watch_directory( $e->fullname, $cb );
@@ -109,36 +114,59 @@ sub shutdown {
 		$w = undef;
 		$i = undef;
 	}
+	
+	if ( $sth ) {
+		# Cancel setting of watches
+		$sth->finish;
+		undef $sth;
+	}
 }
 
 sub _watch_directory {
 	my ( $dir, $cb ) = @_;
 	
-	# XXX store directories in scanned_files table?
-	Slim::Utils::Scanner::Local->find( $dir, { dirs => 1 }, sub {
-		my $dirs = shift;
-		
-		# Also watch the parent directory
-		unshift @{$dirs}, $dir;
-		
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug( "Monitoring " . scalar( @{$dirs} ) . " dirs for changes using Inotify:" );
-			$log->debug( Data::Dump::dump($dirs) );
-		}
-		
-		my $handler = sub {
-			event( shift, $cb );
-		};
-		
-		# XXX run via scheduler as this list may be very long
-		for my $dir ( @{$dirs} ) {
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	# Watch all directories that were found by the scanner
+	my $dbh = Slim::Schema->dbh;
+	
+	$sth = $dbh->prepare_cached("SELECT url FROM scanned_files WHERE filesize = 0");
+	$sth->execute;
+	
+	my $url;
+	$sth->bind_columns(\$url);
+	
+	if ( main::DEBUGLOG && $isDebug ) {
+		my ($count) = $dbh->selectrow_array("SELECT COUNT(*) FROM scanned_files WHERE filesize = 0");
+		$log->debug( "Setting up inotify for $count dirs" );
+	}
+	
+	my $handler = sub {
+		event( shift, $cb );
+	};
+	
+	my $watch_dirs = sub {
+		if ( $sth && $sth->fetch ) {
+			my $dir = Slim::Utils::Misc::pathFromFileURL($url);
+			
+			main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $dir");
+			
 			$i->watch(
 				$dir,
 				IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
 				$handler,
 			) or logWarning("Inotify watch creation failed for $dir: $!");
+			
+			return 1;
 		}
-	} );
+		
+		$sth && $sth->finish;
+		undef $sth;
+		
+		return 0;
+	};
+	
+	Slim::Utils::Scheduler::add_task( $watch_dirs );
 }
 
 1;
