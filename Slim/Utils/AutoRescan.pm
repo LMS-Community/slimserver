@@ -163,6 +163,7 @@ sub handleQueue {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Removing child path $next");
 				
 				delete $queue{$next};
+				delete $queue{ "$next/" };
 				next OUTER;
 			}
 		}
