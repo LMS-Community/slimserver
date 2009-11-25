@@ -39,14 +39,15 @@ sub watch {
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug( "Monitoring $dir for changes using Win32::ChangeNotify" );
 	
-	# XXX: Have scanner maintain/cache this list of active directories,
-	# updated after each scan
+	# XXX store directories in scanned_files table?
+	# XXX: Use Slim::Utils::Scanner::Local->find
 	$class->recurse( $dir, sub {
 		my $subdir = shift;
 		
 		$dirs{$subdir} = undef;
 	} );
 	
+	# XXX: process via Scheduler
 	for my $dir ( keys %dirs ) {
 		$dirs{$dir} = Win32::ChangeNotify->new(
 			$dir,

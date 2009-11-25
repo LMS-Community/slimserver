@@ -26,25 +26,20 @@ sub canWatch {
 	# changes made from the local machine but not from other machines
 	# on the network.  Fall back to stat-based monitoring in this case.
 	
-	eval {
-		# not as good as comparing 'df -L' with 'df -Pl' but more portable
+	# not as good as comparing 'df -L' with 'df -Pl' but more portable	
+	my $mounts  = `mount`;
 		
-		my $mounts  = `mount`;
-		
-		# /dev/mmcblk0p1 on /media/mmcblk0p1 type vfat (roptions)
-		# 192.168.1.11:/data1 on /mnt2 type nfs (options)
-	
-	 	for my $line ( split /\n/, $mounts ) {
-			my ($source, undef, $mountpoint, undef, $fstype, undef) = split /\s+/, $line;
-			if ($dir =~ /^$mountpoint/ &&  $fstype =~/^(nfs|smb)/) {
-				# It's a remote share
-				main::DEBUGLOG && $log->is_debug && $log->debug("Remote mountpoint $mountpoint detected, using stat-based monitoring");
-				die;
-			}
-		}
-	};
+	# /dev/mmcblk0p1 on /media/mmcblk0p1 type vfat (roptions)
+	# 192.168.1.11:/data1 on /mnt2 type nfs (options)
 
-	return 0 if $@;
+ 	for my $line ( split /\n/, $mounts ) {
+		my ($source, undef, $mountpoint, undef, $fstype, undef) = split /\s+/, $line;
+		if ( $dir =~ /^$mountpoint/ &&  $fstype =~ /^(nfs|smb)/ ) {
+			# It's a remote share
+			main::DEBUGLOG && $log->is_debug && $log->debug("Remote mountpoint $mountpoint detected, using stat-based monitoring");
+			return 0;
+		}
+	}
 	
 	# Make sure Inotify works
 	eval { Linux::Inotify2->new or die "Unable to start Inotify watcher: $!" };
@@ -119,6 +114,7 @@ sub shutdown {
 sub _watch_directory {
 	my ( $dir, $cb ) = @_;
 	
+	# XXX store directories in scanned_files table?
 	Slim::Utils::Scanner::Local->find( $dir, { dirs => 1 }, sub {
 		my $dirs = shift;
 		
@@ -134,6 +130,7 @@ sub _watch_directory {
 			event( shift, $cb );
 		};
 		
+		# XXX run via scheduler as this list may be very long
 		for my $dir ( @{$dirs} ) {
 			$i->watch(
 				$dir,

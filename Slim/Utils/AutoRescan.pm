@@ -69,6 +69,8 @@ sub init {
 		}
 	}
 	
+	# XXX maybe add a kqueue watcher for BSD, see File::ChangeNotify::Watcher::KQueue
+	
 	# Verify the dir can be monitored using the OS-specific method
 	if ( $osclass && !$osclass->canWatch( $audiodir ) ) {
 		$osclass = undef;
