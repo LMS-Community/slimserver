@@ -45,7 +45,7 @@ sub check {
 		SELECT COUNT(*) FROM ( $sql )
 	} );
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Stat'ing $count files using AIO");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Stat'ing $count files/directories using AIO");
 	
 	$sth = $dbh->prepare_cached($sql);
 	$sth->execute;
@@ -81,11 +81,15 @@ sub check {
 					die "stat of $file failed: $!\n";
 				}
 				
-				# XXX: Doesn't find new files
-				
-				if ( $mtime != (stat _)[9] || $size != (stat _)[7] ) {
-					# Callback to AutoRescan for directory containing this file
-					$cb->( dirname($file) );
+				# If mtime has changed, or if filesize has changed (unless it's a dir where size=0)
+				if ( $mtime != (stat _)[9] || ( $size && $size != (stat _)[7] ) ) {
+					main::INFOLOG && $log->is_info && $log->info(
+						  "Stat change: $file (cur mtime " . (stat _)[9] . ", db $mtime, "
+						. "cur size: " . (stat _)[7] . ", db $size)"
+					);
+					
+					# Callback to AutoRescan for the directory or file that changed
+					$cb->($file);
 				}
 			} ) );
 		}
