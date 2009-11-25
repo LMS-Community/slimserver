@@ -40,11 +40,6 @@ sub find {
 	
 	my $grp = aio_group($cb);
 	
-	# IO::AIO needs byte-encoded paths
-	if ( utf8::is_utf8($path) ) {
-		utf8::encode($path);
-	}
-	
 	# Scanned files are stored in the database, use raw DBI to improve performance here
 	my $dbh = Slim::Schema->dbh;
 	
@@ -56,6 +51,18 @@ sub find {
 		VALUES
 		(?, ?, ?)
 	} );
+	
+	# Add the root directory to the database
+	$sth->execute(
+		Slim::Utils::Misc::fileURLFromPath($path),
+		(stat $path)[9], # mtime
+		0,               # size, 0 for dirs
+	);
+	
+	# IO::AIO needs byte-encoded paths
+	if ( utf8::is_utf8($path) ) {
+		utf8::encode($path);
+	}
 	
 	$grp->add( aio_readdirx( $path, IO::AIO::READDIR_STAT_ORDER, sub { 
 		my $files = shift;
