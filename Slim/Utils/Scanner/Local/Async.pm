@@ -28,8 +28,6 @@ sub find {
 	
 	main::DEBUGLOG && $log->is_debug && (my $start = Time::HiRes::time);
 	
-	my $basedir = Slim::Utils::Misc::fileURLFromPath($path);
-	
 	my $count = 0;
 	
 	# Other paths we need to scan later
@@ -37,10 +35,6 @@ sub find {
 	
 	# Scanned files are stored in the database, use raw DBI to improve performance here
 	my $dbh = Slim::Schema->dbh;
-	
-	unless ( $args->{no_trunc} ) {
-		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$basedir%'");
-	}
 	
 	my $sth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_files

@@ -28,8 +28,6 @@ sub find {
 	
 	main::DEBUGLOG && $log->is_debug && (my $start = AnyEvent->time);
 	
-	my $basedir = Slim::Utils::Misc::fileURLFromPath($path);
-	
 	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 	
 	my $todo   = 1;
@@ -42,8 +40,6 @@ sub find {
 	
 	# Scanned files are stored in the database, use raw DBI to improve performance here
 	my $dbh = Slim::Schema->dbh;
-	
-	$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$basedir%'");
 	
 	my $sth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_files

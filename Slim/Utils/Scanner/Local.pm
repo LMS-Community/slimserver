@@ -42,19 +42,22 @@ my %pending = ();
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
 	
-	# Return early if we were passed a file
-	lstat $path;
+	# Before looking for files, ensure the path and all children are deleted
+	# from the list of scanned files
+	my $dbh = Slim::Schema->dbh;
+	
+	my $file = Slim::Utils::Misc::fileURLFromPath($path);	
+	$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
+	
+	# Not an lstat because we want symlinks to individual files to be handled as files
+	stat $path;
+	
 	if ( -f _ ) {
+		# A single file was passed in, handle it directly here
 		my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 		
 		if ( Slim::Utils::Misc::fileFilter( dirname($path), basename($path), $types, 1 ) ) {
 			# Add single file to scanned_files
-			my $dbh = Slim::Schema->dbh;
-			
-			my $file = Slim::Utils::Misc::fileURLFromPath($path);
-			
-			$dbh->do( "DELETE FROM scanned_files WHERE url = ?", undef, $file );
-
 			my $sth = $dbh->prepare_cached( qq{
 				INSERT INTO scanned_files
 				(url, timestamp, filesize)
@@ -77,8 +80,14 @@ sub find {
 		
 		return;
 	}
-	
-	$findclass->find( $path, $args, $cb );
+	elsif ( -d _ ) {
+		# Scan the directory for files
+		$findclass->find( $path, $args, $cb );
+	}
+	else {
+		# Item does not exist
+		$cb->(0);
+	}
 }
 
 sub rescan {
