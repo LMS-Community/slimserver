@@ -654,8 +654,7 @@ sub idle {
 		
 		if ( !main::SLIM_SERVICE && !$pendingEvents ) {
 			# run scheduled tasks, only if no other events are pending
-			# XXX: need a way to not call this unless someone is using Scheduler
-			Slim::Utils::Scheduler::run_tasks();
+			$pendingEvents = Slim::Utils::Scheduler::run_tasks();
 		}
 	}
 	

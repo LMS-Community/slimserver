@@ -109,31 +109,31 @@ sub remove_task {
 =cut
 
 sub run_tasks {
-	return 0 unless @background_tasks;
+	my $task_count = scalar @background_tasks;
+	return 0 unless $task_count;
 	
-	# Don't recurse more than 10 times
+	# Don't recurse more than 20 times
 	my $count = shift || 1;
-	return 1 if $count > 10;
+	return $task_count if $count > 20;
 	
 	my $busy  = 0;
 	my $now   = AnyEvent->now;
 	
 	# run tasks at least once half second.
+	# XXX this is called too often
 	if (($now - $lastpass) < 0.5) {
-
-		for my $client (Slim::Player::Client::clients()) {
-
-			if (Slim::Player::Source::playmode($client) eq 'play' && 
+		for my $client ( Slim::Player::Client::clients() ) {
+			if ( Slim::Player::Source::playmode($client) eq 'play' && 
 			    $client->isPlayer() && 
-			    $client->usage() < 0.5) {
-
+			    $client->usage() < 0.5
+			) {
 				$busy = 1;
 				last;
 			}
 		}
 	}
 	
-	if (!$busy) {
+	if ( !$busy ) {
 		my $taskptr = $background_tasks[$curtask];
 		my ($subptr, @subargs) = @$taskptr;
 
@@ -143,36 +143,35 @@ sub run_tasks {
 			logError("Scheduled task failed: $@");
 		}
 
-		if ($@ || !$cont) {
-
+		if ( $@ || !$cont ) {
 			# the task has finished. Remove it from the list.
 			main::INFOLOG && $log->is_info && $log->info("Task finished: $subptr");
 
-			splice(@background_tasks, $curtask, 1);
-
-		} else {
-
+			splice @background_tasks, $curtask, 1;
+			$task_count--;
+		}
+		else {
 			$curtask++;
 		}
 
 		$lastpass = $now;
 
 		# loop around when we get to the end of the list
-		if ($curtask >= scalar @background_tasks) {
+		if ( $curtask >= $task_count ) {
 			$curtask = 0;
 		}
 
 		main::PERFMON && Slim::Utils::PerfMon->check('scheduler', AnyEvent->time - $now, undef, $subptr);
-	}
-	
-	# Run again if we haven't yet reached the blocking limit
-	# Note $now will remain the same across multiple calls
-	if ( @background_tasks && ( AnyEvent->time - $now < BLOCK_LIMIT ) ) {
-		run_tasks( ++$count );
-		main::idleStreams();
+		
+		# Run again if we haven't yet reached the blocking limit
+		# Note $now will remain the same across multiple calls
+		if ( $task_count && ( AnyEvent->time - $now < BLOCK_LIMIT ) ) {
+			run_tasks( ++$count );
+			main::idleStreams();
+		}
 	}
 
-	return 1;
+	return $task_count;
 }
 
 1;
