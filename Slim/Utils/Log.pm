@@ -590,8 +590,8 @@ Returns a list of the the locations of Squeezebox Server's log files.
 sub getLogFiles {
 	return [
 		{SERVER  => serverLogFile},
-		{SCANNER => (Slim::Schema::hasLibrary() ? scannerLogFile : undef)},
-		{PERFMON => (main::PERFMON ? perfmonLogFile : undef )},
+		{SCANNER => (Slim::Schema::hasLibrary() ? scannerLogFile() : undef)},
+		{PERFMON => (main::PERFMON ? perfmonLogFile() : undef )},
 	]
 }
 
