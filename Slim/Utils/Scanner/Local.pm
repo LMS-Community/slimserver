@@ -48,10 +48,31 @@ sub find {
 		my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 		
 		if ( Slim::Utils::Misc::fileFilter( dirname($path), basename($path), $types, 1 ) ) {
-			$cb->( [ [ $path, (stat _)[9], (stat _)[7] ] ] ); # file / mtime / size
+			# Add single file to scanned_files
+			my $dbh = Slim::Schema->dbh;
+			
+			my $file = Slim::Utils::Misc::fileURLFromPath($path);
+			
+			$dbh->do( "DELETE FROM scanned_files WHERE url = ?", undef, $file );
+
+			my $sth = $dbh->prepare_cached( qq{
+				INSERT INTO scanned_files
+				(url, timestamp, filesize)
+				VALUES
+				(?, ?, ?)
+			} );
+			
+			$sth->execute(
+				$file,
+				(stat _)[9], # mtime
+				(stat _)[7], # size
+			);
+			
+			# Callback that we found 1 file
+			$cb->(1);
 		}
 		else {
-			$cb->( [] );
+			$cb->(0);
 		}
 		
 		return;
