@@ -292,7 +292,15 @@ sub _setupMediaDir {
 	
 	# Is audiodir defined, mounted and writable?
 	if ($path && $path =~ m{^/media/[^/]+} && -w $path) {
-		
+
+		my $mounts = `/bin/mount | grep "$path"`;
+		chomp $mounts;
+
+		if ( !$mounts ) {
+			warn "$path: mount point is not mounted, let's ignore it\n";
+			return 0;
+		}
+
 		# XXX Maybe also check for rw mount-point
 		
 		# Create a .Squeezebox directory if necessary
@@ -302,6 +310,7 @@ sub _setupMediaDir {
 				return 0;
 			};
 		}
+		
 		if ( !-e "$path/.Squeezebox/cache" ) {
 			mkdir "$path/.Squeezebox/cache" or do {
 				warn "Unable to create directory $path/.Squeezebox/cache: $!\n";
