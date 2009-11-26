@@ -725,7 +725,9 @@ sub init {
 		$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 	}
 	
-	$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
+		$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+	}
 
 	$prefs->setChange( 
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },

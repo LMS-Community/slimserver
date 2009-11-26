@@ -57,7 +57,6 @@ sub ignoredItems {
 sub initPrefs {
 	my ($class, $defaults) = @_;
 	
-	$defaults->{checkVersion}      = 0;
 	$defaults->{maxPlaylistLength} = 100;
 	
 	# XXX use SN test for now
@@ -372,5 +371,9 @@ sub _checkMediaAtStartup {
 		$prefs->set('audiodir', undef);
 	}
 }
+
+# don't download/cache firmware for other players, but have them download directly
+sub directFirmwareDownload { 1 };
+
 
 1;

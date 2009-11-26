@@ -405,6 +405,20 @@ sub canAutoUpdate { 0 };
 sub installerExtension { '' };
 sub installerOS { '' };
 
+
+=head2 directFirmwareDownload( )
+
+Return true if you don't want Squeezebox Server to download and cache firmware
+upgrades for your players. It will then tell the player to download them directly
+from SqueezeNetwork.
+
+Use this if you are running the server on low spec hardware or flash with limited capacity.
+
+=cut
+
+sub directFirmwareDownload { 0 };
+
+
 =head2 restartServer( )
 
 Squeezebox Server can initiate a restart on some systems. 

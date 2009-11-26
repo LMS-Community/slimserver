@@ -2237,7 +2237,9 @@ sub firmwareUpgradeQuery {
 	if ( my $url = Slim::Utils::Firmware->url($model) ) {
 		# Bug 6828, Send relative firmware URLs for Jive versions which support it
 		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
-		if ( $cur_rev >= 1659 ) {
+		
+		# return full url when running SqueezeOS - we'll serve the direct download link from squeezenetwork
+		if ( $cur_rev >= 1659 && !Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
 			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
 		}
 		else {
