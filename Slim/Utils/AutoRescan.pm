@@ -107,21 +107,23 @@ sub init {
 			$osclass->watch( $prefs->get('audiodir'), \&fsevent );
 		}, [[ 'rescan', 'done' ]] );
 	}
-	
-	# On startup, perform a rescan in case any files have changed while server was off
+
+	# Perform a rescan in case any files have changed while server was off
 	# Only do this if we have files in the database
 	my $rescanning = 0;
 	if ( my ($count) = Slim::Schema->dbh->selectrow_array("SELECT COUNT(*) FROM tracks") ) {
 		if ( !Slim::Music::Import->stillScanning ) {
 			# Start async rescan
-			Slim::Utils::Scanner::Local->rescan(
-				$audiodir,
-				{ types => qr/(?:list|audio)/ },
-			);
+			Slim::Utils::Scanner::Local->rescan( $audiodir, {
+				types    => qr/(?:list|audio)/,
+				scanName => 'directory',
+				progress => 1,
+			} );
+	
 			$rescanning = 1;
 		}
 	}
-	
+
 	if ( !$rescanning ) {
 		# Start change watcher now, if a rescan is run, it will start after it's finished
 		$osclass && $osclass->watch( $audiodir, \&fsevent );
@@ -185,10 +187,11 @@ sub handleQueue {
 	$osclass->shutdown();
 	
 	# Rescan tree
-	Slim::Utils::Scanner::Local->rescan(
-		[ sort keys %queue ],
-		{ types => qr/(?:list|audio)/ },
-	);
+	Slim::Utils::Scanner::Local->rescan( [ sort keys %queue ], {
+		types    => qr/(?:list|audio)/,
+		scanName => 'directory',
+		progress => 1,
+	} );
 	
 	%queue = ();
 	
