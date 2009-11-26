@@ -153,7 +153,7 @@ sub HAS_AIO {
 		
 	eval {
 		require AnyEvent::AIO;
-		IO::AIO::max_poll_time( 0.1 ); # Make AIO play nice if there are a lot of requests
+		IO::AIO::max_poll_time( 10 ); # Make AIO play nice if there are a lot of requests (10ms per poll)
 		$HAS_AIO = 1;
 	};
 	
