@@ -933,10 +933,8 @@ sub getMix {
 		$id = Slim::Utils::Unicode::utf8decode_locale($id);
 	}
 
-	my $mixArgs = "$validMixTypes{$for}=$id";
-
 	# url encode the request, but not the argstring
-	$mixArgs = Slim::Plugin::MusicMagic::Common::escape($mixArgs);
+	my $mixArgs = $validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
 	
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 
