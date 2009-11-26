@@ -21,7 +21,7 @@ use Slim::Utils::Prefs;
 
 my $log = logger('scan.scanner');
 
-use constant MAX_REQS => 4;
+use constant MAX_REQS => 8; # max threads to run
 
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
