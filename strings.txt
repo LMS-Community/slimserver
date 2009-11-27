@@ -8487,6 +8487,9 @@ SETUP_USERNAME
 	SV	Användarnamn
 	ZH_CN	用户名
 
+SETUP_MISSING_USERNAME
+	EN	You can't enable authorization without a password.
+
 SETUP_PASSWORD
 	CS	Heslo
 	DA	Adgangskode
