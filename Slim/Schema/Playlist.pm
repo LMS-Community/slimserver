@@ -9,6 +9,9 @@ use Slim::Schema::ResultSet::Playlist;
 
 use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 {
 	my $class = __PACKAGE__;
@@ -23,8 +26,14 @@ use Slim::Utils::Log;
 
 sub tracks {
 	my $self = shift;
+	
+	my %attributes = (order_by => 'me.position');
+	
+	if (my $maxPlaylistLength = $prefs->get('maxPlaylistLength')) {
+		$attributes{'rows'} = $maxPlaylistLength;
+	}
 
-	return $self->playlist_tracks(undef, { order_by => 'me.position'});
+	return $self->playlist_tracks(undef, \%attributes);
 }
 
 sub setTracks {
