@@ -18,8 +18,10 @@ use Slim::Formats;
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my $log = logger('formats.playlists');
+my $prefs = preferences('server');
 
 sub registerParser {
 	my ($class, $type, $playlistClass) = @_;
@@ -78,12 +80,24 @@ sub parseList {
 		# Dynamically load the module in.
 		Slim::Formats->loadTagFormatForType($type);
 
-		@results = eval { $playlistClass->read($fh, $base, $url) };
+		@results = eval { $playlistClass->read($fh, $base, $url, ) };
 
 		if ($@) {
 
 			logError("While running \$playlistClass->read(): [$@]");
 		}
+		
+		# We could have passed the limit to each of the read functions
+		# to avoid instantiating the unwanted Track objects. Not sure if
+		# that is necessary.
+		my $limit = $prefs->get('maxPlaylistLength');
+		if ($limit && scalar @results >= $limit) {
+			$log->warn("Playlist $url truncated at $limit entries");
+			splice @results, $limit;
+		}
+
+		
+		
 	}
 	else {
 		# Try to guess what kind of playlist it is		
