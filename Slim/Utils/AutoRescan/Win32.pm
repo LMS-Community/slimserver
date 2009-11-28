@@ -22,6 +22,9 @@ my $log = logger('scan.auto');
 # One ChangeNotify object per directory
 my %dirs;
 
+# sth is global to support cancel
+my $sth;
+
 sub canWatch {
 	my ( $class, $dir ) = @_;
 	
@@ -37,43 +40,78 @@ sub watch {
 		$class->shutdown();
 	}
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Monitoring $dir for changes using Win32::ChangeNotify" );
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
-	# XXX store directories in scanned_files table?
-	# XXX: Use Slim::Utils::Scanner::Local->find
-	$class->recurse( $dir, sub {
-		my $subdir = shift;
-		
-		$dirs{$subdir} = undef;
-	} );
+	# Watch all directories that were found by the scanner
+	my $dbh = Slim::Schema->dbh;
 	
-	# XXX: process via Scheduler
-	for my $dir ( keys %dirs ) {
-		$dirs{$dir} = Win32::ChangeNotify->new(
-			$dir,
-			0,
-			  FILE_NOTIFY_CHANGE_DIR_NAME
-			| FILE_NOTIFY_CHANGE_FILE_NAME
-			| FILE_NOTIFY_CHANGE_SIZE
-			| FILE_NOTIFY_CHANGE_LAST_WRITE,
-		);
+	$sth = $dbh->prepare_cached("SELECT url FROM scanned_files WHERE filesize = 0");
+	$sth->execute;
+	
+	my $url;
+	$sth->bind_columns(\$url);
+	
+	if ( main::DEBUGLOG && $isDebug ) {
+		my ($count) = $dbh->selectrow_array("SELECT COUNT(*) FROM scanned_files WHERE filesize = 0");
+		$log->debug( "Setting up ChangeNotify for $count dirs" );
 	}
 	
-	Slim::Utils::Timers::killTimers( $class, \&_poll );
-	Slim::Utils::Timers::setTimer(
-		$class,
-		Time::HiRes::time() + INTERVAL,
-		\&_poll,
-		$cb,
-	);
+	my $watch_dirs = sub {
+		if ( $sth && $sth->fetch ) {
+			my $dir = Slim::Utils::Misc::pathFromFileURL($url);
+			
+			main::DEBUGLOG && $isDebug && $log->debug("ChangeNotify watching: $dir");
+			
+			my $cn = Win32::ChangeNotify->new(
+				$dir,
+				0,
+				  FILE_NOTIFY_CHANGE_DIR_NAME
+				| FILE_NOTIFY_CHANGE_FILE_NAME
+				| FILE_NOTIFY_CHANGE_SIZE
+				| FILE_NOTIFY_CHANGE_LAST_WRITE,
+			);
+			
+			if ( !$cn ) {
+				logWarning("Unable to create ChangeNotify object for $dir");
+			}
+			else {
+				$dirs{$dir} = $cn;
+			}
+			
+			return 1;
+		}
+		
+		$sth && $sth->finish;
+		undef $sth;
+		
+		# Setup poll timer
+		Slim::Utils::Timers::killTimers( $class, \&_poll );
+		Slim::Utils::Timers::setTimer(
+			$class,
+			Time::HiRes::time() + INTERVAL,
+			\&_poll,
+			$cb,
+		);
+		
+		return 0;
+	};
+	
+	Slim::Utils::Scheduler::add_task( $watch_dirs );
 }
 
 sub _poll {
 	my ( $class, $cb ) = @_;
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Polling ChangeNotify...' );
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	my $start;
+	if ( main::DEBUGLOG && $isDebug ) {
+		$start = AnyEvent->time;
+		$log->debug( 'Polling ChangeNotify...' );
+	}
 	
 	while ( my ($dir, $cn) = each %dirs ) {
+		# XXX use wait_any instead?
 		my $result = $cn->wait(0);
 		if ( $result == 1 ) {
 			$cn->reset;
@@ -81,6 +119,8 @@ sub _poll {
 			$cb->( $dir );
 		}
 	}
+	
+	main::DEBUGLOG && $isDebug && $log->debug( 'Polling ChangeNotify finished in ' . (AnyEvent->time - $start) );
 	
 	# Schedule next check
 	Slim::Utils::Timers::setTimer(
@@ -94,11 +134,19 @@ sub _poll {
 sub shutdown {
 	my $class = shift;
 	
+	main::DEBUGLOG && $log->is_debug && $log->debug('ChangeNotify shutting down');
+	
 	for my $cn ( values %dirs ) {
 		$cn->close;
 	}
 	
-	Slim::Utils::Timers::killTimers( $class, \&_poll );		
+	if ( $sth ) {
+		# Cancel setting of watches
+		$sth->finish;
+		undef $sth;
+	}
+	
+	Slim::Utils::Timers::killTimers( $class, \&_poll );
 }
 
 1;

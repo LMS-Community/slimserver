@@ -56,7 +56,7 @@ sub init {
 		}
 		else {
 			# XXX needs improved
-			#$osclass = 'Slim::Utils::AutoRescan::Win32';
+			$osclass = 'Slim::Utils::AutoRescan::Win32';
 		}
 	}
 	elsif ( Slim::Utils::OSDetect::isLinux() ) {
