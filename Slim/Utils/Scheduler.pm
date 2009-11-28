@@ -111,6 +111,8 @@ sub remove_task {
 sub run_tasks {
 	my $task_count = scalar @background_tasks || return 0;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	my $busy = 0;
 	my $now  = AnyEvent->now;
 	
@@ -135,8 +137,13 @@ sub run_tasks {
 
 			my $cont = eval { &$subptr(@subargs) };
 
+            if ( main::DEBUGLOG && $isDebug ) {
+			    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+			    $log->debug("Scheduler ran task: $subname");
+		    }
+
 			if ($@) {
-				logError("Scheduled task failed: $@");
+				logError("Scheduler task failed: $@");
 			}
 
 			if ( $@ || !$cont ) {
@@ -162,6 +169,7 @@ sub run_tasks {
 			# Break out if we've reached the block limit or have no more tasks
 			# Note $now will remain the same across multiple calls
 			if ( !$task_count || ( AnyEvent->time - $now >= BLOCK_LIMIT ) ) {
+			    main::DEBUGLOG && $isDebug && $log->debug("Scheduler block limit reached (" . (AnyEvent->time - $now) . ")");
 				last;
 			}
 			

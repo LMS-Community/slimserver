@@ -441,10 +441,13 @@ sub _readCoverArtFiles {
 
 sub precacheAllArtwork {
 	my $class = shift;
+	my $cb    = shift; # optional callback when done (main process async mode)
 	
 	my $isDebug = $importlog->is_debug;
 	
 	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+	
+	my $isEnabled = $prefs->get('precacheArtwork');
 	
 	my $dbh = Slim::Schema->dbh;
 		
@@ -499,8 +502,6 @@ sub precacheAllArtwork {
 		# 1. user's thumb size or 100x100_o (large web artwork)
 		# 2. 50x50_o (small web artwork)
 		# 3+ SqueezePlay/Jive size artwork
-		
-		my $isEnabled = $prefs->get('precacheArtwork');
 		my @specs;
 		
 		if ($isEnabled) {
@@ -529,45 +530,64 @@ sub precacheAllArtwork {
 		my $sth = $dbh->prepare($sql);
 		$sth->execute;
 		
-		my $i = 0;
-		while ( my $track = $sth->fetchrow_hashref ) {
-			# Make sure album.artwork points to this track, as it may not
-			# be pointing there now because we did not join tracks via the
-			# artwork column.
-			if ( $track->{album_artwork} && $track->{album_artwork} ne $track->{coverid} ) {
-				$sth_update_albums->execute( $track->{coverid}, $track->{albumid} );
-			}
-				
-			# Do the actual pre-caching only if the pref for it is enabled
-			if ( $isEnabled ) {
-						
-				# Image to resize is either a cover path or the audio file
-				my $path = $track->{cover} =~ /^\d+$/
-					? Slim::Utils::Misc::pathFromFileURL( $track->{url} )
-					: $track->{cover};
-				
-				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $track->{album_title} . " from $path" );
-				
-				if ( Slim::Utils::ImageResizer->resize($path, 'music/' . $track->{coverid} . '/cover_', join(',', @specs), undef) ) {				
-					# Update the rest of the tracks on this album
-					# to use the same coverid and cover_cached status
-					$sth_update_tracks->execute( $track->{coverid}, $track->{albumid}, $track->{cover} );
-				}
-			}
-			
-			$progress->update( $track->{album_title} );
-			
-			if (++$i % 50 == 0) {
-				Slim::Schema->forceCommit;
-			}
-		}
+		my ($url, $cover, $coverid, $albumid, $album_title, $album_artwork);
+		$sth->bind_columns(\$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
 		
-		$sth->finish;
-
-		$progress->final($count);
-	}
-
-	Slim::Music::Import->endImporter('precacheArtwork');
+		my $i = 0;
+		
+		my $work = sub {
+		    if ( $sth->fetch ) {
+		    	# Make sure album.artwork points to this track, as it may not
+    			# be pointing there now because we did not join tracks via the
+    			# artwork column.
+    			if ( $album_artwork && $album_artwork ne $coverid ) {
+    				$sth_update_albums->execute( $coverid, $albumid );
+    			}
+				
+    			# Do the actual pre-caching only if the pref for it is enabled
+    			if ( $isEnabled ) {
+						
+    				# Image to resize is either a cover path or the audio file
+    				my $path = $cover =~ /^\d+$/
+    					? Slim::Utils::Misc::pathFromFileURL($url)
+    					: $cover;
+				
+    				main::DEBUGLOG && $isDebug && $importlog->debug( "Pre-caching artwork for " . $album_title . " from $path" );
+				
+    				if ( Slim::Utils::ImageResizer->resize($path, "music/$coverid/cover_", join(',', @specs), undef) ) {				
+    					# Update the rest of the tracks on this album
+    					# to use the same coverid and cover_cached status
+    					$sth_update_tracks->execute( $coverid, $albumid, $cover );
+    				}
+    			}
+			
+    			$progress->update( $album_title );
+			
+    			if (++$i % 50 == 0) {
+    				Slim::Schema->forceCommit;
+    			}
+    			
+    			return 1;
+    		}
+    		
+    		$progress->final($count);
+    		
+    		$cb && $cb->();
+    		
+    		return 0;
+		};
+		
+		if ( main::SCANNER ) {
+		    # Non-async mode in scanner
+		    while ( $work->() ) { }
+		    
+		    Slim::Music::Import->endImporter('precacheArtwork');
+	    }
+	    else {
+	        # Run async in main process
+	        Slim::Utils::Scheduler::add_task($work);
+        }
+	}	
 }
 
 1;

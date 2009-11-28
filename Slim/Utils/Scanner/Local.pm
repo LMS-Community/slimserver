@@ -775,8 +775,11 @@ sub markDone {
 	
 	# Done with all tasks
 	if ( !main::SCANNER ) {
-		Slim::Music::Import->setIsScanning(0);		
-		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+	    # Precache artwork, when done send rescan done event
+	    Slim::Music::Artwork->precacheAllArtwork( sub {
+	        Slim::Music::Import->setIsScanning(0);	
+		    Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+		} );
 	}
 	
 	%pending = ();
