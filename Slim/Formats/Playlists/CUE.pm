@@ -68,8 +68,8 @@ sub parse {
 		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
 
 			$cuesheet->{'ARTIST'} = $1;
-
-		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|DISC|DISCC|COMMENT)\s+\"(.*)\"/i) {
+			
+		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|DISC|DISCC|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
 
 			$cuesheet->{uc($1)} = $2;
 
@@ -201,7 +201,7 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $attribute (qw(ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
+		for my $attribute (qw(ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!$cuesheet->{$attribute}) {
 
@@ -273,7 +273,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
+		for my $attribute (qw(ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
