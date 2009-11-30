@@ -230,7 +230,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP2
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
 	ES	Instale extensiones únicamente de autores de confianza. El software malintencionado puede dañar el equipo o invadir su privacidad.
 	FI	Asenna laajennuksia vain tekijöiltä, joihin luotat. Haittaohjelmistot saattavat vaurioittaa tietokonettasi tai loukata tietosuojaasi.
-	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder a vos données personnelles.
+	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder à vos données personnelles.
 	IT	Installare solo le estensioni create dagli autori fidati. Il software dannoso può danneggiare il computer o violare la privacy degli utenti.
 	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
 	NO	Du bør kun installere utvidelser fra forfattere du har tillit til. Skadelig programvare kan skade datamaskinen og sette personvernet i fare.

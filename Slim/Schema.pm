@@ -1897,6 +1897,8 @@ Returns the total (cumulative) time in seconds of all audio tracks in the databa
 sub totalTime {
 	my $self = shift;
 
+	return 0 unless $self->trackCount();
+
 	# Pull out the total time dynamically.
 	# What a breath of fresh air. :)
 	return $self->search('Track', { 'audio' => 1 }, {
