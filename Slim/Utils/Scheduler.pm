@@ -113,68 +113,51 @@ sub run_tasks {
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
-	my $busy = 0;
-	my $now  = AnyEvent->now;
+	my $now = AnyEvent->now;
 	
-	# run tasks at least once half second.
-	# XXX this is called too often
-	if (($now - $lastpass) < 0.5) {
-		for my $client ( Slim::Player::Client::clients() ) {
-			if ( Slim::Player::Source::playmode($client) eq 'play' && 
-			    $client->isPlayer() && 
-			    $client->usage() < 0.5
-			) {
-				$busy = 1;
-				last;
-			}
+	while (1) {
+		my $taskptr = $background_tasks[$curtask];
+		my ($subptr, @subargs) = @$taskptr;
+
+		my $cont = eval { &$subptr(@subargs) };
+
+           if ( main::DEBUGLOG && $isDebug ) {
+		    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+		    $log->debug("Scheduler ran task: $subname");
+	    }
+
+		if ($@) {
+			logError("Scheduler task failed: $@");
 		}
-	}
+
+		if ( $@ || !$cont ) {
+			# the task has finished. Remove it from the list.
+			main::INFOLOG && $log->is_info && $log->info("Task finished: $subptr");
+
+			splice @background_tasks, $curtask, 1;
+			$task_count--;
+		}
+		else {
+			$curtask++;
+		}
+
+		$lastpass = $now;
+
+		# loop around when we get to the end of the list
+		if ( $curtask >= $task_count ) {
+			$curtask = 0;
+		}
+
+		main::PERFMON && Slim::Utils::PerfMon->check('scheduler', AnyEvent->time - $now, undef, $subptr);
 	
-	if ( !$busy ) {
-		while (1) {
-			my $taskptr = $background_tasks[$curtask];
-			my ($subptr, @subargs) = @$taskptr;
-
-			my $cont = eval { &$subptr(@subargs) };
-
-            if ( main::DEBUGLOG && $isDebug ) {
-			    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
-			    $log->debug("Scheduler ran task: $subname");
-		    }
-
-			if ($@) {
-				logError("Scheduler task failed: $@");
-			}
-
-			if ( $@ || !$cont ) {
-				# the task has finished. Remove it from the list.
-				main::INFOLOG && $log->is_info && $log->info("Task finished: $subptr");
-
-				splice @background_tasks, $curtask, 1;
-				$task_count--;
-			}
-			else {
-				$curtask++;
-			}
-
-			$lastpass = $now;
-
-			# loop around when we get to the end of the list
-			if ( $curtask >= $task_count ) {
-				$curtask = 0;
-			}
-
-			main::PERFMON && Slim::Utils::PerfMon->check('scheduler', AnyEvent->time - $now, undef, $subptr);
+		# Break out if we've reached the block limit or have no more tasks
+		# Note $now will remain the same across multiple calls
+		if ( !$task_count || ( AnyEvent->time - $now >= BLOCK_LIMIT ) ) {
+		    main::DEBUGLOG && $isDebug && $log->debug("Scheduler block limit reached (" . (AnyEvent->time - $now) . ")");
+			last;
+		}
 		
-			# Break out if we've reached the block limit or have no more tasks
-			# Note $now will remain the same across multiple calls
-			if ( !$task_count || ( AnyEvent->time - $now >= BLOCK_LIMIT ) ) {
-			    main::DEBUGLOG && $isDebug && $log->debug("Scheduler block limit reached (" . (AnyEvent->time - $now) . ")");
-				last;
-			}
-			
-			main::idleStreams();
-		}
+		main::idleStreams();
 	}
 
 	return $task_count;
