@@ -41,9 +41,9 @@ power_on				= 76898f70
 power_off				= 76898778
 home					= 768922dd
 
-favorites_2				= 7689a25d
-browse_2				= 7689629d
-search_2				= 7689e21d
+now_playing_2			= 7689a25d
+search_2				= 7689629d
+favorites_2				= 7689e21d
 
 menu_browse_album		= 76897c83
 menu_browse_artist		= 7689748b
