@@ -147,8 +147,8 @@ visual					= visual_toggle
 
 favorites_2.single		= favorites
 favorites_2.hold		= favorites_add
-browse_2			= browse
-search_2			= search
+now_playing_2			= playdisp_toggle
+search_2				= search
 
 # menu shortcuts
 menu_playlist			= menu_playlist
