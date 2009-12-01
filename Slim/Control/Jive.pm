@@ -386,6 +386,8 @@ sub mainMenu {
 		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
 		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
 		@{appMenus($client, 1)},
+
+		@{globalSearchMenu($client)},		
 	);
 
 	if ( !$direct ) {
@@ -2675,6 +2677,44 @@ sub searchMenu {
 	}
 
 }
+
+sub globalSearchMenu {
+	my $client = shift || undef;
+
+	my @searchMenu = ({
+		stringToken	   => 'GLOBAL_SEARCH',
+		text           => $client->string('GLOBAL_SEARCH'),
+		homeMenuText   => $client->string('GLOBAL_SEARCH'),
+		id             => 'globalSearch',
+		node           => 'home',
+		weight         => 50,
+		input => {
+			len  => 1, #bug 5318
+			processingPopup => {
+				text => $client->string('SEARCHING'),
+			},
+			help => {
+				text => $client->string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['globalsearch', 'items'],
+				params => {
+					menu     => 'globalsearch',
+					search   => '__TAGGEDINPUT__',
+				},
+			},
+		},
+		window => {
+			text => $client->string('GLOBAL_SEARCH'),
+			titleStyle => 'search',
+		},
+	});
+
+	return \@searchMenu;	
+}
+
 # send a notification for menustatus
 sub menuNotification {
 	# the lines below are needed as menu notifications are done via notifyFromArray, but
