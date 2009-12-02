@@ -7,12 +7,41 @@ package Slim::Utils::Progress;
 # modify it under the terms of the GNU General Public License, version 2.
 
 use strict;
+use base qw(Slim::Utils::Accessor);
 
 use Slim::Schema;
 use Slim::Utils::Unicode;
 
 use constant UPDATE_DB_INTERVAL  => 5;
 use constant UPDATE_BAR_INTERVAL => 0.3;
+
+__PACKAGE__->mk_accessor( rw => qw(
+	type
+	name
+	total
+	start
+	finish
+	eta
+	done
+	
+	dbup
+	dball
+	
+	_dbid
+) );
+
+if ( main::SCANNER ) {
+	__PACKAGE__->mk_accessor( rw => qw(
+		bar
+		barup
+		fh
+		term
+		avg_msgs_per_sec
+		prev_time
+		prev_done
+		bar_size
+	) );
+}
 
 =head2 new
 
@@ -46,7 +75,7 @@ Set to make the progress object update the database for every call to update (ra
 
 =item bar [optional]
 
-Set to display a progress bar on STDOUT (used by scanner.pl and will only do so if main::PERFMON is set).
+Set to display a progress bar on STDOUT (used by scanner.pl).
 
 =back
 
@@ -55,124 +84,133 @@ Set to display a progress bar on STDOUT (used by scanner.pl and will only do so 
 sub new {
 	my $class = shift;
 	my $args  = shift;
-
-	my $obj;
+	
 	my $now = Time::HiRes::time();
+	
+	my $self = $class->SUPER::new();
+	
+	$self->type( $args->{type} || 'NOTYPE' );
+	$self->name( $args->{name} || 'NONAME' );
+	$self->total( $args->{total} || 0 );
+	$self->start( $now );
+	$self->done( 0 );
+	$self->dbup( 0 );
+	$self->dball( $args->{every} || 0 );
 
-	if (Slim::Schema::hasLibrary()) {
-		$obj = Slim::Schema->rs('Progress')->find_or_create({
-			'type' => $args->{'type'}  || 'NOTYPE',
-			'name' => $args->{'name'}  || 'NONAME',
-		});
+	if ( Slim::Schema::hasLibrary() ) {
+		my $dbh = Slim::Schema->dbh;
+		
+		my $sth = $dbh->prepare_cached("SELECT id FROM progress WHERE type = ? AND name = ?");
+		$sth->execute( $self->type, $self->name );
+		my $row = $sth->fetchrow_hashref;
+		
+		if ( $row ) {
+			$self->_dbid( $row->{id} );
+		}
+		else {
+			$dbh->do(
+				"INSERT INTO progress (type, name) VALUES (?, ?)",
+				undef,
+				$self->type, $self->name
+			);
+			
+			$self->_dbid( $dbh->last_insert_id(undef, undef, undef, undef) );
+		}
+		
+		$self->_update_db( {
+			total  => $self->total,
+			done   => 0,
+			start  => int($now),
+			active => 1,
+		} );
+	}
 	
-		$obj->total($args->{'total'});
-		$obj->done(0);
-		$obj->start ( time() );
-		$obj->active(1);
-	
-		$obj->update;
+	if ( main::SCANNER && $args->{bar} && $::progress ) {
+		$self->bar(1);
+		$self->barup(0);
+		$self->fh( \*STDOUT );
+		$self->term( -t $self->fh );
+		
+		$self->_initBar if $args->{total};
 	}
 
-	my $ref = {
-		'total' => $args->{'total'},
-		'done'  => 0,
-		'obj'   => $obj,
-		'dbup'  => 0,
-		'dball' => $args->{'every'},
-	};
-
-	bless $ref, $class;
-
-	if ($args->{'bar'}) {
-
-		$ref->{'bar'} = 1;
-		$ref->{'barup'} = 0;
-		$ref->{'start_time'} = $now,
-		$ref->{'fh'} = \*STDOUT,
-		$ref->{'term'} = $args->{'term'} || -t $ref->{'fh'};
-
-		$ref->_initBar if $args->{'total'},
-	}
-
-	return $ref;
+	return $self;
 }
 
 =head2 total
 
-public instance () total (Integer $total)
-
-Description:
 Set the total number of items for a progress instance.  Used when the progress instance is started without knowing the
 total number of elements.  Should be called before calling update for a progress instance.
 
 =cut
 
 sub total {
-	my $class = shift;
-	my $total = shift;
+	my ( $self, $total ) = @_;
 
-	$class->{'total'} = $total;
+	$self->total($total);
+	
+	$self->_update_db( { total => $total } );
 
-	if ($class->{'obj'}) {
-		$class->{'obj'}->total( $total );
-		$class->{'obj'}->update;
-	}
-
-	if ($class->{'bar'}) {
+	if ( main::SCANNER && $self->bar ) {
 		# bar only times duration of progress after total set to get accurate tracks/sec
-		$class->{'start_time'} = Time::HiRes::time();
-		$class->_initBar;
+		$self->start( Time::HiRes::time() );
+		$self->_initBar;
 	}
+}
+
+=head2 duration
+
+Returns the total time spent.
+
+=cut
+
+sub duration {
+	my $self = shift;
+	
+	return $self->finish - $self->start;
 }
 
 =head2 update
 
-public instance () update ([String $info], [Integer $num_done])
-
-Description:
 Call to update the progress instance. If $info is passed, this is stored in the database info column
 so infomation can be associated with current progress (set the 'every' param in the call to new if
-you want to rely on this being stored for every call to update). Unless $num_done is passed, the 
+you want to rely on this being stored for every call to update). Unless $done is passed, the 
 progress is incremented by one from the previous call to update.
 
 =cut
 
 sub update {
-	my $class = shift;
-	my $info  = shift;
-	my $latest= shift;
+	my ( $self, $info, $latest ) = @_;
 
 	my $done;
 
-	if (defined $latest) {
-
-		$done = $class->{'done'} = $latest;
-
-	} else {
-
-		$done = ++$class->{'done'};
-
+	if ( defined $latest ) {
+		$done = $self->done($latest);
+	}
+	else {
+		$done = $self->done( $self->done + 1 );
 	}
 
 	my $now = Time::HiRes::time();
+	
+	# Calculate new ETA value
+	my $rate = $done / ( $now - $self->start );
+	$self->eta( int( ( $self->total - $done ) / $rate ) );
 
-	if ($class->{'dball'} || $now > $class->{'dbup'} + UPDATE_DB_INTERVAL) {
-
-		$class->{'dbup'} = $now;
-
-		my $obj = $class->{'obj'} || return;
-
-		$obj->done($done);
-		$obj->info(Slim::Utils::Unicode::utf8decode_locale($info)) if $info;
-
-		$obj->update();
+	if ( $self->dball || $now > $self->dbup + UPDATE_DB_INTERVAL ) {
+		$self->dbup($now);
+		
+		$self->_update_db( {
+			done => $done,
+			info => $info ? Slim::Utils::Unicode::utf8decode_locale($info) : '',
+		} );
 		
 		# If we're the scanner process, notify the server of our progress
 		if ( main::SCANNER ) {
-			my $start = $obj->start;
-			my $type  = $obj->type;
-			my $name  = $obj->name;
-			my $total = $obj->total;
+			my $start = $self->start;
+			my $type  = $self->type;
+			my $name  = $self->name;
+			my $total = $self->total;
 			
 			if ( $::json ) {
 				main::progressJSON( {
@@ -181,7 +219,7 @@ sub update {
 					name   => $name,
 					done   => $done,
 					total  => $total,
-					eta    => $class->{eta},
+					eta    => $self->eta,
 					finish => undef,
 				} );
 			}
@@ -192,44 +230,39 @@ sub update {
 		}
 	}
 
-	if ($class->{'bar'} && $now > $class->{'barup'} + UPDATE_BAR_INTERVAL) {
-
-		$class->{'barup'} = $now;
-
-		$class->_updateBar( $done );
-
+	if ( main::SCANNER && $self->bar && $now > $self->barup + UPDATE_BAR_INTERVAL ) {
+		$self->barup($now);
+		$self->_updateBar;
 	}
 }
 
 =head2 final
 
-public instance () final
-
-Description:
 Call to signal this progress instance is complete.  This updates the database and potentially the progress bar to the complete state.
 
 =cut
 
 sub final {
-	my $class = shift;
-
-	my $obj = $class->{'obj'} || return;
+	my $self = shift;
 	
-	my $done   = $class->{total};
-	my $finish = time();
-
-	$obj->done( $done );
-	$obj->finish( $finish );
-	$obj->active(0);
-	$obj->info( undef );
-
-	$obj->update;
+	my $done   = $self->total;
+	my $finish = Time::HiRes::time();
+	
+	$self->done($done);
+	$self->finish($finish);
+	
+	$self->_update_db( {
+		done   => $done,
+		finish => int($finish),
+		active => 0,
+		info   => undef,
+	} );
 	
 	# If we're the scanner process, notify the server of our progress
 	if ( main::SCANNER ) {
-		my $start  = $obj->start;
-		my $type   = $obj->type;
-		my $name   = $obj->name;
+		my $start  = int( $self->start );
+		my $type   = $self->type;
+		my $name   = $self->name;
 		$done = 1 if !defined $done;
 		
 		if ( $::json ) {
@@ -247,12 +280,24 @@ sub final {
 			my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
 		}
+		
+		if ( $self->bar ) {
+			$self->_finalBar($done);
+		}
 	}
+}
 
-	if ($class->{'bar'}) {
-
-		$class->_finalBar( $class->{'total'} );
-	}
+sub _update_db {
+	my ( $self, $args ) = @_;
+	
+	return unless $self->_dbid;
+	
+	my @cols = keys %{$args};
+	my $ph   = join( ', ', map { $_ . ' = ?' } @cols );
+	my @vals = map { $args->{$_} } @cols;
+	
+	my $sth = Slim::Schema->dbh->prepare_cached("UPDATE progress SET $ph WHERE id = ?");
+	$sth->execute( @vals, $self->_dbid );
 }
 
 # The following code is adapted from Mail::SpamAssassin::Util::Progress which ships
@@ -272,36 +317,29 @@ sub final {
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-use constant HAS_TERM_READKEY => eval { require Term::ReadKey };
+use constant HAS_TERM_READKEY => eval { main::SCANNER && require Term::ReadKey };
 
-sub _initBar {
+sub _initBar { if ( main::SCANNER && $::progress ) {
 	my $self = shift;
+	
+	return unless $self->term;
 
-	my $fh = $self->{'fh'};
+	my $fh = $self->fh;
 
-	# 0 for now, maybe allow this to be passed in
-	$self->{'prev_num_done'} = 0;
-
-	# 0 for now, maybe allow this to be passed in
-	$self->{'num_done'} = 0;
-
-	$self->{'avg_msgs_per_sec'} = undef;
-
-	$self->{'prev_time'}  = $self->{'start_time'};
-
-	return unless $self->{'term'} && $::progress;
+	$self->avg_msgs_per_sec(undef);
+	$self->prev_time( $self->start );
+	$self->prev_done( 0 );
 
 	my $term_size = undef;
 
 	# If they have set the COLUMNS environment variable, respect it and move on
-	if ($ENV{'COLUMNS'}) {
-		$term_size = $ENV{'COLUMNS'};
+	if ( $ENV{COLUMNS} ) {
+		$term_size = $ENV{COLUMNS};
 	}
 
 	# The ideal case would be if they happen to have Term::ReadKey installed
-	if (!defined($term_size) && HAS_TERM_READKEY) {
-
-		my $term_readkey_term_size = eval { (Term::ReadKey::GetTerminalSize($self->{fh}))[0] };
+	if ( !defined $term_size && HAS_TERM_READKEY ) {
+		my $term_readkey_term_size = eval { (Term::ReadKey::GetTerminalSize($self->fh))[0] };
 
 		# an error will just keep the default
 		if (!$@) {
@@ -312,14 +350,14 @@ sub _initBar {
 	}
 
 	# only viable on Unix based OS, so exclude windows, etc here
-	if (!defined $term_size && $^O !~ /^(mswin|dos|os2)/oi) {
+	if ( !defined $term_size && $^O !~ /^(mswin|dos|os2)/oi ) {
 
 		my $data = `stty -a`;
-		if ($data =~ /columns (\d+)/) {
+		if ( $data =~ /columns (\d+)/ ) {
 			$term_size = $1;
 		}
 
-		if (!defined $term_size) {
+		if ( !defined $term_size ) {
 			my $data = `tput cols`;
 			if ($data =~ /^(\d+)/) {
 				$term_size = $1;
@@ -328,7 +366,7 @@ sub _initBar {
 	}
 
 	# fall back on the default
-	if (!defined $term_size) {
+	if ( !defined $term_size ) {
 		$term_size = 80;
 	}
 
@@ -337,68 +375,53 @@ sub _initBar {
 	#123456789012345678901234567890123456789
 	# XXX% [] XXX.XX tracks/sec XXmXXs LEFT
 	# XXX% [] XXX.XX tracks/sec XXmXXs DONE
-	$self->{'bar_size'} = $term_size - 39;
+	$self->bar_size( $term_size - 39 );
 
-	my @chars = (' ') x $self->{'bar_size'};
+	my @chars = (' ') x $self->bar_size;
 
 	print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %s:%s:%s LEFT",
 		    0, join('', @chars), 0, '--', '--', '--');
-}
+} }
 
-sub _updateBar {
-	my ($self, $num_done) = @_;
+sub _updateBar { if ( main::SCANNER && $::progress ) {
+	my $self = shift;
 
-	return unless $self->{'total'};
+	return unless $self->total;
 
-	my $fh       = $self->{'fh'};
-	my $time_now = Time::HiRes::time();
+	my $now  = Time::HiRes::time();
+	my $fh   = $self->fh;
+	my $done = $self->done;
+	my $eta  = $self->eta;
 
-	# If nothing is passed in to update assume we are adding one to the prev_num_done value
-	if (!defined $num_done) {
-		$num_done = $self->{'prev_num_done'} + 1;
-	}
-
-	my $msgs_since = $num_done - $self->{'prev_num_done'};
-	my $time_since = $time_now - $self->{'prev_time'};
+	my $msgs_since = $done - $self->prev_done;
+	my $time_since = $now - $self->prev_time;
+	
+	$self->prev_time( $now );
+	$self->prev_done( $done );
 
 	# Avoid a divide by 0 error.
-	if ($time_since == 0) {
+	if ( $time_since == 0 ) {
 		$time_since = 1;
 	}
 
-	my $overall_rate = $num_done/($time_now-$self->{'start_time'});
+	if ( $self->term ) {
+		my $percentage = $done != 0 ? int(($done / $self->total) * 100) : 0;
 
-	# using the overall_rate here seems to provide much smoother eta numbers
-	my $eta = ($self->{'total'} - $num_done)/$overall_rate;
-
-	$self->{'eta'}           = int($eta);
-	$self->{'prev_time'}     = $time_now;
-	$self->{'prev_num_done'} = $num_done;
-	$self->{'num_done'}      = $num_done;
-
-	return unless $::progress;
-
-	if ($self->{'term'}) {
-
-		my $percentage = $num_done != 0 ? int(($num_done / $self->{'total'}) * 100) : 0;
-
-		my @chars    = (' ') x $self->{'bar_size'};
-		my $used_bar = $num_done * ($self->{'bar_size'} / $self->{'total'});
+		my @chars    = (' ') x $self->bar_size;
+		my $used_bar = $done * ( $self->bar_size / $self->total );
 
 		for (0..$used_bar-1) {
 			$chars[$_] = '=';
 		}
 
-		my $rate         = $msgs_since/$time_since;
+		my $rate = $msgs_since / $time_since;
 
 		# semi-complicated calculation here so that we get the avg msg per sec over time
-		if (defined $self->{'avg_msgs_per_sec'}) {
-
-			$self->{'avg_msgs_per_sec'} = 0.5 * $self->{'avg_msgs_per_sec'} + 0.5 * ($msgs_since / $time_since);
-
-		} else {
-
-			$self->{'avg_msgs_per_sec'} = $msgs_since / $time_since;
+		if ( defined $self->avg_msgs_per_sec ) {
+			$self->avg_msgs_per_sec( 0.5 * $self->avg_msgs_per_sec + 0.5 * ($msgs_since / $time_since) );
+		}
+		else {
+			$self->avg_msgs_per_sec( $msgs_since / $time_since );
 		}
 
 		my $hour = int($eta/3600);
@@ -406,61 +429,49 @@ sub _updateBar {
 		my $sec  = int($eta % 60);
 		
 		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d LEFT",
-				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $hour, $min, $sec);
-
-	} else {
+				$percentage, join('', @chars), $self->avg_msgs_per_sec, $hour, $min, $sec);
+	}
+	else {
 		# we have no term, so fake it
 		print $fh '.' x $msgs_since;
 	}
-}
+} }
 
-sub _finalBar {
-	my ($self, $num_done) = @_;
-	
-	return unless $::progress;
+sub _finalBar { if ( main::SCANNER && $::progress ) {
+	my ( $self, $done ) = @_;
 
-	# passing in $num_done is optional, and will most likely rarely be used,
-	# we should generally favor the data that has been passed in to update()
-	if (!defined $num_done) {
-		$num_done = $self->{'num_done'} || 0;
-	}
-
-	my $fh = $self->{'fh'};
-
-	my $time_taken = Time::HiRes::time() - $self->{'start_time'};
+	my $fh = $self->fh;
+	my $time_taken = Time::HiRes::time() - $self->start;
 
 	# can't have 0 time, so just make it 1 second
-	   $time_taken ||= 1;
+	$time_taken ||= 1;
 
 	# in theory this should be 100% and the bar would be completely full, however
 	# there is a chance that we had an early exit so we aren't at 100%
-	my $percentage = $num_done != 0 ? int(($num_done / $self->{'total'}) * 100) : 0;
+	my $percentage = $done != 0 ? int(($done / $self->total) * 100) : 0;
 
-	my $msgs_per_sec = $num_done / $time_taken;
+	my $msgs_per_sec = $done / $time_taken;
 
 	my $hour = int($time_taken/3600);
 	my $min  = int($time_taken/60) % 60;
 	my $sec  = $time_taken % 60;
 
-	if ( $self->{'term'} && $self->{'total'} ) {
+	if ( $self->term && $self->total ) {
 
-		my @chars    = (' ') x $self->{'bar_size'};
-		my $used_bar = $num_done * ($self->{'bar_size'} / $self->{'total'});
+		my @chars    = (' ') x $self->bar_size;
+		my $used_bar = $done * ( $self->bar_size / $self->total );
 
-		for (0..$used_bar-1) {
+		for ( 0..$used_bar - 1 ) {
 			$chars[$_] = '=';
 		}
 
 		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02d:%02d:%02d DONE\n",
 		      $percentage, join('', @chars), $msgs_per_sec, $hour, $min, $sec);
-
-	} else {
-
+	}
+	else {
 		print $fh sprintf("\n%3d%% Completed %6.2f items/sec in %02dm%02ds\n",
 		      $percentage, $msgs_per_sec, $min, $sec);
 	}
-}
+} }
 
 1;
-
-__END__

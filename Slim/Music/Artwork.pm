@@ -198,7 +198,7 @@ sub findArtwork {
 		$progress->update( $album->title );
 	}
 
-	$progress->final($count) if $count;
+	$progress->final if $count;
 
 	Slim::Music::Import->endImporter('findArtwork');
 }
@@ -570,7 +570,9 @@ sub precacheAllArtwork {
     			return 1;
     		}
     		
-    		$progress->final($count);
+			$progress->final;
+			
+			$log->error( "precacheArtwork finished in " . $progress->duration );
     		
     		$cb && $cb->();
     		
@@ -587,7 +589,7 @@ sub precacheAllArtwork {
 	        # Run async in main process
 	        Slim::Utils::Scheduler::add_task($work);
         }
-	}	
+	}
 }
 
 1;
