@@ -210,6 +210,35 @@ sub _players_done {
 			}
 		}
 	}
+
+	# SN can provide string translations for new menu items
+	if ( $res->{search_providers} ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding search providers: ' . Data::Dump::dump( $res->{search_providers} ) );
+		
+		my $existing_providers = Slim::Menu::GlobalSearch->getInfoProvider();
+		
+		foreach my $provider ( @{ $res->{search_providers} } ) {
+			
+			delete $existing_providers->{$provider->{text}};
+			
+			Slim::Menu::GlobalSearch->registerInfoProvider( $provider->{text} => (
+				after => 'middle',
+				func  => sub {
+					my ( $client, $tags ) = @_;
+				
+					return {
+						name  => Slim::Utils::Strings::cstring($client, $provider->{text}),
+						url   => $provider->{URL},
+						type  => 'opml',
+					};
+				}
+			) ) 			
+		}
+		
+#			Slim::Menu::GlobalSearch->deregisterInfoProvider($provider->{text});
+		logError(Data::Dump::dump($existing_providers));
+	}
+	
 	
 	# Clear error count if any
 	if ( $prefs->get('snPlayersErrors') ) {
