@@ -23,8 +23,6 @@ use strict;
 
 use base qw(Slim::Menu::Base);
 
-use Scalar::Util qw(blessed);
-
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 
@@ -45,10 +43,6 @@ sub name {
 	return 'GLOBAL_SEARCH';
 }
 
-##
-# Register all the information providers that we provide.
-# This order is defined at http://wiki.slimdevices.com/index.php/UserInterfaceHierarchy
-#
 sub registerDefaultInfoProviders {
 	my $class = shift;
 	
