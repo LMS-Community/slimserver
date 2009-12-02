@@ -30,11 +30,13 @@ use Slim::Formats::XML;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 #use Slim::Utils::Timers;
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
 
 my $log = logger('formats.xml');
+my $prefs = preferences('server');
 
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
@@ -708,7 +710,7 @@ sub _cliQuery_done {
 				}
 			}
 			
-			# play all streams of an item
+			# play all streams of an item (or one stream if pref is unset)
 			else {
 				my @urls;
 				for my $item ( @{ $subFeed->{'items'} } ) {
@@ -742,24 +744,44 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					if ( main::INFOLOG && $log->is_info ) {
-						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+					# first check if the playtrackalbum pref is set
+					my $playalbum = undef;
+					if ( $request->client ) {
+						$playalbum = $prefs->client($request->client)->get('playtrackalbum');
 					}
 					
+					# if player pref for playtrack album is not set, get the old server pref.
+					if ( !defined $playalbum ) {
+						$playalbum = $prefs->get('playtrackalbum');
+					}
+
+				
 					if ( $method =~ /play|load/i ) {
 						$client->execute([ 'playlist', 'clear' ]);
 					}
 
+					my $play_index = $request->getParam('play_index') || 0;
+
 					my $cmd;
 					if ($method =~ /add/) {
-						$cmd = 'addtracks';
+						$cmd = 'add';
 					}
 					else {
 						$cmd = 'inserttracks';
 					}
-	
-					my $play_index = $request->getParam('play_index') || 0;
 
+					if (!$playalbum) {
+						@urls = ( $urls[$play_index] );
+					}
+
+					if ( main::INFOLOG && $log->is_info ) {
+						if ( $playalbum ) {
+							$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+						} else {
+							$log->info(sprintf("Playing one item:\n%s", join("\n", @urls)));
+						}
+					}
+	
 					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
 
 					# if we're adding or inserting, show a showBriefly
