@@ -755,6 +755,12 @@ sub _cliQuery_done {
 					}
 
 				
+					# if player pref for playtrack album is not set, get the old server pref.
+					if ( !defined $playalbum ) {
+						$playalbum = $prefs->get('playtrackalbum');
+					}
+
+				
 					if ( $method =~ /play|load/i ) {
 						$client->execute([ 'playlist', 'clear' ]);
 					}
