@@ -14701,9 +14701,6 @@ SEARCH
 	SV	Sök
 	ZH_CN	搜查音乐
 
-GLOBAL_SEARCH
-	EN	Global Search
-
 SEARCHMUSIC
 	CS	Hledat hudbu
 	DA	Søg efter musik

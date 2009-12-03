@@ -2687,9 +2687,9 @@ sub globalSearchMenu {
 	my $client = shift || undef;
 
 	my @searchMenu = ({
-		stringToken	   => 'GLOBAL_SEARCH',
-		text           => $client->string('GLOBAL_SEARCH'),
-		homeMenuText   => $client->string('GLOBAL_SEARCH'),
+		stringToken	   => 'SEARCH',
+		text           => $client->string('SEARCH'),
+		homeMenuText   => $client->string('SEARCH'),
 		id             => 'globalSearch',
 		node           => 'home',
 		weight         => 50,
@@ -2712,7 +2712,7 @@ sub globalSearchMenu {
 			},
 		},
 		window => {
-			text => $client->string('GLOBAL_SEARCH'),
+			text => $client->string('SEARCH'),
 			titleStyle => 'search',
 		},
 	});
