@@ -233,12 +233,33 @@ sub _players_done {
 
 				func  => sub {
 					my ( $client, $tags ) = @_;
-				
-					return {
+
+					my $menuItem = {
 						name  => Slim::Utils::Strings::cstring($client, $provider->{text}),
 						url   => $provider->{URL},
-						type  => 'opml',
+						search=> $tags->{search},
 					};
+
+					$menuItem->{url} =~ s/{QUERY}/$tags->{search}/;
+
+					if ($provider->{outline}) {
+						
+						$menuItem->{items} = [];
+						
+						foreach my $item (@{ $provider->{outline} }) {
+							my $url = $item->{URL};
+							$url =~ s/{QUERY}/$tags->{search}/;
+							
+							push @{ $menuItem->{items} }, {
+								name   => Slim::Utils::Strings::cstring($client, $item->{text}),
+								search => $tags->{search},
+								url    => $url,
+							};
+						}
+					}
+
+				
+					return $menuItem;
 				},
 				
 				remote_search => 1
