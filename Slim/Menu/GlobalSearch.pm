@@ -45,7 +45,7 @@ sub init {
 }
 
 sub name {
-	return 'GLOBAL_SEARCH';
+	return 'SEARCH';
 }
 
 sub registerDefaultInfoProviders {
