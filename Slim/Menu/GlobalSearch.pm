@@ -96,7 +96,6 @@ sub cliQuery {
 	my $request = shift;
 	my $client  = $request->client;
 	my $search  = $request->getParam('search') || '';
-	my $tags  = $request->getParam('tags') || '';
 
 	if ( !$search && (my $itemId = $request->getParam('item_id')) ) {
 		($search) = $itemId =~ m/_([^.]+)/;
