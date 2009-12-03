@@ -918,20 +918,11 @@ sub findAndScanDirectoryTree {
 		$topLevelObj->update;
 
 		# Do a quick directory scan.
-		Slim::Utils::Scanner->scanDirectory({
-			'url'       => $path,
-			'recursive' => 0,
-		});
-
-		# Bug: 4812 - notify those interested that the database has changed.
-		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
-
-		# Bug: 3841 - check for new artwork
-		# But don't search at the root level.
-		if ($path ne $prefs->get('audiodir')) {
-
-			Slim::Music::Artwork->findArtwork($topLevelObj);
-		}
+		# XXX this should really be async but callers would need updated, lots of work
+		Slim::Utils::Scanner::Local->rescan( $path, {
+			no_async  => 1,
+			recursive => 0,
+		} );
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.

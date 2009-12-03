@@ -91,21 +91,20 @@ sub init {
 		# Stop watcher if currently running
 		$osclass->shutdown;
 		
-		# Re-watch if directory changes
-		$prefs->setChange( sub {
+		my $rewatch = sub {
 			my $audiodir = $prefs->get('audiodir');
 			
 			if ( defined $audiodir ) {
 				$osclass->shutdown;
 				$osclass->watch( $audiodir, \&fsevent );
 			}
-		}, 'audiodir');
+		};
+		
+		# Re-watch if directory changes
+		$prefs->setChange( $rewatch, 'audiodir');
 		
 		# Re-watch upon scanner finish
-		Slim::Control::Request::subscribe( sub {
-			$osclass->shutdown;
-			$osclass->watch( $prefs->get('audiodir'), \&fsevent );
-		}, [[ 'rescan', 'done' ]] );
+		Slim::Control::Request::subscribe( $rewatch, [[ 'rescan', 'done' ]] );
 	}
 
 	# Perform a rescan in case any files have changed while server was off
@@ -113,6 +112,9 @@ sub init {
 	my $rescanning = 0;
 	if ( my ($count) = Slim::Schema->dbh->selectrow_array("SELECT COUNT(*) FROM tracks") ) {
 		if ( !Slim::Music::Import->stillScanning ) {
+			# Clear progress info
+			Slim::Utils::Progress->clear;
+			
 			# Start async rescan
 			Slim::Utils::Scanner::Local->rescan( $audiodir, {
 				types    => qr/(?:list|audio)/,

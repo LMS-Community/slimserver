@@ -375,5 +375,7 @@ sub _checkMediaAtStartup {
 # don't download/cache firmware for other players, but have them download directly
 sub directFirmwareDownload { 1 };
 
+# Path to progress JSON file
+sub progressJSON { '/etc/squeezecenter/scan.json' }
 
 1;

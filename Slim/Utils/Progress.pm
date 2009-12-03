@@ -9,6 +9,8 @@ package Slim::Utils::Progress;
 use strict;
 use base qw(Slim::Utils::Accessor);
 
+use JSON::XS::VersionOneAndTwo;
+
 use Slim::Schema;
 use Slim::Utils::Unicode;
 
@@ -205,6 +207,12 @@ sub update {
 			info => $info ? Slim::Utils::Unicode::utf8decode_locale($info) : '',
 		} );
 		
+		# Write progress JSON if applicable
+		my $os = Slim::Utils::OSDetect->getOS();
+		if ( my $json = $os->progressJSON() ) {
+			$self->_write_json($json);
+		}
+		
 		# If we're the scanner process, notify the server of our progress
 		if ( main::SCANNER ) {
 			my $start = $self->start;
@@ -212,21 +220,8 @@ sub update {
 			my $name  = $self->name;
 			my $total = $self->total;
 			
-			if ( $::json ) {
-				main::progressJSON( {
-					start  => $start,
-					type   => $type,
-					name   => $name,
-					done   => $done,
-					total  => $total,
-					eta    => $self->eta,
-					finish => undef,
-				} );
-			}
-			else {
-				my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-				$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${total}-" );
-			}
+			my $sqlHelperClass = $os->sqlHelperClass();
+			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${total}-" );
 		}
 	}
 
@@ -258,6 +253,12 @@ sub final {
 		info   => undef,
 	} );
 	
+	# Write progress JSON if applicable
+	my $os = Slim::Utils::OSDetect->getOS();
+	if ( my $json = $os->progressJSON() ) {
+		$self->_write_json($json);
+	}
+	
 	# If we're the scanner process, notify the server of our progress
 	if ( main::SCANNER ) {
 		my $start  = int( $self->start );
@@ -265,22 +266,9 @@ sub final {
 		my $name   = $self->name;
 		$done = 1 if !defined $done;
 		
-		if ( $::json ) {
-			main::progressJSON( {
-				start  => $start,
-				type   => $type,
-				name   => $name,
-				done   => $done,
-				total  => $done,
-				eta    => 0,
-				finish => $finish,
-			} );
-		}
-		else {
-			my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
-		}
-		
+		my $sqlHelperClass = $os->sqlHelperClass();
+		$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
+				
 		if ( $self->bar ) {
 			$self->_finalBar($done);
 		}
@@ -298,6 +286,54 @@ sub _update_db {
 	
 	my $sth = Slim::Schema->dbh->prepare_cached("UPDATE progress SET $ph WHERE id = ?");
 	$sth->execute( @vals, $self->_dbid );
+}
+
+# Progress written to the JSON file retains all previous progress steps
+my $progress_step = 0;
+my $progress_json = [];
+sub _write_json {
+	my ( $self, $file ) = @_;
+	
+	my $data = {
+		start  => $self->start,
+		type   => $self->type,
+		name   => $self->name,
+		done   => $self->done,
+		total  => $self->total,
+		eta    => $self->eta,
+		finish => $self->finish || undef,
+	};
+	
+	splice @{$progress_json}, $progress_step, 1, $data;
+	
+	# Append each new progress step to the array
+	if ( $data->{finish} ) {
+		$progress_step++;
+	}
+	
+	require File::Slurp;
+	File::Slurp::write_file( $file, to_json($progress_json) );
+}
+
+# Clear all progress information from previous runs
+sub clear {
+	my $class = shift;
+	
+	my $os = Slim::Utils::OSDetect->getOS();
+	
+	# Wipe progress JSON file
+	if ( my $json = $os->progressJSON() ) {
+		unlink $json if -e $json;
+		
+		# Reset progress JSON data
+		$progress_step = 0;
+		$progress_json = [];
+	}
+	
+	# Wipe database progress
+	if ( Slim::Schema::hasLibrary() ) {
+		Slim::Schema->dbh->do("DELETE FROM progress");
+	}
 }
 
 # The following code is adapted from Mail::SpamAssassin::Util::Progress which ships

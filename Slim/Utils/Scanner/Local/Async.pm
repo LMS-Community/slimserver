@@ -53,7 +53,8 @@ sub find {
 			           : Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types)
 		},
 		descend_filter => sub {
-			Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types)
+			$args->{recursive} ? Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types)
+			                   : 0
 		},
 	}, $path );
 	

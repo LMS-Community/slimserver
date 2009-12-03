@@ -1582,7 +1582,7 @@ sub _newTrack {
 		\%columnValueHash,														# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		$contributors->{'ALBUMARTIST'},											# hasAlbumAtrist
+		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumAtrist
 		1,																		# create
 		undef,																	# Track
 		$dirname,
@@ -2783,7 +2783,7 @@ sub _postCheckAttributes {
 		\%cols,																	# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		$contributors->{'ALBUMARTIST'},											# hasAlbumAtrist
+		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumAtrist
 		$create,																# create
 		$track,																	# Track
 	);

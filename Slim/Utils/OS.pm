@@ -433,4 +433,6 @@ sub restartServer {
 
 sub canRestartServer { 1 }
 
+sub progressJSON { }
+
 1;

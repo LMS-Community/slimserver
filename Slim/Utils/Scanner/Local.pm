@@ -46,8 +46,12 @@ sub find {
 	# from the list of scanned files
 	my $dbh = Slim::Schema->dbh;
 	
-	my $file = Slim::Utils::Misc::fileURLFromPath($path);	
-	$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
+	my $file = Slim::Utils::Misc::fileURLFromPath($path);
+	
+	if ( $args->{recursive} ) {
+		# XXX how best to delete files in non-recursive mode?
+		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
+	}
 	
 	lstat $path;
 	
@@ -80,8 +84,16 @@ sub find {
 		return;
 	}
 	elsif ( -d _ ) {
-		# Scan the directory for files
-		$findclass->find( $path, $args, $cb );
+		# Scan the directory for files		
+		if ( $args->{no_async} ) {
+			# Force the use of the async find class if not in async mode
+			# (it can run it a tight loop, AIO can't)
+			require Slim::Utils::Scanner::Local::Async;
+			Slim::Utils::Scanner::Local::Async->find( $path, $args, $cb );
+		}
+		else {
+			$findclass->find( $path, $args, $cb );
+		}
 	}
 	else {
 		# Item does not exist
@@ -91,6 +103,11 @@ sub find {
 
 sub rescan {
 	my ( $class, $paths, $args ) = @_;
+	
+	# Default to a recursive scan
+	if ( !exists $args->{recursive} ) {
+		$args->{recursive} = 1;
+	}
 	
 	if ( ref $paths ne 'ARRAY' ) {
 		$paths = [ $paths ];
@@ -133,6 +150,7 @@ sub rescan {
 			)
 			AND             url LIKE '$basedir%'
 			AND             virtual IS NULL
+			AND             content_type != 'dir'
 		};
 		
 		# 2. Files that are new and not in the database.
@@ -158,6 +176,7 @@ sub rescan {
 					OR
 					scanned_files.filesize != tracks.filesize
 				)
+				AND tracks.content_type != 'dir'
 			)
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
@@ -222,7 +241,7 @@ sub rescan {
 				}
 			}
 			else {
-				Slim::Utils::Scheduler::add_task( $handle_deleted );
+				Slim::Utils::Scheduler::add_ordered_task( $handle_deleted );
 			}
 		}
 		
@@ -274,7 +293,7 @@ sub rescan {
 				}
 			}
 			else {
-				Slim::Utils::Scheduler::add_task( $handle_new );
+				Slim::Utils::Scheduler::add_ordered_task( $handle_new );
 			}
 		}
 		
@@ -326,7 +345,7 @@ sub rescan {
 				}
 			}
 			else {
-				Slim::Utils::Scheduler::add_task( $handle_changed );
+				Slim::Utils::Scheduler::add_ordered_task( $handle_changed );
 			}
 		}
 		
@@ -342,7 +361,7 @@ sub rescan {
 		
 		# If nothing changed, send a rescan done event
 		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
-			if ( !main::SCANNER ) {
+			if ( !main::SCANNER && !$args->{no_async} ) {
 				Slim::Music::Import->setIsScanning(0);
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 			}
@@ -357,6 +376,12 @@ sub rescan {
 		else {
 			Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $paths, $args );
 		}
+	}
+	
+	if ( !main::SCANNER && $args->{no_async} ) {
+		# All done, send a done event
+		Slim::Music::Import->setIsScanning(0);	
+		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 	}
 }
 
@@ -452,6 +477,20 @@ sub deleted {
 			$sth->execute( $playlist->{id} );
 			my $ptracks = $sth->fetchall_arrayref( {} );
 			$sth->finish;
+			
+			# Bug 10636, FLAC+CUE doesn't use playlist_track entries for some reason
+			# so we need to find the virtual tracks by looking at the URL
+			if ( !scalar @{$ptracks} ) {
+				$sth = $dbh->prepare( qq{
+					SELECT id, album, year
+					FROM   tracks
+					WHERE  url LIKE '$url#%'
+					AND    virtual = 1
+				} );
+				$sth->execute;
+				$ptracks = $sth->fetchall_arrayref( {} );
+				$sth->finish;
+			}
 		
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries

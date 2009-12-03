@@ -42,9 +42,6 @@ BEGIN {
 
 	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI HTML::Parser XML::Parser::Expat YAML::Syck)], []);
 	
-	require JSON::XS::VersionOneAndTwo;
-	import JSON::XS::VersionOneAndTwo;
-	
 	# By default, tell Audio::Scan not to get artwork to save memory
 	# Where needed, this is locally changed to 0.
 	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
@@ -104,7 +101,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $json, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
 
 	our $LogTimestamp = 1;
 	our $noweb = 1;
@@ -136,7 +133,6 @@ sub main {
 		'logconfig=s'  => \$logconf,
 		'debug=s'      => \$debug,
 		'quiet'        => \$quiet,
-		'json=s'       => \$json,
 		'dbtype=s'     => \$dbtype,
 		'LogTimestamp!'=> \$LogTimestamp,
 		'help'         => \$help,
@@ -440,7 +436,6 @@ Command line options:
 	--itunes       Run the iTunes Importer.
 	--musicip      Run the MusicIP Importer.
 	--progress     Show a progress bar of the scan.
-	--json FILE    Write progress information to a JSON file.
 	--dbtype TYPE  Force database type (valid values are MySQL or SQLite)
 	--prefsdir     Specify alternative preferences directory.
 	--priority     set process priority from -20 (high) to 20 (low)
@@ -473,22 +468,6 @@ sub initClass {
 	} else {
 		$class->initPlugin;
 	}
-}
-
-my $progress_step = 0;
-my $progress_json = [];
-sub progressJSON {
-	my $data = shift;
-	
-	splice @{$progress_json}, $progress_step, 1, $data;
-	
-	# Append each new progress step to the array
-	if ( $data->{finish} ) {
-		$progress_step++;
-	}
-	
-	require File::Slurp;
-	File::Slurp::write_file( $::json, to_json($progress_json) );
 }
 
 sub cleanup {

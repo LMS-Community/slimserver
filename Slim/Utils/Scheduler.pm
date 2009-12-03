@@ -49,7 +49,7 @@ use constant BLOCK_LIMIT => 0.01; # how long we are allowed to block the server
 
 =head1 METHODS
 
-=head2 add_task( @task)
+=head2 add_task( @task )
 
  Add a new task to the scheduler. Takes an array for task identifier.  First element is a 
  code reference to the sheduled subroutine.  Subsequent elements are the args required by 
@@ -63,6 +63,21 @@ sub add_task {
 	main::INFOLOG && $log->is_info && $log->info("Adding task: @task");
 
 	push @background_tasks, \@task;
+}
+
+=head2 add_ordered_task( @task )
+
+Same as add_task, but this task will run to completion before any other tasks are executed.
+
+=cut
+
+sub add_ordered_task {
+	my @task = @_;
+	
+	main::INFOLOG && $log->is_info && $log->info("Adding ordered task: @task");
+	
+	# Ordered tasks are stored differently so they can be identified in run_tasks
+	push @background_tasks, [ \@task ];
 }
 
 =head2 remove_task( $taskref, [ @taskargs ])
@@ -83,6 +98,11 @@ sub remove_task {
 	while ($i < scalar (@background_tasks)) {
 
 		my ($subref, @subargs) = @{$background_tasks[$i]};
+		
+		# check for ordered task
+		if ( ref $subref eq 'ARRAY' ) {
+			$subref = $subref->[0];
+		}
 
 		if ($taskref eq $subref) {
 
@@ -114,16 +134,24 @@ sub run_tasks {
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
 	my $now = AnyEvent->now;
+	my $ordered = 0;
 	
 	while (1) {
 		my $taskptr = $background_tasks[$curtask];
+		
+		# Check for ordered task
+		if ( ref $taskptr->[0] eq 'ARRAY' ) {
+			$taskptr = $taskptr->[0];
+			$ordered = 1;
+		}
+		
 		my ($subptr, @subargs) = @$taskptr;
 
 		my $cont = eval { &$subptr(@subargs) };
 
            if ( main::DEBUGLOG && $isDebug ) {
 		    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
-		    $log->debug("Scheduler ran task: $subname");
+		    $log->debug("Scheduler ran task: $subname (ordered: $ordered)");
 	    }
 
 		if ($@) {
@@ -138,7 +166,10 @@ sub run_tasks {
 			$task_count--;
 		}
 		else {
-			$curtask++;
+			# Don't cycle through tasks if this one is ordered
+			if ( !$ordered ) {
+				$curtask++;
+			}
 		}
 
 		$lastpass = $now;
