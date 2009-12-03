@@ -236,7 +236,7 @@ sub _players_done {
 
 					my $menuItem = {
 						name  => Slim::Utils::Strings::cstring($client, $provider->{text}),
-						url   => $provider->{URL},
+						url   => $provider->{URL} || $provider->{url},
 						search=> $tags->{search},
 					};
 
@@ -247,7 +247,7 @@ sub _players_done {
 						$menuItem->{items} = [];
 						
 						foreach my $item (@{ $provider->{outline} }) {
-							my $url = $item->{URL};
+							my $url = $item->{URL} || $item->{url};
 							$url =~ s/{QUERY}/$tags->{search}/;
 							
 							push @{ $menuItem->{items} }, {
@@ -258,7 +258,6 @@ sub _players_done {
 						}
 					}
 
-				
 					return $menuItem;
 				},
 				
