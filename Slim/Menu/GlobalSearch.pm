@@ -50,8 +50,8 @@ sub registerDefaultInfoProviders {
 
 	if ( !main::SLIM_SERVICE ) {
 		$class->registerInfoProvider( searchMyMusic => (
-			after => 'top',
-			func  => \&searchMyMusic,
+			isa  => 'top',
+			func => \&searchMyMusic,
 		) );
 	}	
 }
