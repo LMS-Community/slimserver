@@ -40,7 +40,6 @@ use warnings;
 use Scalar::Util qw(blessed);
 
 use Slim::Buttons::Alarm;
-use Slim::Buttons::GlobalSearch;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::Volume;
 use Slim::Buttons::XMLBrowser;
@@ -126,7 +125,6 @@ sub init {
 	Slim::Buttons::Block::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
-	Slim::Buttons::GlobalSearch::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::XMLBrowser::init();
