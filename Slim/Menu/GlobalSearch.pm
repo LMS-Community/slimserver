@@ -24,6 +24,7 @@ use strict;
 use base qw(Slim::Menu::Base);
 
 use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
 
 my $log = logger('menu.globalsearch');
@@ -37,6 +38,10 @@ sub init {
 		[ 1, 1, 1, \&cliQuery ]
 	);
 	
+	Slim::Control::Request::addDispatch(
+		[ 'globalsearch', 'playlist', '_method' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
 }
 
 sub name {
@@ -91,10 +96,13 @@ sub cliQuery {
 	my $request = shift;
 	my $client  = $request->client;
 	my $search  = $request->getParam('search') || '';
-	
+	my $tags  = $request->getParam('tags') || '';
+
 	if ( !$search && (my $itemId = $request->getParam('item_id')) ) {
 		($search) = $itemId =~ m/_([^.]+)/;
 	}
+
+	$search = Slim::Utils::Misc::unescape($search);
 	
 	my $tags = {
 		menuMode => $request->getParam('menu') || 0,
