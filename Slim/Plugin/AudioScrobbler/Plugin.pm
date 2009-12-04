@@ -72,6 +72,12 @@ sub initPlugin {
 		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
 	}
 	
+	# init scrobbling prefs
+	$prefs->init({
+		enable_scrobbling => 1,
+		include_radio     => 0,
+	});
+	
 	# Subscribe to new song events
 	Slim::Control::Request::subscribe(
 		\&newsongCallback, 
