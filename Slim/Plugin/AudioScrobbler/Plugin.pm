@@ -72,6 +72,12 @@ sub initPlugin {
 		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
 	}
 	
+	# init scrobbling prefs
+	$prefs->init({
+		enable_scrobbling => 1,
+		include_radio     => 0,
+	});
+	
 	# Subscribe to new song events
 	Slim::Control::Request::subscribe(
 		\&newsongCallback, 
@@ -1343,19 +1349,19 @@ sub jiveSettingsMenu {
 	my @menu     = ();
 
 	for my $account (@$accounts) {
-                my $item = {
+		my $item = {
 			text    => $account->{username},
-			radio   => ($selected == $account->{username} && $enabled) + 0,
-                        actions => {
-                                do => {
-                                        player => 0,
-                                        cmd    => [ 'audioscrobbler' , 'account' ],
+			radio   => ($selected eq $account->{username} && $enabled) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'audioscrobbler' , 'account' ],
 					params => {
 						user => $account->{username},
 					},
-                                },
-                        },
-                };
+				},
+			},
+		};
 		push @menu, $item;
 	}
 

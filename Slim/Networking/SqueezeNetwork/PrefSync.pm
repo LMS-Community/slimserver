@@ -502,7 +502,7 @@ sub syncUpGlobal {
 	my $sn_timediff = $prefs->get('sn_timediff');
 	
 	# Send prefs that have been changed since the last sync
-	my $lastSync = $prefs->get('snLastSyncUp');
+	my $lastSync = $prefs->get('snLastSyncUp') || 0;
 	
 	for my $pref ( keys %{$can_sync} ) {
 		next unless $pref =~ /\./;
