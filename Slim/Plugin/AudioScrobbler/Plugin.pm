@@ -1349,19 +1349,19 @@ sub jiveSettingsMenu {
 	my @menu     = ();
 
 	for my $account (@$accounts) {
-                my $item = {
+		my $item = {
 			text    => $account->{username},
-			radio   => ($selected == $account->{username} && $enabled) + 0,
-                        actions => {
-                                do => {
-                                        player => 0,
-                                        cmd    => [ 'audioscrobbler' , 'account' ],
+			radio   => ($selected eq $account->{username} && $enabled) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'audioscrobbler' , 'account' ],
 					params => {
 						user => $account->{username},
 					},
-                                },
-                        },
-                };
+				},
+			},
+		};
 		push @menu, $item;
 	}
 
