@@ -917,7 +917,7 @@ sub logLevels {
 		'player.ui'                  => 'ERROR',
 
 		'scan'                       => 'ERROR',
-		'scan.auto'                  => 'ERROR',
+		'scan.auto'                  => 'DEBUG', # XXX forced on because there will be problems
 		'scan.scanner'               => 'ERROR',
 		'scan.import'                => 'ERROR',
 
