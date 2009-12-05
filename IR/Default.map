@@ -299,6 +299,7 @@ menu_search_artist		= dead
 menu_search_song		= dead
 menu_settings			= dead
 now_playing				= dead
+play.*					= dead
 power					= dead
 power_front.*			= dead
 power_off				= dead

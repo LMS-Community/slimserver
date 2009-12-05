@@ -520,7 +520,7 @@ sub lookupFunction {
 
 			if (my $function = $map->{$search}{$code}) {
 
-				main::INFOLOG && $log->info("Found function: $function for button $code in mode $search");
+				main::INFOLOG && $log->info("Found function: $function for button $code in mode $search (current mode: $mode)");
 
 				return $function;
 			}
@@ -534,9 +534,16 @@ sub lookupFunction {
 
 # Checks to see if a button has been released, this sub is executed through timers
 sub checkRelease {
-	my ($client, $releaseType, $startIRTime, $startIRCodeBytes, $estIRTime) = @_;
+	my ($client, $releaseType, $startIRTime, $startIRCodeBytes, $estIRTime, $origMode) = @_;
 
 	my $now = Time::HiRes::time();
+
+	if ($client->modeStack->[-1] ne $origMode) {
+
+		main::INFOLOG && $log->info("ignoring checkRelease mode has changed");
+
+		return 0;
+	}
 	
 	if ($startIRCodeBytes ne $client->lastircodebytes) {
 
@@ -576,6 +583,7 @@ sub checkRelease {
 				$client->startirhold,
 				$startIRCodeBytes,
 				$client->startirhold + $IRHOLDTIME,
+				$origMode,
 			);
 
 			# don't check for single press release
@@ -610,7 +618,8 @@ sub checkRelease {
 			$releaseType,
 			$startIRTime,
 			$startIRCodeBytes,
-			$estIRTime + $nexttime
+			$estIRTime + $nexttime,
+			$origMode,
 		);
 
 		return 1;
@@ -775,7 +784,8 @@ sub processIR {
 				'single',
 				$irTime,
 				$irCodeBytes,
-				$irTime + $IRSINGLETIME
+				$irTime + $IRSINGLETIME,
+				$client->modeStack->[-1], # current mode
 			)
 		}
 
