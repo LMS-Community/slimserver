@@ -1,8 +1,10 @@
 package Slim::Utils::OS::SqueezeOS;
 
 use strict;
-
 use base qw(Slim::Utils::OS::Linux);
+
+use constant SP_PREFS_JSON => '/etc/squeezecenter/prefs.json';
+use constant SP_SCAN_JSON  => '/etc/squeezecenter/scan.json';
 
 # Cannot use Slim::Utils::Prefs here because too early in bootstrap process.
 
@@ -121,7 +123,7 @@ sub postInitPrefs {
 	
 	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
 
-	if (!main::SCANNER) {
+	if ( !main::SCANNER ) {
 
 		# sync up prefs in case they were changed while Squeezebox Server wasn't running
 		foreach (keys %prefSyncHandlers) {
@@ -317,6 +319,7 @@ sub _setupMediaDir {
 			};
 		}
 		
+		$prefs->set( audiodir        => $path );
 		$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
 		
 		return 1;
@@ -346,36 +349,38 @@ sub _onAudiodirChange {
 sub _checkMediaAtStartup {
 	my $prefs = shift;
 	
-	my $audiodir = $prefs->get('audiodir');
+	# Always read audiodir first from /etc/squeezecenter/prefs.json
+	my $audiodir = '';
+	if ( -e SP_PREFS_JSON ) {
+		require File::Slurp;
+		require JSON::XS;
+		
+		my $spPrefs = eval { JSON::XS::decode_json( File::Slurp::read_file(SP_PREFS_JSON) ) };
+		if ( $@ ) {
+			warn "Unable to read prefs.json: $@\n";
+		}
+		else {
+			$audiodir = $spPrefs->{audiodir};
+		}
+	}
 	
-	if (_setupMediaDir($audiodir, $prefs)) {
+	# XXX SP should store audiodir and mountpath values
+	# mediapath is always the root of the drive and where we store the .Squeezebox dir
+	# audiodir may be any other dir, but .Squeezebox dir is not put there
+	
+	if ( _setupMediaDir($audiodir, $prefs) ) {
 		# hunky dory
 		return;
 	}
 	
-	my $mounts = `/bin/mount | grep /media/`;
-	chomp $mounts;
-	
-	for my $line ( split /\n/, $mounts ) {
-		my ($path, $rw) = $line =~ /on ([^ ]+) type [^ ]+ \((\w{2})/;
-		next if $rw ne 'rw';
-		
-		if (_setupMediaDir($path, $prefs)) {
-			$prefs->set('audiodir', $path);
-			return;
-		}
-	}
-	
-	if ($audiodir) {
-		# it is defined but not valid
-		$prefs->set('audiodir', undef);
-	}
+	# Something went wrong, don't use this audiodir
+	$prefs->set( audiodir => undef );
 }
 
 # don't download/cache firmware for other players, but have them download directly
 sub directFirmwareDownload { 1 };
 
 # Path to progress JSON file
-sub progressJSON { '/etc/squeezecenter/scan.json' }
+sub progressJSON { SP_SCAN_JSON }
 
 1;
