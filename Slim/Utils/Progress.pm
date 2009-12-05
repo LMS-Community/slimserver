@@ -105,6 +105,7 @@ sub new {
 		my $sth = $dbh->prepare_cached("SELECT id FROM progress WHERE type = ? AND name = ?");
 		$sth->execute( $self->type, $self->name );
 		my $row = $sth->fetchrow_hashref;
+		$sth->finish;
 		
 		if ( $row ) {
 			$self->_dbid( $row->{id} );
