@@ -2434,9 +2434,19 @@ sub dump {
 
 				my $hash = ${$self->{'_results'}}{$key}->[$i];
 
-				while (my ($key2, $val2) = each %{$hash}) {
-					main::INFOLOG && $log->info("   Result:   $i. [$key2] = [$val2]");
-				}	
+				if (ref($hash) eq 'HASH') {
+					
+					while (my ($key2, $val2) = each %{$hash}) {
+						main::INFOLOG && $log->info("   Result:   $i. [$key2] = [$val2]");
+					}
+						
+				}
+				
+				else {
+					
+					main::INFOLOG && $log->info('   Result:   ' . Data::Dump::dump($hash));
+					
+				}
 			}
 
 		} else {
