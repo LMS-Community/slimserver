@@ -25,6 +25,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use constant SNTIME_POLL_INTERVAL => 3600;
+
 my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
@@ -133,6 +135,9 @@ sub _init_done {
 	main::INFOLOG && $log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
 	$prefs->set( sn_timediff => $diff );
+	$prefs->set( sn_timestamp => $snTime );
+	
+	_syncSNTime_done($http, $json);
 	
 	# Clear error counter
 	$prefs->remove( 'snInitErrors' );
@@ -333,6 +338,48 @@ sub login {
 	
 	$self->get( $url );
 }
+
+
+sub syncSNTime {
+	# we only want this to run on SqueezeOS/SB Touch
+	return unless Slim::Utils::OSDetect::isSqueezeOS();
+	
+	Slim::Networking::SqueezeNetwork->login(
+		cb =>\&_syncSNTime_done,
+		ecb =>\&_init_error,
+	);
+}
+
+sub _syncSNTime_done {
+	my ($http, $json) = @_;
+
+	# we only want this to run on SqueezeOS/SB Touch
+	return unless Slim::Utils::OSDetect::isSqueezeOS();
+	
+	my $snTime = $json->{time};
+	
+	if ( $snTime !~ /^\d+$/ ) {
+		$http->error( "Invalid mysqueezebox.com server timestamp" );
+		return _init_error( $http );
+	}
+	
+	main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
+	
+	# assuming difference = 0 as we're using time as reported by SN
+	$prefs->set('sn_timediff', 0);
+	
+	# set local time to mysqueezebox.com's epochtime 
+	Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
+
+	Slim::Utils::Timers::killTimers( undef, \&syncSNTime );
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + SNTIME_POLL_INTERVAL,
+		\&syncSNTime,
+	);
+		
+}
+
 
 sub getHeaders {
 	my ( $self, $client ) = @_;

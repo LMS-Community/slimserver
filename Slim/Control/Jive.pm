@@ -2180,16 +2180,46 @@ sub jiveSyncCommand {
 	$request->setStatusDone();
 }
 
+sub dateQuery_filter {
+	my ($self, $request) = @_;
+
+	# if time is to be set, pass along the new time value to the listeners
+	if (my $newTime = $request->getParam('set')) {
+		$self->privateData($newTime);
+		return 1;
+	}
+
+	$self->privateData(0);
+	return 0;
+}
+
 sub dateQuery {
 	my $request = shift;
+
+	# trigger time sync update if we're way off
+	my $snTimestamp = $prefs->get('sn_timestamp') || 0;
+	if (time() < $snTimestamp || time() < 1260195768) {
+		Slim::Networking::SqueezeNetwork::syncSNTime();
+	}
 
 	if ( $request->isNotQuery([['date']]) ) {
 		$request->setStatusBadDispatch();
 		return;
 	}
+	
+	my $newTime = $request->getParam('set') || 0;
+
+	# it time is expliciely set, we'll have to notify our listeners
+	if ($newTime) {
+		$request->notify();
+	}
+	else {
+		$newTime = $request->privateData() || 0;
+		$request->privateData(0);
+	}
 
 	# 7.5+ SP devices use epoch time now, much simpler
-	$request->addResult( 'date_epoch', time() );
+	$request->addResult( 'date_epoch', $newTime || time() );
 
 	# This is the field 7.3 and earlier players expect.
 	#  7.4 is smart enough to take no action when missing
@@ -2205,7 +2235,7 @@ sub dateQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$request->registerAutoExecute($timeout, \&dateQuery);
+		$request->registerAutoExecute($timeout, \&dateQuery_filter);		
 	}
 
 	$request->setStatusDone();
