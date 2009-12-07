@@ -13,6 +13,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Scanner::Local;
 
 use Linux::Inotify2;
+use File::Slurp;
 
 my $log = logger('scan.auto');
 
@@ -30,13 +31,13 @@ sub canWatch {
 	# on the network.  Fall back to stat-based monitoring in this case.
 	
 	# not as good as comparing 'df -L' with 'df -Pl' but more portable	
-	my $mounts  = `mount`;
+	my $mounts = File::Slurp::read_file('/proc/mounts');
 		
 	# /dev/mmcblk0p1 on /media/mmcblk0p1 type vfat (roptions)
 	# 192.168.1.11:/data1 on /mnt2 type nfs (options)
 
  	for my $line ( split /\n/, $mounts ) {
-		my ($source, undef, $mountpoint, undef, $fstype, undef) = split /\s+/, $line;
+		my ($source, $mountpoint, $fstype) = split /\s+/, $line;
 		if ( $dir =~ /^$mountpoint/ &&  $fstype =~ /^(nfs|smb)/ ) {
 			# It's a remote share
 			main::DEBUGLOG && $log->is_debug && $log->debug("Remote mountpoint $mountpoint detected, using stat-based monitoring");

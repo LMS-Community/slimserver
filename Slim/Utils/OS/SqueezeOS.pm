@@ -294,8 +294,9 @@ sub _setupMediaDir {
 	# Is audiodir defined, mounted and writable?
 	if ($path && $path =~ m{^/media/[^/]+} && -w $path) {
 
-		my $mounts = `/bin/mount | grep "$path"`;
-		chomp $mounts;
+		require File::Slurp;
+
+		my $mounts = grep /$path/, split /\n/, File::Slurp::read_file('/proc/mounts');
 
 		if ( !$mounts ) {
 			warn "$path: mount point is not mounted, let's ignore it\n";
