@@ -59,8 +59,6 @@ $prefs->setValidate({
 	validator => sub {
 		my ($pref, $new, $params, $old, $client) = @_;
 		
-		logError("$pref, $new, $old, ", $client->mixerConstant($pref, 'max'));
-
 		return $new <= $client->mixerConstant($pref, 'max') 
 		    && $new >= $client->mixerConstant($pref, 'min');
 	} 
