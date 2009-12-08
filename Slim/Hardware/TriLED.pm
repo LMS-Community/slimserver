@@ -44,8 +44,45 @@ $times > 0 -> number of blinks
 
 =cut
 
+my $isInitialized = 0;
+
+# ----------------------------------------------------------------------------
+sub init {
+	Slim::Control::Request::addDispatch( ['triled', 'set', '_color', '_transition', '_ontime', '_offtime', '_times'], [1, 0, 0, \&cliTriLED]);
+	$isInitialized = 1;
+}
+
+
+# ----------------------------------------------------------------------------
+sub cliTriLED {
+	my $request = shift;
+
+	# Check this is the correct query
+	if( $request->isNotCommand( [['triled', 'set']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $client = $request->client();
+	my $color = $request->getParam( '_color');
+	my $transition = $request->getParam( '_transition');
+	my $on_time = $request->getParam( '_ontime');
+	my $off_time = $request->getParam( '_offtime');
+	my $times = $request->getParam( '_times');
+	
+	# Only supported on Receiver
+	if( !defined( $client) || !( $client->model() eq 'receiver')) {
+		return;
+	}
+
+	setTriLED( $client, $color, $transition, $on_time, $off_time, $times);
+	$request->setStatusDone();
+}
+
+
 # ----------------------------------------------------------------------------
 sub setTriLED {
+	init() unless $isInitialized;
 
 	my $client = shift;
 	my $color = shift || 0x00000000;	# white
