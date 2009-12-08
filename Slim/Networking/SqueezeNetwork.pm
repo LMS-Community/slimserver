@@ -137,7 +137,7 @@ sub _init_done {
 	$prefs->set( sn_timediff => $diff );
 	$prefs->set( sn_timestamp => $snTime );
 	
-	_syncSNTime_done($http, $json);
+	_syncSNTime_done($http, $snTime);
 	
 	# Clear error counter
 	$prefs->remove( 'snInitErrors' );
@@ -344,21 +344,25 @@ sub syncSNTime {
 	# we only want this to run on SqueezeOS/SB Touch
 	return unless Slim::Utils::OSDetect::isSqueezeOS();
 	
-	Slim::Networking::SqueezeNetwork->login(
-		cb =>\&_syncSNTime_done,
-		ecb =>\&_init_error,
+	my $http = __PACKAGE__->new(
+		\&_syncSNTime_done,
+		\&_players_error,
 	);
+	
+	$http->get( $http->url( '/api/v1/time' ) );
 }
 
 sub _syncSNTime_done {
-	my ($http, $json) = @_;
+	my ($http, $snTime) = @_;
 
 	# we only want this to run on SqueezeOS/SB Touch
 	return unless Slim::Utils::OSDetect::isSqueezeOS();
-	
-	my $snTime = $json->{time};
-	
-	if ( $snTime !~ /^\d+$/ ) {
+
+	if (!$snTime && $http && $http->content) {
+		$snTime = $http->content;
+	}
+
+	if ( !$snTime || $snTime !~ /^\d+$/ ) {
 		$http->error( "Invalid mysqueezebox.com server timestamp" );
 		return _init_error( $http );
 	}
