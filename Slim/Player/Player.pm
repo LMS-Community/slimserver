@@ -848,6 +848,11 @@ sub mixerDisplay {
 
 	} elsif ($feature eq 'volume') {
 
+		# Negative value = muting
+		if ($featureValue < 0) {
+			$featureValue = 0;
+		}
+
 		if (my $linefunc = $client->customVolumeLines()) {
 
 			$parts = &$linefunc($client, { value => $featureValue });
