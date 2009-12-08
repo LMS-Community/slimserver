@@ -171,6 +171,19 @@ sub _init_done {
 	
 	# Init stats
 	Slim::Networking::SqueezeNetwork::Stats->init( $json );
+
+	
+	# add link to mysb.com favorites to our local favorites list
+	if ( !main::SLIM_SERVICE && $json->{favorites_url} ) {
+
+		my $favs = Slim::Utils::Favorites->new();
+		
+		if ( !defined $favs->findUrl($json->{favorites_url}) ) {
+
+			$favs->add( $json->{favorites_url}, Slim::Utils::Strings::string('PLUGIN_FAVORITES_ON_MYSB'), undef, undef, undef, 'html/images/favorites.png' );
+
+		}
+	}
 }
 
 sub _init_error {

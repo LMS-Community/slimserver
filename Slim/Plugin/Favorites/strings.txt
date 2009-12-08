@@ -581,3 +581,6 @@ PLUGIN_FAVORITES_REMOVE
 	RU	Удалить из выбранного
 	SV	Ta bort från favoriter
 
+PLUGIN_FAVORITES_ON_MYSB
+	DE	Auf mysqueezebox.com
+	EN	On mysqueezebox.com
