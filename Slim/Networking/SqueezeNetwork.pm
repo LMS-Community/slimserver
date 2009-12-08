@@ -362,18 +362,18 @@ sub _syncSNTime_done {
 		$snTime = $http->content;
 	}
 
-	if ( !$snTime || $snTime !~ /^\d+$/ ) {
-		$http->error( "Invalid mysqueezebox.com server timestamp" );
-		return _init_error( $http );
+	if ( $snTime && $snTime =~ /^\d+$/ ) {
+		main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
+		
+		# assuming difference = 0 as we're using time as reported by SN
+		$prefs->set('sn_timediff', 0);
+		
+		# set local time to mysqueezebox.com's epochtime 
+		Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
 	}
-	
-	main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
-	
-	# assuming difference = 0 as we're using time as reported by SN
-	$prefs->set('sn_timediff', 0);
-	
-	# set local time to mysqueezebox.com's epochtime 
-	Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
+	else {
+		$log->error("Invalid mysqueezebox.com server timestamp - ignoring");
+	}
 
 	Slim::Utils::Timers::killTimers( undef, \&syncSNTime );
 	Slim::Utils::Timers::setTimer(
