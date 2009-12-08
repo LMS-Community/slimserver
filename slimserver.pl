@@ -458,23 +458,14 @@ sub init {
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
 	
+	main::INFOLOG && $log->info("SqueezeNetwork Init...");
+	Slim::Networking::SqueezeNetwork->init();
+	
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
 	main::INFOLOG && $log->info("Squeezebox Server Info init...");
 	Slim::Music::Info::init();
-	
-	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
-	if ($prefs->get('audiodir')) {
-		require Slim::Music::MusicFolderScan;
-		Slim::Music::MusicFolderScan->init();
-	}
-	if ($prefs->get('playlistdir')) {
-		require Slim::Music::PlaylistFolderScan;
-		Slim::Music::PlaylistFolderScan->init();
-	}
-	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
-	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
 	main::INFOLOG && $log->info("Squeezebox Server IR init...");
 	Slim::Hardware::IR::init();
@@ -498,15 +489,24 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
-	
-	main::INFOLOG && $log->info("SqueezeNetwork Init...");
-	Slim::Networking::SqueezeNetwork->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");
 		require Slim::Utils::UPnPMediaServer;
 		Slim::Utils::UPnPMediaServer::init();
 	}
+	
+	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
+	if ($prefs->get('audiodir')) {
+		require Slim::Music::MusicFolderScan;
+		Slim::Music::MusicFolderScan->init();
+	}
+	if ($prefs->get('playlistdir')) {
+		require Slim::Music::PlaylistFolderScan;
+		Slim::Music::PlaylistFolderScan->init();
+	}
+	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
+	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
 	main::INFOLOG && $log->info("Squeezebox Server HTTP init...");
 	Slim::Web::HTTP::init();
