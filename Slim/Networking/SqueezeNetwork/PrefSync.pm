@@ -18,7 +18,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
-my $log   = logger('network.squeezenetwork');
+my $log   = logger('network.squeezenetwork.prefsync');
 
 my $prefs = preferences('server');
 
