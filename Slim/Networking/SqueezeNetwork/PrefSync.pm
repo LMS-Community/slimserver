@@ -18,7 +18,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
-my $log   = logger('network.squeezenetwork.prefsync');
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'network.squeezenetwork.prefsync',
+	'defaultLevel' => 'DEBUG',
+});
 
 my $prefs = preferences('server');
 
