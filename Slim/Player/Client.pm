@@ -55,6 +55,17 @@ our $defaultPrefs = {
 	'presets'              => [],
 };
 
+$prefs->setValidate({
+	validator => sub {
+		my ($pref, $new, $params, $old, $client) = @_;
+		
+		logError("$pref, $new, $old, ", $client->mixerConstant($pref, 'max'));
+
+		return $new <= $client->mixerConstant($pref, 'max') 
+		    && $new >= $client->mixerConstant($pref, 'min');
+	} 
+}, qw(bass treble));
+
 $prefs->setChange( sub {
 	my $value  = $_[1];
 	my $client = $_[2] || return;
