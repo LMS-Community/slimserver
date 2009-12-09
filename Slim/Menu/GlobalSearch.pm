@@ -45,7 +45,7 @@ sub init {
 }
 
 sub name {
-	return 'SEARCH';
+	return 'GLOBAL_SEARCH';
 }
 
 sub registerDefaultInfoProviders {
@@ -67,14 +67,40 @@ sub searchMyMusic {
 	
 	my $jive = Slim::Control::Jive::searchMenu(1, $client);
 
+	my $search = Slim::Buttons::Search::searchTerm($client, $tags->{search});
+
+	my %queries = (
+		cstring($client, 'ARTISTS') => {
+			'search'    => $search,
+			'hierarchy' => 'contributor,album,track',
+			'level'     => 0,
+		},
+
+		cstring($client, 'ALBUMS')  => {
+			'search'    => $search,
+			'hierarchy' => 'album,track',
+			'level'     => 0,
+		},
+
+		cstring($client, 'SONGS')   => {
+			'search'    => $search,
+			'hierarchy' => 'track',
+			'level'     => 0,
+		},
+	);
+	
+
 	foreach my $item (@$jive) {
+		
+		next if $item->{text} eq cstring($client, 'PLAYLISTS') && !$tags->{menuMode};
 		
 		if ($item->{actions} && $item->{actions}->{go} && $item->{actions}->{go}->{params}) {
 			 $item->{actions}->{go}->{params}->{search} = $tags->{search};
 		}
 		
-		push @$items, {
+		my $menuItem = {
 			name  => $item->{text},
+			type  => 'redirect',
 			jive  => {
 				actions => $item->{actions},
 				text    => $item->{text},
@@ -82,6 +108,15 @@ sub searchMyMusic {
 				window  => $item->{window},
 			},
 		};
+		
+		if ($queries{$item->{text}}) {
+			$menuItem->{player} = {
+				mode  => 'browsedb',
+				modeParams => $queries{$item->{text}},
+			},
+		}
+		
+		push @$items, $menuItem;
 	}
 
 	return {
@@ -89,6 +124,16 @@ sub searchMyMusic {
 		items => $items,
 		type  => 'opml',
 	};
+}
+
+sub menu {
+	my ( $class, $client, $tags ) = @_;
+
+	my $menu = $class->SUPER::menu($client, $tags);
+
+	$menu->{name} = cstring($client, 'GLOBAL_SEARCH_IN', $tags->{search});
+	
+	return $menu;
 }
 
 sub cliQuery {

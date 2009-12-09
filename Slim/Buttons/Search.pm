@@ -219,9 +219,12 @@ sub startSearch {
 
 sub searchTerm {
 	my $client = shift;
+	my $search = shift;
+	
+	$search = $context{$client} if !defined $search;
 
 	# do the search!
-	@{$client->searchTerm} = split(//, Slim::Utils::Text::ignoreCaseArticles($context{$client}));
+	@{$client->searchTerm} = split(//, Slim::Utils::Text::ignoreCaseArticles($search));
 
 	my $term = '';
 

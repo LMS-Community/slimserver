@@ -76,9 +76,19 @@ if ( main::SLIM_SERVICE ) {
 
 sub get_server {
 	my ($class, $stype) = @_;
+
+	# TODO: remove that code soon...
+	$prefs->migrate( 6, sub {
+		$prefs->set( 'use_sn_test' => 0 );
+	} );
 	
 	# Use SN test server if hidden test pref is set
 	if ( $stype eq 'sn' && $prefs->get('use_sn_test') ) {
+		$stype = 'test';
+	}
+	
+	# TODO - to be removed before release!
+	if ( $stype eq 'sn' ) {
 		$stype = 'test';
 	}
 
@@ -334,6 +344,8 @@ sub login {
 			a => sha1_base64( $password . $time ),
 		};
 	}
+	
+	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
 	
 	my $self = $class->new(
 		\&_login_done,
