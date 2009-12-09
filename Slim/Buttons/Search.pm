@@ -255,10 +255,6 @@ sub searchTerm {
 	return [ $term, "% $term" ];
 }
 
-sub getSearchModes {
-	return $menuParams{SEARCH}->{submenus};
-}
-
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
