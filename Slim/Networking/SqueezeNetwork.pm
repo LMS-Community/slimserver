@@ -74,6 +74,12 @@ if ( main::SLIM_SERVICE ) {
 
 sub get_server {
 	my ($class, $stype) = @_;
+
+	# flip the flag to use test.mysb.com in beta versions
+	# TODO: flip back for release!
+	$prefs->migrate( 5, sub {
+		$prefs->set( 'use_sn_test' => 1 );
+	} );
 	
 	# Use SN test server if hidden test pref is set
 	if ( $stype eq 'sn' && $prefs->get('use_sn_test') ) {
@@ -299,7 +305,7 @@ sub login {
 		return $params{ecb}->( undef, $error );
 	}
 	
-	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as $username");
+	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
 	
 	my $self = $class->new(
 		\&_login_done,
