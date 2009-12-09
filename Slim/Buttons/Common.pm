@@ -42,6 +42,7 @@ use Scalar::Util qw(blessed);
 use Slim::Buttons::Alarm;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::Volume;
+use Slim::Buttons::GlobalSearch;
 use Slim::Buttons::XMLBrowser;
 use Slim::Player::Client;
 use Slim::Utils::DateTime;
@@ -130,6 +131,7 @@ sub init {
 	Slim::Buttons::XMLBrowser::init();
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
+	Slim::Buttons::GlobalSearch::init();
 	Slim::Buttons::Search::init();
 	Slim::Buttons::SqueezeNetwork::init();
 	Slim::Buttons::Synchronize::init();
@@ -695,6 +697,18 @@ our %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'search');
 
 			$client->update();
+		}
+	},
+
+	'globalsearch' => sub  {
+		my $client = shift;
+
+		if ($client->modeParam('header') ne 'GLOBAL_SEARCH') {
+
+			setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'globalsearch');
+			Slim::Buttons::Common::pushModeLeft($client, 'globalsearch');
+
 		}
 	},
 

@@ -14704,6 +14704,30 @@ SEARCH
 	SV	Sök
 	ZH_CN	搜查音乐
 
+GLOBAL_SEARCH
+	CS	Vyhledat
+	DA	Søg
+	DE	Suchen
+	EN	Search
+	ES	Buscar
+	FI	Etsi
+	FR	Recherche
+	HE	חיפוש
+	IT	Ricerca
+	JA	音楽を検索する
+	NL	Zoeken
+	NO	Søk
+	PL	Szukaj
+	PT	Procurar Música
+	RU	Поиск
+	SV	Sök
+	ZH_CN	搜查音乐
+
+GLOBAL_SEARCH_IN
+# SLT: this expands to "Search XYZ in: ABC, DEF", where ABC, DEF is a list of items below this title, and %s is replaced with the search term.
+	DE	Suche %s in:
+	EN	Search %s in:
+
 SEARCHMUSIC
 	CS	Hledat hudbu
 	DA	Søg efter musik

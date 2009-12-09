@@ -140,7 +140,7 @@ repeat_all				= repeat_2
 
 # special buttons
 browse					= browse
-search					= search
+search					= globalsearch
 favorites.single		= favorites
 favorites.hold			= favorites_add
 visual					= visual_toggle
@@ -148,7 +148,7 @@ visual					= visual_toggle
 favorites_2.single		= favorites
 favorites_2.hold		= favorites_add
 now_playing_2			= playdisp_toggle
-search_2				= search
+search_2				= globalsearch
 
 # menu shortcuts
 menu_playlist			= menu_playlist
