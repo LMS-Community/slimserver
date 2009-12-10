@@ -95,7 +95,7 @@ sub initJive {
 	} );
 	
 	# Bug 12336, additional items for type=search
-	if ( $args{type} eq 'search' ) {
+	if ( $args{type} && $args{type} eq 'search' ) {
 		$jiveMenu[0]->{actions}->{go}->{params}->{search} = '__TAGGEDINPUT__';
 		$jiveMenu[0]->{input} = {
 			len  => 1,
@@ -134,11 +134,11 @@ sub initCLI {
 	);
 
 	$cli_next{ $class } ||= {};
-		
+
 	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
 		[ $args{menu}, '_index', '_quantity' ],
 		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $args{menu} ) ]
-	);
+	) if $args{menu};
 }
 
 sub setMode {
