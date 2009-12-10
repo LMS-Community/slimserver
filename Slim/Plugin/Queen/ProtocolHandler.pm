@@ -243,8 +243,6 @@ sub getMetadataFor {
 	
 	return {} unless $url;
 	
-	my $meta;
-
 	my $cache = Slim::Utils::Cache->new;
 	
 	# If metadata is not here, fetch it so the next poll will include the data

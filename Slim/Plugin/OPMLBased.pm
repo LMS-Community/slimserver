@@ -134,7 +134,7 @@ sub initCLI {
 	);
 
 	$cli_next{ $class } ||= {};
-		
+
 	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
 		[ $args{menu}, '_index', '_quantity' ],
 		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $args{menu} ) ]
