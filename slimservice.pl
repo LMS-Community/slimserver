@@ -162,6 +162,7 @@ use Slim::Menu::GenreInfo;
 use Slim::Menu::YearInfo;
 use Slim::Menu::SystemInfo;
 use Slim::Menu::PlaylistInfo;
+use Slim::Menu::GlobalSearch;
 use Slim::Music::Info;
 #use Slim::Music::Import;
 #use Slim::Music::MusicFolderScan;
@@ -391,6 +392,7 @@ sub init {
 	Slim::Menu::YearInfo->init();
 	Slim::Menu::SystemInfo->init();
 	Slim::Menu::PlaylistInfo->init();
+	Slim::Menu::GlobalSearch->init();
 	
 	main::INFOLOG && $log->info('Squeezebox Server Alarms init...');
 	Slim::Utils::Alarm->init();
