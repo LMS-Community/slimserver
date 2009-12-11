@@ -27,6 +27,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
 
+if ($main::SLIM_SERVICE) {
+	require Slim::Utils::Timers;
+	require JSON::XS::VersionOneAndTwo;
+}
+
 my $log = logger('menu.globalsearch');
 
 sub init {
@@ -52,12 +57,51 @@ sub registerDefaultInfoProviders {
 	my $class = shift;
 	
 	$class->SUPER::registerDefaultInfoProviders();
+	
+	# fetch the list of all search providers
+	if ($main::SLIM_SERVICE) {
+		
+		my $_error_handler = sub {
+			my $http = shift;
 
-	if ( !main::SLIM_SERVICE ) {
+			main::DEBUGLOG && $log->error( 'Error getting search providers: ' . $http->error );
+
+			# retry again
+			Slim::Utils::Timers::setTimer(
+				undef,
+				time() + 10,
+				sub {
+					__PACKAGE__->registerDefaultInfoProviders()
+				},
+			);
+		};
+		
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			sub {
+				my $http = shift;
+				my $res = eval { JSON::XS::VersionOneAndTwo::decode_json( $http->content ) };
+
+				if ( $@ || ref $res ne 'ARRAY' || $res->{error} ) {
+					$http->error( $@ || 'Invalid search provider list: ' . $http->content );
+					return $_error_handler->( $http );
+				}
+				
+				$class->regsiterSearchProviders($res);
+			},
+			$_error_handler,
+		);
+		
+		$http->get( Slim::Networking::SqueezeNetwork->url('/api/v1/search_provider') );
+		
+	}
+	
+	else {
+		
 		$class->registerInfoProvider( searchMyMusic => (
 			isa  => 'top',
 			func => \&searchMyMusic,
 		) );
+		
 	}	
 }
 
@@ -82,7 +126,6 @@ sub registerSearchProviders {
 			before => $provider->{before},
 			after  => $provider->{after},
 			
-
 			func   => sub {
 				my ( $client, $tags ) = @_;
 
