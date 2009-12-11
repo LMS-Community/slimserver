@@ -69,10 +69,10 @@ Initializes the entire MySQL subsystem - creates the config file, and starts the
 sub init {
 	my $class = shift;
 
-	# bug 15288 - temporary issue: if user is coming back from embedded, enforce MySQL
-	if ($prefs->get('dbsource') =~ /SQLite/i) {
-		$log->warn('Returning from 7.5/Embedded branch? Going to revert from SQLite to MySQL');
-		$prefs->set('dbsource', default_dbsource());
+	# Reset dbsource pref if it's not for MySQL
+	if ( $prefs->get('dbsource') !~ /^dbi:mysql/ ) {
+		$prefs->set( dbsource => default_dbsource() );
+		$prefs->set( dbsource => $class->source() );
 	}
 
 	# Check to see if our private port is being used. If not, we'll assume
