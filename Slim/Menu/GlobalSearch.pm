@@ -59,7 +59,7 @@ sub registerDefaultInfoProviders {
 	$class->SUPER::registerDefaultInfoProviders();
 	
 	# fetch the list of all search providers
-	if ($main::SLIM_SERVICE) {
+	if (main::SLIM_SERVICE) {
 		
 		my $_error_handler = sub {
 			my $http = shift;
@@ -81,17 +81,17 @@ sub registerDefaultInfoProviders {
 				my $http = shift;
 				my $res = eval { JSON::XS::VersionOneAndTwo::decode_json( $http->content ) };
 
-				if ( $@ || ref $res ne 'ARRAY' || $res->{error} ) {
+				if ( $@ || ref $res ne 'ARRAY' ) {
 					$http->error( $@ || 'Invalid search provider list: ' . $http->content );
 					return $_error_handler->( $http );
 				}
 				
-				$class->regsiterSearchProviders($res);
+				$class->registerSearchProviders($res);
 			},
 			$_error_handler,
 		);
 		
-		$http->get( Slim::Networking::SqueezeNetwork->url('/api/v1/search_provider') );
+		$http->get( Slim::Networking::SqueezeNetwork->url('/api/v1/searchproviders') );
 		
 	}
 	
@@ -125,15 +125,15 @@ sub registerSearchProviders {
 			isa    => $provider->{isa},
 			before => $provider->{before},
 			after  => $provider->{after},
+			app    => lc($provider->{text}),
 			
 			func   => sub {
 				my ( $client, $tags ) = @_;
 
 				if ($provider->{app} && !(grep /$provider->{app}/, @{ $tags->{apps} }) ) {
 					
-					main::DEBUGLOG && $log->is_debug && $log->debug( "Skipping app - not enabled on this player: $provider->{text}" );
-					next;
-
+					main::DEBUGLOG && $log->is_debug && $log->debug( 'Skipping app - not enabled on this player: ' . cstring($client, $provider->{text}) );
+					return;
 				}
 
 				my $menuItem = {
@@ -142,7 +142,7 @@ sub registerSearchProviders {
 					search => $tags->{search},
 				};
 
-				$menuItem->{url} =~ s/{QUERY}/$tags->{search}/;
+				$menuItem->{url} =~ s/{QUERY}/$tags->{search}/ if $menuItem->{url};
 
 				if ($provider->{outline}) {
 						
