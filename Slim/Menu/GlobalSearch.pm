@@ -61,6 +61,75 @@ sub registerDefaultInfoProviders {
 	}	
 }
 
+sub registerSearchProviders {
+	my ($class, $search_providers) = @_;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Registering search providers: ' . Data::Dump::dump( $search_providers ) );
+
+	my %existing_providers;
+
+	# get a list of external search providers so we can purge items which have been disabled since last update
+	while (my ($key, $value) = each %{ $class->getInfoProvider() }) {
+		$existing_providers{$key} = 1 if $value->{remote_search};
+	}
+
+	foreach my $provider ( @{ $search_providers } ) {
+			
+		delete $existing_providers{$provider->{text}};
+
+		$class->registerInfoProvider( $provider->{text} => (
+			isa    => $provider->{isa},
+			before => $provider->{before},
+			after  => $provider->{after},
+			
+
+			func   => sub {
+				my ( $client, $tags ) = @_;
+
+				if ($provider->{app} && !(grep /$provider->{app}/, @{ $tags->{apps} }) ) {
+					
+					main::DEBUGLOG && $log->is_debug && $log->debug( "Skipping app - not enabled on this player: $provider->{text}" );
+					next;
+
+				}
+
+				my $menuItem = {
+					name   => cstring($client, $provider->{text}),
+					url    => $provider->{URL} || $provider->{url},
+					search => $tags->{search},
+				};
+
+				$menuItem->{url} =~ s/{QUERY}/$tags->{search}/;
+
+				if ($provider->{outline}) {
+						
+					$menuItem->{items} = [];
+						
+					foreach my $item (@{ $provider->{outline} }) {
+						my $url = $item->{URL} || $item->{url};
+						$url =~ s/{QUERY}/$tags->{search}/;
+							
+						push @{ $menuItem->{items} }, {
+							name   => cstring($client, $item->{text}),
+							search => $tags->{search},
+							url    => $url,
+						};
+					}
+				}
+
+				return $menuItem;
+			},
+				
+			remote_search => 1
+		) ) 			
+	}
+		
+	# remove search providers which have been disabled since last update
+	foreach (keys %existing_providers) {
+		$class->deregisterInfoProvider($_);
+	}
+}
+
 sub searchMyMusic {
 	my ( $client, $tags ) = @_;
 	my $items = [];
@@ -128,6 +197,8 @@ sub searchMyMusic {
 
 sub menu {
 	my ( $class, $client, $tags ) = @_;
+
+	$tags->{apps} = [ keys %{$client->apps} ];
 
 	my $menu = $class->SUPER::menu($client, $tags);
 
