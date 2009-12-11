@@ -140,6 +140,7 @@ sub registerSearchProviders {
 					name   => cstring($client, $provider->{text}),
 					url    => $provider->{URL} || $provider->{url},
 					search => $tags->{search},
+					type   => $provider->{slideshow} ? 'slideshow' : undef,
 				};
 
 				$menuItem->{url} =~ s/{QUERY}/$tags->{search}/ if $menuItem->{url};
@@ -154,8 +155,9 @@ sub registerSearchProviders {
 							
 						push @{ $menuItem->{items} }, {
 							name   => cstring($client, $item->{text}),
-							search => $tags->{search},
 							url    => $url,
+							search => $tags->{search},
+							type   => $item->{slideshow} ? 'slideshow' : undef,
 						};
 					}
 				}
