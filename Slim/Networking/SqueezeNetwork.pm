@@ -335,7 +335,7 @@ sub login {
 			return $params{ecb}->( undef, $error );
 		}
 	
-		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as $username");
+		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
 		
 		$login_params = {
 			v => 'sc' . $::VERSION,
@@ -344,8 +344,6 @@ sub login {
 			a => sha1_base64( $password . $time ),
 		};
 	}
-	
-	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
 	
 	my $self = $class->new(
 		\&_login_done,
