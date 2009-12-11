@@ -214,62 +214,8 @@ sub _players_done {
 	# SN can provide string translations for new menu items
 	if ( $res->{search_providers} ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding search providers: ' . Data::Dump::dump( $res->{search_providers} ) );
-		
-		my %existing_providers;
 
-		# get a list of external search providers so we can purge items which have been disabled since last update
-		while (my ($key, $value) = each %{ Slim::Menu::GlobalSearch->getInfoProvider() }) {
-			$existing_providers{$key} = 1 if $value->{remote_search};
-		}
-
-		foreach my $provider ( @{ $res->{search_providers} } ) {
-			
-			delete $existing_providers{$provider->{text}};
-			
-			Slim::Menu::GlobalSearch->registerInfoProvider( $provider->{text} => (
-				isa   => $provider->{isa},
-				before=> $provider->{before},
-				after => $provider->{after},
-
-				func  => sub {
-					my ( $client, $tags ) = @_;
-
-					my $menuItem = {
-						name  => Slim::Utils::Strings::cstring($client, $provider->{text}),
-						url   => $provider->{URL} || $provider->{url},
-						search=> $tags->{search},
-					};
-
-					$menuItem->{url} =~ s/{QUERY}/$tags->{search}/;
-
-					if ($provider->{outline}) {
-						
-						$menuItem->{items} = [];
-						
-						foreach my $item (@{ $provider->{outline} }) {
-							my $url = $item->{URL} || $item->{url};
-							$url =~ s/{QUERY}/$tags->{search}/;
-							
-							push @{ $menuItem->{items} }, {
-								name   => Slim::Utils::Strings::cstring($client, $item->{text}),
-								search => $tags->{search},
-								url    => $url,
-							};
-						}
-					}
-
-					return $menuItem;
-				},
-				
-				remote_search => 1
-			) ) 			
-		}
-		
-		# remove search providers which have been disabled since last update
-		foreach (keys %existing_providers) {
-			Slim::Menu::GlobalSearch->deregisterInfoProvider($_);
-		}
-		
+		Slim::Menu::GlobalSearch->registerSearchProviders( $res->{search_providers} );		
 	}
 	
 	

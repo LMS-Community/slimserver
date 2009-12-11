@@ -75,6 +75,12 @@ sub init {
 		$prefs->set( dbsource => $class->source() );
 	}
 
+	# Reset dbsource pref if it's not for MySQL
+	if ( $prefs->get('dbsource') !~ /^dbi:mysql/ ) {
+		$prefs->set( dbsource => default_dbsource() );
+		$prefs->set( dbsource => $class->source() );
+	}
+
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
 	if ($prefs->get('dbsource') !~ /port=9092/) {

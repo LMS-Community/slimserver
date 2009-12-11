@@ -27,6 +27,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
 
+if ($main::SLIM_SERVICE) {
+	require Slim::Utils::Timers;
+	require JSON::XS::VersionOneAndTwo;
+}
+
 my $log = logger('menu.globalsearch');
 
 sub init {
@@ -52,13 +57,122 @@ sub registerDefaultInfoProviders {
 	my $class = shift;
 	
 	$class->SUPER::registerDefaultInfoProviders();
+	
+	# fetch the list of all search providers
+	if (main::SLIM_SERVICE) {
+		
+		my $_error_handler = sub {
+			my $http = shift;
 
-	if ( !main::SLIM_SERVICE ) {
+			main::DEBUGLOG && $log->error( 'Error getting search providers: ' . $http->error );
+
+			# retry again
+			Slim::Utils::Timers::setTimer(
+				undef,
+				time() + 10,
+				sub {
+					__PACKAGE__->registerDefaultInfoProviders()
+				},
+			);
+		};
+		
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			sub {
+				my $http = shift;
+				my $res = eval { JSON::XS::VersionOneAndTwo::decode_json( $http->content ) };
+
+				if ( $@ || ref $res ne 'ARRAY' ) {
+					$http->error( $@ || 'Invalid search provider list: ' . $http->content );
+					return $_error_handler->( $http );
+				}
+				
+				$class->registerSearchProviders($res);
+			},
+			$_error_handler,
+		);
+		
+		$http->get( Slim::Networking::SqueezeNetwork->url('/api/v1/searchproviders') );
+		
+	}
+	
+	else {
+		
 		$class->registerInfoProvider( searchMyMusic => (
 			isa  => 'top',
 			func => \&searchMyMusic,
 		) );
+		
 	}	
+}
+
+sub registerSearchProviders {
+	my ($class, $search_providers) = @_;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Registering search providers: ' . Data::Dump::dump( $search_providers ) );
+
+	my %existing_providers;
+
+	# get a list of external search providers so we can purge items which have been disabled since last update
+	while (my ($key, $value) = each %{ $class->getInfoProvider() }) {
+		$existing_providers{$key} = 1 if $value->{remote_search};
+	}
+
+	foreach my $provider ( @{ $search_providers } ) {
+			
+		delete $existing_providers{$provider->{text}};
+
+		$class->registerInfoProvider( $provider->{text} => (
+			isa    => $provider->{isa},
+			before => $provider->{before},
+			after  => $provider->{after},
+			app    => lc($provider->{text}),
+			
+			func   => sub {
+				my ( $client, $tags ) = @_;
+
+				if ($provider->{app} && !(grep /$provider->{app}/, @{ $tags->{apps} }) ) {
+					
+					main::DEBUGLOG && $log->is_debug && $log->debug( 'Skipping app - not enabled on this player: ' . cstring($client, $provider->{text}) );
+					return;
+				}
+
+				my $menuItem = {
+					name   => cstring($client, $provider->{text}),
+					url    => $provider->{URL} || $provider->{url},
+					search => $tags->{search},
+					type   => $provider->{slideshow} ? 'slideshow' : undef,
+				};
+
+				$menuItem->{url} =~ s/{QUERY}/$tags->{search}/ if $menuItem->{url};
+
+				if ($provider->{outline}) {
+						
+					$menuItem->{items} = [];
+						
+					foreach my $item (@{ $provider->{outline} }) {
+						my $url = $item->{URL} || $item->{url};
+						$url =~ s/{QUERY}/$tags->{search}/;
+							
+						push @{ $menuItem->{items} }, {
+							name   => cstring($client, $item->{text}),
+							url    => $url,
+							search => $tags->{search},
+							type   => $item->{slideshow} ? 'slideshow' : undef,
+						};
+					}
+				}
+
+				return $menuItem;
+			},
+				
+			remote_search => 1
+		) ) 			
+	}
+		
+	# remove search providers which have been disabled since last update
+	foreach (keys %existing_providers) {
+		$class->deregisterInfoProvider($_);
+	}
 }
 
 sub searchMyMusic {
@@ -128,6 +242,8 @@ sub searchMyMusic {
 
 sub menu {
 	my ( $class, $client, $tags ) = @_;
+
+	$tags->{apps} = [ keys %{$client->apps} ];
 
 	my $menu = $class->SUPER::menu($client, $tags);
 
