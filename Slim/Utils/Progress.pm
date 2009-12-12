@@ -95,6 +95,7 @@ sub new {
 	$self->name( $args->{name} || 'NONAME' );
 	$self->total( $args->{total} || 0 );
 	$self->start( $now );
+	$self->eta( -1 );
 	$self->done( 0 );
 	$self->dbup( 0 );
 	$self->dball( $args->{every} || 0 );
@@ -196,31 +197,33 @@ sub update {
 
 	my $now = Time::HiRes::time();
 	
-	# Calculate new ETA value
-	my $rate = $done / ( $now - $self->start );
-	$self->eta( int( ( $self->total - $done ) / $rate ) );
+	if ( my $total = $self->total ) {
+		# Calculate new ETA value if we know the total
+		my $rate = $done / ( $now - $self->start );
+		$self->eta( int( ( $total - $done ) / $rate ) );
+	}
 
 	if ( $self->dball || $now > $self->dbup + UPDATE_DB_INTERVAL ) {
 		$self->dbup($now);
-		
+	
 		$self->_update_db( {
 			done => $done,
 			info => $info ? Slim::Utils::Unicode::utf8decode_locale($info) : '',
 		} );
-		
+	
 		# Write progress JSON if applicable
 		my $os = Slim::Utils::OSDetect->getOS();
 		if ( my $json = $os->progressJSON() ) {
 			$self->_write_json($json);
 		}
-		
+	
 		# If we're the scanner process, notify the server of our progress
 		if ( main::SCANNER ) {
 			my $start = $self->start;
 			my $type  = $self->type;
 			my $name  = $self->name;
 			my $total = $self->total;
-			
+		
 			my $sqlHelperClass = $os->sqlHelperClass();
 			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${total}-" );
 		}
@@ -241,7 +244,7 @@ Call to signal this progress instance is complete.  This updates the database an
 sub final {
 	my $self = shift;
 	
-	my $done   = $self->total;
+	my $done   = shift || $self->total;
 	my $finish = Time::HiRes::time();
 	
 	$self->done($done);

@@ -45,6 +45,14 @@ sub find {
 	
 	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 	
+	my $progress;
+	if ( $args->{progress} ) {
+		$progress = Slim::Utils::Progress->new( {
+			type  => 'importer',
+			name  => 'discovering_files',
+		} );
+	}
+	
 	# Find all files and directories.
 	# We save directories for use in various auto-rescan modules
 	my $iter = File::Next::everything( {
@@ -66,6 +74,8 @@ sub find {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", Time::HiRes::time - $start;
 				$log->debug( "Async scanner found $count files/dirs in $diff sec" );
+				
+				$progress && $progress->final($count);
 			}
 			
 			$cb->($count, $others);
@@ -74,6 +84,8 @@ sub find {
 		
 		# Skip client playlists
 		return if $args->{types} && $args->{types} =~ /list/ && $file =~ /clientplaylist.*\.m3u$/;
+		
+		$progress && $progress->update($file);
 		
 		if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
 			my $orig = $file;

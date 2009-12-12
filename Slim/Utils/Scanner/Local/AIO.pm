@@ -30,6 +30,14 @@ sub find {
 	
 	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 	
+	my $progress;
+	if ( $args->{progress} ) {
+		$progress = Slim::Utils::Progress->new( {
+			type  => 'importer',
+			name  => 'discovering_files',
+		} );
+	}
+	
 	my $todo   = 1;
 	my @items  = ();
 	my $count  = 0;
@@ -71,6 +79,8 @@ sub find {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", AnyEvent->time - $start;
 				$log->debug( "AIO scanner found $count files/dirs in $diff sec" );
+				
+				$progress && $progress->final($count);
 			}
 			
 			if ( $args->{dirs} ) {
@@ -106,6 +116,8 @@ sub find {
 			}
 			
 			$todo++;
+			
+			$progress && $progress->update($file);
 			
 			$childgrp->add( aio_lstat( $file, sub {
 				$todo--;
