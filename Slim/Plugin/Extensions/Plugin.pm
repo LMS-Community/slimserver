@@ -462,6 +462,7 @@ sub _parseXML {
 				$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 				$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
 				$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
+				$new->{'path'}    = $entry->{'path'}    if $entry->{'path'};
 
 			}
 
