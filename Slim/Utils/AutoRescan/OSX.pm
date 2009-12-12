@@ -11,6 +11,7 @@ use strict;
 
 use Slim::Utils::Log;
 
+use File::Basename;
 use Mac::FSEvents;
 
 my $log = logger('scan.auto');
@@ -58,13 +59,22 @@ sub watch {
 		poll => 'r',
 		cb   => sub {
 			for my $event ( $fs->read_events ) {
-				# Skip '.' directories like .Trashes and .Spotlight
-				if ( $event->path =~ m{/\.} ) {
-					main::DEBUGLOG && $log->is_debug && $log->debug( 'FSEvent: ignoring dot directory: ' . $event->path );
-					next;
+				my $file = $event->path;
+				
+				lstat $file;
+				
+				if ( -d _ ) {
+					# Make sure we care about this directory
+					return unless Slim::Utils::Misc::folderFilter( $file, 1 );
+				}
+				else {
+					# Make sure we care about this file
+					return unless Slim::Utils::Misc::fileFilter(
+						dirname($file), basename($file), Slim::Music::Info::validTypeExtensions(), 1
+					);
 				}
 				
-				$cb->( $event->path );
+				$cb->( $file );
 			}
 		},
 	);

@@ -12,8 +12,9 @@ use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Scanner::Local;
 
-use Linux::Inotify2;
+use File::Basename;
 use File::Slurp;
+use Linux::Inotify2;
 
 my $log = logger('scan.auto');
 
@@ -77,6 +78,8 @@ sub watch {
 sub event {
 	my ( $e, $cb ) = @_;
 	
+	my $file = $e->fullname;
+	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		my @types;
 		
@@ -90,19 +93,28 @@ sub event {
 		$e->IN_MOVED_TO    && push @types, 'moved_to';
 		$e->IN_MOVE_SELF   && push @types, 'move_self';
 		
-		$log->debug( 'Inotify event: ' . join( ',', @types ) . ' ' . $e->fullname );
+		$log->debug( 'Inotify event: ' . join( ',', @types ) . ' ' . $file );
 	}
 	
-	if ( $e->IN_CREATE && $e->IN_ISDIR ) {
-		# New directory was created, watch it
-		# This is done so that copying in a new directory structure won't trigger rescan
-		# too soon because we only got one event for the directory
-		main::DEBUGLOG && $log->is_debug && $log->debug('New directory ' . $e->fullname . ' created, watching it');
+	if ( $e->IN_ISDIR ) {
+		# Make sure we care about this directory
+		return unless Slim::Utils::Misc::folderFilter( $file );
+	
+		if ( $e->IN_CREATE ) {
+			# New directory was created, watch it
+			# This is done so that copying in a new directory structure won't trigger rescan
+			# too soon because we only got one event for the directory
+			main::DEBUGLOG && $log->is_debug && $log->debug("New directory $file created, watching it");
 		
-		_watch_directory( $e->fullname, $cb );
+			_watch_directory( $file, $cb );
+		}
+	}
+	else {
+		# Make sure we care about this file
+		return unless Slim::Utils::Misc::fileFilter( dirname($file), basename($file) );
 	}
 
-	$cb->( $e->fullname );
+	$cb->( $file );
 }
 
 sub shutdown {
