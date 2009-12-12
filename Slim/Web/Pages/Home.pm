@@ -77,7 +77,7 @@ sub home {
 	$params->{'nosetup'}  = 1 if $::nosetup;
 	$params->{'noserver'} = 1 if $::noserver;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
-	$params->{'newVersion'} ||= Slim::Utils::PluginManager->message;
+	$params->{'newPlugins'} = Slim::Utils::PluginManager->message;
 
 	if (Slim::Schema::hasLibrary()) {
 		if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
