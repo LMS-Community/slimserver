@@ -78,6 +78,7 @@ sub get_server {
 	# TODO: remove that code soon...
 	$prefs->migrate( 6, sub {
 		$prefs->set( 'use_sn_test' => 0 );
+		1;
 	} );
 	
 	# Use SN test server if hidden test pref is set
