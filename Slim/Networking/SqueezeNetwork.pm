@@ -80,6 +80,7 @@ sub get_server {
 	# TODO: remove that code soon...
 	$prefs->migrate( 6, sub {
 		$prefs->set( 'use_sn_test' => 0 );
+		1;
 	} );
 	
 	# Use SN test server if hidden test pref is set
@@ -136,7 +137,7 @@ sub _init_done {
 	my $snTime = $json->{time};
 	
 	if ( $snTime !~ /^\d+$/ ) {
-		$http->error( "Invalid mysqueezebox.com server timestamp" );
+		$http->error( sprintf("Invalid mysqueezebox.com server timestamp (%s)", $http->url) );
 		return _init_error( $http );
 	}
 	
@@ -209,7 +210,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	$log->error( "Unable to login to mysqueezebox.com, sync is disabled: $error" );
+	$log->error( sprintf("Unable to login to mysqueezebox.com, sync is disabled: $error (%s)", $http->url) );
 	
 	$prefs->remove('sn_timediff');
 	
@@ -219,7 +220,7 @@ sub _init_error {
 	
 	my $retry = 300 * ( $count + 1 );
 	
-	$log->error( "mysqueezebox.com sync init failed: $error, will retry in $retry" );
+	$log->error( sprintf("mysqueezebox.com sync init failed: $error, will retry in $retry (%s)", $http->url) );
 	
 	Slim::Utils::Timers::setTimer(
 		undef,

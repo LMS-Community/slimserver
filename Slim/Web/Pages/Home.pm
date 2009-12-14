@@ -33,7 +33,7 @@ sub init {
 
 	$class->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html"});
 	$class->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	$class->addPageLinks("help", { 'FAQ' => "http://mysqueezebox.com/support"},1);
+#	$class->addPageLinks("help", { 'FAQ' => "http://mysqueezebox.com/support"},1);
 	$class->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
 

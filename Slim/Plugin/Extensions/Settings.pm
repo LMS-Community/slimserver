@@ -214,9 +214,10 @@ sub _addInfo {
 
 		if ($entry->{'action'} eq 'install' && $entry->{'url'} && $entry->{'sha'}) {
 
-			if (!defined $current->{$plugin} || $prefs->get('auto') || ($params->{'saveSettings'} && $params->{"update:$plugin"}) ) {
+			if ($prefs->get('auto') ||
+				($params->{'saveSettings'} && (exists $params->{"update:$plugin"} || exists $params->{"install:$plugin"})) ) {
 
-				# install now if not installed, in auto mode or update has been explicitly selected
+				# install now if in auto mode or install or update has been explicitly selected
 				main::INFOLOG && $log->info("installing $plugin from $entry->{url}");
 
 				Slim::Utils::PluginDownloader->install({ name => $plugin, url => $entry->{'url'}, sha => $entry->{'sha'} });
@@ -226,6 +227,8 @@ sub _addInfo {
 				# add to update list
 				push @updates, $entry->{'info'};
 			}
+
+			$hide->{$plugin} = 1;
 							 
 		} elsif ($entry->{'action'} eq 'uninstall') {
 
@@ -234,8 +237,6 @@ sub _addInfo {
 			Slim::Utils::PluginDownloader->uninstall($plugin);
 		}
 	}
-
-	Slim::Utils::PluginManager->message(undef);
 
 	# prune out duplicate entries, favour favour higher version numbers
 	
@@ -277,6 +278,8 @@ sub _addInfo {
 	my $needsRestart = Slim::Utils::PluginManager->needsRestart || Slim::Utils::PluginDownloader->downloading;
 
 	$params->{'warning'} = $needsRestart ? Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") : '';
+
+	Slim::Utils::PluginManager->message($needsRestart);
 
 	# show a link/button to restart SC if this is supported by this platform
 	if ($needsRestart) {
