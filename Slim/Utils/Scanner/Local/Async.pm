@@ -74,9 +74,9 @@ sub find {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", Time::HiRes::time - $start;
 				$log->debug( "Async scanner found $count files/dirs in $diff sec" );
-				
-				$progress && $progress->final($count);
 			}
+			
+			$progress && $progress->final($count);
 			
 			$cb->($count, $others);
 			return 0;

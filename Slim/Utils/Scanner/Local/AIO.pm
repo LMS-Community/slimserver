@@ -79,9 +79,9 @@ sub find {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $diff = sprintf "%.2f", AnyEvent->time - $start;
 				$log->debug( "AIO scanner found $count files/dirs in $diff sec" );
-				
-				$progress && $progress->final($count);
 			}
+			
+			$progress && $progress->final($count);
 			
 			if ( $args->{dirs} ) {
 				$grp->result( \@dirs );
