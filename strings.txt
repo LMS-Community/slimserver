@@ -19966,6 +19966,9 @@ DIRECTORY_PROGRESS
 	RU	Сканирование каталога
 	SV	Mappsökning
 
+DISCOVERING_FILES_PROGRESS
+	EN	Discovering files
+
 DIRECTORY_DELETED_PROGRESS
 	CS	Odebrat smazané soubory
 	DA	Fjern slettede filer
