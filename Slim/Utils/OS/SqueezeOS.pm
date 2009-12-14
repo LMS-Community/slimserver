@@ -60,6 +60,7 @@ sub initPrefs {
 	my ($class, $defaults) = @_;
 	
 	$defaults->{maxPlaylistLength} = 100;
+	$defaults->{libraryname} = "Squeezebox Touch";
 	
 	# XXX use SN test for now
 	$defaults->{use_sn_test} = 1;
