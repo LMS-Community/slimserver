@@ -360,7 +360,7 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 			
 			if ( ref $new eq 'ARRAY' ) {
 				for ( @{$new} ) {
-					if ( s/^json:// ) {
+					if ( $_ && s/^json:// ) {
 						$_ = eval { from_json($_) };
 						$_ = '' if $@;
 					}
