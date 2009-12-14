@@ -170,11 +170,13 @@ sub home {
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
 		my @sorted = sort {
 			(
+				$menu !~ /(?:my_apps)/ &&
 				( $pluginWeights->{$a} || 0 ) <=>
 				( $pluginWeights->{$b} || 0 )
 			)
 			||
 			( 
+				$menu !~ /(?:my_apps)/ &&
 				( $prefs->get("rank-$b") || 0 ) <=> 
 				( $prefs->get("rank-$a") || 0 )
 			)
