@@ -204,8 +204,6 @@ sub home {
 		};
 	}
 
-Slim::Utils::Log::logError(Data::Dump::dump($pluginWeights));
-
 	Slim::Web::Pages::Common->addPlayerList($client, $params);
 	Slim::Web::Pages::Common->addLibraryStats($params);
 
