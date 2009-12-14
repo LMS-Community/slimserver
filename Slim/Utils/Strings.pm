@@ -497,6 +497,9 @@ Return localised string for token $token, or token itself.
 sub getString {
 	my $token = shift;
 
+	# we don't have lowercase tokens
+	return $token if $token =~ /(?:[a-z]|\s)/;
+
 	my $string = $defaultStrings->{uc($token)};
 	$string = $token if ($token && !defined $string);
 
