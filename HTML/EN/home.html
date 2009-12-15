@@ -110,7 +110,7 @@
 	<div>[% "PLUGINS" | string | upper %]</div>
 	<ul>
 		[%- FOREACH link = additionalLinks.plugins %]
-			[% NEXT IF link.key == 'ALARM' && !player %]
+			[% NEXT IF link.key == 'ALARM' && (!player || nosetup) %]
 			<li><a href="[% link.value | html %]player=[% playerURI %][% IF link.key == 'ALARM'%]&playerid=[% playerURI %][% END %]">[% link.key | getstring | html %]</a></li>
 		[%- END %]
 	</ul>
