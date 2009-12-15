@@ -111,6 +111,7 @@ ELSE %]
 		FOREACH link = additionalLinks.plugins;
 			IF link.key == 'ALARM';
 				NEXT UNLESS player;
+				NEXT IF (nosetup || noserver);
 				link.value = webroot _ 'settings/index.html?activePage=ALARM&amp;';
 				link.target = 'sc_settings';
 			END;
