@@ -503,6 +503,7 @@ sub playTrack {
 	}
 
 	$jive->{actions} = $actions;
+	$jive->{style} = 'itemplay';
 
 	push @{$items}, {
 		type => 'text',

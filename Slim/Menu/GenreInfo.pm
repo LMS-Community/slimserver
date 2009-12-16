@@ -210,6 +210,7 @@ sub playGenre {
 	$actions->{play} = $actions->{go};
 
 	$jive->{actions} = $actions;
+	$jive->{style} = 'itemplay';
 	push @{$items}, {
 		type => 'text',
 		name => $play_string,
