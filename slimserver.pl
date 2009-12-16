@@ -376,6 +376,9 @@ sub init {
 
 		save_pid_file();
 	}
+	
+	# leave a mark for external tools
+	$failsafe ? $prefs->set('failsafe', 1) : $prefs->remove('failsafe');
 
 	# Change UID/GID after the pid & logfiles have been opened.
 	unless (Slim::Utils::OSDetect::getOS->dontSetUserAndGroup() || defined($user) eq "root") {
