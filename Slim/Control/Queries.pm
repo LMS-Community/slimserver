@@ -2335,16 +2335,19 @@ sub playlistXQuery {
 			$request->addResult("_$entity", Slim::Music::Info::isRemoteURL($url));
 		}
 		
-	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
+	} elsif ($entity =~ /(duration|artist|album|title|genre|name)/) {
 
 		my $songData = _songData(
 			$request,
 			Slim::Player::Playlist::song($client, $index),
-			'dalg',			# tags needed for our entities
+			'dalgN',			# tags needed for our entities
 		);
 		
 		if (defined $songData->{$entity}) {
 			$request->addResult("_$entity", $songData->{$entity});
+		}
+		elsif ($entity eq 'name' && defined $songData->{remote_title}) {
+			$request->addResult("_$entity", $songData->{remote_title});
 		}
 	}
 	
