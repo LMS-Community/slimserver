@@ -43,7 +43,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'trackinfo', 'playlist', '_method' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 1, 1, 1, \&cliPlaylistCmd ]
 	);
 }
 
@@ -1421,6 +1421,8 @@ sub _mixerItemHandler {
 	}
 }
 
+my $cachedFeed;
+
 sub cliQuery {
 	my $request = shift;
 	
@@ -1468,11 +1470,27 @@ sub cliQuery {
 		}
 		else {
 			my $track = Slim::Schema->find( Track => $trackId );
-			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags );
+			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
 		}
 	}
 	
+	$cachedFeed = $feed if $feed;
+	
 	Slim::Control::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
+}
+
+sub cliPlaylistCmd {
+	my $request = shift;
+	
+	my $client  = $request->client;
+	my $method  = $request->getParam('_method');
+
+	unless ($client && $method && $cachedFeed) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	return 	Slim::Control::XMLBrowser::cliQuery( 'trackinfo', $cachedFeed, $request );
 }
 
 1;
