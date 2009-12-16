@@ -2687,7 +2687,7 @@ sub globalSearchMenu {
 		homeMenuText   => $client->string('SEARCH'),
 		id             => 'globalSearch',
 		node           => 'home',
-		weight         => 50,
+		weight         => 110,
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
@@ -3040,7 +3040,7 @@ sub recentSearchMenu {
 			text           => $client->string('RECENT_SEARCHES'),
 			id             => 'homeSearchRecent',
 			node           => 'home',
-			weight         => 80,
+			weight         => 111,
 			actions => {
 				go => {
 					cmd => ['jiverecentsearches'],
