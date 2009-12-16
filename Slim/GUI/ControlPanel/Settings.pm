@@ -76,6 +76,9 @@ sub new {
 	});
 	$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 10);
 
+	# check box if server is running in failsafe mode
+	$cbStartSafeMode->SetValue( $svcMgr->checkServiceState() == SC_STATE_RUNNING && Slim::GUI::ControlPanel->getPref('failsafe') );
+
 	@startupOptions = map { string($_) } @startupOptions;	
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
 
