@@ -1411,7 +1411,7 @@ sub _mixerItemHandler {
 			player => 0,
 			cmd    => ['contextmenu'],
 			params => {
-				menu => '1',
+				menu => 'track',
 				$obj_param => $obj->id,
 			},
 			$playHoldAction,
