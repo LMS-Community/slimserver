@@ -21,6 +21,13 @@ sub commentTagTodB {
 	if (ref($tags) ne 'HASH' || !$tags->{'COMMENT'}) {
 		return;
 	}
+
+	# If comment is not an array it didn't come from ID3, this can happen if a 
+	# FLAC file has both ID3 and Vorbis tags for example.  We can ignore it here
+	# in this case.
+	if ( !ref $tags->{COMMENT} ) {
+		return;
+	}
 	
 	# Normalize all comments to array refs
 	if ( !ref $tags->{COMMENT}->[0] ) {
