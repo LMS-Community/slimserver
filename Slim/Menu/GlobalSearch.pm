@@ -269,8 +269,8 @@ sub cliQuery {
 		search   => $search,
 	};
 
-	my $feed = Slim::Menu::GlobalSearch->menu( $client, $tags );
-	
+	my $feed = __PACKAGE__->menu( $client, $tags );
+
 	Slim::Control::XMLBrowser::cliQuery( 'globalsearch', $feed, $request );
 }
 
