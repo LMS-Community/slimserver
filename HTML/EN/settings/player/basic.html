@@ -99,7 +99,8 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 			[% desc="SETUP_SCREENSAVER_DESC" %]
 
 			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver', 'alarmsaver' ] %]
-				[% WRAPPER settingGroup title="SETUP_" _ saver %]
+				[% uppersaver = saver | upper %]
+				[% WRAPPER settingGroup title="SETUP_" _ uppersaver %]
 					<select class="stdedit" name="pref_[% saver %]" id="[% saver %]">
 						[% FOREACH option = saveropts.$saver %]
 							<option [% IF prefs.${"pref_$saver"} == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
