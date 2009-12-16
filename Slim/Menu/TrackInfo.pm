@@ -414,8 +414,7 @@ sub infoContributors {
 						},
 					},
 				};
-				( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
-					_mixerItemHandler(obj => $contributor, 'obj_param' => 'artist_id' );
+				$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $contributor, 'obj_param' => 'artist_id' );
 				push @{$items}, $item;
 			}
 		}
@@ -704,8 +703,7 @@ sub infoAlbum {
 			},
 		};
 
-		( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
-			_mixerItemHandler(obj => $album, 'obj_param' => 'album_id' );
+		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $album, 'obj_param' => 'album_id' );
 
 	}
 	
@@ -783,8 +781,7 @@ sub infoGenres {
 				}, 
 			},
 		};
-		( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
-			_mixerItemHandler(obj => $genre, 'obj_param' => 'genre_id' );
+		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $genre, 'obj_param' => 'genre_id' );
 		push @{$items}, $item;
 	}
 	
@@ -1381,18 +1378,16 @@ sub _mixerItemHandler {
 	my $obj        = $args{'obj'};
 	my $obj_param  = $args{'obj_param'};
 
-	my $playHoldAction = undef;
 	my ($Imports, $mixers) = _mixers();
 	
 	if (scalar(@$mixers) == 1 && blessed($obj)) {
 		my $mixer = $mixers->[0];
 		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
-			$playHoldAction = 'go';
 			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
 			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
 			$command->{'params'}{'menu'} = 1;
 			$command->{'params'}{$obj_param} = $obj->id;
-			return $command, $playHoldAction;
+			return $command;
 		} else {
 			return (
 				{
@@ -1401,8 +1396,7 @@ sub _mixerItemHandler {
 					params => {
 						contextToken => $Imports->{$mixer}->{contextToken},
 					},
-				},
-				$playHoldAction,
+				}
 			);
 			
 		}
@@ -1414,10 +1408,9 @@ sub _mixerItemHandler {
 				menu => 'track',
 				$obj_param => $obj->id,
 			},
-			$playHoldAction,
 		};
 	} else {
-		return undef, undef;
+		return undef;
 	}
 }
 

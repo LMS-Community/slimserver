@@ -2875,14 +2875,25 @@ sub jiveUnmixableMessage {
 	my $request = shift;
 	my $service = $request->getParam('contextToken');
 	my $serviceString = $request->string($service);
-	$request->client->showBriefly(
-		{ 'jive' =>
-			{
-				'type'    => 'popupplay',
-				'text'    => [ $request->string('UNMIXABLE', $serviceString) ],
-			},
-		}
-	);
+
+       my @menu = (
+               {
+                       text    => $request->string('OK'),
+                       actions => {
+                               go => {
+                                       player => 0,
+                                       cmd    => [ 'jiveblankcommand' ],
+                               },
+                       },
+                       nextWindow => 'parent',
+               }
+       );
+
+       $request->addResult('offset', 0);
+       $request->addResult('count', 1);
+       $request->addResult('item_loop', \@menu);
+       $request->addResult('window', { textarea => $request->string('UNMIXABLE', $serviceString), });
+
         $request->setStatusDone();
 }
 
