@@ -5521,19 +5521,17 @@ sub _mixerItemParams {
 	if ( scalar(@$mixers) == 1 ) {
 		my $mixer = $mixers->[0];
 		if ($mixer->mixable($obj)) {
-			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
+
 		} else {
-			my $playHoldAction = {
+			my $unmixable = {
 				player => 0,
 				cmd    => ['jiveunmixable'],
 				params => {
 					contextToken => $Imports->{$mixer}->{contextToken},
 				},
 			};
-			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction } );
+			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $unmixable } );
 		}
-	} elsif ( scalar(@$mixers) ) {
-		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 	} else {
 		return;
 	}
@@ -5740,7 +5738,6 @@ sub _mixerItemHandler {
 	if (scalar(@$mixers) == 1 && blessed($obj)) {
 		my $mixer = $mixers->[0];
 		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
-			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
 			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
 			$command->{'params'}{'menu'} = 1;
@@ -5759,7 +5756,6 @@ sub _mixerItemHandler {
 			
 		}
 	} elsif ( scalar(@$mixers) && blessed($obj) ) {
-		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 		return {
 			player => 0,
 			cmd    => ['mixermenu'],

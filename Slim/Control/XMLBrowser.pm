@@ -1448,6 +1448,7 @@ sub _playlistControlContextMenu {
 		},
 		{
 			text => $request->string('PLAY'),
+			style => 'itemplay',
 			actions => {
 				go => {
 					player => 0,
