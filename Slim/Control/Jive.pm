@@ -3270,7 +3270,7 @@ sub appMenus {
 			# Make sure it's enabled
 			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
 				# Get the predefined menu for this plugin
-				if ( my ($globalMenu) = grep { $_->{text} eq $pluginInfo->{name} } @appMenus ) {				
+				if ( my ($globalMenu) = grep { $_->{text} && $_->{text} eq $pluginInfo->{name} } @appMenus ) {				
 					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
 				
 					# Clone the existing menu and set the node
