@@ -85,8 +85,8 @@ sub snCredentials {
 
 	$parent->addApplyHandler($username, sub {
 		
-		if ( $username->GetValue() ne Slim::GUI::ControlPanel->getPref('sn_email')
-			|| ($password->GetValue() ne 'SN_PASSWORD_PLACEHOLDER') )
+		if ( $username->GetValue() && $username->GetValue() ne Slim::GUI::ControlPanel->getPref('sn_email')
+			|| ($password->GetValue() && $password->GetValue() ne 'SN_PASSWORD_PLACEHOLDER') )
 		{
 			my $validated = Slim::GUI::ControlPanel->serverRequest(
 				'setsncredentials',
