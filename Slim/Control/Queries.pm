@@ -373,6 +373,11 @@ sub albumsQuery {
 		}
 	}
 	
+	if ( $tags && $tags =~ /a/ ) {
+		# If requesting artist data, prefetch contributor to avoid extra queries
+		$attr->{'prefetch'} = 'contributor';
+	}
+	
 	# use the browse standard additions, sort and filters, and complete with 
 	# our stuff
 	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
@@ -572,9 +577,11 @@ sub albumsQuery {
 				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $eachitem->discc);
 				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $eachitem->compilation);
 				if ($tags =~ /a/) {
-					my @artists = $eachitem->artists();
-					if ( blessed( $artists[0] ) ) {
-						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
+					# Bug 15313, this used to use $eachitem->artists which
+					# contains a lot of extra logic.  If this data is wrong we may
+					# need to fix how the album.contributor field is set
+					if ( $eachitem->contributor ) {
+						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $eachitem->contributor->name);
 					}
 				}
 				$tags =~ /s/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
