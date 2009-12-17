@@ -658,7 +658,7 @@ sub paintFlake {
 	#$bigrow = 5 if ($bigrow > 5);
 	
 	my $row = int($bigrow / 3);
-	my $line = "line".$row+1;
+	my $line = "line" . ($row+1);
 	my $col = int($bigcol / 2);
 
 	my $bit = (1 << (($bigrow - $row * 3) + 3 * ($bigcol - $col * 2)));
