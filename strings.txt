@@ -21560,6 +21560,12 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	PL	Pilot zdalnego sterowania
 	RU	Пульт управления по Интернету
 	SV	Fjärrkontroll
+	
+CONTROLPANEL_TRAY_DOUBLECLICK_WEB
+	EN	Open Web Remote Control on doubleclicking the tray icon
+	
+CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
+	EN	Open the Control Panel on doubleclicking the tray icon
 
 CONTROLPANEL_ADVANCED_SETTINGS_DESC
 	CS	Upřesnit nastavení
