@@ -79,7 +79,7 @@ sub new {
 	# check box if server is running in failsafe mode
 	$cbStartSafeMode->SetValue( $svcMgr->checkServiceState() == SC_STATE_RUNNING && Slim::GUI::ControlPanel->getPref('failsafe') );
 
-	@startupOptions = map { string($_) } @startupOptions;	
+	@startupOptions = map { string($_) } @startupOptions;
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
 
 	EVT_CHOICE($self, $lbStartupMode, sub {
@@ -171,6 +171,15 @@ sub new {
 
 			$setStartupMode = 0;
 		};
+		
+		# doubleclick action for tray icon
+		my $lbDoubleClickHandler = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL'), string('CONTROLPANEL_TRAY_DOUBLECLICK_WEB') ]);
+		$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} || 0);
+		
+		$parent->addApplyHandler($lbDoubleClickHandler, sub {
+			$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
+		});
+		$startupSizer->Add($lbDoubleClickHandler, 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 	}
 		
 	$parent->addApplyHandler($lbStartupMode, $setStartupModeHandler);

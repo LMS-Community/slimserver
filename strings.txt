@@ -21548,6 +21548,12 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	PL	Pilot zdalnego sterowania
 	RU	Пульт управления по Интернету
 	SV	Fjärrkontroll
+	
+CONTROLPANEL_TRAY_DOUBLECLICK_WEB
+	EN	Open Web Remote Control on doubleclicking the tray icon
+	
+CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
+	EN	Open the Control Panel on doubleclicking the tray icon
 
 CONTROLPANEL_ADVANCED_SETTINGS_DESC
 	CS	Upřesnit nastavení
@@ -21833,6 +21839,9 @@ CONTROLPANEL_SN_FAILURE_DESC
 	PL	Może to być tymczasowy problem z Internetem lub ograniczenie narzucone przez usługodawcę internetowego. Jeżeli problem nie zniknie, upewnij się, że zapora nie blokuje ruchu wychodzącego.
 	RU	Возможно, это временная проблема с Интернетом или ограничение поставщика услуг Интернета. Если проблема не исчезнет, убедитесь, что брандмауэр не блокирует исходящий трафик.
 	SV	Det kan röra sig om ett tillfälligt internetproblem eller om begränsningar som internetleverantören har infört. Om problemet kvarstår bör du kontrollera om brandväggen blockerar utgående trafik.
+
+CONTROLPANEL_SN_PROXY
+	EN	We've seen that your Squeezebox Server is configured to use a proxy server. In this configuration connectivity to mysqueezebox.com on port 3483 can't be tested. 
 
 CONTROLPANEL_PORTCONFLICT
 	CS	Squeezebox Server není v provozu, ale nějaká aplikace používá stejný port (%s).
