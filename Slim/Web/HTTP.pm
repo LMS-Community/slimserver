@@ -1145,7 +1145,7 @@ sub generateHTTPResponse {
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
 
-			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest(
+			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::artworkRequest(
 				$client, 
 				$path, 
 				$params,
