@@ -304,6 +304,8 @@ sub resize {
 			. "${out_width}x${out_height} inner ${destWidth}x${destHeight} @ ($destX, $destY), "
 			. "bgcolor $bgcolor\n";
 
+		main::idleStreams();
+		
 		if ( $args{faster} ) {
 			# copyResized is very ugly but fast
 			$newImage->copyResized(
@@ -361,6 +363,8 @@ sub resize {
 				$debug && warn "Resized using slow copyResampled\n";
 			}
 		}
+
+		main::idleStreams();
 
 		my $out;
 

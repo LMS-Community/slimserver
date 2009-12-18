@@ -225,6 +225,8 @@ sub artworkRequest {
 	}
 	
 	if ( $fullpath && -e $fullpath ) {
+		main::idleStreams();
+		
 		main::INFOLOG && $isInfo && $log->info("  Resizing: $fullpath using spec $spec");
 			
 		Slim::Utils::ImageResizer->resize($fullpath, $path, $spec, sub {
