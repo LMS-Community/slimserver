@@ -871,7 +871,7 @@ sub objectForUrl {
 }
 
 sub _createOrUpdateAlbum {
-	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename) = @_;
+	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $create, $track, $basename) = @_;
 	
 	my $dbh = $self->dbh;
 	
@@ -1034,7 +1034,7 @@ sub _createOrUpdateAlbum {
 					# different multi-disc albums together just because they
 					# have the same title
 					my $contributor = $contributorId;
-					if ( $isCompilation && !$hasAlbumArtist ) {
+					if ( $isCompilation ) {
 						$contributor = $self->variousArtistsObject->id;
 					}
 					
@@ -1054,7 +1054,7 @@ sub _createOrUpdateAlbum {
 					# different multi-disc albums together just because they
 					# have the same title
 					my $contributor = $contributorId;
-					if ( $isCompilation && !$hasAlbumArtist ) {
+					if ( $isCompilation ) {
 						$contributor = $self->variousArtistsObject->id;
 					}
 					
@@ -1582,7 +1582,6 @@ sub _newTrack {
 		\%columnValueHash,														# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		1,																		# create
 		undef,																	# Track
 		$dirname,
@@ -2783,7 +2782,6 @@ sub _postCheckAttributes {
 		\%cols,																	# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
 	);
