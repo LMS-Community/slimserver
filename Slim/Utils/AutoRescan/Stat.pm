@@ -65,12 +65,7 @@ sub _stat {
 	
 	main::DEBUGLOG && $log->is_debug && (my $start = AnyEvent->now);
 	
-	$statclass->check( $dir, $cb, sub {
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			my $diff = sprintf "%.2f", AnyEvent->now - $start;
-			$log->debug("Stat check finished in $diff seconds");
-		}
-		
+	my $setTimer = sub {
 		Slim::Utils::Timers::setTimer(
 			$class,
 			Time::HiRes::time() + $interval,
@@ -79,7 +74,24 @@ sub _stat {
 			$interval,
 			$cb,
 		);
-	} );
+	};
+	
+	# If a scan is running (i.e. wipe and rescan with scanner.pl), don't trigger a stat check
+	if ( Slim::Music::Import->stillScanning ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Not running stat check, other scan is currently running");
+		
+		$setTimer->();
+	}
+	else {	
+		$statclass->check( $dir, $cb, sub {
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				my $diff = sprintf "%.2f", AnyEvent->now - $start;
+				$log->debug("Stat check finished in $diff seconds");
+			}
+		
+			$setTimer->();
+		} );
+	}
 }
 
 sub shutdown {

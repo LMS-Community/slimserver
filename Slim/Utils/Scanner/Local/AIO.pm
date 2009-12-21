@@ -7,6 +7,9 @@ package Slim::Utils::Scanner::Local::AIO;
 # modify it under the terms of the GNU General Public License, version 2.
 
 # Fully-async recursive directory scanner.  Does not block on any file operations.
+#
+# NOTE: if you make changes to the logic here, you may also need to change Scanner::Local::Async
+# which is the non-AIO version of this code.
 
 use strict;
 

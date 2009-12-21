@@ -8,6 +8,9 @@ package Slim::Utils::Scanner::Local::Async;
 #
 # Async recursive directory scanner for Win32 and other systems without AIO support,
 # this can still block on file operations.
+#
+# NOTE: if you make changes to the logic here, you may also need to change Scanner::Local::AIO
+# which is the AIO version of this code.
 
 use strict;
 
