@@ -1107,6 +1107,7 @@ sub jiveAlarmVolumeSlider {
 
 }
 
+
 sub syncSettingsQuery {
 
 	main::INFOLOG && $log->info("Begin function");
