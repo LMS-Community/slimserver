@@ -594,6 +594,10 @@ sub sound {
 
 		my $request = $client->execute(['stop']);
 		$request->source('ALARM');
+		
+		# Bug 12760, 9569 - Grab power condition before alarm so we can return later on a timeout.
+		main::DEBUGLOG && $log->debug("Current Power State: " . ($client->power ? 'On' : 'Off'));
+		$self->{_originalPower} = $client->power;
 		$request = $client->execute(['power', 1]);
 		$request->source('ALARM');
 
@@ -881,6 +885,9 @@ sub stop {
 			main::DEBUGLOG && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
+		# Bug: 12760, 9569 - Return power state to that prior to the alarm
+		main::DEBUGLOG && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
+		$client->power($self->{_originalPower});
 	});
 	
 
