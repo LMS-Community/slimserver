@@ -101,6 +101,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
 		[1, 0, 1, \&jiveFavoritesCommand]);
 
+	Slim::Control::Request::addDispatch(['jivealarmvolume'],
+		[1, 0, 1, \&jiveAlarmVolumeSlider ]);
+
 	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings', '_index', '_quantity'],
 		[1, 1, 0, \&playerBrightnessMenu]);
 
@@ -1061,15 +1064,34 @@ sub alarmVolumeSettings {
 	my $id              = shift || 0;
 	my $string          = shift;
 
-	my @vol_settings;
+	my $return = { 
+		text      => $string,
+		actions   => {
+			go => {
+				player => 0,
+				cmd    => [ 'jivealarmvolume' ],
+			},
+		},
+	};
+	return $return;
+}
 
+sub jiveAlarmVolumeSlider {
+
+	my $request = shift;
+	my $client  = $request->client();
+
+	my $current_setting = Slim::Utils::Alarm->defaultVolume($client) || 50;
+	my $id              = shift || 0;
+	my $string          = shift;
+
+	my @vol_settings;
 	my $slider = {
 		slider      => 1,
 		min         => 1,
 		max         => 100,
 		sliderIcons => 'volume',
 		initial     => $current_setting,
-		#help    => NO_HELP_STRING_YET,
 		actions => {
 			do => {
 				player => 0,
@@ -1081,16 +1103,13 @@ sub alarmVolumeSettings {
 		},
 	};
 
-	push @vol_settings, $slider;
+	$request->addResult('offset', 0);
+	$request->addResult('count', 1);
+	$request->addResult('item_loop', [ $slider ] );
+	$request->setStatusDone();
 
-	my $return = { 
-		text      => $string,
-		count     => scalar(@vol_settings),
-		offset    => 0,
-		item_loop => \@vol_settings,
-	};
-	return $return;
 }
+
 
 sub syncSettingsQuery {
 
