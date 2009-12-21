@@ -1166,7 +1166,7 @@ sub _createOrUpdateAlbum {
 	$albumHash->{compilation} = $isCompilation;
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
-	if ( $isCompilation && !$hasAlbumArtist ) {
+	if ( $isCompilation ) {
 		$albumHash->{contributor} = $self->variousArtistsObject->id;
 	}
 	elsif ( defined $contributorId ) {
@@ -1582,7 +1582,7 @@ sub _newTrack {
 		\%columnValueHash,														# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumAtrist
+		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		1,																		# create
 		undef,																	# Track
 		$dirname,
@@ -2783,7 +2783,7 @@ sub _postCheckAttributes {
 		\%cols,																	# trackColumns
 		$isCompilation,
 		$contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0],	# primary contributor-id
-		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumAtrist
+		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
 	);
