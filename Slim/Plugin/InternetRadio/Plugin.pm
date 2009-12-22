@@ -337,15 +337,45 @@ sub cacheIconError {
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
 
+	my %rtFormats = (
+		aac     => 'aac',
+		mp3     => 'mp3',
+		wma     => 'wma',
+		ogg     => 'ogg',
+		wmvoice => 'wma',
+		wmvideo => 'wma',
+		wmapro  => 'wmap',
+		# Real Player is supported through the AlienBBC plugin
+		real    => 'rtsp',
+	);
+	
+	my %playerFormats = map { $_ => 1 } $client->formats;
+
 	# RadioTime's listing defaults to giving us mp3 and wma streams only,
 	# but we support a few more
-	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
-	$feed .= 'formats=aac,mp3,wma,wmpro,wmvoice,wmvideo,ogg';
+	my @formats = grep {
 	
-	# If AlienBBC is installed we can ask for Real streams too.
-	if ( exists $INC{'Plugins/Alien/Plugin.pm'} ) {
-		$feed .= ',real';
-	}
+		# format played natively on player?
+		my $canPlay = $playerFormats{$rtFormats{$_}};
+			
+		if ( !$canPlay && main::TRANSCODING ) {
+
+			foreach my $supported (keys %playerFormats) {
+				
+				if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
+					$canPlay = 1;
+					last;
+				}
+
+			}
+		}
+
+		$canPlay;
+
+	} keys %rtFormats;
+
+	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
+	$feed .= 'formats=' . join(',', @formats);
 	
 	return $feed;
 }
