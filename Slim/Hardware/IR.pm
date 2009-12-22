@@ -919,7 +919,11 @@ sub resetHoldStart {
 sub resendButton {
 	my $client = shift;
 
-	my $ircode = lookupCodeBytes($client, $client->lastircodebytes);
+	my $ircode = $client->lastirbutton;
+
+	if ( main::INFOLOG && $log->is_info ) {
+		$log->info("Resending $ircode");
+	}
 
 	if (defined $ircode) {
 
