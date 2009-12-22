@@ -794,6 +794,9 @@ sub handleRequest {
 			# XXX: this could be more specific, i.e. iPeng
 			$client->controlledBy('squeezeplay');
 		}
+		elsif ( $lang ) {
+			$request->setLanguageOverride($lang);
+		}
 		
 		# Finish is called when request is done to reset language and controlledBy
 		my $finish = sub {

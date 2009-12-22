@@ -987,6 +987,7 @@ sub new {
 	   _clientid  => $clientid,
 	   _useixhash => $useIxHashes,
 	   _cb_enable => 1,
+	   _langoverride => undef,
 	};
 
 	bless $self, $class;
@@ -1460,6 +1461,20 @@ sub isStatusBadConfig {
 sub getStatusText {
 	return ($statusMap{$_[0]->{'_status'}});
 }
+
+sub setLanguageOverride {
+	my ($self, $lang) = @_;
+	
+	return if $lang eq Slim::Utils::Strings::getLanguage();
+	
+	$self->{'_langoverride'} = $lang;
+}
+
+sub getLanguageOverride {
+	return $_[0]->{'_langoverride'};
+}
+
+
 ################################################################################
 # Request mgmt
 ################################################################################
@@ -1658,11 +1673,20 @@ sub sliceResultLoop {
 }
 
 sub string {
-	my $self   = shift;
+	my $self = shift;
+	my $name = uc(shift);
 
-	my $client = $self->client();
+	if ( my $client = $self->client() ) {
+		return cstring($client, $name, @_);
+	}
 
-	return cstring($client, @_);
+	if ( my $lang = $self->getLanguageOverride() ) {
+		my $strings = Slim::Utils::Strings::loadAdditional( $lang );
+		
+		return sprintf( $strings->{$name}, @_) if $strings->{$name}; 
+	}
+	
+	return Slim::Utils::Strings::string($name, @_);
 }
 
 
