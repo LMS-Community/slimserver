@@ -2960,12 +2960,15 @@ sub jiveAlarmCommand {
 
 	# this command can issue either a snooze or a cancel
 	my $snooze      = $request->getParam('snooze') ? 1 : undef;
+	my $stop        = $request->getParam('stop')   ? 1 : undef;
 
 	my $alarm       = Slim::Utils::Alarm->getCurrentAlarm($client);
 
 	if ( defined($alarm) ) {
 		if ( defined($snooze) ) {
 			$alarm->snooze();
+		} elsif ( defined ($stop) ) {
+			$alarm->stop();
 		}
 	}
 
