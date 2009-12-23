@@ -773,6 +773,35 @@ sub alarmSettingsQuery {
 		push @menu, $defaultVolumeLevels;
 	}
 
+	my $fadeEnabled = $prefs->client($client)->get('alarmfadeseconds');
+	if (!defined ($fadeEnabled) || $fadeEnabled == 0) {
+		$fadeEnabled = 0;
+	} else {
+		$fadeEnabled = 1;
+	}
+
+	my $fadeInAlarm = {
+		text           => $client->string("ALARM_FADE"),
+		checkbox => ($fadeEnabled == 1) + 0,
+		actions  => {
+			on  => {
+				player => 0,
+				cmd    => [ 'jivealarm' ],
+				params => {
+					fadein => 1,
+				},
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'jivealarm' ],
+				params => {
+					fadein => 0,
+				},
+			},
+		},		
+	};
+	push @menu, $fadeInAlarm;
+
 	sliceAndShip($request, $client, \@menu);
 
 }
@@ -2898,7 +2927,6 @@ sub jiveUnmixableMessage {
         $request->setStatusDone();
 }
 
-# currently just for snooze but this could be extended with other tagged params as needed
 sub jiveAlarmCommand {
 	main::INFOLOG && $log->info("Begin function");
 
@@ -2908,6 +2936,7 @@ sub jiveAlarmCommand {
 	# this command can issue either a snooze or a cancel
 	my $snooze      = $request->getParam('snooze') ? 1 : undef;
 	my $stop        = $request->getParam('stop')   ? 1 : undef;
+	my $fadein      = $request->getParam('fadein');
 
 	my $alarm       = Slim::Utils::Alarm->getCurrentAlarm($client);
 
@@ -2919,6 +2948,11 @@ sub jiveAlarmCommand {
 		}
 	}
 
+	# a fadein:1 tag needs to set a clientpref for alarmfadeseconds
+	if ( defined($fadein) ) {
+		$log->error('Fade in alarm being set to ', $fadein);
+		$prefs->client($client)->set('alarmfadeseconds', $fadein);
+	}
 	$request->setStatusDone();
 }
 
