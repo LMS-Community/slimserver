@@ -890,7 +890,17 @@ sub artistsQuery {
 		# Various artist handling. Don't do if pref is off, or if we're
 		# searching, or if we have a track
 		if ($count_va) {
-			unshift @data, Slim::Schema->variousArtistsObject;
+			my $vaObj = Slim::Schema->variousArtistsObject;
+			
+			# bug 15328 - get the VA name in the language requested by the client
+			#             but only do so if the user isn't using a custom name
+			if ( $vaObj->name eq Slim::Utils::Strings::string('VARIOUSARTISTS') ) {
+				
+				# we can change the name as it will be updated anyway next them the VA object is requested
+				$vaObj->name( $request->string('VARIOUSARTISTS') );
+			}
+			
+			unshift @data, $vaObj;
 		}
 
 		# first PLAY ALL item
