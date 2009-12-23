@@ -290,23 +290,6 @@ sub menuQuery {
 			$client->forgetClient;
 		}
 	}
-	else {
-		# a single dummy item to keep jive happy with _merge
-		my $upgradeText = 
-		"Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and Squeezebox Server, and this requires a newer version of firmware.";
-	        my $upgradeMessage = {
-			text      => 'READ ME',
-			weight    => 1,
-	                offset    => 0,
-	                count     => 1,
-	                window    => { titleStyle => 'settings' },
-	                textArea =>  $upgradeText,
-	        };
-
-		$request->addResult("count", 1);
-		$request->addResult("offset", 0);
-		$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
-	}
 	
 	$request->setStatusDone();
 }
