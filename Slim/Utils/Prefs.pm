@@ -172,7 +172,7 @@ sub init {
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => '',
 		'browseagelimit'        => 100,
-		'groupdiscs'            => 0,
+		'groupdiscs'            => 1,
 		'persistPlaylists'      => 1,
 		'playtrackalbum'        => 1,
 		'reshuffleOnRepeat'     => 0,
