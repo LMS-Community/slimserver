@@ -170,8 +170,8 @@ sub new {
 
 	assert(!defined(getClient($id)));
 
-	# Ignore UUID if all zeros (bug 6899)
-	if ( defined $uuid && $uuid eq '0' x 32 ) {
+	# Ignore UUID if all zeros or many zeroes (bug 6899)
+	if ( defined $uuid && $uuid =~ /0000000000/ ) {
 		$uuid = undef;
 	}
 	
