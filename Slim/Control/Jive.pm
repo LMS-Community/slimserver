@@ -206,14 +206,6 @@ sub buildCaches {
 		}
 		
 		main::idleStreams();
-		
-		# Genres
-		if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-			main::DEBUGLOG && $log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
-			Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, "useContextMenu:1", 'menu:artist', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
 	}
 }
 

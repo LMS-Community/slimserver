@@ -380,6 +380,7 @@ sub albumsQuery {
 	
 	# use the browse standard additions, sort and filters, and complete with 
 	# our stuff
+	# XXX would be much faster with native DBI
 	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
 
 	my $count = $rs->count;
@@ -1353,7 +1354,6 @@ sub genresQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
-	my $to_cache      = $request->getParam('cache');
 	my $party         = $request->getParam('party') || 0;
 	my $tags          = $request->getParam('tags') || '';
 	
@@ -1362,80 +1362,90 @@ sub genresQuery {
 	my $partyMode = _partyModeCheck($request);
 	my $useContextMenu = $request->getParam('useContextMenu');
 	my $insertAll = $menuMode && defined $insert && !$partyMode && $useContextMenu;
-		
-	# get them all by default
-	my $where = {};
 	
-	# sort them
-	my $attr = {
-		'distinct' => 'me.id'
-	};
+	my $sql  = 'SELECT DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable FROM genres ';
+	my $w    = [];
+	my $p    = [];
 
 	# Normalize and add any search parameters
 	if (specified($search)) {
-
-		$where->{'me.namesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
+		my $strings = Slim::Utils::Text::searchStringSplit($search);
+		if ( ref $strings->[0] eq 'ARRAY' ) {
+			push @{$w}, join( ' OR ', map { 'genres.namesearch LIKE ?' } @{ $strings->[0] } );
+			push @{$p}, @{ $strings->[0] };
+		}
+		else {		
+			push @{$w}, 'genres.namesearch LIKE ?';
+			push @{$p}, @{$strings};
+		}
 	}
 
 	# Manage joins
 	if (defined $trackID) {
-			$where->{'genreTracks.track'} = $trackID;
-			push @{$attr->{'join'}}, 'genreTracks';
+		$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+		push @{$w}, 'genre_track.track = ?';
+		push @{$p}, $trackID;
 	}
 	else {
-		# ignore those if we have a track. 
-		
-		if (defined $contributorID){
+		# ignore those if we have a track.
+		if (defined $contributorID) {
 		
 			# handle the case where we're asked for the VA id => return compilations
 			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
-				$where->{'album.compilation'} = 1;
-				push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'album'}};
+				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+				$sql .= 'JOIN tracks ON genre_track.track = tracks.id ';
+				$sql .= 'JOIN albums ON tracks.album = albums.id ';
+				push @{$w}, 'albums.compilation = ?';
+				push @{$p}, 1;
 			}
-			else {	
-				$where->{'contributorTracks.contributor'} = $contributorID;
-				push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'contributorTracks'}};
+			else {
+				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+				$sql .= 'JOIN contributor_track ON genre_track.track = contributor_track.track ';
+				push @{$w}, 'contributor_track.contributor = ?';
+				push @{$p}, $contributorID;
 			}
 		}
 	
-		if (defined $albumID || defined $year){
+		if (defined $albumID || defined $year) {
+			if ( $sql !~ /JOIN genre_track/ ) {
+				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+			}
+			if ( $sql !~ /JOIN tracks/ ) {
+				$sql .= 'JOIN tracks ON genre_track.track = tracks.id ';
+			}
+			 
 			if (defined $albumID) {
-				$where->{'track.album'} = $albumID;
+				push @{$w}, 'tracks.album = ?';
+				push @{$p}, $albumID;
 			}
 			if (defined $year) {
-				$where->{'track.year'} = $year;
+				push @{$w}, 'tracks.year = ?';
+				push @{$p}, $year;
 			}
-			push @{$attr->{'join'}}, {'genreTracks' => 'track'};
 		}
 	}
 	
-	# Flatten request for lookup in cache, only for Jive menu queries
-	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
-	if ( $menuMode ) {
-		if ( my $cached = $cache->{genres}->[$party]->{$cacheKey} ) {
-			my $copy = from_json( $cached );
-
-			# Don't slice past the end of the array
-			if ( $copy->{count} < $index + $quantity ) {
-				$quantity = $copy->{count} - $index;
-			}
-
-			# Slice the full album result according to start and end
-			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
-
-			# Change offset value
-			$copy->{offset} = $index;
-
-			$request->setRawResults( $copy );
-			$request->setStatusDone();
-
-			return;
-		}
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
 	}
-
-	my $rs = Slim::Schema->rs('Genre')->browse->search($where, $attr);
-
-	my $count = $rs->count;
+	$sql .= 'ORDER BY genres.namesort ';
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	# Limit the real query
+	if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+		$sql .= "LIMIT $index, $quantity ";
+	}
+	
+	my $sth = $dbh->prepare_cached($sql);
+	$sth->execute( @{$p} );
 
 	# now build the result
 	
@@ -1520,35 +1530,37 @@ sub genresQuery {
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
-		for my $eachitem ($rs->slice($start, $end)) {
-			
-			my $id = $eachitem->id();
+		
+		my ($id, $name, $namesort, $mixable);
+		$sth->bind_columns( \$id, \$name, \$namesort, \$mixable );
+		
+		while ( $sth->fetch ) {
 			$id += 0;
 			
-			my $textKey = substr($eachitem->namesort, 0, 1);
+			my $textKey = substr($namesort, 0, 1);
 				
 			if ($menuMode) {
-				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $name);
 				
 				# here the url is the genre name
-				my $url = 'db:genre.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->name) );
+				my $url = 'db:genre.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($name) );
 				my $params = {
 					'genre_id'        => $id,
-					'genre_string'    => $eachitem->name,
+					'genre_string'    => $name,
 					'textkey'         => $textKey,
 					'favorites_url'   => $url,
-					'favorites_title' => $eachitem->name,
+					'favorites_title' => $name,
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				if ($party || $partyMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
 				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-				$request->addResultLoop($loopname, $chunkCount, 'genre', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'genre', $name);
 				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			$chunkCount++;
@@ -1561,12 +1573,6 @@ sub genresQuery {
 		_jiveNoResults($request);
 	} else {
 		$request->addResult('count', $totalCount);
-	}
-	
-	# Cache data as JSON to speed up the cloning of it later, this is faster
-	# than using Storable
-	if ( $to_cache && $menuMode ) {
-		$cache->{genres}->[$party]->{$cacheKey} = to_json( $request->getResults() );
 	}
 
 	$request->setStatusDone();
@@ -5531,15 +5537,17 @@ sub _mixerItemParams {
 	my $params     = $args{'params'};
 	my $request    = $args{'request'};
 	my $obj        = $args{'obj'};
+	my $mixable    = $args{'mixable'}; # optional flag if item is mixable, avoids mixable() call
 
 	my ($Imports, $mixers) = _mixers();
 
 	# one enabled mixer available
 	if ( scalar(@$mixers) == 1 ) {
 		my $mixer = $mixers->[0];
-		if ($mixer->mixable($obj)) {
+		if ( !defined $mixable && $mixer->mixable($obj) ) {
 
-		} else {
+		}
+		else {
 			my $unmixable = {
 				player => 0,
 				cmd    => ['jiveunmixable'],
@@ -5549,7 +5557,8 @@ sub _mixerItemParams {
 			};
 			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $unmixable } );
 		}
-	} else {
+	}
+	else {
 		return;
 	}
 }
