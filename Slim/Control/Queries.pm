@@ -734,17 +734,12 @@ sub artistsQuery {
 			if (defined $year) {
 				$where->{'track.year'} = $year;
 				
-				$where_va->{'track.year'} = $year;
+				$where_va->{'me.year'} = $year;
 			}
 			
 			if (!defined $genreID) {
 				# don't need to add track again if we have a genre search
 				push @{$attr->{'join'}}, {'contributorTracks' => 'track'};
-
-				# same logic for VA search
-				if (defined $year) {
-					push @{$attr->{'join'}}, 'track';
-				}
 			}
 		}
 		
