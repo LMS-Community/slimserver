@@ -216,6 +216,8 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
+	
+	my $tv = AnyEvent->time;
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -646,6 +648,8 @@ sub albumsQuery {
 	}
 	
 	$request->setStatusDone();
+	
+	warn "Albums query took: " . (AnyEvent->time - $tv) . "\n";
 }
 
 sub artistsQuery {
@@ -661,6 +665,8 @@ sub artistsQuery {
 		$request->setStatusNotDispatchable();
 		return;
 	}
+	
+	my $sqllog   = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
 	my $index    = $request->getParam('_index');
@@ -688,107 +694,119 @@ sub artistsQuery {
 	my $useContextMenu = $request->getParam('useContextMenu');
 	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
 	
-	# get them all by default
-	my $where = {};
+	my $va_pref = $prefs->get('variousArtistAutoIdentification');
 	
-	# sort them
-	my $attr = {
-		'order_by' => 'me.namesort',
-		'distinct' => 'me.id'
-	};
-	
-	# same for the VA search
-	my $where_va = {'me.compilation' => 1};
-	my $attr_va = {};
+	my $sql    = 'SELECT contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable FROM contributors ';
+	my $sql_va = 'SELECT COUNT(*) FROM albums ';
+	my $w      = [];
+	my $w_va   = [ 'albums.compilation = 1' ];
+	my $p      = [];
+	my $p_va   = [];
 
 	my $rs;
 	my $cacheKey;
 
 	# Manage joins 
 	if (defined $trackID) {
-		$where->{'contributorTracks.track'} = $trackID;
-		push @{$attr->{'join'}}, 'contributorTracks';
-		
-		# don't use browse here as it filters VA...
-		$rs = Slim::Schema->rs('Contributor')->search($where, $attr);
+		$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
+		push @{$w}, 'contributor_track.track = ?';
+		push @{$p}, $trackID;
 	}
 	else {
-		if (defined $genreID) {
-			$where->{'genreTracks.genre'} = $genreID;
-			push @{$attr->{'join'}}, {'contributorTracks' => {'track' => 'genreTracks'}};
+		my $roles = Slim::Schema->artistOnlyRoles || [];
+		
+		if ( !defined $search ) {
+			$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+		}
+		
+		if ( defined $genreID ) {
+			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
+			$sql .= 'JOIN genre_track ON genre_track.track = contributor_track.track ';
+			push @{$w}, 'genre_track.genre = ?';
+			push @{$p}, $genreID;
 			
-			$where->{'contributorTracks.role'} = { 'in' => Slim::Schema->artistOnlyRoles };
+			# Adjust VA check to check for VA artists in this genre
+			$sql_va .= 'JOIN tracks ON tracks.album = albums.id ';
+			$sql_va .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+			push @{$w_va}, 'genre_track.genre = ?';
+			push @{$p_va}, $genreID;
+		}
+		
+		if ( !defined $search ) {
+			# Filter based on album roles unless we're searching
+			push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
 			
-			$where_va->{'genreTracks.genre'} = $genreID;
-			push @{$attr_va->{'join'}}, {'tracks' => 'genreTracks'};
+			if ( $va_pref ) {
+				# Don't include artists that only appear on compilations
+				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
+				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
+			}
 		}
 		
 		if (defined $albumID || defined $year) {
+			if ( $sql !~ /JOIN albums/ ) {
+				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
+			}
 		
 			if (defined $albumID) {
-				$where->{'track.album'} = $albumID;
+				push @{$w}, 'albums.id = ?';
+				push @{$p}, $albumID;
 				
-				$where_va->{'me.id'} = $albumID;
+				push @{$w_va}, 'albums.id = ?';
+				push @{$p_va}, $albumID;
 			}
 			
 			if (defined $year) {
-				$where->{'track.year'} = $year;
+				push @{$w}, 'albums.year = ?';
+				push @{$p}, $year;
 				
-				$where_va->{'me.year'} = $year;
-			}
-			
-			if (!defined $genreID) {
-				# don't need to add track again if we have a genre search
-				push @{$attr->{'join'}}, {'contributorTracks' => 'track'};
+				push @{$w_va}, 'albums.year = ?';
+				push @{$p_va}, $year;
 			}
 		}
-		
-		# Flatten request for lookup in cache, only for Jive menu queries
-		$cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
-		if ( $menuMode ) {
-			if ( my $cached = $cache->{artists}->[$party]->{$cacheKey} ) {
 
-				my $copy = from_json( $cached );
-
-				# Don't slice past the end of the array
-				if ( $copy->{count} < $index + $quantity ) {
-					$quantity = $copy->{count} - $index;
-				}
-
-				# Slice the full album result according to start and end
-				$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
-
-				# Change offset value
-				$copy->{offset} = $index;
-
-				$request->setRawResults( $copy );
-				$request->setStatusDone();
-
-				return;
-			}
-		}
-		
-		# use browse here
 		if ($search) {
-			$rs = Slim::Schema->rs('Contributor')->searchNames(Slim::Utils::Text::searchStringSplit($search), $attr);
-		}
-		else {
-			$rs = Slim::Schema->rs('Contributor')->browse( undef, $where )->search( {}, $attr );
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'contributors.namesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {		
+				push @{$w}, 'contributors.namesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
 		}
 	}
 	
-	my $count = $rs->count;
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= 'GROUP BY contributors.id ORDER BY contributors.namesort ';
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
 	my $totalCount = $count || 0;
 
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
 	my $count_va = 0;
 
-	if ($prefs->get('variousArtistAutoIdentification') &&
-		!defined $search && !defined $trackID) {
-
+	if ( $va_pref && !defined $search && !defined $trackID ) {
 		# Only show VA item if there are any
-		$count_va =  Slim::Schema->rs('Album')->search($where_va, $attr_va)->count;
+		if ( @{$w_va} ) {
+			$sql_va .= 'WHERE ';
+			$sql_va .= join( ' AND ', @{$w_va} );
+			$sql_va .= ' ';
+		}
+		
+		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
 
 		# fix the index and counts if we have to include VA
 		$totalCount = _fixCount($count_va, \$index, \$quantity, $count);
@@ -878,6 +896,12 @@ sub artistsQuery {
 	}
 
 	$count += 0;
+	
+	# If count is 0 but count_va is 1, set count to 1 because
+	# we'll still have a VA item to add to the results
+	if ( $count_va && !$count ) {
+		$count = 1;
+	}
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -885,13 +909,66 @@ sub artistsQuery {
 	my $chunkCount = 0;
 	$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 
-	if ($valid) {
+	if ($valid) {			
+		# first PLAY ALL item
+		if ($insertAll) {
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+		}
+		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
 
-		my @data = $rs->slice($start, $end);
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Artists query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		my ($id, $name, $namesort, $mixable);
+		$sth->bind_columns( \$id, \$name, \$namesort, \$mixable );
+		
+		my $process = sub {
+			$id += 0;
 			
-		# Various artist handling. Don't do if pref is off, or if we're
-		# searching, or if we have a track
-		if ($count_va) {
+			utf8::decode($name);
+			utf8::decode($namesort);
+			
+			my $textKey = substr($namesort, 0, 1);
+
+			if ($menuMode){
+				$request->addResultLoop($loopname, $chunkCount, 'text', $name);
+
+				# the favorites url to be sent to jive is the artist name here
+				my $url = 'db:contributor.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($name) );
+
+				my $params = {
+					'favorites_url'   => $url,
+					'favorites_title' => $name,
+					'artist_id' => $id, 
+					'textkey' => $textKey,
+				};
+				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				if ($party || $partyMode) {
+					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+				}
+			}
+			else {
+				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+				$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			}
+
+			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
+		};
+		
+		# Add VA item first if necessary
+		if ( $count_va ) {
 			my $vaObj = Slim::Schema->variousArtistsObject;
 			
 			# bug 15328 - get the VA name in the language requested by the client
@@ -902,50 +979,16 @@ sub artistsQuery {
 				$vaObj->name( $request->string('VARIOUSARTISTS') );
 			}
 			
-			unshift @data, $vaObj;
+			$id       = $vaObj->id;
+			$name     = $vaObj->name;
+			$namesort = $vaObj->namesort;
+			$mixable  = 0;
+			
+			$process->();
 		}
 
-		# first PLAY ALL item
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
-
-
-		for my $obj (@data) {
-
-			next if !$obj;
-			my $id = $obj->id();
-			$id += 0;
-			
-			my $textKey = substr($obj->namesort, 0, 1);
-
-			if ($menuMode){
-				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
-
-				# the favorites url to be sent to jive is the artist name here
-				my $url = 'db:contributor.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($obj->name) );
-
-				my $params = {
-					'favorites_url'   => $url,
-					'favorites_title' => $obj->name,
-					'artist_id' => $id, 
-					'textkey' => $textKey,
-				};
-				_mixerItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
-			}
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-				$request->addResultLoop($loopname, $chunkCount, 'artist', $obj->name);
-				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-			}
-
-			$chunkCount++;
-			
-			main::idleStreams() if !($chunkCount % 5);
+		while ( $sth->fetch ) {
+			$process->();
 		}
 		
 		if ($menuMode) {
@@ -975,11 +1018,8 @@ sub artistsQuery {
 		$request->addResult('count', $totalCount);
 	}
 	
-	# Cache data as JSON to speed up the cloning of it later, this is faster
-	# than using Storable
-	if ( $to_cache && $menuMode ) {
-		$cache->{artists}->[$party]->{$cacheKey} = to_json( $request->getResults() );
-	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
+	# Cache search result
+	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
 		my $jiveSearchCache = {
 			text        => $request->string('ARTISTS') . ": " . $search,
 			actions     => {
@@ -997,6 +1037,7 @@ sub artistsQuery {
 		};
 		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
 	}
+	
 	$request->setStatusDone();
 }
 

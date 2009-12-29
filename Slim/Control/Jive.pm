@@ -196,16 +196,6 @@ sub buildCaches {
 		}
 		
 		main::idleStreams();
-		
-		# Artists
-		if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-			# Add one since we may have a VA item
-			$numArtists++;
-			main::DEBUGLOG && $log->debug( "Pre-caching $numArtists artist items for partymode:$partymode." );
-			Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, "useContextMenu:1", 'menu:album', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
 	}
 }
 
