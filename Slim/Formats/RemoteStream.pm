@@ -102,7 +102,7 @@ sub open {
 
 		my $errnum = 0 + $!;
 
-		if ($errnum != EWOULDBLOCK && $errnum != EINPROGRESS) {
+		if ($errnum != EWOULDBLOCK && $errnum != EINPROGRESS && $errnum != EINTR) {
 
 			$log->error("Can't open socket to [$server:$port]: $errnum: $!");
 
