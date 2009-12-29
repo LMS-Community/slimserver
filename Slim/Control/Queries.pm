@@ -216,8 +216,6 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-	
-	my $tv = AnyEvent->time;
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -238,14 +236,14 @@ sub albumsQuery {
 	$favorites{'title'}  = $request->getParam('favorites_title');
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
-	my $tags          = $request->getParam('tags');
+	my $tags          = $request->getParam('tags') || 'l';
 	my $search        = $request->getParam('search');
 	my $compilation   = $request->getParam('compilation');
 	my $contributorID = $request->getParam('artist_id');
 	my $genreID       = $request->getParam('genre_id');
 	my $trackID       = $request->getParam('track_id');
 	my $year          = $request->getParam('year');
-	my $sort          = $request->getParam('sort');
+	my $sort          = $request->getParam('sort') || 'album';
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
@@ -262,132 +260,167 @@ sub albumsQuery {
 	my $partyMode = _partyModeCheck($request);
 	my $allSongs = $menuMode && defined $insert && !$partyMode;
 	my $insertAll = $allSongs && !$useContextMenu;
-
-	if (!defined $tags) {
-		$tags = 'l';
-	}
-
-	# get them all by default
-	my $where = {};
-	my $attr = {};
+	
+	my $sql      = 'SELECT %s FROM albums ';
+	my $c        = { 'albums.id' => 1, 'albums.titlesearch' => 1, 'albums.titlesort' => 1 };
+	my $w        = [];
+	my $p        = [];
+	my $order_by = 'albums.titlesort, albums.disc'; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	
 	# Normalize and add any search parameters
-	if (defined $trackID) {
-		$where->{'tracks.id'} = $trackID;
-		push @{$attr->{'join'}}, 'tracks';
+	if ( defined $trackID ) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+		push @{$w}, 'tracks.id = ?';
+		push @{$p}, $trackID;
 	}
 	
 	# ignore everything if $track_id was specified
 	else {
-	
-		if ($sort && $sort eq 'new') {
-
-			$attr->{'order_by'} = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
-			push @{$attr->{'join'}}, 'tracks';
-
-		} elsif ($sort && $sort eq 'artflow') {
-
-			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('contributor.namesort,album.year,album.titlesort');
-			push @{$attr->{'join'}}, 'contributor';
-
-		} elsif ($sort && $sort eq 'artistalbum') {
-
-			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('contributor.namesort,album.titlesort');
-			push @{$attr->{'join'}}, 'contributor';
-
-		} elsif ($sort && $sort eq 'yearartistalbum') {
-
-			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('album.year,contributor.namesort,album.titlesort');
-			push @{$attr->{'join'}}, 'contributor';
-
-		} elsif ($sort && $sort eq 'yearalbum') {
-
-			$attr->{'order_by'} = Slim::Schema->rs('Album')->fixupSortKeys('album.year,album.titlesort');
-
+		if ( $sort eq 'new' ) {
+			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			$order_by = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
+		}
+		elsif ( $sort eq 'artflow' ) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+			$order_by = 'contributors.namesort, albums.year, albums.titlesort';
+			$c->{'contributors.namesort'} = 1;
+		}
+		elsif ( $sort eq 'artistalbum' ) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+			$order_by = 'contributors.namesort, albums.titlesort';
+			$c->{'contributors.namesort'} = 1;
+		}
+		elsif ( $sort eq 'yearartistalbum' ) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+			$order_by = 'albums.year, contributors.namesort, albums.titlesort';
+		}
+		elsif ( $sort eq 'yearalbum' ) {
+			$order_by = 'albums.year, albums.titlesort';
 		}
 
 		if (specified($search)) {
-			$where->{'me.titlesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'albums.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {		
+				push @{$w}, 'albums.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
 		}
 		
 		if (defined $year) {
-			$where->{'me.year'} = $year;
+			push @{$w}, 'albums.year = ?';
+			push @{$p}, $year;
 		}
 		
 		# Manage joins
-		if (defined $contributorID){
-		
+		if (defined $contributorID) {
 			# handle the case where we're asked for the VA id => return compilations
 			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
 				$compilation = 1;
 			}
-			else {	
-				$where->{'contributorAlbums.contributor'} = $contributorID;
-				push @{$attr->{'join'}}, 'contributorAlbums';
-				$attr->{'distinct'} = 1;
-			}			
+			else {
+				$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
+				push @{$w}, 'contributor_album.contributor = ?';
+				push @{$p}, $contributorID;
+			}	
 		}
 	
-		if (defined $genreID){
-			$where->{'genreTracks.genre'} = $genreID;
-			push @{$attr->{'join'}}, {'tracks' => 'genreTracks'};
-			$attr->{'distinct'} = 1;
+		if (defined $genreID) {
+			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+			push @{$w}, 'genre_track.genre = ?';
+			push @{$p}, $genreID;
 		}
 	
 		if (defined $compilation) {
 			if ($compilation == 1) {
-				$where->{'me.compilation'} = 1;
+				push @{$w}, 'albums.compilation = 1';
 			}
-			if ($compilation == 0) {
-				$where->{'me.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
+			else {
+				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
 		}
 	}
 	
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
-		if ( !grep { /^contributor$/ } @{ $attr->{'join'} } ) {
-			push @{ $attr->{'join'} }, 'contributor';
+		if ( $sql !~ /JOIN contributors/ ) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 		}
 		
-		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable disc discc titlesearch) ];
+		map { $c->{$_} = 1 } qw(
+			albums.title
+			albums.artwork
+			contributors.name
+			contributors.namesort
+			albums.titlesort
+			albums.musicmagic_mixable
+			albums.disc
+			albums.discc
+		);
 	}
-	
-	# Flatten request for lookup in cache, only for Jive menu queries
-	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . $tags . (defined $insert ? $insert : '');
-	if ( $menuMode ) {
-		if ( my $cached = $cache->{albums}->[$party]->{$cacheKey} ) {
-			my $copy = from_json( $cached );
-			
-			# Don't slice past the end of the array
-			if ( $copy->{count} < $index + $quantity ) {
-				$quantity = $copy->{count} - $index;
-			}
-		
-			# Slice the full album result according to start and end
-			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
-		
-			# Change offset value
-			$copy->{offset} = $index;
-		
-			$request->setRawResults( $copy );
-			$request->setStatusDone();
-		
-			return;
-		}
-	}
-	
-	if ( $tags && $tags =~ /a/ ) {
-		# If requesting artist data, prefetch contributor to avoid extra queries
-		$attr->{'prefetch'} = 'contributor';
-	}
-	
-	# use the browse standard additions, sort and filters, and complete with 
-	# our stuff
-	# XXX would be much faster with native DBI
-	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
 
-	my $count = $rs->count;
+	if ( $tags =~ /l/ ) {
+		# title/disc/discc is needed to construct (N of M) title
+		map { $c->{$_} = 1 } qw(albums.title albums.disc albums.discc);
+	}
+	
+	if ( $tags =~ /y/ ) {
+		$c->{'albums.year'} = 1;
+	}
+	
+	if ( $tags =~ /j/ ) {
+		$c->{'albums.artwork'} = 1;
+	}
+	
+	if ( $tags =~ /t/ ) {
+		$c->{'albums.title'} = 1;
+	}
+	
+	if ( $tags =~ /i/ ) {
+		$c->{'albums.disc'} = 1;
+	}
+	
+	if ( $tags =~ /q/ ) {
+		$c->{'albums.discc'} = 1;
+	}
+	
+	if ( $tags =~ /w/ ) {
+		$c->{'albums.compilation'} = 1;
+	}
+
+	if ( $tags =~ /a/ ) {
+		# If requesting artist data, join contributor
+		if ( $sql !~ /JOIN contributors/ ) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+		}
+		$c->{'contributors.name'} = 1;
+	}
+	
+	if ( $tags =~ /s/ ) {
+		$c->{'albums.titlesort'} = 1;
+	}
+	
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
+	
+	# Add selected columns
+	my @cols = sort keys %{$c};
+	$sql = sprintf $sql, join( ', ', @cols );
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
 
 	if ($menuMode) {
 
@@ -395,14 +428,16 @@ sub albumsQuery {
 		# on "new music" queries, return the count as being 
 		# the user setting for new music limit if available
 		# then fall back to the block size if the pref doesn't exist
-		if (defined $sort && $sort eq 'new') {
-			if (!$prefs->get('browseagelimit')) {
-				if ($count > $quantity) {
+		if ( $sort eq 'new' ) {
+			my $pref_limit = $prefs->get('browseagelimit');
+			if ( !$pref_limit ) {
+				if ( $count > $quantity ) {
 					$count = $quantity;
 				}
-			} else {
-				if ($count > $prefs->get('browseagelimit')) {
-					$count = $prefs->get('browseagelimit');
+			}
+			else {
+				if ( $count > $pref_limit ) {
+					$count = $pref_limit;
 				}
 			}
 		}
@@ -498,7 +533,6 @@ sub albumsQuery {
 
 	if ($valid) {
 
-
 		# first PLAY ALL item
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1);
@@ -510,25 +544,61 @@ sub albumsQuery {
 		# It looks silly to go to Madonna->No album and see the
 		# picture of '2 Unlimited'.
 		my $noAlbumName = $request->string('NO_ALBUM');
+		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Albums query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		# Bind selected columns in order
+		my $i = 1;
+		for my $col ( @cols ) {
+			$sth->bind_col( $i++, \$c->{$col} );
+		}
 
 		my $artist;
-		for my $eachitem ($rs->slice($start, $end)) {
+		
+		# Little function to construct nice title from title/disc counts
+		my $groupdiscs_pref = $prefs->get('groupdiscs');
+		my $construct_title = sub {
+			if ( $groupdiscs_pref ) {
+				return $c->{'albums.title'};
+			}
 			
-			my $textKey = '';
-
+			return Slim::Music::Info::addDiscNumberToAlbumTitle(
+				$c->{'albums.title'}, $c->{'albums.disc'}, $c->{'albums.discc'}
+			);
+		};
+		
+		while ( $sth->fetch ) {
+			
+			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			
 			#FIXME: see if multiple char textkey is doable for year/genre sort
-			if ($sort && ($sort eq 'artflow' || $sort eq 'artistalbum') ) {
-				$textKey = substr($eachitem->contributor->namesort, 0, 1);
-			} elsif ($sort && $sort ne 'new') {
-				$textKey = substr($eachitem->titlesort, 0, 1);
+			my $textKey;
+			if ($sort eq 'artflow' || $sort eq 'artistalbum') {
+				utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
+				$textKey = substr $c->{'contributors.namesort'}, 0, 1;
+			}
+			elsif ( $sort ne 'new' ) {
+				utf8::decode( $c->{'albums.titlesort'} ) if exists $c->{'albums.titlesort'};
+				$textKey = substr $c->{'albums.titlesort'}, 0, 1;
 			}
 
 			# Jive result formatting
 			if ($menuMode) {
 				
 				# we want the text to be album\nartist
-				$artist  = $eachitem->contributor->name;
-				my $text = $eachitem->title;
+				$artist  = $c->{'contributors.name'};
+				my $text = $construct_title->();
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
 				}
@@ -538,13 +608,13 @@ sub albumsQuery {
 
 				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 				
-				my $id = $eachitem->id();
+				my $id = $c->{'albums.id'};
 				$id += 0;
 
 				# the favorites url to be sent to jive is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->titlesearch) );
+				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles( $c->{'albums.titlesearch'} ) );
 
 				my $params = {
 					'album_id'        => $id,
@@ -563,31 +633,29 @@ sub albumsQuery {
 				}
 
 				# artwork if we have it
-				if ($eachitem->title ne $noAlbumName &&
-				    defined(my $iconId = $eachitem->artwork())) {
+				if ( $c->{'albums.title'} ne $noAlbumName &&
+				    defined(my $iconId = $c->{'albums.artwork'})) {
 					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
 
-				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				_mixerItemParams(request => $request, mixable => $c->{'albums.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			
 			# "raw" result formatting (for CLI or JSON RPC)
 			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $eachitem->id);
-				$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $eachitem->title);
-				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $eachitem->year);
-				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $eachitem->artwork);
-				$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $eachitem->rawtitle);
-				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $eachitem->disc);
-				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $eachitem->discc);
-				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $eachitem->compilation);
+				$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
+				$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
+				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
+				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'});
+				$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
+				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
+				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
+				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
 				if ($tags =~ /a/) {
 					# Bug 15313, this used to use $eachitem->artists which
 					# contains a lot of extra logic.  If this data is wrong we may
 					# need to fix how the album.contributor field is set
-					if ( $eachitem->contributor ) {
-						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $eachitem->contributor->name);
-					}
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 				}
 				$tags =~ /s/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 			}
@@ -625,11 +693,8 @@ sub albumsQuery {
 		$request->addResult('count', $totalCount);
 	}
 
-	# Cache data as JSON to speed up the cloning of it later, this is faster
-	# than using Storable
-	if ( $to_cache && $menuMode ) {
-		$cache->{albums}->[$party]->{$cacheKey} = to_json( $request->getResults() );
-	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
+	# Cache searches
+	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
 		my $jiveSearchCache = {
 			text        => $request->string('ALBUMS') . ": " . $search,
 			actions     => {
@@ -650,8 +715,6 @@ sub albumsQuery {
 	}
 	
 	$request->setStatusDone();
-	
-	warn "Albums query took: " . (AnyEvent->time - $tv) . "\n";
 }
 
 sub artistsQuery {
@@ -1411,7 +1474,7 @@ sub genresQuery {
 	if (specified($search)) {
 		my $strings = Slim::Utils::Text::searchStringSplit($search);
 		if ( ref $strings->[0] eq 'ARRAY' ) {
-			push @{$w}, join( ' OR ', map { 'genres.namesearch LIKE ?' } @{ $strings->[0] } );
+			push @{$w}, '(' . join( ' OR ', map { 'genres.namesearch LIKE ?' } @{ $strings->[0] } ) . ')';
 			push @{$p}, @{ $strings->[0] };
 		}
 		else {		

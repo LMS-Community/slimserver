@@ -160,14 +160,6 @@ sub init {
 	# setup a cli command for jive that returns nothing; can be useful in some situations
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
 		[0, 0, 0, sub { return 1; }]);
-
-	if ( !main::SLIM_SERVICE ) {
-		# Load memory caches to help with menu performance
-		buildCaches();
-		
-		# Re-build the caches after a rescan
-		Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
-	}
 	
 	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
@@ -175,27 +167,6 @@ sub init {
 sub _libraryChanged {
 	foreach ( Slim::Player::Client::clients() ) {
 		myMusicMenu(0, $_);
-	}
-}
-
-sub buildCaches {
-	main::DEBUGLOG && $log->debug("Begin function");
-	
-	# TinySC cannot afford the memory-footprint of these cached queries
-	return if Slim::Utils::OSDetect::isSqueezeOS();
-	
-	return if !Slim::Schema::hasLibrary();
-
-	my $sort    = $prefs->get('jivealbumsort') || 'album';
-
-	for my $partymode ( 0..1 ) {
-		# Pre-cache albums query
-		if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
-			main::DEBUGLOG && $log->debug( "Pre-caching $numAlbums album items for partymode:$partymode" );
-			Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "useContextMenu:1", "sort:$sort", 'menu:track', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
 	}
 }
 
