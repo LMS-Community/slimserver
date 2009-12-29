@@ -230,6 +230,8 @@ sub albumsQuery {
 		return;
 	}
 	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
 	# get our parameters
 	my %favorites;
 	$favorites{'url'}    = $request->getParam('favorites_url');
@@ -666,7 +668,7 @@ sub artistsQuery {
 		return;
 	}
 	
-	my $sqllog   = main::DEBUGLOG && logger('database.sql');
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
 	my $index    = $request->getParam('_index');
@@ -1380,6 +1382,8 @@ sub genresQuery {
 		return;
 	}
 	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
 	# get our parameters
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
@@ -1475,14 +1479,6 @@ sub genresQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	# Limit the real query
-	if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
-		$sql .= "LIMIT $index, $quantity ";
-	}
-	
-	my $sth = $dbh->prepare_cached($sql);
-	$sth->execute( @{$p} );
-
 	# now build the result
 	
 	if ($menuMode) {
@@ -1566,6 +1562,18 @@ sub genresQuery {
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
+		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Genres query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
 		
 		my ($id, $name, $namesort, $mixable);
 		$sth->bind_columns( \$id, \$name, \$namesort, \$mixable );
