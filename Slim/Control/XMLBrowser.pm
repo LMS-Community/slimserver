@@ -199,8 +199,8 @@ sub _cliQuery_done {
 	}
 
 	# get our parameters
-	my $index      = $request->getParam('_index');
-	my $quantity   = $request->getParam('_quantity');
+	my $index      = $request->getParam('_index') || '';
+	my $quantity   = $request->getParam('_quantity') || '';
 
 	# Bug 14100: sending requests that involve newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
