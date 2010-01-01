@@ -619,6 +619,8 @@ sub infoFormat {
 
 		$output = $format->($track) if ref($format) eq 'CODE';
 	}
+	
+	$output = '' if !defined $output;
 
 	if ($output eq "" && defined($safestr)) {
 
