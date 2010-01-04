@@ -112,6 +112,8 @@ sub init {
 	$client->power($prefs->client($client)->get('power'));
 	$client->startup($syncgroupid);
 
+	return if $client->display->isa('Slim::Display::NoDisplay');
+		
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
@@ -267,26 +269,29 @@ sub power {
 		# turning player on - reset mode & brightness, display welcome and sync/start playing
 		$client->audio_outputs_enable(1);
 
-		$client->update( { 'screen1' => {}, 'screen2' => {} } );
-
-		$client->updateMode(2); # block updates to hide mode change
-
-		Slim::Buttons::Common::setMode($client, 'home');
-
-		$client->updateMode(0); # unblock updates
-		
-		# restore the saved brightness, unless its completely dark...
-		my $powerOnBrightness = $prefs->client($client)->get('powerOnBrightness');
-
-		if ($powerOnBrightness < 1) {
-			$powerOnBrightness = 1;
-			$prefs->client($client)->set('powerOnBrightness', $powerOnBrightness);
+		# no need to initialize display if none is available
+		if ( !$client->display->isa('Slim::Display::NoDisplay') ) {
+			$client->update( { 'screen1' => {}, 'screen2' => {} } );
+	
+			$client->updateMode(2); # block updates to hide mode change
+	
+			Slim::Buttons::Common::setMode($client, 'home');
+	
+			$client->updateMode(0); # unblock updates
+			
+			# restore the saved brightness, unless its completely dark...
+			my $powerOnBrightness = $prefs->client($client)->get('powerOnBrightness');
+	
+			if ($powerOnBrightness < 1) {
+				$powerOnBrightness = 1;
+				$prefs->client($client)->set('powerOnBrightness', $powerOnBrightness);
+			}
+			$client->brightness($powerOnBrightness);
+	
+			my $oneline = ($client->linesPerScreen() == 1);
+	
+			$client->welcomeScreen();
 		}
-		$client->brightness($powerOnBrightness);
-
-		my $oneline = ($client->linesPerScreen() == 1);
-
-		$client->welcomeScreen();
 
 		$controller->playerActive($client);
 

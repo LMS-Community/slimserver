@@ -70,6 +70,9 @@ sub getFunctions {
 
 sub screenSaver {
 	my $client = shift;
+
+	return if $client->display->isa('Slim::Display::NoDisplay');
+
 	my $display = $client->display;
 
 	my $now  = Time::HiRes::time();

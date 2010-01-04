@@ -492,7 +492,7 @@ sub _makeDefaultName {
 	my %existingName;
 
 	foreach my $clientPref ( $prefs->allClients ) {
-		$existingName{ $clientPref->get('playername') } = 1;
+		$existingName{ $clientPref->get('playername') || 'Squeezebox' } = 1;
 	}
 	
 	my $maxIndex = 0;
