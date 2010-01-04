@@ -764,7 +764,7 @@ sub _cliQuery_done {
 
 					my $cmd;
 					if ($method =~ /add/) {
-						$cmd = 'add';
+						$cmd = 'addtracks';
 					}
 					else {
 						$cmd = 'inserttracks';
