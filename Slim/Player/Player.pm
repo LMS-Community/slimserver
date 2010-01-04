@@ -113,6 +113,8 @@ sub init {
 	$client->power($prefs->client($client)->get('power'));
 	$client->startup($syncgroupid);
 
+	return if $client->display->isa('Slim::Display::NoDisplay');
+		
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
