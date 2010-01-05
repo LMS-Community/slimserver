@@ -33,6 +33,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $beenHere = 0;
+
 sub dbh {
 	my $self = shift;
 
@@ -66,6 +68,36 @@ sub dbh {
 			}
 
 			unlink($lockFile);
+		}
+
+	} elsif ($@ && $@ =~ /SQLite.*(?:database disk image is malformed|is not a database)/i && !$beenHere) {
+		
+		# make sure we don't come here again
+		$beenHere++;
+
+		my $dbfile = File::Spec->catfile( preferences('server')->get('librarycachedir'), 'squeezebox.db' );
+
+		unlink($dbfile);
+
+		if (!-f $dbfile) {
+
+			logWarning("$@\nTrying to rebuild database from scratch.");
+
+			$@ = '';
+
+			Slim::Schema->_connect();
+
+			eval { $self->ensure_connected };
+
+			if ($@) {
+				logError("Unable to open the database image - even tried creating it from scratch!");
+				logError("Fatal. Exiting.");
+				exit;
+			}
+
+		}
+		else {
+			return $self->throw_exception($@);
 		}
 
 	} elsif ($@) {
