@@ -830,10 +830,11 @@ sub getScannerLogOptions {
 	my $class = shift;
 	
 	my $options = $class->logGroups()->{SCANNER}->{categories};
+	my $defaults = $class->logLevels();
 	
 	foreach my $key (keys %$options) {
 
-		$options->{$key} = $runningConfig{"log4perl.logger.$key"};
+		$options->{$key} = $runningConfig{"log4perl.logger.$key"} || $defaults->{$key};
 		
 	}
 	
