@@ -744,18 +744,6 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					# first check if the playtrackalbum pref is set
-					my $playalbum = undef;
-					if ( $request->client ) {
-						$playalbum = $prefs->client($request->client)->get('playtrackalbum');
-					}
-				
-					# if player pref for playtrack album is not set, get the old server pref.
-					if ( !defined $playalbum ) {
-						$playalbum = $prefs->get('playtrackalbum');
-					}
-
-				
 					if ( $method =~ /play|load/i ) {
 						$client->execute([ 'playlist', 'clear' ]);
 					}
@@ -769,17 +757,9 @@ sub _cliQuery_done {
 					else {
 						$cmd = 'inserttracks';
 					}
-
-					if (!$playalbum) {
-						@urls = ( $urls[$play_index] );
-					}
-
+		
 					if ( main::INFOLOG && $log->is_info ) {
-						if ( $playalbum ) {
-							$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
-						} else {
-							$log->info(sprintf("Playing one item:\n%s", join("\n", @urls)));
-						}
+						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					}
 	
 					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
@@ -1126,7 +1106,19 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
 						elsif ( $touchToPlay ) {
-							my $all = $item->{playall} ? 'all' : '';
+
+							my $playalbum = undef;
+							if ( $request->client ) {
+								$playalbum = $prefs->client($request->client)->get('playtrackalbum');
+							}
+						
+							# if player pref for playtrack album is not set, get the old server pref.
+							if ( !defined $playalbum ) {
+								$playalbum = $prefs->get('playtrackalbum');
+							}
+
+							my $all = $playalbum && $item->{playall} ? 'all' : '';
+							
 							my $actions = {
 								more => {
 									cmd         => [ $query, 'items' ],
@@ -1154,7 +1146,7 @@ sub _cliQuery_done {
 								}
 							};
 							
-							if ( $item->{playall} ) {
+							if ( $playalbum && $item->{playall} ) {
 								# Clone params or we'll end up changing data for every action
 								my $cParams = Storable::dclone($itemParams);
 								
