@@ -370,7 +370,7 @@ sub syncSNTime {
 	
 	my $http = __PACKAGE__->new(
 		\&_syncSNTime_done,
-		\&_players_error,
+		\&_syncSNTime_done,
 	);
 	
 	$http->get( $http->url( '/api/v1/time' ) );
@@ -386,7 +386,7 @@ sub _syncSNTime_done {
 		$snTime = $http->content;
 	}
 
-	if ( $snTime && $snTime =~ /^\d+$/ ) {
+	if ( $snTime && $snTime =~ /^\d+$/ && $snTime > 1262887372 ) {
 		main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
 		
 		# assuming difference = 0 as we're using time as reported by SN
@@ -396,7 +396,7 @@ sub _syncSNTime_done {
 		Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
 	}
 	else {
-		$log->error("Invalid mysqueezebox.com server timestamp - ignoring");
+		$log->error("Invalid or no mysqueezebox.com server timestamp - ignoring");
 	}
 
 	Slim::Utils::Timers::killTimers( undef, \&syncSNTime );
