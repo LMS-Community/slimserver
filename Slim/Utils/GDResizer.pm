@@ -73,11 +73,12 @@ sub resize {
 		# Double-check that this isn't an image file
 		if ( !_content_type_file($file, 1) ) {
 			$origref = _read_tag($file);
-			$file = undef;
 		
 			if ( !$origref ) {
 				die "Unable to find any image tag in $file\n";
 			}
+
+			$file = undef;
 		}
 	}
 	
