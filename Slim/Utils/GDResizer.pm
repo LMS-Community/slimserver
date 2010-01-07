@@ -137,7 +137,7 @@ sub resize {
 			$img->write( data => $origref, type => 'jpeg', jpegquality => 100 ) or die $img->errstr;
 		};
 		if ( $@ ) {
-			warn "Unable to process JPEG image using Imager: $@, trying to continue anyway\n";
+			die "Unable to process JPEG image using Imager: $@\n";
 		}
 	}
 	
