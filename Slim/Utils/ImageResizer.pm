@@ -16,6 +16,8 @@ my ($gdresizein, $gdresizeout, $gdresizeproc);
 sub resize {
 	my ($class, $file, $cachekey, $specs, $callback) = @_;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	my $ret;
 	
 	if (1) {
@@ -28,10 +30,14 @@ sub resize {
 				spec      => \@spec,
 				cache     => Slim::Utils::Cache->new('Artwork'),
 				cachekey  => $cachekey,
-				debug     => main::DEBUGLOG && $log->is_debug,
+				debug     => $isDebug,
 				faster    => !$prefs->get('resampleArtwork'),
 			);
 		};
+		
+		if ( main::DEBUGLOG && $isDebug && $@ ) {
+			$log->error("Error resizing $file: $@");
+		}
 		
 		$ret =  ( $@ ) ? 0 : 1;
 	}

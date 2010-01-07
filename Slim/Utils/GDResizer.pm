@@ -124,10 +124,12 @@ sub resize {
 	if ( ISWINDOWS && $in_format eq 'jpg' ) {
 		require Imager;
 		my $img = Imager->new;
+		my $orig;
 		eval {
 			if ( $file ) {
 				$img->read( file => $file ) or die $img->errstr;
 				$file = undef;
+				$origref = \$orig;
 			}
 			else {
 				$img->read( data => $$origref ) or die $img->errstr;
@@ -135,7 +137,7 @@ sub resize {
 			$img->write( data => $origref, type => 'jpeg', jpegquality => 100 ) or die $img->errstr;
 		};
 		if ( $@ ) {
-			die "Unable to process JPEG image using Imager: $@\n";
+			warn "Unable to process JPEG image using Imager: $@, trying to continue anyway\n";
 		}
 	}
 	
