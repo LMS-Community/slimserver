@@ -188,11 +188,14 @@ sub init {
 			}
 
 			my $output = '';
-			my ($item) = $_[0]->$attr();
-
-			if ($item) {
-				$output = $item->name();
-			}
+			
+			eval {
+				my ($item) = $_[0]->$attr();
+	
+				if ($item) {
+					$output = $item->name();
+				}
+			};
 
 			return (defined $output ? $output : '');
 		};
@@ -218,12 +221,13 @@ sub init {
 
 	# add comment and duration
 	for my $attr (qw(comment duration)) {
-		
-		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{$attr} || '';
-		}
 
 		$parsedFormats{uc($attr)} = sub {
+		
+			if ( ref $_[0] eq 'HASH' ) {
+				return $_[0]->{$attr} || '';
+			}
+
 			my $output = $_[0]->$attr();
 			return (defined $output ? $output : '');
 		};

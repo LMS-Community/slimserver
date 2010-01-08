@@ -660,6 +660,23 @@ PLAYLIST
 	SV	Spellista
 	ZH_CN	播放表
 
+PLAYLIST_SHORT
+#SLT: please keep this _very_ short (rather shorter than the English Playlist if possible)
+	CS	Seznam skladeb
+	DA	Liste
+	DE	Liste
+	EN	Playlist
+	ES	Lista
+	FI	Soittoluettelo
+	FR	Liste
+	IT	Elenco
+	NL	Playlist
+	NO	Spilleliste
+	PL	Lista
+	PT	Playlist
+	RU	Плей-лист
+	SV	Spellista
+
 CURRENT_PLAYLIST
 	CS	Aktuální seznam skladeb
 	DA	Aktiv afspilningsliste

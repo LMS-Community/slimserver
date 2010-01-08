@@ -1876,7 +1876,7 @@ sub repeatSettings {
 	my $batch = shift;
 
 	my $repeat_setting = Slim::Player::Playlist::repeat($client);
-	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST',);
+	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST_SHORT',);
 	my @translated_repeat_strings = map { ucfirst($client->string($_)) } @repeat_strings;
 	my @repeatChoiceActions;
 	for my $i (0..$#repeat_strings) {
