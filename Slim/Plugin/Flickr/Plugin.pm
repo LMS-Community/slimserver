@@ -15,6 +15,7 @@ use Slim::Networking::SqueezeNetwork;
 my @savers = qw(
 	mine
 	contacts
+	favorites
 	interesting
 	recent
 );

@@ -49,5 +49,20 @@ PLUGIN_FLICKR_SCREENSAVER_RECENT
 	RU	Flickr: последние фото
 	SV	Flickr: Nya bilder
 
+PLUGIN_FLICKR_SCREENSAVER_FAVORITES
+	CS	Flickr: Oblíbené položky
+	DA	Flickr: Favoritter
+	DE	Flickr: Favoriten
+	EN	Flickr: Favorites
+	ES	Flickr: Favoritos
+	FI	Flickr: Suosikit
+	FR	Flickr: Favoris
+	IT	Flickr: Preferiti
+	NL	Flickr: Favorieten
+	NO	Flickr: Favoritter
+	PL	Flickr: Ulubione
+	RU	Flickr: Выбранное
+	SV	Flickr: Favoriter
+
 PLUGIN_FLICKR_ON_FLICKR
 	EN	On Flickr
