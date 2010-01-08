@@ -188,11 +188,14 @@ sub init {
 			}
 
 			my $output = '';
-			my ($item) = $_[0]->$attr();
-
-			if ($item) {
-				$output = $item->name();
-			}
+			
+			eval {
+				my ($item) = $_[0]->$attr();
+	
+				if ($item) {
+					$output = $item->name();
+				}
+			};
 
 			return (defined $output ? $output : '');
 		};
