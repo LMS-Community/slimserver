@@ -202,6 +202,10 @@ sub _init_error {
 	my $error = $http->error;
 	
 	$log->error( sprintf("Unable to login to mysqueezebox.com, sync is disabled: $error (%s)", $http->url) );
+
+	if ( my $proxy = $prefs->get('webproxy') ) {
+		$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
+	} 
 	
 	$prefs->remove('sn_timediff');
 	
@@ -468,7 +472,11 @@ sub _error {
 	my ( $self, $error ) = @_;
 	my $params = $self->params('params');
 	
-	$log->error( "Unable to login to SN: $error" );
+	my $proxy = $prefs->get('webproxy'); 
+
+	$log->error( "Unable to login to SN: $error" 
+		. ($proxy ? sprintf(" - please check your proxy configuration (%s)", $proxy) : '')
+	); 
 	
 	$prefs->remove('sn_session');
 	

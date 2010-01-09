@@ -140,7 +140,11 @@ sub _players_error {
 		return;
 	}
 
-	$log->error( "Unable to get players: $error" );
+	my $proxy = Slim::Utils::Prefs::preferences('server')->get('webproxy'); 
+
+	$log->error( "Unable to get players: $error" 
+		. ($proxy ? sprintf(" - please check your proxy configuration (%s)", $proxy) : '')
+	); 
 }
 
 

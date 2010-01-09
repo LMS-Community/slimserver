@@ -126,7 +126,12 @@ sub checkVersionCB {
 sub checkVersionError {
 	my $http = shift;
 
-	$log->error(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error);
+	my $proxy = $prefs->get('webproxy');
+
+	$log->error(Slim::Utils::Strings::string('CHECKVERSION_ERROR')
+		. "\n" . $http->error
+		. ($proxy ? sprintf("\nPlease check your proxy configuration (%s)", $proxy) : '')
+	);
 }
 
 
