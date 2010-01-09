@@ -644,7 +644,10 @@ sub sound {
 		}
 
 		# Set a callback to check we managed to play something
-		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
+		# if this is a squeezeplay-based player, fallback alarm comes from client-side
+		if ( ! $client->isa('Slim::Player::SqueezePlay') ) {
+			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
+		}
 
 		# Allow a slight delay for things to load up then tell the user what's going on
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, sub {
