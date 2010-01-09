@@ -143,32 +143,36 @@ sub initPlugin {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
 	}
 
-	if ($prefs->get('otherrepo')) {
-		$class->addRepo({ other => 1 });
-	}
-
-	for my $repo ( @{$prefs->get('repos')} ) {
-		$class->addRepo({ repo => $repo });
-	}
+	# other repo available always available as an option from jive
+	Slim::Control::Jive::registerExtensionProvider($otherRepo, \&getExtensions, 'other');
 
 	if ( !main::SLIM_SERVICE && !$::noweb ) {
+
+		if ($prefs->get('otherrepo')) {
+			$class->addRepo({ other => 1 });
+		}
+
+		for my $repo ( @{$prefs->get('repos')} ) {
+			$class->addRepo({ repo => $repo });
+		}
+		
 		Slim::Plugin::Extensions::Settings->new;
-	}
 
-	# clean out plugin entries for plugins which are manually installed
-	# this can happen if a developer moves an automatically installed plugin to a manually installed location
-	my $installPlugins = $prefs->get('plugin');
-	my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
-
-	for my $plugin (keys %$installPlugins) {
-
-		if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
-
-			$log->warn("removing $plugin from install list as it is already manually installed");
-
-			delete $installPlugins->{ $plugin };
-
-			$prefs->set('plugin', $installPlugins);
+		# clean out plugin entries for plugins which are manually installed
+		# this can happen if a developer moves an automatically installed plugin to a manually installed location
+		my $installPlugins = $prefs->get('plugin');
+		my $loadedPlugins = Slim::Utils::PluginManager->allPlugins;
+		
+		for my $plugin (keys %$installPlugins) {
+			
+			if ($loadedPlugins->{ $plugin } && $loadedPlugins->{ $plugin }->{'basedir'} !~ /InstalledPlugins/) {
+				
+				$log->warn("removing $plugin from install list as it is already manually installed");
+				
+				delete $installPlugins->{ $plugin };
+				
+				$prefs->set('plugin', $installPlugins);
+			}
 		}
 	}
 
@@ -185,7 +189,10 @@ sub addRepo {
 	main::INFOLOG && $log->info("adding repository $repo weight $weight");
 
 	$repos{$repo} = $weight;
-	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
+
+	unless ($args->{'other'}) {
+		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions, 'user');
+	}
 }
 
 sub removeRepo {
@@ -197,7 +204,10 @@ sub removeRepo {
 	main::INFOLOG && $log->info("removing repository $repo");
 
 	delete $repos{$repo};
-	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
+
+	unless ($args->{'other'}) {
+		Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
+	}
 }
 
 sub repos {
@@ -438,9 +448,10 @@ sub _parseXML {
 				'name'    => $entry->{'name'},
 				'url'     => $entry->{'url'},
 				'version' => $entry->{'version'},
-				'sha'     => $entry->{'sha'},
 			};
 
+			$new->{'sha'} = $entry->{'sha'} if $entry->{'sha'};
+			
 			$debug && $log->debug("entry $new->{name} vers: $new->{version} url: $new->{url}");
 
 			if ($details) {

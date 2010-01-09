@@ -3170,10 +3170,11 @@ my %extensionProviders = ();
 sub registerExtensionProvider {
 	my $name     = shift;
 	my $provider = shift;
+	my $optstr   = shift;
 
-	main::INFOLOG && $log->info("adding extension provider $name $provider");
+	main::INFOLOG && $log->info("adding extension provider $name" . ($optstr ? " optstr: $optstr" : ""));
 
-	$extensionProviders{ $name } = $provider;
+	$extensionProviders{ $name } = { provider => $provider, optstr => $optstr };
 }
 
 sub removeExtensionProvider {
@@ -3193,14 +3194,23 @@ sub extensionsQuery {
 	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
 	my $version= $request->getParam('version');
 	my $target = $request->getParam('target');
+	my $optstr = $request->getParam('optstr');
 
 	if (!defined $type) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	my @providers = keys %extensionProviders;
+	my @providers;
 	my $language  = $Slim::Utils::Strings::currentLang;
+
+	# remove optional providers if key is included in the query and it does not match
+	# this allows SP to select whether optional providers are used to build the list
+	for my $provider (keys %extensionProviders) {
+		if (!$optstr || !defined $extensionProviders{$provider}->{'optstr'} || $optstr =~ /$extensionProviders{$provider}->{optstr}/) {
+			push @providers, $provider;
+		}
+	}
 
 	if (scalar @providers) {
 
@@ -3210,7 +3220,7 @@ sub extensionsQuery {
 
 		for my $provider (@providers) {
 
-			$extensionProviders{$provider}->( {
+			$extensionProviders{$provider}->{'provider'}->( {
 				'name'   => $provider, 
 				'type'   => $type, 
 				'target' => $target,
