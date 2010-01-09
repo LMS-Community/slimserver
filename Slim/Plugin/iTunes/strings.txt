@@ -214,10 +214,11 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
+#SLT: this term should match the one used in iTunes/Preferences/Advanced
 	CS	Složka iTunes Music
 	DA	iTunes-musikmappe
-	DE	iTunes-Musikordner
-	EN	iTunes Music Folder
+	DE	iTunes-Medienordner
+	EN	iTunes Media Folder
 	ES	Carpeta de música de iTunes
 	FI	iTunes-musiikkikansio
 	FR	Dossier de musique iTunes
@@ -234,8 +235,8 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CS	Pokud běží iTunes na jiném počítači než Squeezebox Server, můžete zde specifikovat explicitní cestu ke složce iTunes Music. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Squeezebox Server.
 	DA	Hvis iTunes kører på en anden computer end Squeezebox Server, kan du angive stien til iTunes-musikmappen der. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Squeezebox Server.
-	DE	Falls iTunes auf einem anderen Rechner als Squeezebox Server ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Musiksammlung angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Squeezebox Server installiert ist.
-	EN	If you are running iTunes on a different computer than Squeezebox Server, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as Squeezebox Server.
+	DE	Falls iTunes auf einem anderen Rechner als Squeezebox Server ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Medienordner angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Squeezebox Server installiert ist.
+	EN	If you are running iTunes on a different computer than Squeezebox Server, you may specify an explicit path to the iTunes Media folder here.  Leave this blank if you are running iTunes on the same computer as Squeezebox Server.
 	ES	Si ejecuta iTunes en un equipo distinto al de Squeezebox Server, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que Squeezebox Server.
 	FI	Jos iTunes on käytössä eri tietokoneessa kuin Squeezebox Server, voit määrittää nimenomaisen polun iTunes- musiikkikansioon tässä.  Jätä tämä kohta tyhjäksi, jos iTunes on asennettuna samaan tietokoneeseen kuin Squeezebox Server.
 	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le Squeezebox Server, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le Squeezebox Server.
