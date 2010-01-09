@@ -584,6 +584,10 @@ sub downloadAsyncError {
 			$error,
 			int( $CHECK_TIME / 60 ),
 		));
+
+		if ( my $proxy = $prefs->get('webproxy') ) {
+			$log->error( sprintf("Please check your proxy configuration (%s)", $proxy) );
+		} 
 	
 		Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
 		Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync,
