@@ -6,7 +6,7 @@
 		<ul>
 		[% IF menulist %]
 		    [% FOREACH item = orderlist %]
-	    		<li><a href="[% menulist.$item %]player=[% playerURI %]">[% item | getstring %]</a></li>
+	    		<li><a href="[% menulist.$item %]player=[% playerURI %]" [% IF additionalLinks.my_apps.$item.match('^http:') %]target="mysb"[% END %]>[% item | getstring %]</a></li>
 	    	[% END %]
 		    [% FOREACH link = menulist; IF !orderlist.grep(link.key).size %]
 	    		<li><a href="[% link.value %]player=[% playerURI %]">[% link.key | getstring %]</a></li>
