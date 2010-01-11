@@ -95,6 +95,7 @@ ELSE %]
 		FOREACH item = additionalLinkOrder.my_apps;
 			IF additionalLinks.my_apps.exists(item);
 				link.value = additionalLinks.my_apps.$item;
+				link.target = additionalLinks.my_apps.$item.match('^http:') ? "mysb" : "";
 				link.key = item;
 				PROCESS menuItem;
 			END;

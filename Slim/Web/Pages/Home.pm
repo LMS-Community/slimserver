@@ -105,6 +105,8 @@ sub home {
 		$class->addPageLinks("help", {'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 		$class->addPageLinks("help", {'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	}
+	
+	$class->addPageLinks( 'my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url( '/appgallery' )} );
 
 	if ($prefs->get('audiodir')) {
 
@@ -179,6 +181,14 @@ sub home {
 				$menu !~ /(?:my_apps)/ &&
 				( $prefs->get("rank-$b") || 0 ) <=> 
 				( $prefs->get("rank-$a") || 0 )
+			)
+			|| 
+			(
+				$menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
+			)
+			|| 
+			(
+				$menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
 			)
 			|| 
 			(
