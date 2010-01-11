@@ -8,7 +8,7 @@
         <description>PLUGIN_PODCAST_DESC</description>
         <creator>Logitech</creator>
 
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
         
 	<homepageURL>http://www.mysqueezebox.com/appgallery/Podcasts</homepageURL>
 	<optionsURL>plugins/Podcast/settings/basic.html</optionsURL>
