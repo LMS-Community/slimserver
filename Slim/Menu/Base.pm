@@ -7,16 +7,16 @@ package Slim::Menu::Base;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# Provides OPML-based extensible menu for system information
+# Provides OPML-based extensible menu for system information and more
 
 =head1 NAME
 
-Slim::Menu::SystemInfo
+Slim::Menu::Base
 
 =head1 DESCRIPTION
 
-Provides a dynamic OPML-based system info (player, server, controller)
-menu to all UIs and allows plugins to register additional menu items.
+Provides a dynamic OPML-based menuing system to all UIs. 
+This is the base class of various menus, like SystemInfo, TrackInfo etc.
 
 =cut
 
@@ -170,7 +170,7 @@ sub addItem {
 		
 		my $item = eval { $ref->{func}->( $client, $tags ) };
 		if ( $@ ) {
-			$log->error( 'SystemInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
+			$log->error( 'Menu item "' . $ref->{name} . '" failed: ' . $@ );
 			return;
 		}
 		
@@ -191,7 +191,7 @@ sub addItem {
 			}
 		}
 		else {
-			$log->error( 'SystemInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
+			$log->error( 'Menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
 		}				
 	}
 };
