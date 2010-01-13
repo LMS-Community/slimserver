@@ -108,7 +108,7 @@ sub artworkRequest {
 	
 	# Parse out spec from path
 	# WxH[_m][_bg][.ext]
-	my ($spec) = File::Basename::basename($path) =~ /_([^x]+x[^_]+(?:_(\w))?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
+	my ($spec) = File::Basename::basename($path) =~ /_([^x]+?x[^_]+?(?:_(\w))?(?:_[\da-fA-F]+?)?)(?:\.\w+)?$/;
 	
 	# Special cases:
 	# /music/current/cover.jpg (mentioned in CLI docs)
