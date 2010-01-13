@@ -12882,6 +12882,10 @@ SONG_INFO
 	SV	Låtinfo
 	ZH_CN	歌曲信息
 
+PLAYLIST_INFO
+	DE	Infos zur Wiedergabeliste
+	EN	Playlist Info
+
 NOTE
 	CS	Poznámka:
 	DA	Bemærk:
