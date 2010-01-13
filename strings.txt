@@ -12887,7 +12887,7 @@ SONG_INFO
 
 PLAYLIST_INFO
 	DE	Infos zur Wiedergabeliste
-	EN	Plalyist Info
+	EN	Playlist Info
 
 NOTE
 	CS	Poznámka:
