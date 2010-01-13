@@ -3,6 +3,7 @@ package Slim::Web::Graphics;
 use strict;
 
 use Scalar::Util qw(blessed);
+use File::Basename;
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -107,7 +108,7 @@ sub artworkRequest {
 	
 	# Parse out spec from path
 	# WxH[_m][_bg][.ext]
-	my ($spec) = $path =~ /_([^x]+x[^_]+(?:_(\w))?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
+	my ($spec) = File::Basename::basename($path) =~ /_([^x]+x[^_]+(?:_(\w))?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
 	
 	# Special cases:
 	# /music/current/cover.jpg (mentioned in CLI docs)
