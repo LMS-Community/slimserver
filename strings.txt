@@ -12886,6 +12886,10 @@ PLAYLIST_INFO
 	DE	Infos zur Wiedergabeliste
 	EN	Playlist Info
 
+FOLDER_INFO
+	DE	Ordnerinformationen
+	EN	Folder Info
+
 NOTE
 	CS	Poznámka:
 	DA	Bemærk:

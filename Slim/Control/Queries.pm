@@ -1950,11 +1950,16 @@ sub musicfolderQuery {
 				titleStyle => 'musicfolder',
 			},
 		};
+
 		if ($party || $partyMode) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
-		# FIXME: working on BMF CM issue here
-		# $base->{'actions'}{'more'} = _contextMenuBase('folder');
+
+		if ($useContextMenu) {
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase('folder');
+		}
+		
 		$request->addResult('base', $base);
 
 		$request->addResult('window', { text => $topLevelObj->title } ) if $topLevelObj->title;
