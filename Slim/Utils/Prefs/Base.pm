@@ -361,14 +361,22 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 			if ( ref $new eq 'ARRAY' ) {
 				for ( @{$new} ) {
 					if ( $_ && s/^json:// ) {
+						utf8::encode($_);
 						$_ = eval { from_json($_) };
-						$_ = '' if $@;
+						if ( $@ ) {
+							$log->error( "Bad JSON pref $pref: $@" );
+							$_ = '';
+						}
 					}
 				}
 			}
 			elsif ( $new =~ s/^json:// ) {
+				utf8::encode($new);
 				$new = eval { from_json($new) };
-				$new = '' if $@;
+				if ( $@ ) {
+					$log->error( "Bad JSON pref $pref: $@" );
+					$new = '';
+				}
 			}
 			
 			# If old pref was an array but new is not, force it to stay an array
