@@ -1461,4 +1461,6 @@ sub isAppEnabled {
 	return;
 }
 
+sub revisionNumber { $_[0]->revision }
+
 1;
