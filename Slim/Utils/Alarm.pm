@@ -644,8 +644,10 @@ sub sound {
 		}
 
 		# Set a callback to check we managed to play something
-		# if this is a squeezeplay-based player, fallback alarm comes from client-side
-		if ( ! $client->isa('Slim::Player::SqueezePlay') ) {
+		if ( $client->isa('Slim::Player::SqueezePlay') && $client->revisionNumber >= 8312 ) {
+			# if this is a squeezeplay-based player on or after r8312, fallback alarm comes from client-side only
+		}
+		else {
 			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
 		}
 
