@@ -1585,6 +1585,7 @@ sub playlistXtracksCommand {
 
 	if ($what =~ /urllist/i) {
 		@tracks = _playlistXtracksCommand_constructTrackList($client, $what, $listref);
+		
 	} elsif ($what =~ /listRef/i) {
 		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
 
@@ -3194,6 +3195,8 @@ sub _playlistXtracksCommand_parseListRef {
 
 		return @$listRef;
 	}
+
+	return ();
 }
 
 sub _playlistXtracksCommand_parseSearchRef {
