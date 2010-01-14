@@ -81,8 +81,15 @@ sub model {
 	return shift->_model;
 }
 
+# This will return the full version + revision, i.e. 7.5.0 r8265
 sub revision {
 	return shift->firmware;
+}
+
+# This returns only the integer revision, i.e. 8265
+sub revisionNumber {
+	my ($num) = shift->firmware =~ /r(\d+)/;
+	return $num;
 }
 
 sub needsUpgrade {}
