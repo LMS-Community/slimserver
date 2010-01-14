@@ -33,7 +33,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-my $beenHere = 0;
+my %rebuilt;
 
 sub dbh {
 	my $self = shift;
@@ -43,8 +43,18 @@ sub dbh {
 		eval { $self->ensure_connected };
 	}
 
+	if ($@) {
+		return $self->throw_exception($@);
+	}
+
+	return $self->_dbh;
+}
+
+sub throw_exception {
+	my ($self, $msg) = @_;
+
 	# Try and bring up the database if we can't connect.
-	if ($@ && $@ =~ /Connection failed/) {
+	if ($msg =~ /Connection failed/) {
 
 		my $lockFile = File::Spec->catdir(preferences('server')->get('librarycachedir'), 'mysql.startup');
 
@@ -68,22 +78,28 @@ sub dbh {
 			}
 
 			unlink($lockFile);
+			
+			return;
 		}
 
-	} elsif ($@ && $@ =~ /SQLite.*(?:database disk image is malformed|is not a database)/i && !$beenHere) {
+	} elsif ($msg =~ /SQLite.*(?:database disk image is malformed|is not a database)/i) {
 		
-		# make sure we don't come here again
-		$beenHere++;
+		$msg =~ m|/(squeezebox(?:-persistent)?\.db)|i;
+		
+		my $dbfile = $1 || 'squeezebox.db';
 
-		my $dbfile = File::Spec->catfile( preferences('server')->get('librarycachedir'), 'squeezebox.db' );
+		$dbfile = File::Spec->catfile( preferences('server')->get('librarycachedir'), $dbfile );
 
 		unlink($dbfile);
 
-		if (!-f $dbfile) {
+		if (!$rebuilt{$dbfile} && !-f $dbfile) {
 
-			logWarning("$@\nTrying to rebuild database from scratch.");
+			# make sure we don't come here again
+			$rebuilt{$dbfile}++;
 
-			$@ = '';
+			logError("$msg\nTrying to rebuild $dbfile from scratch.");
+
+			$msg = '';
 
 			Slim::Schema->_connect();
 
@@ -91,25 +107,14 @@ sub dbh {
 
 			if ($@) {
 				logError("Unable to open the database image - even tried creating it from scratch!");
-				logError("Fatal. Exiting.");
+				logError("Fatal. Exiting. [$@]");
 				exit;
 			}
 
+			return $self->_dbh;
 		}
-		else {
-			return $self->throw_exception($@);
-		}
-
-	} elsif ($@) {
-
-		return $self->throw_exception($@);
+		
 	}
-
-	return $self->_dbh;
-}
-
-sub throw_exception {
-	my ($self, $msg) = @_;
 
 	logBacktrace($msg);
 
