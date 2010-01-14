@@ -1408,6 +1408,8 @@ sub _objectInfoHandler {
 
 	my $mixable = $obj->musicmagic_mixable;
 
+	my $playerMenu = {};
+
 	my $special;
 	if ($objectType eq 'album') {
 		$special->{'actionParam'} = 'album_id';
@@ -1423,7 +1425,12 @@ sub _objectInfoHandler {
 		$special->{'actionParam'} = 'track_id';
 		$special->{'modeParam'}   = 'track';
 		$special->{'urlKey'}      = 'song';
-
+		$playerMenu = {
+			mode => 'musicmagic_mix',
+			modeParams => {
+				'track' => $obj,
+			},
+		};
 	}
 
 	my $jive = {};
@@ -1464,12 +1471,7 @@ sub _objectInfoHandler {
 			name      => cstring($client, 'MUSICIP_CREATEMIX'),
 			favorites => 0,
 
-			player => {
-				mode => 'musicmagic_mix',
-				modeParams => {
-					$special->{modeParam} => $obj,
-				},
-			},
+			player => $playerMenu,
 
 			web  => {
 				group => 'mixers',
