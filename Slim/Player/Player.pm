@@ -269,16 +269,16 @@ sub power {
 		# turning player on - reset mode & brightness, display welcome and sync/start playing
 		$client->audio_outputs_enable(1);
 
-		# no need to initialize display if none is available
-		if ( !$client->display->isa('Slim::Display::NoDisplay') ) {
-			$client->update( { 'screen1' => {}, 'screen2' => {} } );
-	
-			$client->updateMode(2); # block updates to hide mode change
-	
-			Slim::Buttons::Common::setMode($client, 'home');
-	
-			$client->updateMode(0); # unblock updates
+		$client->update( { 'screen1' => {}, 'screen2' => {} } );
+
+		$client->updateMode(2); # block updates to hide mode change
+
+		Slim::Buttons::Common::setMode($client, 'home');
+
+		$client->updateMode(0); # unblock updates
 			
+		# no need to initialize brightness if no display is available
+		if ( !$client->display->isa('Slim::Display::NoDisplay') ) {
 			# restore the saved brightness, unless its completely dark...
 			my $powerOnBrightness = $prefs->client($client)->get('powerOnBrightness');
 	
