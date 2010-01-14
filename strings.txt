@@ -6124,7 +6124,7 @@ SETUP_LANGUAGE_DESC
 	CS	Vyberte jazyk, který chcete používat na Squeezebox Server. Položky označené * byly přeloženy komunitou zákazníků Squeezebox Server.
 	DA	Vælg det sprog som teksten i Squeezebox Servers brugerflade skal vises på. De sprog som er markeret med en stjerne (*), er oversat af Squeezebox Servers brugergrupper.
 	DE	Wählen Sie die Sprache für Squeezebox Server. Diejenigen, welche mit * markiert sind, werden durch die Squeezebox Server Community bereit gestellt werden. Falls damit Probleme auftreten oder Sie Verbesserungsvorschläge haben, so kontaktieren Sie die Entwickler in <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	EN	Choose the language that you'd like to use with Squeezebox Server.  Those marked with * were translated by the Squeezebox Server customer community.  If you find problems or would like to contribute, contact the devlopers at <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	EN	Choose the language that you'd like to use with Squeezebox Server.  Those marked with * were translated by the Squeezebox Server customer community.  If you find problems or would like to contribute, contact the developers at <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	ES	Elija el idioma que desea utilizar con Squeezebox Server. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de Squeezebox Server.
 	FI	Valitse kieli, jota haluat käyttää Squeezebox Serverissä.  Tähdellä (*) merkityt ovat Squeezebox Serverin käyttäjäyhteisön kääntämiä.
 	FR	Sélectionnez la langue à utiliser pour le Squeezebox Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Squeezebox Server.
