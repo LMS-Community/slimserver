@@ -20117,6 +20117,21 @@ MERGEVA_PROGRESS
 PRECACHEARTWORK_PROGRESS
 	EN	Pre-caching Artwork
 
+PRECACHEARTWORK_PROGRESS
+	CS	Hledání obalů alb
+	DA	Søg efter covere
+	DE	Suche Plattenhüllen
+	EN	Artwork Scan
+	ES	Examen de carátula de álbum
+	FI	Kansitaiteen haku
+	FR	Analyse de pochettes
+	IT	Analisi copertine
+	NL	Hoesafbeeldingen scannen
+	NO	Søk etter albumomslag
+	PL	Przeszukiwanie okładek
+	RU	Сканирование обложек
+	SV	Sökning efter albumomslag
+
 CLEANUP1_PROGRESS
 	CS	Čištění databáze č.1
 	DA	Oprydning i database nr. 1
