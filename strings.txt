@@ -20115,13 +20115,10 @@ MERGEVA_PROGRESS
 	SV	Slå ihop Blandade artister
 
 PRECACHEARTWORK_PROGRESS
-	EN	Pre-caching Artwork
-
-PRECACHEARTWORK_PROGRESS
 	CS	Hledání obalů alb
 	DA	Søg efter covere
 	DE	Suche Plattenhüllen
-	EN	Artwork Scan
+	EN	Pre-caching Artwork
 	ES	Examen de carátula de álbum
 	FI	Kansitaiteen haku
 	FR	Analyse de pochettes
