@@ -147,6 +147,8 @@ sub shutdown {
 	}
 	
 	Slim::Utils::Timers::killTimers( $class, \&_poll );
+	
+	%dirs = ();
 }
 
 1;
