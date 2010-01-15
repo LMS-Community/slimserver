@@ -170,7 +170,7 @@ sub init {
 		'noGenreFilter'         => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
-		'splitList'             => '',
+		'splitList'             => ';',
 		'browseagelimit'        => 100,
 		'groupdiscs'            => 1,
 		'persistPlaylists'      => 1,
