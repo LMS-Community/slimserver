@@ -108,7 +108,7 @@ sub artworkRequest {
 	
 	# Parse out spec from path
 	# WxH[_m][_bg][.ext]
-	my ($spec) = File::Basename::basename($path) =~ /_([^x\s]+?x[^_\s]+?(?:_(\w))?(?:_[\da-fA-F]+?)?)(?:\.\w+)?$/;
+	my ($spec) = File::Basename::basename($path) =~ /_([^_x\s]+?x[^_\s]+?(?:_(\w))?(?:_[\da-fA-F]+?)?)(?:\.\w+)?$/;
 
 	main::DEBUGLOG && $log->debug("  Resize specification: $spec");
 	
