@@ -216,8 +216,8 @@ sub _gotMetadata {
 	
 	# Also cache the image URL in case the stream has other metadata
 	if ( $meta->{cover} ) {
-		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 );
+		my $cache = Slim::Utils::Cache->new();
+		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 * 7 );
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {

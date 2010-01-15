@@ -29,7 +29,6 @@ use Slim::Formats;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
-use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -382,8 +381,6 @@ sub precacheAllArtwork {
 	my $cb    = shift; # optional callback when done (main process async mode)
 	
 	my $isDebug = $importlog->is_debug;
-	
-	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
 	
 	my $isEnabled = $prefs->get('precacheArtwork');
 	

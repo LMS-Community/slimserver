@@ -4,6 +4,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::ArtworkCache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -28,7 +29,7 @@ sub resize {
 			Slim::Utils::GDResizer->gdresize(
 				file      => $file,
 				spec      => \@spec,
-				cache     => Slim::Utils::Cache->new('Artwork'),
+				cache     => Slim::Utils::ArtworkCache->new(),
 				cachekey  => $cachekey,
 				debug     => $isDebug,
 				faster    => !$prefs->get('resampleArtwork'),

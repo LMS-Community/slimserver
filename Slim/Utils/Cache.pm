@@ -124,15 +124,6 @@ sub init {
 
 	# cause the default cache to be created if it is not already
 	__PACKAGE__->new();
-	
-	if (my $artworkRoot = preferences('server')->get('librarycachedir')) {
-		$nameSpaceRoot{'Artwork'} = $artworkRoot;
-	}
-	
-	Slim::Utils::Prefs::preferences('server')->setChange(sub {
-		delete $caches{'Artwork'} if exists $caches{'Artwork'};
-		$nameSpaceRoot{'Artwork'} = $_[1];
-	}, 'librarycachedir');
 
 	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 		# start purge routine in 10 seconds to purge all caches created during server and plugin startup
@@ -194,12 +185,6 @@ sub new {
 
 	# store cache object and add namespace to purge lists
 	$caches{$namespace} = $self;
-	
-	# Bug 7340, don't purge the Artwork cache
-	# XXX: FileCache sucks, find a better solution for the Artwork cache
-	if ( $namespace ne 'Artwork' ) {
-		push @thisCycle, $namespace;
-	}
 	
 	push @eachCycle, $namespace unless $noPeriodicPurge;
 

@@ -644,15 +644,12 @@ sub gdresize {
 				my $width  = $s->[2];
 				my $height = $s->[3];
 				my $mode   = $s->[4];
-				
-				my $ct = 'image/' . $s->[1];
-				$ct =~ s/jpg/jpeg/;
 			
 				# Series-based resize has to append to the cache key
 				my $key = $cachekey;
 				$key .= "${width}x${height}_${mode}";
 			
-				_cache( $cache, $key, $s->[0], $file, $ct );
+				_cache( $cache, $key, $s->[0], $file, $s->[1] );
 			}
 		}
 	}
@@ -680,12 +677,8 @@ sub gdresize {
 		}
 		
 		if ( $cache && $cachekey ) {
-			my $ct = 'image/' . $format;
-			$ct =~ s/jpg/jpeg/;
-			
 			# When doing a single resize, the cachekey passed in is all we store
-			
-			_cache( $cache, $cachekey, $ref, $file, $ct );
+			_cache( $cache, $cachekey, $ref, $file, $format );
 		}
 	}
 }
@@ -694,16 +687,15 @@ sub _cache {
 	my ( $cache, $key, $imgref, $file, $ct ) = @_;
 	
 	my $cached = {
-		orig        => $file,
-		mtime       => (stat $file)[9],
-		size        => length($$imgref),
-		body        => $imgref,
-		contentType => $ct,
+		content_type  => $ct,
+		mtime         => (stat($file))[9],
+		original_path => $file,
+		data_ref      => $imgref,
 	};
 
-	$cache->set( $key, $cached, $Cache::Cache::EXPIRES_NEVER );
+	$cache->set( $key, $cached );
 	
-	$debug && warn "Cached $key (" . $cached->{size} . " bytes)\n";
+	$debug && warn "Cached $key\n";
 }
 
 1;

@@ -8,7 +8,7 @@ use File::Basename;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Cache;
+use Slim::Utils::ArtworkCache;
 use Slim::Utils::Prefs;
 use Slim::Utils::ImageResizer;
 
@@ -23,8 +23,8 @@ my $skinMgr;
 my $cache;
 
 sub init {
-	# create cache for artwork which is not purged periodically due to potential size of cache
-	$cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+	# Get cache for artwork
+	$cache = Slim::Utils::ArtworkCache->new();
 
 	if (main::SCANNER) {
 		require Slim::Web::Template::NoWeb;
@@ -42,8 +42,9 @@ sub _cached {
 	
 	my $isInfo = main::INFOLOG && $log->is_info;
 	
+	# XXX: use get_fh
 	if ( my $cached = $cache->get($path) ) {
-		if ( my $orig = $cached->{orig} ) {
+		if ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,
 			# unless it's a /music path, where we don't care if
 			# it has changed.  The scanner should deal with changes there.
@@ -56,8 +57,8 @@ sub _cached {
 			}
 	
 			if ( main::INFOLOG && $isInfo ) {
-				my $type = $cached->{contentType};
-				my $size = length( ${$cached->{body}} );
+				my $type = $cached->{content_type};
+				my $size = length( ${ $cached->{data_ref} } );
 				$log->info( "  from cache: $type ($size bytes)" );
 			}
 
@@ -90,7 +91,9 @@ sub artworkRequest {
 	
 	# Check cache for this path
 	if ( my $c = _cached($path) ) {
-		$response->content_type( $c->{contentType} );
+		my $ct = 'image/' . $c->{content_type};
+		$ct =~ s/jpg/jpeg/;
+		$response->content_type($ct);
 		
 		# Cache music URLs for 1 year, others for 1 day
 		my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;
@@ -98,7 +101,7 @@ sub artworkRequest {
 		$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 		$response->expires( time() + $exptime );
 		
-		$callback->( $client, $params, $c->{body}, @args );
+		$callback->( $client, $params, $c->{data_ref}, @args );
 		
 		return;
 	}
@@ -180,11 +183,13 @@ sub artworkRequest {
 			# Check cache for this image
 			if ( my $c = _cached($path) ) {
 				# Don't allow browsers to cache this error image
-				$response->content_type( $c->{contentType} );
+				my $ct = 'image/' . $c->{content_type};
+				$ct =~ s/jpg/jpeg/;
+				$response->content_type($ct);
 				$response->header( 'Cache-Control' => 'no-cache' );
 				$response->expires( time() - 1 );
 
-				$callback->( $client, $params, $c->{body}, @args );
+				$callback->( $client, $params, $c->{data_ref}, @args );
 				return;
 			}
 			
@@ -236,9 +241,11 @@ sub artworkRequest {
 			my $body;
 		
 			if ( my $c = _cached($path) ) {
-				$body = $c->{body};
+				$body = $c->{data_ref};
 				
-				$response->content_type( $c->{contentType} );
+				my $ct = 'image/' . $c->{content_type};
+				$ct =~ s/jpg/jpeg/;
+				$response->content_type($ct);
 				
 				# Cache music URLs for 1 year, others for 1 day
 				my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;

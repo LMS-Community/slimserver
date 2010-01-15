@@ -353,7 +353,7 @@ sub coverArt {
 	
 	# Remote files may have embedded cover art
 	if ( $cover && $self->remote ) {
-		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+		my $cache = Slim::Utils::Cache->new();
 		my $image = $cache->get( 'cover_' . $self->url );
 		if ( $image ) {
 			$body        = $image->{image};

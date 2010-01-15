@@ -306,7 +306,7 @@ sub main {
 		# that are no longer valid.  Just delete the directory because clearing the
 		# cache takes too long
 		$log->error('Removing artwork cache...');
-		my $artworkCacheDir = catdir( $prefs->get('cachedir'), 'Artwork' );
+		my $artworkCacheDir = catdir( $prefs->get('librarycachedir'), 'ArtworkCache' );
 		eval { rmtree( $artworkCacheDir ); };
 	}
 

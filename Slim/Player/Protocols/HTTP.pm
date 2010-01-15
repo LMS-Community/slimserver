@@ -225,7 +225,7 @@ sub parseMetadata {
 				$client,
 				Time::HiRes::time() + $delay,
 				sub {
-					my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+					my $cache = Slim::Utils::Cache->new();
 					$cache->set( "remote_image_$url", $metaUrl, 3600 );
 					
 					main::DEBUGLOG && $directlog->debug("Updating stream artwork to $metaUrl");
@@ -679,7 +679,7 @@ sub getMetadataFor {
 	my $playlistURL = $url;
 	
 	# Check for radio URLs with cached covers
-	my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+	my $cache = Slim::Utils::Cache->new();
 	my $cover = $cache->get( "remote_image_$url" );
 	
 	# Item may be a playlist, so get the real URL playing

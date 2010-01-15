@@ -105,7 +105,7 @@ sub coverArt {
 #	return undef if defined $cover && !$cover;
 	
 	# Remote files may have embedded cover art
-	my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+	my $cache = Slim::Utils::Cache->new();
 	my $image = $cache->get( 'cover_' . $self->_url );
 	
 	return undef if !$image;

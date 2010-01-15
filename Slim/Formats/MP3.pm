@@ -275,14 +275,8 @@ sub scanBitrate {
 				type  => $pic->[1] || 'image/jpeg',
 			};
 			
-			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-			
-			if ( main::SLIM_SERVICE ) {
-				$cache->set( "cover_$url", $data, 86400 );
-			}
-			else {
-				$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
-			}
+			my $cache = Slim::Utils::Cache->new();
+			$cache->set( "cover_$url", $data, 86400 * 7 );
 			
 			main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
