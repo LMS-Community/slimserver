@@ -372,6 +372,7 @@ sub flush {
 sub play {
 	my $client = shift;
 	$client->streamBytes(0);
+	$client->closeStream();			# Bug 15477: always use a new stream
 	return $client->SUPER::play(@_);
 }
 

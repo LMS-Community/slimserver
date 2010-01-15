@@ -1170,6 +1170,12 @@ sub _Stream {				# play -> Buffering, Streaming
 		return $song->currentTrackHandler()->overridePlayback( $self->master(), $song->currentTrack()->url );
 	}
 	
+	# close any existing source stream if necessary
+	if ($self->{'songStreamController'}) {
+		$self->{'songStreamController'}->close();
+		$self->{'songStreamController'} = undef;
+	}
+	
 	my ($songStreamController, @error) = $song->open($seekdata);
 		
 	if (!$songStreamController) {
@@ -1180,8 +1186,6 @@ sub _Stream {				# play -> Buffering, Streaming
 
 	Slim::Control::Request::notifyFromArray( $self->master(),
 		[ 'playlist', 'open', $songStreamController->streamUrl() ] );
-
-	$self->{'songStreamController'} = $songStreamController;
 
 	my $paused = (scalar @{$self->{'players'}} > 1) && 
 		($self->{'playingState'} == STOPPED || $self->{'playingState'} == BUFFERING);
@@ -1241,6 +1245,10 @@ sub _Stream {				# play -> Buffering, Streaming
 		_NextIfMore($self);
 		return;
 	}
+
+	# Bug 15477: Delayed to here so that $player->play() has the opportunity to close any old stream 
+	# before the new one becomes available
+	$self->{'songStreamController'} = $songStreamController;
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Song queue is now " . join(',', map { $_->index() } @$queue));
