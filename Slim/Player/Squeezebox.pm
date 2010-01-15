@@ -150,7 +150,9 @@ sub connected {
 
 sub closeStream {
 	if ( !main::SLIM_SERVICE ) {
-		Slim::Web::HTTP::forgetClient(shift);
+		my $client = shift;
+		Slim::Web::HTTP::forgetClient($client);
+		@{$client->chunks} = (); # Bug 15477: flush old data
 	}
 }
 
@@ -774,7 +776,7 @@ sub stream_s {
 		}
 		
 		if ( $proxy ) {
-			my ($pserver, $pport) = split /:/, $proxy;
+			my ($pserver, $pport) = split (/:/, $proxy);
 			$server = $pserver;
 			$port   = $pport;
 		}
