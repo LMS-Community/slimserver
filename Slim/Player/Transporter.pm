@@ -108,7 +108,7 @@ sub play {
 
 		}
 		else {
-			main::INFOLOG && logger('player.source')->info("Setting DigitalInput to 0 for [$url]");
+			main::DEBUGLOG && logger('player.source')->debug("Setting DigitalInput to 0 for [$url]");
 
 			$client->setDigitalInput(0);
 		}
