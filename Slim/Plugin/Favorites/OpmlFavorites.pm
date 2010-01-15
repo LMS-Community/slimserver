@@ -46,7 +46,7 @@ sub new {
 			$favs->_urlindex;
 		}
 		
-	}, [['rescan', 'done']]);
+	}, [['rescan'], ['done']]);
 
 	return $favs;
 }

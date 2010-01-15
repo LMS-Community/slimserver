@@ -101,7 +101,7 @@ sub init {
 		$prefs->setChange( $rewatch, 'audiodir');
 		
 		# Re-watch upon scanner finish
-		Slim::Control::Request::subscribe( $rewatch, [[ 'rescan', 'done' ]] );
+		Slim::Control::Request::subscribe( $rewatch, [['rescan'], ['done']] );
 	}
 
 	# Perform a rescan in case any files have changed while server was off
