@@ -47,14 +47,17 @@ sub init {
 		}
 	}
 	elsif ( main::ISWINDOWS ) {
+		# XXX I'm not happy with ChangeNotify, needs to be rewritten to use the ReadDirectoryChangesW API
+		# See http://www.perlmonks.org/?node=366446
+=pod
 		eval { require Slim::Utils::AutoRescan::Win32 };
 		if ( $@ ) {
 			$log->error( "Error loading Win32 auto-rescan module, falling back to stat-based monitoring ($@)" );
 		}
 		else {
-			# XXX needs improved
 			$osclass = 'Slim::Utils::AutoRescan::Win32';
 		}
+=cut
 	}
 	elsif ( Slim::Utils::OSDetect::isLinux() ) {
 		eval { require Slim::Utils::AutoRescan::Linux };
@@ -98,7 +101,7 @@ sub init {
 		};
 		
 		# Re-watch if directory changes
-		$prefs->setChange( $rewatch, 'audiodir');
+		$prefs->setChange( $rewatch, 'audiodir' );
 		
 		# Re-watch upon scanner finish
 		Slim::Control::Request::subscribe( $rewatch, [['rescan'], ['done']] );
