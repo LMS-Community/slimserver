@@ -104,6 +104,11 @@ sub find {
 sub rescan {
 	my ( $class, $paths, $args ) = @_;
 	
+	# Wipe if requested
+	if ( $args->{wipe} ) {
+		Slim::Schema->wipeAllData;
+	}
+	
 	# Default to a recursive scan
 	if ( !exists $args->{recursive} ) {
 		$args->{recursive} = 1;

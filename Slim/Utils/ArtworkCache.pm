@@ -84,7 +84,7 @@ sub set {
 	mkpath( $dir, 0, DIR_MODE ) if !-d $dir;
 	
 	my $temp_file = $self->generate_temporary_filename( $dir, $file );
-    my $store_file = defined($temp_file) ? $temp_file : $file;
+	my $store_file = defined($temp_file) ? $temp_file : $file;
 	
 	# Fast spew, adapted from File::Slurp::write, with unnecessary options removed
 	{
