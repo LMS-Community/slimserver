@@ -393,7 +393,10 @@ sub initPlugin {
 						},
 					},
 				},
-				window         => { titleStyle => 'moods' },
+				window         => {
+					'icon-id'  => 'plugins/MusicMagic/html/images/icon.png',
+					titleStyle => 'moods'
+				},
 			}]);
 		}
 	}
