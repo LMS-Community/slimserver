@@ -780,10 +780,6 @@ sub artistsQuery {
 	else {
 		my $roles = Slim::Schema->artistOnlyRoles || [];
 		
-		if ( !defined $search ) {
-			$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
-		}
-		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
 			$sql .= 'JOIN genre_track ON genre_track.track = contributor_track.track ';
@@ -798,17 +794,35 @@ sub artistsQuery {
 		}
 		
 		if ( !defined $search ) {
-			# Filter based on album roles unless we're searching
-			push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
+			if ( $sql !~ /JOIN contributor_track/ ) {
+				$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+			}
+		}
+		
+		if ( !defined $search ) {
+			# Filter based on roles unless we're searching
+			if ( $sql =~ /JOIN contributor_track/ ) {
+				push @{$w}, 'contributor_track.role IN (' . join( ',', @{$roles} ) . ') ';
+			}
+			else {
+				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
+			}
 			
 			if ( $va_pref ) {
 				# Don't include artists that only appear on compilations
+				if ( $sql !~ /JOIN contributor_album/ ) {
+					$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+				}
 				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
 		}
 		
 		if (defined $albumID || defined $year) {
+			if ( $sql !~ /JOIN contributor_album/ ) {
+				$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+			}
+			
 			if ( $sql !~ /JOIN albums/ ) {
 				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
 			}
