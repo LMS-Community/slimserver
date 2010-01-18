@@ -384,7 +384,6 @@ sub initPlugin {
 				weight         => 95,
 				id             => 'moods',
 				node           => 'myMusic',
-				'icon-id'      => 'plugins/MusicMagic/html/images/icon.png',
 				actions => {
 					go => {
 						player => 0,
@@ -394,7 +393,10 @@ sub initPlugin {
 						},
 					},
 				},
-				window         => { titleStyle => 'moods' },
+				window         => {
+					'icon-id'  => 'plugins/MusicMagic/html/images/icon.png',
+					titleStyle => 'moods'
+				},
 			}]);
 		}
 	}
