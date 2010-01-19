@@ -372,19 +372,17 @@ sub _Playing {
 	Slim::Player::Playlist::refreshPlaylist($self->master());
 	
 	if ( $last_song ) {
-		foreach my $player (@{$self->{'players'}})	{
-			Slim::Control::Request::notifyFromArray($player,
-				[
-					'playlist', 
-					'newsong', 
-					Slim::Music::Info::standardTitle(
-						$self->master(), 
-						$last_song->currentTrack()
-					),
-					$last_song->index()
-				]
-			);
-		}
+		Slim::Control::Request::notifyFromArray($self->master(),
+			[
+				'playlist', 
+				'newsong', 
+				Slim::Music::Info::standardTitle(
+					$self->master(), 
+					$last_song->currentTrack()
+				),
+				$last_song->index()
+			]
+		);
 	}
 	
 	if ( main::INFOLOG && $log->is_info ) {
@@ -400,15 +398,14 @@ sub _Stopped {
 
 sub _notifyStopped {
 	my ($self, $suppressNotifications) = @_;
-	my $master = master($self);
+
+	# This was previously commented out, for bug 7781, 
+	# because some plugins (Alarm) don't like extra stop events.
+	# This broke important notifications for Jive.
+	# Other changes mean that that this can be reinstated.
+	Slim::Control::Request::notifyFromArray( $self->master(), ['playlist', 'stop'] ) unless $suppressNotifications;
 
 	foreach my $player ( @{ $self->{'players'} } ) {
-		# This was previously commented out, for bug 7781, 
-		# because some plugins (Alarm) don't like extra stop events.
-		# This broke important notifications for Jive.
-		# Other changes mean that that this can be reinstated.
-		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'stop'] ) unless $suppressNotifications;
-		
 		if ($player->can('onStop')) {
 			$player->onStop();
 		}
@@ -1425,9 +1422,9 @@ sub _Pause {				# pause -> Paused
 			$player->fade_volume(-(FADEVOLUME));
 		}
 		
-		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'pause', 1] );
 	}
 	
+	Slim::Control::Request::notifyFromArray( $self->master(), ['playlist', 'pause', 1] );
 }
 
 # Bug 8861
@@ -1470,8 +1467,9 @@ sub _Resume {				# resume -> Playing
 		$player->volume(0,1);
 		$player->resume();
 		$player->fade_volume($self->{'fadeIn'} ? $self->{'fadeIn'} : FADEVOLUME);
-		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'pause', 0] );
 	}
+
+	Slim::Control::Request::notifyFromArray( $self->master(), ['playlist', 'pause', 0] );
 	
 	$self->{'resumeTime'} = undef;
 	$self->{'fadeIn'} = undef;
@@ -1774,9 +1772,7 @@ sub sync {
 		}
 	}
 	
-	foreach (@{$self->{'allPlayers'}}) {
-		Slim::Control::Request::notifyFromArray($_, ['playlist', 'sync']);
-	}
+	Slim::Control::Request::notifyFromArray($self->master(), ['playlist', 'sync']);
 	
 	if (main::INFOLOG && $log->is_info) {
 		$log->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
@@ -1807,7 +1803,6 @@ sub unsync {
 				} else {
 					# Otherwise just stop the one we are unsyncing
 					_stopClient($player);
-					Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
 				}
 			} else {
 				# Force stop anyway in case it was paused, off
@@ -1839,10 +1834,11 @@ sub unsync {
 	Slim::Player::Playlist::copyPlaylist($player, $self->master());
 	
 	$prefs->client($player)->remove('syncgroupid') unless $keepSyncGroupId;
+
+	Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
+	Slim::Control::Request::notifyFromArray($player, ['playlist', 'sync']);
 	
-	foreach ($player, @{$self->{'allPlayers'}}) {
-		Slim::Control::Request::notifyFromArray($_, ['playlist', 'sync']);
-	}
+	Slim::Control::Request::notifyFromArray($self->master(), ['playlist', 'sync']);
 	
 	if (main::INFOLOG && $log->is_info) {
 		$log->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
@@ -1909,7 +1905,8 @@ sub playerInactive {
 				} else {
 					# Otherwise just stop the one we are unsyncing
 					_stopClient($player);
-					Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
+					# We do not send a 'playlist stop' notification so as not to notify the 
+					# whole sync-group
 				}
 			}
 	

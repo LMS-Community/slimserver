@@ -2106,9 +2106,13 @@ sub notify {
 			
 			# If this listener is client-specific, ignore unless we have that client
 			if ( $clientid ) {
-				unless ( blessed( $self->client ) && $self->client->id eq $clientid ) {
-					main::DEBUGLOG && $log->debug( "Skipping notification, only wanted for $clientid" );
-					next;
+				next if !$self->clientid;
+				
+				# Bug 10064: playlist notifications get sent to everyone in the sync-group
+				if ($self->isCommand([['playlist']])) {
+					next if !grep($_->id eq $clientid, $self->client()->syncGroupActiveMembers());
+				} else {
+					next if $self->clientid ne $clientid;
 				}
 			}
 

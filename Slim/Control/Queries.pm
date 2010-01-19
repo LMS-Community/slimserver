@@ -3425,8 +3425,15 @@ sub statusQuery_filter {
 	
 	# retrieve the clientid, abort if not about us
 	my $clientid = $request->clientid();
-	return 0 if !defined $clientid || !defined $self->clientid();
-	return 0 if $clientid ne $self->clientid();
+	my $myclientid = $self->clientid();
+	return 0 if !defined $clientid || !defined $myclientid;
+	
+	# Bug 10064: playlist notifications get sent to everyone in the sync-group
+	if ($request->isCommand([['playlist']])) {
+		return 0 if !grep($_->id eq $myclientid, $request->client()->syncGroupActiveMembers());
+	} else {
+		return 0 if $clientid ne $myclientid;
+	}
 	
 	# commands we ignore
 	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset', 'playerpref']]);
@@ -4296,7 +4303,6 @@ sub titlesQuery {
 				}
 			
 				if (defined($iconId)) {
-					$iconId += 0;
 					$window->{'icon-id'} = $iconId;
 					# show icon if we're doing press-to-play behavior
 					if ($menuStyle eq 'album' && $useContextMenu) {
