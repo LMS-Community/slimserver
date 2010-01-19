@@ -344,15 +344,21 @@ sub readRemoteHeaders {
 	if ( $url =~ /(m4a|aac)$/i && $type eq 'mp3' ) {
 		$type = 'mov';
 	}
+
+	# bug 15491 - some radio services are too lazy to correctly configure their servers
+	# thus serve playlists with content-type text/html or text/plain
+	elsif ( $type =~ /(?:htm|txt)/ && $url =~ /\.(asx|m3u|pls|wpl)$/i ) {
+		$type = $1;
+	}
+	
+	# fall back to m3u for html and text
+	elsif ( $type =~ /(?:htm|txt)/ ) {
+		$type = 'm3u';
+	}
 	
 	# Some Shoutcast/Icecast servers don't send content-type
 	if ( !$type && $http->response->header('icy-name') ) {
 		$type = 'mp3';
-	}
-	
-	# Seen some ASX playlists served with text/plain content-type
-	if ( $url =~ /\.asx$/i && $type eq 'txt' ) {
-		$type = 'asx';
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
