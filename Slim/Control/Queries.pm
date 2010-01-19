@@ -782,7 +782,8 @@ sub artistsQuery {
 		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
-			$sql .= 'JOIN genre_track ON genre_track.track = contributor_track.track ';
+			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
+			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w}, 'genre_track.genre = ?';
 			push @{$p}, $genreID;
 			
@@ -810,10 +811,17 @@ sub artistsQuery {
 			
 			if ( $va_pref ) {
 				# Don't include artists that only appear on compilations
-				if ( $sql !~ /JOIN contributor_album/ ) {
-					$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+				if ( $sql =~ /JOIN tracks/ ) {
+					# If doing an artists-in-genre query, we are much better off joining through albums
+					$sql .= 'JOIN albums ON albums.id = tracks.album ';
+				} 
+				else {
+					if ( $sql !~ /JOIN contributor_album/ ) {
+						$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+					}
+					$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
 				}
-				$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
+				
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
 		}
@@ -883,6 +891,10 @@ sub artistsQuery {
 			$sql_va .= 'WHERE ';
 			$sql_va .= join( ' AND ', @{$w_va} );
 			$sql_va .= ' ';
+		}
+		
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Artists query VA count: $sql_va / " . Data::Dump::dump($p_va) );
 		}
 		
 		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
