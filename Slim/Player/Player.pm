@@ -1023,7 +1023,7 @@ sub publishPlayPoint {
 }
 
 sub isReadyToStream {
-	my ($client, $song) = @_;
+	my $client = shift; # ignore $song, $playingSong
 	return $client->readyToStream();
 }
 

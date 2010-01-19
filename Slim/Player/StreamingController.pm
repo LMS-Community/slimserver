@@ -1289,7 +1289,7 @@ sub _StreamIfReady {		# IF [allReadyToStream] THEN play -> Streaming ENDIF
 	
 	my $ready = 1;
 	foreach my $player (@{$self->{'players'}})	{
-		if (!$player->isReadyToStream($song)) {
+		if (!$player->isReadyToStream( $song, $self->playingSong() )) {
 			$ready = 0;
 			last;
 		}

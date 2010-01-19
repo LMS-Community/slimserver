@@ -123,16 +123,38 @@ sub nextChunk {
 # SB1 (this module) will only set $client->readyToStream true when it is really idle
 
 sub isReadyToStream {
-	my ($client, $song) = @_;
+	my ($client, $song, $playingSong) = @_;
 		
 	return 1 if $client->readyToStream();
 	
 	return 0 if $client->isSynced(1);
 	
-	# Only try to gapless stream sequential MP3 files. This will miss
-	# sequential WAV files with same characteristics or sequential streams
-	# that would be transcoded to MP3.
-	return $client->streamformat() eq 'mp3' && $song->streamformat() eq 'mp3';
+	# Determine if we can gaplessly stream the next track (return 1) or have to restart the decoder (return 0)
+	my $CSF = $client->streamformat();
+	
+	my $nextCT = $song->currentTrack->content_type;
+	my $prevCT = $playingSong && $playingSong->currentTrack->content_type;
+	
+	# Only allow gapless streaming if previous track's content-type matches the next track's content-type
+	if ( $prevCT && $prevCT eq $nextCT ) {
+		# MP3 is OK even if at a different sample rate, etc
+		return 1 if $CSF eq 'mp3';
+	
+		# Bug 15490, work out whether or not we can gaplessly stream PCM/AIFF. Assume that if
+		# channels, samplesize and samplerate all match, we'll be fine.
+		if ( $CSF eq 'pcm' || $CSF eq 'aif' ) {
+			if ( $playingSong ) {
+				if (   $playingSong->channels   == $song->channels
+					&& $playingSong->samplesize == $song->samplesize
+					&& $playingSong->samplerate == $song->samplerate
+				) {
+					return 1;
+				}
+			}
+		}
+	}
+	
+	return 0;
 }
 
 sub volume {
