@@ -1119,8 +1119,7 @@ sub generateHTTPResponse {
 			# Bug 15380, return correct content-type depending on what we're streaming
 			if ( my $sc = $client->controller()->songStreamController() ) {
 				if ( my $song = $sc->song() ) {
-					my $type = Slim::Schema->contentType( $song->currentTrack );
-					$type = 'mp3' if $type eq 'unk';
+					my $type = $song->streamformat();
 					$response->content_type( $Slim::Music::Info::types{$type} );
 				}
 			}
