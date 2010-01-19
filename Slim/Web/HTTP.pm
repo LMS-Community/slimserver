@@ -1613,11 +1613,6 @@ sub _stringifyHeaders {
 	# is the last of the headers.
 	$data =~ s/^(icy-metaint:[^\n]*\n)(.+)/$2$1/ms;
 
-	# hack for Reciva Internet Radios which glitch on metadata unless the
-	# icy-name header comes before icy-metaint, so make sure icy-metaint
-	# is the last of the headers.
-	$data =~ s/^(icy-metaint:[^\n]*\n)(.+)/$2$1/ms;
-
 	return $data;
 }
 
