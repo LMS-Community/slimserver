@@ -4964,14 +4964,14 @@ sub _addJiveSong {
 	# Bug 7443, check for a track cover before using the album cover
 	my $iconId = $songData->{coverid};
 	
-	if ( defined $iconId ) {
+	if ( defined($songData->{artwork_url}) ) {
+		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
+	}
+	elsif ( defined $iconId ) {
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
-	elsif ( defined($songData->{artwork_url}) ) {
-		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
-	# send radio placeholder art for remote tracks with no art
-	} 
 	elsif ( $isRemote ) {
+		# send radio placeholder art for remote tracks with no art
 		my $radioicon = main::SLIM_SERVICE
 			? Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
 			: '/html/images/radio.png';
