@@ -122,13 +122,13 @@ sub find {
 			
 			$progress && $progress->update($file);
 			
-			$childgrp->add( aio_lstat( $file, sub {
+			$childgrp->add( aio_stat( $file, sub {
 				$todo--;
 				
 				$_[0] && die "stat of $file failed: $!";
 
 				if ( -d _ ) {
-					if ( Slim::Utils::Misc::folderFilter( $file, 1, $types ) ) {
+					if ( Slim::Utils::Misc::folderFilter( $file, 0, $types ) ) {
 						$todo++;
 						$count++;
 						
@@ -157,7 +157,7 @@ sub find {
 				else {
 					# Make sure we want this file
 					if ( !$args->{dirs} ) {
-						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 1 ) ) {			
+						if ( Slim::Utils::Misc::fileFilter( dirname($file), basename($file), $types, 0 ) ) {		
 							if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
 								my $orig = $file;
 								

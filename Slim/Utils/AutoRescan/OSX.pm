@@ -61,7 +61,7 @@ sub watch {
 			for my $event ( $fs->read_events ) {
 				my $file = $event->path;
 				
-				lstat $file;
+				stat $file;
 				
 				if ( -d _ ) {
 					# Make sure we care about this directory

@@ -51,7 +51,7 @@ sub check {
 		if ( $sth && $sth->fetch ) {
 			my $file = Slim::Utils::Misc::pathFromFileURL($url);
 			
-			my @stat = lstat $file;
+			my @stat = stat $file;
 			
 			if ( !@stat ) {
 				# stat failed

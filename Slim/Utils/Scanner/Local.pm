@@ -53,7 +53,7 @@ sub find {
 		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
 	}
 	
-	lstat $path;
+	stat $path;
 	
 	if ( -f _ ) {
 		# A single file was passed in, handle it directly here
