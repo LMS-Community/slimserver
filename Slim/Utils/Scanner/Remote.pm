@@ -408,6 +408,8 @@ sub readRemoteHeaders {
 	if ( Slim::Music::Info::isSong( $track, $type ) ) {
 		main::INFOLOG && $log->is_info && $log->info("This URL is an audio stream [$type]: " . $track->url);
 		
+		$track->content_type($type);
+		
 		if ( $type eq 'wma' ) {
 			# WMA streams require extra processing, we must parse the Describe header info
 			
@@ -432,6 +434,8 @@ sub readRemoteHeaders {
 		else {
 			# If URL was mms but content-type is not wma, change URL
 			if ( $track->url =~ /^mms/i ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("URL was mms:// but content-type is $type, fixing URL to http://");
+				
 				# XXX: may create duplicate track entries
 				my $httpURL = $track->url;
 				$httpURL =~ s/^mms/http/i;
@@ -470,7 +474,7 @@ sub readRemoteHeaders {
 					$bitrate *= 1000;
 				}
 							
-				$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );
+				Slim::Music::Info::setBitrate( $track, $bitrate, $vbr );
 				
 				if ( $track->url ne $url ) {
 					Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
@@ -625,7 +629,7 @@ sub parseWMAHeader {
 		}
 		
 		if ( $bitrate ) {
-			$track = Slim::Music::Info::setBitrate( $track->url, $bitrate );
+			Slim::Music::Info::setBitrate( $track, $bitrate );
 		}
 
 		if ( main::DEBUGLOG && $log->is_debug ) {
@@ -638,7 +642,7 @@ sub parseWMAHeader {
 	
 	# Set duration if available (this is not a broadcast stream)
 	if ( my $ms = $wma->{info}->{song_length_ms} ) {	
-		$track= Slim::Music::Info::setDuration( $track->url, int($ms / 1000) );
+		Slim::Music::Info::setDuration( $track, int($ms / 1000) );
 	}
 	
 	# Save this metadata for the MMS protocol handler to use
@@ -730,9 +734,9 @@ sub streamAudioData {
 		}
 		
 		if ( $bitrate > 0 ) {
-			$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );
+			Slim::Music::Info::setBitrate( $track, $bitrate, $vbr );
 			if ($cl) {
-				$track = Slim::Music::Info::setDuration( $track->url, ( $cl * 8 ) / $bitrate );
+				Slim::Music::Info::setDuration( $track, ( $cl * 8 ) / $bitrate );
 			}	
 			
 			# Copy bitrate to redirected URL
@@ -850,7 +854,7 @@ sub parsePlaylist {
 					
 					# Get the $playlist object again, as it may have changed
 					$playlist = Slim::Schema->objectForUrl( {
-						url => $playlist->url,
+						url      => $playlist->url,
 						playlist => 1,
 					} );
 					

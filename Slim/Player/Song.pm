@@ -208,7 +208,7 @@ sub _getNextPlaylistTrack {
 	
 	# Get the next good audio track
 	my $playlist = Slim::Schema->objectForUrl( {url => $self->_track()->url, playlist => 1} );
-	main::DEBUGLOG && $log->debug( "Getting next audio URL from playlist" );	
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Getting next audio URL from playlist (after " . ($self->_currentTrack() ? $self->_currentTrack()->url : '') . ")" );	
 	my $track = $playlist->getNextEntry($self->_currentTrack() ? {after => $self->_currentTrack()} : undef);
 	if ($track) {
 		$self->_currentTrack($track);

@@ -139,7 +139,7 @@ sub _addTracksToPlaylist {
 }
 
 # Return the next audio URL from a remote playlist
-# XXX probably obsolete
+# XXX probably obsolete, see RemotePlaylist
 sub getNextEntry {
 	my ( $self, $args ) = @_;
 	

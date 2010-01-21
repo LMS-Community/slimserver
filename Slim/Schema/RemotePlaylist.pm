@@ -51,7 +51,7 @@ sub getNextEntry {
 		my $type = $track->content_type;
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug( "Considering " . $track->url . " ($type)" );
+			$log->debug( "Considering " . $track->url . " (type: $type)" );
 		}
 		
 		if ( Slim::Music::Info::isSong( $track, $type ) ) {

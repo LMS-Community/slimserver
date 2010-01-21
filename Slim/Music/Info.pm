@@ -320,38 +320,59 @@ sub getBitrate {
 }
 
 sub setBitrate {
-	my $url     = shift;
-	my $bitrate = shift;
-	my $vbr     = shift || undef;
+	my $urlOrTrack = shift;
+	my $bitrate    = shift;
+	my $vbr        = shift || undef;
+	
+	my $track;
 
-	my $track   = Slim::Schema->updateOrCreate({
-		'url'        => $url,
-		'readTags'   => 1,
-		'commit'     => 1,
-		'attributes' => { 
-			'BITRATE'   => $bitrate,
-			'VBR_SCALE' => $vbr,
-		},
-	});
+	if ( blessed($urlOrTrack) ) {
+		$track = $urlOrTrack;
+		$track->bitrate($bitrate);
+		$track->vbr_scale($vbr);
+		$track->update;
+	}
+	else {
+		$track = Slim::Schema->updateOrCreate({
+			'url'        => $urlOrTrack,
+			'readTags'   => 1,
+			'commit'     => 1,
+			'attributes' => { 
+				'BITRATE'   => $bitrate,
+				'VBR_SCALE' => $vbr,
+			},
+		});
+	}
 	
 	# Cache the bitrate string so it will appear in TrackInfo
-	$currentBitrates{$url} = $track->prettyBitRate;
+	$currentBitrates{ $track->url } = $track->prettyBitRate;
 
 	return $track;
 }
 
 sub setDuration {
-	my $url      = shift;
-	my $duration = shift;
+	my $urlOrTrack = shift;
+	my $duration   = shift;
 
-	Slim::Schema->updateOrCreate({
-		'url'        => $url,
-		'readTags'   => 1,
-		'commit'     => 1,
-		'attributes' => { 
-			'SECS' => $duration,
-		},
-	});
+	my $track;
+	
+	if ( blessed($urlOrTrack) ) {
+		$track = $urlOrTrack;
+		$track->secs($duration);
+		$track->update;
+	}
+	else {
+		$track = Slim::Schema->updateOrCreate({
+			'url'        => $urlOrTrack,
+			'readTags'   => 1,
+			'commit'     => 1,
+			'attributes' => { 
+				'SECS' => $duration,
+			},
+		});
+	}
+	
+	return $track;
 }
 
 sub getDuration {
