@@ -2804,6 +2804,7 @@ sub jivePlayTrackAlbumCommand {
 	my $request    = shift;
 	my $client     = $request->client || return;
 	my $albumID    = $request->getParam('album_id');
+	my $artistID   = $request->getParam('artist_id');
 	my $trackID    = $request->getParam('track_id');
 	my $playlistID = $request->getParam('playlist_id');
 	my $folder     = $request->getParam('folder')|| undef;
@@ -2820,7 +2821,11 @@ sub jivePlayTrackAlbumCommand {
 
 	# Database album browse is the simple case
 	if ( $albumID ) {
-		$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
+		if ($artistID) {
+			$client->execute( ["playlist", "addtracks", { 'contributor.id' => $artistID, 'album.id' => $albumID } ] );
+		} else {
+			$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
+		}
 		$client->execute( ["playlist", "jump", $listIndex] );
 
 	}
