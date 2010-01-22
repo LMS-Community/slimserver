@@ -141,7 +141,6 @@ sub findFilesMatching {
 	my $found = $args->{'foundItems'} || [];
 
 	while (my $file = $iter->()) {
-		warn "iter file: $file\n";
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
 		if (main::ISWINDOWS && $file =~ /\.lnk$/i) {
