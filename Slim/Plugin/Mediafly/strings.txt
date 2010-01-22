@@ -74,3 +74,5 @@ PLUGIN_MEDIAFLY_STREAM_FAILED
 	RU	Сбой аудиопотока. Переход на следующую дорожку.
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
+PLUGIN_MEDIAFLY_CHANGING_CHANNELS
+	EN	Changing channel...
