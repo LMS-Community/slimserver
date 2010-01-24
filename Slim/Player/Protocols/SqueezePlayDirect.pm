@@ -49,9 +49,10 @@ sub requestString {
 		$params{$key} = decode_base64($val) || $val;
 	}
 
-	$song->duration($params{dur})            if $params{dur};
-	$song->pluginData('icon', $params{icon}) if $params{icon};
-	$song->pluginData('desc', $params{desc}) if $params{desc};
+	$song->duration($params{dur})                if $params{dur};
+	$song->pluginData('icon',   $params{icon})   if $params{icon};
+	$song->pluginData('artist', $params{artist}) if $params{artist};
+	$song->pluginData('album',  $params{album})  if $params{album};
 
 	if ($seekdata  && (my $newtime = $seekdata->{'timeOffset'})) {
 		$song->startOffset($newtime);
