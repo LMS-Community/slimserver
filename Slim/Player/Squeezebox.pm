@@ -550,8 +550,10 @@ sub opened {
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t transition_period;	// [1]	seconds over which transition should happen
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
-#	u8_t flags;		// [1]	0x80 - loop infinitely
-#                               //      0x40 - stream without restarting decoder
+#	u8_t flags;	// [1]	0x80 - loop infinitely
+#               //      0x40 - stream without restarting decoder
+#               //  0x20 - Rtmp (SqueezePlay only)
+#               //  0x10 - SqueezePlay direct protocol handler - pass direct to SqueezePlay
 #				//	0x01 - polarity inversion left
 #				//	0x02 - polarity inversion right
 #	u8_t output_threshold;	// [1]	Amount of output buffer data before playback starts in tenths of second.
@@ -728,6 +730,16 @@ sub stream_s {
 		$pcmchannels     = '?';
 		$outputThreshold = 0;
 
+	} elsif ($format eq 'spdr') {
+
+		# Format handled by squeezeplay to allow custom squeezeplay protocol handlers
+		$formatbyte      = 's';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 1;
+		
 	} else {
 
 		# assume MP3
@@ -756,8 +768,15 @@ sub stream_s {
 	# When streaming a new song, we reset the buffer fullness value so buffering()
 	# doesn't get an outdated fullness result
 	Slim::Networking::Slimproto::fullness( $client, 0 );
-			
-	if ($isDirect) {
+	
+	if ($format eq 'spdr') {
+
+		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
+
+		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
+		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
+
+	} elsif ($isDirect) {
 
 		# Logger for direct streaming
 		my $log = logger('player.streaming.direct');
