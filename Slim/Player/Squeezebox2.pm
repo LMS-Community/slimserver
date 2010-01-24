@@ -443,8 +443,16 @@ sub directHeaders {
 	my $controller = $client->controller()->songStreamController();
 	my $handler    = $controller ? $controller->protocolHandler() : undef;
 	
-	if ($handler && $handler->can('handlesStreamHeaders')) {
-		$handler->handlesStreamHeaders($client);
+	if ($handler) {
+
+		if ($handler->can('handlesStreamHeaders')) {
+			$handler->handlesStreamHeaders($client);
+		}
+
+		if ($handler->can('handlesStreamHeadersFully')) {
+			$handler->handlesStreamHeadersFully($client, $headers);
+			return;
+		}
 	}
 
 	unless ($controller && $controller->isDirect()) {return;}

@@ -364,6 +364,10 @@ sub open {
 	$self->seekdata($seekdata) if $seekdata;
 	my $sock;
 	my $format = Slim::Music::Info::contentType($track);
+
+	if ($handler->can('formatOverride')) {
+		$format = $handler->formatOverride;
+	}
 	
 	# get transcoding command & stream-mode
 	# IF command == '-' AND canDirectStream THEN

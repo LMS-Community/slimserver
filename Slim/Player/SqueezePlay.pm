@@ -44,6 +44,7 @@ BEGIN {
 		hasDigitalOut
 		hasPreAmp
 		hasDisableDac
+		spDirectHandlers
 	));
 }
 
@@ -64,6 +65,7 @@ sub new {
 		hasDigitalOut           => 0,
 		hasPreAmp               => 0,
 		hasDisableDac           => 0,
+		spDirectHandlers        => undef,
 	);
 
 	return $client;
@@ -83,6 +85,7 @@ my %CapabilitiesMap = (
 	HasPreAmp               => 'hasPreAmp',
 	HasDisableDac           => 'hasDisableDac',
 	SyncgroupID             => undef,
+	Spdirect                => 'spDirectHandlers',
 
 	# deprecated
 	model                   => '_model',
