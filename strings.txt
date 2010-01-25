@@ -7922,7 +7922,7 @@ SETUP_LONGDATEFORMAT_DESC
 	ZH_CN	这个选项决定了显示完整日期所使用的格式（譬如在播放机关机状态时）。以下是各个选择所使用的惯例：<br>WWWW=星期（星期六、星期天、等）<br>WWW=简化的星期（六、日、等）<br>DD=日（主导零被去除）<br>MM=简化的月份<br>YY=两位数的年份<br>YYYY=四位数的年份
 
 SETUP_LONGDATEFORMAT_DEFAULT
-# SLT: a long date format description, eg. "22. Oktober 2009" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
+# SLT: a long date format description, eg. "Monday, 22. Oktober 2009" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%A, %B |%d, %Y
 	DA	%A, %B |%d, %Y
 	DE	%A, |%d. %B %Y
@@ -7938,7 +7938,7 @@ SETUP_LONGDATEFORMAT_DEFAULT
 	SV	%A, %B |%d, %Y
 
 SETUP_LONGDATEFORMAT_DEFAULT_N
-# SLT: a long date format description, which should fit in to about 20 characters, eg. "22. Okt. 09" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
+# SLT: a long date format description, which should fit in to about 20 characters, eg. "Mo, 22. Okt. 09" ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%a, %b |%d, %Y
 	DA	%a %d. %b %Y
 	DE	%a, |%d. %b %Y
