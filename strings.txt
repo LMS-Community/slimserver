@@ -87,34 +87,34 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2009 Logitech Verze 7.5.0
-	DA	© 2001-2009 Logitech - version 7.5.0
-	DE	© 2001-2009 Logitech Version 7.5.0
-	EN	© 2001-2009 Logitech Version 7.5.0
-	ES	© 2001-2009 Logitech Versión 7.5.0
-	FI	© 2001-2009 Logitechin versio 7.5.0
-	FR	© 2001-2009 Logitech Version 7.5.0
-	IT	© 2001-2009 Logitech Versione 7.5.0
-	NL	© 2001-2009 Logitech Versie 7.5.0
-	NO	© 2001–2009 Logitech versjon 7.5.0
-	PL	© 2001-2009 Logitech wersja 7.5.0
-	RU	© Logitech, 2001-2009. Версия 7.5.0
-	SV	© 2001–2009 Logitech Version 7.5.0
+	CS	© 2001-2010 Logitech Verze 7.5.0
+	DA	© 2001-2010 Logitech - version 7.5.0
+	DE	© 2001-2010 Logitech Version 7.5.0
+	EN	© 2001-2010 Logitech Version 7.5.0
+	ES	© 2001-2010 Logitech Versión 7.5.0
+	FI	© 2001-2010 Logitechin versio 7.5.0
+	FR	© 2001-2010 Logitech Version 7.5.0
+	IT	© 2001-2010 Logitech Versione 7.5.0
+	NL	© 2001-2010 Logitech Versie 7.5.0
+	NO	© 2001–2010 Logitech versjon 7.5.0
+	PL	© 2001-2010 Logitech wersja 7.5.0
+	RU	© Logitech, 2001-2010. Версия 7.5.0
+	SV	© 2001–2010 Logitech Version 7.5.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2009 Logitech
-	DA	© 2001-2009 Logitech
-	DE	© 2001-2009 Logitech
-	EN	© 2001-2009 Logitech
-	ES	© 2001-2009 Logitech
-	FI	© 2001-2009 Logitechin
-	FR	© 2001-2009 Logitech
-	IT	© 2001-2009 Logitech
-	NL	© 2001-2009 Logitech
-	NO	© 2001–2009 Logitech
-	PL	© 2001-2009 Logitech
-	RU	© Logitech, 2001-2009.
-	SV	© 2001–2009 Logitech
+	CS	© 2001-2010 Logitech
+	DA	© 2001-2010 Logitech
+	DE	© 2001-2010 Logitech
+	EN	© 2001-2010 Logitech
+	ES	© 2001-2010 Logitech
+	FI	© 2001-2010 Logitechin
+	FR	© 2001-2010 Logitech
+	IT	© 2001-2010 Logitech
+	NL	© 2001-2010 Logitech
+	NO	© 2001–2010 Logitech
+	PL	© 2001-2010 Logitech
+	RU	© Logitech, 2001-2010.
+	SV	© 2001–2010 Logitech
 
 
 VERSION
