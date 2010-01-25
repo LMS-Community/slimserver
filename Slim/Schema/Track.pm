@@ -284,8 +284,12 @@ sub duration {
 sub modificationTime {
 	my $self = shift;
 
-	my $time = $self->timestamp;
+	return $self->buildModificationTime( $self->timestamp );
+}
 
+sub buildModificationTime {
+	my ( $self, $time ) = @_;
+	
 	return join(', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time));
 }
 
@@ -295,15 +299,21 @@ sub prettyBitRate {
 
 	my $bitrate  = $self->bitrate;
 	my $vbrScale = $self->vbr_scale;
+	
+	return $self->buildPrettyBitRate($bitrate, $vbrScale);
+}
 
+sub buildPrettyBitRate {
+	my ( $self, $bitrate, $vbrScale ) = @_;
+	
 	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 
 	if ($bitrate) {
-		return int ($bitrate/1000) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
+		return sprintf( "%d", ($bitrate / 1000) ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
 	}
 
 	return 0;
-}
+}	
 
 sub prettySampleRate {
 	my $self = shift;

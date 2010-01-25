@@ -47,7 +47,7 @@ sub init {
 		$parsedFormats{uc $attr} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return $_[0]->{ lc($attr) } || '';
+				return $_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '';
 			}
 			
 			my $output = $_[0]->get_column($attr);
@@ -59,7 +59,7 @@ sub init {
 	$parsedFormats{'ALBUM'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{album} || '';
+			return $_[0]->{album} || $_[0]->{'albums.title'} || '';
 		}
 
 		my $output = '';
@@ -73,7 +73,7 @@ sub init {
 	$parsedFormats{'ALBUMSORT'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{albumsort} || '';
+			return $_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '';
 		}
 
 		my $output = '';
@@ -89,7 +89,7 @@ sub init {
 	$parsedFormats{'DISCC'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{discc} || '';
+			return $_[0]->{discc} || $_[0]->{'albums.discc'} || '';
 		}
 
 		my $output = '';
@@ -105,7 +105,7 @@ sub init {
 	$parsedFormats{'DISC'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{disc} || '';
+			return $_[0]->{disc} || $_[0]->{'tracks.disc'} || '';
 		}
 
 		my $disc = $_[0]->disc;
@@ -132,7 +132,7 @@ sub init {
 	$parsedFormats{'ARTIST'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || '';
+			return $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '';
 		}
 
 		my @output  = ();
@@ -160,7 +160,7 @@ sub init {
 	$parsedFormats{'ARTISTSORT'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{artistsort} || '';
+			return $_[0]->{artistsort} || $_[0]->{'contributors.titlesort'} || '';
 		}
 
 		my @output  = ();
@@ -205,7 +205,7 @@ sub init {
 	$parsedFormats{'GENRE'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{genre} || '';
+			return $_[0]->{genre} || $_[0]->{'genres.name'} || '';
 		}
 
 		my $output = '';
@@ -225,7 +225,7 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 		
 			if ( ref $_[0] eq 'HASH' ) {
-				return $_[0]->{$attr} || '';
+				return $_[0]->{$attr} || $_[0]->{"tracks.$attr"} || '';
 			}
 
 			my $output = $_[0]->$attr();
