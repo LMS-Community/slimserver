@@ -6,6 +6,17 @@ use constant ISWINDOWS => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 
 use GD;
 
+# rotation methods matching the EXIF Orientation flag
+my %orientationToRotateMethod = (
+#	2 => 'copyFlipHorizontal',
+	3 => 'copyRotate180',
+#	4 => 'copyFlipVertical',
+	6 => 'copyRotate90',
+	8 => 'copyRotate270',
+);
+
+my $hasEXIF;
+
 my %typeToMethod = (
 	'gif' => 'newFromGifData',
 	'jpg' => 'newFromJpegData',
@@ -85,6 +96,21 @@ sub resize {
 		$mode = 'm';
 	}
 	
+	# optionally load Image::ExifTool to automatically rotate images if possible
+	# load late as it might be provided by some plugin instead of the system
+	if ( !defined $hasEXIF ) {
+		$hasEXIF = 0;
+		eval {
+			require Image::ExifTool;
+			$hasEXIF = 1;
+		};
+	}
+
+	my $orientation;
+	if ( $hasEXIF && $in_format eq 'jpg' ) {
+		$orientation = Image::ExifTool::ImageInfo($origref, 'Orientation#', { FastScan => 2 });
+	}
+		
 	# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
 	# XXX: Remove this when we get a newer build of GD
 	if ( ISWINDOWS && $in_format eq 'jpg' ) {
@@ -104,6 +130,12 @@ sub resize {
 	my $constructor = $typeToMethod{$in_format};
 	my $origImage   = GD::Image->$constructor($$origref);
 	
+	# rotate image if original had rotation information
+	if ( $orientation && $orientation->{Orientation} && (my $rotateMethod = $orientationToRotateMethod{$orientation->{Orientation}}) ) {
+		$origImage = $origImage->$rotateMethod();
+		$debug && warn "  Rotating image based on EXIF data using $rotateMethod()\n";
+	}
+		
 	my ($in_width, $in_height) = ($origImage->width, $origImage->height);
 
 	# Output format
