@@ -4272,7 +4272,6 @@ sub titlesQuery {
 	
 	my $join_tracks_persistent = sub {
 		if ( main::STATISTICS ) {
-			# XXX broken
 			$sql .= 'JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
 		}
 	};
@@ -4336,14 +4335,10 @@ sub titlesQuery {
 		$c->{'genres.name'} = 1;
 	};
 	
-	# XXX tag G (all genre names, separated by commas)
-	
 	$tags =~ /p/ && do {
 		$join_genres->();
 		$c->{'genres.id'} = 1;
 	};
-	
-	# XXX tag P (all genre IDs)
 	
 	$tags =~ /a/ && do {
 		$join_contributors->();
