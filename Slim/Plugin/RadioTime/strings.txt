@@ -40,7 +40,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	EN	radiotime
 	ES	radiotime
 	FI	radiotime
-	FR	radiotime
+	FR	RadioTime
 	HE	radiotime
 	IT	radiotime
 	NL	radiotime

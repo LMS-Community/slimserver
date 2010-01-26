@@ -1,6 +1,6 @@
 PLUGIN_SIRIUS_MODULE_NAME
 	CS	Internetové rádio SIRIUS
-	DA	SIRIUS Internetradio
+	DA	Sirius Internetradio
 	DE	SIRIUS Internet Radio
 	EN	SIRIUS Internet Radio
 	ES	SIRIUS Internet Radio
@@ -12,11 +12,11 @@ PLUGIN_SIRIUS_MODULE_NAME
 	NO	SIRIUS Internett-radio
 	PL	Radio internetowe SIRIUS
 	RU	Радиостанция Интернета SIRIUS
-	SV	SIRIUS-webbradio
+	SV	Sirius-webbradio
 
 PLUGIN_SIRIUS_ERROR
 	CS	Chyba SIRIUS
-	DA	SIRIUS-fejl
+	DA	Sirius-fejl
 	DE	SIRIUS-Fehler
 	EN	SIRIUS Error
 	ES	Error de SIRIUS
@@ -28,7 +28,7 @@ PLUGIN_SIRIUS_ERROR
 	NO	SIRIUS-feil
 	PL	Błąd usługi SIRIUS
 	RU	Ошибка SIRIUS
-	SV	SIRIUS-fel
+	SV	Sirius-fel
 
 PLUGIN_SIRIUS_NO_INFO
 	CS	Není možné načíst info kanálu.
@@ -79,7 +79,7 @@ PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
 
 PLUGIN_SIRIUS_STOPPING_INACTIVE
 	CS	Překročena doba nečinnosti SIRIUS, stiskněte PLAY k pokračování poslechu.
-	DA	Grænsen for inaktivitet på SIRIUS er overskredet. Tryk på Afspil for at fortsætte med at lytte.
+	DA	Grænsen for inaktivitet på Sirius er overskredet. Tryk på Afspil for at fortsætte med at lytte.
 	DE	Erlaubte SIRIUS-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	SIRIUS idle time exceeded, press PLAY to continue listening.
 	ES	Se ha excedido el tiempo de inactividad en SIRIUS. Pulse PLAY para continuar escuchando.
@@ -91,10 +91,10 @@ PLUGIN_SIRIUS_STOPPING_INACTIVE
 	NO	SIRIUS' terskel for inaktivitet er nådd, trykk PLAY for å fortsette å lytte.
 	PL	Czas bezczynności usługi SIRIUS; naciśnij przycisk PLAY, aby kontynuować odtwarzanie.
 	RU	Превышен интервал неактивности на SIRIUS. Нажмите PLAY, чтобы продолжить прослушивание.
-	SV	SIRIUS har varit inaktivt för länge. Tryck på Play om du vill fortsätta lyssna.
+	SV	Sirius har varit inaktivt för länge. Tryck på Play om du vill fortsätta lyssna.
 
 PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED
-	CS	K použití SIRIUS stiskněte a podržte tlačítko JAS k aktualizaci vašeho firmware.
+	CS	K použití Sirius, stiskněte a podržte tlačítko JAS k aktualizaci vašeho firmware.
 	DA	Hvis du vil bruge SIRIUS, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
 	DE	Wenn Sie SIRIUS verwenden möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
 	EN	To use SIRIUS, press and hold BRIGHTNESS to update your firmware.

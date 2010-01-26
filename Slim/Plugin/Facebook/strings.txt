@@ -15,18 +15,18 @@ PLUGIN_FACEBOOK_MODULE_NAME
 
 PLUGIN_FACEBOOK_ON_FACEBOOK
 	CS	Sdílet na Facebook
-	DA	Del dette på Facebook
+	DA	Del på Facebook
 	DE	Auf Facebook veröffentlichen
 	EN	Share on Facebook
 	ES	Compartir en Facebook
-	FI	Jaa tämä Facebookissa
+	FI	Jaa Facebookissa
 	FR	Partager sur Facebook
 	IT	Condividi su Facebook
-	NL	Dit delen op Facebook
-	NO	Del dette på Facebook
-	PL	Udostępnij to w serwisie Facebook
+	NL	Delen op Facebook
+	NO	Del på Facebook
+	PL	Udostępnij w serwisie Facebook
 	RU	Разместить на Facebook
-	SV	Dela med dig av det här på Facebook
+	SV	Dela med dig på Facebook
 
 PLUGIN_FACEBOOK_SCREENSAVER_NEWS
 	CS	Moje kanály zpráv z Facebook

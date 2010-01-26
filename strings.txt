@@ -91,7 +91,7 @@ COPYRIGHT
 	DA	© 2001-2009 Logitech - version 7.5.0
 	DE	© 2001-2009 Logitech Version 7.5.0
 	EN	© 2001-2009 Logitech Version 7.5.0
-	ES	© 2001-2009 Logitech Versión 7.5.0
+	ES	© 2001-2009 Logitech versión 7.5.0
 	FI	© 2001-2009 Logitechin versio 7.5.0
 	FR	© 2001-2009 Logitech Version 7.5.0
 	IT	© 2001-2009 Logitech Versione 7.5.0
@@ -107,31 +107,29 @@ COPYRIGHT_LOGITECH
 	DE	© 2001-2009 Logitech
 	EN	© 2001-2009 Logitech
 	ES	© 2001-2009 Logitech
-	FI	© 2001-2009 Logitechin
+	FI	© 2001-2009 Logitech
 	FR	© 2001-2009 Logitech
 	IT	© 2001-2009 Logitech
 	NL	© 2001-2009 Logitech
-	NO	© 2001–2009 Logitech
+	NO	© 2001-2009 Logitech
 	PL	© 2001-2009 Logitech
-	RU	© Logitech, 2001-2009.
-	SV	© 2001–2009 Logitech
-
+	RU	© Logitech, 2001-2009
+	SV	© 2001-2009 Logitech
 
 VERSION
-	CS	Verze 7.5.0 / %s
-	DA	Version 7.5.0 / %s
+	CS	Verze 7.5.0 / r%s
+	DA	Version 7.5.0 / r%s
 	DE	Version 7.5.0 / r%s
 	EN	Version 7.5.0 / r%s
 	ES	Versión 7.5.0 / r%s
-	FI	Versio 7.5.0 / %s
+	FI	Versio 7.5.0 / r%s
 	FR	Version 7.5.0 / r%s
 	IT	Versione 7.5.0 / r%s
-	NL	Versie 7.5.0 / %s
-	NO	Versjon 7.5.0 / %s
-	PL	Wersja 7.5.0 / %s
-	RU	Версия 7.5.0 / %s
-	SV	Version 7.5.0 / %s
-
+	NL	Versie 7.5.0 / r%s
+	NO	Versjon 7.5.0 / r%s
+	PL	Wersja 7.5.0 / r%s
+	RU	Версия 7.5.0/r%s
+	SV	Version 7.5.0 / r%s
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
@@ -676,7 +674,7 @@ PLAYLIST
 	ZH_CN	播放表
 
 PLAYLIST_SHORT
-#SLT: please keep this _very_ short (rather shorter than the English Playlist if possible)
+#SLT: please keep this _very_ short. The German "Wiedergabeliste" is by far too long. This should be shorter than the English Playlist, as it's being used togethe with "Repeat" on one line of the small Controller display.
 	CS	Seznam skladeb
 	DA	Liste
 	DE	Liste
@@ -1348,7 +1346,7 @@ CANCEL_SLEEP
 	DE	Schlafmodus abgebrochen
 	EN	Sleep cancelled.
 	ES	Suspensión cancelada.
-	FI	Lepotila peruutettiin.
+	FI	Uniajastin peruutettiin
 	FR	Mise en veille annulée
 	HE	הגדרת שינה מבוטלת.
 	IT	Sospensione annullata
@@ -5388,7 +5386,7 @@ SETUP_REPLAYGAINMODE
 	FI	Äänenvoimakkuuden säätö/toiston äänenvoimakkuus
 	FR	Ajustement du volume (Replay Gain)
 	HE	כוונון עוצמת הקול/הגברה להשמעה חוזרת
-	IT	Correzione del volume / Replay gain
+	IT	Correzione del volume / Guadagno riproduzione
 	NL	Volumeaanpassing/Replay Gain
 	NO	Volumjustering (Replay Gain)
 	PL	Regulacja głośności/Wzmocnienie przy ponownym odtwarzaniu
@@ -5405,7 +5403,7 @@ SETUP_REPLAYGAINMODE_DESC
 	FI	Jotkin ääniraidat sisältävät tietoa äänen säätämisestä. Näiden tietojen avulla voidaan varmistaa, että kaikki raidat ja levyt toistuvat samalla äänenvoimakkuudella. Soitin voi käyttää näitä tietoja, jos ne ovat käytettävissä. Raidan äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki raidat kuuluvat samalla äänenvoimakkuudella. Levyn äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki levyt kuuluvat samalla äänenvoimakkuudella. Erot samalla levyllä olevien raitojen äänenvoimakkuudessa kuitenkin säilyvät. Älykkäillä äänenvoimakkuusasetuksilla soitin käyttää levyn äänenvoimakkuutta, jos soittoluettelossa on peräkkäin useita kappaleita samalta levyltä, tai raidan äänenvoimakkuutta, jos soittoluettelossa on sekaisin kappaleita eri levyiltä.
 	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées Replay Gain, permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le gain morceau permet de normaliser le volume de chaque morceau. Avec le gain album, le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le gain intelligent permet d'utiliser le gain album si des morceaux consécutifs sont issus d'un même album. Sinon, le gain morceau est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
-	IT	Alcune tracce audio contengono una regolazione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di un elenco di riproduzione misto.
+	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di un elenco di riproduzione misto.
 	NL	Sommige muziekbestanden bevatten volumeaanpassing, of 'Replay Gain'-informatie, die gebruikt kan worden tijdens het afspelen om ervoor te zorgen dat liedjes en albums met hetzelfde volume afgespeeld worden. Het muzieksysteem kan deze informatie gebruiken, indien aanwezig. Je kunt volumeaanpassing van tracks gebruiken om tracks met een gelijk volume af te spelen. Je kunt volumeaanpassing van albums gebruiken om albums met een gelijk volume af te spelen, maar daarbij de volumeverschillen tussen de tracks van een album bewaren. 'Slimme' aanpassingsselectie gebruikt volumeaanpassing van album als opeenvolgende liedjes van hetzelfde album komen, of volumeaanpassing van tracks voor een gemengde playlist.
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
@@ -6121,19 +6119,19 @@ SETUP_LANGUAGE
 	ZH_CN	语言
 
 SETUP_LANGUAGE_DESC
-	CS	Vyberte jazyk, který chcete používat na Squeezebox Server. Položky označené * byly přeloženy komunitou zákazníků Squeezebox Server.
-	DA	Vælg det sprog som teksten i Squeezebox Servers brugerflade skal vises på. De sprog som er markeret med en stjerne (*), er oversat af Squeezebox Servers brugergrupper.
-	DE	Wählen Sie die Sprache für Squeezebox Server. Diejenigen, welche mit * markiert sind, werden durch die Squeezebox Server Community bereit gestellt werden. Falls damit Probleme auftreten oder Sie Verbesserungsvorschläge haben, so kontaktieren Sie die Entwickler in <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	CS	Vyberte jazyk, který chcete používat na Squeezebox Server. Položky označené * byly přeloženy komunitou zákazníků Squeezebox Server. Pokud zjistíte nějaké problémy nebo budete chtít přispět, kontaktujte vývojáře na adrese <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	DA	Vælg det sprog som teksten i Squeezebox Servers brugerflade skal vises på. De sprog som er markeret med en stjerne (*), er oversat af Squeezebox Servers brugergrupper. Hvis du opdager fejl eller ønsker at bidrage, kan du kontakte udviklerne på <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	DE	Wählen Sie die Sprache für Squeezebox Server. Die mit * markierten Sprachen wurden durch die Squeezebox Server-Community bereitgestellt. Falls Probleme auftreten oder Sie Verbesserungsvorschläge haben, wenden Sie sich an die Entwickler unter <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 	EN	Choose the language that you'd like to use with Squeezebox Server.  Those marked with * were translated by the Squeezebox Server customer community.  If you find problems or would like to contribute, contact the developers at <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
-	ES	Elija el idioma que desea utilizar con Squeezebox Server. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de Squeezebox Server.
-	FI	Valitse kieli, jota haluat käyttää Squeezebox Serverissä.  Tähdellä (*) merkityt ovat Squeezebox Serverin käyttäjäyhteisön kääntämiä.
-	FR	Sélectionnez la langue à utiliser pour le Squeezebox Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Squeezebox Server.
-	IT	Scegliere la lingua che si desidera utilizzare con Squeezebox Server. Le versioni nelle lingue contrassegnate con un asterisco (*) sono state tradotte da utenti di Squeezebox Server.
-	NL	Kies de taal die je met Squeezebox Server wilt gebruiken. De talen met een sterretje (*) zijn door de klantencommunity van Squeezebox Server vertaald.
-	NO	Velg hvilket språk du vil bruke i Squeezebox Server. Språk markert med * er oversatt av Squeezebox Server-brukere.
-	PL	Wybierz język programu Squeezebox Server. Tłumaczenia na języki oznaczone * zostały wykonane przez społeczność użytkowników programu Squeezebox Server.
-	RU	Выберите язык программы Squeezebox Server. На языки, помеченные звездочкой (*), программа была переведена сообществом пользователей Squeezebox Server.
-	SV	Välj språk för Squeezebox Server.  Språkversioner markerade med en asterisk (*) har översatts av Squeezebox Server-användare.
+	ES	Elija el idioma que desea utilizar con Squeezebox Server. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de Squeezebox Server. Si tiene alguna consulta que realizar o desea aportar su contribución, póngase en contacto con los desarrolladores a <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	FI	Valitse kieli, jota haluat käyttää Squeezebox Serverissä.  Tähdellä (*) merkityt ovat Squeezebox Serverin käyttäjäyhteisön kääntämiä.  Jos löydät virheitä tai haluat kantaa oman kortesi kekoon, ota yhteyttä kehittäjiin osoitteessa <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	FR	Sélectionnez la langue à utiliser pour le Squeezebox Server. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs Squeezebox Server. Pour signaler un problème ou si vous souhaitez contribuer, contactez les développeurs à l'adresse suivante: <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	IT	Scegliere la lingua che si desidera utilizzare con Squeezebox Server. Le versioni nelle lingue contrassegnate con un asterisco (*) sono state tradotte da utenti di Squeezebox Server. Se si individuano dei problemi o si desidera fornire un contributo, contattare gli sviluppatori alla pagina <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	NL	Kies de taal die je met Squeezebox Server wilt gebruiken. De talen met een sterretje (*) zijn door de klantencommunity van Squeezebox Server vertaald. Wil je verbeteringen voorstellen of aan vertalingen bijdragen, stuur dan een e-mail naar <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	NO	Velg hvilket språk du vil bruke i Squeezebox Server. Språk markert med * er oversatt av Squeezebox Server-brukere. Hvis du oppdager problemer eller ønsker å hjelpe til, kan du sende en e-post til <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	PL	Wybierz język programu Squeezebox Server. Tłumaczenia na języki oznaczone * zostały wykonane przez społeczność użytkowników programu Squeezebox Server. W przypadku znalezienia problemów lub jeżeli chcesz rozpocząć współpracę, skontaktuj się z twórcami pod adresem href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
+	RU	Выберите язык программы Squeezebox Server. На языки, помеченные звездочкой (*), программа была переведена сообществом пользователей Squeezebox Server. Если вы найдете ошибки или захотите сотрудничать с нами, напишите по адресу <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	SV	Välj språk för Squeezebox Server. Språkversioner markerade med en asterisk (*) har översatts av Squeezebox Server-användare. Om du stöter på problem eller om du vill hjälpa till med översättningen kan du ta kontakt med programutvecklarna på <a href="http://forums.slimdevices.com">forums.slimdevices.com</a>.
 
 SETUP_LIBRARY_NAME
 	CS	Název hudební knihovny
@@ -6535,7 +6533,7 @@ SCAN_ABORTED
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca de música deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää musiikkikirjastoa täysin.
 	FR	L'analyse a été interrompue. Notez que vous devrez exécuter une nouvelle fois une analyse afin d'obtenir l'accès complet à votre collection musicale.
-	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi completa per avere accesso completo alla libreria musicale.
+	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi per avere accesso completo alla libreria musicale.
 	NL	De scan is afgebroken. Je moet opnieuw een scan uitvoeren om volledige toegang tot je muziekcollectie te verkrijgen.
 	NO	Søket ble avbrutt. Du må kjøre søket på nytt for å få full tilgang til musikkbiblioteket.
 	PL	Przeszukiwanie zostało przerwane. Należy pamiętać, że w celu uzyskania pełnego dostępu do biblioteki muzyki, konieczne będzie ponowne uruchomienie przeszukiwania.
@@ -7943,15 +7941,15 @@ SETUP_LONGDATEFORMAT_DEFAULT_N
 	DA	%a %d. %b %Y
 	DE	%a, |%d. %b %Y
 	EN	%a, %b |%d, %Y
-	ES	%d/%m/%Y
-	FI	%d/%m/%Y
-	FR	%d/%m/%Y
-	IT	%d/%m/%Y
-	NL	%d-%m-%Y
-	NO	%d/%m/%Y
+	ES	%a, %d |%b, %Y
+	FI	%a, %b |%d, %Y
+	FR	%a, %b |%d, %Y
+	IT	%a %d %b %Y
+	NL	%a %d |%b %Y
+	NO	%a, %b |%d, %Y
 	PL	%a, %b |%d, %Y
 	RU	%a, %b |%d, %Y
-	SV	%Y/%m/%d
+	SV	%a, %d |%b %Y
 
 SETUP_SHORTDATEFORMAT
 	CS	Formát krátkého data
@@ -8047,19 +8045,19 @@ SETUP_TIMEFORMAT_DESC
 
 SETUP_TIMEFORMAT_DEFAULT
 # SLT: time format description ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
-	CS	|%I:%M %p
-	DA	|%I:%M %p
+	CS	|%H:%M
+	DA	%H:%M
 	DE	%H:%M
 	EN	|%I:%M %p
 	ES	|%H:%M
-	FI	|%I:%M %p
+	FI	|%H:%M
 	FR	%H:%M
 	IT	|%H.%M
 	NL	|%H:%M
-	NO	|%I:%M %p
-	PL	|%I:%M %p
-	RU	|%I:%M %p
-	SV	|%I:%M %p
+	NO	%H:%M
+	PL	%H:%M
+	RU	|%H:%M
+	SV	%H:%M
 
 SETUP_ITEMSPERPAGE
 	CS	Počet položek na stránce
@@ -8505,7 +8503,19 @@ SETUP_USERNAME
 	ZH_CN	用户名
 
 SETUP_MISSING_USERNAME
+	CS	Autorizaci nemůžete povolit bez hesla.
+	DA	Du kan ikke aktivere godkendelse uden en adgangskode.
+	DE	Sie können die Autorisierung nicht ohne ein Kennwort aktivieren.
 	EN	You can't enable authorization without a password.
+	ES	No puede activar la autorización sin una contraseña.
+	FI	Valtuutusta ei voi ottaa käyttöön ilman salasanaa.
+	FR	Vous devez indiquer un mot de passe pour activer l'autorisation.
+	IT	Non è consentito attivare l'autorizzazione senza una password.
+	NL	Zonder wachtwoord kun je geen autorisatie inschakelen.
+	NO	Du kan ikke aktivere autorisering uten et passord.
+	PL	Nie można włączyć autoryzacji bez hasła.
+	RU	Невозможно включить авторизацию без пароля.
+	SV	Det går inte att aktivera auktorisering utan ett lösenord.
 
 SETUP_PASSWORD
 	CS	Heslo
@@ -8792,19 +8802,19 @@ SETUP_SN_VALID_LOGIN
 	SV	Ansluten till mysqueezebox.com
 
 SETUP_SN_VALIDATION_FAILED
-	CS	Chyba při validaci vašeho účtu mysqueezebox.com.
-	DA	Der opstod en fejl under valideringen af din mysqueezebox.com-konto.
-	DE	Unerwarteter Fehler beim Prüfen des mysqueezebox.com-Kontos. Bitte stellen Sie sicher, dass die Netzwerkverbindung in Ordnung ist.
+	CS	Při validaci vašeho účtu mysqueezebox.com došlo k neočekávané chybě. Ujistěte se, že vaše síťové připojení funguje správně.
+	DA	Der opstod en uventet fejl under validering af din konto på mysqueezebox.com. Kontroller at din netværksforbindelse fungerer som den skal.
+	DE	Unerwarteter Fehler beim Prüfen Ihres mysqueezebox.com-Kontos. Überprüfen Sie, ob die Netzwerkverbindung ordnungsgemäß funktioniert.
 	EN	An unexpected error occurred while validating your mysqueezebox.com account. Please make sure network connectivity is working fine.
-	ES	Se ha producido un error al validar la cuenta mysqueezebox.com.
-	FI	Tapahtui virhe vahvistettaessa mysqueezebox.com-tiliä.
-	FR	Une erreur s'est produite lors de la validation de votre compte mysqueezebox.com.
-	IT	Si è verificato un errore durante la convalida dell'account mysqueezebox.com.
-	NL	Er is een fout opgetreden tijdens het valideren van je mysqueezebox.com-account.
-	NO	Det oppsto en feil under bekreftelsen av mysqueezebox.com-kontoen.
-	PL	Podczas sprawdzania poprawności konta w usłudze mysqueezebox.com wystąpił błąd.
-	RU	Произошла ошибка при проверке вашей учетной записи mysqueezebox.com.
-	SV	Ett fel uppstod vid valideringen av ditt mysqueezebox.com-konto.
+	ES	Se ha producido un error inesperado mientras validaba su cuenta de squeezebox.com. Asegúrese de que la conexión de red funciona correctamente.
+	FI	Odottamaton virhe mysqueezebox.com-tilisi vahvistamisessa. Tarkista, että verkkoyhteys toimii.
+	FR	Une erreur inattendue est survenue lors de la validation de votre compte mysqueezebox.com. Vérifiez que la connectivité réseau fonctionne correctement.
+	IT	Si è verificato un errore imprevisto durante la convalida dell'account mysqueezebox.com. Verificare che la connessione della rete funzioni correttamente.
+	NL	Er is een onverwachte fout opgetreden tijdens validatie van je mysqueezebox.com-account. Zorg ervoor dat de netwerkverbinding goed werkt.
+	NO	Det oppsto en uventet feil under opprettelse av mysqueezebox.com-kontoen. Kontroller at nettverkstilkoplingen fungerer.
+	PL	Podczas sprawdzania poprawności konta mysqueezebox.com wystąpił nieoczekiwany błąd. Upewnij się, że połączenie sieciowe działa prawidłowo.
+	RU	Непредвиденная ошибка при проверке вашей учетной записи mysqueezebox.com. Убедитесь, что сетевое подключение работает правильно.
+	SV	Ett oväntat fel inträffade när mysqueezebox.com-kontot skulle valideras. Kontrollera att nätverksanslutningen fungerar som den ska.
 
 SETUP_SN_FORGOT_PASSWORD
 	CS	Zapomněl jsem své heslo
@@ -8913,18 +8923,18 @@ SETUP_SN_REPORT_STATS
 
 SETUP_SN_REPORT_STATS_DESC
 	CS	Pomozte nám zlepšit mysqueezebox.com zasíláním statistiky o poslechu internetového rádia a hudebních služeb. (Tyto anonymní informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=cz,ce" target="_blank">strategií zachování soukromí</a>).
-	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne bruges samlet og er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
+	DA	Du kan hjælpe med at forbedre mysqueezebox.com ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne er anonyme og bruges samlet, og de er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=dk,da" target="_blank">beskyttelse af personlige oplysninger</a>.
 	DE	Melden Sie zur Verbesserung von mysqueezebox.com Statistiken über den Einsatz von Internetradio und -Musikdiensten. (Diese anonymen Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=de,de" target="_blank">Datenschutzrichtlinien</a>).
 	EN	Help improve mysqueezebox.com by reporting statistics on internet radio and music service listening. (This anonymous information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
-	ES	Ayude a mejorar mysqueezebox, proporciónenos estadísticas sobre el uso de radio y música por Internet (esta información anónima se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=es,es" target="_blank">política de privacidad</a>).
+	ES	Ayude a mejorar mysqueezebox, proporcione estadísticas sobre el uso de radio y música por Internet (esta información anónima se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=es,es" target="_blank">política de privacidad</a>).
 	FI	Auta parantamaan mysqueezebox.com-verkon toimintaa ilmoittamalla, miten käytät nettiradiota ja musiikkipalveluita (tiedot kerätään nimettömästi ja kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fi,fi" target="_blank">tietosuojakäytäntömme</a> mukaisesti).
-	FR	Pour améliorer mysqueezebox.com, nous collectons des informations sur les radios Internet et services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
+	FR	Pour améliorer mysqueezebox.com, nous recueillons des informations sur les radios Internet et les services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=fr,fr" target="_blank">politique de confidentialité</a>.
 	IT	Al fine di migliorare mysqueezebox.com, è possibile inviare dati statistici sull'ascolto di stazioni radio in Internet e sui servizi musicali utilizzati. Il trattamento di tali dai, raccolti collettivamente e in modo anonimo, è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=it,it" target="_blank">informativa sulla privacy</a>.
-	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. (Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=nl,nl" target="_blank">privacybeleid</a>.)
-	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
-	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=pl,pl" target="_blank">zasady zachowania poufności informacji</a>).
-	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>).
-	SV	Varför inte hjälpa oss att göra mysqueezebox.com ännu bättre genom att berätta hur du använder webbradion och musiktjänsterna? Informationen samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=se,sv" target="_blank">sekretesspolicy</a>.
+	NL	Help met de verbetering van mysqueezebox.com door statistieken over het luisteren naar internetradio en muziekservices te rapporteren. (Deze anonieme informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacybeleid</a>.)
+	NO	Du kan hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon om bruk av Internett-radio og musikktjenester. (Denne anonyme informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=no,no" target="_blank">personvernerklæringen</a> vår.)
+	PL	Pomóż w ulepszeniu usługi mysqueezebox.com, wysyłając statystyki dotyczące słuchania internetowych stacji radiowych i korzystania z usług muzycznych. (Te anonimowe informacje są gromadzone w postaci zbiorczej i chronione przez nasze <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">zasady zachowania poufności informacji</a>).
+	RU	Помогите улучшить работу mysqueezebox.com благодаря статистике прослушивания радиостанций Интернета и музыкальной службы. (Собранная анонимная информация защищается в соответствии с нашей <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=ru,ru" target="_blank">политикой конфиденциальности</a>.)
+	SV	Varför inte hjälpa oss att göra mysqueezebox.com ännu bättre genom att berätta hur du använder webbradion och musiktjänsterna? Informationen, som är helt anonym, samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=se,sw" target="_blank">sekretesspolicy</a>.
 
 SETUP_SN_REPORT_STATS_ENABLE
 	CS	Ano, pomoci zlepšovat mysqueezebox.com odesíláním statistik.
@@ -8958,7 +8968,7 @@ SETUP_SN_REPORT_STATS_DISABLE
 
 SETUP_NO_JAVASCRIPT
 	CS	Před přístupem ke Squeezebox Server se prosím ujistěte, že používáte poslední prohlížeč (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 nebo vyšší), a že je na vašem prohlížeči povolen JavaScript. Alternativně můžete používat jednodušší skin, např.<a href="/Classic/?skipWizard=1">Klasický</a> nebo <a href="/Handheld/?skipWizard=1">Do ruky</a> (optimalizován pro malé obrazovky).
-	DA	Du skal bruge en forholdsvis ny browser for at få adgang til Squeezebox Server (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7, Opera 9 eller senere), og JavaScript skal være aktiveret i browseren. Alternativt kan du benytte et enklere layout, fx <a href="/Classic/?skipWizard=1">Klassisk</a> eller <a href="/Handheld/?skipWizard=1">Håndholdt</a> (optimeret til små skærme).
+	DA	Du skal bruge en forholdsvis ny browser for at få adgang til Squeezebox Server (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller senere), og JavaScript skal være aktiveret i browseren. Alternativt kan du benytte et enklere layout, fx <a href="/Classic/?skipWizard=1">Klassisk</a> eller <a href="/Handheld/?skipWizard=1">Håndholdt</a> (optimeret til små skærme).
 	DE	Für den Zugriff auf Squeezebox Server benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7 +, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.
 	EN	In order to access Squeezebox Server, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a> or <a href="/Handheld/?skipWizard=1">Handheld</a> (optimized for small screens).
 	ES	Para acceder a Squeezebox Server, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7 o posterior, Opera 9 o posterior) con la opción JavaScript activada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (optimizada para pantallas pequeñas).
@@ -8967,9 +8977,9 @@ SETUP_NO_JAVASCRIPT
 	IT	Per accedere a Squeezebox Server, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7 o versioni successive, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare una skin quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
 	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 of later) en JavaScript in je browser inschakelen om Squeezebox Server te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1">Classic</a> of <a href="/Handheld/?skipWizard=1">Handheld</a> (geoptimaliseerd voor kleine schermen).
 	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på Squeezebox Server. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (laget for små skjermer).
-	PL	Aby uzyskać dostęp do programu Squeezebox Server, sprawdź czy korzystasz z najnowszej przeglądarki (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7, Opera 9 lub nowszej), a obsługa skryptów JavaScript w przeglądarce jest włączona. Można także użyć prostej karnacji, takiej jak <a href="/Classic/?skipWizard=1">Klasyczna</a> lub <a href="/Handheld/?skipWizard=1">Urządzenie przenośne</a> (zoptymalizowana dla małych ekranów).
+	PL	Aby uzyskać dostęp do programu Squeezebox Server, sprawdź czy korzystasz z najnowszej przeglądarki (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 lub nowszej), a obsługa skryptów JavaScript w przeglądarce jest włączona. Można także użyć prostej karnacji, takiej jak <a href="/Classic/?skipWizard=1">Klasyczna</a> lub <a href="/Handheld/?skipWizard=1">Urządzenie przenośne</a> (zoptymalizowana dla małych ekranów).
 	RU	Для доступа к Squeezebox Server необходим современный обозреватель (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7+, Opera 9 или более поздние версии), в котором включен JavaScript. Либо можно использовать упрощенную оболочку, например <a href="/Classic/?skipWizard=1">Classic</a> или <a href="/Handheld/?skipWizard=1">Handheld</a> (специально для устройств с маленьким экраном).
-	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 7, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Squeezebox Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
+	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till Squeezebox Server. Alternativt kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
 
 SETUP_WIZARD_SQN_PLEASE
 	CS	Přihlašte se svojí emailovou adresou mysqueezebox.com a heslem a pokračujte .
@@ -9787,7 +9797,7 @@ PLAY_NOW
 	EN	Play Now
 	ES	Reproducir ahora
 	FI	Toista nyt
-	FR	Jouer maintenant
+	FR	Lire maintenant
 	IT	Riproduci ora
 	NL	Nu afspelen
 	NO	Spill av nå
@@ -11106,12 +11116,24 @@ MP4
 	IT	MPEG-4
 	NL	MPEG-4
 	NO	MPEG-4
-	PL	MPEG-4
+	PL	MP4
 	RU	MPEG-4
 	SV	MPEG-4
 
 SLS
+	CS	MPEG-4 SLS / HD-AAC
+	DA	MPEG-4 SLS / HD-AAC
+	DE	MPEG-4 SLS / HD-AAC
 	EN	MPEG-4 SLS / HD-AAC
+	ES	MPEG-4 SLS / HD-AAC
+	FI	MPEG-4 SLS / HD-AAC
+	FR	MPEG-4 SLS / HD-AAC
+	IT	MPEG-4 SLS / HD-AAC
+	NL	MPEG-4 SLS / HD-AAC
+	NO	MPEG-4 SLS / HD-AAC
+	PL	MPEG-4 SLS / HD-AAC
+	RU	MPEG-4 SLS/HD-AAC
+	SV	MPEG-4 SLS / HD-AAC
 
 M3U
 	CS	Seznam skladeb M3U
@@ -11583,17 +11605,17 @@ THOUSANDS_SEP
 	DE	'
 	EN	,
 	ES	.
-	FI	.
-	FR	.
+	FI	 
+	FR	 
 	HE	,
 	IT	'
 	JA	,
 	NL	,
-	NO	'
-	PL	.
+	NO	 
+	PL	 
 	PT	.
-	RU	,
-	SV	'
+	RU	 
+	SV	 
 	ZH_CN	,
 
 BYTES
@@ -11812,12 +11834,12 @@ RATING
 
 TAGVERSION
 	CS	Verze tagů
-	DA	ID3-version
+	DA	Mærkeversion
 	DE	Tag-Version
 	EN	Tag Version
 	ES	Versión de etiqueta
 	FI	Tunnisteen versio
-	FR	Version ID3
+	FR	Version avec repère
 	HE	גרסת תג
 	IT	Versione tag
 	JA	タグ バージョン
@@ -11830,10 +11852,34 @@ TAGVERSION
 	ZH_CN	版本
 
 VIEW_TAGS
+	CS	Zobrazit tagy
+	DA	Vis mærker
+	DE	Tags anzeigen
 	EN	View Tags
+	ES	Ver etiquetas
+	FI	Näytä tunnisteet
+	FR	Afficher les repères
+	IT	Visualizza tag
+	NL	Tags weergeven
+	NO	Vis etiketter
+	PL	Wyświetl znaczniki
+	RU	Просмотреть теги
+	SV	Visa taggar
 
 NO_TAGS_FOUND
+	CS	Žádné tagy nenalezeny
+	DA	Der blev ikke fundet nogen mærker
+	DE	Keine Tags gefunden.
 	EN	No tags found
+	ES	No se han encontrado etiquetas
+	FI	Tunnisteita ei löytynyt
+	FR	Aucun repère détecté
+	IT	Nessun tag trovato
+	NL	Geen tags gevonden
+	NO	Finner ingen etiketter
+	PL	Nie znaleziono znaczników
+	RU	Теги не найдены
+	SV	Inga taggar hittades
 
 LOCATION
 	CS	Umístění
@@ -13559,7 +13605,7 @@ DEBUG_SELECT_SET
 	ES	Seleccione un conjunto de registros...
 	FI	Valitse lokijoukko...
 	FR	Sélectionnez l'ensemble de journaux...
-	IT	Selezionare un gruppo di log...
+	IT	Selezionare un gruppo di registri...
 	NL	Selecteer een logboekset...
 	NO	Velg logg-sett ...
 	PL	Wybierz zestaw dzienników...
@@ -14354,13 +14400,13 @@ NO_PLAYER_DETAILS
 	DA	<b>Hvis du har en Squeezebox eller Transporter:</b><ul><li>Kontroller at din afspiller er sluttet til, og at netværksindstillingerne er korrekte. Klik på opdateringsknappen når afspilleren er tilsluttet.</ul><p><b>Hvis du ikke har en Squeezebox eller Transporter:</b><ul><li>Du kan lytte til dit musikbibliotek vha. <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en softwareversion af Squeezebox.<li>Du kan også bruge et program til at afspille mp3-filer (fx Winamp eller iTunes) til at høre filerne sammen med Squeezebox Server ved at etablere forbindelse til denne adresse: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf Squeezebox Server zugreifen: http://localhost:9000/stream.mp3
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Squeezebox Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Squeezebox Server conectándose a esta URL: http://localhost:9000/stream.mp3
+	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Squeezebox Server conectándose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Squeezebox Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le Squeezebox Server en vous connectant à l'URL suivante: http://localhost:9000/stream.mp3.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Squeezebox Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Squeezebox Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
-	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je muzieksysteem op het netwerk is aangesloten en dat de netwerkinstellingen goed zijn. Klik op de knop Vernieuwen wanneer je systeem is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Squeezebox Server naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: http://localhost:9000/stream.mp3
+	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je muzieksysteem op het netwerk is aangesloten en dat de netwerkinstellingen goed zijn. Klik op de knop Vernieuwen wanneer je systeem is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Squeezebox Server naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	NO	<b>Hvis du har en Squeezebox eller en Transporter:</b><ul><li>Kontroller at spilleren er plugget inn, og at nettverksinnstillingene stemmer. Klikk på Oppdater så snart spilleren er koplet til.</ul><p><b>Hvis du ikke har en Squeezebox eller en Transporter:</b><ul><li>Du kan lytte til musikkbiblioteket ditt med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvareversjon av Squeezebox.<li>Du kan bruke mp3-spiller-programvare (som Winamp eller iTunes) til å lytte til musikkbiblioteket ditt med Squeezebox Server ved å gå til denne url-en: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PL	<b>Jeżeli korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Sprawdź, czy odtwarzacz jest podłączony do źródła zasilania, a ustawienia sieciowe są prawidłowe. Po podłączeniu odtwarzacza kliknij przycisk Odśwież.</ul><p><b>Jeżeli nie korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Możesz słuchać muzyki z biblioteki, używając programu <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, programowej wersji urządzenia Squeezebox.<li>W celu słuchania muzyki z biblioteki w programie Squeezebox Server możesz użyć oprogramowania odtwarzacza plików MP3 (na przykład Winamp lub iTunes), przechodząc pod następujący adres URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
@@ -14750,8 +14796,19 @@ GLOBAL_SEARCH
 
 GLOBAL_SEARCH_IN
 # SLT: this expands to "Search XYZ in: ABC, DEF", where ABC, DEF is a list of items below this title, and %s is replaced with the search term.
-	DE	Suche %s in:
+	CS	Hledat %s v:
+	DA	Søg efter %s i:
+	DE	%s suchen in:
 	EN	Search %s in:
+	ES	Buscar %s en:
+	FI	Etsi %s kohteesta:
+	FR	Rechercher %s dans:
+	IT	Cerca %s in:
+	NL	%s zoeken in:
+	NO	Søk etter %s i:
+	PL	Szukaj %s w:
+	RU	Искать %s в:
+	SV	Sök efter %s i:
 
 SEARCHMUSIC
 	CS	Hledat hudbu
@@ -17294,7 +17351,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	FI	Jos levyllä on lauluja, jotka on merkitty jollekin tietylle yhtyeelle, levy voidaan sijoittaa yhtyeen nimen alle tai muiden samalla levyllä esiintyvien artistien alle.  Yhtyetunnus tunnetaan myös nimellä TPE2. Joissakin ohjelmistoissa se saattaa näkyä "levyartistina".
 	FR	Les albums qui contiennent des morceaux contenant les informations d'un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Les informations sur le groupe sont appelées TPE2 ou Artiste de l'album dans certains logiciels.
 	HE	ייתכן שאלבומים שמכילים שירים המתויגים עם להקה יפורטו ברשימה תחת שם הלהקה או עם מבצעים אחרים באלבום. תג הלהקה מוכר גם בשם TPE2 ועשוי להופיע כ"מבצע האלבום" בתוכנות מסוימות.
-	IT	Gli album con brani che contengono il tag "Gruppo" nei tag possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
+	IT	Gli album con brani che contengono il tag Gruppo possono essere elencati sotto il nome del gruppo o sotto il nome degli altri artisti dell'album. Il tag Gruppo è conosciuto anche come TPE2 e in qualche programma può figurare come "artista dell'album".
 	NL	Albums met liedjes die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
 	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
 	PL	Albumy zawierające utwory z nazwą zespołu mogą być wymienione pod nazwą tego zespołu lub innych wykonawców tego albumu. Etykieta zespołu nosi także nazwę TPE2 i w niektórych programach może być widoczna jako „wykonawca albumu”.
@@ -21346,17 +21403,64 @@ SETUP_SHOWCOUNT_TEMP
 	SV	Vid rullning
 
 SETUP_MAXPLAYLISTLENGTH
+	CS	Maximální délka seznamu skladeb
+	DA	Maksimal længde på afspilningsliste
+	DE	Maximale Länge der Wiedergabeliste
 	EN	Maximum Playlist Length
+	ES	Longitud máxima de la lista de reproducción
+	FI	Soittoluettelon enimmäispituus
+	FR	Longueur maximale de la liste de lecture
+	IT	Lunghezza massima elenco di riproduzione
+	NL	Maximumlengte van playlist
+	NO	Makslengde for spilleliste
+	PL	Maksymalna długość listy odtwarzania
+	RU	Максимальная длина плей-листа
+	SV	Maximal längd på spellistan
 
 SETUP_MAXPLAYLISTLENGTH_DESC
+	CS	Aby byl server chráněn před nadměrným zatížením paměti, může být omezena maximální délka seznamu skladeb, včetně seznamu Nyní hraje. Hodnota 0 znamená bez omezení. Pokud je zadána, je minimální hodnota 10.
+	DA	Du kan forhindre at serveren bruger for meget hukommelse ved at begrænse længden på afspilningslisterne, inklusive den aktive afspilningsliste. Værdien 0 angiver at længden er ubegrænset. Ellers er minimumsværdien 10.
+	DE	Um eine übermäßige Speicherverwendung auf dem Server zu verhindern, kann die Länge der Wiedergabeliste, einschließlich der aktuell abgespielten Liste, eingeschränkt werden. Bei Eingabe des Werts '0' wird keine Einschränkung vorgenommen. Wird eine Einschränkung festgelegt, muss mindestens der Wert '10' eingegeben werden.
 	EN	In order to protect the server against excessive memory use the maximum length of a playlist, including the Now-Playing playlist, can be restricted. A value of 0 means no restriction. If set then the minimum value is 10.
+	ES	Para proteger el servidor contra el uso excesivo de memoria se puede restringir la longitud máxima de una lista de reproducción, incluida la lista Reproduciendo. Si el valor es 0, no hay restricción. Si la hay, el valor mínimo es 10.
+	FI	Jotta palvelimen muistia ei kuormiteta liikaa, soittoluettelon enimmäispituutta voidaan rajoittaa, mukaan luettuna Nyt soi -soittoluettelo. Jos arvo on 0, pituutta ei ole rajoitettu. Jos arvo annetaan, pienin sallittu on 10.
+	FR	La taille maximale de la liste de lecture, y compris de la liste de lecture en cours, peut être limitée afin de prévenir toute utilisation excessive de la mémoire système. La valeur 0 indique qu'aucune restriction n'est appliquée. La valeur minimale est de 10.
+	IT	Per evitare un uso eccessivo di memoria del server, è possibile limitare la lunghezza massima degli elenchi di riproduzione, inclusi quelli Riproduzione in corso. Con il valore 0 non si impone alcun limite. Se si imposta un limite, il valore minimo è 10.
+	NL	Teneinde de server tegen buitensporig geheugengebruik te beschermen, kan de maximumlengte van een playlist beperkt worden, inclusief de playlist Speelt nu. De waarde 0 betekent dat er geen beperking geldt. Indien ingesteld, is de minimumwaarde 10.
+	NO	Makslengden for spillelister kan begrenses, inkludert Spilles nå-listen, for å beskytte serveren mot overdreven minnebruk. Verdien 0 angir ingen begrensning. Hvis en begrensning angis, er minimumsverdien 10.
+	PL	Aby ochronić serwer przed maksymalnym wykorzystaniem pamięci, maksymalna długość listy odtwarzania, włącznie z listą Teraz odtwarzane, może zostać ograniczona. Wartość 0 oznacza brak ograniczeń. Minimalna wartość w przypadku ustawienia wynosi 10.
+	RU	Чтобы защитить сервер от избыточного использования памяти, можно ограничить максимальную длину плей-листа, включая плей-лист "Исполняется". Минимальное значение ограничения равно 10. Значение 0 задает отказ от ограничения.
+	SV	Det går att skydda servern och undvika minnesfel genom att begränsa längden på spellistan (vilket omfattar Nu spelas-listan). 0 innebär att det inte finns någon begränsning. Om spellistan begränsas är det minsta tillåtna värdet 10.
 
 ERROR_PLAYLIST_FULL
+	CS	Seznam skladeb plný; nepřidány žádné stopy
+	DA	Afspilningslisten er fyldt; der blev ikke tilføjet nogen numre
+	DE	Wiedergabeliste ist voll; keine Titel hinzugefügt
 	EN	Playlist full; no tracks added
-	
-ERROR_PLAYLIST_ALMOST_FULL
-	EN	Playlist full: %s of %s tracks added
+	ES	Lista de reproducción llena; no se han agregado pistas
+	FI	Soittoluettelo on täynnä; raitoja ei lisätty
+	FR	La liste de lecture est pleine ; aucune piste n'a été ajoutée
+	IT	Elenco di riproduzione pieno. Nessun brano aggiunto.
+	NL	Playlist vol; geen tracks toegevoegd
+	NO	Spillelisten er full, ingen spor ble lagt til
+	PL	Lista odtwarzania jest pełna; nie dodano żadnych ścieżek
+	RU	Плей-лист заполнен; дорожки не добавлены
+	SV	Spellistan är full. Inga spår lades till.
 
+ERROR_PLAYLIST_ALMOST_FULL
+	CS	Seznam skladeb plný: %s z %s přidaných stop
+	DA	Afspilningslisten er fyldt: Der blev tilføjet %s af %s numre
+	DE	Wiedergabeliste ist voll: %s von %s Titeln hinzugefügt
+	EN	Playlist full: %s of %s tracks added
+	ES	Lista de reproducción llena: %s de %s pistas agregadas
+	FI	Soittoluettelo on täynnä: lisättiin %s/%s raitaa
+	FR	Liste de lecture pleine: %s pistes sur %s ont été ajoutées
+	IT	Elenco di riproduzione pieno: aggiunti %s di %s brani
+	NL	Playlist vol: %s van %s tracks toegevoegd
+	NO	Spillelisten er full: %s av %s spor lagt til
+	PL	Lista odtwarzania jest pełna: dodano ścieżek: %s z %s
+	RU	Плей-лист заполнен: добавлено %s из %s дорожек
+	SV	Spellistan är full: %s av %s spår lades till
 
 SQUEEZEBOX_SERVER_CONNECT
 	CS	Připojit ke Squeezebox Server
@@ -21594,18 +21698,42 @@ CONTROLPANEL_WEB_CONTROL_DESC
 	ES	Control remoto por Web
 	FI	Kauko-ohjaus
 	FR	Télécommande Web
-	IT	Telecomando Web
+	IT	Controllo remoto Web
 	NL	Afstandsbediening voor web
 	NO	Fjernkontroll
 	PL	Pilot zdalnego sterowania
 	RU	Пульт управления по Интернету
 	SV	Fjärrkontroll
-	
+
 CONTROLPANEL_TRAY_DOUBLECLICK_WEB
+	CS	Dálkové ovládání sítě otevřete dvojitým kliknutím na ikonu na liště
+	DA	Åbn Fjernbetjening via browser ved at dobbeltklikke på ikonet i systembakken
+	DE	Fernbedienung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open Web Remote Control on doubleclicking the tray icon
-	
+	ES	Abrir el Control remoto por Web haciendo doble clic en el icono de la bandeja
+	FI	Avaa WWW-etähallinta kaksoisnapsauttamalla ilmaisinalueen kuvaketta
+	FR	Ouvrir la télécommande Web en cliquant deux fois sur l'icône de la barre d'état
+	IT	Aprire Controllo remoto Web facendo doppio clic sull'icona nell'area di notifica
+	NL	Open webafstandsbediening door te dubbelklikken op het pictogram in het systeemvak
+	NO	Åpne Fjernkontroll ved dobbeltklikk på ikonet i systemstatusfeltet
+	PL	Otwórz Pilot zdalnego sterowania, klikając dwukrotnie ikonę na pasku zadań
+	RU	Открывать пульт управления по Интернету двойным щелчком по значку на панели задач
+	SV	Öppna webbfjärrkontrollen genom att klicka på ikonen i aktivitetsfältet
+
 CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL
+	CS	Ovládací panel otevřete dvojitým kliknutím na ikonu na liště
+	DA	Åbn kontrolpanelet ved at dobbeltklikke på ikonet i systembakken
+	DE	Systemsteuerung per Doppelklick auf das Symbol in der Taskleiste öffnen
 	EN	Open the Control Panel on doubleclicking the tray icon
+	ES	Abrir el Panel de control haciendo doble clic en el icono de la bandeja
+	FI	Avaa Ohjauspaneeli kaksoisnapsauttamalla ilmaisinalueen kuvaketta
+	FR	Ouvrir le panneau de configuration en cliquant deux fois sur l'icône de la barre d'état
+	IT	Aprire il pannello di controllo facendo doppio clic sull'icona nell'area di notifica
+	NL	Open het Configuratiescherm door te dubbelklikken op het pictogram in het systeemvak
+	NO	Åpne kontrollpanelet ved dobbeltklikk på ikonet i systemstatusfeltet
+	PL	Otwórz Panel sterowania, klikając dwukrotnie ikonę na pasku zadań
+	RU	Открывать панель управления двойным щелчком по значку на панели задач
+	SV	Öppna Kontrollpanelen genom att klicka på ikonen i fältet
 
 CONTROLPANEL_ADVANCED_SETTINGS_DESC
 	CS	Upřesnit nastavení
@@ -21893,7 +22021,19 @@ CONTROLPANEL_SN_FAILURE_DESC
 	SV	Det kan röra sig om ett tillfälligt internetproblem eller om begränsningar som internetleverantören har infört. Om problemet kvarstår bör du kontrollera om brandväggen blockerar utgående trafik.
 
 CONTROLPANEL_SN_PROXY
-	EN	We've seen that your Squeezebox Server is configured to use a proxy server. In this configuration connectivity to mysqueezebox.com on port 3483 can't be tested. 
+	CS	Zjistili jsme, že váš Squeezebox Server je konfigurován k použití proxy serveru. V této konfiguraci nemůže být testována konektivita k mysqueezebox.com na portu 3483.
+	DA	Din Squeezebox Server er indstillet til at bruge en proxyserver. Det betyder at forbindelsen til mysqueezebox.com via port 3483 ikke kan afprøves.
+	DE	Ihr Squeezebox Server ist für die Verwendung eines Proxyservers konfiguriert. Bei dieser Konfiguration kann die Verbindung zu mysqueezebox.com über Port 3483 nicht getestet werden.
+	EN	We've seen that your Squeezebox Server is configured to use a proxy server. In this configuration connectivity to mysqueezebox.com on port 3483 can't be tested.
+	ES	Hemos comprobado que Squeezebox Server está configurado para utilizar un servidor proxy. Esta configuración no permite comprobar la conectividad a mysqueezebox.com en el puerto 3483.
+	FI	Squeezebox Server on määritetty käyttämään välityspalvelinta. Tässä kokoonpanossa yhteyttä sivustoon mysqueezebox.com portin 3483 kautta ei voi testata.
+	FR	La configuration de votre Squeezebox Server indique l'utilisation d'un serveur proxy. Cette configuration ne permet pas de tester la connectivité à mysqueezebox.com sur le port 3483.
+	IT	È stato rilevato che Squeezebox Server è configurato per utilizzare un server proxy. Con questa configurazione non è possibile verificare la connessione con mysqueezebox.com sulla porta 3483.
+	NL	Je Squeezebox Server is geconfigureerd voor gebruik van een proxyserver. In deze configuratie kan de verbinding met 'mysqueezebox.com' op poort 3483 niet getest worden.
+	NO	Squeezebox Server er konfigurert til å bruke en proxy-server. Med denne konfigureringen kan ikke tilkoplingen til mysqueezebox.com på port 3483 testes.
+	PL	Program Squeezebox Server jest skonfigurowany w celu użycia serwera proxy. W przypadku takiej konfiguracji nie można przetestować połączenia z witryną mysqueezebox.com na porcie 3483.
+	RU	Обнаружено, что ваш Squeezebox Server настроен на использование прокси-сервера. В такой конфигурации подключение к сайту mysqueezebox.com на порту 3483 невозможно проверить.
+	SV	När Squeezebox Server har konfigurerats för användning med en proxyserver går det inte att kontrollera anslutningen till port 3483 på mysqueezebox.com.
 
 CONTROLPANEL_PORTCONFLICT
 	CS	Squeezebox Server není v provozu, ale nějaká aplikace používá stejný port (%s).
@@ -21986,19 +22126,19 @@ CONTROLPANEL_OTHER_ISSUE
 	SV	Eventuellt programvarukonflikt upptäcktes
 
 CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
-	CS	ESET Antivirus nebo Smart Security může při spuštění Squeezebox Serveru způsobovat problémy. Pokud dojde k chybě při spuštění Squeezebox Serveru, ujistěte se, že jste zrušili zaškrtnutí filtrování portů pro SqueezeSvr.exe v Pokročilém nastavení ESET / Antivirus a antispyware / Ochrana webového přístupu / HTTP, HTTPS / Webové prohlížeče.
+	CS	ESET Antivirus nebo Smart Security může při spuštění Squeezebox Serveru způsobovat problémy. Pokud dojde k chybě při spuštění Squeezebox Serveru, ujistěte se, že jste zrušili zaškrtnutí filtrování portů pro SqueezeboxSvr.exe v Pokročilém nastavení ESET / Antivirus a antispyware / Ochrana webového přístupu / HTTP, HTTPS / Webové prohlížeče.
 	DA	ESET Antivirus eller Smart Security kan skabe problemer når du starter Squeezebox Server. Hvis du ikke kan starte Squeezebox Server, skal du sørge for at porten som bruges af SqueezeSvr.exe, ikke er lukket i ESET Advanced Settings/Antivirus og antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	DE	ESET Antivirus oder ESET Smart Security können beim Starten von Squeezebox Server Probleme verursachen. Wenn beim Starten von Squeezebox Server Fehler auftreten, sollten Sie prüfen, ob Sie unter ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers die Portfilterung für 'SqueezeSvr.exe' deaktiviert haben.
 	EN	ESET Antivirus or Smart Security can cause problems starting Squeezebox Server. If you experience failure starting Squeezebox Server, then make sure you have unchecked port filtering for SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	ES	ESET Antivirus o Smart Security pueden producir problemas a la hora de iniciar Squeezebox Server. Si no puede iniciar Squeezebox Server, asegúrese de no tener seleccionada la opción de filtrado de puertos para SqueezeSvr.exe en ESET: Configuración avanzada/Antivirus y antiespía/Protección del tráfico de Internet/HTTP, HTTPS/Navegadores de Internet.
-	FI	ESET Antivirus tai Smart Security saattavat aiheuttaa ongelmia Squeezebox Serverin käynnistyksessä. Jos Squeezebox Serverin käynnistys ei onnistu, varmista, että olet poistanut portinsuodatuksen valinnan SqueezeSvr.exe-tiedostolle kohteessa ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
+	FI	ESET Antivirus tai Smart Security saattavat aiheuttaa ongelmia Squeezebox Serverin käynnistyksessä. Jos Squeezebox Serverin käynnistys ei onnistu, varmista, että olet poistanut portinsuodatuksen valinnan SqueezeboxSvr.exe-tiedostolle kohteessa ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	FR	L'antivirus ESET ou Smart Security peut être à l'origine de difficultés au démarrage de Squeezebox Server. En cas d'échec du démarrage de Squeezebox Server, vérifiez que le filtrage des ports n'est pas activé pour SqueezeSvr.exe sous ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Squeezebox Server. Se Squeezebox Server non si avvia, deselezionare il filtraggio delle porte per SqueezeSvr.exe in impostazioni avanzate/antivirus e antispyware/protezione dell'accesso Web/HTTP di ESET e nei browser HTTPS/Web.
+	IT	L'antivirus ESET o Smart Security possono causare problemi di avvio di Squeezebox Server. Se Squeezebox Server non si avvia, deselezionare il filtraggio delle porte per SqueezeSvr.exe in Impostazioni avanzate/Antivirus e antispyware/Protezione accesso Web/HTTP di ESET e nei browser HTTPS/Web.
 	NL	ESET Antivirus of Smart Security kan problemen veroorzaken bij het opstarten van Squeezebox Server. Controleer in dit geval of je het filteren van poorten hebt uitgeschakeld voor SqueezeSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
 	NO	ESET Antivirus og Smart Security kan skape problemer med oppstarten av Squeezebox Server. Hvis du ikke får til å starte Squeezebox Server, må du sikre at du ikke har merket av for portfiltrering for SqueezeSvr.exe i ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	PL	Program ESET Antivirus lub Smart Security może powodować problemy z uruchomieniem programu Squeezebox Server. W przypadku napotkania problemu z uruchomieniem programu Squeezebox Server należy sprawdzić, czy wyłączono opcję filtrowania portów dla programu SqueezeSvr.exe w ustawieniach zaawansowanych funkcji antywirusowych i anti-spyware programu ESET, a także w ustawieniach zabezpieczeń dostępu do sieci Web oraz protokołów HTTP/HTTPS przeglądarki internetowej.
+	PL	Program ESET Antivirus lub Smart Security może powodować problemy z uruchomieniem programu Squeezebox Server. W przypadku napotkania problemu z uruchomieniem programu Squeezebox Server należy sprawdzić, czy wyłączono opcję filtrowania portów dla programu SqueezeSvr.exe w ustawieniach zaawansowanych funkcji antywirusowych i anty-spyware programu ESET, a także w ustawieniach zabezpieczeń dostępu do sieci Web oraz protokołów HTTP/HTTPS przeglądarki internetowej.
 	RU	Антивирусная программа ESET или Smart Security может привести к неполадкам при запуске Squeezebox Server. Если возникают ошибки при запуске Squeezebox Server, убедитесь, что для SqueezeSvr.exe отключена фильтрация портов в разделе ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
-	SV	ESET Antivirus och Smart Security kan orsaka problem med att starta Squeezebox Server. Om du upplever problem med att starta Squeezebox Server kontrollerar du att du har avmarkerat portfiltrering för SqueezeSvr.exe i ESET under Avancerade inställningar/Skydd mot virus och spionprogram/Webbåtkomstskydd/HTTP, HTTPS/Webbläsare.
+	SV	Om ESET Antivirus och Smart Security är installerade kan det uppstå problem när Squeezebox Server ska startas. Vid eventuella problem bör du kontrollera att du har avmarkerat portfiltrering för SqueezeboxSvr.exe i ESET under Avancerade inställningar/Skydd mot virus och spionprogram/Webbåtkomstskydd/HTTP, HTTPS/Webbläsare.
 
 CONTROLPANEL_REFRESH
 	CS	Obnovit
@@ -22935,20 +23075,20 @@ PRESETS_NOT_DEFINED
 	SV	Förinställningen #%s har inte angetts.
 
 PRESET_ADDING
-	CS	Ukládání Oblíbených položek...
-	DA	Gemmer favoritter...
-	DE	Favoriten werden gespeichert ...
+	CS	Ukládám zadané #%s...
+	DA	Gemmer fast indstilling #%s...
+	DE	Voreinstellung %s wird gespeichert...
 	EN	Saving preset #%s...
-	ES	Guardando favoritos...
-	FI	Tallennetaan suosikit...
-	FR	Enregistrement des favoris...
+	ES	Guardando memoria #%s...
+	FI	Tallennetaan esiasetusta #%s...
+	FR	Enregistrement de la présélection n°%s...
 	HE	שומר פריטים מועדפים...
-	IT	Salvataggio preferiti in corso...
-	NL	Favorieten worden opgeslagen...
-	NO	Lagrer favoritter...
-	PL	Zapisywanie...
-	RU	Сохранение выбранного...
-	SV	Sparar favoriter ...
+	IT	Salvataggio preimpostazione #%s in corso...
+	NL	Voorinstelling #%s wordt opgeslagen...
+	NO	Lagrer forhåndsinnstilling nr. %s ...
+	PL	Zapisywanie zdefiniowanego ustawienia #%s...
+	RU	Сохранение набора настроек #%s...
+	SV	Förinställning #%s sparas...
 	ZH_CN	保存最喜爱的...
 
 PRESET_HOLD_TO_SAVE
