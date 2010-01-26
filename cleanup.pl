@@ -168,6 +168,7 @@ sub getFolderList {
 			label   => 'file cache (artwork, templates etc.)',
 			folders => [
 				File::Spec::Functions::catdir($cacheFolder, 'Artwork'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache'),
 				File::Spec::Functions::catdir($cacheFolder, 'iTunesArtwork'),
 				File::Spec::Functions::catdir($cacheFolder, 'FileCache'),
 				File::Spec::Functions::catdir($cacheFolder, 'fonts.bin'),
