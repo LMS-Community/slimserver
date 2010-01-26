@@ -8,7 +8,6 @@ package Slim::Utils::UPnPMediaServer;
 # UPnP interface between the Control Point and player/web/plugins
 
 use strict;
-use warnings;
 
 use HTML::Entities;
 use Tie::LLHash;

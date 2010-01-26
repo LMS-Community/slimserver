@@ -10,7 +10,6 @@ package Slim::Networking::Async::Socket::HTTP;
 # This class contains the socket we use for async HTTP communication
 
 use strict;
-use warnings;
 
 use base qw(Net::HTTP::NB Slim::Networking::Async::Socket);
 

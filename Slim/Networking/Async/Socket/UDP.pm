@@ -10,7 +10,6 @@ package Slim::Networking::Async::Socket::UDP;
 # This class contains the socket we use for async multicast UDP communication
 
 use strict;
-use warnings;
 
 use base qw(IO::Socket::INET Slim::Networking::Async::Socket);
 

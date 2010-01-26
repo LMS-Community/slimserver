@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use FindBin qw($Bin);
 use lib $Bin;

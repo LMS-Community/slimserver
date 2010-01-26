@@ -24,7 +24,6 @@ acting as a subclass of L<DBIx::Class::Schema>.
 =cut
 
 use strict;
-use warnings;
 
 use base qw(DBIx::Class::Schema);
 

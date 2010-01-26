@@ -45,7 +45,6 @@ display parameters and entry/leave points.
 =cut
 
 use strict;
-use warnings;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Prefs;

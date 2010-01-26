@@ -17,7 +17,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use Config;
 use Data::Dump qw(dump);

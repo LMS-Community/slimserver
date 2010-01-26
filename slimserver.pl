@@ -13,7 +13,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;

@@ -10,7 +10,6 @@ package Slim::Networking::UPnP::ControlPoint;
 # $Id$
 
 use strict;
-use warnings;
 
 use IO::Socket qw(:DEFAULT :crlf);
 use HTML::Entities;

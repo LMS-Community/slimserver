@@ -9,7 +9,6 @@ package Slim::Player::StreamingController;
 
 use bytes;
 use strict;
-use warnings;
 
 use Scalar::Util qw(blessed weaken);
 use Slim::Utils::Log;

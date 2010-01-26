@@ -51,7 +51,6 @@ for creating just about any kind of mode.
 =cut
 
 use strict;
-use warnings;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Log;

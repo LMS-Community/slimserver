@@ -9,7 +9,6 @@ package Slim::Player::Source;
 
 use bytes;
 use strict;
-use warnings;
 
 use Fcntl qw(SEEK_CUR);
 use Time::HiRes;

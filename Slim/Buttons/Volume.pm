@@ -20,7 +20,6 @@ handled by L<Slim::Player::Player::mixerDisplay>.
 =cut
 
 use strict;
-use warnings;
 
 use Time::HiRes;
 

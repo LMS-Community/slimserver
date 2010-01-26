@@ -9,7 +9,6 @@ package Slim::Player::Song;
 
 use bytes;
 use strict;
-use warnings;
 
 use base qw(Slim::Utils::Accessor);
 

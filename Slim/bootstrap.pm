@@ -12,7 +12,6 @@ package Slim::bootstrap;
 # 2005-11-09 - dsully
 
 use strict;
-use warnings;
 
 use Config;
 use FindBin qw($Bin);
