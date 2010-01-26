@@ -91,7 +91,7 @@ COPYRIGHT
 	DA	© 2001-2010 Logitech - version 7.5.0
 	DE	© 2001-2010 Logitech Version 7.5.0
 	EN	© 2001-2010 Logitech Version 7.5.0
-	ES	© 2001-2010 Logitech Versión 7.5.0
+	ES	© 2001-2010 Logitech versión 7.5.0
 	FI	© 2001-2010 Logitechin versio 7.5.0
 	FR	© 2001-2010 Logitech Version 7.5.0
 	IT	© 2001-2010 Logitech Versione 7.5.0
@@ -107,14 +107,14 @@ COPYRIGHT_LOGITECH
 	DE	© 2001-2010 Logitech
 	EN	© 2001-2010 Logitech
 	ES	© 2001-2010 Logitech
-	FI	© 2001-2010 Logitechin
+	FI	© 2001-2010 Logitech
 	FR	© 2001-2010 Logitech
 	IT	© 2001-2010 Logitech
 	NL	© 2001-2010 Logitech
-	NO	© 2001–2010 Logitech
+	NO	© 2001-2010 Logitech
 	PL	© 2001-2010 Logitech
-	RU	© Logitech, 2001-2010.
-	SV	© 2001–2010 Logitech
+	RU	© Logitech, 2001-2010
+	SV	© 2001-2010 Logitech
 
 VERSION
 	CS	Verze 7.5.0 / r%s
@@ -7990,13 +7990,13 @@ SETUP_SHORTDATEFORMAT_DEFAULT
 # SLT: a short date format description, eg. 22.10.2009 ([[http://www.opengroup.org/onlinepubs/009695399/functions/strptime.html]])
 	CS	%m/%d/%Y
 	DA	%m/%d/%Y
-	DE	%m.%d.%y
+	DE	%d.%m.%Y
 	EN	%m/%d/%Y
 	ES	%d/%m/%Y
 	FI	%d/%m/%Y
 	FR	%d/%m/%Y
-	IT	%d/%m/%Y
-	NL	%d-%m-%Y
+	IT	%m/%d/%Y
+	NL	%m/%d/%Y
 	NO	%d/%m/%Y
 	PL	%m/%d/%R
 	RU	%m/%d/%Y
