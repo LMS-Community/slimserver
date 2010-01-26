@@ -903,6 +903,7 @@ sub stop {
 	$client->showBriefly({
 		line => [$client->string('ALARM_STOPPED')],
 		duration => $SHOW_BRIEFLY_DUR,
+		jive => undef,
 	});
 
 	# Send notifications
