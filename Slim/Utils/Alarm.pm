@@ -495,6 +495,7 @@ sub sound {
 
 	my $class = ref $self;
 
+bt();
 	# Optional, high-res epoch time value for when this alarm should have been triggered.  Passed when
 	# the alarm is triggered by a timer.
 	my $alarmTime = shift;
@@ -1418,9 +1419,8 @@ sub scheduleNext {
 			main::DEBUGLOG && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
 
 			if ($nextAlarm->{_nextDue} == $now) {
-				# The alarm is for this minute - sound it immediately
-				main::DEBUGLOG && $log->debug('Sounding alarm immediately');
-				$nextAlarm->sound;
+				# The alarm is for this minute, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
+				main::DEBUGLOG && $log->debug('Alarm time is now; let client handle this failure');
 			} else {
 				# TODO: schedule a bit early to allow for timers firing late.  Once this is done and the early
 				# timer fires, check every second to see if the alarm should sound.  10 secs early should be more
