@@ -1,4 +1,4 @@
-#!/opt/sdi/bin/perl -w
+#!/opt/sdi/bin/perl
 
 # Squeezebox Server Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
