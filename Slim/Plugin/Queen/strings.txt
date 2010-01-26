@@ -1,21 +1,33 @@
 PLUGIN_QUEEN_MODULE_NAME
 #SLT Do not translate
+	CS	Queen
+	DA	Queen
+	DE	Queen
 	EN	Queen
-	
+	ES	Queen
+	FI	Queen
+	FR	Queen
+	IT	Queen
+	NL	Queen
+	NO	Queen
+	PL	Queen
+	RU	Queen
+	SV	Queen
+
 PLUGIN_QUEEN_ERROR
-	CS	Chyba služby Queen
-	DA	Queen-fejl
-	DE	Queen-Fehler
+	CS	Chyba Queen
+	DA	Fejl: Queen
+	DE	Fehler – Queen
 	EN	Queen Error
 	ES	Error de Queen
-	FI	Queen-virhe
+	FI	Queen: virhe
 	FR	Erreur Queen
 	IT	Errore Queen
 	NL	Queen-fout
-	NO	Feil med Queen
-	PL	Błąd usługi Queen
-	RU	Ошибка Queen
-	SV	Queen-fel
+	NO	Queen-feil
+	PL	Queen — błąd
+	RU	Queen: ошибка
+	SV	Queen: fel
 
 PLUGIN_QUEEN_NO_INFO
 	CS	Není možné načíst informace o proudu.
@@ -31,3 +43,4 @@ PLUGIN_QUEEN_NO_INFO
 	PL	Nie można pobrać informacji o strumieniu.
 	RU	Невозможно извлечь информацию о потоке.
 	SV	Det gick inte att hämta ströminformationen.
+

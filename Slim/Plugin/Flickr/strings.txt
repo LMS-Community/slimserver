@@ -14,10 +14,34 @@ PLUGIN_FLICKR_MODULE_NAME
 	SV	Flickr
 
 PLUGIN_FLICKR_SCREENSAVER_MINE
+	CS	Flickr: Moje obrázky
+	DA	Flickr: Mine billeder
+	DE	Flickr: Eigene Fotos
 	EN	Flickr: My Photos
+	ES	Flickr: Mis fotos
+	FI	Flickr: My Photos
+	FR	Flickr: mes photos
+	IT	Flickr: Foto
+	NL	Flickr: Mijn afbeeldingen
+	NO	Flickr: Bilder
+	PL	Flickr: moje zdjęcia
+	RU	Flickr: My Photos
+	SV	Flickr: My Photos
 
 PLUGIN_FLICKR_SCREENSAVER_CONTACTS
+	CS	Flickr: Moje kontakty
+	DA	Flickr: Mine kontaktpersoner
+	DE	Flickr: Kontakte
 	EN	Flickr: My Contacts
+	ES	Flickr: Mis contactos
+	FI	Flickr: My Contacts
+	FR	Flickr: mes contacts
+	IT	Flickr: Contatti
+	NL	Flickr: Mijn contactpersonen
+	NO	Flickr: Kontakter
+	PL	Flickr: moje kontakty
+	RU	Flickr: My Contacts
+	SV	Flickr: My Contacts
 
 PLUGIN_FLICKR_SCREENSAVER_INTERESTING
 	CS	Flickr: Zajímavé fotky
@@ -55,14 +79,27 @@ PLUGIN_FLICKR_SCREENSAVER_FAVORITES
 	DE	Flickr: Favoriten
 	EN	Flickr: Favorites
 	ES	Flickr: Favoritos
-	FI	Flickr: Suosikit
-	FR	Flickr: Favoris
+	FI	Flickr: Favorites
+	FR	Flickr: favoris
 	IT	Flickr: Preferiti
 	NL	Flickr: Favorieten
 	NO	Flickr: Favoritter
-	PL	Flickr: Ulubione
-	RU	Flickr: Выбранное
-	SV	Flickr: Favoriter
+	PL	Flickr: ulubione
+	RU	Flickr: Favorites
+	SV	Flickr: Favorites
 
 PLUGIN_FLICKR_ON_FLICKR
+	CS	Na Flickr
+	DA	På Flickr
+	DE	Auf Flickr
 	EN	On Flickr
+	ES	En Flickr
+	FI	Flickr-sivustolla
+	FR	Sur Flickr
+	IT	Su Flickr
+	NL	Op Flickr
+	NO	På Flickr
+	PL	W serwisie Flickr
+	RU	На Flickr
+	SV	På Flickr
+

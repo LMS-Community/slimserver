@@ -360,17 +360,49 @@ PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 
 PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	DE	Empfohlene Erweiterungen anderer Anbieter
+	CS	Doporučené pluginy třetích stran
+	DA	Anbefalede udvidelsesmoduler fra tredjepart
+	DE	Empfohlene Plugins anderer Hersteller
 	EN	Recommended 3rd party plugins
-	FR	Extensions recommandées
+	ES	Complementos de terceros recomendados
+	FI	Suositellut muiden valmistajien laajennukset
+	FR	Plugins tiers recommandés
+	IT	Plugin di terzi consigliati
+	NL	Aanbevolen plug-ins van derden
+	NO	Anbefalte tredjeparts plugin-moduler
+	PL	Zalecane dodatki innych firm
+	RU	Рекомендуемые подключаемые модули сторонних изготовителей
+	SV	Rekommenderade plugin-program från tredje part
 
 PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	DE	Weitere Erweiterungen anderer Anbieter
+	CS	Jiné pluginy třetích stran
+	DA	Andre udvidelsesmoduler fra tredjepart
+	DE	Andere Plugins von Drittanbietern
 	EN	Other 3rd party plugins
+	ES	Otros complementos de terceros
+	FI	Muiden valmistajien laajennukset
+	FR	Autres plugins tiers
+	IT	Altri plugin di terzi
+	NL	Andere plug-ins van derden
+	NO	Andre tredjeparts plugin-moduler
+	PL	Pozostałe dodatki innych firm
+	RU	Другие подключаемые модули сторонних изготовителей
+	SV	Andra tillägg från tredje part
 
 PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
-	DE	Logitech Erweiterungen
+	CS	Rozšíření Logitech
+	DA	Logitech-udvidelser
+	DE	Logitech-Erweiterungen
 	EN	Logitech Extensions
+	ES	Extensiones Logitech
+	FI	Logitechin laajennukset
 	FR	Extensions Logitech
+	IT	Estensioni Logitech
+	NL	Logitech-extensies
+	NO	Logitech-tillegg
+	PL	Rozszerzenia firmy Logitech
+	RU	Расширения Logitech
+	SV	Logitech-tillägg
+
