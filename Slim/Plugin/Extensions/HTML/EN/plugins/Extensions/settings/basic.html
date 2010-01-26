@@ -102,12 +102,12 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	<tr>
-		<td><input name="[% type == 'update' ? "update:" _ plugin.name : plugin.name %]" [% plugin.enforce ? "disabled" : "" %] [% type == 'enabled' ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
+		<td><input name="[% type == 'update' ? "update:" _ plugin.name : plugin.name %]" [% plugin.enforce || plugin.error ? "disabled" : "" %] [% type == 'enabled' ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 		[% IF type != 'update' %]
 			<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />&nbsp;</td>
 		[% END %]
 		<td>[% plugin.title %][% IF type == 'enabled' %] (v[% plugin.version %])[%- END -%]&nbsp;</td>
-		<td>[% ((plugin.error && "<b>" _ plugin.error _ "</b>")|| (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]&nbsp;</td>
+		<td>[% ((plugin.error && "<b>" _ plugin.error _ "</b>") || (type == 'update' && plugin.changes) || plugin.desc) | html_line_break %]&nbsp;</td>
 		<td>
 			<span style="display:none">[% plugin.creator || plugin.email || plugin.homepage %]&nbsp;</span>
 			[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[% ELSIF plugin.homepage %]<a href="[% plugin.homepage %]" target="_blank">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email %]</a>[%- END -%]&nbsp;
