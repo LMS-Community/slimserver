@@ -78,6 +78,8 @@ use IO::Socket::UNIX;
 use Slim::Utils::ArtworkCache;
 use Slim::Utils::GDResizer;
 
+DEBUG && require Time::HiRes;
+
 our ($faster);
 
 while ($_ = shift @ARGV) {
@@ -126,6 +128,8 @@ while (1) {
 	
 		# Set cache root
 		$cache->setRoot($cacheroot);
+		
+		DEBUG && (my $tv = Time::HiRes::time());
 	
 		# do resize
 		Slim::Utils::GDResizer->gdresize(
@@ -140,7 +144,7 @@ while (1) {
 		# send result
 		print $client "OK\015\012";
 		
-		DEBUG && warn "OK\n";
+		DEBUG && warn "OK (" . (Time::HiRes::time() - $tv) . " seconds)\n";
 	};
 	
 	if ( $@ ) {
