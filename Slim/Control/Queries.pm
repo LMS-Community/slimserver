@@ -3435,8 +3435,19 @@ sub statusQuery_filter {
 		return 0 if $clientid ne $myclientid;
 	}
 	
+	# ignore most prefset commands, but e.g. alarmSnoozeSeconds needs to generate a playerstatus update
+	if ( $request->isCommand( [ ['prefset'] ] ) ) {
+		my $prefname = $request->getParam('_prefname');
+		if ( defined($prefname) && $prefname eq 'alarmSnoozeSeconds' ) {
+			# this needs to pass through the filter
+		}
+		else {
+			return 0;
+		}
+	}
+
 	# commands we ignore
-	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset', 'playerpref']]);
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'playerpref']]);
 	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 	# special case: the client is gone!
@@ -3658,6 +3669,10 @@ sub statusQuery {
 			$request->addResult('alarm_state', $alarmComing);
 			$request->addResult('alarm_next', defined $alarmNext ? $alarmNext + 0 : 0);
 		}
+
+		# send client pref for alarm snooze
+		my $alarm_snooze_seconds = $prefs->client($client)->get('alarmSnoozeSeconds');
+		$request->addResult('alarm_snooze_seconds', defined $alarm_snooze_seconds ? $alarm_snooze_seconds + 0 : 540);
 
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
