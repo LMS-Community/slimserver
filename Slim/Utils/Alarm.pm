@@ -495,7 +495,6 @@ sub sound {
 
 	my $class = ref $self;
 
-bt();
 	# Optional, high-res epoch time value for when this alarm should have been triggered.  Passed when
 	# the alarm is triggered by a timer.
 	my $alarmTime = shift;
@@ -903,6 +902,7 @@ sub stop {
 	$client->showBriefly({
 		line => [$client->string('ALARM_STOPPED')],
 		duration => $SHOW_BRIEFLY_DUR,
+		jive => undef,
 	});
 
 	# Send notifications
