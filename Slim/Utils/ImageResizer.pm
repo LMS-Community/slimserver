@@ -2,12 +2,18 @@ package Slim::Utils::ImageResizer;
 
 use strict;
 
+use File::Spec::Functions qw(catdir);
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::ArtworkCache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+
+# UNIX domain socket for optional artwork resizing daemon, if this is
+# present we will use async artwork resizing via the external daemon
+use constant SOCKET_PATH    => '/tmp/sbs_artwork';
+use constant SOCKET_TIMEOUT => 15;
 
 my $prefs = preferences('server');
 my $log   = logger('artwork');
@@ -19,102 +25,98 @@ sub resize {
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
-	my $ret;
+	# Check for callback, and that the gdresized daemon running and read/writable
+	my $hasDaemon = $callback && !main::ISWINDOWS && -r SOCKET_PATH && -w _;
 	
-	if (1) {
-		require Slim::Utils::GDResizer;
+	if ($hasDaemon) {
+		require AnyEvent::Socket;
+		require AnyEvent::Handle;
 		
-		my @spec = split(',', $specs);
-		eval {
-			Slim::Utils::GDResizer->gdresize(
-				file      => $file,
-				spec      => \@spec,
-				cache     => Slim::Utils::ArtworkCache->new(),
-				cachekey  => $cachekey,
-				debug     => $isDebug,
-				faster    => !$prefs->get('resampleArtwork'),
-			);
-		};
-		
-		if ( main::DEBUGLOG && $isDebug && $@ ) {
-			$log->error("Error resizing $file: $@");
-		}
-		
-		$ret =  ( $@ ) ? 0 : 1;
-	}
-	
-	else {
-		$ret = _gdresize($file, $specs, $cachekey);
-	}
-	
-	if ($callback) {
-		$callback->();
-	}	
-	
-	return $ret;
-}
-
-sub _gdresize {
-	my ($file, $spec, $cachekey) = @_;
-	my $c  = pack('Z*Z*Z*', $file, $spec, $cachekey);
-	my $cl = pack('CL', ord('R'), length($c));
-	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Command length ", length($c), ": $c");
-	
-	if (!defined $gdresizeproc || syswrite($gdresizeout, $cl, 5) != 5) {
-		if (!defined $gdresizeproc || eof($gdresizein)) {
-			$gdresizeproc = undef;
-			_start_gdresized();
-			
-			# Try again
-			syswrite($gdresizeout, $cl, 5) == 5 or return 0;
-		}
-	}
-	
-	syswrite($gdresizeout, $c, length($c)) == length($c) or return 0;
-	
-	my $result;
-	sysread($gdresizein, $result, 1);
-	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Got result $result");
-	
-	if ($result && $result eq 'K') {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-sub _start_gdresized {
-	if (!defined $gdresizeproc) {
-		require IPC::Open2;
-		
-		my $gdresize  = Slim::Utils::OSDetect::getOS->gdresized();
-		
-		my @cmd = (
-			$gdresize,
-			'--cacheroot', $prefs->get('librarycachedir'),
+		# Get cache root for passing to daemon
+		my $cacheroot = catdir(
+			$prefs->get('librarycachedir'),
+			'ArtworkCache',
 		);
 		
-		push @cmd, '--faster' if !$prefs->get('resampleArtwork');
+		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize");
 		
-		eval {
-			if (main::DEBUGLOG && $log->is_debug) {
-				push @cmd, '--debug';
-				$log->debug( "  Running: " . join( " ", @cmd ) );
-			}
-			($gdresizeout, $gdresizein) = (undef, undef);
-			$gdresizeproc = IPC::Open2::open2($gdresizein, $gdresizeout, @cmd) || die "Could not launch gdresized command\n";
-		};
-		
-		if ( $@ ) {
-			$log->error($@);
-		} else {
-			binmode($gdresizeout);
-			binmode($gdresizein);
-		}
+		# Daemon available, do an async resize
+		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
+			my $fh = shift || do {
+				main::DEBUGLOG && $isDebug && $log->debug("daemon failed to connect: $!");
+				
+				# Fallback to resizing the old way
+				sync_resize($file, $cachekey, $specs, $callback);
+				
+				return;
+			};
+			
+			my $handle;
+			
+			# Timer in case daemon craps out
+			my $timeout = sub {
+				main::DEBUGLOG && $isDebug && $log->debug("daemon timed out");
+				
+				$handle && $handle->destroy;
+				
+				# Fallback to resizing the old way
+				sync_resize($file, $cachekey, $specs, $callback);
+			};
+			Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + SOCKET_TIMEOUT, $timeout );
+			
+			$handle = AnyEvent::Handle->new(
+				fh       => $fh,
+				on_read  => sub {},
+				on_eof   => undef,
+				on_error => sub {
+					my $result = delete $_[0]->{rbuf};
+					
+					main::DEBUGLOG && $isDebug && $log->debug("daemon result: $result");
+					
+					$_[0]->destroy;
+					
+					Slim::Utils::Timers::killTimers(undef, $timeout);
+					
+					$callback && $callback->();
+				},
+			);
+			
+			$handle->push_write( pack('Z*Z*Z*Z*', $file, $specs, $cacheroot, $cachekey) . "\015\012" );
+		}, sub {
+			# prepare callback, used to set the timeout
+			return SOCKET_TIMEOUT;
+		} );
+	}
+	else {
+		# No daemon, resize synchronously in-process
+		sync_resize($file, $cachekey, $specs, $callback);
 	}
 }
 
+sub sync_resize {
+	my ( $file, $cachekey, $specs, $callback ) = @_;
+	
+	require Slim::Utils::GDResizer;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	my @spec = split(',', $specs);
+	eval {
+		Slim::Utils::GDResizer->gdresize(
+			file      => $file,
+			spec      => \@spec,
+			cache     => Slim::Utils::ArtworkCache->new(),
+			cachekey  => $cachekey,
+			debug     => $isDebug,
+			faster    => !$prefs->get('resampleArtwork'),
+		);
+	};
+	
+	if ( main::DEBUGLOG && $isDebug && $@ ) {
+		$log->error("Error resizing $file: $@");
+	}
+	
+	$callback && $callback->();
+}
 
 1;

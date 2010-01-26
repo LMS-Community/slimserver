@@ -39,6 +39,13 @@ sub new {
 	my $class = shift;
 	
 	if ( !$singleton ) {
+		if ( main::RESIZER ) {
+			# Standalone resizer daemon does not use Prefs, but will call setRoot
+			# when receiving a resize request
+			$singleton = bless { root => '' }, $class;
+			return $singleton;
+		}
+		
 		require Slim::Utils::Prefs;
 		my $root = fast_catdir(
 			Slim::Utils::Prefs::preferences('server')->get('librarycachedir'),
@@ -54,6 +61,12 @@ sub new {
 	}
 	
 	return $singleton;
+}
+
+sub setRoot {
+	my $self = shift;
+	
+	$self->{root} = shift;
 }
 
 sub set {

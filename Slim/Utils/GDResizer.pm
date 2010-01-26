@@ -338,7 +338,7 @@ sub resize {
 			. "${out_width}x${out_height} inner ${destWidth}x${destHeight} @ ($destX, $destY), "
 			. "bgcolor $bgcolor\n";
 
-		main::idleStreams();
+		main::idleStreams() unless main::RESIZER;
 		
 		if ( $args{faster} ) {
 			# copyResized is very ugly but fast
@@ -398,7 +398,7 @@ sub resize {
 			}
 		}
 
-		main::idleStreams();
+		main::idleStreams() unless main::RESIZER;
 
 		my $out;
 

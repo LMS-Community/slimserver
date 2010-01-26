@@ -16,6 +16,7 @@ use constant PERFMON      => 0;
 use constant SCANNER      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant DEBUG        => ( grep { /--debug/ } @ARGV ) ? 1 : 0;
+use constant SOCKET_PATH  => '/tmp/sbs_artwork';
 
 # Copied from Slim::bootstrap to reduce memory overhead of unnecessary stuff
 BEGIN {
@@ -73,86 +74,80 @@ BEGIN {
 	unshift @INC, @SlimINC;
 };
 
+use IO::Socket::UNIX;
+use Slim::Utils::ArtworkCache;
 use Slim::Utils::GDResizer;
 
-our ($cacheroot, $faster, $debug);
+our ($faster);
 
 while ($_ = shift @ARGV) {
-	if ($_ eq '--cacheroot') {
-		$cacheroot = shift @ARGV;
-	} elsif ($_ eq '--faster') {
+	if ($_ eq '--faster') {
 		$faster = 1;
-	} elsif ($_ eq '--debug') {
-		$debug = 1;
-	} else {
-		require Pod::Usage;
-		Pod::Usage::pod2usage(1);
 	}
 }
 
 # Setup cache
-my $cache;
-if ( $cacheroot ) {
-	require Cache::FileCache;
-	
-	$cache = Cache::FileCache->new( {
-		namespace       => 'Artwork',
-		cache_root      => $cacheroot,
-		directory_umask => umask(),
-	} );
+my $cache = Slim::Utils::ArtworkCache->new;
+
+# Remove socket if it didn't get cleaned up
+if ( -e SOCKET_PATH ) {
+	unlink SOCKET_PATH || die "Unable to remove old socket";
 }
 
-binmode(STDIN);
-binmode(STDOUT);
+# Open UNIX domain socket
+my $socket = IO::Socket::UNIX->new(
+	Type   => SOCK_STREAM,
+	Local  => SOCKET_PATH,
+	Listen => SOMAXCONN,
+) || die "Unable to open socket: $!";
+
+$SIG{TERM} = $SIG{INT} = sub {
+	unlink SOCKET_PATH if -e SOCKET_PATH;
+	exit 0;
+};
+
+DEBUG && warn "$0 listening on " . SOCKET_PATH . "\n";
 
 while (1) {
+	my $client = $socket->accept();
 	
-	# get command
-	my $buf;
-	if (read (STDIN, $buf, 5) != 5) {
-		if (eof(STDIN)) {
-			exit 0;
-		} else {
-			die 'No command';
-		}
-	}	
-
-	my ($c, $l) = unpack 'CL', $buf;
-	
-	$debug && warn("command data length $l");
-	
-	read(STDIN, $buf, $l) == $l or die 'Bad command';
-	
-	my ($file, $spec, $cachekey) = unpack 'Z*Z*Z*', $buf;
-	$debug && warn("file=$file, spec=$spec, cachekey=$cachekey");
-	
-	my @spec = split(',', $spec);
-	
-	# do resize
 	eval {
+		# get command
+		my $buf = <$client>;
+	
+		my ($file, $spec, $cacheroot, $cachekey) = unpack 'Z*Z*Z*Z*', $buf;
+		DEBUG && warn "file=$file, spec=$spec, cacheroot=$cacheroot, cachekey=$cachekey\n";
+		
+		if ( !$file || !$spec || !$cacheroot || !$cachekey ) {
+			die "Invalid parameters: $file, $spec, $cacheroot, $cachekey\n";
+		}
+	
+		my @spec = split ',', $spec;
+	
+		# Set cache root
+		$cache->setRoot($cacheroot);
+	
+		# do resize
 		Slim::Utils::GDResizer->gdresize(
 			file     => $file,
-			debug    => $debug,
+			debug    => DEBUG,
 			faster   => $faster,
 			cache    => $cache,
 			cachekey => $cachekey,
 			spec     => \@spec,
 		);
+	
+		# send result
+		print $client "OK\015\012";
+		
+		DEBUG && warn "OK\n";
 	};
 	
 	if ( $@ ) {
-		# For now, just die
-		die "$@\n";
+		syswrite $client, "Error: $@\015\012";
+		warn "$@\n";
 	}
-	
-	# send result
-	$buf = 'K';		# K ==> 'OK'
-	syswrite(STDOUT, $buf, 1);
-	
 }
-
-exit 0;
-
 
 __END__
 
@@ -166,8 +161,7 @@ Resize normal image file or an audio file's embedded tags:
 
 Options:
 
-  --faster                 Use ugly but fast copyResized function
-  --cacheroot [dir]        Cache resulting image in a FileCache called
-                           'Artwork' located in dir
+  --debug          Display debug information
+  --faster         Use ugly but fast copyResized function
 
 =cut
