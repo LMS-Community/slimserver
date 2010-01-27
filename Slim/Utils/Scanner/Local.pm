@@ -59,7 +59,7 @@ sub find {
 		# A single file was passed in, handle it directly here
 		my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
 		
-		if ( Slim::Utils::Misc::fileFilter( dirname($path), basename($path), $types, 1 ) ) {
+		if ( Slim::Utils::Misc::fileFilter( dirname($path), basename($path), $types, 0 ) ) {
 			# Add single file to scanned_files
 			my $sth = $dbh->prepare_cached( qq{
 				INSERT INTO scanned_files
