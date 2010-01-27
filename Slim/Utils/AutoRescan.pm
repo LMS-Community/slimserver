@@ -12,6 +12,7 @@ package Slim::Utils::AutoRescan;
 
 use strict;
 
+use File::Basename ();
 use Path::Class ();
 
 use Slim::Utils::Log;
@@ -136,6 +137,11 @@ sub fsevent {
 	my $path = shift;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("File system event(s) detected: $path");
+	
+	# Don't rescan individual files, move this up to directory level to be more efficient
+	if ( !-d $path ) {
+		$path = File::Basename::dirname($path);
+	}
 	
 	$queue{ $path } = 1;
 			
