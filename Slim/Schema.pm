@@ -1929,14 +1929,17 @@ sub mergeVariousArtistsAlbums {
 	# * Compilation is not set
 	#
 	# For each album, if more than 1 contributor of type $role (ARTIST):
-	# * It's a compilation
+	# * Check track contributors, if each track has the exact same contributors:
+	#   * Not a compilation
+	# * else
+	#   * Is a compilation
 	# else
 	# * Set compilation = 0
 	my $sql = qq{
 		SELECT albums.id, albums.title, COUNT(contributor_album.contributor)
 		FROM   albums
 		JOIN   contributor_album ON (albums.id = contributor_album.album)
-		AND    albums.compilation IS NULL
+		WHERE  albums.compilation IS NULL
 		AND    contributor_album.role = ?
 		GROUP BY albums.id
 	};
@@ -1955,6 +1958,18 @@ sub mergeVariousArtistsAlbums {
 		my ($albumid, $title, $num_contribs);
 		$sth->bind_columns( \$albumid, \$title, \$num_contribs );
 		
+		my $track_contribs_sth = $self->dbh->prepare( qq{
+			SELECT contributor, track
+			FROM   contributor_track
+			WHERE  role = ?
+			AND    track IN (
+				SELECT id
+				FROM tracks
+				WHERE album = ?
+			)
+			ORDER BY contributor, track
+		} );
+		
 		my $comp_sth = $self->dbh->prepare( qq{
 			UPDATE albums
 			SET    compilation = 1, contributor = ?
@@ -1968,10 +1983,35 @@ sub mergeVariousArtistsAlbums {
 		} );
 
 		while ( $sth->fetch ) {
+			my $is_comp;
+			
 			if ( $num_contribs > 1 ) {
+				# Check track contributors to see if all tracks have the same contributors
+				my ($contributor, $trackid);
+				my %track_contribs;
+				
+				$track_contribs_sth->execute( $role, $albumid );
+				$track_contribs_sth->bind_columns( \$contributor, \$trackid );
+				
+				while ( $track_contribs_sth->fetch ) {
+					$track_contribs{ $contributor } .= $trackid . ':';
+				}
+				
+				my $track_list;
+				for my $tracks ( values %track_contribs ) {
+					if ( $track_list && $track_list ne $tracks ) {
+						# contributors differ for some tracks, it's a compilation
+						$is_comp = 1;
+						last;
+					}
+					$track_list = $tracks;
+				}
+			}
+				
+			if ( $is_comp ) {				
 				# Flag as a compilation, set primary contrib to Various Artists
 				$comp_sth->execute( $vaObjId, $albumid );
-							
+						
 				main::INFOLOG && $isInfo && $importlog->info("Is a Comp : $title");
 			}
 			else {
