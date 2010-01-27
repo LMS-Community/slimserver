@@ -1925,8 +1925,8 @@ sub mergeVariousArtistsAlbums {
 	my $vaObjId = $self->variousArtistsObject->id;
 	my $role    = Slim::Schema::Contributor->typeToRole('ARTIST');
 	
-	# Get a list of albums that where:
-	# * Compilation is not set or 0
+	# Get a list of albums where:
+	# * Compilation is not set
 	#
 	# For each album, if more than 1 contributor of type $role (ARTIST):
 	# * It's a compilation
@@ -1936,7 +1936,7 @@ sub mergeVariousArtistsAlbums {
 		SELECT albums.id, albums.title, COUNT(contributor_album.contributor)
 		FROM   albums
 		JOIN   contributor_album ON (albums.id = contributor_album.album)
-		AND    (albums.compilation IS NULL OR albums.compilation = 0)
+		AND    albums.compilation IS NULL
 		AND    contributor_album.role = ?
 		GROUP BY albums.id
 	};
