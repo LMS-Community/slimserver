@@ -88,9 +88,6 @@ while ($_ = shift @ARGV) {
 	}
 }
 
-# Setup cache
-my $cache = Slim::Utils::ArtworkCache->new;
-
 # Remove socket if it didn't get cleaned up
 if ( -e SOCKET_PATH ) {
 	unlink SOCKET_PATH || die "Unable to remove old socket";
@@ -126,9 +123,6 @@ while (1) {
 	
 		my @spec = split ',', $spec;
 	
-		# Set cache root
-		$cache->setRoot($cacheroot);
-		
 		DEBUG && (my $tv = Time::HiRes::time());
 	
 		# do resize
@@ -136,7 +130,7 @@ while (1) {
 			file     => $file,
 			debug    => DEBUG,
 			faster   => $faster,
-			cache    => $cache,
+			cache    => Slim::Utils::ArtworkCache->new($cacheroot),
 			cachekey => $cachekey,
 			spec     => \@spec,
 		);

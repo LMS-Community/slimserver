@@ -33,10 +33,7 @@ sub resize {
 		require AnyEvent::Handle;
 		
 		# Get cache root for passing to daemon
-		my $cacheroot = catdir(
-			$prefs->get('librarycachedir'),
-			'ArtworkCache',
-		);
+		my $cacheroot = Slim::Utils::ArtworkCache->new()->getRoot();
 		
 		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize");
 		
