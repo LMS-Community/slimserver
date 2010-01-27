@@ -26,7 +26,7 @@ sub resize {
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
 	# Check for callback, and that the gdresized daemon running and read/writable
-	my $hasDaemon = $callback && !main::ISWINDOWS && -r SOCKET_PATH && -w _;
+	my $hasDaemon = !main::SCANNER && !main::ISWINDOWS && $callback && -r SOCKET_PATH && -w _;
 	
 	if ($hasDaemon) {
 		require AnyEvent::Socket;
@@ -86,10 +86,12 @@ sub resize {
 			# prepare callback, used to set the timeout
 			return SOCKET_TIMEOUT;
 		} );
+		
+		return;
 	}
 	else {
 		# No daemon, resize synchronously in-process
-		sync_resize($file, $cachekey, $specs, $callback);
+		return sync_resize($file, $cachekey, $specs, $callback);
 	}
 }
 
@@ -117,6 +119,8 @@ sub sync_resize {
 	}
 	
 	$callback && $callback->();
+	
+	return $@ ? 0 : 1;
 }
 
 1;
