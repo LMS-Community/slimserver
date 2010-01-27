@@ -432,15 +432,10 @@ sub deleted {
 					if ( $album->in_storage && $album->compilation ) {
 						$album->compilation(undef);
 						$album->update;
-					
-						if ( !main::SCANNER ) {
-							# Re-check VA status for the album,
-							# this will also save the album
-							Slim::Schema->mergeSingleVAAlbum( $album->id );
-						}
-						else {
-							# Album will be checked for VA status in mergeVA phase
-						}
+						
+						# Re-check VA status for the album,
+						# this will also save the album
+						Slim::Schema->mergeSingleVAAlbum( $album->id );
 					}
 					
 					# Tell Album to rescan, by looking for remaining tracks in album.  If none, remove album.
@@ -747,13 +742,8 @@ sub changed {
 				$album->compilation(undef);
 				$album->update;
 				
-				if ( !main::SCANNER ) {
-					# Auto-rescan mode, immediately merge VA
-					Slim::Schema->mergeSingleVAAlbum( $album->id );
-				}
-				else {
-					# Will be checked later during mergeVA phase
-				}
+				# Auto-rescan mode, immediately merge VA
+				Slim::Schema->mergeSingleVAAlbum( $album->id );
 			}
 			
 			# XXX

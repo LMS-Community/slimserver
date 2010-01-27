@@ -362,13 +362,6 @@ sub runScanPostProcessing {
 	# May not have a DB to store this in
 	return 1 if !Slim::Schema::hasLibrary();
 	
-	# Auto-identify VA/Compilation albums
-	$log->error("Starting merge of various artists albums");
-
-	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
-
-	Slim::Schema->mergeVariousArtistsAlbums;
-	
 	# Run any artwork importers
 	for my $importer (keys %Importers) {		
 		# Skip non-artwork scanners
