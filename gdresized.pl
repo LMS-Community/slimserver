@@ -142,7 +142,7 @@ while (1) {
 	};
 	
 	if ( $@ ) {
-		syswrite $client, "Error: $@\015\012";
+		print $client "Error: $@\015\012";
 		warn "$@\n";
 	}
 }
