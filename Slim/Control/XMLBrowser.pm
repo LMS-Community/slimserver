@@ -40,7 +40,7 @@ my $prefs = preferences('server');
 
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
-	
+
 	main::INFOLOG && $log->info("cliQuery($query)");
 
 	# check this is the correct query.
@@ -135,12 +135,6 @@ sub cliQuery {
 			$request->addParam( item_id => "$itemId" ); # stringify for JSON
 		}
 		
-		if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
-			_playlistControlContextMenu({ request => $request, query => $query });
-
-			return;
-		}
-
 		my $cache = Slim::Utils::Cache->new;
 		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
@@ -187,6 +181,12 @@ sub _cliQuery_done {
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
 	
+	my $playlistControlCM = [];
+	if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
+ 		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
+		main::INFOLOG && $log->info("playlistControlCM size: ", scalar(@$playlistControlCM));
+	}
+
 	my $cache = Slim::Utils::Cache->new;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
@@ -201,6 +201,7 @@ sub _cliQuery_done {
 	# get our parameters
 	my $index      = $request->getParam('_index');
 	my $quantity   = $request->getParam('_quantity');
+
 
 	# Bug 14100: sending requests that involve newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
@@ -452,10 +453,19 @@ sub _cliQuery_done {
 				$request->addResult('count', 1) if !$menuMode;
 				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
 				
+				my $cnt = 0;
+
+				if ($menuMode) {
+					for my $eachmenu (@$playlistControlCM) {
+						main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
+						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+						$cnt++;
+					}
+				}
+
 				if ($valid) {
 					
 					my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
-					my $cnt = 0;
 					$request->addResult('offset', $start) if $menuMode;
 
 					# create an ordered hash to store this stuff...
@@ -506,6 +516,7 @@ sub _cliQuery_done {
 							},
 						);
 						
+					if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
 						for my $mode ( 'play', 'add' ) {
 							my $actions = {
 								'do' => {
@@ -543,6 +554,7 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
 							$cnt++;
 						}
+					}
 						
 						if ( my $title = $hash{name} ) {
 							my $text = $request->string('TITLE') . ": $title";
@@ -620,6 +632,7 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
+					if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
 						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
 							# first see if $url is already a favorite
 							my $action = 'add';
@@ -653,6 +666,7 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'favorites' });
 							$cnt++;
 						}
+					}
 
 						$request->addResult('count', $cnt);
 					}
@@ -829,6 +843,15 @@ sub _cliQuery_done {
 		
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
+
+			if ($menuMode) {
+				for my $eachmenu (@$playlistControlCM) {
+					$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+					$cnt++;
+					$count++;
+				}
+			}
+
 			$request->addResult('offset', $start) if $menuMode;
 
 			if ($valid) {
@@ -1497,12 +1520,8 @@ sub _playlistControlContextMenu {
 	$request->addResult('count', $numItems);
 	$request->addResult('offset', 0);
 	my $cnt = 0;
-	for my $eachmenu (@contextMenu) {
-		$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-		$cnt++;
-	}
+	return \@contextMenu;
 
-	$request->setStatusDone();
 }
 
 
