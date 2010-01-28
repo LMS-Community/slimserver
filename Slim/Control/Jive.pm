@@ -825,6 +825,7 @@ sub alarmUpdateMenu {
 		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_ENABLED"),
 		checkbox => ($enabled == 1) + 0,
+		onClick  => 'refreshOrigin',
 		actions  => {
 			on  => {
 				player => 0,
@@ -843,7 +844,6 @@ sub alarmUpdateMenu {
 				},
 			},
 		},		
-		nextWindow => 'refresh',
 	};
 	push @menu, $onOff;
 
@@ -910,6 +910,7 @@ sub alarmUpdateMenu {
 		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_REPEAT"),
 		radio    => ($repeat == 1) + 0,
+		onClick  => 'refreshOrigin',
 		actions  => {
 			do  => {
 				player => 0,
@@ -920,7 +921,6 @@ sub alarmUpdateMenu {
 				},
 			},
 		},		
-		nextWindow => 'refresh',
 	};
 	push @menu, $repeatOn;
 
@@ -928,6 +928,7 @@ sub alarmUpdateMenu {
 		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_ONETIME"),
 		radio    => ($repeat == 0) + 0,
+		onClick  => 'refreshOrigin',
 		actions  => {
 			do => {
 				player => 0,
@@ -938,7 +939,6 @@ sub alarmUpdateMenu {
 				},
 			},
 		},
-		nextWindow => 'refresh',
 	};
 	push @menu, $repeatOff;
 
@@ -999,7 +999,7 @@ sub alarmUpdateDays {
 		my $day = {
 			text       => $client->string($string),
 			checkbox   => $dayActive + 0,
-			nextWindow => 'refreshOrigin',
+			onClick    => 'refreshGrandparent',
 			actions => {
 				on => {
 					player => 0,
