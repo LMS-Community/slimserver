@@ -148,6 +148,9 @@ sub init {
 
 	Slim::Control::Request::addDispatch(['jivesounds'],
 		[0, 1, 1, \&extensionsQuery]);
+
+	Slim::Control::Request::addDispatch(['jivepatches'],
+		[0, 1, 1, \&extensionsQuery]);
 	
 	# setup the menustatus dispatch and subscription
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'],
@@ -3179,7 +3182,7 @@ sub removeExtensionProvider {
 sub extensionsQuery {
 	my $request = shift;
  
-	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
+	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound|patche)s/; # S:P:Extensions always appends 's' to type
 	my $version= $request->getParam('version');
 	my $target = $request->getParam('target');
 	my $optstr = $request->getParam('optstr');

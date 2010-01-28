@@ -373,9 +373,10 @@ sub _parseResponse {
 				applets => 'applet', 
 				sounds  => 'sound', 
 				wallpapers => 'wallpaper', 
-				plugins => 'plugin'
+				plugins => 'plugin',
+				patches => 'patch',
 			},
-			ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc', 'changes' ],
+			ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'patch', 'title', 'desc', 'changes' ],
 		 )
 	};
 
