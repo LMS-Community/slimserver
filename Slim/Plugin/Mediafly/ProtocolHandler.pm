@@ -88,8 +88,8 @@ sub getNextTrack {
 	my ($first) = $url =~ m{\?first=(.+)};
 	
 	# If we were playing previously, pass the previous slug
-	my $firstslug;
-	my $prevslug;
+	my $firstslug = '';
+	my $prevslug = '';
 	
 	my $playedFirst = $client->master->pluginData('playedFirst') || '';
 	
@@ -99,7 +99,7 @@ sub getNextTrack {
 		$client->master->pluginData( playedFirst => $first );
 	}
 	elsif ( my $track = $song->pluginData() ) {
-		$prevslug = $track->{slug};
+		$prevslug = $track->{slug} || '';
 	}
 	
 	# Talk to SN and get the next track to play
@@ -302,7 +302,7 @@ sub getMetadataFor {
 	
 	if ( my $track = $song->pluginData() ) {
 		return {
-			artist      => $track->{show}->[0]->{title},
+			artist      => $track->{show}->[0]->{title} || $track->{showTitle},
 			title       => $track->{title},
 			cover       => $track->{imageUrl},
 			icon        => $icon,
