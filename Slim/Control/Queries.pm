@@ -583,7 +583,7 @@ sub albumsQuery {
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			
 			#FIXME: see if multiple char textkey is doable for year/genre sort
-			my $textKey;
+			my $textKey = '';
 			if ($sort eq 'artflow' || $sort eq 'artistalbum') {
 				utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
 				$textKey = substr $c->{'contributors.namesort'}, 0, 1;
