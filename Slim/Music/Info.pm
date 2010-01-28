@@ -978,6 +978,11 @@ sub addDiscNumberToAlbumTitle {
 
 # Cache this preference, which may be undef
 my ($_splitList, $_gotSplitList);
+		
+$prefs->setChange( 
+	sub { $_gotSplitList = 0 },
+	'splitList'
+);
 
 sub splitTag {
 	my $tag = shift;
