@@ -980,7 +980,10 @@ sub addDiscNumberToAlbumTitle {
 my ($_splitList, $_gotSplitList);
 		
 $prefs->setChange( 
-	sub { $_gotSplitList = 0 },
+	sub {
+		$_gotSplitList = 1;
+		$_splitList = $_[1];
+	},
 	'splitList'
 );
 
