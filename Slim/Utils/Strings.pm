@@ -143,6 +143,11 @@ sub loadStrings {
 		if ($cacheOK && $strings->{'mtimesum'} && $strings->{'mtimesum'} != $sum) {
 			$cacheOK = 0;
 		}
+		
+		# force cache renewal on server updates
+		if ($cacheOK && ( !$strings->{'serverRevision'} || $strings->{'serverRevision'} !~ /^$::REVISION$/ )) {
+			$cacheOK = 0;
+		}
 
 		# check for same list of strings files as that stored in stringcache
 		if ($cacheOK && scalar @{$strings->{'files'}} == scalar @$files) {
@@ -163,10 +168,11 @@ sub loadStrings {
 	# otherwise reparse all string files
 	unless ($args->{'dontClear'}) {
 		$strings = {
-			'version' => $stringCacheVersion,
-			'mtimesum'=> $sum,
-			'lang'    => $currentLang,
-			'files'   => $files,
+			'version'        => $stringCacheVersion,
+			'mtimesum'       => $sum,
+			'lang'           => $currentLang,
+			'files'          => $files,
+			'serverRevision' => $::REVISION,
 		};
 	}
 
