@@ -1200,6 +1200,7 @@ sub sleepSettingsQuery {
 				},
 			},
 			nextWindow => 'refresh',
+			setSelectedIndex => 1,
 		};
 	}
 
@@ -2403,6 +2404,7 @@ sub sleepInXHash {
 			},
 		},
 		nextWindow => 'refresh',
+		setSelectedIndex => '1',
 	);
 	return \%return;
 }
