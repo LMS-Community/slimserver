@@ -121,6 +121,11 @@ sub cliQuery {
 		$feed =~ s/{QUERY}/$query/g;
 	}
 	
+	my $playlistControlCM = [];
+	if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
+		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
+	}
+
 	# Lookup this browse session in cache if user is browsing below top-level
 	# This avoids repated lookups to drill down the menu
 	if ( $itemId && $itemId =~ /^([a-f0-9]{8})/ ) {
@@ -135,6 +140,7 @@ sub cliQuery {
 			$request->addParam( item_id => "$itemId" ); # stringify for JSON
 		}
 		
+
 		my $cache = Slim::Utils::Cache->new;
 		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
@@ -145,6 +151,7 @@ sub cliQuery {
 				'url'     => $feed,
 				'query'   => $query,
 				'expires' => $expires,
+				'playlistControlCM' => $playlistControlCM,
 				'timeout' => 35,
 			} );
 			return;
@@ -163,6 +170,7 @@ sub cliQuery {
 			'query'      => $query,
 			'expires'    => $expires,
 			'timeout'    => 35,
+			'playlistControlCM' => $playlistControlCM,
 #			'forceTitle' => $forceTitle,
 		}
 	);
@@ -178,15 +186,10 @@ sub _cliQuery_done {
 	my $query      = $params->{'query'};
 	my $expires    = $params->{'expires'};
 	my $timeout    = $params->{'timeout'};
+	my $playlistControlCM = $params->{'playlistControlCM'} or [];
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
 	
-	my $playlistControlCM = [];
-	if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
- 		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
-		main::INFOLOG && $log->info("playlistControlCM size: ", scalar(@$playlistControlCM));
-	}
-
 	my $cache = Slim::Utils::Cache->new;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
@@ -349,6 +352,7 @@ sub _cliQuery_done {
 					'query'        => $query,
 					'expires'      => $expires,
 					'timeout'      => $timeout,
+					'playlistControlCM' => $playlistControlCM,
 				};
 				
 				# Check for a cached version of this subfeed URL
