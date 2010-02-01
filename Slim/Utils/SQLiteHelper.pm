@@ -111,6 +111,7 @@ sub on_connect_do {
 	my $sql = [
 		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = MEMORY',
+		'PRAGMA locking_mode = EXCLUSIVE',
 		'PRAGMA foreign_keys = ON',
 	];
 	
