@@ -148,7 +148,7 @@ sub init {
 	%runningConfig = %config;
 
 	# And finally call l4p's initialization method.
-  	Log::Log4perl->init(\%config);
+	Log::Log4perl->init(\%config);
 
 	$rootLogger = $class->get_logger('');
 }
@@ -891,6 +891,7 @@ sub logLevels {
 		'player.display'             => 'ERROR',
 		'player.fonts'               => 'ERROR',
 		'player.firmware'            => 'ERROR',
+		'player.jive'                => 'ERROR',
 		'player.ir'                  => 'ERROR',
 		'player.menu'                => 'ERROR',
 		'player.playlist'            => 'ERROR',
