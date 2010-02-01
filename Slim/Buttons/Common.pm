@@ -1151,6 +1151,7 @@ our %functions = (
 		my $line = $sleepTime == 0 ? $client->string('CANCEL_SLEEP') : $client->prettySleepTime;
 
 		$client->showBriefly( {
+			jive => undef,
 			line => [ "", $line ],
 		},
 		{
