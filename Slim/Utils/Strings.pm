@@ -571,6 +571,7 @@ sub setLanguage {
 		$currentLang = $lang;
 
 		loadStrings({'ignoreCache' => 1});
+		loadExtraStrings();
 		setLocale();
 
 		for my $client ( Slim::Player::Client::clients() ) {
