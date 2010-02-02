@@ -186,7 +186,7 @@ sub _cliQuery_done {
 	my $query      = $params->{'query'};
 	my $expires    = $params->{'expires'};
 	my $timeout    = $params->{'timeout'};
-	my $playlistControlCM = $params->{'playlistControlCM'} or [];
+	my $playlistControlCM = $params->{'playlistControlCM'} || [];
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
 	
