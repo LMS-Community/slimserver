@@ -523,8 +523,18 @@ sub processCoverArtRequest {
 		);
 	};
 	
+	my $imageFilePath = blessed($obj) ? $obj->cover : 0;
+	$imageFilePath = $obj->path if $imageFilePath eq 1;
+	
+	if ( $trackid eq 'notCoverArt' ) {
+		# Cache the path to a non-cover icon image
+		my $skin = $params->{'skinOverride'} || $prefs->get('skin');
+		
+		$imageFilePath = $skinMgr->fixHttpPath($skin, $actualPathToImage) || $actualPathToImage;			
+	}
+	
 	if ( $@ ) {
-		logError("Unable to resize $path: $@");
+		logError("Unable to resize $path (original file: $imageFilePath): $@");
 
 		my $staticImg;
 		if ($trackid =~ /^-[0-9]+$/) {
