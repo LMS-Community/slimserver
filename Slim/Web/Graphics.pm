@@ -42,7 +42,6 @@ sub _cached {
 	
 	my $isInfo = main::INFOLOG && $log->is_info;
 	
-	# XXX: use get_fh
 	if ( my $cached = $cache->get($path) ) {
 		if ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,

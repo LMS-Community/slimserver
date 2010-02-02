@@ -2890,6 +2890,16 @@ sub ratingCommand {
 	$request->setStatusDone();
 }
 
+sub pragmaCommand {
+	my $request = shift;
+	
+	my $pragma = join( ' ', grep { $_ ne 'pragma' } $request->renderAsArray );
+	
+	Slim::Utils::OSDetect->getOS()->sqlHelperClass()->pragma($pragma);
+	
+	$request->setStatusDone();
+}
+
 ################################################################################
 # Helper functions
 ################################################################################

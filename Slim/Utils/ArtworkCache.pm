@@ -2,33 +2,24 @@ package Slim::Utils::ArtworkCache;
 
 # Lightweight, efficient, and fast file cache for artwork.
 #
-# This class is roughly 5x faster for fetching than using Cache::FileCache which imposes
-# too much overhead for our artwork needs, for example we don't need any expiration checking code.
-# It's even faster if using the get_fh method to return only a filehandle to the cache file, which
-# can then be sent out directly to the client without any extra memory or read overhead.
-#
-# Most of this module is stolen from CHI::Driver::File and CHI::Util, with some memory usage
-# improvements.
+# This class is roughly 9x faster for get, and 12x faster for set than using Cache::FileCache
+# which imposes too much overhead for our artwork needs.  Using a SQLite database also makes
+# it much faster to remove the cache.
 
-use common::sense;
+use strict;
+
+use DBD::SQLite;
 use Digest::MD5 ();
-use Fcntl qw(:DEFAULT);
-use File::Path qw(mkpath);
-use File::Spec::Functions qw(catdir catfile);
+use File::Spec::Functions qw(catfile);
 use Time::HiRes ();
 
-use constant DEPTH       => 2;
-use constant DIR_MODE    => oct(775);
-use constant FILE_MODE   => oct(666);
-use constant FETCH_FLAGS => O_RDONLY | O_BINARY;
-use constant STORE_FLAGS => O_WRONLY | O_CREAT | O_BINARY;
+use constant DB_FILENAME => 'ArtworkCache.db';
 
 {
 	if ( $File::Spec::ISA[0] eq 'File::Spec::Unix' ) {
-		*fast_catdir = *fast_catfile = sub { join( "/", @_ ) };
+		*fast_catfile = sub { join( "/", @_ ) };
 	}
 	else {
-		*fast_catdir  = sub { catdir(@_) };
 		*fast_catfile = sub { catfile(@_) };
 	}
 }
@@ -39,25 +30,20 @@ sub new {
 	my $class = shift;
 	my $root = shift;
 	
-	# If given the root then just return an instance pointing to it
-	# (used by the resize daemon)
-	if (defined $root) {
-		return bless { root => $root }, $class;
-	}
-	
 	if ( !$singleton ) {
-		require Slim::Utils::Prefs;
-		$root = fast_catdir(
-			Slim::Utils::Prefs::preferences('server')->get('librarycachedir'),
-			'ArtworkCache',
-		);
+		if ( !defined $root ) {
+			require Slim::Utils::Prefs;
+			$root = Slim::Utils::Prefs::preferences('server')->get('librarycachedir');
+			
+			# Update root value if librarycachedir changes
+			Slim::Utils::Prefs::preferences('server')->setChange( sub {
+				$singleton->wipe;
+				$singleton->setRoot( $_[1] );
+				$singleton->_init_db;
+			}, 'librarycachedir' );
+		}
 		
 		$singleton = bless { root => $root }, $class;
-		
-		# Update root value if librarycachedir changes
-		Slim::Utils::Prefs::preferences('server')->setChange( sub {
-			$singleton->{root} = fast_catdir( $_[1], 'ArtworkCache' );
-		}, 'librarycachedir' );
 	}
 	
 	return $singleton;
@@ -67,8 +53,30 @@ sub getRoot {
 	return shift->{root};
 }
 
+sub setRoot {
+	my ( $self, $root ) = @_;
+	
+	$self->{root} = $root;
+}
+
+sub wipe {
+	my $self = shift;
+	
+	if ( $self->{dbh} ) {
+		$self->_close_db;
+	}
+	
+	my $dbfile = fast_catfile( $self->{root}, DB_FILENAME );
+	
+	unlink $dbfile if -e $dbfile;
+}
+
 sub set {
 	my ( $self, $key, $data ) = @_;
+	
+	if ( !$self->{dbh} ) {
+		$self->_init_db;
+	}
 	
 	# packed data is stored as follows:
 	# 3 bytes type (jpg/png/gif)
@@ -89,50 +97,14 @@ sub set {
 	# Prepend the packed header to the original data
 	substr $$ref, 0, 0, $packed;
 	
-	my $dir;
-	my $file = $self->path_to_key( $key, \$dir );
+	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key) 
+	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 15 ) );
 	
-	mkpath( $dir, 0, DIR_MODE ) if !-d $dir;
-	
-	my $temp_file = $self->generate_temporary_filename( $dir, $file );
-	my $store_file = defined($temp_file) ? $temp_file : $file;
-	
-	# Fast spew, adapted from File::Slurp::write, with unnecessary options removed
-	{
-		my $write_fh;
-		unless (
-			sysopen(
-				$write_fh,	 $store_file,
-				STORE_FLAGS, FILE_MODE
-			)
-		  )
-		{
-			die "write_file '$store_file' - sysopen: $!";
-		}
-		my $size_left = length($$ref);
-		my $offset	  = 0;
-		do {
-			my $write_cnt = syswrite( $write_fh, $$ref, $size_left, $offset );
-			unless ( defined $write_cnt ) {
-				die "write_file '$store_file' - syswrite: $!";
-			}
-			$size_left -= $write_cnt;
-			$offset += $write_cnt;
-		} while ( $size_left > 0 );
-	}
-	
-	if ( defined($temp_file) ) {		
-		# Rename can fail in rare race conditions...try multiple times
-		#
-		for ( my $try = 0 ; $try < 3 ; $try++ ) {
-			last if ( rename( $temp_file, $file ) );
-		}
-		if ( -f $temp_file ) {
-			my $error = $!;
-			unlink($temp_file);
-			die "could not rename '$temp_file' to '$file': $error";
-		}
-	}
+	# Insert or replace the value
+	my $set = $self->{set_sth};
+	$set->bind_param( 1, $id );
+	$set->bind_param( 2, $$ref, DBI::SQL_BLOB );
+	$set->execute;
 	
 	# Remove the packed header
 	substr $$ref, 0, length($packed), '';
@@ -141,27 +113,17 @@ sub set {
 sub get {
 	my ( $self, $key ) = @_;
 	
-	my $file = $self->path_to_key($key);
-	return undef unless defined $file && -f $file;
+	if ( !$self->{dbh} ) {
+		$self->_init_db;
+	}
 	
-	# Fast slurp, adapted from File::Slurp::read, with unnecessary options removed
-	my $buf = '';
-	my $read_fh;
-	unless ( sysopen( $read_fh, $file, FETCH_FLAGS ) ) {
-		die "read_file '$file' - sysopen: $!";
-	}
-	my $size_left = -s $read_fh;
-	while (1) {
-		my $read_cnt = sysread( $read_fh, $buf, $size_left, length $buf );
-		if ( defined $read_cnt ) {
-			last if $read_cnt == 0;
-			$size_left -= $read_cnt;
-			last if $size_left <= 0;
-		}
-		else {
-			die "read_file '$file' - sysread: $!";
-		}
-	}
+	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key) 
+	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 15 ) );
+	
+	my $get = $self->{get_sth};
+	$get->execute($id);
+	
+	my ($buf) = $get->fetchrow_array;
 	
 	# unpack data and strip header from data as we go
 	my ($content_type, $mtime, $pathlen) = unpack( 'A3LS', substr( $buf, 0, 9, '' ) );
@@ -175,71 +137,69 @@ sub get {
 	};
 }
 
-# Return the same data as get(), but with a filehandle to the data.  This filehandle is pre-seeked
-# past the cache metadata header, so callers should not call seek on this filehandle.
-sub get_fh {
-	my ( $self, $key ) = @_;
+sub pragma {
+	my ( $self, $pragma ) = @_;
 	
-	my $file = $self->path_to_key($key);
-	return undef unless defined $file && -f $file;
+	my $dbh = $self->{dbh} || $self->_init_db;
 	
-	my $read_fh;
-	unless ( sysopen( $read_fh, $file, FETCH_FLAGS ) ) {
-		die "read_file '$file' - sysopen: $!";
+	$dbh->do("PRAGMA $pragma");
+	
+	if ( $pragma =~ /locking_mode/ ) {
+		# if changing the locking_mode we need to run a statement to change the lock
+		$dbh->do('SELECT 1 FROM cache LIMIT 1');
 	}
-	
-	# unpack data and strip header from data as we go
-	# This requires 2 reads, but does not use any extra memory and the 
-	# returned filehandle can be streamed out directly to the client
-	my $buf = '';
-	if ( sysread( $read_fh, $buf, 9 ) != 9 ) {
-		die "read_file '$file' - unable to read header";
-	}
-	
-	my ($content_type, $mtime, $pathlen) = unpack( 'A3LS', $buf );
-	
-	my $original_path;
-	if ( sysread( $read_fh, $original_path, $pathlen ) != $pathlen ) {
-		die "read_file '$file' - unable to read header";
-	}
-	
-	return {
-		content_type  => $content_type,
-		mtime         => $mtime,
-		original_path => $original_path,
-		data_fh       => $read_fh,
-	};
-}		
-
-sub generate_temporary_filename {
-	my ( $self, $dir, $file ) = @_;
-
-	my $unique_id = Digest::MD5::md5_hex( $file . Time::HiRes::time() );
-	
-	return fast_catfile( $dir, $unique_id );
 }
 
-sub path_to_key {
-	my ( $self, $key, $dir_ref ) = @_;
+sub _init_db {
+	my $self = shift;
+	my $retry = shift;
 	
-	my $filename = Digest::MD5::md5_hex($key);
+	my $dbfile = fast_catfile( $self->{root}, DB_FILENAME );
 	
-	my @paths = (
-		$self->{root},
-		map { substr( $filename, $_, 1 ) } ( 0 .. DEPTH - 1 )
-	);
+	my $dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
+		AutoCommit => 1,
+		PrintError => 0,
+		RaiseError => 1,
+	} );
 	
-	my $filepath;
-	if ( defined $dir_ref && ref $dir_ref ) {
-		my $dir = fast_catdir(@paths);
-		$filepath = fast_catfile( $dir, $filename );
-		$$dir_ref = $dir;
+	eval {
+		$dbh->do('PRAGMA journal_mode = OFF');
+		$dbh->do('PRAGMA synchronous = OFF');
+		$dbh->do('PRAGMA locking_mode = EXCLUSIVE');
+	
+		# Create the table, note that using an integer primary key
+		# is much faster than any other kind of key, such as a char
+		# because it doesn't have to create an index
+		$dbh->do('CREATE TABLE IF NOT EXISTS cache (k INTEGER PRIMARY KEY, v BLOB)');
+	};
+	
+	if ( $@ ) {
+		if ( $retry ) {
+			# Give up after 2 tries
+			die "Unable to read/create $dbfile\n";
+		}
+		
+		# Something was wrong with the database, delete it and try again
+		$self->wipe;
+		
+		return $self->_init_db(1);
 	}
-	else {
-		$filepath = fast_catfile( @paths, $filename );
-	}
 	
-	return $filepath;
+	# Prepare statements we need
+	$self->{set_sth} = $dbh->prepare('INSERT OR REPLACE INTO cache (k, v) VALUES (?, ?)');
+	$self->{get_sth} = $dbh->prepare('SELECT v FROM cache WHERE k = ?');
+	
+	$self->{dbh} = $dbh;
+	
+	return $dbh;
+}
+
+sub _close_db {
+	my $self = shift;
+	
+	$self->{dbh}->disconnect;
+	
+	delete $self->{$_} for qw(set_sth get_sth dbh);
 }
 
 1;

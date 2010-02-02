@@ -336,7 +336,7 @@ sub updateDebug {
 
 =head2 disconnect()
 
-Disconnect from the database, and ununtialize the class.
+Disconnect from the database, and uninitialize the class.
 
 =cut
 
@@ -2038,6 +2038,9 @@ sub wipeCaches {
 	if (!main::SCANNER) {	
 		Slim::Control::Queries::wipeCaches();
 	}
+	
+	require Slim::Utils::ArtworkCache;
+	Slim::Utils::ArtworkCache->new()->wipe();
 
 	main::INFOLOG && logger('scan.import')->info("Wiped all in-memory caches.");
 }

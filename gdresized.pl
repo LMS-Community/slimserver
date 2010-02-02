@@ -105,12 +105,16 @@ $SIG{TERM} = $SIG{INT} = sub {
 	exit 0;
 };
 
+my $cache = Slim::Utils::ArtworkCache->new('.');
+
 DEBUG && warn "$0 listening on " . SOCKET_PATH . "\n";
 
 while (1) {
 	my $client = $socket->accept();
 	
 	eval {
+		DEBUG && (my $tv = Time::HiRes::time());
+		
 		# get command
 		my $buf = <$client>;
 	
@@ -122,15 +126,18 @@ while (1) {
 		}
 	
 		my @spec = split ',', $spec;
-	
-		DEBUG && (my $tv = Time::HiRes::time());
-	
+		
+		if ( $cache->getRoot() ne $cacheroot ) {
+			$cache->setRoot($cacheroot);
+			$cache->pragma('locking_mode = NORMAL');
+		}
+		
 		# do resize
 		Slim::Utils::GDResizer->gdresize(
 			file     => $file,
 			debug    => DEBUG,
 			faster   => $faster,
-			cache    => Slim::Utils::ArtworkCache->new($cacheroot),
+			cache    => $cache,
 			cachekey => $cachekey,
 			spec     => \@spec,
 		);

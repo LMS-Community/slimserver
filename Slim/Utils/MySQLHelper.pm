@@ -640,6 +640,8 @@ sub postConnect { }
 
 sub postOptimize { }
 
+sub pragma { }
+
 =head2 cleanup()
 
 Shut down MySQL when Squeezebox Server is shut down.

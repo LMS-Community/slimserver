@@ -29,6 +29,7 @@ use File::Spec::Functions qw(:ALL);
 use JSON::XS::VersionOneAndTwo;
 use Time::HiRes qw(sleep);
 
+use Slim::Utils::ArtworkCache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -85,6 +86,12 @@ sub init {
 			[0, 0, 0, \&_notifyFromScanner]
 		);
 	}
+	
+	if ( main::SCANNER ) {
+		# At init time we need to notify the main process
+		# to unlock the database so we can access it
+		$class->updateProgress('unlock');
+	}
 }
 
 sub source {
@@ -111,9 +118,13 @@ sub on_connect_do {
 	my $sql = [
 		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = MEMORY',
-		'PRAGMA locking_mode = EXCLUSIVE',
 		'PRAGMA foreign_keys = ON',
 	];
+	
+	if ( !main::SCANNER ) {
+		# Use exclusive locking only in the main process
+		push @{$sql}, 'PRAGMA locking_mode = EXCLUSIVE';
+	}
 	
 	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file
@@ -446,6 +457,28 @@ Shut down when Squeezebox Server is shut down.
 
 sub cleanup { }
 
+=head2 pragma()
+
+Run a given PRAGMA statement.
+
+=cut
+
+sub pragma {
+	my ( $class, $pragma ) = @_;
+	
+	my $dbh = Slim::Schema->dbh;
+	$dbh->do("PRAGMA $pragma");
+	
+	if ( $pragma =~ /locking_mode/ ) {
+		# if changing the locking_mode we need to run a statement on each database to change the lock
+		$dbh->do('SELECT 1 FROM metainformation LIMIT 1');
+		$dbh->do('SELECT 1 FROM tracks_persistent LIMIT 1');
+	}
+	
+	# Pass the pragma to the ArtworkCache database
+	Slim::Utils::ArtworkCache->new->pragma($pragma);
+}
+
 sub _dbFile {
 	my ( $class, $name ) = @_;
 	
@@ -469,6 +502,10 @@ sub _notifyFromScanner {
 	my $msg = $request->getParam('_msg');
 	
 	main::INFOLOG && $log->is_info && $log->info("Notify from scanner: $msg");
+	
+	if ( $msg eq 'unlock' ) {
+		$class->pragma('locking_mode = NORMAL');
+	}
 	
 	# If user aborted the scan, return an abort message
 	if ( Slim::Music::Import->hasAborted ) {
@@ -524,10 +561,14 @@ sub _notifyFromScanner {
 			# Scanner has finished.
 			$SCANNING = 0;
 		}
+		
+		$class->pragma('locking_mode = EXCLUSIVE');
 	}
 	elsif ( $msg eq 'exit' ) {
 		# Scanner is exiting.  If we get this without an 'end' message
 		# the scanner aborted and we should throw away the scanner database
+		$class->pragma('locking_mode = EXCLUSIVE');
+		
 		if ( $SCANNING ) {
 			my $db = $class->_dbFile('squeezebox-scanner.db');
 			

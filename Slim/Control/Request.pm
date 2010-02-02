@@ -52,6 +52,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    rescan          <|playlists|?>
  N    rescanprogress  <tagged parameters>
  N    wipecache
+ N    pragma          <pragma>
  
  N    albums          <startindex>                <numitems>                  <tagged parameters>
  N    artists         <startindex>                <numitems>                  <tagged parameters>
@@ -593,6 +594,7 @@ sub init {
 	addDispatch(['playlists',      'tracks',         '_index',     '_quantity'],                       [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
 	addDispatch(['power',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
 	addDispatch(['power',          '_newvalue',      '_noplay'],                                       [1, 0, 1, \&Slim::Control::Commands::powerCommand]);
+	addDispatch(['pragma',         '_pragma'],                                                         [0, 0, 0, \&Slim::Control::Commands::pragmaCommand]);
 	addDispatch(['pref',           '_prefname',      '?'],                                             [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
 	addDispatch(['pref',           'validate',       '_prefname',  '_newvalue'],                       [0, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
 	addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 1, \&Slim::Control::Commands::prefCommand]);

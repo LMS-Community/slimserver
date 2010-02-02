@@ -20,6 +20,8 @@ my $log   = logger('artwork');
 
 my ($gdresizein, $gdresizeout, $gdresizeproc);
 
+my $pending_requests = 0;
+
 sub resize {
 	my ($class, $file, $cachekey, $specs, $callback) = @_;
 	
@@ -33,14 +35,25 @@ sub resize {
 		require AnyEvent::Handle;
 		
 		# Get cache root for passing to daemon
-		my $cacheroot = Slim::Utils::ArtworkCache->new()->getRoot();
+		my $cache = Slim::Utils::ArtworkCache->new();
+		my $cacheroot = $cache->getRoot();
 		
-		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize");
+		# Change artwork cache locking mode so daemon can write to it
+		$cache->pragma('locking_mode = NORMAL');
+		
+		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize (pending requests: $pending_requests)");
+		
+		$pending_requests++;
 		
 		# Daemon available, do an async resize
 		AnyEvent::Socket::tcp_connect( 'unix/', SOCKET_PATH, sub {
 			my $fh = shift || do {
 				main::DEBUGLOG && $isDebug && $log->debug("daemon failed to connect: $!");
+				
+				if ( --$pending_requests == 0 ) {
+					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
+					$cache->pragma('locking_mode = EXCLUSIVE');
+				}
 				
 				# Fallback to resizing the old way
 				sync_resize($file, $cachekey, $specs, $callback);
@@ -55,6 +68,11 @@ sub resize {
 				main::DEBUGLOG && $isDebug && $log->debug("daemon timed out");
 				
 				$handle && $handle->destroy;
+				
+				if ( --$pending_requests == 0 ) {
+					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
+					$cache->pragma('locking_mode = EXCLUSIVE');
+				}
 				
 				# Fallback to resizing the old way
 				sync_resize($file, $cachekey, $specs, $callback);
@@ -73,6 +91,11 @@ sub resize {
 					$_[0]->destroy;
 					
 					Slim::Utils::Timers::killTimers(undef, $timeout);
+					
+					if ( --$pending_requests == 0 ) {
+						main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
+						$cache->pragma('locking_mode = EXCLUSIVE');
+					}
 					
 					$callback && $callback->();
 				},
