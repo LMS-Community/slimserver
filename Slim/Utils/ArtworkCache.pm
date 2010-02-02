@@ -97,8 +97,10 @@ sub set {
 	# Prepend the packed header to the original data
 	substr $$ref, 0, 0, $packed;
 	
-	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key) 
-	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 15 ) );
+	# Get a 32-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
+	# We have to limit this to 32 bits because hex() doesn't work for larger values on
+	# a 32-bit machine
+	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 8 ) );
 	
 	# Insert or replace the value
 	my $set = $self->{set_sth};
@@ -117,8 +119,10 @@ sub get {
 		$self->_init_db;
 	}
 	
-	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key) 
-	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 15 ) );
+	# Get a 32-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
+	# We have to limit this to 32 bits because hex() doesn't work for larger values on
+	# a 32-bit machine
+	my $id = hex( substr( Digest::MD5::md5_hex($key), 0, 8 ) );
 	
 	my $get = $self->{get_sth};
 	$get->execute($id);
