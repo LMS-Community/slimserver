@@ -55,7 +55,7 @@ sub init {
 		sub {
 			Slim::Utils::Timers::setTimer(
 				undef,
-				time() + 5,
+				time() + 2,
 				\&Slim::Networking::Discovery::Server::fetch_servers,
 			);			
 		},
