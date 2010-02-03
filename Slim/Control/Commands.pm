@@ -1549,11 +1549,12 @@ sub playlistXtracksCommand {
 	}
 
 	# get the parameters
-	my $client   = $request->client();
-	my $cmd      = $request->getRequest(1); #p1
-	my $what     = $request->getParam('_what'); #p2
-	my $listref  = $request->getParam('_listref');#p3
-	my $fadeIn   = $request->getParam('_fadein');#p4
+	my $client      = $request->client();
+	my $cmd         = $request->getRequest(1); #p1
+	my $what        = $request->getParam('_what'); #p2
+	my $listref     = $request->getParam('_listref');#p3
+	my $fadeIn      = $request->getParam('_fadein');#p4
+	my $jumpToIndex = $request->getParam('_index');#p5, by default undef - see bug 2085
 
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 
@@ -1561,9 +1562,6 @@ sub playlistXtracksCommand {
 		$request->setStatusBadParams();
 		return;
 	}
-
-	# This should be undef - see bug 2085
-	my $jumpToIndex = undef;
 
 	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
 	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'loadtracks' ) {
@@ -1631,7 +1629,7 @@ sub playlistXtracksCommand {
 
 		if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
 
-			if (!Slim::Player::Playlist::shuffle($client)) {
+			if (!defined $jumpToIndex && !Slim::Player::Playlist::shuffle($client)) {
 				$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $client->currentPlaylist->path );
 			}
 
@@ -3171,7 +3169,7 @@ sub _playlistXtracksCommand_constructTrackList {
 	my $term    = shift;
 	my $list    = shift;
 	
-	my @list = split /,/, $list;
+	my @list = split (/,/, $list);
 	my @tracks = ();
 	for my $url ( @list ) {
 		my $track = Slim::Schema->objectForUrl($url);
