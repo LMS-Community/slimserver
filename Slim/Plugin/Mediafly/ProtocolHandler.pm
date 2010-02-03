@@ -95,11 +95,9 @@ sub getNextTrack {
 	
 	if ( $first && $playedFirst ne $first ) {
 		$firstslug = $first;
-		
-		$client->master->pluginData( playedFirst => $first );
 	}
 	elsif ( my $track = $song->pluginData() ) {
-		$prevslug = $track->{slug} || '';
+		$prevslug = $track->{slug} || $client->master->pluginData('previousSlug');
 	}
 	
 	# Talk to SN and get the next track to play
@@ -113,6 +111,7 @@ sub getNextTrack {
 		{
 			client        => $client,
 			song          => $song,
+			playedFirst   => $first,
 			callback      => $successCb,
 			errorCallback => $errorCb,
 			timeout       => 35,
@@ -163,6 +162,8 @@ sub gotNextTrack {
 	
 	# Save metadata for this track
 	$song->pluginData( $track );
+	$client->master->pluginData( playedFirst => $http->params->{playedFirst} );
+	$client->master->pluginData( previousSlug => $track->{slug} );
 	$song->streamUrl($track->{url});
 
 	$http->params->{callback}->();
