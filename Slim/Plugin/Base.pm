@@ -31,7 +31,7 @@ sub initPlugin {
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
 	# ambiguous function name if there ever was) in a closure so that it
 	# can be called as class method.
-	if ( !main::SCANNER && $class->can('setMode') && $class->modeName ) {
+	if ( !main::SCANNER && $class->can('setMode') && $mode ) {
 
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
