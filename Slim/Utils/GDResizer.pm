@@ -726,7 +726,7 @@ sub _cache {
 
 	$cache->set( $key, $cached );
 	
-	$debug && warn "Cached $key\n";
+	$debug && warn "Cached $key (" . length($$imgref) . " bytes)\n";
 }
 
 1;

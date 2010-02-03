@@ -97,6 +97,10 @@ sub set {
 	# Prepend the packed header to the original data
 	substr $$ref, 0, 0, $packed;
 	
+	# XXX: bug in DBD::SQLite, if utf-8 flag is on for the string
+	# the data is converted to UTF-8 even if it's in a SQL_BLOB field
+	utf8::downgrade($$ref);
+	
 	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
 	# Have to concat 2 values here so it works on a 32-bit machine
 	my $md5 = Digest::MD5::md5_hex($key);
@@ -128,6 +132,8 @@ sub get {
 	$get->execute($id);
 	
 	my ($buf) = $get->fetchrow_array;
+	
+	return unless defined $buf;
 	
 	# unpack data and strip header from data as we go
 	my ($content_type, $mtime, $pathlen) = unpack( 'A3LS', substr( $buf, 0, 9, '' ) );
