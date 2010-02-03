@@ -302,9 +302,17 @@ sub getMetadataFor {
 	my $icon = $class->getIcon();
 	
 	if ( my $track = $song->pluginData() ) {
+		
+		my $date = '';
+		($date) = $track->{published} =~ m/^(\d{4}-\d{2}-\d{2})/ if $track->{published};
+		
+		# bug 15499 - wipe track object's title, it's initially set by Slim::Control::Queries::_songData only
+		$song->track->title('') if $song->track->title();
+
 		return {
 			artist      => $track->{show}->[0]->{title} || $track->{showTitle},
 			title       => $track->{title},
+			album       => $date,
 			cover       => $track->{imageUrl},
 			icon        => $icon,
 			duration    => $track->{secs},
