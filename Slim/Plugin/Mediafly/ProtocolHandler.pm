@@ -319,6 +319,10 @@ sub getMetadataFor {
 			bitrate     => ( $track->{bitrate} ) ? $track->{bitrate} . 'k' : undef,
 			type        => 'Mediafly',
 			info_link   => 'plugins/mediafly/trackinfo.html',
+			buttons       => {
+				fwd => 1,
+				rew => 1,
+			},
 		};
 	}
 	else {
