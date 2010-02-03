@@ -79,7 +79,7 @@
 	[%- FOREACH item = additionalLinkOrder.my_apps %]
 		<li><a href="[% additionalLinks.my_apps.$item | html %]player=[% playerURI %]" [% IF additionalLinks.my_apps.$item.match('^http:') %]target="mysb"[% END %]>[% item | getstring | html %]</a></li>
 	[%- END %]
-	[%- FOREACH link = additionalLinks.my_apps; IF !additionalLinks.my_apps.grep(link.key).size %]
+	[%- FOREACH link = additionalLinks.apps; IF !additionalLinkOrder.my_apps.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END; END %]
 	</ul>

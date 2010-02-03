@@ -78,7 +78,7 @@
 		[%- FOREACH item = additionalLinkOrder.my_apps %][% key = item %][% value = additionalLinks.my_apps.$item %]
 			[% linkList.push([key,value]) %]
 		[%- END %]
-		[%- FOREACH link = additionalLinks.my_apps; IF !additionalLinkOrder.my_apps.grep(link.key).size %][% value = link.value %][% key = link.key %]
+		[%- FOREACH link = additionalLinks.apps; IF !additionalLinkOrder.my_apps.grep(link.key).size %][% value = link.value %][% key = link.key %]
 			[% linkList.push([key,value]) %]
 		[%- END;END %]
 		[% FOREACH link = linkList %][% key = link.0 %][% value = link.1 %]

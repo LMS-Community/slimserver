@@ -7,6 +7,7 @@
 			[%- IF additionalLinks.my_apps %]
 			<OPTION value="" label="">---[% "PLUGIN_MY_APPS_MODULE_NAME" | string  %]---</option>
 			[%- PROCESS addBrowseLinks links=additionalLinks.my_apps order=additionalLinkOrder.my_apps %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.apps order=additionalLinkOrder.apps %]
 			[% END %]
 			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
 			[%- PROCESS addBrowseLinks links=additionalLinks.search order={} %]

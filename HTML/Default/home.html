@@ -100,7 +100,7 @@ ELSE %]
 				PROCESS menuItem;
 			END;
 		END;
-		FOREACH link = additionalLinks.my_apps;
+		FOREACH link = additionalLinks.apps;
 			IF !additionalLinkOrder.my_apps.grep(link.key).size;
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				PROCESS menuItem;
