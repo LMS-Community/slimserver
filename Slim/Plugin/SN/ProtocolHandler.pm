@@ -37,7 +37,7 @@ sub overridePlayback {
 	my @playerIds = map($_->id, @players);
 	
 	# Show-briefly to each player saying is being switched
-	my $line = $client->string('PLUGIN_SN_SWITCH');
+	my $line = $client->string('SQUEEZENETWORK_CONNECTING');
 	foreach (@players) {
 		$_->showBriefly( {
 			line => [ $line ],
