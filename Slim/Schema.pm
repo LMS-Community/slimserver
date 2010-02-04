@@ -1195,7 +1195,7 @@ sub _createOrUpdateAlbum {
 			$albumHash->{$shortTag} = $attributes->{$gainTag};
 			
 			# Bug 15483, remove non-numeric gain tags
-			if ( $albumHash->{$shortTag} !~ /^[\d\-\.]+$/ ) {
+			if ( $albumHash->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
 				my $file = Slim::Utils::Misc::pathFromFileURL($trackColumns->{url});
 				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $albumHash->{$shortTag} );
 
