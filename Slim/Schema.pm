@@ -1193,6 +1193,14 @@ sub _createOrUpdateAlbum {
 			$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
 
 			$albumHash->{$shortTag} = $attributes->{$gainTag};
+			
+			# Bug 15483, remove non-numeric gain tags
+			if ( $albumHash->{$shortTag} !~ /^[\d\-\.]+$/ ) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($trackColumns->{url});
+				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $albumHash->{$shortTag} );
+
+				delete $albumHash->{$shortTag};
+			}
 		}
 		else {
 			$albumHash->{$shortTag} = undef;
