@@ -57,7 +57,7 @@ sub init {
 		sub {
 			Slim::Utils::Timers::setTimer(
 				undef,
-				time() + 5,
+				time() + 2,
 				\&fetch_players,
 			);			
 		},
