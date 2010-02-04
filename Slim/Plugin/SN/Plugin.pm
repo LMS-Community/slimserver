@@ -24,7 +24,7 @@ my @defaultServices = (qw(
 	classical
 	deezer
 	mediafly
-	naptser
+	napster
 	pandora
 	rhapd
 	slacker

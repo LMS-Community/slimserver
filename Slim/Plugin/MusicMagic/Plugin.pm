@@ -165,7 +165,7 @@ our %validMixTypes = (
 	'album'    => 'album',
 	'age'      => 'album',
 	'artist'   => 'artist',
-	'genre'    => 'filter',
+	'genre'    => 'genre',
 	'mood'     => 'mood',
 	'playlist' => 'playlist',
 	'year'     => 'filter=?year',

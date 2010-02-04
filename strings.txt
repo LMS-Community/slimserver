@@ -1507,6 +1507,7 @@ POWERING_OFF
 	ZH_CN	进入备用状态中...
 
 POWER
+#SLT: This is "power" as in the "Power on/off" button
 	CS	Napájení
 	DA	Tænd/sluk
 	DE	Ein/Aus

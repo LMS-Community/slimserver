@@ -3263,6 +3263,11 @@ sub serverstatusQuery_filter {
 	my $self = shift;
 	my $request = shift;
 	
+	# we want to know about clients going away as soon as possible
+	if ($request->isCommand([['client'], ['forget']]) || $request->isCommand([['connect']])) {
+		return 1;
+	}
+	
 	# we want to know about rescan and all client notifs, as well as power on/off
 	# FIXME: wipecache and rescan are synonyms...
 	if ($request->isCommand([['wipecache', 'rescan', 'client', 'power']])) {
