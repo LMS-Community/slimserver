@@ -10,6 +10,7 @@ package Slim::Plugin::SN::Plugin;
 use strict;
 use Scalar::Util 'blessed';
 
+use Slim::Utils::Prefs;
 use Slim::Player::ProtocolHandlers;
 use Slim::Plugin::SN::ProtocolHandler;
 use Slim::Utils::Log;
@@ -41,10 +42,39 @@ sub shutdownPlugin {
 sub postinitPlugin {
 	my $class = shift;
 
-	# XXX get up-to-date list of services from SN
-	my @services = @defaultServices;
+	my $prefs = preferences('server');
+	my $services = \@defaultServices;
 	
-	foreach (@services) {
+	if ( my $announcedServices = $prefs->get('sn_protocolhandlers') ) {
+		$services =	$announcedServices if (ref $announcedServices eq 'ARRAY' && scalar @$announcedServices);
+	}
+	
+	_registerHandlers($class, $services);
+	
+	$prefs->setChange( sub {
+		my $services = $_[1];
+		main::INFOLOG && $log->is_info && $log->info("Got services update: ", join(', ', @$services));
+		if (ref $services eq 'ARRAY' && scalar @$services) {
+			
+			# Clean out previous handlers
+			foreach (Slim::Player::ProtocolHandlers->registeredHandlers) {
+				if (Slim::Player::ProtocolHandlers->handlerForProtocol($_) eq 'Slim::Plugin::SN::ProtocolHandler') {
+					Slim::Player::ProtocolHandlers->registerHandler($_ => 0);
+				}
+			}
+			
+			# register updated set
+			_registerHandlers($class, $services);
+		}
+	}, 'sn_protocolhandlers' );
+	
+	return 1;
+}
+
+sub _registerHandlers {
+	my ($class, $services) = @_;
+	
+	foreach (@$services) {
 		if (!Slim::Player::ProtocolHandlers->isValidHandler($_)) {
 			Slim::Player::ProtocolHandlers->registerHandler(
 				$_ => 'Slim::Plugin::SN::ProtocolHandler'
@@ -52,7 +82,7 @@ sub postinitPlugin {
 		}
 	}
 	
-	my $join  = join('|', @services);
+	my $join  = join('|', @$services);
 	$match = qr/^$join:/;
 
 	return 1;
