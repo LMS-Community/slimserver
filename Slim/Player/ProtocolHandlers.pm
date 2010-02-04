@@ -76,6 +76,13 @@ sub registerIconHandler {
         $iconHandlers{$regex} = $ref;
 }
 
+
+sub handlerForProtocol {
+	my ($class, $protocol) = @_;
+	
+	return $protocolHandlers{$protocol};
+}
+
 sub handlerForURL {
 	my ($class, $url) = @_;
 

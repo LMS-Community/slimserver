@@ -174,6 +174,11 @@ sub _init_done {
 		}
 	}
 	
+	# Stash the supported protocols
+	if ( $json->{protocolhandlers}  && ref $json->{protocolhandlers} eq 'ARRAY') {
+		$prefs->set( sn_protocolhandlers => $json->{protocolhandlers} );
+	}
+
 	# Init pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->init() if $prefs->get('sn_sync');
 	
