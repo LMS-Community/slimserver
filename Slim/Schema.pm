@@ -2067,10 +2067,18 @@ sub _preCheckAttributes {
 		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
 
 		if (defined $attributes->{$gainTag}) {
-
+		    
 			$attributes->{$shortTag} = delete $attributes->{$gainTag};
 			$attributes->{$shortTag} =~ s/\s*dB//gi;
 			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
+			
+			# Bug 15483, remove non-numeric gain tags
+			if ( $attributes->{$shortTag} !~ /^[\d\-\.]+$/ ) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($url);
+				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
+				
+				delete $attributes->{$shortTag};
+			}
 		}
 	}
 
@@ -2629,6 +2637,14 @@ sub _postCheckAttributes {
 				$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
 
 				$set{$shortTag} = $attributes->{$gainTag};
+				
+				# Bug 15483, remove non-numeric gain tags
+				if ( $set{$shortTag} !~ /^[\d\-\.]+$/ ) {
+					my $file = Slim::Utils::Misc::pathFromFileURL($trackUrl);
+					$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $set{$shortTag} );
+
+					delete $set{$shortTag};
+				}
 
 			} else {
 
