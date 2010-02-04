@@ -3119,7 +3119,7 @@ sub serverstatusQuery_filter {
 	my $request = shift;
 	
 	# we want to know about clients going away as soon as possible
-	if ($request->isCommand([['client'] ['forget']]) || $request->isCommand([['connect']])) {
+	if ($request->isCommand([['client'], ['forget']]) || $request->isCommand([['connect']])) {
 		return 1;
 	}
 	
