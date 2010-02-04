@@ -110,19 +110,24 @@ sub _checkAndPlay {
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($args));
 	
 	my $foundPlayer = undef;
+	my $foundPlayers = 0;
 	foreach my $id (@{$args->{'playerIds'}}) {
-		if (!grep {$id eq $_->{'mac'}} @snPlayers) {
-			if ($args->{'retryCount'}++ > RETRY_LIMIT) {
-				$log->warn("At least player $id did not make it to mysqueezebox.com");
-				last;	# give up waiting
-			} else {
-				Slim::Networking::SqueezeNetwork::Players->fetch_players();
-				Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 1, \&_checkAndPlay, $args);
-			}
-		} else {
+		if (grep {$id eq $_->{'mac'}} @snPlayers) {
 			$foundPlayer = $id;
+			$foundPlayers++;
 		}
 	}
+	
+	if ($foundPlayers < scalar @{$args->{'playerIds'}}) {
+		if ($args->{'retryCount'}++ > RETRY_LIMIT) {
+			$log->warn("At least one player did not yet make it to mysqueezebox.com");
+			# give up waiting
+		} else {
+			Slim::Networking::SqueezeNetwork::Players->fetch_players();
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 1, \&_checkAndPlay, $args);
+			return;
+		}
+	}	
 	
 	if ($foundPlayer) {	# at least one player made it
 		my $http = Slim::Networking::SqueezeNetwork->new(
