@@ -2521,7 +2521,7 @@ sub _preCheckAttributes {
 			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
 			
 			# Bug 15483, remove non-numeric gain tags
-			if ( $attributes->{$shortTag} !~ /^[\d\-\.]+$/ ) {
+			if ( $attributes->{$shortTag} !~ /^[\d\-\+\.]+$/ ) {
 				my $file = Slim::Utils::Misc::pathFromFileURL($url);
 				$log->error("Invalid ReplayGain tag found in $file: $gainTag -> " . $attributes->{$shortTag} );
 				
