@@ -64,6 +64,10 @@ my $log = logger('server');
 
 my $prefs = preferences('server');
 
+use constant CACHE_VERSION => 3;
+# version 2 - include the sum of string file mtimes as an additional validation check
+# version 3 - include the server revision
+
 =head1 METHODS
 
 =head2 init( )
@@ -111,9 +115,6 @@ sub loadStrings {
 	# between 32-bit and 64-bit perl for example
 	$stringCache .= '.' . Slim::Utils::OSDetect::details()->{osArch} . '.bin';
 
-	my $stringCacheVersion = 2; # Version number for cache file
-	# version 2 - include the sum of string file mtimes as an additional validation check
-
 	# use stored stringCache if newer than all string files and correct version
 	if (!$args->{'ignoreCache'} && -r $stringCache && ($newest < (stat($stringCache))[9])) {
 
@@ -130,7 +131,7 @@ sub loadStrings {
 		}
 
 		if (!$@ && defined $strings &&
-			defined $strings->{'version'} && $strings->{'version'} == $stringCacheVersion &&
+			defined $strings->{'version'} && $strings->{'version'} == CACHE_VERSION &&
 			defined $strings->{'lang'} && $strings->{'lang'} eq $currentLang ) {
 
 			$defaultStrings = $strings->{$currentLang};
@@ -168,7 +169,7 @@ sub loadStrings {
 	# otherwise reparse all string files
 	unless ($args->{'dontClear'}) {
 		$strings = {
-			'version'        => $stringCacheVersion,
+			'version'        => CACHE_VERSION,
 			'mtimesum'       => $sum,
 			'lang'           => $currentLang,
 			'files'          => $files,
