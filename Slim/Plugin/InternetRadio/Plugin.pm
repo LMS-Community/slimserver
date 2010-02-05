@@ -5,6 +5,7 @@ package Slim::Plugin::InternetRadio::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Digest::MD5 ();
 use File::Basename qw(basename);
 use File::Path qw(mkpath);
 use File::Spec::Functions qw(catdir catfile);
@@ -377,6 +378,9 @@ sub radiotimeFeed {
 
 	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
 	$feed .= 'formats=' . join(',', @formats);
+	
+	# Bug 15568, pass obfuscated serial to RadioTime
+	$feed .= '&serial=' . Digest::MD5::md5_hex( $client->uuid || $client->id );
 	
 	return $feed;
 }
