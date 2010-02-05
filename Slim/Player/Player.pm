@@ -298,8 +298,8 @@ sub power {
 		if (!$controller->isPlaying() && !$noplay) {
 			
 			if ($resumeOn =~ /Reset/) {
-				# reset playlist to start
-				$client->execute(["playlist","jump", 0, 1]);
+				# reset playlist to start, but don't start the playback yet
+				$client->execute(["playlist","jump", 0, 1, 1]);
 			}
 			
 			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client)
