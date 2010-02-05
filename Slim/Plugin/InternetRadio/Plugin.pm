@@ -10,6 +10,7 @@ use File::Path qw(mkpath);
 use File::Spec::Functions qw(catdir catfile);
 use HTTP::Date;
 use JSON::XS::VersionOneAndTwo;
+use Tie::IxHash;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Networking::SimpleAsyncHTTP;
@@ -337,13 +338,14 @@ sub cacheIconError {
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
 
-	my %rtFormats = (
+	# In order of preference
+	tie my %rtFormats, 'Tie::IxHash', (
 		aac     => 'aac',
-		mp3     => 'mp3',
-		wma     => 'wma',
 		ogg     => 'ogg',
-		wmvoice => 'wma',
+		mp3     => 'mp3',
 		wmpro   => 'wmap',
+		wma     => 'wma',
+		wmvoice => 'wma',
 		# Real Player is supported through the AlienBBC plugin
 		real    => 'rtsp',
 	);
