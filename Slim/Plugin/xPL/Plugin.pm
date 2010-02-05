@@ -20,7 +20,7 @@ use strict;
 use IO::Socket;
 use Scalar::Util qw(blessed);
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::xPL::Settings;
 }
 
@@ -58,7 +58,7 @@ $prefs->migrate(1, sub {
 # plugin: initialize xPL support
 sub initPlugin {
 
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::xPL::Settings->new;
 	}
 

@@ -36,7 +36,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::PreventStandby::Settings;
 }
 
@@ -79,7 +79,7 @@ sub getDisplayName {
 
 sub initPlugin {
 	
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::PreventStandby::Settings->new;
 	}
 

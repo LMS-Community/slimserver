@@ -16,7 +16,7 @@ use Time::HiRes;
 
 use base qw(Slim::Plugin::Base);
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::Rescan::Settings;
 }
 
@@ -74,7 +74,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 	
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::Rescan::Settings->new;
 	}
 

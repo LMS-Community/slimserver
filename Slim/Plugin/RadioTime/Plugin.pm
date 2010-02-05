@@ -26,7 +26,7 @@ sub initPlugin {
 	# Initialize metadata handler
 	Slim::Plugin::RadioTime::Metadata->init();
 	
-	if ( !main::SLIM_SERVICE && !$::noweb) {
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/radiotime/trackinfo.html',

@@ -16,8 +16,7 @@ sub initDetails {
 	$class->{osDetails} = $class->SUPER::initDetails();
 
 	# package specific addition to @INC to cater for plugin locations
-	$class->{osDetails}->{isSqueezeOS} = 1 ;
-	$::noweb = 1;
+	$class->{osDetails}->{isSqueezeOS} = 1;
 	
 	if ( !main::SCANNER && -r '/proc/cpuinfo' ) {
 		# Read MAC/UUID from cpuinfo

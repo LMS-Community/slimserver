@@ -46,7 +46,6 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::HTTP::ClientConn;
-use Slim::Web::HTTP::CSRF;
 use Slim::Web::Pages;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
@@ -115,17 +114,17 @@ my $prefs = preferences('server');
 # initialize the http server
 sub init {
 
-	if ($::noweb) {
-		require Slim::Web::Template::NoWeb;
-		$skinMgr = Slim::Web::Template::NoWeb->new();
-	}
-
-	else {
+	if ( main::WEBUI ) {
+		require Slim::Web::HTTP::CSRF;
 		require Slim::Web::Template::SkinManager;
 		$skinMgr = Slim::Web::Template::SkinManager->new();
 
 		# Initialize all the web page handlers.
 		Slim::Web::Pages::init();
+	}
+	else {
+		require Slim::Web::Template::NoWeb;
+		$skinMgr = Slim::Web::Template::NoWeb->new();
 	}
 	
 	# Initialize graphics resizing
@@ -492,26 +491,29 @@ sub processHTTP {
 
 		# Set the request time - for If-Modified-Since
 		$request->client_date(time());
+		
+		my $csrfProtectionLevel = main::WEBUI && $prefs->get('csrfProtectionLevel');
 	
-	
-		# remove our special X-Slim-CSRF header if present
-		$request->remove_header("X-Slim-CSRF");
-	
-		# store CSRF auth code in fake request header if present
-		if ( defined($uri) && ($uri =~ m|^(.*)\;cauth\=([0-9a-f]{32})$| ) ) {
-	
-			my $plainURI = $1;
-			my $csrfAuth = $2;
-	
-			if ( main::DEBUGLOG && $isDebug ) {
-				$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"" . $uri . "\", so resetting request URI to \"$plainURI\"");
+		if ( main::WEBUI && $csrfProtectionLevel ) {
+			# remove our special X-Slim-CSRF header if present
+			$request->remove_header("X-Slim-CSRF");
+			
+			# store CSRF auth code in fake request header if present
+			if ( defined($uri) && ($uri =~ m|^(.*)\;cauth\=([0-9a-f]{32})$| ) ) {
+
+				my $plainURI = $1;
+				my $csrfAuth = $2;
+
+				if ( main::DEBUGLOG && $isDebug ) {
+					$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"" . $uri . "\", so resetting request URI to \"$plainURI\"");
+				}
+
+				# change the URI so later code doesn't "see" the cauth part
+				$request->uri($plainURI);
+
+				# store the cauth code in the request object (headers are handy!)
+				$request->push_header("X-Slim-CSRF",$csrfAuth);
 			}
-	
-			# change the URI so later code doesn't "see" the cauth part
-			$request->uri($plainURI);
-	
-			# store the cauth code in the request object (headers are handy!)
-			$request->push_header("X-Slim-CSRF",$csrfAuth);
 		}
 		
 		# Dont' process cookies for graphics
@@ -550,79 +552,82 @@ sub processHTTP {
 
 		$params->{content} = $request->content();
 
-		# CSRF: make list of params passed by HTTP client
-		my %csrfReqParams;
+		my ($queryWithArgs, $queryToTest, $providedPageAntiCSRFToken);
+		if ( main::WEBUI && $csrfProtectionLevel ) {
+			# CSRF: make list of params passed by HTTP client
+			my %csrfReqParams;
 
-		# XXX - unfortunately Squeezebox Server uses a query form
-		# that can have a key without a value, yet it's
-		# differnet from a key with an empty value. So we have
-		# to parse out like this.
-		if ($query) {
+			# XXX - unfortunately Squeezebox Server uses a query form
+			# that can have a key without a value, yet it's
+			# differnet from a key with an empty value. So we have
+			# to parse out like this.
+			if ($query) {
 
-			foreach my $param (split (/\&/, $query)) {
+				foreach my $param (split /\&/, $query) {
 
-				if ($param =~ /([^=]+)=(.*)/) {
+					if ($param =~ /([^=]+)=(.*)/) {
 
-					my $name  = Slim::Utils::Misc::unescape($1, 1);
-					my $value = Slim::Utils::Misc::unescape($2, 1);
+						my $name  = Slim::Utils::Misc::unescape($1, 1);
+						my $value = Slim::Utils::Misc::unescape($2, 1);
 
-					# We need to turn perl's internal
-					# representation of the unescaped
-					# UTF-8 string into a "real" UTF-8
-					# string with the appropriate magic set.
-					if ($value ne '*') {
-						$value = Slim::Utils::Unicode::utf8decode($value);
-					}
+						# We need to turn perl's internal
+						# representation of the unescaped
+						# UTF-8 string into a "real" UTF-8
+						# string with the appropriate magic set.
+						if ($value ne '*') {
+							$value = Slim::Utils::Unicode::utf8decode($value);
+						}
 
-					# Ick. It sure would be nice to use
-					# CGI or CGI::Lite
-					if (ref($params->{$name}) eq 'ARRAY') {
+						# Ick. It sure would be nice to use
+						# CGI or CGI::Lite
+						if (ref($params->{$name}) eq 'ARRAY') {
 
-						push @{$params->{$name}}, $value;
+							push @{$params->{$name}}, $value;
 
-					} elsif (exists $params->{$name}) {
+						} elsif (exists $params->{$name}) {
 
-						my $old = delete $params->{$name};
+							my $old = delete $params->{$name};
 
-						@{$params->{$name}} = ($old, $value);
+							@{$params->{$name}} = ($old, $value);
+
+						} else {
+
+							$params->{$name} = $value;
+						}
+
+						main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = $value");
+
+						my $csrfName = $name;
+						if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
+						if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
+						push @{$csrfReqParams{$csrfName}}, $value;
 
 					} else {
 
-						$params->{$name} = $value;
+						my $name = Slim::Utils::Misc::unescape($param, 1);
+
+						$params->{$name} = 1;
+
+						main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = 1");
+
+						my $csrfName = $name;
+						if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
+						if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
+						push @{$csrfReqParams{$csrfName}}, 1;
 					}
-
-					main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = $value");
-
-					my $csrfName = $name;
-					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
-					if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
-					push @{$csrfReqParams{$csrfName}}, $value;
-
-				} else {
-
-					my $name = Slim::Utils::Misc::unescape($param, 1);
-
-					$params->{$name} = 1;
-
-					main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = 1");
-
-					my $csrfName = $name;
-					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
-					if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
-					push @{$csrfReqParams{$csrfName}}, 1;
 				}
 			}
-		}
 
-		# for CSRF protection, get the query args in one neat string that 
-		# looks like a GET querystring value; this should handle GET and POST
-		# equally well, only looking at the data that we would act on
-		my ($queryWithArgs, $queryToTest) = Slim::Web::HTTP::CSRF->getQueries($request, \%csrfReqParams);
+			# for CSRF protection, get the query args in one neat string that 
+			# looks like a GET querystring value; this should handle GET and POST
+			# equally well, only looking at the data that we would act on
+			($queryWithArgs, $queryToTest) = Slim::Web::HTTP::CSRF->getQueries($request, \%csrfReqParams);
 		
-		# Stash CSRF token in $params for use in TT templates
-		my $providedPageAntiCSRFToken = $params->{pageAntiCSRFToken};
-		# pageAntiCSRFToken is a bare token
-		$params->{pageAntiCSRFToken} = Slim::Web::HTTP::CSRF->makePageToken($request);
+			# Stash CSRF token in $params for use in TT templates
+			$providedPageAntiCSRFToken = $params->{pageAntiCSRFToken};
+			# pageAntiCSRFToken is a bare token
+			$params->{pageAntiCSRFToken} = Slim::Web::HTTP::CSRF->makePageToken($request);
+		}
 
 		# Skins 
 		if ($path) {
@@ -635,7 +640,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( $::noweb || $path =~ m{^(?:html|music|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -711,9 +716,11 @@ sub processHTTP {
 			$params->{'skinOverride'} = 'Touch';
 		}
 
-		# apply CSRF protection logic to "dangerous" commands
-		if (!Slim::Web::HTTP::CSRF->testCSRFToken($httpClient, $request, $response, $params, $queryWithArgs, $queryToTest, $providedPageAntiCSRFToken)) {
-			return;
+		if ( main::WEBUI && $csrfProtectionLevel ) {
+			# apply CSRF protection logic to "dangerous" commands
+			if (!Slim::Web::HTTP::CSRF->testCSRFToken($httpClient, $request, $response, $params, $queryWithArgs, $queryToTest, $providedPageAntiCSRFToken)) {
+				return;
+			}
 		}
 		
 		if ( main::DEBUGLOG && $isDebug ) {
@@ -1169,25 +1176,25 @@ sub generateHTTPResponse {
 			delete $keepAlives{$httpClient};
 			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
-			if (!$::noweb && Slim::Web::Pages::Common->downloadMusicFile($httpClient, $response, $1)) {
+			if ( main::WEBUI && Slim::Web::Pages::Common->downloadMusicFile($httpClient, $response, $1) ) {
 				return 0;
 			}
 
 		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
 
-			if (!$::noweb) {
+			if ( main::WEBUI ) {
 				($contentType, $body) = Slim::Web::Pages::Common->logFile($params, $response, $1);
 			}
 		
 		} elsif ($path =~ /status\.txt/) {
 
-			if (!$::noweb) {
+			if ( main::WEBUI ) {
 				($contentType, $body) = Slim::Web::Pages::Common->statusTxt($client, $httpClient, $response, $params, $p);
 			}
 		
 		} elsif ($path =~ /status\.m3u/) {
 
-			if (!$::noweb) {
+			if ( main::WEBUI ) {
 				$$body = Slim::Web::Pages::Common->statusM3u($client);
 			}
 
@@ -2387,68 +2394,25 @@ sub removeRawDownload {
 	Slim::Web::Pages->removeRawDownload(@_);
 }
 
-sub throwCSRFError {
-
-	my ($httpClient,$request,$response,$params,$queryWithArgs) = @_;
-
-	# throw 403, we don't this from non-server pages
-	# unless valid "cauth" token is present
-	$params->{'suggestion'} = "Invalid Referer and no valid CSRF auth code.";
-
-	my $protoHostPort = 'http://' . $request->header('Host');
-	my $authURI = makeAuthorizedURI($request->uri(),$queryWithArgs);
-	my $authURL = $protoHostPort . $params->{path};
-
-	# add a long SGML comment so Internet Explorer displays the page
-	my $msg = "<!--" . ( '.' x 500 ) . "-->\n<p>";
-
-	$msg .= string('CSRF_ERROR_INFO'); 
-	$msg .= "<br>\n<br>\n<A HREF=\"${authURI}\">${authURL}</A></p>";
-	
-	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
-	
-	if ( defined($csrfProtectionLevel) && $csrfProtectionLevel == 1 ) {
-		$msg .= string('CSRF_ERROR_MEDIUM');
-	}
-	
-	$params->{'validURL'} = $msg;
-	
-	# add the appropriate URL in a response header to make automated
-	# re-requests easy? (WARNING: this creates a potential Cross Site
-	# Tracing sort of vulnerability!
-
-	# (see http://computercops.biz/article2165.html for info on XST)
-	# If you enable this, also uncomment the text regarding this on the http.html docs
-	#$response->header('X-Slim-Auth-URI' => $authURI);
-	
-	$response->code(RC_FORBIDDEN);
-	$response->content_type('text/html');
-	$response->header('Connection' => 'close');
-	$response->content_ref(filltemplatefile('html/errors/403.html', $params));
-
-	$httpClient->send_response($response);
-	closeHTTPSocket($httpClient);	
-}
-
-sub protectURI {
+sub protectURI { if ( main::WEBUI ) {
 	logBacktrace("Slim::Web::HTTP::protectURI() is deprecated - please use Slim::Web::HTTP::CSRF->protectURI() instead");
 	Slim::Web::HTTP::CSRF->protectURI(@_);
-}
+} }
 
-sub protectName {
+sub protectName { if ( main::WEBUI ) {
 	logBacktrace("Slim::Web::HTTP::protectName() is deprecated - please use Slim::Web::HTTP::CSRF->protectName() instead");
 	Slim::Web::HTTP::CSRF->protectName(@_);
-}
+} }
 
-sub protectCommand {
+sub protectCommand { if ( main::WEBUI ) {
 	logBacktrace("Slim::Web::HTTP::protectCommand() is deprecated - please use Slim::Web::HTTP::CSRF->protectCommand() instead");
 	Slim::Web::HTTP::CSRF->protectCommand(@_);
-}
+} }
 
-sub protect {
+sub protect { if ( main::WEBUI ) {
 	logBacktrace("Slim::Web::HTTP::protect() is deprecated - please use Slim::Web::HTTP::CSRF->protect() instead");
 	Slim::Web::HTTP::CSRF->protect(@_);
-}
+} }
 
 1;
 

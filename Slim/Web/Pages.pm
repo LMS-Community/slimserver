@@ -30,11 +30,8 @@ our %additionalLinks = ();
 our %pageConditions = ();
 
 sub init {
-	
-	# don't initialize pages when called from scanner or 
-	# SC is run with the --noweb parameter
-	return if $::noweb;
-	
+	# Note: init() is not run with --noweb param
+		
 	require Slim::Web::Pages::Common;
 	require Slim::Web::Pages::Home;
 	require Slim::Web::Pages::BrowseDB;

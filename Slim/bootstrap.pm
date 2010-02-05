@@ -56,7 +56,6 @@ my @default_required_modules = qw(version Time::HiRes DBI EV XML::Parser::Expat 
 my @default_optional_modules = qw(Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
-my $noweb                    = (grep { /noweb/ }     @ARGV) ? 1 : 0;
 
 my $sigINTcalled             = 0;
 
@@ -355,7 +354,7 @@ sub check_valid_versions {
 
 	for my $line ( split /\n/, $modules ) {
 		
-		next if $noweb && $line =~ /Template/;
+		next if !main::WEBUI && $line =~ /Template/;
 		
 		next unless $line =~ /^\w+/;
 		chomp $line;

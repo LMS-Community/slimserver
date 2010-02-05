@@ -11,7 +11,7 @@ use IO::Socket qw(SOMAXCONN);
 use Socket qw(:crlf inet_ntoa);
 use Scalar::Util qw(blessed);
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
  	require Slim::Plugin::CLI::Settings;
 }
 
@@ -86,7 +86,7 @@ sub initPlugin {
 
 	main::INFOLOG && $log->info("Initializing");
 
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::CLI::Settings->new;
 	}
 

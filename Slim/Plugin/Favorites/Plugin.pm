@@ -31,7 +31,7 @@ use Slim::Utils::Prefs;
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
  	require Slim::Plugin::Favorites::Settings;
 	require Slim::Web::XMLBrowser;
 }
@@ -57,7 +57,7 @@ sub initPlugin {
 		Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::SqueezeNetwork');
 	}
 	else {
-		if ( !$::noweb ) {
+		if ( main::WEBUI ) {
 			Slim::Plugin::Favorites::Settings->new;
 		}
 		

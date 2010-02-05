@@ -46,6 +46,7 @@ use constant DEBUGLOG     => 0;
 use constant INFOLOG      => 0;
 use constant STATISTICS   => 0;
 use constant SB1SLIMP3SYNC=> 0;
+use constant WEBUI        => 0;
 
 # load these later, don't need them right now
 require File::Path;

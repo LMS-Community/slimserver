@@ -668,8 +668,7 @@ sub init {
 	
 ######################################################################################################################################################################
 
-	# No web code on SN
-	return if main::SLIM_SERVICE;
+	return if !main::WEBUI;
 
 	# Normal Squeezebox Server commands can be accessed with URLs like
 	#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
