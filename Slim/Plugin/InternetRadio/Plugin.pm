@@ -5,11 +5,13 @@ package Slim::Plugin::InternetRadio::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Digest::MD5 ();
 use File::Basename qw(basename);
 use File::Path qw(mkpath);
 use File::Spec::Functions qw(catdir catfile);
 use HTTP::Date;
 use JSON::XS::VersionOneAndTwo;
+use Tie::IxHash;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Networking::SimpleAsyncHTTP;
@@ -337,14 +339,14 @@ sub cacheIconError {
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
 
-	my %rtFormats = (
+	# In order of preference
+	tie my %rtFormats, 'Tie::IxHash', (
 		aac     => 'aac',
-		mp3     => 'mp3',
-		wma     => 'wma',
 		ogg     => 'ogg',
+		mp3     => 'mp3',
+		wmpro   => 'wmap',
+		wma     => 'wma',
 		wmvoice => 'wma',
-		wmvideo => 'wma',
-		wmapro  => 'wmap',
 		# Real Player is supported through the AlienBBC plugin
 		real    => 'rtsp',
 	);
@@ -376,6 +378,9 @@ sub radiotimeFeed {
 
 	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
 	$feed .= 'formats=' . join(',', @formats);
+	
+	# Bug 15568, pass obfuscated serial to RadioTime
+	$feed .= '&serial=' . Digest::MD5::md5_hex( $client->uuid || $client->id );
 	
 	return $feed;
 }

@@ -440,7 +440,7 @@ sub getMetadataFor {
 				# replace repeat with Thumbs Up
 				repeat  => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_up_button.png' : 'html/images/btn_thumbs_up.gif',
-					jiveStyle => 'thumbsUp',
+					jiveStyle => $track->{allowFeedback} ? 'thumbsUp' : 'thumbsUpDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_LIKE'),
 					command => [ 'pandora', 'rate', 1 ],
 				},
@@ -448,7 +448,7 @@ sub getMetadataFor {
 				# replace shuffle with Thumbs Down
 				shuffle => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_down_button.png' : 'html/images/btn_thumbs_down.gif',
-					jiveStyle => 'thumbsDown',
+					jiveStyle => $track->{allowFeedback} ? 'thumbsDown' : 'thumbsDownDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_DONT_LIKE'),
 					command => [ 'pandora', 'rate', 0 ],
 				},

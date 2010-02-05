@@ -1455,6 +1455,10 @@ sub cliQuery {
 		if ( $handler && $handler->can('trackInfoURL') ) {
 			$feed = $handler->trackInfoURL( $client, $url );
 		}
+		elsif ( $url =~ m{^http://opml\.radiotime\.com} ) {
+			# Special case for RadioTime's trackinfo menu
+			$feed = Slim::Plugin::RadioTime::Plugin->trackInfoURL( $client, $url );
+		}
 	}
 	
 	if ( !$feed ) {

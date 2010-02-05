@@ -919,6 +919,11 @@ sub _cliQuery_done {
 				}
 
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+					
+					# Bug 15343, If we're adding items above in a context menu, we have to adjust our index values
+					if ( my $cmCount = scalar @{$playlistControlCM} ) {
+						$item->{_slim_id} = $start + $cnt - $cmCount;
+					}
 									
 					# create an ordered hash to store this stuff...
 					tie my %hash, "Tie::IxHash";
