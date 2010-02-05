@@ -343,8 +343,7 @@ sub radiotimeFeed {
 		wma     => 'wma',
 		ogg     => 'ogg',
 		wmvoice => 'wma',
-		wmvideo => 'wma',
-		wmapro  => 'wmap',
+		wmpro   => 'wmap',
 		# Real Player is supported through the AlienBBC plugin
 		real    => 'rtsp',
 	);
