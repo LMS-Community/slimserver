@@ -8,7 +8,6 @@ use Carp::Clan qw/^DBIx::Class/;
 use Scalar::Util qw/weaken/;
 use File::Spec;
 use Sub::Name ();
-use Module::Find();
 
 use base qw/DBIx::Class/;
 
@@ -164,6 +163,7 @@ sub _findallmod {
   my $proto = shift;
   my $ns = shift || ref $proto || $proto;
 
+  require Module::Find;
   my @mods = Module::Find::findallmod($ns);
 
   # try to untaint module names. mods where this fails
