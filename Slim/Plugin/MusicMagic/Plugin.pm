@@ -19,7 +19,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Prefs;
 
-if (!$::noweb) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::MusicMagic::Settings;
 	require Slim::Plugin::MusicMagic::ClientSettings;
 }
@@ -244,7 +244,7 @@ sub initPlugin {
 	
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
 
-	if (!$::noweb) {	
+	if ( main::WEBUI ) {	
 		Slim::Plugin::MusicMagic::Settings->new;
 	}
 
@@ -315,7 +315,7 @@ sub initPlugin {
 		# initialize the filter list
 		Slim::Plugin::MusicMagic::Common->grabFilters();
 		
-		if (!$::noweb) {	
+		if ( main::WEBUI ) {	
 			Slim::Plugin::MusicMagic::ClientSettings->new;
 		}
 
@@ -369,7 +369,7 @@ sub initPlugin {
 			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
 			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
 
-			if (!$::noweb) {
+			if ( main::WEBUI ) {
 				Slim::Web::Pages->addPageLinks("browse", {
 					'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 				});
@@ -406,7 +406,7 @@ sub initPlugin {
 	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions, \&setMixMode);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 
-	if (!$::noweb) {
+	if ( main::WEBUI ) {
 		Slim::Web::Pages->addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
 		Slim::Web::Pages->addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
 	}
@@ -807,7 +807,10 @@ sub mixerlink {
 		$form->{'mmmixable_not_descend'} = 1;
 	}
 
-	Slim::Web::HTTP::CSRF->protectURI('plugins/MusicMagic/.*\.html');
+	if ( main::WEBUI ) {
+		Slim::Web::HTTP::CSRF->protectURI('plugins/MusicMagic/.*\.html');
+	}
+	
 	# only add link if enabled and usable
 	if (canUseMusicMagic() && $prefs->get('musicip')) {
 

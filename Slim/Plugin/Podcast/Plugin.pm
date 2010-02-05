@@ -74,7 +74,7 @@ $prefs->migrate(FEED_VERSION, sub {
 	1;
 });
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
  	require Slim::Plugin::Podcast::Settings;
 }
 
@@ -85,7 +85,7 @@ sub initPlugin {
 
 	main::INFOLOG && $log->info("Initializing.");
 
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::Podcast::Settings->new;
 	}
 

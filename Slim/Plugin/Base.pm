@@ -64,9 +64,8 @@ sub initPlugin {
 		}
 	}
 
-	if ( !main::SLIM_SERVICE  && !main::SCANNER ) {
-		if ($class->can('webPages') && !$::noweb) {
-
+	if ( main::WEBUI ) {
+		if ( $class->can('webPages') ) {
 			$class->webPages;
 		}
 		

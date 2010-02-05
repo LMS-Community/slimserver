@@ -21,7 +21,7 @@ use IO::Socket;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::RS232::Settings;
 }
 
@@ -49,12 +49,13 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
 	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
-	Slim::Web::HTTP::CSRF->protectCommand('rs232');
+	
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 
 	# Initialize settings classes
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::RS232::Settings->new;
+		Slim::Web::HTTP::CSRF->protectCommand('rs232');
 	}
 
 	# Initial turn on or off CLI over RS232

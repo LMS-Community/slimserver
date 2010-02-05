@@ -58,7 +58,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
  	require Slim::Plugin::InfoBrowser::Settings;
 }
 
@@ -71,7 +71,7 @@ my @searchDirs; # search directories for menu opml files
 sub initPlugin {
 	my $class = shift;
 
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::InfoBrowser::Settings->new($class);
 	}
 

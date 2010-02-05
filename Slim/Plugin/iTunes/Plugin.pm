@@ -8,7 +8,7 @@ package Slim::Plugin::iTunes::Plugin;
 use strict;
 use base qw(Slim::Plugin::iTunes::Common);
 
-if (!$::noweb) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::iTunes::Settings;
 }
 
@@ -93,15 +93,11 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	if (!$::noweb) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::iTunes::Settings->new;
 	}
 
 	return 1 if $class->initialized;
-
-	if (!$::noweb) {
-		Slim::Plugin::iTunes::Settings->new;
-	}
 
 	if (!$class->canUseiTunesLibrary) {
 		return;

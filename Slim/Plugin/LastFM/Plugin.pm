@@ -68,7 +68,7 @@ sub initPlugin {
 		);
 	}
 	
-	if ( !$::noweb && !main::SLIM_SERVICE ) {
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/lastfm/trackinfo.html',

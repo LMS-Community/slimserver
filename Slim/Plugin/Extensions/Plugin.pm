@@ -91,7 +91,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::Extensions::Settings;
 }
 
@@ -146,7 +146,7 @@ sub initPlugin {
 	# other repo available always available as an option from jive
 	Slim::Control::Jive::registerExtensionProvider($otherRepo, \&getExtensions, 'other');
 
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 
 		if ($prefs->get('otherrepo')) {
 			$class->addRepo({ other => 1 });

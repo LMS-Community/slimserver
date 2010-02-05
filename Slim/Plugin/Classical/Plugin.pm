@@ -28,7 +28,7 @@ sub initPlugin {
 		is_app => 1,
 	);
 	
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/classical/trackinfo.html',

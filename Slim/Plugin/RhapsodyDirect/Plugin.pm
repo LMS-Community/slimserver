@@ -80,7 +80,7 @@ sub initPlugin {
 		);
 	}
 	
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/rhapsodydirect/trackinfo.html',

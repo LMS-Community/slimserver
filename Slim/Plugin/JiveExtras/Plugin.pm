@@ -10,7 +10,7 @@ use base qw(Slim::Plugin::Base);
 
 use Slim::Utils::Prefs;
 
-if (!$::noweb) {
+if ( main::WEBUI ) {
 	require Slim::Plugin::JiveExtras::Settings;
 }
 
@@ -23,7 +23,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
-	if (!$::noweb) {
+	if ( main::WEBUI ) {
 		Slim::Plugin::JiveExtras::Settings->new;
 	}
 

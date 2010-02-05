@@ -162,7 +162,7 @@ sub _players_done {
 	}
 	
 	# Setup apps for the web and classic player UI.
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		# Clear all existing my_apps items on the web, we'll build a new list
 		Slim::Web::Pages->delPageCategory('my_apps');
 		

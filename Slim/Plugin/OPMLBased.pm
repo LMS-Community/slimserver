@@ -10,7 +10,7 @@ use base 'Slim::Plugin::Base';
 use Slim::Utils::Prefs;
 use Slim::Control::XMLBrowser;
 
-if ( !main::SLIM_SERVICE && !$::noweb ) {
+if ( main::WEBUI ) {
  	require Slim::Web::XMLBrowser;
 }
 

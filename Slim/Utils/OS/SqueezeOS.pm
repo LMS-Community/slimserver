@@ -14,8 +14,7 @@ sub initDetails {
 	$class->{osDetails} = $class->SUPER::initDetails();
 
 	# package specific addition to @INC to cater for plugin locations
-	$class->{osDetails}->{isSqueezeOS} = 1 ;
-	$::noweb = 1;
+	$class->{osDetails}->{isSqueezeOS} = 1;
 
 	return $class->{osDetails};
 }

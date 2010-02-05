@@ -33,7 +33,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['mediafly', 'skipTrack'],
 		[0, 1, 1, \&skipTrack]);
 	
-	if ( !main::SLIM_SERVICE && !$::noweb ) {
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/mediafly/trackinfo.html',
