@@ -33,7 +33,6 @@ use Digest::SHA1;
 use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
-use LWP::UserAgent;
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Networking::SimpleAsyncHTTP;
@@ -372,6 +371,7 @@ $file must be an absolute path.
 sub download {
 	my ( $url, $file ) = @_;
 	
+	require LWP::UserAgent;
 	my $ua = LWP::UserAgent->new(
 		env_proxy => 1,
 	);
