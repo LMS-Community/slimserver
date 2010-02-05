@@ -553,63 +553,65 @@ sub processHTTP {
 		$params->{content} = $request->content();
 
 		my ($queryWithArgs, $queryToTest, $providedPageAntiCSRFToken);
-		if ( main::WEBUI && $csrfProtectionLevel ) {
-			# CSRF: make list of params passed by HTTP client
-			my %csrfReqParams;
+		# CSRF: make list of params passed by HTTP client
+		my %csrfReqParams;
+		
+		# XXX - unfortunately Squeezebox Server uses a query form
+		# that can have a key without a value, yet it's
+		# differnet from a key with an empty value. So we have
+		# to parse out like this.
+		if ($query) {
 
-			# XXX - unfortunately Squeezebox Server uses a query form
-			# that can have a key without a value, yet it's
-			# differnet from a key with an empty value. So we have
-			# to parse out like this.
-			if ($query) {
+			foreach my $param (split /\&/, $query) {
 
-				foreach my $param (split /\&/, $query) {
+				if ($param =~ /([^=]+)=(.*)/) {
 
-					if ($param =~ /([^=]+)=(.*)/) {
+					my $name  = Slim::Utils::Misc::unescape($1, 1);
+					my $value = Slim::Utils::Misc::unescape($2, 1);
 
-						my $name  = Slim::Utils::Misc::unescape($1, 1);
-						my $value = Slim::Utils::Misc::unescape($2, 1);
+					# We need to turn perl's internal
+					# representation of the unescaped
+					# UTF-8 string into a "real" UTF-8
+					# string with the appropriate magic set.
+					if ($value ne '*') {
+						$value = Slim::Utils::Unicode::utf8decode($value);
+					}
 
-						# We need to turn perl's internal
-						# representation of the unescaped
-						# UTF-8 string into a "real" UTF-8
-						# string with the appropriate magic set.
-						if ($value ne '*') {
-							$value = Slim::Utils::Unicode::utf8decode($value);
-						}
+					# Ick. It sure would be nice to use
+					# CGI or CGI::Lite
+					if (ref($params->{$name}) eq 'ARRAY') {
 
-						# Ick. It sure would be nice to use
-						# CGI or CGI::Lite
-						if (ref($params->{$name}) eq 'ARRAY') {
+						push @{$params->{$name}}, $value;
 
-							push @{$params->{$name}}, $value;
+					} elsif (exists $params->{$name}) {
 
-						} elsif (exists $params->{$name}) {
+						my $old = delete $params->{$name};
 
-							my $old = delete $params->{$name};
+						@{$params->{$name}} = ($old, $value);
 
-							@{$params->{$name}} = ($old, $value);
+					} else {
 
-						} else {
+						$params->{$name} = $value;
+					}
 
-							$params->{$name} = $value;
-						}
+					main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = $value");
 
-						main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = $value");
-
+					if ( main::WEBUI && $csrfProtectionLevel ) {
 						my $csrfName = $name;
 						if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
 						if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
 						push @{$csrfReqParams{$csrfName}}, $value;
+					}
 
-					} else {
+				} else {
 
-						my $name = Slim::Utils::Misc::unescape($param, 1);
+					my $name = Slim::Utils::Misc::unescape($param, 1);
 
-						$params->{$name} = 1;
+					$params->{$name} = 1;
 
-						main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = 1");
+					main::DEBUGLOG && $isDebug && $log->info("HTTP parameter $name = 1");
 
+					if ( main::WEBUI && $csrfProtectionLevel ) {
 						my $csrfName = $name;
 						if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
 						if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
@@ -617,12 +619,14 @@ sub processHTTP {
 					}
 				}
 			}
+		}
 
+		if ( main::WEBUI && $csrfProtectionLevel ) {
 			# for CSRF protection, get the query args in one neat string that 
 			# looks like a GET querystring value; this should handle GET and POST
 			# equally well, only looking at the data that we would act on
 			($queryWithArgs, $queryToTest) = Slim::Web::HTTP::CSRF->getQueries($request, \%csrfReqParams);
-		
+	
 			# Stash CSRF token in $params for use in TT templates
 			$providedPageAntiCSRFToken = $params->{pageAntiCSRFToken};
 			# pageAntiCSRFToken is a bare token
