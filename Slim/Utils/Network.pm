@@ -308,6 +308,102 @@ sub sysreadline(*;$) {
 	return $line;
 }
 
+=head1 intip($ip)
+
+Replacement for heavyweight Net::IP->intip. Returns 0 on error.
+
+=cut
+
+sub intip {
+	my $ip = shift;
+	
+	if ( $ip !~ /^[\d\.]+$/ ) {
+		return 0;
+	}
+	
+	my $n   = 1;
+	my $dec = 0;
+	
+	for my $octet ( reverse( split /\./, $ip ) ) {
+		return 0 if $octet !~ /^\d+$/;
+		
+		$dec += ( $n * $octet );
+		$n *= 256;
+	}
+	
+	return $dec;
+}
+
+=head1 ip_is_private($ip)
+
+Replacement for heavyweight Net::IP->iptype.
+
+=cut
+
+sub ip_is_private {
+	my $packed_ip = inet_aton(shift) || return 0;
+	
+	# http://www.perlmonks.org/?node_id=791164
+	return $packed_ip =~ m{
+        ^
+        (?: \x0A             # 10.0.0.0/8
+        |   \xAC[\x10-\x1F]  # 172.16.0.0/12
+        |   \xC0\xA8         # 192.168.0.0/16
+        )
+    }x;
+}
+
+=head1 ip_is_ipv4($ip)
+
+Low-fat version of Net::IP->ip_is_ipv4
+
+=cut
+
+sub ip_is_ipv4 {
+	my $ip = shift;
+
+	# Check for invalid chars
+	unless ($ip =~ m/^[\d\.]+$/) {
+		return 0;
+	}
+
+	# Can't start with a dot
+	if ($ip =~ m/^\./) {
+		return 0;
+	}
+
+	# Can't end with a dot
+	if ($ip =~ m/\.$/) {
+		return 0;
+	}
+
+	# Single Numbers are considered to be IPv4
+	if ($ip =~ m/^(\d+)$/ and $1 < 256) { return 1 }
+
+	# Count quads
+	my $n = ($ip =~ tr/\./\./);
+
+	# IPv4 must have from 1 to 4 quads
+	unless ($n >= 0 and $n < 4) {
+		return 0;
+	}
+
+	# Check for empty quads
+	if ($ip =~ m/\.\./) {
+		return 0;
+	}
+
+	foreach (split /\./, $ip) {
+
+		# Check for invalid quads
+		unless ($_ >= 0 and $_ < 256) {
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
 =head1 SEE ALSO
 
 L<IO::Select>

@@ -10,7 +10,6 @@ use base qw(Slim::Player::Protocols::HTTP);
 use HTML::Entities qw(encode_entities);
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(decode_base64);
-use Net::IP;
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_escape_utf8);
 
@@ -487,8 +486,8 @@ sub onStream {
 	if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
 		main::DEBUGLOG && $log->debug( $client->id . " Sending updated secure-direct IP: $ip" );
 		
-		if ( $ip = Net::IP->new($ip) ) {
-			my $data = pack( 'cNn', 0, $ip->intip, 443 );
+		if ( $ip = Slim::Utils::Network::intip($ip) ) {
+			my $data = pack( 'cNn', 0, $ip, 443 );
 			$client->sendFrame( rpds => \$data );
 		}
 	}

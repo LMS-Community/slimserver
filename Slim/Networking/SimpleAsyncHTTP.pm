@@ -185,7 +185,7 @@ sub _createHTTPRequest {
 	if ( my $client = $params->{usePlayer} ) {
 		# We still have to do DNS lookups in SC unless
 		# we have an IP host
-		if ( Net::IP::ip_is_ipv4( $request->uri->host ) ) {
+		if ( Slim::Utils::Network::ip_is_ipv4( $request->uri->host ) ) {
 			sendPlayerRequest( $request->uri->host, $self, $client, $request );
 		}
 		else {
@@ -449,11 +449,10 @@ sub sendPlayerRequest {
 	} );
 	
 	my $requestStr = $request->as_string("\015\012");
-	$ip = Net::IP->new($ip);
 	
 	my $limit = $self->{params}->{limit} || 0;
 	
-	my $data = pack( 'NnCNn', $ip->intip, $port, 0, $limit, length($requestStr) );
+	my $data = pack( 'NnCNn', Slim::Utils::Network::intip($ip), $port, 0, $limit, length($requestStr) );
 	$data   .= $requestStr;
 	
 	$client->sendFrame( http => \$data );
@@ -527,11 +526,10 @@ sub playerHTTPError {
 			Time::HiRes::time() + 0.5,
 			sub {
 				my $requestStr = $state->{request}->as_string("\015\012");
-				my $ip = Net::IP->new( $state->{ip} );
 
 				my $limit = $self->{params}->{limit} || 0;
 
-				my $data = pack( 'NnCNn', $ip->intip, $state->{port}, 0, $limit, length($requestStr) );
+				my $data = pack( 'NnCNn', Slim::Utils::Network::intip( $state->{ip} ), $state->{port}, 0, $limit, length($requestStr) );
 				$data   .= $requestStr;
 
 				$client->sendFrame( http => \$data );
