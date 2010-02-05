@@ -676,6 +676,7 @@ sub init {
 	# not intended for use via the web interface!
 	#
 	# protect some commands regardless of args passed to them
+	require Slim::Web::HTTP::CSRF;
 	Slim::Web::HTTP::CSRF->protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
 					playlistcontrol playlists stop stopserver restartserver wipecache prefset mode
 					power rescan sleep sync time gototime
