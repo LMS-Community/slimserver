@@ -46,8 +46,7 @@ sub open {
 	$args->{Timeout} ||= preferences('server')->get('remotestreamtimeout') || 10;
 
 	# Skip async DNS if we know the IP address or are using a proxy (skipDNS)
-	require Net::IP;
-	if ( $args->{skipDNS} || $args->{PeerAddr} || Net::IP::ip_is_ipv4( $args->{Host} ) ) {
+	if ( $args->{skipDNS} || $args->{PeerAddr} || Slim::Utils::Network::ip_is_ipv4( $args->{Host} ) ) {
 		
 		# If caller only wanted to lookup the DNS, callback now
 		if ( my $onDNS = $args->{onDNS} ) {

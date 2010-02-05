@@ -1278,9 +1278,8 @@ sub shouldCacheURL {
 		return 1;
 	}
 	
-	require Net::IP;
-	if ( my $ip = Net::IP->new($host) ) {
-		return 0 if $ip->iptype eq 'PRIVATE';
+	if ( Slim::Utils::Network::ip_is_private($host) ) {
+		return 0;
 	}
 	
 	return 1;

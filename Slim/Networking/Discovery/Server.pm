@@ -116,11 +116,7 @@ Return a server's IP address if available
 sub getServerAddress {
 	my $server = shift;
 	
-	require Net::IP;
-	my $ip = Net::IP->new($server);
-	$ip = $ip->ip if $ip;
-	
-	return $server_list->{$server}->{IP} || $ip || $server;
+	return $server_list->{$server}->{IP} || $server;
 }
 
 =head2 getServerPort()

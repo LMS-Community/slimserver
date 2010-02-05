@@ -275,14 +275,12 @@ sub clientConnectCommand {
 			# Squeezebox Server (used on SN)
 		}
 		else {
-			require Net::IP;
-			my $ip = Net::IP->new($host);
-			if ( !defined $ip ) {
+			$host = Slim::Utils::Network::intip($host);
+			
+			if ( !$host ) {
 				$request->setStatusBadParams();
 				return;
 			}
-			
-			$host = $ip->intip;
 		}
 		
 		if ($client->controller()->allPlayers() > 1) {
