@@ -199,6 +199,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    alarm           end                         <id>
  Y    alarm           snooze                      <id>
  Y    alarm           snooze_end                  <id>
+ Y    newmetadata
 
 =head2 PLUGINS
 
@@ -652,6 +653,7 @@ sub init {
 	addDispatch(['alarm',          'snooze',         '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'snooze_end',     '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['fwdownloaded',   '_machine'],                                                        [0, 0, 0, undef]);
+	addDispatch(['newmetadata'],                                                                       [1, 0, 0, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);

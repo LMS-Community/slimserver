@@ -49,10 +49,11 @@ sub requestString {
 		$params{$key} = decode_base64($val) || $val;
 	}
 
-	$song->duration($params{dur})                if $params{dur};
-	$song->pluginData('icon',   $params{icon})   if $params{icon};
-	$song->pluginData('artist', $params{artist}) if $params{artist};
-	$song->pluginData('album',  $params{album})  if $params{album};
+	$song->duration($params{dur})                  if exists $params{dur};
+	$song->pluginData('icon',    $params{icon})    if exists $params{icon};
+	$song->pluginData('artist',  $params{artist})  if exists $params{artist};
+	$song->pluginData('album',   $params{album})   if exists $params{album};
+	$song->pluginData('type',    $params{type})    if exists $params{type};
 
 	if ($seekdata  && (my $newtime = $seekdata->{'timeOffset'})) {
 		$song->startOffset($newtime);
@@ -68,7 +69,24 @@ sub handlesStreamHeadersFully {
 	$client->sendContCommand(0, 0);
 }
 
-sub parseMetadata { }
+sub parseMetadata {
+	my ( $class, $client, undef, $metadata ) = @_;
+	my $song = $client->streamingSong || return {};
+
+	my %meta;
+	for my $param (split /&/, $metadata) {
+		my ($key, $val) = $param =~ /(.*?)=(.*)/;
+		$meta{$key} = decode_base64($val) || $val;
+	}
+
+	$song->duration($meta{dur})                 if exists $meta{dur};
+	$song->pluginData('icon',    $meta{icon})   if exists $meta{icon};
+	$song->pluginData('artist',  $meta{artist}) if exists $meta{artist};
+	$song->pluginData('album',   $meta{album})  if exists $meta{album};
+	$song->pluginData('type',    $meta{type})   if exists $meta{type};
+
+	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+}
 
 sub canSeek {
 	my ($class, $client, $song) = @_;
@@ -88,6 +106,7 @@ sub getMetadataFor {
 		album  => $song->pluginData('album'),
 		cover  => $song->pluginData('icon'),
 		icon   => $song->pluginData('icon'),
+		type   => $song->pluginData('type'),
 	};
 }	
 
