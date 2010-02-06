@@ -1011,6 +1011,16 @@ sub infoContentType {
 			}
 		}
 		
+		if ($ct eq 'unk' && $track->remote) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+			if ( $handler && $handler->can('getMetadataFor') ) {
+				my $meta = $handler->getMetadataFor( $client, $url );
+				if ($meta && $meta->{type}) {
+					$ct = $meta->{type};
+				}
+			}
+		}
+
 		$item = {
 			type => 'text',
 			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . cstring($client,  uc($ct) ),
