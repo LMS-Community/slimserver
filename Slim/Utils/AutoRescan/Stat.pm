@@ -13,7 +13,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
-use constant INTERVAL => 60;
+use constant INTERVAL => 60 * 10;
 
 my $log = logger('scan.auto');
 
