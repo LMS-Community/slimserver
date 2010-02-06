@@ -24,7 +24,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language audiodir playlistdir libraryname autorescan) );
+	return ($prefs, qw(language audiodir playlistdir libraryname autorescan autorescan_stat_interval) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...

@@ -13,7 +13,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
-use constant INTERVAL => 60 * 10;
+use constant INTERVAL_MINUTES => 10;
 
 my $log = logger('scan.auto');
 
@@ -43,7 +43,7 @@ sub watch {
 	
 	$active = 1;
 	
-	my $interval = $prefs->get('autorescan_stat_interval') || INTERVAL;
+	my $interval = ( $prefs->get('autorescan_stat_interval') || INTERVAL_MINUTES ) * 60;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug( "Starting stat monitoring for $dir, interval $interval" );
 
@@ -53,17 +53,18 @@ sub watch {
 		Time::HiRes::time() + $interval,
 		\&_stat,
 		$dir,
-		$interval,
 		$cb,
 	);
 }
 
 sub _stat {
-	my ( $class, $dir, $interval, $cb ) = @_;
+	my ( $class, $dir, $cb ) = @_;
 	
 	my $isDebug = $log->is_debug;
 	
 	main::DEBUGLOG && $log->is_debug && (my $start = AnyEvent->now);
+	
+	my $interval = ( $prefs->get('autorescan_stat_interval') || INTERVAL_MINUTES ) * 60;
 	
 	my $setTimer = sub {
 		Slim::Utils::Timers::setTimer(
@@ -71,7 +72,6 @@ sub _stat {
 			Time::HiRes::time() + $interval,
 			\&_stat,
 			$dir,
-			$interval,
 			$cb,
 		);
 	};

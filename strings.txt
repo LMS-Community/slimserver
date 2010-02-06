@@ -6460,6 +6460,12 @@ SETUP_AUTO_RESCAN_DISABLE
 	RU	Отключено, выполните поиск новой музыки вручную
 	SV	Inaktiverad. Sök manuellt efter ny musik
 
+SETUP_AUTO_RESCAN_STAT_INTERVAL
+	EN	Network share detection interval
+
+SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
+	EN	To detect changes on remote network shares or on some operating systems with no native change detection support, the files must be polled for changes at regular intervals. Select the interval to use for this check, in minutes. The default value is 10 minutes.
+
 RESCANNING
 	CS	Squeezebox Server nyní znovu prohledává vaši hudební knihovnu.
 	DA	Squeezebox Server gennemsøger nu dit musikbibliotek.
