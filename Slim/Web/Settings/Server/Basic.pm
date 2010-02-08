@@ -78,10 +78,7 @@ sub handler {
 		my $curLang = $prefs->get('language');
 		my $lang    = $paramRef->{'pref_language'};
 
-		# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
 		if ( $lang && $lang ne $curLang ) {
-			$class->changeCollation($lang, $curLang);
-
 			# use Classic instead of Default skin if the server's language is set to Hebrew
 			if ($lang eq 'HE' && $prefs->get('skin') eq 'Default') {
 				$prefs->set('skin', 'Classic');
@@ -99,54 +96,6 @@ sub handler {
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	return $class->SUPER::handler($client, $paramRef);
-}
-
-sub changeCollation {
-	my ($class, $lang, $curLang) = @_;
-	
-	return if !Slim::Schema::hasLibrary();
-	
-	my $newCollation;
-	
-	if ( $lang eq 'CS' ) {
-		$newCollation = 'utf8_czech_ci';
-	}
-	elsif ( $lang eq 'SV' ) {
-		$newCollation = 'utf8_swedish_ci';
-	}
-	elsif ( $lang eq 'DA' ) {
-		$newCollation = 'utf8_danish_ci';
-	}
-	elsif ( $lang eq 'ES' ) {
-		$newCollation = 'utf8_spanish_ci';
-	}
-	elsif ($curLang =~ /(?:CS|SV|DA|ES)/) {
-		$newCollation = 'utf8_general_ci';
-	}
-	
-	return unless $newCollation;
-	
-	if (Slim::Music::Import->stillScanning) {
-
-		my $autoCommit = Slim::Schema->dbh->{'AutoCommit'};
-	
-		if ($autoCommit) {
-			Slim::Schema->dbh->{'AutoCommit'} = 0;
-		}
-	
-		my $setCollation = Slim::Schema->rs('MetaInformation')->find_or_create({
-			'name' => 'setCollation'
-		});
-	
-		$setCollation->value($newCollation);
-		$setCollation->update;
-	
-		Slim::Schema->dbh->{'AutoCommit'} = $autoCommit;
-	}
-	else {
-
-		Slim::Schema->changeCollation( $newCollation );
-	}
 }
 
 sub beforeRender {

@@ -391,16 +391,6 @@ sub runScanPostProcessing {
 
 	# Reset
 	$class->useFolderImporter(0);
-
-	# change collation in case user changed language
-	my $collationRS = Slim::Schema->single('MetaInformation', { 'name' => 'setCollation' });
-
-	if ( blessed($collationRS) && $collationRS->value ) {
-		Slim::Schema->changeCollation( $collationRS->value );
-
-		$collationRS->value(0);
-		$collationRS->update;
-	}
 		
 	# Always run an optimization pass at the end of our scan.
 	$log->error("Starting Database optimization.");

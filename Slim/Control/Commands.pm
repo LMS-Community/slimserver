@@ -2998,12 +2998,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
+	my $collate = $sqlHelperClass->collate();
+	
 	my $albumSort 
-		= $sqlHelperClass->append0("album.titlesort") 
+		= $sqlHelperClass->append0("album.titlesort") . " $collate"
 		. ', me.disc, me.tracknum, '
-		. $sqlHelperClass->append0("me.titlesort");
+		. $sqlHelperClass->append0("me.titlesort") . " $collate";
 		
-	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort");
+	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort") . " $collate";
 	
 	if ( main::SLIM_SERVICE || !Slim::Schema::hasLibrary()) {
 		return ();

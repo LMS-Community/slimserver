@@ -28,9 +28,11 @@ sub browse {
 	my $find = shift;
 	my $cond = shift;
 	my $sort = shift;
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	return $self->search($cond, {
-		'order_by' => 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort',
+		'order_by' => "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate",
 		'join'     => 'tracks',
 		'limit'    => (preferences('server')->get('browseagelimit') - 1),
 	});

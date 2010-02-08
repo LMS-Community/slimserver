@@ -328,22 +328,20 @@ sub on_connect_do {
 	return [ 'SET NAMES UTF8' ];
 }
 
-sub changeCollation {
-	my ( $class, $dbh, $collation ) = @_;
+sub collate {
+	my $class = shift;
 	
-	if ( $class->sqlVersion($dbh) > 4.0 ) {
-		my @tables = qw(
-			albums
-			contributors
-			genres
-			tracks
-		);
-
-		for my $table ( @tables ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug( "Changing $table to $collation" );
-			eval { $dbh->do( "ALTER TABLE $table CONVERT TO CHARACTER SET utf8 COLLATE $collation" ) };
-		}
-	}
+	my $lang = $prefs->get('language');
+	
+	my $collation
+		= $lang eq 'CS' ? 'utf8_czech_ci'
+		: $lang eq 'SV' ? 'utf8_swedish_ci'
+		: $lang eq 'DA' ? 'utf8_danish_ci'
+		: $lang eq 'ES' ? 'utf8_spanish_ci'
+		: $lang eq 'PL' ? 'utf8_polish_ci'
+		: 'utf8_general_ci';
+	
+	return "COLLATE $collation ";
 }
 
 =head2 randomFunction()

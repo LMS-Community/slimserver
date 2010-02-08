@@ -207,7 +207,8 @@ sub advancedSearch {
 	}
 	
 	# load up the genres we know about.
-	$params->{'genres'}    = Slim::Schema->search('Genre', undef, { 'order_by' => 'namesort' });
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	$params->{'genres'}    = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -260,7 +261,7 @@ sub advancedSearch {
 	# XXXX - for some reason, the 'join' key isn't preserved when passed
 	# along as a ref. Perl bug because 'join' is a keyword? Use 'joins' as well.
 	my %attrs = (
-		'order_by' => 'me.disc, me.titlesort',
+		'order_by' => "me.disc, me.titlesort $collate",
 		'join'     => \@joins,
 		'joins'    => \@joins,
 	);

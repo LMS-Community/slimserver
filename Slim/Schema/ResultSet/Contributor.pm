@@ -58,8 +58,10 @@ sub searchNames {
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';
 	}
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	$attrs->{'order_by'} ||= 'me.namesort';
+	$attrs->{'order_by'} ||= "me.namesort $collate";
 	$attrs->{'distinct'} ||= 'me.id';
 	$attrs->{'join'}     ||= \@joins;
 
@@ -95,9 +97,11 @@ sub browse {
 			push @joins, 'contributorAlbums';
 		}
 	}
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	return $self->search($cond, {
-		'order_by' => 'me.namesort',
+		'order_by' => "me.namesort $collate",
 		'group_by' => 'me.id',
 		'join'     => \@joins,
 	});
@@ -116,8 +120,9 @@ sub descendAlbum {
 
 	} else {
 		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+		my $collate = $sqlHelperClass->collate();
 		
-		$sort = $sqlHelperClass->prepend0("album.titlesort") . ", album.disc";
+		$sort = $sqlHelperClass->prepend0("album.titlesort") . " $collate, album.disc";
 	}
 
 	my $attr = {

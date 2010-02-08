@@ -40,10 +40,12 @@ our %contributorToRoleMap = (
 
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	$class->many_to_many('tracks', 'contributorTracks' => 'contributor', undef, {
 		'distinct' => 1,
-		'order_by' => [qw(disc tracknum titlesort)],
+		'order_by' => ['disc', 'tracknum', "titlesort $collate"], # XXX won't change if language changes
 	});
 
 	$class->many_to_many('albums', 'contributorAlbums' => 'album', undef, { 'distinct' => 1 });

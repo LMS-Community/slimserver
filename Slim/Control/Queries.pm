@@ -261,11 +261,13 @@ sub albumsQuery {
 	my $allSongs = $menuMode && defined $insert && !$partyMode;
 	my $insertAll = $allSongs && !$useContextMenu;
 	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
 	my $sql      = 'SELECT %s FROM albums ';
 	my $c        = { 'albums.id' => 1, 'albums.titlesearch' => 1, 'albums.titlesort' => 1 };
 	my $w        = [];
 	my $p        = [];
-	my $order_by = 'albums.titlesort, albums.disc'; # XXX old code prepended 0 to titlesort, but not other titlesorts
+	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -278,24 +280,24 @@ sub albumsQuery {
 	else {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
-			$order_by = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
+			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
 		}
 		elsif ( $sort eq 'artflow' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
-			$order_by = 'contributors.namesort, albums.year, albums.titlesort';
+			$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
 		}
 		elsif ( $sort eq 'artistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
-			$order_by = 'contributors.namesort, albums.titlesort';
+			$order_by = "contributors.namesort $collate, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
 		}
 		elsif ( $sort eq 'yearartistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
-			$order_by = 'albums.year, contributors.namesort, albums.titlesort';
+			$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
 		}
 		elsif ( $sort eq 'yearalbum' ) {
-			$order_by = 'albums.year, albums.titlesort';
+			$order_by = "albums.year, albums.titlesort $collate";
 		}
 
 		if (specified($search)) {
@@ -870,7 +872,9 @@ sub artistsQuery {
 		$sql .= join( ' AND ', @{$w} );
 		$sql .= ' ';
 	}
-	$sql .= 'GROUP BY contributors.id ORDER BY contributors.namesort ';
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	$sql .= "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
 	
 	my $dbh = Slim::Schema->dbh;
 	
@@ -1559,7 +1563,9 @@ sub genresQuery {
 		$sql .= join( ' AND ', @{$w} );
 		$sql .= ' ';
 	}
-	$sql .= 'ORDER BY genres.namesort ';
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	$sql .= "ORDER BY genres.namesort $collate";
 	
 	my $dbh = Slim::Schema->dbh;
 	
@@ -4224,13 +4230,15 @@ sub titlesQuery {
 	# since when $default eq '' -> $val eq $param
 	$tags = $tagsprm if defined $tagsprm;
 	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
 	my $sql      = 'SELECT %s FROM tracks ';
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
 	my $w        = [
 		'(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")'
 	];
 	my $p        = [];
-	my $order_by = 'tracks.titlesort';
+	my $order_by = "tracks.titlesort $collate";
 	
 	# Normalize any search parameters
 	if (specified($search)) {
@@ -4319,7 +4327,7 @@ sub titlesQuery {
 
 	if ($sort && $sort eq "tracknum") {
 		$tags .= 't';
-		$order_by = 'tracks.disc, tracks.tracknum, tracks.titlesort'; # XXX titlesort had prepended 0
+		$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
 	}
 	
 	# Jive menuMode needs some extra columns and joins. Set these using tags

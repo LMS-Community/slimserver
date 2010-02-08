@@ -542,20 +542,6 @@ sub migrateDB {
 	return 0;
 }
 
-=head2 changeCollation ( $collation )
-
-Change the collation for tables where sorting is important.
-
-=cut
-
-sub changeCollation {
-	my ( $class, $collation ) = @_;
-	
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	
-	$sqlHelperClass->changeCollation( $class->storage->dbh, $collation );
-}
-
 =head2 rs( $class )
 
 Returns a L<DBIx::Class::ResultSet> for the specified class.

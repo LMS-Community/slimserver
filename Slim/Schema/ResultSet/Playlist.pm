@@ -97,7 +97,8 @@ sub getPlaylists {
 	}
 
 	# Add search criteria for playlists
-	my $rs = $self->search($find, { 'order_by' => 'titlesort' });
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	my $rs = $self->search($find, { 'order_by' => "titlesort $collate" });
 
 	return wantarray ? $rs->all : $rs;
 }

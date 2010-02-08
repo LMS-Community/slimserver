@@ -46,8 +46,10 @@ sub searchNames {
 	my $self  = shift;
 	my $terms = shift;
 	my $attrs = shift || {};
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	$attrs->{'order_by'} ||= 'me.disc, me.titlesort';
+	$attrs->{'order_by'} ||= "me.disc, me.titlesort $collate";
 	$attrs->{'distinct'} ||= 'me.id';
 
 	return $self->search({
@@ -66,7 +68,11 @@ sub browse {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
-	my $sort = shift || 'me.titlesort';
+	
+	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $collate = $sqlHelperClass->collate();
+	
+	my $sort = shift || "me.titlesort $collate";
 	
 	my $join = '';
 
@@ -80,9 +86,7 @@ sub browse {
 			$join = 'album';
 		}
 		
-		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-		
-		$sort =~ s/(\w+?.\w+?sort)/$sqlHelperClass->prepend0($1)/eg;
+		$sort =~ s/((?:\w+\.)?\w+sort)/$sqlHelperClass->prepend0($1) . " $collate"/eg;
 	}
 
 	# Join on album

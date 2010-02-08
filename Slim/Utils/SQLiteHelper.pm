@@ -134,11 +134,10 @@ sub on_connect_do {
 	return $sql;
 }
 
-sub changeCollation {
-	my ( $class, $dbh, $collation ) = @_;
-	
-	# XXX
-}
+# Built-in perllocale collation will sort using Unicode Collation Algorithm
+# on systems with a properly installed locale.  This appears to be fine on Linux,
+# but not under OSX for some reason.
+sub collate { 'COLLATE perllocale ' }
 
 =head2 randomFunction()
 

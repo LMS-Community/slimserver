@@ -45,8 +45,10 @@ sub searchNames {
 	my $self  = shift;
 	my $terms = shift;
 	my $attrs = shift || {};
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	$attrs->{'order_by'} ||= 'me.namesort';
+	$attrs->{'order_by'} ||= "me.namesort $collate";
 	$attrs->{'distinct'} ||= 'me.id';
 
 	return $self->search({ 'me.namesearch' => { 'like' => $terms } }, $attrs);
@@ -57,8 +59,10 @@ sub browse {
 	my $find = shift;
 	my $cond = shift;
 	my $sort = shift;
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	return $self->search($cond, { 'order_by' => 'me.namesort' });
+	return $self->search($cond, { 'order_by' => "me.namesort $collate" });
 }
 
 sub descendContributor {
@@ -91,8 +95,10 @@ sub descendContributor {
 
 		$rs = $rs->search_related('contributorTracks');
 	}
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	return $rs->search_related('contributor', {}, { 'order_by' => $sort || 'contributor.namesort' });
+	return $rs->search_related('contributor', {}, { 'order_by' => $sort || "contributor.namesort $collate" });
 }
 
 1;
