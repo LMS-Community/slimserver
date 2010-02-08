@@ -1024,9 +1024,6 @@ sub checkDataSource {
 	return if !Slim::Schema::hasLibrary();
 	
 	$sqlHelperClass->checkDataSource();
-	
-	# Don't start scanning if auto-rescan is enabled
-	return if $prefs->get('autorescan');
 
 	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
