@@ -758,11 +758,11 @@ sub _errorOpening {
 	$error ||= 'PROBLEM_OPENING';
 	$url   ||= $songUrl;
 
-	_playersMessage($self, $url, {}, $error, undef, 1, 5);
+	_playersMessage($self, $url, {}, $error, undef, 1, 5, 'isError');
 }
 
 sub _playersMessage {
-	my ($self, $url, $remoteMeta, $message, $icon, $block, $duration) = @_;
+	my ($self, $url, $remoteMeta, $message, $icon, $block, $duration, $isError) = @_;
 	
 	$block    = 0  unless defined $block;
 	$duration = 10 unless defined $duration;
@@ -783,7 +783,7 @@ sub _playersMessage {
 		# Show an error message
 		$client->showBriefly( {
 			line => [ $line1, $line2 ],
-			jive => { type => 'song', text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
+			jive => { type => ($isError ? 'popupplay' : 'song'), text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
 		}, {
 			scroll    => 1,
 			firstline => 1,
