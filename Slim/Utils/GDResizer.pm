@@ -539,6 +539,11 @@ sub _read_tag {
 		}
 	}
 	
+	# APE
+	if ( $tags->{'COVER ART (FRONT)'} ) {
+		return \($tags->{'COVER ART (FRONT)'});
+	}
+	
 	# Escient artwork app block (who uses this??)
 	if ( $tags->{APPLICATION} && $tags->{APPLICATION}->{1163084622} ) {
 		my $artwork = $tags->{APPLICATION}->{1163084622};
