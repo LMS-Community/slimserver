@@ -5601,7 +5601,7 @@ SETUP_TRANSITIONTYPE
 	FI	Ristihäivytys
 	FR	Transitions
 	HE	מעבר הדרגתי
-	IT	Dissolvenza
+	IT	Dissolvenza incrociata
 	NL	Crossfade
 	NO	Krysstoning
 	PL	Przenikanie
@@ -5686,7 +5686,7 @@ TRANSITION_CROSSFADE
 	FI	Ristihäivytys
 	FR	Transitions
 	HE	מעבר הדרגתי
-	IT	Dissolvenza
+	IT	Dissolv. incrociata
 	NL	Crossfade
 	NO	Krysstoning
 	PL	Przenikanie
