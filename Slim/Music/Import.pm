@@ -169,6 +169,8 @@ sub launchScan {
 		push @scanArgs, '--debug', $debugArgs;
 	}
 	
+	$class->setIsScanning(1);
+	
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);

@@ -2806,6 +2806,7 @@ sub wipecacheCommand {
 		}
 		
 		if ( $prefs->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		

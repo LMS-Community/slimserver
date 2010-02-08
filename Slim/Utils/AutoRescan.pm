@@ -110,9 +110,9 @@ sub init {
 
 	# Perform a rescan in case any files have changed while server was off
 	# Only do this if we have files in the database
-	my $rescanning = 0;
+	my $rescanning = Slim::Music::Import->stillScanning;
 	if ( my ($count) = Slim::Schema->dbh->selectrow_array("SELECT COUNT(*) FROM tracks") ) {
-		if ( !Slim::Music::Import->stillScanning ) {
+		if ( !$rescanning ) {
 			# Clear progress info
 			Slim::Utils::Progress->clear;
 			
