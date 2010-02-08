@@ -20,12 +20,7 @@ use strict;
 use base qw(Slim::Formats);
 
 use Audio::Scan;
-
-my %tagMapping = (
-	'TRACK'	     => 'TRACKNUM',
-	'DATE'       => 'YEAR',
-	'DISCNUMBER' => 'DISC',
-);
+use Slim::Formats::APE;
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
@@ -48,19 +43,11 @@ sub getTag {
 	$tags->{RATE}     = $info->{samplerate};
 	$tags->{CHANNELS} = $info->{channels};
 	
-	$class->doTagMapping($tags);
+	Slim::Formats::APE->doTagMapping($tags);
 
 	return $tags;
 }
 
-sub doTagMapping {
-	my ( $class, $tags ) = @_;
-	
-	while ( my ($old, $new) = each %tagMapping ) {
-		if ( exists $tags->{$old} ) {
-			$tags->{$new} = delete $tags->{$old};
-		}
-	}
-}
+*getCoverArt = \&Slim::Formats::APE::getCoverArt;
 
 1;
