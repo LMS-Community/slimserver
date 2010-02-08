@@ -23,11 +23,25 @@ sub page {
 }
 
 sub prefs {
- 	return ($prefs, qw(dbtype disableStatistics serverPriority scannerPriority resampleArtwork precacheArtwork maxPlaylistLength) );
+ 	return ($prefs, qw(dbtype disableStatistics serverPriority scannerPriority resampleArtwork 
+ 				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
+		
+	if ( $paramRef->{'saveSettings'} ) {
+		my $curAuto = $prefs->get('autorescan');
+		if ( $curAuto != $paramRef->{pref_autorescan} ) {
+			require Slim::Utils::AutoRescan;
+			if ( $paramRef->{pref_autorescan} == 1 ) {
+				Slim::Utils::AutoRescan->init;
+			}
+			else {
+				Slim::Utils::AutoRescan->shutdown;
+			}
+		}
+	}
 	
 	# Change database type
 	my $curdb = $prefs->get('dbsource') =~ /SQLite/ ? 'SQLite' : 'MySQL';

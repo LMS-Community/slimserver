@@ -24,7 +24,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language audiodir playlistdir libraryname autorescan autorescan_stat_interval) );
+	return ($prefs, qw(language audiodir playlistdir libraryname) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...
@@ -91,17 +91,6 @@ sub handler {
 			# Bug 5740, flush the playlist cache
 			for my $client (Slim::Player::Client::clients()) {
 				$client->currentPlaylistChangeTime(Time::HiRes::time());
-			}
-		}
-		
-		my $curAuto = $prefs->get('autorescan');
-		if ( $curAuto != $paramRef->{pref_autorescan} ) {
-			require Slim::Utils::AutoRescan;
-			if ( $paramRef->{pref_autorescan} == 1 ) {
-				Slim::Utils::AutoRescan->init;
-			}
-			else {
-				Slim::Utils::AutoRescan->shutdown;
 			}
 		}
 	}

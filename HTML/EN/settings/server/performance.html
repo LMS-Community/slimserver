@@ -62,6 +62,21 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
+		<select class="stdedit" name="pref_autorescan" id="autorescan">
+			<option [% IF prefs.pref_autorescan == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_AUTO_RESCAN_ENABLE' | string %]
+			</option>
+			<option [% IF !prefs.pref_autorescan %]selected="selected" [% END %]value="0">
+				[% 'SETUP_AUTO_RESCAN_DISABLE' | string %]
+			</option>
+		</select>
+	[% END %]
+	
+	[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
+		<input type=text class="stdedit" name="pref_autorescan_stat_interval" id="autorescan_stat_interval" value="[% prefs.pref_autorescan_stat_interval %]" size="15">
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_MAXPLAYLISTLENGTH" desc="SETUP_MAXPLAYLISTLENGTH_DESC" %]
 		<input type="text" class="stdedit" name="pref_maxPlaylistLength" id="pref_maxPlaylistLength" value="[% prefs.pref_maxPlaylistLength %]" size="15">
 	[% END %]

@@ -54,15 +54,4 @@
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 	
-	[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
-		<select class="stdedit" name="pref_autorescan" id="autorescan">
-			<option [% IF prefs.pref_autorescan == 1 %]selected="selected" [% END %]value="1">
-				[% 'SETUP_AUTO_RESCAN_ENABLE' | string %]
-			</option>
-			<option [% IF !prefs.pref_autorescan %]selected="selected" [% END %]value="0">
-				[% 'SETUP_AUTO_RESCAN_DISABLE' | string %]
-			</option>
-		</select>
-	[% END %]
-	
 [% PROCESS settings/footer.html %]
