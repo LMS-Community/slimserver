@@ -7,7 +7,4 @@ PLUGIN_SN
 
 PLUGIN_SN_DESC
 	EN	Switch to mysqueezebox.com for services which are not supported on your Squeezebox Server.
-
-DEBUG_PLUGIN_SN
-	EN	mysqueezebox.com services handler
 	

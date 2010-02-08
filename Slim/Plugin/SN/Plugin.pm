@@ -19,6 +19,7 @@ use Slim::Utils::Log;
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.sn',
 	'defaultLevel' => 'ERROR',
+	'description'  => 'PLUGIN_SN',
 });
 
 my @defaultServices = (qw(

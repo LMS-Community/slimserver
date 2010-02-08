@@ -13508,6 +13508,9 @@ DEBUG_NETWORK_SQUEEZENETWORK
 	RU	Ведение журнала mysqueesebox.com
 	SV	mysqueezebox.com-loggning
 
+DEBUG_JIVE
+	EN	Support for Squeezplay based devices
+
 DEBUG_MENU_TRACKINFO
 	CS	Nabídka informací o stopě
 	DA	Menu med oplysninger om nummer
