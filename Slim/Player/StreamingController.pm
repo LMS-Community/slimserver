@@ -1026,7 +1026,9 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	my $song = playingSong($self) || return;
 	my $handler = $song->currentTrackHandler();
 
-	if ($newtime !~ /^[\+\-]/ && $newtime == 0) {
+	if ($newtime !~ /^[\+\-]/ && $newtime == 0
+		|| !$song->duration()
+	) {
 		# User is trying to restart the current track
 		my $url         = $song->currentTrack()->url;
 		
@@ -1051,7 +1053,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 		}
 	}
 	
-	if ($newtime > $self->playingSongDuration()) {
+	if ($newtime > $song->duration()) {
 		_Skip($self, $event);
 		return;
 	}
