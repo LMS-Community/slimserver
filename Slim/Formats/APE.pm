@@ -77,6 +77,26 @@ sub doTagMapping {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+	
+	# Flag if we have embedded cover art
+	if ( exists $tags->{'COVER ART (FRONT)'} ) {
+		$tags->{HAS_COVER} = 1;
+	}
+}
+
+=head2 getCoverArt( $filename )
+
+Extract and return cover image from the file.
+
+=cut
+
+sub getCoverArt {
+	my $class = shift;
+	my $file  = shift || return undef;
+	
+	my $s = Audio::Scan->scan_tags($file);
+	
+	return $s->{tags}->{'COVER ART (FRONT)'};
 }
 
 1;
