@@ -2810,10 +2810,25 @@ sub wipecacheCommand {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		# wipe scan still launches the external scanner
-		Slim::Music::Import->launchScan( {
-			wipe => 1,
-		} );
+		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+			# Wipe/rescan in-process on SqueezeOS
+			my $dir = $prefs->get('audiodir');
+			
+			my %args = (
+				types    => qr/(?:list|audio)/,
+				scanName => 'directory',
+				progress => 1,
+				wipe     => 1,
+			);
+			
+			Slim::Utils::Scanner::Local->rescan( $dir, \%args );
+		}
+		else {
+			# Launch external scanner on normal systems
+			Slim::Music::Import->launchScan( {
+				wipe => 1,
+			} );
+		}
 	}
 
 	$request->setStatusDone();

@@ -1024,6 +1024,9 @@ sub checkDataSource {
 	return if !Slim::Schema::hasLibrary();
 	
 	$sqlHelperClass->checkDataSource();
+	
+	# Don't launch an initial scan on SqueezeOS, it will be handled by AutoRescan
+	return if Slim::Utils::OSDetect::isSqueezeOS();
 
 	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
