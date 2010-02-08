@@ -2809,18 +2809,10 @@ sub wipecacheCommand {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		
-		
-		my $dir = $prefs->get('audiodir');
-
-		my %args = (
-			types    => qr/(?:list|audio)/,
-			scanName => 'directory',
-			progress => 1,
-			wipe     => 1,
-		);
-		
-		Slim::Utils::Scanner::Local->rescan( $dir, \%args );
+		# wipe scan still launches the external scanner
+		Slim::Music::Import->launchScan( {
+			wipe => 1,
+		} );
 	}
 
 	$request->setStatusDone();
