@@ -2093,6 +2093,9 @@ sub _preCheckAttributes {
 	# Look for tags we don't want to expose in comments, and splice them out.
 	for my $c ( @{$rawcomments} ) {
 		next unless defined $c;
+		
+		# Bug 15630, ignore strings which have the utf8 flag on but are in fact invalid utf8
+		next if utf8::is_utf8($c) && !Slim::Utils::Unicode::looks_like_utf8($c);
 
 		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
 		if ($c =~ /SoundJam_CDDB_/ ||
