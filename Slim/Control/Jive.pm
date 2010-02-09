@@ -2184,12 +2184,6 @@ sub dateQuery_filter {
 sub dateQuery {
 	my $request = shift;
 
-	# trigger time sync update if we're way off
-	my $snTimestamp = $prefs->get('sn_timestamp') || 0;
-	if (time() < $snTimestamp || time() < 1260195768) {
-		Slim::Networking::SqueezeNetwork::syncSNTime();
-	}
-
 	if ( $request->isNotQuery([['date']]) ) {
 		$request->setStatusBadDispatch();
 		return;

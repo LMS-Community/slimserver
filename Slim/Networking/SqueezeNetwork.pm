@@ -146,7 +146,6 @@ sub _init_done {
 	main::INFOLOG && $log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
 	$prefs->set( sn_timediff => $diff );
-	$prefs->set( sn_timestamp => $snTime );
 	
 	_syncSNTime_done($http, $snTime);
 	
@@ -398,8 +397,8 @@ sub _syncSNTime_done {
 	if ( $snTime && $snTime =~ /^\d+$/ && $snTime > 1262887372 ) {
 		main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
 		
-		# assuming difference = 0 as we're using time as reported by SN
-		$prefs->set('sn_timediff', 0);
+		# update offset to SN time
+		$prefs->set( sn_timediff => $snTime - time() );
 		
 		# set local time to mysqueezebox.com's epochtime 
 		Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
