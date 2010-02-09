@@ -465,7 +465,13 @@ sub initClass {
 	}
 }
 
+my $cleanupDone;
 sub cleanup {
+	
+	# cleanup() is called at the end of main() and possibly again from a sig handler
+	# We only want it to run once.
+	return if $cleanupDone;	
+	$cleanupDone = 1;
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
