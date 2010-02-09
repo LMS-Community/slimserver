@@ -324,8 +324,23 @@ sub getMetadataFor {
 	return unless $song;
 	
 	my $icon = $class->getIcon();
+	my $name = $client->string('PLUGIN_LFM_MODULE_NAME');
 	
-	if ( my $track = $song->pluginData() ) {
+	# Could be somewhere else in the playlist
+	if ($song->track->url ne $url) {
+		$log->error("$url: ");
+		return {
+			icon    => $icon,
+			cover   => $icon,
+			bitrate => '128k CBR',
+			type    => 'MP3 (' . $name . ')',
+			title   => $name,
+			album   => Slim::Music::Info::standardTitle( $client, $url, undef ),
+		};
+	}
+	
+	my $track = $song->pluginData();
+	if ( $track && %$track ) {
 		return {
 			artist      => $track->{creator},
 			album       => $track->{album},
@@ -334,7 +349,7 @@ sub getMetadataFor {
 			icon        => $icon,
 			duration    => $track->{secs},
 			bitrate     => '128k CBR',
-			type        => 'MP3 (' . $client->string('PLUGIN_LFM_MODULE_NAME') . ')',
+			type        => 'MP3 (' . $name . ')',
 			info_link   => 'plugins/lastfm/trackinfo.html',
 			buttons     => {
 				# disable REW/Previous button
@@ -365,7 +380,8 @@ sub getMetadataFor {
 			icon    => $icon,
 			cover   => $icon,
 			bitrate => '128k CBR',
-			type    => 'MP3 (' . $client->string('PLUGIN_LFM_MODULE_NAME') . ')',
+			type    => 'MP3 (' . $name . ')',
+			title   => $song->track()->title(),
 		};
 	}
 }
