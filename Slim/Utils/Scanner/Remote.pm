@@ -105,7 +105,7 @@ sub scanURL {
 	
 	# Make sure it has a title
 	if ( !$track->title ) {
-		$track = Slim::Music::Info::setTitle( $url, $url );
+		$track = Slim::Music::Info::setTitle( $url, $args->{'title'} ? $args->{'title'} : $url );
 	}
 
 	# Check if the protocol handler has a custom scanning method
@@ -835,6 +835,7 @@ sub parsePlaylist {
 			song   => $args->{song},
 			depth  => $args->{depth} + 1,
 			delay  => $delay,
+			title  => (($playlist->title && $playlist->title =~ /^(?:http|mms)/i) ? undef : $playlist->title),
 			cb     => sub {
 				my ( $result, $error ) = @_;
 				
