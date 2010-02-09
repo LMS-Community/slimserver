@@ -577,8 +577,6 @@ sub open {
 						$pipeline =  new FileHandle $command;
 					}
 					
-					warn "Launched FileHandle pipeline " . Data::Dump::dump($pipeline) . "\n";
-	
 					if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {
 						logError("Can't set nonblocking for url: [$url]");
 						return (undef, 'PROBLEM_OPENING', $url);
