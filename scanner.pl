@@ -143,6 +143,11 @@ sub main {
 		$musicip = $musicmagic;
 	}
 	
+	# If dbsource has been changed via settings, it overrides the default
+	if ( $prefs->get('dbtype') ) {
+		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
+	}
+	
 	if ( $dbtype ) {
 		# For testing SQLite, can specify a different database type
 		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
