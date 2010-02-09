@@ -639,7 +639,16 @@ Get the current priority of the server.
 =cut
 
 sub getPriority {
+	return _priorityFromPriorityClass( getPriorityClass() );
+}
 
+=head1 getPriorityClass()
+
+Get the current Win32 priority class of the server.
+
+=cut
+
+sub getPriorityClass {
 	Slim::bootstrap::tryModuleLoad('Scalar::Util', 'Win32::API', 'Win32::Process', 'nowarn');
 
 	my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
@@ -661,8 +670,10 @@ sub getPriority {
 			Slim::Utils::Log->logError("Can't get priority class ($^E) [$@]");
 		}
 
-		return _priorityFromPriorityClass($priorityClass);
+		return $priorityClass;
 	}
+	
+	return;
 }
 
 # Translation between win32 and *nix priorities

@@ -566,12 +566,21 @@ sub open {
 					# On windows ensure a child window is not opened if $command includes transcode processes
 					if (main::ISWINDOWS) {
 						Win32::SetChildShowWindow(0);
-						$pipeline =  new FileHandle $command;
+						$pipeline = FileHandle->new;
+						my $pid = $pipeline->open($command);
+						
+						# XXX Bug 15650, this sets the priority of the cmd.exe process but not the actual
+						# transcoder process(es).
+						my $handle;
+						if ( Win32::Process::Open( $handle, $pid, 0 ) ) {
+							$handle->SetPriorityClass( Slim::Utils::OS::Win32::getPriorityClass() || Win32::Process::NORMAL_PRIORITY_CLASS() );
+						}
+						
 						Win32::SetChildShowWindow();
 					} else {
 						$pipeline =  new FileHandle $command;
 					}
-	
+					
 					if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {
 						logError("Can't set nonblocking for url: [$url]");
 						return (undef, 'PROBLEM_OPENING', $url);
