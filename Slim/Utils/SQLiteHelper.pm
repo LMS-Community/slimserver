@@ -500,6 +500,8 @@ sub _notifyFromScanner {
 	
 	my $msg = $request->getParam('_msg');
 	
+	my $log = logger('scan.scanner');
+	
 	main::INFOLOG && $log->is_info && $log->info("Notify from scanner: $msg");
 	
 	if ( $msg eq 'unlock' ) {
@@ -559,6 +561,18 @@ sub _notifyFromScanner {
 		if ( $SCANNING ) {
 			# Scanner has finished.
 			$SCANNING = 0;
+			
+			# Replace our database with the scanner database.
+			$class->replace_with('squeezebox-scanner.db') if Slim::Schema::hasLibrary();
+			
+			# XXX handle players with track objects that are now outdated?
+		
+			Slim::Music::Import->setIsScanning(0);
+			
+			# Clear caches, like the vaObj, etc after scanning has been finished.
+			Slim::Schema->wipeCaches;
+
+			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 		}
 		
 		$class->pragma('locking_mode = EXCLUSIVE');
@@ -579,19 +593,6 @@ sub _notifyFromScanner {
 			$SCANNING = 0;
 			
 			Slim::Music::Import->setIsScanning(0);
-		}
-		else {
-			# Replace our database with the scanner database.
-			$class->replace_with('squeezebox-scanner.db') if Slim::Schema::hasLibrary();
-			
-			# XXX handle players with track objects that are now outdated?
-		
-			Slim::Music::Import->setIsScanning(0);
-			
-			# Clear caches, like the vaObj, etc after scanning has been finished.
-			Slim::Schema->wipeCaches;
-
-			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 		}
 	}
 	
