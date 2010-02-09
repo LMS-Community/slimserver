@@ -522,6 +522,10 @@ sub _notifyFromScanner {
 		# Scanner has started
 		$SCANNING = 1;
 		
+		if ( $prefs->get('autorescan') ) {
+			Slim::Utils::AutoRescan->shutdown;
+		}
+		
 		Slim::Music::Import->clearProgressInfo;
 		
 		Slim::Music::Import->setIsScanning(1);
