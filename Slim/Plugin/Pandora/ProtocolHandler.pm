@@ -420,7 +420,22 @@ sub getMetadataFor {
 	
 	my $icon = $class->getIcon();
 	
-	if ( my $track = $song->pluginData() ) {
+	# Could be somewhere else in the playlist
+	if ($song->track->url ne $url) {
+		$log->error("$url: ");
+		return {
+			icon    => $icon,
+			cover   => $icon,
+			bitrate => '128k CBR',
+			type    => 'MP3 (Pandora)',
+			title   => 'Pandora',
+			album   => Slim::Music::Info::standardTitle( $client, $url, undef ),
+		};
+	}
+	
+	my $track = $song->pluginData();
+	if ( $track && %$track ) {
+		$log->error("$url: ", Data::Dump::dump($track));
 		return {
 			artist      => $track->{artistName},
 			album       => $track->{albumName},
@@ -461,6 +476,7 @@ sub getMetadataFor {
 			cover   => $icon,
 			bitrate => '128k CBR',
 			type    => 'MP3 (Pandora)',
+			title   => $song->track()->title(),
 		};
 	}
 }
