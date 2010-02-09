@@ -2033,9 +2033,6 @@ sub wipeCaches {
 		Slim::Control::Queries::wipeCaches();
 	}
 	
-	require Slim::Utils::ArtworkCache;
-	Slim::Utils::ArtworkCache->new()->wipe();
-
 	main::INFOLOG && logger('scan.import')->info("Wiped all in-memory caches.");
 }
 
@@ -2050,6 +2047,9 @@ sub wipeAllData {
 
 	$self->wipeCaches;
 	$self->wipeDB;
+	
+	require Slim::Utils::ArtworkCache;
+	Slim::Utils::ArtworkCache->new()->wipe();
 
 	main::INFOLOG && logger('scan.import')->info("Wiped the database.");
 }
