@@ -368,6 +368,9 @@ sub main {
 	# Wipe templates if they exist.
 	rmtree( catdir($prefs->get('cachedir'), 'templates') );
 	
+	# Cleanup after we're done, we can't rely on this being called from a sig handler
+	cleanup();
+	
 	# To debug scanner memory usage, uncomment this line and kill -USR2 the scanner process
 	# after it's finished scanning.
 	# while (1) { sleep 1 }
