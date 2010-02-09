@@ -618,7 +618,7 @@ sub sound {
 		$self->{_originalVolume} = $currentVolume;
 		main::DEBUGLOG && $log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
 
-		if ($currentVolume != $self->volume) {
+		if ($currentVolume != $self->volume && ! _fadeInSeconds($client) ) {
 			main::DEBUGLOG && $log->debug("Changing volume from $currentVolume to " . $self->volume);
 			$client->volume($self->volume);
 		}
