@@ -409,6 +409,8 @@ sub updateProgress {
 	require LWP::UserAgent;
 	require HTTP::Request;
 	
+	my $log = logger('scan.scanner');
+	
 	# Scanner does not have an event loop, so use sync HTTP here
 	my $host = ( $prefs->get('httpaddr') || '127.0.0.1' ) . ':' . $prefs->get('httpport');
 	
@@ -566,13 +568,10 @@ sub _notifyFromScanner {
 			# Scanner has finished.
 			$SCANNING = 0;
 		}
-		
-		$class->pragma('locking_mode = EXCLUSIVE');
 	}
 	elsif ( $msg eq 'exit' ) {
 		# Scanner is exiting.  If we get this without an 'end' message
 		# the scanner aborted and we should throw away the scanner database
-		$class->pragma('locking_mode = EXCLUSIVE');
 		
 		if ( $SCANNING ) {
 			my $db = $class->_dbFile('squeezebox-scanner.db');
@@ -585,9 +584,13 @@ sub _notifyFromScanner {
 			$SCANNING = 0;
 			
 			Slim::Music::Import->setIsScanning(0);
+			
+			# Reset locking mode
+			$class->pragma('locking_mode = EXCLUSIVE');
 		}
 		else {
-			# Replace our database with the scanner database.
+			# Replace our database with the scanner database. Note that the locking mode
+			# is set to exclusive when we reconnect to squeezebox.db.
 			$class->replace_with('squeezebox-scanner.db') if Slim::Schema::hasLibrary();
 			
 			# XXX handle players with track objects that are now outdated?
