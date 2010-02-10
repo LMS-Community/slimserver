@@ -41,7 +41,6 @@ use Exporter::Lite;
 our @EXPORT_OK = qw(string cstring clientString);
 
 use Config;
-use Data::URIEncode qw(complex_to_query);
 use Digest::SHA1 qw(sha1_hex);
 use POSIX qw(setlocale LC_TIME);
 use File::Slurp qw(read_file write_file);
@@ -399,6 +398,7 @@ strings for apps.
 
 # Cache extra strings to avoid reading from disk
 my $extraStringsCache = {};
+my $extraStringsDirty = 0;
 
 sub storeExtraStrings {
 	my $extra = shift;
@@ -415,24 +415,42 @@ sub storeExtraStrings {
 		}
 	}
 	
-	my $in = complex_to_query($extraStringsCache);
+	# This function determines if the string hash data has changed
+	my $hash_diff = sub {
+		for my $k ( keys %{ $_[1] } ) {
+			if ( !exists $_[0]->{$k} || $_[0]->{$k} ne $_[1]->{$k} ) {
+				return 1;
+			}
+		}
+		return 0;
+	};
 	
 	# Turn into a hash
 	$extra = { map { $_->{token} => $_->{strings} } @{$extra} };
 
 	for my $string ( keys %{$extra} ) {
 		storeString( $string, $extra->{$string} );
-		$extraStringsCache->{$string} = $extra->{$string};
+		if ( !exists $extraStringsCache->{$string} || $hash_diff->( $extraStringsCache->{$string}, $extra->{$string} ) ) {
+			$extraStringsCache->{$string} = $extra->{$string};
+			$extraStringsDirty = 1;
+		}
 	}
-	
-	# Only update the file on disk if the data has changed
-	my $out = complex_to_query($extraStringsCache);
-	
-	if ( $out ne $in ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug('Writing updated extrastrings.json file');
-		eval { write_file( $extraCache, to_json($extraStringsCache) ) };
+
+	if ( $extraStringsDirty ) {
+		# Batch changes to avoid lots of writes
+		Slim::Utils::Timers::killTimers( $extraCache, \&_writeExtraStrings );
+		Slim::Utils::Timers::setTimer( $extraCache, time() + 5, \&_writeExtraStrings );
 	}
 }
+
+sub _writeExtraStrings {
+	my $extraCache = shift;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug('Writing updated extrastrings.json file');
+	
+	$extraStringsDirty = 0;
+	eval { write_file( $extraCache, to_json($extraStringsCache) ) };
+};
 
 =head2 loadExtraStrings
 
