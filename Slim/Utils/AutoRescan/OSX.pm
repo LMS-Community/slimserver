@@ -69,9 +69,7 @@ sub watch {
 				}
 				else {
 					# Make sure we care about this file
-					return unless Slim::Utils::Misc::fileFilter(
-						dirname($file), basename($file), Slim::Music::Info::validTypeExtensions()
-					);
+					return unless Slim::Utils::Misc::fileFilter( dirname($file), basename($file) );
 				}
 				
 				$cb->( $file );
