@@ -65,12 +65,12 @@ sub watch {
 				
 				if ( -d _ ) {
 					# Make sure we care about this directory
-					return unless Slim::Utils::Misc::folderFilter( $file, 1 );
+					return unless Slim::Utils::Misc::folderFilter($file);
 				}
 				else {
 					# Make sure we care about this file
 					return unless Slim::Utils::Misc::fileFilter(
-						dirname($file), basename($file), Slim::Music::Info::validTypeExtensions(), 1
+						dirname($file), basename($file), Slim::Music::Info::validTypeExtensions()
 					);
 				}
 				
