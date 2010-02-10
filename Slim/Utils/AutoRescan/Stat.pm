@@ -28,7 +28,6 @@ if ( main::HAS_AIO ) {
 else {
 	$statclass = 'Slim::Utils::AutoRescan::Stat::Async';
 }
-print "$statclass\n";
 eval "use $statclass";
 die $@ if $@;
 
