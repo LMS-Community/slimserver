@@ -116,11 +116,14 @@ sub init {
 			# Clear progress info
 			Slim::Utils::Progress->clear;
 			
-			# Start async rescan
-			Slim::Utils::Scanner::Local->rescan( $audiodir, {
-				types    => qr/(?:list|audio)/,
-				scanName => 'directory',
-				progress => 1,
+			# Start async rescan, but wait until the event loop starts before running this
+			# or it will block startup
+			Slim::Utils::Timers::setTimer( undef, time(), sub {
+				Slim::Utils::Scanner::Local->rescan( $audiodir, {
+					types    => qr/(?:list|audio)/,
+					scanName => 'directory',
+					progress => 1,
+				} );
 			} );
 	
 			$rescanning = 1;
