@@ -11,6 +11,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use LWP::UserAgent;
+use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -1501,6 +1502,37 @@ sub _syncHTTPRequest {
 	$http->timeout($prefs->get('timeout') || 5);
 
 	return $http->get("http://localhost:$MMSport$url");
+}
+
+# This method is used for the in-process rescanner to update mixable status
+# for new/changed tracks
+sub checkSingleTrack {
+	my ( $class, $trackid, $url ) = @_;
+	
+	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
+	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $http = shift;
+			
+			if ( $http->content =~ /active\s+yes/ ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("Setting MusicIP mixable status for $path");
+				
+				my $track = Slim::Schema->rs('Track')->find($trackid);
+				
+				Slim::Plugin::MusicMagic::Importer->setSongMixable($track);
+			}
+			else {
+				main::DEBUGLOG && $log->is_debug && $log->debug("MusicIP mixable status not found for $path");
+			}
+		},
+		sub {
+			main::DEBUGLOG && $log->is_debug && $log->debug("MusicIP mixable status not found for $path");
+		},
+	);
+	
+	$http->get($apiurl);
 }
 
 1;

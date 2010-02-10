@@ -50,7 +50,7 @@ sub find {
 	
 	if ( $args->{recursive} ) {
 		# XXX how best to delete files in non-recursive mode?
-		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '$file%'");
+		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '${file}/%'");
 	}
 	
 	stat $path;
@@ -608,6 +608,13 @@ sub new {
 				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
 				return;
 			}
+			
+			# If MIP is enabled, check status for this track
+			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
+				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($trackid, $url);
+			}
+			
+			# XXX iTunes
 		};
 	}
 	elsif ( 
@@ -764,6 +771,11 @@ sub changed {
 				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
 				
 				Slim::Schema::Year->rescan( $orig->{year} );
+			}
+			
+			# If MIP is enabled, check status for this track
+			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
+				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($track->id, $url);
 			}
 		};
 		
