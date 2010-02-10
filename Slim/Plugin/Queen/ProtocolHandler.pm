@@ -12,13 +12,10 @@ use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Player::Playlist;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
-my $log = Slim::Utils::Log->addLogCategory( {
-	category     => 'plugin.queen',
-	defaultLevel => 'ERROR',
-	description  => 'PLUGIN_QUEEN_MODULE_NAME',
-} );
+my $log = logger('plugin.queen');
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
 sub new {

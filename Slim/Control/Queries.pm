@@ -31,7 +31,6 @@ L<Slim::Control::Queries> implements most Squeezebox Server queries and is desig
 
 use strict;
 
-use Data::URIEncode qw(complex_to_query);
 use Storable;
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64 decode_base64);
