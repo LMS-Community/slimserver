@@ -29,11 +29,7 @@ CLI commands used by Jive.
 
 =cut
 
-my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'player.jive',
-	'defaultLevel' => 'ERROR',
-	'description'  => 'DEBUG_JIVE',
-});
+my $log = logger('player.jive');
 
 # additional top level menus registered by plugins
 my @appMenus           = (); # all available apps
