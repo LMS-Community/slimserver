@@ -1190,7 +1190,8 @@ sub sleepSettingsQuery {
 		push @menu, sleepInXHash($client, $val, 0);
 	}
 
-	if ($client->isPlaying()) {
+	#bug 15675 - don't display 'end of song' option for radio streams
+	if ($client->isPlaying() && $client->controller()->playingSongDuration()) {
 
 		push @menu, {
 			text    => $client->string('SLEEP_AT_END_OF_SONG'),
