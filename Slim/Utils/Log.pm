@@ -398,6 +398,7 @@ sub setLogLevelForCategory {
 
 	# If the level is the same, it's a no-op.
 	if (defined $runningConfig{$category} && $runningConfig{$category} eq $level) {
+
 		return -1;
 	}
 
