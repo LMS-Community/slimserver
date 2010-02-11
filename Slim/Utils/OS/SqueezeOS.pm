@@ -52,6 +52,7 @@ sub ignoredItems {
 	$ignoredItems{'System Volume Information'} = 1;
 	$ignoredItems{'RECYCLER'} = 1;
 	$ignoredItems{'$Recycle.Bin'} = 1;
+	$ignoredItems{'log'} = 1;
 
 	return %ignoredItems;
 }
