@@ -142,7 +142,7 @@ sub fsevent {
 	main::DEBUGLOG && $log->is_debug && $log->debug("File system event(s) detected: $path");
 	
 	# Don't rescan individual files, move this up to directory level to be more efficient
-	if ( !-d $path ) {
+	if ( -f $path ) {
 		$path = File::Basename::dirname($path);
 	}
 	

@@ -24,6 +24,10 @@ my $w;
 # sth is global to support cancel
 my $sth;
 
+# Killing/recreating all inotify watchers is expensive, so 
+# we handle stopped mode with a simple flag
+my $STOPPED = 0;
+
 sub canWatch {
 	my ( $class, $dir ) = @_;
 	
@@ -60,12 +64,16 @@ sub watch {
 	my ( $class, $dir, $cb ) = @_;
 	
 	if ( $i ) {
-		$class->shutdown();
+		# We are already watching, so simply turn off the stopped flag
+		main::DEBUGLOG && $log->is_debug && $log->debug('Enabling inotify watcher');
+		$STOPPED = 0;
+		return;
 	}
 	
 	$i = Linux::Inotify2->new or die "Unable to start Inotify watcher: $!";
 	
-	_watch_directory( $dir, $cb );
+	# Watch all directories
+	_watch_directory( undef, $cb );
 	
 	# Can't use fileno's with AnyEvent for some reason
 	$w = EV::io (
@@ -97,10 +105,15 @@ sub event {
 	}
 	
 	if ( $e->IN_ISDIR ) {
-		# Make sure we care about this directory
-		return unless Slim::Utils::Misc::folderFilter( $file );
+		if ( $e->IN_DELETE || $e->IN_DELETE_SELF || $e->IN_MOVED_FROM ) {
+			# Always check moved_from and delete, they will fail the folderFilter but we want to handle them
+		}
+		else {
+			# Make sure we care about this directory
+			return unless Slim::Utils::Misc::folderFilter( $file );
+		}
 	
-		if ( $e->IN_CREATE ) {
+		if ( $e->IN_CREATE || $e->IN_MOVED_TO ) {
 			# New directory was created, watch it
 			# This is done so that copying in a new directory structure won't trigger rescan
 			# too soon because we only got one event for the directory
@@ -113,6 +126,9 @@ sub event {
 		# Make sure we care about this file
 		return unless Slim::Utils::Misc::fileFilter( dirname($file), basename($file) );
 	}
+	
+	# Don't call callback if we are in stopped mode
+	return if $STOPPED;
 
 	$cb->( $file );
 }
@@ -120,18 +136,9 @@ sub event {
 sub shutdown {
 	my $class = shift;
 	
-	if ( $i ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug('Stopping change monitoring');
-		
-		# Kill watchers
-		$w = undef;
-		$i = undef;
-	}
-	
-	if ( $sth ) {
-		# Cancel setting of watches
-		$sth->finish;
-		undef $sth;
+	if ( $i && !$STOPPED ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug('Disabling inotify watcher');
+		$STOPPED = 1;
 	}
 }
 
@@ -139,47 +146,73 @@ sub _watch_directory {
 	my ( $dir, $cb ) = @_;
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
-	
-	# Watch all directories that were found by the scanner
-	my $dbh = Slim::Schema->dbh;
-	
-	$sth = $dbh->prepare_cached("SELECT url FROM scanned_files WHERE filesize = 0");
-	$sth->execute;
-	
-	my $url;
-	$sth->bind_columns(\$url);
-	
-	if ( main::DEBUGLOG && $isDebug ) {
-		my ($count) = $dbh->selectrow_array("SELECT COUNT(*) FROM scanned_files WHERE filesize = 0");
-		$log->debug( "Setting up inotify for $count dirs" );
-	}
-	
+
 	my $handler = sub {
 		event( shift, $cb );
 	};
 	
-	my $watch_dirs = sub {
-		if ( $sth && $sth->fetch ) {
-			my $dir = Slim::Utils::Misc::pathFromFileURL($url);
-			
-			main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $dir");
-			
-			$i->watch(
-				$dir,
-				IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
-				$handler,
-			) or logWarning("Inotify watch creation failed for $dir: $!");
-			
-			return 1;
-		}
-		
-		$sth && $sth->finish;
-		undef $sth;
-		
-		return 0;
-	};
+	if ( $dir ) {
+		# Watch a single dir
+
+		# Scan new dir in case it has child directories we also need to watch
+		my $args = {
+			dirs      => 1,
+			recursive => 1,
+		};
+
+		Slim::Utils::Scanner::Local->find( $dir, $args, sub {
+			my $dirs = shift || [];
+			push @{$dirs}, $dir;
+
+			for my $d ( @{$dirs} ) {
+				main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $d");
+				
+				$i->watch(
+					$d,
+					IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
+					$handler,
+				) or logWarning("Inotify watch creation failed for $d: $!");
+			}
+		} );		
+	}
+	else {
+		# Watch all directories that were found by the scanner
+		my $dbh = Slim::Schema->dbh;
 	
-	Slim::Utils::Scheduler::add_task( $watch_dirs );
+		$sth = $dbh->prepare_cached("SELECT url FROM scanned_files WHERE filesize = 0");
+		$sth->execute;
+	
+		my $url;
+		$sth->bind_columns(\$url);
+	
+		if ( main::DEBUGLOG && $isDebug ) {
+			my ($count) = $dbh->selectrow_array("SELECT COUNT(*) FROM scanned_files WHERE filesize = 0");
+			$log->debug( "Setting up inotify for $count dirs" );
+		}
+	
+		my $watch_dirs = sub {
+			if ( $sth && $sth->fetch ) {
+				my $path = Slim::Utils::Misc::pathFromFileURL($url);
+				
+				main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $path");
+				
+				$i->watch(
+					$path,
+					IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
+					$handler,
+				) or logWarning("Inotify watch creation failed for $path: $!");
+				
+				return 1;
+			}
+			
+			$sth && $sth->finish;
+			undef $sth;
+			
+			return 0;
+		};
+		
+		Slim::Utils::Scheduler::add_task( $watch_dirs );
+	}
 }
 
 1;

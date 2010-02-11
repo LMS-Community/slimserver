@@ -48,9 +48,10 @@ sub find {
 	
 	my $file = Slim::Utils::Misc::fileURLFromPath($path);
 	
-	if ( $args->{recursive} ) {
+	if ( $args->{recursive} && !$args->{dirs} ) {
 		# XXX how best to delete files in non-recursive mode?
-		$dbh->do("DELETE FROM scanned_files WHERE url LIKE '${file}/%'");
+		# Delete the directory itself and all children
+		$dbh->do("DELETE FROM scanned_files WHERE url = '${file}' OR url LIKE '${file}/%'");
 	}
 	
 	stat $path;
