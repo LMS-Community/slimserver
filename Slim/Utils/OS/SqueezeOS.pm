@@ -3,8 +3,9 @@ package Slim::Utils::OS::SqueezeOS;
 use strict;
 use base qw(Slim::Utils::OS::Linux);
 
-use constant SP_PREFS_JSON => '/etc/squeezecenter/prefs.json';
-use constant SP_SCAN_JSON  => '/etc/squeezecenter/scan.json';
+use constant SQUEEZEPLAY_PREFS => '/etc/squeezeplay/userpath/settings/';
+use constant SP_PREFS_JSON     => '/etc/squeezecenter/prefs.json';
+use constant SP_SCAN_JSON      => '/etc/squeezecenter/scan.json';
 
 # Cannot use Slim::Utils::Prefs here because too early in bootstrap process.
 
@@ -64,9 +65,6 @@ sub initPrefs {
 	# XXX use SN test for now
 	$defaults->{use_sn_test} = 1;
 }
-
-
-use constant SQUEEZEPLAY_PREFS => '/etc/squeezeplay/userpath/settings/';
 
 my %prefSyncHandlers = (
 	SQUEEZEPLAY_PREFS . 'SetupLanguage.lua' => sub {
@@ -321,7 +319,20 @@ sub _setupMediaDir {
 		}
 		
 		$prefs->set( audiodir        => $path );
-		$prefs->set( librarycachedir => "$path/.Squeezebox/cache");
+		$prefs->set( librarycachedir => "$path/.Squeezebox/cache" );
+		
+		# Create a playlist dir if necessary
+		my $playlistdir = "$path/Playlists";
+		
+		if ( -f $playlistdir ) {
+			$playlistdir .= 'Squeezebox';
+		}
+
+		if ( !-d $playlistdir ) {
+			mkdir $playlistdir or warn "Couldn't create playlist directory: $playlistdir - $!\n";
+		}
+		
+		$prefs->set( playlistdir => $playlistdir );
 		
 		return 1;
 	}
