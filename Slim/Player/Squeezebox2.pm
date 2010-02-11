@@ -776,7 +776,10 @@ sub directMetadata {
 	# Will also get called for proxy streaming
 	# unless ($controller && $controller->isDirect()) {return;}
 
-	$controller->song()->currentTrackHandler()->parseMetadata( $client, $controller->song(), $metadata );
+	my $handler = $controller->song()->currentTrackHandler();
+	if ( $handler->can('parseMetadata') ) {
+		$handler->parseMetadata( $client, $controller->song(), $metadata );
+	}
 	
 	# new song, so reset counters
 	$client->songBytes(0);
