@@ -16,6 +16,8 @@ use File::Basename;
 use File::Slurp;
 use Linux::Inotify2;
 
+use constant PROC_MAX_USER_WATCHES => '/proc/sys/fs/inotify/max_user_watches';
+
 my $log = logger('scan.auto');
 
 my $i;
@@ -27,6 +29,10 @@ my $sth;
 # Killing/recreating all inotify watchers is expensive, so 
 # we handle stopped mode with a simple flag
 my $STOPPED = 0;
+
+# Keep track of max_user_watches and current watchers so we can warn/increase if necessary
+my $max_user_watches = 0;
+my $current_watches = 0;
 
 sub canWatch {
 	my ( $class, $dir ) = @_;
@@ -56,6 +62,17 @@ sub canWatch {
 		logWarning($@);
 		return 0;
 	}
+
+	# Get max_user_watches value
+	if ( !-r PROC_MAX_USER_WATCHES ) {
+		logWarning("Unable to read " . PROC_MAX_USER_WATCHES );
+		return 0;
+	}
+
+	$max_user_watches = File::Slurp::read_file(PROC_MAX_USER_WATCHES);
+	chomp $max_user_watches;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("inotify init, max_user_watches: $max_user_watches");
 	
 	return 1;
 }
@@ -167,11 +184,18 @@ sub _watch_directory {
 			for my $d ( @{$dirs} ) {
 				main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $d");
 				
-				$i->watch(
+				my $ok = $i->watch(
 					$d,
 					IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
 					$handler,
-				) or logWarning("Inotify watch creation failed for $d: $!");
+				);
+
+				if ( $ok ) {
+					_increment_watcher_count();
+				} 
+				else {
+					logWarning("Inotify watch creation failed for $d: $!");
+				}
 			}
 		} );		
 	}
@@ -196,11 +220,18 @@ sub _watch_directory {
 				
 				main::DEBUGLOG && $isDebug && $log->debug("inotify watching: $path");
 				
-				$i->watch(
+				my $ok = $i->watch(
 					$path,
 					IN_MOVE | IN_CREATE | IN_CLOSE_WRITE | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF,
 					$handler,
-				) or logWarning("Inotify watch creation failed for $path: $!");
+				);
+
+				if ( $ok ) {
+					_increment_watcher_count();
+				}
+				else {
+					logWarning("Inotify watch creation failed for $path: $!");
+				}
 				
 				return 1;
 			}
@@ -212,6 +243,28 @@ sub _watch_directory {
 		};
 		
 		Slim::Utils::Scheduler::add_task( $watch_dirs );
+	}
+}
+
+sub _increment_watcher_count {
+	$current_watches++;
+
+	# If we are close to the max, try to increase it
+	if ( $current_watches >= ( $max_user_watches - 100 ) ) {
+		logWarning("Current inotify watches ($current_watches) nearing max_user_watches ($max_user_watches), trying to increase to " . ($max_user_watches * 2));
+
+		eval {
+			open my $fh, '>', PROC_MAX_USER_WATCHES or die "$!\n";
+			print $fh $max_user_watches * 2;
+			close $fh;
+
+			$max_user_watches *= 2;
+		};
+
+		if ( $@ ) {
+			chomp $@;
+			logError( "Failed to update " . PROC_MAX_USER_WATCHES . ": $@ - please increase this value manually" );
+		}
 	}
 }
 
