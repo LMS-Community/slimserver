@@ -2295,7 +2295,10 @@ sub _postCheckAttributes {
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
 	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation, $isLocal);
-	my $foundContributor = scalar keys %{$contributors};
+	
+	# Bug 15553, Primary contributor can only be Album Artist or Artist,
+	# so only check for those roles and assign No Artist otherwise
+	my $foundContributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]) ? scalar( keys %{$contributors} ) : 0;
 
 	main::DEBUGLOG && $isDebug && $log->debug("-- Track has $foundContributor contributor(s)");
 
