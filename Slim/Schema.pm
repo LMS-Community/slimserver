@@ -2810,10 +2810,14 @@ sub _mergeAndCreateContributors {
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
 	}
 	
+	# Bug 15553, Primary contributor can only be Album Artist or Artist,
+	# so only check for those roles and assign No Artist otherwise
+	my $foundContributor = ($contributors{'ALBUMARTIST'}->[0] || $contributors{'ARTIST'}->[0]) ? scalar( keys %contributors ) : 0;
+		
 	main::DEBUGLOG && $isDebug && $log->debug("-- Track has ", scalar (keys %contributors), " contributor(s)");
 
 	# Create a singleton for "No Artist"
-	if ($create && !scalar (keys %contributors)) {
+	if ($create && !$foundContributor) {
 
 		if (!$_unknownArtist) {
 			my $name        = string('NO_ARTIST');
