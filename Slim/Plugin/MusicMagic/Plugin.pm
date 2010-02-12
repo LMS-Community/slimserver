@@ -358,6 +358,12 @@ sub initPlugin {
 			func     => \&artistInfoHandler,
 		) );
 
+		# Genre Info handler
+		Slim::Menu::GenreInfo->registerInfoProvider( musicmagic => (
+			below    => 'addgenre',
+			func     => \&genreInfoHandler,
+		) );
+
 
 		if (scalar @{grabMoods()}) {
 
@@ -1408,6 +1414,11 @@ sub artistInfoHandler {
 	return $return;
 }
 
+sub genreInfoHandler {
+	my $return = _objectInfoHandler( @_, 'genre' );
+	return $return;
+}
+
 sub _objectInfoHandler {
 	
 	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
@@ -1427,6 +1438,11 @@ sub _objectInfoHandler {
 		$special->{'actionParam'} = 'artist_id';
 		$special->{'modeParam'}   = 'artist';
 		$special->{'urlKey'}      = 'artist';
+
+	} elsif ($objectType eq 'genre') {
+		$special->{'actionParam'} = 'genre_id';
+		$special->{'modeParam'}   = 'genre';
+		$special->{'urlKey'}      = 'genre';
 
 	} else {
 		$special->{'actionParam'} = 'track_id';
