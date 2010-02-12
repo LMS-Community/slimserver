@@ -1133,6 +1133,10 @@ sub _cliQuery_done {
 							# Bug 13247, support nextWindow param
 							if ( $item->{nextWindow} ) {
 								$actions->{go}{nextWindow} = $item->{nextWindow};
+								# Bug 15690 - if nextWindow is 'nowPlaying', assume this should be styled as a touch-to-play
+								if ( $item->{nextWindow} eq 'nowPlaying' ) {
+									$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+								}
 							}
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
