@@ -1368,7 +1368,7 @@ sub jiveSettingsMenu {
 	# disable for this player
 	my $disableItem = {
 		text    => $client->string('PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED'),
-		radio   => !$enabled + 0,
+		radio   => ($selected eq '0') + 0,
 		actions => {
 			do => {
 				player => 0,
