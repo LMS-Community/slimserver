@@ -16,7 +16,7 @@ my $prefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'server.update',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 });
 
 my $os = Slim::Utils::OSDetect->getOS();
