@@ -435,7 +435,6 @@ sub getMetadataFor {
 	
 	my $track = $song->pluginData();
 	if ( $track && %$track ) {
-		$log->error("$url: ", Data::Dump::dump($track));
 		return {
 			artist      => $track->{artistName},
 			album       => $track->{albumName},
