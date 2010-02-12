@@ -396,13 +396,13 @@ sub setLogLevelForCategory {
 		$category = "log4perl.logger.$category";
 	}
 
+	$categories{$category} = $level;
+
 	# If the level is the same, it's a no-op.
 	if (defined $runningConfig{$category} && $runningConfig{$category} eq $level) {
 
 		return -1;
 	}
-
-	$categories{$category} = $level;
 
 	$needsReInit = 1;
 
