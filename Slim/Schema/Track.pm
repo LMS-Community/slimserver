@@ -459,7 +459,7 @@ sub coverArtMtime {
 sub coverArtExists {
 	my $self = shift;
 
-	return defined($self->cover) ? $self->cover : defined($self->coverArt);
+	return defined($self->cover) ? 1 : defined($self->coverArt);
 }
 
 sub path {
