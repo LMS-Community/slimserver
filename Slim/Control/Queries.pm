@@ -5243,7 +5243,7 @@ sub _addJiveSong {
 
 	# Special case for Internet Radio streams, if the track is remote, has no duration,
 	# has title metadata, and has no album metadata, display the station title as line 1 of the text
-	if ( $songData->{remote_title} && !$album && $isRemote && !$track->secs ) {
+	if ( $songData->{remote_title} && $songData->{remote_title} ne $title && !$album && $isRemote && !$track->secs ) {
 		push @secondLine, $songData->{remote_title};
 		$album = $songData->{remote_title};
 		$request->addResult('current_title');
