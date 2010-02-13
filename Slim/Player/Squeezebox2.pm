@@ -152,6 +152,13 @@ sub statHandler {
 		$client->readyToStream(0);
 		$client->bufferReady(0);
 	} elsif ($code eq 'STMs') {
+		# XXX Workaround for bug 15344, SP can sometimes send wrong elapsed value on a new track
+		# Need to fix actual bug in SP decoder, but this will handle it for now
+		if ( $client->songElapsedSeconds > 5 ) {
+			logWarning( 'Player sent bad elapsed seconds value for new track: ' . $client->songElapsedSeconds );
+			$client->songElapsedSeconds(0);
+		}
+		
 		$client->controller()->playerTrackStarted($client);
 	} elsif ($code eq 'STMo') {
 		$client->controller()->playerOutputUnderrun($client);
