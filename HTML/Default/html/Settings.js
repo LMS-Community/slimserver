@@ -235,6 +235,7 @@ Settings.Page = function(){
 			this.initSliders();
 			this.showWarning();
 			this.initDescPopup();
+			this.showRestartMessage();
 
 			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
@@ -504,6 +505,30 @@ Settings.Page = function(){
 						reload.dom.innerHTML.replace(/<br\/?>/ig, ' ')
 					)
 				);
+				reload.update('');
+			}
+		},
+		
+		showRestartMessage : function() {
+			var reload = Ext.get('restartWarning');
+			if (reload) {
+				var restartUrl = reload.child('a').dom.href;
+				
+				Ext.MessageBox.show({
+					title: SqueezeJS.string('settings'),
+					msg: Ext.util.Format.stripTags(
+						reload.dom.innerHTML.replace(/<br\/?>/ig, ' ')
+					),
+					buttons: {
+						ok: SqueezeJS.string('restart_now'),
+						cancel: SqueezeJS.string('restart_later')
+					},
+					fn: function(btn, text) {
+						if (btn == 'ok') {
+							location = restartUrl;
+						}
+					}
+				});
 				reload.update('');
 			}
 		},
