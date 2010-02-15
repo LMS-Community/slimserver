@@ -668,7 +668,7 @@ SqueezeJS.SonginfoParser = {
 			}
 		}
 
-		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
+		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,
 			width: width ? 'width="' + width + '"' : '',
