@@ -3584,8 +3584,8 @@ sub statusQuery_filter {
 	return 0 if !defined $clientid || !defined $myclientid;
 	
 	# Bug 10064: playlist notifications get sent to everyone in the sync-group
-	if ($request->isCommand([['playlist', 'newmetadata']])) {
-		return 0 if !grep($_->id eq $myclientid, $request->client()->syncGroupActiveMembers());
+	if ($request->isCommand([['playlist', 'newmetadata']]) && (my $client = $request->client)) {
+		return 0 if !grep($_->id eq $myclientid, $client->syncGroupActiveMembers());
 	} else {
 		return 0 if $clientid ne $myclientid;
 	}
