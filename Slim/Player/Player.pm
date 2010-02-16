@@ -1169,7 +1169,7 @@ sub _buffering {
 	}
 
 	if ( $percent == 0 && $buffering == 1) {
-		my $status = $client->string('CONNECTING_FOR');
+		$status = $client->string('CONNECTING_FOR');
   		if ( $client->linesPerScreen() == 1 ) {
 			$line2 = $status;
 		} else {
