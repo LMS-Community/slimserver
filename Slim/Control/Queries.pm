@@ -4808,7 +4808,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'alKNJ',			# tags needed for our entities
+		'AalKNJ',			# tags needed for our entities
 	);
 	
 	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
@@ -4816,7 +4816,13 @@ sub _addJiveSong {
 	my $text   = $songData->{title};
 	my $title  = $text;
 	my $album  = $songData->{album};
-	my $artist = $songData->{artist};
+	
+	my @artists;
+	if (defined $songData->{albumartist}) {
+		push @artists, $songData->{albumartist}, ($songData->{trackartist} || $songData->{artist});
+	}
+	push @artists, ($songData->{trackartist} || $songData->{artist});
+	my $artist = join(', ', @artists);
 	
 	if ( $track->remote && $text && $album && $artist ) {
 		$request->addResult('current_title');
