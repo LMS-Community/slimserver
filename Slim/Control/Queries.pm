@@ -5217,7 +5217,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'alKNc',			# tags needed for our entities
+		'AalKNc',			# tags needed for our entities
 	);
 	
 	my $isRemote = $track->remote;
@@ -5227,7 +5227,16 @@ sub _addJiveSong {
 	my $text   = $songData->{title};
 	my $title  = $text;
 	my $album  = $songData->{album};
-	my $artist = $songData->{artist};
+	
+	my (%artists, @artists);
+	foreach ('albumartist', 'trackartist', 'artist') {
+		my $a = $songData->{$_};
+		if ( $a && !$artists{$a} ) {
+			push @artists, $a;
+			$artists{$a} = 1;
+		}
+	}
+	my $artist = join(', ', @artists);
 	
 	if ( $isRemote && $text && $album && $artist ) {
 		$request->addResult('current_title');
