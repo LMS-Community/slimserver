@@ -1210,7 +1210,7 @@ sub _buffering {
 		$client->display->updateMode(0);
 		$client->showBriefly({
 			line => [ $line1, $line2 ],
-			jive => { type => 'song', text => [ $status, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 },
+			jive => { type => 'song', text => [ $status, $args->{'title'} ], duration => 500 },
 			cli  => undef,
 		}, { duration => 1, block => 1 });
 	}
