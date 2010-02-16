@@ -4817,11 +4817,14 @@ sub _addJiveSong {
 	my $title  = $text;
 	my $album  = $songData->{album};
 	
-	my @artists;
-	if (defined $songData->{albumartist}) {
-		push @artists, $songData->{albumartist}, ($songData->{trackartist} || $songData->{artist});
+	my (%artists, @artists);
+	foreach ('albumartist', 'trackartist', 'artist') {
+		my $a = $songData->{$_};
+		if ( $a && !$artists{$a} ) {
+			push @artists, $a;
+			$artists{$a} = 1;
+		}
 	}
-	push @artists, ($songData->{trackartist} || $songData->{artist});
 	my $artist = join(', ', @artists);
 	
 	if ( $track->remote && $text && $album && $artist ) {
