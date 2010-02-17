@@ -1143,16 +1143,6 @@ sub endOfTrackSleepCommand {
 		my $dur = $client->controller()->playingSongDuration();
 		my $remaining = $dur - Slim::Player::Source::songTime($client);
 		$client->execute( ['sleep', $remaining ] );
-		# an intentional showBriefly stomp of SLEEPING_IN_X_MINUTES with SLEEPING_AT_END_OF_SONG
-		$request->client->showBriefly(
-			{ 
-			'jive' =>
-				{
-					'type'    => 'popupplay',
-					'text'    => [ $request->string('SLEEPING_AT_END_OF_SONG') ],
-				},
-			}
-		);
 	} else {
 		$request->client->showBriefly(
 			{ 
