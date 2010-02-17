@@ -4236,6 +4236,7 @@ sub titlesQuery {
 
 	$count += 0;
 
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	my $loopname = $menuMode?'item_loop':'titles_loop';
@@ -4349,11 +4350,11 @@ sub titlesQuery {
 
 	}
 
-	if ($count == 0 && $menuMode) {
+	if ($totalCount == 0 && $menuMode) {
 		# this is an empty resultset
 		_jiveNoResults($request);
 	} else {
-		$request->addResult('count', $count);
+		$request->addResult('count', $totalCount);
 	}
 
 	if ( $menuMode && $search && $count > 0 && $start == 0 && !$request->getParam('cached_search') ) {
