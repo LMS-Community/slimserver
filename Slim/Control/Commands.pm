@@ -2676,6 +2676,15 @@ sub sleepCommand {
 					'text'    => [ $will_sleep_in_minutes ],
 				}
 			});
+		} else {
+			my $sleepTime = $client->prettySleepTime;
+                	$client->showBriefly( {
+				'jive' =>
+					{
+						'type'    => 'popupplay',
+						'text'    => [ $sleepTime ],
+					},
+			});
 		}
 		
 	} else {
