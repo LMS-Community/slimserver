@@ -91,7 +91,7 @@ sub getTag {
 	
 	my $s = Audio::Scan->scan($file);
 	
-	return unless $s->{info}->{song_length_ms};
+	return unless $s->{info}->{samplerate};
 	
 	my $tags = $class->_getStandardTag($s);
 	
