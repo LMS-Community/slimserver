@@ -4350,11 +4350,11 @@ sub titlesQuery {
 
 	}
 
-	if ($totalCount == 0 && $menuMode) {
+	if ($count == 0 && $menuMode) {
 		# this is an empty resultset
 		_jiveNoResults($request);
 	} else {
-		$request->addResult('count', $totalCount);
+		$request->addResult('count', $count);
 	}
 
 	if ( $menuMode && $search && $count > 0 && $start == 0 && !$request->getParam('cached_search') ) {
