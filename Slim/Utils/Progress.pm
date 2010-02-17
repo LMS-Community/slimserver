@@ -20,7 +20,6 @@ use constant UPDATE_BAR_INTERVAL => 0.3;
 __PACKAGE__->mk_accessor( rw => qw(
 	type
 	name
-	total
 	start
 	finish
 	eta
