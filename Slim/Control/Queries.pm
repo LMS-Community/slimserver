@@ -4819,10 +4819,12 @@ sub _addJiveSong {
 	
 	my (%artists, @artists);
 	foreach ('albumartist', 'trackartist', 'artist') {
-		my $a = $songData->{$_};
-		if ( $a && !$artists{$a} ) {
-			push @artists, $a;
-			$artists{$a} = 1;
+		# split artist by colon, as eg. trackartist is merging artists already
+		foreach my $a ( split(/,\s*/, $songData->{$_}) ) {
+			if ( $a && !$artists{$a} ) {
+				push @artists, $a;
+				$artists{$a} = 1;
+			}
 		}
 	}
 	my $artist = join(', ', @artists);
