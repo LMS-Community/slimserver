@@ -136,7 +136,7 @@ sub postInitPrefs {
 
 			$i = Linux::Inotify2->new() or die "Unable to start Inotify watcher: $!";
 
-			$i->watch(SQUEEZEPLAY_PREFS, IN_MOVE() | IN_MODIFY(), sub {
+			$i->watch(SQUEEZEPLAY_PREFS, Linux::Inotify2::IN_MOVE() | Linux::Inotify2::IN_MODIFY(), sub {
 				my $ev = shift;
 				my $file = $ev->fullname || '';
 				
