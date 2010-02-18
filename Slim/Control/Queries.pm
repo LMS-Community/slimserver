@@ -1319,7 +1319,7 @@ sub displaystatusQuery_filter {
 sub displaystatusQuery {
 	my $request = shift;
 	
-	main::INFOLOG && $log->info("displaystatusQuery()");
+	main::DEBUGLOG && $log->debug("displaystatusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['displaystatus']])) {
@@ -1387,7 +1387,7 @@ sub displaystatusQuery {
 
 		my $client = $request->client;
 
-		main::INFOLOG && $log->info("adding displaystatus subscription $subs");
+		main::DEBUGLOG && $log->debug("adding displaystatus subscription $subs");
 
 		if ($subs eq 'bits') {
 
@@ -3638,7 +3638,7 @@ sub statusQuery_filter {
 sub statusQuery {
 	my $request = shift;
 	
-	main::INFOLOG && $log->info("statusQuery()");
+	main::DEBUGLOG && $log->debug("statusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -4529,7 +4529,10 @@ sub titlesQuery {
 
 	$count += 0;
 
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
+	# we only change the count if we're going to insert the play all item
+	my $addPlayAllItem = $search && $insertAll;
+
+	my $totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $count);
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
@@ -4543,7 +4546,7 @@ sub titlesQuery {
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
 		# PLAY ALL item for search results
-		if ( $search && $insertAll ) {
+		if ( $addPlayAllItem ) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
 		}
 
@@ -4750,11 +4753,11 @@ sub titlesQuery {
 
 	}
 
-	if ($count == 0 && $menuMode) {
+	if ($totalCount == 0 && $menuMode) {
 		# this is an empty resultset
 		_jiveNoResults($request);
 	} else {
-		$request->addResult('count', $count);
+		$request->addResult('count', $totalCount);
 	}
 
 	if ( $menuMode && $search && $count > 0 && $start == 0 && !$request->getParam('cached_search') ) {
