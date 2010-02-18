@@ -29,6 +29,7 @@ __PACKAGE__->mk_accessor( rw => qw(
 	dball
 	
 	_dbid
+	_total
 ) );
 
 if ( main::SCANNER ) {
@@ -149,16 +150,20 @@ total number of elements.  Should be called before calling update for a progress
 
 sub total {
 	my ( $self, $total ) = @_;
-
-	$self->total($total);
 	
-	$self->_update_db( { total => $total } );
+	if ( defined $total ) {
+		$self->_total($total);
+	
+		$self->_update_db( { total => $total } );
 
-	if ( main::SCANNER && $self->bar ) {
-		# bar only times duration of progress after total set to get accurate tracks/sec
-		$self->start( Time::HiRes::time() );
-		$self->_initBar;
+		if ( main::SCANNER && $self->bar ) {
+			# bar only times duration of progress after total set to get accurate tracks/sec
+			$self->start( Time::HiRes::time() );
+			$self->_initBar;
+		}
 	}
+	
+	return $self->_total;
 }
 
 =head2 duration
