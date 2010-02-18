@@ -1781,15 +1781,17 @@ sub playlistcontrolCommand {
 			} elsif ($insert) {
 				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
 			} else {
-				$token = 'JIVE_POPUP_NOW_PLAYING';
+				$token = undef;
 			}
-			my $string = $client->string($token, $folder->title);
-			$client->showBriefly({ 
-				'jive' => { 
-					'type'    => 'popupplay',
-					'text'    => [ $string ],
-				}
-			});
+			if ( defined($token) ) {
+				my $string = $client->string($token, $folder->title);
+				$client->showBriefly({ 
+					'jive' => { 
+						'type'    => 'popupplay',
+						'text'    => [ $string ],
+					}
+				});
+			}
 		} 
 
 		Slim::Control::Request::executeRequest(
