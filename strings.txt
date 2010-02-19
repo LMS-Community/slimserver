@@ -23118,3 +23118,20 @@ PRESET
 	RU	Установить #%s
 	SV	Förinställning av #%s
 
+USB
+	EN	USB
+
+SD
+	CS	SD karta
+	DA	SD-kort
+	DE	SD-Karte
+	EN	SD Card
+	ES	Tarjeta SD
+	FI	SD-kortti
+	FR	Carte SD
+	IT	Scheda SD
+	NL	SD-kaart
+	NO	SD-kort
+	PL	Karta SD
+	RU	SD-карта.
+	SV	SD-kort

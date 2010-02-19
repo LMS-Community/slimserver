@@ -108,7 +108,12 @@ my %prefSyncHandlers = (
 			my $playerInit = $1;
 			
 			if ($playerInit =~ /name="(.*?)"/i) {
-				Slim::Utils::Prefs::preferences('server')->set('libraryname', $1);
+				my $prefs = Slim::Utils::Prefs::preferences('server');
+				$prefs->set('libraryname', $1);
+				
+				# can't handle this change using a changehandler,
+				# as this in turn updates the pref again 
+				_updateLibraryname($prefs);
 			}
 		}
 	},
@@ -121,6 +126,9 @@ sub postInitPrefs {
 	_checkMediaAtStartup($prefs);
 	
 	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
+	$prefs->setChange( sub {
+		_updateLibraryname($prefs);
+	}, 'language', 'audiodir' );
 
 	if ( !main::SCANNER ) {
 
@@ -156,6 +164,24 @@ sub postInitPrefs {
 
 		Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
 	}
+}
+
+# add media name to the libraryname
+sub _updateLibraryname {
+	require Slim::Utils::Strings;
+	
+	my $prefs = $_[0];
+	my $libraryname = $prefs->get('libraryname');
+	
+	# remove media name
+	$libraryname =~ s/ \(.*?(?:USB|SD).*?\)$//i;
+	 
+	my $audiodir = $prefs->get('audiodir');
+	if ( $audiodir && $audiodir =~ m{/(mmcblk|sd[a-z]\d)}i ) {
+		$libraryname = sprintf( "%s (%s)", $libraryname, Slim::Utils::Strings::getString($1 =~ /mmc/ ? 'SD' : 'USB') );
+	}
+	
+	$prefs->set('libraryname', $libraryname);
 }
 
 sub _syncPrefs {
