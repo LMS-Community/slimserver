@@ -820,13 +820,14 @@ sub objectForUrl {
 	
 	# Bug 14648: Check to see if we have a playlist with remote tracks
 	if (!$track && defined $playlistId && Slim::Music::Info::isRemoteURL($url)) {
-		my $playlistObj = $self->find('Playlist', $playlistId);
 
-		# Parse the playlist file to cause the RemoteTrack objects to be created
-		Slim::Formats::Playlists->parseList($playlistObj->url);
-		
-		# try again
-		$track = $self->_retrieveTrack($url, $playlist);
+		if (my $playlistObj = $self->find('Playlist', $playlistId)) {
+			# Parse the playlist file to cause the RemoteTrack objects to be created
+			Slim::Formats::Playlists->parseList($playlistObj->url);
+			
+			# try again
+			$track = $self->_retrieveTrack($url, $playlist);
+		}
 	}
 
 	# _retrieveTrack will always return undef or a track object
