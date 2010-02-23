@@ -220,7 +220,7 @@ our @AUTHORS = (
 );
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.4.2-sn';
+our $VERSION     = '7.4.3-sn';
 our $REVISION    = undef;
 our $audiodir    = undef;
 our $playlistdir = undef;
