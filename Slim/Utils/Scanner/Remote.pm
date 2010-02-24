@@ -211,6 +211,18 @@ sub scanURL {
 		$request->header( 'X-Forwarded-For' => $client->ip );
 	}
 	
+	# If the URL is on SqueezeNetwork, add session headers
+	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
+		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders($client);
+		while ( my ($k, $v) = each %snHeaders ) {
+			$request->header( $k => $v );
+		}
+	
+		if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie($client) ) {
+			$request->header( Cookie => $snCookie );
+		}
+	}
+	
 	my $timeout = preferences('server')->get('remotestreamtimeout') || 10;
 	
 	my $send = sub {
