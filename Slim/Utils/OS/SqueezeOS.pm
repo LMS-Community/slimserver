@@ -422,4 +422,24 @@ sub directFirmwareDownload { 1 };
 # Path to progress JSON file
 sub progressJSON { SP_SCAN_JSON }
 
+# This is a bit of a hack to call the settimeofday() syscall to set the system time
+# without the need to shell out to another process.
+sub settimeofday {
+	my ( $class, $epoch ) = @_;
+	
+	eval {
+		# int settimeofday(const struct timeval *tv , const struct timezone *tz);
+		# struct timeval is long, long
+		# struct timezone is int, int, but ignored
+		my $ret = syscall( 79, pack('LLLL', $epoch, 0, 0, 0) );
+		if ( $ret != 0 ) {
+			die $!;
+		}
+	};
+	
+	if ( $@ ) {
+		logWarning("settimeofday($epoch) failed: $@");
+	}
+}
+
 1;
