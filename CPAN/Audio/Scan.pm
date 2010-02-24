@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.59';
+our $VERSION = '0.61';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-Audio::Scan - XS parser for MP3, MP4, Ogg Vorbis, FLAC, ASF, WAV, AIFF, Musepack, Monkey's Audio
+Audio::Scan - Fast C parser for all common audio file formats
 
 =head1 SYNOPSIS
 
@@ -56,8 +56,8 @@ Audio::Scan - XS parser for MP3, MP4, Ogg Vorbis, FLAC, ASF, WAV, AIFF, Musepack
 =head1 DESCRIPTION
 
 Audio::Scan is a C-based scanner for audio file metadata and tag information. It currently
-supports MP3 via an included version of libid3tag, MP4, Ogg Vorbis, FLAC (if libFLAC is
-installed), ASF, WAV, AIFF, Musepack, and Monkey's Audio.
+supports MP3 via an included version of libid3tag, MP4, Ogg Vorbis, FLAC, ASF, WAV, AIFF,
+Musepack, Monkey's Audio, and WavPack.
 
 See below for specific details about each file format.
 
@@ -78,6 +78,7 @@ determined by the file's extension.  Supported extensions are:
     Monkey's Audio:  ape, apl
     WAV: wav
     AIFF: aiff, aif
+    WavPack: wv
 
 This method returns a hashref containing two other hashrefs: info and tags.  The
 contents of the info and tag hashes vary depending on file format, see below for details.
@@ -113,7 +114,7 @@ audio packet/frame past this point will be returned.
 Offset is a timestamp in milliseconds.  The byte offset to the data packet
 containing this timestamp will be returned.
 
-=item WAV, AIFF, Musepack, Monkey's Audio
+=item WAV, AIFF, Musepack, Monkey's Audio, WavPack
 
 Not supported by find_frame.
 
@@ -578,6 +579,31 @@ The following metadata about a file may be returned.
 
 Musepack uses APEv2 tags.  They are returned as a hash of key/value pairs.
 
+=head1 WAVPACK
+
+=head2
+
+Currently only WavPack encoder version 4.x files are supported. Support for older versions
+may be added in a future release.
+
+The following metadata about a file may be returned.
+
+    audio_offset
+    bitrate (in bps)
+    bits_per_sample
+    channels
+    encoder_version
+    file_size
+    hybrid (1 if file is lossy)
+    lossless (1 if file is lossless)
+    samplerate
+    song_length_ms
+    total_samples
+
+=head2 TAGS
+
+WavPack uses APEv2 tags.  They are returned as a hash of key/value pairs.
+
 =head1 
 
 =head1 THANKS
@@ -608,7 +634,7 @@ Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009 Logitech, Inc.
+Copyright (C) 2010 Logitech, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
