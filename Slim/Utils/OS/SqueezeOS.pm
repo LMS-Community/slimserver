@@ -129,6 +129,7 @@ sub postInitPrefs {
 	$prefs->setChange( sub {
 		_updateLibraryname($prefs);
 	}, 'language', 'audiodir' );
+	$prefs->setChange( \&_onSNTimediffChange, 'sn_timediff');
 
 	if ( !main::SCANNER ) {
 
@@ -414,6 +415,16 @@ sub _checkMediaAtStartup {
 	
 	# Something went wrong, don't use this audiodir
 	$prefs->set( audiodir => undef );
+}
+
+# Update system time if difference between system and SN time is bigger than 15 seconds
+sub _onSNTimediffChange {
+	my $pref = shift;
+	my $diff = shift;
+
+	if( abs( $diff) > 15) {
+		Slim::Utils::OS::SqueezeOS->settimeofday( time() + $diff);
+	}
 }
 
 # don't download/cache firmware for other players, but have them download directly

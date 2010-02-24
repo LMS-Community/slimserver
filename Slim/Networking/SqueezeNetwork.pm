@@ -142,14 +142,6 @@ sub _init_done {
 	}
 	
 	my $diff = $snTime - time();
-
-	# Update system time if difference between system and SN time is bigger than 15 seconds
-	if( Slim::Utils::OSDetect::isSqueezeOS()) {
-		if( abs( $diff) > 15) {
-			Slim::Utils::OS::SqueezeOS->settimeofday( $snTime);
-			$diff = $snTime - time();
-		}
-	}
 	
 	main::INFOLOG && $log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
