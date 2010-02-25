@@ -57,6 +57,14 @@ my $prefs = preferences('server');
 # Frequently used data can be cached in memory, such as the list of albums for Jive
 my $cache = {};
 
+sub init {
+	my $class = shift;
+	
+	# Wipe cached data after rescan
+	Slim::Control::Request::subscribe( sub {
+		$class->wipeCaches;
+	}, [['rescan'], ['done']] );
+}
 
 sub alarmPlaylistsQuery {
 	my $request = shift;
@@ -418,10 +426,14 @@ sub albumsQuery {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Get count of all results
-	my ($count) = $dbh->selectrow_array( qq{
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
+	
+	$cache->{$cacheKey} = $count;
 
 	if ($menuMode) {
 
@@ -877,10 +889,14 @@ sub artistsQuery {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Get count of all results
-	my ($count) = $dbh->selectrow_array( qq{
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
+	
+	$cache->{$cacheKey} = $count;
 	
 	my $totalCount = $count || 0;
 
@@ -1568,10 +1584,14 @@ sub genresQuery {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Get count of all results
-	my ($count) = $dbh->selectrow_array( qq{
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
+	
+	$cache->{$cacheKey} = $count;
 	
 	# now build the result
 	
@@ -4422,10 +4442,14 @@ sub titlesQuery {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Get count of all results
-	my ($count) = $dbh->selectrow_array( qq{
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
+	
+	$cache->{$cacheKey} = $count;
 
 	my $playalbum;
 	if ( $request->client ) {
@@ -6032,7 +6056,6 @@ sub showArtwork {
 sub wipeCaches {
 	$cache = {};
 }
-
 
 # fix the count in case we're adding additional items
 # (play all, VA etc.) to the resultset

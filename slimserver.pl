@@ -477,6 +477,9 @@ sub init {
 	main::INFOLOG && $log->info("Squeezebox Server Request init...");
 	Slim::Control::Request::init();
 	
+	main::INFOLOG && $log->info("Squeezebox Server Queries init...");
+	Slim::Control::Queries->init();
+	
 	main::INFOLOG && $log->info("Squeezebox Server Buttons init...");
 	Slim::Buttons::Common::init();
 
