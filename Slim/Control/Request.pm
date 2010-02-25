@@ -1595,22 +1595,20 @@ sub addResultLoop {
 	my $key = shift;
 	my $val = shift;
 
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
+	if ($loop !~ /_loop$/) {
+		$loop .= '_loop';
 	}
 	
-	if (!defined ${$self->{'_results'}}{$loop}) {
-		${$self->{'_results'}}{$loop} = [];
-	}
+	my $array = $self->{_results}->{$loop} ||= [];
 	
-	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
+	if ( !defined $array->[$loopidx] ) {
 		my %paramHash;
-		tie %paramHash, 'Tie::IxHash' if $self->{'_useixhash'};
+		tie %paramHash, 'Tie::IxHash' if $self->{_useixhash};
 		
-		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
+		$array->[$loopidx] = \%paramHash;
 	}
 	
-	${${$self->{'_results'}}{$loop}->[$loopidx]}{$key} = $val;
+	$array->[$loopidx]->{$key} = $val;
 }
 
 # same as addResultLoop but checks first the value is defined.
