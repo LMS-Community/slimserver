@@ -1618,15 +1618,10 @@ sub addResultLoop {
 }
 
 # same as addResultLoop but checks first the value is defined.
+# optimized for speed
 sub addResultLoopIfValueDefined {
-	my $self = shift;
-	my $loop = shift;
-	my $loopidx = shift;
-	my $key = shift;
-	my $val = shift;
-
-	if (defined $val) {
-		$self->addResultLoop($loop, $loopidx, $key, $val);
+	if ( defined $_[4] ) {
+		goto &addResultLoop;
 	}
 }
 
