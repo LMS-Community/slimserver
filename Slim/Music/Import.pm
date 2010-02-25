@@ -252,12 +252,6 @@ sub setIsScanning {
 
 	# May not have a DB to store this in
 	return if !Slim::Schema::hasLibrary();
-	
-	my $autoCommit = Slim::Schema->dbh->{'AutoCommit'};
-
-	if ($autoCommit) {
-		Slim::Schema->dbh->{'AutoCommit'} = 0;
-	}
 
 	my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
 		'name' => 'isScanning'
@@ -269,8 +263,6 @@ sub setIsScanning {
 	if ($@) {
 		logError("Failed to update isScanning: [$@]");
 	}
-
-	Slim::Schema->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 =head2 clearProgressInfo( )
