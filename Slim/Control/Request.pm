@@ -1595,10 +1595,6 @@ sub addResultLoop {
 	my $key = shift;
 	my $val = shift;
 
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
 	if ($loop !~ /.*_loop$/) {
 		$loop = $loop . '_loop';
 	}
