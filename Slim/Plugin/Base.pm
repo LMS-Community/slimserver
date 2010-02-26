@@ -68,10 +68,10 @@ sub initPlugin {
 		if ( $class->can('webPages') ) {
 			$class->webPages;
 		}
-		
-		if ($class->_pluginDataFor('icon')) {
-			Slim::Web::Pages->addPageLinks("icons", { $name => $class->_pluginDataFor('icon') });
-		}
+	}
+
+	if ($class->_pluginDataFor('icon')) {
+		Slim::Web::Pages->addPageLinks("icons", { $name => $class->_pluginDataFor('icon') });
 	}
 
 	if ($class->can('defaultMap') && !main::SCANNER) {
