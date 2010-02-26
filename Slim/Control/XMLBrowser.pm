@@ -325,6 +325,17 @@ sub _cliQuery_done {
 				$subFeed->{url}  = $subFeed->{playlist};
 			}
 			
+			# Bug 15343, if we are at the lowest menu level, and we have already
+			# fetched and cached this menu level, check if we should always
+			# re-fetch this menu. This is used to ensure things like the Pandora
+			# station list are always up to date. The reason we check depth==levels
+			# is so that when you are browsing at a lower level we don't allow
+			# the parent menu to be refreshed out from under the user
+			if ( $depth == $levels && $subFeed->{fetched} && $subFeed->{forceRefresh} && !$params->{fromSubFeed} ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("  Forcing refresh of menu");
+				delete $subFeed->{fetched};
+			}
+			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
@@ -1288,6 +1299,14 @@ sub _cliQuerySubFeed_done {
 	}
 
 	$subFeed->{'fetched'} = 1;
+	
+	# Pass-through forceRefresh flag
+	if ( $feed->{forceRefresh} ) {
+		$subFeed->{forceRefresh} = 1;
+	}
+	
+	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
+	$params->{fromSubFeed} = 1;
 
 	# cachetime will only be set by parsers which know their content is dynamic
 	if (defined $feed->{'cachetime'}) {

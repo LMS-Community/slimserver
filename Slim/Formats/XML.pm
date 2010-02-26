@@ -282,7 +282,7 @@ sub gotViaHTTP {
 			$expires = $XML_CACHE_TIME;
 		}
 		
-		# Bug 14409, don't cache the RadioTime local menU on SN
+		# Bug 14409, don't cache the RadioTime local menu on SN
 		if ( main::SLIM_SERVICE ) {
 			if ( $http->url =~ /radiotime.*local/ ) {
 				$feed->{nocache} = 1;
@@ -540,10 +540,12 @@ sub parseAtom {
 # represent OPML in a simple data structure compatable with INPUT.Choice mode.
 sub parseOPML {
 	my $xml = shift;
+	
+	my $head = $xml->{head};
 
 	my $opml = {
 		'type'  => 'opml',
-		'title' => unescapeAndTrim($xml->{'head'}->{'title'}),
+		'title' => unescapeAndTrim($head->{'title'}),
 		'items' => _parseOPMLOutline($xml->{'body'}->{'outline'}),
 	};
 	
@@ -561,10 +563,16 @@ sub parseOPML {
 	}
 	
 	# Optional windowId to support nextWindow
-	if ( $xml->{head}->{windowId} ) {
-		$opml->{windowId} = $xml->{head}->{windowId};
+	if ( $head->{windowId} ) {
+		$opml->{windowId} = $head->{windowId};
 	}
-
+	
+	# Bug 15343, a menu may define forceRefresh in the head to always
+	# be refreshed when accessing this menu item
+	if ( $head->{forceRefresh} ) {
+		$opml->{forceRefresh} = 1;
+	}
+	
 	$xml = undef;
 
 	# Don't leak
