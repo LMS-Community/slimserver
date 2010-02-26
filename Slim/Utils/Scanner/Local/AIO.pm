@@ -24,7 +24,8 @@ use Slim::Utils::Prefs;
 
 my $log = logger('scan.scanner');
 
-use constant MAX_REQS => 8; # max threads to run
+# 1 thread seems best on Touch
+use constant MAX_REQS => Slim::Utils::OSDetect::isSqueezeOS() ? 1 : 8; # max threads to run
 
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
