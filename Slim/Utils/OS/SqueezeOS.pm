@@ -293,22 +293,11 @@ sub skipPlugins {
 	
 	return (
 		qw(
-			Amazon
-			Classical Deezer LMA Mediafly MP3tunes Napster Pandora Slacker Sounds
-			Queen
-			Podcast
-			InfoBrowser RSSNews
-			
-			DigitalInput LineIn	LineOut RS232
-			SlimTris Snow Visualizer
+			RS232 Visualizer SlimTris Snow NetTest
 
 			Extensions JiveExtras
 			
-			iTunes MusicMagic
-
-			PreventStandby Rescan TT
-
-			xPL
+			iTunes MusicMagic PreventStandby Rescan TT xPL
 		),
 		$class->SUPER::skipPlugins(),
 	);
