@@ -112,7 +112,7 @@ sub artworkRequest {
 	# WxH[_m][_bg][.ext]
 	my ($spec) = File::Basename::basename($path) =~ /_([^_x\s]+?x[^_\s]+?(?:_(\w))?(?:_[\da-fA-F]+?)?)(?:\.\w+)?$/;
 
-	main::DEBUGLOG && $log->debug("  Resize specification: $spec");
+	main::DEBUGLOG && $isInfo && $log->info("  Resize specification: $spec");
 	
 	# Special cases:
 	# /music/current/cover.jpg (mentioned in CLI docs)
