@@ -24,6 +24,7 @@ __PACKAGE__->mk_accessor( rw => qw(
 	finish
 	eta
 	done
+	rate
 	
 	dbup
 	dball
@@ -201,9 +202,11 @@ sub update {
 
 	my $now = Time::HiRes::time();
 	
+	my $rate = $done / ( $now - $self->start );
+	$self->rate($rate);
+	
 	if ( my $total = $self->total ) {
 		# Calculate new ETA value if we know the total
-		my $rate = $done / ( $now - $self->start );
 		$self->eta( int( ( $total - $done ) / $rate ) );
 	}
 
@@ -309,6 +312,7 @@ sub _write_json {
 		done   => $self->done,
 		total  => $self->total,
 		eta    => $self->eta,
+		rate   => $self->rate,
 		finish => $self->finish || undef,
 	};
 	
