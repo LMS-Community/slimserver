@@ -670,6 +670,11 @@ sub idle {
 		}
 	}
 	
+	# Include pending AIO events or we will end up stalling AIO processing
+	if ( HAS_AIO && !$pendingEvents ) {
+		$pendingEvents += IO::AIO::nreqs;
+	}
+	
 	if ( $pendingEvents ) {
 		# Some notifications are still pending, run the loop in non-blocking mode
 		Slim::Networking::IO::Select::loop( EV::LOOP_NONBLOCK );
