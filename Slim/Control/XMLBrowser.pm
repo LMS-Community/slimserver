@@ -1129,6 +1129,9 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
+							if ($item->{nextWindow}) {
+								$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
+							}
 						}
 						elsif ( !$isPlayable && !$touchToPlay ) {
 							my $actions = {
