@@ -293,6 +293,7 @@ sub skipPlugins {
 	
 	return (
 		qw(
+			RSSNews Podcast InfoBrowser
 			RS232 Visualizer SlimTris Snow NetTest
 
 			Extensions JiveExtras
