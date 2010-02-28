@@ -114,7 +114,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  Y    pause           <0|1|>                      <fadeInSecs> (only for resume)
  Y    play            <fadeInSecs>
- Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+ Y    playlist        add|append                  <item> (item can be a song, playlist or directory) <title> (override)
  Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        addtracks                   <searchterms>    
  Y    playlist        clear
@@ -541,11 +541,11 @@ sub init {
 	addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
 	addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['players',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playersQuery]);
-	addDispatch(['playlist',       'add',            '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'add',            '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'addalbum',       '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'addtracks',      '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'album',          '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-	addDispatch(['playlist',       'append',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'append',         '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'artist',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'clear'],                                                           [1, 0, 0, \&Slim::Control::Commands::playlistClearCommand]);
 	addDispatch(['playlist',       'delete',         '_index'],                                        [1, 0, 0, \&Slim::Control::Commands::playlistDeleteCommand]);
