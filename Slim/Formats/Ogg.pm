@@ -32,7 +32,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
 use Audio::Scan;
-use MIME::Base64 qw(decode_base64);
 
 my $log       = logger('scan.scanner');
 my $sourcelog = logger('player.source');
@@ -109,11 +108,7 @@ sub getTag {
 
 	$tags->{OFFSET} = 0; # the header is an important part of the file. don't skip it
 	
-	# Read cover art if available
-	if ( $tags->{COVERART} ) {
-		# XXX: do we need to decode this here?
-		$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
-		
+	if ( $tags->{ALLPICTURES} ) {
 		# Flag if we have embedded cover art
 		$tags->{HAS_COVER} = 1;
 	}
@@ -132,11 +127,21 @@ sub getCoverArt {
 	my $file  = shift || return undef;
 	
 	my $s = Audio::Scan->scan_tags($file);
-
-	if ( $s->{tags}->{COVERART} ) {
-		my $coverart = eval { decode_base64( $s->{tags}->{COVERART} ) };
-		return if $@;
-		return $coverart;
+	my $tags = $s->{tags};
+	
+	# Standard picture block, try to find the front cover first
+	if ( $tags->{ALLPICTURES} ) {
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+			@{ $tags->{ALLPICTURES} };
+				
+		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+			# in case of many type 3 (front cover) just use the first one
+			return $frontcover[0]->{image_data};
+		}
+		else {
+			# fall back to use lowest type image found
+			return $allpics[0]->{image_data};
+		}
 	}
 
 	return;
@@ -192,15 +197,31 @@ sub scanBitrate {
 
 		# Save artwork if found
 		# Read cover art if available
-		if ( my $coverart = $tags->{COVERART} ) {
-			$coverart = decode_base64($coverart);
+		# Standard picture block, try to find the front cover first
+		if ( $tags->{ALLPICTURES} ) {
+			my $coverart;
+			my $mime;
+			
+			my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+				@{ $tags->{ALLPICTURES} };
+
+			if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+				# in case of many type 3 (front cover) just use the first one
+				$coverart = $frontcover[0]->{image_data};
+				$mime     = $frontcover[0]->{mime_type};
+			}
+			else {
+				# fall back to use lowest type image found
+				$coverart = $allpics[0]->{image_data};
+				$mime     = $allpics[0]->{mime_type};
+			}
 
 			$track->cover(1);
 			$track->update;
 
 			my $data = {
 				image => $coverart,
-				type  => $tags->{COVERARTMIME} || 'image/jpeg',
+				type  => $tags->{COVERARTMIME} || $mime,
 			};
 
 			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
