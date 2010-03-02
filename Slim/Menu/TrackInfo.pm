@@ -455,7 +455,7 @@ sub playTrack {
 
 	# Play is not a valid item in the context menu of the currently playing track
 	if ( $tags->{menuContext} eq 'playlist' && $tags->{currentTrack} ) {
-		return $items;
+		return;
 	}
 
 	# "Play Song" in current playlist context is 'jump'
@@ -527,7 +527,8 @@ sub addTrackNext {
 	if ( $tags->{menuContext} eq 'playlist' ) {
 		$cmd = 'playlistnext';
 	}
-	addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	
+	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
 }
 
 sub addTrackEnd {
@@ -541,7 +542,8 @@ sub addTrackEnd {
 		$string = cstring($client, 'REMOVE_FROM_PLAYLIST');
 		$cmd = 'delete';
 	}
-	addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	
+	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
 }
 
 sub addTrack {
@@ -552,7 +554,7 @@ sub addTrack {
 	
 	# Add is not a valid item in the context menu of the currently playing track
 	if ( $tags->{menuContext} eq 'playlist' && $tags->{currentTrack} ) {
-		return $items;
+		return;
 	}
 
 	my $actions;
