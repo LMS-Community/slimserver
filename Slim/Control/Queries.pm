@@ -5255,10 +5255,10 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		$current ?'AalKNc' : 'alKNc',			# tags needed for our entities
+		$current ?'AalKNcx' : 'alKNcx',			# tags needed for our entities
 	);
 	
-	my $isRemote = $track->remote;
+	my $isRemote = $songData->{remote};
 	
 	$request->addResultLoop($loop, $count, 'trackType', $isRemote ? 'radio' : 'local');
 	
@@ -5349,10 +5349,8 @@ sub _addJiveSong {
 		$request->addResultLoop( $loop, $count, 'actions', $actions );
 	}
 
-	my $id = $track->id();
-	$id += 0;
 	my $params = {
-		'track_id' => $id, 
+		'track_id' => ($songData->{'id'} + 0), 
 		'playlist_index' => $count,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
@@ -5813,6 +5811,12 @@ sub _songData {
 					$returnHash{$tagref->[0]} = $meta;
 				}
 			}
+		}
+		
+		# special case for remote flag, since we had to evaluate it anyway
+		# only include it if it is true
+		elsif ($tag eq 'x' && $isRemote) {
+			$returnHash{$tagref->[0]} = 1;
 		}
 		
 		# special case artists (tag A and S)
