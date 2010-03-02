@@ -97,6 +97,9 @@ sub cliQuery {
 	if ( ref $feed eq 'HASH' ) {
 		
 		main::DEBUGLOG && $log->debug("Feed is already XML data!");
+		
+		$feed->{_local} = 1;
+		
 		_cliQuery_done( $feed, {
 			'request'    => $request,
 			'client'     => $request->client,
@@ -235,6 +238,8 @@ sub _cliQuery_done {
 	my @index = ();
 
 	if ( defined $item_id && length($item_id) ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("item_id: $item_id");
+		
 		@index = split /\./, $item_id;
 		
 		if ( length( $index[0] ) >= 8 ) {
@@ -243,19 +248,18 @@ sub _cliQuery_done {
 		}
 	}
 	else {
-		# Create a new session ID, unless the list has coderefs
 		my $refs = scalar grep { ref $_->{url} } @{ $feed->{items} };
 		
-		if ( !$refs ) {
+		# Don't cache if list has coderefs or the feed is from a local source
+		if ( !$refs && !$feed->{_local} ) {
 			$sid = Slim::Utils::Misc::createUUID();
 		}
 	}
 	
 	my $subFeed = $feed;
 	
-#	use Data::Dumper;
-#	print Data::Dumper::Dumper($subFeed);
-	
+#	warn Data::Dump::dump($feed) . "\n";
+
 	my @crumbIndex = $sid ? ( $sid ) : ();
 	
 	# Add top-level search to index
