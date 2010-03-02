@@ -109,18 +109,27 @@ sub getTag {
 	$tags->{OFFSET} = 0; # the header is an important part of the file. don't skip it
 	
 	# Read cover art if available
-	if ( $tags->{COVERART} ) {
-		# In 'no artwork' mode, ARTWORK is the length
-		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
-			$tags->{COVER_LENGTH} = $tags->{COVERART};
+	if ( $tags->{ALLPICTURES} ) {
+		my $pic;
+		
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+			@{ $tags->{ALLPICTURES} };
+
+		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+			# in case of many type 3 (front cover) just use the first one
+			$pic = $frontcover[0]->{image_data};
 		}
 		else {
-			$tags->{ARTWORK} = eval { decode_base64( delete $tags->{COVERART} ) };
+			# fall back to use lowest type image found
+			$pic = $allpics[0]->{image_data};
+		}
 		
-			if ( !$@ ) {
-				# Flag if we have embedded cover art
-				$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
-			}
+		# In 'no artwork' mode, ARTWORK is the length
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			$tags->{COVER_LENGTH} = $pic;
+		}
+		else {
+			$tags->{COVER_LENGTH} = length($pic);
 		}
 	}
 
@@ -213,23 +222,36 @@ sub scanBitrate {
 
 		# Save artwork if found
 		# Read cover art if available
-		if ( my $coverart = $tags->{COVERART} ) {
-			$coverart = eval { decode_base64($coverart) };
+		if ( $tags->{ALLPICTURES} ) {
+			my $coverart;
+			my $mime;
 
-			if ( !$@ ) {
-				$track->cover( length($coverart) );
-				$track->update;
+			my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+				@{ $tags->{ALLPICTURES} };
 
-				my $data = {
-					image => $coverart,
-					type  => $tags->{COVERARTMIME} || 'image/jpeg',
-				};
-
-				my $cache = Slim::Utils::Cache->new();
-				$cache->set( "cover_$url", $data, 86400 * 7 );
-
-				main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
+			if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+				# in case of many type 3 (front cover) just use the first one
+				$coverart = $frontcover[0]->{image_data};
+				$mime     = $frontcover[0]->{mime_type};
 			}
+			else {
+				# fall back to use lowest type image found
+				$coverart = $allpics[0]->{image_data};
+				$mime     = $allpics[0]->{mime_type};
+			}
+			
+			$track->cover( length($coverart) );
+			$track->update;
+
+			my $data = {
+				image => $coverart,
+				type  => $tags->{COVERARTMIME} || $mime,
+			};
+
+			my $cache = Slim::Utils::Cache->new();
+			$cache->set( "cover_$url", $data, 86400 * 7 );
+
+			main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
 	}
 	
