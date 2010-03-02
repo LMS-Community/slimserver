@@ -32,7 +32,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
 use Audio::Scan;
-use MIME::Base64 qw(decode_base64);
 
 my $log       = logger('scan.scanner');
 my $sourcelog = logger('player.source');
@@ -142,11 +141,21 @@ sub getCoverArt {
 	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_tags($file);
-
-	if ( $s->{tags}->{COVERART} ) {
-		my $coverart = eval { decode_base64( $s->{tags}->{COVERART} ) };
-		return if $@;
-		return $coverart;
+	my $tags = $s->{tags};
+	
+	# Standard picture block, try to find the front cover first
+	if ( $tags->{ALLPICTURES} ) {
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+			@{ $tags->{ALLPICTURES} };
+				
+		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+			# in case of many type 3 (front cover) just use the first one
+			return $frontcover[0]->{image_data};
+		}
+		else {
+			# fall back to use lowest type image found
+			return $allpics[0]->{image_data};
+		}
 	}
 
 	return;
