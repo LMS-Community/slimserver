@@ -674,6 +674,13 @@ database if we can get a simple file extension match.
 sub contentType {
 	my ($self, $urlOrObj) = @_;
 
+	# Bug 15779 - if we have it in the cache then just use it
+	# This does not even check that $urlOrObj is actually a URL
+	# but there should be no practical chance of a key-space clash if it is not.
+	if (defined $contentTypeCache{$urlOrObj}) {
+		return $contentTypeCache{$urlOrObj};
+	}
+
 	my $defaultType = 'unk';
 	my $contentType = $defaultType;
 
@@ -685,7 +692,7 @@ sub contentType {
 		return $defaultType;
 	}
 
-	# Cache hit - return immediately.
+	# Try again for a cache hit - return immediately.
 	if (defined $contentTypeCache{$url}) {
 		return $contentTypeCache{$url};
 	}

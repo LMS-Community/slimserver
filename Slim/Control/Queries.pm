@@ -3649,7 +3649,13 @@ sub statusQuery_filter {
 		return 1.4;
 	}
 
-	# send everyother notif with a small delay to accomodate
+	# give it more time for stop as this is often followed by a new play
+	# command (for example, with track skip), and the new status may be delayed
+	if ($request->isCommand([['playlist'],['stop']])) {
+		return 2.5;
+	}
+
+	# send every other notif with a small delay to accomodate
 	# bursts of commands
 	return 1.3;
 }
@@ -5235,6 +5241,10 @@ sub _addJivePlaylistControls {
 	}
 }
 
+# **********************************************************************
+# *** This is performance-critical method ***
+# Take cake to understand the performance implications of any changes.
+
 sub _addJiveSong {
 	my $request   = shift; # request
 	my $loop      = shift; # loop
@@ -5245,7 +5255,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'AalKNc',			# tags needed for our entities
+		$current ?'AalKNc' : 'alKNc',			# tags needed for our entities
 	);
 	
 	my $isRemote = $track->remote;
@@ -5255,18 +5265,23 @@ sub _addJiveSong {
 	my $text   = $songData->{title};
 	my $title  = $text;
 	my $album  = $songData->{album};
+	my $artist = $songData->{artist};
 	
-	my (%artists, @artists);
-	foreach ('albumartist', 'trackartist', 'artist') {
-		# split artist by colon, as eg. trackartist is merging artists already
-		foreach my $a ( split(/,\s*/, $songData->{$_}) ) {
-			if ( $a && !$artists{$a} ) {
-				push @artists, $a;
-				$artists{$a} = 1;
+	# Bug 15779: we cannot afford to get multiple contributor roles for each track
+	# in the playlist so restrict this information to just for the current track.
+	# (even getting it just for the current track is pretty expensive)
+	if ($current) {
+		my (%artists, @artists);
+		foreach ('albumartist', 'trackartist', 'artist') {
+			foreach my $a ( @{$songData->{"arrayRef_$_"}} ) {
+				if ( $a && !$artists{$a} ) {
+					push @artists, $a;
+					$artists{$a} = 1;
+				}
 			}
 		}
+		$artist = join(', ', @artists);
 	}
-	my $artist = join(', ', @artists);
 	
 	if ( $isRemote && $text && $album && $artist ) {
 		$request->addResult('current_title');
@@ -5815,12 +5830,14 @@ sub _songData {
 						
 					my $key = lc($type) . $postfix;
 					my $contributors = $track->contributorsOfType($type) or next;
-					my $value = join(', ', map { $_ = $_->$submethod() } $contributors->all);
+					my @values = map { $_ = $_->$submethod() } $contributors->all;
+					my $value = join(', ', @values);
 			
 					if (defined $value && $value ne '') {
 
 						# add the tag to the result
 						$returnHash{$key} = $value;
+						$returnHash{"arrayRef_$key"} = \@values;
 					}
 				}
 			}
