@@ -4838,7 +4838,7 @@ sub _addJiveSong {
 	if ($current) {
 		my (%artists, @artists);
 		foreach ('albumartist', 'trackartist', 'artist') {
-			foreach my $a ( @{$songData->{"arrayRef_$_"}} ) {
+			foreach my $a ( $songData->{"arrayRef_$_"} ? @{$songData->{"arrayRef_$_"}} : $songData->{$_} ) {
 				if ( $a && !$artists{$a} ) {
 					push @artists, $a;
 					$artists{$a} = 1;
