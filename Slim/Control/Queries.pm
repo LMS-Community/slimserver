@@ -5736,7 +5736,7 @@ sub _songData {
 
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
-		return = _songDataFromHash($request, $pathOrObj, $tags);
+		return _songDataFromHash($request, $pathOrObj, $tags);
 	}
 
 	# figure out the track object
