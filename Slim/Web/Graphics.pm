@@ -4,6 +4,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use File::Basename;
+use File::Slurp ();
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -228,6 +229,35 @@ sub artworkRequest {
 		my $skin = $params->{skinOverride} || $prefs->get('skin');
 		main::INFOLOG && $isInfo && $log->info("  Looking for: $fullpath in skin $skin");	
 		$fullpath = $skinMgr->fixHttpPath($skin, $fullpath);
+	}
+	
+	# Support pre-sized files already in place, this is used on SB Touch
+	# for app icons because it can't handle resizing so many icons at once
+	if ( $fullpath && $fullpath =~ /\.(?:jpg|png|gif)$/i ) {
+		# Add the spec back to the fullpath
+		my $fullpathspec = $fullpath;
+		
+		if ( $spec ) {
+			$fullpathspec =~ s/(\.\w+)$/_${spec}$1/;
+		}
+		
+		if ( -e $fullpathspec ) {
+			main::INFOLOG && $isInfo && $log->info("  Using existing pre-cached file: $fullpathspec");
+		
+			my ($ext) = $fullpathspec =~ /\.(\w+)$/;
+			my $ct = 'image/' . $ext;
+			$ct =~ s/jpg/jpeg/;
+			$response->content_type($ct);
+		
+			my $exptime = ONE_DAY;
+			$response->header( 'Cache-Control' => 'max-age=' . $exptime );
+			$response->expires( time() + $exptime );
+		
+			my $body = File::Slurp::read_file($fullpathspec);
+		
+			$callback->( $client, $params, \$body, @args );
+			return;
+		}
 	}
 	
 	if ( $fullpath && -e $fullpath ) {
