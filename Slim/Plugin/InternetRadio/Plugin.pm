@@ -122,7 +122,7 @@ sub buildMenus {
 	}
 	
 	for my $item ( @{$items} ) {
-		if ( !main::SLIM_SERVICE ) {
+		if ( !main::SLIM_SERVICE && !Slim::Utils::OSDetect::isSqueezeOS() ) {
 			if ( $item->{icon} && $icondir ) {
 				# Download and cache icons so we can support resizing on them
 				$class->cacheIcon( $icondir, $item->{icon} );
@@ -151,7 +151,7 @@ sub generate {
 	my $feed    = $item->{URL};
 	my $weight  = $item->{weight};
 	my $type    = $item->{type};
-	my $icon    = main::SLIM_SERVICE ? $item->{icon} : $ICONS->{ $item->{icon} }; # local path to cached icon
+	my $icon    = $ICONS->{ $item->{icon} } || $item->{icon};
 	my $iconRE  = $item->{iconre} || 0;
 	
 	# SN needs to dynamically filter radio plugins per-user and append values such as RT username
@@ -392,7 +392,7 @@ sub _pluginDataFor {
 		return $class->SUPER::_pluginDataFor($key);
 	}
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE || Slim::Utils::OSDetect::isSqueezeOS() ) {
 		return $class->icon;
 	}
 	
