@@ -3575,6 +3575,9 @@ sub statusQuery {
 	my $playlist_cur_index;
 	
 	$request->addResult('mode', Slim::Player::Source::playmode($client));
+	if ($client->isPlaying() && !$client->isPlaying('really')) {
+		$request->addResult('waitingToPlay', 1);	
+	}
 
 	if (my $song = $client->playingSong()) {
 
