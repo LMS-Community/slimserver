@@ -5133,16 +5133,7 @@ sub _addSong {
 	my $prefixVal = shift; # prefix value, if any   
 
 	# get the hash with the data	
-	my $hashRef;
-	
-	if ( ref $pathOrObj eq 'HASH' ) {
-		# Hash from direct DBI query in titlesQuery
-		$hashRef = _songDataFromHash($request, $pathOrObj, $tags);
-	}
-	else {
-		# url or track object
-		$hashRef = _songData($request, $pathOrObj, $tags);
-	}
+	my $hashRef = _songData($request, $pathOrObj, $tags);
 	
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
@@ -5732,6 +5723,10 @@ sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
 
+	if ( ref $pathOrObj eq 'HASH' ) {
+		# Hash from direct DBI query in titlesQuery
+		return = _songDataFromHash($request, $pathOrObj, $tags);
+	}
 
 	# figure out the track object
 	my $track     = Slim::Schema->objectForUrl($pathOrObj);
