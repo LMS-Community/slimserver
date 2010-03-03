@@ -1162,17 +1162,39 @@ sub generateHTTPResponse {
 			) {
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
+			
+			# Bug 15723, We need to track if we have an async artwork request so 
+			# we don't return data out of order
+			my $async = 0;
+			my $sentResponse = 0;
 
 			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::artworkRequest(
 				$client, 
 				$path, 
 				$params,
-				\&prepareResponseForSending,
+				sub {
+					$sentResponse = 1;
+					prepareResponseForSending(@_);
+					
+					if ( $async ) {
+						main::INFOLOG && $log->is_info && $log->info('Async artwork request done, enable read');
+						Slim::Networking::Select::addRead($httpClient, \&processHTTP);
+					}
+				},
 				$httpClient,
 				$response,
 			);
 			
+			# If artworkRequest did not directly call the callback, we are in an async request
+			if ( !$sentResponse ) {
+				main::INFOLOG && $log->is_info && $log->info('Async artwork request pending, pause read');
+				Slim::Networking::Select::removeRead($httpClient);
+				$async = 1;
+			}
+			
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
+			
+			return;
 
 		} elsif ($path =~ /music\/(\d+)\/download/) {
 			# Bug 10730

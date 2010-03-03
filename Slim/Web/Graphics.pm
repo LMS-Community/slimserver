@@ -59,7 +59,7 @@ sub _cached {
 			if ( main::INFOLOG && $isInfo ) {
 				my $type = $cached->{content_type};
 				my $size = length( ${ $cached->{data_ref} } );
-				$log->info( "  from cache: $type ($size bytes)" );
+				$log->info( "  from cache: $type ($size bytes for $path)" );
 			}
 
 			return $cached;
