@@ -3489,7 +3489,7 @@ sub statusQuery_filter {
 	# the case with remote tracks.
 	# Note that the 1.5s here and the 1s from 'playlist stop' above could
 	# accumulate in the worst case.
-	if $request->isCommand([['playlist'], ['open', 'jump']]) {
+	if ($request->isCommand([['playlist'], ['open', 'jump']])) {
 		return 2.5;
 	}
 
