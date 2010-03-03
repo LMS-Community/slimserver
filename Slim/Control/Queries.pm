@@ -3623,7 +3623,6 @@ sub statusQuery_filter {
 
 	# commands we ignore
 	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'playerpref']]);
-	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 	# special case: the client is gone!
 	if ($request->isCommand([['client'], ['forget']])) {
@@ -3652,6 +3651,15 @@ sub statusQuery_filter {
 	# give it more time for stop as this is often followed by a new play
 	# command (for example, with track skip), and the new status may be delayed
 	if ($request->isCommand([['playlist'],['stop']])) {
+		return 2.0;
+	}
+
+	# This is quite likely about to be followed by a 'playlist newsong' so
+	# we only want to generate this if the newsong is delayed, as can be
+	# the case with remote tracks.
+	# Note that the 1.5s here and the 1s from 'playlist stop' above could
+	# accumulate in the worst case.
+	if ($request->isCommand([['playlist'], ['open', 'jump']])) {
 		return 2.5;
 	}
 
@@ -3737,6 +3745,9 @@ sub statusQuery {
 	my $playlist_cur_index;
 	
 	$request->addResult('mode', Slim::Player::Source::playmode($client));
+	if ($client->isPlaying() && !$client->isPlaying('really')) {
+		$request->addResult('waitingToPlay', 1);	
+	}
 
 	if (my $song = $client->playingSong()) {
 
