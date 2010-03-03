@@ -439,7 +439,7 @@ sub settimeofday {
 	};
 	
 	if ( $@ ) {
-		logWarning("settimeofday($epoch) failed: $@");
+		Slim::Utils::Log::logWarning("settimeofday($epoch) failed: $@");
 	}
 }
 
