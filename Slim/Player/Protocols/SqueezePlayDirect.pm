@@ -101,34 +101,31 @@ sub getSeekData {
 sub getMetadataFor {
 	my ($class, $client, $url) = @_;
 
-	my $song = $client->streamingSong;
-	my $streamUrl = $song ? $song->streamUrl : undef;
-
-	if (!$song || $url ne $streamUrl) {
-		# non streaming url - see if we can extract metadata from the url
-		my ($paramstr) = $url =~ /spdr:\/\/.+\?(.*)/;
-
-		my %params;
-		for my $param (split /&/, $paramstr) {
-			my ($key, $val) = $param =~ /(.*?)=(.*)/;
-			$params{$key} = decode_base64($val) || $val;
-		}
-
+	if (my $song = $client->currentSongForUrl($url)) {
 		return {
-			artist => $params{artist},
-			album  => $params{album},
-			cover  => $params{icon},
-			icon   => $params{icon},
-			type   => $params{type},
+			artist => $song->pluginData('artist'),
+			album  => $song->pluginData('album'),
+			cover  => $song->pluginData('icon'),
+			icon   => $song->pluginData('icon'),
+			type   => $song->pluginData('type'),
 		};
 	}
 
+	# non streaming url - see if we can extract metadata from the url
+	my ($paramstr) = $url =~ /spdr:\/\/.+\?(.*)/;
+
+	my %params;
+	for my $param (split /&/, $paramstr) {
+		my ($key, $val) = $param =~ /(.*?)=(.*)/;
+		$params{$key} = decode_base64($val) || $val;
+	}
+	
 	return {
-		artist => $song->pluginData('artist'),
-		album  => $song->pluginData('album'),
-		cover  => $song->pluginData('icon'),
-		icon   => $song->pluginData('icon'),
-		type   => $song->pluginData('type'),
+		artist => $params{artist},
+		album  => $params{album},
+		cover  => $params{icon},
+		icon   => $params{icon},
+		type   => $params{type},
 	};
 }	
 
