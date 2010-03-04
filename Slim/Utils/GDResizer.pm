@@ -477,7 +477,7 @@ sub resizeSeries {
 		delete $args{file};
 		
 		# Don't use source artwork < 100, as this results in blurry images
-		if ( !$args{original} || ($args{width} >= 100 && $args{height} >= 100) ) {
+		if ( !$args{original} || $args{faster} || ($args{width} >= 100 && $args{height} >= 100) ) {
 			$args{original} = $resized_ref;
 		}
 		
