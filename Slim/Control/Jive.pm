@@ -275,7 +275,6 @@ sub mainMenu {
 			id             => 'myMusic',
 			isANode        => 1,
 			node           => 'home',
-			window         => { titleStyle => 'mymusic', },
 		},
 		{
 			stringToken    => 'FAVORITES',
@@ -289,9 +288,6 @@ sub mainMenu {
 						menu     => 'favorites',
 					},
 				},
-			},
-			window        => {
-					titleStyle => 'favorites',
 			},
 		},
 
@@ -459,9 +455,6 @@ sub albumSortSettingsItem {
 					menu => 'radio',
 				},
 			},
-		},
-		window        => {
-				titleStyle => 'settings',
 		},
 	};
 
@@ -779,7 +772,6 @@ sub alarmUpdateMenu {
 
 	my $enabled = $alarm->enabled();
 	my $onOff = {
-		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_ENABLED"),
 		checkbox => ($enabled == 1) + 0,
 		onClick  => 'refreshOrigin',
@@ -826,7 +818,6 @@ sub alarmUpdateMenu {
 			},
 		},
 		nextWindow => 'parent',
-		window         => { titleStyle => 'settings' },
 	};
 	push @menu, $setTime;
 
@@ -842,7 +833,6 @@ sub alarmUpdateMenu {
 				},
 			},
 		},
-		window    => { titleStyle => 'settings' },
 	};
 	push @menu, $setDays;
 
@@ -858,13 +848,11 @@ sub alarmUpdateMenu {
 				},
 			},
 		},
-		window    => { titleStyle => 'settings' },
 	};
 	push @menu, $playlistChoice;
 
 	my $repeat = $alarm->repeat();
 	my $repeatOn = {
-		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_REPEAT"),
 		radio    => ($repeat == 1) + 0,
 		onClick  => 'refreshOrigin',
@@ -882,7 +870,6 @@ sub alarmUpdateMenu {
 	push @menu, $repeatOn;
 
 	my $repeatOff = {
-		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_ONETIME"),
 		radio    => ($repeat == 0) + 0,
 		onClick  => 'refreshOrigin',
@@ -1014,7 +1001,6 @@ sub getCurrentAlarms {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 		push @return, $thisAlarm;
 		$count++;
@@ -1345,7 +1331,6 @@ sub internetRadioMenu {
 			},
 			window        => {
 					menuStyle => 'album',
-					titleStyle => 'internetradio',
 			},
 		};
 	}
@@ -1369,7 +1354,6 @@ sub playerSettingsMenu {
 		node           => 'settings',
 		isANode        => 1,
 		weight         => 35,
-		window         => { titleStyle => 'settings', },
 	};
 	
 	# always add repeat
@@ -1416,7 +1400,6 @@ sub playerSettingsMenu {
 					},
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 	}
 
@@ -1436,7 +1419,6 @@ sub playerSettingsMenu {
 					},
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 	}
 
@@ -1453,7 +1435,6 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 	}
 
@@ -1470,7 +1451,6 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};
 	}
 
@@ -1487,7 +1467,6 @@ sub playerSettingsMenu {
 				player => 0,
 			},
 		},
-		window         => { titleStyle => 'settings' },
 	};	
 
 	# synchronization. only if numberOfPlayers > 1
@@ -1504,7 +1483,6 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -1514,7 +1492,6 @@ sub playerSettingsMenu {
 		id             => 'settingsInformation',
 		node           => 'advancedSettings',
 		weight         => 100,
-		window         => { titleStyle => 'settings' },
 		actions        => {
 				go =>	{
 						cmd    => ['systeminfo', 'items'],
@@ -1550,7 +1527,6 @@ sub playerSettingsMenu {
 						},
                                         },
                                   },
-		window         => { titleStyle => 'settings' },
 	};
 
 
@@ -1567,7 +1543,6 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
-			window         => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -1584,7 +1559,6 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
-			window         => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -1596,7 +1570,6 @@ sub playerSettingsMenu {
 			id             => 'squeezeboxDisplaySettings',
 			isANode        => 1,
 			node           => 'advancedSettings',
-			window         => { titleStyle => 'settings', },
 		},
 		{
 			text           => $client->string("PLAYER_BRIGHTNESS"),
@@ -1608,7 +1581,6 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
-			window         => { titleStyle => 'settings' },
 		},
 	}
 
@@ -1625,7 +1597,6 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
-			window         => { titleStyle => 'settings' },
 		},
 		{
 			text           => $client->string("OFFDISPLAYSIZE"),
@@ -1637,7 +1608,6 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
-			window         => { titleStyle => 'settings' },
 		},
 	}
 
@@ -1845,9 +1815,6 @@ sub browseMusicFolder {
 						},
 					},
 				},
-				window        => {
-					titleStyle => 'musicfolder',
-				},
 			};
 	} else {
 		# if it disappeared, send a notification to get rid of it if it exists
@@ -1928,7 +1895,6 @@ sub shuffleSettings {
 				],
 			},
 		},
-		window         => { titleStyle => 'settings' },
 	};
 
 	if ($batch) {
@@ -2386,9 +2352,6 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window        => {
-					titleStyle => 'artists',
-				},
 			},		
 			{
 				text           => $client->string('BROWSE_BY_ALBUM'),
@@ -2409,7 +2372,6 @@ sub myMusicMenu {
 				window         => {
 					menuStyle => 'album',
 					menuStyle => 'album',
-					titleStyle => 'albumlist',
 				},
 			},
 			{
@@ -2427,9 +2389,6 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window        => {
-					titleStyle => 'genres',
-				},
 			},
 			{
 				text           => $client->string('BROWSE_BY_YEAR'),
@@ -2445,9 +2404,6 @@ sub myMusicMenu {
 							party => $party,
 						},
 					},
-				},
-				window        => {
-					titleStyle => 'years',
 				},
 			},
 			{
@@ -2467,7 +2423,6 @@ sub myMusicMenu {
 				},
 				window        => {
 					menuStyle => 'album',
-					titleStyle => 'newmusic',
 				},
 			},
 			{
@@ -2484,9 +2439,6 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window        => {
-					titleStyle => 'playlist',
-				},
 			},
 			{
 				text           => $client->string('SEARCH'),
@@ -2494,7 +2446,6 @@ sub myMusicMenu {
 				node           => 'myMusic',
 				isANode        => 1,
 				weight         => 90,
-				window         => { titleStyle => 'search', },
 			},
 		);
 		# add the items for under mymusicSearch
@@ -2570,7 +2521,6 @@ sub searchMenu {
 		},
                 window => {
                         text => $client->string('SEARCHFOR_ARTISTS'),
-                        titleStyle => 'search',
                 },
 	},
 	{
@@ -2603,7 +2553,6 @@ sub searchMenu {
 		},
 		window => {
 			text => $client->string('SEARCHFOR_ALBUMS'),
-			titleStyle => 'search',
 			menuStyle  => 'album',
 		},
 	},
@@ -2637,7 +2586,6 @@ sub searchMenu {
 		},
 		window => {
 			text => $client->string('SEARCHFOR_SONGS'),
-			titleStyle => 'search',
 			menuStyle => 'album',
 		},
 	},
@@ -2669,7 +2617,6 @@ sub searchMenu {
 		},
 		window => {
 			text => $client->string('SEARCHFOR_PLAYLISTS'),
-			titleStyle => 'search',
 		},
 	},
 
@@ -2713,7 +2660,6 @@ sub globalSearchMenu {
 		},
 		window => {
 			text => $client->string('SEARCH'),
-			titleStyle => 'search',
 		},
 	});
 
@@ -2870,7 +2816,6 @@ sub jivePlaylistsCommand {
 	$request->addResult('offset', 0);
 	$request->addResult('count', 2);
 	$request->addResult('item_loop', \@delete_menu);
-	$request->addResult('window', { titleStyle => 'playlist' } );
 
 	$request->setStatusDone();
 
@@ -3021,7 +2966,6 @@ sub jiveFavoritesCommand {
 		$request->addResult('offset', 0);
 		$request->addResult('count', 2);
 		$request->addResult('item_loop', \@favorites_menu);
-		$request->addResult('window', { titleStyle => 'favorites' } );
 	}
 	
 	
@@ -3072,7 +3016,6 @@ sub recentSearchMenu {
 			},
 			window => {
 				text => $client->string('RECENT_SEARCHES'),
-				titleStyle => 'search',
 			},
 		};
 		push @recentSearchMenu,
@@ -3089,7 +3032,6 @@ sub recentSearchMenu {
 			},
 			window => {
 				text => $client->string('RECENT_SEARCHES'),
-				titleStyle => 'search',
 			},
 		};	
 		if (!$batch) {
@@ -3348,7 +3290,6 @@ sub appMenus {
 					text           => $apps->{$app}->{title},
 					window         => {
 						'icon-id'  => $icon,
-						titleStyle => 'album',
 					},
 				};
 			}

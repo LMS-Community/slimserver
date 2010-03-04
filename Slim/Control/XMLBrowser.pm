@@ -682,7 +682,6 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'text', $string);
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 							$request->addResultLoop($loopname, $cnt, 'style', 'item');
-							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'favorites' });
 							$cnt++;
 						}
 					}
@@ -1072,13 +1071,11 @@ sub _cliQuery_done {
 
 						if ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
-							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}
 
 						if ( $item->{icon} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
-							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}
 
