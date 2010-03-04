@@ -166,13 +166,15 @@ sub _init_db {
 	
 	my $dbfile = fast_catfile( $self->{root}, DB_FILENAME );
 	
-	my $dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
-		AutoCommit => 1,
-		PrintError => 0,
-		RaiseError => 1,
-	} );
+	my $dbh;
 	
 	eval {
+		$dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
+			AutoCommit => 1,
+			PrintError => 0,
+			RaiseError => 1,
+		} );
+		
 		$dbh->do('PRAGMA journal_mode = OFF');
 		$dbh->do('PRAGMA synchronous = OFF');
 		$dbh->do('PRAGMA locking_mode = EXCLUSIVE');
