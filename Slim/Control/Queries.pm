@@ -441,9 +441,6 @@ sub albumsQuery {
 					'itemsParams' => 'params',
 				}		
 			},
-			'window' => {
-				'titleStyle' => "album",
-			}
 		};
 		
 		$base->{'actions'}{'play-hold'} = _mixerBase();
@@ -845,7 +842,6 @@ sub artistsQuery {
 			# style correctly the window that opens for the action element
 			'window' => {
 				'menuStyle'  => 'album',
-				'titleStyle' => 'artists',
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
@@ -1478,7 +1474,6 @@ sub genresQuery {
 					'itemsParams' => 'params',
 				},
 			},
-			window => { titleStyle => 'genres', },
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
@@ -1826,9 +1821,6 @@ sub musicfolderQuery {
 					},
 					'itemsParams' => 'params',
 				},
-			},
-			window => {
-				titleStyle => 'musicfolder',
 			},
 		};
 
@@ -2628,9 +2620,6 @@ sub playlistsQuery {
 					},
 					'itemsParams' => 'params',
 				},
-			},
-			window => {
-				titleStyle => 'playlist',
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
@@ -3739,9 +3728,6 @@ sub statusQuery {
 						itemsParams => 'params',
 					},
 				},
-				window => {
-					titleStyle => 'album',
-				}
 			};
 		}
 		$request->addResult('base', $base);
@@ -4214,9 +4200,6 @@ sub titlesQuery {
 					itemsParams => 'params',
 				},
 			},
-			window => {
-				titleStyle => 'album',
-			}
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
@@ -4506,7 +4489,6 @@ sub yearsQuery {
 			},
 			'window' => {
 				menuStyle   => 'album',
-				titleStyle  => 'years',
 			}
 		};
 		# sort by artist, year, album when sending the albums query
@@ -4774,7 +4756,6 @@ sub _addJivePlaylistControls {
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
-	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
 	
 	if ( main::SLIM_SERVICE ) {
 		# Bug 7110, move images
@@ -4809,7 +4790,6 @@ sub _addJivePlaylistControls {
 		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/playlistsave.png');
 		$request->addResultLoop($loop, $count, 'input', $input);
 		$request->addResultLoop($loop, $count, 'actions', $actions);
-		$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
 	}
 	
 	# Bug 7110, move images
@@ -5031,7 +5011,6 @@ sub _jiveAddToFavorites {
 		$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
 
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
 
 		if ($includeArt) {
 			my $favicon = main::SLIM_SERVICE
@@ -5097,7 +5076,6 @@ sub _jiveDeletePlaylist {
 		};
 
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'playlist' });
 		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		$chunkCount++;
 	}
@@ -5142,7 +5120,7 @@ sub _jiveGenreAllAlbums {
 		};
 
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
+		$request->addResultLoop($loopname, $chunkCount, 'window', { text => "$genreString" });
 
 		if ($includeArt) {
 			my $playallicon = main::SLIM_SERVICE
