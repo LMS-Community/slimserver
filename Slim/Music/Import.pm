@@ -630,13 +630,14 @@ sub stillScanning {
 	return 0 if main::SLIM_SERVICE;
 	return 0 if !Slim::Schema::hasLibrary();
 	
-	my $imports  = scalar keys %importsRunning;
-
-	# Check and see if there is a flag in the database, and the process is alive.
-	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
-	my $scanning = blessed($scanRS) ? $scanRS->value : 0;
-
-	return $scanning;
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		"SELECT value FROM metainformation WHERE name = 'isScanning'"
+	);
+	$sth->execute;
+	my ($value) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $value || 0;
 }
 
 sub _checkLibraryStatus {
