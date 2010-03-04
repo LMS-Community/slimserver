@@ -424,6 +424,8 @@ sub albumsQuery {
 	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', @cols );
 	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
@@ -433,7 +435,9 @@ sub albumsQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$cache->{$cacheKey} = $count;
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
 
 	if ($menuMode) {
 
@@ -526,7 +530,7 @@ sub albumsQuery {
 		$request->addResult('base', $base);
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
+	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
@@ -884,6 +888,8 @@ sub artistsQuery {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	$sql .= "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
 	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
@@ -893,7 +899,9 @@ sub artistsQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$cache->{$cacheKey} = $count;
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
 	
 	my $totalCount = $count || 0;
 
@@ -997,7 +1005,7 @@ sub artistsQuery {
 
 	$totalCount = _fixCount($insertAll, \$index, \$quantity, $totalCount);
 
-	if (Slim::Music::Import->stillScanning()) {
+	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
@@ -1578,6 +1586,8 @@ sub genresQuery {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	$sql .= "ORDER BY genres.namesort $collate";
 	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
@@ -1587,7 +1597,9 @@ sub genresQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$cache->{$cacheKey} = $count;
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
 	
 	# now build the result
 	
@@ -1653,7 +1665,7 @@ sub genresQuery {
 
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
+	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
@@ -4443,6 +4455,8 @@ sub titlesQuery {
 	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', @cols );
 	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
@@ -4452,7 +4466,9 @@ sub titlesQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$cache->{$cacheKey} = $count;
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
 
 	my $playalbum;
 	if ( $request->client ) {
@@ -4547,7 +4563,7 @@ sub titlesQuery {
 		$request->addResult('base', $base);
 	}
 
-	if (Slim::Music::Import->stillScanning) {
+	if ($stillScanning) {
 		$request->addResult("rescan", 1);
 	}
 
