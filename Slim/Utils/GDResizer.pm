@@ -687,7 +687,10 @@ sub gdresize {
 			
 				# Series-based resize has to append to the cache key
 				my $key = $cachekey;
-				$key .= "${width}x${height}_${mode}";
+				my $spec = "${width}x${height}_${mode}";
+				if (! ($key =~ s/(\.\w{3,4})$/_$spec$1/)) {
+					$key .= $spec;
+				}
 			
 				_cache( $cache, $key, $s->[0], $file, $s->[1] );
 			}
