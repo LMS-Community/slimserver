@@ -475,7 +475,11 @@ sub resizeSeries {
 		my ($resized_ref, $format) = $class->resize( %args );
 		
 		delete $args{file};
-		$args{original} = $resized_ref;
+		
+		# Don't use source artwork < 100, as this results in blurry images
+		if ( !$args{original} || ($args{width} >= 100 && $args{height} >= 100) ) {
+			$args{original} = $resized_ref;
+		}
 		
 		push @ret, [ $resized_ref, $format, $args{width}, $args{height}, $args{mode} ];
 	}
