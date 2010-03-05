@@ -86,7 +86,7 @@ sub find {
 		}
 		
 		# Skip client playlists
-		return if $args->{types} && $args->{types} =~ /list/ && $file =~ /clientplaylist.*\.m3u$/;
+		return 1 if $args->{types} && $args->{types} =~ /list/ && $file =~ /clientplaylist.*\.m3u$/;
 		
 		$progress && $progress->update($file);
 		
