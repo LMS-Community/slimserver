@@ -45,6 +45,7 @@
 <hr>
 <h4 id="7">Changes starting from Squeezebox Server 7.5</h4>
 <ul>
+	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
 	<li>Added <a href="#pragma">&quot;pragma&quot;</a> command for changing SQLite behavior.</li>
 </ul>
 
@@ -4701,6 +4702,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Beats per minute. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>M</b>
+		</td>
+		<td>
+			musicmagic_mixable
+		</td>
+		<td>
+			1 if track is mixable, otherwise 0.
 		</td>
 	</tr>
 	<tr>

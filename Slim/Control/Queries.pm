@@ -3673,7 +3673,9 @@ sub statusQuery_filter {
 sub statusQuery {
 	my $request = shift;
 	
-	main::DEBUGLOG && $log->debug("statusQuery()");
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	main::DEBUGLOG && $isDebug && $log->debug("statusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -3879,7 +3881,7 @@ sub statusQuery {
 		}
 		$request->addResult('preset_loop', $presetLoop);
 
-		main::DEBUGLOG && $log->debug("statusQuery(): setup base for jive");
+		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
@@ -3917,14 +3919,21 @@ sub statusQuery {
 	
 	if ($songCount > 0) {
 	
-		main::DEBUGLOG && $log->debug("statusQuery(): setup non-zero player response");
+		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
 		my $tags     = $request->getParam('tags');
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
-	
-		$tags = 'gald' if !defined $tags;
+		
 		my $loop = $menuMode ? 'item_loop' : 'playlist_loop';
+		
+		if ( $menuMode ) {
+			# Set required tags for menuMode
+			$tags = 'AalKNcx';
+		}
+		else {
+			$tags = 'gald' if !defined $tags;
+		}
 
 		# we can return playlist data.
 		# which mode are we in?
@@ -3952,7 +3961,7 @@ sub statusQuery {
 			$request->addResult('offset', $playlist_cur_index) if $menuMode;
 
 			if ($menuMode) {
-				_addJiveSong($request, $loop, 0, 1, $track);
+				_addJiveSong($request, $loop, 0, $playlist_cur_index, $track);
 			}
 			else {
 				_addSong($request, $loop, 0, 
@@ -3976,13 +3985,22 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 				
-				for ($idx = $start; $idx <= $end; $idx++) {
-					
-					my $track = Slim::Player::Playlist::song($client, $idx, $refreshTrack);
-					my $current = ($idx == $playlist_cur_index);
+				# Slice and map playlist to get only the requested IDs
+				my @trackIds = map { $_->id } @{ $client->playlist }[$start .. $end];
+				
+				# get hash of tagged data for all tracks
+				my $songData = _getTagDataForTracks( $tags, {
+					trackIds => \@trackIds,
+					sort     => 'tracks.id',
+				} );
+				
+				$idx = $start;
+				for my $track ( @{ $client->playlist }[$start .. $end] ) {
+					# Use songData for track, if remote just pass-through track object
+					my $data = $track->remote ? $track : shift @{$songData};
 
 					if ($menuMode) {
-						_addJiveSong($request, $loop, $count, $current, $track);
+						_addJiveSong($request, $loop, $count, $idx, $data);
 						# add clear and save playlist items at the bottom
 						if ( ($idx+1)  == $songCount) {
 							_addJivePlaylistControls($request, $loop, $count);
@@ -3990,18 +4008,20 @@ sub statusQuery {
 					}
 					else {
 						_addSong(	$request, $loop, $count, 
-									$track, $tags,
+									$data, $tags,
 									'playlist index', $idx
 								);
 					}
 
 					$count++;
+					$idx++;
 					
 					# give peace a chance...
-					main::idleStreams();
+					# This is almost certainly not needed anymore now that this is much faster
+					# main::idleStreams();
 				}
 				
-				#we don't do that in menu mode!
+				# we don't do that in menu mode!
 				if (!$menuMode) {
 				
 					my $repShuffle = $prefs->get('reshuffleOnRepeat');
@@ -4012,6 +4032,8 @@ sub statusQuery {
 												(!$repShuffle));	# we don't reshuffle
 				
 					if ($modecurrent && $canPredictFuture && ($count < scalar($quantity))) {
+						
+						# XXX: port this to use _getTagDataForTracks
 
 						# wrap around the playlist...
 						($valid, $start, $end) = $request->normalize(0, (scalar($quantity) - $count), $songCount);		
@@ -4039,7 +4061,7 @@ sub statusQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		main::DEBUGLOG && $log->debug("statusQuery(): setting up subscription");
+		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setting up subscription");
 	
 		# register ourselves to be automatically re-executed on timeout or filter
 		$request->registerAutoExecute($timeout, \&statusQuery_filter);
@@ -4219,13 +4241,7 @@ sub titlesQuery {
 		return;
 	}
 	
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
-	# Bug 6889, exclude remote tracks from these queries
-	my $where  = { 'me.remote' => { '!=' => 1 } };
-	my $attr   = {};
-
-	my $tags   = 'gald';
+	my $tags = 'gald';
 
 	# get our parameters
 	my $index         = $request->getParam('_index');
@@ -4252,6 +4268,9 @@ sub titlesQuery {
 	my $menuMode  = defined $menu;
 	my $partyMode = _partyModeCheck($request);
 	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	
+	# we only change the count if we're going to insert the play all item
+	my $addPlayAllItem = $search && $insertAll;
 
 	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
 		$request->setStatusBadParams();
@@ -4264,211 +4283,46 @@ sub titlesQuery {
 	# since when $default eq '' -> $val eq $param
 	$tags = $tagsprm if defined $tagsprm;
 	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	
-	my $sql      = 'SELECT %s FROM tracks ';
-	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
-	my $w        = [
-		'(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")'
-	];
-	my $p        = [];
+	my $collate  = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
 	my $order_by = "tracks.titlesort $collate";
 	
-	# Normalize any search parameters
-	if (specified($search)) {
-		my $strings = Slim::Utils::Text::searchStringSplit($search);
-		if ( ref $strings->[0] eq 'ARRAY' ) {
-			push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-			push @{$p}, @{ $strings->[0] };
-		}
-		else {		
-			push @{$w}, 'tracks.titlesearch LIKE ?';
-			push @{$p}, @{$strings};
-		}
-	}
-
-	if (defined $albumID){
-		push @{$w}, 'tracks.album = ?';
-		push @{$p}, $albumID;
-	}
-
-	if (defined $year) {
-		push @{$w}, 'tracks.year = ?';
-		push @{$p}, $year;
-	}
-	
-	# Some helper functions to setup joins with less code
-	my $join_genre_track = sub {
-		if ( $sql !~ /JOIN genre_track/ ) {
-			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
-		}
-	};
-	
-	my $join_genres = sub {
-		$join_genre_track->();
-		
-		if ( $sql !~ /JOIN genres/ ) {
-			$sql .= 'JOIN genres ON genres.id = genre_track.genre ';
-		}
-	};
-	
-	my $join_contributor_tracks = sub {
-		if ( $sql !~ /JOIN contributor_track/ ) {
-			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ';
-		}
-	};
-	
-	my $join_contributors = sub {
-		$join_contributor_tracks->();
-		
-		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'JOIN contributors ON contributors.id = contributor_track.contributor ';
-		}
-	};
-	
-	my $join_albums = sub {
-		if ( $sql !~ /JOIN albums/ ) {
-			$sql .= 'JOIN albums ON albums.id = tracks.album ';
-		}
-	};
-	
-	my $join_tracks_persistent = sub {
-		if ( main::STATISTICS ) {
-			$sql .= 'JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
-		}
-	};
-
-	# Manage joins
-	if (defined $genreID) {
-		$join_genre_track->();
-		push @{$w}, 'genre_track.genre = ?';
-		push @{$p}, $genreID;
-	}
-
-	if (defined $contributorID) {
-	
-		# handle the case where we're asked for the VA id => return compilations
-		if ($contributorID == Slim::Schema->variousArtistsObject->id) {
-			$join_albums->();
-			push @{$w}, 'albums.compilation = 1';
-		}
-		else {
-			$join_contributor_tracks->();
-			push @{$w}, 'contributor_track.contributor = ?';
-			push @{$p}, $contributorID;
-		}
-	}
-
-	if ($sort && $sort eq "tracknum") {
+	if ($sort && $sort eq 'tracknum') {
 		$tags .= 't';
 		$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
 	}
 	
 	# Jive menuMode needs some extra columns and joins. Set these using tags
 	if ( $menuMode ) {
-		$tags .= 'alc'; # artist name, album title, coverid, joins will be setup below
-		
-		# Also needs mixable, not available with a tag
-		$c->{'tracks.musicmagic_mixable'} = 1;
+		$tags .= 'alcM'; # artist name, album title, coverid, mixable, joins will be setup below
 	}
-		
-	# Process tags and add columns/joins as needed
-	$tags =~ /e/ && do { $c->{'tracks.album'} = 1 };
-	$tags =~ /d/ && do { $c->{'tracks.secs'} = 1 };
-	$tags =~ /t/ && do { $c->{'tracks.tracknum'} = 1 };
-	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
-	$tags =~ /m/ && do { $c->{'tracks.bpm'} = 1 };
-	$tags =~ /o/ && do { $c->{'tracks.content_type'} = 1 };
-	$tags =~ /v/ && do { $c->{'tracks.tagversion'} = 1 };
-	$tags =~ /r/ && do { $c->{'tracks.bitrate'} = 1; $c->{'tracks.vbr_scale'} = 1 };
-	$tags =~ /f/ && do { $c->{'tracks.filesize'} = 1 };
-	$tags =~ /j/ && do { $c->{'tracks.cover'} = 1 };
-	$tags =~ /n/ && do { $c->{'tracks.timestamp'} = 1 };
-	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
-	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
-	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
-	$tags =~ /w/ && do { $c->{'tracks.lyrics'} = 1 };
-	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
-	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
-	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
-	
-	$tags =~ /g/ && do {
-		$join_genres->();
-		$c->{'genres.name'} = 1;
-	};
-	
-	$tags =~ /p/ && do {
-		$join_genres->();
-		$c->{'genres.id'} = 1;
-	};
-	
-	$tags =~ /a/ && do {
-		$join_contributors->();
-		$c->{'contributors.name'} = 1;
-	};
-	
-	$tags =~ /s/ && do {
-		$join_contributors->();
-		$c->{'contributors.id'} = 1;
-	};
-	
-	$tags =~ /l/ && do {
-		$join_albums->();
-		$c->{'albums.title'} = 1;
-	};
-	
-	$tags =~ /q/ && do {
-		$join_albums->();
-		$c->{'albums.discc'} = 1;
-	};
-		
-	$tags =~ /J/ && do {
-		$join_albums->();
-		$c->{'albums.artwork'} = 1;
-	};
-	
-	$tags =~ /C/ && do {
-		$join_albums->();
-		$c->{'albums.compilation'} = 1;
-	};
-	
-	$tags =~ /X/ && do {
-		$join_albums->();
-		$c->{'albums.replay_gain'} = 1;
-	};
-	
-	$tags =~ /R/ && do {
-		if ( main::STATISTICS ) {
-			$join_tracks_persistent->();
-			$c->{'tracks_persistent.rating'} = 1;
-		}
-	};
-	
-	if ( @{$w} ) {
-		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
-	}
-	$sql .= "GROUP BY tracks.id ORDER BY $order_by ";
-	
-	# Add selected columns
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', @cols );
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
-	my $dbh = Slim::Schema->dbh;
+	my $count;
+	my $totalCount;
+	my $start;
+	my $end;
 	
-	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
-	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
-	
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
-	}
+	my $items = _getTagDataForTracks( $tags, {
+		where         => $where,
+		sort          => $order_by,
+		search        => $search,
+		albumId       => $albumID,
+		year          => $year,
+		genreId       => $genreID,
+		contributorId => $contributorID,
+		limit         => sub {
+			$count = shift;
+			
+			my $valid;
+
+			$totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $count);
+			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+			
+			return ($valid, $index, $quantity);
+		},
+	} );
 
 	my $playalbum;
 	if ( $request->client ) {
@@ -4569,19 +4423,13 @@ sub titlesQuery {
 
 	$count += 0;
 
-	# we only change the count if we're going to insert the play all item
-	my $addPlayAllItem = $search && $insertAll;
-
-	my $totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $count);
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
 	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
 	# this is the count of items in this part of the request (e.g., menu 100 200)
 	# not to be confused with $count, which is the count of the entire list
 	my $chunkCount = 0;
 	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-	if ($valid) {
+	if ( scalar @{$items} ) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
@@ -4592,44 +4440,12 @@ sub titlesQuery {
 
 		my $listIndex = 0;
 		
-		# Limit the real query
-		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
-			$sql .= "LIMIT $index, $quantity ";
-		}
-
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Titles query: $sql / " . Data::Dump::dump($p) );
-		}
-
-		my $sth = $dbh->prepare_cached($sql);
-		$sth->execute( @{$p} );
-		
-		# Bind selected columns in order
-		my $i = 1;
-		for my $col ( @cols ) {
-			# Adjust column names that are sub-queries to be stored using the AS value
-			if ( $col =~ /SELECT/ ) {
-				my ($newcol) = $col =~ /AS (\w+)/;
-				$c->{$newcol} = 1;
-				$col = $newcol;
-			}
+		for my $item ( @{$items} ) {
 			
-			$sth->bind_col( $i++, \$c->{$col} );
-		}
-
-		while ( $sth->fetch ) {
-
-			utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
-			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
-			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
-			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
-			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
-
 			# jive formatting
 			if ($menuMode) {
 				
-				my $id = $c->{'tracks.id'};
+				my $id = $item->{'tracks.id'};
 				$id += 0;
 				my $params = {
 					track_id => $id, 
@@ -4649,14 +4465,14 @@ sub titlesQuery {
 			
 				# open a window with icon etc...
 			
-				my $text = $c->{'tracks.title'};
-				my $album = $c->{'albums.title'};
+				my $text = $item->{'tracks.title'};
+				my $album = $item->{'albums.title'};
 				
 				# Bug 7443, check for a track cover before using the album cover
-				my $iconId = $c->{'tracks.coverid'};
+				my $iconId = $item->{'tracks.coverid'};
 				
 				# Pass hash to title formatter, it will know what to do with our data
-				my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $c);
+				my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item);
 				
 				my $window = {
 					'text' => $oneLineTrackTitle,
@@ -4669,7 +4485,7 @@ sub titlesQuery {
 
 					# format second line as 'artist - album'
 					my @secondLine = ();
-					if (defined(my $artistName = $c->{'contributors.name'})) {
+					if (defined(my $artistName = $item->{'contributors.name'})) {
 						push @secondLine, $artistName;
 					}
 					if (defined($album)) {
@@ -4680,7 +4496,7 @@ sub titlesQuery {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 
 				} elsif ($menuStyle eq 'allSongs') {
-					$request->addResultLoop($loopname, $chunkCount, 'text', $c->{'tracks.title'});
+					$request->addResultLoop($loopname, $chunkCount, 'text', $item->{'tracks.title'});
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $oneLineTrackTitle);
 				}
@@ -4692,103 +4508,21 @@ sub titlesQuery {
 						$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 					}
 				}
+				
+				warn Data::Dump::dump($item) . "\n";
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
-				 _mixerItemParams(request => $request, mixable => $c->{'tracks.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				 _mixerItemParams(request => $request, mixable => $item->{'tracks.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			
 			}
 			
 			# regular formatting
-			else {
-				# For tag A/S we have to run 1 additional query per track, unfortunately there is no way
-				# to get this comma-separated contributor list using a single query
-				if ( $tags =~ /[AS]/ ) {
-					my $contrib_sth = $dbh->prepare_cached( qq{
-						SELECT contributors.id, contributors.name
-						FROM contributor_track
-						JOIN contributors ON contributors.id = contributor_track.contributor
-						WHERE contributor_track.track = ?
-						AND contributor_track.role = ?
-						ORDER BY contributor_track.role DESC
-					} );
-					
-					for my $role ( Slim::Schema::Contributor->contributorRoles ) {
-						my $role_id = Slim::Schema::Contributor->typeToRole($role);
-						$role = lc $role;
-						
-						$contrib_sth->execute( $c->{'tracks.id'}, $role_id );
-						
-						my @ids;
-						my @names;
-						
-						while ( my ($id, $name) = $contrib_sth->fetchrow_array ) {
-							push @ids, $id;
-							push @names, $name;
-						}
-						
-						$contrib_sth->finish;
-						
-						$c->{"${role}_ids"} = join ', ', @ids;
-						$c->{$role} = join ', ', @names;
-					}
-				}
-				
-				# Same thing for G/P, multiple genres requires another query
-				if ( $tags =~ /[GP]/ ) {
-					my $genre_sth = $dbh->prepare_cached( qq{
-						SELECT genres.id, genres.name
-						FROM genre_track
-						JOIN genres ON genres.id = genre_track.genre
-						WHERE genre_track.track = ?
-						ORDER BY genres.namesort
-					} );
-					
-					$genre_sth->execute( $c->{'tracks.id'} );
-					
-					my @ids;
-					my @names;
-					
-					while ( my ($id, $name) = $genre_sth->fetchrow_array ) {
-						push @ids, $id;
-						push @names, $name;
-					}
-					
-					$genre_sth->finish;
-					
-					$c->{genre_ids} = join ', ', @ids;
-					$c->{genres} = join ', ', @names;
-				}
-				
-				# And same for comments
-				if ( $tags =~ /k/ ) {
-					my $comment_sth = $dbh->prepare_cached( qq{
-						SELECT value
-						FROM comments
-						WHERE track = ?
-						ORDER BY id
-					} );
-					
-					$comment_sth->execute( $c->{'tracks.id'} );
-					
-					my @values;
-					
-					while ( my ($value) = $comment_sth->fetchrow_array ) {
-						push @values, $value if defined $value;
-					}
-					
-					$comment_sth->finish;
-					
-					$c->{comment} = join ' / ', @values;
-				}
-				
-				_addSong($request, $loopname, $chunkCount, $c, $tags);
+			else {		
+				_addSong($request, $loopname, $chunkCount, $item, $tags);
 			}
 			
 			$chunkCount++;
 			$listIndex++;
-			
-			# give peace a chance...
-			main::idleStreams();
 		}
 
 	}
@@ -5240,20 +4974,20 @@ sub _addJivePlaylistControls {
 }
 
 # **********************************************************************
-# *** This is performance-critical method ***
+# *** This is a performance-critical method ***
 # Take cake to understand the performance implications of any changes.
 
 sub _addJiveSong {
 	my $request   = shift; # request
 	my $loop      = shift; # loop
 	my $count     = shift; # loop index
-	my $current   = shift;
+	my $index     = shift; # playlist index
 	my $track     = shift || return;
 	
 	my $songData  = _songData(
 		$request,
 		$track,
-		$current ?'AalKNcx' : 'alKNcx',			# tags needed for our entities
+		'AalKNcx',			# tags needed for our entities
 	);
 	
 	my $isRemote = $songData->{remote};
@@ -5265,21 +4999,18 @@ sub _addJiveSong {
 	my $album  = $songData->{album};
 	my $artist = $songData->{artist};
 	
-	# Bug 15779: we cannot afford to get multiple contributor roles for each track
-	# in the playlist so restrict this information to just for the current track.
-	# (even getting it just for the current track is pretty expensive)
-	if ($current) {
-		my (%artists, @artists);
-		foreach ('albumartist', 'trackartist', 'artist') {
-			foreach my $a ( $songData->{"arrayRef_$_"} ? @{$songData->{"arrayRef_$_"}} : $songData->{$_} ) {
-				if ( $a && !$artists{$a} ) {
-					push @artists, $a;
-					$artists{$a} = 1;
-				}
+	# Bug 15779, include other role data
+	# XXX may want to include all contributor roles here?
+	my (%artists, @artists);
+	foreach ('albumartist', 'trackartist', 'artist') {
+		foreach my $a ( split /, /, $songData->{$_} ) {
+			if ( $a && !$artists{$a} ) {
+				push @artists, $a;
+				$artists{$a} = 1;
 			}
 		}
-		$artist = join(', ', @artists);
 	}
+	$artist = join(', ', @artists);
 	
 	if ( $isRemote && $text && $album && $artist ) {
 		$request->addResult('current_title');
@@ -5349,7 +5080,7 @@ sub _addJiveSong {
 
 	my $params = {
 		'track_id' => ($songData->{'id'} + 0), 
-		'playlist_index' => $count,
+		'playlist_index' => $index,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
 	$request->addResultLoop($loop, $count, 'style', 'itemplay');
@@ -5606,7 +5337,7 @@ my %tagMap = (
 	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
 	  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
 	# 'z' => ['drm',              '',              'drm'],              #drm
-	                                                                    #musicmagic_mixable
+	  'M' => ['musicmagic_mixable', '',            'musicmagic_mixable'], #musicmagic_mixable
 	                                                                    #musicbrainz_id 
 	                                                                    #playcount 
 	                                                                    #lastplayed 
@@ -5659,6 +5390,7 @@ my %colMap = (
 	t => 'tracks.tracknum',
 	y => 'tracks.year',
 	m => 'tracks.bpm',
+	M => sub { $_[0]->{'tracks.musicmagic_mixable'} ? 1 : 0 },
 	k => 'comment',
 	o => 'tracks.content_type',
 	v => 'tracks.tagversion',
@@ -5727,7 +5459,7 @@ sub _songData {
 	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
-
+	
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
 		return _songDataFromHash($request, $pathOrObj, $tags);
@@ -5841,7 +5573,6 @@ sub _songData {
 
 						# add the tag to the result
 						$returnHash{$key} = $value;
-						$returnHash{"arrayRef_$key"} = \@values;
 					}
 				}
 			}
@@ -6391,6 +6122,398 @@ sub _scanFailed {
 	}
 
 	$request->addResult('lastscanfailed', $info || '?');	
+}
+
+=pod
+This method is used by both titlesQuery and statusQuery, it tries to get a bunch of data
+about tracks as efficiently as possible.
+
+	$tags - String of tags, see songinfo docs
+	$args - {
+		where         => additional raw SQL to be used in WHERE clause
+		sort          => string to be used with ORDER BY
+		search        => titlesearch
+		albumId       => return tracks for this album ID
+		year          => return tracks for this year
+		genreId       => return tracks for this genre ID
+		contributorId => return tracks for this contributor ID
+		trackIds      => arrayref of track IDs to fetch
+		limit         => a coderef that is passed the count and returns (valid, start, end)
+		                 If valid is not true, the request is aborted.
+		                 This is messy but the only way to support the use of _fixCount, etc
+	}
+	
+Returns arrayref of hashes.
+=cut
+
+sub _getTagDataForTracks {
+	my ( $tags, $args ) = @_;
+	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
+	my $sql      = 'SELECT %s FROM tracks ';
+	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
+	my $w        = [];
+	my $p        = [];
+	
+	if ( $args->{where} ) {
+		push @{$w}, $args->{where};
+	}
+	
+	my $sort = $args->{sort};
+	
+	# Normalize any search parameters
+	my $search = $args->{search};
+	if ( $search && specified($search) ) {
+		my $strings = Slim::Utils::Text::searchStringSplit($search);
+		if ( ref $strings->[0] eq 'ARRAY' ) {
+			push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+			push @{$p}, @{ $strings->[0] };
+		}
+		else {		
+			push @{$w}, 'tracks.titlesearch LIKE ?';
+			push @{$p}, @{$strings};
+		}
+	}
+	
+	if ( my $albumId = $args->{albumId} ){
+		push @{$w}, 'tracks.album = ?';
+		push @{$p}, $albumId;
+	}
+
+	if ( my $year = $args->{year} ) {
+		push @{$w}, 'tracks.year = ?';
+		push @{$p}, $year;
+	}
+	
+	# Some helper functions to setup joins with less code
+	my $join_genre_track = sub {
+		if ( $sql !~ /JOIN genre_track/ ) {
+			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
+		}
+	};
+	
+	my $join_genres = sub {
+		$join_genre_track->();
+		
+		if ( $sql !~ /JOIN genres/ ) {
+			$sql .= 'JOIN genres ON genres.id = genre_track.genre ';
+		}
+	};
+	
+	my $join_contributor_tracks = sub {
+		if ( $sql !~ /JOIN contributor_track/ ) {
+			$sql .= 'JOIN contributor_track ON contributor_track.track = tracks.id ';
+		}
+	};
+	
+	my $join_contributors = sub {
+		$join_contributor_tracks->();
+		
+		if ( $sql !~ /JOIN contributors/ ) {
+			$sql .= 'JOIN contributors ON contributors.id = contributor_track.contributor ';
+		}
+	};
+	
+	my $join_albums = sub {
+		if ( $sql !~ /JOIN albums/ ) {
+			$sql .= 'JOIN albums ON albums.id = tracks.album ';
+		}
+	};
+	
+	my $join_tracks_persistent = sub {
+		if ( main::STATISTICS ) {
+			$sql .= 'JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5 ';
+		}
+	};
+	
+	if ( my $genreId = $args->{genreId} ) {
+		$join_genre_track->();
+		push @{$w}, 'genre_track.genre = ?';
+		push @{$p}, $genreId;
+	}
+	
+	if ( my $contributorId = $args->{contributorId} ) {
+		# handle the case where we're asked for the VA id => return compilations
+		if ($contributorId == Slim::Schema->variousArtistsObject->id) {
+			$join_albums->();
+			push @{$w}, 'albums.compilation = 1';
+		}
+		else {
+			$join_contributor_tracks->();
+			push @{$w}, 'contributor_track.contributor = ?';
+			push @{$p}, $contributorId;
+		}
+	}
+	
+	if ( my $trackIds = $args->{trackIds} ) {
+		push @{$w}, 'tracks.id IN (' . join( ',', @{$trackIds} ) . ')';
+	}
+	
+	# Process tags and add columns/joins as needed
+	$tags =~ /e/ && do { $c->{'tracks.album'} = 1 };
+	$tags =~ /d/ && do { $c->{'tracks.secs'} = 1 };
+	$tags =~ /t/ && do { $c->{'tracks.tracknum'} = 1 };
+	$tags =~ /y/ && do { $c->{'tracks.year'} = 1 };
+	$tags =~ /m/ && do { $c->{'tracks.bpm'} = 1 };
+	$tags =~ /M/ && do { $c->{'tracks.musicmagic_mixable'} = 1 };
+	$tags =~ /o/ && do { $c->{'tracks.content_type'} = 1 };
+	$tags =~ /v/ && do { $c->{'tracks.tagversion'} = 1 };
+	$tags =~ /r/ && do { $c->{'tracks.bitrate'} = 1; $c->{'tracks.vbr_scale'} = 1 };
+	$tags =~ /f/ && do { $c->{'tracks.filesize'} = 1 };
+	$tags =~ /j/ && do { $c->{'tracks.cover'} = 1 };
+	$tags =~ /n/ && do { $c->{'tracks.timestamp'} = 1 };
+	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
+	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
+	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
+	$tags =~ /w/ && do { $c->{'tracks.lyrics'} = 1 };
+	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
+	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
+	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
+	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
+	
+	$tags =~ /g/ && do {
+		$join_genres->();
+		$c->{'genres.name'} = 1;
+		
+		# XXX there is a bug here if a track has multiple genres, the genre
+		# returned will be a random genre, not sure how to solve this -Andy
+	};
+	
+	$tags =~ /p/ && do {
+		$join_genres->();
+		$c->{'genres.id'} = 1;
+	};
+	
+	$tags =~ /a/ && do {
+		$join_contributors->();
+		$c->{'contributors.name'} = 1;
+		
+		# Tag 'a' returns either ARTIST or TRACKARTIST role
+		push @{$w}, 'contributor_track.role IN (?, ?)';
+		push @{$p}, (
+			Slim::Schema::Contributor->typeToRole('ARTIST'), 
+			Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
+		);
+	};
+	
+	$tags =~ /s/ && do {
+		$join_contributors->();
+		$c->{'contributors.id'} = 1;
+	};
+	
+	$tags =~ /l/ && do {
+		$join_albums->();
+		$c->{'albums.title'} = 1;
+	};
+	
+	$tags =~ /q/ && do {
+		$join_albums->();
+		$c->{'albums.discc'} = 1;
+	};
+		
+	$tags =~ /J/ && do {
+		$join_albums->();
+		$c->{'albums.artwork'} = 1;
+	};
+	
+	$tags =~ /C/ && do {
+		$join_albums->();
+		$c->{'albums.compilation'} = 1;
+	};
+	
+	$tags =~ /X/ && do {
+		$join_albums->();
+		$c->{'albums.replay_gain'} = 1;
+	};
+	
+	$tags =~ /R/ && do {
+		if ( main::STATISTICS ) {
+			$join_tracks_persistent->();
+			$c->{'tracks_persistent.rating'} = 1;
+		}
+	};
+	
+	if ( scalar @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= 'GROUP BY tracks.id ';
+	
+	if ( $sort ) {
+		$sql .= "ORDER BY $sort ";
+	}
+	
+	# Add selected columns
+	my @cols = sort keys %{$c};
+	$sql = sprintf $sql, join( ', ', @cols );
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	if ( my $limit = $args->{limit} ) {
+		# Let the caller worry about the limit values
+		
+		my ($count) = $dbh->selectrow_array( qq{
+			SELECT COUNT(*) FROM ( $sql ) AS t1
+		}, undef, @{$p} );
+		
+		my ($valid, $start, $end) = $limit->($count);
+		
+		if ( !$valid ) {
+			return [];
+		}
+		
+		# Limit the real query
+		if ( $start =~ /^\d+$/ && $end =~ /^\d+$/ ) {
+			$sql .= "LIMIT $start, $end ";
+		}
+	}
+	
+	if ( main::DEBUGLOG && $sqllog->is_debug ) {
+		$sqllog->debug( "_getTagDataForTracks query: $sql / " . Data::Dump::dump($p) );
+	}
+	
+	my $sth = $dbh->prepare_cached($sql);
+	$sth->execute( @{$p} );
+	
+	# Bind selected columns in order
+	my $i = 1;
+	for my $col ( @cols ) {
+		# Adjust column names that are sub-queries to be stored using the AS value
+		if ( $col =~ /SELECT/ ) {
+			my ($newcol) = $col =~ /AS (\w+)/;
+			$c->{$newcol} = 1;
+			$col = $newcol;
+		}
+		
+		$sth->bind_col( $i++, \$c->{$col} );
+	}
+	
+	my @results;
+	
+	while ( $sth->fetch ) {
+		utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
+		utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
+		utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
+		utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+		utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
+		utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
+		
+		push @results, { map { $_ => $c->{$_} } keys %{$c} };
+	}
+	
+	# For tag A/S we have to run 1 additional query
+	if ( $tags =~ /[AS]/ ) {
+		my $sql = sprintf qq{
+			SELECT contributors.id, contributors.name, contributor_track.track, contributor_track.role
+			FROM contributor_track
+			JOIN contributors ON contributors.id = contributor_track.contributor
+			WHERE contributor_track.track IN (%s)
+			ORDER BY contributor_track.role DESC
+		}, join( ',', map { $_->{'tracks.id'} } @results );
+		
+		my $contrib_sth = $dbh->prepare($sql);
+		
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Tag A/S (contributor) query: $sql" );
+		}
+		
+		$contrib_sth->execute;
+		
+		my %values;
+		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
+			$values{$track} ||= {};
+			my $role_info = $values{$track}->{$role} ||= {};
+			
+			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
+			$role_info->{names} .= $role_info->{names} ? ', ' . $name : $name;
+		}
+		
+		my $want_names = $tags =~ /A/;
+		my $want_ids   = $tags =~ /S/;
+		
+		for ( @results ) {
+			if ( my $data = $values{ $_->{'tracks.id'} } ) {
+				while ( my ($role_id, $role_info) = each %{$data} ) {
+					my $role = lc( Slim::Schema::Contributor->roleToType($role_id) );
+					
+					$_->{"${role}_ids"} = $role_info->{ids}   if $want_ids;
+					$_->{$role}         = $role_info->{names} if $want_names;
+				}
+			}
+		}
+	}
+	
+	# Same thing for G/P, multiple genres requires another query
+	if ( $tags =~ /[GP]/ ) {
+		my $sql = sprintf qq{
+			SELECT genres.id, genres.name, genre_track.track
+			FROM genre_track
+			JOIN genres ON genres.id = genre_track.genre
+			WHERE genre_track.track IN (%s)
+			ORDER BY genres.namesort $collate
+		}, join( ',', map { $_->{'tracks.id'} } @results );
+		
+		my $genre_sth = $dbh->prepare($sql);
+		
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Tag G/P (genre) query: $sql" );
+		}
+		
+		$genre_sth->execute;
+		
+		my %values;
+		while ( my ($id, $name, $track) = $genre_sth->fetchrow_array ) {
+			my $genre_info = $values{$track} ||= {};
+			
+			$genre_info->{ids}   .= $genre_info->{ids} ? ', ' . $id : $id;
+			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
+		}
+		
+		my $want_names = $tags =~ /G/;
+		my $want_ids   = $tags =~ /P/;
+		
+		for ( @results ) {
+			if ( my $genre_info = $values{ $_->{'tracks.id'} } ) {
+				$_->{genre_ids} = $genre_info->{ids}   if $want_ids;
+				$_->{genres}    = $genre_info->{names} if $want_names;
+			}
+		}
+	}
+	
+	# And same for comments
+	if ( $tags =~ /k/ ) {
+		my $sql = sprintf qq{
+			SELECT track, value
+			FROM comments
+			WHERE track IN (%s)
+			ORDER BY id
+		}, join( ',', map { $_->{'tracks.id'} } @results );
+		
+		my $comment_sth = $dbh->prepare($sql);
+		
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Tag k (comment) query: $sql" );
+		}
+		
+		$comment_sth->execute();
+		
+		my %values;
+		while ( my ($track, $value) = $comment_sth->fetchrow_array ) {
+			$values{$track} .= $values{$track} ? ' / ' . $value : $value;
+		}
+		
+		for ( @results ) {
+			if ( my $comment = $values{ $_->{'tracks.id'} } ) {
+				$_->{comment} = $comment;
+			}
+		}
+	}
+	
+	return \@results;
 }
 
 =head1 SEE ALSO

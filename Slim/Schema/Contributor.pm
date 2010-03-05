@@ -21,6 +21,8 @@ our %contributorToRoleMap = (
 	'TRACKARTIST' => 6,
 );
 
+our %roleToContributorMap = reverse %contributorToRoleMap;
+
 {
 	my $class = __PACKAGE__;
 
@@ -70,10 +72,11 @@ sub totalContributorRoles {
 }
 
 sub typeToRole {
-	my $class = shift;
-	my $type  = shift;
+	return $contributorToRoleMap{$_[1]} || $_[1];
+}
 
-	return $contributorToRoleMap{$type} || $type;
+sub roleToType {
+	return $roleToContributorMap{$_[1]};
 }
 
 sub displayAsHTML {

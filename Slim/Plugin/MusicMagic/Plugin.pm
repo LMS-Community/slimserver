@@ -1254,7 +1254,7 @@ sub cliMix {
 		}
 
 		if ($menuMode) {
-			Slim::Control::Queries::_addJiveSong($request, $loopname, $chunkCount, 0, $trackObj);
+			Slim::Control::Queries::_addJiveSong($request, $loopname, $chunkCount, $chunkCount, $trackObj);
 		} else {
 			Slim::Control::Queries::_addSong($request, $loopname, $chunkCount, $trackObj, $tags);
 		}
