@@ -24,6 +24,9 @@ use constant PENDING_DELETE  => 0x01;
 use constant PENDING_NEW     => 0x02;
 use constant PENDING_CHANGED => 0x04;
 
+# If more than this many items are changed during a scan, the database is optimized
+use constant OPTIMIZE_THRESHOLD => 100;
+
 my $log   = logger('scan.scanner');
 my $prefs = preferences('server');
 
@@ -199,6 +202,10 @@ sub rescan {
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} );
 		
+		# Keep track of the number of changes we've made so we can decide
+		# if we should optimize the database or not.
+		my $changes = 0;
+		
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $inDBOnlyCount ) {
@@ -224,13 +231,14 @@ sub rescan {
 			my $handle_deleted = sub {
 				if ( $inDBOnly->fetch ) {
 					$progress && $progress->update($deleted);
+					$changes++;
 					
 					deleted($deleted);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_DELETE ) unless $args->{no_async};
+					markDone( $next => PENDING_DELETE, $changes ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					
@@ -276,13 +284,14 @@ sub rescan {
 			my $handle_new = sub {
 				if ( $onDiskOnly->fetch ) {
 					$progress && $progress->update($new);
+					$changes++;
 				
 					new($new);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_NEW ) unless $args->{no_async};
+					markDone( $next => PENDING_NEW, $changes ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					
@@ -328,13 +337,14 @@ sub rescan {
 			my $handle_changed = sub {
 				if ( $changedOnly->fetch ) {
 					$progress && $progress->update($changed);
+					$changes++;
 					
 					changed($changed);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_CHANGED ) unless $args->{no_async};
+					markDone( $next => PENDING_CHANGED, $changes ) unless $args->{no_async};
 				
 					$progress && $progress->final;
 					
@@ -805,7 +815,7 @@ sub changed {
 
 # Check if we're done with all our rescan tasks
 sub markDone {
-	my ( $path, $type ) = @_;
+	my ( $path, $type, $changes ) = @_;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
 	
@@ -818,14 +828,26 @@ sub markDone {
 		}
 	}
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug('All rescan tasks finished');
+	main::DEBUGLOG && $log->is_debug && $log->debug("All rescan tasks finished (total changes: $changes)");
 	
 	# Done with all tasks
 	if ( !main::SCANNER ) {
-	    # Precache artwork, when done send rescan done event
-	    Slim::Music::Artwork->precacheAllArtwork( sub {
-	        Slim::Music::Import->setIsScanning(0);	
-		    Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+		# Precache artwork, when done send rescan done event
+		Slim::Music::Artwork->precacheAllArtwork( sub {
+			# Persist the count of "changes since last optimization"
+			# so for example adding 50 tracks, then 50 more would trigger optimize
+			$changes += _getChangeCount();
+			if ( $changes >= OPTIMIZE_THRESHOLD ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("Scan change count reached $changes, optimizing database");
+				Slim::Schema->optimizeDB();
+				_setChangeCount(0);
+			}
+			else {
+				_setChangeCount($changes);
+			}
+			
+			Slim::Music::Import->setIsScanning(0);
+			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 		} );
 	}
 	
@@ -940,6 +962,34 @@ sub _content_type {
 	$sth->finish;
 	
 	return $content_type || '';
+}
+
+sub _getChangeCount {
+	my $sth = Slim::Schema->dbh->prepare_cached("SELECT value FROM metainformation WHERE name = 'scanChangeCount'");
+	$sth->execute;
+	my ($count) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $count || 0;
+}
+
+sub _setChangeCount {
+	my $changes = shift;
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	my $sth = $dbh->prepare_cached("SELECT 1 FROM metainformation WHERE name = 'scanChangeCount'");
+	$sth->execute;
+	if ( $sth->fetchrow_array ) {
+		my $sta = $dbh->prepare_cached( "UPDATE metainformation SET value = ? WHERE name = 'scanChangeCount'" );
+		$sta->execute($changes);
+	}
+	else {
+		my $sta = $dbh->prepare_cached( "INSERT INTO metainformation (name, value) VALUES (?, ?)" );
+		$sta->execute( 'scanChangeCount', $changes );
+	}
+	
+	$sth->finish;
 }
 
 1;

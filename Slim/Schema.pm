@@ -436,9 +436,6 @@ Calls the schema_optimize.sql script for the current database driver.
 sub optimizeDB {
 	my $class = shift;
 	
-	# Only optimize in the scanner
-	return unless main::SCANNER;
-	
 	my $log = logger('scan.import');
 
 	main::INFOLOG && $log->is_info && $log->info("Start schema_optimize");
@@ -454,9 +451,6 @@ sub optimizeDB {
 	if ($@) {
 		logError("Failed to optimize schema: [$@]");
 	}
-	
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	$sqlHelperClass->postOptimize();
 
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 }

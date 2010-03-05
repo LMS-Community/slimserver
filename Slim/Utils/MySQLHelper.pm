@@ -636,8 +636,6 @@ sub updateProgress { }
 
 sub postConnect { }
 
-sub postOptimize { }
-
 sub pragma { }
 
 =head2 cleanup()

@@ -372,35 +372,6 @@ sub postConnect {
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
 }
 
-=head2 postOptimize()
-
-Called after schema_optimize.  Used to perform SQLite-specific VACUUM and ANALYZE.
-
-=cut
-
-sub postOptimize {
-	my $class = shift;
-	
-	my @sql;
-	
-	my ($driver) = Slim::Schema->sourceInformation;
-	
-	# Disconnect and reconnect to the database in order to run
-	# VACUUM and ANALYZE to compact the database file and optimize indices
-	my $dsn = "dbi:$driver:" . Slim::Schema->dbh->{Name};
-
-	# VACUUM takes too much memory to run on TinySC
-	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
-		push @sql, 'VACUUM';
-	}
-	
-	push @sql, 'ANALYZE';
-	
-	Slim::Schema->disconnect;
-	
-	Slim::Schema->init( $dsn, \@sql );
-}
-
 sub updateProgress {
 	my $class = shift;
 	
