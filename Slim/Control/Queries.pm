@@ -3986,18 +3986,21 @@ sub statusQuery {
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 				
 				# Slice and map playlist to get only the requested IDs
-				my @trackIds = map { $_->id } @{ $client->playlist }[$start .. $end];
+				# If in shuffle mode, we first have to slice the list in the shuffled order
+				my @trackIds = map { $_->id } $shuffle ?
+					(@{ Slim::Player::Playlist::playList($client) }[ @{Slim::Player::Playlist::shuffleList($client)} ])[$start .. $end]
+					:
+					@{ Slim::Player::Playlist::playList($client) }[$start .. $end];
 				
 				# get hash of tagged data for all tracks
 				my $songData = _getTagDataForTracks( $tags, {
 					trackIds => \@trackIds,
-					sort     => 'tracks.id',
 				} );
 				
 				$idx = $start;
-				for my $track ( @{ $client->playlist }[$start .. $end] ) {
-					# Use songData for track, if remote just pass-through track object
-					my $data = $track->remote ? $track : shift @{$songData};
+				for my $id ( @trackIds ) {
+					# Use songData for track, if remote (negative id) fetch the object directly
+					my $data = $id > 0 ? $songData->{$id} : Slim::Schema::RemoteTrack->fetchById($id);
 
 					if ($menuMode) {
 						_addJiveSong($request, $loop, $count, $idx, $data);
@@ -4304,7 +4307,7 @@ sub titlesQuery {
 	my $start;
 	my $end;
 	
-	my $items = _getTagDataForTracks( $tags, {
+	my ($items, $itemOrder) = _getTagDataForTracks( $tags, {
 		where         => $where,
 		sort          => $order_by,
 		search        => $search,
@@ -4429,7 +4432,7 @@ sub titlesQuery {
 	my $chunkCount = 0;
 	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-	if ( scalar @{$items} ) {
+	if ( scalar @{$itemOrder} ) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
@@ -4440,7 +4443,8 @@ sub titlesQuery {
 
 		my $listIndex = 0;
 		
-		for my $item ( @{$items} ) {
+		for my $trackId ( @{$itemOrder} ) {
+			my $item = $items->{$trackId};
 			
 			# jive formatting
 			if ($menuMode) {
@@ -4508,8 +4512,6 @@ sub titlesQuery {
 						$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 					}
 				}
-				
-				warn Data::Dump::dump($item) . "\n";
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
 				 _mixerItemParams(request => $request, mixable => $item->{'tracks.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
@@ -6249,7 +6251,8 @@ sub _getTagDataForTracks {
 	}
 	
 	if ( my $trackIds = $args->{trackIds} ) {
-		push @{$w}, 'tracks.id IN (' . join( ',', @{$trackIds} ) . ')';
+		# Filter out negative tracks (remote tracks)
+		push @{$w}, 'tracks.id IN (' . join( ',', grep { $_ > 0 } @{$trackIds} ) . ')';
 	}
 	
 	# Process tags and add columns/joins as needed
@@ -6392,7 +6395,12 @@ sub _getTagDataForTracks {
 		$sth->bind_col( $i++, \$c->{$col} );
 	}
 	
-	my @results;
+	# Results are stored in a hash keyed by track ID, and we
+	# also store the order the data is returned in, titlesQuery
+	# needs this to provide correctly sorted results, and I don't
+	# want to make %results an IxHash.
+	my %results;
+	my @resultOrder;
 	
 	while ( $sth->fetch ) {
 		utf8::decode( $c->{'tracks.title'} ) if exists $c->{'tracks.title'};
@@ -6402,7 +6410,8 @@ sub _getTagDataForTracks {
 		utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 		utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 		
-		push @results, { map { $_ => $c->{$_} } keys %{$c} };
+		$results{ $c->{'tracks.id'} } = { map { $_ => $c->{$_} } keys %{$c} };
+		push @resultOrder, $c->{'tracks.id'};
 	}
 	
 	# For tag A/S we have to run 1 additional query
@@ -6413,7 +6422,7 @@ sub _getTagDataForTracks {
 			JOIN contributors ON contributors.id = contributor_track.contributor
 			WHERE contributor_track.track IN (%s)
 			ORDER BY contributor_track.role DESC
-		}, join( ',', map { $_->{'tracks.id'} } @results );
+		}, join( ',', @resultOrder );
 		
 		my $contrib_sth = $dbh->prepare($sql);
 		
@@ -6435,14 +6444,14 @@ sub _getTagDataForTracks {
 		my $want_names = $tags =~ /A/;
 		my $want_ids   = $tags =~ /S/;
 		
-		for ( @results ) {
-			if ( my $data = $values{ $_->{'tracks.id'} } ) {
-				while ( my ($role_id, $role_info) = each %{$data} ) {
-					my $role = lc( Slim::Schema::Contributor->roleToType($role_id) );
-					
-					$_->{"${role}_ids"} = $role_info->{ids}   if $want_ids;
-					$_->{$role}         = $role_info->{names} if $want_names;
-				}
+		while ( my ($id, $role) = each %values ) {
+			my $track = $results{$id};
+			
+			while ( my ($role_id, $role_info) = each %{$role} ) {
+				my $role = lc( Slim::Schema::Contributor->roleToType($role_id) );
+				
+				$track->{"${role}_ids"} = $role_info->{ids}   if $want_ids;
+				$track->{$role}         = $role_info->{names} if $want_names;
 			}
 		}
 	}
@@ -6455,7 +6464,7 @@ sub _getTagDataForTracks {
 			JOIN genres ON genres.id = genre_track.genre
 			WHERE genre_track.track IN (%s)
 			ORDER BY genres.namesort $collate
-		}, join( ',', map { $_->{'tracks.id'} } @results );
+		}, join( ',', @resultOrder );
 		
 		my $genre_sth = $dbh->prepare($sql);
 		
@@ -6476,11 +6485,10 @@ sub _getTagDataForTracks {
 		my $want_names = $tags =~ /G/;
 		my $want_ids   = $tags =~ /P/;
 		
-		for ( @results ) {
-			if ( my $genre_info = $values{ $_->{'tracks.id'} } ) {
-				$_->{genre_ids} = $genre_info->{ids}   if $want_ids;
-				$_->{genres}    = $genre_info->{names} if $want_names;
-			}
+		while ( my ($id, $genre_info) = each %values ) {
+			my $track = $results{$id};
+			$track->{genre_ids} = $genre_info->{ids}   if $want_ids;
+			$track->{genres}    = $genre_info->{names} if $want_names;
 		}
 	}
 	
@@ -6491,7 +6499,7 @@ sub _getTagDataForTracks {
 			FROM comments
 			WHERE track IN (%s)
 			ORDER BY id
-		}, join( ',', map { $_->{'tracks.id'} } @results );
+		}, join( ',', @resultOrder );
 		
 		my $comment_sth = $dbh->prepare($sql);
 		
@@ -6506,14 +6514,12 @@ sub _getTagDataForTracks {
 			$values{$track} .= $values{$track} ? ' / ' . $value : $value;
 		}
 		
-		for ( @results ) {
-			if ( my $comment = $values{ $_->{'tracks.id'} } ) {
-				$_->{comment} = $comment;
-			}
+		while ( my ($id, $comment) = each %values ) {
+			$results{$id}->{comment} = $comment;
 		}
 	}
 	
-	return \@results;
+	return wantarray ? ( \%results, \@resultOrder ) : \%results;
 }
 
 =head1 SEE ALSO
