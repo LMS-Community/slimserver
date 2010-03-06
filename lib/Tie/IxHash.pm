@@ -37,23 +37,20 @@ sub TIEHASH {
 #sub DESTROY {}           # costly if there's nothing to do
 
 sub FETCH {
-  my($s, $k) = (shift, shift);
-  return exists( $s->[0]{$k} ) ? $s->[2][ $s->[0]{$k} ] : undef;
+  return exists( $_[0]->[0]{$_[1]} ) ? $_[0]->[2][ $_[0]->[0]{$_[1]} ] : undef;
 }
 
 sub STORE {
-  my($s, $k, $v) = (shift, shift, shift);
-  
-  if (exists $s->[0]{$k}) {
-    my($i) = $s->[0]{$k};
-    $s->[1][$i] = $k;
-    $s->[2][$i] = $v;
-    $s->[0]{$k} = $i;
+  if (exists $_[0]->[0]{$_[1]}) {
+    my($i) = $_[0]->[0]{$_[1]};
+    $_[0]->[1][$i] = $_[1];
+    $_[0]->[2][$i] = $_[2];
+    $_[0]->[0]{$_[1]} = $i;
   }
   else {
-    push(@{$s->[1]}, $k);
-    push(@{$s->[2]}, $v);
-    $s->[0]{$k} = $#{$s->[1]};
+    push(@{$_[0]->[1]}, $_[1]);
+    push(@{$_[0]->[2]}, $_[2]);
+    $_[0]->[0]{$_[1]} = $#{$_[0]->[1]};
   }
 }
 
