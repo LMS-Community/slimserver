@@ -512,19 +512,9 @@ sub _read_tag {
 		}
 	}
 	
-	# FLAC picture block
+	# FLAC/Ogg picture block
 	if ( $tags->{ALLPICTURES} ) {
-		return \($tags->{ALLPICTURES}->[0]->{image_data});
-	}
-	
-	# FLAC/Ogg base64 coverart
-	if ( $tags->{COVERART} ) {
-		require MIME::Base64;
-		my $artwork = eval { MIME::Base64::decode_base64( $tags->{COVERART} ) };
-		if ( $@ ) {
-			die "Unable to read image tag from $file: $@\n";
-		}
-		return \$artwork;
+		return \(( sort { $a->{picture_type} <=> $b->{picture_type} } @{ $tags->{ALLPICTURES} } )[0]->{image_data});
 	}
 	
 	# ALAC/M4A
