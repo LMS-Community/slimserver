@@ -93,6 +93,45 @@ sub song {
 	return $objOrUrl;
 }
 
+sub songs {
+
+	my ($client, $start, $end) = @_;
+
+	if (count($client) == 0) {
+		return;
+	}
+
+	my @objOrUrl;
+
+	if (defined ${shuffleList($client)}[$start]) {
+
+		@objOrUrl = (@{ playList($client) }[ @{shuffleList($client)} ])[$start .. $end];
+
+	} else {
+
+		@objOrUrl = @{playList($client)}[$start .. $end];
+	}
+
+	foreach (@objOrUrl) {
+		# Use $_ here to use perl's inline replace semantics
+		
+		if ( $_ && !blessed($_) ) {
+						
+			# XXX If we instantiate a Track from a URL then maybe we should
+			# back-patch the playlist item with the Track. This could be common
+			# for remote tracks.
+
+			$_ = Slim::Schema->objectForUrl({
+					'url'      => $_,
+					'create'   => 1,
+					'readTags' => 1,
+				});
+		}
+	}
+
+	return @objOrUrl;
+}
+
 # Refresh track(s) in a client playlist from the database
 sub refreshTrack {
 	my ( $client, $url ) = @_;

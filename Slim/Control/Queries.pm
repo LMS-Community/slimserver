@@ -3985,22 +3985,20 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 				
+				my @tracks = Slim::Player::Playlist::songs($client, $start, $end);
+				
 				# Slice and map playlist to get only the requested IDs
-				# If in shuffle mode, we first have to slice the list in the shuffled order
-				my @trackIds = map { $_->id } $shuffle ?
-					(@{ Slim::Player::Playlist::playList($client) }[ @{Slim::Player::Playlist::shuffleList($client)} ])[$start .. $end]
-					:
-					@{ Slim::Player::Playlist::playList($client) }[$start .. $end];
+				my @trackIds = grep (defined $_, map { $_->remote ? undef : $_->id } @tracks);
 				
 				# get hash of tagged data for all tracks
 				my $songData = _getTagDataForTracks( $tags, {
 					trackIds => \@trackIds,
-				} );
+				} ) if scalar @trackIds;
 				
 				$idx = $start;
-				for my $id ( @trackIds ) {
-					# Use songData for track, if remote (negative id) fetch the object directly
-					my $data = $id > 0 ? $songData->{$id} : Slim::Schema::RemoteTrack->fetchById($id);
+				foreach( @tracks ) {
+					# Use songData for track, if remote use the object directly
+					my $data = $_->remote ? $_ : $songData->{$_->id};
 
 					if ($menuMode) {
 						_addJiveSong($request, $loop, $count, $idx, $data);
@@ -5005,7 +5003,7 @@ sub _addJiveSong {
 	# XXX may want to include all contributor roles here?
 	my (%artists, @artists);
 	foreach ('albumartist', 'trackartist', 'artist') {
-		foreach my $a ( split /, /, $songData->{$_} ) {
+		foreach my $a ( split (/, /, $songData->{$_}) ) {
 			if ( $a && !$artists{$a} ) {
 				push @artists, $a;
 				$artists{$a} = 1;
