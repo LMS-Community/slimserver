@@ -3988,7 +3988,7 @@ sub statusQuery {
 				my @tracks = Slim::Player::Playlist::songs($client, $start, $end);
 				
 				# Slice and map playlist to get only the requested IDs
-				my @trackIds = grep (defined $_, map { $_->remote ? undef : $_->id } @tracks);
+				my @trackIds = grep (defined $_, map { (!defined $_ || $_->remote) ? undef : $_->id } @tracks);
 				
 				# get hash of tagged data for all tracks
 				my $songData = _getTagDataForTracks( $tags, {
@@ -3997,6 +3997,10 @@ sub statusQuery {
 				
 				$idx = $start;
 				foreach( @tracks ) {
+					# XXX - need to resolve how we get here in the first place
+					# should not need this:
+					next if !defined $_;
+
 					# Use songData for track, if remote use the object directly
 					my $data = $_->remote ? $_ : $songData->{$_->id};
 
