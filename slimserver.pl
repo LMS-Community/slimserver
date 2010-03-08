@@ -671,7 +671,7 @@ sub idle {
 	}
 	
 	# Include pending AIO events or we will end up stalling AIO processing
-	if ( HAS_AIO && !$pendingEvents ) {
+	if ( $HAS_AIO && !$pendingEvents ) {
 		$pendingEvents += IO::AIO::nreqs();
 	}
 	
