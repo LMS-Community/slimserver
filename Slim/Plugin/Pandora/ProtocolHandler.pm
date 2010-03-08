@@ -453,7 +453,7 @@ sub getMetadataFor {
 	
 	# Could be somewhere else in the playlist
 	if ($song->track->url ne $url) {
-		$log->error("$url: ");
+		main::DEBUGLOG && $log->debug($url);
 		return {
 			icon    => $icon,
 			cover   => $icon,
