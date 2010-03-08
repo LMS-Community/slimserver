@@ -119,6 +119,10 @@ while (1) {
 		my $buf = <$client>;
 	
 		my ($file, $spec, $cacheroot, $cachekey) = unpack 'Z*Z*Z*Z*', $buf;
+		
+		# An empty spec is allowed, this returns the original image
+		$spec ||= 'XxX';
+		
 		DEBUG && warn "file=$file, spec=$spec, cacheroot=$cacheroot, cachekey=$cachekey\n";
 		
 		if ( !$file || !$spec || !$cacheroot || !$cachekey ) {
