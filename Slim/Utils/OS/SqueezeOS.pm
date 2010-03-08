@@ -432,7 +432,7 @@ sub settimeofday {
 		# int settimeofday(const struct timeval *tv , const struct timezone *tz);
 		# struct timeval is long, long
 		# struct timezone is int, int, but ignored
-		my $ret = syscall( 79, pack('LLLL', $epoch, 0, 0, 0) );
+		my $ret = syscall( 79, pack('LLLL', $epoch, 0, 0, 0), 0 );
 		if ( $ret != 0 ) {
 			die $!;
 		}
