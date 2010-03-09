@@ -187,6 +187,12 @@ sub getInitialAudioBlock {
 	# Find the location of the next frame past the audio offset
 	my $second_frame = Audio::Scan->find_frame_fh( mp3 => $localFh, $track->audio_offset + 1 );
 	
+	# If unable to find the second frame for some reason, $second_frame will be -1
+	# We'll check for less than audio_offset to be safe although this should never happen
+	if ( $second_frame < $track->audio_offset ) {
+		return '';
+	}
+	
 	seek $localFh, $track->audio_offset, 0;
 	
 	read $localFh, my $buffer, $second_frame - $track->audio_offset;
