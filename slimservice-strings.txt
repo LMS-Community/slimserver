@@ -1325,7 +1325,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	FI	Virhe: soittoluettelosta ei löytynyt kohteita
 	FR	Erreur: rien dans la liste de lecture
 	HE	שגיאה: לא נמצאו פריטים ברשימת ההשמעה
-	IT	Errore: nessun elemento trovato nell'elenco di riproduzione
+	IT	Errore: nessun elemento trovato nella playlist
 	NL	Fout: Geen items in playlist gevonden
 	NO	Feil: Spillelisten er tom
 	PL	Błąd: nie znaleziono elementów na liście odtwarzania
@@ -1341,7 +1341,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	FI	Virhe: ei voi muodostaa yhteyttä soittoluettelon noutoa varten
 	FR	Erreur: connexion impossible pour récupérer la liste de lecture
 	HE	שגיאה: לא ניתן להתחבר לאחזור רשימת ההשמעה
-	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
+	IT	Errore: impossibile eseguire la connessione per recuperare la playlist
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
 	NO	Feil: Kan ikke kople til for å hente spilleliste
 	PL	Błąd: nie można nawiązać połączenia w celu pobrania listy odtwarzania

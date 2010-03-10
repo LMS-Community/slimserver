@@ -3,8 +3,32 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z  $
 
 PLUGIN_SN
+	CS	Obslužný program služeb mysqueezebox.com
+	DA	mysqueezebox.com – tjenestehåndtering
+	DE	mysqueezebox.com-Service Handler
 	EN	mysqueezebox.com services handler
+	ES	Controlador de servicios de mysqueezebox.com
+	FI	mysqueezebox.com-palveluiden käsittely
+	FR	Gestionnaire de services mysqueezebox.com
+	IT	Programma di gestione di servizi mysqueezebox.com
+	NL	Handler voor services op mysqueezebox.com
+	NO	Tjenestehåndtering for mysqueezebox.com
+	PL	Procedura obsługi usług mysqueezebox.com
+	RU	Обработчик служб mysqueezebox.com
+	SV	tjänsthanteraren mysqueezebox.com
 
 PLUGIN_SN_DESC
+	CS	Pro služby, které nejsou podporovány na vašem Squeezebox Server přepněte na mysqueezebox.com.
+	DA	Skift til mysqueezebox.com for tjenester som ikke er understøttet af Squeezebox Server.
+	DE	Wechseln Sie zu mysqueezebox.com für eine Auswahl an Diensten, die nicht von Squeezebox Server unterstützt werden.
 	EN	Switch to mysqueezebox.com for services which are not supported on your Squeezebox Server.
-	
+	ES	Cambie a mysqueezebox.com para acceder a los servicios no admitidos en Squeezebox Server.
+	FI	Vaihtamalla mysqueezebox.comiin pääset nauttimaan palveluista, joita Squeezebox Server ei tue.
+	FR	Utilisez mysqueezebox.com pour accéder aux services non pris en charge par votre Squeezebox Server.
+	IT	Passare a mysqueezebox.com per i servizi che non sono supportati dal proprio Squeezebox Server.
+	NL	Ga naar mysqueezebox.com voor services die niet worden ondersteund op je Squeezebox Server.
+	NO	Bytt til mysqueezebox.com for tjenester som ikke støttes av Squeezebox Server.
+	PL	Przełącz się na serwis mysqueezebox.com, aby uzyskać usługi, które nie są obsługiwane w programie Squeezebox Server.
+	RU	Чтобы получить службы, которые не поддерживаются в Squeezebox Server, перейдите к использованию mysqueezebox.com.
+	SV	Gå till mysqueezebox.com för tjänster som inte stöds av Squeezebox Server.
+
