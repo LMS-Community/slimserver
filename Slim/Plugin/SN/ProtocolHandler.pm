@@ -83,7 +83,7 @@ sub overridePlayback {
 	
 	# Give various notifications the chance to fire.
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.3, 
-		sub {shift->execute(["connect", 'www.test.mysqueezebox.com']);}
+		sub {shift->execute(["connect", Slim::Networking::SqueezeNetwork->get_server('sn')]);}
 	);
 	
 	# We don't need to poke S::N::SN::Players->fetch_players() because it will automatically 
