@@ -42,7 +42,7 @@ SETUP_ITUNESPLAYLISTFORMAT
 	FI	iTunes-soittoluetteloiden muoto
 	FR	Format des listes de lecture iTunes
 	HE	תבנית רשימות ההשמעה של iTunes
-	IT	Formato dell'elenco di riproduzione di iTunes
+	IT	Formato della playlist di iTunes
 	JA	iTunesプレイリストフォーマット
 	NL	iTunes-playlistformaat
 	NO	iTunes spillelisteformat
@@ -60,7 +60,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	FI	Tällä asetuksella määritetään iTunes-soittoluetteloiden muoto, kun soittoluettelot tuodaan.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש בעת ייבוא רשימות השמעה של iTunes.
-	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione degli elenchi di riproduzione di iTunes.
+	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
 	NL	Deze optie bepaalt welk formaat bij het importeren van iTunes-playlists gebruikt wordt.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av iTunes-spillelister.
@@ -133,7 +133,7 @@ SETUP_ITUNES_DESC
 	FI	Squeezebox Server voi käyttää iTunesin musiikkikirjastoa ja soittoluetteloita. Kaikki iTunesiin tekemäsi muutokset heijastuvat soittimeen. Lisää valintamerkki alla olevaan ruutuun, jos haluat tuoda iTunes-musiikkikirjaston tiedot.
 	FR	Le Squeezebox Server peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
 	HE	Squeezebox Server יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
-	IT	In Squeezebox Server è possibile utilizzare la libreria musicale e gli elenchi di riproduzione di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
+	IT	In Squeezebox Server è possibile utilizzare la libreria musicale e le playlist di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	Squeezebox ServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	Squeezebox Server kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je muzieksysteem  doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
 	NO	Squeezebox Server kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
@@ -356,7 +356,7 @@ ITUNES_PLAYLISTS_PROGRESS
 	ES	Importación de lista de reproducción de iTunes
 	FI	iTunes-soittoluetteloiden tuonti
 	FR	Importation de liste de lecture iTunes
-	IT	Importazione degli elenchi di riproduzione iTunes
+	IT	Importazione delle playlist iTunes
 	NL	iTunes-playlist importeren
 	NO	Importere iTunes-spilleliste
 	PL	Importowanie listy odtwarzania z programu iTunes
@@ -427,7 +427,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS
 	ES	Listas de reproducción omitidas
 	FI	Ohitetut soittoluettelot
 	FR	Listes de lecture ignorées
-	IT	Elenchi di riproduzione ignorati
+	IT	Playlist ignorate
 	NL	Genegeerde playlists
 	NO	Ignorerte spillelister
 	PL	Ignorowane listy odtwarzania
@@ -442,7 +442,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	ES	Defina una lista separada por comas de listas de reproducción de iTunes que no desea que se importen (por ejemplo "Vídeos, Comprados").
 	FI	Määritä pilkuilla erotettu luettelo iTunesin soittoluetteloista, joita et halua tuoda (esim. videot, ostetut).
 	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par ex.: "Vidéos, achetées").
-	IT	Definire una lista di elenchi di riproduzione iTunes separati da virgole che non si desidera importare (esempio: Video, Brani acquistati).
+	IT	Definire un elenco di playlist iTunes separate da virgole che non si desidera importare (esempio: Video, Brani acquistati).
 	NL	Maak een kommagescheiden lijst van iTunes-playlists die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
 	NO	Lag en liste, adskilt med kommaer, over iTunes-spillelister du ikke vil importere (f.eks. "videoer, kjøp").
 	PL	Zdefiniuj listę zawierającą oddzielone przecinkami listy odtwarzania programu iTunes, których nie chcesz importować (np. „Filmy wideo, Zakupione”).

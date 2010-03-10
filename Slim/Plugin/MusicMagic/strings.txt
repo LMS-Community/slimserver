@@ -41,7 +41,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT
 	FI	MusicIP-soittoluetteloiden muoto
 	FR	Format des listes de lecture MusicIP
 	HE	תבנית רשימות ההשמעה של MusicIP
-	IT	Formato dell'elenco di riproduzione di MusicIP
+	IT	Formato della playlist di MusicIP
 	NL	MusicIP-playlistformaat
 	NO	MusicIP spillelisteformat
 	PL	Format listy odtwarzania w usłudze MusicIP
@@ -58,7 +58,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	FI	Tällä asetuksella määritetään MusicIP-soittoluetteloiden muoto, kun soittoluettelot tuodaan.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicIP.
 	HE	אפשרות זו קובעת את התבנית שזה נעשה שימוש בעת ייבוא רשימות השמעה של MusicIP.
-	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione degli elenchi di riproduzione di MusicIP.
+	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione delle playlist di MusicIP.
 	NL	Deze optie bepaalt welk formaat bij het importeren van MusicIP-playlists gebruikt wordt.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av MusicIP-spillelister.
 	PL	Ta opcja określa format używany podczas importowania list odtwarzania z usługi MusicIP.

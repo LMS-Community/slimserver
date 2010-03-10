@@ -10,7 +10,7 @@ SAVE_PLAYLIST_DESC
 	ES	Guardar listas de reproducción desde la interfaz del reproductor
 	FI	Tallenna soittoluettelot soittimen käyttöliittymästä
 	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
-	IT	Salva elenchi di riproduzione dall'interfaccia del lettore
+	IT	Salva playlist dall'interfaccia del lettore
 	NL	Playlists uit de muzieksysteem-UI opslaan
 	NO	Lagre spillelister fra spillergrensesnittet
 	PL	Zapisz listy odtwarzania z interfejsu odtwarzacza
@@ -26,7 +26,7 @@ PLAYLIST_OVERWRITE
 	FI	Korvaa olemassa oleva soittoluettelo siirtymällä oikealle:
 	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante:
 	HE	עבור ימינה להחלפת רשימת ההשמעה הנוכחית:
-	IT	Premere DESTRA per sostituire l'elenco di riproduzione corrente:
+	IT	Premere DESTRA per sostituire la playlist corrente:
 	NL	Rechts om de bestaande playlist te vervangen:
 	NO	Gå til høyre for å bytte ut den eksisterende spillelisten:
 	PL	Przejdź w prawo, aby zastąpić istniejącą listę odtwarzania:
@@ -42,7 +42,7 @@ PLAYLIST_SAVE
 	FI	Tallenna soittoluettelo nimellä siirtymällä uudelleen oikealle:
 	FR	Appuyez à nouveau sur DROITE pour enregistrer la liste de lecture sous:
 	HE	עבור ימינה פעם נוספת לשמירת רשימת ההשמעה בשם:
-	IT	Premere DESTRA nuovamente per salvare l'elenco di riproduzione col nome:
+	IT	Premere DESTRA nuovamente per salvare la playlist con nome:
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
 	NL	Opnieuw rechts om playlist op te slaan als:
 	NO	Gå til høyre igjen for å lagre spillelisten som:
@@ -60,7 +60,7 @@ PLAYLIST_AS
 	FI	Tallenna nykyinen soittoluettelo nimellä:
 	FR	Enregistrer la liste de lecture sous:
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
-	IT	Salva l'elenco di riproduzione corrente col nome:
+	IT	Salva la playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :
 	NL	Huidige playlist opslaan als:
 	NO	Lagre spillelisten som:
@@ -78,7 +78,7 @@ PLAYLIST_SAVING
 	FI	Nykyinen soittoluettelo tallennetaan nimellä:
 	FR	Enregistre la liste de lecture sous:
 	HE	שמירת רשימת ההשמעה הנוכחית בשם:
-	IT	Salvataggio dell'elenco di riproduzione corrente col nome:
+	IT	Salvataggio della playlist corrente con nome:
 	JA	現在のプレイリストを別の名前で保存する :
 	NL	Huidige playlist opslaan als:
 	NO	Lagrer spillelisten som:
@@ -96,7 +96,7 @@ NO_PLAYLIST_DIR
 	FI	Ongelma: ei tallennettujen soittoluetteloiden kansiota.
 	FR	Dossier Listes de lecture enregistrées introuvable.
 	HE	בעיה: אין תיקייה של רשימות השמעה שמורות.
-	IT	Problema: nessuna cartella per gli elenchi di riproduzione salvati.
+	IT	Problema: nessuna cartella per le playlist salvate.
 	JA	エラー: プレイ  リストがみつかりません
 	NL	Probleem: geen map met opgeslagen playlists.
 	NO	Problem: Ingen mappe for lagrede spillelister.
