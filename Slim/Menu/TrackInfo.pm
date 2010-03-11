@@ -453,11 +453,6 @@ sub playTrack {
 
 	my $actions;
 
-	# Play is not a valid item in the context menu of the currently playing track
-	if ( $tags->{menuContext} eq 'playlist' && $tags->{currentTrack} ) {
-		return;
-	}
-
 	# "Play Song" in current playlist context is 'jump'
 	if ( $tags->{menuContext} eq 'playlist' ) {
 		$actions = {
@@ -552,11 +547,6 @@ sub addTrack {
 	my $items = [];
 	my $jive;
 	
-	# Add is not a valid item in the context menu of the currently playing track
-	if ( $tags->{menuContext} eq 'playlist' && $tags->{currentTrack} ) {
-		return;
-	}
-
 	my $actions;
 	# remove from playlist
 	if ( $cmd eq 'delete' ) {
@@ -1447,7 +1437,6 @@ sub cliQuery {
 	my $url            = $request->getParam('url');
 	my $trackId        = $request->getParam('track_id');
 	my $menuMode       = $request->getParam('menu') || 0;
-	my $currentTrack   = $request->getParam('currentTrack') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
 	
@@ -1463,7 +1452,6 @@ sub cliQuery {
 	my $tags = {
 		menuMode      => $menuMode,
 		menuContext   => $menuContext,
-		currentTrack  => $currentTrack,
 		playlistIndex => $playlist_index,
 	};
 
