@@ -2,13 +2,14 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
-		<li>Boom - Version xx<br />	
-			Squeezebox 2/3 - Version xxx<br />
-			Transporter - Version xx<br />
-			Receiver - Version xx
+		<li>Boom - Version 53<br />	
+			Squeezebox 2/3 - Version 133<br />
+			Transporter - Version 83<br />
+			Receiver - Version 68
 		</li>
 		<ul>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3932">#3932</a> - (Transporter / Boom) Add discrete ir codes for power_on, power_off, digital_inputs and line_in</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4682">#4682</a> - (SB3 / Transporter / Boom) Send WOL while in connecting state and receiving discrete power_on ir code</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=12319">#12319</a> - (Boom) Change RTC alarm time to 1 hour (was 1 minute).</li>
 		</ul>
 	</ul>
@@ -51,6 +52,8 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8620">#8620</a> - Apple Lossless cannot fast forward/rewind</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=10889">#10889</a> - Place configurable upper limit on playlist length.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=11506">#11506</a> - Napster WMA playback does not sync correctly when started</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=11851">#11851</a> - Ambient light sensor update - minimal brightness, smoother dimming</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=12229">#12229</a> - Disable WPS pin method - it's more secure than PBC but also very confusing</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=12723">#12723</a> - Seeking support for AAC (for platforms capable of running faad) </li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=12756">#12756</a> - Alarm clock function AM/PM difficult to set </li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=13462">#13462</a> - touch-to-play needs to style and push correctly to now playing for correct XMLBrowse items</li>
@@ -64,11 +67,15 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14648">#14648</a> - Local playlists with remote URLs missing title</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14700">#14700</a> - Update to ALAC 0.2.0 (24-bit support)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14760">#14760</a> - Playing a music-service already-playing item should not restart it (go to Now Playing instead)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14774">#14774</a> - Remove 'Preamp Volume Control' setting for SBR</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14848">#14848</a> - Rhapsody menus don't add single track through SqueezePlay</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14937">#14937</a> - Add mute ir code</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14942">#14942</a> - Cannot change mysb.com password if using IE 7 or IE 8</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14972">#14972</a> - Do not remove last known remote SC from music list so it can be selected and wake on lan is sent</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14977">#14977</a> - Run with no user extensions ("safe Mode ") is broken</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14986">#14986</a> - Fix backlight turning back on after a while when using blank SS</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15005">#15005</a> - I can enable username/password without confirming the password</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15050">#15050</a> - Fix IP address in Remote Login help text</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15052">#15052</a> - Album favorites with non-latin characters are broken</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15117">#15117</a> - Neither clockSource nor fxloop prefs are stored in the player</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15129">#15129</a> - Music IP Integration on Windows Home Server provides wrong url with Seed song to API</li>
@@ -79,6 +86,8 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15474">#15474</a> - Playing radio station, turning on an additional player in sync-group causes skip in playlist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15477">#15477</a> - New track stream can get (superfluous) packets from old stream</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15553">#15553</a> - Track with composer but no artist tag can't be browsed on SqueezePlay devices</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15556">#15556</a> - DHCP client fix - check IP address before using it</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15566">#15566</a> - (Controller) - Fix power management settings. Only reset to default if a setting is missing.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15815">#15815</a> - Now Playing information can alternate previous-next-previous-next at track skip</li>
 	</ul>
 	<br />
