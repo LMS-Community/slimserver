@@ -9866,7 +9866,7 @@ ADD
 PLAY_NEXT
 	CS	Přehrát další
 	DA	Spil næste
-	DE	Nächsten wiedergeben
+	DE	Als nächstes wiedergeben
 	EN	Play Next
 	ES	Reproducir a continuación
 	FI	Soita seuraava
