@@ -603,8 +603,8 @@ SqueezeJS.SonginfoParser = {
 		if (result.playlist_tracks > 0) {
 			for (var x = 0; x < contributorRoles.length; x++) {
 				if (result.playlist_loop[0][contributorRoles[x]]) {
-					var contributors = result.playlist_loop[0][contributorRoles[x]].split(',');
-					var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(',') : new Array();
+					var contributors = result.playlist_loop[0][contributorRoles[x]].split(', ');
+					var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(', ') : new Array();
 	
 					for (var i = 0; i < contributors.length; i++) {
 						// only add to the list if it's not already in there
