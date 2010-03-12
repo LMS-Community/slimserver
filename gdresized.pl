@@ -100,7 +100,10 @@ my $socket = IO::Socket::UNIX->new(
 	Listen => SOMAXCONN,
 ) || die "Unable to open socket: $!";
 
-$SIG{TERM} = $SIG{INT} = sub {
+$SIG{HUP} = 'IGNORE';
+
+$SIG{TERM} = $SIG{INT} = $SIG{QUIT} = sub {
+	DEBUG && warn "SIG received, removing " . SOCKET_PATH . "\n";
 	unlink SOCKET_PATH if -e SOCKET_PATH;
 	exit 0;
 };
