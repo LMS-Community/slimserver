@@ -98,8 +98,6 @@ sub cliQuery {
 		
 		main::DEBUGLOG && $log->debug("Feed is already XML data!");
 		
-		$feed->{_local} = 1;
-		
 		_cliQuery_done( $feed, {
 			'request'    => $request,
 			'client'     => $request->client,
@@ -242,7 +240,7 @@ sub _cliQuery_done {
 		
 		@index = split /\./, $item_id;
 		
-		if ( length( $index[0] ) >= 8 ) {
+		if ( length( $index[0] ) >= 8 && $index[0] =~ /^[a-f0-9]{8}/ ) {
 			# Session ID is first element in index
 			$sid = shift @index;
 		}
@@ -250,8 +248,8 @@ sub _cliQuery_done {
 	else {
 		my $refs = scalar grep { ref $_->{url} } @{ $feed->{items} };
 		
-		# Don't cache if list has coderefs or the feed is from a local source
-		if ( !$refs && !$feed->{_local} ) {
+		# Don't cache if list has coderefs
+		if ( !$refs ) {
 			$sid = Slim::Utils::Misc::createUUID();
 		}
 	}
@@ -283,8 +281,8 @@ sub _cliQuery_done {
 		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
 
-		if ( $@ && $log->is_warn ) {
-			$log->warn("Session not cached: $@");
+		if ( $@ && $log->is_debug ) {
+			$log->debug("Session not cached: $@");
 		}
 	}
 	
