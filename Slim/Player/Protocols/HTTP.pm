@@ -149,6 +149,9 @@ sub parseMetadata {
 		}
 		return if $handled;
 	}
+	
+	# Bug 15896, a stream had CRLF in the metadata
+	$metadata =~ s/[\r\n]//g;
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 		
