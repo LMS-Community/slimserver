@@ -2814,7 +2814,8 @@ sub _mergeAndCreateContributors {
 	
 	# Bug 15553, Primary contributor can only be Album Artist or Artist,
 	# so only check for those roles and assign No Artist otherwise
-	my $foundContributor = ($contributors{'ALBUMARTIST'}->[0] || $contributors{'ARTIST'}->[0]) ? scalar( keys %contributors ) : 0;
+	my $foundContributor = ($contributors{'ALBUMARTIST'} && $contributors{'ALBUMARTIST'}->[0]
+							|| $contributors{'ARTIST'} && $contributors{'ARTIST'}->[0]);
 		
 	main::DEBUGLOG && $isDebug && $log->debug("-- Track has ", scalar (keys %contributors), " contributor(s)");
 
@@ -2848,6 +2849,11 @@ sub _mergeAndCreateContributors {
 sub _createContributorRoleRelationships {
 	
 	my ($self, $contributors, $trackId, $albumId) = @_;
+	
+	if (!keys %$contributors) {
+		$log->warn('Attempt to set empty contributor set for trackid=', $trackId);
+		return;
+	}
 	
 	# Wipe track contributors for this track, this is necessary to handle
 	# a changed track where contributors have been removed.  Current contributors
