@@ -103,9 +103,6 @@ sub initPlugin {
 		return;
 	}
 
-	# default to on if not previously set
-	$prefs->set('itunes', 1) unless defined $prefs->get('itunes');
-
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	$class->initialized(1);
