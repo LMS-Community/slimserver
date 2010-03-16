@@ -2851,7 +2851,7 @@ sub _createContributorRoleRelationships {
 	my ($self, $contributors, $trackId, $albumId) = @_;
 	
 	if (!keys %$contributors) {
-		$log->warn('Attempt to set empty contributor set for trackid=', $trackId);
+		main::DEBUGLOG && $log->debug('Attempt to set empty contributor set for trackid=', $trackId);
 		return;
 	}
 	
