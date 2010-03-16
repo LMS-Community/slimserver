@@ -408,8 +408,20 @@ sub checkDefaults {
 		$prefs->set('lastITunesMusicLibraryDate',0);
 	}
 
-	if (!defined $prefs->get('itunes') && defined $class->findMusicLibraryFile()) {
-		$prefs->set('itunes', 1);
+	if (!defined $prefs->get('itunes')) {
+		require Slim::Utils::OSDetect;
+
+		# disable iTunes unless
+		# - an iTunes XML file is found
+		# - or we're on a Mac
+		# - or we're running Windows (but not Windows Home Server)
+		if (defined $class->findMusicLibraryFile() || main::ISMAC 
+				|| (main::ISWINDOWS && !Slim::Utils::OSDetect->getOS()->get('isWHS'))) {
+			$prefs->set('itunes', 1);
+		}
+		else {
+			$prefs->set('itunes', 0);
+		}
 	}
 	
 	if (!defined $prefs->get('ignore_playlists')) {
