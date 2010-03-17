@@ -575,6 +575,9 @@ sub forgetClient {
 		
 		# stop watching this player
 		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
+		
+		# Bug 15860: Force the connection shut if it is not already
+		Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
 	}
 }
 
