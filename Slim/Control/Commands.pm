@@ -293,15 +293,17 @@ sub clientConnectCommand {
 		$client->execute([ 'stop' ]);
 		
 		foreach ($client->controller()->allPlayers()) {
-		
-			$_->sendFrame( serv => \$packed );
 			
-			if ( main::SLIM_SERVICE ) {
-				# Bug 7973, forget client immediately
-				$_->forgetClient;
-			}
-			else {
-				$_->execute([ 'client', 'forget' ]);
+			if ($_->hasServ()) {
+
+				$_->sendFrame( serv => \$packed );
+				
+				# Give player time to disconnect
+				Slim::Utils::Timers::setTimer($_, time() + 3,
+					sub { shift->execute([ 'client', 'forget' ]); }
+				);
+			} else {
+				$log->warn('Cannot switch player to new server as player not capable: ', $_->id());
 			}
 		}
 	}
