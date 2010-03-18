@@ -19,7 +19,6 @@
 	<ul>
 		<li>RadioTime: Use RadioTime's own track info menu which allows you to report stream problems, see related streams, etc.</li>
 		<li>Added a View Tags menu to Track Info -> More Info that displays a raw listing of all tags found in the file.</li>
-		<li>Added support for transcoding files in MPEG-4 SLS / HD-AAC format.</li>
 		<li>Added support for reading embedded cover art from APEv2 tags.</li>
 		<li>Added "global" search: enter search term once, easily search in local music, on online services, internet radio stations etc.</li>
 		<li>Added "On mysqueezebox.com" sub folder to favorites list, to easily access favorites managed on mysqueezebox.com</li>
@@ -40,7 +39,18 @@
 
 	<li>Transcoding:</li>
 	<ul>
-		<li>sox updated to version 14.3.0.</li>
+		<li>Added support for transcoding files in MPEG-4 SLS / HD-AAC format.</li>
+		<li><code>sox</code> updated to version 14.3.0.</li>
+		<li><code>faad2</code> patched to support ALAC (Apple Lossless encoding) including 24-bit support
+		(<a href="http://bugs.slimdevices.com/show_bug.cgi?id=14700">bug 14700</a>);
+		separate <code>alac</code> program for transcoding from ALAC withdrawn.</li>
+		<li><code>faad2</code> patched to support seeking
+		(<a href="http://bugs.slimdevices.com/show_bug.cgi?id=12723">bug 12723</a>,
+		<a href="http://bugs.slimdevices.com/show_bug.cgi?id=8620">bug 8620</a>)
+		<br><i>Note to people porting to other platforms:</i> the transcoding support for AAC and ALAC that is configured
+		in <code>convert.conf</code> is dependent upon the two patches above.
+		The combined patch is available at <a href="http://svn.slimdevices.com/repos/slim/7.5/trunk/vendor/faad2/seeking+alac.patch">
+		http://svn.slimdevices.com/repos/slim/7.5/trunk/vendor/faad2/seeking+alac.patch</a></br></li>
 	</ul>
 	<br />
 	
