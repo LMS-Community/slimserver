@@ -95,7 +95,8 @@ sub initPrefs {
 	
 	$prefs->{libraryname} = `scutil --get ComputerName` || '';
 	chomp($prefs->{libraryname});
-	
+	$prefs->{libraryname} =~ s/’/'/;
+		
 	# we now have a binary preference pane - don't show the wizard
 	$prefs->{wizardDone} = 1;
 }
