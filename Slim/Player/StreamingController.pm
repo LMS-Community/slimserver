@@ -127,7 +127,7 @@ ContinuePlay =>
 [	[	\&_Stop,		\&_BadState,	\&_BadState,	\&_StopGetNext],	# STOPPED	
 	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Continue,	\&_Continue,	\&_Continue,	\&_Continue],		# PLAYING
+	[	\&_Continue,	\&_Continue,	\&_Continue,	\&_PlayIfReady],	# PLAYING
 	[	\&_Stop,		\&_Stop,		\&_Stop,		\&_Stop],			# PAUSED
 ],
 Pause =>

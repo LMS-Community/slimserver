@@ -329,6 +329,12 @@ bail:
 			$log->info($msg);
 		}
 
+		# Mark the end of stream
+		for my $buddy ($client->syncGroupActiveMembers()) {
+			main::INFOLOG && $log->info($buddy->id() . " mark end of stream");
+			push @{$buddy->chunks}, \'';
+		}
+
 		if ($client->streamBytes() == 0 && $client->reportsTrackStart()) {
 
 			# If we haven't streamed any bytes, then it is most likely an error
@@ -338,12 +344,6 @@ bail:
 			return;
 		}
 		
-		# Mark the end of stream
-		for my $buddy ($client->syncGroupActiveMembers()) {
-			main::INFOLOG && $log->info($buddy->id() . " mark end of stream");
-			push @{$buddy->chunks}, \'';
-		}
-
 		$client->controller()->localEndOfStream();
 		
 		return undef;
