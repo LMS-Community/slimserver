@@ -202,7 +202,12 @@ sub update {
 
 	my $now = Time::HiRes::time();
 	
-	my $rate = $done / ( $now - $self->start );
+	my $elapsed = $now - $self->start;
+	if ($elapsed <= 0) {
+		$elapsed = 0.01;
+	}
+    
+	my $rate = $done / $elapsed;
 	$self->rate($rate);
 	
 	if ( my $total = $self->total ) {
