@@ -419,7 +419,7 @@ sub resize {
 	}
 	
 	# Return original image unchanged
-	return ($origref, $in_format);
+	return $file ? (_slurp($file), $in_format) : ($origref, $in_format);
 }
 
 sub getSize {
@@ -662,6 +662,7 @@ sub gdresize {
 				file   => $file,
 				series => $specs,
 				faster => $args{'faster'},
+				debug  => $debug,
 			);
 		};
 		
@@ -702,6 +703,7 @@ sub gdresize {
 				mode    => $mode,
 				bgcolor => $bgcolor,
 				format  => $ext,
+				debug   => $debug,
 			);
 		};
 		
