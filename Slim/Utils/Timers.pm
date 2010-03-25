@@ -318,11 +318,11 @@ sub _storeTimer {
 	my ( $subptr, $objRef, $w ) = @_;
 	
 	$TIMERS{$subptr} ||= {};
-	$TIMERS{$subptr}->{$objRef} ||= [];
-	push @{ $TIMERS{$subptr}->{$objRef} }, $w;
+	my $slot = $TIMERS{$subptr}->{$objRef} ||= [];
+	push @{$slot}, $w;
 	
 	# Ensure the timer is destroyed after it fires (by undef $w above)
-	Scalar::Util::weaken( $TIMERS{$subptr}->{$objRef}->[-1] );
+	Scalar::Util::weaken( $slot->[-1] );
 }
 
 1;
