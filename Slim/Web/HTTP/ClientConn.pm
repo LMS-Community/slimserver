@@ -7,8 +7,8 @@ package Slim::Web::HTTP::ClientConn;
 use strict;
 use base 'HTTP::Daemon::ClientConn';
 
-# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
-use Exporter qw(import);
+# Avoid IO::Socket's import method
+sub import {}
 
 sub sent_headers {
 	my ( $self, $value ) = @_;

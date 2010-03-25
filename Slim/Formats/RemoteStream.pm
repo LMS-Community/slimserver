@@ -12,8 +12,8 @@ package Slim::Formats::RemoteStream;
 use strict;
 use base qw(IO::Socket::INET);
 
-# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
-use Exporter qw(import);
+# Avoid IO::Socket's import method
+sub import {}
 
 use IO::Socket qw(
 	:crlf
