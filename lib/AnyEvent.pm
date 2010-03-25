@@ -1109,7 +1109,10 @@ package AnyEvent;
 # basically a tuned-down version of common::sense
 sub common_sense {
    # from common:.sense 1.0
-   ${^WARNING_BITS} = "\xfc\x3f\xf3\x00\x0f\xf3\xcf\xc0\xf3\xfc\x33\x03";
+   # Changed warning bits to remove FATAL, as this causes errors on OSX 10.3.9/Perl 5.8.1 with v-strings -andy
+   #${^WARNING_BITS} = "\xfc\x3f\xf3\x00\x0f\xf3\xcf\xc0\xf3\xfc\x33\x03";
+   ${^WARNING_BITS} = "\x54\x15\x11\x00\x05\x51\x45\x40\x51\x54\x11\x00";
+
    # use strict vars subs
    $^H |= 0x00000600;
 }
