@@ -13,8 +13,8 @@ use strict;
 
 use base qw(Net::HTTP::NB Slim::Networking::Async::Socket);
 
-# Get Exporter's import method here so as to avoid inheriting one from IO::Socket::INET
-use Exporter qw(import);
+# Avoid IO::Socket's import method
+sub import {}
 
 use Socket qw(pack_sockaddr_in sockaddr_in);
 
