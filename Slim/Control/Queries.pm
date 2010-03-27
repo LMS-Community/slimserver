@@ -1702,6 +1702,9 @@ sub genresQuery {
 		while ( $sth->fetch ) {
 			$id += 0;
 			
+			utf8::decode($name) if $name;
+			utf8::decode($namesort) if $namesort;
+			
 			my $textKey = substr($namesort, 0, 1);
 				
 			if ($menuMode) {
