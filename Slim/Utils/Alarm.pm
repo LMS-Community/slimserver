@@ -1833,7 +1833,7 @@ sub pushAlarmScreensaver {
 	my $client = shift;
 
 	my $currentMode = Slim::Buttons::Common::mode($client);
-	my $alarmScreensaver = $class->alarmScreensaver;
+	my $alarmScreensaver = $class->alarmScreensaver($client);
 	if ($client->display->isa('Slim::Display::NoDisplay')) {
 		$alarmScreensaver = undef;
 	}
@@ -1864,7 +1864,7 @@ sub popAlarmScreensaver {
 
 	my $currentMode = Slim::Buttons::Common::mode($client);
 	main::DEBUGLOG && $log->debug("Attempting to pop alarm screensaver.  Current mode: $currentMode");
-	if ($currentMode eq $class->alarmScreensaver) {
+	if ($currentMode eq $class->alarmScreensaver($client)) {
 		main::DEBUGLOG && $log->debug('Popping alarm screensaver');
 		Slim::Buttons::Common::popMode($client);
 	}
