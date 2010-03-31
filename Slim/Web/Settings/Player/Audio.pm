@@ -85,7 +85,7 @@ sub prefs {
 		push @prefs, 'analogOutMode';
 	}
 	
-	if ($client->maxBase() - $client->minBase() > 0) {
+	if ($client->maxBass() - $client->minBass() > 0) {
 		push @prefs, 'bass';
 	}
 
