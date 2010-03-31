@@ -196,9 +196,9 @@ sub loadModules {
 NOTE:
 
 Please use the buildme.sh script located here:
-http://svn.slimdevices.com/repos/slim/7.5/trunk/vendor/CPAN/
+http://svn.slimdevices.com/repos/slim/7.6/trunk/vendor/CPAN/
 
-If 7.5 is outdated by the time you read this, Replace "7.5" with the major version
+If 7.6 is outdated by the time you read this, Replace "7.6" with the major version
 of Squeezebox Server you are running.
 
 *******
