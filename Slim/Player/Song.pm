@@ -810,12 +810,7 @@ sub canDoSeek {
 	
 	else {
 
-		my $needEndSeek;
-		if (my $anchor = Slim::Utils::Misc::anchorFromURL($self->currentTrack->url())) {
-			$needEndSeek = ($anchor =~ /[\d.:]+-[\d.:]+/);
-		}
-		
-		if (!$needEndSeek && $handler->can('canSeek')) {
+		if ($handler->can('canSeek')) {
 			if ($handler->canSeek( $self->master(), $self )) {
 				return $self->_canSeek(1) if $handler->isRemote();
 				
