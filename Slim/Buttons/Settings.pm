@@ -222,7 +222,7 @@ sub init {
 							'initialValue' => sub { return $_[0]->stereoxl() },
 							'condition'   => sub {
 								my $client = shift;
-								return $client->can('maxXL') ? $client->maxXL() - $client->minXL() : 0;
+								return $client->maxXL() - $client->minXL();
 							},
 						},
 
@@ -247,7 +247,7 @@ sub init {
 							'initialValue' => sub { $prefs->client(shift)->get('lineInLevel') },
 							'condition'    => sub {
 								my $client = shift;
-								return $client->isa('Slim::Player::Boom') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
+								return $client->can('setLineIn') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
 							},
 						},
 
@@ -272,7 +272,7 @@ sub init {
 							'initialValue' => sub { $prefs->client(shift)->get('lineInAlwaysOn') },
 							'condition'    => sub {
 								my $client = shift;
-								return $client->isa('Slim::Player::Boom') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
+								return $client->can('setLineIn') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
 							},
 						},
 				

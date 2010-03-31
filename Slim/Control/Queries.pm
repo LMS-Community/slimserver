@@ -3619,12 +3619,15 @@ sub statusQuery {
 		$request->addResult("mixer volume", $vol);
 	}
 		
-	if ($client->model() =~ /^(?:squeezebox|slimp3)$/) {
-		$request->addResult("mixer treble", $client->treble());
+	if ($client->maxBass() - $client->minBass() > 0) {
 		$request->addResult("mixer bass", $client->bass());
 	}
 
-	if ($client->model() eq 'squeezebox') {
+	if ($client->maxTreble() - $client->minTreble() > 0) {
+		$request->addResult("mixer treble", $client->treble());
+	}
+
+	if ($client->maxPitch() - $client->minPitch()) {
 		$request->addResult("mixer pitch", $client->pitch());
 	}
 

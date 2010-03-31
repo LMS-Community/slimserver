@@ -1467,7 +1467,7 @@ sub playerSettingsMenu {
 	}
 
 	# stereoXL, if available
-	if ( $client->can('maxXL') ) {
+	if ( $client->maxXL() - $client->minXL() ) {
 		push @menu, {
 			text           => $client->string("STEREOXL"),
 			id             => 'settingsStereoXL',

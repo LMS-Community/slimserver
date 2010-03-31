@@ -80,13 +80,25 @@ sub prefs {
 	if ($client->canDoReplayGain(0)) {
 		push @prefs,'replayGainMode';
 	}
+	
+	if ($client->hasHeadSubOut()) {
+		push @prefs, 'analogOutMode';
+	}
+	
+	if ($client->maxBase() - $client->minBase() > 0) {
+		push @prefs, 'bass';
+	}
 
-	if ($client->isa('Slim::Player::Boom')) {
-		push @prefs, 'analogOutMode', 'bass', 'treble', 'stereoxl';
-		
-		if (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
-			push @prefs, 'lineInLevel', 'lineInAlwaysOn';
-		}
+	if ($client->maxTreble() - $client->minTreble() > 0) {
+		push @prefs, 'treble';
+	}
+	
+	if ($client->maxXL() - $client->minXL()) {
+		push @prefs, 'stereoxl';
+	}
+	
+	if ($client->can('setLineIn') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+		push @prefs, 'lineInLevel', 'lineInAlwaysOn';
 	}
 	
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {

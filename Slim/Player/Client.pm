@@ -697,6 +697,9 @@ sub minTreble {	return 50; }
 sub maxBass {	return 50; }
 sub minBass {	return 50; }
 
+sub maxXL {	return 0; }
+sub minXL {	return 0; }
+
 sub canDirectStream { return 0; }
 sub canLoop { return 0; }
 sub canDoReplayGain { return 0; }
