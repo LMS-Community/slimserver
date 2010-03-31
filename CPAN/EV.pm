@@ -81,7 +81,7 @@ package EV;
 use common::sense;
 
 BEGIN {
-   our $VERSION = '3.8';
+   our $VERSION = '3.9';
    use XSLoader;
    XSLoader::load "EV", $VERSION;
 }
@@ -458,7 +458,7 @@ watcher isn't pending it does nothing and returns C<0>.
 
 Normally, C<EV::loop> will return when there are no active watchers
 (which is a "deadlock" because no progress can be made anymore). This is
-convinient because it allows you to start your watchers (and your jobs),
+convenient because it allows you to start your watchers (and your jobs),
 call C<EV::loop> once and when it returns you know that all your jobs are
 finished (or they forgot to register some watchers for their task :).
 

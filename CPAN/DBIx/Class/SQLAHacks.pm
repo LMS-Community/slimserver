@@ -508,15 +508,21 @@ sub _recurse_from {
   foreach my $j (@join) {
     my ($to, $on) = @$j;
 
+
     # check whether a join type exists
-    my $join_clause = '';
     my $to_jt = ref($to) eq 'ARRAY' ? $to->[0] : $to;
-    if (ref($to_jt) eq 'HASH' and exists($to_jt->{-join_type})) {
-      $join_clause = ' '.uc($to_jt->{-join_type}).' JOIN ';
-    } else {
-      $join_clause = ' JOIN ';
+    my $join_type;
+    if (ref($to_jt) eq 'HASH' and defined($to_jt->{-join_type})) {
+      $join_type = $to_jt->{-join_type};
+      $join_type =~ s/^\s+ | \s+$//xg;
     }
-    push(@sqlf, $join_clause);
+
+    $join_type = $self->{_default_jointype} if not defined $join_type;
+
+    my $join_clause = sprintf ('%s JOIN ',
+      $join_type ?  ' ' . uc($join_type) : ''
+    );
+    push @sqlf, $join_clause;
 
     if (ref $to eq 'ARRAY') {
       push(@sqlf, '(', $self->_recurse_from(@$to), ')');

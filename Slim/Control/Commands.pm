@@ -1911,7 +1911,7 @@ sub playlistcontrolCommand {
 			$what->{'album.id'} = $album_id;
 			my $album = Slim::Schema->find('Album', $album_id);
 			@info    = ( $album->title, $album->contributors->first->name );
-			$artwork = $album->artwork +0;
+			$artwork = $album->artwork || 0;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
@@ -2450,18 +2450,25 @@ sub rescanCommand {
 	
 	# if we're scanning allready, don't do it twice
 	if (!Slim::Music::Import->stillScanning()) {
+		
+		if ( $prefs->get('autorescan') ) {
+			Slim::Utils::AutoRescan->shutdown;
+		}
+		
+		my $dir = $prefs->get('audiodir');
 
 		my %args = (
-			'rescan'  => 1,
-			'cleanup' => 1,
+			types    => qr/(?:list|audio)/,
+			scanName => 'directory',
+			progress => 1,
 		);
 
 		if ($playlistsOnly) {
-
-			$args{'playlists'} = 1;
+			$dir = $prefs->get('playlistdir');
+			$args{types} = 'list';
 		}
-
-		Slim::Music::Import->launchScan(\%args);
+		
+		Slim::Utils::Scanner::Local->rescan( $dir, \%args );
 	}
 
 	$request->setStatusDone();
@@ -2810,10 +2817,31 @@ sub wipecacheCommand {
 
 			$client->execute([qw(playlist clear)]);
 		}
-
-		Slim::Music::Import->launchScan({
-			'wipe' => 1,
-		});
+		
+		if ( $prefs->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
+			Slim::Utils::AutoRescan->shutdown;
+		}
+		
+		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+			# Wipe/rescan in-process on SqueezeOS
+			my $dir = $prefs->get('audiodir');
+			
+			my %args = (
+				types    => qr/(?:list|audio)/,
+				scanName => 'directory',
+				progress => 1,
+				wipe     => 1,
+			);
+			
+			Slim::Utils::Scanner::Local->rescan( $dir, \%args );
+		}
+		else {
+			# Launch external scanner on normal systems
+			Slim::Music::Import->launchScan( {
+				wipe => 1,
+			} );
+		}
 	}
 
 	$request->setStatusDone();
@@ -2876,6 +2904,16 @@ sub ratingCommand {
 		$request->addResult( '_rating', defined $rating ? $rating : 0 );
 	}
 
+	$request->setStatusDone();
+}
+
+sub pragmaCommand {
+	my $request = shift;
+	
+	my $pragma = join( ' ', grep { $_ ne 'pragma' } $request->renderAsArray );
+	
+	Slim::Utils::OSDetect->getOS()->sqlHelperClass()->pragma($pragma);
+	
 	$request->setStatusDone();
 }
 
@@ -2981,12 +3019,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	
+	my $collate = $sqlHelperClass->collate();
+	
 	my $albumSort 
-		= $sqlHelperClass->append0("album.titlesort") 
+		= $sqlHelperClass->append0("album.titlesort") . " $collate"
 		. ', me.disc, me.tracknum, '
-		. $sqlHelperClass->append0("me.titlesort");
+		. $sqlHelperClass->append0("me.titlesort") . " $collate";
 		
-	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort");
+	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort") . " $collate";
 	
 	if ( main::SLIM_SERVICE || !Slim::Schema::hasLibrary()) {
 		return ();
@@ -3030,27 +3070,27 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		# Bug: 4063 - don't enforce contributor.role when coming from
 		# the web UI's search.
-		if ($key eq 'contributor.role') {
+		elsif ($key eq 'contributor.role') {
 			next;
 		}
 
 		# Bug: 3582 - reconstitute from 0 for album.compilation.
-		if ($key eq 'album.compilation' && $value == 0) {
+		elsif ($key eq 'album.compilation' && $value == 0) {
 
 			$find{$key} = [ { 'is' => undef }, { '=' => 0 } ];
 		}
 
 		# Do some mapping from the player browse mode. This is
 		# already done in the web ui.
-		if ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
+		elsif ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
 			$key = "$1.id";
 		}
 
 		# New Music browsing is working on the
-		# tracks.timestamp column, but shows years
-		if ($key =~ /^age\.id$/) {
-
-			$key = 'album.id';
+		# tracks.timestamp column, but shows years.
+		# Use the album-id in the track instead of joining with the album table.
+		if ($key eq 'album.id' || $key eq 'age.id') {
+			$key = 'track.album';
 		}
 
 		# Setup the join mapping
@@ -3130,7 +3170,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		# on search, only grab audio items.
 		$find{'audio'} = 1;
-		$find{'remote'} = 0;
 
 		# Bug 2271 - allow VA albums.
 		if (defined $find{'album.compilation'} && $find{'album.compilation'} == 1) {
@@ -3138,7 +3177,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'contributor.id'};
 		}
 
-		if ($find{'album.id'} && $find{'contributor.id'} && 
+		if ($find{'me.album'} && $find{'contributor.id'} && 
 			$find{'contributor.id'} == Slim::Schema->variousArtistsObject->id) {
 
 			delete $find{'contributor.id'};
@@ -3151,7 +3190,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		# If we have an album and a year - remove the year, since
 		# there is no explict relationship between Track and Year.
-		if ($find{'album.id'} && $find{'year.id'}) {
+		if ($find{'me.album'} && $find{'year.id'}) {
 
 			delete $find{'year.id'};
 			delete $joinMap{'year'};
@@ -3161,10 +3200,15 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			$find{'album.year'} = delete $find{'year.id'};
 			delete $joinMap{'year'};
 		}
-
-		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
+		
 		if ($sort && $sort eq $albumSort) {
-			$joinMap{'album'} = 'album';
+			if ($find{'me.album'}) {
+				# Don't need album-sort if we have a specific album-id
+				$sort = undef;
+			} else {
+				# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
+				$joinMap{'album'} = 'album';
+			}
 		}
 
 		# limit & offset may have been populated above.

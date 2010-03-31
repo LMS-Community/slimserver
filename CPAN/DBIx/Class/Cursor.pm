@@ -3,6 +3,8 @@ package DBIx::Class::Cursor;
 use strict;
 use warnings;
 
+use base qw/DBIx::Class/;
+
 =head1 NAME
 
 DBIx::Class::Cursor - Abstract object representing a query cursor on a

@@ -329,11 +329,11 @@ sub infoServer {
 		},
 	];
 	
-	if ( Slim::Schema::hasLibrary() && Slim::Utils::OSDetect->getOS->sqlHelperClass =~ /MySQL/ ) {
+	if ( Slim::Schema::hasLibrary() ) {
 		push @{$items},	{
 			type => 'text',
-			name => cstring($client, 'MYSQL_VERSION') . cstring($client, 'COLON') . ' '
-						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh ),
+			name => cstring($client, 'DATABASE_VERSION') . cstring($client, 'COLON') . ' '
+						. Slim::Utils::OSDetect->getOS->sqlHelperClass->sqlVersionLong( Slim::Schema->dbh ),
 		};
 	}
 	
@@ -429,7 +429,7 @@ sub infoPlugins {
 sub infoLogs {
 	my $client = shift;
 	
-	my $logs = Slim::Web::Settings::Server::Debugging::getLogs();
+	my $logs = Slim::Utils::Log->getLogFiles();
 	
 	my $item = {
 		name  => cstring($client, 'SETUP_DEBUG_SERVER_LOG'),

@@ -25,6 +25,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use constant SNTIME_POLL_INTERVAL => 3600;
+
 my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
@@ -114,7 +116,11 @@ sub init {
 		undef,
 		time(),
 		sub {
-			if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
+			if (
+				( $prefs->get('sn_email') && $prefs->get('sn_password_sha') )
+				||
+				Slim::Utils::OSDetect::isSqueezeOS()
+			) {
 				# Login to SN
 				$class->login(
 					cb  => \&_init_done,
@@ -140,6 +146,8 @@ sub _init_done {
 	main::INFOLOG && $log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
 	$prefs->set( sn_timediff => $diff );
+	
+	_syncSNTime_done($http, $snTime);
 	
 	# Clear error counter
 	$prefs->remove( 'snInitErrors' );
@@ -301,25 +309,50 @@ sub login {
 	
 	my $client = $params{client};
 	
-	my $username = $params{username};
-	my $password = $params{password};
+	my $time = time();
+	my $login_params;
 	
-	if ( !$username || !$password ) {
-		$username = $prefs->get('sn_email');
-		$password = $prefs->get('sn_password_sha');
+	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+		# login using MAC/UUID on TinySBS
+		my $osDetails = Slim::Utils::OSDetect::details();
+		
+		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $_Servers->{sn} . " as " . $osDetails->{mac});
+		
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			m => $osDetails->{mac},
+			t => $time,
+			a => sha1_base64( $osDetails->{uuid} . $time ),
+		};
 	}
+	else {		
+		my $username = $params{username};
+		my $password = $params{password};
 	
-	# Return if we don't have any SN login information
-	if ( !$username || !$password ) {
-		my $error = $client 
-			? $client->string('SQUEEZENETWORK_NO_LOGIN')
-			: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
+		if ( !$username || !$password ) {
+			$username = $prefs->get('sn_email');
+			$password = $prefs->get('sn_password_sha');
+		}
+	
+		# Return if we don't have any SN login information
+		if ( !$username || !$password ) {
+			my $error = $client 
+				? $client->string('SQUEEZENETWORK_NO_LOGIN')
+				: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
 			
-		main::INFOLOG && $log->info( $error );
-		return $params{ecb}->( undef, $error );
-	}
+			main::INFOLOG && $log->info( $error );
+			return $params{ecb}->( undef, $error );
+		}
 	
-	main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
+		main::INFOLOG && $log->is_info && $log->info("Logging in to " . $class->get_server('sn') . " as $username");
+		
+		$login_params = {
+			v => 'sc' . $::VERSION,
+			u => $username,
+			t => $time,
+			a => sha1_base64( $password . $time ),
+		};
+	}
 	
 	my $self = $class->new(
 		\&_login_done,
@@ -329,21 +362,60 @@ sub login {
 			Timeout => 30,
 		},
 	);
-		
-	my $time = time();
 	
 	my $url = $self->_construct_url(
 		'login',
-		{
-			v => 'sc' . $::VERSION,
-			u => $username,
-			t => $time,
-			a => sha1_base64( $password . $time ),
-		},
+		$login_params,
 	);
 	
 	$self->get( $url );
 }
+
+
+sub syncSNTime {
+	# we only want this to run on SqueezeOS/SB Touch
+	return unless Slim::Utils::OSDetect::isSqueezeOS();
+	
+	my $http = __PACKAGE__->new(
+		\&_syncSNTime_done,
+		\&_syncSNTime_done,
+	);
+	
+	$http->get( $http->url( '/api/v1/time' ) );
+}
+
+sub _syncSNTime_done {
+	my ($http, $snTime) = @_;
+
+	# we only want this to run on SqueezeOS/SB Touch
+	return unless Slim::Utils::OSDetect::isSqueezeOS();
+
+	if (!$snTime && $http && $http->content) {
+		$snTime = $http->content;
+	}
+
+	if ( $snTime && $snTime =~ /^\d+$/ && $snTime > 1262887372 ) {
+		main::INFOLOG && $log->info("Got SqueezeNetwork server time - set local time to $snTime");
+		
+		# update offset to SN time
+		$prefs->set( sn_timediff => $snTime - time() );
+		
+		# set local time to mysqueezebox.com's epochtime 
+		Slim::Control::Request::executeRequest(undef, ['date', "set:$snTime"]);	
+	}
+	else {
+		$log->error("Invalid or no mysqueezebox.com server timestamp - ignoring");
+	}
+
+	Slim::Utils::Timers::killTimers( undef, \&syncSNTime );
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + SNTIME_POLL_INTERVAL,
+		\&syncSNTime,
+	);
+		
+}
+
 
 sub getHeaders {
 	my ( $self, $client ) = @_;

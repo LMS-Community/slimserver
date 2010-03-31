@@ -6,8 +6,8 @@ use warnings;
 use base qw/DBIx::Class/;
 use mro 'c3';
 
-use Scalar::Util qw/weaken/;
-use Carp::Clan qw/^DBIx::Class/;
+use DBIx::Class::Exception;
+use Scalar::Util();
 use IO::File;
 use DBIx::Class::Storage::TxnScopeGuard;
 
@@ -83,7 +83,7 @@ storage object, such as during L<DBIx::Class::Schema/clone>.
 sub set_schema {
   my ($self, $schema) = @_;
   $self->schema($schema);
-  weaken($self->{schema}) if ref $self->{schema};
+  Scalar::Util::weaken($self->{schema}) if ref $self->{schema};
 }
 
 =head2 connected
@@ -120,8 +120,12 @@ Throws an exception - croaks.
 sub throw_exception {
   my $self = shift;
 
-  $self->schema->throw_exception(@_) if $self->schema;
-  croak @_;
+  if ($self->schema) {
+    $self->schema->throw_exception(@_);
+  }
+  else {
+    DBIx::Class::Exception->throw(@_);
+  }
 }
 
 =head2 txn_do

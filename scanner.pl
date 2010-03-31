@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use FindBin qw($Bin);
 use lib $Bin;
@@ -25,10 +24,12 @@ use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
+use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant HAS_AIO      => 0;
 
 # Tell PerlApp to bundle these modules
 if (0) {
@@ -36,24 +37,14 @@ if (0) {
 }
 
 BEGIN {
-	# With EV, only use select backend
-	# I have seen segfaults with poll, and epoll is not stable
-	$ENV{LIBEV_FLAGS} = 1;
-
-	# set the AnyEvent model
-	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
-	
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI DBD::mysql HTML::Parser XML::Parser::Expat YAML::Syck)], []);
+	Slim::bootstrap->loadModules([qw(version Time::HiRes DBI HTML::Parser XML::Parser::Expat YAML::Syck)], []);
 	
-	require File::Basename;
-	require File::Copy;
-	require File::Slurp;
-	
-	require JSON::XS::VersionOneAndTwo;
-	import JSON::XS::VersionOneAndTwo;
+	# By default, tell Audio::Scan not to get artwork to save memory
+	# Where needed, this is locally changed to 0.
+	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
 };
 
 # Force XML::Simple to use XML::Parser for speed. This is done
@@ -101,9 +92,7 @@ our $BUILDDATE   = undef;
 
 our $prefs;
 our $progress;
-
-# Remember if the main server is running or not, to avoid LWP timeout delays
-my $serverDown = 0;
+our $pidfile;
 
 my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 eval "use $sqlHelperClass";
@@ -112,7 +101,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $json, $logfile, $logdir, $logconf, $debug, $help);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
 
 	our $LogTimestamp = 1;
 
@@ -131,7 +120,11 @@ sub main {
 		'musicip'      => \$musicip,
 		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
+		'pidfile=s'    => \$pidfile,
 		# prefsdir parsed by Slim::Utils::Prefs
+		'nodebuglog'   => \$nodebuglog,
+		'noinfolog'    => \$noinfolog,
+		'nostatistics' => \$nostatistics,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,
@@ -139,13 +132,27 @@ sub main {
 		'logconfig=s'  => \$logconf,
 		'debug=s'      => \$debug,
 		'quiet'        => \$quiet,
-		'json=s'       => \$json,
+		'dbtype=s'     => \$dbtype,
 		'LogTimestamp!'=> \$LogTimestamp,
 		'help'         => \$help,
 	);
 
+	save_pid_file();
+
 	if (defined $musicmagic && !defined $musicip) {
 		$musicip = $musicmagic;
+	}
+	
+	# If dbsource has been changed via settings, it overrides the default
+	if ( $prefs->get('dbtype') ) {
+		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
+	}
+	
+	if ( $dbtype ) {
+		# For testing SQLite, can specify a different database type
+		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
+		eval "use $sqlHelperClass";
+		die $@ if $@;
 	}
 	
 	# Start a fresh scanner.log on every scan
@@ -165,6 +172,21 @@ sub main {
 		usage();
 		exit;
 	}
+	
+	# Start/stop profiler during runtime (requires Devel::NYTProf)
+	# and NYTPROF env var set to 'start=no'
+	if ( $ENV{NYTPROF} && $INC{'Devel/NYTProf.pm'} && $ENV{NYTPROF} =~ /start=no/ ) {
+		$SIG{USR1} = sub {
+			DB::enable_profile();
+			warn "Profiling enabled...\n";
+		};
+	
+		$SIG{USR2} = sub {
+			DB::disable_profile();
+			warn "Profiling disabled...\n";
+		};
+	}
+	
 
 	# Redirect STDERR to the log file.
 	if (!$progress) {
@@ -187,6 +209,19 @@ sub main {
 		Slim::Utils::Misc::setPriority($priority);
 	} else {
 		Slim::Utils::Misc::setPriority( $prefs->get('scannerPriority') );
+	}
+	
+	# Load appropriate DB module
+	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
+	Slim::bootstrap::tryModuleLoad($dbModule);
+	if ( $@ ) {
+		logError("Couldn't load $dbModule [$@]");
+		exit;
+	}
+	
+	if ( $sqlHelperClass ) {
+		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
+		$sqlHelperClass->init();
 	}
 
 	if (!$force && Slim::Music::Import->stillScanning) {
@@ -211,6 +246,9 @@ sub main {
 			Slim::Utils::MemoryUsage->init();
 		}
 	}
+	
+	main::INFOLOG && $log->info("Cache init...");
+	Slim::Utils::Cache->init();
 
 	if ($playlists) {
 
@@ -232,12 +270,15 @@ sub main {
 		initClass('Slim::Plugin::MusicMagic::Importer');
 	}
 
-	#checkDataSource();
+	checkDataSource();
 
 	main::INFOLOG && $log->info("Squeezebox Server Scanner done init...\n");
+	
+	# Perform pre-scan steps specific to the database type, i.e. SQLite needs to copy to a new file
+	$sqlHelperClass->beforeScan();
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
-	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+	Slim::Schema->dbh->{'AutoCommit'} = 0;
 
 	my $scanType = 'SETUP_STANDARDRESCAN';
 
@@ -264,13 +305,6 @@ sub main {
 			logError("This is a fatal error. Exiting");
 			exit(-1);
 		}
-		
-		# Clear the artwork cache, since it will contain cached items with IDs
-		# that are no longer valid.  Just delete the directory because clearing the
-		# cache takes too long
-		$log->error('Removing artwork cache...');
-		my $artworkCacheDir = catdir( $prefs->get('cachedir'), 'Artwork' );
-		eval { rmtree( $artworkCacheDir ); };
 	}
 
 	# Don't wrap the below in a transaction - we want to have the server
@@ -329,11 +363,18 @@ sub main {
 				logError("Failed to update lastRescanTime: [$@]");
 				logError("You may encounter problems next rescan!");
 			}
+			else {
+				# Notify server we are done scanning
+				$sqlHelperClass->afterScan();
+			}
 		}
 	}
 
 	# Wipe templates if they exist.
 	rmtree( catdir($prefs->get('cachedir'), 'templates') );
+	
+	# Cleanup after we're done, we can't rely on this being called from a sig handler
+	cleanup();
 	
 	# To debug scanner memory usage, uncomment this line and kill -USR2 the scanner process
 	# after it's finished scanning.
@@ -395,12 +436,15 @@ Command line options:
 	--itunes       Run the iTunes Importer.
 	--musicip      Run the MusicIP Importer.
 	--progress     Show a progress bar of the scan.
-	--json FILE    Write progress information to a JSON file.
+	--dbtype TYPE  Force database type (valid values are MySQL or SQLite)
 	--prefsdir     Specify alternative preferences directory.
 	--priority     set process priority from -20 (high) to 20 (low)
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file
 	--logconfig    Specify pre-defined logging configuration file
+    --nodebuglog   Disable all debug-level logging (compiled out).
+    --noinfolog    Disable all debug-level & info-level logging (compiled out).
+    --nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
 	--debug        various debug options
 	--quiet        keep silent
 	
@@ -426,13 +470,13 @@ sub initClass {
 	}
 }
 
-sub progressJSON {
-	my $data = shift;
-	
-	File::Slurp::write_file( $::json, to_json($data) );
-}
-
+my $cleanupDone;
 sub cleanup {
+	
+	# cleanup() is called at the end of main() and possibly again from a sig handler
+	# We only want it to run once.
+	return if $cleanupDone;	
+	$cleanupDone = 1;
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
@@ -442,10 +486,42 @@ sub cleanup {
 		
 		Slim::Schema->disconnect;
 	}
+	
+	# Notify server we are exiting
+	$sqlHelperClass->exitScan();
+	
+	$sqlHelperClass->cleanup;
+
+	remove_pid_file();
+}
+
+sub checkDataSource {
+	my $audiodir = $prefs->get('audiodir');
+
+	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
+		$audiodir =~ s|[/\\]$||;
+		$prefs->set('audiodir',$audiodir);
+	}
+
+	return if !Slim::Schema::hasLibrary();
+	
+	$sqlHelperClass->checkDataSource();
+}
+
+sub save_pid_file {
+	if (defined $pidfile) {
+		logger('')->info("Scanner saving pid file.");
+		File::Slurp::write_file($pidfile, $$);
+	}
+}
+
+sub remove_pid_file {
+	if (defined $pidfile) {
+		unlink $pidfile;
+	}
 }
 
 sub END {
-
 	Slim::bootstrap::theEND();
 }
 

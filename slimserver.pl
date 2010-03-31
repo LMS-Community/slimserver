@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
@@ -22,6 +21,7 @@ use constant TRANSCODING  => ( grep { /--notranscoding/ } @ARGV ) ? 0 : 1;
 use constant PERFMON      => ( grep { /--perfwarn/ } @ARGV ) ? 1 : 0;
 use constant DEBUGLOG     => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
+use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
@@ -124,6 +124,10 @@ BEGIN {
 	# set the AnyEvent model to our subclassed version when PERFMON is enabled
 	$ENV{PERL_ANYEVENT_MODEL} = 'PerfMonEV' if main::PERFMON;
 	$ENV{PERL_ANYEVENT_MODEL} ||= 'EV';
+	
+	# By default, tell Audio::Scan not to get artwork to save memory
+	# Where needed, this is locally changed to 0.
+	$ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
 
 	# save argv
 	@argv = @ARGV;
@@ -141,6 +145,20 @@ use POSIX qw(setsid);
 use Time::HiRes;
 use EV;
 use AnyEvent;
+
+# Load AIO support if available
+my $HAS_AIO;
+sub HAS_AIO {
+	return $HAS_AIO if defined $HAS_AIO;
+		
+	eval {
+		require AnyEvent::AIO;
+		IO::AIO::max_poll_time( 0.01 ); # Make AIO play nice if there are a lot of requests (10ms per poll)
+		$HAS_AIO = 1;
+	};
+	
+	return $HAS_AIO;
+}
 
 # Force XML::Simple to use XML::Parser for speed. This is done
 # here so other packages don't have to worry about it. If we
@@ -203,7 +221,6 @@ use Slim::Networking::UDP;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
-use Slim::Utils::Update;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
@@ -291,12 +308,14 @@ our (
 	$nodebuglog,
 	$noinfolog,
 	$nosb1slimp3sync,
+	$nostatistics,
 	$stdio,
 	$stop,
 	$perfwarn,
 	$failsafe,
 	$checkstrings,
 	$charset,
+	$dbtype,
 	$d_startup, # Needed for Slim::bootstrap
 );
 
@@ -328,6 +347,18 @@ sub init {
 
 	# force a charset from the command line
 	$Slim::Utils::Unicode::lc_ctype = $charset if $charset;
+	
+	# If dbsource has been changed via settings, it overrides the default
+	if ( $prefs->get('dbtype') ) {
+		$dbtype ||= $prefs->get('dbtype') =~ /SQLite/ ? 'SQLite' : 'MySQL';
+	}
+    
+	if ( $dbtype ) {
+		# For testing SQLite, can specify a different database type
+		$sqlHelperClass = "Slim::Utils::${dbtype}Helper";
+		eval "use $sqlHelperClass";
+		die $@ if $@;
+	}
 
 	Slim::Utils::OSDetect::init();
 
@@ -410,9 +441,17 @@ sub init {
 
 	main::INFOLOG && $log->info("Squeezebox Server strings init...");
 	Slim::Utils::Strings::init();
+	
+	# Load appropriate DB module
+	my $dbModule = $sqlHelperClass =~ /MySQL/ ? 'DBD::mysql' : 'DBD::SQLite';
+	Slim::bootstrap::tryModuleLoad($dbModule);
+	if ( $@ ) {
+		logError("Couldn't load $dbModule [$@]");
+		exit;
+	}
 
 	if ( $sqlHelperClass ) {
-		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
+		main::INFOLOG && $log->info("Squeezebox Server SQL init ($sqlHelperClass)...");
 		$sqlHelperClass->init();
 	}
 	
@@ -423,29 +462,23 @@ sub init {
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
 	
+	main::INFOLOG && $log->info("SqueezeNetwork Init...");
+	Slim::Networking::SqueezeNetwork->init();
+	
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
 	main::INFOLOG && $log->info("Squeezebox Server Info init...");
 	Slim::Music::Info::init();
-	
-	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
-	if ($prefs->get('audiodir')) {
-		require Slim::Music::MusicFolderScan;
-		Slim::Music::MusicFolderScan->init();
-	}
-	if ($prefs->get('playlistdir')) {
-		require Slim::Music::PlaylistFolderScan;
-		Slim::Music::PlaylistFolderScan->init();
-	}
-	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
-	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
 	main::INFOLOG && $log->info("Squeezebox Server IR init...");
 	Slim::Hardware::IR::init();
 
 	main::INFOLOG && $log->info("Squeezebox Server Request init...");
 	Slim::Control::Request::init();
+	
+	main::INFOLOG && $log->info("Squeezebox Server Queries init...");
+	Slim::Control::Queries->init();
 	
 	main::INFOLOG && $log->info("Squeezebox Server Buttons init...");
 	Slim::Buttons::Common::init();
@@ -463,15 +496,24 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
-	
-	main::INFOLOG && $log->info("SqueezeNetwork Init...");
-	Slim::Networking::SqueezeNetwork->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");
 		require Slim::Utils::UPnPMediaServer;
 		Slim::Utils::UPnPMediaServer::init();
 	}
+	
+	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
+	if ($prefs->get('audiodir')) {
+		require Slim::Music::MusicFolderScan;
+		Slim::Music::MusicFolderScan->init();
+	}
+	if ($prefs->get('playlistdir')) {
+		require Slim::Music::PlaylistFolderScan;
+		Slim::Music::PlaylistFolderScan->init();
+	}
+	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
+	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
 	main::INFOLOG && $log->info("Squeezebox Server HTTP init...");
 	Slim::Web::HTTP::init();
@@ -511,7 +553,7 @@ sub init {
 	
 	main::INFOLOG && $log->info("Remote Metadata init...");
 	Slim::Formats::RemoteMetadata->init();
-
+	
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
 
@@ -520,6 +562,13 @@ sub init {
 
 	main::INFOLOG && $log->info("Squeezebox Server checkDataSource...");
 	checkDataSource();
+	
+	if ( $prefs->get('autorescan') ) {
+		require Slim::Utils::AutoRescan;
+		
+		main::INFOLOG && $log->info('Auto-rescan init...');
+		Slim::Utils::AutoRescan->init();
+	}
 
 	# regular server has a couple more initial operations.
 	main::INFOLOG && $log->info("Squeezebox Server persist playlists...");
@@ -552,11 +601,16 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time() + 30,
-		\&Slim::Utils::Update::checkVersion,
-	);
+	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
+
+		require Slim::Utils::Update;
+
+		Slim::Utils::Timers::setTimer(
+			undef,
+			time() + 30,
+			\&Slim::Utils::Update::checkVersion,
+		);
+	}
 
 	main::INFOLOG && $log->info("Squeezebox Server HTTP enable...");
 	Slim::Web::HTTP::init2();
@@ -612,9 +666,13 @@ sub idle {
 		
 		if ( !main::SLIM_SERVICE && !$pendingEvents ) {
 			# run scheduled tasks, only if no other events are pending
-			# XXX: need a way to not call this unless someone is using Scheduler
-			Slim::Utils::Scheduler::run_tasks();
+			$pendingEvents = Slim::Utils::Scheduler::run_tasks();
 		}
+	}
+	
+	# Include pending AIO events or we will end up stalling AIO processing
+	if ( $HAS_AIO && !$pendingEvents ) {
+		$pendingEvents += IO::AIO::nreqs();
 	}
 	
 	if ( $pendingEvents ) {
@@ -652,7 +710,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
-          [--noweb] [--notranscoding] [--nosb1slimp3sync]
+          [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -695,6 +753,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
                         Settings changes are not preserved.
     --noweb          => Disable web interface. JSON-RPC, Comet, and artwork web APIs are still enabled.
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
+    --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
@@ -703,6 +762,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --checkstrings   => Enable reloading of changed string files for plugin development
     --charset        => Force a character set to be used, eg. utf8 on Linux devices
                         which don't have full utf8 locale installed
+    --dbtype         => Force database type (valid values are MySQL or SQLite)
     --logging        => Enable logging for the specified comma separated categories
 
 Commands may be sent to the server through standard in and will be echoed via
@@ -744,6 +804,7 @@ sub initOptions {
 		'noinfolog'     => \$noinfolog,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
+		'nostatistics'  => \$nostatistics,
 		'noupnp'        => \$noupnp,
 		'nosb1slimp3sync'=> \$nosb1slimp3sync,
 		'notranscoding' => \$notranscoding,
@@ -752,6 +813,7 @@ sub initOptions {
 		'perfwarn=s'    => \$perfwarn,  # content parsed by PerfMon if set
 		'checkstrings'  => \$checkstrings,
 		'charset=s'     => \$charset,
+		'dbtype=s'      => \$dbtype,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	);
 
@@ -818,7 +880,7 @@ sub initSettings {
 		Slim::Utils::Prefs::makeCacheDir($cachedir);
 		
 		$prefs->set('cachedir',$cachedir);
-		$prefs->set('librarycachedir',$cachedir);
+		$prefs->set('librarycachedir',$cachedir) unless $prefs->get('librarycachedir');
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();	
@@ -968,6 +1030,11 @@ sub checkDataSource {
 	}
 
 	return if !Slim::Schema::hasLibrary();
+	
+	$sqlHelperClass->checkDataSource();
+	
+	# Don't launch an initial scan on SqueezeOS, it will be handled by AutoRescan
+	return if Slim::Utils::OSDetect::isSqueezeOS();
 
 	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
@@ -1005,18 +1072,6 @@ sub stopServer {
 }
 
 sub cleanup {
-	
-	# Bug 11827, export tracks_persistent data for future use
-	if ($INC{'Slim/Schema/TrackPersistent.pm'}) {
-
-		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
-		logger('')->info("Exporting persistent track data to $dir");
-
-		Slim::Schema::TrackPersistent->export(
-			catfile( $dir, 'tracks_persistent.json' )
-		);	
-	}
-	
 	logger('')->info("Squeezebox Server cleaning up.");
 	
 	$::stop = 1;

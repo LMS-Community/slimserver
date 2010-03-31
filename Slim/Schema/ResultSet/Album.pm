@@ -75,8 +75,10 @@ sub searchNames {
 	my $self  = shift;
 	my $terms = shift;
 	my $attrs = shift || {};
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	$attrs->{'order_by'} ||= 'me.titlesort, me.disc';
+	$attrs->{'order_by'} ||= "me.titlesort $collate, me.disc";
 	$attrs->{'distinct'} ||= 'me.id';
 
 	return $self->search({ 'me.titlesearch' => { 'like' => $terms } }, $attrs);
@@ -120,9 +122,10 @@ sub browse {
 
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $collate = $sqlHelperClass->collate();
 	
 	return $self->search($cond, {
-		'order_by' => $sort || $sqlHelperClass->prepend0("me.titlesort") . ", me.disc",
+		'order_by' => $sort || ( $sqlHelperClass->prepend0("me.titlesort") . " $collate" ) . ", me.disc",
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});
@@ -140,11 +143,12 @@ sub descendTrack {
 
 	# Force a specified sort order right now, since Track's aren't sortable.
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $collate = $sqlHelperClass->collate();
 	
 	$sort 
-		= $sqlHelperClass->prepend0("me.titlesort") 
+		= $sqlHelperClass->prepend0("me.titlesort") . " $collate"
 		. ", tracks.disc, tracks.tracknum, "
-		. $sqlHelperClass->prepend0("tracks.titlesort");
+		. $sqlHelperClass->prepend0("tracks.titlesort") . " $collate";
 
 	my $attr = {
 		'order_by' => $sort,

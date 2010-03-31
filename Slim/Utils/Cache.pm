@@ -64,6 +64,9 @@ my $defaultVersion = 1;
 # hash of caches which we have created by namespace
 my %caches = ();
 
+# hash of roots to use for caches
+my %nameSpaceRoot;
+
 my @thisCycle = (); # namespaces to be purged this purge cycle
 my @eachCycle = (); # namespaces to be purged every PURGE_INTERVAL
 
@@ -115,13 +118,14 @@ my $log = logger('server');
 	}
 }
 
+
 sub init {
 	my $class = shift;
 
 	# cause the default cache to be created if it is not already
 	__PACKAGE__->new();
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 		# start purge routine in 10 seconds to purge all caches created during server and plugin startup
 		require Slim::Utils::Timers;
 		Slim::Utils::Timers::setTimer( undef, time() + 10, \&cleanup );
@@ -160,7 +164,7 @@ sub new {
 	my $cache = Cache::FileCache->new( {
 		namespace          => $namespace,
 		default_expires_in => $DEFAULT_EXPIRES_TIME,
-		cache_root         => preferences('server')->get('cachedir'),
+		cache_root         => ($nameSpaceRoot{$namespace} || preferences('server')->get('cachedir')),
 		directory_umask    => umask(),
 	} );
 	
@@ -181,12 +185,6 @@ sub new {
 
 	# store cache object and add namespace to purge lists
 	$caches{$namespace} = $self;
-	
-	# Bug 7340, don't purge the Artwork cache
-	# XXX: FileCache sucks, find a better solution for the Artwork cache
-	if ( $namespace ne 'Artwork' ) {
-		push @thisCycle, $namespace;
-	}
 	
 	push @eachCycle, $namespace unless $noPeriodicPurge;
 

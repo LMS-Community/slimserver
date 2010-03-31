@@ -35,7 +35,6 @@ This includes navigating menus, registering and managing player modes, and acces
 =cut
 
 use strict;
-use warnings;
 
 use Scalar::Util qw(blessed);
 

@@ -117,6 +117,7 @@ sub initPlugin {
 
 	my @item = ({
 			stringToken    => getDisplayName(),
+			text           => getDisplayName(),
 			weight         => 20,
 			id             => 'podcast',
 			'icon-id'      => $class->_pluginDataFor('icon'),

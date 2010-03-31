@@ -105,7 +105,7 @@ sub coverArt {
 #	return undef if defined $cover && !$cover;
 	
 	# Remote files may have embedded cover art
-	my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+	my $cache = Slim::Utils::Cache->new();
 	my $image = $cache->get( 'cover_' . $self->_url );
 	
 	return undef if !$image;
@@ -142,8 +142,8 @@ sub url {
 
 # Calling conventions:
 # class->new($url)
-# class->new($url, %attributes, \%tagMapping)
-# class->new(%attributes, \%tagMapping) -- 'url' attribute in %attributes
+# class->new($url, %attributes)
+# class->new(%attributes) -- 'url' attribute in %attributes
 
 sub new {
 	my $class  = shift;
@@ -159,8 +159,6 @@ sub new {
 		$url = $attributes->{'url'};
 	}
 	
-	my $tagMapping = shift;
-	
 	if (!defined $url) {
 		$log->error('No url!');
 		return undef;
@@ -173,7 +171,7 @@ sub new {
 	
 	$self->init_accessor(_url => $url, id => -int($self), secs => 0, stash => {});
 	$self->init_accessor(remote => Slim::Music::Info::isRemoteURL($url));
-	$self->setAttributes($attributes, $tagMapping);
+	$self->setAttributes($attributes);
 	
 	$Cache{$url} = $self;
 	$idIndex{$self->id} = $self;
@@ -181,6 +179,7 @@ sub new {
 	return $self;
 }
 
+# Probably do not need all of these any more
 my %localTagMapping = (
 	artist                 => 'artistname',
 	albumartist            => 'artistname',
@@ -189,22 +188,17 @@ my %localTagMapping = (
 	composer               => undef,
 	conductor              => undef,
 	band                   => undef,
-	discc                  => undef,
-	replaygain_track_gain  => 'replay_gain',	# Bug 14468: iTunes
-												# Should really be handled by Schema::_preCheckAttributes
-												# but that is not called for remote tracks at present.
-	replaygain_track_peak  => 'replay_peak',	# Potentially used from tracks in CUE files.
+	remote                 => undef,
 );
 
 sub setAttributes {
-	my ($self, $attributes, $tagMapping) = @_;
+	my ($self, $attributes) = @_;
 	
 #	main::DEBUGLOG && $log->debug("$url: $self => ", Data::Dump::dump($attributes));
 	
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this
 		$key = lc($key);
-		$key = $tagMapping->{$key} if $tagMapping && exists $tagMapping->{$key};
 		$key = $localTagMapping{$key} if exists $localTagMapping{$key};
 		next if !defined($key) || $key eq 'url';
 		
@@ -216,7 +210,7 @@ sub setAttributes {
 }
 
 sub updateOrCreate {
-	my ($class, $objOrUrl, $attributes, $tagMapping) = @_;
+	my ($class, $objOrUrl, $attributes) = @_;
 
 	my $self;
 	my $url;
@@ -233,9 +227,9 @@ sub updateOrCreate {
 	main::DEBUGLOG && $log->is_debug && $log->debug($url);
 	
 	if ($self) {
-		$self->setAttributes($attributes, $tagMapping);
+		$self->setAttributes($attributes);
 	} else {
-		$self = $class->new($url, $attributes, $tagMapping);
+		$self = $class->new($url, $attributes);
 	}
 	
 	return $self;
@@ -297,5 +291,6 @@ sub duration {
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs && $secs > 0;
 }
 
+sub coverid { $_[0]->id }
 
 1;

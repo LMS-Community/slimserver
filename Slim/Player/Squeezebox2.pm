@@ -411,9 +411,8 @@ sub songElapsedSeconds {
 
 	# Ignore values sent by the client if we're in the stopped
 	# state, since they may be out of sync.
-	if (defined($_[0]) && 
-	    Slim::Player::Source::playmode($client) eq 'stop') {
-		$client->SUPER::songElapsedSeconds(0);
+	if (defined($_[0]) && $client->isStopped()) {
+		return $client->SUPER::songElapsedSeconds(0);
 	}
 
 	return $client->SUPER::songElapsedSeconds(@_);
@@ -924,7 +923,7 @@ sub setPlayerSetting {
 
 	my $currpref = $pref_settings->{$pref};
 	
-	my $status = $client->pendingPrefChanges()->{$pref};
+	my $status = $client->pendingPrefChanges()->{$pref} || 0;
 
 	# Only send a setd packet to the player if it is stopped and we are not
 	# still waiting for a response to a previous setd packet for this pref

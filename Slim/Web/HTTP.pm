@@ -1156,23 +1156,45 @@ sub generateHTTPResponse {
 		} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/ || 
 			$path =~ m{^plugins/cache/icons} || 
 			$path =~ /\/\w+_(X|\d+)x(X|\d+)
-	                        (?:_([sSfFpc]))?        # resizeMode, given by a single character
+	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character
 	                        (?:_[\da-fA-F]+)? 		# background color, optional
 				/x   # extend this to also include any image that gives resizing parameters
 			) {
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
+			
+			# Bug 15723, We need to track if we have an async artwork request so 
+			# we don't return data out of order
+			my $async = 0;
+			my $sentResponse = 0;
 
-			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest(
+			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::artworkRequest(
 				$client, 
 				$path, 
 				$params,
-				\&prepareResponseForSending,
+				sub {
+					$sentResponse = 1;
+					prepareResponseForSending(@_);
+					
+					if ( $async ) {
+						main::INFOLOG && $log->is_info && $log->info('Async artwork request done, enable read');
+						Slim::Networking::Select::addRead($httpClient, \&processHTTP);
+					}
+				},
 				$httpClient,
 				$response,
 			);
 			
+			# If artworkRequest did not directly call the callback, we are in an async request
+			if ( !$sentResponse ) {
+				main::INFOLOG && $log->is_info && $log->info('Async artwork request pending, pause read');
+				Slim::Networking::Select::removeRead($httpClient);
+				$async = 1;
+			}
+			
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
+			
+			return;
 
 		} elsif ($path =~ /music\/(\d+)\/download/) {
 			# Bug 10730
@@ -1569,6 +1591,9 @@ sub prepareResponseForSending {
 	my ($client, $params, $body, $httpClient, $response) = @_;
 
 	use bytes;
+	
+	# Trap empty content
+	$body ||= \'';
 
 	# Set the Content-Length - valid for either HEAD or GET
 	$response->content_length(length($$body));
@@ -1771,13 +1796,9 @@ sub sendResponse {
 		$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 	}
 
-	if ($! == EWOULDBLOCK) {
-
+	if (!defined $sentbytes && $! == EWOULDBLOCK) {
 		main::INFOLOG && $log->is_info && $log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}:$port");
-
-		if (!defined $sentbytes) {
-			$sentbytes = 0;
-		}
+		$sentbytes = 0;
 	}
 
 	if (!defined($sentbytes)) {
@@ -1911,8 +1932,9 @@ sub sendStreamingResponse {
 	
 	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
 	# assert($client);
-
-	my $segment = shift(@{$outbuf{$httpClient}});
+	
+	my $outbuf = $outbuf{$httpClient};
+	my $segment = shift(@$outbuf);
 	my $streamingFile = $streamingFiles{$httpClient};
 
 	my $silence = 0;
@@ -1929,36 +1951,19 @@ sub sendStreamingResponse {
 		main::DEBUGLOG && $log->is_debug && $log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
 	}
 
-	if ($client && 
-			$client->isa("Slim::Player::Squeezebox") && 
-			defined($httpClient) &&
-			(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())
-		) {
-
-		if ( main::INFOLOG && $isInfo ) {
-			$log->info($client->id . " We're done streaming this socket to client");
-		}
-
-		closeStreamingSocket($httpClient);
-		return;
-	}
-	
-	if (!$httpClient->connected()) {
+	if (   !$httpClient->connected()
+		|| ($client && $client->isa("Slim::Player::Squeezebox")
+			&& (   !defined($client->streamingsocket())
+			    || $httpClient != $client->streamingsocket()
+				|| (!$streamingFile && $client->isStopped()) # XXX is the !$streamingFile test superfluous
+				)
+			)
+		)
+	{
+		main::INFOLOG && $isInfo &&
+			$log->info(($client ? $client->id : ''), " Streaming connection closed");
 
 		closeStreamingSocket($httpClient);
-
-		main::INFOLOG && $isInfo && $log->info("Streaming client closed connection...");
-
-		return undef;
-	}
-	
-	if (!$streamingFile && $client && $client->isa("Slim::Player::Squeezebox") && 
-		$client->isStopped()) {
-
-		closeStreamingSocket($httpClient);
-
-		main::INFOLOG && $isInfo && $log->info("Squeezebox closed connection...");
-
 		return undef;
 	}
 	
@@ -1994,7 +1999,7 @@ sub sendStreamingResponse {
 				'length' => length($$silence)
 			);
 
-			unshift @{$outbuf{$httpClient}}, \%segment;
+			unshift @$outbuf, \%segment;
 
 		} else {
 			my $chunkRef;
@@ -2052,11 +2057,12 @@ sub sendStreamingResponse {
 						'length' => length($$chunkRef)
 					);
 	
-					unshift @{$outbuf{$httpClient}},\%segment;
+					unshift @$outbuf,\%segment;
 					
 				} else {
 					main::INFOLOG && $log->info("Found an empty chunk on the queue - dropping the streaming connection.");
 					forgetClient($client);
+					return undef;
 				}
 
 			} else {
@@ -2068,14 +2074,12 @@ sub sendStreamingResponse {
 				
 				Slim::Networking::Select::removeWrite($httpClient);
 				
-				if ( $httpClient->connected() ) {
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
-				}
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
 			}
 		}
 
 		# try again...
-		$segment = shift(@{$outbuf{$httpClient}});
+		$segment = shift(@$outbuf);
 	}
 	
 	# try to send metadata, if appropriate
@@ -2086,7 +2090,7 @@ sub sendStreamingResponse {
 
 		if ($metaDataBytes{$httpClient} == METADATAINTERVAL) {
 
-			unshift @{$outbuf{$httpClient}}, $segment;
+			unshift @$outbuf, $segment;
 
 			my $url = Slim::Player::Playlist::url($client);
 
@@ -2125,7 +2129,7 @@ sub sendStreamingResponse {
 			$splitsegment{'offset'} += $splitpoint;
 			$splitsegment{'length'} -= $splitpoint;
 			
-			unshift @{$outbuf{$httpClient}}, \%splitsegment;
+			unshift @$outbuf, \%splitsegment;
 			
 			#only send the first part
 			$segment->{'length'} = $splitpoint;
@@ -2141,15 +2145,15 @@ sub sendStreamingResponse {
 		}
 	}
 
-	if (defined($segment) && $httpClient->connected()) {
+	if (defined($segment)) {
 
 		use bytes;
 
 		my $prebytes = $segment->{'length'};
 		$sentbytes   = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 
-		if ($! == EWOULDBLOCK) {
-			$sentbytes = 0 unless defined $sentbytes;
+		if (!defined $sentbytes && $! == EWOULDBLOCK) {
+			$sentbytes = 0;
 		}
 
 		if (defined($sentbytes)) {
@@ -2165,7 +2169,7 @@ sub sendStreamingResponse {
 				$segment->{'length'} -= $sentbytes;
 				$segment->{'offset'} += $sentbytes;
 
-				unshift @{$outbuf{$httpClient}},$segment;
+				unshift @$outbuf,$segment;
 			}
 
 		} else {
@@ -2207,7 +2211,7 @@ sub tryStreamingLater {
 	my $client     = shift;
 	my $httpClient = shift;
 
-	if ( $httpClient == $client->streamingsocket() ) {
+	if ( defined $client->streamingsocket() && $httpClient == $client->streamingsocket() ) {
 
 		# Bug 10085 - This might be a callback for an old connection  
 		# which we decided to close after establishing the timer, so

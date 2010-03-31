@@ -79,10 +79,10 @@ sub fixupSortKeys {
 	# Always turn namesearch into the concat version.
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	my $concatFunction = $sqlHelperClass->concatFunction();
+	my $collate = $sqlHelperClass->collate();
 	
-	if ($fixed =~ /\w+?.\w+?sort/ && $fixed !~ /$concatFunction/) {
-
-		$fixed =~ s/(\w+?.\w+?sort)/$sqlHelperClass->prepend0($1)/eg;
+	if ($fixed =~ /sort/) {
+		$fixed =~ s/((?:\w+\.)?\w+sort)/$sqlHelperClass->prepend0($1) . " $collate"/eg;
 	}
 
 	# Always append disc for albums & tracks.

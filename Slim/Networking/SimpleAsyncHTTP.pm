@@ -20,7 +20,6 @@ package Slim::Networking::SimpleAsyncHTTP;
 # more documentation at end of file.
 
 use strict;
-use warnings;
 
 use base qw(Slim::Utils::Accessor);
 

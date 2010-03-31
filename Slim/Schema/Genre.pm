@@ -66,12 +66,12 @@ sub displayAsHTML {
 sub add {
 	my $class = shift;
 	my $genre = shift;
-	my $track = shift;
+	my $trackId = shift;
 	
 	# Using native DBI here to improve performance during scanning
 	# and because DBIC objects are not needed here
 	# This is around 20x faster than using DBIC
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
@@ -102,24 +102,31 @@ sub add {
 			VALUES
 			(?, ?)
 		} );
-		$sth->execute( $id, $track->id );
+		$sth->execute( $id, $trackId );
 	}
 	
 	return;
 }
 
-# XXX native DBI
 sub rescan {
 	my ( $class, @ids ) = @_;
+	
+	my $dbh = Slim::Schema->dbh;
 	
 	my $log = logger('scan.scanner');
 	
 	for my $id ( @ids ) {
-		my $count = Slim::Schema->rs('GenreTrack')->search( genre => $id )->count;
-		
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM genre_track WHERE genre = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+				
 		if ( !$count ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused genre: $id");
-			Slim::Schema->rs('Genre')->find($id)->delete;
+			
+			$dbh->do( "DELETE FROM genres WHERE id = ?", undef, $id );
 		}
 	}
 }

@@ -264,6 +264,14 @@ sub scanner {
 	return -x "$Bin/scanner.exe" ? "$Bin/scanner.exe" : $_[0]->SUPER::scanner();
 }
 
+sub gdresize {
+	return -x "$Bin/gdresize.exe" ? "$Bin/gdresize.exe" : $_[0]->SUPER::gdresize();
+}
+
+sub gdresized {
+	return -x "$Bin/gdresized.exe" ? "$Bin/gdresized.exe" : $_[0]->SUPER::gdresized();
+}
+
 sub localeDetails {
 	eval { use POSIX qw(LC_TIME); };
 	require Win32::Locale;

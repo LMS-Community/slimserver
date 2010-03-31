@@ -159,14 +159,6 @@ sub init {
 	# setup a cli command for jive that returns nothing; can be useful in some situations
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
 		[0, 0, 0, sub { return 1; }]);
-
-	if ( !main::SLIM_SERVICE ) {
-		# Load memory caches to help with menu performance
-		buildCaches();
-		
-		# Re-build the caches after a rescan
-		Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
-	}
 	
 	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
@@ -174,42 +166,6 @@ sub init {
 sub _libraryChanged {
 	foreach ( Slim::Player::Client::clients() ) {
 		myMusicMenu(0, $_);
-	}
-}
-
-sub buildCaches {
-	main::DEBUGLOG && $log->debug("Begin function");
-	
-	return if !Slim::Schema::hasLibrary();
-
-	my $sort    = $prefs->get('jivealbumsort') || 'album';
-
-	for my $partymode ( 0..1 ) {
-		# Pre-cache albums query
-		if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
-			main::DEBUGLOG && $log->debug( "Pre-caching $numAlbums album items for partymode:$partymode" );
-			Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "useContextMenu:1", "sort:$sort", 'menu:track', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
-		
-		# Artists
-		if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-			# Add one since we may have a VA item
-			$numArtists++;
-			main::DEBUGLOG && $log->debug( "Pre-caching $numArtists artist items for partymode:$partymode." );
-			Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, "useContextMenu:1", 'menu:album', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
-		
-		# Genres
-		if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-			main::DEBUGLOG && $log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
-			Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, "useContextMenu:1", 'menu:artist', 'cache:1', "party:$partymode" ] );
-		}
-		
-		main::idleStreams();
 	}
 }
 
@@ -2165,6 +2121,19 @@ sub jiveSyncCommand {
 	$request->setStatusDone();
 }
 
+sub dateQuery_filter {
+	my ($self, $request) = @_;
+
+	# if time is to be set, pass along the new time value to the listeners
+	if (my $newTime = $request->getParam('set')) {
+		$self->privateData($newTime);
+		return 1;
+	}
+
+	$self->privateData(0);
+	return 0;
+}
+
 sub dateQuery {
 	my $request = shift;
 
@@ -2172,9 +2141,20 @@ sub dateQuery {
 		$request->setStatusBadDispatch();
 		return;
 	}
+	
+	my $newTime = $request->getParam('set') || 0;
+
+	# it time is expliciely set, we'll have to notify our listeners
+	if ($newTime) {
+		$request->notify();
+	}
+	else {
+		$newTime = $request->privateData() || 0;
+		$request->privateData(0);
+	}
 
 	# 7.5+ SP devices use epoch time now, much simpler
-	$request->addResult( 'date_epoch', time() );
+	$request->addResult( 'date_epoch', $newTime || time() );
 
 	# This is the field 7.3 and earlier players expect.
 	#  7.4 is smart enough to take no action when missing
@@ -2190,7 +2170,7 @@ sub dateQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$request->registerAutoExecute($timeout, \&dateQuery);
+		$request->registerAutoExecute($timeout, \&dateQuery_filter);		
 	}
 
 	$request->setStatusDone();
@@ -2224,7 +2204,9 @@ sub firmwareUpgradeQuery {
 	if ( my $url = Slim::Utils::Firmware->url($model) ) {
 		# Bug 6828, Send relative firmware URLs for Jive versions which support it
 		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
-		if ( $cur_rev >= 1659 ) {
+		
+		# return full url when running SqueezeOS - we'll serve the direct download link from squeezenetwork
+		if ( $cur_rev >= 1659 && !Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
 			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
 		}
 		else {

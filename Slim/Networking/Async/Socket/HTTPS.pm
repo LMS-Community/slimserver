@@ -8,7 +8,6 @@ package Slim::Networking::Async::Socket::HTTPS;
 # version 2.
 
 use strict;
-use warnings;
 
 BEGIN {
 	# Force Net::HTTPS to use IO::Socket::SSL

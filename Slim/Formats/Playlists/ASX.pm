@@ -50,10 +50,10 @@ sub read {
 		
 		# Make sure playlist is UTF-8
 		my $encoding = Slim::Utils::Unicode::encodingFromString( $content );
-		main::DEBUGLOG && $log->debug( "Encoding of ASX playlist: $encoding" );
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Encoding of ASX playlist: $encoding" );
 		
 		if ( $encoding ne 'utf8' ) {		
-			$content = Slim::Utils::Unicode::utf8decode_guess( $content );
+			$content = Slim::Utils::Unicode::utf8decode_guess( $content, $encoding );
 		}
 		
 		my $parsed = eval {

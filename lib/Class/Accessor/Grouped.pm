@@ -18,13 +18,9 @@ BEGIN {
         $hasXS = 0;
         eval {
             require Class::XSAccessor;
-            die if $Class::XSAccessor::VERSION lt '1.03';
+            die if $Class::XSAccessor::VERSION lt '1.05';
             $hasXS = 1;
         };
-
-        if ( $@ ) {
-            warn "NOTE: Class::XSAccessor not found, install it for better performance\n";
-        }
     
         return $hasXS;
     }
@@ -104,10 +100,16 @@ sub mk_group_accessors {
             my $full_alias = join('::', $class, $alias);
             
             if ( $hasXS && $group eq 'simple' ) {
-                Class::XSAccessor::newxs_accessor("${class}::${name}", $field, 0);
-                Class::XSAccessor::newxs_accessor("${class}::${alias}", $field, 0);
+                Class::XSAccessor->import(
+                    class     => $class,
+                    accessors => { $name, $field }
+                );
                 
                 # XXX: is the alias accessor really necessary?
+                Class::XSAccessor->import(
+                    class     => $class,
+                    accessors => { $alias, $field }
+                );
             }
             else {
                 my $accessor = $self->$maker($group, $field);

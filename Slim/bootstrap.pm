@@ -12,7 +12,6 @@ package Slim::bootstrap;
 # 2005-11-09 - dsully
 
 use strict;
-use warnings;
 
 use Config;
 use FindBin qw($Bin);
@@ -53,14 +52,12 @@ use Slim::Utils::OSDetect;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(version Time::HiRes DBI DBD::mysql EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::Syck GD Sub::Name);
+my @default_required_modules = qw(version Time::HiRes DBI EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::Syck GD Sub::Name);
 my @default_optional_modules = qw(Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
 
 my $sigINTcalled             = 0;
-
-my $sigCHLD                  = {};
 
 sub loadModules {
 	my ($class, $required_modules, $optional_modules, $libPath) = @_;
@@ -247,38 +244,10 @@ of Squeezebox Server you are running.
 		require Slim::Utils::PerfMon;
 	}
 	
-	sub REAPER {
-		my $kid;
-		
-		# Reap all dead children
-		while (($kid = waitpid(-1, WNOHANG)) > 0) {
-			if ( exists $sigCHLD->{$kid} ) {
-				
-				my $cb = $sigCHLD->{$kid}->{cb};
-				my $pt = $sigCHLD->{$kid}->{pt} || [];
-				$cb->( @{$pt} );
-				
-				delete $sigCHLD->{$kid};
-			}
-		}
-		
-		$SIG{'CHLD'} = \&REAPER;
-	}
-	$SIG{'CHLD'} = \&REAPER;
-	
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'TERM'} = \&sigterm;
 	$SIG{'INT'}  = \&sigint;
 	$SIG{'QUIT'} = \&sigquit;
-}
-
-sub sigCHLDCallback {
-	my ( $pid, $cb, @args ) = @_;
-	
-	$sigCHLD->{$pid} = {
-		cb => $cb,
-		pt => \@args,
-	};
 }
 
 sub tryModuleLoad {

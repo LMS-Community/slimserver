@@ -12,6 +12,8 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PERFORMANCE_SETTINGS');
 }
@@ -21,11 +23,45 @@ sub page {
 }
 
 sub prefs {
- 	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority resampleArtwork precacheArtwork maxPlaylistLength) );
+ 	return ($prefs, qw(dbtype disableStatistics serverPriority scannerPriority resampleArtwork 
+ 				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
+		
+	if ( $paramRef->{'saveSettings'} ) {
+		my $curAuto = $prefs->get('autorescan');
+		if ( $curAuto != $paramRef->{pref_autorescan} ) {
+			require Slim::Utils::AutoRescan;
+			if ( $paramRef->{pref_autorescan} == 1 ) {
+				Slim::Utils::AutoRescan->init;
+			}
+			else {
+				Slim::Utils::AutoRescan->shutdown;
+			}
+		}
+	}
+	
+	# Change database type
+	my $curdb = $prefs->get('dbsource') =~ /SQLite/ ? 'SQLite' : 'MySQL';
+	if ( $paramRef->{pref_dbtype} && $paramRef->{pref_dbtype} ne $curdb ) {
+		my $dbtype = $paramRef->{pref_dbtype};
+		my $sqlHelperClass = "Slim::Utils::${dbtype}Helper";
+		eval "use $sqlHelperClass";
+		
+		$prefs->set( dbtype => $dbtype );
+		$prefs->set( dbsource => $sqlHelperClass->default_dbsource() );
+		$prefs->set( dbsource => $sqlHelperClass->source() );
+		
+		# Trigger restart required message
+		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
+	}
+	
+	# Restart if restart=1 param is set
+	if ( $paramRef->{restart} ) {
+		$paramRef = Slim::Web::Settings::Server::Plugins->restartServer($paramRef, 1);
+	}
 
 	$paramRef->{'options'} = {
 		''   => 'SETUP_PRIORITY_CURRENT',

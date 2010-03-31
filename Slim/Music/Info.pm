@@ -63,7 +63,9 @@ our %currentTitleCallbacks = ();
 tie our %isFile, 'Tie::Cache::LRU', 16;
 
 # No need to do this over and over again either.
-tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
+# Don't use Tie::Cache::LRU as it is a bit too expensive in the scanner
+our %urlToTypeCache;
+use constant URLTYPECACHESIZE => 16;
 
 my $log = logger('database.info');
 
@@ -255,6 +257,7 @@ sub setContentType {
 	}
 
 	# Update the cache set by typeFrompath as well.
+	%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
 	$urlToTypeCache{$url} = $type;
 	
 	main::INFOLOG && $log->info("Content-Type for $url is cached as $type");
@@ -391,6 +394,10 @@ my %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 sub setRemoteMetadata {
 	my ( $url, $meta ) = @_;
 	
+	# Bug 15833: only update metadata for remote tracks.
+	# Local tracks should have everything correct from the scan.
+	return if !isRemoteURL($url);
+	
 	my $attr = {};
 	
 	if ( $meta->{title} ) {
@@ -424,6 +431,7 @@ sub setRemoteMetadata {
 		}
 
 		# Update the cache set by typeFrompath as well.
+		%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
 		$urlToTypeCache{$url} = $type;
 		
 		$attr->{CT} = $type;
@@ -849,13 +857,15 @@ sub guessTags {
 			my $i = 0;
 
 			foreach my $match (@matches) {
+				# $match is from a raw filename and needs to be utf8-decoded
+				utf8::decode($match);
 
 				main::INFOLOG && $log->info("$tags[$i] => $match");
 
 				$match =~ tr/_/ / if (defined $match);
 
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
-				$taghash->{$tags[$i++]} = Slim::Utils::Unicode::utf8decode_locale($match);
+				$taghash->{$tags[$i++]} = $match;
 			}
 
 			return;
@@ -970,6 +980,17 @@ sub addDiscNumberToAlbumTitle {
 	return $title;
 }
 
+# Cache this preference, which may be undef
+my ($_splitList, $_gotSplitList);
+		
+$prefs->setChange( 
+	sub {
+		$_gotSplitList = 1;
+		$_splitList = $_[1];
+	},
+	'splitList'
+);
+
 sub splitTag {
 	my $tag = shift;
 
@@ -985,12 +1006,16 @@ sub splitTag {
 	}
 
 	my @splitTags = ();
-	my $splitList = $prefs->get('splitList');
-
+	
+	if (!$_gotSplitList) {
+		$_splitList = $prefs->get('splitList');
+		$_gotSplitList = 1;
+	}
+	
 	# only bother if there are some characters in the pref
-	if ($splitList) {
+	if ($_splitList) {
 
-		for my $splitOn (split(/\s+/, $splitList),'\x00') {
+		for my $splitOn (split(/\s+/, $_splitList),'\x00') {
 
 			my @temp = ();
 
@@ -1272,7 +1297,7 @@ sub validTypeExtensions {
 	my $findTypes  = shift || qr/(?:list|audio)/;
 
 	my @extensions = ();
-	my $disabled   = disabledExtensions($findTypes);
+	my $disabled   = disabledExtensions();
 
 	while (my ($ext, $type) = each %slimTypes) {
 
@@ -1371,26 +1396,27 @@ sub typeFromSuffix {
 }
 
 sub typeFromPath {
-	my $fullpath = shift;
+	my $fullpath = shift;		# either a file path or a URL (even for files)
 	my $defaultType = shift || 'unk';
 
 	# Remove the anchor if we're checking the suffix.
 	my ($type, $anchorlessPath, $filepath);
 
+	# Process raw path
+	if (isFileURL($fullpath)) {
+		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+	} else {
+		$filepath = $fullpath;
+	}
+
 	if ($fullpath && $fullpath !~ /\x00/) {
 
 		# Return quickly if we have it in the cache.
-		if (defined $urlToTypeCache{$fullpath}) {
-
-			$type = $urlToTypeCache{$fullpath};
-			
+		if (defined ($type = $urlToTypeCache{$filepath})) {
 			return $type if $type ne 'unk';
-
 		}
 		elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
-
 			$type = $suffixes{$1};
-
 		} 
 		elsif ( $fullpath =~ /^(?:radioio|live365)/ ) {
 			# Force mp3 for protocol handlers
@@ -1409,14 +1435,7 @@ sub typeFromPath {
 		}
 	}
 
-	# Process raw path, sanity check for folders
-	if (isFileURL($fullpath)) {
-		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-
-	} else {
-		$filepath = $fullpath;
-	}
-
+	# sanity check for folders
 	if ($filepath && -d $filepath) {
 		$type = 'dir';
 	}
@@ -1472,8 +1491,8 @@ sub typeFromPath {
 
 	# Don't cache remote URL types, as they may change.
 	if (!isRemoteURL($fullpath)) {
-
-		$urlToTypeCache{$fullpath} = $type;
+		%urlToTypeCache = () if scalar keys %urlToTypeCache > URLTYPECACHESIZE;
+		$urlToTypeCache{$filepath} = $type;
 	}
 
 	main::DEBUGLOG && $log->debug("$type file type for $fullpath");

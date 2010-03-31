@@ -298,6 +298,13 @@ sub fileURLFromPath {
 	if ( utf8::is_utf8($path) ) {
 		utf8::encode($path);
 	}
+	
+	# If the path contains any combining characters, we need
+	# to recompose it.  This happens most often on HFS+ filesystems
+	# but can also be an issue in playlists.
+	if ( Slim::Utils::Unicode::hasCombiningMarks($path) ) {
+		$path = Slim::Utils::Unicode::recomposeUnicode($path);
+	}
 
 	my $uri = URI::file->new($path);
 	$uri->host('');
@@ -733,7 +740,7 @@ sub fileFilter {
 	return 1;
 }
 
-=head2 folderFilter( $dirname )
+=head2 folderFilter( $dirname, $hasStat, $validRE )
 
 	Verify whether we want to include a folder in our search.
 
@@ -744,8 +751,9 @@ sub folderFilter {
 	my $folder = pop @path;
 	
 	my $hasStat = shift || 0;
+	my $validRE = shift;
 
-	return fileFilter(catdir(@path), $folder, undef, $hasStat);
+	return fileFilter(catdir(@path), $folder, $validRE, $hasStat);
 }
 
 
@@ -910,20 +918,11 @@ sub findAndScanDirectoryTree {
 		$topLevelObj->update;
 
 		# Do a quick directory scan.
-		Slim::Utils::Scanner->scanDirectory({
-			'url'       => $path,
-			'recursive' => 0,
-		});
-
-		# Bug: 4812 - notify those interested that the database has changed.
-		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
-
-		# Bug: 3841 - check for new artwork
-		# But don't search at the root level.
-		if ($path ne $prefs->get('audiodir')) {
-
-			Slim::Music::Artwork->findArtwork($topLevelObj);
-		}
+		# XXX this should really be async but callers would need updated, lots of work
+		Slim::Utils::Scanner::Local->rescan( $path, {
+			no_async  => 1,
+			recursive => 0,
+		} );
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
@@ -1062,10 +1061,10 @@ sub settingsDiagString {
 	);
 	
 	if ( my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass ) {
-		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->storage->dbh );
+		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->dbh );
 		push @diagString, sprintf("%s%s %s",
 	
-			Slim::Utils::Strings::string('MYSQL_VERSION'),
+			Slim::Utils::Strings::string('DATABASE_VERSION'),
 			Slim::Utils::Strings::string('COLON'),
 			$sqlVersion,
 		);
@@ -1341,6 +1340,21 @@ Round a number to an integer
 sub round {
 	my $number = shift;
 	return int($number + .5 * ($number <=> 0));
+}
+
+=head2 min ( )
+
+Return the minimum value from a list supplied as an array reference
+
+=cut
+
+# Smaller and faster than Math::VecStat::min
+
+sub min {
+  my $v = $_[0];
+  my $m = $v->[0];
+  foreach (@$v) { $m = $_ if $_ < $m; }
+  return $m;
 }
 
 =head1 SEE ALSO

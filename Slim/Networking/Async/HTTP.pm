@@ -10,7 +10,6 @@ package Slim::Networking::Async::HTTP;
 # This class provides an async HTTP implementation.
 
 use strict;
-use warnings;
 
 BEGIN {
 	my $hasSSL;

@@ -43,6 +43,14 @@
 </p>
 
 <hr>
+<h4 id="7">Changes starting from Squeezebox Server 7.5</h4>
+<ul>
+	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
+	<li>Added tag 'c' for <a href="#songinfo">songinfo</a> to return the track's coverid value, used for artwork URLs. If you were using the track's ID directly in artwork URLs, you should switch to using the coverid value.</li>
+	<li>Added <a href="#pragma">&quot;pragma&quot;</a> command for changing SQLite behavior.</li>
+</ul>
+
+<hr>
 <h4 id="7">Changes starting from Squeezebox Server 7.4</h4>
 <ul>
 	<li>The music_services command is now apps.</li>
@@ -2610,6 +2618,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#search">search</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#pragma">pragma</a></code></strong>
+	</li>
 </ul>
 
 
@@ -4696,6 +4707,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>M</b>
+		</td>
+		<td>
+			musicmagic_mixable
+		</td>
+		<td>
+			1 if track is mixable, otherwise 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>k</b>
 		</td>
 		<td>
@@ -4892,6 +4914,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Title of the internet radio station.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>c</b>
+		</td>
+		<td>
+			coverid
+		</td>
+		<td>
+			coverid to use when constructing an artwork URL, such as /music/$coverid/cover.jpg
 		</td>
 	</tr>
 	<tr>
@@ -5395,7 +5428,29 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
-
+<br>
+<p id="pragma">
+	<strong>
+		<code>
+			pragma 
+			&lt;pragma string&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;pragma&quot; command executes the given pragma string against the
+	SQLite database engine.  If using MySQL, this command has no effect. For a list of
+	available pragmas, see <a href="http://www.sqlite.org/pragma.html">sqlite.org</a>.
+	Warning: Do not use this function unless you know what you are doing!
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		pragma locking_mode = NORMAL
+	</p>
+</blockquote>
 
 <!--#########################################################################-->
 <!-- PLAYLIST COMMANDS                                                       -->

@@ -4,8 +4,15 @@ package Slim::Plugin::Queen::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use Slim::Utils::Log;
 
 use Slim::Plugin::Queen::ProtocolHandler;
+
+my $log = Slim::Utils::Log->addLogCategory( {
+	category     => 'plugin.queen',
+	defaultLevel => 'ERROR',
+	description  => 'PLUGIN_QUEEN_MODULE_NAME',
+} );
 
 sub initPlugin {
 	my $class = shift;

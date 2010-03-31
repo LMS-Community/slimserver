@@ -581,6 +581,20 @@ sub scannerLogFile {
 	return _logFileName('scanner');
 }
 
+=head2 getLogFiles ( )
+
+Returns a list of the the locations of Squeezebox Server's log files.
+
+=cut
+
+sub getLogFiles {
+	return [
+		{SERVER  => serverLogFile},
+		{SCANNER => (Slim::Schema::hasLibrary() ? scannerLogFile() : undef)},
+		{PERFMON => (main::PERFMON ? perfmonLogFile() : undef )},
+	]
+}
+
 =head2 scannerLogMode ( )
 
 Returns the logging mode of Squeezebox Server's scanner log file.
@@ -799,6 +813,7 @@ sub logGroups {
 		SCANNER => {
 			categories => {
 				'scan'                   => 'DEBUG',
+				'scan.auto'              => 'DEBUG',
 				'scan.scanner'           => 'DEBUG',
 				'scan.import'            => 'DEBUG',
 				'artwork'                => 'DEBUG',
@@ -904,6 +919,7 @@ sub logLevels {
 		'player.ui'                  => 'ERROR',
 
 		'scan'                       => 'ERROR',
+		'scan.auto'                  => 'DEBUG', # XXX forced on because there will be problems
 		'scan.scanner'               => 'ERROR',
 		'scan.import'                => 'ERROR',
 

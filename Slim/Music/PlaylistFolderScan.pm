@@ -23,7 +23,7 @@ use base qw(Class::Data::Inheritable);
 use Slim::Music::Import;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
 
 {
 
@@ -81,17 +81,12 @@ sub startScan {
 
 	main::INFOLOG && $log->info("Starting playlist folder scan");
 	
-	# Bug 6710, clear all 'ssp' playlists before rescanning
-	main::INFOLOG && $log->info("Clearing internal ssp playlists");
-	Slim::Schema->rs('Playlist')->clearInternalPlaylists();
-
-	Slim::Utils::Scanner->scanDirectory({
-		'url'       => $dir,
-		'recursive' => $recurse,
-		'types'     => 'list',
-		'scanName'  => 'playlist',
-		'progress'  => 1,
-	});
+	Slim::Utils::Scanner::Local->rescan( $dir, {
+		types    => 'list',
+		scanName => 'playlist',
+		no_async => 1,
+		progress => 1,
+	} );
 
 	$class->doneScanning;
 }

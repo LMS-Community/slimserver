@@ -80,7 +80,13 @@ sub doTagMapping {
 	
 	# Flag if we have embedded cover art
 	if ( exists $tags->{'COVER ART (FRONT)'} ) {
-		$tags->{HAS_COVER} = 1;
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			$tags->{COVER_LENGTH} = $tags->{'COVER ART (FRONT)'};
+		}
+		else {
+			$tags->{ARTWORK} = delete $tags->{'COVER ART (FRONT)'};
+			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		}
 	}
 }
 
@@ -93,6 +99,9 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
+	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_tags($file);
 	

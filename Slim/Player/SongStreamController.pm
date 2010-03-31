@@ -9,7 +9,6 @@ package Slim::Player::SongStreamController;
 
 use bytes;
 use strict;
-use warnings;
 
 use Slim::Utils::Log;
 

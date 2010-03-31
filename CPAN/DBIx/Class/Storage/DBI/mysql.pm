@@ -33,6 +33,21 @@ sub _dbh_last_insert_id {
   $dbh->{mysql_insertid};
 }
 
+# we need to figure out what mysql version we're running
+sub sql_maker {
+  my $self = shift;
+
+  unless ($self->_sql_maker) {
+    my $maker = $self->next::method (@_);
+
+    # mysql 3 does not understand a bare JOIN
+    my $mysql_ver = $self->_get_dbh->get_info(18);
+    $maker->{_default_jointype} = 'INNER' if $mysql_ver =~ /^3/;
+  }
+
+  return $self->_sql_maker;
+}
+
 sub sqlt_type {
   return 'MySQL';
 }

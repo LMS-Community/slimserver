@@ -160,6 +160,8 @@ sub init {
 		'language'              => \&defaultLanguage,
 		'audiodir'              => \&defaultAudioDir,
 		'playlistdir'           => \&defaultPlaylistDir,
+		'autorescan'            => 1,
+		'autorescan_stat_interval' => 10,
 		# Server Settings - Behaviour
 		'displaytexttimeout'    => 1,
 		'checkVersion'          => 1,
@@ -169,9 +171,9 @@ sub init {
 		'noGenreFilter'         => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
-		'splitList'             => '',
+		'splitList'             => ';',
 		'browseagelimit'        => 100,
-		'groupdiscs'            => 0,
+		'groupdiscs'            => 1,
 		'persistPlaylists'      => 1,
 		'playtrackalbum'        => 1,
 		'reshuffleOnRepeat'     => 0,
@@ -179,7 +181,7 @@ sub init {
 		'composerInArtists'     => 0,
 		'conductorInArtists'    => 0,
 		'bandInArtists'         => 0,
-		'variousArtistAutoIdentification' => 0,
+		'variousArtistAutoIdentification' => 1,
 		'useBandAsAlbumArtist'  => 0,
 		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
@@ -671,6 +673,9 @@ sub init {
 
 	# initialise any new prefs
 	$prefs->init(\%defaults);
+	
+	# perform OS-specific post-init steps
+	Slim::Utils::OSDetect::getOS->postInitPrefs($prefs);
 
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
@@ -749,7 +754,9 @@ sub init {
 		$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 	}
 	
-	$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
+		$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+	}
 
 	$prefs->setChange( 
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
@@ -763,12 +770,14 @@ sub init {
 		Slim::Control::Request::executeRequest(undef, ['wipecache'])
 	}, 'ignoredarticles');
 
-	$prefs->setChange( sub {
-		Slim::Buttons::BrowseTree->init;
-		require Slim::Music::MusicFolderScan;
-		Slim::Music::MusicFolderScan->init;
-		Slim::Control::Request::executeRequest(undef, ['wipecache']);
-	}, 'audiodir');
+	if ( !main::SCANNER ) {
+		$prefs->setChange( sub {
+			Slim::Buttons::BrowseTree->init;
+			require Slim::Music::MusicFolderScan;
+			Slim::Music::MusicFolderScan->init;
+			Slim::Control::Request::executeRequest(undef, ['wipecache']);
+		}, 'audiodir');
+	}
 
 	$prefs->setChange( sub {
 		require Slim::Music::PlaylistFolderScan;
@@ -861,7 +870,6 @@ sub init {
 	# Rebuild Jive cache if VA setting is changed
 	$prefs->setChange( sub {
 		Slim::Control::Queries::wipeCaches();
-		Slim::Control::Jive::buildCaches();
 	}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
 
 	# Reset IR state if preference change

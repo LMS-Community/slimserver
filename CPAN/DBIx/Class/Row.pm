@@ -4,9 +4,9 @@ use strict;
 use warnings;
 
 use base qw/DBIx::Class/;
-use Carp::Clan qw/^DBIx::Class/;
+
+use DBIx::Class::Exception;
 use Scalar::Util ();
-use Scope::Guard;
 
 ###
 ### Internal method
@@ -168,7 +168,8 @@ sub new {
     foreach my $key (keys %$attrs) {
       if (ref $attrs->{$key}) {
         ## Can we extract this lot to use with update(_or .. ) ?
-        confess "Can't do multi-create without result source" unless $source;
+        $new->throw_exception("Can't do multi-create without result source")
+          unless $source;
         my $info = $source->relationship_info($key);
         if ($info && $info->{attrs}{accessor}
           && $info->{attrs}{accessor} eq 'single')
@@ -1330,10 +1331,12 @@ See L<DBIx::Class::Schema/throw_exception>.
 
 sub throw_exception {
   my $self=shift;
+
   if (ref $self && ref $self->result_source && $self->result_source->schema) {
-    $self->result_source->schema->throw_exception(@_);
-  } else {
-    croak(@_);
+    $self->result_source->schema->throw_exception(@_)
+  }
+  else {
+    DBIx::Class::Exception->throw(@_);
   }
 }
 

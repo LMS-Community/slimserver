@@ -50,7 +50,7 @@ sub setTracks {
 	
 	# Bug 12091: Only use a txn_do() if autocommit is on
 	eval {
-		if (Slim::Schema->storage->dbh->{'AutoCommit'}) {
+		if (Slim::Schema->dbh->{'AutoCommit'}) {
 			Slim::Schema->txn_do($work);
 		} else {
 			&$work;
@@ -76,7 +76,7 @@ sub appendTracks {
 		# Bug 13185, I don't think we can do this with DBIC due to inflate_result
 		my $max = 0;
 		
-		my $dbh = Slim::Schema->storage->dbh;
+		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached( qq{
 			SELECT MAX(position) FROM playlist_track WHERE playlist = ? LIMIT 1
 		} );
@@ -91,7 +91,7 @@ sub appendTracks {
 	
 	# Bug 12091: Only use a txn_do() if autocommit is on
 	eval {
-		if (Slim::Schema->storage->dbh->{'AutoCommit'}) {
+		if (Slim::Schema->dbh->{'AutoCommit'}) {
 			Slim::Schema->txn_do($work);
 		} else {
 			&$work;

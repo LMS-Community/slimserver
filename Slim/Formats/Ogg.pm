@@ -108,9 +108,29 @@ sub getTag {
 
 	$tags->{OFFSET} = 0; # the header is an important part of the file. don't skip it
 	
+	# Read cover art if available
 	if ( $tags->{ALLPICTURES} ) {
-		# Flag if we have embedded cover art
-		$tags->{HAS_COVER} = 1;
+		my $pic;
+		
+		my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
+			@{ $tags->{ALLPICTURES} };
+
+		if ( my @frontcover = grep ( $_->{picture_type} == 3, @allpics ) ) {
+			# in case of many type 3 (front cover) just use the first one
+			$pic = $frontcover[0]->{image_data};
+		}
+		else {
+			# fall back to use lowest type image found
+			$pic = $allpics[0]->{image_data};
+		}
+		
+		# In 'no artwork' mode, ARTWORK is the length
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			$tags->{COVER_LENGTH} = $pic;
+		}
+		else {
+			$tags->{COVER_LENGTH} = length($pic);
+		}
 	}
 
 	return $tags;
@@ -125,6 +145,9 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
+	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan_tags($file);
 	my $tags = $s->{tags};
@@ -163,6 +186,8 @@ sub scanBitrate {
 	
 	my $isDebug = $log->is_debug;
 	
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
+	
 	seek $fh, 0, 0;
 	
 	my $s = Audio::Scan->scan_fh( ogg => $fh );
@@ -197,11 +222,10 @@ sub scanBitrate {
 
 		# Save artwork if found
 		# Read cover art if available
-		# Standard picture block, try to find the front cover first
 		if ( $tags->{ALLPICTURES} ) {
 			my $coverart;
 			my $mime;
-			
+
 			my @allpics = sort { $a->{picture_type} <=> $b->{picture_type} } 
 				@{ $tags->{ALLPICTURES} };
 
@@ -215,8 +239,8 @@ sub scanBitrate {
 				$coverart = $allpics[0]->{image_data};
 				$mime     = $allpics[0]->{mime_type};
 			}
-
-			$track->cover(1);
+			
+			$track->cover( length($coverart) );
 			$track->update;
 
 			my $data = {
@@ -224,8 +248,8 @@ sub scanBitrate {
 				type  => $tags->{COVERARTMIME} || $mime,
 			};
 
-			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
+			my $cache = Slim::Utils::Cache->new();
+			$cache->set( "cover_$url", $data, 86400 * 7 );
 
 			main::DEBUGLOG && $isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}

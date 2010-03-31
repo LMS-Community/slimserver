@@ -5,6 +5,7 @@ package Slim::Schema::Track;
 use strict;
 use base 'Slim::Schema::DBI';
 
+use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
 
 use Slim::Schema::ResultSet::Track;
@@ -20,11 +21,11 @@ my $prefs = preferences('server');
 my $log = logger('database.info');
 
 our @allColumns = (qw(
-	id url content_type title titlesort titlesearch album primary_artist tracknum
+	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
 	timestamp filesize disc remote audio audio_size audio_offset year secs
-	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
+	cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
-	musicbrainz_id lossless lyrics replay_gain replay_peak extid
+	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual
 ));
 
 if ( main::SLIM_SERVICE ) {
@@ -49,7 +50,10 @@ if ( main::SLIM_SERVICE ) {
 
 	$class->table('tracks');
 
-	$class->add_columns(@allColumns);
+	$class->add_columns(
+		@allColumns,
+		coverid => { accessor => '_coverid' }, # use a wrapper method for coverid
+	);
 
 	$class->set_primary_key('id');
 	
@@ -73,11 +77,13 @@ if ( main::SLIM_SERVICE ) {
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
 	
-	$class->might_have(
-		persistent => 'Slim::Schema::TrackPersistent',
-		{ 'foreign.url' => 'self.url' },
-		{ cascade_delete => 0 },
-	);
+	if (main::STATISTICS) {
+		$class->might_have(
+			persistent => 'Slim::Schema::TrackPersistent',
+			{ 'foreign.urlmd5' => 'self.urlmd5' },
+			{ cascade_delete => 0 },
+		);
+	}
 
 	# Simple caching as artistsWithAttributes is expensive.
 	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
@@ -278,8 +284,12 @@ sub duration {
 sub modificationTime {
 	my $self = shift;
 
-	my $time = $self->timestamp;
+	return $self->buildModificationTime( $self->timestamp );
+}
 
+sub buildModificationTime {
+	my ( $self, $time ) = @_;
+	
 	return join(', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time));
 }
 
@@ -289,15 +299,21 @@ sub prettyBitRate {
 
 	my $bitrate  = $self->bitrate;
 	my $vbrScale = $self->vbr_scale;
+	
+	return $self->buildPrettyBitRate($bitrate, $vbrScale);
+}
 
+sub buildPrettyBitRate {
+	my ( $self, $bitrate, $vbrScale ) = @_;
+	
 	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 
 	if ($bitrate) {
-		return int ($bitrate/1000) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
+		return sprintf( "%d", ($bitrate / 1000) ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
 	}
 
 	return 0;
-}
+}	
 
 sub prettySampleRate {
 	my $self = shift;
@@ -347,7 +363,7 @@ sub coverArt {
 	
 	# Remote files may have embedded cover art
 	if ( $cover && $self->remote ) {
-		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+		my $cache = Slim::Utils::Cache->new();
 		my $image = $cache->get( 'cover_' . $self->url );
 		if ( $image ) {
 			$body        = $image->{image};
@@ -376,12 +392,12 @@ sub coverArt {
 
 	main::INFOLOG && $log->info("Retrieving artwork for: $url");
 
-	# A value of 1 indicate the cover art is embedded in the file's
+	# A numeric cover value indicates the cover art is embedded in the file's
 	# metdata tags.
 	# 
 	# Otherwise we'll have a path to a file on disk.
 
-	if ($cover && $cover ne 1) {
+	if ($cover && $cover !~ /^\d+$/) {
 
 		($body, $contentType) = Slim::Music::Artwork->getImageContentAndType($cover);
 
@@ -394,7 +410,7 @@ sub coverArt {
 	}
 
 	# If we didn't already store an artwork value - look harder.
-	if (!$cover || $cover eq 1 || !$body) {
+	if (!$cover || $cover =~ /^\d+$/ || !$body) {
 
 		# readCoverArt calls into the Format classes, which can throw an error. 
 		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self) };
@@ -403,15 +419,15 @@ sub coverArt {
 			$log->error("Error: Exception when trying to call readCoverArt() for [$url] : [$@]");
 		}
 	}
-
 	
 	if (defined $path) {
-
-		$self->cover($path);
-		$self->update;
+		if ( $self->cover ne $path ) {
+			$self->cover($path);
+			$self->update;
+		}
 
 		# kick this back up to the webserver so we can set last-modified
-		$mtime = $path ne 1 ? (stat($path))[9] : (stat($self->path))[9];
+		$mtime = $path !~ /^\d+$/ ? (stat($path))[9] : (stat($self->path))[9];
 	}
 	
 	else {
@@ -532,18 +548,20 @@ sub displayAsHTML {
 sub retrievePersistent {
 	my $self = shift;
 
-	my $trackPersistent;
+	if (main::STATISTICS) {
+		my $trackPersistent;
+		
+		# Match on musicbrainz_id first
+		if ( $self->musicbrainz_id ) {
+			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
+		}
+		else {
+			$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { urlmd5 => $self->urlmd5 } );
+		}
 	
-	# Match on musicbrainz_id first
-	if ( $self->musicbrainz_id ) {
-		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
-	}
-	else {
-		$trackPersistent = Slim::Schema->rs('TrackPersistent')->single( { url => $self->url } );
-	}
-
-	if ( blessed($trackPersistent) ) {
-		return $trackPersistent;
+		if ( blessed($trackPersistent) ) {
+			return $trackPersistent;
+		}
 	}
 
 	return undef;
@@ -554,13 +572,15 @@ sub retrievePersistent {
 sub playcount { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( playcount => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( playcount => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->playcount;
 		}
-		
-		return $persistent->playcount;
 	}
 	
 	return;
@@ -569,13 +589,15 @@ sub playcount {
 sub rating { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( rating => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( rating => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->rating;
 		}
-		
-		return $persistent->rating;
 	}
 	
 	return;
@@ -584,18 +606,79 @@ sub rating {
 sub lastplayed { 
 	my ( $self, $val ) = @_;
 	
-	if ( my $persistent = $self->retrievePersistent ) {
-		if ( defined $val ) {
-			$persistent->set( lastplayed => $val );
-			$persistent->update;
+	if (main::STATISTICS) {
+		if ( my $persistent = $self->retrievePersistent ) {
+			if ( defined $val ) {
+				$persistent->set( lastplayed => $val );
+				$persistent->update;
+			}
+			
+			return $persistent->lastplayed;
 		}
-		
-		return $persistent->lastplayed;
 	}
 	
 	return;
 }
 
-1;
+#
+# New DB field, coverid, stores truncated md5(url, mtime, size)
+#  mtime/size are either from cover.jpg or the audio file with embedded art
+#
+# Cache headers can be set to never expire with this new scheme
+#
+# Old-style URLs will still be supported but are discouraged:
+# /music/<track id>/cover_<dimensions/mode/extension>
+# This will require a database lookup, and should spit out deprecated warnings
+#
+sub coverid {
+	my $self = shift;
+	
+	my $val = $self->_coverid(@_);
+	
+	# Don't initialize on any update, even $track->coverid(undef)
+	return $val if @_;
+	
+	if ( !defined $val ) {
+		# Initialize coverid value
+		if ( $self->cover ) {
+			my $coverid = $self->generateCoverId( {
+				cover => $self->cover,
+				url   => $self->url,
+				mtime => $self->timestamp,
+				size  => $self->filesize,
+			} );
+			
+			$self->_coverid($coverid);
+			$self->update;
+		}
+	}
+	
+	return $val;
+}
 
-__END__
+# Cover ID can be generated without a Track object, so this is a class method
+sub generateCoverId {
+	my ( $classOrSelf, $args ) = @_;
+	
+	my $coverid;
+ 	my $mtime;
+	my $size;
+		
+	if ( $args->{cover} =~ /^\d+$/ ) {
+		# Cache is based on mtime/size of the file containing embedded art
+		$mtime = $args->{mtime};
+		$size  = $args->{size};
+	}
+	elsif ( -e $args->{cover} ) {
+		# Cache is based on mtime/size of artwork file
+		($size, $mtime) = (stat _)[7, 9];
+	}
+
+	if ( $mtime && $size ) {
+		$coverid = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+	}
+	
+	return $coverid;
+}
+
+1;

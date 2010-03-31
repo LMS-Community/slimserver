@@ -68,7 +68,7 @@ Initializes the entire MySQL subsystem - creates the config file, and starts the
 
 sub init {
 	my $class = shift;
-
+	
 	# Reset dbsource pref if it's not for MySQL
 	if ( $prefs->get('dbsource') !~ /^dbi:mysql/ ) {
 		$prefs->set( dbsource => default_dbsource() );
@@ -328,22 +328,20 @@ sub on_connect_do {
 	return [ 'SET NAMES UTF8' ];
 }
 
-sub changeCollation {
-	my ( $class, $dbh, $collation ) = @_;
+sub collate {
+	my $class = shift;
 	
-	if ( $class->sqlVersion($dbh) > 4.0 ) {
-		my @tables = qw(
-			albums
-			contributors
-			genres
-			tracks
-		);
-
-		for my $table ( @tables ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug( "Changing $table to $collation" );
-			eval { $dbh->do( "ALTER TABLE $table CONVERT TO CHARACTER SET utf8 COLLATE $collation" ) };
-		}
-	}
+	my $lang = $prefs->get('language');
+	
+	my $collation
+		= $lang eq 'CS' ? 'utf8_czech_ci'
+		: $lang eq 'SV' ? 'utf8_swedish_ci'
+		: $lang eq 'DA' ? 'utf8_danish_ci'
+		: $lang eq 'ES' ? 'utf8_spanish_ci'
+		: $lang eq 'PL' ? 'utf8_polish_ci'
+		: 'utf8_general_ci';
+	
+	return "COLLATE $collation ";
 }
 
 =head2 randomFunction()
@@ -613,8 +611,32 @@ sub sqlVersionLong {
 
 	my ($mysqlVersion) = $dbh->selectrow_array( 'SELECT version()' );
 
-	return $mysqlVersion || 0;
-}	
+	return 'MySQL ' . $mysqlVersion || 0;
+}
+
+=head2 canCacheDBHandle( )
+
+Is it permitted to cache the DB handle for the period that the DB is open?
+
+=cut
+
+sub canCacheDBHandle {
+	return 0;
+}
+
+sub checkDataSource { }
+
+sub beforeScan { }
+
+sub afterScan { }
+
+sub exitScan { }
+
+sub updateProgress { }
+
+sub postConnect { }
+
+sub pragma { }
 
 =head2 cleanup()
 
@@ -625,7 +647,7 @@ Shut down MySQL when Squeezebox Server is shut down.
 sub cleanup {
 	my $class = shift;
 
-	if ($class->pidFile) {
+	if ($class->processObj) {
 		$class->stopServer;
 	}
 }

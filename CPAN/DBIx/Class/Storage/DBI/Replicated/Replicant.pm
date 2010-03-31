@@ -3,7 +3,7 @@ package DBIx::Class::Storage::DBI::Replicated::Replicant;
 use Moose::Role;
 requires qw/_query_start/;
 with 'DBIx::Class::Storage::DBI::Replicated::WithDSN';
-use MooseX::Types::Moose 'Bool';
+use MooseX::Types::Moose qw/Bool Str/;
 
 use namespace::clean -except => 'meta';
 
@@ -51,6 +51,9 @@ has 'active' => (
   required=>1,
   default=>1,
 );
+
+has dsn => (is => 'rw', isa => Str);
+has id  => (is => 'rw', isa => Str);
 
 =head1 METHODS
 

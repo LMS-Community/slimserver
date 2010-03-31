@@ -340,7 +340,7 @@ function _init() {
 		getStatus : function(){
 			if (this.player) {
 				this.playerRequest({
-					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoKLN" ],
+					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLN" ],
 					failure: this._updateStatus,
 					success: this._updateStatus,
 					scope: this
@@ -686,15 +686,15 @@ SqueezeJS.SonginfoParser = {
 				coverart = result.playlist_loop[0].artwork_url;
 			}
 			else {
-				coverart = this.defaultCoverart(result.playlist_loop[0].id, width);
+				coverart = this.defaultCoverart(result.playlist_loop[0].coverid, width);
 			}
 		}
 
 		return coverart;
 	},
 	
-	defaultCoverart : function(id, width) {
-		return '/music/' + (id || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
+	defaultCoverart : function(coverid, width) {
+		return '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
 	}
 };
 

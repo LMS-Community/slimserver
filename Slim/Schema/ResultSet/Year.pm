@@ -41,7 +41,8 @@ sub descendAlbum {
 
 	# Handle sorts from the web UI.
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	$sort ||= $sqlHelperClass->prepend0("album.titlesort") . ", album.disc";
+	my $collate = $sqlHelperClass->collate();
+	$sort ||= $sqlHelperClass->prepend0("album.titlesort") . " $collate, album.disc";
 
 	my @join;
 

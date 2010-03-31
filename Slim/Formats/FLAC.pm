@@ -152,7 +152,8 @@ sub getTag {
 	$tags->{AUDIO} = 0;
 
 	# set a resonable "title" for the bare file
-	$tags->{TITLE} = $tags->{ALBUM};
+	# First choice: TITLE value from the cue sheet (stored in $tracks->{ALBUM}), or ALBUM tag
+	$tags->{TITLE} = $tracks->{1}->{ALBUM} || $tags->{ALBUM};
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($file) . "#$anchor";
 	my $fileage = (stat($file))[9];
@@ -163,8 +164,12 @@ sub getTag {
 
 		my $track = $tracks->{$key};
 
-		# Allow FLACs with embedded cue sheets to have a date.
+		# Allow FLACs with embedded cue sheets to have a date and size
 		$track->{AGE} = $fileage;
+		$track->{FS}  = $tags->{SIZE};
+		
+		# Mark track as virtual
+		$track->{VIRTUAL} = 1;
 
 		next unless exists $track->{URI};
 
@@ -199,6 +204,9 @@ Return any cover art embedded in the FLAC file's metadata.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
+
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
 	
 	my $s = Audio::Scan->scan($file);
 	
@@ -300,7 +308,15 @@ sub _addArtworkTags {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{ARTWORK};
+	if ( $tags->{ARTWORK} ) {
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			# In 'no artwork' mode, ARTWORK is the length
+			$tags->{COVER_LENGTH} = $tags->{ARTWORK};
+		}
+		else {
+			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		}
+	}
 
 	return $tags;
 }

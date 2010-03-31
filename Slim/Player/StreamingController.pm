@@ -9,7 +9,6 @@ package Slim::Player::StreamingController;
 
 use bytes;
 use strict;
-use warnings;
 
 use Scalar::Util qw(blessed weaken);
 use Slim::Utils::Log;
@@ -19,6 +18,7 @@ use Slim::Player::Song;
 use Slim::Player::ReplayGain;
 
 my $log = logger('player.source');
+my $synclog = logger('player.sync');
 
 my $prefs = preferences('server');
 
@@ -478,8 +478,6 @@ use constant PLAYPOINT_RECENT_THRESHOLD => 3.0;
 sub _CheckSync {
 	my ($self, $event, $params) = @_;
 	
-	my $log = logger('player.sync');
-	
 	# check to see if resynchronization is necessary
 
 	return unless scalar @{ $self->{'players'} } > 1;
@@ -496,7 +494,7 @@ sub _CheckSync {
 			&& $prefs->client($player)->get('maintainSync') );
 		my $playPoint = $player->playPoint();
 		if ( !defined $playPoint ) {
-			if ( main::DEBUGLOG && $log->is_debug ) {$log->debug( $player->id() . " bailing as no playPoint" );}
+			if ( main::DEBUGLOG && $synclog->is_debug ) {$synclog->debug( $player->id() . " bailing as no playPoint" );}
 			return;
 		}
 		if ( $playPoint->[0] > $recentThreshold ) {
@@ -508,8 +506,8 @@ sub _CheckSync {
 			);
 		}
 		else {
-			if ( main::DEBUGLOG && $log->is_debug ) {
-				$log->debug( $player->id() . " bailing as playPoint too old: "
+			if ( main::DEBUGLOG && $synclog->is_debug ) {
+				$synclog->debug( $player->id() . " bailing as playPoint too old: "
 					  . ( $now - $playPoint->[0] ) . "s" );
 			}
 			return;
@@ -517,14 +515,14 @@ sub _CheckSync {
 	}
 	return unless scalar(@playerPlayPoints);
 
-	if ( main::DEBUGLOG && $log->is_debug ) {
+	if ( main::DEBUGLOG && $synclog->is_debug ) {
 		my $first = $playerPlayPoints[0][1];
 		my $str = sprintf( "%s: %.3f", $playerPlayPoints[0][0]->id(), $first );
 		foreach ( @playerPlayPoints[ 1 .. $#playerPlayPoints ] ) {
 			$str .= sprintf( ", %s: %+5d",
 				$_->[0]->id(), ( $_->[1] - $first ) * 1000 );
 		}
-		$log->debug("playPoints: $str");
+		$synclog->debug("playPoints: $str");
 	}
 
 	# sort the play-points by decreasing apparent-start-time
@@ -557,8 +555,8 @@ sub _CheckSync {
 			# || $delta < $referenceMinAdjust
 		  );
 		if ( $i < $reference ) {
-			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("%s resync: skipAhead %dms",	$player->id(), $delta * 1000));
+			if ( main::INFOLOG && $synclog->is_info ) {
+				$synclog->info(sprintf("%s resync: skipAhead %dms",	$player->id(), $delta * 1000));
 			}
 			$player->skipAhead($delta);
 			$self->{'nextCheckSyncTime'} += 1;
@@ -567,8 +565,8 @@ sub _CheckSync {
 
  			# bug 6864: SB1s cannot reliably pause without skipping frames, so we don't try
 			if ( $player->can('pauseForInterval') ) {
-				if ( main::INFOLOG && $log->is_info ) {
-					$log->info(sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000));
+				if ( main::INFOLOG && $synclog->is_info ) {
+					$synclog->info(sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000));
 				}
 				$player->pauseForInterval($delta);
 				$self->{'nextCheckSyncTime'} += $delta;
@@ -1713,10 +1711,8 @@ sub localEndOfStream {
 sub sync {
 	my ($self, $player) = @_;
 
-	my $log = logger('player.sync');
-		
 	if ($player->controller() == $self) {
-		main::INFOLOG && $log->info($self->{'masterId'} . " sync-group already contains: " . $player->id());
+		main::INFOLOG && $synclog->info($self->{'masterId'} . " sync-group already contains: " . $player->id());
 		if ($player->power && $player->connected) {
 			$self->playerActive($player);
 		}
@@ -1730,13 +1726,13 @@ sub sync {
 		_stopClient($player);
 	}
 
-	main::INFOLOG && $log->info($self->{'masterId'} . " adding to syncGroup: " . $player->id()); # bt();
+	main::INFOLOG && $synclog->info($self->{'masterId'} . " adding to syncGroup: " . $player->id()); # bt();
 	
 	assert (@{$player->controller()->{'allPlayers'}} == 1); # can only add un-synced player
 	
 	foreach (@{$self->{'allPlayers'}}) {
 		if ($_ == $player) {
-			$log->error($player->id . " already in this syncgroup but has different controller");
+			$synclog->error($player->id . " already in this syncgroup but has different controller");
 			return;
 		}
 	}
@@ -1769,16 +1765,16 @@ sub sync {
 			_JumpToTime($self, undef, {newtime => playingSongElapsed($self), restartIfNoSeek => 1});
 		}
 	} else {
-		if (main::INFOLOG && $log->is_info) {
-			$log->info(sprintf("New player inactive: power=%d, connected=%d", $player->power, $player->connected));
+		if (main::INFOLOG && $synclog->is_info) {
+			$synclog->info(sprintf("New player inactive: power=%d, connected=%d", $player->power, $player->connected));
 		}
 	}
 	
 	Slim::Control::Request::notifyFromArray($self->master(), ['playlist', 'sync']);
 	
-	if (main::INFOLOG && $log->is_info) {
-		$log->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
-		$log->info($self->{'masterId'} . " active players are: " . join(',', map { $_->id } @{$self->{'players'}}));
+	if (main::INFOLOG && $synclog->is_info) {
+		$synclog->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
+		$synclog->info($self->{'masterId'} . " active players are: " . join(',', map { $_->id } @{$self->{'players'}}));
 	}
 }
 
@@ -1789,9 +1785,7 @@ sub unsync {
 	
 	if (@{$self->{'allPlayers'}} < 2) {return;}
 	
-	my $log = logger('player.sync');
-	
-	main::INFOLOG && $log->info($self->{'masterId'} . " unsync " . $player->id()); # bt();
+	main::INFOLOG && $synclog->info($self->{'masterId'} . " unsync " . $player->id()); # bt();
 		
 	# remove player from the lists
 	my $i = 0;
@@ -1842,9 +1836,9 @@ sub unsync {
 	
 	Slim::Control::Request::notifyFromArray($self->master(), ['playlist', 'sync']);
 	
-	if (main::INFOLOG && $log->is_info) {
-		$log->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
-		$log->info($self->{'masterId'} . " active players are: " . join(',', map { $_->id } @{$self->{'players'}}));
+	if (main::INFOLOG && $synclog->is_info) {
+		$synclog->info($self->{'masterId'} . " sync group now has: " . join(',', map { $_->id } @{$self->{'allPlayers'}}));
+		$synclog->info($self->{'masterId'} . " active players are: " . join(',', map { $_->id } @{$self->{'players'}}));
 	}
 }
 

@@ -52,6 +52,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    rescan          <|playlists|?>
  N    rescanprogress  <tagged parameters>
  N    wipecache
+ N    pragma          <pragma>
  
  N    albums          <startindex>                <numitems>                  <tagged parameters>
  N    artists         <startindex>                <numitems>                  <tagged parameters>
@@ -594,6 +595,7 @@ sub init {
 	addDispatch(['playlists',      'tracks',         '_index',     '_quantity'],                       [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
 	addDispatch(['power',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
 	addDispatch(['power',          '_newvalue',      '_noplay'],                                       [1, 0, 1, \&Slim::Control::Commands::powerCommand]);
+	addDispatch(['pragma',         '_pragma'],                                                         [0, 0, 0, \&Slim::Control::Commands::pragmaCommand]);
 	addDispatch(['pref',           '_prefname',      '?'],                                             [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
 	addDispatch(['pref',           'validate',       '_prefname',  '_newvalue'],                       [0, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
 	addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 1, \&Slim::Control::Commands::prefCommand]);
@@ -1593,38 +1595,27 @@ sub addResultLoop {
 	my $key = shift;
 	my $val = shift;
 
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
+	if ($loop !~ /_loop$/) {
+		$loop .= '_loop';
 	}
 	
-	if (!defined ${$self->{'_results'}}{$loop}) {
-		${$self->{'_results'}}{$loop} = [];
-	}
+	my $array = $self->{_results}->{$loop} ||= [];
 	
-	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
+	if ( !defined $array->[$loopidx] ) {
 		my %paramHash;
-		tie %paramHash, 'Tie::IxHash' if $self->{'_useixhash'};
+		tie %paramHash, 'Tie::IxHash' if $self->{_useixhash};
 		
-		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
+		$array->[$loopidx] = \%paramHash;
 	}
 	
-	${${$self->{'_results'}}{$loop}->[$loopidx]}{$key} = $val;
+	$array->[$loopidx]->{$key} = $val;
 }
 
 # same as addResultLoop but checks first the value is defined.
+# optimized for speed
 sub addResultLoopIfValueDefined {
-	my $self = shift;
-	my $loop = shift;
-	my $loopidx = shift;
-	my $key = shift;
-	my $val = shift;
-
-	if (defined $val) {
-		$self->addResultLoop($loop, $loopidx, $key, $val);
+	if ( defined $_[4] ) {
+		goto &addResultLoop;
 	}
 }
 

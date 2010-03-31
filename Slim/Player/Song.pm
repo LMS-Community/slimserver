@@ -9,7 +9,6 @@ package Slim::Player::Song;
 
 use bytes;
 use strict;
-use warnings;
 
 use base qw(Slim::Utils::Accessor);
 
@@ -417,6 +416,11 @@ sub open {
 	} else {
 		require Slim::Player::CapabilitiesHelper;
 		
+		# Set the correct format for WAV/AAC playback
+		if ( exists $streamFormatMap{$format} ) {
+			$format = $streamFormatMap{$format};
+		}
+		
 		# Is format supported by all players?
 		if (!grep {$_ eq $format} Slim::Player::CapabilitiesHelper::supportedFormats($client)) {
 			$error = 'PROBLEM_CONVERT_FILE';
@@ -433,7 +437,7 @@ sub open {
 		
 		$transcoder = {
 			command => '-',
-			streamformat => ($streamFormatMap{$format} || $format),
+			streamformat => $format,
 			streamMode => 'I',
 			rateLimit => 0,
 		};
@@ -617,7 +621,7 @@ sub open {
 			$sock->sysseek($position, SEEK_SET) if $position;
 		}
 
-		if ( !main::SLIM_SERVICE ) {
+		if ( main::STATISTICS ) {
 			# XXXX - this really needs to happen in the caller!
 			# No database access here. - dsully
 			# keep track of some stats for this track
@@ -906,7 +910,7 @@ sub icon {
 	$icon ||= Slim::Player::ProtocolHandlers->iconForURL($self->track()->url, $client);
 	
 	if (!$icon && $self->currentTrack()->isa('Slim::Schema::Track')) {
-		$icon = '/music/' . $self->currentTrack()->id . '/cover.jpg'
+		$icon = '/music/' . $self->currentTrack()->coverid . '/cover.jpg'
 	}
 	
 	return $icon;

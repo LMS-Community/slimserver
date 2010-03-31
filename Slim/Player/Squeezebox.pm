@@ -11,7 +11,6 @@ package Slim::Player::Squeezebox;
 # GNU General Public License for more details.
 
 use strict;
-use warnings;
 
 use base qw(Slim::Player::Player);
 

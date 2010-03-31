@@ -169,28 +169,12 @@ sub launchScan {
 		push @scanArgs, '--debug', $debugArgs;
 	}
 	
+	$class->setIsScanning(1);
+	
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
 	
-	# Clear progress info so scan progress displays are blank
-	$class->clearProgressInfo;
-
-	my $scanType = 'SETUP_STANDARDRESCAN';
-
-	if ($args->{"wipe"}) {
-		$scanType = 'SETUP_WIPEDB';
-
-	} elsif ($args->{"playlists"}) {
-		$scanType = 'SETUP_PLAYLISTRESCAN';
-	}
-
-	# Update a DB flag, so the server knows we're scanning.
-	$class->setIsScanning($scanType);
-
-	# Set a timer to check on the scanning process.
-	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
-
 	return 1;
 }
 
@@ -202,64 +186,19 @@ Stop the external (forked) scanning process.
 
 sub abortScan {
 	my $class = shift || __PACKAGE__;
-
-	if ($class->stillScanning) {
-
-		$class->scanningProcess->die();
-		
-		$class->checkScanningStatus();
-
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
-			$p->info('SCAN_ABORTED');
-			$p->update;
-		}
-	}
-}
-
-=head2 checkScanningStatus( )
-
-If we're still scanning, start a timer process to notify any subscribers of a
-'rescan done' status.
-
-=cut
-
-sub checkScanningStatus {
-	my $class = shift || __PACKAGE__;
-
-	Slim::Utils::Timers::killTimers(undef, \&checkScanningStatus);
-
-	# Run again if we're still scanning.
-	if ($class->stillScanning) {
-
-		Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
-
-	} else {
-
-		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
-		
-			$log->warn("scanner is not running, but no progress data available - scanner crashed");
 	
-			$p->finish( $p->finish || time() );
-			$p->active(0);
-			$p->update;
-
-			my $failure = Slim::Utils::Progress->new({
-				type => 'importer', 
-				name => 'failure',
-			});
-			
-			$failure->final;
-			
-			# we store the failed step's token to be used in UIs
-			$failure->update(uc($p->name || ''));
-		}
-
-		# Clear caches, like the vaObj, etc after scanning has been finished.
-		Slim::Schema->wipeCaches;
-
-		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
+	if ( $class->stillScanning ) {
+		# Tell scanner to shut down the next time
+		# we get a progress update
+		$ABORT = 1;
+		
+		$class->setIsScanning(0);
 	}
 }
+
+sub hasAborted { $ABORT }
+
+sub setAborted { shift; $ABORT = shift; }
 
 =head2 lastScanTime()
 
@@ -313,12 +252,6 @@ sub setIsScanning {
 
 	# May not have a DB to store this in
 	return if !Slim::Schema::hasLibrary();
-	
-	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
-
-	if ($autoCommit) {
-		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
-	}
 
 	my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
 		'name' => 'isScanning'
@@ -330,8 +263,6 @@ sub setIsScanning {
 	if ($@) {
 		logError("Failed to update isScanning: [$@]");
 	}
-
-	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 =head2 clearProgressInfo( )
@@ -425,21 +356,6 @@ sub runScanPostProcessing {
 	# May not have a DB to store this in
 	return 1 if !Slim::Schema::hasLibrary();
 	
-	# Auto-identify VA/Compilation albums
-	$log->error("Starting merge of various artists albums");
-
-	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
-
-	Slim::Schema->mergeVariousArtistsAlbums;
-
-	# Post-process artwork, so we can use title formats, and use a generic
-	# image to speed up artwork loading.
-	$log->error("Starting artwork scan");
-
-	$importsRunning{'findArtwork'} = Time::HiRes::time();
-
-	Slim::Music::Artwork->findArtwork;
-	
 	# Run any artwork importers
 	for my $importer (keys %Importers) {		
 		# Skip non-artwork scanners
@@ -450,34 +366,25 @@ sub runScanPostProcessing {
 		$class->runArtworkImporter($importer);
 	}
 	
-	# Remove and dangling references.
-	if ($class->cleanupDatabase) {
-
-		# Don't re-enter
-		$class->cleanupDatabase(0);
-
-		$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
-		
-		$log->error("Starting cleanup of stale track entries");
-
-		Slim::Schema->cleanupStaleTrackEntries;
-	}
+	# Pre-cache resized artwork
+	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
+	Slim::Music::Artwork->precacheAllArtwork;
 	
-	# Cleanup stale year entries
-	Slim::Schema::Year->cleanupStaleYears;
+	if (main::STATISTICS) {
+		# Look for and import persistent data migrated from MySQL
+		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
+		my $json = catfile( $dir, 'tracks_persistent.json' );
+		if ( -e $json ) {
+			$log->error('Migrating persistent track information from MySQL');
+			
+			if ( Slim::Schema::TrackPersistent->import_json($json) ) {
+				unlink $json;
+			}
+		}
+	}
 
 	# Reset
 	$class->useFolderImporter(0);
-
-	# change collation in case user changed language
-	my $collationRS = Slim::Schema->single('MetaInformation', { 'name' => 'setCollation' });
-
-	if ( blessed($collationRS) && $collationRS->value ) {
-		Slim::Schema->changeCollation( $collationRS->value );
-
-		$collationRS->value(0);
-		$collationRS->update;
-	}
 		
 	# Always run an optimization pass at the end of our scan.
 	$log->error("Starting Database optimization.");
@@ -723,19 +630,14 @@ sub stillScanning {
 	return 0 if main::SLIM_SERVICE;
 	return 0 if !Slim::Schema::hasLibrary();
 	
-	my $imports  = scalar keys %importsRunning;
-
-	# Check and see if there is a flag in the database, and the process is alive.
-	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
-	my $scanning = blessed($scanRS) ? $scanRS->value : 0;
-
-	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
-
-	if ($running && $scanning) {
-		return $scanning;
-	}
-
-	return 0;
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		"SELECT value FROM metainformation WHERE name = 'isScanning'"
+	);
+	$sth->execute;
+	my ($value) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $value || 0;
 }
 
 sub _checkLibraryStatus {
@@ -752,6 +654,7 @@ sub _checkLibraryStatus {
 	# Tell everyone who needs to know
 	Slim::Control::Request::notifyFromArray(undef, ['library', 'changed', Slim::Schema::hasLibrary() ? 1 : 0]);
 }
+
 
 =head1 SEE ALSO
 

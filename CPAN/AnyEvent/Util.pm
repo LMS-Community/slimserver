@@ -236,6 +236,7 @@ my @fork_queue;
 sub _fork_schedule;
 sub _fork_schedule {
    require Storable;
+   require POSIX;
 
    while ($forks < $MAX_FORKS) {
       my $job = shift @fork_queue
@@ -313,7 +314,7 @@ sub _fork_schedule {
          if (AnyEvent::WIN32) {
             shutdown $w, 1; # signal parent to please kill us
             sleep 10; # give parent a chance to clean up
-            sysread $w, my $buf, 1; # this *might* detect the parent exiting in some cases.
+            sysread $w, (my $buf), 1; # this *might* detect the parent exiting in some cases.
          }
          POSIX::_exit (0);
          exit 1;

@@ -1,4 +1,4 @@
-#!/opt/sdi/bin/perl -w
+#!/opt/sdi/bin/perl
 
 # Squeezebox Server Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
 
 require 5.008_001;
 use strict;
-use warnings;
 
 use Config;
 use Data::Dump qw(dump);
@@ -34,6 +33,7 @@ use constant PERFMON       => 0;
 use constant DEBUGLOG      => ( grep { /--no(?:debug|info)log/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG       => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC => 0;
+use constant STATISTICS    => 0;
 use constant WEBUI         => 0;
 use constant ISWINDOWS     => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC         => ( $^O =~ /darwin/i ) ? 1 : 0;

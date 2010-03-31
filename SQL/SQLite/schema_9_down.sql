@@ -1,0 +1,2 @@
+-- SQLite cannot drop columns
+-- ALTER TABLE tracks DROP primary_artist;

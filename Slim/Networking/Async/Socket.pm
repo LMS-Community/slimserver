@@ -10,7 +10,6 @@ package Slim::Networking::Async::Socket;
 # A base class for all sockets
 
 use strict;
-use warnings;
 
 # store data within the socket
 sub set {

@@ -9,9 +9,8 @@ use base qw/
 /;
 use mro 'c3';
 
-sub _rebless {
+sub _init {
   my $self = shift;
-
   $self->disable_sth_caching(1);
 }
 

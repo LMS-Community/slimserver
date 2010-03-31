@@ -6,13 +6,11 @@ use strict;
 use base 'Slim::Schema::DBI';
 
 use Scalar::Util qw(blessed);
-use Tie::Cache::LRU;
 
 use Slim::Schema::ResultSet::Contributor;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
-
-use constant CACHE_SIZE => 50;
 
 our %contributorToRoleMap = (
 	'ARTIST'      => 1,
@@ -23,8 +21,7 @@ our %contributorToRoleMap = (
 	'TRACKARTIST' => 6,
 );
 
-# Small LRU cache of id => contributor object mapping, to improve scanner performance
-tie my %CACHE, 'Tie::Cache::LRU', CACHE_SIZE;
+our %roleToContributorMap = reverse %contributorToRoleMap;
 
 {
 	my $class = __PACKAGE__;
@@ -45,10 +42,12 @@ tie my %CACHE, 'Tie::Cache::LRU', CACHE_SIZE;
 
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	$class->many_to_many('tracks', 'contributorTracks' => 'contributor', undef, {
 		'distinct' => 1,
-		'order_by' => [qw(disc tracknum titlesort)],
+		'order_by' => ['disc', 'tracknum', "titlesort $collate"], # XXX won't change if language changes
 	});
 
 	$class->many_to_many('albums', 'contributorAlbums' => 'album', undef, { 'distinct' => 1 });
@@ -73,10 +72,11 @@ sub totalContributorRoles {
 }
 
 sub typeToRole {
-	my $class = shift;
-	my $type  = shift;
+	return $contributorToRoleMap{$_[1]} || $_[1];
+}
 
-	return $contributorToRoleMap{$type} || $type;
+sub roleToType {
+	return $roleToContributorMap{$_[1]};
 }
 
 sub displayAsHTML {
@@ -114,9 +114,6 @@ sub add {
 	# Pass args by name
 	my $artist     = $args->{'artist'} || return;
 	my $brainzID   = $args->{'brainzID'};
-	my $role       = $args->{'role'}   || return;
-	my $track      = $args->{'track'}  || return;
-	my $artistSort = $args->{'sortBy'} || $artist;
 
 	my @contributors = ();
 
@@ -129,10 +126,10 @@ sub add {
 	#
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
-	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
+	my @sortedList   = $args->{'sortBy'} ? Slim::Music::Info::splitTag($args->{'sortBy'}) : @artistList;
 	
 	# Using native DBI here to improve performance during scanning
-	my $dbh = Slim::Schema->storage->dbh;
+	my $dbh = Slim::Schema->dbh;
 
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 
@@ -164,45 +161,36 @@ sub add {
 			}
 		}
 		
-		$sth = $dbh->prepare_cached( qq{
-			REPLACE INTO contributor_track
-			(role, contributor, track)
-			VALUES
-			(?, ?, ?)
-		} );
-		$sth->execute( $role, $id, (ref $track ? $track->id : $track) );
-		
-		# We need to return a DBIC object, which is really slow, use a cache
-		# to help out a bit
-		if ( !exists $CACHE{$id} ) {
-			$CACHE{$id} = Slim::Schema->rs('Contributor')->find($id);
-		}
-		push @contributors, $CACHE{$id};
+		push @contributors, $id;
 	}
 
 	return wantarray ? @contributors : $contributors[0];
 }
 
-# Rescan this contributor, this simply means to make sure at least 1 track
+# Rescan list of contributors, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
-# XXX native DBI
 sub rescan {
-	my $self = shift;
+	my ( $class, @ids ) = @_;
 	
-	my $count = Slim::Schema->rs('ContributorTrack')->search( contributor => $self->id )->count;
+	my $log = logger('scan.scanner');
 	
-	if ( !$count ) {
-		delete $CACHE{ $self->id };
-		
-		$self->delete;
-	}
-}
+	my $dbh = Slim::Schema->dbh;
+	
+	for my $id ( @ids ) {
+		my $sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(*) FROM contributor_track WHERE contributor = ?
+		} );
+		$sth->execute($id);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
+	
+		if ( !$count ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Removing unused contributor: $id");
 
-sub wipeCaches {
-	my $class = shift;
-	
-	tied(%CACHE)->max_size(0);
-	tied(%CACHE)->max_size(CACHE_SIZE);
+			# This will cascade within the database to contributor_album and contributor_track
+			$dbh->do( "DELETE FROM contributors WHERE id = ?", undef, $id );
+		}
+	}
 }
 
 1;

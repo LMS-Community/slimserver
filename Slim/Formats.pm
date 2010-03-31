@@ -134,7 +134,7 @@ sub readTags {
 	my $class = shift;
 	my $file  = shift || return {};
 
-	my $isDebug = $log->is_debug;
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my ($filepath, $tags, $anchor);
 
@@ -240,7 +240,7 @@ sub readTags {
 	# Only set if we couldn't read it from the file.
 	$tags->{'CONTENT_TYPE'} ||= $type;
 
-	$isDebug && $log->debug("Report for $file:");
+	main::DEBUGLOG && $isDebug && $log->debug("Report for $file:");
 	
 	# XXX: can Audio::Scan make these regexes unnecessary?
 	
@@ -249,22 +249,23 @@ sub readTags {
 	# Bug: 3998 - Strip UTF-16 BOMs from multiple genres (or other values).
 	while (my ($tag, $value) = each %{$tags}) {
 
-		if (defined $tags->{$tag}) {
+		if (defined $value) {
 
 			use bytes;
 
-			if (ref($tags->{$tag}) eq 'ARRAY') {
+			if (ref($value) eq 'ARRAY') {
 
-				for (my $i = 0; $i < scalar @{$tags->{$tag}}; $i++) {
+				for (my $i = 0; $i < scalar @{$value}; $i++) {
 
-					$tags->{$tag}->[$i] =~ s/$Slim::Utils::Unicode::bomRE//;
-					$tags->{$tag}->[$i] =~ s/\000$//;
+					$value->[$i] =~ s/$Slim::Utils::Unicode::bomRE//;
+					$value->[$i] =~ s/\000$//;
 				}
 
 			} else {
 
-				$tags->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
-				$tags->{$tag} =~ s/\000$//;
+				$value =~ s/$Slim::Utils::Unicode::bomRE//;
+				$value =~ s/\000$//;
+				$tags->{$tag} = $value;
 			}
 			
 			# Bug 14587, sanity check all MusicBrainz ID tags to ensure it is a UUID and nothing more
@@ -272,10 +273,10 @@ sub readTags {
 
 				# DiscID has a different format:
 				# http://wiki.musicbrainz.org/Disc_ID_Calculation
-				if ( $tag eq 'MUSICBRAINZ_DISCID' && $tags->{$tag} =~ /^[0-9a-z_\.-]{28}$/i ) {
-					$tags->{$tag} = lc($1);
-				} elsif ( $tags->{$tag} =~ /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
-					$tags->{$tag} = lc($1);
+				if ( $tag eq 'MUSICBRAINZ_DISCID' && $value =~ /^[0-9a-z_\.-]{28}$/i ) {
+					$value = lc($1);
+				} elsif ( $value =~ /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i ) {
+					$value = lc($1);
 				}
 				else {
 					if ( main::DEBUGLOG && $log->is_debug ) {
@@ -284,10 +285,11 @@ sub readTags {
 					delete $tags->{$tag};
 					next;
 				}
+				$tags->{$tag} = $value;
 			}
 		}
 		
-		$isDebug && $value && $log->debug(". $tag : $value");
+		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
 	}
 
 	return $tags;

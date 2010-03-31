@@ -106,6 +106,9 @@ sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
 	
+	# Enable artwork in Audio::Scan
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 0;
+	
 	my $s = Audio::Scan->scan_tags($file);
 	
 	return $s->{tags}->{COVR};
@@ -140,7 +143,15 @@ sub _doTagMapping {
 	}
 	
 	# Flag if we have embedded cover art
-	$tags->{HAS_COVER} = 1 if $tags->{COVR};
+	if ( $tags->{ARTWORK} ) {
+		if ( $ENV{AUDIO_SCAN_NO_ARTWORK} ) {
+			# In 'no artwork' mode, ARTWORK is the length
+			$tags->{COVER_LENGTH} = $tags->{ARTWORK};
+		}
+		else {
+			$tags->{COVER_LENGTH} = length( $tags->{ARTWORK} );
+		}
+	}
 }
 
 sub getInitialAudioBlock {

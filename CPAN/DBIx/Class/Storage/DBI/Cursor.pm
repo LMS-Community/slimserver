@@ -5,6 +5,10 @@ use warnings;
 
 use base qw/DBIx::Class::Cursor/;
 
+__PACKAGE__->mk_group_accessors('simple' =>
+    qw/sth/
+);
+
 =head1 NAME
 
 DBIx::Class::Storage::DBI::Cursor - Object representing a query cursor on a
@@ -73,24 +77,24 @@ sub _dbh_next {
       && $self->{attrs}{rows}
         && $self->{pos} >= $self->{attrs}{rows}
   ) {
-    $self->{sth}->finish if $self->{sth}->{Active};
-    delete $self->{sth};
+    $self->sth->finish if $self->sth->{Active};
+    $self->sth(undef);
     $self->{done} = 1;
   }
   return if $self->{done};
-  unless ($self->{sth}) {
-    $self->{sth} = ($storage->_select(@{$self->{args}}))[1];
+  unless ($self->sth) {
+    $self->sth(($storage->_select(@{$self->{args}}))[1]);
     if ($self->{attrs}{software_limit}) {
       if (my $offset = $self->{attrs}{offset}) {
-        $self->{sth}->fetch for 1 .. $offset;
+        $self->sth->fetch for 1 .. $offset;
       }
     }
   }
-  my @row = $self->{sth}->fetchrow_array;
+  my @row = $self->sth->fetchrow_array;
   if (@row) {
     $self->{pos}++;
   } else {
-    delete $self->{sth};
+    $self->sth(undef);
     $self->{done} = 1;
   }
   return @row;
@@ -120,8 +124,8 @@ sub _dbh_all {
   my ($storage, $dbh, $self) = @_;
 
   $self->_check_dbh_gen;
-  $self->{sth}->finish if $self->{sth}->{Active};
-  delete $self->{sth};
+  $self->sth->finish if $self->sth && $self->sth->{Active};
+  $self->sth(undef);
   my ($rv, $sth) = $storage->_select(@{$self->{args}});
   return @{$sth->fetchall_arrayref};
 }
@@ -146,17 +150,17 @@ sub reset {
   my ($self) = @_;
 
   # No need to care about failures here
-  eval { $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active} };
+  eval { $self->sth->finish if $self->sth && $self->sth->{Active} };
   $self->_soft_reset;
+  return undef;
 }
 
 sub _soft_reset {
   my ($self) = @_;
 
-  delete $self->{sth};
+  $self->sth(undef);
   delete $self->{done};
   $self->{pos} = 0;
-  return $self;
 }
 
 sub _check_dbh_gen {
@@ -173,7 +177,7 @@ sub DESTROY {
 
   # None of the reasons this would die matter if we're in DESTROY anyways
   local $@;
-  eval { $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active} };
+  eval { $self->sth->finish if $self->sth && $self->sth->{Active} };
 }
 
 1;

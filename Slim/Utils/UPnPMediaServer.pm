@@ -8,7 +8,6 @@ package Slim::Utils::UPnPMediaServer;
 # UPnP interface between the Control Point and player/web/plugins
 
 use strict;
-use warnings;
 
 use HTML::Entities;
 use Tie::LLHash;
@@ -348,8 +347,8 @@ sub gotContainer {
 							
 							# Cache artwork if any
 							if ( $props->{albumArtURI} ) {
-								my $artcache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-								$artcache->set( "remote_image_$url" => $props->{albumArtURI}, '1 day' );
+								my $cache = Slim::Utils::Cache->new();
+								$cache->set( "remote_image_$url" => $props->{albumArtURI}, '1 day' );
 							}
 
 							$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );

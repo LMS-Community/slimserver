@@ -270,23 +270,20 @@ PERL_VERSION
 	SV	Perl-version
 	ZH_CN	Perl版本
 
-MYSQL_VERSION
-	CS	Verze MySQL
-	DA	MySQL-version
-	DE	MySQL-Version
-	EN	MySQL Version
-	ES	Versión de MySQL
-	FI	MySQL-versio
-	FR	Version de MySQL
-	HE	גרסת MySQL‏
-	IT	Versione MySQL
-	NL	MySQL-versie
-	NO	MySQL-versjon
-	PL	Wersja MySQL
-	PT	Versão do MySQL
-	RU	Версия MySQL
-	SV	MySQL-version
-	ZH_CN	MySQLr版本
+DATABASE_VERSION
+	CS	Verze databáze
+	DA	Databaseversion
+	DE	Datenbankversion
+	EN	Database Version
+	ES	Versión de base de datos
+	FI	Tietokantaversio
+	FR	Version de la base de données
+	IT	Versione database
+	NL	Databaseversie
+	NO	Databaseversjon
+	PL	Wersja bazy danych
+	RU	Версия базы данных
+	SV	Databasversion
 
 PLAYER_VERSION
 	CS	Verze firmwaru přehrávače
@@ -6475,6 +6472,36 @@ SETUP_AUTO_RESCAN_DISABLE
 	RU	Отключено, выполните поиск новой музыки вручную
 	SV	Inaktiverad. Sök manuellt efter ny musik
 
+SETUP_AUTO_RESCAN_STAT_INTERVAL
+	CS	Interval detekce sdílení sítě
+	DA	Tjek netværksmapper
+	DE	Netzwerkfreigabe – Erkennungsintervall
+	EN	Network share detection interval
+	ES	Intervalo de detección de red compartida
+	FI	Jaetun verkkoresurssin tunnistusväli
+	FR	Intervalle de détection d'un partage de réseau
+	IT	Intervallo di rilevamento condivisione rete
+	NL	Interval voor networkshare-detectie
+	NO	Intervall for oppdagelse av delte nettverkselementer
+	PL	Interwał wykrywania udziału sieciowego
+	RU	Интервал между попытками найти общий сетевой ресурс
+	SV	Identifieringsintervall för nätverksresurs
+
+SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
+	CS	Aby mohly být zachyceny změny u vzdálených částí sítě nebo u některých operačních systémů bez domácí podpory detekce změn, musí být soubory v pravidelných intervalech kontrolovány. Zvolte interval této kontroly, v minutách. Továrně nastavená hodnota je 10 minut.
+	DA	Nogle operativsystemer har ikke en indbygget funktion til at registrere ændringer i delte netværksmapper. Derfor skal disses tjekkes med jævne mellemrum for at se om noget er ændret. Du skal angive med hvor mange minutters mellemrum de skal tjekkes. Standardværdien er 10 minutter.
+	DE	Um Änderungen auf Remote-Netzwerkfreigaben oder Betriebssystemen ohne Unterstützung von systemeigener Änderungserkennung zu erkennen, müssen die Dateienin regelmäßigen Abständen auf Änderungen abgefragt werden. Wählen Sie das für diese Überprüfung zu verwendende Intervall in Minuten. Der Standardwert ist 10 Minuten.
+	EN	To detect changes on remote network shares or on some operating systems with no native change detection support, the files must be polled for changes at regular intervals. Select the interval to use for this check, in minutes. The default value is 10 minutes.
+	ES	Para detectar los cambios en las redes compartidas remotas o en los sistemas operativos sin detección de cambios nativa, es necesario buscar cambios en los archivos a intervalos regulares. Seleccione el intervalo con que desea realizar esta comprobación (en minutos). El valor predeterminado es 10 minutos.
+	FI	Jotta jaettuihin verkkoresursseihin tai joihinkin käyttöjärjestelmiin tehdyt muutokset voitaisiin havaita ilman alkuperäistä muutoksentunnistustukea, tiedostoista pitää kysellä muutoksia säännöllisin aikavälein. Valitse tarkistuksessa käytetty aikaväli minuutteina. Oletusarvo on 10 minuuttia.
+	FR	Pour détecter et être informé des changements effectués sur des partages de réseaux à distance ou sur des systèmes d'exploitation qui ne bénéficient pas d'assistance de détection de changement, vous devez interroger les fichiers à des intervalles réguliers. Choisissez un intervalle à utiliser pour effectuer ce contrôle, en minutes. La valeur par défaut est de dix minutes.
+	IT	Per rilevare le modifiche sulle condivisioni di reti remote o su sistemi operativi senza alcun supporto nativo per il rilevamento delle modifiche, è necessario che il polling dei file venga eseguito a intervalli regolari. Selezionare l'intervallo da utilizzare per tale verifica, in minuti. Il valore predefinito è di 10 minuti.
+	NL	Voor detectie van wijzigingen op externe networkshares of op sommige besturingssystemen zonder ondersteuning voor detectie van systeemeigen wijzigingen, moeten de bestanden periodiek worden gecontroleerd op wijzigingen. Selecteer de interval voor deze controle in minuten. De standaardwaarde is 10 minuten.
+	NO	Filene må kontrolleres for å se etter endringer med jevne mellomrom, slik at endringer av delte elementer på eksterne nettverk og på systemer som ikke har støtte for oppdagelse av endringer, kan oppdages. Velg hvor lang tid det skal gå mellom hver kontroll (i minutter). Standardverdien er 10 minutter.
+	PL	Aby możliwe było wykrywanie zmian w zdalnych udziałach sieciowych lub w niektórych systemach operacyjnych bez wbudowanej obsługi wykrywania zmian, konieczne jest odpytywanie o zmiany plików w regularnych przedziałach czasu. Wybierz interwał takiego sprawdzania (w minutach). Wartość domyślna to 10 minut.
+	RU	Если нужно отслеживать изменения на удаленных сетевых ресурсах или в операционных системах, в которых не поддерживается функция  обнаружения изменений, следует регулярно опрашивать файлы на наличие изменений. Выберите интервал между опросами (в минутах). Значение по умолчанию — 10 минут.
+	SV	För att upptäcka ändringar i fjärrnätverksresurser eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
+
 RESCANNING
 	CS	Squeezebox Server nyní znovu prohledává vaši hudební knihovnu.
 	DA	Squeezebox Server gennemsøger nu dit musikbibliotek.
@@ -7814,6 +7841,66 @@ SETUP_BROWSEAGELIMIT_DESC
 	PL	Wybierz liczbę najnowszych albumów podczas wyszukiwania nowej muzyki. Wartość domyślna wynosi 100.
 	RU	Выберите число последних альбомов, отображаемых при просмотре новой музыки. По умолчанию — 100
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
+
+SETUP_DBTYPE
+	CS	Databáze
+	DA	Database
+	DE	Datenbank
+	EN	Database
+	ES	Base de datos
+	FI	Tietokanta
+	FR	Base de données
+	IT	Database
+	NL	Database
+	NO	Database
+	PL	Baza danych
+	RU	База данных
+	SV	Databas
+
+SETUP_DBTYPE_DESC
+	CS	Squeezebox Server podporuje SQLite a MySQL Server. SQLite je doporučen pro zabudované systémy systémy s menší pamětí, nabízí také rychlejší provoz scanneru. MySQL může poskytovat lepší výkon při prohledávání knihoven a doporučuje se pro rychlejší systémy s větší pamětí. Změna tohoto nastavení vyžaduje restartování serveru.
+	DA	Squeezebox Server understøtter SQLite og MySQL Server. SQLite anbefales til integrerede systemer og systemer med begrænset hukommelse, og søgning efter musikfiler er desuden hurtigere. MySQL er hurtigere til at søge i musikbiblioteket og anbefales til hurtigere systemer med mere hukommelse. Hvis du ændrer denne indstilling, skal serveren muligvis genstartes.
+	DE	Squeezebox Server unterstützt SQLite und MySQL Server. SQLite wird für eingebettete Systeme sowie für Systeme mit wenig Speicherplatz empfohlen und ermöglicht schnellere Suchvorgänge. MySQL kann eine bessere Durchsuchung der Musiksammlung ermöglichen und wird für schnellere Systeme mit mehr Speicherplatz empfohlen. Wenn Sie diese Einstellung ändern, muss der Server neu gestartet werden.
+	EN	Squeezebox Server supports SQLite and MySQL Server. SQLite is recommended for embedded systems and those with less memory, and also offers faster scanner performance. MySQL may offer better library browsing performance and is recommended for faster systems with more memory. Changing this setting requires a server restart.
+	ES	Squeezebox Server admite SQLite y MySQL Server. Se recomienda usar SQLite para los sistemas incrustados y los sistemas con menos memoria; además esta opción ofrece un mayor rendimiento en los exámenes. MySQL puede ofrecer un mayor rendimiento al examinar la biblioteca y se recomienda usarlo con los sistemas con más memoria. Si cambia esta configuración, deberá reiniciar el servidor.
+	FI	Squeezebox Server tukee SQLite- ja MySQL-palvelimia. SQLite-palvelinta suositellaan upotetuille ja pienimuistisille järjestelmille. Palvelin suoriutuu nopeasti tarkistuksista. MySQL suoriutuu tehokkaammin kirjastojen selauksesta. Tätä palvelinta suositellaan nopeille ja suurimuistisille järjestelmille. Jos asetusta vaihdetaan, palvelin pitää käynnistää uudelleen.
+	FR	Squeezebox Server prend en charge SQLite et MySQL Server. SQLite est recommandé pour les systèmes intégrés et disposant d'une mémoire limitée et offre également un service d'analyse rapide. MySQL est capable de fournir un accès amélioré à votre bibliothèque et est recommandé pour les systèmes plus rapides disposant d'une mémoire plus élevée. La modification de ce paramètre nécessite le redémarrage du serveur.
+	IT	Squeezebox Server supporta SQLite e MySQL Server. SQLite è consigliato per sistemi integrati e per quelli con meno memoria e consente prestazioni di analisi superiori. MySQL è in grado di offrire funzionalità di esplorazione più avanzate nella libreria ed è consigliato per i sistemi più potenti e con più memoria. Per modificare questa impostazione è necessario riavviare il server.
+	NL	Squeezebox Server ondersteunt SQLite- en MySQL-server. SQLite wordt aanbevolen voor ingesloten systemen en systemen met minder geheugen, en het biedt ook snellere scanprestaties. MySQL biedt betere prestaties voor het bladeren door je muziekcollectie en wordt aanbevolen voor snellere systemen met meer geheugen. Wanneer je deze instelling wijzigt, moet je de server opnieuw starten.
+	NO	Squeezebox Server støtter SQLite og MySQL Server. SQLite anbefales for innebygde systemer og systemer med lite minne. Dette alternativet gir også raskere søk. MySQL kan gi bedre lesing av bibliotek, og dette alternativet anbefales for raske systemer med større minne. Du må starte serveren på nytt hvis du endrer denne innstillingen.
+	PL	Program Squeezebox Server obsługuje bazy danych SQLite i MySQL Server. Baza danych SQLite jest zalecana dla systemów osadzonych i z mniejszą ilością pamięci, a także zapewnia lepszą wydajność skanera. Baza danych MySQL może zapewnić lepszą wydajność podczas przeglądania biblioteki i jest zalecana dla szybszych systemów z większą ilością pamięci. Zmiana tego ustawienia wymaga ponownego uruchomienia serwera.
+	RU	Squeezebox Server поддерживает SQLite и MySQL Server. SQLite рекомендуется для внедренных систем и систем с небольшой памятью, эта СУБД обеспечивает более быстрое сканирование. В MySQL обзор библиотек выполняется быстрее, эта СУБД рекомендуется для быстрых систем с большим объемом памяти. После изменения этого параметра необходимо перезапустить сервер.
+	SV	Squeezebox Server stöder SQLite- och MySQL-servrar. SQLite rekommenderas för inbäddade system samt system med litet mindre minne, och erbjuder också snabbare sökprestanda. MySQL kan erbjuda bättre prestanda vid bläddring i bibliotek och rekommenderas för snabbare system med mer minne. Om den här inställningen ändras måste servern startas om.
+
+SETUP_DBTYPE_SQLITE
+	CS	SQLite
+	DA	SQLite
+	DE	SQLite
+	EN	SQLite
+	ES	SQLite
+	FI	SQLite
+	FR	SQLite
+	IT	SQLite
+	NL	SQLite
+	NO	SQLite
+	PL	SQLite
+	RU	SQLite
+	SV	SQLite
+
+SETUP_DBTYPE_MYSQL
+	CS	MySQL Server
+	DA	MySQL Server
+	DE	MySQL Server
+	EN	MySQL Server
+	ES	MySQL Server
+	FI	MySQL-palvelin
+	FR	Serveur MySQL
+	IT	MySQL Server
+	NL	MySQL-server
+	NO	MySQL Server
+	PL	MySQL Server
+	RU	MySQL Server
+	SV	MySQL-server
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -20089,6 +20176,21 @@ DIRECTORY_PROGRESS
 	RU	Сканирование каталога
 	SV	Mappsökning
 
+DISCOVERING_FILES_PROGRESS
+	CS	Hledám soubory
+	DA	Søger efter filer
+	DE	Dateien werden erkannt
+	EN	Discovering files
+	ES	Detectando archivos
+	FI	Etsitään tiedostoja
+	FR	Détection des fichiers
+	IT	Rilevazione file
+	NL	Bestanden detecteren
+	NO	Ser etter filer
+	PL	Wykrywanie plików
+	RU	Обнаружение файлов
+	SV	Letar filer
+
 DIRECTORY_DELETED_PROGRESS
 	CS	Odebrat smazané soubory
 	DA	Fjern slettede filer
@@ -20209,35 +20311,20 @@ MERGEVA_PROGRESS
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
 
-ARTWORK_PROGRESS
-	CS	Hledání obalů alb
-	DA	Søg efter covere
-	DE	Suche Plattenhüllen
-	EN	Artwork Scan
-	ES	Examen de carátula de álbum
-	FI	Kansitaiteen haku
-	FR	Analyse de pochettes
-	IT	Analisi copertine
-	NL	Hoesafbeeldingen scannen
-	NO	Søk etter albumomslag
-	PL	Przeszukiwanie okładek
-	RU	Сканирование обложек
-	SV	Sökning efter albumomslag
-
 PRECACHEARTWORK_PROGRESS
-	CS	Hledání obalů alb
-	DA	Søg efter covere
-	DE	Suche Plattenhüllen
-	EN	Artwork Scan
-	ES	Examen de carátula de álbum
-	FI	Kansitaiteen haku
-	FR	Analyse de pochettes
-	IT	Analisi copertine
-	NL	Hoesafbeeldingen scannen
-	NO	Søk etter albumomslag
-	PL	Przeszukiwanie okładek
-	RU	Сканирование обложек
-	SV	Sökning efter albumomslag
+	CS	Příprava ukládání obalu do mezipaměti
+	DA	Gem coverbilleder i cachelager
+	DE	Plattenhüllen werden zwischengespeichert
+	EN	Pre-caching Artwork
+	ES	Guardando carátula en caché previamente
+	FI	Levykansien tallennus valmiiksi välimuistiin
+	FR	Mise en cache de la pochette
+	IT	Pre-cache copertina
+	NL	Hoesafbeeldingen vooraf in cache opslaan
+	NO	Hurtigbufring av omslag på forhånd
+	PL	Wstępnie buforowanie okładki
+	RU	Предварительное кэширование обложки
+	SV	Cachelagrat albumomslag
 
 CLEANUP1_PROGRESS
 	CS	Čištění databáze č.1
@@ -23160,4 +23247,34 @@ PRESET
 	PL	Zdefiniowane ustawienie #%s
 	RU	Установить #%s
 	SV	Förinställning av #%s
+
+USB
+	CS	Rozhraní USB
+	DA	USB
+	DE	USB
+	EN	USB
+	ES	USB
+	FI	USB
+	FR	USB
+	IT	USB
+	NL	USB
+	NO	Usb-port
+	PL	USB
+	RU	USB
+	SV	USB-port
+
+SD
+	CS	SD karta
+	DA	SD-kort
+	DE	SD-Karte
+	EN	SD Card
+	ES	Tarjeta SD
+	FI	SD-kortti
+	FR	Carte SD
+	IT	Scheda SD
+	NL	SD-kaart
+	NO	SD-kort
+	PL	Karta SD
+	RU	SD-карта
+	SV	SD-kort
 

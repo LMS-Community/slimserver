@@ -49,7 +49,7 @@ use constant BLOCK_LIMIT => 0.01; # how long we are allowed to block the server
 
 =head1 METHODS
 
-=head2 add_task( @task)
+=head2 add_task( @task )
 
  Add a new task to the scheduler. Takes an array for task identifier.  First element is a 
  code reference to the sheduled subroutine.  Subsequent elements are the args required by 
@@ -63,6 +63,21 @@ sub add_task {
 	main::INFOLOG && $log->is_info && $log->info("Adding task: @task");
 
 	push @background_tasks, \@task;
+}
+
+=head2 add_ordered_task( @task )
+
+Same as add_task, but this task will run to completion before any other tasks are executed.
+
+=cut
+
+sub add_ordered_task {
+	my @task = @_;
+	
+	main::INFOLOG && $log->is_info && $log->info("Adding ordered task: @task");
+	
+	# Ordered tasks are stored differently so they can be identified in run_tasks
+	push @background_tasks, [ \@task ];
 }
 
 =head2 remove_task( $taskref, [ @taskargs ])
@@ -83,6 +98,11 @@ sub remove_task {
 	while ($i < scalar (@background_tasks)) {
 
 		my ($subref, @subargs) = @{$background_tasks[$i]};
+		
+		# check for ordered task
+		if ( ref $subref eq 'ARRAY' ) {
+			$subref = $subref->[0];
+		}
 
 		if ($taskref eq $subref) {
 
@@ -109,70 +129,69 @@ sub remove_task {
 =cut
 
 sub run_tasks {
-	return 0 unless @background_tasks;
+	my $task_count = scalar @background_tasks || return 0;
 	
-	# Don't recurse more than 10 times
-	my $count = shift || 1;
-	return 1 if $count > 10;
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
-	my $busy  = 0;
-	my $now   = AnyEvent->now;
+	my $now = AnyEvent->now;
+	my $ordered = 0;
 	
-	# run tasks at least once half second.
-	if (($now - $lastpass) < 0.5) {
-
-		for my $client (Slim::Player::Client::clients()) {
-
-			if (Slim::Player::Source::playmode($client) eq 'play' && 
-			    $client->isPlayer() && 
-			    $client->usage() < 0.5) {
-
-				$busy = 1;
-				last;
-			}
-		}
-	}
-	
-	if (!$busy) {
+	while (1) {
 		my $taskptr = $background_tasks[$curtask];
+		
+		# Check for ordered task
+		if ( ref $taskptr->[0] eq 'ARRAY' ) {
+			$taskptr = $taskptr->[0];
+			$ordered = 1;
+		}
+		
 		my ($subptr, @subargs) = @$taskptr;
 
 		my $cont = eval { &$subptr(@subargs) };
 
+           if ( main::DEBUGLOG && $isDebug ) {
+		    my $subname = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+		    $log->debug("Scheduler ran task: $subname (ordered: $ordered)");
+	    }
+
 		if ($@) {
-			logError("Scheduled task failed: $@");
+			logError("Scheduler task failed: $@");
 		}
 
-		if ($@ || !$cont) {
-
+		if ( $@ || !$cont ) {
 			# the task has finished. Remove it from the list.
 			main::INFOLOG && $log->is_info && $log->info("Task finished: $subptr");
 
-			splice(@background_tasks, $curtask, 1);
-
-		} else {
-
-			$curtask++;
+			splice @background_tasks, $curtask, 1;
+			$task_count--;
+		}
+		else {
+			# Don't cycle through tasks if this one is ordered
+			if ( !$ordered ) {
+				$curtask++;
+			}
 		}
 
 		$lastpass = $now;
 
 		# loop around when we get to the end of the list
-		if ($curtask >= scalar @background_tasks) {
+		if ( $curtask >= $task_count ) {
 			$curtask = 0;
 		}
 
 		main::PERFMON && Slim::Utils::PerfMon->check('scheduler', AnyEvent->time - $now, undef, $subptr);
-	}
 	
-	# Run again if we haven't yet reached the blocking limit
-	# Note $now will remain the same across multiple calls
-	if ( @background_tasks && ( AnyEvent->time - $now < BLOCK_LIMIT ) ) {
-		run_tasks( ++$count );
+		# Break out if we've reached the block limit or have no more tasks
+		# Note $now will remain the same across multiple calls
+		if ( !$task_count || ( AnyEvent->time - $now >= BLOCK_LIMIT ) ) {
+		    main::DEBUGLOG && $isDebug && $log->debug("Scheduler block limit reached (" . (AnyEvent->time - $now) . ")");
+			last;
+		}
+		
 		main::idleStreams();
 	}
 
-	return 1;
+	return $task_count;
 }
 
 1;

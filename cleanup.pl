@@ -40,7 +40,12 @@ use constant RESIZER      => 0;
 use constant DEBUG        => 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant TRANSCODING  => 0;
+use constant PERFMON      => 0;
+use constant DEBUGLOG     => 0;
 use constant INFOLOG      => 0;
+use constant STATISTICS   => 0;
+use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => 0;
 
 # load these later, don't need them right now
@@ -164,6 +169,7 @@ sub getFolderList {
 			label   => 'file cache (artwork, templates etc.)',
 			folders => [
 				File::Spec::Functions::catdir($cacheFolder, 'Artwork'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache'),
 				File::Spec::Functions::catdir($cacheFolder, 'iTunesArtwork'),
 				File::Spec::Functions::catdir($cacheFolder, 'FileCache'),
 				File::Spec::Functions::catdir($cacheFolder, 'fonts.bin'),
