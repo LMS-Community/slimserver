@@ -231,6 +231,7 @@ sub handler {
 			}
 		}
 
+		$paramRef->{'playerid'}    = $client->id;
 		$paramRef->{'playersetup'} = \%playerSetupLinks;
 		$paramRef->{'playername'}  = $client->name();
 		$paramRef->{'needsClient'} = $class->needsClient();
