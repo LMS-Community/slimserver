@@ -88,11 +88,6 @@ sub get_server {
 		$stype = 'test';
 	}
 	
-	# TODO - to be removed before release!
-	if ( $stype eq 'sn' ) {
-		$stype = 'test';
-	}
-
 	return $_Servers->{$stype}
 		|| die "No hostname known for server type '$stype'";
 }
