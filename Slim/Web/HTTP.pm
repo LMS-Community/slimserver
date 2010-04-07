@@ -2218,9 +2218,10 @@ sub tryStreamingLater {
 		# only kill the timer if we were called for the active streaming connection;
 		# otherwise we might kill the timer related to the next connection too.
 		Slim::Utils::Timers::killTimers($client, \&tryStreamingLater);
-		
-		Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 	}
+
+	# Bug 14740 - always call sendStreamingResponse so we ensure the socket gets closed
+	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
 sub forgetClient {
