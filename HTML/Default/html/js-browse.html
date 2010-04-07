@@ -4,7 +4,10 @@ IF debug;
 	INSERT "html/ext/adapter/ext/ext-base.js";
 	INSERT "html/ext/ext-all-debug.js";
 ELSE;
-	INSERT "html/ext/ext-browse.js";
+	INSERT "html/ext/adapter/ext/ext-base.js";
+	INSERT "html/ext/ext-all.js";
+# TODO: re-build optimized version for browse pages
+#	INSERT "html/ext/ext-browse.js";
 END;
 
 INSERT "html/SqueezeJS/Base.js";

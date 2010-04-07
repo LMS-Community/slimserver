@@ -8,7 +8,7 @@ Main = {
 		Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + SqueezeJS.string('loading') + '</div>';
 		SqueezeJS.UI.buttonTemplate = new Ext.Template(
 				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
-				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
+				'<td></td><td><button type="{0}" style="padding:0" class="x-btn-text {2}"></button></td><td></td>',
 				'</tr></tbody></table>');
 		
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider({

@@ -912,10 +912,12 @@ form#advSearchForm.resultsPage {
 
 .btn-collapse-player button {
 	background: transparent url(html/images/btn_player_toggle_col.gif) no-repeat 0 0;
+	height: 18px;
 }
 
 .btn-expand-player button {
 	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
+	height: 18px;
 }
 
 #ctrlCollapse .x-btn-over button,
@@ -1478,7 +1480,8 @@ ul.x-tab-strip-top {
 	font-family: sans-serif;
 }
 
-.x-btn-menu-arrow-wrap .x-btn-center button {
+.x-btn-menu-arrow-wrap .x-btn-center button,
+.x-btn-mc em.x-btn-split {
 	height: 19px;
 	background-image: url(html/images/slim-ext/btn-arrow.gif);
 }
@@ -1488,24 +1491,25 @@ ul.x-tab-strip-top {
 	color: #d1d1d1;
 	font-family: sans-serif;
 	font-weight: bold;
+	border-style: none;
 }
 
-.x-panel-btns-ct .x-btn-focus .x-btn-left,
-.x-btn-left {
+.x-panel-btns-ct .x-btn-focus .x-btn-ml,
+.x-btn-ml {
 	width: 5px;
 	height: 19px;
 	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 0;
 }
 
-.x-panel-btns-ct .x-btn-focus .x-btn-right,
-.x-btn-right {
+.x-panel-btns-ct .x-btn-focus .x-btn-mr,
+.x-btn-mr {
 	width: 5px;
 	height: 19px;
 	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 -19px;
 }
 
-.x-panel-btns-ct .x-btn-focus .x-btn-center,
-.x-btn-center {
+.x-panel-btns-ct .x-btn-focus .x-btn-mc,
+.x-btn-mc {
 	background: url(html/images/slim-ext/btn-generic.png) repeat-x 0 -38px;
 	vertical-align: middle;
 	text-align: center;
@@ -1518,39 +1522,39 @@ ul.x-tab-strip-top {
     width: 5px;
 }
 
-.x-window .x-btn-over .x-btn-left,
-.x-btn-over .x-btn-left,
-.x-btn-menu-active .x-btn-left {
+.x-window .x-btn-over .x-btn-ml,
+.x-btn-over .x-btn-ml,
+.x-btn-menu-active .x-btn-ml {
 	background-position: 0 -57px;
 }
 
-.x-window .x-btn-over .x-btn-right,
-.x-btn-over .x-btn-right, 
-.x-btn-menu-active .x-btn-right {
+.x-window .x-btn-over .x-btn-mr,
+.x-btn-over .x-btn-mr, 
+.x-btn-menu-active .x-btn-mr {
 	background-position: 0 -76px;
 }
 
-.x-window .x-btn-over .x-btn-center,
-.x-btn-over .x-btn-center,
-.x-btn-menu-active .x-btn-center {
+.x-window .x-btn-over .x-btn-mc,
+.x-btn-over .x-btn-mc,
+.x-btn-menu-active .x-btn-mc {
 	background-position: 0 -95px;
 }
 
-.x-window .x-btn-click .x-btn-left,
-.x-btn-click .x-btn-left,
-.x-btn-pressed .x-btn-left {
+.x-window .x-btn-click .x-btn-ml,
+.x-btn-click .x-btn-ml,
+.x-btn-pressed .x-btn-ml {
 	background-position: 0 -114px;
 }
 
-.x-window .x-btn-click .x-btn-right,
-.x-btn-click .x-btn-right,
-.x-btn-pressed .x-btn-right {
+.x-window .x-btn-click .x-btn-mr,
+.x-btn-click .x-btn-mr,
+.x-btn-pressed .x-btn-mr {
 	background-position: 0 -133px;
 }
 
-.x-window .x-btn-click .x-btn-center,
-.x-btn-click .x-btn-center,
-.x-btn-pressed .x-btn-center {
+.x-window .x-btn-click .x-btn-mc,
+.x-btn-click .x-btn-mc,
+.x-btn-pressed .x-btn-mc {
 	background-position: 0 -152px;
 }
 
