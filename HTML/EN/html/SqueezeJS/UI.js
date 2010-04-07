@@ -166,7 +166,7 @@ SqueezeJS.UI = {
 			if (this.el)
 				this.el.child(this.buttonSelector).update(text);
 
-			this.autoWidth();
+//			this.syncSize();
 		},
 
 		setClass: function(newClass) {
