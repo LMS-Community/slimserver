@@ -11,7 +11,9 @@ Main = {
 				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
 				'</tr></tbody></table>');
 		
-		Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+		Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+			expires: new Date(new Date().getTime()+(60*60*24*365*1000))
+		}));
 
 		var leftpanel = {
 			region: 'center',

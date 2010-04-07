@@ -1,6 +1,7 @@
+[%- playerid = playerid || player -%]
 [%- BLOCK pluginLink -%]
 	[% IF enabled && settings.length > 0 %]
-		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;noSettingsList=1">[% 'SETTINGS' | string %]</a>
+		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerid | uri %]&amp;noSettingsList=1">[% 'SETTINGS' | string %]</a>
 	[% END %]
 [%- END -%]
 <?xml version="1.0" encoding="UTF-8"?>
@@ -28,7 +29,6 @@
 			[% PROCESS jsString id='RESTART_NOW' jsId='' %]
 			[% PROCESS jsString id='RESTART_LATER' jsId='' %]
 
-			[% playerid = playerid || player %]
 			// display player list if we're in the player settings
 			[%-
 			pageId = '^' _ page _ '$';
@@ -46,18 +46,19 @@
 								id: "[% playerobj.id %]",
 								name: "[% playerobj.name %]",
 								model: "[% playerobj.model %]",
-								current: "[% playerobj.id %]" == playerid || "[% playerobj.id %]" == player
+								current: [% playerobj.id == playerid ? "true" : "false" %]
 							}[% loop.last ? '' : ',' %]
 						[% END %]
 					]);
 	
 					// remember the last loaded page - to be used when the player tab is selected next time
 					try {
-						parent.SqueezeJS.setCookie('Squeezebox-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
 						parent.player = '[% playerURI %]';
-						parent.playerid = '[% playerURI %]';  
+						parent.playerid = '[% playerid | uri %]';
+						parent.SqueezeJS.setCookie('Squeezebox-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
 					}
 					catch(e) {}
+					playerid = '[% playerid | uri %]';  
 	
 				[% END %]
 

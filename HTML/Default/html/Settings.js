@@ -136,7 +136,7 @@ Settings = {
 		if (typeof page == 'object' && page.url)
 			page = page.url;
 
-		Ext.get('maincontent').dom.src = webroot + page + 'player=' + player + '&playerid=' + playerid;
+		Ext.get('maincontent').dom.src = webroot + page + 'playerid=' + playerid;
 	},
 
 	activate : function(tab) {
@@ -350,7 +350,7 @@ Settings.Page = function(){
 						group: 'playerList',
 						handler: function(ev) {
 							this._confirmPageChange(
-								location.pathname + '?player=' + ev.value + '&playerid=' + ev.value
+								location.pathname + '?playerid=' + ev.value
 							);
 						},
 						scope: this
@@ -391,7 +391,7 @@ Settings.Page = function(){
 						group: 'settingsList',
 						handler: function(ev) {
 							this._confirmPageChange(
-								webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid
+								webroot + ev.value + 'playerid=' + playerid
 							);
 						},
 						scope: this
