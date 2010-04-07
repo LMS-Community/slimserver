@@ -1271,11 +1271,6 @@ div.buttonbarSpacer {
 }
 
 
-/* don't show the checkbox in the tooltip */
-.x-tip-bd input.pluginEnablerCheckbox {
-	display: none;
-}
-
 /* Help screen */
 .helpPage, .helpPage .inner_content { background-color: white; }
 
@@ -1481,7 +1476,9 @@ ul.x-tab-strip-top {
 }
 
 .x-btn-menu-arrow-wrap .x-btn-center button,
-.x-btn-mc em.x-btn-split {
+.x-btn-mc em.x-btn-split,
+.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, 
+.x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
 	height: 19px;
 	background-image: url(html/images/slim-ext/btn-arrow.gif);
 }
@@ -1518,8 +1515,13 @@ ul.x-tab-strip-top {
 	white-space: nowrap;
 }
 
-.x-btn-left i, .x-btn-right i{
+.x-btn-ml i, .x-btn-mr i{
     width: 5px;
+}
+
+.x-btn-tl, .x-btn-tc, .x-btn-tr,
+.x-btn-bl, .x-btn-bc, .x-btn-br {
+	background-image: none;
 }
 
 .x-window .x-btn-over .x-btn-ml,
@@ -1617,13 +1619,6 @@ body.x-body-masked .x-window-plain .x-window-mc,
 	padding: 5px 15px 5px 0;
 }
 
-
-/* tool tips */
-.x-tip .x-tip-top, .x-tip .x-tip-top-left, .x-tip .x-tip-top-right, 
-.x-tip .x-tip-ft, .x-tip .x-tip-ft-left, .x-tip .x-tip-ft-right,
-.x-tip .x-tip-bd-left, .x-tip .x-tip-bd-right{
-	background-image: url(html/images/slim-ext/tip-sprite.gif);
-}
 
 .x-slider-horz .x-slider-thumb {
 	background-image: url(html/images/slim-ext/slider-thumb.png);

@@ -62,7 +62,8 @@ SqueezeJS.UI = {
 			SqueezeJS.UI.Button.superclass.initComponent.call(this);
 
 			// work around an IE7 workaround...
-			if (Ext.isIE7) {
+/* TODO: 3.2 compatibility?
+  			if (Ext.isIE7) {
 				Ext.apply(this, {
 					autoWidth : function(){
 						if(this.el){
@@ -76,7 +77,7 @@ SqueezeJS.UI = {
 					}
 				});
 			}
-
+*/
 			SqueezeJS.Controller.on({
 				'playerstatechange': {
 					fn: this._beforePlayerStateChange,
@@ -166,7 +167,7 @@ SqueezeJS.UI = {
 			if (this.el)
 				this.el.child(this.buttonSelector).update(text);
 
-//			this.syncSize();
+//  TODO: 3.2 compatibility?			this.autoWidth();
 		},
 
 		setClass: function(newClass) {
@@ -199,6 +200,7 @@ SqueezeJS.UI = {
         el.addClass("x-masked");
         el._mask.setDisplayed(true);
 
+        // TODO: test Ext 3.2 compatibility with IE8 too!
         if(Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && el.getStyle('height') == 'auto'){ // ie will not expand full height automatically
             el._mask.setSize(el.dom.clientWidth, el.getHeight());
         }
@@ -313,6 +315,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 		SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
 
+		// TODO: ExtJS 3.2 & IE8
 		// workaround for IE7's inability to overflow unless position:relative is set
 		if (Ext.isIE7) {
 			var parentEl = Ext.get(this.renderTo).parent();
@@ -1893,14 +1896,23 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 });
 
 
-SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
+SqueezeJS.UI.SliderInput = Ext.extend(Ext.slider.SingleSlider, {
 	tpl: new Ext.Template('<span></span>'),
 
 	initComponent : function(){
 		this.input = Ext.get(this.initialConfig.input);
 
-		this.renderTo = this.tpl.insertBefore(this.input, {}, true);	
-
+		this.renderTo = this.tpl.insertBefore(this.input, {}, true);
+		
+		// if no initial value has been configured,
+		// try reading it from our input field
+		if (this.initialConfig.value == null) {
+			this.values = [ isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value) ];
+		}
+		else {
+			this.values = [ parseInt(this.initialConfig.value) ]
+		}
+		
 		SqueezeJS.UI.SliderInput.superclass.initComponent.call(this);
 		
 		this.on({
@@ -1932,11 +1944,6 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 				scope: this
 			}
 		});
-		
-		// if no initial value has been configured,
-		// try reading it from our input field
-		if (this.initialConfig.value == null)
-			this.value = isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value);
 	},
 	
 	inputChangeDelay: new Ext.util.DelayedTask(),

@@ -429,12 +429,12 @@ Settings.Page = function(){
 						max = RegExp.$2;
 						increment = RegExp.$3;
 					}
-
+					
 					new SqueezeJS.UI.SliderInput({
 						width: 200,
-						minValue: min,
-						maxValue: max,
-						increment: increment,
+						minValue: parseInt(min),
+						maxValue: parseInt(max),
+						increment: parseInt(increment),
 				 		input: inputEl,
 				 		cls: 'settingsSlider'
 					});
