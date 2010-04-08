@@ -65,20 +65,12 @@ Browse = {
 				}
 			}
 
-			new Ext.SplitButton({
+			new SqueezeJS.UI.SplitButton({
 				renderTo: 'viewSelect',
 				icon: webroot + 'html/images/albumlist' + viewMode  + '.gif',
 				cls: 'x-btn-icon',
 				menu: menu,
-				handler: function(ev){
-					if(this.menu && !this.menu.isVisible()){
-						this.menu.show(this.el, this.menuAlign);
-					}
-					this.fireEvent('arrowclick', this, ev);
-				},
-				tooltip: SqueezeJS.string('display_options'),
-				arrowTooltip: SqueezeJS.string('display_options'),
-				tooltipType: 'title'
+				arrowTooltip: SqueezeJS.string('display_options')
 			});
 		}
 	},

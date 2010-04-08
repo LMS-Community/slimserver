@@ -374,20 +374,12 @@ Main = {
 						]
 					});
 	
-					new Ext.SplitButton({
+					new SqueezeJS.UI.SplitButton({
 						renderTo: 'btnPlaylistToggleArtwork',
 						icon: webroot + 'html/images/albumlist' + (noCover ? '2' : '0')  + '.gif',
 						cls: 'x-btn-icon',
 						menu: menu,
-						handler: function(ev){
-							if(this.menu && !this.menu.isVisible()){
-								this.menu.show(this.el, this.menuAlign);
-							}
-							this.fireEvent('arrowclick', this, ev);
-						},
-						tooltip: SqueezeJS.string('coverart'),
-						arrowTooltip: SqueezeJS.string('coverart'),
-						tooltipType: 'title'
+						arrowTooltip: SqueezeJS.string('coverart')
 					});
 				}
 	

@@ -183,6 +183,23 @@ SqueezeJS.UI = {
 		}
 	}),
 
+			
+	SplitButton : Ext.extend(Ext.SplitButton, {
+		initComponent : function(){
+			Ext.apply(this, {
+				tooltipType: 'title',
+				handler: function(ev){
+					if(this.menu && !this.menu.isVisible()){
+						this.menu.show(this.el, this.menuAlign);
+					}
+					this.fireEvent('arrowclick', this, ev);
+				}
+			});
+
+			SqueezeJS.UI.SplitButton.superclass.initComponent.call(this);
+		}
+	}),
+
 	progressCursorTimer : new Ext.util.DelayedTask(),
 	
 	setProgressCursor : function(timeout){
@@ -993,15 +1010,13 @@ SqueezeJS.UI.Buttons.Power = Ext.extend(SqueezeJS.UI.Button, {
 	}
 });
 
-SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
+SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(SqueezeJS.UI.SplitButton, {
 	playerList : null,
 
 	initComponent : function(){
 		Ext.apply(this, {
 			menu: new Ext.menu.Menu(),
-			tooltip: SqueezeJS.string('choose_player'),
-			arrowTooltip: SqueezeJS.string('choose_player'),
-			tooltipType: 'title'
+			arrowTooltip: SqueezeJS.string('choose_player')
 		})
 		SqueezeJS.UI.Buttons.PlayerDropdown.superclass.initComponent.call(this);
 
@@ -1019,13 +1034,6 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 				scope: this
 			}
 		});
-	},
-
-	handler : function(ev){
-		if(this.menu && !this.menu.isVisible()){
-			this.menu.show(this.el, this.menuAlign);
-		}
-		this.fireEvent('arrowclick', this, ev);
 	},
 
 	onPlayerlistUpdate : function(response){

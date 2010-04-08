@@ -315,18 +315,10 @@ Settings.Page = function(){
 			if (!Ext.get('playerSelector'))
 				return;
 
-			var playerChooser = new Ext.SplitButton({
+			var playerChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'playerSelector',
-				handler: function(ev){
-					if(this.menu && !this.menu.isVisible()){
-						this.menu.show(this.el, this.menuAlign);
-					}
-					this.fireEvent('arrowclick', this, ev);
-				},
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				tooltip: SqueezeJS.string('choose_player'),
-				arrowTooltip: SqueezeJS.string('choose_player'),
-				tooltipType: 'title'
+				arrowTooltip: SqueezeJS.string('choose_player')
 			});
 
 
@@ -363,18 +355,10 @@ Settings.Page = function(){
 			if (!Ext.get('settingsSelector'))
 				return;
 
-			var settingsChooser = new Ext.SplitButton({
+			var settingsChooser = new SqueezeJS.UI.SplitButton({
 				renderTo: 'settingsSelector',
-				handler: function(ev){
-					if(this.menu && !this.menu.isVisible()){
-						this.menu.show(this.el, this.menuAlign);
-					}
-					this.fireEvent('arrowclick', this, ev);
-				},
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				tooltip: SqueezeJS.string('settings'),
-				arrowTooltip: SqueezeJS.string('settings'),
-				tooltipType: 'title'
+				arrowTooltip: SqueezeJS.string('settings')
 			});
 
 			for (var x=0; x<settingsList.length; x++){

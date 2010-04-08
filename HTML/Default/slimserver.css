@@ -1484,12 +1484,14 @@ ul.x-tab-strip-top {
 }
 
 /* standard buttons */
+.x-btn-click .x-btn-text, .x-btn-menu-active .x-btn-text, .x-btn-pressed .x-btn-text,
 .x-btn-text, .x-btn button {
 	color: #d1d1d1;
 	font-family: sans-serif;
 	font-weight: bold;
 	border-style: none;
 }
+
 
 .x-panel-btns-ct .x-btn-focus .x-btn-ml,
 .x-btn-ml {
