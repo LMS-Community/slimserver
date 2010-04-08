@@ -64,9 +64,10 @@ sub requestString {
 	return $url;
 }
 
-sub handlesStreamHeadersFully {
+sub handlesStreamHeaders {
 	my ($class, $client, $headers) = @_;
 	$client->sendContCommand(0, 0);
+	return 1; # all done
 }
 
 sub parseMetadata {

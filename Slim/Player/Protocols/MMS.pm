@@ -278,11 +278,13 @@ sub handlesStreamHeaders {
 	
 	my $controller = $client->controller()->songStreamController();
 	
-	# let the normal direct-streamng code in Slim::Player::Squeezebox2 handle things
-	return if $controller->isDirect();
+	# let the normal direct-streaming code in Slim::Player::Squeezebox2 handle things
+	return 0 if $controller->isDirect();
 	
 	# tell player to continue and send us metadata
 	$client->sendContCommand(0, 0, metadataGuids($client));
+	
+	return 1;
 }
 
 sub parseDirectHeaders {
