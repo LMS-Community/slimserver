@@ -74,12 +74,6 @@ if ( main::SLIM_SERVICE ) {
 
 sub get_server {
 	my ($class, $stype) = @_;
-
-	# TODO: remove that code soon...
-	$prefs->migrate( 6, sub {
-		$prefs->set( 'use_sn_test' => 0 );
-		1;
-	} );
 	
 	# Use SN test server if hidden test pref is set
 	if ( $stype eq 'sn' && $prefs->get('use_sn_test') ) {
