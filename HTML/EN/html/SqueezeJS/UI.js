@@ -188,6 +188,7 @@ SqueezeJS.UI = {
 		initComponent : function(){
 			Ext.apply(this, {
 				tooltipType: 'title',
+				template: SqueezeJS.UI.splitButtonTemplate || null,
 				handler: function(ev){
 					if(this.menu && !this.menu.isVisible()){
 						this.menu.show(this.el, this.menuAlign);

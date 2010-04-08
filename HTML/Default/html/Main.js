@@ -7,10 +7,19 @@ Main = {
 		// overwrite some default Ext values
 		Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + SqueezeJS.string('loading') + '</div>';
 		SqueezeJS.UI.buttonTemplate = new Ext.Template(
-				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
-				'<td></td><td><button type="{0}" style="padding:0" class="x-btn-text {2}"></button></td><td></td>',
-				'</tr></tbody></table>');
-		
+			'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
+			'<td></td><td><button type="{0}" style="padding:0" class="x-btn-text {2}"></button></td><td></td>',
+			'</tr></tbody></table>'
+		);
+		SqueezeJS.UI.buttonTemplate.compile();
+
+		SqueezeJS.UI.splitButtonTemplate = new Ext.Template(
+			'<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
+			'<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><em class="{2}" unselectable="on"><button type="{0}"></button></em></td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+			'</tbody></table>'
+		);
+		SqueezeJS.UI.splitButtonTemplate.compile();
+
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
 			expires: new Date(new Date().getTime()+(60*60*24*365*1000))
 		}));

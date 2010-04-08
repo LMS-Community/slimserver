@@ -1521,11 +1521,6 @@ ul.x-tab-strip-top {
     width: 5px;
 }
 
-.x-btn-tl, .x-btn-tc, .x-btn-tr,
-.x-btn-bl, .x-btn-bc, .x-btn-br {
-	background-image: none;
-}
-
 .x-window .x-btn-over .x-btn-ml,
 .x-btn-over .x-btn-ml,
 .x-btn-menu-active .x-btn-ml {
