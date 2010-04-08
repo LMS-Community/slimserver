@@ -23,7 +23,7 @@ sub io {
    my $cb = $arg{cb};
 
    EV::io
-      fileno $arg{fh},
+      $arg{fh},
       $arg{poll} eq "r" ? EV::READ : EV::WRITE,
       sub {
 		  my $now = AnyEvent->time;
