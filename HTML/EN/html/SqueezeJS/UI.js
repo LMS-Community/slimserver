@@ -37,170 +37,6 @@ SqueezeJS.UI = {
 		onPlayerStateChange : function(){}
 	}),
 
-	// graphical button, defined in three element sprite for normal, mouseover, pressed
-	Button : Ext.extend(Ext.Button, {
-		power: 0,
-		cmd : null,
-		cmd_id : null,
-		cls : '',
-		config: {},
-	
-		initComponent : function(){
-			this.tooltipType = this.initialConfig.tooltipType || 'title';
-
-			if (this.initialConfig.template)
-				this.template = this.initialConfig.template;
-			else if (SqueezeJS.UI.buttonTemplate)
-				this.template = SqueezeJS.UI.buttonTemplate;
-
-			// if we want a pure graphical button, overwrite text and setText method
-			if (this.noText) {
-				this.text = '';
-				this.setText = function(){};
-			}
-
-			SqueezeJS.UI.Button.superclass.initComponent.call(this);
-
-			// work around an IE7 workaround...
-/* TODO: 3.2 compatibility?
-  			if (Ext.isIE7) {
-				Ext.apply(this, {
-					autoWidth : function(){
-						if(this.el){
-							this.el.setWidth("auto");
-							if(this.minWidth){
-								if(this.el.getWidth() < this.minWidth){
-									this.el.setWidth(this.minWidth);
-								}
-							}
-						}
-					}
-				});
-			}
-*/
-			SqueezeJS.Controller.on({
-				'playerstatechange': {
-					fn: this._beforePlayerStateChange,
-					scope: this
-				},
-				'buttonupdate': {
-					fn: this._beforePlayerStateChange,
-					scope: this
-				}
-			});
-
-
-			this.on({
-				'render': {
-					fn: function() {
-						if (this.minWidth) {
-							var btnEl = this.el.child("button:first");
-							Ext.get(btnEl).setWidth(this.minWidth);
-						}
-					},
-					scope: this
-				}
-			});
-		},
-
-		_beforePlayerStateChange : function(result){
-			this.power = (result.power == null) || result.power; 
-
-			if (this.cmd_id) {
-
-				// update custom handler for stations overwriting default behavior
-				if (result.playlist_loop && result.playlist_loop[0] 
-					&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
-		
-					var btn = result.playlist_loop[0].buttons[this.cmd_id];
-		
-					if (btn.cls)
-						this.setClass(btn.cls);
-					else if (btn.icon)
-						this.setIcon(btn.icon);
-		
-					if (btn.tooltip)
-						this.setTooltip(btn.tooltip);
-	
-					if (this.textOnly && btn.tooltip)
-						this.setText(btn.tooltip);
-	
-					if (btn.command)
-						this.cmd = btn.command;
-				}
-				else {
-					// reset button
-					this.cmd   = '';
-					this.state = -1;
-				}
-			}
-
-			this.onPlayerStateChange(result);
-		},
-
-		onPlayerStateChange : function(result){},
-	
-		setTooltip: function(tooltip){
-			if (this.tooltip == tooltip)
-				return;
-	
-			this.tooltip = tooltip;
-
-			if (this.textOnly)
-				this.setText(this.tooltip);
-			
-			var btnEl = this.el.child("button:first");
-	
-			if(typeof this.tooltip == 'object'){
-				Ext.QuickTips.tips(Ext.apply({
-					target: btnEl.id
-				}, this.tooltip));
-			} 
-			else {
-				btnEl.dom[this.tooltipType] = this.tooltip;
-			}
-		},
-
-		setText : function(text){
-			this.text = text;
-
-			if (this.el)
-				this.el.child(this.buttonSelector).update(text);
-
-//  TODO: 3.2 compatibility?			this.autoWidth();
-		},
-
-		setClass: function(newClass) {
-			this.el.removeClass(this.cls);
-			this.cls = newClass
-			this.el.addClass(this.cls);
-		},
-
-		setIcon: function(newIcon) {
-			var btnEl = this.el.child("button:first");
-			if (btnEl)
-				btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
-		}
-	}),
-
-			
-	SplitButton : Ext.extend(Ext.SplitButton, {
-		initComponent : function(){
-			Ext.apply(this, {
-				tooltipType: 'title',
-				template: SqueezeJS.UI.splitButtonTemplate || null,
-				handler: function(ev){
-					if(this.menu && !this.menu.isVisible()){
-						this.menu.show(this.el, this.menuAlign);
-					}
-					this.fireEvent('arrowclick', this, ev);
-				}
-			});
-
-			SqueezeJS.UI.SplitButton.superclass.initComponent.call(this);
-		}
-	}),
-
 	progressCursorTimer : new Ext.util.DelayedTask(),
 	
 	setProgressCursor : function(timeout){
@@ -263,283 +99,709 @@ SqueezeJS.UI.ScrollPanel = {
 };
 
 
-// specialised TreeLoader to create folder trees
-SqueezeJS.UI.FileTreeLoader = function(filter) {
-	Ext.apply(this, {
-		dataUrl: '/jsonrpc.js',
-		filter: filter
-	});
-	SqueezeJS.UI.FileTreeLoader.superclass.constructor.call(this);	
-};
-
-Ext.extend(SqueezeJS.UI.FileTreeLoader, Ext.tree.TreeLoader, {
-	getParams: function(node){
-		var cliQuery = [ 'readdirectory', 0, 99999 ];
-
-		cliQuery.push("folder:" + node.id);
-
-		if (this.filter)
-			cliQuery.push("filter:" + this.filter);
-
-		return Ext.util.JSON.encode({ 
-			id: 1,
-			method: "slim.request",
-			params: [ "", cliQuery ]
-		});
-	},
-
-	createNode : function(attr){
-		Ext.apply(attr, {
-			id: attr.path,
-			text: attr.name,
-			leaf: (!attr.isfolder > 0),
-			iconCls: (attr.isfolder > 0 ? 'x-tree-node-alwayscollapsed' : '')
-		});
-
-		return SqueezeJS.UI.FileTreeLoader.superclass.createNode.call(this, attr);
-	},
-
-	// we have to extract the result ourselves as IE/Opera can't handle multi-node data roots
-	processResponse : function(response, node, callback){
-		try {
-			var o = eval("(" + response.responseText + ")");
-			o = eval('o.result');
-
-			SqueezeJS.UI.FileTreeLoader.superclass.processResponse.call(
-				this, { responseText: Ext.util.JSON.encode(o.fsitems_loop) }, node, callback);
-		} catch(e){
-			this.handleFailure(response);
-		}
-	}
-});
-
-
-// the FileSelector panel component
-SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
-	initComponent : function(config){
-		Ext.apply(this, config);
-
-		Ext.apply(this, {
-			rootVisible: false,
-			animate: false,
-			pathSeparator: '|',
-			containerScroll: true,
-			loader: new SqueezeJS.UI.FileTreeLoader(this.filter),
-			root: new Ext.tree.AsyncTreeNode({
-				text: 'root',
-				id: '/'
-			})
-		});
-
-		SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
-
-		// TODO: ExtJS 3.2 & IE8
-		// workaround for IE7's inability to overflow unless position:relative is set
-		if (Ext.isIE7) {
-			var parentEl = Ext.get(this.renderTo).parent();
-			parentEl.setStyle('position', 'relative');
-		}
-		
-		this.on({
-			click: this.onClick,
-			collapse: this.onCollapse
-		});
-
-		this.selectMyPath();
-
-		// activate button to add path to the selector box
-		var gotoBtn;
-		if (this.gotoBtn && (gotoBtn = Ext.get(this.gotoBtn))) {
-			new Ext.Button({
-				renderTo: gotoBtn,
-				text: '>',
-				handler: this.showPath,
-				scope: this
-			});
-		}
-	},
-
-	onClick: function(node, e){
-		var input = Ext.get(this.input);
-
-		if (input != null && input.getValue() != null) {
-			input.dom.value = node.id;
-		}
-	},
-
-	// clean up collapsed nodes so we can refresh a view
-	onCollapse: function(node){
-		while(node.firstChild){
-			node.removeChild(node.firstChild);
-		}
-
-		node.childrenRendered = false;
-		node.loaded = false;
-
-		// add dummy node to prevent file icon instead of folder
-		node.appendChild([]);
-	},
-
-	selectMyPath: function(){
-		// select the current setting, if available
-		var input = Ext.get(this.input);
-
-		if (input == null || input.getValue() == null || input.getValue() == '')
-			return;
-
-		var path = input.getValue();
-		var separator = '/';
-		var result;
-
-		if (path.match(/^[a-z]:\\/i))
-			separator = '\\';
-
-		// only open the first level of UNC paths (\\server\share)
-		else if (result = path.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/))
-			path = result[0];
-
-		path = path.split(separator);
-
-		var prev = '';
-		var target = this.pathSeparator + this.root.id;
-
-		// we don't need the root element on *X systems, but on Windows...
-		for (var x=(path[0]=='/' ? 1 : 0); x<path.length; x++) {
-			if (path[x] == '') continue;
-
-			prev += (x==0 ? '' : separator) + path[x];
-			target += this.pathSeparator + prev;
-		}
-
-		this.selectPath(target, null, function(success, selNode){
-			if (!success) {
-				// if that path is a Windows share, try adding it to the tree
-				var result = input.getValue().match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
-				if (result) {
-					var root = this.getRootNode();
-					root.appendChild(new Ext.tree.AsyncTreeNode({
-						id: result[0],
-						text: result[0],
-						iconCls: 'x-tree-node-alwayscollapsed'
-					}));
-					this.selectMyPath();
-				}
+// graphical button, defined in three element sprite for normal, mouseover, pressed
+if (Ext.Button) {
+	
+	SqueezeJS.UI.Button = Ext.extend(Ext.Button, {
+		power: 0,
+		cmd : null,
+		cmd_id : null,
+		cls : '',
+		config: {},
+	
+		initComponent : function(){
+			this.tooltipType = this.initialConfig.tooltipType || 'title';
+	
+			if (this.initialConfig.template)
+				this.template = this.initialConfig.template;
+			else if (SqueezeJS.UI.buttonTemplate)
+				this.template = SqueezeJS.UI.buttonTemplate;
+	
+			// if we want a pure graphical button, overwrite text and setText method
+			if (this.noText) {
+				this.text = '';
+				this.setText = function(){};
 			}
-		}.createDelegate(this));
-	},
-
-	// select path (if available) or try to add it to the tree if it's a network share
-	showPath: function(){
-		var input = Ext.get(this.input);
-		if (input == null || input.getValue() == null)
-			return;
-
-		SqueezeJS.Controller.request({
-			params: ["",
-				[
-					'pref',
-					'validate',
-					'audiodir',
-					input.getValue()
-				]
-			],
-
-			scope: this,
-
-			success: function(response, options){
-				var result = Ext.util.JSON.decode(response.responseText);
-
-				if (result.result.valid == '1')
-					this.selectMyPath();
-
-				else
-					input.highlight('#ff8888');
-
-			}
-		});
-	}
-});
-
-
-SqueezeJS.UI.FilesystemBrowser = {
-	init: function(){
-		var inputEl, btnEl, filter, classes, start;
-
-		var tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.string('browse') + '" onclick="SqueezeJS.UI.FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
-		tpl.compile();
-
-		// try to get the filter expression from the input fields CSS class
-		// selectFolder - only display folders
-		// selectFile   - display any filetype
-		// selectFile_X - only show files of the type X (eg. selectFile_xml -> .xml only)
-		var items = Ext.query('input.selectFolder, input[class*=selectFile]');
-		for(var i = 0; i < items.length; i++) {
-
-			if (inputEl = Ext.get(items[i])) {
-				filter = '';
-
-				if (inputEl.hasClass('selectFolder'))
-					filter = 'foldersonly'
-
-				else {
-					classes = items[i].className.split(' ');
-
-					for (var x=0; x<classes.length; x++) {
-
-						if (classes[x].search(/selectFile_/) > -1) {
-							filter += (filter ? '|' : '') + classes[x].replace(/selectFile_/, '');
+	
+			SqueezeJS.UI.Button.superclass.initComponent.call(this);
+	
+			// work around an IE7 workaround...
+	/* TODO: 3.2 compatibility?
+	  			if (Ext.isIE7) {
+					Ext.apply(this, {
+						autoWidth : function(){
+							if(this.el){
+								this.el.setWidth("auto");
+								if(this.minWidth){
+									if(this.el.getWidth() < this.minWidth){
+										this.el.setWidth(this.minWidth);
+									}
+								}
+							}
 						}
-					}
-					if (filter)
-						filter = "filetype:" + filter;
+					});
 				}
-
-				btnEl = tpl.insertAfter(inputEl, {
-					inputField: inputEl.id,
-					filter: filter
-				});
-			}
-		}
-	},
-
-	show: function(inputField, filter){
-		var filesystemDlg = new Ext.Window({
-			modal: true,
-			collapsible: false,
-			width: 350,
-			height: 400,
-			resizeHandles: 'se',
-			html: '<div id="filesystembrowser"></div>',
-			buttons: [{
-				text: SqueezeJS.string('close'),
-				handler: function(){
-					filesystemDlg.close()
+	*/
+			SqueezeJS.Controller.on({
+				'playerstatechange': {
+					fn: this._beforePlayerStateChange,
+					scope: this
 				},
-				scope: filesystemDlg
-			}],
-			listeners: {
-				resize: this.onResize
+				'buttonupdate': {
+					fn: this._beforePlayerStateChange,
+					scope: this
+				}
+			});
+	
+	
+			this.on({
+				'render': {
+					fn: function() {
+						if (this.minWidth) {
+							var btnEl = this.el.child("button:first");
+							Ext.get(btnEl).setWidth(this.minWidth);
+						}
+					},
+					scope: this
+				}
+			});
+		},
+	
+		_beforePlayerStateChange : function(result){
+			this.power = (result.power == null) || result.power; 
+	
+			if (this.cmd_id) {
+	
+				// update custom handler for stations overwriting default behavior
+				if (result.playlist_loop && result.playlist_loop[0] 
+					&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
+		
+					var btn = result.playlist_loop[0].buttons[this.cmd_id];
+		
+					if (btn.cls)
+						this.setClass(btn.cls);
+					else if (btn.icon)
+						this.setIcon(btn.icon);
+		
+					if (btn.tooltip)
+						this.setTooltip(btn.tooltip);
+	
+					if (this.textOnly && btn.tooltip)
+						this.setText(btn.tooltip);
+	
+					if (btn.command)
+						this.cmd = btn.command;
+				}
+				else {
+					// reset button
+					this.cmd   = '';
+					this.state = -1;
+				}
 			}
-		});
+	
+			this.onPlayerStateChange(result);
+		},
+	
+		onPlayerStateChange : function(result){},
+	
+		setTooltip: function(tooltip){
+			if (this.tooltip == tooltip)
+				return;
+	
+			this.tooltip = tooltip;
+	
+			if (this.textOnly)
+				this.setText(this.tooltip);
+			
+			var btnEl = this.el.child("button:first");
+	
+			if(typeof this.tooltip == 'object'){
+				Ext.QuickTips.tips(Ext.apply({
+					target: btnEl.id
+				}, this.tooltip));
+			} 
+			else {
+				btnEl.dom[this.tooltipType] = this.tooltip;
+			}
+		},
+	
+		setText : function(text){
+			this.text = text;
+	
+			if (this.el)
+				this.el.child(this.buttonSelector).update(text);
+	
+	//  TODO: 3.2 compatibility?			this.autoWidth();
+		},
+	
+		setClass: function(newClass) {
+			this.el.removeClass(this.cls);
+			this.cls = newClass
+			this.el.addClass(this.cls);
+		},
+	
+		setIcon: function(newIcon) {
+			var btnEl = this.el.child("button:first");
+			if (btnEl)
+				btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
+		}
+	});
 
-		filesystemDlg.setTitle(SqueezeJS.string(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
-		filesystemDlg.show();
 
-		new SqueezeJS.UI.FileSelector({
-			renderTo: 'filesystembrowser',
-			input: inputField,
+	// common button and label components, automatically updated on player events
+	SqueezeJS.UI.Buttons.Play = Ext.extend(SqueezeJS.UI.Button, {
+		isPlaying: false,
+	
+		initComponent : function(){
+			this.cls = this.cls || 'btn-play'; 
+			this.tooltip = this.tooltip || SqueezeJS.string('play');
+			this.text = this.text || SqueezeJS.string('play');
+			SqueezeJS.UI.Buttons.Play.superclass.initComponent.call(this);
+		},
+	
+		handler: function(){
+			if (this.isPlaying) {
+				this.updateState(false);
+				SqueezeJS.Controller.playerControl(['pause']);
+			}
+			else {
+				this.updateState(true);
+				SqueezeJS.Controller.playerControl(['play']);
+			}
+		},
+	
+		onPlayerStateChange: function(result){
+			var newState = (result.mode == 'play');
+	
+			if (this.isPlaying != newState) {
+				this.updateState(newState);
+			}
+		},
+	
+		updateState: function(isPlaying){
+			var playEl = Ext.get(Ext.DomQuery.selectNode('table:first', Ext.get(this.initialConfig.renderTo).dom));
+	
+			playEl.removeClass(['btn-play', 'btn-pause']);
+			playEl.addClass(isPlaying ? 'btn-pause' : 'btn-play');
+	
+			this.setTooltip(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
+			this.setText(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
+			this.isPlaying = isPlaying;
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.Rew = Ext.extend(SqueezeJS.UI.Button, {
+		initComponent : function(){
+			this.cls = this.cls || 'btn-previous'; 
+			this.tooltip = this.tooltip || SqueezeJS.string('previous');
+			this.text = this.text || SqueezeJS.string('previous');
+			this.skipCmd = ['button', 'jump_rew'];
+	
+			SqueezeJS.UI.Buttons.Rew.superclass.initComponent.call(this);
+			
+			SqueezeJS.Controller.on({
+				'playerselected': {
+					fn: function(playerobj) {
+						if (playerobj.isplayer)
+							this.skipCmd = ['button', 'jump_rew'];
+						else
+							this.skipCmd = ['playlist', 'index', '-1'];
+					},
+					scope: this
+				}
+			});
+		},
+	
+		handler: function(){
+			if (this.power)
+				SqueezeJS.Controller.playerControl(this.skipCmd);
+		},
+	
+		onPlayerStateChange: function(result){
+			if (result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].buttons) {
+				try { this.setDisabled(!result.playlist_loop[0].buttons.rew) }
+				catch(e){}
+			}
+			else if (this.disabled)
+				this.enable();
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.Fwd = Ext.extend(SqueezeJS.UI.Button, {
+		initComponent : function(){
+			this.cls = this.cls || 'btn-next';
+			this.tooltip = this.tooltip || SqueezeJS.string('next');
+			this.text = this.text || SqueezeJS.string('next');
+			this.skipCmd = ['button', 'jump_fwd'];
+			
+			SqueezeJS.UI.Buttons.Fwd.superclass.initComponent.call(this);
+			
+			SqueezeJS.Controller.on({
+				'playerselected': {
+					fn: function(playerobj) {
+						// http clients don't know IR commands
+						if (playerobj.isplayer)
+							this.skipCmd = ['button', 'jump_fwd'];
+						else
+							this.skipCmd = ['playlist', 'index', '+1'];
+					},
+					scope: this
+				}
+			});
+		},
+	
+		handler: function(){
+			if (this.power)
+				SqueezeJS.Controller.playerControl(this.skipCmd);
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
+		cmd_id: 'repeat',
+		state: -1,
+	
+		initComponent : function(){
+			this.cls = this.initialConfig.cls || 'btn-repeat-0';
+			SqueezeJS.UI.Buttons.Repeat.superclass.initComponent.call(this);
+		},
+	
+		handler: function(){
+			if (this.power) {
+				if (this.cmd)
+					SqueezeJS.Controller.playerControl(this.cmd);
+				else
+					SqueezeJS.Controller.playerControl(['playlist', 'repeat', (this.state + 1) % 3]);
+			} 
+		},
+	
+		onPlayerStateChange: function(result){
+			if (this.cmd) {}
+			else if (this.state == -1 || (result['playlist repeat'] != null && this.state != result['playlist repeat']))
+				this.updateState(result['playlist repeat']);
+	
+		},
+	
+		updateState: function(newState){
+			this.state = newState || 0;
+			this.setIcon('');
+			this.setTooltip(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
+			this.setText(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
+			this.setClass('btn-repeat-' + this.state);
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
+		cmd_id: 'shuffle',
+		state: -1,
+	
+		initComponent : function(){
+			this.cls = this.initialConfig.cls || 'btn-shuffle-0';
+			this.tooltip = this.tooltip || SqueezeJS.string('shuffle');
+			this.text = this.text || SqueezeJS.string('shuffle');
+			SqueezeJS.UI.Buttons.Shuffle.superclass.initComponent.call(this);
+		},
+	
+		handler: function(){
+			if (this.power) {
+				if (this.cmd)
+					SqueezeJS.Controller.playerControl(this.cmd);
+				else
+					SqueezeJS.Controller.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]);
+			} 
+		},
+	
+		onPlayerStateChange: function(result){
+			if (this.cmd) {}
+			else if (this.state == -1 || (result['playlist shuffle'] != null && this.state != result['playlist shuffle']))
+				this.updateState(result['playlist shuffle']);
+	
+		},
+	
+		updateState: function(newState){
+			this.state = newState || 0;
+			this.setIcon('');
+			this.setTooltip(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
+			this.setText(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
+			this.setClass('btn-shuffle-' + this.state);
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.Power = Ext.extend(SqueezeJS.UI.Button, {
+		initComponent : function(){
+			this.cls = this.cls || 'btn-power';
+			this.tooltip = this.tooltip || SqueezeJS.string('power');
+			this.text = this.text || SqueezeJS.string('power') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off');
+			SqueezeJS.UI.Buttons.Power.superclass.initComponent.call(this);
+	
+			SqueezeJS.Controller.on({
+				playerselected: {
+					fn: function(playerobj) {
+						this.setVisible(playerobj && playerobj.canpoweroff)
+					},
+					scope: this
+				}
+			});
+		},
+	
+		handler: function(){
+			var newState = (this.power ? '0' : '1');
+			this.power = !this.power;
+			this.onPlayerStateChange();
+			SqueezeJS.Controller.playerControl(['power', newState]);
+		},
+	
+		onPlayerStateChange: function(result){
+			this.setTooltip(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
+			this.setText(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
+	
+			if (this.power)
+				this.el.removeClass('btn-power-off');
+			else
+				this.el.addClass('btn-power-off');
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.VolumeDown = Ext.extend(SqueezeJS.UI.Button, {
+		initComponent : function(){
+			this.cls = this.cls || 'btn-volume-decrease';
+			this.tooltip = this.tooltip || SqueezeJS.string('volumedown');
+			this.text = this.text || SqueezeJS.string('volumedown');
+			SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
+		},
+	
+		handler : function(){
+			if (this.power)
+				SqueezeJS.Controller.setVolume(1, '-');
+		}
+	});
+	
+	SqueezeJS.UI.Buttons.VolumeUp = Ext.extend(SqueezeJS.UI.Button, {
+		initComponent : function(){
+			this.cls = this.cls || 'btn-volume-increase';
+			this.tooltip = this.tooltip || SqueezeJS.string('volumeup');
+			this.text = this.text || SqueezeJS.string('volumeup');
+			SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
+		},
+	
+		handler : function(){
+			if (this.power)
+				SqueezeJS.Controller.setVolume(1, '+');
+		}
+	});
+
+}
+
+
+if (Ext.SplitButton) {
+
+	SqueezeJS.UI.SplitButton = Ext.extend(Ext.SplitButton, {
+		initComponent : function(){
+			Ext.apply(this, {
+				tooltipType: 'title',
+				template: SqueezeJS.UI.splitButtonTemplate || null,
+				handler: function(ev){
+					if(this.menu && !this.menu.isVisible()){
+						this.menu.show(this.el, this.menuAlign);
+					}
+					this.fireEvent('arrowclick', this, ev);
+				}
+			});
+
+			SqueezeJS.UI.SplitButton.superclass.initComponent.call(this);
+		}
+	});
+
+}
+
+
+
+// specialised TreeLoader to create folder trees
+if (Ext.tree && Ext.tree.TreeLoader) {
+
+	SqueezeJS.UI.FileTreeLoader = function(filter) {
+		Ext.apply(this, {
+			dataUrl: '/jsonrpc.js',
 			filter: filter
 		});
-	},
+		SqueezeJS.UI.FileTreeLoader.superclass.constructor.call(this);	
+	};
 	
-	onResize: function() {
-		var el = Ext.get('filesystembrowser');
-		if (el && (el = el.parent())) {
-			el.setWidth(el.getWidth()-12);
-			el.setStyle({ overflow: 'auto' })
+	Ext.extend(SqueezeJS.UI.FileTreeLoader, Ext.tree.TreeLoader, {
+		getParams: function(node){
+			var cliQuery = [ 'readdirectory', 0, 99999 ];
+	
+			cliQuery.push("folder:" + node.id);
+	
+			if (this.filter)
+				cliQuery.push("filter:" + this.filter);
+	
+			return Ext.util.JSON.encode({ 
+				id: 1,
+				method: "slim.request",
+				params: [ "", cliQuery ]
+			});
+		},
+	
+		createNode : function(attr){
+			Ext.apply(attr, {
+				id: attr.path,
+				text: attr.name,
+				leaf: (!attr.isfolder > 0),
+				iconCls: (attr.isfolder > 0 ? 'x-tree-node-alwayscollapsed' : '')
+			});
+	
+			return SqueezeJS.UI.FileTreeLoader.superclass.createNode.call(this, attr);
+		},
+	
+		// we have to extract the result ourselves as IE/Opera can't handle multi-node data roots
+		processResponse : function(response, node, callback){
+			try {
+				var o = eval("(" + response.responseText + ")");
+				o = eval('o.result');
+	
+				SqueezeJS.UI.FileTreeLoader.superclass.processResponse.call(
+					this, { responseText: Ext.util.JSON.encode(o.fsitems_loop) }, node, callback);
+			} catch(e){
+				this.handleFailure(response);
+			}
 		}
-	}
-};
+	});
+	
+	// the FileSelector panel component
+	SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
+		initComponent : function(config){
+			Ext.apply(this, config);
+	
+			Ext.apply(this, {
+				rootVisible: false,
+				animate: false,
+				pathSeparator: '|',
+				containerScroll: true,
+				loader: new SqueezeJS.UI.FileTreeLoader(this.filter),
+				root: new Ext.tree.AsyncTreeNode({
+					text: 'root',
+					id: '/'
+				})
+			});
+	
+			SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
+	
+			// TODO: ExtJS 3.2 & IE8
+			// workaround for IE7's inability to overflow unless position:relative is set
+			if (Ext.isIE7) {
+				var parentEl = Ext.get(this.renderTo).parent();
+				parentEl.setStyle('position', 'relative');
+			}
+			
+			this.on({
+				click: this.onClick,
+				collapse: this.onCollapse
+			});
+	
+			this.selectMyPath();
+	
+			// activate button to add path to the selector box
+			var gotoBtn;
+			if (this.gotoBtn && (gotoBtn = Ext.get(this.gotoBtn))) {
+				new Ext.Button({
+					renderTo: gotoBtn,
+					text: '>',
+					handler: this.showPath,
+					scope: this
+				});
+			}
+		},
+	
+		onClick: function(node, e){
+			var input = Ext.get(this.input);
+	
+			if (input != null && input.getValue() != null) {
+				input.dom.value = node.id;
+			}
+		},
+	
+		// clean up collapsed nodes so we can refresh a view
+		onCollapse: function(node){
+			while(node.firstChild){
+				node.removeChild(node.firstChild);
+			}
+	
+			node.childrenRendered = false;
+			node.loaded = false;
+	
+			// add dummy node to prevent file icon instead of folder
+			node.appendChild([]);
+		},
+	
+		selectMyPath: function(){
+			// select the current setting, if available
+			var input = Ext.get(this.input);
+	
+			if (input == null || input.getValue() == null || input.getValue() == '')
+				return;
+	
+			var path = input.getValue();
+			var separator = '/';
+			var result;
+	
+			if (path.match(/^[a-z]:\\/i))
+				separator = '\\';
+	
+			// only open the first level of UNC paths (\\server\share)
+			else if (result = path.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/))
+				path = result[0];
+	
+			path = path.split(separator);
+	
+			var prev = '';
+			var target = this.pathSeparator + this.root.id;
+	
+			// we don't need the root element on *X systems, but on Windows...
+			for (var x=(path[0]=='/' ? 1 : 0); x<path.length; x++) {
+				if (path[x] == '') continue;
+	
+				prev += (x==0 ? '' : separator) + path[x];
+				target += this.pathSeparator + prev;
+			}
+	
+			this.selectPath(target, null, function(success, selNode){
+				if (!success) {
+					// if that path is a Windows share, try adding it to the tree
+					var result = input.getValue().match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
+					if (result) {
+						var root = this.getRootNode();
+						root.appendChild(new Ext.tree.AsyncTreeNode({
+							id: result[0],
+							text: result[0],
+							iconCls: 'x-tree-node-alwayscollapsed'
+						}));
+						this.selectMyPath();
+					}
+				}
+			}.createDelegate(this));
+		},
+	
+		// select path (if available) or try to add it to the tree if it's a network share
+		showPath: function(){
+			var input = Ext.get(this.input);
+			if (input == null || input.getValue() == null)
+				return;
+	
+			SqueezeJS.Controller.request({
+				params: ["",
+					[
+						'pref',
+						'validate',
+						'audiodir',
+						input.getValue()
+					]
+				],
+	
+				scope: this,
+	
+				success: function(response, options){
+					var result = Ext.util.JSON.decode(response.responseText);
+	
+					if (result.result.valid == '1')
+						this.selectMyPath();
+	
+					else
+						input.highlight('#ff8888');
+	
+				}
+			});
+		}
+	});
+
+}
+
+
+
+if (Ext.Window && SqueezeJS.UI.FileSelector) {
+
+	SqueezeJS.UI.FilesystemBrowser = {
+		init: function(){
+			var inputEl, btnEl, filter, classes, start;
+	
+			var tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.string('browse') + '" onclick="SqueezeJS.UI.FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
+			tpl.compile();
+	
+			// try to get the filter expression from the input fields CSS class
+			// selectFolder - only display folders
+			// selectFile   - display any filetype
+			// selectFile_X - only show files of the type X (eg. selectFile_xml -> .xml only)
+			var items = Ext.query('input.selectFolder, input[class*=selectFile]');
+			for(var i = 0; i < items.length; i++) {
+	
+				if (inputEl = Ext.get(items[i])) {
+					filter = '';
+	
+					if (inputEl.hasClass('selectFolder'))
+						filter = 'foldersonly'
+	
+					else {
+						classes = items[i].className.split(' ');
+	
+						for (var x=0; x<classes.length; x++) {
+	
+							if (classes[x].search(/selectFile_/) > -1) {
+								filter += (filter ? '|' : '') + classes[x].replace(/selectFile_/, '');
+							}
+						}
+						if (filter)
+							filter = "filetype:" + filter;
+					}
+	
+					btnEl = tpl.insertAfter(inputEl, {
+						inputField: inputEl.id,
+						filter: filter
+					});
+				}
+			}
+		},
+	
+		show: function(inputField, filter){
+			var filesystemDlg = new Ext.Window({
+				modal: true,
+				collapsible: false,
+				width: 350,
+				height: 400,
+				resizeHandles: 'se',
+				html: '<div id="filesystembrowser"></div>',
+				buttons: [{
+					text: SqueezeJS.string('close'),
+					handler: function(){
+						filesystemDlg.close()
+					},
+					scope: filesystemDlg
+				}],
+				listeners: {
+					resize: this.onResize
+				}
+			});
+	
+			filesystemDlg.setTitle(SqueezeJS.string(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
+			filesystemDlg.show();
+	
+			new SqueezeJS.UI.FileSelector({
+				renderTo: 'filesystembrowser',
+				input: inputField,
+				filter: filter
+			});
+		},
+		
+		onResize: function() {
+			var el = Ext.get('filesystembrowser');
+			if (el && (el = el.parent())) {
+				el.setWidth(el.getWidth()-12);
+				el.setStyle({ overflow: 'auto' })
+			}
+		}
+	};
+
+}
+
+
 
 // menu highlighter helper classes 
 SqueezeJS.UI.Highlight = function(config){
@@ -644,568 +906,313 @@ SqueezeJS.UI.Highlight.prototype = {
 	}
 }
 
-// create d'n'd sortable panel
-SqueezeJS.UI.Sortable = function(config){
-	Ext.apply(this, config);
 
-	Ext.dd.ScrollManager.register(this.el);
-
-	this.init();
-};
-
-SqueezeJS.UI.Sortable.prototype = {
-	init: function(){
-		var items = Ext.DomQuery.select(this.selector);
-		this.offset |= 0;
-
-		for(var i = 0; i < items.length; i++) {
-			var item = Ext.get(items[i]);
-
-			if (!item.hasClass('dontdrag'))
-				item.dd = this.addDDProxy(items[i], this.el, {
-					position: i + this.offset,
-					list: this,
-					droptarget: item.hasClass('droptarget')
-				});
-		}
-
-		if (this.highlighter)
-			this.highlighter.isDragging = false;
-	},
+if (Ext.dd && Ext.dd.ScrollManager && Ext.dd.DDProxy) {
 	
-	addDDProxy: function(item, el, config){
-		return new SqueezeJS.DDProxy(item, el, config);
-	},
-
-	onDrop: function(source, target, position) {
-		if (target && source) {
-			var sourcePos = Ext.get(source.id).dd.config.position;
-			var targetPos = Ext.get(target.id).dd.config.position;
-
-			if (sourcePos >= 0 && targetPos >= 0) {
-				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
-					targetPos += position;
+	// create d'n'd sortable panel
+	SqueezeJS.UI.Sortable = function(config){
+		Ext.apply(this, config);
+	
+		Ext.dd.ScrollManager.register(this.el);
+	
+		this.init();
+	};
+	
+	SqueezeJS.UI.Sortable.prototype = {
+		init: function(){
+			var items = Ext.DomQuery.select(this.selector);
+			this.offset |= 0;
+	
+			for(var i = 0; i < items.length; i++) {
+				var item = Ext.get(items[i]);
+	
+				if (!item.hasClass('dontdrag'))
+					item.dd = this.addDDProxy(items[i], this.el, {
+						position: i + this.offset,
+						list: this,
+						droptarget: item.hasClass('droptarget')
+					});
+			}
+	
+			if (this.highlighter)
+				this.highlighter.isDragging = false;
+		},
+		
+		addDDProxy: function(item, el, config){
+			return new SqueezeJS.DDProxy(item, el, config);
+		},
+	
+		onDrop: function(source, target, position) {
+			if (target && source) {
+				var sourcePos = Ext.get(source.id).dd.config.position;
+				var targetPos = Ext.get(target.id).dd.config.position;
+	
+				if (sourcePos >= 0 && targetPos >= 0) {
+					if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
+						targetPos += position;
+					}
+				}
+	
+				if (target && sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+					if (position == 0)
+						source.remove();
+	
+					else if (position < 0)
+						source.insertBefore(target);
+	
+					else
+						source.insertAfter(target);
+	
+					this.onDropCmd(sourcePos, targetPos, position);
+					this.init();
 				}
 			}
-
-			if (target && sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-				if (position == 0)
-					source.remove();
-
-				else if (position < 0)
-					source.insertBefore(target);
-
-				else
-					source.insertAfter(target);
-
-				this.onDropCmd(sourcePos, targetPos, position);
-				this.init();
+		},
+	
+		onDropCmd: function() {}
+	}
+	
+	SqueezeJS.DDProxy = function(id, sGroup, config){
+		SqueezeJS.DDProxy.superclass.constructor.call(this, id, sGroup, config);
+		this.setXConstraint(0, 0);
+		this.scroll = false;
+		this.scrollContainer = true;
+		this.position = 0;
+	};
+	
+	Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
+		// highlight a copy of the dragged item to move with the mouse pointer
+		startDrag: function(x, y) {
+			var dragEl = Ext.get(this.getDragEl());
+			var el = Ext.get(this.getEl());
+			if (this.config.list.highlighter) {
+				this.config.list.highlighter.unHighlight();
+				this.config.list.highlighter.isDragging = true;
 			}
+	
+			dragEl.applyStyles({'z-index':2000});
+			dragEl.update(el.child('div').dom.innerHTML);
+			dragEl.addClass(el.dom.className + ' dd-proxy');
+		},
+	
+		// disable the default behaviour which would place the dragged element
+		// we don't need to place it as it will be moved in onDragDrop
+		endDrag: function() {
+			if (this.config.list.highlighter)
+				this.config.list.highlighter.isDragging = false;
+		},
+	
+		onDragOver: function(ev, id){
+			var el = Ext.get(id);
+			var oldPosition = this.position;
+	
+			this.calculatePosition(el.getHeight(), ev.getPageY() - el.getY(), el.dd.config.droptarget);
+	
+			if (oldPosition != this.position) {
+				this.removeDropIndicator(el);
+				this.addDropIndicator(el)
+			}
+		},
+	
+		onDragOut: function(e, id) {
+			this.removeDropIndicator(Ext.get(id));
+		},
+	
+		onDragDrop: function(e, id) {
+			SqueezeJS.UI.Highlight.isDragging = false;
+			this.removeDropIndicator(Ext.get(id));
+			this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id), this.position);
+		},
+	
+		calculatePosition: function(height, top, droptarget){
+			// target can be dropped on - make it selectable
+			if (droptarget)
+				if (top <= 0.33*height)
+					this.position = -1;
+				else if (top >= 0.6*height)
+					this.position = 1;
+				else
+					this.position = 0;		
+	
+			// target can't be dropped on - only drop below/beneath
+			else
+				if (top <= 0.5*height)
+					this.position = -1;
+				else
+					this.position = 1;		
+		},
+	
+		addDropIndicator: function(el) {
+			if (this.position < 0)
+				el.addClass('dragUp');
+			else if (this.position > 0)
+				el.addClass('dragDown');
+			else
+				el.addClass('dragOver');
+		},
+	
+		removeDropIndicator: function(el) {
+			if (!el)
+				return;
+	
+			el.removeClass('dragUp');
+			el.removeClass('dragDown');
+			el.removeClass('dragOver');
 		}
-	},
+	});
 
-	onDropCmd: function() {}
 }
 
-SqueezeJS.DDProxy = function(id, sGroup, config){
-	SqueezeJS.DDProxy.superclass.constructor.call(this, id, sGroup, config);
-	this.setXConstraint(0, 0);
-	this.scroll = false;
-	this.scrollContainer = true;
-	this.position = 0;
-};
 
-Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
-	// highlight a copy of the dragged item to move with the mouse pointer
-	startDrag: function(x, y) {
-		var dragEl = Ext.get(this.getDragEl());
-		var el = Ext.get(this.getEl());
-		if (this.config.list.highlighter) {
-			this.config.list.highlighter.unHighlight();
-			this.config.list.highlighter.isDragging = true;
-		}
-
-		dragEl.applyStyles({'z-index':2000});
-		dragEl.update(el.child('div').dom.innerHTML);
-		dragEl.addClass(el.dom.className + ' dd-proxy');
-	},
-
-	// disable the default behaviour which would place the dragged element
-	// we don't need to place it as it will be moved in onDragDrop
-	endDrag: function() {
-		if (this.config.list.highlighter)
-			this.config.list.highlighter.isDragging = false;
-	},
-
-	onDragOver: function(ev, id){
-		var el = Ext.get(id);
-		var oldPosition = this.position;
-
-		this.calculatePosition(el.getHeight(), ev.getPageY() - el.getY(), el.dd.config.droptarget);
-
-		if (oldPosition != this.position) {
-			this.removeDropIndicator(el);
-			this.addDropIndicator(el)
-		}
-	},
-
-	onDragOut: function(e, id) {
-		this.removeDropIndicator(Ext.get(id));
-	},
-
-	onDragDrop: function(e, id) {
-		SqueezeJS.UI.Highlight.isDragging = false;
-		this.removeDropIndicator(Ext.get(id));
-		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id), this.position);
-	},
-
-	calculatePosition: function(height, top, droptarget){
-		// target can be dropped on - make it selectable
-		if (droptarget)
-			if (top <= 0.33*height)
-				this.position = -1;
-			else if (top >= 0.6*height)
-				this.position = 1;
-			else
-				this.position = 0;		
-
-		// target can't be dropped on - only drop below/beneath
-		else
-			if (top <= 0.5*height)
-				this.position = -1;
-			else
-				this.position = 1;		
-	},
-
-	addDropIndicator: function(el) {
-		if (this.position < 0)
-			el.addClass('dragUp');
-		else if (this.position > 0)
-			el.addClass('dragDown');
-		else
-			el.addClass('dragOver');
-	},
-
-	removeDropIndicator: function(el) {
-		if (!el)
-			return;
-
-		el.removeClass('dragUp');
-		el.removeClass('dragDown');
-		el.removeClass('dragOver');
-	}
-});
-
-
-
-// common button and label components, automatically updated on player events
-SqueezeJS.UI.Buttons.Play = Ext.extend(SqueezeJS.UI.Button, {
-	isPlaying: false,
-
-	initComponent : function(){
-		this.cls = this.cls || 'btn-play'; 
-		this.tooltip = this.tooltip || SqueezeJS.string('play');
-		this.text = this.text || SqueezeJS.string('play');
-		SqueezeJS.UI.Buttons.Play.superclass.initComponent.call(this);
-	},
-
-	handler: function(){
-		if (this.isPlaying) {
-			this.updateState(false);
-			SqueezeJS.Controller.playerControl(['pause']);
-		}
-		else {
-			this.updateState(true);
-			SqueezeJS.Controller.playerControl(['play']);
-		}
-	},
-
-	onPlayerStateChange: function(result){
-		var newState = (result.mode == 'play');
-
-		if (this.isPlaying != newState) {
-			this.updateState(newState);
-		}
-	},
-
-	updateState: function(isPlaying){
-		var playEl = Ext.get(Ext.DomQuery.selectNode('table:first', Ext.get(this.initialConfig.renderTo).dom));
-
-		playEl.removeClass(['btn-play', 'btn-pause']);
-		playEl.addClass(isPlaying ? 'btn-pause' : 'btn-play');
-
-		this.setTooltip(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
-		this.setText(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
-		this.isPlaying = isPlaying;
-	}
-});
-
-SqueezeJS.UI.Buttons.Rew = Ext.extend(SqueezeJS.UI.Button, {
-	initComponent : function(){
-		this.cls = this.cls || 'btn-previous'; 
-		this.tooltip = this.tooltip || SqueezeJS.string('previous');
-		this.text = this.text || SqueezeJS.string('previous');
-		this.skipCmd = ['button', 'jump_rew'];
-
-		SqueezeJS.UI.Buttons.Rew.superclass.initComponent.call(this);
-		
-		SqueezeJS.Controller.on({
-			'playerselected': {
-				fn: function(playerobj) {
-					if (playerobj.isplayer)
-						this.skipCmd = ['button', 'jump_rew'];
-					else
-						this.skipCmd = ['playlist', 'index', '-1'];
+if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
+	
+	SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(SqueezeJS.UI.SplitButton, {
+		playerList : null,
+	
+		initComponent : function(){
+			Ext.apply(this, {
+				menu: new Ext.menu.Menu(),
+				arrowTooltip: SqueezeJS.string('choose_player')
+			})
+			SqueezeJS.UI.Buttons.PlayerDropdown.superclass.initComponent.call(this);
+	
+			SqueezeJS.Controller.on({
+				playerlistupdate: {
+					fn: this.onPlayerlistUpdate,
+					scope: this
 				},
-				scope: this
-			}
-		});
-	},
-
-	handler: function(){
-		if (this.power)
-			SqueezeJS.Controller.playerControl(this.skipCmd);
-	},
-
-	onPlayerStateChange: function(result){
-		if (result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].buttons) {
-			try { this.setDisabled(!result.playlist_loop[0].buttons.rew) }
-			catch(e){}
-		}
-		else if (this.disabled)
-			this.enable();
-	}
-});
-
-SqueezeJS.UI.Buttons.Fwd = Ext.extend(SqueezeJS.UI.Button, {
-	initComponent : function(){
-		this.cls = this.cls || 'btn-next';
-		this.tooltip = this.tooltip || SqueezeJS.string('next');
-		this.text = this.text || SqueezeJS.string('next');
-		this.skipCmd = ['button', 'jump_fwd'];
-		
-		SqueezeJS.UI.Buttons.Fwd.superclass.initComponent.call(this);
-		
-		SqueezeJS.Controller.on({
-			'playerselected': {
-				fn: function(playerobj) {
-					// http clients don't know IR commands
-					if (playerobj.isplayer)
-						this.skipCmd = ['button', 'jump_fwd'];
-					else
-						this.skipCmd = ['playlist', 'index', '+1'];
-				},
-				scope: this
-			}
-		});
-	},
-
-	handler: function(){
-		if (this.power)
-			SqueezeJS.Controller.playerControl(this.skipCmd);
-	}
-});
-
-SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
-	cmd_id: 'repeat',
-	state: -1,
-
-	initComponent : function(){
-		this.cls = this.initialConfig.cls || 'btn-repeat-0';
-		SqueezeJS.UI.Buttons.Repeat.superclass.initComponent.call(this);
-	},
-
-	handler: function(){
-		if (this.power) {
-			if (this.cmd)
-				SqueezeJS.Controller.playerControl(this.cmd);
-			else
-				SqueezeJS.Controller.playerControl(['playlist', 'repeat', (this.state + 1) % 3]);
-		} 
-	},
-
-	onPlayerStateChange: function(result){
-		if (this.cmd) {}
-		else if (this.state == -1 || (result['playlist repeat'] != null && this.state != result['playlist repeat']))
-			this.updateState(result['playlist repeat']);
-
-	},
-
-	updateState: function(newState){
-		this.state = newState || 0;
-		this.setIcon('');
-		this.setTooltip(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
-		this.setText(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
-		this.setClass('btn-repeat-' + this.state);
-	}
-});
-
-SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
-	cmd_id: 'shuffle',
-	state: -1,
-
-	initComponent : function(){
-		this.cls = this.initialConfig.cls || 'btn-shuffle-0';
-		this.tooltip = this.tooltip || SqueezeJS.string('shuffle');
-		this.text = this.text || SqueezeJS.string('shuffle');
-		SqueezeJS.UI.Buttons.Shuffle.superclass.initComponent.call(this);
-	},
-
-	handler: function(){
-		if (this.power) {
-			if (this.cmd)
-				SqueezeJS.Controller.playerControl(this.cmd);
-			else
-				SqueezeJS.Controller.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]);
-		} 
-	},
-
-	onPlayerStateChange: function(result){
-		if (this.cmd) {}
-		else if (this.state == -1 || (result['playlist shuffle'] != null && this.state != result['playlist shuffle']))
-			this.updateState(result['playlist shuffle']);
-
-	},
-
-	updateState: function(newState){
-		this.state = newState || 0;
-		this.setIcon('');
-		this.setTooltip(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
-		this.setText(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
-		this.setClass('btn-shuffle-' + this.state);
-	}
-});
-
-SqueezeJS.UI.Buttons.Power = Ext.extend(SqueezeJS.UI.Button, {
-	initComponent : function(){
-		this.cls = this.cls || 'btn-power';
-		this.tooltip = this.tooltip || SqueezeJS.string('power');
-		this.text = this.text || SqueezeJS.string('power') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off');
-		SqueezeJS.UI.Buttons.Power.superclass.initComponent.call(this);
-
-		SqueezeJS.Controller.on({
-			playerselected: {
-				fn: function(playerobj) {
-					this.setVisible(playerobj && playerobj.canpoweroff)
-				},
-				scope: this
-			}
-		});
-	},
-
-	handler: function(){
-		var newState = (this.power ? '0' : '1');
-		this.power = !this.power;
-		this.onPlayerStateChange();
-		SqueezeJS.Controller.playerControl(['power', newState]);
-	},
-
-	onPlayerStateChange: function(result){
-		this.setTooltip(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
-		this.setText(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
-
-		if (this.power)
-			this.el.removeClass('btn-power-off');
-		else
-			this.el.addClass('btn-power-off');
-	}
-});
-
-SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(SqueezeJS.UI.SplitButton, {
-	playerList : null,
-
-	initComponent : function(){
-		Ext.apply(this, {
-			menu: new Ext.menu.Menu(),
-			arrowTooltip: SqueezeJS.string('choose_player')
-		})
-		SqueezeJS.UI.Buttons.PlayerDropdown.superclass.initComponent.call(this);
-
-		SqueezeJS.Controller.on({
-			playerlistupdate: {
-				fn: this.onPlayerlistUpdate,
-				scope: this
-			},
-
-			playerselected: {
-				fn: function(playerobj) {
-					if (playerobj && playerobj.name)
-						this.setText(playerobj.name)
-				},
-				scope: this
-			}
-		});
-	},
-
-	onPlayerlistUpdate : function(response){
-		this.menu.removeAll();
-		this.menu.add(
-			'<span class="menu-title">' + SqueezeJS.string('choose_player') + '</span>'
-		);
-
-		// let's set the current player to the first player in the list
-		if (response['player count'] > 0 || response['sn player count'] > 0 || response['other player count'] > 0) {
-			var el;
-
-			this.playerList = new Ext.util.MixedCollection();
-
-			this._addPlayerlistMenu(response);
-			this._addSNPlayerlistMenu(response);
-			this._addOtherPlayerlistMenu(response);
-
-			if (!this.noSync) {
-				// add the sync option menu item
-				this.menu.add(
-					'-',
-					new Ext.menu.Item({
-						text: SqueezeJS.string('synchronize') + '...',
-						// query the currently synced players and show the dialog
-						handler: function(){
-							SqueezeJS.Controller.request({
-								params: ['', ['syncgroups', '?']],
-								success: this.showSyncDialog,
-								failure: this.showSyncDialog,
-								scope: this
-							});	
-						},
-						scope: this,
-						disabled: (this.playerList.getCount() < 2) 
-					})
-				);
-			}
-		}
-
-		else {
-			this.menu.add(
-				new Ext.menu.Item({
-					text: SqueezeJS.string('no_player') + '..',
-					handler: function(){
-						var dlg = new Ext.BasicDialog('', {
-							autoCreate: true,
-							title: SqueezeJS.string('no_player'),
-							modal: true,
-							closable: false,
-							collapsible: false,
-							width: 500,
-							height: 250,
-							resizeHandles: 'se'
-						});
-						dlg.addButton(SqueezeJS.string('close'), dlg.destroy, dlg);
-						dlg.addKeyListener(27, dlg.destroy, dlg);
-						dlg.body.update(SqueezeJS.string('no_player_details'));
-						dlg.show();
-					}
-				})
-			);
-		}
-
-	},
-
-	_addPlayerlistMenu : function(response){
-		if (response.players_loop) {
-			response.players_loop = response.players_loop.sort(this._sortPlayer);
-
-			for (var x=0; x < response.players_loop.length; x++) {
-				var playerInfo = response.players_loop[x];
-				
-				if (!playerInfo.connected)
-					continue;
-
-				// mark the current player as selected
-				if (playerInfo.playerid == SqueezeJS.Controller.getPlayer()) {
-					this.setText(playerInfo.name);
+	
+				playerselected: {
+					fn: function(playerobj) {
+						if (playerobj && playerobj.name)
+							this.setText(playerobj.name)
+					},
+					scope: this
 				}
-
-				// add the players to the list to be displayed in the synch dialog
-				this.playerList.add(playerInfo.playerid, {
-					name: playerInfo.name,
-					isplayer: playerInfo.isplayer
-				});
-
-				this.menu.add(
-					new Ext.menu.CheckItem({
-						text: playerInfo.name,
-						value: playerInfo.playerid,
-						cls: playerInfo.model,
-						group: 'playerList',
-						checked: playerInfo.playerid == playerid,
-						scope: this,
-						handler: this._selectPlayer
-					})
-				);
-			}
-		}
-	},
-
-	_addSNPlayerlistMenu : function(response){
-		// add a list of players connected to SQN, if available
-		if (response.sn_players_loop) {
-			var first = true;
-			response.sn_players_loop = response.sn_players_loop.sort(this._sortPlayer);
-							
-			for (var x=0; x < response.sn_players_loop.length; x++) {
-				var playerInfo = response.sn_players_loop[x];
-
-				// don't display players which are already connected to SC
-				// this is to prevent double entries right after a player has switched
-				if (! this.playerList.get(playerInfo.playerid)) {
-					if (first) {
-						this.menu.add(
-							'-',
-							new Ext.menu.Item({
-								text: SqueezeJS.string('squeezenetwork'),
-								cls: 'menu-title',
-								scope: this,
-								handler: function(ev){
-									location = 'http://www.squeezenetwork.com/';
-								}
-							})
-						);
-						first = false;
-					}
-
+			});
+		},
+	
+		onPlayerlistUpdate : function(response){
+			this.menu.removeAll();
+			this.menu.add(
+				'<span class="menu-title">' + SqueezeJS.string('choose_player') + '</span>'
+			);
+	
+			// let's set the current player to the first player in the list
+			if (response['player count'] > 0 || response['sn player count'] > 0 || response['other player count'] > 0) {
+				var el;
+	
+				this.playerList = new Ext.util.MixedCollection();
+	
+				this._addPlayerlistMenu(response);
+				this._addSNPlayerlistMenu(response);
+				this._addOtherPlayerlistMenu(response);
+	
+				if (!this.noSync) {
+					// add the sync option menu item
 					this.menu.add(
+						'-',
 						new Ext.menu.Item({
-							text: playerInfo.name,
-							playerid: playerInfo.playerid,
-							server: 'www.squeezenetwork.com',
-							cls: playerInfo.model,
+							text: SqueezeJS.string('synchronize') + '...',
+							// query the currently synced players and show the dialog
+							handler: function(){
+								SqueezeJS.Controller.request({
+									params: ['', ['syncgroups', '?']],
+									success: this.showSyncDialog,
+									failure: this.showSyncDialog,
+									scope: this
+								});	
+							},
 							scope: this,
-							dlgTitle: SqueezeJS.string('squeezenetwork'),
-							dlgServer: SqueezeJS.string('squeezenetwork'),
-							handler: this._confirmSwitchPlayer
+							disabled: (this.playerList.getCount() < 2) 
 						})
 					);
 				}
 			}
-		}
-	},
-
-	_addOtherPlayerlistMenu : function(response){
-		// add a list of players connected to other servers, if available
-		if (response.other_players_loop) {
-			var playersByServer = this._groupPlayersByServer(response.other_players_loop);
-
-			playersByServer._servers.each(function(item){
-				var first = true;
-				var players = playersByServer[item].players.sort(this._sortPlayer);
-
-				for (var x = 0; x < players.length; x++) {
-					var playerInfo = players[x];
+	
+			else {
+				this.menu.add(
+					new Ext.menu.Item({
+						text: SqueezeJS.string('no_player') + '..',
+						handler: function(){
+							var dlg = new Ext.BasicDialog('', {
+								autoCreate: true,
+								title: SqueezeJS.string('no_player'),
+								modal: true,
+								closable: false,
+								collapsible: false,
+								width: 500,
+								height: 250,
+								resizeHandles: 'se'
+							});
+							dlg.addButton(SqueezeJS.string('close'), dlg.destroy, dlg);
+							dlg.addKeyListener(27, dlg.destroy, dlg);
+							dlg.body.update(SqueezeJS.string('no_player_details'));
+							dlg.show();
+						}
+					})
+				);
+			}
+	
+		},
+	
+		_addPlayerlistMenu : function(response){
+			if (response.players_loop) {
+				response.players_loop = response.players_loop.sort(this._sortPlayer);
+	
+				for (var x=0; x < response.players_loop.length; x++) {
+					var playerInfo = response.players_loop[x];
 					
+					if (!playerInfo.connected)
+						continue;
+	
+					// mark the current player as selected
+					if (playerInfo.playerid == SqueezeJS.Controller.getPlayer()) {
+						this.setText(playerInfo.name);
+					}
+	
+					// add the players to the list to be displayed in the synch dialog
+					this.playerList.add(playerInfo.playerid, {
+						name: playerInfo.name,
+						isplayer: playerInfo.isplayer
+					});
+	
+					this.menu.add(
+						new Ext.menu.CheckItem({
+							text: playerInfo.name,
+							value: playerInfo.playerid,
+							cls: playerInfo.model,
+							group: 'playerList',
+							checked: playerInfo.playerid == playerid,
+							scope: this,
+							handler: this._selectPlayer
+						})
+					);
+				}
+			}
+		},
+	
+		_addSNPlayerlistMenu : function(response){
+			// add a list of players connected to SQN, if available
+			if (response.sn_players_loop) {
+				var first = true;
+				response.sn_players_loop = response.sn_players_loop.sort(this._sortPlayer);
+								
+				for (var x=0; x < response.sn_players_loop.length; x++) {
+					var playerInfo = response.sn_players_loop[x];
+	
 					// don't display players which are already connected to SC
 					// this is to prevent double entries right after a player has switched
-					if (playerInfo && !this.playerList.get(playerInfo.playerid)) {
+					if (! this.playerList.get(playerInfo.playerid)) {
 						if (first) {
 							this.menu.add(
 								'-',
 								new Ext.menu.Item({
-									text: item,
-									url: playerInfo.serverurl,
+									text: SqueezeJS.string('squeezenetwork'),
 									cls: 'menu-title',
 									scope: this,
 									handler: function(ev){
-										location = ev.url;
+										location = 'http://www.squeezenetwork.com/';
 									}
 								})
 							);
@@ -1216,220 +1223,244 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(SqueezeJS.UI.SplitButton, {
 							new Ext.menu.Item({
 								text: playerInfo.name,
 								playerid: playerInfo.playerid,
-								server: playerInfo.server,
+								server: 'www.squeezenetwork.com',
 								cls: playerInfo.model,
 								scope: this,
-								dlgTitle: SqueezeJS.string('squeezebox_server'),
-								dlgServer: playerInfo.server,
+								dlgTitle: SqueezeJS.string('squeezenetwork'),
+								dlgServer: SqueezeJS.string('squeezenetwork'),
 								handler: this._confirmSwitchPlayer
 							})
 						);
 					}
 				}
-				
-				return 1;
-			}, this);
-
-		}
-	},
-
-	_sortPlayer : function(a, b){
-		a = a.name.toLowerCase();
-		b = b.name.toLowerCase();
-		return a > b ? 1 : (a < b ? -1 : 0);
-	},
-
-	_groupPlayersByServer : function(players) {
-		var playersByServer = {};
-		playersByServer._servers = new Ext.util.MixedCollection();
-
-		// group players by server
-		for (var x=0; x < players.length; x++) {
-			// some players can't be switched, as they don't know the SERV command
-			if (players[x].model.match(/http|slimp3|softsqueeze|squeezeslave|squeezebox$/i))
-				continue;
-			
-			var server = players[x].server;
-
-			if (playersByServer[server] == null) {
-				playersByServer[server] = {
-					players: new Array(),
-					url: players[x].serverurl
-				}
-
-				playersByServer._servers.add(server, server);
 			}
-
-			playersByServer[server].players.push(players[x]);
-		}
-
-		playersByServer._servers.sort('ASC');
-
-		return playersByServer;
-	},
-
-	_selectPlayer: function(ev){
-		if (ev) {
-			this.setText(ev.text || '');
-			SqueezeJS.Controller.selectPlayer(ev.value);
-		}
-		else
-			this.setText('');		
-	},
-
-	_confirmSwitchPlayer: function(ev){
-		var msg = SqueezeJS.string('sc_want_switch');
-		msg.replace(/%s/, ev.dlgServer);
-
-		Ext.MessageBox.confirm(
-			ev.dlgTitle,
-			SqueezeJS.string('sc_want_switch').replace(/%s/, ev.dlgServer),
-			function(btn){
-				if (btn == 'yes') {
-					this._switchPlayer(ev);
-				}
-			},
-			this
-		);
-	},
-
-	_switchPlayer: function(ev){
-		SqueezeJS.Controller.request({ params: ['', ['disconnect', ev.playerid, ev.server ]] });
-			
-		// switch player in a few seconds, to give the player time to connect
-		var update = new Ext.util.DelayedTask(function(ev){
-			SqueezeJS.Controller.updateAll();
-			this._selectPlayer({ value: ev.playerid });
-		}, this, new Array(ev));
-		update.delay(3000); 
-	},
-
-	showSyncDialog: function(response){
-		var responseText = Ext.util.JSON.decode(response.responseText);
-
-		var syncedPlayers = new Array();
-		if (responseText.result && responseText.result.syncgroups_loop) {
-			syncedPlayers = responseText.result.syncgroups_loop;
-		}
-
-		// make sure any previous syncgroup form is deleted; seems not to happen in on dlg.destroy() in some browsers
-		var playerSelection = Ext.get('syncgroup');
-		if (playerSelection)
-			playerSelection.remove();
-
-		playerSelection = '<p style="margin-right:25px">' + SqueezeJS.string('setup_synchronize_desc') + '</p>';
-		playerSelection += '<form name="syncgroup" id="syncgroup">';
-		var tpl = new Ext.Template('<input type="radio" id="{id}" value="{id}" {checked} {disabled} name="synctarget">&nbsp;<label for="{id}">{name}</label><br>');
-		tpl.compile();
-
-		var syncedPlayersList = '';
+		},
+	
+		_addOtherPlayerlistMenu : function(response){
+			// add a list of players connected to other servers, if available
+			if (response.other_players_loop) {
+				var playersByServer = this._groupPlayersByServer(response.other_players_loop);
+	
+				playersByServer._servers.each(function(item){
+					var first = true;
+					var players = playersByServer[item].players.sort(this._sortPlayer);
+	
+					for (var x = 0; x < players.length; x++) {
+						var playerInfo = players[x];
+						
+						// don't display players which are already connected to SC
+						// this is to prevent double entries right after a player has switched
+						if (playerInfo && !this.playerList.get(playerInfo.playerid)) {
+							if (first) {
+								this.menu.add(
+									'-',
+									new Ext.menu.Item({
+										text: item,
+										url: playerInfo.serverurl,
+										cls: 'menu-title',
+										scope: this,
+										handler: function(ev){
+											location = ev.url;
+										}
+									})
+								);
+								first = false;
+							}
 		
-		// add sync groups first in the menu
-		for (var i = 0; i < syncedPlayers.length; i++) {
-			
-			var sync_group = syncedPlayers[i].sync_members;
-
-			if (sync_group) {
-				var members = sync_group.split(',');
-				syncedPlayersList += sync_group;
-
-				playerSelection += tpl.apply({
-					name: syncedPlayers[i].sync_member_names.replace(/,/g, ",&nbsp;") || sync_group,
-					id: members[0],
-					checked: sync_group.indexOf(playerid) > -1 ? 'checked="checked"' : '',
-					disabled: ''
-				});
+							this.menu.add(
+								new Ext.menu.Item({
+									text: playerInfo.name,
+									playerid: playerInfo.playerid,
+									server: playerInfo.server,
+									cls: playerInfo.model,
+									scope: this,
+									dlgTitle: SqueezeJS.string('squeezebox_server'),
+									dlgServer: playerInfo.server,
+									handler: this._confirmSwitchPlayer
+								})
+							);
+						}
+					}
+					
+					return 1;
+				}, this);
+	
 			}
-		}
-
-		
-		// create checkboxes for other players and preselect if synced
-		this.playerList.eachKey(function(id, data){
-
-			if (id && data.name && id != playerid && syncedPlayersList.indexOf(id) == -1) {
+		},
+	
+		_sortPlayer : function(a, b){
+			a = a.name.toLowerCase();
+			b = b.name.toLowerCase();
+			return a > b ? 1 : (a < b ? -1 : 0);
+		},
+	
+		_groupPlayersByServer : function(players) {
+			var playersByServer = {};
+			playersByServer._servers = new Ext.util.MixedCollection();
+	
+			// group players by server
+			for (var x=0; x < players.length; x++) {
+				// some players can't be switched, as they don't know the SERV command
+				if (players[x].model.match(/http|slimp3|softsqueeze|squeezeslave|squeezebox$/i))
+					continue;
 				
-				// unsynced player
-				playerSelection += tpl.apply({
-					name: data.name,
-					id: id,
-					checked: '',
-					disabled: data.isplayer ? '' : 'disabled'
-				});
+				var server = players[x].server;
+	
+				if (playersByServer[server] == null) {
+					playersByServer[server] = {
+						players: new Array(),
+						url: players[x].serverurl
+					}
+	
+					playersByServer._servers.add(server, server);
+				}
+	
+				playersByServer[server].players.push(players[x]);
 			}
-
-		});
-
-		// "Don't sync" item
-		playerSelection += tpl.apply({
-			name: SqueezeJS.string('setup_no_synchronization'),
-			id: '-',
-			checked: syncedPlayers.length == 0 || syncedPlayers[0] == '-' ? 'checked="checked"' : '',
-			disabled: ''
-		});
-
-		playerSelection += '</form>';
-
-		var dlg = new Ext.Window({
-			title: SqueezeJS.string('synchronize'),
-			modal: true,
-			collapsible: false,
-			width: 400,
-			height: 250 + this.playerList.getCount() * 13,
-			autoScroll: true,
-			resizeHandles: 'se',
-			html: playerSelection
-		});
-
-		dlg.addButton(SqueezeJS.string('synchronize'), function() {
-			var targets = document.forms.syncgroup.synctarget;
+	
+			playersByServer._servers.sort('ASC');
+	
+			return playersByServer;
+		},
+	
+		_selectPlayer: function(ev){
+			if (ev) {
+				this.setText(ev.text || '');
+				SqueezeJS.Controller.selectPlayer(ev.value);
+			}
+			else
+				this.setText('');		
+		},
+	
+		_confirmSwitchPlayer: function(ev){
+			var msg = SqueezeJS.string('sc_want_switch');
+			msg.replace(/%s/, ev.dlgServer);
+	
+			Ext.MessageBox.confirm(
+				ev.dlgTitle,
+				SqueezeJS.string('sc_want_switch').replace(/%s/, ev.dlgServer),
+				function(btn){
+					if (btn == 'yes') {
+						this._switchPlayer(ev);
+					}
+				},
+				this
+			);
+		},
+	
+		_switchPlayer: function(ev){
+			SqueezeJS.Controller.request({ params: ['', ['disconnect', ev.playerid, ev.server ]] });
+				
+			// switch player in a few seconds, to give the player time to connect
+			var update = new Ext.util.DelayedTask(function(ev){
+				SqueezeJS.Controller.updateAll();
+				this._selectPlayer({ value: ev.playerid });
+			}, this, new Array(ev));
+			update.delay(3000); 
+		},
+	
+		showSyncDialog: function(response){
+			var responseText = Ext.util.JSON.decode(response.responseText);
+	
+			var syncedPlayers = new Array();
+			if (responseText.result && responseText.result.syncgroups_loop) {
+				syncedPlayers = responseText.result.syncgroups_loop;
+			}
+	
+			// make sure any previous syncgroup form is deleted; seems not to happen in on dlg.destroy() in some browsers
+			var playerSelection = Ext.get('syncgroup');
+			if (playerSelection)
+				playerSelection.remove();
+	
+			playerSelection = '<p style="margin-right:25px">' + SqueezeJS.string('setup_synchronize_desc') + '</p>';
+			playerSelection += '<form name="syncgroup" id="syncgroup">';
+			var tpl = new Ext.Template('<input type="radio" id="{id}" value="{id}" {checked} {disabled} name="synctarget">&nbsp;<label for="{id}">{name}</label><br>');
+			tpl.compile();
+	
+			var syncedPlayersList = '';
 			
-			for (var i = 0; i < targets.length; i++) {
-
-				if (targets[i].checked) {
-					if (targets[i].value == '-')
-						SqueezeJS.Controller.playerRequest({ params: [ 'sync', '-' ]});
-					else
-						SqueezeJS.Controller.request({ params: [ targets[i].value, [ 'sync', playerid ] ] });
-					break;
+			// add sync groups first in the menu
+			for (var i = 0; i < syncedPlayers.length; i++) {
+				
+				var sync_group = syncedPlayers[i].sync_members;
+	
+				if (sync_group) {
+					var members = sync_group.split(',');
+					syncedPlayersList += sync_group;
+	
+					playerSelection += tpl.apply({
+						name: syncedPlayers[i].sync_member_names.replace(/,/g, ",&nbsp;") || sync_group,
+						id: members[0],
+						checked: sync_group.indexOf(playerid) > -1 ? 'checked="checked"' : '',
+						disabled: ''
+					});
 				}
 			}
+	
+			
+			// create checkboxes for other players and preselect if synced
+			this.playerList.eachKey(function(id, data){
+	
+				if (id && data.name && id != playerid && syncedPlayersList.indexOf(id) == -1) {
+					
+					// unsynced player
+					playerSelection += tpl.apply({
+						name: data.name,
+						id: id,
+						checked: '',
+						disabled: data.isplayer ? '' : 'disabled'
+					});
+				}
+	
+			});
+	
+			// "Don't sync" item
+			playerSelection += tpl.apply({
+				name: SqueezeJS.string('setup_no_synchronization'),
+				id: '-',
+				checked: syncedPlayers.length == 0 || syncedPlayers[0] == '-' ? 'checked="checked"' : '',
+				disabled: ''
+			});
+	
+			playerSelection += '</form>';
+	
+			var dlg = new Ext.Window({
+				title: SqueezeJS.string('synchronize'),
+				modal: true,
+				collapsible: false,
+				width: 400,
+				height: 250 + this.playerList.getCount() * 13,
+				autoScroll: true,
+				resizeHandles: 'se',
+				html: playerSelection
+			});
+	
+			dlg.addButton(SqueezeJS.string('synchronize'), function() {
+				var targets = document.forms.syncgroup.synctarget;
+				
+				for (var i = 0; i < targets.length; i++) {
+	
+					if (targets[i].checked) {
+						if (targets[i].value == '-')
+							SqueezeJS.Controller.playerRequest({ params: [ 'sync', '-' ]});
+						else
+							SqueezeJS.Controller.request({ params: [ targets[i].value, [ 'sync', playerid ] ] });
+						break;
+					}
+				}
+	
+				dlg.destroy();
+			}, dlg);
+	
+			dlg.addButton(SqueezeJS.string('cancel'), dlg.destroy, dlg);
+	
+			dlg.show();
+		}
+	});
 
-			dlg.destroy();
-		}, dlg);
+}
 
-		dlg.addButton(SqueezeJS.string('cancel'), dlg.destroy, dlg);
 
-		dlg.show();
-	}
-});
-
-SqueezeJS.UI.Buttons.VolumeDown = Ext.extend(SqueezeJS.UI.Button, {
-	initComponent : function(){
-		this.cls = this.cls || 'btn-volume-decrease';
-		this.tooltip = this.tooltip || SqueezeJS.string('volumedown');
-		this.text = this.text || SqueezeJS.string('volumedown');
-		SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
-	},
-
-	handler : function(){
-		if (this.power)
-			SqueezeJS.Controller.setVolume(1, '-');
-	}
-});
-
-SqueezeJS.UI.Buttons.VolumeUp = Ext.extend(SqueezeJS.UI.Button, {
-	initComponent : function(){
-		this.cls = this.cls || 'btn-volume-increase';
-		this.tooltip = this.tooltip || SqueezeJS.string('volumeup');
-		this.text = this.text || SqueezeJS.string('volumeup');
-		SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
-	},
-
-	handler : function(){
-		if (this.power)
-			SqueezeJS.Controller.setVolume(1, '+');
-	}
-});
 
 SqueezeJS.UI.VolumeBar = Ext.extend(SqueezeJS.UI.Component, {
 	power: null,
@@ -1694,66 +1725,73 @@ SqueezeJS.UI.Coverart = Ext.extend(SqueezeJS.UI.Component, {
 	}
 });
 
-SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
-	initComponent : function(){
-		if (this.songInfo)
-			this.title = '&nbsp;';
- 
-		this.dismissDelay = 0;
-		this.hideDelay = 500;
-			
-		SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
 
-		// let's try to size the width at a maximum of 80% of the current screen size or 500 (as the background image is only 500)
-		this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
-		this.maxWidth = Math.min(this.maxWidth, 500);
 
-		SqueezeJS.Controller.on({
-			playerstatechange: {
-				fn: this.onPlayerStateChange,
-				scope: this
-			}
-		});
+if (Ext.ToolTip) {
 
-		this.on({
-			show: {
-				fn: function(el){
-					if (el && el.body 
-						&& (el = el.body.child('img:first', true)) 
-						&& (el = Ext.get(el))
-						&& (el.getWidth() > this.maxWidth))
-							el.setWidth(this.maxWidth - 10);
-				}
-			}
-		});
-
-		Ext.EventManager.onWindowResize(function(){
+	SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
+		initComponent : function(){
+			if (this.songInfo)
+				this.title = '&nbsp;';
+	 
+			this.dismissDelay = 0;
+			this.hideDelay = 500;
+				
+			SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
+	
+			// let's try to size the width at a maximum of 80% of the current screen size or 500 (as the background image is only 500)
 			this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
 			this.maxWidth = Math.min(this.maxWidth, 500);
-		}, this);
-	},
-
-	onPlayerStateChange : function(result){
-		if (this.songInfo) {
-			var title = SqueezeJS.SonginfoParser.title(result, true);
-			var contributors = SqueezeJS.SonginfoParser.contributors(result, true);
-			var album = SqueezeJS.SonginfoParser.album(result, true, true);
 	
-			this.setTitle(title
-				+ (contributors ? '&nbsp;/ ' + contributors : '')
-				+ (album ? '&nbsp;/ ' + album : ''));
+			SqueezeJS.Controller.on({
+				playerstatechange: {
+					fn: this.onPlayerStateChange,
+					scope: this
+				}
+			});
+	
+			this.on({
+				show: {
+					fn: function(el){
+						if (el && el.body 
+							&& (el = el.body.child('img:first', true)) 
+							&& (el = Ext.get(el))
+							&& (el.getWidth() > this.maxWidth))
+								el.setWidth(this.maxWidth - 10);
+					}
+				}
+			});
+	
+			Ext.EventManager.onWindowResize(function(){
+				this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
+				this.maxWidth = Math.min(this.maxWidth, 500);
+			}, this);
+		},
+	
+		onPlayerStateChange : function(result){
+			if (this.songInfo) {
+				var title = SqueezeJS.SonginfoParser.title(result, true);
+				var contributors = SqueezeJS.SonginfoParser.contributors(result, true);
+				var album = SqueezeJS.SonginfoParser.album(result, true, true);
+		
+				this.setTitle(title
+					+ (contributors ? '&nbsp;/ ' + contributors : '')
+					+ (album ? '&nbsp;/ ' + album : ''));
+			}
+	
+			var el = this.body;
+			if (el) {
+				if (el = el.child('img:first', true))
+					el.src = SqueezeJS.SonginfoParser.coverartUrl(result);
+			}
+			else {
+				this.html = SqueezeJS.SonginfoParser.coverart(result, true);
+			}
 		}
+	});
 
-		var el = this.body;
-		if (el) {
-			if (el = el.child('img:first', true))
-				el.src = SqueezeJS.SonginfoParser.coverartUrl(result);
-		}
-		else {
-			this.html = SqueezeJS.SonginfoParser.coverart(result, true);
-		}
-	}
-});
+}
+
 
 
 SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
@@ -1773,7 +1811,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 	},
 
 	load : function(url, showIndicator){
-		if (this.getPlEl())
+		if (this.getPlEl() && SqueezeJS.UI.Sortable)
 			// unregister event handlers
 			Ext.dd.ScrollManager.unregister(this.playlistEl);
 
@@ -1818,6 +1856,9 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 	},
 
 	_initSortable : function(){
+		if (!SqueezeJS.UI.Sortable)
+			return;
+		
 		var offset = 0;
 		if (offset = Ext.get('offset'))
 			offset = parseInt(offset.dom.innerHTML);
@@ -1905,83 +1946,87 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 });
 
 
-SqueezeJS.UI.SliderInput = Ext.extend(Ext.slider.SingleSlider, {
-	tpl: new Ext.Template('<span></span>'),
-
-	initComponent : function(){
-		this.input = Ext.get(this.initialConfig.input);
-
-		this.renderTo = this.tpl.insertBefore(this.input, {}, true);
-		
-		// if no initial value has been configured,
-		// try reading it from our input field
-		if (this.initialConfig.value == null) {
-			this.values = [ isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value) ];
-		}
-		else {
-			this.values = [ parseInt(this.initialConfig.value) ]
-		}
-		
-		SqueezeJS.UI.SliderInput.superclass.initComponent.call(this);
-		
-		this.on({
-			dragstart: {
-				fn: this.onSlide
-			},
-			drag: {
-				fn: this.onSlide
-			},
-			change: {
-				fn: this.onSlide
-			},
-			dragend: {
-				fn: function(){
-					// trigger validation for settings
-					this.input.focus();
-					this.input.blur();
-				}
-			}
-		});
-		
-		this.input.on({
-			change: {
-				fn: this._onChange,
-				scope: this
-			},
-			keyup: {
-				fn: this._onChange,
-				scope: this
-			}
-		});
-	},
+if (Ext.slider) {
 	
-	inputChangeDelay: new Ext.util.DelayedTask(),
-
-	_onChange: function(ev, input) {
-		this.inputChangeDelay.delay(500, function(input){
-			// sanity check input values, don't accept non-numerical values
-			if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
-				input.value = input.defaultValue;
-			else if (input.value != '' && input.value != '-')
-				input.value = parseInt(input.value);
+	SqueezeJS.UI.SliderInput = Ext.extend(Ext.slider.SingleSlider, {
+		tpl: new Ext.Template('<span></span>'),
 	
-			this.setInputValue(input.value);
+		initComponent : function(){
+			this.input = Ext.get(this.initialConfig.input);
 	
-		}, this, [input]);
-	},
-
-	setInputValue: function(v){
-		v = parseInt(v);
-		if (isNaN(v))
-			v = 0;
+			this.renderTo = this.tpl.insertBefore(this.input, {}, true);
 			
-		this.setValue(v);
-	},
+			// if no initial value has been configured,
+			// try reading it from our input field
+			if (this.initialConfig.value == null) {
+				this.values = [ isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value) ];
+			}
+			else {
+				this.values = [ parseInt(this.initialConfig.value) ]
+			}
+			
+			SqueezeJS.UI.SliderInput.superclass.initComponent.call(this);
+			
+			this.on({
+				dragstart: {
+					fn: this.onSlide
+				},
+				drag: {
+					fn: this.onSlide
+				},
+				change: {
+					fn: this.onSlide
+				},
+				dragend: {
+					fn: function(){
+						// trigger validation for settings
+						this.input.focus();
+						this.input.blur();
+					}
+				}
+			});
+			
+			this.input.on({
+				change: {
+					fn: this._onChange,
+					scope: this
+				},
+				keyup: {
+					fn: this._onChange,
+					scope: this
+				}
+			});
+		},
+		
+		inputChangeDelay: new Ext.util.DelayedTask(),
 	
-	onSlide : function(){
-		this.input.dom.value = this.getValue();
-	}
-});
+		_onChange: function(ev, input) {
+			this.inputChangeDelay.delay(500, function(input){
+				// sanity check input values, don't accept non-numerical values
+				if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
+					input.value = input.defaultValue;
+				else if (input.value != '' && input.value != '-')
+					input.value = parseInt(input.value);
+		
+				this.setInputValue(input.value);
+		
+			}, this, [input]);
+		},
+	
+		setInputValue: function(v){
+			v = parseInt(v);
+			if (isNaN(v))
+				v = 0;
+				
+			this.setValue(v);
+		},
+		
+		onSlide : function(){
+			this.input.dom.value = this.getValue();
+		}
+	});
+
+}
 
 
 SqueezeJS.UI.ShowBriefly = Ext.extend(Ext.Component, {
@@ -2019,6 +2064,7 @@ SqueezeJS.UI.ShowBriefly = Ext.extend(Ext.Component, {
 		this.el.fadeIn().pause(3).fadeOut();
 	}
 });
+
 
 // simple one line scanner information
 SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
@@ -2071,6 +2117,7 @@ SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
 		this.el.fadeOut();
 	}
 });
+
 
 // page oriented scanner information - not configurable nor inheritable
 SqueezeJS.UI.ScannerInfoExtended = function(){
