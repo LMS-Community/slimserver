@@ -1051,6 +1051,10 @@ sub artistsQuery {
 			utf8::decode($namesort);
 			
 			my $textKey = substr($namesort, 0, 1);
+			# Bug 11070: Don't display large V at beginning of browse Artists
+			if ($count_va && $chunkCount == 0) {
+				$textKey = " ";
+			}
 
 			if ($menuMode){
 				$request->addResultLoop($loopname, $chunkCount, 'text', $name);
