@@ -867,16 +867,15 @@ form#advSearchForm.resultsPage {
 }
 
 #ctrlUndock, .btn-undock, .btn-undock button {
-	width: 16px;
 	height: 9px;
 }
 
-.btn-undock {
+.btn-undock button {
 	background: transparent url(html/images/btn_undock.gif) no-repeat 0 0;
 }
 
-#ctrlUndock .x-btn-over,
-#ctrlUndock .x-btn-click {
+#ctrlUndock .x-btn-over button,
+#ctrlUndock .x-btn-click button {
 	background-position: 0 -9px;
 }
 
