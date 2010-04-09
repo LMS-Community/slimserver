@@ -67,7 +67,13 @@ sub processCoverArtRequest {
 	# need to excavate real path to the static image here
 	if ($path !~ /^music\//) {
 		$trackid = 'notCoverArt';
-		$imgBasename =~ s/(-*[A-Za-z0-9]+)_.*/$1/;
+		$imgBasename =~ /([A-Za-z0-9_]+?)  # image name is first string before resizing parameters
+			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
+			(?:_([sSfFpcom]))?       # resizeMode, given by a single character
+			(?:_([\da-fA-F]+))?      # background color, optional
+			(?:\.(jpg|png|gif))?$ # optional file suffixes allowed are jpg png gif
+			/ix;	
+		$imgBasename = $1;
 		$actualPathToImage = $path;
 		$actualPathToImage =~ s/$imgName/$imgBasename$suffix/;
 	}
@@ -82,7 +88,7 @@ sub processCoverArtRequest {
 
 	# typical cover art request would come across as something like cover_300x300_c_000000.jpg
 	# delimiter on "fields" is an underscore '_'
-	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)  # image name is first string before resizing parameters
+	$imgName =~ /(cover|thumb|[A-Za-z0-9_]+?)  # image name is first string before resizing parameters
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
 			(?:_([sSfFpcom]))?       # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
