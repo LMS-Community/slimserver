@@ -390,6 +390,7 @@ sub parseMetadata {
 					$song->pluginData( wmaMeta => {
 						title => $1,
 					} );
+					Slim::Music::Info::setCurrentTitle($url, $1, $client);
 				};
 				
 				# Delay metadata according to buffer size if we already have metadata
@@ -419,6 +420,7 @@ sub parseMetadata {
 				my $cb = sub {
 					$song->pluginData( wmaMeta => $meta );
 					$song->pluginData( wmaHasData => 1 );
+					Slim::Music::Info::setCurrentTitle($url, $meta->{title}, $client) if $meta->{title};
 				};
 				
 				# Delay metadata according to buffer size if we already have metadata
@@ -444,6 +446,7 @@ sub parseMetadata {
 				my $cb = sub {
 					$song->pluginData( wmaMeta => $meta );
 					$song->pluginData( wmaHasData => 1 );
+					Slim::Music::Info::setCurrentTitle($url, $meta->{title}, $client) if $meta->{title};
 				};
 				
 				# Delay metadata according to buffer size if we already have metadata
