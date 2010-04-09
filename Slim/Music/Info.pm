@@ -584,35 +584,24 @@ sub getStreamDelay {
 sub setDelayedTitle {
 	my ( $client, $url, $newTitle, $outputDelayOnly ) = @_;
 	
-	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
+	return if !$client || !$newTitle || !$url;
 	
 	my $metaTitle = $client->metaTitle || '';
 	
-	if ( $newTitle && ( $metaTitle ne $newTitle ) ) {
+	if ( $metaTitle ne $newTitle ) {
 		
-		# Some mp3 stations can have 10-15 seconds in the buffer.
-		# This will delay metadata updates according to how much is in
-		# the buffer, so title updates are more in sync with the music
-		my $delay = getStreamDelay($client, $outputDelayOnly);
+		main::INFOLOG && $log->info("New metadata title ($newTitle)");
 		
 		# No delay on the initial metadata
 		if ( !$metaTitle ) {
-			$delay = 0;
+			setCurrentTitle( $url, $newTitle, $client );
+		} else {
+			setDelayedCallback( 
+					$client,
+					sub {setCurrentTitle( $url, $newTitle, $client );}, 
+					$outputDelayOnly,
+				);
 		}
-		
-		main::INFOLOG && $log->info("Delaying metadata title set by $delay secs ($newTitle)");
-		
-		$client->metaTitle( $newTitle );
-		
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + $delay,
-			sub {
-				my $client = shift || return;
-				
-				setCurrentTitle( $url, $newTitle, $client );
-			},
-		);
 	}
 	
 	return $metaTitle;
@@ -623,7 +612,6 @@ sub setDelayedCallback {
 	
 	my $delay = getStreamDelay($client, $outputDelayOnly);
 	
-	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
 	main::INFOLOG && $log->is_info && $log->info("Delaying callback by $delay secs");
 	
 	Slim::Utils::Timers::setTimer(
