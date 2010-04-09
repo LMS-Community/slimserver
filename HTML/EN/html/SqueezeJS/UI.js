@@ -773,7 +773,8 @@ if (Ext.Window && SqueezeJS.UI.FileSelector) {
 					handler: function(){
 						filesystemDlg.close()
 					},
-					scope: filesystemDlg
+					scope: filesystemDlg,
+					template: SqueezeJS.UI.buttonTemplate
 				}],
 				listeners: {
 					resize: this.onResize
