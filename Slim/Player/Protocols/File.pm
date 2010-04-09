@@ -53,7 +53,7 @@ sub open {
 	my $track    = $song->currentTrack();
 	my $url      = $track->url;
 	my $client   = $args->{'client'};
-	my $seekdata = $args->{'song'}->seekdata();
+	my $seekdata = $song->seekdata();
 	
 	my $seekoffset = 0;
 
@@ -118,21 +118,24 @@ sub open {
 	my $format = Slim::Music::Info::contentType($track);
 	
 	my $seekoffset = $offset;
+	my $streamLength = $size;
 	
 	if (defined $seekdata) {
 		
 		if (   ! $seekdata->{sourceStreamOffset}
-			&& ! $seekdata->{playingStreamOffset}
+			&& ! $seekdata->{restartOffset}
 			&& $seekdata->{'timeOffset'}
 			&& canSeek($class, $client, $song) )
 		{
 			$seekdata->{sourceStreamOffset} = _timeToOffset($sock, $format, $song, $seekdata->{'timeOffset'});
 		}
 		
-		if ($seekdata->{sourceStreamOffset}) {							# used for seeking
+		if ($seekdata->{restartOffset}) {								# used for reconnect
+			$streamLength = $song->streamLength();
+			$seekoffset = $seekdata->{restartOffset};
+		} elsif ($seekdata->{sourceStreamOffset}) {						# used for seeking
 			$seekoffset = $seekdata->{sourceStreamOffset};
-		} elsif ($seekdata->{playingStreamOffset}) {					# used for reconnect
-			$seekoffset = $offset + $seekdata->{playingStreamOffset};
+			$streamLength -= $seekdata->{sourceStreamOffset} - $offset;
 		} else {
 			$seekoffset = $offset;										# normal case
 		}
@@ -145,7 +148,13 @@ sub open {
 
 	${*$sock}{'streamFormat'} = $args->{'transcoder'}->{'streamformat'};
 
-	if ( $seekoffset ) {
+	if ( $seekoffset
+	
+		# We do not need to worry about an initialAudioBlock when we are restarting
+		# as getSeekDataByPosition() will not have allowed a restart within the
+		# initialAudioBlock.
+		&& !($seekdata && $seekdata->{restartOffset}) )
+	{
 		my $streamClass = _streamClassForFormat($format);
 
 		if (!defined($song->initialAudioBlock()) && 
@@ -162,9 +171,11 @@ sub open {
 			if ($seekoffset <= $length) {
 				# Might as well just play from the start normally
 				$offset = $seekoffset = 0;
+				$streamLength = $size + $offset;
 			} else {
 				${*$sock}{'initialAudioBlockRemaining'} = $length;
 				${*$sock}{'initialAudioBlockRef'} = \($song->initialAudioBlock());
+				$streamLength += $length;
 			}
 			
 			# For MP4 files, we can't cache the audio block because it's different each time
@@ -188,6 +199,8 @@ sub open {
 	} else {
 		$client->songBytes(0);
 	}
+	
+	$song->streamLength($streamLength);
 
 	return $sock;
 }
@@ -314,9 +327,24 @@ sub getSeekData {
 }
 
 sub getSeekDataByPosition {
-	my (undef, undef, undef, $bytesReceived) = @_;
+	my (undef, undef, $song, $bytesReceived) = @_;
 	
-	return {playingStreamOffset => $bytesReceived};
+	my $streamLength = $song->streamLength();
+	
+	if ( !$streamLength
+		|| $song->initialAudioBlock() && $bytesReceived < $song->initialAudioBlock() )
+	{
+		return undef;
+	}
+
+	my $position = $song->totalbytes() - ($streamLength - $bytesReceived);
+	
+	if ($position <= 0) {
+		return undef;
+	}
+	
+	my $seekdata = $song->seekdata || {}; # We preserve the original seekdata so we know the time-offset, if any
+	return {%$seekdata, restartOffset => $position + $song->offset()};
 }
 
 sub canSeek {

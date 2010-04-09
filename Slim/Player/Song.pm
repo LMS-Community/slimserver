@@ -61,7 +61,7 @@ my @_playlistCloneAttributes = qw(
 		qw(
 			_status
 	
-			startOffset
+			startOffset streamLength
 			seekdata initialAudioBlock
 			_canSeek _canSeekError
 	
@@ -721,6 +721,12 @@ sub getSeekDataByPosition {
 	my ($self, $bytesReceived) = @_;
 	
 	return undef if $self->_transcoded();
+	
+	my $streamLength = $self->streamLength();
+	
+	if ($streamLength && $bytesReceived >= $streamLength) {
+		return {streamComplete => 1};
+	}
 	
 	my $handler = $self->currentTrackHandler();
 	

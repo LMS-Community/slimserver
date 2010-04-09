@@ -381,21 +381,34 @@ sub parseDirectHeaders {
 		$length = $rangeLength;
 	}
 	
-	# However we got here, we want to know that we did not start at the beginning, if possible
-	if ($startOffset && $length) {
+	my $song = ${*self}{'song'} if blessed $self;
+	
+	if (!$song && $client->controller()->songStreamController()) {
+		$song = $client->controller()->songStreamController()->song();
+	}
+	
+	if ($song && $length) {
+		my $seekdata = $song->seekdata();
 		
-		# Assume saved duration is more accurate that by calculating from length and bitrate
-		my $duration = Slim::Music::Info::getDuration($url);
-		$duration ||= $length * 8 / $bitrate if $bitrate;
+		if ($startOffset && $seekdata && $seekdata->{restartOffset}
+			&& $seekdata->{sourceStreamOffset} && $startOffset > $seekdata->{sourceStreamOffset})
+		{
+			$startOffset = $seekdata->{sourceStreamOffset};
+		}
+
+		my $streamLength = $length;
+		$streamLength -= $startOffset if $startOffset;
+		$song->streamLength($streamLength);
 		
-		if ($duration) {
-			my $song = ${*self}{'song'} if blessed $self;
+		# However we got here, we want to know that we did not start at the beginning, if possible
+		if ($startOffset) {
 			
-			if (!$song && $client->controller()->songStreamController()) {
-				$song = $client->controller()->songStreamController()->song();
-			}
 			
-			if ($song) {
+			# Assume saved duration is more accurate that by calculating from length and bitrate
+			my $duration = Slim::Music::Info::getDuration($url);
+			$duration ||= $length * 8 / $bitrate if $bitrate;
+			
+			if ($duration) {
 				main::INFOLOG && $directlog->info("Setting startOffest based on Content-Range to ", $duration * ($startOffset/$length));
 				$song->startOffset($duration * ($startOffset/$length));
 			}
@@ -574,7 +587,7 @@ sub requestString {
 	
 	# If seeking, add Range header
 	if ($client && $seekdata) {
-		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} ) . '-';
+		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} +  $seekdata->{restartOffset}) . '-';
 		
 		if (defined $seekdata->{timeOffset}) {
 			# Fix progress bar
@@ -843,7 +856,9 @@ sub getSeekData {
 sub getSeekDataByPosition {
 	my ($class, $client, $song, $bytesReceived) = @_;
 	
-	return {sourceStreamOffset => $bytesReceived};
+	my $seekdata = $song->seekdata() || {};
+	
+	return {%$seekdata, restartOffset => $bytesReceived};
 }
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance

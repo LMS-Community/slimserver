@@ -901,7 +901,10 @@ sub _Continue {
 		$seekdata = $song->getSeekDataByPosition($bytesReceived);
 	}	
 	
-	if (!$bytesReceived || $seekdata) {
+	if ($seekdata && $seekdata->{'streamComplete'}) {
+		main::INFOLOG && $log->is_info && $log->info("stream already complete at offset $bytesReceived");
+		_Streamout($self);
+	} elsif (!$bytesReceived || $seekdata) {
 		main::INFOLOG && $log->is_info && $log->info("Restarting stream at offset $bytesReceived");
 		_Stream($self, $event, {song => $song, seekdata => $seekdata, reconnect => 1});
 		if ($song == playingSong($self)) {
