@@ -495,10 +495,9 @@ sub clearCurrentTitleChangeCallback {
 }
 
 sub setCurrentTitle {
-	my $url = shift;
-	my $title = shift;
+	my ($url, $title, $client) = @_;
 
-	if (($currentTitles{$url} || '') ne ($title || '')) {
+	if (getCurrentTitle($client, $url) ne ($title || '')) {
 		no strict 'refs';
 		
 		for my $changeCallback (values %currentTitleCallbacks) {
@@ -507,6 +506,19 @@ sub setCurrentTitle {
 				&$changeCallback($url, $title);
 			}
 		}
+		
+		if ($client) {
+			$client->metaTitle( $title );
+			
+			for my $everybuddy ( $client->syncGroupActiveMembers()) {
+				$everybuddy->update();
+			}
+	
+			# For some purposes, a change of title is a newsong...
+			Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'newsong', $title ] );
+		}
+
+		main::INFOLOG && $log->info("Setting title for $url to $title");	
 	}
 
 	$currentTitles{$url} = $title;
@@ -598,20 +610,7 @@ sub setDelayedTitle {
 			sub {
 				my $client = shift || return;
 				
-				my $currentTitle = getCurrentTitle( $client, $url ) || '';
-				
-				return if $newTitle eq $currentTitle;
-
-				setCurrentTitle( $url, $newTitle );
-
-				for my $everybuddy ( $client->syncGroupActiveMembers()) {
-					$everybuddy->update();
-				}
-
-				# For some purposes, a change of title is a newsong...
-				Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'newsong', $newTitle ] );
-
-				main::INFOLOG && $log->info("Setting title for $url to $newTitle");
+				setCurrentTitle( $url, $newTitle, $client );
 			},
 		);
 	}

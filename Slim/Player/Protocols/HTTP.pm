@@ -150,12 +150,13 @@ sub parseMetadata {
 		return if $handled;
 	}
 	
-	# Bug 15896, a stream had CRLF in the metadata
-	$metadata =~ s/[\r\n]//g;
-
+	# Assume Icy metadata as first guess
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 		
 		main::DEBUGLOG && $log->is_debug && $log->debug("Icy metadata received: $metadata");
+	
+		# Bug 15896, a stream had CRLF in the metadata
+		$metadata =~ s/\s*[\r\n]+\s*/; /g;
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
@@ -172,8 +173,33 @@ sub parseMetadata {
 				/\U$1/xg;
 		}
 		
-		# Delay the title set
-		Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
+		# Check for an image URL in the metadata.
+		my $artworkUrl;
+		if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
+			$artworkUrl = $1;
+			if ( $artworkUrl !~ /\.(?:jpe?g|gif|png)$/i ) {
+				$artworkUrl = undef;
+			}
+		}
+		
+		my $cb = sub {
+			Slim::Music::Info::setCurrentTitle($url, $newTitle, $client);
+			
+			if ($artworkUrl) {
+				my $cache = Slim::Utils::Cache->new();
+				$cache->set( "remote_image_$url", $artworkUrl, 3600 );
+				
+				main::DEBUGLOG && $directlog->debug("Updating stream artwork to $artworkUrl");
+			};
+		};
+		
+		# Delay metadata according to buffer size if we already have metadata
+		if ( $client->metaTitle() ) {
+			Slim::Music::Info::setDelayedCallback( $client, $cb );
+		}
+		else {
+			$cb->();
+		}
 	}
 	
 	# Check for Ogg metadata, which is formatted as a series of
@@ -187,6 +213,9 @@ sub parseMetadata {
 			
 			main::DEBUGLOG && $directlog->is_debug && $directlog->debug("Ogg comment: $value");
 			
+			# Bug 15896, a stream had CRLF in the metadata
+			$metadata =~ s/\s*[\r\n]+\s*/; /g;
+
 			# Look for artist/title/album
 			if ( $value =~ /ARTIST=(.+)/i ) {
 				$meta->{artist} = $1;
@@ -204,6 +233,7 @@ sub parseMetadata {
 		
 		my $cb = sub {
 			$song->pluginData( wmaMeta => $meta );
+			Slim::Music::Info::setCurrentTitle($url, $meta->{title}, $client) if $meta->{title};
 		};
 		
 		# Delay metadata according to buffer size if we already have metadata
@@ -215,26 +245,6 @@ sub parseMetadata {
 		}
 		
 		return;
-	}
-	
-	# Check for an image URL in the metadata.  Currently, only Radio Paradise supports this
-	if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
-		my $metaUrl = $1;
-		if ( $metaUrl =~ /\.(?:jpe?g|gif|png)$/i ) {
-			# Set this in the artwork cache after a delay
-			my $delay = Slim::Music::Info::getStreamDelay($client);
-			
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time() + $delay,
-				sub {
-					my $cache = Slim::Utils::Cache->new();
-					$cache->set( "remote_image_$url", $metaUrl, 3600 );
-					
-					main::DEBUGLOG && $directlog->debug("Updating stream artwork to $metaUrl");
-				},
-			);
-		}
 	}
 
 	return undef;
