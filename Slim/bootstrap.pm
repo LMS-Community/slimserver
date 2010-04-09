@@ -359,13 +359,20 @@ sub check_valid_versions {
 		next unless $line =~ /^\w+/;
 		chomp $line;
 		
-		my ($mod, $ver) = split /\s+/, $line;
+		my ($mod, $ver, $max_ver) = split /\s+/, $line;
 		
 		# Could parse the module file here using code from Module::Build,
 		# but we will be loading these later anyway, so this is easier.
 		eval "use $mod ()";
 		if ( !$@ ) {
-			eval { $mod->VERSION( $ver || 0 ); 1; };
+			eval {
+				$mod->VERSION( $ver || 0 );
+			
+				# Check if version is too high
+				if ( $max_ver && $mod->VERSION gt $max_ver ) {
+					die "$mod version " . $mod->VERSION . " is too new, please use version $max_ver\n";
+				}
+			};
 		}
 		if ( $@ ) {
 			my $msg = $@;
@@ -385,7 +392,7 @@ sub check_valid_versions {
 				};
 			}
 		}
-	}		
+	}
 	
 	return $failed;
 }
