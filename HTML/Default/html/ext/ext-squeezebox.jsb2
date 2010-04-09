@@ -823,40 +823,7 @@
             "path": "src/widgets/grid/"
         }]
     },{
-        "name": "Ext Squeezebox All",
-        "file": "ext-sb-all.js",
-        "isDebug": true,
-        "includeDeps": true,
-        "pkgDeps": [
-            "pkgs/ext-foundation.js",
-            "pkgs/cmp-foundation.js",
-            "pkgs/ext-dd.js",
-            "pkgs/data-foundation.js",
-            "pkgs/data-json.js",
-            "pkgs/data-xml.js",
-            "pkgs/data-grouping.js",
-            "pkgs/direct.js",
-            "pkgs/resizable.js",
-            "pkgs/window.js",
-            "pkgs/state.js",
-            "pkgs/data-list-views.js",
-            "pkgs/pkg-tabs.js",
-            "pkgs/pkg-buttons.js",
-            "pkgs/pkg-toolbars.js",
-            "pkgs/pkg-history.js",
-            "pkgs/pkg-tips.js",
-            "pkgs/pkg-tree.js",
-            "pkgs/pkg-charts.js",
-            "pkgs/pkg-menu.js",
-            "pkgs/pkg-forms.js",
-            "pkgs/pkg-grid-foundation.js",
-            "pkgs/pkg-grid-editor.js",
-            "pkgs/pkg-grid-property.js",
-            "pkgs/pkg-grid-grouping.js"
-        ],
-        "fileIncludes": []
-    },{
-        "name": "Ext Squeezebox Browse",
+        "name": "Squeezebox Browse Pages",
         "file": "ext-browse.js",
         "isDebug": true,
         "includeDeps": true,
@@ -870,7 +837,7 @@
         ],
         "fileIncludes": []
     },{
-       "name": "Ext All CSS No theme",
+       "name": "Squeezebox Browse Pages",
        "file": "resources/css/ext-browse.css",
        "fileIncludes": [{
            "text": "reset.css",
@@ -879,38 +846,7 @@
            "text": "core.css",
            "path": "resources/css/structure/"
        },{
-           "text": "form.css",
-           "path": "resources/css/structure/"
-       },{
            "text": "button.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "dd.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "qtips.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "menu.css",
-           "path": "resources/css/structure/"
-       }]
-    },{
-       "name": "Your Theme",
-       "file": "resources/css/ext-browse.css",
-       "fileIncludes": [{
-           "text": "reset.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "core.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "form.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "button.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "dd.css",
            "path": "resources/css/structure/"
        },{
            "text": "menu.css",
@@ -919,42 +855,14 @@
            "text": "core.css",
            "path": "resources/css/visual/"
        },{
-           "text": "form.css",
-           "path": "resources/css/visual/"
-       },{
            "text": "button.css",
-           "path": "resources/css/visual/"
-       },{
-           "text": "dd.css",
            "path": "resources/css/visual/"
        },{
            "text": "menu.css",
            "path": "resources/css/visual/"
        }]
-    },{
-       "name": "Ext Debug CSS",
-       "file": "resources/css/debug.css",
-       "fileIncludes": [{
-           "text": "debug.css",
-           "path": "resources/css/structure/"
-       },{
-           "text": "debug.css",
-           "path": "resources/css/visual/"
-        }]
     }],
     "resources": [{
-        "src": "resources/",
-        "dest": "resources/",
-        "filters": ".*"
-    },{
-        "src": "license.txt",
-        "dest": "license.txt",
-        "filters": ".*"
-    },{
-        "src": "gpl-3.0.txt",
-        "dest": "gpl-3.0.txt",
-        "filters": ".*"
-    },{
         "src": "ext-squeezebox.jsb2",
         "dest": "ext-squeezebox.jsb2",
         "filters": ".*"

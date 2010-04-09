@@ -1,0 +1,1284 @@
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td{margin:0;padding:0;}img,body,html{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}ol,ul {list-style:none;}caption,th {text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;}q:before,q:after{content:'';}/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.ext-el-mask {
+    z-index: 100;
+    position: absolute;
+    top:0;
+    left:0;
+    -moz-opacity: 0.5;
+    opacity: .50;
+    filter: alpha(opacity=50);
+    width: 100%;
+    height: 100%;
+    zoom: 1;
+}
+
+.ext-el-mask-msg {
+    z-index: 20001;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border:1px solid;
+    background:repeat-x 0 -16px;
+    padding:2px;
+}
+
+.ext-el-mask-msg div {
+    padding:5px 10px 5px 10px;
+    border:1px solid;
+    cursor:wait;
+}
+
+.ext-shim {
+    position:absolute;
+    visibility:hidden;
+    left:0;
+    top:0;
+    overflow:hidden;
+}
+
+.ext-ie .ext-shim {
+    filter: alpha(opacity=0);
+}
+
+.ext-ie6 .ext-shim {
+    margin-left: 5px;
+    margin-top: 3px;
+}
+
+.x-mask-loading div {
+    padding:5px 10px 5px 25px;
+    background:no-repeat 5px 5px;
+    line-height:16px;
+}
+
+/* class for hiding elements without using display:none */
+.x-hidden, .x-hide-offsets {
+    position:absolute !important;
+    left:-10000px;
+    top:-10000px;
+    visibility:hidden;
+}
+
+.x-hide-display {
+    display:none !important;
+}
+
+.x-hide-visibility {
+    visibility:hidden !important;
+}
+
+.x-masked {
+    overflow: hidden !important;
+}
+.x-masked-relative {
+    position: relative !important;
+}
+
+.x-masked select, .x-masked object, .x-masked embed {
+    visibility: hidden;
+}
+
+.x-layer {
+    visibility: hidden;
+}
+
+.x-unselectable, .x-unselectable * {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select:ignore;
+}
+
+.x-repaint {
+    zoom: 1;
+    background-color: transparent;
+    -moz-outline: none;
+    outline: none;
+}
+
+.x-item-disabled {
+    cursor: default;
+    opacity: .6;
+    -moz-opacity: .6;
+    filter: alpha(opacity=60);
+}
+
+.x-item-disabled * {
+    cursor: default !important;
+}
+
+.x-form-radio-group .x-item-disabled {
+    filter: none;
+}
+
+.x-splitbar-proxy {
+    position: absolute;
+    visibility: hidden;
+    z-index: 20001;
+    zoom: 1;
+    line-height: 1px;
+    font-size: 1px;
+    overflow: hidden;
+}
+
+.x-splitbar-h, .x-splitbar-proxy-h {
+    cursor: e-resize;
+    cursor: col-resize;
+}
+
+.x-splitbar-v, .x-splitbar-proxy-v {
+    cursor: s-resize;
+    cursor: row-resize;
+}
+
+.x-color-palette {
+    width: 150px;
+    height: 92px;
+    cursor: pointer;
+}
+
+.x-color-palette a {
+    border: 1px solid;
+    float: left;
+    padding: 2px;
+    text-decoration: none;
+    -moz-outline: 0 none;
+    outline: 0 none;
+    cursor: pointer;
+}
+
+.x-color-palette a:hover, .x-color-palette a.x-color-palette-sel {
+    border: 1px solid;
+}
+
+.x-color-palette em {
+    display: block;
+    border: 1px solid;
+}
+
+.x-color-palette em span {
+    cursor: pointer;
+    display: block;
+    height: 10px;
+    line-height: 10px;
+    width: 10px;
+}
+
+.x-ie-shadow {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    left:0;
+    top:0;
+    zoom:1;
+}
+
+.x-shadow {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    left:0;
+    top:0;
+}
+
+.x-shadow * {
+    overflow: hidden;
+}
+
+.x-shadow * {
+    padding: 0;
+    border: 0;
+    margin: 0;
+    clear: none;
+    zoom: 1;
+}
+
+/* top  bottom */
+.x-shadow .xstc, .x-shadow .xsbc {
+    height: 6px;
+    float: left;
+}
+
+/* corners */
+.x-shadow .xstl, .x-shadow .xstr, .x-shadow .xsbl, .x-shadow .xsbr {
+    width: 6px;
+    height: 6px;
+    float: left;
+}
+
+/* sides */
+.x-shadow .xsc {
+    width: 100%;
+}
+
+.x-shadow .xsml, .x-shadow .xsmr {
+    width: 6px;
+    float: left;
+    height: 100%;
+}
+
+.x-shadow .xsmc {
+    float: left;
+    height: 100%;
+    background: transparent;
+}
+
+.x-shadow .xst, .x-shadow .xsb {
+    height: 6px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.x-shadow .xsml {
+    background: transparent repeat-y 0 0;
+}
+
+.x-shadow .xsmr {
+    background: transparent repeat-y -6px 0;
+}
+
+.x-shadow .xstl {
+    background: transparent no-repeat 0 0;
+}
+
+.x-shadow .xstc {
+    background: transparent repeat-x 0 -30px;
+}
+
+.x-shadow .xstr {
+    background: transparent repeat-x 0 -18px;
+}
+
+.x-shadow .xsbl {
+    background: transparent no-repeat 0 -12px;
+}
+
+.x-shadow .xsbc {
+    background: transparent repeat-x 0 -36px;
+}
+
+.x-shadow .xsbr {
+    background: transparent repeat-x 0 -6px;
+}
+
+.loading-indicator {
+    background: no-repeat left;
+    padding-left: 20px;
+    line-height: 16px;
+    margin: 3px;
+}
+
+.x-text-resize {
+    position: absolute;
+    left: -1000px;
+    top: -1000px;
+    visibility: hidden;
+    zoom: 1;
+}
+
+.x-drag-overlay {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-image:url(../images/default/s.gif);
+    z-index: 20000;
+}
+
+.x-clear {
+    clear:both;
+    height:0;
+    overflow:hidden;
+    line-height:0;
+    font-size:0;
+}
+
+.x-spotlight {
+    z-index: 8999;
+    position: absolute;
+    top:0;
+    left:0;
+    -moz-opacity: 0.5;
+    opacity: .50;
+    filter: alpha(opacity=50);
+    width:0;
+    height:0;
+    zoom: 1;
+}
+
+#x-history-frame {
+    position:absolute;
+    top:-1px;
+    left:0;
+	width:1px;
+    height:1px;
+    visibility:hidden;
+}
+
+#x-history-field {
+    position:absolute;
+    top:0;
+    left:-1px;
+	width:1px;
+    height:1px;
+    visibility:hidden;
+}
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.x-btn{
+	cursor:pointer;
+	white-space: nowrap;
+}
+
+.x-btn button{
+    border:0 none;
+    background:transparent;
+    padding-left:3px;
+    padding-right:3px;
+    cursor:pointer;
+    margin:0;
+    overflow:visible;
+    width:auto;
+    -moz-outline:0 none;
+    outline:0 none;
+}
+
+* html .ext-ie .x-btn button {
+    width:1px;
+}
+
+.ext-gecko .x-btn button, .ext-webkit .x-btn button {
+    padding-left:0;
+    padding-right:0;
+}
+
+.ext-gecko .x-btn button::-moz-focus-inner {
+    padding:0;
+}
+
+.ext-ie .x-btn button {
+    padding-top:2px;
+}
+
+.x-btn td {
+    padding:0 !important;
+}
+
+.x-btn-text {
+    cursor:pointer;
+	white-space: nowrap;
+    padding:0;
+}
+
+/* icon placement and sizing styles */
+
+/* Only text */
+.x-btn-noicon .x-btn-small .x-btn-text{
+	height: 16px;
+}
+
+.x-btn-noicon .x-btn-medium .x-btn-text{
+    height: 24px;
+}
+
+.x-btn-noicon .x-btn-large .x-btn-text{
+    height: 32px;
+}
+
+/* Only icons */
+.x-btn-icon .x-btn-text{
+    background-position: center;
+	background-repeat: no-repeat;
+}
+
+.x-btn-icon .x-btn-small .x-btn-text{
+	height: 16px;
+	width: 16px;
+}
+
+.x-btn-icon .x-btn-medium .x-btn-text{
+    height: 24px;
+	width: 24px;
+}
+
+.x-btn-icon .x-btn-large .x-btn-text{
+    height: 32px;
+	width: 32px;
+}
+
+/* Icons and text */
+/* left */
+.x-btn-text-icon .x-btn-icon-small-left .x-btn-text{
+    background-position: 0 center;
+	background-repeat: no-repeat;
+    padding-left:18px;
+    height:16px;
+}
+
+.x-btn-text-icon .x-btn-icon-medium-left .x-btn-text{
+    background-position: 0 center;
+	background-repeat: no-repeat;
+    padding-left:26px;
+    height:24px;
+}
+
+.x-btn-text-icon .x-btn-icon-large-left .x-btn-text{
+    background-position: 0 center;
+	background-repeat: no-repeat;
+    padding-left:34px;
+    height:32px;
+}
+
+/* top */
+.x-btn-text-icon .x-btn-icon-small-top .x-btn-text{
+    background-position: center 0;
+	background-repeat: no-repeat;
+    padding-top:18px;
+}
+
+.x-btn-text-icon .x-btn-icon-medium-top .x-btn-text{
+    background-position: center 0;
+	background-repeat: no-repeat;
+    padding-top:26px;
+}
+
+.x-btn-text-icon .x-btn-icon-large-top .x-btn-text{
+    background-position: center 0;
+	background-repeat: no-repeat;
+    padding-top:34px;
+}
+
+/* right */
+.x-btn-text-icon .x-btn-icon-small-right .x-btn-text{
+    background-position: right center;
+	background-repeat: no-repeat;
+    padding-right:18px;
+    height:16px;
+}
+
+.x-btn-text-icon .x-btn-icon-medium-right .x-btn-text{
+    background-position: right center;
+	background-repeat: no-repeat;
+    padding-right:26px;
+    height:24px;
+}
+
+.x-btn-text-icon .x-btn-icon-large-right .x-btn-text{
+    background-position: right center;
+	background-repeat: no-repeat;
+    padding-right:34px;
+    height:32px;
+}
+
+/* bottom */
+.x-btn-text-icon .x-btn-icon-small-bottom .x-btn-text{
+    background-position: center bottom;
+	background-repeat: no-repeat;
+    padding-bottom:18px;
+}
+
+.x-btn-text-icon .x-btn-icon-medium-bottom .x-btn-text{
+    background-position: center bottom;
+	background-repeat: no-repeat;
+    padding-bottom:26px;
+}
+
+.x-btn-text-icon .x-btn-icon-large-bottom .x-btn-text{
+    background-position: center bottom;
+	background-repeat: no-repeat;
+    padding-bottom:34px;
+}
+
+/* background positioning */
+.x-btn-tr i, .x-btn-tl i, .x-btn-mr i, .x-btn-ml i, .x-btn-br i, .x-btn-bl i{
+	font-size:1px;
+    line-height:1px;
+    width:3px;
+    display:block;
+    overflow:hidden;
+}
+
+.x-btn-tr i, .x-btn-tl i, .x-btn-br i, .x-btn-bl i{
+	height:3px;
+}
+
+.x-btn-tl{
+	width:3px;
+	height:3px;
+	background:no-repeat 0 0;
+}
+.x-btn-tr{
+	width:3px;
+	height:3px;
+	background:no-repeat -3px 0;
+}
+.x-btn-tc{
+	height:3px;
+	background:repeat-x 0 -6px;
+}
+
+.x-btn-ml{
+	width:3px;
+	background:no-repeat 0 -24px;
+}
+.x-btn-mr{
+	width:3px;
+	background:no-repeat -3px -24px;
+}
+
+.x-btn-mc{
+	background:repeat-x 0 -1096px;
+    vertical-align: middle;
+	text-align:center;
+	padding:0 5px;
+	cursor:pointer;
+	white-space:nowrap;
+}
+
+/* Fixes an issue with the button height */
+.ext-strict .ext-ie6 .x-btn-mc, .ext-strict .ext-ie7 .x-btn-mc {
+    height: 100%;
+}
+
+.x-btn-bl{
+	width:3px;
+	height:3px;
+	background:no-repeat 0 -3px;
+}
+
+.x-btn-br{
+	width:3px;
+	height:3px;
+	background:no-repeat -3px -3px;
+}
+
+.x-btn-bc{
+	height:3px;
+	background:repeat-x 0 -15px;
+}
+
+.x-btn-over .x-btn-tl{
+	background-position: -6px 0;
+}
+
+.x-btn-over .x-btn-tr{
+	background-position: -9px 0;
+}
+
+.x-btn-over .x-btn-tc{
+	background-position: 0 -9px;
+}
+
+.x-btn-over .x-btn-ml{
+	background-position: -6px -24px;
+}
+
+.x-btn-over .x-btn-mr{
+	background-position: -9px -24px;
+}
+
+.x-btn-over .x-btn-mc{
+	background-position: 0 -2168px;
+}
+
+.x-btn-over .x-btn-bl{
+	background-position: -6px -3px;
+}
+
+.x-btn-over .x-btn-br{
+	background-position: -9px -3px;
+}
+
+.x-btn-over .x-btn-bc{
+	background-position: 0 -18px;
+}
+
+.x-btn-click .x-btn-tl, .x-btn-menu-active .x-btn-tl, .x-btn-pressed .x-btn-tl{
+	background-position: -12px 0;
+}
+
+.x-btn-click .x-btn-tr, .x-btn-menu-active .x-btn-tr, .x-btn-pressed .x-btn-tr{
+	background-position: -15px 0;
+}
+
+.x-btn-click .x-btn-tc, .x-btn-menu-active .x-btn-tc, .x-btn-pressed .x-btn-tc{
+	background-position: 0 -12px;
+}
+
+.x-btn-click .x-btn-ml, .x-btn-menu-active .x-btn-ml, .x-btn-pressed .x-btn-ml{
+	background-position: -12px -24px;
+}
+
+.x-btn-click .x-btn-mr, .x-btn-menu-active .x-btn-mr, .x-btn-pressed .x-btn-mr{
+	background-position: -15px -24px;
+}
+
+.x-btn-click .x-btn-mc, .x-btn-menu-active .x-btn-mc, .x-btn-pressed .x-btn-mc{
+	background-position: 0 -3240px;
+}
+
+.x-btn-click .x-btn-bl, .x-btn-menu-active .x-btn-bl, .x-btn-pressed .x-btn-bl{
+	background-position: -12px -3px;
+}
+
+.x-btn-click .x-btn-br, .x-btn-menu-active .x-btn-br, .x-btn-pressed .x-btn-br{
+	background-position: -15px -3px;
+}
+
+.x-btn-click .x-btn-bc, .x-btn-menu-active .x-btn-bc, .x-btn-pressed .x-btn-bc{
+	background-position: 0 -21px;
+}
+
+.x-btn-disabled *{
+	cursor:default !important;
+}
+
+
+/* With a menu arrow */
+/* right */
+.x-btn-mc em.x-btn-arrow {
+    display:block;
+    background:transparent no-repeat right center;
+	padding-right:10px;
+}
+
+.x-btn-mc em.x-btn-split {
+    display:block;
+    background:transparent no-repeat right center;
+	padding-right:14px;
+}
+
+/* bottom */
+.x-btn-mc em.x-btn-arrow-bottom {
+    display:block;
+    background:transparent no-repeat center bottom;
+	padding-bottom:14px;
+}
+
+.x-btn-mc em.x-btn-split-bottom {
+    display:block;
+    background:transparent no-repeat center bottom;
+	padding-bottom:14px;
+}
+
+/* height adjustment class */
+.x-btn-as-arrow .x-btn-mc em {
+    display:block;
+    background:transparent;
+	padding-bottom:14px;
+}
+
+/* groups */
+.x-btn-group {
+    padding:1px;
+}
+
+.x-btn-group-header {
+    padding:2px;
+    text-align:center;
+}
+
+.x-btn-group-tc {
+	background: transparent repeat-x 0 0;
+	overflow:hidden;
+}
+
+.x-btn-group-tl {
+	background: transparent no-repeat 0 0;
+	padding-left:3px;
+    zoom:1;
+}
+
+.x-btn-group-tr {
+	background: transparent no-repeat right 0;
+	zoom:1;
+    padding-right:3px;
+}
+
+.x-btn-group-bc {
+	background: transparent repeat-x 0 bottom;
+    zoom:1;
+}
+
+.x-btn-group-bc .x-panel-footer {
+    zoom:1;
+}
+
+.x-btn-group-bl {
+	background: transparent no-repeat 0 bottom;
+	padding-left:3px;
+    zoom:1;
+}
+
+.x-btn-group-br {
+	background: transparent no-repeat right bottom;
+	padding-right:3px;
+    zoom:1;
+}
+
+.x-btn-group-mc {
+    border:0 none;
+    padding:1px 0 0 0;
+    margin:0;
+}
+
+.x-btn-group-mc .x-btn-group-body {
+    background:transparent;
+    border: 0 none;
+}
+
+.x-btn-group-ml {
+	background: transparent repeat-y 0 0;
+	padding-left:3px;
+    zoom:1;
+}
+
+.x-btn-group-mr {
+	background: transparent repeat-y right 0;
+	padding-right:3px;
+    zoom:1;
+}
+
+.x-btn-group-bc .x-btn-group-footer {
+    padding-bottom:6px;
+}
+
+.x-panel-nofooter .x-btn-group-bc {
+	height:3px;
+    font-size:0;
+    line-height:0;
+}
+
+.x-btn-group-bwrap {
+    overflow:hidden;
+    zoom:1;
+}
+
+.x-btn-group-body {
+    overflow:hidden;
+    zoom:1;
+}
+
+.x-btn-group-notitle .x-btn-group-tc {
+	background: transparent repeat-x 0 0;
+	overflow:hidden;
+    height:2px;
+}/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.x-menu {
+	z-index: 15000;
+	zoom: 1;
+	background: repeat-y;
+}
+
+.x-menu-floating{
+    border: 1px solid;
+}
+
+.x-menu a {
+    text-decoration: none !important;
+}
+
+.ext-ie .x-menu {
+    zoom:1;
+    overflow:hidden;
+}
+
+.x-menu-list{
+    padding: 2px;
+	background:transparent;
+	border:0 none;
+    overflow:hidden;
+    overflow-y: hidden;
+}
+
+.ext-strict .ext-ie .x-menu-list{
+    position: relative;
+}
+
+.x-menu li{
+	line-height:100%;
+}
+
+.x-menu li.x-menu-sep-li{
+	font-size:1px;
+	line-height:1px;
+}
+
+.x-menu-list-item{
+    white-space: nowrap;
+	display:block;
+	padding:1px;
+}
+
+.x-menu-item{
+    -moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+}
+
+.x-menu-item-arrow{
+	background:transparent no-repeat right;
+}
+
+.x-menu-sep {
+	display:block;
+	font-size:1px;
+	line-height:1px;
+	margin: 2px 3px;
+	border-bottom:1px solid;
+    overflow:hidden;
+}
+
+.x-menu-focus {
+	position:absolute;
+	left:-1px;
+	top:-1px;
+	width:1px;
+	height:1px;
+    line-height:1px;
+    font-size:1px;
+    -moz-outline:0 none;
+    outline:0 none;
+    -moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+    overflow:hidden;
+    display:block;
+}
+
+a.x-menu-item {
+    cursor: pointer;
+    display: block;
+    line-height: 16px;
+    outline-color: -moz-use-text-color;
+    outline-style: none;
+    outline-width: 0;
+    padding: 3px 21px 3px 27px;
+    position: relative;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.x-menu-item-active {
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    border-style:solid;
+    border-width: 1px 0;
+    margin:0 1px;
+	padding: 0;
+}
+
+.x-menu-item-active a.x-menu-item {
+    border-style:solid;
+    border-width:0 1px;
+    margin:0 -1px;
+}
+
+.x-menu-item-icon {
+	border: 0 none;
+	height: 16px;
+	padding: 0;
+	vertical-align: top;
+	width: 16px;
+	position: absolute;
+    left: 3px;
+    top: 3px;
+    margin: 0;
+    background-position:center;
+}
+
+.ext-ie .x-menu-item-icon {
+    left: -24px;
+}
+.ext-strict .x-menu-item-icon {
+    left: 3px;
+}
+
+.ext-ie6 .x-menu-item-icon {
+    left: -24px;
+}
+
+.ext-ie .x-menu-item-icon {
+    vertical-align: middle;
+}
+
+.x-menu-check-item .x-menu-item-icon{
+	background: transparent no-repeat center;
+}
+
+.x-menu-group-item .x-menu-item-icon{
+	background: transparent;
+}
+
+.x-menu-item-checked .x-menu-group-item .x-menu-item-icon{
+    background: transparent no-repeat center;
+}
+
+.x-date-menu .x-menu-list{
+    padding: 0;
+}
+
+.x-menu-date-item{
+	padding:0;
+}
+
+.x-menu .x-color-palette, .x-menu .x-date-picker{
+    margin-left: 26px;
+	margin-right:4px;
+}
+
+.x-menu .x-date-picker{
+    border:1px solid;
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+.x-menu-plain .x-color-palette, .x-menu-plain .x-date-picker{
+	 margin: 0;
+	 border: 0 none;
+}
+
+.x-date-menu {
+   padding:0 !important;
+}
+
+/*
+ * fixes separator visibility problem in IE 6
+ */
+.ext-strict .ext-ie6 .x-menu-sep-li {
+    padding: 3px 4px;
+}
+.ext-strict .ext-ie6 .x-menu-sep {
+    margin: 0;
+    height: 1px;
+}
+
+/*
+ * Ugly mess to remove the white border under the picker
+ */
+.ext-ie .x-date-menu{
+    height: 199px;
+}
+
+.ext-strict .ext-ie .x-date-menu, .ext-border-box .ext-ie8 .x-date-menu{
+    height: 197px;
+}
+
+.ext-strict .ext-ie7 .x-date-menu{
+    height: 195px;
+}
+
+.ext-strict .ext-ie8 .x-date-menu{
+    height: auto;
+}
+
+.x-cycle-menu .x-menu-item-checked {
+    border:1px dotted !important;
+	padding:0;
+}
+
+.x-menu .x-menu-scroller {
+    width: 100%;
+	background-repeat:no-repeat;
+	background-position:center;
+	height:8px;
+    line-height: 8px;
+	cursor:pointer;
+    margin: 0;
+    padding: 0;
+}
+
+.x-menu .x-menu-scroller-active{
+    height: 6px;
+    line-height: 6px;
+}
+
+.x-menu-list-item-indent{
+    padding-left: 27px;
+}/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.ext-el-mask {
+    background-color: #ccc;
+}
+
+.ext-el-mask-msg {
+    border-color:#6593cf;
+    background-color:#c3daf9;
+    background-image:url(../images/default/box/tb-blue.gif);
+}
+.ext-el-mask-msg div {
+    background-color: #eee;
+    border-color:#a3bad9;
+    color:#222;
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+}
+
+.x-mask-loading div {
+    background-color:#fbfbfb;
+    background-image:url(../images/default/grid/loading.gif);
+}
+
+.x-item-disabled {
+    color: gray;
+}
+
+.x-item-disabled * {
+    color: gray !important;
+}
+
+.x-splitbar-proxy {
+    background-color: #aaa;
+}
+
+.x-color-palette a {
+    border-color:#fff;
+}
+
+.x-color-palette a:hover, .x-color-palette a.x-color-palette-sel {
+    border-color:#8bb8f3;
+    background-color: #deecfd;
+}
+
+.x-color-palette em:hover, .x-color-palette span:hover{   
+    background-color: #deecfd;
+}
+
+.x-color-palette em {
+    border-color:#aca899;
+}
+
+.x-ie-shadow {
+    background-color:#777;
+}
+
+.x-shadow .xsmc {
+    background-image: url(../images/default/shadow-c.png);
+}
+
+.x-shadow .xsml, .x-shadow .xsmr {
+    background-image: url(../images/default/shadow-lr.png);
+}
+
+.x-shadow .xstl, .x-shadow .xstc,  .x-shadow .xstr, .x-shadow .xsbl, .x-shadow .xsbc, .x-shadow .xsbr{
+    background-image: url(../images/default/shadow.png);
+}
+
+.loading-indicator {
+    font-size: 11px;
+    background-image: url(../images/default/grid/loading.gif);
+}
+
+.x-spotlight {
+    background-color: #ccc;
+}
+/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.x-btn{
+	font:normal 11px tahoma, verdana, helvetica;
+}
+
+.x-btn button{
+    font:normal 11px arial,tahoma,verdana,helvetica;
+    color:#333;
+}
+
+.x-btn em {
+    font-style:normal;
+    font-weight:normal;
+}
+
+.x-btn-tl, .x-btn-tr, .x-btn-tc, .x-btn-ml, .x-btn-mr, .x-btn-mc, .x-btn-bl, .x-btn-br, .x-btn-bc{
+	background-image:url(../images/default/button/btn.gif);
+}
+
+.x-btn-click .x-btn-text, .x-btn-menu-active .x-btn-text, .x-btn-pressed .x-btn-text{
+    color:#000;
+}
+
+.x-btn-disabled *{
+	color:gray !important;
+}
+
+.x-btn-mc em.x-btn-arrow {
+    background-image:url(../images/default/button/arrow.gif);
+}
+
+.x-btn-mc em.x-btn-split {
+    background-image:url(../images/default/button/s-arrow.gif);
+}
+
+.x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
+    background-image:url(../images/default/button/s-arrow-o.gif);
+}
+
+.x-btn-mc em.x-btn-arrow-bottom {
+    background-image:url(../images/default/button/s-arrow-b-noline.gif);
+}
+
+.x-btn-mc em.x-btn-split-bottom {
+    background-image:url(../images/default/button/s-arrow-b.gif);
+}
+
+.x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-btn-click .x-btn-mc em.x-btn-split-bottom, .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-btn-pressed .x-btn-mc em.x-btn-split-bottom {
+    background-image:url(../images/default/button/s-arrow-bo.gif);
+}
+
+.x-btn-group-header {
+    color: #3e6aaa;
+}
+
+.x-btn-group-tc {
+	background-image: url(../images/default/button/group-tb.gif);
+}
+
+.x-btn-group-tl {
+	background-image: url(../images/default/button/group-cs.gif);
+}
+
+.x-btn-group-tr {
+	background-image: url(../images/default/button/group-cs.gif);
+}
+
+.x-btn-group-bc {
+	background-image: url(../images/default/button/group-tb.gif);
+}
+
+.x-btn-group-bl {
+	background-image: url(../images/default/button/group-cs.gif);
+}
+
+.x-btn-group-br {
+	background-image: url(../images/default/button/group-cs.gif);
+}
+
+.x-btn-group-ml {
+	background-image: url(../images/default/button/group-lr.gif);
+}
+.x-btn-group-mr {
+	background-image: url(../images/default/button/group-lr.gif);
+}
+
+.x-btn-group-notitle .x-btn-group-tc {
+	background-image: url(../images/default/button/group-tb.gif);
+}/*!
+ * Ext JS Library 3.2.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+ */
+.x-menu {
+    background-color:#f0f0f0;
+	background-image:url(../images/default/menu/menu.gif);
+}
+
+.x-menu-floating{
+    border-color:#718bb7;
+}
+
+.x-menu-nosep {
+	background-image:none;
+}
+
+.x-menu-list-item{
+	font:normal 11px arial,tahoma,sans-serif;
+}
+
+.x-menu-item-arrow{
+	background-image:url(../images/default/menu/menu-parent.gif);
+}
+
+.x-menu-sep {
+    background-color:#e0e0e0;
+	border-bottom-color:#fff;
+}
+
+a.x-menu-item {
+	color:#222;
+}
+
+.x-menu-item-active {
+    background-image: url(../images/default/menu/item-over.gif);
+	background-color: #dbecf4;
+    border-color:#aaccf6;
+}
+
+.x-menu-item-active a.x-menu-item {
+	border-color:#aaccf6;
+}
+
+.x-menu-check-item .x-menu-item-icon{
+	background-image:url(../images/default/menu/unchecked.gif);
+}
+
+.x-menu-item-checked .x-menu-item-icon{
+	background-image:url(../images/default/menu/checked.gif);
+}
+
+.x-menu-item-checked .x-menu-group-item .x-menu-item-icon{
+    background-image:url(../images/default/menu/group-checked.gif);
+}
+
+.x-menu-group-item .x-menu-item-icon{
+    background-image:none;
+}
+
+.x-menu-plain {
+	background-color:#f0f0f0 !important;
+    background-image: none;
+}
+
+.x-date-menu, .x-color-menu{
+    background-color: #fff !important;
+}
+
+.x-menu .x-date-picker{
+    border-color:#a3bad9;
+}
+
+.x-cycle-menu .x-menu-item-checked {
+    border-color:#a3bae9 !important;
+    background-color:#def8f6;
+}
+
+.x-menu-scroller-top {
+    background-image:url(../images/default/layout/mini-top.gif);
+}
+
+.x-menu-scroller-bottom {
+    background-image:url(../images/default/layout/mini-bottom.gif);
+}
