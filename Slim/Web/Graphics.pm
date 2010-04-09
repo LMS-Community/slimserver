@@ -67,7 +67,7 @@ sub processCoverArtRequest {
 	# need to excavate real path to the static image here
 	if ($path !~ /^music\//) {
 		$trackid = 'notCoverArt';
-		$imgBasename =~ /([A-Za-z0-9_]+?)  # image name is first string before resizing parameters
+		$imgBasename =~ /-*([A-Za-z0-9_]+?)  # image name is first string before resizing parameters
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
 			(?:_([sSfFpcom]))?       # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
