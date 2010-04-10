@@ -823,6 +823,25 @@
             "path": "src/widgets/grid/"
         }]
     },{
+        "name": "Squeezebox Main Page",
+        "file": "ext-main.js",
+        "isDebug": true,
+        "includeDeps": true,
+        "pkgDeps": [
+        	"adapter/ext/ext-base.js",
+            "pkgs/ext-foundation.js",
+            "pkgs/ext-dd.js",
+            "pkgs/state.js",
+            "pkgs/cmp-foundation.js",
+            "pkgs/pkg-buttons.js",
+            "pkgs/pkg-tips.js",
+            "pkgs/pkg-menu.js",
+            "pkgs/pkg-toolbars.js",
+            "pkgs/window.js",
+            "pkgs/resizable.js"
+        ],
+        "fileIncludes": []
+    },{
         "name": "Squeezebox Browse Pages",
         "file": "ext-browse.js",
         "isDebug": true,
@@ -833,7 +852,7 @@
             "pkgs/state.js",
             "pkgs/cmp-foundation.js",
             "pkgs/pkg-buttons.js",
-            "pkgs/pkg-menu.js",
+            "pkgs/pkg-menu.js"
         ],
         "fileIncludes": []
     },{
