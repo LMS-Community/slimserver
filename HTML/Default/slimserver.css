@@ -308,6 +308,10 @@ img#background {
 	color: white;
 }
 
+#footerInfoText div {
+	display: inline;
+}
+
 #settingsLink {
 	position: absolute;
 	top: 7px;
