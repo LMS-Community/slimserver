@@ -41,24 +41,8 @@ SqueezeJS.UI = {
 	
 	setProgressCursor : function(timeout){
 		var el = Ext.get(document.body);
+		el.mask();
 
-		// don't want to overwrite Ext.Element.mask, thus partially copying
-        if (el._maskMsg)
-            el._maskMsg.remove();
-
-        if(el._mask)
-            el._mask.remove();
-
-        el._mask = Ext.DomHelper.append(el.dom, {cls:"waitingCursorMask"}, true);
-
-        el.addClass("x-masked");
-        el._mask.setDisplayed(true);
-
-        // TODO: test Ext 3.2 compatibility with IE8 too!
-        if(Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && el.getStyle('height') == 'auto'){ // ie will not expand full height automatically
-            el._mask.setSize(el.dom.clientWidth, el.getHeight());
-        }
-		
 		this.progressCursorTimer.delay(timeout || 500, function(){
 			el.unmask();
 		});
