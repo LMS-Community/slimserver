@@ -109,23 +109,6 @@ if (Ext.Button) {
 	
 			SqueezeJS.UI.Button.superclass.initComponent.call(this);
 	
-			// work around an IE7 workaround...
-	/* TODO: 3.2 compatibility?
-	  			if (Ext.isIE7) {
-					Ext.apply(this, {
-						autoWidth : function(){
-							if(this.el){
-								this.el.setWidth("auto");
-								if(this.minWidth){
-									if(this.el.getWidth() < this.minWidth){
-										this.el.setWidth(this.minWidth);
-									}
-								}
-							}
-						}
-					});
-				}
-	*/
 			SqueezeJS.Controller.on({
 				'playerstatechange': {
 					fn: this._beforePlayerStateChange,
@@ -214,8 +197,6 @@ if (Ext.Button) {
 	
 			if (this.el)
 				this.el.child(this.buttonSelector).update(text);
-	
-	//  TODO: 3.2 compatibility?			this.autoWidth();
 		},
 	
 		setClass: function(newClass) {
@@ -570,7 +551,6 @@ if (Ext.tree && Ext.tree.TreeLoader) {
 	
 			SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
 	
-			// TODO: ExtJS 3.2 & IE8
 			// workaround for IE7's inability to overflow unless position:relative is set
 			if (Ext.isIE7) {
 				var parentEl = Ext.get(this.renderTo).parent();
