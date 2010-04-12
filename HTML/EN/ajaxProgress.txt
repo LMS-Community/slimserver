@@ -3,7 +3,7 @@
 
 Name[% num %]|[% item.obj.name _ "_PROGRESS" | string %]
 Done[% num %]|[% item.obj.done %]
-Total[% num %]|[% item.obj.total %]
+Total[% num %]|[% item.obj.total || item.obj.done %]
 Active[% num %]|[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]
 Time[% num %]|[% item.time %]
 Bar[% num %]|[% item.bar %]

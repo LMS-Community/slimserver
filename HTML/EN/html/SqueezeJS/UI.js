@@ -2072,7 +2072,7 @@ SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
 
 			if (el = Ext.get(this.total)) {
 				Ext.get(this.name).update(result.progressname);
-				Ext.get(this.done).update(result.progressdone) || 0;
+				Ext.get(this.done).update(result.progressdone || 0);
 				el.update(result.progresstotal || 0);
 			}
 		}
