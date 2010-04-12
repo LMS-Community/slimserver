@@ -71,7 +71,8 @@ a:hover, .link:hover,
 	cursor: default;
 }
 
-.waitingCursorMask {
+.ext-el-mask {
+	background-color: transparent;
 	cursor: progress;
 	z-index: 20000;
 	position: absolute;
