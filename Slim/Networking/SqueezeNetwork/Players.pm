@@ -173,8 +173,7 @@ sub _players_done {
 			# and just copy it to the my_apps list
 			if ( $info->{plugin} ) {
 				if ( my $plugin = Slim::Utils::PluginManager->isEnabled( $info->{plugin} ) ) {
-					my $url = Slim::Web::Pages->getPageLink( 'apps', $plugin->{name} );
-					Slim::Web::Pages->addPageLinks( 'my_apps', { $plugin->{name} => $url } );
+					_updateWebLink($plugin->{name}, $app);
 				}
 			}
 			elsif ( $info->{type} eq 'opml' ) {
@@ -201,10 +200,11 @@ sub _players_done {
 
 				if (!$@) {
 					$log->debug("Plugin $subclass already initialized - skipping");
+					_updateWebLink($info->{title}, $app);
 					next; 
 				}
 
-				$log->debug("Initializing plugin for mysqueezebox.com based app '$app'");
+				$log->debug("Initializing plugin for mysqueezebox.com based app '$app': $subclass");
 				
 				my $code = qq{
 					package ${subclass};
@@ -247,6 +247,8 @@ sub _players_done {
 				else {
 					$subclass->initPlugin();
 
+					_updateWebLink($info->{title}, $app);
+
 					foreach my $client ( Slim::Player::Client::clients() ) {
 						if ( !$client->isa('Slim::Player::SqueezePlay') ) {
 							Slim::Buttons::Home::updateMenu($client);
@@ -275,6 +277,17 @@ sub _players_done {
 		time() + $POLL_INTERVAL,
 		\&fetch_players,
 	);
+}
+
+sub _updateWebLink {
+	my $name = shift;
+	my $id   = shift;
+	
+	my $disabled = $prefs->get('sn_disabled_plugins');
+	return if $disabled && grep /^$id$/i, @$disabled;
+	
+	my $url = Slim::Web::Pages->getPageLink( 'apps', $name );
+	Slim::Web::Pages->addPageLinks( 'my_apps', { $name => $url } );
 }
 
 sub _players_error {
