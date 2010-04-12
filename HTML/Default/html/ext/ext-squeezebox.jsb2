@@ -446,6 +446,48 @@
             "path": "src/widgets/"
         }]
     },{
+        "name": "Component Foundation Browse pages",
+        "file": "pkgs/cmp-foundation-browse.js",
+        "isDebug": true,
+        "pkgDeps": ["pkgs/ext-foundation.js"],
+        "fileIncludes": [{
+            "text": "ComponentMgr.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Component.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Layer.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Shadow.js",
+            "path": "src/widgets/"
+        },{
+            "text": "BoxComponent.js",
+            "path": "src/widgets/"
+        },{
+            "text": "SplitBar.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Container.js",
+            "path": "src/widgets/"
+        },{
+            "text": "ContainerLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "Container.js",
+            "path": "src/widgets/"
+        },{
+            "text": "MenuLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "Viewport.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Panel.js",
+            "path": "src/widgets/"
+        }]
+    },{
         "name": "Window",
         "file": "pkgs/window.js",
         "isDebug": true,
@@ -850,7 +892,7 @@
         	"adapter/ext/ext-base.js",
             "pkgs/ext-foundation.js",
             "pkgs/state.js",
-            "pkgs/cmp-foundation.js",
+            "pkgs/cmp-foundation-browse.js",
             "pkgs/pkg-buttons.js",
             "pkgs/pkg-menu.js"
         ],
