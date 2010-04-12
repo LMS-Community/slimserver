@@ -446,6 +446,60 @@
             "path": "src/widgets/"
         }]
     },{
+        "name": "Component Foundation Main",
+        "file": "pkgs/cmp-foundation-main.js",
+        "isDebug": true,
+        "pkgDeps": ["pkgs/ext-foundation.js"],
+        "fileIncludes": [{
+            "text": "ComponentMgr.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Component.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Layer.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Shadow.js",
+            "path": "src/widgets/"
+        },{
+            "text": "BoxComponent.js",
+            "path": "src/widgets/"
+        },{
+            "text": "SplitBar.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Container.js",
+            "path": "src/widgets/"
+        },{
+            "text": "ContainerLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "AutoLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "BorderLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "ToolbarLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "MenuLayout.js",
+            "path": "src/widgets/layout/"
+        },{
+            "text": "Viewport.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Panel.js",
+            "path": "src/widgets/"
+        },{
+            "text": "Slider.js",
+            "path": "src/widgets/"
+        },{
+            "text": "ProgressBar.js",
+            "path": "src/widgets/"
+        }]
+    },{
         "name": "Component Foundation Browse pages",
         "file": "pkgs/cmp-foundation-browse.js",
         "isDebug": true,
@@ -474,9 +528,6 @@
         },{
             "text": "ContainerLayout.js",
             "path": "src/widgets/layout/"
-        },{
-            "text": "Container.js",
-            "path": "src/widgets/"
         },{
             "text": "MenuLayout.js",
             "path": "src/widgets/layout/"
@@ -874,7 +925,7 @@
             "pkgs/ext-foundation.js",
             "pkgs/ext-dd.js",
             "pkgs/state.js",
-            "pkgs/cmp-foundation.js",
+            "pkgs/cmp-foundation-main.js",
             "pkgs/pkg-buttons.js",
             "pkgs/pkg-tips.js",
             "pkgs/pkg-menu.js",
@@ -883,6 +934,70 @@
             "pkgs/resizable.js"
         ],
         "fileIncludes": []
+    },{
+       "name": "Squeezebox Main Page",
+       "file": "resources/css/ext-main.css",
+       "fileIncludes": [{
+           "text": "reset.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "core.css",
+           "path": "resources/css/structure/"
+       },{
+            "text": "resizable.css",
+            "path": "resources/css/structure/"
+       },{
+           "text": "button.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "toolbar.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "dd.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "qtips.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "menu.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "box.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "combo.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "panel.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "panel-reset.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "window.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "borders.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "layout.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "dialog.css",
+           "path": "resources/css/structure/"
+       },{
+           "text": "core.css",
+           "path": "resources/css/visual/"
+       },{
+           "text": "button.css",
+           "path": "resources/css/visual/"
+       },{
+           "text": "resizable.css",
+           "path": "resources/css/visual/"
+       },{
+           "text": "menu.css",
+           "path": "resources/css/visual/"
+       }]
     },{
         "name": "Squeezebox Browse Pages",
         "file": "ext-browse.js",
