@@ -74,8 +74,8 @@
 		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
 
 		<script type="text/javascript">
-			document.getElementById('noJS').style.display = 'none';
 			document.getElementById('loading').style.display = 'block';
+			document.getElementById('noJS').style.display = 'none';
 		</script>
 
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
