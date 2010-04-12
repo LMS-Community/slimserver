@@ -6446,6 +6446,7 @@ sub _getTagDataForTracks {
 			$values{$track} ||= {};
 			my $role_info = $values{$track}->{$role} ||= {};
 			
+			utf8::decode($name);
 			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
 			$role_info->{names} .= $role_info->{names} ? ', ' . $name : $name;
 		}
@@ -6487,6 +6488,7 @@ sub _getTagDataForTracks {
 		while ( my ($id, $name, $track) = $genre_sth->fetchrow_array ) {
 			my $genre_info = $values{$track} ||= {};
 			
+			utf8::decode($name);
 			$genre_info->{ids}   .= $genre_info->{ids} ? ', ' . $id : $id;
 			$genre_info->{names} .= $genre_info->{names} ? ', ' . $name : $name;
 		}
