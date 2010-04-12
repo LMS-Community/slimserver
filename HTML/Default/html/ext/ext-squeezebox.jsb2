@@ -992,6 +992,9 @@
            "text": "button.css",
            "path": "resources/css/visual/"
        },{
+           "text": "qtips.css",
+           "path": "resources/css/visual/"
+       },{
            "text": "resizable.css",
            "path": "resources/css/visual/"
        },{
