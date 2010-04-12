@@ -170,6 +170,9 @@ sub home {
 	my $conditions = \%Slim::Web::Pages::pageConditions;
 	
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
+		
+		next if $menu eq 'apps';
+
 		my @sorted = sort {
 			(
 				$menu !~ /(?:my_apps)/ &&
