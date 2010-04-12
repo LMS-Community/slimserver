@@ -1780,13 +1780,20 @@ if (Ext.ToolTip) {
 
 
 SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
+	_resizeTask: null,
+	
 	initComponent : function(){
 		SqueezeJS.UI.Playlist.superclass.initComponent.call(this);
 
 		this.container = Ext.get(this.renderTo);
 		this.onResize();
+		
+		this._resizeTask = new Ext.util.DelayedTask(function(){ this.onResize(); }, this);
 
-		Ext.EventManager.onWindowResize(this.onResize, this);
+		Ext.EventManager.onWindowResize(function(){
+			this._resizeTask.delay(100);
+		}, this);
+		
 		SqueezeJS.Controller.on({
 			playerselected: {
 				fn: this.onPlayerSelected,
