@@ -6526,6 +6526,7 @@ sub _getTagDataForTracks {
 		}
 		
 		while ( my ($id, $comment) = each %values ) {
+			utf8::decode($comment);
 			$results{$id}->{comment} = $comment;
 		}
 	}
