@@ -359,7 +359,7 @@ sub readRemoteHeaders {
 
 	# bug 15491 - some radio services are too lazy to correctly configure their servers
 	# thus serve playlists with content-type text/html or text/plain
-	elsif ( $type =~ /(?:htm|txt)/ && $url =~ /\.(asx|m3u|pls|wpl)$/i ) {
+	elsif ( $type =~ /(?:htm|txt)/ && $url =~ /\.(asx|m3u|pls|wpl|wma)$/i ) {
 		$type = $1;
 	}
 	
@@ -912,7 +912,7 @@ sub parsePlaylist {
 						# Get error of last item we tried in the playlist, or a generic error
 						my $error;
 						for my $track ( $playlist->tracks ) {
-							if ( $track->error ) {
+							if ( $track->can('error') && $track->error ) {
 								$error = $track->error;
 							}
 						}
