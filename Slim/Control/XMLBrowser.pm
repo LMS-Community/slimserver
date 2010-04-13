@@ -93,9 +93,19 @@ sub cliQuery {
 		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
 	}
 
-	# If the feed is already XML data (Podcast List), send it to handleFeed
+	my $playlistControlCM = [];
+
+	# If the feed is already XML data (e.g., local music CMs, favorites menus), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		
+		# Bug 15824-- push playlist control items for favorites item CMs
+		# note: making the judgment to put the playlistControl items in a CM by looking if the command is not '*info' is a hack
+		# 	*info menus need to not get these items though, since they deliver them through their own menus
+		my $localMusicInfoRequest = $request->getRequest(0) =~ /info$/;
+		if ( defined($request->getParam('xmlBrowseInterimCM')) && !$localMusicInfoRequest ) {
+			$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
+		}
+
 		main::DEBUGLOG && $log->debug("Feed is already XML data!");
 		
 		_cliQuery_done( $feed, {
@@ -104,7 +114,7 @@ sub cliQuery {
 			'url'        => $feed->{'url'},
 			'query'      => $query,
 			'expires'    => $expires,
-#			'forceTitle' => $forceTitle,
+			'playlistControlCM' => $playlistControlCM,
 		} );
 		return;
 	}
@@ -122,7 +132,6 @@ sub cliQuery {
 		$feed =~ s/{QUERY}/$query/g;
 	}
 	
-	my $playlistControlCM = [];
 	if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
 		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
 	}

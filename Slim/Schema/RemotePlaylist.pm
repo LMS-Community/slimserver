@@ -47,6 +47,11 @@ sub getNextEntry {
 	
 	my $playlist = $args->{playlist} || $self;
 	
+	# Bug 16052: protect against empty apparent playlists
+	if (!$playlist->can('tracks')) {
+		return;
+	}
+	
 	for my $track ( $playlist->tracks ) {
 		my $type = $track->content_type;
 		
