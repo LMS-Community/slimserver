@@ -66,9 +66,8 @@ sub checkVersion {
 
 	main::INFOLOG && $log->info("Checking version now.");
 
-	my $url  = "http://"
-		. Slim::Networking::SqueezeNetwork->get_server("sn")
-		. sprintf(
+	my $url  = Slim::Networking::SqueezeNetwork->url(
+		sprintf(
 			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s", 
 			$::VERSION, 
 			$::REVISION, 
@@ -76,7 +75,8 @@ sub checkVersion {
 			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
 			$os->installerOS(),
 			$prefs->get('server_uuid'),
-		);
+		)
+	);
 		
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
