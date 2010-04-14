@@ -65,3 +65,6 @@ PLUGIN_RADIOTIME_LOADING
 	RU	Загрузка RadioTime...
 	SV	Läser in RadioTime ...
 
+PLUGIN_RADIOTIME_OPTIONS
+	EN	RadioTime Options
+

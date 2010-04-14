@@ -19,6 +19,7 @@ use Digest::MD5 ();
 use URI;
 use URI::QueryParam;
 use Slim::Plugin::RadioTime::Metadata;
+use Slim::Utils::Strings qw(cstring);
 
 sub initPlugin {
 	my $class = shift;
@@ -26,26 +27,11 @@ sub initPlugin {
 	# Initialize metadata handler
 	Slim::Plugin::RadioTime::Metadata->init();
 	
-	if ( main::WEBUI ) {
-		# Add a function to view trackinfo in the web
-		Slim::Web::Pages->addPageFunction( 
-			'plugins/radiotime/trackinfo.html',
-			sub {
-				my $client = $_[0];
-				
-				my $url = Slim::Player::Playlist::url($client);
-				
-				Slim::Web::XMLBrowser->handleWebIndex( {
-					client  => $client,
-					feed    => $class->trackInfoURL( $client, $url ),
-					path    => 'plugins/radiotime/trackinfo.html',
-					title   => Slim::Music::Info::title($url),
-					timeout => 35,
-					args    => \@_
-				} );
-			},
-		);
-	}
+	# Track Info handler
+	Slim::Menu::TrackInfo->registerInfoProvider( infoRadioTime => (
+		before => 'playitem',
+		func   => \&trackInfoHandler,
+	) );
 }
 
 sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
@@ -53,27 +39,19 @@ sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
 # Don't add this item to any menu
 sub playerMenu { }
 
-sub trackInfo {
-	my ( $class, $client, $track ) = @_;
+sub trackInfoHandler {
+	my ( $client, $url, $track ) = @_;
 	
-	my $url = $track->url;
-
-	# SN URL to fetch track info menu
-	my $trackInfoURL = $class->trackInfoURL( $client, $url );
+	my $item;
 	
-	# let XMLBrowser handle all our display
-	my %params = (
-		header   => 'PLUGIN_RADIOTIME_MODULE_NAME',
-		modeName => 'RadioTime Now Playing',
-		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
-		url      => $trackInfoURL,
-		remember => 0,
-		timeout  => 35,
-	);
-
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+	if ( $url =~ m{^http://opml\.radiotime\.com} ) {
+		$item = {
+			name => cstring($client, 'PLUGIN_RADIOTIME_OPTIONS'),
+			url  => __PACKAGE__->trackInfoURL( $client, $url ),
+		};
+	}
 	
-	$client->modeParam( 'handledTransition', 1 );
+	return $item;
 }
 
 sub trackInfoURL {
