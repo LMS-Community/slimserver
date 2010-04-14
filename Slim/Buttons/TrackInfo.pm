@@ -66,11 +66,6 @@ sub setMode {
 		$handler->trackInfo( $client, $track );
 		return;
 	}
-	elsif ( $url =~ m{^http://opml\.radiotime\.com} ) {
-		# Special case for RadioTime's trackinfo menu
-		Slim::Plugin::RadioTime::Plugin->trackInfo( $client, $track );
-		return;
-	}
 	
 	my $getMenu = sub {
 		my ( $client, $callback ) = @_;
