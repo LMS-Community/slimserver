@@ -159,22 +159,11 @@ sub getInitialAudioBlock {
 	
 	my $sourcelog = logger('player.source');
 	
-	open my $localFh, '<&=', $fh;
+	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
+	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
+	);
 	
-	seek $localFh, 0, 0;
-	
-	my $s = Audio::Scan->scan_fh( mp4 => $localFh );
-	
-	main::DEBUGLOG && $sourcelog->is_debug && $sourcelog->debug( 'Reading initial audio block: length ' . $s->{info}->{audio_offset} );
-	
-	seek $localFh, 0, 0;
-	read $localFh, my $buffer, $s->{info}->{audio_offset};
-	
-	close $localFh;
-	
-	# XXX: need to construct a new mdat atom for the seeked data
-	
-	return $buffer;
+	return ${ delete ${*$fh}{_mp4_seek_header} };
 }
 
 sub findFrameBoundaries {
@@ -184,10 +173,15 @@ sub findFrameBoundaries {
 		return 0;
 	}
 	
-	return Audio::Scan->find_frame_fh( mp4 => $fh, int($time * 1000) );
+	my $info = Audio::Scan->find_frame_fh_return_info( mp4 => $fh, int($time * 1000) );
+	
+	# Since getInitialAudioBlock will be called right away, stash the new seek header so
+	# we don't have to scan again
+	${*$fh}{_mp4_seek_header} = \($info->{seek_header});
+	
+	return $info->{seek_offset};
 }
 
-# XXX support while transcoding?
-sub canSeek { 0 }
+sub canSeek { 1 }
 
 1;
