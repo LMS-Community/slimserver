@@ -32,6 +32,7 @@ my %tagMapping = (
 	'replaygain_album_peak' => 'REPLAYGAIN_ALBUM_PEAK',
 	'WM/PartOfSet'          => 'DISC',
 	'WM/ArtistSortOrder'    => 'ARTISTSORT',
+	'WM/AlbumSortOrder'     => 'ALBUMSORT',
 	'WM/Comments'           => 'COMMENT',
 	'WM/Lyrics'             => 'LYRICS',
 	'WM/Year'               => 'YEAR',
