@@ -43,7 +43,7 @@ var myGlobalHandlers = {
 			}, 30*1000
 		);
 	},
-	onComplete: function() {
+	onComplete: function(request) {
 		if(Ajax.activeRequestCount == 0) {
 			if ($('systemWorking')) {
 				Element.hide('systemWorking');
