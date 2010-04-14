@@ -525,7 +525,7 @@ sub _notifyFromScanner {
 				start  => $start,
 				total  => $total,
 				done   => $done,
-				active => $finish ? 1 : 0,
+				active => $finish ? 0 : 1,
 			} );
 		
 			if ( $finish ) {
