@@ -24,7 +24,6 @@ L<AnyEvent>). However, this module can be loaded at any time.
 package AnyEvent::Strict;
 
 use Carp qw(croak);
-use Fcntl ();
 
 use AnyEvent (); BEGIN { AnyEvent::common_sense }
 

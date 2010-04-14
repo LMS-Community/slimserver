@@ -38,9 +38,11 @@ our $VERSION = $AnyEvent::VERSION;
 
 # some public dns servers
 our @DNS_FALLBACK = (
-   v209.244.0.3, v209.244.0.4, # level3
-   v4.2.2.1, v4.2.2.3, v4.2.2.4, v4.2.2.5, v4.2.2.6, # vnsc-pri.sys.gtei.net
+   (v8.8.8.8, v8.8.4.4)[rand 2], # google public dns
+   (v209.244.0.3, v209.244.0.4)[rand 2], # level3
+   (v4.2.2.1, v4.2.2.3, v4.2.2.4, v4.2.2.5, v4.2.2.6)[rand 4], # vnsc-pri.sys.gtei.net
 );
+push @DNS_FALLBACK, splice @DNS_FALLBACK, rand $_, 1 for reverse 1..@DNS_FALLBACK;
 
 =item AnyEvent::DNS::a $domain, $cb->(@addrs)
 
@@ -878,7 +880,7 @@ sub os_config {
    $self->{search} = [];
 
    if ((AnyEvent::WIN32 || $^O =~ /cygwin/i)) {
-      no strict 'refs';
+      #no strict 'refs';
 
       # there are many options to find the current nameservers etc. on windows
       # all of them don't work consistently:
@@ -939,8 +941,8 @@ sub os_config {
          }
       }
 
-      # always add one fallback server
-      push @{ $self->{server} }, $DNS_FALLBACK[rand @DNS_FALLBACK];
+      # always add the fallback servers
+      push @{ $self->{server} }, @DNS_FALLBACK;
 
       $self->_compile;
    } else {
@@ -1092,7 +1094,7 @@ sub _exec {
                      &$do_retry;
                   };
 
-               $handle->push_write (pack "n/a", $req->[0]);
+               $handle->push_write (pack "n/a*", $req->[0]);
                $handle->push_read (chunk => 2, sub {
                   $handle->unshift_read (chunk => (unpack "n", $_[1]), sub {
                      undef $handle;
@@ -1124,7 +1126,7 @@ sub _exec {
 sub _scheduler {
    my ($self) = @_;
 
-   no strict 'refs';
+   #no strict 'refs';
 
    $NOW = time;
 

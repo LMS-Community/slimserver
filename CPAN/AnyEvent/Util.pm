@@ -29,41 +29,29 @@ use AnyEvent (); BEGIN { AnyEvent::common_sense }
 use base 'Exporter';
 
 our @EXPORT = qw(fh_nonblocking guard fork_call portable_pipe portable_socketpair run_cmd);
-our @EXPORT_OK = qw(AF_INET6 WSAEWOULDBLOCK WSAEINPROGRESS WSAEINVAL close_all_fds_except);
+our @EXPORT_OK = qw(
+   AF_INET6 WSAEWOULDBLOCK WSAEINPROGRESS WSAEINVAL
+   close_all_fds_except
+   punycode_encode punycode_decode idn_nameprep idn_to_ascii idn_to_unicode
+);
 
 our $VERSION = $AnyEvent::VERSION;
 
 BEGIN {
-   my $af_inet6 = eval { local $SIG{__DIE__}; &Socket::AF_INET6 };
-
-   # uhoh
-   $af_inet6 ||= 10 if $^O =~ /linux/;
-   $af_inet6 ||= 23 if $^O =~ /cygwin/i;
-   $af_inet6 ||= 23 if AnyEvent::WIN32;
-   $af_inet6 ||= 24 if $^O =~ /openbsd|netbsd/;
-   $af_inet6 ||= 28 if $^O =~ /freebsd/;
-
-   $af_inet6 && socket my $ipv6_socket, $af_inet6, &Socket::SOCK_STREAM, 0 # check if they can be created
-      or $af_inet6 = 0;
-
-   eval "sub AF_INET6() { $af_inet6 }"; die if $@;
-
-   delete $AnyEvent::PROTOCOL{ipv6} unless $af_inet6;
+   if (
+      $AnyEvent::PROTOCOL{ipv6}
+      && _AF_INET6
+      && socket my $ipv6_socket, _AF_INET6, Socket::SOCK_DGRAM(), 0 # check if they can be created
+   ) {
+      *AF_INET6 = \&_AF_INET6;
+   } else {
+      # disable ipv6
+      *AF_INET6 = sub () { 0 };
+      delete $AnyEvent::PROTOCOL{ipv6};
+   }
 }
 
 BEGIN {
-   # broken windows perls use undocumented error codes...
-   if (AnyEvent::WIN32) {
-      eval "sub WSAEINVAL      () { 10022 }";
-      eval "sub WSAEWOULDBLOCK () { 10035 }";
-      eval "sub WSAEINPROGRESS () { 10036 }";
-   } else {
-      # these should never match any errno value
-      eval "sub WSAEINVAL      () { -1e99 }";
-      eval "sub WSAEWOULDBLOCK () { -1e99 }";
-      eval "sub WSAEINPROGRESS () { -1e99 }";
-   }
-
    # fix buggy Errno on some non-POSIX platforms
    # such as openbsd and windows.
    my %ERR = (
@@ -106,74 +94,75 @@ Returns the empty list on any errors.
 
 =cut
 
-sub _win32_socketpair {
-   # perl's socketpair emulation fails on many vista machines, because
-   # vista returns fantasy port numbers.
+BEGIN {
+   if (AnyEvent::WIN32) {
+      *_win32_socketpair = sub () {
+         # perl's socketpair emulation fails on many vista machines, because
+         # vista returns fantasy port numbers.
 
-   for (1..10) {
-      socket my $l, &Socket::AF_INET, &Socket::SOCK_STREAM, 0
-         or next;
+         for (1..10) {
+            socket my $l, Socket::AF_INET(), Socket::SOCK_STREAM(), 0
+               or next;
 
-      bind $l, Socket::pack_sockaddr_in 0, "\x7f\x00\x00\x01"
-         or next;
+            bind $l, Socket::pack_sockaddr_in 0, "\x7f\x00\x00\x01"
+               or next;
 
-      my $sa = getsockname $l
-         or next;
+            my $sa = getsockname $l
+               or next;
 
-      listen $l, 1
-         or next;
+            listen $l, 1
+               or next;
 
-      socket my $r, &Socket::AF_INET, &Socket::SOCK_STREAM, 0
-         or next;
+            socket my $r, Socket::AF_INET(), Socket::SOCK_STREAM(), 0
+               or next;
 
-      bind $r, Socket::pack_sockaddr_in 0, "\x7f\x00\x00\x01"
-         or next;
+            bind $r, Socket::pack_sockaddr_in 0, "\x7f\x00\x00\x01"
+               or next;
 
-      connect $r, $sa
-         or next;
+            connect $r, $sa
+               or next;
 
-      accept my $w, $l
-         or next;
+            accept my $w, $l
+               or next;
 
-      # vista has completely broken peername/sockname that return
-      # fantasy ports. this combo seems to work, though.
-      #
-      (Socket::unpack_sockaddr_in getpeername $r)[0]
-      == (Socket::unpack_sockaddr_in getsockname $w)[0]
-         or (($! = WSAEINVAL), next);
+            # vista has completely broken peername/sockname that return
+            # fantasy ports. this combo seems to work, though.
+            #
+            (Socket::unpack_sockaddr_in getpeername $r)[0]
+            == (Socket::unpack_sockaddr_in getsockname $w)[0]
+               or (($! = WSAEINVAL), next);
 
-      # vista example (you can't make this shit up...):
-      #(Socket::unpack_sockaddr_in getsockname $r)[0] == 53364
-      #(Socket::unpack_sockaddr_in getpeername $r)[0] == 53363
-      #(Socket::unpack_sockaddr_in getsockname $w)[0] == 53363
-      #(Socket::unpack_sockaddr_in getpeername $w)[0] == 53365
+            # vista example (you can't make this shit up...):
+            #(Socket::unpack_sockaddr_in getsockname $r)[0] == 53364
+            #(Socket::unpack_sockaddr_in getpeername $r)[0] == 53363
+            #(Socket::unpack_sockaddr_in getsockname $w)[0] == 53363
+            #(Socket::unpack_sockaddr_in getpeername $w)[0] == 53365
 
-      return ($r, $w);
+            return ($r, $w);
+         }
+
+         ()
+      };
+
+      *portable_socketpair = \&_win32_socketpair;
+      *portable_pipe       = \&_win32_socketpair;
+   } else {
+      *portable_pipe = sub () {
+         my ($r, $w);
+
+         pipe $r, $w
+            or return;
+
+         ($r, $w);
+      };
+
+      *portable_socketpair = sub () {
+         socketpair my $fh1, my $fh2, Socket::AF_UNIX(), Socket::SOCK_STREAM(), Socket::PF_UNSPEC()
+            or return;
+
+         ($fh1, $fh2)
+      };
    }
-
-   ()
-}
-
-sub portable_pipe() {
-   return _win32_socketpair
-      if AnyEvent::WIN32;
-
-   my ($r, $w);
-
-   pipe $r, $w
-      or return;
-
-   ($r, $w);
-}
-
-sub portable_socketpair() {
-   return _win32_socketpair
-      if AnyEvent::WIN32;
-
-   socketpair my $fh1, my $fh2, &Socket::AF_UNIX, &Socket::SOCK_STREAM, &Socket::PF_UNSPEC
-      or return;
-
-   ($fh1, $fh2)
 }
 
 =item fork_call { CODE } @args, $cb->(@res)
@@ -364,17 +353,15 @@ broken (i.e. windows) platforms.
 
 =cut
 
-sub fh_nonblocking($$) {
-   my ($fh, $nb) = @_;
-
-   require Fcntl;
-
-   if (AnyEvent::WIN32) {
-      $nb = (! ! $nb) + 0;
-      ioctl $fh, 0x8004667e, \$nb; # FIONBIO
-   } else {
-      fcntl $fh, &Fcntl::F_SETFL, $nb ? &Fcntl::O_NONBLOCK : 0;
-   }
+BEGIN {
+   *fh_nonblocking = AnyEvent::WIN32
+      ? sub($$) {
+          ioctl $_[0], 0x8004667e, pack "L", $_[1]; # FIONBIO
+        }
+      : sub($$) {
+          fcntl $_[0], AnyEvent::F_SETFL, $_[1] ? AnyEvent::O_NONBLOCK : 0;
+        }
+   ;
 }
 
 =item $guard = guard { CODE }
@@ -740,6 +727,215 @@ sub run_cmd {
 
    $cv
 }
+
+=item AnyEvent::Util::punycode_encode $string
+
+Punycode-encodes the given C<$string> and returns its punycode form. Note
+that uppercase letters are I<not> casefolded - you have to do that
+yourself.
+
+Croaks when it cannot encode the string.
+
+=item AnyEvent::Util::punycode_decode $string
+
+Tries to punycode-decode the given C<$string> and return it's unicode
+form. Again, uppercase letters are not casefoled, you have to do that
+yourself.
+
+Croaks when it cannot decode the string.
+
+=cut
+
+sub punycode_encode($) {
+   require "AnyEvent/Util/idna.pl";
+   goto &punycode_encode;
+}
+
+sub punycode_decode($) {
+   require "AnyEvent/Util/idna.pl";
+   goto &punycode_decode;
+}
+
+=item AnyEvent::Util::idn_nameprep $idn[, $display]
+
+Implements the IDNA nameprep normalisation algorithm. Or actually the
+UTS#46 algorithm. Or maybe something similar - reality is complicated
+btween IDNA2003, UTS#46 and IDNA2008. If C<$display> is true then the name
+is prepared for display, otherwise it is prepared for lookup (default).
+
+If you have no clue what this means, look at C<idn_to_ascii> instead.
+
+This function is designed to avoid using a lot of resources - it uses
+about 1MB of RAM (most of this due to Unicode::Normalize). Also, names
+that are already "simple" will only be checked for basic validity, without
+the overhead of full nameprep processing.
+
+=cut
+
+our ($uts46_valid, $uts46_imap);
+
+sub idn_nameprep($;$) {
+   local $_ = $_[0];
+
+   # lowercasing these should always be valid, and is required for xn-- detection
+   y/A-Z/a-z/;
+
+   if (/[^0-9a-z\-.]/) {
+      # load the mapping data
+      unless (defined $uts46_imap) {
+         require Unicode::Normalize;
+         require "lib/AnyEvent/Util/uts46data.pl";
+      }
+
+      # uts46 nameprep
+
+      # I naively tried to use a regex/transliterate approach first,
+      # with one regex and one y///, but the compiled code was 4.5MB.
+      # this version has a bit-table for the valid class, and
+      # a char-replacement search string
+
+      # for speed (cough) reasons, we skip-case 0-9a-z, -, ., which
+      # really ought to be trivially valid. A-Z is valid, but already lowercased.
+      s{
+         ([^0-9a-z\-.])
+      }{
+         my $chr = $1;
+         unless (vec $uts46_valid, ord $chr, 1) {
+            # not in valid class, search for mapping
+            utf8::encode $chr; # the imap table is in utf-8
+            (my $rep = index $uts46_imap, "\x00$chr") >= 0
+               or Carp::croak "$_[0]: disallowed characters during idn_nameprep";
+
+            (substr $uts46_imap, $rep, 128) =~ /\x00 .[\x80-\xbf]* ([^\x00]+) \x00/x
+               or die "FATAL: idn_nameprep imap table has unexpected contents";
+
+            $rep = $1;
+            $chr = $rep unless $rep =~ s/^\x01// && $_[1]; # replace unless deviation and display
+            utf8::decode $chr;
+         }
+         $chr
+      }gex;
+
+      # KC
+      $_ = Unicode::Normalize::NFKC ($_);
+   }
+
+   # decode punycode components, check for invalid xx-- prefixes
+   s{
+      (^|\.)(..)--([^\.]*)
+   }{
+      my ($pfx, $ace, $pc) = ($1, $2, $3);
+
+      if ($ace eq "xn") {
+         $pc = punycode_decode $pc; # will croak on error (we hope :)
+
+         require Unicode::Normalize;
+         $pc eq Unicode::Normalize::NFC ($pc)
+            or Carp::croak "$_[0]: punycode label not in NFC detected during idn_nameprep";
+
+         "$pfx$pc"
+      } elsif ($ace !~ /^[a-z0-9]{2}$/) {
+         "$pfx$ace--$pc"
+      } else {
+         Carp::croak "$_[0]: hyphens in 3rd/4th position of a label are not allowed";
+      }
+   }gex;
+
+   # uts46 verification
+   /\.-|-\.|\.\./
+      and Carp::croak "$_[0]: invalid hyphens detected during idn_nameprep";
+
+   # missing: label begin with combining mark, idna2008 bidi
+
+   # now check validity of each codepoint
+   if (/[^0-9a-z\-.]/) {
+      # load the mapping data
+      unless (defined $uts46_imap) {
+         require "lib/AnyEvent/Util/uts46data.pl";
+      }
+
+      vec $uts46_valid, ord, 1
+         or $_[1] && 0 <= index $uts46_imap, pack "C0U*", 0, ord, 1 # deviation == \x00$chr\x01
+         or Carp::croak "$_[0]: disallowed characters during idn_nameprep"
+         for split //;
+   }
+
+   $_
+}
+
+=item $domainname = AnyEvent::Util::idn_to_ascii $idn
+
+Converts the given unicode string (C<$idn>, international domain name,
+e.g. 日本語。ＪＰ) to a pure-ASCII domain name (this is usually
+called the "IDN ToAscii" transform). This transformation is idempotent,
+which means you can call it just in case and it will do the right thing.
+
+Unlike some other "ToAscii" implementations, this one works on full domain
+names and should never fail - if it cannot convert the name, then it will
+return it unchanged.
+
+This function is an amalgam of IDNA2003, UTS#46 and IDNA2008 - it tries to
+be reasonably compatible to other implementations, reasonably secure, as
+much as IDNs can be secure, and reasonably efficient when confronted with
+IDNs that are already valid DNS names.
+
+=cut
+
+sub idn_to_ascii($) {
+   return $_[0]
+      unless $_[0] =~ /[^\x00-\x7f]/;
+
+   my @output;
+
+   eval {
+      # punycode by label
+      for (split /\./, idn_nameprep $_[0]) {
+         if (/[^\x00-\x7f]/) {
+            eval {
+               push @output, "xn--" . punycode_encode $_;
+               1;
+            } or do {
+               push @output, $_;
+            };
+         } else {
+            push @output, $_;
+         }
+      }
+
+      1
+   } or return $_[0];
+
+   join ".", @output
+}
+
+=item $idn = AnyEvent::Util::idn_to_unicode $idn
+
+Converts the given unicode string (C<$idn>, international domain name,
+e.g. 日本語。ＪＰ, www.deliantra.net, www.xn--l-0ga.de) to
+unicode form (this is usually called the "IDN ToUnicode" transform). This
+transformation is idempotent, which means you can call it just in case and
+it will do the right thing.
+
+Unlike some other "ToUnicode" implementations, this one works on full
+domain names and should never fail - if it cannot convert the name, then
+it will return it unchanged.
+
+This function is an amalgam of IDNA2003, UTS#46 and IDNA2008 - it tries to
+be reasonably compatible to other implementations, reasonably secure, as
+much as IDNs can be secure, and reasonably efficient when confronted with
+IDNs that are already valid DNS names.
+
+At the moment, this function simply calls C<idn_nameprep $idn, 1>,
+returning it's argument when that function fails.
+
+=cut
+
+sub idn_to_unicode($) {
+   my $res = eval { idn_nameprep $_[0], 1 };
+   defined $res ? $res : $_[0]
+}
+
+
 1;
 
 =back

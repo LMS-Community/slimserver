@@ -22,9 +22,14 @@ package AnyEvent::Impl::EV;
 use AnyEvent (); BEGIN { AnyEvent::common_sense }
 use EV 3.44;
 
+# cannot override directly, as EV doesn't allow arguments
 sub time       { EV::time       }
 sub now        { EV::now        }
 sub now_update { EV::now_update }
+
+*AE::time       = \&EV::time;
+*AE::now        = \&EV::now;
+*AE::now_update = \&EV::now_update;
 
 *AE::timer = \&EV::timer;
 
@@ -34,7 +39,7 @@ sub timer {
    EV::timer $arg{after}, $arg{interval}, $arg{cb}
 }
 
-*AE::io = defined &EV::_ae_io
+*AE::io = defined &EV::_ae_io # 3.8
    ? \&EV::_ae_io
    : sub($$$) { EV::io $_[0], $_[1] ? EV::WRITE : EV::READ, $_[2] };
 

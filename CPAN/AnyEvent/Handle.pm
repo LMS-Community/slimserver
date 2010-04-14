@@ -81,7 +81,7 @@ sub _load_func($) {
 
 =over 4
 
-=item $handle = B<new> AnyEvent::TLS fh => $filehandle, key => value...
+=item $handle = B<new> AnyEvent::Handle fh => $filehandle, key => value...
 
 The constructor supports these arguments (all as C<< key => value >> pairs).
 
@@ -834,6 +834,9 @@ water mark, the C<on_drain> callback will be invoked.
 Sets the C<on_drain> callback or clears it (see the description of
 C<on_drain> in the constructor).
 
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
+
 =cut
 
 sub on_drain {
@@ -850,6 +853,9 @@ sub on_drain {
 Queues the given scalar to be written. You can push as much data as you
 want (only limited by the available memory), as C<AnyEvent::Handle>
 buffers it independently of the kernel.
+
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
 
 =cut
 
@@ -905,11 +911,14 @@ sub push_write {
            ->($self, @_);
    }
 
+   # we downgrade here to avoid hard-to-track-down bugs,
+   # and diagnose the problem earlier and better.
+
    if ($self->{tls}) {
-      $self->{_tls_wbuf} .= $_[0];
+      utf8::downgrade $self->{_tls_wbuf} .= $_[0];
       &_dotls ($self)    if $self->{fh};
    } else {
-      $self->{wbuf}      .= $_[0];
+      utf8::downgrade $self->{wbuf}      .= $_[0];
       $self->_drain_wbuf if $self->{fh};
    }
 }
@@ -1032,6 +1041,9 @@ the peer.
 
 You can rely on the normal read queue and C<on_eof> handling
 afterwards. This is the cleanest way to close a connection.
+
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
 
 =cut
 
@@ -1238,6 +1250,9 @@ This replaces the currently set C<on_read> callback, or clears it (when
 the new callback is C<undef>). See the description of C<on_read> in the
 constructor.
 
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
+
 =cut
 
 sub on_read {
@@ -1285,6 +1300,9 @@ available (or an error condition is detected).
 If enough data was available, then the callback must remove all data it is
 interested in (which can be none at all) and return a true value. After returning
 true, it will be removed from the queue.
+
+These methods may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
 
 =cut
 
@@ -1713,7 +1731,7 @@ sub stop_read {
 sub start_read {
    my ($self) = @_;
 
-   unless ($self->{_rw} || $self->{_eof}) {
+   unless ($self->{_rw} || $self->{_eof} || !$self->{fh}) {
       Scalar::Util::weaken $self;
 
       $self->{_rw} = AE::io $self->{fh}, 0, sub {
@@ -1816,6 +1834,7 @@ sub _dotls {
    while (length ($tmp = Net::SSLeay::BIO_read ($self->{_wbio}))) {
       $self->{wbuf} .= $tmp;
       $self->_drain_wbuf;
+      $self->{tls} or return; # tls session might have gone away in callback
    }
 
    $self->{_on_starttls}
@@ -1849,6 +1868,9 @@ when this function returns.
 Due to bugs in OpenSSL, it might or might not be possible to do multiple
 handshakes on the same stream. Best do not attempt to use the stream after
 stopping TLS.
+
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
 
 =cut
 
@@ -1924,15 +1946,18 @@ sub starttls {
 
 Shuts down the SSL connection - this makes a proper EOF handshake by
 sending a close notify to the other side, but since OpenSSL doesn't
-support non-blocking shut downs, it is not guarenteed that you can re-use
+support non-blocking shut downs, it is not guaranteed that you can re-use
 the stream afterwards.
+
+This method may invoke callbacks (and therefore the handle might be
+destroyed after it returns).
 
 =cut
 
 sub stoptls {
    my ($self) = @_;
 
-   if ($self->{tls}) {
+   if ($self->{tls} && $self->{fh}) {
       Net::SSLeay::shutdown ($self->{tls});
 
       &_dotls;
@@ -2018,6 +2043,29 @@ sub destroy {
 sub AnyEvent::Handle::destroyed::AUTOLOAD {
    #nop
 }
+
+=item $handle->destroyed
+
+Returns false as long as the handle hasn't been destroyed by a call to C<<
+->destroy >>, true otherwise.
+
+Can be useful to decide whether the handle is still valid after some
+callback possibly destroyed the handle. For example, C<< ->push_write >>,
+C<< ->starttls >> and other methods can call user callbacks, which in turn
+can destroy the handle, so work can be avoided by checking sometimes:
+
+   $hdl->starttls ("accept");
+   return if $hdl->destroyed;
+   $hdl->push_write (...
+
+Note that the call to C<push_write> will silently be ignored if the handle
+has been destroyed, so often you can just ignore the possibility of the
+handle being destroyed.
+
+=cut
+
+sub destroyed { 0 }
+sub AnyEvent::Handle::destroyed::destroyed { 1 }
 
 =item AnyEvent::Handle::TLS_CTX
 
