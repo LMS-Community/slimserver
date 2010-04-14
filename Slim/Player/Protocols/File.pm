@@ -166,6 +166,11 @@ sub open {
 				${*$sock}{'initialAudioBlockRemaining'} = $length;
 				${*$sock}{'initialAudioBlockRef'} = \($song->initialAudioBlock());
 			}
+			
+			# For MP4 files, we can't cache the audio block because it's different each time
+			if ($streamClass eq 'Slim::Formats::Movie') {
+				$song->initialAudioBlock(undef);
+			}
 		}
 	}
 	

@@ -164,10 +164,10 @@ sub getCoverArt {
 	if ( my $pic = $tags->{APIC} ) {
 		if ( ref $pic->[0] eq 'ARRAY' ) {
 			# multiple images, return image with lowest image_type value
-			return ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4];
+			return ( sort { $a->[1] <=> $b->[1] } @{$pic} )[0]->[3];
 		}
 		else {
-			return $pic->[4];
+			return $pic->[3];
 		}
 	}
 
@@ -184,8 +184,9 @@ sub getInitialAudioBlock {
 	
 	open my $localFh, '<&=', $fh;
 	
-	# Find the location of the next frame past the audio offset
-	my $second_frame = Audio::Scan->find_frame_fh( mp3 => $localFh, $track->audio_offset + 1 );
+	# Find the location of the next frame past the audio offset (uses negative offset for byte-based seeking)
+	my $offset = $track->audio_offset + 1;
+	my $second_frame = Audio::Scan->find_frame_fh( mp3 => $localFh, -$offset );
 	
 	# If unable to find the second frame for some reason, $second_frame will be -1
 	# We'll check for less than audio_offset to be safe although this should never happen
@@ -211,8 +212,16 @@ Locate MP3 frame boundaries when seeking through a file.
 sub findFrameBoundaries {
 	my ( $class, $fh, $offset, $time ) = @_;
 	
-	if (!defined $fh || !defined $offset) {
+	if ( !defined $fh || !defined $offset ) {
 		return 0;
+	}
+	
+	if ( defined $time ) {
+		$offset = int($time * 1000);
+	}
+	elsif ( $offset > 0 ) {
+		# Use negative offset for byte-based seeking
+		$offset = -$offset;
 	}
 	
 	return Audio::Scan->find_frame_fh( mp3 => $fh, $offset );
@@ -267,15 +276,15 @@ sub scanBitrate {
 		if ( my $pic = $tags->{APIC} ) {
 			if ( ref $pic->[0] eq 'ARRAY' ) {
 				# multiple images, use image with lowest image_type value
-				$pic = ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0];
+				$pic = ( sort { $a->[1] <=> $b->[1] } @{$pic} )[0];
 			}
 			
 			$track->cover(1);
 			$track->update;
 			
 			my $data = {
-				image => $pic->[4],
-				type  => $pic->[1] || 'image/jpeg',
+				image => $pic->[3],
+				type  => $pic->[0] || 'image/jpeg',
 			};
 			
 			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
@@ -371,7 +380,7 @@ sub doTagMapping {
 		# Sometimes iTunNORM is not in a comment tag
 		if ( $tags->{ITUNNORM} ) {
 			$tags->{COMMENT} ||= [];
-			push @{ $tags->{COMMENT} }, [ 0, 'eng', 'iTunNORM', delete $tags->{ITUNNORM} ];
+			push @{ $tags->{COMMENT} }, [ 'eng', 'iTunNORM', delete $tags->{ITUNNORM} ];
 		}
 	
 		if ( $tags->{COMMENT} ) {
@@ -401,21 +410,21 @@ sub doTagMapping {
 		
 		if ( ref $tags->{COMMENT}->[0] eq 'ARRAY' ) {
 			for my $comment ( @{ $tags->{COMMENT} } ) {
-				if ( $comment->[2] ) {
+				if ( $comment->[1] ) {
 					# Comment has a description
-					push @{$fixed}, $comment->[2] . ': ' . $comment->[3];
+					push @{$fixed}, $comment->[1] . ': ' . $comment->[2];
 				}
 				else {
-					push @{$fixed}, $comment->[3];
+					push @{$fixed}, $comment->[2];
 				}
 			}
 		}
 		else {
-			if ( $tags->{COMMENT}->[2] ) {
-				push @{$fixed}, $tags->{COMMENT}->[2] . ': ' . $tags->{COMMENT}->[3];
+			if ( $tags->{COMMENT}->[1] ) {
+				push @{$fixed}, $tags->{COMMENT}->[1] . ': ' . $tags->{COMMENT}->[2];
 			}
 			else {
-				push @{$fixed}, $tags->{COMMENT}->[3];
+				push @{$fixed}, $tags->{COMMENT}->[2];
 			}
 		}
 		
@@ -424,7 +433,7 @@ sub doTagMapping {
 	
 	# Clean up lyrics
 	if ( $tags->{LYRICS} && ref $tags->{LYRICS} eq 'ARRAY' ) {
-		$tags->{LYRICS} = $tags->{LYRICS}->[3];
+		$tags->{LYRICS} = $tags->{LYRICS}->[2];
 	}
 	
 	# Flag if we have embedded cover art
