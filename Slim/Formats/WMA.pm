@@ -22,6 +22,7 @@ my %tagMapping = (
 	'WM/AlbumArtist'        => 'ALBUMARTIST',
 	'WM/AlbumTitle'         => 'ALBUM',
 	'WM/Composer'           => 'COMPOSER',
+	'WM/Conductor'          => 'CONDUCTOR',
 	'WM/Genre'              => 'GENRE',
 	'WM/TrackNumber'        => 'TRACKNUM',
 	'WM/PartOfACompilation' => 'COMPILATION',
