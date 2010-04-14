@@ -1026,7 +1026,8 @@ sub infoContentType {
 
 		$item = {
 			type => 'text',
-			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . cstring($client,  uc($ct) ),
+			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' 
+				. ( ($ct eq uc($ct)) ? cstring($client,  uc($ct)) : $ct ),
 		};
 	}
 	
@@ -1467,10 +1468,6 @@ sub cliQuery {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('trackInfoURL') ) {
 			$feed = $handler->trackInfoURL( $client, $url );
-		}
-		elsif ( $url =~ m{^http://opml\.radiotime\.com} ) {
-			# Special case for RadioTime's trackinfo menu
-			$feed = Slim::Plugin::RadioTime::Plugin->trackInfoURL( $client, $url );
 		}
 	}
 	

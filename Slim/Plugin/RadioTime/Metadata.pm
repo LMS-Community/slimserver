@@ -38,10 +38,9 @@ sub defaultMeta {
 	my ( $client, $url ) = @_;
 	
 	return {
-		title     => Slim::Music::Info::getCurrentTitle($url),
-		icon      => $ICON,
-		type      => $client->string('RADIO'),
-		info_link => 'plugins/radiotime/trackinfo.html',
+		title => Slim::Music::Info::getCurrentTitle($url),
+		icon  => $ICON,
+		type  => $client->string('RADIO'),
 	};
 }
 
