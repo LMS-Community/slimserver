@@ -52,7 +52,7 @@ sub find {
 	if ( $args->{progress} ) {
 		$progress = Slim::Utils::Progress->new( {
 			type  => 'importer',
-			name  => 'discovering_' . $args->{scanName},
+			name  => $args->{scanName} ? 'discovering_' . $args->{scanName} : 'discovering_files',
 		} );
 	}
 	

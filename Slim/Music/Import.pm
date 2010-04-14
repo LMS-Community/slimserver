@@ -270,7 +270,7 @@ sub setIsScanning {
 
 Clear importer progress info stored in the database.
 
-XXX - only here for backwards compatibility. This has been replaced by Slim::Utils::Progress->clear()
+XXX - only here for backwards compatibility (v7.6). This has been replaced by Slim::Utils::Progress->clear
 
 =cut
 
