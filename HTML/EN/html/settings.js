@@ -20,7 +20,7 @@ function chooseSettings(value,option)
 
 	switch(option)
 	{
-		[% IF playerid -%]
+		[% IF needsClient -%]
 			[% PROCESS addSetupCaseLinks setuplinks=playersetup  %]
 		[%- ELSE -%]
 			[% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
