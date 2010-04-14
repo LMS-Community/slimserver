@@ -36,6 +36,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Prefs;
+use Slim::Utils::Progress;
 
 my $log = logger('database.info');
 
@@ -499,7 +500,7 @@ sub _notifyFromScanner {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		Slim::Music::Import->clearProgressInfo;
+		Slim::Utils::Progress->clear;
 		
 		Slim::Music::Import->setIsScanning(1);
 		

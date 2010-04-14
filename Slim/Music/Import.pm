@@ -52,6 +52,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
+use Slim::Utils::Progress;
 
 {
 	if (main::ISWINDOWS) {
@@ -269,17 +270,12 @@ sub setIsScanning {
 
 Clear importer progress info stored in the database.
 
+XXX - only here for backwards compatibility. This has been replaced by Slim::Utils::Progress->clear()
+
 =cut
 
 sub clearProgressInfo {
-	my $class = shift;
-	
-	# May not have a DB to store this in
-	return if !Slim::Schema::hasLibrary();
-	
-	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
-		$prog->delete;
-	}
+	Slim::Utils::Progress->clear();
 }
 
 =head2 runScan( )
@@ -294,7 +290,7 @@ sub runScan {
 	my $class  = shift;
 
 	# clear progress info in case scanner.pl is run standalone
-	$class->clearProgressInfo;
+	Slim::Utils::Progress->clear;
 
 	# If we are scanning a music folder, do that first - as we'll gather
 	# the most information from files that way and subsequent importers

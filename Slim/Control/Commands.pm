@@ -2467,6 +2467,8 @@ sub rescanCommand {
 			$dir = $prefs->get('playlistdir');
 			$args{types} = 'list';
 		}
+
+		Slim::Utils::Progress->clear();
 		
 		Slim::Utils::Scanner::Local->rescan( $dir, \%args );
 	}
@@ -2822,6 +2824,8 @@ sub wipecacheCommand {
 			require Slim::Utils::AutoRescan;
 			Slim::Utils::AutoRescan->shutdown;
 		}
+
+		Slim::Utils::Progress->clear();
 		
 		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 			# Wipe/rescan in-process on SqueezeOS
