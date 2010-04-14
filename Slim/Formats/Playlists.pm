@@ -71,7 +71,7 @@ sub parseList {
 
 			$fh = FileHandle->new($path);
 
-			$closeFH = 1;
+			$closeFH = 1 if $fh;
 		}
 	}
 
