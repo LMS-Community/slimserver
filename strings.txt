@@ -20191,6 +20191,36 @@ DISCOVERING_FILES_PROGRESS
 	RU	Обнаружение файлов
 	SV	Letar filer
 
+DISCOVERING_DIRECTORY_PROGRESS
+	CS	Hledám soubory
+	DA	Søger efter filer
+	DE	Dateien werden erkannt
+	EN	Discovering files
+	ES	Detectando archivos
+	FI	Etsitään tiedostoja
+	FR	Détection des fichiers
+	IT	Rilevazione file
+	NL	Bestanden detecteren
+	NO	Ser etter filer
+	PL	Wykrywanie plików
+	RU	Обнаружение файлов
+	SV	Letar filer
+
+DISCOVERING_PLAYLIST_PROGRESS
+	CS	Hledám soubory
+	DA	Søger efter filer
+	DE	Wiedergabelisten werden erkannt
+	EN	Discovering playlists
+	ES	Detectando archivos
+	FI	Etsitään tiedostoja
+	FR	Détection des fichiers
+	IT	Rilevazione file
+	NL	Bestanden detecteren
+	NO	Ser etter filer
+	PL	Wykrywanie plików
+	RU	Обнаружение файлов
+	SV	Letar filer
+
 DIRECTORY_DELETED_PROGRESS
 	CS	Odebrat smazané soubory
 	DA	Fjern slettede filer
