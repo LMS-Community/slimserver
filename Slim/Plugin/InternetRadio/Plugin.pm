@@ -350,37 +350,44 @@ sub radiotimeFeed {
 		# Real Player is supported through the AlienBBC plugin
 		real    => 'rtsp',
 	);
-	
-	my %playerFormats = map { $_ => 1 } $client->formats;
 
-	# RadioTime's listing defaults to giving us mp3 and wma streams only,
-	# but we support a few more
-	my @formats = grep {
+	my @formats = keys %rtFormats;
+	my $id = '';
 	
-		# format played natively on player?
-		my $canPlay = $playerFormats{$rtFormats{$_}};
-			
-		if ( !$canPlay && main::TRANSCODING ) {
-
-			foreach my $supported (keys %playerFormats) {
+	if ($client) {
+		my %playerFormats = map { $_ => 1 } $client->formats;
+	
+		# RadioTime's listing defaults to giving us mp3 and wma streams only,
+		# but we support a few more
+		@formats = grep {
+		
+			# format played natively on player?
+			my $canPlay = $playerFormats{$rtFormats{$_}};
 				
-				if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
-					$canPlay = 1;
-					last;
+			if ( !$canPlay && main::TRANSCODING ) {
+	
+				foreach my $supported (keys %playerFormats) {
+					
+					if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
+						$canPlay = 1;
+						last;
+					}
+	
 				}
-
 			}
-		}
-
-		$canPlay;
-
-	} keys %rtFormats;
+	
+			$canPlay;
+	
+		} keys %rtFormats;
+		
+		$id = $client->uuid || $client->id;
+	}
 
 	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
 	$feed .= 'formats=' . join(',', @formats);
 	
 	# Bug 15568, pass obfuscated serial to RadioTime
-	$feed .= '&serial=' . Digest::MD5::md5_hex( $client->uuid || $client->id );
+	$feed .= '&serial=' . Digest::MD5::md5_hex($id);
 	
 	return $feed;
 }
