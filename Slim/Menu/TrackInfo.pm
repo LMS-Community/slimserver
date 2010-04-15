@@ -1137,10 +1137,12 @@ sub infoBitrate {
 				&& ($streambitrate = $song->streambitrate())
 				&& $sourcebitrate != $streambitrate)
 			{
-					$convert = sprintf( ' (%s %s%s ABR)', 
+					$convert = sprintf( ' (%s %s%s %s)', 
 						cstring($client, 'CONVERTED_TO'), 
-						$streambitrate / 1000,
-						cstring($client, 'KBPS')); 
+						sprintf( "%d", $streambitrate / 1000 ),
+						cstring($client, 'KBPS'),
+						cstring($client, $song->streamformat())
+					); 
 			}
 			
 			$item = {
