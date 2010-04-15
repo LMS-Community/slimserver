@@ -166,6 +166,7 @@ LOADING_SQUEEZEBOX_SERVER
 	SV	Squeezebox Server startas
 
 EN_SKIN
+# SLT: please use "Light" as in "light weight", not "illumination"
 	CS	Tenké
 	DA	Let
 	DE	Light
@@ -177,7 +178,7 @@ EN_SKIN
 	IT	Chiaro
 	JA	ライト
 	NL	Licht
-	NO	Lys
+	NO	Lett
 	PL	Lekki
 	PT	Leve
 	RU	Светлый
@@ -10444,6 +10445,7 @@ FULL
 	SV	Full
 
 LIGHT
+# SLT: please use "Light" as in "light weight", not "illumination"
 	CS	Tenké
 	DA	Let
 	DE	Light
@@ -13902,6 +13904,7 @@ BRIGHTNESS_AMBIENT
 	SV	Automatiskt
 
 LIGHT_N
+# SLT: please use "Light" as in "light weight", not "illumination"
 	CS	Tenké úzké
 	DA	Let og smal
 	DE	Schwach eng
