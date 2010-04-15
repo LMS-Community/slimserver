@@ -414,29 +414,16 @@ sub processAnchor {
 
 		return 0;
 	}
-
-	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-	my $header     = $attributesHash->{'OFFSET'} || 0;
-	my $startbytes = int($byterate * $start);
-	my $endbytes   = int($byterate * $end);
-			
-	$startbytes -= $startbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
-	$endbytes   -= $endbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
 	
-	# Bug 8877, if this is an MP3/FLAC/Ogg file, we need to use findFrameBoundaries to find the accurate
-	# split points.
+	my ($startbytes, $endbytes);
 	
-	# XXX: This may be needed for other formats too, MP4?
+	my $header = $attributesHash->{'OFFSET'} || 0;
 	
-	# XXX: MP3 needs lots more work in order to make it gapless, I plan to use the technique pcutmp3 uses
-	# to add silence frame(s) and rewrite LAME tags to achieve proper splitting
-	# http://www.hydrogenaudio.org/forums/index.php?showtopic=35654
-	# http://jaybeee.themixingbowl.org/other/pcutmp3.jar
-	
+	# Bug 8877, use findFrameBoundaries to find the accurate split points if the format supports it
 	my $ct = $attributesHash->{'CONTENT_TYPE'};
-	if ( $ct =~ /^(?:mp3|flc|ogg)$/ ) {
-		my $formatclass = Slim::Formats->classForFormat($ct);
-		
+	my $formatclass = Slim::Formats->classForFormat($ct);
+	
+	if ( $formatclass->can('findFrameBoundaries') ) {		
 		my $path = Slim::Utils::Misc::pathFromFileURL( $attributesHash->{'FILENAME'} );
 		open my $fh, '<', $path;
 		
@@ -450,6 +437,10 @@ sub processAnchor {
 			if ( $ct eq 'mp3' ) {
 				# MP3 only - We need to skip past the LAME header so the first chunk
 				# doesn't get truncated by the firmware thinking it needs to remove encoder padding
+				# XXX: MP3 needs lots more work in order to make it gapless, I plan to use the technique pcutmp3 uses
+				# to add silence frame(s) and rewrite LAME tags to achieve proper splitting
+				# http://www.hydrogenaudio.org/forums/index.php?showtopic=35654
+				# http://jaybeee.themixingbowl.org/other/pcutmp3.jar
 				seek $fh, 0, 0;
 				my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
 				if ( $s->{info}->{lame_encoder_version} ) {
@@ -472,6 +463,14 @@ sub processAnchor {
 	}
 	else {
 		# Just take a guess as to the offset position
+		my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+		
+		$startbytes = int($byterate * $start);
+		$endbytes   = int($byterate * $end);
+
+		$startbytes -= $startbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
+		$endbytes   -= $endbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
+		
 		$attributesHash->{'OFFSET'} = $header + $startbytes;
 		$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 	}
