@@ -155,9 +155,14 @@ sub _doTagMapping {
 }
 
 sub getInitialAudioBlock {
-	my ($class, $fh) = @_;
+	my ($class, $fh, $track, $time) = @_;
 	
 	my $sourcelog = logger('player.source');
+	
+	# When playing the start of a virtual cue sheet track, findFrameBoundaries will not have been called
+	if ( !exists ${*$fh}{_mp4_seek_header} && $track->url =~ /#([^-]+)-([^-]+)$/ ) {
+		$class->findFrameBoundaries( $fh, undef, $1 );
+	}
 	
 	main::INFOLOG && $sourcelog->is_info && $sourcelog->info(
 	    'Reading initial audio block: length ' . length( ${ ${*$fh}{_mp4_seek_header} } )
