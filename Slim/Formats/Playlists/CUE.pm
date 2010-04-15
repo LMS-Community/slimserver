@@ -201,7 +201,7 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $attribute (qw(ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!$cuesheet->{$attribute}) {
 
@@ -254,11 +254,6 @@ sub parse {
 
 		main::DEBUGLOG && $log->debug("    URL: $track->{'URI'}");
 
-		# Ensure that we have a CONTENT_TYPE
-		if (!defined $track->{'CONTENT_TYPE'}) {
-			$track->{'CONTENT_TYPE'} = Slim::Music::Info::typeFromPath($file, 'mp3');
-		}
-
 		$track->{'TRACKNUM'} = $key;
 
 		main::DEBUGLOG && $log->debug("    TRACKNUM: $track->{'TRACKNUM'}");
@@ -273,7 +268,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
@@ -281,6 +276,11 @@ sub parse {
 
 				main::DEBUGLOG && $log->debug("    $attribute: $track->{$attribute}");
 			}
+		}
+		
+		# Ensure that we have a CONTENT_TYPE
+		if (!defined $track->{'CONTENT_TYPE'}) {
+			$track->{'CONTENT_TYPE'} = Slim::Music::Info::typeFromPath($file, 'mp3');
 		}
 
 		# Everything in a cue sheet should be marked as audio.
