@@ -423,12 +423,26 @@ sub tokenizeConvertCommand2 {
 
 	my ($start, $end);
 	
+	my %subs;
+	my %vars;
+
+	# Special case for cuesheets. We pass the start and end
+	# of the track within the file.
+	if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
+		 ($start, $end) = ($1, $2);
+	}
+	
 	if ($transcoder->{'start'}) {
 		$start += $transcoder->{'start'};
 	}
-		
-	my %subs;
-	my %vars;
+	
+	if ($start) {
+		push @{$transcoder->{'usedCapabilities'}}, 'T';
+	}
+	
+	if ($end) {
+		push @{$transcoder->{'usedCapabilities'}}, 'U';
+	}
 	
 	# Start with some legacy ones
 	
