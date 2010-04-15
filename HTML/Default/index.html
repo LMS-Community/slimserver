@@ -85,7 +85,10 @@
 		<script type="text/javascript">
 			[% IF moreThanThis != "" %]SqueezeJS.setCookie( 'Squeezebox-allLinks', "[% moreThanThis %]" )[% END %]
 
-			Ext.onReady(Main.init, Main, true);
+			Ext.onReady(function() {
+				Main.init();
+				frames.browser.location.href = "[% webroot %]home.html?player=[% playerid %]&uid=[% USE date; date.now %]";
+			}, Main, true);
 		</script>
 
 		<div id="header">
@@ -106,7 +109,7 @@
 			</div>
 		</div>
 
-		<iframe src="[% webroot %]home.html?player=[% playerid %]&uid=[% USE date; date.now %]" name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
+		<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
 
 		<div id="leftfooter">
 			<div class="inner">
