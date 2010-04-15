@@ -1246,6 +1246,7 @@ body.settingsMenu {
 }
 
 .settings .buttonbar {
+	height: 25px;
 	padding: 2px 13px;
 	width: 100%;
 	background-color: #eee;
