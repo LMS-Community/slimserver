@@ -287,7 +287,7 @@ sub _timeToOffset {
 
 	if ($streamClass && $streamClass->can('findFrameBoundaries')) {
 		# Bug 16068, adjust time if this is a virtual track in a cue sheet
-		if ( $song->currentTrack()->virtual && $song->currentTrack()->url =~ /#([^-]+)-([^-]+)$/ ) {
+		if ( $song->currentTrack()->url =~ /#([^-]+)-([^-]+)$/ ) {
 			$time += $1;
 		}
 		
