@@ -213,7 +213,7 @@ Locate MP3 frame boundaries when seeking through a file.
 sub findFrameBoundaries {
 	my ( $class, $fh, $offset, $time ) = @_;
 	
-	if ( !defined $fh || !defined $offset ) {
+	if ( !defined $fh || (!defined $offset && !defined $time) ) {
 		return 0;
 	}
 	
