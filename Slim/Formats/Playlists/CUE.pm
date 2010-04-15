@@ -416,51 +416,63 @@ sub processAnchor {
 	}
 
 	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-	my $header     = $attributesHash->{'AUDIO_OFFSET'} || 0;
+	my $header     = $attributesHash->{'OFFSET'} || 0;
 	my $startbytes = int($byterate * $start);
 	my $endbytes   = int($byterate * $end);
 			
 	$startbytes -= $startbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
 	$endbytes   -= $endbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
 	
-	# Bug 8877, if this is an MP3 file, we need to split on a frame boundary
-	# XXX: This may be broken for other formats too, i.e. Ogg
-	# XXX: Needs lots more work, I plan to use the technique pcutmp3 uses
+	# Bug 8877, if this is an MP3/FLAC/Ogg file, we need to use findFrameBoundaries to find the accurate
+	# split points.
+	
+	# XXX: This may be needed for other formats too, MP4?
+	
+	# XXX: MP3 needs lots more work in order to make it gapless, I plan to use the technique pcutmp3 uses
 	# to add silence frame(s) and rewrite LAME tags to achieve proper splitting
 	# http://www.hydrogenaudio.org/forums/index.php?showtopic=35654
 	# http://jaybeee.themixingbowl.org/other/pcutmp3.jar
-	if ( $attributesHash->{'CONTENT_TYPE'} eq 'mp3' ) {
+	
+	my $ct = $attributesHash->{'CONTENT_TYPE'};
+	if ( $ct =~ /^(?:mp3|flc|ogg)$/ ) {
+		my $formatclass = Slim::Formats->classForFormat($ct);
+		
 		my $path = Slim::Utils::Misc::pathFromFileURL( $attributesHash->{'FILENAME'} );
 		open my $fh, '<', $path;
 		
-		if ( $startbytes > 0 ) {
-			$startbytes = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + $startbytes );	
-			$attributesHash->{'AUDIO_OFFSET'} = $startbytes;
+		if ( $start > 0 ) {
+			$startbytes = $formatclass->findFrameBoundaries( $fh, undef, $start );	
+			$attributesHash->{'OFFSET'} = $startbytes;
 		}
 		else {
-			$attributesHash->{'AUDIO_OFFSET'} = $header;
+			$attributesHash->{'OFFSET'} = $header;
 			
-			# We need to skip past the LAME header so the first chunk
-			# doesn't get truncated by the firmware thinking it needs to remove encoder padding
-			seek $fh, 0, 0;
-			my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
-			if ( $s->{info}->{lame_encoder_version} ) {
-				my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );
-				$attributesHash->{'AUDIO_OFFSET'} += $next;
+			if ( $ct eq 'mp3' ) {
+				# MP3 only - We need to skip past the LAME header so the first chunk
+				# doesn't get truncated by the firmware thinking it needs to remove encoder padding
+				seek $fh, 0, 0;
+				my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
+				if ( $s->{info}->{lame_encoder_version} ) {
+					my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );
+					$attributesHash->{'OFFSET'} += $next;
+				}
 			}
 		}
 		
-		my $newend = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + $endbytes );
+		seek $fh, 0, 0;
+		
+		my $newend = $formatclass->findFrameBoundaries( $fh, undef, $end );
 		if ( $newend ) {
 			$endbytes = $newend;
 		}
 		
-		$attributesHash->{'SIZE'} = $endbytes - $attributesHash->{'AUDIO_OFFSET'};
+		$attributesHash->{'SIZE'} = $endbytes - $attributesHash->{'OFFSET'};
 		
 		close $fh;
 	}
 	else {
-		$attributesHash->{'AUDIO_OFFSET'} = $header + $startbytes;
+		# Just take a guess as to the offset position
+		$attributesHash->{'OFFSET'} = $header + $startbytes;
 		$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 	}
 	
@@ -472,8 +484,8 @@ sub processAnchor {
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( sprintf(
 			"New virtual track ($start-$end): start: %d, end: %d, size: %d, length: %d",
-			$attributesHash->{'AUDIO_OFFSET'},
-			$attributesHash->{'SIZE'} + $attributesHash->{'AUDIO_OFFSET'},
+			$attributesHash->{'OFFSET'},
+			$attributesHash->{'SIZE'} + $attributesHash->{'OFFSET'},
 			$attributesHash->{'SIZE'},
 			$attributesHash->{'SECS'},
 		) );

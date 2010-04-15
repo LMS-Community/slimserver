@@ -302,21 +302,6 @@ sub getConvertCommand2 {
 		}
 		push @$need, 'D';
 	}
-		
-	# special case for FLAC cuesheets for SB2. For now, we
-	# let flac do the seeking to the correct point and transcode
-	# to a complete stream that we can send to SB2.
-	# Yucky, but a stopgap until we get FLAC seeking code into
-	# a Perl invokable form.
-	if (($type eq "flc") && ($url =~ /#([^-]+)-([^-]+)$/)) {
-		my ($foundU, $foundT);
-		foreach (@$need) {
-			$foundT = 1 if /T/;
-			$foundU = 1 if /U/;
-		}
-		push @$need, 'T' if ! $foundT;
-		push @$need, 'U' if ! $foundU;
-	}
 	
 	# make sure we only test formats that are supported.
 	@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
@@ -437,11 +422,6 @@ sub tokenizeConvertCommand2 {
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 	my ($start, $end);
-	# Special case for FLAC cuesheets. We pass the start and end
-	# of the track within the FLAC file.
-	if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
-		 ($start, $end) = ($1, $2);
-	}
 	
 	if ($transcoder->{'start'}) {
 		$start += $transcoder->{'start'};
