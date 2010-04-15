@@ -1026,8 +1026,7 @@ sub infoContentType {
 
 		$item = {
 			type => 'text',
-			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' 
-				. ( ($ct eq uc($ct)) ? cstring($client,  uc($ct)) : $ct ),
+			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . cstring($client,  uc($ct) ),
 		};
 	}
 	
