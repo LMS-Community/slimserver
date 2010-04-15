@@ -605,7 +605,7 @@ sub open {
 		$client->pauseTime(0);
 	}
 
-	my $streamControler;
+	my $streamController;
 	
 	######################
 	# make sure the filehandle was actually set
@@ -635,7 +635,7 @@ sub open {
 		$self->_streamFormat($transcoder->{'streamformat'});
 		$client->streamformat($self->_streamFormat()); # XXX legacy
 
-		$streamControler = Slim::Player::SongStreamController->new($self, $sock);
+		$streamController = Slim::Player::SongStreamController->new($self, $sock);
 
 	} else {
 
@@ -649,7 +649,7 @@ sub open {
 	
 	$client->metaTitle(undef);
 	
-	return $streamControler;
+	return $streamController;
 }
 
 # Static method
