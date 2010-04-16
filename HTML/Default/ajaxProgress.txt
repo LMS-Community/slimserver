@@ -5,6 +5,7 @@
 			'Done':'[% item.obj.done | uri | replace("'", "%27") %]',
 			'Total':'[% (item.obj.total || item.obj.done) | uri | replace("'", "%27") %]',
 			'Active':'[% IF item.obj.active %][% "RUNNING" | string | replace("'", "%27") %][% ELSE %][% "COMPLETE" | string | uri | replace("'", "%27") %][% END %]',
+			'isActive':[% item.obj.active ? "true" : "false" %],
 			'Time':'[% item.time %]',
 			'Bar':'[% item.bar %]',
 			'Info':'[% item.obj.info | utf8decode | uri | html | replace("'", "%27") %]'

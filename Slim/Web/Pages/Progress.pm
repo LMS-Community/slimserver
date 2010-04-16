@@ -44,7 +44,7 @@ sub progress {
 				$bar .= ( $i <= $barFinish ) ? $bar1 : $bar0;
 			}
 	
-			my $runtime = ($p->finish || time()) - $p->start;
+			my $runtime = ((!$p->active && $p->finish) ? $p->finish : time()) - $p->start;
 	
 			my $hrs  = int($runtime / 3600);
 			my $mins = int(($runtime - $hrs * 3600)/60);
