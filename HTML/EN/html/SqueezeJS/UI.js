@@ -2155,13 +2155,15 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 					}
 					
 					// if we don't really have a progress value (eg. done != total) then let's hide the total value
-					if (scans[i]['isActive'] && scans[i]['Done'] && scans[i]['Total'] && scans[i]['Done'] >= scans[i]['Total']) {
+					if (scans[i]['isActive'] && scans[i]['Done'] && scans[i]['Total'] && parseInt(scans[i]['Done']) >= parseInt(scans[i]['Total'])) {
 						Ext.get('XofY' + i).setDisplayed(false);
 						Ext.get('Total' + i).setDisplayed(false);
+						Ext.get('Bar' + i).setDisplayed(false);
 					}
 					else {
 						Ext.get('XofY' + i).setDisplayed(true);
 						Ext.get('Total' + i).setDisplayed(true);
+						Ext.get('Bar' + i).setDisplayed(true);
 					}
 				}
 				
