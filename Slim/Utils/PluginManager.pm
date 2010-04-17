@@ -61,7 +61,7 @@ sub init {
 		1;
 	});
 
-	if ( $main::WEBUI ) {
+	if ( main::WEBUI ) {
 		eval {
 			require Slim::Utils::PluginDownloader;
 			$downloader = 'Slim::Utils::PluginDownloader';
