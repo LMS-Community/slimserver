@@ -743,7 +743,9 @@ SqueezeJS.Utils = {
 	toggleFavorite : function(el, url, title) {
 		var el = Ext.get(el);
 		if (el) {
-			SqueezeJS.UI.setProgressCursor(250);
+			if (SqueezeJS.UI)
+				SqueezeJS.UI.setProgressCursor(250);
+				
 			el.getUpdateManager().showLoadIndicator = false;
 			el.load({
 				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
@@ -814,7 +816,10 @@ function ajaxUpdate(url, params, callback) {
 		if (um)
 			um.loadScripts = true;
 
-		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback || SqueezeJS.UI.ScrollPanel.init);
+		if (!callback && SqueezeJS.UI)
+			callback = SqueezeJS.UI.ScrollPanel.init;
+			
+		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback);
 	}
 }
 
