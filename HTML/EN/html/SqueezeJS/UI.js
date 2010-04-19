@@ -172,9 +172,6 @@ if (Ext.Button) {
 		onPlayerStateChange : function(result){},
 	
 		setTooltip: function(tooltip){
-			if (this.tooltip == tooltip)
-				return;
-	
 			this.tooltip = tooltip;
 	
 			if (this.textOnly)
