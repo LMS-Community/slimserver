@@ -87,7 +87,12 @@
 
 			Ext.onReady(function() {
 				Main.init();
-				frames.browser.location.href = "[% webroot %]home.html?player=[% playerid %]&uid=[% USE date; date.now %]";
+
+				// Firefox wouldn't load the frame on first attempt. Have it load an empty page first, before the home.html 
+				if (Ext.isGecko)
+					frames.browser.location.href = "about:blank";
+				 
+				frames.browser.location.href = "[% webroot %]home.html?player=[% playerid %]&uid=[% USE date; date.now %]"; 
 			}, Main, true);
 		</script>
 
