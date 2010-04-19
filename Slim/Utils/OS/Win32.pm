@@ -65,6 +65,11 @@ sub initDetails {
 	$class->{osDetails}->{'isWin6+'} = ($major >= 6);
 	$class->{osDetails}->{isVista}   = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
 
+	# let's clean up our temporary folders (pdk* folders)
+	if (!main::SCANNER) {
+		$class->cleanupTempDirs();
+	}
+
 	return $class->{osDetails};
 }
 
