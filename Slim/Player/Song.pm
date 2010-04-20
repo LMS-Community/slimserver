@@ -553,7 +553,10 @@ sub open {
 					return (undef, 'PROBLEM_CONVERT_FILE', $url);
 				}
 	
-				main::INFOLOG && $log->info("Tokenized command $command");
+				# Do not substitute $command into the log message within a literal string
+				# because 'use bytes' is in effect and this will mess up  the
+				# representation of any UFT-8 filenames
+				main::INFOLOG && $log->info('Tokenized command: ', $command);
 	
 				my $pipeline;
 				
