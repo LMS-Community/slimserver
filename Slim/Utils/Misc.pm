@@ -252,9 +252,19 @@ sub pathFromFileURL {
 
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
+		$file = $uri->file;
+
 		# Bug 10199 - need to ensure that the perl-internal UTF8 flag is set if necessary
 		# (this should really be done by URI::file)
-		$file = fixPathCase( $uri->file );
+		#
+		# BUT we don't actually dare do that here because (1) we do not fully understand
+		# what character-encoding the file path actually has, and (2) it looks as many calls 
+		# to this method use the result to pass to a perl function that expects a native
+		# byte-string, not a character-string.
+		#
+		# utf8::decode($file);
+
+		$file = fixPathCase($file);
 	}
 
 	if (Slim::Utils::Log->isInitialized) {
@@ -812,6 +822,11 @@ sub readDirectory {
 		if (scalar @diritems % 3) {
 			main::idleStreams();
 		}
+
+        # readdir returns only bytes, so try and decode the
+        # filename to UTF-8 here or the later calls to -d/-f may fail,
+        # causing directories and files to be skipped.
+        utf8::decode($item);
 
 		next unless fileFilter($dirname, $item, $validRE);
 

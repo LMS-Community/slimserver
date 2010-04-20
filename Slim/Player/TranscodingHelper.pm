@@ -420,7 +420,17 @@ sub tokenizeConvertCommand2 {
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-
+	
+	# Bug 10199 - $filepath will have come from Track::path(), which in turn uses
+	# Slim::Utils::Misc::pathFromFileURL which currently returns a byte-string,
+	# not a character-string. Need to convert to a character-string before it
+	# gets handled by regex stuff.
+	#
+	# This is not really the correct fix but sorting out the correct use of 
+	# byte-string vs character-string is a major task and actually is not
+	# properly understood.
+	utf8::decode($filepath);
+	
 	my ($start, $end);
 	
 	my %subs;
