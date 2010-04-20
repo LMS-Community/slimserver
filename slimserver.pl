@@ -157,6 +157,8 @@ sub HAS_AIO {
 		$HAS_AIO = 1;
 	};
 	
+	$HAS_AIO = 0 if !$HAS_AIO;	# Make sure it is defined now.
+	
 	return $HAS_AIO;
 }
 
