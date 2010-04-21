@@ -111,8 +111,17 @@ sub alarmPlaylistsQuery {
 								playlisturl => $choice->{url} || 0, # send 0 for "current playlist"
 							},
 						},
+						preview => {
+							title   => $choice->{title},
+							cmd	=> [ 'playlist', 'play', $choice->{url}, $choice->{title} ],
+						},
 					},
 				};
+				if ( ! $choice->{url} ) {
+					$subitem->{actions}->{preview} = {
+						cmd => [ 'play' ],
+					};
+				}
 	
 				
 				if ($typeRef->{singleItem}) {
