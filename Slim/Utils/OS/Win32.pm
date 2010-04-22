@@ -67,7 +67,8 @@ sub initDetails {
 
 	# let's clean up our temporary folders (pdk* folders)
 	if (!main::SCANNER) {
-		$class->cleanupTempDirs();
+		# XXX broken 
+		#$class->cleanupTempDirs();
 	}
 
 	return $class->{osDetails};
