@@ -85,6 +85,10 @@ sub reconnect {
 			
 			$controller->playerActive($client);
 			
+			# Bug 16046, statHandler will ignore all packets without a $client->streamStartTimestamp()
+			# The value doesn't matter so we'll just set it to 1 here
+			$client->streamStartTimestamp(1);
+			
 			# SqueezeNetworkClient handles the following in it's reconnect():
 			# Restoring the playlist
 			# Calling reinit in protocol handler if necessary
