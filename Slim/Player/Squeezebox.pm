@@ -734,7 +734,7 @@ sub stream_s {
 		$pcmchannels     = '?';
 		$outputThreshold = 0;
 
-	} elsif ($format eq 'spdr') {
+	} elsif ( $handler->isa('Slim::Player::Protocols::SqueezePlayDirect') ) {
 
 		# Format handled by squeezeplay to allow custom squeezeplay protocol handlers
 		$formatbyte      = 's';
@@ -773,7 +773,7 @@ sub stream_s {
 	# doesn't get an outdated fullness result
 	Slim::Networking::Slimproto::fullness( $client, 0 );
 	
-	if ($format eq 'spdr') {
+	if ( $handler->isa('Slim::Player::Protocols::SqueezePlayDirect') ) {
 
 		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
