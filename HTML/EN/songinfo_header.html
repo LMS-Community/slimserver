@@ -20,7 +20,8 @@
 				<img src="[% plugin_meta.icon %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="coverArt" onLoad="resize(this)">
 				[% END %]
 			[% ELSE %]
-				<a href="/music/[% itemobj.id %]/cover.jpg" [% UNLESS notarget %]target="cover"[% END %]>
+				[%# fall back to 0 for cover link if itemobj.id isn't going to give us a valid id %]
+				<a href="/music/[% itemobj.id || 0 %]/cover.jpg" [% UNLESS notarget %]target="cover"[% END %]>
 					<img src="/music/[% itemobj.id || 0 %]/cover_150x150_o" alt="coverArt">
 				</a>
 			[% END %]
