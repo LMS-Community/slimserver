@@ -4,6 +4,8 @@ use strict;
 
 use MIME::Base64;
 
+use Slim::Utils::Log;
+
 # protocol handler for the pseudo protocol spdr://
 
 # This is used to allow remote urls to be passed direct to SqueezePlay clients
@@ -13,9 +15,11 @@ use MIME::Base64;
 
 # urls are of the form:
 #
-# spdr://<hander>?params...
+# spdr://<handler>?params...
 #
 # where handler identifies a specific playback handler within SP
+
+my $log = logger('player.streaming.direct');
 
 sub isRemote { 1 }
 
