@@ -66,9 +66,9 @@ sub initDetails {
 	$class->{osDetails}->{isVista}   = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
 
 	# let's clean up our temporary folders (pdk* folders)
-	if (!main::SCANNER) {
-		# XXX broken 
-		#$class->cleanupTempDirs();
+	# only run when using the compiled version
+	if ($PerlSvc::VERSION && !main::SCANNER) {
+		$class->cleanupTempDirs();
 	}
 
 	return $class->{osDetails};
