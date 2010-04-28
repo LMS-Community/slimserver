@@ -43,6 +43,15 @@
 </p>
 
 <hr>
+<h4 id="7">Changes starting from Squeezebox Server 7.5.1</h4>
+<ul>
+	<li>Added <a href="#playlist preview">&quot;playlist preview&quot;</a> command.</li>
+	<li>Extended <a href="#playlist resume">&quot;playlist resume&quot;</a> with optional noplay and wipePlaylist tagged params.</li>
+	<li>Extended <a href="#playlist save">&quot;playlist save&quot;</a> with optional silent tagged param, which will suppress any showBriefly popup on squeezeplay players.</li>
+</ul>
+
+
+<hr>
 <h4 id="7">Changes starting from Squeezebox Server 7.4</h4>
 <ul>
 	<li>The music_services command is now apps.</li>
@@ -5464,6 +5473,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#playlist delete">playlist delete</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#playlist preview">playlist preview</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#playlist resume">playlist resume</a></code></strong>
 	</li>
 	<li>
@@ -5879,11 +5891,50 @@ Any songs currently playing or already on the playlist are not affected.</p>
 	</p>
 </blockquote>
 
-<br><p id="playlist resume"><strong><code>&lt;playerid&gt; playlist resume &lt;playlist&gt;</code></strong></p>
+<br>
+<p id="playlist preview">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			preview
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+
+<p>When called without a cmd param of stop, replace the current playlist with the playlist specified by url, but save the current playlist to tempplaylist_&lt;playerid&gt;.m3u for later retrieval. When called with the cmd param of stop, stops the currently playing playlist and loads (if possible) the previous playlist. Restored playlist jumps to beginning of CURTRACK when present in m3u file, and does not autoplay restored playlist.
+</p>
+<p>Examples:</p>
+<blockquote>
+<p>Request: &quot;04:20:00:12:23:45 playlist preview url:db:album.titlesearch=A%20FEAST%20OF%20WIRE title:A%20Feast%20Of%20Wire&lt;LF&gt;&quot;
+<br>
+Response: &quot;04:20:00:12:23:45 playlist preview url:db:album.titlesearch=A%20FEAST%20OF%20WIRE title:A%20Feast%20Of%20Wire&lt;LF&gt;&quot;
+</p>
+
+</blockquote>
+<blockquote>
+<p>Request: &quot;04:20:00:12:23:45 playlist preview cmd:stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist preview cmd:stop&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+<br><p id="playlist resume">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			resume 
+			&lt;playlist&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+
 <p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when
 the file was saved. (Resuming works only with M3U files saved with the &quot;playlist save&quot; command below.) 
 Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist 
 in the saved playlists folder.</p>
+<p>Optional tagged parameters are noplay, which when non-zero will not auto-start the track, and wipePlaylist, which will destroy the saved playlist from both the filesystem and from the DB (these tagged params are typically used for resuming a temporarily cached playlist, e.g. after exiting alarm sound preview on squeezeplay devices).</p>
 <p>Examples:</p>
 <blockquote>
 <p>Request: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;</p>
@@ -5897,6 +5948,7 @@ in the saved playlists folder.</p>
 			playlist
 			save
 			&lt;filename&gt;
+			&lt;taggedParameters&gt;
 		</code>
 	</strong>
 </p>
@@ -5904,6 +5956,9 @@ in the saved playlists folder.</p>
 	Saves a playlist file in the saved playlists directory. Accepts a playlist 
 	filename (without .m3u suffix) and saves in the top level of the playlists 
 	directory.
+</p>
+<p>
+	Optional tagged param silent. When non-zero, suppresses any showBriefly displayed.
 </p>
 <p>
 	Examples:

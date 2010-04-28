@@ -113,7 +113,11 @@ sub alarmPlaylistsQuery {
 						},
 						preview => {
 							title   => $choice->{title},
-							cmd	=> [ 'playlist', 'play', $choice->{url}, $choice->{title} ],
+							cmd	=> [ 'playlist', 'preview' ],
+							params  => {
+								url	=>	$choice->{url}, 
+								title	=>	$choice->{title},
+							},
 						},
 					},
 				};
