@@ -160,6 +160,7 @@ sub alarmPlaylistsQuery {
 	
 	$request->addResult("offset", $start);
 	$request->addResult("count", $cnt);
+	$request->addResult('window', { textareaToken => 'SLIMBROWSER_ALARM_SOUND_HELP' } );
 	$request->setStatusDone;
 }
 
