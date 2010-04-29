@@ -1959,7 +1959,7 @@ sub stop       {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Stop');}
 sub play       {
 	main::INFOLOG && $log->info($_[0]->{'masterId'});
 	$_[0]->{'consecutiveErrors'} = 0;
-	$_[0]->{'fadeIn'} = $_[3] if ($_[3] && $_[3] > 0);
+	$_[0]->{'fadeIn'} = $_[4] if ($_[4] && $_[4] > 0);
 	_eventAction($_[0], 'Play', {index => $_[1], seekdata => $_[2]});
 }
 
