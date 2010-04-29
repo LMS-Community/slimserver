@@ -706,7 +706,6 @@ sub playcontrolCommand {
 			$wantmode = ($curmode eq 'pause' || $curmode eq 'stop') ? 'play' : 'pause';
 		}
 	}
-
 	# Adjust for resume: if we're paused and asked to play, we resume
 	$wantmode = 'resume' if ($curmode eq 'pause' && $wantmode eq 'play');
 
@@ -1065,9 +1064,11 @@ sub playlistSaveCommand {
 	# get the parameters
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
+	my $silent = $request->getParam('silent') || 0;
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
 	$title = Slim::Utils::Misc::cleanupFilename($title);
+
 
 	my $playlistObj = Slim::Schema->updateOrCreate({
 
@@ -1111,14 +1112,16 @@ sub playlistSaveCommand {
 		Slim::Player::Playlist::playlistMode($client, 'off');
 	}
 
-	$client->showBriefly({
-		'jive' => {
-			'type'    => 'popupplay',
-			'text'    => [ $client->string('SAVED_THIS_PLAYLIST_AS', $title) ],
-		}
-	});
-
 	$request->addResult('__playlist_id', $playlistObj->id);
+
+	if ( ! $silent ) {
+		$client->showBriefly({
+			'jive' => {
+				'type'    => 'popupplay',
+				'text'    => [ $client->string('SAVED_THIS_PLAYLIST_AS', $title) ],
+			}
+		});
+	}
 
 	$request->setStatusDone();
 }
@@ -1222,6 +1225,59 @@ sub playlistXalbumCommand {
 }
 
 
+sub playlistPreviewCommand {
+	my $request = shift;
+	# check this is the correct command.
+	if ( $request->isNotCommand( [ ['playlist'], ['preview' ] ]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $client   = $request->client();
+	my $cmd      = $request->getParam('cmd'); 
+	my $url      = $request->getParam('url'); 
+	my $title    = $request->getParam('title') || '';
+	my $fadeIn   = $request->getParam('fadein') ? $request->getParam('fadein') : undef;
+	
+	# if we have a cmd of 'stop', load the most recent playlist (which will clear the preview)
+	if ($cmd eq 'stop') {
+		# stop and clear the current tone
+		Slim::Player::Playlist::stopAndClear($client);
+
+		my $filename = _getPreviewPlaylistName($client);
+		main::INFOLOG && $log->info("loading ", $filename, " to resume previous playlist");
+
+		# load mostrecent.m3u and jump to the previously playing track, but don't play
+		$client->execute( [ 'playlist', 'resume', $filename, '', 'noplay:1', 'wipePlaylist:1' ]);
+
+	} else {
+
+		# if we're not stopping, we're previewing. first check for correct params
+		if ( ! defined($url) ) {
+			$request->setStatusBadDispatch();
+			return;
+		}
+
+		my $filename = _getPreviewPlaylistName($client);
+		main::INFOLOG && $log->info("saving current playlist as ", $filename);
+                $client->execute( ['playlist', 'save', $filename, 'silent:1' ] );
+
+		main::INFOLOG && $log->info("queuing up ", $title, " for preview");
+		$client->execute( ['playlist', 'play', $url, $title, $fadeIn ] );
+        
+	}
+
+	$request->setStatusDone();
+	
+}
+
+sub _getPreviewPlaylistName {
+	my $client = shift;
+	my $filename = "tempplaylist_" . $client->id();
+	$filename =~ s/://g;
+	return $filename;
+}
+
 sub playlistXitemCommand {
 	my $request = shift;
 
@@ -1237,6 +1293,8 @@ sub playlistXitemCommand {
 	my $item     = $request->getParam('_item'); #p2
 	my $title    = $request->getParam('_title') || ''; #p3
 	my $fadeIn   = $cmd eq 'play' ? $request->getParam('_fadein') : undef;
+	my $noplay       = $request->getParam('noplay') || 0; # optional tagged param, used for resuming playlist after preview
+	my $wipePlaylist = $request->getParam('wipePlaylist') || 0; #optional tagged param, used for removing playlist after resume
 
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load') {
@@ -1368,25 +1426,27 @@ sub playlistXitemCommand {
 		return;
 	}
 
+	my $fixedPath = Slim::Utils::Misc::fixPath($path);
+
 	if ($cmd =~ /^(play|load|resume)$/) {
 
 		Slim::Player::Playlist::stopAndClear($client);
 
-		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
+		$client->currentPlaylist( $fixedPath );
 
 		if ( main::INFOLOG && $log->is_info ) {
-			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+			$log->info("currentPlaylist:" .  $fixedPath );
 		}
 
 		$client->currentPlaylistModified(0);
 
 	} elsif ($cmd =~ /^(add|append)$/) {
 
-		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
+		$client->currentPlaylist( $fixedPath );
 		$client->currentPlaylistModified(1);
 
 		if ( main::INFOLOG && $log->is_info ) {
-			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+			$log->info("currentPlaylist:" .  $fixedPath );
 		}
 
 	} else {
@@ -1394,9 +1454,9 @@ sub playlistXitemCommand {
 		$client->currentPlaylistModified(1);
 	}
 
-	if (!Slim::Music::Info::isRemoteURL($path) && Slim::Music::Info::isFileURL($path)) {
+	if (!Slim::Music::Info::isRemoteURL( $fixedPath ) && Slim::Music::Info::isFileURL( $fixedPath ) ) {
 
-		$path = Slim::Utils::Misc::pathFromFileURL($path);
+		$path = Slim::Utils::Misc::pathFromFileURL($fixedPath);
 
 		main::INFOLOG && $log->info("path: $path");
 	}
@@ -1474,7 +1534,6 @@ sub playlistXitemCommand {
 				},
 			} );
 		}
-
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
@@ -1499,11 +1558,14 @@ sub playlistXitemCommand {
 					$jumpToIndex,
 					$request,
 					Slim::Player::Playlist::count($client),
-					$path,
+					Slim::Utils::Misc::fixPath($path),
 					$error,
 					$noShuffle,
 					$fadeIn,
+					$noplay,
+					$wipePlaylist,
 				);
+
 
 				playlistXitemCommand_done( $client, $request, $path );
 			},
@@ -2173,6 +2235,23 @@ sub playlistsDeleteCommand {
 		});
 	}
 
+	_wipePlaylist($playlistObj);
+
+	$request->setStatusDone();
+}
+
+
+sub _wipePlaylist {
+
+	my $playlistObj = shift;
+
+	
+	if ( ! ( blessed($playlistObj) && $playlistObj->isPlaylist() ) ) {
+		$log->error('PlaylistObj not right for this sub: ', $playlistObj);
+		$log->error('PlaylistObj not right for this sub: ', $playlistObj->isPlaylist() );
+		return 0;
+	}
+
 	Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 	
 	# Do a fast delete, and then commit it.
@@ -2183,9 +2262,6 @@ sub playlistsDeleteCommand {
 
 	Slim::Schema->forceCommit;
 
-
-
-	$request->setStatusDone();
 }
 
 
@@ -2952,7 +3028,7 @@ sub _mixer_mute {
 }
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $request, $count, $url, $error, $noShuffle, $fadeIn) = @_;
+	my ($client, $index, $request, $count, $url, $error, $noShuffle, $fadeIn, $noplay, $wipePlaylist) = @_;
 	
 	# dont' keep current song on loading a playlist
 	if ( !$noShuffle ) {
@@ -2962,7 +3038,7 @@ sub _playlistXitem_load_done {
 	}
 
 	if (defined($index)) {
-		$client->execute(['playlist', 'jump', $index, $fadeIn]);
+		$client->execute(['playlist', 'jump', $index, $fadeIn, $noplay ]);
 	}
 
 	# XXX: this should not be calling a request callback directly!
@@ -2974,6 +3050,12 @@ sub _playlistXitem_load_done {
 		else {
 			$callbackf->( $request );
 		}
+	}
+
+	if ($wipePlaylist) {
+		my $playlistObj = Slim::Schema->objectForUrl($url);
+		_wipePlaylist($playlistObj);
+
 	}
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);

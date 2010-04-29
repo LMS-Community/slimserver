@@ -574,11 +574,12 @@ sub init {
 	addDispatch(['playlist',       'playalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'playlistsinfo'],                                                   [1, 1, 1, \&Slim::Control::Queries::playlistPlaylistsinfoQuery]);
 	addDispatch(['playlist',       'playtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'preview'],                                                         [1, 0, 1, \&Slim::Control::Commands::playlistPreviewCommand]);
 	addDispatch(['playlist',       'remote',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'repeat',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'repeat',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playlistRepeatCommand]);
-	addDispatch(['playlist',       'resume',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
-	addDispatch(['playlist',       'save',           '_title'],                                        [1, 0, 0, \&Slim::Control::Commands::playlistSaveCommand]);
+	addDispatch(['playlist',       'resume',         '_item'],                                         [1, 0, 1, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'save',           '_title'],                                        [1, 0, 1, \&Slim::Control::Commands::playlistSaveCommand]);
 	addDispatch(['playlist',       'shuffle',        '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'shuffle',        '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playlistShuffleCommand]);
 	addDispatch(['playlist',       'title',          '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);

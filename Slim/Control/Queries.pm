@@ -120,7 +120,11 @@ sub alarmPlaylistsQuery {
 						},
 						preview => {
 							title   => $choice->{title},
-							cmd	=> [ 'playlist', 'play', $choice->{url}, $choice->{title} ],
+							cmd	=> [ 'playlist', 'preview' ],
+							params  => {
+								url	=>	$choice->{url}, 
+								title	=>	$choice->{title},
+							},
 						},
 					},
 				};
@@ -163,6 +167,7 @@ sub alarmPlaylistsQuery {
 	
 	$request->addResult("offset", $start);
 	$request->addResult("count", $cnt);
+	$request->addResult('window', { textareaToken => 'SLIMBROWSER_ALARM_SOUND_HELP' } );
 	$request->setStatusDone;
 }
 
