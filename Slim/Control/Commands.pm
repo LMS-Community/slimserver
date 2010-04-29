@@ -1403,9 +1403,9 @@ sub playlistXitemCommand {
 		&& $path eq $client->playingSong()->track()->url() )
 	{
 		if ( Slim::Player::Source::playmode($client) eq 'pause' ) {
-			Slim::Player::Source::playmode($client, 'resume');
+			Slim::Player::Source::playmode($client, 'resume', undef, undef, $fadeIn);
 		} elsif ( Slim::Player::Source::playmode($client) ne 'play' ) {
-			Slim::Player::Source::playmode($client, 'play');
+			Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
 		}
 		
 		# XXX: this should not be calling a request callback directly!
@@ -1510,7 +1510,7 @@ sub playlistXitemCommand {
 		# if music isn't playing, hitting the play button should start playing music
 		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'insert' ) {
 			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-				Slim::Player::Source::playmode($client, 'play');
+				Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
 			}
 		}
 

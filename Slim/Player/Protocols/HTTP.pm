@@ -693,7 +693,22 @@ sub getMetadataFor {
 	
 	# Check for radio URLs with cached covers
 	my $cache = Slim::Utils::Cache->new();
-	my $cover = $cache->get( "remote_image_$url" );
+	my $cover;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Only try to fetch from cache once to avoid spamming memcached
+		# This makes sense for SBS too but I'm not sure if it will
+		# break something, i.e. delayed metadata after the first call
+		if ( my $song = $client->playingSong() ) {
+			$cover = $song->pluginData('httpCover');
+			if ( !defined $cover ) {
+				$cover = $song->pluginData( httpCover => $cache->get( "remote_image_$url" ) || '' );
+			}
+		}
+	}
+	else {		
+		$cover = $cache->get( "remote_image_$url" );
+	}
 	
 	# Item may be a playlist, so get the real URL playing
 	if ( Slim::Music::Info::isPlaylist($url) ) {

@@ -137,14 +137,7 @@ sub addLibraryStats {
 			$cond->{'contributorTracks.role'} = { 'in' => $roles };
 		}
 		
-		if ( $previousLevel eq 'album' && $params->{'hierarchy'} =~ /genre/ ) {
-			# Avoid duplicate join on contributorTracks when browsing by genre
-			$counts{'contributor'} = $rs->search_related('album')->search_related( 'contributor', $cond );
-		}
-		else {
-			$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
-		}
-
+		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
 		$counts{'album'}       = $rs->search_related('album');
 		$counts{'track'}       = $rs;
 		
@@ -158,7 +151,7 @@ sub addLibraryStats {
 	# Don't let any database errors here stop the page from displaying
 	eval {
 		$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
-		$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
+		$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS'); 
 		$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 	};
 	
