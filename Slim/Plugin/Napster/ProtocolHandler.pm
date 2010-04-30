@@ -261,6 +261,7 @@ sub _gotNextRadioTrack {
 		artist    => $track->{artist},
 		album     => $track->{album},
 		title     => $track->{title},
+		duration  => $track->{duration},
 		cover     => $track->{cover},
 		bitrate   => '128k CBR',
 		type      => 'WMA (Napster)',
@@ -271,6 +272,8 @@ sub _gotNextRadioTrack {
 			rew => 0,
 		},
 	};
+	
+	$song->duration( $track->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'napster_meta_' . $track->{id}, $meta, 86400 );
@@ -375,6 +378,8 @@ sub _gotTrackInfo {
 		info_link => 'plugins/napster/trackinfo.html',
 		icon      => Slim::Plugin::Napster::Plugin->_pluginDataFor('icon'),
 	};
+	
+	$song->duration( $info->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'napster_meta_' . $info->{id}, $meta, 86400 );
@@ -641,31 +646,38 @@ sub getSeekData {
 sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
-	# Reset song duration/progress bar
-	my $currentURL = $song->streamUrl();
+	my $url = $song->track->url();
 	
-	main::DEBUGLOG && $log->debug("Re-init Napster - $currentURL");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Re-init Napster - $url");
 	
-	if ( my $length = $client->master->pluginData('length') ) {			
-		# On a timer because $client->currentsongqueue does not exist yet
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time(),
-			sub {
-				my $client = shift;
+	my $cache     = Slim::Utils::Cache->new;
+	my ($trackId) = $url =~ m{napster://(.+)\.wma};
+	my $meta      = $cache->get( 'napster_meta_' . $trackId );
+	
+	if ( $meta ) {
+		# We have previous data about the currently-playing song
+		
+		# Back to Now Playing
+		Slim::Buttons::Common::pushMode( $client, 'playlist' );
+	
+		# Reset song duration/progress bar
+		if ( $meta->{duration} ) {
+			$song->duration( $meta->{duration} );
+			
+			# On a timer because $client->currentsongqueue does not exist yet
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time(),
+				sub {
+					my $client = shift;
 				
-				$client->streamingProgressBar( {
-					url     => $currentURL,
-					length  => $length,
-					bitrate => 128_000,
-				} );
-				
-				# Back to Now Playing
-				# This is within the timer because otherwise it will run before
-				# addtracks adds all the tracks, and not jump to the correct playing item
-				Slim::Buttons::Common::pushMode( $client, 'playlist' );
-			},
-		);
+					$client->streamingProgressBar( {
+						url      => $url,
+						duration => $meta->{duration},
+					} );
+				},
+			);
+		}
 	}
 	
 	return 1;

@@ -497,6 +497,10 @@ sub setMetadata {
 			url      => $url,
 			duration => int($ms / 1000),
 		} );
+		
+		if ( my $song = $client->streamingSong() ) {
+			$song->duration($ms / 1000);
+		}
 	}
 	
 	# Set title if available
