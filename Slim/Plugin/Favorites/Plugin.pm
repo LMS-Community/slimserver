@@ -797,6 +797,11 @@ sub cliAdd {
 					],
 				},
 			} );
+			
+			# XXX temporary logging of favorites adds on SN for debugging
+			SDI::Service::EventLog->log(
+				$client, 'favorites_add', { url => $url, title => $title },
+			);
 
 			$request->setStatusDone();
 		}
