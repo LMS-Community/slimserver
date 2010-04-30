@@ -148,6 +148,9 @@ sub send_request {
 		$self->request->protocol( 'HTTP/1.0' );
 	}
 	
+	# XXX until we support chunked encoding, force 1.0
+	$self->request->protocol('HTTP/1.0');
+	
 	$self->add_headers();
 	
 	$self->write_async( {
@@ -225,6 +228,9 @@ sub _format_request {
 	if ( ref $content_ref ) {
 		push @h, $$content_ref;
 	}
+	
+	# XXX until we support chunked encoding, force 1.0
+	$self->socket->http_version('1.0');
 	
 	my $request = $self->socket->format_request(
 		$self->request->method,
