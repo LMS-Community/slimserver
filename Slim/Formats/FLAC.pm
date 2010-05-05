@@ -117,12 +117,7 @@ sub getTag {
 	#
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
-	push @$cuesheet, "    REM END " . sprintf(
-		"%02d:%02d:%02d",
-		int(int($tags->{SECS})/60),
-		int($tags->{SECS} % 60),
-		(($tags->{SECS} - int($tags->{SECS})) * 75)
-	);
+	push @$cuesheet, "    REM END " . $tags->{SECS};
 
 	$tags->{FILENAME} = $file;
 
@@ -747,11 +742,8 @@ sub _getCUEinVCs {
 	return 0 unless exists $tags->{CUESHEET};
 
 	my @cuesheet = split(/\s*\n/, $tags->{'CUESHEET'});
-	push(@cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
-		int(int($tags->{'SECS'})/60),
-		int($tags->{'SECS'} % 60),
-		(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
-	));
+	
+	push @cuesheet, "    REM END " . $tags->{'SECS'};
 
 	# we don't have a proper dir to send parseCUE(), but we already have urls,
 	# so we can just fake it. Tell parseCUE that we're an embedded cue sheet

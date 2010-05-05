@@ -141,6 +141,11 @@ sub parse {
 		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 
 			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
+		
+		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(.+)/i) {
+			# Bug 11950, pass absolute end time in seconds (FLAC), since some loss of accuracy would
+			# occur if passing in MM:SS:FF format			
+			$tracks->{$currtrack}->{'END'} = $1;
 
 		} elsif (defined $currtrack and defined $filename) {
 			# Each track in a cue sheet can have a different
@@ -187,17 +192,7 @@ sub parse {
 
 		my $tags = Slim::Formats->readTags($filename);
 
-		# Make sure the format is the same as END above.
-		$lastpos = sprintf("%02d:%02d:%02d",
-			int(int($tags->{'SECS'})/60),
-			int($tags->{'SECS'} % 60),
-			(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
-		);
-
-		if ($lastpos =~ /^(\d+):(\d+):(\d+)/) {
-
-			$lastpos = ($1 * 60) + $2 + ($3 / 75);
-		}
+		$lastpos = $tags->{SECS};
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
@@ -450,11 +445,17 @@ sub processAnchor {
 			}
 		}
 		
-		seek $fh, 0, 0;
+		if ( $attributesHash->{SECS} == $attributesHash->{END} ) {
+			# Bug 11950, The last track should always extend to the end of the file
+			$endbytes = $attributesHash->{SIZE};
+		}
+		else {		
+			seek $fh, 0, 0;
 		
-		my $newend = $formatclass->findFrameBoundaries( $fh, undef, $end );
-		if ( $newend ) {
-			$endbytes = $newend;
+			my $newend = $formatclass->findFrameBoundaries( $fh, undef, $end );
+			if ( $newend ) {
+				$endbytes = $newend;
+			}
 		}
 		
 		$attributesHash->{'SIZE'} = $endbytes - $attributesHash->{'OFFSET'};
