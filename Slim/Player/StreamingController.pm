@@ -807,7 +807,7 @@ sub nextsong {
 	my $repeat = Slim::Player::Playlist::repeat($client);
 	
 	if ($self->{'consecutiveErrors'} >= 2) {
-		if (scalar @{$self->songqueue()} == 1) {
+		if ($playlistCount == 1) {
 			$log->warn("Giving up because of too many consecutive errors: " . $self->{'consecutiveErrors'});
 			return undef;
 		} elsif ($repeat == 1) {
@@ -819,7 +819,8 @@ sub nextsong {
 		return $currsong;
 	}
 
-	if ($self->{'consecutiveErrors'} >= $playlistCount) {
+	# Allow one full cycle of the playlist + 1 track
+	if ($self->{'consecutiveErrors'} > $playlistCount) {
 		$log->warn("Giving up because of too many consecutive errors: " . $self->{'consecutiveErrors'});
 		return undef;
 	}
