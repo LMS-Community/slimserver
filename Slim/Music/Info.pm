@@ -402,8 +402,6 @@ sub setRemoteMetadata {
 	
 	if ( $meta->{title} ) {
 		$attr->{TITLE} = $meta->{title};
-		
-		setCurrentTitle( $url, $meta->{title} );
 	}
 	
 	if ( my $type = $meta->{ct} ) {
@@ -467,6 +465,11 @@ sub setRemoteMetadata {
 		commit     => 1,
 	} );
 	
+	if ( $meta->{title} ) {
+		# set current title, after setting track->title so that calls to displayText do not cache empty title
+		setCurrentTitle( $url, $meta->{title} );
+	}
+
 	if ( $meta->{bitrate} ) {
 		# Cache the bitrate string so it will appear in TrackInfo
 		$currentBitrates{$url} = $track->prettyBitRate;
