@@ -974,7 +974,7 @@ sub playlistJumpCommand {
 		$client->controller()->resetSongqueue($newIndex);
 	} else {
 		main::INFOLOG && $log->info("playing $newIndex");
-		$client->controller()->play($newIndex, $seekdata, $fadeIn);
+		$client->controller()->play($newIndex, $seekdata, undef, $fadeIn);
 	}	
 
 	# Does the above change the playlist?
