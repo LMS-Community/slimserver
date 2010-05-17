@@ -2111,9 +2111,11 @@ sub notify {
 			if ( $clientid ) {
 				next if !$self->clientid;
 				
+				my $client = $self->client() || next;
+				
 				# Bug 10064: playlist notifications get sent to everyone in the sync-group
 				if ($self->isCommand([['playlist', 'newmetadata']])) {
-					next if !grep($_->id eq $clientid, $self->client()->syncGroupActiveMembers());
+					next if !grep($_->id eq $clientid, $client->syncGroupActiveMembers());
 				} else {
 					next if $self->clientid ne $clientid;
 				}
