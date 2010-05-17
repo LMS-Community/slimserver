@@ -20,20 +20,26 @@ sub initDetails {
 	$class->{osDetails}->{isSqueezeOS} = 1;
 	
 	if ( !main::SCANNER && -r '/proc/cpuinfo' ) {
-		# Read MAC/UUID from cpuinfo
+		# Read UUID from cpuinfo
 		open my $fh, '<', '/proc/cpuinfo' or die "Unable to read /proc/cpuinfo: $!";
 		while ( <$fh> ) {
-			if ( /^Serial\s+:\s+([0-9a-f]+)/ ) {
-				my $serial = $1;
-				my $mac = '000420' . substr( $serial, -6, 6 );
-				$mac =~ s/(.{2})/$1:/g;
-				$mac =~ s/:$//;
-				$class->{osDetails}->{mac} = $mac;
-			}
-			elsif ( /^UUID\s+:\s+([0-9a-f-]+)/ ) {
+			if ( /^UUID\s+:\s+([0-9a-f-]+)/ ) {
 				my $uuid = $1;
 				$uuid =~ s/-//g;
 				$class->{osDetails}->{uuid} = $uuid;
+			}
+		}
+		close $fh;
+	}
+	
+	if ( !main::SCANNER && -r '/sys/class/net/eth0/address' ) {
+		# Read MAC
+		open my $fh, '<', '/sys/class/net/eth0/address' or die "Unable to read /sys/class/net/eth0/address: $!";
+		while ( <$fh> ) {
+			if ( /^([0-9a-f]{2}([:]|$)){6}$/i ) {
+				$class->{osDetails}->{mac} = $_;
+				chomp $class->{osDetails}->{mac};
+				last;
 			}
 		}
 		close $fh;
@@ -62,9 +68,6 @@ sub initPrefs {
 	
 	$defaults->{maxPlaylistLength} = 100;
 	$defaults->{libraryname} = "Squeezebox Touch";
-	
-	# XXX use SN test for now
-	$defaults->{use_sn_test} = 1;
 }
 
 my %prefSyncHandlers = (
