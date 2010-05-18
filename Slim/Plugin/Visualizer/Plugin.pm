@@ -242,7 +242,7 @@ sub setVisualizerMode {
 sub _showsongtransition {
 	my $request = shift;
 	
-	my $client = $request->client();
+	my $client = $request->client() || return;
 	my $mode   = Slim::Buttons::Common::mode($client);
 
 	if (!$mode || $mode !~ /^SCREENSAVER\.visualizer_/) {

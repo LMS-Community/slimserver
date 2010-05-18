@@ -1956,7 +1956,7 @@ sub _fadeInSeconds {
 sub _alarmEnd {
 	my $request = shift;
 
-	my $client = $request->client;
+	my $client = $request->client || return;
 	
 	# Ignore unexpected notifications
 	if ($request->isNotCommand([['pause', 'stop', 'power']])
