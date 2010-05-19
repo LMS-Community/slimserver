@@ -45,25 +45,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.itunes');
 
-# mac file types
-our %filetypes = (
-	1095321158 => 'aif', # AIFF
-	1295270176 => 'mov', # M4A
-	1295270432 => 'mov', # M4B
-#	1295274016 => 'mov', # M4P
-	1297101600 => 'mp3', # MP3
-	1297101601 => 'mp3', # MP3!
-	1297106247 => 'mp3', # MPEG
-	1297106738 => 'mp3', # MPG2
-	1297106739 => 'mp3', # MPG3
-	1299148630 => 'mov', # MooV
-	1299198752 => 'mp3', # Mp3
-	1463899717 => 'wav', # WAVE
-	1836069665 => 'mp3', # mp3!
-	1836082995 => 'mp3', # mpg3
-	1836082996 => 'mov', # mpg4
-);
-
 sub initPlugin {
 	my $class = shift;
 
@@ -235,8 +216,6 @@ sub handleTrack {
 	my $pid      = $curTrack->{'Persistent ID'};
 	my $id       = $curTrack->{'Track ID'};
 	my $location = $curTrack->{'Location'};
-	my $filetype = $curTrack->{'File Type'};
-	my $type     = undef;
 
 	# Always update the progress, even if we return.
 	$progress->update;
@@ -378,20 +357,7 @@ sub handleTrack {
 
 	main::DEBUGLOG && $log->debug("Got a track named $curTrack->{'Name'} location: $url");
 
-	if ($filetype) {
-
-		if (exists $Slim::Music::Info::types{$filetype}) {
-			$type = $Slim::Music::Info::types{$filetype};
-		} else {
-			$type = $filetypes{$filetype};
-		}
-	}
-
-	if ($url && !defined($type)) {
-		$type = Slim::Music::Info::typeFromPath($url);
-	}
-
-	if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
+	if ($url && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isHTTPURL($url))) {
 
 		for my $key (keys %{$curTrack}) {
 
@@ -401,7 +367,6 @@ sub handleTrack {
 		}
 
 		$cacheEntry{'EXTID'}    = $pid;
-		$cacheEntry{'CT'}       = $type;
 		$cacheEntry{'TITLE'}    = $curTrack->{'Name'};
 		$cacheEntry{'ARTIST'}   = $curTrack->{'Artist'};
 		$cacheEntry{'COMPOSER'} = $curTrack->{'Composer'};
