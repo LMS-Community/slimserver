@@ -339,13 +339,13 @@ sub parseMetadata {
 		# Buffer partial packets
 		if ( $status == META_STATUS_PARTIAL ) {
 			$md .= $metadata;
-			$song->wmaMetaData($metadata);
+			$song->wmaMetaData($md);
 			main::DEBUGLOG && $log->is_debug && $log->debug( "ASF_Command_Media: Buffered partial packet, len " . length($metadata) );
 			return;
 		}
 		elsif ( $status == META_STATUS_FINAL ) {		
 			# Prepend previous chunks, if any
-			$metadata = $song->wmaMetaData() . $metadata;
+			$metadata = $md . $metadata;
 			$song->wmaMetaData(undef);
 		
 			# Strip first byte if it is a length byte
