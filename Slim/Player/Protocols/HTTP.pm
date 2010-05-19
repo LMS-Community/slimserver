@@ -348,7 +348,7 @@ sub parseDirectHeaders {
 			$bitrate = $1 * 1000;
 		}
 	
-		elsif ($header =~ /^icy-metaint:\s*(.+)/) {
+		elsif ($header =~ /^icy-metaint:\s*(.+)/i) {
 			$metaint = $1;
 		}
 	
