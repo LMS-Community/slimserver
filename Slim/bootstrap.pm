@@ -198,8 +198,13 @@ sub loadModules {
 
 NOTE:
 
-Please use the buildme.sh script located here:
+If you're running some unsupported Linux/Unix platform, please use the buildme.sh 
+script located here:
+
 http://svn.slimdevices.com/repos/slim/7.5/trunk/vendor/CPAN/
+
+You should never need to do this if you're on Windows or Mac OSX. If the installers
+don't work for you, ask for help and/or report a bug.
 
 If 7.5 is outdated by the time you read this, Replace "7.5" with the major version
 of Squeezebox Server you are running.
