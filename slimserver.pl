@@ -223,6 +223,7 @@ use Slim::Networking::UDP;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
+use Slim::Utils::Update;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
@@ -603,16 +604,11 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
-
-		require Slim::Utils::Update;
-
-		Slim::Utils::Timers::setTimer(
-			undef,
-			time() + 30,
-			\&Slim::Utils::Update::checkVersion,
-		);
-	}
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 30,
+		\&Slim::Utils::Update::checkVersion,
+	);
 
 	main::INFOLOG && $log->info("Squeezebox Server HTTP enable...");
 	Slim::Web::HTTP::init2();
