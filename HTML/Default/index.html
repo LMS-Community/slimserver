@@ -86,6 +86,7 @@
 
 		<script type="text/javascript">
 			[% IF moreThanThis != "" %]SqueezeJS.setCookie( 'Squeezebox-allLinks', "[% moreThanThis %]" )[% END %]
+			[% PROCESS jsString id='WEB_NO_COOKIES_WARNING' jsId='' %]
 
 			Ext.onReady(function() {
 				Main.init();

@@ -173,6 +173,9 @@ Main = {
 
 		Ext.EventManager.onWindowResize(this.onResize, this);
 		this.onResize(this.body.getWidth(), this.body.getHeight());
+		
+		if (!SqueezeJS.cookiesEnabled())
+			Ext.MessageBox.alert(SqueezeJS.string('squeezebox_server'), SqueezeJS.string('web_no_cookies_warning'));
 	},
 
 	onResize : function(width, height) {

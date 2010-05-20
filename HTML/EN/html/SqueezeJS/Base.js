@@ -804,6 +804,16 @@ SqueezeJS.clearCookie = function(name, failover) {
 	return SqueezeJS.CookieManager.clear(name);
 };
 
+SqueezeJS.cookiesEnabled = function(){
+	Ext.util.Cookies.set('_SqueezeJS-cookietest', true);
+	
+	if (Ext.util.Cookies.get('_SqueezeJS-cookietest')) {
+		Ext.util.Cookies.clear('_SqueezeJS-cookietest');
+		return true;
+	}
+	
+	return false;
+};
 
 
 // XXX some legacy stuff - should eventually go away

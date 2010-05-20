@@ -14285,6 +14285,9 @@ CURRENT_WEB_SKIN
 	SV	Aktuellt webbskal:
 	ZH_CN	当前的网外壳：
 
+WEB_NO_COOKIES_WARNING
+	EN	Your browser does not accept cookies. This can lead to unexpected behaviour controlling your Squeezebox Server. Please enable cookies in your browser before you continue.
+
 DISPLAY_PLUGINS
 	CS	Zobrazit nabídku Doplňky na přehrávači Slim:
 	DA	Vis menuen Ekstra på Slim-afspilleren:
