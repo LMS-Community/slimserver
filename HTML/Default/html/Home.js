@@ -22,6 +22,12 @@ var Home = {
 					this.expandItem(panel);
 			}
 		}
+		
+		new Ext.KeyNav('tuneinurl', {
+			'enter': function(e) {
+				Home.tuneInUrl('play')
+			}
+		});
 	},
 
 	onSelectorClicked : function(ev, target){
