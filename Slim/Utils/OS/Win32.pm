@@ -94,6 +94,19 @@ sub initPrefs {
 	$prefs->{wizardDone} = 1;
 }
 
+sub postInitPrefs {
+	my ($class, $prefs) = @_;
+
+	return if !$class->{osDetails}->{isWHS};
+
+	# bug 15818: on WHS we don't want iTunes to be started by default (Support request)
+	require Slim::Utils::Prefs;
+	my $pluginState = Slim::Utils::Prefs::preferences('plugin.state');
+	if (!defined $pluginState->get('iTunes')) {
+		$pluginState->set('iTunes', 'disabled');
+	}
+}
+
 sub dirsFor {
 	my ($class, $dir) = @_;
 	
