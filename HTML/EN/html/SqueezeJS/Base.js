@@ -428,9 +428,11 @@ function _init() {
 		},
 
 		setVolume : function(amount, d){
-			amount *= 10;
 			if (d)
-				amount = d + amount;
+				amount = d + (amount * 2);
+			else
+				amount *= 10;
+
 			this.playerControl(['mixer', 'volume', amount]);
 		},
 	
