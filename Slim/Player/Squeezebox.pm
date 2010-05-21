@@ -648,6 +648,7 @@ sub stream_s {
 		if ( $track ) {
 			$pcmsamplesize = $client->pcm_sample_sizes($track);
 			$pcmsamplerate = $client->pcm_sample_rates($track);
+			$pcmendian     = $track->endian() == 1 ? 0 : 1;
 			$pcmchannels   = $track->channels() || '2';
 		 }
 
