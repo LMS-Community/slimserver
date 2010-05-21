@@ -66,6 +66,11 @@ sub getTag {
 	$tags->{BLOCKALIGN} = $info->{block_align};
 	$tags->{ENDIAN}     = 1;
 	
+	# Support AIFC little-endian files
+	if ( $info->{compression_type} && $info->{compression_type} eq 'sowt' ) {
+		$tags->{ENDIAN} = 0;
+	}
+	
 	# Map ID3 tags if file has them
 	if ( $info->{id3_version} ) {
 		$tags->{TAGVERSION} = $info->{id3_version};
