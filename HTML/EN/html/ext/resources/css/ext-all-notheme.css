@@ -1,5 +1,5 @@
 /*!
- * Ext JS Library 3.2.0
+ * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
  * licensing@extjs.com
  * http://www.extjs.com/license
@@ -1035,10 +1035,6 @@ textarea {
 /* invalid fields */
 .x-form-invalid, textarea.x-form-invalid{
     background:repeat-x bottom;
-    border: 1px solid;
-}
-
-.ext-webkit .x-form-invalid{
     border: 1px solid;
 }
 

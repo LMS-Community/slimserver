@@ -1,7 +1,7 @@
 {
     "projectName": "Ext JS",
     "deployDir": "ext-sb",
-    "licenseText": "Ext JS Library 3.2.0\nCopyright(c) 2006-2010 Ext JS, Inc.\nlicensing@extjs.com\nhttp://www.extjs.com/license",
+    "licenseText": "Ext JS Library for Squeezebox Server",
     "pkgs": [{
         "name": "Ext Base",
         "file": "adapter/ext/ext-base.js",
