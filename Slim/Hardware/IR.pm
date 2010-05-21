@@ -660,6 +660,9 @@ sub processIR {
 		if ( $code eq 'add' ) {
 			return if $client->blocksAddButton;
 		}
+		elsif ( $code eq 'search' || $code eq 'search_2' ) {
+			return if $client->blocksSearchButton;
+		}
 	}
 
 	my $timediff = $irTime - $client->lastirtime();
