@@ -90,19 +90,6 @@ sub parseDirectHeaders {
 	if ( $url =~ /\.dzr$/ ) {
 		Slim::Music::Info::setDuration( $url, 0 );
 	}
-
-	foreach my $header (@headers) {
-
-		main::DEBUGLOG && $log->debug("Deezer header: $header");
-
-		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
-			$length = $1;
-			last;
-		}
-	}
-	
-	# Save length for reinit
-	$client->master->pluginData( length => $length );
 	
 	my $bitrate = 128_000;
 
@@ -294,6 +281,7 @@ sub _gotNextRadioTrack {
 		artist    => $track->{artist_name},
 		album     => $track->{album_name},
 		title     => $track->{title},
+		duration  => $track->{duration},
 		cover     => $track->{cover} || $icon,
 		bitrate   => '128k CBR',
 		type      => 'MP3 (Deezer)',
@@ -304,6 +292,8 @@ sub _gotNextRadioTrack {
 			rew => 0,
 		},
 	};
+	
+	$song->duration( $track->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
@@ -385,6 +375,25 @@ sub _gotTrack {
 
 	# Save all the info
 	$song->pluginData( info => $info );
+	
+	# Cache the rest of the track's metadata
+	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $meta = {
+		artist    => $info->{artist},
+		album     => $info->{album},
+		title     => $info->{title},
+		cover     => $info->{cover} || $icon,
+		duration  => $info->{duration},
+		bitrate   => '128k CBR',
+		type      => 'MP3 (Deezer)',
+		info_link => 'plugins/deezer/trackinfo.html',
+		icon      => $icon,
+	};
+	
+	$song->duration( $info->{duration} );
+	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
 	
 	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 	# When done, callback will continue on to playback
@@ -649,30 +658,36 @@ sub reinit {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
-	my $currentURL = $song->streamUrl();
+	my $url = $song->track->url();
 	
-	main::DEBUGLOG && $log->debug("Re-init Deezer - $currentURL");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Re-init Deezer - $url");
 	
-	if ( my $length = $client->master->pluginData('length') ) {			
-		# On a timer because $client->currentsongqueue does not exist yet
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time(),
-			sub {
-				my $client = shift;
+	my $cache     = Slim::Utils::Cache->new;
+	my ($trackId) = $url =~ m{deezer://(.+)\.mp3};
+	my $meta      = $cache->get( 'deezer_meta_' . $trackId );
+	
+	if ( $meta ) {			
+		# Back to Now Playing
+		Slim::Buttons::Common::pushMode( $client, 'playlist' );
+	
+		# Reset song duration/progress bar
+		if ( $meta->{duration} ) {
+			$song->duration( $meta->{duration} );
+			
+			# On a timer because $client->currentsongqueue does not exist yet
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time(),
+				sub {
+					my $client = shift;
 				
-				$client->streamingProgressBar( {
-					url     => $currentURL,
-					length  => $length,
-					bitrate => 128_000,
-				} );
-				
-				# Back to Now Playing
-				# This is within the timer because otherwise it will run before
-				# addtracks adds all the tracks, and not jump to the correct playing item
-				Slim::Buttons::Common::pushMode( $client, 'playlist' );
-			},
-		);
+					$client->streamingProgressBar( {
+						url      => $url,
+						duration => $meta->{duration},
+					} );
+				},
+			);
+		}
 	}
 	
 	return 1;
