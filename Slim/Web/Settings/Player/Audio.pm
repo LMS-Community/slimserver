@@ -104,6 +104,10 @@ sub prefs {
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {
 		push @prefs, 'mp3StreamingMethod';
 	}
+	
+	if ($client->hasOutputChannels()) {
+		push @prefs, 'outputChannels';
+	}
 
 	return ($prefs->client($client), @prefs);
 }

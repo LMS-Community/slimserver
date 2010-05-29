@@ -555,11 +555,14 @@ sub opened {
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
 #	u8_t flags;	// [1]	0x80 - loop infinitely
 #               //      0x40 - stream without restarting decoder
-#               //  0x20 - Rtmp (SqueezePlay only)
-#               //  0x10 - SqueezePlay direct protocol handler - pass direct to SqueezePlay
-#				//	0x01 - polarity inversion left
-#				//	0x02 - polarity inversion right
-#	u8_t output_threshold;	// [1]	Amount of output buffer data before playback starts in tenths of second.
+#               //      0x20 - Rtmp (SqueezePlay only)
+#               //      0x10 - SqueezePlay direct protocol handler - pass direct to SqueezePlay
+#               //      0x08 - output only right channel as mono
+#               //      0x04 - output only left channel as mono
+#               //      0x02 - polarity inversion right
+#               //      0x01 - polarity inversion left
+#				
+#	u8_t output_threshold`;	// [1]	Amount of output buffer data before playback starts in tenths of second.
 #	u8_t reserved;		// [1]	reserved
 #	u32_t replay_gain;	// [4]	replay gain in 16.16 fixed point, 0 means none
 #	u16_t server_port;	// [2]	server's port
@@ -866,17 +869,11 @@ sub stream_s {
 		return 0;
 	}
 
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info(sprintf(
-			"Starting decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
-			$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
-		));
-	}
-
 	my $flags = 0;
 	$flags |= 0x40 if $params->{reconnect};
 	$flags |= 0x80 if $params->{loop};
 	$flags |= 0x03 & ($prefs->client($client)->get('polarityInversion') || 0);
+	$flags |= (($prefs->client($client)->get('outputChannels') || 0) & 0x03) << 2;
 
 	if ($handler->can('slimprotoFlags')) {
 		$flags |= $handler->slimprotoFlags($client, $url, $isDirect);
@@ -952,6 +949,13 @@ sub stream_s {
 	
 	if ($transitionDuration > $client->maxTransitionDuration()) {
 		$transitionDuration = $client->maxTransitionDuration();
+	}
+	
+	if ( main::INFOLOG && $log->is_info ) {
+		$log->info(sprintf(
+			"Starting decoder with format: %s flags: 0x%x autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
+			$formatbyte, $flags, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+		));
 	}
 	
 	my $frame = pack 'aaaaaaaCCCaCCCNnN', (

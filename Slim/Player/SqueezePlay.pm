@@ -196,6 +196,8 @@ sub getVolumeParameters
 
 sub hasIR() { return 0; }
 
+sub hasOutputChannels { 1 }
+
 sub formats {
 	return @{shift->myFormats};
 }

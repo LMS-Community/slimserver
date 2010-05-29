@@ -50,6 +50,7 @@ our $defaultPrefs = {
 	'snLastSyncUp'       => -1,
 	'snLastSyncDown'     => -1,
 	'snSyncInterval'     => 30,
+	'outputChannels'     => 0,
 };
 
 # Keep track of direct stream redirects
@@ -82,7 +83,7 @@ sub maxTransitionDuration { 10 };
 sub canDecodeRhapsody { 1 };
 sub hasPreAmp { 1 };
 sub hasDisableDac { 1 };
-sub hasServ { 1 }; 
+sub hasServ { 1 };
 
 # SN only, this checks that the player's firmware version supports compression
 sub hasCompression {
