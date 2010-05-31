@@ -5594,7 +5594,7 @@ SETUP_OUTPUT_CHANNELS
 	EN	Output Channel Mode
 
 SETUP_OUTPUT_CHANNELS_DESC
-	EN	You can configure this player to play only the left or right channels. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
+	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
 
 OUTPUT_CHANNELS_NORMAL
 	EN	Both Channels (Stereo)
