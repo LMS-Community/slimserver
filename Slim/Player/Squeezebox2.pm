@@ -84,6 +84,7 @@ sub canDecodeRhapsody { 1 };
 sub hasPreAmp { 1 };
 sub hasDisableDac { 1 };
 sub hasServ { 1 };
+sub hasOutputChannels { 1 }
 
 # SN only, this checks that the player's firmware version supports compression
 sub hasCompression {
