@@ -647,7 +647,8 @@ sub gdresize {
 			my ($width, $height, $mode) = $s =~ /^([^x]+)x([^_]+)_(\w)$/;
 			
 			if ( !$width || !$height || !$mode ) {
-				die "Invalid spec: $s\n";
+				warn "Invalid spec: $s\n";
+				next;
 			}
 			
 			push @{$specs}, {
