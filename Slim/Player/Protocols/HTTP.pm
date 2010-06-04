@@ -189,6 +189,10 @@ sub parseMetadata {
 				my $cache = Slim::Utils::Cache->new();
 				$cache->set( "remote_image_$url", $artworkUrl, 3600 );
 				
+				if ( my $song = $client->playingSong() ) {
+					$song->pluginData( httpCover => $artworkUrl );
+				}
+				
 				main::DEBUGLOG && $directlog->debug("Updating stream artwork to $artworkUrl");
 			};
 		};
