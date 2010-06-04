@@ -62,3 +62,11 @@ digital_input_toslink		= 7689c639
 analog_input_line_in		= 76890ef1
 
 muting				= 7689c43b
+
+preset_1			= 76898a75
+preset_2			= 76894ab5
+preset_3			= 7689ca35
+preset_4			= 76892ad5
+preset_5			= 7689aa55
+preset_6			= 76896a95
+
