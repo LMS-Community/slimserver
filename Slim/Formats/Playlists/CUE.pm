@@ -13,14 +13,17 @@ use base qw(Slim::Formats::Playlists::Base);
 
 use Audio::Scan;
 use File::Slurp;
+use File::Spec::Functions qw(catdir);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 my $log = logger('formats.playlists');
+my $prefs = preferences('server');
 
 # This now just processes the cuesheet into tags. The calling process is
 # responsible for adding the tracks into the datastore.
@@ -441,6 +444,22 @@ sub processAnchor {
 				if ( $s->{info}->{lame_encoder_version} ) {
 					my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );
 					$attributesHash->{'OFFSET'} += $next;
+				}
+				
+				eval {
+					# Pre-scan the file with MP3::Cut::Gapless to create frame data cache file
+					# that will be used during playback
+					require MP3::Cut::Gapless;
+				
+					main::INFOLOG && $log->is_info && $log->info("Pre-caching MP3 gapless split data for $path");
+				
+					MP3::Cut::Gapless->new(
+						file      => $path,
+						cache_dir => catdir( $prefs->get('librarycachedir'), 'mp3cut' ),
+					);
+				};
+				if ($@) {
+					$log->warn("Unable to scan $path for gapless split data: $@");
 				}
 			}
 		}

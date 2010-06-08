@@ -10,17 +10,20 @@ package Slim::Player::Protocols::File;
 use strict;
 use base qw(IO::File);
 
+use File::Spec::Functions qw(catdir);
 use IO::String;
 
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Formats;
 use Slim::Player::Source;
 
 use constant MAXCHUNKSIZE => 32768;
 
 my $log = logger('player.source');
+my $prefs = preferences('server');
 
 sub new {
 	my $class = shift;
@@ -201,13 +204,53 @@ sub open {
 	}
 	
 	$song->streamLength($streamLength);
+	
+	if ( $format eq 'mp3' && $track->virtual ) {
+		eval {
+			# Return a gapless MP3 stream for cue sheet tracks
+			# XXX avoid calling the above stuff for these tracks, it's just wasted
+			require MP3::Cut::Gapless;
+		
+			my ($start_ms, $end_ms);
+		
+			if ( $url =~ /#([^-]+)-([^-]+)$/ ) {
+				$start_ms = sprintf "%d", $1 * 1000;
+				$end_ms   = sprintf "%d", $2 * 1000; # XXX last track should be undef
+			}
+		
+			if ( defined $seekdata && $seekdata->{timeOffset} ) {
+				# XXX error checks?
+				$start_ms += sprintf "%d", $seekdata->{timeOffset} * 1000;
+			}
+		
+			main::INFOLOG && $log->is_info && $log->info("Opening gapless MP3 stream from time $start_ms to $end_ms");
+		
+			${*$sock}{mp3cut} = MP3::Cut::Gapless->new(
+				file      => $filepath,
+				cache_dir => catdir( $prefs->get('librarycachedir'), 'mp3cut' ),
+				start_ms  => $start_ms,
+				end_ms    => $end_ms,
+			);
+		};
+		if ($@) {
+			$log->warn("Unable to play MP3 cue track in gapless mode: $@");
+			delete ${*$sock}{mp3cut};
+		}
+	}
 
 	return $sock;
 }
 
 sub sysread {
-    my $self = $_[0];
-    my $n    = $_[2];
+	my $self = $_[0];
+	my $n	 = $_[2];
+	
+	if ( ${*$self}{mp3cut} ) {
+		# Get audio data from MP3::Cut::Gapless object instead of directly from the file
+		$n = ${*$self}{mp3cut}->read( $_[1], $n );
+		${*$self}{position} += $n unless (!defined($n) || $n <= 0);
+		return $n;
+	}
 
 	if (my $length = ${*$self}{'initialAudioBlockRemaining'}) {
 		
