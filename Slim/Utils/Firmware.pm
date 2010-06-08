@@ -301,7 +301,7 @@ sub url {
 		# don't trigger download more than once
 		$firmwares->{$model} = {};
 		init_firmware_download($model);
-		return;
+		return unless ($firmwares->{$model}->{file});	# Will be available immediately if custom f/w 
 	}
 
 	# when running on SqueezeOS, return the direct link from SqueezeNetwork
