@@ -122,6 +122,8 @@ sub read {
 
 		if ($class->playlistEntryIsValid($fullentry, $url)) {
 
+			main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
+
 			push @items, $class->_updateMetaData( $fullentry, {
 				'TITLE'  => $title,
 				'ALBUM'  => $album,
