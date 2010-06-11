@@ -305,6 +305,7 @@ sub fileURLFromPath {
 	$path = fixPathCase($path);
 	
 	# All paths should be in raw bytes, warn if it appears to be UTF-8
+	# XXX remove this later, before release
 	if ( utf8::is_utf8($path) ) {
 		my $test = $path;
 		utf8::decode($test);

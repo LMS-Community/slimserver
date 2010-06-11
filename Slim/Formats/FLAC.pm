@@ -121,9 +121,6 @@ sub getTag {
 
 	$tags->{FILENAME} = $file;
 
-	# Bug 14386, $file is raw UTF-8, need to decode it here
-	utf8::decode($file);
-
 	# get the tracks from the cuesheet - tell parseCUE that we're dealing
 	# with an embedded cue sheet by passing in the filename
 	my $tracks = Slim::Formats::Playlists::CUE->parse($cuesheet, dirname($file), $file);
