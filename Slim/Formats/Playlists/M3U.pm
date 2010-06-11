@@ -62,22 +62,26 @@ sub read {
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
 		
-		# decode any HTML entities in-place
-		HTML::Entities::decode_entities($entry);
+		# If the line is not a filename (starts with #), handle encoding
+		# If it's a filename, accept it as raw bytes
+		if ( $entry =~ /^#/ ) {
+			# decode any HTML entities in-place
+			HTML::Entities::decode_entities($entry);
 
-		# Guess the encoding of each line in the file. Bug 1876
-		# includes a playlist that has latin1 titles, and utf8 paths.
-		my $enc = Slim::Utils::Unicode::encodingFromString($entry);
+			# Guess the encoding of each line in the file. Bug 1876
+			# includes a playlist that has latin1 titles, and utf8 paths.
+			my $enc = Slim::Utils::Unicode::encodingFromString($entry);
 
-		# Only strip the BOM off of UTF-8 encoded bytes. Encode will
-		# handle UTF-16
-		if (!$foundBOM && $enc eq 'utf8') {
+			# Only strip the BOM off of UTF-8 encoded bytes. Encode will
+			# handle UTF-16
+			if (!$foundBOM && $enc eq 'utf8') {
 
-			$entry = Slim::Utils::Unicode::stripBOM($entry);
-			$foundBOM = 1;
+				$entry = Slim::Utils::Unicode::stripBOM($entry);
+				$foundBOM = 1;
+			}
+
+			$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 		}
-
-		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 
 		main::DEBUGLOG && $log->debug("  entry from file: $entry");
 
@@ -117,8 +121,6 @@ sub read {
 		my $fullentry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 		if ($class->playlistEntryIsValid($fullentry, $url)) {
-
-			main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
 
 			push @items, $class->_updateMetaData( $fullentry, {
 				'TITLE'  => $title,
