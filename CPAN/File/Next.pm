@@ -392,11 +392,6 @@ sub _candidate_files {
 
     for my $file ( grep { !exists $skip_dirs{$_} } readdir $dh ) {
         my $has_stat;
-        
-        # readdir returns only bytes, so try and decode the
-        # filename to UTF-8 here or the later calls to -d/-f may fail,
-        # causing directories and files to be skipped. -Andy
-        utf8::decode($file);
 
         # Only do directory checking if we have a descend_filter
         my $fullpath = File::Spec->catdir( $dir, $file );

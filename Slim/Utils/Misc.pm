@@ -304,16 +304,15 @@ sub fileURLFromPath {
 	
 	$path = fixPathCase($path);
 	
-	# Encode to UTF-8 before URI-escaping, if needed
+	# All paths should be in raw bytes, warn if it appears to be UTF-8
 	if ( utf8::is_utf8($path) ) {
-		utf8::encode($path);
-	}
-	
-	# If the path contains any combining characters, we need
-	# to recompose it.  This happens most often on HFS+ filesystems
-	# but can also be an issue in playlists.
-	if ( Slim::Utils::Unicode::hasCombiningMarks($path) ) {
-		$path = Slim::Utils::Unicode::recomposeUnicode($path);
+		my $test = $path;
+		utf8::decode($test);
+		utf8::encode($test);
+		if ( $test ne $path ) {
+			logWarning("fileURLFromPath got decoded UTF-8 path: " . Data::Dump::dump($path));
+			bt();
+		}
 	}
 
 	my $uri = URI::file->new($path);

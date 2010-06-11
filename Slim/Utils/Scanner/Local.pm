@@ -124,6 +124,11 @@ sub rescan {
 	
 	my $next = shift @{$paths};
 	
+	# Must make sure all scanned paths are raw bytes, since the UTF-8
+	# flag is enabled for the audiodir pref, this caused the join() in catdir in File::Next
+	# to upgrade the path to UTF-8 which caused -d tests to fail in some cases
+	utf8::encode($next);
+	
 	# Strip trailing slashes
 	$next =~ s{/$}{};
 	

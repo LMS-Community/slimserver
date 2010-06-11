@@ -67,11 +67,6 @@ sub find {
 		0,               # size, 0 for dirs
 	);
 	
-	# IO::AIO needs byte-encoded paths
-	if ( utf8::is_utf8($path) ) {
-		utf8::encode($path);
-	}
-	
 	$grp->add( aio_readdirx( $path, IO::AIO::READDIR_STAT_ORDER, sub { 
 		my $files = shift;
 		
