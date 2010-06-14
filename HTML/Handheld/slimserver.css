@@ -173,7 +173,7 @@ div.fileselectorautocomplete ul li {
 }
 
 /* add a few optimizations for iThingy browsers */
-@media screen and (max-device-width: 480px) { 
+@media screen and (max-device-width: 480px) and (min-device-width: 320px) { 
 	.menuitem {
 		padding-top: 5px;
 		padding-bottom: 5px;

@@ -13,11 +13,11 @@
 	[% END %]
 	<script TYPE="text/javascript">
 		function resizeBody() {
-			if (navigator.userAgent.search(/Opera 8/) != -1) {
+			if (navigator.userAgent.search(/Opera [891]/) != -1) {
 				var width = 0;
 				// Opera Mobile on Symbian 
 				if (document.getElementsByTagName("body")[0].offsetWidth > window.outerWidth)
-					width = window.outerWidth;
+					width = window.outerWidth - 40;
 
 				// Opera Mobile on Windows Mobile 
 				else if (window.outerWidth > 1500) {
