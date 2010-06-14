@@ -1354,11 +1354,12 @@ sub playlistXitemCommand {
 		Slim::Music::Info::setCurrentTitle( $url, $title );
 	}
 
-	# check whether url is potentially for a local file or db entry, if so pass to playlistXtracksCommand
-	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
+	# check whether url is potentially for some sort of db entry, if so pass to playlistXtracksCommand
+	# But not for or local file:// URLs,  and this may mean 
+	# rescanning items already in the database but still allows playlist and other favorites to be played
 	
 	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
-	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
+	if ($path =~ /^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
@@ -1780,14 +1781,6 @@ sub playlistcontrolCommand {
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
 
-	my $trackID             = $request->getParam('track_id');
-	my $albumID             = $request->getParam('album_id');
-	my $artistID            = $request->getParam('artist_id');
-	my $genreID             = $request->getParam('genre_id');
-	my $yearID              = $request->getParam('year_id');
-
-	my $goCmd               = $request->getParam('goCmd');
-	my $goMenu              = $request->getParam('goMenu');
 	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -1891,10 +1884,7 @@ sub playlistcontrolCommand {
 		}
 	}
 
-	if (!$playlist_id && $request->getParam('playlist_id')) {
-
-		$playlist_id = $request->getParam('playlist_id');
-	}
+	$playlist_id ||= $request->getParam('playlist_id');
 
 	if ($playlist_id) {
 
