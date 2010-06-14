@@ -4301,7 +4301,7 @@ sub titlesQuery {
 	# we only change the count if we're going to insert the play all item
 	my $addPlayAllItem = $search && $insertAll;
 
-	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum', 'albumtrack'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -4319,6 +4319,10 @@ sub titlesQuery {
 	if ($sort && $sort eq 'tracknum') {
 		$tags .= 't';
 		$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+	}
+	elsif ($sort && $sort eq 'albumtrack') {
+		$tags .= 'tl';
+		$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
 	}
 	
 	# Jive menuMode needs some extra columns and joins. Set these using tags
@@ -5342,7 +5346,7 @@ my %tagMap = (
 	                                                                    #titlesearch 
 	  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
 	  'e' => ['album_id',         '',              'albumid'],          #album 
-	  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
+	  'l' => ['album',            'ALBUM',         'albumname'],        #->album.title
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
 	  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
