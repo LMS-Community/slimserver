@@ -171,3 +171,11 @@ div.fileselectorautocomplete ul li {
 	cursor: pointer;
 	white-space: nowrap
 }
+
+/* add a few optimizations for iThingy browsers */
+@media screen and (max-device-width: 480px) { 
+	.menuitem {
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+}

@@ -68,7 +68,7 @@
 
 	[%- content | indent(4) %]
 	
-<tr><td>
+</td></tr>
 [%- END %]
 
 [% BLOCK gallerycontainer %]
@@ -85,7 +85,7 @@
 	[%- IF leftcontrols -%]
 		[%- PROCESS $leftcontrols -%]
 	[%- END %]
-	<td bgcolor="[% PROCESS oddOrEvenC %]" width="100%">
+	<td bgcolor="[% PROCESS oddOrEvenC %]" width="100%" class="menuitem">
 	
 	[%- IF anchor %]
 		<a name="[% anchor | uri%]"></a>
