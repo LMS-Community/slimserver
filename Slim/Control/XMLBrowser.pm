@@ -1233,7 +1233,7 @@ sub _cliQuery_done {
 			
 			_jivePresetBase($request->getResult('base')->{'actions'}) if $presetFavSet;
 			
-			if ( $window->{'windowStyle'} ) {
+			if ( $windowStyle ) {
 				$window->{'windowStyle'} = $windowStyle;
 			} 
 			elsif ( $hasImage ) {
