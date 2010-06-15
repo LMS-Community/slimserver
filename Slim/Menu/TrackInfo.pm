@@ -250,6 +250,12 @@ sub menu {
 		
 		if ( defined $ref->{func} ) {
 			
+			# skip jive-only items for non-jive UIs
+			return if $ref->{menuMode} && !$tags->{menuMode};
+			
+			# show artwork item to jive only if artwork exists
+			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
+			
 			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta, $tags ) };
 			if ( $@ ) {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
@@ -257,12 +263,6 @@ sub menu {
 			}
 			
 			return unless defined $item;
-			
-			# skip jive-only items for non-jive UIs
-			return if $ref->{menuMode} && !$tags->{menuMode};
-			
-			# show artwork item to jive only if artwork exists
-			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
 			
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
@@ -338,35 +338,26 @@ sub infoContributors {
 			for my $contributor ( $track->contributorsOfType($role) ) {
 				my $id = $contributor->id;
 				
-				my $db = {   
-					hierarchy         => 'contributor,album,track',
-					level             => 1,
-					findCriteria      => {
-						'contributor.id'   => $id,
-						'contributor.role' => $role,
-					},
-					selectionCriteria => {
-						'track.id'       => $track->id,
-						'album.id'       => $track->albumid,
-						'contributor.id' => $id,
-					},
-				};
-
+				my %params = (
+					mode      => 'albums',
+					artist_id => $id,
+					title     => $contributor->name,
+				);
+				
 				# XXX: Ideally this would point to another OPML provider like
 				# Slim::Menu::Library::Contributor
 				my $item = {
 					type => 'redirect',
 					name => cstring($client,  uc $role) . cstring($client, 'COLON') . ' ' . $contributor->name,
 
-					db   => $db,
-
 					player => {
-						mode  => 'browsedb',
-						modeParams => $db,
+						mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+						modeParams => \%params,
 					},
 
 					web  => {
-						url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
+						url   => "plugins/browselibrary/index.html?" .
+							join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
 						type  => 'contributor',
 						group => uc($role),
 						value => $contributor->name,
@@ -375,11 +366,11 @@ sub infoContributors {
 					jive => {
 						actions => {
 							go => {
-								cmd    => [ 'albums' ],
+								cmd    => [ 'browselibrary', 'items' ],
 								params => {
 									menu      => 'track',
 									menu_all  => 1,
-									artist_id => $id,
+									%params,
 								},
 							},
 							play => {
@@ -630,35 +621,26 @@ sub infoAlbum {
 	}
 	elsif ( my $album = $track->album ) {
 		my $id = $album->id;
-		my $artist = $track->artist;
 
-		my $db = {
-			hierarchy         => 'album,track',
-			level             => 1,
-			findCriteria      => { 
-				'album.id'       => $id,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
-			},
-			selectionCriteria => {
-				'track.id'       => $track->id,
-				'album.id'       => $id,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
-			},
-		};
+		my %params = (
+			mode      => 'tracks',
+			album_id  => $id,
+			sort     => 'tracknum',
+			title    => $album->name,
+		);
 		
 		$item = {
 			type => 'redirect',
 			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $album->name,
 
-			db   => $db,
-
 			player => {
-				mode  => 'browsedb',
-				modeParams => $db,
+				mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+				modeParams => \%params,
 			},
 
 			web  => {
-				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
+				url   => "plugins/browselibrary/index.html?" .
+					join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
 				group => 'album',
 				value => $album->name,
 			},
@@ -666,12 +648,11 @@ sub infoAlbum {
 			jive => {
 				actions => {
 					go => {
-						cmd    => [ 'tracks' ],
+						cmd    => [ 'browselibrary', 'items' ],
 						params => {
 							menu     => 'songinfo',
 							menu_all => 1,
-							album_id => $id,
-							sort     => 'tracknum',
+							%params,
 						},
 					},
 					play => {
@@ -722,32 +703,24 @@ sub infoGenres {
 	for my $genre ( $track->genres ) {
 		my $id = $genre->id;
 		
-		my $db = {
-			hierarchy         => 'genre,contributor,album,track',
-			level             => 1,
-			findCriteria      => {
-				'genre.id' => $id,
-			},
-			selectionCriteria => {
-				'track.id'       => $track->id,
-				'album.id'       => $track->albumid,
-				'contributor.id' => $track->artistid,
-			},
-		};
+		my %params = (
+			mode      => 'genres',
+			genre_id => $id,
+			title    => $genre->name,
+		);
 		
 		my $item = {
 			type => 'redirect',
 			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
 
-			db   => $db,
-
 			player => {
-				mode  => 'browsedb',
-				modeParams => $db,
+				mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+				modeParams => \%params,
 			},
 
 			web  => {
-				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
+				url   => url   => "plugins/browselibrary/index.html?" .
+					join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
 				group => 'genre',
 				value => $genre->name,
 			},
@@ -755,11 +728,11 @@ sub infoGenres {
 			jive => {
 				actions => {
 					go => {
-						cmd    => [ 'artists' ],
+						cmd    => [ 'browselibrary', 'items' ],
 						params => {
 							menu     => 'album',
 							menu_all => 1,
-							genre_id => $id,
+							%params,
 						},
 					},
 					play => {

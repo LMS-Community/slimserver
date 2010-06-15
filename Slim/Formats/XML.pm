@@ -41,13 +41,6 @@ if ( main::SLIM_SERVICE ) {
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
-sub getCachedFeed {
-	my ( $class, $url ) = @_;
-	
-	my $cache = Slim::Utils::Cache->new();
-	return $cache->get( $url . '_parsedXML' );
-}
-
 sub getFeedAsync {
 	my $class = shift;
 	my ( $cb, $ecb, $params ) = @_;

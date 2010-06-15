@@ -105,6 +105,9 @@ sub setMode {
 		if ( !defined $remember ) {
 			$remember = 1;
 		}
+		
+		# get modeParams before pusing block
+		my $modeParams = $client->modeParams();
 
 		# give user feedback while loading
 		$client->block();
@@ -126,30 +129,40 @@ sub setMode {
 		# instead of fetching it ourselves.
 		if ( ref $url eq 'CODE' ) {
 			my $callback = sub {
-				my $menu = shift;
-				
-				if ( ref $menu ne 'ARRAY' ) {
-					$menu = [ $menu ];
+				my $data = shift;
+				my $opml;
+
+				if ( ref $data eq 'HASH' ) {
+					$opml = {
+						$opml = $data;
+						$opml->{'type'}  ||= 'opml';
+						$opml->{'title'} = $title;
+					};
+				} else {
+					$opml = {
+						type  => 'opml',
+						title => $title,
+						items => (ref $data ne 'ARRAY' ? [$data] : $data),
+					};
 				}
-				
-				my $opml = {
-					type  => 'opml',
-					title => $title,
-					items => $menu,
-				};
 				
 				gotFeed( $opml, $params );
 			};
 			
 			# get passthrough params if supplied
-			my $pt = $item->{'passthrough'} || [];
+			my $pt = $item->{'passthrough'} || [undef];
 			
+			# XXX hack
+			if (my $search = $modeParams->{'search'}) {
+				$pt->[0]->{'search'} = $search;
+			}
+						
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
 				$log->debug( "Fetching OPML from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, @{$pt} );
+			return $url->( $client, $callback, @{$pt}, $modeParams );
 		}
 		
 		Slim::Formats::XML->getFeedAsync( 
@@ -837,6 +850,7 @@ sub handleSearch {
 			'modeName' => "XMLBrowser:$searchURL:$searchString",
 			'url'      => $searchURL,
 			'title'    => $searchString,
+			'search'   => $searchString,
 			'timeout'  => $item->{'timeout'},
 			'parser'   => $item->{'parser'},
 		);
@@ -1214,23 +1228,28 @@ sub playItem {
 		# we may have a callback as URL
 		if ( ref $url eq 'CODE' ) {
 			my $callback = sub {
-				my $menu = shift;
-				
-				if ( ref $menu ne 'ARRAY' ) {
-					$menu = [ $menu ];
+				my $data = shift;
+				my $opml;
+
+				if ( ref $data eq 'HASH' ) {
+					$opml = {
+						$opml = $data;
+						$opml->{'type'}  ||= 'opml';
+						$opml->{'title'} = $title;
+					};
+				} else {
+					$opml = {
+						type  => 'opml',
+						title => $title,
+						items => (ref $data ne 'ARRAY' ? [$data] : $data),
+					};
 				}
-				
-				my $opml = {
-					type  => 'opml',
-					title => $title,
-					items => $menu,
-				};
 				
 				gotPlaylist( $opml, $params );
 			};
 			
 			# get passthrough params if supplied
-			my $pt = $item->{'passthrough'} || [];
+			my $pt = $item->{'passthrough'} || [undef];
 			
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);

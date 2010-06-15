@@ -72,30 +72,34 @@ sub handleWebIndex {
 	# Handle plugins that want to use callbacks to fetch their own URLs
 	if ( ref $feed eq 'CODE' ) {
 		my $callback = sub {
-			my $menu = shift;
-			
-			if ( ref $menu ne 'ARRAY' ) {
-				$menu = [ $menu ];
+			my $data = shift;
+			my $opml;
+
+			if ( ref $data eq 'HASH' ) {
+				$opml = $data;
+				$opml->{'type'}  ||= 'opml';
+				$opml->{'title'} ||= $title;
+			} else {
+				$opml = {
+					type  => 'opml',
+					title =>  $title,
+					items => (ref $data ne 'ARRAY' ? [$data] : $data),
+				};
 			}
-			
-			my $opml = {
-				type  => 'opml',
-				title => $title,
-				items => $menu,
-			};
-			
+
 			handleFeed( $opml, $params );
 		};
 		
 		# get passthrough params if supplied
-		my $pt = $item->{'passthrough'} || [];
+		my $pt = $item->{'passthrough'} || [undef];
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($feed);
 			$log->debug( "Fetching OPML from coderef $cbname" );
+			$log->debug($asyncArgs->[1]->{url_query});
 		}
 		
-		return $feed->( $client, $callback, @{$pt} );
+		return $feed->( $client, $callback, @{$pt}, $asyncArgs->[1] );
 	}
 	
 	# Handle type = search at the top level, i.e. Radio Search
@@ -149,9 +153,15 @@ sub handleFeed {
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 	
 	my $cache = Slim::Utils::Cache->new;
+	
+	main::DEBUGLOG && $stash->{'index'} && $log->debug("stash-index=", $stash->{'index'});
 
 	$stash->{'pagetitle'} = $feed->{'title'} || Slim::Utils::Strings::getString($params->{'title'});
 	$stash->{'pageicon'}  = $params->{pageicon};
+	
+	if ($feed->{'query'}) {
+		$stash->{'query'} = join('&', map {$_ . '=' . $feed->{'query'}->{$_}} keys(%{$feed->{'query'}}));
+	}
 
 	my $template = 'xmlbrowser.html';
 	
@@ -162,7 +172,7 @@ sub handleFeed {
 	my @index = ();
 
 	if ( defined $stash->{'index'} && length( $stash->{'index'} ) ) {
-		@index = split /\./, $stash->{'index'};
+		@index = split (/\./, $stash->{'index'});
 		
 		if ( length( $index[0] ) >= 8 ) {
 			# Session ID is first element in index
@@ -317,38 +327,43 @@ sub handleFeed {
 				
 				if ( ref $subFeed->{'url'} eq 'CODE' ) {
 					my $callback = sub {
-						my $menu = shift;
+						my $data = shift;
+						my $opml;
 
-						if ( ref $menu ne 'ARRAY' ) {
-							$menu = [ $menu ];
+						if ( ref $data eq 'HASH' ) {
+							$opml = $data;
+							$opml->{'type'}  ||= 'opml';
+							$opml->{'title'} = $args->{feedTitle};
+						} else {
+							$opml = {
+								type  => 'opml',
+								title => $args->{feedTitle},
+								items => (ref $data ne 'ARRAY' ? [$data] : $data),
+							};
 						}
-
-						my $opml = {
-							type  => 'opml',
-							title => $args->{feedTitle},
-							items => $menu,
-						};
 
 						handleSubFeed( $opml, $args );
 					};
 
 					# get passthrough params if supplied
-					my $pt = $subFeed->{'passthrough'} || [];
+					my $pt = $subFeed->{'passthrough'} || [undef];
 
+					# XXX hack
+					if ($searchQuery && $subFeed->{type} && $subFeed->{type} eq 'search') {
+						$pt->[0]->{'search'} = $searchQuery;
+					}
+					
 					if ( main::DEBUGLOG && $log->is_debug ) {
 						my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
 						$log->debug( "Fetching OPML from coderef $cbname" );
 					}
 
 					# first param is a $client object, but undef from webpages
-					return $subFeed->{url}->( $client, $callback, @{$pt} );
+					$subFeed->{url}->( $client, $callback, @{$pt} );
 				}
 				
-				# Check for a cached version of this subfeed URL
-				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
-					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
-					handleSubFeed( $cached, $args );
-				}
+				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
+
 				else {
 					# We need to fetch the URL
 					Slim::Formats::XML->getFeedAsync(
