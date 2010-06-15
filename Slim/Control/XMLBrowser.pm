@@ -1241,7 +1241,7 @@ sub _cliQuery_done {
 		
 		if ($menuMode) {
 			
-			if ( $window->{'windowStyle'} ) {
+			if ( $windowStyle ) {
 				$window->{'windowStyle'} = $windowStyle;
 			} 
 			elsif ( $hasImage ) {
