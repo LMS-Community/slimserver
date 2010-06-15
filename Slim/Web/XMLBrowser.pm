@@ -382,7 +382,7 @@ sub handleFeed {
 			 ||
 			 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
 		) {
-			$subFeed->{'image'} = $subFeed->{'image'} || Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
+			$subFeed->{'image'} ||= Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
 
 			$stash->{'streaminfo'} = {
 				'item'  => $subFeed,
@@ -402,6 +402,7 @@ sub handleFeed {
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = $itemIndex;
 		$stash->{'image'}     = $subFeed->{'image'};
+		$stash->{'icon'}      = $subFeed->{'icon'};
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || Slim::Utils::Strings::getString($params->{'title'});
