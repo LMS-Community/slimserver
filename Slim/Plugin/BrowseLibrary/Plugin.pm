@@ -14,6 +14,64 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
 });
 
+sub initSubmenu {
+	my ($class, %args) = @_;
+	$args{'weight'} ||= $class->weight() + 1;
+	$args{'is_app'} ||= 0;
+	$class->SUPER::initPlugin(%args);
+}
+
+my @submenus = (
+	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
+		icon => 'plugins/BrowseLibrary/html/images/albums.png',
+	}],
+	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
+		icon => 'plugins/BrowseLibrary/html/images/artists.png',
+	}],
+);
+
+sub _pluginDataFor {
+	my $class = shift;
+	my $key   = shift;
+
+	my $pluginData = $class->pluginData() if $class->can('pluginData');
+
+	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
+		return $pluginData->{$key};
+	}
+
+	return __PACKAGE__->SUPER::_pluginDataFor($key);
+}
+
+
+sub initSubmenus {
+	my $class = shift;
+	my $base  = __PACKAGE__;
+	
+	foreach my $menu (@submenus) {
+
+		my $packageName = $base . '::' . $menu->[0];
+		my $pkg = "{
+			package $packageName;
+			use base '$base';
+			my \$pluginData;
+			
+			sub init {
+				my (\$class, \$feed, \$data) = \@_;
+				\$pluginData = \$data;
+				\$class->SUPER::initSubmenu(feed => \$feed, tag => '$menu->[1]');
+			}
+		
+			sub getDisplayName {'$menu->[2]'}	
+			sub pluginData {\$pluginData}	
+		}";
+		
+		eval $pkg;
+		
+		$packageName->init($menu->[3], $menu->[4]);
+	}
+}
+
 sub initPlugin {
 	my $class = shift;
 	
@@ -23,10 +81,13 @@ sub initPlugin {
 		feed   => \&_topLevel,
 		tag    => 'browselibrary',
 		menu   => 'plugins',
-		weight => 20,
+		weight => 15,
 		is_app => 0,
 	);
+
+	$class->initSubmenus();
 }
+
 
 sub setMode {
 	my ( $class, $client, $method ) = @_;
@@ -102,63 +163,71 @@ sub _topLevel {
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_ARTIST'),
 				url  => \&_artists,
+				icon => 'plugins/BrowseLibrary/html/images/artists.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_ALBUM'),
 				url  => \&_albums,
+				icon => 'plugins/BrowseLibrary/html/images/albums.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_GENRE'),
 				url  => \&_genres,
+				icon => 'plugins/BrowseLibrary/html/images/genres.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_YEAR'),
 				url  => \&_years,
+				icon => 'plugins/BrowseLibrary/html/images/years.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_NEW_MUSIC'),
 				url  => \&_albums,
 				passthrough => [ { sort => 'sort:new' } ],
+				icon => 'plugins/BrowseLibrary/html/images/newmusic.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_MUSIC_FOLDER'),
 				url  => \&_bmf,
+				icon => 'plugins/BrowseLibrary/html/images/musicfolder.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'PLAYLISTS'),
 				url  => \&_playlists,
+				icon => 'plugins/BrowseLibrary/html/images/playlists.png',
 			},
 			{
 				name  => _clientString($client, 'SEARCH'),
+				icon => 'plugins/BrowseLibrary/html/images/search.png',
 				items => [
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_ARTIST'),
-						image=> 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'plugins/BrowseLibrary/html/images/search.png',
 						url  => \&_artists,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_ALBUM'),
-						image=> 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'plugins/BrowseLibrary/html/images/search.png',
 						url  => \&_albums,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_SONG'),
-						image=> 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'plugins/BrowseLibrary/html/images/search.png',
 						url  => \&_tracks,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'PLAYLISTS'),
-						image=> 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'plugins/BrowseLibrary/html/images/search.png',
 						url  => \&_playlists,
 					},
 				],
