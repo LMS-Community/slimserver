@@ -216,7 +216,16 @@ sub registerDefaultInfoProviders {
 sub menu {
 	my ( $class, $client, $url, $track, $tags ) = @_;
 	$tags ||= {};
-
+	
+	# Protocol Handlers can define their own track info OPML menus
+	if ( $url && !$track ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('trackInfoURL') ) {
+			my $feed = $handler->trackInfoURL( $client, $url );
+			return $feed if $feed;
+		}
+	}
+	
 	# If we don't have an ordering, generate one.
 	# This will be triggered every time a change is made to the
 	# registered information providers, but only then. After
@@ -1436,24 +1445,13 @@ sub cliQuery {
 	}
 	
 	my $feed;
-	
-	# Protocol Handlers can define their own track info OPML menus
+		
 	if ( $url ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-		if ( $handler && $handler->can('trackInfoURL') ) {
-			$feed = $handler->trackInfoURL( $client, $url );
-		}
+		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
 	}
-	
-	if ( !$feed ) {
-		# Default menu
-		if ( $url ) {
-			$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
-		}
-		else {
-			my $track = Slim::Schema->find( Track => $trackId );
-			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
-		}
+	else {
+		my $track = Slim::Schema->find( Track => $trackId );
+		$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
 	}
 	
 	$cachedFeed = $feed if $feed;
