@@ -117,7 +117,8 @@ sub setMode {
 }
 
 sub _topLevel {
-	my ($client, $callback, undef, $params) = @_;
+	my ($client, $callback, $args) = @_;
+	my $params = $args->{'params'};
 	
 	if ($params) {
 		my %args;
@@ -286,7 +287,7 @@ sub _generic {
 }
 
 sub _artists {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $search     = $pt->{'search'};
 	
@@ -321,7 +322,7 @@ sub _artists {
 }
 
 sub _genres {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 
 	_generic($client, $callback, 'genres', 'genres_loop', ['tags:s', @searchTags],
@@ -342,7 +343,7 @@ sub _genres {
 }
 
 sub _years {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	
 	_generic($client, $callback, 'years', 'years_loop', \@searchTags,
@@ -360,7 +361,7 @@ sub _years {
 }
 
 sub _albums {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
@@ -397,7 +398,7 @@ sub _albums {
 }
 
 sub _tracks {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $sort       = $pt->{'sort'} || 'sort:albumtrack';
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
@@ -428,7 +429,7 @@ sub _tracks {
 }
 
 sub _track {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 
 	my $tags = {
 		menuMode      => 0,
@@ -449,7 +450,7 @@ sub _track {
 }
 
 sub _bmf {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	
 	_generic($client, $callback, 'musicfolder', 'folder_loop', ['tags:dus', @searchTags],
@@ -494,7 +495,7 @@ sub _bmf {
 }
 
 sub _playlists {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $search     = $pt->{'search'};
 	
@@ -517,7 +518,7 @@ sub _playlists {
 }
 
 sub _playlistTracks {
-	my ($client, $callback, $pt) = @_;
+	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	

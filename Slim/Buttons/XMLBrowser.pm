@@ -148,19 +148,14 @@ sub setMode {
 			};
 			
 			# get passthrough params if supplied
-			my $pt = $item->{'passthrough'} || [undef];
+			my $pt = $item->{'passthrough'} || [];
 			
-			# XXX hack
-			if (my $search = $modeParams->{'search'}) {
-				$pt->[0]->{'search'} = $search;
-			}
-						
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
 				$log->debug( "Fetching OPML from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, @{$pt}, $modeParams );
+			return $url->( $client, $callback, {params => $modeParams, search => $modeParams->{'search'}}, @{$pt});
 		}
 		
 		Slim::Formats::XML->getFeedAsync( 
@@ -1245,14 +1240,14 @@ sub playItem {
 			};
 			
 			# get passthrough params if supplied
-			my $pt = $item->{'passthrough'} || [undef];
+			my $pt = $item->{'passthrough'} || [];
 			
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
 				$log->debug( "Fetching OPML playlist from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, @{$pt} );
+			return $url->( $client, $callback, {}, @{$pt} );
 		}
 		
 		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item

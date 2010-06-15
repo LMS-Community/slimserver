@@ -91,7 +91,7 @@ sub handleWebIndex {
 		};
 		
 		# get passthrough params if supplied
-		my $pt = $item->{'passthrough'} || [undef];
+		my $pt = $item->{'passthrough'} || [];
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($feed);
@@ -99,7 +99,7 @@ sub handleWebIndex {
 			$log->debug($asyncArgs->[1]->{url_query});
 		}
 		
-		return $feed->( $client, $callback, @{$pt}, $asyncArgs->[1] );
+		return $feed->( $client, $callback, {params => $asyncArgs->[1]}, @{$pt});
 	}
 	
 	# Handle type = search at the top level, i.e. Radio Search
@@ -348,9 +348,9 @@ sub handleFeed {
 					# get passthrough params if supplied
 					my $pt = $subFeed->{'passthrough'} || [undef];
 
-					# XXX hack
+					my $search;
 					if ($searchQuery && $subFeed->{type} && $subFeed->{type} eq 'search') {
-						$pt->[0]->{'search'} = $searchQuery;
+						$search = $searchQuery;
 					}
 					
 					if ( main::DEBUGLOG && $log->is_debug ) {
@@ -359,7 +359,7 @@ sub handleFeed {
 					}
 
 					# first param is a $client object, but undef from webpages
-					$subFeed->{url}->( $client, $callback, @{$pt} );
+					$subFeed->{url}->( $client, $callback, {search => $search}, @{$pt} );
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that

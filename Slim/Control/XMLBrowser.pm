@@ -182,7 +182,7 @@ sub cliQuery {
 			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
 
-		$feed->( $request->client, $callback, undef, $request->getParamsCopy() );
+		$feed->( $request->client, $callback, {params => $request->getParamsCopy()});
 		
 		return;
 	}
@@ -480,11 +480,11 @@ sub _cliQuery_done {
 						_cliQuerySubFeed_done( $opml, $args );
 					};
 					
-					my $pt = $subFeed->{passthrough} || [undef];
+					my $pt = $subFeed->{passthrough} || [];
 					
-					# XXX hack
+					my $searchArg;
 					if ($search && $subFeed->{type} && $subFeed->{type} eq 'search') {
-						$pt->[0]->{'search'} = $search;
+						$searchArg = $search;
 					}
 					
 					if ( main::DEBUGLOG && $log->is_debug ) {
@@ -492,7 +492,7 @@ sub _cliQuery_done {
 						$log->debug( "Fetching OPML from coderef $cbname" );
 					}
 
-					$subFeed->{url}->( $request->client, $callback, @{$pt}, ($feed->{'query'} || undef) );
+					$subFeed->{url}->( $request->client, $callback, {search => $searchArg, params => $feed->{'query'}}, @{$pt});
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that

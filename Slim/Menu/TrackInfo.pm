@@ -1274,7 +1274,7 @@ sub infoTagDump {
 }
 
 sub tagDump {
-	my ( $client, $callback, $path ) = @_;
+	my ( $client, $callback, undef, $path ) = @_;
 	
 	my $menu = [];
 	

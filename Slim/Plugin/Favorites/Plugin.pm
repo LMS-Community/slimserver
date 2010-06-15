@@ -1092,7 +1092,7 @@ sub _objectInfoHandler {
 }
 
 sub objectInfoAddFavorite {
-	my ( $client, $callback, $obj ) = @_;
+	my ( $client, $callback, undef, $obj ) = @_;
 	
 	my $favorites = Slim::Utils::Favorites->new($client);
 	
@@ -1116,7 +1116,7 @@ sub objectInfoAddFavorite {
 }
 
 sub objectInfoRemoveFavorite {
-	my ( $client, $callback, $obj ) = @_;
+	my ( $client, $callback, $params, $obj ) = @_;
 	
 	my $menu = [
 		{

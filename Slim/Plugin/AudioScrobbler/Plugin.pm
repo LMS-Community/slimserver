@@ -1296,7 +1296,7 @@ sub infoLoveTrack {
 }
 
 sub infoLoveTrackSubmit {
-	my ( $client, $callback, $url ) = @_;
+	my ( $client, $callback, undef, $url ) = @_;
 	
 	$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
 	
