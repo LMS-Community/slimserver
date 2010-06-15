@@ -1064,7 +1064,7 @@ sub _objectInfoHandler {
 					cmd    => [ 'jivefavorites', 'delete' ],
 					params => {
 						title   => $title,
-                                                url     => $obj->url,
+						url     => $obj->url,
 						item_id => $index,
 						isContextMenu => 1,
 					},
