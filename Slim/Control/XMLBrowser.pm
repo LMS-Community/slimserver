@@ -1198,6 +1198,10 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
 						
+						if ( scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) ) {
+							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
+						}
+						
 						my $contextMenuParams = $item->{'contextMenuParams'};
 						if ($item->{'contextMenu'}) {
 							$contextMenuParams->{'menu'} = 1;
@@ -1212,11 +1216,6 @@ sub _cliQuery_done {
 						} elsif ($haveFeedContextMenu && $contextMenuParams) {
 							$request->addResultLoop( $loopname, $cnt, 'contextMenuParams', $contextMenuParams );
 						}
-							
-						if ( scalar keys %{$itemParams} && $isPlayable ) {
-							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
-						}
-						
 						
 					}
 					else {
