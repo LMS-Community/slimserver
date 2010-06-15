@@ -133,11 +133,9 @@ sub setMode {
 				my $opml;
 
 				if ( ref $data eq 'HASH' ) {
-					$opml = {
-						$opml = $data;
-						$opml->{'type'}  ||= 'opml';
-						$opml->{'title'} = $title;
-					};
+					$opml = $data;
+					$opml->{'type'}  ||= 'opml';
+					$opml->{'title'} = $title;
 				} else {
 					$opml = {
 						type  => 'opml',
@@ -1232,11 +1230,9 @@ sub playItem {
 				my $opml;
 
 				if ( ref $data eq 'HASH' ) {
-					$opml = {
-						$opml = $data;
-						$opml->{'type'}  ||= 'opml';
-						$opml->{'title'} = $title;
-					};
+					$opml = $data;
+					$opml->{'type'}  ||= 'opml';
+					$opml->{'title'} = $title;
 				} else {
 					$opml = {
 						type  => 'opml',
