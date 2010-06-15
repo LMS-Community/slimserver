@@ -1241,7 +1241,15 @@ sub _cliQuery_done {
 		
 		if ($menuMode) {
 			
-			$window->{'windowStyle'} = $windowStyle || 'text_list';
+			if ( $window->{'windowStyle'} ) {
+				$window->{'windowStyle'} = $windowStyle;
+			} 
+			elsif ( $hasImage ) {
+				$window->{'windowStyle'} = 'home_menu';
+			} 
+			else {
+				$window->{'windowStyle'} = 'text_list';
+			}
 			
 			# Bug 13247, support windowId param
 			if ( $subFeed->{windowId} ) {
