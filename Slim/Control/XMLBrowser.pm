@@ -869,6 +869,7 @@ sub _cliQuery_done {
 	
 		# now build the result
 	
+		my $hasImage = 0;
 		my $windowStyle;
 		my $presetFavSet = 0;
 		
@@ -1106,8 +1107,10 @@ sub _cliQuery_done {
 
 						if ( $item->{icon} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
+							$hasImage = 1;				
 						} elsif ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$hasImage = 1;
 						}
 
 						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
@@ -1422,7 +1425,7 @@ sub touchToPlay {
 	elsif ( $item->{'on_select'} && $item->{'on_select'} eq 'play' ) {
 		return 1;
 	}
-	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:playlist)$/ && $item->{'parser'} ) {
+	elsif ( $item->{'type'} && $item->{'type'} eq 'playlist' && $item->{'parser'} ) {
 		return 1;
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
