@@ -365,22 +365,49 @@ sub _albums {
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
+	my $getMetadata= $args->{'wantMetadata'}; 
+	my $tags       = 'ljs';
+	
+	$tags .= 'yawXSiq' if $getMetadata;
 	
 	_generic($client, $callback, 'albums', 'albums_loop',
-		['tags:ljs', @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
+		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
 			my $loop = shift;
 			my $addAll = 0;
-			my @result = ( map {
-				name        => $_->{album},
-				textkey     => $_->{textkey},
-				image       => ($_->{artwork_track_id} ? 'music/' . $_->{artwork_track_id} . '/cover' : undef),
-				type        => 'playlist',
-				playlist    => \&_tracks,
-				url         => \&_tracks,
-				passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{id} ], sort => 'sort:tracknum', }],
-				contextMenuParams=> { album_id =>  $_->{id} },
-			}, @$loop );
+			my @result;
+			foreach (@$loop) {
+				my %item = (
+					name        => $_->{album},
+					textkey     => $_->{textkey},
+					image       => ($_->{artwork_track_id} ? 'music/' . $_->{artwork_track_id} . '/cover' : undef),
+					type        => 'playlist',
+					playlist    => \&_tracks,
+					url         => \&_tracks,
+					passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{id} ], sort => 'sort:tracknum', }],
+					contextMenuParams=> { album_id =>  $_->{id} },
+				);
+				if ($getMetadata) {
+					$item{'metadata'}->{'year'} = $_->{'year'} if $_->{'year'};
+					$item{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
+					$item{'metadata'}->{'disccount'} = $_->{'disccount'} if $_->{'disccount'};
+					$item{'metadata'}->{'album'} = {
+							name         => $_->{'album'},
+							id           => $_->{'id'},
+							replay_gain  => $_->{'replay_gain'},
+							compilation  => $_->{'compilation'},
+						};
+					$item{'metadata'}->{'contributors'} =	{
+							ARTIST => [
+								{
+									name => $_->{'artist'},
+									id   => $_->{'artist_id'},
+								},
+							],
+						} if $_->{'artist_id'};
+				}
+				push @result, \%item;
+			}
 			if (scalar @result > 1 && scalar @searchTags) {
 				push @result, {
 					name        => _clientString($client, 'ALL_SONGS'),

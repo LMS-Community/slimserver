@@ -103,7 +103,7 @@ sub handleWebIndex {
 			$log->debug($asyncArgs->[1]->{url_query});
 		}
 		
-		return $feed->( $client, $callback, {params => $asyncArgs->[1]}, @{$pt});
+		return $feed->( $client, $callback, {wantMetadata => 1, params => $asyncArgs->[1]}, @{$pt});
 	}
 	
 	# Handle type = search at the top level, i.e. Radio Search
@@ -363,7 +363,7 @@ sub handleFeed {
 					}
 
 					# first param is a $client object, but undef from webpages
-					$subFeed->{url}->( $client, $callback, {search => $search, params => $stash->{'query'}}, @{$pt} );
+					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
