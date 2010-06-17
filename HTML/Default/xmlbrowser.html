@@ -188,7 +188,11 @@ END %]
 
 					[% IF item.image && !(artwork > 0) %]
 						<span class="browseCover">
+							[% IF item.image.match("^http") %]
+							<img src="[% item.image | imageproxy(50, 50) %]" width="50">
+							[% ELSE %]
 							<img src="[% item.image %]" width="50"/>
+							[% END %]
 						</span>
 						<div class="browseItemDetail">
 					[% END %]
