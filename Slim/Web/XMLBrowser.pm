@@ -42,6 +42,10 @@ sub handleWebIndex {
 	my $item      = $args->{'item'} || {};
 	my $pageicon  = $Slim::Web::Pages::additionalLinks{icons}{$title};
 	
+	if ($title eq uc($title)) {
+		$title = string($title);
+	}
+	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 
@@ -322,7 +326,7 @@ sub handleFeed {
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 					'currentIndex' => \@crumbIndex,
 					'args'         => [ $client, $stash, $callback, $httpClient, $response ],
-					'pageicon'     => $params->{'pageicon'}
+					'pageicon'     => $subFeed->{'icon'} || $params->{'pageicon'},
 				};
 				
 				if ( ref $subFeed->{'url'} eq 'CODE' ) {
@@ -587,6 +591,7 @@ sub handleFeed {
 						push @{ $details->{'contributors'}->{ $group } }, {
 							name => $item->{'web'}->{'value'},
 							id   => $item->{'db'}->{'findCriteria'}->{'contributor.id'},
+							url  => $item->{'web'}->{'url'},
 						};
 
 					}
