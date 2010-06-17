@@ -51,7 +51,24 @@ sub cliQuery {
 
 	$request->setStatusProcessing();
 	
-	my $itemId = $request->getParam('item_id');
+	my $itemId = $request->getParam('item_id');	# get our parameters
+	
+	my $index      = $request->getParam('_index') || 0;
+	my $quantity   = $request->getParam('_quantity') || 0;
+
+	# Bug 14100: sending requests that involve newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	if ( $index =~ /:/ ) {
+		$request->addParam(split /:/, $index);
+		$index = 0;
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split /:/, $quantity);
+		$quantity = 200;
+	}
+	
 	
 	# Handle touch-to-play
 	if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
@@ -294,20 +311,6 @@ sub _cliQuery_done {
 	# get our parameters
 	my $index      = $request->getParam('_index') || 0;
 	my $quantity   = $request->getParam('_quantity') || 0;
-
-
-	# Bug 14100: sending requests that involve newWindow param from SP side results in no
-	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
-	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
-	# to the $request params
-	if ( $index =~ /:/ ) {
-		$request->addParam(split /:/, $index);
-		$index = 0;
-	}
-	if ( $quantity =~ /:/ ) {
-		$request->addParam(split /:/, $quantity);
-		$quantity = 200;
-	}
 	my $search     = $request->getParam('search');
 	my $want_url   = $request->getParam('want_url') || 0;
 	my $item_id    = $request->getParam('item_id');
@@ -872,24 +875,32 @@ sub _cliQuery_done {
 		my $hasImage = 0;
 		my $windowStyle;
 		my $presetFavSet = 0;
+		my $totalCount = $count;
 		
 		if ($count) {
-		
-			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 		
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
 
 			if ($menuMode) {
+
+				$request->addResult('offset', $index);
+
+				my $firstChunk = !$index;
 				for my $eachmenu (@$playlistControlCM) {
-					$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-					$cnt++;
-					$count++;
+					$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
+					
+					# Only add them the first time
+					if ($firstChunk) {
+						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+						$cnt++;
+					}
 				}
 				
-				$request->addResult('offset', $start);
 			}
 
+			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+		
 			if ($valid) {
 				
 				$request->addResult( 'title', $subFeed->{'name'} || $subFeed->{'title'} );
@@ -987,6 +998,7 @@ sub _cliQuery_done {
 				}
 
 				my $itemIndex = $start - 1;
+				$log->error("Getting slice $start..$end: $totalCount");
 				for my $item ( @$items[$start..$end] ) {
 					$itemIndex++;
 					
@@ -1030,7 +1042,7 @@ sub _cliQuery_done {
 									});
 
 							# Skip this item
-							$count--;
+							$totalCount--;
 
 							next;
 						}
@@ -1045,7 +1057,7 @@ sub _cliQuery_done {
 							$window->{textarea} = $item->{name};
 
 							# Skip this item
-							$count--;
+							$totalCount--;
 							
 							# In case this is the only item, add an empty item list
 							$request->setResultLoopHash($loopname, 0, {});
@@ -1230,7 +1242,7 @@ sub _cliQuery_done {
 
 		}
 
-		$request->addResult('count', $count);
+		$request->addResult('count', $totalCount);
 		
 		if ($menuMode) {
 			
