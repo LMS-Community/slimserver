@@ -138,6 +138,7 @@ END %]
 		image = undef;
 	ELSIF metadata;
 		PROCESS songinfo_header.html itemobj = metadata;
+		image = undef;
 	END %]
 
 
@@ -149,7 +150,7 @@ END %]
 				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
 			[% ELSE %]
 			<a href="[% webroot _ image %]" target="cover">
-				<img src="[% webroot _ image.replace('cover$', 'cover_150x150') %]" alt="coverArt" onLoad="resize(this)">
+				<img src="[% webroot _ image.replace('(cover)$', '$1_150x150') %]" alt="coverArt" onLoad="resize(this)">
 			[% END %]
 			</a>
 		</div>
