@@ -38,7 +38,10 @@
 			[% PROCESS songInfoItem title = "TITLE" %]
 		[% END %]
 
-		[% FOREACH role = itemobj.contributorRoles.sort %]
+		[% 
+			roles = itemobj.contributorRoles || itemobj.contributors.keys;
+			FOREACH role = roles.sort
+		 %]
 
 			[% contributors = itemobj.contributors.${role} || itemobj.contributorsOfType(role) || itemobj.album.artistsForRoles(role) %]
 			
