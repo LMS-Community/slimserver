@@ -151,7 +151,7 @@ sub _topLevel {
 					$opml->{'query'} = \%entryParams;
 					$callback->($opml, @_);
 				},
-				\%args, $params);
+				$args, \%args);
 			return;
 		}
 	}
