@@ -164,7 +164,7 @@ sub handleFeed {
 	$stash->{'pageicon'}  = $params->{pageicon};
 	
 	if ($feed->{'query'}) {
-		$stash->{'query'} = join('&', map {$_ . '=' . $feed->{'query'}->{$_}} keys(%{$feed->{'query'}}));
+		$stash->{'query'} = join('&amp;', map {$_ . '=' . $feed->{'query'}->{$_}} keys(%{$feed->{'query'}}));
 	}
 
 	my $template = 'xmlbrowser.html';
@@ -363,7 +363,7 @@ sub handleFeed {
 					}
 
 					# first param is a $client object, but undef from webpages
-					$subFeed->{url}->( $client, $callback, {search => $search}, @{$pt} );
+					$subFeed->{url}->( $client, $callback, {search => $search, params => $stash->{'query'}}, @{$pt} );
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
