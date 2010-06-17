@@ -26,7 +26,7 @@
 
 		[%- albumInfo = BLOCK%]
 			[% IF itemobj.album %] 
-				[% item = BLOCK %]<a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
+				[% item = BLOCK %]<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
 				[% PROCESS songInfoItem title = "ALBUM" %]
 			[% END %]
 		[% END %]
@@ -54,9 +54,9 @@
 	
 					[% 
 					IF contributor.url;
-						contributorHTMLFrag = "<a href=\"$contributor.url&amp;player=$playerURI\" $target>$contributor.name</a>";
+						contributorHTMLFrag = "<a href=\"$webroot$contributor.url&amp;player=$playerURI\" $target>$contributor.name</a>";
 					ELSIF contributor.id;
-						contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" $target>$contributor.name</a>";
+						contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" $target>$contributor.name</a>";
 					ELSE;
 						contributorHTMLFrag = contributor.name;
 					END
@@ -82,7 +82,7 @@
 
 		[% IF itemobj.genres %] [% genresHTML = [] %]
 			[% FOREACH genre = itemobj.genres %][% UNLESS notarget; target = "target=\"browser\""; END %]
-				[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" $target>$genre.name</a>" %]
+				[% genreHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" $target>$genre.name</a>" %]
 				[% genresHTML.push(genreHTMLFrag) %]
 			[% END %]
 			[% item = genresHTML.join(', ') %]
@@ -90,7 +90,7 @@
 		[% END %]
 	
 		[% IF itemobj.year %] 
-			[% item = BLOCK %]<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.year| html %]</a>[% END %]
+			[% item = BLOCK %]<a href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.year| html %]</a>[% END %]
 			[% PROCESS songInfoItem title = "YEAR" %]
 		[% END %]
 
