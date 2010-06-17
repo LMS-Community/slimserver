@@ -407,6 +407,7 @@ sub handleFeed {
 		$stash->{'index'}     = $itemIndex;
 		$stash->{'image'}     = $subFeed->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
+		$stash->{'metadata'}  = $subFeed->{'metadata'};	
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || Slim::Utils::Strings::getString($params->{'title'});
