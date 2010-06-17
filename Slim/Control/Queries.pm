@@ -415,6 +415,14 @@ sub albumsQuery {
 		$c->{'albums.compilation'} = 1;
 	}
 
+	if ( $tags =~ /X/ ) {
+		$c->{'albums.replay_gain'} = 1;
+	}
+
+	if ( $tags =~ /S/ ) {
+		$c->{'albums.contributor'} = 1;
+	}
+
 	if ( $tags =~ /a/ ) {
 		# If requesting artist data, join contributor
 		if ( $sql !~ /JOIN contributors/ ) {
@@ -679,6 +687,8 @@ sub albumsQuery {
 				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
 				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
+				$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
+				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				if ($tags =~ /a/) {
 					# Bug 15313, this used to use $eachitem->artists which
 					# contains a lot of extra logic.  If this data is wrong we may

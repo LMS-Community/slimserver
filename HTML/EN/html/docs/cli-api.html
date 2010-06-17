@@ -48,6 +48,9 @@
 	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
 	<li>Added tag 'c' for <a href="#songinfo">songinfo</a> to return the track's coverid value, used for artwork URLs. If you were using the track's ID directly in artwork URLs, you should switch to using the coverid value.</li>
 	<li>Added <a href="#pragma">&quot;pragma&quot;</a> command for changing SQLite behavior.</li>
+	<li>Added sort order 'albumtrack' for <a href="#titles">titles</a> to return the tracks in the order album-title, track-number.</li>
+	<li>Added tag 'X' for <a href="#albums">albums</a> to return the album's replay-gain value.</li>
+	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
 </ul>
 
 <hr>
@@ -3561,6 +3564,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			S
+		</td>
+		<td>
+			&nbsp;&nbsp;artist_id
+		</td>
+		<td>
+			The album artist id (depends on server configuration).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			s
 		</td>
 		<td>
@@ -3568,6 +3582,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			The album's "textkey" is the first letter of the sorting key.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			X
+		</td>
+		<td>
+			&nbsp;&nbsp;album_replay_gain
+		</td>
+		<td>
+			The album's replay-gain.
 		</td>
 	</tr>
 </table>
