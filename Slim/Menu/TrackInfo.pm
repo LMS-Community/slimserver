@@ -728,7 +728,7 @@ sub infoGenres {
 			},
 
 			web  => {
-				url   => url   => "plugins/browselibrary/index.html?" .
+				url   => "plugins/browselibrary/index.html?" .
 					join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
 				group => 'genre',
 				value => $genre->name,
