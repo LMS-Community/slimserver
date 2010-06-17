@@ -136,11 +136,13 @@ END %]
 			};
 
 		image = undef;
+	ELSIF metadata;
+		PROCESS songinfo_header.html itemobj = metadata;
 	END %]
 
 
 	[%- WRAPPER $container %]
-		[% IF image %]
+		[% IF !metadata && image %]
 		<div>
 			[% IF image.match("^http") %]
 			<a href="[% image %]" target="cover">
