@@ -187,43 +187,16 @@ END %]
 					END %]
 
 					[% IF item.image && !(artwork > 0) %]
-						<span class="browseCover">
-							[% IF item.image.match("^http") %]
-							<img src="[% item.image | imageproxy(50, 50) %]" width="50">
-							[% ELSE %]
-							<img src="[% item.image %]" width="50"/>
-							[% END %]
-						</span>
-						<div class="browseItemDetail">
+						[% PROCESS itemIcon url=item.image size=50 class="browseItemDetail" %]
 					[% ELSIF item.icon %]
-						<span class="browseCover">
-							[% IF item.icon.match("^http") %]
-							<img src="[% item.icon | imageproxy(25, 25) %]" width="25" border="0">
-							[% ELSE %]
-							<img src="[% item.icon %]" width="25" border="0">
-							[% END %]
-						</span>
-						<div class="smallBrowseItemDetail">
+						[% PROCESS itemIcon url=item.icon size=25 class="smallBrowseItemDetail" %]
 					[% END %]
 
 					[% IF item.web.type == 'htmltemplate' %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]
-						[% IF item.weblink %]
-							<a href="[% item.weblink %]" target="_blank">
-						[% ELSIF item.type == 'redirect' %]
-							[% IF item.web.url %]
-							<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
-							[% ELSE; NEXT %]
-							[% END %]
-						[% ELSIF !item.type.match('^text') %]
-							<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
-						[% END %]
-	
-						[% (item.web.value || item.name || item.title) | html_line_break %]
-	
-						[% IF item.weblink || !item.type.match('^text') %]
-							</a>
+						[% WRAPPER weblink %]
+							[% (item.web.value || item.name || item.title) | html_line_break %]
 						[% END %]
 					[% END %]
 
@@ -243,3 +216,34 @@ END %]
 
 [% IF NOT ajaxUpdate %][% IF !streaminfo %]</div>[% END %][% PROCESS pagefooter.html %][% END %]
 
+[% BLOCK itemIcon %]
+	[% WRAPPER weblink %]
+	<span class="browseCover">
+		[% IF item.image.match("^http") %]
+		<img src="[% url | imageproxy(size, size) %]" width="[% size %]">
+		[% ELSE %]
+		<img src="[% url.replace('.png', "_${size}x${size}_f.png") %]" width="[% size %]"/>
+		[% END %]
+	</span>
+	[% END %]
+	<div class="[% class %]">
+[% END %]
+
+[% BLOCK weblink %]
+	[% IF item.weblink %]
+		<a href="[% item.weblink %]" target="_blank">
+	[% ELSIF item.type == 'redirect' %]
+		[% IF item.web.url %]
+		<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+		[% ELSE; NEXT %]
+		[% END %]
+	[% ELSIF !item.type.match('^text') %]
+		<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
+	[% END %]
+	
+	[% content %]
+	
+	[% IF item.weblink || !item.type.match('^text') %]
+		</a>
+	[% END %]
+[% END %]
