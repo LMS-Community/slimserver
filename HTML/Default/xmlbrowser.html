@@ -180,7 +180,7 @@ END %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = item.type=='text' ? 'defaultCursor' : '' %]
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : '') _ (item.icon ? ' smallIcon' : '') %]
 					[% IF artwork == 1 || path == 'trackinfo.html';
 						item.size = thumbSize || 100;
 						itemobj.id = loop.count;
@@ -188,9 +188,22 @@ END %]
 
 					[% IF item.image && !(artwork > 0) %]
 						<span class="browseCover">
+							[% IF item.image.match("^http") %]
+							<img src="[% item.image | imageproxy(50, 50) %]" width="50">
+							[% ELSE %]
 							<img src="[% item.image %]" width="50"/>
+							[% END %]
 						</span>
 						<div class="browseItemDetail">
+					[% ELSIF item.icon %]
+						<span class="browseCover">
+							[% IF item.icon.match("^http") %]
+							<img src="[% item.icon | imageproxy(25, 25) %]" width="25" border="0">
+							[% ELSE %]
+							<img src="[% item.icon %]" width="25" border="0">
+							[% END %]
+						</span>
+						<div class="smallBrowseItemDetail">
 					[% END %]
 
 					[% IF item.web.type == 'htmltemplate' %]
@@ -214,7 +227,7 @@ END %]
 						[% END %]
 					[% END %]
 
-					[% IF item.image && !(artwork > 0) %]
+					[% IF item.icon || (item.image && !(artwork > 0)) %]
 						</div>
 					[% END %]
 				[%- END %]
