@@ -222,7 +222,7 @@ END %]
 		[% IF item.image.match("^http") %]
 		<img src="[% url | imageproxy(size, size) %]" width="[% size %]">
 		[% ELSE %]
-		<img src="[% url.replace('.png', "_${size}x${size}_f.png") %]" width="[% size %]"/>
+		<img src="[% webroot %][% url.replace('.png', "_${size}x${size}_f.png") %]" width="[% size %]"/>
 		[% END %]
 	</span>
 	[% END %]
