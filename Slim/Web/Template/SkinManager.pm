@@ -227,6 +227,11 @@ sub addSkinTemplate {
 				
 				return sub {
 					my $url = shift;
+
+					# don't use imageproxy on local network
+					if ($url =~ m{^http://(?:192\.168\.|172\.16\.|10\.)}i) {
+						return $url;
+					}
 					
 					return Slim::Networking::SqueezeNetwork->url(
 						"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
