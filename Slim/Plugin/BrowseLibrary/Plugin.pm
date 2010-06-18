@@ -247,6 +247,7 @@ sub _clientString {
 sub _generic {
 	my ($client,
 		$callback,		# func ref:  Callback function to XMLbowser: callback(hashOrArray_ref)
+		$args,          # hash ref:  Additional parameters from XMLBrowser
 		$query,			# string:    CLI query, single verb or array-ref;
 						#            command takes _index, _quantity and tagged params
 		$loopName,		# string:    name of loop variable in CLI result; usually <query>_loop
@@ -255,10 +256,10 @@ sub _generic {
 						#            function to process results loop from CLI and generate XMLBrowser items
 	) = @_;
 	
-	my $index = 0;
-	my $quantity = 0;
+	my $index = $args->{'index'} || 0;
+	my $quantity = $args->{'quantity'} || 0;
 	
-	main::INFOLOG && $log->is_info && $log->info("$query: tags ->", join(', ', @$queryTags));
+	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @$queryTags));
 	
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef,
 		[ (ref $query ? @$query : $query), $index, $quantity || 100000, @$queryTags ] );
@@ -277,8 +278,9 @@ sub _generic {
 #	$log->error(Data::Dump::dump($result));
 	
 	$callback->({
-		total => $request->getResults()->{count} + ($extraAtEnd || 0),
-		items => $result,
+		total  => $request->getResults()->{count} + ($extraAtEnd || 0),
+		offset => $index,
+		items  => $result,
 		sorted => !$unsorted,
 		itemsContextMenu => $itemsContextMenu,
 	});
@@ -291,7 +293,7 @@ sub _artists {
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $search     = $pt->{'search'};
 	
-	_generic($client, $callback, 'artists', 'artists_loop',
+	_generic($client, $callback, $args, 'artists', 'artists_loop',
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $loop = shift;
@@ -325,7 +327,7 @@ sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 
-	_generic($client, $callback, 'genres', 'genres_loop', ['tags:s', @searchTags],
+	_generic($client, $callback, $args, 'genres', 'genres_loop', ['tags:s', @searchTags],
 		sub {
 			my $loop = shift;
 			my @result = ( map {
@@ -346,7 +348,7 @@ sub _years {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	
-	_generic($client, $callback, 'years', 'years_loop', \@searchTags,
+	_generic($client, $callback, $args, 'years', 'years_loop', \@searchTags,
 		sub {
 			my $loop = shift;
 			return [ map {
@@ -370,7 +372,7 @@ sub _albums {
 	
 	$tags .= 'yawXSiq' if $getMetadata;
 	
-	_generic($client, $callback, 'albums', 'albums_loop',
+	_generic($client, $callback, $args, 'albums', 'albums_loop',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
 			my $loop = shift;
@@ -431,7 +433,7 @@ sub _tracks {
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $search     = $pt->{'search'};
 	
-	_generic($client, $callback, 'titles', 'titles_loop',
+	_generic($client, $callback, $args, 'titles', 'titles_loop',
 		['tags:dtux', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $loop = shift;
@@ -480,7 +482,7 @@ sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	
-	_generic($client, $callback, 'musicfolder', 'folder_loop', ['tags:dus', @searchTags],
+	_generic($client, $callback, $args, 'musicfolder', 'folder_loop', ['tags:dus', @searchTags],
 		sub {
 			my $loop = shift;
 			my @result;
@@ -526,7 +528,7 @@ sub _playlists {
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $search     = $pt->{'search'};
 	
-	_generic($client, $callback, 'playlists', 'playlists_loop',
+	_generic($client, $callback, $args, 'playlists', 'playlists_loop',
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $loop = shift;
@@ -549,7 +551,7 @@ sub _playlistTracks {
 	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	
-	_generic($client, $callback, ['playlists', 'tracks'], 'playlisttracks_loop',
+	_generic($client, $callback, $args, ['playlists', 'tracks'], 'playlisttracks_loop',
 		['tags:dtu', $menuStyle, @searchTags],
 		sub {
 			my $loop = shift;
