@@ -921,6 +921,7 @@ sub _cliQuery_done {
 		my $windowStyle;
 		my $presetFavSet = 0;
 		my $totalCount = $count;
+		my $allTouchToPlay = 1;
 		
 		if ($count) {
 		
@@ -1193,6 +1194,7 @@ sub _cliQuery_done {
 									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
 								}
 							}
+							$allTouchToPlay = 0;
 						}
 						
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
@@ -1234,6 +1236,7 @@ sub _cliQuery_done {
 							if ($item->{nextWindow}) {
 								$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
 							}
+							$allTouchToPlay = 0;
 						}
 						elsif ( !$isPlayable && !$touchToPlay ) {
 							
@@ -1257,6 +1260,7 @@ sub _cliQuery_done {
 							}
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
+							$allTouchToPlay = 0;
 						}
 						elsif ( $touchToPlay ) {
 
@@ -1267,7 +1271,9 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
-
+						else {
+							$allTouchToPlay = 0;
+						}
 # XXX experimental stuff
 #						elsif ( $item->{'playlist'} =~ m%^CLI:([^/]+)(?:/(.+))%) {
 #							my ($verbs, $params) = ($1, $2);
@@ -1324,7 +1330,11 @@ sub _cliQuery_done {
 		
 		if ($menuMode) {
 			
-			_jivePresetBase($request->getResult('base')->{'actions'}) if $presetFavSet;
+			my $baseActions = $request->getResult('base')->{'actions'};
+			
+			_jivePresetBase($baseActions) if $presetFavSet;
+			
+			$baseActions->{'go'} = $baseActions->{'play'} if $allTouchToPlay;
 			
 			if ( $windowStyle ) {
 				$window->{'windowStyle'} = $windowStyle;
