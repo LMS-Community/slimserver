@@ -9,9 +9,9 @@ use Slim::Utils::Log;
 
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.browse',
-	'defaultLevel' => 'ERROR',
-	'description'  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
+	category     => 'plugin.browse',
+	defaultLevel => 'ERROR',
+	description  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
 });
 
 sub initSubmenu {
@@ -278,7 +278,7 @@ sub _generic {
 #	$log->error(Data::Dump::dump($result));
 	
 	$callback->({
-		total  => $request->getResults()->{count} + ($extraAtEnd || 0),
+		total  => $request->getResults()->{'count'} + ($extraAtEnd || 0),
 		offset => $index,
 		items  => $result,
 		sorted => !$unsorted,
@@ -290,7 +290,7 @@ sub _generic {
 
 sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
 	
 	_generic($client, $callback, $args, 'artists', 'artists_loop',
@@ -299,16 +299,16 @@ sub _artists {
 			my $loop = shift;
 			my $addAll = 0;
 			my @result = ( map {
-				name        => $_->{artist},
-				textkey     => $_->{textkey},
+				name        => $_->{'artist'},
+				textkey     => $_->{'textkey'},
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_albums,
-				passthrough => [ { searchTags => [@searchTags, "artist_id:" . $_->{id}] } ],
-				contextMenuParams=> { artist_id =>  $_->{id} },
+				passthrough => [ { searchTags => [@searchTags, "artist_id:" . $_->{'id'}] } ],
+				contextMenuParams=> { artist_id =>  $_->{'id'} },
 				
 			}, @$loop );
-			if ($pt->{addAllAlbums} && scalar @result > 1) {
+			if ($pt->{'addAllAlbums'} && scalar @result > 1) {
 				push @result, {
 					name        => _clientString($client, 'ALL_ALBUMS'),
 					type        => 'playlist',
@@ -325,19 +325,19 @@ sub _artists {
 
 sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 
 	_generic($client, $callback, $args, 'genres', 'genres_loop', ['tags:s', @searchTags],
 		sub {
 			my $loop = shift;
 			my @result = ( map {
-				name        => $_->{genre},
-				textkey     => $_->{textkey},
+				name        => $_->{'genre'},
+				textkey     => $_->{'textkey'},
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_artists,
-				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{id}], addAllAlbums => 1 } ],
-				contextMenuParams=> { genre_id =>  $_->{id} },
+				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], addAllAlbums => 1 } ],
+				contextMenuParams=> { genre_id =>  $_->{'id'} },
 			}, @$loop );
 			return \@result, 0, 0, ['genreinfo', 'items'];
 		},
@@ -346,17 +346,17 @@ sub _genres {
 
 sub _years {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
 	_generic($client, $callback, $args, 'years', 'years_loop', \@searchTags,
 		sub {
 			my $loop = shift;
 			return [ map {
-				name        => $_->{year},
+				name        => $_->{'year'},
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_albums,
-				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{year}] } ],
+				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{'year'}] } ],
 			}, @$loop ];
 		},
 	);
@@ -364,13 +364,18 @@ sub _years {
 
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $getMetadata= $args->{'wantMetadata'}; 
-	my $tags       = 'ljs';
+	my $tags       = 'ljsa';
 	
-	$tags .= 'yawXSiq' if $getMetadata;
+	$tags .= 'ywXiq' if $getMetadata;
+	
+	my @artistIds = grep /artist_id:/, @searchTags;
+	my ($artistId) = ($artistIds[0] =~ /artist_id:(\d+)/) if @artistIds;
+
+	$tags .= 'S' if ($artistId || $getMetadata);
 	
 	_generic($client, $callback, $args, 'albums', 'albums_loop',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
@@ -380,15 +385,23 @@ sub _albums {
 			my @result;
 			foreach (@$loop) {
 				my %item = (
-					name        => $_->{album},
-					textkey     => $_->{textkey},
-					image       => ($_->{artwork_track_id} ? 'music/' . $_->{artwork_track_id} . '/cover' : undef),
+					name        => $_->{'album'},
+					textkey     => $_->{'textkey'},
+					image       => ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef),
 					type        => 'playlist',
 					playlist    => \&_tracks,
+#					playlist    => 'CLI:browselibrary+items/mode:tracks&album_id:' . $_->{'id'},
 					url         => \&_tracks,
-					passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{id} ], sort => 'sort:tracknum', }],
-					contextMenuParams=> { album_id =>  $_->{id} },
+					passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{'id'} ], sort => 'sort:tracknum', }],
+					contextMenuParams=> { album_id =>  $_->{'id'} },
 				);
+				
+				# If an artist was not used in the selection criteria or if one was
+				# used but is different to that of the primary artist, then provide 
+				# the primary artist name in name2.
+				if (!$artistId || $artistId != $_->{'artist_id'}) {
+					$item{'name2'} = $_->{'artist'};
+				}
 				if ($getMetadata) {
 					$item{'metadata'}->{'year'} = $_->{'year'} if $_->{'year'};
 					$item{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
@@ -428,7 +441,7 @@ sub _albums {
 
 sub _tracks {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'} || 'sort:albumtrack';
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $search     = $pt->{'search'};
@@ -439,16 +452,16 @@ sub _tracks {
 			my $loop = shift;
 			my @result;
 			for (@$loop) {
-				my $tracknum = $_->{tracknum} ? $_->{tracknum} . '. ' : '';
+				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
 				my %item = (
-					name        => $tracknum . $_->{title},
+					name        => $tracknum . $_->{'title'},
 					type        => 'link',
 					url         => \&_track,
 					on_select   => 'play',
-					duration    => $_->{duration},
-					play        => $_->{url},
+					duration    => $_->{'duration'},
+					play        => $_->{'url'},
 					playall     => 1,
-					passthrough => [ $_->{'remote'} ? { track_url => $_->{url} } : { track_id => $_->{id} } ],
+					passthrough => [ $_->{'remote'} ? { track_url => $_->{'url'} } : { track_id => $_->{'id'} } ],
 				);
 				push @result, \%item;
 			}
@@ -467,10 +480,10 @@ sub _track {
 	my $feed;
 	
 	if ($pt->{'track_url'}) {
-		$feed  = Slim::Menu::TrackInfo->menu( $client, $pt->{track_url}, undef, $tags );
+		$feed  = Slim::Menu::TrackInfo->menu( $client, $pt->{'track_url'}, undef, $tags );
 	}
 	if ($pt->{'track_id'}) {
-		my $track = Slim::Schema->find( Track => $pt->{track_id} );
+		my $track = Slim::Schema->find( Track => $pt->{'track_id'} );
 		$feed  = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
 	}
 	
@@ -480,7 +493,7 @@ sub _track {
 
 sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
 	_generic($client, $callback, $args, 'musicfolder', 'folder_loop', ['tags:dus', @searchTags],
 		sub {
@@ -489,33 +502,33 @@ sub _bmf {
 			my $gotsubfolder = 0;
 			for (@$loop) {
 				my %item;
-				if ($_->{type} eq 'folder') {
+				if ($_->{'type'} eq 'folder') {
 					%item = (
 						type        => 'link',
 						url         => \&_bmf,
-						passthrough => [{ searchTags => [ "folder_id:" . $_->{id} ] }],
-						contextMenuParams=> { folder_id =>  $_->{id} },
+						passthrough => [{ searchTags => [ "folder_id:" . $_->{'id'} ] }],
+						contextMenuParams=> { folder_id =>  $_->{'id'} },
 					);
 					$gotsubfolder = 1;
-				}  elsif ($_->{type} eq 'track') {
+				}  elsif ($_->{'type'} eq 'track') {
 					%item = (
 						type        => 'link',
 						url         => \&_track,
 						on_select   => 'play',
-						duration    => $_->{duration},
-						play        => $_->{url},
+						duration    => $_->{'duration'},
+						play        => $_->{'url'},
 						playall     => 1,
-						passthrough => [{ track_id => $_->{id} }],
+						passthrough => [{ track_id => $_->{'id'} }],
 					);
-				}  elsif ($_->{type} eq 'playlist') {
+				}  elsif ($_->{'type'} eq 'playlist') {
 					
-				}  elsif ($_->{type} eq 'unknown') {
+				}  elsif ($_->{'type'} eq 'unknown') {
 					%item = (
 						type => 'text',
 					);
 				}
-				$item{name} = $_->{filename};
-				$item{textkey} = $_->{textkey};
+				$item{'name'} = $_->{'filename'};
+				$item{'textkey'} = $_->{'textkey'};
 				push @result, \%item;
 			}
 			return \@result, 0, 0, ($gotsubfolder ? ['folderinfo', 'items'] : undef);
@@ -525,7 +538,7 @@ sub _bmf {
 
 sub _playlists {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
 	
 	_generic($client, $callback, $args, 'playlists', 'playlists_loop',
@@ -533,13 +546,13 @@ sub _playlists {
 		sub {
 			my $loop = shift;
 			my @result = ( map {
-				name        => $_->{playlist},
-				textkey     => $_->{textkey},
+				name        => $_->{'playlist'},
+				textkey     => $_->{'textkey'},
 				type        => 'playlist',
 				playlist    => \&_playlistTracks,
 				url         => \&_playlistTracks,
-				passthrough => [{ searchTags => [ @searchTags, 'playlist_id:' . $_->{id} ], }],
-				contextMenuParams=> { playlist_id =>  $_->{id} },
+				passthrough => [{ searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], }],
+				contextMenuParams=> { playlist_id =>  $_->{'id'} },
 			}, @$loop );
 			return \@result, 0, 0, ['playlistinfo', 'items'];
 		},
@@ -548,7 +561,7 @@ sub _playlists {
 
 sub _playlistTracks {
 	my ($client, $callback, $args, $pt) = @_;
-	my @searchTags = $pt->{searchTags} ? @{$pt->{searchTags}} : ();
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 'playlisttracks_loop',
@@ -557,16 +570,16 @@ sub _playlistTracks {
 			my $loop = shift;
 			my @result;
 			for (@$loop) {
-				my $tracknum = $_->{tracknum} ? $_->{tracknum} . '. ' : '';
+				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
 				my %item = (
-					name        => $tracknum . $_->{title},
+					name        => $tracknum . $_->{'title'},
 					type        => 'link',
 					url         => \&_track,
 					on_select   => 'play',
-					duration    => $_->{duration},
-					play        => $_->{url},
+					duration    => $_->{'duration'},
+					play        => $_->{'url'},
 					playall     => 1,
-					passthrough => [{ track_id => $_->{id} }],
+					passthrough => [{ track_id => $_->{'id'} }],
 				);
 				push @result, \%item;
 			}
