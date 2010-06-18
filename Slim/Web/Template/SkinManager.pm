@@ -220,23 +220,9 @@ sub addSkinTemplate {
 			'utf8encode'    => \&Slim::Utils::Unicode::utf8encode,
 			'utf8on'        => \&Slim::Utils::Unicode::utf8on,
 			'utf8off'       => \&Slim::Utils::Unicode::utf8off,
+			'resizeimage'   => [ \&_resizeImage, 1 ],  
 			'imageproxy'    => [ sub {
-				my ( $context, $width, $height ) = @_;
-				
-				$height ||= '';
-				
-				return sub {
-					my $url = shift;
-
-					# don't use imageproxy on local network
-					if ($url =~ m{^http://(?:192\.168\.|172\.16\.|10\.|127\.0|localhost)}i) {
-						return $url;
-					}
-					
-					return Slim::Networking::SqueezeNetwork->url(
-						"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
-					);
-				};
+				return _resizeImage($_[0], $_[1], $_[2], '-');
 			}, 1 ],
 		},
 
@@ -255,6 +241,54 @@ sub _nonBreaking {
 
 	return $string;
 }
+
+
+sub _resizeImage {
+	my ( $context, $width, $height, $mode, $prefix ) = @_;
+	
+	$height ||= '';
+	$mode   ||= '';
+	$prefix ||= '';
+	
+	return sub {
+		my $url = shift;
+
+		# don't use imageproxy on local network
+		if ( $url =~ m{^http://(?:192\.168\.|172\.16\.|10\.|127\.0|localhost)}i ) {
+			# XXX - we might consider a local imageproxy handling local URLs and files
+			return $url;
+		}
+		
+		# external resource
+		elsif ( $url =~ m{^http://} ) {
+			return Slim::Networking::SqueezeNetwork->url(
+				"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
+			);
+		}
+		
+		# sometimes we'll need to prepend the webroot to our url
+		$url = $prefix . $url;
+
+		# local url - use internal image resizer
+		my $resizeParams = "_$width";
+		$resizeParams .= "x$height" if $height;
+
+		# music artwork
+		if ( $url =~ m{^(/music/.*/cover)\.jpg} ) {
+			return $1 . $resizeParams . '_o';
+		}
+		
+		# special mode "-": don't resize local urls (some already come with resize parameters)
+		return $url if $mode eq '-';
+
+		$resizeParams .= "_$mode" if $mode;
+	
+		$url =~ s/(\.png|\.gif|\.jpe?g|)$/$resizeParams$1/i;
+		
+		return $url; 
+	};
+}
+
 
 sub _fillTemplate {
 	my ($class, $params, $path, $skin) = @_;

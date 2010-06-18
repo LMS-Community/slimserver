@@ -154,12 +154,7 @@ ELSE %]
 						END
 					%]
 						<span class="browseCover">
-							[% IF link.icon.match("^http") %]
-							[%# Remote icon, use imageproxy to resize %]
-							<img src="[% link.icon | imageproxy(25, 25) %]" width="25" border="0" alt="[% string %]">
-							[% ELSE %]
-							<img src="[% link.icon %]" width="25" border="0" alt="[% string %]">
-							[% END %]
+							<img src="[% link.icon | resizeimage(25, 25, '-') %]" width="25" border="0" alt="[% string %]">
 						</span>
 						<div class="smallBrowseItemDetail">
 					[% END %]

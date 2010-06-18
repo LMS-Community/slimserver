@@ -147,7 +147,7 @@ END %]
 		<div>
 			[% IF image.match("^http") %]
 			<a href="[% image %]" target="cover">
-				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
+				<img src="[% image | resizeimage(150, 150, '-') %]" alt="coverArt">
 			[% ELSE %]
 			<a href="[% webroot _ image %]" target="cover">
 				<img src="[% webroot _ image.replace('(cover)$', '$1_150x150') %]" alt="coverArt" onLoad="resize(this)">
