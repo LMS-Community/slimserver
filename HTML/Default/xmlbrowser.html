@@ -145,13 +145,8 @@ END %]
 	[%- WRAPPER $container %]
 		[% IF !metadata && image %]
 		<div>
-			[% IF image.match("^http") %]
 			<a href="[% image %]" target="cover">
-				<img src="[% image | resizeimage(150, 150, '-') %]" alt="coverArt">
-			[% ELSE %]
-			<a href="[% webroot _ image %]" target="cover">
-				<img src="[% webroot _ image.replace('(cover)$', '$1_150x150') %]" alt="coverArt" onLoad="resize(this)">
-			[% END %]
+				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
 			</a>
 		</div>
 		[% END %]
@@ -227,11 +222,7 @@ END %]
 [% BLOCK itemIcon %]
 	[% WRAPPER weblink %]
 	<span class="browseCover">
-		[% IF item.image.match("^http") %]
-		<img src="[% url | imageproxy(size, size) %]" width="[% size %]">
-		[% ELSE %]
-		<img src="[% webroot %][% url.replace('.png', "_${size}x${size}_f.png") %]" width="[% size %]"/>
-		[% END %]
+		<img src="[% url | resizeimage(size, size, 'f', webroot) %]" width="[% size %]">
 	</span>
 	[% END %]
 	<div class="[% class %]">
