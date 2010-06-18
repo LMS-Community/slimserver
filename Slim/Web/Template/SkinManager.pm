@@ -229,7 +229,7 @@ sub addSkinTemplate {
 					my $url = shift;
 
 					# don't use imageproxy on local network
-					if ($url =~ m{^http://(?:192\.168\.|172\.16\.|10\.)}i) {
+					if ($url =~ m{^http://(?:192\.168\.|172\.16\.|10\.|127\.0|localhost)}i) {
 						return $url;
 					}
 					
