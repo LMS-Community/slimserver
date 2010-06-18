@@ -51,28 +51,32 @@ sub cliQuery {
 
 	$request->setStatusProcessing();
 	
-	my $itemId = $request->getParam('item_id');	# get our parameters
-	
-	my $index      = $request->getParam('_index') || 0;
-	my $quantity   = $request->getParam('_quantity') || 0;
+	my $itemId     = $request->getParam('item_id');	# get our parameters
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
 
 	# Bug 14100: sending requests that involve newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
 	# to the $request params
 	if ( $index =~ /:/ ) {
-		$request->addParam(split /:/, $index);
+		$request->addParam(split (/:/, $index));
 		$index = 0;
+		$request->addParam('_index', $index);
 	}
 	if ( $quantity =~ /:/ ) {
-		$request->addParam(split /:/, $quantity);
+		$request->addParam(split(/:/, $quantity));
 		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
 	}
 	
+	my $isPlayCommand = $request->isQuery([[$query], ['playlist']]);
 	
 	# Handle touch-to-play
 	if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
 
+		$isPlayCommand = 1;
+		
 		# A hack to handle clients that cannot map the 'go' action
 		if (!$request->getParam('_method')) {
 			$request->addParam('_method', 'play');
@@ -93,8 +97,6 @@ sub cliQuery {
 			$itemId =~ s/(.*)\.(\d+)/$1/;			# strip off last node
 			$request->addParam('playIndex', $2);	# and save in playIndex
 			$request->addParam('item_id', $itemId);
-			$request->addParam('_index', 0);		# need all items in this case
-			$request->addParam('_quantity', 0);
 		}
 		
 	}
@@ -194,12 +196,38 @@ sub cliQuery {
 			_cliQuery_done( $opml, \%args );
 		};
 		
+		my %args = (params => $request->getParamsCopy());
+
+		# If we are getting an intermediate level, then we just need the one item
+		# If we are getting the last level then we need all items if we are doing playall of some kind
+		
+		my $levels = 0;
+		my $nextIndex;
+		if ( defined $itemId && length($itemId) ) {
+			my @index = split(/\./, $itemId);
+			$levels = scalar @index;
+			$nextIndex = $index[0] =~ /^(\d+)/;
+		}
+		
+		if ($index && $quantity && !$levels && !$isPlayCommand) {
+			
+			# XXX hack to allow for some CM entries
+			my $j = 10; 
+			$j = $index if ($j > $index);
+			$args{'index'} = $index - $j;
+			$args{'quantity'} = $quantity + $j;
+		} elsif ($levels) {
+			$args{'index'} = $nextIndex;
+			$args{'quantity'} = 1;
+		}
+		
+		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $feed );
 			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
 
-		$feed->( $request->client, $callback, {params => $request->getParamsCopy()});
+		$feed->( $request->client, $callback, \%args);
 		
 		return;
 	}
@@ -347,6 +375,7 @@ sub _cliQuery_done {
 	}
 	
 	my $subFeed = $feed;
+	$subFeed->{'offset'} ||= 0;
 	
 #	warn Data::Dump::dump($feed) . "\n";
 
@@ -388,8 +417,8 @@ sub _cliQuery_done {
 			$depth++;
 			
 			my ($in) = $i =~ /^(\d+)/;
-			$subFeed = $subFeed->{'items'}->[$in];
-
+			$subFeed = $subFeed->{'items'}->[$in - $subFeed->{'offset'}];
+			$subFeed->{'offset'} ||= 0;
 			# Add search query to crumb list
 			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
 				# Escape periods in the search string
@@ -484,10 +513,25 @@ sub _cliQuery_done {
 					};
 					
 					my $pt = $subFeed->{passthrough} || [];
+					my %args = (params => $feed->{'query'});
 					
-					my $searchArg;
 					if ($search && $subFeed->{type} && $subFeed->{type} eq 'search') {
-						$searchArg = $search;
+						$args{'search'} = $search;
+					}
+					
+					# If we are getting an intermediate level, then we just need the one item
+					# If we are getting the last level then we need all items if we are doing playall of some kind
+					
+					if ($index && $quantity && $depth == $levels && !$isPlaylistCmd) {
+						
+						# XXX hack to allow for some CM entries
+						my $j = 10; 
+						$j = $index if ($j > $index);
+						$args{'index'} = $index - $j;
+						$args{'quantity'} = $quantity + $j;
+					} elsif ($depth < $levels) {
+						$args{'index'} = $index[$depth];
+						$args{'quantity'} = 1;
 					}
 					
 					if ( main::DEBUGLOG && $log->is_debug ) {
@@ -495,7 +539,7 @@ sub _cliQuery_done {
 						$log->debug( "Fetching OPML from coderef $cbname" );
 					}
 
-					$subFeed->{url}->( $request->client, $callback, {search => $searchArg, params => $feed->{'query'}}, @{$pt});
+					$subFeed->{url}->( $request->client, $callback, \%args, @{$pt});
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
@@ -615,7 +659,7 @@ sub _cliQuery_done {
 					if ($menuMode) {
 						
 						# setup hash for different items between play and add
-						my %items = (
+						my %modeitems = (
 							'play' => {
 								'string'  => $request->string('PLAY'),
 								'style'   => 'itemplay',
@@ -633,7 +677,7 @@ sub _cliQuery_done {
 								my $actions = {
 									'do' => {
 										'player' => 0,
-										'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
+										'cmd'    => [$query, 'playlist', $modeitems{$mode}->{'cmd'}],
 										'params' => {
 											'item_id' => "$item_id", # stringify for JSON
 										},
@@ -641,7 +685,7 @@ sub _cliQuery_done {
 									},
 									'play' => {
 										'player' => 0,
-										'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
+										'cmd'    => [$query, 'playlist', $modeitems{$mode}->{'cmd'}],
 										'params' => {
 											'item_id' => "$item_id", # stringify for JSON
 										},
@@ -662,9 +706,9 @@ sub _cliQuery_done {
 										},
 									},
 								};
-								$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
+								$request->addResultLoop($loopname, $cnt, 'text', $modeitems{$mode}{'string'});
 								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
+								$request->addResultLoop($loopname, $cnt, 'style', $modeitems{$mode}{'style'});
 								$cnt++;
 							}
 						}
@@ -862,7 +906,9 @@ sub _cliQuery_done {
 		main::INFOLOG && $log->info("Get items.");
 		
 		my $items = $subFeed->{'items'};
-		my $count = defined $items ? scalar @$items : 0;
+		my $count = $subFeed->{'total'};;
+		$count ||= defined $items ? scalar @$items : 0;
+		
 		
 		# Bug 7024, display an "Empty" item instead of returning an empty list
 		if ( $menuMode && !$count ) {
@@ -998,7 +1044,11 @@ sub _cliQuery_done {
 				}
 
 				my $itemIndex = $start - 1;
-				$log->error("Getting slice $start..$end: $totalCount");
+				
+				$start -= $subFeed->{'offset'};
+				$end   -= $subFeed->{'offset'};
+				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'});
+				
 				for my $item ( @$items[$start..$end] ) {
 					$itemIndex++;
 					
@@ -1302,7 +1352,7 @@ sub _cliQuerySubFeed_done {
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;
 		
-		$subFeed = $subFeed->{'items'}->[$i];
+		$subFeed = $subFeed->{'items'}->[$i - ($subFeed->{'offset'} || 0)];
 	}
 
 	if ($subFeed->{'type'} &&
@@ -1334,6 +1384,8 @@ sub _cliQuerySubFeed_done {
 	if ($feed->{'itemsContextMenu'}) {
 		$subFeed->{'itemsContextMenu'} = $feed->{'itemsContextMenu'};
 	}
+	$subFeed->{'total'} = $feed->{'total'};
+	$subFeed->{'offset'} = $feed->{'offset'};
 	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
