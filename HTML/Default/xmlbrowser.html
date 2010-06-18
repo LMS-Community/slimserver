@@ -143,7 +143,7 @@ END %]
 		[% IF image %]
 		<div>
 			<a href="[% image %]" target="cover">
-				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
+				<img src="[% image | resizeimage(150, 150, '-') %]" alt="coverArt">
 			</a>
 		</div>
 		[% END %]
@@ -188,11 +188,7 @@ END %]
 
 					[% IF item.image && !(artwork > 0) %]
 						<span class="browseCover">
-							[% IF item.image.match("^http") %]
-							<img src="[% item.image | imageproxy(50, 50) %]" width="50">
-							[% ELSE %]
-							<img src="[% item.image %]" width="50"/>
-							[% END %]
+							<img src="[% item.image | resizeimage(50, 50, '-') %]" width="50">
 						</span>
 						<div class="browseItemDetail">
 					[% END %]
