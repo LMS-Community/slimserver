@@ -828,7 +828,6 @@ sub _cliQuery_done {
 			
 			# play all streams of an item (or one stream if pref is unset)
 			else {
-				my $jumpIndex = $playIndex;
 				my @urls;
 				for my $item ( @{ $subFeed->{'items'} } ) {
 					my $url;
@@ -949,7 +948,13 @@ sub _cliQuery_done {
 		
 			if ($valid) {
 				
-				$request->addResult( 'title', $subFeed->{'name'} || $subFeed->{'title'} );
+				if (my $title = $subFeed->{'name'} || $subFeed->{'title'}) {
+					if ($menuMode && $subFeed->{'name2'}) {
+						$title .= "\n" . $subFeed->{'name2'};
+					}
+					$request->addResult( 'title', $title );
+				}
+				
 				# decide what is the next step down
 				# we go to xxx items from xx items :)
 				my $base; my $params = {};
@@ -1115,17 +1120,17 @@ sub _cliQuery_done {
 							next;
 						}
 						
-						# Bug 13175, support custom windowStyle
-						if ( $item->{style} ) {
-							$windowStyle = $item->{style};
-						}
-						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
 						if ( $item->{autoplays} ) {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
 						}
-
-						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
+						
+						my $itemText = $hash{'name'} || $hash{'title'};
+						if ($item->{'name2'}) {
+							$itemText .= "\n" . $item->{'name2'};
+							$windowStyle = 'icon_list' if !$windowStyle;
+						}
+						$request->addResultLoop($loopname, $cnt, 'text', $itemText);
 						
 						my $isPlayable = (
 							   $item->{play} 
@@ -1262,6 +1267,29 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
+
+# XXX experimental stuff
+#						elsif ( $item->{'playlist'} =~ m%^CLI:([^/]+)(?:/(.+))%) {
+#							my ($verbs, $params) = ($1, $2);
+#							my %params;
+#							foreach (split(/\&/, $params)) {
+#								my ($k, $v) = /([^:]+):(.*)/;
+#								$params{$k} = $v;
+#							}
+#							$params{'menu'} ||= 1;
+#							my $actions = {
+#								'go' => {
+#									'cmd' => [ split(/\+/, $verbs) ],
+#									'params' => \%params,
+#								},
+#							};
+#							$log->error('Go: [', join(' ', @{$actions->{'go'}->{'cmd'}}),
+#										'] [', join(' ', map { $_ . ':' . 
+#															$actions->{'go'}->{'params'}->{$_} }
+#															keys(%{$actions->{'go'}->{'params'}})), ']');
+#							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+#							
+#						}
 						
 						if ( scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) ) {
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
@@ -1302,7 +1330,7 @@ sub _cliQuery_done {
 				$window->{'windowStyle'} = $windowStyle;
 			} 
 			elsif ( $hasImage ) {
-				$window->{'windowStyle'} = 'home_menu';
+				$window->{'windowStyle'} = 'icon_list';
 			} 
 			else {
 				$window->{'windowStyle'} = 'text_list';
