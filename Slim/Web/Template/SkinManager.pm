@@ -274,7 +274,7 @@ sub _resizeImage {
 		$resizeParams .= "x$height" if $height;
 
 		# music artwork
-		if ( $url =~ m{^(/music/.*/cover)\.jpg} ) {
+		if ( $url =~ m{^(/music/.*/cover)(?:\.jpg)?$} ) {
 			return $1 . $resizeParams . '_o';
 		}
 		
