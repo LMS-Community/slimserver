@@ -348,6 +348,7 @@ sub _cliQuery_done {
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $feedMode = defined $request->getParam('feedMode');
 	
 	# Session ID for this browse session
  	my $sid;
@@ -567,6 +568,12 @@ sub _cliQuery_done {
 					)
 				) {
 				
+				if ($feedMode) {
+					$request->setRawResults($feed);
+					$request->setStatusDone();
+					return;
+				}
+				
 				main::DEBUGLOG && $log->debug("Adding results for audio or enclosure subfeed");
 
 				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
@@ -771,7 +778,13 @@ sub _cliQuery_done {
 			}
 		}
 	}
-
+	
+	if ($feedMode) {
+		$request->setRawResults($feed);
+		$request->setStatusDone();
+		return;
+	}
+				
 	if ($isPlaylistCmd) {
 
 		# get our parameters
@@ -922,6 +935,7 @@ sub _cliQuery_done {
 		my $presetFavSet = 0;
 		my $totalCount = $count;
 		my $allTouchToPlay = 1;
+		my %actionParamsNeeded;
 		
 		if ($count) {
 		
@@ -1008,7 +1022,41 @@ sub _cliQuery_done {
 						},
 					};
 					
-					if ($subFeed->{'itemsContextMenu'}) {
+					if (my $actions = $subFeed->{'actions'}) {
+						
+						if (my $action = $actions->{'contextMenu'}) {
+							my $params = $action->{'fixedParams'} || {};
+							$params->{'menu'} ||= 1;
+							my %baseAction = (
+								player      => 0,
+								cmd         => $action->{'command'},
+								params      => $params,
+								window      => {isContextMenu => 1},
+							);
+							if ($action->{'variables'}) {
+								$baseAction{'itemsParams'} = 'contextMenuParams';
+								$actionParamsNeeded{'contextMenuParams'} = $action->{'variables'};
+							}
+							$base->{'actions'}->{'more'} = \%baseAction;
+						}
+
+						if (my $action = $actions->{'items'}) {
+							my $params = $action->{'fixedParams'} || {};
+							$params->{'menu'} ||= 1;
+							my %baseAction = (
+								player      => 0,
+								cmd         => $action->{'command'},
+								params      => $params,
+							);
+							if ($action->{'variables'}) {
+								$baseAction{'itemsParams'} = 'itemsParams';
+								$actionParamsNeeded{'itemsParams'} = $action->{'variables'};
+							}
+							$base->{'actions'}->{'go'} = \%baseAction;
+						}
+					}
+					
+					elsif ($subFeed->{'itemsContextMenu'}) {
 						$base->{'actions'}->{'more'} = {
 							player      => 0,
 							cmd         => $subFeed->{'itemsContextMenu'},
@@ -1274,48 +1322,37 @@ sub _cliQuery_done {
 						else {
 							$allTouchToPlay = 0;
 						}
-# XXX experimental stuff
-#						elsif ( $item->{'playlist'} =~ m%^CLI:([^/]+)(?:/(.+))%) {
-#							my ($verbs, $params) = ($1, $2);
-#							my %params;
-#							foreach (split(/\&/, $params)) {
-#								my ($k, $v) = /([^:]+):(.*)/;
-#								$params{$k} = $v;
-#							}
-#							$params{'menu'} ||= 1;
-#							my $actions = {
-#								'go' => {
-#									'cmd' => [ split(/\+/, $verbs) ],
-#									'params' => \%params,
-#								},
-#							};
-#							$log->error('Go: [', join(' ', @{$actions->{'go'}->{'cmd'}}),
-#										'] [', join(' ', map { $_ . ':' . 
-#															$actions->{'go'}->{'params'}->{$_} }
-#															keys(%{$actions->{'go'}->{'params'}})), ']');
-#							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-#							
-#						}
 						
 						if ( scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) ) {
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
 						
-						my $contextMenuParams = $item->{'contextMenuParams'};
-						if ($item->{'contextMenu'}) {
-							$contextMenuParams->{'menu'} = 1;
-							my $actions = {
-								more => {
-									player    => 0,
-									cmd       => $item->{'contextMenu'},
-									params    => $contextMenuParams,
-								},
-							};
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-						} elsif ($haveFeedContextMenu && $contextMenuParams) {
-							$request->addResultLoop( $loopname, $cnt, 'contextMenuParams', $contextMenuParams );
-						}
+						if (%actionParamsNeeded) {
+							foreach my $key (keys %actionParamsNeeded) {
+								my %params;
+								my @vars = @{$actionParamsNeeded{$key}};
+								for (my $i = 0; $i < scalar @vars; $i += 2) {
+									$params{$vars[$i]} = $item->{$vars[$i+1]};
+								}
+								$request->addResultLoop( $loopname, $cnt, $key, \%params );
+							}
+						} else {
 						
+							my $contextMenuParams = $item->{'contextMenuParams'};
+							if ($item->{'contextMenu'}) {
+								$contextMenuParams->{'menu'} = 1;
+								my $actions = {
+									more => {
+										player    => 0,
+										cmd       => $item->{'contextMenu'},
+										params    => $contextMenuParams,
+									},
+								};
+								$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							} elsif ($haveFeedContextMenu && $contextMenuParams) {
+								$request->addResultLoop( $loopname, $cnt, 'contextMenuParams', $contextMenuParams );
+							}
+						}
 					}
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -1330,11 +1367,13 @@ sub _cliQuery_done {
 		
 		if ($menuMode) {
 			
-			my $baseActions = $request->getResult('base')->{'actions'};
-			
-			_jivePresetBase($baseActions) if $presetFavSet;
-			
-			$baseActions->{'go'} = $baseActions->{'play'} if $allTouchToPlay;
+			if ($request->getResult('base')) {
+				my $baseActions = $request->getResult('base')->{'actions'};
+				
+				_jivePresetBase($baseActions) if $presetFavSet;
+				
+				$baseActions->{'go'} = $baseActions->{'play'} if $allTouchToPlay;
+			}
 			
 			if ( $windowStyle ) {
 				$window->{'windowStyle'} = $windowStyle;
@@ -1421,6 +1460,9 @@ sub _cliQuerySubFeed_done {
 	
 	if ($feed->{'itemsContextMenu'}) {
 		$subFeed->{'itemsContextMenu'} = $feed->{'itemsContextMenu'};
+	}
+	if ($feed->{'actions'}) {
+		$subFeed->{'actions'} = $feed->{'actions'};
 	}
 	$subFeed->{'total'} = $feed->{'total'};
 	$subFeed->{'offset'} = $feed->{'offset'};

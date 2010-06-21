@@ -14,7 +14,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	description  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
 });
 
-sub initSubmenu {
+sub _initSubmenu {
 	my ($class, %args) = @_;
 	$args{'weight'} ||= $class->weight() + 1;
 	$args{'is_app'} ||= 0;
@@ -44,7 +44,7 @@ sub _pluginDataFor {
 }
 
 
-sub initSubmenus {
+sub _initSubmenus {
 	my $class = shift;
 	my $base  = __PACKAGE__;
 	
@@ -59,7 +59,7 @@ sub initSubmenus {
 			sub init {
 				my (\$class, \$feed, \$data) = \@_;
 				\$pluginData = \$data;
-				\$class->SUPER::initSubmenu(feed => \$feed, tag => '$menu->[1]');
+				\$class->SUPER::_initSubmenu(feed => \$feed, tag => '$menu->[1]');
 			}
 		
 			sub getDisplayName {'$menu->[2]'}	
@@ -85,7 +85,9 @@ sub initPlugin {
 		is_app => 0,
 	);
 
-	$class->initSubmenus();
+	$class->_initSubmenus();
+	
+	$class->_registerWebLink();
 }
 
 
@@ -116,6 +118,8 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
+my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id);
+
 sub _topLevel {
 	my ($client, $callback, $args) = @_;
 	my $params = $args->{'params'};
@@ -128,7 +132,7 @@ sub _topLevel {
 		}
 
 		my @searchTags;
-		for (qw(track_id artist_id genre_id album_id)) {
+		for (@topLevelArgs) {
 			push (@searchTags, $_ . ':' . $params->{$_}) if $params->{$_};
 		}
 		$args{'searchTags'} = \@searchTags if scalar @searchTags;
@@ -139,7 +143,7 @@ sub _topLevel {
 			no strict "refs";
 			
 			my %entryParams;
-			for (qw(track_id artist_id genre_id album_id sort mode)) {
+			for (@topLevelArgs, qw(sort mode)) {
 				$entryParams{$_} = $params->{$_} if $params->{$_};
 			}
 			main::INFOLOG && $log->is_info && $log->info('params=>', join('&', map {$_ . '=' . $entryParams{$_}} keys(%entryParams)));
@@ -277,15 +281,29 @@ sub _generic {
 	
 #	$log->error(Data::Dump::dump($result));
 	
-	$callback->({
+	my %results = (
 		total  => $request->getResults()->{'count'} + ($extraAtEnd || 0),
 		offset => $index,
 		items  => $result,
 		sorted => !$unsorted,
-		itemsContextMenu => $itemsContextMenu,
-	});
-	
-	if ($@) {logBacktrace('$callback=', ($callback ? ref $callback : 'invalid'), ', $request=', ($request ? ref $request : 'invalid'));}
+	);
+	if ($itemsContextMenu && ref $itemsContextMenu eq 'HASH') {
+		$results{'actions'} = $itemsContextMenu;
+	} else {
+		$results{'itemsContextMenu'} = $itemsContextMenu;
+	}
+
+	$callback->(\%results);
+}
+
+sub _tagsToParams {
+	my $tags = shift;
+	my %p;
+	foreach (@$tags) {
+		my ($k, $v) = /([^:]+):(.+)/;
+		$p{$k} = $v;
+	}
+	return \%p;
 }
 
 sub _artists {
@@ -305,7 +323,7 @@ sub _artists {
 				playlist    => \&_tracks,
 				url         => \&_albums,
 				passthrough => [ { searchTags => [@searchTags, "artist_id:" . $_->{'id'}] } ],
-				contextMenuParams=> { artist_id =>  $_->{'id'} },
+				id          =>  $_->{'id'},
 				
 			}, @$loop );
 			if ($pt->{'addAllAlbums'} && scalar @result > 1) {
@@ -318,7 +336,23 @@ sub _artists {
 				};
 				$addAll = 1;
 			}
-			return \@result, 0, $addAll, ['artistinfo', 'items'];
+			return \@result, 0, $addAll,
+				{
+					contextMenu => {
+						command     => ['artistinfo', 'items'],
+						fixedParams => {},
+						variables	=> [artist_id => 'id'],
+					},
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => {
+							mode       => 'albums',
+							%{&_tagsToParams(\@searchTags)},
+						},
+						variables	=> [artist_id => 'id'],
+					},
+				};
+			
 		},
 	);
 }
@@ -337,9 +371,24 @@ sub _genres {
 				playlist    => \&_tracks,
 				url         => \&_artists,
 				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], addAllAlbums => 1 } ],
-				contextMenuParams=> { genre_id =>  $_->{'id'} },
+				id          =>  $_->{'id'},
 			}, @$loop );
-			return \@result, 0, 0, ['genreinfo', 'items'];
+			return \@result, 0, 0,
+				{
+					contextMenu => {
+						command     => ['genreinfo', 'items'],
+						variables	=> [genre_id => 'id'],
+					},
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => {
+							mode         => 'artists',
+							addAllAlbums => 1,
+							%{&_tagsToParams(\@searchTags)},
+						},
+						variables	=> [genre_id => 'id'],
+					},
+				};
 		},
 	);
 }
@@ -357,7 +406,17 @@ sub _years {
 				playlist    => \&_tracks,
 				url         => \&_albums,
 				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{'year'}] } ],
-			}, @$loop ];
+			}, @$loop ], 0, 0,
+				{
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => {
+							mode       => 'albums',
+							%{&_tagsToParams(\@searchTags)},
+						},
+						variables	=> [year => 'name'],
+					},
+				};
 		},
 	);
 }
@@ -390,10 +449,9 @@ sub _albums {
 					image       => ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef),
 					type        => 'playlist',
 					playlist    => \&_tracks,
-#					playlist    => 'CLI:browselibrary+items/mode:tracks&album_id:' . $_->{'id'},
 					url         => \&_tracks,
 					passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{'id'} ], sort => 'sort:tracknum', }],
-					contextMenuParams=> { album_id =>  $_->{'id'} },
+					id          =>  $_->{'id'},
 				);
 				
 				# If an artist was not used in the selection criteria or if one was
@@ -434,7 +492,22 @@ sub _albums {
 				};
 				$addAll = 1;
 			}
-			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll, ['albuminfo', 'items'];
+			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll,
+				{
+					contextMenu => {
+						command     => ['albuminfo', 'items'],
+						fixedParams => {},
+						variables	=> [album_id => 'id'],
+					},
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => {
+							mode       => 'tracks',
+							%{&_tagsToParams(\@searchTags)},
+						},
+						variables	=> [album_id => 'id'],
+					},
+				};
 		},
 	);
 }
@@ -462,10 +535,17 @@ sub _tracks {
 					play        => $_->{'url'},
 					playall     => 1,
 					passthrough => [ $_->{'remote'} ? { track_url => $_->{'url'} } : { track_id => $_->{'id'} } ],
+					id          => $_->{'id'},
 				);
 				push @result, \%item;
 			}
-			return \@result;
+			return \@result, 0, 0,
+				{
+					contextMenu => {
+						command     => ['trackinfo', 'items'],
+						variables	=> [track_id => 'id'],
+					},
+				};
 		},
 	);
 }
@@ -507,6 +587,7 @@ sub _bmf {
 						type        => 'link',
 						url         => \&_bmf,
 						passthrough => [{ searchTags => [ "folder_id:" . $_->{'id'} ] }],
+						contextMenu => ['folderinfo', 'items'],
 						contextMenuParams=> { folder_id =>  $_->{'id'} },
 					);
 					$gotsubfolder = 1;
@@ -519,6 +600,9 @@ sub _bmf {
 						play        => $_->{'url'},
 						playall     => 1,
 						passthrough => [{ track_id => $_->{'id'} }],
+						contextMenu => ['trackinfo', 'items'],
+						contextMenuParams=> { track_id =>  $_->{'id'} },
+						
 					);
 				}  elsif ($_->{'type'} eq 'playlist') {
 					
@@ -531,7 +615,7 @@ sub _bmf {
 				$item{'textkey'} = $_->{'textkey'};
 				push @result, \%item;
 			}
-			return \@result, 0, 0, ($gotsubfolder ? ['folderinfo', 'items'] : undef);
+			return \@result;
 		},
 	);
 }
@@ -552,9 +636,24 @@ sub _playlists {
 				playlist    => \&_playlistTracks,
 				url         => \&_playlistTracks,
 				passthrough => [{ searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], }],
-				contextMenuParams=> { playlist_id =>  $_->{'id'} },
+				id          =>  $_->{'id'},
 			}, @$loop );
-			return \@result, 0, 0, ['playlistinfo', 'items'];
+			return \@result, 0, 0,
+				{
+					contextMenu => {
+						command     => ['playlistinfo', 'items'],
+						variables	=> [playlist_id => 'id'],
+					},
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => {
+							mode       => 'playlistTracks',
+							%{&_tagsToParams(\@searchTags)},
+						},
+						variables	=> [playlist_id => 'id'],
+					},
+				};
+			
 		},
 	);
 }
@@ -580,10 +679,17 @@ sub _playlistTracks {
 					play        => $_->{'url'},
 					playall     => 1,
 					passthrough => [{ track_id => $_->{'id'} }],
+					id          => $_->{'id'},
 				);
 				push @result, \%item;
 			}
-			return \@result;
+			return \@result, 1, 0, 
+				{
+					contextMenu => {
+						command     => ['trackinfo', 'items'],
+						variables	=> [track_id => 'id'],
+					},
+				};
 		},
 	);
 }
@@ -594,5 +700,70 @@ sub getDisplayName () {
 
 sub playerMenu {'PLUGINS'}
 
+sub _registerWebLink {
+	my $class = shift;
+	
+	my $url   = 'browselibrarylink/.*';
+	
+	Slim::Web::Pages->addPageFunction( $url, \&webLink);
+}
+
+sub _webLinkDone {
+	my ($client, $feed, $args) = @_;
+	
+	# pass CLI command as result to XMLBrowser
+	
+	main::INFOLOG && $log->is_info && $log->info(join(', ', map { $_ . '(' . ref($feed->{$_}) . ')'} keys %$feed));
+	
+	Slim::Web::XMLBrowser->handleWebIndex( {
+			client  => $client,
+			feed    => $feed,
+			timeout => 35,
+			args    => $args,
+		} );
+}
+
+sub webLink {
+	my $client  = $_[0];
+	my $args    = $_[1];
+	my $allArgs = \@_;
+	
+	# get parameters and construct CLI command
+	my ($params) = ($args->{'path'} =~ m%browselibrarylink/([^/]+)%);
+	my %params;
+	foreach (split(/\&/, $params)) {
+		if (my ($k, $v) = /([^=]+)=(.*)/) {
+			$params{$k} = $v;
+		} else {
+			$log->warn("Unrecognized parameter syntax: $_");
+		}
+	}
+	
+		$log->error(join(', ', keys %$args));
+	my @verbs = split(/\+/, delete $params{'clicmd'});
+	if (!scalar @verbs) {
+		$log->error("Missing clicmd parameter");
+		$log->error(join(', ', keys %$args));
+		$log->error("path=", $args->{'path'}, ', webroot=', $args->{'webroot'}, ', url_query=', $args->{'url_query'});
+		return;
+	}
+		$log->error("path=", $args->{'path'}, ', webroot=', $args->{'webroot'}, ', url_query=', $args->{'url_query'});
+	
+	my @params = map { $_ . ':' . $params{$_} } keys %params;
+	
+	# execute CLI command
+	main::INFOLOG && $log->is_info && $log->info(join(', ', @verbs, @params));
+	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, [ @verbs, @params, 'feedMode:1' ] );
+		
+	# wrap async requests
+	if ( $proxiedRequest->isStatusProcessing ) {			
+		$proxiedRequest->callbackFunction( sub {
+			_webLinkDone($client, $_[0]->getResults, $allArgs);
+		} );
+	} else {
+		_webLinkDone($client, $proxiedRequest->getResults, $allArgs);
+	}
+
+}
 	
 1;

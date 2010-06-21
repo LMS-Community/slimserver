@@ -164,7 +164,7 @@ sub handleFeed {
 	$stash->{'pageicon'}  = $params->{pageicon};
 	
 	if ($feed->{'query'}) {
-		$stash->{'query'} = join('&amp;', map {$_ . '=' . $feed->{'query'}->{$_}} keys(%{$feed->{'query'}}));
+		$stash->{'mquery'} = join('&amp;', map {$_ . '=' . $feed->{'query'}->{$_}} keys(%{$feed->{'query'}}));
 	}
 
 	my $template = 'xmlbrowser.html';
@@ -238,9 +238,11 @@ sub handleFeed {
 		my $depth = 0;
 		
 		my $subFeed = $feed;
+		my $superFeed;
 		for my $i ( @index ) {
 			$depth++;
 			
+			$superFeed = $subFeed;
 			$subFeed = $subFeed->{'items'}->[$i];
 			
 			push @crumbIndex, $i;
@@ -300,6 +302,40 @@ sub handleFeed {
 				delete $subFeed->{fetched};
 			}
 			
+			# short-circuit fetch if possible
+			# If we have an action and we have an equivalent superFeed action
+			# and we are about to fetch the last level then we can just use the feed-defined action.
+			
+			if ($depth == $levels
+				&& $stash->{'action'} && $stash->{'action'} =~ /^((?:play|add)(?:all)?)$/
+				&& $superFeed->{'actions'} && $superFeed->{'actions'}->{$1}
+				)
+			{
+				my $action = $superFeed->{'actions'}->{$1};
+				
+				my @params = @{$action->{'command'}};
+				if (my $params = $action->{'fixedParams'}) {
+					push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
+				}
+				my @vars = @{$action->{'variables'} || []};
+				for (my $i = 0; $i < scalar @vars; $i += 2) {
+					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
+				}
+				
+				main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
+
+				Slim::Control::Request::executeRequest( $client, \@params );
+
+				my $webroot = $stash->{'webroot'};
+				$webroot =~ s/(.*?)plugins.*$/$1/;
+				$template = 'xmlbrowser_redirect.html';
+				
+				my $output = processTemplate($template, $stash);
+				
+				# done, send output back to Web module for display
+				$callback->( $client, $stash, $output, $httpClient, $response );
+			}
+
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
@@ -329,7 +365,47 @@ sub handleFeed {
 					'pageicon'     => $subFeed->{'icon'} || $params->{'pageicon'},
 				};
 				
-				if ( ref $subFeed->{'url'} eq 'CODE' ) {
+				
+				if (!($depth == $levels && $stash->{'action'})
+					&& $superFeed->{'actions'} && $superFeed->{'actions'}->{'items'})
+				{
+					my $action = $superFeed->{'actions'}->{'items'};
+					
+					my @params = @{$action->{'command'}};
+					if (my $params = $action->{'fixedParams'}) {
+						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
+					}
+					my @vars = @{$action->{'variables'} || []};
+					for (my $i = 0; $i < scalar @vars; $i += 2) {
+						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
+					}
+					
+					main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
+					
+					my $callback = sub {
+						my $opml = shift;
+
+						$opml->{'type'}  ||= 'opml';
+						$opml->{'title'} = $args->{feedTitle};
+
+						handleSubFeed( $opml, $args );
+					};
+					
+				
+					my $proxiedRequest = Slim::Control::Request::executeRequest(
+						$client, [ @params, 'feedMode:1', ] );
+					
+					# wrap async requests
+					if ( $proxiedRequest->isStatusProcessing ) {			
+						$proxiedRequest->callbackFunction( sub {
+							$callback->($_[0]->getResults);
+						} );
+					} else {
+						$callback->($proxiedRequest->getResults);
+					}
+				}
+				
+				elsif ( ref $subFeed->{'url'} eq 'CODE' ) {
 					my $callback = sub {
 						my $data = shift;
 						my $opml;
@@ -408,11 +484,13 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'metadata'}  = $subFeed->{'metadata'};	
+		$stash->{'actions'}   = $subFeed->{'actions'};	
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || Slim::Utils::Strings::getString($params->{'title'});
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
+		$stash->{'actions'}   = $feed->{'actions'};	
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -525,6 +603,27 @@ sub handleFeed {
 		}
 	}
 	else {
+		
+		# Not in use because it messes up title breadcrumbs
+#		if ($stash->{'actions'} && $stash->{'actions'}->{'items'}) {
+#			my $action = $stash->{'actions'}->{'items'};
+#			
+#			my $base = '/browselibrarylink/clicmd=' . join('+', @{$action->{'command'}});
+#			if (my $params = $action->{'fixedParams'}) {
+#				$base .= '&' . join('&', map { $_ . '=' . $params->{$_}} keys %{$params});
+#			}
+#			
+#			main::INFOLOG && $log->is_info && $log->info($base);
+#			
+#			my @vars = @{$action->{'variables'} || []};
+#			foreach my $item (@{ $stash->{'items'} }) {
+#				my $link = $base;
+#				for (my $i = 0; $i < scalar @vars; $i += 2) {
+#					$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]};
+#				}
+#				$item->{'web'}->{'url'} = $link . '/';
+#			}
+#		}
 		
 		# Check if any of our items contain audio as well as a duration value, so we can display an
 		# 'All Songs' link.  Lists with no duration values are lists of radio stations where it doesn't
@@ -777,6 +876,10 @@ sub handleSubFeed {
 		$subFeed->{forceRefresh} = 1;
 	}
 	
+	if ($feed->{'actions'}) {
+		$subFeed->{'actions'} = $feed->{'actions'};
+	}
+
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
 
