@@ -320,8 +320,6 @@ sub showExtendedText {
 	my $display = shift;
 	my $client = $display->client;
 
-	return 0 if (!$client->power());
-
 	my $visu = $prefs->client($client)->get('visualModes')->[ $prefs->client($client)->get('visualMode') ] || 0;
 	
 	return $visualizers[$visu]{text};
