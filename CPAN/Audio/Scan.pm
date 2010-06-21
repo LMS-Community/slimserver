@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.82';
+our $VERSION = '0.83';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -11,15 +11,110 @@ use constant FILTER_INFO_ONLY => 1;
 use constant FILTER_TAGS_ONLY => 2;
 
 sub scan_info {
-    my ( $class, $file ) = @_;
+    my ( $class, $path ) = @_;
     
-    $class->scan( $file, FILTER_INFO_ONLY );
+    $class->scan( $path, FILTER_INFO_ONLY );
 }
 
 sub scan_tags {
-    my ( $class, $file ) = @_;
+    my ( $class, $path ) = @_;
     
-    $class->scan( $file, FILTER_TAGS_ONLY );
+    $class->scan( $path, FILTER_TAGS_ONLY );
+}
+
+sub scan {
+    my ( $class, $path, $filter ) = @_;
+      
+    open my $fh, '<', $path or do {
+        warn "Could not open $path for reading: $!\n";
+        return;
+    };
+    
+    binmode $fh;
+    
+    my ($suffix) = $path =~ /\.(\w+)$/;
+    
+    return if !$suffix;
+    
+    if ( !defined $filter ) {
+        $filter = FILTER_INFO_ONLY | FILTER_TAGS_ONLY;
+    }
+    
+    my $ret = $class->_scan( $suffix, $fh, $path, $filter );
+    
+    close $fh;
+    
+    return $ret;
+}
+
+sub scan_fh {
+    my ( $class, $suffix, $fh, $filter ) = @_;
+    
+    binmode $fh;
+    
+    if ( !defined $filter ) {
+        $filter = FILTER_INFO_ONLY | FILTER_TAGS_ONLY;
+    }
+    
+    return $class->_scan( $suffix, $fh, '(filehandle)', $filter );
+}
+
+sub find_frame {
+    my ( $class, $path, $offset ) = @_;
+    
+    open my $fh, '<', $path or do {
+        warn "Could not open $path for reading: $!\n";
+        return;
+    };
+    
+    binmode $fh;
+    
+    my ($suffix) = $path =~ /\.(\w+)$/;
+    
+    return -1 if !$suffix;
+    
+    my $ret = $class->_find_frame( $suffix, $fh, $path, $offset );
+    
+    close $fh;
+    
+    return $ret;
+}
+
+sub find_frame_fh {
+    my ( $class, $suffix, $fh, $offset ) = @_;
+    
+    binmode $fh;
+    
+    return $class->_find_frame( $suffix, $fh, '(filehandle)', $offset );
+}
+
+sub find_frame_return_info {
+    my ( $class, $path, $offset ) = @_;
+    
+    open my $fh, '<', $path or do {
+        warn "Could not open $path for reading: $!\n";
+        return;
+    };
+    
+    binmode $fh;
+    
+    my ($suffix) = $path =~ /\.(\w+)$/;
+    
+    return if !$suffix;
+    
+    my $ret = $class->_find_frame_return_info( $suffix, $fh, $path, $offset );
+    
+    close $fh;
+    
+    return $ret;
+}
+
+sub find_frame_fh_return_info {
+    my ( $class, $suffix, $fh, $offset ) = @_;
+    
+    binmode $fh;
+    
+    return $class->_find_frame_return_info( $suffix, $fh, '(filehandle)', $offset );
 }
 
 1;
