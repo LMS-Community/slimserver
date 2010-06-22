@@ -974,105 +974,85 @@ sub _cliQuery_done {
 				# we go to xxx items from xx items :)
 				my $base; my $params = {};
 				
-				my $haveFeedContextMenu = 0;
-				
 				if ($menuMode) {
-					# build the base element
-					$params = {
-						'menu' => $query,
-					};
-				
-					if ( $url ) {
-						$params->{'url'} = $url;
-					}
+					my $feedActions = $subFeed->{'actions'};
 					
-					if ($feed->{'query'}) {
-						$params = {%$params, %{$feed->{'query'}}};
-					}
-					elsif ( $trackId ) {
-						$params->{'track_id'} = $trackId;
-					}
-				
-					$base = {
-						'actions' => {
-							'go' => {
-								'cmd' => [ $query, 'items' ],
-								'params' => $params,
-								'itemsParams' => 'params',
-							},
-							'play' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'play'],
-								'itemsParams' => 'params',
-								'params' => $params,
-								'nextWindow' => 'nowPlaying',
-							},
-							'add' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'add'],
-								'itemsParams' => 'params',
-								'params' => $params,
-							},
-							'add-hold' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'insert'],
-								'itemsParams' => 'params',
-								'params' => $params,
-							},
-						},
-					};
+					if (!$feedActions->{'allAvailableActionsDefined'}) {
+						# build the default base element
+						$params = {
+							'menu' => $query,
+						};
 					
-					if (my $actions = $subFeed->{'actions'}) {
+						if ( $url ) {
+							$params->{'url'} = $url;
+						}
 						
-						if (my $action = $actions->{'contextMenu'}) {
-							my $params = $action->{'fixedParams'} || {};
-							$params->{'menu'} ||= 1;
-							my %baseAction = (
-								player      => 0,
-								cmd         => $action->{'command'},
-								params      => $params,
-								window      => {isContextMenu => 1},
-							);
-							if ($action->{'variables'}) {
-								$baseAction{'itemsParams'} = 'contextMenuParams';
-								$actionParamsNeeded{'contextMenuParams'} = $action->{'variables'};
-							}
-							$base->{'actions'}->{'more'} = \%baseAction;
+						if ($feed->{'query'}) {
+							$params = {%$params, %{$feed->{'query'}}};
 						}
-
-						if (my $action = $actions->{'items'}) {
-							my $params = $action->{'fixedParams'} || {};
-							$params->{'menu'} ||= 1;
-							my %baseAction = (
-								player      => 0,
-								cmd         => $action->{'command'},
-								params      => $params,
-							);
-							if ($action->{'variables'}) {
-								$baseAction{'itemsParams'} = 'itemsParams';
-								$actionParamsNeeded{'itemsParams'} = $action->{'variables'};
-							}
-							$base->{'actions'}->{'go'} = \%baseAction;
+						elsif ( $trackId ) {
+							$params->{'track_id'} = $trackId;
 						}
+				
+						$base = {
+							'actions' => {
+								'go' => {
+									'cmd' => [ $query, 'items' ],
+									'params' => $params,
+									'itemsParams' => 'params',
+								},
+								'play' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'play'],
+									'itemsParams' => 'params',
+									'params' => $params,
+									'nextWindow' => 'nowPlaying',
+								},
+								'add' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'add'],
+									'itemsParams' => 'params',
+									'params' => $params,
+								},
+								'add-hold' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'insert'],
+									'itemsParams' => 'params',
+									'params' => $params,
+								},
+								'more' => {
+									player      => 0,
+									cmd         => [ $query, 'items' ],
+									itemsParams => 'params',
+									params      => $params,
+									window      => {isContextMenu => 1},
+								},
+							},
+						};
 					}
 					
-					elsif ($subFeed->{'itemsContextMenu'}) {
-						$base->{'actions'}->{'more'} = {
-							player      => 0,
-							cmd         => $subFeed->{'itemsContextMenu'},
-							params      => {menu => 1},
-							itemsParams => 'contextMenuParams',
-							window      => {isContextMenu => 1},
-						};
-						$haveFeedContextMenu = 1;
-					} else {
-						$base->{'actions'}->{'more'} = {
-							player      => 0,
-							cmd         => [ $query, 'items' ],
-							itemsParams => 'params',
-							params      => $params,
-							window      => {isContextMenu => 1},
-						};
+					if (my $feedActions = $subFeed->{'actions'}) {
+						if (my $baseAction = _makeAction($feedActions, 'info', \%actionParamsNeeded, 1, 1)) {
+							$base->{'actions'}->{'more'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'items', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'go'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'play', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
+							$base->{'actions'}->{'play'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'add', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'insert', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add-hold'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'playall', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
+							$base->{'actions'}->{'playall'} = $baseAction;
+						}
+						if (my $baseAction = _makeAction($feedActions, 'addall', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'addall'} = $baseAction;
+						}
 					}
 					
 					$request->addResult('base', $base);
@@ -1311,7 +1291,12 @@ sub _cliQuery_done {
 							$allTouchToPlay = 0;
 						}
 						elsif ( $touchToPlay ) {
-
+							
+							# XXX need to redo the all-items logic
+							# so can use playall/addall actions
+							# need to add play_index item if missing for all-items
+							# or something
+							
 							$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
 							
 							# XXX not currently supported by client
@@ -1336,22 +1321,12 @@ sub _cliQuery_done {
 								}
 								$request->addResultLoop( $loopname, $cnt, $key, \%params );
 							}
-						} else {
+						}
 						
-							my $contextMenuParams = $item->{'contextMenuParams'};
-							if ($item->{'contextMenu'}) {
-								$contextMenuParams->{'menu'} = 1;
-								my $actions = {
-									more => {
-										player    => 0,
-										cmd       => $item->{'contextMenu'},
-										params    => $contextMenuParams,
-									},
-								};
-								$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							} elsif ($haveFeedContextMenu && $contextMenuParams) {
-								$request->addResultLoop( $loopname, $cnt, 'contextMenuParams', $contextMenuParams );
-							}
+						if (my $action = _makeAction($item->{'itemActions'}, 'info', undef, 1, 1)) {
+							my $actions = $request->getResultLoop($loopname, $cnt, 'actions') || {};
+							$actions->{'more'} = $action;
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 						}
 					}
 					else {
@@ -1458,9 +1433,6 @@ sub _cliQuerySubFeed_done {
 		$subFeed->{forceRefresh} = 1;
 	}
 	
-	if ($feed->{'itemsContextMenu'}) {
-		$subFeed->{'itemsContextMenu'} = $feed->{'itemsContextMenu'};
-	}
 	if ($feed->{'actions'}) {
 		$subFeed->{'actions'} = $feed->{'actions'};
 	}
@@ -1501,6 +1473,35 @@ sub _addingToPlaylist {
 			'icon-id' => defined $icon ? $icon : '/html/music/cover.png',
 		},
 	} );
+}
+
+sub _makeAction {
+	my ($actions, $actionName, $actionParamsNeeded, $player, $contextMenu, $nextWindow) = @_;
+	
+	if (my $action = $actions->{$actionName}) {
+		my $params = $action->{'fixedParams'} || {};
+		$params->{'menu'} ||= 1;
+		
+		my %action = (
+			cmd         => $action->{'command'},
+			params      => $params,
+		);
+		$action{'player'} ||= 0 if $player;
+		$action{'window'} = {isContextMenu => 1} if $contextMenu;
+		$action{'nextWindow'} = $nextWindow if $nextWindow;
+		if (defined $actionParamsNeeded) {
+			if (exists $action->{'variables'}) {
+				if ($action->{'variables'}) {
+					$action{'itemsParams'} = $actionName . 'Params';
+					$actionParamsNeeded->{$action{'itemsParams'}} = $action->{'variables'};
+				}
+			} elsif ($actions->{'commonVariables'}) {
+				$action{'itemsParams'} = 'commonParams';
+				$actionParamsNeeded->{'commonParams'} = $actions->{'commonVariables'};
+			}
+		}
+		return \%action;
+	}
 }
 
 sub _cliQuery_error {

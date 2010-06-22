@@ -277,7 +277,7 @@ sub _generic {
 	
 	my $loop = $request->getResults()->{$loopName};
 	
-	my ($result, $unsorted, $extraAtEnd, $itemsContextMenu) = $resultsFunc->($loop);
+	my ($result, $unsorted, $extraAtEnd, $actions) = $resultsFunc->($loop);
 	
 #	$log->error(Data::Dump::dump($result));
 	
@@ -287,11 +287,7 @@ sub _generic {
 		items  => $result,
 		sorted => !$unsorted,
 	);
-	if ($itemsContextMenu && ref $itemsContextMenu eq 'HASH') {
-		$results{'actions'} = $itemsContextMenu;
-	} else {
-		$results{'itemsContextMenu'} = $itemsContextMenu;
-	}
+	$results{'actions'} = $actions if $actions;
 
 	$callback->(\%results);
 }
@@ -338,10 +334,9 @@ sub _artists {
 			}
 			return \@result, 0, $addAll,
 				{
-					contextMenu => {
+					commonVariables	=> [artist_id => 'id'],
+					info => {
 						command     => ['artistinfo', 'items'],
-						fixedParams => {},
-						variables	=> [artist_id => 'id'],
 					},
 					items => {
 						command     => ['browselibrary', 'items'],
@@ -349,7 +344,26 @@ sub _artists {
 							mode       => 'albums',
 							%{&_tagsToParams(\@searchTags)},
 						},
-						variables	=> [artist_id => 'id'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert', %{&_tagsToParams(\@searchTags)}},
 					},
 				};
 			
@@ -375,18 +389,36 @@ sub _genres {
 			}, @$loop );
 			return \@result, 0, 0,
 				{
-					contextMenu => {
+					commonVariables	=> [genre_id => 'id'],
+					info => {
 						command     => ['genreinfo', 'items'],
-						variables	=> [genre_id => 'id'],
 					},
 					items => {
 						command     => ['browselibrary', 'items'],
 						fixedParams => {
 							mode         => 'artists',
 							addAllAlbums => 1,
-							%{&_tagsToParams(\@searchTags)},
 						},
-						variables	=> [genre_id => 'id'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
 					},
 				};
 		},
@@ -408,13 +440,32 @@ sub _years {
 				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{'year'}] } ],
 			}, @$loop ], 0, 0,
 				{
+					commonVariables	=> [year => 'name'],
 					items => {
 						command     => ['browselibrary', 'items'],
 						fixedParams => {
 							mode       => 'albums',
-							%{&_tagsToParams(\@searchTags)},
 						},
-						variables	=> [year => 'name'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
 					},
 				};
 		},
@@ -494,10 +545,9 @@ sub _albums {
 			}
 			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll,
 				{
-					contextMenu => {
+					commonVariables	=> [album_id => 'id'],
+					info => {
 						command     => ['albuminfo', 'items'],
-						fixedParams => {},
-						variables	=> [album_id => 'id'],
 					},
 					items => {
 						command     => ['browselibrary', 'items'],
@@ -505,7 +555,26 @@ sub _albums {
 							mode       => 'tracks',
 							%{&_tagsToParams(\@searchTags)},
 						},
-						variables	=> [album_id => 'id'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
 					},
 				};
 		},
@@ -518,6 +587,7 @@ sub _tracks {
 	my $sort       = $pt->{'sort'} || 'sort:albumtrack';
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $search     = $pt->{'search'};
+	my $offset     = $args->{'index'} || 0;
 	
 	_generic($client, $callback, $args, 'titles', 'titles_loop',
 		['tags:dtux', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
@@ -536,14 +606,40 @@ sub _tracks {
 					playall     => 1,
 					passthrough => [ $_->{'remote'} ? { track_url => $_->{'url'} } : { track_id => $_->{'id'} } ],
 					id          => $_->{'id'},
+					play_index  => $offset++,
 				);
 				push @result, \%item;
 			}
 			return \@result, 0, 0,
 				{
-					contextMenu => {
+					commonVariables	=> [track_id => 'id'],
+					info => {
 						command     => ['trackinfo', 'items'],
-						variables	=> [track_id => 'id'],
+					},
+					items => {
+						command     => ['trackinfo', 'items'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
+						variables	=> [play_index => 'play_index'],
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						variables	=> [],
+						fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
 					},
 				};
 		},
@@ -587,8 +683,12 @@ sub _bmf {
 						type        => 'link',
 						url         => \&_bmf,
 						passthrough => [{ searchTags => [ "folder_id:" . $_->{'id'} ] }],
-						contextMenu => ['folderinfo', 'items'],
-						contextMenuParams=> { folder_id =>  $_->{'id'} },
+						actions     => {
+							info => {
+								command     => ['folderinfo', 'items'],
+								fixedParams => {folder_id =>  $_->{'id'}},
+							},
+						},
 					);
 					$gotsubfolder = 1;
 				}  elsif ($_->{'type'} eq 'track') {
@@ -600,9 +700,12 @@ sub _bmf {
 						play        => $_->{'url'},
 						playall     => 1,
 						passthrough => [{ track_id => $_->{'id'} }],
-						contextMenu => ['trackinfo', 'items'],
-						contextMenuParams=> { track_id =>  $_->{'id'} },
-						
+						actions     => {
+							info => {
+								command     => ['trackinfo', 'items'],
+								fixedParams => {track_id =>  $_->{'id'}},
+							},
+						},
 					);
 				}  elsif ($_->{'type'} eq 'playlist') {
 					
@@ -640,9 +743,9 @@ sub _playlists {
 			}, @$loop );
 			return \@result, 0, 0,
 				{
-					contextMenu => {
+					commonVariables	=> [playlist_id => 'id'],
+					info => {
 						command     => ['playlistinfo', 'items'],
-						variables	=> [playlist_id => 'id'],
 					},
 					items => {
 						command     => ['browselibrary', 'items'],
@@ -650,7 +753,26 @@ sub _playlists {
 							mode       => 'playlistTracks',
 							%{&_tagsToParams(\@searchTags)},
 						},
-						variables	=> [playlist_id => 'id'],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load'},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add'},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert'},
 					},
 				};
 			
@@ -685,7 +807,7 @@ sub _playlistTracks {
 			}
 			return \@result, 1, 0, 
 				{
-					contextMenu => {
+					info => {
 						command     => ['trackinfo', 'items'],
 						variables	=> [track_id => 'id'],
 					},

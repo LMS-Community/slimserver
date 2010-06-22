@@ -306,18 +306,19 @@ sub handleFeed {
 			# If we have an action and we have an equivalent superFeed action
 			# and we are about to fetch the last level then we can just use the feed-defined action.
 			
+			my $feedActions = $superFeed->{'actions'};
 			if ($depth == $levels
 				&& $stash->{'action'} && $stash->{'action'} =~ /^((?:play|add)(?:all)?)$/
-				&& $superFeed->{'actions'} && $superFeed->{'actions'}->{$1}
+				&& $feedActions && $feedActions->{$1}
 				)
 			{
-				my $action = $superFeed->{'actions'}->{$1};
+				my $action = $feedActions->{$1};
 				
 				my @params = @{$action->{'command'}};
 				if (my $params = $action->{'fixedParams'}) {
 					push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 				}
-				my @vars = @{$action->{'variables'} || []};
+				my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 				for (my $i = 0; $i < scalar @vars; $i += 2) {
 					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 				}
@@ -365,17 +366,17 @@ sub handleFeed {
 					'pageicon'     => $subFeed->{'icon'} || $params->{'pageicon'},
 				};
 				
-				
+				my $feedActions = $superFeed->{'actions'};
 				if (!($depth == $levels && $stash->{'action'})
-					&& $superFeed->{'actions'} && $superFeed->{'actions'}->{'items'})
+					&& $feedActions && $feedActions->{'items'})
 				{
-					my $action = $superFeed->{'actions'}->{'items'};
+					my $action = $feedActions->{'items'};
 					
 					my @params = @{$action->{'command'}};
 					if (my $params = $action->{'fixedParams'}) {
 						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 					}
-					my @vars = @{$action->{'variables'} || []};
+					my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 					for (my $i = 0; $i < scalar @vars; $i += 2) {
 						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 					}
