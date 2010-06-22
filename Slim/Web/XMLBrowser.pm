@@ -335,6 +335,8 @@ sub handleFeed {
 				
 				# done, send output back to Web module for display
 				$callback->( $client, $stash, $output, $httpClient, $response );
+				
+				return;
 			}
 
 			# If the feed is another URL, fetch it and insert it into the
