@@ -14,22 +14,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 	description  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
 });
 
-sub _initSubmenu {
-	my ($class, %args) = @_;
-	$args{'weight'} ||= $class->weight() + 1;
-	$args{'is_app'} ||= 0;
-	$class->SUPER::initPlugin(%args);
-}
-
-my @submenus = (
-	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
-		icon => 'plugins/BrowseLibrary/html/images/albums.png',
-	}],
-	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
-		icon => 'plugins/BrowseLibrary/html/images/artists.png',
-	}],
-);
-
 sub _pluginDataFor {
 	my $class = shift;
 	my $key   = shift;
@@ -43,6 +27,21 @@ sub _pluginDataFor {
 	return __PACKAGE__->SUPER::_pluginDataFor($key);
 }
 
+my @submenus = (
+	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
+		icon => 'plugins/BrowseLibrary/html/images/albums.png',
+	}],
+	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
+		icon => 'plugins/BrowseLibrary/html/images/artists.png',
+	}],
+);
+
+sub _initSubmenu {
+	my ($class, %args) = @_;
+	$args{'weight'} ||= $class->weight() + 1;
+	$args{'is_app'} ||= 0;
+	$class->SUPER::initPlugin(%args);
+}
 
 sub _initSubmenus {
 	my $class = shift;
@@ -279,7 +278,6 @@ sub _generic {
 	
 	my ($result, $unsorted, $extraAtEnd, $actions) = $resultsFunc->($loop);
 	
-#	$log->error(Data::Dump::dump($result));
 	
 	my %results = (
 		total  => $request->getResults()->{'count'} + ($extraAtEnd || 0),
@@ -288,6 +286,8 @@ sub _generic {
 		sorted => !$unsorted,
 	);
 	$results{'actions'} = $actions if $actions;
+
+#	$log->error(Data::Dump::dump(\%results));
 
 	$callback->(\%results);
 }
@@ -441,6 +441,9 @@ sub _years {
 			}, @$loop ], 0, 0,
 				{
 					commonVariables	=> [year => 'name'],
+					info => {
+						command     => ['yearinfo', 'items'],
+					},
 					items => {
 						command     => ['browselibrary', 'items'],
 						fixedParams => {
@@ -683,7 +686,7 @@ sub _bmf {
 						type        => 'link',
 						url         => \&_bmf,
 						passthrough => [{ searchTags => [ "folder_id:" . $_->{'id'} ] }],
-						actions     => {
+						itemActions => {
 							info => {
 								command     => ['folderinfo', 'items'],
 								fixedParams => {folder_id =>  $_->{'id'}},
@@ -700,7 +703,7 @@ sub _bmf {
 						play        => $_->{'url'},
 						playall     => 1,
 						passthrough => [{ track_id => $_->{'id'} }],
-						actions     => {
+						itemActions => {
 							info => {
 								command     => ['trackinfo', 'items'],
 								fixedParams => {track_id =>  $_->{'id'}},
