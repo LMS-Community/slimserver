@@ -1780,6 +1780,7 @@ sub playlistcontrolCommand {
 	# get the parameters
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
+	my $jumpIndex           = $request->getParam('play_index');
 
 	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
 	
@@ -1914,7 +1915,7 @@ sub playlistcontrolCommand {
 			$cmd .= "tracks";
 
 			Slim::Control::Request::executeRequest(
-				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id]
+				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex]
 			);
 
 			$request->addResult( 'count', $playlist->tracks->count() );
@@ -2014,7 +2015,7 @@ sub playlistcontrolCommand {
 		$cmd .= "tracks";
 
 		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, 'listRef', \@tracks]
+			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex]
 		);
 	}
 

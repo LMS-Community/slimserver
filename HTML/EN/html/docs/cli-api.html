@@ -51,6 +51,7 @@
 	<li>Added sort order 'albumtrack' for <a href="#titles">titles</a> to return the tracks in the order album-title, track-number.</li>
 	<li>Added tag 'X' for <a href="#albums">albums</a> to return the album's replay-gain value.</li>
 	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
+	<li>Added 'play_index' tagged parameter to <a href="#playlistcontrol">playlistcontrol</a>.</li>
 </ul>
 
 <hr>
@@ -6499,6 +6500,12 @@ in the saved playlists folder.</p>
 		<td>Playlist name, to restrict the results to this playlist_name. If this
 		    parameter is provided, then any genre_id, artist_id, album_id,
 		    track_id and/or playlist_id parameter is ignored.</td>
+	</tr>
+	<tr>
+		<td>play_index</td>
+		<td>If this parameter is provided along with &quot;cmd:load&quot; then
+		playback will start with the indicated track.
+		Does not work with a &quot;folder_id&quot; parameter.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
