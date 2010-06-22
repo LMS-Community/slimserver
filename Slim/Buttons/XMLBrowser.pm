@@ -61,6 +61,7 @@ sub setMode {
 	my $url    = $client->modeParam('url');
 	my $parser = $client->modeParam('parser');
 	my $opml   = $client->modeParam('opml');
+	my $parent = $client->modeParam('parent');
 	
 	# Pre-filled menu of OPML items
 	if ( $opml ) {
@@ -124,6 +125,52 @@ sub setMode {
 			'timeout'   => $timeout,
 			'remember'  => $remember,
 		};
+		
+		# Use 'items' action from item or parent feed if available
+		my $feedActions = $item->{'actions'};
+		if (!($feedActions && $feedActions->{'items'}) && $parent) {
+			$feedActions = $parent->{'actions'};
+		}
+		
+		main::INFOLOG && $log->is_info && $log->info(($feedActions ? ('Got actions' . ($parent && $parent->{'actions'} ? ' from parent' : '')) : 'Not actions'));
+		if ($feedActions && $feedActions->{'items'}) {
+			my $action = $feedActions->{'items'};
+			
+			my @params = @{$action->{'command'}};
+			if (my $params = $action->{'fixedParams'}) {
+				push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
+			}
+			my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+			for (my $i = 0; $i < scalar @vars; $i += 2) {
+				push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
+			}
+			
+			main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
+			
+			my $callback = sub {
+				my $opml = shift;
+
+				$opml->{'type'}  ||= 'opml';
+				$opml->{'title'} = $title;
+
+				gotFeed( $opml, $params );
+			};
+			
+		
+			my $proxiedRequest = Slim::Control::Request::executeRequest(
+				$client, [ @params, 'feedMode:1', ] );
+			
+			# wrap async requests
+			if ( $proxiedRequest->isStatusProcessing ) {			
+				$proxiedRequest->callbackFunction( sub {
+					$callback->($_[0]->getResults);
+				} );
+			} else {
+				$callback->($proxiedRequest->getResults);
+			}
+			
+			return;
+		}
 		
 		# Some plugins may give us a callback we should use to get OPML data
 		# instead of fetching it ourselves.
@@ -705,6 +752,7 @@ sub gotOPML {
 					'header'  => $title,
 					'headerAddCount' => 1,
 					'item'    => $item,
+					'parent'  => $opml,
 					'parser'  => $parser,
 				);
 
