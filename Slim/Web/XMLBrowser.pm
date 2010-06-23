@@ -375,6 +375,7 @@ sub handleFeed {
 					my $action = $feedActions->{'items'};
 					
 					my @params = @{$action->{'command'}};
+					push @params, (0, 0);	# All items requests take _index and _quantity parameters
 					if (my $params = $action->{'fixedParams'}) {
 						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 					}
@@ -383,7 +384,7 @@ sub handleFeed {
 						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 					}
 					
-					main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
+					main::INFOLOG && $log->is_info && $log->info('Use CLI for items: ', join(', ', @params));
 					
 					my $callback = sub {
 						my $opml = shift;
@@ -394,15 +395,12 @@ sub handleFeed {
 						handleSubFeed( $opml, $args );
 					};
 					
-				
-					my $proxiedRequest = Slim::Control::Request::executeRequest(
-						$client, [ @params, 'feedMode:1', ] );
+				    push @params, 'feedMode:1';
+					my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
 					
 					# wrap async requests
 					if ( $proxiedRequest->isStatusProcessing ) {			
-						$proxiedRequest->callbackFunction( sub {
-							$callback->($_[0]->getResults);
-						} );
+						$proxiedRequest->callbackFunction( sub { $callback->($_[0]->getResults); } );
 					} else {
 						$callback->($proxiedRequest->getResults);
 					}
