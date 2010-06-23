@@ -1479,7 +1479,7 @@ sub findAction {
 	my ($feed, $item, $actionName) = @_;
 	
 	if ($item && $item->{'actions'} && $item->{'actions'}->{$actionName}) {
-		return wantarray ? ($item->{'actions'}->{$actionName}, {} : $item->{'actions'}->{$actionName};
+		return wantarray ? ($item->{'actions'}->{$actionName}, {}) : $item->{'actions'}->{$actionName};
 	}
 	if ($feed && $feed->{'actions'} && $feed->{'actions'}->{$actionName}) {
 		return wantarray ? ($feed->{'actions'}->{$actionName}, $feed->{'actions'}) : $feed->{'actions'}->{$actionName};
