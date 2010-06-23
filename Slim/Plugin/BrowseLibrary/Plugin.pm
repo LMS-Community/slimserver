@@ -137,12 +137,13 @@ sub _topLevel {
 		$args{'searchTags'} = \@searchTags if scalar @searchTags;
 
 		$args{'sort'} = 'sort:' . $params->{'sort'} if $params->{'sort'};
+		$args{'search'} = $params->{'search'} if $params->{'search'};
 		
 		if ($params->{'mode'}) {
 			no strict "refs";
 			
 			my %entryParams;
-			for (@topLevelArgs, qw(sort mode)) {
+			for (@topLevelArgs, qw(sort search mode)) {
 				$entryParams{$_} = $params->{$_} if $params->{$_};
 			}
 			main::INFOLOG && $log->is_info && $log->info('params=>', join('&', map {$_ . '=' . $entryParams{$_}} keys(%entryParams)));
@@ -306,6 +307,10 @@ sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
+
+	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		$search = $args->{'search'};
+	}
 	
 	_generic($client, $callback, $args, 'artists', 'artists_loop',
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
@@ -482,6 +487,10 @@ sub _albums {
 	my $search     = $pt->{'search'};
 	my $getMetadata= $args->{'wantMetadata'}; 
 	my $tags       = 'ljsa';
+
+	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		$search = $args->{'search'};
+	}
 	
 	$tags .= 'ywXiq' if $getMetadata;
 	
@@ -592,6 +601,10 @@ sub _tracks {
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
 	
+	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		$search = $args->{'search'};
+	}
+
 	_generic($client, $callback, $args, 'titles', 'titles_loop',
 		['tags:dtux', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
@@ -731,6 +744,10 @@ sub _playlists {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
 	
+	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		$search = $args->{'search'};
+	}
+
 	_generic($client, $callback, $args, 'playlists', 'playlists_loop',
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
