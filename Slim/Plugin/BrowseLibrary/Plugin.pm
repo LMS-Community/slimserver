@@ -851,17 +851,16 @@ sub _registerWebLink {
 }
 
 sub _webLinkDone {
-	my ($client, $feed, $args) = @_;
+	my ($client, $feed, $title, $args) = @_;
 	
 	# pass CLI command as result to XMLBrowser
-	
-	main::INFOLOG && $log->is_info && $log->info(join(', ', map { $_ . '(' . ref($feed->{$_}) . ')'} keys %$feed));
 	
 	Slim::Web::XMLBrowser->handleWebIndex( {
 			client  => $client,
 			feed    => $feed,
 			timeout => 35,
 			args    => $args,
+			title   => $title,
 		} );
 }
 
@@ -887,6 +886,8 @@ sub webLink {
 		return;
 	}
 	
+	my $title = delete $params{'linktitle'};
+	
 	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
 	push @verbs, 'feedMode:1';
 	
@@ -896,9 +897,9 @@ sub webLink {
 		
 	# wrap async requests
 	if ( $proxiedRequest->isStatusProcessing ) {			
-		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $allArgs); } );
+		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $title, $allArgs); } );
 	} else {
-		_webLinkDone($client, $proxiedRequest->getResults, $allArgs);
+		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
 	}
 
 }
