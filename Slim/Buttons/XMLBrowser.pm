@@ -1195,7 +1195,7 @@ sub playItem {
 		$actionKey .= 'all';
 	}
 	
-	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, $actionKey)) {
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, $actionKey)) {
 		$feedActions ||= {};
 		
 		my @params = @{$feedAction->{'command'}};
