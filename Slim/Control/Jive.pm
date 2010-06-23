@@ -1809,8 +1809,9 @@ sub browseMusicFolder {
 				weight         => 70,
 				actions        => {
 					go => {
-						cmd    => ['musicfolder'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode => 'bmf',
 							menu => 'musicfolder',
 						},
 					},
@@ -2345,8 +2346,9 @@ sub myMusicMenu {
 				weight         => 10,
 				actions        => {
 					go => {
-						cmd    => ['artists'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode  => 'artists',
 							menu  => 'album',
 							party => $party,
 						},
@@ -2361,8 +2363,9 @@ sub myMusicMenu {
 				weight         => 20,
 				actions        => {
 					go => {
-						cmd    => ['albums'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode     => 'albums',
 							menu     => 'track',
 							sort     => $sort,
 							party    => $party,
@@ -2370,7 +2373,6 @@ sub myMusicMenu {
 					},
 				},
 				window         => {
-					menuStyle => 'album',
 					menuStyle => 'album',
 				},
 			},
@@ -2382,8 +2384,9 @@ sub myMusicMenu {
 				weight         => 30,
 				actions        => {
 					go => {
-						cmd    => ['genres'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode  => 'genres',
 							menu  => 'artist',
 							party => $party,
 						},
@@ -2398,8 +2401,9 @@ sub myMusicMenu {
 				weight         => 40,
 				actions        => {
 					go => {
-						cmd    => ['years'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode  => 'years',
 							menu  => 'album',
 							party => $party,
 						},
@@ -2413,8 +2417,9 @@ sub myMusicMenu {
 				weight         => 50,
 				actions        => {
 					go => {
-						cmd    => ['albums'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode  => 'albums',
 							menu  => 'track',
 							sort  => 'new',
 							party => $party,
@@ -2432,8 +2437,9 @@ sub myMusicMenu {
 				weight         => 80,
 				actions        => {
 					go => {
-						cmd    => ['playlists'],
+						cmd    => ['browselibrary', 'items'],
 						params => {
+							mode  => 'playlists',
 							menu  => 'track',
 							party => $party,
 						},
@@ -2456,7 +2462,7 @@ sub myMusicMenu {
 			push @myMusicMenu, $browseMusicFolder;
 		}
 	}
-
+	
 	if ($batch) {
 		return \@myMusicMenu;
 	} else {
@@ -2508,8 +2514,9 @@ sub searchMenu {
 		},
 		actions => {
 			go => {
-				cmd => ['artists'],
+				cmd => ['browselibrary', 'items'],
 				params => {
+					mode     => 'artists',
 					menu     => 'album',
 					menu_all => '1',
 					useContextMenu => '1',
@@ -2540,8 +2547,9 @@ sub searchMenu {
 		},
 		actions => {
 			go => {
-				cmd => ['albums'],
+				cmd => ['browselibrary', 'items'],
 				params => {
+					mode     => 'albums',
 					menu     => 'track',
 					menu_all => '1',
 					useContextMenu => '1',
@@ -2573,16 +2581,17 @@ sub searchMenu {
 		},
 		actions => {
 			go => {
-				cmd => ['tracks'],
+				cmd => ['browselibrary', 'items'],
 				params => {
-					menu     => 'track',
+					mode      => 'tracks', 
+					menu      => 'track',
 					menuStyle => 'album',
 					useContextMenu => '1',
-					menu_all => '1',
-					search   => '__TAGGEDINPUT__',
+					menu_all  => '1',
+					search    => '__TAGGEDINPUT__',
 					_searchType => 'tracks',
 				},
-                        },
+			},
 		},
 		window => {
 			text => $client->string('SEARCHFOR_SONGS'),
@@ -2606,8 +2615,9 @@ sub searchMenu {
 		},
 		actions => {
 			go => {
-				cmd => ['playlists'],
+				cmd => ['browselibrary', 'items'],
 				params => {
+					mode     => 'playlists',
 					menu     => 'track',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
