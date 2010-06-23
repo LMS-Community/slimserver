@@ -864,27 +864,22 @@ sub webLink {
 		}
 	}
 	
-		$log->error(join(', ', keys %$args));
 	my @verbs = split(/\+/, delete $params{'clicmd'});
 	if (!scalar @verbs) {
 		$log->error("Missing clicmd parameter");
-		$log->error(join(', ', keys %$args));
-		$log->error("path=", $args->{'path'}, ', webroot=', $args->{'webroot'}, ', url_query=', $args->{'url_query'});
 		return;
 	}
-		$log->error("path=", $args->{'path'}, ', webroot=', $args->{'webroot'}, ', url_query=', $args->{'url_query'});
 	
-	my @params = map { $_ . ':' . $params{$_} } keys %params;
+	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
+	push @verbs, 'feedMode:1';
 	
 	# execute CLI command
-	main::INFOLOG && $log->is_info && $log->info(join(', ', @verbs, @params));
-	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, [ @verbs, @params, 'feedMode:1' ] );
+	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(', ', @verbs));
+	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
 		
 	# wrap async requests
 	if ( $proxiedRequest->isStatusProcessing ) {			
-		$proxiedRequest->callbackFunction( sub {
-			_webLinkDone($client, $_[0]->getResults, $allArgs);
-		} );
+		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $allArgs); } );
 	} else {
 		_webLinkDone($client, $proxiedRequest->getResults, $allArgs);
 	}
