@@ -305,20 +305,20 @@ sub handleFeed {
 			# short-circuit fetch if possible
 			# If we have an action and we have an equivalent superFeed action
 			# and we are about to fetch the last level then we can just use the feed-defined action.
-			
-			my $feedActions = $superFeed->{'actions'};
+			my ($feedAction, $feedActions);
 			if ($depth == $levels
 				&& $stash->{'action'} && $stash->{'action'} =~ /^((?:play|add)(?:all)?)$/
-				&& $feedActions && $feedActions->{$1}
 				)
 			{
-				my $action = $feedActions->{$1};
-				
-				my @params = @{$action->{'command'}};
-				if (my $params = $action->{'fixedParams'}) {
+				($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($superFeed, $subFeed, $1);
+			}
+
+			if ($feedAction) {
+				my @params = @{$feedAction->{'command'}};
+				if (my $params = $feedAction->{'fixedParams'}) {
 					push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 				}
-				my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+				my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 				for (my $i = 0; $i < scalar @vars; $i += 2) {
 					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 				}
@@ -367,19 +367,16 @@ sub handleFeed {
 					'args'         => [ $client, $stash, $callback, $httpClient, $response ],
 					'pageicon'     => $subFeed->{'icon'} || $params->{'pageicon'},
 				};
-				
-				my $feedActions = $superFeed->{'actions'};
-				if (!($depth == $levels && $stash->{'action'})
-					&& $feedActions && $feedActions->{'items'})
-				{
-					my $action = $feedActions->{'items'};
-					
-					my @params = @{$action->{'command'}};
+
+
+				my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($superFeed, $subFeed, 'items');
+				if ($feedAction && !($depth == $levels && $stash->{'action'})) {
+					my @params = @{$feedAction->{'command'}};
 					push @params, (0, 0);	# All items requests take _index and _quantity parameters
-					if (my $params = $action->{'fixedParams'}) {
+					if (my $params = $feedAction->{'fixedParams'}) {
 						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 					}
-					my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+					my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 					for (my $i = 0; $i < scalar @vars; $i += 2) {
 						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 					}

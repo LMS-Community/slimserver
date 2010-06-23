@@ -1475,6 +1475,17 @@ sub _addingToPlaylist {
 	} );
 }
 
+sub findAction {
+	my ($feed, $item, $actionName) = @_;
+	
+	if ($item && $item->{'actions'} && $item->{'actions'}->{$actionName}) {
+		return $item->{'actions'}->{$actionName};
+	}
+	if ($feed && $feed->{'actions'} && $feed->{'actions'}->{$actionName}) {
+		return wantarray ? ($feed->{'actions'}->{$actionName}, $feed->{'actions'}) : $feed->{'actions'}->{$actionName};
+	}
+}
+
 sub _makeAction {
 	my ($actions, $actionName, $actionParamsNeeded, $player, $contextMenu, $nextWindow) = @_;
 	

@@ -128,21 +128,15 @@ sub setMode {
 		'remember'  => $remember,
 	};
 	
-	# Use 'items' action from item or parent feed if available
-	my $feedActions = $item->{'actions'};
-	if (!($feedActions && $feedActions->{'items'}) && $parent) {
-		$feedActions = $parent->{'actions'};
-	}
-	
-	if ($feedActions && $feedActions->{'items'}) {
-		my $action = $feedActions->{'items'};
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, 'items')) {
+		$feedActions ||= {};
 		
-		my @params = @{$action->{'command'}};
+		my @params = @{$feedAction->{'command'}};
 		push @params, (0, 0);	# All items requests take _index and _quantity parameters
-		if (my $params = $action->{'fixedParams'}) {
+		if (my $params = $feedAction->{'fixedParams'}) {
 			push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 		}
-		my @vars = exists $action->{'variables'} ? @{$action->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 		for (my $i = 0; $i < scalar @vars; $i += 2) {
 			push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
 		}
@@ -1201,13 +1195,8 @@ sub playItem {
 		$actionKey .= 'all';
 	}
 	
-	my $feedActions = $item->{'actions'};
-	if (!($feedActions && $feedActions->{$actionKey}) && $feed) {
-		$feedActions = $feed->{'actions'};
-	}
-	
-	if ($feedActions && $feedActions->{$actionKey}) {
-		my $feedAction = $feedActions->{$actionKey};
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, $actionKey)) {
+		$feedActions ||= {};
 		
 		my @params = @{$feedAction->{'command'}};
 		if (my $params = $feedAction->{'fixedParams'}) {
