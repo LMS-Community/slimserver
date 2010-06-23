@@ -129,7 +129,6 @@ sub setMode {
 	};
 	
 	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, 'items')) {
-		$feedActions ||= {};
 		
 		my @params = @{$feedAction->{'command'}};
 		push @params, (0, 0);	# All items requests take _index and _quantity parameters
@@ -1196,7 +1195,6 @@ sub playItem {
 	}
 	
 	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, $actionKey)) {
-		$feedActions ||= {};
 		
 		my @params = @{$feedAction->{'command'}};
 		if (my $params = $feedAction->{'fixedParams'}) {
