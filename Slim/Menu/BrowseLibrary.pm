@@ -34,10 +34,10 @@ sub _pluginDataFor {
 
 my @submenus = (
 	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
-		icon => 'plugins/BrowseLibrary/html/images/albums.png',
+		icon => 'html/images/albums.png',
 	}],
 	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
-		icon => 'plugins/BrowseLibrary/html/images/artists.png',
+		icon => 'html/images/artists.png',
 	}],
 );
 
@@ -270,71 +270,71 @@ sub _topLevel {
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_ARTIST'),
 				url  => \&_artists,
-				icon => 'plugins/BrowseLibrary/html/images/artists.png',
+				icon => 'html/images/artists.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_ALBUM'),
 				url  => \&_albums,
-				icon => 'plugins/BrowseLibrary/html/images/albums.png',
+				icon => 'html/images/albums.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_GENRE'),
 				url  => \&_genres,
-				icon => 'plugins/BrowseLibrary/html/images/genres.png',
+				icon => 'html/images/genres.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_BY_YEAR'),
 				url  => \&_years,
-				icon => 'plugins/BrowseLibrary/html/images/years.png',
+				icon => 'html/images/years.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_NEW_MUSIC'),
 				url  => \&_albums,
 				passthrough => [ { sort => 'sort:new' } ],
-				icon => 'plugins/BrowseLibrary/html/images/newmusic.png',
+				icon => 'html/images/newmusic.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'BROWSE_MUSIC_FOLDER'),
 				url  => \&_bmf,
-				icon => 'plugins/BrowseLibrary/html/images/musicfolder.png',
+				icon => 'html/images/musicfolder.png',
 			},
 			{
 				type => 'link',
 				name => _clientString($client, 'PLAYLISTS'),
 				url  => \&_playlists,
-				icon => 'plugins/BrowseLibrary/html/images/playlists.png',
+				icon => 'html/images/playlists.png',
 			},
 			{
 				name  => _clientString($client, 'SEARCH'),
-				icon => 'plugins/BrowseLibrary/html/images/search.png',
+				icon => 'html/images/search.png',
 				items => [
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_ARTIST'),
-						icon => 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'html/images/search.png',
 						url  => \&_artists,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_ALBUM'),
-						icon => 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'html/images/search.png',
 						url  => \&_albums,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'BROWSE_BY_SONG'),
-						icon => 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'html/images/search.png',
 						url  => \&_tracks,
 					},
 					{
 						type => 'search',
 						name => _clientString($client, 'PLAYLISTS'),
-						icon => 'plugins/BrowseLibrary/html/images/search.png',
+						icon => 'html/images/search.png',
 						url  => \&_playlists,
 					},
 				],
@@ -1057,7 +1057,7 @@ sub _playlistTracks {
 }
 
 sub getDisplayName () {
-	return 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME';
+	return 'MY_MUSIC';
 }
 
 sub playerMenu {'PLUGINS'}

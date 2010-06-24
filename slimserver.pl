@@ -573,6 +573,12 @@ sub init {
 		Slim::Utils::AutoRescan->init();
 	}
 
+	if (Slim::Schema::hasLibrary()) {
+		main::INFOLOG && $log->info("Library Browser init...");
+		require Slim::Menu::BrowseLibrary;
+		Slim::Menu::BrowseLibrary->init();
+	}
+	
 	# regular server has a couple more initial operations.
 	main::INFOLOG && $log->info("Squeezebox Server persist playlists...");
 
