@@ -23,7 +23,6 @@ sub init {
 
 	Slim::Web::Pages->addPageFunction( qr/^browsedb\.(?:htm|xml)/, \&browsedb );
 	Slim::Web::Pages->addPageFunction( qr/^browseid3\.(?:htm|xml)/, \&browseid3 );
-	Slim::Web::Pages->addPageFunction( qr/^(?:songinfo|trackinfo)\.(?:htm|xml)/, \&trackinfo);
 
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0" });
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&level=0" });
@@ -578,34 +577,6 @@ sub browseid3 {
 	$params->{'hierarchy'} = join(',', @hierarchy);
 
 	return browsedb($client, $params);
-}
-
-sub trackinfo {
-	my $client = shift;
-	my $params = shift;
-	
-	my $id    = $params->{sess} || $params->{item};
-	my $track = Slim::Schema->find( Track => $id );
-	
-	my $menu = Slim::Menu::TrackInfo->menu( $client, $track->url, $track ) if $track;
-	
-	# some additional parameters for the nice favorites button at the top
-	$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($track->url);
-	$params->{itemUrl}    = $track->url;
-
-	# Pass-through track ID as sess param
-	$params->{sess} = $id;
-	
-	# Include track cover image
-	$params->{image} = $menu->{cover};
-	
-	Slim::Web::XMLBrowser->handleWebIndex( {
-		client => $client,
-		path   => 'trackinfo.html',
-		title  => 'SONG_INFO',
-		feed   => $menu,
-		args   => [ $client, $params, @_ ],
-	} );
 }
 
 # Turn an array of attributes into a URI string
