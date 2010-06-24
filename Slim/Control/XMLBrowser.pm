@@ -963,6 +963,8 @@ sub _cliQuery_done {
 		
 			if ($valid) {
 				
+				my $feedActions = $subFeed->{'actions'};
+				
 				if (my $title = $subFeed->{'name'} || $subFeed->{'title'}) {
 					if ($menuMode && $subFeed->{'name2'}) {
 						$title .= "\n" . $subFeed->{'name2'};
@@ -975,8 +977,6 @@ sub _cliQuery_done {
 				my $base; my $params = {};
 				
 				if ($menuMode) {
-					my $feedActions = $subFeed->{'actions'};
-					
 					if (!$feedActions->{'allAvailableActionsDefined'}) {
 						# build the default base element
 						$params = {
@@ -1032,26 +1032,41 @@ sub _cliQuery_done {
 					}
 					
 					if (my $feedActions = $subFeed->{'actions'}) {
-						if (my $baseAction = _makeAction($feedActions, 'info', \%actionParamsNeeded, 1, 1)) {
-							$base->{'actions'}->{'more'} = $baseAction;
+						my $n = 0;
+						
+						my $playalbum = undef;
+						if ( $request->client ) {
+							$playalbum = $prefs->client($request->client)->get('playtrackalbum');
 						}
-						if (my $baseAction = _makeAction($feedActions, 'items', \%actionParamsNeeded, 1)) {
-							$base->{'actions'}->{'go'} = $baseAction;
+						# if player pref for playtrack album is not set, get the old server pref.
+						if ( !defined $playalbum ) {
+							$playalbum = $prefs->get('playtrackalbum');
 						}
-						if (my $baseAction = _makeAction($feedActions, 'play', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
-							$base->{'actions'}->{'play'} = $baseAction;
+						
+						my $baseAction;
+						
+						if ($baseAction = _makeAction($feedActions, 'info', \%actionParamsNeeded, 1, 1)) {
+							$base->{'actions'}->{'more'} = $baseAction; $n++;
 						}
-						if (my $baseAction = _makeAction($feedActions, 'add', \%actionParamsNeeded, 1)) {
-							$base->{'actions'}->{'add'} = $baseAction;
+						if ($baseAction = _makeAction($feedActions, 'items', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'go'} = $baseAction; $n++;
 						}
-						if (my $baseAction = _makeAction($feedActions, 'insert', \%actionParamsNeeded, 1)) {
-							$base->{'actions'}->{'add-hold'} = $baseAction;
+						if ( $playalbum && ($baseAction = _makeAction($feedActions, 'playall', \%actionParamsNeeded, 1, 0, 'nowPlaying')) ) {
+							$base->{'actions'}->{'play'} = $baseAction; $n++;
+						} elsif (my $baseAction = _makeAction($feedActions, 'play', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
+							$base->{'actions'}->{'play'} = $baseAction; $n++;
 						}
-						if (my $baseAction = _makeAction($feedActions, 'playall', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
-							$base->{'actions'}->{'playall'} = $baseAction;
+						if ( $playalbum && ($baseAction = _makeAction($feedActions, 'addall', \%actionParamsNeeded, 1)) ) {
+							$base->{'actions'}->{'add'} = $baseAction; $n++;
+						} elsif (my $baseAction = _makeAction($feedActions, 'add', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add'} = $baseAction; $n++;
 						}
-						if (my $baseAction = _makeAction($feedActions, 'addall', \%actionParamsNeeded, 1)) {
-							$base->{'actions'}->{'addall'} = $baseAction;
+						if ($baseAction = _makeAction($feedActions, 'insert', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add-hold'} = $baseAction; $n++;
+						}
+						
+						if ($n >= 5) {
+							$feedActions->{'allAvailableActionsDefined'} = 1;
 						}
 					}
 					
@@ -1308,11 +1323,40 @@ sub _cliQuery_done {
 							$allTouchToPlay = 0;
 						}
 						
-						if ( scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) ) {
-							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
+						my $itemActions = $item->{'itemActions'};
+						if ($itemActions) {
+							
+							my $actions;
+							if (!$itemActions->{'allAvailableActionsDefined'}) {
+								$actions = $request->getResultLoop($loopname, $cnt, 'actions');
+							}
+							$actions ||= {};
+							
+							my $n = 0;
+							
+							if (my $action = _makeAction($itemActions, 'info', undef, 1, 1)) {
+								$actions->{'more'} = $action; $n++;
+							}
+							if (my $action = _makeAction($itemActions, 'items', undef, 1)) {
+								$actions->{'go'} = $action; $n++;
+							}
+							if (my $action = _makeAction($itemActions, 'play', undef, 1, 0, 'nowPlaying')) {
+								$actions->{'play'} = $action; $n++;
+							}
+							if (my $action = _makeAction($itemActions, 'add', undef, 1)) {
+								$actions->{'add'} = $action; $n++;
+							}
+							if (my $action = _makeAction($itemActions, 'insert', undef, 1)) {
+								$actions->{'add-hold'} = $action; $n++;
+							}
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							
+							if ($n >= 5) {
+								$itemActions->{'allAvailableActionsDefined'} = 1;
+							}
 						}
-						
-						if (%actionParamsNeeded) {
+
+						if (!$itemActions->{'allAvailableActionsDefined'} && %actionParamsNeeded) {
 							foreach my $key (keys %actionParamsNeeded) {
 								my %params;
 								my @vars = @{$actionParamsNeeded{$key}};
@@ -1323,11 +1367,13 @@ sub _cliQuery_done {
 							}
 						}
 						
-						if (my $action = _makeAction($item->{'itemActions'}, 'info', undef, 1, 1)) {
-							my $actions = $request->getResultLoop($loopname, $cnt, 'actions') || {};
-							$actions->{'more'} = $action;
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+						if (   !$itemActions->{'allAvailableActionsDefined'}
+							&& !$feedActions->{'allAvailableActionsDefined'}
+							&& scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) )
+						{
+							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
+						
 					}
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -1491,6 +1537,10 @@ sub _makeAction {
 	my ($actions, $actionName, $actionParamsNeeded, $player, $contextMenu, $nextWindow) = @_;
 	
 	if (my $action = $actions->{$actionName}) {
+		if ( !($action->{'command'} && scalar @{$action->{'command'}}) ) {
+			return 'none';
+		}
+	
 		my $params = $action->{'fixedParams'} || {};
 		$params->{'menu'} ||= 1;
 		
@@ -1498,6 +1548,7 @@ sub _makeAction {
 			cmd         => $action->{'command'},
 			params      => $params,
 		);
+		
 		$action{'player'} ||= 0 if $player;
 		$action{'window'} = {isContextMenu => 1} if $contextMenu;
 		$action{'nextWindow'} = $nextWindow if $nextWindow;
@@ -1509,7 +1560,7 @@ sub _makeAction {
 				}
 			} elsif ($actions->{'commonVariables'}) {
 				$action{'itemsParams'} = 'commonParams';
-				$actionParamsNeeded->{'commonParams'} = $actions->{'commonVariables'};
+				$actionParamsNeeded->{$action{'itemsParams'}} = $actions->{'commonVariables'};
 			}
 		}
 		return \%action;
