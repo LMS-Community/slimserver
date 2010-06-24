@@ -4,77 +4,76 @@ package Slim::Menu::BrowseLibrary;
 
 
 use strict;
-use base 'Slim::Plugin::OPMLBased';
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
 
-my %pluginData = (
-	icon => 'html/images/browselibrary.png',
-);
-
-sub _pluginDataFor {
-	my $class = shift;
-	my $key   = shift;
-
-	my $pluginData = $class->pluginData() if $class->can('pluginData');
-
-	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
-		return $pluginData->{$key};
-	}
-	
-	if ($pluginData{$key}) {
-		return $pluginData{$key};
-	}
-
-	return __PACKAGE__->SUPER::_pluginDataFor($key);
-}
-
-my @submenus = (
-	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
-		icon => 'html/images/albums.png',
-	}],
-	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
-		icon => 'html/images/artists.png',
-	}],
-);
-
-sub _initSubmenu {
-	my ($class, %args) = @_;
-	$args{'weight'} ||= $class->weight() + 1;
-	$args{'is_app'} ||= 0;
-	$class->SUPER::initPlugin(%args);
-}
-
-sub _initSubmenus {
-	my $class = shift;
-	my $base  = __PACKAGE__;
-	
-	foreach my $menu (@submenus) {
-
-		my $packageName = $base . '::' . $menu->[0];
-		my $pkg = "{
-			package $packageName;
-			use base '$base';
-			my \$pluginData;
-			
-			sub init {
-				my (\$class, \$feed, \$data) = \@_;
-				\$pluginData = \$data;
-				\$class->SUPER::_initSubmenu(feed => \$feed, tag => '$menu->[1]');
-			}
-		
-			sub getDisplayName {'$menu->[2]'}	
-			sub pluginData {\$pluginData}	
-		}";
-		
-		eval $pkg;
-		
-		$packageName->init($menu->[3], $menu->[4]);
-	}
-}
+#my %pluginData = (
+#	icon => 'html/images/browselibrary.png',
+#);
+#
+#sub _pluginDataFor {
+#	my $class = shift;
+#	my $key   = shift;
+#
+#	my $pluginData = $class->pluginData() if $class->can('pluginData');
+#
+#	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
+#		return $pluginData->{$key};
+#	}
+#	
+#	if ($pluginData{$key}) {
+#		return $pluginData{$key};
+#	}
+#
+#	return __PACKAGE__->SUPER::_pluginDataFor($key);
+#}
+#
+#my @submenus = (
+#	['Albums', 'browsealbums', 'BROWSE_BY_ALBUM', \&_albums, {
+#		icon => 'html/images/albums.png',
+#	}],
+#	['Artists', 'browseartists', 'BROWSE_BY_ARTIST', \&_artists, {
+#		icon => 'html/images/artists.png',
+#	}],
+#);
+#
+#sub _initSubmenu {
+#	my ($class, %args) = @_;
+#	$args{'weight'} ||= $class->weight() + 1;
+#	$args{'is_app'} ||= 0;
+#	$class->SUPER::initPlugin(%args);
+#}
+#
+#sub _initSubmenus {
+#	my $class = shift;
+#	my $base  = __PACKAGE__;
+#	
+#	foreach my $menu (@submenus) {
+#
+#		my $packageName = $base . '::' . $menu->[0];
+#		my $pkg = "{
+#			package $packageName;
+#			use base '$base';
+#			my \$pluginData;
+#			
+#			sub init {
+#				my (\$class, \$feed, \$data) = \@_;
+#				\$pluginData = \$data;
+#				\$class->SUPER::_initSubmenu(feed => \$feed, tag => '$menu->[1]');
+#			}
+#		
+#			sub getDisplayName {'$menu->[2]'}	
+#			sub pluginData {\$pluginData}	
+#		}";
+#		
+#		eval $pkg;
+#		
+#		$packageName->init($menu->[3], $menu->[4]);
+#	}
+#}
 
 use constant BROWSELIBRARY => 'browselibrary';
 
@@ -83,19 +82,49 @@ sub init {
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug('init');
 	
-	$class->SUPER::initPlugin(
-		feed   => \&_topLevel,
-		tag    => BROWSELIBRARY,
-		weight => 15,
-		is_app => 0,
-	);
+	{
+		no strict 'refs';
+		*{$class.'::'.'feed'}     = \&_topLevel;
+		*{$class.'::'.'tag'}      = sub { BROWSELIBRARY };
+		*{$class.'::'.'modeName'} = sub { BROWSELIBRARY };
+		*{$class.'::'.'menu'}     = sub { undef };
+		*{$class.'::'.'weight'}   = sub { 15 };
+		*{$class.'::'.'type'}     = sub { 'link' };
+	}
 
-	$class->_initSubmenus();
+	$class->_initCLI();
+	
+	if ( main::WEBUI ) {
+		$class->_webPages;
+	}
+	
+
+#	$class->_initSubmenus();
 	
     $class->_initModes();
 }
 
-sub webPages {
+sub cliQuery {
+ 	my $request = shift;
+	Slim::Control::XMLBrowser::cliQuery( BROWSELIBRARY, \&_topLevel, $request );
+};
+
+sub _initCLI {
+	my ( $class ) = @_;
+	
+	# CLI support
+	Slim::Control::Request::addDispatch(
+		[ BROWSELIBRARY, 'items', '_index', '_quantity' ],
+	    [ 1, 1, 1, \&cliQuery ]
+	);
+	
+	Slim::Control::Request::addDispatch(
+		[ BROWSELIBRARY, 'playlist', '_method' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
+}
+
+sub _webPages {
 	my $class = shift;
 	
 	require Slim::Web::XMLBrowser;
@@ -147,9 +176,6 @@ sub _initModes {
 		}
 	}
 }
-
-# Leave setup of jive menu calls to getJiveMenu below
-sub initJive {}
 
 sub getJiveMenu {
 	my ($client, $baseNode, $albumSort) = @_;
