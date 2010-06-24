@@ -1,4 +1,4 @@
-package Slim::Plugin::BrowseLibrary::Plugin;
+package Slim::Menu::BrowseLibrary;
 
 # $Id$
 
@@ -9,12 +9,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
+my $log = logger('database.info');
 
-my $log = Slim::Utils::Log->addLogCategory({
-	category     => 'plugin.browse',
-	defaultLevel => 'ERROR',
-	description  => 'PLUGIN_BROWSE_LIBRARY_MODULE_NAME',
-});
+my %pluginData = (
+	icon => 'html/images/browselibrary.png',
+);
 
 sub _pluginDataFor {
 	my $class = shift;
@@ -24,6 +23,10 @@ sub _pluginDataFor {
 
 	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
 		return $pluginData->{$key};
+	}
+	
+	if ($pluginData{$key}) {
+		return $pluginData{$key};
 	}
 
 	return __PACKAGE__->SUPER::_pluginDataFor($key);
@@ -73,34 +76,47 @@ sub _initSubmenus {
 	}
 }
 
-sub initPlugin {
+use constant BROWSELIBRARY => 'browselibrary';
+
+sub init {
 	my $class = shift;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug('init');
 	
 	$class->SUPER::initPlugin(
 		feed   => \&_topLevel,
-		tag    => 'browselibrary',
-		menu   => 'plugins',
+		tag    => BROWSELIBRARY,
 		weight => 15,
 		is_app => 0,
 	);
 
 	$class->_initSubmenus();
 	
-    $class->_addSubModes();
+    $class->_initModes();
 }
 
 sub webPages {
 	my $class = shift;
 	
-	$class->SUPER::webPages();
-	
 	require Slim::Web::XMLBrowser;
 	Slim::Web::XMLBrowser->init();
 	
+	Slim::Web::Pages->addPageFunction( $class->tag(), sub {
+		my $client = $_[0];
+		
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			client  => $client,
+			feed    => $class->feed( $client ),
+			type    => $class->type( $client ),
+			title   => $class->getDisplayName(),
+			timeout => 35,
+			args    => \@_
+		} );
+	} );
+	
+	
 	foreach my $node (@{_getNodeList()}) {
-		my $url = 'clixmlbrowser/clicmd=browselibrary+items&linktitle=' . $node->{'name'};
+		my $url = 'clixmlbrowser/clicmd=' . $class->tag() . '+items&linktitle=' . $node->{'name'};
 		$url .= join('&', ('', map {$_ .'=' . $node->{'params'}->{$_}} keys %{$node->{'params'}}));
 		$url .= '/';
 		Slim::Web::Pages->addPageLinks("browse", { $node->{'name'} => $url });
@@ -108,19 +124,21 @@ sub webPages {
 	}
 }
 
-sub _addSubModes {
+sub _initModes {
 	my $class = shift;
+	
+	Slim::Buttons::Common::addMode($class, {}, sub { $class->setMode(@_) });
 	
 	foreach my $node (@{_getNodeList()}) {
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
-			useMode   => $class->modeName,
+			useMode   => $class->modeName(),
 			header    => $node->{'name'},
 			title     => '{' . $node->{'name'} . '}',
 			%{$node->{'params'}},
 		});
 		if ($node->{'homeMenuText'}) {
 			Slim::Buttons::Home::addMenuOption($node->{'name'}, {
-				useMode   => $class->modeName,
+				useMode   => $class->modeName(),
 				header    => $node->{'homeMenuText'},
 				title     => '{' . $node->{'homeMenuText'} . '}',
 				%{$node->{'params'}},
@@ -129,6 +147,9 @@ sub _addSubModes {
 		}
 	}
 }
+
+# Leave setup of jive menu calls to getJiveMenu below
+sub initJive {}
 
 sub getJiveMenu {
 	my ($client, $baseNode, $albumSort) = @_;
@@ -143,7 +164,7 @@ sub getJiveMenu {
 			weight => $node->{'weight'},
 			actions => {
 				go => {
-					cmd    => ['browselibrary', 'items'],
+					cmd    => [BROWSELIBRARY, 'items'],
 					params => {
 						menu => 1,
 						%{$node->{'params'}},
@@ -338,7 +359,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_BY_ARTIST',
 			params => {mode => 'artists'},
-			icon => 'plugins/BrowseLibrary/html/images/artists.png',
+			icon => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ARTISTS',
 			id           => 'myMusicArtists',
 			weight       => 10,
@@ -347,7 +368,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_BY_ALBUM',
 			params => {mode => 'albums', sort => $albumsSort},
-			icon => 'plugins/BrowseLibrary/html/images/albums.png',
+			icon => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
 			id           => 'myMusicAlbums',
 			weight       => 20,
@@ -356,7 +377,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_BY_GENRE',
 			params => {mode => 'genres'},
-			icon => 'plugins/BrowseLibrary/html/images/genres.png',
+			icon => 'html/images/genres.png',
 			homeMenuText => 'BROWSE_GENRES',
 			id           => 'myMusicGenres',
 			weight       => 30,
@@ -365,7 +386,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_BY_YEAR',
 			params => {mode => 'years'},
-			icon => 'plugins/BrowseLibrary/html/images/years.png',
+			icon => 'html/images/years.png',
 			homeMenuText => 'BROWSE_YEARS',
 			id           => 'myMusicYears',
 			weight       => 40,
@@ -374,7 +395,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_NEW_MUSIC',
 			
-			icon => 'plugins/BrowseLibrary/html/images/newmusic.png',
+			icon => 'html/images/newmusic.png',
 			params => {mode => 'albums', sort => 'new'},
 			id           => 'myMusicNewMusic',
 			weight       => 50,
@@ -383,7 +404,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'BROWSE_MUSIC_FOLDER',
 			params => {mode => 'bmf'},
-			icon => 'plugins/BrowseLibrary/html/images/musicfolder.png',
+			icon => 'html/images/musicfolder.png',
 			condition => sub {$prefs->get('audiodir');},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
@@ -392,7 +413,7 @@ sub _getNodeList {
 			type => 'link',
 			name => 'SAVED_PLAYLISTS',
 			params => {mode => 'playlists'},
-			icon => 'plugins/BrowseLibrary/html/images/playlists.png',
+			icon => 'html/images/playlists.png',
 			condition => sub {
 				$prefs->get('playlistdir') ||
 				 (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
@@ -402,30 +423,30 @@ sub _getNodeList {
 		},
 #		{
 #			name  => _clientString($client, 'SEARCH'),
-#			icon => 'plugins/BrowseLibrary/html/images/search.png',
+#			icon => 'html/images/search.png',
 #			items => [
 #				{
 #					type => 'search',
 #					name => _clientString($client, 'BROWSE_BY_ARTIST'),
-#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					icon => 'html/images/search.png',
 #					url  => \&_artists,
 #				},
 #				{
 #					type => 'search',
 #					name => _clientString($client, 'BROWSE_BY_ALBUM'),
-#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					icon => 'html/images/search.png',
 #					url  => \&_albums,
 #				},
 #				{
 #					type => 'search',
 #					name => _clientString($client, 'BROWSE_BY_SONG'),
-#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					icon => 'html/images/search.png',
 #					url  => \&_tracks,
 #				},
 #				{
 #					type => 'search',
 #					name => _clientString($client, 'PLAYLISTS'),
-#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					icon => 'html/images/search.png',
 #					url  => \&_playlists,
 #				},
 #			],
@@ -543,7 +564,7 @@ sub _artists {
 						command     => ['artistinfo', 'items'],
 					},
 					items => {
-						command     => ['browselibrary', 'items'],
+						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'albums',
 							%{&_tagsToParams(\@searchTags)},
@@ -598,7 +619,7 @@ sub _genres {
 						command     => ['genreinfo', 'items'],
 					},
 					items => {
-						command     => ['browselibrary', 'items'],
+						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode         => 'artists',
 							addAllAlbums => 1,
@@ -649,7 +670,7 @@ sub _years {
 						command     => ['yearinfo', 'items'],
 					},
 					items => {
-						command     => ['browselibrary', 'items'],
+						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'albums',
 						},
@@ -761,7 +782,7 @@ sub _albums {
 						command     => ['albuminfo', 'items'],
 					},
 					items => {
-						command     => ['browselibrary', 'items'],
+						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'tracks',
 							%{&_tagsToParams(\@searchTags)},
@@ -967,7 +988,7 @@ sub _playlists {
 						command     => ['playlistinfo', 'items'],
 					},
 					items => {
-						command     => ['browselibrary', 'items'],
+						command     => [BROWSELIBRARY, 'items'],
 						fixedParams => {
 							mode       => 'playlistTracks',
 							%{&_tagsToParams(\@searchTags)},

@@ -2334,7 +2334,7 @@ sub myMusicMenu {
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
 	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 
-	my $myMusicMenu = Slim::Plugin::BrowseLibrary::Plugin::getJiveMenu($client, 'myMusic', $sort);
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort);
 
 	if (@{$myMusicMenu}) {
 		

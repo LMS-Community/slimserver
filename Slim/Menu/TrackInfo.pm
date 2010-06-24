@@ -360,7 +360,7 @@ sub infoContributors {
 					name => cstring($client,  uc $role) . cstring($client, 'COLON') . ' ' . $contributor->name,
 
 					player => {
-						mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+						mode  => 'Slim::Menu::BrowseLibrary',
 						modeParams => \%params,
 					},
 
@@ -643,7 +643,7 @@ sub infoAlbum {
 			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $album->name,
 
 			player => {
-				mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+				mode  => 'Slim::Menu::BrowseLibrary',
 				modeParams => \%params,
 			},
 
@@ -723,7 +723,7 @@ sub infoGenres {
 			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
 
 			player => {
-				mode  => 'Slim::Plugin::BrowseLibrary::Plugin',
+				mode  => 'Slim::Menu::BrowseLibrary',
 				modeParams => \%params,
 			},
 
