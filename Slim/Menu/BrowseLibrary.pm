@@ -581,29 +581,9 @@ sub _artists {
 					playlist    => \&_tracks,
 					url         => \&_albums,
 					passthrough => [{ searchTags => \@searchTags }],
-					actions     => {
+					itemActions => {
 						info => {
 							command     => [],
-						},
-						play => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'load', %$params},
-						},
-						playall => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'load', %$params},
-						},
-						add => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'add', %$params},
-						},
-						addall => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'add', %$params},
-						},
-						insert => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'insert', %$params},
 						},
 					},					
 				};
@@ -822,7 +802,7 @@ sub _albums {
 					playlist    => \&_tracks,
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'allSongs' }],
-					actions     => {
+					itemActions => {
 						info => {
 							command     => [],
 						},
