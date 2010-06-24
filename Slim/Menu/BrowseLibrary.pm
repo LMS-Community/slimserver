@@ -573,13 +573,39 @@ sub _artists {
 				id          =>  $_->{'id'},
 				
 			}, @$loop );
-			if ($pt->{'addAllAlbums'} && scalar @result > 1) {
+			if (scalar @searchTags && scalar @result > 1) {
+				my $params = _tagsToParams(\@searchTags);
 				push @result, {
 					name        => _clientString($client, 'ALL_ALBUMS'),
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_albums,
 					passthrough => [{ searchTags => \@searchTags }],
+					actions     => {
+						info => {
+							command     => [],
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						playall => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						addall => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', %$params},
+						},
+					},					
 				};
 				$addAll = 1;
 			}
@@ -635,7 +661,7 @@ sub _genres {
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_artists,
-				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}], addAllAlbums => 1 } ],
+				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ],
 				id          =>  $_->{'id'},
 			}, @$loop );
 			return \@result, 0, 0,
@@ -646,10 +672,7 @@ sub _genres {
 					},
 					items => {
 						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {
-							mode         => 'artists',
-							addAllAlbums => 1,
-						},
+						fixedParams => {mode => 'artists'},
 					},
 					play => {
 						command     => ['playlistcontrol'],
@@ -791,6 +814,7 @@ sub _albums {
 				push @result, \%item;
 			}
 			if (scalar @result > 1 && scalar @searchTags) {
+				my $params = _tagsToParams(\@searchTags);
 				push @result, {
 					name        => _clientString($client, 'ALL_SONGS'),
 					image       => 'music/all_items/cover',
@@ -798,6 +822,31 @@ sub _albums {
 					playlist    => \&_tracks,
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'allSongs' }],
+					actions     => {
+						info => {
+							command     => [],
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						playall => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						addall => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', %$params},
+						},
+					},					
 				};
 				$addAll = 1;
 			}
