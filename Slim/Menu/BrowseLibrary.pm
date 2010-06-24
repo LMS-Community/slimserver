@@ -589,40 +589,37 @@ sub _artists {
 				};
 				$addAll = 1;
 			}
-			return \@result, 0, $addAll,
-				{
-					commonVariables	=> [artist_id => 'id'],
-					info => {
-						command     => ['artistinfo', 'items'],
+			
+			my %actions = (
+				allAvailableActionsDefined => 1,
+				commonVariables	=> [artist_id => 'id'],
+				info => {
+					command     => ['artistinfo', 'items'],
+				},
+				items => {
+					command     => [BROWSELIBRARY, 'items'],
+					fixedParams => {
+						mode       => 'albums',
+						%{&_tagsToParams(\@searchTags)},
 					},
-					items => {
-						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {
-							mode       => 'albums',
-							%{&_tagsToParams(\@searchTags)},
-						},
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert', %{&_tagsToParams(\@searchTags)}},
-					},
-				};
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert', %{&_tagsToParams(\@searchTags)}},
+				},
+			);
+			$actions{'playall'} = $actions{'play'};
+			$actions{'addall'} = $actions{'add'};
+			
+			return \@result, 0, $addAll, \%actions;
 			
 		},
 	);
@@ -644,37 +641,34 @@ sub _genres {
 				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ],
 				id          =>  $_->{'id'},
 			}, @$loop );
-			return \@result, 0, 0,
-				{
-					commonVariables	=> [genre_id => 'id'],
-					info => {
-						command     => ['genreinfo', 'items'],
-					},
-					items => {
-						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {mode => 'artists'},
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert'},
-					},
-				};
+			
+			my %actions = (
+				allAvailableActionsDefined => 1,
+				commonVariables	=> [genre_id => 'id'],
+				info => {
+					command     => ['genreinfo', 'items'],
+				},
+				items => {
+					command     => [BROWSELIBRARY, 'items'],
+					fixedParams => {mode => 'artists'},
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert'},
+				},
+			);
+			$actions{'playall'} = $actions{'play'};
+			$actions{'addall'} = $actions{'add'};
+			
+			return \@result, 0, 0, \%actions;
 		},
 	);
 }
@@ -686,45 +680,43 @@ sub _years {
 	_generic($client, $callback, $args, 'years', 'years_loop', \@searchTags,
 		sub {
 			my $loop = shift;
-			return [ map {
+			my @result = ( map {
 				name        => $_->{'year'},
 				type        => 'playlist',
 				playlist    => \&_tracks,
 				url         => \&_albums,
 				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{'year'}] } ],
-			}, @$loop ], 0, 0,
-				{
-					commonVariables	=> [year => 'name'],
-					info => {
-						command     => ['yearinfo', 'items'],
+			}, @$loop );
+			
+			my %actions = (
+				allAvailableActionsDefined => 1,
+				commonVariables	=> [year => 'name'],
+				info => {
+					command     => ['yearinfo', 'items'],
+				},
+				items => {
+					command     => [BROWSELIBRARY, 'items'],
+					fixedParams => {
+						mode       => 'albums',
 					},
-					items => {
-						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {
-							mode       => 'albums',
-						},
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert'},
-					},
-				};
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert'},
+				},
+			);
+			$actions{'playall'} = $actions{'play'};
+			$actions{'addall'} = $actions{'add'};
+			
+			return \@result, 0, 0, \%actions;
 		},
 	);
 }
@@ -795,6 +787,27 @@ sub _albums {
 			}
 			if (scalar @result > 1 && scalar @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
+				my %actions = (
+					allAvailableActionsDefined => 1,
+					info => {
+						command     => [],
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', %$params},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add', %$params},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert', %$params},
+					},
+				);
+				$actions{'playall'} = $actions{'play'};
+				$actions{'addall'} = $actions{'add'};
+				
 				push @result, {
 					name        => _clientString($client, 'ALL_SONGS'),
 					image       => 'music/all_items/cover',
@@ -802,68 +815,49 @@ sub _albums {
 					playlist    => \&_tracks,
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'allSongs' }],
-					itemActions => {
-						info => {
-							command     => [],
-						},
-						play => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'load', %$params},
-						},
-						playall => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'load', %$params},
-						},
-						add => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'add', %$params},
-						},
-						addall => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'add', %$params},
-						},
-						insert => {
-							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'insert', %$params},
-						},
-					},					
+					itemActions => \%actions,
 				};
 				$addAll = 1;
 			}
-			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll,
-				{
-					commonVariables	=> [album_id => 'id'],
-					info => {
-						command     => ['albuminfo', 'items'],
+			
+			my %actions = (
+				allAvailableActionsDefined => 1,
+				commonVariables	=> [album_id => 'id'],
+				info => {
+					command     => ['albuminfo', 'items'],
+				},
+				items => {
+					command     => [BROWSELIBRARY, 'items'],
+					fixedParams => {
+						mode       => 'tracks',
+						%{&_tagsToParams(\@searchTags)},
 					},
-					items => {
-						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {
-							mode       => 'tracks',
-							%{&_tagsToParams(\@searchTags)},
-						},
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert'},
-					},
-				};
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				playall => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				addall => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert'},
+				},
+			);
+			$actions{'playall'} = $actions{'play'};
+			$actions{'addall'} = $actions{'add'};
+			
+			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll, \%actions;
 		},
 	);
 }
@@ -901,38 +895,41 @@ sub _tracks {
 				);
 				push @result, \%item;
 			}
-			return \@result, 0, 0,
-				{
-					commonVariables	=> [track_id => 'id'],
-					info => {
-						command     => ['trackinfo', 'items'],
-					},
-					items => {
-						command     => ['trackinfo', 'items'],
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
-						variables	=> [play_index => 'play_index'],
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						variables	=> [],
-						fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert'},
-					},
-				};
+			
+			my %actions = (
+				commonVariables	=> [track_id => 'id'],
+				allAvailableActionsDefined => 1,
+				
+				info => {
+					command     => ['trackinfo', 'items'],
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				playall => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
+					variables	=> [play_index => 'play_index'],
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				addall => {
+					command     => ['playlistcontrol'],
+					variables	=> [],
+					fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert'},
+				},
+			);
+			$actions{'items'} = $actions{'info'};
+			
+			return \@result, 0, 0, \%actions;
+				
 		},
 	);
 }
@@ -1036,40 +1033,37 @@ sub _playlists {
 				passthrough => [{ searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], }],
 				id          =>  $_->{'id'},
 			}, @$loop );
-			return \@result, 0, 0,
-				{
-					commonVariables	=> [playlist_id => 'id'],
-					info => {
-						command     => ['playlistinfo', 'items'],
+			
+			my %actions = (
+				allAvailableActionsDefined => 1,
+				commonVariables	=> [playlist_id => 'id'],
+				info => {
+					command     => ['playlistinfo', 'items'],
+				},
+				items => {
+					command     => [BROWSELIBRARY, 'items'],
+					fixedParams => {
+						mode       => 'playlistTracks',
+						%{&_tagsToParams(\@searchTags)},
 					},
-					items => {
-						command     => [BROWSELIBRARY, 'items'],
-						fixedParams => {
-							mode       => 'playlistTracks',
-							%{&_tagsToParams(\@searchTags)},
-						},
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					playall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load'},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					addall => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add'},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert'},
-					},
-				};
+				},
+				play => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load'},
+				},
+				add => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'add'},
+				},
+				insert => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'insert'},
+				},
+			);
+			$actions{'playall'} = $actions{'play'};
+			$actions{'addall'} = $actions{'add'};
+			
+			return \@result, 0, 0, \%actions;
 			
 		},
 	);
