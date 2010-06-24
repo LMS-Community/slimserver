@@ -365,8 +365,8 @@ sub infoContributors {
 					},
 
 					web  => {
-						url   => "plugins/browselibrary/index.html?" .
-							join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
+						url   => "clixmlbrowser/clicmd=browselibrary+items" .
+							join('&amp;', ('', map {$_ . '=' . $params{$_}} keys(%params))) . '/',
 						type  => 'contributor',
 						group => uc($role),
 						value => $contributor->name,
