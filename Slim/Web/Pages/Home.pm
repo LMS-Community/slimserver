@@ -42,14 +42,14 @@ sub init {
 	$class->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
 	$class->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
 	$class->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
-	$class->addPageLinks('icons', { 'BROWSE_BY_ARTIST' => 'html/images/artists.png'} );
-	$class->addPageLinks('icons', { 'BROWSE_BY_GENRE'  => 'html/images/genres.png'} );
-	$class->addPageLinks('icons', { 'BROWSE_BY_ALBUM'  => 'html/images/albums.png'} );
-	$class->addPageLinks('icons', { 'BROWSE_BY_YEAR'   => 'html/images/years.png'} );
-	$class->addPageLinks('icons', { 'BROWSE_NEW_MUSIC' => 'html/images/newmusic.png'} );
-	$class->addPageLinks('icons', { 'SEARCHMUSIC' => 'html/images/search.png'} );
-	$class->addPageLinks('icons', { 'BROWSE_MUSIC_FOLDER' => 'html/images/musicfolder.png'} );
-	$class->addPageLinks('icons', { 'SAVED_PLAYLISTS' => 'html/images/playlists.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_BY_ARTIST' => 'html/images/artists.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_BY_GENRE'  => 'html/images/genres.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_BY_ALBUM'  => 'html/images/albums.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_BY_YEAR'   => 'html/images/years.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_NEW_MUSIC' => 'html/images/newmusic.png'} );
+#	$class->addPageLinks('icons', { 'SEARCHMUSIC' => 'html/images/search.png'} );
+#	$class->addPageLinks('icons', { 'BROWSE_MUSIC_FOLDER' => 'html/images/musicfolder.png'} );
+#	$class->addPageLinks('icons', { 'SAVED_PLAYLISTS' => 'html/images/playlists.png'} );
 }
 
 sub home {
@@ -108,21 +108,21 @@ sub home {
 	
 	$class->addPageLinks( 'my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url( '/appgallery' )} );
 
-	if ($prefs->get('audiodir')) {
-
-		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
-
-	} else {
-
-		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER' => undef});
-		$params->{'nofolder'} = 1;
-	}
-
-	# Show playlists if any exists
-	if ($prefs->get('playlistdir') || (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count)) {
-
-		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&amp;level=0"});
-	}
+#	if ($prefs->get('audiodir')) {
+#
+#		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
+#
+#	} else {
+#
+#		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER' => undef});
+#		$params->{'nofolder'} = 1;
+#	}
+#
+#	# Show playlists if any exists
+#	if ($prefs->get('playlistdir') || (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count)) {
+#
+#		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&amp;level=0"});
+#	}
 
 	# fill out the client setup choices
 	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {

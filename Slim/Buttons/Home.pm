@@ -29,8 +29,8 @@ navigating a configurable multilevel menu structure.
 
 use strict;
 
-use Slim::Buttons::BrowseDB;
-use Slim::Buttons::BrowseTree;
+#use Slim::Buttons::BrowseDB;
+#use Slim::Buttons::BrowseTree;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;

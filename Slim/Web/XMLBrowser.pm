@@ -160,7 +160,8 @@ sub handleFeed {
 	
 	main::DEBUGLOG && $stash->{'index'} && $log->debug("stash-index=", $stash->{'index'});
 
-	$stash->{'pagetitle'} = $feed->{'title'} || Slim::Utils::Strings::getString($params->{'title'});
+	$feed->{'title'} ||= Slim::Utils::Strings::getString($params->{'title'});
+	$stash->{'pagetitle'} = $feed->{'title'};
 	$stash->{'pageicon'}  = $params->{pageicon};
 	
 	if ($feed->{'query'}) {
@@ -194,7 +195,7 @@ sub handleFeed {
 	
 	# breadcrumb
 	my @crumb = ( {
-		'name'  => $feed->{'title'} || Slim::Utils::Strings::getString($params->{'title'}),
+		'name'  => $feed->{'title'},
 		'index' => $sid,
 	} );
 	
@@ -485,7 +486,7 @@ sub handleFeed {
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 	}
 	else {
-		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || Slim::Utils::Strings::getString($params->{'title'});
+		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'};
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
 		$stash->{'actions'}   = $feed->{'actions'};	
@@ -606,7 +607,7 @@ sub handleFeed {
 #		if ($stash->{'actions'} && $stash->{'actions'}->{'items'}) {
 #			my $action = $stash->{'actions'}->{'items'};
 #			
-#			my $base = '/browselibrarylink/clicmd=' . join('+', @{$action->{'command'}});
+#			my $base = 'clixmlbrowser/clicmd=' . join('+', @{$action->{'command'}});
 #			if (my $params = $action->{'fixedParams'}) {
 #				$base .= '&' . join('&', map { $_ . '=' . $params->{$_}} keys %{$params});
 #			}
@@ -901,4 +902,65 @@ sub processTemplate {
 	return Slim::Web::HTTP::filltemplatefile( @_ );
 }
 
+sub init {
+	my $class = shift;
+	
+	my $url   = 'clixmlbrowser/.*';
+	
+	Slim::Web::Pages->addPageFunction( $url, \&webLink);
+}
+
+sub _webLinkDone {
+	my ($client, $feed, $title, $args) = @_;
+	
+	# pass CLI command as result to XMLBrowser
+	
+	__PACKAGE__->handleWebIndex( {
+			client  => $client,
+			feed    => $feed,
+			timeout => 35,
+			args    => $args,
+			title   => $title,
+		} );
+}
+
+sub webLink {
+	my $client  = $_[0];
+	my $args    = $_[1];
+	my $allArgs = \@_;
+	
+	# get parameters and construct CLI command
+	my ($params) = ($args->{'path'} =~ m%clixmlbrowser/([^/]+)%);
+	my %params;
+	foreach (split(/\&/, $params)) {
+		if (my ($k, $v) = /([^=]+)=(.*)/) {
+			$params{$k} = $v;
+		} else {
+			$log->warn("Unrecognized parameter syntax: $_");
+		}
+	}
+	
+	my @verbs = split(/\+/, delete $params{'clicmd'});
+	if (!scalar @verbs) {
+		$log->error("Missing clicmd parameter");
+		return;
+	}
+	
+	my $title = delete $params{'linktitle'};
+	
+	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
+	push @verbs, 'feedMode:1';
+	
+	# execute CLI command
+	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(', ', @verbs));
+	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
+		
+	# wrap async requests
+	if ( $proxiedRequest->isStatusProcessing ) {			
+		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $title, $allArgs); } );
+	} else {
+		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
+	}
+}
+	
 1;

@@ -2333,141 +2333,31 @@ sub myMusicMenu {
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
 	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
-	my @myMusicMenu = ();
-	
-	if (Slim::Schema::hasLibrary()) {
+
+	my $myMusicMenu = Slim::Plugin::BrowseLibrary::Plugin::getJiveMenu($client, 'myMusic', $sort);
+
+	if (@{$myMusicMenu}) {
 		
-		@myMusicMenu = (
-			{
-				text           => $client->string('BROWSE_BY_ARTIST'),
-				homeMenuText   => $client->string('BROWSE_ARTISTS'),
-				id             => 'myMusicArtists',
-				node           => 'myMusic',
-				weight         => 10,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode  => 'artists',
-							menu  => 'album',
-							party => $party,
-						},
-					},
-				},
-			},		
-			{
-				text           => $client->string('BROWSE_BY_ALBUM'),
-				homeMenuText   => $client->string('BROWSE_ALBUMS'),
-				id             => 'myMusicAlbums',
-				node           => 'myMusic',
-				weight         => 20,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode     => 'albums',
-							menu     => 'track',
-							sort     => $sort,
-							party    => $party,
-						},
-					},
-				},
-				window         => {
-					menuStyle => 'album',
-				},
-			},
-			{
-				text           => $client->string('BROWSE_BY_GENRE'),
-				homeMenuText   => $client->string('BROWSE_GENRES'),
-				id             => 'myMusicGenres',
-				node           => 'myMusic',
-				weight         => 30,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode  => 'genres',
-							menu  => 'artist',
-							party => $party,
-						},
-					},
-				},
-			},
-			{
-				text           => $client->string('BROWSE_BY_YEAR'),
-				homeMenuText   => $client->string('BROWSE_YEARS'),
-				id             => 'myMusicYears',
-				node           => 'myMusic',
-				weight         => 40,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode  => 'years',
-							menu  => 'album',
-							party => $party,
-						},
-					},
-				},
-			},
-			{
-				text           => $client->string('BROWSE_NEW_MUSIC'),
-				id             => 'myMusicNewMusic',
-				node           => 'myMusic',
-				weight         => 50,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode  => 'albums',
-							menu  => 'track',
-							sort  => 'new',
-							party => $party,
-						},
-					},
-				},
-				window        => {
-					menuStyle => 'album',
-				},
-			},
-			{
-				text           => $client->string('SAVED_PLAYLISTS'),
-				id             => 'myMusicPlaylists',
-				node           => 'myMusic',
-				weight         => 80,
-				actions        => {
-					go => {
-						cmd    => ['browselibrary', 'items'],
-						params => {
-							mode  => 'playlists',
-							menu  => 'track',
-							party => $party,
-						},
-					},
-				},
-			},
+		# XXX temp until search gets sorted out
+		push @{$myMusicMenu},
 			{
 				text           => $client->string('SEARCH'),
 				id             => 'myMusicSearch',
 				node           => 'myMusic',
 				isANode        => 1,
 				weight         => 90,
-			},
-		);
+			};
+
 		# add the items for under mymusicSearch
 		my $searchMenu = searchMenu(1, $client);
-		@myMusicMenu = (@myMusicMenu, @$searchMenu);
-	
-		if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
-			push @myMusicMenu, $browseMusicFolder;
-		}
+		push @{$myMusicMenu}, @$searchMenu;
 	}
 	
 	if ($batch) {
-		return \@myMusicMenu;
+		return $myMusicMenu;
 	} else {
 		_emptyMyMusicMenu($client);
-		_notifyJive(\@myMusicMenu, $client);
+		_notifyJive($myMusicMenu, $client);
 	}
 
 }

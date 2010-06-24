@@ -34,8 +34,8 @@ sub init {
 		
 	require Slim::Web::Pages::Common;
 	require Slim::Web::Pages::Home;
-	require Slim::Web::Pages::BrowseDB;
-	require Slim::Web::Pages::BrowseTree;
+#	require Slim::Web::Pages::BrowseDB;
+#	require Slim::Web::Pages::BrowseTree;
 	require Slim::Web::Pages::Search;
 	require Slim::Web::Pages::Status;
 	require Slim::Web::Pages::EditPlaylist;
@@ -45,8 +45,8 @@ sub init {
 
 	Slim::Web::Pages::Common->init();
 	Slim::Web::Pages::Home->init();
-	Slim::Web::Pages::BrowseDB->init();
-	Slim::Web::Pages::BrowseTree->init();
+#	Slim::Web::Pages::BrowseDB->init();
+#	Slim::Web::Pages::BrowseTree->init();
 	Slim::Web::Pages::Search->init();
 	Slim::Web::Pages::Status->init();
 	Slim::Web::Pages::EditPlaylist->init();

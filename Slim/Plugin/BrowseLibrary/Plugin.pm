@@ -6,7 +6,9 @@ package Slim::Plugin::BrowseLibrary::Plugin;
 use strict;
 use base 'Slim::Plugin::OPMLBased';
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	category     => 'plugin.browse',
@@ -86,9 +88,80 @@ sub initPlugin {
 
 	$class->_initSubmenus();
 	
-	$class->_registerWebLink();
+    $class->_addSubModes();
 }
 
+sub webPages {
+	my $class = shift;
+	
+	$class->SUPER::webPages();
+	
+	require Slim::Web::XMLBrowser;
+	Slim::Web::XMLBrowser->init();
+	
+	foreach my $node (@{_getNodeList()}) {
+		my $url = 'clixmlbrowser/clicmd=browselibrary+items&linktitle=' . $node->{'name'};
+		$url .= join('&', ('', map {$_ .'=' . $node->{'params'}->{$_}} keys %{$node->{'params'}}));
+		$url .= '/';
+		Slim::Web::Pages->addPageLinks("browse", { $node->{'name'} => $url });
+		Slim::Web::Pages->addPageLinks('icons', { $node->{'name'} => $node->{'icon'} }) if $node->{'icon'};
+	}
+}
+
+sub _addSubModes {
+	my $class = shift;
+	
+	foreach my $node (@{_getNodeList()}) {
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
+			useMode   => $class->modeName,
+			header    => $node->{'name'},
+			title     => '{' . $node->{'name'} . '}',
+			%{$node->{'params'}},
+		});
+		if ($node->{'homeMenuText'}) {
+			Slim::Buttons::Home::addMenuOption($node->{'name'}, {
+				useMode   => $class->modeName,
+				header    => $node->{'homeMenuText'},
+				title     => '{' . $node->{'homeMenuText'} . '}',
+				%{$node->{'params'}},
+				
+			});
+		}
+	}
+}
+
+sub getJiveMenu {
+	my ($client, $baseNode, $albumSort) = @_;
+	
+	my @myMusicMenu;
+	
+	foreach my $node (@{_getNodeList()}) {
+		my %menu = (
+			text => $client->string($node->{'name'}),
+			id   => $node->{'id'},
+			node => $baseNode,
+			weight => $node->{'weight'},
+			actions => {
+				go => {
+					cmd    => ['browselibrary', 'items'],
+					params => {
+						menu => 1,
+						%{$node->{'params'}},
+					},
+					
+				},
+			}
+		);
+		
+		if ($node->{'homeMenuText'}) {
+			$menu{'homeMenuText'} = $client->string($node->{'homeMenuText'});
+		}
+		
+		push @myMusicMenu, \%menu;
+	}
+	
+	return \@myMusicMenu;
+}
 
 sub setMode {
 	my ( $class, $client, $method ) = @_;
@@ -110,12 +183,22 @@ sub setMode {
 		timeout  => 35,
 		%{$client->modeParams()},
 	);
-
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
 	# we'll handle the push in a callback
 	$client->modeParam( handledTransition => 1 );
 }
+
+my %modeMap = (
+	albums => \&_albums,
+	artists => \&_artists,
+	genres => \&_genres,
+	bmf => \&_bmf,
+	tracks => \&_tracks,
+	years => \&_years,
+	playlists => \&_playlists,
+	playlistTracks => \&_playlistTracks,
+);
 
 my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id);
 
@@ -140,15 +223,13 @@ sub _topLevel {
 		$args{'search'} = $params->{'search'} if $params->{'search'};
 		
 		if ($params->{'mode'}) {
-			no strict "refs";
-			
 			my %entryParams;
 			for (@topLevelArgs, qw(sort search mode)) {
 				$entryParams{$_} = $params->{$_} if $params->{$_};
 			}
 			main::INFOLOG && $log->is_info && $log->info('params=>', join('&', map {$_ . '=' . $entryParams{$_}} keys(%entryParams)));
 			
-			my $func = '_' . $params->{'mode'};
+			my $func = $modeMap{$params->{'mode'}};
 			&$func($client,
 				sub {
 					my $opml = shift;
@@ -246,6 +327,124 @@ sub _topLevel {
 sub _clientString {
 	my ($client, $string) = @_;
 	return Slim::Utils::Strings::clientString($client, $string);
+}
+
+sub _getNodeList {
+	my ($albumsSort) = @_;
+	$albumsSort ||= 'album';
+	
+	my @topLevel = (
+		{
+			type => 'link',
+			name => 'BROWSE_BY_ARTIST',
+			params => {mode => 'artists'},
+			icon => 'plugins/BrowseLibrary/html/images/artists.png',
+			homeMenuText => 'BROWSE_ARTISTS',
+			id           => 'myMusicArtists',
+			weight       => 10,
+		},
+		{
+			type => 'link',
+			name => 'BROWSE_BY_ALBUM',
+			params => {mode => 'albums', sort => $albumsSort},
+			icon => 'plugins/BrowseLibrary/html/images/albums.png',
+			homeMenuText => 'BROWSE_ALBUMS',
+			id           => 'myMusicAlbums',
+			weight       => 20,
+		},
+		{
+			type => 'link',
+			name => 'BROWSE_BY_GENRE',
+			params => {mode => 'genres'},
+			icon => 'plugins/BrowseLibrary/html/images/genres.png',
+			homeMenuText => 'BROWSE_GENRES',
+			id           => 'myMusicGenres',
+			weight       => 30,
+		},
+		{
+			type => 'link',
+			name => 'BROWSE_BY_YEAR',
+			params => {mode => 'years'},
+			icon => 'plugins/BrowseLibrary/html/images/years.png',
+			homeMenuText => 'BROWSE_YEARS',
+			id           => 'myMusicYears',
+			weight       => 40,
+		},
+		{
+			type => 'link',
+			name => 'BROWSE_NEW_MUSIC',
+			
+			icon => 'plugins/BrowseLibrary/html/images/newmusic.png',
+			params => {mode => 'albums', sort => 'new'},
+			id           => 'myMusicNewMusic',
+			weight       => 50,
+		},
+		{
+			type => 'link',
+			name => 'BROWSE_MUSIC_FOLDER',
+			params => {mode => 'bmf'},
+			icon => 'plugins/BrowseLibrary/html/images/musicfolder.png',
+			condition => sub {$prefs->get('audiodir');},
+			id           => 'myMusicMusicFolder',
+			weight       => 70,
+		},
+		{
+			type => 'link',
+			name => 'SAVED_PLAYLISTS',
+			params => {mode => 'playlists'},
+			icon => 'plugins/BrowseLibrary/html/images/playlists.png',
+			condition => sub {
+				$prefs->get('playlistdir') ||
+				 (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
+			},
+			id           => 'myMusicPlaylists',
+			weight       => 80,
+		},
+#		{
+#			name  => _clientString($client, 'SEARCH'),
+#			icon => 'plugins/BrowseLibrary/html/images/search.png',
+#			items => [
+#				{
+#					type => 'search',
+#					name => _clientString($client, 'BROWSE_BY_ARTIST'),
+#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					url  => \&_artists,
+#				},
+#				{
+#					type => 'search',
+#					name => _clientString($client, 'BROWSE_BY_ALBUM'),
+#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					url  => \&_albums,
+#				},
+#				{
+#					type => 'search',
+#					name => _clientString($client, 'BROWSE_BY_SONG'),
+#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					url  => \&_tracks,
+#				},
+#				{
+#					type => 'search',
+#					name => _clientString($client, 'PLAYLISTS'),
+#					icon => 'plugins/BrowseLibrary/html/images/search.png',
+#					url  => \&_playlists,
+#				},
+#			],
+#		},
+	);
+	
+	my @nodes;
+	
+	if (!Slim::Schema::hasLibrary) {
+		return \@nodes;
+	}
+	
+	foreach my $item (@topLevel) {
+		if ($item->{'condition'} && !$item->{'condition'}->()) {
+			next;
+		}
+		push @nodes, $item;
+	}
+	return \@nodes;
 }
 
 sub _generic {
@@ -842,66 +1041,5 @@ sub getDisplayName () {
 
 sub playerMenu {'PLUGINS'}
 
-sub _registerWebLink {
-	my $class = shift;
-	
-	my $url   = 'browselibrarylink/.*';
-	
-	Slim::Web::Pages->addPageFunction( $url, \&webLink);
-}
 
-sub _webLinkDone {
-	my ($client, $feed, $title, $args) = @_;
-	
-	# pass CLI command as result to XMLBrowser
-	
-	Slim::Web::XMLBrowser->handleWebIndex( {
-			client  => $client,
-			feed    => $feed,
-			timeout => 35,
-			args    => $args,
-			title   => $title,
-		} );
-}
-
-sub webLink {
-	my $client  = $_[0];
-	my $args    = $_[1];
-	my $allArgs = \@_;
-	
-	# get parameters and construct CLI command
-	my ($params) = ($args->{'path'} =~ m%browselibrarylink/([^/]+)%);
-	my %params;
-	foreach (split(/\&/, $params)) {
-		if (my ($k, $v) = /([^=]+)=(.*)/) {
-			$params{$k} = $v;
-		} else {
-			$log->warn("Unrecognized parameter syntax: $_");
-		}
-	}
-	
-	my @verbs = split(/\+/, delete $params{'clicmd'});
-	if (!scalar @verbs) {
-		$log->error("Missing clicmd parameter");
-		return;
-	}
-	
-	my $title = delete $params{'linktitle'};
-	
-	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
-	push @verbs, 'feedMode:1';
-	
-	# execute CLI command
-	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(', ', @verbs));
-	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
-		
-	# wrap async requests
-	if ( $proxiedRequest->isStatusProcessing ) {			
-		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $title, $allArgs); } );
-	} else {
-		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
-	}
-
-}
-	
 1;

@@ -123,8 +123,8 @@ sub init {
 	
 	Slim::Buttons::Alarm::init();
 	Slim::Buttons::Block::init();
-	Slim::Buttons::BrowseDB::init();
-	Slim::Buttons::BrowseTree::init();
+#	Slim::Buttons::BrowseDB::init();
+#	Slim::Buttons::BrowseTree::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::XMLBrowser::init();

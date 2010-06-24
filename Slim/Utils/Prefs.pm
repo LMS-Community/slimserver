@@ -772,7 +772,7 @@ sub init {
 
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
-			Slim::Buttons::BrowseTree->init;
+#			Slim::Buttons::BrowseTree->init;
 			require Slim::Music::MusicFolderScan;
 			Slim::Music::MusicFolderScan->init;
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
