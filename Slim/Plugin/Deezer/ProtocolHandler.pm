@@ -21,8 +21,8 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp3' }
 
-# default buffer 3 seconds of 128k audio
-sub bufferThreshold { 16 * ( $prefs->get('bufferSecs') || 3 ) }
+# default buffer 3 seconds of 320k audio
+sub bufferThreshold { 40 * ( $prefs->get('bufferSecs') || 3 ) }
 
 sub canSeek { 0 }
 
@@ -44,7 +44,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 128_000,
+		bitrate => 320_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
@@ -91,7 +91,7 @@ sub parseDirectHeaders {
 		Slim::Music::Info::setDuration( $url, 0 );
 	}
 	
-	my $bitrate = 128_000;
+	my $bitrate = 320_000;
 
 	$client->streamingSong->bitrate($bitrate);
 
@@ -283,7 +283,7 @@ sub _gotNextRadioTrack {
 		title     => $track->{title},
 		duration  => $track->{duration},
 		cover     => $track->{cover} || $icon,
-		bitrate   => '128k CBR',
+		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
@@ -384,7 +384,7 @@ sub _gotTrack {
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
-		bitrate   => '128k CBR',
+		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
@@ -525,7 +525,7 @@ sub getMetadataFor {
 		my $song = $client->currentSongForUrl($url);
 		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
 			return {
-				bitrate   => '128k CBR',
+				bitrate   => '320k CBR',
 				type      => 'MP3 (Deezer)',
 				icon      => $icon,
 				cover     => $icon,
@@ -584,7 +584,7 @@ sub getMetadataFor {
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
 	
 	return $meta || {
-		bitrate   => '128k CBR',
+		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
 		icon      => $icon,
 		cover     => $icon,
@@ -624,7 +624,7 @@ sub _gotBulkMetadata {
 		
 		my $meta = {
 			%{$track},
-			bitrate   => '128k CBR',
+			bitrate   => '320k CBR',
 			type      => 'MP3 (Deezer)',
 			info_link => 'plugins/deezer/trackinfo.html',
 			icon      => $icon,
