@@ -2332,26 +2332,9 @@ sub myMusicMenu {
 	my $batch = shift;
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
-	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
+#	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 
 	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort);
-
-	if (@{$myMusicMenu}) {
-		
-		# XXX temp until search gets sorted out
-		push @{$myMusicMenu},
-			{
-				text           => $client->string('SEARCH'),
-				id             => 'myMusicSearch',
-				node           => 'myMusic',
-				isANode        => 1,
-				weight         => 90,
-			};
-
-		# add the items for under mymusicSearch
-		my $searchMenu = searchMenu(1, $client);
-		push @{$myMusicMenu}, @$searchMenu;
-	}
 	
 	if ($batch) {
 		return $myMusicMenu;

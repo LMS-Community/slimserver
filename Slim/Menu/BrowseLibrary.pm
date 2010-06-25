@@ -84,7 +84,7 @@ sub init {
 	
 	{
 		no strict 'refs';
-		*{$class.'::'.'feed'}     = \&_topLevel;
+		*{$class.'::'.'feed'}     = sub { \&_topLevel; };
 		*{$class.'::'.'tag'}      = sub { BROWSELIBRARY };
 		*{$class.'::'.'modeName'} = sub { BROWSELIBRARY };
 		*{$class.'::'.'menu'}     = sub { undef };
@@ -156,7 +156,7 @@ sub _webPages {
 sub _initModes {
 	my $class = shift;
 	
-	Slim::Buttons::Common::addMode($class, {}, sub { $class->setMode(@_) });
+	Slim::Buttons::Common::addMode($class->modeName(), {}, sub { $class->setMode(@_) });
 	
 	foreach my $node (@{_getNodeList()}) {
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
@@ -245,6 +245,7 @@ my %modeMap = (
 	years => \&_years,
 	playlists => \&_playlists,
 	playlistTracks => \&_playlistTracks,
+	search => \&_search,
 );
 
 my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id);
@@ -368,6 +369,7 @@ sub _topLevel {
 		],
 	);
 
+	# Proably should never get here, but just in case
 	$callback->( \%topLevel );
 }
 
@@ -447,43 +449,22 @@ sub _getNodeList {
 			id           => 'myMusicPlaylists',
 			weight       => 80,
 		},
-#		{
-#			name  => _clientString($client, 'SEARCH'),
-#			icon => 'html/images/search.png',
-#			items => [
-#				{
-#					type => 'search',
-#					name => _clientString($client, 'BROWSE_BY_ARTIST'),
-#					icon => 'html/images/search.png',
-#					url  => \&_artists,
-#				},
-#				{
-#					type => 'search',
-#					name => _clientString($client, 'BROWSE_BY_ALBUM'),
-#					icon => 'html/images/search.png',
-#					url  => \&_albums,
-#				},
-#				{
-#					type => 'search',
-#					name => _clientString($client, 'BROWSE_BY_SONG'),
-#					icon => 'html/images/search.png',
-#					url  => \&_tracks,
-#				},
-#				{
-#					type => 'search',
-#					name => _clientString($client, 'PLAYLISTS'),
-#					icon => 'html/images/search.png',
-#					url  => \&_playlists,
-#				},
-#			],
-#		},
+		{
+			type => 'link',
+			name => 'SEARCH',
+			params => {mode => 'search'},
+			icon => 'html/images/search.png',
+			id           => 'myMusicSearch',
+			weight       => 90,
+		},
 	);
 	
-	my @nodes;
 	
 	if (!Slim::Schema::hasLibrary) {
-		return \@nodes;
+		return [];
 	}
+	
+	my @nodes;
 	
 	foreach my $item (@topLevel) {
 		if ($item->{'condition'} && !$item->{'condition'}->()) {
@@ -537,6 +518,43 @@ sub _generic {
 #	$log->error(Data::Dump::dump(\%results));
 
 	$callback->(\%results);
+}
+
+sub _search {
+	my ($client, $callback, $args, $pt) = @_;
+
+	my %feed = (
+		name  => _clientString($client, 'SEARCH'),
+		icon => 'html/images/search.png',
+		items => [
+			{
+				type => 'search',
+				name => _clientString($client, 'BROWSE_BY_ARTIST'),
+				icon => 'html/images/search.png',
+				url  => \&_artists,
+			},
+			{
+				type => 'search',
+				name => _clientString($client, 'BROWSE_BY_ALBUM'),
+				icon => 'html/images/search.png',
+				url  => \&_albums,
+			},
+			{
+				type => 'search',
+				name => _clientString($client, 'BROWSE_BY_SONG'),
+				icon => 'html/images/search.png',
+				url  => \&_tracks,
+			},
+			{
+				type => 'search',
+				name => _clientString($client, 'PLAYLISTS'),
+				icon => 'html/images/search.png',
+				url  => \&_playlists,
+			},
+		],
+	);
+	
+	$callback->( \%feed );
 }
 
 sub _tagsToParams {

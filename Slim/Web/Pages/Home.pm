@@ -80,18 +80,18 @@ sub home {
 	$params->{'newPlugins'} = Slim::Utils::PluginManager->message;
 
 	if (Slim::Schema::hasLibrary()) {
-		if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
-			$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&amp;level=0"});
-			$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&amp;level=0"});
-			$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&amp;level=0"});
-			$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&amp;level=0"});
-			$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&amp;level=0"});
-		}
+#		if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
+#			$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&amp;level=0"});
+#			$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&amp;level=0"});
+#			$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&amp;level=0"});
+#			$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&amp;level=0"});
+#			$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&amp;level=0"});
+#		}
 	
-		if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
-			$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
-			$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
-		}
+#		if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
+#			$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
+#			$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+#		}
 		
 		$params->{'hasLibrary'} = 1;
 	} else {
