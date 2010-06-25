@@ -947,6 +947,7 @@ sub webLink {
 	}
 	
 	my $title = delete $params{'linktitle'};
+	$title = Slim::Utils::Unicode::utf8decode(Slim::Utils::Misc::unescape($title)) if $title;
 	
 	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
 	push @verbs, 'feedMode:1';
