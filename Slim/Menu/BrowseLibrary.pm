@@ -481,9 +481,8 @@ sub _generic {
 		$args,          # hash ref:  Additional parameters from XMLBrowser
 		$query,			# string:    CLI query, single verb or array-ref;
 						#            command takes _index, _quantity and tagged params
-		$loopName,		# string:    name of loop variable in CLI result; usually <query>_loop
 		$queryTags,		# array ref: tagged params to pass to CLI query
-		$resultsFunc	# func ref:  func(ARRAYref cliLoop) returns (ARRAYref items, Bool unsorted default FALSE);
+		$resultsFunc	# func ref:  func(HASHref cliResult) returns (HASHref result, ARRAYref extraItems);
 						#            function to process results loop from CLI and generate XMLBrowser items
 	) = @_;
 	
@@ -502,22 +501,37 @@ sub _generic {
 
 #	$log->error(Data::Dump::dump($request->getResults()));
 	
-	my $loop = $request->getResults()->{$loopName};
 	
-	my ($result, $unsorted, $extraAtEnd, $actions) = $resultsFunc->($loop);
+	my ($result, $extraItems) = $resultsFunc->($request->getResults());
+	
+	$result->{'offset'} = $index;
+	my $total = $result->{'total'} = $request->getResults()->{'count'};
+	
+	# We only add extra-items (typically all-songs) if the total is 2 or more
+	if ($extraItems && $total > 1) {
+		my $n = scalar @$extraItems;
+		$result->{'total'} += $n;
+		
+		my $nResults = scalar @{$result->{'items'}};
+		
+		# Work out whether this result block should have the extra items added
+		if ($quantity && $index && !$nResults) {
+			# Only extra items in this result
+			my $usedAlready = $index - $total;
+			push @{$result->{'items'}}, @$extraItems[$usedAlready..-1];
+		} elsif ($quantity && $nResults < $quantity) {
+			my $spaceLeft = $quantity - $nResults;
+			push @{$result->{'items'}}, @$extraItems[0..($spaceLeft-1)];
+		} else {
+			# just add them all
+			push @{$result->{'items'}}, @$extraItems;
+		}
+	}
 	
 	
-	my %results = (
-		total  => $request->getResults()->{'count'} + ($extraAtEnd || 0),
-		offset => $index,
-		items  => $result,
-		sorted => !$unsorted,
-	);
-	$results{'actions'} = $actions if $actions;
+#	$log->error(Data::Dump::dump($result));
 
-#	$log->error(Data::Dump::dump(\%results));
-
-	$callback->(\%results);
+	$callback->($result);
 }
 
 sub _search {
@@ -576,24 +590,22 @@ sub _artists {
 		$search = $args->{'search'};
 	}
 	
-	_generic($client, $callback, $args, 'artists', 'artists_loop',
+	_generic($client, $callback, $args, 'artists', 
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
-			my $loop = shift;
-			my $addAll = 0;
-			my @result = ( map {
-				name        => $_->{'artist'},
-				textkey     => $_->{'textkey'},
-				type        => 'playlist',
-				playlist    => \&_tracks,
-				url         => \&_albums,
-				passthrough => [ { searchTags => [@searchTags, "artist_id:" . $_->{'id'}] } ],
-				id          =>  $_->{'id'},
-				
-			}, @$loop );
-			if (scalar @searchTags && scalar @result > 1) {
+			my $results = shift;
+			my $items = $results->{'artists_loop'};
+			foreach (@$items) {
+				$_->{'name'}        = $_->{'artist'};
+				$_->{'type'}        = 'playlist';
+				$_->{'playlist'}    = \&_tracks;
+				$_->{'url'}         = \&_albums;
+				$_->{'passthrough'} = [ { searchTags => [@searchTags, "artist_id:" . $_->{'id'}] } ];
+			}
+			my $extra;
+			if (scalar @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
-				push @result, {
+				$extra = [ {
 					name        => _clientString($client, 'ALL_ALBUMS'),
 					type        => 'playlist',
 					playlist    => \&_tracks,
@@ -604,8 +616,7 @@ sub _artists {
 							command     => [],
 						},
 					},					
-				};
-				$addAll = 1;
+				} ];
 			}
 			
 			my %actions = (
@@ -637,8 +648,7 @@ sub _artists {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return \@result, 0, $addAll, \%actions;
-			
+			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
 	);
 }
@@ -647,18 +657,17 @@ sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 
-	_generic($client, $callback, $args, 'genres', 'genres_loop', ['tags:s', @searchTags],
+	_generic($client, $callback, $args, 'genres', ['tags:s', @searchTags],
 		sub {
-			my $loop = shift;
-			my @result = ( map {
-				name        => $_->{'genre'},
-				textkey     => $_->{'textkey'},
-				type        => 'playlist',
-				playlist    => \&_tracks,
-				url         => \&_artists,
-				passthrough => [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ],
-				id          =>  $_->{'id'},
-			}, @$loop );
+			my $results = shift;
+			my $items = $results->{'genres_loop'};
+			foreach (@$items) {
+				$_->{'name'}        = $_->{'genre'};
+				$_->{'type'}        = 'playlist';
+				$_->{'playlist'}    = \&_tracks;
+				$_->{'url'}         = \&_artists;
+				$_->{'passthrough'} = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ];
+			};
 			
 			my %actions = (
 				allAvailableActionsDefined => 1,
@@ -686,7 +695,7 @@ sub _genres {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return \@result, 0, 0, \%actions;
+			return {items => $items, actions => \%actions, sorted => 1}, undef;
 		},
 	);
 }
@@ -695,16 +704,17 @@ sub _years {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'years', 'years_loop', \@searchTags,
+	_generic($client, $callback, $args, 'years', \@searchTags,
 		sub {
-			my $loop = shift;
-			my @result = ( map {
-				name        => $_->{'year'},
-				type        => 'playlist',
-				playlist    => \&_tracks,
-				url         => \&_albums,
-				passthrough => [ { searchTags => [@searchTags, 'year:' . $_->{'year'}] } ],
-			}, @$loop );
+			my $results = shift;
+			my $items = $results->{'years_loop'};
+			foreach (@$items) {
+				$_->{'name'}        = $_->{'year'};
+				$_->{'type'}        = 'playlist';
+				$_->{'playlist'}    = \&_tracks;
+				$_->{'url'}         = \&_albums;
+				$_->{'passthrough'} = [ { searchTags => [@searchTags, "year:" . $_->{'year'}] } ];
+			};
 			
 			my %actions = (
 				allAvailableActionsDefined => 1,
@@ -734,7 +744,7 @@ sub _years {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return \@result, 0, 0, \%actions;
+			return {items => $items, actions => \%actions, sorted => 1}, undef;
 		},
 	);
 }
@@ -758,41 +768,36 @@ sub _albums {
 
 	$tags .= 'S' if ($artistId || $getMetadata);
 	
-	_generic($client, $callback, $args, 'albums', 'albums_loop',
+	_generic($client, $callback, $args, 'albums',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
-			my $loop = shift;
-			my $addAll = 0;
-			my @result;
-			foreach (@$loop) {
-				my %item = (
-					name        => $_->{'album'},
-					textkey     => $_->{'textkey'},
-					image       => ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef),
-					type        => 'playlist',
-					playlist    => \&_tracks,
-					url         => \&_tracks,
-					passthrough => [{ searchTags => [ @searchTags, 'album_id:' . $_->{'id'} ], sort => 'sort:tracknum', }],
-					id          =>  $_->{'id'},
-				);
+			my $results = shift;
+			my $items = $results->{'albums_loop'};
+			foreach (@$items) {
+				$_->{'name'}        = $_->{'album'};
+				$_->{'image'}       = ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef);
+				$_->{'type'}        = 'playlist';
+				$_->{'playlist'}    = \&_tracks;
+				$_->{'url'}         = \&_tracks;
+				$_->{'passthrough'} = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum' } ];
 				
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'artist_id'}) {
-					$item{'name2'} = $_->{'artist'};
+				if (!$artistId || $artistId != $_->{'id'}) {
+					$_->{'name2'} = $_->{'artist'};
 				}
 				if ($getMetadata) {
-					$item{'metadata'}->{'year'} = $_->{'year'} if $_->{'year'};
-					$item{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
-					$item{'metadata'}->{'disccount'} = $_->{'disccount'} if $_->{'disccount'};
-					$item{'metadata'}->{'album'} = {
+					$_->{'metadata'}->{'year'} = $_->{'year'} if $_->{'year'};
+					$_->{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
+					$_->{'metadata'}->{'disccount'} = $_->{'disccount'} if $_->{'disccount'};
+					$_->{'metadata'}->{'album'} = {
 							name         => $_->{'album'},
 							id           => $_->{'id'},
 							replay_gain  => $_->{'replay_gain'},
 							compilation  => $_->{'compilation'},
 						};
-					$item{'metadata'}->{'contributors'} =	{
+					$_->{'metadata'}->{'contributors'} = {
 							ARTIST => [
 								{
 									name => $_->{'artist'},
@@ -801,9 +806,9 @@ sub _albums {
 							],
 						} if $_->{'artist_id'};
 				}
-				push @result, \%item;
 			}
-			if (scalar @result > 1 && scalar @searchTags) {
+			my $extra;
+			if (scalar @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				my %actions = (
 					allAvailableActionsDefined => 1,
@@ -826,7 +831,7 @@ sub _albums {
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'add'};
 				
-				push @result, {
+				$extra = [ {
 					name        => _clientString($client, 'ALL_SONGS'),
 					image       => 'music/all_items/cover',
 					type        => 'playlist',
@@ -834,8 +839,7 @@ sub _albums {
 					url         => \&_tracks,
 					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'allSongs' }],
 					itemActions => \%actions,
-				};
-				$addAll = 1;
+				} ];
 			}
 			
 			my %actions = (
@@ -875,7 +879,11 @@ sub _albums {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return \@result, (($sort && $sort =~ /:new/) ? 1 : 0), $addAll, \%actions;
+			return {
+				items   => $items,
+				actions => \%actions,
+				sorted  => (($sort && $sort =~ /:new/) ? 0 : 1),
+			}, $extra;
 		},
 	);
 }
@@ -892,26 +900,22 @@ sub _tracks {
 		$search = $args->{'search'};
 	}
 
-	_generic($client, $callback, $args, 'titles', 'titles_loop',
+	_generic($client, $callback, $args, 'titles',
 		['tags:dtux', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
-			my $loop = shift;
-			my @result;
-			for (@$loop) {
+			my $results = shift;
+			my $items = $results->{'titles_loop'};
+			foreach (@$items) {
 				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
-				my %item = (
-					name        => $tracknum . $_->{'title'},
-					type        => 'link',
-					url         => \&_track,
-					on_select   => 'play',
-					duration    => $_->{'duration'},
-					play        => $_->{'url'},
-					playall     => 1,
-					passthrough => [ $_->{'remote'} ? { track_url => $_->{'url'} } : { track_id => $_->{'id'} } ],
-					id          => $_->{'id'},
-					play_index  => $offset++,
-				);
-				push @result, \%item;
+				$_->{'name'}        = $tracknum . $_->{'title'};
+				$_->{'type'}        = 'link';
+				$_->{'on_select'}   = 'play';
+				$_->{'playall'}     = 1;
+				$_->{'play_index'}  = $offset++;
+				$_->{'type'}        = 'link';
+				$_->{'play'}        = $_->{'url'};
+				$_->{'url'}         = \&_track;
+				$_->{'passthrough'} = [ { track_id => $_->{'id'} } ];
 			}
 			
 			my %actions = (
@@ -946,8 +950,7 @@ sub _tracks {
 			);
 			$actions{'items'} = $actions{'info'};
 			
-			return \@result, 0, 0, \%actions;
-				
+			return {items => $items, actions => \%actions, sorted => 0}, undef;
 		},
 	);
 }
@@ -961,14 +964,15 @@ sub _track {
 	};
 	my $feed;
 	
-	if ($pt->{'track_url'}) {
-		$feed  = Slim::Menu::TrackInfo->menu( $client, $pt->{'track_url'}, undef, $tags );
-	}
 	if ($pt->{'track_id'}) {
 		my $track = Slim::Schema->find( Track => $pt->{'track_id'} );
 		$feed  = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
 	}
 	
+	if (!$feed && $pt->{'track_url'}) {
+		$feed  = Slim::Menu::TrackInfo->menu( $client, $pt->{'track_url'}, undef, $tags );
+	}
+
 	$callback->($feed);
 	return;
 }
@@ -977,54 +981,45 @@ sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'musicfolder', 'folder_loop', ['tags:dus', @searchTags],
+	_generic($client, $callback, $args, 'musicfolder', ['tags:dus', @searchTags],
 		sub {
-			my $loop = shift;
-			my @result;
+			my $results = shift;
 			my $gotsubfolder = 0;
-			for (@$loop) {
-				my %item;
+			my $items = $results->{'folder_loop'};
+			foreach (@$items) {
+				$_->{'name'} = $_->{'filename'};
 				if ($_->{'type'} eq 'folder') {
-					%item = (
-						type        => 'link',
-						url         => \&_bmf,
-						passthrough => [{ searchTags => [ "folder_id:" . $_->{'id'} ] }],
-						itemActions => {
-							info => {
-								command     => ['folderinfo', 'items'],
-								fixedParams => {folder_id =>  $_->{'id'}},
-							},
+					$_->{'type'}        = 'link';
+					$_->{'url'}         = \&_bmf;
+					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ] } ];
+					$_->{'itemActions'} = {
+						info => {
+							command     => ['folderinfo', 'items'],
+							fixedParams => {folder_id =>  $_->{'id'}},
 						},
-					);
+					};
 					$gotsubfolder = 1;
 				}  elsif ($_->{'type'} eq 'track') {
-					%item = (
-						type        => 'link',
-						url         => \&_track,
-						on_select   => 'play',
-						duration    => $_->{'duration'},
-						play        => $_->{'url'},
-						playall     => 1,
-						passthrough => [{ track_id => $_->{'id'} }],
-						itemActions => {
-							info => {
-								command     => ['trackinfo', 'items'],
-								fixedParams => {track_id =>  $_->{'id'}},
-							},
+					$_->{'type'}        = 'link';
+					$_->{'on_select'}   = 'play';
+					$_->{'playall'}     = 1;
+					$_->{'play'}        = $_->{'url'};
+					$_->{'url'}         = \&_track;
+					$_->{'passthrough'} = [ { searchTags => [ track_id => $_->{'id'} ] } ];
+					$_->{'itemActions'} = {
+						info => {
+							command     => ['trackinfo', 'items'],
+							fixedParams => {track_id =>  $_->{'id'}},
 						},
-					);
+					};
 				}  elsif ($_->{'type'} eq 'playlist') {
-					
-				}  elsif ($_->{'type'} eq 'unknown') {
-					%item = (
-						type => 'text',
-					);
+					$_->{'type'}        = 'text';
+				}  else # if ($_->{'type'} eq 'unknown') 
+				{
+					$_->{'type'}        = 'text';
 				}
-				$item{'name'} = $_->{'filename'};
-				$item{'textkey'} = $_->{'textkey'};
-				push @result, \%item;
 			}
-			return \@result;
+			return {items => $items, sorted => 1}, undef;
 		},
 	);
 }
@@ -1038,19 +1033,18 @@ sub _playlists {
 		$search = $args->{'search'};
 	}
 
-	_generic($client, $callback, $args, 'playlists', 'playlists_loop',
+	_generic($client, $callback, $args, 'playlists',
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
-			my $loop = shift;
-			my @result = ( map {
-				name        => $_->{'playlist'},
-				textkey     => $_->{'textkey'},
-				type        => 'playlist',
-				playlist    => \&_playlistTracks,
-				url         => \&_playlistTracks,
-				passthrough => [{ searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], }],
-				id          =>  $_->{'id'},
-			}, @$loop );
+			my $results = shift;
+			my $items = $results->{'playlists_loop'};
+			foreach (@$items) {
+				$_->{'name'}        = $_->{'playlist'};
+				$_->{'type'}        = 'playlist';
+				$_->{'playlist'}    = \&_playlistTracks;
+				$_->{'url'}         = \&_playlistTracks;
+				$_->{'passthrough'} = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], } ];
+			};
 			
 			my %actions = (
 				allAvailableActionsDefined => 1,
@@ -1081,7 +1075,7 @@ sub _playlists {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return \@result, 0, 0, \%actions;
+			return {items => $items, actions => \%actions, sorted => 1}, undef;
 			
 		},
 	);
@@ -1092,34 +1086,34 @@ sub _playlistTracks {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	
-	_generic($client, $callback, $args, ['playlists', 'tracks'], 'playlisttracks_loop',
+	_generic($client, $callback, $args, ['playlists', 'tracks'], 
 		['tags:dtu', $menuStyle, @searchTags],
 		sub {
-			my $loop = shift;
-			my @result;
-			for (@$loop) {
+			my $results = shift;
+			my $items = $results->{'playlisttracks_loop'};
+			foreach (@$items) {
 				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
-				my %item = (
-					name        => $tracknum . $_->{'title'},
-					type        => 'link',
-					url         => \&_track,
-					on_select   => 'play',
-					duration    => $_->{'duration'},
-					play        => $_->{'url'},
-					playall     => 1,
-					passthrough => [{ track_id => $_->{'id'} }],
-					id          => $_->{'id'},
-				);
-				push @result, \%item;
+				$_->{'name'}        = $tracknum . $_->{'title'};
+				$_->{'type'}        = 'link';
+				$_->{'on_select'}   = 'play';
+				$_->{'playall'}     = 1;
+				$_->{'type'}        = 'link';
+				$_->{'play'}        = $_->{'url'};
+				$_->{'url'}         = \&_track;
+				$_->{'passthrough'} = [ $_->{'remote'} ? {track_url => $_->{'url'}} : {track_id => $_->{'id'}} ];
 			}
-			return \@result, 1, 0, 
-				{
+
+			my %actions = (
 					info => {
 						command     => ['trackinfo', 'items'],
 						variables	=> [track_id => 'id'],
 					},
-				};
-		},
+				);
+
+			# Maybe add delete-item and add-to-favourites
+			
+			return {items => $items, actions => \%actions, sorted => 0}, undef;
+		}
 	);
 }
 
