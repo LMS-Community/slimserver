@@ -1524,8 +1524,8 @@ sub _addingToPlaylist {
 sub findAction {
 	my ($feed, $item, $actionName) = @_;
 	
-	if ($item && $item->{'actions'} && $item->{'actions'}->{$actionName}) {
-		return wantarray ? ($item->{'actions'}->{$actionName}, {}) : $item->{'actions'}->{$actionName};
+	if ($item && $item->{'itemActions'} && $item->{'itemActions'}->{$actionName}) {
+		return wantarray ? ($item->{'itemActions'}->{$actionName}, {}) : $item->{'itemActions'}->{$actionName};
 	}
 	if ($feed && $feed->{'actions'} && $feed->{'actions'}->{$actionName}) {
 		return wantarray ? ($feed->{'actions'}->{$actionName}, $feed->{'actions'}) : $feed->{'actions'}->{$actionName};
