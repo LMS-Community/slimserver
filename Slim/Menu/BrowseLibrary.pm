@@ -1012,6 +1012,7 @@ sub _bmf {
 							fixedParams => {track_id =>  $_->{'id'}},
 						},
 					};
+					$_->{'itemActions'}->{'items'} = $_->{'itemActions'}->{'info'};
 				}  elsif ($_->{'type'} eq 'playlist') {
 					$_->{'type'}        = 'text';
 				}  else # if ($_->{'type'} eq 'unknown') 
@@ -1109,6 +1110,7 @@ sub _playlistTracks {
 						variables	=> [track_id => 'id'],
 					},
 				);
+			$actions{'items'} = $actions{'info'};
 
 			# Maybe add delete-item and add-to-favourites
 			
