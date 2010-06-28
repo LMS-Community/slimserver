@@ -489,6 +489,10 @@ sub gotOPML {
 	my $index = 0;
 	for my $item ( @{ $opml->{'items'} || [] } ) {
 		
+		if (my $label = delete $item->{'label'}) {
+			$item->{'name'} = $client->string($label) . $client->string('COLON') . ' ' . $item->{'name'};
+		}
+
 		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
@@ -628,7 +632,6 @@ sub gotOPML {
 		'isSorted'   => $opml->{sorted} || 0,
 		'lookupRef'  => sub {
 			my $index = shift;
-
 			return $opml->{'items'}->[$index]->{'name'};
 		},
 

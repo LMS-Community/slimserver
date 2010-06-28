@@ -1106,6 +1106,7 @@ sub _cliQuery_done {
 					
 					$hash{id}    = join('.', @crumbIndex, $itemIndex);
 					$hash{name}  = $item->{name}  if defined $item->{name};
+					$hash{name}  = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $hash{'name'} if $hash{'name'} && defined $item->{'label'};
 					$hash{type}  = $item->{type}  if defined $item->{type};
 					$hash{title} = $item->{title} if defined $item->{title};
 					$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
