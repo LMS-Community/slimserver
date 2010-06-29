@@ -382,6 +382,9 @@ sub handleFeed {
 						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
 					}
 					
+				    push @params, 'feedMode:1';
+				    push @params, 'wantMetadata:1';
+
 					main::INFOLOG && $log->is_info && $log->info('Use CLI for items: ', join(', ', @params));
 					
 					my $callback = sub {
@@ -393,7 +396,6 @@ sub handleFeed {
 						handleSubFeed( $opml, $args );
 					};
 					
-				    push @params, 'feedMode:1';
 					my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
 					
 					# wrap async requests
@@ -490,6 +492,7 @@ sub handleFeed {
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
 		$stash->{'actions'}   = $feed->{'actions'};	
+		$stash->{'image'}     = $feed->{'image'};
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -668,10 +671,17 @@ sub handleFeed {
 			$stash->{'items'} = \@slice;
 		}
 
-		if ($stash->{'path'} =~ /trackinfo.html/) {
+		# Find special stuff that we either want to pull up into the metadata for the 
+		# songinfo header block or which needs unfolding.
+		
+#		if ($stash->{'path'} =~ /trackinfo.html/) {
+		{
 			my $details = {};
 			my $mixerlinks = {};
 			my $i = 0;
+			
+			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
+			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR));
 			
 			foreach my $item ( @{ $stash->{'items'} } ) {
 
@@ -679,23 +689,25 @@ sub handleFeed {
 				if ( !$stash->{'index'} ) {
 					$item->{'index'} = $i;
 				}
+				
+				my $label = $item->{'label'} || '';
+				if ($item->{'label'} =~ /$allLabels/) {
 
-				if ($item->{'web'} && (my $group = $item->{'web'}->{'group'})) {
-
-					if ($item->{'web'}->{'type'} && $item->{'web'}->{'type'} eq 'contributor') {
+					if ($item->{'label'} =~ /$roles/) {
 
 						$details->{'contributors'} ||= {};
-						$details->{'contributors'}->{$group} ||= [];
+						$details->{'contributors'}->{$label} ||= [];
 
-						push @{ $details->{'contributors'}->{ $group } }, {
-							name => $item->{'web'}->{'value'},
-							id   => $item->{'db'}->{'findCriteria'}->{'contributor.id'},
-							url  => $item->{'web'}->{'url'},
+						push @{ $details->{'contributors'}->{ $label } }, {
+							name => $item->{'name'},
+							index=> $item->{'index'},
+							link => _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string('ARTIST'), $item->{'name'})),
 						};
-
+						
+						$item->{'ignore'} = 1;
 					}
 
-					elsif ($group eq 'mixers') {
+					elsif ($label eq 'mixers') {
 						
 						$details->{'mixers'} ||= [];
 						
@@ -713,48 +725,62 @@ sub handleFeed {
 						push @{ $details->{'mixers'} }, $mixer;
 					}
 
-					# unfold items which are folded for smaller UIs;
-					elsif ($item->{'items'} && $item->{'web'}->{'unfold'}) {
-						
-						$details->{'unfold'} ||= [];
-						
-						my $new_index = 0;
-						foreach my $moreItem ( @{ $item->{'items'} } ) {
-							$moreItem->{'index'} = $item->{'index'} . '.' . $new_index;
-							$new_index++;
-						}
-						
-						push @{ $details->{'unfold'} }, {
-							items => $item->{'items'},
-							start => $i,
-						};
-					}
-					
-					else {
-						
-						$details->{$group} ||= [];
+					elsif ($label eq 'GENRE') { 
+						$details->{lc $label} ||= [];
 												
-						push @{ $details->{$group} }, {
-							name => $item->{'web'}->{'value'},
-							id   => $item->{'db'}->{'findCriteria'}->{ $group . '.id' },
+						push @{ $details->{lc $label} }, {
+							name => $item->{'name'},
+							link => _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string($label), $item->{'name'})),
 						};
+						$item->{'ignore'} = 1;
+						$item->{'type'} = 'redirect';
+						
+					}
+
+					else {
+						$details->{lc $label} = {
+							name => $item->{'name'},
+							link => _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string($label), $item->{'name'})),
+						};
+						$item->{'ignore'} = 1;
+						$item->{'type'} = 'redirect';
+						
+					}
+				}
+				
+				# unfold items which are folded for smaller UIs;
+				elsif ( $item->{'items'} && ($item->{'unfold'} || $item->{'web'}->{'unfold'}) ) {
+					
+					$details->{'unfold'} ||= [];
+					
+					my $new_index = 0;
+					foreach my $moreItem ( @{ $item->{'items'} } ) {
+						$moreItem->{'index'} = $item->{'index'} . '.' . $new_index;
+						$new_index++;
 					}
 					
+					push @{ $details->{'unfold'} }, {
+						items => $item->{'items'},
+						start => $i,
+					};
 				}
 
 				$i++;
 			}
 
-			# unfold nested groups of additional items
-			my $new_index;
-			foreach my $group (@{ $details->{'unfold'} }) {
-				
-				splice @{ $stash->{'items'} }, ($group->{'start'} + $new_index), 1, @{ $group->{'items'} };
-				$new_index = $#{ $group->{'items'} };
+			if ($details->{'unfold'}) {
+				# unfold nested groups of additional items
+				my $new_index;
+				foreach my $group (@{ $details->{'unfold'} }) {
+					
+					splice @{ $stash->{'items'} }, ($group->{'start'} + $new_index), 1, @{ $group->{'items'} };
+					$new_index = $#{ $group->{'items'} };
+				}
+				delete $details->{'unfold'};
 			}
 
-			$stash->{'details'} = $details;
-
+#			$stash->{'details'} = $details;
+			$stash->{'metadata'} = $details if scalar keys %$details && !$stash->{'metadata'};
 		}
 	}
 
@@ -871,13 +897,10 @@ sub handleSubFeed {
 	$subFeed->{'fetched'} = 1;
 	
 	# Pass-through forceRefresh flag
-	if ( $feed->{forceRefresh} ) {
-		$subFeed->{forceRefresh} = 1;
-	}
+	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	if ($feed->{'actions'}) {
-		$subFeed->{'actions'} = $feed->{'actions'};
-	}
+	$subFeed->{'actions'} = $feed->{'actions'} if $feed->{'actions'};
+	$subFeed->{'image'}   = $feed->{'cover'}   if $feed->{'cover'};
 
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
@@ -951,6 +974,7 @@ sub webLink {
 	
 	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
 	push @verbs, 'feedMode:1';
+	push @verbs, 'wantMetadata:1';	# We always want everything we can get
 	
 	# execute CLI command
 	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(', ', @verbs));
@@ -963,5 +987,31 @@ sub webLink {
 		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
 	}
 }
+
+sub _makeWebLink {
+	my ($feed, $item, $action, $title) = @_;
 	
+	my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, $action);
+	if ($feedAction) {
+		my $link = 'clixmlbrowser/clicmd=' . join('+', @{$feedAction->{'command'}});
+		if (my $params = $feedAction->{'fixedParams'}) {
+			$link .= join('&', '', map { $_ . '=' . $params->{$_}} keys %{$params});
+		}
+		
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]};
+		}
+		
+		$link .= '&linktitle=' . $title if $title;
+		 
+		$link .= '/';
+		
+		main::INFOLOG && $log->is_info && $log->info($link);
+		
+		return $link;
+	}
+}
+
+
 1;

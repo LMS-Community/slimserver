@@ -269,6 +269,7 @@ sub _topLevel {
 
 		$args{'sort'} = 'sort:' . $params->{'sort'} if $params->{'sort'};
 		$args{'search'} = $params->{'search'} if $params->{'search'};
+		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -754,7 +755,7 @@ sub _albums {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
-	my $getMetadata= $args->{'wantMetadata'}; 
+	my $getMetadata= $pt->{'wantMetadata'}; 
 	my $tags       = 'ljsa';
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
@@ -788,7 +789,10 @@ sub _albums {
 					$_->{'name2'} = $_->{'artist'};
 				}
 				if ($getMetadata) {
-					$_->{'metadata'}->{'year'} = $_->{'year'} if $_->{'year'};
+					$_->{'metadata'}->{'year'} = {
+							name		=> $_->{'year'},
+							id			=> $_->{'year'},
+						} if $_->{'year'};
 					$_->{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
 					$_->{'metadata'}->{'disccount'} = $_->{'disccount'} if $_->{'disccount'};
 					$_->{'metadata'}->{'album'} = {
@@ -957,6 +961,8 @@ sub _tracks {
 
 sub _track {
 	my ($client, $callback, $args, $pt) = @_;
+	
+	logBacktrace('unexpected call');
 
 	my $tags = {
 		menuMode      => 0,

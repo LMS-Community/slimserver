@@ -117,7 +117,7 @@ END %]
 	[%- END %]
 
 	[%- # treat track information specially
-	IF path == 'trackinfo.html';
+	IF 0 && path == 'trackinfo.html';
 
 		itemobj = {
 			id => sess,
@@ -125,7 +125,7 @@ END %]
 			contributorRoles => details.contributors.keys,
 			contributors => details.contributors,
 			genres => details.genre,
-			year => details.year.0.id
+			year => details.year.0,
 			title => pagetitle
 			url => itemUrl
 		};
@@ -167,6 +167,8 @@ END %]
 		[% END %]
 
 		[%- FOREACH item = items %]
+		
+			[% IF item.ignore; NEXT; END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
@@ -240,22 +242,20 @@ END %]
 [% BLOCK weblink %]
 	[% IF item.weblink %]
 		<a href="[% item.weblink %]" target="_blank">
+	[% ELSIF item.link %]
+		<a href="[% webroot %][% item.link %]&amp;player=[% player | uri %]" target="_blank">
 	[% ELSIF item.type == 'redirect' %]
 		[% IF item.web.url %]
 		<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
 		[% ELSE; NEXT %]
 		[% END %]
 	[% ELSIF !item.type.match('^text') %]
-		[% IF item.web.url %]
-		<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
-		[% ELSE %]
 		<a href="[% path %]?[% multiquery %][% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
-		[% END %]
 	[% END %]
 	
 	[% content %]
 	
-	[% IF item.weblink || !item.type.match('^text') %]
+	[% IF item.weblink || item.link || !item.type.match('^text') %]
 		</a>
 	[% END %]
 [% END %]
