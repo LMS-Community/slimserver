@@ -227,14 +227,16 @@ sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 	
 	# Get the current track
-	my $currentTrack = $client->currentSongForUrl($url)->pluginData();
+	if (my $song = $client->currentSongForUrl($url)) {
+		my $currentTrack = $song->pluginData();
 	
-	# SN URL to fetch track info menu
-	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/classical/v1/opml/trackInfo?trackId=' . $currentTrack->{id}
-	);
-	
-	return $trackInfoURL;
+		# SN URL to fetch track info menu
+		my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
+			  '/api/classical/v1/opml/trackInfo?trackId=' . $currentTrack->{id}
+		);
+		
+		return $trackInfoURL;
+	}
 }
 
 # Metadata for a URL, used by CLI/JSON clients
