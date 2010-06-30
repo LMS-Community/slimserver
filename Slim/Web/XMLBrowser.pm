@@ -391,7 +391,7 @@ sub handleFeed {
 						my $opml = shift;
 
 						$opml->{'type'}  ||= 'opml';
-						$opml->{'title'} = $args->{feedTitle};
+						$opml->{'title'} ||= $args->{feedTitle};
 
 						handleSubFeed( $opml, $args );
 					};
@@ -482,7 +482,7 @@ sub handleFeed {
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = $itemIndex;
-		$stash->{'image'}     = $subFeed->{'image'};
+		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'metadata'}  = $subFeed->{'metadata'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
@@ -492,7 +492,7 @@ sub handleFeed {
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
 		$stash->{'actions'}   = $feed->{'actions'};	
-		$stash->{'image'}     = $feed->{'image'};
+		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -681,7 +681,7 @@ sub handleFeed {
 			my $i = 0;
 			
 			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
-			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR));
+			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN));
 			
 			foreach my $item ( @{ $stash->{'items'} } ) {
 
@@ -691,9 +691,9 @@ sub handleFeed {
 				}
 				
 				my $label = $item->{'label'} || '';
-				if ($item->{'label'} =~ /$allLabels/) {
+				if ($label =~ /^($allLabels)$/) {
 
-					if ($item->{'label'} =~ /$roles/) {
+					if ($label =~ /^($roles)$/) {
 
 						$details->{'contributors'} ||= {};
 						$details->{'contributors'}->{$label} ||= [];
@@ -726,28 +726,29 @@ sub handleFeed {
 					}
 
 					elsif ($label eq 'GENRE') { 
-						$details->{lc $label} ||= [];
+						$details->{'genres'} ||= [];
 												
-						push @{ $details->{lc $label} }, {
+						push @{ $details->{'genres'} }, {
 							name => $item->{'name'},
 							link => _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string($label), $item->{'name'})),
 						};
 						$item->{'ignore'} = 1;
 						$item->{'type'} = 'redirect';
-						
 					}
 
 					else {
-						$details->{lc $label} = {
+						my $tag = lc $label;
+						$details->{$tag} = {
 							name => $item->{'name'},
-							link => _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string($label), $item->{'name'})),
 						};
+						if ($item->{'type'} ne 'text') {
+							$details->{$tag}->{'link'} = _makeWebLink(undef, $item, 'items', sprintf('%s (%s)', string($label), $item->{'name'}));
+						}
 						$item->{'ignore'} = 1;
 						$item->{'type'} = 'redirect';
-						
 					}
 				}
-				
+
 				# unfold items which are folded for smaller UIs;
 				elsif ( $item->{'items'} && ($item->{'unfold'} || $item->{'web'}->{'unfold'}) ) {
 					
@@ -757,6 +758,19 @@ sub handleFeed {
 					foreach my $moreItem ( @{ $item->{'items'} } ) {
 						$moreItem->{'index'} = $item->{'index'} . '.' . $new_index;
 						$new_index++;
+						
+						my $label = $moreItem->{'label'} || '';
+						if ($label =~ /^($allLabels)$/) {
+							my $tag = lc $label;
+							$details->{$tag} = {
+								name => $moreItem->{'name'},
+							};
+							if ($moreItem->{'type'} ne 'text') {
+								$details->{$tag}->{'link'} = _makeWebLink(undef, $moreItem, 'items', sprintf('%s (%s)', string($label), $moreItem->{'name'}));
+							}
+							$moreItem->{'ignore'} = 1;
+							$moreItem->{'type'} = 'redirect';
+						}
 					}
 					
 					push @{ $details->{'unfold'} }, {
