@@ -86,6 +86,12 @@ sub registerDefaultInfoProviders {
 		func     => \&infoReplayGain,
 	) );
 
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( contributors => (
+			after => 'top',
+			func  => \&infoContributors,
+		) );
+	}
 }
 
 sub menu {
@@ -181,6 +187,62 @@ sub menu {
 		items => $items,
 		cover => '/music/' . $album->artwork . '/cover.jpg',
 	};
+}
+
+sub infoContributors {
+	my ( $client, $url, $album, $remoteMeta ) = @_;
+	
+	my $items = [];
+	
+	if ( $remoteMeta->{artist} ) {
+		push @{$items}, {
+			type =>  'text',
+			name =>  $remoteMeta->{artist},
+			label => 'ARTIST',
+		};
+	}
+	else {
+		# Loop through the contributor types and append
+		for my $role ( sort Slim::Schema::Contributor->contributorRoles ) {
+			for my $contributor ( $album->artistsForRoles($role) ) {
+				my $id = $contributor->id;
+				
+				
+				my %actions = (
+					allAvailableActionsDefined => 1,
+					items => {
+						command     => ['browselibrary', 'items'],
+						fixedParams => { mode => 'albums', artist_id => $id },
+					},
+					play => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', artist_id => $id},
+					},
+					add => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'add', artist_id => $id},
+					},
+					insert => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'insert', artist_id => $id},
+					},								
+				);
+				$actions{'playall'} = $actions{'play'};
+				$actions{'addall'} = $actions{'add'};
+				
+				my $item = {
+					type    => 'playlist',
+					url     => 'blabla',
+					name    => $contributor->name,
+					label   => uc $role,
+					itemActions => \%actions,
+				};
+				push @{$items}, $item;
+			}
+		}
+	}
+	
+	return $items;
 }
 
 
