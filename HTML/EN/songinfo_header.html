@@ -123,6 +123,8 @@
 	
 		[% IF itemobj.album.replay_gain.defined %] 
 			[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
+		[% ELSIF itemobj.albumreplaygain %]
+			[% item = itemobj.albumreplaygain.name |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
 		[% END %]
 	</div>
 
