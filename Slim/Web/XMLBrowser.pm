@@ -321,7 +321,7 @@ sub handleFeed {
 				}
 				my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 				for (my $i = 0; $i < scalar @vars; $i += 2) {
-					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
+					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]} if defined $subFeed->{$vars[$i+1]};
 				}
 				
 				main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
@@ -379,7 +379,7 @@ sub handleFeed {
 					}
 					my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 					for (my $i = 0; $i < scalar @vars; $i += 2) {
-						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]};
+						push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]} if defined $subFeed->{$vars[$i+1]};
 					}
 					
 				    push @params, 'feedMode:1';
@@ -1014,7 +1014,7 @@ sub _makeWebLink {
 		
 		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 		for (my $i = 0; $i < scalar @vars; $i += 2) {
-			$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]};
+			$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]} if defined $item->{$vars[$i+1]};
 		}
 		
 		$link .= '&linktitle=' . $title if $title;
