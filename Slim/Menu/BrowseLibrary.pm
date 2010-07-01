@@ -486,13 +486,15 @@ sub _generic {
 	) = @_;
 	
 	my $index = $args->{'index'} || 0;
-	my $quantity = $args->{'quantity'} || 0;
+	my $quantity = $args->{'quantity'};
 	
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @$queryTags));
 	
 	my $request = Slim::Control::Request->new( $client ? $client->id() : undef,
-		[ (ref $query ? @$query : $query), $index, $quantity || 100000, @$queryTags ] );
+		[ (ref $query ? @$query : $query), $index, $quantity, @$queryTags ] );
 	$request->execute();
+	
+	$quantity ||= 0;
 	
 	if ( $request->isStatusError() ) {
 		$log->error($request->getStatusText());
