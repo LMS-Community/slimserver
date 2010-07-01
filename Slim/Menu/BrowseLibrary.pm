@@ -265,10 +265,9 @@ sub _topLevel {
 		for (@topLevelArgs) {
 			push (@searchTags, $_ . ':' . $params->{$_}) if $params->{$_};
 		}
-		$args{'searchTags'} = \@searchTags if scalar @searchTags;
-
-		$args{'sort'} = 'sort:' . $params->{'sort'} if $params->{'sort'};
-		$args{'search'} = $params->{'search'} if $params->{'search'};
+		$args{'searchTags'}   = \@searchTags if scalar @searchTags;
+		$args{'sort'}         = 'sort:' . $params->{'sort'} if $params->{'sort'};
+		$args{'search'}       = $params->{'search'} if $params->{'search'};
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		
 		if ($params->{'mode'}) {
@@ -385,76 +384,75 @@ sub _getNodeList {
 	
 	my @topLevel = (
 		{
-			type => 'link',
-			name => 'BROWSE_BY_ARTIST',
-			params => {mode => 'artists'},
-			icon => 'html/images/artists.png',
+			type         => 'link',
+			name         => 'BROWSE_BY_ARTIST',
+			params       => {mode => 'artists'},
+			icon         => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ARTISTS',
 			id           => 'myMusicArtists',
 			weight       => 10,
 		},
 		{
-			type => 'link',
-			name => 'BROWSE_BY_ALBUM',
-			params => {mode => 'albums', sort => $albumsSort},
-			icon => 'html/images/albums.png',
+			type         => 'link',
+			name         => 'BROWSE_BY_ALBUM',
+			params       => {mode => 'albums', sort => $albumsSort},
+			icon         => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
 			id           => 'myMusicAlbums',
 			weight       => 20,
 		},
 		{
-			type => 'link',
-			name => 'BROWSE_BY_GENRE',
-			params => {mode => 'genres'},
-			icon => 'html/images/genres.png',
+			type         => 'link',
+			name         => 'BROWSE_BY_GENRE',
+			params       => {mode => 'genres'},
+			icon         => 'html/images/genres.png',
 			homeMenuText => 'BROWSE_GENRES',
 			id           => 'myMusicGenres',
 			weight       => 30,
 		},
 		{
-			type => 'link',
-			name => 'BROWSE_BY_YEAR',
-			params => {mode => 'years'},
-			icon => 'html/images/years.png',
+			type         => 'link',
+			name         => 'BROWSE_BY_YEAR',
+			params       => {mode => 'years'},
+			icon         => 'html/images/years.png',
 			homeMenuText => 'BROWSE_YEARS',
 			id           => 'myMusicYears',
 			weight       => 40,
 		},
 		{
-			type => 'link',
-			name => 'BROWSE_NEW_MUSIC',
-			
-			icon => 'html/images/newmusic.png',
-			params => {mode => 'albums', sort => 'new'},
+			type         => 'link',
+			name         => 'BROWSE_NEW_MUSIC',
+			icon         => 'html/images/newmusic.png',
+			params       => {mode => 'albums', sort => 'new'},
 			id           => 'myMusicNewMusic',
 			weight       => 50,
 		},
 		{
-			type => 'link',
-			name => 'BROWSE_MUSIC_FOLDER',
-			params => {mode => 'bmf'},
-			icon => 'html/images/musicfolder.png',
-			condition => sub {$prefs->get('audiodir');},
+			type         => 'link',
+			name         => 'BROWSE_MUSIC_FOLDER',
+			params       => {mode => 'bmf'},
+			icon         => 'html/images/musicfolder.png',
+			condition    => sub {$prefs->get('audiodir');},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 		},
 		{
-			type => 'link',
-			name => 'SAVED_PLAYLISTS',
-			params => {mode => 'playlists'},
-			icon => 'html/images/playlists.png',
-			condition => sub {
-				$prefs->get('playlistdir') ||
-				 (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
-			},
+			type         => 'link',
+			name         => 'SAVED_PLAYLISTS',
+			params       => {mode => 'playlists'},
+			icon         => 'html/images/playlists.png',
+			condition    => sub {
+								$prefs->get('playlistdir') ||
+				 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
+							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
 		},
 		{
-			type => 'link',
-			name => 'SEARCH',
-			params => {mode => 'search'},
-			icon => 'html/images/search.png',
+			type         => 'link',
+			name         => 'SEARCH',
+			params       => {mode => 'search'},
+			icon         => 'html/images/search.png',
 			id           => 'myMusicSearch',
 			weight       => 90,
 		},
@@ -933,25 +931,30 @@ sub _tracks {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'load'},
 				},
-				playall => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
-					variables	=> [play_index => 'play_index'],
-				},
 				add => {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'add'},
-				},
-				addall => {
-					command     => ['playlistcontrol'],
-					variables	=> [],
-					fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
 				},
 				insert => {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'insert'},
 				},
 			);
+			if ($search) {
+				$actions{'playall'} = $actions{'play'};
+				$actions{'addall'} = $actions{'all'};
+			} else {
+				$actions{'playall'} = {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'load', %{&_tagsToParams([@searchTags, $sort])}},
+					variables	=> [play_index => 'play_index'],
+				};
+				$actions{'addall'} = {
+					command     => ['playlistcontrol'],
+					variables	=> [],
+					fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
+				};
+			}
 			$actions{'items'} = $actions{'info'};
 			
 			return {items => $items, actions => \%actions, sorted => 0}, undef;
