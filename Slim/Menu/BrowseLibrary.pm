@@ -817,6 +817,13 @@ sub _albums {
 					info => {
 						command     => [],
 					},
+					items => {
+						command     => [BROWSELIBRARY, 'items'],
+						fixedParams => {
+							mode       => 'tracks',
+							%{&_tagsToParams(\@searchTags)},
+						},
+					},
 					play => {
 						command     => ['playlistcontrol'],
 						fixedParams => {cmd => 'load', %$params},
