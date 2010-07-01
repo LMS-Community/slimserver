@@ -591,6 +591,13 @@ sub _artists {
 		$search = $args->{'search'};
 	}
 	
+	my @ptSearchTags;
+	if ($prefs->get('noGenreFilter')) {
+		@ptSearchTags = grep {$_ !~ /^genre_id:/} @searchTags;
+	} else {
+		@ptSearchTags = @searchTags;
+	}
+
 	_generic($client, $callback, $args, 'artists', 
 		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
@@ -601,7 +608,7 @@ sub _artists {
 				$_->{'type'}        = 'playlist';
 				$_->{'playlist'}    = \&_tracks;
 				$_->{'url'}         = \&_albums;
-				$_->{'passthrough'} = [ { searchTags => [@searchTags, "artist_id:" . $_->{'id'}] } ];
+				$_->{'passthrough'} = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}] } ];
 			}
 			my $extra;
 			if (scalar @searchTags) {
@@ -613,13 +620,34 @@ sub _artists {
 					url         => \&_albums,
 					passthrough => [{ searchTags => \@searchTags }],
 					itemActions => {
+						allAvailableActionsDefined => 1,
 						info => {
 							command     => [],
+						},
+						items => {
+							command     => [BROWSELIBRARY, 'items'],
+							fixedParams => {
+								mode       => 'albums',
+								%$params,
+							},
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', %$params},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', %$params},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', %$params},
 						},
 					},					
 				} ];
 			}
 			
+			my $params = _tagsToParams(\@ptSearchTags);
 			my %actions = (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [artist_id => 'id'],
@@ -630,20 +658,20 @@ sub _artists {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {
 						mode       => 'albums',
-						%{&_tagsToParams(\@searchTags)},
+						%$params,
 					},
 				},
 				play => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
+					fixedParams => {cmd => 'load', %$params},
 				},
 				add => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
+					fixedParams => {cmd => 'add', %$params},
 				},
 				insert => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert', %{&_tagsToParams(\@searchTags)}},
+					fixedParams => {cmd => 'insert', %$params},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};
