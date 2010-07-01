@@ -289,6 +289,7 @@ sub albumsQuery {
 	my $w        = [];
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
+	my $limit;
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -301,6 +302,7 @@ sub albumsQuery {
 	else {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			$limit = $prefs->get('browseagelimit') || 100;
 			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
 		}
 		elsif ( $sort eq 'artflow' ) {
@@ -453,8 +455,10 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
+	my $countsql = $sql;
+	$countsql .= ' LIMIT ' . $limit if $limit;
 	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
+		SELECT COUNT(*) FROM ( $countsql ) AS t1
 	}, undef, @{$p} );
 	
 	if ( !$stillScanning ) {
@@ -582,9 +586,14 @@ sub albumsQuery {
 		my $noAlbumName = $request->string('NO_ALBUM');
 		
 		# Limit the real query
+		if ($limit && !$quantity) {
+			$quantity = "$limit";
+			$index ||= "0";
+		}
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
 		}
+		$log->error("index=$index, quantity=$quantity");
 
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Albums query: $sql / " . Data::Dump::dump($p) );
@@ -5732,91 +5741,91 @@ sub _playAll {
 
 		for my $mode (@items) {
 
-		$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
-		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
-
-		if ($includeArt) {
-			my $playallicon = main::SLIM_SERVICE
-				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
-				: '/html/images/playall.png';
-				
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
-		}
-
-		# get all our params
-		my $params = $request->getParamsCopy();
-		my $searchType = $request->getParam('_searchType');
+			$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
+			$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 	
-		# remove keys starting with _ (internal or positional) and make copies
-		while (my ($key, $val) = each %{$params}) {
-			if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
-				next;
+			if ($includeArt) {
+				my $playallicon = main::SLIM_SERVICE
+					? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
+					: '/html/images/playall.png';
+					
+				$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
 			}
-			# search is a special case of _playAll, which needs to fire off a different cli command
-			if ($key eq 'search') {
-				# we don't need a cmd: tagged param for these
-				delete($items{$mode}{'params'}{'play'}{'cmd'});
-				delete($items{$mode}{'params'}{'add'}{'cmd'});
-				delete($items{$mode}{'params'}{'add-hold'}{'cmd'});
-				my $searchParam;
-				for my $button ('add', 'add-hold', 'play') {
-					if ($searchType eq 'artists') {
-						$searchParam = 'contributor.namesearch=' . $val;
-					} elsif ($searchType eq 'albums') {
-						$searchParam = 'album.titlesearch=' . $val;
-					} else {
-						$searchParam = 'track.titlesearch=' . $val;
-					}
+	
+			# get all our params
+			my $params = $request->getParamsCopy();
+			my $searchType = $request->getParam('_searchType');
+		
+			# remove keys starting with _ (internal or positional) and make copies
+			while (my ($key, $val) = each %{$params}) {
+				if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
+					next;
 				}
-				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks', $searchParam ];
-				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks', $searchParam ];
-				$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks', $searchParam ];
-				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
-			} else {
-				$items{$mode}{'params'}{'add'}{$key}  = $val;
-				$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
-				$items{$mode}{'params'}{'play'}{$key} = $val;
-				$items{$mode}{'params'}{'go'}{$key} = $val;
+				# search is a special case of _playAll, which needs to fire off a different cli command
+				if ($key eq 'search') {
+					# we don't need a cmd: tagged param for these
+					delete($items{$mode}{'params'}{'play'}{'cmd'});
+					delete($items{$mode}{'params'}{'add'}{'cmd'});
+					delete($items{$mode}{'params'}{'add-hold'}{'cmd'});
+					my $searchParam;
+					for my $button ('add', 'add-hold', 'play') {
+						if ($searchType eq 'artists') {
+							$searchParam = 'contributor.namesearch=' . $val;
+						} elsif ($searchType eq 'albums') {
+							$searchParam = 'album.titlesearch=' . $val;
+						} else {
+							$searchParam = 'track.titlesearch=' . $val;
+						}
+					}
+					$items{$mode}{'playCmd'} = ['playlist', 'loadtracks', $searchParam ];
+					$items{$mode}{'addCmd'}  = ['playlist', 'addtracks', $searchParam ];
+					$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks', $searchParam ];
+					$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
+				} else {
+					$items{$mode}{'params'}{'add'}{$key}  = $val;
+					$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
+					$items{$mode}{'params'}{'play'}{$key} = $val;
+					$items{$mode}{'params'}{'go'}{$key} = $val;
+				}
 			}
-		}
-				
-		# override the actions, babe!
-		my $actions = {
-			'play' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'playCmd'},
-				'nextWindow' => 'nowPlaying',
-				'params' => $items{$mode}{'params'}{'play'},
-			},
-			'add' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'addCmd'},
-				'params' => $items{$mode}{'params'}{'add'},
-			},
-			'add-hold' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'addCmd'},
-				'params' => $items{$mode}{'params'}{'add-hold'},
-			},
-		};
-		if ($items{$mode}{'goCmd'}) {
-			$actions->{'go'} = {
+					
+			# override the actions, babe!
+			my $actions = {
+				'play' => {
 					'player' => 0,
-					'cmd'    => $items{$mode}{'goCmd'},
-					'params' => $items{$mode}{'params'}{'go'},
+					'cmd'    => $items{$mode}{'playCmd'},
+					'nextWindow' => 'nowPlaying',
+					'params' => $items{$mode}{'params'}{'play'},
+				},
+				'add' => {
+					'player' => 0,
+					'cmd'    => $items{$mode}{'addCmd'},
+					'params' => $items{$mode}{'params'}{'add'},
+				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd'    => $items{$mode}{'addCmd'},
+					'params' => $items{$mode}{'params'}{'add-hold'},
+				},
 			};
-		} else {
-			$actions->{'do'} = {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'playCmd'},
-				'params' => $items{$mode}{'params'}{'play'},
-			};
-			if ($items{$mode}{'nextWindow'}) {
-				$actions->{'do'}{'nextWindow'} = $items{$mode}{'nextWindow'};
-			}			
-		}
-		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$chunkCount++;
+			if ($items{$mode}{'goCmd'}) {
+				$actions->{'go'} = {
+						'player' => 0,
+						'cmd'    => $items{$mode}{'goCmd'},
+						'params' => $items{$mode}{'params'}{'go'},
+				};
+			} else {
+				$actions->{'do'} = {
+					'player' => 0,
+					'cmd'    => $items{$mode}{'playCmd'},
+					'params' => $items{$mode}{'params'}{'play'},
+				};
+				if ($items{$mode}{'nextWindow'}) {
+					$actions->{'do'}{'nextWindow'} = $items{$mode}{'nextWindow'};
+				}			
+			}
+			$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+			$chunkCount++;
 
 		}
 
