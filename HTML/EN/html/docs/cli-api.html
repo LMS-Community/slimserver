@@ -52,6 +52,7 @@
 	<li>Added tag 'X' for <a href="#albums">albums</a> to return the album's replay-gain value.</li>
 	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
 	<li>Added 'play_index' tagged parameter to <a href="#playlistcontrol">playlistcontrol</a>.</li>
+	<li>In extended queries, return all possible items if the &lt;itemsPerResponse&gt; parameter is omitted.</li>
 </ul>
 
 <hr>
@@ -395,6 +396,10 @@
 		each command to separate the multiple returned items. Data is
 		only returned when applicable, that is, all possible tags are
 		not always returned.
+	</p>
+	<p>
+		If the &lt;itemsPerResponse&gt; positional parameter and all tagged
+		parameters are omitted then all possible items are returned.
 	</p>
 </blockquote>
 <p>

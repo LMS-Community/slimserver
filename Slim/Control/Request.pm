@@ -1866,6 +1866,7 @@ sub normalize {
 	my $end   = 0;
 	my $valid = 0;
 	
+	$numofitems = $count if !defined $numofitems && defined $from;
 	if ($numofitems && $count) {
 
 		my $lastidx = $count - 1;
