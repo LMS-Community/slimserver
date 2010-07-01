@@ -205,6 +205,9 @@ sub cliQuery {
 		my $nextIndex;
 		if ( defined $itemId && length($itemId) ) {
 			my @index = split(/\./, $itemId);
+			if (length($index[0] >= 8)) {
+				shift @index;	# discard sid
+			}
 			$levels = scalar @index;
 			$nextIndex = $index[0] =~ /^(\d+)/;
 		}
@@ -897,8 +900,8 @@ sub _cliQuery_done {
 
 					# if we're adding or inserting, show a showBriefly
 					if ( $method =~ /add/ || $method eq 'insert' ) {
-						my $icon = $request->getParam('icon');
-						my $title = $request->getParam('favorites_title');
+						my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
+						my $title = $subFeed->{'name'} || $subFeed->{'title'};
 						_addingToPlaylist($client, $method, $title, $icon);
 					# if not, we jump to the correct track in the list
 					} else {
