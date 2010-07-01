@@ -604,11 +604,13 @@ sub _artists {
 			my $results = shift;
 			my $items = $results->{'artists_loop'};
 			foreach (@$items) {
-				$_->{'name'}        = $_->{'artist'};
-				$_->{'type'}        = 'playlist';
-				$_->{'playlist'}    = \&_tracks;
-				$_->{'url'}         = \&_albums;
-				$_->{'passthrough'} = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}] } ];
+				$_->{'name'}          = $_->{'artist'};
+				$_->{'type'}          = 'playlist';
+				$_->{'playlist'}      = \&_tracks;
+				$_->{'url'}           = \&_albums;
+				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}] } ];
+				$_->{'favorites_url'} = 'db:contributor.namesearch=' .
+						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
 			}
 			my $extra;
 			if (scalar @searchTags) {
@@ -691,11 +693,13 @@ sub _genres {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
 			foreach (@$items) {
-				$_->{'name'}        = $_->{'genre'};
-				$_->{'type'}        = 'playlist';
-				$_->{'playlist'}    = \&_tracks;
-				$_->{'url'}         = \&_artists;
-				$_->{'passthrough'} = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ];
+				$_->{'name'}          = $_->{'genre'};
+				$_->{'type'}          = 'playlist';
+				$_->{'playlist'}      = \&_tracks;
+				$_->{'url'}           = \&_artists;
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ];
+				$_->{'favorites_url'} = 'db:genre.namesearch=' .
+						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
 			};
 			
 			my %actions = (
@@ -738,11 +742,12 @@ sub _years {
 			my $results = shift;
 			my $items = $results->{'years_loop'};
 			foreach (@$items) {
-				$_->{'name'}        = $_->{'year'};
-				$_->{'type'}        = 'playlist';
-				$_->{'playlist'}    = \&_tracks;
-				$_->{'url'}         = \&_albums;
-				$_->{'passthrough'} = [ { searchTags => [@searchTags, "year:" . $_->{'year'}] } ];
+				$_->{'name'}          = $_->{'year'};
+				$_->{'type'}          = 'playlist';
+				$_->{'playlist'}      = \&_tracks;
+				$_->{'url'}           = \&_albums;
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "year:" . $_->{'year'}] } ];
+				$_->{'favorites_url'} = 'db:year.id=' . ($_->{'name'} || 0 );
 			};
 			
 			my %actions = (
@@ -803,12 +808,17 @@ sub _albums {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
 			foreach (@$items) {
-				$_->{'name'}        = $_->{'album'};
-				$_->{'image'}       = ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef);
-				$_->{'type'}        = 'playlist';
-				$_->{'playlist'}    = \&_tracks;
-				$_->{'url'}         = \&_tracks;
-				$_->{'passthrough'} = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum' } ];
+				$_->{'name'}          = $_->{'album'};
+				$_->{'image'}         = ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef);
+				$_->{'type'}          = 'playlist';
+				$_->{'playlist'}      = \&_tracks;
+				$_->{'url'}           = \&_tracks;
+				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "album_id:" . $_->{'id'}], sort => 'sort:tracknum' } ];
+				# the favorites url is the album title here
+				# album id would be (much) better, but that would screw up the favorite on a rescan
+				# title is a really stupid thing to use, since there's no assurance it's unique
+				$_->{'favorites_url'} = 'db:album.titlesearch=' .
+						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
 				
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
@@ -946,15 +956,16 @@ sub _tracks {
 			my $items = $results->{'titles_loop'};
 			foreach (@$items) {
 				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
-				$_->{'name'}        = $tracknum . $_->{'title'};
-				$_->{'type'}        = 'link';
-				$_->{'on_select'}   = 'play';
-				$_->{'playall'}     = 1;
-				$_->{'play_index'}  = $offset++;
-				$_->{'type'}        = 'link';
-				$_->{'play'}        = $_->{'url'};
-				$_->{'url'}         = \&_track;
-				$_->{'passthrough'} = [ { track_id => $_->{'id'} } ];
+				$_->{'name'}          = $tracknum . $_->{'title'};
+				$_->{'type'}          = 'link';
+				$_->{'on_select'}     = 'play';
+				$_->{'playall'}       = 1;
+				$_->{'play_index'}    = $offset++;
+				$_->{'type'}          = 'link';
+				$_->{'play'}          = $_->{'url'};
+				$_->{'favorites_url'} = $_->{'url'};
+				$_->{'url'}           = \&_track;
+				$_->{'passthrough'}   = [ { track_id => $_->{'id'} } ];
 			}
 			
 			my %actions = (
