@@ -218,7 +218,7 @@ sub menu {
 	$tags ||= {};
 	
 	# Protocol Handlers can define their own track info OPML menus
-	if ( $url && !$track ) {
+	if ( $url ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('trackInfoURL') ) {
 			my $feed = $handler->trackInfoURL( $client, $url );
@@ -1530,13 +1530,12 @@ sub cliQuery {
 	}
 	
 	my $feed;
-		
-	if ( $url ) {
-		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
-	}
-	else {
+	
+	if ($trackId) {
 		my $track = Slim::Schema->find( Track => $trackId );
 		$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
+	} else {
+		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
 	}
 	
 	$cachedFeed = $feed if $feed;
