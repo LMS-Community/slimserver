@@ -1249,8 +1249,8 @@ sub _cliQuery_done {
 								go => {
 									cmd    => [ $query, 'items' ],
 									params => {
+										%$params,
 										item_id     => "$id",
-										menu        => $query,
 										search      => '__TAGGEDINPUT__',
 										cachesearch => defined $item->{cachesearch} ? $item->{cachesearch} : 1, # Bug 13044, can this search be cached or not?
 									},
