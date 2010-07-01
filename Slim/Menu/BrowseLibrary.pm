@@ -957,15 +957,9 @@ sub _tracks {
 			foreach (@$items) {
 				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
 				$_->{'name'}          = $tracknum . $_->{'title'};
-				$_->{'type'}          = 'link';
-				$_->{'on_select'}     = 'play';
+				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
-				$_->{'type'}          = 'link';
-				$_->{'play'}          = $_->{'url'};
-				$_->{'favorites_url'} = $_->{'url'};
-				$_->{'url'}           = \&_track;
-				$_->{'passthrough'}   = [ { track_id => $_->{'id'} } ];
 			}
 			
 			my %actions = (
@@ -1010,29 +1004,6 @@ sub _tracks {
 	);
 }
 
-sub _track {
-	my ($client, $callback, $args, $pt) = @_;
-	
-	logBacktrace('unexpected call');
-
-	my $tags = {
-		menuMode      => 0,
-		menuContext   => 'normal',
-	};
-	my $feed;
-	
-	if ($pt->{'track_id'}) {
-		my $track = Slim::Schema->find( Track => $pt->{'track_id'} );
-		$feed  = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
-	}
-	
-	if (!$feed && $pt->{'track_url'}) {
-		$feed  = Slim::Menu::TrackInfo->menu( $client, $pt->{'track_url'}, undef, $tags );
-	}
-
-	$callback->($feed);
-	return;
-}
 
 sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
@@ -1057,12 +1028,8 @@ sub _bmf {
 					};
 					$gotsubfolder = 1;
 				}  elsif ($_->{'type'} eq 'track') {
-					$_->{'type'}        = 'link';
-					$_->{'on_select'}   = 'play';
+					$_->{'type'}        = 'audio';
 					$_->{'playall'}     = 1;
-					$_->{'play'}        = $_->{'url'};
-					$_->{'url'}         = \&_track;
-					$_->{'passthrough'} = [ { searchTags => [ track_id => $_->{'id'} ] } ];
 					$_->{'itemActions'} = {
 						info => {
 							command     => ['trackinfo', 'items'],
@@ -1143,6 +1110,7 @@ sub _playlistTracks {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
+	my $offset     = $args->{'index'} || 0;
 	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
 		['tags:dtu', $menuStyle, @searchTags],
@@ -1152,19 +1120,25 @@ sub _playlistTracks {
 			foreach (@$items) {
 				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
 				$_->{'name'}        = $tracknum . $_->{'title'};
-				$_->{'type'}        = 'link';
-				$_->{'on_select'}   = 'play';
+				$_->{'type'}        = 'audio';
 				$_->{'playall'}     = 1;
-				$_->{'type'}        = 'link';
-				$_->{'play'}        = $_->{'url'};
-				$_->{'url'}         = \&_track;
-				$_->{'passthrough'} = [ $_->{'remote'} ? {track_url => $_->{'url'}} : {track_id => $_->{'id'}} ];
+				$_->{'play_index'}  = $offset++;
 			}
 
 			my %actions = (
+					commonVariables	=> [track_id => 'id', url => 'url'],
 					info => {
 						command     => ['trackinfo', 'items'],
-						variables	=> [track_id => 'id'],
+					},
+					playall => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'load', %{&_tagsToParams(\@searchTags)}},
+						variables	=> [play_index => 'play_index'],
+					},
+					addall => {
+						command     => ['playlistcontrol'],
+						variables	=> [],
+						fixedParams => {cmd => 'add', %{&_tagsToParams(\@searchTags)}},
 					},
 				);
 			$actions{'items'} = $actions{'info'};
