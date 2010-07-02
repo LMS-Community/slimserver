@@ -334,6 +334,7 @@ sub infoContributors {
 			type =>  'text',
 			name =>  $remoteMeta->{artist},
 			label => 'ARTIST',
+		};
 	}
 	else {
 		# Loop through the contributor types and append
