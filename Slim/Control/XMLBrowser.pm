@@ -1216,8 +1216,6 @@ sub _cliQuery_done {
 							$itemParams->{'isContextMenu'} = 1;
 						}
 						
-						$itemParams->{'textkey'} = $item->{textkey} if defined $item->{textkey};
-
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
@@ -1378,6 +1376,8 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
 						
+						$request->addResultLoop( $loopname, $cnt, 'textkey', $item->{textkey} ) if defined $item->{textkey};
+
 					}
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
