@@ -3054,9 +3054,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$terms->{$key} = $value;
 
-			} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
-
-				$terms->{$1} = $2;
 			}
 		}
 	}
@@ -3148,11 +3145,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	}
 
 	# 
-	if (my $fieldKey = $find{'fieldInfo'}) {
-
-		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
-
-	} elsif ($find{'playlist.id'} && !$find{'me.id'}) {
+	if ($find{'playlist.id'} && !$find{'me.id'}) {
 
 		# Treat playlists specially - they are containers.
 		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});

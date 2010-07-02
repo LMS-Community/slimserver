@@ -3482,10 +3482,11 @@ sub yearsQuery {
 	
 	# sort them
 	my $attr = {
-		'distinct' => 'me.id'
+		'distinct' => 'me.id',
+		'order_by' => 'me.id',
 	};
 
-	my $rs = Slim::Schema->rs('Year')->browse->search($where, $attr);
+	my $rs = Slim::Schema->rs('Year')->search($where, $attr);
 
 	my $count = $rs->count;
 

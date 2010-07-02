@@ -7,17 +7,6 @@ use base qw(Slim::Schema::ResultSet::Base);
 
 use Slim::Utils::Prefs;
 
-sub title {
-	my $self = shift;
-
-	return 'BROWSE_BY_ALBUM';
-}
-
-sub allTitle {
-	my $self = shift;
-
-	return 'ALL_ALBUMS';
-}
 
 sub pageBarResults {
 	my $self = shift;
@@ -129,65 +118,6 @@ sub browse {
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});
-}
-
-sub descendTrack {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	my $sort = shift;
-
-	# Create a "clean" resultset, without any joins on it - since we'll
-	# just want information from the album.
-	my $rs = $self->result_source->resultset;
-
-	# Force a specified sort order right now, since Track's aren't sortable.
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	my $collate = $sqlHelperClass->collate();
-	
-	$sort 
-		= $sqlHelperClass->prepend0("me.titlesort") . " $collate"
-		. ", tracks.disc, tracks.tracknum, "
-		. $sqlHelperClass->prepend0("tracks.titlesort") . " $collate";
-
-	my $attr = {
-		'order_by' => $sort,
-	};
-
-	# Filter by genre if requested.
-	if (!preferences('server')->get('noGenreFilter') && defined $find->{'genre.id'}) {
-
-		push @{$attr->{'join'}}, 'genreTracks';
-		$cond->{'genreTracks.genre'} = $find->{'genre.id'};
-	}
-
-	# Check if contributor.id exists, so that we can only select tracks
-	# for the album for that contributor. See Bug: 3558
-	if (my $contributor = $find->{'contributor.id'}) {
-
-		if (Slim::Schema->variousArtistsObject->id != $contributor) {
-
-			push @{$attr->{'join'}}, 'contributorTracks';
-			$cond->{'contributorTracks.contributor'} = $contributor;
-		}
-	}
-
-	# Only select tracks for this album or year
-	while (my ($key, $value) = each %{$find}) {
-
-		if ($key =~ /^album\.(\w+)$/) {
-
-			$cond->{"me.$1"} = $value;
-		}
-
-		if ($key =~ /^(year)\.\w+$/) {
-
-			# we want to filter on the track level, not album level (bug 5748)
-			$cond->{"tracks.$1"} = $value;
-		}
-	}
-
-	return $rs->search_related('tracks', $rs->fixupFindKeys($cond), $attr);
 }
 
 1;

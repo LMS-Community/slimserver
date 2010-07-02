@@ -524,8 +524,6 @@ L<Slim::Utils::Timers>
 
 L<Slim::Buttons::Settings>
 
-L<Slim::Buttons::BrowseDB>
-
 =cut
 
 1;

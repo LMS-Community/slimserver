@@ -7,18 +7,6 @@ use base qw(Slim::Schema::ResultSet::Base);
 
 use Slim::Utils::Prefs;
 
-sub title {
-	my $self = shift;
-
-	return 'BROWSE_BY_SONG';
-}
-
-sub allTitle {
-	my $self = shift;
-
-	return 'ALL_SONGS';
-}
-
 sub pageBarResults {
 	my $self = shift;
 

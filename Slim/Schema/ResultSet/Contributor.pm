@@ -21,18 +21,6 @@ sub pageBarResults {
 	});
 }
 
-sub title {
-	my $self = shift;
-
-	return 'BROWSE_BY_ARTIST';
-}
-
-sub allTitle {
-	my $self = shift;
-
-	return 'ALL_ARTISTS';
-}
-
 sub alphaPageBar { 1 }
 sub ignoreArticles { 1 }
 
@@ -105,86 +93,6 @@ sub browse {
 		'group_by' => 'me.id',
 		'join'     => \@joins,
 	});
-}
-
-sub descendAlbum {
-	my ($self, $find, $cond, $sort) = @_;
-
-	# Create a clean resultset
-	my $rs = $self->result_source->resultset;
-
-	# Handle sort's from the web UI.
-	if ($sort) {
-
-		$sort = $rs->fixupSortKeys($sort);
-
-	} else {
-		my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-		my $collate = $sqlHelperClass->collate();
-		
-		$sort = $sqlHelperClass->prepend0("album.titlesort") . " $collate, album.disc";
-	}
-
-	my $attr = {
-		'order_by' => $sort,
-	};
-
-	# Bug: 4694 - if role has been specified descend using this role, otherwise descend for all artist only roles
-	my $roles;
-
-	if ($find->{'contributor.role'}) {
-
-		if ($find->{'contributor.role'} ne 'ALL') {
-
-			$roles = [ Slim::Schema::Contributor->typeToRole($find->{'contributor.role'}) ];
-		}
-
-	} else {
-
-		$roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
-	}
-
-	if ($roles) {
-
-		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
-	}
-
-	# Bug: 2192 - Don't filter out compilation
-	# albums at the artist level - we want to see all of them for an artist.
-	my $albumCond = {};
-
-	# Make run fixupFindKeys before trying to check/delete me.id,
-	# otherwise it will be contributor.id still.
-	$cond = $rs->fixupFindKeys($cond);
-
-	if (defined $find->{'album.compilation'}) {
-
-		if ($cond->{'me.id'} && $cond->{'me.id'} == Slim::Schema->variousArtistsObject->id && $find->{'contributor.role'} ne 'ALL') {
-
-			delete $cond->{'me.id'};
-		}
-
-		$albumCond->{'album.compilation'} = $find->{'album.compilation'};
-	}
-
-	# Pull in the album join.
-	$rs = $rs->search_related('contributorAlbums', $cond);
-
-	# Constrain on the genre if it exists
-	# but only do so if the noGenreFilter isn't set or the "All Songs" item is selected
-	if ( (my $genre = $find->{'genre.id'}) && !preferences('server')->get('noGenreFilter') ) {
-		$albumCond->{'genreTracks.genre'} = $genre;
-		$attr->{'join'} = { 'tracks' => 'genreTracks' };
-	}
-
-
-	# Full on genre join will override the above if we need to search on the genre name.
-	if ($sort =~ /genre\./) {
-
-		$attr->{'join'} = { 'tracks' => { 'genreTracks' => 'genre' } };
-	}
-
-	return $rs->search_related('album', $albumCond, $attr);
 }
 
 1;

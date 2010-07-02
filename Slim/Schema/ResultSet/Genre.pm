@@ -21,18 +21,6 @@ sub pageBarResults {
 	});
 }
 
-sub title {
-        my $self = shift;
-
-        return 'BROWSE_BY_GENRE';
-}
-
-sub allTitle {
-        my $self = shift;
-
-        return 'ALL_GENRES';
-}
-
 sub alphaPageBar { 1 }
 
 sub searchColumn {
@@ -52,53 +40,6 @@ sub searchNames {
 	$attrs->{'distinct'} ||= 'me.id';
 
 	return $self->search({ 'me.namesearch' => { 'like' => $terms } }, $attrs);
-}
-
-sub browse {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	my $sort = shift;
-	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-
-	return $self->search($cond, { 'order_by' => "me.namesort $collate" });
-}
-
-sub descendContributor {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	my $sort = shift;
-
-	# Get our own RS first - then search for related, which builds up a LEFT JOIN query.
-	my $rs   = $self->search($cond)->search_related('genreTracks');
-
-	# If we are automatically identifiying VA albums, constrain the query.
-	if (preferences('server')->get('variousArtistAutoIdentification')) {
-
-		$rs = $rs->search_related('track', {
-			'album.compilation' => [ { 'is' => undef }, { '=' => 0 } ]
-		}, { 'join' => 'album' });
-
-	} else {
-
-		$rs = $rs->search_related('track');
-	}
-
-	# The user may not want to include all the composers / conductors
-	if (my $roles = Slim::Schema->artistOnlyRoles) {
-
-		$rs = $rs->search_related('contributorTracks', { 'contributorTracks.role' => { 'in' => $roles } });
-
-	} else {
-
-		$rs = $rs->search_related('contributorTracks');
-	}
-	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-
-	return $rs->search_related('contributor', {}, { 'order_by' => $sort || "contributor.namesort $collate" });
 }
 
 1;
