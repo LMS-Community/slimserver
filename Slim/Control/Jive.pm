@@ -344,64 +344,6 @@ sub jiveSetAlbumSort {
 	$request->setStatusDone();
 }
 
-sub playlistModeSettings {
-	main::INFOLOG && $log->info("Begin function");
-
-	my $client       = shift;
-	my $batch        = shift;
-	my $playlistmode = Slim::Player::Playlist::playlistMode($client);
-
-	my @menu = ();
-
-	my @modeStrings = ('DISABLED', 'OFF', 'ON', 'PARTY');
-	my @translatedModeStrings = map { ucfirst($client->string($_)) } @modeStrings;
-	my %modes = (
-		disabled => 1,
-		off      => 2,
-		on       => 3,
-		party    => 4,
-	);
-
-	#todo: move node to "betaFeatures",  left as advancedSettings for backwards compat 
-	my $choice = {
-		text          => $client->string('PLAYLIST_MODE'),
-		choiceStrings => [ @translatedModeStrings ] ,
-		selectedIndex => $modes{$playlistmode},
-		id            => 'settingsPlaylistMode',
-		node          => 'advancedSettings',
-		weight        => 100,
-		actions       => {
-			do => { 
-				choices => [ 
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'disabled' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'off' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'on' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'party' ],
-					},
-				], 
-			},
-		},
-	};
-
-	if ($batch) {
-		return $choice;
-	} else {
-		_notifyJive( [ $choice ], $client);
-	}
-
-}
-
 
 
 sub albumSortSettingsMenu {
@@ -1361,12 +1303,6 @@ sub playerSettingsMenu {
 
 	# always add shuffle
 	push @menu, shuffleSettings($client, 1);
-
-	# always add playlist mode
-	# Bugs: 13896, 13689, 8878
-	# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
-	# fix for bug 13689 will be the complete fix, but for now remove playlistModeSettings from SP menus entirely
-	# push @menu, playlistModeSettings($client, 1);
 
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
@@ -2332,7 +2268,6 @@ sub myMusicMenu {
 	my $batch = shift;
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
-#	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 
 	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort);
 	
@@ -2368,7 +2303,6 @@ sub searchMenu {
 	main::INFOLOG && $log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
-	my $party = ( $client && Slim::Player::Playlist::playlistMode($client) eq 'party' );
 	my @searchMenu = (
 	{
 		text           => $client->string('ARTISTS'),
@@ -2394,7 +2328,6 @@ sub searchMenu {
 					menu_all => '1',
 					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
-					party    => $party,
 					_searchType => 'artists',
 				},
                         },
@@ -2428,7 +2361,6 @@ sub searchMenu {
 					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'albums',
-					party    => $party,
 				},
 			},
 		},
@@ -2494,7 +2426,6 @@ sub searchMenu {
 					menu     => 'track',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
-					party    => $party,
 				},
                         },
 		},
@@ -2597,13 +2528,6 @@ sub jivePlayTrackAlbumCommand {
 	my $playlistID = $request->getParam('playlist_id');
 	my $folder     = $request->getParam('folder')|| undef;
 	my $listIndex  = $request->getParam('list_index');
- 	my $mode       = Slim::Player::Playlist::playlistMode($client);
-	
-	if ( ( $mode eq 'on' || $mode eq 'party' ) && $trackID ) {
-		# send the track with cmd of 'load' so playlistcontrol doesn't turn off playlistmode
-		$client->execute( ['playlistcontrol', 'cmd:load', "track_id:$trackID" ] );
-		return;
-	}
 
 	$client->execute( ["playlist", "clear"] );
 

@@ -249,11 +249,6 @@ sub power {
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);
 
-		# shut playlist mode off
-		if (Slim::Player::Playlist::playlistMode($client) eq 'on') {
-			Slim::Player::Playlist::playlistMode($client, 'off');
-		}
-
 		# move display to off mode
 		$client->killAnimation();
 		$client->brightness($prefs->client($client)->get('powerOffBrightness'));

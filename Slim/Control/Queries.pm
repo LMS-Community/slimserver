@@ -268,7 +268,6 @@ sub albumsQuery {
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
-	my $party         = $request->getParam('party') || 0;
 	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
@@ -278,8 +277,7 @@ sub albumsQuery {
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
 	my $useContextMenu = $request->getParam('useContextMenu');
-	my $partyMode = _partyModeCheck($request);
-	my $allSongs = $menuMode && defined $insert && !$partyMode;
+	my $allSongs = $menuMode && defined $insert;
 	my $insertAll = $allSongs && !$useContextMenu;
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
@@ -534,10 +532,6 @@ sub albumsQuery {
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 
-		if ( $party || $partyMode ) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-
 		# adapt actions to SS preference
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
@@ -673,9 +667,6 @@ sub albumsQuery {
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
 
 				# artwork if we have it
 				if ( $c->{'albums.title'} ne $noAlbumName &&
@@ -792,7 +783,6 @@ sub artistsQuery {
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
 	my $to_cache = $request->getParam('cache');
-	my $party    = $request->getParam('party') || 0;
 	my $tags     = $request->getParam('tags') || '';
 	
 	my %favorites;
@@ -801,10 +791,9 @@ sub artistsQuery {
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
 	my $allAlbums = defined $genreID;
 	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
+	my $insertAll = $menuMode && defined $insert && !$useContextMenu;
 	
 	my $va_pref = $prefs->get('variousArtistAutoIdentification');
 	
@@ -1017,9 +1006,6 @@ sub artistsQuery {
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		if ($partyMode || $party) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
@@ -1103,9 +1089,6 @@ sub artistsQuery {
 				};
 				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -1543,14 +1526,12 @@ sub genresQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
-	my $party         = $request->getParam('party') || 0;
 	my $tags          = $request->getParam('tags') || '';
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
 	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode && $useContextMenu;
+	my $insertAll = $menuMode && defined $insert && $useContextMenu;
 	
 	my $sql  = 'SELECT DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable FROM genres ';
 	my $w    = [];
@@ -1688,9 +1669,6 @@ sub genresQuery {
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
 		if ($useContextMenu) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('genre');
@@ -1759,9 +1737,6 @@ sub genresQuery {
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -1949,14 +1924,12 @@ sub musicfolderQuery {
 	my $url      = $request->getParam('url');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
-	my $party    = $request->getParam('party') || 0;
 	my $tags     = $request->getParam('tags') || '';
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
 	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# url overrides any folderId
 	my $params = ();
@@ -1970,15 +1943,15 @@ sub musicfolderQuery {
 	
 	# Pull the directory list, which will be used for looping.
 	my ($topLevelObj, $items, $count);
-
+	
 	# if this is a follow up query ($index > 0), try to read from the cache
-	if ($index > 0 && $cache->{bmf}->[$party]
-		&& $cache->{bmf}->[$party]->{id} eq ($params->{url} || $params->{id}) 
-		&& $cache->{bmf}->[$party]->{ttl} > time()) {
+	if ($index > 0 && $cache->{bmf}
+		&& $cache->{bmf}->{id} eq ($params->{url} || $params->{id}) 
+		&& $cache->{bmf}->{ttl} > time()) {
 			
-		$items       = $cache->{bmf}->[$party]->{items};
-		$topLevelObj = $cache->{bmf}->[$party]->{topLevelObj};
-		$count       = $cache->{bmf}->[$party]->{count};
+		$items       = $cache->{bmf}->{items};
+		$topLevelObj = $cache->{bmf}->{topLevelObj};
+		$count       = $cache->{bmf}->{count};
 	}
 	else {
 		
@@ -2045,10 +2018,6 @@ sub musicfolderQuery {
 				},
 			},
 		};
-
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
 
 		if ($useContextMenu) {
 			# + is more
@@ -2126,9 +2095,6 @@ sub musicfolderQuery {
 
 					$params->{'folder_id'} = $id;
 
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
 					# Bug 13855: there is no Slim::Menu::Folderinfo so no context menu is available here
 				# song
 				} elsif (Slim::Music::Info::isSong($item)) {
@@ -2169,7 +2135,7 @@ sub musicfolderQuery {
 						},
 					};
 					
-					if ( $playalbum && ! $partyMode ) {
+					if ( $playalbum ) {
 						$actions->{'play'} = {
 							player => 0,
 							cmd    => ['jiveplaytrackalbum'],
@@ -2228,9 +2194,6 @@ sub musicfolderQuery {
 						},
 					};
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
 					if ($useContextMenu) {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
@@ -2274,9 +2237,6 @@ sub musicfolderQuery {
 							'itemsParams' => 'params',
 						},
 					};
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 				}
 
@@ -2313,7 +2273,7 @@ sub musicfolderQuery {
 
 	# cache results in case the same folder is queried again shortly 
 	# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-	$cache->{bmf}->[$party] = {
+	$cache->{bmf} = {
 		id          => ($params->{url} || $params->{id}),
 		ttl         => (time() + 15),
 		items       => $items,
@@ -3745,7 +3705,6 @@ sub statusQuery {
 	my $repeat       = Slim::Player::Playlist::repeat($client);
 	my $shuffle      = Slim::Player::Playlist::shuffle($client);
 	my $songCount    = Slim::Player::Playlist::count($client);
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 
 	my $idx = 0;
 
@@ -3860,7 +3819,8 @@ sub statusQuery {
 	$shuffle += 0;
 	$request->addResult("playlist shuffle", $shuffle); 
 
-	$request->addResult("playlist mode", $playlistMode);
+	# Backwards compatibility - now obsolete
+	$request->addResult("playlist mode", 'off');
 
 	if (defined $client->sequenceNumber()) {
 		$request->addResult("seq_no", $client->sequenceNumber());
@@ -4314,8 +4274,7 @@ sub titlesQuery {
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# we only change the count if we're going to insert the play all item
 	my $addPlayAllItem = $search && $insertAll;
@@ -4445,8 +4404,7 @@ sub titlesQuery {
 		
 		# Bug 5981
 		# special play handler for "play all tracks in album
-		# ignore this setting when in party mode
-		if ( $playalbum && $albumID && ! $partyMode ) {
+		if ( $playalbum && $albumID ) {
 			$base->{'actions'}{'play'} = {
 				player => 0,
 				cmd    => ['jiveplaytrackalbum'],
@@ -4645,13 +4603,11 @@ sub yearsQuery {
 	my $quantity      = $request->getParam('_quantity');	
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
-	my $party         = $request->getParam('party') || 0;
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
 	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# get them all by default
 	my $where = {};
@@ -4720,9 +4676,6 @@ sub yearsQuery {
 		if ($actioncmd eq 'albums') {
 			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artistalbum';
 		}
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 		if ($useContextMenu) {
@@ -4771,9 +4724,6 @@ sub yearsQuery {
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
@@ -6150,17 +6100,6 @@ sub _mixerItemHandler {
 		return undef;
 	}
 }
-
-sub _partyModeCheck {
-	my $request   = shift;
-	my $partyMode = 0;
-	if ($request->client) {
-		my $client = $request->client();
-		$partyMode = Slim::Player::Playlist::playlistMode($client);
-	}
-	return ($partyMode eq 'party');
-}
-
 
 sub _scanFailed {
 	my ($request, $info) = @_;

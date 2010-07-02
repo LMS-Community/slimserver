@@ -759,12 +759,8 @@ sub playlistClearCommand {
 
 	# get the parameters
 	my $client = $request->client();
-	my $mode   = Slim::Player::Playlist::playlistMode($client);
 
 	Slim::Player::Playlist::stopAndClear($client);
-	if ( $mode eq 'on' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-	}
 
 	# called by currentPlaylistUpdateTime below
 	# $client->currentPlaylistChangeTime(Time::HiRes::time());
@@ -1106,12 +1102,6 @@ sub playlistSaveCommand {
 		$request->addResult('writeError', 1);
 	}
 	
-	# exit playlist mode if currently in playlist mode
-	my $mode = Slim::Player::Playlist::playlistMode($client);
-	if ( $mode eq 'on' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-	}
-
 	$request->addResult('__playlist_id', $playlistObj->id);
 
 	if ( ! $silent ) {
@@ -1125,21 +1115,6 @@ sub playlistSaveCommand {
 
 	$request->setStatusDone();
 }
-
-sub playlistModeCommand {
-
-	my $request   = shift;
-	my $client    = $request->client;
-	my $mode      = $request->getParam('_newvalue');
-
-	if ( defined($mode) ) {
-		Slim::Player::Playlist::playlistMode($client, $mode);
-	}
-
-	$request->setStatusDone();
-
-}
-
 
 sub playlistShuffleCommand {
 	my $request = shift;
@@ -1186,11 +1161,6 @@ sub playlistXalbumCommand {
 	my $artist   = $request->getParam('_artist');#p3
 	my $album    = $request->getParam('_album'); #p4
 	my $title    = $request->getParam('_title'); #p5
-
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'loadalbum') {
-		$cmd = 'insertalbum';
-	}
 
 	# Pass to parseSearchTerms
 	my $find     = {};
@@ -1295,11 +1265,6 @@ sub playlistXitemCommand {
 	my $fadeIn   = $cmd eq 'play' ? $request->getParam('_fadein') : undef;
 	my $noplay       = $request->getParam('noplay') || 0; # optional tagged param, used for resuming playlist after preview
 	my $wipePlaylist = $request->getParam('wipePlaylist') || 0; #optional tagged param, used for removing playlist after resume
-
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load') {
-		$cmd = 'insert';
-	}
 
 	if (!defined $item) {
 		$request->setStatusBadParams();
@@ -1508,12 +1473,6 @@ sub playlistXitemCommand {
 					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
 				});
 		}
-		# if music isn't playing, hitting the play button should start playing music
-		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'insert' ) {
-			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-				Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
-			}
-		}
 
 	} else {
 		
@@ -1619,16 +1578,9 @@ sub playlistXtracksCommand {
 	my $fadeIn      = $request->getParam('_fadein');#p4
 	my $jumpToIndex = $request->getParam('_index');#p5, by default undef - see bug 2085
 
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-
 	if (!defined $what) {
 		$request->setStatusBadParams();
 		return;
-	}
-
-	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'loadtracks' ) {
-		$cmd    = 'inserttracks';
 	}
 
 	my $load   = ($cmd eq 'loadtracks' || $cmd eq 'playtracks');
@@ -1668,11 +1620,6 @@ sub playlistXtracksCommand {
 
 	if ($insert) {
 		_insert_done($client, $size);
-		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') ) {
-			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-				Slim::Player::Source::playmode($client, 'play');
-			}
-		}
 		$request->addResult(index => (Slim::Player::Source::streamingSongIndex($client)+1));
 	}
 
@@ -1782,8 +1729,6 @@ sub playlistcontrolCommand {
 	my $cmd                 = $request->getParam('cmd');
 	my $jumpIndex           = $request->getParam('play_index');
 
-	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
-	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
 	}
@@ -1791,21 +1736,6 @@ sub playlistcontrolCommand {
 	if ($request->paramUndefinedOrNotOneOf($cmd, ['load', 'insert', 'add', 'delete'])) {
 		$request->setStatusBadParams();
 		return;
-	}
-
-	# when playlistmode is on, 'playlistcontrol insert' turns off playlist mode
-	if ( $playlistMode eq 'on' && $cmd eq 'insert' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-		return;
-	}
-	
-	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load' ) {
-		$cmd    = 'insert';
-	}
-	# when playlist mode is off, 'playlistcontrol add' turns on playlistmode
-	if ( $playlistMode eq 'off' && $cmd eq 'add' ) {
-		Slim::Player::Playlist::playlistMode($client, 'on');
 	}
 
 	my $load   = ($cmd eq 'load');
@@ -2017,13 +1947,6 @@ sub playlistcontrolCommand {
 		Slim::Control::Request::executeRequest(
 			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex]
 		);
-	}
-
-	# if music isn't playing, hitting the play button should start playing music
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $insert ) {
-		if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-			Slim::Player::Source::playmode($client, 'play');
-		}
 	}
 
 	$request->addResult('count', scalar(@tracks));

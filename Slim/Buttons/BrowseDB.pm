@@ -132,13 +132,6 @@ sub init {
 			}
 
 			my ($command, $line1, $line2, $string);
-			my $playlistMode = Slim::Player::Playlist::playlistMode($client); 
-
-			# play button for non-tracks should drill into the item, not play it, when in party mode
-			if ($levelName ne 'track' && $playlistMode eq 'party') {
-				browsedbExitCallback($client, 'RIGHT');
-				return;
-			}
 
 			# Based on the button pressed, we determine what to display
 			# and which command to send to modify the playlist
@@ -147,16 +140,8 @@ sub init {
 				$string = 'ADDING_TO_PLAYLIST';
 				$command = "addtracks";	
 
-				if ( $playlistMode eq 'off') {
-					Slim::Player::Playlist::playlistMode($client, 'on');
-				}
 
 			} elsif ($addorinsert == 2) {
-				# add-hold when in playlist mode shuts off playlist mode and consumes key event
-				if ( $playlistMode eq 'on' ) {
-					Slim::Player::Playlist::playlistMode($client, 'off');
-					return;
-				}
 				$string  = 'INSERT_TO_PLAYLIST';
 				$command = "inserttracks";
 
@@ -164,9 +149,7 @@ sub init {
 
 				$command = "loadtracks";
 
-				if ( ( $playlistMode eq 'on' || $playlistMode eq 'party' ) && $level ne 'track') {
-					$string = 'INSERT_TO_PLAYLIST';
-				} elsif (Slim::Player::Playlist::shuffle($client)) {
+				if (Slim::Player::Playlist::shuffle($client)) {
 					$string = 'PLAYING_RANDOMLY_FROM';
 				} else {
 					$string = 'NOW_PLAYING_FROM';
@@ -253,10 +236,6 @@ sub init {
 					$command = 'inserttracks' if $addorinsert == 2;
 
 					$client->execute(["playlist", $command, 'listref', [ $currentItem ]]); 
-				}
-				# play button was hit in party mode
-				elsif ( $playlistMode eq 'party' || $playlistMode eq 'on' ) {
-					$client->execute(["playlist", 'inserttracks', 'listref', [ $currentItem ]]); 
 				}
 				# Otherwise deal with it in the context of the 
 				# containing album or playlist.
