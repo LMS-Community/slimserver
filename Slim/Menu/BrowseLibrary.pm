@@ -182,7 +182,7 @@ sub getJiveMenu {
 	
 	my @myMusicMenu;
 	
-	foreach my $node (@{_getNodeList()}) {
+	foreach my $node (@{_getNodeList($albumSort)}) {
 		my %menu = (
 			text => $client->string($node->{'name'}),
 			id   => $node->{'id'},
