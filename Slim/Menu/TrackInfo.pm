@@ -334,25 +334,12 @@ sub infoContributors {
 			type =>  'text',
 			name =>  $remoteMeta->{artist},
 			label => 'ARTIST',
-
-#			web  => {
-#				type  => 'contributor',
-#				group => 'ARTIST',
-#				value => $remoteMeta->{artist},
-#			},
-		};
 	}
 	else {
 		# Loop through the contributor types and append
 		for my $role ( sort $track->contributorRoles ) {
 			for my $contributor ( $track->contributorsOfType($role) ) {
 				my $id = $contributor->id;
-				
-#				my %params = (
-#					mode      => 'albums',
-#					artist_id => $id,
-#					title     => $contributor->name,
-#				);
 				
 				my %actions = (
 					allAvailableActionsDefined => 1,
@@ -382,61 +369,7 @@ sub infoContributors {
 					name    => $contributor->name,
 					label   => uc $role,
 					itemActions => \%actions,
-#					player => {
-#						mode  => 'brwoselibrary',
-#						modeParams => \%params,
-#					},
-#
-#					web  => {
-#						url   => "clixmlbrowser/clicmd=browselibrary+items" .
-#							join('&amp;', ('', map {$_ . '=' . $params{$_}} keys(%params))) . '/',
-#						type  => 'contributor',
-#						group => uc($role),
-#						value => $contributor->name,
-#					},
-#
-#					jive => {
-#						actions => {
-#							go => {
-#								cmd    => [ 'browselibrary', 'items' ],
-#								params => {
-#									menu      => 'track',
-#									%params,
-#								},
-#							},
-#							play => {
-#								player => 0,
-#								cmd    => [ 'playlistcontrol' ],
-#								params => {
-#									cmd       => 'load',
-#									artist_id => $id,
-#								},
-#							},
-#							add => {
-#								player => 0,
-#								cmd    => [ 'playlistcontrol' ],
-#								params => {
-#									cmd       => 'add',
-#									artist_id => $id,
-#								},
-#							},
-#							'add-hold' => {
-#								player => 0,
-#								cmd    => [ 'playlistcontrol' ],
-#								params => {
-#									cmd       => 'insert',
-#									artist_id => $id,
-#								},
-#							},
-#						},
-#						window => {
-#							titleStyle => 'artists',
-#							menuStyle  => 'album',
-#							text       => $contributor->name,
-#						},
-#					},
 				};
-#				$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $contributor, 'obj_param' => 'artist_id' );
 				push @{$items}, $item;
 			}
 		}
@@ -677,65 +610,7 @@ sub infoAlbum {
 			name    => $album->name,
 			label   => 'ALBUM',
 			itemActions => \%actions,
-#			type => 'redirect',
-#			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $album->name,
-#
-#			player => {
-#				mode  => 'Slim::Menu::BrowseLibrary',
-#				modeParams => \%params,
-#			},
-#
-#			web  => {
-#				url   => "plugins/browselibrary/index.html?" .
-#					join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
-#				group => 'album',
-#				value => $album->name,
-#			},
-#
-#			jive => {
-#				actions => {
-#					go => {
-#						cmd    => [ 'browselibrary', 'items' ],
-#						params => {
-#							menu     => 'songinfo',
-#							%params,
-#						},
-#					},
-#					play => {
-#						player => 0,
-#						cmd    => [ 'playlistcontrol' ],
-#						params => {
-#							cmd      => 'load',
-#							album_id => $id,
-#						},
-#					},
-#					add => {
-#						player => 0,
-#						cmd    => [ 'playlistcontrol' ],
-#						params => {
-#							cmd      => 'add',
-#							album_id => $id,
-#						},
-#					},
-#					'add-hold' => {
-#						player => 0,
-#						cmd    => [ 'playlistcontrol' ],
-#						params => {
-#							cmd      => 'insert',
-#							album_id => $id,
-#						},
-#					},
-#				},
-#				window => {
-#					titleStyle => 'album',
-#					'icon-id'  => $track->id,
-#					text       => $album->name,
-#				},
-#			},
 		};
-
-#		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $album, 'obj_param' => 'album_id' );
-
 	}
 	
 	return $item;
@@ -771,66 +646,13 @@ sub infoGenres {
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
 
-#		my %params = (
-#			mode      => 'artists',
-#			genre_id => $id,
-#			title    => $genre->name,
-#		);
-		
 		my $item = {
 			type    => 'playlist',
 			url     => 'blabla',
 			name    => $genre->name,
 			label   => 'GENRE',
 			itemActions => \%actions,
-#			type => 'redirect',
-#			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
-#
-#			player => {
-#				mode  => 'Slim::Menu::BrowseLibrary',
-#				modeParams => \%params,
-#			},
-#
-#			web  => {
-#				url   => "plugins/browselibrary/index.html?" .
-#					join('&amp;', map {$_ . '=' . $params{$_}} keys(%params)),
-#				group => 'genre',
-#				value => $genre->name,
-#			},
-#
-#			jive => {
-#				actions => {
-#					go => {
-#						cmd    => [ 'browselibrary', 'items' ],
-#						params => {
-#							menu     => 'album',
-#							%params,
-#						},
-#					},
-#					play => {
-#						player => 0,
-#						cmd    => [ 'playlistcontrol' ],
-#						params => {
-#							cmd      => 'load',
-#							genre_id => $id,
-#						},
-#					},
-#					add => {
-#						player => 0,
-#						cmd    => [ 'playlistcontrol' ],
-#						params => {
-#							cmd      => 'add',
-#							genre_id => $id,
-#						},
-#					},
-#				},
-#				window => {
-#					titleStyle => 'genres',
-#					text       => $genre->name,
-#				}, 
-#			},
 		};
-#		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $genre, 'obj_param' => 'genre_id' );
 		push @{$items}, $item;
 	}
 	
@@ -844,19 +666,6 @@ sub infoYear {
 	
 	if ( my $year = $track->year ) {
 		
-#		my $db = {
-#			hierarchy         => 'year,album,track',
-#			level             => 1,
-#			findCriteria      => {
-#				'year.id' => $year,
-#			},
-#			selectionCriteria => {
-#				'track.id'       => $track->id,
-#				'album.id'       => $track->albumid,
-#				'contributor.id' => $track->artistid,
-#			},
-#		};
-
 		my %actions = (
 			allAvailableActionsDefined => 1,
 			items => {
@@ -885,65 +694,6 @@ sub infoYear {
 			name    => $year,
 			label   => 'YEAR',
 			itemActions => \%actions,
-#			type => 'redirect',
-#			name => cstring($client, 'YEAR') . cstring($client, 'COLON') . " $year",
-#
-#			db   => $db,
-#
-#			player => {
-#				mode  => 'browsedb',
-#				modeParams => $db,
-#			},
-#
-#			web  => {
-#				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
-#				group => 'year',
-#				value => $year,
-#			},
-#
-#			jive => {
-#				actions => {
-#					go => {
-#						cmd         => [ 'albums' ],
-#						itemsParams => 'params',
-#						params => {
-#							year     => $year,
-#							menu     => 'track',
-#						},
-#					},
-#					play => {
-#						player      => 0,
-#						itemsParams => 'params',
-#						cmd         => [ 'playlistcontrol' ],
-#						params      => {
-#							year => $year,
-#							cmd  => 'load',
-#						},
-#					},
-#					add => {
-#						player      => 0,
-#						itemsParams => 'params',
-#						cmd         => [ 'playlistcontrol' ],
-#						params      => {
-#							year => $year,
-#							cmd  => 'add',
-#						},
-#					},
-#					'add-hold' => {
-#						player      => 0,
-#						itemsParams => 'params',
-#						cmd         => [ 'playlistcontrol' ],
-#						params      => {
-#							year => $year,
-#							cmd  => 'insert',
-#						},
-#					},
-#				},
-#				window => {
-#					menuStyle  => 'album',
-#					titleStyle => 'years',
-#				},
-#			},
 		};
 	}
 	
@@ -1427,17 +1177,6 @@ sub tagDump {
 	
 	$callback->( $menu );
 }
-
-#sub _findDBCriteria {
-#	my $db = shift;
-#	
-#	my $findCriteria = '';
-#	foreach (keys %{$db->{findCriteria}}) {
-#		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-#	}
-#	
-#	return $findCriteria;
-#}
 
 sub _mixers {
 	my $Imports = Slim::Music::Import->importers;
