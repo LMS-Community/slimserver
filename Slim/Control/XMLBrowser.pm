@@ -125,6 +125,8 @@ sub cliQuery {
 			$title = $request->string($queryTypes->{$query}) . ": " . $title;
 		}
 
+		# XXX need to fix how this works for browselibrary
+		# the mode parameters do not get passed through
 		my $jiveSearchCache = {
 			text     => $title,
 			actions  => {
