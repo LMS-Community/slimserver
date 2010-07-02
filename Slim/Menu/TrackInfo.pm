@@ -401,7 +401,6 @@ sub infoContributors {
 #								cmd    => [ 'browselibrary', 'items' ],
 #								params => {
 #									menu      => 'track',
-#									menu_all  => 1,
 #									%params,
 #								},
 #							},
@@ -699,7 +698,6 @@ sub infoAlbum {
 #						cmd    => [ 'browselibrary', 'items' ],
 #						params => {
 #							menu     => 'songinfo',
-#							menu_all => 1,
 #							%params,
 #						},
 #					},
@@ -806,7 +804,6 @@ sub infoGenres {
 #						cmd    => [ 'browselibrary', 'items' ],
 #						params => {
 #							menu     => 'album',
-#							menu_all => 1,
 #							%params,
 #						},
 #					},
@@ -912,7 +909,6 @@ sub infoYear {
 #						params => {
 #							year     => $year,
 #							menu     => 'track',
-#							menu_all => 1,
 #						},
 #					},
 #					play => {
