@@ -2915,7 +2915,7 @@ sub totals {
 		$TOTAL_CACHE{album} = $class->count('Album');
 	}
 	if ( !exists $TOTAL_CACHE{contributor} ) {
-		$TOTAL_CACHE{contributor} = $class->rs('Contributor')->browse->count;
+		$TOTAL_CACHE{contributor} = $class->rs('Contributor')->countTotal;
 	}
 	if ( !exists $TOTAL_CACHE{genre} ) {
 		$TOTAL_CACHE{genre} = $class->count('Genre');

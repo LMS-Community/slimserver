@@ -52,39 +52,6 @@ sub orderBy {
 	return 'album.titlesort,me.disc,me.tracknum,me.titlesort';
 }
 
-sub browse {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	my $collate = $sqlHelperClass->collate();
-	
-	my $sort = shift || "me.titlesort $collate";
-	
-	my $join = '';
-
-	# Only search for audio
-	$cond->{'me.audio'} = 1;
-
-	# If we need to order by album,titlesort, etc - join on album.
-	if ($sort) {
-
-		if ($sort =~ /album\./) {
-			$join = 'album';
-		}
-		
-		$sort =~ s/((?:\w+\.)?\w+sort)/$sqlHelperClass->prepend0($1) . " $collate"/eg;
-	}
-
-	# Join on album
-	return $self->search($self->fixupFindKeys($cond), {
-		'order_by' => $sort,
-		'distinct' => 'me.id',
-		'join'     => $join,
-	});
-}
-
 # XXX  - These are wrappers around the methods in Slim::Schema, which need to
 # be moved here. This is the proper API, and we want to have people using this
 # now, and we can migrate the code underneath later.

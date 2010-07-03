@@ -73,51 +73,5 @@ sub searchNames {
 	return $self->search({ 'me.titlesearch' => { 'like' => $terms } }, $attrs);
 }
 
-sub browse {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	my $sort = shift;
-
-	my @join = ();
-
-	# This sort/join logic is here to handle the 'Sort Browse Artwork'
-	# feature - which applies to albums, as artwork is just a view on the
-	# album list.
-	#
-	# Quick and dirty to get something working again. This code should be
-	# expanded to be generic per level. A UI feature would be to have a
-	# drop down on certain browse pages of how to order the items being
-	# displayed. Album is problably the most flexible of all our browse
-	# modes.
-	#
-	# Writing this code also brought up how we might be able to abstract
-	# out some join issues/duplications - if we resolve all potential
-	# joins first, like the contributorAlbums issue below.
-	if ($sort) {
-
-		if ($sort =~ /contributor/) {
-
-			push @join, 'contributor';
-		}
-
-		if ($sort =~ /genre/) {
-
-			push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
-		}
-
-		$sort = $self->fixupSortKeys($sort);
-	}
-
-	# Bug: 2563 - force a numeric compare on an alphanumeric column.
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	my $collate = $sqlHelperClass->collate();
-	
-	return $self->search($cond, {
-		'order_by' => $sort || ( $sqlHelperClass->prepend0("me.titlesort") . " $collate" ) . ", me.disc",
-		'distinct' => 'me.id',
-		'join'     => \@join,
-	});
-}
 
 1;

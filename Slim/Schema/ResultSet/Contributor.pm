@@ -56,21 +56,16 @@ sub searchNames {
 	return $self->search($cond, $attrs);
 }
 
-sub browse {
+sub countTotal {
 	my $self = shift;
-	my $find = shift;
-	my $cond = shift || {};
-	my $sort = shift;
 
+	my $cond  = {};
 	my @joins = ();
 	my $roles = Slim::Schema->artistOnlyRoles;
 
 	# The user may not want to include all the composers / conductors
 	if ($roles) {
-		# Bug 7992, Don't join on contributorAlbums if this is for a genre query
-		if ( !exists $cond->{'genreTracks.genre'} ) {
-			$cond->{'contributorAlbums.role'} = { 'in' => $roles };
-		}
+		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
 	if (preferences('server')->get('variousArtistAutoIdentification')) {
@@ -81,9 +76,7 @@ sub browse {
 
 	} elsif ($roles) {
 
-		if ( !exists $cond->{'genreTracks.genre'} ) {
-			push @joins, 'contributorAlbums';
-		}
+		push @joins, 'contributorAlbums';
 	}
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
@@ -92,7 +85,7 @@ sub browse {
 		'order_by' => "me.namesort $collate",
 		'group_by' => 'me.id',
 		'join'     => \@joins,
-	});
+	})->count();
 }
 
 1;

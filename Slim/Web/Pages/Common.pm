@@ -1,6 +1,6 @@
 package Slim::Web::Pages::Common;
 
-# $Id: $
+# $Id$
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -96,6 +96,8 @@ sub addLibraryStats {
 	#	}
 	#}
 
+	$params->{'song_count'} = undef;	# So we know if we found the count some way
+	
 	# The current level will always be a ->browse call, so just reuse the resultset.
 	if ($level eq 'album') {
 
@@ -142,25 +144,28 @@ sub addLibraryStats {
 		$counts{'track'}       = $rs;
 		
 	} else {
-
-		$counts{'album'}       = Slim::Schema->rs('Album')->browse;
-		$counts{'track'}       = Slim::Schema->rs('Track')->browse;
-		$counts{'contributor'} = Slim::Schema->rs('Contributor')->browse;
+		
+		my $totals = Slim::Schema->totals();
+		$params->{'album_count'}  = $totals->{'album'};
+		$params->{'song_count'}   = $totals->{'track'};
+		$params->{'artist_count'} = $totals->{'contributor'};
 	}
 
-	# Don't let any database errors here stop the page from displaying
-	eval {
-		$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
-		$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS'); 
-		$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
-	};
-	
-	if ( $@ ) {
-		$sqllog->error("Error building library counts: $@");
+	if (!defined $params->{'song_count'}) {
+		# Don't let any database errors here stop the page from displaying
+		eval {
+			$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
+			$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS'); 
+			$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
+		};
 		
-		$params->{'song_count'}   = 0;
-		$params->{'album_count'}  = 0;
-		$params->{'artist_count'} = 0;
+		if ( $@ ) {
+			$sqllog->error("Error building library counts: $@");
+			
+			$params->{'song_count'}   = 0;
+			$params->{'album_count'}  = 0;
+			$params->{'artist_count'} = 0;
+		}
 	}
 
 	if ( main::INFOLOG && $sqllog->is_info ) {
