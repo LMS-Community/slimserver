@@ -863,7 +863,7 @@ sub _cliQuery_done {
 					# Don't add non-audio items
 					# In touch-to-play, only add items with the playall attribute
 					if (!$url || defined($playIndex) && !$item->{'playall'}) {
-						$playIndex-- if defined($playIndex);
+						$playIndex-- if defined($playIndex) && $playIndex >= scalar @urls;
 						next;
 					}
 
@@ -1188,13 +1188,8 @@ sub _cliQuery_done {
 							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
 						);
 						
-						my $itemParams = {};
 						my $id = $hash{id};
 						
-						if ( !$item->{type} || $item->{type} ne 'text' ) {							
-							$itemParams->{'item_id'} = "$id", #stringify, make sure it's a string
-						}
-
 						my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
 						my $favorites_title  = $item->{title} || $item->{name};
 						
@@ -1212,6 +1207,12 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'presetParams', $presetParams );
 							$presetFavSet = 1;
+						}
+
+						my $itemParams = {};
+
+						if ( !$item->{type} || $item->{type} ne 'text' ) {							
+							$itemParams->{'item_id'} = "$id", #stringify, make sure it's a string
 						}
 
 						if ( $isPlayable || $item->{isContextMenu} ) {
@@ -1274,6 +1275,7 @@ sub _cliQuery_done {
 							}
 							$allTouchToPlay = 0;
 						}
+						
 						elsif ( !$isPlayable && !$touchToPlay ) {
 							
 							# I think that doing is this way means that, because $itemParams does not get
@@ -1298,13 +1300,9 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 							$allTouchToPlay = 0;
 						}
+						
 						elsif ( $touchToPlay ) {
-							
-							# XXX need to redo the all-items logic
-							# so can use playall/addall actions
-							# need to add play_index item if missing for all-items
-							# or something
-							
+														
 							$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
 							
 							# XXX not currently supported by client
