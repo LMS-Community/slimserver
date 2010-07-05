@@ -748,7 +748,7 @@ sub gotOPML {
 					'parser'  => $parser,
 				);
 
-				if ($isAudio) {
+				if ($isAudio && ref $itemURL ne 'CODE' && !Slim::Control::XMLBrowser::findAction($opml, $item, 'info')) {
 
 					# Additional info if known
 					my @details = ();

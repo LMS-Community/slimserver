@@ -1243,7 +1243,7 @@ sub cliQuery {
 	my $trackId        = $request->getParam('track_id');
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
-	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
+	my $playlist_index = $request->getParam('playlist_index');
 	
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {

@@ -249,6 +249,8 @@ sub handleFeed {
 			push @crumbIndex, $i;
 			my $crumbText = join '.', @crumbIndex;
 			
+			main::DEBUGLOG && $log->debug("Considering $crumbText");
+			
 			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
 			
 			# Add search query to crumb list
@@ -343,7 +345,7 @@ sub handleFeed {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} &&
+			if ( defined $subFeed->{'url'} && !$subFeed->{'fetched'} &&
 					 !( $stash->{'action'} && $stash->{'action'} =~ /favadd|favdel/ && $depth == $levels ) ) {
 				
 				# Rewrite the URL if it was a search request
@@ -404,6 +406,8 @@ sub handleFeed {
 					} else {
 						$callback->($proxiedRequest->getResults);
 					}
+				
+					return;
 				}
 				
 				elsif ( ref $subFeed->{'url'} eq 'CODE' ) {
@@ -441,20 +445,22 @@ sub handleFeed {
 
 					# first param is a $client object, but undef from webpages
 					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
+				
+					return;
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
 
-				else {
+				elsif ($subFeed->{'type'} ne 'audio') {
 					# We need to fetch the URL
 					Slim::Formats::XML->getFeedAsync(
 						\&handleSubFeed,
 						\&handleError,
 						$args,
 					);
-				}
 				
-				return;
+					return;
+				}
 			}
 		}
 			
@@ -1021,7 +1027,7 @@ sub _makeWebLink {
 		 
 		$link .= '/';
 		
-		main::INFOLOG && $log->is_info && $log->info($link);
+		main::DEBUGLOG && $log->debug($link);
 		
 		return $link;
 	}

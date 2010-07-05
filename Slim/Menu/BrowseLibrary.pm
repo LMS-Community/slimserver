@@ -982,6 +982,8 @@ sub _tracks {
 					fixedParams => {cmd => 'insert'},
 				},
 			);
+			$actions{'items'} = $actions{'info'};
+
 			if ($search) {
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'all'};
@@ -997,7 +999,6 @@ sub _tracks {
 					fixedParams => {cmd => 'add', %{&_tagsToParams([@searchTags, $sort])}},
 				};
 			}
-			$actions{'items'} = $actions{'info'};
 			
 			return {items => $items, actions => \%actions, sorted => 0}, undef;
 		},
