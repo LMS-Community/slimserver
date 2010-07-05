@@ -788,19 +788,15 @@ sub _albums {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
-	my $getMetadata= $pt->{'wantMetadata'}; 
 	my $tags       = 'ljsa';
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
 	}
 	
-	$tags .= 'ywXiq' if $getMetadata;
-	
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my ($artistId) = ($artistIds[0] =~ /artist_id:(\d+)/) if @artistIds;
-
-	$tags .= 'S' if ($artistId || $getMetadata);
+	$tags .= 'S' if ($artistId);
 	
 	_generic($client, $callback, $args, 'albums',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
@@ -825,28 +821,6 @@ sub _albums {
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'id'}) {
 					$_->{'name2'} = $_->{'artist'};
-				}
-				if ($getMetadata) {
-					$_->{'metadata'}->{'year'} = {
-							name		=> $_->{'year'},
-							id			=> $_->{'year'},
-						} if $_->{'year'};
-					$_->{'metadata'}->{'disc'} = $_->{'disc'} if $_->{'disc'};
-					$_->{'metadata'}->{'disccount'} = $_->{'disccount'} if $_->{'disccount'};
-					$_->{'metadata'}->{'album'} = {
-							name         => $_->{'album'},
-							id           => $_->{'id'},
-							replay_gain  => $_->{'replay_gain'},
-							compilation  => $_->{'compilation'},
-						};
-					$_->{'metadata'}->{'contributors'} = {
-							ARTIST => [
-								{
-									name => $_->{'artist'},
-									id   => $_->{'artist_id'},
-								},
-							],
-						} if $_->{'artist_id'};
 				}
 			}
 			my $extra;
@@ -944,6 +918,7 @@ sub _tracks {
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
+	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags; 
 	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
@@ -1000,7 +975,19 @@ sub _tracks {
 				};
 			}
 			
-			return {items => $items, actions => \%actions, sorted => 0}, undef;
+			my $albumMetadata;
+			my $image;
+			if ($getMetadata) {
+				my ($albumId) = grep {/album_id:/} @searchTags;
+				$albumId =~ s/album_id:// if $albumId;
+				my $album = Slim::Schema->find( Album => $albumId );
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef ) if $album;
+				$albumMetadata = $feed->{'items'} if $feed;
+				
+				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
+			}
+			
+			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, cover => $image}, undef;
 		},
 	);
 }

@@ -288,6 +288,17 @@ sub rescan {
 	}
 }
 
+sub duration {
+	my $self = shift;
+	
+	my $secs = 0;
+	foreach ($self->tracks) {
+		return if !defined $_->secs;
+		$secs += $_->secs;
+	}
+	return sprintf('%s:%02s', int($secs / 60), $secs % 60);
+}
+
 1;
 
 __END__

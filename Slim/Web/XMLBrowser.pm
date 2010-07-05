@@ -491,6 +491,7 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'metadata'}  = $subFeed->{'metadata'};	
+		$stash->{'albumData'} = $subFeed->{'albumData'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 	}
 	else {
@@ -499,6 +500,7 @@ sub handleFeed {
 		$stash->{'items'}     = $feed->{'items'};
 		$stash->{'actions'}   = $feed->{'actions'};	
 		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
+		$stash->{'albumData'} = $feed->{'albumData'};	
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -680,16 +682,15 @@ sub handleFeed {
 		# Find special stuff that we either want to pull up into the metadata for the 
 		# songinfo header block or which needs unfolding.
 		
-#		if ($stash->{'path'} =~ /trackinfo.html/) {
 		{
 			my $details = {};
 			my $mixerlinks = {};
 			my $i = 0;
 			
 			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
-			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN));
+			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN ALBUMLENGTH COMPILATION));
 			
-			foreach my $item ( @{ $stash->{'items'} } ) {
+			foreach my $item ( @{ $stash->{'albumData'} || $stash->{'items'} } ) {
 
 				# Bug 7854, don't set an index value unless we're at the top-level trackinfo page
 				if ( !$stash->{'index'} ) {
@@ -799,7 +800,6 @@ sub handleFeed {
 				delete $details->{'unfold'};
 			}
 
-#			$stash->{'details'} = $details;
 			$stash->{'metadata'} = $details if scalar keys %$details && !$stash->{'metadata'};
 		}
 	}
@@ -919,8 +919,9 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	$subFeed->{'actions'} = $feed->{'actions'} if $feed->{'actions'};
-	$subFeed->{'image'}   = $feed->{'cover'}   if $feed->{'cover'};
+	$subFeed->{'actions'}   = $feed->{'actions'} if $feed->{'actions'};
+	$subFeed->{'image'}     = $feed->{'cover'}   if $feed->{'cover'};
+	$subFeed->{'albumData'} = $feed->{'albumData'}   if $feed->{'albumData'};
 
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;

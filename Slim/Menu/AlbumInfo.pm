@@ -80,18 +80,43 @@ sub registerDefaultInfoProviders {
 #		func      => \&showArtwork,
 #	) );
 
-	$class->registerInfoProvider( replaygain => (
-		menuMode => 1,
-		after    => 'addalbum',
-		func     => \&infoReplayGain,
-	) );
-
 	if ( !main::SLIM_SERVICE ) {
 		$class->registerInfoProvider( contributors => (
 			after => 'top',
 			func  => \&infoContributors,
 		) );
 	}
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( year => (
+			after => 'top',
+			func  => \&infoYear,
+		) );
+	}
+
+	$class->registerInfoProvider( duration => (
+		after    => 'year',
+		func     => \&infoDuration,
+	) );
+
+	$class->registerInfoProvider( replaygain => (
+		after    => 'year',
+		func     => \&infoReplayGain,
+	) );
+
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( disc => (
+			after => 'year',
+			func  => \&infoDisc,
+		) );
+	}
+
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( compilation => (
+			after => 'year',
+			func  => \&infoCompilation,
+		) );
+	}
+	
 }
 
 sub menu {
@@ -245,6 +270,96 @@ sub infoContributors {
 	return $items;
 }
 
+sub infoYear {
+	my ( $client, $url, $album ) = @_;
+	
+	my $item;
+	
+	if ( my $year = $album->year ) {
+		
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'albums', year => $year },
+			},
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'load', year => $year},
+			},
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'add', year => $year},
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'insert', year => $year},
+			},								
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
+
+		$item = {
+			type    => 'playlist',
+			url     => 'blabla',
+			name    => $year,
+			label   => 'YEAR',
+			itemActions => \%actions,
+		};
+	}
+	
+	return $item;
+}
+
+sub infoDisc {
+	my ( $client, $url, $album ) = @_;
+	
+	my $item;
+	my ($disc, $discc);
+	
+	if ( blessed($album) && ($disc = $album->disc) && ($discc = $album->discc) ) {
+		$item = {
+			type  => 'text',
+			label => 'DISC',
+			name  => "$disc/$discc",
+		};
+	}
+	
+	return $item;
+}
+
+sub infoDuration {
+	my ( $client, $url, $album ) = @_;
+	
+	my $item;
+	
+	if ( my $duration = $album->duration ) {
+		$item = {
+			type  => 'text',
+			label => 'ALBUMLENGTH',
+			name  => $duration,
+		};
+	}
+	
+	return $item;
+}
+
+sub infoCompilation {
+	my ( $client, $url, $album ) = @_;
+	
+	my $item;
+	
+	if ( $album->compilation ) {
+		$item = {
+			type  => 'text',
+			label => 'COMPILATION',
+			name  => cstring($client,'YES'),
+		};
+	}
+	
+	return $item;
+}
+
 
 sub showArtwork {
 	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
@@ -366,30 +481,22 @@ sub addAlbum {
 sub infoReplayGain {
 	my ( $client, $url, $album ) = @_;
 	
-	my $items = [];
-	
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
 			my $noclip = Slim::Player::ReplayGain::preventClipping( $albumreplaygain, $album->replay_peak );
+			my %item = (
+				type  => 'text',
+				label => 'ALBUMREPLAYGAIN',
+				name  => sprintf( "%2.2f dB", $albumreplaygain),
+			);
 			if ( $noclip < $albumreplaygain ) {
 				# Gain was reduced to avoid clipping
-				push @{$items}, {
-					type => 'text',
-					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' 
-						. sprintf( "%2.2f", $albumreplaygain ) . ' dB (' 
-						. cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) . ')',
-				};
+				$item{'name'} .= sprintf( " (%s)",
+						cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) ); 
 			}
-			else {
-				push @{$items}, {
-					type => 'text',
-					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
-				};
-			}
+			return \%item;
 		}
 	}
-	
-	return $items;
 }
 
 sub _findDBCriteria {

@@ -1233,18 +1233,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'action', 'none' );
 						}
 						
-						# Support type='db' for Track Info
-						if ( $item->{jive} ) {
-							$request->addResultLoop( $loopname, $cnt, 'actions', $item->{jive}->{actions} );
-							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'playHoldAction', 'icon-id') {
-								if ( $item->{jive}->{$key} ) {
-									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
-								}
-							}
-							$allTouchToPlay = 0;
-						}
-						
-						elsif ( $item->{type} && $item->{type} eq 'search' ) {
+						if ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
@@ -1376,6 +1365,20 @@ sub _cliQuery_done {
 							&& scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) )
 						{
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
+						}
+						
+						if ( $item->{jive} ) {
+							my $actions = $request->getResultLoop($loopname, $cnt, 'actions') || {};
+							while (my($name, $action) = each(%{$item->{jive}->{actions} || {}})) {
+								$actions->{$name} = $action;
+							}
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							
+							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'icon-id') {
+								if ( $item->{jive}->{$key} ) {
+									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
+								}
+							}
 						}
 						
 						$request->addResultLoop( $loopname, $cnt, 'textkey', $item->{textkey} ) if defined $item->{textkey};
