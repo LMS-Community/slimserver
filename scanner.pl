@@ -290,10 +290,6 @@ sub main {
 	# Perform pre-scan steps specific to the database type, i.e. SQLite needs to copy to a new file
 	$sqlHelperClass->beforeScan();
 
-	# Take the db out of autocommit mode - this makes for a much faster scan.
-	# Scanner::Local will commit every few operations
-	Slim::Schema->dbh->{'AutoCommit'} = 0;
-
 	my $scanType = 'SETUP_STANDARDRESCAN';
 
 	if ($wipe) {
