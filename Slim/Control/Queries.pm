@@ -1571,6 +1571,7 @@ sub musicfolderQuery {
 			}
 
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 
 			$chunkCount++;
 		}

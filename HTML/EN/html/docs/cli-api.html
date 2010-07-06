@@ -53,6 +53,7 @@
 	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
 	<li>Added 'play_index' tagged parameter to <a href="#playlistcontrol">playlistcontrol</a>.</li>
 	<li>In extended queries, return all possible items if the &lt;itemsPerResponse&gt; parameter is omitted.</li>
+	<li>Add the 'u' tag to the &quot;<a href="#musicfolder">musicfolder</a>&quot; query</li>
 </ul>
 
 <hr>
@@ -3865,10 +3866,21 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			s
 		</td>
 		<td>
-			&nbsp;&nbsp;sortvalue, textkey
+			&nbsp;&nbsp;textkey
 		</td>
 		<td>
 			The item's "textkey" is the first letter of the sorting key.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			u
+		</td>
+		<td>
+			&nbsp;&nbsp;url
+		</td>
+		<td>
+			The item's full URL.
 		</td>
 	</tr>
 </table>
@@ -4022,7 +4034,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			s
 		</td>
 		<td>
-			&nbsp;&nbsp;sortvalue, textkey
+			&nbsp;&nbsp;textkey
 		</td>
 		<td>
 			The playlist's "textkey" is the first letter of the sorting key.
