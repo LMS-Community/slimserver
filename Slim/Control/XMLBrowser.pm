@@ -1328,12 +1328,29 @@ sub _cliQuery_done {
 							if (my $action = _makeAction($itemActions, 'info', undef, 1, 1)) {
 								$actions->{'more'} = $action; $n++;
 							}
+							
+							# Need to be careful not to undo (effectively) a 'go' action mapping
+							# (could also consider other mappings but do not curretly)
+							my $goAction = $request->getResultLoop($loopname, $cnt, 'goAction');
+
 							if (my $action = _makeAction($itemActions, 'items', undef, 1)) {
-								$actions->{'go'} = $action; $n++;
+								# If 'go' is already mapped to something else (probably 'play')
+								# then leave it alone.
+								unless ($goAction) {
+									$actions->{'go'} = $action; $n++;
+								}
 							}
 							if (my $action = _makeAction($itemActions, 'play', undef, 1, 0, 'nowPlaying')) {
 								$actions->{'play'} = $action; $n++;
+								
+								# This test should really be repeated for all the other actions,
+								# in case 'go' is mapped to one of them, but that does not actually
+								# happen (would have to be somewhere in this module)
+								if ($goAction && $goAction eq 'play') {
+									$actions->{'go'} = $action;
+								}
 							}
+
 							if (my $action = _makeAction($itemActions, 'add', undef, 1)) {
 								$actions->{'add'} = $action; $n++;
 							}
