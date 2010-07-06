@@ -128,7 +128,9 @@ sub setMode {
 		'remember'  => $remember,
 	};
 	
-	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, 'items')) {
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, 
+		($item->{'type'} && $item->{'type'} eq 'audio') ? 'info' : 'items') )
+	{
 		
 		my @params = @{$feedAction->{'command'}};
 		push @params, (0, 0);	# All items requests take _index and _quantity parameters
