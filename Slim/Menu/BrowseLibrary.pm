@@ -6,6 +6,7 @@ package Slim::Menu::BrowseLibrary;
 use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(cstring);
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
@@ -184,7 +185,7 @@ sub getJiveMenu {
 	
 	foreach my $node (@{_getNodeList($albumSort)}) {
 		my %menu = (
-			text => $client->string($node->{'name'}),
+			text => cstring($client, $node->{'name'}),
 			id   => $node->{'id'},
 			node => $baseNode,
 			weight => $node->{'weight'},
@@ -201,7 +202,7 @@ sub getJiveMenu {
 		);
 		
 		if ($node->{'homeMenuText'}) {
-			$menu{'homeMenuText'} = $client->string($node->{'homeMenuText'});
+			$menu{'homeMenuText'} = cstring($client, $node->{'homeMenuText'});
 		}
 		
 		push @myMusicMenu, \%menu;
@@ -220,7 +221,7 @@ sub setMode {
 	}
 
 	my $name  = $class->getDisplayName();
-	my $title = (uc($name) eq $name) ? $client->string( $name ) : $name;
+	my $title = (uc($name) eq $name) ? cstring($client,  $name ) : $name;
 	
 	my %params = (
 		header   => $name,
