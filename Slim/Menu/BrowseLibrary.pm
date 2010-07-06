@@ -957,7 +957,7 @@ sub _tracks {
 					fixedParams => {cmd => 'insert'},
 				},
 			);
-			$actions{'items'} = $actions{'info'};
+			$actions{'items'} = $actions{'info'};	# XXX, not sure about this, probably harmless but unnecessary
 
 			if ($search) {
 				$actions{'playall'} = $actions{'play'};
@@ -1005,7 +1005,7 @@ sub _bmf {
 			foreach (@$items) {
 				$_->{'name'} = $_->{'filename'};
 				if ($_->{'type'} eq 'folder') {
-					$_->{'type'}        = 'link';
+					$_->{'type'}        = 'playlist';
 					$_->{'url'}         = \&_bmf;
 					$_->{'passthrough'} = [ { searchTags => [ "folder_id:" . $_->{'id'} ] } ];
 					$_->{'itemActions'} = {
@@ -1024,9 +1024,10 @@ sub _bmf {
 							fixedParams => {track_id =>  $_->{'id'}},
 						},
 					};
-					$_->{'itemActions'}->{'items'} = $_->{'itemActions'}->{'info'};
 				}  elsif ($_->{'type'} eq 'playlist') {
-					$_->{'type'}        = 'text';
+					# $_->{'type'}      = 'playlist';
+					$_->{'playlist'}	= \&_playlistTracks;
+					$_->{'passthrough'} = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
 				}  else # if ($_->{'type'} eq 'unknown') 
 				{
 					$_->{'type'}        = 'text';
