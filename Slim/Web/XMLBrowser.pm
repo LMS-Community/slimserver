@@ -372,7 +372,8 @@ sub handleFeed {
 				};
 
 
-				my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($superFeed, $subFeed, 'items');
+				my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction( $superFeed, $subFeed, 
+					($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') ? 'info' : 'items' );
 				if ($feedAction && !($depth == $levels && $stash->{'action'})) {
 					my @params = @{$feedAction->{'command'}};
 					push @params, (0, 0);	# All items requests take _index and _quantity parameters
