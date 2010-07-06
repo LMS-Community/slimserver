@@ -119,7 +119,7 @@ sub playFolder {
 				folder_id => $tags->{folder_id},
 				cmd => 'load',
 			},
-			nextWindow => 'parent',
+			nextWindow => 'nowPlaying',
 		},
 	};
 	$actions->{play} = $actions->{go};
