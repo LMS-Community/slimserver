@@ -310,7 +310,7 @@ sub handleFeed {
 			# and we are about to fetch the last level then we can just use the feed-defined action.
 			my ($feedAction, $feedActions);
 			if ($depth == $levels
-				&& $stash->{'action'} && $stash->{'action'} =~ /^((?:play|add)(?:all)?)$/
+				&& $stash->{'action'} && $stash->{'action'} =~ /^((?:play|add|insert)(?:all)?)$/
 				)
 			{
 				($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($superFeed, $subFeed, $1);
@@ -326,7 +326,7 @@ sub handleFeed {
 					push @params, $vars[$i] . ':' . $subFeed->{$vars[$i+1]} if defined $subFeed->{$vars[$i+1]};
 				}
 				
-				main::INFOLOG && $log->is_info && $log->info(join(', ', @params));
+				main::INFOLOG && $log->is_info && $log->info('CLI action (', $stash->{'action'}, '): ', join(' ', @params));
 
 				Slim::Control::Request::executeRequest( $client, \@params );
 
@@ -387,7 +387,7 @@ sub handleFeed {
 				    push @params, 'feedMode:1';
 				    push @params, 'wantMetadata:1';
 
-					main::INFOLOG && $log->is_info && $log->info('Use CLI for items: ', join(', ', @params));
+					main::INFOLOG && $log->is_info && $log->info('CLI browse: ', join(' ', @params));
 					
 					my $callback = sub {
 						my $opml = shift;
@@ -438,9 +438,9 @@ sub handleFeed {
 						$search = $searchQuery;
 					}
 					
-					if ( main::DEBUGLOG && $log->is_debug ) {
+					if ( main::DEBUGLOG && $log->is_info ) {
 						my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
-						$log->debug( "Fetching OPML from coderef $cbname" );
+						$log->info( "Fetching OPML from coderef $cbname" );
 					}
 
 					# first param is a $client object, but undef from webpages
@@ -453,6 +453,7 @@ sub handleFeed {
 
 				elsif ($subFeed->{'type'} ne 'audio') {
 					# We need to fetch the URL
+					$log->info( "Fetching OPML from:", $subFeed->{'url'} );
 					Slim::Formats::XML->getFeedAsync(
 						\&handleSubFeed,
 						\&handleError,
@@ -551,14 +552,16 @@ sub handleFeed {
 		
 			if ( $play ) {
 				$client->execute([ 'playlist', 'play', $url ]);
-			}
-			else {
+			} else {
 				$client->execute([ 'playlist', 'add', $url ]);
 			}
 		
 			my $webroot = $stash->{'webroot'};
 			$webroot =~ s/(.*?)plugins.*$/$1/;
 			$template = 'xmlbrowser_redirect.html';
+		}
+		else {
+			main::INFOLOG && $log->info('No URL to play');
 		}
 	}
 	# play all/add all
@@ -611,6 +614,9 @@ sub handleFeed {
 			$webroot =~ s/(.*?)plugins.*$/$1/;
 			$template = 'xmlbrowser_redirect.html';
 		}
+		else {
+			main::INFOLOG && $log->info('No URLs to play');
+		}
 	}
 	else {
 		
@@ -634,6 +640,8 @@ sub handleFeed {
 #				$item->{'web'}->{'url'} = $link . '/';
 #			}
 #		}
+
+		main::INFOLOG && $log->info('Item details or list');
 		
 		# Check if any of our items contain audio as well as a duration value, so we can display an
 		# 'All Songs' link.  Lists with no duration values are lists of radio stations where it doesn't
