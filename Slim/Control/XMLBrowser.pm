@@ -101,49 +101,6 @@ sub cliQuery {
 		
 	}
 	
-	# cache SBC queries for "Recent Search" menu
-	if (
-		   $request->isQuery([[$query], ['items']]) 
-		&& defined($request->getParam('menu')) 
-		&& defined($request->getParam('search'))
-		&& $request->getParam('cachesearch') # Bug 13044, allow some searches to not be cached
-	) {
-		
-		# make a best effort to make a labeled title for the search
-		my $queryTypes = {
-			rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
-			mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
-			radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
-			slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
-			live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
-			lma		=>	'PLUGIN_LMA_MODULE_NAME',
-		};
-		
-		my $title = $request->getParam('search');
-		
-		if ($queryTypes->{$query}) {
-			$title = $request->string($queryTypes->{$query}) . ": " . $title;
-		}
-
-		# XXX need to fix how this works for browselibrary
-		# the mode parameters do not get passed through
-		my $jiveSearchCache = {
-			text     => $title,
-			actions  => {
-				go => {
-					player => 0,
-					cmd => [ $query, 'items' ],
-					params => {
-						'item_id' => $request->getParam('item_id'),
-						menu      => $query,
-						search    => $request->getParam('search'),
-					},
-				},
-			},
-		};
-		
-		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
-	}
 
 	my $playlistControlCM = [];
 	
@@ -388,7 +345,7 @@ sub _cliQuery_done {
 	my @crumbIndex = $sid ? ( $sid ) : ();
 	
 	# Add top-level search to index
-	if ( $search && !scalar @index ) {
+	if ( defined $search && !scalar @index ) {
 		@crumbIndex = ( ($sid || '') . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
 	}
 	
@@ -422,7 +379,7 @@ sub _cliQuery_done {
 			push @crumbIndex, $i;
 			
 			# Add search query to crumb list
-			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
+			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 				# Escape periods in the search string
 				@crumbIndex[-1] .= '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
 			}
@@ -514,7 +471,7 @@ sub _cliQuery_done {
 					my $pt = $subFeed->{passthrough} || [];
 					my %args = (params => $feed->{'query'});
 					
-					if ($search && $subFeed->{type} && $subFeed->{type} eq 'search') {
+					if (defined $search && $subFeed->{type} && $subFeed->{type} eq 'search') {
 						$args{'search'} = $search;
 					}
 					
@@ -1432,7 +1389,49 @@ sub _cliQuery_done {
 			if ($window) {
 				$request->addResult('window', $window );
 			}
+
+			# cache SBC queries for "Recent Search" menu
+			if ($search && $request->getParam('cachesearch')) {	# Bug 13044, allow some searches to not be cached
+				
+				# XXX this is probably obsolete because of move to myapps
+				# make a best effort to make a labeled title for the search
+				my $queryTypes = {
+					rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
+					mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
+					radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
+					slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
+					live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
+					lma		=>	'PLUGIN_LMA_MODULE_NAME',
+				};
+				
+				my $title = $search;
+				
+				if ($queryTypes->{$query}) {
+					$title = $request->string($queryTypes->{$query}) . ": " . $title;
+				}
+		
+				my $queryParams = $feed->{'query'} || {};
+				my $jiveSearchCache = {
+					text     => $title,
+					actions  => {
+						go => {
+							player => 0,
+							cmd => [ $query, 'items' ],
+							params => {
+								'item_id' => $request->getParam('item_id'),
+								menu      => $query,
+								search    => $search,
+								%$queryParams,
+							},
+						},
+					},
+				};
+				
+				Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
+			}
+			
 		}
+
 	} # ENDIF $isItemQuery
 	
 	$request->setStatusDone();
