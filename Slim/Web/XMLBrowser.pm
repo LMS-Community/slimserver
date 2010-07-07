@@ -158,8 +158,6 @@ sub handleFeed {
 	
 	my $cache = Slim::Utils::Cache->new;
 	
-	main::DEBUGLOG && $stash->{'index'} && $log->debug("stash-index=", $stash->{'index'});
-
 	$feed->{'title'} ||= Slim::Utils::Strings::getString($params->{'title'});
 	$stash->{'pagetitle'} = $feed->{'title'};
 	$stash->{'pageicon'}  = $params->{pageicon};
@@ -177,9 +175,11 @@ sub handleFeed {
 	my @index = ();
 
 	if ( defined $stash->{'index'} && length( $stash->{'index'} ) ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("item_id: ", $stash->{'index'});
+
 		@index = split (/\./, $stash->{'index'});
 		
-		if ( length( $index[0] ) >= 8 ) {
+		if ( length( $index[0] ) >= 8 && $index[0] =~ /^[a-f0-9]{8}/ ) {
 			# Session ID is first element in index
 			$sid = shift @index;
 		}
@@ -200,8 +200,8 @@ sub handleFeed {
 	} );
 	
 	# Persist search query from top level item
-	if ( $params->{type} && $params->{type} eq 'search' ) {
-		$crumb[0]->{index} = '_' . $stash->{q};
+	if ( $params->{type} && $params->{type} eq 'search' && !scalar @index ) {
+		$crumb[0]->{index} = ($sid || '') . '_' . $stash->{q};
 	};
 
 	# favorites class to allow add/del of urls to favorites, but not when browsing favorites list itself
@@ -220,11 +220,8 @@ sub handleFeed {
 		# cachetime is only set by parsers which known the content is dynamic and so can't be cached
 		# for all other cases we always cache for CACHE_TIME to ensure the menu stays the same throughout the session
 		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
-
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid for $cachetime" );
-
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
-		
 		if ( $@ && $log->is_warn ) {
 			$log->warn("Session not cached: $@");
 		}
@@ -240,16 +237,18 @@ sub handleFeed {
 		
 		my $subFeed = $feed;
 		my $superFeed;
+		
 		for my $i ( @index ) {
 			$depth++;
 			
+			my ($in) = $i =~ /^(\d+)/;
 			$superFeed = $subFeed;
-			$subFeed = $subFeed->{'items'}->[$i];
+			$subFeed = $subFeed->{'items'}->[$in];
 			
 			push @crumbIndex, $i;
 			my $crumbText = join '.', @crumbIndex;
 			
-			main::DEBUGLOG && $log->debug("Considering $crumbText");
+			main::DEBUGLOG && $log->debug("Considering $i=$in ($crumbText) from ", $stash->{'index'});
 			
 			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
 			
@@ -349,7 +348,7 @@ sub handleFeed {
 					 !( $stash->{'action'} && $stash->{'action'} =~ /favadd|favdel/ && $depth == $levels ) ) {
 				
 				# Rewrite the URL if it was a search request
-				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
+				if ( $subFeed->{'type'} eq 'search' && defined ( $stash->{'q'} || $searchQuery ) ) {
 					my $search = $stash->{'q'} || $searchQuery;
 					$subFeed->{'url'} =~ s/{QUERY}/$search/g;
 				}

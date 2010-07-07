@@ -389,12 +389,7 @@ sub _cliQuery_done {
 	
 	# Add top-level search to index
 	if ( $search && !scalar @index ) {
-		if ( $sid ) {
-			@crumbIndex = ( $sid . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
-		}
-		else {
-			@crumbIndex = ( '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
-		}
+		@crumbIndex = ( ($sid || '') . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
 	}
 	
 	if ( $sid ) {
@@ -403,11 +398,8 @@ sub _cliQuery_done {
 		# cachetime is only set by parsers which known the content is dynamic and so can't be cached
 		# for all other cases we always cache for CACHE_TIME to ensure the menu stays the same throughout the session
 		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
-
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid for $cachetime" );
-		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
-
 		if ( $@ && $log->is_debug ) {
 			$log->debug("Session not cached: $@");
 		}
@@ -417,6 +409,7 @@ sub _cliQuery_done {
 
 		# descend to the selected item
 		my $depth = 0;
+		
 		for my $i ( @index ) {
 			main::DEBUGLOG && $log->debug("Considering item $i");
 
@@ -425,13 +418,13 @@ sub _cliQuery_done {
 			my ($in) = $i =~ /^(\d+)/;
 			$subFeed = $subFeed->{'items'}->[$in - $subFeed->{'offset'}];
 			$subFeed->{'offset'} ||= 0;
+			
+			push @crumbIndex, $i;
+			
 			# Add search query to crumb list
 			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
 				# Escape periods in the search string
-				push @crumbIndex, $i . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
-			}
-			else {
-				push @crumbIndex, $i;
+				@crumbIndex[-1] .= '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
 			}
 			
 			# Change URL if there is a play attribute and it's the last item
@@ -474,7 +467,7 @@ sub _cliQuery_done {
 				}
 				
 				# Rewrite the URL if it was a search request
-				if ( $subFeed->{type} && $subFeed->{type} eq 'search' ) {
+				if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 					$subFeed->{url} =~ s/{QUERY}/$search/g;
 				}
 				
