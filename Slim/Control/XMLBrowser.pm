@@ -101,24 +101,12 @@ sub cliQuery {
 		
 	}
 	
-
-	my $playlistControlCM = [];
-	
-	# Bug 15824-- push playlist control items for favorites item CMs
-	# note: making the judgment to put the playlistControl items in a CM by looking if the command is not '*info' is a hack
-	# 	*info menus need to not get these items though, since they deliver them through their own menus
-	my $localMusicInfoRequest = $request->getRequest(0) =~ /info$/;
-	if ( defined($request->getParam('xmlBrowseInterimCM')) && !$localMusicInfoRequest ) {
-		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
-	}
-	
 	my %args = (
 		'request' => $request,
 		'client'  => $request->client,
 		'url'     => $feed,
 		'query'   => $query,
 		'expires' => $expires,
-		'playlistControlCM' => $playlistControlCM,
 		'timeout' => 35,
 	);
 
@@ -173,7 +161,7 @@ sub cliQuery {
 		
 		if ($index && $quantity && !$levels && !$isPlayCommand) {
 			
-			# XXX hack to allow for some CM entries
+			# hack to allow for some CM entries
 			my $j = 10; 
 			$j = $index if ($j > $index);
 			$args{'index'} = $index - $j;
@@ -194,8 +182,6 @@ sub cliQuery {
 		return;
 	}
 
-	
-	
 	
 	if ( $feed =~ /{QUERY}/ ) {
 		# Support top-level search
@@ -277,7 +263,6 @@ sub _cliQuery_done {
 
 	my $request    = $params->{'request'};
 	my $query      = $params->{'query'};
-	my $playlistControlCM = $params->{'playlistControlCM'} || [];
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
 	
@@ -286,12 +271,13 @@ sub _cliQuery_done {
 	my $cache = Slim::Utils::Cache->new;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
+	my $xmlBrowseInterimCM = $request->getParam('xmlBrowseInterimCM');
 	
 	if ($request->isQuery([[$query], ['playlist']])) {
 		$isPlaylistCmd = 1;
 	}
 	elsif ($request->isQuery([[$query], ['items']])) {
-		if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
+		if ($request->getParam('touchToPlay') && !$xmlBrowseInterimCM) {
 			$isPlaylistCmd = 1;
 		} else {
 			$isItemQuery = 1;
@@ -340,8 +326,6 @@ sub _cliQuery_done {
 	my $subFeed = $feed;
 	$subFeed->{'offset'} ||= 0;
 	
-#	warn Data::Dump::dump($feed) . "\n";
-
 	my @crumbIndex = $sid ? ( $sid ) : ();
 	
 	# Add top-level search to index
@@ -442,7 +426,6 @@ sub _cliQuery_done {
 					'query'        => $query,
 					'expires'      => $params->{'expires'},
 					'timeout'      => $params->{'timeout'},
-					'playlistControlCM' => $playlistControlCM,
 				};
 				
 				if ( ref $subFeed->{url} eq 'CODE' ) {
@@ -480,7 +463,7 @@ sub _cliQuery_done {
 					
 					if ($index && $quantity && $depth == $levels && !$isPlaylistCmd) {
 						
-						# XXX hack to allow for some CM entries
+						# hack to allow for some CM entries
 						my $j = 10; 
 						$j = $index if ($j > $index);
 						$args{'index'} = $index - $j;
@@ -537,41 +520,7 @@ sub _cliQuery_done {
 
 				if ($menuMode) {
 
-					# decide what is the next step down
-					# generally, we go nowhere after this, so we get menu:nowhere...
-					# build the base element
-					my $base = {
-						'actions' => {
-							# no go, we ain't going anywhere!
-					
-							# we play/add the current track id
-							'play' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'play'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-								'nextWindow' => 'nowPlaying',
-							},
-							'add' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'add'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-							},
-							'add-hold' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'insert'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-							},
-						},
-					};
-					$request->addResult('base', $base);
-					
-					for my $eachmenu (@$playlistControlCM) {
+					for my $eachmenu ( @{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) } ) {
 						main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
 						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
 						$cnt++;
@@ -620,61 +569,6 @@ sub _cliQuery_done {
 										
 					if ($menuMode) {
 						
-						# setup hash for different items between play and add
-						my %modeitems = (
-							'play' => {
-								'string'  => $request->string('PLAY'),
-								'style'   => 'itemplay',
-								'cmd'     => 'play',
-							},
-							'add' => {
-								'string'  => $request->string('ADD'),
-								'style'   => 'itemadd',
-								'cmd'     => 'add',
-							},
-						);
-						
-						if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
-							for my $mode ( 'play', 'add' ) {
-								my $actions = {
-									'do' => {
-										'player' => 0,
-										'cmd'    => [$query, 'playlist', $modeitems{$mode}->{'cmd'}],
-										'params' => {
-											'item_id' => "$item_id", # stringify for JSON
-										},
-										'nextWindow' => 'parent',
-									},
-									'play' => {
-										'player' => 0,
-										'cmd'    => [$query, 'playlist', $modeitems{$mode}->{'cmd'}],
-										'params' => {
-											'item_id' => "$item_id", # stringify for JSON
-										},
-									},
-									# add always adds
-									'add' => {
-										'player' => 0,
-										'cmd'    => [$query, 'playlist', 'add'],
-										'params' => {
-											'item_id' => "$item_id", # stringify for JSON
-										},
-									},
-									'add-hold' => {
-										'player' => 0,
-										'cmd'    => [$query, 'playlist', 'insert'],
-										'params' => {
-											'item_id' => "$item_id", # stringify for JSON
-										},
-									},
-								};
-								$request->addResultLoop($loopname, $cnt, 'text', $modeitems{$mode}{'string'});
-								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$request->addResultLoop($loopname, $cnt, 'style', $modeitems{$mode}{'style'});
-								$cnt++;
-							}
-						}
-						
 						foreach my $att (@mapAttributes[1..$#mapAttributes]) {
 							my $key = $hash{$att->{'key'}};
 							next unless (defined $key && ($att->{'condition'} ? $att->{'condition'}->($key) : $key));
@@ -686,41 +580,6 @@ sub _cliQuery_done {
 							$cnt++;
 						}
 						
-						if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
-							if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
-								# first see if $url is already a favorite
-								my $action = 'add';
-	 							my $favIndex = undef;
-								my $token = 'JIVE_SAVE_TO_FAVORITES';
-								if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-									my $favs = Slim::Utils::Favorites->new($request->client);
-									$favIndex = $favs->findUrl($url);
-									if (defined($favIndex)) {
-										$action = 'delete';
-										$token = 'JIVE_DELETE_FROM_FAVORITES';
-									}
-								}
-								my $actions = {
-									'go' => {
-										player => 0,
-										cmd    => [ 'jivefavorites', $action ],
-										params => {
-											title   => $title,
-											url     => $url,
-											isContextMenu => 1,
-										},
-									},
-								};
-								$actions->{'go'}{'params'}{'icon'} = $hash{image} if defined($hash{image});
-								$actions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
-								my $string = $request->string($token);
-								$request->addResultLoop($loopname, $cnt, 'text', $string);
-								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$request->addResultLoop($loopname, $cnt, 'style', 'item');
-								$cnt++;
-							}
-						}
-
 						$request->addResult('count', $cnt);
 					} # $menuMode
 					
@@ -730,7 +589,7 @@ sub _cliQuery_done {
 				}
 				$request->setStatusDone();
 				return;
-			}
+			} # $isItemQuery && (audio || enclosure || description)
 		}
 	}
 	
@@ -892,7 +751,7 @@ sub _cliQuery_done {
 		my $allTouchToPlay = 1;
 		my %actionParamsNeeded;
 		
-		if ($count) {
+		if ($count || $xmlBrowseInterimCM) {
 		
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
@@ -902,7 +761,7 @@ sub _cliQuery_done {
 				$request->addResult('offset', $index);
 
 				my $firstChunk = !$index;
-				for my $eachmenu (@$playlistControlCM) {
+				for my $eachmenu (@{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) }) {
 					$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
 					
 					# Only add them the first time
@@ -1120,6 +979,17 @@ sub _cliQuery_done {
 							next;
 						}
 						
+						# Avoid including album tracks and the like in context-menus
+						if ( $xmlBrowseInterimCM &&
+							($item->{play} || ($item->{type} && ($item->{type} eq 'audio')))
+							# Cannot do this if we might screw up paging - silly but unlikely
+							&& $totalCount < scalar($quantity) )
+						{
+							# Skip this item
+							$totalCount--;
+							next;
+						}
+						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
 						if ( $item->{autoplays} ) {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
@@ -1140,21 +1010,8 @@ sub _cliQuery_done {
 						
 						my $id = $hash{id};
 						
-						my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
-						my $favorites_title  = $item->{title} || $item->{name};
-						
-						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
-							my $presetParams = {
-								favorites_url   => $favorites_url,
-								favorites_title => $favorites_title,
-								favorites_type  => $item->{type} || 'audio',
-							};
-							
-							if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
-								$presetParams->{favorites_url} = $item->{playlist};
-							}
-							$presetParams->{parser} = $item->{parser} if $item->{parser};
-							
+						my $presetParams = _favoritesParams($item);
+						if ($presetParams && !$xmlBrowseInterimCM) {
 							$request->addResultLoop( $loopname, $cnt, 'presetParams', $presetParams );
 							$presetFavSet = 1;
 						}
@@ -1699,96 +1556,120 @@ sub _playlistControlContextMenu {
 	my $args    = shift;
 	my $query   = $args->{'query'};
 	my $request = $args->{'request'};
-	my $client  = $request->client;
-	my $params  = $request->{_params};
-	my $itemParams = {
-		favorites_title => $params->{'favorites_title'},
-		favorites_url   => $params->{'favorites_url'},
-		favorites_type  => $params->{'favorites_type'},
-		menu => $params->{'menu'},
-		type => $params->{'type'},
-		icon => $params->{'icon'},
-		item_id => $params->{'item_id'},
-	};
+	my $item    = $args->{'item'};
 
+	my @contextMenu;
+	
+	if (!defined($request->getParam('xmlBrowseInterimCM'))) {
+		return \@contextMenu;
+	}
+	
+	# We only add playlist-control items for an item which is playable
+	if (hasAudio($item)) {
+		my $itemParams = {
+			menu    => $request->getParam('menu'),
+			item_id => $request->getParam('item_id'),
+		};
 
-	my @contextMenu = (
-		{
-			text => $request->string('ADD_TO_END'),
-			actions => {
-				go => {
-				player => 0,
-					cmd    => [ $query, 'playlist', 'add'],
-					params => $itemParams,
-					nextWindow => 'parentNoRefresh',
+		@contextMenu = (
+			{
+				text => $request->string('ADD_TO_END'),
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ $query, 'playlist', 'add'],
+						params => $itemParams,
+						nextWindow => 'parentNoRefresh',
+					},
 				},
 			},
-		},
-		{
-			text => $request->string('PLAY_NEXT'),
-			actions => {
-				go => {
-				player => 0,
-					cmd    => [ $query, 'playlist', 'insert'],
-					params => $itemParams,
-					nextWindow => 'parentNoRefresh',
+			{
+				text => $request->string('PLAY_NEXT'),
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ $query, 'playlist', 'insert'],
+						params => $itemParams,
+						nextWindow => 'parentNoRefresh',
+					},
 				},
 			},
-		},
-		{
-			text => $request->string('PLAY'),
-			style => 'itemplay',
-			actions => {
-				go => {
-					player => 0,
-					cmd    => [ $query, 'playlist', 'play'],
-					params => $itemParams,
-					nextWindow => 'nowPlaying',
+			{
+				text => $request->string('PLAY'),
+				style => 'itemplay',
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ $query, 'playlist', 'play'],
+						params => $itemParams,
+						nextWindow => 'nowPlaying',
+					},
 				},
 			},
-		},
-	);
+		);
+	}
 
 	# Favorites handling
-	my $action = 'add';
- 	my $favIndex = undef;
-	my $token = 'JIVE_SAVE_TO_FAVORITES';
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-		my $favs = Slim::Utils::Favorites->new($request->client);
-		$favIndex = $favs->findUrl($itemParams->{favorites_url});
-		if (defined($favIndex)) {
-			$action = 'delete';
-			$token = 'JIVE_DELETE_FROM_FAVORITES';
+	if (my $favParams = _favoritesParams($item)) {
+	
+		my $action = 'add';
+	 	my $favIndex = undef;
+		my $token = 'JIVE_SAVE_TO_FAVORITES';
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+			my $favs = Slim::Utils::Favorites->new($request->client);
+			$favIndex = $favs->findUrl($favParams->{favorites_url});
+			if (defined($favIndex)) {
+				$action = 'delete';
+				$token = 'JIVE_DELETE_FROM_FAVORITES';
+			}
 		}
-	}
-	my $favoriteActions = {
-		'go' => {
-			player => 0,
-			cmd    => [ 'jivefavorites', $action ],
-			params => {
-				title   => $itemParams->{'favorites_title'},
-				url     => $itemParams->{'favorites_url'},
-				type    => $itemParams->{'favorites_type'},
-				isContextMenu => 1,
+		
+		my $favoriteActions = {
+			'go' => {
+				player => 0,
+				cmd    => [ 'jivefavorites', $action ],
+				params => {
+					title   => $favParams->{'favorites_title'},
+					url     => $favParams->{'favorites_url'},
+					type    => $favParams->{'favorites_type'},
+					parser  => $favParams->{'parser'},
+					isContextMenu => 1,
+				},
 			},
-		},
-	};
-	$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
-	$favoriteActions->{'go'}{'params'}{'icon'}    = $itemParams->{icon} if defined($itemParams->{icon});
+		};
+		$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
+		$favoriteActions->{'go'}{'params'}{'icon'}    = $request->getParam('icon') if $request->getParam('icon');
+	
+		push @contextMenu, {
+			text => $request->string($token),
+			actions => $favoriteActions,
+		};
+	}
 
-	push @contextMenu, {
-		text => $request->string($token),
-		actions => $favoriteActions,
-	};
-
-	my $numItems = scalar(@contextMenu);
-	$request->addResult('count', $numItems);
-	$request->addResult('offset', 0);
-	my $cnt = 0;
 	return \@contextMenu;
-
 }
 
+sub _favoritesParams {
+	my $item = shift;
+	
+	my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
+	my $favorites_title  = $item->{title} || $item->{name};
+	
+	if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
+		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
+			$favorites_url = $item->{playlist};
+		}
+		
+		my %presetParams = (
+			favorites_url   => $favorites_url,
+			favorites_title => $favorites_title,
+			favorites_type  => $item->{type} || 'audio',
+		);
+		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
+		
+		return \%presetParams;
+	}
+}
 
 1;
 
