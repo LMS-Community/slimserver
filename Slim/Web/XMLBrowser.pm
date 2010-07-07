@@ -255,7 +255,7 @@ sub handleFeed {
 			# Add search query to crumb list
 			my $searchQuery;
 			
-			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && $stash->{'q'} ) {
+			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && defined $stash->{'q'} ) {
 				$crumbText .= '_' . $stash->{'q'};
 				$searchQuery = $stash->{'q'};
 			}
@@ -264,7 +264,7 @@ sub handleFeed {
 			}
 			
 			# Add search query to crumbName
-			if ( $searchQuery ) {
+			if ( defined $searchQuery ) {
 				$crumbName .= ' (' . $searchQuery . ')';
 			}
 			
@@ -1006,7 +1006,7 @@ sub webLink {
 	push @verbs, 'wantMetadata:1';	# We always want everything we can get
 	
 	# execute CLI command
-	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(', ', @verbs));
+	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(' ', (defined $client ? $client->id : 'noClient'), @verbs));
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
 		
 	# wrap async requests
