@@ -116,39 +116,14 @@ END %]
 		[% END %]
 	[%- END %]
 
-	[%- # treat track information specially
-	IF 0 && path == 'trackinfo.html';
-
-		itemobj = {
-			id => sess,
-			album => details.album.0,
-			contributorRoles => details.contributors.keys,
-			contributors => details.contributors,
-			genres => details.genre,
-			year => details.year.0,
-			title => pagetitle
-			url => itemUrl
-		};
-
-		songInfoPlayLinks = BLOCK;
-			PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0;
-		END;
-
-		PROCESS songinfo_header.html 
-			albumFirst = 1
-			plugin_meta = {
-				title => details.title.0.name 
-			};
-
-		image = undef;
-	ELSIF metadata;
-		PROCESS songinfo_header.html itemobj = metadata;
+	[%- IF songinfo;
+		PROCESS songinfo_header.html itemobj = songinfo;
 		image = undef;
 	END %]
 
 
 	[%- WRAPPER $container %]
-		[% IF !metadata && image %]
+		[% IF image %]
 		<div>
 			<a href="[% image %]" target="cover">
 				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">

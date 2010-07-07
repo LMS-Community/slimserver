@@ -491,7 +491,6 @@ sub handleFeed {
 		$stash->{'index'}     = $itemIndex;
 		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
-		$stash->{'metadata'}  = $subFeed->{'metadata'};	
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 	}
@@ -808,7 +807,7 @@ sub handleFeed {
 				delete $details->{'unfold'};
 			}
 
-			$stash->{'metadata'} = $details if scalar keys %$details && !$stash->{'metadata'};
+			$stash->{'songinfo'} = $details if scalar keys %$details;
 		}
 	}
 
