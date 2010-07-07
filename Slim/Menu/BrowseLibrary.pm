@@ -116,7 +116,7 @@ sub _initCLI {
 	# CLI support
 	Slim::Control::Request::addDispatch(
 		[ BROWSELIBRARY, 'items', '_index', '_quantity' ],
-	    [ 1, 1, 1, \&cliQuery ]
+	    [ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
