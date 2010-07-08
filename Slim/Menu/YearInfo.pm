@@ -178,24 +178,6 @@ sub playYear {
 			},
 			nextWindow => 'nowPlaying',
 		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				year => $year,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				year => $year,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
-		},
 	};
 	$actions->{play} = $actions->{go};
 
@@ -256,17 +238,6 @@ sub addYear {
 		jive => $jive, 
 	};
 	return $items;
-}
-
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
 }
 
 sub cliQuery {

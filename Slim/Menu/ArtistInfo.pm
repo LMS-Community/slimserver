@@ -129,7 +129,7 @@ sub menu {
 				}
 			}
 			else {
-				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
+				$log->error( 'Artistinfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
 			}				
 		}
 	};

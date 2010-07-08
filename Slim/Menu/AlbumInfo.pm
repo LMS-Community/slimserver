@@ -176,7 +176,7 @@ sub menu {
 				}
 			}
 			else {
-				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
+				$log->error( 'AlbumInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
 			}				
 		}
 	};
@@ -400,24 +400,6 @@ sub playAlbum {
 			},
 			nextWindow => 'nowPlaying',
 		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				album_id => $album->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				album_id => $album->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
-		},
 	};
 	$actions->{play} = $actions->{go};
 
@@ -497,17 +479,6 @@ sub infoReplayGain {
 			return \%item;
 		}
 	}
-}
-
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
 }
 
 sub cliQuery {

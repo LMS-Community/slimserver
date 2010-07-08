@@ -188,24 +188,6 @@ sub playPlaylist {
 			},
 			nextWindow => 'nowPlaying',
 		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				playlist_id => $playlist->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				playlist_id => $playlist->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
-		},
 	};
 	$actions->{play} = $actions->{go};
 
@@ -264,17 +246,6 @@ sub addPlaylist {
 	};
 	
 	return $items;
-}
-
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
 }
 
 sub cliQuery {
