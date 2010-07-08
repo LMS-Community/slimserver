@@ -114,7 +114,6 @@ sub setMode {
 		'client'    => $client,
 		'url'       => $url,
 		'expires'   => $expires,
-		'onFailure' => $onFailure,
 		'feedTitle' => $title,
 		'parser'    => $parser,
 		'item'      => $item,
