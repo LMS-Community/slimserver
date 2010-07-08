@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'yearinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -165,6 +165,8 @@ sub playYear {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $play_string   = cstring($client, 'PLAY');
 
@@ -215,6 +217,7 @@ sub addYear {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {

@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'genreinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -175,6 +175,8 @@ sub playGenre {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $play_string   = cstring($client, 'PLAY');
 
@@ -223,6 +225,7 @@ sub addGenre {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {

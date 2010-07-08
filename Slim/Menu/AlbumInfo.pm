@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'albuminfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -387,6 +387,8 @@ sub playAlbum {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $play_string   = cstring($client, 'PLAY');
 
@@ -434,6 +436,8 @@ sub addAlbum {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $actions = {
 		go => {

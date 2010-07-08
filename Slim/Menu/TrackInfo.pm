@@ -38,7 +38,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'trackinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -405,6 +405,8 @@ sub playTrack {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
+	
 	my $play_string = cstring($client, 'PLAY');
 
 	my $actions;
@@ -484,6 +486,8 @@ sub addTrack {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $actions;
 	# remove from playlist
@@ -1229,11 +1233,12 @@ sub cliQuery {
 	
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
-		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
-		$trackId = $song->id;
-		$url     = $song->url;
-		$request->addParam('track_id', $trackId);
-		$request->addParam('url', $url);
+		if (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) {
+			$trackId = $song->id;
+			$url     = $song->url;
+			$request->addParam('track_id', $trackId);
+			$request->addParam('url', $url);
+		}
 	}
 		
 	my $tags = {

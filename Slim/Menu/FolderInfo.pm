@@ -33,7 +33,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'folderinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 }
 
@@ -84,6 +84,8 @@ sub addFolderEnd {
 sub addFolder {
 	my ($client, $tags, $cmd, $label) = @_;
 
+	return [] if !blessed($client);
+
 	my $actions = {
 		go => {
 			player => 0,
@@ -110,6 +112,8 @@ sub addFolder {
 
 sub playFolder {
 	my ( $client, $tags) = @_;
+
+	return [] if !blessed($client);
 
 	my $actions = {
 		go => {

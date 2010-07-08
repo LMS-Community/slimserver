@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'artistinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -173,6 +173,8 @@ sub playArtist {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
+
 	my $play_string   = cstring($client, 'PLAY');
 
 	my $actions = {
@@ -184,24 +186,6 @@ sub playArtist {
 				cmd => 'load',
 			},
 			nextWindow => 'nowPlaying',
-		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				artist_id => $artist->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				artist_id => $artist->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -239,6 +223,7 @@ sub addArtist {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {
