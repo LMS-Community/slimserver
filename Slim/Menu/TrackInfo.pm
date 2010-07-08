@@ -436,24 +436,6 @@ sub playTrack {
 				},
 				nextWindow => 'nowPlaying',
 			},
-			add => {
-				player => 0,
-				cmd => [ 'playlistcontrol' ],
-				params => {
-					cmd => 'add',
-					track_id => $track->id,
-				},
-				nextWindow => 'parent',
-			},
-			'add-hold' => {
-				player => 0,
-				cmd => [ 'playlistcontrol' ],
-				params => {
-					cmd => 'insert',
-					track_id => $track->id,
-				},
-				nextWindow => 'parent',
-			},
 		};
 		# play is go
 		$actions->{play} = $actions->{go};
