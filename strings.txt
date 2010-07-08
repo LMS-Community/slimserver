@@ -11080,6 +11080,25 @@ LENGTH
 	SV	Varaktighet
 	ZH_CN	持久时间
 
+ALBUMLENGTH
+	CS	Doba trvání
+	DA	Varighed
+	DE	Dauer
+	EN	Duration
+	ES	Duración
+	FI	Kesto
+	FR	Durée
+	HE	משך
+	IT	Durata
+	JA	長さ（時間）
+	NL	Duur
+	NO	Varighet
+	PL	Czas trwania
+	PT	Duração
+	RU	Продолжительность
+	SV	Varaktighet
+	ZH_CN	持久时间
+
 TYPE
 	CS	Formát souboru
 	DA	Filformat
