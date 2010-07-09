@@ -493,6 +493,10 @@ sub handleFeed {
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
+		$stash->{'playUrl'}   = $subFeed->{'play'} 
+								|| ($subFeed->{'type'} && $subFeed->{'type'} eq 'audio'
+									? $subFeed->{'url'}
+									: undef);	
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'};
@@ -501,6 +505,7 @@ sub handleFeed {
 		$stash->{'actions'}   = $feed->{'actions'};	
 		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
 		$stash->{'albumData'} = $feed->{'albumData'};	
+		$stash->{'playUrl'}   = $feed->{'play'};	
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -518,6 +523,11 @@ sub handleFeed {
 		if (defined $favsItem) {
 			$stash->{'index'} = undef;
 		}
+	}
+	
+	# Only want plain URLs as play-URL
+	if ($stash->{'playUrl'} && ref $stash->{'playUrl'}) {
+		delete $stash->{'playUrl'};
 	}
 	
 	# play/add stream
@@ -806,8 +816,19 @@ sub handleFeed {
 				}
 				delete $details->{'unfold'};
 			}
-
-			$stash->{'songinfo'} = $details if scalar keys %$details;
+			
+			if (scalar keys %$details) {
+				
+				# This is really just for Trackinfo
+				if ($stash->{'playUrl'}) {
+					$details->{'playLink'} = 'anyurl?p0=playlist&p1=play&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
+					$details->{'addLink'} = 'anyurl?p0=playlist&p1=add&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
+				}
+	
+				$stash->{'songinfo'} = $details;
+			}
 		}
 	}
 
@@ -817,6 +838,7 @@ sub handleFeed {
 
 		if (defined $favsItem && $items[$favsItem - $start]) {
 			my $item = $items[$favsItem - $start];
+			my $furl = _favoritesUrl($item);
 			if ($stash->{'action'} eq 'favadd') {
 
 				my $type = $item->{'type'} || 'link';
@@ -825,31 +847,39 @@ sub handleFeed {
 					$type = 'audio';
 				}
 				
-				my $url = $item->{play} || $item->{url};
-				
-				# There may be an alternate URL for playlist
-				if ( $type eq 'playlist' && $item->{playlist} ) {
-					$url = $item->{playlist};
-				}
-
 				$favs->add(
-					$url,
+					$furl,
 					$item->{'name'}, 
 					$type, 
 					$item->{'parser'}, 
 					1, 
-					$item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
+					$item->{'image'} || $item->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($furl) 
 				);
 			} elsif ($stash->{'action'} eq 'favdel') {
-				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
+				$favs->deleteUrl( $furl );
 			}
 		}
 
 		for my $item (@items) {
-			if ($item->{'url'} && !defined $item->{'favorites'}) {
-				$item->{'favorites'} = $favs->hasUrl( $item->{'play'} || $item->{'url'} ) ? 2 : 1;
+			my $furl = _favoritesUrl($item);
+			if ($furl && !defined $item->{'favorites'}) {
+				$item->{'favorites'} = $favs->hasUrl( $furl ) ? 2 : 1;
 			}
 		}
+	}
+	
+	# Add play links if we can
+	for my $item (@{$stash->{'items'} || []}) {
+		
+		next if $item->{'ignore'};
+		
+		my $link;
+		
+		$link = _makePlayLink($stash->{'actions'}, $item, 'play');
+		$item->{'playLink'} = $link if $link;
+		
+		$link = _makePlayLink($stash->{'actions'}, $item, 'add');
+		$item->{'addLink'} = $link if $link;
 	}
 
 	my $output = processTemplate($template, $stash);
@@ -998,7 +1028,7 @@ sub webLink {
 	}
 	
 	my $title = delete $params{'linktitle'};
-	$title = Slim::Utils::Unicode::utf8decode(Slim::Utils::Misc::unescape($title)) if $title;
+	$title = Slim::Utils::Unicode::utf8decode(uri_unescape($title)) if $title;
 	
 	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
 	push @verbs, 'feedMode:1';
@@ -1031,7 +1061,7 @@ sub _makeWebLink {
 			$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]} if defined $item->{$vars[$i+1]};
 		}
 		
-		$link .= '&linktitle=' . $title if $title;
+		$link .= '&linktitle=' . Slim::Utils::Misc::escape($title) if $title;
 		 
 		$link .= '/';
 		
@@ -1041,5 +1071,62 @@ sub _makeWebLink {
 	}
 }
 
+sub _makePlayLink {
+	my ($feedActions, $item, $action) = @_;
+	
+	my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction({actions => $feedActions}, $item, $action);
+	if ($feedAction) {
+		my @p = @{$feedAction->{'command'}};
+		
+		if (my $params = $feedAction->{'fixedParams'}) {
+			push @p, map { $_ . ':' . $params->{$_}} keys %{$params};
+		}
+		
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			push @p, $vars[$i] . ':' . $item->{$vars[$i+1]} if defined $item->{$vars[$i+1]};
+		}
+		
+		my $link = 'anyurl?p0=' . shift @p;
+		my $i = 1;
+		
+		foreach (@p) {
+			$link .= "&p$i=$_";
+			$i++;
+		}
+		
+		main::DEBUGLOG && $log->debug($link);
+		
+		return $link;
+	}
+		
+	my $playUrl = $item->{'play'} 
+					|| ($item->{'type'} && $item->{'type'} eq 'audio'
+						? $item->{'url'}
+						: undef);
+	if ($playUrl && !ref $playUrl) {
+		my $link = 'anyurl?p0=playlist&p1=' . $action . '&p2=' . Slim::Utils::Misc::escape($playUrl);
+
+		my $title = $item->{'title'} || $item->{'name'};
+		$link .= '&p3=' . Slim::Utils::Misc::escape($title) if $title;
+		 
+		return $link;
+	}
+}
+
+sub _favoritesUrl {
+	my $item = shift;
+	
+	my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
+	
+	if ( $favorites_url && !ref $favorites_url ) {
+		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
+			$favorites_url = $item->{playlist};
+		}
+		
+		
+		return $favorites_url;
+	}
+}
 
 1;

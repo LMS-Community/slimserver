@@ -107,7 +107,10 @@ END %]
 			[% END %]
 		[% END %]
 
-		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
+		[% IF item.playLink %]
+			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.playLink %]&player=[% player | uri %]', 0, SqueezeJS.string('connecting_for'));"[% END %]
+			[% IF item.addLink; WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.addLink %]&player=[% player | uri %]', 0);"[% END; END %]
+		[% ELSIF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
 			[% WRAPPER playlink %]onclick="Browse.XMLBrowser.play[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
 			[% WRAPPER addlink %]onclick="Browse.XMLBrowser.add[% IF item.type == 'playlist' %]All[% END %]Link('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% sess %]');"[% END %]
 		[% ELSE %]
@@ -116,7 +119,17 @@ END %]
 		[% END %]
 	[%- END %]
 
+	[%- BLOCK allcontrol -%]
+		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+	[%- END %]
+
 	[%- IF songinfo;
+		songInfoPlayLinks = BLOCK %]
+		<div id="songInfoPlayLinks">
+			[% IF songinfo.playLink; PROCESS gencontrol item = songinfo; ELSIF itemsHaveAudio; PROCESS allcontrol; END %]
+		</div>
+		[% END;	
 		PROCESS songinfo_header.html itemobj = songinfo;
 		image = undef;
 	END %]
@@ -131,7 +144,7 @@ END %]
 		</div>
 		[% END %]
 
-		[% IF itemsHaveAudio %]
+		[% IF itemsHaveAudio && !songinfo %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 				[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]

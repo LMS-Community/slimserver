@@ -319,6 +319,7 @@ sub menu {
 		name  => $track->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
 		items => $items,
+		play  => $track->url,
 		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $track->coverid . '/cover.jpg',
 	};
 }
