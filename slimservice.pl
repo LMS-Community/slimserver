@@ -320,7 +320,7 @@ sub init {
 		};
 	
 		$SIG{USR2} = sub {
-			DB::disable_profile();
+			DB::finish_profile();
 			warn "Profiling disabled...\n";
 		};
 	}

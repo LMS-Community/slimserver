@@ -136,6 +136,10 @@ sub init {
 		$config{'log4perl.appender.server.recreate'}              = 1;
 		$config{'log4perl.appender.server.recreate_check_signal'} = 'USR1';
 	}
+	else {
+		$config{'log4perl.appender.server.recreate'}              = 0;
+		$config{'log4perl.appender.server.recreate_check_signal'} = '';
+	}
 	
 	# Change to syslog if requested
 	if ( $args->{logfile} && $args->{logfile} eq 'syslog' ) {

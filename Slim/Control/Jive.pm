@@ -2135,6 +2135,11 @@ sub dateQuery_filter {
 }
 
 sub dateQuery {
+	# XXX dateQuery uses registerAutoExecute which is called for every notification!
+	# (See Request.pm "send the notification to all filters...")
+	# An easy workaround here is to abort on any more params in @_
+	return if @_ > 1;
+	
 	my $request = shift;
 
 	if ( $request->isNotQuery([['date']]) ) {
