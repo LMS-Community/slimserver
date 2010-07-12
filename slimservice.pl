@@ -1,4 +1,4 @@
-#!/usr/bin/env NYTPROF=start=no:addpid=1:file=/home/svcprod/ss/nytprof.out /opt/sdi/bin/perl -d:NYTProf
+#!/opt/sdi/bin/perl
 
 # Squeezebox Server Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
