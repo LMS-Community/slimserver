@@ -3429,9 +3429,6 @@ sub sleepQuery {
 # the filter function decides, based on a notified request, if the status
 # query must be re-executed.
 sub statusQuery_filter {
-
-	$log->debug('statusQuery_filter()');
-
 	my $self = shift;
 	my $request = shift;
 	
