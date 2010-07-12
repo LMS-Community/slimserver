@@ -1,6 +1,6 @@
 package Slim::Web::Pages::Common;
 
-# $Id: $
+# $Id$
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -687,7 +687,9 @@ sub buildStatusHeaders {
 			if ($] > 5.007 && Slim::Utils::Unicode::encodingFromString($value) ne 'ascii') {
 
 				$value = Slim::Utils::Unicode::utf8encode($value, 'iso-8859-1');
-				$value = encode_qp($value);
+				
+				# XXX - did we previously import this from somewhere?
+				#$value = encode_qp($value);
 			}
 
 			$response->header($key => $value);
