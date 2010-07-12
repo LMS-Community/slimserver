@@ -1196,6 +1196,26 @@ sub generateHTTPResponse {
 			
 			return;
 
+		# return quickly with a 404 if web UI is disabled
+		} elsif ( !main::WEBUI && (
+			$path =~ /music\/(\d+)\/download/
+			|| $path =~ /status\.m3u/
+			|| $path =~ /status\.txt/
+			|| $path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/
+		) ) {
+			$response->content_type('text/html');
+			$response->code(RC_NOT_FOUND);
+		
+			$body = filltemplatefile('html/errors/404.html', $params);
+		
+			return prepareResponseForSending(
+				$client,
+				$params,
+				$body,
+				$httpClient,
+				$response,
+			);
+
 		} elsif ($path =~ /music\/(\d+)\/download/) {
 			# Bug 10730
 			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for file download");
