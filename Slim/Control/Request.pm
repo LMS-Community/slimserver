@@ -1160,16 +1160,13 @@ sub disconnectedClientID {
 }
 
 # sets/returns the client ID
-sub clientid {
-	my $self = shift;
-	my $clientid = shift;
-	
-	if (defined $clientid) {
-		$self->{'_clientid'} = $clientid;
-		$self->validate();
+sub clientid {	
+	if (defined $_[1]) {
+		$_[0]->{'_clientid'} = $_[1];
+		$_[0]->validate();
 	}
 	
-	return $self->{'_clientid'};
+	return $_[0]->{'_clientid'};
 }
 
 # sets/returns the need client state
@@ -1306,13 +1303,12 @@ sub removeAutoExecuteCallback {
 }
 
 # sets/returns the source subscribe callback
-sub autoExecuteFilter {
-	my $self = shift;
-	my $newvalue = shift;
+sub autoExecuteFilter {	
+	if ( defined $_[1] && ref $_[1] eq 'CODE' ) {
+		$_[0]->{'_ae_filter'} = $_[1];
+	}
 	
-	$self->{'_ae_filter'} = $newvalue if defined $newvalue && ref($newvalue) eq 'CODE';
-	
-	return $self->{'_ae_filter'};
+	return $_[0]->{'_ae_filter'};
 }
 
 
