@@ -1324,9 +1324,9 @@ sub displaystatusQuery_filter {
 	return 0 if !$request->isCommand([['displaynotify']]);
 
 	# retrieve the clientid, abort if not about us
-	my $clientid = $request->clientid();
-	return 0 if !defined $clientid || !defined $self->clientid();
-	return 0 if $clientid ne $self->clientid();
+	my $clientid   = $request->clientid() || return 0;
+	my $myclientid = $self->clientid() || return 0; 
+	return 0 if $clientid ne $myclientid;
 
 	my $subs  = $self->getParam('subscribe');
 	my $type  = $request->getParam('_type');
@@ -3618,9 +3618,8 @@ sub statusQuery_filter {
 	my $request = shift;
 	
 	# retrieve the clientid, abort if not about us
-	my $clientid = $request->clientid();
-	my $myclientid = $self->clientid();
-	return 0 if !defined $clientid || !defined $myclientid;
+	my $clientid   = $request->clientid() || return 0;
+	my $myclientid = $self->clientid() || return 0;
 	
 	# Bug 10064: playlist notifications get sent to everyone in the sync-group
 	if ($request->isCommand([['playlist', 'newmetadata']]) && (my $client = $request->client)) {
