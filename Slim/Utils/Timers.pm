@@ -92,9 +92,7 @@ An array of any other arguments to be passed to $coderef.
 
 =cut
 
-sub setTimer {
-	return _makeTimer(@_);
-}
+*setTimer = \&_makeTimer;
 
 =head2 killTimers ( $obj, $coderef )
 
