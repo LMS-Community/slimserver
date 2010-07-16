@@ -782,9 +782,6 @@ sub init {
 		require Slim::Music::PlaylistFolderScan;
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
-		for my $client (Slim::Player::Client::clients()) {
-			Slim::Buttons::Home::updateMenu($client);
-		}
 	}, 'playlistdir');
 
 	$prefs->setChange( sub {

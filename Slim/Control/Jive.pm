@@ -154,7 +154,6 @@ sub init {
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
 		[0, 0, 0, sub { return 1; }]);
 	
-	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
 
 sub _libraryChanged {
@@ -2231,7 +2230,7 @@ sub myMusicMenu {
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
 
-	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort);
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort, \&_libraryChanged);
 	
 	
 	if (!$batch) {

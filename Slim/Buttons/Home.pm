@@ -164,15 +164,8 @@ sub init {
 		},
 	);
 
-	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
 
-sub _libraryChanged {
-	foreach ( Slim::Player::Client::clients() ) {
-		updateMenu($_);
-		$_->update();
-	}
-}
 
 =head2 forgetClient ( $client )
 

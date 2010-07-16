@@ -103,6 +103,8 @@ sub init {
 #	$class->_initSubmenus();
 	
     $class->_initModes();
+    
+    Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
 
 sub cliQuery {
@@ -179,8 +181,19 @@ sub _initModes {
 	}
 }
 
+my $jiveUpdateCallback = undef;
+
+sub _libraryChanged {
+	if ($jiveUpdateCallback) {
+		$jiveUpdateCallback->();
+	}
+}
+
+
 sub getJiveMenu {
-	my ($client, $baseNode, $albumSort) = @_;
+	my ($client, $baseNode, $albumSort, $updateCallback) = @_;
+	
+	$jiveUpdateCallback = $updateCallback if $updateCallback;
 	
 	my @myMusicMenu;
 	
