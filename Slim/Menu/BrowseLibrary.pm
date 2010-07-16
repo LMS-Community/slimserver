@@ -163,6 +163,7 @@ sub _initModes {
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
 			useMode   => $class->modeName(),
 			header    => $node->{'name'},
+			condition => $node->{'condition'},
 			title     => '{' . $node->{'name'} . '}',
 			%{$node->{'params'}},
 		});
@@ -184,6 +185,10 @@ sub getJiveMenu {
 	my @myMusicMenu;
 	
 	foreach my $node (@{_getNodeList($albumSort)}) {
+		if ($node->{'condition'} && !$node->{'condition'}->($client)) {
+			next;
+		}
+		
 		my %menu = (
 			text => cstring($client, $node->{'name'}),
 			id   => $node->{'id'},
@@ -390,6 +395,7 @@ sub _getNodeList {
 			params       => {mode => 'artists'},
 			icon         => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ARTISTS',
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicArtists',
 			weight       => 10,
 		},
@@ -399,6 +405,7 @@ sub _getNodeList {
 			params       => {mode => 'albums', sort => $albumsSort},
 			icon         => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicAlbums',
 			weight       => 20,
 		},
@@ -408,6 +415,7 @@ sub _getNodeList {
 			params       => {mode => 'genres'},
 			icon         => 'html/images/genres.png',
 			homeMenuText => 'BROWSE_GENRES',
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicGenres',
 			weight       => 30,
 		},
@@ -417,6 +425,7 @@ sub _getNodeList {
 			params       => {mode => 'years'},
 			icon         => 'html/images/years.png',
 			homeMenuText => 'BROWSE_YEARS',
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicYears',
 			weight       => 40,
 		},
@@ -425,6 +434,7 @@ sub _getNodeList {
 			name         => 'BROWSE_NEW_MUSIC',
 			icon         => 'html/images/newmusic.png',
 			params       => {mode => 'albums', sort => 'new'},
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicNewMusic',
 			weight       => 50,
 		},
@@ -433,7 +443,7 @@ sub _getNodeList {
 			name         => 'BROWSE_MUSIC_FOLDER',
 			params       => {mode => 'bmf'},
 			icon         => 'html/images/musicfolder.png',
-			condition    => sub {$prefs->get('audiodir');},
+			condition    => sub {Slim::Schema::hasLibrary && $prefs->get('audiodir');},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 		},
@@ -444,6 +454,7 @@ sub _getNodeList {
 			icon         => 'html/images/playlists.png',
 			condition    => sub {
 								$prefs->get('playlistdir') ||
+								# this might be expensive - perhaps need to cache this somehow
 				 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
 							},
 			id           => 'myMusicPlaylists',
@@ -454,25 +465,13 @@ sub _getNodeList {
 			name         => 'SEARCH',
 			params       => {mode => 'search'},
 			icon         => 'html/images/search.png',
+			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicSearch',
 			weight       => 90,
 		},
 	);
 	
-	
-	if (!Slim::Schema::hasLibrary) {
-		return [];
-	}
-	
-	my @nodes;
-	
-	foreach my $item (@topLevel) {
-		if ($item->{'condition'} && !$item->{'condition'}->()) {
-			next;
-		}
-		push @nodes, $item;
-	}
-	return \@nodes;
+	return \@topLevel;
 }
 
 sub _generic {
