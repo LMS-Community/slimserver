@@ -1032,7 +1032,7 @@ sub _objectInfoHandler {
 					cmd    => [ 'jivefavorites', 'add' ],
 					params => {
 						title   => $title,
-                                                url     => $obj->url,
+						url     => $obj->url,
 						isContextMenu => 1,
 					},
 				},
