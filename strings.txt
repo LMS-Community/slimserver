@@ -11355,19 +11355,19 @@ WMAL
 	SV	WMA (utan dataförluster)
 
 WMAP
-	CS	WMAPro
-	DA	WMAPro
-	DE	WMAPro
-	EN	WMAPro
-	ES	WMAPro
-	FI	WMAPro
-	FR	WMAPro
-	IT	WMAPro
-	NL	WMAPro
-	NO	WMAPro
-	PL	WMAPro
-	RU	WMAPro
-	SV	WMAPro
+	CS	WMA Pro
+	DA	WMA Pro
+	DE	WMA Pro
+	EN	WMA Pro
+	ES	WMA Pro
+	FI	WMA Pro
+	FR	WMA Pro
+	IT	WMA Pro
+	NL	WMA Pro
+	NO	WMA Pro
+	PL	WMA Pro
+	RU	WMA Pro
+	SV	WMA Pro
 
 MMS
 	CS	Microsoft Media Server
