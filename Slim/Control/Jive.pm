@@ -2223,6 +2223,8 @@ sub replayGainHash {
 	return \%return;
 }
 
+my %allMyMusicMenuItems;
+
 sub myMusicMenu {
 	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
 	my $batch = shift;
@@ -2231,34 +2233,23 @@ sub myMusicMenu {
 
 	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort);
 	
+	
+	if (!$batch) {
+		my %newMenuItems = map {$_->{'id'} => 1} @$myMusicMenu;
+		my @myMusicMenuDelete = map +{id => $_, node => 'myMusic'}, (grep {!$newMenuItems{$_}} keys %allMyMusicMenuItems);
+			
+		_notifyJive(\@myMusicMenuDelete, $client, 'remove');
+	}
+	
+	foreach (@$myMusicMenu) {
+		$allMyMusicMenuItems{$_->{'id'}} = 1;
+	}
+	
 	if ($batch) {
 		return $myMusicMenu;
 	} else {
-		_emptyMyMusicMenu($client);
 		_notifyJive($myMusicMenu, $client);
 	}
-
-}
-
-sub _emptyMyMusicMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-	
-	# XXX this needs to keep track of what items were added so that they can be removed
-		
-	my @myMusicMenu = map +{id => $_, node => 'myMusic'},
-		qw(
-			myMusicArtists
-			myMusicAlbums
-			myMusicGenres
-			myMusicYears
-			myMusicNewMusic
-			myMusicPlaylists
-			myMusicSearch
-			myMusicMusicFolder
-		);
-
-	_notifyJive(\@myMusicMenu, $client, 'remove');
 }
 
 sub searchMenu {
