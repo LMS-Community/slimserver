@@ -663,6 +663,8 @@ sub _stat_handler {
 	
 	my $now = Time::HiRes::time();
 	
+	my $stat = $status{$client};
+	
 	# Bug 3881, 6350, ignore stat response if player is not in the heartbeat
 	# list, i.e. it is upgrading firmware
 	if ( !exists $heartbeat{ $client->id } ) {
@@ -713,23 +715,23 @@ sub _stat_handler {
 
 	my ($fullnessA, $fullnessB);
 	
-	(	$status{$client}->{'event_code'},
-		$status{$client}->{'num_crlf'},
-		$status{$client}->{'mas_initialized'},
-		$status{$client}->{'mas_mode'},
+	(	$stat->{'event_code'},
+		$stat->{'num_crlf'},
+		$stat->{'mas_initialized'},
+		$stat->{'mas_mode'},
 		$fullnessA,
 		$fullnessB,
-		$status{$client}->{'bytes_received_H'},
-		$status{$client}->{'bytes_received_L'},
-		$status{$client}->{'signal_strength'},
-		$status{$client}->{'jiffies'},
-		$status{$client}->{'output_buffer_size'},
-		$status{$client}->{'output_buffer_fullness'},
-		$status{$client}->{'elapsed_seconds'},
-		$status{$client}->{'voltage'},
-		$status{$client}->{'elapsed_milliseconds'},
-		$status{$client}->{'server_timestamp'},
-		$status{$client}->{'error_code'},
+		$stat->{'bytes_received_H'},
+		$stat->{'bytes_received_L'},
+		$stat->{'signal_strength'},
+		$stat->{'jiffies'},
+		$stat->{'output_buffer_size'},
+		$stat->{'output_buffer_fullness'},
+		$stat->{'elapsed_seconds'},
+		$stat->{'voltage'},
+		$stat->{'elapsed_milliseconds'},
+		$stat->{'server_timestamp'},
+		$stat->{'error_code'},
 	) = unpack ('a4CCCNNNNnNNNNnNNn', $$data_ref);
 
 	my $len = length($$data_ref);
@@ -738,12 +740,12 @@ sub _stat_handler {
 		# Older firmware that doesn't report error_code
 		# 57 = current firmware (4 junk bytes)
 		# 53 = future firmware (correct length)
-		$status{$client}->{'error_code'} = 0;
+		$stat->{'error_code'} = 0;
 	}
 		
 	# Track latency if we have a server timestamp
-	if ( $status{$client}->{'server_timestamp'} ) {
-		my $latency = (int($now * 1000 % 0xffffffff) - $status{$client}->{'server_timestamp'}) / 2;
+	if ( $stat->{'server_timestamp'} ) {
+		my $latency = (int($now * 1000 % 0xffffffff) - $stat->{'server_timestamp'}) / 2;
 	
 		push (@{$latencyList{$client}}, $latency) if ($latency >= 0 && $latency < 1000);
 		shift(@{$latencyList{$client}}) if (@{$latencyList{$client}} > LATENCY_LIST_MAX);
@@ -758,94 +760,94 @@ sub _stat_handler {
 		}
 	}	
 		
-	$client->trackJiffiesEpoch($status{$client}->{'jiffies'}, $now);
+	$client->trackJiffiesEpoch($stat->{'jiffies'}, $now);
 
-	$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
+	$stat->{'bytes_received'} = $stat->{'bytes_received_H'} * 2**32 + $stat->{'bytes_received_L'}; 
 
 	if ($client->model() eq 'squeezebox' &&
 		$client->revision() < 20 && $client->revision() > 0) {
 		$client->bufferSize(262144);
-		$status{$client}->{'rptr'} = $fullnessA;
-		$status{$client}->{'wptr'} = $fullnessB;
+		$stat->{'rptr'} = $fullnessA;
+		$stat->{'wptr'} = $fullnessB;
 
-		my $fullness = $status{$client}->{'wptr'} - $status{$client}->{'rptr'};
+		my $fullness = $stat->{'wptr'} - $stat->{'rptr'};
 		if ($fullness < 0) {
 			$fullness = $client->bufferSize() + $fullness;
 		};
-		$status{$client}->{'fullness'} = $fullness;
+		$stat->{'fullness'} = $fullness;
 	} else {
 		$client->bufferSize($fullnessA);
-		$status{$client}->{'fullness'} = $fullnessB;
+		$stat->{'fullness'} = $fullnessB;
 	}
 	
 	# Use milliseconds for the song-elapsed-time if defined and have not suffered truncation
-	if (defined $status{$client}->{'elapsed_milliseconds'}) {
-		my $songElapsed = $status{$client}->{'elapsed_milliseconds'} / 1000;
-		if ($songElapsed < $status{$client}->{'elapsed_seconds'}) {
-			$songElapsed = $status{$client}->{'elapsed_seconds'};
+	if (defined $stat->{'elapsed_milliseconds'}) {
+		my $songElapsed = $stat->{'elapsed_milliseconds'} / 1000;
+		if ($songElapsed < $stat->{'elapsed_seconds'}) {
+			$songElapsed = $stat->{'elapsed_seconds'};
 		}
 		$client->songElapsedSeconds($songElapsed);
 	}
 
-	if (defined($status{$client}->{'output_buffer_fullness'})) {
+	if (defined($stat->{'output_buffer_fullness'})) {
 
-		$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
+		$client->outputBufferFullness($stat->{'output_buffer_fullness'});
 	}
 
 	if ( main::DEBUGLOG && $faclog->is_debug ) {
 		$faclog->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
-			$client->id, $status{$client}->{'signal_strength'}
+			$client->id, $stat->{'signal_strength'}
 		));
 	}
 	
 	if (main::INFOLOG && $log->is_info) {
 		$log->info(sprintf("%s: STAT-%s: fullness=%d, output_fullness=%d, elapsed=%.3f",
-			$client->id(), $status{$client}->{'event_code'}, $status{$client}->{'fullness'},
-			$status{$client}->{'output_buffer_fullness'} || -1,
-			defined($status{$client}->{'elapsed_milliseconds'}) ? $status{$client}->{'elapsed_milliseconds'} /1000 : -1  ))
+			$client->id(), $stat->{'event_code'}, $stat->{'fullness'},
+			$stat->{'output_buffer_fullness'} || -1,
+			defined($stat->{'elapsed_milliseconds'}) ? $stat->{'elapsed_milliseconds'} /1000 : -1  ))
 	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
 
 		my $msg = join("\n", 
 			$client->id() . " Squeezebox stream status:",
-			"\tevent_code:      $status{$client}->{'event_code'}",
-			#"\tnum_crlf:        $status{$client}->{'num_crlf'}",
-			#"\tmas_initiliazed: $status{$client}->{'mas_initialized'}",
-			#"\tmas_mode:        $status{$client}->{'mas_mode'}",
-			"\tbytes_rec_H      $status{$client}->{'bytes_received_H'}",
-			"\tbytes_rec_L      $status{$client}->{'bytes_received_L'}",
-			"\tfullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->bufferSize()*100) . "%)",
+			"\tevent_code:      $stat->{'event_code'}",
+			#"\tnum_crlf:        $stat->{'num_crlf'}",
+			#"\tmas_initiliazed: $stat->{'mas_initialized'}",
+			#"\tmas_mode:        $stat->{'mas_mode'}",
+			"\tbytes_rec_H      $stat->{'bytes_received_H'}",
+			"\tbytes_rec_L      $stat->{'bytes_received_L'}",
+			"\tfullness:        $stat->{'fullness'} (" . int($stat->{'fullness'}/$client->bufferSize()*100) . "%)",
 			"\tbufferSize      " . $client->bufferSize,
-			"\tfullness         $status{$client}->{'fullness'}",
-			"\tbytes_received   $status{$client}->{'bytes_received'}",
-			"\tsignal_strength: $status{$client}->{'signal_strength'}",
-			"\tjiffies:         $status{$client}->{'jiffies'}",
-			"\tvoltage:         $status{$client}->{'voltage'}",
+			"\tfullness         $stat->{'fullness'}",
+			"\tbytes_received   $stat->{'bytes_received'}",
+			"\tsignal_strength: $stat->{'signal_strength'}",
+			"\tjiffies:         $stat->{'jiffies'}",
+			"\tvoltage:         $stat->{'voltage'}",
 			""
 		);
 
 		$log->debug($msg);
 
-		if (defined($status{$client}->{'output_buffer_size'})) {
+		if (defined($stat->{'output_buffer_size'})) {
 
 			my $msg = join("\n",
 				"",
-				"\toutput size:     $status{$client}->{'output_buffer_size'}",
-				"\toutput fullness: $status{$client}->{'output_buffer_fullness'}",
-				"\telapsed seconds: $status{$client}->{'elapsed_seconds'}",
+				"\toutput size:     $stat->{'output_buffer_size'}",
+				"\toutput fullness: $stat->{'output_buffer_fullness'}",
+				"\telapsed seconds: $stat->{'elapsed_seconds'}",
 				"",
 			);
 
 			$log->debug($msg);
 		}
 		
-		if (defined($status{$client}->{'elapsed_milliseconds'})) {
+		if (defined($stat->{'elapsed_milliseconds'})) {
 			
 			my $msg = join("\n",
 				"",
-				"\telapsed milliseconds: $status{$client}->{'elapsed_milliseconds'}",
-				"\tserver timestamp:     $status{$client}->{'server_timestamp'}",
+				"\telapsed milliseconds: $stat->{'elapsed_milliseconds'}",
+				"\tserver timestamp:     $stat->{'server_timestamp'}",
 				"",
 			);
 			
@@ -854,10 +856,10 @@ sub _stat_handler {
 	}
 	
 	if ($client->isSynced(1) && $client->isPlaying(1) && $client->needsWeightedPlayPoint()) {
-		my $statusTime = $client->jiffiesToTimestamp( $status{$client}->{'jiffies'} );
+		my $statusTime = $client->jiffiesToTimestamp( $stat->{'jiffies'} );
 		my $apparentStreamStartTime;
-		if ($status{$client}->{'elapsed_milliseconds'}) {
-			$apparentStreamStartTime = $statusTime - ($status{$client}->{'elapsed_milliseconds'} / 1000);
+		if ($stat->{'elapsed_milliseconds'}) {
+			$apparentStreamStartTime = $statusTime - ($stat->{'elapsed_milliseconds'} / 1000);
 		} else {
 			$apparentStreamStartTime = Slim::Player::SB1SliMP3Sync::apparentStreamStartTime($client, $statusTime) if main::SB1SLIMP3SYNC;
 		}
@@ -866,12 +868,12 @@ sub _stat_handler {
 		}
 	}
 	
-	$client->statHandler($status{$client}->{'event_code'}, $status{$client}->{'jiffies'}, $status{$client}->{'error_code'});
+	$client->statHandler($stat->{'event_code'}, $stat->{'jiffies'}, $stat->{'error_code'});
 
 	if ( main::SLIM_SERVICE ) {
 		# Bug 8995, Update signal strength on SN
 		if ( !$client->playerData->signal ) {
-			$client->playerData->signal( $status{$client}->{signal_strength} );
+			$client->playerData->signal( $stat->{signal_strength} );
 			$client->playerData->update;
 		}
 	}
