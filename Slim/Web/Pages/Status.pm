@@ -171,6 +171,10 @@ sub status {
 			$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client, $client->currentPlaylist);
 		}
 	}
+	
+	$params->{'imageproxy'} = Slim::Networking::SqueezeNetwork->url(
+		"/public/imageproxy"
+	);
 
 	return Slim::Web::HTTP::filltemplatefile($params->{'omit_playlist'} ? "status_header.html" : "status.html" , $params);
 }

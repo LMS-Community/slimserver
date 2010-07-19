@@ -686,6 +686,14 @@ SqueezeJS.SonginfoParser = {
 		if (result.playlist_tracks > 0) {
 			if (result.playlist_loop[0].artwork_url) {
 				coverart = result.playlist_loop[0].artwork_url;
+
+				// SqueezeJS.externalImageProxy must be a template accepting url and size values
+				if (coverart && width && SqueezeJS.externalImageProxy && coverart.search(/^http:/) != -1) {
+					coverart = SqueezeJS.externalImageProxy.apply({
+						url: encodeURIComponent(coverart),
+						size: width
+					});
+				}
 			}
 			else {
 				coverart = this.defaultCoverart(result.playlist_loop[0].coverid, width);

@@ -219,6 +219,10 @@ sub home {
 
 	Slim::Web::Pages::Common->addPlayerList($client, $params);
 	Slim::Web::Pages::Common->addLibraryStats($params);
+	
+	$params->{'imageproxy'} = Slim::Networking::SqueezeNetwork->url(
+		"/public/imageproxy"
+	);
 
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }
