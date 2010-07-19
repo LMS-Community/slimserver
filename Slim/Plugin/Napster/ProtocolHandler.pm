@@ -320,6 +320,7 @@ sub _getTrackInfo {
 			if ( $@ || $info->{error} ) {
 				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug( 'getTrackInfo failed: ' . ( $@ || $info->{error} ) );
+					$log->debug( '      data received: ' . Data::Dump::dump($info) );
 				}
 				
 				_gotTrackError( $@ || $info->{error}, $client, $params );
