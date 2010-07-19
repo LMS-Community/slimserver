@@ -11,7 +11,7 @@ package Slim::Web::XMLBrowser;
 
 use strict;
 
-use URI::Escape qw(uri_unescape);
+use URI::Escape qw(uri_unescape uri_escape_utf8);
 use List::Util qw(min);
 
 use Slim::Formats::XML;
@@ -113,6 +113,7 @@ sub handleWebIndex {
 		if ( !$query ) {
 			my $index = $asyncArgs->[1]->{index};
 			($query) = $index =~ m/^_([^.]+)/;
+			$query = uri_unescape( $query ) if $query;
 		}
 		
 		$params->{url} =~ s/{QUERY}/$query/g;
@@ -201,7 +202,7 @@ sub handleFeed {
 	
 	# Persist search query from top level item
 	if ( $params->{type} && $params->{type} eq 'search' && !scalar @index ) {
-		$crumb[0]->{index} = ($sid || '') . '_' . $stash->{q};
+		$crumb[0]->{index} = ($sid || '') . '_' . uri_escape_utf8( $stash->{q}, "^A-Za-z0-9" );
 	};
 
 	# favorites class to allow add/del of urls to favorites, but not when browsing favorites list itself
@@ -256,11 +257,11 @@ sub handleFeed {
 			my $searchQuery;
 			
 			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && defined $stash->{'q'} ) {
-				$crumbText .= '_' . $stash->{'q'};
+				$crumbText .= '_' . uri_escape_utf8( $stash->{q}, "^A-Za-z0-9" );
 				$searchQuery = $stash->{'q'};
 			}
 			elsif ( $i =~ /(?:\d+)?_(.+)/ ) {
-				$searchQuery = $1;
+				$searchQuery = uri_unescape($1);
 			}
 			
 			# Add search query to crumbName
@@ -466,9 +467,11 @@ sub handleFeed {
 		}
 			
 		# If the feed contains no sub-items, display item details
-		if ( !$subFeed->{'items'} 
-			 ||
-			 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
+		if ( (!$subFeed->{'items'} 
+				 ||
+				 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} })
+			 && !($subFeed->{type} && $subFeed->{type} eq 'search')
+			 && !(ref $subFeed->{'url'}) ) 
 		) {
 			$subFeed->{'image'} ||= Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
 
@@ -481,7 +484,7 @@ sub handleFeed {
 		# Construct index param for each item in the list
 		my $itemIndex = $sid ? join( '.', $sid, @index ) : join( '.', @index );
 		if ( $stash->{'q'} ) {
-			$itemIndex .= '_' . $stash->{'q'};
+			$itemIndex .= '_' . uri_escape_utf8( $stash->{'q'}, "^A-Za-z0-9" );
 		}
 		$itemIndex .= '.';
 		
@@ -513,7 +516,7 @@ sub handleFeed {
 		
 		# Persist search term from top-level item (i.e. Search Radio)
 		if ( $stash->{q} ) {
-			$stash->{index} .= '_' . $stash->{q};
+			$stash->{index} .= '_' . uri_escape_utf8( $stash->{'q'}, "^A-Za-z0-9" );
 		}
 		
 		if ( $stash->{index} ) {
