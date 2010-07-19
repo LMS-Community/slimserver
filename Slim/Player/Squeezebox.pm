@@ -697,6 +697,11 @@ sub stream_s {
 		$pcmendian       = '?';
 		$outputThreshold = 10;
 		
+		# Increase outputThreshold for WMA Lossless as it has a higher startup cost
+		if ( $format eq 'wmal' ) {
+			$outputThreshold = 50;
+		}
+		
 	} elsif ($format eq 'ogg') {
 
 		$formatbyte      = 'o';
@@ -953,8 +958,8 @@ sub stream_s {
 	
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf(
-			"Starting decoder with format: %s flags: 0x%x autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
-			$formatbyte, $flags, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+			"Starting decoder with format: %s flags: 0x%x autostart: %s buffer threshold: %s output threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
+			$formatbyte, $flags, $autostart, $bufferThreshold, $outputThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
 		));
 	}
 	
