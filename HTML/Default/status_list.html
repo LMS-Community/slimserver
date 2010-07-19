@@ -25,7 +25,7 @@
 					<img src="[% item.plugin_meta.icon | resizeimage(50, 50, resizeParam) %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]">
 					[% END %]
 				[% ELSE %]
-					<img src="[% ("/music/" _ item.itemobj.coverid _ "/cover" _ (browserType == 'IE' ? ".gif" : "")) | resizeimage(50, 50, resizeParam) %]">
+					<img src="[% ("/music/" _ item.itemobj.coverid _ "/cover" _ (browserType == 'IE' ? ".gif" : "")) | resizeimage(50, 50) %]">
 				[% END %]
 				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>
