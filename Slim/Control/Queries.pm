@@ -3886,6 +3886,10 @@ sub statusQuery {
 		my $alarm_snooze_seconds = $prefs->client($client)->get('alarmSnoozeSeconds');
 		$request->addResult('alarm_snooze_seconds', defined $alarm_snooze_seconds ? $alarm_snooze_seconds + 0 : 540);
 
+		# send client pref for alarm timeout
+		my $alarm_timeout_seconds = $prefs->client($client)->get('alarmTimeoutSeconds');
+		$request->addResult('alarm_timeout_seconds', defined $alarm_timeout_seconds ? $alarm_timeout_seconds + 0 : 300);
+
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
 		my $presetLoop;
