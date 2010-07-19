@@ -147,14 +147,9 @@ ELSE %]
 
 					[% IF (additionalLinks.icons.item(link.key) || link.icon) && !noIcon;
 						link.icon = additionalLinks.icons.item(link.key) || link.icon;
-
-						# have local artwork resized
-						UNLESS link.icon.match('^http:');
-							link.icon = webroot _ link.icon.replace('.png', "_25x25_f.png");
-						END
 					%]
 						<span class="browseCover">
-							<img src="[% link.icon | resizeimage(25, 25, '-') %]" width="25" border="0" alt="[% string %]">
+							<img src="[% link.icon | resizeimage(25, 25) %]" width="25" border="0" alt="[% string %]">
 						</span>
 						<div class="smallBrowseItemDetail">
 					[% END %]
