@@ -2,6 +2,143 @@ package Slim::Menu::BrowseLibrary;
 
 # $Id$
 
+=head1 NAME
+
+Slim::Menu::BrowseLibrary
+
+=head1 SYNOPSIS
+
+	use Slim::Menu::BrowseLibrary;
+	
+	Slim::Menu::BrowseLibrary->registerNode({
+		type         => 'link',
+		name         => 'MYMUSIC_MENU_ITEM_TITLE',
+		params       => {mode => 'myNewMode'},
+		feed         => \&myFeed,
+		icon         => 'html/images/someimage.png',
+		homeMenuText => 'HOMEMENU_MENU_ITEM_TITLE',
+		condition    => sub {my ($client, $nodeId) = @_; return 1;}
+		id           => 'myNewModeId',
+		weight       => 30,
+	});
+	
+	Slim::Menu::BrowseLibrary->deregisterNode('someNodeId');
+	
+	Slim::Menu::BrowseLibrary->registerNodeFilter(\&nodeFilter);
+	
+	Slim::Menu::BrowseLibrary->deregisterNodeFilter(\&nodeFilter);
+
+=head1 DESCRIPTION
+
+Register or deregister menu items for the My Music menu.
+
+Register or deregister filter functions used to determine if a menu
+item should be included in the My Music menu, possibly for a specific client.
+
+=head2 registerNode()
+
+The new menu item is specified using a HASH-ref as follows (mandatory items marked with *):
+
+=over
+
+=item C<type>*
+
+C<link> | C<search>
+
+=item C<id>*
+
+Unique identifier for the menu item
+
+=item C<name>*
+
+Unique string name for the menu item title when used in the My Music menu
+
+=item C<homeMenuText>
+
+Unique string name for the menu item title when used in the Home menu
+
+=item C<feed>*
+
+function to a function that is invoked in the manner of an XMLBrowser function feed
+
+=item C<icon>
+
+Icon to be used with menu item
+
+=item C<condition>
+
+function to determine dynamically whether this menu item should be shown in the menu
+
+=item C<weight>
+
+Hint as to relative position of item in menu
+
+=item C<params>
+
+HASH-ref containing:
+
+=over
+
+=item C<mode>
+
+This will default to the value of the C<id> of the menu item.
+If one of C<artists, albums, genres, years, tracks, playlists, playlistTracks, bmf>
+is used then it will override the default method from BrowseLibrary - use with caution.
+
+=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id>
+
+When browsing to a deeper level in the menu hierarchy,
+then any of these values (and only these values)
+will be passed in the C<params> value of the I<args> HASH-ref passed as the third parameter
+to the C<feed> function as part of the (re)navigation to the sub-menu(s).
+
+Any search-input string will also be so passed as the C<search> value.
+
+=back
+
+All values of this C<params> HASH will be passed in the C<params> value
+of the I<args> HASH-ref passed as the third parameter to the C<feed> function
+when it is invoked at the top level.
+
+=back
+
+Note that both C<id> and C<name> should be unique 
+and should not be one of the standard IDs or name strings used by BrowseLibrary.
+That means that if, for example, one wants to replace the B<Artists> menu item,
+one cannot use C<BROWSE_BY_ARTIST> as the C<name> string;
+one must supply one's own string with a unique name,
+but quite possibly pointing to the same localized strings.
+
+=head2 deregisterNode()
+
+Remove a previously registered menu item specified by its C<id>.
+
+I<Caution:> will not restore any default BrowseLibrary handlers that had been overridden
+using a C<params =E<gt> mode> value of one of the default handlers.
+
+=head2 registerNodeFilter()
+
+Register a function to be called when a menu is being displayed to determine whether that 
+menu item should be included.
+
+Passed the Slim::Player::Client for which the menu is being built, if it is a client-specific menu,
+and the C<id> of the menu item.
+
+Multiple filter functions can be registered.
+
+If the condition associated with a menu item itself (if any),
+or any of the registered filter functions,
+return false then the menu item will not be included;
+otherwise it will be included.
+
+=head2 deregisterNodeFilter()
+
+Deregister a menu-item filter.
+If this method is going to be called then both registerNodeFilter() & deregisterNodeFilter()
+should be passed a reference to a real sub (not an anonymous one).
+
+=cut
+
 
 use strict;
 use Slim::Utils::Log;
@@ -78,6 +215,73 @@ my $log = logger('database.info');
 
 use constant BROWSELIBRARY => 'browselibrary';
 
+my $_initialized = 0;
+my $_pendingChanges = 0;
+my %nodes;
+my @addedNodes;
+my @deletedNodes;
+
+my %browseLibraryModeMap = (
+	albums => \&_albums,				# needs to be here because is special and not added via registerNode()
+	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
+	playlistTracks => \&_playlistTracks,# needs to be here because no top-level menu added via registerNode()
+);
+
+my %nodeFilters;
+
+sub registerNodeFilter {
+	my ($class, $filter) = @_;
+	
+	if (!ref $filter eq 'CODE') {
+		$log->error("Invalid filter: must be a CODE ref");
+		return;
+	}
+	
+	$nodeFilters{$filter} = 1;
+}
+
+sub deregisterNodeFilter {
+	my ($class, $filter) = @_;
+	
+	delete $nodeFilters{$filter};
+}
+
+sub registerNode {
+	my ($class, $node) = @_;
+	
+	return unless $node->{'id'};
+	
+	if (!$node->{'id'} || ref $node->{'feed'} ne 'CODE') {
+		logBacktrace('Invalid node specification');
+		return 0;
+	}
+	
+	if ($nodes{$node->{'id'}}) {
+		logBacktrace('Duplicate node id: ', $node->{'id'});
+		return 0;
+	}
+	
+	$node->{'params'}->{'mode'} ||= $node->{'id'};
+	$nodes{$node->{'id'}} = $node;
+	$browseLibraryModeMap{$node->{'params'}->{'mode'}} = $node->{'feed'};
+	
+	$class->_scheduleMenuChanges($node, undef);
+	
+	return 1;
+}
+
+sub deregisterNode {
+	my ($class, $id) = @_;
+	
+	if (my $node = delete $nodes{$id}) {
+		if ($browseLibraryModeMap{$node->{'params'}->{'mode'}} == $node->{'feed'}) {
+			delete $browseLibraryModeMap{$node->{'params'}->{'mode'}};
+		}
+		$class->_scheduleMenuChanges(undef, $node);
+	}
+}
+
+
 sub init {
 	my $class = shift;
 	
@@ -92,19 +296,22 @@ sub init {
 		*{$class.'::'.'weight'}   = sub { 15 };
 		*{$class.'::'.'type'}     = sub { 'link' };
 	}
+	
+	$class->_registerBaseNodes();
 
 	$class->_initCLI();
 	
 	if ( main::WEBUI ) {
 		$class->_webPages;
 	}
-	
 
 #	$class->_initSubmenus();
 	
     $class->_initModes();
     
     Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+    
+    $_initialized = 1;
 }
 
 sub cliQuery {
@@ -127,6 +334,19 @@ sub _initCLI {
 	);
 }
 
+sub _addWebLink {
+	my ($class, $node) = @_;
+
+	my $url = 'clixmlbrowser/clicmd=' . $class->tag() . '+items&linktitle=' . $node->{'name'};
+	$url .= join('&', ('', map {$_ .'=' . $node->{'params'}->{$_}} keys %{$node->{'params'}}));
+	$url .= '/';
+	Slim::Web::Pages->addPageLinks("browse", { $node->{'name'} => $url });
+	Slim::Web::Pages->addPageCondition($node->{'name'} => sub {
+		return _conditionWrapper(shift, $node->{'id'}, $node->{'condition'})
+	});
+	Slim::Web::Pages->addPageLinks('icons', { $node->{'name'} => $node->{'icon'} }) if $node->{'icon'};
+}
+
 sub _webPages {
 	my $class = shift;
 	
@@ -146,13 +366,30 @@ sub _webPages {
 		} );
 	} );
 	
-	
 	foreach my $node (@{_getNodeList()}) {
-		my $url = 'clixmlbrowser/clicmd=' . $class->tag() . '+items&linktitle=' . $node->{'name'};
-		$url .= join('&', ('', map {$_ .'=' . $node->{'params'}->{$_}} keys %{$node->{'params'}}));
-		$url .= '/';
-		Slim::Web::Pages->addPageLinks("browse", { $node->{'name'} => $url });
-		Slim::Web::Pages->addPageLinks('icons', { $node->{'name'} => $node->{'icon'} }) if $node->{'icon'};
+		$class->_addWebLink($node);
+	}
+}
+
+sub _addMode {
+	my ($class, $node) = @_;
+	
+	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
+		useMode   => $class->modeName(),
+		header    => $node->{'name'},
+		condition => sub {return _conditionWrapper(shift, $node->{'id'}, $node->{'condition'});},
+		title     => '{' . $node->{'name'} . '}',
+		%{$node->{'params'}},
+	});
+	
+	if ($node->{'homeMenuText'}) {
+		Slim::Buttons::Home::addMenuOption($node->{'name'}, {
+			useMode   => $class->modeName(),
+			header    => $node->{'homeMenuText'},
+			title     => '{' . $node->{'homeMenuText'} . '}',
+			%{$node->{'params'}},
+			
+		});
 	}
 }
 
@@ -162,22 +399,7 @@ sub _initModes {
 	Slim::Buttons::Common::addMode($class->modeName(), {}, sub { $class->setMode(@_) });
 	
 	foreach my $node (@{_getNodeList()}) {
-		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $node->{'name'}, {
-			useMode   => $class->modeName(),
-			header    => $node->{'name'},
-			condition => $node->{'condition'},
-			title     => '{' . $node->{'name'} . '}',
-			%{$node->{'params'}},
-		});
-		if ($node->{'homeMenuText'}) {
-			Slim::Buttons::Home::addMenuOption($node->{'name'}, {
-				useMode   => $class->modeName(),
-				header    => $node->{'homeMenuText'},
-				title     => '{' . $node->{'homeMenuText'} . '}',
-				%{$node->{'params'}},
-				
-			});
-		}
+		$class->_addMode($node);
 	}
 }
 
@@ -189,6 +411,188 @@ sub _libraryChanged {
 	}
 }
 
+sub _scheduleMenuChanges {
+	my $class = shift;
+	
+	my ($add, $del) = @_;
+	
+	return if !$_initialized;
+	
+	push @addedNodes, $add if $add;
+	push @deletedNodes, $del if $del;
+	
+	return if $_pendingChanges;
+	
+	Slim::Utils::Timers::setTimer($class, Time::HiRes::time() + 1, \&_handleMenuChanges);
+
+	$_pendingChanges = 1;
+}
+
+sub _handleMenuChanges {
+	my $class = shift;
+	# do deleted first, then added
+	
+	foreach my $node (@deletedNodes) {
+
+		Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC', $node->{'name'});
+		if ($node->{'homeMenuText'}) {
+			Slim::Buttons::Home::delMenuOption($node->{'name'});
+		}
+	
+		if ( main::WEBUI ) {
+			Slim::Web::Pages->delPageLinks("browse", $node->{'name'});
+			Slim::Web::Pages->delPageLinks('icons', $node->{'name'}) if $node->{'icon'};
+		}
+	}
+	
+	foreach my $node (@addedNodes) {
+		$class->_addMode($node);
+		$class->_addWebLink($node) if main::WEBUI;
+	}
+	
+	@addedNodes = ();
+	@deletedNodes = ();
+	$_pendingChanges = 0;
+
+	_libraryChanged();
+}
+
+sub _conditionWrapper {
+	my ($client, $id, $baseCondition) = @_;
+	
+	if ($baseCondition && !$baseCondition->($client, $id)) {
+		return 0;
+	}
+	
+	foreach my $filter (keys %nodeFilters) {
+		my $status;
+		
+		eval {
+			$status = $_->($client, $id)
+		};
+		
+		if ($@) {
+			$log->warn("Couldn't call menu-filter", Slim::Utils::PerlRunTime::realNameForCodeRef($_), ": $@");
+			# Assume true
+			next;
+		}
+		
+		if (!$status) {
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
+sub _getNodeList {
+	my ($albumsSort) = @_;
+	$albumsSort ||= 'album';
+	
+	my @specials = (
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_ALBUM',
+			params       => {mode => 'albums', sort => $albumsSort},
+			icon         => 'html/images/albums.png',
+			homeMenuText => 'BROWSE_ALBUMS',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicAlbums',
+			weight       => 20,
+		},
+	);
+	
+	return [@specials, values %nodes];
+}
+
+sub _registerBaseNodes {
+	my $class = shift;
+	
+	my @topLevel = (
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_ARTIST',
+			params       => {mode => 'artists'},
+			feed         => \&_artists,
+			icon         => 'html/images/artists.png',
+			homeMenuText => 'BROWSE_ARTISTS',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicArtists',
+			weight       => 10,
+		},
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_GENRE',
+			params       => {mode => 'genres'},
+			feed         => \&_genres,
+			icon         => 'html/images/genres.png',
+			homeMenuText => 'BROWSE_GENRES',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicGenres',
+			weight       => 30,
+		},
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_YEAR',
+			params       => {mode => 'years'},
+			feed         => \&_years,
+			icon         => 'html/images/years.png',
+			homeMenuText => 'BROWSE_YEARS',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicYears',
+			weight       => 40,
+		},
+		{
+			type         => 'link',
+			name         => 'BROWSE_NEW_MUSIC',
+			icon         => 'html/images/newmusic.png',
+			params       => {mode => 'albums', sort => 'new'},
+			feed         => \&_albums,
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicNewMusic',
+			weight       => 50,
+		},
+		{
+			type         => 'link',
+			name         => 'BROWSE_MUSIC_FOLDER',
+			params       => {mode => 'bmf'},
+			feed         => \&_bmf,
+			icon         => 'html/images/musicfolder.png',
+			condition    => sub {return Slim::Schema::hasLibrary && $prefs->get('audiodir');},
+			id           => 'myMusicMusicFolder',
+			weight       => 70,
+		},
+		{
+			type         => 'link',
+			name         => 'SAVED_PLAYLISTS',
+			params       => {mode => 'playlists'},
+			feed         => \&_playlists,
+			icon         => 'html/images/playlists.png',
+			condition    => \&Slim::Schema::hasLibrary,
+			condition    => sub {
+								return $prefs->get('playlistdir') ||
+									# this might be expensive - perhaps need to cache this somehow
+					 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
+							},
+			id           => 'myMusicPlaylists',
+			weight       => 80,
+		},
+		{
+			type         => 'link',
+			name         => 'SEARCH',
+			params       => {mode => 'search'},
+			feed         => \&_search,
+			icon         => 'html/images/search.png',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicSearch',
+			weight       => 90,
+		},
+	);
+	
+	foreach (@topLevel) {
+		$class->registerNode($_);
+	}
+}
 
 sub getJiveMenu {
 	my ($client, $baseNode, $albumSort, $updateCallback) = @_;
@@ -198,7 +602,7 @@ sub getJiveMenu {
 	my @myMusicMenu;
 	
 	foreach my $node (@{_getNodeList($albumSort)}) {
-		if ($node->{'condition'} && !$node->{'condition'}->($client)) {
+		if (!_conditionWrapper($client, $node->{'id'}, $node->{'condition'})) {
 			next;
 		}
 		
@@ -255,18 +659,6 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-my %modeMap = (
-	albums => \&_albums,
-	artists => \&_artists,
-	genres => \&_genres,
-	bmf => \&_bmf,
-	tracks => \&_tracks,
-	years => \&_years,
-	playlists => \&_playlists,
-	playlistTracks => \&_playlistTracks,
-	search => \&_search,
-);
-
 my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id);
 
 sub _topLevel {
@@ -276,7 +668,7 @@ sub _topLevel {
 	if ($params) {
 		my %args;
 
-		if ($params->{'query'} && $params->{'query'} =~ /(\w+)=(.*)/) {
+		if ($params->{'query'} && $params->{'query'} =~ /C<$1>=(.*)/) {
 			$params->{$1} = $2;
 		}
 
@@ -296,7 +688,13 @@ sub _topLevel {
 			}
 			main::INFOLOG && $log->is_info && $log->info('params=>', join('&', map {$_ . '=' . $entryParams{$_}} keys(%entryParams)));
 			
-			my $func = $modeMap{$params->{'mode'}};
+			my $func = $browseLibraryModeMap{$params->{'mode'}};
+			
+			if (ref $func ne 'CODE') {
+				$log->error('No feed method for mode: ', $params->{'mode'});
+				return;
+			}
+			
 			&$func($client,
 				sub {
 					my $opml = shift;
@@ -308,183 +706,12 @@ sub _topLevel {
 		}
 	}
 	
-	my %topLevel = (
-		url   => \&_topLevel,
-		name  => _clientString($client, getDisplayName()),
-		items => [
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_BY_ARTIST'),
-				url  => \&_artists,
-				icon => 'html/images/artists.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_BY_ALBUM'),
-				url  => \&_albums,
-				icon => 'html/images/albums.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_BY_GENRE'),
-				url  => \&_genres,
-				icon => 'html/images/genres.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_BY_YEAR'),
-				url  => \&_years,
-				icon => 'html/images/years.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_NEW_MUSIC'),
-				url  => \&_albums,
-				passthrough => [ { sort => 'sort:new' } ],
-				icon => 'html/images/newmusic.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'BROWSE_MUSIC_FOLDER'),
-				url  => \&_bmf,
-				icon => 'html/images/musicfolder.png',
-			},
-			{
-				type => 'link',
-				name => _clientString($client, 'PLAYLISTS'),
-				url  => \&_playlists,
-				icon => 'html/images/playlists.png',
-			},
-			{
-				name  => _clientString($client, 'SEARCH'),
-				icon => 'html/images/search.png',
-				items => [
-					{
-						type => 'search',
-						name => _clientString($client, 'BROWSE_BY_ARTIST'),
-						icon => 'html/images/search.png',
-						url  => \&_artists,
-					},
-					{
-						type => 'search',
-						name => _clientString($client, 'BROWSE_BY_ALBUM'),
-						icon => 'html/images/search.png',
-						url  => \&_albums,
-					},
-					{
-						type => 'search',
-						name => _clientString($client, 'BROWSE_BY_SONG'),
-						icon => 'html/images/search.png',
-						url  => \&_tracks,
-					},
-					{
-						type => 'search',
-						name => _clientString($client, 'PLAYLISTS'),
-						icon => 'html/images/search.png',
-						url  => \&_playlists,
-					},
-				],
-			},
-		],
-	);
-
-	# Proably should never get here, but just in case
-	$callback->( \%topLevel );
+	$log->error("Routing failure: node mode param");
 }
 
 sub _clientString {
 	my ($client, $string) = @_;
 	return Slim::Utils::Strings::clientString($client, $string);
-}
-
-sub _getNodeList {
-	my ($albumsSort) = @_;
-	$albumsSort ||= 'album';
-	
-	my @topLevel = (
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_ARTIST',
-			params       => {mode => 'artists'},
-			icon         => 'html/images/artists.png',
-			homeMenuText => 'BROWSE_ARTISTS',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicArtists',
-			weight       => 10,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_ALBUM',
-			params       => {mode => 'albums', sort => $albumsSort},
-			icon         => 'html/images/albums.png',
-			homeMenuText => 'BROWSE_ALBUMS',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicAlbums',
-			weight       => 20,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_GENRE',
-			params       => {mode => 'genres'},
-			icon         => 'html/images/genres.png',
-			homeMenuText => 'BROWSE_GENRES',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicGenres',
-			weight       => 30,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_YEAR',
-			params       => {mode => 'years'},
-			icon         => 'html/images/years.png',
-			homeMenuText => 'BROWSE_YEARS',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicYears',
-			weight       => 40,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_NEW_MUSIC',
-			icon         => 'html/images/newmusic.png',
-			params       => {mode => 'albums', sort => 'new'},
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicNewMusic',
-			weight       => 50,
-		},
-		{
-			type         => 'link',
-			name         => 'BROWSE_MUSIC_FOLDER',
-			params       => {mode => 'bmf'},
-			icon         => 'html/images/musicfolder.png',
-			condition    => sub {Slim::Schema::hasLibrary && $prefs->get('audiodir');},
-			id           => 'myMusicMusicFolder',
-			weight       => 70,
-		},
-		{
-			type         => 'link',
-			name         => 'SAVED_PLAYLISTS',
-			params       => {mode => 'playlists'},
-			icon         => 'html/images/playlists.png',
-			condition    => sub {
-								$prefs->get('playlistdir') ||
-								# this might be expensive - perhaps need to cache this somehow
-				 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
-							},
-			id           => 'myMusicPlaylists',
-			weight       => 80,
-		},
-		{
-			type         => 'link',
-			name         => 'SEARCH',
-			params       => {mode => 'search'},
-			icon         => 'html/images/search.png',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicSearch',
-			weight       => 90,
-		},
-	);
-	
-	return \@topLevel;
 }
 
 sub _generic {
