@@ -443,6 +443,17 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
+		elsif ( $type eq 'aac' ) {
+			# Bug 16379, AAC streams require extra processing to check for the samplerate
+			
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AAC header');
+			
+			$http->read_body( {
+				readLimit   => 4 * 1024,
+				onBody      => \&parseAACHeader,
+				passthrough => [ $track, $args ],
+			} );
+		}
 		else {
 			# If URL was mms but content-type is not wma, change URL
 			if ( $track->url =~ /^mms/i ) {
@@ -668,6 +679,33 @@ sub parseWMAHeader {
 			metadata  => $wma,
 			headers	  => $http->response->headers,
 		};
+	}
+	
+	# All done
+	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseAACHeader {
+	my ( $http, $track, $args ) = @_;
+	
+	my $client = $args->{client};
+	my $cb	   = $args->{cb} || sub {};
+	my $pt	   = $args->{pt} || [];
+	
+	my $header = $http->response->content;
+	
+	my $fh = File::Temp->new();
+	$fh->write( $header, length($header) );
+	$fh->seek(0, 0);
+	
+	my $aac = Audio::Scan->scan_fh( aac => $fh );
+	
+	if ( my $samplerate = $aac->{info}->{samplerate} ) {
+		if ( $samplerate <= 24000 ) { # XXX remove when Audio::Scan is updated to 0.84
+			$samplerate *= 2;
+		}
+		$track->samplerate($samplerate);
+		main::DEBUGLOG && $log->is_debug && $log->debug("AAC samplerate: $samplerate");
 	}
 	
 	# All done
