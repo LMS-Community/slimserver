@@ -253,10 +253,6 @@ sub canDoAction {
 				
 		return 0;
 	}
-	elsif ( $action eq 'pause' ) {
-		# Pausing not allowed, stop instead
-		return 0;
-	}
 	
 	return 1;
 }
