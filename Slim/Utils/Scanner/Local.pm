@@ -837,6 +837,10 @@ sub markDone {
 	
 	# Done with all tasks
 	if ( !main::SCANNER ) {
+
+		# try to autocomplete artwork from mysqueezebox.com		
+		Slim::Music::Artwork->downloadArtwork();
+
 		# Precache artwork, when done send rescan done event
 		Slim::Music::Artwork->precacheAllArtwork( sub {
 			# Persist the count of "changes since last optimization"

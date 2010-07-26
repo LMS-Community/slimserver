@@ -20377,6 +20377,10 @@ PRECACHEARTWORK_PROGRESS
 	RU	Предварительное кэширование обложки
 	SV	Cachelagrat albumomslag
 
+DOWNLOADARTWORK_PROGRESS
+	DE	Plattenhüllen werden heruntergeladen
+	EN	Downloading Artwork
+
 CLEANUP1_PROGRESS
 	CS	Čištění databáze č.1
 	DA	Oprydning i database nr. 1
