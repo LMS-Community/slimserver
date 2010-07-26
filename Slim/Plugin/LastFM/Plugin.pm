@@ -290,7 +290,7 @@ sub _screensaver_request {
 		}
 	}
 
-	my $url = Slim::Networking::SqueezeNetwork->url( '/api/lastfm/v1/screensaver/artist?artist=' . $artist );
+	my $url = Slim::Networking::SqueezeNetwork->url( '/api/lastfm/v1/screensaver/artist?artist=' . uri_escape_utf8($artist) );
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_screensaver_ok,
@@ -313,7 +313,7 @@ sub _screensaver_ok {
 	
 	my $data = eval { from_json( $http->content ) };
 	
-	if ( $@ || $data->{error} || !$data->{image} ) {
+	if ( $@ || $data->{error} ) {
 		$http->error( $@ || $data->{error} );
 		_screensaver_error( $http );
 		return;
@@ -329,8 +329,13 @@ sub _screensaver_error {
 	my $error   = $http->error;
 	my $request = $http->params('request');
 	
+	$request->addResult( data => [ {
+		caption => $error,
+	} ] );
+
 	# Not sure what status to use here
-	$request->setStatusBadParams();
+#	$request->setStatusBadParams();
+	$request->setStatusDone();
 }
 
 1;
