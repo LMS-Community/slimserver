@@ -136,3 +136,5 @@ PLUGIN_LFM_ON_LASTFM
 	RU	На радиостанции Last.fm
 	SV	På Last.fm Radio
 
+PLUGIN_LFM_ARTIST_SLIDESHOW
+	EN	Last.fm: Artist Slideshow
