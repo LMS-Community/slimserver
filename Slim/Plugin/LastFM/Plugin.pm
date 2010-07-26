@@ -14,6 +14,7 @@ use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Unicode;
 
 use URI::Escape qw(uri_escape_utf8);
+use JSON::XS::VersionOneAndTwo;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.lfm',
@@ -87,6 +88,19 @@ sub initPlugin {
 			},
 		);
 	}
+}
+
+sub initCLI {
+	my ( $class, %args ) = @_;
+	
+	$class->SUPER::initCLI( %args );
+	
+	Slim::Control::Request::addDispatch(
+		[ $args{tag}, 'screensaver_artist' ],
+		[ 1, 1, 1, sub {
+			_screensaver_request( @_ );
+		} ]
+	);
 }
 
 sub getDisplayName () {
@@ -248,6 +262,80 @@ sub trackInfoMenu {
 	}
 	
 	return;
+}
+
+sub _screensaver_request {
+	my $request = shift;
+	my $client  = $request->client;
+	
+	my $artist = '';
+	
+	if ($client && (my $song = $client->playingSong()) ) {
+		my $track = $song->track();
+		$artist = $track->artistName() if $track;
+	}
+
+	# if nothing's playing, let's take some random artist...
+	if (!$artist) {
+		my $randomFunc = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction();
+		my @results;
+
+		@results = Slim::Schema->rs('contributor')->search(
+			undef,
+			{ 'order_by' => \$randomFunc },
+		)->first;
+
+		if (scalar @results) {
+			$artist = $results[0]->name;
+		}
+	}
+
+	my $url = Slim::Networking::SqueezeNetwork->url( '/api/lastfm/v1/screensaver/artist?artist=' . uri_escape_utf8($artist) );
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_screensaver_ok,
+		\&_screensaver_error,
+		{
+			client  => $client,
+			request => $request,
+			timeout => 35,
+		},
+	);
+	
+	$http->get( $url );
+	
+	$request->setStatusProcessing();
+}
+
+sub _screensaver_ok {
+	my $http    = shift;
+	my $request = $http->params('request');
+	
+	my $data = eval { from_json( $http->content ) };
+	
+	if ( $@ || $data->{error} ) {
+		$http->error( $@ || $data->{error} );
+		_screensaver_error( $http );
+		return;
+	}
+	
+	$request->addResult( data => [ $data ] );
+	
+	$request->setStatusDone();
+}
+
+sub _screensaver_error {
+	my $http    = shift;
+	my $error   = $http->error;
+	my $request = $http->params('request');
+	
+	$request->addResult( data => [ {
+		caption => $error,
+	} ] );
+
+	# Not sure what status to use here
+#	$request->setStatusBadParams();
+	$request->setStatusDone();
 }
 
 1;
