@@ -103,6 +103,25 @@ sub initCLI {
 	);
 }
 
+# Extend initJive to setup screensavers
+sub initJive {
+	my ( $class, %args ) = @_;
+	
+	my $menu = $class->SUPER::initJive( %args );
+
+	# TODO - XXX remove this once we've updated mysb.com
+	return $menu if !main::SLIM_SERVICE && !preferences('server')->get('use_sn_test');
+
+	$menu->[0]->{screensavers} = [
+		{
+			cmd         => [ $args{tag}, 'screensaver_artist' ],
+			stringToken => 'PLUGIN_LFM_ARTIST_SLIDESHOW',
+		},
+	];
+	
+	return $menu;
+}			
+
 sub getDisplayName () {
 	return 'PLUGIN_LFM_MODULE_NAME';
 }
@@ -318,6 +337,8 @@ sub _screensaver_ok {
 		_screensaver_error( $http );
 		return;
 	}
+	
+	$data->{caption} ||= '';
 	
 	$request->addResult( data => [ $data ] );
 	
