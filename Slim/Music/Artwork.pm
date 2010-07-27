@@ -557,7 +557,8 @@ sub downloadArtwork {
 	
 	# Find distinct albums to check for artwork.
 	my $tracks = Slim::Schema->search('Track', {
-		'me.audio'      => 1,
+		'me.audio'   => 1,
+		'me.coverid' => { '='  => undef },
 	}, {
 		'join'     => 'album',
 	});
