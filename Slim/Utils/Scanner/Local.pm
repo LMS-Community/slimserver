@@ -142,6 +142,11 @@ sub rescan {
 	
 	$log->error("Discovering files in $next");
 	
+	# Keep track of the number of changes we've made so we can decide
+	# if we should optimize the database or not, and also so we know if
+	# we need to udpate lastRescanTime
+	my $changes = 0;
+	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
@@ -206,10 +211,6 @@ sub rescan {
 		my ($changedOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} );
-		
-		# Keep track of the number of changes we've made so we can decide
-		# if we should optimize the database or not.
-		my $changes = 0;
 		
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
@@ -404,6 +405,8 @@ sub rescan {
 		Slim::Music::Import->setIsScanning(0);	
 		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 	}
+	
+	return $changes;
 }
 
 sub deleted {

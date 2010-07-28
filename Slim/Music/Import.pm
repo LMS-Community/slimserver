@@ -288,6 +288,8 @@ This is called by the scanner.pl helper program.
 
 sub runScan {
 	my $class  = shift;
+	
+	my $changes = 0;
 
 	# clear progress info in case scanner.pl is run standalone
 	Slim::Utils::Progress->clear;
@@ -297,7 +299,7 @@ sub runScan {
 	# need to do less work.
 	if ($Importers{$folderScanClass} && !$class->scanPlaylistsOnly) {
 
-		$class->runImporter($folderScanClass);
+		$changes += $class->runImporter($folderScanClass);
 
 		$class->useFolderImporter(1);
 	}
@@ -329,12 +331,12 @@ sub runScan {
 			next;
 		}
 
-		$class->runImporter($importer);
+		$changes += $class->runImporter($importer);
 	}
 
 	$class->scanPlaylistsOnly(0);
 
-	return 1;
+	return $changes;
 }
 
 =head2 runScanPostProcessing( )
@@ -462,6 +464,8 @@ running importers.
 
 sub runImporter {
 	my ($class, $importer) = @_;
+	
+	my $changes = 0;
 
 	if ($Importers{$importer}->{'use'}) {
 
@@ -470,12 +474,10 @@ sub runImporter {
 		# rescan each enabled Import, or scan the newly enabled Import
 		$log->error("Starting $importer scan");
 
-		$importer->startScan;
-
-		return 1;
+		$changes = $importer->startScan;
 	}
 
-	return 0;
+	return $changes;
 }
 
 =head2 runArtworkImporter( $importer )
