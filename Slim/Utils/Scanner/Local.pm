@@ -843,6 +843,12 @@ sub markDone {
 
 		# Precache artwork, when done send rescan done event
 		Slim::Music::Artwork->precacheAllArtwork( sub {
+			# Update the last rescan time if any changes were made
+			if ($changes) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
+				Slim::Music::Import->setLastScanTime();
+			}
+			
 			# Persist the count of "changes since last optimization"
 			# so for example adding 50 tracks, then 50 more would trigger optimize
 			$changes += _getChangeCount();
