@@ -2447,14 +2447,13 @@ sub serverstatusQuery {
 				$request->addResult('progresstotal', $p->total);
 			}
 		}
-	
-		elsif (my @p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer' }, { 'order_by' => 'start,id' })->all) {
-			
-			$request->addResult('lastscan', $p[-1]->finish);
-			
-			if ($p[-1]->name eq 'failure') {
-				_scanFailed($request, $p[-1]->info);
-			}
+		else {
+			$request->addResult( lastscan => Slim::Music::Import->lastScanTime() );
+
+			# XXX This needs to be fixed, failures are not reported
+			#if ($p[-1]->name eq 'failure') {
+			#	_scanFailed($request, $p[-1]->info);
+			#}
 		}
 	}
 	

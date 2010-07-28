@@ -104,6 +104,8 @@ sub main {
 	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
 
 	our $LogTimestamp = 1;
+	
+	my $changes = 0;
 
 	$prefs = preferences('server');
 	my $musicmagic;
@@ -336,7 +338,7 @@ sub main {
 				Slim::Music::Import->resetImporters;
 			}
 
-			Slim::Music::Import->runScan;
+			$changes = Slim::Music::Import->runScan;
 		};
 	}
 
@@ -357,16 +359,12 @@ sub main {
 
 		} else {
 
-			Slim::Music::Import->setLastScanTime;
+			if ($changes) {
+				Slim::Music::Import->setLastScanTime;
+			}
 
-			if ($@) {
-				logError("Failed to update lastRescanTime: [$@]");
-				logError("You may encounter problems next rescan!");
-			}
-			else {
-				# Notify server we are done scanning
-				$sqlHelperClass->afterScan();
-			}
+			# Notify server we are done scanning
+			$sqlHelperClass->afterScan();
 		}
 	}
 

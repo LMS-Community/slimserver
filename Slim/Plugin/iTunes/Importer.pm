@@ -186,6 +186,9 @@ sub startScan {
 	main::INFOLOG && $log->info("Finished scanning iTunes XML");
 
 	$class->doneScanning;
+	
+	# XXX return number of changes made
+	return 1;
 }
 
 sub doneScanning {

@@ -81,7 +81,7 @@ sub startScan {
 
 	main::INFOLOG && $log->info("Starting playlist folder scan");
 	
-	Slim::Utils::Scanner::Local->rescan( $dir, {
+	my $changes = Slim::Utils::Scanner::Local->rescan( $dir, {
 		types    => 'list',
 		scanName => 'playlist',
 		no_async => 1,
@@ -89,6 +89,8 @@ sub startScan {
 	} );
 
 	$class->doneScanning;
+	
+	return $changes;
 }
 
 sub doneScanning {
@@ -97,7 +99,7 @@ sub doneScanning {
 	# If scan aborted, $stillScanning will already be false.
 	return if !$class->stillScanning;
 
-	main::INFOLOG && $log->info("Finished background scan of playlist folder.");
+	main::INFOLOG && $log->info("Finished scan of playlist folder.");
 
 	$class->stillScanning(0);
 
