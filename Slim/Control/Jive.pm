@@ -2644,7 +2644,7 @@ sub globalSearchMenu {
 		homeMenuText   => $client->string('SEARCH'),
 		id             => 'globalSearch',
 		node           => 'home',
-		weight         => 110,
+		weight         => 22, # after internet radio
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
@@ -3304,7 +3304,7 @@ sub appMenus {
 	return [] if !scalar @{$menu};
 	
 	# Alpha sort and add weighting
-	my $weight = 21; # After Internet Radio
+	my $weight = 25; # After Search
 	
 	my @sorted =
 	 	map { $_->{weight} = $weight++; $_ } 
