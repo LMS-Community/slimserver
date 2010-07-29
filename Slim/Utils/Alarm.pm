@@ -425,19 +425,13 @@ sub findNextTime {
 		
 		if ( main::SLIM_SERVICE ) {
 			# Adjust for the user's timezone
-			my $timezone = $prefs->client($client)->get('timezone') 
-				|| $client->playerData->userid->timezone 
-				|| 'America/Los_Angeles';
-
-			my $dt = DateTime->now( 
-				time_zone => $timezone
-			);
+			my $dt = $client->datetime;
 			
 			$wday = $dt->day_of_week % 7;
 			$min  = $dt->min;
 			$hour = $dt->hour;
 			
-			main::DEBUGLOG && $log->debug( "SN time adjusted for $timezone to wday $wday $hour:$min:$sec" );
+			main::DEBUGLOG && $log->is_debug && $log->debug( "SN time adjusted to wday $wday $hour:$min:$sec" );
 		}
 
 		# Find the first enabled alarm starting at baseTime's day num 
