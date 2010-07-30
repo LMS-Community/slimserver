@@ -85,17 +85,10 @@ sub init {
 					# if alarm set, show "enabled" text
 					# XXX: This used to show the time, but with multi-day alarms, that doesn't make sense now
 					my $append = '';
-					
-					my $tz 
-						=  $prefs->client($client)->get('timezone')
-						|| $client->playerData->userid->timezone
-						|| 'America/Los_Angeles';
-					
-					my $dt = DateTime->now( time_zone => $tz );
 
 					my $alarmOn 
 						= $prefs->client($client)->get('alarm')->[0] 
-						|| $prefs->client($client)->get('alarm')->[ $dt->day_of_week ];
+						|| $prefs->client($client)->get('alarm')->[ $client->datetime->day_of_week ];
 					
 					if ( $alarmOn ) {
 						$append = " (" . $client->string('MCON'). ")";
