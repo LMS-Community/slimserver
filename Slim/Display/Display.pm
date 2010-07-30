@@ -616,7 +616,7 @@ sub scrollStop {
 	my $screenNo = shift;
 	my $scroll = $display->scrollData($screenNo) || return;
 
-	Slim::Utils::Timers::killSpecific($scroll->{timer});
+	delete $scroll->{timer};
 
 	$display->scrollState($screenNo, 0);
 	$display->scrollData($screenNo, undef);
@@ -677,6 +677,20 @@ sub scrollUpdate {
 
 	# update display
 	$display->scrollUpdateDisplay($scroll);
+	
+	# We use a direct EV timer here because this is a high-frequency repeating
+	# timer, and we can take advantage of EV's built-in repeating timer mode
+	# which isn't supported via the Slim::Utils::Timers API
+	my $timer = $scroll->{timer};
+	if ( !$timer ) {
+		$timer = $scroll->{timer} = EV::timer_ns(
+			0,
+			0,
+			sub { scrollUpdate($display, $scroll) },
+		);
+		# Make it a high priority timer
+		$timer->priority(2);
+	}
 
 	my $timenow = Time::HiRes::time();
 
@@ -684,8 +698,6 @@ sub scrollUpdate {
 		# called during pause phase - don't scroll
 		$scroll->{paused} = 1;
 		$scroll->{refreshTime} = $scroll->{pauseUntil};
-		$scroll->{timer} = Slim::Utils::Timers::setHighTimer($display, $scroll->{pauseUntil}, \&scrollUpdate, $scroll);
-
 	} else {
 		# update refresh time and skip frame if running behind actual timenow
 		do {
@@ -708,6 +720,7 @@ sub scrollUpdate {
 					$scroll->{offset} = $scroll->{scrollstart};
 					$scroll->{paused} = 1;
 					$scroll->{inhibitsaver} = 0;
+					$timer->stop;
 					if ($scroll->{scrollonceend}) {
 						# schedule endAnimaton to kill off scrolling and display new screen
 						$display->animateState(6) unless ($display->animateState() == 5);
@@ -725,9 +738,10 @@ sub scrollUpdate {
 				$scroll->{inhibitsaver} = 0;
 			}
 		}
-		# fast timer during scroll
-		$scroll->{timer} = Slim::Utils::Timers::setHighTimer($display, $scroll->{refreshTime}, \&scrollUpdate, $scroll);
 	}
+	
+	$timer->set( 0, $scroll->{refreshTime} - $timenow );
+	$timer->again;
 }
 
 sub endAnimation {
