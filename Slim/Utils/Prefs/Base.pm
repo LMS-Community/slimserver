@@ -82,7 +82,7 @@ sub get_SN {
 	
 		# More special handling for alarm prefs, ugh
 		elsif ( $key =~ /^alarm/ && !ref $value ) {
-			if ( $key !~ /alarmfadeseconds|alarmsEnabled|alarmSnoozeSeconds/ ) {
+			if ( $key !~ /alarmfadeseconds|alarmsEnabled|alarmSnoozeSeconds|alarmTimeoutSeconds/ ) {
 				$value = [ $value ];
 			}
 		}

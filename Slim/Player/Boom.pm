@@ -488,13 +488,7 @@ sub setRTCTime {
 	
 	if ( main::SLIM_SERVICE ) {
 		# Adjust for the user's timezone
-		my $timezone = $prefs->client($client)->get('timezone') 
-			|| $client->playerData->userid->timezone 
-			|| 'America/Los_Angeles';
-
-		my $dt = DateTime->now( 
-			time_zone => $timezone
-		);
+		my $dt = $client->datetime;
 		
 		$sec  = $dt->sec;
 		$min  = $dt->min;

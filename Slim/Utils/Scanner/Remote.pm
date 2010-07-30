@@ -443,7 +443,7 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
-		elsif ( $type eq 'aac' ) {
+		elsif ( !main::SLIM_SERVICE && $type eq 'aac' ) {
 			# Bug 16379, AAC streams require extra processing to check for the samplerate
 			
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AAC header');
