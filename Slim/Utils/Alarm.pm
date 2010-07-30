@@ -417,6 +417,8 @@ sub findNextTime {
 		return undef;
 	}
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	my $client = $self->client;
 
 	if (defined $self->{_days}) {
@@ -431,7 +433,7 @@ sub findNextTime {
 			$min  = $dt->min;
 			$hour = $dt->hour;
 			
-			main::DEBUGLOG && $log->is_debug && $log->debug( "SN time adjusted to wday $wday $hour:$min:$sec" );
+			main::DEBUGLOG && $isDebug && $log->debug( "SN time adjusted to wday $wday $hour:$min:$sec" );
 		}
 
 		# Find the first enabled alarm starting at baseTime's day num 
@@ -448,7 +450,7 @@ sub findNextTime {
 					my $relAlarmTime = $self->{_time} + $i * 86400;
 					my $absAlarmTime = $baseTime - $baseTimeSecs + $relAlarmTime;
 
-					main::DEBUGLOG && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime)});
+					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime)});
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
@@ -458,7 +460,7 @@ sub findNextTime {
 						$self->{_nextDue} = $absAlarmTime;
 						return $absAlarmTime;
 					} else {
-						main::DEBUGLOG && $log->debug('Skipping..');
+						main::DEBUGLOG && $isDebug && $log->debug('Skipping..');
 					}
 
 				}
@@ -467,7 +469,7 @@ sub findNextTime {
 			$day = ($day + 1) % 7;
 		}
 
-		main::DEBUGLOG && $log->debug('Alarm has no days enabled');
+		main::DEBUGLOG && $isDebug && $log->debug('Alarm has no days enabled');
 		return undef;
 	} else {
 		# This is a calendar alarm so _time is already absolute
@@ -486,6 +488,8 @@ This method is generally called by a Timer callback that has been set using sche
 
 sub sound {
 	my $self = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my $class = ref $self;
 
@@ -497,11 +501,11 @@ sub sound {
 	
 	if (! defined $client) {
 		# This can happen if a client is forgotten after an alarm was scheduled for it
-		main::DEBUGLOG && $log->debug('Alarm triggered for unknown client: ' . $self->{_clientId});
+		main::DEBUGLOG && $isDebug && $log->debug('Alarm triggered for unknown client: ' . $self->{_clientId});
 		return;
 	}
 
-	main::DEBUGLOG && $log->debug('Alarm triggered for ' . $client->name);
+	main::DEBUGLOG && $isDebug && $log->debug('Alarm triggered for ' . $client->name);
 
 	# Check if this alarm is still current - we could be running really late due to hibernation or similar
 	my $soundAlarm = 1;
@@ -512,14 +516,14 @@ sub sound {
 		my $delta = CORE::time - $alarmTime;
 	
 		if ($delta < -10 || $delta > 60) {
-			main::DEBUGLOG && $log->debug("Alarm is $delta seconds early/late - ignoring");
+			main::DEBUGLOG && $isDebug && $log->debug("Alarm is $delta seconds early/late - ignoring");
 			$soundAlarm = 0;
 		}
 	}
 
 	# Disable alarm if it doesn't repeat
 	if (! $self->{_repeat}) {
-		main::DEBUGLOG && $log->debug('Alarm does not repeat so disabling for next time');
+		main::DEBUGLOG && $isDebug && $log->debug('Alarm does not repeat so disabling for next time');
 		$self->{_enabled} = 0;
 		$self->save(0);
 	}
@@ -532,7 +536,7 @@ sub sound {
 	if ( $soundAlarm && $self->playlist =~ m{^cli://(.+)} ) {
 		my @cmd = map { uri_unescape($_) } split /__/, $1;
 		
-		main::DEBUGLOG && $log->is_debug && $log->debug( 'Executing Alarm CLI: ' . Data::Dump::dump(\@cmd) );
+		main::DEBUGLOG && $isDebug && $log->debug( 'Executing Alarm CLI: ' . Data::Dump::dump(\@cmd) );
 		
 		$client->execute( \@cmd );
 		
@@ -552,7 +556,7 @@ sub sound {
 			
 			# Run it
 			if ( $soundAlarm ) {
-				main::DEBUGLOG && $log->is_debug && $log->debug( 'Playing special alarm ' . $self->title . ' (' . $self->playlist . ')' );
+				main::DEBUGLOG && $isDebug && $log->debug( 'Playing special alarm ' . $self->title . ' (' . $self->playlist . ')' );
 				
 				$client->execute( [ 'playlist', 'play', $self->playlist, $self->title ] );
 			
@@ -567,7 +571,7 @@ sub sound {
 
 	if ($soundAlarm) {
 		# Sound an Alarm (HWV 63)
-		main::DEBUGLOG && $log->debug('Sounding alarm');
+		main::DEBUGLOG && $isDebug && $log->debug('Sounding alarm');
 
 		# Stop any other current alarm
 		if ($client->alarmData->{currentAlarm}) {
@@ -590,7 +594,7 @@ sub sound {
 		$request->source('ALARM');
 		
 		# Bug 12760, 9569 - Grab power condition before alarm so we can return later on a timeout.
-		main::DEBUGLOG && $log->debug("Current Power State: " . ($client->power ? 'On' : 'Off'));
+		main::DEBUGLOG && $isDebug && $log->debug("Current Power State: " . ($client->power ? 'On' : 'Off'));
 		$self->{_originalPower} = $client->power;
 		$request = $client->execute(['power', 1]);
 		$request->source('ALARM');
@@ -603,36 +607,36 @@ sub sound {
 			&& $client->lineOutConnected()
 			&& $prefs->client($client)->get('analogOutMode') == 0)
 		{
-			main::DEBUGLOG && $log->debug('Setting analog out mode to always on');
+			main::DEBUGLOG && $isDebug && $log->debug('Setting analog out mode to always on');
 			$client->setAnalogOutMode(2);
 		}
 
 		# Set up volume
 		my $currentVolume = $prefs->client($client)->get('volume');
 		$self->{_originalVolume} = $currentVolume;
-		main::DEBUGLOG && $log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
+		main::DEBUGLOG && $isDebug && $log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
 
 		if ($currentVolume != $self->volume) {
-			main::DEBUGLOG && $log->debug("Changing volume from $currentVolume to " . $self->volume);
+			main::DEBUGLOG && $isDebug && $log->debug("Changing volume from $currentVolume to " . $self->volume);
 			# Bug 15662: use mixer command to change volume so that synced volumes are correctly set
 			$client->execute(['mixer', 'volume', $self->volume]);
 		}
 
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
-			main::DEBUGLOG && $log->debug('Alarm playlist url: ' . $self->playlist);
+			main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist url: ' . $self->playlist);
 			$request = $client->execute(['playlist', 'play', $self->playlist, $self->title, _fadeInSeconds($client)]);
 			$request->source('ALARM');
 
 		} else {
-			main::DEBUGLOG && $log->debug('Current playlist selected for alarm playlist');
+			main::DEBUGLOG && $isDebug && $log->debug('Current playlist selected for alarm playlist');
 			# Check that the current playlist isn't empty
 			my $playlistLen = Slim::Player::Playlist::count($client);
 			if ($playlistLen) {
 				$request = $client->execute(['play', _fadeInSeconds($client)]);
 				$request->source('ALARM');
 			} else {
-				main::DEBUGLOG && $log->debug('Current playlist is empty');
+				main::DEBUGLOG && $isDebug && $log->debug('Current playlist is empty');
 
 				$self->_playFallback();
 			}
@@ -689,7 +693,7 @@ sub sound {
 		# Set up subscription to automatically end the alarm if requested
 		my $timeout = $prefs->client($client)->alarmTimeoutSeconds;
 		if ($timeout) {
-			main::DEBUGLOG && $log->debug("Scheduling time out in $timeout seconds");
+			main::DEBUGLOG && $isDebug && $log->debug("Scheduling time out in $timeout seconds");
 			$self->{_timeoutTimer} = Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout, \&_timeout);
 		}
 	}
@@ -720,8 +724,10 @@ Does nothing unless this alarm is already active.
 
 sub snooze {
 	my $self = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug('Snooze called for alarm id ' . $self->{_id});
+	main::DEBUGLOG && $isDebug && $log->debug('Snooze called for alarm id ' . $self->{_id});
 	
 	return unless $self->{_active};
 
@@ -730,10 +736,10 @@ sub snooze {
 
 	# don't snooze again if we're already snoozing.
 	if ($self->{_snoozeActive}) {
-		main::DEBUGLOG && $log->debug('Already snoozing');
+		main::DEBUGLOG && $isDebug && $log->debug('Already snoozing');
 	} else {
 		my $snoozeSeconds = $prefs->client($client)->alarmSnoozeSeconds;
-		main::DEBUGLOG && $log->debug("Snoozing for $snoozeSeconds seconds");
+		main::DEBUGLOG && $isDebug && $log->debug("Snoozing for $snoozeSeconds seconds");
 
 		# Send notification
 		Slim::Control::Request::notifyFromArray($client, ['alarm', 'snooze', $self->{_id}]);
@@ -745,14 +751,14 @@ sub snooze {
 		if (defined $self->{_timeoutTimer}) {
 			my $timeout = $prefs->client($client)->alarmTimeoutSeconds;
 			Slim::Utils::Timers::killSpecific($self->{_timeoutTimer});
-			main::DEBUGLOG && $log->debug(sub {'Scheduling automatic timeout in ' . ($timeout + $snoozeSeconds) . ' seconds'});
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Scheduling automatic timeout in ' . ($timeout + $snoozeSeconds) . ' seconds'});
 			$self->{_timeoutTimer} =
 				Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout + $snoozeSeconds, \&_timeout);
 		}
 
 		if (Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
 			# Stop rather than pause for remote urls in order to keep radio in real time after a snooze
-			main::DEBUGLOG && $log->debug('Remote url being played - stopping');
+			main::DEBUGLOG && $isDebug && $log->debug('Remote url being played - stopping');
 			my $request = $client->execute(['stop']);
 			$request->source('ALARM');
 		} else {
@@ -795,8 +801,10 @@ is being called at the end of a snooze timer.
 sub stopSnooze {
 	my $self = shift;
 	my $unPause = @_ ? shift : 1;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug('Snooze expired');
+	main::DEBUGLOG && $isDebug && $log->debug('Snooze expired');
 
 	return unless $self->{_snoozeActive};
 
@@ -806,7 +814,7 @@ sub stopSnooze {
 	$self->{_snoozeActive} = 0;
 	
 	if ($unPause) {
-		main::DEBUGLOG && $log->debug('unpausing music');
+		main::DEBUGLOG && $isDebug && $log->debug('unpausing music');
 		my $request = $client->execute(['pause', 0, _fadeInSeconds($client)]);
 		$request->source('ALARM');
 
@@ -844,6 +852,8 @@ sub stop {
 	my $client = $self->client;
 
 	return unless $self->{_active};
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	if (defined $client->alarmData->{currentAlarm} && $client->alarmData->{currentAlarm} == $self) {
 		$client->alarmData->{currentAlarm} = undef;
@@ -869,7 +879,7 @@ sub stop {
 		# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
 		# is called during a power off volume fade.  Bug 9093.
 		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
-			main::DEBUGLOG && $log->debug('Restoring previous line out mode');
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring previous line out mode');
 			$client->setAnalogOutMode();
 		});
 	}
@@ -882,11 +892,11 @@ sub stop {
 		# volume levels (vol is reported as 0 after a mute)
 		my $vol = $prefs->client($client)->get('volume');
 		if (! $client->isPlaying && $vol == $self->volume) {
-			main::DEBUGLOG && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
 		# Bug: 12760, 9569 - Return power state to that prior to the alarm
-		main::DEBUGLOG && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
+		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
 		$client->power($self->{_originalPower});
 	});
 	
@@ -1003,8 +1013,10 @@ sub save {
 
 	my $class = ref $self;
 	my $client = $self->client;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug('Saving alarm.');
+	main::DEBUGLOG && $isDebug && $log->debug('Saving alarm.');
 
 	my $newAlarm = ! $self->{_id};
 
@@ -1018,13 +1030,13 @@ sub save {
 	# 1 to make sure the alarm sounds.  Otherwise assume that if all alarms
 	# were turned off it was with good reason and leave things as they are.
 	if ($newAlarm && keys(%$prefAlarms) == 1) {
-		main::DEBUGLOG && $log->debug('Forcing alarmsEnabled to 1');
+		main::DEBUGLOG && $isDebug && $log->debug('Forcing alarmsEnabled to 1');
 		$prefs->client($client)->alarmsEnabled(1);
 	}
 
 	# There's a new/updated alarm so reschedule
 	if ($reschedule) {
-		main::DEBUGLOG && $log->debug('Alarm saved with id ' . $self->{_id} .  ' Rescheduling alarms...');
+		main::DEBUGLOG && $isDebug && $log->debug('Alarm saved with id ' . $self->{_id} .  ' Rescheduling alarms...');
 		$class->scheduleNext($client);
 	}
 }
@@ -1039,7 +1051,7 @@ sub _createSaveable {
 	my $client = $self->client;
 
 	if (! defined $self->{_time}) {
-		main::DEBUGLOG && $log->debug('Alarm hasn\'t had a time set.  Not saving.');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Alarm hasn\'t had a time set.  Not saving.');
 		return;
 	}
 	
@@ -1080,7 +1092,8 @@ sub delete {
 
 	# Only delete if alarm has actually been saved
 	if (defined $self->{_id}) {
-		main::DEBUGLOG && $log->debug('Deleting alarm, id: ' . $self->{_id});
+		my $isDebug = main::DEBUGLOG && $log->is_debug;
+		main::DEBUGLOG && $isDebug && $log->debug('Deleting alarm, id: ' . $self->{_id});
 
 		my $prefAlarms = $prefs->client($client)->alarms;
 		delete $prefAlarms->{$self->{_id}};
@@ -1089,7 +1102,7 @@ sub delete {
 		delete $client->alarmData->{alarms}->{$self->{_id}};
 
 		# Alarm deleted so reschedule
-		main::DEBUGLOG && $log->debug('Rescheduling alarms...');
+		main::DEBUGLOG && $isDebug && $log->debug('Rescheduling alarms...');
 		$class->scheduleNext($client);
 	}
 };
@@ -1097,18 +1110,20 @@ sub delete {
 # Check whether the alarm's client is playing something and trigger a fallback if not
 sub _checkPlaying {
 	my $self = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug('Checking whether client is playing for alarm ' . $self->id);
+	main::DEBUGLOG && $isDebug && $log->debug('Checking whether client is playing for alarm ' . $self->id);
 
 	# Do nothing if the alarm is no longer active or the user has already hit snooze (something must have woken them!)
 	return if ! $self->active || $self->snoozeActive;
 
 	my $client = $self->client;
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Current playmode: ' . Slim::Player::Source::playmode($client) );
+	main::DEBUGLOG && $isDebug && $log->debug( 'Current playmode: ' . Slim::Player::Source::playmode($client) );
 
 	if (!$client->isPlaying) {
-		main::DEBUGLOG && $log->debug('Alarm active but client not playing');
+		main::DEBUGLOG && $isDebug && $log->debug('Alarm active but client not playing');
 		$self->_playFallback();
 	}
 }
@@ -1138,7 +1153,7 @@ sub _playFallback {
 		$url = "loop://${auth}${server}:${port}/html/slim-backup-alarm.mp3";
 	}
 
-	main::DEBUGLOG && $log->debug("Starting fallback alarm: $url");
+	main::DEBUGLOG && $log->is_debug && $log->debug("Starting fallback alarm: $url");
 
 	my $request = $client->execute([ 'playlist', 'play', $url, $client->string('BACKUP_ALARM'), _fadeInSeconds($client) ]);
 	$request->source('ALARM');
@@ -1150,7 +1165,7 @@ sub _timeout {
 
 	my $client = $self->client || return;
 
-	main::DEBUGLOG && $log->debug('Alarm ' . $self->id . ' ending automatically due to timeout');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Alarm ' . $self->id . ' ending automatically due to timeout');
 
 	# Pause the music.  Should we turn off?  Probably only if the player was off to start with.
 	my $request = $client->execute(['pause', 1]);
@@ -1173,7 +1188,7 @@ sub init {
 	my $class = shift;
 	my $client = shift;
 
-	main::DEBUGLOG && $log->debug('Alarm initing...');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Alarm initing...');
 }
 
 # Subscribe to commands that should stop the alarm
@@ -1189,7 +1204,7 @@ sub _setAlarmSubscription {
 
 	return unless defined $currentAlarm;
 
-	main::DEBUGLOG && $log->debug('Adding ' . ($snooze ? 'snooze' : 'alarm') . ' subscription');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Adding ' . ($snooze ? 'snooze' : 'alarm') . ' subscription');
 
 	my $stopCommands;
 
@@ -1319,7 +1334,9 @@ sub loadAlarms {
 	my $class = shift;
 	my $client = shift;	
 	
-	main::DEBUGLOG && $log->debug('Loading saved alarms from prefs for ' . $client->name);
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
+	main::DEBUGLOG && $isDebug && $log->debug('Loading saved alarms from prefs for ' . $client->name);
 	my $prefAlarms = $prefs->client($client)->alarms || {};
 
 	$client->alarmData->{alarms} = {};
@@ -1347,7 +1364,7 @@ sub loadAlarms {
 		# Fix up createTime for alarms that pre-date its introduction
 		my $needsSaving = 0;
 		if (! defined $prefAlarm->{_createTime}) {
-			main::DEBUGLOG && $log->debug('Alarm has no createTime - assigning one');
+			main::DEBUGLOG && $isDebug && $log->debug('Alarm has no createTime - assigning one');
 			$needsSaving = 1;
 			$alarm->{_createTime} = Time::HiRes::time;
 		} else {
@@ -1362,7 +1379,7 @@ sub loadAlarms {
 		}
 	}
 
-	main::DEBUGLOG && $log->debug('Alarms loaded.  Rescheduling...');
+	main::DEBUGLOG && $isDebug && $log->debug('Alarms loaded.  Rescheduling...');
 	$class->scheduleNext($client);
 }
 
@@ -1377,14 +1394,16 @@ This method is called automatically when new alarms are added or re-scheduling i
 sub scheduleNext {
 	my $class = shift;
 	my $client = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug('Asked to schedule next alarm for ' . $client->name);
+	main::DEBUGLOG && $isDebug && $log->debug('Asked to schedule next alarm for ' . $client->name);
 	my $alarms = $client->alarmData->{alarms};
 
 	my $nextAlarm = $client->alarmData->{nextAlarm};
 	if ($nextAlarm) {
 		if (defined $nextAlarm->{_timerRef}) {
-			main::DEBUGLOG && $log->debug('Previous scheduled alarm wasn\'t triggered.  Clearing nextAlarm and killing timer');
+			main::DEBUGLOG && $isDebug && $log->debug('Previous scheduled alarm wasn\'t triggered.  Clearing nextAlarm and killing timer');
 			Slim::Utils::Timers::killSpecific($nextAlarm->{_timerRef});
 			$nextAlarm->{_timerRef} = undef;
 			$alarmsScheduled--;
@@ -1411,18 +1430,18 @@ sub scheduleNext {
 		}
 
 		if (defined $nextAlarm) {
-			main::DEBUGLOG && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
 
 			if ($nextAlarm->{_nextDue} == $now) {
 				# The alarm is for this minute, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
-				main::DEBUGLOG && $log->debug('Alarm time is now; let client handle this failure');
+				main::DEBUGLOG && $isDebug && $log->debug('Alarm time is now; let client handle this failure');
 			} else {
 				# TODO: schedule a bit early to allow for timers firing late.  Once this is done and the early
 				# timer fires, check every second to see if the alarm should sound.  10 secs early should be more
 				# than enough.  This is only really needed for mysqueezebox.com where 1000s of clients can lead
 				# to timers firing a few seconds late.
 				my $alarmTime = $nextAlarm->{_nextDue};
-				main::DEBUGLOG && $log->debug('Scheduling alarm');
+				main::DEBUGLOG && $isDebug && $log->debug('Scheduling alarm');
 				$nextAlarm->{_timerRef} = Slim::Utils::Timers::setTimer($nextAlarm, $alarmTime, \&sound, $alarmTime);
 				$alarmsScheduled++;
 				$class->_startStopTimeCheck;
@@ -1430,11 +1449,11 @@ sub scheduleNext {
 				$client->alarmData->{nextAlarm} = $nextAlarm;
 			}
 		} else {
-			main::DEBUGLOG && $log->debug('No future alarms found');
+			main::DEBUGLOG && $isDebug && $log->debug('No future alarms found');
 		}
 
 	} else {
-		main::DEBUGLOG && $log->debug('Alarms are disabled');
+		main::DEBUGLOG && $isDebug && $log->debug('Alarms are disabled');
 	}
 
 	# Set/clear the client's RTC alarm if supported
@@ -1455,8 +1474,10 @@ sub setRTCAlarm {
 	my $client = shift;
 
 	return if !$client->hasRTCAlarm;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Asked to set rtc alarm for ' . $client->name );
+	main::DEBUGLOG && $isDebug && $log->debug( 'Asked to set rtc alarm for ' . $client->name );
 
 	# Clear any existing timer to call this sub
 	my $timerRef = $client->alarmData->{_rtcTimerRef};
@@ -1485,7 +1506,7 @@ sub setRTCAlarm {
 			}
 
 			# Alarm times are "floating" so no need to adjust for local time
-			main::DEBUGLOG && $log->debug( "Setting RTC alarm to $alarmTime, volume " . $nextAlarm->volume );
+			main::DEBUGLOG && $isDebug && $log->debug( "Setting RTC alarm to $alarmTime, volume " . $nextAlarm->volume );
 			
 			$client->setRTCAlarm($alarmTime, $nextAlarm->volume);
 
@@ -1495,7 +1516,7 @@ sub setRTCAlarm {
 
 	if ($clearRTCAlarm) {
 		# Next alarm not defined or not within next 24 hours
-		main::DEBUGLOG && $log->debug('Clearing RTC alarm');
+		main::DEBUGLOG && $isDebug && $log->debug('Clearing RTC alarm');
 		$client->setRTCAlarm(undef);
 	}
 
@@ -1540,7 +1561,7 @@ sub defaultVolumeChanged {
 	my $client = shift;
 
 	# Update the RTC volume
-	main::DEBUGLOG && $log->debug('defaultVolume has changed');
+	main::DEBUGLOG && $log->is_debug && $log->debug('defaultVolume has changed');
 	$class->setRTCAlarm($client);
 }
 
@@ -1606,7 +1627,7 @@ sub alarmsEnabledChanged {
 	my $client = shift;
 
 	# Reschedule to enable/disable
-	main::DEBUGLOG && $log->debug('Alarms enabled state changed - rescheduling alarms...');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Alarms enabled state changed - rescheduling alarms...');
 	$class->scheduleNext($client);
 }
 
@@ -1827,19 +1848,21 @@ sub pushAlarmScreensaver {
 	my $class = shift;
 	my $client = shift;
 
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+
 	my $currentMode = Slim::Buttons::Common::mode($client);
 	my $alarmScreensaver = $class->alarmScreensaver($client);
 	if ($client->display->isa('Slim::Display::NoDisplay')) {
 		$alarmScreensaver = undef;
 	}
 
-	main::DEBUGLOG && $log->debug('Attempting to push into alarm screensaver: ' . (defined $alarmScreensaver ? $alarmScreensaver : undef)
+	main::DEBUGLOG && $isDebug && $log->debug('Attempting to push into alarm screensaver: ' . (defined $alarmScreensaver ? $alarmScreensaver : undef)
 			. ". Current mode: $currentMode");
 	if (defined $alarmScreensaver
 		&& Slim::Buttons::Common::validMode($alarmScreensaver)
 		&& $currentMode ne $alarmScreensaver) {
 
-		main::DEBUGLOG && $log->debug('Pushing alarm screensaver');
+		main::DEBUGLOG && $isDebug && $log->debug('Pushing alarm screensaver');
 		Slim::Buttons::Common::pushMode($client, $alarmScreensaver);
 		$client->update();
 	}
@@ -1856,11 +1879,13 @@ Pop out of the alarm screensaver if it's being displayed on the given client.
 sub popAlarmScreensaver {
 	my $class = shift;
 	my $client = shift;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	my $currentMode = Slim::Buttons::Common::mode($client);
-	main::DEBUGLOG && $log->debug("Attempting to pop alarm screensaver.  Current mode: $currentMode");
+	main::DEBUGLOG && $isDebug && $log->debug("Attempting to pop alarm screensaver.  Current mode: $currentMode");
 	if ($currentMode eq $class->alarmScreensaver($client)) {
-		main::DEBUGLOG && $log->debug('Popping alarm screensaver');
+		main::DEBUGLOG && $isDebug && $log->debug('Popping alarm screensaver');
 		Slim::Buttons::Common::popMode($client);
 	}
 }
@@ -1871,17 +1896,19 @@ sub _startStopTimeCheck {
 	my $class = shift;
 
 	return if main::SLIM_SERVICE; # SN does things differently
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
-	main::DEBUGLOG && $log->debug("$alarmsScheduled scheduled alarm(s)");
+	main::DEBUGLOG && $isDebug && $log->debug("$alarmsScheduled scheduled alarm(s)");
 
 	if ($alarmsScheduled && ! $checkTimeTimerRef) {
 		# Start watching the time to track any changes
-		main::DEBUGLOG && $log->debug('Starting time checker task');
+		main::DEBUGLOG && $isDebug && $log->debug('Starting time checker task');
 		$lastSeenTime = CORE::time;
 		$lastSeenDST = (localtime($lastSeenTime))[8];
 		$checkTimeTimerRef = Slim::Utils::Timers::setTimer($class, Time::HiRes::time + 60, \&_checkTime);
 	} elsif ($alarmsScheduled == 0 && $checkTimeTimerRef) {
-		main::DEBUGLOG && $log->debug('Stopping time checker task');
+		main::DEBUGLOG && $isDebug && $log->debug('Stopping time checker task');
 		Slim::Utils::Timers::killSpecific($checkTimeTimerRef);
 		$checkTimeTimerRef = undef;
 	}
@@ -1903,7 +1930,7 @@ sub _checkTime {
 	# 60 secs ahead, this indicates a backwards-changed time.  For forward-changes, allow a
 	# 10 sec window to allow for timers firing late.
 	if ($delta < 60 || $delta > 70 || $isdst != $lastSeenDST) {
-		main::DEBUGLOG && $log->debug("System time has changed (delta $delta, lastDST $lastSeenDST, dst: $isdst)"
+		main::DEBUGLOG && $log->is_debug && $log->debug("System time has changed (delta $delta, lastDST $lastSeenDST, dst: $isdst)"
 				. ' - rescheduling all alarms');
 
 		foreach my $client (Slim::Player::Client::clients()) {
@@ -1952,37 +1979,39 @@ sub _alarmEnd {
 
 	my $client = $request->client || return;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	# Ignore unexpected notifications
 	if ($request->isNotCommand([['pause', 'stop', 'power']])
 		&& $request->isNotCommand([['playlist'], ['jump']]))
 	{
-		main::DEBUGLOG && $log->debug('Ignoring unwanted notification: ', $request->getRequestString);
+		main::DEBUGLOG && $isDebug && $log->debug('Ignoring unwanted notification: ', $request->getRequestString);
 		return;
 	}
 
-	main::DEBUGLOG && $log->debug(sub {'_alarmEnd called with request: ' . $request->getRequestString});
+	main::DEBUGLOG && $isDebug && $log->debug(sub {'_alarmEnd called with request: ' . $request->getRequestString});
 
 	my $currentAlarm = $client->alarmData->{currentAlarm};
 	if (! defined $currentAlarm) {
-		main::DEBUGLOG && $log->debug('No current alarm.  Doing nothing.');
+		main::DEBUGLOG && $isDebug && $log->debug('No current alarm.  Doing nothing.');
 		return;
 	}
 
 	# Don't respond to requests that we created ourselves
 	my $source = $request->source;
 	if ($source && ($source eq 'ALARM' || $source eq 'PLUGIN_RANDOMPLAY')) {
-		main::DEBUGLOG && $log->debug('Ignoring self-created request');
+		main::DEBUGLOG && $isDebug && $log->debug('Ignoring self-created request');
 		return;
 	}
 
 	# power always ends the alarm, whether snoozing or not
 	if ($currentAlarm->{_snoozeActive} && $request->getRequest(0) ne 'power') {
 		# Stop the snooze expiry timer and set a new alarm subscription for events that should end the alarm
-		main::DEBUGLOG && $log->debug('Stopping snooze');
+		main::DEBUGLOG && $isDebug && $log->debug('Stopping snooze');
 		Slim::Utils::Timers::killTimers($currentAlarm, \&stopSnooze);
 		$currentAlarm->stopSnooze(0);
 	} else {
-		main::DEBUGLOG && $log->debug('Stopping alarm');
+		main::DEBUGLOG && $isDebug && $log->debug('Stopping alarm');
 		$currentAlarm->stop;
 	}
 }

@@ -77,6 +77,7 @@ sub initJive {
 		text           => $name,
 		id             => 'opml' . $args{tag},
 		node           => $args{node} || $args{menu} || 'plugins',
+		isApp		=> defined($args{is_app}) ? $args{is_app} : 0,
 		weight         => $class->weight,
 		displayWhenOff => 0,
 		window         => { 
