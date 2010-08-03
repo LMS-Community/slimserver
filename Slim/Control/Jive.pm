@@ -3291,6 +3291,7 @@ sub appMenus {
 					},
 					displayWhenOff => 0,
 					id             => 'opml' . $app,
+					isApp		=> 1,
 					node           => $node,
 					text           => $apps->{$app}->{title},
 					window         => {
