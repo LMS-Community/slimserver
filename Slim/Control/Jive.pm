@@ -2910,6 +2910,9 @@ sub appMenus {
 					# Use title from app list
 					$clone->{stringToken} = $apps->{$app}->{title};
 
+					# flag as an app
+					$clone->{isApp} = 1;
+
 					push @{$menu}, $clone;
 				}
 			}
