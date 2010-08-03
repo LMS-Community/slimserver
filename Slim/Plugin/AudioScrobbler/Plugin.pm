@@ -448,7 +448,7 @@ sub newsongCallback {
 	# report all new songs as now playing
 	my $queue = getQueue($client);
 	
-	if ( scalar @{$queue} ) {
+	if ( scalar @{$queue} && scalar @{$queue} <= 50 ) {
 		# before we submit now playing, submit all queued tracks, so that
 		# a scrobbled track doesn't clobber the now playing data
 		main::DEBUGLOG && $log->debug( 'Submitting scrobble queue before now playing track' );
@@ -855,8 +855,7 @@ sub submitScrobble {
 	my $post = 's=' . $client->master->pluginData('session_id');
 	
 	my $index = 0;
-	while ( my $item = shift @{$queue} ) {
-		
+	while ( my $item = shift @{$queue} ) {		
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
 		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
@@ -877,22 +876,13 @@ sub submitScrobble {
 		
 		$index++;
 		
-		# If we have a really large queue, don't let this loop block
-		main::idleStreams();
+		# Max size of each scrobble request is 50 items
+		last if $index == 50;
 	}
 	
 	# Add the currently playing track back to the queue
 	if ( $current_item ) {
 		unshift @{$queue}, $current_item;
-		
-		# Try again in a minute
-		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			time() + 60,
-			\&submitScrobble,
-			$params,
-		);
 	}
 	
 	setQueue( $client, $queue );
@@ -915,6 +905,17 @@ sub submitScrobble {
 			$client->master->pluginData('submit_url'),
 			'Content-Type' => 'application/x-www-form-urlencoded',
 			$post,
+		);
+	}
+	
+	# If there are still items left in the queue, scrobble again in a minute
+	if ( scalar @{$queue} ) {
+		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + 60,
+			\&submitScrobble,
+			$params,
 		);
 	}
 }
