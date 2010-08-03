@@ -53,8 +53,8 @@ sub _returnPlayMode {
 	# Should reall find out if the player is active in the sync-group but too expensive
 	return 'stop' if !$_[1]->power();
 	
-	my $returnedmode = $controller->isPaused ? 'pause'
-						: $controller->isStopped ? 'stop' : 'play';
+	my $returnedmode = $controller->isStopped ? 'stop'
+						: $controller->isPaused ? 'pause' : 'play';
 	return $returnedmode;
 }
 
