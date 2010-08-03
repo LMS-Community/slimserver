@@ -15,7 +15,6 @@ package Slim::Player::Player;
 
 use strict;
 
-use Math::VecStat;
 use Scalar::Util qw(blessed);
 
 use base qw(Slim::Player::Client);
@@ -954,7 +953,7 @@ sub trackJiffiesEpoch {
 	if (   $diff > 0.001
 		&& (@{$jiffiesOffsetList} >= JIFFIES_OFFSET_TRACKING_LIST_MIN)
 	) {
-		my $min_diff = Math::VecStat::min($jiffiesOffsetList);
+		my $min_diff = Slim::Utils::Misc::min($jiffiesOffsetList);
 		if ( $min_diff > JIFFIES_EPOCH_MIN_ADJUST ) {
 			
 			# We only make jumps larger than JIFFIES_EPOCH_MAX_ADJUST if we have a full sequence of offsets.
