@@ -855,7 +855,7 @@ sub _stat_handler {
 		}
 	}
 	
-	if ($client->isSynced(1) && $client->isPlaying(1) && $client->needsWeightedPlayPoint()) {
+	if ($client->needsWeightedPlayPoint() && $client->isSynced(1) && $client->isPlaying(1)) {
 		my $statusTime = $client->jiffiesToTimestamp( $stat->{'jiffies'} );
 		my $apparentStreamStartTime;
 		if ($stat->{'elapsed_milliseconds'}) {
@@ -870,6 +870,7 @@ sub _stat_handler {
 	
 	$client->statHandler($stat->{'event_code'}, $stat->{'jiffies'}, $stat->{'error_code'});
 
+=pod XXX This is wasteful
 	if ( main::SLIM_SERVICE ) {
 		# Bug 8995, Update signal strength on SN
 		if ( !$client->playerData->signal ) {
@@ -877,6 +878,7 @@ sub _stat_handler {
 			$client->playerData->update;
 		}
 	}
+=cut
 }
 
 sub getLatency {
