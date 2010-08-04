@@ -202,11 +202,6 @@ sub playlist {
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$form{'plugin_meta'} = $handler->getMetadataFor( $client, $track->url );
 			
-			# Strip extension from icon path
-			if ( $form{'plugin_meta'}->{'icon'} ) {
-				$form{'plugin_meta'}->{'icon'} =~ s/\.png$//;
-			}
-			
 			# Only use cover if it's a full URL
 			if ( $form{'plugin_meta'}->{'cover'} && $form{'plugin_meta'}->{'cover'} !~ /^http/ ) {
 				delete $form{'plugin_meta'}->{'cover'};

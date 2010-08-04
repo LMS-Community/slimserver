@@ -9,7 +9,7 @@
 					<img src="[% image || plugin_meta.cover | resizeimage(150, 150) %]" alt="coverArt">
 				</a>
 				[% ELSIF plugin_meta.icon %]
-				<img src="[% plugin_meta.icon %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="coverArt" onLoad="resize(this)">
+				<img src="[% plugin_meta.icon %].png" alt="coverArt" onLoad="resize(this)">
 				[% END %]
 			[% ELSE %]
 				[%# fall back to 0 for cover link if itemobj.id isn't going to give us a valid id %]
