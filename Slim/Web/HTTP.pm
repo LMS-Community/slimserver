@@ -1091,6 +1091,10 @@ sub generateHTTPResponse {
 
 			# if we match one of the page functions as defined above,
 			# execute that, and hand it a callback to send the data.
+			
+			$params->{'imageproxy'} = Slim::Networking::SqueezeNetwork->url(
+				"/public/imageproxy"
+			);
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
 
