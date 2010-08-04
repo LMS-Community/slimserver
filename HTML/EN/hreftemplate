@@ -192,7 +192,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% IF item.image %]
 		"[% item.image.replace('^(music/.*/cover.*)', '/$1') | resizeimage(height, height, '-') %]"
 		[% ELSE %]
-		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% ELSIF browserType == 'IE' %].gif[% END %]"
+		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% END %]"
 		[% END %]
 	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 	alt=	"[% item.text | html %]
@@ -218,7 +218,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% itemobj=item.itemobj %]
 		[% artistlist = PROCESS artistsAsText.html %]
 	[% END %]
-	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p[% IF browserType == 'IE' %].gif[% END %]" 
+	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p" 
 		height="[% height %]"
 		alt="[% item.text | html %] [% artistlist | html %]
 			[% IF item.year %]
