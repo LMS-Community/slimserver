@@ -588,49 +588,75 @@ sub downloadArtwork {
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' );
 	
-	my $cacheDir = catdir( $prefs->get('cachedir'), 'AutoArtwork' );
+	my $cacheDir = catdir( $prefs->get('cachedir'), 'DownloadedArtwork' );
 	mkpath $cacheDir if !-d $cacheDir;
 	
-	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+	tie my %cache, 'Tie::Cache::LRU', 128;
 	
 	while ( my $track = $tracks->next ) {
+
+		my $albumname = $track->album->name;
 		
 		# Only lookup albums that have artist names
 		if ( $track->album->contributor ) {
+
+			my $file;
+			my $albumid   = $track->album->id;
+			my $album_mbid= $track->album->musicbrainz_id;
 			
 			# Skip if we have already looked for this album before with no results
-			if ( $cache->get( 'artwork_download_failed_' . $track->album->id ) ) {
-				main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( 'Skipping ' . $track->album->name . ', previous search failed' );
+			if ( $cache{ "artwork_download_failed_$albumid" } ) {
+				main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname, previous search failed" );
 				next;
 			} 
 
-			my $url = $snURL
-				. '?album=' . URI::Escape::uri_escape_utf8( $track->album->name )
-				. '&artist=' . URI::Escape::uri_escape_utf8( $track->album->contributor->name )
-				. '&mbid=' . $track->album->musicbrainz_id;
+			# we'll not only try the album artist, but track artists too
+			# iTunes tends to oddly flag albums as compilations when they're not
+			foreach my $contributor ($track->album->contributor->name, $track->artists) {
 				
-			my $file = $cache->get($url);
-			my $res;
+				$contributor = $contributor->name if blessed($contributor);
 				
-			if ( !$file || !-e $file ) {
-	
-				main::DEBUGLOG && $importlog->is_debug && $importlog->debug("Trying to get artwork for " . $track->album->name . '/' . $track->album->contributor->name . " from mysqueezebox.com");
-				
-				$res = $ua->get($url);
+				my $url = $snURL
+					. '?album=' . URI::Escape::uri_escape_utf8( $albumname )
+					. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
+					. '&mbid=' . $album_mbid;
 
-				if ( $res->is_success ) {
-					# Save the artwork to a cache file
-					my ($ext) = $res->content_type =~ m{image/(jpg|gif|png)$};
-					$file = catfile( $cacheDir, $track->album->id ) . ".$ext";
+				if ( $cache{ "artwork_download_failed_$url" } ) {
+					main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname/$contributor, previous search failed" );
+					next;
+				} 
+					
+				$file = $cache{$url};
+				my $res;
+					
+				if ( $file && -e $file ) {
+					main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Artwork for $albumname/$contributor already downloaded: $file" );
+					last;
+				}
+				else {
+		
+					main::DEBUGLOG && $importlog->is_debug && $importlog->debug("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
+					
+					$res = $ua->get($url);
 	
-					if ( write_file( $file, { binmode => ':raw' }, $res->content ) ) {
-						$cache->set( $url, $file, 60 );
-						main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for " . $track->album->name );
+					if ( $res->is_success ) {
+						# Save the artwork to a cache file
+						my ($ext) = $res->content_type =~ m{image/(jpg|gif|png)$};
+						$file = catfile( $cacheDir, $albumid ) . ".$ext";
+		
+						if ( write_file( $file, { binmode => ':raw' }, $res->content ) ) {
+							$cache{$url} = $file;
+							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
+							last;
+						}
+					}
+					elsif ( $res->code == 404 ) {
+						main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to get artwork url for $albumname/$contributor" );
+						
+						$cache{ "artwork_download_failed_$url" } = 1;
 					}
 				}
-			}
-			else {
-				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Artwork for " . $track->album->name . " already downloaded: $file" );
+			
 			}
 			
 			if ( -e $file ) {
@@ -651,21 +677,19 @@ sub downloadArtwork {
 				}
 			}
 			else {
-				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to download artwork for " . $track->album->name );
+				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to download artwork for $albumname" );
 				
-				$cache->set( 'artwork_download_failed_' . $track->album->id, 60 );
+				$cache{"artwork_download_failed_$albumid"} = 1;
 			}
 			
 			# Don't hammer the artwork server
 #			sleep 1;
 		}
 
-		$progress->update( $track->album->name );
+		$progress->update( $albumname );
 	}
 
 	$progress->final($count) if $count;
-
-	$cache->clear();
 
 	Slim::Music::Import->endImporter('downloadArtwork');
 }
@@ -675,12 +699,8 @@ sub wipeDownloadedArtwork {
 	
 	main::DEBUGLOG && $importlog->is_debug && $importlog->debug('Wiping artwork download folder');
 	
-	my $cacheDir = catdir( $prefs->get('cachedir'), 'AutoArtwork' );
+	my $cacheDir = catdir( $prefs->get('cachedir'), 'DownloadedArtwork' );
 	rmtree $cacheDir if -d $cacheDir;
-	
-	# Wipe the Artwork cache
-	my $cache = Slim::Utils::Cache->new('Artwork', 1, 1);
-	$cache->clear();
 }
 
 1;
