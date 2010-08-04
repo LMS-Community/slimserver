@@ -694,6 +694,11 @@ SqueezeJS.SonginfoParser = {
 						size: width
 					});
 				}
+
+				// some internal logos come without resizing parameters - add them here if size is defined
+				else if (coverart && width) {
+					coverart = coverart.replace(/(icon)(\.\w+)$/, "$1_" + width + 'x' + width + "_p$2");
+				}
 			}
 			else {
 				coverart = this.defaultCoverart(result.playlist_loop[0].coverid, width);
