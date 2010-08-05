@@ -286,6 +286,11 @@ sub shuffle {
 	) {
 		return 0;
 	}
+
+	# Allow plugins to inhibit shuffle mode
+	if ($client->shuffleInhibit) {
+		return 0;
+	}
 	
 	return $prefs->client($client)->get('shuffle');
 }

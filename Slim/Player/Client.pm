@@ -137,7 +137,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								sleepTime pendingPrefChanges _pluginData
 								alarmData knobData
 								modeStack modeParameterStack playlist chunks
-								shufflelist syncSelections searchTerm
+								shufflelist shuffleInhibit syncSelections searchTerm
 								updatePending httpState
 								disconnected
 							));
@@ -245,6 +245,7 @@ sub new {
 		# playlist state
 		playlist                => [],
 		shufflelist             => [],
+		shuffleInhibit          => undef,
 		startupPlaylistLoading  => undef,
 		_currentPlaylist        => undef,
 		currentPlaylistModified => undef,
