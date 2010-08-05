@@ -611,11 +611,15 @@ sub downloadArtwork {
 				next;
 			} 
 
+			# let's join all contributors together, in case the album artist doesn't match (eg. compilations)
+			my @artists;
+			foreach ($track->album->contributors) {
+				push @artists, $_->name;
+			}
+
 			# we'll not only try the album artist, but track artists too
 			# iTunes tends to oddly flag albums as compilations when they're not
-			foreach my $contributor ($track->album->contributor->name, $track->artists) {
-				
-				$contributor = $contributor->name if blessed($contributor);
+			foreach my $contributor ( $track->album->contributor->name, join(',', @artists) ) {
 				
 				my $url = $snURL
 					. '?album=' . URI::Escape::uri_escape_utf8( $albumname )
@@ -651,7 +655,7 @@ sub downloadArtwork {
 							last;
 						}
 					}
-					elsif ( $res->code == 404 ) {
+					else {
 						main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to get artwork url for $albumname/$contributor" );
 						
 						$cache{ "artwork_download_failed_$url" } = 1;
@@ -678,8 +682,7 @@ sub downloadArtwork {
 				}
 			}
 			
-			# if this is a compilation, try with next track artist, otherwise we'll give up on this album
-			elsif (!$track->album->compilation) {
+			else {
 				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to download artwork for $albumname" );
 				
 				$cache{"artwork_download_failed_$albumid"} = 1;
