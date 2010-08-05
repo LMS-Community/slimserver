@@ -596,6 +596,7 @@ sub downloadArtwork {
 	while ( my $track = $tracks->next ) {
 
 		my $albumname = $track->album->name;
+		$progress->update( $albumname );
 		
 		# Only lookup albums that have artist names
 		if ( $track->album->contributor ) {
@@ -641,7 +642,7 @@ sub downloadArtwork {
 	
 					if ( $res->is_success ) {
 						# Save the artwork to a cache file
-						my ($ext) = $res->content_type =~ m{image/(jpg|gif|png)$};
+						my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
 						$file = catfile( $cacheDir, $albumid ) . ".$ext";
 		
 						if ( write_file( $file, { binmode => ':raw' }, $res->content ) ) {
@@ -687,8 +688,6 @@ sub downloadArtwork {
 			# Don't hammer the artwork server
 #			sleep 1;
 		}
-
-		$progress->update( $albumname );
 	}
 
 	$progress->final($count) if $count;
