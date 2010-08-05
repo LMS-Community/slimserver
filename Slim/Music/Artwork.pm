@@ -676,7 +676,9 @@ sub downloadArtwork {
 					$track->album->update;
 				}
 			}
-			else {
+			
+			# if this is a compilation, try with next track artist, otherwise we'll give up on this album
+			elsif (!$track->album->compilation) {
 				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to download artwork for $albumname" );
 				
 				$cache{"artwork_download_failed_$albumid"} = 1;
