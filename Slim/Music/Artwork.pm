@@ -645,7 +645,7 @@ sub downloadArtwork {
 						my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
 						$file = catfile( $cacheDir, $albumid ) . ".$ext";
 		
-						if ( write_file( $file, { binmode => ':raw' }, $res->content ) ) {
+						if ( $ext && write_file( $file, { binmode => ':raw' }, $res->content ) ) {
 							$cache{$url} = $file;
 							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
 							last;
