@@ -6732,7 +6732,7 @@ SETUP_DOWNLOAD_ARTWORK
 	EN	Autocomplete Artwork
 
 SETUP_DOWNLOAD_ARTWORK_DESC
-	EN	Squeezebox Server can try to complete missing artwork for your music files while it's scanning your library. This process will send artist and album information to mysqueezebox.com to discover matching cover art. Please note that this process can slow down scanning considerably.
+	EN	Squeezebox Server can try to complete missing artwork for your music files while it's scanning your library. This process will send artist and album information to mysqueezebox.com to discover matching cover art. Please note that this process can slow down scanning considerably.<br><br>Artwork is provided by <a href="http://last.fm" target="_blank">Last.fm</a>.
 
 SETUP_DOWNLOAD_ARTWORK_ON
 	EN	Download album artwork (experimental)
