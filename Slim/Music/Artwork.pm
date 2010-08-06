@@ -578,7 +578,7 @@ sub downloadArtwork {
 	# Agent for talking to SN
 	my $ua = LWP::UserAgent->new(
 		agent   => 'Squeezebox Server/' . $::VERSION,
-		timeout => 30,
+		timeout => 10,
 	);
 	
 	# Add an auth header
