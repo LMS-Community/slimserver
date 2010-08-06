@@ -622,9 +622,18 @@ sub downloadArtwork {
 				push @artists, 'Various Artists';
 			}
 
+			my $trackartists = join(',', @artists);
+			my $albumartist  = $track->album->contributor->name;
+			
+			if ( lc($trackartists) eq lc($albumartist) ) {
+				$trackartists = undef;
+			}			
+
 			# we'll not only try the album artist, but track artists too
 			# iTunes tends to oddly flag albums as compilations when they're not
-			foreach my $contributor ( $track->album->contributor->name, join(',', @artists) ) {
+			foreach my $contributor ( $albumartist, $trackartists ) {
+				
+				next unless $contributor;
 				
 				my $url = $snURL
 					. '?album=' . URI::Escape::uri_escape_utf8( $albumname )
