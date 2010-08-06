@@ -8,6 +8,13 @@
 		<input type="text" class="stdedit selectFolder" name="pref_artfolder" id="artfolder" value="[% prefs.pref_artfolder %]" size="40">
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_DOWNLOAD_ARTWORK" desc="SETUP_DOWNLOAD_ARTWORK_DESC" %]
+		<select class="stdedit" name="pref_downloadArtwork" id="downloadArtwork">
+			<option [% IF  prefs.pref_downloadArtwork %]selected [% END %]value="1">[% "SETUP_DOWNLOAD_ARTWORK_ON" | string  %]</option>
+			<option [% IF !prefs.pref_downloadArtwork %]selected [% END %]value="0">[% "SETUP_DOWNLOAD_ARTWORK_OFF" | string  %]</option>
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_GUESSFILEFORMATS" desc="SETUP_GROUP_GUESSFILEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_guessFileFormats %]
 			<input type="text" class="stdedit" name="pref_guessFileFormats[% loop.index %]" id="pref_guessFileFormats[% loop.index %]" value="[% format %]" size="40"><br>
