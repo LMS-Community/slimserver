@@ -616,6 +616,11 @@ sub downloadArtwork {
 			foreach ($track->album->contributors) {
 				push @artists, $_->name;
 			}
+			
+			# last.fm stores compilations under the non-localized "Various Artists" artist
+			if ($track->album->compilation) {
+				push @artists, 'Various Artists';
+			}
 
 			# we'll not only try the album artist, but track artists too
 			# iTunes tends to oddly flag albums as compilations when they're not
@@ -626,11 +631,6 @@ sub downloadArtwork {
 					. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
 					. '&mbid=' . $album_mbid;
 
-				if ( $cache{ "artwork_download_failed_$url" } ) {
-					main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname/$contributor, previous search failed" );
-					next;
-				} 
-					
 				$file = $cache{$url};
 				my $res;
 					
@@ -654,11 +654,6 @@ sub downloadArtwork {
 							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
 							last;
 						}
-					}
-					else {
-						main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to get artwork url for $albumname/$contributor" );
-						
-						$cache{ "artwork_download_failed_$url" } = 1;
 					}
 				}
 			
