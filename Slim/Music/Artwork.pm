@@ -631,7 +631,7 @@ sub downloadArtwork {
 					. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
 					. '&mbid=' . $album_mbid;
 
-				$file = $cache{$url};
+				$file = $cache{ "artwork_download_$albumid" };
 				my $res;
 					
 				if ( $file && -e $file ) {
@@ -650,7 +650,7 @@ sub downloadArtwork {
 						$file = catfile( $cacheDir, $albumid ) . ".$ext";
 		
 						if ( $ext && write_file( $file, { binmode => ':raw' }, $res->content ) ) {
-							$cache{$url} = $file;
+							$cache{ "artwork_download_$albumid" } = $file;
 							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
 							last;
 						}
