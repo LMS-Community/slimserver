@@ -48,6 +48,7 @@ sub default_dbsource { 'dbi:SQLite:dbname=%s' }
 
 # Remember if the main server is running or not, to avoid LWP timeout delays
 my $serverDown = 0;
+use constant MAX_RETRIES => 5;
 
 # Scanning flag is set during scanning	 
 my $SCANNING = 0;
@@ -376,7 +377,7 @@ sub postConnect {
 sub updateProgress {
 	my $class = shift;
 	
-	return if $serverDown;
+	return if $serverDown > MAX_RETRIES;
 	
 	require LWP::UserAgent;
 	require HTTP::Request;
@@ -411,13 +412,14 @@ sub updateProgress {
 		else {
 			main::INFOLOG && $log->is_info && $log->info('Notify to server OK');
 		}
+		$serverDown = 0;
 	}
 	else {
 		main::INFOLOG && $log->is_info && $log->info( 'Notify to server failed: ' . $res->status_line );
 		
 		if ( $res->content =~ /timeout|refused/ ) {
 			# Server is down, avoid further requests
-			$serverDown = 1;
+			$serverDown++;
 		}
 	}
 }
