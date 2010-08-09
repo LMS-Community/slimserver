@@ -544,7 +544,7 @@ sub downloadArtwork {
 	return unless $prefs->get('downloadArtwork');
 
 	# Artwork requires an SN account
-	if ( !$prefs->get('sn_email') ) {
+	if ( !$prefs->get('sn_email') && !Slim::Utils::OSDetect::isSqueezeOS() ) {
 		$importlog->warn( "Automatic artwork download requires a SqueezeNetwork account" );
 		Slim::Music::Import->endImporter('downloadArtwork');
 		return;
@@ -584,9 +584,22 @@ sub downloadArtwork {
 	);
 	
 	# Add an auth header
-	my $email = $prefs->get('sn_email');
-	my $pass  = $prefs->get('sn_password_sha');
-	$ua->default_header( sn_auth => $email . ':' . Digest::SHA1::sha1_base64( $email . $pass ) );
+	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+		
+		# login using MAC/UUID on TinySBS
+		my $osDetails = Slim::Utils::OSDetect::details();
+		my $time = time();
+		
+		main::INFOLOG && $log->is_info && $log->info("Logging in as " . $osDetails->{mac});
+		
+		$ua->default_header( sn_auth_u => $osDetails->{mac} . '|' . $time . '|' . Digest::SHA1::sha1_base64( $osDetails->{uuid} . $time ) );
+	}
+	
+	else {
+		my $email = $prefs->get('sn_email') || '';
+		my $pass  = $prefs->get('sn_password_sha') || '';
+		$ua->default_header( sn_auth => $email . ':' . Digest::SHA1::sha1_base64( $email . $pass ) );
+	}
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' );
 	
@@ -612,7 +625,7 @@ sub downloadArtwork {
 				
 				# Skip if we have already looked for this album before with no results
 				if ( $cache{ "artwork_download_failed_$albumid" } ) {
-					main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname, previous search failed" );
+					main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Skipping $albumname, previous search failed" );
 					next;
 				} 
 	
@@ -687,6 +700,9 @@ sub downloadArtwork {
 								$importlog->warn("Didn't receive image data: " . $res->content);
 							}
 						}
+						else {
+							$importlog->warn( sprintf("Got error %s: %s", $res->code, $res->content) );
+						}
 	
 						$importlog->warn( "Failed to download artwork for $albumname/$contributor" );
 						$cache{"artwork_download_failed_$base"} = 1;
@@ -719,10 +735,6 @@ sub downloadArtwork {
 				}
 			}
 			
-			if ( ++$i % 50 == 0 ) {
-				Slim::Schema->forceCommit;
-			}
-	
 			return 1;
 		}
 
