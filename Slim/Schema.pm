@@ -403,8 +403,6 @@ sub wipeDB {
 	if ($@) {
 		logError("Failed to clear & migrate schema: [$@]");
 	}
-
-	Slim::Music::Artwork->wipeDownloadedArtwork();
 	
 	main::INFOLOG && $log->is_info && $log->info("End schema_clear");
 }
@@ -2034,7 +2032,6 @@ sub wipeAllData {
 	
 	require Slim::Utils::ArtworkCache;
 	Slim::Utils::ArtworkCache->new()->wipe();
-	Slim::Music::Artwork->wipeDownloadedArtwork();
 
 	main::INFOLOG && logger('scan.import')->info("Wiped the database.");
 }
