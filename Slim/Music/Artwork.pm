@@ -574,6 +574,8 @@ sub downloadArtwork {
 			'bar'   => 1
 		});
 	}
+
+	$importlog->error("Starting downloadArtwork for $count tracks");
 	
 	# Agent for talking to SN
 	my $ua = LWP::UserAgent->new(
@@ -593,7 +595,10 @@ sub downloadArtwork {
 	
 	tie my %cache, 'Tie::Cache::LRU', 128;
 	
-	while ( my $track = $tracks->next ) {
+	my $i = 0;
+	
+	my $work = sub {
+	if ( my $track = $tracks->next ) {
 
 		my $albumname = $track->album->name;
 		$progress->update( $albumname );
@@ -635,35 +640,56 @@ sub downloadArtwork {
 				
 				next unless $contributor;
 				
-				my $url = $snURL
-					. '?album=' . URI::Escape::uri_escape_utf8( $albumname )
+				my $url = '?album=' . URI::Escape::uri_escape_utf8( $albumname )
 					. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
 					. '&mbid=' . $album_mbid;
 
-				$file = $cache{ "artwork_download_$albumid" };
+				my $base = catfile( $cacheDir, Digest::SHA1::sha1_hex($url) );
+
+				# if we've failed on that combination before, skip it
+				next if $cache{"artwork_download_failed_$base"};
+
+				$file = '';
 				my $res;
+				
+				foreach ( $cache{ "artwork_download_$albumid" }, _readFileCache($base) ) {
 					
-				if ( $file && -e $file ) {
+					if ($_ && -e $_) {
+						$file = $_;
+						last;
+					}
+					$file = '';
+					
+				}
+
+				if ( $file ) {
 					main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Artwork for $albumname/$contributor already downloaded: $file" );
 					last;
 				}
 				else {
 		
-					main::DEBUGLOG && $importlog->is_debug && $importlog->debug("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
+					main::INFOLOG && $importlog->is_info && $importlog->info("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
 					
-					$res = $ua->get($url);
+					$res = $ua->get($snURL . $url);
 	
 					if ( $res->is_success ) {
 						# Save the artwork to a cache file
 						my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
-						$file = catfile( $cacheDir, $albumid ) . ".$ext";
+						mkpath $base if !-d $base;
+						$file = catfile( $base, "cover.$ext");
 		
 						if ( $ext && write_file( $file, { binmode => ':raw' }, $res->content ) ) {
 							$cache{ "artwork_download_$albumid" } = $file;
 							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
 							last;
 						}
+						elsif ( $res->content_type =~ /text/i ) {
+							$importlog->warn("Didn't receive image data: " . $res->content);
+						}
 					}
+
+					$importlog->warn( "Failed to download artwork for $albumname/$contributor" );
+					$cache{"artwork_download_failed_$base"} = 1;
 				}
 			
 			}
@@ -687,28 +713,45 @@ sub downloadArtwork {
 			}
 			
 			else {
-				main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Failed to download artwork for $albumname" );
+				$importlog->warn( "Failed to download artwork for $albumname" );
 				
 				$cache{"artwork_download_failed_$albumid"} = 1;
 			}
-			
-			# Don't hammer the artwork server
-#			sleep 1;
 		}
+		
+		if ( ++$i % 50 == 0 ) {
+			Slim::Schema->forceCommit;
+		}
+
+		return 1;
 	}
 
-	$progress->final($count) if $count;
+		$progress->final($count) if $count;
+		$importlog->error( "downloadArtwork finished in " . $progress->duration );
+	
+		Slim::Music::Import->endImporter('downloadArtwork');
 
-	Slim::Music::Import->endImporter('downloadArtwork');
+		return 0
+	};
+	
+	if ( main::SCANNER ) {
+		# Non-async mode in scanner
+		while ( $work->() ) { }
+	}
+	else {
+		# Run async in main process
+		Slim::Utils::Scheduler::add_ordered_task($work);
+	}	
 }
 
-sub wipeDownloadedArtwork {
-	my $class = shift;
+sub _readFileCache {
+	my $base = shift;
 	
-	main::DEBUGLOG && $importlog->is_debug && $importlog->debug('Wiping artwork download folder');
+	opendir(DIR, $base) || return;
 	
-	my $cacheDir = catdir( $prefs->get('cachedir'), 'DownloadedArtwork' );
-	rmtree $cacheDir if -d $cacheDir;
+	my @f = grep /cover\.(?:jpe?g|png|gif)$/i, readdir(DIR);
+
+	return catdir($base, $f[0]) if @f;
 }
 
 1;
