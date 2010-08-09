@@ -590,7 +590,7 @@ sub downloadArtwork {
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' );
 	
-	my $cacheDir = catdir( $prefs->get('cachedir'), 'DownloadedArtwork' );
+	my $cacheDir = catdir( $prefs->get('librarycachedir'), 'DownloadedArtwork' );
 	mkpath $cacheDir if !-d $cacheDir;
 	
 	tie my %cache, 'Tie::Cache::LRU', 128;
