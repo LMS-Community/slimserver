@@ -598,133 +598,133 @@ sub downloadArtwork {
 	my $i = 0;
 	
 	my $work = sub {
-	if ( my $track = $tracks->next ) {
-
-		my $albumname = $track->album->name;
-		$progress->update( $albumname );
-		
-		# Only lookup albums that have artist names
-		if ( $track->album->contributor ) {
-
-			my $file;
-			my $albumid   = $track->album->id;
-			my $album_mbid= $track->album->musicbrainz_id;
-			
-			# Skip if we have already looked for this album before with no results
-			if ( $cache{ "artwork_download_failed_$albumid" } ) {
-				main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname, previous search failed" );
-				next;
-			} 
-
-			# let's join all contributors together, in case the album artist doesn't match (eg. compilations)
-			my @artists;
-			foreach ($track->album->contributors) {
-				push @artists, $_->name;
-			}
-			
-			# last.fm stores compilations under the non-localized "Various Artists" artist
-			if ($track->album->compilation) {
-				push @artists, 'Various Artists';
-			}
-
-			my $trackartists = join(',', @artists);
-			my $albumartist  = $track->album->contributor->name;
-			
-			if ( lc($trackartists) eq lc($albumartist) ) {
-				$trackartists = undef;
-			}			
-
-			# we'll not only try the album artist, but track artists too
-			# iTunes tends to oddly flag albums as compilations when they're not
-			foreach my $contributor ( $albumartist, $trackartists ) {
-				
-				next unless $contributor;
-				
-				my $url = '?album=' . URI::Escape::uri_escape_utf8( $albumname )
-					. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
-					. '&mbid=' . $album_mbid;
-
-				my $base = catfile( $cacheDir, Digest::SHA1::sha1_hex($url) );
-
-				# if we've failed on that combination before, skip it
-				next if $cache{"artwork_download_failed_$base"};
-
-				$file = '';
-				my $res;
-				
-				foreach ( $cache{ "artwork_download_$albumid" }, _readFileCache($base) ) {
-					
-					if ($_ && -e $_) {
-						$file = $_;
-						last;
-					}
-					$file = '';
-					
-				}
-
-				if ( $file ) {
-					main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Artwork for $albumname/$contributor already downloaded: $file" );
-					last;
-				}
-				else {
-		
-					main::INFOLOG && $importlog->is_info && $importlog->info("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
-					
-					$res = $ua->get($snURL . $url);
+		if ( my $track = $tracks->next ) {
 	
-					if ( $res->is_success ) {
-						# Save the artwork to a cache file
-						my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
-						mkpath $base if !-d $base;
-						$file = catfile( $base, "cover.$ext");
-		
-						if ( $ext && write_file( $file, { binmode => ':raw' }, $res->content ) ) {
-							$cache{ "artwork_download_$albumid" } = $file;
-							main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
+			my $albumname = $track->album->name;
+			$progress->update( $albumname );
+			
+			# Only lookup albums that have artist names
+			if ( $track->album->contributor ) {
+	
+				my $file;
+				my $albumid   = $track->album->id;
+				my $album_mbid= $track->album->musicbrainz_id;
+				
+				# Skip if we have already looked for this album before with no results
+				if ( $cache{ "artwork_download_failed_$albumid" } ) {
+					main::DEBUGLOG && $importlog->is_debug &&	$importlog->debug( "Skipping $albumname, previous search failed" );
+					next;
+				} 
+	
+				# let's join all contributors together, in case the album artist doesn't match (eg. compilations)
+				my @artists;
+				foreach ($track->album->contributors) {
+					push @artists, $_->name;
+				}
+				
+				# last.fm stores compilations under the non-localized "Various Artists" artist
+				if ($track->album->compilation) {
+					push @artists, 'Various Artists';
+				}
+	
+				my $trackartists = join(',', @artists);
+				my $albumartist  = $track->album->contributor->name;
+				
+				if ( lc($trackartists) eq lc($albumartist) ) {
+					$trackartists = undef;
+				}			
+	
+				# we'll not only try the album artist, but track artists too
+				# iTunes tends to oddly flag albums as compilations when they're not
+				foreach my $contributor ( $albumartist, $trackartists ) {
+					
+					next unless $contributor;
+					
+					my $url = '?album=' . URI::Escape::uri_escape_utf8( $albumname )
+						. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
+						. '&mbid=' . $album_mbid;
+	
+					my $base = catfile( $cacheDir, Digest::SHA1::sha1_hex($url) );
+	
+					# if we've failed on that combination before, skip it
+					next if $cache{"artwork_download_failed_$base"};
+	
+					$file = '';
+					my $res;
+					
+					foreach ( $cache{ "artwork_download_$albumid" }, _readFileCache($base) ) {
+						
+						if ($_ && -e $_) {
+							$file = $_;
 							last;
 						}
-						elsif ( $res->content_type =~ /text/i ) {
-							$importlog->warn("Didn't receive image data: " . $res->content);
-						}
+						$file = '';
+						
 					}
-
-					$importlog->warn( "Failed to download artwork for $albumname/$contributor" );
-					$cache{"artwork_download_failed_$base"} = 1;
-				}
+	
+					if ( $file ) {
+						main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Artwork for $albumname/$contributor already downloaded: $file" );
+						last;
+					}
+					else {
 			
-			}
-			
-			if ( -e $file ) {
-				$track->cover( $file );
-				$track->update;
-
-				$track->coverid( $track->generateCoverId({
-					cover => $file,
-					url   => $track->url,
-					mtime => $track->timestamp,
-					size  => $track->filesize,
-				}) );
-				$track->update;
-
-				if (!$track->album->artwork) {
-					$track->album->artwork( $track->coverid );
-					$track->album->update;
-				}
-			}
-			
-			else {
-				$importlog->warn( "Failed to download artwork for $albumname" );
-				
-				$cache{"artwork_download_failed_$albumid"} = 1;
-			}
-		}
+						main::INFOLOG && $importlog->is_info && $importlog->info("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
+						
+						$res = $ua->get($snURL . $url);
 		
-		if ( ++$i % 50 == 0 ) {
-			Slim::Schema->forceCommit;
+						if ( $res->is_success ) {
+							# Save the artwork to a cache file
+							my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
+							mkpath $base if !-d $base;
+							$file = catfile( $base, "cover.$ext");
+			
+							if ( $ext && write_file( $file, { binmode => ':raw' }, $res->content ) ) {
+								$cache{ "artwork_download_$albumid" } = $file;
+								main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Downloaded artwork for $albumname" );
+								last;
+							}
+							elsif ( $res->content_type =~ /text/i ) {
+								$importlog->warn("Didn't receive image data: " . $res->content);
+							}
+						}
+	
+						$importlog->warn( "Failed to download artwork for $albumname/$contributor" );
+						$cache{"artwork_download_failed_$base"} = 1;
+					}
+				
+				}
+				
+				if ( -e $file ) {
+					$track->cover( $file );
+					$track->update;
+	
+					$track->coverid( $track->generateCoverId({
+						cover => $file,
+						url   => $track->url,
+						mtime => $track->timestamp,
+						size  => $track->filesize,
+					}) );
+					$track->update;
+	
+					if (!$track->album->artwork) {
+						$track->album->artwork( $track->coverid );
+						$track->album->update;
+					}
+				}
+				
+				else {
+					$importlog->warn( "Failed to download artwork for $albumname" );
+					
+					$cache{"artwork_download_failed_$albumid"} = 1;
+				}
+			}
+			
+			if ( ++$i % 50 == 0 ) {
+				Slim::Schema->forceCommit;
+			}
+	
+			return 1;
 		}
-
-		return 1;
-	}
 
 		$progress->final($count) if $count;
 		$importlog->error( "downloadArtwork finished in " . $progress->duration );
