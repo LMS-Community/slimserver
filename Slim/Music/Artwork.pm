@@ -729,7 +729,7 @@ sub downloadArtwork {
 							$serverDown = 0;
 						}
 						else {
-							if ( $res->code =~ /^5/ ) {
+							if ( $res->code =~ /^5/ || $res->code == 403 ) {
 								$serverDown++;
 							}
 							$importlog->error( sprintf("Got error %s: %s", $res->code, $res->content) );
