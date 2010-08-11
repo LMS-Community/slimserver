@@ -10246,6 +10246,12 @@ BASS
 	SV	Bas
 	ZH_CN	低音
 
+FIXED_VOLUME
+	EN	Fixed Volume
+
+FIXED_VOLUME_100
+	EN	Fixed Volume 100%
+
 STEREOXL
 	CS	StereoXL
 	DA	StereoXL
