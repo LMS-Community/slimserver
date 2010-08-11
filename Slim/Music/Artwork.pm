@@ -37,6 +37,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
 
+use constant MAX_RETRIES => 5;
+
 # Global caches:
 my $artworkDir = '';
 my $log        = logger('artwork');
@@ -628,9 +630,10 @@ sub downloadArtwork {
 	tie my %cache, 'Tie::Cache::LRU', 128;
 	
 	my $i = 0;
+	my $serverDown = 0;
 	
 	my $work = sub {
-		if ( my $track = $tracks->next ) {
+		if ( $serverDown < MAX_RETRIES && (my $track = $tracks->next) ) {
 	
 			my $albumname = $track->album->name;
 			
@@ -722,8 +725,13 @@ sub downloadArtwork {
 							elsif ( $res->content_type =~ /text/i ) {
 								$importlog->warn("Didn't receive image data: " . $res->content);
 							}
+
+							$serverDown = 0;
 						}
 						else {
+							if ( $res->code =~ /^5/ ) {
+								$serverDown++;
+							}
 							$importlog->warn( sprintf("Got error %s: %s", $res->code, $res->content) );
 						}
 	
@@ -764,7 +772,13 @@ sub downloadArtwork {
 		}
 
 		$progress->final($count) if $count;
-		$importlog->error( "downloadArtwork finished in " . $progress->duration );
+	
+		if ($serverDown >= MAX_RETRIES) {
+			$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
+		}
+		else {
+			$importlog->error( "downloadArtwork finished in " . $progress->duration );
+		}
 	
 		Slim::Music::Import->endImporter('downloadArtwork');
 
