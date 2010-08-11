@@ -732,10 +732,10 @@ sub downloadArtwork {
 							if ( $res->code =~ /^5/ ) {
 								$serverDown++;
 							}
-							$importlog->warn( sprintf("Got error %s: %s", $res->code, $res->content) );
+							$importlog->error( sprintf("Got error %s: %s", $res->code, $res->content) );
 						}
 	
-						$importlog->warn( "Failed to download artwork for $albumname/$contributor" );
+						$importlog->error( "Failed to download artwork for $albumname/$contributor" );
 						$cache{"artwork_download_failed_$base"} = 1;
 					}
 				
