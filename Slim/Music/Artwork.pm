@@ -539,14 +539,19 @@ sub precacheAllArtwork {
 
 sub downloadArtwork {
 	my $class = shift;
+	my $cb    = shift; # optional callback when done (main process async mode)
 	
 	# don't try to run this in embedded mode
-	return unless $prefs->get('downloadArtwork');
-
+	if ( !$prefs->get('downloadArtwork') ) {
+		$cb && $cb->();
+		return;
+	}
+	
 	# Artwork requires an SN account
 	if ( !$prefs->get('sn_email') && !Slim::Utils::OSDetect::isSqueezeOS() ) {
 		$importlog->warn( "Automatic artwork download requires a SqueezeNetwork account" );
 		Slim::Music::Import->endImporter('downloadArtwork');
+		$cb && $cb->();
 		return;
 	}
 
@@ -762,6 +767,8 @@ sub downloadArtwork {
 		$importlog->error( "downloadArtwork finished in " . $progress->duration );
 	
 		Slim::Music::Import->endImporter('downloadArtwork');
+
+		$cb && $cb->();
 
 		return 0
 	};
