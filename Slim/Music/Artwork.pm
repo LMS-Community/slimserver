@@ -562,6 +562,20 @@ sub downloadArtwork {
 	}, {
 		'join'     => 'album',
 	});
+
+	my $dbh = Slim::Schema->dbh;
+
+	my $sth_update_tracks = $dbh->prepare( qq{
+	    UPDATE tracks
+	    SET    cover = ?, coverid = ?
+	    WHERE  album = ?
+	} );
+	
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
 	
 	my $progress = undef;
 	my $count    = $tracks->count;
@@ -614,20 +628,24 @@ sub downloadArtwork {
 		if ( my $track = $tracks->next ) {
 	
 			my $albumname = $track->album->name;
-			$progress->update( $albumname );
 			
 			# Only lookup albums that have artist names
 			if ( $track->album->contributor ) {
 	
 				my $file;
 				my $albumid   = $track->album->id;
-				my $album_mbid= $track->album->musicbrainz_id;
+
+				# for whatever reason the second track of an album will still get here, even if it has artwork. Skip it.
+				next if $cache{ "$albumid" };
 				
 				# Skip if we have already looked for this album before with no results
-				if ( $cache{ "artwork_download_failed_$albumid" } ) {
+				if ( $cache{ "failed_$albumid" } ) {
+					$progress->update( $albumname );
 					main::DEBUGLOG && $importlog->is_debug && $importlog->debug( "Skipping $albumname, previous search failed" );
 					next;
 				} 
+
+				my $album_mbid= $track->album->musicbrainz_id;
 	
 				# let's join all contributors together, in case the album artist doesn't match (eg. compilations)
 				my @artists;
@@ -711,27 +729,29 @@ sub downloadArtwork {
 				}
 				
 				if ( -e $file ) {
-					$track->cover( $file );
-					$track->update;
-	
-					$track->coverid( $track->generateCoverId({
+					my $coverid = $track->generateCoverId({
 						cover => $file,
 						url   => $track->url,
 						mtime => $track->timestamp,
 						size  => $track->filesize,
-					}) );
-					$track->update;
-	
-					if (!$track->album->artwork) {
-						$track->album->artwork( $track->coverid );
-						$track->album->update;
+					});
+					
+					my $c = $sth_update_tracks->execute( $file, $coverid, $albumid );
+					$sth_update_albums->execute( $coverid, $albumid );
+
+					# if the track update returned a number, we'll increase progress by this value
+					if ( $c ) {
+						$progress->update( $albumname, $progress->done() + $c );
 					}
+
+					$cache{ "$albumid" } = 1;
 				}
 				
 				else {
 					$importlog->warn( "Failed to download artwork for $albumname" );
+					$progress->update( $albumname );
 					
-					$cache{"artwork_download_failed_$albumid"} = 1;
+					$cache{"failed_$albumid"} = 1;
 				}
 			}
 			
