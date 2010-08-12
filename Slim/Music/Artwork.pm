@@ -561,6 +561,7 @@ sub downloadArtwork {
 	require Slim::Networking::SqueezeNetwork;
 	require Digest::SHA1;
 	require LWP::UserAgent;
+	require FileHandle;
 	
 	# Find distinct albums to check for artwork.
 	my $tracks = Slim::Schema->search('Track', {
@@ -696,12 +697,31 @@ sub downloadArtwork {
 			
 						$isInfo && $importlog->info("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
 						
-						my $content;
 						my $i = 0;
+						my ($content, $fh, $ext);
 						
 						my $res = $ua->get($snURL . $url,
 							':content_cb' => sub {
-								$content .= $_[0];
+								
+								if ( !$file ) {
+									# Save the artwork to a cache file
+									($ext) = $_[1]->content_type =~ m{image/(jpe?g|gif|png)$};
+									
+									if ( $ext ) {
+										mkpath $base unless -d $base;
+										$file = catfile( $base, "cover.$ext");
+										
+										$fh = FileHandle->new(">$file");
+										open($fh, ">>$file") || $importlog->error("Failed to create cache file: $file");
+									}
+								}
+								
+								if ( defined $fh ) {
+									print $fh $_[0];
+								}
+								else {
+									$content .= $_[0];
+								}
 								
 								if ( !($i++ % 10) ) {
 									# every now and then we give the streams some air to breath
@@ -709,26 +729,23 @@ sub downloadArtwork {
 								}
 							}
 						);
-						
-						if ( $res->is_success && $content ) {
-							# Save the artwork to a cache file
-							my ($ext) = $res->content_type =~ m{image/(jpe?g|gif|png)$};
-							mkpath $base if $ext && !-d $base;
-							$file = catfile( $base, "cover.$ext");
-			
-							if ( $ext && write_file( $file, { binmode => ':raw' }, $content ) ) {
-								$isDebug && $importlog->debug( "Successfully downloaded artwork for $albumname to $file" );
-								last;
-							}
-							elsif ( $res->content_type =~ /text/i ) {
-								$importlog->warn("Didn't receive image data: " . $content);
-							}
 
+						if ( defined $fh ) {
+							$fh->close;
+						}
+						
+						if ( $res->is_success && $ext ) {
+							$isDebug && $importlog->debug( "Successfully downloaded artwork for $albumname to $file" );
 							$serverDown = 0;
+							last;
 						}
 						else {
+							# 50x - server problem, 403 - authentication require
 							if ( $res->code =~ /^5/ || $res->code == 403 ) {
 								$serverDown++;
+							}
+							else {
+								$serverDown = 0;
 							}
 							$importlog->error( sprintf("Got error %s: %s", $res->code, $content) );
 						}
@@ -739,7 +756,7 @@ sub downloadArtwork {
 				
 				}
 				
-				if ( -e $file ) {
+				if ( $file && -e $file ) {
 					my $coverid = $track->generateCoverId({
 						cover => $file,
 						url   => $track->url,
@@ -769,13 +786,15 @@ sub downloadArtwork {
 			return 1;
 		}
 
-		$progress->final($count) if $count;
-	
-		if ($serverDown >= MAX_RETRIES) {
-			$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
-		}
-		else {
-			$importlog->error( "downloadArtwork finished in " . $progress->duration );
+		if ( $progress ) {
+			$progress->final($count) ;
+		
+			if ($serverDown >= MAX_RETRIES) {
+				$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
+			}
+			else {
+				$importlog->error( "downloadArtwork finished in " . $progress->duration );
+			}
 		}
 	
 		Slim::Music::Import->endImporter('downloadArtwork');
