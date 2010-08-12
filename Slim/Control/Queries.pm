@@ -2705,9 +2705,9 @@ sub statusQuery_filter {
 	}
 	
 	# ignore most prefset commands, but e.g. alarmSnoozeSeconds needs to generate a playerstatus update
-	if ( $request->isCommand( [ ['prefset'] ] ) ) {
+	if ( $request->isCommand( [['prefset', 'playerpref']] ) ) {
 		my $prefname = $request->getParam('_prefname');
-		if ( defined($prefname) && $prefname eq 'alarmSnoozeSeconds' ) {
+		if ( defined($prefname) && ( $prefname eq 'alarmSnoozeSeconds' || $prefname eq 'digitalVolumeControl' ) ) {
 			# this needs to pass through the filter
 		}
 		else {
@@ -2716,7 +2716,7 @@ sub statusQuery_filter {
 	}
 
 	# commands we ignore
-	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'playerpref']]);
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display']]);
 
 	# special case: the client is gone!
 	if ($request->isCommand([['client'], ['forget']])) {
@@ -2968,6 +2968,12 @@ sub statusQuery {
 		# send client pref for alarm timeout
 		my $alarm_timeout_seconds = $prefs->client($client)->get('alarmTimeoutSeconds');
 		$request->addResult('alarm_timeout_seconds', defined $alarm_timeout_seconds ? $alarm_timeout_seconds + 0 : 300);
+
+		# send client pref for digital volume control
+		my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
+		if ( defined($digitalVolumeControl) ) {
+			$request->addResult('digital_volume_control', $digitalVolumeControl + 0);
+		}
 
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');

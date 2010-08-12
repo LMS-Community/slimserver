@@ -73,6 +73,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivetonesettings', '_index', '_quantity'],
 		[1, 1, 1, \&toneSettingsQuery]);
 
+	Slim::Control::Request::addDispatch(['jivefixedvolumesettings', '_index', '_quantity'],
+		[1, 1, 1, \&fixedVolumeSettingsQuery]);
+
 	Slim::Control::Request::addDispatch(['jivestereoxl', '_index', '_quantity'],
 		[1, 1, 1, \&stereoXLQuery]);
 
@@ -1138,6 +1141,45 @@ sub lineOutQuery {
 
 }
 
+
+sub fixedVolumeSettingsQuery {
+
+	main::INFOLOG && $log->info("Begin function");
+	my $request        = shift;
+	my $client         = $request->client();
+	my $setting        = $request->getParam('cmd');
+
+
+	my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
+	my $currentSetting = 0;
+	if ( ( defined $digitalVolumeControl && $digitalVolumeControl == 0 ) ) {
+		$currentSetting = 1;
+	}
+
+	my @menu = ();
+	my $checkbox = {
+		text           => $client->string("FIXED_VOLUME_100"),
+		checkbox       => $currentSetting,
+		actions => {
+			on => {
+				player => 0,
+				cmd    => [ 'playerpref', 'digitalVolumeControl', 0 ],
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'playerpref', 'digitalVolumeControl', 1 ],
+			},
+		},
+	};
+
+	push @menu, $checkbox;
+
+	sliceAndShip($request, $client, \@menu);
+
+	$request->setStatusDone();
+}
+
+
 sub toneSettingsQuery {
 
 	main::INFOLOG && $log->info("Begin function");
@@ -1327,6 +1369,22 @@ sub playerSettingsMenu {
 					params => {
 						'cmd' => 'bass',
 					},
+				},
+			},
+		};
+	}
+
+	# send an option for fixed 100% volume setting is sent for any player that has a digital out
+	if ( $client->hasDigitalOut() ) {
+		push @menu, {
+			text           => $client->string("FIXED_VOLUME"),
+			id             => 'settingsFixedVolume',
+			node           => 'settingsAudio',
+			weight         => 100,
+			actions        => {
+				go => {
+					cmd    => ['jivefixedvolumesettings'],
+					player => 0,
 				},
 			},
 		};
