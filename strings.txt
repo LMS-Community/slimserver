@@ -20535,8 +20535,9 @@ PROGRESS_IMPORTER_NO_INFO
 	SV	Det finns ingen förloppsinformation för den föregående sökningen tillgänglig.
 
 TOTAL_TIME
+# SLT: please not that this isn't the total time of a playlist, but of the scanning process
 	CS	Celkem doba:
-	DA	Samlet spilletid:
+	DA	Samlet tid:
 	DE	Laufzeit:
 	EN	Total Time:
 	ES	Tiempo total:
