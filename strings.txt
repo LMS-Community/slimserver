@@ -18767,6 +18767,18 @@ WORDCLOCKOUTPUT_ENABLED
 	RU	Выход Word clock включен (Transporter — ведущее устройство)
 	SV	Word clock-utsignal har aktiverats (Transporter är master)
 
+SETUP_ROLLOFFSLOW
+	EN	DAC Roll-off Filter
+
+SETUP_ROLLOFFSLOW_DESC
+	EN	The AK4396 DAC defaults to using a sharp roll-off filter, with an option to use a slow roll-off filter instead. This option only affects the analog outputs.
+
+ROLLOFFSLOW_DISABLED
+	EN	Sharp Roll-off Filter
+
+ROLLOFFSLOW_ENABLED
+	EN	Slow Roll-off Filter
+
 SETUP_POWEROFFDAC
 	CS	Vypnout AUDIO
 	DA	Slå lyden fra

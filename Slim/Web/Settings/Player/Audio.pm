@@ -77,6 +77,10 @@ sub prefs {
 		push @prefs,'wordClockOutput';
 	}
 	
+	if ($client->hasRolloff()) {
+		push @prefs, 'rolloffSlow';
+	}
+	
 	if ($client->canDoReplayGain(0)) {
 		push @prefs,'replayGainMode';
 	}
