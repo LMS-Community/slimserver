@@ -347,65 +347,6 @@ sub jiveSetAlbumSort {
 	$request->setStatusDone();
 }
 
-sub playlistModeSettings {
-	main::INFOLOG && $log->info("Begin function");
-
-	my $client       = shift;
-	my $batch        = shift;
-	my $playlistmode = Slim::Player::Playlist::playlistMode($client);
-
-	my @menu = ();
-
-	my @modeStrings = ('DISABLED', 'OFF', 'ON', 'PARTY');
-	my @translatedModeStrings = map { ucfirst($client->string($_)) } @modeStrings;
-	my %modes = (
-		disabled => 1,
-		off      => 2,
-		on       => 3,
-		party    => 4,
-	);
-
-	#todo: move node to "betaFeatures",  left as advancedSettings for backwards compat 
-	my $choice = {
-		text          => $client->string('PLAYLIST_MODE'),
-		choiceStrings => [ @translatedModeStrings ] ,
-		selectedIndex => $modes{$playlistmode},
-		id            => 'settingsPlaylistMode',
-		node          => 'advancedSettings',
-		weight        => 100,
-		actions       => {
-			do => { 
-				choices => [ 
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'disabled' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'off' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'on' ],
-					},
-					{
-						player => 0,
-						cmd    => [ 'playlistmode', 'set', 'party' ],
-					},
-				], 
-			},
-		},
-	};
-
-	if ($batch) {
-		return $choice;
-	} else {
-		_notifyJive( [ $choice ], $client);
-	}
-
-}
-
-
 
 sub albumSortSettingsMenu {
 	main::INFOLOG && $log->info("Begin function");
@@ -450,6 +391,7 @@ sub albumSortSettingsItem {
 		text           => $client->string('ALBUMS_SORT_METHOD'),
 		id             => 'settingsAlbumSettings',
 		node           => 'advancedSettings',
+		iconStyle      => 'hm_advancedSettings',
 		weight         => 105,
 			actions        => {
 			go => {
@@ -1404,12 +1346,6 @@ sub playerSettingsMenu {
 	# always add shuffle
 	push @menu, shuffleSettings($client, 1);
 
-	# always add playlist mode
-	# Bugs: 13896, 13689, 8878
-	# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
-	# fix for bug 13689 will be the complete fix, but for now remove playlistModeSettings from SP menus entirely
-	# push @menu, playlistModeSettings($client, 1);
-
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
 		push @menu, {
@@ -1432,6 +1368,7 @@ sub playerSettingsMenu {
 			text           => $client->string("BASS"),
 			id             => 'settingsBass',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 10,
 			actions        => {
 				go => {
@@ -1450,6 +1387,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("FIXED_VOLUME"),
 			id             => 'settingsFixedVolume',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 100,
 			actions        => {
@@ -1467,6 +1405,7 @@ sub playerSettingsMenu {
 			text           => $client->string("TREBLE"),
 			id             => 'settingsTreble',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 20,
 			actions        => {
 				go => {
@@ -1486,6 +1425,7 @@ sub playerSettingsMenu {
 			text           => $client->string("STEREOXL"),
 			id             => 'settingsStereoXL',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 90,
 			actions        => {
 				go => {
@@ -1502,6 +1442,7 @@ sub playerSettingsMenu {
 			text           => $client->string("SETUP_ANALOGOUTMODE"),
 			id             => 'settingsLineOut',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 80,
 			actions        => {
 				go => {
@@ -1593,6 +1534,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 30,
 			actions        => {
@@ -1609,6 +1551,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 40,
 			actions        => {
@@ -1626,12 +1569,14 @@ sub playerSettingsMenu {
 		{
 			stringToken    => 'JIVE_PLAYER_DISPLAY_SETTINGS',
 			id             => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			isANode        => 1,
 			node           => 'advancedSettings',
 		},
 		{
 			text           => $client->string("PLAYER_BRIGHTNESS"),
 			id             => 'settingsPlayerBrightness',
+			iconStyle      => 'hm_settingsBrightness',
 			node           => 'squeezeboxDisplaySettings',
 			actions        => {
 				  go => {
@@ -1649,6 +1594,7 @@ sub playerSettingsMenu {
 			text           => $client->string("TEXTSIZE"),
 			id             => 'settingsPlayerTextsize',
 			node           => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'activeFont' ],
@@ -1660,6 +1606,7 @@ sub playerSettingsMenu {
 			text           => $client->string("OFFDISPLAYSIZE"),
 			id             => 'settingsPlayerOffTextsize',
 			node           => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'idleFont' ],
@@ -2394,7 +2341,6 @@ sub myMusicMenu {
 	my $batch = shift;
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
-	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 	my @myMusicMenu = ();
 	
 	if (Slim::Schema::hasLibrary()) {
@@ -2411,7 +2357,6 @@ sub myMusicMenu {
 						cmd    => ['artists'],
 						params => {
 							menu  => 'album',
-							party => $party,
 						},
 					},
 				},
@@ -2428,7 +2373,6 @@ sub myMusicMenu {
 						params => {
 							menu     => 'track',
 							sort     => $sort,
-							party    => $party,
 						},
 					},
 				},
@@ -2448,7 +2392,6 @@ sub myMusicMenu {
 						cmd    => ['genres'],
 						params => {
 							menu  => 'artist',
-							party => $party,
 						},
 					},
 				},
@@ -2464,7 +2407,6 @@ sub myMusicMenu {
 						cmd    => ['years'],
 						params => {
 							menu  => 'album',
-							party => $party,
 						},
 					},
 				},
@@ -2480,7 +2422,6 @@ sub myMusicMenu {
 						params => {
 							menu  => 'track',
 							sort  => 'new',
-							party => $party,
 						},
 					},
 				},
@@ -2498,7 +2439,6 @@ sub myMusicMenu {
 						cmd    => ['playlists'],
 						params => {
 							menu  => 'track',
-							party => $party,
 						},
 					},
 				},
@@ -2552,7 +2492,6 @@ sub searchMenu {
 	main::INFOLOG && $log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
-	my $party = ( $client && Slim::Player::Playlist::playlistMode($client) eq 'party' );
 	my @searchMenu = (
 	{
 		text           => $client->string('ARTISTS'),
@@ -2577,7 +2516,6 @@ sub searchMenu {
 					menu_all => '1',
 					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
-					party    => $party,
 					_searchType => 'artists',
 				},
                         },
@@ -2610,7 +2548,6 @@ sub searchMenu {
 					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'albums',
-					party    => $party,
 				},
 			},
 		},
@@ -2674,7 +2611,6 @@ sub searchMenu {
 					menu     => 'track',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
-					party    => $party,
 				},
                         },
 		},
@@ -2779,12 +2715,6 @@ sub jivePlayTrackAlbumCommand {
 	my $listIndex  = $request->getParam('list_index');
  	my $mode       = Slim::Player::Playlist::playlistMode($client);
 	
-	if ( ( $mode eq 'on' || $mode eq 'party' ) && $trackID ) {
-		# send the track with cmd of 'load' so playlistcontrol doesn't turn off playlistmode
-		$client->execute( ['playlistcontrol', 'cmd:load', "track_id:$trackID" ] );
-		return;
-	}
-
 	$client->execute( ["playlist", "clear"] );
 
 	# Database album browse is the simple case
