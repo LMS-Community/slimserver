@@ -556,25 +556,26 @@ sub currentSongLines {
 		my $currentTitle;
 		my $imgKey;
 		my $artwork;
+		my $remoteMeta;
 
 		if ( $song->isRemoteURL ) {
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
 			if ( $handler && $handler->can('getMetadataFor') ) {
 
-				my $meta = $handler->getMetadataFor( $client, $song->url );
+				$remoteMeta = $handler->getMetadataFor( $client, $song->url );
 
-				if ( $meta->{cover} ) {
+				if ( $remoteMeta->{cover} ) {
 					$imgKey = 'icon';
-					$artwork = $meta->{cover};
+					$artwork = $remoteMeta->{cover};
 				}
-				elsif ( $meta->{icon} ) {
+				elsif ( $remoteMeta->{icon} ) {
 					$imgKey = 'icon-id';
-					$artwork = $meta->{icon};
+					$artwork = $remoteMeta->{icon};
 				}
 				
 				# Format remote metadata according to title format
-				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $meta );
+				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $remoteMeta );
 			}
 			
 			# If that didn't return anything, use default title
@@ -614,14 +615,19 @@ sub currentSongLines {
 				my $title = Slim::Music::Info::displayText($client, $song, 'TITLE');
 
 				if ( ($currentTitle || '') ne ($title || '') && !Slim::Music::Info::isURL($title) ) {
+
 					$s2line2 = $title;
+
+				} elsif ($remoteMeta) {
+
+					$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM', $remoteMeta);
+					$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST', $remoteMeta);
 				}
 
 			} else {
 
 				$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM');
 				$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST');
-
 			}
 
 			$screen2 = {
