@@ -410,9 +410,8 @@ sub gotOPML {
 	}
 
 	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned with a parser
-	if ($params->{'item'}->{'type'} &&
-		($params->{'item'}->{'type'} eq 'replace' || 
-		 ($params->{'item'}->{'type'} eq 'playlist' && $params->{'item'}->{'parser'} && scalar @{ $opml->{'items'} || [] } == 1) ) ) {
+	if (($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'replace' || $opml->{'replaceparent'}) &&
+		 $opml->{'items'} && scalar @{$opml->{'items'}} == 1) {
 		my $item  = $opml->{'items'}[0];
 		my $title = $item->{'name'} || $item->{'title'};
 		my $url   = $item->{'url'};

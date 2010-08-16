@@ -1298,19 +1298,14 @@ sub _cliQuerySubFeed_done {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} &&
-		($subFeed->{'type'} eq 'replace' || 
-		 ($subFeed->{'type'} eq 'playlist' && $subFeed->{'parser'} && scalar @{ $feed->{'items'} } == 1) ) ) {
-		 	
-		# in the case of a replacable menu or playlist of one with parser update previous entry to avoid new menu level
+	if (($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' || $feed->{'replaceparent'}) && 
+		$feed->{'items'} && scalar @{$feed->{'items'}} == 1) {
+		# if child has 1 item and requests, update previous entry to avoid new menu level
+		delete $subFeed->{'url'};
 		my $item = $feed->{'items'}[0];
-		if ($subFeed->{'type'} eq 'replace') {
-			delete $subFeed->{'url'};
-		}
-		
 		for my $key (keys %$item) {
 			$subFeed->{ $key } = $item->{ $key };
-		}	
+		}
 	} 
 	else {
 		# otherwise insert items as subfeed
@@ -1424,9 +1419,6 @@ sub touchToPlay {
 		return 1;
 	}
 	elsif ( $item->{'on_select'} && $item->{'on_select'} eq 'play' ) {
-		return 1;
-	}
-	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:playlist)$/ && $item->{'parser'} ) {
 		return 1;
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
