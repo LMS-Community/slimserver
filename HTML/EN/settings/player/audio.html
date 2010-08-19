@@ -298,6 +298,21 @@
 			</select>
 		[% END %]
 	[% END %]
+	
+	[% IF prefs.exists('pref_rolloffSlow') %]
+		[% WRAPPER setting title="SETUP_ROLLOFFSLOW" desc="SETUP_ROLLOFFSLOW_DESC" %]
+			<select class="stdedit" name="pref_rolloffSlow" id="pref_rolloffSlow">
+	
+			[% FOREACH option = {
+				'0' => 'ROLLOFFSLOW_DISABLED',
+				'1' => 'ROLLOFFSLOW_ENABLED',
+			} %]
+				<option [% IF prefs.pref_rolloffSlow == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			[%- END -%]
+			
+			</select>
+		[% END %]
+	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% IF allowNoLimit %]

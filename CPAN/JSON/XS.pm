@@ -66,10 +66,10 @@ so, and even documents what "correct" means.
 =item * round-trip integrity
 
 When you serialise a perl data structure using only data types supported
-by JSON, the deserialised data structure is identical on the Perl level.
-(e.g. the string "2.0" doesn't suddenly become "2" just because it looks
-like a number). There minor I<are> exceptions to this, read the MAPPING
-section below to learn about those.
+by JSON and Perl, the deserialised data structure is identical on the Perl
+level. (e.g. the string "2.0" doesn't suddenly become "2" just because
+it looks like a number). There I<are> minor exceptions to this, read the
+MAPPING section below to learn about those.
 
 =item * strict checking of JSON correctness
 
@@ -103,7 +103,7 @@ package JSON::XS;
 
 use common::sense;
 
-our $VERSION = '2.27';
+our $VERSION = '2.3';
 our @ISA = qw(Exporter);
 
 our @EXPORT = qw(encode_json decode_json to_json from_json);
@@ -753,6 +753,11 @@ an error occurs, an exception will be raised as in the scalar context
 case. Note that in this case, any previously-parsed JSON texts will be
 lost.
 
+Example: Parse some JSON arrays/objects in a given string and return
+them.
+
+   my @objs = JSON::XS->new->incr_parse ("[5][7][1,2]");
+
 =item $lvalue_string = $json->incr_text
 
 This method returns the currently stored JSON fragment as an lvalue, that
@@ -991,6 +996,11 @@ represented as numeric (floating point) values, possibly at a loss of
 precision (in which case you might lose perfect roundtripping ability, but
 the JSON number will still be re-encoded as a JSON number).
 
+Note that precision is not accuracy - binary floating point values cannot
+represent most decimal fractions exactly, and when converting from and to
+floating point, JSON::XS only guarantees precision up to but not including
+the leats significant bit.
+
 =item true, false
 
 These JSON atoms become C<JSON::XS::true> and C<JSON::XS::false>,
@@ -1086,6 +1096,13 @@ You can force the type to be a JSON number by numifying it:
 You can not currently force the type in other, less obscure, ways. Tell me
 if you need this capability (but don't forget to explain why it's needed
 :).
+
+Note that numerical precision has the same meaning as under Perl (so
+binary to decimal conversion follows the same rules as in Perl, which
+can differ to other languages). Also, your perl interpreter might expose
+extensions to the floating point numbers of your platform, such as
+infinities or NaN's - these cannot be represented in JSON, and it is an
+error to pass those in.
 
 =back
 
@@ -1326,49 +1343,48 @@ L<http://dist.schmorp.de/misc/json/short.json>).
 
    {"method": "handleMessage", "params": ["user1",
    "we were just talking"], "id": null, "array":[1,11,234,-5,1e5,1e7,
-   true,  false]}
+   1,  0]}
 
 It shows the number of encodes/decodes per second (JSON::XS uses
 the functional interface, while JSON::XS/2 uses the OO interface
 with pretty-printing and hashkey sorting enabled, JSON::XS/3 enables
-shrink). Higher is better:
+shrink. JSON::DWIW/DS uses the deserialise function, while JSON::DWIW::FJ
+uses the from_json method). Higher is better:
 
-   module     |     encode |     decode |
-   -----------|------------|------------|
-   JSON 1.x   |   4990.842 |   4088.813 |
-   JSON::DWIW |  51653.990 |  71575.154 |
-   JSON::PC   |  65948.176 |  74631.744 |
-   JSON::PP   |   8931.652 |   3817.168 |
-   JSON::Syck |  24877.248 |  27776.848 |
-   JSON::XS   | 388361.481 | 227951.304 |
-   JSON::XS/2 | 227951.304 | 218453.333 |
-   JSON::XS/3 | 338250.323 | 218453.333 |
-   Storable   |  16500.016 | 135300.129 |
-   -----------+------------+------------+
+   module        |     encode |     decode |
+   --------------|------------|------------|
+   JSON::DWIW/DS |  86302.551 | 102300.098 |
+   JSON::DWIW/FJ |  86302.551 |  75983.768 |
+   JSON::PP      |  15827.562 |   6638.658 |
+   JSON::Syck    |  63358.066 |  47662.545 |
+   JSON::XS      | 511500.488 | 511500.488 |
+   JSON::XS/2    | 291271.111 | 388361.481 |
+   JSON::XS/3    | 361577.931 | 361577.931 |
+   Storable      |  66788.280 | 265462.278 |
+   --------------+------------+------------+
 
-That is, JSON::XS is about five times faster than JSON::DWIW on encoding,
-about three times faster on decoding, and over forty times faster
-than JSON, even with pretty-printing and key sorting. It also compares
-favourably to Storable for small amounts of data.
+That is, JSON::XS is almost six times faster than JSON::DWIW on encoding,
+about five times faster on decoding, and over thirty to seventy times
+faster than JSON's pure perl implementation. It also compares favourably
+to Storable for small amounts of data.
 
 Using a longer test string (roughly 18KB, generated from Yahoo! Locals
 search API (L<http://dist.schmorp.de/misc/json/long.json>).
 
-   module     |     encode |     decode |
-   -----------|------------|------------|
-   JSON 1.x   |     55.260 |     34.971 |
-   JSON::DWIW |    825.228 |   1082.513 |
-   JSON::PC   |   3571.444 |   2394.829 |
-   JSON::PP   |    210.987 |     32.574 |
-   JSON::Syck |    552.551 |    787.544 |
-   JSON::XS   |   5780.463 |   4854.519 |
-   JSON::XS/2 |   3869.998 |   4798.975 |
-   JSON::XS/3 |   5862.880 |   4798.975 |
-   Storable   |   4445.002 |   5235.027 |
-   -----------+------------+------------+
+   module        |     encode |     decode |
+   --------------|------------|------------|
+   JSON::DWIW/DS |   1647.927 |   2673.916 |
+   JSON::DWIW/FJ |   1630.249 |   2596.128 |
+   JSON::PP      |    400.640 |     62.311 |
+   JSON::Syck    |   1481.040 |   1524.869 |
+   JSON::XS      |  20661.596 |   9541.183 |
+   JSON::XS/2    |  10683.403 |   9416.938 |
+   JSON::XS/3    |  20661.596 |   9400.054 |
+   Storable      |  19765.806 |  10000.725 |
+   --------------+------------+------------+
 
 Again, JSON::XS leads by far (except for Storable which non-surprisingly
-decodes faster).
+decodes a bit faster).
 
 On large strings containing lots of high Unicode characters, some modules
 (such as JSON::PC) seem to decode faster than JSON::XS, but the result
@@ -1414,11 +1430,11 @@ will not end up in front of untrusted eyes.
 
 If you are using JSON::XS to return packets to consumption
 by JavaScript scripts in a browser you should have a look at
-L<http://jpsykes.com/47/practical-csrf-and-json-security> to see whether
-you are vulnerable to some common attack vectors (which really are browser
-design bugs, but it is still you who will have to deal with it, as major
-browser developers care only for features, not about getting security
-right).
+L<http://blog.archive.jpsykes.com/47/practical-csrf-and-json-security/> to
+see whether you are vulnerable to some common attack vectors (which really
+are browser design bugs, but it is still you who will have to deal with
+it, as major browser developers care only for features, not about getting
+security right).
 
 
 =head1 THREADS

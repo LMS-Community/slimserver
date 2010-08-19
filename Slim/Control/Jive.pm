@@ -341,7 +341,6 @@ sub jiveSetAlbumSort {
 }
 
 
-
 sub albumSortSettingsMenu {
 	main::INFOLOG && $log->info("Begin function");
 	my $request = shift;
@@ -385,6 +384,7 @@ sub albumSortSettingsItem {
 		text           => $client->string('ALBUMS_SORT_METHOD'),
 		id             => 'settingsAlbumSettings',
 		node           => 'advancedSettings',
+		iconStyle      => 'hm_advancedSettings',
 		weight         => 105,
 			actions        => {
 			go => {
@@ -1361,6 +1361,7 @@ sub playerSettingsMenu {
 			text           => $client->string("BASS"),
 			id             => 'settingsBass',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 10,
 			actions        => {
 				go => {
@@ -1379,6 +1380,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("FIXED_VOLUME"),
 			id             => 'settingsFixedVolume',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 100,
 			actions        => {
@@ -1396,6 +1398,7 @@ sub playerSettingsMenu {
 			text           => $client->string("TREBLE"),
 			id             => 'settingsTreble',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 20,
 			actions        => {
 				go => {
@@ -1415,6 +1418,7 @@ sub playerSettingsMenu {
 			text           => $client->string("STEREOXL"),
 			id             => 'settingsStereoXL',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 90,
 			actions        => {
 				go => {
@@ -1431,6 +1435,7 @@ sub playerSettingsMenu {
 			text           => $client->string("SETUP_ANALOGOUTMODE"),
 			id             => 'settingsLineOut',
 			node           => 'settingsAudio',
+			iconStyle      => 'hm_settingsAudio',
 			weight         => 80,
 			actions        => {
 				go => {
@@ -1522,6 +1527,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 30,
 			actions        => {
@@ -1538,6 +1544,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
+			iconStyle      => 'hm_settingsAudio',
 			node           => 'settingsAudio',
 			weight         => 40,
 			actions        => {
@@ -1555,12 +1562,14 @@ sub playerSettingsMenu {
 		{
 			stringToken    => 'JIVE_PLAYER_DISPLAY_SETTINGS',
 			id             => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			isANode        => 1,
 			node           => 'advancedSettings',
 		},
 		{
 			text           => $client->string("PLAYER_BRIGHTNESS"),
 			id             => 'settingsPlayerBrightness',
+			iconStyle      => 'hm_settingsBrightness',
 			node           => 'squeezeboxDisplaySettings',
 			actions        => {
 				  go => {
@@ -1578,6 +1587,7 @@ sub playerSettingsMenu {
 			text           => $client->string("TEXTSIZE"),
 			id             => 'settingsPlayerTextsize',
 			node           => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'activeFont' ],
@@ -1589,6 +1599,7 @@ sub playerSettingsMenu {
 			text           => $client->string("OFFDISPLAYSIZE"),
 			id             => 'settingsPlayerOffTextsize',
 			node           => 'squeezeboxDisplaySettings',
+			iconStyle      => 'hm_advancedSettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'idleFont' ],
@@ -2287,9 +2298,119 @@ sub myMusicMenu {
 	my $batch = shift;
 	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'album';
-
-	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort, \&_libraryChanged);
+	my @myMusicMenu = ();
 	
+	if (Slim::Schema::hasLibrary()) {
+		
+		@myMusicMenu = (
+			{
+				text           => $client->string('BROWSE_BY_ARTIST'),
+				homeMenuText   => $client->string('BROWSE_ARTISTS'),
+				id             => 'myMusicArtists',
+				node           => 'myMusic',
+				weight         => 10,
+				actions        => {
+					go => {
+						cmd    => ['artists'],
+						params => {
+							menu  => 'album',
+						},
+					},
+				},
+			},		
+			{
+				text           => $client->string('BROWSE_BY_ALBUM'),
+				homeMenuText   => $client->string('BROWSE_ALBUMS'),
+				id             => 'myMusicAlbums',
+				node           => 'myMusic',
+				weight         => 20,
+				actions        => {
+					go => {
+						cmd    => ['albums'],
+						params => {
+							menu     => 'track',
+							sort     => $sort,
+						},
+					},
+				},
+				window         => {
+					menuStyle => 'album',
+					menuStyle => 'album',
+				},
+			},
+			{
+				text           => $client->string('BROWSE_BY_GENRE'),
+				homeMenuText   => $client->string('BROWSE_GENRES'),
+				id             => 'myMusicGenres',
+				node           => 'myMusic',
+				weight         => 30,
+				actions        => {
+					go => {
+						cmd    => ['genres'],
+						params => {
+							menu  => 'artist',
+						},
+					},
+				},
+			},
+			{
+				text           => $client->string('BROWSE_BY_YEAR'),
+				homeMenuText   => $client->string('BROWSE_YEARS'),
+				id             => 'myMusicYears',
+				node           => 'myMusic',
+				weight         => 40,
+				actions        => {
+					go => {
+						cmd    => ['years'],
+						params => {
+							menu  => 'album',
+						},
+					},
+				},
+			},
+			{
+				text           => $client->string('BROWSE_NEW_MUSIC'),
+				id             => 'myMusicNewMusic',
+				node           => 'myMusic',
+				weight         => 50,
+				actions        => {
+					go => {
+						cmd    => ['albums'],
+						params => {
+							menu  => 'track',
+							sort  => 'new',
+						},
+					},
+				},
+				window        => {
+					menuStyle => 'album',
+				},
+			},
+			{
+				text           => $client->string('SAVED_PLAYLISTS'),
+				id             => 'myMusicPlaylists',
+				node           => 'myMusic',
+				weight         => 80,
+				actions        => {
+					go => {
+						cmd    => ['playlists'],
+						params => {
+							menu  => 'track',
+						},
+					},
+				},
+			},
+			{
+				text           => $client->string('SEARCH'),
+				id             => 'myMusicSearch',
+				node           => 'myMusic',
+				isANode        => 1,
+				weight         => 90,
+			},
+		);
+		# add the items for under mymusicSearch
+		my $searchMenu = searchMenu(1, $client);
+		@myMusicMenu = (@myMusicMenu, @$searchMenu);
 	
 	if (!$batch) {
 		my %newMenuItems = map {$_->{'id'} => 1} @$myMusicMenu;
@@ -2493,6 +2614,96 @@ sub menuNotification {
 	my $client           = $request->clientid();
 	main::INFOLOG && $log->is_info && $log->info("Menustatus notification sent:", $action, '->', ($client || 'all'));
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
+}
+
+sub jivePlayTrackPlaylistCommand {
+
+	main::INFOLOG && $log->info("Begin function");
+
+	my $request    = shift;
+	my $client     = $request->client || return;
+	my $playlistID = $request->getParam('playlist_id');
+	my $listIndex  = $request->getParam('list_index');
+	
+	$client->execute( ["playlist", "clear"] );
+
+	if ( !defined ($playlistID) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# load the playlist
+	$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
+	# jump to the correct index
+	$client->execute( ["playlist", "jump", $listIndex] );
+
+	$request->setStatusDone();
+}
+
+sub jivePlayTrackAlbumCommand {
+
+	main::INFOLOG && $log->info("Begin function");
+
+	my $request    = shift;
+	my $client     = $request->client || return;
+	my $albumID    = $request->getParam('album_id');
+	my $artistID   = $request->getParam('artist_id');
+	my $trackID    = $request->getParam('track_id');
+	my $playlistID = $request->getParam('playlist_id');
+	my $folder     = $request->getParam('folder')|| undef;
+	my $listIndex  = $request->getParam('list_index');
+ 	my $mode       = Slim::Player::Playlist::playlistMode($client);
+	
+	$client->execute( ["playlist", "clear"] );
+
+	# Database album browse is the simple case
+	if ( $albumID ) {
+		if ($artistID) {
+			$client->execute( ["playlist", "addtracks", { 'contributor.id' => $artistID, 'album.id' => $albumID } ] );
+		} else {
+			$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
+		}
+		$client->execute( ["playlist", "jump", $listIndex] );
+
+	}
+
+	elsif ( $playlistID ) {
+		# load the playlist
+		$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
+		# jump to the correct index
+		$client->execute( ["playlist", "jump", $listIndex] );
+	}
+
+	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item
+	elsif ( $folder && defined $listIndex ) {
+
+		my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+		Slim::Player::Playlist::shuffle($client, 0);
+
+		my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
+			url => $folder,
+		} );
+
+		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
+
+		# filter out folders
+		@{$items} = grep { Slim::Music::Info::isSong($_) }
+		# make sure we get a valid path
+		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $folder) }
+		@$items;
+
+		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
+
+		$client->execute(['playlist', 'clear']);
+		$client->execute(['playlist', 'addtracks', 'listref', $items]);
+		$client->execute(['playlist', 'jump', $listIndex]);
+
+		if ($wasShuffled) {
+			$client->execute(['playlist', 'shuffle', 1]);
+		}
+	}
+
+	$request->setStatusDone();
 }
 
 sub jivePlaylistsCommand {

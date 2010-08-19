@@ -1,5 +1,24 @@
 <h2><a name="v7.6.0" id="v7.6.0"></a>Version 7.6.0</h2>
 <ul>
+	<li>Firmware updates:</li>
+	<ul>
+		<li>Boom - Version 54<br />	
+			Squeezebox 2/3 - Version 134<br />
+			Transporter - Version 84<br />
+			Receiver - Version 69
+		</li>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3932">#3932</a> - (Transporter) Discrete IR codes for power_on, power_off and digital_inputs</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4682">#4682</a> - Send WOL while in connecting state and receiving discrete power_on IR code</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=12319">#12319</a> - (Boom) Change RTC alarm time to 1 hour (was 1 minute)</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15693">#15693</a> - (Transporter) Fix for spurious AC voltage readings</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16442">#16442</a> - (Transporter) audr command to change the AK4396 rolloff filter</li>
+			<li>(Boom) Discrete IR codes for power_on, power_off and line_in</li>
+			<li>Support for output_channels flags, to output only left or right channel, useful with synced Booms.</li>
+		</ul>
+	</ul>
+	<br />
+	
 	<li>New Features:</li>
 	<ul>
 		<li>Native decoding for WMA Pro and WMA Lossless has been added to Radio and Touch.</li>
@@ -16,6 +35,7 @@
 		</ul>
 		<li>MP3 cue sheet tracks are now played without gaps. A full rescan is required and scan time will be slower for these tracks.</li>
 		<li>Harmony remote integration: Discrete IR codes to play presets 1-6.</li>
+		<li>Transporter: DAC roll-off filter can now be toggled between sharp and slow.</li>
 	</ul>
 	<br />
 	
@@ -36,6 +56,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16280">#16280</a> - SB Touch: Fix ambient light calculation.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16332">#16332</a> - SB Touch: Disable proximity LEDs after startup.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16365">#16365</a> - SB Touch / Radio: Reduce ambient light sensor polling.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16442">#16442</a> - Choice of Transporter roll-off filter</li>
 		<li>SB Radio: Fixed hostname</li>
 		<li>SB Controller, Radio, Touch: Updated busybox to 1.16.2</li>
 	</ul>

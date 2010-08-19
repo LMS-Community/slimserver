@@ -45,6 +45,7 @@ our $defaultPrefs = {
 	'polarityInversion' => 0,
 	'fxloopSource' => 0,
 	'fxloopClock' => 0,
+	'rolloffSlow' => 0,
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -80,6 +81,7 @@ sub reconnect {
 
 	$client->updateClockSource();
 	$client->updateEffectsLoop();
+	$client->updateRolloff();
 
 	# Update the knob in reconnect - as that's the last function that is
 	# called when a new or pre-existing client connects to the server.
@@ -213,6 +215,14 @@ sub updateEffectsLoop {
 		$prefs->client($client)->get('fxloopClock'),
 		);
 	$client->sendFrame('audf', \$data);
+}
+
+sub updateRolloff {
+	my $client = shift;
+
+	my $data = pack 'C', $prefs->client($client)->get('rolloffSlow') || 0;
+	
+	$client->sendFrame('audr', \$data);
 }
 
 sub updateKnob {
@@ -360,6 +370,8 @@ sub hasPreAmp {
 sub hasFrontPanel {
 	return 1;
 }
+
+sub hasRolloff { 1 }
 
 # SN only, this checks that the player's firmware version supports compression
 sub hasCompression {

@@ -265,6 +265,11 @@ sub _resizeImage {
 				"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
 			);
 		}
+		elsif ( $url =~ m{^http} ) {
+			return Slim::Networking::SqueezeNetwork->url(
+				"/public/imageproxy?w=$width&h=$height&u=$url"
+			);
+		}
 		
 		# sometimes we'll need to prepend the webroot to our url
 		$url = $prefix . $url;
