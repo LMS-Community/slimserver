@@ -379,8 +379,8 @@ sub _gotTrack {
 	# Cache the rest of the track's metadata
 	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
 	my $meta = {
-		artist    => $info->{artist},
-		album     => $info->{album},
+		artist    => $info->{artist_name},
+		album     => $info->{album_name},
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
