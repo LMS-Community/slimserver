@@ -594,10 +594,11 @@ sub downloadArtwork {
 	$importlog->error("Starting downloadArtwork for $count tracks");
 
 	# don't load these modules unless we get here, as they're pulling in a lot of dependencies
-	require Digest::SHA1;
 	require Slim::Networking::SqueezeNetwork;
+
 	if ( main::SCANNER ) {
 		require LWP::UserAgent;
+		require HTTP::Headers;
 	}
 	else {
 		require Slim::Networking::SimpleAsyncHTTP;
@@ -605,27 +606,7 @@ sub downloadArtwork {
 	}
 
 	# Add an auth header
-	my $authHeader;
-	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
-		
-		# login using MAC/UUID on TinySBS
-		my $osDetails = Slim::Utils::OSDetect::details();
-		my $time = time();
-		
-		main::INFOLOG && $log->is_info && $log->info("Logging in as " . $osDetails->{mac});
-		
-		$authHeader = {
-			sn_auth_u => $osDetails->{mac} . '|' . $time . '|' . Digest::SHA1::sha1_base64( $osDetails->{uuid} . $time ),
-		};
-	}
-	
-	else {
-		my $email = $prefs->get('sn_email') || '';
-		my $pass  = $prefs->get('sn_password_sha') || '';
-		$authHeader = {
-			sn_auth => $email . ':' . Digest::SHA1::sha1_base64( $email . $pass )
-		};
-	}
+	my $authHeader = Slim::Networking::SqueezeNetwork->getAuthHeaders();
 
 	my $cacheDir = catdir( $prefs->get('librarycachedir'), 'DownloadedArtwork' );
 	mkpath $cacheDir if !-d $cacheDir;
@@ -634,14 +615,14 @@ sub downloadArtwork {
 	
 	if ( main::SCANNER ) {
 		$ua = LWP::UserAgent->new(
-			agent           => 'Squeezebox Server/' . $::VERSION,
-			timeout         => 10,
-			default_headers => [ $authHeader ],
-		)
+			agent   => 'Squeezebox Server/' . $::VERSION,
+			timeout => 10,
+		);
+		$ua->default_header($authHeader->[0] => $authHeader->[1]);
 	}
 
 	while ( _downloadArtwork({
-		headers           => [ $authHeader ],
+		headers           => $authHeader,
 		snUrl             => Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' ),
 		tracks            => $tracks,
 		count             => $count,
@@ -864,7 +845,7 @@ sub _gotArtwork {
 
 	if ( $error ) {
 		# 50x - server problem, 403 - authentication required
-		if ( $error =~ /^5/ || $error == 403 ) {
+		if ( $error =~ /^(:5|403)/ ) {
 			$params->{serverDown}++;
 		}
 		else {
