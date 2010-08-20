@@ -678,7 +678,6 @@ sub _downloadArtwork {
 			
 			# Skip if we have already looked for this album before with no results
 			if ( $lastFile{ "failed_$albumid" } ) {
-				$params->{progress}->update( $albumname ) if $params->{progress};
 				$isDebug && $importlog->debug( "Skipping $albumname, previous search failed" );
 			} 
 			
@@ -712,6 +711,11 @@ sub _downloadArtwork {
 				$params->{title}      = $params->{albumname} . '/' . $artist;
 				$params->{track}      = $track;
 			}
+
+			# update the progress status unless we give this track another try with a different contributor
+			if ( $params->{progress} ) {
+				$params->{progress}->update( $albumname );
+			}
 		}
 		
 		# nothing left to do
@@ -727,7 +731,7 @@ sub _downloadArtwork {
 	
 		# if we're done or have failed on that combination before, skip it
 		if ( $done || $lastFile{ "failed_" . $params->{albumid} } || $lastFile{ "failed_$base" } ) {
-			# nothing to do here...
+			# nothing really to do here... 
 		}
 		
 		# check whether we already have cached artwork from earlier lookup
@@ -867,7 +871,6 @@ sub _gotArtwork {
 			$params->{serverDown} = 0;
 		}
 	
-		$params->{progress}->update( $params->{title} ) if $params->{progress};
 		$importlog->error( "Failed to download artwork for $params->{title}: " . $error );
 		$lastFile{ "failed_$base" } = 1;
 	}	
@@ -902,7 +905,7 @@ sub _setCoverArt {
 
 		# if the track update returned a number, we'll increase progress by this value
 		if ( $c && $progress ) {
-			$progress->update( $params->{title}, $progress->done() + $c );
+			$progress->update( $params->{title}, $progress->done() + $c - 1 );
 		}
 
 		$lastFile{ $albumid } = 1;
@@ -910,7 +913,6 @@ sub _setCoverArt {
 	
 	else {
 		$importlog->warn( "Failed to download artwork for $params->{title}" );
-		$progress->update( $params->{title} ) if $progress;
 		
 		$lastFile{ "failed_$albumid" } = 1;
 	}
