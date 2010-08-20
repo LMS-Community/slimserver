@@ -556,12 +556,6 @@ sub downloadArtwork {
 		$cb && $cb->();
 		return;
 	}
-
-	# don't load these modules unless we get here, as they're pulling in a lot of dependencies
-	require Slim::Networking::SqueezeNetwork;
-	require Digest::SHA1;
-	require LWP::UserAgent;
-	require FileHandle;
 	
 	# Find distinct albums to check for artwork.
 	my $tracks = Slim::Schema->search('Track', {
@@ -598,14 +592,20 @@ sub downloadArtwork {
 	}
 
 	$importlog->error("Starting downloadArtwork for $count tracks");
-	
-	# Agent for talking to SN
-	my $ua = LWP::UserAgent->new(
-		agent   => 'Squeezebox Server/' . $::VERSION,
-		timeout => 10,
-	);
-	
+
+	# don't load these modules unless we get here, as they're pulling in a lot of dependencies
+	require Digest::SHA1;
+	require Slim::Networking::SqueezeNetwork;
+	if ( main::SCANNER ) {
+		require LWP::UserAgent;
+	}
+	else {
+		require Slim::Networking::SimpleAsyncHTTP;
+		require Slim::Utils::Network;
+	}
+
 	# Add an auth header
+	my $authHeader;
 	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 		
 		# login using MAC/UUID on TinySBS
@@ -614,48 +614,77 @@ sub downloadArtwork {
 		
 		main::INFOLOG && $log->is_info && $log->info("Logging in as " . $osDetails->{mac});
 		
-		$ua->default_header( sn_auth_u => $osDetails->{mac} . '|' . $time . '|' . Digest::SHA1::sha1_base64( $osDetails->{uuid} . $time ) );
+		$authHeader = {
+			sn_auth_u => $osDetails->{mac} . '|' . $time . '|' . Digest::SHA1::sha1_base64( $osDetails->{uuid} . $time ),
+		};
 	}
 	
 	else {
 		my $email = $prefs->get('sn_email') || '';
 		my $pass  = $prefs->get('sn_password_sha') || '';
-		$ua->default_header( sn_auth => $email . ':' . Digest::SHA1::sha1_base64( $email . $pass ) );
+		$authHeader = {
+			sn_auth => $email . ':' . Digest::SHA1::sha1_base64( $email . $pass )
+		};
 	}
-	
-	my $snURL = Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' );
-	
+
 	my $cacheDir = catdir( $prefs->get('librarycachedir'), 'DownloadedArtwork' );
 	mkpath $cacheDir if !-d $cacheDir;
 	
-	my $serverDown = 0;
+	my $ua;
 	
-	my $isInfo  = main::INFOLOG && $importlog->is_info;
-	my $isDebug = main::DEBUGLOG && $importlog->is_debug;
+	if ( main::SCANNER ) {
+		$ua = LWP::UserAgent->new(
+			agent           => 'Squeezebox Server/' . $::VERSION,
+			timeout         => 10,
+			default_headers => [ $authHeader ],
+		)
+	}
+
+	while ( _downloadArtwork({
+		headers           => [ $authHeader ],
+		snUrl             => Slim::Networking::SqueezeNetwork->url( '/api/artwork/search' ),
+		tracks            => $tracks,
+		count             => $count,
+		progress          => $progress,
+		sth_update_tracks => $sth_update_tracks,
+		sth_update_albums => $sth_update_albums, 
+		cacheDir          => $cacheDir,
+		serverDown        => 0,
+		cb                => $cb,
+		ua                => $ua,
+	}) ) {}
+}
+
+sub _downloadArtwork {
+	my $params = shift;
+
+	if ( $params->{serverDown} < MAX_RETRIES ) {
+
+		my $isInfo  = main::INFOLOG && $importlog->is_info;
+		my $isDebug = main::DEBUGLOG && $importlog->is_debug;
+
+		my ($artist, $done);
 	
-	my $work = sub {
-		if ( $serverDown < MAX_RETRIES && (my $track = $tracks->next) ) {
-	
+		# try other contributors of previous track
+		if ( $artist = delete $params->{contributors} ) {
+			$params->{title} = $params->{albumname} . '/' . $artist;
+		}
+		
+		# get next track from db
+		elsif ( my $track = $params->{tracks}->next ) {
+			
 			my $albumname = $track->album->name;
+			my $albumid   = $track->album->id;
+			
+			# Skip if we have already looked for this album before with no results
+			if ( $lastFile{ "failed_$albumid" } ) {
+				$params->{progress}->update( $albumname ) if $params->{progress};
+				$isDebug && $importlog->debug( "Skipping $albumname, previous search failed" );
+			} 
 			
 			# Only lookup albums that have artist names
-			if ( $track->album->contributor ) {
-	
-				my $albumid = $track->album->id;
+			elsif ( $track->album->contributor && !$lastFile{ $albumid } ) {
 
-				# for whatever reason the second track of an album will still get here, even if it has artwork. Skip it.
-				next if $lastFile{ $albumid };
-				
-				# Skip if we have already looked for this album before with no results
-				if ( $lastFile{ "failed_$albumid" } ) {
-					$progress->update( $albumname );
-					$isDebug && $importlog->debug( "Skipping $albumname, previous search failed" );
-					next;
-				} 
-
-				my $file;
-				my $album_mbid= $track->album->musicbrainz_id;
-	
 				# let's join all contributors together, in case the album artist doesn't match (eg. compilations)
 				my @artists;
 				foreach ($track->album->contributors) {
@@ -666,153 +695,218 @@ sub downloadArtwork {
 				if ($track->album->compilation) {
 					push @artists, 'Various Artists';
 				}
-	
+
 				my $trackartists = join(',', @artists);
-				my $albumartist  = $track->album->contributor->name;
+				$artist = $track->album->contributor->name;
 				
-				if ( lc($trackartists) eq lc($albumartist) ) {
-					$trackartists = undef;
-				}			
-	
 				# we'll not only try the album artist, but track artists too
 				# iTunes tends to oddly flag albums as compilations when they're not
-				foreach my $contributor ( $albumartist, $trackartists ) {
-					
-					next unless $contributor;
-					
-					my $url = '?album=' . URI::Escape::uri_escape_utf8( $albumname )
-						. '&artist=' . URI::Escape::uri_escape_utf8( $contributor )
-						. '&mbid=' . $album_mbid;
-	
-					my $base = catfile( $cacheDir, Digest::SHA1::sha1_hex($url) );
-	
-					# if we've failed on that combination before, skip it
-					next if $lastFile{ "failed_$base" };
-
-					if ( $file = _getCoverFromFileCache( $base ) ) {
-						$isDebug && $importlog->debug( "Artwork for $albumname/$contributor found in cache: $file" );
-						last;
-					}
-					else {
-			
-						$isInfo && $importlog->info("Trying to get artwork for $albumname/$contributor from mysqueezebox.com");
-						
-						my $i = 0;
-						my ($content, $fh, $ext);
-						
-						my $res = $ua->get($snURL . $url,
-							':content_cb' => sub {
-								
-								if ( !$file ) {
-									# Save the artwork to a cache file
-									($ext) = $_[1]->content_type =~ m{image/(jpe?g|gif|png)$};
-									
-									if ( $ext ) {
-										mkpath $base unless -d $base;
-										$file = catfile( $base, "cover.$ext");
-										
-										$fh = FileHandle->new(">$file");
-										open($fh, ">>$file") || $importlog->error("Failed to create cache file: $file");
-									}
-								}
-								
-								if ( defined $fh ) {
-									print $fh $_[0];
-								}
-								else {
-									$content .= $_[0];
-								}
-								
-								if ( !($i++ % 10) ) {
-									# every now and then we give the streams some air to breath
-									main::idleStreams();
-								}
-							}
-						);
-
-						if ( defined $fh ) {
-							$fh->close;
-						}
-						
-						if ( $res->is_success && $ext ) {
-							$isDebug && $importlog->debug( "Successfully downloaded artwork for $albumname to $file" );
-							$serverDown = 0;
-							last;
-						}
-						else {
-							# 50x - server problem, 403 - authentication require
-							if ( $res->code =~ /^5/ || $res->code == 403 ) {
-								$serverDown++;
-							}
-							else {
-								$serverDown = 0;
-							}
-							$importlog->error( sprintf("Got error %s: %s", $res->code, $content) );
-						}
-	
-						$importlog->error( "Failed to download artwork for $albumname/$contributor" );
-						$lastFile{ "failed_$base" } = 1;
-					}
-				
+				# store contributors in params hash for later use
+				if ( lc($trackartists) ne lc($artist) ) {
+					$params->{contributors} = $trackartists;
 				}
-				
-				if ( $file && -e $file ) {
-					my $coverid = $track->generateCoverId({
-						cover => $file,
-						url   => $track->url,
-						mtime => $track->timestamp,
-						size  => $track->filesize,
-					});
-					
-					my $c = $sth_update_tracks->execute( $file, $coverid, $albumid );
-					$sth_update_albums->execute( $coverid, $albumid );
 
-					# if the track update returned a number, we'll increase progress by this value
-					if ( $c ) {
-						$progress->update( $albumname, $progress->done() + $c );
-					}
+				$params->{albumname}  = $albumname;
+				$params->{albumid}    = $albumid;
+				$params->{album_mbid} = $track->album->musicbrainz_id;
+				$params->{title}      = $params->{albumname} . '/' . $artist;
+				$params->{track}      = $track;
+			}
+		}
+		
+		# nothing left to do
+		else {
+			$done = 1;
+		}
 
-					$lastFile{ $albumid } = 1;
-				}
+		my $args = '?album=' . URI::Escape::uri_escape_utf8( $params->{albumname} || '' )
+			. '&artist=' . URI::Escape::uri_escape_utf8( $artist || '' )
+			. '&mbid=' . $params->{album_mbid};
+	
+		my $base = catfile( $params->{cacheDir}, Digest::SHA1::sha1_hex($args) );
+	
+		# if we're done or have failed on that combination before, skip it
+		if ( $done || $lastFile{ "failed_" . $params->{albumid} } || $lastFile{ "failed_$base" } ) {
+			# nothing to do here...
+		}
+		
+		# check whether we already have cached artwork from earlier lookup
+		elsif ( my $file = _getCoverFromFileCache( $base ) ) {
+			 if ($isDebug) {
+			 	 $importlog->debug( "Artwork for $params->{title} found in cache:" );
+			 	 $importlog->debug( $file );
+			 }
+			_setCoverArt( $file, $params );
+		}
+		
+		# get artwork from mysb.com
+		else {
+
+			$isInfo && $importlog->info("Trying to get artwork for $params->{title} from mysqueezebox.com");
+
+			my $file = catfile($base) . '.tmp';
+			my $url  = $params->{snUrl} . $args;
+
+			# we're going to use sync downloads in the scanner
+			if ( main::SCANNER ) {
+				my $res = $params->{ua}->get( $url, ':content_file' => $file );
 				
-				else {
-					$importlog->warn( "Failed to download artwork for $albumname" );
-					$progress->update( $albumname );
-					
-					$lastFile{ "failed_$albumid" } = 1;
-				}
+				_gotArtwork({
+					params => {
+						%$params,
+						saveAs => $file,
+					},
+					error  => $res->code != 200 ? $res->code . ' ' . $res->message : undef,
+					ct     => $res->content_type,
+				})
 			}
 			
+			# use async downloads when running in-process
+			else {
+				my $http = Slim::Networking::SimpleAsyncHTTP->new(
+					\&_gotArtwork,
+					\&_gotArtwork,
+					{
+						%$params,
+						saveAs   => $file,
+						timeout  => 10,
+					}
+				);
+			
+				$http->get( $url, @{ $params->{headers} } );
+
+				return;
+			}
+		}
+
+
+		# if we're running in the standalone scanner, return true value
+		if ( main::SCANNER && !$done ) {
 			return 1;
 		}
-
-		if ( $progress ) {
-			$progress->final($count) ;
-		
-			if ($serverDown >= MAX_RETRIES) {
-				$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
-			}
-			else {
-				$importlog->error( "downloadArtwork finished in " . $progress->duration );
-			}
+		# didn't need to download artwork - call ourselves for the next lookup
+		elsif (!$done) {
+			_downloadArtwork($params);			
+			return;
 		}
-	
-		Slim::Music::Import->endImporter('downloadArtwork');
+	}
 
-		%lastFile = ();
-		$cb && $cb->();
-
-		return 0
-	};
+	if ( my $progress = $params->{progress} ) {
+		$progress->final($params->{count}) ;
 	
-	if ( main::SCANNER ) {
-		# Non-async mode in scanner
-		while ( $work->() ) { }
+		if ($params->{serverDown} >= MAX_RETRIES) {
+			$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
+		}
+		else {
+			$importlog->error( "downloadArtwork finished in " . $progress->duration );
+		}
+	}
+
+	Slim::Music::Import->endImporter('downloadArtwork');
+
+	%lastFile = ();
+	if ( my $cb = $params->{cb} ) {
+		$cb->();
+	}
+	
+	return 0;
+}
+
+sub _gotArtwork {
+	my $http = shift;
+	
+	my ($params, $ct, $error);
+	
+	# SimpleAsyncHTTP will return an object
+	if ( blessed($http) ) {
+		$params = $http->params;
+		$ct     = $http->headers() && $http->headers()->content_type;
+		$error  = $http->error;
 	}
 	else {
-		# Run async in main process
-		Slim::Utils::Scheduler::add_ordered_task($work);
+		$params = $http->{params};
+		$ct     = $http->{ct};
+		$error  = $http->{error};
+	}
+	
+	my $base = $params->{saveAs};
+	$base =~ s/\.tmp$//i;
+
+	if ( !$error && $ct =~ m{image/(jpe?g|gif|png)$} && -f $params->{saveAs} ) {
+		# move artwork file to sub-folder 
+		my $file = catfile( $base, "cover.$1" );
+		mkdir $base;
+		rename $params->{saveAs}, $file;
+
+		if (main::DEBUGLOG && $importlog->is_debug) {
+			$importlog->debug( "Successfully downloaded artwork for $params->{title}" );
+			$importlog->debug( "Cached as $file" );
+		} 
+		$params->{serverDown} = 0;
+		delete $params->{contributor};
+		
+		_setCoverArt( $file, $params );
+	}
+	elsif ( !$error ) {
+		$error = "Invalid file type $ct, or file not found: $base";
+	}
+
+	if ( $error ) {
+		# 50x - server problem, 403 - authentication required
+		if ( $error =~ /^5/ || $error == 403 ) {
+			$params->{serverDown}++;
+		}
+		else {
+			$params->{serverDown} = 0;
+		}
+	
+		$params->{progress}->update( $params->{title} ) if $params->{progress};
+		$importlog->error( "Failed to download artwork for $params->{title}: " . $error );
+		$lastFile{ "failed_$base" } = 1;
 	}	
+	
+	# remove left-overs
+	unlink $params->{saveAs};
+	delete $params->{saveAs};
+	
+	# we're in async mode - call ourselves
+	if ( !main::SCANNER ) {
+		_downloadArtwork($params);
+	}
+}
+
+sub _setCoverArt {
+	my ( $file, $params ) = @_;
+	
+	my $track     = $params->{track};
+	my $progress  = $params->{progress};
+	my $albumid   = $params->{albumid};
+	
+	if ( $file && -e $file ) {
+		my $coverid = $track->generateCoverId({
+			cover => $file,
+			url   => $track->url,
+			mtime => $track->timestamp,
+			size  => $track->filesize,
+		});
+		
+		my $c = $params->{sth_update_tracks}->execute( $file, $coverid, $albumid );
+		$params->{sth_update_albums}->execute( $coverid, $albumid );
+
+		# if the track update returned a number, we'll increase progress by this value
+		if ( $c && $progress ) {
+			$progress->update( $params->{title}, $progress->done() + $c );
+		}
+
+		$lastFile{ $albumid } = 1;
+	}
+	
+	else {
+		$importlog->warn( "Failed to download artwork for $params->{title}" );
+		$progress->update( $params->{title} ) if $progress;
+		
+		$lastFile{ "failed_$albumid" } = 1;
+	}
 }
 
 sub _getCoverFromFileCache {
