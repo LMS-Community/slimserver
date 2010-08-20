@@ -848,7 +848,14 @@ sub _gotArtwork {
 		_setCoverArt( $file, $params );
 	}
 	elsif ( !$error ) {
-		$error = "Invalid file type $ct, or file not found: $base";
+		
+		# sometimes the error message is the response's content
+		if ( $ct eq 'text/plain' && -f $params->{saveAs} ) {
+			$error = eval { read_file($params->{saveAs}) };
+		}
+
+		$error ||= "Invalid file type $ct, or file not found: $params->{saveAs}";
+
 	}
 
 	if ( $error ) {
