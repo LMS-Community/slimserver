@@ -123,6 +123,18 @@ sub on_connect_do {
 		'PRAGMA foreign_keys = ON',
 	];
 	
+	# Wweak some memory-related pragmas if dbhighmem is enabled
+	if ( $prefs->get('dbhighmem') ) {
+		# Default cache_size is 2000 pages, a page is normally 1K but may be different
+		# depending on the OS/filesystem.  So default is usually 2MB.
+		# Highmem we will try 20M
+		push @{$sql}, 'PRAGMA cache_size = 20000';
+		
+		# Default temp_store is to create disk files to save memory
+		# Highmem we'll let it use memory
+		push @{$sql}, 'PRAGMA temp_store = MEMORY';
+	}
+	
 	if ( !main::SCANNER ) {
 		# Use exclusive locking only in the main process
 		push @{$sql}, 'PRAGMA locking_mode = EXCLUSIVE';
