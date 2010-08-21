@@ -7930,6 +7930,18 @@ SETUP_DBTYPE_MYSQL
 	RU	MySQL Server
 	SV	MySQL-server
 
+SETUP_DBHIGHMEM
+	EN	Database Memory Config
+
+SETUP_DBHIGHMEM_DESC
+	EN	If your server has enough memory, you can obtain better performance by increasing the amount of memory available to the database. Changing this option requires a server restart.
+
+SETUP_DBHIGHMEM_NORMAL
+	EN	Normal
+
+SETUP_DBHIGHMEM_HIGH
+	EN	High (recommended for machines with 1+ GB RAM)
+
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
 	DA	Statistik for musikbibliotek

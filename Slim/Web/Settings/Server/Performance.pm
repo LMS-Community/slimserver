@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
- 	return ($prefs, qw(dbtype disableStatistics serverPriority scannerPriority resampleArtwork 
+ 	return ($prefs, qw(dbtype dbhighmem disableStatistics serverPriority scannerPriority resampleArtwork 
  				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
 }
 
@@ -54,6 +54,13 @@ sub handler {
 		$prefs->set( dbsource => $sqlHelperClass->default_dbsource() );
 		$prefs->set( dbsource => $sqlHelperClass->source() );
 		
+		# Trigger restart required message
+		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
+	}
+	
+	# Restart message if dbhighmem is changed
+	my $curmem = $prefs->get('dbhighmem') || 0;
+	if ( $paramRef->{pref_dbhighmem} && $paramRef->{pref_dbhighmem} != $curmem ) {
 		# Trigger restart required message
 		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
 	}

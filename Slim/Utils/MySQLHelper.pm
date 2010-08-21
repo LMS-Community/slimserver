@@ -133,8 +133,10 @@ Creates a MySQL config file from the L<my.tt> template in the MySQL directory.
 
 sub createConfig {
 	my ($class, $cacheDir) = @_;
-
-	my $ttConf = catdir($class->mysqlDir, 'my.tt');
+	
+	my $highmem = $prefs->get('dbhighmem') || 0;
+	
+	my $ttConf = catdir($class->mysqlDir, $highmem ? 'my-highmem.tt' : 'my.tt');
 	my $output = catdir($cacheDir, 'my.cnf');
 
 	my %config = (
