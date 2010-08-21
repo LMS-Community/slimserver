@@ -18772,6 +18772,7 @@ SETUP_ROLLOFFSLOW
 
 SETUP_ROLLOFFSLOW_DESC
 	EN	The AK4396 DAC defaults to using a sharp roll-off filter, with an option to use a slow roll-off filter instead. This option only affects the analog outputs.
+	DE	Der DAC des Transporters verfügt über 2 analoge Filtercharakteristiken. Standardmäßig wird ein sharp Roll-off Filter genutzt. Wählen Sie hier zwischen sharp Roll-off, oder soft Roll-off Filter.
 
 ROLLOFFSLOW_DISABLED
 	EN	Sharp Roll-off Filter
