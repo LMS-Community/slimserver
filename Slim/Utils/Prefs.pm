@@ -137,6 +137,7 @@ sub init {
 		'dbsource'              => $default_dbsource,
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
+		'dbhighmem'             => 0,
 		'cachedir'              => \&defaultCacheDir,
 		'librarycachedir'       => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,

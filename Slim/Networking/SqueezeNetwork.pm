@@ -448,6 +448,28 @@ sub getHeaders {
 	return @headers;
 }
 
+sub getAuthHeaders {
+	my ( $self ) = @_;
+	
+	if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
+		
+		# login using MAC/UUID on TinySBS
+		my $osDetails = Slim::Utils::OSDetect::details();
+		my $time = time();
+		
+		return [
+			sn_auth_u => $osDetails->{mac} . '|' . $time . '|' . sha1_base64( $osDetails->{uuid} . $time ),
+		];
+	}
+	
+	my $email = $prefs->get('sn_email') || '';
+	my $pass  = $prefs->get('sn_password_sha') || '';
+
+	return [
+		sn_auth => $email . ':' . sha1_base64( $email . $pass )
+	];
+}
+
 sub getCookie {
 	my ( $self, $client ) = @_;
 	
