@@ -1,0 +1,52 @@
+# $Id$
+# 
+# Squeezebox Server specific MySQL Server config.
+# High-memory configuration by Moonbase
+# http://forums.slimdevices.com/showthread.php?t=60682
+
+[mysqld]
+innodb
+skip-locking
+long_query_time       = 2
+log_slow_queries
+
+# If you want to have user permissions - you need to setup a valid user, and
+# remove this line below.
+skip-grant-tables
+
+basedir               = [% basedir %]
+datadir               = [% datadir %]
+tmpdir                = [% datadir %]
+language              = [% language %]
+port                  = [% port %]
+socket                = [% socket %]
+pid-file              = [% pidFile %]
+log-error             = [% errorLog %]
+innodb_fast_shutdown  = 1
+max_connections       = 4
+thread_concurrency    = 4
+log-warnings          = 0
+bind-address          = [% bindAddress %]
+default-character-set = utf8
+default-collation     = utf8_general_ci
+key_buffer            = 16M
+max_allowed_packet    = 1M
+table_cache           = 64
+sort_buffer_size      = 512K
+net_buffer_length     = 8K
+read_buffer_size      = 256K
+read_rnd_buffer_size  = 512K
+
+# InnoDB settings
+# You can set .._buffer_pool_size up to 50 - 80 %
+# of RAM but beware of setting memory usage too high
+innodb_buffer_pool_size = 32M
+innodb_additional_mem_pool_size = 2M
+# Set .._log_file_size to 25 % of buffer pool size
+innodb_log_file_size = 5M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 1
+innodb_lock_wait_timeout = 50
+
+[client]
+socket                = [% socket %]
