@@ -630,16 +630,16 @@ sub downloadArtwork {
 		sth_update_tracks => $sth_update_tracks,
 		sth_update_albums => $sth_update_albums, 
 		cacheDir          => $cacheDir,
-		serverDown        => 0,
 		cb                => $cb,
 		ua                => $ua,
 	}) ) {}
 }
 
+my $serverDown = 0;
 sub _downloadArtwork {
 	my $params = shift;
 
-	if ( $params->{serverDown} < MAX_RETRIES ) {
+	if ( $serverDown < MAX_RETRIES ) {
 
 		my $isInfo  = main::INFOLOG && $importlog->is_info;
 		my $isDebug = main::DEBUGLOG && $importlog->is_debug;
@@ -647,8 +647,8 @@ sub _downloadArtwork {
 		my ($artist, $done);
 	
 		# try other contributors of previous track
-		if ( $artist = delete $params->{contributors} ) {
-			$params->{title} = $params->{albumname} . '/' . $artist;
+		if ( $artist = delete $lastFile{meta}->{contributors} ) {
+			$lastFile{meta}->{title} = $lastFile{meta}->{albumname} . '/' . $artist;
 		}
 		
 		# get next track from db
@@ -678,19 +678,21 @@ sub _downloadArtwork {
 
 				my $trackartists = join(',', @artists);
 				$artist = $track->album->contributor->name;
+
+				$lastFile{meta} = {
+					albumname  => $albumname,
+					albumid    => $albumid,
+					album_mbid => $track->album->musicbrainz_id,
+					title      => "$albumname/$artist",
+					track      => $track,
+				};
 				
 				# we'll not only try the album artist, but track artists too
 				# iTunes tends to oddly flag albums as compilations when they're not
 				# store contributors in params hash for later use
 				if ( lc($trackartists) ne lc($artist) ) {
-					$params->{contributors} = $trackartists;
+					$lastFile{meta}->{contributors} = $trackartists;
 				}
-
-				$params->{albumname}  = $albumname;
-				$params->{albumid}    = $albumid;
-				$params->{album_mbid} = $track->album->musicbrainz_id;
-				$params->{title}      = $params->{albumname} . '/' . $artist;
-				$params->{track}      = $track;
 			}
 
 			# update the progress status unless we give this track another try with a different contributor
@@ -704,21 +706,21 @@ sub _downloadArtwork {
 			$done = 1;
 		}
 
-		my $args = '?album=' . URI::Escape::uri_escape_utf8( $params->{albumname} || '' )
+		my $args = '?album=' . URI::Escape::uri_escape_utf8( $lastFile{meta}->{albumname} || '' )
 			. '&artist=' . URI::Escape::uri_escape_utf8( $artist || '' )
-			. '&mbid=' . $params->{album_mbid};
+			. '&mbid=' . $lastFile{meta}->{album_mbid};
 	
 		my $base = catfile( $params->{cacheDir}, Digest::SHA1::sha1_hex($args) );
 	
 		# if we're done or have failed on that combination before, skip it
-		if ( $done || $lastFile{ "failed_" . $params->{albumid} } || $lastFile{ "failed_$base" } ) {
+		if ( $done || $lastFile{ "failed_" . $lastFile{meta}->{albumid} } || $lastFile{ "failed_$base" } || $lastFile{ $lastFile{meta}->{albumid} } ) {
 			# nothing really to do here... 
 		}
 		
 		# check whether we already have cached artwork from earlier lookup
 		elsif ( my $file = _getCoverFromFileCache( $base ) ) {
 			 if ($isDebug) {
-			 	 $importlog->debug( "Artwork for $params->{title} found in cache:" );
+			 	 $importlog->debug( "Artwork for $lastFile{meta}->{title} found in cache:" );
 			 	 $importlog->debug( $file );
 			 }
 			_setCoverArt( $file, $params );
@@ -727,7 +729,7 @@ sub _downloadArtwork {
 		# get artwork from mysb.com
 		else {
 
-			$isInfo && $importlog->info("Trying to get artwork for $params->{title} from mysqueezebox.com");
+			$isInfo && $importlog->info("Trying to get artwork for $lastFile{meta}->{title} from mysqueezebox.com");
 
 			my $file = catfile($base) . '.tmp';
 			my $url  = $params->{snUrl} . $args;
@@ -779,7 +781,7 @@ sub _downloadArtwork {
 	if ( my $progress = $params->{progress} ) {
 		$progress->final($params->{count}) ;
 	
-		if ($params->{serverDown} >= MAX_RETRIES) {
+		if ($serverDown >= MAX_RETRIES) {
 			$importlog->error( "downloadArtwork aborted after repeated failure connecting to mysqueezebox.com " . $progress->duration );
 		}
 		else {
@@ -789,6 +791,7 @@ sub _downloadArtwork {
 
 	Slim::Music::Import->endImporter('downloadArtwork');
 
+	$serverDown = 0;
 	%lastFile = ();
 	if ( my $cb = $params->{cb} ) {
 		$cb->();
@@ -824,11 +827,11 @@ sub _gotArtwork {
 		rename $params->{saveAs}, $file;
 
 		if (main::DEBUGLOG && $importlog->is_debug) {
-			$importlog->debug( "Successfully downloaded artwork for $params->{title}" );
+			$importlog->debug( "Successfully downloaded artwork for $lastFile{meta}->{title}" );
 			$importlog->debug( "Cached as $file" );
 		} 
-		$params->{serverDown} = 0;
-		delete $params->{contributor};
+		$serverDown = 0;
+		delete $lastFile{meta}->{contributor};
 		
 		_setCoverArt( $file, $params );
 	}
@@ -845,14 +848,14 @@ sub _gotArtwork {
 
 	if ( $error ) {
 		# 50x - server problem, 403 - authentication required
-		if ( $error =~ /^(:5|403)/ ) {
-			$params->{serverDown}++;
+		if ( $error =~ /^(:5|403|connect timed out)/i ) {
+			$serverDown++;
 		}
 		else {
-			$params->{serverDown} = 0;
+			$serverDown = 0;
 		}
-	
-		$importlog->error( "Failed to download artwork for $params->{title}: " . $error );
+
+		$importlog->error( "Failed to download artwork for $lastFile{meta}->{title}: " . $error );
 		$lastFile{ "failed_$base" } = 1;
 	}	
 	
@@ -869,9 +872,9 @@ sub _gotArtwork {
 sub _setCoverArt {
 	my ( $file, $params ) = @_;
 	
-	my $track     = $params->{track};
+	my $track     = $lastFile{meta}->{track};
 	my $progress  = $params->{progress};
-	my $albumid   = $params->{albumid};
+	my $albumid   = $lastFile{meta}->{albumid};
 	
 	if ( $file && -e $file ) {
 		my $coverid = $track->generateCoverId({
@@ -886,14 +889,17 @@ sub _setCoverArt {
 
 		# if the track update returned a number, we'll increase progress by this value
 		if ( $c && $progress ) {
-			$progress->update( $params->{title}, $progress->done() + $c - 1 );
+			$progress->update( $lastFile{meta}->{title}, $progress->done() + $c - 1 );
 		}
 
 		$lastFile{ $albumid } = 1;
+		
+		# don't look up alternative artist for track if one has been found
+		delete $lastFile{meta}->{contributors};
 	}
 	
 	else {
-		$importlog->warn( "Failed to download artwork for $params->{title}" );
+		$importlog->warn( "Failed to download artwork for $lastFile{meta}->{title}" );
 		
 		$lastFile{ "failed_$albumid" } = 1;
 	}
