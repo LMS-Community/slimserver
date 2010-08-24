@@ -81,13 +81,26 @@ sub import_json {
 sub findhash {
 	my ( $class, $mbid, $urlmd5 ) = @_;
 	
-	my $sth = Slim::Schema->dbh->prepare_cached( qq{
-		SELECT *
-		FROM tracks_persistent
-		WHERE (	musicbrainz_id = ? OR urlmd5 = ? )
-	} );
+	my $sth;
 	
-	$sth->execute( $mbid, $urlmd5 );
+	if ($mbid) {
+		$sth = Slim::Schema->dbh->prepare_cached( qq{
+			SELECT *
+			FROM tracks_persistent
+			WHERE (	musicbrainz_id = ? OR urlmd5 = ? )
+		} );
+		
+		$sth->execute( $mbid, $urlmd5 );
+	}
+	else {
+		$sth = Slim::Schema->dbh->prepare_cached( qq{
+			SELECT *
+			FROM tracks_persistent
+			WHERE urlmd5 = ?
+		} );
+		
+		$sth->execute( $urlmd5 );
+	}
 			
 	my $hash = $sth->fetchrow_hashref;
 	
