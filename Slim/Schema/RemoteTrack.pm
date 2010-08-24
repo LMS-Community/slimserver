@@ -11,6 +11,7 @@ use base qw(Slim::Utils::Accessor);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $log = logger('formats.metadata');
@@ -54,6 +55,27 @@ my @allAttributes = (qw(
 	);
 	
 	__PACKAGE__->mk_accessor('rw', @allAttributes);
+}
+
+sub init {
+	my $maxPlaylistLengthCB = sub {
+		my ($pref, $max) = @_;
+		
+		$max ||= 500;
+		$max = 500 if $max > 500;
+		$max = 100 if $max < 100;
+
+		my $cacheObj = tied %Cache;
+		if ($cacheObj->max_size != $max) {
+			$cacheObj->max_size($max);
+		}
+	};
+	
+	my $prefs = preferences('server');
+	
+	$maxPlaylistLengthCB->(undef, $prefs->get('maxPlaylistLength'));
+	
+	$prefs->setChange($maxPlaylistLengthCB, 'maxPlaylistLength');
 }
 
 # Emulate absent methods - hopefully these can be retired at some time
