@@ -29,10 +29,6 @@ sub tracks {
 	
 	my %attributes = (order_by => 'me.position');
 	
-	if (my $maxPlaylistLength = $prefs->get('maxPlaylistLength')) {
-		$attributes{'rows'} = $maxPlaylistLength;
-	}
-
 	return $self->playlist_tracks(undef, \%attributes);
 }
 
