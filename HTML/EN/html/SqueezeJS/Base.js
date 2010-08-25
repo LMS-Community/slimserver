@@ -771,50 +771,54 @@ SqueezeJS.Utils = {
 };
 
 // our own cookie manager doesn't prepend 'ys-' to any cookie
-SqueezeJS.CookieManager = new Ext.state.CookieProvider({
-	expires : new Date(new Date().getTime() + 1000*60*60*24*365),
-
-	readCookies : function(){
-		var cookies = {};
-		var c = document.cookie + ";";
-		var re = /\s?(.*?)=(.*?);/g;
-		var matches;
-		while((matches = re.exec(c)) != null){
-			var name = matches[1];
-			var value = matches[2];
-			if(name){
-				cookies[name] = value;
+if (Ext.state.CookieProvider) {
+	SqueezeJS.CookieManager = new Ext.state.CookieProvider({
+		expires : new Date(new Date().getTime() + 1000*60*60*24*365),
+	
+		readCookies : function(){
+			var cookies = {};
+			var c = document.cookie + ";";
+			var re = /\s?(.*?)=(.*?);/g;
+			var matches;
+			while((matches = re.exec(c)) != null){
+				var name = matches[1];
+				var value = matches[2];
+				if(name){
+					cookies[name] = value;
+				}
 			}
-		}
-		return cookies;
-	},
-
-	setCookie : function(name, value){
-		document.cookie = name + "=" + value +
-		((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
-		((this.path == null) ? "" : ("; path=" + this.path)) +
-		((this.domain == null) ? "" : ("; domain=" + this.domain)) +
-		((this.secure == true) ? "; secure" : "");
-	},
-
-	clearCookie : function(name){
-		document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
+			return cookies;
+		},
+	
+		setCookie : function(name, value){
+			document.cookie = name + "=" + value +
+			((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
 			((this.path == null) ? "" : ("; path=" + this.path)) +
 			((this.domain == null) ? "" : ("; domain=" + this.domain)) +
 			((this.secure == true) ? "; secure" : "");
-	}
-});
+		},
+	
+		clearCookie : function(name){
+			document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
+				((this.path == null) ? "" : ("; path=" + this.path)) +
+				((this.domain == null) ? "" : ("; domain=" + this.domain)) +
+				((this.secure == true) ? "; secure" : "");
+		}
+	});
+}
 
-SqueezeJS.setCookie = function(name, value) {
-	SqueezeJS.CookieManager.set(name, value);
+SqueezeJS.cookieExpiry = new Date(new Date().getTime() + 1000*60*60*24*365);
+
+SqueezeJS.setCookie = function(name, value, expiry) {
+	Ext.util.Cookies.set(name, value, expiry != null ? expiry : SqueezeJS.cookieExpiry);
 };
 
-SqueezeJS.getCookie = function(name, failover) {
-	return SqueezeJS.CookieManager.get(name, failover);
+SqueezeJS.getCookie = function(name) {
+	return Ext.util.Cookies.get(name);
 };
 
-SqueezeJS.clearCookie = function(name, failover) {
-	return SqueezeJS.CookieManager.clear(name);
+SqueezeJS.clearCookie = function(name) {
+	return Ext.util.Cookies.clear(name);
 };
 
 SqueezeJS.cookiesEnabled = function(){
