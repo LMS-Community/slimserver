@@ -499,6 +499,7 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
+	Slim::Schema::RemoteTrack->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");

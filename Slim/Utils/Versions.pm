@@ -109,9 +109,7 @@ sub _compareVersionPart {
 
 =head2 compareVersions( $left, $right )
 
-Returns true if the version string in $left is greater than the string in $right.
-
-Returns false otherwise.
+Returns: 1 if $left > $right, 0 if $left == $right, -1 if $left < $right
 
 =cut
 

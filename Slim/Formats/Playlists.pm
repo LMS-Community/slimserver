@@ -86,18 +86,7 @@ sub parseList {
 
 			logError("While running \$playlistClass->read(): [$@]");
 		}
-		
-		# We could have passed the limit to each of the read functions
-		# to avoid instantiating the unwanted Track objects. Not sure if
-		# that is necessary.
-		my $limit = $prefs->get('maxPlaylistLength');
-		if ($limit && scalar @results >= $limit) {
-			$log->warn("Playlist $url truncated at $limit entries");
-			splice @results, $limit;
-		}
-
-		
-		
+				
 	}
 	else {
 		# Try to guess what kind of playlist it is		

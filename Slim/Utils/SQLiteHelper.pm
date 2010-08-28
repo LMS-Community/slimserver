@@ -57,8 +57,8 @@ sub init {
 	my ( $class, $dbh ) = @_;
 	
 	# Make sure we're running the right version of DBD::SQLite
-	if ( $DBD::SQLite::VERSION lt 1.29 ) {
-		die "DBD::SQLite version 1.29 or higher required\n";
+	if ( $DBD::SQLite::VERSION lt 1.30 ) {
+		die "DBD::SQLite version 1.30 or higher required\n";
 	}
 	
 	if ( main::SLIM_SERVICE ) {
