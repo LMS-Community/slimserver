@@ -6,11 +6,11 @@ use DBI   1.57 ();
 use DynaLoader ();
 
 use vars qw($VERSION @ISA);
-use vars qw{$err $errstr $drh $sqlite_version};
+use vars qw{$err $errstr $drh $sqlite_version $sqlite_version_number};
 use vars qw{%COLLATION};
 
 BEGIN {
-    $VERSION = '1.29';
+    $VERSION = '1.30_05';
     @ISA     = 'DynaLoader';
 
     # Initialize errors
@@ -26,11 +26,14 @@ BEGIN {
 
 __PACKAGE__->bootstrap($VERSION);
 
+# New or old API?
+use constant NEWAPI => ($DBI::VERSION >= 1.608);
+
 tie %COLLATION, 'DBD::SQLite::_WriteOnceHash';
 $COLLATION{perl}       = sub { $_[0] cmp $_[1] };
 $COLLATION{perllocale} = sub { use locale; $_[0] cmp $_[1] };
 
-my $methods_are_installed;
+my $methods_are_installed = 0;
 
 sub driver {
     return $drh if $drh;
@@ -52,6 +55,7 @@ sub driver {
         DBD::SQLite::db->install_method('sqlite_backup_from_file');
         DBD::SQLite::db->install_method('sqlite_backup_to_file');
         DBD::SQLite::db->install_method('sqlite_enable_load_extension');
+        DBD::SQLite::db->install_method('sqlite_register_fts3_perl_tokenizer');
         $methods_are_installed++;
     }
 
@@ -60,12 +64,14 @@ sub driver {
         Version     => $VERSION,
         Attribution => 'DBD::SQLite by Matt Sergeant et al',
     } );
+
     return $drh;
 }
 
 sub CLONE {
     undef $drh;
 }
+
 
 package DBD::SQLite::dr;
 
@@ -116,15 +122,17 @@ sub connect {
     # Hand off to the actual login function
     DBD::SQLite::db::_login($dbh, $real, $user, $auth, $attr) or return undef;
 
-    # Register the on-demand collation installer
-    $DBI::VERSION >= 1.608
-      ? $dbh->sqlite_collation_needed(\&install_collation)
-      : $dbh->func(\&install_collation, "collation_needed");
-
-    # Register the REGEXP function
-    $DBI::VERSION >= 1.608
-      ? $dbh->sqlite_create_function("REGEXP", 2, \&regexp)
-      : $dbh->func("REGEXP", 2, \&regexp, "create_function");
+    # Register the on-demand collation installer, REGEXP function and
+    # perl tokenizer
+    if ( DBD::SQLite::NEWAPI ) {
+        $dbh->sqlite_collation_needed( \&install_collation );
+        $dbh->sqlite_create_function( "REGEXP", 2, \&regexp );
+        $dbh->sqlite_register_fts3_perl_tokenizer();
+    } else {
+        $dbh->func( \&install_collation, "collation_needed"  );
+        $dbh->func( "REGEXP", 2, \&regexp, "create_function" );
+        $dbh->func( "register_fts3_perl_tokenizer" );
+    }
 
     # HACK: Since PrintWarn = 0 doesn't seem to actually prevent warnings
     # in DBD::SQLite we set Warn to false if PrintWarn is false.
@@ -135,14 +143,19 @@ sub connect {
     return $dbh;
 }
 
-
 sub install_collation {
-    my ($dbh, $collation_name) = @_;
-    my $collation = $DBD::SQLite::COLLATION{$collation_name}
-        or die "can't install, unknown collation : $collation_name";
-    $DBI::VERSION >= 1.608
-        ? $dbh->sqlite_create_collation($collation_name => $collation)
-        : $dbh->func($collation_name => $collation, "create_collation");
+    my $dbh       = shift;
+    my $name      = shift;
+    my $collation = $DBD::SQLite::COLLATION{$name};
+    unless ($collation) {
+        warn "Can't install unknown collation: $name" if $dbh->{PrintWarn};
+        return;
+    }
+    if ( DBD::SQLite::NEWAPI ) {
+        $dbh->sqlite_create_collation( $name => $collation );
+    } else {
+        $dbh->func( $name => $collation, "create_collation" );
+    }
 }
 
 # default implementation for sqlite 'REGEXP' infix operator.
@@ -152,7 +165,6 @@ sub regexp {
     use locale;
     return scalar($_[1] =~ $_[0]);
 }
-
 
 package DBD::SQLite::db;
 
@@ -168,6 +180,25 @@ sub prepare {
     DBD::SQLite::st::_prepare($sth, $sql, @_) or return undef;
 
     return $sth;
+}
+
+sub do {
+    my ($dbh, $statement, $attr, @bind_values) = @_;
+
+    my @copy = @{[@bind_values]};
+    my $rows = 0;
+
+    while ($statement) {
+        my $sth = $dbh->prepare($statement, $attr) or return undef;
+        $sth->execute(splice @copy, 0, $sth->{NUM_OF_PARAMS}) or return undef;
+        $rows += $sth->rows;
+        # XXX: not sure why but $dbh->{sqlite...} wouldn't work here
+        last unless $dbh->FETCH('sqlite_allow_multiple_statements');
+        $statement = $sth->{sqlite_unprepared_statements};
+    }
+
+    # always return true if no error
+    return ($rows == 0) ? "0E0" : $rows;
 }
 
 sub _get_version {
@@ -319,13 +350,15 @@ END_SQL
 }
 
 sub primary_key_info {
-    my ($dbh, $catalog, $schema, $table) = @_;
+    my ($dbh, $catalog, $schema, $table, $attr) = @_;
 
     # Escape the schema and table name
     $schema =~ s/([\\_%])/\\$1/g if defined $schema;
     my $escaped = $table;
     $escaped =~ s/([\\_%])/\\$1/g;
-    my $sth_tables = $dbh->table_info($catalog, $schema, $escaped, undef, {Escape => '\\'});
+    $attr ||= {};
+    $attr->{Escape} = '\\';
+    my $sth_tables = $dbh->table_info($catalog, $schema, $escaped, undef, $attr);
 
     # This is a hack but much simpler than using pragma index_list etc
     # also the pragma doesn't list 'INTEGER PRIMARY KEY' autoinc PKs!
@@ -342,6 +375,8 @@ sub primary_key_info {
         }
         my $key_seq = 0;
         foreach my $pk_field (@pk) {
+            $pk_field =~ s/(["'`])(.+)\1/$2/; # dequote
+            $pk_field =~ s/\[(.+)\]/$1/; # dequote
             push @pk_info, {
                 TABLE_SCHEM => $row->{TABLE_SCHEM},
                 TABLE_NAME  => $row->{TABLE_NAME},
@@ -360,8 +395,8 @@ sub primary_key_info {
         NUM_OF_FIELDS => scalar @names,
         NAME          => \@names,
     }) or return $dbh->DBI::set_err(
-        $sponge->err(),
-        $sponge->errstr()
+        $sponge->err,
+        $sponge->errstr,
     );
     return $sth;
 }
@@ -519,7 +554,7 @@ END_SQL
                 $col{IS_NULLABLE} = 'YES';
             }
 
-+            push @cols, \%col;
+            push @cols, \%col;
         }
         $sth_columns->finish;
     }
@@ -565,6 +600,8 @@ sub DELETE {
 __END__
 
 =pod
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -730,12 +767,29 @@ This is somewhat weird, but works anyway.
 
 =back
 
+=head2 Placeholders
+
+SQLite supports several placeholder expressions, including C<?>
+and C<:AAAA>. Consult the L<DBI> and sqlite documentation for
+details. 
+
+L<http://www.sqlite.org/lang_expr.html#varparam>
+
+Note that a question mark actually means a next unused (numbered)
+placeholder. You're advised not to use it with other (numbered or
+named) placeholders to avoid confusion.
+
+  my $sth = $dbh->prepare(
+    'update TABLE set a=?1 where b=?2 and a IS NOT ?1'
+  );
+  $sth->execute(1, 2); 
+
 =head2 Foreign Keys
 
 B<BE PREPARED! WOLVES APPROACH!!>
 
 SQLite has started supporting foreign key constraints since 3.6.19
-(released on Oct 14, 2009; bundled with DBD::SQLite 1.26_05).
+(released on Oct 14, 2009; bundled in DBD::SQLite 1.26_05).
 To be exact, SQLite has long been able to parse a schema with foreign
 keys, but the constraints has not been enforced. Now you can issue
 a pragma actually to enable this feature and enforce the constraints.
@@ -800,7 +854,7 @@ the corresponding statements.
 
 =item When the AutoCommit flag is off
 
-You're supposed to always use the transactinal mode, until you
+You're supposed to always use the transactional mode, until you
 explicitly turn on the AutoCommit flag. You can explicitly issue
 a C<BEGIN> statement (only when an actual transaction has not
 begun yet) but you're not allowed to call C<begin_work> method
@@ -826,9 +880,60 @@ This C<AutoCommit> mode is independent from the autocommit mode
 of the internal SQLite library, which always begins by a C<BEGIN>
 statement, and ends by a C<COMMIT> or a <ROLLBACK>.
 
+=head2 Transaction and Database Locking
+
+Transaction by C<AutoCommit> or C<begin_work> is nice and handy, but
+sometimes you may get an annoying "database is locked" error.
+This typically happens when someone begins a transaction, and tries
+to write to a database while other person is reading from the
+database (in another transaction). You might be surprised but SQLite
+doesn't lock a database when you just begin a normal (deferred)
+transaction to maximize concurrency. It reserves a lock when you
+issue a statement to write, but until you actually try to write
+with a C<commit> statement, it allows other people to read from
+the database. However, reading from the database also requires
+C<shared lock>, and that prevents to give you the C<exclusive lock>
+you reserved, thus you get the "database is locked" error, and
+other people will get the same error if they try to write afterwards,
+as you still have a C<pending> lock. C<busy_timeout> doesn't help
+in this case.
+
+To avoid this, set a transaction type explicitly. You can issue a
+C<begin immediate transaction> (or C<begin exclusive transaction>)
+for each transaction, or set C<sqlite_use_immediate_transaction>
+database handle attribute to true (since 1.30_02) to always use
+an immediate transaction (even when you simply use C<begin_work>
+or turn off the C<AutoCommit>.).
+
+  my $dbh = DBI->connect("dbi:SQLite::memory:", "", "", {
+    sqlite_use_immediate_transaction => 1,
+  });
+
+Note that this works only when all of the connections use the same
+(non-deferred) transaction. See L<http://sqlite.org/lockingv3.html>
+for locking details.
+
+=head2 Processing Multiple Statements At A Time
+
+L<DBI>'s statement handle is not supposed to process multiple
+statements at a time. So if you pass a string that contains multiple
+statements (a C<dump>) to a statement handle (via C<prepare> or C<do>),
+L<DBD::SQLite> only processes the first statement, and discards the
+rest.
+
+Since 1.30_01, you can retrieve those ignored (unprepared) statements
+via C<< $sth->{sqlite_unprepared_statements} >>. It usually contains
+nothing but white spaces, but if you really care, you can check this
+attribute to see if there's anything left undone. Also, if you set
+a C<sqlite_allow_multiple_statements> attribute of a database handle
+to true when you connect to a database, C<do> method automatically
+checks the C<sqlite_unprepared_statements> attribute, and if it finds
+anything undone (even if what's left is just a single white space),
+it repeats the process again, to the end.
+
 =head2 Performance
 
-SQLite is fast, very fast. Matt processed my 72MB log file with it,
+SQLite is fast, very fast. Matt processed his 72MB log file with it,
 inserting the data (400,000+ rows) by using transactions and only
 committing every 1000 rows (otherwise the insertion is quite slow),
 and then performing queries on the data.
@@ -851,7 +956,7 @@ Oh yeah, and that was with no indexes on the table, on a 400MHz PIII.
 For best performance be sure to tune your hdparm settings if you
 are using linux. Also you might want to set:
 
-  PRAGMA default_synchronous = OFF
+  PRAGMA synchronous = OFF
 
 Which will prevent sqlite from doing fsync's when writing (which
 slows down non-transactional writes significantly) at the expense
@@ -903,9 +1008,36 @@ This attribute was originally named as C<unicode>, and renamed to
 C<sqlite_unicode> for integrity since version 1.26_06. Old C<unicode>
 attribute is still accessible but will be deprecated in the near future.
 
+=item sqlite_allow_multiple_statements
+
+If you set this to true, C<do> method will process multiple
+statements at one go. This may be handy, but with performance
+penalty. See above for details.
+
+=item sqlite_use_immediate_transaction
+
+If you set this to true, DBD::SQLite tries to issue a C<begin
+immediate transaction> (instead of C<begin transaction>) when
+necessary. See above for details.
+
+=back
+
+=head2 Statement Handle Attributes
+
+=over 4
+
+=item sqlite_unprepared_statements
+
+Returns an unprepared part of the statement you pass to C<prepare>.
+Typically this contains nothing but white spaces after a semicolon.
+See above for details.
+
 =back
 
 =head1 METHODS
+
+See also to the L<DBI> documentation for the details of other common
+methods.
 
 =head2 table_info
 
@@ -914,7 +1046,7 @@ attribute is still accessible but will be deprecated in the near future.
 Returns all tables and schemas (databases) as specified in L<DBI/table_info>.
 The schema and table arguments will do a C<LIKE> search. You can specify an
 ESCAPE character by including an 'Escape' attribute in \%attr. The C<$type>
-argument accepts a comma seperated list of the following types 'TABLE',
+argument accepts a comma separated list of the following types 'TABLE',
 'VIEW', 'LOCAL TEMPORARY' and 'SYSTEM TABLE' (by default all are returned).
 Note that a statement handle is returned, and not a direct list of tables.
 
@@ -930,6 +1062,17 @@ B<TABLE_NAME>: The name of the table or view.
 
 B<TABLE_TYPE>: The type of object returned. Will be one of 'TABLE', 'VIEW',
 'LOCAL TEMPORARY' or 'SYSTEM TABLE'.
+
+=head2 primary_key, primary_key_info
+
+  @names = $dbh->primary_key(undef, $schema, $table);
+  $sth   = $dbh->primary_key_info(undef, $schema, $table, \%attr);
+
+You can retrieve primary key names or more detailed information.
+As noted above, SQLite does not have the concept of catalogs, so the
+first argument of the mothods is usually C<undef>, and you'll usually
+set C<undef> for the second one (unless you want to know the primary
+keys of temporary tables).
 
 =head1 DRIVER PRIVATE METHODS
 
@@ -966,7 +1109,7 @@ Set the current busy timeout. The timeout is in milliseconds.
 
 =head2 $dbh->sqlite_create_function( $name, $argc, $code_ref )
 
-This method will register a new function which will be useable in an SQL
+This method will register a new function which will be usable in an SQL
 query. The method's parameters are:
 
 =over
@@ -1010,7 +1153,7 @@ If you want case-insensitive searching, use perl regex flags, like this :
 
   SELECT * from table WHERE column REGEXP '(?i:\bA\w+)'
 
-The default REGEXP implementation can be overriden through the
+The default REGEXP implementation can be overridden through the
 C<create_function> API described above.
 
 Note that regexp matching will B<not> use SQLite indices, but will iterate
@@ -1018,7 +1161,7 @@ over all rows, so it could be quite costly in terms of performance.
 
 =head2 $dbh->sqlite_create_collation( $name, $code_ref )
 
-This method manually registers a new function which will be useable in an SQL
+This method manually registers a new function which will be usable in an SQL
 query as a COLLATE option for sorting. Such functions can also be registered
 automatically on demand: see section L</"COLLATION FUNCTIONS"> below.
 
@@ -1227,7 +1370,8 @@ is the name of the table containing the affected row;
 
 =item $rowid
 
-is the unique 64-bit signed integer key of the affected row within that table.
+is the unique 64-bit signed integer key of the affected row within
+that table.
 
 =back
 
@@ -1303,6 +1447,12 @@ sqlite3 extensions. After the call, you can load extensions like this:
   $dbh->sqlite_enable_load_extension(1);
   $sth = $dbh->prepare("select load_extension('libsqlitefunctions.so')")
   or die "Cannot prepare: " . $dbh->errstr();
+
+=head2 DBD::SQLite::compile_options()
+
+Returns an array of compile options (available since sqlite 3.6.23,
+bundled in DBD::SQLite 1.30_01), or an empty array if the bundled
+library is old or compiled with SQLITE_OMIT_COMPILEOPTION_DIAGS.
 
 =head1 DRIVER CONSTANTS
 
@@ -1499,6 +1649,265 @@ collations in existing database handles: it will only affect new
 I<requests> for collations. In other words, if you want to change
 the behaviour of a collation within an existing C<$dbh>, you
 need to call the L</create_collation> method directly.
+
+=head1 FULLTEXT SEARCH
+
+The FTS3 extension module within SQLite allows users to create special
+tables with a built-in full-text index (hereafter "FTS3 tables"). The
+full-text index allows the user to efficiently query the database for
+all rows that contain one or more instances of a specified word (hereafter
+a "token"), even if the table contains many large documents.
+
+
+=head2 Short introduction to FTS3
+
+The detailed documentation for FTS3 can be found
+at L<http://www.sqlite.org/fts3.html>. Here is a very short example :
+
+  $dbh->do(<<"") or die DBI::errstr;
+  CREATE VIRTUAL TABLE fts_example USING fts3(content)
+  
+  my $sth = $dbh->prepare("INSERT INTO fts_example(content) VALUES (?))");
+  $sth->execute($_) foreach @docs_to_insert;
+  
+  my $results = $dbh->selectall_arrayref(<<"");
+  SELECT docid, snippet(content) FROM fts_example WHERE content MATCH 'foo'
+  
+
+The key points in this example are :
+
+=over
+
+=item *
+
+The syntax for creating FTS3 tables is 
+
+  CREATE VIRTUAL TABLE <table_name> USING fts3(<columns>)
+
+where C<< <columns> >> is a list of column names. Columns may be
+typed, but the type information is ignored. If no columns
+are specified, the default is a single column named C<content>.
+In addition, FTS3 tables have an implicit column called C<docid>
+(or also C<rowid>) for numbering the stored documents.
+
+=item *
+
+Statements for inserting, updating or deleting records 
+use the same syntax as for regular SQLite tables.
+
+=item *
+
+Full-text searches are specified with the C<MATCH> operator, and an
+operand which may be a single word, a word prefix ending with '*', a
+list of words, a "phrase query" in double quotes, or a boolean combination
+of the above. 
+
+=item *
+
+The builtin function C<snippet(...)> builds a formatted excerpt of the
+document text, where the words pertaining to the query are highlighted.
+
+=back
+
+There are many more details to building and searching
+FTS3 tables, so we strongly invite you to read
+the full documentation at at L<http://www.sqlite.org/fts3.html>.
+
+B<Incompatible change> : 
+starting from version 1.31, C<DBD::SQLite> uses the new, recommended
+"Enhanced Query Syntax" for binary set operators (AND, OR, NOT, possibly 
+nested with parenthesis). Previous versions of C<DBD::SQLite> used the
+"Standard Query Syntax" (see L<http://www.sqlite.org/fts3.html#section_3_2>).
+Unfortunately this is a compilation switch, so it cannot be tuned
+at runtime; however, since FTS3 was never advertised in versions prior
+to 1.31, the change should be invisible to the vast majority of 
+C<DBD::SQLite> users. If, however, there are any applications
+that nevertheless were built using the "Standard Query" syntax,
+they have to be migrated; but the conversion 
+function provided in in L<DBD::SQLite::FTS3Transitional>
+is there to help.
+
+
+=head2 Tokenizers
+
+The behaviour of full-text indexes strongly depends on how
+documents are split into I<tokens>; therefore FTS3 table
+declarations can explicitly specify how to perform
+tokenization: 
+
+  CREATE ... USING fts3(<columns>, tokenize=<tokenizer>)
+
+where C<< <tokenizer> >> is a sequence of space-separated
+words that triggers a specific tokenizer, as explained below.
+
+=head3 SQLite builtin tokenizers
+
+SQLite comes with three builtin tokenizers :
+
+=over
+
+=item simple
+
+Under the I<simple> tokenizer, a term is a contiguous sequence of
+eligible characters, where eligible characters are all alphanumeric
+characters, the "_" character, and all characters with UTF codepoints
+greater than or equal to 128. All other characters are discarded when
+splitting a document into terms. They serve only to separate adjacent
+terms.
+
+All uppercase characters within the ASCII range (UTF codepoints less
+than 128), are transformed to their lowercase equivalents as part of
+the tokenization process. Thus, full-text queries are case-insensitive
+when using the simple tokenizer.
+
+=item porter
+
+The I<porter> tokenizer uses the same rules to separate the input
+document into terms, but as well as folding all terms to lower case it
+uses the Porter Stemming algorithm to reduce related English language
+words to a common root.
+
+=item icu
+
+If SQLite is compiled with the SQLITE_ENABLE_ICU
+pre-processor symbol defined, then there exists a built-in tokenizer
+named "icu" implemented using the ICU library, and taking an
+ICU locale identifier as argument (such as "tr_TR" for
+Turkish as used in Turkey, or "en_AU" for English as used in
+Australia). For example:
+
+  CREATE VIRTUAL TABLE thai_text USING fts3(text, tokenize=icu th_TH)
+
+The ICU tokenizer implementation is very simple. It splits the input
+text according to the ICU rules for finding word boundaries and
+discards any tokens that consist entirely of white-space. This may be
+suitable for some applications in some locales, but not all. If more
+complex processing is required, for example to implement stemming or
+discard punctuation, use the perl tokenizer as explained below.
+
+=back
+
+=head3 Perl tokenizers
+
+In addition to the builtin SQLite tokenizers, C<DBD::Sqlite>
+implements a I<perl> tokenizer, that can hook to any tokenizing
+algorithm written in Perl. This is specified as follows :
+
+  CREATE ... USING fts3(<columns>, tokenize=perl '<perl_function>')
+
+where C<< <perl_function> >> is a fully qualified Perl function name
+(i.e. prefixed by the name of the package in which that function is
+declared). So for example if the function is C<my_func> in the main 
+program, write
+
+  CREATE ... USING fts3(<columns>, tokenize=perl 'main::my_func')
+
+That function should return a code reference that takes a string as
+single argument, and returns an iterator (another function), which
+returns a tuple C<< ($term, $len, $start, $end, $index) >> for each
+term. Here is a simple example that tokenizes on words according to
+the current perl locale
+
+  sub locale_tokenizer {
+    return sub {
+      my $string = shift;
+
+      use locale;
+      my $regex      = qr/\w+/;
+      my $term_index = 0;
+
+      return sub { # closure
+        $string =~ /$regex/g or return; # either match, or no more token
+        my ($start, $end) = ($-[0], $+[0]);
+        my $len           = $end-$start;
+        my $term          = substr($string, $start, $len);
+        return ($term, $len, $start, $end, $term_index++);
+      }
+    };
+  }
+
+There must be three levels of subs, in a kind of "Russian dolls" structure,
+because :
+
+=over
+
+=item *
+
+the external, named sub is called whenever accessing a FTS3 table
+with that tokenizer
+
+=item *
+
+the inner, anonymous sub is called whenever a new string
+needs to be tokenized (either for inserting new text into the table,
+or for analyzing a query).
+
+=item *
+
+the innermost, anonymous sub is called repeatedly for retrieving
+all terms within that string.
+
+=back
+
+Instead of writing tokenizers by hand, you can grab one of those
+already implemented in the L<Search::Tokenizer> module :
+
+  use Search::Tokenizer;
+  $dbh->do(<<"") or die DBI::errstr;
+  CREATE ... USING fts3(<columns>, 
+                        tokenize=perl 'Search::Tokenizer::unaccent')
+
+or you can use L<Search::Tokenizer/new> to build
+your own tokenizer.
+
+
+=head2 Incomplete handling of utf8 characters
+
+The current FTS3 implementation in SQLite is far from complete with
+respect to utf8 handling : in particular, variable-length characters
+are not treated correctly by the builtin functions
+C<offsets()> and C<snippet()>.
+
+=head2 Database space for FTS3
+
+FTS3 stores a complete copy of the indexed documents, together with
+the fulltext index. On a large collection of documents, this can
+consume quite a lot of disk space. If copies of documents are also
+available as external resources (for example files on the filesystem),
+that space can sometimes be spared --- see the tip in the 
+L<Cookbook|DBD::SQLite::Cookbook/"Sparing database disk space">.
+
+
+=head1 FOR DBD::SQLITE EXTENSION AUTHORS
+
+Since 1.30_01, you can retrieve the bundled sqlite C source and/or
+header like this:
+
+  use File::ShareDir 'dist_dir';
+  use File::Spec::Functions 'catfile';
+  
+  # the whole sqlite3.h header
+  my $sqlite3_h = catfile(dist_dir('DBD-SQLite'), 'sqlite3.h');
+  
+  # or only a particular header, amalgamated in sqlite3.c
+  my $what_i_want = 'parse.h';
+  my $sqlite3_c = catfile(dist_dir('DBD-SQLite'), 'sqlite3.c');
+  open my $fh, '<', $sqlite3_c or die $!;
+  my $code = do { local $/; <$fh> };
+  my ($parse_h) = $code =~ m{(
+    /\*+[ ]Begin[ ]file[ ]$what_i_want[ ]\*+
+    .+?
+    /\*+[ ]End[ ]of[ ]$what_i_want[ ]\*+/
+  )}sx;
+  open my $out, '>', $what_i_want or die $!;
+  print $out $parse_h;
+  close $out;
+
+You usually want to use this in your extension's C<Makefile.PL>,
+and you may want to add DBD::SQLite to your extension's C<CONFIGURE_REQUIRES>
+to ensure your extension users use the same C source/header they use
+to build DBD::SQLite itself (instead of the ones installed in their
+system).
 
 =head1 TO DO
 
