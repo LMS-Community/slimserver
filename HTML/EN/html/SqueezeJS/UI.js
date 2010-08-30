@@ -2144,6 +2144,7 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 					// only show the count if it is more than one item
 					Ext.get('Count'+i).setDisplayed(scans[i].Total ? true : false);
 					Ext.get('progress'+i).setDisplayed(scans[i].Name ? true : false);
+					Ext.get('Info'+i).setDisplayed(scans[i].Info ? true : false);
 
 					for (var j=0; j<elems.length; j++) {
 						if (value = scans[i][elems[j]])

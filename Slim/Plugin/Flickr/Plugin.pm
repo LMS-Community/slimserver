@@ -60,6 +60,8 @@ sub initJive {
 	
 	my $menu = $class->SUPER::initJive( %args );
 	
+	return if !$menu;
+	
 	$menu->[0]->{screensavers} = [];
 	
 	for my $saver ( @savers ) {
