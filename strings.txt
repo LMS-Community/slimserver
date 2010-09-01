@@ -20298,7 +20298,7 @@ DIRECTORY_DELETED_PROGRESS
 	CS	Odebrat smazané soubory
 	DA	Fjern slettede filer
 	DE	Gelöschte Dateien entfernen
-	EN	Remove deleted files
+	EN	Removing deleted files
 	ES	Quitar archivos eliminados
 	FI	Poista poistetut tiedostot
 	FR	Enlever les fichiers supprimés
@@ -20313,7 +20313,7 @@ DIRECTORY_NEW_PROGRESS
 	CS	Prohledat nové soubory
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
-	EN	Scan new files
+	EN	Scanning new files
 	ES	Examinar archivos nuevos
 	FI	Tarkista uudet tiedostot
 	FR	Analyse des nouveaux fichiers
@@ -20343,7 +20343,7 @@ PLAYLIST_DELETED_PROGRESS
 	CS	Odebrat smazané seznamy skladeb
 	DA	Fjern slettede afspilningslister
 	DE	Gelöschte Wiedergabelisten entfernen
-	EN	Remove deleted playlists
+	EN	Removing deleted playlists
 	ES	Quitar listas de reproducción eliminadas
 	FI	Poista poistetut soittoluettelot
 	FR	Enlever les listes de lecture supprimées
@@ -20358,7 +20358,7 @@ PLAYLIST_NEW_PROGRESS
 	CS	Prohledat nové seznamy skladeb
 	DA	Søg efter nye afspilningslister
 	DE	Neue Wiedergabelisten durchsuchen
-	EN	Scan new playlists
+	EN	Scanning new playlists
 	ES	Examinar listas de reproducción nuevas
 	FI	Tarkista uudet soittoluettelot
 	FR	Analyser les nouvelles listes de lecture
