@@ -163,6 +163,12 @@ END %]
 </ul></div>
 [%- END %]
 
+[% BLOCK dummycontainer %]
+<div>
+	[%- content | indent(4) %]
+</div>
+[%- END %]
+
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]">
 	[%- IF anchor %]

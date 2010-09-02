@@ -4,12 +4,8 @@ contentwrapper = 'contentitem';
 container = 'contentcontainer';
 artwork = artwork ? artwork : 0;
 
-IF ajaxUpdate;
-	BLOCK contentcontainer %]
-	<div>
-		[%- content | indent(4) %]
-	</div>
-	[% END;
+IF ajaxUpdate >= 1;
+	container = 'dummycontainer';
 ELSE;
 	FOREACH item = items;
 		IF item.image;
