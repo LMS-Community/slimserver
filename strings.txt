@@ -7947,7 +7947,7 @@ SETUP_DBHIGHMEM_NORMAL
 	EN	Normal
 
 SETUP_DBHIGHMEM_HIGH
-	DE	Hoch (empfohlen fär Rechner mit min. 1GB Arbeitsspeicher) 
+	DE	Hoch (empfohlen für Rechner mit min. 1GB Arbeitsspeicher) 
 	EN	High (recommended for machines with 1+ GB RAM)
 
 SETUP_DISABLESTATISTICS
