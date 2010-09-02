@@ -5591,18 +5591,23 @@ MP3_STREAMING_PROXIED
 	SV	Proxyströmning
 
 SETUP_OUTPUT_CHANNELS
+	DE	Kanal Ausgangsmodus
 	EN	Output Channel Mode
 
 SETUP_OUTPUT_CHANNELS_DESC
+	DE	Sie können diesen Player nur den rechten oder linken Kanal wiedergeben lassen. So lässt sich z.B. ein Stereobild aus 2 synchronisierten Squeezebox Radios erzeugen.
 	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
 
 OUTPUT_CHANNELS_NORMAL
+	DE	Beide Kanäle (Stereo)
 	EN	Both Channels (Stereo)
 
 OUTPUT_CHANNELS_LEFT
+	DE	Linker Kanal
 	EN	Left Channel
 
 OUTPUT_CHANNELS_RIGHT
+	DE	Rechter Kanal
 	EN	Right Channel
 
 SETUP_TRANSITIONTYPE
@@ -7931,15 +7936,18 @@ SETUP_DBTYPE_MYSQL
 	SV	MySQL-server
 
 SETUP_DBHIGHMEM
+	DE	Datenbank Speicherkonfiguration
 	EN	Database Memory Config
 
 SETUP_DBHIGHMEM_DESC
+	DE	Verfügt Ihr Server über ausreichend Arbeitsspeicher, kann die Leistung gesteigert werden, indem der Datenbank mehr Speicher zugewiesen wird. Wenn Sie diese Einstellung ändern, muss der Server neu gestartet werden.
 	EN	If your server has enough memory, you can obtain better performance by increasing the amount of memory available to the database. Changing this option requires a server restart.
 
 SETUP_DBHIGHMEM_NORMAL
 	EN	Normal
 
 SETUP_DBHIGHMEM_HIGH
+	DE	Hoch (empfohlen für Rechner mit min. 1GB Arbeitsspeicher) 
 	EN	High (recommended for machines with 1+ GB RAM)
 
 SETUP_DISABLESTATISTICS
@@ -18799,11 +18807,12 @@ WORDCLOCKOUTPUT_ENABLED
 	SV	Word clock-utsignal har aktiverats (Transporter är master)
 
 SETUP_ROLLOFFSLOW
+	DE	DAC Roll-off Filter
 	EN	DAC Roll-off Filter
 
 SETUP_ROLLOFFSLOW_DESC
+	DE	Der DAC des Transporters verfügt über 2 analoge Filtercharakteristiken. Standardmäßig wird ein Sharp Roll-off Filter genutzt. Wählen Sie hier zwischen Sharp Roll-off, oder Soft Roll-off Filter.
 	EN	The AK4396 DAC defaults to using a sharp roll-off filter, with an option to use a slow roll-off filter instead. This option only affects the analog outputs.
-	DE	Der DAC des Transporters verfügt über 2 analoge Filtercharakteristiken. Standardmäßig wird ein sharp Roll-off Filter genutzt. Wählen Sie hier zwischen sharp Roll-off, oder soft Roll-off Filter.
 
 ROLLOFFSLOW_DISABLED
 	EN	Sharp Roll-off Filter
@@ -20308,7 +20317,7 @@ DIRECTORY_DELETED_PROGRESS
 	CS	Odebrat smazané soubory
 	DA	Fjern slettede filer
 	DE	Gelöschte Dateien entfernen
-	EN	Remove deleted files
+	EN	Removing deleted files
 	ES	Quitar archivos eliminados
 	FI	Poista poistetut tiedostot
 	FR	Enlever les fichiers supprimés
@@ -20323,7 +20332,7 @@ DIRECTORY_NEW_PROGRESS
 	CS	Prohledat nové soubory
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
-	EN	Scan new files
+	EN	Scanning new files
 	ES	Examinar archivos nuevos
 	FI	Tarkista uudet tiedostot
 	FR	Analyse des nouveaux fichiers
@@ -20353,7 +20362,7 @@ PLAYLIST_DELETED_PROGRESS
 	CS	Odebrat smazané seznamy skladeb
 	DA	Fjern slettede afspilningslister
 	DE	Gelöschte Wiedergabelisten entfernen
-	EN	Remove deleted playlists
+	EN	Removing deleted playlists
 	ES	Quitar listas de reproducción eliminadas
 	FI	Poista poistetut soittoluettelot
 	FR	Enlever les listes de lecture supprimées
@@ -20368,7 +20377,7 @@ PLAYLIST_NEW_PROGRESS
 	CS	Prohledat nové seznamy skladeb
 	DA	Søg efter nye afspilningslister
 	DE	Neue Wiedergabelisten durchsuchen
-	EN	Scan new playlists
+	EN	Scanning new playlists
 	ES	Examinar listas de reproducción nuevas
 	FI	Tarkista uudet soittoluettelot
 	FR	Analyser les nouvelles listes de lecture
