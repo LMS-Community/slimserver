@@ -3,41 +3,53 @@
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
 		Ext.onReady(function(){
-			new Ext.form.TextField({
+			var sinput = new Ext.form.TextField({
 				applyTo: 'livesearch',
 				validationDelay: 100,
 				validateOnBlur: false,
 				selectOnFocus: true,
 
-				validator: [% IF manualSearch; 'null'; ELSE %]function(value){
+				searches: [
+					[% FOREACH search = searches %]
+					{
+						id: 'result[% loop.index %]',
+						url: '[% search.values.0 %]'
+					}[% loop.last ? '' : ',' %]
+					[% END %]
+				],
+
+				validator: function(value, force){
 					var el;
 
-					if (value.length > 2) {
-						if (el = Ext.get('browsedbHeader'))
-							el.remove();
+					if (value.length > 2 || force) {
+						for (var i=0; i<this.searches.length; i++) {
+							if (el = Ext.get(this.searches[i].id)) {
+								// don't wait for an earlier update to finish
+								if (el.getUpdateManager().isUpdating())
+									el.getUpdateManager().abort();
 
-						if (el = Ext.get('browsedbList'))
-							el.remove();
+								el.load({
+									url: this.searches[i].url,
+									method: 'GET',
+									params: {
+										q: value,
+										player: player,
+										ajaxUpdate: 1,
+										index: i
+									},
+									callback: function() {
+										Highlighter.init();
+										SqueezeJS.UI.ScrollPanel.init();
 
-						el = Ext.get('search-results')
-
-						// don't wait for an earlier update to finish
-						if (el.getUpdateManager().isUpdating())
-							el.getUpdateManager().abort();
-
-						el.load('search.xml',
-							{
-								query: value,
-								player: player
-							},
-							function(){
-								Highlighter.init();
-								SqueezeJS.UI.ScrollPanel.init();
+										// we need to fix the URL, as the returned values are relative to the search path
+										var a = Ext.DomQuery.select("a[class=browseItemLink]");
+										for (i=0; i<a.length; i++) {
+											a[i].href = a[i].href.replace(/index.html/g, "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/");
+										}
+									}
+								});
 							}
-						);
-					}
-					else if (el = Ext.get('search-results')) {
-						el.update('');
+						}
 					}
 
 					return true;
@@ -49,8 +61,11 @@
 			            this.validationTask.delay(this.validationDelay);
 			        }
 			    }
-				[% END %]
 			});
+
+			[% IF manualSearch %]
+			sinput.validator('[% query %]', true);
+			[% END %]
 
 			new Ext.Button({
 				renderTo: 'searchButton',
@@ -95,20 +110,11 @@
 		[% END %]
 	</div>
 
-	<div id="search-results">
-		[% IF browse_items.size %]
-			<div id="browsedbList">
-	
-				[% FOREACH item = browse_items %]
-					[% PROCESS browsedbitems_list.html %]
-				[% END %]
-	
-			</div>
-		[% ELSIF manualSearch %]
-			<div id="browsedbList">
-				[% "NO_SEARCH_RESULTS" | string %]
-			</div>
-		[% END %]
+	<div id="browsedblist" class="yo">
+	[% FOREACH search = searches %]
+		<div class="searchHeader">[% search.keys.0 %]</div>
+		<div id="result[% loop.index %]"></div>
+	[% END %]
 	</div>
 
 [% PROCESS pagefooter.html %]

@@ -4,10 +4,18 @@ contentwrapper = 'contentitem';
 container = 'contentcontainer';
 artwork = artwork ? artwork : 0;
 
-FOREACH item = items;
-	IF item.image;
-		hasArtwork = 1;
-		LAST;
+IF ajaxUpdate;
+	BLOCK contentcontainer %]
+	<div>
+		[%- content | indent(4) %]
+	</div>
+	[% END;
+ELSE;
+	FOREACH item = items;
+		IF item.image;
+			hasArtwork = 1;
+			LAST;
+		END;	
 	END;	
 END;
 
@@ -181,7 +189,7 @@ END %]
 				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : '') _ (item.icon ? ' smallIcon' : '') %]
 					[% IF artwork == 1 || path == 'trackinfo.html';
 						item.size = thumbSize || 100;
-						itemobj.id = loop.count;
+						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
 					END %]
 
 					[% IF item.image && !(artwork > 0) %]

@@ -22,6 +22,7 @@ my $prefs = preferences('server');
 sub init {
 
 	Slim::Web::Pages->addPageFunction( qr/^browsedb\.(?:htm|xml)/, \&browsedb );
+	Slim::Web::Pages->addPageFunction( qr/^search\.(?:htm|xml)/, \&search );
 #	Slim::Web::Pages->addPageFunction( qr/^browseid3\.(?:htm|xml)/, \&browseid3 );
 #
 #	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0" });
@@ -610,77 +611,95 @@ sub browsedb {
 }
 
 # Implement browseid3 in terms of browsedb.
-sub browseid3 {
-	my ($client, $params) = @_;
-
-	my @hierarchy  = ();
-	my %categories = (
-		'genre'  => 'genre',
-		'artist' => 'contributor',
-		'album'  => 'album',
-		'song'   => 'track'
-	);
-
-	my %queryMap = (
-		'genre'       => 'me.name',
-		'contributor' => 'me.name',
-		'album'       => 'me.title',
-		'track'       => 'me.title',
-	);
-
-	$params->{'level'} = 0;
-
-	# Turn the browseid3 params into something browsedb can use.
-	for my $category (keys %categories) {
-
-		next unless $params->{$category};
-
-		$params->{ $categories{$category} } = $params->{$category};
-	}
-
-	# These must be in order.
-	for my $category (qw(genre artist album track)) {
-
-		if (!defined $params->{$category}) {
-
-			push @hierarchy, $category;
-
-		} elsif ($params->{$category} eq '*') {
-
-			delete $params->{$category};
-
-		} elsif ($params->{$category}) {
-
-			# Search for each real name - normalize the query,
-			# then turn it into the ID suitable for browsedb()
-			my $cat = $params->{$category} = Slim::Schema->single($category, {
-				$queryMap{$category} => $params->{$category},
-			});
-
-			return browsedb($client, $params) unless $cat;
-
-			$params->{$category} = $cat->id;
-		}
-	}
-
-	$params->{'hierarchy'} = join(',', @hierarchy);
-
-	return browsedb($client, $params);
-}
+#sub browseid3 {
+#	my ($client, $params) = @_;
+#
+#	my @hierarchy  = ();
+#	my %categories = (
+#		'genre'  => 'genre',
+#		'artist' => 'contributor',
+#		'album'  => 'album',
+#		'song'   => 'track'
+#	);
+#
+#	my %queryMap = (
+#		'genre'       => 'me.name',
+#		'contributor' => 'me.name',
+#		'album'       => 'me.title',
+#		'track'       => 'me.title',
+#	);
+#
+#	$params->{'level'} = 0;
+#
+#	# Turn the browseid3 params into something browsedb can use.
+#	for my $category (keys %categories) {
+#
+#		next unless $params->{$category};
+#
+#		$params->{ $categories{$category} } = $params->{$category};
+#	}
+#
+#	# These must be in order.
+#	for my $category (qw(genre artist album track)) {
+#
+#		if (!defined $params->{$category}) {
+#
+#			push @hierarchy, $category;
+#
+#		} elsif ($params->{$category} eq '*') {
+#
+#			delete $params->{$category};
+#
+#		} elsif ($params->{$category}) {
+#
+#			# Search for each real name - normalize the query,
+#			# then turn it into the ID suitable for browsedb()
+#			my $cat = $params->{$category} = Slim::Schema->single($category, {
+#				$queryMap{$category} => $params->{$category},
+#			});
+#
+#			return browsedb($client, $params) unless $cat;
+#
+#			$params->{$category} = $cat->id;
+#		}
+#	}
+#
+#	$params->{'hierarchy'} = join(',', @hierarchy);
+#
+#	return browsedb($client, $params);
+#}
 
 # Turn an array of attributes into a URI string
 # 
 # Use URI::Query instead?
-sub _attributesToKeyValuePair {
-	my $attrs = shift;
-	my @pairs = ();
+#sub _attributesToKeyValuePair {
+#	my $attrs = shift;
+#	my @pairs = ();
+#
+#	for my $key (sort keys %{$attrs}) {
+#
+#		push @pairs, sprintf('%s=%s', $key, $attrs->{$key});
+#	}
+#
+#	return sprintf('&%s', join('&', @pairs));
+#}
 
-	for my $key (sort keys %{$attrs}) {
+sub search {
+	my ($client, $params) = @_;
 
-		push @pairs, sprintf('%s=%s', $key, $attrs->{$key});
+	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
+	
+	$params->{searches} = [];
+	
+	my $i = 0;
+	foreach (@$searchItems) {
+		push @{ $params->{searches} }, {
+			$_->{name} => "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/"
+		};
+		$i++;
 	}
 
-	return sprintf('&%s', join('&', @pairs));
+	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	
 }
 
 1;
