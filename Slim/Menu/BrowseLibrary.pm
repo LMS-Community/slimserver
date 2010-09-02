@@ -709,11 +709,6 @@ sub _topLevel {
 	$log->error("Routing failure: node mode param");
 }
 
-sub _clientString {
-	my ($client, $string) = @_;
-	return Slim::Utils::Strings::clientString($client, $string);
-}
-
 sub _generic {
 	my ($client,
 		$callback,		# func ref:  Callback function to XMLbowser: callback(hashOrArray_ref)
@@ -779,37 +774,43 @@ sub _search {
 	my ($client, $callback, $args, $pt) = @_;
 
 	my %feed = (
-		name  => _clientString($client, 'SEARCH'),
+		name  => cstring($client, 'SEARCH'),
 		icon => 'html/images/search.png',
-		items => [
-			{
-				type => 'search',
-				name => _clientString($client, 'BROWSE_BY_ARTIST'),
-				icon => 'html/images/search.png',
-				url  => $browseLibraryModeMap{'artists'},
-			},
-			{
-				type => 'search',
-				name => _clientString($client, 'BROWSE_BY_ALBUM'),
-				icon => 'html/images/search.png',
-				url  => $browseLibraryModeMap{'albums'},
-			},
-			{
-				type => 'search',
-				name => _clientString($client, 'BROWSE_BY_SONG'),
-				icon => 'html/images/search.png',
-				url  => $browseLibraryModeMap{'tracks'},
-			},
-			{
-				type => 'search',
-				name => _clientString($client, 'PLAYLISTS'),
-				icon => 'html/images/search.png',
-				url  => $browseLibraryModeMap{'playlists'},
-			},
-		],
+		items => searchItems($client),
 	);
 	
 	$callback->( \%feed );
+}
+
+sub searchItems {
+	my $client = shift;
+	
+	return [
+		{
+			type => 'search',
+			name => cstring($client, 'BROWSE_BY_ARTIST'),
+			icon => 'html/images/search.png',
+			url  => $browseLibraryModeMap{'artists'},
+		},
+		{
+			type => 'search',
+			name => cstring($client, 'BROWSE_BY_ALBUM'),
+			icon => 'html/images/search.png',
+			url  => $browseLibraryModeMap{'albums'},
+		},
+		{
+			type => 'search',
+			name => cstring($client, 'BROWSE_BY_SONG'),
+			icon => 'html/images/search.png',
+			url  => $browseLibraryModeMap{'tracks'},
+		},
+		{
+			type => 'search',
+			name => cstring($client, 'PLAYLISTS'),
+			icon => 'html/images/search.png',
+			url  => $browseLibraryModeMap{'playlists'},
+		},
+	];
 }
 
 sub _tagsToParams {
@@ -856,7 +857,7 @@ sub _artists {
 			if (scalar @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
-					name        => _clientString($client, 'ALL_ALBUMS'),
+					name        => cstring($client, 'ALL_ALBUMS'),
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_albums,
@@ -1095,7 +1096,7 @@ sub _albums {
 				$actions{'addall'} = $actions{'add'};
 				
 				$extra = [ {
-					name        => _clientString($client, 'ALL_SONGS'),
+					name        => cstring($client, 'ALL_SONGS'),
 					image       => 'music/all_items/cover',
 					type        => 'playlist',
 					playlist    => \&_tracks,
