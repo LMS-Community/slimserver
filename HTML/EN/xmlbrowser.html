@@ -120,9 +120,8 @@
 			
 			[% IF item.type == 'search' && !item.weblink %]
 				<form name="searchForm[% item.index || index _ (start + loop.index) %]" id="searchForm[% item.index || index _ (start + loop.index) %]" method="GET">
-					[% item.name || item.title %]
 					<input type="text" name="q" value=""/>
-					<input name="formsubmit" type="submit" class="stdclick" value="[% "SEARCH" | string %]" onClick = "document.getElementById('searchForm[% item.index || index _ (start + loop.index) %]').submit();"><p>
+					<input name="formsubmit" type="submit" class="stdclick" value="[% item.name || item.title %]" onClick = "document.getElementById('searchForm[% item.index || index _ (start + loop.index) %]').submit();"><p>
 					<input type="hidden" value="[% player %]" name="player" />
 					<input type="hidden" value="[% sess %]" name="sess">
 					<input type="hidden" value="[% item.index || index _ (start + loop.index) %]" name="index" />

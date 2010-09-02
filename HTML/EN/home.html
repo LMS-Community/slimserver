@@ -50,14 +50,14 @@
 	</ul>
 </div>
 
-<div class="homeMenuSection">
+<!-- <div class="homeMenuSection">
 	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
-	[%- FOREACH key = additionalLinks.search.keys %]
+	[%-# FOREACH key = additionalLinks.search.keys %]
 		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | getstring | html %]</a></li>
-	[%- END %]
+	[%-# END %]
 	</ul>
-</div>
+</div> -->
 
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
