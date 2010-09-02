@@ -34,29 +34,22 @@ ELSE %]
 			END;
 		END;
 		FOREACH link = additionalLinks.browse;
-			IF link.key.search('\W') || (link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size);
+			IF link.key == 'SEARCH';
+				control = BLOCK %]
+ 					<form method="GET" action="[% webroot %]search.html">
+						<input type="hidden" name="player" value="[% playerid %]">
+						<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
+						<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
+					</form>
+				[% END;
+				PROCESS menuItem;
+			ELSIF link.key.search('\W') || (link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size);
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				PROCESS menuItem;
 			ELSIF link.key == 'FAVORITES';
 				useFavorites = 1;
 			END;
 		END;
-#		FOREACH link = additionalLinks.search;
-#			IF link.key == 'SEARCHMUSIC' && 0;
-#				control = BLOCK 
-%]
-<!-- 					<form method="GET" action="[% webroot %]search.html">
-						<input type="hidden" name="manualSearch" value="1"/>
-						<input type="hidden" name="livesearch" value="0"/>
-						<input type="hidden" name="player" value="[% playerid %]">
-						<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
-						<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
-					</form>
- -->				[%
- # END;
-#				PROCESS menuItem;
-#			END;
-#		END;
 	END;
 	
 	radioItems = BLOCK;

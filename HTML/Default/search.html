@@ -63,7 +63,7 @@
 			    }
 			});
 
-			[% IF manualSearch %]
+			[% IF query %]
 			sinput.validator('[% query %]', true);
 			[% END %]
 
@@ -79,7 +79,7 @@
 	</script>
 [% END %]
 [% pwd_list = BLOCK %]
-	<a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+	<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html dontscroll=browse_items.size %]
 
@@ -90,7 +90,6 @@
 			<td><span id="searchButton"></span></td>
 			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
-		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
 	</div>
@@ -99,18 +98,9 @@
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
-		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %]
-			<div class="pagerbox">
-				<div class="pagerbox_top"><div></div></div>
-				<div class="pagerbox_content">
-					[% PROCESS pagebar %]
-				</div>
-				<div class="pagerbox_bottom"><div></div></div>
-			</div>
-		[% END %]
 	</div>
 
-	<div id="browsedblist" class="yo">
+	<div id="browsedblist">
 	[% FOREACH search = searches %]
 		<div class="searchHeader">[% search.keys.0 %]</div>
 		<div id="result[% loop.index %]"></div>
