@@ -1579,6 +1579,11 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 	
+	# Set primary_artist for the track
+	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
+		$columnValueHash{primary_artist} = $artist->[0];
+	}
+	
 	### Find artwork column values for the Track
 	if ( !$columnValueHash{cover} && $columnValueHash{audio} ) {
 		# Track does not have embedded artwork, look for standalone cover

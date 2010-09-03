@@ -160,6 +160,8 @@ sub _artistid {
 		main::INFOLOG && $log->info("Using cached primary artist");
 		return wantarray ? ($id, $self->primary_artist) : $id;
 	}
+	
+	# XXX primary_artist is now set during scan, the below code should be removed
 
 	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
 	my $artist = $self->contributorsOfType('ARTIST')->single ||
