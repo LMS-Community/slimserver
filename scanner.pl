@@ -280,7 +280,8 @@ sub main {
 	$sqlHelperClass->beforeScan();
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
-	Slim::Schema->dbh->{'AutoCommit'} = 0;
+	# XXX with the new scanner there are no periodic commits...
+	#Slim::Schema->dbh->{'AutoCommit'} = 0;
 
 	my $scanType = 'SETUP_STANDARDRESCAN';
 

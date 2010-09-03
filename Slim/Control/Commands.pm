@@ -2906,6 +2906,7 @@ sub pragmaCommand {
 	
 	my $pragma = join( ' ', grep { $_ ne 'pragma' } $request->renderAsArray );
 	
+	# XXX need to pass pragma to artwork cache even if using MySQL
 	Slim::Utils::OSDetect->getOS()->sqlHelperClass()->pragma($pragma);
 	
 	$request->setStatusDone();
