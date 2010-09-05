@@ -402,22 +402,15 @@ sub initializeFrameworks {
 	main::INFOLOG && $log->info("Squeezebox Server Info init...");
 
 	Slim::Music::Info::init();
-	
-	# Bug 6721
-	# The ProtocolHandlers class won't have all our handlers registered,
-	# and this can cause problems scanning playlists that contain URLs
-	# that use a protocol handler, i.e. rhapd://
-	my @handlers = qw(
-		live365
-		loop
-		pandora
-		rhapd
-		slacker
-		source
-	);
-	
-	for my $handler ( @handlers ) {
-		Slim::Player::ProtocolHandlers->registerHandler( $handler => 1 );
+
+	# Bug 16188 - create dummy protocol entries for all protocol handlers known to the main server
+	# this ensures that when we scan a url for one of these protocols we treat it as a valid remote entry
+
+	for my $handler(@{$prefs->get('registeredhandlers') || []}) {
+
+		if (!defined Slim::Player::ProtocolHandlers->handlerForProtocol($handler)) {
+			Slim::Player::ProtocolHandlers->registerHandler( $handler => 1 );
+		}
 	}
 }
 
