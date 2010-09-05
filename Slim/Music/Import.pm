@@ -100,6 +100,9 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
+	# Bug 16188 - ensure loaded protocol handlers are known by scanner process by saving in a pref
+	$prefs->set('registeredhandlers', [ Slim::Player::ProtocolHandlers->registeredHandlers ]);
+
 	Slim::Utils::Prefs->writeAll;
 
 	my $path = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath(

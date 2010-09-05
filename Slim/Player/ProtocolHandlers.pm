@@ -24,7 +24,6 @@ my %protocolHandlers = (
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
-	rtsp     => 1,
 	playlist => 0,
 	db       => 1,
 );

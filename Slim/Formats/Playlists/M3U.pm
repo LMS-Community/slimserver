@@ -114,11 +114,20 @@ sub read {
 
 		$entry =~ s|$LF||g;
 
-		if (main::ISWINDOWS) {
-			$entry = Win32::GetANSIPathName($entry);	
-		}
+		my $fullentry;
 
-		my $fullentry = Slim::Utils::Misc::fixPath($entry, $baseDir);
+		if (Slim::Music::Info::isRemoteURL($entry)) {
+
+			$fullentry = $entry;
+
+		} else {
+
+			if (main::ISWINDOWS) {
+				$entry = Win32::GetANSIPathName($entry);	
+			}
+			
+			$fullentry = Slim::Utils::Misc::fixPath($entry, $baseDir);
+		}
 
 		if ($class->playlistEntryIsValid($fullentry, $url)) {
 
