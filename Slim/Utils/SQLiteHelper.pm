@@ -119,7 +119,7 @@ sub on_connect_do {
 	
 	my $sql = [
 		'PRAGMA synchronous = OFF',
-		'PRAGMA journal_mode = WAL',
+		#'PRAGMA journal_mode = WAL', # XXX WAL mode needs more work
 		'PRAGMA foreign_keys = ON',
 	];
 	
@@ -144,7 +144,7 @@ sub on_connect_do {
 	# Track Persistent data is in another file
 	my $persistentdb = $class->_dbFile('squeezebox-persistent.db');
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
-	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
+	#push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL'; # XXX
 	
 	return $sql;
 }
@@ -232,8 +232,7 @@ scanner database if available.
 sub checkDataSource {
 	my $class = shift;
 	
-	# XXX WAL
-=pod
+	# XXX remove for WAL
 	my $scannerdb = $class->_dbFile('squeezebox-scanner.db');
 	
 	if ( -e $scannerdb ) {
@@ -276,7 +275,7 @@ sub checkDataSource {
 			eval { $dbh->do('DETACH scannerdb') };
 		}
 	}
-=cut
+	# XXX end WAL
 }
 
 =head2 replace_with( $from )
@@ -319,8 +318,7 @@ Called before a scan is started.  We copy the database to a new file and switch 
 sub beforeScan {
 	my $class = shift;
 
-	# XXX WAL
-=pod
+    # XXX remove for WAL
 	my $to = 'squeezebox-scanner.db';
 	
 	my ($driver, $source, $username, $password) = Slim::Schema->sourceInformation;
@@ -354,7 +352,7 @@ sub beforeScan {
 	else {
 		die "Unable to copy_and_switch: $dbname does not exist";
 	}
-=cut
+    # XXX end WAL
 }
 
 =head2 afterScan()
@@ -367,7 +365,7 @@ sub afterScan {
 	my $class = shift;
 	
 	# Checkpoint the database
-	$class->pragma('wal_checkpoint');
+	#$class->pragma('wal_checkpoint'); # XXX
 	
 	$class->updateProgress('end');
 }
@@ -570,15 +568,14 @@ sub _notifyFromScanner {
 		# the scanner aborted and we should throw away the scanner database
 		
 		if ( $SCANNING ) {
-			# XXX WAL
-=pod
+			# XXX remove for WAL
 			my $db = $class->_dbFile('squeezebox-scanner.db');
 			
 			if ( -e $db ) {
 				main::INFOLOG && $log->is_info && $log->info("Scanner aborted, removing $db");
 				unlink $db;
 			}
-=cut
+			# XXX end WAL
 			
 			$SCANNING = 0;
 			
@@ -590,8 +587,8 @@ sub _notifyFromScanner {
 		else {
 			# Replace our database with the scanner database. Note that the locking mode
 			# is set to exclusive when we reconnect to squeezebox.db.
-			# XXX WAL
-			#$class->replace_with('squeezebox-scanner.db') if Slim::Schema::hasLibrary();
+			# XXX remove next line for WAL
+			$class->replace_with('squeezebox-scanner.db') if Slim::Schema::hasLibrary();
 			
 			# XXX handle players with track objects that are now outdated?
 		
