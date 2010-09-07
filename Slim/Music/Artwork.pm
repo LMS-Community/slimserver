@@ -708,7 +708,7 @@ sub _downloadArtwork {
 
 		my $args = '?album=' . URI::Escape::uri_escape_utf8( $lastFile{meta}->{albumname} || '' )
 			. '&artist=' . URI::Escape::uri_escape_utf8( $artist || '' )
-			. '&mbid=' . $lastFile{meta}->{album_mbid};
+			. '&mbid=' . ( $lastFile{meta}->{album_mbid} || '' );
 	
 		my $base = catfile( $params->{cacheDir}, Digest::SHA1::sha1_hex($args) );
 	

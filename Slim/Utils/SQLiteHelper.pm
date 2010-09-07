@@ -120,6 +120,7 @@ sub on_connect_do {
 	my $sql = [
 		'PRAGMA synchronous = OFF',
 		#'PRAGMA journal_mode = WAL', # XXX WAL mode needs more work
+		'PRAGMA journal_mode = MEMORY',
 		'PRAGMA foreign_keys = ON',
 	];
 	
@@ -145,6 +146,7 @@ sub on_connect_do {
 	my $persistentdb = $class->_dbFile('squeezebox-persistent.db');
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
 	#push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL'; # XXX
+	push @{$sql}, 'PRAGMA persistentdb.journal_mode = MEMORY';
 	
 	return $sql;
 }
