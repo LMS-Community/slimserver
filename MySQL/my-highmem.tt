@@ -29,13 +29,20 @@ log-warnings          = 0
 bind-address          = [% bindAddress %]
 default-character-set = utf8
 default-collation     = utf8_general_ci
-key_buffer            = 16M
 max_allowed_packet    = 1M
 table_cache           = 64
-sort_buffer_size      = 512K
 net_buffer_length     = 8K
-read_buffer_size      = 256K
-read_rnd_buffer_size  = 512K
+
+# key_buffer_size: cache index blocks for MyISAM, temp disc tables for InnoDB
+key_buffer_size       = 16M
+# sort_buffer_size: improve ORDER BY and GROUP BY
+sort_buffer_size      = 2M
+# join_buffer_size: improve full JOINs (non-indexed)
+join_buffer_size      = 2M
+# read_buffer_size: don't adjust too high, just for full scans
+read_buffer_size      = 512K
+# read_rnd_buffer_size: really improve ORDER BY
+read_rnd_buffer_size  = 2M
 
 # InnoDB settings
 # You can set .._buffer_pool_size up to 50 - 80 %
