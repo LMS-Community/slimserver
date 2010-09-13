@@ -82,7 +82,7 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	<tr>
-		<td><input name="[% type == 'update' ? "update:" _ plugin.name : plugin.name %]" [% plugin.enforce || plugin.error ? "disabled" : "" %] [% type == 'enabled' ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
+		<td><input name="[% type == 'update' ? "update:" _ plugin.name : plugin.name %]" [% plugin.enforce ? "disabled" : "" %] [% type == 'enabled' && !plugin.error ? "checked=checked" : "" %] type="checkbox" value="[% plugin.title %]" [% IF type == 'unsafe' %]class="unsafePlugin"[% END %] />
 		[% IF type != 'update' %]
 			<input name="[% IF plugin.manual %]manual[% ELSE %]install[% END %]:[% plugin.name %]" type="hidden" />&nbsp;</td>
 		[% END %]
