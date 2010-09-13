@@ -203,7 +203,6 @@ sub init {
 		'disableStatistics'     => 0,
 		'serverPriority'        => '',
 		'scannerPriority'       => 0,
-		'resampleArtwork'       => 1,
 		'precacheArtwork'       => 1,
 		'maxPlaylistLength'     => 500,
 		# Server Settings - Security
