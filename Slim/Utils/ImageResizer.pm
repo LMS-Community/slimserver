@@ -130,7 +130,6 @@ sub sync_resize {
 			cache     => Slim::Utils::ArtworkCache->new(),
 			cachekey  => $cachekey,
 			debug     => $isDebug,
-			faster    => !$prefs->get('resampleArtwork'),
 		);
 	};
 	

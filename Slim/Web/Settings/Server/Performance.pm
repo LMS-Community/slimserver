@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
- 	return ($prefs, qw(dbtype dbhighmem disableStatistics serverPriority scannerPriority resampleArtwork 
+ 	return ($prefs, qw(dbtype dbhighmem disableStatistics serverPriority scannerPriority 
  				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
 }
 

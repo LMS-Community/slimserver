@@ -18318,66 +18318,6 @@ SETUP_VISUALIZERMODE_DESC
 	RU	Правый экран плеера может показывать визуализацию или расширенную текстовую информацию. Выберите нужный вариант отображения. С помощью кнопки "Визуальные эффекты" можно перемещаться между выбранными ниже параметрами.
 	SV	Spelaren kan visa antingen mätare eller mer utförlig textinformation på displayen till höger. Välj det alternativ du föredrar. Genom att trycka på visualiseringsknappen på spelaren kan du växla mellan alla de alternativ du markerat nedan.
 
-SETUP_RESAMPLEARTWORK
-	CS	Převzorkování obrázku obalu alba
-	DA	Genbehandling af albumcovere
-	DE	Plattenhülle neu berechnen
-	EN	Artwork resampling
-	ES	Nuevo muestreo de carátulas
-	FI	Kansitaiteen uudelleenluonti näytteistä
-	FR	Rééchantillonnage de la pochette
-	IT	Ricampionamento immagine
-	NL	Bezig met resamplen van hoesafbeeldingen
-	NO	Omsampling av albumomslag
-	PL	Zmiana rozdzielczości okładki
-	RU	Изменение атрибутов обложки
-	SV	Omsampling av omslagsbilder
-
-SETUP_RESAMPLEARTWORK_DESC
-	CS	U nenáročných zařízení, například u některých populárních zařízení NAS, převzorkování předlohy může být pomalé. Použitím jednodušší metody lze čas potřebný pro zpracování obalu alba zlepšit na úkor kvality obrazu. Pokud chcete urychlit zpracování obalu alba, zvolte "Změna velikosti" místo  "Převzorkování".
-	DA	På maskiner med lave specifikationer, fx visse populære NAS-enheder, kan det tage lang tid at behandle albumcovere. Behandlingstiden kan forkortes ved at bruge en enklere metode, men det går ud over billedkvaliteten. Du kan gøre behandlingen af albumcovere hurtigere hvis du vælger Tilpas størrelse i stedet for Genbehandling.
-	DE	Auf Rechnern mit niedriger Leistung (z.B. bestimmten beliebten NAS-Geräten) kann das Resampling von Plattenhüllen langsam sein. Wenn Sie ein einfacheres Verfahren wählen, wird der Vorgang schneller, worunter allerdings die Bildqualität leidet. Soll die Verarbeitung von Plattenhüllen schneller ablaufen, wählen Sie "Größe der Plattenhülle ändern" statt "Plattenhülle neu berechnen".
-	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling.
-	ES	Con aparatos de gama baja (p. ej. algunos dispositivos NAS de uso extendido) la repetición del muestreo de carátula puede ser un proceso lento. Un método más sencillo puede agilizar la tarea, aunque con una reducción de calidad de imagen. Para ello, seleccione "Cambiar tamaño" en lugar de "Nuevo muestreo".
-	FI	Tehottomammissa koneissa, esimerkiksi eräissä suosituissa NAS-laitteissa, kansitaiteen kuvan uudelleenluonti näytteistä saattaa olla hidasta. Yksinkertaisempaa menetelmää käyttämällä kuvien käsittelyyn tarvittavaa aikaa voidaan lyhentää kuvanlaadusta tinkimällä. Valitse "kuvan koon muuttaminen" äläkä "kuvan uudelleenluonti näytteistä", jos haluat nopeuttaa kuvien käsittelyä.
-	FR	Sur certains appareils bas de gamme, tels que les dispositifs NAS, le rééchantillonnage de pochette peut être lent. En utilisant un procédé plus simple, le traitement de la pochette peut être accéléré au détriment de la qualité de l'image. Pour accélérer le traitement des pochettes, sélectionnez "Redimensionner la pochette" plutôt que "Rééchantillonner la pochette".
-	IT	Nei macchine di fascia bassa, quali alcuni dispositivi NAS molto diffusi, il ricampionamento delle immagini può risultare lento. Se si utilizza un metodo più semplice, è possibile ridurre i tempi di elaborazione delle immagini a scapito però della qualità. Per accelerare la gestione delle immagini, selezionare Ridimensiona immagine anziché Ricampiona immagine.
-	NL	Op low-end machines, zoals sommige populaire NAS-apparaten, kan resampling van hoesafbeeldingen lang duren. Wanneer je een eenvoudigere methode gebruikt, kun je de verwerking van hoesafbeeldingen versnellen. Dit gaat wel ten koste van de beeldkwaliteit. Selecteer 'Formaat van hoesafbeeldingen wijzigen' in plaats van 'Hoesafbeeldingen resamplen' als je dit proces wilt versnellen.
-	NO	På enkelte billige maskiner, som en del populære NAS-enheter, kan det gå langsomt å endre størrelse på albumomslag ved omsampling. Ved å bruke en enklere metode kan omslaget prosesseres raskere, på bekostning av bildekvaliteten. Velg «Endre størrelse» i stedet for «Omsampling» hvis du vil utføre behandling av albumomslag raskere.
-	PL	W przypadku mniej wydajnych urządzeń, takich jak popularne urządzenia NAS, ponowne pobieranie okładki może trwać dłużej. Użycie prostszej metody skraca czas przetworzenia okładki kosztem jakości obrazu. Aby przyspieszyć wyświetlanie okładki, wybierz opcję „Zmiana rozmiaru” zamiast „Ponowne pobieranie”.
-	RU	На младших моделях, например на некоторых популярных устройствах NAS, изменение атрибутов обложки может занимать много времени. Упрощенный метод обработки может сэкономить время за счет снижения качества изображения. Если требуется ускорить обработку обложек, выберите "Изменение размера" вместо "Изменение атрибутов".
-	SV	På en del billigare enheter, t.ex. vissa NAS-enheter, kan det ta lång tid att sampla om albumomslagen. Du kan snabba upp processen genom att använda en enklare metod som ger lägre bildkvalitet. Om du vill hantera omslagsbilderna snabbare väljer du Ändra storlek istället för Sampla om.
-
-SETUP_USE_RESAMPLE
-	CS	Převzorkovat obrázek obalu alba (pomalejší, vyšší kvalita)
-	DA	Genbehandling af albumcovere (langsomt, bedre kvalitet)
-	DE	Plattenhülle neu berechnen (langsamer, bessere Qualität)
-	EN	Resample Artwork (slower, better quality)
-	ES	Nuevo muestreo de carátula (más lento, mejor calidad)
-	FI	Luo kuva uudelleen näytteistä (hitaampi, parempi laatu)
-	FR	Rééchantillonner la pochette (plus lent, qualité supérieure)
-	IT	Ricampiona immagine (velocità inferiore, qualità superiore)
-	NL	Hoesafbeeldingen resamplen (langzamer, betere kwaliteit)
-	NO	Omsample albumomslag (langsommere, bedre kvalitet)
-	PL	Zmień rozdzielczość okładki (wolniej, lepsza jakość)
-	RU	Изменить атрибуты обложки (медленнее, качество выше)
-	SV	Sampla om albumomslag (långsammare, högre kvalitet)
-
-SETUP_USE_RESIZE
-	CS	Změnit velikost obrázku obalu alba (rychlejší, nižší kvalita)
-	DA	Tilpas størrelse af albumcovere (hurtigere, lavere kvalitet)
-	DE	Größe der Plattenhülle ändern (schneller, geringere Qualität)
-	EN	Resize Artwork (faster, lower quality)
-	ES	Cambiar tamaño de carátula (más rápido, peor calidad)
-	FI	Muuta kansitaiteen kokoa (nopeampi, huonompi laatu)
-	FR	Redimensionner la pochette (plus rapide, qualité inférieure)
-	IT	Ridimensiona immagine (velocità superiore, qualità inferiore)
-	NL	Formaat van hoesafbeeldingen wijzigen (sneller, lagere kwaliteit)
-	NO	Endre størrelse på albumomslag (raskere, lavere kvalitet)
-	PL	Zmień rozmiar okładki (szybciej, niższa jakość)
-	RU	Изменить размер обложки (быстрее, низкое качество)
-	SV	Ändra storlek på albumomslag (snabbare, lägre kvalitet)
-
 SETUP_PRECACHEARTWORK
 	CS	Ukládání obalu alba
 	DA	Gemmer coverbilleder i cachelager
