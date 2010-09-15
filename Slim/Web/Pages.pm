@@ -143,8 +143,10 @@ sub getPageFunction {
 sub addRawFunction {
 	my ( $class, $regexp, $funcPtr ) = @_;
 
-	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-	main::INFOLOG && $log->is_info && $log->info("Adding RAW handler: /$regexp/ -> $funcName");
+	if ( main::INFOLOG && $log->is_info ) {
+		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+		$log->info("Adding RAW handler: /$regexp/ -> $funcName");
+	}
 
 	$rawFunctions{$regexp} = $funcPtr;
 }

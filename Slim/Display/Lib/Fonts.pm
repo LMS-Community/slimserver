@@ -49,6 +49,8 @@ use constant FT_RENDER_MODE_MONO => 2;
 
 my $prefs = preferences('server');
 
+my $log = logger('player.fonts');
+
 our $fonts;
 our $fonthash;
 our $fontheight;
@@ -63,15 +65,35 @@ my $maxLines = 3; # Max lines any display will render
 my %measureTextCache;
 
 # Hebrew support
-my $canUseHebrew = eval {
-	require Locale::Hebrew;
-	return 1;
+my $hasHebrew;
+my $canUseHebrew = sub {
+	return $hasHebrew if defined $hasHebrew;
+	main::DEBUGLOG && $log->debug('Loading Locale::Hebrew');
+	eval { require Locale::Hebrew };
+	if ($@) {
+		logWarning("Unable to load Hebrew support: $@");
+	}
+	$hasHebrew = $@ ? 0 : 1;
+	return $hasHebrew;
 };
 
-my ($ft, $TTFFontFile, $useTTFCache, $useTTF);
+my $hasFreeType;
+my $canUseFreeType = sub {
+	return $hasFreeType if defined $hasFreeType;
+	main::DEBUGLOG && $log->debug('Loading Font::FreeType');
+	eval { require Font::FreeType };
+	if ($@) {
+		logWarning("Unable to load TrueType font support: $@");
+	}
+	$hasFreeType = $@ ? 0 : 1;
+	return $hasFreeType;
+};
+
+my ($ft, $TTFFontFile);
 
 # Keep a cache of up to 256 characters at a time.
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
+%TTFCache = ();
 
 # template for unpacking strings: U - unpacks Unicode chars into ords, C - is needed for 5.6 perl's
 my $unpackTemplate = ($] > 5.007) ? 'U*' : 'C*';
@@ -179,8 +201,6 @@ my %cp1252mapping = (
 
 my $cp1252re = qr/(\x{0152}|\x{0153}|\x{0160}|\x{0161}|\x{0178}|\x{017D}|\x{017E}|\x{0192}|\x{02C6}|\x{02DC}|\x{2013}|\x{2014}|\x{2018}|\x{2019}|\x{201A}|\x{201C}|\x{201D}|\x{201E}|\x{2020}|\x{2021}|\x{2022}|\x{2026}|\x{2030}|\x{2039}|\x{203A}|\x{20AC}|\x{2122})/;
 
-my $log = logger('player.fonts');
-
 my $initialized = 0;
 
 sub init {
@@ -197,27 +217,12 @@ sub init {
 		# Try a few different fonts..
 		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
 	
-			$TTFFontFile = catdir($fontFolder, $fontFile);
+			my $file = catdir($fontFolder, $fontFile);
 
-			if (-e $TTFFontFile) {
-				$useTTF = 1;
+			if (-e $file) {
+				$TTFFontFile = $file;
 				last FONTDIRS;
 			}
-		}
-	}
-		
-	if ($useTTF) {
-
-		main::INFOLOG && $log->info("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]");
-
-		$useTTFCache = 1;
-		%TTFCache    = ();
-		
-		$ft = eval { require Font::FreeType; Font::FreeType->new->face($TTFFontFile) };
-		
-		if ($@) {
-			logWarning("Unable to use TTF font $TTFFontFile: $@");
-			$useTTF = 0;
 		}
 	}
 }
@@ -310,22 +315,24 @@ sub string {
 	my $useTTFNow = 0;
 	my $reverse = 0; # flag for whether the text was reversed (Bidi:R)
 
-	if ($useTTF && defined $font2TTF{$defaultFontname}) {
-		$useTTFNow  = 1;
-		$FTFontSize = $font2TTF{$defaultFontname}->{'FTFontSize'};
-		$FTBaseline = $font2TTF{$defaultFontname}->{'FTBaseline'};
-
-		# If the string contains any Unicode characters which exist in our bitmap,
-		# use the bitmap version instead of the TTF version
-		# http://forums.slimdevices.com/showthread.php?t=42087
-		if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
-			$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
-		}
-	}
-
 	my @ords = unpack($unpackTemplate, $string);
 
 	if (@ords && max(@ords) > 255) {
+		
+		if ($TTFFontFile && exists $font2TTF{$defaultFontname} && $canUseFreeType->()) {
+			$useTTFNow  = 1;
+			$FTFontSize = $font2TTF{$defaultFontname}->{'FTFontSize'};
+			$FTBaseline = $font2TTF{$defaultFontname}->{'FTBaseline'};
+			
+			$ft ||= Font::FreeType->new->face($TTFFontFile);
+
+			# If the string contains any Unicode characters which exist in our bitmap,
+			# use the bitmap version instead of the TTF version
+			# http://forums.slimdevices.com/showthread.php?t=42087
+			if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
+				$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
+			}
+		}
 
 		if ($useTTFNow) {
 
@@ -336,7 +343,7 @@ sub string {
 			}
 
 			# flip BiDi R text and decide if scrolling should be reversed
-			if ($canUseHebrew && $string =~ $bidiR) {
+			if ($string =~ $bidiR && $canUseHebrew->()) {
 				$reverse = ($prefs->get('language') eq 'HE' || $string !~ $bidiL);
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();
@@ -408,11 +415,11 @@ sub string {
 
 			if ($ord > 255 && $useTTFNow) {
 
-				my $bits_tmp = $useTTFCache ? $TTFCache{$defaultFontname}{$ord} : '';
+				my $char_bits = $TTFCache{$ord};
 
-				unless ($bits_tmp) {
+				if ( !$char_bits ) {
 
-					$bits_tmp = '';
+					my $bits_tmp = '';
 					
 					$ft->set_char_size($FTFontSize, $FTFontSize, 96, 96);
 					my $glyph = $ft->glyph_from_char_code($ord) || $ft->glyph_from_char_code(9647); # square as fallback
@@ -458,17 +465,18 @@ sub string {
 						$bits_tmp .= '0' x 32;
 					}
 					
-					$bits_tmp = pack("B*", $bits_tmp);
+					$char_bits = pack "B*", $bits_tmp;
 
-					$TTFCache{$defaultFontname}{$ord} = $bits_tmp if $useTTFCache;
+					$TTFCache{$ord} = $char_bits;
 				}
 
 				if ($cursorpos) {
-					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
+					my $len = length($char_bits);
+					$char_bits |= substr($defaultFont->[$ord0a] x $len, 0, $len);
 					$cursorpos = 0;
 				}
 
-				$bits .= $bits_tmp;
+				$bits .= $char_bits;
 
 			} else {
 
@@ -480,15 +488,16 @@ sub string {
 
 				if ($cursorpos) {
 
-					my $bits_tmp = $font->[$ord];
+					my $char_bits = $font->[$ord];
 
 					# pad narrow characters so the cursor is wide enough to see
-					if (length($bits_tmp) < 3 * length($interspace) ) {
-						$bits_tmp = $interspace . $bits_tmp . $interspace;
+					if (length($char_bits) < 3 * length($interspace) ) {
+						$char_bits = $interspace . $char_bits . $interspace;
 					}
-
-					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
-					$bits .= $bits_tmp;
+					
+					my $len = length($char_bits);
+					$char_bits |= substr($defaultFont->[$ord0a] x $len, 0, $len);
+					$bits .= $char_bits;
 
 					$cursorpos = 0;
 
