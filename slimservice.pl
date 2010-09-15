@@ -111,7 +111,6 @@ BEGIN {
 
 # SlimService doesn't use Bootstrap
 use DBI;
-use GD;
 use Locale::Hebrew;
 use XML::Parser;
 use HTML::Parser;
