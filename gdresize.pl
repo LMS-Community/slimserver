@@ -14,12 +14,13 @@ use constant RESIZER      => 1;
 use constant SLIM_SERVICE => 0;
 use constant PERFMON      => 0;
 use constant SCANNER      => 0;
+use constant WEBUI        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant DEBUG        => ( grep { /--debug/ } @ARGV ) ? 1 : 0;
 
 BEGIN {
 	use Slim::bootstrap ();
-	Slim::bootstrap->loadModules( ['GD'], [] );
+	Slim::bootstrap->loadModules( ['Image::Scale'], [] );
 };
 
 use Getopt::Long;
@@ -109,7 +110,7 @@ Options:
 
   --file [ /path/to/image.jpg | /path/to/image.mp3 ]
     Supported file types:
-      Images: jpg, jpeg, gif, png
+      Images: jpg, jpeg, gif, png, bmp
       Audio:  see Audio::Scan documentation
 
   --url http://...
@@ -118,16 +119,10 @@ Options:
     Mode is one of:
 	  m: max         (default)
 	  p: pad         (same as max)
-	  s: stretch
-	  S: squash
-	  f: fitstretch
-	  F: fitsquash
-	  c: crop
 	  o: original
 	
 	Multiple spec arguments may be specified to resize in series.
 
-  --faster                 Use ugly but fast copyResized function
   --cacheroot [dir]        Cache resulting image in a FileCache called
                            'Artwork' located in dir
   --cachekey [key]         Use this key for the cached data.
