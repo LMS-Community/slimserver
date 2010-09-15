@@ -63,9 +63,12 @@ my $maxLines = 3; # Max lines any display will render
 my %measureTextCache;
 
 # Hebrew support
-my $canUseHebrew = eval {
-	require Locale::Hebrew;
-	return 1;
+my $hasHebrew;
+my $canUseHebrew = sub {
+	return $hasHebrew if defined $hasHebrew;
+	eval { require Locale::Hebrew };
+	$hasHebrew = $@ ? 0 : 1;
+	return $hasHebrew;
 };
 
 my ($ft, $TTFFontFile, $useTTFCache, $useTTF);
@@ -336,7 +339,7 @@ sub string {
 			}
 
 			# flip BiDi R text and decide if scrolling should be reversed
-			if ($canUseHebrew && $string =~ $bidiR) {
+			if ($string =~ $bidiR && $canUseHebrew->()) {
 				$reverse = ($prefs->get('language') eq 'HE' || $string !~ $bidiL);
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();

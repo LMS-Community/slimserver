@@ -53,7 +53,7 @@ use Slim::Utils::OSDetect;
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
 my @default_required_modules = qw(version Time::HiRes DBI EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::Syck Sub::Name);
-my @default_optional_modules = qw(Locale::Hebrew);
+my @default_optional_modules = ();
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
 
