@@ -3072,17 +3072,20 @@ UNSUPPORTED_SAMPLE_RATE
 	SV	Samplingsfrekvensen stöds ej
 
 PLAYLIST_NO_ITEMS_FOUND
-	DA	Fejl: Ingen elementer i spillelisten
+	CS	Chyba: V seznamu skladeb nebyly nalezeny žádné položky
+	DA	Fejl: Der er ikke noget på afspilningslisten
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron elementos en la lista de reproducción
+	FI	Virhe: soittoluettelosta ei löytynyt kohteita
 	FR	Erreur: rien dans la liste de lecture
 	HE	שגיאה: לא נמצאו פריטים ברשימת ההשמעה
-	IT	Errore: nessun elemento trovato nell'elenco di riproduzione
+	IT	Errore: nessun elemento trovato nella playlist
 	NL	Fout: Geen items in playlist gevonden
 	NO	Feil: Spillelisten er tom
-	SV	Fel: Spellistan är tom
-	ZH_CN	失误：播放表为空
+	PL	Błąd: nie znaleziono elementów na liście odtwarzania
+	RU	Ошибка: не найдены элементы плей-листа
+	SV	Fel: Spellistan är tom.
 
 PLAYLIST_PROBLEM_CONNECTING
 	DA	Fejl: Kan ikke tilslutte for at hente spillelisten
