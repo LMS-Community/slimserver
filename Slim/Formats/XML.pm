@@ -625,7 +625,7 @@ sub xmlToHash {
 	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
 	my $xml     = undef;
-	my $timeout = (preferences('server')->get('remotestreamtimeout') || 5) * 2;
+	my $timeout = preferences('server')->get('remotestreamtimeout') * 2;
 
 	# Bug 3510 - check for bogus content.
 	if ($$content !~ /<\??(?:xml|rss)/) {
