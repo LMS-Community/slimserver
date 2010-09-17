@@ -223,7 +223,7 @@ sub scanURL {
 		}
 	}
 	
-	my $timeout = preferences('server')->get('remotestreamtimeout') || 10;
+	my $timeout = preferences('server')->get('remotestreamtimeout');
 	
 	my $send = sub {
 		my $http = Slim::Networking::Async::HTTP->new;
