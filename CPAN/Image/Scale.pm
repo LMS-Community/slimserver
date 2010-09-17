@@ -7,7 +7,7 @@ use constant IMAGE_SCALE_TYPE_GD_FIXED => 1;
 use constant IMAGE_SCALE_TYPE_GM       => 2;
 use constant IMAGE_SCALE_TYPE_GM_FIXED => 3;
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 require XSLoader;
 XSLoader::load('Image::Scale', $VERSION);
@@ -115,6 +115,9 @@ unit, such as ARM devices like the SheevaPlug, and the Sparc-based ReadyNAS Duo.
 Previously it would take many seconds to resize using GD on the ReadyNAS but the
 conversion to fixed-point with a little assembly code brings this down to the range of
 well under 1 second.
+
+GD is also incredibly difficult to build on platforms such as Windows so we
+needed a replacement.
 
 Normal platforms will also see improvement, by removing all of the GD overhead this
 version of copyResampled is around 3 times faster while also using less memory.
