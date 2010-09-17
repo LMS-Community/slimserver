@@ -394,7 +394,7 @@ sub _http_read {
 		$self->socket->set( passthrough => [ $self, $args ] );
 		
 		# Timer in case the server never sends any body data
-		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout') || 10;
+		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
 		Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_socket_error, $self, $args );
 		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
@@ -484,7 +484,7 @@ sub _http_read_body {
 		# More body data to read
 		
 		# Some servers may never send EOF, but we want to return whatever data we've read
-		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout') || 10;
+		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
 		Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
 	}
 }

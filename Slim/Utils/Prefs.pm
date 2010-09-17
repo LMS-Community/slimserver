@@ -192,7 +192,7 @@ sub init {
 		'webproxy'              => \&Slim::Utils::OSDetect::getProxy,
 		'httpport'              => 9000,
 		'bufferSecs'            => 3,
-		'remotestreamtimeout'   => 5,
+		'remotestreamtimeout'   => 15,
 		'maxWMArate'            => 9999,
 		'tcpConnectMaximum'	    => 30,             # not on web page
 		'udpChunkSize'          => 1400,           # only used for Slimp3

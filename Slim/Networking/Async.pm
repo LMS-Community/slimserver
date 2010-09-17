@@ -43,7 +43,7 @@ sub open {
 	}
 	
 	# Timeout defaults to the Radio Station Timeout pref
-	$args->{Timeout} ||= preferences('server')->get('remotestreamtimeout') || 10;
+	$args->{Timeout} ||= preferences('server')->get('remotestreamtimeout');
 
 	# Skip async DNS if we know the IP address or are using a proxy (skipDNS)
 	if ( $args->{skipDNS} || $args->{PeerAddr} || Slim::Utils::Network::ip_is_ipv4( $args->{Host} ) ) {

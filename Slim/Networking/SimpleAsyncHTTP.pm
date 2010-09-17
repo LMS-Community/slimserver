@@ -140,8 +140,7 @@ sub _createHTTPRequest {
 	my $timeout 
 		=  $params->{Timeout}
 		|| $params->{timeout}
-		|| $prefs->get('remotestreamtimeout')
-		|| 10;
+		|| $prefs->get('remotestreamtimeout');
 		
 	my $request = HTTP::Request->new( $type => $url );
 	
