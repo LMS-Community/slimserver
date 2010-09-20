@@ -127,20 +127,24 @@ Settings = {
 	},
 
 	showSettingsPage : function(page) {
-		if (page.id == 'PLAYER' && SqueezeJS.getCookie('Squeezebox-playersettings'))
+		if (page.id == 'PLAYER') {
 			page = SqueezeJS.getCookie('Squeezebox-playersettings');
-		else if (page.id == 'PLAYER')
-			page = 'settings/player/basic.html?';
 
-		else if (page.id == 'ADVANCED_SETTINGS' && SqueezeJS.getCookie('Squeezebox-advancedsettings'))
+			if (page == null || page == 'null')
+				page = 'settings/player/basic.html?';
+		}
+
+		else if (page.id == 'ADVANCED_SETTINGS') {
 			page = SqueezeJS.getCookie('Squeezebox-advancedsettings');
-		else if (page.id == 'ADVANCED_SETTINGS')
-			page = 'settings/server/formatting.html?';
+
+			if (page == null || page == 'null')
+				page = 'settings/server/formatting.html?';
+		}
 
 		if (typeof page == 'object' && page.url)
 			page = page.url;
 			
-		if (!page)
+		if (page == null || page == 'null')
 			page = 'settings/server/basic.html?'
 
 		Ext.get('maincontent').dom.src = webroot + page + 'playerid=' + playerid;
