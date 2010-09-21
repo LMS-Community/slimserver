@@ -818,6 +818,7 @@ SqueezeJS.getCookie = function(name) {
 };
 
 SqueezeJS.clearCookie = function(name) {
+	this.setCookie(name, null);
 	return Ext.util.Cookies.clear(name);
 };
 
