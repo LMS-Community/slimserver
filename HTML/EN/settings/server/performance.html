@@ -1,5 +1,14 @@
 [% PROCESS settings/header.html %]
 
+	[% WRAPPER setting title="SETUP_DBHIGHMEM" desc="SETUP_DBHIGHMEM_DESC" %]
+		<select class="stdedit" name="pref_dbhighmem" id="dbhighmem">
+
+			<option [% IF NOT prefs.pref_dbhighmem %]selected [% END %]value="0">[% 'SETUP_DBHIGHMEM_NORMAL' | getstring %]</option>
+			<option [% IF prefs.pref_dbhighmem %]selected [% END %]value="1">[% 'SETUP_DBHIGHMEM_HIGH' | getstring %]</option>
+
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_DISABLESTATISTICS" desc="SETUP_DISABLESTATISTICS_DESC" %]
 		<select class="stdedit" name="pref_disableStatistics" id="disableStatistics">
 
