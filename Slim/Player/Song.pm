@@ -69,6 +69,8 @@ my @_playlistCloneAttributes = qw(
 			_transcoded directstream
 			
 			samplerate samplesize channels totalbytes offset blockalign isLive
+			
+			retryData
 		),
 	);
 }

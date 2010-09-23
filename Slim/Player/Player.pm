@@ -535,6 +535,22 @@ sub currentSongLines {
 				);
 			}
 
+		} elsif ($client->isRetrying()) {
+			
+			$status = $lines[0] = $client->string('RETRYING');
+
+			if ( $playlistlen == 1 ) {
+
+				$lines[0] = $status;
+
+			} else {
+
+				$lines[0] = sprintf(
+					$status." (%d %s %d) ",
+					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				);
+			}
+			
 		} else {
 
 			$status = $lines[0] = $client->string('PLAYING');

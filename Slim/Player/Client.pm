@@ -119,7 +119,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								knobPos knobTime knobSync
 								sequenceNumber
 								controller
-								bufferReady readyToStream streamStartTimestamp
+								bufferReady readyToStream connecting streamStartTimestamp
 								streamformat streamingsocket remoteStreamStartTime
 								trackStartTime outputBufferFullness bytesReceived songBytes pauseTime
 								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize bufferStarted
@@ -1368,6 +1368,7 @@ sub playingSong {return $_[0]->controller()->playingSong();}
 sub isPlaying {return $_[0]->controller()->isPlaying($_[1]);}
 sub isPaused {return $_[0]->controller()->isPaused();}
 sub isStopped {return $_[0]->controller()->isStopped();}
+sub isRetrying {return $_[0]->controller()->isRetrying();}
 
 sub currentTrackForUrl {
 	my ($client, $url) = @_;
