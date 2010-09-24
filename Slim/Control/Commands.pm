@@ -2637,6 +2637,7 @@ sub showCommand {
 	my $brightness = $request->getParam('brightness');
 	my $font       = $request->getParam('font');
 	my $centered   = $request->getParam('centered');
+	my $screen     = $request->getParam('screen');
 	
 	if (!defined $line1 && !defined $line2) {
 		$request->setStatusBadParams();
@@ -2670,6 +2671,10 @@ sub showCommand {
 			'graphic-280x16' => 'medium',
 			'text'           => 2,
 		};
+	}
+
+	if (defined $screen && $screen == 2) {
+		$hash = { 'screen2' => $hash };
 	}
 
 	# get out of the screensaver if one is active
