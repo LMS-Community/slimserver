@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>DEB1A433-A53C-4D14-ADB4-537C05A6D29B</id>
+	<name>PLUGIN_WIMP_MODULE_NAME</name>
+	<module>Slim::Plugin::WiMP::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_WIMP_MODULE_NAME</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/WiMP</homepageURL>
+	<icon>plugins/WiMP/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.5</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
