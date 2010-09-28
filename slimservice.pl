@@ -96,7 +96,7 @@ BEGIN {
 	
 	require SDI::Service::Model::DBI;
 	require SDI::Util::ClassDBIBase;
-	SDI::Service::Model::DBI->init( $sn_config->{database} );
+	SDI::Service::Model::DBI->init( $sn_config );
 	
 	require SDI::Util::Memcached;
 	SDI::Util::Memcached->new( $sn_config->{memcached} );
