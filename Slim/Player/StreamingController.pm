@@ -224,7 +224,7 @@ ReadyToStream =>
 	[	\&_NoOp,		\&_NextIfMore,	\&_NextIfMore,	\&_StreamIfReady],	# PAUSED
 ],
 Stopped =>
-[	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
+[	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
 	[	\&_Stopped,		\&_Buffering,	\&_Buffering,	\&_PlayIfReady],	# PLAYING
@@ -360,6 +360,7 @@ sub _Playing {
 	if (defined($last_song)) {
 		main::INFOLOG && $log->info("Song " . $last_song->index() . " has now started playing");
 		$last_song->setStatus(Slim::Player::Song::STATUS_PLAYING);
+		$last_song->retryData(undef);	# we are playing so we must be done retrying
 	}
 	
 	# Update a few timestamps
@@ -685,6 +686,8 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		pop @$queue;
 	}
 	
+	_showTrackwaitStatus($self, $song);
+
 	$song->getNextSong (
 		sub {	# success
 			_nextTrackReady($self, $id, $song);
@@ -694,7 +697,6 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		}
 	);
 	
-	_showTrackwaitStatus($self, $song);
 }
 
 sub _showTrackwaitStatus {
@@ -882,6 +884,7 @@ sub _RetryOrNext {		# -> Idle; IF [shouldretry && canretry] THEN continue
 			main::INFOLOG && $log->is_info && $log->info('Unable to re-stream ', $song->currentTrack()->url, ', duration=', $song->duration(), ' at time offset ', $elapsed + $stillToPlay);
 		} elsif (!$song->duration() && $song->isLive()) {	# unknown duration => assume radio
 			main::INFOLOG && $log->is_info && $log->info('Attempting to re-stream ', $song->currentTrack()->url, ' after time ', $elapsed);
+			$song->retryData({ count => 0, start => Time::HiRes::time()});
 			_Stream($self, $event, {song => $song});
 			return;
 		}
@@ -954,15 +957,19 @@ sub _NextIfMore {			# -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait EN
 	_getNextTrack($self, $params, 1);
 }
 
+# This action is only called for StreamingFailed; buffering or wait-to-sync
 sub _StopNextIfMore {		# -> Stopped, Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	
 	# bug 10165: need to force stop in case the failure that got use here did not stop all active players
 	_Stop(@_);
 	
+	return if _willRetry($self);
+	
 	_getNextTrack($self, $params, 1);
 }
 
+# This action is only called for StreamingFailed, PLAYING
 sub _SyncStopNext {		# -> [synced]Stopped, Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
 	
@@ -972,10 +979,16 @@ sub _SyncStopNext {		# -> [synced]Stopped, Idle; IF [moreTracks] THEN getNextTra
 	} elsif ($params->{'errorDisconnect'}) {
 		# we are already playing, treat like EoS & give retry a chance
 		_setStreamingState($self, STREAMOUT);
-		return;
+		my $song = streamingSong($self);
+		if ($song && !$song->retryData()) {
+			return;
+		}
 	} else {
 		_setStreamingState($self, IDLE);
 	}
+
+	return if _willRetry($self);
+
 	_getNextTrack($self, $params, 1);
 }
 
@@ -1182,6 +1195,10 @@ sub _Stream {				# play -> Buffering, Streaming
 		
 	if (!$songStreamController) {
 		_errorOpening($self, $song->currentTrack()->url, @error);
+
+		# Bug 3161: more-agressive retries
+		return if _willRetry($self, $song);
+		
 		_NextIfMore($self, $event, {errorSong => $song});
 		return;	
 	}	
@@ -1328,6 +1345,64 @@ sub _Start {		# start -> Playing
 		# TODO maybe try synchronized resume
 		_Resume(@_);
 	}
+}
+
+my @retryIntervals = (5, 10, 15, 30);
+use constant RETRY_LIMIT          => 5 * 60;
+use constant RETRY_LIMIT_PLAYLIST => 30;
+
+# Bug 3161: more retries
+sub _willRetry {
+	my ($self, $song) = @_;
+	
+	$song ||= streamingSong($self);
+	return 0 if !$song;
+	
+	my $retry = $song->retryData();
+	if (!$retry) {
+		$log->info('no retry data');
+		return 0;
+	}
+	
+	my $limit;
+	my $next = nextsong($self);
+	if (defined $next && $next != $song->index) {
+		$limit = RETRY_LIMIT_PLAYLIST;
+	} else {
+		$limit = RETRY_LIMIT;
+	}
+	
+	my $interval = $retryIntervals[$retry->{'count'} > $#retryIntervals ? -1 : $retry->{'count'}];
+	my $retryTime = time() + $interval;
+
+	if ($retry->{'start'} + $limit < $retryTime) {
+		# too late, give up
+		$song->retryData(undef);
+		_errorOpening($self, $song->currentTrack()->url, 'RETRY_LIMIT_EXCEEDED');
+		_Stop($self);
+		$self->{'consecutiveErrors'} = 1;	# the failed retry counts as one error
+		return 0;
+	}
+	
+	$retry->{'count'} += 1;
+	my $id = ++$self->{'nextTrackCallbackId'};
+	$self->{'nextTrack'} = undef;
+	_setStreamingState($self, TRACKWAIT);
+	
+	Slim::Utils::Timers::setTimer(
+		$self,
+		$retryTime,
+		sub {
+			$song->setStatus(Slim::Player::Song::STATUS_READY);
+			$self->{'consecutiveErrors'} = 0;
+			_nextTrackReady($self, $id, $song);
+		},
+		undef
+	);
+	
+	_playersMessage($self, $song->currentTrack()->url, undef, 'RETRYING', undef, 0, $interval + 1);
+
+	return 1;
 }
 
 sub _syncStart {
@@ -1524,6 +1599,12 @@ sub buffering {
 
 sub isWaitingToSync {
 	return $_[0]->{'playingState'} == WAITING_TO_SYNC;
+}
+
+sub isRetrying {
+	my $self = shift;
+	my $song = streamingSong($self);
+	return $song && $song->retryData();
 }
 
 sub playingSongDuration {

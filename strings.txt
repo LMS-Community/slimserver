@@ -23198,3 +23198,10 @@ SD
 	RU	SD-карта
 	SV	SD-kort
 
+RETRYING
+# SLT: keep this short
+	EN	Connection lost, retrying...
+
+RETRY_LIMIT_EXCEEDED
+# SLT: keep this short
+	EN	Connection retries failed

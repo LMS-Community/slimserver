@@ -495,6 +495,7 @@ sub infoSqueezeNetwork {
 
 		my $config = SDI::Util::SNConfig::get_config();
 		my $dcname = $config->{dcname};
+		my $dcdesc = $config->{datacenter_info}->{$dcname}->{desc} || 'Unknown';
 
 		$item = {
 			name  => cstring($client, 'INFORMATION_MENU_SERVER'),
@@ -512,13 +513,7 @@ sub infoSqueezeNetwork {
 				
 				{
 					type => 'text',
-					name => cstring($client, 'INFORMATION_DATACENTER') . cstring($client, 'COLON') . ' '					
-								. ($dcname eq 'sv'  ? 'Sunnyvale, CA'
-								: $dcname eq 'dc'  ? 'Ashburn, VA'
-								: $dcname eq 'de'  ? 'Frankfurt, Germany'
-								: $dcname eq 'okc' ? 'Oklahoma City (Test)'
-								: $dcname eq 'dfw' ? 'Dallas (Test)'
-								:                    'Unknown')					
+					name => cstring($client, 'INFORMATION_DATACENTER') . cstring($client, 'COLON') . ' ' . $dcdesc,
 				},
 				
 				{

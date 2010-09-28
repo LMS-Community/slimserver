@@ -253,6 +253,7 @@ sub statHandler {
 	} elsif ($code eq 'STMc') {
 		$client->readyToStream(0);
 		$client->bufferReady(0);
+		$client->connecting(1); # reset in Slim::Networking::Slimproto::_http_response_handler() upon connection establishment
 	} elsif ($code eq 'STMs') {
 		$client->controller()->playerTrackStarted($client);
 	} elsif ($code eq 'STMo') {

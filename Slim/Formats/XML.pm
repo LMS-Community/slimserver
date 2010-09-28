@@ -243,6 +243,7 @@ sub gotViaHTTP {
 	if ($@) {
 		# call ecb
 		my $ecb = $params->{'ecb'};
+		$log->error("XML/JSON parse error: $@");
 		$ecb->( string('XML_GET_FAILED'), $params->{'params'} );
 		return;
 	}

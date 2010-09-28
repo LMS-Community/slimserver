@@ -555,6 +555,8 @@ sub _http_response_handler {
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info("Squeezebox got HTTP response:\n$$data_ref");
 	}
+	
+	$client->connecting(0);
 
 	if ($client->can('directHeaders')) {
 		$client->directHeaders($$data_ref);
@@ -598,6 +600,13 @@ sub _disco_handler {
 	if ($reason) {
 		$log->warn('Unexpected data stream disconnect type: ', $reasons{$reason});
 	}
+	
+	# It may be that we get this disconnect before we had completed connecting.
+	# Need to reset readyToStream state in that case.
+	if ($client->connecting()) {
+		$client->connecting(0);
+		$client->readyToStream(1);
+	}
 
 	if ($reason
 	
@@ -618,19 +627,18 @@ sub _disco_handler {
 	{
 		# Report failure via protocol handler if available
 		my $controller = $client->controller()->songStreamController();
-		if ($controller && $controller->isDirect() ) {
-			my $handler = $controller->protocolHandler();
-			if ($handler->can("handleDirectError") ) {
-				
-				# bug 10407 - make sure ready to stream again
-				$client->readyToStream(1);
-				
-				$handler->handleDirectError( $client, $controller->streamUrl(), $reason, $reasons{$reason} );
-				return;
-			}
+		my $handler;
+		if ($controller && $controller->isDirect() 
+			&& ($handler = $controller->protocolHandler())
+			&&  $handler->can("handleDirectError") )
+		{
+			# bug 10407 - make sure ready to stream again
+			$client->readyToStream(1);
+			
+			$handler->handleDirectError( $client, $controller->streamUrl(), $reason, $reasons{$reason} );
 		}
 		
-		if ($reason && $client->isPlaying(1)) {
+		elsif ($reason && $client->isPlaying(1)) {
 			# If we get an error disconnect and we are already playing
 			# then give the controller the opportunity to retry the stream
 			# by signalling with the third param to to playerStreamingFailed.
@@ -639,6 +647,15 @@ sub _disco_handler {
 		}
 		else {
 			$client->failedDirectStream( $reasons{$reason} );
+		}
+		
+		# If we have a connection-failure for a client and it has already run out of
+		# data, then this was likely because this failure related to the next (possibly retry)
+		# stream and not the playing one. So we tell the controller that we have stopped,
+		# even though this may actually take a few seconds to happen while the output buffer
+		# plays out.
+		if ($client->isPlaying() && !$client->bufferFullness()) {
+			$client->controller()->playerStopped($client);
 		}
 	} else {		
 		$client->statHandler('EoS');
