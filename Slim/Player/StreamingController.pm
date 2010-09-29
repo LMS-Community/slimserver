@@ -1759,10 +1759,14 @@ sub sync {
 		_newMaster($self);
 	}
 	
-	# TODO - reevaluate master
+	# TODO - reevaluate master in general
 
 	if ($player->power && $player->connected) {
 		push @{$self->{'players'}}, $player;
+		
+		if (!$self->master->power()) {
+			_newMaster($self);
+		}
 		
 		if (isPaused($self)) {
 			_pauseStreaming($self, playingSong($self));
