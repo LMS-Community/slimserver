@@ -1000,6 +1000,10 @@ sub _cliQuery_done {
 							$itemText .= "\n" . $item->{'name2'};
 							$windowStyle = 'icon_list' if !$windowStyle;
 						}
+						elsif ( $item->{line2} ) {
+							$windowStyle = 'icon_list';
+							$itemText = ( $item->{line1} || $hash{name} || $hash{title} ) . "\n" . $item->{line2};
+						}
 						$request->addResultLoop($loopname, $cnt, 'text', $itemText);
 						
 						my $isPlayable = (
