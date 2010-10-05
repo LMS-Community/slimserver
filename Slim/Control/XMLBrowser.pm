@@ -1028,6 +1028,12 @@ sub _cliQuery_done {
 						if ( $item->{autoplays} ) {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
 						}
+						
+						# Use 2-line icon_list style if line1/line2 values are provided
+						if ( $item->{line2} ) {
+							$windowStyle = 'icon_list';
+							$hash{name} = ( $item->{line1} || $hash{name} || $hash{title} ) . "\n" . $item->{line2};
+						}
 
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
