@@ -55,6 +55,7 @@ sub name {
 
 sub registerDefaultInfoProviders {
 	my $class = shift;
+	my $retry = shift;
 	
 	$class->SUPER::registerDefaultInfoProviders();
 	
@@ -67,13 +68,15 @@ sub registerDefaultInfoProviders {
 			main::DEBUGLOG && $log->error( 'Error getting search providers: ' . $http->error );
 
 			# retry again
-			Slim::Utils::Timers::setTimer(
-				undef,
-				time() + 10,
-				sub {
-					__PACKAGE__->registerDefaultInfoProviders()
-				},
-			);
+			if ( !$retry ) {
+				Slim::Utils::Timers::setTimer(
+					undef,
+					time() + 10,
+					sub {
+						__PACKAGE__->registerDefaultInfoProviders(1)
+					},
+				);
+			}
 		};
 		
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
