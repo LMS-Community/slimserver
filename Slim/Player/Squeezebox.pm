@@ -74,7 +74,7 @@ sub reconnect {
 		# playing/paused.
 	    
 		my $state = $client->playerData->playmode;
-		if ( $state =~ /^(?:PLAYING|PAUSED)/ ) {
+		if ( $state && $state =~ /^(?:PLAYING|PAUSED)/ ) {
 			main::INFOLOG && $sourcelog->is_info && $sourcelog->info( $client->id . " current state is $state, resuming" );
 			
 			$reconnect = 1;
