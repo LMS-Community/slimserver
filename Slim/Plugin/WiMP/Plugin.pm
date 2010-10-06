@@ -4,6 +4,7 @@ package Slim::Plugin::WiMP::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Plugin::WiMP::ProtocolHandler;
 
@@ -58,6 +59,35 @@ sub initPlugin {
 				} );
 			},
 		);
+	}
+}
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+
+	return unless $client;
+
+	# Only show if in the app list
+	return unless $client->isAppEnabled('wimp');
+	
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
+	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
+	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
+	
+	if ( $artist || $album || $title ) {
+	
+		my $snURL = Slim::Networking::SqueezeNetwork->url(
+			'/api/wimp/v1/opml/context?artist=' . uri_escape_utf8($artist)
+			. '&album=' . uri_escape_utf8($album)
+			. '&track='	. uri_escape_utf8($title)
+		);
+
+		return {
+			type      => 'link',
+			name      => $client->string('PLUGIN_WIMP_ON_WIMP'),
+			url       => $snURL,
+			favorites => 0,
+		};
 	}
 }
 
