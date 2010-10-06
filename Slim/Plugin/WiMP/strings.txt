@@ -37,3 +37,17 @@ PLUGIN_WIMP_ERROR
 	RU	Ошибка WiMP
 	SV	WiMP-fel
 
+PLUGIN_WIMP_ON_WIMP
+	CS	Na WiMP
+	DA	På WiMP
+	DE	Auf WiMP
+	EN	On WiMP
+	ES	En WiMP
+	FI	WiMPissa
+	FR	Sur WiMP
+	IT	Su WiMP
+	NL	Op WiMP
+	NO	På WiMP
+	PL	W usłudze WiMP
+	RU	На WiMP
+	SV	På WiMP
