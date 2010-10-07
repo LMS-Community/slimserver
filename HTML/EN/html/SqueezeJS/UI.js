@@ -205,7 +205,7 @@ if (Ext.Button) {
 		setIcon: function(newIcon) {
 			var btnEl = this.el.child("button:first");
 			if (btnEl)
-				btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
+				btnEl.setStyle('background-image', newIcon ? 'url(' + SqueezeJS.Controller.getBaseUrl() + webroot + newIcon + ')' : '');
 		}
 	});
 

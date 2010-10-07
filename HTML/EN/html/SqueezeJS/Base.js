@@ -44,6 +44,10 @@ function _init() {
 		init : function(o){
 			Ext.apply(this, o);
 
+			Ext.applyIf(this, {
+				'_server': ''
+			})
+			
 			this._initPlayerStatus();
 
 			this.player = -1;
@@ -274,7 +278,7 @@ function _init() {
 				this.showBriefly(config.showBriefly);
 	
 			Ext.Ajax.request({
-				url: config.url || '/jsonrpc.js',
+				url: this.getBaseUrl() + (config.url || '/jsonrpc.js'),
 				method: config.method ? config.method : 'POST',
 				params: config.url ? null : Ext.util.JSON.encode({
 					id: 1,
@@ -489,6 +493,22 @@ function _init() {
 			
 			SqueezeJS.Controller.player = SqueezeJS.Controller.player.replace(/%3A/gi, ':');
 			return SqueezeJS.Controller.player;
+		},
+
+		getBaseUrl: function() {
+			return this._server || '';
+		},
+		
+		setBaseUrl: function(server) {
+			if (typeof server == 'object' && server.ip && server.port) {
+				this._server = 'http://' + server.ip + ':' + server.port;
+			}
+			else if (typeof server == 'string') {
+				this._server = server;
+			}
+			else {
+				this._server = '';
+			}
 		}
 	});
 }
