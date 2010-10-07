@@ -20,7 +20,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
-use Slim::Utils::Unicode;
 
 {
 	if (main::ISWINDOWS) {

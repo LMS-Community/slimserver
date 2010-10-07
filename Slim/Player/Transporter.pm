@@ -31,7 +31,6 @@ use MIME::Base64;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
