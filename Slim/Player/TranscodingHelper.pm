@@ -411,22 +411,22 @@ sub getConvertCommand2 {
 	return wantarray ? ($transcoder, $error) : $transcoder;
 }
 
-sub _dump_string {
-	use bytes;
-	my $res = '';
-	my $string = shift;
-	
-	for (my $i = 0; $i < length($string); $i++) {
-		my $c = substr($string, $i, 1);
-		my $o = ord($c);
-		if ($o > 127) {
-			$res .= sprintf("\\x%02X", $o);
-		} else {
-			$res .= $c;
-		}
-	}
-	return $res;
-}
+#sub _dump_string {
+#	use bytes;
+#	my $res = '';
+#	my $string = shift;
+#	
+#	for (my $i = 0; $i < length($string); $i++) {
+#		my $c = substr($string, $i, 1);
+#		my $o = ord($c);
+#		if ($o > 127) {
+#			$res .= sprintf("\\x%02X", $o);
+#		} else {
+#			$res .= $c;
+#		}
+#	}
+#	return $res;
+#}
 
 sub tokenizeConvertCommand2 {
 	my ($transcoder, $filepath, $fullpath, $noPipe, $quality) = @_;
