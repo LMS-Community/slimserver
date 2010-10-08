@@ -411,24 +411,34 @@ sub getConvertCommand2 {
 	return wantarray ? ($transcoder, $error) : $transcoder;
 }
 
+sub _dump_string {
+	use bytes;
+	my $res = '';
+	my $string = shift;
+	
+	for (my $i = 0; $i < length($string); $i++) {
+		my $c = substr($string, $i, 1);
+		my $o = ord($c);
+		if ($o > 127) {
+			$res .= sprintf("\\x%02X", $o);
+		} else {
+			$res .= $c;
+		}
+	}
+	return $res;
+}
+
 sub tokenizeConvertCommand2 {
 	my ($transcoder, $filepath, $fullpath, $noPipe, $quality) = @_;
+	
+	# Bug 10199 - make sure we do not promote any strings to decoded ones (8859-1 => UFT-8)
+	use bytes;
 	
 	my $command = $transcoder->{'command'};
 	
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-	
-	# Bug 10199 - $filepath will have come from Track::path(), which in turn uses
-	# Slim::Utils::Misc::pathFromFileURL which currently returns a byte-string,
-	# not a character-string. Need to convert to a character-string before it
-	# gets handled by regex stuff.
-	#
-	# This is not really the correct fix but sorting out the correct use of 
-	# byte-string vs character-string is a major task and actually is not
-	# properly understood.
-	utf8::decode($filepath);
 	
 	my ($start, $end);
 	
@@ -478,10 +488,6 @@ sub tokenizeConvertCommand2 {
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
 
-	if (Slim::Music::Info::isFile($filepath)) {
-		$filepath = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($filepath);
-	}
-	
 	foreach my $v (keys %vars) {
 		my $value;
 		
@@ -517,9 +523,6 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# XXX What was this for?
-	# $command =~ s/\$([^\$\\]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-	
 	$command =~ s/\s+\$\w+\$//g;
 	
 	if (!defined($noPipe)) {
@@ -527,7 +530,7 @@ sub tokenizeConvertCommand2 {
 		$command .= ' |';
 	}
 
-	main::DEBUGLOG && $log->debug("Using command for conversion: $command");
+	main::DEBUGLOG && $log->debug("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	return $command;
 }
