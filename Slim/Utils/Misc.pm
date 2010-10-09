@@ -198,6 +198,8 @@ sub pathFromMacAlias {
 	Given a file:// style url, return the filepath to the caller
 
 	If the option $noCache argument is set, the result is  not cached
+	
+	Returns the pathname as a (possibly-encoded) byte-string, not a Unicode (decoded) string
 
 =cut
 
@@ -253,16 +255,6 @@ sub pathFromFileURL {
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
 		$file = $uri->file;
-
-		# Bug 10199 - need to ensure that the perl-internal UTF8 flag is set if necessary
-		# (this should really be done by URI::file)
-		#
-		# BUT we don't actually dare do that here because (1) we do not fully understand
-		# what character-encoding the file path actually has, and (2) it looks as many calls 
-		# to this method use the result to pass to a perl function that expects a native
-		# byte-string, not a character-string.
-		#
-		# utf8::decode($file);
 
 		$file = fixPathCase($file);
 	}

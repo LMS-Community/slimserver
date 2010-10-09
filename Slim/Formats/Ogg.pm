@@ -29,7 +29,6 @@ use base qw(Slim::Formats);
 use Fcntl qw(:seek);
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
-use Slim::Utils::Unicode;
 
 use Audio::Scan;
 

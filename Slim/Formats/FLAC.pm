@@ -36,7 +36,6 @@ use Slim::Formats::Playlists::CUE;
 use Slim::Schema::Contributor;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Unicode;
 
 my $log       = logger('formats.playlists');
 my $sourcelog = logger('player.source');

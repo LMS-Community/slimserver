@@ -28,7 +28,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
-use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
 

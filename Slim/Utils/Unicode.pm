@@ -179,7 +179,7 @@ sub utf8decode_locale {
 	if ($string && !utf8::is_utf8($string)) {
 
 		my $decoded = eval { Encode::decode($lc_ctype, $string, $FB_CROAK) };
-		$string = $@ ? $string : $decoded;
+		$string = ($@) ? $string : $decoded;
 	}
 
 	return $string;
