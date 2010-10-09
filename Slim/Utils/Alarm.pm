@@ -1432,9 +1432,9 @@ sub scheduleNext {
 		if (defined $nextAlarm) {
 			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
 
-			if ($nextAlarm->{_nextDue} == $now) {
-				# The alarm is for this minute, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
-				main::DEBUGLOG && $isDebug && $log->debug('Alarm time is now; let client handle this failure');
+			if ($nextAlarm->{_nextDue} <= $now) {
+				# The alarm is for this minute or the past, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
+				main::DEBUGLOG && $isDebug && $log->debug('Alarm time is now or in the past; let client handle this failure');
 			} else {
 				# TODO: schedule a bit early to allow for timers firing late.  Once this is done and the early
 				# timer fires, check every second to see if the alarm should sound.  10 secs early should be more
