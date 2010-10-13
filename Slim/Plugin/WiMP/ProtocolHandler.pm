@@ -24,35 +24,14 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub isRemote { 1 }
 
-sub getFormatForURL { 
-	my ($self, $url) = @_;
-	
-	my ($id, $format) = _getStreamParams($url);
-	
-	if ( $format eq 'aac' ) {
-		return $format;
-	}
+sub getFormatForURL { return 'mp3' }
 
-	return 'mp4';
-}
-
-sub formatOverride { 'aac' }
-
-# default buffer 3 seconds of 256/96kbps audio
+# default buffer 3 seconds of 256kbps audio
 sub bufferThreshold {
-	my ($self, $url) = @_;
-	
-	my ($id, $format) = _getStreamParams($url);
-	my $bufferSecs    = $prefs->get('bufferSecs') || 3;
-	
-	if ( $format eq 'aac' ) {
-		return 12 * $bufferSecs; 
-	}
-	
-	return 32 * $bufferSecs; 
+	return 32 * ($prefs->get('bufferSecs') || 3); 
 }
 
-sub canSeek { 0 }
+sub canSeek { 1 }
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
@@ -70,10 +49,10 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 96_000,
+		bitrate => 256_000,
 	} ) || return;
 	
-	${*$sock}{contentType} = 'audio/aac';
+	${*$sock}{contentType} = 'audio/mpeg';
 
 	return $sock;
 }
@@ -256,7 +235,7 @@ sub _gotTrack {
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
 		bitrate   => $info->{bitrate} . 'k CBR',
-		type      => 'AAC (WiMP)',
+		type      => 'MP3 (WiMP)',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
@@ -363,7 +342,7 @@ sub parseDirectHeaders {
 	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', 'aac');
+	return (undef, $bitrate, 0, '', 'mp3');
 }
 
 # URL used for CLI trackinfo queries
@@ -464,8 +443,8 @@ sub getMetadataFor {
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
 	
 	return $meta || {
-		bitrate   => ($format eq 'aac' ? '96' : '256') . 'k CBR',
-		type      => 'AAC (WiMP)',
+		bitrate   => '256k CBR',
+		type      => 'MP3 (WiMP)',
 		icon      => $icon,
 		cover     => $icon,
 	};
@@ -507,7 +486,7 @@ sub _gotBulkMetadata {
 		my $meta = {
 			%{$track},
 			bitrate   => $bitrate . 'k CBR',
-			type      => 'AAC (WiMP)',
+			type      => 'MP3 (WiMP)',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
 		};
@@ -576,8 +555,8 @@ sub reinit {
 }
 
 sub _getStreamParams {
-	$_[0] =~ m{wimp://(.+)\.(m4a|aac)}i;
-	return ($1, lc($2 || 'm4a') );
+	$_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3)}i;
+	return ($1, lc($2 || 'mp3') );
 }
 
 1;
