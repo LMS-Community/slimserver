@@ -580,7 +580,7 @@ sub open {
 						
 						Win32::SetChildShowWindow();
 					} else {
-						$pipeline =  new FileHandle $command;
+						$pipeline = FileHandle->new($command);
 					}
 					
 					if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {

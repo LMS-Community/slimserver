@@ -638,6 +638,8 @@ sub _gotBulkMetadata {
 	
 	# Update the playlist time so the web will refresh, etc
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+	
+	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
 }
 
 sub _gotBulkMetadataError {
