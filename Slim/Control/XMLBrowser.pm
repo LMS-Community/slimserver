@@ -1059,7 +1059,7 @@ sub _cliQuery_done {
 						my $presetFavSet     = undef;
 						my $favorites_url    = $item->{play} || $item->{url};
 						my $favorites_title  = $item->{title} || $item->{name};
-						my $favorites_type   = $item->{type} || 'audio';
+						my $favorites_type   = $item->{play} ? 'audio' : ($item->{type} || 'audio');
 						
 						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
 							$itemParams->{favorites_url}   = $favorites_url;
