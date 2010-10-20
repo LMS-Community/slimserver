@@ -777,10 +777,17 @@ sub _cliQuery_done {
 		
 			if ($valid) {
 				
+				my $feedActions = $subFeed->{'actions'};
+				
 				# Title is preferred here as it will contain the real title from the subfeed,
 				# whereas name is the title of the menu item that led to this submenu and may
 				# not always match
-				$request->addResult( 'title', $subFeed->{'title'} || $subFeed->{'name'} );
+				if (my $title = $subFeed->{'title'} || $subFeed->{'name'}) {
+					if ($menuMode && $subFeed->{'name2'}) {
+						$title .= "\n" . $subFeed->{'name2'};
+					}
+					$request->addResult( 'title', $title );
+				}
 				
 				# decide what is the next step down
 				# we go to xxx items from xx items :)
@@ -1352,6 +1359,11 @@ sub _cliQuerySubFeed_done {
 		main::DEBUGLOG && $log->is_debug && $log->debug("menu title was '" . $subFeed->{name} . "', changing to '" . $feed->{title} . "'");
 		$subFeed->{title} = $feed->{title};
 	}
+	if ($feed->{'actions'}) {
+		$subFeed->{'actions'} = $feed->{'actions'};
+	}
+	$subFeed->{'total'} = $feed->{'total'};
+	$subFeed->{'offset'} = $feed->{'offset'};
 	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
