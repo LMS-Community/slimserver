@@ -350,7 +350,7 @@ sub handleFeed {
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && defined ( $stash->{'q'} || $searchQuery ) ) {
-					my $search = $stash->{'q'} || $searchQuery;
+					my $search = URI::Escape::uri_escape_utf8($stash->{'q'} || $searchQuery);
 					$subFeed->{'url'} =~ s/{QUERY}/$search/g;
 				}
 				
