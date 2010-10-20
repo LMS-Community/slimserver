@@ -861,7 +861,11 @@ sub _cliQuery_done {
 
 			if ($valid) {
 				
-				$request->addResult( 'title', $subFeed->{'name'} || $subFeed->{'title'} );
+				# Title is preferred here as it will contain the real title from the subfeed,
+				# whereas name is the title of the menu item that led to this submenu and may
+				# not always match
+				$request->addResult( 'title', $subFeed->{'title'} || $subFeed->{'name'} );
+				
 				# decide what is the next step down
 				# we go to xxx items from xx items :)
 				my $base; my $params = {};
@@ -1055,7 +1059,7 @@ sub _cliQuery_done {
 						my $presetFavSet     = undef;
 						my $favorites_url    = $item->{play} || $item->{url};
 						my $favorites_title  = $item->{title} || $item->{name};
-						my $favorites_type   = $item->{type} || 'audio';
+						my $favorites_type   = $item->{play} ? 'audio' : ($item->{type} || 'audio');
 						
 						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
 							$itemParams->{favorites_url}   = $favorites_url;
@@ -1328,6 +1332,12 @@ sub _cliQuerySubFeed_done {
 	# Pass-through forceRefresh flag
 	if ( $feed->{forceRefresh} ) {
 		$subFeed->{forceRefresh} = 1;
+	}
+	
+	# Support alternate title if it's different from this menu in the parent
+	if ( $feed->{title} && $subFeed->{name} ne $feed->{title} ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("menu title was '" . $subFeed->{name} . "', changing to '" . $feed->{title} . "'");
+		$subFeed->{title} = $feed->{title};
 	}
 	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
