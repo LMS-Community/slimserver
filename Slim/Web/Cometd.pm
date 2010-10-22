@@ -43,6 +43,9 @@ my %toUnsubscribe = ();
 use constant PROTOCOL_VERSION => '1.0';
 use constant RETRY_DELAY      => 5000;
 
+use constant LONG_POLLING_INTERVAL => 0;     # client can request again immediately
+use constant LONG_POLLING_TIMEOUT  => 60000; # server will wait up to 60s for events to send
+
 # indicies used for $conn in handler()
 use constant HTTP_CLIENT      => 0;
 use constant HTTP_RESPONSE    => 1;
@@ -77,8 +80,8 @@ sub webHandler {
 	
 	my ( $params, %ops );
 	
-	if ( $ct && $ct eq 'text/json' ) {
-		# POST
+	if ( $ct && $ct =~ m{^(?:text|application)/json} ) {
+		# POST as plain JSON
 		if ( my $content = $req->content ) {
 			$ops{message} = $content;
 		}
@@ -189,17 +192,20 @@ sub handler {
 		}
 		
 		if ( $obj->{channel} eq '/meta/handshake' ) {
-
+			
+			my $advice = {
+				reconnect => 'retry',               # one of "none", "retry", "handshake"
+				interval  => LONG_POLLING_INTERVAL, # initial interval is 0 to support long-polling's connect request
+				timeout   => LONG_POLLING_TIMEOUT,
+			};
+				
 			push @{$events}, {
 				channel					 => '/meta/handshake',
 				version					 => PROTOCOL_VERSION,
 				supportedConnectionTypes => [ 'long-polling', 'streaming' ],
 				clientId				 => $clid,
 				successful				 => JSON::XS::true,
-				advice					 => {
-					reconnect => 'retry',     # one of "none", "retry", "handshake"
-					interval  => RETRY_DELAY, # retry delay in ms
-				},
+				advice					 => $advice,
 			};			
 		}
 		elsif ( $obj->{channel} eq '/meta/connect' ) {
@@ -222,17 +228,27 @@ sub handler {
 			else {
 				# Valid clientId
 				
+				my $streaming = $obj->{connectionType} eq 'streaming' ? 1 : 0;
+				
 				push @{$events}, {
 					channel    => '/meta/connect',
 					clientId   => $clid,
 					successful => JSON::XS::true,
 					timestamp  => time2str( time() ),
+					advice     => {
+						interval => $streaming ? RETRY_DELAY : 0, # update interval for streaming mode
+					},						
 				};
 				
-				# Add any additional pending events
-				push @{$events}, ( $manager->get_pending_events( $clid ) );
+				# Remove disconnect timer, as a connect is basically the same as a reconnect
+				Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
 				
-				if ( $obj->{connectionType} eq 'streaming' ) {
+				# register this connection with the manager
+				$manager->register_connection( $clid, $conn );
+				
+				if ( $streaming ) {
+					# Add any additional pending events
+					push @{$events}, ( $manager->get_pending_events( $clid ) );
 					
 					if ( ref $conn eq 'ARRAY' ) {
 						# HTTP-specific connection stuff
@@ -242,14 +258,28 @@ sub handler {
 						# Tell HTTP client our transport
 						$conn->[HTTP_CLIENT]->transport( 'streaming' );
 					}
-				
-					# register this connection with the manager
-					$manager->register_connection( $clid, $conn );
 				}
 				else {
+					# Long-polling
 					if ( ref $conn eq 'ARRAY' ) {
-						$conn->[HTTP_CLIENT]->transport( 'polling' );
+						$conn->[HTTP_CLIENT]->transport( 'long-polling' );
 					}
+					
+					my $timeout = LONG_POLLING_TIMEOUT;
+					
+					# Client can override timeout
+					if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
+						$timeout = $obj->{advice}->{timeout};
+					}
+					
+					# Hold the connection open while we wait for messages
+					Slim::Utils::Timers::setTimer(
+						$conn,
+						Time::HiRes::time() + ($timeout / 1000),
+						\&sendResponse,
+						$events,
+					);
+					return;
 				}
 			}
 		}
@@ -271,6 +301,8 @@ sub handler {
 			}
 			else {
 				# Valid clientId, reconnect them
+				# XXX probably should combine /meta/connect code with reconnect,
+				# they are effectively the same thing
 				
 				main::DEBUGLOG && $log->debug( "Client reconnected: $clid" );
 				
@@ -283,10 +315,13 @@ sub handler {
 				# Remove disconnect timer
 				Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
 				
-				# Add any additional pending events
-				push @{$events}, ( $manager->get_pending_events( $clid ) );
+				# Tell the manager about the new connection
+				$manager->register_connection( $clid, $conn );
 				
 				if ( $obj->{connectionType} eq 'streaming' ) {
+					# Add any additional pending events
+					push @{$events}, ( $manager->get_pending_events( $clid ) );
+					
 					if ( ref $conn eq 'ARRAY' ) {
 						# Streaming connections use chunked transfer encoding
 						$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
@@ -301,14 +336,28 @@ sub handler {
 						main::DEBUGLOG && $log->debug( 'Marking connection ' . $old->[HTTP_CLIENT] . ' as old' );
 						$old->[HTTP_CLIENT]->transport( 'streaming-old' );
 					}
-				
-					# Tell the manager about the new connection
-					$manager->register_connection( $clid, $conn );
 				}
 				else {
+					# Long-polling
 					if ( ref $conn eq 'ARRAY' ) {
-						$conn->[HTTP_CLIENT]->transport( 'polling' );
+						$conn->[HTTP_CLIENT]->transport( 'long-polling' );
 					}
+					
+					my $timeout = LONG_POLLING_TIMEOUT;
+					
+					# Client can override timeout
+					if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
+						$timeout = $obj->{advice}->{timeout};
+					}
+					
+					# Hold the connection open while we wait for messages
+					Slim::Utils::Timers::setTimer(
+						$conn,
+						Time::HiRes::time() + ($timeout / 1000),
+						\&sendResponse,
+						$events,
+					);
+					return;
 				}
 			}	
 		}
@@ -471,7 +520,12 @@ sub handler {
 					
 					# If the request was not async, tell the manager to deliver the results to all subscribers
 					if ( exists $result->{data} ) {
-						$manager->deliver_events( $result );
+						if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+							push @{$events}, $result;
+						}
+						else {
+							$manager->deliver_events( $result );
+						}
 					}
 				}
 			}
@@ -579,7 +633,12 @@ sub handler {
 					
 						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
-							$manager->deliver_events( $result );
+							if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+								push @{$events}, @{$result};
+							}
+							else {
+								$manager->deliver_events( $result );
+							}
 						}
 					}
 				}
@@ -616,6 +675,16 @@ sub sendResponse {
 	my ( $conn, $out ) = @_;
 	
 	if ( ref $conn eq 'ARRAY' ) {
+		
+		if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+			# Finish a long-poll cycle by sending all pending events and removing the timer
+			Slim::Utils::Timers::killTimers($conn, \&sendResponse);
+
+			# Add any additional pending events
+			my $clid = $out->[0]->{clientId}; # first event is the connect response
+			push @{$out}, ( $manager->get_pending_events( $clid ) );
+		}
+		
 		sendHTTPResponse( @{$conn}, $out );
 	}
 	else {
@@ -902,15 +971,13 @@ sub webCloseHandler {
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
 		}
 		
-		if ( $transport && $transport eq 'streaming' ) {
-			$manager->remove_connection( $clid );
+		$manager->remove_connection( $clid );
 			
-			Slim::Utils::Timers::setTimer(
-				$clid,
-				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
-				\&disconnectClient,
-			);
-		}
+		Slim::Utils::Timers::setTimer(
+			$clid,
+			Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
+			\&disconnectClient,
+		);
 	}
 }
 
