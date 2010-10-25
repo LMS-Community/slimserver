@@ -1081,7 +1081,7 @@ sub rebuffer {
 		$client,
 		Time::HiRes::time() + 0.125,
 		\&_buffering,
-		{threshold => $threshold, outputThreshold => $outputThreshold, title => $title, cover => $cover}
+		{song => $song, threshold => $threshold, outputThreshold => $outputThreshold, title => $title, cover => $cover}
 	);
 }
 
@@ -1103,7 +1103,7 @@ sub buffering {
 		$client,
 		Time::HiRes::time() + 0.125,
 		\&_buffering,
-		{threshold => $bufferThreshold, title => $title, cover => $cover}
+		{song => $song, threshold => $bufferThreshold, title => $title, cover => $cover}
 	);
 }
 
@@ -1112,6 +1112,7 @@ sub _buffering {
 	
 	my $log = logger('player.source');
 	
+	my $song = $args->{song};
 	my $threshold = $args->{'threshold'};
 	my $outputThreshold = $args->{'outputThreshold'};
 	
@@ -1128,6 +1129,9 @@ sub _buffering {
 		$client->bufferStarted(0); # marker that we are no longer rebuffering
 		return;
 	}
+	
+	my $handler = $song->currentTrackHandler();
+	my $suppressPlayersMessage = $handler->can('suppressPlayersMessage') || sub {};
 
 	my ($line1, $line2, $status);
 	
@@ -1172,6 +1176,7 @@ sub _buffering {
 		$fraction += $outputFullness / $outputThreshold;
 	}
 	
+	my $string;
 	my $percent = sprintf "%d", $fraction * 100;
 	
 	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
@@ -1185,7 +1190,8 @@ sub _buffering {
 	}
 
 	if ( $percent == 0 && $buffering == 1) {
-		$status = $client->string('CONNECTING_FOR');
+		$string = 'CONNECTING_FOR';
+		$status = $client->string($string);
   		if ( $client->linesPerScreen() == 1 ) {
 			$line2 = $status;
 		} else {
@@ -1197,7 +1203,8 @@ sub _buffering {
 
 		# When synced, a player may have to wait longer than the buffering time
 		if ( $syncWait && $percent >= 100 ) {
-			$status = $client->string('WAITING_TO_SYNC');
+			$string = 'WAITING_TO_SYNC';
+			$status = $client->string($string);
 			$stillBuffering = 1;
 		}
 		else {
@@ -1205,7 +1212,7 @@ sub _buffering {
 				$percent = 99;
 			}
 			
-			my $string = $buffering < 2 ? 'BUFFERING' : 'REBUFFERING';
+			$string = $buffering < 2 ? 'BUFFERING' : 'REBUFFERING';
 			$status = $client->string($string) . ' ' . $percent . '%';
 		}
 
@@ -1223,12 +1230,14 @@ sub _buffering {
 	
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 
-		$client->display->updateMode(0);
-		$client->showBriefly({
-			line => [ $line1, $line2 ],
-			jive => { type => 'song', text => [ $status, $args->{'title'} ], duration => 500 },
-			cli  => undef,
-		}, { duration => 1, block => 1 });
+		if ( !$suppressPlayersMessage->($handler, $client, $song, $string) ) {
+			$client->display->updateMode(0);
+			$client->showBriefly({
+				line => [ $line1, $line2 ],
+				jive => { type => 'song', text => [ $status, $args->{'title'} ], duration => 500 },
+				cli  => undef,
+			}, { duration => 1, block => 1 });
+		}
 	}
 	
 	# Call again unless we've reached the threshold
