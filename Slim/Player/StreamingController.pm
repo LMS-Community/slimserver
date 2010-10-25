@@ -768,6 +768,14 @@ sub _playersMessage {
 	$duration = 10 unless defined $duration;
 
 	my $master = $self->master();
+	
+	# Check with the protocol handler to see if it wants to suppress certain messages
+	if ( my $song = $self->streamingSong() || $self->playingSong() ) {
+		my $handler = $song->currentTrackHandler();
+		if ( $handler->can('suppressPlayersMessage') ) {
+			return if $handler->suppressPlayersMessage($master, $song, $message);
+		}
+	}	
 
 	my $line1 = (uc($message) eq $message) ? $master->string($message) : $message;
 	
