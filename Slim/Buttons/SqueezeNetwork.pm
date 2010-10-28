@@ -130,46 +130,13 @@ sub connectSqueezeNetwork {
 	# don't disconnect unless we're still in this mode.
 	return unless ($client->modeParam('squeezenetwork.connect'));
 
-	if ($client->hasServ) {
-		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
-		my $packed;
-
-		if ( $host eq "www.(?:squeezenetwork|mysqueezebox).com" ) {
-			$packed = pack 'N', 1;
-		}
-		elsif ( $host eq "www.test.(?:squeezenetwork|mysqueezebox).com" ) {
-			$packed = pack 'N', 2;
-		}
-		else {
-			# anything else is probably a custom value by a developer
-			# testing against a local mysqueezebox.com instance
-			$packed = scalar gethostbyname($host);
-		}
-
-		$client->execute([ 'stop' ]);
-		
-		$client->sendFrame('serv', \$packed);
-
-		# ensure client has disconnected before forgetting him
-		Slim::Control::Request::subscribe(
-			\&_forgetPlayer, 
-			[['client'],['disconnect']], 
-			$client
-		);
-	}
-}
-
-sub _forgetPlayer {
-	my $request = shift;
-	my $client  = $request->client;
-	
-	Slim::Control::Request::unsubscribe(\&_forgetPlayer, $client);
+	my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 
 	Slim::Control::Request::executeRequest(
 		$client,
-		['client', 'forget']);	
+		['connect', $host],
+	);
 }
-
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
