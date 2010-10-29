@@ -52,7 +52,7 @@ function progressUpdate() {
 }
 
 function setProgressBarWidth() {
-	if ( _progressAt >= _progressEnd) {
+	if ( _progressEnd > 0 && _progressAt >= _progressEnd) {
 		_progressAt = _progressEnd;
 		clearIntervalCall();
 		doRefresh();

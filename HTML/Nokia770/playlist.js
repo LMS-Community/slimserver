@@ -191,7 +191,7 @@ function refreshProgress(theData) {
 	} else {
 		timeToRefresh = 10000; // 10 seconds
 	}
-	if (timeToRefresh > 10000) {
+	if (timeToRefresh > 10000 || timeToRefresh <= 0) {
 		timeToRefresh = 10000; // 10 seconds
 	}
 	// set the timeout
