@@ -2129,7 +2129,7 @@ sub pushMode {
 	if ($client->display->hasScreen2) {
 		my $screen2 = $client->modeParam('screen2');
 
-		if ($client->display->showExtendedText() && !$screen2) {
+		if ($client->display->showExtendedText() && $client->power() && !$screen2) {
 			$screen2 = 'periodic';
 		} elsif ($screen2 && $screen2 eq 'inherit') {
 			$screen2 = $oldscreen2;
@@ -2225,7 +2225,7 @@ sub popMode {
 
 		my $screen2 = $client->modeParam('screen2active');
 
-		if ($client->display->showExtendedText()) {
+		if ($client->display->showExtendedText() && $client->power()) {
 
 			$client->modeParam('screen2active', 'periodic') unless $screen2;
 
@@ -2335,7 +2335,7 @@ sub updateScreen2Mode {
 
 	my $screen2 = $client->modeParam('screen2active');
 
-	if ($client->display->showExtendedText()) {
+	if ($client->display->showExtendedText() && $client->power()) {
 		if (!$screen2) {
 			$client->modeParam('screen2active', 'periodic');
 			startPeriodicUpdates($client);

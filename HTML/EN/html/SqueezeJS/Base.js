@@ -1,5 +1,9 @@
 Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
-	
+
+Ext.Ajax.defaultHeaders = {
+	'Content-Type': 'application/json'
+}
+
 // hack to fake IE8 into IE7 mode - let's consider them the same
 Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
 
@@ -487,11 +491,11 @@ function _init() {
 			}		
 		},
 
-		getPlayer : function(){
-			if (SqueezeJS.Controller.player == null)
+		getPlayer : function() {
+			if (SqueezeJS.Controller.player == null || SqueezeJS.Controller.player == -1)
 				return;
 			
-			SqueezeJS.Controller.player = SqueezeJS.Controller.player.replace(/%3A/gi, ':');
+			SqueezeJS.Controller.player = String(SqueezeJS.Controller.player).replace(/%3A/gi, ':');
 			return SqueezeJS.Controller.player;
 		},
 
@@ -721,7 +725,7 @@ SqueezeJS.SonginfoParser = {
 				}
 			}
 			else {
-				coverart = this.defaultCoverart(result.playlist_loop[0].coverid, width);
+				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].id, width);
 			}
 		}
 
@@ -729,7 +733,7 @@ SqueezeJS.SonginfoParser = {
 	},
 	
 	defaultCoverart : function(coverid, width) {
-		return '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
+		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
 	}
 };
 

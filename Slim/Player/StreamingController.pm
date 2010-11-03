@@ -710,9 +710,16 @@ sub _showTrackwaitStatus {
 			? $handler->getMetadataFor($self->master(), $song->currentTrack()->url)
 			: {};
 		my $icon = $song->icon();
+		my $message;
+
+		if (!$song->isRemote) {
+			$message = 'NOW_PLAYING';
+			$remoteMeta = undef;
+		} else {
+			$message = $song->isPlaylist() ? 'GETTING_TRACK_DETAILS' : 'GETTING_STREAM_INFO';
+		}
 		
-		_playersMessage($self, $song->currentTrack->url,
-			$remoteMeta, $song->isPlaylist() ? 'GETTING_TRACK_DETAILS' : 'GETTING_STREAM_INFO', $icon, 0, 30);
+		_playersMessage($self, $song->currentTrack->url, $remoteMeta , $message, $icon, 0, 30);
 	}
 }
 
@@ -783,6 +790,11 @@ sub _playersMessage {
 	
 	my $iconType = $icon && Slim::Music::Info::isRemoteURL($icon) ? 'icon' : 'icon-id';
 	$icon ||= 0;
+
+	# don't pass remoteMeta if it does not contain a title so getCurrentTitle can extract from db
+	if ($remoteMeta && ref $remoteMeta eq 'HASH' && !$remoteMeta->{'title'}) {
+		$remoteMeta = undef;
+	}
 
 	foreach my $client (@{$self->{'players'}}) {
 
