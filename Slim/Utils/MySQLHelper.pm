@@ -339,6 +339,8 @@ sub changeCollation {
 			contributors
 			genres
 			tracks
+			playlist_track
+			tracks_persistent
 		);
 
 		for my $table ( @tables ) {
