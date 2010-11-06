@@ -4334,11 +4334,10 @@ sub titlesQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	my $count;
-	my $totalCount;
 	my $start;
 	my $end;
 	
-	my ($items, $itemOrder) = _getTagDataForTracks( $tags, {
+	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
 		where         => $where,
 		sort          => $order_by,
 		search        => $search,
@@ -6190,6 +6189,7 @@ sub _getTagDataForTracks {
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
 	my $w        = [];
 	my $p        = [];
+	my $total    = 0;
 	
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
@@ -6390,11 +6390,11 @@ sub _getTagDataForTracks {
 	if ( my $limit = $args->{limit} ) {
 		# Let the caller worry about the limit values
 		
-		my ($count) = $dbh->selectrow_array( qq{
+		($total) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $sql ) AS t1
 		}, undef, @{$p} );
 		
-		my ($valid, $start, $end) = $limit->($count);
+		my ($valid, $start, $end) = $limit->($total);
 		
 		if ( !$valid ) {
 			return [];
@@ -6552,8 +6552,13 @@ sub _getTagDataForTracks {
 			$results{$id}->{comment} = $comment;
 		}
 	}
+
+	# If the query wasn't limited, get total from results
+	if ( !$total ) {
+		$total = scalar @resultOrder;
+	}
 	
-	return wantarray ? ( \%results, \@resultOrder ) : \%results;
+	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
 
 =head1 SEE ALSO
