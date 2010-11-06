@@ -1,9 +1,5 @@
 Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
 
-Ext.Ajax.defaultHeaders = {
-	'Content-Type': 'application/json'
-}
-
 // hack to fake IE8 into IE7 mode - let's consider them the same
 Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
 
