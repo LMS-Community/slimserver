@@ -291,6 +291,11 @@ sub albumsQuery {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
 			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
+			
+			# Force quantity to not exceed max
+			if ( $quantity && $quantity > $limit ) {
+				$quantity = $limit;
+			}
 		}
 		elsif ( $sort eq 'artflow' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
