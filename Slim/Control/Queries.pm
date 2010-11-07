@@ -263,6 +263,7 @@ sub albumsQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $genreID       = $request->getParam('genre_id');
 	my $trackID       = $request->getParam('track_id');
+	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
 	my $menu          = $request->getParam('menu');
@@ -296,8 +297,11 @@ sub albumsQuery {
 		push @{$w}, 'tracks.id = ?';
 		push @{$p}, $trackID;
 	}
-	
-	# ignore everything if $track_id was specified
+	elsif ( defined $albumID ) {
+		push @{$w}, 'albums.id = ?';
+		push @{$p}, $albumID;
+	}
+	# ignore everything if $track_id or $album_id was specified
 	else {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
@@ -770,6 +774,7 @@ sub artistsQuery {
 	my $genreString  = $request->getParam('genre_string');
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
+	my $artistID = $request->getParam('artist_id');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
 	my $to_cache = $request->getParam('cache');
@@ -804,6 +809,10 @@ sub artistsQuery {
 		$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
 		push @{$w}, 'contributor_track.track = ?';
 		push @{$p}, $trackID;
+	}
+	elsif (defined $artistID) {
+		push @{$w}, 'contributors.id = ?';
+		push @{$p}, $artistID;
 	}
 	else {
 		my $roles = Slim::Schema->artistOnlyRoles || [];
@@ -923,7 +932,7 @@ sub artistsQuery {
 	# searching, or if we have a track
 	my $count_va = 0;
 
-	if ( $va_pref && !defined $search && !defined $trackID ) {
+	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID ) {
 		# Only show VA item if there are any
 		if ( @{$w_va} ) {
 			$sql_va .= 'WHERE ';
@@ -4350,12 +4359,13 @@ sub titlesQuery {
 			
 			my $valid;
 
-			$totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $count);
 			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 			
 			return ($valid, $index, $quantity);
 		},
 	} );
+	
+	$totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $totalCount);
 
 	my $playalbum;
 	if ( $request->client ) {
