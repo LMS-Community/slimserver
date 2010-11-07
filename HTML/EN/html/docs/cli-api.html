@@ -48,6 +48,8 @@
 	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
 	<li>Added tag 'c' for <a href="#songinfo">songinfo</a> to return the track's coverid value, used for artwork URLs. If you were using the track's ID directly in artwork URLs, you should switch to using the coverid value.</li>
 	<li>Added <a href="#pragma">&quot;pragma&quot;</a> command for changing SQLite behavior.</li>
+        <li>Added artist_id tagged parameter to <a href="#artists">artists</a>.</li>
+        <li>Added album_id tagged parameter to <a href="#albums">albums</a>.</li>
 	<li>Added sort order 'albumtrack' for <a href="#titles">titles</a> to return the tracks in the order album-title, track-number.</li>
 	<li>Added tag 'X' for <a href="#albums">albums</a> to return the album's replay-gain value.</li>
 	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
@@ -3207,6 +3209,25 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			track_id
+		</td>
+		<td>
+			Track ID, to restrict the results to the artist of 
+			&quot;track_id&quot;. If specified, all other filters are
+			ignored.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			artist_id
+		</td>
+		<td>
+			Artist ID, to restrict the results to a single artist. If
+			specified, all other filters are ignored.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			tags
 		</td>
 		<td>
@@ -3382,6 +3403,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Track ID, to restrict the results to the album of 
 			&quot;track_id&quot;. If specified, all other filters are
 			ignored.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			album_id
+		</td>
+		<td>
+			Album ID, to restrict the results to a single album. If
+			specified, all other filters are ignored.
 		</td>
 	</tr>
 	<tr>
