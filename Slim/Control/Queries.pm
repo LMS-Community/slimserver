@@ -3377,6 +3377,7 @@ sub titlesQuery {
 	my $genreID       = $request->getParam('genre_id');
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
+	my $trackID       = $request->getParam('track_id');
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -3418,6 +3419,7 @@ sub titlesQuery {
 		year          => $year,
 		genreId       => $genreID,
 		contributorId => $contributorID,
+		trackId       => $trackID,
 		limit         => sub {
 			$count = shift;
 			
@@ -4594,9 +4596,14 @@ sub _getTagDataForTracks {
 		}
 	}
 	
-	if ( my $albumId = $args->{albumId} ){
+	if ( my $albumId = $args->{albumId} ) {
 		push @{$w}, 'tracks.album = ?';
 		push @{$p}, $albumId;
+	}
+	
+	if ( my $trackId = $args->{trackId} ) {
+		push @{$w}, 'tracks.id = ?';
+		push @{$p}, $trackId;
 	}
 
 	if ( my $year = $args->{year} ) {
@@ -4851,6 +4858,7 @@ sub _getTagDataForTracks {
 			$values{$track} ||= {};
 			my $role_info = $values{$track}->{$role} ||= {};
 			
+			# XXX: what if name has ", " in it?
 			utf8::decode($name);
 			$role_info->{ids}   .= $role_info->{ids} ? ', ' . $id : $id;
 			$role_info->{names} .= $role_info->{names} ? ', ' . $name : $name;
