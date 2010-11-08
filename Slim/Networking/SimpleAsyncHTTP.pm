@@ -164,13 +164,16 @@ sub _createHTTPRequest {
 	}
 	
 	# Add Accept-Language header
-	my $lang = $prefs->get('language') || 'en';
-	
-	if ( main::SLIM_SERVICE ) {
-		if ( my $client = $params->{params}->{client} ) {
-			$lang = $prefs->client($client)->get('language');
+	my $lang;
+	if ( my $client = $params->{params}->{client} ) {
+		$lang = $client->languageOverride(); # override from comet request
+		
+		if ( main::SLIM_SERVICE ) {
+			$lang ||= $prefs->client($client)->get('language');
 		}
 	}
+
+	$lang ||= $prefs->get('language') || 'en';
 		
 	unshift @_, (
 		'Accept-Language' => lc($lang),
