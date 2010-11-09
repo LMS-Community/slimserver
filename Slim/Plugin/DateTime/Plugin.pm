@@ -131,11 +131,19 @@ sub screensaverDateTimelines {
 
 	my $flash  = $args->{'flash'}; # set when called from animation callback
 	
-	if ( main::SLIM_SERVICE ) {	
-		# Align updates at each minute change so we only have to run once a minute instead
-		# of every few seconds
-		my $sec = (localtime(time))[0];
-		my $snInterval = 60 - $sec;
+	if ( main::SLIM_SERVICE ) {
+		my $snInterval;
+		
+		if ( !$flash ) {	
+			# Align updates at each minute change so we only have to run once a minute instead
+			# of every few seconds
+			my $sec = (localtime(time))[0];
+			$snInterval = 60 - $sec;		
+		}
+		else {
+			# OK to update every second while flashing an alarm icon
+			$snInterval = 1;
+		}
 		
 		$client->modeParam( modeUpdateInterval => $snInterval );
 		Slim::Buttons::Common::startPeriodicUpdates( $client, time() + $snInterval );
