@@ -91,6 +91,11 @@ sub hasCompression {
 	return shift->revision >= 80;
 }
 
+# Do we have support for client-side scrolling?
+sub hasScrolling {
+	return shift->revision >= 135;
+}
+
 sub model {
 	my $client       = shift;
 	my $wantRealName = shift;

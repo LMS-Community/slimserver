@@ -57,12 +57,28 @@ my $prefs = preferences('server');
 #   0 = no scrolling
 #   1 = server side normal scrolling
 #   2 = server side ticker mode
-#  3+ = <reserved for client side scrolling>
+#   3 = client-side scrolling
 
 my $log = logger('player.display');
 
 my $initialized;
 
+# XXX: don't break SB1 by changing these values
+
+# Old defaults for server-side scrolling were:
+# scrollRate       => 0.15
+# scrollRateDouble => 0.1
+# scrollPixels     => 7
+#
+# This results in it taking about 6.8s for something in normal mode to
+# scroll completely across the 320px display and 4.8s in double mode.
+#
+# New values maintain the same transit time but using a 1px
+# interval for smoother scrolling:
+# scrollRate       => 0.01
+# scrollRateDouble => 0.005
+# scrollPixels     => 1
+#
 our $defaultPrefs = {
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
@@ -535,11 +551,13 @@ sub scrollInit {
 	                        # 2 = scroll to scrollend and then end animation (causing new update)
 
 	my $client = $display->client;
+	my $cprefs = $prefs->client($client);
 
 	my $ticker = ($screen->{scroll} == 2);
 
-	my $refresh = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate'  );
-	my $pause   = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');
+	my $refresh = $cprefs->get($display->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate'    );
+	my $pause   = $cprefs->get($display->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause'  );
+	my $pixels  = $cprefs->get($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
 
 	my $now = Time::HiRes::time();
 	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
@@ -563,7 +581,6 @@ sub scrollInit {
 
 	if (defined($screen->{bitsref})) {
 		# graphics display
-		my $pixels = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
 		$scroll->{shift} = $pixels * $display->bytesPerColumn() * $screen->{scrolldir};
 		$scroll->{scrollHeader} = $display->scrollHeader($screenNo);
 		$scroll->{scrollFrameSize} = length($display->scrollHeader) + $display->screenBytes($screenNo);
@@ -607,7 +624,54 @@ sub scrollInit {
 
 	$display->scrollData($screenNo, $scroll);
 	$display->scrollState($screenNo, $ticker ? 2 : 1);
-	$display->scrollUpdate($scroll);
+	
+	if (!$ticker && $client->hasScrolling) {
+		# Start client-side scrolling
+		$display->scrollState($screenNo, 3);
+		
+		# First send the scrollable data frame
+		# Note: length of $data header must be even!
+		my $header = pack 'ccNNnnn',
+			$screenNo,
+			($scroll->{dir} == 1 ? 1 : 2),
+			$pause * 1000,
+			$refresh * 1000,
+			$pixels,
+			$scroll->{scrollonce},    # repeat flag
+			$scroll->{scrollend} / 4; # width of scroll area in pixels
+		
+		# slimproto has a max packet size of 3000 bytes, so we may need to send multiple packets
+		# for a long scrolling frame
+		my $scrollbits = ${$scroll->{scrollbitsref}};
+		my $length = length $scrollbits;
+		my $offset = 0;
+		
+		while ($length > 0) {
+			if ( $length > 2900 ) {
+				$length = 2900;
+			}
+			
+			my $data = $header . pack('n', $offset) . substr( $scrollbits, 0, $length, '' );
+			
+			$client->sendFrame( grfs => \$data );
+			$offset += $length;			
+			$length = length $scrollbits;
+		}
+		
+		# Next send the background frame, display will be updated after it is received
+		# and scrolling will begin.
+		# Note: also must have an even length
+		my $data2 = pack 'nn',
+			$screenNo,
+			$screen->{overlaystart}[$screen->{scrollline}] / 4; # width of scrollable area
+		
+		$data2 .= ${$scroll->{bitsref}};
+		$client->sendFrame( grfg => \$data2 );
+	}
+	else {
+		# server-side scrolling
+		$display->scrollUpdate($scroll);
+	}
 }
 
 # stop server side scrolling
@@ -644,9 +708,20 @@ sub scrollUpdateBackground {
 
 	$scroll->{overlaystart} = $screen->{overlaystart}[$screen->{scrollline}];
 
-	# force update of screen for if paused, otherwise rely on scrolling to update
-	if ($scroll->{paused}) {
-		$display->scrollUpdateDisplay($scroll);
+	# If we're doing client-side scrolling, send a new background frame
+	if ($display->scrollState == 3) {
+		my $data = pack 'nn',
+			$screenNo,
+			$scroll->{overlaystart} / 4; # width of scrollable area
+
+		$data .= ${$scroll->{bitsref}};
+		$display->client->sendFrame( grfg => \$data );
+	}
+	else {
+		# force update of screen for if paused, otherwise rely on scrolling to update
+		if ($scroll->{paused}) {
+			$display->scrollUpdateDisplay($scroll);
+		}
 	}
 }
 
