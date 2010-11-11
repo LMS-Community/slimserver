@@ -634,7 +634,7 @@ sub scrollInit {
 		my $header = pack 'ccNNnnn',
 			$screenNo,
 			($scroll->{dir} == 1 ? 1 : 2),
-			$pause * 1000,
+			($pause > 0.5 ? $pause : 0.5) * 1000,
 			$refresh * 1000,
 			$pixels,
 			$scroll->{scrollonce},    # repeat flag
