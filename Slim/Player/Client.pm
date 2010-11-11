@@ -1445,6 +1445,8 @@ sub canDecodeRhapsody { 0 };
 
 sub hidden { 0 }
 
+sub hasScrolling { 0 }
+
 sub apps {
 	my $client = shift;
 	

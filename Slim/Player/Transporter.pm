@@ -377,6 +377,11 @@ sub hasCompression {
 	return shift->revision >= 30;
 }
 
+# Do we have support for client-side scrolling?
+sub hasScrolling {
+	return shift->revision >= 85;
+}
+
 sub voltage {
 	return Slim::Networking::Slimproto::voltage(@_);
 }
