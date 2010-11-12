@@ -164,6 +164,12 @@ sub update {
 	if (!defined $scrollMode) {
 		$scrollMode = $prefs->client($client)->get('scrollMode') || 0;
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# XXX temporary, remove with local scrolling
+		# force one-scroll mode for users with normal scroll
+		$scrollMode = 1 if $scrollMode == 0;
+	}
 
 	my ($scroll, $scrollonce);
 	if    ($scrollMode == 0) { $scroll = 1; $scrollonce = 0; }
@@ -733,12 +739,6 @@ sub scrollUpdate {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
 				$scroll->{inhibitsaver} = 0;
-				
-				if ( main::SLIM_SERVICE ) {
-					# XXX Temporary SN scroll change, pause for 5x as long after the initial pause
-					# Remove after client-side scrolling is in place
-					$scroll->{pauseUntil} += $scroll->{pauseInt} * 4;
-				}
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{inhibitsaver} = 0;
