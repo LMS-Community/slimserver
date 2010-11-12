@@ -1531,6 +1531,7 @@ sub genresQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
+	my $genreID       = $request->getParam('genre_id');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $party         = $request->getParam('party') || 0;
@@ -1564,6 +1565,10 @@ sub genresQuery {
 		$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
 		push @{$w}, 'genre_track.track = ?';
 		push @{$p}, $trackID;
+	}
+	elsif (defined $genreID) {
+		push @{$w}, 'genres.id = ?';
+		push @{$p}, $genreID;
 	}
 	else {
 		# ignore those if we have a track.
