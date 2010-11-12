@@ -709,7 +709,7 @@ sub scrollUpdateBackground {
 	$scroll->{overlaystart} = $screen->{overlaystart}[$screen->{scrollline}];
 
 	# If we're doing client-side scrolling, send a new background frame
-	if ($display->scrollState == 3) {
+	if ($display->scrollState($screenNo) == 3) {
 		my $data = pack 'nn',
 			$screenNo,
 			$scroll->{overlaystart} / 4; # width of scrollable area
