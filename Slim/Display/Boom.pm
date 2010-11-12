@@ -125,6 +125,12 @@ our $defaultPrefs = {
 	'alwaysShowCount'      => 0,
 };
 
+# XXX remove when local scrolling is done
+if ( main::SLIM_SERVICE ) {
+	$defaultPrefs->{scrollPause} = 3.6;
+	$defaultPrefs->{scrollPauseDouble} = 3.6;
+}
+
 our $defaultFontPrefs = {
 	'activeFont'          => [qw(light_n standard_n full_n)],
 	'activeFont_curr'     => 1,
