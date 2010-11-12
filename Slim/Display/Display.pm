@@ -733,6 +733,12 @@ sub scrollUpdate {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
 				$scroll->{inhibitsaver} = 0;
+				
+				if ( main::SLIM_SERVICE ) {
+					# XXX Temporary SN scroll change, pause for 3x as long after the initial pause
+					# Remove after client-side scrolling is in place
+					$scroll->{pauseUntil} += $scroll->{pauseInt} * 2;
+				}
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{inhibitsaver} = 0;
