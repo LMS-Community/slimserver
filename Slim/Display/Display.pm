@@ -709,7 +709,7 @@ sub scrollUpdateBackground {
 	$scroll->{overlaystart} = $screen->{overlaystart}[$screen->{scrollline}];
 
 	# If we're doing client-side scrolling, send a new background frame
-	if ($display->scrollState == 3) {
+	if ($display->scrollState($screenNo) == 3) {
 		my $data = pack 'nn',
 			$screenNo,
 			$scroll->{overlaystart} / 4; # width of scrollable area
@@ -808,6 +808,12 @@ sub scrollUpdate {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
 				$scroll->{inhibitsaver} = 0;
+				
+				if ( main::SLIM_SERVICE ) {
+					# XXX Temporary SN scroll change, pause for 3x as long after the initial pause
+					# Remove after client-side scrolling is in place
+					$scroll->{pauseUntil} += $scroll->{pauseInt} * 2;
+				}
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{inhibitsaver} = 0;
