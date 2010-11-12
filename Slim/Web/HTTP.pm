@@ -1479,6 +1479,9 @@ sub sendStreamingFile {
 	# we are not a real streaming session, so we need to avoid sendStreamingResponse using the random $client stored in
 	# $peerclient as this will cause streaming to the real client $client to stop.
 	delete $peerclient{$httpClient};
+	
+	# Disable metadata in case this client sent an Icy-Metadata header
+	$sendMetaData{$httpClient} = 0;
 
 	addStreamingResponse($httpClient, $headers);
 }
