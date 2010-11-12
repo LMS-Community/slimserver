@@ -1148,6 +1148,7 @@ sub generateHTTPResponse {
 			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for stream.mp3");
 			delete $keepAlives{$httpClient};
 			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+			$response->header( Connection => 'close' );
 
 			my $headers = _stringifyHeaders($response) . $CRLF;
 
@@ -1202,8 +1203,7 @@ sub generateHTTPResponse {
 
 		# return quickly with a 404 if web UI is disabled
 		} elsif ( !main::WEBUI && (
-			$path =~ /music\/(\d+)\/download/
-			|| $path =~ /status\.m3u/
+			   $path =~ /status\.m3u/
 			|| $path =~ /status\.txt/
 			|| $path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/
 		) ) {
@@ -1222,11 +1222,14 @@ sub generateHTTPResponse {
 
 		} elsif ($path =~ /music\/(\d+)\/download/) {
 			# Bug 10730
+			my $id = $1;
+			
 			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for file download");
 			delete $keepAlives{$httpClient};
 			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+			$response->header( Connection => 'close' );
 
-			if ( main::WEBUI && Slim::Web::Pages::Common->downloadMusicFile($httpClient, $response, $1) ) {
+			if ( downloadMusicFile($httpClient, $response, $id) ) {
 				return 0;
 			}
 
@@ -1289,8 +1292,7 @@ sub generateHTTPResponse {
 				if ( $keepAlives{$httpClient} ) {
 					main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for raw file $file");
 					delete $keepAlives{$httpClient};
-					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
-					
+					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );					
 					$response->header( Connection => 'close' );
 				}
 				
@@ -2466,6 +2468,28 @@ sub protect { if ( main::WEBUI ) {
 	logBacktrace("Slim::Web::HTTP::protect() is deprecated - please use Slim::Web::HTTP::CSRF->protect() instead");
 	Slim::Web::HTTP::CSRF->protect(@_);
 } }
+
+sub downloadMusicFile {
+	my ($httpClient, $response, $id) = @_;
+
+	my $obj = Slim::Schema->find('Track', $id);
+
+	if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
+
+		main::INFOLOG && $log->is_info && $log->info("Opening $obj to stream...");
+		
+		# XXX support transcoding if a file extension is provided
+		# Also support LAME bitrate with a bitrate param
+		
+		my $ct = $Slim::Music::Info::types{$obj->content_type()};
+			
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
+			
+		return 1;
+	}
+	
+	return;
+}
 
 1;
 
