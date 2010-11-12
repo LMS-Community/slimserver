@@ -1941,6 +1941,7 @@ sub musicfolderQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
+	my $want_top = $request->getParam('return_top');
 	my $url      = $request->getParam('url');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
@@ -1978,6 +1979,11 @@ sub musicfolderQuery {
 	else {
 		
 		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	}
+	
+	if ($want_top) {
+		$items = [ $topLevelObj->url ];
+		$count = 1;
 	}
 
 	# create filtered data
