@@ -4644,9 +4644,12 @@ sub yearsQuery {
 		return;
 	}
 	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
 	# get our parameters
 	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');	
+	my $quantity      = $request->getParam('_quantity');
+	my $year          = $request->getParam('year');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $party         = $request->getParam('party') || 0;
@@ -4657,17 +4660,31 @@ sub yearsQuery {
 	my $useContextMenu = $request->getParam('useContextMenu');
 	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
-	# get them all by default
-	my $where = {};
+	my $sql = 'SELECT id FROM years ';
+	my $w   = [];
+	my $p   = [];
 	
-	# sort them
-	my $attr = {
-		'distinct' => 'me.id'
-	};
-
-	my $rs = Slim::Schema->rs('Year')->browse->search($where, $attr);
-
-	my $count = $rs->count;
+	if (defined $year) {
+		push @{$w}, 'id = ?';
+		push @{$p}, $year;
+	}
+	
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	$sql .= 'ORDER BY id';
 
 	# now build the result
 	
@@ -4754,17 +4771,29 @@ sub yearsQuery {
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
+		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= " LIMIT $index, $quantity ";
+		}
 
-		for my $eachitem ($rs->slice($start, $end)) {
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Years query: $sql / " . Data::Dump::dump($p) );
+		}
 
-
-			my $id = $eachitem->id();
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		my $id;
+		$sth->bind_columns(\$id);
+		
+		while ( $sth->fetch ) {
 			$id += 0;
 
-			my $url = $eachitem->id() ? 'db:year.id=' . $eachitem->id() : 0;
+			my $url = $id ? 'db:year.id=' . $id : 0;
 
 			if ($menuMode) {
-				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $id);
 
 				my $params = {
 					'year'            => $id,
@@ -4774,7 +4803,6 @@ sub yearsQuery {
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				if ($party || $partyMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
 				}
@@ -4783,8 +4811,6 @@ sub yearsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
 			}
 			$chunkCount++;
-			
-			main::idleStreams() if !($chunkCount % 5);
 		}
 	}
 
