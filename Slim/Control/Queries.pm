@@ -4790,7 +4790,7 @@ sub yearsQuery {
 		while ( $sth->fetch ) {
 			$id += 0;
 
-			my $url = $id ? 'db:year.id=' . $id : 0;
+			my $url = defined $id ? 'db:year.id=' . $id : 0;
 
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $id);
