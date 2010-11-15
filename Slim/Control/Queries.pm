@@ -2617,17 +2617,30 @@ sub playlistsTracksQuery {
 		
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
+	
+	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
+	my $order_by = 'playlist_track.position';
+	
+	my $count;
+	my $start;
+	my $end;
+	
+	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
+		where      => $where,
+		sort       => $order_by,
+		playlistId => $playlistID,
+		limit      => sub {
+			$count = shift;
+			
+			my $valid;
 
-	my $iterator;
-	my @tracks;
-
-	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
-
-	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
-		$iterator = $playlistObj->tracks();
-	}
-
-	# now build the result
+			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+			
+			return ($valid, $index, $quantity);
+		},
+	} );
+	
+	$totalCount = _fixCount($insertAll, \$index, \$quantity, $totalCount);
 	
 	if ($menuMode) {
 
@@ -2685,85 +2698,82 @@ sub playlistsTracksQuery {
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
-
-	if (defined $iterator) {
-
-		my $count = $iterator->count();
-		$count += 0;
-		my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
+	
+	$count += 0;
+	
+	my $loopname = $menuMode ? 'item_loop' : 'playlisttracks_loop';
+	
+	# this is the count of items in this part of the request (e.g., menu 100 200)
+	# not to be confused with $count, which is the count of the entire list
+	my $chunkCount = 0;
+	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+	
+	if ( scalar @{$itemOrder} ) {
+		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 		
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $totalCount);
+		if ( $insertAll && !$useContextMenu ) {
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+		}
 
-		if ($valid || $start == $end) {
-
-
-			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-			my $cur = $start;
-			my $loopname = $menuMode?'item_loop':'playlisttracks_loop';
-			my $chunkCount = 0;
-			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
+		my $cur = $start;
+		my $list_index = 0;
+		
+		for my $trackId ( @{$itemOrder} ) {
+			my $item = $items->{$trackId};
 			
-			if ( $insertAll && !$useContextMenu ) {
-				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-			}
-
-			my $list_index = 0;
-			for my $eachitem ($iterator->slice($start, $end)) {
-
-				if ($menuMode) {
-					
-					my $text = Slim::Music::TitleFormatter::infoFormat($eachitem, $format, 'TITLE');
-					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
-					$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'nowPlaying');
-					my $id = $eachitem->id();
-					$id += 0;
-					my $params = {
-						'track_id' =>  $id, 
-						'list_index' => $list_index,
-					};
-					$list_index++;
-					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-					if ( $useContextMenu ) {
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-					}
-				}
-				else {
-					_addSong($request, $loopname, $chunkCount, $eachitem, $tags, 
-							"playlist index", $cur);
-				}
+			if ($menuMode) {
+				my $id = $item->{'tracks.id'};
+				$id += 0;
 				
-				$cur++;
-				$chunkCount++;
+				my $params = {
+					'track_id'   => $id, 
+					'list_index' => $list_index,
+				};
 				
-				main::idleStreams();
-			}
+				# Pass hash to title formatter, it will know what to do with our data
+				my $text = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item);
 
-			my $lastChunk;
-			if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') || $start == $end) {
-				$lastChunk = 1;
-			}
+				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
+				$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'nowPlaying');
 
-			# add a favorites link below play/add links
-			#Add another to result count
-			my %favorites;
-			$favorites{'title'} = $playlistObj->name;
-			$favorites{'url'} = $playlistObj->url;
+				$list_index++;
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				if ( $useContextMenu ) {
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+				}
+			}
+			else {
+				_addSong($request, $loopname, $chunkCount, $item, $tags, 
+						"playlist index", $cur);
+			}
+				
+			$cur++;
+			$chunkCount++;
 
 			if ($menuMode) {
-				($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
+				my $lastChunk;
+				if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') || $start == $end) {
+					$lastChunk = 1;
+				}
 				
-				if ($valid) {
+				if ($lastChunk) {				
+					my $playlistObj = Slim::Schema->find( Playlist => $playlistID );
+
+					# add a favorites link below play/add links
+					#Add another to result count
+					my %favorites;
+					$favorites{'title'} = $playlistObj->name;
+					$favorites{'url'} = $playlistObj->url;
+				
+					($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
+				
 					($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 				}
 			}
-			
 		}
-		$request->addResult("count", $totalCount);
-
-	} else {
-
-		$request->addResult("count", 0);
 	}
+	
+	$request->addResult("count", $totalCount);
 
 	$request->setStatusDone();	
 }
@@ -6316,6 +6326,12 @@ sub _getTagDataForTracks {
 		}
 	};
 	
+	my $join_playlist_track = sub {
+		if ( $sql !~ /JOIN playlist_track/ ) {
+			$sql .= 'JOIN playlist_track ON playlist_track.track = tracks.url ';
+		}
+	};
+	
 	if ( my $genreId = $args->{genreId} ) {
 		$join_genre_track->();
 		push @{$w}, 'genre_track.genre = ?';
@@ -6333,6 +6349,12 @@ sub _getTagDataForTracks {
 			push @{$w}, 'contributor_track.contributor = ?';
 			push @{$p}, $contributorId;
 		}
+	}
+	
+	if ( my $playlistId = $args->{playlistId} ) {
+		$join_playlist_track->();
+		push @{$w}, 'playlist_track.playlist = ?';
+		push @{$p}, $playlistId;
 	}
 	
 	if ( my $trackIds = $args->{trackIds} ) {
