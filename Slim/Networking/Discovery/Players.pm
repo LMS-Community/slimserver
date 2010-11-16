@@ -65,11 +65,12 @@ sub init {
 
 =head2 getPlayerList()
 
-Remove any player connected to the given server from oure list
+return list of discovered players
 
 =cut
 
 sub getPlayerList {
+	_purge_player_list();
 	return $players;
 }
 
@@ -155,7 +156,7 @@ Remove any player connected to the given server from oure list
 =cut
 
 sub _purge_player_list {
-	my $server = shift;
+	my $server = shift || '';
 
 	foreach my $player (keys %{$players}) {
 		
