@@ -2706,7 +2706,8 @@ sub playlistsTracksQuery {
 	# this is the count of items in this part of the request (e.g., menu 100 200)
 	# not to be confused with $count, which is the count of the entire list
 	my $chunkCount = 0;
-	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+	my $offset = $request->getParam('_index');
+	$request->addResult('offset', $offset) if $menuMode;
 	
 	if ( scalar @{$itemOrder} ) {
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
@@ -2727,7 +2728,7 @@ sub playlistsTracksQuery {
 				
 				my $params = {
 					'track_id'   => $id, 
-					'list_index' => $list_index,
+					'list_index' => $list_index + $offset,
 				};
 				
 				# Pass hash to title formatter, it will know what to do with our data
@@ -4501,7 +4502,8 @@ sub titlesQuery {
 	# this is the count of items in this part of the request (e.g., menu 100 200)
 	# not to be confused with $count, which is the count of the entire list
 	my $chunkCount = 0;
-	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+	my $offset = $request->getParam('_index');
+	$request->addResult('offset', $offset) if $menuMode;
 
 	if ( scalar @{$itemOrder} ) {
 		
@@ -4527,7 +4529,7 @@ sub titlesQuery {
 				};
 				if ( $playalbum && $albumID ) {
 					$params->{'album_id'}   = $albumID;
-					$params->{'list_index'} = $listIndex;
+					$params->{'list_index'} = $listIndex + $offset;
 					if ($contributorID) {
 						$params->{'artist_id'} = $contributorID;
 					}
