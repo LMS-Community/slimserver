@@ -3931,14 +3931,22 @@ sub statusQuery {
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
 		my $presetLoop;
+		my $presetData; # send detailed preset data in a separate loop so we don't break backwards compatibility
 		for my $i (0..9) {
 			if (defined $presets->[$i] ) {
 				$presetLoop->[$i] = 1;
+				for my $key (keys %$presets) {
+					if (defined $presets->[$i]->{$key}) {
+						$presetData->[$i]->{$key} = $presets->[$i]->{$key};
+					}
+				}
 			} else {
 				$presetLoop->[$i] = 0;
+				$presetData->[$i] = 0;
 			}
 		}
 		$request->addResult('preset_loop', $presetLoop);
+		$request->addResult('preset_data', $presetData);
 
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
