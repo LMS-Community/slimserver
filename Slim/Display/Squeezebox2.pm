@@ -26,6 +26,12 @@ use base qw(Slim::Display::Graphics);
 
 use Slim::Utils::Prefs;
 
+# ANIC flags
+use constant ANIM_TRANSITION  => 0x01; # A transition animation has finished
+use constant ANIM_SCROLL_ONCE => 0x02; # A scrollonce has finished
+use constant ANIM_SCREEN_1    => 0x04; # For scrollonce only, screen 1 was scrolling
+use constant ANIM_SCREEN_2    => 0x08; # For scrollonce only, screen 2 was scrolling
+
 my $prefs = preferences('server');
 
 # constants
@@ -413,7 +419,11 @@ sub pushBumpAnimate {
 sub clientAnimationComplete {
 	# Called when client sents ANIC frame
 	# Ensures scrolling is started by setting a timer to call update in 0.5 seconds
+	# XXX comment says 0.5s, but the timer is 1s, which is right?
 	my $display = shift;
+	my $data_ref = shift;
+	
+	my $flags = unpack 'c', $$data_ref;
 
 	$display->updateMode(0);
 
