@@ -3934,12 +3934,17 @@ sub statusQuery {
 		my $presetLoop;
 		my $presetData; # send detailed preset data in a separate loop so we don't break backwards compatibility
 		for my $i (0..9) {
-			if (defined $presets->[$i] ) {
-				$presetLoop->[$i] = 1;
-				for my $key (keys %$presets) {
-					if (defined $presets->[$i]->{$key}) {
-						$presetData->[$i]->{$key} = $presets->[$i]->{$key};
+			if ( ref($presets) eq 'ARRAY' && defined $presets->[$i] ) {
+				if ( ref($presets->[$i]) eq 'HASH') {	
+					$presetLoop->[$i] = 1;
+					for my $key (keys %$presets) {
+						if (defined $presets->[$i]->{$key}) {
+							$presetData->[$i]->{$key} = $presets->[$i]->{$key};
+						}
 					}
+				} else {
+					$presetLoop->[$i] = 0;
+					$presetData->[$i] = 0;
 				}
 			} else {
 				$presetLoop->[$i] = 0;
