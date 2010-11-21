@@ -417,14 +417,31 @@ sub pushBumpAnimate {
 }
 
 sub clientAnimationComplete {
-	# Called when client sents ANIC frame
-	# Ensures scrolling is started by setting a timer to call update in 0.5 seconds
-	# XXX comment says 0.5s, but the timer is 1s, which is right?
+	# Called when client sends ANIC frame
 	my $display = shift;
 	my $data_ref = shift;
-	
 	my $flags = unpack 'c', $$data_ref;
+	# for players with client side scrolling, flags are:
+	# 0x01 - transition animation has finished (previous use of ANIC)
+	# 0x02 | 0x04 - end of first scroll on screen 1
+	# 0x02 | 0x08 - end of first scroll on screen 2
 
+	# process end of first scroll ANIC
+	if ($display->client->hasScrolling && ($flags & 0x02)) {
+		my $scroll = $display->scrollData(($flags & 0x04) ? 1 : 2);
+		if ($scroll) {
+			$scroll->{inhibitsaver} = 0;
+			if ($scroll->{scrollonceend}) {
+				# schedule endAnimaton to kill off scrolling and display new screen
+				$display->animateState(6) unless ($display->animateState() == 5);
+				my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
+				Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $end, \&Slim::Display::endAnimation);
+			}
+		}
+		return;
+	}
+
+	# otherwise treat as end of transition ANIC
 	$display->updateMode(0);
 
 	# process any defered showBriefly
@@ -433,6 +450,7 @@ sub clientAnimationComplete {
 		return;
 	}
 
+	# Ensure scrolling is started by setting a timer to call update in 1.0 seconds
 	$display->animateState(2);
 	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
 }
