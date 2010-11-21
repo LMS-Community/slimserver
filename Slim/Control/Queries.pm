@@ -3937,7 +3937,7 @@ sub statusQuery {
 			if ( ref($presets) eq 'ARRAY' && defined $presets->[$i] ) {
 				if ( ref($presets->[$i]) eq 'HASH') {	
 					$presetLoop->[$i] = 1;
-					for my $key (keys %$presets) {
+					for my $key (keys %{$presets->[$i]}) {
 						if (defined $presets->[$i]->{$key}) {
 							$presetData->[$i]->{$key} = $presets->[$i]->{$key};
 						}
