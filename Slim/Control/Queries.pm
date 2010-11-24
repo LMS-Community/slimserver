@@ -4351,11 +4351,6 @@ sub titlesQuery {
 	# we only change the count if we're going to insert the play all item
 	my $addPlayAllItem = $search && $insertAll;
 
-	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
-		$request->setStatusBadParams();
-		return;
-	}
-
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
 	# $val = $param || $default;
@@ -4366,9 +4361,15 @@ sub titlesQuery {
 	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
 	my $order_by = "tracks.titlesort $collate";
 	
-	if ($sort && $sort eq 'tracknum') {
-		$tags .= 't';
-		$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+	if ($sort) {
+		if ($sort eq 'tracknum') {
+			$tags .= 't';
+			$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
+		elsif ( $sort =~ /^sql=(.+)/ ) {
+			$order_by = $1;
+			$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
+		}
 	}
 	
 	# Jive menuMode needs some extra columns and joins. Set these using tags
@@ -6274,14 +6275,21 @@ sub _getTagDataForTracks {
 	# Normalize any search parameters
 	my $search = $args->{search};
 	if ( $search && specified($search) ) {
-		my $strings = Slim::Utils::Text::searchStringSplit($search);
-		if ( ref $strings->[0] eq 'ARRAY' ) {
-			push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-			push @{$p}, @{ $strings->[0] };
+		if ( $search =~ s/^sql=// ) {
+			# Raw SQL search query
+			$search =~ s/;//g; # strip out any attempt at combining SQL statements
+			push @{$w}, $search;
 		}
-		else {		
-			push @{$w}, 'tracks.titlesearch LIKE ?';
-			push @{$p}, @{$strings};
+		else {
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {		
+				push @{$w}, 'tracks.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
 		}
 	}
 	
@@ -6488,7 +6496,7 @@ sub _getTagDataForTracks {
 		my ($valid, $start, $end) = $limit->($total);
 		
 		if ( !$valid ) {
-			return [];
+			return wantarray ? ( {}, [], 0 ) : {};
 		}
 		
 		# Limit the real query
