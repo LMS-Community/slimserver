@@ -2524,15 +2524,17 @@ sub downloadMusicFile {
 					}
 				
 					main::INFOLOG && $log->is_info && $log->info("Opening transcoded download (" . $transcoder->{profile} . "), command: $command");
-				
-					my $pipeline;
-				
+					
+					my $in;
+					my $out;
+					my $done = 0;
+					
 					# Bug: 4318
 					# On windows ensure a child window is not opened if $command includes transcode processes
 					if (main::ISWINDOWS) {
 						Win32::SetChildShowWindow(0);
-						$pipeline = FileHandle->new;
-						my $pid = $pipeline->open($command);
+					 	$in = FileHandle->new;
+						my $pid = $in->open($command);
 					
 						# XXX Bug 15650, this sets the priority of the cmd.exe process but not the actual
 						# transcoder process(es).
@@ -2543,10 +2545,10 @@ sub downloadMusicFile {
 					
 						Win32::SetChildShowWindow();
 					} else {
-						$pipeline = FileHandle->new($command);
+						$in = FileHandle->new($command);
 					}
-				
-					Slim::Utils::Network::blocking($pipeline, 0);
+					
+					Slim::Utils::Network::blocking($in, 0);
 				
 					$response->content_type( $Slim::Music::Info::types{$outFormat} );
 				
@@ -2569,24 +2571,23 @@ sub downloadMusicFile {
 					my $headers = _stringifyHeaders($response) . $CRLF;
 
 					# non-blocking stream $pipeline to $httpClient
-					my $out_hdl;
-					my $done;
-				
 					my $writer; $writer = sub {
-						if ( $done || !$httpClient->opened() ) {
-							close $pipeline;
-							undef $pipeline;
-							closeHTTPSocket($httpClient);
-							$out_hdl && $out_hdl->destroy;
+						if ($done) {
+							$out && $out->destroy;
+							$in && $in->close;
+							
+							if ( $httpClient->opened() ) {
+								closeHTTPSocket($httpClient);
+							}
 							return;
 						}
 					
 						# Try to read some data from the pipeline
-						my $len = sysread $pipeline, my $buf, 32 * 1024;
+						my $len = sysread $in, my $buf, 32 * 1024;
 						if ( !defined $len ) {
-							my $w; $w = AnyEvent->io( fh => $pipeline, poll => 'r', cb => sub {
+							my $w; $w = AnyEvent->io( fh => $in, poll => 'r', cb => sub {
 								undef $w;
-								$pipeline && $writer->();
+								$in && $writer->();
 							} );
 						}
 						elsif ( $len == 0 ) {
@@ -2594,24 +2595,38 @@ sub downloadMusicFile {
 						
 							if ($is11) {
 								# Add last empty chunk
-								$out_hdl->push_write( '0' . $CRLF . $CRLF );
+								$out->push_write( '0' . $CRLF . $CRLF );
 							}
 						}
 						else {
 							if ($is11) {
-								$out_hdl->push_write( sprintf("%X", length($buf)) . $CRLF . $buf . $CRLF );
+								$out->push_write( sprintf("%X", length($buf)) . $CRLF . $buf . $CRLF );
 							}
 							else {
-								$out_hdl->push_write($buf);
+								$out->push_write($buf);
 							}
 						}
 					};
-				
-					$out_hdl = AnyEvent::Handle->new(
-						fh       => $httpClient,
-						on_drain => $writer,
+					
+					$out = AnyEvent::Handle->new(
+						fh         => $httpClient,
+						autocork   => 1, # avoid calling $writer immediately
+						linger     => 0,
+						on_drain   => $writer,
+						timeout    => 300,
+						on_timeout => sub {
+							main::INFOLOG && $log->is_info && $log->info("Timing out transcoded download for $httpClient");
+							$done = 1;
+							$writer->();
+						},
+						on_error   => sub {
+							my ($hdl, $fatal, $msg) = @_;
+							main::INFOLOG && $log->is_info && $log->info("Transcoded download error: $msg");
+							$done = 1;
+							$writer->();
+						},						    
 					);
-					$out_hdl->push_write($headers);
+					$out->push_write($headers);
 				
 					return 1;
 				}
