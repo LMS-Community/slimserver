@@ -1751,7 +1751,7 @@ sub addHTTPResponse {
 			# add a last empty chunk if we're closing the connection or if there's nothing more
 			if ($close || !$more) {
 				
-				$outbuf .= '0' . $CRLF;
+				$outbuf .= '0' . $CRLF . $CRLF;
 			}
 
 		} else {
@@ -1774,7 +1774,7 @@ sub addHTTPLastChunk {
 	my $httpClient = shift;
 	my $close = shift;
 	
-	my $emptychunk = "0" . $CRLF;
+	my $emptychunk = "0" . $CRLF . $CRLF;
 
 	push @{$outbuf{$httpClient}}, {
 		'data'     => \$emptychunk,
@@ -2594,7 +2594,7 @@ sub downloadMusicFile {
 						
 							if ($is11) {
 								# Add last empty chunk
-								$out_hdl->push_write( '0' . $CRLF );
+								$out_hdl->push_write( '0' . $CRLF . $CRLF );
 							}
 						}
 						else {
