@@ -2750,6 +2750,7 @@ sub playlistsTracksQuery {
 				
 			$cur++;
 			$chunkCount++;
+		}
 
 			if ($menuMode) {
 				my $lastChunk;
@@ -2771,7 +2772,6 @@ sub playlistsTracksQuery {
 					($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 				}
 			}
-		}
 	}
 	
 	$request->addResult("count", $totalCount);
