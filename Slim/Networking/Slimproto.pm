@@ -924,7 +924,7 @@ sub _animation_complete_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	$client->display->clientAnimationComplete();
+	$client->display->clientAnimationComplete($data_ref);
 }
 
 sub _http_metadata_handler {
