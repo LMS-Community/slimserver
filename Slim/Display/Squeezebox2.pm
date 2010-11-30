@@ -435,7 +435,7 @@ sub clientAnimationComplete {
 				# schedule endAnimaton to kill off scrolling and display new screen
 				$display->animateState(6) unless ($display->animateState() == 5);
 				my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
-				Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $end, \&Slim::Display::endAnimation);
+				Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $end, \&Slim::Display::Display::endAnimation);
 			}
 		}
 		return;
