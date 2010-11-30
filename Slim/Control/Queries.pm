@@ -1041,6 +1041,11 @@ sub artistsQuery {
 	}
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	
+	# XXX for 'artists 0 1' with VA we need to force valid to 1
+	if ( $count_va && $index == 0 && $quantity == 0 ) {
+		$valid = 1;
+	}
 
 	my $loopname = $menuMode?'item_loop':'artists_loop';
 	my $chunkCount = 0;
