@@ -65,20 +65,6 @@ my $initialized;
 
 # XXX: don't break SB1 by changing these values
 
-# Old defaults for server-side scrolling were:
-# scrollRate       => 0.15
-# scrollRateDouble => 0.1
-# scrollPixels     => 7
-#
-# This results in it taking about 6.8s for something in normal mode to
-# scroll completely across the 320px display and 4.8s in double mode.
-#
-# New values maintain the same transit time but using a 1px
-# interval for smoother scrolling:
-# scrollRate       => 0.01
-# scrollRateDouble => 0.005
-# scrollPixels     => 1
-#
 our $defaultPrefs = {
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
