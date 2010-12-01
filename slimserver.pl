@@ -508,11 +508,11 @@ sub init {
 	}
 	
 	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
-	if ($prefs->get('audiodir')) {
+	if (Slim::Utils::Misc::getAudioDir()) {
 		require Slim::Music::MusicFolderScan;
 		Slim::Music::MusicFolderScan->init();
 	}
-	if ($prefs->get('playlistdir')) {
+	if (Slim::Utils::Misc::getPlaylistDir()) {
 		require Slim::Music::PlaylistFolderScan;
 		Slim::Music::PlaylistFolderScan->init();
 	}
@@ -1021,7 +1021,7 @@ sub changeEffectiveUserAndGroup {
 
 sub checkDataSource {
 
-	my $audiodir = $prefs->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
 		$audiodir =~ s|[/\\]$||;

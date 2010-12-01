@@ -57,7 +57,7 @@ sub setMode {
 	
 	$client->lines(\&lines);
 	
-	if (!$prefsServer->get('playlistdir')) {
+	if (!Slim::Utils::Misc::getPlaylistDir()) {
 		# do nothing if there is no playlist folder defined.
 		
 	} elsif ($push eq 'pop') {
@@ -96,10 +96,10 @@ sub lines {
 	my $playlistfile = $context{$client};
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefsServer->get('playlistdir'), $playlistfile . '.m3u')
+		catfile(Slim::Utils::Misc::getPlaylistDir(), $playlistfile . '.m3u')
 	);
 
-	if (!$prefsServer->get('playlistdir')) {
+	if (!Slim::Utils::Misc::getPlaylistDir()) {
 
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');

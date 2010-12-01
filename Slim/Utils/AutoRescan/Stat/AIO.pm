@@ -60,17 +60,11 @@ sub check {
 	$grp->feed( sub {
 		if ( $sth && $sth->fetch ) {
 			my $file = Slim::Utils::Misc::pathFromFileURL($url);
-			my $bfile = $file;
-			
-			# IO::AIO needs byte-encoded paths
-			if ( utf8::is_utf8($bfile) ) {
-				utf8::encode($bfile);
-			}
 			
 			# Copy bound variables as we can't rely on their values in a closure
 			my ($mtime, $size) = ($timestamp, $filesize);
 			
-			$grp->add( aio_lstat( $bfile, sub {
+			$grp->add( aio_lstat( $file, sub {
 				if ( $_[0] ) {
 					# stat failed
 					if ( $! == ENOENT ) {

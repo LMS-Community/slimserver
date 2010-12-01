@@ -143,7 +143,7 @@ sub status {
 				string('KBPS')); 
 		}
 
-		if ($prefs->get('playlistdir')) {
+		if (Slim::Utils::Misc::getPlaylistDir()) {
 			$params->{'cansave'} = 1;
 		}
 	}

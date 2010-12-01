@@ -488,7 +488,7 @@ sub cleanup {
 }
 
 sub checkDataSource {
-	my $audiodir = $prefs->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
 		$audiodir =~ s|[/\\]$||;

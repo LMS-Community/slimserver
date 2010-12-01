@@ -37,7 +37,7 @@ sub init {
 
 	# Enable Folder scan only if audiodir is set and is a valid directory
 	my $enabled  = 0;
-	my $audioDir = $prefs->get('audiodir');
+	my $audioDir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audioDir && -d $audioDir) {
 
@@ -50,7 +50,7 @@ sub init {
 
 sub startScan {
 	my $class   = shift;
-	my $dir     = shift || $prefs->get('audiodir');
+	my $dir     = shift || Slim::Utils::Misc::getAudioDir();
 	my $recurse = shift;
 
 	if (!defined $dir || !-d $dir) {

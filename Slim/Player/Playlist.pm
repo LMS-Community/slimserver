@@ -879,7 +879,7 @@ sub scheduleWriteOfPlaylist {
 	# This can happen if the user removes the
 	# playlist - because this is a closure, we get
 	# a bogus object back)
-	if (!blessed($playlistObj) || !$playlistObj->can('tracks') || !$prefs->get('playlistdir')) {
+	if (!blessed($playlistObj) || !$playlistObj->can('tracks') || !Slim::Utils::Misc::getPlaylistDir()) {
 
 		return 0;
 	}
@@ -915,7 +915,7 @@ sub removePlaylistFromDisk {
 
 	} else {
 
-		unlink catfile($prefs->get('playlistdir'), $playlistObj->title . '.m3u');
+		unlink catfile(Slim::Utils::Misc::getPlaylistDir(), $playlistObj->title . '.m3u');
 	}
 }
 
@@ -927,7 +927,7 @@ sub newSongPlaylist {
 	main::DEBUGLOG && logger('player.playlist')->debug("Begin function - reset: " . ($reset || 'false'));
 
 	return if Slim::Player::Playlist::shuffle($client);
-	return if !$prefs->get('playlistdir');
+	return if !Slim::Utils::Misc::getPlaylistDir();
 	
 	my $playlist = '';
 

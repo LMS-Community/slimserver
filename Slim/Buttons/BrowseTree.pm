@@ -53,7 +53,7 @@ sub init {
 		'hierarchy' => '',
 	};
 
-	if ($prefs->get('audiodir')) {
+	if (Slim::Utils::Misc::getAudioDir()) {
 		Slim::Buttons::Common::addMode($mode, Slim::Buttons::BrowseTree::getFunctions(), \&Slim::Buttons::BrowseTree::setMode);
 	
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menu);

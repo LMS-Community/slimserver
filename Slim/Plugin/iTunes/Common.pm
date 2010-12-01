@@ -225,7 +225,7 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $audiodir = $prefsServer->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audiodir) {
 		push @searchdirs, (

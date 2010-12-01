@@ -216,7 +216,7 @@ sub menuUrl {
 sub _menuUrl {
 	my $class = shift;
 
-	my $dir = $prefsServer->get('playlistdir');
+	my $dir = Slim::Utils::Misc::getPlaylistDir();
 
 	if (!$dir || !-w $dir) {
 		$dir = $prefsServer->get('cachedir');

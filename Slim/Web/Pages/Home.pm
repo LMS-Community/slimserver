@@ -108,7 +108,7 @@ sub home {
 	
 	$class->addPageLinks( 'my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url( '/appgallery' )} );
 
-	if ($prefs->get('audiodir')) {
+	if (Slim::Utils::Misc::getAudioDir()) {
 
 		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 
@@ -119,7 +119,7 @@ sub home {
 	}
 
 	# Show playlists if any exists
-	if ($prefs->get('playlistdir') || (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count)) {
+	if (Slim::Utils::Misc::getPlaylistDir() || (Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count)) {
 
 		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&amp;level=0"});
 	}

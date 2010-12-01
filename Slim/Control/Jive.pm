@@ -1802,10 +1802,11 @@ sub browseMusicFolder {
 	my $batch = shift;
 
 	# first we decide if $audiodir has been configured. If not, don't show this
-	my $audiodir = $prefs->get('audiodir');
-
+	# (this used to check that $audiodir was actually a directory,
+	# but no other UI does that so why should we?)
+	
 	my $return = 0;
-	if (defined($audiodir) && -d $audiodir) {
+	if (Slim::Utils::Misc::getAudioDir()) {
 		main::INFOLOG && $log->info("Adding Browse Music Folder");
 		$return = {
 				text           => $client->string('BROWSE_MUSIC_FOLDER'),

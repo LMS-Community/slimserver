@@ -127,9 +127,7 @@ sub findFilesMatching {
 	};
 
 
-	if (utf8::is_utf8($topDir)) {
-		utf8::encode($topDir);
-	}
+	$topDir = Slim::Utils::Unicode::encode_locale($topDir);
 
 	my $iter  = File::Next::files({
 		'file_filter'     => $file_filter,
@@ -150,7 +148,7 @@ sub findFilesMatching {
 			$url  = Slim::Utils::OS::Win32->fileURLFromShortcut($url) || next;
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 
-			my $audiodir = preferences('server')->get('audiodir');
+			my $audiodir = Slim::Utils::Misc::getAudioDir();
 
 			# Bug: 2485:
 			# Use Path::Class to determine if the file points to a
