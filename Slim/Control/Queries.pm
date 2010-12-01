@@ -3152,14 +3152,17 @@ sub readDirectoryQuery {
 				$path = ($folder ? catdir($folder, $item) : $item);
 
 				my $name = $item;
+				my $decodedName;
 
 				# display full name if we got a Windows 8.3 file name
 				if (main::ISWINDOWS && $name =~ /~\d/) {
-					$name = Slim::Music::Info::fileName($path);
+					$decodedName = Slim::Music::Info::fileName($path);
+				} else {
+					$decodedName = Slim::Utils::Unicode::utf8decode_locale($name);
 				}
 
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode_locale($path));
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode_locale($name));
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', $decodedName);
 				
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
 
