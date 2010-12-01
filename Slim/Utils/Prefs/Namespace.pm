@@ -43,8 +43,8 @@ my $simpleValidators = {
 	'hash'     => sub { ref $_[1] eq 'HASH' },
 	'defined'  => sub { defined $_[1] },
 	'false'    => sub { 0 },
-	'file'     => sub { !$_[1] || -f $_[1] || (main::ISWINDOWS && -f Win32::GetANSIPathName($_[1])) || -f Slim::Utils::Unicode::utf8encode_locale($_[1]) },
-	'dir'      => sub { !$_[1] || -d $_[1] || (main::ISWINDOWS && -d Win32::GetANSIPathName($_[1])) || -d Slim::Utils::Unicode::utf8encode_locale($_[1]) },
+	'file'     => sub { !$_[1] || -f $_[1] || (main::ISWINDOWS && -f Win32::GetANSIPathName($_[1])) || -f Slim::Utils::Unicode::encode_locale($_[1]) },
+	'dir'      => sub { !$_[1] || -d $_[1] || (main::ISWINDOWS && -d Win32::GetANSIPathName($_[1])) || -d Slim::Utils::Unicode::encode_locale($_[1]) },
 	'intlimit' => sub { $_[1] =~ /^-?\d+$/ &&
 						(!defined $_[2]->{'low'}  || $_[1] >= $_[2]->{'low'} ) &&
 						(!defined $_[2]->{'high'} || $_[1] <= $_[2]->{'high'}) },
@@ -187,7 +187,7 @@ sub setFilepaths {
 	while (my $pref = shift) {
 
 		if ( main::DEBUGLOG && $log->isInitialized && $log->is_debug ) {
-			$log->debug("setting utf8off for $class->{'namespace'}:$pref");
+			$log->debug("setting filepathPrefs for $class->{'namespace'}:$pref");
 		}
 
 		if ( $class->{'prefs'}->{ $pref } ) {
