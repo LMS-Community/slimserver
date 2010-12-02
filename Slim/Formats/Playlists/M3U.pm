@@ -122,7 +122,7 @@ sub read {
 
 		} else {
 
-			if (main::ISWINDOWS) {
+			if (main::ISWINDOWS && !Slim::Music::Info::isFileURL($entry)) {
 				$entry = Win32::GetANSIPathName($entry);	
 			}
 			
@@ -257,20 +257,17 @@ sub write {
 
 		if ($addTitles) {
 			
-			my $title = Slim::Utils::Unicode::utf8decode( $track->title );
+			my $title = $track->title;
 			my $secs = int($track->secs || -1);
 
 			if ($title) {
 				print $output "#EXTINF:$secs,$title\n";
 			}
 		}
-
-		# XXX - we still have a problem where there can be decomposed
-		# unicode characters. I don't know how this happens - it's
-		# coming from the filesystem.
-		my $path = Slim::Utils::Unicode::utf8decode( $class->_pathForItem($track->url, 1) );
-
-		print $output "$path\n";
+		
+		# Bug 16683: just use the 'file:///' URL.
+		# Not strictly correct but probably only we read these M3U files that we write anyway.
+		print $output $track->url, "\n";
 	}
 
 	close $output if $filename;
