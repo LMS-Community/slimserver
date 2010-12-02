@@ -422,13 +422,28 @@ sub clientAnimationComplete {
 	my $data_ref = shift;
 	my $flags = unpack 'c', $$data_ref;
 	# for players with client side scrolling, flags are:
-	# 0x01 - transition animation has finished (previous use of ANIC)
-	# 0x02 | 0x04 - end of first scroll on screen 1
-	# 0x02 | 0x08 - end of first scroll on screen 2
+	# ANIM_TRANSITION (0x01) - transition animation has finished (previous use of ANIC)
+	# ANIM_SCROLL_ONCE (0x02) | ANIM_SCREEN_1 (0x04) - end of scroll once on screen 1
+	# ANIM_SCREEN_ONCE (0x02) | ANIM_SCREEN_2 (0x08) - end of scroll once on screen 2
+	
+	if ($flags & ANIM_TRANSITION) {
+		# end of transition ANIC
+		$display->updateMode(0);
 
-	# process end of first scroll ANIC
-	if ($display->client->hasScrolling && ($flags & 0x02)) {
-		my $scroll = $display->scrollData(($flags & 0x04) ? 1 : 2);
+		# process any defered showBriefly
+		if ($display->animateState == 7) {
+			$display->showBriefly($display->sbDeferred->{parts}, $display->sbDeferred->{args});
+			return;
+		}
+
+		# Ensure scrolling is started by setting a timer to call update in 1.0 seconds
+		$display->animateState(2);
+		Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
+	}
+
+	# process end of scroll once ANIC (from clients with native scrolling)
+	elsif ($flags & ANIM_SCROLL_ONCE) {
+		my $scroll = $display->scrollData(($flags & ANIM_SCREEN_1) ? 1 : 2);
 		if ($scroll) {
 			$scroll->{inhibitsaver} = 0;
 			if ($scroll->{scrollonceend}) {
@@ -438,21 +453,7 @@ sub clientAnimationComplete {
 				Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $end, \&Slim::Display::Display::endAnimation);
 			}
 		}
-		return;
 	}
-
-	# otherwise treat as end of transition ANIC
-	$display->updateMode(0);
-
-	# process any defered showBriefly
-	if ($display->animateState == 7) {
-		$display->showBriefly($display->sbDeferred->{parts}, $display->sbDeferred->{args});
-		return;
-	}
-
-	# Ensure scrolling is started by setting a timer to call update in 1.0 seconds
-	$display->animateState(2);
-	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
 }
 
 sub killAnimation {
