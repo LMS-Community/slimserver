@@ -2712,7 +2712,7 @@ sub jivePlayTrackAlbumCommand {
 	my $artistID   = $request->getParam('artist_id');
 	my $trackID    = $request->getParam('track_id');
 	my $playlistID = $request->getParam('playlist_id');
-	my $folder     = $request->getParam('folder')|| undef;
+	my $folder_id  = $request->getParam('folder_id')|| undef;
 	my $listIndex  = $request->getParam('list_index');
  	my $mode       = Slim::Player::Playlist::playlistMode($client);
 	
@@ -2737,13 +2737,13 @@ sub jivePlayTrackAlbumCommand {
 	}
 
 	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item
-	elsif ( $folder && defined $listIndex ) {
+	elsif ( defined $folder_id && defined $listIndex ) {
 
 		my $wasShuffled = Slim::Player::Playlist::shuffle($client);
 		Slim::Player::Playlist::shuffle($client, 0);
 
 		my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
-			url => $folder,
+			id => $folder_id,
 		} );
 
 		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
@@ -2751,7 +2751,7 @@ sub jivePlayTrackAlbumCommand {
 		# filter out folders
 		@{$items} = grep { Slim::Music::Info::isSong($_) }
 		# make sure we get a valid path
-		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $folder) }
+		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $topLevelObj->path) }
 		@$items;
 
 		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");

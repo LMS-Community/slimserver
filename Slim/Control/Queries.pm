@@ -2181,7 +2181,7 @@ sub musicfolderQuery {
 							cmd    => ['jiveplaytrackalbum'],
 							params => {
 								list_index => $index + $listIndex,
-								folder     => $topPath,
+								folder_id  => $topLevelObj->id,
 							},
 							nextWindow => 'nowPlaying',
 						};
