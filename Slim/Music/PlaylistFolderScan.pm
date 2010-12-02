@@ -43,7 +43,7 @@ sub init {
 
 	# Enable Folder scan only if playlistdir is set and is a valid directory
 	my $enabled  = 0;
-	my $playlistDir = $prefs->get('playlistdir');
+	my $playlistDir = Slim::Utils::Misc::getPlaylistDir();
 
 	if (defined $playlistDir && -d $playlistDir) {
 
@@ -55,7 +55,7 @@ sub init {
 
 sub startScan {
 	my $class   = shift;
-	my $dir     = shift || $prefs->get('playlistdir');
+	my $dir     = shift || Slim::Utils::Misc::getPlaylistDir();
 	my $recurse = shift;
 
 	if (!defined $dir || !-d $dir) {

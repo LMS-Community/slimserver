@@ -181,7 +181,7 @@ sub _updateLibraryname {
 	# remove media name
 	$libraryname =~ s/ \(.*?(?:USB|SD).*?\)$//i;
 	 
-	my $audiodir = $prefs->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 	if ( $audiodir && $audiodir =~ m{/(mmcblk|sd[a-z]\d)}i ) {
 		$libraryname = sprintf( "%s (%s)", $libraryname, Slim::Utils::Strings::getString($1 =~ /mmc/ ? 'SD' : 'USB') );
 	}
@@ -366,7 +366,7 @@ sub _onAudiodirChange {
 	require Slim::Utils::Prefs;
 	my $prefs = Slim::Utils::Prefs::preferences('server');
     
-	my $audiodir = $prefs->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 	
 	if ($audiodir) {
 		if (_setupMediaDir($audiodir, $prefs)) {

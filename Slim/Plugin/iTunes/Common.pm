@@ -98,6 +98,7 @@ sub findLibraryFromPlist {
 
 	open (PLIST, catfile(@parts)) || return $path;
 
+	local $_;
 	while (<PLIST>) {
 		if (/<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
 			$path = Slim::Utils::Misc::pathFromFileURL($1);
@@ -225,7 +226,7 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $audiodir = $prefsServer->get('audiodir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audiodir) {
 		push @searchdirs, (

@@ -215,9 +215,9 @@ sub decodeExternalHelperPath {
 	my $path = $_[1];
 	
 	# Bug 8118, only decode if filename can't be found
-	if ( !-e $path ) {
-		$path = Slim::Utils::Unicode::utf8decode_locale($path);
-	}
+	# No. We need to set the UFT8 flag if we have non-ASCII contents
+	
+	$path = Slim::Utils::Unicode::utf8decode_locale($path);
 	
 	return $path;
 }

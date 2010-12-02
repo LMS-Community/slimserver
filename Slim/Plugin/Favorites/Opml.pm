@@ -161,9 +161,9 @@ sub filename {
 
 		$name = Slim::Utils::Misc::pathFromFileURL($name);
 
-	} elsif ( !Slim::Music::Info::isURL($name) && dirname($name) eq '.' && $prefsServer->get("playlistdir") ) {
+	} elsif ( !Slim::Music::Info::isURL($name) && dirname($name) eq '.' && Slim::Utils::Misc::getPlaylistDir() ) {
 
-		$name = catdir($prefsServer->get("playlistdir"), $name);
+		$name = catdir(Slim::Utils::Misc::getPlaylistDir(), $name);
 	}
 
 	return $class->{'filename'} = $name;

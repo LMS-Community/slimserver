@@ -87,6 +87,7 @@ sub handler {
 
 sub _mapDirectories {
 	my $currDir = shift;
+	$currDir = Slim::Utils::Unicode::encode_locale($currDir);
 	return map { catdir($currDir, $_) } readDirectory($currDir, qr/./); 
 }
 

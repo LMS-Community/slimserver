@@ -291,6 +291,7 @@ sub needsUpgrade {
 	my $to;
 	my $default;
 
+	local $_;
 	while (<$versionFile>) {
 
 		chomp;

@@ -470,8 +470,10 @@ sub hasXSCwd {
 
 # there's not really a better way to do this..
 sub fixPath {
-	my $file = shift;
-	my $base = shift;
+	# Only using encode_locale() here as a safety measure because
+	# it should be a no-op.
+	my $file = Slim::Utils::Unicode::encode_locale(shift);
+	my $base = Slim::Utils::Unicode::encode_locale(shift);
 
 	if (!defined($file)) {
 		return;
@@ -510,8 +512,8 @@ sub fixPath {
 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
-	my $audiodir = $prefs->get('audiodir');
-	my $savedplaylistdir = $prefs->get('playlistdir');
+	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $savedplaylistdir = Slim::Utils::Misc::getPlaylistDir();
 
 	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
 
@@ -609,6 +611,27 @@ sub stripRel {
 	return $file;
 }
 
+
+=head2 getAudioDir()
+
+	Get the byte-string (native) version of the audiodir
+
+=cut
+
+sub getAudioDir {
+	return Slim::Utils::Unicode::encode_locale($prefs->get('audiodir'));
+}
+
+=head2 getPlaylistDir()
+
+	Get the byte-string (native) version of the playlistdir
+
+=cut
+
+sub getPlaylistDir {
+	return Slim::Utils::Unicode::encode_locale($prefs->get('playlistdir'));
+}
+
 =head2 inAudioFolder( $)
 
 	Check if argument is an item contained in the music folder tree
@@ -616,7 +639,7 @@ sub stripRel {
 =cut
 
 sub inAudioFolder {
-	return _checkInFolder(shift, 'audiodir');
+	return _checkInFolder(shift, getAudioDir());
 }
 
 =head2 inPlaylistFolder( $)
@@ -626,18 +649,16 @@ sub inAudioFolder {
 =cut
 
 sub inPlaylistFolder {
-	return _checkInFolder(shift, 'playlistdir');
+	return _checkInFolder(shift, getPlaylistDir());
 }
 
 sub _checkInFolder {
 	my $path = shift || return;
-	my $pref = shift;
+	my $checkdir = shift;
 
 	# Fully qualify the path - and strip out any url prefix.
 	$path = fixPath($path) || return 0;
 	$path = pathFromFileURL($path) || return 0;
-
-	my $checkdir = $prefs->get($pref);
 
 	if ($checkdir && $path =~ /^\Q$checkdir\E/) {
 		return 1;
@@ -789,8 +810,11 @@ sub readDirectory {
 	my @diritems = ();
 	my $log      = logger('os.files');
 
+	my $native_dirname = $dirname;
+	$native_dirname = Slim::Utils::Unicode::encode_locale($native_dirname) if utf8::is_utf8($native_dirname);
+	
 	if (main::ISWINDOWS) {
-		my ($volume) = splitpath($dirname);
+		my ($volume) = splitpath($native_dirname);
 
 		if ($volume && isWinDrive($volume) && !Slim::Utils::OS::Win32->isDriveReady($volume)) {
 			
@@ -800,7 +824,7 @@ sub readDirectory {
 		}
 	}
 
-	opendir(DIR, $dirname) || do {
+	opendir(DIR, $native_dirname) || do {
 
 		main::DEBUGLOG && $log->debug("opendir on [$dirname] failed: $!");
 
@@ -818,9 +842,15 @@ sub readDirectory {
         # readdir returns only bytes, so try and decode the
         # filename to UTF-8 here or the later calls to -d/-f may fail,
         # causing directories and files to be skipped.
-        utf8::decode($item);
+		# utf8::decode($item);
+		#
+		# This was the wrong fix. The entries returned by this method
+		# should be in native byte-strings. It is likely that the previous problem
+		# was caused by the incoming $dirname having the uft8 flag set,
+		# so that concatenating the dirname and an entry would result in a UTF-8
+		# string that was incorrectly auto-decoded.
 
-		next unless fileFilter($dirname, $item, $validRE);
+		next unless fileFilter($native_dirname, $item, $validRE);
 
 		push @diritems, $item;
 	}
@@ -868,7 +898,7 @@ sub findAndScanDirectoryTree {
 		
 		# make sure we have a valid URL...
 		if (!defined $url) {
-			$url = $prefs->get('audiodir');
+			$url = Slim::Utils::Misc::getAudioDir();
 		}
 
 		if (!Slim::Music::Info::isURL($url)) {

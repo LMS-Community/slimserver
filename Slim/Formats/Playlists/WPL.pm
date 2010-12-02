@@ -61,7 +61,7 @@ sub read {
 				$entry = Win32::GetANSIPathName($entry);	
 			}
 			else {
-				$entry = Slim::Utils::Unicode::utf8encode_locale($entry);	
+				$entry = Slim::Utils::Unicode::encode_locale($entry);	
 			}
 
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);

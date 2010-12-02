@@ -1052,7 +1052,7 @@ sub playlistSaveCommand {
 	}
 	
 	# can't do much without playlistdir!
-	if (!$prefs->get('playlistdir')) {
+	if (!Slim::Utils::Misc::getPlaylistDir()) {
 		$request->setStatusBadConfig();
 		return;
 	}
@@ -1069,7 +1069,7 @@ sub playlistSaveCommand {
 	my $playlistObj = Slim::Schema->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
-			catfile( $prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
+			catfile( Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
 		),
 		'playlist' => 1,
 		'attributes' => {
@@ -1337,7 +1337,7 @@ sub playlistXitemCommand {
 	# this only seems to be useful for playlists?
 	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
 
-		my $easypath = catfile($prefs->get('playlistdir'), basename($url) . ".m3u");
+		my $easypath = catfile(Slim::Utils::Misc::getPlaylistDir(), basename($url) . ".m3u");
 
 		if (-e $easypath) {
 
@@ -1345,7 +1345,7 @@ sub playlistXitemCommand {
 
 		} else {
 
-			$easypath = catfile($prefs->get('playlistdir'), basename($url) . ".pls");
+			$easypath = catfile(Slim::Utils::Misc::getPlaylistDir(), basename($url) . ".pls");
 
 			if (-e $easypath) {
 				$path = $easypath;
@@ -1690,7 +1690,7 @@ sub playlistZapCommand {
 
 	my $playlistObj = Slim::Schema->updateOrCreate({
 		'url'        => Slim::Utils::Misc::fileURLFromPath(
-			catfile( $prefs->get('playlistdir'), $zapped . '.m3u')
+			catfile( Slim::Utils::Misc::getPlaylistDir(), $zapped . '.m3u')
 		),
 		'playlist'   => 1,
 
@@ -2189,7 +2189,7 @@ sub playlistsNewCommand {
 	}
 	
 	# can't do much without playlistdir!
-	if (!$prefs->get('playlistdir')) {
+	if (!Slim::Utils::Misc::getPlaylistDir()) {
 		$request->setStatusBadConfig();
 		return;
 	}
@@ -2202,7 +2202,7 @@ sub playlistsNewCommand {
 
 	# create the playlist URL
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
+		catfile(Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
 	);
 
 	my $existingPlaylist = Slim::Schema->objectForUrl({
@@ -2274,7 +2274,7 @@ sub playlistsRenameCommand {
 	# now perform the operation
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($newName) . '.m3u')
+		catfile(Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($newName) . '.m3u')
 	);
 
 	my $existingPlaylist = Slim::Schema->objectForUrl({
@@ -2445,7 +2445,7 @@ sub rescanCommand {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		my $dir = $prefs->get('audiodir');
+		my $dir = Slim::Utils::Misc::getAudioDir();
 
 		my %args = (
 			types    => qr/(?:list|audio)/,
@@ -2454,7 +2454,7 @@ sub rescanCommand {
 		);
 
 		if ($playlistsOnly) {
-			$dir = $prefs->get('playlistdir');
+			$dir = Slim::Utils::Misc::getPlaylistDir();
 			$args{types} = 'list';
 		}
 
@@ -2824,7 +2824,7 @@ sub wipecacheCommand {
 		
 		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 			# Wipe/rescan in-process on SqueezeOS
-			my $dir = $prefs->get('audiodir');
+			my $dir = Slim::Utils::Misc::getAudioDir();
 			
 			my %args = (
 				types    => qr/(?:list|audio)/,

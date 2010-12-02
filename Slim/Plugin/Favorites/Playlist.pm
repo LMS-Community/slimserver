@@ -26,7 +26,7 @@ sub read {
 
 	} elsif (dirname($name) eq '.') {
 
-		$name = catdir($prefsServer->get('playlistdir'), $name);
+		$name = catdir(Slim::Utils::Misc::getPlaylistDir(), $name);
 	}
 
 	my $type = Slim::Music::Info::contentType($name);

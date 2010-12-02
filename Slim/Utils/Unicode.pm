@@ -211,7 +211,7 @@ sub utf8encode {
 
 	} elsif ($string) {
 
-		$string = Encode::encode('UTF-8', $string);
+		$string = Encode::encode('utf8', $string);
 	}
 
 	return $string;
@@ -230,6 +230,34 @@ sub utf8encode_locale {
 	return utf8encode($_[0], $lc_ctype);
 }
 
+=head2 encode_locale( $string )
+
+Encode the current (possibly Unicode) character-string to the current locale.
+This guarantees that the internal utf-8 flag will be unset, even if it was
+erroneously set for a string that contains only ASCII (as will be the case
+with strings from preferences because of the behavior of YAML::Syck).
+
+It will not handle the case where the string might actually contain UTF-8
+but has not been decoded. Use utf8encode_local() in that case.
+
+Return the newly encoded string.
+
+=cut
+
+sub encode_locale {
+	my $string = shift;
+	
+	if (!$string) {
+		return $string;
+	}
+	
+	if (utf8::is_utf8($string)) {
+		return Encode::encode($lc_ctype, $string, $FB_QUIET);
+	} else {
+		return $string;
+	}
+}
+
 =head2 utf8off( $string )
 
 Alias for Encode::encode('UTF-8', $string)
@@ -241,7 +269,7 @@ Returns the new string.
 sub utf8off {
 	my $string = shift || return;
 	
-	return Encode::encode('UTF-8', $string);
+	return Encode::encode('utf8', $string);
 }
 
 =head2 utf8on( $string )
@@ -255,7 +283,8 @@ Returns the new string.
 sub utf8on {
 	my $string = shift || return;
 	
-	return Encode::decode('UTF-8', $string);
+	return $string if Encode::is_utf8($string);
+	return Encode::decode('utf8', $string);
 }
 
 =head2 looks_like_ascii( $string )

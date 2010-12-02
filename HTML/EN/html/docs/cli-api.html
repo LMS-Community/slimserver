@@ -57,6 +57,9 @@
 	<li>In extended queries, return all possible items if the &lt;itemsPerResponse&gt; parameter is omitted.</li>
 	<li>Add the 'u' tag to the &quot;<a href="#musicfolder">musicfolder</a>&quot; query</li>
 	<li>Added track_id tagged parameter to <a href="#titles">titles</a>.</li>
+	<li>Added genre_id tagged parameter to <a href="#genres">genres</a>.</li>
+	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
+	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
 </ul>
 
 <hr>
@@ -3034,6 +3037,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			genre_id
+		</td>
+		<td>
+			Limit results to the genre identified by 
+			&quot;genre_id&quot;. If present, other filters are ignored.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			year
 		</td>
 		<td>
@@ -3699,6 +3711,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			year
+		</td>
+		<td>
+			Return only the specified year.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -3803,6 +3823,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Browses the folder identified by &quot;folder_id&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			return_top
+		</td>
+		<td>
+			If set to 1, and &quot;folder_id&quot; is provided, will return the data about 
+			the listed folder instead of the child folders.
 		</td>
 	</tr>
 	<tr>

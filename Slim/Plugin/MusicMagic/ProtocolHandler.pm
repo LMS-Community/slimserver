@@ -29,6 +29,8 @@ sub overridePlayback {
 
 sub canDirectStream { 0 }
 
+sub isRemote { 0 }
+
 sub contentType {
 	return 'mood';
 }

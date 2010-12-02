@@ -769,11 +769,11 @@ sub menuOptions {
 	MENU:
 	for my $menuOption (sort keys %home) {
 
-		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !$prefs->get('audiodir')) {
+		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Misc::getAudioDir()) {
 			next;
 		}
 
-		if ($menuOption eq 'SAVED_PLAYLISTS' && !$prefs->get('playlistdir')) {
+		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Misc::getPlaylistDir()) {
 			next;
 		}
 		

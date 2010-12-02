@@ -21,6 +21,7 @@
 	
 	<li>New Features:</li>
 	<ul>
+		<li>Transcoding is now supported when requesting an HTTP download (/music/[id]/download[.extension]).</li>
 		<li>The default database is now SQLite. MySQL can still be used by selecting it on the Advanced -> Performance page.</li>
 		<li>Native decoding for WMA Pro and WMA Lossless has been added to Radio and Touch.</li>
 		<li>Cue sheet support has been improved.  The following formats will currently work with cue sheets, including seeking:</li>
@@ -50,6 +51,7 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3161">#3161</a> - Need more aggressive auto-retry for internet radio</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8808">#8808</a> - Support transcoding on download URLs</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8877">#8877</a> - MP3 cue sheets are not gapless</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9947">#9947</a> - home.html is loaded several times when web UI is opened</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=10199">#10199</a> - Most transcoding doesn't work with non-ascii-characters in filename</li>
@@ -62,6 +64,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16332">#16332</a> - SB Touch: Disable proximity LEDs after startup.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16365">#16365</a> - SB Touch / Radio: Reduce ambient light sensor polling.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16442">#16442</a> - Choice of Transporter roll-off filter</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16662">#16662</a> - Incorrect UTF8 encoding returned by CLI</li>
 		<li>SB Radio: Fixed hostname</li>
 		<li>SB Controller, Radio, Touch: Updated busybox to 1.16.2</li>
 	</ul>
@@ -70,6 +73,12 @@
 
 <h2><a name="v7.5.2" id="v7.5.2"></a>Version 7.5.2</h2>
 <ul>
+	<li>Platform Support:</li>
+	<ul>
+		<li>Perl 5.12 is now supported on Linux, enabling the newest distributions to work out of the box.</li>
+	</ul>
+	<br />
+
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>Fixed a bug where connecting to MySB from the player UI would always incorrectly use a DNS lookup, leaving the player stuck on MySB.</li>

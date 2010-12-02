@@ -165,6 +165,7 @@ sub getPref {
 
 		if (open(PREF, $prefFile)) {
 
+			local $_;
 			while (<PREF>) {
 			
 				# read YAML (server) and old style prefs (installer)
@@ -192,6 +193,7 @@ sub checkForUpdate {
 	
 	my $installer = '';
 	
+	local $_;
 	while ( <UPDATEFLAG> ) {
 
 		chomp;

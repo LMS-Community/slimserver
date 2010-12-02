@@ -65,20 +65,6 @@ my $initialized;
 
 # XXX: don't break SB1 by changing these values
 
-# Old defaults for server-side scrolling were:
-# scrollRate       => 0.15
-# scrollRateDouble => 0.1
-# scrollPixels     => 7
-#
-# This results in it taking about 6.8s for something in normal mode to
-# scroll completely across the 320px display and 4.8s in double mode.
-#
-# New values maintain the same transit time but using a 1px
-# interval for smoother scrolling:
-# scrollRate       => 0.01
-# scrollRateDouble => 0.005
-# scrollPixels     => 1
-#
 our $defaultPrefs = {
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
@@ -179,6 +165,12 @@ sub update {
 
 	if (!defined $scrollMode) {
 		$scrollMode = $prefs->client($client)->get('scrollMode') || 0;
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# XXX temporary, remove with local scrolling
+		# force one-scroll mode for users with normal scroll
+		$scrollMode = 1 if $scrollMode == 0;
 	}
 
 	my ($scroll, $scrollonce);
@@ -808,12 +800,6 @@ sub scrollUpdate {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
 				$scroll->{inhibitsaver} = 0;
-				
-				if ( main::SLIM_SERVICE ) {
-					# XXX Temporary SN scroll change, pause for 3x as long after the initial pause
-					# Remove after client-side scrolling is in place
-					$scroll->{pauseUntil} += $scroll->{pauseInt} * 2;
-				}
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{inhibitsaver} = 0;

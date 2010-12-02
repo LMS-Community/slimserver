@@ -1790,6 +1790,45 @@ sub playerTextMenu {
 
 }
 
+sub browseMusicFolder {
+	main::INFOLOG && $log->info("Begin function");
+	my $client = shift;
+	my $batch = shift;
+
+	# first we decide if $audiodir has been configured. If not, don't show this
+	# (this used to check that $audiodir was actually a directory,
+	# but no other UI does that so why should we?)
+	
+	my $return = 0;
+	if (Slim::Utils::Misc::getAudioDir()) {
+		main::INFOLOG && $log->info("Adding Browse Music Folder");
+		$return = {
+				text           => $client->string('BROWSE_MUSIC_FOLDER'),
+				id             => 'myMusicMusicFolder',
+				node           => 'myMusic',
+				weight         => 70,
+				actions        => {
+					go => {
+						cmd    => ['musicfolder'],
+						params => {
+							menu => 'musicfolder',
+						},
+					},
+				},
+			};
+	} else {
+		# if it disappeared, send a notification to get rid of it if it exists
+		main::INFOLOG && $log->info("Removing Browse Music Folder from Jive menu via notification");
+		deleteMenuItem('myMusicMusicFolder', $client);
+	}
+
+	if ($batch) {
+		return $return;
+	} else {
+		_notifyJive( [ $return ], $client);
+	}
+}
+
 sub repeatSettings {
 	my $client = shift;
 	my $batch = shift;

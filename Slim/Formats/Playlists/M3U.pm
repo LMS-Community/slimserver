@@ -145,7 +145,7 @@ sub read {
 		}
 		else {
 			# Check if the playlist entry is relative to audiodir
-			$audiodir ||= $prefs->get('audiodir');
+			$audiodir ||= Slim::Utils::Misc::getAudioDir();
 			
 			$fullentry = Slim::Utils::Misc::fixPath($entry, $audiodir);
 			

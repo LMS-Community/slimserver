@@ -33,7 +33,7 @@ my $osclass;
 sub init {
 	my $class = shift;
 	
-	my $audiodir = $prefs->get('audiodir') || return;
+	my $audiodir = Slim::Utils::Misc::getAudioDir() || return;
 	
 	Slim::Schema->init();
 	
@@ -93,7 +93,7 @@ sub init {
 		$osclass->shutdown;
 		
 		my $rewatch = sub {
-			my $audiodir = $prefs->get('audiodir');
+			my $audiodir = Slim::Utils::Misc::getAudioDir();
 			
 			if ( defined $audiodir ) {
 				$osclass->shutdown;
@@ -154,7 +154,7 @@ sub fsevent {
 }
 
 sub handleQueue {
-	my $audiodir = $prefs->get('audiodir') || return;
+	my $audiodir = Slim::Utils::Misc::getAudioDir() || return;
 	
 	# We need to ignore the top-level dir (unless it's the only event),
 	# or else we will have to do a full rescan

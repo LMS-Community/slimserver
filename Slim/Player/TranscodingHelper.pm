@@ -269,23 +269,36 @@ sub checkBin {
 }
 
 sub getConvertCommand2 {
-	my ($song, $type, $streamModes, $need, $want) = @_;
+	my ($songOrTrack, $type, $streamModes, $need, $want, $formatOverride, $rateOverride) = @_;
 	
-	my $track  = $song->currentTrack();
+	my $track;
+	my $song;
+	my $client;
+	
+	if ( ref $songOrTrack eq 'Slim::Player::Song' ) {
+		$song   = $songOrTrack;
+		$track  = $song->currentTrack();
+		$client = $song->master();
+	}
+	else {
+		$track = $songOrTrack;
+	}
+	
 	$type ||= Slim::Music::Info::contentType($track);
-
-	my $client     = $song->master();
-	my $player     = $client->model();
-	my $clientid   = $client->id();
+	
+	my $player     = $client ? $client->model() : undef;
+	my $clientid   = $client ? $client->id() : undef;
 	my $transcoder = undef;
 	my $error;
-	my $backupTranscoder  = undef;
-	my $url      = $track->url;
+	my $backupTranscoder = undef;
+	my $url = $track->url;
 
 	my @supportedformats = ();
 	
 	# Check if we need to ratelimit
-	my $rateLimit = _rateLimit($client, $type, $track->bitrate);
+	my $rateLimit 
+		= $rateOverride ? $rateOverride
+		: $client ? _rateLimit($client, $type, $track->bitrate) : 0;
 	RATELIMIT: if ($rateLimit) {
 		foreach (@$want) {
 			last RATELIMIT if /B/;
@@ -294,7 +307,7 @@ sub getConvertCommand2 {
 	}
 	
 	# Check if we need to downsample
-	my $samplerateLimit = Slim::Player::CapabilitiesHelper::samplerateLimit($song);
+	my $samplerateLimit = $song ? Slim::Player::CapabilitiesHelper::samplerateLimit($song) : 0;
 	SAMPLELIMIT: if ($samplerateLimit) {
 		foreach (@$need) {
 			last SAMPLELIMIT if /D/;
@@ -303,17 +316,24 @@ sub getConvertCommand2 {
 	}
 	
 	# make sure we only test formats that are supported.
-	@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
+	if ( $formatOverride ) {
+		@supportedformats = ($formatOverride);
+	}
+	elsif ( $client ) {
+		@supportedformats = Slim::Player::CapabilitiesHelper::supportedFormats($client);
+	}
 
 	# Build the full list of possible profiles
 	my @profiles = ();
 	foreach my $checkFormat (@supportedformats) {
 
-		push @profiles, (
-			"$type-$checkFormat-$player-$clientid",
-			"$type-$checkFormat-*-$clientid",
-			"$type-$checkFormat-$player-*"
-		);
+		if ( $clientid && $player ) {
+			push @profiles, (
+				"$type-$checkFormat-$player-$clientid",
+				"$type-$checkFormat-*-$clientid",
+				"$type-$checkFormat-$player-*"
+			);
+		}
 
 		push @profiles, "$type-$checkFormat-*-*";
 		

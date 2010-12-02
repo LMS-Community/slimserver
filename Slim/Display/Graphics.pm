@@ -159,6 +159,7 @@ sub render {
 		#  scrollstart     - start offset of scroll
 		#  scrollend       - end offset of scroll
 		#  scrolldir       - direction to scroll: +1 = left to right, -1 = right to left
+		#  scrolltype      - for normal scroll, value of $scroll, 1 = wrapped scroll, 2 = non wrapped scroll
 		#  [nb only scroll and scrollline are cleared when scrolling stops, others can contain stale data]
 
 		# Per screen flags
@@ -412,7 +413,7 @@ sub render {
 						$sc->{overlaybits}[$l];
 				}
 
-			} elsif ($sc->{scroll} && $sc->{scrollline} == $l) {
+			} elsif ($sc->{scroll} && $sc->{scrollline} == $l && $sc->{scrolltype} == $scroll) {
 				# scrolling already on this line - add overlay only
 				$bits |= chr(0) x $sc->{overlaystart}[$l] . $sc->{overlaybits}[$l];
 
@@ -444,6 +445,7 @@ sub render {
 						$sc->{scrollstart} = $sc->{overlaystart}[$l] + $padBytes + $offset;
 						$sc->{scrollend} = 0;
 					}
+					$sc->{scrolltype} = 1;
 
 				} else {
 					# don't wrap text - scroll to end only
@@ -455,6 +457,7 @@ sub render {
 						$sc->{scrollstart} = $sc->{linefinish}[$l] - $sc->{overlaystart}[$l];
 						$sc->{scrollend} = 0;
 					}
+					$sc->{scrolltype} = 2;
 				}
 
 				$sc->{scroll} = 1;

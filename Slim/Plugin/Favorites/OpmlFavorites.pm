@@ -56,7 +56,7 @@ sub migrate {
 
 	my $file = $class->filename();
 	if (! -f $file) {
-		foreach ($prefsServer->get('playlistdir'), $prefsServer->get('cachedir')) {
+		foreach (Slim::Utils::Misc::getPlaylistDir(), $prefsServer->get('cachedir')) {
 			my $oldfile = $class->filename($_);
 			if (-f $oldfile) {
 				require File::Copy;

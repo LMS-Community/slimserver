@@ -569,23 +569,6 @@ sub logFile {
 	return ("text/plain", \$body)
 }
 
-sub downloadMusicFile {
-	my ($class, $httpClient, $response, $track) = @_;
-
-	my $obj = Slim::Schema->find('Track', $track);
-
-	if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
-
-		main::INFOLOG && $log->is_info && $log->info("Opening $obj to stream...");
-			
-		my $ct = $Slim::Music::Info::types{$obj->content_type()};
-			
-		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
-			
-		return 1;
-	}
-}
-
 sub statusTxt {
 	my ($class, $client, $httpClient, $response, $params, $p) = @_;
 	

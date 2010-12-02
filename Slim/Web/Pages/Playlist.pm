@@ -105,7 +105,7 @@ sub playlist {
 
 			main::INFOLOG && $log->info("Rebuilding playlist from cached params.");
 
-			if ($prefs->get('playlistdir')) {
+			if (Slim::Utils::Misc::getPlaylistDir()) {
 				$params->{'cansave'} = 1;
 			}
 
