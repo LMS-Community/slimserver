@@ -276,6 +276,7 @@ sub getUpdateInstaller {
 	
 	my $updateInstaller = '';
 	
+	local $_;
 	while ( <UPDATEFLAG> ) {
 
 		chomp;

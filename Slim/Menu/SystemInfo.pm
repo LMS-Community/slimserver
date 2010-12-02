@@ -475,7 +475,7 @@ sub infoSqueezeNetwork {
 				my $ok = open(my $vfile, '<', '/etc/sn/versions');
 				
 				if ($ok) {
-					
+					local $_;
 					while(<$vfile>) {
 						chomp;
 						next unless /^(S[NS]):([^:]+)$/;

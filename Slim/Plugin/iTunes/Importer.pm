@@ -127,6 +127,7 @@ sub _getTotalCount {
 
 	my $count = 0;
 
+	local $_;
 	while(<XML>) {
 
 		if (/<key>$type/) {

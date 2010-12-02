@@ -98,6 +98,7 @@ sub findLibraryFromPlist {
 
 	open (PLIST, catfile(@parts)) || return $path;
 
+	local $_;
 	while (<PLIST>) {
 		if (/<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
 			$path = Slim::Utils::Misc::pathFromFileURL($1);
