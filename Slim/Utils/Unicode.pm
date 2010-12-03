@@ -290,10 +290,8 @@ Returns the new string.
 =cut
 
 sub utf8on {
-	my $string = shift || return;
-	
-	return $string if Encode::is_utf8($string);
-	return Encode::decode('utf8', $string);
+	utf8::decode($_[0]);
+	return $_[0];
 }
 
 =head2 looks_like_ascii( $string )
