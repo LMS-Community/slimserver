@@ -985,7 +985,7 @@ sub playerSettingsFrame {
 			}
 		}
 		else {
-			$value = Slim::Utils::Unicode::utf8on($value) if $pref eq 'playername'; 
+			utf8::decode($value) if $pref eq 'playername'; 
 			$prefs->client($client)->set( $pref, $value );
 		}
 	}

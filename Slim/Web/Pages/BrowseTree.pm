@@ -108,7 +108,7 @@ sub browsetree {
 		# won't take the penalty for the lookup.
 		if (main::ISWINDOWS && Slim::Music::Info::isWinShortcut($url)) {
 			($name, $url) = Slim::Utils::OS::Win32->getShortcut($url);
-			$name = Slim::Utils::Unicode::utf8on($name);
+			utf8::decode($name);
 		}
 
 		my $item = Slim::Schema->objectForUrl({
