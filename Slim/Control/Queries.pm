@@ -3952,11 +3952,11 @@ sub statusQuery {
 					}
 				} else {
 					$presetLoop->[$i] = 0;
-					$presetData->[$i] = 0;
+					$presetData->[$i] = {};
 				}
 			} else {
 				$presetLoop->[$i] = 0;
-				$presetData->[$i] = 0;
+				$presetData->[$i] = {};
 			}
 		}
 		$request->addResult('preset_loop', $presetLoop);
