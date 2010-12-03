@@ -35,6 +35,6 @@
 <song_url><![CDATA[[% itemobj.url %]]]></song_url>
 [% IF download %]<download_url><![CDATA[[% download %]]]></download_url>[% END %]
 <info_url><![CDATA[[% webroot %]songinfo.xml?item=[% itemobj.id %]]]></info_url>
-<path><![CDATA[[% itemobj.path | unuri | utf8on %]]]></path>
+<path><![CDATA[[% itemobj.path | unuri | utf8decode_locale %]]]></path>
 [% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[/music/[% itemobj.coverid %]/cover.jpg]]></coverart>[% END %]
 [% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]
