@@ -153,6 +153,7 @@ sub render {
 	#  scrollstart     - start offset of scroll
 	#  scrollend       - end offset of scroll
 	#  scrolldir       - direction to scroll: always 1 as character displays don't scroll r->l
+	#  scrolltype      - for normal scroll, value of $scroll, 1 = wrapped scroll, 2 = non wrapped scroll
 	#  [nb only scroll and scrollline are cleared when scrolling stops, others can contain stale data]
 
 	# Per screen flags
@@ -391,7 +392,7 @@ sub render {
 			$line = subString($sc->{linetext}[$l], 0, $sc->{overlaystart}[$l]) .
 				$sc->{overlaytext}[$l];
 
-		} elsif ($sc->{scroll} && $sc->{scrollline} == $l) {
+		} elsif ($sc->{scroll} && $sc->{scrollline} == $l && $sc->{scrolltype} == $scroll) {
 			# scrolling already on this line - add overlay only
 			$line = ' ' x $sc->{overlaystart}[$l] . $sc->{overlaytext}[$l];
 
@@ -407,9 +408,11 @@ sub render {
 				# normal wrapped text scrolling
 				$scrolltext .= ' ' x $scroll_pad_scroll . subString($scrolltext, 0, $display->displayWidth);
 				$sc->{scrollend} = $sc->{linefinish}[$l] + $scroll_pad_scroll;
+				$sc->{scrolltype} = 1;
 			} else {
 				# don't wrap text - scroll to end only
 				$sc->{scrollend} = $sc->{linefinish}[$l] - $display->displayWidth;
+				$sc->{scrolltype} = 2;
 			}
 
 			if (!$double || $l == 0) {
