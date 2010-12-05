@@ -44,6 +44,8 @@ our $defaultPrefs = {
 	'largeTextFont'       => 1,
 	'playingDisplayMode'  => 0,
 	'playingDisplayModes' => [0..5]
+	'scrollRate'          => 0.15,
+	'scrollRateDouble'    => 0.1,
 };
 
 
