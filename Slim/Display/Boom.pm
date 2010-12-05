@@ -120,8 +120,6 @@ our $defaultPrefs = {
 	'powerOffBrightness'   => 6,
 	'scrollPause'          => 1.5,
 	'scrollPauseDouble'    => 1.5,
-	'scrollRate'           => 0.1,
-	'scrollRateDouble'     => 0.1,
 	'alwaysShowCount'      => 0,
 };
 
