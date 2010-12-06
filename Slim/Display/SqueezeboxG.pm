@@ -35,7 +35,11 @@ my $GRAPHICS_FRAMEBUF_LIVE = (1 * 280 * 2);
 
 our $defaultPrefs = {
 	'playingDisplayMode'  => 0,
-	'playingDisplayModes' => [0..5]
+	'playingDisplayModes' => [0..5],
+	'scrollRate'          => 0.15,
+	'scrollRateDouble'    => 0.1,
+	'scrollPixels'		  => 7,
+	'scrollPixelsDouble'  => 7,
 };
 
 our $defaultFontPrefs = {
