@@ -290,6 +290,7 @@ sub albumsQuery {
 	my $w        = [];
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
+	my $limit;
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -305,6 +306,7 @@ sub albumsQuery {
 	else {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			$limit = $prefs->get('browseagelimit') || 100;
 			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
 			
 			# Force quantity to not exceed max
