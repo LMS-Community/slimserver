@@ -751,6 +751,11 @@ sub artistsQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+	# XXX for 'artists 0 1' with VA we need to force valid to 1
+	if ( $count_va && $index == 0 && $quantity == 0 ) {
+		$valid = 1;
+	}
+	
 	my $loopname = 'artists_loop';
 	my $chunkCount = 0;
 
@@ -1171,6 +1176,7 @@ sub genresQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
+	my $genreID       = $request->getParam('genre_id');
 	my $tags          = $request->getParam('tags') || '';
 	
 	my $sql  = 'SELECT DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable FROM genres ';
@@ -1195,6 +1201,10 @@ sub genresQuery {
 		$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
 		push @{$w}, 'genre_track.track = ?';
 		push @{$p}, $trackID;
+	}
+	elsif (defined $genreID) {
+		push @{$w}, 'genres.id = ?';
+		push @{$p}, $genreID;
 	}
 	else {
 		# ignore those if we have a track.
@@ -1475,6 +1485,7 @@ sub musicfolderQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
+	my $want_top = $request->getParam('return_top');
 	my $url      = $request->getParam('url');
 	my $tags     = $request->getParam('tags') || '';
 	
@@ -1503,6 +1514,11 @@ sub musicfolderQuery {
 	else {
 		
 		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	}
+
+	if ($want_top) {
+		$items = [ $topLevelObj->url ];
+		$count = 1;
 	}
 
 	# create filtered data
@@ -1865,7 +1881,7 @@ sub playlistXQuery {
 	$request->setStatusDone();
 }
 
-
+# XXX TODO: merge SQL-based code from 7.6/trunk
 sub playlistsTracksQuery {
 	my $request = shift;
 	
@@ -2207,14 +2223,17 @@ sub readDirectoryQuery {
 				$path = ($folder ? catdir($folder, $item) : $item);
 
 				my $name = $item;
+				my $decodedName;
 
 				# display full name if we got a Windows 8.3 file name
 				if (main::ISWINDOWS && $name =~ /~\d/) {
-					$name = Slim::Music::Info::fileName($path);
+					$decodedName = Slim::Music::Info::fileName($path);
+				} else {
+					$decodedName = Slim::Utils::Unicode::utf8decode_locale($name);
 				}
 
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode_locale($path));
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode_locale($name));
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', $decodedName);
 				
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
 
@@ -2992,14 +3011,27 @@ sub statusQuery {
 		# send which presets are defined
 		my $presets = $prefs->client($client)->get('presets');
 		my $presetLoop;
+		my $presetData; # send detailed preset data in a separate loop so we don't break backwards compatibility
 		for my $i (0..9) {
-			if (defined $presets->[$i] ) {
+			if ( ref($presets) eq 'ARRAY' && defined $presets->[$i] ) {
+				if ( ref($presets->[$i]) eq 'HASH') {	
 				$presetLoop->[$i] = 1;
+					for my $key (keys %{$presets->[$i]}) {
+						if (defined $presets->[$i]->{$key}) {
+							$presetData->[$i]->{$key} = $presets->[$i]->{$key};
+						}
+					}
 			} else {
 				$presetLoop->[$i] = 0;
+					$presetData->[$i] = {};
 			}
+			} else {
+				$presetLoop->[$i] = 0;
+				$presetData->[$i] = {};
+		}
 		}
 		$request->addResult('preset_loop', $presetLoop);
+		$request->addResult('preset_data', $presetData);
 
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
@@ -3381,10 +3413,6 @@ sub titlesQuery {
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
-	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum', 'albumtrack'])) {
-		$request->setStatusBadParams();
-		return;
-	}
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
@@ -3396,13 +3424,19 @@ sub titlesQuery {
 	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
 	my $order_by = "tracks.titlesort $collate";
 	
-	if ($sort && $sort eq 'tracknum') {
-		$tags .= 't';
-		$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
-	}
-	elsif ($sort && $sort eq 'albumtrack') {
-		$tags .= 'tl';
-		$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+	if ($sort) {
+		if ($sort eq 'tracknum') {
+			$tags .= 't';
+			$order_by = "tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
+		elsif ( $sort =~ /^sql=(.+)/ ) {
+			$order_by = $1;
+			$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
+		}
+		elsif ($sort eq 'albumtrack') {
+			$tags .= 'tl';
+			$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
 	}
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
@@ -3494,22 +3528,41 @@ sub yearsQuery {
 		return;
 	}
 	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
 	# get our parameters
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
+	my $year          = $request->getParam('year');
 	
 	# get them all by default
 	my $where = {};
 	
-	# sort them
-	my $attr = {
-		'distinct' => 'me.id',
-		'order_by' => 'me.id',
-	};
+	my $sql = 'SELECT id FROM years ';
+	my $w   = [];
+	my $p   = [];
 
-	my $rs = Slim::Schema->rs('Year')->search($where, $attr);
+	if (defined $year) {
+		push @{$w}, 'id = ?';
+		push @{$p}, $year;
+	}
 
-	my $count = $rs->count;
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	$sql .= 'ORDER BY id';
 
 	# now build the result
 	
@@ -3526,14 +3579,28 @@ sub yearsQuery {
 		my $loopname = 'years_loop';
 		my $chunkCount = 0;
 
-		for my $eachitem ($rs->slice($start, $end)) {
-			my $id = $eachitem->id() + 0;
+
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= " LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Years query: $sql / " . Data::Dump::dump($p) );
+		}
+			
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		my $id;
+		$sth->bind_columns(\$id);
+		
+		while ( $sth->fetch ) {
+			$id += 0;
 
 			$request->addResultLoop($loopname, $chunkCount, 'year', $id);
 
 			$chunkCount++;
-			
-			main::idleStreams() if !($chunkCount % 5);
 		}
 	}
 
@@ -4585,14 +4652,21 @@ sub _getTagDataForTracks {
 	# Normalize any search parameters
 	my $search = $args->{search};
 	if ( $search && specified($search) ) {
-		my $strings = Slim::Utils::Text::searchStringSplit($search);
-		if ( ref $strings->[0] eq 'ARRAY' ) {
-			push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-			push @{$p}, @{ $strings->[0] };
+		if ( $search =~ s/^sql=// ) {
+			# Raw SQL search query
+			$search =~ s/;//g; # strip out any attempt at combining SQL statements
+			push @{$w}, $search;
 		}
-		else {		
-			push @{$w}, 'tracks.titlesearch LIKE ?';
-			push @{$p}, @{$strings};
+		else {
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {		
+				push @{$w}, 'tracks.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
 		}
 	}
 	
@@ -4652,6 +4726,12 @@ sub _getTagDataForTracks {
 		}
 	};
 	
+	my $join_playlist_track = sub {
+		if ( $sql !~ /JOIN playlist_track/ ) {
+			$sql .= 'JOIN playlist_track ON playlist_track.track = tracks.url ';
+		}
+	};
+	
 	if ( my $genreId = $args->{genreId} ) {
 		$join_genre_track->();
 		push @{$w}, 'genre_track.genre = ?';
@@ -4669,6 +4749,12 @@ sub _getTagDataForTracks {
 			push @{$w}, 'contributor_track.contributor = ?';
 			push @{$p}, $contributorId;
 		}
+	}
+	
+	if ( my $playlistId = $args->{playlistId} ) {
+		$join_playlist_track->();
+		push @{$w}, 'playlist_track.playlist = ?';
+		push @{$p}, $playlistId;
 	}
 	
 	if ( my $trackIds = $args->{trackIds} ) {
@@ -4787,7 +4873,7 @@ sub _getTagDataForTracks {
 		my ($valid, $start, $end) = $limit->($total);
 		
 		if ( !$valid ) {
-			return [];
+			return wantarray ? ( {}, [], 0 ) : {};
 		}
 		
 		# Limit the real query
