@@ -63,15 +63,13 @@ my $log = logger('player.display');
 
 my $initialized;
 
-# XXX: don't break SB1 by changing these values
-
 our $defaultPrefs = {
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
 	'scrollPause'          => 3.6,
 	'scrollPauseDouble'    => 3.6,
-	'scrollRate'           => 0.15,
-	'scrollRateDouble'     => 0.1,
+	'scrollRate'           => 0.033,
+	'scrollRateDouble'     => 0.033,
 	'alwaysShowCount'      => 1,
 };
 

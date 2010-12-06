@@ -54,6 +54,24 @@ BEGIN {
 	}
 }
 
+sub _printPath {
+	use bytes;
+	my $path = shift;
+	return 'undef' unless defined $path;
+	my $s = utf8::is_utf8($path) ? 'ON:' : 'OFF:';
+	
+	for (my $i = 0; $i < length($path); $i++) {
+		my $c = substr($path, $i, 1);
+		if (ord($c) > 127) {
+			$s .= sprintf("#%02x", ord($c));
+		} else {
+			$s .= $c;
+		}
+	}
+	return $s;
+}
+
+
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
 	$lc_ctype, $lc_time, $comb_re_bits, $bomRE, $FB_QUIET, $FB_CROAK,
@@ -199,10 +217,8 @@ sub utf8encode {
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string)) {
-		return $string;
+		return utf8::is_utf8($string) ? utf8off($string) : $string;
 	}
-
-	my $orig = $string;
 
 	if ($string && $encoding ne 'utf8') {
 
@@ -247,20 +263,13 @@ Return the newly encoded string.
 sub encode_locale {
 	my $string = shift;
 	
-	if (!$string) {
-		return $string;
-	}
-	
-	if (utf8::is_utf8($string)) {
-		return Encode::encode($lc_ctype, $string, $FB_QUIET);
-	} else {
-		return $string;
-	}
+	return Encode::encode($lc_ctype, $string, $FB_QUIET) if utf8::is_utf8($string);
+	return $string;
 }
 
 =head2 utf8off( $string )
 
-Alias for Encode::encode('UTF-8', $string)
+Alias for Encode::encode('utf8', $string)
 
 Returns the new string.
 
@@ -274,17 +283,15 @@ sub utf8off {
 
 =head2 utf8on( $string )
 
-Alias for Encode::decode('UTF-8', $string)
+Alias for Encode::decode('utf8', $string)
 
 Returns the new string.
 
 =cut
 
 sub utf8on {
-	my $string = shift || return;
-	
-	return $string if Encode::is_utf8($string);
-	return Encode::decode('utf8', $string);
+	utf8::decode($_[0]);
+	return $_[0];
 }
 
 =head2 looks_like_ascii( $string )
@@ -663,12 +670,7 @@ An alias for L<Encode::decode()>
 
 =cut
 
-sub decode {
-	my $encoding = shift;
-	my $string = shift;
-	
-	return Encode::decode($encoding, $string);
-}
+*decode = \&Encode::decode;
 
 =head2 encode( $encoding, $string )
 
@@ -676,13 +678,7 @@ An alias for L<Encode::encode()>
 
 =cut
 
-sub encode {
-	my $encoding = shift;
-	my $string = shift;
-	
-	return Encode::encode($encoding, $string);
-}
-
+*encode = \&Encode::encode;
 
 =head2 from_to( $string, $from_encoding, $to_encoding )
 

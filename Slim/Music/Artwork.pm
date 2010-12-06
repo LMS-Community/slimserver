@@ -85,6 +85,10 @@ sub findStandaloneArtwork {
 						# Remove illegal characters from filename.
 						$coverFormat =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
 					}
+					
+					# Generating a pathname from tags is dangerous because the filesystem
+					# encoding may not match the locale, but that is the best guess that we have.
+					$coverFormat = Slim::Utils::Unicode::encode_locale($coverFormat);
 
 					my $artPath = $parentDir->file($coverFormat)->stringify;
 					
@@ -150,11 +154,8 @@ sub getImageContentAndType {
 
 	# Bug 3245 - for systems who's locale is not UTF-8 - turn our UTF-8
 	# path into the current locale.
-	my $locale = Slim::Utils::Unicode::currentLocale();
-
-	if ($locale ne 'utf8' && !-e $path) {
-		$path = Slim::Utils::Unicode::encode($locale, $path);
-	}
+	# Bug 16683: this is no longer true - all paths should be native encoding already
+	# (locale encoding of $path removed)
 
 	my $content = eval { read_file($path, 'binmode' => ':raw') };
 
@@ -301,7 +302,11 @@ sub _readCoverArtFiles {
 			if (main::ISWINDOWS) {
 				# Remove illegal characters from filename.
 				$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
-			}
+			}		
+			
+			# Generating a pathname from tags is dangerous because the filesystem
+			# encoding may not match the locale, but that is the best guess that we have.
+			$artwork = Slim::Utils::Unicode::encode_locale($artwork);
 	
 			my $artPath = $parentDir->file($artwork)->stringify;
 	

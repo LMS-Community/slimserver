@@ -810,8 +810,7 @@ sub readDirectory {
 	my @diritems = ();
 	my $log      = logger('os.files');
 
-	my $native_dirname = $dirname;
-	$native_dirname = Slim::Utils::Unicode::encode_locale($native_dirname) if utf8::is_utf8($native_dirname);
+	my $native_dirname = Slim::Utils::Unicode::encode_locale($dirname);
 	
 	if (main::ISWINDOWS) {
 		my ($volume) = splitpath($native_dirname);

@@ -36,8 +36,8 @@ my $scroll_pad_scroll = 40; # lines of padding between scrolling text
 my $scroll_pad_ticker = 60; # lines of padding in ticker mode
 
 our $defaultPrefs = {
-	'scrollPixels'		   => 7,
-	'scrollPixelsDouble'   => 7,
+	'scrollPixels'		   => 2,
+	'scrollPixelsDouble'   => 3,
 	'idleBrightness'       => 2,
 	'powerOffBrightness'   => 1,
 	'powerOnBrightness'    => 4,

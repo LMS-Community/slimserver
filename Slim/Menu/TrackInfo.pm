@@ -1031,7 +1031,7 @@ sub infoUrl {
 		} else {
 			$item = {
 				type  => 'text',
-				name  => Slim::Utils::Unicode::utf8decode( Slim::Utils::Misc::pathFromFileURL($turl) ),
+				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
 				label => 'LOCATION',	
 				weblink => '/music/' . $track->id . '/download',
 			};

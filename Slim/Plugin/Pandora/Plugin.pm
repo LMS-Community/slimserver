@@ -172,8 +172,9 @@ sub _rateTrackOK {
 	}
 	
 	# Parse the text out of the JSON
-	my ($text) = $http->content =~ m/"text":"([^"]+)/;	
-	$request->addResult( text => Slim::Utils::Unicode::utf8on($text) );
+	my ($text) = $http->content =~ m/"text":"([^"]+)/;
+	utf8::decode($text);	
+	$request->addResult( $text );
 	
 	$request->setStatusDone();
 }

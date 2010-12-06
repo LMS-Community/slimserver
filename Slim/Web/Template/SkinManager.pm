@@ -213,15 +213,16 @@ sub addSkinTemplate {
 				my ($context, @args) = @_;
 				sub { Slim::Utils::Strings::getString(shift, @args) }
 			}, 1 ],
-			'nbsp'          => \&_nonBreaking,
-			'uri'           => \&URI::Escape::uri_escape_utf8,
-			'unuri'         => \&URI::Escape::uri_unescape,
-			'utf8decode'    => \&Slim::Utils::Unicode::utf8decode,
-			'utf8encode'    => \&Slim::Utils::Unicode::utf8encode,
-			'utf8on'        => \&Slim::Utils::Unicode::utf8on,
-			'utf8off'       => \&Slim::Utils::Unicode::utf8off,
-			'resizeimage'   => [ \&_resizeImage, 1 ],  
-			'imageproxy'    => [ sub {
+			'nbsp'              => \&_nonBreaking,
+			'uri'               => \&URI::Escape::uri_escape_utf8,
+			'unuri'             => \&URI::Escape::uri_unescape,
+			'utf8decode'        => \&Slim::Utils::Unicode::utf8decode,
+			'utf8decode_locale' => \&Slim::Utils::Unicode::utf8decode_locale,
+			'utf8encode'        => \&Slim::Utils::Unicode::utf8encode,
+			'utf8on'            => \&Slim::Utils::Unicode::utf8on,
+			'utf8off'           => \&Slim::Utils::Unicode::utf8off,
+			'resizeimage'       => [ \&_resizeImage, 1 ],  
+			'imageproxy'        => [ sub {
 				return _resizeImage($_[0], $_[1], $_[2], '-');
 			}, 1 ],
 		},
