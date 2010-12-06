@@ -306,6 +306,11 @@ sub albumsQuery {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
+			
+			# Force quantity to not exceed max
+			if ( $quantity && $quantity > $limit ) {
+				$quantity = $limit;
+			}
 		}
 		elsif ( $sort eq 'artflow' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
