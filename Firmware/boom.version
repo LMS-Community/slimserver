@@ -7,9 +7,9 @@
 
 # All players must go through FW30.  The device ID was changed, so that FW29 cannot be upgraded to FW31, for instance.
 
-30..54	54
+30..55	55
 
 
 # future versions may be downgraded to this one
-* 54
+* 55
 
