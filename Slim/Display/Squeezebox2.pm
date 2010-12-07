@@ -423,10 +423,12 @@ sub clientAnimationComplete {
 	my $flags = unpack 'c', $$data_ref;
 	# for players with client side scrolling, flags are:
 	# ANIM_TRANSITION (0x01) - transition animation has finished (previous use of ANIC)
+	# ANIM_SCREEN_1 (0x04)                           - end of first scroll on screen 1
+	# ANIM_SCREEN_2 (0x08)                           - end of first scroll on screen 2
 	# ANIM_SCROLL_ONCE (0x02) | ANIM_SCREEN_1 (0x04) - end of scroll once on screen 1
-	# ANIM_SCREEN_ONCE (0x02) | ANIM_SCREEN_2 (0x08) - end of scroll once on screen 2
+	# ANIM_SCROLL_ONCE (0x02) | ANIM_SCREEN_2 (0x08) - end of scroll once on screen 2
 	
-	if ($flags & ANIM_TRANSITION) {
+	if (!$display->client->hasScrolling || $flags & ANIM_TRANSITION) {
 		# end of transition ANIC
 		$display->updateMode(0);
 
@@ -442,11 +444,11 @@ sub clientAnimationComplete {
 	}
 
 	# process end of scroll once ANIC (from clients with native scrolling)
-	elsif ($flags & ANIM_SCROLL_ONCE) {
+	elsif ($flags & (ANIM_SCREEN_1 | ANIM_SCREEN_2)) {
 		my $scroll = $display->scrollData(($flags & ANIM_SCREEN_1) ? 1 : 2);
 		if ($scroll) {
 			$scroll->{inhibitsaver} = 0;
-			if ($scroll->{scrollonceend}) {
+			if (($flags & ANIM_SCROLL_ONCE) && $scroll->{scrollonceend}) {
 				# schedule endAnimaton to kill off scrolling and display new screen
 				$display->animateState(6) unless ($display->animateState() == 5);
 				my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
