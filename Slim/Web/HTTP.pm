@@ -2481,7 +2481,8 @@ sub downloadMusicFile {
 	if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
 		
 		# Bug 8808, support transcoding if a file extension is provided
-		my $uri = $response->request->uri;
+		my $uri    = $response->request->uri;
+		my $isHead = $response->request->method eq 'HEAD';
 		
 		if ( my ($outFormat) = $uri =~ m{download\.([^\?]+)} ) {				
 			$outFormat = 'flc' if $outFormat eq 'flac';
@@ -2523,32 +2524,34 @@ sub downloadMusicFile {
 						return 1;
 					}
 				
-					main::INFOLOG && $log->is_info && $log->info("Opening transcoded download (" . $transcoder->{profile} . "), command: $command");
-					
 					my $in;
 					my $out;
 					my $done = 0;
 					
-					# Bug: 4318
-					# On windows ensure a child window is not opened if $command includes transcode processes
-					if (main::ISWINDOWS) {
-						Win32::SetChildShowWindow(0);
-					 	$in = FileHandle->new;
-						my $pid = $in->open($command);
+					if ( !$isHead ) {
+						main::INFOLOG && $log->is_info && $log->info("Opening transcoded download (" . $transcoder->{profile} . "), command: $command");
+						
+						# Bug: 4318
+						# On windows ensure a child window is not opened if $command includes transcode processes
+						if (main::ISWINDOWS) {
+							Win32::SetChildShowWindow(0);
+						 	$in = FileHandle->new;
+							my $pid = $in->open($command);
 					
-						# XXX Bug 15650, this sets the priority of the cmd.exe process but not the actual
-						# transcoder process(es).
-						my $handle;
-						if ( Win32::Process::Open( $handle, $pid, 0 ) ) {
-							$handle->SetPriorityClass( Slim::Utils::OS::Win32::getPriorityClass() || Win32::Process::NORMAL_PRIORITY_CLASS() );
+							# XXX Bug 15650, this sets the priority of the cmd.exe process but not the actual
+							# transcoder process(es).
+							my $handle;
+							if ( Win32::Process::Open( $handle, $pid, 0 ) ) {
+								$handle->SetPriorityClass( Slim::Utils::OS::Win32::getPriorityClass() || Win32::Process::NORMAL_PRIORITY_CLASS() );
+							}
+					
+							Win32::SetChildShowWindow();
+						} else {
+							$in = FileHandle->new($command);
 						}
 					
-						Win32::SetChildShowWindow();
-					} else {
-						$in = FileHandle->new($command);
+						Slim::Utils::Network::blocking($in, 0);
 					}
-					
-					Slim::Utils::Network::blocking($in, 0);
 				
 					$response->content_type( $Slim::Music::Info::types{$outFormat} );
 				
@@ -2572,6 +2575,15 @@ sub downloadMusicFile {
 
 					# non-blocking stream $pipeline to $httpClient
 					my $writer; $writer = sub {
+						if ($headers) {
+							syswrite $httpClient, $headers;
+							undef $headers;
+							
+							if ($isHead) {
+								$done = 1;
+							}
+						}
+						
 						if ($done) {
 							$out && $out->destroy;
 							$in && $in->close;
@@ -2582,35 +2594,36 @@ sub downloadMusicFile {
 							return;
 						}
 					
-						# Try to read some data from the pipeline
-						my $len = sysread $in, my $buf, 32 * 1024;
-						if ( !defined $len ) {
-							my $w; $w = AnyEvent->io( fh => $in, poll => 'r', cb => sub {
-								undef $w;
-								$in && $writer->();
-							} );
-						}
-						elsif ( $len == 0 ) {
-							$done = 1;
-						
-							if ($is11) {
-								# Add last empty chunk
-								$out->push_write( '0' . $CRLF . $CRLF );
+						if ($in) {
+							# Try to read some data from the pipeline
+							my $len = sysread $in, my $buf, 32 * 1024;
+							if ( !defined $len ) {
+								my $w; $w = AnyEvent->io( fh => $in, poll => 'r', cb => sub {
+									undef $w;
+									$in && $writer->();
+								} );
 							}
-						}
-						else {
-							if ($is11) {
-								$out->push_write( sprintf("%X", length($buf)) . $CRLF . $buf . $CRLF );
+							elsif ( $len == 0 ) {
+								$done = 1;
+						
+								if ($is11) {
+									# Add last empty chunk
+									$out->push_write( '0' . $CRLF . $CRLF );
+								}
 							}
 							else {
-								$out->push_write($buf);
+								if ($is11) {
+									$out->push_write( sprintf("%X", length($buf)) . $CRLF . $buf . $CRLF );
+								}
+								else {
+									$out->push_write($buf);
+								}
 							}
 						}
 					};
 					
 					$out = AnyEvent::Handle->new(
 						fh         => $httpClient,
-						autocork   => 1, # avoid calling $writer immediately
 						linger     => 0,
 						on_drain   => $writer,
 						timeout    => 300,
@@ -2626,7 +2639,6 @@ sub downloadMusicFile {
 							$writer->();
 						},						    
 					);
-					$out->push_write($headers);
 				
 					return 1;
 				}
