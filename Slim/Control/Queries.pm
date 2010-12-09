@@ -6389,7 +6389,7 @@ sub _getTagDataForTracks {
 		my ($valid, $start, $end) = $limit->($count);
 		
 		if ( !$valid ) {
-			return [];
+			return wantarray ? ( {}, [] ) : {};
 		}
 		
 		# Limit the real query
