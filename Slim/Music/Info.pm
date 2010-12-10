@@ -924,7 +924,7 @@ sub sortFilename {
 
 	# Bug 14906: need to use native character-encoding collation sequence
 	my $oldCollate = setlocale(LC_COLLATE);
-	setlocale(LC_COLLATE, setlocale(LC_CTYPE);
+	setlocale(LC_COLLATE, setlocale(LC_CTYPE));
 
 	# return the input array sliced by the sorted array
 	my @ret = @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
