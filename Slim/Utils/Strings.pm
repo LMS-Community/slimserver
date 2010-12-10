@@ -42,7 +42,7 @@ our @EXPORT_OK = qw(string cstring clientString);
 
 use Config;
 use Digest::SHA1 qw(sha1_hex);
-use POSIX qw(setlocale LC_TIME);
+use POSIX qw(setlocale LC_TIME LC_COLLATE);
 use File::Slurp qw(read_file write_file);
 use File::Spec::Functions qw(:ALL);
 use JSON::XS::VersionOneAndTwo;
@@ -662,10 +662,21 @@ sub checkChangedStrings {
 }
 
 sub setLocale {
-	my $locale = string('LOCALE' . (main::ISWINDOWS ? '_WIN' : '') );
+	my $locale = string(main::ISWINDOWS ? 'LOCALE_WIN' : 'LOCALE');
 	$locale .= Slim::Utils::Unicode::currentLocale() =~ /utf8/i ? '.UTF-8' : '';
 
 	setlocale( LC_TIME, $locale );
+	
+	# We leave LC_TYPE unchanged.
+	# This is used in Slim::Music::Info::sortFilename() to modify the
+	# behaviour of uc() when sorting native-encoded filenames.
+	# It is also used, probably incorrectly, in Slim::Schema::Genre::add() for ucfirst()
+	
+	# We set LC_COLLATE always to utf8 so that it can be used correctly within 
+	# the collate function (perlcollate) for SQLite DB sorting, where the field values
+	# are always UTF-8
+	$locale = string(main::ISWINDOWS ? 'LOCALE_WIN' : 'LOCALE') . '.UTF-8';
+	setlocale( LC_COLLATE, $locale );
 }
 
 

@@ -57,7 +57,7 @@ LOCALE
 	DE	de_DE
 	EN	en_US
 	ES	es_ES
-	FI	fi
+	FI	fi_FI
 	FR	fr_FR
 	HE	he_IL
 	IT	it_IT
