@@ -6439,12 +6439,23 @@ sub _getTagDataForTracks {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1;
 		
+		my $cond = 'contributor_track.role IN (?, ?';
+		
 		# Tag 'a' returns either ARTIST or TRACKARTIST role
-		push @{$w}, 'contributor_track.role IN (?, ?)';
 		push @{$p}, (
 			Slim::Schema::Contributor->typeToRole('ARTIST'), 
 			Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
 		);
+
+		# Loop through each pref to see if the user wants to show that contributor role.
+		foreach (Slim::Schema::Contributor->contributorRoles) {
+			if ($prefs->get(lc($_) . 'InArtists')) {
+				$cond .= ', ?';
+				push @{$p}, Slim::Schema::Contributor->typeToRole($_);
+			}
+		}
+		
+		push @{$w}, ($cond . ')');
 	};
 	
 	$tags =~ /s/ && do {
