@@ -151,10 +151,60 @@ sub on_connect_do {
 	return $sql;
 }
 
-# Built-in perllocale collation will sort using Unicode Collation Algorithm
-# on systems with a properly installed locale.  This appears to be fine on Linux,
-# but not under OSX for some reason.
-sub collate { 'COLLATE perllocale ' }
+my $hasICU;
+my $currentICU = '';
+sub collate { 
+	# Use ICU if built into DBD::SQLite
+	if ( !defined $hasICU ) {
+		$hasICU = (DBD::SQLite->can('compile_options') && grep /ENABLE_ICU/, DBD::SQLite::compile_options());
+	}
+	
+	if ($hasICU) {
+		my $lang = $prefs->get('language');
+
+		my $collation
+			= $lang eq 'CS' ? 'cs_CZ'
+			: $lang eq 'DA' ? 'da_DK'
+			: $lang eq 'DE' ? 'de_DE'
+			: $lang eq 'EN' ? 'en_US'
+			: $lang eq 'ES' ? 'es_ES'
+			: $lang eq 'FR' ? 'fr_FR'
+			: $lang eq 'HE' ? 'he_IL'
+			: $lang eq 'IT' ? 'it_IT'
+			: $lang eq 'JA' ? 'ja_JP'
+			: $lang eq 'NL' ? 'nl_NL'
+			: $lang eq 'NO' ? 'no_NO'
+			: $lang eq 'PL' ? 'pl_PL'
+			: $lang eq 'PT' ? 'pt_PT'
+			: $lang eq 'RU' ? 'ru_RU'
+			: $lang eq 'SV' ? 'sv_SE'
+			: $lang eq 'ZH_CN' ? 'zh_CN'
+			: 'en_US';
+		
+		if ( $currentICU ne $collation ) {
+			if ( !Slim::Schema->hasLibrary() ) {
+				# XXX for i.e. ContributorTracks many_to_many
+				return "COLLATE $collation ";
+			}
+			
+			my $dbh = Slim::Schema->dbh;
+			
+			eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
+			if ( $@ ) {
+				$log->error("SQLite ICU collation $collation failed: $@");
+				return 'COLLATE perllocale ';
+			}
+			
+			$currentICU = $collation;
+		}
+		
+		return "COLLATE $currentICU ";
+	}
+	
+	# Fallback to built-in perllocale collation to sort using Unicode Collation Algorithm
+	# on systems with a properly installed locale.
+	return 'COLLATE perllocale ';
+}
 
 =head2 randomFunction()
 
