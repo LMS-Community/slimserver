@@ -173,12 +173,12 @@ sub collate {
 			: $lang eq 'IT' ? 'it_IT'
 			: $lang eq 'JA' ? 'ja_JP'
 			: $lang eq 'NL' ? 'nl_NL'
-			: $lang eq 'NO' ? 'no_NO'
+			: $lang eq 'NO' ? 'nb_NO' # Norwegian Bokmål
 			: $lang eq 'PL' ? 'pl_PL'
 			: $lang eq 'PT' ? 'pt_PT'
 			: $lang eq 'RU' ? 'ru_RU'
 			: $lang eq 'SV' ? 'sv_SE'
-			: $lang eq 'ZH_CN' ? 'zh_CN'
+			: $lang eq 'ZH_CN' ? 'zh'
 			: 'en_US';
 		
 		if ( $currentICU ne $collation ) {
