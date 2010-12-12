@@ -187,6 +187,9 @@ sub collate {
 				return "COLLATE $collation ";
 			}
 			
+			# Point to our custom small ICU collation data file
+			$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
+			
 			my $dbh = Slim::Schema->dbh;
 			
 			eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
