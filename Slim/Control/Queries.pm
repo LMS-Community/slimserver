@@ -4809,12 +4809,6 @@ sub _addJivePlaylistControls {
 		$request->addResultLoop($loop, $count, 'input', $input);
 		$request->addResultLoop($loop, $count, 'actions', $actions);
 	}
-	
-	# Bug 7110, move images
-	if ( main::SLIM_SERVICE ) {
-		use Slim::Networking::SqueezeNetwork;
-		$request->addResultLoop( $loop, $count, 'icon', Slim::Networking::SqueezeNetwork->url('/static/jive/images/blank.png', 1) );
-	}
 }
 
 # **********************************************************************
