@@ -66,12 +66,12 @@ LOCALE
 	IT	it_IT
 	JA	ja_JP
 	NL	nl_NL
-	NO	no_NO
+	NO	nb_NO
 	PL	pl_PL
 	PT	pt_PT
 	RU	ru_RU
 	SV	sv_SE
-	ZH_CN	zh_CN
+	ZH_CN	zh
 
 CREDITS
 	CS	Roman Smetak
