@@ -338,6 +338,9 @@ sub parseStrings {
 				$strings->{'langchoices'}->{$language} = $string;
 				next LINE;
 			}
+			elsif ($stringname eq 'LOCALE') {
+				$strings->{locales}->{$language} = $string;
+			}
 
 			if (defined $stringData->{$language}) {
 				$stringData->{$language} .= "\n$string";
@@ -679,5 +682,8 @@ sub setLocale {
 	setlocale( LC_COLLATE, $locale );
 }
 
+sub getLocales {
+	return $strings->{locales};
+}
 
 1;

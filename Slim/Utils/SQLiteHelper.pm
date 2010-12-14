@@ -37,6 +37,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
+use Slim::Utils::Strings ();
 
 my $log = logger('database.info');
 
@@ -153,6 +154,7 @@ sub on_connect_do {
 
 my $hasICU;
 my $currentICU = '';
+my $loadedICU = {};
 sub collate { 
 	# Use ICU if built into DBD::SQLite
 	if ( !defined $hasICU ) {
@@ -162,40 +164,29 @@ sub collate {
 	if ($hasICU) {
 		my $lang = $prefs->get('language');
 
-		my $collation
-			= $lang eq 'CS' ? 'cs_CZ'
-			: $lang eq 'DA' ? 'da_DK'
-			: $lang eq 'DE' ? 'de_DE'
-			: $lang eq 'EN' ? 'en_US'
-			: $lang eq 'ES' ? 'es_ES'
-			: $lang eq 'FR' ? 'fr_FR'
-			: $lang eq 'HE' ? 'he_IL'
-			: $lang eq 'IT' ? 'it_IT'
-			: $lang eq 'JA' ? 'ja_JP'
-			: $lang eq 'NL' ? 'nl_NL'
-			: $lang eq 'NO' ? 'nb_NO' # Norwegian Bokmål
-			: $lang eq 'PL' ? 'pl_PL'
-			: $lang eq 'PT' ? 'pt_PT'
-			: $lang eq 'RU' ? 'ru_RU'
-			: $lang eq 'SV' ? 'sv_SE'
-			: $lang eq 'ZH_CN' ? 'zh'
-			: 'en_US';
+		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
 		
-		if ( $currentICU ne $collation ) {
-			if ( !Slim::Schema->hasLibrary() ) {
-				# XXX for i.e. ContributorTracks many_to_many
-				return "COLLATE $collation ";
-			}
-			
-			# Point to our custom small ICU collation data file
-			$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
-			
-			my $dbh = Slim::Schema->dbh;
-			
-			eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
-			if ( $@ ) {
-				$log->error("SQLite ICU collation $collation failed: $@");
-				return 'COLLATE perllocale ';
+		if ( $currentICU ne $collation ) {	
+			if ( !$loadedICU->{$collation} ) {
+				if ( !Slim::Schema->hasLibrary() ) {
+					# XXX for i.e. ContributorTracks many_to_many
+					return "COLLATE $collation ";
+				}
+				
+				# Point to our custom small ICU collation data file
+				$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
+
+				my $dbh = Slim::Schema->dbh;
+				
+				eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
+				if ( $@ ) {
+					$log->error("SQLite ICU collation $collation failed: $@");
+					return 'COLLATE perllocale ';
+				}
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug("Loaded ICU collation for $collation");
+				
+				$loadedICU->{$collation} = 1;
 			}
 			
 			$currentICU = $collation;
