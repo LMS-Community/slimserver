@@ -666,7 +666,7 @@ sub checkChangedStrings {
 
 sub setLocale {
 	my $locale = string(main::ISWINDOWS ? 'LOCALE_WIN' : 'LOCALE');
-	$locale .= Slim::Utils::Unicode::currentLocale() =~ /utf8/i ? '.UTF-8' : '';
+	$locale .= '.UTF-8' if Slim::Utils::Unicode::currentLocale() =~ /utf8/i;
 
 	setlocale( LC_TIME, $locale );
 	
