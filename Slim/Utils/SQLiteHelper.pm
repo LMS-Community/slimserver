@@ -438,6 +438,10 @@ sub postConnect {
 	my ( $class, $dbh ) = @_;
 	
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
+	
+	# Reset collation load state
+	$currentICU = '';
+	$loadedICU = {};
 }
 
 sub updateProgress {
