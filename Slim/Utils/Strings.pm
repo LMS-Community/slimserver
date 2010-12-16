@@ -338,6 +338,9 @@ sub parseStrings {
 				$strings->{'langchoices'}->{$language} = $string;
 				next LINE;
 			}
+			elsif ($stringname eq 'LOCALE') {
+				$strings->{locales}->{$language} = $string;
+			}
 
 			if (defined $stringData->{$language}) {
 				$stringData->{$language} .= "\n$string";
@@ -663,7 +666,7 @@ sub checkChangedStrings {
 
 sub setLocale {
 	my $locale = string(main::ISWINDOWS ? 'LOCALE_WIN' : 'LOCALE');
-	$locale .= Slim::Utils::Unicode::currentLocale() =~ /utf8/i ? '.UTF-8' : '';
+	$locale .= '.UTF-8' if Slim::Utils::Unicode::currentLocale() =~ /utf8/i;
 
 	setlocale( LC_TIME, $locale );
 	
@@ -679,5 +682,8 @@ sub setLocale {
 	setlocale( LC_COLLATE, $locale );
 }
 
+sub getLocales {
+	return $strings->{locales};
+}
 
 1;

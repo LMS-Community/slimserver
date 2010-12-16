@@ -37,19 +37,22 @@ LANGUAGE_CHOICES
 	ZH_CN	简体中文 *
 
 LOCALE_WIN
-	CS	cze
-	DA	dan
-	DE	deu
-	EN	en
-	ES	sp
-	FI	fi
-	FR	fra
-	IT	ita
-	NL	nld
-	NO	no
-	PL	pl
-	RU	ru
-	SV	sv
+	CS	cze_cze
+	DA	dan_dnk
+	DE	deu_deu
+	EN	enu_usa
+	ES	esp_esp
+	FI	fin_fin
+	FR	fra_fra
+	IT	ita_ita
+	JA	jpn_jpn
+	NL	nld_nld
+	NO	nor_nor
+	PL	plk_pol
+	PT	ptg_prt
+	RU	rus_rus
+	SV	sve_swe
+	ZH_CN	chs_chn
 
 LOCALE
 	CS	cs_CZ
@@ -63,12 +66,12 @@ LOCALE
 	IT	it_IT
 	JA	ja_JP
 	NL	nl_NL
-	NO	no_NO
+	NO	nb_NO
 	PL	pl_PL
 	PT	pt_PT
 	RU	ru_RU
 	SV	sv_SE
-	ZH_CN	zh_CN
+	ZH_CN	zh
 
 CREDITS
 	CS	Roman Smetak

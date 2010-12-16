@@ -215,19 +215,14 @@ sub utf8encode {
 	my $string   = shift;
 	my $encoding = shift || 'utf8';
 
-	# Bail early if it's just ascii
-	if (looks_like_ascii($string)) {
-		return utf8::is_utf8($string) ? utf8off($string) : $string;
-	}
-
 	if ($string && $encoding ne 'utf8') {
 
-		$string = utf8on($string);
+		utf8::decode($string);
 		$string = Encode::encode($encoding, $string, $FB_QUIET);
 
 	} elsif ($string) {
 
-		$string = Encode::encode('utf8', $string);
+		utf8::encode($string) if utf8::is_utf8($string);
 	}
 
 	return $string;
@@ -276,9 +271,8 @@ Returns the new string.
 =cut
 
 sub utf8off {
-	my $string = shift || return;
-	
-	return Encode::encode('utf8', $string);
+	utf8::encode($_[0]) if utf8::is_utf8($_[0]);
+	return $_[0];
 }
 
 =head2 utf8on( $string )

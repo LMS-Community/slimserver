@@ -37,6 +37,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
+use Slim::Utils::Strings ();
 
 my $log = logger('database.info');
 
@@ -151,10 +152,53 @@ sub on_connect_do {
 	return $sql;
 }
 
-# Built-in perllocale collation will sort using Unicode Collation Algorithm
-# on systems with a properly installed locale.  This appears to be fine on Linux,
-# but not under OSX for some reason.
-sub collate { 'COLLATE perllocale ' }
+my $hasICU;
+my $currentICU = '';
+my $loadedICU = {};
+sub collate { 
+	# Use ICU if built into DBD::SQLite
+	if ( !defined $hasICU ) {
+		$hasICU = (DBD::SQLite->can('compile_options') && grep /ENABLE_ICU/, DBD::SQLite::compile_options());
+	}
+	
+	if ($hasICU) {
+		my $lang = $prefs->get('language');
+
+		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
+		
+		if ( $currentICU ne $collation ) {	
+			if ( !$loadedICU->{$collation} ) {
+				if ( !Slim::Schema->hasLibrary() ) {
+					# XXX for i.e. ContributorTracks many_to_many
+					return "COLLATE $collation ";
+				}
+				
+				# Point to our custom small ICU collation data file
+				$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
+
+				my $dbh = Slim::Schema->dbh;
+				
+				eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
+				if ( $@ ) {
+					$log->error("SQLite ICU collation $collation failed: $@");
+					return 'COLLATE perllocale ';
+				}
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug("Loaded ICU collation for $collation");
+				
+				$loadedICU->{$collation} = 1;
+			}
+			
+			$currentICU = $collation;
+		}
+		
+		return "COLLATE $currentICU ";
+	}
+	
+	# Fallback to built-in perllocale collation to sort using Unicode Collation Algorithm
+	# on systems with a properly installed locale.
+	return 'COLLATE perllocale ';
+}
 
 =head2 randomFunction()
 
@@ -394,6 +438,10 @@ sub postConnect {
 	my ( $class, $dbh ) = @_;
 	
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
+	
+	# Reset collation load state
+	$currentICU = '';
+	$loadedICU = {};
 }
 
 sub updateProgress {

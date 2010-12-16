@@ -1,0 +1,36 @@
+UPnP General
+------------
+General tests
+  Discovery, various M-SEARCH types  
+  Eventing
+  Description XML files
+  HTTP protocol stuff (DLNA requires various things)
+
+DLNA
+----
+Study libdlna for reference
+
+MediaRenderer
+-------------
+Change upnp:// mode playback to a single-track model:
+* NextAVTransportURI is internal-only, not exposed as playlist index 2
+* Playlists are also internal, Next/Previous switch between internal tracks, Pandora-like
+When not in upnp:// mode, i.e. control point connects during playback of native SBS tracks, radio, etc:
+* Only return current track metadata, empty values for Next track
+* NumberOfTracks = playlist size
+* Next/Previous work like skip
+* (is this worth worrying about? maybe should just return nothing if not in upnp:// mode)
+DLNA extras
+Verify list of content-types is correct
+If a control point tries to have us play an item from our own MediaServer, need some special-case handling?
+
+MediaServer
+-----------
+Better icon
+Proper sorting, although I'm not sure it really matters
+Test suite
+  All menus
+  UpdateID changes
+  Eventing
+DLNA extras
+Cache total count values and use them for childCount attributes?

@@ -23,6 +23,7 @@ use File::Path;
 use File::Basename;
 use File::Spec::Functions qw(catdir splitdir);
 use Path::Class;
+use POSIX qw(setlocale LC_CTYPE LC_COLLATE);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
@@ -921,8 +922,16 @@ sub sortFilename {
 		)
 	} @_;
 
+	# Bug 14906: need to use native character-encoding collation sequence
+	my $oldCollate = setlocale(LC_COLLATE);
+	setlocale(LC_COLLATE, setlocale(LC_CTYPE));
+
 	# return the input array sliced by the sorted array
-	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
+	my @ret = @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
+	
+	setlocale(LC_COLLATE, $oldCollate);
+	
+	return @ret;
 }
 
 sub isFragment {
