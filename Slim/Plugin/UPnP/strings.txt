@@ -1,0 +1,5 @@
+PLUGIN_UPNP_MODULE_NAME
+	EN	UPnP/DLNA Media Interface
+
+PLUGIN_UPNP_MODULE_NAME_DESC
+	EN	Adds a UPnP/DLNA AV MediaServer and MediaRenderer, enabling access by other devices on the local network.
