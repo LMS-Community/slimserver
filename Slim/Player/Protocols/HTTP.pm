@@ -158,7 +158,7 @@ sub parseMetadata {
 		# Bug 15896, a stream had CRLF in the metadata
 		$metadata =~ s/\s*[\r\n]+\s*/; /g;
 
-		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1);
 
 		# capitalize titles that are all lowercase
 		# XXX: Why do we do this?  Shouldn't we let metadata display as-is?
@@ -345,7 +345,7 @@ sub parseDirectHeaders {
 
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
 			
-			$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+			$title = Slim::Utils::Unicode::utf8decode_guess($1);
 		}
 		
 		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
