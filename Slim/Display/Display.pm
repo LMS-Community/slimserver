@@ -164,12 +164,6 @@ sub update {
 	if (!defined $scrollMode) {
 		$scrollMode = $prefs->client($client)->get('scrollMode') || 0;
 	}
-	
-	if ( main::SLIM_SERVICE ) {
-		# XXX temporary, remove with local scrolling
-		# force one-scroll mode for users with normal scroll
-		$scrollMode = 1 if $scrollMode == 0;
-	}
 
 	my ($scroll, $scrollonce);
 	if    ($scrollMode == 0) { $scroll = 1; $scrollonce = 0; }
