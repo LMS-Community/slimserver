@@ -40,7 +40,12 @@ sub progress {
 	my $songduration = playingSongDuration($client);
 
 	return 0 unless $songduration;
-	return songTime($client) / $songduration;
+
+	my $songtime = songTime($client);
+
+	return 0 unless defined($songtime);
+
+	return $songtime / $songduration;
 }
 
 sub songTime {
