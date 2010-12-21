@@ -305,6 +305,7 @@ our (
 	$quiet,
 	$nosetup,
 	$noserver,
+	$norestart,
 	$noupnp,
 	$noweb,     # used in scanner to prevent loading of Slim::Web::Pages etc.
 	$notranscoding,
@@ -709,7 +710,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
-          [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics]
+          [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -747,6 +748,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
                         to streaming audio sources
     --nodebuglog     => Disable all debug-level logging (compiled out).
     --noinfolog      => Disable all debug-level & info-level logging (compiled out).
+    --norestart      => Disable automatic restarts of server (if performed by external script) 
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible.
                         Settings changes are not preserved.
@@ -801,6 +803,7 @@ sub initOptions {
 		'quiet'	        => \$quiet,
 		'nodebuglog'    => \$nodebuglog,
 		'noinfolog'     => \$noinfolog,
+		'norestart'     => \$norestart,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
 		'nostatistics'  => \$nostatistics,
@@ -1054,13 +1057,13 @@ sub forceStopServer {
 sub stopServer {
 	my $restart = shift;
 
-	logger('')->info( 'Squeezebox Server ' . ($restart ? 'restarting...' : 'shutting down.') );
+	logger('')->info( 'Squeezebox Server ' . ($restart && !$::norestart ? 'restarting...' : 'shutting down.') );
 	
 	$::stop = 1;
 	
 	cleanup();
 	
-	if ($restart 
+	if ($restart && !$::norestart
 		&& Slim::Utils::OSDetect->getOS()->canRestartServer() 
 		&& !main::ISWINDOWS)
 	{
