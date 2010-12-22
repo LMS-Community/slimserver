@@ -1310,6 +1310,9 @@ sub _hello_handler {
 		
 		$client->controller()->playerInactive($client);
 		
+		# Don't animate the upgrade screen on SN
+		my $static = main::SLIM_SERVICE ? 1 : 0;
+		
 		$client->block( {
 			'screen1' => {
 				'line' => [
@@ -1324,7 +1327,7 @@ sub _hello_handler {
 				}
 			},
 			'screen2' => {},
-		}, 'upgrade');
+		}, 'upgrade', $static );
 
 	} else {
 
