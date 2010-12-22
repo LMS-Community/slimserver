@@ -48,8 +48,11 @@ sub getFeedAsync {
 	my $url = $params->{'url'};
 	
 	# Try to load a cached copy of the parsed XML
+	# On SN we need to include the language in the cache key
 	my $cache = Slim::Utils::Cache->new();
-	my $feed  = $cache->get( $url . '_parsedXML' );
+	my $cachekey = main::SLIM_SERVICE && $params->{client} ? $params->{client}->language : '';
+	$cachekey .= $url . '_parsedXML';
+	my $feed  = $cache->get($cachekey);
 
 	if ( $feed ) {
 
@@ -106,6 +109,7 @@ sub getFeedAsync {
 		# Add real client IP for Radiotime so they can do proper geo-location
 		$headers{'X-Forwarded-For'} = $params->{client}->ip;
 		
+=pod
 		# XXX try to track down a bug
 		my $b = $tb{ $params->{client}->ip };
 		if ( $b ) {
@@ -125,6 +129,7 @@ sub getFeedAsync {
 			# 1 req every 2 seconds, burst 5
 			$tb{ $params->{client}->ip } = Algorithm::TokenBucket->new( 0.5, 5 );
 		}
+=cut
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers or login first
@@ -290,7 +295,10 @@ sub gotViaHTTP {
 				$log->info("Caching parsed XML for " . $http->url . " for $expires seconds");
 			}
 
-			$cache->set( $http->url() . '_parsedXML', $feed, $expires );
+			my $client = $params->{params}->{client};
+			my $cachekey = main::SLIM_SERVICE && $client ? $client->language : '';
+			$cachekey .= $http->url() . '_parsedXML';
+			$cache->set( $cachekey, $feed, $expires );
 
 		} elsif ( $expires && !$cache->get( $http->url() ) ) {
 

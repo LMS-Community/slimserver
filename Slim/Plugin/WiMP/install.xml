@@ -3,7 +3,7 @@
 	<id>DEB1A433-A53C-4D14-ADB4-537C05A6D29B</id>
 	<name>PLUGIN_WIMP_MODULE_NAME</name>
 	<module>Slim::Plugin::WiMP::Plugin</module>
-	<version>1.1</version>
+	<version>1.2</version>
 	<description>PLUGIN_WIMP_MODULE_NAME</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>

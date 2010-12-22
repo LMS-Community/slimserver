@@ -699,12 +699,16 @@ CURRENT_PLAYLIST
 	ES	Lista de reproducción actual
 	FI	Nykyinen soittoluettelo.
 	FR	Liste de lecture en cours
-	IT	Playlist in uso
+	HE	רשימת ההשמעה הנוכחית
+	IT	Elenco di riproduzione in uso
+	JA	現在のプレイリスト
 	NL	De huidige playlist
 	NO	Aktiv spilleliste
 	PL	Aktualna lista odtwarzania
+	PT	Playlist Actual
 	RU	Текущий плей-лист
 	SV	Aktuell spellista
+	ZH_CN	当前播放表
 
 PLAYLISTS
 	CS	Seznamy skladeb
@@ -10580,25 +10584,6 @@ TITLEFORMAT_DBL
 	NO	Tittelformat
 	SV	Titelformat
 	ZH_CN	标题格式
-
-CURRENT_PLAYLIST
-	CS	Aktuální seznam skladeb
-	DA	Aktiv afspilningsliste
-	DE	Aktuelle Wiedergabeliste
-	EN	The current playlist
-	ES	Lista de reproducción actual
-	FI	Nykyinen soittoluettelo.
-	FR	Liste de lecture en cours
-	HE	רשימת ההשמעה הנוכחית
-	IT	Elenco di riproduzione in uso
-	JA	現在のプレイリスト
-	NL	De huidige playlist
-	NO	Aktiv spilleliste
-	PL	Aktualna lista odtwarzania
-	PT	Playlist Actual
-	RU	Текущий плей-лист
-	SV	Aktuell spellista
-	ZH_CN	当前播放表
 
 DOWNLOAD
 	CS	Stáhnout
