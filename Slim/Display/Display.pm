@@ -631,8 +631,8 @@ sub scrollInit {
 		my $offset = 0;
 		
 		while ($length > 0) {
-			if ( $length > 2900 ) {
-				$length = 2900;
+			if ( $length > 1400 ) {
+				$length = 1400;
 			}
 			
 			my $data = $header . pack('n', $offset) . substr( $scrollbits, 0, $length, '' );
