@@ -71,12 +71,12 @@ sub sysread {
 
 	if ( !${*$self}{'parsed_status_line'} ) {
 		if ( ${*$self}{'httpnb_save'} =~ /^(HTTP|ICY)/ ) {
-			my $icy = ${*$self}{'httpnb_save'} =~ s/ICY/HTTP\/1.0/;
+			my $icy = ${*$self}{'httpnb_save'} =~ s/^ICY/HTTP\/1.0/;
 			${*$self}{'parsed_status_line'} = 1;
 			
 			if ( $icy ) {
 				$n += 5;
-				$_[1] =~ s/ICY/HTTP\/1.0/;
+				$_[1] =~ s/^ICY/HTTP\/1.0/;
 			}
 		}
 	}
