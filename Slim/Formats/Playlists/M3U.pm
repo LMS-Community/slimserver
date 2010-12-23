@@ -28,7 +28,7 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
-	my ($secs, $artist, $album, $title);
+	my ($secs, $artist, $album, $title, $trackurl);
 	my $foundBOM = 0;
 	my $fh;
 	my $audiodir;
@@ -108,32 +108,39 @@ sub read {
 			main::DEBUGLOG && $log->debug("  found title: $title");
 		}
 
+		elsif ( $entry =~ /^#EXTURL:(.*?)$/ ) {
+			$trackurl = $1;
+			
+			main::DEBUGLOG && $log->debug("  found trackurl: $trackurl");
+		}
+
 		next if $entry =~ /^#/;
 		next if $entry =~ /#CURTRACK/;
 		next if $entry eq "";
 
 		$entry =~ s|$LF||g;
 
-		my $fullentry;
+		if (!$trackurl) {
 
-		if (Slim::Music::Info::isRemoteURL($entry)) {
-
-			$fullentry = $entry;
-
-		} else {
-
-			if (main::ISWINDOWS && !Slim::Music::Info::isFileURL($entry)) {
-				$entry = Win32::GetANSIPathName($entry);	
+			if (Slim::Music::Info::isRemoteURL($entry)) {
+	
+				$trackurl = $entry;
+	
+			} else {
+	
+				if (main::ISWINDOWS && !Slim::Music::Info::isFileURL($entry)) {
+					$entry = Win32::GetANSIPathName($entry);	
+				}
+				
+				$trackurl = Slim::Utils::Misc::fixPath($entry, $baseDir);
 			}
-			
-			$fullentry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 		}
+		
+		if ($class->playlistEntryIsValid($trackurl, $url)) {
 
-		if ($class->playlistEntryIsValid($fullentry, $url)) {
+			main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
 
-			main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
-
-			push @items, $class->_updateMetaData( $fullentry, {
+			push @items, $class->_updateMetaData( $trackurl, {
 				'TITLE'  => $title,
 				'ALBUM'  => $album,
 				'ARTIST' => $artist,
@@ -141,19 +148,19 @@ sub read {
 			} );
 
 			# reset the title
-			$title = undef;
+			($secs, $artist, $album, $title, $trackurl) = ();
 		}
 		else {
 			# Check if the playlist entry is relative to audiodir
 			$audiodir ||= Slim::Utils::Misc::getAudioDir();
 			
-			$fullentry = Slim::Utils::Misc::fixPath($entry, $audiodir);
+			$trackurl = Slim::Utils::Misc::fixPath($entry, $audiodir);
 			
-			if ($class->playlistEntryIsValid($fullentry, $url)) {
+			if ($class->playlistEntryIsValid($trackurl, $url)) {
 
-				main::DEBUGLOG && $log->debug("    valid entry: $fullentry");
+				main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
 
-				push @items, $class->_updateMetaData( $fullentry, {
+				push @items, $class->_updateMetaData( $trackurl, {
 					'TITLE'  => $title,
 					'ALBUM'  => $album,
 					'ARTIST' => $artist,
@@ -161,7 +168,7 @@ sub read {
 				} );
 
 				# reset the title
-				$title = undef;
+				($secs, $artist, $album, $title, $trackurl) = ();
 			}
 		}
 	}
@@ -254,6 +261,9 @@ sub write {
 			logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			next;
 		};
+		
+		# Bug 16683: put the 'file:///' URL in an extra extension
+		print $output "#EXTURL:", $track->url, "\n";
 
 		if ($addTitles) {
 			
@@ -265,9 +275,8 @@ sub write {
 			}
 		}
 		
-		# Bug 16683: just use the 'file:///' URL.
-		# Not strictly correct but probably only we read these M3U files that we write anyway.
-		print $output $track->url, "\n";
+		my $path = Slim::Utils::Unicode::utf8decode_locale( $class->_pathForItem($track->url) );
+		print $output $path, "\n";
 	}
 
 	close $output if $filename;
