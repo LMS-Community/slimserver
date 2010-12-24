@@ -367,7 +367,7 @@ sub open {
 	my $format = Slim::Music::Info::contentType($track);
 
 	if ($handler->can('formatOverride')) {
-		$format = $handler->formatOverride;
+		$format = $handler->formatOverride($self);
 	}
 	
 	# get transcoding command & stream-mode
