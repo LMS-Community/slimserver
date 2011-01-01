@@ -545,6 +545,12 @@ sub scrollInit {
 
 	my $now = Time::HiRes::time();
 	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
+	
+	# Adjust scrolling params for ticker mode, we don't want the server scrolling at 30fps
+	if ($ticker) {
+		$refresh = 0.15;
+		$pixels = 7;
+	}
 
 	my $scroll = {
 		'scrollstart'   => $screen->{scrollstart},
