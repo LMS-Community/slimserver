@@ -177,10 +177,19 @@ sub collate {
 				$ENV{ICU_DATA} = Slim::Utils::OSDetect::dirsFor('strings');
 
 				my $dbh = Slim::Schema->dbh;
-				
-				eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
+                
+				my $qcoll = $dbh->quote($collation);
+				my $qpath = $dbh->quote($ENV{ICU_DATA});
+
+				# Win32 doesn't always like to read the ICU_DATA env var, so pass it here too
+				my $sql = main::ISWINDOWS
+					? "SELECT icu_load_collation($qcoll, $qcoll, $qpath)"
+					: "SELECT icu_load_collation($qcoll, $qcoll)";
+
+				eval { $dbh->do($sql) };
 				if ( $@ ) {
 					$log->error("SQLite ICU collation $collation failed: $@");
+					$hasICU = 0;
 					return 'COLLATE perllocale ';
 				}
 				
