@@ -181,6 +181,7 @@ sub collate {
 				eval { $dbh->do("SELECT icu_load_collation('$collation', '$collation')") };
 				if ( $@ ) {
 					$log->error("SQLite ICU collation $collation failed: $@");
+					$hasICU = 0;
 					return 'COLLATE perllocale ';
 				}
 				
