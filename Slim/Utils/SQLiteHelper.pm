@@ -472,6 +472,14 @@ sub updateProgress {
 	
 	my $req = HTTP::Request->new( POST => "http://${host}/jsonrpc.js" );
 	
+	$req->header( 'X-Scanner' => 1 );
+	
+	# Handle security if necessary
+	if ( my $username = $prefs->get('username') ) {
+		my $password = $prefs->get('password');
+		$req->authorization_basic($username, $password);
+	}
+	
 	$req->content( to_json( {
 		id     => 1,
 		method => 'slim.request',
