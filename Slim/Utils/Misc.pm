@@ -775,8 +775,14 @@ sub folderFilter {
 	
 	my $hasStat = shift || 0;
 	my $validRE = shift;
-
-	return fileFilter(catdir(@path), $folder, $validRE, $hasStat);
+	my $file = catdir(@path);
+	
+	# Bug 15209, Hack for UNC bug where catdir turns \\foo into \foo
+	if ( main::ISWINDOWS && $path[0] eq '' && $path[1] eq '' && $file !~ /^\\{2}/ ) {
+		$file = '\\' . $file;
+	}
+	
+	return fileFilter($file, $folder, $validRE, $hasStat);
 }
 
 
