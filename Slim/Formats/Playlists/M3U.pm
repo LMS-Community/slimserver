@@ -252,6 +252,7 @@ sub write {
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
 
+	my $i = 0;
 	for my $item (@{$listref}) {
 
 		my $track = Slim::Schema->objectForUrl($item);
@@ -277,6 +278,8 @@ sub write {
 		
 		my $path = Slim::Utils::Unicode::utf8decode_locale( $class->_pathForItem($track->url) );
 		print $output $path, "\n";
+		
+		main::idleStreams() if ! (++$i % 20);
 	}
 
 	close $output if $filename;
