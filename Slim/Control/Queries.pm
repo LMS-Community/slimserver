@@ -3174,8 +3174,8 @@ sub statusQuery {
 					$idx++;
 					
 					# give peace a chance...
-					# This is almost certainly not needed anymore now that this is much faster
-					# main::idleStreams();
+					# This is need much less now that the DB query is done ahead of time
+					main::idleStreams() if ! ($count % 20);
 				}
 				
 				# we don't do that in menu mode!
