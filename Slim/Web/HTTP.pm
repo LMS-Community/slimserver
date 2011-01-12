@@ -396,7 +396,7 @@ sub processHTTP {
 		my $authorized = !$prefs->get('authorize');
 
 		if (my ($user, $pass) = $request->authorization_basic()) {
-			$authorized = checkAuthorization($user, $pass);
+			$authorized = checkAuthorization($user, $pass, $request);
 		}
 
 		# no Valid authorization supplied!
@@ -2343,6 +2343,7 @@ sub closeStreamingSocket {
 sub checkAuthorization {
 	my $username = shift;
 	my $password = shift;
+	my $request = shift;
 
 	my $ok = 0;
 
@@ -2370,6 +2371,13 @@ sub checkAuthorization {
 			if (!$ok) {
 				my $salt = substr($pwd, 0, 2);
 				$ok = (crypt($password, $salt) eq $pwd);
+			}
+		}
+		
+		# Check for scanner progress request
+		if ( !$ok && $pwd eq $password ) {
+			if ( $request->header('X-Scanner') ) {
+				$ok = 1;
 			}
 		}
 
