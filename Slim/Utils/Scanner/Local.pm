@@ -431,6 +431,8 @@ sub deleted {
 				my @contribs = $track->contributors->all;
 				my $year     = $track->year;
 				my @genres   = map { $_->id } $track->genres;
+				
+				# XXX plugin hook, onDeleteTrack( $track->id )
 		
 				# delete() will cascade to:
 				#   contributor_track
@@ -511,6 +513,8 @@ sub deleted {
 				$ptracks = $sth->fetchall_arrayref( {} );
 				$sth->finish;
 			}
+			
+			# XXX plugin hook, onDeletePlaylist( $playlist->{id} )
 		
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries
@@ -578,6 +582,8 @@ sub deleted {
 			my ($playlist) = $sth->fetchrow_hashref;
 			$sth->finish;
 			
+			# XXX plugin hook, onDeletePlaylist( $playlist->{id} )
+			
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries
 			$sth = $dbh->prepare_cached( qq{
@@ -629,12 +635,15 @@ sub new {
 				return;
 			}
 			
+			# XXX plugin hook, onNewTrack( $trackid )
+			
 			# If MIP is enabled, check status for this track
+			# XXX use onNewTrack instead
 			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
 				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($trackid, $url);
 			}
 			
-			# XXX iTunes
+			# XXX iTunes, use onNewTrack
 		};
 	}
 	elsif ( 
@@ -668,6 +677,8 @@ sub new {
 				$playlist,
 				FileHandle->new( Slim::Utils::Misc::pathFromFileURL($url) ),
 			);
+			
+			# XXX plugin hook, onNewPlaylist( $playlist->id )
 		};
 	}
 	
@@ -793,7 +804,10 @@ sub changed {
 				Slim::Schema::Year->rescan( $orig->{year} );
 			}
 			
+			# XXX plugin hook, onChangedTrack( $track->id )
+			
 			# If MIP is enabled, check status for this track
+			# XXX use onChangedTrack
 			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
 				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($track->id, $url);
 			}
@@ -913,6 +927,8 @@ sub scanPlaylistFileHandle {
 
 	if (scalar @playlistTracks) {
 		$playlist->setTracks(\@playlistTracks);
+		
+		# XXX plugin hook, onNewTrack( $_->id ) for @playlistTracks
 	}
 
 	# Create a playlist container
