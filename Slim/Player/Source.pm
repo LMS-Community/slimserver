@@ -101,6 +101,9 @@ sub playmode {
 	return $return;
 }
 
+use constant QUEUED_CHUNKS_HWM => 10;
+use constant QUEUED_CHUNKS_LWM => 3;
+
 # TODO - move to some stream-handler
 sub nextChunk {
 	my $client       = shift;
@@ -111,17 +114,30 @@ sub nextChunk {
 	my $len;
 
 	return if !$client;
+	
+	my $queued_chunks = $client->chunks;
 
 	# if there's a chunk in the queue, then use it.
-	if (ref($client->chunks) eq 'ARRAY' && scalar(@{$client->chunks})) {
+	if (ref($queued_chunks) eq 'ARRAY' && scalar(@$queued_chunks)) {
 
-		$chunk = shift @{$client->chunks};
+		$chunk = shift @$queued_chunks;
 
 		$len = length($$chunk);
 		
 	} else {
+		
+		# Bug 14117
+		# If any client in sync-group has exceeded the high water-mark, then just sleep
+		# until the queue gets drained.
+		foreach ($client->syncGroupActiveMembers()) {
+			if (ref($_->chunks) eq 'ARRAY' && scalar(@{$_->chunks}) >= QUEUED_CHUNKS_HWM) {
+				main::DEBUGLOG && $log->is_debug && $log->debug('Waiting for queue to drain for ', $_->id);
+				$client->streamReadableCallback($callback) if $callback;
+				return undef;
+			}
+		}
 
-		#otherwise, read a new chunk
+		# otherwise, read a new chunk
 		my $controller = $client->controller();
 		my $master = $controller->master();
 
@@ -151,17 +167,41 @@ sub nextChunk {
 		}
 	}
 	
+	$client->streamReadableCallback(undef) if defined($chunk);
+	
 	if (defined($chunk) && ($len > $maxChunkSize)) {
 
 		0 && $log->debug("Chunk too big, pushing the excess for later.");
 
 		my $queued = substr($$chunk, $maxChunkSize - $len, $len - $maxChunkSize);
 
-		unshift @{$client->chunks}, \$queued;
+		unshift @$queued_chunks, \$queued;
 
 		my $returned = substr($$chunk, 0, $maxChunkSize);
 
 		$chunk = \$returned;
+	}
+	
+	# Bug 14117
+	# If we just dropped back to the low-water-mark, then signal waiting clients in sync-group
+	elsif (defined($chunk) && ref($queued_chunks) eq 'ARRAY' && scalar(@$queued_chunks) == QUEUED_CHUNKS_LWM) {
+		
+		# This is important. We must only signal the waiting streams that they may try again so
+		# long as no client is above the HWM. It is possible that a callback is still registered
+		# for an old stream connection for a client in this sync-group. We do not want to fire that (old)
+		# callback because it will steal a chunk. However, we can be pretty sure that, if this client
+		# has just reached the LWM, then any other client which has not yet started streaming will
+		# have its queue full and it can correctly reset its callback registration before we signal
+		# the waiters.
+		foreach ($client->syncGroupActiveMembers()) {
+			if (ref($_->chunks) eq 'ARRAY' && scalar(@{$_->chunks}) >= QUEUED_CHUNKS_HWM) {
+				main::DEBUGLOG && $log->is_debug && $log->debug('Still waiting for queue to drain for ', $_->id);
+				return $chunk;
+			}
+		}
+		
+		main::DEBUGLOG && $log->is_debug && $log->debug('Wake up queued clients as have drained queue for ', $client->id);
+		_wakeupOnReadable(undef, $client->controller()->master());
 	}
 	
 	return $chunk;
@@ -251,7 +291,7 @@ sub _readNextChunk {
 
 	my $endofsong = undef;
 
-	if ($client->streamBytes() == 0 && $client->master()->streamformat() eq 'mp3') {
+	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
 	
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...
@@ -366,16 +406,15 @@ bail:
 
 sub _wakeupOnReadable {
 	my ($fd, $master) = @_;
-	my $cb;
 	
 	main::DEBUGLOG && $log->debug($master->id);
 	
-	Slim::Networking::Select::removeRead($fd);
+	Slim::Networking::Select::removeRead($fd) if defined $fd;
 	
-	foreach my $client ($master->syncGroupActiveMembers()) {
-		if ($cb = $client->streamReadableCallback) {
-			&$cb($client);
-			$client->streamReadableCallback(undef);
+	foreach ($master->syncGroupActiveMembers()) {
+		if (my $cb = $_->streamReadableCallback) {
+			$_->streamReadableCallback(undef);
+			&$cb($_);
 		}
 	}
 }
