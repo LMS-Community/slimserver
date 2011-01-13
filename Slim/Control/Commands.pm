@@ -1361,16 +1361,19 @@ sub playlistXitemCommand {
 
 	main::INFOLOG && $log->info("path: $path");
 	
-	# bug 14760 - just continue where we already were if what we are about to play is the
+	# bug 14760 - just continue where we were if what we are about to play is the
 	# same as the single thing we are already playing
 	if ( $cmd =~ /^(play|load)$/
 		&& Slim::Player::Playlist::count($client) == 1
 		&& $client->playingSong()	
-		&& $path eq $client->playingSong()->track()->url() )
+		&& $path eq $client->playingSong()->track()->url()
+		&& !$noplay )
 	{
-		if ( Slim::Player::Source::playmode($client) eq 'pause' ) {
+		# Bug 16154: use more-precise control measures
+		# so that we only leave it playing if fully in Playing state already.
+		if ( $client->isPaused() ) {
 			Slim::Player::Source::playmode($client, 'resume', undef, undef, $fadeIn);
-		} elsif ( Slim::Player::Source::playmode($client) ne 'play' ) {
+		} elsif ( !$client->isPlaying('really') ) {
 			Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
 		}
 		
