@@ -115,9 +115,6 @@ sub readMetaData {
 		main::INFOLOG && $log->info("Metadata: $metadata");
 
 		${*$self}{'title'} = __PACKAGE__->parseMetadata($client, $self->url, $metadata);
-
-		# new song, so reset counters
-		$client->songBytes(0);
 	}
 }
 
@@ -589,6 +586,8 @@ sub requestString {
 		$request .= $CRLF . "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'');
 	}
 	
+	$client->songBytes(0) if $client;
+
 	# If seeking, add Range header
 	if ($client && $seekdata) {
 		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} +  $seekdata->{restartOffset}) . '-';
@@ -598,6 +597,8 @@ sub requestString {
 			$client->playingSong()->startOffset($seekdata->{timeOffset});
 			$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
 		}
+
+		$client->songBytes(int( $seekdata->{sourceStreamOffset} ));
 	}
 
 	# Send additional information if we're POSTing
