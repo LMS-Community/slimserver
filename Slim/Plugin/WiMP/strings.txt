@@ -17,9 +17,9 @@ PLUGIN_WIMP_DIRECT_GETTING_TRACK_INFO
 	SV	Hämtar streaminformation...
 
 PLUGIN_WIMP_ERROR_LOGGED_OUT
-	DA	Du er blevet logget ud af WiMP, da du er logget på et andet sted.
-	EN	You were logged out because you logged in to WiMP somewhere else.
-	NO	Du ble logget ut fordi du logget inn på WiMP et annet sted.
+	DA	Vi beklager, du kan ikke benytte WiMP på PC/mobil samtidig med du lytter til WiMP på din Squeezebox. Start venligst afspilningen forfra.
+	EN	We're sorry - you can't connect to WiMP from another device while using it on your Squeezebox. Please try again to use WiMP on your Squeezebox.
+	NO	Vi beklager, du kan ikke benytte WiMP på PC/mobil samtidig som du lytter til WiMP på din Squeezebox. Vennligst start avspillingen på nytt.
 	SV	Du blev utloggad eftersom du loggat in i WiMP någon annanstans.
 
 PLUGIN_WIMP_ERROR
