@@ -46,7 +46,6 @@ use Slim::Utils::Timers;
 
 use constant INITIAL_RETRY_TIME => 600;
 use constant MAX_RETRY_TIME     => 86400;
-use constant VERSION_FILE_STALE => 1800;
 
 # Firmware location - initialize in init() once options have been parsed
 my $dir;
@@ -131,26 +130,17 @@ sub init_firmware_download {
 	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
 	return unless $prefs->get('checkVersion');
 
-	if (-r $version_file && time() - (stat($version_file))[9] < VERSION_FILE_STALE) {
+	main::INFOLOG && $log->is_info && $log->info("Downloading $model.version file...");
 
-		main::INFOLOG && $log->is_info && $log->info("Using exising $model.version file...");
-
-		init_version_done($version_file, $model);
-
-	} else {
-
-		main::INFOLOG && $log->is_info && $log->info("Downloading $model.version file...");
-	
-		# Any async downloads in init must be started on a timer so they don't
-		# time out from other slow init things
-		Slim::Utils::Timers::setTimer(
-			undef,
-			time(),
-			sub {
-				downloadAsync( $version_file, {cb => \&init_version_done, pt => [$version_file, $model]} );
-			},
-		);
-	}
+	# Any async downloads in init must be started on a timer so they don't
+	# time out from other slow init things
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time(),
+		sub {
+			downloadAsync( $version_file, {cb => \&init_version_done, pt => [$version_file, $model]} );
+		},
+	);
 }
 
 =head2 init_version_done($version_file, $model)
