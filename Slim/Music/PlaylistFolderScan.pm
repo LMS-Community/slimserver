@@ -37,9 +37,11 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 
-	Slim::Music::Import->addImporter($class, {
-		'playlistOnly' => 1,
-	});
+	Slim::Music::Import->addImporter( $class, {
+		type         => 'file',
+		weight       => 10,
+		playlistOnly => 1,
+	} );
 
 	# Enable Folder scan only if playlistdir is set and is a valid directory
 	my $enabled  = 0;

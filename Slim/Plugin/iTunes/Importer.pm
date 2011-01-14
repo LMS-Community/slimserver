@@ -56,6 +56,7 @@ sub initPlugin {
 
 	Slim::Music::Import->addImporter($class, {
 		'type'         => 'file',
+		'weight'       => 20,
 		'reset'        => \&resetState,
 		'playlistOnly' => 1,
 		'use'          => $prefs->get('itunes'),

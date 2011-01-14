@@ -100,7 +100,7 @@ die $@ if $@;
 
 sub main {
 
-	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $priority);
+	our ($rescan, $playlists, $wipe, $force, $cleanup, $prefsFile, $priority);
 	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
 
 	our $LogTimestamp = 1;
@@ -108,7 +108,6 @@ sub main {
 	my $changes = 0;
 
 	$prefs = preferences('server');
-	my $musicmagic;
 
 	$prefs->readonly;
 
@@ -118,9 +117,6 @@ sub main {
 		'rescan'       => \$rescan,
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
-		'itunes'       => \$itunes,
-		'musicip'      => \$musicip,
-		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
 		# prefsdir parsed by Slim::Utils::Prefs
@@ -140,10 +136,6 @@ sub main {
 	);
 
 	save_pid_file();
-
-	if (defined $musicmagic && !defined $musicip) {
-		$musicip = $musicmagic;
-	}
 	
 	# If dbsource has been changed via settings, it overrides the default
 	if ( $prefs->get('dbtype') ) {
@@ -170,7 +162,7 @@ sub main {
 		'debug'   => $debug,
 	});
 
-	if ($help || (!$rescan && !$wipe && !$playlists && !$musicip && !$itunes && !scalar @ARGV)) {
+	if ($help || (!$rescan && !$wipe && !$playlists && !scalar @ARGV)) {
 		usage();
 		exit;
 	}
@@ -262,15 +254,11 @@ sub main {
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Music::MusicFolderScan->init;
 	}
-
-	# Various importers - should these be hardcoded?
-	if ($itunes) {
-		initClass('Slim::Plugin::iTunes::Importer');
-	}
-
-	if ($musicip) {
-		initClass('Slim::Plugin::MusicMagic::Importer');
-	}
+	
+	# Load any plugins that define import modules
+	# useCache is 0 so scanner does not modify the plugin cache file
+	Slim::Utils::PluginManager->init( 'import', 0 );
+	Slim::Utils::PluginManager->load('import');
 
 	checkDataSource();
 
@@ -416,7 +404,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicip] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe] <path or URL>
 
 Command line options:
 
@@ -425,8 +413,6 @@ Command line options:
 	--rescan       Look for new files since the last scan.
 	--wipe         Wipe the DB and start from scratch
 	--playlists    Only scan files in your playlistdir.
-	--itunes       Run the iTunes Importer.
-	--musicip      Run the MusicIP Importer.
 	--progress     Show a progress bar of the scan.
 	--dbtype TYPE  Force database type (valid values are MySQL or SQLite)
 	--prefsdir     Specify alternative preferences directory.
@@ -434,9 +420,9 @@ Command line options:
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file
 	--logconfig    Specify pre-defined logging configuration file
-    --nodebuglog   Disable all debug-level logging (compiled out).
-    --noinfolog    Disable all debug-level & info-level logging (compiled out).
-    --nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
+	--nodebuglog   Disable all debug-level logging (compiled out).
+	--noinfolog    Disable all debug-level & info-level logging (compiled out).
+	--nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
 	--debug        various debug options
 	--quiet        keep silent
 	
@@ -450,18 +436,6 @@ EOF
 
 }
 
-sub initClass {
-	my $class = shift;
-
-	Slim::bootstrap::tryModuleLoad($class);
-
-	if ($@) {
-		logError("Couldn't load $class: $@");
-	} else {
-		$class->initPlugin;
-	}
-}
-
 my $cleanupDone;
 sub cleanup {
 	
@@ -469,6 +443,8 @@ sub cleanup {
 	# We only want it to run once.
 	return if $cleanupDone;	
 	$cleanupDone = 1;
+	
+	Slim::Utils::PluginManager->shutdownPlugins();
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {

@@ -45,6 +45,9 @@ my %SKIP = ();
 
 sub init {
 	my $class = shift;
+	my $moduleType = shift || '';
+	my $useCache = shift;
+	$useCache = 1 if !defined $useCache;
 
 	# migrate state info to new pref format
 	$prefs->migrate(1, sub {
@@ -76,32 +79,34 @@ sub init {
 	%SKIP = map {$_ => 1} Slim::Utils::OSDetect::skipPlugins();
 
 	# load the manifest cache
-	$class->_loadPluginCache;
+	if ( $useCache ) {
+		$class->_loadPluginCache;
 
-	# process any pending operations (using cache which will potentially become stale)
-	for my $plugin (keys %{$prefs->all}) {
+		# process any pending operations (using cache which will potentially become stale)
+		for my $plugin (keys %{$prefs->all}) {
 
-		my $val = $prefs->get($plugin);
+			my $val = $prefs->get($plugin);
 
-		if ($val =~ /needs/) {
+			if ($val =~ /needs/) {
 
-			$pendingOps = 1;
+				$pendingOps = 1;
 
-			if       ($val eq 'needs-enable') {
+				if       ($val eq 'needs-enable') {
 
-				$class->_needsEnable($plugin);
+					$class->_needsEnable($plugin);
 
-			} elsif ($val eq 'needs-disable') {
+				} elsif ($val eq 'needs-disable') {
 
-				$class->_needsDisable($plugin);
+					$class->_needsDisable($plugin);
 
-			} elsif ($val eq 'needs-uninstall') { 
+				} elsif ($val eq 'needs-uninstall') { 
 
-				$class->_needsUninstall($plugin); 
+					$class->_needsUninstall($plugin); 
 
-			} elsif ($val eq 'needs-install') {
+				} elsif ($val eq 'needs-install') {
 
-				$class->_needsInstall($plugin);
+					$class->_needsInstall($plugin);
+				}
 			}
 		}
 	}
@@ -110,9 +115,9 @@ sub init {
 	my ($manifestFiles, $sum) = $class->_findInstallManifests;
 
 	if ($main::failsafe) {
-	
+
 		$cacheInvalid = 'starting in failsafe mode - do not load optional plugins';
-	
+
 	} elsif (!scalar keys %{$prefs->all}) {
 
 		$cacheInvalid = 'plugins states are not defined';
@@ -122,7 +127,7 @@ sub init {
 		$cacheInvalid = 'processed pending operations';
 
 	} elsif ($cacheInfo && $cacheInfo->{'version'}) {
-		
+	
 		if ($cacheInfo->{'version'} != CACHE_VERSION) {
 
 			$cacheInvalid = 'cache version does not match';
@@ -154,32 +159,35 @@ sub init {
 
 	} else {
 
-		$cacheInvalid = 'no plugin cache';
+		$cacheInvalid = 'no plugin cache or cache disabled by caller';
 	}
-
+	
 	if ($cacheInvalid) {
 
 		$log->warn("Reparsing plugin manifests - $cacheInvalid");
 
-		$class->_readInstallManifests($manifestFiles);
+		$class->_readInstallManifests($manifestFiles, $moduleType);
 
-		$cacheInfo = {
-			'version' => CACHE_VERSION,
-			'bin'     => $Bin,
-			'count'   => scalar @{$manifestFiles},
-			'mtimesum'=> $sum,
-			'server'  => $::VERSION,
-			'revision'=> $::REVISION,
-			'osType'  => $osDetails->{'os'},
-			'osArch'  => $osDetails->{'osArch'},
-		};
+		if ( $useCache ) {
+			$cacheInfo = {
+				'version' => CACHE_VERSION,
+				'bin'     => $Bin,
+				'count'   => scalar @{$manifestFiles},
+				'mtimesum'=> $sum,
+				'server'  => $::VERSION,
+				'revision'=> $::REVISION,
+				'osType'  => $osDetails->{'os'},
+				'osArch'  => $osDetails->{'osArch'},
+			};
 		
-		$class->_writePluginCache unless $main::failsafe;
+			$class->_writePluginCache unless $main::failsafe;
+		}
 	}
 } 
 
 sub load {
 	my $class = shift;
+	my $moduleType = shift || '';
 
 	for my $name (sort keys %$plugins) {
 		
@@ -188,10 +196,10 @@ sub load {
 		my $manifest = $plugins->{$name};
 
 		# Skip plugins with no perl module.
-		next unless $manifest->{'module'};
+		next unless $manifest->{ $moduleType . 'module' };
 		
 		my $baseDir    = $manifest->{'basedir'};
-		my $module     = $manifest->{'module'};
+		my $module     = $manifest->{ $moduleType . 'module' };
 		
 		# Initialize all plugins into the disabled list, they are removed below
 		# if they are loaded
@@ -304,14 +312,16 @@ sub load {
 			Slim::Utils::Misc::addFindBinPaths( catdir($binDir, Slim::Utils::OSDetect::details()->{'binArch'}), $binDir );
 		}
 
-		# Add any available HTML to TT's INCLUDE_PATH
-		my $htmlDir = catdir($baseDir, 'HTML');
+		if ( main::WEBUI ) {
+			# Add any available HTML to TT's INCLUDE_PATH
+			my $htmlDir = catdir($baseDir, 'HTML');
 
-		if (-d $htmlDir) {
+			if (-d $htmlDir) {
 
-			main::DEBUGLOG && $log->debug("Adding HTML directory: [$htmlDir]");
+				main::DEBUGLOG && $log->debug("Adding HTML directory: [$htmlDir]");
 
-			Slim::Web::HTTP::addTemplateDirectory($htmlDir);
+				Slim::Web::HTTP::addTemplateDirectory($htmlDir);
+			}
 		}
 	}
 
@@ -576,12 +586,13 @@ sub _findInstallManifests {
 sub _readInstallManifests {
 	my $class = shift;
 	my $files = shift;
+	my $moduleType = shift;
 
 	$plugins = {};
 
 	for my $file (@{$files}) {
 
-		my ($pluginName, $installManifest) = $class->_parseInstallManifest($file);
+		my ($pluginName, $installManifest) = $class->_parseInstallManifest($file, $moduleType);
 
 		if (!defined $pluginName) {
 			next;
@@ -594,6 +605,7 @@ sub _readInstallManifests {
 sub _parseInstallManifest {
 	my $class = shift;
 	my $file  = shift;
+	my $moduleType = shift;
 
 	my $installManifest = eval { XMLin($file, SuppressEmpty => undef) };
 
@@ -606,7 +618,7 @@ sub _parseInstallManifest {
 
 	my $pluginName;
 
-	my $module = $installManifest->{'module'};
+	my $module = $installManifest->{ $moduleType . 'module' };
 
 	if ($module && $module =~ /^Plugins::(.*)::/) {
 

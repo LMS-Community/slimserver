@@ -63,7 +63,7 @@ use Slim::Utils::Progress;
 {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly useFolderImporter scanningProcess)) {
+	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly scanningProcess)) {
 
 		$class->mk_classdata($accessor);
 	}
@@ -73,7 +73,6 @@ use Slim::Utils::Progress;
 our %importsRunning = ();
 our %Importers      = ();
 
-my $folderScanClass = 'Slim::Music::MusicFolderScan';
 my $log             = logger('scan.import');
 my $prefs           = preferences('server');
 
@@ -118,18 +117,6 @@ sub launchScan {
 
 	if (defined $::logdir && -d $::logdir) {
 		$args->{"logdir=$::logdir"} = 1;
-	}
-
-	# Add in the various importer flags
-	# TODO: rework to only access prefs IF Importer is active
-	for my $importer (qw(iTunes MusicIP)) {
-		my $prefs = preferences("plugin.".lc($importer));
-
-		# TODO: one day we'll have to fully rename MusicMagic to MusicIP...
-		if (Slim::Utils::PluginManager->isEnabled("Slim::Plugin::" . ($importer eq 'MusicIP' ? 'MusicMagic' : $importer) . "::Plugin") && $prefs->get(lc($importer))) {
-
-			$args->{lc($importer)} = 1;
-		}
 	}
 
 	# Set scanner priority.  Use the current server priority unless 
@@ -297,33 +284,12 @@ sub runScan {
 	# clear progress info in case scanner.pl is run standalone
 	Slim::Utils::Progress->clear;
 
-	# If we are scanning a music folder, do that first - as we'll gather
-	# the most information from files that way and subsequent importers
-	# need to do less work.
-	if ($Importers{$folderScanClass} && !$class->scanPlaylistsOnly) {
-
-		$changes += $class->runImporter($folderScanClass);
-
-		$class->useFolderImporter(1);
-	}
-
 	# Check Import scanners
-	# Bug 14758: make sure MusicIP is run last, or it will miss iTunes imported files
-	for my $importer (sort {
-		return 1 if $a =~ /MusicMagic/i;
-		return -1 if $b =~ /MusicMagic/i;
-		return 0;
-	} keys %Importers) {
-
-		# Don't rescan the music folder again.
-		if ($importer eq $folderScanClass) {
+	for my $importer ( _sortedImporters() ) {
+		# Skip non-file scanners
+		if ( !$Importers{$importer}->{type} || $Importers{$importer}->{type} ne 'file' ) {
 			next;
 		}
-		
-		# Skip non-file scanners here (i.e. artwork)
-		if ( $Importers{$importer}->{'type'} && $Importers{$importer}->{'type'} ne 'file' ) {
-			next;
-		} 
 
 		# These importers all implement 'playlist only' scanning.
 		# See bug: 1892
@@ -342,6 +308,14 @@ sub runScan {
 	return $changes;
 }
 
+sub _sortedImporters {
+	return sort {
+		my $wa = exists $Importers{$a}->{weight} ? $Importers{$a}->{weight} : 1000;
+		my $wb = exists $Importers{$b}->{weight} ? $Importers{$b}->{weight} : 1000;
+		return $wa <=> $wb;
+	} keys %Importers;
+}
+
 =head2 runScanPostProcessing( )
 
 This is called by the scanner.pl helper program.
@@ -357,22 +331,6 @@ sub runScanPostProcessing {
 	# May not have a DB to store this in
 	return 1 if !Slim::Schema::hasLibrary();
 	
-	# Run any artwork importers
-	for my $importer (keys %Importers) {		
-		# Skip non-artwork scanners
-		if ( !$Importers{$importer}->{'type'} || $Importers{$importer}->{'type'} ne 'artwork' ) {
-			next;
-		}
-		
-		$class->runArtworkImporter($importer);
-	}
-
-	Slim::Music::Artwork->downloadArtwork();
-	
-	# Pre-cache resized artwork
-	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
-	Slim::Music::Artwork->precacheAllArtwork;
-	
 	if (main::STATISTICS) {
 		# Look for and import persistent data migrated from MySQL
 		my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
@@ -385,9 +343,32 @@ sub runScanPostProcessing {
 			}
 		}
 	}
+	
+	# Run any post-scan importers
+	for my $importer ( _sortedImporters() ) {		
+		# Skip non-post scanners
+		if ( !$Importers{$importer}->{type} || $Importers{$importer}->{type} ne 'post' ) {
+			next;
+		}
+		
+		$class->runImporter($importer);
+	}
+	
+	# Run any artwork importers
+	for my $importer ( _sortedImporters() ) {		
+		# Skip non-artwork scanners
+		if ( !$Importers{$importer}->{type} || $Importers{$importer}->{type} ne 'artwork' ) {
+			next;
+		}
+		
+		$class->runArtworkImporter($importer);
+	}
 
-	# Reset
-	$class->useFolderImporter(0);
+	Slim::Music::Artwork->downloadArtwork();
+	
+	# Pre-cache resized artwork
+	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
+	Slim::Music::Artwork->precacheAllArtwork;
 		
 	# Always run an optimization pass at the end of our scan.
 	$log->error("Starting Database optimization.");

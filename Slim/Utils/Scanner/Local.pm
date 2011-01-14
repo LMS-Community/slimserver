@@ -42,6 +42,9 @@ die $@ if $@;
 
 my %pending = ();
 
+# Coderefs to plugin handler functions
+my $pluginHandlers = {};
+
 sub find {
 	my ( $class, $path, $args, $cb ) = @_;
 	
@@ -139,6 +142,14 @@ sub rescan {
 	
 	if ( !main::SCANNER ) {
 		Slim::Music::Import->setIsScanning(1);
+	}
+	
+	# Initialize plugin hooks if any plugins want scan events.
+	# The API module is only loaded if a plugin uses it.
+	$pluginHandlers = {};
+	
+	if ( Slim::Utils::Scanner::API->can('getHandlers') ) {
+		$pluginHandlers = Slim::Utils::Scanner::API->getHandlers();
 	}
 	
 	$log->error("Discovering files in $next");
@@ -432,7 +443,10 @@ sub deleted {
 				my $year     = $track->year;
 				my @genres   = map { $_->id } $track->genres;
 				
-				# XXX plugin hook, onDeleteTrack( $track->id )
+				# plugin hook
+				if ( my $handler = $pluginHandlers->{onDeletedTrackHandler} ) {
+					$handler->( { id => $track->id, obj => $track, url => $url } );
+				}
 		
 				# delete() will cascade to:
 				#   contributor_track
@@ -514,7 +528,10 @@ sub deleted {
 				$sth->finish;
 			}
 			
-			# XXX plugin hook, onDeletePlaylist( $playlist->{id} )
+			# plugin hook
+			if ( my $handler = $pluginHandlers->{onDeletedPlaylistHandler} ) {
+				$handler->( { id => $playlist->{id}, url => $url } );
+			}
 		
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries
@@ -582,7 +599,10 @@ sub deleted {
 			my ($playlist) = $sth->fetchrow_hashref;
 			$sth->finish;
 			
-			# XXX plugin hook, onDeletePlaylist( $playlist->{id} )
+			# plugin hook
+			if ( my $handler = $pluginHandlers->{onDeletedPlaylistHandler} ) {
+				$handler->( { id => $playlist->{id}, url => $url } );
+			}
 			
 			# Delete the playlist
 			# This will cascade to remove the playlist_track entries
@@ -635,12 +655,9 @@ sub new {
 				return;
 			}
 			
-			# XXX plugin hook, onNewTrack( $trackid )
-			
-			# If MIP is enabled, check status for this track
-			# XXX use onNewTrack instead
-			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
-				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($trackid, $url);
+			# plugin hook
+			if ( my $handler = $pluginHandlers->{onNewTrackHandler} ) {
+				$handler->( { id => $trackid, url => $url } );
 			}
 			
 			# XXX iTunes, use onNewTrack
@@ -678,7 +695,10 @@ sub new {
 				FileHandle->new( Slim::Utils::Misc::pathFromFileURL($url) ),
 			);
 			
-			# XXX plugin hook, onNewPlaylist( $playlist->id )
+			# plugin hook
+			if ( my $handler = $pluginHandlers->{onNewPlaylistHandler} ) {
+				$handler->( { id => $playlist->id, obj => $playlist, url => $url } );
+			}
 		};
 	}
 	
@@ -804,12 +824,9 @@ sub changed {
 				Slim::Schema::Year->rescan( $orig->{year} );
 			}
 			
-			# XXX plugin hook, onChangedTrack( $track->id )
-			
-			# If MIP is enabled, check status for this track
-			# XXX use onChangedTrack
-			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') ) {
-				Slim::Plugin::MusicMagic::Plugin->checkSingleTrack($track->id, $url);
+			# plugin hook
+			if ( my $handler = $pluginHandlers->{onChangedTrackHandler} ) {
+				$handler->( { id => $track->id, obj => $track, url => $url } );
 			}
 		};
 		
@@ -928,7 +945,13 @@ sub scanPlaylistFileHandle {
 	if (scalar @playlistTracks) {
 		$playlist->setTracks(\@playlistTracks);
 		
-		# XXX plugin hook, onNewTrack( $_->id ) for @playlistTracks
+		# plugin hook
+		if ( my $handler = $pluginHandlers->{onNewTrackHandler} ) {
+			for my $track ( @playlistTracks ) {
+				$handler->( { id => $track->id, obj => $track, url => $track->url } );
+				main::idleStreams();
+			}
+		}
 	}
 
 	# Create a playlist container
