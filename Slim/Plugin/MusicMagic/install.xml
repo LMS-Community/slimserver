@@ -4,6 +4,7 @@
 	<id>2A25E5C4-036E-493F-890C-2BFC07944110</id>
 	<name>MUSICMAGIC</name>
 	<module>Slim::Plugin::MusicMagic::Plugin</module>
+	<importmodule>Slim::Plugin::MusicMagic::Importer</importmodule>
 	<version>1.0</version>
 	<description>MUSICMAGIC_DESC</description>
 	<creator>Logitech</creator>

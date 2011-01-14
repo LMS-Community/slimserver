@@ -3,6 +3,7 @@
 <extension>
 	<name>ITUNES</name>
 	<module>Slim::Plugin::iTunes::Plugin</module>
+	<importmodule>Slim::Plugin::iTunes::Importer</importmodule>
 	<version>1.0</version>
 	<description>ITUNES_DESC</description>
 	<creator>Logitech</creator>

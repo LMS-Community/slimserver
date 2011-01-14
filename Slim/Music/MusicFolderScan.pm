@@ -40,11 +40,14 @@ sub init {
 	my $audioDir = Slim::Utils::Misc::getAudioDir();
 
 	if (defined $audioDir && -d $audioDir) {
-
 		$enabled = 1;
 	}
 
-	Slim::Music::Import->addImporter($class);
+	Slim::Music::Import->addImporter( $class, {
+		type   => 'file',
+		weight => 1,   # always run the file importer first
+	} );
+	
 	Slim::Music::Import->useImporter($class, $enabled);
 }
 
