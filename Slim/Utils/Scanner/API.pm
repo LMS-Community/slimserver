@@ -124,7 +124,7 @@ sub _makeDispatcher {
 			my $arg1 = $opts->{id};
 						
 			if ( $h->{want_object} ) {
-				$arg1 = $opts->{obj} || Slim::Schema->rs($objectClass)->find($arg1);
+				$arg1 = $opts->{obj} ||= Slim::Schema->rs($objectClass)->find($arg1);
 			}
 			
 			eval { $h->{cb}->( $arg1, $opts->{url} ) };
