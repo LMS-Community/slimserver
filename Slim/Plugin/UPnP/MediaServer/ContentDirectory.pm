@@ -504,7 +504,7 @@ sub Search {
 	$tags .= $stags;
 
 	# Avoid 'A' and 'G' tags because they will run extra queries
-	$tags .= 'aldyorfTIct';
+	$tags .= 'agldyorfTIct';
 	
 	if ( $sort && !$sortsql ) {
 		return [ 708 => 'Unsupported or invalid sort criteria' ];
