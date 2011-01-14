@@ -815,8 +815,9 @@ sub processURL {
 
 	# is this an HTTP stream?
 	if (!defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
-	
-		my $address = $peeraddr{$httpClient};
+		
+		# Bug 14825, allow multiple stream.mp3 clients from the same address with a player param
+		my $address = $params->{player} || $peeraddr{$httpClient};
 	
 		main::INFOLOG && $log->is_info && $log->info("processURL found HTTP client at address=$address");
 	
