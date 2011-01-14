@@ -310,6 +310,11 @@ sub initPlugin {
 			},
 			'contextToken' => 'MUSICMAGIC_MIX',
 		});
+		
+		# Add plugin hooks
+		require Slim::Utils::Scanner::API;
+		Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack } );
+		Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack } );
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
 
@@ -1523,7 +1528,7 @@ sub _syncHTTPRequest {
 # This method is used for the in-process rescanner to update mixable status
 # for new/changed tracks
 sub checkSingleTrack {
-	my ( $class, $trackid, $url ) = @_;
+	my ( $trackid, $url ) = @_;
 	
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
 	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
