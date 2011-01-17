@@ -310,7 +310,7 @@ sub menu {
 		name  => $track->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
 		items => $items,
-		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $track->coverid . '/cover.jpg',
+		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($track->coverid || 0) . '/cover.jpg',
 	};
 }
 
@@ -1228,15 +1228,23 @@ sub infoUrl {
 	my $item;
 	
 	if ( my $turl = $track->url ) {
+		my $weblink;
+		
+		if ( !$track->isRemoteURL($turl) ) {
+			$weblink = '/music/' . $track->id . '/download';
+			
+			if ( $track->path && $track->path =~ m|(/[^/\\]+)$| ) {
+				$weblink .= $1;
+			}
+		}
+		
 		$item = {
 			type => 'text',
 			name => $track->isRemoteURL($turl)
 				? cstring($client, 'URL') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
 				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
 				
-			weblink => $track->isRemoteURL($turl)
-				? undef
-				: '/music/' . $track->id . '/download',
+			weblink => $weblink,
 		};
 	}
 	
