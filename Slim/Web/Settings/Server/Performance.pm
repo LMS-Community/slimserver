@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
- 	return ($prefs, qw(dbtype dbhighmem disableStatistics serverPriority scannerPriority 
+ 	return ($prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority 
  				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
 }
 
@@ -41,21 +41,6 @@ sub handler {
 				Slim::Utils::AutoRescan->shutdown;
 			}
 		}
-	}
-	
-	# Change database type
-	my $curdb = $prefs->get('dbsource') =~ /SQLite/ ? 'SQLite' : 'MySQL';
-	if ( $paramRef->{pref_dbtype} && $paramRef->{pref_dbtype} ne $curdb ) {
-		my $dbtype = $paramRef->{pref_dbtype};
-		my $sqlHelperClass = "Slim::Utils::${dbtype}Helper";
-		eval "use $sqlHelperClass";
-		
-		$prefs->set( dbtype => $dbtype );
-		$prefs->set( dbsource => $sqlHelperClass->default_dbsource() );
-		$prefs->set( dbsource => $sqlHelperClass->source() );
-		
-		# Trigger restart required message
-		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
 	}
 	
 	# Restart message if dbhighmem is changed
