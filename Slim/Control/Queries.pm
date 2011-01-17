@@ -2310,8 +2310,8 @@ sub rescanprogressQuery {
 
 		# report it
 		my $hrs  = int($total_time / 3600);
-		my $mins = int(($total_time - $hrs * 60)/60);
-		my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
+		my $mins = int(($total_time - $hrs * 3600)/60);
+		my $sec  = $total_time - (3600 * $hrs) - (60 * $mins);
 		$request->addResult('totaltime', sprintf("%02d:%02d:%02d", $hrs, $mins, $sec));
 	
 	# if we're not scanning, just say so...

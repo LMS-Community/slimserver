@@ -53,7 +53,7 @@
 			END;
 
 			PROCESS songinfo_header.html itemobj = {
-				id => coverArt,
+				id => coverArt || 0,
 				album => album,
 				contributorRoles => contributorRoles.keys,
 				genres => album.genre,

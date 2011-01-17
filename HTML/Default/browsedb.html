@@ -86,7 +86,7 @@
 				END;
 
 				PROCESS songinfo_header.html albumFirst = 1 itemobj = {
-					id => coverArt,
+					id => coverArt || 0,
 					album => album,
 					contributorRoles => contributorRoles.keys,
 					genres => album.genre,
