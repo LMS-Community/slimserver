@@ -1178,6 +1178,7 @@ sub _createOrUpdateAlbum {
 		# bug we do want to update album gain tags if they are changed.
 		if ( $attributes->{$gainTag} ) {
 			$attributes->{$gainTag} =~ s/\s*dB//gi;
+			$attributes->{$gainTag} =~ s/\s//g;  # bug 15965
 			$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
 
 			$albumHash->{$shortTag} = $attributes->{$gainTag};
