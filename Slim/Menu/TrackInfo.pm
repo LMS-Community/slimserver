@@ -320,7 +320,7 @@ sub menu {
 		type  => 'opml',
 		items => $items,
 		play  => $track->url,
-		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $track->coverid . '/cover.jpg',
+		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($track->coverid || 0) . '/cover.jpg',
 	};
 }
 
@@ -1029,11 +1029,17 @@ sub infoUrl {
 				label => 'URL',	
 			};
 		} else {
+			my $weblink = '/music/' . $track->id . '/download';
+
+			if ( $track->path && $track->path =~ m|(/[^/\\]+)$| ) {
+				$weblink .= $1;
+			}
+
 			$item = {
 				type  => 'text',
 				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
 				label => 'LOCATION',	
-				weblink => '/music/' . $track->id . '/download',
+				weblink => $weblink,
 			};
 		}
 	}
