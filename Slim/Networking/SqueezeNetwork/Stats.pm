@@ -27,6 +27,10 @@ my $REPORT_INTERVAL = 1200;
 # Granularity for radio logging
 my $REPORT_GRANULARITY = 300;
 
+# Max number of items to upload at a time
+# 8K events = ~1M of JSON data, no one should ever hit this unless there's a bug
+my $MAX_ITEMS_PER_UPLOAD = 8 * 1024;
+
 sub init {
 	my ( $class, $json ) = @_;
 	
@@ -154,28 +158,29 @@ sub logRadio {
 
 sub reportStats {
 	my $queue = $prefs->get('sn_stats_queue') || [];
-	
-	if ( scalar @{$queue} ) {
+
+	if ( scalar @{$queue} ) {		
 		my $client = Slim::Player::Client::clientRandom();
 		
 		if ( defined $client ) {
-			if ( main::DEBUGLOG && $log->is_debug ) {
-				$log->debug( 'Reporting stats queue to SN: ' . Data::Dump::dump($queue) );
-			}
+			# Copy no more than max items into tmp array
+			my @tmp = splice @{$queue}, 0, $MAX_ITEMS_PER_UPLOAD;			
+			$prefs->set( sn_stats_queue => $queue );
 			
-			# Clear the stats queue so we don't lose anything during submit
-			$prefs->set( sn_stats_queue => [] );
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug( 'Reporting stats queue to SN: ' . Data::Dump::dump(\@tmp) );
+			}
 		
 			my $http = Slim::Networking::SqueezeNetwork->new(
 				\&_reportStats_done,
 				\&_reportStats_error,
 				{
 					client => $client,
-					queue  => $queue,
+					queue  => \@tmp,
 				},
 			);
 			
-			my $json = eval { to_json($queue) };
+			my $json = eval { to_json(\@tmp) };
 			if ( $@ ) {
 				$log->error( "Unable to render stats queue as JSON: $@" );
 			}
