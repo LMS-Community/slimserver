@@ -10,7 +10,7 @@ use Slim::Plugin::WiMP::ProtocolHandler;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.wimp',
-	defaultLevel => 'DEBUG',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_WIMP_MODULE_NAME',
 } );
 
