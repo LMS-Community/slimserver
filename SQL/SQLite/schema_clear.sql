@@ -24,4 +24,6 @@ DELETE FROM pluginversion;
 
 DELETE FROM unreadable_tracks;
 
+DELETE FROM scanned_files;
+
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
