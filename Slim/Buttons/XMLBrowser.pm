@@ -610,7 +610,7 @@ sub gotOPML {
 			# XXX: refresh that item?
 			if ( my $nextWindow = $item->{nextWindow} ) {
 				# Ignore special nextWindow values used by SP
-				if ( $nextWindow !~ /^(?:home|parent)$/ ) {		
+				if ( $nextWindow !~ /^(?:home|parent|nowPlaying)$/ ) {		
 					while ( Slim::Buttons::Common::mode($client) ) {
 						Slim::Buttons::Common::popModeRight($client);
 						if ( $client->modeParam('windowId') eq $nextWindow ) {
