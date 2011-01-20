@@ -451,6 +451,17 @@ sub postConnect {
 	# Reset collation load state
 	$currentICU = '';
 	$loadedICU = {};
+	
+	# Check if the DB has been optimized (stats analysis)
+	if ( !main::SCANNER ) {
+		# Check for the presence of the sqlite_stat1 table
+		my ($count) = eval { $dbh->selectrow_array( "SELECT COUNT(*) FROM sqlite_stat1 WHERE tbl = 'tracks'", undef, () ) };
+		
+		if (!$count) {
+			$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');			
+			Slim::Schema->optimizeDB();
+		}
+	}
 }
 
 sub updateProgress {

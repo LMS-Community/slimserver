@@ -197,7 +197,10 @@ sub _syncPrefs {
 		require File::Slurp;
 
 		my $data = File::Slurp::read_file($file);
-
+		
+		# bug 15882 - SP writes files with UTF-8 encoding
+		utf8::decode($data);
+		
 		&{ $prefSyncHandlers{$file} }(\$data);
 	}
 }
