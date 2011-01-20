@@ -1411,7 +1411,7 @@ SLEEPING_IN
 	DE	Schlafmodus in
 	EN	Sleeping in
 	ES	Suspensión en
-	FI	Nukun myöhään
+	FI	Uniajastin
 	FR	Mise en veille dans
 	HE	מצב שינה ב
 	IT	Sospendi fra
