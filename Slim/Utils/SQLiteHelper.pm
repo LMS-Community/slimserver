@@ -452,7 +452,7 @@ sub postConnect {
 	$currentICU = '';
 	$loadedICU = {};
 	
-	# Check if the DB has been optimized
+	# Check if the DB has been optimized (stats analysis)
 	if ( !main::SCANNER ) {
 		# Check for the presence of the sqlite_stat1 table
 		my ($count) = $dbh->selectrow_array( 'SELECT COUNT(*) FROM sqlite_stat1', undef, () );
