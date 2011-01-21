@@ -423,8 +423,9 @@ sub albumsQuery {
 	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
 	
 	# Add selected columns
-	my @cols = sort keys %{$c};
-	$sql = sprintf $sql, join( ', ', @cols );
+	# Bug 15997, AS mapping needed for MySQL
+	my @cols = keys %{$c};
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
@@ -4864,7 +4865,7 @@ sub _getTagDataForTracks {
 	
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
-	my @cols = sort keys %{$c};
+	my @cols = keys %{$c};
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 	
 	my $dbh = Slim::Schema->dbh;
