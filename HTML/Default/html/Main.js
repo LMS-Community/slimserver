@@ -427,7 +427,10 @@ Main = {
 	},
 
 	collapseExpand : function(ev){
-		var doExpand = ev.doExpand == null ? !SqueezeJS.getCookie('Squeezebox-expandPlayerControl') : ev.doExpand;
+		var expandCookie = SqueezeJS.getCookie('Squeezebox-expandPlayerControl');
+		expandCookie = expandCookie == 'false' ? false : true;
+		
+		var doExpand = ev.doExpand == null ? !expandCookie : ev.doExpand;
 
 		var art = Ext.get('ctrlCurrentArt');
 

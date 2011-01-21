@@ -268,11 +268,8 @@ sub pathFromFileURL {
 		}
 	}
 
-	if (!$noCache && scalar keys %fileToPathCache > 32) {
-		%fileToPathCache = ();
-	}
-
 	if (!$noCache) {
+		%fileToPathCache = () if scalar keys %fileToPathCache > 32;
 		$fileToPathCache{$url} = $file;
 	}
 
@@ -307,11 +304,20 @@ sub fileURLFromPath {
 			bt();
 		}
 	}
+	
+	# Bug 15511
+	# URI::file->new() will strip trailing space from path. Use a trailing / to defeat this if necessary.
+	my $addedSlash;
+	if ($path =~ /[\s"]$/) {
+		$path .= '/';
+		$addedSlash = 1;
+	}
 
 	my $uri = URI::file->new($path);
 	$uri->host('');
 
 	my $file = $uri->as_string;
+	$file =~ s%/$%% if $addedSlash;
 
 	if (scalar keys %pathToFileCache > 32) {
 		%pathToFileCache = ();

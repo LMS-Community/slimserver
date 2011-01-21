@@ -4863,7 +4863,8 @@ sub _getTagDataForTracks {
 	}
 	
 	# Add selected columns
-	my @cols = sort keys %{$c};
+	# Bug 15997, AS mapping needed for MySQL
+	my @cols = map { $_ . " AS '" . $_ . "'" } sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', @cols );
 	
 	my $dbh = Slim::Schema->dbh;
