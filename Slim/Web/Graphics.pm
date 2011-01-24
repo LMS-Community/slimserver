@@ -179,6 +179,7 @@ sub artworkRequest {
 			$path = $id =~ /^-/ ? 'html/images/radio_' : 'html/images/cover_';
 			$path .= $spec;
 			$path =~ s/\.\w+//;
+			$path =~ s/_$//;
 			$path .= '.png';
 			
 			# Don't allow browsers to cache this error image

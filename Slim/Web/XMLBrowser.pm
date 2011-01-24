@@ -116,7 +116,22 @@ sub handleWebIndex {
 			$query = uri_unescape( $query ) if $query;
 		}
 		
-		$params->{url} =~ s/{QUERY}/$query/g;
+		if ( $query ) {
+			$params->{url} =~ s/{QUERY}/$query/g;
+		}
+		else {
+			my $opml = {
+				type  => 'opml',
+				title => Slim::Utils::Strings::getString($title),
+				items => [{
+					type => 'search',
+					name => Slim::Utils::Strings::getString($title),
+					url  => $params->{url},
+				}],
+			};
+			handleFeed( $opml, $params );
+			return;
+		}
 	}
 	
 	# Lookup this browse session in cache if user is browsing below top-level
