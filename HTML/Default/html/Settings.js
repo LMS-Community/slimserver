@@ -681,6 +681,7 @@ Settings.Alarm = function() {
 					altFormats: (altFormats ? '|' + altFormats : '') + "g:iA|g:ia|g:i A|g:i a|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H",
 					increment: 5,
 					format: timeFormat,
+					width: 50,
 					hideTrigger: true
 				});
 			}
