@@ -232,7 +232,7 @@ sub deliver_events {
 				);
 			}
 		
-			Slim::Web::Cometd::sendResponse( $conn, $events );
+			Slim::Web::Cometd::sendResponse( @{$conn}, $events );
 		}
 		else {
 			# queue the event for later

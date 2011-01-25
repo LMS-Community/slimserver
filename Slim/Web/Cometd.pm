@@ -62,7 +62,7 @@ sub cliHandler {
 	# Tell the CLI plugin to notify us on disconnect for this socket
 	Slim::Plugin::CLI::Plugin::addDisconnectHandler( $socket, \&cliCloseHandler );
 	
-	handler( $socket, $message );
+	handler( [ $socket, undef ], $message );
 }
 
 # Handler for web requests
@@ -116,7 +116,7 @@ sub handler {
 	
 	if ( !$message ) {
 		sendResponse( 
-			$conn,
+			@{$conn},
 			[ { successful => JSON::XS::false, error => 'no bayeux message found' } ]
 		);
 		return;
@@ -125,7 +125,7 @@ sub handler {
 	my $objs = eval { from_json( $message ) };
 	if ( $@ ) {
 		sendResponse( 
-			$conn,
+			@{$conn},
 			[ { successful => JSON::XS::false, error => "$@" } ]
 		);
 		return;
@@ -137,7 +137,7 @@ sub handler {
 		}
 		
 		sendResponse( 
-			$conn,
+			@{$conn},
 			[ { successful => JSON::XS::false, error => 'bayeux message not an array' } ]
 		);
 		return;
@@ -154,7 +154,7 @@ sub handler {
 	for my $obj ( @{$objs} ) {		
 		if ( ref $obj ne 'HASH' ) {
 			sendResponse( 
-				$conn,
+				@{$conn},
 				[ { successful => JSON::XS::false, error => 'bayeux event not a hash' } ]
 			);
 			return;
@@ -273,10 +273,13 @@ sub handler {
 					}
 					
 					# Hold the connection open while we wait for messages
+					main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
+					
 					Slim::Utils::Timers::setTimer(
-						$conn,
+						$conn->[HTTP_CLIENT],
 						Time::HiRes::time() + ($timeout / 1000),
 						\&sendResponse,
+						$conn->[HTTP_RESPONSE],
 						$events,
 					);
 					return;
@@ -352,9 +355,10 @@ sub handler {
 					
 					# Hold the connection open while we wait for messages
 					Slim::Utils::Timers::setTimer(
-						$conn,
+						$conn->[HTTP_CLIENT],
 						Time::HiRes::time() + ($timeout / 1000),
 						\&sendResponse,
+						$conn->[HTTP_RESPONSE],
 						$events,
 					);
 					return;
@@ -668,29 +672,28 @@ sub handler {
 		}
 	}
 	
-	sendResponse( $conn, $events );
+	sendResponse( @{$conn}, $events );
 }
 
 sub sendResponse {
-	my ( $conn, $out ) = @_;
+	my ( $httpClient, $httpResponse, $out ) = @_;
 	
-	if ( ref $conn eq 'ARRAY' ) {
-		
-		if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+	if ($httpResponse) {
+		if ( $httpClient->transport eq 'long-polling' ) {
 			# Finish a long-poll cycle by sending all pending events and removing the timer
-			Slim::Utils::Timers::killTimers($conn, \&sendResponse);
+			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 
 			# Add any additional pending events
 			my $clid = $out->[0]->{clientId}; # first event is the connect response
 			push @{$out}, ( $manager->get_pending_events( $clid ) );
 		}
 		
-		sendHTTPResponse( @{$conn}, $out );
+		sendHTTPResponse( $httpClient, $httpResponse, $out );
 	}
 	else {
 		# For CLI, don't send anything if there are no events
 		if ( scalar @{$out} ) {
-			sendCLIResponse( $conn, $out );
+			sendCLIResponse( $httpClient, $httpResponse, $out );
 		}
 	}
 }
@@ -969,6 +972,10 @@ sub webCloseHandler {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
+		}
+		
+		if ( $transport eq 'long-polling' ) {
+			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
 		$manager->remove_connection( $clid );
