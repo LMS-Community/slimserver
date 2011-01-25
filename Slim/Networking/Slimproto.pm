@@ -11,7 +11,7 @@ use strict;
 
 use Slim::Utils::Errno;
 use FindBin qw($Bin);
-use Socket qw(inet_ntoa SOMAXCONN);
+use Socket qw(inet_ntoa inet_aton pack_sockaddr_in SOMAXCONN);
 use IO::Socket qw(sockaddr_in);
 use Sys::Hostname;
 use Scalar::Util qw(blessed);
@@ -57,9 +57,10 @@ if ( main::SLIM_SERVICE ) {
 	$forget_disconnected_time = 5;
 }
 
-my $slimproto_socket;
+our $slimproto_socket;
 
-our %ipport;		     # ascii IP:PORT
+our %ipport;		     # ascii IP:PORT, per socket
+our %prxy_seen;		     # PRXY msg already seen, per socket
 our %sock2client;	     # reference to client for each sonnected sock
 our %heartbeat;          # the last time we heard from a client
 our %status;
@@ -69,13 +70,16 @@ our %latency;            # current published latency
 our %callbacksRAWI;
 
 our %message_handlers = (
+	# These two are special-case in client_readable, and shouldn't
+	#   be "handled" during established communications with a $client
+	# 'HELO' => \&_hello_handler,
+	# 'PRXY' => \&_proxy_handler,			# slimprox, not to be used by clients.
 	'ANIC' => \&_animation_complete_handler,	# SB2+
 	'BODY' => \&_http_body_handler,				# SB2+
 	'BUTN' => \&_button_handler,				# SB2+ (TP, Boom)
 	'BYE!' => \&_bye_handler,					# SB2+
 	'DBUG' => \&_debug_handler,					# SB2+
 	'DSCO' => \&_disco_handler,
-	'HELO' => \&_hello_handler,
 	'IR  ' => \&_ir_handler,
 	'KNOB' => \&_knob_handler,					# SB2+ (TP, Boom)
 	'META' => \&_http_metadata_handler,			# SB2+
@@ -85,6 +89,7 @@ our %message_handlers = (
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
 	'ALSS' => \&_ambient_light_sensor_handler,
+	'SHUT' => \&_shut_handler,			# slimprox, not to be used by clients.
 );
 
 sub addHandler {
@@ -293,6 +298,7 @@ sub slimproto_close {
 
 	# forget state
 	delete($ipport{$clientsock});
+	delete($prxy_seen{$clientsock});
 	delete($sock2client{$clientsock});
 }		
 
@@ -395,28 +401,30 @@ sub client_readable {
 						$log->debug( "Slimproto frame: $op, len: $len" );
 					}
 				
-					my $handler_ref = $message_handlers{$op};
-
-					if ( $handler_ref && ref $handler_ref  eq 'CODE' ) {
-						my $client = $sock2client{$s};
-					
-						if ( $op eq 'HELO' ) {
-							$handler_ref->( $s, \$data );
+					my $client = $sock2client{$s};
+				
+					if ( $client ) {
+						my $handler_ref = $message_handlers{$op};
+						if ( $handler_ref && ref $handler_ref  eq 'CODE' ) {
+							$handler_ref->( $client, \$data );
 						}
 						else {
-							if ( $client ) {
-								$handler_ref->( $client, \$data );
-							}
-							else {
-								if ( $s->peeraddr ) {
-									$log->error( "Client not found for slimproto msg op: $op", ' from ', inet_ntoa($s->peeraddr) );
-								}
-								slimproto_close($s);
-							}
+							$log->warn("Unknown slimproto op: $op");
 						}
 					}
 					else {
-						$log->warn("Unknown slimproto op: $op");
+						if ( $op eq 'HELO' ) {
+							_hello_handler( $s, \$data );
+						}
+						elsif ( main::SLIM_SERVICE && $op eq 'PRXY' ) {
+							_proxy_handler( $s, \$data );
+						}
+						else {
+							if ( $s->peeraddr ) {
+								$log->error( "Client not found for slimproto msg op: $op", ' from ', inet_ntoa($s->peeraddr) );
+							}
+							slimproto_close($s);
+						}
 					}
 				}
 				
@@ -973,7 +981,26 @@ sub _bye_handler {
 		$client->unblock();
 		$client->upgradeFirmware();
 	}
-} 
+}
+
+sub _proxy_handler {
+	my $s = shift;
+	my $data_ref = shift;
+
+	if( length($$data_ref) != 6 ) {
+		$log->error( 'Invalid PRXY message from ', inet_ntoa($s->peeraddr) );
+		slimproto_close($s);
+	}
+	elsif( ! exists($prxy_seen{$s}) ) { # prevent double-PRXY
+		$ipport{$s} = sprintf("%u.%u.%u.%u:%u", unpack("CCCCn", $$data_ref));
+		$prxy_seen{$s} = 1;
+	}
+}
+
+sub _shut_handler {
+	my $client = shift;
+	slimproto_close($client->tcpsock);
+}
 
 my $warnNoSB1Support = 0;
 
@@ -1052,8 +1079,10 @@ sub _hello_handler {
 	if (!$s->peerport || !$s->peeraddr) {
 		return;
 	}
-	
-	my $paddr  = sockaddr_in($s->peerport, $s->peeraddr);
+
+	my ($ascii_ip, $ascii_port) = split(/:/, $ipport{$s});
+	my $paddr  = pack_sockaddr_in($ascii_port, inet_aton($ascii_ip));
+
 	my $client = Slim::Player::Client::getClient($id); 
 
 	my ($client_class, $display_class);
@@ -1226,8 +1255,9 @@ sub _hello_handler {
 		if (defined($oldsock) && exists($sock2client{$oldsock})) {
 		
 			if ( main::INFOLOG && $log->is_info ) {
-				$log->info("Closing previous socket to client: $id on ipport: ".
-					join(':', inet_ntoa($oldsock->peeraddr), $oldsock->peerport)
+				$log->info("Closing previous socket to client: $id on ipport: " .
+					join(':', inet_ntoa($oldsock->peeraddr), $oldsock->peerport) .
+					" (" . $ipport{$oldsock} . ") "
 				);
 			}
 
