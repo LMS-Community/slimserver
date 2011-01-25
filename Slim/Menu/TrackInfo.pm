@@ -84,12 +84,12 @@ sub registerDefaultInfoProviders {
 		func      => \&showArtwork,
 	) );
 
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( contributors => (
-			after => 'top',
-			func  => \&infoContributors,
-		) );
+	$class->registerInfoProvider( contributors => (
+		after => 'top',
+		func  => \&infoContributors,
+	) );
 
+	if ( !main::SLIM_SERVICE ) {
 		$class->registerInfoProvider( album => (
 			after => 'contributors',
 			func  => \&infoAlbum,
@@ -333,6 +333,8 @@ sub infoContributors {
 		};
 	}
 	else {
+		return if main::SLIM_SERVICE;
+		
 		# Loop through the contributor types and append
 		for my $role ( sort $track->contributorRoles ) {
 			for my $contributor ( $track->contributorsOfType($role) ) {
