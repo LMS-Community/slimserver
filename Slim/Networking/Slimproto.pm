@@ -11,7 +11,7 @@ use strict;
 
 use Slim::Utils::Errno;
 use FindBin qw($Bin);
-use Socket qw(inet_ntoa inet_aton SOMAXCONN);
+use Socket qw(inet_ntoa inet_aton pack_sockaddr_in SOMAXCONN);
 use IO::Socket qw(sockaddr_in);
 use Sys::Hostname;
 use Scalar::Util qw(blessed);
