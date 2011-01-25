@@ -460,6 +460,11 @@ sub client_socket_write {
 		$log->info("$connections{$client_socket}{'id'} - Sending response [$msg...]");
 	}
 	
+	if ( main::SLIM_SERVICE && $connections{$client_socket}{want_len} ) {
+		# Prepend length of message on SN so we can verify on the web side that we received the whole message
+		$message = 'LEN' . pack('N', length($message)) . $message;
+	}
+	
 	$sentbytes = send($client_socket, $message, 0);
 
 	unless (defined($sentbytes)) {
@@ -576,6 +581,11 @@ sub cli_process {
 	# element of the array as the command
 	if (!defined $cmd && $request->isStatusNotDispatchable()) {
 		$cmd = $arrayRef->[0];	
+	}
+	
+	if ( main::SLIM_SERVICE && $request->getParam('_want_len') ) {
+		# Client wants length prefix on response
+		$connections{$client_socket}{want_len} = 1;
 	}
 
 	# give the command a client if it misses one
