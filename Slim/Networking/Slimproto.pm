@@ -416,7 +416,7 @@ sub client_readable {
 						if ( $op eq 'HELO' ) {
 							_hello_handler( $s, \$data );
 						}
-						else if ( main::SLIM_SERVICE && $op eq 'PRXY' ) {
+						elsif ( main::SLIM_SERVICE && $op eq 'PRXY' ) {
 							_proxy_handler( $s, \$data );
 						}
 						else {
@@ -974,7 +974,7 @@ sub _proxy_handler {
 		$log->error( 'Invalid PRXY message from ', inet_ntoa($s->peeraddr) );
 		slimproto_close($s);
 	}
-	else if( ! exists($prxy_seen{$s}) ) { // prevent double-PRXY
+	elsif( ! exists($prxy_seen{$s}) ) { # prevent double-PRXY
 		$ipport{$s} = sprintf("%u.%u.%u.%u:%u", unpack("CCCCn", $$data_ref));
 		$prxy_seen{$s} = 1;
 	}
