@@ -258,7 +258,9 @@ sub slimproto_close {
 	$clientsock->close();
 
 	if ( my $client = $sock2client{$clientsock} ) {
-		$client->savePluginData;
+		if ( main::SLIM_SERVICE ) {
+			$client->savePluginData;
+		}
 		
 		delete $heartbeat{ $client->id };
 		delete $latency{ $client };
