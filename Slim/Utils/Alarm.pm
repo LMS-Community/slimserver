@@ -1458,6 +1458,9 @@ sub scheduleNext {
 
 	# Set/clear the client's RTC alarm if supported
 	$class->setRTCAlarm($client);
+			
+	# Bug 15755: make sure CLI-based notifications get triggered
+	Slim::Control::Request::notifyFromArray($client, ['alarm', '_cmd']);
 }
 
 =head2 setRTCAlarm( $client )
