@@ -101,6 +101,8 @@ sub is_valid_clid {
 
 sub add_channels {
 	my ( $self, $clid, $subs ) = @_;
+	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	for my $sub ( @{$subs} ) {
 		
@@ -119,7 +121,7 @@ sub add_channels {
 		$self->{channels}->{$re_sub} ||= {};
 		$self->{channels}->{$re_sub}->{$clid} = 1;
 		
-		main::DEBUGLOG && $log->debug("add_channels: $sub ($re_sub)");
+		main::DEBUGLOG && $isDebug && $log->debug("add_channels: $sub ($re_sub) for $clid");
 	}
 	
 	return 1;
@@ -176,6 +178,16 @@ sub remove_channels {
 	return 1;
 }
 
+sub queue_events {
+	my ( $self, $clid, $events ) = @_;
+	
+	my $e = $self->{events}->{$clid};
+	
+	for my $event ( @{$events} ) {
+		$e->{ $event->{channel} } = $event;
+	}
+}
+
 sub get_pending_events {
 	my ( $self, $clid ) = @_;
 	
@@ -189,6 +201,12 @@ sub get_pending_events {
 	$self->{events}->{$clid} = {};
 	
 	return wantarray ? @{$events} : $events;
+}
+
+sub has_pending_events {
+	my ( $self, $clid ) = @_;
+	
+	return scalar keys %{ $self->{events}->{$clid} };
 }
 
 sub deliver_events {
@@ -220,7 +238,7 @@ sub deliver_events {
 	for my $clid ( @to_send ) {	
 		my $conn = $self->{conn}->{$clid};
 		
-		# If we have a connection to send to...
+		# If we have an active connection to send to...
 		if ( $conn ) {
 			# Add any pending events
 			push @{$events}, ( $self->get_pending_events( $clid ) );
@@ -235,8 +253,8 @@ sub deliver_events {
 			Slim::Web::Cometd::sendResponse( @{$conn}, $events );
 		}
 		else {
-			# queue the event for later
-			$self->{events}->{$clid}->{ $events->[0]->{channel} } = $events->[0];
+			# queue the events for later
+			$self->queue_events( $clid, $events );
 			
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 'Queued ' . scalar @{$events} . " event(s) for $clid" );
