@@ -40,8 +40,7 @@ sub read {
 		my $location = $track->location;
 		my $title    = $track->title;
 
-		my $enc = Slim::Utils::Unicode::encodingFromString($title);
-		 $title = Slim::Utils::Unicode::utf8decode_guess($title, $enc);
+		$title = Slim::Utils::Unicode::utf8decode_guess($title);
 
 		if ($class->playlistEntryIsValid($location, $url)) {
 

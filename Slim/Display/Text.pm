@@ -235,7 +235,7 @@ sub render {
 			$sc->{line}[$l] = $screen->{line}[$l];
 			next if ($double && $l == 0);
 			if (!$double) {
-				if (Slim::Utils::Unicode::encodingFromString($screen->{line}[$l]) eq 'raw') {
+				if (Slim::Utils::Unicode::encodingFromString($screen->{line}[$l], 'ignore-utf8-flag') eq 'raw') {
 					# SliMP3 / Pre-G can't handle wide characters outside the latin1 range - turn off the utf8 flag.
 					$sc->{linetext}[$l] = Slim::Utils::Unicode::utf8off($screen->{line}[$l]);
 				} else {
