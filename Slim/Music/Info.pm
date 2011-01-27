@@ -849,7 +849,7 @@ sub guessTags {
 
 			foreach my $match (@matches) {
 				# $match is from a raw filename and needs to be utf8-decoded
-				utf8::decode($match);
+				$match = Slim::Utils::Unicode::utf8decode_locale($match);
 
 				main::INFOLOG && $log->info("$tags[$i] => $match");
 

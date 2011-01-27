@@ -261,9 +261,7 @@ sub handler {
 				}
 				else {
 					# Long-polling
-					if ( ref $conn eq 'ARRAY' ) {
-						$conn->[HTTP_CLIENT]->transport( 'long-polling' );
-					}
+					$conn->[HTTP_CLIENT]->transport( 'long-polling' );
 					
 					my $timeout = LONG_POLLING_TIMEOUT;
 					
@@ -272,16 +270,27 @@ sub handler {
 						$timeout = $obj->{advice}->{timeout};
 					}
 					
-					# Hold the connection open while we wait for messages
-					main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
+					# If we have pending messages for this client, send immediately
+					if ( $manager->has_pending_events($clid) ) {
+						main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');
+											
+						sendResponse( @{$conn}, $events );
+					}
+					else {
+						# Hold the connection open while we wait for events
+						main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
+						
+						# Queue the /meta/connect response so it'll be sent when a response is sent later
+						$manager->queue_events( $clid, $events );
+						
+						Slim::Utils::Timers::setTimer(
+							$conn->[HTTP_CLIENT],
+							Time::HiRes::time() + ($timeout / 1000),
+							\&sendResponse,
+							$conn->[HTTP_RESPONSE],
+						);
+					}
 					
-					Slim::Utils::Timers::setTimer(
-						$conn->[HTTP_CLIENT],
-						Time::HiRes::time() + ($timeout / 1000),
-						\&sendResponse,
-						$conn->[HTTP_RESPONSE],
-						$events,
-					);
 					return;
 				}
 			}
@@ -339,29 +348,6 @@ sub handler {
 						main::DEBUGLOG && $log->debug( 'Marking connection ' . $old->[HTTP_CLIENT] . ' as old' );
 						$old->[HTTP_CLIENT]->transport( 'streaming-old' );
 					}
-				}
-				else {
-					# Long-polling
-					if ( ref $conn eq 'ARRAY' ) {
-						$conn->[HTTP_CLIENT]->transport( 'long-polling' );
-					}
-					
-					my $timeout = LONG_POLLING_TIMEOUT;
-					
-					# Client can override timeout
-					if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
-						$timeout = $obj->{advice}->{timeout};
-					}
-					
-					# Hold the connection open while we wait for messages
-					Slim::Utils::Timers::setTimer(
-						$conn->[HTTP_CLIENT],
-						Time::HiRes::time() + ($timeout / 1000),
-						\&sendResponse,
-						$conn->[HTTP_RESPONSE],
-						$events,
-					);
-					return;
 				}
 			}	
 		}
@@ -662,6 +648,18 @@ sub handler {
 				};
 			}
 		}
+		else {
+			# Any other channel, except special /service/* channel 
+			if ( $obj->{channel} !~ q{^/service/} ) {
+				$manager->deliver_events( [ $obj ] );
+			}
+			
+			push @{$events}, {
+				channel      => $obj->{channel},
+				id           => $obj->{id},
+				successful   => JSON::XS::true,
+			};
+		}
 	}
 	
 	if ( @errors ) {		
@@ -678,14 +676,15 @@ sub handler {
 sub sendResponse {
 	my ( $httpClient, $httpResponse, $out ) = @_;
 	
+	$out ||= [];
+	
 	if ($httpResponse) {
 		if ( $httpClient->transport eq 'long-polling' ) {
 			# Finish a long-poll cycle by sending all pending events and removing the timer
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 
 			# Add any additional pending events
-			my $clid = $out->[0]->{clientId}; # first event is the connect response
-			push @{$out}, ( $manager->get_pending_events( $clid ) );
+			push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
 		}
 		
 		sendHTTPResponse( $httpClient, $httpResponse, $out );
@@ -707,6 +706,13 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
+	# Signal the connection to close if long-polling
+	if ( $httpClient->transport eq 'long-polling' ) {
+		$httpResponse->header( Connection => 'close' );
+		$manager->remove_connection( $httpClient->clid );
+		$httpClient->clid(0);
+	}
+	
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
@@ -727,6 +733,8 @@ sub sendHTTPResponse {
 		}
 	}
 	else {
+		# XXX gzip if supported
+		
 		$httpResponse->header( 'Content-Length', length $out );
 		$sendheaders = 1;
 	}

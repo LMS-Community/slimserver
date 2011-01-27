@@ -3303,7 +3303,7 @@ sub _playlistXtracksCommand_parseDbItem {
 				my $key   = URI::Escape::uri_unescape($2);
 				my $value = URI::Escape::uri_unescape($3);
 
-				if (!utf8::decode($value)) { $log->warn("The following value is not UTF-8 encoded: $value"); }
+				if (!utf8::is_utf8($value) && !utf8::decode($value)) { $log->warn("The following value is not UTF-8 encoded: $value"); }
 
 				$class = ucfirst($1);
 				$obj   = Slim::Schema->single( $class, { $key => $value } );

@@ -97,7 +97,7 @@ sub initPrefs {
 	chomp($prefs->{libraryname});
 
 	# Replace fancy apostraphe (’) with ASCII
-	utf8::decode( $prefs->{libraryname} );
+	utf8::decode( $prefs->{libraryname} ) unless utf8::is_utf8($prefs->{libraryname});
 	$prefs->{libraryname} =~ s/\x{2019}/'/;
 		
 	# we now have a binary preference pane - don't show the wizard

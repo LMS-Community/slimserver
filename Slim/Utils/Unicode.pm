@@ -217,7 +217,7 @@ sub utf8encode {
 
 	if ($string && $encoding ne 'utf8') {
 
-		utf8::decode($string);
+		utf8::decode($string) unless utf8::is_utf8($string);
 		$string = Encode::encode($encoding, $string, $FB_QUIET);
 
 	} elsif ($string) {
@@ -284,7 +284,7 @@ Returns the new string.
 =cut
 
 sub utf8on {
-	utf8::decode($_[0]);
+	utf8::decode($_[0]) unless utf8::is_utf8($_[0]);
 	return $_[0];
 }
 
@@ -431,7 +431,7 @@ sub utf8toLatin1Transliterate {
 	return utf8toLatin1( Text::Unidecode::unidecode($data) );
 }
 
-=head2 encodingFromString( $string )
+=head2 encodingFromString( $string, $ignore_utf8_flag )
 
 Use a best guess effort to return the encoding of the passed string.
 
@@ -440,29 +440,32 @@ Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
 =cut
 
 sub encodingFromString {
+	my $string = shift;
+	
+	return 'utf8' if !$_[0] && utf8::is_utf8($string);
 
 	# Don't copy a potentially large string - just read it from the stack.
-	if (looks_like_ascii($_[0])) {
+	if (looks_like_ascii($string)) {
 
 		return 'ascii';
 
-	} elsif (looks_like_utf32($_[0])) {
+	} elsif (looks_like_utf32($string)) {
 
 		return 'utf-32';
 
-	} elsif (looks_like_utf16($_[0])) {
+	} elsif (looks_like_utf16($string)) {
 	
 		return 'utf-16';
 
-	} elsif (looks_like_utf8($_[0])) {
+	} elsif (looks_like_utf8($string)) {
 	
 		return 'utf8';
 		
-	} elsif (looks_like_latin1($_[0])) {
+	} elsif (looks_like_latin1($string)) {
 	
 		return 'iso-8859-1';
 
-	} elsif (looks_like_cp1252($_[0])) {
+	} elsif (looks_like_cp1252($string)) {
 	
 		return 'cp1252';
 	}
@@ -473,14 +476,14 @@ sub encodingFromString {
 
 	# Check Encode::Detect::Detector before ISO-8859-1, as it can find
 	# overlapping charsets.
-	my $charset = Encode::Detect::Detector::detect($_[0]);
+	my $charset = Encode::Detect::Detector::detect($string);
 
 #	# Encode::Detect::Detector is mislead to to return Big5 with some characters
 #	# In these cases Encode::Guess does a better job... (bug 9553)
 	if ($charset =~ /^(?:big5|euc-jp|euc-kr|euc-cn|euc-tw)$/i) {
 
 		eval {
-			$charset = Encode::Guess::guess_encoding($_[0]);
+			$charset = Encode::Guess::guess_encoding($string);
 			$charset = $charset->name;
 		};
 
