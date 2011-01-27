@@ -50,6 +50,20 @@ use constant LONG_POLLING_TIMEOUT  => 60000; # server will wait up to 60s for ev
 use constant HTTP_CLIENT      => 0;
 use constant HTTP_RESPONSE    => 1;
 
+BEGIN {
+	my $hasZlib;
+	
+	sub hasZlib {
+		return $hasZlib if defined $hasZlib;
+		
+		$hasZlib = 0;
+		eval { 
+			require Compress::Raw::Zlib;
+			$hasZlib = 1;
+		};
+	}
+}
+
 sub init {
 	Slim::Web::Pages->addRawFunction( '/cometd', \&webHandler );
 	Slim::Web::HTTP::addCloseHandler( \&webCloseHandler );
@@ -733,7 +747,23 @@ sub sendHTTPResponse {
 		}
 	}
 	else {
-		# XXX gzip if supported
+		# deflate if requested
+		if ( hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
+			if ( $ae =~ /deflate/ ) {
+				my $x = Compress::Raw::Zlib::Deflate->new( {
+					-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
+				} );
+				
+				my $output = '';
+				if ( ($x->deflate( $out, $output )) == Compress::Raw::Zlib::Z_OK() ) {
+					if ( ($x->flush($output)) == Compress::Raw::Zlib::Z_OK() ) {
+						$out = $output;
+						$httpResponse->header('Content-Encoding' => 'deflate');
+						$httpResponse->header(Vary => 'Accept-Encoding');
+					}
+				}
+			}
+		}
 		
 		$httpResponse->header( 'Content-Length', length $out );
 		$sendheaders = 1;
