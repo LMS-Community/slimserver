@@ -714,6 +714,8 @@ sub sendResponse {
 sub sendHTTPResponse {
 	my ( $httpClient, $httpResponse, $out ) = @_;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	$httpResponse->code( 200 );
 	$httpResponse->header( Expires => '-1' );
 	$httpResponse->header( Pragma => 'no-cache' );
@@ -749,7 +751,7 @@ sub sendHTTPResponse {
 	else {
 		# deflate if requested
 		if ( hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
-			if ( $ae =~ /deflate/ ) {
+			if ( $ae =~ /deflate/ && !$isDebug ) { # don't compress if debugging
 				my $x = Compress::Raw::Zlib::Deflate->new( {
 					-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
 				} );
@@ -769,7 +771,7 @@ sub sendHTTPResponse {
 		$sendheaders = 1;
 	}
 	
-	if ( main::DEBUGLOG && $log->is_debug ) {
+	if ( main::DEBUGLOG && $isDebug ) {
 		if ( $sendheaders ) {
 			$log->debug( "Sending Cometd Response:\n" 
 				. $httpResponse->as_string . $out
