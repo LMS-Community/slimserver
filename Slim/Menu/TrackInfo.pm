@@ -1026,9 +1026,12 @@ sub infoContentType {
 			}
 		}
 
+		# some plugin protocol handlers return a ct string which is not a string token
+		my $ctString = Slim::Utils::Strings::stringExists($ct) ? cstring($client, uc($ct)) : $ct;
+
 		$item = {
 			type => 'text',
-			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . cstring($client,  uc($ct) ),
+			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . $ctString,
 		};
 	}
 	
