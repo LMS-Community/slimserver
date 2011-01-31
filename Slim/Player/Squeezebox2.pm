@@ -800,7 +800,7 @@ sub failedDirectStream {
 	if (!$controller) {return;}
 
 	my $url = $controller->streamUrl();
-	$directlog->warn("Oh, well failed to do a direct stream for: $url [$error]");
+	$directlog->warn("Oh, well failed to do a direct stream for: $url: ", ($error || ''));
 
 	$client->directBody(undef);
 	
