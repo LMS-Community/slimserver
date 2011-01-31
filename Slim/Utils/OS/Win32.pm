@@ -276,6 +276,12 @@ sub getFileName {
 		$path = $fileObj->{Name};
 	}
 
+	else {
+		# bug 16683 - experimental fix
+		# Decode pathnames that do not have '~' as they may have locale-encoded chracaters in them
+		$path = Slim::Utils::Unicode::utf8decode_locale($path);
+	}
+
 	return $path;	
 }
 
