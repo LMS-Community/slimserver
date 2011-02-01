@@ -99,6 +99,9 @@ sub processControl {
 		$client = Slim::Player::Client::getClient($id);
 	}
 	
+	# JRiver Media Center appends invalid null bytes to its HTTP requests
+	$request->{_content} =~ s/\0+$//;
+	
 	# Parse the request
 	my $som_object;
 	eval { $som_object = SOAP::Deserializer->deserialize( $request->content ) };
