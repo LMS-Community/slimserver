@@ -128,8 +128,9 @@ sub array_to_string {
 
 	# add clientid if there is a client
 	unshift @elements, $clientid if defined $clientid;
+	
 	# escape all the terms
-	do { utf8::encode($_) if utf8::is_utf8($_); $_ = URI::Escape::uri_escape($_) } foreach @elements;
+	map { $_ = URI::Escape::uri_escape_utf8($_) } @elements;
 	
 	# join by space and return!
 	return join " ",  @elements;

@@ -2267,18 +2267,7 @@ Handle encoding for external commands.
 sub fixEncoding {
 	my $self = shift || return;
 	
-	my $encoding = ${$self->{'_params'}}{'charset'} || return;
-
-	while (my ($key, $val) = each %{$self->{'_params'}}) {
-
-		if (!ref($val)) {
-
-			# wrap decode in eval, as an incorrect encoding type could hang CLI
-			eval { ${$self->{'_params'}}{$key} = Slim::Utils::Unicode::decode($encoding, $val) };
-			
-			$@ && $log->is_warn && $log->warn($@);
-		}
-	}
+	map {utf8::decode($_) unless ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'}};
 }
 
 ################################################################################
@@ -2312,7 +2301,6 @@ sub executeLegacy {
 # returns the request as an array
 sub renderAsArray {
 	my $self = shift;
-	my $encoding = shift;
 
 	if (!$self->{'_useixhash'}) {
 		logBacktrace("request should set useIxHashes in Slim::Control::Request->new()");
@@ -2335,8 +2323,6 @@ sub renderAsArray {
 		# no output
 		next if ($key =~ /^__/);
 
-		$val = Slim::Utils::Unicode::utf8encode($val, $encoding) if $encoding;
-
 		if ($key =~ /^_/) {
 			push @returnArray, $val;
 		} else {
@@ -2358,8 +2344,6 @@ sub renderAsArray {
 
 				while (my ($key2, $val2) = each %{$hash}) {
 
-					$val2 = Slim::Utils::Unicode::utf8encode($val2, $encoding) if $encoding;
-
 					if ($key2 =~ /^__/) {
 						# no output
 					} elsif ($key2 =~ /^_/) {
@@ -2375,9 +2359,6 @@ sub renderAsArray {
 		# array unrolled
 		if (ref $val eq 'ARRAY') {
 			$val = join (',', @{$val})
-		}
-		elsif ($encoding && !ref $val) {
-			$val = Slim::Utils::Unicode::utf8encode($val, $encoding);
 		}
 		
 		if ($key =~ /^_/) {

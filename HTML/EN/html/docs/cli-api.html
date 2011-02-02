@@ -24,8 +24,7 @@
 	The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
 	hexadecimal 0x0A). The server accepts LF, CR or 0x00 (or any combination
 	thereof) as end of line, and replies with whatever was used for the command.
-	For strings, Squeezebox Server uses the UTF-8 charset. Some extended queries allow
-	to return data in a different charset.
+	For strings, Squeezebox Server uses the UTF-8 character-set encoding.
 </p>
 <p>
 	To use the command line interface interactively, use the telnet
@@ -54,6 +53,7 @@
 	<li>Added genre_id tagged parameter to <a href="#genres">genres</a>.</li>
 	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
 	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
+	<li>Removed the charset tagged parameter from all commands that supported it.</li>
 </ul>
 
 <hr>
@@ -555,22 +555,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</li>
 	
 	<li>
-		Extended queries accepting the &quot;charset&quot; parameter normally
-		return field values in utf8, Perl's lenient version of UTF-8. The value 
-		of this parameter is sent as is to Perl's Encode plumbing. As a 
-		consequence, any encoding known to Perl is valid, for example 
-		&quot;iso-8859-1&quot; (the web standard), &quot;cp437&quot; (MS-DOS), 
-		etc. More exotic choices like &quot;UTF-16&quot; or &quot;shiftjis&quot;
-		are possible. Note that the server will crash if the encoding is 
-		unknown.
-	</li>
-
-	<li>
-		All paths and URLs, for example the ones returned by the query
+		All paths returned as URLs, for example the ones returned by the query
 		&quot;<a href="#songinfo">songinfo</a>&quot; are double URL escaped.
 		To get a useable path (that you can use with your file system), you will
 		need to unescape the field twice. Also note the URLs are not translated
-		into Unicode (or into any other charset requested). 
+		or re-encoded: they use the encoding of the underlying filesystem API,
+		typically (but not necessarily) the current locale.
 	</li>
 
 	<li>
@@ -1988,15 +1978,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			charset
-		</td>
-		<td>
-			Character set to use for the data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			screen
 		</td>
 		<td>
@@ -2409,15 +2390,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Comma separated list of preference values to return (for each player).
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -2703,15 +2675,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			<b>Description</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -3052,15 +3015,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			by a letter (see below). The default value is empty.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -3236,15 +3190,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Determines which tags are returned. Each returned tag is identified 
 			by a letter (see below). The default value is empty.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -3452,15 +3397,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Determines which tags are returned. Each returned tag is identified 
 			by a letter (see below). The default value is &quot;l&quot;.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -3685,15 +3621,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Return only the specified year.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -3824,15 +3751,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			by a letter (see below). The default value is empty.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -3885,7 +3803,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;filename
 		</td>
 		<td>
-			File name
+			File name (encoded in UTF-8, not the system locale)
 		</td>
 	</tr>
 	<tr>
@@ -3974,15 +3892,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is empty.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -4122,11 +4031,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		    for a list of possible fields and their identifying letter). The 
 		    default tags value for this command is &quot;gald&quot;.</td>
 	</tr>
-	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
-	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -4211,15 +4115,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			return a &quot;overwritten_playlist_id&quot; parameter.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -4291,15 +4186,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			The name of the playlist (without .m3u).
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -4536,15 +4422,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is all info except the
 			url (u) and the multi-valued tags for genre(s) (G &amp; P) and artists (A &amp; S)
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -5155,15 +5032,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			possible only if tracks are defined and for a single album.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use for the data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -5287,15 +5155,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Search string
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use for the data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -6284,15 +6143,6 @@ in the saved playlists folder.</p>
 		<td width="100"><b>Tag</b></td>
 		<td><b>Description</b></td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -6653,15 +6503,6 @@ in the saved playlists folder.</p>
 		</td>
 		<td>
 			Comma separated list of player preference values to return (for each player).
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 	<tr>
@@ -7124,15 +6965,6 @@ in the saved playlists folder.</p>
 			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
 			fields and their identifying letter). The default tags value for 
 			this query is &quot;gald&quot;.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 	<tr>
@@ -8071,11 +7903,6 @@ in the saved playlists folder.</p>
 		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use 
 		&quot;enabled&quot;</td>
 	</tr>
-	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
-	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -8241,15 +8068,6 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 			Field used to sort results, typically &quot;name&quot;.
 		</td>
 	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
-		</td>
-	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -8407,15 +8225,6 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			If set to 1, urls are returned by the query, otherwise they aren't.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
@@ -8734,15 +8543,6 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			If set to 1, urls are returned by the query, otherwise they aren't.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			charset
-		</td>
-		<td>
-			Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.
 		</td>
 	</tr>
 </table>
