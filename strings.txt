@@ -9473,7 +9473,7 @@ CHOOSE_PLAYER
 	CS	Zvolte přehrávač
 	DA	Vælg afspiller
 	DE	Player Auswahl
-	EN	Choose player
+	EN	Choose Player
 	ES	Elegir reproductor
 	FI	Valitse soitin
 	FR	Sélectionner une platine
