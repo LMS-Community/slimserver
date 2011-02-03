@@ -33,7 +33,7 @@ use Slim::Utils::Prefs;
 #  subscribe
 # Other CLI queries/commands are handled through Request.pm
 #
-# This module also handles parameters "charset" and "subscribe"
+# This module also handles parameter "subscribe"
 
 my $cli_socket;             # server socket
 my $cli_socket_port = 0;    # CLI port on which socket is opened
@@ -565,7 +565,7 @@ sub cli_process {
 
 	return if !defined $request;
 
-	# fix the encoding and/or manage charset param
+	# fix the encoding
 	$request->fixEncoding();
 
 	# remember we're the source and the $client_socket
@@ -702,9 +702,8 @@ sub cli_request_write {
 
 	$client_socket = $request->connectionID() unless defined $client_socket;
 
-	my $encoding = $request->getParam('charset') || undef; # default is utf8
 
-	my @elements = $request->renderAsArray($encoding);
+	my @elements = $request->renderAsArray();
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 

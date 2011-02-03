@@ -415,7 +415,7 @@ sub string {
 
 			if ($ord > 255 && $useTTFNow) {
 
-				my $char_bits = $TTFCache{$ord};
+				my $char_bits = $TTFCache{"$FTFontSize.$FTBaseline.$ord"};
 
 				if ( !$char_bits ) {
 
@@ -467,7 +467,7 @@ sub string {
 					
 					$char_bits = pack "B*", $bits_tmp;
 
-					$TTFCache{$ord} = $char_bits;
+					$TTFCache{"$FTFontSize.$FTBaseline.$ord"} = $char_bits;
 				}
 
 				if ($cursorpos) {
