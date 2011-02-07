@@ -78,6 +78,7 @@ sub _constant {
 		'MSWin32' => [10,12],
 		'cygwin'  => [3,5],
 		'darwin'  => [10,12],
+		'freebsd' => [10,12],
 		'default' => [33,35],
 	);
 	
