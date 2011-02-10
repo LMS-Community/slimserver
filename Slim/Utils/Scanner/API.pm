@@ -20,6 +20,14 @@ use Slim::Utils::Log ();
 			print "New track scanned: " . $track->title . "\n";
 		},
 	} );
+	
+	Slim::Utils::Scanner::API->onFinished( {
+		cb => sub {
+			my $changeCount = shift;
+			
+			print "Scan finished, $changeCount changes made\n";
+		},
+	} );
 
 =head1 METHODS
 
@@ -40,6 +48,7 @@ my @onDeletedTrack;
 my @onChangedTrack;
 my @onNewPlaylist;
 my @onDeletedPlaylist;
+my @onFinish;
 
 sub onNewTrack {
 	my ( $class, $opts ) = @_;
@@ -110,6 +119,22 @@ sub onDeletedPlaylist {
 	push @onDeletedPlaylist, $opts;
 }
 
+=head2 Slim::Utils::Scanner::API->onFinished( { cb => $cb } )
+
+Register a handler that will be called when a scan has finished.
+
+The callback function is passed the number of changes that were made.
+This handler is called after new/changed/deleted handling, but before
+the artwork precaching phase.
+
+=cut
+
+sub onFinished {
+	my ( $class, $opts ) = @_;
+	
+	push @onFinished, $opts;
+}
+
 ### Internal interface
 
 sub _makeDispatcher {
@@ -137,6 +162,25 @@ sub _makeDispatcher {
 	};
 }
 
+sub _makeFinishedDispatcher {
+	my $handlers = shift;
+	
+	return 0 unless scalar @{$handlers};
+	
+	return sub {
+		my $count = shift;
+		
+		for my $h ( @{$handlers} ) {
+			eval { $h->{cb}->($count) };
+			if ( $@ ) {
+				require Slim::Utils::PerlRunTime;
+				my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+				Slim::Utils::Log::logError("Error in onFinished handler ($method): $@");
+			}
+		}
+	};
+}
+
 sub getHandlers {	
 	return {
 		onNewTrackHandler        => _makeDispatcher( \@onNewTrack, 'Track', 'onNewTrack' ),
@@ -144,6 +188,7 @@ sub getHandlers {
 		onChangedTrackHandler    => _makeDispatcher( \@onChangedTrack, 'Track', 'onChangedTrack' ),
 		onNewPlaylistHandler     => _makeDispatcher( \@onNewPlaylist, 'Playlist', 'onNewPlaylist' ),
 		onDeletedPlaylistHandler => _makeDispatcher( \@onDeletedPlaylist, 'Playlist', 'onDeletedPlaylist' ),
+		onFinishedHandler        => _makeFinishedDispatcher( \@onFinished ),
 	};
 }
 
