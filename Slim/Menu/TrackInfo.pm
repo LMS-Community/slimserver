@@ -837,7 +837,7 @@ sub infoContentType {
 		$item = {
 			type  => 'text',
 			label => 'TYPE',
-			name  => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . $ctString,
+			name  => $ctString,
 		};
 	}
 	
