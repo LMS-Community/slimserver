@@ -469,7 +469,7 @@ sub handleFeed {
 
 				elsif ($subFeed->{'type'} ne 'audio') {
 					# We need to fetch the URL
-					$log->info( "Fetching OPML from:", $subFeed->{'url'} );
+					main::INFOLOG && $log->info( "Fetching OPML from:", $subFeed->{'url'} );
 					Slim::Formats::XML->getFeedAsync(
 						\&handleSubFeed,
 						\&handleError,
@@ -480,7 +480,7 @@ sub handleFeed {
 				}
 			}
 		}
-			
+		
 		# If the feed contains no sub-items, display item details
 		if ( (!$subFeed->{'items'} 
 				 ||
@@ -702,16 +702,26 @@ sub handleFeed {
 		
 		$stash->{'path'} = $params->{'path'} || 'index.html';
 
+		my $start = $stash->{'start'} || 0;
+		
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 
 			# the following ensures the original array is not altered by creating a slice to show this page only
-			my $start = $stash->{'start'};
 			my $finish = $start + $stash->{'pageinfo'}{'itemsperpage'};
 			$finish = $itemCount if ($itemCount < $finish);
 
 			my @items = @{ $stash->{'items'} };
 			my @slice = @items [ $start .. $finish - 1 ];
 			$stash->{'items'} = \@slice;
+		}
+		
+		my $item_index = $start;
+		foreach (@{ $stash->{'items'} }) {
+			if ( !defined $stash->{'index'} ) {
+				$_->{'index'} = $item_index++;
+			} else {
+				$_->{'index'} = $stash->{'index'} . $item_index++;
+			}
 		}
 
 		# Find special stuff that we either want to pull up into the metadata for the 
@@ -727,11 +737,6 @@ sub handleFeed {
 			
 			foreach my $item ( @{ $stash->{'albumData'} || $stash->{'items'} } ) {
 
-				# Bug 7854, don't set an index value unless we're at the top-level trackinfo page
-				if ( !$stash->{'index'} ) {
-					$item->{'index'} = $i;
-				}
-				
 				my $label = $item->{'label'} || '';
 				if ($label =~ /^($allLabels)$/) {
 
