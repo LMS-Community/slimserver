@@ -767,6 +767,7 @@ sub _generic {
 	
 	
 #	$log->error(Data::Dump::dump($result));
+	logBacktrace('no callback') unless $callback;
 
 	$callback->($result);
 }
@@ -1302,16 +1303,17 @@ sub _playlists {
 	}
 
 	_generic($client, $callback, $args, 'playlists',
-		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
+		['tags:su', @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlists_loop'};
 			foreach (@$items) {
-				$_->{'name'}        = $_->{'playlist'};
-				$_->{'type'}        = 'playlist';
-				$_->{'playlist'}    = \&_playlistTracks;
-				$_->{'url'}         = \&_playlistTracks;
-				$_->{'passthrough'} = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], } ];
+				$_->{'name'}          = $_->{'playlist'};
+				$_->{'type'}          = 'playlist';
+				$_->{'favorites_url'} =	$_->{'url'};			
+				$_->{'playlist'}      = \&_playlistTracks;
+				$_->{'url'}           = \&_playlistTracks;
+				$_->{'passthrough'}   = [ { searchTags => [ @searchTags, 'playlist_id:' . $_->{'id'} ], } ];
 			};
 			
 			my %actions = (
