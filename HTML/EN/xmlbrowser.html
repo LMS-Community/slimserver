@@ -22,9 +22,23 @@
 	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 [% END %][% END %]
 
+[%-
+	hasArtwork = 0;
+	contentwrapper = 'contentitem';
+	container = 'contentcontainer';
+	
+	UNLESS ajaxUpdate && ajaxUpdate >= 1;
+		FOREACH item = items;
+			IF item.image; hasArtwork = 1; LAST; END;	
+		END;
+	END;	
+	
+	IF 0 && artwork == 1 && hasArtwork; container = 'gallerycontainer'; contentwrapper = 'galleryitem'; END;
+-%]
+
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
 
-[% IF msg %][% WRAPPER contentcontainer %]
+[% IF msg %][% WRAPPER $container %]
 	<b>[% msg %]</b>
 [% END %][% END %]
 
@@ -76,7 +90,7 @@
 		image = undef;
 	END %]
 
-	[%- WRAPPER contentcontainer %]
+	[%- WRAPPER $container %]
 		[% IF image %]
 		<ul>
 			<a href="[% image %]" target="cover">
@@ -90,7 +104,7 @@
 				[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 				[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
+			[%- WRAPPER $contentwrapper leftcontrols = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
 			[%- END %]
 			[%- odd = (not odd) %]
@@ -124,7 +138,7 @@
 					onMouseOut="hideElements(['controls[% item.index || index _ (start + loop.index) %]'])">
 				[% END %]
 
-				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
 					[% IF item.web.type == 'htmltemplate' %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]
