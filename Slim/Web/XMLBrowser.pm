@@ -873,7 +873,7 @@ sub handleFeed {
 
 				my $type = $item->{'type'} || 'link';
 				
-				if ( $item->{'play'} ) {
+				if ( $item->{'play'} || $item->{'type'} eq 'playlist' ) {
 					$type = 'audio';
 				}
 				
