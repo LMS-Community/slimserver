@@ -678,6 +678,7 @@ sub _topLevel {
 		}
 		$args{'searchTags'}   = \@searchTags if scalar @searchTags;
 		$args{'sort'}         = 'sort:' . $params->{'sort'} if $params->{'sort'};
+		$args{'orderBy'}      = 'sort:' . $params->{'orderBy'} if $params->{'orderBy'};
 		$args{'search'}       = $params->{'search'} if $params->{'search'};
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		
@@ -1024,16 +1025,27 @@ sub _years {
 	);
 }
 
+my %orderByList = (
+	ALBUM                => 'album',
+	SORT_YEARALBUM       => 'yearalbum',
+	SORT_YEARARTISTALBUM => 'yearartistalbum',
+	SORT_ARTISTALBUM     => 'artistalbum',
+);
+
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my $sort       = $pt->{'sort'};
+	my $sort       = $pt->{'orderBy'} || $args->{'orderBy'} || $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $tags       = 'ljsa';
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
 	}
+	
+	if ($sort && $sort =~ /sort:(.*)/) {
+		$sort = undef unless grep {$_ eq $1} ('new', values %orderByList);
+	} 
 	
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my ($artistId) = ($artistIds[0] =~ /artist_id:(\d+)/) if @artistIds;
@@ -1144,9 +1156,10 @@ sub _albums {
 			$actions{'addall'} = $actions{'add'};
 			
 			return {
-				items   => $items,
-				actions => \%actions,
-				sorted  => (($sort && $sort =~ /:new/) ? 0 : 1),
+				items       => $items,
+				actions     => \%actions,
+				sorted      => (($sort && $sort =~ /:new/) ? 0 : 1),
+				orderByList => (($sort && $sort =~ /:new/) ? undef : \%orderByList),
 			}, $extra;
 		},
 	);
@@ -1227,7 +1240,7 @@ sub _tracks {
 				
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
 			}
-			
+
 			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, cover => $image}, undef;
 		},
 	);

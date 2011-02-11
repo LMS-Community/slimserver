@@ -265,6 +265,7 @@ sub albumsQuery {
 	my $sort          = $request->getParam('sort') || 'album';
 	my $to_cache      = $request->getParam('cache');
 	
+	# FIXME: missing artistyearalbum, genrealbum, genreartistalbum
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
 		return;

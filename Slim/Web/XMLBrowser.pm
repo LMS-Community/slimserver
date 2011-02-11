@@ -103,6 +103,8 @@ sub handleWebIndex {
 			$log->debug($asyncArgs->[1]->{url_query});
 		}
 		
+		# XXX: maybe need to pass orderBy through
+		
 		return $feed->( $client, $callback, {wantMetadata => 1, params => $asyncArgs->[1]}, @{$pt});
 	}
 	
@@ -403,6 +405,8 @@ sub handleFeed {
 				    push @params, 'feedMode:1';
 				    push @params, 'wantMetadata:1';
 
+					push @params, 'orderBy:' . $stash->{'orderBy'} if $stash->{'orderBy'};
+					
 					main::INFOLOG && $log->is_info && $log->info('CLI browse: ', join(' ', @params));
 					
 					my $callback = sub {
@@ -459,6 +463,8 @@ sub handleFeed {
 						$log->info( "Fetching OPML from coderef $cbname" );
 					}
 
+					# XXX: maybe need to pass orderBy through
+		
 					# first param is a $client object, but undef from webpages
 					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
 				
@@ -510,6 +516,7 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
+		$stash->{'orderByList'} = $subFeed->{'orderByList'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 		$stash->{'playUrl'}   = $subFeed->{'play'} 
 								|| ($subFeed->{'type'} && $subFeed->{'type'} eq 'audio'
@@ -523,6 +530,7 @@ sub handleFeed {
 		$stash->{'actions'}   = $feed->{'actions'};	
 		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
 		$stash->{'albumData'} = $feed->{'albumData'};	
+		$stash->{'orderByList'} = $feed->{'orderByList'};	
 		$stash->{'playUrl'}   = $feed->{'play'};	
 		
 		if ( $sid ) {
@@ -904,7 +912,7 @@ sub handleFeed {
 		$link = _makePlayLink($stash->{'actions'}, $item, 'add');
 		$item->{'addLink'} = $link if $link;
 	}
-
+	
 	my $output = processTemplate($template, $stash);
 	
 	# done, send output back to Web module for display
@@ -976,9 +984,10 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	$subFeed->{'actions'}   = $feed->{'actions'} if $feed->{'actions'};
-	$subFeed->{'image'}     = $feed->{'cover'}   if $feed->{'cover'};
-	$subFeed->{'albumData'} = $feed->{'albumData'}   if $feed->{'albumData'};
+	$subFeed->{'actions'}     = $feed->{'actions'}       if $feed->{'actions'};
+	$subFeed->{'image'}       = $feed->{'cover'}         if $feed->{'cover'};
+	$subFeed->{'albumData'}   = $feed->{'albumData'}     if $feed->{'albumData'};
+	$subFeed->{'orderByList'} = $feed->{'orderByList'}   if $feed->{'orderByList'};
 
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
@@ -1029,7 +1038,7 @@ sub webLink {
 	my $client  = $_[0];
 	my $args    = $_[1];
 	my $allArgs = \@_;
-	
+
 	# get parameters and construct CLI command
 	my ($params) = ($args->{'path'} =~ m%clixmlbrowser/([^/]+)%);
 	my %params;
@@ -1054,6 +1063,8 @@ sub webLink {
 	push @verbs, 'feedMode:1';
 	push @verbs, 'wantMetadata:1';	# We always want everything we can get
 	
+	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
+
 	# execute CLI command
 	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(' ', (defined $client ? $client->id : 'noClient'), @verbs));
 	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );

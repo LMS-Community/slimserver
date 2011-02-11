@@ -4,7 +4,7 @@ contentwrapper = 'contentitem';
 container = 'contentcontainer';
 artwork = artwork ? artwork : 0;
 
-IF ajaxUpdate >= 1;
+IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
 ELSE;
 	FOREACH item = items;
@@ -33,9 +33,17 @@ END %]
 			[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
 			[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
 			[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
-			var orderByList;
 		[% END %]
 
+		var orderByList;
+		[% IF orderByList %]
+			orderByList = {};
+			[% PROCESS jsString id='SORT_BY' jsId='sort_by' %]
+			[% FOREACH key = orderByList.keys.sort %]
+				orderByList["[% key | string %]"] = '[% orderByList.$key | replace("'", "%27") %]';
+			[% END %]
+		[% END %]
+			
 		Ext.onReady(function(){
 			Browse.init();
 		});
