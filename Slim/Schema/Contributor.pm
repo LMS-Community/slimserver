@@ -139,7 +139,7 @@ sub add {
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		
 		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE name = ?' );
-		$sth->execute($search);
+		$sth->execute($name);
 		my ($id) = $sth->fetchrow_array;
 		$sth->finish;
 		
