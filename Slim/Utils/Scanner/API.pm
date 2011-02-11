@@ -48,7 +48,7 @@ my @onDeletedTrack;
 my @onChangedTrack;
 my @onNewPlaylist;
 my @onDeletedPlaylist;
-my @onFinish;
+my @onFinished;
 
 sub onNewTrack {
 	my ( $class, $opts ) = @_;
