@@ -362,8 +362,7 @@ sub handleFeed {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
-			if ( defined $subFeed->{'url'} && !$subFeed->{'fetched'} &&
-					 !( $stash->{'action'} && $stash->{'action'} =~ /favadd|favdel/ && $depth == $levels ) ) {
+			if ( defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && defined ( $stash->{'q'} || $searchQuery ) ) {
