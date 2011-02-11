@@ -870,6 +870,11 @@ sub markDone {
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("All rescan tasks finished (total changes: $changes)");
 	
+	# plugin hook
+	if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
+		$handler->($changes);
+	}
+	
 	# Done with all tasks
 	if ( !main::SCANNER ) {
 
