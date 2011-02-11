@@ -255,10 +255,8 @@ sub indexHandler {
 
 	my $edit;     # index of entry to edit if set
 	my $changed;  # opml has been changed
-$log->error();
 
 	if ($params->{'sess'} && $sessions{ $params->{'sess'} }) {
-$log->error();
 
 		$sessId = $params->{'sess'};
 
@@ -269,7 +267,6 @@ $log->error();
 		$autosave = $sessions{ $sessId }->{'autosave'};
 
 	} elsif ($params->{'sess'} && $params->{'sess'} > 1 || $params->{'new'}) {
-$log->error();
 
 		my $url   = $params->{'new'};
 
@@ -291,7 +288,6 @@ $log->error();
 		}
 
 	} else {
-$log->error();
 
 		main::INFOLOG && $log->info("new favorites editing session");
 
@@ -300,13 +296,11 @@ $log->error();
 		$autosave = 1;
 		$sessId   = 1;
 	}
-$log->error();
 
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
 	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
-$log->error();
 
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		# also pass through play/add to reuse xmlbrowser handling of playall etc
@@ -321,7 +315,6 @@ $log->error();
 
 	# if not editting favorites create favs class so we can add or delete urls from favorites
 	my $favs = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites') ? undef : Slim::Plugin::Favorites::OpmlFavorites->new($client);
-$log->error();
 
 	if ($params->{'loadfile'}) {
 
@@ -406,7 +399,6 @@ $log->error();
 	if ($params->{'title'}) {
 		$opml->title( $params->{'title'} );
 	}
-$log->error();
 
 	if (my $action = $params->{'action'}) {
 
@@ -599,7 +591,6 @@ $log->error();
 		$params->{'removeoncancel'} = 1;
 		$changed = 1;
 	}
-$log->error();
 
 	# save session data for next call
 	$sessions{ $sessId } = {
@@ -607,13 +598,11 @@ $log->error();
 		'deleted'  => $deleted,
 		'autosave' => $autosave,
 	};
-$log->error();
 
 	# save each change if autosave set
 	if ($changed && $opml && $autosave) {
 		$opml->save;
 	}
-$log->error();
 
 	# set params for page build
 	$params->{'sess'}      = $sessId;
@@ -632,7 +621,6 @@ $log->error();
 	# add the entries for current level
 	my @entries;
 	my $i = 0;
-$log->error();
 
 	foreach my $opmlEntry (@$level) {
 		my $entry = {
@@ -650,7 +638,6 @@ $log->error();
 
 		push @entries, $entry;
 	}
-$log->error();
 
 	$params->{'entries'}       = \@entries;
 	$params->{'levelindex'}    = join '.', @indexPrefix;
@@ -671,7 +658,6 @@ $log->error();
 			'href'  => 'href="index.html?index=' . (join '.', @ind) . '&sess=' . $sessId . '"',
 		};
 	}
-$log->error();
 
 	# fill template and send back response
 	my $callback = shift;
