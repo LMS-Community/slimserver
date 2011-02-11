@@ -255,8 +255,10 @@ sub indexHandler {
 
 	my $edit;     # index of entry to edit if set
 	my $changed;  # opml has been changed
+$log->error();
 
 	if ($params->{'sess'} && $sessions{ $params->{'sess'} }) {
+$log->error();
 
 		$sessId = $params->{'sess'};
 
@@ -267,6 +269,7 @@ sub indexHandler {
 		$autosave = $sessions{ $sessId }->{'autosave'};
 
 	} elsif ($params->{'sess'} && $params->{'sess'} > 1 || $params->{'new'}) {
+$log->error();
 
 		my $url   = $params->{'new'};
 
@@ -288,6 +291,7 @@ sub indexHandler {
 		}
 
 	} else {
+$log->error();
 
 		main::INFOLOG && $log->info("new favorites editing session");
 
@@ -296,11 +300,13 @@ sub indexHandler {
 		$autosave = 1;
 		$sessId   = 1;
 	}
+$log->error();
 
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
 	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
+$log->error();
 
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		# also pass through play/add to reuse xmlbrowser handling of playall etc
@@ -315,6 +321,7 @@ sub indexHandler {
 
 	# if not editting favorites create favs class so we can add or delete urls from favorites
 	my $favs = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites') ? undef : Slim::Plugin::Favorites::OpmlFavorites->new($client);
+$log->error();
 
 	if ($params->{'loadfile'}) {
 
@@ -399,6 +406,7 @@ sub indexHandler {
 	if ($params->{'title'}) {
 		$opml->title( $params->{'title'} );
 	}
+$log->error();
 
 	if (my $action = $params->{'action'}) {
 
@@ -591,6 +599,7 @@ sub indexHandler {
 		$params->{'removeoncancel'} = 1;
 		$changed = 1;
 	}
+$log->error();
 
 	# save session data for next call
 	$sessions{ $sessId } = {
@@ -598,11 +607,13 @@ sub indexHandler {
 		'deleted'  => $deleted,
 		'autosave' => $autosave,
 	};
+$log->error();
 
 	# save each change if autosave set
 	if ($changed && $opml && $autosave) {
 		$opml->save;
 	}
+$log->error();
 
 	# set params for page build
 	$params->{'sess'}      = $sessId;
@@ -621,6 +632,7 @@ sub indexHandler {
 	# add the entries for current level
 	my @entries;
 	my $i = 0;
+$log->error();
 
 	foreach my $opmlEntry (@$level) {
 		my $entry = {
@@ -638,6 +650,7 @@ sub indexHandler {
 
 		push @entries, $entry;
 	}
+$log->error();
 
 	$params->{'entries'}       = \@entries;
 	$params->{'levelindex'}    = join '.', @indexPrefix;
@@ -658,6 +671,7 @@ sub indexHandler {
 			'href'  => 'href="index.html?index=' . (join '.', @ind) . '&sess=' . $sessId . '"',
 		};
 	}
+$log->error();
 
 	# fill template and send back response
 	my $callback = shift;
@@ -1112,7 +1126,7 @@ sub objectInfoAddFavorite {
 		favorites   => 0,
 	};
 	
-	$callback->( $menu );
+	$callback->( [$menu] );
 }
 
 sub objectInfoRemoveFavorite {
@@ -1125,13 +1139,13 @@ sub objectInfoRemoveFavorite {
 			url  => sub {
 				my $callback = $_[1];
 				
-				$callback->( {
+				$callback->( [{
 					type        => 'text',
 					name        => cstring($client, 'PLUGIN_FAVORITES_CANCELLING'),
 					showBriefly => 1,
 					popback     => 2,
 					favorites   => 0,
-				} );
+				}] );
 			},
 		},
 		{
@@ -1154,7 +1168,7 @@ sub objectInfoRemoveFavorite {
 					favorites   => 0,
 				};
 				
-				$callback->( $menu2 );
+				$callback->( [$menu2] );
 			},
 		},
 	];
