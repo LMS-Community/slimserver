@@ -278,7 +278,7 @@ sub handleFeed {
 				$searchQuery = $stash->{'q'};
 			}
 			elsif ( $i =~ /(?:\d+)?_(.+)/ ) {
-				$searchQuery = uri_unescape($1);
+				$searchQuery = Slim::Utils::Unicode::utf8on(uri_unescape($1));
 			}
 			
 			# Add search query to crumbName
