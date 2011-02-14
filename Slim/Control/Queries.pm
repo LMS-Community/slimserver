@@ -2780,9 +2780,18 @@ sub playlistsTracksQuery {
 					$favorites{'title'} = $playlistObj->name;
 					$favorites{'url'} = $playlistObj->url;
 				
-					$chunkCount = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
+					($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
 				
-					$chunkCount = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+					($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+				}
+				else {
+					# bug 16947, 14360: $totalCount needs to be upped by two for all chunks, not just the last one
+					# this is to ensure that $totalCount correctly accounts for the 
+					# delete playlist and add to favorites menu items, even for the earlier chunks. 
+					# If SP gets conflicting counts on different chunks, it leads to badthings
+					if ($totalCount > 0) {
+						$totalCount += 2;
+					}
 				}
 			}
 	}
