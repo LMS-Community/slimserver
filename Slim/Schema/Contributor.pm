@@ -104,7 +104,7 @@ sub displayAsHTML {
 sub url {
 	my $self = shift;
 
-	return sprintf('db:contributor.namesearch=%s', URI::Escape::uri_escape_utf8($self->namesearch));
+	return sprintf('db:contributor.name=%s', URI::Escape::uri_escape_utf8($self->name));
 }
 
 sub add {
@@ -133,13 +133,13 @@ sub add {
 
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 
-		# The search columnn is the canonical text that we match against in a search.
+		# Bug 10324, we now match only the exact name
 		my $name   = $artistList[$i];
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 		
-		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE namesearch = ?' );
-		$sth->execute($search);
+		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE name = ?' );
+		$sth->execute($name);
 		my ($id) = $sth->fetchrow_array;
 		$sth->finish;
 		

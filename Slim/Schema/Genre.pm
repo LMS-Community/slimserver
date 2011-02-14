@@ -39,7 +39,7 @@ use Slim::Utils::Log;
 sub url {
 	my $self = shift;
 
-	return sprintf('db:genre.namesearch=%s', URI::Escape::uri_escape_utf8($self->namesearch));
+	return sprintf('db:genre.name=%s', URI::Escape::uri_escape_utf8($self->name));
 }
 
 sub tracks {
@@ -80,8 +80,8 @@ sub add {
 		# So that ucfirst() works properly.
 		use locale;
 		
-		my $sth = $dbh->prepare_cached( 'SELECT id FROM genres WHERE namesearch = ?' );
-		$sth->execute($namesort);
+		my $sth = $dbh->prepare_cached( 'SELECT id FROM genres WHERE name = ?' );
+		$sth->execute( ucfirst($genreSub) );
 		my ($id) = $sth->fetchrow_array;
 		$sth->finish;
 		
