@@ -213,7 +213,7 @@ Locate MP3 frame boundaries when seeking through a file.
 sub findFrameBoundaries {
 	my ( $class, $fh, $offset, $time ) = @_;
 	
-	if ( !defined $fh || !defined $offset ) {
+	if ( !defined $fh || (!defined $offset && !defined $time) ) {
 		return 0;
 	}
 	
@@ -282,7 +282,7 @@ sub scanBitrate {
 				$pic = ( sort { $a->[1] <=> $b->[1] } @{$pic} )[0];
 			}
 			
-			$track->cover( length( $pic->[4] ) );
+			$track->cover( length( $pic->[3] ) );
 			$track->update;
 			
 			my $data = {
@@ -439,13 +439,13 @@ sub doTagMapping {
 			# multiple images, use image with lowest image_type value
 			# In 'no artwork' mode, ARTWORK is the length
 			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK} 
-				? ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4]
-				: length( ( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4] );
+				? ( sort { $a->[1] <=> $b->[1] } @{$pic} )[0]->[3]
+				: length( ( sort { $a->[1] <=> $b->[1] } @{$pic} )[0]->[3] );
 		}
 		else {
 			$tags->{COVER_LENGTH} = $ENV{AUDIO_SCAN_NO_ARTWORK}
-				? $pic->[4]
-				: length( $pic->[4] );
+				? $pic->[3]
+				: length( $pic->[3] );
 		}
 	}
 }

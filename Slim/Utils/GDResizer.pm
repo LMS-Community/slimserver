@@ -505,10 +505,10 @@ sub _read_tag {
 	if ( my $pic = $tags->{APIC} ) {
 		if ( ref $pic->[0] eq 'ARRAY' ) {
 			# multiple images, return image with lowest image_type value
-			return \(( sort { $a->[2] <=> $b->[2] } @{$pic} )[0]->[4]);
+			return \(( sort { $a->[1] <=> $b->[1] } @{$pic} )[0]->[3]);
 		}
 		else {
-			return \($pic->[4]);
+			return \($pic->[3]);
 		}
 	}
 	
