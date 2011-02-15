@@ -619,6 +619,18 @@ sub scrollInit {
 		# Start client-side scrolling
 		$display->scrollState($screenNo, 3);
 		
+		my $scrollbits = ${$scroll->{scrollbitsref}};
+		my $length = length $scrollbits;
+		my $offset = 0;
+		
+		# Don't exceed max width the firmware can handle (10 screen widths)
+		my $maxWidth = $display->screenBytes($screenNo) * 10;
+		if ( $length > $maxWidth ) {
+			substr $scrollbits, $maxWidth, $length - $maxWidth, '';
+			$scroll->{scrollend} = $maxWidth - $display->screenBytes($screenNo);
+			$length = length $scrollbits;
+		}
+		
 		# First send the scrollable data frame
 		# Note: length of $data header must be even!
 		my $header = pack 'ccNNnnn',
@@ -629,12 +641,6 @@ sub scrollInit {
 			$pixels,
 			$scroll->{scrollonce},    # repeat flag
 			$scroll->{scrollend} / 4; # width of scroll area in pixels
-		
-		# slimproto has a max packet size of 3000 bytes, so we may need to send multiple packets
-		# for a long scrolling frame
-		my $scrollbits = ${$scroll->{scrollbitsref}};
-		my $length = length $scrollbits;
-		my $offset = 0;
 		
 		while ($length > 0) {
 			if ( $length > 1280 ) { # split up into normal max grf size
