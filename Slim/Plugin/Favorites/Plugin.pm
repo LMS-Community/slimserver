@@ -914,8 +914,12 @@ sub cliDelete {
 		my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
 		if (!defined $index || !defined $favs->entry($index)) {
-			$request->setStatusBadParams();
-			return;
+			if ($url) {
+				$favs->deleteUrl($url);
+			} else {
+				$request->setStatusBadParams();
+				return;
+			}
 		}
 
 		$favs->deleteIndex($index);

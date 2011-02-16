@@ -1387,8 +1387,6 @@ sub _playlistTracks {
 					},
 				);
 			$actions{'items'} = $actions{'info'};
-
-			# Maybe add delete-item and add-to-favourites
 			
 			return {items => $items, actions => \%actions, sorted => 0}, undef;
 		}

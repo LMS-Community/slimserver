@@ -74,6 +74,17 @@ sub registerDefaultInfoProviders {
 		func      => \&playPlaylist,
 	) );
 
+	$class->registerInfoProvider( addfavorite => (
+		menuMode  => 1,
+		after    => 'playitem',
+		func      => \&addFavorite,
+	) );
+
+	$class->registerInfoProvider( deleteplaylist => (
+		menuMode  => 1,
+		after    => 'addfavorite',
+		func      => \&deletePlaylist,
+	) );
 
 }
 
@@ -252,13 +263,82 @@ sub addPlaylist {
 	return $items;
 }
 
+sub addFavorite {
+	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+
+	return [] if !blessed($client);
+
+	my $action = 'add';
+	my $token = 'JIVE_SAVE_TO_FAVORITES';
+	# first we check to see if the URL exists in favorites already
+	my $favIndex = undef;
+	if ( blessed($client) ) {
+		my $favs = Slim::Utils::Favorites->new($client);
+		$favIndex = $favs->findUrl($url);
+		if (defined($favIndex)) {
+			$action = 'delete';
+			$token = 'JIVE_DELETE_FROM_FAVORITES';
+		}
+	}
+	
+	return [ {
+		type => 'text',
+		name => cstring($client, $token),
+		jive => {
+			actions => {
+				'go' => {
+					player => 0,
+					cmd    => [ 'jivefavorites', $action ],
+					params => {
+							title   => $playlist->name,
+							url     => $url,
+					},
+				},
+			},
+			style   => 'item',
+		}, 
+	} ];
+}
+
+sub deletePlaylist {
+	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+
+	return [] if !blessed($client);
+
+	###
+	# FIXME: bug 8670. This is the 7.1 workaround to deal with the %s in the EN string
+	my $string = cstring($client, 'JIVE_DELETE_PLAYLIST', $playlist->name);
+	$string =~ s/\\n/ /g;
+
+	return [ {
+		type => 'text',
+		name => $string,
+		jive => {
+			actions => {
+				'go' => {
+					player => 0,
+					cmd    => [ 'jiveplaylists', 'delete' ],
+					params => {
+						url	        => $url,
+						playlist_id => $playlist->id,
+						title       => $playlist->name,
+						menu        => 'track',
+						menu_all    => 1,
+					},
+				},
+			},
+			style   => 'item',
+		}, 
+	} ];
+}
+
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
 	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
-	my $playlistId        = $request->getParam('playlist_id');
+	my $playlistId     = $request->getParam('playlist_id');
 	my $menuMode       = $request->getParam('menu') || 0;
 	
 
