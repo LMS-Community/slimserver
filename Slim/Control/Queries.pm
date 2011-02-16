@@ -474,7 +474,6 @@ sub albumsQuery {
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
 		}
-		$log->error("index=$index, quantity=$quantity");
 
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Albums query: $sql / " . Data::Dump::dump($p) );
@@ -3479,9 +3478,6 @@ sub titlesQuery {
 	my $chunkCount = 0;
 
 	if ( scalar @{$itemOrder} ) {
-		
-		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-
 		
 		for my $trackId ( @{$itemOrder} ) {
 			my $item = $items->{$trackId};
