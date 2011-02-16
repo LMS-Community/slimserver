@@ -620,7 +620,28 @@ sub gotOPML {
 		'isSorted'   => $opml->{sorted} || 0,
 		'lookupRef'  => sub {
 			my $index = shift;
-			return $opml->{'items'}->[$index]->{'name'};
+			my $item  = $opml->{'items'}->[$index];
+			my $hasMatedata = $item->{'hasMetadata'} || '';
+			
+			if ($hasMatedata eq 'track') {
+				return Slim::Music::Info::standardTitle($client, undef, $item) || $item->{name};
+			} elsif ($hasMatedata eq 'album') {
+				my $name = $item->{name};
+				
+				if ($prefs->get('showYear')) {
+					my $year = $item->{'year'};
+					$name .= " ($year)" if $year;
+				}
+		
+				if ($prefs->get('showArtist')) {
+					my $artist = $item->{'artist'};
+					$name .= sprintf(' %s %s', $client->string('BY'), $artist) if $artist;
+				}
+				
+				return $name;
+			} else {
+				return $item->{name};
+			}
 		},
 
 		'onRight'    => sub {

@@ -910,7 +910,8 @@ sub _cliQuery_done {
 				}
 
 				my $itemIndex = $start - 1;
-				
+				my $format  = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+								
 				$start -= $subFeed->{'offset'};
 				$end   -= $subFeed->{'offset'};
 				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'});
@@ -922,8 +923,15 @@ sub _cliQuery_done {
 					tie my %hash, "Tie::IxHash";
 					
 					$hash{id}    = join('.', @crumbIndex, $itemIndex);
-					$hash{name}  = $item->{name}  if defined $item->{name};
-					$hash{name}  = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $hash{'name'} if $hash{'name'} && defined $item->{'label'};
+					if (my $name = $item->{name}) {
+						if (defined $item->{'label'}) {
+							$hash{name} = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $name;
+						} elsif (($item->{'hasMetadata'} || '') eq 'track') {
+							$hash{name} = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item) || $name;
+						} else {
+							$hash{name} = $name;
+						}
+					}
 					$hash{type}  = $item->{type}  if defined $item->{type};
 					$hash{title} = $item->{title} if defined $item->{title};
 					$hash{url}   = $item->{url}   if $want_url && defined $item->{url};

@@ -21,12 +21,14 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Favorites;
+use Slim::Utils::Prefs;
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
 
 my $log = logger('formats.xml');
+my $prefs = preferences('server');
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
@@ -723,11 +725,21 @@ sub handleFeed {
 		}
 		
 		my $item_index = $start;
+		my $format  = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 		foreach (@{ $stash->{'items'} }) {
 			if ( !defined $stash->{'index'} ) {
 				$_->{'index'} = $item_index++;
 			} else {
 				$_->{'index'} = $stash->{'index'} . $item_index++;
+			}
+			
+			if (my $hasMetadata = $_->{'hasMetadata'}) {
+				if ($hasMetadata eq 'track') {
+					$_->{'name'} = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $_);
+				} elsif ($hasMetadata eq 'album') {
+					$_->{'showYear'}   = 1 if ($prefs->get('showYear')   && $_->{'year'});
+					$_->{'showArtist'} = 1 if ($prefs->get('showArtist') && $_->{'artist'});
+				}
 			}
 		}
 

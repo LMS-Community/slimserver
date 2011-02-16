@@ -1934,7 +1934,6 @@ sub playlistsTracksQuery {
 		if ($valid || $start == $end) {
 
 
-			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 			my $cur = $start;
 			my $loopname = 'playlisttracks_loop';
 			my $chunkCount = 0;

@@ -1050,7 +1050,10 @@ sub _albums {
 	
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my ($artistId) = ($artistIds[0] =~ /artist_id:(\d+)/) if @artistIds;
-	$tags .= 'S' if ($artistId);
+	my $showArtist = $prefs->get('showArtist');
+	$tags .= 'S' if $showArtist || $artistId;
+	
+	$tags .= 'y' unless grep {/^year:/} @searchTags;
 	
 	_generic($client, $callback, $args, 'albums',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
@@ -1073,9 +1076,13 @@ sub _albums {
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
-				if (!$artistId || $artistId != $_->{'id'}) {
+				if (!$artistId || $artistId != $_->{'artist_id'}) {
 					$_->{'name2'} = $_->{'artist'};
+				} elsif (!$showArtist) {
+					delete $_->{'artist'};
 				}
+				
+				$_->{'hasMetadata'}   = 'album'
 			}
 			my $extra;
 			if (scalar @searchTags) {
@@ -1180,13 +1187,25 @@ sub _tracks {
 	}
 
 	_generic($client, $callback, $args, 'titles',
-		['tags:dtux', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
+		['tags:dtuxgaliqykorf', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
-			my $items = $results->{'titles_loop'};
+			my $items   = $results->{'titles_loop'};
+			
 			foreach (@$items) {
-				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
-				$_->{'name'}          = $tracknum . $_->{'title'};
+				# Map a few items that get different tags to those expected for TitleFormatter
+				# Currently missing composer, conductor, band because of additional cost of 'A' tag query
+				$_->{'ct'}            = $_->{'type'};
+				if (my $secs = $_->{'duration'}) {
+					$_->{'secs'}      = $secs;
+					$_->{'duration'}  = sprintf('%d:%02d', int($secs / 60), $secs % 60);
+				}
+				$_->{'discc'}         = delete $_->{'disccount'} if defined $_->{'disccount'};
+				$_->{'fs'}            = $_->{'filesize'};
+				$_->{'hasMetadata'}   = 'track';
+				
+				$_->{'name'}          = $_->{'title'};
+
 				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;

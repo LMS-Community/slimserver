@@ -234,7 +234,6 @@ sub init {
 									'TRACKNUM. ARTIST - TITLE',
 									'TRACKNUM. TITLE (ARTIST)',
 									'TRACKNUM. TITLE - ARTIST - ALBUM',
-									'FILE.EXT',
 									'TRACKNUM. TITLE from ALBUM by ARTIST',
 									'TITLE (ARTIST)',
 									'ARTIST - TITLE'

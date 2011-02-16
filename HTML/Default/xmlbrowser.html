@@ -205,6 +205,16 @@ END %]
 						[% WRAPPER weblink %]
 							[% (item.web.value || item.name || item.title) | html_line_break %]
 						[% END %]
+						[% IF item.showYear && item.year %]
+								<br><a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
+						[% END %]
+						[% IF item.showArtist && item.artist %]
+							[% IF item.artist_id %]
+								<br><a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
+							[% ELSE %]
+								<br>[% item.artist %]
+							[% END %]
+						[% END %]
 					[% END %]
 
 					[% IF item.icon || (item.image && !(artwork > 0)) %]

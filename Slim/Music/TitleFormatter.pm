@@ -605,7 +605,7 @@ sub infoFormat {
 		# Make sure all keys in meta are lowercase for format lookups
 		my @uckeys = grep { $_ =~ /[A-Z]/ } keys %{$meta};
 		for my $key ( @uckeys ) {
-			$meta->{lc($key)} = delete $meta->{$key};
+			$meta->{lc($key)} = $meta->{$key};
 		}
 		
 		$output = $format->($meta) if ref($format) eq 'CODE';
