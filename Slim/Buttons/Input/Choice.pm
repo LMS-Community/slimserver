@@ -100,23 +100,19 @@ sub getItem {
 sub getItemName {
 	my $client = shift;
 	my $index  = shift; # optional
+	
+	# if name has been overridden by a function, this code will get that.
+	# A 'name' function in the item is preferred over a 'name' modeParam
 
-	if (!defined($index)) {
-
-		# if name has been overridden by a function, this code will get that.
-		my $name = getParam($client, 'name');
-		if ($name) {
-			return $name;
-		}
-	}
-
-	# name not overridden, get it from the item
 	my $item = getItem($client, $index);
-
-	if ( ref($item) && $item->{'name'} ) {
+	if ( ref($item) && $item->{'name'} && ref $item->{'name'} eq 'CODE' ) {
 		return $item->{'name'};
 	}
 	
+	if (my $name = $client->modeParam('name')) {
+		return $name;
+	}
+
 	# use lookupRef to find the item name if available
 	if ( my $lookup = $client->modeParam('lookupRef') ) {
 		return $lookup->( $client->modeParam('listIndex') || 0 );
