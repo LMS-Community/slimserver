@@ -52,6 +52,20 @@
 	
 	<li>Other Major Changes:</li>
 	<ul>
+		<li>Major Rewrite of Library Browser</li>
+		<ul>
+			<li>A single core implementation supports WebUI, ip3k Player-UI (Boom, Transporter, Classic, SliMP3), SqueezePlay UI (Touch, Radio, Controller).</li>
+			<li>Features generally much more consistent across the different user interfaces.</li>
+			<li>Access to some features changed and some other features may behave differently or be unavailable:</li>
+			<ul>
+				<li>Playlist tracks listing includes artwork in Web and SqueezePlay UIs.</li>
+				<li>Add-as-favorite and Delete-playlist items from SqueezePlay playlist tracks listing moved to playlist context menu (more).</li>
+				<li><code>VBR_SCALE</code>, <code>BITRATE</code>, <code>TAGSIZE</code>, <code>VOLUME</code> (volume name), <code>PATH</code>, <code>FILE</code> and <code>EXT</code>
+					substitution items no longer available for title format configuration
+					(see Settings/Interface/Title&nbsp;Format and Settings/Player/<i>player</i>/Basic&nbsp;Settings/Title&nbsp;Format in the Web UI).</li>
+			</ul>
+			<li>API for plugin developers to modify browsing experience (see <code>BrowseLibrary.pm</code> for documentation).</li>
+		</ul>
 		<li>The CLI serverstatus lastscan field has been changed to more correctly report the timestamp of the last time the database was changed by the scanner.</li>
 		<li>The CLI charset tagged parameter has been removed from all commands that supported it. All input and output is now in UTF-8 (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=16834">#16834</a>).</li>
 	</ul>
