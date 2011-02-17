@@ -1031,6 +1031,7 @@ my %orderByList = (
 	SORT_YEARALBUM       => 'yearalbum',
 	SORT_YEARARTISTALBUM => 'yearartistalbum',
 	SORT_ARTISTALBUM     => 'artistalbum',
+	SORT_ARTISTYEARALBUM => 'artflow',
 );
 
 sub _albums {
