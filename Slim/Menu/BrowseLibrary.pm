@@ -1037,9 +1037,13 @@ my %orderByList = (
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my $sort       = $pt->{'orderBy'} || $args->{'orderBy'} || $pt->{'sort'};
+	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $tags       = 'ljsa';
+	
+	if (!$sort || $sort ne 'sort:new') {
+		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
+	}
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
@@ -1167,8 +1171,8 @@ sub _albums {
 			return {
 				items       => $items,
 				actions     => \%actions,
-				sorted      => (($sort && $sort =~ /:new/) ? 0 : 1),
-				orderByList => (($sort && $sort =~ /:new/) ? undef : \%orderByList),
+				sorted      => (($sort && $sort eq 'sort:new') ? 0 : 1),
+				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
 			}, $extra;
 		},
 	);
