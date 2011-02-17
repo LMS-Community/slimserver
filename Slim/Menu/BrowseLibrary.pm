@@ -1377,16 +1377,32 @@ sub _playlistTracks {
 	my $offset     = $args->{'index'} || 0;
 	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
-		['tags:dtu', $menuStyle, @searchTags],
+		['tags:dtuxgaliqykorfJK', $menuStyle, @searchTags],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlisttracks_loop'};
 			foreach (@$items) {
-				my $tracknum = $_->{'tracknum'} ? $_->{'tracknum'} . '. ' : '';
-				$_->{'name'}        = $tracknum . $_->{'title'};
-				$_->{'type'}        = 'audio';
-				$_->{'playall'}     = 1;
-				$_->{'play_index'}  = $offset++;
+				# Map a few items that get different tags to those expected for TitleFormatter
+				# Currently missing composer, conductor, band because of additional cost of 'A' tag query
+				$_->{'ct'}            = $_->{'type'};
+				if (my $secs = $_->{'duration'}) {
+					$_->{'secs'}      = $secs;
+					$_->{'duration'}  = sprintf('%d:%02d', int($secs / 60), $secs % 60);
+				}
+				$_->{'discc'}         = delete $_->{'disccount'} if defined $_->{'disccount'};
+				$_->{'fs'}            = $_->{'filesize'};
+				$_->{'hasMetadata'}   = 'track';
+				
+				$_->{'name'}          = $_->{'title'};
+				$_->{'name2'}		  = $_->{'artist'};
+				
+				$_->{'image'}         = ($_->{'artwork_track_id'}
+										? 'music/' . $_->{'artwork_track_id'} . '/cover'
+										: $_->{'artwork_url'} ? $_->{'artwork_url'} : undef);
+
+				$_->{'type'}          = 'audio';
+				$_->{'playall'}       = 1;
+				$_->{'play_index'}    = $offset++;
 			}
 
 			my %actions = (
