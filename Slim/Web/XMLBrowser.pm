@@ -22,6 +22,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Favorites;
 use Slim::Utils::Prefs;
+use Slim::Music::TitleFormatter;
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
 

@@ -31,6 +31,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Music::TitleFormatter;
 #use Slim::Utils::Timers;
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
