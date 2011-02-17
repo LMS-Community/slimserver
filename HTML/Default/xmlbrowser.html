@@ -206,7 +206,11 @@ END %]
 							[% (item.web.value || item.name || item.title) | html_line_break %]
 						[% END %]
 						[% IF item.showYear && item.year %]
+							[% IF item.remote %]
+								([% item.year %])
+							[% ELSE %]
 								<br><a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
+							[% END %]
 						[% END %]
 						[% IF item.showArtist && item.artist %]
 							[% IF item.artist_id %]

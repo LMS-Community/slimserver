@@ -156,7 +156,12 @@
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]
-						[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+						[% IF item.showYear && item.year %]
+							[% IF item.remote %]
+								([% item.year %])
+							[% ELSE %]
+								<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+							[% END %]
 						[% IF item.showArtist && item.artist %]
 							[% UNLESS noby %][% "BY" | string %] [% END %]
 							[% IF item.artist_id %]
