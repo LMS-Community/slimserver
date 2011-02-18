@@ -215,14 +215,14 @@ sub playPlaylist {
 	return $items;
 }
 
-sub addPlaylistNext {
+sub addPlaylistEnd {
 	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
 	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd );
 
 }
-sub addPlaylistEnd {
+sub addPlaylistNext {
 	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
