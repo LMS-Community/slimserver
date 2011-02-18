@@ -774,6 +774,7 @@ sub cliAdd {
 	my $icon   = $request->getParam('icon');
 	my $index  = $request->getParam('item_id');
 	my $type   = $request->getParam('type');
+	my $parser = $request->getParam('parser');
 	my $hotkey = $request->getParam('hotkey');
 	
 	if ( main::SLIM_SERVICE ) {
@@ -830,6 +831,7 @@ sub cliAdd {
 				'type' => $type || 'audio',
 				'icon' => $icon || $favs->icon($url),
 			};
+			$entry->{'parser'} = $parser if $parser;
 			
 			$request->addResult('count', 1);
 

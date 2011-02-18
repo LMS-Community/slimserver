@@ -2618,6 +2618,7 @@ sub jiveFavoritesCommand {
 	my $url     = $request->getParam('url');
 	my $type    = $request->getParam('type');
 	my $icon    = $request->getParam('icon');
+	my $parser  = $request->getParam('parser');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
 	my $action = 'grandparent';
@@ -2629,7 +2630,6 @@ sub jiveFavoritesCommand {
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
 		my $type   = $request->getParam('favorites_type');
-		my $parser = $request->getParam('parser');
 
 		# if playlist_index is sent, that's for the current NP track, derive everything you need from it
 		my $playlist_index = $request->getParam('playlist_index');
@@ -2684,9 +2684,10 @@ sub jiveFavoritesCommand {
 					player => 0,
 					cmd    => ['favorites', $command ],
 					params => {
-						title => $title,
-						url   => $url,
-						type  => $type,
+						title  => $title,
+						url    => $url,
+						type   => $type,
+						parser => $parser,
 					},
 				},
 			},
