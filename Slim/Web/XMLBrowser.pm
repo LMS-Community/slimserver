@@ -302,6 +302,7 @@ sub handleFeed {
 				&& $stash->{'action'} =~ /^(?:play|add)$/
 			) {
 				$subFeed->{'type'} = 'audio';
+				$subFeed->{'url'}  = $subFeed->{'play'};
 			}
 			
 			# Change URL if there is a playlist attribute and it's the last item
@@ -558,20 +559,26 @@ sub handleFeed {
 		delete $stash->{'playUrl'};
 	}
 	
+	my $action      = $stash->{'action'};
+	my $streamItem  = $stash->{'streaminfo'}->{'item'} if $stash->{'streaminfo'};
+	
+	# Play of a playlist should be playall
+	if ($action && $streamItem->{'type'} eq 'playlist' && $action =~ /^(?:play|add)$/) {
+		$action .= 'all';
+	}
+			
 	# play/add stream
-	if ( $client && $stash->{'action'} && $stash->{'action'} =~ /^(play|add)$/ ) {
-		my $play  = ($stash->{'action'} eq 'play');
-		my $url   = $stash->{'streaminfo'}->{'item'}->{'url'};
-		my $title = $stash->{'streaminfo'}->{'item'}->{'name'} 
-			|| $stash->{'streaminfo'}->{'item'}->{'title'};
+	if ( $client && $action && $action =~ /^(play|add)$/ ) {
+		my $url   = $streamItem->{'url'};
+		my $title = $streamItem->{'name'} || $streamItem->{'title'};
 		
 		# Podcast enclosures
-		if ( my $enc = $stash->{'streaminfo'}->{'item'}->{'enclosure'} ) {
+		if ( my $enc = $streamItem->{'enclosure'} ) {
 			$url = $enc->{'url'};
 		}
 		
 		# Items with a 'play' attribute will use this for playback
-		if ( my $play = $stash->{'streaminfo'}->{'item'}->{'play'} ) {
+		if ( my $play = $streamItem->{'play'} ) {
 			$url = $play;
 		}
 		
@@ -582,16 +589,12 @@ sub handleFeed {
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
 				title   => $title,
-				ct      => $stash->{'streaminfo'}->{'item'}->{'mime'},
-				secs    => $stash->{'streaminfo'}->{'item'}->{'duration'},
-				bitrate => $stash->{'streaminfo'}->{'item'}->{'bitrate'},
+				ct      => $streamItem->{'mime'},
+				secs    => $streamItem->{'duration'},
+				bitrate => $streamItem->{'bitrate'},
 			} );
 		
-			if ( $play ) {
-				$client->execute([ 'playlist', 'play', $url ]);
-			} else {
-				$client->execute([ 'playlist', 'add', $url ]);
-			}
+			$client->execute([ 'playlist', $action, $url ]);
 		
 			my $webroot = $stash->{'webroot'};
 			$webroot =~ s/(.*?)plugins.*$/$1/;
@@ -602,12 +605,12 @@ sub handleFeed {
 		}
 	}
 	# play all/add all
-	elsif ( $client && $stash->{'action'} && $stash->{'action'} =~ /^(playall|addall)$/ ) {
-		my $play  = ($stash->{'action'} eq 'playall');
+	elsif ( $client && $action && $action =~ /^(playall|addall)$/ ) {
+		my $play  = ($action eq 'playall');
 		
 		my @urls;
 		# XXX: Why is $stash->{streaminfo}->{item} added on here, it seems to be undef?
-		for my $item ( @{ $stash->{'items'} }, $stash->{'streaminfo'}->{'item'} ) {
+		for my $item ( @{ $stash->{'items'} }, $streamItem ) {
 			my $url;
 			if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
 				$url = $item->{'url'};
@@ -640,12 +643,7 @@ sub handleFeed {
 				$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 			}
 			
-			if ( $play ) {
-				$client->execute([ 'playlist', 'play', \@urls ]);
-			}
-			else {
-				$client->execute([ 'playlist', 'add', \@urls ]);
-			}
+			$client->execute([ 'playlist', ($play ? 'play' : 'add'), \@urls ]);
 
 			my $webroot = $stash->{'webroot'};
 			$webroot =~ s/(.*?)plugins.*$/$1/;
@@ -886,7 +884,9 @@ sub handleFeed {
 
 				my $type = $item->{'type'} || 'link';
 				
-				if ( $item->{'play'} || $item->{'type'} eq 'playlist' ) {
+				if ( $item->{'play'} 
+				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)
+				) {
 					$type = 'audio';
 				}
 				
