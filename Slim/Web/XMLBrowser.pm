@@ -393,7 +393,7 @@ sub handleFeed {
 
 
 				my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction( $superFeed, $subFeed, 
-					($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') ? 'info' : 'items' );
+					($subFeed->{'type'} eq 'audio') ? 'info' : 'items' );
 				if ($feedAction && !($depth == $levels && $stash->{'action'})) {
 					my @params = @{$feedAction->{'command'}};
 					push @params, (0, 0);	# All items requests take _index and _quantity parameters
@@ -521,6 +521,7 @@ sub handleFeed {
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
 		$stash->{'orderByList'} = $subFeed->{'orderByList'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
+		$stash->{'type'}      = $subFeed->{'type'};
 		$stash->{'playUrl'}   = $subFeed->{'play'} 
 								|| ($subFeed->{'type'} && $subFeed->{'type'} eq 'audio'
 									? $subFeed->{'url'}
@@ -535,6 +536,7 @@ sub handleFeed {
 		$stash->{'albumData'} = $feed->{'albumData'};	
 		$stash->{'orderByList'} = $feed->{'orderByList'};	
 		$stash->{'playUrl'}   = $feed->{'play'};	
+		$stash->{'type'}      = $feed->{'type'};
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -563,7 +565,11 @@ sub handleFeed {
 	my $streamItem  = $stash->{'streaminfo'}->{'item'} if $stash->{'streaminfo'};
 	
 	# Play of a playlist should be playall
-	if ($action && $streamItem->{'type'} eq 'playlist' && $action =~ /^(?:play|add)$/) {
+	if ($action
+		&& ($streamItem ? $streamItem->{'type'} eq 'playlist'
+						: $stash->{'type'} && $stash->{'type'} eq 'playlist')
+		&& $action =~ /^(?:play|add)$/
+	) {
 		$action .= 'all';
 	}
 			
