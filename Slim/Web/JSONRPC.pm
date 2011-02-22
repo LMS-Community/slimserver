@@ -328,6 +328,8 @@ sub requestMethod {
 	my $clientid = blessed($client) ? $client->id() : undef;
 	
 	if ($clientid) {
+		# bug 16988 - need to update lastActivityTime in jsonrpc too
+		$client->lastActivityTime( Time::HiRes::time() );
 
 		main::INFOLOG && $log->info("Parsing command: Found client [$clientid]");
 	}
