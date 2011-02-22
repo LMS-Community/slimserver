@@ -26,6 +26,7 @@ my %tagMapping = (
 	'WM/Genre'              => 'GENRE',
 	'WM/TrackNumber'        => 'TRACKNUM',
 	'WM/PartOfACompilation' => 'COMPILATION',
+	'compilation'           => 'COMPILATION', # Bug 16991
 	'Description'           => 'COMMENT',
 	'replaygain_track_gain' => 'REPLAYGAIN_TRACK_GAIN',
 	'replaygain_track_peak' => 'REPLAYGAIN_TRACK_PEAK',
