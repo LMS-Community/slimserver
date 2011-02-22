@@ -2017,7 +2017,7 @@ sub playlistcontrolCommand {
 						'type'    => 'mixed',
 						'style'   => 'add',
 						'text'    => [ $string, $info[0] ],
-						'icon-id' => defined $artwork ? $artwork : '/html/music/cover.png',
+						'icon-id' => defined $artwork ? $artwork : '/html/images/cover.png',
 					}
 				});
 			}
