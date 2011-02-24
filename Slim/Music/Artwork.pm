@@ -544,6 +544,8 @@ sub precacheAllArtwork {
 	}	
 }
 
+=pod We don't have an artwork provider for this feature.
+
 sub downloadArtwork {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
@@ -919,5 +921,6 @@ sub _getCoverFromFileCache {
 
 	return catdir($base, $f[0]) if @f;
 }
+=cut
 
 1;
