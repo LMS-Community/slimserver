@@ -363,6 +363,10 @@ sub infoContributors {
 						command     => ['playlistcontrol'],
 						fixedParams => {cmd => 'insert', artist_id => $id},
 					},								
+					info => {
+						command     => ['artistinfo', 'items'],
+						fixedParams => {artist_id => $id},
+					},								
 				);
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'add'};
@@ -590,6 +594,10 @@ sub infoAlbum {
 				command     => ['playlistcontrol'],
 				fixedParams => {cmd => 'insert', album_id => $id},
 			},								
+			info => {
+				command     => ['albuminfo', 'items'],
+				fixedParams => {album_id => $id},
+			},								
 		);
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
@@ -632,6 +640,10 @@ sub infoGenres {
 				command     => ['playlistcontrol'],
 				fixedParams => {cmd => 'insert', genre_id => $id},
 			},								
+			info => {
+				command     => ['genreinfo', 'items'],
+				fixedParams => {genre_id => $id},
+			},								
 		);
 		$actions{'playall'} = $actions{'play'};
 		$actions{'addall'} = $actions{'add'};
@@ -673,6 +685,10 @@ sub infoYear {
 			insert => {
 				command     => ['playlistcontrol'],
 				fixedParams => {cmd => 'insert', year => $year},
+			},								
+			info => {
+				command     => ['yearinfo', 'items'],
+				fixedParams => {year => $year},
 			},								
 		);
 		$actions{'playall'} = $actions{'play'};
