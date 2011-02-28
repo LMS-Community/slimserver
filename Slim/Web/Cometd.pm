@@ -722,13 +722,6 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
-	# Signal the connection to close if long-polling
-	if ( $httpClient->transport eq 'long-polling' ) {
-		$httpResponse->header( Connection => 'close' );
-		$manager->remove_connection( $httpClient->clid );
-		$httpClient->clid(0);
-	}
-	
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
