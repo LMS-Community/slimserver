@@ -53,4 +53,17 @@ sub start_time {
 	return ${*$self}{_start};
 }
 
+# Special event that should be returned first (usually /meta/connect)
+sub first_event {
+	my ( $self, $value ) = @_;
+	
+	if ( defined $value ) {
+		${*$self}{_first_event} = $value;
+		return;
+	}
+	
+	# Can only be retrieved once
+	return delete ${*$self}{_first_event};
+}
+
 1;
