@@ -1039,7 +1039,7 @@ if (SqueezeJS.UI.SplitButton && Ext.MessageBox && Ext.Window) {
 			SqueezeJS.UI.Buttons.PlayerDropdown.superclass.initComponent.call(this);
 	
 			SqueezeJS.Controller.on({
-				playerlistupdate: {
+				serverstatus: {
 					fn: this.onPlayerlistUpdate,
 					scope: this
 				},
