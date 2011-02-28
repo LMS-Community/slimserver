@@ -240,8 +240,8 @@ sub deliver_events {
 		
 		# If we have an active connection to send to...
 		if ( $conn ) {
-			# Add any pending events
-			push @{$events}, ( $self->get_pending_events( $clid ) );
+			# Prepend any pending events
+			unshift @{$events}, ( $self->get_pending_events( $clid ) );
 		
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 
