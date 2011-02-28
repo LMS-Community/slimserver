@@ -210,13 +210,18 @@ sub has_pending_events {
 }
 
 sub deliver_events {
-	my ( $self, $events ) = @_;
+	my ( $self, $events, $clid ) = @_;
 	
 	if ( ref $events ne 'ARRAY' ) {
 		$events = [ $events ];
 	}
 	
 	my @to_send;
+	
+	# If a specific clid is provided, always try to deliver to them
+	if ( $clid ) {
+		push @to_send, $clid;
+	}
 	
 	for my $event ( @{$events} ) {
 		# Find subscriber(s) to this event
