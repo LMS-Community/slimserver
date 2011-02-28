@@ -298,6 +298,10 @@ sub clientConnectCommand {
 
 				$_->sendFrame( serv => \$packed );
 				
+				# Bug 14400: make sure we do not later accidentally reattach a returning client
+				# to a sync-group that is no longer current.
+				$prefs->client($_)->remove('syncgroupid');
+				
 				# Give player time to disconnect
 				Slim::Utils::Timers::setTimer($_, time() + 3,
 					sub { shift->execute([ 'client', 'forget' ]); }
