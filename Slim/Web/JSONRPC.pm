@@ -178,6 +178,12 @@ sub handleURI {
 	$context->{'httpResponse'} = $httpResponse;
 	$context->{'procedure'} = $procedure;
 	
+
+	# Detect the language the client wants content returned in
+	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
+		my @parts = split(/-/, $lang);
+		$context->{lang} = uc $parts[0] if $parts[0];
+	}
 	
 	# Check our operational mode using our X-Jive header
 	# We must be delaing with a 1.1 client because X-Jive uses chunked transfers
@@ -336,6 +342,15 @@ sub requestMethod {
 
 	# create a request
 	my $request = Slim::Control::Request->new($clientid, $commandargs);
+
+	# Set language override for this request
+	my $lang = $context->{lang};
+	if ( $client && $lang ) {
+		$client->languageOverride($lang);
+	}
+	elsif ( $lang ) {
+		$request->setLanguageOverride($lang);
+	}
 
 	if ($request->isStatusDispatchable) {
 		
