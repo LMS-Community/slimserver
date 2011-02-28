@@ -957,8 +957,17 @@ sub requestCallback {
 		},
 	} ];
 	
-	# Deliver request results via Manager
-	$manager->deliver_events( $events );
+	# Queue request results via Manager
+	my $clid = $request->connectionID;
+	$manager->queue_events( $clid, $events );
+	
+	# It's possible for multiple callbacks to be triggered, for example
+	# a 'power' event will send both serverstatus and playerstatus data.
+	# To allow these to batch together, we need to use a timer to call
+	# deliver_events
+	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 0.2, sub {
+		$manager->deliver_events( [], $clid );
+	} );
 }
 
 sub webCloseHandler {
