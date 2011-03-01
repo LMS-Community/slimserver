@@ -37,7 +37,7 @@ sub new {
 sub add_client {
 	my ( $self, $clid ) = @_;
 	
-	# The per-client event hash holds one pending event per channel
+	# Pending events for this clid
 	$self->{events}->{$clid} = [];
 	
 	main::DEBUGLOG && $log->debug("add_client: $clid");
