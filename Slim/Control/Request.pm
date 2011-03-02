@@ -2431,7 +2431,7 @@ sub dump {
 				if (ref($hash) eq 'HASH') {
 					
 					while (my ($key2, $val2) = each %{$hash}) {
-						main::INFOLOG && $log->info("   Result:   $i. [$key2] = [$val2]");
+						main::INFOLOG && $log->info("   Result:   $i. [$key2] = [", (ref $val2 ? Data::Dump::dump($val2) : $val2), "]");
 					}
 						
 				}
@@ -2444,7 +2444,7 @@ sub dump {
 			}
 
 		} else {
-			main::INFOLOG && $log->info("   Result: [$key] = [$val]");
+			main::INFOLOG && $log->info("   Result: [$key] = [", (ref $val ? Data::Dump::dump($val) : $val), "]");
 		}
  	}
 }
