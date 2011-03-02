@@ -744,13 +744,6 @@ sub _cliQuery_done {
 		my $count = $subFeed->{'total'};;
 		$count ||= defined $items ? scalar @$items : 0;
 		
-		
-		# Bug 7024, display an "Empty" item instead of returning an empty list
-		if ( $menuMode && !$count ) {
-			$items = [ { type => 'text', name => $request->string('EMPTY') } ];
-			$count = 1;
-		}
-	
 		# now build the result
 	
 		my $hasImage = 0;
@@ -760,7 +753,13 @@ sub _cliQuery_done {
 		my $allTouchToPlay = 1;
 		my %actionParamsNeeded;
 		
-		if ($count || $xmlBrowseInterimCM) {
+		# Bug 7024, display an "Empty" item instead of returning an empty list
+		if ( $menuMode && !$count && !$xmlBrowseInterimCM) {
+			$items = [ { type => 'text', name => $request->string('EMPTY') } ];
+			$totalCount = $count = 1;
+		}
+	
+		elsif ($count || $xmlBrowseInterimCM) {
 		
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
@@ -1491,16 +1490,18 @@ sub _fixCount {
 
 	my $totalCount = $count || 0;
 
-	if ($insertItem && $count > 1) {
+	if ($insertItem) {
 		$totalCount++;
-		if (!$$index && $count == $$quantity) {
-			# count and qty are the same, don't do anything to index or quantity
-		# return one less result as we only add the additional item in the first chunk
-		} elsif ( !$$index ) {
-			$$quantity--;
-		# decrease the index in subsequent queries
-		} else {
-			$$index--;
+		if ($count) {
+			if (!$$index && $count == $$quantity) {
+				# count and qty are the same, don't do anything to index or quantity
+			# return one less result as we only add the additional item in the first chunk
+			} elsif ( !$$index ) {
+				$$quantity--;
+			# decrease the index in subsequent queries
+			} else {
+				$$index--;
+			}
 		}
 	}
 
