@@ -55,6 +55,7 @@ sub cliQuery {
 	my $itemId     = $request->getParam('item_id');	# get our parameters
 	my $index      = $request->getParam('_index');
 	my $quantity   = $request->getParam('_quantity');
+	my $client     = $request->client();
 
 	# Bug 14100: sending requests that involve newWindow param from SP side results in no
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
@@ -85,8 +86,8 @@ sub cliQuery {
 		}
 		
 		my $playalbum = undef;
-		if ( $request->client ) {
-			$playalbum = $prefs->client($request->client)->get('playtrackalbum');
+		if ( $client ) {
+			$playalbum = $prefs->client($client)->get('playtrackalbum');
 		}
 	
 		# if player pref for playtrack album is not set, get the old server pref.
@@ -104,7 +105,7 @@ sub cliQuery {
 	
 	my %args = (
 		'request' => $request,
-		'client'  => $request->client,
+		'client'  => $client,
 		'url'     => $feed,
 		'query'   => $query,
 		'expires' => $expires,
@@ -178,7 +179,7 @@ sub cliQuery {
 			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
 
-		$feed->( $request->client, $callback, \%args);
+		$feed->( $client, $callback, \%args);
 		
 		return;
 	}
@@ -265,6 +266,7 @@ sub _cliQuery_done {
 	my $request    = $params->{'request'};
 	my $query      = $params->{'query'};
 #	my $forceTitle = $params->{'forceTitle'};
+	my $client     = $request->client();
 	my $window;
 	
 	main::INFOLOG && $log->info("_cliQuery_done(): ", $request->getRequestString());
@@ -423,7 +425,7 @@ sub _cliQuery_done {
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 					'currentIndex' => \@crumbIndex,
 					'request'      => $request,
-					'client'       => $request->client,
+					'client'       => $client,
 					'query'        => $query,
 					'expires'      => $params->{'expires'},
 					'timeout'      => $params->{'timeout'},
@@ -479,7 +481,7 @@ sub _cliQuery_done {
 						$log->debug( "Fetching OPML from coderef $cbname" );
 					}
 
-					$subFeed->{url}->( $request->client, $callback, \%args, @{$pt});
+					$subFeed->{url}->( $client, $callback, \%args, @{$pt});
 				}
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
@@ -603,7 +605,6 @@ sub _cliQuery_done {
 	if ($isPlaylistCmd) {
 
 		# get our parameters
-		my $client = $request->client();
 		my $method = $request->getParam('_method');
 		
 		my $playIndex = $request->getParam('playIndex');
@@ -862,8 +863,8 @@ sub _cliQuery_done {
 						my $n = 0;
 						
 						my $playalbum = undef;
-						if ( $request->client ) {
-							$playalbum = $prefs->client($request->client)->get('playtrackalbum');
+						if ( $client ) {
+							$playalbum = $prefs->client($client)->get('playtrackalbum');
 						}
 						# if player pref for playtrack album is not set, get the old server pref.
 						if ( !defined $playalbum ) {
@@ -969,7 +970,7 @@ sub _cliQuery_done {
 					if ($menuMode) {
 						# if showBriefly is 1, send the name as a showBriefly
 						if ($item->{showBriefly} and ( $hash{name} || $hash{title} ) ) {
-							$request->client->showBriefly({ 
+							$client->showBriefly({ 
 										'jive' => {
 											'type'    => 'popupplay',
 											'text'    => [ $hash{name} || $hash{title} ],
