@@ -479,6 +479,10 @@ sub handler {
 					if ( exists $result->{data} ) {
 						if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
 							push @{$events}, $result;
+							
+							# We might be in delayed response mode, but we don't want to delay
+							# this non-async data
+							$delayedResponse = 0;
 						}
 						else {
 							$manager->deliver_events( $result );
