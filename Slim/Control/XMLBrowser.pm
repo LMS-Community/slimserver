@@ -1662,7 +1662,9 @@ sub _playlistControlContextMenu {
 			},
 		};
 		$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
-		$favoriteActions->{'go'}{'params'}{'icon'}    = $request->getParam('icon') if $request->getParam('icon');
+		if (my $icon = $favParams->{'icon'} || $request->getParam('icon')) {
+			$favoriteActions->{'go'}{'params'}{'icon'} = $icon;
+		}
 	
 		push @contextMenu, {
 			text => $request->string($token),
@@ -1690,6 +1692,10 @@ sub _favoritesParams {
 			favorites_type  => $item->{play} ? 'audio' : ($item->{type} || 'audio'),
 		);
 		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
+		
+		if (my $icon = $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
+			$presetParams{'icon'} = $icon;
+		}
 		
 		return \%presetParams;
 	}
