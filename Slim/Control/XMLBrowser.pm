@@ -758,6 +758,7 @@ sub _cliQuery_done {
 		my $presetFavSet = 0;
 		my $totalCount = $count;
 		my $allTouchToPlay = 1;
+		my $defeatDestructiveTouchToPlay = _defeatDestructiveTouchToPlay($request);
 		my %actionParamsNeeded;
 		
 		# Bug 7024, display an "Empty" item instead of returning an empty list
@@ -903,6 +904,14 @@ sub _cliQuery_done {
 							$feedActions->{'allAvailableActionsDefined'} = 1;
 						}
 					}
+					
+					$base->{'actions'}->{'playControl'} = {
+						player      => 0,
+						window      => {isContextMenu => 1},
+						cmd         => [map {$request->getRequest($_)} (0 .. ($request->getRequestCount()-1))],
+						itemsParams => 'playControlParams',
+						params      => $request->getParamsCopy(),
+					};
 					
 					$request->addResult('base', $base);
 				}
@@ -1141,13 +1150,18 @@ sub _cliQuery_done {
 						}
 						
 						elsif ( $touchToPlay ) {
-														
-							$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
-							
-							# XXX not currently supported by client
-							$request->addResultLoop( $loopname, $cnt, 'goAction', 'play'); 
-							
-							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+							if (!$defeatDestructiveTouchToPlay) {
+								$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
+								
+								# not currently supported by 7.5 client
+								$request->addResultLoop( $loopname, $cnt, 'goAction', 'play'); 
+								
+								$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+							} else {
+								# not currently supported by 7.5 client
+								$request->addResultLoop( $loopname, $cnt, 'goAction', 'more'); 
+								# $request->addResultLoop( $loopname, $cnt, 'playControlParams', {xmlbrowserPlayControl=>"$itemIndex"});
+							}
 						}
 						else {
 							$allTouchToPlay = 0;
@@ -1256,7 +1270,9 @@ sub _cliQuery_done {
 				
 				_jivePresetBase($baseActions) if $presetFavSet;
 				
-				$baseActions->{'go'} = $baseActions->{'play'} if $allTouchToPlay;
+				if ($allTouchToPlay) {
+							$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'more'} : $baseActions->{'play'};
+		}
 			}
 			
 			if ( $windowStyle ) {
@@ -1602,6 +1618,28 @@ sub _playlistControlContextMenu {
 			menu    => $request->getParam('menu'),
 			item_id => $request->getParam('item_id'),
 		};
+		
+=cut
+		my $subfeed = $args->{'subfeed'};
+		
+		my %addAction;
+		if (my ($feedAction, $feedActions) = findAction($subfeed, $item, 'add')) {
+			my %params = %{$feedAction->{'fixedParams'}} if $feedAction->{'fixedParams'};
+			my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+			for (my $i = 0; $i < scalar @vars; $i += 2) {
+				$params{$vars[$i]} = $item->{$vars[$i+1]};
+			}
+	
+			$params{'menu'} = $request->getParam('menu');
+			
+			%addAction = (
+				player     => 0,
+				cmd        => $feedAction->{'command'},
+				params     => \%params,
+				nextWindow => 'parentNoRefresh',
+			);
+		}
+=cut
 
 		@contextMenu = (
 			{
@@ -1707,6 +1745,30 @@ sub _favoritesParams {
 		
 		return \%presetParams;
 	}
+}
+
+sub _defeatDestructiveTouchToPlay {
+	my $request = shift;
+	my $client = $request->client();
+	my $pref;
+	
+	$pref = $request->getParam('defeatDestructiveTouchToPlay');
+	$pref = $prefs->client($request->client)->get('defeatDestructiveTouchToPlay') if !defined $pref;
+	$pref = $prefs->get('defeatDestructiveTouchToPlay') if !defined $pref;
+	
+	# Values:
+	# 0 => no defeat
+	# 1 => always defeat
+	# 2 => defeat if playlist length > 1
+	# 3 => defeat only if playing and current-playlist-length > 1
+	
+	return 0 if !$pref;
+	return 1 if $pref == 1;
+	my $l = Slim::Player::Playlist::count($client);
+	return 0 if $l < 2;
+	return 0 if $pref == 3 && (!$client->isPlaying() || $l < 2);
+	
+	return 1;
 }
 
 1;
