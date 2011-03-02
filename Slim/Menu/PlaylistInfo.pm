@@ -177,6 +177,7 @@ sub menu {
 		name  => $playlist->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 

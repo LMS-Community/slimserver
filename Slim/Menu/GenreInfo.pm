@@ -166,6 +166,7 @@ sub menu {
 		name  => $genre->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 

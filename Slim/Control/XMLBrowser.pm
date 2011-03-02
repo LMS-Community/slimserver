@@ -652,6 +652,9 @@ sub _cliQuery_done {
 				
 					$client->execute([ 'playlist', $method, $url ]);
 				}
+				else {
+					main::INFOLOG && $log->info("No valid URL found for: ", $title);
+				}
 			}
 			
 			# play all streams of an item (or one stream if pref is unset)
@@ -720,6 +723,10 @@ sub _cliQuery_done {
 						$client->execute([ 'playlist', 'jump', ($playIndex || 0)]);
 					}
 				}
+				else {
+					main::INFOLOG && $log->info("No valid URL found for: ", ($subFeed->{'name'} || $subFeed->{'title'}));
+				}
+				
 			}
 		}
 		else {
@@ -762,13 +769,15 @@ sub _cliQuery_done {
 				$request->addResult('offset', $index);
 
 				my $firstChunk = !$index;
-				for my $eachmenu (@{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) }) {
-					$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
-					
-					# Only add them the first time
-					if ($firstChunk) {
-						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-						$cnt++;
+				if (!$subFeed->{'menuComplete'}) {
+					for my $eachmenu (@{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) }) {
+						$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
+						
+						# Only add them the first time
+						if ($firstChunk) {
+							$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+							$cnt++;
+						}
 					}
 				}
 				
@@ -1373,6 +1382,7 @@ sub _cliQuerySubFeed_done {
 	}
 	$subFeed->{'total'} = $feed->{'total'};
 	$subFeed->{'offset'} = $feed->{'offset'};
+	$subFeed->{'menuComplete'} = $feed->{'menuComplete'};
 	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;

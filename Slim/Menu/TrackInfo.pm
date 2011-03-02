@@ -321,6 +321,7 @@ sub menu {
 		items => $items,
 		play  => $track->url,
 		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($track->coverid || 0) . '/cover.jpg',
+		menuComplete => 1,
 	};
 }
 

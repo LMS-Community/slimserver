@@ -159,6 +159,7 @@ sub menu {
 		name  => cstring($client, $class->name),
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 

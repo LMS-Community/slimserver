@@ -156,6 +156,7 @@ sub menu {
 		name  => $year,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 

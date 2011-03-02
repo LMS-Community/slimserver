@@ -163,6 +163,7 @@ sub menu {
 		name  => $artist->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
