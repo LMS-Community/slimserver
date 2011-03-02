@@ -181,7 +181,7 @@ sub handleURI {
 
 	# Detect the language the client wants content returned in
 	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
-		my @parts = split(/-/, $lang);
+		my @parts = split(/[,-]/, $lang);
 		$context->{lang} = uc $parts[0] if $parts[0];
 	}
 	
@@ -343,16 +343,25 @@ sub requestMethod {
 	# create a request
 	my $request = Slim::Control::Request->new($clientid, $commandargs);
 
-	# Set language override for this request
-	my $lang = $context->{lang};
-	if ( $client && $lang ) {
-		$client->languageOverride($lang);
-	}
-	elsif ( $lang ) {
-		$request->setLanguageOverride($lang);
-	}
-
 	if ($request->isStatusDispatchable) {
+
+		# Set language override for this request
+		my $lang = $context->{lang};
+
+		my $finish;
+
+		if ( $client && $lang ) {
+			$client->languageOverride($lang);
+			$client->controlledBy('squeezeplay');
+ 
+			$finish = sub {
+				$client->languageOverride(undef);
+				$client->controlledBy(undef);
+			};
+		}
+		elsif ( $lang ) {
+			$request->setLanguageOverride($lang);
+		}
 		
 		# fix the encoding and/or manage charset param
 		$request->fixEncoding();
@@ -371,6 +380,7 @@ sub requestMethod {
 		$request->execute();
 		
 		if ($request->isStatusError()) {
+			$finish->() if $finish;
 
 			if ( $log->is_error ) {
 				$log->error("Request failed with error: " . $request->getStatusText);
@@ -387,9 +397,14 @@ sub requestMethod {
  				main::INFOLOG && $log->info("Request is async: will be back");
  						
  				# add our write routine as a callback
- 				$request->callbackParameters(\&requestWrite);
+ 				$request->callbackParameters( sub {
+					requestWrite(@_);
+					$finish->() if $finish;
+				} );
  				return;
 			}
+
+			$finish->() if $finish;
 			
 			# the request was successful and is not async, send results back to caller!
 			requestWrite($request, $context->{'httpClient'}, $context);
