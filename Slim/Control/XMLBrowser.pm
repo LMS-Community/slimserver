@@ -404,7 +404,14 @@ sub _cliQuery_done {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
+			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'}
+
+				# Only fetch playlist-with-parser types if playing - so favorites get the unsubstituted (long-lived) URL
+				#
+				# Unfortunately, we cannot do this because playtrackalbum & touchToPlay logic interfers by
+				# stripping the last component off the hierarchy.	
+				# && !($isItemQuery && $subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && $subFeed->{'parser'})
+			) {
 				
 				if ( $i =~ /(?:\d+)?_(.+)/ ) {
 					$search = uri_unescape($1);
