@@ -4437,10 +4437,7 @@ sub mixerMenuQuery {
 		return;
 	}
 
-	my $obj_id = $request->getParam('obj_param') ? 
-			$request->getParam('obj_param') :
-			$request->getParam($obj_param);
-
+	my $obj_id = $request->getParam($obj_param);
 
 	my ($Imports, $mixers) = _mixers();
 	
