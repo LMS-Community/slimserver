@@ -1271,8 +1271,8 @@ sub _cliQuery_done {
 				_jivePresetBase($baseActions) if $presetFavSet;
 				
 				if ($allTouchToPlay) {
-							$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'more'} : $baseActions->{'play'};
-		}
+					$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'more'} : $baseActions->{'play'};
+				}
 			}
 			
 			if ( $windowStyle ) {
