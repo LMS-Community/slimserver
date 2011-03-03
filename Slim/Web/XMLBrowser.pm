@@ -476,7 +476,13 @@ sub handleFeed {
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
 
-				elsif ($subFeed->{'type'} ne 'audio') {
+				elsif ($subFeed->{'type'} ne 'audio'
+					# Only fetch playlist-with-parser types if playing
+					&& !(  $subFeed->{'type'} eq 'playlist'
+						&& $subFeed->{'parser'}
+						&& $stash->{'action'} !~ /^(?:play|add)/ )
+					)
+				{
 					# We need to fetch the URL
 					main::INFOLOG && $log->info( "Fetching OPML from:", $subFeed->{'url'} );
 					Slim::Formats::XML->getFeedAsync(
