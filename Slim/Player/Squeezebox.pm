@@ -106,8 +106,9 @@ sub reconnect {
 	# resume streaming at the bytes_received point. If we were
 	# paused, then stop.
 
+	my $controller = $client->controller();
+
 	if (!$reconnect) {
-		my $controller = $client->controller();
 
 		if ($client->power()) {
 			$controller->playerActive($client);
@@ -125,6 +126,12 @@ sub reconnect {
 				main::INFOLOG && $sourcelog->is_info && $sourcelog->info($client->id . " forcing stop on pseudo-reconnect");
 				$client->stop();
 			}
+		}
+	} else {
+		# bug 16881: player in a sync-group may have been made inactive upon disconnect;
+		# make sure it is active now.
+		if ($client->power()) {
+			$controller->playerActive($client);
 		}
 	}
 
