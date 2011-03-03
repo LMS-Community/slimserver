@@ -279,6 +279,7 @@ sub albumsQuery {
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	my $limit;
+	my $page_key = "SUBSTR(albums.titlesort,1,1)";
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -301,23 +302,29 @@ sub albumsQuery {
 			if ( $quantity && $quantity > $limit ) {
 				$quantity = $limit;
 			}
+			
+			$page_key = undef;
 		}
 		elsif ( $sort eq 'artflow' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
+			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'artistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
+			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'yearartistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
+			$page_key = "albums.year";
 		}
 		elsif ( $sort eq 'yearalbum' ) {
 			$order_by = "albums.year, albums.titlesort $collate";
+			$page_key = "albums.year";
 		}
 
 		if (specified($search)) {
@@ -421,6 +428,15 @@ sub albumsQuery {
 		$sql .= join( ' AND ', @{$w} );
 		$sql .= ' ';
 	}
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	if ($page_key && $tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "$page_key, count(distinct albums.id)")
+			 . "GROUP BY $page_key ORDER BY $order_by ";
+		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+	}
+	
 	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
 	
 	# Add selected columns
@@ -429,8 +445,6 @@ sub albumsQuery {
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
-	
-	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
@@ -577,7 +591,7 @@ sub artistsQuery {
 	
 	my $va_pref = $prefs->get('variousArtistAutoIdentification');
 	
-	my $sql    = 'SELECT contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable FROM contributors ';
+	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';
 	my $w      = [];
 	my $w_va   = [ 'albums.compilation = 1' ];
@@ -691,12 +705,20 @@ sub artistsQuery {
 		$sql .= ' ';
 	}
 	
+	my $dbh = Slim::Schema->dbh;
+	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$sql .= "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
+
+	if ($tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
+			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
+		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+	}
+
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable')
+			. "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
-	
-	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
@@ -1180,7 +1202,7 @@ sub genresQuery {
 	my $genreID       = $request->getParam('genre_id');
 	my $tags          = $request->getParam('tags') || '';
 	
-	my $sql  = 'SELECT DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable FROM genres ';
+	my $sql  = 'SELECT %s FROM genres ';
 	my $w    = [];
 	my $p    = [];
 
@@ -1252,12 +1274,20 @@ sub genresQuery {
 		$sql .= ' ';
 	}
 	
+	my $dbh = Slim::Schema->dbh;
+	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$sql .= "ORDER BY genres.namesort $collate";
+	
+	if ($tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
+			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
+		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+	}
+	
+	$sql = sprintf($sql, 'DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable')
+			. "ORDER BY genres.namesort $collate";
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
-	
-	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
@@ -3236,7 +3266,7 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijJklmnopqrstvwxyzBCDEFHIJKLMNOQRTUVWXYZ'; # all letter EXCEPT u, A & S, G & P
+	my $tags  = 'abcdefghijJklmnopqrstvwxyzBCDEFHIJKLMNOQRTUVWXY'; # all letter EXCEPT u, A & S, G & P, Z
 	my $track;
 
 	# get our parameters

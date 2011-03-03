@@ -108,7 +108,7 @@ sub handleWebIndex {
 		
 		# XXX: maybe need to pass orderBy through
 		
-		return $feed->( $client, $callback, {wantMetadata => 1, params => $asyncArgs->[1]}, @{$pt});
+		return $feed->( $client, $callback, {wantMetadata => 1, wantIndex => 1, params => $asyncArgs->[1]}, @{$pt});
 	}
 	
 	# Handle type = search at the top level, i.e. Radio Search
@@ -407,6 +407,7 @@ sub handleFeed {
 					
 				    push @params, 'feedMode:1';
 				    push @params, 'wantMetadata:1';
+				    push @params, 'wantIndex:1';
 
 					push @params, 'orderBy:' . $stash->{'orderBy'} if $stash->{'orderBy'};
 					
@@ -469,7 +470,7 @@ sub handleFeed {
 					# XXX: maybe need to pass orderBy through
 		
 					# first param is a $client object, but undef from webpages
-					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
+					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
 				
 					return;
 				}
@@ -525,6 +526,7 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
+		$stash->{'indexList'} = $subFeed->{'indexList'};	
 		$stash->{'orderByList'} = $subFeed->{'orderByList'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 		$stash->{'type'}      = $subFeed->{'type'};
@@ -540,6 +542,7 @@ sub handleFeed {
 		$stash->{'actions'}   = $feed->{'actions'};	
 		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
 		$stash->{'albumData'} = $feed->{'albumData'};	
+		$stash->{'indexList'} = $feed->{'indexList'};	
 		$stash->{'orderByList'} = $feed->{'orderByList'};	
 		$stash->{'playUrl'}   = $feed->{'play'};	
 		$stash->{'type'}      = $feed->{'type'};
@@ -712,6 +715,7 @@ sub handleFeed {
 			
 		$stash->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 				'itemCount'   => $itemCount,
+				'indexList'   => $stash->{'indexList'},
 				'path'        => $params->{'path'} || 'index.html',
 				'otherParams' => $otherParams,
 				'start'       => $stash->{'start'},
@@ -1012,6 +1016,7 @@ sub handleSubFeed {
 	$subFeed->{'image'}       = $feed->{'cover'}         if $feed->{'cover'};
 	$subFeed->{'albumData'}   = $feed->{'albumData'}     if $feed->{'albumData'};
 	$subFeed->{'orderByList'} = $feed->{'orderByList'}   if $feed->{'orderByList'};
+	$subFeed->{'indexList'}   = $feed->{'indexList'}     if $feed->{'indexList'};
 
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
@@ -1086,6 +1091,7 @@ sub webLink {
 	push @verbs, map { $_ . ':' . $params{$_} } keys %params;
 	push @verbs, 'feedMode:1';
 	push @verbs, 'wantMetadata:1';	# We always want everything we can get
+	push @verbs, 'wantIndex:1';	# We always want everything we can get
 	
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
 

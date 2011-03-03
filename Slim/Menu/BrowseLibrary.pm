@@ -681,6 +681,7 @@ sub _topLevel {
 		$args{'orderBy'}      = 'sort:' . $params->{'orderBy'} if $params->{'orderBy'};
 		$args{'search'}       = $params->{'search'} if $params->{'search'};
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
+		$args{'wantIndex'}    = $params->{'wantIndex'} if $params->{'wantIndex'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
@@ -829,6 +830,7 @@ sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
+	my $tags       = 's';
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
@@ -841,8 +843,10 @@ sub _artists {
 		@ptSearchTags = @searchTags;
 	}
 
+	$tags .= 'Z' if $pt->{'wantIndex'};
+
 	_generic($client, $callback, $args, 'artists', 
-		['tags:s', @searchTags, ($search ? 'search:' . $search : undef)],
+		["tags:$tags", @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'artists_loop'};
@@ -922,7 +926,7 @@ sub _artists {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return {items => $items, actions => \%actions, sorted => 1}, $extra;
+			return {items => $items, actions => \%actions, sorted => 1, indexList => $results->{'indexList'}}, $extra;
 		},
 	);
 }
@@ -930,8 +934,11 @@ sub _artists {
 sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+	my $tags = 's';
+	
+	$tags .= 'Z' if $pt->{'wantIndex'};
 
-	_generic($client, $callback, $args, 'genres', ['tags:s', @searchTags],
+	_generic($client, $callback, $args, 'genres', ["tags:$tags", @searchTags],
 		sub {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
@@ -971,7 +978,7 @@ sub _genres {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return {items => $items, actions => \%actions, sorted => 1}, undef;
+			return {items => $items, actions => \%actions, sorted => 1, indexList => $results->{'indexList'}}, undef;
 		},
 	);
 }
@@ -1059,6 +1066,8 @@ sub _albums {
 	$tags .= 'S' if $showArtist || $artistId;
 	
 	$tags .= 'y' unless grep {/^year:/} @searchTags;
+	
+	$tags .= 'Z' if $pt->{'wantIndex'};
 	
 	_generic($client, $callback, $args, 'albums',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
@@ -1173,6 +1182,7 @@ sub _albums {
 				actions     => \%actions,
 				sorted      => (($sort && $sort eq 'sort:new') ? 0 : 1),
 				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
+				indexList   => $results->{'indexList'},
 			}, $extra;
 		},
 	);

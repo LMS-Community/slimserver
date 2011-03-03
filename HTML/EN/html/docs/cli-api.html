@@ -60,6 +60,8 @@
 	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
 	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
 	<li>Removed the charset tagged parameter from all commands that supported it.</li>
+	<li>Added the 'Z' tag to <a href="#albums">albums</a>, <a href="#artists">artists</a> and <a href="#genres">genres</a> queries.
+		It generates a indexList array or arrays in the result.</li>
 </ul>
 
 <hr>
@@ -3059,6 +3061,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter.
+		</td>
+	</tr>
+	<tr>
 		<td colspan="2">
 			<em>For each genre:</em>
 		</td>
@@ -3233,6 +3246,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Number of results returned by the query. If no search string is 
 			present, this is the same value as returned by 
 			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter.
 		</td>
 	</tr>
 	<tr>
@@ -3443,6 +3467,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Number of results returned by the query. If no filter
 			is present, this is the same value as returned by 
 			&quot;<a href="#info total albums ?">info total albums ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter (or year for a year-dominated sort order).
 		</td>
 	</tr>
 	<tr>
@@ -4527,6 +4562,95 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>a</b>
+		</td>
+		<td>
+			artist
+		</td>
+		<td>
+			Artist name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>A</b>
+		</td>
+		<td>
+			&lt;role&gt;
+		</td>
+		<td>
+			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
+			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>B</b>
+		</td>
+		<td>
+			buttons
+		</td>
+		<td>
+			A hash with button definitions. Only available for certain plugins such as Pandora.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>c</b>
+		</td>
+		<td>
+			coverid
+		</td>
+		<td>
+			coverid to use when constructing an artwork URL, such as /music/$coverid/cover.jpg
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>C</b>
+		</td>
+		<td>
+			compilation
+		</td>
+		<td>
+			1 if the album this track belongs to is a compilation
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>d</b>
+		</td>
+		<td>
+			duration
+		</td>
+		<td>
+			Song duration in seconds.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>e</b>
+		</td>
+		<td>
+			album_id
+		</td>
+		<td>
+			Album ID. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>f</b>
+		</td>
+		<td>
+			filesize
+		</td>
+		<td>
+			Song file length in bytes. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>g</b>
 		</td>
 		<td>
@@ -4549,106 +4673,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>p</b>
-		</td>
-		<td>
-			genre_id
-		</td>
-		<td>
-			Genre ID. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>P</b>
-		</td>
-		<td>
-			genre_ids
-		</td>
-		<td>
-			Genre IDs, separated by commas (only useful if the server is set to handle multiple items in tags).
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>a</b>
-		</td>
-		<td>
-			artist
-		</td>
-		<td>
-			Artist name.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>s</b>
-		</td>
-		<td>
-			artist_id
-		</td>
-		<td>
-			Artist ID.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>A</b>
-		</td>
-		<td>
-			&lt;role&gt;
-		</td>
-		<td>
-			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
-			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>S</b>
-		</td>
-		<td>
-			&lt;role&gt;_ids
-		</td>
-		<td>
-			For each role as defined above, the list of ids.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>l</b>
-		</td>
-		<td>
-			album
-		</td>
-		<td>
-			Album name. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>e</b>
-		</td>
-		<td>
-			album_id
-		</td>
-		<td>
-			Album ID. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>d</b>
-		</td>
-		<td>
-			duration
-		</td>
-		<td>
-			Song duration in seconds.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<b>i</b>
 		</td>
 		<td>
@@ -4660,112 +4684,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>q</b>
+			<b>I</b>
 		</td>
 		<td>
-			disccount
+			samplesize
 		</td>
 		<td>
-			Number of discs. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>t</b>
-		</td>
-		<td>
-			tracknum
-		</td>
-		<td>
-			Track number. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>y</b>
-		</td>
-		<td>
-			year
-		</td>
-		<td>
-			Song year. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>m</b>
-		</td>
-		<td>
-			bpm
-		</td>
-		<td>
-			Beats per minute. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>M</b>
-		</td>
-		<td>
-			musicmagic_mixable
-		</td>
-		<td>
-			1 if track is mixable, otherwise 0.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>k</b>
-		</td>
-		<td>
-			comment
-		</td>
-		<td>
-			Song comments, if any.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>o</b>
-		</td>
-		<td>
-			type
-		</td>
-		<td>
-			Content type. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>v</b>
-		</td>
-		<td>
-			tagversion
-		</td>
-		<td>
-			Version of tag information in song file. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>r</b>
-		</td>
-		<td>
-			bitrate
-		</td>
-		<td>
-			Song bitrate. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>f</b>
-		</td>
-		<td>
-			filesize
-		</td>
-		<td>
-			Song file length in bytes. Only if known.
+			Song sample size (in bits)
 		</td>
 	</tr>
 	<tr>
@@ -4794,6 +4719,72 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>k</b>
+		</td>
+		<td>
+			comment
+		</td>
+		<td>
+			Song comments, if any.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>K</b>
+		</td>
+		<td>
+			artwork_url
+		</td>
+		<td>
+			A full URL to remote artwork.  Only available for certain plugins such as Pandora and Rhapsody.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>l</b>
+		</td>
+		<td>
+			album
+		</td>
+		<td>
+			Album name. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>L</b>
+		</td>
+		<td>
+			info_link
+		</td>
+		<td>
+			A custom link to use for trackinfo. Only available for certain plugins such as Pandora.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>m</b>
+		</td>
+		<td>
+			bpm
+		</td>
+		<td>
+			Beats per minute. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>M</b>
+		</td>
+		<td>
+			musicmagic_mixable
+		</td>
+		<td>
+			1 if track is mixable, otherwise 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>n</b>
 		</td>
 		<td>
@@ -4805,35 +4796,68 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>C</b>
+			<b>N</b>
 		</td>
 		<td>
-			compilation
+			remote_title
 		</td>
 		<td>
-			1 if the album this track belongs to is a compilation
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>Y</b>
-		</td>
-		<td>
-			replay_gain
-		</td>
-		<td>
-			Replay gain (in dB), if any
+			Title of the internet radio station.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>X</b>
+			<b>o</b>
 		</td>
 		<td>
-			album_replay_gain
+			type
 		</td>
 		<td>
-			Replay gain of the album (in dB), if any
+			Content type. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>p</b>
+		</td>
+		<td>
+			genre_id
+		</td>
+		<td>
+			Genre ID. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>P</b>
+		</td>
+		<td>
+			genre_ids
+		</td>
+		<td>
+			Genre IDs, separated by commas (only useful if the server is set to handle multiple items in tags).
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>q</b>
+		</td>
+		<td>
+			disccount
+		</td>
+		<td>
+			Number of discs. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>r</b>
+		</td>
+		<td>
+			bitrate
+		</td>
+		<td>
+			Song bitrate. Only if known.
 		</td>
 	</tr>
 	<tr>
@@ -4849,6 +4873,39 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>s</b>
+		</td>
+		<td>
+			artist_id
+		</td>
+		<td>
+			Artist ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>S</b>
+		</td>
+		<td>
+			&lt;role&gt;_ids
+		</td>
+		<td>
+			For each role as defined above, the list of ids.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>t</b>
+		</td>
+		<td>
+			tracknum
+		</td>
+		<td>
+			Track number. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>T</b>
 		</td>
 		<td>
@@ -4860,17 +4917,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>I</b>
-		</td>
-		<td>
-			samplesize
-		</td>
-		<td>
-			Song sample size (in bits)
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<b>u</b>
 		</td>
 		<td>
@@ -4878,6 +4924,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Song file url.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>v</b>
+		</td>
+		<td>
+			tagversion
+		</td>
+		<td>
+			Version of tag information in song file. Only if known.
 		</td>
 	</tr>
 	<tr>
@@ -4904,57 +4961,35 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>N</b>
+			<b>X</b>
 		</td>
 		<td>
-			remote_title
+			album_replay_gain
 		</td>
 		<td>
-			Title of the internet radio station.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>c</b>
-		</td>
-		<td>
-			coverid
-		</td>
-		<td>
-			coverid to use when constructing an artwork URL, such as /music/$coverid/cover.jpg
+			Replay gain of the album (in dB), if any
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>K</b>
+			<b>y</b>
 		</td>
 		<td>
-			artwork_url
+			year
 		</td>
 		<td>
-			A full URL to remote artwork.  Only available for certain plugins such as Pandora and Rhapsody.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>B</b>
-		</td>
-		<td>
-			buttons
-		</td>
-		<td>
-			A hash with button definitions. Only available for certain plugins such as Pandora.
+			Song year. Only if known.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>L</b>
+			<b>Y</b>
 		</td>
 		<td>
-			info_link
+			replay_gain
 		</td>
 		<td>
-			A custom link to use for trackinfo. Only available for certain plugins such as Pandora.
+			Replay gain (in dB), if any
 		</td>
 	</tr>
 </table>

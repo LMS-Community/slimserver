@@ -361,46 +361,35 @@ sub options {
 sub pageInfo {
 	my ($class, $args) = @_;
 	
-	my $results      = $args->{'results'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
 	my $itemsPerPage = $args->{'perPage'} || $prefs->get('itemsPerPage');
+	my $index        = $args->{'indexList'};
 
 	my %pageinfo  = ();
 	my %alphamap  = ();
 	my $itemCount = 0;
 	my $end;
-
-	# Use the ResultSet from pageBarResults to build our offset list.
-	if ($args->{'addAlpha'}) {
-
-		my $first = $results->first;
-
-		$alphamap{ Encode::decode('utf8', $first->get_column('letter')) } = 0;
-
-		$itemCount += $first->get_column('count');
-
-		while (my $row = $results->next) {
-
-			my $count  = $row->get_column('count');
-			my $letter = $row->get_column('letter');
-
-			# Set offset for subsequent letter rows to current # $itemCount
-			# (*before* we add number of items for this letter to $itemCount!)
-			$alphamap{ Encode::decode('utf8', $letter) } = $itemCount;
-
-			$itemCount += $count;
+	
+	if ($index) {
+		foreach (@$index) {
+			my $key = $_->[0];
+			utf8::decode($key);
+			$key = ' ' if !defined $key;
+			$alphamap{$key} = $itemCount;
+			$itemCount += $_->[1];
 		}
+		
+		if ($args->{'itemCount'} && $args->{'itemCount'} > $itemCount) {
+			$itemCount = $args->{'itemCount'};
+		}
+	}
 
-	} else {
+	else {
 
 		if ($args->{'itemCount'}) {
 
 			$itemCount = $args->{'itemCount'}
-
-		} elsif ($results) {
-
-			$itemCount = $results->count;
 
 		} else {
 
@@ -454,7 +443,7 @@ sub pageInfo {
 	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
 	$pageinfo{'path'}         = $args->{'path'};
 
-	if ($args->{'addAlpha'} && $itemCount) {
+	if ($index && $itemCount) {
 
 		my @letterstarts = sort { $a <=> $b } values %alphamap;
 		my @pagestarts   = $letterstarts[0];

@@ -7,7 +7,6 @@ package Slim::Schema::ResultSet::Base;
 use strict;
 use base qw(DBIx::Class::ResultSet);
 
-use Slim::Schema::PageBar;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
@@ -15,9 +14,6 @@ my $log = logger('database.sql');
 
 sub orderBy            { '' }
 sub searchColumn       { 'id' }
-sub pageBarResults     { 0 }
-sub alphaPageBar       { 0 }
-sub ignoreArticles     { 0 }
 
 sub distinct {
 	my $self = shift;

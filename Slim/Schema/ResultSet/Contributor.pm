@@ -7,23 +7,6 @@ use base qw(Slim::Schema::ResultSet::Base);
 
 use Slim::Utils::Prefs;
 
-sub pageBarResults {
-	my $self = shift;
-
-	my $table = $self->{'attrs'}{'alias'};
-	my $name  = "$table.namesort";
-
-	$self->search(undef, {
-		'select'     => [ \"SUBSTR($name, 1, 1)", { count => \"DISTINCT($table.id)" } ],
-		as           => [ 'letter', 'count' ],
-		group_by     => \"SUBSTR($name, 1, 1)",
-		result_class => 'Slim::Schema::PageBar',
-	});
-}
-
-sub alphaPageBar { 1 }
-sub ignoreArticles { 1 }
-
 sub searchColumn {
 	my $self  = shift;
 
