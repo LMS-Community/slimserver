@@ -1876,6 +1876,7 @@ sub playlistcontrolCommand {
 		# sort them back!
 		@tracks = sort { $track_ids_order{$a->id()} <=> $track_ids_order{$b->id()} } @rawtracks;
 
+		$artwork = $tracks[0]->album->artwork || 0 if scalar @tracks == 1;
 
 	} else {
 
