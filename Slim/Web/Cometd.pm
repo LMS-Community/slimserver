@@ -292,6 +292,12 @@ sub handler {
 						$timeout = $obj->{advice}->{timeout};
 					}
 					
+					# If we have another active long-poll connection, this is an error
+					if ( $prev && $prev->[HTTP_CLIENT] != $conn->[HTTP_CLIENT] ) {
+						main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
+						$prev->[HTTP_CLIENT]->transport( 'long-polling-old' );
+					}
+					
 					# If we have pending messages for this client, send immediately
 					if ( $manager->has_pending_events($clid) ) {
 						main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');				
@@ -688,6 +694,12 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
+	if ( $httpClient->transport eq 'long-polling' ) {
+		# XXX This prevents reuse of connections but also works around
+		# bug 17021 for now.
+		$httpResponse->header( Connection => 'close' );
+	}
+	
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
@@ -734,7 +746,8 @@ sub sendHTTPResponse {
 	
 	if ( main::DEBUGLOG && $isDebug ) {
 		if ( $sendheaders ) {
-			$log->debug( "Sending Cometd Response:\n" 
+			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
+			$log->debug( "Sending Cometd Response ($peer):\n" 
 				. $httpResponse->as_string . $out
 			);
 		}
@@ -988,7 +1001,8 @@ sub webCloseHandler {
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
-		if ( $transport ne 'none' ) {
+		# We want to ignore any transports that are marked "-old"
+		if ( $transport eq 'streaming' || $transport eq 'long-polling' ) {
 			$manager->remove_connection( $clid );
 			
 			Slim::Utils::Timers::setTimer(
