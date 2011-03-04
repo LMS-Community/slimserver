@@ -275,6 +275,7 @@ sub _cliQuery_done {
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
 	my $xmlBrowseInterimCM = $request->getParam('xmlBrowseInterimCM');
+	my $xmlbrowserPlayControl = $request->getParam('xmlbrowserPlayControl');
 	
 	if ($request->isQuery([[$query], ['playlist']])) {
 		$isPlaylistCmd = 1;
@@ -301,6 +302,15 @@ sub _cliQuery_done {
 	my $menuMode = defined $menu;
 	my $feedMode = defined $request->getParam('feedMode');
 	
+	my $playalbum = undef;
+	if ( $client ) {
+		$playalbum = $prefs->client($client)->get('playtrackalbum');
+	}
+	# if player pref for playtrack album is not set, get the old server pref.
+	if ( !defined $playalbum ) {
+		$playalbum = $prefs->get('playtrackalbum');
+	}
+						
 	# Session ID for this browse session
  	my $sid;
 	
@@ -529,11 +539,12 @@ sub _cliQuery_done {
 				my $cnt = 0;
 
 				if ($menuMode) {
-
-					for my $eachmenu ( @{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) } ) {
-						main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
-						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-						$cnt++;
+					if ($xmlBrowseInterimCM) {
+						for my $eachmenu ( @{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) } ) {
+							main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
+							$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+							$cnt++;
+						}
 					}
 				} # $menuMode
 				
@@ -628,6 +639,7 @@ sub _cliQuery_done {
 		main::INFOLOG && $log->info("Play an item ($method).");
 
 		if ($client && $method =~ /^(add|addall|play|playall|insert|load)$/i) {
+
 			# single item
 			if ((defined $subFeed->{'url'} && $subFeed->{'type'} eq 'audio' || defined $subFeed->{'enclosure'})
 				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})
@@ -761,8 +773,37 @@ sub _cliQuery_done {
 		my $defeatDestructiveTouchToPlay = _defeatDestructiveTouchToPlay($request);
 		my %actionParamsNeeded;
 		
+		if ($menuMode && defined $xmlbrowserPlayControl) {
+
+			$totalCount = 0;
+			my $i = $xmlbrowserPlayControl - $subFeed->{'offset'};
+			if ($i < 0 || $i > $count) {
+				$log->error("Requested item index $xmlbrowserPlayControl out of range: ",
+					$subFeed->{'offset'}, '..', $subFeed->{'offset'} + $count -1);
+			} else {
+				my $item = $items->[$i];
+				for my $eachmenu (@{ 
+					_playlistControlContextMenu({
+						request     => $request,
+						query       => $query,
+						item        => $item,
+						subFeed     => $subFeed,
+						noFavorites => 1,
+						subItemId   => $xmlbrowserPlayControl,
+						playalbum   => $playalbum,
+					})
+				})
+				{
+					$request->setResultLoopHash('item_loop', $totalCount, $eachmenu);
+					$totalCount++;
+				}
+				
+			}
+			$request->addResult('offset', 0);
+		}
+			
 		# Bug 7024, display an "Empty" item instead of returning an empty list
-		if ( $menuMode && !$count && !$xmlBrowseInterimCM) {
+		elsif ( $menuMode && !$count && !$xmlBrowseInterimCM) {
 			$items = [ { type => 'text', name => $request->string('EMPTY') } ];
 			$totalCount = $count = 1;
 		}
@@ -777,7 +818,7 @@ sub _cliQuery_done {
 				$request->addResult('offset', $index);
 
 				my $firstChunk = !$index;
-				if (!$subFeed->{'menuComplete'}) {
+				if ($xmlBrowseInterimCM && !$subFeed->{'menuComplete'}) {
 					for my $eachmenu (@{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) }) {
 						$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
 						
@@ -868,15 +909,6 @@ sub _cliQuery_done {
 					
 					if (my $feedActions = $subFeed->{'actions'}) {
 						my $n = 0;
-						
-						my $playalbum = undef;
-						if ( $client ) {
-							$playalbum = $prefs->client($client)->get('playtrackalbum');
-						}
-						# if player pref for playtrack album is not set, get the old server pref.
-						if ( !defined $playalbum ) {
-							$playalbum = $prefs->get('playtrackalbum');
-						}
 						
 						my $baseAction;
 						
@@ -1159,8 +1191,8 @@ sub _cliQuery_done {
 								$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 							} else {
 								# not currently supported by 7.5 client
-								$request->addResultLoop( $loopname, $cnt, 'goAction', 'more'); 
-								# $request->addResultLoop( $loopname, $cnt, 'playControlParams', {xmlbrowserPlayControl=>"$itemIndex"});
+								$request->addResultLoop( $loopname, $cnt, 'goAction', 'playControl'); 
+								$request->addResultLoop( $loopname, $cnt, 'playControlParams', {xmlbrowserPlayControl=>"$itemIndex"});
 							}
 						}
 						else {
@@ -1271,7 +1303,7 @@ sub _cliQuery_done {
 				_jivePresetBase($baseActions) if $presetFavSet;
 				
 				if ($allTouchToPlay) {
-					$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'more'} : $baseActions->{'play'};
+					$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'playControl'} : $baseActions->{'play'};
 				}
 			}
 			
@@ -1455,6 +1487,45 @@ sub findAction {
 	return wantarray ? () : undef;
 }
 
+sub _makePlayAction {
+	my ($subFeed, $item, $name, $nextWindow, $query, $item_id, $playIndex) = @_;
+	
+	my %params;
+	my $cmd;
+	
+	if (my ($feedAction, $feedActions) = findAction($subFeed, $item, $name)) {
+		%params = %{$feedAction->{'fixedParams'}} if $feedAction->{'fixedParams'};
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			$params{$vars[$i]} = $item->{$vars[$i+1]};
+		}
+
+		$cmd = $feedAction->{'command'};
+	} else {
+		%params = (
+			'item_id' => $item_id,
+		);
+		$params{'playIndex'} = $playIndex if defined $playIndex;
+		
+		$cmd = [ $query, 'playlist', $name ],
+	}
+	
+	if ($cmd) {
+		$params{'menu'} = 1;
+
+		my %action = (
+			player      => 0,
+			cmd         => $cmd,
+			params      => \%params,
+		);
+		$action{'nextWindow'} = $nextWindow if $nextWindow;
+		
+		return \%action;
+	}
+	
+	return undef;
+}
+
 sub _makeAction {
 	my ($actions, $actionName, $actionParamsNeeded, $player, $contextMenu, $nextWindow) = @_;
 	
@@ -1608,79 +1679,65 @@ sub _playlistControlContextMenu {
 
 	my @contextMenu;
 	
-	if (!defined($request->getParam('xmlBrowseInterimCM'))) {
-		return \@contextMenu;
-	}
-	
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
+		my $item_id = $request->getParam('item_id') || '';
+		my $sub_id  = $args->{'subItemId'};
+		my $subFeed = $args->{'subFeed'};
+		
+		if (defined $sub_id) {
+			$item_id .= '.' if length($item_id);
+			$item_id .= $sub_id;
+		}
+		
 		my $itemParams = {
 			menu    => $request->getParam('menu'),
-			item_id => $request->getParam('item_id'),
+			item_id => $item_id,
 		};
 		
-=cut
-		my $subfeed = $args->{'subfeed'};
-		
-		my %addAction;
-		if (my ($feedAction, $feedActions) = findAction($subfeed, $item, 'add')) {
-			my %params = %{$feedAction->{'fixedParams'}} if $feedAction->{'fixedParams'};
-			my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
-			for (my $i = 0; $i < scalar @vars; $i += 2) {
-				$params{$vars[$i]} = $item->{$vars[$i+1]};
-			}
-	
-			$params{'menu'} = $request->getParam('menu');
-			
-			%addAction = (
-				player     => 0,
-				cmd        => $feedAction->{'command'},
-				params     => \%params,
-				nextWindow => 'parentNoRefresh',
-			);
-		}
-=cut
-
-		@contextMenu = (
-			{
-				text => $request->string('ADD_TO_END'),
-				actions => {
-					go => {
-						player => 0,
-						cmd    => [ $query, 'playlist', 'add'],
-						params => $itemParams,
-						nextWindow => 'parentNoRefresh',
-					},
-				},
-			},
-			{
-				text => $request->string('PLAY_NEXT'),
-				actions => {
-					go => {
-						player => 0,
-						cmd    => [ $query, 'playlist', 'insert'],
-						params => $itemParams,
-						nextWindow => 'parentNoRefresh',
-					},
-				},
-			},
-			{
-				text => $request->string('PLAY'),
-				style => 'itemplay',
-				actions => {
-					go => {
-						player => 0,
-						cmd    => [ $query, 'playlist', 'play'],
-						params => $itemParams,
-						nextWindow => 'nowPlaying',
-					},
-				},
-			},
+		my $addPlayAll = (
+			   $args->{'playalbum'}
+			&& defined $sub_id
+			&& $subFeed && scalar @{$subFeed->{'items'} || []} > 1
+			&& ($subFeed->{'playall'} || $item->{'playall'})
 		);
+		
+		my $action;
+		
+		if ($action = _makePlayAction($subFeed, $item, 'add', 'parentNoRefresh', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string('ADD_TO_END'),
+				actions => {go => $action},
+			},
+		}
+		
+		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string('PLAY_NEXT'),
+				actions => {go => $action},
+			},
+		}
+		
+		if ($action = _makePlayAction($subFeed, $item, 'play', 'nowPlaying', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string($addPlayAll ? 'PLAY_THIS_SONG' : 'PLAY'),
+				style => 'itemplay',
+				actions => {go => $action},
+			},
+		}
+		
+		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $request->getParam('item_id'), $sub_id))) {
+			push @contextMenu, {
+				text => $request->string('JIVE_PLAY_ALL_SONGS'),
+				style => 'itemplay',
+				actions => {go => $action},
+			},
+		}
 	}
 
 	# Favorites handling
-	if (my $favParams = _favoritesParams($item)) {
+	my $favParams;
+	if (($favParams = _favoritesParams($item)) && !$args->{'noFavorites'}) {
 	
 		my $action = 'add';
 	 	my $favIndex = undef;
@@ -1751,6 +1808,16 @@ sub _defeatDestructiveTouchToPlay {
 	my $request = shift;
 	my $client = $request->client();
 	my $pref;
+	
+	if (my $agent = $request->getAgent()) {
+		$log->error($agent);
+		if ($agent =~ /squeezeplay/i) {
+			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
+			
+			return 0 if $version < 7.6;
+			return 0 if $version eq '7.6' && $revision < 9337;
+		}
+	}
 	
 	$pref = $request->getParam('defeatDestructiveTouchToPlay');
 	$pref = $prefs->client($request->client)->get('defeatDestructiveTouchToPlay') if !defined $pref;
