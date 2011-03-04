@@ -1810,7 +1810,6 @@ sub _defeatDestructiveTouchToPlay {
 	my $pref;
 	
 	if (my $agent = $request->getAgent()) {
-		$log->error($agent);
 		if ($agent =~ /squeezeplay/i) {
 			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
 			
