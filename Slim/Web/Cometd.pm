@@ -145,7 +145,8 @@ sub handler {
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Cometd request: " . Data::Dump::dump( $objs ) );
+		my $peer = $conn->[HTTP_CLIENT]->peerhost . ':' . $conn->[HTTP_CLIENT]->peerport;
+		$log->debug( "Cometd request ($peer): " . Data::Dump::dump( $objs ) );
 	}
 	
 	my $clid;
