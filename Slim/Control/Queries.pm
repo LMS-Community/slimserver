@@ -709,10 +709,11 @@ sub artistsQuery {
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
+	my $indexList;
 	if ($tags =~ /Z/) {
 		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
 			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
-		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		$indexList = $dbh->selectall_arrayref($pageSql, undef, @{$p});
 	}
 
 	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable')
@@ -837,6 +838,8 @@ sub artistsQuery {
 			$mixable  = 0;
 			
 			$process->();
+			
+			unshift @$indexList, ['#' => 1] if $indexList;
 		}
 
 		while ( $sth->fetch ) {
@@ -844,6 +847,8 @@ sub artistsQuery {
 		}
 		
 	}
+	
+	$request->addResult('indexList', $indexList) if $indexList;
 
 	$request->addResult('count', $totalCount);
 	
@@ -1973,19 +1978,10 @@ sub playlistsTracksQuery {
 
 				_addSong($request, $loopname, $chunkCount, $eachitem, $tags, "playlist index", $cur);
 				
-					($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
+				$cur++;
+				$chunkCount++;
 				
-					($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
-				}
-				else {
-					# bug 16947, 14360: $totalCount needs to be upped by two for all chunks, not just the last one
-					# this is to ensure that $totalCount correctly accounts for the 
-					# delete playlist and add to favorites menu items, even for the earlier chunks. 
-					# If SP gets conflicting counts on different chunks, it leads to badthings
-					if ($totalCount > 0) {
-						$totalCount += 2;
-					}
-				}
+				main::idleStreams();
 			}
 		}
 		$request->addResult("count", $count);
