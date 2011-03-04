@@ -731,7 +731,7 @@ sub handleFeed {
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 
 			# the following ensures the original array is not altered by creating a slice to show this page only
-			my $finish = $start + $stash->{'pageinfo'}{'itemsperpage'};
+			my $finish = $stash->{'pageinfo'}{'enditem'} + 1;
 			$finish = $itemCount if ($itemCount < $finish);
 
 			my @items = @{ $stash->{'items'} };
