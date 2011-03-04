@@ -364,7 +364,8 @@ sub runScanPostProcessing {
 		$class->runArtworkImporter($importer);
 	}
 
-	Slim::Music::Artwork->downloadArtwork();
+	# If we ever find an artwork provider...
+	#Slim::Music::Artwork->downloadArtwork();
 	
 	# Pre-cache resized artwork
 	$importsRunning{'precacheArtwork'} = Time::HiRes::time();

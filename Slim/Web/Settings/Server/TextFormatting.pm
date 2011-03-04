@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(coverArt artfolder downloadArtwork));
+	return ($prefs, qw(coverArt artfolder));
 }
 
 sub handler {

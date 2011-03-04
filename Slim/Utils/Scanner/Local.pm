@@ -878,8 +878,10 @@ sub markDone {
 	# Done with all tasks
 	if ( !main::SCANNER ) {
 
+=pod
 		# try to autocomplete artwork from mysqueezebox.com		
 		Slim::Music::Artwork->downloadArtwork( sub {
+=cut
 			
 			# Precache artwork, when done send rescan done event
 			Slim::Music::Artwork->precacheAllArtwork( sub {
@@ -904,8 +906,6 @@ sub markDone {
 				Slim::Music::Import->setIsScanning(0);
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 			} );
-
-		} );
 	}
 	
 	%pending = ();

@@ -1470,7 +1470,7 @@ sub _addingToPlaylist {
 			type => 'mixed',
 			text => [ $jivestring, $title ],
 			style => 'add',
-			'icon-id' => defined $icon ? $icon : '/html/music/cover.png',
+			'icon-id' => defined $icon ? $icon : '/html/images/cover.png',
 		},
 	} );
 }

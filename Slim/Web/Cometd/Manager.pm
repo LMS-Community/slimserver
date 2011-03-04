@@ -37,8 +37,8 @@ sub new {
 sub add_client {
 	my ( $self, $clid ) = @_;
 	
-	# The per-client event hash holds one pending event per channel
-	$self->{events}->{$clid} = {};
+	# Pending events for this clid
+	$self->{events}->{$clid} = [];
 	
 	main::DEBUGLOG && $log->debug("add_client: $clid");
 	
@@ -184,7 +184,7 @@ sub queue_events {
 	my $e = $self->{events}->{$clid};
 	
 	for my $event ( @{$events} ) {
-		$e->{ $event->{channel} } = $event;
+		push @{$e}, $event;
 	}
 }
 
@@ -193,12 +193,12 @@ sub get_pending_events {
 	
 	my $events = [];
 	
-	while ( my ($channel, $event) = each %{ $self->{events}->{$clid} } ) {
-		push @{$events}, $event;
+	for ( @{ $self->{events}->{$clid} } ) {
+		push @{$events}, $_;
 	}
 	
 	# Clear all pending events
-	$self->{events}->{$clid} = {};
+	$self->{events}->{$clid} = [];
 	
 	return wantarray ? @{$events} : $events;
 }
@@ -206,17 +206,22 @@ sub get_pending_events {
 sub has_pending_events {
 	my ( $self, $clid ) = @_;
 	
-	return scalar keys %{ $self->{events}->{$clid} };
+	return scalar @{ $self->{events}->{$clid} };
 }
 
 sub deliver_events {
-	my ( $self, $events ) = @_;
+	my ( $self, $events, $clid ) = @_;
 	
 	if ( ref $events ne 'ARRAY' ) {
 		$events = [ $events ];
 	}
 	
 	my @to_send;
+	
+	# If a specific clid is provided, always try to deliver to them
+	if ( $clid ) {
+		push @to_send, $clid;
+	}
 	
 	for my $event ( @{$events} ) {
 		# Find subscriber(s) to this event
@@ -240,8 +245,8 @@ sub deliver_events {
 		
 		# If we have an active connection to send to...
 		if ( $conn ) {
-			# Add any pending events
-			push @{$events}, ( $self->get_pending_events( $clid ) );
+			# Prepend any pending events
+			unshift @{$events}, ( $self->get_pending_events( $clid ) );
 		
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( 

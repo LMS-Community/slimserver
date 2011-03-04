@@ -1,13 +1,4 @@
 [% PROCESS settings/header.html %]
-
-	[% WRAPPER setting title="SETUP_DBTYPE" desc="SETUP_DBTYPE_DESC" %]
-		<select class="stdedit" name="pref_dbtype" id="dbtype">
-
-			<option [% IF prefs.dbtype == 'SQLite' %]selected [% END %]value="SQLite">[% 'SETUP_DBTYPE_SQLITE' | getstring %]</option>
-			<option [% IF prefs.dbtype == 'MySQL' %]selected [% END %]value="MySQL">[% 'SETUP_DBTYPE_MYSQL' | getstring %]</option>
-	
-		</select>
-	[% END %]
 	
 	[% WRAPPER setting title="SETUP_DBHIGHMEM" desc="SETUP_DBHIGHMEM_DESC" %]
 		<select class="stdedit" name="pref_dbhighmem" id="dbhighmem">

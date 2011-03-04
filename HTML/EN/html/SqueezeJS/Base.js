@@ -54,7 +54,7 @@ function _init() {
 			this.events = this.events || {};
 			this.addEvents({
 				'playerselected'   : true,
-				'playerlistupdate' : true,
+				'serverstatus'     : true,
 				'playlistchange'   : true,
 				'buttonupdate'     : true,
 				'playerstatechange': true,
@@ -150,7 +150,7 @@ function _init() {
 							
 							response = Ext.util.JSON.decode(response.responseText);
 							if (response && response.result) {
-								this.fireEvent('playerlistupdate', response.result);
+								this.fireEvent('serverstatus', response.result);
 
 								if (response.result.rescan || this.playerStatus.rescan) {
 									this.playerStatus.rescan = response.result.rescan;
@@ -173,7 +173,7 @@ function _init() {
 				name : 'playtimeticker',
 				timeout : 950,
 				fn : function(self){
-					if (this.playerStatus.duration > 0 
+					if (this.playerStatus.mode == 'play' && this.playerStatus.duration > 0 
 						&& this.playerStatus.playtime >= this.playerStatus.duration-1
 						&& this.playerStatus.playtime <= this.playerStatus.duration + 2)
 						this.getStatus();
@@ -228,6 +228,7 @@ function _init() {
 				current_title: null,
 				title: null,
 				track: null,
+				playlist_tracks: 0,
 				index: null,
 				duration: null,
 				playtime: 0,
@@ -303,6 +304,14 @@ function _init() {
 			}
 		},
 	
+		togglePause : function(dontUpdate) {
+			if (this.isPaused()) {
+				this.playerControl(['play'], dontUpdate);
+			} else {
+				this.playerControl(['pause'], dontUpdate);
+			}
+		},
+
 		// custom playerRequest which requires a controller update
 		// ussually used in player controls
 		playerControl : function(action, dontUpdate){
@@ -363,12 +372,9 @@ function _init() {
 				return;
 
 			response = response.result;
+			
+			var playlistchange = this._needUpdate(response) && Ext.get('playList');
 
-			this.fireEvent('playerstatechange', response);
-	
-			if (this._needUpdate(response) && Ext.get('playList'))
-				this.fireEvent('playlistchange', response);
-	
 			this.playerStatus = {
 				// if power is undefined, set it to on for http clients
 				power:     (response.power == null) || response.power,
@@ -377,16 +383,22 @@ function _init() {
 				current_title: response.current_title,
 				title:     response.playlist_tracks > 0 ? response.playlist_loop[0].title : '',
 				track:     response.playlist_tracks > 0 ? response.playlist_loop[0].url : '',
+				playlist_tracks: response.playlist_tracks,
 				index:     response.playlist_cur_index,
 				duration:  parseInt(response.duration) || 0,
 				canSeek:   response.can_seek ? true : false,
 				playtime:  parseInt(response.time),
 				timestamp: response.playlist_timestamp
 			};
-	
+
 			if ((response.power != null) && !response.power) {
 				this.playerStatus.power = 0;
 			}
+
+			this.fireEvent('playerstatechange', response);
+			if (playlistchange)
+				this.fireEvent('playlistchange', response);
+	
 		},
 	
 		_needUpdate : function(result) {
@@ -463,8 +475,12 @@ function _init() {
 				if ((playerobj.playerid != this.player && encodeURIComponent(playerobj.playerid) != this.player) 
 					|| this.player == -1) {
 					
+					var oldPlayer = this.player != -1 ? {
+						playerid: this.player
+					} : null;
+					
 					this._initPlayerStatus();
-					this.fireEvent('playerselected', playerobj);
+					this.fireEvent('playerselected', playerobj, oldPlayer);
 				}
 			}
 			else {
@@ -479,10 +495,15 @@ function _init() {
 				response = response.result;
 
 			activeplayer = activeplayer || SqueezeJS.getCookie('Squeezebox-player');
-			if (response && response.players_loop) {
-				for (var x=0; x < response.players_loop.length; x++) {
-					if (response.players_loop[x].playerid == activeplayer || encodeURIComponent(response.players_loop[x].playerid) == activeplayer)
-						return response.players_loop[x];
+			return this.parseCurrentPlayerInfo(response, activeplayer);
+		},
+		
+		parseCurrentPlayerInfo: function(result, activeplayer) {
+			if (result && result.players_loop) {
+				var players_loop = result.players_loop;
+				for (var x=0; x < players_loop.length; x++) {
+					if (players_loop[x].playerid == activeplayer || encodeURIComponent(players_loop[x].playerid) == activeplayer)
+						return players_loop[x];
 				}
 			}		
 		},
@@ -493,6 +514,34 @@ function _init() {
 			
 			SqueezeJS.Controller.player = String(SqueezeJS.Controller.player).replace(/%3A/gi, ':');
 			return SqueezeJS.Controller.player;
+		},
+
+		isPaused : function() {
+			if (this.player && this.playerStatus.mode == 'pause') {
+				return true;
+			} 
+			return false;
+		},
+
+		isPlaying : function() {
+			if (this.player && this.playerStatus.mode == 'play') {
+				return true;
+			} 
+			return false;
+		},
+
+		isStopped : function() {
+			if (this.player && this.playerStatus.mode == 'stop') {
+				return true;
+			} 
+			return false;
+		},
+
+		hasPlaylistTracks: function() {
+			if (!this.player || !this.playerStatus)
+				return;
+				
+			return parseInt(this.playerStatus.playlist_tracks) > 0 ? true : false;
 		},
 
 		getBaseUrl: function() {
@@ -787,6 +836,39 @@ SqueezeJS.Utils = {
 				method: 'GET'
 			});
 		}
+	},
+	
+	parseURI: function(uri) {
+		var	parsed = uri.match(/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/);
+		var keys   = [
+			"source",
+			"protocol", 
+			"authority", 
+			"userInfo", 
+			"user", 
+			"password", 
+			"host", 
+			"port", 
+			"relative", 
+			"path", 
+			"directory", 
+			"file", 
+			"query", 
+			"anchor"
+		];
+		var parts = {};
+		
+		for (var i = keys.length; i--;) {
+			parts[keys[i]] = parsed[i] || '';
+		}
+
+		parts.queryKey = {};
+
+		parts.query.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, function ($0, $1, $2) {
+			if ($1) parts.queryKey[$1] = $2;
+		});
+
+		return parts;
 	}
 };
 

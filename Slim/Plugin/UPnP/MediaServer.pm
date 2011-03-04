@@ -65,10 +65,15 @@ sub description {
 	$params->{serverURL}  = 'http://' . $hostport;
 	$params->{eventAddr}  = $eventaddr;
 	
+	# Replace the first 8 chars of server_uuid with a constant value that identifies this
+	# as an SBS server
+	my $serial = $server_uuid;
+	substr $serial, 0, 8, '106173c8';
+	
 	$params->{device} = {
 		name    => 'Squeezebox Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
 		version => $::VERSION . ' r' . $::REVISION,
-		serial  => $server_uuid,
+		serial  => $serial,
 		uuid    => uc($server_uuid),
 	};
 	
