@@ -27,6 +27,7 @@ use URI::Escape qw(uri_unescape);
 use Slim::Control::Request;
 use Slim::Web::Cometd::Manager;
 use Slim::Web::HTTP;
+use Slim::Utils::Compress;
 use Slim::Utils::Log;
 use Slim::Utils::Timers;
 
@@ -49,20 +50,6 @@ use constant LONG_POLLING_TIMEOUT  => 60000; # server will wait up to 60s for ev
 # indicies used for $conn in handler()
 use constant HTTP_CLIENT      => 0;
 use constant HTTP_RESPONSE    => 1;
-
-BEGIN {
-	my $hasZlib;
-	
-	sub hasZlib {
-		return $hasZlib if defined $hasZlib;
-		
-		$hasZlib = 0;
-		eval { 
-			require Compress::Raw::Zlib;
-			$hasZlib = 1;
-		};
-	}
-}
 
 sub init {
 	Slim::Web::Pages->addRawFunction( '/cometd', \&webHandler );
@@ -158,7 +145,8 @@ sub handler {
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Cometd request: " . Data::Dump::dump( $objs ) );
+		my $peer = $conn->[HTTP_CLIENT]->peerhost . ':' . $conn->[HTTP_CLIENT]->peerport;
+		$log->debug( "Cometd request ($peer): " . Data::Dump::dump( $objs ) );
 	}
 	
 	my $clid;
@@ -184,8 +172,9 @@ sub handler {
 				$clid = Slim::Utils::Misc::createUUID(); 
 				$manager->add_client( $clid );
 			}
-			else {
-				# No clientId, this is OK for sending unconnected requests
+			elsif ( $obj->{channel} =~ m{^/slim/(?:subscribe|request)} && $obj->{data} ) {
+				# Pull clientId out of response channel
+				($clid) = $obj->{data}->{response} =~ m{/([0-9a-f]{8})/};
 			}
 			
 			# Register client with HTTP connection
@@ -193,6 +182,13 @@ sub handler {
 				if ( ref $conn eq 'ARRAY' ) {
 					$conn->[HTTP_CLIENT]->clid( $clid );
 				}
+			}
+			else {
+				push @errors, {
+					channel => $obj->{channel},
+					error   => 'No clientId found',
+					id      => $obj->{id},
+				};
 			}
 		}
 		
@@ -294,6 +290,12 @@ sub handler {
 					# Client can override timeout
 					if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
 						$timeout = $obj->{advice}->{timeout};
+					}
+					
+					# If we have another active long-poll connection, this is an error
+					if ( $prev && $prev->[HTTP_CLIENT] != $conn->[HTTP_CLIENT] ) {
+						main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
+						$prev->[HTTP_CLIENT]->transport( 'long-polling-old' );
 					}
 					
 					# If we have pending messages for this client, send immediately
@@ -692,6 +694,12 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
+	if ( $httpClient->transport eq 'long-polling' ) {
+		# XXX This prevents reuse of connections but also works around
+		# bug 17021 for now.
+		$httpResponse->header( Connection => 'close' );
+	}
+	
 	$out = eval { to_json($out) };
 	if ( $@ ) {
 		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
@@ -712,20 +720,22 @@ sub sendHTTPResponse {
 		}
 	}
 	else {
-		# deflate if requested
-		if ( hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
-			if ( $ae =~ /deflate/ && !$isDebug ) { # don't compress if debugging
-				my $x = Compress::Raw::Zlib::Deflate->new( {
-					-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
-				} );
-				
+		# deflate/gzip if requested (unless debugging)
+		if ( !$isDebug && Slim::Utils::Compress::hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
+			if ( $ae =~ /gzip/ ) {
 				my $output = '';
-				if ( ($x->deflate( $out, $output )) == Compress::Raw::Zlib::Z_OK() ) {
-					if ( ($x->flush($output)) == Compress::Raw::Zlib::Z_OK() ) {
-						$out = $output;
-						$httpResponse->header('Content-Encoding' => 'deflate');
-						$httpResponse->header(Vary => 'Accept-Encoding');
-					}
+				if ( Slim::Utils::Compress::deflate( { type => 'gzip', in => \$out, out => \$output } ) ) {
+					$out = $output;
+					$httpResponse->header( 'Content-Encoding' => 'gzip' );
+					$httpResponse->header( Vary => 'Accept-Encoding' );
+				}
+			}
+			elsif ( $ae =~ /deflate/ ) {
+				my $output = '';
+				if ( Slim::Utils::Compress::deflate( { type => 'deflate', in => \$out, out => \$output } ) ) {
+					$out = $output;
+					$httpResponse->header( 'Content-Encoding' => 'deflate' );
+					$httpResponse->header( Vary => 'Accept-Encoding' );
 				}
 			}
 		}
@@ -736,7 +746,8 @@ sub sendHTTPResponse {
 	
 	if ( main::DEBUGLOG && $isDebug ) {
 		if ( $sendheaders ) {
-			$log->debug( "Sending Cometd Response:\n" 
+			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
+			$log->debug( "Sending Cometd Response ($peer):\n" 
 				. $httpResponse->as_string . $out
 			);
 		}
@@ -979,24 +990,27 @@ sub webCloseHandler {
 	
 	# unregister connection from manager
 	if ( my $clid = $httpClient->clid ) {
-		my $transport = $httpClient->transport;
+		my $transport = $httpClient->transport || 'none';
 			
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
-			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
+			$log->debug( "Lost connection from $peer, clid: $clid, transport: $transport" );
 		}
 		
 		if ( $transport eq 'long-polling' ) {
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
-		$manager->remove_connection( $clid );
+		# We want to ignore any transports that are marked "-old"
+		if ( $transport eq 'streaming' || $transport eq 'long-polling' ) {
+			$manager->remove_connection( $clid );
 			
-		Slim::Utils::Timers::setTimer(
-			$clid,
-			Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
-			\&disconnectClient,
-		);
+			Slim::Utils::Timers::setTimer(
+				$clid,
+				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
+				\&disconnectClient,
+			);
+		}
 	}
 }
 
