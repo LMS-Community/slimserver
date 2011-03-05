@@ -129,12 +129,12 @@ href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=
 
 [%# this is the href to the year of item %]
 [% BLOCK yearItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;year=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% item.year %])&amp;year=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the primary artist of item %]
 [% BLOCK artistItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% item.artist | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]

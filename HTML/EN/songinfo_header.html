@@ -27,7 +27,7 @@
 		[%- albumInfo = BLOCK%]
 			[% IF itemobj.album %] 
 				[% IF itemobj.album.id %] 
-					[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
+					[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% itemobj.album.title || itemobj.album.name | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
 				[% ELSIF itemobj.album.link %] 
 					[% item = BLOCK %]<a href="[% webroot %][% itemobj.album.link %]&amp;player=[% playerURI %]" class="browseItemLink">
 						[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
@@ -63,7 +63,7 @@
 					IF contributor.link;
 						contributorHTMLFrag = "<a href=\"$webroot$contributor.link&amp;player=$playerURI\" $target>$contributor.name</a>";
 					ELSIF contributor.id;
-						contributorHTMLFrag = "<a href=\"${webroot}clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;artist_id=$contributor.id&amp;player=$playerURI/\" $target>$contributor.name</a>";
+						contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% contributor.name | url %])&amp;artist_id=[% contributor.id %]&amp;player=[% playerURI %]" $target>[% contributor.name %]</a>[% END;
 					ELSE;
 						contributorHTMLFrag = contributor.name;
 					END
@@ -90,7 +90,7 @@
 		[% IF itemobj.genres %] [% genresHTML = [] %]
 			[% FOREACH genre = itemobj.genres %][% UNLESS notarget; target = "target=\"browser\""; END %]
 				[% IF genre.id %]
-					[% genreHTMLFrag = "<a href=\"${webroot}clixmlbrowser/clicmd=browselibrary+items&amp;mode=artists&amp;genre_id=$genre.id&amp;player=$playerURI/\" $target>$genre.name</a>" %]
+					[% genreHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=artists&amp;linktitle=[% 'GENRE' | string %]%20([% $genre.name | uri %])&amp;genre_id=[% genre.id %]&amp;player=[% playerURI %]/" $target>[% genre.name %]</a>[% END %]
 				[% ELSIF genre.link %]
 					[% genreHTMLFrag = "<a href=\"${webroot}$genre.link&amp;player=$playerURI\" $target>$genre.name</a>" %]
 				[% ELSE %]
@@ -104,7 +104,7 @@
 	
 		[% IF itemobj.year %] 
 			[% IF itemobj.year.id %]
-				[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;year=[% itemobj.year.name %]&amp;player=[% playerURI %]/" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.year.name| html %]</a>[% END %]
+				[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% itemobj.year.name %])&amp;year=[% itemobj.year.name %]&amp;player=[% playerURI %]/" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.year.name| html %]</a>[% END %]
 			[% ELSIF itemobj.year.link %]
 				[% item = BLOCK %]<a href="[% webroot %][% itemobj.year.link %]&amp;player=[% playerURI %]" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.year.name| html %]</a>[% END %]
 			[% ELSE %]
