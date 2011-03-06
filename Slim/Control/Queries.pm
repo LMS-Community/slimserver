@@ -4824,12 +4824,14 @@ sub _getTagDataForTracks {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1;
 		
-		my $cond = 'contributor_track.role IN (?, ?';
+		my $cond = 'contributor_track.role IN (?, ?, ?';
 		
 		# Tag 'a' returns either ARTIST or TRACKARTIST role
+		# Bug 16791: Need to include ALBUMARTIST too
 		push @{$p}, (
 			Slim::Schema::Contributor->typeToRole('ARTIST'), 
 			Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
+			Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
 		);
 
 		# Loop through each pref to see if the user wants to show that contributor role.
