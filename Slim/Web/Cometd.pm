@@ -695,9 +695,9 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
 	if ( $httpClient->transport eq 'long-polling' ) {
-		# XXX This prevents reuse of connections but also works around
-		# bug 17021 for now.
-		$httpResponse->header( Connection => 'close' );
+		# Remove the active connection info from manager until
+		# the client makes a new /meta/(re)?connect request
+		$manager->remove_connection( $httpClient->clid );
 	}
 	
 	$out = eval { to_json($out) };
@@ -720,21 +720,14 @@ sub sendHTTPResponse {
 		}
 	}
 	else {
-		# deflate/gzip if requested (unless debugging)
+		# gzip if requested (unless debugging or less than 150 bytes)
 		if ( !$isDebug && Slim::Utils::Compress::hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
-			if ( $ae =~ /gzip/ ) {
+			my $len = length($out);
+			if ( $ae =~ /gzip/ && $len > 150 ) {
 				my $output = '';
-				if ( Slim::Utils::Compress::deflate( { type => 'gzip', in => \$out, out => \$output } ) ) {
+				if ( Slim::Utils::Compress::gzip( { in => \$out, out => \$output } ) ) {
 					$out = $output;
 					$httpResponse->header( 'Content-Encoding' => 'gzip' );
-					$httpResponse->header( Vary => 'Accept-Encoding' );
-				}
-			}
-			elsif ( $ae =~ /deflate/ ) {
-				my $output = '';
-				if ( Slim::Utils::Compress::deflate( { type => 'deflate', in => \$out, out => \$output } ) ) {
-					$out = $output;
-					$httpResponse->header( 'Content-Encoding' => 'deflate' );
 					$httpResponse->header( Vary => 'Accept-Encoding' );
 				}
 			}

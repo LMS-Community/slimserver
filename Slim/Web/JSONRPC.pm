@@ -17,6 +17,7 @@ use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 
 use Slim::Web::HTTP;
+use Slim::Utils::Compress;
 use Slim::Utils::Log;
 
 
@@ -218,10 +219,12 @@ sub writeResponse {
 	my $context = shift;
 	my $responseRef = shift;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	my $httpClient   = $context->{'httpClient'};
 	my $httpResponse = $context->{'httpResponse'};
 
-	if ( main::DEBUGLOG && $log->is_debug ) {
+	if ( main::DEBUGLOG && $isDebug ) {
 		$log->debug( "JSON response: " . Data::Dump::dump($responseRef) );
 	}
 	
@@ -234,7 +237,7 @@ sub writeResponse {
 	# convert Perl object into JSON
 	my $jsonResponse = to_json($responseRef);
 
-	main::INFOLOG && $log->info("JSON raw response: [$jsonResponse]");
+	main::DEBUGLOG && $isDebug && $log->info("JSON raw response: [$jsonResponse]");
 
 	$httpResponse->code(RC_OK);
 	
@@ -255,12 +258,25 @@ sub writeResponse {
 	if ($xjive) {
 		$httpResponse->header('Transfer-Encoding' => 'chunked');
 	} else {
+		# gzip if requested (unless debugging or less than 150 bytes)
+		if ( !$isDebug && Slim::Utils::Compress::hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
+			my $len = length($jsonResponse);
+			if ( $ae =~ /gzip/ && $len > 150 ) {
+				my $output = '';
+				if ( Slim::Utils::Compress::gzip( { in => \$jsonResponse, out => \$output } ) ) {
+					$jsonResponse = $output;
+					$httpResponse->header( 'Content-Encoding' => 'gzip' );
+					$httpResponse->header( Vary => 'Accept-Encoding' );
+				}
+			}
+		}
+		
 		$httpResponse->content_length(length($jsonResponse));
 	}
 	
 	if ($sendheaders) {
 	
-		if ( main::DEBUGLOG && $log->is_debug ) {
+		if ( main::DEBUGLOG && $isDebug ) {
 			$log->debug("Response headers: [\n" . $httpResponse->as_string . "]");
 		}
 	}
