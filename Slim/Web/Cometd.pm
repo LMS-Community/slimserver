@@ -695,9 +695,9 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
 	if ( $httpClient->transport eq 'long-polling' ) {
-		# XXX This prevents reuse of connections but also works around
-		# bug 17021 for now.
-		$httpResponse->header( Connection => 'close' );
+		# Remove the active connection info from manager until
+		# the client makes a new /meta/(re)?connect request
+		$manager->remove_connection( $httpClient->clid );
 	}
 	
 	$out = eval { to_json($out) };
