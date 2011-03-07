@@ -662,7 +662,7 @@ SqueezeJS.SonginfoParser = {
 		return this.tpl[((noLink || id == null) ? 'raw' : 'linked')].album.apply({
 			id: id,
 			album: album,
-			title: encodeURIComponent('xyX (' + album + ')'),
+			title: encodeURIComponent(SqueezeJS.string("album") + ' (' + album + ')'),
 			player: SqueezeJS.getPlayer()
 		});
 	},
@@ -689,7 +689,7 @@ SqueezeJS.SonginfoParser = {
 							contributorList += this.tpl[((ids[i] && !noLink) ? 'linked' : 'raw')].contributor.apply({ 
 								id: (ids[i] || null),
 								contributor: contributors[i],
-								title: encodeURIComponent('xyX (' + contributors[i] + ')'),
+								title: encodeURIComponent(SqueezeJS.string("artist") + ' (' + contributors[i] + ')'),
 								player: SqueezeJS.getPlayer()
 							});
 						}
@@ -709,7 +709,7 @@ SqueezeJS.SonginfoParser = {
 
 		return this.tpl[(noLink || !year ? 'raw' : 'linked')].year.apply({
 			year: year,
-			title: encodeURIComponent('xyX (' + year + ')'),
+			title: encodeURIComponent(SqueezeJS.string("year") + ' (' + year + ')'),
 			player: SqueezeJS.getPlayer()
 		});
 	},
