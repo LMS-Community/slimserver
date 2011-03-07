@@ -720,21 +720,14 @@ sub sendHTTPResponse {
 		}
 	}
 	else {
-		# deflate/gzip if requested (unless debugging)
+		# gzip if requested (unless debugging or less than 150 bytes)
 		if ( !$isDebug && Slim::Utils::Compress::hasZlib() && (my $ae = $httpResponse->request->header('Accept-Encoding')) ) {
-			if ( $ae =~ /gzip/ ) {
+			my $len = length($out);
+			if ( $ae =~ /gzip/ && $len > 150 ) {
 				my $output = '';
-				if ( Slim::Utils::Compress::deflate( { type => 'gzip', in => \$out, out => \$output } ) ) {
+				if ( Slim::Utils::Compress::gzip( { in => \$out, out => \$output } ) ) {
 					$out = $output;
 					$httpResponse->header( 'Content-Encoding' => 'gzip' );
-					$httpResponse->header( Vary => 'Accept-Encoding' );
-				}
-			}
-			elsif ( $ae =~ /deflate/ ) {
-				my $output = '';
-				if ( Slim::Utils::Compress::deflate( { type => 'deflate', in => \$out, out => \$output } ) ) {
-					$out = $output;
-					$httpResponse->header( 'Content-Encoding' => 'deflate' );
 					$httpResponse->header( Vary => 'Accept-Encoding' );
 				}
 			}

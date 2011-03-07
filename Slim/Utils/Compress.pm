@@ -1,8 +1,7 @@
 package Slim::Utils::Compress;
 
-# deflate/gzip routines
+# gzip routines
 
-my $deflate;
 my $gzip;
 
 BEGIN {
@@ -19,34 +18,24 @@ BEGIN {
 	}
 }
 
-sub deflate {
+sub gzip {
 	my $opts = shift;
 	
-	my $type = $opts->{type};
-	my $x;
-	
-	if ( $type eq 'deflate' ) {
-		$x = $deflate ||= Compress::Raw::Zlib::Deflate->new( {
-			-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
-		} );
-	}
-	elsif ( $type eq 'gzip' ) {
-		$x = $gzip ||= Compress::Raw::Zlib::Deflate->new( {
-			-WindowBits => Compress::Raw::Zlib::WANT_GZIP(),
-		} );
-	}
+	my $x = $gzip ||= Compress::Raw::Zlib::Deflate->new( {
+		-WindowBits => Compress::Raw::Zlib::WANT_GZIP(),
+	} );
 	
 	if ( ($x->deflate( $opts->{in}, $opts->{out} )) == Compress::Raw::Zlib::Z_OK() ) {
 		if ( ($x->flush( $opts->{out} )) == Compress::Raw::Zlib::Z_OK() ) {
-			if ( $type eq 'gzip' ) { # add gzip header
-				substr ${$opts->{out}}, 0, 0, _getGzipHeader();
-			}
+			# add gzip header
+			substr ${$opts->{out}}, 0, 0, _getGzipHeader();
+			
+			$x->deflateReset();
 			return 1;
 		}
 	}
 	
 	# Failed, reset objects
-	undef $deflate;
 	undef $gzip;
 	
 	return;
