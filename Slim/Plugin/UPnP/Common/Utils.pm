@@ -168,6 +168,11 @@ sub trackDetails {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
 		}
+		
+		if ( $filterall || $filter =~ /upnp:icon/ ) {
+			my $thumbSize = $prefs->get('thumbSize') || 100;
+			$xml .= '<upnp:icon>' . absURL("/music/$coverid/cover_${thumbSize}x${thumbSize}_o") . '</upnp:icon>';
+		}
 	}
 	
 	if ( $filterall || $filter =~ /res/ ) {
