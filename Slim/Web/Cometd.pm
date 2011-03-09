@@ -644,6 +644,9 @@ sub sendResponse {
 	
 	$out ||= [];
 	
+	# Add any additional pending events
+	push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
+	
 	# Add special first event for /meta/(re)connect if set
 	# Note: calling first_event will remove the event from httpClient
 	if ( my $first = $httpClient->first_event ) {
@@ -652,9 +655,7 @@ sub sendResponse {
 	
 	if ($httpResponse) {
 		if ( $httpClient->transport eq 'long-polling' ) {
-			# Finish a long-poll cycle by sending all pending events and removing the timer
-			push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
-			
+			# Finish a long-poll cycle by sending all pending events and removing the timer			
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
@@ -723,14 +724,14 @@ sub sendHTTPResponse {
 	}
 	
 	if ( main::DEBUGLOG && $isDebug ) {
+		my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 		if ( $sendheaders ) {
-			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
-			$log->debug( "Sending Cometd Response ($peer):\n" 
+			$log->debug( "Sending Cometd response ($peer):\n" 
 				. $httpResponse->as_string . $out
 			);
 		}
 		else {
-			$log->debug( "Sending Cometd chunk:\n" . $out );
+			$log->debug( "Sending Cometd chunk ($peer):\n" . $out );
 		}
 	}
 	
@@ -843,6 +844,7 @@ sub handleRequest {
 		
 		# Only set a callback if the caller wants a response
 		if ( $id ) {
+			$request->connectionID($clid);
 			$request->autoExecuteCallback( \&requestCallback );
 		}
 		
