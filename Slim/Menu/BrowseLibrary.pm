@@ -309,6 +309,11 @@ sub init {
 	
     $class->_initModes();
     
+    Slim::Menu::GlobalSearch->registerInfoProvider( searchMyMusic => (
+			isa  => 'top',
+			func => \&_globalSearchMenu,
+	) );
+    
     Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
     
     $_initialized = 1;
@@ -785,6 +790,20 @@ sub _search {
 	);
 	
 	$callback->( \%feed );
+}
+
+sub _globalSearchMenu {
+	my ( $client, $tags ) = @_;
+	
+	my $items = searchItems($client);
+	
+	foreach (@$items) {$_->{'type'} = 'link'; $_->{'searchParam'} = $tags->{search};}
+
+	return {
+		name  => cstring($client, 'MY_MUSIC'),
+		items => $items,
+		type  => 'opml',
+	};
 }
 
 sub searchItems {

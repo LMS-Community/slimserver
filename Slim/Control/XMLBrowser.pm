@@ -375,6 +375,8 @@ sub _cliQuery_done {
 			
 			push @crumbIndex, $i;
 			
+			$search = $subFeed->{'searchParam'} if (defined $subFeed->{'searchParam'});
+			
 			# Add search query to crumb list
 			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 				# Escape periods in the search string
@@ -474,7 +476,7 @@ sub _cliQuery_done {
 					my $pt = $subFeed->{passthrough} || [];
 					my %args = (params => $feed->{'query'});
 					
-					if (defined $search && $subFeed->{type} && $subFeed->{type} eq 'search') {
+					if (defined $search && $subFeed->{type} && ($subFeed->{type} eq 'search' || defined $subFeed->{'searchParam'})) {
 						$args{'search'} = $search;
 					}
 					

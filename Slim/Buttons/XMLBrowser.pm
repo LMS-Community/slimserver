@@ -185,7 +185,9 @@ sub setMode {
 			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
 		
-		$url->( $client, $callback, {params => $modeParams, search => $modeParams->{'search'}}, @{$pt});
+		my $search = $modeParams->{'item'}->{'searchParam'} || $modeParams->{'search'};
+		
+		$url->( $client, $callback, {params => $modeParams, search => $search}, @{$pt});
 	}
 	
 	else {
