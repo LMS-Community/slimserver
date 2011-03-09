@@ -23,10 +23,8 @@ use Slim::Utils::Prefs;
 
 sub init {
 	
-	Slim::Web::Pages->addPageFunction( qr/^search\.(?:htm|xml)/, \&basicSearch );
 	Slim::Web::Pages->addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
 	
-	Slim::Web::Pages->addPageLinks("search", {'SEARCHMUSIC' => "search.html?liveSearch=1"});
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 }
 
@@ -199,6 +197,8 @@ sub advancedSearch {
 		for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
 	
 			$type = (split /-/, $type)[0];
+			
+			next if $type =~ /^SPDR$/i;
 	
 			$types{$type} = string($type);
 		}

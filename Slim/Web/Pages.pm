@@ -41,6 +41,7 @@ sub init {
 	require Slim::Web::Pages::History;
 	require Slim::Web::Pages::Progress;
 	require Slim::Web::Pages::Trackinfo;
+	require Slim::Web::Pages::Search;
 
 	Slim::Web::Pages::Common->init();
 	Slim::Web::Pages::Home->init();
@@ -51,6 +52,7 @@ sub init {
 	Slim::Web::Pages::History->init();
 	Slim::Web::Pages::Progress->init();
 	Slim::Web::Pages::Trackinfo->init();
+	Slim::Web::Pages::Search->init();
 }
 
 sub addPageLinks {
