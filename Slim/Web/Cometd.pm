@@ -720,8 +720,11 @@ sub sendHTTPResponse {
 		}
 		
 		$httpResponse->header( 'Content-Length', length $out );
-		$sendheaders = 1;
 	}
+	
+	Slim::Web::HTTP::addHTTPResponse(
+		$httpClient, $httpResponse, \$out, $sendheaders, $chunked,
+	);
 	
 	if ( main::DEBUGLOG && $isDebug ) {
 		my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
@@ -734,10 +737,6 @@ sub sendHTTPResponse {
 			$log->debug( "Sending Cometd chunk ($peer):\n" . $out );
 		}
 	}
-	
-	Slim::Web::HTTP::addHTTPResponse(
-		$httpClient, $httpResponse, \$out, $sendheaders, $chunked,
-	);
 }
 
 sub sendCLIResponse {
