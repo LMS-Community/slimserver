@@ -23,9 +23,28 @@ use Slim::Utils::Prefs;
 
 sub init {
 	
+	Slim::Web::Pages->addPageFunction( qr/^search\.(?:htm|xml)/, \&search );
 	Slim::Web::Pages->addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
 	
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+}
+
+sub search {
+	my ($client, $params) = @_;
+
+	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
+	
+	$params->{searches} = [];
+	
+	my $i = 0;
+	foreach (@$searchItems) {
+		push @{ $params->{searches} }, {
+			$_->{name} => "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/"
+		};
+		$i++;
+	}
+
+	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	
 }
 
 sub basicSearch {

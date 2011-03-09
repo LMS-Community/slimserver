@@ -22,7 +22,6 @@ my $prefs = preferences('server');
 sub init {
 
 	Slim::Web::Pages->addPageFunction( qr/^browsedb\.(?:htm|xml)/, \&browsedb );
-	Slim::Web::Pages->addPageFunction( qr/^search\.(?:htm|xml)/, \&search );
 #	Slim::Web::Pages->addPageFunction( qr/^browseid3\.(?:htm|xml)/, \&browseid3 );
 #
 #	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0" });
@@ -683,24 +682,6 @@ sub browsedb {
 #
 #	return sprintf('&%s', join('&', @pairs));
 #}
-
-sub search {
-	my ($client, $params) = @_;
-
-	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
-	
-	$params->{searches} = [];
-	
-	my $i = 0;
-	foreach (@$searchItems) {
-		push @{ $params->{searches} }, {
-			$_->{name} => "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/"
-		};
-		$i++;
-	}
-
-	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	
-}
 
 1;
 
