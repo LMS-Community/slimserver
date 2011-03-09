@@ -440,47 +440,39 @@ our %functions = (
 
 		} elsif ($button eq 'menu_browse_genre') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'genre,contributor,album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'genres', 'BROWSE_BY_GENRE');
 
-			$jump = 'BROWSE_BY_GENRE';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_artist') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'contributor,album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'artists', 'BROWSE_BY_ARTIST');
 
-			$jump = 'BROWSE_BY_ARTIST';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_album') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'albums', 'BROWSE_BY_ALBUM');
 
-			$jump = 'BROWSE_BY_ALBUM';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_song') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'tracks', 'BROWSE_BY_SONG');
 
-			$jump = 'BROWSE_BY_SONG';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_music') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsetree', {
-				'hierarchy' => '',
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'bmf', 'BROWSE_MUSIC_FOLDER');
 
-			$jump = 'BROWSE_MUSIC_FOLDER';
+			$jump = undef;
+
+		} elsif ($button eq 'menu_browse_playlists') {
+
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'playlists', 'SAVED_PLAYLISTS');
+
+			$jump = undef;
 
 		} elsif ($button eq 'menu_synchronize') {
 
@@ -514,15 +506,6 @@ our %functions = (
 
 			$jump = 'SEARCH_FOR_SONGS';
 
-		} elsif ($button eq 'menu_browse_playlists') {
-
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'playlist,playlistTrack',
-				'level'     => 0,
-			});
-
-			$jump = 'SAVED_PLAYLISTS';
-
 		} elsif ($buttonarg =~ /^plugin/i) {
 
 			if (exists($modes{$buttonarg})) {
@@ -539,7 +522,7 @@ our %functions = (
 			$jump = 'SETTINGS';
 		}
 
-		Slim::Buttons::Home::jump($client,$jump);
+		Slim::Buttons::Home::jump($client,$jump) if defined $jump;
 
 		$client->update();
 	},

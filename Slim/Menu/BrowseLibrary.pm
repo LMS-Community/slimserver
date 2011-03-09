@@ -634,7 +634,7 @@ sub getJiveMenu {
 }
 
 sub setMode {
-	my ( $class, $client, $method ) = @_;
+	my ( $class, $client, $method, $mode, $name ) = @_;
 
 	if ($method eq 'pop') {
 
@@ -642,18 +642,20 @@ sub setMode {
 		return;
 	}
 
-	my $name  = $class->getDisplayName();
+	my $modeName = $class->getDisplayName();
+	$name ||= $modeName;
 	my $title = (uc($name) eq $name) ? cstring($client,  $name ) : $name;
 	
 	my %params = (
 		header   => $name,
-		modeName => $name,
+		modeName => $modeName,
 		url      => $class->feed( $client ),
 		title    => $title,
 		timeout  => 35,
+		mode     => $mode,
 		%{$client->modeParams()},
 	);
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+	Slim::Buttons::Common::pushModeLeft( $client, 'xmlbrowser', \%params );
 	
 	# we'll handle the push in a callback
 	$client->modeParam( handledTransition => 1 );
