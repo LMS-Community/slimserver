@@ -668,9 +668,6 @@ sub sendResponse {
 	
 	$out ||= [];
 	
-	# Add any additional pending events
-	push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
-	
 	# Add special first event for /meta/(re)connect if set
 	# Note: calling first_event will remove the event from httpClient
 	if ( my $first = $httpClient->first_event ) {
@@ -680,6 +677,8 @@ sub sendResponse {
 	if ($httpResponse) {
 		if ( $httpClient->transport eq 'long-polling' ) {
 			# Finish a long-poll cycle by sending all pending events and removing the timer
+			push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
+			
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
@@ -817,8 +816,8 @@ sub handleRequest {
 					
 					return unless $mac eq $request->client->id;
 				}
-			
-				$request->source( "$response|$id|$priority" );
+				
+				$request->source( "$response|$id|$priority|$clid" );
 			
 				requestCallback( $request );
 			};
@@ -865,10 +864,7 @@ sub handleRequest {
 		$request->fixEncoding;
 		
 		# remember the response channel, request id, and priority
-		$request->source( "$response|$id|$priority" );
-		
-		# Link this request to the IP of the request
-		$request->connectionID($clid);
+		$request->source( "$response|$id|$priority|$clid" );
 		
 		# Only set a callback if the caller wants a response
 		if ( $id ) {
@@ -947,7 +943,7 @@ sub handleRequest {
 sub requestCallback {
 	my $request = shift;
 	
-	my ($channel, $id, $priority) = split /\|/, $request->source, 3;
+	my ($channel, $id, $priority, $clid) = split /\|/, $request->source, 4;
 	
 	main::DEBUGLOG && $log->debug( "requestCallback got results for $channel / $id" );
 	
@@ -978,7 +974,6 @@ sub requestCallback {
 	} ];
 	
 	# Queue request results via Manager
-	my $clid = $request->connectionID;
 	$manager->queue_events( $clid, $events );
 	
 	# It's possible for multiple callbacks to be triggered, for example
