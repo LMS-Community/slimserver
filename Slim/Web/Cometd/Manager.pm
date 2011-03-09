@@ -193,7 +193,7 @@ sub get_pending_events {
 	
 	my $events = [];
 	
-	my $e = $self->{events}->{$clid};
+	my $e = $self->{events}->{$clid} || [];
 	
 	if ( scalar @{$e} ) {	
 		for ( @{$e} ) {
