@@ -193,12 +193,16 @@ sub get_pending_events {
 	
 	my $events = [];
 	
-	for ( @{ $self->{events}->{$clid} } ) {
-		push @{$events}, $_;
-	}
+	my $e = $self->{events}->{$clid};
 	
-	# Clear all pending events
-	$self->{events}->{$clid} = [];
+	if ( scalar @{$e} ) {	
+		for ( @{$e} ) {
+			push @{$events}, $_;
+		}
+	
+		# Clear all pending events
+		$self->{events}->{$clid} = [];
+	}
 	
 	return wantarray ? @{$events} : $events;
 }
