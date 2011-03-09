@@ -196,8 +196,10 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		src=
 		[% IF item.image %]
 		"[% item.image | resizeimage(height, height, '-', webroot) %]"
-		[% ELSE %]
+		[% ELSIF item.coverThumb %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% END %]"
+		[% ELSIF item.icon %]
+		"[% item.icon | resizeimage(height, height, '-', webroot) %]"
 		[% END %]
 	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 	alt=	"[% item.text | html %]

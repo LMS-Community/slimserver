@@ -143,7 +143,7 @@ END %]
 	[%- WRAPPER $container %]
 		[% IF image %]
 		<div>
-			<a href="[% image %]" target="cover">
+			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
 				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
 			</a>
 		</div>
@@ -189,10 +189,16 @@ END %]
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
 					END %]
 
-					[% IF item.image && !(artwork > 0) %]
-						[% PROCESS itemIcon url=item.image size=50 class="browseItemDetail" %]
-					[% ELSIF item.icon %]
-						[% PROCESS itemIcon url=item.icon size=25 class="smallBrowseItemDetail" %]
+					[% IF item.image %]
+						[% IF artwork == 0 %]
+							[% PROCESS itemIcon url=item.image size=50 class="browseItemDetail" %]
+						[% END %]
+					[% ELSIF item.icon && artwork != 1 %]
+						[% IF hasArtwork && artwork == 0 %]
+							[% PROCESS itemIcon url=item.icon size=50 class="browseItemDetail" %]
+						[% ELSE %]
+							[% PROCESS itemIcon url=item.icon size=25 class="smallBrowseItemDetail" %]
+						[% END %]
 					[% END %]
 
 					[% IF item.web.type == 'htmltemplate' %]
@@ -221,7 +227,7 @@ END %]
 						[% END %]
 					[% END %]
 
-					[% IF item.icon || (item.image && !(artwork > 0)) %]
+					[% IF (item.icon && artwork != 1) || (item.image && artwork== 0) %]
 						</div>
 					[% END %]
 				[%- END %]

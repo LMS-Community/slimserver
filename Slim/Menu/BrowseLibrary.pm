@@ -1131,7 +1131,7 @@ sub _albums {
 				
 				$extra = [ {
 					name        => cstring($client, 'ALL_SONGS'),
-					image       => 'html/images/albums.png',
+					icon        => 'html/images/albums.png',
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,

@@ -93,8 +93,8 @@
 	[%- WRAPPER $container %]
 		[% IF image %]
 		<ul>
-			<a href="[% image %]" target="cover">
-				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
+			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
+				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
 			</a>
 		</ul>
 		[% END %]

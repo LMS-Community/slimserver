@@ -54,7 +54,7 @@
 					[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
 					<a [% PROCESS browseDbItemHRef %]>
 				[% ELSE %]
-					[%- itemImg = item.image ? "thumbnailItemImg" : "dummyItemImg" %]
+					[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
 					[% IF item.weblink %]
 						<a href="[% item.weblink %]" target="_blank">
 					[% ELSIF item.type != 'text' %]
