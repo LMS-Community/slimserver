@@ -202,6 +202,25 @@ sub handler {
 			}
 		}
 		
+		# If a client sends any request and we do not have a valid clid record
+		# because the streaming connection has been lost for example, re-handshake them
+		if ( !$manager->is_valid_clid( $clid ) ) {
+			# Invalid clientId, send advice to re-handshake
+			push @{$events}, {
+				channel    => $obj->{channel},
+				clientId   => undef,
+				successful => JSON::XS::false,
+				timestamp  => time2str( time() ),
+				error      => 'invalid clientId',
+				advice     => {
+					reconnect => 'handshake',
+					interval  => 0,
+				}
+			};
+			
+			last;
+		}
+		
 		if ( $obj->{channel} eq '/meta/handshake' ) {
 			
 			my $advice = {
@@ -220,135 +239,102 @@ sub handler {
 			};			
 		}
 		elsif ( $obj->{channel} =~ qr{^/meta/(?:re)?connect$} ) {
+			main::DEBUGLOG && $log->debug( "Client (re-)connected: $clid" );
 			
-			if ( !$manager->is_valid_clid( $clid ) ) {
-				# Invalid clientId, send advice to re-handshake
-				
-				push @{$events}, {
-					channel    => $obj->{channel},
-					clientId   => undef,
-					successful => JSON::XS::false,
-					timestamp  => time2str( time() ),
-					error      => 'invalid clientId',
-					advice     => {
-						reconnect => 'handshake',
-						interval  => 0,
+			my $streaming = $obj->{connectionType} eq 'streaming' ? 1 : 0;
+
+			# We want the /meta/(re)connect response to always be the first event
+			# sent in the response, so it's stored in the special first_event slot
+			$conn->[HTTP_CLIENT]->first_event( {
+				channel    => $obj->{channel},
+				clientId   => $clid,
+				successful => JSON::XS::true,
+				timestamp  => time2str( time() ),
+				advice     => {
+					interval => $streaming ? RETRY_DELAY : 0, # update interval for streaming mode
+				},
+			} );
+			
+			# Remove disconnect timer, as a connect is basically the same as a reconnect
+			Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
+			
+			# Bug 8707, get prior connection data if any
+			my $prev = $manager->get_connection( $clid );
+			
+			# register this connection with the manager
+			$manager->register_connection( $clid, $conn );
+			
+			if ( $streaming ) {					
+				if ( ref $conn eq 'ARRAY' ) {
+					# HTTP-specific connection stuff
+					# Streaming connections use chunked transfer encoding
+					$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
+		
+					# Tell HTTP client our transport
+					$conn->[HTTP_CLIENT]->transport( 'streaming' );
+					
+					# Bug 8707, Find previous streaming connection using the
+					# same clientId and mark it as 'old'
+					if ( $prev ) {
+						main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
+						$prev->[HTTP_CLIENT]->transport( 'streaming-old' );
 					}
-				};
+				}
 			}
 			else {
-				# Valid clientId
+				# Long-polling
+				$conn->[HTTP_CLIENT]->transport( 'long-polling' );
 				
-				main::DEBUGLOG && $log->debug( "Client (re-)connected: $clid" );
+				my $timeout = LONG_POLLING_TIMEOUT;
 				
-				my $streaming = $obj->{connectionType} eq 'streaming' ? 1 : 0;
-
-				# We want the /meta/(re)connect response to always be the first event
-				# sent in the response, so it's stored in the special first_event slot
-				$conn->[HTTP_CLIENT]->first_event( {
-					channel    => $obj->{channel},
-					clientId   => $clid,
-					successful => JSON::XS::true,
-					timestamp  => time2str( time() ),
-					advice     => {
-						interval => $streaming ? RETRY_DELAY : 0, # update interval for streaming mode
-					},
-				} );
-				
-				# Remove disconnect timer, as a connect is basically the same as a reconnect
-				Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
-				
-				# Bug 8707, get prior connection data if any
-				my $prev = $manager->get_connection( $clid );
-				
-				# register this connection with the manager
-				$manager->register_connection( $clid, $conn );
-				
-				if ( $streaming ) {					
-					if ( ref $conn eq 'ARRAY' ) {
-						# HTTP-specific connection stuff
-						# Streaming connections use chunked transfer encoding
-						$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
-			
-						# Tell HTTP client our transport
-						$conn->[HTTP_CLIENT]->transport( 'streaming' );
-						
-						# Bug 8707, Find previous streaming connection using the
-						# same clientId and mark it as 'old'
-						if ( $prev ) {
-							main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
-							$prev->[HTTP_CLIENT]->transport( 'streaming-old' );
-						}
-					}
+				# Client can override timeout
+				if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
+					$timeout = $obj->{advice}->{timeout};
 				}
-				else {
-					# Long-polling
-					$conn->[HTTP_CLIENT]->transport( 'long-polling' );
-					
-					my $timeout = LONG_POLLING_TIMEOUT;
-					
-					# Client can override timeout
-					if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
-						$timeout = $obj->{advice}->{timeout};
-					}
-					
-					# If we have another active long-poll connection, this is an error
-					if ( $prev && $prev->[HTTP_CLIENT] != $conn->[HTTP_CLIENT] ) {
-						main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
-						$prev->[HTTP_CLIENT]->transport( 'long-polling-old' );
-					}
-					
-					# If we have pending messages for this client, send immediately
-					if ( $manager->has_pending_events($clid) ) {
-						main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');				
-						$timeout = 0;
-					}
-					
-					# Hold the connection open while we wait for events
-					# If timeout is 0, sendResponse will be called as soon as all
-					# events in the request have been processed
-					main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
-						
-					Slim::Utils::Timers::setTimer(
-						$conn->[HTTP_CLIENT],
-						Time::HiRes::time() + ($timeout / 1000),
-						\&sendResponse,
-						$conn->[HTTP_RESPONSE],
-					);
-					
-					$delayedResponse = 1;
+				
+				# If we have another active long-poll connection, this is an error
+				if ( $prev && $prev->[HTTP_CLIENT] != $conn->[HTTP_CLIENT] ) {
+					main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
+					$prev->[HTTP_CLIENT]->transport( 'long-polling-old' );
 				}
+				
+				# If we have pending messages for this client, send immediately
+				if ( $manager->has_pending_events($clid) ) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('Sending long-poll response immediately');				
+					$timeout = 0;
+				}
+				
+				# Hold the connection open while we wait for events
+				# If timeout is 0, sendResponse will be called as soon as all
+				# events in the request have been processed
+				main::DEBUGLOG && $log->is_debug && $log->debug("Waiting ". ($timeout / 1000) . " seconds on long-poll connection");
+					
+				Slim::Utils::Timers::setTimer(
+					$conn->[HTTP_CLIENT],
+					Time::HiRes::time() + ($timeout / 1000),
+					\&sendResponse,
+					$conn->[HTTP_RESPONSE],
+				);
+				
+				$delayedResponse = 1;
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/disconnect' ) {
 			
-			if ( !$manager->is_valid_clid( $clid ) ) {
-				# Invalid clientId, send error
-				
-				push @{$events}, {
-					channel    => '/meta/disconnect',
-					clientId   => undef,
-					successful => JSON::XS::false,
-					error      => 'invalid clientId',
-				};
-			}
-			else {
-				# Valid clientId, disconnect them
-				
-				push @{$events}, {
-					channel    => '/meta/disconnect',
-					clientId   => $clid,
-					successful => JSON::XS::true,
-					timestamp  => time2str( time() ),
-				};
-				
-				if ( ref $conn eq 'ARRAY' ) {
-					# Close the connection after this response
-					$conn->[HTTP_RESPONSE]->header( Connection => 'close' );
-				}
+			# disconnect them				
+			push @{$events}, {
+				channel    => '/meta/disconnect',
+				clientId   => $clid,
+				successful => JSON::XS::true,
+				timestamp  => time2str( time() ),
+			};
 			
-				disconnectClient( $clid );
+			if ( ref $conn eq 'ARRAY' ) {
+				# Close the connection after this response
+				$conn->[HTTP_RESPONSE]->header( Connection => 'close' );
 			}
+		
+			disconnectClient( $clid );
 		}
 		elsif ( $obj->{channel} eq '/meta/subscribe' ) {
 			
@@ -658,6 +644,9 @@ sub sendResponse {
 	
 	$out ||= [];
 	
+	# Add any additional pending events
+	push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
+	
 	# Add special first event for /meta/(re)connect if set
 	# Note: calling first_event will remove the event from httpClient
 	if ( my $first = $httpClient->first_event ) {
@@ -666,9 +655,7 @@ sub sendResponse {
 	
 	if ($httpResponse) {
 		if ( $httpClient->transport eq 'long-polling' ) {
-			# Finish a long-poll cycle by sending all pending events and removing the timer
-			push @{$out}, ( $manager->get_pending_events( $httpClient->clid ) );
-			
+			# Finish a long-poll cycle by sending all pending events and removing the timer			
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
 		
@@ -737,14 +724,14 @@ sub sendHTTPResponse {
 	}
 	
 	if ( main::DEBUGLOG && $isDebug ) {
+		my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 		if ( $sendheaders ) {
-			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
-			$log->debug( "Sending Cometd Response ($peer):\n" 
+			$log->debug( "Sending Cometd response ($peer):\n" 
 				. $httpResponse->as_string . $out
 			);
 		}
 		else {
-			$log->debug( "Sending Cometd chunk:\n" . $out );
+			$log->debug( "Sending Cometd chunk ($peer):\n" . $out );
 		}
 	}
 	
@@ -857,6 +844,7 @@ sub handleRequest {
 		
 		# Only set a callback if the caller wants a response
 		if ( $id ) {
+			$request->connectionID($clid);
 			$request->autoExecuteCallback( \&requestCallback );
 		}
 		
