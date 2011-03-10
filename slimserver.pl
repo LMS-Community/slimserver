@@ -323,6 +323,9 @@ our (
 sub init {
 	$inInit = 1;
 	
+	# May get overridden by object-leak or nytprof usage below
+	$SIG{USR2} = \&Slim::Utils::Log::logBacktrace;
+	
 	# Can only have one of NYTPROF and Object-Leak at a time
 	if ( $ENV{OBJECT_LEAK} ) {
 		require Devel::Leak::Object;
