@@ -847,6 +847,90 @@ sub _tagsToParams {
 	return \%p;
 }
 
+=cut
+# Untested
+sub _combinedSearch {
+	my ($client, $callback, $args, $pt) = @_;
+	my $search     = $pt->{'search'} || $args->{'search'};
+
+	_generic($client, $callback, $args, 'search', 
+		['term:' . $search],
+		sub {
+			my $results = shift;
+			my @items;
+			
+			# Artists, Genres, Albums, Songs, Playlists: see Slim::Schema->searchTypes()
+			
+			my %types = (
+				contributor => ['ARTISTS',    'artist_id',    'artistinfo',    \&_tracks,         \&_albums],
+				genre       => ['GENRES',     'genre_id',     'genreinfo',     \&_tracks,         \&_albums],
+				album       => ['ALBUMS',     'album_id',     'albuminfo',     \&_tracks,         \&_tracks],
+				playlist    => ['PLAYLISTS',  'playlist_id',  'playlistinfo',  \&_playlistTracks, \&_playlistTracks],
+			);
+			
+			while (my($type, $params) = each %types) {
+				if (exists $results->{$type . 's_count'}) {
+					push @items, {type => 'text', name => cstring($client, $params->[0])};
+					my $type_id = $type . '_id';
+					foreach (@{$results->{$type . 's_loop'}}) {
+						my %item = (
+							name          => $_->{$type},
+							type          => 'playlist',
+							playlist      => $params->[3],
+							url           => $params->[4],
+							passthrough   => [ { searchTags => [$params->[1] . ':' . $_->{$type_id}] } ],
+							itemActions   => {
+								info => {
+									command     => [$params->[2], 'items'],
+									fixedParams => {$params->[1] => $_->{$type_id}},	
+								},
+							}
+						);
+						push @items, \%item;
+					}
+				}
+				
+			}
+
+			
+			if (exists $results->{'tracks_count'}) {
+				push @items, {type => 'text', name => cstring($client, 'SONGS')};
+				foreach (@{$results->{'tracks_loop'}}) {
+					my %item = (
+						name          => $_->{'track'},
+						type          => 'audio',
+						itemActions   => {
+							info => {
+								command     => ['trackinfo', 'items'],
+								fixedParams => {track_id => $_->{'track_id'}},	
+							},
+							play => {
+								command     => ['playlistcontrol'],
+								fixedParams => {cmd => 'load'},
+							},
+							add => {
+								command     => ['playlistcontrol'],
+								fixedParams => {cmd => 'add'},
+							},
+							insert => {
+								command     => ['playlistcontrol'],
+								fixedParams => {cmd => 'insert'},
+							},
+						}
+					);
+					push @items, \%item;
+				}
+			}
+			
+			# override the total as index/offset will not work for repeat calls
+			$results->{'count'} = scalar @items;
+			
+			return ({items => \@items, sorted => 0});
+		},
+	);
+}
+=cut
+
 sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
