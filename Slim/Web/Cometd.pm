@@ -266,9 +266,6 @@ sub handler {
 			# Remove disconnect timer, as a connect is basically the same as a reconnect
 			Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
 			
-			# Bug 8707, get prior connection data if any
-			my $prev = $manager->get_connection( $clid );
-			
 			# register this connection with the manager
 			$manager->register_connection( $clid, $conn );
 			
@@ -280,13 +277,6 @@ sub handler {
 		
 					# Tell HTTP client our transport
 					$conn->[HTTP_CLIENT]->transport( 'streaming' );
-					
-					# Bug 8707, Find previous streaming connection using the
-					# same clientId and mark it as 'old'
-					if ( $prev ) {
-						main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
-						$prev->[HTTP_CLIENT]->transport( 'streaming-old' );
-					}
 				}
 			}
 			else {
@@ -298,12 +288,6 @@ sub handler {
 				# Client can override timeout
 				if ( $obj->{advice} && exists $obj->{advice}->{timeout} ) {
 					$timeout = $obj->{advice}->{timeout};
-				}
-				
-				# If we have another active long-poll connection, this is an error
-				if ( $prev && $prev->[HTTP_CLIENT] != $conn->[HTTP_CLIENT] ) {
-					main::DEBUGLOG && $log->debug( 'Marking connection ' . $prev->[HTTP_CLIENT] . ' as old' );
-					$prev->[HTTP_CLIENT]->transport( 'long-polling-old' );
 				}
 				
 				# If we have pending messages for this client, send immediately
@@ -983,20 +967,26 @@ sub webCloseHandler {
 			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: $transport" );
 		}
-		
-		if ( $transport eq 'long-polling' ) {
-			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
-		}
-		
-		# We want to ignore any transports that are marked "-old"
-		if ( $transport eq 'streaming' || $transport eq 'long-polling' ) {
+
+		# Make sure the connection we lost is the current (newest) connection
+		# we are using. This was the source of a bug with long-polling because
+		# browsers can use either of 2 connections for any given request.
+		my $conn = $manager->get_connection($clid);
+		if ( $conn && $conn->[HTTP_CLIENT] == $httpClient ) {
 			$manager->remove_connection( $clid );
+			
+			if ( $transport eq 'long-polling' ) {
+				Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
+			}
 			
 			Slim::Utils::Timers::setTimer(
 				$clid,
 				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
 				\&disconnectClient,
 			);
+		}
+		else {
+			main::DEBUGLOG && $log->is_debug && $log->debug('Not the active connection, ignoring');
 		}
 	}
 }
