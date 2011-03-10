@@ -209,7 +209,16 @@ END %]
 			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 		[% ELSE %]
-			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %]
+					[% IF item.level %]&amp;level=[% item.level %][% END %]
+					[% item.attributes | html %]");'
+				[% ELSE %]
+					[% IF item.weblink %]
+						href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type != 'text' %]
+						href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
+					[% END %]
+				[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
 		[% END -%]
 	</div>
 

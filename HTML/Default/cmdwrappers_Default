@@ -50,16 +50,11 @@
 		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;">
-				[% IF template.name.search('browsedb.html') %]
-					[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
-					<a [% PROCESS browseDbItemHRef %]>
-				[% ELSE %]
-					[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
-					[% IF item.weblink %]
-						<a href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type != 'text' %]
-						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
-					[% END %]
+				[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
+				[% IF item.weblink %]
+					<a href="[% item.weblink %]" target="_blank">
+				[% ELSIF item.type != 'text' %]
+					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
 				[% END %]
 				[% PROCESS $itemImg height="$item.size" %]</a>
 
@@ -98,7 +93,7 @@
 				</div>
 				[% IF levelName == 'playlisttrack' && item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 					<div class="browseItemDetail">
-						<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
+						<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
 					</div>
 				[% END %]
 				[% IF item.showYear && item.year -%]

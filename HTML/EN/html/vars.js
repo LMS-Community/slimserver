@@ -7,4 +7,5 @@
 	var statusroot    = "[% statusroot %]";
 	var browserTarget;
 	[% IF browserTarget %]browserTarget = "[% browserTarget %]";[% END %]
+	// FIXME: browsedb.html is obsolete
 	var orderByUrl    = 'browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&artwork=[% IF artwork; artwork; ELSE; '0'; END %]&player=' + player;
