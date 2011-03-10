@@ -32,15 +32,15 @@ sub editplaylist {
 	# This is a dispatcher to parts of the playlist editing
 	if ($params->{'saveCurrentPlaylist'}) {
 
-		return saveCurrentPlaylist($client, $params);
+		return saveCurrentPlaylist(@_);
 
 	} elsif ($params->{'renamePlaylist'}) {
 
-		return renamePlaylist($client, $params);
+		return renamePlaylist(@_);
 
 	} elsif ($params->{'deletePlaylist'}) {
 
-		return deletePlaylist($client, $params);
+		return deletePlaylist(@_);
 	}
 
 	my $playlist_id = $params->{'playlist.id'};
@@ -80,7 +80,7 @@ sub editplaylist {
 
 	}
 
-	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb(@_);
 }
 
 sub saveCurrentPlaylist {
@@ -130,7 +130,7 @@ sub saveCurrentPlaylist {
 	# Don't add this back to the breadcrumbs
 	delete $params->{'saveCurrentPlaylist'};
 
-	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb(@_);
 }
 
 sub renamePlaylist {
@@ -179,7 +179,7 @@ sub renamePlaylist {
 		}
 	}
 
-	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb(@_);
 }
 
 sub deletePlaylist {
@@ -214,7 +214,7 @@ sub deletePlaylist {
 	# Send the user off to the top level browse playlists
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 
-	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb(@_);
 }
 
 

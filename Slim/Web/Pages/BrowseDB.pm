@@ -38,6 +38,8 @@ my %mapLevel = (
 	genre       => 'genres',
 	year        => 'years',
 	age         => 'albums',	# need sort:new too
+	playlist    => 'playlists',
+	playlistTrack => 'playlistTracks'
 );
 
 my %mapParams = (
@@ -54,6 +56,7 @@ my %mapTitles = (
 	contributor => ['Contributor', 'contributor.id'],
 	album       => ['Album', 'album.id'],
 	genre       => ['Genre', 'genre.id'],
+	playlist    => ['Playlist', 'playlist.id'],
 );
 
 my %mapNames = (
@@ -63,6 +66,7 @@ my %mapNames = (
 	genre       => 'GENRE',
 	year        => 'YEAR',
 	age         => 'ALBUM',	# need sort:new too
+	playlist    => 'PLAYLIST',
 );
 
 sub browsedb {
