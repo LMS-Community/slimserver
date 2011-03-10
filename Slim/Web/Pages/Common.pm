@@ -51,7 +51,7 @@ sub _lcPlural {
 }
 
 sub addLibraryStats {
-	my ($class, $params, $rs, $previousLevel) = @_;
+	my ($class, $params) = @_;
 	
 	if (!Slim::Schema::hasLibrary()) {
 		return;
@@ -82,94 +82,13 @@ sub addLibraryStats {
 		return;
 	}
 
-	my %counts = ();
-	my $level  = $params->{'levelName'} || '';
-
-	# Albums needs a roles check, as it doesn't go through contributors first.
-	# if (defined $rs && !grep { 'contributorAlbums' } @{$rs->{'attrs'}->{'join'}}) {
-
-	#	if (my $roles = Slim::Schema->artistOnlyRoles) {
-
-			#$rs = $rs->search_related('contributorAlbums', {
-			#	'contributorAlbums.role' => { 'in' => $roles }
-			#});
-	#	}
-	#}
-
-	$params->{'song_count'} = undef;	# So we know if we found the count some way
-	
-	# The current level will always be a ->browse call, so just reuse the resultset.
-	if ($level eq 'album') {
-
-		# Bug 3351
-		if ( $previousLevel eq 'contributor' ) {
-			# This avoids duplicate joins on contributorAlbums, the proper roles
-			# are already selected since the $rs is already joined with contributorAlbums
-			$counts{'contributor'} = $rs->search_related('contributor');
-		}
-		else {
-			# filter out non-artist roles for contributor count
-			my $cond  = {};
-			my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
-			if ( $roles ) {
-				$cond->{'contributorAlbums.role'} = { 'in' => $roles };
-			}
-			$counts{'contributor'} = $rs->search_related('contributorAlbums')->search_related( 'contributor', $cond );
-		}
-		
-		$counts{'album'} = $rs;
-		$counts{'track'} = $rs->search_related('tracks');
-
-	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
-		
-		# Bug 3351, we can't use the $rs here, because it's a contributor RS that is already
-		# joined to genres.  We can use the genre RS that is stored in params however.
-		my $genreTracks = $params->{'genre'}->search_related('genreTracks')->search_related('track');
-
-		$counts{'album'}       = $genreTracks->search_related('album');
-		$counts{'contributor'} = $rs;
-		$counts{'track'}       = $genreTracks;
-
-	} elsif ($level eq 'track') {
-		
-		# Bug 3351, filter out non-artist roles for contributor count
-		my $cond = {};
-		my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
-		if ( $roles ) {
-			$cond->{'contributorTracks.role'} = { 'in' => $roles };
-		}
-		
-		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
-		$counts{'album'}       = $rs->search_related('album');
-		$counts{'track'}       = $rs;
-		
-	} else {
-		
-		my $totals = Slim::Schema->totals();
-		$params->{'album_count'}  = $totals->{'album'};
-		$params->{'song_count'}   = $totals->{'track'};
-		$params->{'artist_count'} = $totals->{'contributor'};
-	}
-
-	if (!defined $params->{'song_count'}) {
-		# Don't let any database errors here stop the page from displaying
-		eval {
-			$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
-			$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS'); 
-			$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
-		};
-		
-		if ( $@ ) {
-			$sqllog->error("Error building library counts: $@");
-			
-			$params->{'song_count'}   = 0;
-			$params->{'album_count'}  = 0;
-			$params->{'artist_count'} = 0;
-		}
-	}
+	my $totals = Slim::Schema->totals();
+	$params->{'album_count'}  = $class->_lcPlural($totals->{'album'}, 'SONG', 'SONGS');
+	$params->{'song_count'}   = $class->_lcPlural($totals->{'track'}, 'ALBUM', 'ALBUMS');
+	$params->{'artist_count'} = $class->_lcPlural($totals->{'contributor'}, 'ARTIST', 'ARTISTS');
 
 	if ( main::INFOLOG && $sqllog->is_info ) {
-		$sqllog->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
+		$sqllog->info(sprintf("Found %s, %s & %s", 
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}
