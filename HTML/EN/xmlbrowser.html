@@ -146,7 +146,7 @@
 							<a href="[% item.weblink %]" target="_blank">
 						[% ELSIF item.type == 'redirect' %]
 							[% IF item.web.url %]
-							<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+							<a href="[% webroot %][% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
 							[% ELSE; NEXT %]
 							[% END %]
 						[% ELSIF !item.type.match('^text') %]
