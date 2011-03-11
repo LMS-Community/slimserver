@@ -1092,7 +1092,7 @@ sub _years {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'years', \@searchTags,
+	_generic($client, $callback, $args, 'years', [ 'hasAlbums:1', @searchTags ],
 		sub {
 			my $results = shift;
 			my $items = $results->{'years_loop'};
@@ -1300,14 +1300,20 @@ sub _tracks {
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
-	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags; 
+	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
+	my $tags       = 'dtuxgaliqyorf';
 	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
 	}
 
+	$tags .= 'k' if $pt->{'wantMetadata'};
+	
+	my $addAlbumToName2  = !(grep {/album_id:/} @searchTags);
+	my $addArtistToName2 = $addAlbumToName2 && !(grep {/artist_id:/} @searchTags);
+	
 	_generic($client, $callback, $args, 'titles',
-		['tags:dtuxgaliqykorf', $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
+		["tags:$tags", $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items   = $results->{'titles_loop'};
@@ -1329,6 +1335,14 @@ sub _tracks {
 				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
+				
+				my $name2;
+				$name2 = $_->{'artist'} if $addArtistToName2;
+				if ($addAlbumToName2 && $_->{'album'}) {
+					$name2 .= ' - ' if $name2;
+					$name2 .= $_->{'album'};
+				}
+				$_->{'name2'}         = $name2 if $name2;
 			}
 			
 			my %actions = (
