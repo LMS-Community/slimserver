@@ -3566,16 +3566,19 @@ sub yearsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
+	my $hasAlbums     = $request->getParam('hasAlbums');
 	
 	# get them all by default
 	my $where = {};
 	
-	my $sql = 'SELECT id FROM years ';
-	my $w   = [];
+	my ($key, $table) = $hasAlbums ? ('year', 'albums') : ('id', 'years');
+	
+	my $sql = "SELECT DISTINCT $key FROM $table ";
+	my $w   = ["$key != '0'"];
 	my $p   = [];
 
 	if (defined $year) {
-		push @{$w}, 'id = ?';
+		push @{$w}, "$key = ?";
 		push @{$p}, $year;
 	}
 
@@ -3594,7 +3597,7 @@ sub yearsQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$sql .= 'ORDER BY id';
+	$sql .= "ORDER BY $key";
 
 	# now build the result
 	

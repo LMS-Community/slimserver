@@ -57,7 +57,7 @@
 	<li>Add the 'u' tag to the &quot;<a href="#musicfolder">musicfolder</a>&quot; query</li>
 	<li>Added track_id tagged parameter to <a href="#titles">titles</a>.</li>
 	<li>Added genre_id tagged parameter to <a href="#genres">genres</a>.</li>
-	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
+	<li>Added year and hasAlbums tagged parameters to <a href="#years">years</a>.</li>
 	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
 	<li>Removed the charset tagged parameter from all commands that supported it.</li>
 	<li>Added the 'Z' tag to <a href="#albums">albums</a>, <a href="#artists">artists</a> and <a href="#genres">genres</a> queries.
@@ -3686,6 +3686,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Return only the specified year.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			hasAlbums:1
+		</td>
+		<td>
+			Return only years which are valid for albums.
 		</td>
 	</tr>
 </table>
