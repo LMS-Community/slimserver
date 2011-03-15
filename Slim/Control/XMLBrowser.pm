@@ -559,8 +559,9 @@ sub _cliQuery_done {
 					my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 					$request->addResult('offset', $start) if $menuMode;
 
-					# create an ordered hash to store this stuff...
-					tie (my %hash, "Tie::IxHash");
+					my %hash;
+					# create an ordered hash to store this stuff... except not for menuMode
+					tie (%hash, "Tie::IxHash") unless $menuMode;
 
 					$hash{'id'} = "$item_id"; # stringify for JSON
 					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
@@ -772,7 +773,7 @@ sub _cliQuery_done {
 		my $presetFavSet = 0;
 		my $totalCount = $count;
 		my $allTouchToPlay = 1;
-		my $defeatDestructiveTouchToPlay = _defeatDestructiveTouchToPlay($request);
+		my $defeatDestructiveTouchToPlay = _defeatDestructiveTouchToPlay($request, $client);
 		my %actionParamsNeeded;
 		
 		if ($menuMode && defined $xmlbrowserPlayControl) {
@@ -976,53 +977,34 @@ sub _cliQuery_done {
 				$end   -= $subFeed->{'offset'};
 				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'});
 				
+				my $baseId = scalar @crumbIndex ? join('.', @crumbIndex, '') : '';
 				for my $item ( @$items[$start..$end] ) {
 					$itemIndex++;
 					
-					# create an ordered hash to store this stuff...
-					tie my %hash, "Tie::IxHash";
+					my $id = $baseId . $itemIndex;
 					
-					$hash{id}    = join('.', @crumbIndex, $itemIndex);
-					if (my $name = $item->{name}) {
+					my $name;
+					if ($name = $item->{name}) {
 						if (defined $item->{'label'}) {
-							$hash{name} = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $name;
+							$name = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $name;
 						} elsif (($item->{'hasMetadata'} || '') eq 'track') {
-							$hash{name} = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item) || $name;
-						} else {
-							$hash{name} = $name;
+							$name = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item) || $name;
 						}
 					}
-					$hash{type}  = $item->{type}  if defined $item->{type};
-					$hash{title} = $item->{title} if defined $item->{title};
-					$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
-					$hash{image} = $item->{image} if defined $item->{image};
-
-					$hash{isaudio} = defined(hasAudio($item)) + 0;
-					my $touchToPlay = defined(touchToPlay($item)) + 0;
 					
-					# Bug 7684, set hasitems to 1 if any of the following are true:
-					# type is not text or audio
-					# items array contains items
-					{
-						my $hasItems = 0;
-						
-						if ( !defined $item->{type} || $item->{type} !~ /^(?:text|audio)$/i ) {
-							$hasItems = 1;
-						}
-						elsif ( ref $item->{items} eq 'ARRAY' ) {
-							$hasItems = scalar @{ $item->{items} };
-						}
-						
-						$hash{hasitems} = $hasItems;
-					}
 					
 					if ($menuMode) {
+						my %hash;
+						
+						my $nameOrTitle = $name || $item->{title};
+						my $touchToPlay = defined(touchToPlay($item)) + 0;
+						
 						# if showBriefly is 1, send the name as a showBriefly
-						if ($item->{showBriefly} and ( $hash{name} || $hash{title} ) ) {
+						if ($item->{showBriefly} and ( $nameOrTitle ) ) {
 							$client->showBriefly({ 
 										'jive' => {
 											'type'    => 'popupplay',
-											'text'    => [ $hash{name} || $hash{title} ],
+											'text'    => [ $nameOrTitle ],
 										},
 									});
 
@@ -1063,19 +1045,19 @@ sub _cliQuery_done {
 						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
 						if ( $item->{autoplays} ) {
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+							$hash{'style'} = 'itemplay';
 						}
 						
-						my $itemText = $hash{'name'} || $hash{'title'};
+						my $itemText = $nameOrTitle;
 						if ($item->{'name2'}) {
 							$itemText .= "\n" . $item->{'name2'};
 							$windowStyle = 'icon_list' if !$windowStyle;
 						}
 						elsif ( $item->{line2} ) {
 							$windowStyle = 'icon_list';
-							$itemText = ( $item->{line1} || $hash{name} || $hash{title} ) . "\n" . $item->{line2};
+							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $item->{line2};
 						}
-						$request->addResultLoop($loopname, $cnt, 'text', $itemText);
+						$hash{'text'} = $itemText;
 						
 						my $isPlayable = (
 							   $item->{play} 
@@ -1083,11 +1065,9 @@ sub _cliQuery_done {
 							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
 						);
 						
-						my $id = $hash{id};
-						
 						my $presetParams = _favoritesParams($item);
 						if ($presetParams && !$xmlBrowseInterimCM) {
-							$request->addResultLoop( $loopname, $cnt, 'presetParams', $presetParams );
+							$hash{'presetParams'} = $presetParams;
 							$presetFavSet = 1;
 						}
 
@@ -1104,16 +1084,16 @@ sub _cliQuery_done {
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
+							$hash{'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id')} = $item->{icon};
 							$hasImage = 1;				
 						} elsif ( $item->{image} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$hash{'icon'} = $item->{image};
 							$hasImage = 1;
 						}
 
 						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
-							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
-							$request->addResultLoop( $loopname, $cnt, 'action', 'none' );
+							$hash{'style'} = 'itemNoAction';
+							$hash{'action'} = 'none';
 						}
 						
 						if ( $item->{type} && $item->{type} eq 'search' ) {
@@ -1150,10 +1130,10 @@ sub _cliQuery_done {
 								title => $item->{title} || $item->{name},
 							};
 							
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'input', $input );
+							$hash{'actions'} = $actions;
+							$hash{'input'} = $input;
 							if ($item->{nextWindow}) {
-								$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
+								$hash{'nextWindow'} = $item->{nextWindow};
 							}
 							$allTouchToPlay = 0;
 						}
@@ -1175,11 +1155,11 @@ sub _cliQuery_done {
 								$actions->{go}{nextWindow} = $item->{nextWindow};
 								# Bug 15690 - if nextWindow is 'nowPlaying', assume this should be styled as a touch-to-play
 								if ( $item->{nextWindow} eq 'nowPlaying' ) {
-									$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+									$hash{'style'} = 'itemplay';
 								}
 							}
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
+							$hash{'actions'} = $actions;
+							$hash{'addAction'} = 'go';
 							$allTouchToPlay = 0;
 						}
 						
@@ -1188,13 +1168,13 @@ sub _cliQuery_done {
 								$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
 								
 								# not currently supported by 7.5 client
-								$request->addResultLoop( $loopname, $cnt, 'goAction', 'play'); 
+								$hash{'goAction'} = 'play'; 
 								
-								$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+								$hash{'style'} = 'itemplay';
 							} else {
 								# not currently supported by 7.5 client
-								$request->addResultLoop( $loopname, $cnt, 'goAction', 'playControl'); 
-								$request->addResultLoop( $loopname, $cnt, 'playControlParams', {xmlbrowserPlayControl=>"$itemIndex"});
+								$hash{'goAction'} = 'playControl'; 
+								$hash{'playControlParams'} = {xmlbrowserPlayControl=>"$itemIndex"};
 							}
 						}
 						else {
@@ -1206,7 +1186,7 @@ sub _cliQuery_done {
 							
 							my $actions;
 							if (!$itemActions->{'allAvailableActionsDefined'}) {
-								$actions = $request->getResultLoop($loopname, $cnt, 'actions');
+								$actions = $hash{'actions'};
 							}
 							$actions ||= {};
 							
@@ -1218,7 +1198,7 @@ sub _cliQuery_done {
 							
 							# Need to be careful not to undo (effectively) a 'go' action mapping
 							# (could also consider other mappings but do not curretly)
-							my $goAction = $request->getResultLoop($loopname, $cnt, 'goAction');
+							my $goAction = $hash{'goAction'};
 
 							if (my $action = _makeAction($itemActions, 'items', undef, 1)) {
 								# If 'go' is already mapped to something else (probably 'play')
@@ -1244,7 +1224,7 @@ sub _cliQuery_done {
 							if (my $action = _makeAction($itemActions, 'insert', undef, 1)) {
 								$actions->{'add-hold'} = $action; $n++;
 							}
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							$hash{'actions'} = $actions;
 							
 							if ($n >= 5) {
 								$itemActions->{'allAvailableActionsDefined'} = 1;
@@ -1258,7 +1238,7 @@ sub _cliQuery_done {
 								for (my $i = 0; $i < scalar @vars; $i += 2) {
 									$params{$vars[$i]} = $item->{$vars[$i+1]};
 								}
-								$request->addResultLoop( $loopname, $cnt, $key, \%params );
+								$hash{$key} = \%params;
 							}
 						}
 						
@@ -1266,27 +1246,57 @@ sub _cliQuery_done {
 							&& !$feedActions->{'allAvailableActionsDefined'}
 							&& scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) )
 						{
-							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
+							$hash{'params'} = $itemParams;
 						}
 						
 						if ( $item->{jive} ) {
-							my $actions = $request->getResultLoop($loopname, $cnt, 'actions') || {};
+							my $actions = $hash{'actions'} || {};
 							while (my($name, $action) = each(%{$item->{jive}->{actions} || {}})) {
 								$actions->{$name} = $action;
 							}
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							$hash{'actions'} = $actions;
 							
 							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'icon-id') {
 								if ( $item->{jive}->{$key} ) {
-									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
+									$hash{$key} = $item->{jive}->{$key};
 								}
 							}
 						}
 						
-						$request->addResultLoop( $loopname, $cnt, 'textkey', $item->{textkey} ) if defined $item->{textkey};
+						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
+						
+						$request->setResultLoopHash($loopname, $cnt, \%hash);
 
 					}
 					else {
+						# create an ordered hash to store this stuff...
+						tie my %hash, "Tie::IxHash";
+						
+						$hash{id}    = $id;
+						$hash{name}  = $name          if defined $name;
+						$hash{type}  = $item->{type}  if defined $item->{type};
+						$hash{title} = $item->{title} if defined $item->{title};
+						$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
+						$hash{image} = $item->{image} if defined $item->{image};
+	
+						$hash{isaudio} = defined(hasAudio($item)) + 0;
+						
+						# Bug 7684, set hasitems to 1 if any of the following are true:
+						# type is not text or audio
+						# items array contains items
+						{
+							my $hasItems = 0;
+							
+							if ( !defined $item->{type} || $item->{type} !~ /^(?:text|audio)$/i ) {
+								$hasItems = 1;
+							}
+							elsif ( ref $item->{items} eq 'ARRAY' ) {
+								$hasItems = scalar @{ $item->{items} };
+							}
+							
+							$hash{hasitems} = $hasItems;
+						}
+					
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
 					}
 					$cnt++;
@@ -1807,8 +1817,7 @@ sub _favoritesParams {
 }
 
 sub _defeatDestructiveTouchToPlay {
-	my $request = shift;
-	my $client = $request->client();
+	my ($request, $client) = @_;
 	my $pref;
 	
 	if (my $agent = $request->getAgent()) {
