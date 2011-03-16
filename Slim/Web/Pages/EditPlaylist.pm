@@ -29,6 +29,9 @@ sub editplaylist {
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 	$params->{'level'} = 1;
 
+	my $playlist_id = $params->{'playlist_id'};
+	$params->{'playlist.id'} = $playlist_id if (defined $playlist_id);
+
 	# This is a dispatcher to parts of the playlist editing
 	if ($params->{'saveCurrentPlaylist'}) {
 
@@ -43,9 +46,9 @@ sub editplaylist {
 		return deletePlaylist(@_);
 	}
 
-	my $playlist_id = $params->{'playlist.id'};
+	my $playlist_id = $params->{'playlist_id'};
 	# 0 base
-	my $itemPos = ($params->{'itempos'} || 1) - 1;
+	my $itemPos = ($params->{'itempos'} || 0);
 
 	my $changed = 0;
 
@@ -146,7 +149,7 @@ sub renamePlaylist {
 
 	} else {
 			
-		my $playlist_id = $params->{'playlist.id'};
+		my $playlist_id = $params->{'playlist_id'};
 		my $dry_run     = !$params->{'overwrite'};
 	
 		my $request = Slim::Control::Request::executeRequest(undef, [
@@ -185,7 +188,7 @@ sub renamePlaylist {
 sub deletePlaylist {
 	my ($client, $params) = @_;
 	
-	my $playlist_id = $params->{'playlist.id'};
+	my $playlist_id = $params->{'playlist_id'};
 	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
 
 	$params->{'level'} = 0;

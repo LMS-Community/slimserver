@@ -528,6 +528,8 @@ sub handleFeed {
 		$stash->{'albumData'} = $subFeed->{'albumData'};	
 		$stash->{'indexList'} = $subFeed->{'indexList'};	
 		$stash->{'orderByList'} = $subFeed->{'orderByList'};	
+		$stash->{'playlist_id'} = $subFeed->{'playlist_id'};	
+		$stash->{'playlistTitle'} = $subFeed->{'playlistTitle'};	
 		$stash->{'actions'}   = $subFeed->{'actions'};	
 		$stash->{'type'}      = $subFeed->{'type'};
 		$stash->{'playUrl'}   = $subFeed->{'play'} 
@@ -544,6 +546,8 @@ sub handleFeed {
 		$stash->{'albumData'} = $feed->{'albumData'};	
 		$stash->{'indexList'} = $feed->{'indexList'};	
 		$stash->{'orderByList'} = $feed->{'orderByList'};	
+		$stash->{'playlist_id'} = $feed->{'playlist_id'};	
+		$stash->{'playlistTitle'} = $feed->{'playlistTitle'};	
 		$stash->{'playUrl'}   = $feed->{'play'};	
 		$stash->{'type'}      = $feed->{'type'};
 		
@@ -941,6 +945,9 @@ sub handleFeed {
 		$item->{'addLink'} = $link if $link;
 	}
 	
+#	$log->error(Data::Dump::dump($stash->{'items'}));
+#$log->error(join(', ', keys %$params));
+#$log->error(Data::Dump::dump($stash));	
 	my $output = processTemplate($template, $stash);
 	
 	# done, send output back to Web module for display
@@ -1012,11 +1019,13 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	$subFeed->{'actions'}     = $feed->{'actions'}       if $feed->{'actions'};
-	$subFeed->{'image'}       = $feed->{'cover'}         if $feed->{'cover'};
-	$subFeed->{'albumData'}   = $feed->{'albumData'}     if $feed->{'albumData'};
-	$subFeed->{'orderByList'} = $feed->{'orderByList'}   if $feed->{'orderByList'};
-	$subFeed->{'indexList'}   = $feed->{'indexList'}     if $feed->{'indexList'};
+	$subFeed->{'actions'}       = $feed->{'actions'}       if $feed->{'actions'};
+	$subFeed->{'image'}         = $feed->{'cover'}         if $feed->{'cover'};
+	$subFeed->{'albumData'}     = $feed->{'albumData'}     if $feed->{'albumData'};
+	$subFeed->{'orderByList'}   = $feed->{'orderByList'}   if $feed->{'orderByList'};
+	$subFeed->{'indexList'}     = $feed->{'indexList'}     if $feed->{'indexList'};
+	$subFeed->{'playlist_id'}   = $feed->{'playlist_id'}   if defined $feed->{'playlist_id'};
+	$subFeed->{'playlistTitle'} = $feed->{'playlistTitle'} if defined $feed->{'playlistTitle'};
 
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;

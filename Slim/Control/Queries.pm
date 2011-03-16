@@ -1951,6 +1951,7 @@ sub playlistsTracksQuery {
 
 	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
 		$iterator = $playlistObj->tracks();
+		$request->addResult("__playlistTitle", $playlistObj->title) if $playlistObj->title;
 	}
 
 	# now build the result

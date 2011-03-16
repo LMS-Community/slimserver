@@ -1557,7 +1557,15 @@ sub _playlistTracks {
 				);
 			$actions{'items'} = $actions{'info'};
 			
-			return {items => $items, actions => \%actions, sorted => 0}, undef;
+			my %hash = (
+				items       => $items,
+				actions     => \%actions,
+				sorted      => 0,
+				playlist_id => (&_tagsToParams(\@searchTags))->{'playlist_id'},
+			);
+			$hash{'playlistTitle'} = $results->{'__playlistTitle'} if defined $results->{'playlistTitle'};
+			
+			return \%hash, undef;
 		}
 	);
 }
