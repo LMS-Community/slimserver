@@ -135,25 +135,25 @@ sub getFeedAsync {
 	# If the URL is on SqueezeNetwork, add session headers or login first
 	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) && !$params->{no_sn} ) {
 		
+		# Sometimes from the web we won't have a client, so pick a random one
+		# (Never use random client on SN)
+		if ( !main::SLIM_SERVICE ) {
+			$params->{client} ||= Slim::Player::Client::clientRandom();
+		}
+		
+		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders( $params->{client} );
+		while ( my ($k, $v) = each %snHeaders ) {
+			$headers{$k} = $v;
+		}
+		
 		# Don't require SN session for public URLs
 		if ( $url !~ /public/ ) {
 			main::INFOLOG && $log->is_info && $log->info("URL requires SqueezeNetwork session");
-		
-			# Sometimes from the web we won't have a client, so pick a random one
-			# (Never use random client on SN)
-			if ( !main::SLIM_SERVICE ) {
-				$params->{client} ||= Slim::Player::Client::clientRandom();
-			}
 
 			if ( !$params->{client} ) {
 				# No player connected, cannot continue
 				$ecb->( string('SQUEEZENETWORK_NO_PLAYER_CONNECTED'), $params );
 				return;
-			}
-		
-			my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders( $params->{client} );
-			while ( my ($k, $v) = each %snHeaders ) {
-				$headers{$k} = $v;
 			}
 		
 			if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie( $params->{client} ) ) {
