@@ -866,7 +866,7 @@ our %functions = (
 			my $url   = $preset->{URL};
 			my $title = $preset->{text};
 
-			if ( $preset->{parser} || $preset->{type} eq 'playlist' ) {
+			if ( $preset->{parser} || ($preset->{type} eq 'playlist' && Slim::Music::Info::isRemoteURL($url)) ) {
 
 				main::INFOLOG && $log->info("Playing preset number $digit $title $url via xmlbrowser");
 

@@ -30,6 +30,7 @@ my %protocolHandlers = (
 
 my %localHandlers = (
 	file     => 1,
+	db       => 1,
 );
 
 my %loadedHandlers = ();
