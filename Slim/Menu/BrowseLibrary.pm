@@ -961,8 +961,8 @@ sub _artists {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_albums;
 				$_->{'passthrough'}   = [ { searchTags => [@ptSearchTags, "artist_id:" . $_->{'id'}] } ];
-				$_->{'favorites_url'} = 'db:contributor.namesearch=' .
-						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
+				$_->{'favorites_url'} = 'db:contributor.name=' .
+						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
 			my $extra;
 			if (scalar @searchTags) {
@@ -1053,8 +1053,8 @@ sub _genres {
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_artists;
 				$_->{'passthrough'}   = [ { searchTags => [@searchTags, "genre_id:" . $_->{'id'}] } ];
-				$_->{'favorites_url'} = 'db:genre.namesearch=' .
-						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
+				$_->{'favorites_url'} = 'db:genre.name=' .
+						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			};
 			
 			my %actions = (
@@ -1189,8 +1189,8 @@ sub _albums {
 				# the favorites url is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				$_->{'favorites_url'} = 'db:album.titlesearch=' .
-						URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($_->{'name'}) );
+				$_->{'favorites_url'} = 'db:album.title=' .
+						URI::Escape::uri_escape_utf8( $_->{'name'} );
 				
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
