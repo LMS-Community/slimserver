@@ -1065,10 +1065,12 @@ sub _cliQuery_done {
 							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
 						);
 						
-						my $presetParams = _favoritesParams($item);
-						if ($presetParams && !$xmlBrowseInterimCM) {
-							$hash{'presetParams'} = $presetParams;
-							$presetFavSet = 1;
+						if ($isPlayable) {
+							my $presetParams = _favoritesParams($item);
+							if ($presetParams && !$xmlBrowseInterimCM) {
+								$hash{'presetParams'} = $presetParams;
+								$presetFavSet = 1;
+							}
 						}
 
 						my $itemParams = {};
