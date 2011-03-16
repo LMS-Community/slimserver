@@ -1595,10 +1595,6 @@ sub addResultLoop {
 	my $key = shift;
 	my $val = shift;
 
-	if ($loop !~ /_loop$/) {
-		$loop .= '_loop';
-	}
-	
 	my $array = $self->{_results}->{$loop} ||= [];
 	
 	if ( !defined $array->[$loopidx] ) {
