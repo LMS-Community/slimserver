@@ -793,7 +793,7 @@ sub _cliQuery_done {
 						subFeed     => $subFeed,
 						noFavorites => 1,
 						subItemId   => $xmlbrowserPlayControl,
-						playalbum   => $playalbum,
+						playalbum   => 1,	# Allways add play-all item
 					})
 				})
 				{
