@@ -1621,14 +1621,6 @@ sub setResultLoopHash {
 	my $loopidx = shift;
 	my $hashRef = shift;
 	
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
-	}
-	
 	if (!defined ${$self->{'_results'}}{$loop}) {
 		${$self->{'_results'}}{$loop} = [];
 	}
@@ -1641,14 +1633,6 @@ sub sliceResultLoop {
 	my $loop     = shift;
 	my $start    = shift;
 	my $quantity = shift || 0;
-	
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
-	}
 	
 	if (defined ${$self->{'_results'}}{$loop}) {
 		
@@ -1685,14 +1669,6 @@ sub sortResultLoop {
 	my $self     = shift;
 	my $loop     = shift;
 	my $field    = shift;
-	
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
-	}
 	
 	if (defined ${$self->{'_results'}}{$loop}) {
 		my @data;
@@ -1734,14 +1710,6 @@ sub getResultLoopCount {
 	my $self = shift;
 	my $loop = shift;
 	
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
-	}
-	
 	if (defined ${$self->{'_results'}}{$loop}) {
 		return scalar(@{${$self->{'_results'}}{$loop}});
 	}
@@ -1753,14 +1721,6 @@ sub getResultLoop {
 	my $loopidx = shift;
 	my $key = shift || return undef;
 
-	if ($loop =~ /^@(.*)/) {
-		$loop = $1 . "_loop";
-		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
-	}
-	if ($loop !~ /.*_loop$/) {
-		$loop = $loop . '_loop';
-	}
-	
 	if (defined ${$self->{'_results'}}{$loop} && 
 		defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
 		
