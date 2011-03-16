@@ -817,7 +817,7 @@ sub artistsQuery {
 
 			$chunkCount++;
 			
-			main::idleStreams() if !($chunkCount % 5);
+			main::idleStreams() if !($chunkCount % 10);
 		};
 		
 		# Add VA item first if necessary
