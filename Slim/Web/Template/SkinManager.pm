@@ -273,7 +273,7 @@ sub _resizeImage {
 		}
 		
 		# sometimes we'll need to prepend the webroot to our url
-		$url = $prefix . $url;
+		$url = $prefix . $url unless $url =~ m{^/};
 
 		# local url - use internal image resizer
 		my $resizeParams = "_$width";
