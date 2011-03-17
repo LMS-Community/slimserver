@@ -83,8 +83,8 @@ sub addLibraryStats {
 	}
 
 	my $totals = Slim::Schema->totals();
-	$params->{'album_count'}  = $class->_lcPlural($totals->{'album'}, 'SONG', 'SONGS');
-	$params->{'song_count'}   = $class->_lcPlural($totals->{'track'}, 'ALBUM', 'ALBUMS');
+	$params->{'album_count'}  = $class->_lcPlural($totals->{'album'}, 'ALBUM', 'ALBUMS');
+	$params->{'song_count'}   = $class->_lcPlural($totals->{'track'}, 'SONG', 'SONGS');
 	$params->{'artist_count'} = $class->_lcPlural($totals->{'contributor'}, 'ARTIST', 'ARTISTS');
 
 	if ( main::INFOLOG && $sqllog->is_info ) {
