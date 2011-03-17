@@ -1563,8 +1563,8 @@ sub _playlistTracks {
 				sorted      => 0,
 				playlist_id => (&_tagsToParams(\@searchTags))->{'playlist_id'},
 			);
-			$hash{'playlistTitle'} = $results->{'__playlistTitle'} if defined $results->{'playlistTitle'};
-			
+			$hash{'playlistTitle'} = $results->{'__playlistTitle'} if defined $results->{'__playlistTitle'};
+
 			return \%hash, undef;
 		}
 	);
