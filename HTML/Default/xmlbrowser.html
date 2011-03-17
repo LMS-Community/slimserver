@@ -17,8 +17,12 @@ END;
 
 IF hasArtwork;
 	IF artwork == 1;
-		container = 'gallerycontainer';
-		contentwrapper = 'galleryitem';
+		IF playlist_id;
+			artwork = 0;
+		ELSE;
+			container = 'gallerycontainer';
+			contentwrapper = 'galleryitem';
+		END;
 	END;
 	
 	titleRight = BLOCK %]
@@ -27,27 +31,44 @@ IF hasArtwork;
 END %]
 
 [%- extJsScripts = BLOCK -%]
-	<script type="text/javascript">
-		[% IF hasArtwork %]
-			[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
-			[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
-			[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
-			[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
-		[% END %]
-
-		var orderByList;
-		[% IF orderByList %]
-			orderByList = {};
-			[% PROCESS jsString id='SORT_BY' jsId='sort_by' %]
-			[% FOREACH key = orderByList.keys.sort %]
-				orderByList["[% key | string %]"] = '[% orderByList.$key | replace("'", "%27") %]';
+	[% IF playlist_id && !noEdit %]
+		<script type="text/javascript" src="[% webroot %]html/SqueezeJS/UI.js?r=[% revision %]"></script>
+		<script type="text/javascript">
+			[% IF hasArtwork %]
+				[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+				[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+				[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
 			[% END %]
-		[% END %]
-			
-		Ext.onReady(function(){
-			Browse.init();
-		});
-	</script>
+			var orderByList;
+			Ext.onReady(function(){ Browse.init(); Browse.initPlaylistEditing([% playlist_id %]); });
+		</script>
+
+	[% ELSE %]
+
+		<script type="text/javascript">
+			[% IF hasArtwork %]
+				[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+				[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+				[% IF !playlist_id %]
+					[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
+				[% END %]
+				[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
+			[% END %]
+	
+			var orderByList;
+			[% IF orderByList %]
+				orderByList = {};
+				[% PROCESS jsString id='SORT_BY' jsId='sort_by' %]
+				[% FOREACH key = orderByList.keys.sort %]
+					orderByList["[% key | string %]"] = '[% orderByList.$key | replace("'", "%27") %]';
+				[% END %]
+			[% END %]
+				
+			Ext.onReady(function(){
+				Browse.init();
+			});
+		</script>
+	[% END %]
 [% END %]
 
 [% IF query %]
@@ -261,7 +282,7 @@ END %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : '') _ (item.icon ? ' smallIcon' : '') anchor = item.anchor %]
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : playlist_id ? 'draggableSong' : '') _ (item.icon ? ' smallIcon' : '') anchor = item.anchor %]
 					[% IF artwork == 1 || path == 'trackinfo.html';
 						item.size = thumbSize || 100;
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
