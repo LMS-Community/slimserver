@@ -26,9 +26,6 @@ sub init {
 sub editplaylist {
 	my ($client, $params) = @_;
 
-	$params->{'hierarchy'} = 'playlist,playlistTrack';
-	$params->{'level'} = 1;
-
 	my $playlist_id = $params->{'playlist_id'};
 	$params->{'playlist.id'} = $playlist_id if (defined $playlist_id);
 
@@ -83,7 +80,7 @@ sub editplaylist {
 
 	}
 
-	return Slim::Web::Pages::BrowseDB::browsedb(@_);
+	return browsePlaylist(@_);
 }
 
 sub saveCurrentPlaylist {
@@ -119,29 +116,24 @@ sub saveCurrentPlaylist {
 	
 		}
 
-		# setup browsedb params to view the current playlist
-		$params->{'level'} = 1;
+		# setup params to view the current playlist
 		$params->{'untitledString'} = $title;
 
+		# Don't add this back to the breadcrumbs
+		delete $params->{'saveCurrentPlaylist'};
+	
+		return browsePlaylist(@_);
+		
 	} else {
 
-		$params->{'level'} = 0;
+		return browsePlaylists(@_);
 	}
 
-	$params->{'hierarchy'} = 'playlist,playlistTrack';
-
-	# Don't add this back to the breadcrumbs
-	delete $params->{'saveCurrentPlaylist'};
-
-	return Slim::Web::Pages::BrowseDB::browsedb(@_);
 }
 
 sub renamePlaylist {
 	my ($client, $params) = @_;
 
-	$params->{'hierarchy'} = 'playlist,playlistTrack';
-	$params->{'level'}     = 1;
-	
 	my $newName = $params->{'newname'};
 	if ($newName ne Slim::Utils::Misc::cleanupFilename($newName)) {
 			
@@ -182,7 +174,7 @@ sub renamePlaylist {
 		}
 	}
 
-	return Slim::Web::Pages::BrowseDB::browsedb(@_);
+	return browsePlaylist(@_);
 }
 
 sub deletePlaylist {
@@ -191,13 +183,10 @@ sub deletePlaylist {
 	my $playlist_id = $params->{'playlist_id'};
 	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
 
-	$params->{'level'} = 0;
-
 	# Warn the user if the playlist already exists.
 	if (blessed($playlistObj) && !$params->{'confirm'}) {
 
 		$params->{'warning'}     = 'DELETE_WARNING';
-		$params->{'level'}       = 1;
 		$params->{'playlist.id'} = $playlist_id;
 
 	} elsif (blessed($playlistObj)) {
@@ -209,17 +198,81 @@ sub deletePlaylist {
 			
 			$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
 			
+		} else {
+			# Send the user off to the top level browse playlists
+			return browsePlaylists(@_);
 		}
 
 		$playlistObj = undef;
 	}
 
-	# Send the user off to the top level browse playlists
-	$params->{'hierarchy'} = 'playlist,playlistTrack';
-
-	return Slim::Web::Pages::BrowseDB::browsedb(@_);
+	return browsePlaylist(@_);
 }
 
+sub browsePlaylists {
+	my ($client, $params) = @_;
+	my $allArgs = \@_;
+
+	my @verbs = ('browselibrary', 'items', 'feedMode:1', 'mode:playlists');
+	
+	my $callback = sub {
+		my ($client, $feed) = @_;
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			client  => $client,
+			feed    => $feed,
+			timeout => 35,
+			args    => $allArgs,
+			title   => 'SAVED_PLAYLISTS',
+			path    => '/clixmlbrowser/clicmd=browselibrary+items&linktitle=SAVED_PLAYLISTS&mode=playlists/',
+		} );
+	};
+
+	# execute CLI command
+	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, ['browselibrary', 'items', 'feedMode:1', 'mode:playlists'] );
+		
+	# wrap async requests
+	if ( $proxiedRequest->isStatusProcessing ) {			
+		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
+	} else {
+		$callback->($client, $proxiedRequest->getResults);
+	}
+}
+
+sub browsePlaylist {
+	my ($client, $params) = @_;
+	my $allArgs = \@_;
+
+	my $playlist_id = $params->{'playlist.id'};
+	
+# Not using playlist title as it much more useful to leave 'Home / Plalists' and the breadcrumb.	
+#	my $title;
+#	my $obj = Slim::Schema->find('Playlist', $playlist_id);
+#	$title = string('PLAYLIST') . ' (' . $obj->name . ')' if $obj;
+	
+	my @verbs = ('browselibrary', 'items', 'feedMode:1', 'mode:playlistTracks', 'playlist_id:' . $playlist_id);
+	
+	my $callback = sub {
+		my ($client, $feed) = @_;
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			client  => $client,
+			feed    => $feed,
+			timeout => 35,
+			args    => $allArgs,
+			title   => 'SAVED_PLAYLISTS',
+			path    => 'clixmlbrowser/clicmd=browselibrary+items&linktitle=SAVED_PLAYLISTS&mode=playlists/',
+		} );
+	};
+
+	# execute CLI command
+	my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@verbs );
+		
+	# wrap async requests
+	if ( $proxiedRequest->isStatusProcessing ) {			
+		$proxiedRequest->callbackFunction( sub { $callback->($client, $_[0]->getResults); } );
+	} else {
+		$callback->($client, $proxiedRequest->getResults);
+	}
+}
 
 1;
 
