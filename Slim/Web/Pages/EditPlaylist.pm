@@ -116,9 +116,6 @@ sub saveCurrentPlaylist {
 	
 		}
 
-		# setup params to view the current playlist
-		$params->{'untitledString'} = $title;
-
 		# Don't add this back to the breadcrumbs
 		delete $params->{'saveCurrentPlaylist'};
 	
