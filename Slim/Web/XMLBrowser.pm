@@ -931,7 +931,8 @@ sub handleFeed {
 		}
 	}
 	
-	# Add play links if we can
+	# Add play links and anchors if we can
+	my $anchor = '';
 	for my $item (@{$stash->{'items'} || []}) {
 		
 		next if $item->{'ignore'};
@@ -943,11 +944,15 @@ sub handleFeed {
 		
 		$link = _makePlayLink($stash->{'actions'}, $item, 'add');
 		$item->{'addLink'} = $link if $link;
+		
+		my $textkey = $item->{'textkey'};
+		if (defined $textkey && $textkey ne $anchor) {
+			$item->{'anchor'} = $anchor = $textkey;
+		}
 	}
 	
 #	$log->error(Data::Dump::dump($stash->{'items'}));
-#$log->error(join(', ', keys %$params));
-#$log->error(Data::Dump::dump($stash));	
+
 	my $output = processTemplate($template, $stash);
 	
 	# done, send output back to Web module for display

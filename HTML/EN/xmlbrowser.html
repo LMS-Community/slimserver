@@ -217,7 +217,7 @@
 					onMouseOut="hideElements(['controls[% item.index || index _ (start + loop.index) %]'])">
 				[% END %]
 
-				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = (playlist_id ? 'editcontrols' : 'favoritescontrol') %]
+				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = (playlist_id ? 'editcontrols' : 'favoritescontrol') anchor = item.anchor %]
 					[% IF item.web.type == 'htmltemplate' %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]

@@ -183,7 +183,7 @@ END %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : '') _ (item.icon ? ' smallIcon' : '') %]
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : '') _ (item.icon ? ' smallIcon' : '') anchor = item.anchor %]
 					[% IF artwork == 1 || path == 'trackinfo.html';
 						item.size = thumbSize || 100;
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
