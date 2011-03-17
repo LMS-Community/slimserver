@@ -102,6 +102,26 @@ END %]
 	</div>
 
 	[%- BLOCK gencontrol -%]
+		[% IF playlist_id && loop.count > 0 || loop.last %]
+			[% UNLESS useExtJS %]
+				[%- WRAPPER moveuplink noTarget=1 %]
+					[%- PROCESS editcmd cmd='up' %]
+				[% END %]
+	
+				[%- WRAPPER movedownlink noTarget=1 %]
+					[%- PROCESS editcmd cmd='down' %]
+				[% END %]
+			[% END %]
+			
+			[%- WRAPPER editlink noTarget=1 %]
+				[%- PROCESS editcmd cmd='edit' %]
+			[% END %]
+		
+			[%- WRAPPER removelink noTarget=1 %]
+				[%- PROCESS editcmd cmd='delete' %]
+			[% END %]
+		[% END %]
+
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				onclick="Browse.XMLBrowser.toggleFavorite(this, '[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]', '[% pageinfo.startitem %]', '[% sess %]');"
@@ -122,13 +142,65 @@ END %]
 			[% PROCESS dummylink %]
 			[% PROCESS dummylink %]
 		[% END %]
-	[%- END %]
+
+	[% END %]
 
 	[%- BLOCK allcontrol -%]
 		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 	[%- END %]
 
+	[% BLOCK editcmd %]
+			href="[% webroot %]edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist_id=[% playlist_id %]&amp;itempos=[% item.play_index %]"
+	[% END %]
+	
+	[% BLOCK editform %]
+		<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
+			<input type="hidden" name="player" value=[% playerURI %]>
+			<input type="hidden" name="itempos" value=[% item.play_index %]>				
+			<input type="hidden" name="playlist_id" value=[% playlist_id %]>
+			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title %]">[% END %]
+			<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.url %]">
+			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
+			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
+		</form>
+	[% END %]
+	
+	[% IF playlist_id %]
+		<div class="playlistform">
+			<form method="get" action="[% webroot %]edit_playlist.html">
+				<table>
+					<tr>
+						<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlistTitle; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "ADD" | string %]" onclick='this.form.addItem.value=1'></td>
+						<td>
+							[% IF playlistTitle %]
+								<input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'>
+							[% END %]
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							[%- IF warning == 'RENAME_WARNING' %]
+								<input type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
+							[%- END %]
+							[%- IF warning == 'DELETE_WARNING' %]
+								<input type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
+							[%- END %]
+							<input type="hidden" name="playlist_id" value="[% playlist_id %]">
+							<input type="hidden" name="renamePlaylist" value="0">
+							<input type="hidden" name="editPlaylist" value="0">
+							<input type="hidden" name="deletePlaylist" value="0">
+							<input type="hidden" name="addItem" value="0">
+							<input type="hidden" name="player" value="[% player %]">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	[% END %]
+	
 	[%- IF songinfo;
 		songInfoPlayLinks = BLOCK %]
 		<div id="songInfoPlayLinks">
@@ -149,6 +221,10 @@ END %]
 		</div>
 		[% END %]
 
+		[% IF playlist_id && addItem %]
+			[% PROCESS editform %]
+		[% END %]
+		
 		[% IF itemsHaveAudio && !songinfo %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
@@ -165,7 +241,9 @@ END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
-			[% IF item.type == 'search' && !item.weblink;
+			[% IF playlist_id && edit && loop.index == itempos %]
+				[% PROCESS editform %]
+			[% ELSIF item.type == 'search' && !item.weblink;
 				WRAPPER contentitem controls = xmlSearchControls;
 					IF artwork == 1;
 						itemobj.id = loop.count;
