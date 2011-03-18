@@ -693,17 +693,6 @@ div#albumBackground {
 	cursor: pointer;
 }
 
-.descenditem {
-	padding-left:18px;
-}
-
-.descendlinkbtn {
-	background-image:url("html/images/b_descend.gif");
-	background-repeat:no-repeat;
-	cursor: pointer;
-	padding: 0px 5px 1px 5px;
-}
-
 .waitlinkbtn {
 	background-image:url("html/images/b_wait2.gif");
 	background-repeat:no-repeat;

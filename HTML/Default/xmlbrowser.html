@@ -284,7 +284,7 @@ useSpecialExt="-browse" %]
 				[% END %]
 			[% ELSE %]
 				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : playlist_id ? 'draggableSong' : '') _ (item.icon ? ' smallIcon' : '') anchor = item.anchor %]
-					[% IF artwork == 1 || path == 'trackinfo.html';
+					[% IF artwork == 1;
 						item.size = thumbSize || 100;
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
 					END %]

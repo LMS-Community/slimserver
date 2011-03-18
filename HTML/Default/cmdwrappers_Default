@@ -73,53 +73,7 @@
 
 
 	[% BLOCK iteminfo -%]
-
-		[%- IF item.descend || (levelName == 'playlisttrack') %]
-
-			[% IF ((levelName == 'album' || levelName == 'age') && !(artwork && artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %]
-				[% IF levelName == 'playlisttrack'; item.coverThumb = item.item; END %]
-				<span class="browseCover">
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" noby=0 %][% IF item.hierarchy %]</a>[% END -%]
-				</span>
-				<div class="browseItemDetail">
-					[% IF levelName == 'playlisttrack';
-						includeArtist = item.includeArtist;
-						includeAlbum = item.includeAlbum;
-						PROCESS trackinfo item.includeArtist = 0 item.includeAlbum = 0; 
-						item.includeArtist = includeArtist;
-						item.includeAlbum = includeAlbum;
-					ELSE -%]
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END; END -%]
-				</div>
-				[% IF levelName == 'playlisttrack' && item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
-					<div class="browseItemDetail">
-						<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
-					</div>
-				[% END %]
-				[% IF item.showYear && item.year -%]
-					<div class="browseItemDetail">
-						<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
-					</div>
-				[% END %]
-				<div class="browseItemDetail">
-					[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj noby=1; END -%]
-				</div>
-
-			[% ELSE %]
-
-				[% IF levelName == 'playlisttrack'; PROCESS trackinfo; ELSE -%]
-				[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
-
-				[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>[% END -%]
-
-				<!-- Include the artist for the album view -->
-				[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END; END -%]
-
-			[% END %]
-
-		[%- ELSE -%]
-			[% PROCESS trackinfo %]
-		[%- END %]
+		[% PROCESS trackinfo %]
 	[%- END %]
 
 

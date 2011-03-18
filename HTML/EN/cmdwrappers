@@ -311,21 +311,7 @@ END %]
 [% END %]
 
 [% BLOCK iteminfo -%]
-	[%- IF item.descend %][% IF item.hierarchy -%]
-	[%- IF useAJAX AND (container == 'contentcontainer') AND item.itemobj -%]
-	<span  id='descend[% itemid %]' class="descendlinkbtn"                      onClick='showTree("[% itemid %]","[% item.hreftype %]","hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]")'>&nbsp;</span
-	><span id='wait[% itemid %]'    class="waitlinkbtn"  style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span
-	><span id='close[% itemid %]'   class="closelinkbtn" style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span>
-	[%- END %]
-	<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
-	[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
-
-		<!-- Include the artist for the album view -->
-		[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END -%]
-
-	[%- ELSE -%]
-		[% PROCESS trackinfo %]
-	[%- END %]
+	[% PROCESS trackinfo %]
 [%- END %]
 
 [% BLOCK songInfoPlayLinks %]

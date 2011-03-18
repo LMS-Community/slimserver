@@ -154,12 +154,6 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% item.hierarchy | html%][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
-
-[%# this is the href to the browsetree page for item %]
-[% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
-[%- END %]
-
 [%# this is a generic href for item, or the item itself if no href present %]
 [% BLOCK ItemHRef -%]
 [% item.href ? item.href : item %]
