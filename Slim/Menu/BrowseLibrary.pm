@@ -1185,7 +1185,7 @@ sub _albums {
 			my $items = $results->{'albums_loop'};
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'album'};
-				$_->{'image'}         = ($_->{'artwork_track_id'} ? 'music/' . $_->{'artwork_track_id'} . '/cover' : undef);
+				$_->{'image'}         = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 				$_->{'type'}          = 'playlist';
 				$_->{'playlist'}      = \&_tracks;
 				$_->{'url'}           = \&_tracks;
@@ -1307,8 +1307,14 @@ sub _tracks {
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
 	my $tags       = 'dtuxgaliqyorf';
 	
-	if (!$search && !scalar @searchTags && $args->{'search'}) {
+	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
 		$search = $args->{'search'};
+	}
+	
+	# Sanity check
+	if ((!defined $search || !length($search)) && !scalar @searchTags) {
+		$log->error('Invalid request: no search term or album/artist/genre tags');
+		$callback->({title => 'Invalid request: no search term or album/artist/genre tags'});
 	}
 
 	$tags .= 'k' if $pt->{'wantMetadata'};
