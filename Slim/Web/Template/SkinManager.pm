@@ -285,7 +285,14 @@ sub _resizeImage {
 		}
 		
 		# special mode "-": don't resize local urls (some already come with resize parameters)
-		return $url if $mode eq '-';
+		if ($mode eq '-') {
+			if ($url =~ m|/[a-z]+\.png$|) {
+				$mode = '';
+			}
+			else {
+				return $url;
+			}
+		}
 
 		$resizeParams .= "_$mode" if $mode;
 	
