@@ -124,7 +124,7 @@ useSpecialExt="-browse" %]
 	</div>
 
 	[%- BLOCK gencontrol -%]
-		[% IF playlist_id && loop.count > 0 || loop.last %]
+		[% IF playlist_id %]
 			[% UNLESS useExtJS %]
 				[%- WRAPPER moveuplink noTarget=1 %]
 					[%- PROCESS editcmd cmd='up' %]
