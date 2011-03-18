@@ -1006,7 +1006,7 @@ sub _cliQuery_done {
 											'type'    => 'popupplay',
 											'text'    => [ $nameOrTitle ],
 										},
-									});
+									}) if $client;
 
 							# Skip this item
 							$totalCount--;
@@ -1406,8 +1406,12 @@ sub _cliQuerySubFeed_done {
 		my @p = map { uri_unescape($_) } split / /, $feed->{command};
 		my $client = $params->{request}->client();
 		
-		main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
-		$client->execute( \@p );
+		if ($client) {
+			main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
+			$client->execute( \@p );
+		} else {
+			$log->error('No client to execute command for.');
+		}
 	}
 	
 	# insert the sub-feed data into the original feed
@@ -1836,7 +1840,7 @@ sub _defeatDestructiveTouchToPlay {
 	}
 	
 	$pref = $request->getParam('defeatDestructiveTouchToPlay');
-	$pref = $prefs->client($request->client)->get('defeatDestructiveTouchToPlay') if !defined $pref;
+	$pref = $prefs->client($client)->get('defeatDestructiveTouchToPlay') if $client && !defined $pref;
 	$pref = $prefs->get('defeatDestructiveTouchToPlay') if !defined $pref;
 	
 	# Values:
@@ -1846,7 +1850,7 @@ sub _defeatDestructiveTouchToPlay {
 	# 3 => defeat only if playing and current-playlist-length > 1
 	
 	return 0 if !$pref;
-	return 1 if $pref == 1;
+	return 1 if $pref == 1 || !$client;
 	my $l = Slim::Player::Playlist::count($client);
 	return 0 if $l < 2;
 	return 0 if $pref == 3 && (!$client->isPlaying() || $l < 2);
