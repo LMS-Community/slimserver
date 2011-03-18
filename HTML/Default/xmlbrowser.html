@@ -252,8 +252,16 @@ useSpecialExt="-browse" %]
 				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 				[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem controls = 'allcontrol' %]
+			[% useAllIcon = hasArtwork && artwork == 0 %]
+			[%- WRAPPER contentitem controls = 'allcontrol' lineclass = (useAllIcon ? 'browsedbListItem itemWithCover' : 'browsedbListItem' )%]
+				[% IF useAllIcon %]
+					<span class="browseCover">
+						<img src="[% webroot %]html/images/playall_50x50_f.png" width="50">
+					</span>
+					<div class="browseItemDetail">
+				[% END %]
 				[% "ALL_SONGS" | string %]
+				[% IF useAllIcon %]</div>[% END %]
 			[%- END %]
 		[% END %]
 
