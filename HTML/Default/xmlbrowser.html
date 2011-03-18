@@ -28,11 +28,14 @@ IF hasArtwork;
 	titleRight = BLOCK %]
 		<div id="viewSelect"></div>
 	[% END; 
-END %]
+END;
+
+useSpecialExt="-browse" %]
 
 [%- extJsScripts = BLOCK -%]
 	[% IF playlist_id && !noEdit %]
-		<script type="text/javascript" src="[% webroot %]html/SqueezeJS/UI.js?r=[% revision %]"></script>
+		[% useSpecialExt="" %]
+		<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			[% IF hasArtwork %]
 				[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
@@ -91,7 +94,7 @@ END %]
 	[% END %]
 [% END # filter -%]
 
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll = (streaminfo ? 0 : 1) useSpecialExt="-browse" %][% IF !streaminfo %]<div id="mainbody">[% END %][% END %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll = (streaminfo ? 0 : 1) %][% IF !streaminfo %]<div id="mainbody">[% END %][% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
 	<div class="message">[% msg %]</div>
