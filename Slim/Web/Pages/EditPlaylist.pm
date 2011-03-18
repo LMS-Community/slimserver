@@ -241,10 +241,9 @@ sub browsePlaylist {
 
 	my $playlist_id = $params->{'playlist.id'};
 	
-# Not using playlist title as it much more useful to leave 'Home / Plalists' and the breadcrumb.	
-#	my $title;
-#	my $obj = Slim::Schema->find('Playlist', $playlist_id);
-#	$title = string('PLAYLIST') . ' (' . $obj->name . ')' if $obj;
+	my $title;
+	my $obj = Slim::Schema->find('Playlist', $playlist_id);
+	$title = string('PLAYLIST') . ' (' . $obj->name . ')' if $obj;
 	
 	my @verbs = ('browselibrary', 'items', 'feedMode:1', 'mode:playlistTracks', 'playlist_id:' . $playlist_id);
 	
@@ -255,8 +254,10 @@ sub browsePlaylist {
 			feed    => $feed,
 			timeout => 35,
 			args    => $allArgs,
-			title   => 'SAVED_PLAYLISTS',
-			path    => 'clixmlbrowser/clicmd=browselibrary+items&linktitle=SAVED_PLAYLISTS&mode=playlists/',
+			title   => $title,
+			path    => sprintf('clixmlbrowser/clicmd=browselibrary+items&linktitle=%s&mode=playlistTracks&playlist_id=%s/', 
+							Slim::Utils::Misc::escape($title),
+							$playlist_id),
 		} );
 	};
 
