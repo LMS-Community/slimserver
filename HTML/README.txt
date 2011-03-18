@@ -16,22 +16,6 @@ EN:
 	Owner: SlimDevices
 	Description: Base template elements and generic fallback HTML for other skins.
 
-Fishbone:
-	Owner: Slim Devices
-	Description: Lots of features - and multi-CSS available.
-
-Handheld:
-	Owner: Michael Herger
-	Description: Skin good for use on Palm/WindowsCE devices.
-
-Nokia770:
-	Owner: Ben Klaas
-	Description: Skin optimised for Nokia770/800 style web tablets
-
-ScreenReader:
-	Owner: Michael Herger
-	Description: Skin based on Handheld, with some optimizations for screen readers as used by our blind users.
-
-Touch:
-	Owner: N/A
-	Description: Looks good for Tablet computers?
+Previously available skins (Fishbone, Handheld, Nokia770, ScreenReader, Touch)
+are no longer maintained as part of the core software.
+They may be available as third-party plugins.
