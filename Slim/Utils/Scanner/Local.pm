@@ -414,7 +414,8 @@ sub rescan {
 	
 	if ( !main::SCANNER && $args->{no_async} ) {
 		# All done, send a done event
-		Slim::Music::Import->setIsScanning(0);	
+		Slim::Music::Import->setIsScanning(0);
+		Slim::Schema->wipeCaches();
 		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 	}
 	
@@ -889,6 +890,7 @@ sub markDone {
 				if ($changes) {
 					main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 					Slim::Music::Import->setLastScanTime();
+					Slim::Schema->wipeCaches();
 				}
 				
 				# Persist the count of "changes since last optimization"
