@@ -118,12 +118,14 @@ Browse = {
 		location.search = params;
 	},
 
-	initPlaylistEditing: function(id){
+	initPlaylistEditing: function(id, start){
 		new SqueezeJS.UI.Sortable({
 			el: 'browsedbList',
 			selector: '#browsedbList div.draggableSong',
 			highlighter: Highlighter,
 			onDropCmd: function(sourcePos, targetPos) {
+				sourcePos = sourcePos + start;
+				targetPos = targetPos + start;
 				SqueezeJS.Controller.request({
 					params: [ '', [
 						'playlists',
