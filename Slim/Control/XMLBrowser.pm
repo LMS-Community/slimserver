@@ -1092,6 +1092,10 @@ sub _cliQuery_done {
 							$hash{'icon'} = $item->{image};
 							$hasImage = 1;
 						}
+						if (my $coverid = $item->{'artwork_track_id'}) {
+							$hash{'icon-id'} = $coverid;
+							$hasImage = 1;
+						}
 
 						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
 							$hash{'style'} = 'itemNoAction';
