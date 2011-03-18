@@ -1166,7 +1166,11 @@ sub _albums {
 	} 
 	
 	my @artistIds = grep /artist_id:/, @searchTags;
-	my ($artistId) = ($artistIds[0] =~ /artist_id:(\d+)/) if @artistIds;
+	my $artistId;
+	if (scalar @artistIds) {
+		$artistIds[0] =~ /artist_id:(\d+)/;
+		$artistId = $1;
+	}
 	my $showArtist = $prefs->get('showArtist');
 	$tags .= 'S' if $showArtist || $artistId;
 	
