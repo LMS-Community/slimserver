@@ -33,31 +33,29 @@ END;
 useSpecialExt="-browse" %]
 
 [%- extJsScripts = BLOCK -%]
+	<script type="text/javascript">
+		[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+		[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+		[% IF !playlist_id %]
+			[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
+		[% END %]
+		[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
+	</script>
+
 	[% IF playlist_id && !noEdit %]
 		[% useSpecialExt="" %]
 		<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 		<script type="text/javascript">
-			[% IF hasArtwork %]
-				[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
-				[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
-				[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
-			[% END %]
 			var orderByList;
-			Ext.onReady(function(){ Browse.init(); Browse.initPlaylistEditing([% playlist_id %]); });
+			Ext.onReady(function(){
+				Browse.init(); 
+				Browse.initPlaylistEditing([% playlist_id %]);
+			});
 		</script>
 
 	[% ELSE %]
 
 		<script type="text/javascript">
-			[% IF hasArtwork %]
-				[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
-				[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
-				[% IF !playlist_id %]
-					[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
-				[% END %]
-				[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
-			[% END %]
-	
 			var orderByList;
 			[% IF orderByList %]
 				orderByList = {};
