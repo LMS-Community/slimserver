@@ -299,7 +299,7 @@ sub handleFeed {
 			if ( 
 				   $subFeed->{'play'} 
 				&& $depth == $levels
-				&& $stash->{'action'} =~ /^(?:play|add)$/
+				&& $stash->{'action'} =~ /^(?:play|add|insert)$/
 			) {
 				$subFeed->{'type'} = 'audio';
 				$subFeed->{'url'}  = $subFeed->{'play'};
@@ -309,7 +309,7 @@ sub handleFeed {
 			if ( 
 			       $subFeed->{'playlist'}
 				&& $depth == $levels
-				&& $stash->{'action'} =~ /^(?:playall|addall)$/
+				&& $stash->{'action'} =~ /^(?:playall|addall|insert)$/
 			) {
 				$subFeed->{'type'} = 'playlist';
 				$subFeed->{'url'}  = $subFeed->{'playlist'};
@@ -481,7 +481,7 @@ sub handleFeed {
 					# Only fetch playlist-with-parser types if playing
 					&& !(  $subFeed->{'type'} eq 'playlist'
 						&& $subFeed->{'parser'}
-						&& $stash->{'action'} !~ /^(?:play|add)/ )
+						&& $stash->{'action'} !~ /^(?:play|add|insert)/ )
 					)
 				{
 					# We need to fetch the URL
@@ -624,8 +624,8 @@ sub handleFeed {
 		}
 	}
 	# play all/add all
-	elsif ( $client && $action && $action =~ /^(playall|addall)$/ ) {
-		my $play  = ($action eq 'playall');
+	elsif ( $client && $action && $action =~ /^(playall|addall|insert)$/ ) {
+		$action =~ s/all$//;
 		
 		my @urls;
 		# XXX: Why is $stash->{streaminfo}->{item} added on here, it seems to be undef?
@@ -661,9 +661,12 @@ sub handleFeed {
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 			}
+			if ($action eq 'insert') {
+				$client->execute([ 'playlist', 'inserttracks', 'listRef', \@urls ]);
+			} else {
+				$client->execute([ 'playlist', $action, \@urls ]);
+			}
 			
-			$client->execute([ 'playlist', ($play ? 'play' : 'add'), \@urls ]);
-
 			my $webroot = $stash->{'webroot'};
 			$webroot =~ s/(.*?)plugins.*$/$1/;
 			$template = 'xmlbrowser_redirect.html';

@@ -160,6 +160,10 @@ Browse.XMLBrowser = {
 		this._playAddLink('addall', query, index, sess);
 	},
 	
+	insertLink: function(query, index, sess) {
+		this._playAddLink('insert', query, index, sess);
+	},
+	
 	_playAddLink: function(action, query, index, sess, showBriefly) {
 		this._doRequest(this.template.apply({
 				action: action,
