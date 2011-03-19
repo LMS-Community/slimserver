@@ -996,6 +996,9 @@ sub _cliQuery_done {
 					if ($menuMode) {
 						my %hash;
 						
+						$hash{'type'}   = $item->{'type'}  if defined $item->{'type'};
+										# search|text|textarea|audio|playlist|link|opml|replace|redirect|radio
+										# radio is a radio-button selection item, not an internet-radio station 
 						my $nameOrTitle = $name || $item->{title};
 						my $touchToPlay = defined(touchToPlay($item)) + 0;
 						
