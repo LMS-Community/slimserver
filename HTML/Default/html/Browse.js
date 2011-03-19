@@ -168,7 +168,7 @@ Browse.XMLBrowser = {
 				index: index,
 				sess: sess
 			}), 
-			false,
+			true,
 			showBriefly
 		);
 	},
