@@ -945,6 +945,9 @@ sub handleFeed {
 		$link = _makePlayLink($stash->{'actions'}, $item, 'add');
 		$item->{'addLink'} = $link if $link;
 		
+		$link = _makePlayLink($stash->{'actions'}, $item, 'insert');
+		$item->{'insertLink'} = $link if $link;
+		
 		my $textkey = $item->{'textkey'};
 		if (defined $textkey && $textkey ne $anchor) {
 			$item->{'anchor'} = $anchor = $textkey;
