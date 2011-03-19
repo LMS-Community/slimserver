@@ -1234,6 +1234,10 @@ sub _albums {
 						command     => ['playlistcontrol'],
 						fixedParams => {cmd => 'insert', %$params},
 					},
+					remove => {
+						command     => ['playlistcontrol'],
+						fixedParams => {cmd => 'delete', %$params},
+					},
 				);
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'add'};
@@ -1281,6 +1285,10 @@ sub _albums {
 				insert => {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'insert'},
+				},
+				remove => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'delete'},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};

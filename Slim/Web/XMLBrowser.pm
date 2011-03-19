@@ -951,6 +951,9 @@ sub handleFeed {
 		$link = _makePlayLink($stash->{'actions'}, $item, 'insert');
 		$item->{'insertLink'} = $link if $link;
 		
+		$link = _makePlayLink($stash->{'actions'}, $item, 'remove');
+		$item->{'removeLink'} = $link if $link;
+		
 		my $textkey = $item->{'textkey'};
 		if (defined $textkey && $textkey ne $anchor) {
 			$item->{'anchor'} = $anchor = $textkey;
@@ -1186,12 +1189,18 @@ sub _makePlayLink {
 						? $item->{'url'}
 						: undef);
 	if ($playUrl && !ref $playUrl) {
-		my $link = 'anyurl?p0=playlist&p1=' . $action . '&p2=' . Slim::Utils::Misc::escape($playUrl);
-
-		my $title = $item->{'title'} || $item->{'name'};
-		$link .= '&p3=' . Slim::Utils::Misc::escape($title) if $title;
-		 
-		return $link;
+		
+		if ($action eq 'remove') {
+			my $link = 'anyurl?p0=playlist&p1=deleteitem&p2=' . Slim::Utils::Misc::escape($playUrl);
+			return $link;
+		} else {
+			my $link = 'anyurl?p0=playlist&p1=' . $action . '&p2=' . Slim::Utils::Misc::escape($playUrl);
+	
+			my $title = $item->{'title'} || $item->{'name'};
+			$link .= '&p3=' . Slim::Utils::Misc::escape($title) if $title;
+			 
+			return $link;
+		}
 	}
 }
 
