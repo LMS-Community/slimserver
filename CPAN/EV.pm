@@ -53,6 +53,15 @@ EV - perl interface to libev, a high performance full-featured event loop
    EV::loop EV::LOOP_ONESHOT;  # block until at least one event could be handled
    EV::loop EV::LOOP_NONBLOCK; # try to handle same events, but do not block
 
+=head1 BEFORE YOU START USING THIS MODULE
+
+If you only need timer, I/O, signal, child and idle watchers and not the
+advanced functionality of this module, consider using L<AnyEvent> instead,
+specifically the simplified API described in L<AE>.
+
+When used with EV as backend, the L<AE> API is as fast as the native L<EV>
+API, but your programs/modules will still run with many other event loops.
+
 =head1 DESCRIPTION
 
 This module provides an interface to libev
@@ -70,6 +79,37 @@ loops (if you don't rely on any watcher types not available through it)
 and still be faster than with any other event loop currently supported in
 Perl.
 
+=head2 PORTING FROM EV 3.X to 4.X
+
+EV version 4 introduces a number of incompatible changes summarised
+here. According to the depreciation strategy used by libev, there is a
+compatibility layer in place so programs should continue to run unchanged
+(the XS interface lacks this layer, so programs using that one need to be
+updated).
+
+This compatibility layer will be switched off in some future release.
+
+All changes relevant to Perl are renames of symbols, functions and
+methods:
+
+  EV::loop          => EV::run
+  EV::LOOP_NONBLOCK => EV::RUN_NOWAIT
+  EV::LOOP_ONESHOT  => EV::RUN_ONCE
+
+  EV::unloop        => EV::break
+  EV::UNLOOP_CANCEL => EV::BREAK_CANCEL
+  EV::UNLOOP_ONE    => EV::BREAK_ONE
+  EV::UNLOOP_ALL    => EV::BREAK_ALL
+
+  EV::TIMEOUT       => EV::TIMER
+
+  EV::loop_count    => EV::iteration
+  EV::loop_depth    => EV::depth
+  EV::loop_verify   => EV::verify
+
+The loop object methods corresponding to the functions above have been
+similarly renamed.
+
 =head2 MODULE EXPORTS
 
 This module does not export any symbols.
@@ -81,7 +121,7 @@ package EV;
 use common::sense;
 
 BEGIN {
-   our $VERSION = '3.9';
+   our $VERSION = '4.03';
    use XSLoader;
    XSLoader::load "EV", $VERSION;
 }
@@ -261,19 +301,22 @@ callback calls EV::unloop.
 
 The $flags argument can be one of the following:
 
-   0                  as above
-   EV::LOOP_ONESHOT   block at most once (wait, but do not loop)
-   EV::LOOP_NONBLOCK  do not block at all (fetch/handle events but do not wait)
+   0                as above
+   EV::LOOP_ONCE    block at most once (wait, but do not loop)
+   EV::LOOP_NOWAIT  do not block at all (fetch/handle events but do not wait)
 
-=item EV::unloop [$how]
+=item EV::break [$how]
 
-=item $loop->unloop ([$how])
+=item $loop->break ([$how])
 
-When called with no arguments or an argument of EV::UNLOOP_ONE, makes the
+When called with no arguments or an argument of EV::BREAK_ONE, makes the
 innermost call to EV::loop return.
 
-When called with an argument of EV::UNLOOP_ALL, all calls to EV::loop will return as
-fast as possible.
+When called with an argument of EV::BREAK_ALL, all calls to EV::loop will
+return as fast as possible.
+
+When called with an argument of EV::BREAK_CANCEL, any pending break will
+be cancelled.
 
 =item $count = EV::loop_count
 
@@ -301,13 +344,13 @@ timeout. Otherwise a EV::timer with this value will be started.
 When an error occurs or either the timeout or I/O watcher triggers, then
 the callback will be called with the received event set (in general
 you can expect it to be a combination of C<EV::ERROR>, C<EV::READ>,
-C<EV::WRITE> and C<EV::TIMEOUT>).
+C<EV::WRITE> and C<EV::TIMER>).
 
 EV::once doesn't return anything: the watchers stay active till either
 of them triggers, then they will be stopped and freed, and the callback
 invoked.
 
-=item EV::feed_fd_event ($fd, $revents)
+=item EV::feed_fd_event $fd, $revents
 
 =item $loop->feed_fd_event ($fd, $revents)
 
@@ -315,10 +358,16 @@ Feed an event on a file descriptor into EV. EV will react to this call as
 if the readyness notifications specified by C<$revents> (a combination of
 C<EV::READ> and C<EV::WRITE>) happened on the file descriptor C<$fd>.
 
-=item EV::feed_signal_event ($signal)
+=item EV::feed_signal_event $signal
 
-Feed a signal event into EV. EV will react to this call as if the signal
-specified by C<$signal> had occured.
+Feed a signal event into the default loop. EV will react to this call as
+if the signal specified by C<$signal> had occured.
+
+=item EV::feed_signal $signal
+
+Feed a signal event into EV - unlike C<EV::feed_signal_event>, this works
+regardless of which loop has registered the signal, and is mainly useful
+fro custom signal implementations.
 
 =item EV::set_io_collect_interval $time
 
@@ -368,8 +417,7 @@ Each watcher type has its associated bit in revents, so you can use the
 same callback for multiple watchers. The event mask is named after the
 type, i.e. EV::child sets EV::CHILD, EV::prepare sets EV::PREPARE,
 EV::periodic sets EV::PERIODIC and so on, with the exception of I/O events
-(which can set both EV::READ and EV::WRITE bits), and EV::timer (which
-uses EV::TIMEOUT).
+(which can set both EV::READ and EV::WRITE bits).
 
 In the rare case where one wants to create a watcher but not start it at
 the same time, each constructor has a variant with a trailing C<_ns> in
@@ -944,7 +992,7 @@ The C<prepare_ns> variant doesn't start (activate) the newly created watcher.
 Call the callback just after the process wakes up again (after it has
 gathered events), but before any other callbacks have been invoked.
 
-This is used to integrate other event-based software into the EV
+This can be used to integrate other event-based software into the EV
 mainloop: You register a prepare callback and in there, you create io and
 timer watchers as required by the other software. Here is a real-world
 example of integrating Net::SNMP (with some details left out):
@@ -988,6 +1036,16 @@ are destroyed before this can happen (remember EV::check gets called
 first).
 
 The C<check_ns> variant doesn't start (activate) the newly created watcher.
+
+=item EV::CHECK constant issues
+
+Like all other watcher types, there is a bitmask constant for use in
+C<$revents> and other places. The C<EV::CHECK> is special as it has
+the same name as the C<CHECK> sub called by Perl. This doesn't cause
+big issues on newer perls (beginning with 5.8.9), but it means thatthe
+constant must be I<inlined>, i.e. runtime calls will not work. That means
+that as long as you always C<use EV> and then C<EV::CHECK> you are on the
+safe side.
 
 =back
 
@@ -1141,9 +1199,10 @@ default_loop
 
 =head1 SEE ALSO
 
-L<EV::ADNS> (asynchronous DNS), L<Glib::EV> (makes Glib/Gtk2 use EV as
-event loop), L<EV::Glib> (embed Glib into EV), L<Coro::EV> (efficient
-coroutines with EV), L<Net::SNMP::EV> (asynchronous SNMP), L<AnyEvent> for
+L<EV::MakeMaker> - MakeMaker interface to XS API, L<EV::ADNS>
+(asynchronous DNS), L<Glib::EV> (makes Glib/Gtk2 use EV as event
+loop), L<EV::Glib> (embed Glib into EV), L<Coro::EV> (efficient thread
+integration), L<Net::SNMP::EV> (asynchronous SNMP), L<AnyEvent> for
 event-loop agnostic and portable event driven programming.
 
 =head1 AUTHOR
