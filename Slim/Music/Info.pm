@@ -671,6 +671,7 @@ sub standardTitle {
 	my $client    = shift;
 	my $pathOrObj = shift; # item whose information will be formatted
 	my $meta      = shift; # optional remote metadata to format
+	my $format    = shift; # caller may specify format 
 	
 	# Short-circuit if we have metadata
 	if ( $meta ) {
@@ -692,7 +693,6 @@ sub standardTitle {
 	}
 
 	my $fullpath = blessed($track) && $track->can('url') ? $track->url : $track;
-	my $format   = undef;
 
 	if (isPlaylistURL($fullpath) || isList($track)) {
 
@@ -700,7 +700,7 @@ sub standardTitle {
 
 	} else {
 
-		$format = standardTitleFormat($client) || 'TITLE';
+		$format ||= standardTitleFormat($client) || 'TITLE';
 
 	}
 
@@ -1122,9 +1122,16 @@ sub isPlaylistURL {
 	# seen as a playlist which forces only the title to be displayed.
 	return if $url =~ /^rhap.+wma$/;
 
-	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1) && !isFileURL($url)) {
+	if ($url =~ /^([a-zA-Z0-9\-]+):/) {
 
-		return 1;
+		my $handler = Slim::Player::ProtocolHandlers->handlerForProtocol($1);
+		if ($handler && $handler->can('isPlaylistURL')) {
+			return $handler->isPlaylistURL($url);
+		}
+
+		if (Slim::Player::ProtocolHandlers->isValidHandler($1) && !isFileURL($url)) {
+			return 1;
+		}
 	}
 
 	return 0;
