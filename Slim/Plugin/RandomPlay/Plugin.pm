@@ -21,7 +21,7 @@ use Slim::Buttons::Home;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
+use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Prefs;
 use Slim::Player::Sync;
 
@@ -153,7 +153,7 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
-        [1, 0, 0, \&cliRequest]);
+        [1, 0, 1, \&cliRequest]);
 	Slim::Control::Request::addDispatch(['randomplaygenrelist', '_index', '_quantity'],
         [1, 1, 0, \&chooseGenresMenu]);
 	Slim::Control::Request::addDispatch(['randomplaychoosegenre', '_genre', '_value'],
@@ -265,6 +265,12 @@ sub initPlugin {
 	);
 
 	Slim::Control::Jive::registerPluginMenu(\@item);
+
+	Slim::Menu::GenreInfo->registerInfoProvider( randomPlay => (
+		after    => 'top',
+		func      => \&_genreInfoMenu,
+	) );
+	
 }
 
 sub _shutdown {
@@ -304,6 +310,58 @@ sub _libraryChanged {
 		_shutdown();
 	}
 }
+
+
+sub _genreInfoMenu {
+	my ($client, $url, $genre, $remoteMeta, $tags) = @_;
+	
+	if($genre) {
+		my $params = {'genre_id'=> $genre->id};
+		my @items;
+		my $action;
+		
+		$action = {
+			command     => [ 'randomplay', 'track' ],
+			fixedParams => $params,
+		};
+		push @items, {
+			itemActions    => {
+				play  => $action,
+				items => $action,
+			},
+			nextWindow => 'nowPlaying',
+			name       => sprintf('%s %s %s %s', 
+				cstring($client, 'PLUGIN_RANDOMPLAY'),
+				cstring($client, 'GENRE'),
+				cstring($client, 'SONGS'),
+				$genre->name),
+		};
+
+		$action = {
+			command     => [ 'randomplay', 'album' ],
+			fixedParams => $params,
+		};
+		push @items, {
+			itemActions    => {
+				play  => $action,
+				items => $action,
+			},
+			nextWindow => 'nowPlaying',
+			name       => sprintf('%s %s %s %s', 
+				cstring($client, 'PLUGIN_RANDOMPLAY'),
+				cstring($client, 'GENRE'),
+				cstring($client, 'ALBUMS'),
+				$genre->name),
+		};
+		
+		return \@items;
+	}
+	else {
+		return {
+			type => 'text',
+			name => cstring($client, 'UNMIXABLE', cstring($client, 'PLUGIN_RANDOMPLAY')),
+		};
+	}}
 
 sub genreSelectAllOrNone {
 	my $request = shift;
@@ -1223,6 +1281,25 @@ sub cliRequest {
 	$mode      = $mixTypeMap{$mode} || $mode;
 
 	my $client = $request->client();
+
+	if (my $genre = $request->getParam('genre_id')){
+		my $name = Slim::Schema->find('Genre', $genre)->name;
+		
+		my $genres    = getGenres($client);
+	
+		# in $genres, an enabled genre returns true for $genres->{'enabled'}
+		my @excluded = ();
+		for (keys %$genres) {
+			push @excluded, $_ unless $_ eq $name;
+		}
+		# set the exclude_genres pref to all disabled genres 
+		$prefs->set('exclude_genres', [@excluded]);
+		$genres->{$name}->{'enabled'} = 1;
+
+		# need to reset mix list when changing genres
+		$mixInfo{$client->master()->id}->{'idList'} = undef;
+	}
+	
 
 	if (!defined $mode || !(scalar grep /$mode/, @mixTypes) || !$client) {
 		$request->setStatusBadParams();
