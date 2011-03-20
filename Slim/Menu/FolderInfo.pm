@@ -142,6 +142,23 @@ sub playFolder {
 sub cliQuery {
 	my $request = shift;
 	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
+	
 	my $client    = $request->client;
 	my $folder_id = $request->getParam('folder_id');
 	my $menuMode  = $request->getParam('menu') || 0;
