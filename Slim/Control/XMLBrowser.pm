@@ -75,7 +75,7 @@ sub cliQuery {
 	my $isPlayCommand = $request->isQuery([[$query], ['playlist']]);
 	
 	# Handle touch-to-play
-	if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
+	if (!$isPlayCommand && $request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
 
 		$isPlayCommand = 1;
 		
@@ -1149,7 +1149,7 @@ sub _cliQuery_done {
 						
 						elsif ( !$isPlayable && !$touchToPlay ) {
 							
-							# I think that doing is this way means that, because $itemParams does not get
+							# I think that doing it this way means that, because $itemParams does not get
 							# added as 'params' if !$isPlayable, therefore all the other default actions will
 							# bump because SlimBrowser needs 'params' as specified in the base actions.
 							
@@ -1209,7 +1209,7 @@ sub _cliQuery_done {
 							# (could also consider other mappings but do not curretly)
 							my $goAction = $hash{'goAction'};
 
-							if (my $action = _makeAction($itemActions, 'items', undef, 1)) {
+							if (my $action = _makeAction($itemActions, 'items', undef, 1, 0, $item->{nextWindow})) {
 								# If 'go' is already mapped to something else (probably 'play')
 								# then leave it alone.
 								unless ($goAction) {
