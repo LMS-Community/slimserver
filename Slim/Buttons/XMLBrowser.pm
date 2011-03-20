@@ -853,6 +853,13 @@ sub gotOPML {
 			
 			playItem($client, $item, $opml, $action);
 		},
+		'onCreateMix'     => sub {
+			my $client = shift;
+			my $item   = shift;
+
+			# Play just a single item
+			contextMenu( $client, $item, $opml );
+		},
 		
 		'overlayRef' => \&overlaySymbol,
 	);
@@ -1375,6 +1382,79 @@ sub playItem {
 		
 		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	}
+	else {
+
+		$client->bumpRight();
+	}
+}
+
+sub contextMenu {
+	my $client = shift;
+	my $item   = shift;
+	my $feed   = shift;
+
+	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
+	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || 'audio';
+	
+	my $expires = $client->modeParam('expires');
+	
+	# Adjust HTTP timeout value to match the API on the other end
+	my $timeout = $client->modeParam('timeout') || 5;
+	
+	# Should we remember where the user was browsing? (default: yes)
+	my $remember = $client->modeParam('remember');
+	if ( !defined $remember ) {
+		$remember = 1;
+	}
+	
+	# get modeParams before pusing block
+	my $modeParams = $client->modeParams();
+
+	my $params = {
+		'client'    => $client,
+		'expires'   => $expires,
+		'feedTitle' => $title,
+		'item'      => $item,
+		'timeout'   => $timeout,
+		'remember'  => $remember,
+	};
+	
+	main::DEBUGLOG && $log->debug("Context menu for :", $title);
+	
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, 'info')) {
+		
+		my @params = @{$feedAction->{'command'}};
+		if (my $params = $feedAction->{'fixedParams'}) {
+			push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
+		}
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
+		}
+		
+		main::INFOLOG && $log->is_info && $log->info("Use CLI command for info: ", join(', ', @params));
+		
+		my $callback = sub {
+			my $opml = shift;
+			$opml->{'type'}  ||= 'opml';
+			$opml->{'title'} = $title;
+			
+			# XXX maybe bumpRight if no entries in menu
+			
+			gotFeed( $opml, $params );
+		};
+	
+	    push @params, 'feedMode:1';
+		my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
+		
+		# wrap async requests
+		if ( $proxiedRequest->isStatusProcessing ) {			
+			$proxiedRequest->callbackFunction( sub { $callback->($_[0]->getResults); } );
+		} else {
+			$callback->($proxiedRequest->getResults);
+		}
+	}
+	
 	else {
 
 		$client->bumpRight();

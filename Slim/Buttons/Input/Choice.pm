@@ -262,9 +262,10 @@ my %functions = (
 		exitInput($client,$functarg);
 	},
 
-	'passback' => \&passback,
-	'play'     => sub { callCallback('onPlay', @_) },
-	'add'      => sub { callCallback('onAdd', @_)  },
+	'passback'   => \&passback,
+	'play'       => sub { callCallback('onPlay', @_) },
+	'add'        => sub { callCallback('onAdd', @_)  },
+	'create_mix' => sub { callCallback('onCreateMix', @_)  },
 	
 	# right and left buttons is handled in exitInput
 
