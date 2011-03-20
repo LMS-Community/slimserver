@@ -477,13 +477,7 @@ sub handleFeed {
 				
 				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
 
-				elsif ($subFeed->{'type'} ne 'audio'
-					# Only fetch playlist-with-parser types if playing
-					&& !(  $subFeed->{'type'} eq 'playlist'
-						&& $subFeed->{'parser'}
-						&& $stash->{'action'} !~ /^(?:play|add|insert)/ )
-					)
-				{
+				elsif ($subFeed->{'type'} ne 'audio') {
 					# We need to fetch the URL
 					main::INFOLOG && $log->info( "Fetching OPML from:", $subFeed->{'url'} );
 					Slim::Formats::XML->getFeedAsync(
@@ -954,6 +948,9 @@ sub handleFeed {
 		$link = _makePlayLink($stash->{'actions'}, $item, 'remove');
 		$item->{'removeLink'} = $link if $link;
 		
+		$link = _makeWebLink({actions => $stash->{'actions'}}, $item, 'info', sprintf('%s (%s)', string('INFORMATION'), ($item->{'name'}|| '')));
+		$item->{'mixersLink'} = $link if $link;
+
 		my $textkey = $item->{'textkey'};
 		if (defined $textkey && $textkey ne $anchor) {
 			$item->{'anchor'} = $anchor = $textkey;
@@ -1135,14 +1132,21 @@ sub _makeWebLink {
 	
 	my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, $action);
 	if ($feedAction) {
-		my $link = 'clixmlbrowser/clicmd=' . join('+', @{$feedAction->{'command'}});
+		my $cmd = join('+', @{$feedAction->{'command'}});
+		return undef unless $cmd;
+		
+		my $link = 'clixmlbrowser/clicmd=' . $cmd;
 		if (my $params = $feedAction->{'fixedParams'}) {
 			$link .= join('&', '', map { $_ . '=' . $params->{$_}} keys %{$params});
 		}
 		
 		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
 		for (my $i = 0; $i < scalar @vars; $i += 2) {
-			$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]} if defined $item->{$vars[$i+1]};
+			if (defined $item->{$vars[$i+1]}) {
+				$link .= '&' . $vars[$i] . '=' . $item->{$vars[$i+1]};
+			} else {
+				return undef;
+			}
 		}
 		
 		$link .= '&linktitle=' . Slim::Utils::Misc::escape($title) if $title;
@@ -1183,6 +1187,8 @@ sub _makePlayLink {
 		
 		return $link;
 	}
+	
+	return undef unless $action =~ /^(add|play|insert|remove)/;
 		
 	my $playUrl = $item->{'play'} 
 					|| ($item->{'type'} && $item->{'type'} eq 'audio'

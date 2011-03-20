@@ -168,9 +168,9 @@ useSpecialExt="-browse" %]
 			[% PROCESS dummylink %]
 		[% END %]
 			
-		[% FOREACH mixer = mixerlinks.values.sort -%]
-			[% PROCESS $mixer %]
-		[% END %]
+		[% IF item.mixersLink; WRAPPER cmdlink cmdimage='b_mmmix.gif' cmdtitle='MIXERS' %]
+			href="[% webroot %][% item.mixersLink %]&player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]
+		[% END; END %]
 
 	[% END %]
 
