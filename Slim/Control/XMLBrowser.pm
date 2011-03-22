@@ -1272,6 +1272,11 @@ sub _cliQuery_done {
 							}
 						}
 						
+						if (scalar keys %{$hash{'actions'}}) {
+							delete $hash{'action'};
+							delete $hash{'style'} if $hash{'style'} eq 'itemNoAction';
+						}
+						
 						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
 						
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
