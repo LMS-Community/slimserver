@@ -476,8 +476,8 @@ sub gotOPML {
 
 	my $radioDefault;
 
-	my $index = 0;
-	for my $item ( @{ $opml->{'items'} || [] } ) {
+	for (my $index = 0; $index < scalar @{ $opml->{'items'} || []}; ) {
+		my $item = $opml->{'items'}->[$index];
 		
 		if (my $label = delete $item->{'label'}) {
 			$item->{'name'} = $client->string($label) . $client->string('COLON') . ' ' . $item->{'name'};
@@ -509,7 +509,8 @@ sub gotOPML {
 		}
 		
 		# Check for a 'hide' param, if it's 'ip3k' skip the item in this UI
-		if ( $item->{hide} && $item->{hide} =~ /ip3k/ ) {
+		# of it is a playcontrol item - don't need those for ip3k
+		if ( ($item->{hide} && $item->{hide} =~ /ip3k/) || $item->{'playcontrol'}) {
 			splice @{ $opml->{items} }, $index, 1;
 			next;
 		}

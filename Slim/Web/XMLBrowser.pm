@@ -930,11 +930,22 @@ sub handleFeed {
 	
 	# Add play links and anchors if we can
 	my $anchor = '';
+	my $songinfo = $stash->{'songinfo'};
 	for my $item (@{$stash->{'items'} || []}) {
 		
 		next if $item->{'ignore'};
 		
 		my $link;
+		
+		if ($songinfo) {
+			if (my $playcontrol = $item->{'playcontrol'}) {
+				if ($link = _makePlayLink($stash->{'actions'}, $item, 'play')) {
+					$songinfo->{$playcontrol . 'Link'} = $link;
+					$item->{'ignore'} = 1;
+					next;
+				}
+			}
+		}
 		
 		$link = _makePlayLink($stash->{'actions'}, $item, 'play');
 		$item->{'playLink'} = $link if $link;

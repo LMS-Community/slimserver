@@ -233,7 +233,7 @@ useSpecialExt="-browse" %]
 	[%- IF songinfo;
 		songInfoPlayLinks = BLOCK %]
 		<div id="songInfoPlayLinks">
-			[% IF songinfo.playLink; PROCESS gencontrol item = songinfo; ELSIF itemsHaveAudio; PROCESS allcontrol; END %]
+			[% IF songinfo.playLink || songinfo.insertLink || songinfo.addLink || songinfo.removeLink; PROCESS gencontrol item = songinfo; ELSIF itemsHaveAudio; PROCESS allcontrol; END %]
 		</div>
 		[% END;	
 		PROCESS songinfo_header.html itemobj = songinfo;

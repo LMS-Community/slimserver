@@ -57,19 +57,16 @@ sub registerDefaultInfoProviders {
 	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( addalbum => (
-		menuMode  => 1,
 		after    => 'top',
 		func      => \&addAlbumEnd,
 	) );
 
 	$class->registerInfoProvider( addalbumnext => (
-		menuMode  => 1,
 		after    => 'addalbum',
 		func      => \&addAlbumNext,
 	) );
 
 	$class->registerInfoProvider( playitem => (
-		menuMode  => 1,
 		after    => 'addalbumnext',
 		func      => \&playAlbum,
 	) );
@@ -393,83 +390,57 @@ sub showArtwork {
 sub playAlbum {
 	my ( $client, $url, $album, $remoteMeta, $tags) = @_;
 
-	my $items = [];
-	my $jive;
-
-	return $items if !blessed($client);
+	return undef if !blessed($client);
 	
-	my $play_string   = cstring($client, 'PLAY');
-
 	my $actions = {
-		go => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				album_id => $album->id,
-				cmd => 'load',
-			},
-			nextWindow => 'nowPlaying',
+		items => {
+			command     => [ 'playlistcontrol' ],
+			fixedParams => {cmd => 'load', album_id => $album->id},
 		},
 	};
-	$actions->{play} = $actions->{go};
-
-	$jive->{actions} = $actions;
-	$jive->{style} = 'itemplay';
-
-	push @{$items}, {
-		type => 'text',
-		name => $play_string,
-		jive => $jive, 
-	};
+	$actions->{'play'} = $actions->{'items'};
 	
-	return $items;
+	return {
+		itemActions => $actions,
+		nextWindow  => 'nowPlaying',
+		type        => 'text',
+		playcontrol => 'play',
+		name        => cstring($client, 'PLAY'),
+		jive        => {style => 'itemplay'},
+	};
 }
 	
 sub addAlbumEnd {
 	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
-	my $add_string = cstring($client, 'ADD_TO_END');
-	my $cmd = 'add';
-	addAlbum( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd );
+	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'ADD_TO_END', 'add' );
 }
 
 sub addAlbumNext {
 	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
-	my $add_string = cstring($client, 'PLAY_NEXT');
-	my $cmd = 'insert';
-	addAlbum( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd );
+	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'PLAY_NEXT', 'insert' );
 }
 
 sub addAlbum {
 	my ( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd ) = @_;
 
-	my $items = [];
-	my $jive;
-
-	return $items if !blessed($client);
+	return undef if !blessed($client);
 	
 	my $actions = {
-		go => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				album_id => $album->id,
-				cmd => $cmd,
-			},
-			nextWindow => 'parent',
+		items => {
+			command     => [ 'playlistcontrol' ],
+			fixedParams => {cmd => $cmd, album_id => $album->id},
 		},
 	};
-	$actions->{play} = $actions->{go};
-	$actions->{add}  = $actions->{go};
-
-	$jive->{actions} = $actions;
-
-	push @{$items}, {
-		type => 'text',
-		name => $add_string,
-		jive => $jive, 
-	};
+	$actions->{'play'} = $actions->{'items'};
+	$actions->{'add'}  = $actions->{'items'};
 	
-	return $items;
+	return {
+		itemActions => $actions,
+		nextWindow  => 'parent',
+		type        => 'text',
+		playcontrol => $cmd,
+		name        => cstring($client, $add_string),
+	};
 }
 
 sub infoReplayGain {
