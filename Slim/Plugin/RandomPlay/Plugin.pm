@@ -325,12 +325,13 @@ sub _genreInfoMenu {
 			fixedParams => $params,
 		};
 		push @items, {
-			itemActions    => {
+			itemActions => {
 				play  => $action,
 				items => $action,
 			},
-			nextWindow => 'nowPlaying',
-			name       => sprintf('%s %s %s %s', 
+			nextWindow  => 'nowPlaying',
+			type        => 'text',
+			name        => sprintf('%s %s %s %s', 
 				cstring($client, 'PLUGIN_RANDOMPLAY'),
 				cstring($client, 'GENRE'),
 				cstring($client, 'SONGS'),
@@ -342,12 +343,13 @@ sub _genreInfoMenu {
 			fixedParams => $params,
 		};
 		push @items, {
-			itemActions    => {
+			itemActions => {
 				play  => $action,
 				items => $action,
 			},
-			nextWindow => 'nowPlaying',
-			name       => sprintf('%s %s %s %s', 
+			nextWindow  => 'nowPlaying',
+			type        => 'text',
+			name        => sprintf('%s %s %s %s', 
 				cstring($client, 'PLUGIN_RANDOMPLAY'),
 				cstring($client, 'GENRE'),
 				cstring($client, 'ALBUMS'),
