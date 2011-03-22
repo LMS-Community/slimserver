@@ -1104,7 +1104,7 @@ sub objectInfoAddFavorite {
 	
 	my $favIndex = $favorites->add(
 		$obj,
-		$obj->title || $obj->url,
+		$obj->name || $obj->url,
 		undef,
 		undef,
 		undef,
