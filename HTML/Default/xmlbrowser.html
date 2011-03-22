@@ -154,8 +154,8 @@ useSpecialExt="-browse" %]
 			[% END %]
 		[% END %]
 
-		[% IF item.playLink %]
-			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.playLink | replace("'", "%27") %]&player=[% player | uri %]', 1, SqueezeJS.string('connecting_for'));"[% END %]
+		[% IF item.playLink  || item.insertLink || item.addLink || item.removeLink %]
+			[% IF item.playLink; WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.playLink | replace("'", "%27") %]&player=[% player | uri %]', 1, SqueezeJS.string('connecting_for'));"[% END; END %]
 			[% IF allLinks && item.insertLink; WRAPPER insertlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.insertLink | replace("'", "%27") %]&player=[% player | uri %]', 1);"[% END; END %]
 			[% IF item.addLink; WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.addLink | replace("'", "%27") %]&player=[% player | uri %]', 1);"[% END; END %]
 			[% IF allLinks && item.removeLink; WRAPPER removelink %]onclick="SqueezeJS.Controller.urlRequest('[% webroot %][% item.removeLink | replace("'", "%27") %]&player=[% player | uri %]', 1);"[% END; END %]
@@ -280,6 +280,7 @@ useSpecialExt="-browse" %]
 
 			[% IF playlist_id && edit && loop.index == itempos %]
 				[% PROCESS editform %]
+			[% ELSIF item.type == 'redirect' && !(item.web.url || item.weblink || item.link); NEXT %]
 			[% ELSIF item.type == 'search' && !item.weblink;
 				WRAPPER contentitem controls = xmlSearchControls;
 					IF artwork == 1;
