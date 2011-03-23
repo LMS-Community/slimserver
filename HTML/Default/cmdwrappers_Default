@@ -91,7 +91,6 @@
 		[% ELSE %]
 			[% PROCESS favoritescontrol %]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
-			[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 			[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
 			[% FOREACH mixer = mixerlinks.values.sort -%]

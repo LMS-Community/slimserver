@@ -102,6 +102,7 @@ useSpecialExt="-browse" %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
 	<div id="songInfoPlayLinks">
 		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
+		[% IF allLinks; WRAPPER insert %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
 		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
 	</div>
 	[% END; END %]
@@ -176,6 +177,7 @@ useSpecialExt="-browse" %]
 
 	[%- BLOCK allcontrol -%]
 		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+		[% WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 	[%- END %]
 
@@ -257,6 +259,7 @@ useSpecialExt="-browse" %]
 		[% IF itemsHaveAudio && !songinfo %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
+				[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]
 				[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 			[%- END %]
 			[% useAllIcon = hasArtwork && artwork == 0 %]
