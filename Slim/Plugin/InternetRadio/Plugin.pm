@@ -240,7 +240,7 @@ sub feed {
 	\$feed .= ( \$feed =~ /\\\?/ ) ? '&' : '?';
 	\$feed .= \$val;
 	
-	return \$feed;
+	return \$class->radiotimeFeed( \$feed, \$client );
 }
 };
 	}
