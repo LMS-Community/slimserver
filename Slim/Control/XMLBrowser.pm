@@ -1337,7 +1337,7 @@ sub _cliQuery_done {
 				$window->{'windowStyle'} = $windowStyle;
 			} 
 			elsif ( $hasImage ) {
-				$window->{'windowStyle'} = 'icon_list';
+				$window->{'windowStyle'} = 'home_menu';
 			} 
 			else {
 				$window->{'windowStyle'} = 'text_list';
