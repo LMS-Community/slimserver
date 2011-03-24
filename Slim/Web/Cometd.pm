@@ -577,7 +577,7 @@ sub handler {
 						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
 							if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
-								push @{$events}, @{$result};
+								push @{$events}, $result;
 							}
 							else {
 								$manager->deliver_events( $result );
