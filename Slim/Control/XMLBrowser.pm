@@ -999,7 +999,7 @@ sub _cliQuery_done {
 						$hash{'type'}   = $item->{'type'}  if defined $item->{'type'};
 										# search|text|textarea|audio|playlist|link|opml|replace|redirect|radio
 										# radio is a radio-button selection item, not an internet-radio station 
-						my $nameOrTitle = $name || $item->{title};
+						my $nameOrTitle = $name || $item->{title} || '';
 						my $touchToPlay = defined(touchToPlay($item)) + 0;
 						
 						# if showBriefly is 1, send the name as a showBriefly
@@ -1044,6 +1044,11 @@ sub _cliQuery_done {
 							# Skip this item
 							$totalCount--;
 							next;
+						}
+						
+						# Bug 13175, support custom windowStyle - this is really naff
+						if ( $item->{style} ) {
+							$windowStyle = $item->{style};
 						}
 						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
