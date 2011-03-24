@@ -1152,7 +1152,7 @@ sub _cliQuery_done {
 							$allTouchToPlay = 0;
 						}
 						
-						elsif ( !$isPlayable && !$touchToPlay ) {
+						elsif ( !$isPlayable && !$touchToPlay && ($hash{'style'} || '') ne 'itemNoAction') {
 							
 							# I think that doing it this way means that, because $itemParams does not get
 							# added as 'params' if !$isPlayable, therefore all the other default actions will
