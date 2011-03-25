@@ -77,7 +77,7 @@
 [%# this is to wrap around an href which does a remove command, with default image reference %]
 [%- BLOCK removelink -%]
 	[%- PROCESS cmdlink
-		cmdtitle = "DELETE"
+		cmdtitle = "REMOVE_FROM_PLAYLIST"
 		cmdimage = "b_delete.gif" -%]
 [%- END -%]
 
@@ -243,16 +243,16 @@ END %]
 	[%- SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' -%]
 	[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
 	[% IF showplayall -%]
-		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
+		EE [% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
 		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
 	[% ELSIF showdescend && href -%]
-		[%- WRAPPER descendlink %][%- href -%][% END -%]
+		FF [%- WRAPPER descendlink %][%- href -%][% END -%]
 		[% IF showplay -%]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 		[%- END %]
 	[% ELSE %]
-		[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+		GG [% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 		[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 		[% FOREACH mixer = mixerlinks.values.sort -%]
 			[% PROCESS $mixer %]
