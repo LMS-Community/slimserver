@@ -336,14 +336,14 @@ useSpecialExt="-browse" %]
 							[% IF item.remote %]
 								([% item.year %])
 							[% ELSE %]
-								<br><a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
+								[% artwork != 2 ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 							[% END %]
 						[% END %]
 						[% IF item.showArtist && item.artist %]
 							[% IF item.artist_id %]
-								<br><a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
+								[% IF artwork != 2; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
 							[% ELSE %]
-								<br>[% item.artist %]
+								[% IF artwork != 2; '<br>'; ELSE %][% 'BY' | string %][% END %] [% item.artist %]
 							[% END %]
 						[% END %]
 					[% END %]
