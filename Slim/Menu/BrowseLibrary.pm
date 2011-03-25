@@ -59,7 +59,7 @@ Unique string name for the menu item title when used in the Home menu
 
 =item C<feed>*
 
-function to a function that is invoked in the manner of an XMLBrowser function feed
+reference to a function that is invoked in the manner of an XMLBrowser function feed
 
 =item C<icon>
 
@@ -107,7 +107,7 @@ and should not be one of the standard IDs or name strings used by BrowseLibrary.
 That means that if, for example, one wants to replace the B<Artists> menu item,
 one cannot use C<BROWSE_BY_ARTIST> as the C<name> string;
 one must supply one's own string with a unique name,
-but quite possibly pointing to the same localized strings.
+but quite possibly using the same localized string values.
 
 =head2 deregisterNode()
 
