@@ -302,7 +302,7 @@ useSpecialExt="-browse" %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : playlist_id ? 'draggableSong' : '') _ (item.icon ? ' smallIcon' : '') anchor = item.anchor %]
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = (item.type=='text' ? 'defaultCursor' : playlist_id ? 'draggableSong' : '') _ (item.icon && !(hasArtwork && !artwork) ? ' smallIcon' : '') anchor = item.anchor %]
 					[% IF artwork == 1;
 						item.size = thumbSize || 100;
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
@@ -318,6 +318,8 @@ useSpecialExt="-browse" %]
 						[% ELSE %]
 							[% PROCESS itemIcon url=item.icon size=25 class="smallBrowseItemDetail" %]
 						[% END %]
+					[% ELSIF hasArtwork && artwork == 0 %]
+						[% PROCESS itemIcon url='music/0/cover.jpg' size=50 class="browseItemDetail" %]
 					[% END %]
 
 					[% IF item.web.type == 'htmltemplate' %]
@@ -346,7 +348,7 @@ useSpecialExt="-browse" %]
 						[% END %]
 					[% END %]
 
-					[% IF (item.icon && artwork != 1) || (item.image && artwork== 0) %]
+					[% IF (item.icon && artwork != 1) || (item.image && artwork== 0) || (hasArtwork && artwork == 0) %]
 						</div>
 					[% END %]
 				[%- END %]
