@@ -43,6 +43,7 @@ sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 
 	main::INFOLOG && $log->info("cliQuery($query)");
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($request->getParamsCopy));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
@@ -75,7 +76,8 @@ sub cliQuery {
 	my $isPlayCommand = $request->isQuery([[$query], ['playlist']]);
 	
 	# Handle touch-to-play
-	if (!$isPlayCommand && $request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')) {
+	if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')
+		&& (!$isPlayCommand || $request->getParam('_method') eq 'play')) {
 
 		$isPlayCommand = 1;
 		
@@ -1277,7 +1279,7 @@ sub _cliQuery_done {
 							}
 						}
 						
-						if (scalar keys %{$hash{'actions'}}) {
+						if (exists $hash{'actions'} && scalar keys %{$hash{'actions'}}) {
 							delete $hash{'action'};
 							delete $hash{'style'} if $hash{'style'} eq 'itemNoAction';
 						}
