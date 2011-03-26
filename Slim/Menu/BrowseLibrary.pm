@@ -1146,6 +1146,14 @@ my %orderByList = (
 	SORT_ARTISTYEARALBUM => 'artflow',
 );
 
+my %mapArtistOrders = (
+	album            => 'album',
+	yearalbum        => 'yearalbum',
+	yearartistalbum  => 'yearalbum',
+	artistalbum      => 'album',
+	artflow          => 'yearalbum'
+);
+
 sub _albums {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
@@ -1161,10 +1169,6 @@ sub _albums {
 		$search = $args->{'search'};
 	}
 	
-	if ($sort && $sort =~ /sort:(.*)/) {
-		$sort = undef unless grep {$_ eq $1} ('new', values %orderByList);
-	} 
-	
 	my @artistIds = grep /artist_id:/, @searchTags;
 	my $artistId;
 	if (scalar @artistIds) {
@@ -1177,6 +1181,15 @@ sub _albums {
 	$tags .= 'y' unless grep {/^year:/} @searchTags;
 	
 	$tags .= 'Z' if $pt->{'wantIndex'};
+	
+	# Remove artist from sort order if selection includes artist
+	if ($sort && $sort =~ /sort:(.*)/) {
+		my $mapped;
+		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
+			$sort = 'sort:' . $mapped;
+		}
+		$sort = undef unless grep {$_ eq $1} ('new', values %orderByList);
+	} 
 	
 	_generic($client, $callback, $args, 'albums',
 		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
