@@ -351,9 +351,28 @@ sub albumsQuery {
 				$compilation = 1;
 			}
 			else {
+
 				$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
 				push @{$w}, 'contributor_album.contributor = ?';
 				push @{$p}, $contributorID;
+
+				my $cond = 'contributor_album.role IN (?, ?, ?';
+				
+				push @{$p}, (
+					Slim::Schema::Contributor->typeToRole('ARTIST'), 
+					Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
+					Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+				);
+		
+				# Loop through each pref to see if the user wants to show that contributor role.
+				foreach (Slim::Schema::Contributor->contributorRoles) {
+					if ($prefs->get(lc($_) . 'InArtists')) {
+						$cond .= ', ?';
+						push @{$p}, Slim::Schema::Contributor->typeToRole($_);
+					}
+				}
+				
+				push @{$w}, ($cond . ')');
 			}	
 		}
 	

@@ -29,8 +29,10 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
+use Slim::Utils::Prefs;
 
 my $log = logger('menu.trackinfo');
+my $prefs = preferences('server');
 
 sub init {
 	my $class = shift;
@@ -341,45 +343,62 @@ sub infoContributors {
 	else {
 		return if main::SLIM_SERVICE;
 		
+		my @roles = Slim::Schema::Contributor->contributorRoles;
+		
+		# Loop through each pref to see if the user wants to link to that contributor role.
+		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
+		$linkRoles{'ARTIST'} = 1;
+		$linkRoles{'TRACKARTIST'} = 1;
+		$linkRoles{'ALBUMARTIST'} = 1;
+		
 		# Loop through the contributor types and append
-		for my $role ( sort $track->contributorRoles ) {
+		for my $role ( @roles ) {
 			for my $contributor ( $track->contributorsOfType($role) ) {
-				my $id = $contributor->id;
-				
-				my %actions = (
-					allAvailableActionsDefined => 1,
-					items => {
-						command     => ['browselibrary', 'items'],
-						fixedParams => { mode => 'albums', artist_id => $id },
-					},
-					play => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'load', artist_id => $id},
-					},
-					add => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'add', artist_id => $id},
-					},
-					insert => {
-						command     => ['playlistcontrol'],
-						fixedParams => {cmd => 'insert', artist_id => $id},
-					},								
-					info => {
-						command     => ['artistinfo', 'items'],
-						fixedParams => {artist_id => $id},
-					},								
-				);
-				$actions{'playall'} = $actions{'play'};
-				$actions{'addall'} = $actions{'add'};
-				
-				my $item = {
-					type    => 'playlist',
-					url     => 'blabla',
-					name    => $contributor->name,
-					label   => uc $role,
-					itemActions => \%actions,
-				};
-				push @{$items}, $item;
+				if ($linkRoles{$role}) {
+					my $id = $contributor->id;
+					
+					my %actions = (
+						allAvailableActionsDefined => 1,
+						items => {
+							command     => ['browselibrary', 'items'],
+							fixedParams => { mode => 'albums', artist_id => $id },
+						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', artist_id => $id},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', artist_id => $id},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', artist_id => $id},
+						},								
+						info => {
+							command     => ['artistinfo', 'items'],
+							fixedParams => {artist_id => $id},
+						},								
+					);
+					$actions{'playall'} = $actions{'play'};
+					$actions{'addall'} = $actions{'add'};
+					
+					my $item = {
+						type    => 'playlist',
+						url     => 'blabla',
+						name    => $contributor->name,
+						label   => uc $role,
+						itemActions => \%actions,
+					};
+					push @{$items}, $item;
+				} else {
+					my $item = {
+						type    => 'text',
+						name    => $contributor->name,
+						label   => uc $role,
+					};
+					push @{$items}, $item;
+				}
 			}
 		}
 	}
