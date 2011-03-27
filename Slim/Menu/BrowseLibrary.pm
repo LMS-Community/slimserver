@@ -1340,8 +1340,11 @@ sub _tracks {
 
 	$tags .= 'k' if $pt->{'wantMetadata'};
 	
-	my $addAlbumToName2  = !(grep {/album_id:/} @searchTags);
-	my $addArtistToName2 = $addAlbumToName2 && !(grep {/artist_id:/} @searchTags);
+	my ($addAlbumToName2, $addArtistToName2);
+	if ($addAlbumToName2  = !(grep {/album_id:/} @searchTags)) {
+		$addArtistToName2 = !(grep {/artist_id:/} @searchTags);
+		$tags            .= 'JK'; # artwork
+	}
 	
 	_generic($client, $callback, $args, 'titles',
 		["tags:$tags", $sort, $menuStyle, @searchTags, ($search ? 'search:' . $search : undef)],
@@ -1373,7 +1376,11 @@ sub _tracks {
 					$name2 .= ' - ' if $name2;
 					$name2 .= $_->{'album'};
 				}
-				$_->{'name2'}         = $name2 if $name2;
+				if ($name2) {
+					$_->{'name2'}     = $name2;
+					$_->{'image'}     = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
+					$_->{'image'}   ||= $_->{'artwork_url'} if $_->{'artwork_url'};
+				}
 			}
 			
 			my %actions = (
