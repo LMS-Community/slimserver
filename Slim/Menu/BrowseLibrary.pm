@@ -815,24 +815,28 @@ sub searchItems {
 			name => cstring($client, 'BROWSE_BY_ARTIST'),
 			icon => 'html/images/search.png',
 			url  => $browseLibraryModeMap{'artists'},
+			cachesearch => 'ARTISTS',
 		},
 		{
 			type => 'search',
 			name => cstring($client, 'BROWSE_BY_ALBUM'),
 			icon => 'html/images/search.png',
 			url  => $browseLibraryModeMap{'albums'},
+			cachesearch => 'ALBUMS',
 		},
 		{
 			type => 'search',
 			name => cstring($client, 'BROWSE_BY_SONG'),
 			icon => 'html/images/search.png',
 			url  => $browseLibraryModeMap{'tracks'},
+			cachesearch => 'SONGS',
 		},
 		{
 			type => 'search',
 			name => cstring($client, 'PLAYLISTS'),
 			icon => 'html/images/search.png',
 			url  => $browseLibraryModeMap{'playlists'},
+			cachesearch => 'PLAYLISTS',
 		},
 	];
 }

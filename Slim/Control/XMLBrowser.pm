@@ -1361,7 +1361,7 @@ sub _cliQuery_done {
 			}
 
 			# cache SBC queries for "Recent Search" menu
-			if ($search && $request->getParam('cachesearch')) {	# Bug 13044, allow some searches to not be cached
+			if ($search && ($request->getParam('cachesearch') || $subFeed->{'cachesearch'})) {	# Bug 13044, allow some searches to not be cached
 				
 				# XXX this is probably obsolete because of move to myapps
 				# make a best effort to make a labeled title for the search
@@ -1378,6 +1378,11 @@ sub _cliQuery_done {
 				
 				if ($queryTypes->{$query}) {
 					$title = $request->string($queryTypes->{$query}) . ": " . $title;
+				} elsif (my $key = $subFeed->{'cachesearch'}) {
+					if (length($key) > 1) {
+						$key = $request->string($key) if (uc($key) eq $key);
+						$title = $key . ': ' . $title;
+					}
 				}
 		
 				my $queryParams = $feed->{'query'} || {};
