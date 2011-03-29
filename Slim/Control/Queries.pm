@@ -6424,8 +6424,7 @@ sub _getTagDataForTracks {
 	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
 	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
 	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
-	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
-	
+	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };	
 	$tags =~ /g/ && do {
 		$join_genres->();
 		$c->{'genres.name'} = 1;
@@ -6690,6 +6689,170 @@ sub _getTagDataForTracks {
 	}
 	
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
+}
+
+### Video support
+
+# XXX needs to be more like titlesQuery, was originally copied from albumsQuery
+sub videoTitlesQuery {
+	my $request = shift;
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $tags          = $request->getParam('tags') || 't';
+	my $search        = $request->getParam('search');
+	my $sort          = $request->getParam('sort');
+	my $videoID       = $request->getParam('video_id');
+	
+	if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
+	my $sql      = 'SELECT %s FROM videos ';
+	my $c        = { 'videos.id' => 1, 'videos.titlesearch' => 1, 'videos.titlesort' => 1 };
+	my $w        = [];
+	my $p        = [];
+	my $order_by = "videos.titlesort $collate";
+	my $limit;
+	
+	# Normalize and add any search parameters
+	if ( defined $videoID ) {
+		push @{$w}, 'videos.id = ?';
+		push @{$p}, $videoID;
+	}
+	# ignore everything if $videoID was specified
+	else {
+		if ( $sort eq 'new' ) {
+			$limit = $prefs->get('browseagelimit') || 100;
+			$order_by = "videos.added_time desc";
+			
+			# Force quantity to not exceed max
+			if ( $quantity && $quantity > $limit ) {
+				$quantity = $limit;
+			}
+		}
+
+		if (specified($search)) {
+			my $strings = Slim::Utils::Text::searchStringSplit($search);
+			if ( ref $strings->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { 'videos.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				push @{$p}, @{ $strings->[0] };
+			}
+			else {		
+				push @{$w}, 'videos.titlesearch LIKE ?';
+				push @{$p}, @{$strings};
+			}
+		}
+	}
+	
+	$tags =~ /t/ && do { $c->{'videos.title'} = 1 };
+	$tags =~ /d/ && do { $c->{'videos.secs'} = 1 };
+	$tags =~ /o/ && do { $c->{'videos.mime_type'} = 1 };
+	$tags =~ /r/ && do { $c->{'videos.bitrate'} = 1 };
+	$tags =~ /f/ && do { $c->{'videos.filesize'} = 1 };
+	#$tags =~ /c/ && do { $c->{'videos.coverid'} = 1 };
+	$tags =~ /w/ && do { $c->{'videos.width'} = 1 };
+	$tags =~ /h/ && do { $c->{'videos.height'} = 1 };	
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= "GROUP BY videos.id ORDER BY $order_by ";
+	
+	# Add selected columns
+	# Bug 15997, AS mapping needed for MySQL
+	my @cols = keys %{$c};
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
+
+	if ($stillScanning) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my $totalCount = $count;
+
+	# now build the result
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	my $loopname = 'videos_loop';
+	my $chunkCount = 0;
+
+	if ($valid) {		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Video Titles query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		# Bind selected columns in order
+		my $i = 1;
+		for my $col ( @cols ) {
+			$sth->bind_col( $i++, \$c->{$col} );
+		}
+		
+		while ( $sth->fetch ) {
+			warn Data::Dump::dump($c);
+			utf8::decode( $c->{'videos.title'} ) if exists $c->{'videos.title'};
+			
+			if ( $sort ne 'new' ) {
+				utf8::decode( $c->{'videos.titlesort'} ) if exists $c->{'videos.titlesort'};
+			}
+
+			# "raw" result formatting (for CLI or JSON RPC)
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'videos.id'});				
+			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'videos.title'});
+			$tags =~ /d/ && $request->addResultLoop($loopname, $chunkCount, 'duration', $c->{'videos.secs'});
+			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'videos.mime_type'});
+			$tags =~ /r/ && $request->addResultLoop($loopname, $chunkCount, 'bitrate', $c->{'videos.bitrate'} / 1000);
+			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'videos.filesize'});
+			#$tags =~ /c/ && do { $c->{'videos.coverid'} = 1 };
+			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
+			$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
+		
+			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
+		}
+	}
+
+	$request->addResult('count', $totalCount);
+	
+	$request->setStatusDone();
 }
 
 =head1 SEE ALSO

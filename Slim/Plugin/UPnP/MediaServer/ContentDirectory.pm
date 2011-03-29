@@ -11,7 +11,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 
-use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails);
+use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails);
 
 use constant EVENT_RATE => 0.2;
 
@@ -175,6 +175,14 @@ sub Browse {
 	
 	# ContentDirectory menu/IDs are as follows:                CLI query:
 	
+	# Home Menu
+	# ---------
+	# Music
+	# Video
+	# Pictures
+	
+	# Music (/music)
+	# -----
 	# Artists (/a)                                             artists
 	#   Artist 1 (/a/<id>/l)                                   albums artist_id:<id> sort:album
 	#     Album 1 (/a/<id>/l/<id>/t)                           titles album_id:<id> sort:tracknum
@@ -204,16 +212,19 @@ sub Browse {
 	# Tracks (/t) (cannot be browsed)
 	#   Track 1 (/t/<id>)
 	
-	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && length($id) == 2) ) { # top-level menu, or metadata for a top-level item
+	# Video (/video)
+	# -----
+	# Browse Video Folder (/v)
+	#   Video Folder (/v/<hash>/v)
+	#   All Videos (/va)                                       videos
+	#     Video 1 (/va/<hash>)                                 video_titles video_hash:<hash>
+	
+	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video)$}) ) { # top-level menu
 		my $type = 'object.container';
 		my $menu = [
-			{ id => '/a', parentID => 0, type => $type, title => $string->('ARTISTS') },
-			{ id => '/l', parentID => 0, type => $type, title => $string->('ALBUMS') },
-			{ id => '/g', parentID => 0, type => $type, title => $string->('GENRES') },
-			{ id => '/y', parentID => 0, type => $type, title => $string->('BROWSE_BY_YEAR') },
-			{ id => '/n', parentID => 0, type => $type, title => $string->('BROWSE_NEW_MUSIC') },
-			{ id => '/m', parentID => 0, type => $type, title => $string->('BROWSE_MUSIC_FOLDER') },
-			{ id => '/p', parentID => 0, type => $type, title => $string->('PLAYLISTS') },
+			{ id => '/music', parentID => 0, type => $type, title => $string->('MUSIC') },
+			#{ id => '/pictures', parentID => 0, type => $type, title => $string->('PICTURES') },
+			{ id => '/video', parentID => 0, type => $type, title => $string->('VIDEO') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -231,6 +242,51 @@ sub Browse {
 				my ($item) = grep { $_->{id} eq $id } @{$menu};
 				$menu = [ $item ];
 			}
+		}
+		
+		($xml, $count, $total) = _arrayToDIDLLite( {
+			array  => $menu,
+			sort   => $sort,
+			start  => $start,
+			limit  => $limit,
+		} );
+	}
+	elsif ( $id eq '/music' || ($flag eq 'BrowseMetadata' && length($id) == 2) ) { # Music menu, or metadata for a music menu item
+		my $type = 'object.container';
+		my $menu = [
+			{ id => '/a', parentID => '/music', type => $type, title => $string->('ARTISTS') },
+			{ id => '/l', parentID => '/music', type => $type, title => $string->('ALBUMS') },
+			{ id => '/g', parentID => '/music', type => $type, title => $string->('GENRES') },
+			{ id => '/y', parentID => '/music', type => $type, title => $string->('BROWSE_BY_YEAR') },
+			{ id => '/n', parentID => '/music', type => $type, title => $string->('BROWSE_NEW_MUSIC') },
+			{ id => '/m', parentID => '/music', type => $type, title => $string->('BROWSE_MUSIC_FOLDER') },
+			{ id => '/p', parentID => '/music', type => $type, title => $string->('PLAYLISTS') },
+		];
+		
+		if ( $flag eq 'BrowseMetadata' ) {
+			# pull out the desired menu item
+			my ($item) = grep { $_->{id} eq $id } @{$menu};
+			$menu = [ $item ];
+		}
+		
+		($xml, $count, $total) = _arrayToDIDLLite( {
+			array  => $menu,
+			sort   => $sort,
+			start  => $start,
+			limit  => $limit,
+		} );
+	}
+	elsif ( $id eq '/video' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:v|va)$}) ) { # Video menu
+		my $type = 'object.container';
+		my $menu = [
+			{ id => '/v', parentID => '/video', type => $type, title => $string->('BROWSE_VIDEO_FOLDER') },
+			{ id => '/va', parentID => '/video', type => $type, title => $string->('BROWSE_ALL_VIDEOS') },
+		];
+		
+		if ( $flag eq 'BrowseMetadata' ) {
+			# pull out the desired menu item
+			my ($item) = grep { $_->{id} eq $id } @{$menu};
+			$menu = [ $item ];
 		}
 		
 		($xml, $count, $total) = _arrayToDIDLLite( {
@@ -438,6 +494,18 @@ sub Browse {
 		}
 		elsif ( $id =~ m{^/t/(\d+)$} ) {
 			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+		}
+		
+		### Video
+		elsif ( $id =~ m{^/va} ) { # All Videos
+			if ( $id =~ m{/(\d+)$} ) {
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "video_titles $start $limit video_id:$1 tags:dorfcwht"
+					: "video_titles 0 1 video_id:$1 tags:dorfcwht";
+			}
+			else {
+				$cmd = "video_titles $start $limit tags:dorfcwht";
+			}
 		}
 	
 		if ( !$cmd ) {
@@ -757,6 +825,21 @@ sub _queryToDIDLLite {
 				. '<upnp:class>object.container.playlistContainer</upnp:class>'
 				. '<dc:title>' . xmlEscape($playlist->{playlist}) . '</dc:title>'
 				. '</container>';
+		}
+	}
+	elsif ( $cmd =~ /^video_titles/ ) {		
+		for my $video ( @{ $results->{videos_loop} || [] } ) {
+			$count++;			
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $video->{id};
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the video's parent
+				 # XXX
+			}
+			
+			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
+			 	. videoDetails($video, $filter)
+			 	. '</item>';
 		}
 	}
 	

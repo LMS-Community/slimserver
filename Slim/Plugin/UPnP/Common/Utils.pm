@@ -16,7 +16,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 use Exporter::Lite;
-our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetails);
+our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetails videoDetails);
 
 my $log   = logger('plugin.upnp');
 my $prefs = preferences('server');
@@ -222,6 +222,59 @@ sub trackDetails {
 		
 			$xml .= '>' . absURL('/music/' . ($track->{id} || $track->{'tracks.id'}) . '/download.' . $ext) . '</res>';
 		}
+	}
+	
+	return $xml;
+}
+
+sub videoDetails {
+	my ( $video, $filter ) = @_;
+	
+	my $filterall = ($filter eq '*');
+	
+	my $xml;
+	
+	# This supports either track data from CLI results or _getTagDataForTracks, thus
+	# the checks for alternate hash keys
+	
+	$xml .= '<upnp:class>object.item.videoItem</upnp:class>'
+		. '<dc:title>' . xmlEscape($video->{title} || $video->{'videos.title'}) . '</dc:title>';
+	
+	if ( my $coverid = ($video->{coverid} || $video->{'videos.coverid'}) ) {
+		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+			$xml .= '<upnp:albumArtURI>' . absURL("/video/$coverid/cover") . '</upnp:albumArtURI>';
+		}
+		
+		if ( $filterall || $filter =~ /upnp:icon/ ) {
+			my $thumbSize = $prefs->get('thumbSize') || 100;
+			$xml .= '<upnp:icon>' . absURL("/video/$coverid/cover_${thumbSize}x${thumbSize}_o") . '</upnp:icon>';
+		}
+	}
+	
+	if ( $filterall || $filter =~ /res/ ) {
+		my ($bitrate) = $video->{bitrate} =~ /^(\d+)/;
+		if ( !$bitrate && $video->{'videos.bitrate'} ) {
+			$bitrate = $video->{'videos.bitrate'} / 1000;
+		}
+		
+		my $type = $video->{mime_type} || $video->{'videos.mime_type'};
+
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+	
+		if ( ($filterall || $filter =~ /res\@size/) ) {
+			$xml .= ' size="' . ($video->{filesize} || $video->{'videos.filesize'}) . '"';
+		}
+		if ( $filterall || $filter =~ /res\@duration/ ) {
+			$xml .= ' duration="' . secsToHMS($video->{duration} || $video->{'videos.secs'}) . '"';
+		}
+		if ( ($filterall || $filter =~ /res\@bitrate/) ) {
+			$xml .= ' bitrate="' . (($bitrate * 1000) / 8) . '"'; # yes, it's bytes/second for some reason
+		}
+		if ( ($filterall || $filter =~ /res\@resolution/) ) {
+			$xml .= ' resolution="' . $video->{width} . 'x' . $video->{height} . '"';
+		}
+	
+		$xml .= '>' . absURL('/video/' . ($video->{id} || $video->{'videos.id'}) . '/download') . '</res>';
 	}
 	
 	return $xml;

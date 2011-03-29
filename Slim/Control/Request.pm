@@ -62,6 +62,9 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    titles          <startindex>                <numitems>                  <tagged parameters>
  N    years           <startindex>                <numitems>                  <tagged parameters>
  N    musicfolder     <startindex>                <numitems>                  <tagged parameters>
+
+ N    videos          <startindex>                <numitems>                  <tagged parameters>
+ N    video_titles    <startindex>                <numitems>                  <tagged parameters>
  
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
@@ -631,6 +634,7 @@ sub init {
 	addDispatch(['artwork',        '_artworkid'],                                                      [0, 0, 0, \&Slim::Control::Queries::showArtwork]);
 	addDispatch(['rating',         '_item',          '?'],                                             [0, 1, 0, \&Slim::Control::Commands::ratingCommand]);
 	addDispatch(['rating',         '_item',          '_rating'],                                       [0, 0, 0, \&Slim::Control::Commands::ratingCommand]);
+	addDispatch(['video_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::videoTitlesQuery]);
 
 # NOTIFICATIONS
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);

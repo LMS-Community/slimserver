@@ -645,7 +645,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( !main::WEBUI || $path =~ m{^(?:html|music|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -983,7 +983,7 @@ sub generateHTTPResponse {
 		$contentType = 'application/octet-stream';
 	}
 	
-	if ( $path =~ /music\/\d+\/download/ ) {
+	if ( $path =~ /(?:music|video)\/\d+\/download/ ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
 	}
@@ -1222,7 +1222,7 @@ sub generateHTTPResponse {
 				$response,
 			);
 
-		} elsif ($path =~ /music\/(\d+)\/download/) {
+		} elsif ($path =~ /(?:music|video)\/(\d+)\/download/) {
 			# Bug 10730
 			my $id = $1;
 			
@@ -1231,8 +1231,15 @@ sub generateHTTPResponse {
 			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 			$response->header( Connection => 'close' );
 
-			if ( downloadMusicFile($httpClient, $response, $id) ) {
-				return 0;
+			if ( $path =~ /music/ ) {
+				if ( downloadMusicFile($httpClient, $response, $id) ) {
+					return 0;
+				}
+			}
+			elsif ( $path =~ /video/ ) {
+				if ( downloadVideoFile($httpClient, $response, $id) ) {
+					return 0;
+				}
 			}
 
 		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
@@ -2667,6 +2674,21 @@ sub downloadMusicFile {
 		my $ct = $Slim::Music::Info::types{$obj->content_type()};
 			
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
+			
+		return 1;
+	}
+	
+	return;
+}
+
+sub downloadVideoFile {
+	my ($httpClient, $response, $id) = @_;
+
+	require Slim::Schema::Video;
+	my $video = Slim::Schema::Video->findhash($id);
+
+	if ($video) {			
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}) );
 			
 		return 1;
 	}
