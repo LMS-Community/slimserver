@@ -514,36 +514,18 @@ sub handleFeed {
 		$itemIndex .= '.';
 		
 		$stash->{'pagetitle'} = $subFeed->{'name'} || $subFeed->{'title'};
-		$stash->{'crumb'}     = \@crumb;
-		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = $itemIndex;
-		$stash->{'image'}     = $subFeed->{'image'} || $subFeed->{'cover'} || $stash->{'image'};
 		$stash->{'icon'}      = $subFeed->{'icon'};
-		$stash->{'albumData'} = $subFeed->{'albumData'};	
-		$stash->{'indexList'} = $subFeed->{'indexList'};	
-		$stash->{'orderByList'} = $subFeed->{'orderByList'};	
-		$stash->{'playlist_id'} = $subFeed->{'playlist_id'};	
-		$stash->{'playlistTitle'} = $subFeed->{'playlistTitle'};	
-		$stash->{'actions'}   = $subFeed->{'actions'};	
-		$stash->{'type'}      = $subFeed->{'type'};
 		$stash->{'playUrl'}   = $subFeed->{'play'} 
 								|| ($subFeed->{'type'} && $subFeed->{'type'} eq 'audio'
 									? $subFeed->{'url'}
-									: undef);	
+									: undef);
+		
+		$feed = $subFeed;
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'};
-		$stash->{'crumb'}     = \@crumb;
-		$stash->{'items'}     = $feed->{'items'};
-		$stash->{'actions'}   = $feed->{'actions'};	
-		$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
-		$stash->{'albumData'} = $feed->{'albumData'};	
-		$stash->{'indexList'} = $feed->{'indexList'};	
-		$stash->{'orderByList'} = $feed->{'orderByList'};	
-		$stash->{'playlist_id'} = $feed->{'playlist_id'};	
-		$stash->{'playlistTitle'} = $feed->{'playlistTitle'};	
 		$stash->{'playUrl'}   = $feed->{'play'};	
-		$stash->{'type'}      = $feed->{'type'};
 		
 		if ( $sid ) {
 			$stash->{index} = $sid;
@@ -561,6 +543,13 @@ sub handleFeed {
 		if (defined $favsItem) {
 			$stash->{'index'} = undef;
 		}
+	}
+	
+	$stash->{'crumb'}     = \@crumb;
+	$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
+
+	foreach (qw(items type orderByList playlist_id playlistTitle)) {
+		$stash->{$_} = $feed->{$_} if defined $feed->{$_};
 	}
 	
 	# Only want plain URLs as play-URL
@@ -672,8 +661,8 @@ sub handleFeed {
 	else {
 		
 		# Not in use because it messes up title breadcrumbs
-#		if ($stash->{'actions'} && $stash->{'actions'}->{'items'}) {
-#			my $action = $stash->{'actions'}->{'items'};
+#		if ($feed->{'actions'} && $feed->{'actions'}->{'items'}) {
+#			my $action = $feed->{'actions'}->{'items'};
 #			
 #			my $base = 'clixmlbrowser/clicmd=' . join('+', @{$action->{'command'}});
 #			if (my $params = $action->{'fixedParams'}) {
@@ -716,7 +705,7 @@ sub handleFeed {
 			
 		$stash->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 				'itemCount'   => $itemCount,
-				'indexList'   => $stash->{'indexList'},
+				'indexList'   => $feed->{'indexList'},
 				'path'        => $params->{'path'} || 'index.html',
 				'otherParams' => $otherParams,
 				'start'       => $stash->{'start'},
@@ -770,7 +759,7 @@ sub handleFeed {
 			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
 			my $allLabels = join ('|', $roles, qw(ALBUM GENRE YEAR ALBUMREPLAYGAIN ALBUMLENGTH COMPILATION));
 			
-			foreach my $item ( @{ $stash->{'albumData'} || $stash->{'items'} } ) {
+			foreach my $item ( @{ $feed->{'albumData'} || $stash->{'items'} } ) {
 
 				my $label = $item->{'label'} || '';
 				if ($label =~ /^($allLabels)$/) {
@@ -939,7 +928,7 @@ sub handleFeed {
 		
 		if ($songinfo) {
 			if (my $playcontrol = $item->{'playcontrol'}) {
-				if ($link = _makePlayLink($stash->{'actions'}, $item, 'play')) {
+				if ($link = _makePlayLink($feed->{'actions'}, $item, 'play')) {
 					$songinfo->{$playcontrol . 'Link'} = $link;
 					$item->{'ignore'} = 1;
 					next;
@@ -947,19 +936,19 @@ sub handleFeed {
 			}
 		}
 		
-		$link = _makePlayLink($stash->{'actions'}, $item, 'play');
+		$link = _makePlayLink($feed->{'actions'}, $item, 'play');
 		$item->{'playLink'} = $link if $link;
 		
-		$link = _makePlayLink($stash->{'actions'}, $item, 'add');
+		$link = _makePlayLink($feed->{'actions'}, $item, 'add');
 		$item->{'addLink'} = $link if $link;
 		
-		$link = _makePlayLink($stash->{'actions'}, $item, 'insert');
+		$link = _makePlayLink($feed->{'actions'}, $item, 'insert');
 		$item->{'insertLink'} = $link if $link;
 		
-		$link = _makePlayLink($stash->{'actions'}, $item, 'remove');
+		$link = _makePlayLink($feed->{'actions'}, $item, 'remove');
 		$item->{'removeLink'} = $link if $link;
 		
-		$link = _makeWebLink({actions => $stash->{'actions'}}, $item, 'info', sprintf('%s (%s)', string('INFORMATION'), ($item->{'name'}|| '')));
+		$link = _makeWebLink({actions => $feed->{'actions'}}, $item, 'info', sprintf('%s (%s)', string('INFORMATION'), ($item->{'name'}|| '')));
 		$item->{'mixersLink'} = $link if $link;
 
 		my $textkey = $item->{'textkey'};
@@ -1041,14 +1030,10 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	$subFeed->{'actions'}       = $feed->{'actions'}       if $feed->{'actions'};
-	$subFeed->{'image'}         = $feed->{'cover'}         if $feed->{'cover'};
-	$subFeed->{'albumData'}     = $feed->{'albumData'}     if $feed->{'albumData'};
-	$subFeed->{'orderByList'}   = $feed->{'orderByList'}   if $feed->{'orderByList'};
-	$subFeed->{'indexList'}     = $feed->{'indexList'}     if $feed->{'indexList'};
-	$subFeed->{'playlist_id'}   = $feed->{'playlist_id'}   if defined $feed->{'playlist_id'};
-	$subFeed->{'playlistTitle'} = $feed->{'playlistTitle'} if defined $feed->{'playlistTitle'};
-
+	foreach (qw(offset total actions image albumData orderByList indexList playlist_id playlistTitle)) {
+		$subFeed->{$_} = $feed->{$_} if defined $feed->{$_};
+	}
+	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
 
