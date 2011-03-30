@@ -62,12 +62,12 @@ sub cliQuery {
 	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
 	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
 	# to the $request params
-	if ( $index =~ /:/ ) {
+	if ( defined $index && $index =~ /:/ ) {
 		$request->addParam(split (/:/, $index));
 		$index = 0;
 		$request->addParam('_index', $index);
 	}
-	if ( $quantity =~ /:/ ) {
+	if ( defined $quantity && $quantity =~ /:/ ) {
 		$request->addParam(split(/:/, $quantity));
 		$quantity = 200;
 		$request->addParam('_quantity', $quantity);
@@ -163,13 +163,17 @@ sub cliQuery {
 			$nextIndex = $index[0] =~ /^(\d+)/;
 		}
 		
-		if ($index && $quantity && !$levels && !$isPlayCommand) {
-			
-			# hack to allow for some CM entries
-			my $j = 10; 
-			$j = $index if ($j > $index);
-			$args{'index'} = $index - $j;
-			$args{'quantity'} = $quantity + $j;
+		if (defined $index && $quantity && !$levels && !$isPlayCommand) {
+			if (defined $request->getParam('feedMode')) {
+				$args{'index'} = $index;
+				$args{'quantity'} = $quantity;
+			} else {
+				# hack to allow for some CM entries
+				my $j = 10; 
+				$j = $index if ($j > $index);
+				$args{'index'} = $index - $j;
+				$args{'quantity'} = $quantity + $j;
+			}
 		} elsif ($levels) {
 			$args{'index'} = $nextIndex;
 			$args{'quantity'} = 1;
@@ -485,13 +489,17 @@ sub _cliQuery_done {
 					# If we are getting an intermediate level, then we just need the one item
 					# If we are getting the last level then we need all items if we are doing playall of some kind
 					
-					if ($index && $quantity && $depth == $levels && !$isPlaylistCmd) {
-						
-						# hack to allow for some CM entries
-						my $j = 10; 
-						$j = $index if ($j > $index);
-						$args{'index'} = $index - $j;
-						$args{'quantity'} = $quantity + $j;
+					if (defined $index && $quantity && $depth == $levels && !$isPlaylistCmd) {
+						if ($feedMode) {
+							$args{'index'} = $index;
+							$args{'quantity'} = $quantity;
+						} else {
+							# hack to allow for some CM entries
+							my $j = 10; 
+							$j = $index if ($j > $index);
+							$args{'index'} = $index - $j;
+							$args{'quantity'} = $quantity + $j;
+						}
 					} elsif ($depth < $levels) {
 						$args{'index'} = $index[$depth];
 						$args{'quantity'} = 1;
@@ -977,7 +985,7 @@ sub _cliQuery_done {
 								
 				$start -= $subFeed->{'offset'};
 				$end   -= $subFeed->{'offset'};
-				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'});
+				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'}, ' quantity=', scalar @$items);
 				
 				my $baseId = scalar @crumbIndex ? join('.', @crumbIndex, '') : '';
 				for my $item ( @$items[$start..$end] ) {
