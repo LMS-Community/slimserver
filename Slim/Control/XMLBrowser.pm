@@ -97,7 +97,7 @@ sub cliQuery {
 			$playalbum = $prefs->get('playtrackalbum');
 		}
 		
-		if ($playalbum) {
+		if ($playalbum && $request->getParam('touchToPlayAll')) {
 			$itemId =~ s/(.*)\.(\d+)/$1/;			# strip off last node
 			$request->addParam('playIndex', $2);	# and save in playIndex
 			$request->addParam('item_id', $itemId);
@@ -1190,6 +1190,7 @@ sub _cliQuery_done {
 						elsif ( $touchToPlay ) {
 							if (!$defeatDestructiveTouchToPlay) {
 								$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
+								$itemParams->{'touchToPlayAll'} = $item->{'playall'};
 								
 								# not currently supported by 7.5 client
 								$hash{'goAction'} = 'play'; 
