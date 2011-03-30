@@ -396,7 +396,7 @@ sub handleFeed {
 					($subFeed->{'type'} eq 'audio') ? 'info' : 'items' );
 				if ($feedAction && !($depth == $levels && $stash->{'action'})) {
 					my @params = @{$feedAction->{'command'}};
-					push @params, (0, 0);	# All items requests take _index and _quantity parameters
+					push @params, (0, $prefs->get('itemsPerPage')); # All items requests take _index and _quantity parameters
 					if (my $params = $feedAction->{'fixedParams'}) {
 						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 					}
@@ -695,7 +695,7 @@ sub handleFeed {
 			last;
 		}
 		
-		my $itemCount = scalar @{ $stash->{'items'} };
+		my $itemCount = $feed->{'total'} || scalar @{ $stash->{'items'} };
 		
 		my $clientId = ( $client ) ? $client->id : undef;
 		my $otherParams = '&index=' . $crumb[-1]->{index} . '&player=' . $clientId;
@@ -712,21 +712,29 @@ sub handleFeed {
 				'perPage'     => $stash->{'itemsPerPage'},
 		});
 		
-		$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
-		
 		$stash->{'path'} = $params->{'path'} || 'index.html';
 
-		my $start = $stash->{'start'} || 0;
+		my $offset = $feed->{'offset'} || 0;
+		my $start  = $stash->{'pageinfo'}{'startitem'} || 0;
+		$start = $offset if ($start < $offset);
+		$stash->{'start'} = $start;
 		
-		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
+		if ($offset || $stash->{'pageinfo'}{'totalpages'} > 1) {
+			my $count = scalar @{ $stash->{'items'} };
 
 			# the following ensures the original array is not altered by creating a slice to show this page only
-			my $finish = $stash->{'pageinfo'}{'enditem'} + 1;
-			$finish = $itemCount if ($itemCount < $finish);
-
-			my @items = @{ $stash->{'items'} };
-			my @slice = @items [ $start .. $finish - 1 ];
-			$stash->{'items'} = \@slice;
+			my $finish = $stash->{'pageinfo'}{'enditem'} + 1 - $offset;
+			$finish = $count if ($count < $finish);
+			
+			if ($start > $offset || $finish < $count) {
+				main::DEBUGLOG && $log->is_debug && $log->info("start=$start, offset=$offset, count=$count: cutting slice ", $start - $offset, "..$finish");
+				my @items = @{ $stash->{'items'} };
+				my @slice = @items [ $start - $offset .. $finish - 1 ];
+				$stash->{'items'} = \@slice;
+			}
+			else {
+				main::DEBUGLOG && $log->is_debug && $log->info("start=$start, offset=$offset, count=$count: no slice needed");
+			}
 		}
 		
 		my $item_index = $start;
@@ -879,12 +887,8 @@ sub handleFeed {
 		}
 	}
 
-	if ($favs) {
-		my @items = @{$stash->{'items'} || []};
-		my $start = $stash->{'start'} || 0;
-
-		if (defined $favsItem && $items[$favsItem - $start]) {
-			my $item = $items[$favsItem - $start];
+	if ($favs && defined $favsItem && scalar @{$stash->{'items'}}) {
+		if (my $item = $stash->{'items'}->[$favsItem - ($stash->{'start'} || 0)]) {
 			my $furl = _favoritesUrl($item);
 			if ($stash->{'action'} eq 'favadd') {
 
@@ -908,21 +912,21 @@ sub handleFeed {
 				$favs->deleteUrl( $furl );
 			}
 		}
-
-		for my $item (@items) {
-			my $furl = _favoritesUrl($item);
-			if ($furl && !defined $item->{'favorites'}) {
-				$item->{'favorites'} = $favs->hasUrl( $furl ) ? 2 : 1;
-			}
-		}
 	}
 	
-	# Add play links and anchors if we can
+	# Add play & favourites links and anchors if we can
 	my $anchor = '';
 	my $songinfo = $stash->{'songinfo'};
 	for my $item (@{$stash->{'items'} || []}) {
 		
 		next if $item->{'ignore'};
+		
+		if ($favs) {
+			my $furl = _favoritesUrl($item);
+			if ($furl && !defined $item->{'favorites'}) {
+				$item->{'favorites'} = $favs->hasUrl( $furl ) ? 2 : 1;
+			}
+		}
 		
 		my $link;
 		
@@ -1100,6 +1104,8 @@ sub webLink {
 		$log->error("Missing clicmd parameter");
 		return;
 	}
+	
+	push @verbs, (($args->{'start'} || 0), $prefs->get('itemsPerPage'));
 	
 	my $title = delete $params{'linktitle'};
 	$title = Slim::Utils::Unicode::utf8decode(uri_unescape($title)) if $title;

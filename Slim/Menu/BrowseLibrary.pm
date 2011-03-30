@@ -720,17 +720,52 @@ sub _topLevel {
 
 sub _generic {
 	my ($client,
-		$callback,		# func ref:  Callback function to XMLbowser: callback(hashOrArray_ref)
+		$callback,      # func ref:  Callback function to XMLbowser: callback(hashOrArray_ref)
 		$args,          # hash ref:  Additional parameters from XMLBrowser
-		$query,			# string:    CLI query, single verb or array-ref;
-						#            command takes _index, _quantity and tagged params
-		$queryTags,		# array ref: tagged params to pass to CLI query
-		$resultsFunc	# func ref:  func(HASHref cliResult) returns (HASHref result, ARRAYref extraItems);
+		$query,         # string:    CLI query, single verb or array-ref;
+                        #            command takes _index, _quantity and tagged params
+		$queryTags,     # array ref: tagged params to pass to CLI query
+		$resultsFunc,   # func ref:  func(HASHref cliResult) returns (HASHref result, ARRAYref extraItems);
 						#            function to process results loop from CLI and generate XMLBrowser items
+		$tags,          # string:    (optional) the value of the 'tags'	parameter to use - added to queryTags
+		$getIndexList   # boolean:   (optional)
 	) = @_;
 	
 	my $index = $args->{'index'} || 0;
 	my $quantity = $args->{'quantity'};
+	
+	my $indexList;
+	
+	if ($getIndexList && $quantity) {
+		
+		# Get the page-bar and update quantity if necessary so that all of the last category is returned
+		
+		my @newTags = @$queryTags;
+		push @newTags, 'tags:' . ($tags || '') . 'ZZ';
+		
+		main::INFOLOG && $log->is_info && $log->info("$query (0, 1): tags ->", join(', ', @newTags));
+		
+		my $request = Slim::Control::Request->new( $client ? $client->id() : undef,
+			[ (ref $query ? @$query : $query), 0, 1, @newTags ] );
+		$request->execute();
+		if ( $request->isStatusError() ) {
+			$log->error($request->getStatusText());
+		}
+
+		# find where our index starts and then where it needs to end
+		if ($indexList = $request->getResult('indexList')) {
+			my $total = 0;
+			foreach (@$indexList) {
+				$total += $_->[1];
+				if ($total >= $index + $quantity) {
+					$quantity = $total - $index;
+					last;
+				}
+			}
+		}
+	}
+	
+	push @$queryTags, 'tags:' . $tags if defined $tags;
 	
 	main::INFOLOG && $log->is_info && $log->info("$query ($index, $quantity): tags ->", join(', ', @$queryTags));
 	
@@ -746,10 +781,10 @@ sub _generic {
 
 #	$log->error(Data::Dump::dump($request->getResults()));
 	
-	
 	my ($result, $extraItems) = $resultsFunc->($request->getResults());
-	
-	$result->{'offset'} = $index;
+
+	$result->{'indexList'} = $indexList if defined $indexList;
+	$result->{'offset'}    = $index;
 	my $total = $result->{'total'} = $request->getResults()->{'count'};
 	
 	# We only add extra-items (typically all-songs) if the total is 2 or more
@@ -939,7 +974,6 @@ sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
-	my $tags       = 's';
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		$search = $args->{'search'};
@@ -952,10 +986,8 @@ sub _artists {
 		@ptSearchTags = @searchTags;
 	}
 
-	$tags .= 'Z' if $pt->{'wantIndex'};
-
 	_generic($client, $callback, $args, 'artists', 
-		["tags:$tags", @searchTags, ($search ? 'search:' . $search : undef)],
+		[@searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'artists_loop'};
@@ -1035,19 +1067,17 @@ sub _artists {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return {items => $items, actions => \%actions, sorted => 1, indexList => $results->{'indexList'}}, $extra;
+			return {items => $items, actions => \%actions, sorted => 1}, $extra;
 		},
+		's', $pt->{'wantIndex'},
 	);
 }
 
 sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	my $tags = 's';
 	
-	$tags .= 'Z' if $pt->{'wantIndex'};
-
-	_generic($client, $callback, $args, 'genres', ["tags:$tags", @searchTags],
+	_generic($client, $callback, $args, 'genres', \@searchTags,
 		sub {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
@@ -1087,8 +1117,9 @@ sub _genres {
 			$actions{'playall'} = $actions{'play'};
 			$actions{'addall'} = $actions{'add'};
 			
-			return {items => $items, actions => \%actions, sorted => 1, indexList => $results->{'indexList'}}, undef;
+			return {items => $items, actions => \%actions, sorted => 1}, undef;
 		},
+		's', $pt->{'wantIndex'},
 	);
 }
 
@@ -1184,8 +1215,6 @@ sub _albums {
 	
 	$tags .= 'y' unless grep {/^year:/} @searchTags;
 	
-	$tags .= 'Z' if $pt->{'wantIndex'};
-	
 	# Remove artist from sort order if selection includes artist
 	if ($sort && $sort =~ /sort:(.*)/) {
 		my $mapped;
@@ -1196,7 +1225,7 @@ sub _albums {
 	} 
 	
 	_generic($client, $callback, $args, 'albums',
-		["tags:$tags", @searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
+		[@searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'albums_loop'};
@@ -1316,9 +1345,9 @@ sub _albums {
 				actions     => \%actions,
 				sorted      => (($sort && $sort eq 'sort:new') ? 0 : 1),
 				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
-				indexList   => $results->{'indexList'},
 			}, $extra;
 		},
+		$tags, $pt->{'wantIndex'},
 	);
 }
 

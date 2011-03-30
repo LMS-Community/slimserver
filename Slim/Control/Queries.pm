@@ -454,6 +454,11 @@ sub albumsQuery {
 		my $pageSql = sprintf($sql, "$page_key, count(distinct albums.id)")
 			 . "GROUP BY $page_key ORDER BY $order_by ";
 		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		
+		if ($tags =~ /ZZ/) {
+			$request->setStatusDone();
+			return
+		}
 	}
 	
 	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
@@ -728,11 +733,38 @@ sub artistsQuery {
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
+	# Various artist handling. Don't do if pref is off, or if we're
+	# searching, or if we have a track
+	my $count_va = 0;
+
+	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID ) {
+		# Only show VA item if there are any
+		if ( @{$w_va} ) {
+			$sql_va .= 'WHERE ';
+			$sql_va .= join( ' AND ', @{$w_va} );
+			$sql_va .= ' ';
+		}
+		
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Artists query VA count: $sql_va / " . Data::Dump::dump($p_va) );
+		}
+		
+		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
+	}
+
 	my $indexList;
 	if ($tags =~ /Z/) {
 		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
 			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
 		$indexList = $dbh->selectall_arrayref($pageSql, undef, @{$p});
+		
+		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
+		
+		if ($tags =~ /ZZ/) {
+			$request->addResult('indexList', $indexList) if $indexList;
+			$request->setStatusDone();
+			return
+		}
 	}
 
 	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable')
@@ -753,24 +785,7 @@ sub artistsQuery {
 	
 	my $totalCount = $count || 0;
 
-	# Various artist handling. Don't do if pref is off, or if we're
-	# searching, or if we have a track
-	my $count_va = 0;
-
-	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID ) {
-		# Only show VA item if there are any
-		if ( @{$w_va} ) {
-			$sql_va .= 'WHERE ';
-			$sql_va .= join( ' AND ', @{$w_va} );
-			$sql_va .= ' ';
-		}
-		
-		if ( main::DEBUGLOG && $sqllog->is_debug ) {
-			$sqllog->debug( "Artists query VA count: $sql_va / " . Data::Dump::dump($p_va) );
-		}
-		
-		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
-
+	if ( $count_va ) {
 		# fix the index and counts if we have to include VA
 		$totalCount = _fixCount($count_va, \$index, \$quantity, $count);
 
@@ -857,8 +872,6 @@ sub artistsQuery {
 			$mixable  = 0;
 			
 			$process->();
-			
-			unshift @$indexList, ['#' => 1] if $indexList;
 		}
 
 		while ( $sth->fetch ) {
@@ -1306,6 +1319,10 @@ sub genresQuery {
 		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
 			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
 		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		if ($tags =~ /ZZ/) {
+			$request->setStatusDone();
+			return
+		}
 	}
 	
 	$sql = sprintf($sql, 'DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable')
