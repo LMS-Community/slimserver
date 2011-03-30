@@ -411,7 +411,7 @@ sub pageInfo {
 		$pageinfo{'alphamap'} = \%alphamap;
 	}
 
-	# set the start index, accounding for alpha cases
+	# set the start index, accounting for alpha cases
 	$pageinfo{'startitem'} = $start || 0;
 
 	return \%pageinfo;
