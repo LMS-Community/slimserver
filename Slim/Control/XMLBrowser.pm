@@ -160,7 +160,7 @@ sub cliQuery {
 				shift @index;	# discard sid
 			}
 			$levels = scalar @index;
-			$nextIndex = $index[0] =~ /^(\d+)/;
+			($nextIndex) = $index[0] =~ /^(\d+)/;
 		}
 		
 		if (defined $index && $quantity && !$levels && !$isPlayCommand) {
