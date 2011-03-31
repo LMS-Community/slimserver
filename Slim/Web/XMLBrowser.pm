@@ -401,7 +401,7 @@ sub handleFeed {
 					if ($depth < $levels) {
 						push @params, ($index[$depth], 1); 
 					} else {
-						push @params, (0, $prefs->get('itemsPerPage')); 
+						push @params, (($stash->{'start'} || 0), $prefs->get('itemsPerPage')); 
 					}
 					
 					if (my $params = $feedAction->{'fixedParams'}) {
@@ -1113,7 +1113,7 @@ sub webLink {
 	}
 	
 	my ($index, $quantity) = (($args->{'start'} || 0), $prefs->get('itemsPerPage'));
-	if (my $itemId = $args->{index}) {
+	if (my $itemId = $args->{'index'}) {
 		if ($itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
 			$index = $1;
 			$quantity = 1;
