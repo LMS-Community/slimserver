@@ -113,15 +113,15 @@ sub getItemName {
 		return $name;
 	}
 
-	if ( ref($item) && $item->{'name'}) {
-		return $item->{'name'};
-	}
-	
 	# use lookupRef to find the item name if available
 	if ( my $lookup = $client->modeParam('lookupRef') ) {
 		return $lookup->( $client->modeParam('listIndex') || 0 );
 	}
 
+	if ( ref($item) && $item->{'name'}) {
+		return $item->{'name'};
+	}
+	
 	return $item;
 }
 
