@@ -551,7 +551,8 @@ sub _registerBaseNodes {
 			type         => 'link',
 			name         => 'BROWSE_NEW_MUSIC',
 			icon         => 'html/images/newmusic.png',
-			params       => {mode => 'albums', sort => 'new'},
+			params       => {mode => 'albums', sort => 'new', wantMetadata => 1},
+			                                                  # including wantMetadata is a hack for ip3k
 			feed         => \&_albums,
 			homeMenuText => 'BROWSE_NEW_MUSIC',
 			condition    => \&Slim::Schema::hasLibrary,
@@ -1196,7 +1197,8 @@ sub _albums {
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
-	my $tags       = 'ljsa';
+	my $wantMeta   = $pt->{'wantMetadata'};
+	my $tags       = 'ljsaS';
 	
 	if (!$sort || $sort ne 'sort:new') {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
@@ -1212,8 +1214,6 @@ sub _albums {
 		$artistIds[0] =~ /artist_id:(\d+)/;
 		$artistId = $1;
 	}
-	my $showArtist = $prefs->get('showArtist');
-	$tags .= 'S' if $showArtist || $artistId;
 	
 	$tags .= 'y' unless grep {/^year:/} @searchTags;
 	
@@ -1249,7 +1249,8 @@ sub _albums {
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'artist_id'}) {
 					$_->{'name2'} = $_->{'artist'};
-				} elsif (!$showArtist) {
+				} 
+				if (!$wantMeta) {
 					delete $_->{'artist'};
 				}
 				

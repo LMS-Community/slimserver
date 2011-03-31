@@ -145,6 +145,7 @@ sub setMode {
 		};
 	
 	    push @params, 'feedMode:1';
+	    push @params, 'wantMetadata:1' unless ($item->{'hasMetadata'} || '') eq 'album';
 		my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
 		
 		# wrap async requests
@@ -624,11 +625,11 @@ sub gotOPML {
 		'lookupRef'  => sub {
 			my $index = shift;
 			my $item  = $opml->{'items'}->[$index];
-			my $hasMatedata = $item->{'hasMetadata'} || '';
-			
-			if ($hasMatedata eq 'track') {
+			my $hasMetadata = $item->{'hasMetadata'} || '';
+				
+			if ($hasMetadata eq 'track') {
 				return Slim::Music::Info::standardTitle($client, undef, $item) || $item->{name};
-			} elsif ($hasMatedata eq 'album') {
+			} elsif ($hasMetadata eq 'album') {
 				my $name = $item->{name};
 				
 				if ($prefs->get('showYear')) {
@@ -636,9 +637,8 @@ sub gotOPML {
 					$name .= " ($year)" if $year;
 				}
 		
-				if ($prefs->get('showArtist')) {
-					my $artist = $item->{'artist'};
-					$name .= sprintf(' %s %s', $client->string('BY'), $artist) if $artist;
+				if (my $artist = $item->{'artist'}) {
+					$name .= sprintf(' %s %s', $client->string('BY'), $artist);
 				}
 				
 				return $name;
