@@ -264,12 +264,12 @@ sub handleFeed {
 			
 			my ($in) = $i =~ /^(\d+)/;
 			$superFeed = $subFeed;
-			$subFeed = $subFeed->{'items'}->[$in];
+			$subFeed = $subFeed->{'items'}->[$in - ($subFeed->{'offset'} || 0)];
 			
 			push @crumbIndex, $i;
 			my $crumbText = join '.', @crumbIndex;
 			
-			main::DEBUGLOG && $log->debug("Considering $i=$in ($crumbText) from ", $stash->{'index'});
+			main::DEBUGLOG && $log->is_debug && $log->debug("Considering $i=$in ($crumbText) from ", $stash->{'index'}, ' offset=', $superFeed->{'offset'});
 			
 			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
 			
@@ -396,7 +396,14 @@ sub handleFeed {
 					($subFeed->{'type'} eq 'audio') ? 'info' : 'items' );
 				if ($feedAction && !($depth == $levels && $stash->{'action'})) {
 					my @params = @{$feedAction->{'command'}};
-					push @params, (0, $prefs->get('itemsPerPage')); # All items requests take _index and _quantity parameters
+					
+					# All items requests take _index and _quantity parameters
+					if ($depth < $levels) {
+						push @params, ($index[$depth], 1); 
+					} else {
+						push @params, (0, $prefs->get('itemsPerPage')); 
+					}
+					
 					if (my $params = $feedAction->{'fixedParams'}) {
 						push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 					}
@@ -1012,7 +1019,7 @@ sub handleSubFeed {
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;
 		
-		$subFeed = $subFeed->{'items'}->[$i];
+		$subFeed = $subFeed->{'items'}->[$i - ($subFeed->{'offset'} || 0)];
 	}
 
 	if (($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' || $feed->{'replaceparent'}) && 
@@ -1105,7 +1112,15 @@ sub webLink {
 		return;
 	}
 	
-	push @verbs, (($args->{'start'} || 0), $prefs->get('itemsPerPage'));
+	my ($index, $quantity) = (($args->{'start'} || 0), $prefs->get('itemsPerPage'));
+	if (my $itemId = $args->{index}) {
+		if ($itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
+			$index = $1;
+			$quantity = 1;
+		}
+	}
+	
+	push @verbs, ($index, $quantity);
 	
 	my $title = delete $params{'linktitle'};
 	$title = Slim::Utils::Unicode::utf8decode(uri_unescape($title)) if $title;
@@ -1155,7 +1170,7 @@ sub _makeWebLink {
 		 
 		$link .= '/';
 		
-		main::DEBUGLOG && $log->debug($link);
+#		main::DEBUGLOG && $log->debug($link);
 		
 		return $link;
 	}
@@ -1185,7 +1200,7 @@ sub _makePlayLink {
 			$i++;
 		}
 		
-		main::DEBUGLOG && $log->debug($link);
+#		main::DEBUGLOG && $log->debug($link);
 		
 		return $link;
 	}
