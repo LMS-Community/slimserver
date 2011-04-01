@@ -31,17 +31,20 @@ sub init {
 
 sub search {
 	my ($client, $params) = @_;
+	
+	if (my $action = $params->{'action'}) {
+		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+playlist+$action&mode=search/";
+		return Slim::Web::XMLBrowser::webLink(@_);
+	}
 
 	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
 	
 	$params->{searches} = [];
 	
-	my $i = 0;
 	foreach (@$searchItems) {
 		push @{ $params->{searches} }, {
 			$_->{name} => "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/"
 		};
-		$i++;
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	

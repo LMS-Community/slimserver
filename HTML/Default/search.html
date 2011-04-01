@@ -1,6 +1,7 @@
 [%- pagetitle = 'SEARCHMUSIC' | string %]
 [%- pageicon = icons.SEARCHMUSIC %]
 [% extJsScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 	<script type="text/javascript">
 		Ext.onReady(function(){
 			var sinput = new Ext.form.TextField({
@@ -75,6 +76,8 @@
 					document.getElementById("searchForm").submit();
 				}
 			});
+
+			Browse.init();
 		});
 	</script>
 [% END %]
