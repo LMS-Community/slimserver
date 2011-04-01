@@ -2247,8 +2247,6 @@ sub _checkValidity {
 
 	my $url = $track->get('url');
 
-	main::DEBUGLOG && $isDebug && $log->debug("Checking to see if $url has changed.");
-
 	# Don't check for things that aren't audio
 	if ($track->get('audio') && $self->_hasChanged($track, $url)) {
 
@@ -2293,7 +2291,7 @@ sub _hasChanged {
 
 	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
 
-	main::DEBUGLOG && $isDebug && $log->debug("Checking for [$filepath] - size & timestamp.");
+#	main::DEBUGLOG && $isDebug && $log->debug("Checking for [$filepath] - size & timestamp.");
 
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
