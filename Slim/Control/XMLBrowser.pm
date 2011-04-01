@@ -1532,6 +1532,9 @@ sub findAction {
 	if ($item && $item->{'itemActions'} && $item->{'itemActions'}->{$actionName}) {
 		return wantarray ? ($item->{'itemActions'}->{$actionName}, {}) : $item->{'itemActions'}->{$actionName};
 	}
+	if ($item && $item->{'itemActions'} && $item->{'itemActions'}->{'allAvailableActionsDefined'}) {
+		return wantarray ? () : undef;
+	}
 	if ($feed && $feed->{'actions'} && $feed->{'actions'}->{$actionName}) {
 		return wantarray ? ($feed->{'actions'}->{$actionName}, $feed->{'actions'}) : $feed->{'actions'}->{$actionName};
 	}
