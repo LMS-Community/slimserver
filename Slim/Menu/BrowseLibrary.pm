@@ -739,7 +739,8 @@ sub _generic {
 	
 	my $indexList;
 	
-	if ($getIndexList && $quantity) {
+	if ($getIndexList && $quantity && $quantity != 1) {
+		# quantity == 1 is special and only used when (re)traversing the tree before getting to the desired leaf
 		
 		# Get the page-bar and update quantity if necessary so that all of the last category is returned
 		
@@ -801,18 +802,19 @@ sub _generic {
 		if ($quantity && $index && !$nResults) {
 			# Only extra items in this result
 			my $usedAlready = $index - $total;
-			push @{$result->{'items'}}, @$extraItems[$usedAlready..-1];
+			push @{$result->{'items'}}, @$extraItems[$usedAlready..$#$extraItems];
 		} elsif ($quantity && $nResults < $quantity) {
 			my $spaceLeft = $quantity - $nResults;
+			$spaceLeft = scalar @$extraItems if scalar @$extraItems < $spaceLeft;
 			push @{$result->{'items'}}, @$extraItems[0..($spaceLeft-1)];
 		} else {
 			# just add them all
 			push @{$result->{'items'}}, @$extraItems;
 		}
 	}
-	
-	
+		
 #	$log->error(Data::Dump::dump($result));
+
 	logBacktrace('no callback') unless $callback;
 
 	$callback->($result);
@@ -1037,6 +1039,47 @@ sub _artists {
 							fixedParams => {cmd => 'insert', %$params},
 						},
 					},					
+				} ];
+			}
+			
+			elsif ($search) {
+				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];
+
+				my $sql;
+				if ( ref $strings eq 'ARRAY' ) {
+					$_ =~ s/'/''/g foreach @$strings;
+					$sql = '(' . join( ' OR ', map { "contributors.namesearch LIKE '" . $_ . "'"} @$strings ) . ')';
+				} else {
+					$strings =~ s/'/''/g;		
+					$sql = "contributors.namesearch LIKE '" . $strings . "'";
+				}
+				
+				my %params = (
+					mode       => 'tracks',
+					sort       => 'albumtrack',
+					menuStyle  => 'menuStyle:allSongs',
+					search     => 'sql=' . $sql,
+				);
+					
+				my %actions = (
+					allAvailableActionsDefined => 1,
+					info   => {
+						command => [BROWSELIBRARY, 'items'],
+						fixedParams => {mode => 'artists', search => $search, item_id => $results->{'count'}},
+					},
+					items  => {command => [BROWSELIBRARY, 'items'],              fixedParams => \%params},
+					play   => {command => [BROWSELIBRARY, 'playlist', 'play'],   fixedParams => \%params},
+					add    => {command => [BROWSELIBRARY, 'playlist', 'add'],    fixedParams => \%params},
+					insert => {command => [BROWSELIBRARY, 'playlist', 'insert'], fixedParams => \%params},
+				);
+
+				$extra = [ {
+					name        => cstring($client, 'ALL_SONGS'),
+					type        => 'playlist',
+					playlist    => \&_tracks,
+					url         => \&_tracks,
+					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+					itemActions => \%actions,
 				} ];
 			}
 			
@@ -1297,7 +1340,48 @@ sub _albums {
 					type        => 'playlist',
 					playlist    => \&_tracks,
 					url         => \&_tracks,
-					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'allSongs' }],
+					passthrough => [{ searchTags => \@searchTags, sort => 'sort:title', menuStyle => 'menuStyle:allSongs' }],
+					itemActions => \%actions,
+				} ];
+			}
+			elsif ($search) {
+				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];
+
+				my $sql;
+				if ( ref $strings eq 'ARRAY' ) {
+					$_ =~ s/'/''/g foreach @$strings;
+					$sql = '(' . join( ' OR ', map { "albums.titlesearch LIKE '" . $_ . "'"} @$strings ) . ')';
+				} else {
+					$strings =~ s/'/''/g;		
+					$sql = "albums.titlesearch LIKE '" . $strings . "'";
+				}
+				
+				my %params = (
+					mode       => 'tracks',
+					sort       => 'albumtrack',
+					menuStyle  => 'menuStyle:allSongs',
+					search     => 'sql=' . $sql,
+				);
+					
+				my %actions = (
+					allAvailableActionsDefined => 1,
+					info   => {
+						command => [BROWSELIBRARY, 'items'],
+						fixedParams => {mode => 'albums', search => $search, item_id => $results->{'count'}},
+					},
+					items  => {command => [BROWSELIBRARY, 'items'],              fixedParams => \%params},
+					play   => {command => [BROWSELIBRARY, 'playlist', 'play'],   fixedParams => \%params},
+					add    => {command => [BROWSELIBRARY, 'playlist', 'add'],    fixedParams => \%params},
+					insert => {command => [BROWSELIBRARY, 'playlist', 'insert'], fixedParams => \%params},
+				);
+
+				$extra = [ {
+					name        => cstring($client, 'ALL_SONGS'),
+					icon        => 'html/images/albums.png',
+					type        => 'playlist',
+					playlist    => \&_tracks,
+					url         => \&_tracks,
+					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
 					itemActions => \%actions,
 				} ];
 			}
