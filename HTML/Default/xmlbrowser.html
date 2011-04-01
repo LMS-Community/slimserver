@@ -6,16 +6,15 @@ artwork = artwork ? artwork : 0;
 
 IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
-ELSE;
-	FOREACH item = items;
-		IF item.image;
-			hasArtwork = 1;
-			LAST;
-		END;	
-	END;	
 END;
+FOREACH item = items;
+	IF item.image;
+		hasArtwork = 1;
+		LAST;
+	END;	
+END;	
 
-IF hasArtwork;
+IF hasArtwork && !(ajaxUpdate && ajaxUpdate >= 1);
 	IF artwork == 1;
 		IF playlist_id;
 			artwork = 0;
