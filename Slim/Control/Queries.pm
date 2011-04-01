@@ -444,8 +444,9 @@ sub albumsQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s .= join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	
 	my $dbh = Slim::Schema->dbh;
@@ -725,8 +726,9 @@ sub artistsQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	
 	my $dbh = Slim::Schema->dbh;
@@ -786,11 +788,11 @@ sub artistsQuery {
 	my $totalCount = $count || 0;
 
 	if ( $count_va ) {
-		# fix the index and counts if we have to include VA
-		$totalCount = _fixCount($count_va, \$index, \$quantity, $count);
-
 		# don't add the VA item on subsequent queries
 		$count_va = ($count_va && !$index);
+
+		# fix the index and counts if we have to include VA
+		$totalCount = _fixCount(1, \$index, \$quantity, $count);
 	}
 
 	# now build the result
@@ -838,16 +840,14 @@ sub artistsQuery {
 			
 			utf8::decode($name);
 			utf8::decode($namesort);
-			
-			my $textKey = substr($namesort, 0, 1);
-			# Bug 11070: Don't display large V at beginning of browse Artists
-			if ($count_va && $chunkCount == 0) {
-				$textKey = " ";
-			}
 
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
-			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			if ($tags =~ /s/) {
+				# Bug 11070: Don't display large V at beginning of browse Artists
+				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			}
 
 			$chunkCount++;
 			
@@ -1307,8 +1307,9 @@ sub genresQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	
 	my $dbh = Slim::Schema->dbh;
@@ -4380,7 +4381,7 @@ sub _fixCount {
 
 	my $totalCount = $count || 0;
 
-	if ($insertItem && $count > 1) {
+	if ($insertItem) {
 		$totalCount++;
 
 		# return one less result as we only add the additional item in the first chunk
@@ -4924,8 +4925,9 @@ sub _getTagDataForTracks {
 	
 	if ( scalar @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	$sql .= 'GROUP BY tracks.id ';
 	
