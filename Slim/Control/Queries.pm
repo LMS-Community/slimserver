@@ -544,17 +544,6 @@ sub albumsQuery {
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			
-			#FIXME: see if multiple char textkey is doable for year/genre sort
-			my $textKey = '';
-			if ($sort eq 'artflow' || $sort eq 'artistalbum') {
-				utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
-				$textKey = substr $c->{'contributors.namesort'}, 0, 1;
-			}
-			elsif ( $sort ne 'new' ) {
-				utf8::decode( $c->{'albums.titlesort'} ) if exists $c->{'albums.titlesort'};
-				$textKey = substr $c->{'albums.titlesort'}, 0, 1;
-			}
-
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
 			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
@@ -571,7 +560,18 @@ sub albumsQuery {
 				# need to fix how the album.contributor field is set
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
-			$tags =~ /s/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+			if ($tags =~ /s/) {
+				#FIXME: see if multiple char textkey is doable for year/genre sort
+				my $textKey;
+				if ($sort eq 'artflow' || $sort eq 'artistalbum') {
+					utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
+					$textKey = substr $c->{'contributors.namesort'}, 0, 1;
+				} elsif ( $sort eq 'album' ) {
+					utf8::decode( $c->{'albums.titlesort'} ) if exists $c->{'albums.titlesort'};
+					$textKey = substr $c->{'albums.titlesort'}, 0, 1;
+				}
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+			}
 			
 			$chunkCount++;
 			
