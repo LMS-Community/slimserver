@@ -18,7 +18,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Web::Pages;
-use Slim::Web::Pages::LiveSearch;
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
