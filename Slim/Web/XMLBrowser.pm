@@ -867,6 +867,14 @@ sub handleFeed {
 
 				$i++;
 			}
+			
+			if (my $c = $details->{'contributors'}) {
+				if ($c->{'TRACKARTIST'} && $c->{'ALBUMARTIST'}) {
+					my $t = join(' ', (sort (map {$_->{'name'}} @{$c->{'TRACKARTIST'}})));
+					my $a = join(' ', (sort (map {$_->{'name'}} @{$c->{'ALBUMARTIST'}})));
+					delete $c->{'TRACKARTIST'} if $t eq $a;
+				}
+			}
 
 			if ($details->{'unfold'}) {
 				# unfold nested groups of additional items
