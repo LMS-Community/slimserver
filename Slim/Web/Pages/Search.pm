@@ -20,6 +20,9 @@ use Slim::Utils::Text;
 use Slim::Web::Pages;
 use Slim::Web::Pages::LiveSearch;
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
+
+my $log = logger('network.http');
 
 sub init {
 	
@@ -29,6 +32,8 @@ sub init {
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 }
 
+use constant MAXRESULTS => 10;
+
 sub search {
 	my ($client, $params) = @_;
 	
@@ -37,84 +42,24 @@ sub search {
 		return Slim::Web::XMLBrowser::webLink(@_);
 	}
 
+	
+	if ($params->{'ajaxSearch'}) {
+		$params->{'itemsPerPage'} = MAXRESULTS;
+		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/";
+		return Slim::Web::XMLBrowser::webLink(@_);		
+	}
+
 	my $searchItems = Slim::Menu::BrowseLibrary::searchItems($client);
 	
 	$params->{searches} = [];
 	
 	foreach (@$searchItems) {
 		push @{ $params->{searches} }, {
-			$_->{name} => "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/"
+			$_->{name} => "search.html",
 		};
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('search.html', $params);	
-}
-
-sub basicSearch {
-	my ($client, $params) = @_;
-
-	my $player = $params->{'player'};
-	my $query  = $params->{'query'};
-
-	# set some defaults for the template
-	$params->{'browse_list'}  = " ";
-	$params->{'numresults'}   = -1;
-	$params->{'browse_items'} = [];
-	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
-
-	# short circuit
-	if (!defined($query) || ($params->{'manualSearch'} && $query eq '')) {
-		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
-	}
-
-	# Don't auto-search for 2 chars, but allow manual search. IE: U2
-	if (!$params->{'manualSearch'} && length($query) <= 2) {
-		return \'';
-	}
-
-	# Don't kill the database - use limit & offsets
-	my $types  = [ $params->{'type'} ];
-	my $limit  = $params->{'itemPerPage'} || 10;
-	my $offset = $params->{'start'} || 0;
-	my $search = Slim::Utils::Text::searchStringSplit($query);
-
-	# Default to a valid list of types
-	if (!ref($types) || !defined $types->[0]) {
-
-		$types = [ Slim::Schema->searchTypes ];
-	}
-
-	my @rsList = ();
-
-	# Create a ResultSet for each of Contributor, Album & Track
-	for my $type (@$types) {
-
-		my $rs = Slim::Schema->rs($type)->searchNames($search);
-		push @rsList, $rs;
-	}
-
-	# The user has hit enter, or has a browser that can't handle the javascript.
-	if ($params->{'manualSearch'}) {
-
-		# Tell the template not to do a livesearch request anymore.
-		$params->{'liveSearch'} = 0;
-		$params->{'path'}       = 'search.html';
-
-		for my $rs (@rsList) {
-
-			fillInSearchResults($params, $rs, [ 'manualSearch=1' ], 0, $client);
-		}
-		
-		$params->{'query'} = Slim::Utils::Unicode::utf8decode($query);
-
-		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
-
-	} else {
-
-		# do it live - and send back the div
-		# this should be replaced with a call to filltemplatefile()
-		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, \@rsList, $player, $params);
-	}
 }
 
 sub advancedSearch {

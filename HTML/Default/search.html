@@ -14,6 +14,7 @@
 					[% FOREACH search = searches %]
 					{
 						id: 'result[% loop.index %]',
+						hd: 'header[% loop.index %]',
 						url: '[% search.values.0 %]'
 					}[% loop.last ? '' : ',' %]
 					[% END %]
@@ -36,18 +37,34 @@
 										q: value,
 										player: player,
 										ajaxUpdate: 1,
+										ajaxSearch: 1,
 										index: i
 									},
-									callback: function() {
+									callback: function(el, success, response, options) {
 										Highlighter.init();
 										SqueezeJS.UI.ScrollPanel.init();
 
+
 										// we need to fix the URL, as the returned values are relative to the search path
-										var a = Ext.DomQuery.select("a[class=browseItemLink]");
+										var a = Ext.DomQuery.select("a[class=browseItemLink]", options.thisSearch.id);
 										for (i=0; i<a.length; i++) {
 											a[i].href = a[i].href.replace(/index.html/g, "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/");
 										}
-									}
+										var l = Ext.DomQuery.select("div[class=browsedbListItem]", options.thisSearch.id).length;
+										if (!l) {
+											l = Ext.DomQuery.select("div[class=browseItemDetail]", options.thisSearch.id).length;
+										}
+										var t = Ext.get(options.thisSearch.id).child('div[id="total"]');
+										var c = parseInt(t.getAttribute('value'));
+										var m = l + '';
+										if (l && c && l < c) {
+											m += ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
+												+ options.params.index + '&q=' + options.params.q + '">[%- "MORE" | string %]</a>...';
+										}
+										Ext.get(options.thisSearch.hd).update(m);
+
+									},
+									thisSearch : this.searches[i]
 								});
 							}
 						}
@@ -105,7 +122,7 @@
 
 	<div id="browsedblist">
 	[% FOREACH search = searches %]
-		<div class="searchHeader">[% search.keys.0 %]</div>
+		<div class="searchHeader">[% search.keys.0 %]: <span id="header[% loop.index %]"></span></div>
 		<div id="result[% loop.index %]"></div>
 	[% END %]
 	</div>

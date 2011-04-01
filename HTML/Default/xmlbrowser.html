@@ -3,6 +3,7 @@ hasArtwork = 0;
 contentwrapper = 'contentitem';
 container = 'contentcontainer';
 artwork = artwork ? artwork : 0;
+useAllControl = 1;
 
 IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
@@ -110,18 +111,24 @@ useSpecialExt="-browse" %]
 [% END %]
 
 [%- IF items.size -%]
-
-	<div id="browsedbHeader">
-		[% IF hasPagebar %]
-			<div class="pagerbox">
-				<div class="pagerbox_top"><div></div></div>
-				<div class="pagerbox_content">
-					[% PROCESS pagebar %]
+	[% IF !ajaxSearch %] 
+		<div id="browsedbHeader">
+			[% IF hasPagebar %]
+				<div class="pagerbox">
+					<div class="pagerbox_top"><div></div></div>
+					<div class="pagerbox_content">
+						[% PROCESS pagebar %]
+					</div>
+					<div class="pagerbox_bottom"><div></div></div>
 				</div>
-				<div class="pagerbox_bottom"><div></div></div>
-			</div>
+			[% END %]
+		</div>
+	[% ELSE %]
+		[% IF total %]
+			<div id="total" value="[%- total %]"></div>
+			[% IF total > items.size; useAllControl = 0; END %]
 		[% END %]
-	</div>
+	[% END %]
 
 	[%- BLOCK gencontrol -%]
 		[% IF playlist_id %]
@@ -255,7 +262,7 @@ useSpecialExt="-browse" %]
 			[% PROCESS editform %]
 		[% END %]
 		
-		[% IF itemsHaveAudio && !songinfo %]
+		[% IF itemsHaveAudio && !songinfo && useAllControl %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playAllLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END %]
 				[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% currentIndex %]', '[% sess %]');"[% END; END %]

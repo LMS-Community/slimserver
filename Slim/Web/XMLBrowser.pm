@@ -401,7 +401,7 @@ sub handleFeed {
 					if ($depth < $levels) {
 						push @params, ($index[$depth], 1); 
 					} else {
-						push @params, (($stash->{'start'} || 0), $prefs->get('itemsPerPage')); 
+						push @params, (($stash->{'start'} || 0), ($args->{'itemsPerPage'} || $prefs->get('itemsPerPage'))); 
 					}
 					
 					if (my $params = $feedAction->{'fixedParams'}) {
@@ -555,7 +555,7 @@ sub handleFeed {
 	$stash->{'crumb'}     = \@crumb;
 	$stash->{'image'}     = $feed->{'image'} || $feed->{'cover'} || $stash->{'image'};
 
-	foreach (qw(items type orderByList playlist_id playlistTitle)) {
+	foreach (qw(items type orderByList playlist_id playlistTitle total)) {
 		$stash->{$_} = $feed->{$_} if defined $feed->{$_};
 	}
 	
@@ -1120,7 +1120,7 @@ sub webLink {
 		return;
 	}
 	
-	my ($index, $quantity) = (($args->{'start'} || 0), $prefs->get('itemsPerPage'));
+	my ($index, $quantity) = (($args->{'start'} || 0), ($args->{'itemsPerPage'} || $prefs->get('itemsPerPage')));
 	if (my $itemId = $args->{'index'}) {
 		if ($itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
 			$index = $1;
