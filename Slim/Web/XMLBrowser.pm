@@ -1121,11 +1121,10 @@ sub webLink {
 	}
 	
 	my ($index, $quantity) = (($args->{'start'} || 0), ($args->{'itemsPerPage'} || $prefs->get('itemsPerPage')));
-	if (my $itemId = $args->{'index'}) {
-		if ($itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
-			$index = $1;
-			$quantity = 1;
-		}
+	my $itemId = $args->{'index'};
+	if (defined $itemId && $itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
+		$index = $1;
+		$quantity = 1;
 	}
 	
 	push @verbs, ($index, $quantity);
