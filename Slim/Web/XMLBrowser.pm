@@ -1049,7 +1049,7 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	foreach (qw(offset total actions image albumData orderByList indexList playlist_id playlistTitle)) {
+	foreach (qw(offset total actions image cover albumData orderByList indexList playlist_id playlistTitle)) {
 		$subFeed->{$_} = $feed->{$_} if defined $feed->{$_};
 	}
 	
