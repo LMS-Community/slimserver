@@ -55,7 +55,7 @@
 											l = Ext.DomQuery.select("div[class=browseItemDetail]", options.thisSearch.id).length;
 										}
 										var t = Ext.get(options.thisSearch.id).child('div[id="total"]');
-										var c = parseInt(t.getAttribute('value'));
+										var c = t ? parseInt(t.getAttribute('value')) : 0;
 										var m = l + '';
 										if (l && c && l < c) {
 											m += ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
