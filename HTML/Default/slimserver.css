@@ -83,7 +83,7 @@ a:hover, .link:hover,
 	zoom: 1;
 }
 
-.selectedItem a {
+.searchResultHeader, .selectedItem a {
 	font-weight: bold;
 }
 

@@ -54,7 +54,9 @@
 										var t = Ext.get(options.thisSearch.id).child('div[id="total"]');
 										var c = t ? parseInt(t.getAttribute('value')) : 0;
 										var m = '';
-										if (l && c && c > 1 && l < c) {
+										if (!c) {
+											m = '[%- "NONE" | string %]';
+										} else if (l && c && c > 1 && l < c) {
 											m += l + ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
 												+ options.params.index + '&q=' + options.params.q + '">[%- "MORE" | string %]</a>...';
 										}
@@ -119,7 +121,7 @@
 
 	<div id="browsedblist">
 	[% FOREACH search = searches %]
-		<div class="searchHeader">[% search.keys.0 %]: <span id="header[% loop.index %]"></span></div>
+		<div class="searchResultHeader">[% search.keys.0 %]: <span id="header[% loop.index %]"></span></div>
 		<div id="result[% loop.index %]"></div>
 	[% END %]
 	</div>
