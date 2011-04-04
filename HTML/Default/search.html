@@ -50,15 +50,12 @@
 										for (i=0; i<a.length; i++) {
 											a[i].href = a[i].href.replace(/index.html/g, "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/");
 										}
-										var l = Ext.DomQuery.select("div[class=browsedbListItem]", options.thisSearch.id).length;
-										if (!l) {
-											l = Ext.DomQuery.select("div[class=browseItemDetail]", options.thisSearch.id).length;
-										}
+										var l = Ext.DomQuery.select("div[class*=browsedbListItem]", options.thisSearch.id).length;
 										var t = Ext.get(options.thisSearch.id).child('div[id="total"]');
 										var c = t ? parseInt(t.getAttribute('value')) : 0;
-										var m = l + '';
-										if (l && c && l < c) {
-											m += ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
+										var m = '';
+										if (l && c && c > 1 && l < c) {
+											m += l + ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
 												+ options.params.index + '&q=' + options.params.q + '">[%- "MORE" | string %]</a>...';
 										}
 										Ext.get(options.thisSearch.hd).update(m);
