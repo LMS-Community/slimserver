@@ -116,4 +116,17 @@ sub resolve {
 	} );
 }
 
+# Return value from cache, used to replace gethostbyname calls
+sub cached {
+	my ( $class, $host ) = @_;
+	
+	if ( my $cached = $cache{$host} ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached DNS response $cached->{addr} for $host" );
+		
+		return $cached->{addr};
+	}
+	
+	return;
+}
+
 1;
