@@ -819,12 +819,20 @@ sub stream_s {
 			$server = $pserver;
 			$port   = $pport;
 		}
-				
-		my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
-		if ($port && $addrs[0]) {
-			$server_port = $port;
-			$server_ip = unpack('N',$addrs[0]);
+		
+		# Get IP from async DNS cache if available
+		if ( my $addr = Slim::Networking::Async::DNS->cached($server) ) {
+			$server_ip = Slim::Utils::Network::intip($addr);
 		}
+		else {
+			my $tv = AnyEvent->time;
+			my (undef, undef, undef, undef, @addrs) = gethostbyname($server);
+			$log->warn( sprintf "Made synchronous DNS request for $server (%.2f ms)", AnyEvent->time - $tv );
+			if ( $addrs[0] ) {
+				$server_ip = unpack 'N', $addrs[0];
+			}
+		}
+		$server_port = $port;
 
 		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
