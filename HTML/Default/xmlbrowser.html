@@ -123,6 +123,7 @@ useSpecialExt="-browse" %]
 				</div>
 			[% END %]
 		</div>
+		[% IF items.size < 2; useAllControl = 0; END %]
 	[% ELSE %]
 		[% IF total %]
 			<div id="total" value="[%- total %]"></div>
