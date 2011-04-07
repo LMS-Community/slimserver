@@ -69,6 +69,7 @@ sub initPrefs {
 	
 	$defaults->{maxPlaylistLength} = 100;
 	$defaults->{libraryname} = "Squeezebox Touch";
+	$defaults->{autorescan} = 1;
 }
 
 my %prefSyncHandlers = (

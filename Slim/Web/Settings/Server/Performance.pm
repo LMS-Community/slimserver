@@ -23,8 +23,10 @@ sub page {
 }
 
 sub prefs {
- 	return ($prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority 
- 				precacheArtwork maxPlaylistLength autorescan autorescan_stat_interval) );
+	my @prefs = ( $prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority 
+ 				precacheArtwork maxPlaylistLength) );
+ 	push @prefs, qw(autorescan autorescan_stat_interval) unless main::ISWINDOWS;
+ 	return @prefs;
 }
 
 sub handler {
