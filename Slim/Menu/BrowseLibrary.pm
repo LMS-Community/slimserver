@@ -1590,11 +1590,16 @@ sub _bmf {
 							fixedParams => {track_id =>  $_->{'id'}},
 						},
 					};
-				}  elsif ($_->{'type'} eq 'playlist') {
-					# $_->{'type'}      = 'playlist';
-					$_->{'playlist'}	= \&_playlistTracks;
-					$_->{'passthrough'} = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
-				}  else # if ($_->{'type'} eq 'unknown') 
+				}
+				# Cannot do anything useful with a playlist in BMF
+#				elsif ($_->{'type'} eq 'playlist') {
+#					$_->{'type'}        = 'text';
+#					$_->{'favorites_url'} =	$_->{'url'};
+#					$_->{'playlist'}	  = \&_playlistTracks;
+#					$_->{'url'}           = \&_playlistTracks;
+#					$_->{'passthrough'}   = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
+#				}
+				else # if ($_->{'type'} eq 'unknown') 
 				{
 					$_->{'type'}        = 'text';
 				}
