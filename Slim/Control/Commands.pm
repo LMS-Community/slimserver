@@ -401,7 +401,7 @@ sub disconnectCommand {
 	if ( $server =~ /^www.(?:squeezenetwork|mysqueezebox).com$/i || $server =~ /^www.test.(?:squeezenetwork|mysqueezebox).com$/i ) {
 
 		main::DEBUGLOG && $log->debug("Sending disconnect request for $remoteClient to $server");
-		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient, Slim::Utils::Network::hostAddr() ]);
+		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
 	}
 
 	else {
