@@ -921,6 +921,7 @@ sub playlistJumpCommand {
 		my $jiveIconStyle = shift || undef;
 		if ($client->isPlayer()) {
 			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client), jiveIconStyle => $jiveIconStyle });
+			$parts->{'jive'}->{'duration'} = 10000 if $parts && $parts->{'jive'}; # 10s: nice and long to avoid bouncing displays
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
 			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 		}
