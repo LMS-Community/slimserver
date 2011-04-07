@@ -255,10 +255,11 @@ sub _makeTimer {
 		main::PERFMON && Slim::Utils::PerfMon->check('timers', AnyEvent->time - $now, undef, $subptr);
 
 		if ( $@ ) {
-			logError("Timer failed: $@");
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+
+			logError("Timer $name failed: $@");
 			
 			if ( main::SLIM_SERVICE ) {
-				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
 				$@ =~ s/"/'/g;
 				SDI::Util::Syslog::error("service=SS-Timer method=${name} error=\"$@\"");
 			}
