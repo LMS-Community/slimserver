@@ -1839,7 +1839,7 @@ sub _favoritesParams {
 	my $favorites_title  = $item->{title} || $item->{name};
 	
 	if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
-		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
+		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} && !ref $item->{playlist}) {
 			$favorites_url = $item->{playlist};
 		}
 		
