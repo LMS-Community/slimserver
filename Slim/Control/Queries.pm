@@ -3037,7 +3037,7 @@ sub statusQuery {
 			"playlist_cur_index", 
 			$playlist_cur_index
 		);
-		$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
+		$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime());
 	}
 
 	$request->addResult("playlist_tracks", $songCount);
