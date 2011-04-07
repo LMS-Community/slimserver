@@ -183,6 +183,11 @@ sub abortScan {
 		# we get a progress update
 		$ABORT = 1;
 		
+		if (blessed($class->scanningProcess) && $class->scanningProcess->alive) {
+			$class->scanningProcess->die();
+			$class->scanningProcess(undef);
+		}
+
 		$class->setIsScanning(0);
 	}
 }
@@ -614,6 +619,12 @@ sub stillScanning {
 	
 	return 0 if main::SLIM_SERVICE;
 	return 0 if !Slim::Schema::hasLibrary();
+	
+	if (blessed($class->scanningProcess) && !$class->scanningProcess->alive) {
+		$class->scanningProcess(undef);
+		$class->setIsScanning(0);
+		return 0;
+	}
 	
 	my $sth = Slim::Schema->dbh->prepare_cached(
 		"SELECT value FROM metainformation WHERE name = 'isScanning'"
