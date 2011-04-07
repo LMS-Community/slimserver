@@ -401,7 +401,7 @@ sub disconnectCommand {
 	if ( $server =~ /^www.(?:squeezenetwork|mysqueezebox).com$/i || $server =~ /^www.test.(?:squeezenetwork|mysqueezebox).com$/i ) {
 
 		main::DEBUGLOG && $log->debug("Sending disconnect request for $remoteClient to $server");
-		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
+		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient, Slim::Utils::Network::hostAddr() ]);
 	}
 
 	else {
@@ -917,7 +917,7 @@ sub playlistJumpCommand {
 		my $jiveIconStyle = shift || undef;
 		if ($client->isPlayer()) {
 			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client), jiveIconStyle => $jiveIconStyle });
-			$parts->{'jive'}->{'duration'} = 10000; # 10s: nice and long to avoid bouncing displays
+			$parts->{'jive'}->{'duration'} = 10000 if $parts && $parts->{'jive'}; # 10s: nice and long to avoid bouncing displays
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
 			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 		}
