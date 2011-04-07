@@ -885,9 +885,12 @@ sub submitScrobble {
 		unshift @{$queue}, $current_item;
 	}
 	
-	setQueue( $client, $queue );
-	
 	if ( @tmpQueue ) {
+		# Only setQueue if tmpQueue is nonempty
+		# otherwise it means we didn't shift anything out of queue into tmpQueue
+		# and $queue is therefore unchanged. prevents disk writes enabling some disks to spindown
+		setQueue( $client, $queue );
+	
 		main::DEBUGLOG && $log->debug( "Submitting: $post" );
 	
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(
