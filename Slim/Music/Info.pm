@@ -1300,10 +1300,10 @@ sub isContainer {
 
 # Return a list of valid extensions for a particular type as listed in types.conf
 sub validTypeExtensions {
-	my $findTypes  = shift || qr/(?:list|audio)/;
+	my $findTypes  = shift || 'list|audio';
 
 	my @extensions = ();
-	my $disabled   = disabledExtensions();
+	my $disabled   = disabledExtensions($findTypes);
 
 	while (my ($ext, $type) = each %slimTypes) {
 
@@ -1331,7 +1331,7 @@ sub validTypeExtensions {
 	}
 
 	# Always look for cue sheets when looking for audio.
-	if ($findTypes eq 'audio' && !$disabled->{'cue'}) {
+	if ('audio' =~ /$findTypes/ && !$disabled->{'cue'}) {
 		push @extensions, 'cue';
 	}
 	

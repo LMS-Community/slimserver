@@ -120,7 +120,7 @@ sub init {
 			# or it will block startup
 			Slim::Utils::Timers::setTimer( undef, time(), sub {
 				Slim::Utils::Scanner::Local->rescan( $audiodir, {
-					types    => qr/(?:list|audio)/,
+					types    => 'list|audio',
 					scanName => 'directory',
 					progress => 1,
 				} );
@@ -199,7 +199,7 @@ sub handleQueue {
 	
 	# Rescan tree
 	Slim::Utils::Scanner::Local->rescan( [ sort keys %queue ], {
-		types    => qr/(?:list|audio)/,
+		types    => 'list|audio',
 		scanName => 'directory',
 		progress => 1,
 	} );
