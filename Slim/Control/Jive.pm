@@ -335,8 +335,6 @@ sub jiveSetAlbumSort {
 	my $client  = $request->client;
 	my $sort = $request->getParam('sortMe');
 	$prefs->set('jivealbumsort', $sort);
-	# resend the myMusic menus with the new sort pref set
-	myMusicMenu(0, $client);
 	$request->setStatusDone();
 }
 
@@ -2298,9 +2296,8 @@ sub myMusicMenu {
 	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
 	my $batch = shift;
 	my $client = shift;
-	my $sort   = $prefs->get('jivealbumsort') || 'album';
 
-	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', $sort, \&_libraryChanged);
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&_libraryChanged);
 	
 	
 	if (!$batch) {

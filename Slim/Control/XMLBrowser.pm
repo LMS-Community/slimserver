@@ -179,6 +179,12 @@ sub cliQuery {
 			$args{'quantity'} = 1;
 		}
 		
+		if ($request->getParam('menu')) {
+			if (my $sort = $prefs->get('jivealbumsort')) {
+				$args{'orderBy'} = 'sort:' . $sort;
+			}
+		}
+		
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $feed );

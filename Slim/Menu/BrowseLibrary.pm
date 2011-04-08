@@ -222,7 +222,6 @@ my @addedNodes;
 my @deletedNodes;
 
 my %browseLibraryModeMap = (
-	albums => \&_albums,				# needs to be here because is special and not added via registerNode()
 	tracks => \&_tracks,				# needs to be here because no top-level menu added via registerNode()
 	playlistTracks => \&_playlistTracks,# needs to be here because no top-level menu added via registerNode()
 );
@@ -491,23 +490,7 @@ sub _conditionWrapper {
 }
 
 sub _getNodeList {
-	my ($albumsSort) = @_;
-	$albumsSort ||= 'album';
-	
-	my @specials = (
-		{
-			type         => 'link',
-			name         => 'BROWSE_BY_ALBUM',
-			params       => {mode => 'albums', sort => $albumsSort},
-			icon         => 'html/images/albums.png',
-			homeMenuText => 'BROWSE_ALBUMS',
-			condition    => \&Slim::Schema::hasLibrary,
-			id           => 'myMusicAlbums',
-			weight       => 20,
-		},
-	);
-	
-	return [@specials, values %nodes];
+	return [values %nodes];
 }
 
 sub _registerBaseNodes {
@@ -524,6 +507,17 @@ sub _registerBaseNodes {
 			condition    => \&Slim::Schema::hasLibrary,
 			id           => 'myMusicArtists',
 			weight       => 10,
+		},
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_ALBUM',
+			params       => {mode => 'albums'},
+			feed         => \&_albums,
+			icon         => 'html/images/albums.png',
+			homeMenuText => 'BROWSE_ALBUMS',
+			condition    => \&Slim::Schema::hasLibrary,
+			id           => 'myMusicAlbums',
+			weight       => 20,
 		},
 		{
 			type         => 'link',
@@ -603,13 +597,13 @@ sub _registerBaseNodes {
 }
 
 sub getJiveMenu {
-	my ($client, $baseNode, $albumSort, $updateCallback) = @_;
+	my ($client, $baseNode, $updateCallback) = @_;
 	
 	$jiveUpdateCallback = $updateCallback if $updateCallback;
 	
 	my @myMusicMenu;
 	
-	foreach my $node (@{_getNodeList($albumSort)}) {
+	foreach my $node (@{_getNodeList()}) {
 		if (!_conditionWrapper($client, $node->{'id'}, $node->{'condition'})) {
 			next;
 		}
