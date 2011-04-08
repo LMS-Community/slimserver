@@ -1230,7 +1230,7 @@ sub playItem {
 			my @urls;
 			
 			# Index to jump to
-			my $index = 0;
+			my $index;
 			
 			my $count = 0;
 			
@@ -1267,11 +1267,8 @@ sub playItem {
 				$count++;
 			}
 			
-			my $cmd = $action eq 'add' ? 'addtracks' : 'inserttracks';
-			
-			$client->execute([ 'playlist', 'clear' ]);
-			$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
-			$client->execute([ 'playlist', 'jump', $index ]);
+			$index = undef if $action ne 'play';
+			$client->execute([ 'playlist', $action.'tracks', 'listref', \@urls, undef, $index ]);
 		}
 		else {
 			# Set metadata about this URL

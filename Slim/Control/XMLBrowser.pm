@@ -734,32 +734,28 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					if ( $method =~ /play|load/i ) {
-						$client->execute([ 'playlist', 'clear' ]);
-					}
-
 					my $cmd;
-					if ($method =~ /add/) {
+					if ( $method =~ /play|load/i ) {
+						$cmd = 'loadtracks';
+					} elsif ($method =~ /add/) {
 						$cmd = 'addtracks';
-					}
-					else {
+						$playIndex = undef;
+					} else {
 						$cmd = 'inserttracks';
+						$playIndex = undef;
 					}
 		
 					if ( main::INFOLOG && $log->is_info ) {
 						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					}
 	
-					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+					$client->execute([ 'playlist', $cmd, 'listref', \@urls, undef, $playIndex ]);
 
 					# if we're adding or inserting, show a showBriefly
 					if ( $method =~ /add/ || $method eq 'insert' ) {
 						my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
 						my $title = $subFeed->{'name'} || $subFeed->{'title'};
 						_addingToPlaylist($client, $method, $title, $icon);
-					# if not, we jump to the correct track in the list
-					} else {
-						$client->execute([ 'playlist', 'jump', ($playIndex || 0)]);
 					}
 				}
 				else {
