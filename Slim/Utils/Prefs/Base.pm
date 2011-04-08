@@ -415,9 +415,9 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 	
 	for my $func ( @handlers ) {
 		eval { $func->(); };
-		if ( $@ && $log->is_debug ) {
+		if ( main::DEBUGLOG && $@ && $log->is_debug ) {
 			my $handler = Slim::Utils::PerlRunTime::realNameForCodeRef($func);
-			main::DEBUGLOG && $log->debug( "Error running bulkSet change handler $handler: $@" );
+			$log->debug( "Error running bulkSet change handler $handler: $@" );
 			Slim::Utils::Misc::bt();
 		}
 	}
