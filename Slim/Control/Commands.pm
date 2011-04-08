@@ -2470,7 +2470,7 @@ sub rescanCommand {
 		my $dir = Slim::Utils::Misc::getAudioDir();
 
 		my %args = (
-			types    => qr/(?:list|audio)/,
+			types    => 'list|audio',
 			scanName => 'directory',
 			progress => 1,
 		);
@@ -2849,7 +2849,7 @@ sub wipecacheCommand {
 			my $dir = Slim::Utils::Misc::getAudioDir();
 			
 			my %args = (
-				types    => qr/(?:list|audio)/,
+				types    => 'list|audio',
 				scanName => 'directory',
 				progress => 1,
 				wipe     => 1,
