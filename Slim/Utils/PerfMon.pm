@@ -71,7 +71,7 @@ sub check {
 		$string .= ref $stringref ? $stringref->() : $stringref;
 	}
 	
-	if ($coderef) {
+	if (main::INFOLOG && $coderef) {
 		$string .= Slim::Utils::PerlRunTime::realNameForCodeRef($coderef);
 	}
 	

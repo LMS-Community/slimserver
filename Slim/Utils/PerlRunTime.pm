@@ -104,14 +104,18 @@ Use L<Devel::Peek> find the original name of a non-anonymous $coderef.
 =cut
 
 sub realNameForCodeRef {
-	my $coderef = shift;
+	if (main::INFOLOG) {
+		my $coderef = shift;
+		
+		require Devel::Peek;
 	
-	require Devel::Peek;
-
-	my $gv   = Devel::Peek::CvGV($coderef);
-	my $name = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'}) || 'ANON';
-
-	return $name;
+		my $gv   = Devel::Peek::CvGV($coderef);
+		my $name = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'}) || 'ANON';
+	
+		return $name;
+	} else {
+		return 'method-name-unavailable';
+	}
 }
 
 =head1 SEE ALSO
