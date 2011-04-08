@@ -1668,6 +1668,9 @@ sub playlistXtracksCommand {
 		
 		$client->execute(['playlist', 'jump', $jumpToIndex, $fadeIn]);
 		
+		# Reshuffle (again) to get playing song or album at start of list
+		Slim::Player::Playlist::reshuffle($client) if $load && defined $jumpToIndex && Slim::Player::Playlist::shuffle($client);
+		
 		$client->currentPlaylistModified(0);
 	}
 
