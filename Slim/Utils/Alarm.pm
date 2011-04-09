@@ -1171,6 +1171,9 @@ sub _timeout {
 	my $request = $client->execute(['pause', 1]);
 	$request->source('ALARM');
 
+	# Bug 15585: make sure CLI-based notifications get triggered when alarm times out
+	Slim::Control::Request::notifyFromArray($client, ['alarm', '_cmd']);
+
 	$self->stop;
 }
 

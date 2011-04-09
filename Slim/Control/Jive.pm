@@ -100,6 +100,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
 		[1, 0, 1, \&jiveFavoritesCommand]);
 
+	Slim::Control::Request::addDispatch(['jivepresets', '_index', '_quantity' ],
+		[1, 1, 1, \&jivePresetsMenu]);
+
 	Slim::Control::Request::addDispatch(['jivealarmvolume'],
 		[1, 0, 1, \&jiveAlarmVolumeSlider ]);
 
@@ -1469,20 +1472,9 @@ sub playerSettingsMenu {
 	};	
 
 	# synchronization. only if numberOfPlayers > 1
-	my $synchablePlayers = howManyPlayersToSyncWith($client);
-	if ($synchablePlayers > 0) {
-		push @menu, {
-			text           => $client->string("SYNCHRONIZE"),
-			id             => 'settingsSync',
-			node           => 'settings',
-			weight         => 70,
-			actions        => {
-				go => {
-					cmd    => ['syncsettings'],
-					player => 0,
-				},
-			},
-		};	
+	my $syncItem = syncMenuItem($client, 1);
+	if ($syncItem) {
+		push @menu, $syncItem;
 	}
 
 	# information, always display
@@ -1622,6 +1614,38 @@ sub playerSettingsMenu {
 		_notifyJive(\@menu, $client);
 	}
 }
+
+sub syncMenuItem {
+	my $client = shift;
+	my $batch = shift;
+
+	my $synchablePlayers = howManyPlayersToSyncWith($client);
+	if ($synchablePlayers > 0) {
+		my $return = {
+			text           => $client->string("SYNCHRONIZE"),
+			id             => 'settingsSync',
+			node           => 'settings',
+			weight         => 70,
+			actions        => {
+				go => {
+					cmd    => ['syncsettings'],
+					player => 0,
+				},
+			},
+		};
+
+		if ($batch) {
+			return $return;
+		} else {
+			_notifyJive( [ $return ], $client);
+		}
+	} else {
+		if ($batch) {
+			return undef;
+		}
+	}
+}
+
 
 sub minAutoBrightness {
 	my $current_setting = shift;
@@ -2869,6 +2893,118 @@ sub jiveAlarmCommand {
 	}
 	$request->setStatusDone();
 }
+
+
+sub jivePresetsMenu {
+	main::INFOLOG && $log->info("Begin function");
+	my $request = shift;
+	my $client  = $request->client || shift;
+
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	my $title   = $request->getParam('title');
+	my $url     = $request->getParam('url');
+	my $type    = $request->getParam('type');
+	my $icon    = $request->getParam('icon');
+	my $preset = $request->getParam('key');
+	my $parser = $request->getParam('parser');
+	my $action = 'grandparent';
+
+	# if playlist_index is sent, that's for the current NP track, derive everything you need from it
+	my $playlist_index = $request->getParam('playlist_index');
+	if ( defined($playlist_index) ) {
+		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
+		$url     = $song->url;
+		$type    = 'audio';
+		$title   = $song->title;
+	}
+
+	# preset needs to be saved as either a playlist or default to audio
+	if ( defined($type) && $type ne 'playlist' ) {
+		$type = 'audio';
+	}
+	if ( ! defined $title || ! defined $url ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $presets = $prefs->client($client)->get('presets');
+	my @presets_menu;
+	for my $preset (0..5) {
+		my $jive_preset = $preset + 1;
+		# is this preset currently set?
+		my $set = ref($presets) eq 'ARRAY' && defined $presets->[$preset] ? 1 : 0;
+		my $item;
+
+		if ($set) {
+			my $currentPreset = $presets->[$preset]->{'text'};
+			$log->error($currentPreset);
+			$item = {
+				text    => $request->string('JIVE_SET_PRESET_X', $jive_preset),
+				count   => 2,
+				offset   => 0,
+				isContextMenu => 1,
+				item_loop => [
+					{
+						text    => $client->string('CANCEL'),
+						actions => {
+							go => {
+								player => 0,
+								cmd    => [ 'jiveblankcommand' ],
+							},
+						},
+						nextWindow => 'parent',
+					},
+					{
+						text    => $client->string('JIVE_OVERWRITE_PRESET_X', $currentPreset),
+						actions => {
+							go => {
+								player => 0,
+								cmd    => [ 'jivefavorites', 'set_preset', ],
+								params => {
+									key	=> $jive_preset,
+									favorites_url	=> $url,
+									favorites_title	=> $title,
+									favorites_type	=> $type,
+									parser	=> $parser,
+								},
+							},
+						},
+						nextWindow => 'presets',
+					},
+
+				],
+			};
+		} else {
+			$item = {
+				text    => $request->string('JIVE_SET_PRESET_X', $jive_preset),
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ 'jivefavorites', 'set_preset', ],
+						params => {
+							key	=> $jive_preset,
+							favorites_url	=> $url,
+							favorites_title	=> $title,
+							favorites_type	=> $type,
+							parser	=> $parser,
+						},
+					},
+				},
+				nextWindow => 'presets',
+			};
+		}
+		push @presets_menu, $item;
+	}
+
+	$request->addResult('offset', 0);
+	$request->addResult('count', scalar(@presets_menu));
+	$request->addResult('item_loop', \@presets_menu);
+	$request->setStatusDone();
+		
+} 
+
 
 sub jiveFavoritesCommand {
 
