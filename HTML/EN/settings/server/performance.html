@@ -53,15 +53,17 @@
 		[% END %]
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
-		<select class="stdedit" name="pref_autorescan" id="autorescan">
-			<option [% IF prefs.pref_autorescan == 1 %]selected="selected" [% END %]value="1">
-				[% 'SETUP_AUTO_RESCAN_ENABLE' | string %]
-			</option>
-			<option [% IF !prefs.pref_autorescan %]selected="selected" [% END %]value="0">
-				[% 'SETUP_AUTO_RESCAN_DISABLE' | string %]
-			</option>
-		</select>
+	[% IF prefs.exists('pref_autorescan') %]
+		[% WRAPPER setting title="SETUP_AUTO_RESCAN" desc="SETUP_AUTO_RESCAN_DESC" %]
+			<select class="stdedit" name="pref_autorescan" id="autorescan">
+				<option [% IF prefs.pref_autorescan == 1 %]selected="selected" [% END %]value="1">
+					[% 'SETUP_AUTO_RESCAN_ENABLE' | string %]
+				</option>
+				<option [% IF !prefs.pref_autorescan %]selected="selected" [% END %]value="0">
+					[% 'SETUP_AUTO_RESCAN_DISABLE' | string %]
+				</option>
+			</select>
+		[% END %]
 	[% END %]
 	
 	[% WRAPPER setting title="SETUP_AUTO_RESCAN_STAT_INTERVAL" desc="SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC" %]
