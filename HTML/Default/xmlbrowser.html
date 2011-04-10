@@ -102,7 +102,7 @@ useSpecialExt="-browse" %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
 	<div id="songInfoPlayLinks">
 		[% WRAPPER playlink %]onclick="Browse.XMLBrowser.playLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
-		[% IF allLinks; WRAPPER insert %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
+		[% IF allLinks; WRAPPER insertlink %]onclick="Browse.XMLBrowser.insertLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END; END %]
 		[% WRAPPER addlink %]onclick="Browse.XMLBrowser.addLink('[% multiquery %][% searchquery | replace("'", "%27") | uri %]', '[% streaminfo.index %]', '[% sess %]');"[% END %]
 	</div>
 	[% END; END %]
