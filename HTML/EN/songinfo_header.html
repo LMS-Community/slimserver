@@ -32,7 +32,7 @@
 					[% item = BLOCK %]<a href="[% webroot %][% itemobj.album.link %]&amp;player=[% playerURI %]" class="browseItemLink">
 						[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
 				[% ELSE %] 
-					[% itemobj.album.title || itemobj.album.name | html %]
+					[% item = BLOCK %][% itemobj.album.title || itemobj.album.name | html %][% END %]
 				[% END %] 
 				[% PROCESS songInfoItem title = "ALBUM" %]
 			[% END %]
