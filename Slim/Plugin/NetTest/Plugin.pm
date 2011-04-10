@@ -15,6 +15,10 @@ use strict;
 
 use base qw(Slim::Plugin::Base);
 
+use constant HANDLER => qw(Slim::Plugin::NetTest::ProtocolHandler);
+
+Slim::Player::ProtocolHandlers->registerHandler('teststream', HANDLER);
+
 my $FRAME_LEN_SB1 =  560; # test frame len - SB1 can't support longer frames
 my $FRAME_LEN_SB2 = 1400; # test frame len for SB2 and later
 
@@ -384,20 +388,57 @@ sub cliQuery {
 		$request->addResult('default', $defaultRate);
 	}
 
-	if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
+	if ($client->isa('Slim::Player::SqueezePlay')) {
 
-		$request->addResult('state', 'off');
+		my $fd = $client->controller()->songStreamController() ? $client->controller()->songStreamController()->streamHandler() : undef;
+
+		if ($fd && $fd->isa(HANDLER) && $client->isPlaying) {
+
+			$request->addResult('state', 'running');
+			$request->addResult('rate', $fd->testrate / 1000);
+
+			my $inst = $fd->currentrate / $fd->testrate * 100;
+
+			$inst = $inst > 100 ? 100 : $inst;
+
+			if (!$fd->stash) {
+				$fd->stash([ { 10 => 0 }, { 20 => 0 }, { 30 => 0 }, { 40 => 0 }, { 50 => 0 }, { 60 => 0 },
+							 { 70 => 0 }, { 80 => 0 }, { 90 => 0 }, { 95 => 0 }, { 100 => 0 } ]);
+			} else {
+				for my $bucket (@{$fd->stash}) {
+					my ($key) = keys(%$bucket);
+					next if $inst > $key;
+					$bucket->{$key}++;
+					last;
+				}
+			}
+
+			$request->addResult('inst', $inst);
+			$request->addResult('distrib', $fd->stash);
+
+		} else {
+
+			$request->addResult('state', 'off');
+		}
 
 	} else {
 
-		$request->addResult('state', 'running');
+		if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
+			
+			$request->addResult('state', 'off');
+			
+		} else {
+			
+			$request->addResult('state', 'running');
+			
+			my $params = $client->modeParam('testparams');
+			
+			$request->addResult('rate', $params->{'rate'} +0);
+			$request->addResult('inst', $params->{'inst'} +0);
+			$request->addResult('avg',  $params->{'count'} ? $params->{'sum'} / $params->{'count'} : 0);
+			$request->addResult('distrib', $params->{'log'});
+		}
 
-		my $params = $client->modeParam('testparams');
-
-		$request->addResult('rate', $params->{'rate'} +0);
-		$request->addResult('inst', $params->{'inst'} +0);
-		$request->addResult('avg',  $params->{'count'} ? $params->{'sum'} / $params->{'count'} : 0);
-		$request->addResult('distrib', $params->{'log'});
 	}
 
 	$request->setStatusDone();
@@ -411,19 +452,28 @@ sub cliStartTest {
 
 	$client->power(1) if !$client->power();
 
-	if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
-		Slim::Buttons::Common::pushMode($client, 'Slim::Plugin::NetTest::Plugin');
-	}
+	if ($client->isa('Slim::Player::SqueezePlay')) {
 
-	my $params = $client->modeParam('testparams');
-
-	if ( setTest($params, undef, $rate) ) {
+		$client->execute(['playlist', 'play', "teststream://test?rate=$rate"]);
 
 		$request->setStatusDone();
 
 	} else {
 
-		$request->setStatusBadParams();
+		if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::NetTest::Plugin') {
+			Slim::Buttons::Common::pushMode($client, 'Slim::Plugin::NetTest::Plugin');
+		}
+		
+		my $params = $client->modeParam('testparams');
+		
+		if ( setTest($params, undef, $rate) ) {
+			
+			$request->setStatusDone();
+			
+		} else {
+			
+			$request->setStatusBadParams();
+		}
 	}
 }
 
@@ -431,8 +481,19 @@ sub cliStopTest {
 	my $request = shift;
 	my $client = $request->client;
 
-	if (Slim::Buttons::Common::mode($client) eq 'Slim::Plugin::NetTest::Plugin') {
+	if ($client->isa('Slim::Player::SqueezePlay')) {
+
+		my $fd = $client->controller()->songStreamController() ? $client->controller()->songStreamController()->streamHandler() : undef;
+
+		if ($fd && $fd->isa(HANDLER) && $client->isPlaying) {
+
+			$client->execute(['playlist', 'clear']);
+		}
+
+	} elsif (Slim::Buttons::Common::mode($client) eq 'Slim::Plugin::NetTest::Plugin') {
+
 		Slim::Buttons::Common::popMode($client);
+
 		$client->update;
 	}
 
@@ -460,17 +521,33 @@ sub systemInfoMenu {
 	};
 }
 
+sub maxRate {
+	my $class = shift;
+	my $client = shift;
+
+	my $model = $client->model;
+
+	return  3_000_000 if $model eq 'baby';
+
+	return 10_000_000 if $model =~ /fab4|squeezeplay/;
+
+	return  2_000_000 if $model eq 'squeezebox'; # using old test method
+
+	return  2_000_000; # FIXME - Squeezebox2 no longer works with new firmware
+}
+
 sub testRates {
 	my $client = shift;
 
-	if ($client->isa('Slim::Player::SqueezePlay') || !$client->isa('Slim::Player::Squeezebox2')) {
-		# Squeezeplay and Squeezebox1 can't support high bitrates over the slimproto connection so restrict it
-		return ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000 );
+	my $maxRate = __PACKAGE__->maxRate($client) / 1000;
 
-	} else {
+	my @rates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 8000, 10000 );
 
-		return ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 );
+	while ($rates[$#rates] > $maxRate) {
+		pop @rates;
 	}
+
+	return @rates;
 }
 
 1;

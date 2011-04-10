@@ -759,6 +759,15 @@ sub stream_s {
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
 		$outputThreshold = 1;
+
+	} elsif ($format eq 'test') {
+
+		$formatbyte      = 'n';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 0;
 		
 	} else {
 
