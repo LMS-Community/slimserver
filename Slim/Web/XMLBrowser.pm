@@ -180,7 +180,6 @@ sub handleFeed {
 	my $cache = Slim::Utils::Cache->new;
 	
 	$feed->{'title'} ||= Slim::Utils::Strings::getString($params->{'title'});
-	$stash->{'pagetitle'} = $feed->{'title'};
 	$stash->{'pageicon'}  = $params->{pageicon};
 	
 	if ($feed->{'query'}) {
@@ -531,7 +530,7 @@ sub handleFeed {
 		$feed = $subFeed;
 	}
 	else {
-		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'};
+		$stash->{'pagetitle'} = $feed->{'name'} || $feed->{'title'};
 		$stash->{'playUrl'}   = $feed->{'play'};	
 		
 		if ( $sid ) {

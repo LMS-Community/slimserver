@@ -42,7 +42,7 @@ sub trackinfo {
 	Slim::Web::XMLBrowser->handleWebIndex( {
 		client => $client,
 		path   => 'trackinfo.html',
-		title  => 'SONG_INFO',
+		title  => sprintf('%s (%s)', Slim::Utils::Strings::string('SONG_INFO'), $menu->{'name'}),
 		feed   => $menu,
 		args   => [ $client, $params, @_ ],
 	} );
