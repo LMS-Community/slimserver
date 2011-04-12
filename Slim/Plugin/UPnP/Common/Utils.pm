@@ -242,6 +242,10 @@ sub videoDetails {
 	$xml .= '<upnp:class>object.item.videoItem</upnp:class>'
 		. '<dc:title>' . xmlEscape($video->{title} || $video->{'videos.title'}) . '</dc:title>';
 	
+	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+		$xml .= '<upnp:albumArtURI>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+	}
+	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
 		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
 	}
@@ -289,6 +293,10 @@ sub imageDetails {
 	
 	$xml .= '<upnp:class>object.item.imageItem.photo</upnp:class>'
 		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
+	
+	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+		$xml .= '<upnp:albumArtURI>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+	}
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
 		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
