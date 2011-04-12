@@ -22,7 +22,7 @@ sub updateOrCreateFromResult {
 	
 	my $hash = {
 		url          => $url,
-		hash         => 0, # XXX $result->hash
+		hash         => $result->hash,
 		title        => $title,
 		titlesearch  => $normalize,
 		titlesort    => $normalize,

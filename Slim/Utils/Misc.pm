@@ -648,6 +648,16 @@ sub getVideoDir {
 	return Slim::Utils::Unicode::encode_locale($prefs->get('videodir'));
 }
 
+=head2 getImageDir()
+
+	Get the byte-string (native) version of the imagedir
+
+=cut
+
+sub getImageDir {
+	return Slim::Utils::Unicode::encode_locale($prefs->get('imagedir'));
+}
+
 =head2 inAudioFolder( $)
 
 	Check if argument is an item contained in the music folder tree
@@ -676,6 +686,16 @@ sub inPlaylistFolder {
 
 sub inVideoFolder {
 	return _checkInFolder(shift, getVideoDir());
+}
+
+=head2 inImageFolder( $)
+
+	Check if argument is an item contained in the image tree
+
+=cut
+
+sub inImageFolder {
+	return _checkInFolder(shift, getImageDir());
 }
 
 sub _checkInFolder {

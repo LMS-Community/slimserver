@@ -645,7 +645,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|image|plugins|apps|settings|firmware)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -983,7 +983,7 @@ sub generateHTTPResponse {
 		$contentType = 'application/octet-stream';
 	}
 	
-	if ( $path =~ /(?:music|video)\/\d+\/download/ ) {
+	if ( $path =~ /(?:music|video|image)\/[0-9a-f]+\/download/ ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
 	}
@@ -1222,7 +1222,7 @@ sub generateHTTPResponse {
 				$response,
 			);
 
-		} elsif ($path =~ /(?:music|video)\/(\d+)\/download/) {
+		} elsif ($path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/) {
 			# Bug 10730
 			my $id = $1;
 			
@@ -1238,6 +1238,11 @@ sub generateHTTPResponse {
 			}
 			elsif ( $path =~ /video/ ) {
 				if ( downloadVideoFile($httpClient, $response, $id) ) {
+					return 0;
+				}
+			}
+			elsif ( $path =~ /image/ ) {
+				if ( downloadImageFile($httpClient, $response, $id) ) {
 					return 0;
 				}
 			}
@@ -2689,7 +2694,20 @@ sub downloadVideoFile {
 
 	if ($video) {			
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}) );
-			
+		return 1;
+	}
+	
+	return;
+}
+
+sub downloadImageFile {
+	my ($httpClient, $response, $hash) = @_;
+
+	require Slim::Schema::Image;
+	my $image = Slim::Schema::Image->findhash($hash);
+
+	if ($image) {			
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}) );
 		return 1;
 	}
 	

@@ -16,7 +16,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 use Exporter::Lite;
-our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetails videoDetails);
+our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetails videoDetails imageDetails);
 
 my $log   = logger('plugin.upnp');
 my $prefs = preferences('server');
@@ -237,18 +237,13 @@ sub videoDetails {
 	# This supports either track data from CLI results or _getTagDataForTracks, thus
 	# the checks for alternate hash keys
 	
+	my $hash = $video->{id} || $video->{'videos.id'}; # id is the hash column
+	
 	$xml .= '<upnp:class>object.item.videoItem</upnp:class>'
 		. '<dc:title>' . xmlEscape($video->{title} || $video->{'videos.title'}) . '</dc:title>';
 	
-	if ( my $coverid = ($video->{coverid} || $video->{'videos.coverid'}) ) {
-		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-			$xml .= '<upnp:albumArtURI>' . absURL("/video/$coverid/cover") . '</upnp:albumArtURI>';
-		}
-		
-		if ( $filterall || $filter =~ /upnp:icon/ ) {
-			my $thumbSize = $prefs->get('thumbSize') || 100;
-			$xml .= '<upnp:icon>' . absURL("/video/$coverid/cover_${thumbSize}x${thumbSize}_o") . '</upnp:icon>';
-		}
+	if ( $filterall || $filter =~ /upnp:icon/ ) {
+		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
 	}
 	
 	if ( $filterall || $filter =~ /res/ ) {
@@ -274,7 +269,44 @@ sub videoDetails {
 			$xml .= ' resolution="' . $video->{width} . 'x' . $video->{height} . '"';
 		}
 	
-		$xml .= '>' . absURL('/video/' . ($video->{id} || $video->{'videos.id'}) . '/download') . '</res>';
+		$xml .= '>' . absURL("/video/${hash}/download") . '</res>';
+	}
+	
+	return $xml;
+}
+
+sub imageDetails {
+	my ( $image, $filter ) = @_;
+	
+	my $filterall = ($filter eq '*');
+	
+	my $xml;
+	
+	# This supports either track data from CLI results or _getTagDataForTracks, thus
+	# the checks for alternate hash keys
+	
+	my $hash = $image->{id} || $image->{'images.id'}; # id is the hash column
+	
+	$xml .= '<upnp:class>object.item.imageItem.photo</upnp:class>'
+		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
+	
+	if ( $filterall || $filter =~ /upnp:icon/ ) {
+		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
+	}
+	
+	if ( $filterall || $filter =~ /res/ ) {
+		my $type = $image->{mime_type} || $image->{'images.mime_type'};
+
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+	
+		if ( ($filterall || $filter =~ /res\@size/) ) {
+			$xml .= ' size="' . ($image->{filesize} || $image->{'images.filesize'}) . '"';
+		}
+		if ( ($filterall || $filter =~ /res\@resolution/) ) {
+			$xml .= ' resolution="' . $image->{width} . 'x' . $image->{height} . '"';
+		}
+	
+		$xml .= '>' . absURL("/image/${hash}/download") . '</res>';
 	}
 	
 	return $xml;

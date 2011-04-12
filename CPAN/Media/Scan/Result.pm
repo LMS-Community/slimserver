@@ -4,7 +4,7 @@ use strict;
 
 # Implementation is in xs/Result.xs
 
-sub hash {
+sub as_hash {
     my $self = shift;
     
     return {
@@ -16,6 +16,8 @@ sub hash {
         mtime        => $self->mtime,
         bitrate      => $self->bitrate,
         duration_ms  => $self->duration_ms,
+        hash         => $self->hash,
+        thumbnails   => $self->thumbnails,
     };
 }
 

@@ -480,6 +480,12 @@ MUSIC
 	RU	Музыка
 	SV	Musik
 
+VIDEO
+	EN	Video
+
+PICTURES
+	EN	Pictures
+
 SETTINGS
 	CS	Nastavení
 	DA	Indstillinger
@@ -12726,6 +12732,15 @@ BROWSE_MUSIC_FOLDER
 	RU	Папка "Музыка"
 	SV	Musikmapp
 	ZH_CN	浏览音乐文件夹
+
+BROWSE_VIDEO_FOLDER
+	EN	Video Folder
+
+BROWSE_ALL_VIDEOS
+	EN	All Videos
+
+BROWSE_ALL_PICTURES
+	EN	All Pictures
 
 SYNCHRONIZE
 	CS	Synchronizovat

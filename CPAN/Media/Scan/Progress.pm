@@ -4,7 +4,7 @@ use strict;
 
 # Implementation is in xs/Progress.xs
 
-sub hash {
+sub as_hash {
     my $self = shift;
     
     return {

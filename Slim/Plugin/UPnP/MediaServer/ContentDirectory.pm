@@ -11,7 +11,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 
-use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails);
+use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails imageDetails);
 
 use constant EVENT_RATE => 0.2;
 
@@ -223,7 +223,7 @@ sub Browse {
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/music', parentID => 0, type => $type, title => $string->('MUSIC') },
-			#{ id => '/pictures', parentID => 0, type => $type, title => $string->('PICTURES') },
+			{ id => '/images', parentID => 0, type => $type, title => $string->('PICTURES') },
 			{ id => '/video', parentID => 0, type => $type, title => $string->('VIDEO') },
 		];
 		
@@ -233,7 +233,7 @@ sub Browse {
 					id         => 0,
 					parentID   => -1,
 					type       => 'object.container',
-					title      => 'Squeezebox Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
+					title      => 'Logitech Media Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
 					searchable => 1,
 				} ];
 			}
@@ -281,6 +281,25 @@ sub Browse {
 		my $menu = [
 			{ id => '/v', parentID => '/video', type => $type, title => $string->('BROWSE_VIDEO_FOLDER') },
 			{ id => '/va', parentID => '/video', type => $type, title => $string->('BROWSE_ALL_VIDEOS') },
+		];
+		
+		if ( $flag eq 'BrowseMetadata' ) {
+			# pull out the desired menu item
+			my ($item) = grep { $_->{id} eq $id } @{$menu};
+			$menu = [ $item ];
+		}
+		
+		($xml, $count, $total) = _arrayToDIDLLite( {
+			array  => $menu,
+			sort   => $sort,
+			start  => $start,
+			limit  => $limit,
+		} );
+	}
+	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia)$}) ) { # Image menu
+		my $type = 'object.container';
+		my $menu = [
+			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -498,13 +517,25 @@ sub Browse {
 		
 		### Video
 		elsif ( $id =~ m{^/va} ) { # All Videos
-			if ( $id =~ m{/(\d+)$} ) {
+			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
 					? "video_titles $start $limit video_id:$1 tags:dorfcwht"
 					: "video_titles 0 1 video_id:$1 tags:dorfcwht";
 			}
 			else {
 				$cmd = "video_titles $start $limit tags:dorfcwht";
+			}
+		}
+		
+		### Images
+		elsif ( $id =~ m{^/ia} ) { # All Images
+			if ( $id =~ m{/([0-9a-f]{8})$} ) {
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles $start $limit image_id:$1 tags:ofwht"
+					: "image_titles 0 1 image_id:$1 tags:ofwht";
+			}
+			else {
+				$cmd = "image_titles $start $limit tags:ofwht";
 			}
 		}
 	
@@ -839,6 +870,21 @@ sub _queryToDIDLLite {
 			
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
 			 	. videoDetails($video, $filter)
+			 	. '</item>';
+		}
+	}
+	elsif ( $cmd =~ /^image_titles/ ) {		
+		for my $image ( @{ $results->{images_loop} || [] } ) {
+			$count++;			
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $image->{id};
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the video's parent
+				 # XXX
+			}
+			
+			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
+			 	. imageDetails($image, $filter)
 			 	. '</item>';
 		}
 	}

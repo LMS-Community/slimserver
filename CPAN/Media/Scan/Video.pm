@@ -5,11 +5,11 @@ use base qw(Media::Scan::Result);
 
 # Implementation is in xs/Video.xs and xs/Result.xs
 
-sub hash {
+sub as_hash {
     my $self = shift;
     
     return {
-        %{ $self->SUPER::hash() },
+        %{ $self->SUPER::as_hash() },
         codec  => $self->codec,
         width  => $self->width,
         height => $self->height,

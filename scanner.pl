@@ -81,6 +81,7 @@ use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 use Slim::Video::VideoFolderScan;
+use Slim::Image::ImageFolderScan;
 
 if ( INFOLOG || DEBUGLOG ) {
     require Data::Dump;
@@ -255,6 +256,7 @@ sub main {
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Music::MusicFolderScan->init;
 		Slim::Video::VideoFolderScan->init;
+		Slim::Image::ImageFolderScan->init;
 	}
 	
 	# Load any plugins that define import modules

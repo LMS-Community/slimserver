@@ -28,4 +28,6 @@ DELETE FROM scanned_files;
 
 DELETE FROM videos;
 
+DELETE FROM images;
+
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
