@@ -1226,10 +1226,12 @@ sub generateHTTPResponse {
 			# Bug 10730
 			my $id = $1;
 			
-			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for file download");
-			delete $keepAlives{$httpClient};
-			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
-			$response->header( Connection => 'close' );
+			if ( $path =~ /music|video/ ) {
+				main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for large file download");
+				delete $keepAlives{$httpClient};
+				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+				$response->header( Connection => 'close' );
+			}
 
 			if ( $path =~ /music/ ) {
 				if ( downloadMusicFile($httpClient, $response, $id) ) {

@@ -60,7 +60,7 @@ sub findhash {
 	my ( $class, $id ) = @_;
 	
 	my $sth = Slim::Schema->dbh->prepare_cached( qq{
-		SELECT * FROM videos WHERE id = ?
+		SELECT * FROM videos WHERE hash = ?
 	} );
 	
 	$sth->execute($id);

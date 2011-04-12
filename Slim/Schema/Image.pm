@@ -56,7 +56,7 @@ sub findhash {
 	my ( $class, $id ) = @_;
 	
 	my $sth = Slim::Schema->dbh->prepare_cached( qq{
-		SELECT * FROM images WHERE id = ?
+		SELECT * FROM images WHERE hash = ?
 	} );
 	
 	$sth->execute($id);
