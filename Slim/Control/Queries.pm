@@ -6712,10 +6712,10 @@ sub videoTitlesQuery {
 	my $sort          = $request->getParam('sort');
 	my $videoHash     = $request->getParam('video_id');
 	
-	if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
-		$request->setStatusBadParams();
-		return;
-	}
+	#if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
+	#	$request->setStatusBadParams();
+	#	return;
+	#}
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
@@ -6743,7 +6743,7 @@ sub videoTitlesQuery {
 			}
 		}
 
-		if (specified($search)) {
+		if (specified($search) && $search !~ /sql/) {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
 				push @{$w}, '(' . join( ' OR ', map { 'videos.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
@@ -6871,10 +6871,10 @@ sub imageTitlesQuery {
 	my $sort          = $request->getParam('sort');
 	my $imageHash     = $request->getParam('image_id');
 	
-	if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
-		$request->setStatusBadParams();
-		return;
-	}
+	#if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
+	#	$request->setStatusBadParams();
+	#	return;
+	#}
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
@@ -6902,7 +6902,7 @@ sub imageTitlesQuery {
 			}
 		}
 
-		if (specified($search)) {
+		if (specified($search) && $search !~ /sql/) {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
 				push @{$w}, '(' . join( ' OR ', map { 'images.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
