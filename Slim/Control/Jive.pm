@@ -1006,11 +1006,25 @@ sub syncSettingsQuery {
 	main::INFOLOG && $log->info("Begin function");
 	my $request           = shift;
 	my $client            = $request->client();
-	my $playersToSyncWith = getPlayersToSyncWith($client);
+	my $synchablePlayers  = howManyPlayersToSyncWith($client);
 
-	my @menu = @$playersToSyncWith;
+	if ( $synchablePlayers > 0 ) {
+		my $playersToSyncWith = getPlayersToSyncWith($client);
+		my @menu = @$playersToSyncWith;
+		sliceAndShip($request, $client, \@menu);
 
-	sliceAndShip($request, $client, \@menu);
+	# Bug 16030
+	# when no sync players present, give message about how adding squeezeboxes could allow you to sync players
+	} else {
+		
+		my $textarea = {
+			textarea    => $request->string('SYNC_ADVERTISEMENT'),
+		};
+		$request->addResult('window', $textarea);
+		$request->addResult("count", 0);
+		$request->setStatusDone()
+	}
+
 
 }
 
@@ -1463,11 +1477,8 @@ sub playerSettingsMenu {
 		},
 	};	
 
-	# synchronization. only if numberOfPlayers > 1
-	my $syncItem = syncMenuItem($client, 1);
-	if ($syncItem) {
-		push @menu, $syncItem;
-	}
+	# sync menu
+	push @menu, syncMenuItem($client, 1);
 
 	# information, always display
 	push @menu, {
@@ -1611,30 +1622,23 @@ sub syncMenuItem {
 	my $client = shift;
 	my $batch = shift;
 
-	my $synchablePlayers = howManyPlayersToSyncWith($client);
-	if ($synchablePlayers > 0) {
-		my $return = {
-			text           => $client->string("SYNCHRONIZE"),
-			id             => 'settingsSync',
-			node           => 'settings',
-			weight         => 70,
-			actions        => {
-				go => {
-					cmd    => ['syncsettings'],
-					player => 0,
-				},
+	my $return = {
+		text           => $client->string("SYNCHRONIZE"),
+		id             => 'settingsSync',
+		node           => 'settings',
+		weight         => 70,
+		actions        => {
+			go => {
+				cmd    => ['syncsettings'],
+				player => 0,
 			},
-		};
+		},
+	};
 
-		if ($batch) {
-			return $return;
-		} else {
-			_notifyJive( [ $return ], $client);
-		}
+	if ($batch) {
+		return $return;
 	} else {
-		if ($batch) {
-			return undef;
-		}
+		_notifyJive( [ $return ], $client);
 	}
 }
 

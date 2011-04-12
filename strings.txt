@@ -20760,6 +20760,15 @@ JIVE_DELETE_FROM_FAVORITES
 	RU	Удалить элемент выбранного
 	SV	Ta bort favorit
 
+JIVE_OVERWRITE_PRESET_X
+	EN	Replace %s?
+
+JIVE_SET_PRESET_X
+	EN	Set Preset %s
+
+JIVE_SET_AS_PRESET
+	EN	Set as Preset
+
 JIVE_SAVE_TO_FAVORITES
 	CS	Uložit do Oblíbených
 	DA	Føj til favoritter
@@ -23133,3 +23142,7 @@ RETRYING
 RETRY_LIMIT_EXCEEDED
 # SLT: keep this short
 	EN	Connection retries failed
+
+SYNC_ABOUT
+	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
+
