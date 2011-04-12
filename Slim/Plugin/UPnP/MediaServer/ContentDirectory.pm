@@ -219,7 +219,7 @@ sub Browse {
 	#   All Videos (/va)                                       videos
 	#     Video 1 (/va/<hash>)                                 video_titles video_hash:<hash>
 	
-	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video)$}) ) { # top-level menu
+	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video|images)$}) ) { # top-level menu
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/music', parentID => 0, type => $type, title => $string->('MUSIC') },
@@ -596,6 +596,7 @@ sub Search {
 	my $results;
 	my $count = 0;
 	my $total = 0;
+	my $base_id;
 	
 	my ($sortsql, $tags) = _decodeSortCriteria($sort);
 	
@@ -610,7 +611,21 @@ sub Search {
 	}
 		
 	if ( $id eq '0' ) {
-		$cmd = [ 'titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
+		# XXX quick hack to support images/videos
+		if ( $search eq '(upnp:class derivedfrom "object.item.videoItem")' ) {
+			$tags .= 'wh';
+			$cmd = [ 'video_titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
+			$base_id = '/v';
+		}
+		elsif ( $search eq '(upnp:class derivedfrom "object.item.imageItem")' ) {
+			$tags .= 'wh';
+			$cmd = [ 'image_titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
+			$base_id = '/i';
+		}
+		else {
+			$cmd = [ 'titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
+			$base_id = '/t';
+		}
 	}
 	
 	if ( !$cmd ) {
@@ -637,7 +652,7 @@ sub Search {
 		cmd      => $cmd,
 		results  => $results,
 		flag     => '',
-		id       => '/t', # will construct /t/<id> id's for every item
+		id       => $base_id,
 		filter   => $filter,
 	} );
 	
@@ -873,7 +888,7 @@ sub _queryToDIDLLite {
 			 	. '</item>';
 		}
 	}
-	elsif ( $cmd =~ /^image_titles/ ) {		
+	elsif ( $cmd =~ /^image_titles/ ) {
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $image->{id};
