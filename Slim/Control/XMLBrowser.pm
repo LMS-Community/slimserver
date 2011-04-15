@@ -817,14 +817,14 @@ sub _cliQuery_done {
 			$request->addResult('offset', 0);
 		}
 			
-		# Bug 7024, display an "Empty" item instead of returning an empty list
-		elsif ( $menuMode && !$count && !$xmlBrowseInterimCM) {
-			$items = [ { type => 'text', name => $request->string('EMPTY') } ];
-			$totalCount = $count = 1;
-		}
-	
-		elsif ($count || $xmlBrowseInterimCM) {
+		elsif ($menuMode || $count || $xmlBrowseInterimCM) {
 		
+			# Bug 7024, display an "Empty" item instead of returning an empty list
+			if ( $menuMode && !$count && !$xmlBrowseInterimCM) {
+				$items = [ { type => 'text', name => $request->string('EMPTY') } ];
+				$totalCount = $count = 1;
+			}
+			
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
 
