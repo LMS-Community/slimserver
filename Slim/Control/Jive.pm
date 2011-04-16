@@ -1026,7 +1026,7 @@ sub syncSettingsQuery {
 	} else {
 		
 		my $textarea = {
-			textarea    => $request->string('SYNC_ADVERTISEMENT'),
+			textarea    => $request->string('SYNC_ABOUT'),
 		};
 		$request->addResult('window', $textarea);
 		$request->addResult("count", 0);
