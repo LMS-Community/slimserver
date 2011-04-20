@@ -87,9 +87,23 @@ sub rescan {
 	# we need to udpate lastRescanTime
 	my $changes = 0;
 	
+	my $ignore = [];
+	if ( my $types = $args->{types} ) {
+		if ( $types eq 'image' ) {
+			push @{$ignore}, 'VIDEO', 'AUDIO';
+		}
+		elsif ( $types eq 'video' ) {
+			push @{$ignore}, 'IMAGE', 'AUDIO';
+		}
+		elsif ( $types eq 'audio' ) {
+			push @{$ignore},' VIDEO', 'IMAGE';
+		}
+	}
+	
 	# Begin scan	
 	my $s = Media::Scan->new( $paths, {
-		#loglevel => 9,
+		#loglevel => 5,
+		ignore => $ignore,
 		thumbnails => [
 			{ width => 300 },
 		],
@@ -109,6 +123,9 @@ sub rescan {
 		on_progress => sub {
 			my $progress = shift;
 			# XXX interface with progress data
+		},
+		on_finish => sub {
+			warn "on_finish\n";
 		},
 	} );
 	
