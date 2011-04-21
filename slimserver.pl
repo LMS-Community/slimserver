@@ -1026,6 +1026,9 @@ sub changeEffectiveUserAndGroup {
 }
 
 sub checkDataSource {
+	
+	# XXX probably not needed for LMS
+	return;
 
 	my $audiodir = Slim::Utils::Misc::getAudioDir();
 

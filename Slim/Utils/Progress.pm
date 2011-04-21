@@ -207,12 +207,13 @@ sub update {
 		$elapsed = 0.01;
 	}
     
-	my $rate = $done / $elapsed;
-	$self->rate($rate);
+	if ( my $rate = $done / $elapsed ) {
+		$self->rate($rate);
 	
-	if ( my $total = $self->total ) {
-		# Calculate new ETA value if we know the total
-		$self->eta( int( ( $total - $done ) / $rate ) );
+		if ( my $total = $self->total ) {
+			# Calculate new ETA value if we know the total
+			$self->eta( int( ( $total - $done ) / $rate ) );
+		}
 	}
 
 	if ( $self->dball || $now > $self->dbup + UPDATE_DB_INTERVAL ) {
