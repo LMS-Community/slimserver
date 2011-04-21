@@ -36,8 +36,8 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 package PerlSvc;
 
 our %Config = (
-	DisplayName => 'Squeezebox Server',
-	Description => "Squeezebox Server - streaming music server",
+	DisplayName => 'Logitech Media Server',
+	Description => "Logitech Media Server - streaming media server",
 	ServiceName => "squeezesvc",
 	StartNow    => 0,
 );
@@ -346,7 +346,7 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->error("Starting Squeezebox Server (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
 
 	if ($diag) { 
 		eval "use diagnostics";
@@ -512,9 +512,9 @@ sub init {
 	}
 	
 	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
-	if (Slim::Utils::Misc::getAudioDir()) {
-		require Slim::Music::MusicFolderScan;
-		Slim::Music::MusicFolderScan->init();
+	if (Slim::Utils::Misc::getMediaDirs()) {
+		require Slim::Media::MediaFolderScan;
+		Slim::Media::MediaFolderScan->init();
 	}
 	if (Slim::Utils::Misc::getPlaylistDir()) {
 		require Slim::Music::PlaylistFolderScan;

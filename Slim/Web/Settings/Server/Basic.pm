@@ -24,7 +24,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language audiodir playlistdir libraryname) );
+	return ($prefs, qw(language playlistdir libraryname) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...
@@ -54,7 +54,7 @@ sub handler {
 			$rescanType = [qw(rescan playlists)];
 		}
 
-		for my $pref (qw(audiodir playlistdir)) {
+		for my $pref (qw(playlistdir)) {
 
 			my (undef, $ok) = $prefs->set($pref, $paramRef->{"pref_$pref"});
 
@@ -90,10 +90,26 @@ sub handler {
 				$client->currentPlaylistChangeTime(Time::HiRes::time());
 			}
 		}
+		
+		# handle paths
+		my @paths;
+		my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
+
+		for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
+			if (my $path = $paramRef->{"pref_mediadirs$i"}) {
+				delete $oldPaths{$path};
+				push @paths, $path;
+			}
+		}
+
+		my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
+		$prefs->set('mediadirs', \@paths) if keys %oldPaths || !$oldCount || scalar @paths != $oldCount;
 	}
 
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
+	
+	$paramRef->{'prefs'}->{ 'pref_mediadirs' } = [ @{ $prefs->get('mediadirs') || [] }, '' ];
 
 	return $class->SUPER::handler($client, $paramRef);
 }

@@ -654,7 +654,7 @@ sub _checkLibraryStatus {
 
 =head1 SEE ALSO
 
-L<Slim::Music::MusicFolderScan>
+L<Slim::Media::MediaFolderScan>
 
 L<Slim::Music::PlaylistFolderScan>
 

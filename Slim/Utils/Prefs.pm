@@ -342,6 +342,15 @@ sub init {
 			$prefs->set('librarycachedir', $prefs->get('cachedir'));
 			1;
 		} );
+		
+		# Replace audiodir with mediadirs
+		# Not sure where 5 and 6 went...
+		$prefs->migrate( 7, sub {
+			my $audiodir = $prefs->get('audiodir');
+			$prefs->set( mediadirs => [ $audiodir ] );
+			$prefs->remove('audiodir');
+			1;
+		} );
 	}
 
 	# migrate client prefs to version 2 - sync prefs changed
@@ -786,10 +795,10 @@ sub init {
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
 			Slim::Buttons::BrowseTree->init;
-			require Slim::Music::MusicFolderScan;
-			Slim::Music::MusicFolderScan->init;
+			require Slim::Media::MediaFolderScan;
+			Slim::Media::MediaFolderScan->init;
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
-		}, 'audiodir');
+		}, 'mediadirs');
 	}
 
 	$prefs->setChange( sub {

@@ -59,7 +59,7 @@ sub init {
 	);
 	
 	if ( !$SOCK ) {
-		$log->error("Unable to open UPnP multicast discovery socket: $!");
+		$log->error("Unable to open UPnP multicast discovery socket: ($!) You may have other UPnP software running or a permissions problem.");
 		return;
 	}
 	

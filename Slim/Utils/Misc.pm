@@ -625,6 +625,9 @@ sub stripRel {
 =cut
 
 sub getAudioDir {
+	$scannerlog->error("getAudioDir is deprecated, use getMediaDirs instead");
+	return getMediaDirs()->[0];
+	
 	return Slim::Utils::Unicode::encode_locale($prefs->get('audiodir'));
 }
 
@@ -638,24 +641,14 @@ sub getPlaylistDir {
 	return Slim::Utils::Unicode::encode_locale($prefs->get('playlistdir'));
 }
 
-=head2 getVideoDir()
+=head2 getMediaDirs()
 
-	Get the byte-string (native) version of the videodir
-
-=cut
-
-sub getVideoDir {
-	return Slim::Utils::Unicode::encode_locale($prefs->get('videodir'));
-}
-
-=head2 getImageDir()
-
-	Get the byte-string (native) version of the imagedir
+	Returns an arrayref of all media directories.
 
 =cut
 
-sub getImageDir {
-	return Slim::Utils::Unicode::encode_locale($prefs->get('imagedir'));
+sub getMediaDirs {
+	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get('mediadirs') } ];
 }
 
 =head2 inAudioFolder( $)
@@ -683,20 +676,6 @@ sub inPlaylistFolder {
 	Check if argument is an item contained in the video tree
 
 =cut
-
-sub inVideoFolder {
-	return _checkInFolder(shift, getVideoDir());
-}
-
-=head2 inImageFolder( $)
-
-	Check if argument is an item contained in the image tree
-
-=cut
-
-sub inImageFolder {
-	return _checkInFolder(shift, getImageDir());
-}
 
 sub _checkInFolder {
 	my $path = shift || return;

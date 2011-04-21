@@ -280,7 +280,7 @@ sub infoServer {
 	my $items = [
 		{
 			type => 'text',
-			name => sprintf("%s%s %s - %s @ %s",
+			name => sprintf("Logitech Media Server %s%s %s - %s @ %s",
 						cstring($client, 'INFORMATION_VERSION'),
 						cstring($client, 'COLON'),
 						$::VERSION,

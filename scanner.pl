@@ -71,7 +71,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
-use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -80,8 +79,7 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
-use Slim::Video::VideoFolderScan;
-use Slim::Image::ImageFolderScan;
+use Slim::Media::MediaFolderScan;
 
 if ( INFOLOG || DEBUGLOG ) {
     require Data::Dump;
@@ -195,7 +193,7 @@ sub main {
 	
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	$log->error("Starting Squeezebox Server scanner (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server scanner (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);
@@ -253,10 +251,8 @@ sub main {
 
 	} else {
 
+		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
-		Slim::Music::MusicFolderScan->init;
-		Slim::Video::VideoFolderScan->init;
-		Slim::Image::ImageFolderScan->init;
 	}
 	
 	# Load any plugins that define import modules
