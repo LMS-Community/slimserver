@@ -106,6 +106,7 @@ sub rescan {
 	my $s = Media::Scan->new( $paths, {
 		#loglevel => 5,
 		#async => $args->{no_async} ? 0 : 1,
+		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
 		thumbnails => [
 			{ width => 300 }, # XXX
