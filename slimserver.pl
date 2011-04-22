@@ -1026,9 +1026,6 @@ sub changeEffectiveUserAndGroup {
 }
 
 sub checkDataSource {
-	
-	# XXX probably not needed for LMS
-	return;
 
 	my $audiodir = Slim::Utils::Misc::getAudioDir();
 
@@ -1043,10 +1040,19 @@ sub checkDataSource {
 	
 	# Don't launch an initial scan on SqueezeOS, it will be handled by AutoRescan
 	return if Slim::Utils::OSDetect::isSqueezeOS();
+	
+	# Count entries for all media types, run scan if all are empty
+	my $dbh = Slim::Schema->dbh;
+	my ($tc, $vc, $ic) = $dbh->selectrow_array( qq{
+		SELECT
+			(SELECT COUNT(*) FROM tracks where audio = 1) as tc,
+			(SELECT COUNT(*) FROM videos) as vc,
+			(SELECT COUNT(*) FROM images) as ic
+	} );
 
-	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
+	if (Slim::Schema->schemaUpdated || (!$tc && !$vc && !$ic)) {
 
-		logWarning("Schema updated or no tracks in the database, initiating scan.");
+		logWarning("Schema updated or no media found in the database, initiating scan.");
 
 		Slim::Control::Request::executeRequest(undef, ['wipecache']);
 	}
