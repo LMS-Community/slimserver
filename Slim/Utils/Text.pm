@@ -13,6 +13,7 @@ package Slim::Utils::Text;
 use strict;
 
 use Slim::Utils::Prefs;
+use Slim::Utils::Unicode;
 
 my $prefs = preferences('server');
 
@@ -132,6 +133,7 @@ strip out characters beyond U+FFFF as MySQL doesn't like them in TEXT fields.
 
 sub ignoreCaseArticles {
 	my $s = shift;
+	my $transliterate = shift;
 
 	if (!defined $s) {
 		return undef;
@@ -145,22 +147,29 @@ sub ignoreCaseArticles {
 	if (scalar keys %caseArticlesCache > 256) {
 		%caseArticlesCache = ();
 	}
+	
+	my $key = $s . ($transliterate ? '1' : '0');
 
-	if (!$caseArticlesCache{$s}) {
+	if (!$caseArticlesCache{$key}) {
 
 		use locale;
 
-		$caseArticlesCache{$s} = ignorePunct(ignoreArticles(uc($s)));
+		$caseArticlesCache{$key} = ignorePunct(ignoreArticles(uc($s)));
 
 		# Remove characters beyond U+FFFF as MySQL doesn't like them in TEXT fields
-		$caseArticlesCache{$s} =~ s/[\x{10000}-\x{10ffff}]//g;
+		$caseArticlesCache{$key} =~ s/[\x{10000}-\x{10ffff}]//g;
 
 		# strip leading & trailing spaces
-		$caseArticlesCache{$s} =~ s/^ +//o;
-		$caseArticlesCache{$s} =~ s/ +$//o;
+		$caseArticlesCache{$key} =~ s/^ +//o;
+		$caseArticlesCache{$key} =~ s/ +$//o;
+		
+		if ($transliterate) {
+			# Bug 16956, Transliterate Unicode characters
+			$caseArticlesCache{$key} = Slim::Utils::Unicode::utf8toLatin1Transliterate($s);
+		}
 	}
 
-	return $caseArticlesCache{$s};
+	return $caseArticlesCache{$key};
 }
 
 =head2 clearCaseArticleCache()
@@ -194,7 +203,7 @@ sub searchStringSplit {
 
 	# normalize the string
 	$search = Slim::Utils::Unicode::utf8decode_locale($search);
-	$search = ignoreCaseArticles($search);
+	$search = ignoreCaseArticles($search, 1);
 
 	my @strings = ();
 

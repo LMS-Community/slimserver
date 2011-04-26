@@ -30,7 +30,7 @@ use Slim::Utils::Log;
 	$class->has_many('genreTracks' => 'Slim::Schema::GenreTrack' => 'genre');
 
 	if ($] > 5.007) {
-		$class->utf8_columns(qw/name namesort namesearch/);
+		$class->utf8_columns(qw/name namesort/);
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Genre');
@@ -76,6 +76,7 @@ sub add {
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
 		my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
+		my $namesearch = Slim::Utils::Text::ignoreCaseArticles($genreSub, 1);
 
 		# So that ucfirst() works properly.
 		use locale;
@@ -92,7 +93,7 @@ sub add {
 				VALUES
 				(?, ?, ?)
 			} );
-			$sth->execute( $namesort, ucfirst($genreSub), $namesort );
+			$sth->execute( $namesort, ucfirst($genreSub), $namesearch );
 			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
 		
