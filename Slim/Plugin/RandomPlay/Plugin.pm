@@ -1153,6 +1153,7 @@ sub commandCallback {
 		}
 
 		my $songsToKeep = $prefs->get('oldtracks');
+		my $playlistCount = Slim::Player::Playlist::count($client);
 
 		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
 
@@ -1169,13 +1170,25 @@ sub commandCallback {
 		}
 
 		Slim::Utils::Timers::killTimers($client, \&_addTracksLater);
-		Slim::Utils::Timers::setTimer($client, time() + 15, \&_addTracksLater);
+
+		# Bug: 16890 only defer adding tracks if we are not nearing end of the playlist
+		# this avoids repeating the playlist due to the user skipping tracks
+		if ($playlistCount - $songIndex > 2) {
+
+			Slim::Utils::Timers::setTimer($client, time() + 15, \&_addTracksLater);
+
+		} else {
+
+			playRandom($client, $mixInfo{$client->master()->id}->{'type'}, 1);
+		}
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("Cyclic mode ending due to playlist: %s command", $request->getRequestString));
 		}
+
+		Slim::Utils::Timers::killTimers($client, \&_addTracksLater);
 
 		playRandom($client, 'disable');
 	}
@@ -1184,7 +1197,7 @@ sub commandCallback {
 sub _addTracksLater {
 	my $client = shift;
 	
-	if (defined $mixInfo{$client->master()->id}) {
+	if ($mixInfo{$client->master()->id} && $mixInfo{$client->master()->id}->{'type'}) {
 		playRandom($client, $mixInfo{$client->master()->id}->{'type'}, 1);
 	}
 }
