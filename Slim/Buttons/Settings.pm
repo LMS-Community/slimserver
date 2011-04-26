@@ -416,7 +416,12 @@ sub init {
 							'useMode'      => 'INPUT.Choice',
 							'header'       => '{TEXTSIZE}',
 							'headerAddCount' => 1,
-							'onChange'     => \&setPref,
+							# to display the font options, we temporarily set the activeFont pref to the current selection and then reset the pref in exit callback
+							'onChange'     => sub { $prefs->client($_[0])->set('activeFont_curr', $_[1]->{'value'}) },
+							'onPlay'       => sub { $_[0]->modeParam('settextsize', $_[1]->{'value'}) },
+							'onAdd'        => sub { $_[0]->modeParam('settextsize', $_[1]->{'value'}) },
+							'overlayRef'   => sub { [undef, Slim::Buttons::Common::radioButtonOverlay($_[0], $_[1]->{'value'} eq $_[0]->modeParam('settextsize')) ] },
+							'overlayRefArgs' => 'CV',
 							'pref'         => 'activeFont_curr',
 							'initialValue' => sub { $prefs->client(shift)->get('activeFont_curr') },
 							'condition'    => sub { $_[0]->display->isa('Slim::Display::Graphics'); },
@@ -435,7 +440,21 @@ sub init {
 								}
 		
 								$client->modeParam('listRef', \@fonts);
-							}
+								$client->modeParam('settextsize', $prefs->client($client)->get('activeFont_curr'));
+							},
+							'callback'      => sub {
+								my $client = shift;
+								my $action = shift;
+								if ($action eq 'right') {
+									my $valref = $client->modeParam('valueRef');
+									$client->modeParam('settextsize', $$valref->{'value'});
+									$client->update;
+								}
+								if ($action eq 'left') {
+									setPref($client, $client->modeParam('settextsize'));
+									Slim::Buttons::Common::popModeRight($client);
+								}
+							},
 						},
 
 						# Brightness submenus
