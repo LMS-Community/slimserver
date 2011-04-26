@@ -18,6 +18,7 @@ Supported args:
 						  #   m: max         (default, fit image into given space while keeping aspect ratio)
 						  #   p: pad
 						  #   o: original    (ignore height if given, resize only based on width)
+						  #   F: ???         (return original if req. size is bigger, return downsized if req. size is smaller)
 	format   => $format   # Optional, output format (png, jpg)
 	                      #   Defaults to jpg if source is jpg, otherwise png
 	width    => $width    # Output size.  One of width or height is required
@@ -133,6 +134,29 @@ sub resize {
 			# XXX memory_limit on SqueezeOS
 		} );
 	}
+
+	elsif ( $mode eq 'F' ) {
+		# Requested size is bigger than original -> return original size
+		if (( $width >= $in_width ) && ( $height >= $in_height)) {
+			$debug && warn "Return original size ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height}\n";
+			$im->resize( {
+				width       => $in_width,
+				height      => $in_height,
+				keep_aspect => 1,
+				# XXX memory_limit on SqueezeOS
+			} );
+		# Requested size is smaller than original -> resize to requested size
+		} else {
+			$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height}\n";
+			$im->resize( {
+				width       => $width,
+				height      => $height,
+				keep_aspect => 1,
+				# XXX memory_limit on SqueezeOS
+			} );
+		}
+	}
+
 	else { # mode 'o', only use the width
 		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}xX\n";
 		
