@@ -437,6 +437,7 @@ sub scanPlaylistFileHandle {
 
 		$playlist->title($title);
 		$playlist->titlesort( Slim::Utils::Text::ignoreCaseArticles( $title ) );
+		$playlist->titlesearch( Slim::Utils::Text::ignoreCaseArticles( $title, 1 ) );
 	}
 
 	# With the special url if the playlist is in the

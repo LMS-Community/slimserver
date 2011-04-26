@@ -68,7 +68,7 @@ if ( main::SLIM_SERVICE ) {
 		$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 
 		if ($] > 5.007) {
-			$class->utf8_columns(qw/title titlesort titlesearch lyrics/);
+			$class->utf8_columns(qw/title titlesort lyrics/);
 		}
 	}
 	else {
