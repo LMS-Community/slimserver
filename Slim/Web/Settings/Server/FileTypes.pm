@@ -69,7 +69,7 @@ sub handler {
 	for my $profile (sort { $a cmp $b } (grep { $_ !~ /transcode/ } (keys %{$formatslistref}))) {
 
 		# skip internal formats which should not be shown or disabled 
-		next if $profile =~ /^spdr/;
+		next if $profile =~ /^spdr|^test/;
 
 		my @profileitems = split('-', $profile);
 		my @binaries     = ('DISABLED');

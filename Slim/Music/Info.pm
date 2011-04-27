@@ -1125,7 +1125,8 @@ sub isPlaylistURL {
 	if ($url =~ /^([a-zA-Z0-9\-]+):/) {
 
 		my $handler = Slim::Player::ProtocolHandlers->handlerForProtocol($1);
-		if ($handler && $handler->can('isPlaylistURL')) {
+		# check handler is a real handler first by matching :: 
+		if ($handler && $handler =~ /::/ && $handler->can('isPlaylistURL')) {
 			return $handler->isPlaylistURL($url);
 		}
 

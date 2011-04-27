@@ -62,7 +62,6 @@ sub getInitialAudioBlock {
 	my ($class, $fh, $track) = @_;
 	
 	# bug 10026: do not provide header when streaming as PCM
-	print(${*$fh}{'streamFormat'}, "\n");
 	if (${*$fh}{'streamFormat'} eq 'pcm') {
 		return '';
 	}
