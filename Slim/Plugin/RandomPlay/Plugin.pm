@@ -1233,9 +1233,9 @@ sub commandCallback {
 
 		# Bug: 16890 only defer adding tracks if we are not nearing end of the playlist
 		# this avoids repeating the playlist due to the user skipping tracks
-		if ($playlistCount - $songIndex > 2) {
+		if ($playlistCount - $songIndex > $prefs->get('newtracks') / 2) {
 
-			Slim::Utils::Timers::setTimer($client, time() + 15, \&_addTracksLater);
+			Slim::Utils::Timers::setTimer($client, time() + 10, \&_addTracksLater);
 
 		} else {
 
