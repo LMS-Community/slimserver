@@ -90,34 +90,34 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2010 Logitech Verze 7.6.0
-	DA	© 2001-2010 Logitech - version 7.6.0
-	DE	© 2001-2010 Logitech Version 7.6.0
-	EN	© 2001-2010 Logitech Version 7.6.0
-	ES	© 2001-2010 Logitech versión 7.6.0
-	FI	© 2001-2010 Logitech-versio 7.6.0
-	FR	© 2001-2010 Logitech Version 7.6.0
-	IT	© 2001-2010 Logitech Versione 7.6.0
-	NL	© 2001-2010 Logitech Versie 7.6.0
-	NO	© 2001–2010 Logitech versjon 7.6.0
-	PL	© 2001-2010 Logitech wersja 7.6.0
-	RU	© Logitech, 2001-2010. Версия 7.6.0
-	SV	© 2001–2010 Logitech Version 7.6.0
+	CS	© 2001-2011 Logitech Verze 7.6.0
+	DA	© 2001-2011 Logitech - version 7.6.0
+	DE	© 2001-2011 Logitech Version 7.6.0
+	EN	© 2001-2011 Logitech Version 7.6.0
+	ES	© 2001-2011 Logitech versión 7.6.0
+	FI	© 2001-2011 Logitech-versio 7.6.0
+	FR	© 2001-2011 Logitech Version 7.6.0
+	IT	© 2001-2011 Logitech Versione 7.6.0
+	NL	© 2001-2011 Logitech Versie 7.6.0
+	NO	© 2001–2011 Logitech versjon 7.6.0
+	PL	© 2001-2011 Logitech wersja 7.6.0
+	RU	© Logitech, 2001-2011. Версия 7.6.0
+	SV	© 2001–2011 Logitech Version 7.6.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2010 Logitech
-	DA	© 2001-2010 Logitech
-	DE	© 2001-2010 Logitech
-	EN	© 2001-2010 Logitech
-	ES	© 2001-2010 Logitech
-	FI	© 2001-2010 Logitech
-	FR	© 2001-2010 Logitech
-	IT	© 2001-2010 Logitech
-	NL	© 2001-2010 Logitech
-	NO	© 2001-2010 Logitech
-	PL	© 2001-2010 Logitech
-	RU	© Logitech, 2001-2010
-	SV	© 2001-2010 Logitech
+	CS	© 2001-2011 Logitech
+	DA	© 2001-2011 Logitech
+	DE	© 2001-2011 Logitech
+	EN	© 2001-2011 Logitech
+	ES	© 2001-2011 Logitech
+	FI	© 2001-2011 Logitech
+	FR	© 2001-2011 Logitech
+	IT	© 2001-2011 Logitech
+	NL	© 2001-2011 Logitech
+	NO	© 2001-2011 Logitech
+	PL	© 2001-2011 Logitech
+	RU	© Logitech, 2001-2011
+	SV	© 2001-2011 Logitech
 
 VERSION
 	CS	Verze 7.6.0 / r%s
@@ -8276,7 +8276,7 @@ SETUP_WEBPROXY_DESC
 	IT	Si può specificare l'indirizzo IP e la porta da utilizzare con un proxy HTTP/Web quando Squeezebox Server si collega a server al di fuori della propria rete locale. Utilizzare il formato xx.xx.xx.xx:yyyy dove xx.xx.xx.xx è l'indirizzo IP del proxy e yyyy è il numero della porta. Lasciare vuoto questo campo se non si utilizza alcun proxy HTTP/Web.
 	JA	ローカルネットワーク以外でSqueezebox Serverを接続される場合に、HTTP/Web Proxyの為のIPとポート番号を設定することができます。xx.xx.xx.xx:yyyyのように入力してください。xx.xx.xx.xxはIPアドレス、yyyyはポート番号を表します。
 	NL	Je kunt het IP-adres en poortnummer opgeven voor een HTTP/Webproxy die gebruikt moet worden wanneer Squeezebox Server een verbinding met servers buiten je lokale netwerk moet maken. Gebruik de notatie xx.xx.xx.xx:yyyy, waarbij xx.xx.xx.xx het IP-adres van de proxy is en yyyy het poortnummer Laat dit veld leeg als je geen HTTP/Webproxy gebruikt.
-	NO	Du kan angi ip-adresse og port for en HTTP/Webproxy som brukes når Squeezebox Server kopler til servere utenfor det lokale nettverket. Bruk formatet xx.xx.xx.xx:yyyy, der xx.xx.xx.xx er ip-adressen til proxyen, og yyyy er portnummeret. La dette feltet stå tomt hvis du ikke bruker en http-webproxy.
+	NO	Du kan angi IP-adresse og port for en HTTP/Webproxy som brukes når Squeezebox Server kopler til servere utenfor det lokale nettverket. Bruk formatet xx.xx.xx.xx:yyyy, der xx.xx.xx.xx er IP-adressen til proxyen, og yyyy er portnummeret. La dette feltet stå tomt hvis du ikke bruker en http-webproxy.
 	PL	Możliwe jest określenie adresu IP portu serwera proxy HTTP/internetowego używanego przez program Squeezebox Server do łączenia z serwerami poza siecią lokalną. Użyj formatu xx.xx.xx.xx:yyyy, gdzie xx.xx.xx.xx to adres IP serwera proxy, a yyyy to numer portu. Jeżeli nie chcesz korzystać z internetowego serwera proxy HTTP, pozostaw to pole puste.
 	RU	Можно задать IP-адрес и порт, используемые HTTP или веб-прокси при подключении Squeezebox Server к серверам вне локальной сети. Используйте формат xx.xx.xx.xx:yyyy, где xx.xx.xx.xx — IP-адрес прокси, а yyyy — номер порта. Не заполняйте это поле, если HTTP или веб-прокси не используется.
 	SV	Du kan ange IP-adress och port för en HTTP-/webbproxy som ska användas när Squeezebox Server ansluter till servrar utanför ditt lokala nätverk.  Använd formatet xx.xx.xx.xx:yyyy, där xx.xx.xx.xx är proxyns IP-adress och yyyy portnumret.  Lämna fältet tomt om du inte använder någon HTTP-/webbproxy.
@@ -8365,7 +8365,7 @@ SETUP_IPFILTER_DESC
 	IT	Questa opzione consente di bloccare le richieste CLI e HTTP in ingresso in base all'indirizzo IP di origine.
 	JA	このオプションは、外からのCLIまたはHTTP要請をIPアドレスによってブロックすることができるようにします。
 	NL	Met behulp van deze optie kunnen inkomende CLI- en HTTP-aanvragen op IP-bronadres geblokkeerd worden.
-	NO	Dette valget gir deg muligheten til å blokkere for inngående CLI- og HTTP-forbindelser basert på ip-adresse.
+	NO	Dette valget gir deg muligheten til å blokkere for inngående CLI- og HTTP-forbindelser basert på IP-adresse.
 	PL	Ta opcja umożliwia włączenie blokowania przychodzących żądań CLI i HTTP według źródłowego adresu IP.
 	PT	Esta opção permite bloquear ligações remotas à porta HTTP ou à da linha de comando, baseado no IP de origem.
 	RU	С помощью этого параметра можно заблокировать входящие запросы CLI и HTTP по IP-адресу источника.
@@ -8422,7 +8422,7 @@ SETUP_FILTERRULE_HEAD
 	IT	Indirizzi IP validi
 	JA	認められるIPアドレス
 	NL	Geldige IP-adressen
-	NO	Tillatte ip-adresser
+	NO	Tillatte IP-adresser
 	PL	Dozwolone adresy IP
 	PT	Endereços IP Permitidos
 	RU	Разрешенные IP-адреса
@@ -8441,7 +8441,7 @@ SETUP_FILTERRULE_DESC
 	IT	Se è stato attivato il blocco, è possibile inserire gli indirizzi a cui consentire la connessione a Squeezebox Server.<br><br>In questo campo è possibile inserire un elenco di indirizzi IP specifici, il carattere jolly * ed elenchi di intervalli di indirizzi IP separati da virgole. Ad esempio:<BR><BR>se si specifica<B>10.1.2.2</B>, viene accettata solo la connessione con l'indirizzo 10.1.2.2<BR><BR>se si specifica<B>10.1.2.*</B>, viene accettata la connessione con tutti gli indirizzi IP che iniziano con 10.1.2.x<BR><BR>se si specifica<B>10.1.2.2-50</B>, viene accettata la connessione con indirizzi IP compresi tra 10.1.2.2 e 10.1.2.50<BR><BR>Infine, è possibile specificare più indirizzi IP separandoli con virgole, ad esempio:<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 consente di connettere un browser Web a Squeezebox Server in esecuzione sullo stesso computer.
 	JA	ブロックする、と指定したのであれば、Squeezebox Serverに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがSqueezebox Serverに接続する時に接続を可能にします。
 	NL	Als je 'Blokkeren' hebt ingesteld, kun je de adressen invoeren die je toegang wilt geven tot Squeezebox Server.<br><br>Dit veld accepteert een lijst van specifieke IP-adressen, jokertekens zoals '*' en IP-adresbereiken in een kommagescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> staat alleen 10.1.2.2 toe een verbinding te maken<br><br><b>10.1.2.*</b> verleent elk IP-adres met de vorm 10.1.2.x toegang.<br><br><b>10.1.2.2-50</b> verleent IP-adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Ten slotte kunnen meerdere adressen als volgt met komma's gecombineerd worden:<b>10.1.2.2,172.16.1.*,192.168.1-254</b><br><br>Het speciale IP-adres 127.0.0.1 verleent toegang aan webbrowsers die op dezelfde computer als Squeezebox Server zelf draaien.
-	NO	Hvis du har aktivert blokkering kan du angi de ip-adressene som skal få kople seg til Squeezebox Server.<br><br>I dette feltet kan du angi en kommadelt liste med ip-adresser, jokertegn som *, og en kommadelt liste med ip-adressegrupper. Eksempel:<BR><BR><B>10.1.2.2</B> tillater kun at 10.1.2.2 kopler seg til.<BR><BR><B>10.1.2.*</B> tillater alle ip-adresser som begynner med 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> tillater at ip-adresser i gruppen 10.1.2.2–10.1.2.50 kopler seg til.<BR><BR>Du kan også kombinere oppføringer med komma, slik som dette: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Spesial-ip-adressen 127.0.0.1 gjør at en nettleser som kjører på samme datamaskin kan kople seg til Squeezebox Server.
+	NO	Hvis du har aktivert blokkering kan du angi de IP-adressene som skal få kople seg til Squeezebox Server.<br><br>I dette feltet kan du angi en kommadelt liste med IP-adresser, jokertegn som *, og en kommadelt liste med IP-adressegrupper. Eksempel:<BR><BR><B>10.1.2.2</B> tillater kun at 10.1.2.2 kopler seg til.<BR><BR><B>10.1.2.*</B> tillater alle IP-adresser som begynner med 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> tillater at IP-adresser i gruppen 10.1.2.2–10.1.2.50 kopler seg til.<BR><BR>Du kan også kombinere oppføringer med komma, slik som dette: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Spesial-IP-adressen 127.0.0.1 gjør at en nettleser som kjører på samme datamaskin kan kople seg til Squeezebox Server.
 	PL	Jeżeli włączono blokowanie, możesz wprowadzić adresy, które będą mogły się łączyć z programem Squeezebox Server.<br><br>W tym polu można wpisać określone adresy IP, znaki wieloznaczne typu * i zakresy adresów IP na liście rozdzielonej przecinkami. Na przykład: wpisanie <BR><BR><B>10.1.2.2</B> umożliwi połączenie tylko z adresu 10.1.2.2<BR><BR>Wpisanie <B>10.1.2.*</B> umożliwi połączenie z dowolnego adresu IP w postaci 10.1.2.x.<BR><BR>Wpisanie <B>10.1.2.2-50</B> umożliwi połączenie z adresów IP w zakresie 10.1.2.2&ndash;10.1.2.50.<BR><BR>Można także dodać kilka wpisów rozdzielonych przecinkami, na przykład: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Specjalny adres IP 127.0.0.1 umożliwia przeglądarce internetowej połączenie z programem Squeezebox Server uruchomionym na tym samym komputerze.
 	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao Squeezebox Server.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
 	RU	При включенном блокировании можно ввести адреса, с которых разрешено подключение к Squeezebox Server.<br><br>В данное поле можно ввести список разделенных запятыми IP-адресов, подстановочных знаков (*) и диапазонов IP-адресов. Например:<BR><BR><B>10.1.2.2</B> — подключение будет разрешено только для IP-адреса 10.1.2.2<BR><BR><B>10.1.2.*</B> — разрешено для IP-адресов вида 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> — разрешено для IP-адресов в диапазоне 10.1.2.2 — 10.1.2.50.<BR><BR>Наконец, можно ввести через запятую несколько элементов: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Специальный IP-адрес 127.0.0.1 позволяет веб-браузеру подключаться к Squeezebox Server, запущенному на этом же компьютере.
@@ -11339,7 +11339,7 @@ WMAP
 	FR	WMA Pro
 	IT	WMA Pro
 	NL	WMA Pro
-	NO	WMA Pro
+	NO	WMAPro
 	PL	WMA Pro
 	RU	WMA Pro
 	SV	WMA Pro
@@ -13829,7 +13829,7 @@ SERVER_IP_ADDRESS
 	HE	כתובת ה-IP של השרת
 	IT	Indirizzo IP del server
 	NL	IP-adres van server
-	NO	Serverens ip-adresse
+	NO	Serverens IP-adresse
 	PL	Adres IP serwera
 	RU	IP-адрес сервера
 	SV	Serverns IP-adress
@@ -13846,7 +13846,7 @@ PLAYER_IP_ADDRESS
 	IT	L'indirizzo IP del lettore è
 	JA	このプレーヤーのIPアドレスは 
 	NL	Het IP-adres van dit muzieksysteem is
-	NO	Spillerens ip-adresse er
+	NO	Spillerens IP-adresse er
 	PL	Adres IP tego odtwarzacza to
 	PT	O endereço IP deste cliente é
 	RU	IP-адрес данного плеера —
@@ -14628,7 +14628,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	IT	Se l'indirizzo IP del lettore non appare nel display, tenere premuto il tasto BRIGHTNESS finché non viene visualizzato. Inserire qui l'indirizzo IP visualizzato nel display:
 	JA	もしプレーヤーのIPアドレスが画面に表示されなければ、表示されるまでBRIGHTNESSボタンを押しつづけてください。そして、ここにIPアドレスを入力してください :
 	NL	Als het IP-adres van je muzieksysteem niet op het scherm wordt weergegeven, houd je de knop BRIGHTNESS ingedrukt tot het verschijnt. Voer dan hier het weergegeven IP-adres in:
-	NO	Hvis ip-adressen til spilleren ikke vises på spillerens skjerm, må du holde inne knappen BRIGHTNESS til den vises. Når du ser adressen, skriver du den inn her:
+	NO	Hvis IP-adressen til spilleren ikke vises på spillerens skjerm, må du holde inne knappen BRIGHTNESS til den vises. Når du ser adressen, skriver du den inn her:
 	PL	Jeżeli adres IP odtwarzacza nie jest wyświetlany na jego ekranie, naciśnij i przytrzymaj przycisk BRIGHTNESS, aż do wyświetlenia adresu. Następnie wprowadź wyświetlony adres IP widoczny na ekranie tutaj:
 	RU	Если IP-адрес плеера не отображается на экране, нажмите и удерживайте кнопку BRIGHTNESS, пока он не появится. Затем введите отображаемый IP-адрес в следующее поле:
 	SV	Om spelarens IP-adress inte visas på skärmen på spelaren håller du knappen BRIGHTNESS nedtryckt tills adressen visas.  Ange sedan IP-adressen här:
@@ -16201,7 +16201,7 @@ INFORMATION_PLAYER_IP
 	IT	Indirizzo IP del lettore
 	JA	プレーヤーIPアドレス
 	NL	IP-adres van muzieksysteem
-	NO	Spillerens ip-adresse
+	NO	Spillerens IP-adresse
 	PL	Adres IP odtwarzacza
 	RU	IP-адрес плеера
 	SV	Spelarens IP-adress
@@ -16217,7 +16217,7 @@ INFORMATION_PLAYER_IP_ABBR
 	FR	IP
 	IT	IP
 	NL	IP
-	NO	Ip
+	NO	IP
 	PL	Adres IP
 	RU	IP-адрес
 	SV	IP
@@ -16425,7 +16425,7 @@ INFORMATION_SERVER_IP
 	IT	Indirizzo IP del server
 	JA	サーバーIPアドレス
 	NL	IP-adres van server
-	NO	Serverens ip-adresse
+	NO	Serverens IP-adresse
 	PL	Adres IP serwera
 	RU	IP-адрес сервера
 	SV	Serverns IP-adress
@@ -16441,7 +16441,7 @@ INFORMATION_SERVER_IP_ABBR
 	FR	IP
 	IT	IP
 	NL	IP
-	NO	Ip
+	NO	IP
 	PL	Adres IP
 	RU	IP-адрес
 	SV	IP
@@ -16679,7 +16679,7 @@ INFORMATION_HOSTIP
 	HE	כתובת ה-IP של המארח
 	IT	Indirizzo IP host
 	NL	IP-adres van host
-	NO	Verts-ip
+	NO	Verts-IP
 	PL	Adres IP hosta
 	RU	IP-адрес узла
 	SV	Värdens IP-adress
