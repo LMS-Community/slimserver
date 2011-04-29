@@ -1145,6 +1145,7 @@ sub webLink {
 	# wrap async requests
 	if ( $proxiedRequest->isStatusProcessing ) {			
 		$proxiedRequest->callbackFunction( sub { _webLinkDone($client, $_[0]->getResults, $title, $allArgs); } );
+		return undef;
 	} else {
 		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
 	}
