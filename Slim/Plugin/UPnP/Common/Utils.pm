@@ -175,6 +175,23 @@ sub trackDetails {
 		}
 	}
 	
+	# mtime is used for all values as fallback
+	my $mtime = $track->{modificationTime} || $track->{'tracks.timestamp'};
+	
+	if ( $filterall || $filter =~ /pv:modificationTime/ ) {
+		$xml .= "<pv:modificationTime>${mtime}</pv:modificationTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:addedTime/ ) {
+		my $added_time = $track->{addedTime} || $track->{'tracks.added_time'} || $mtime;
+		$xml .= "<pv:addedTime>${added_time}</pv:addedTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:lastUpdated/ ) {
+		my $updated = $track->{lastUpdated} || $track->{'tracks.updated_time'} || $mtime;
+		$xml .= "<pv:lastUpdated>${updated}</pv:lastUpdated>";
+	}
+	
 	if ( $filterall || $filter =~ /res/ ) {
 		my ($bitrate) = $track->{bitrate} =~ /^(\d+)/;
 		if ( !$bitrate && $track->{'tracks.bitrate'} ) {
@@ -250,6 +267,23 @@ sub videoDetails {
 		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
 	}
 	
+	# mtime is used for all values as fallback
+	my $mtime = $video->{mtime} || $video->{'videos.mtime'};
+	
+	if ( $filterall || $filter =~ /pv:modificationTime/ ) {
+		$xml .= "<pv:modificationTime>${mtime}</pv:modificationTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:addedTime/ ) {
+		my $added_time = $video->{added_time} || $video->{'videos.added_time'} || $mtime;
+		$xml .= "<pv:addedTime>${added_time}</pv:addedTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:lastUpdated/ ) {
+		my $updated = $video->{updated_time} || $video->{'videos.updated_time'} || $mtime;
+		$xml .= "<pv:lastUpdated>${updated}</pv:lastUpdated>";
+	}
+	
 	if ( $filterall || $filter =~ /res/ ) {
 		my ($bitrate) = $video->{bitrate} =~ /^(\d+)/;
 		if ( !$bitrate && $video->{'videos.bitrate'} ) {
@@ -300,6 +334,23 @@ sub imageDetails {
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
 		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
+	}
+	
+	# mtime is used for all values as fallback
+	my $mtime = $image->{mtime} || $image->{'images.mtime'};
+	
+	if ( $filterall || $filter =~ /pv:modificationTime/ ) {
+		$xml .= "<pv:modificationTime>${mtime}</pv:modificationTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:addedTime/ ) {
+		my $added_time = $image->{added_time} || $image->{'images.added_time'} || $mtime;
+		$xml .= "<pv:addedTime>${added_time}</pv:addedTime>";
+	}
+	
+	if ( $filterall || $filter =~ /pv:lastUpdated/ ) {
+		my $updated = $image->{updated_time} || $image->{'images.updated_time'} || $mtime;
+		$xml .= "<pv:lastUpdated>${updated}</pv:lastUpdated>";
 	}
 	
 	if ( $filterall || $filter =~ /res/ ) {

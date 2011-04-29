@@ -327,13 +327,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIct"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
 				if ( $sort && $sort !~ /^+dc:title$/ ) {
@@ -359,13 +359,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIct"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			else {
 				if ( $sort && $sort !~ /^+dc:title$/ ) {
@@ -378,8 +378,8 @@ sub Browse {
 		elsif ( $id =~ m{^/g} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
@@ -387,7 +387,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIct"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
@@ -415,8 +415,8 @@ sub Browse {
 		elsif ( $id =~ m{^/y} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
@@ -424,7 +424,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIct"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
@@ -447,8 +447,8 @@ sub Browse {
 		elsif ( $id =~ m{^/n} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
@@ -456,7 +456,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIct"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			else {
@@ -472,8 +472,8 @@ sub Browse {
 		elsif ( $id =~ m{^/m} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
 				if ( $sort && $sort !~ /^+dc:title$/ ) {
@@ -495,12 +495,12 @@ sub Browse {
 		elsif ( $id =~ m{^/p} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIct"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{^/p/(\d+)/t$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIct"
+					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDU"
 					: "playlists 0 1 playlist_id:$1";
 			}
 			else {
@@ -512,18 +512,18 @@ sub Browse {
 			}
 		}
 		elsif ( $id =~ m{^/t/(\d+)$} ) {
-			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIct";
+			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 		}
 		
 		### Video
 		elsif ( $id =~ m{^/va} ) { # All Videos
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "video_titles $start $limit video_id:$1 tags:dorfcwht"
-					: "video_titles 0 1 video_id:$1 tags:dorfcwht";
+					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDU"
+					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDU";
 			}
 			else {
-				$cmd = "video_titles $start $limit tags:dorfcwht";
+				$cmd = "video_titles $start $limit tags:dorfcwhtnDU";
 			}
 		}
 		
@@ -531,11 +531,11 @@ sub Browse {
 		elsif ( $id =~ m{^/ia} ) { # All Images
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwht"
-					: "image_titles 0 1 image_id:$1 tags:ofwht";
+					? "image_titles $start $limit image_id:$1 tags:ofwhtnDU"
+					: "image_titles 0 1 image_id:$1 tags:ofwhtnDU";
 			}
 			else {
-				$cmd = "image_titles $start $limit tags:ofwht";
+				$cmd = "image_titles $start $limit tags:ofwhtnDU";
 			}
 		}
 	
@@ -604,7 +604,7 @@ sub Search {
 	$tags .= $stags;
 
 	# Avoid 'A' and 'G' tags because they will run extra queries
-	$tags .= 'agldyorfTIct';
+	$tags .= 'agldyorfTIctnDU';
 	
 	if ( $sort && !$sortsql ) {
 		return [ 708 => 'Unsupported or invalid sort criteria' ];
@@ -683,7 +683,7 @@ sub _queryToDIDLLite {
 		$cmd = join( ' ', @{$cmd} );
 	}
 	
-	my $xml = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
+	my $xml = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:pv="http://www.pv.com/pvns/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
 	
 	if ( $cmd =~ /^artists/ ) {		
 		for my $artist ( @{ $results->{artists_loop} || [] } ) {
@@ -1018,6 +1018,10 @@ sub _decodeSearchCriteria {
 	
 	if ( $search =~ s/upnp:genre/genres.namesearch/g ) {
 		$tags .= 'g';
+	}
+	
+	if ( $search =~ s/pv:lastUpdated/tracks.updated_time/g ) {
+		$tags .= 'U';
 	}
 	
 	return ( $search, $tags );

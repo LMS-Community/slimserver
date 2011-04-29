@@ -1553,6 +1553,11 @@ sub _newTrack {
 	if ($trackId) {
 		$columnValueHash{'id'} = $trackId;
 	}
+	
+	# Record time this track was added/updated
+	my $now = time();
+	$columnValueHash{added_time} = $now;
+	$columnValueHash{updated_time} = $now;
 
 	my $ct = $columnValueHash{'content_type'};
 	
@@ -1778,6 +1783,9 @@ sub updateOrCreateBase {
 			'url'        => $url,
 			'attributes' => $attributeHash,
 		});
+		
+		# Update timestamp
+		$attributeHash->{updated_time} = time();
 
 		while (my ($key, $val) = each %$attributeHash) {
 

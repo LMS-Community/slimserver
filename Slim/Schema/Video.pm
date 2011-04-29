@@ -18,22 +18,25 @@ sub updateOrCreateFromResult {
 	my $title = basename($result->path);
 	$title =~ s/\.\w+$//;
 	
-	my $normalize = Slim::Utils::Text::ignoreCaseArticles($title);
+	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
+	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
+	my $now = time();
 	
 	my $hash = {
 		url          => $url,
 		hash         => $result->hash,
 		title        => $title,
-		titlesearch  => $normalize,
-		titlesort    => $normalize,
+		titlesearch  => $search,
+		titlesort    => $sort,
 		video_codec  => $result->codec,
 		audio_codec  => 'TODO',
-		mime_type    => $result->mime_type || 'video/x-msvideo', # XXX lms must always provide this
+		mime_type    => $result->mime_type,
 		dlna_profile => $result->dlna_profile,
 		width        => $result->width,
 		height       => $result->height,
 		mtime        => $result->mtime,
-		added_time   => time(),
+		added_time   => $now,
+		updated_time => $now,
 		filesize     => $result->size,
 		secs         => $result->duration_ms / 1000,
 		bitrate      => $result->bitrate,
@@ -50,6 +53,10 @@ sub updateOrCreateFromResult {
 	}
 	else {
 		$hash->{id} = $id;
+		
+		# Don't overwrite the original add time
+		delete $hash->{added_time};
+		
 		Slim::Schema->_updateHash( videos => $hash, 'id' );
 	}
 	

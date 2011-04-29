@@ -5443,6 +5443,8 @@ my %tagMap = (
 	  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
+	  'D' => ['addedTime',        'ADDTIME',       'addedTime'],        #added_time
+	  'U' => ['lastUpdated',      'UPDTIME',       'lastUpdated'],      #updated_time
 	  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
 	                                                                    #tag 
 	  'i' => ['disc',             'DISC',          'disc'],             #disc
@@ -5524,7 +5526,9 @@ my %colMap = (
 	f => 'tracks.filesize',
 	j => sub { $_[0]->{'tracks.cover'} ? 1 : 0 },
 	J => 'albums.artwork',
-	n => sub { Slim::Schema::Track->buildModificationTime( $_[0]->{'tracks.timestamp'} ) },
+	n => 'tracks.timestamp',
+	D => 'tracks.added_time',
+	U => 'tracks.updated_time',
 	C => sub { $_[0]->{'albums.compilation'} ? 1 : 0 },
 	Y => 'tracks.replay_gain',
 	X => 'albums.replay_gain',
@@ -6417,6 +6421,8 @@ sub _getTagDataForTracks {
 	$tags =~ /f/ && do { $c->{'tracks.filesize'} = 1 };
 	$tags =~ /j/ && do { $c->{'tracks.cover'} = 1 };
 	$tags =~ /n/ && do { $c->{'tracks.timestamp'} = 1 };
+	$tags =~ /D/ && do { $c->{'tracks.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'tracks.updated_time'} = 1 };
 	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
 	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
 	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
@@ -6762,7 +6768,10 @@ sub videoTitlesQuery {
 	$tags =~ /r/ && do { $c->{'videos.bitrate'} = 1 };
 	$tags =~ /f/ && do { $c->{'videos.filesize'} = 1 };
 	$tags =~ /w/ && do { $c->{'videos.width'} = 1 };
-	$tags =~ /h/ && do { $c->{'videos.height'} = 1 };	
+	$tags =~ /h/ && do { $c->{'videos.height'} = 1 };
+	$tags =~ /n/ && do { $c->{'videos.mtime'} = 1 };
+	$tags =~ /D/ && do { $c->{'videos.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'videos.updated_time'} = 1 };
 
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
@@ -6840,6 +6849,9 @@ sub videoTitlesQuery {
 			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'videos.filesize'});
 			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
 			$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
+			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
+			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
+			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
 		
 			$chunkCount++;
 			
@@ -6919,7 +6931,10 @@ sub imageTitlesQuery {
 	$tags =~ /o/ && do { $c->{'images.mime_type'} = 1 };
 	$tags =~ /f/ && do { $c->{'images.filesize'} = 1 };
 	$tags =~ /w/ && do { $c->{'images.width'} = 1 };
-	$tags =~ /h/ && do { $c->{'images.height'} = 1 };	
+	$tags =~ /h/ && do { $c->{'images.height'} = 1 };
+	$tags =~ /n/ && do { $c->{'images.mtime'} = 1 };
+	$tags =~ /D/ && do { $c->{'images.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'images.updated_time'} = 1 };
 
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
@@ -6995,6 +7010,9 @@ sub imageTitlesQuery {
 			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
 			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
 			$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
+			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'images.mtime'});
+			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
+			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
 		
 			$chunkCount++;
 			

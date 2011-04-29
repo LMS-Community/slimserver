@@ -22,7 +22,7 @@ my $log = logger('database.info');
 
 our @allColumns = (qw(
 	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
-	timestamp filesize disc remote audio audio_size audio_offset year secs
+	timestamp added_time updated_time filesize disc remote audio audio_size audio_offset year secs
 	cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual
@@ -287,6 +287,18 @@ sub modificationTime {
 	my $self = shift;
 
 	return $self->buildModificationTime( $self->timestamp );
+}
+
+sub addedTime {
+	my $self = shift;
+
+	return $self->buildModificationTime( $self->added_time );
+}
+
+sub lastUpdated {
+	my $self = shift;
+
+	return $self->buildModificationTime( $self->updated_time );
 }
 
 sub buildModificationTime {
