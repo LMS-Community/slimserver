@@ -236,7 +236,7 @@ sub registerNodeFilter {
 		return;
 	}
 	
-	$nodeFilters{$filter} = 1;
+	$nodeFilters{$filter} = $filter;
 }
 
 sub deregisterNodeFilter {
@@ -468,15 +468,15 @@ sub _conditionWrapper {
 		return 0;
 	}
 	
-	foreach my $filter (keys %nodeFilters) {
+	foreach my $filter (values %nodeFilters) {
 		my $status;
 		
 		eval {
-			$status = $_->($client, $id)
+			$status = $filter->($client, $id)
 		};
 		
 		if ($@) {
-			$log->warn("Couldn't call menu-filter", Slim::Utils::PerlRunTime::realNameForCodeRef($_), ": $@");
+			$log->warn("Couldn't call menu-filter", Slim::Utils::PerlRunTime::realNameForCodeRef($filter), ": $@");
 			# Assume true
 			next;
 		}
