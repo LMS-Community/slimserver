@@ -474,9 +474,19 @@ sub handleFeed {
 					}
 
 					# XXX: maybe need to pass orderBy through
-		
-					# first param is a $client object, but undef from webpages
-					$subFeed->{url}->( $client, $callback, {wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'}}, @{$pt} );
+					my %args = (wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'});
+					my $index = $stash->{'start'};
+
+					if ($depth == $levels) {
+						$args{'index'} = $index;
+						$args{'quantity'} = $stash->{'itemsPerPage'} || $prefs->get('itemsPerPage');
+					} elsif ($depth < $levels) {
+						$args{'index'} = $index[$depth];
+						$args{'quantity'} = 1;
+					}
+
+					# first param is a $client object, but undef from webpages					
+					$subFeed->{url}->( $client, $callback, \%args, @{$pt} );
 				
 					return;
 				}
