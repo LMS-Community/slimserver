@@ -363,6 +363,10 @@ sub getHeaders {
 			push @headers, 'X-Controlled-By', $controller;
 		}
 		
+		if ( my $controllerUA = $client->controllerUA ) {
+			push @headers, 'X-Controller-UA', $controllerUA;
+		}
+		
 		# Request JSON instead of XML, it is much faster to parse
 		push @headers, 'Accept', 'text/x-json, text/xml';
 		
