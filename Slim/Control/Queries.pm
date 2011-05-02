@@ -5012,7 +5012,7 @@ sub _addSong {
 	
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
-	if (defined $prefixKey) {
+	if (defined $prefixKey && defined $hashRef) {
 		(tied %{$hashRef})->Unshift($prefixKey => $prefixVal);
 	}
 	
