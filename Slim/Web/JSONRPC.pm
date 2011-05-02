@@ -179,6 +179,16 @@ sub handleURI {
 	$context->{'httpResponse'} = $httpResponse;
 	$context->{'procedure'} = $procedure;
 	
+
+	# Detect the language the client wants content returned in
+	if ( my $lang = $httpResponse->request->header('Accept-Language') ) {
+		my @parts = split(/[,-]/, $lang);
+		$context->{lang} = uc $parts[0] if $parts[0];
+	}
+
+	if ( my $ua = ( $httpResponse->request->header('X-User-Agent') || $httpResponse->request->header('User-Agent') ) ) {
+		$context->{ua} = $ua;
+	}
 	
 	# Check our operational mode using our X-Jive header
 	# We must be delaing with a 1.1 client because X-Jive uses chunked transfers
@@ -202,8 +212,8 @@ sub handleURI {
 	eval { &{$funcPtr}($context); };
 
 	if ($@) {
-		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		if ( $log->is_error ) {
+			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 			$log->error("While trying to run function coderef [$funcName]: [$@]");
 			main::DEBUGLOG && $log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
 		}
@@ -354,6 +364,30 @@ sub requestMethod {
 	my $request = Slim::Control::Request->new($clientid, $commandargs);
 
 	if ($request->isStatusDispatchable) {
+
+		# Set language override for this request
+		my $lang = $context->{lang};
+		my $ua   = $context->{ua};
+
+		my $finish;
+
+		if ( $client && $lang ) {
+			$client->languageOverride($lang);
+			$client->controlledBy('squeezeplay');
+ 
+			$finish = sub {
+				$client->languageOverride(undef);
+				$client->controlledBy(undef);
+				$client->controllerUA(undef);
+			};
+		}
+		elsif ( $lang ) {
+			$request->setLanguageOverride($lang);
+		}
+
+		if ( $ua && $client ) {
+			$client->controllerUA($ua);
+		}
 		
 		# fix the encoding and/or manage charset param
 		$request->fixEncoding();
@@ -372,6 +406,7 @@ sub requestMethod {
 		$request->execute();
 		
 		if ($request->isStatusError()) {
+			$finish->() if $finish;
 
 			if ( $log->is_error ) {
 				$log->error("Request failed with error: " . $request->getStatusText);
@@ -388,9 +423,14 @@ sub requestMethod {
  				main::INFOLOG && $log->info("Request is async: will be back");
  						
  				# add our write routine as a callback
- 				$request->callbackParameters(\&requestWrite);
+ 				$request->callbackParameters( sub {
+					requestWrite(@_);
+					$finish->() if $finish;
+				} );
  				return;
 			}
+
+			$finish->() if $finish;
 			
 			# the request was successful and is not async, send results back to caller!
 			requestWrite($request, $context->{'httpClient'}, $context);
