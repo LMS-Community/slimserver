@@ -55,6 +55,7 @@ sub requestString {
 
 	$song->duration($params{dur})                  if exists $params{dur};
 	$song->pluginData('icon',    $params{icon})    if exists $params{icon};
+	$song->pluginData('title',   $params{title})   if exists $params{title};
 	$song->pluginData('artist',  $params{artist})  if exists $params{artist};
 	$song->pluginData('album',   $params{album})   if exists $params{album};
 	$song->pluginData('type',    $params{type})    if exists $params{type};
@@ -84,10 +85,16 @@ sub parseMetadata {
 		$meta{$key} = decode_base64($val) || $val;
 	}
 
+	# set title, artist and album together so they are cleared if any are set
+	if (exists $meta{title} || exists $meta{artist} || exists $meta{album}) {
+		$song->pluginData('title', $meta{title});
+		$song->pluginData('artist', $meta{artist});
+		$song->pluginData('album', $meta{album});
+	}
+
+	# set duration, icon and type only when sent - persist across track changes
 	$song->duration($meta{dur})                 if exists $meta{dur};
 	$song->pluginData('icon',    $meta{icon})   if exists $meta{icon};
-	$song->pluginData('artist',  $meta{artist}) if exists $meta{artist};
-	$song->pluginData('album',   $meta{album})  if exists $meta{album};
 	$song->pluginData('type',    $meta{type})   if exists $meta{type};
 
 	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
@@ -107,13 +114,18 @@ sub getMetadataFor {
 	my ($class, $client, $url) = @_;
 
 	if (my $song = $client->currentSongForUrl($url)) {
-		return {
+
+		my $ret = {
 			artist => $song->pluginData('artist'),
 			album  => $song->pluginData('album'),
 			cover  => $song->pluginData('icon'),
 			icon   => $song->pluginData('icon'),
 			type   => $song->pluginData('type'),
 		};
+
+		$ret->{'title'} = $song->pluginData('title') if $song->pluginData('title');
+
+		return $ret;
 	}
 
 	# non streaming url - see if we can extract metadata from the url
@@ -126,6 +138,7 @@ sub getMetadataFor {
 	}
 	
 	return {
+		# omit title here as it prevents connecting status being displayed
 		artist => $params{artist},
 		album  => $params{album},
 		cover  => $params{icon},

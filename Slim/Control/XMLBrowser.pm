@@ -1111,6 +1111,14 @@ sub _cliQuery_done {
 							}
 						}
 						
+						elsif ( $item->{type} && $item->{type} eq 'localservice' ) {
+							$request->addResultLoop( $loopname, $cnt, 'actions',  {
+								go => {
+									localservice => $item->{serviceId},
+								},
+							});
+						}
+
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							

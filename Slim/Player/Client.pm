@@ -133,7 +133,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								curDepth lastLetterIndex lastLetterDigit lastLetterTime lastDigitIndex lastDigitTime searchFor
 								syncSelection _playPoint playPoints
 								jiffiesEpoch jiffiesOffsetList
-								_tempVolume musicInfoTextCache metaTitle languageOverride controlledBy password currentSleepTime
+								_tempVolume musicInfoTextCache metaTitle languageOverride controlledBy controllerUA password currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								alarmData knobData
 								modeStack modeParameterStack playlist chunks
@@ -297,6 +297,7 @@ sub new {
 		metaTitle               => undef,
 		languageOverride        => undef,
 		controlledBy            => undef,
+		controllerUA            => undef,
 		password                => undef,
 		currentSleepTime        => 0,
 		sleepTime               => 0,
