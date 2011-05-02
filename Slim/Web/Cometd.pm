@@ -195,11 +195,13 @@ sub handler {
 		last if @errors;
 		
 		# Detect the language Jive wants content returned in
-		my $lang;
+		my ($lang, $ua);
 		if ( ref $conn ) {
 			if ( my $al = $conn->[HTTP_RESPONSE]->request->header('Accept-Language') ) {
 				$lang = uc $al;
 			}
+
+			$ua = $conn->[HTTP_RESPONSE]->request->header('X-User-Agent') || $conn->[HTTP_RESPONSE]->request->header('User-Agent');
 		}
 		
 		# If a client sends any request and we do not have a valid clid record
@@ -427,6 +429,7 @@ sub handler {
 					clid     => $responseClid,
 					type     => 'subscribe',
 					lang     => $lang,
+					ua       => $ua,
 				} ); 
 				
 				if ( $result->{error} ) {
@@ -540,6 +543,7 @@ sub handler {
 					clid     => $responseClid,
 					type     => 'request',
 					lang     => $lang,
+					ua       => $ua,
 				} );
 				
 				if ( $result->{error} ) {
@@ -749,6 +753,7 @@ sub handleRequest {
 	
 	my $type     = $params->{type};
 	my $lang     = $params->{lang};
+	my $ua       = $params->{ua};
 	
 	my $mac  = $cmd->[0];
 	my $args = $cmd->[1];
@@ -844,11 +849,16 @@ sub handleRequest {
 			$request->setLanguageOverride($lang);
 		}
 		
+		if ( $ua && $client ) {
+			$client->controllerUA($ua);
+		}
+		
 		# Finish is called when request is done to reset language and controlledBy
 		my $finish = sub {
 			if ( $client ) {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
+				$client->controllerUA(undef);
 			}
 		};
 		
