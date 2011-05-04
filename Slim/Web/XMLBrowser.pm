@@ -1110,14 +1110,19 @@ sub _webLinkDone {
 sub webLink {
 	my $client  = $_[0];
 	my $args    = $_[1];
+	my $response= $_[4];
 	my $allArgs = \@_;
 
 	# get parameters and construct CLI command
-	my ($params) = ($args->{'path'} =~ m%clixmlbrowser/([^/]+)%);
+	# Bug 17181: Unfortunately were un-escaping the request path parameter before we split it into separate parameters.
+	# Which means any value with a & in it would be considered a distinct parameter. By using the
+	# raw path value from the request object and un-escaping after the splitting, we could fix this.
+	my ($params) = ($response->request->uri =~ m%clixmlbrowser/([^/]+)%);
 	my %params;
+
 	foreach (split(/\&/, $params)) {
 		if (my ($k, $v) = /([^=]+)=(.*)/) {
-			$params{$k} = $v;
+			$params{$k} = Slim::Utils::Misc::unescape($v);
 		} else {
 			$log->warn("Unrecognized parameter syntax: $_");
 		}
