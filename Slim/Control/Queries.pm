@@ -6739,25 +6739,38 @@ sub videoTitlesQuery {
 	}
 	# ignore everything if $videoID was specified
 	else {
-		if ( $sort eq 'new' ) {
-			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "videos.added_time desc";
-			
-			# Force quantity to not exceed max
-			if ( $quantity && $quantity > $limit ) {
-				$quantity = $limit;
+		if ($sort) {
+			if ( $sort eq 'new' ) {
+				$limit = $prefs->get('browseagelimit') || 100;
+				$order_by = "videos.added_time desc";
+
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
+				}
+			}
+			elsif ( $sort =~ /^sql=(.+)/ ) {
+				$order_by = $1;
+				$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
 			}
 		}
 
-		if (specified($search) && $search !~ /sql/) {
-			my $strings = Slim::Utils::Text::searchStringSplit($search);
-			if ( ref $strings->[0] eq 'ARRAY' ) {
-				push @{$w}, '(' . join( ' OR ', map { 'videos.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-				push @{$p}, @{ $strings->[0] };
+		if ( $search && specified($search) ) {
+			if ( $search =~ s/^sql=// ) {
+				# Raw SQL search query
+				$search =~ s/;//g; # strip out any attempt at combining SQL statements
+				push @{$w}, $search;
 			}
-			else {		
-				push @{$w}, 'videos.titlesearch LIKE ?';
-				push @{$p}, @{$strings};
+			else {
+				my $strings = Slim::Utils::Text::searchStringSplit($search);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'videos.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {		
+					push @{$w}, 'videos.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
 			}
 		}
 	}
@@ -6904,25 +6917,38 @@ sub imageTitlesQuery {
 	}
 	# ignore everything if $imageHash was specified
 	else {
-		if ( $sort eq 'new' ) {
-			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "images.added_time desc";
-			
-			# Force quantity to not exceed max
-			if ( $quantity && $quantity > $limit ) {
-				$quantity = $limit;
+		if ($sort) {
+			if ( $sort eq 'new' ) {
+				$limit = $prefs->get('browseagelimit') || 100;
+				$order_by = "images.added_time desc";
+
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
+				}
+			}
+			elsif ( $sort =~ /^sql=(.+)/ ) {
+				$order_by = $1;
+				$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
 			}
 		}
-
-		if (specified($search) && $search !~ /sql/) {
-			my $strings = Slim::Utils::Text::searchStringSplit($search);
-			if ( ref $strings->[0] eq 'ARRAY' ) {
-				push @{$w}, '(' . join( ' OR ', map { 'images.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-				push @{$p}, @{ $strings->[0] };
+		
+		if ( $search && specified($search) ) {
+			if ( $search =~ s/^sql=// ) {
+				# Raw SQL search query
+				$search =~ s/;//g; # strip out any attempt at combining SQL statements
+				push @{$w}, $search;
 			}
-			else {		
-				push @{$w}, 'images.titlesearch LIKE ?';
-				push @{$p}, @{$strings};
+			else {
+				my $strings = Slim::Utils::Text::searchStringSplit($search);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'images.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {		
+					push @{$w}, 'images.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
 			}
 		}
 	}

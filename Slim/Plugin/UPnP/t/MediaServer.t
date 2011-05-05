@@ -11,7 +11,7 @@ use Net::UPnP::ControlPoint;
 use Net::UPnP::AV::MediaServer;
 use XML::Fast;
 
-plan tests => 252;
+plan tests => 260;
 
 # Force a server to use, in case there is more than one on the network
 my $force_ip = shift;
@@ -45,7 +45,7 @@ if ( !$cm || !$cd ) {
 	exit;
 }
 
-goto HERE;
+#goto HERE;
 
 ### Eventing
 
@@ -1353,8 +1353,6 @@ my $playlist;
 
 ### All Videos (/va)
 
-HERE:
-
 # Test browsing All Videos menu
 my $video;
 {
@@ -1422,7 +1420,6 @@ my $video;
 	is( $container->{'dc:title'}, $video->{'dc:title'}, 'Video BrowseMetadata dc:title ok' );
 	is( $container->{'upnp:class'}, $video->{'upnp:class'}, 'Video BrowseMetadata upnp:class ok' );
 }
-exit;
 
 ### Search
 
@@ -1449,7 +1446,7 @@ exit;
 	is( $track->{'-parentID'}, '/t', 'Win7 Search result parentID ok' );
 }
 
-# Revue Media Player uses this query
+# Revue Media Player 1.0 uses this query
 {
 	my $res = _action( $cd, 'Search', {
 		ContainerID    => 0,
@@ -1471,6 +1468,53 @@ exit;
 	like( $track->{'-id'}, qr{^/t/\d+$}, 'Revue Search result id ok' );
 	is( $track->{'-parentID'}, '/t', 'Revue Search result parentID ok' );
 }
+
+# Test searching for new videos only
+{	
+	my $res = _action( $cd, 'Search', {
+		ContainerID    => 0,
+		SearchCriteria => 'pv:lastUpdated > 0 and upnp:class derivedfrom "object.item.videoItem"',
+		Filter         => '*',
+		StartingIndex  => 0,
+		RequestedCount => 10,
+		SortCriteria   => '-pv:lastUpdated',
+	} );
+	
+	cmp_ok( $res->{TotalMatches}->{t}, '>', 0, "Video Search TotalMatches is >0" );
+	cmp_ok( $res->{NumberReturned}->{t}, '>', 0, "Video Search NumberReturned is >0" );
+	
+	my $menu = xml2hash( $res->{Result}->{t}, text => 't' );
+	my $items = $menu->{'DIDL-Lite'}->{item};
+	
+	my $video = $items->[0];
+	
+	like( $video->{'-id'}, qr{^/v/[0-9a-f]{8}$}, 'Video Search result id ok' );
+	is( $video->{'-parentID'}, '/v', 'Video Search result parentID ok' );
+}
+
+# Test searching for images
+{	
+	my $res = _action( $cd, 'Search', {
+		ContainerID    => 0,
+		SearchCriteria => 'pv:lastUpdated > 0 and upnp:class derivedfrom "object.item.imageItem"',
+		Filter         => '*',
+		StartingIndex  => 0,
+		RequestedCount => 10,
+		SortCriteria   => '-pv:lastUpdated',
+	} );
+	
+	cmp_ok( $res->{TotalMatches}->{t}, '>', 0, "Image Search TotalMatches is >0" );
+	cmp_ok( $res->{NumberReturned}->{t}, '>', 0, "Image Search NumberReturned is >0" );
+	
+	my $menu = xml2hash( $res->{Result}->{t}, text => 't' );
+	my $items = $menu->{'DIDL-Lite'}->{item};
+	
+	my $image = $items->[0];
+	
+	like( $image->{'-id'}, qr{^/i/[0-9a-f]{8}$}, 'Image Search result id ok' );
+	is( $image->{'-parentID'}, '/i', 'Image Search result parentID ok' );
+}
+exit;
 
 sub _action {
 	my ( $service, $action, $args ) = @_;

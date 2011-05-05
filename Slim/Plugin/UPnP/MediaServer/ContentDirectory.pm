@@ -591,52 +591,39 @@ sub Search {
 	my $limit  = $args->{RequestedCount};
 	my $sort   = $args->{SortCriteria};
 	
-	my $cmd;
 	my $xml;
 	my $results;
 	my $count = 0;
 	my $total = 0;
-	my $base_id;
 	
-	my ($sortsql, $tags) = _decodeSortCriteria($sort);
+	if ( $id != 0 ) {
+		return [ 708 => 'Unsupported or invalid search criteria (only ContainerID 0 is supported)' ];
+	}
 	
-	my ($searchsql, $stags) = _decodeSearchCriteria($search);
-	$tags .= $stags;
+	my ($cmd, $table, $searchsql, $tags) = _decodeSearchCriteria($search);
 
+	my ($sortsql, $stags) = _decodeSortCriteria($sort, $table);
+	$tags .= $stags;
+	
 	# Avoid 'A' and 'G' tags because they will run extra queries
 	$tags .= 'agldyorfTIctnDU';
 	
 	if ( $sort && !$sortsql ) {
 		return [ 708 => 'Unsupported or invalid sort criteria' ];
 	}
-		
-	if ( $id eq '0' ) {
-		# XXX quick hack to support images/videos
-		if ( $search eq '(upnp:class derivedfrom "object.item.videoItem")' ) {
-			$tags .= 'wh';
-			$cmd = [ 'video_titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
-			$base_id = '/v';
-		}
-		elsif ( $search eq '(upnp:class derivedfrom "object.item.imageItem")' ) {
-			$tags .= 'wh';
-			$cmd = [ 'image_titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
-			$base_id = '/i';
-		}
-		else {
-			$cmd = [ 'titles', $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
-			$base_id = '/t';
-		}
-	}
 	
 	if ( !$cmd ) {
 		return [ 708 => 'Unsupported or invalid search criteria' ];
 	}
+	
+	# Construct query
+	$cmd = [ $cmd, $start, $limit, "tags:$tags", "search:sql=($searchsql)", "sort:sql=$sortsql" ];
 
-	main::INFOLOG && $log->is_info && $log->info("Executing command: " . (ref $cmd eq 'ARRAY' ? Data::Dump::dump($cmd) : $cmd));
+	main::INFOLOG && $log->is_info && $log->info("Executing command: " . Data::Dump::dump($cmd));
 
 	# Run the request
 	my $results;
-	my $request = Slim::Control::Request->new( undef, ref $cmd eq 'ARRAY' ? $cmd : [ split( / /, $cmd ) ] );
+	my $request = Slim::Control::Request->new( undef, $cmd );
 	if ( $request->isStatusDispatchable ) {
 		$request->execute();
 		if ( $request->isStatusError ) {
@@ -652,7 +639,7 @@ sub Search {
 		cmd      => $cmd,
 		results  => $results,
 		flag     => '',
-		id       => $base_id,
+		id       => $table eq 'tracks' ? '/t' : $table eq 'videos' ? '/v' : '/i',
 		filter   => $filter,
 	} );
 	
@@ -977,6 +964,9 @@ sub _arrayToDIDLLite {
 sub _decodeSearchCriteria {
 	my $search = shift;
 	
+	my $cmd = 'titles';
+	my $table = 'tracks';
+	my $idcol = 'id'; # XXX switch to hash for audio tracks
 	my $tags = '';
 	
 	if ( $search eq '*' ) {
@@ -987,14 +977,26 @@ sub _decodeSearchCriteria {
 	$search =~ s/&quot;/"/g;
 	$search =~ s/&apos;/'/g;
 	
-	# Remove any derivedfrom
-	$search =~ s/upnp:class derivedfrom "[^"]+"/1=1/ig;
+	# Handle derivedfrom
+	if ( $search =~ s/upnp:class derivedfrom "([^"]+)"/1=1/ig ) {
+		my $sclass = $1;
+		if ( $sclass =~ /object\.item\.videoItem/i ) {
+			$cmd = 'video_titles';
+			$table = 'videos';
+			$idcol = 'hash';
+		}
+		elsif ( $sclass =~ /object\.item\.imageItem/i ) {
+			$cmd = 'image_titles';
+			$table = 'images';
+			$idcol = 'hash';
+		}
+	}
 	
 	# Replace 'contains "x"' and 'doesNotContain "x" with 'LIKE "%X%"' and 'NOT LIKE "%X%"'
 	$search =~ s/contains\s+"([^"]+)"/LIKE "%%\U$1%%"/ig;
 	$search =~ s/doesNotContain\s+"([^"]+)"/NOT LIKE "%%\U$1%%"/ig;
 
-	$search =~ s/\@id/tracks.id/g;
+	$search =~ s/\@id/${table}.${idcol}/g;
 	$search =~ s/\@refID exists (?:true|false)/1=1/ig;
 
 	# Replace 'exists true' and 'exists false'
@@ -1002,33 +1004,37 @@ sub _decodeSearchCriteria {
 	$search =~ s/exists\s+false/IS NULL/ig;
 	
 	# Replace properties
-	$search =~ s/dc:title/tracks.titlesearch/g;
+	$search =~ s/dc:title/${table}.titlesearch/g;
 	
-	if ( $search =~ s/dc:creator/contributors.namesearch/g ) {
-		$tags .= 'a';
-	}
-	
-	if ( $search =~ s/upnp:artist/contributors.namesearch/g ) {
-		$tags .= 'a';
-	}
-	
-	if ( $search =~ s/upnp:album/albums.titlesearch/g ) {
-		$tags .= 'l';
-	}
-	
-	if ( $search =~ s/upnp:genre/genres.namesearch/g ) {
-		$tags .= 'g';
-	}
-	
-	if ( $search =~ s/pv:lastUpdated/tracks.updated_time/g ) {
+	if ( $search =~ s/pv:lastUpdated/${table}.updated_time/g ) {
 		$tags .= 'U';
 	}
 	
-	return ( $search, $tags );
+	if ( $cmd eq 'titles' ) {
+		# These search params are only valid for audio
+		if ( $search =~ s/dc:creator/contributors.namesearch/g ) {
+			$tags .= 'a';
+		}
+	
+		if ( $search =~ s/upnp:artist/contributors.namesearch/g ) {
+			$tags .= 'a';
+		}
+	
+		if ( $search =~ s/upnp:album/albums.titlesearch/g ) {
+			$tags .= 'l';
+		}
+	
+		if ( $search =~ s/upnp:genre/genres.namesearch/g ) {
+			$tags .= 'g';
+		}
+	}
+	
+	return ( $cmd, $table, $search, $tags );
 }
 
 sub _decodeSortCriteria {
 	my $sort = shift;
+	my $table = shift;
 	
 	# Note: collate intentionally not used here, doesn't seem to work with multiple values
 	
@@ -1044,20 +1050,20 @@ sub _decodeSortCriteria {
 	# upnp:album
 	# upnp:genre
 	# upnp:originalTrackNumber
+	# pv:modificationTime
+	# pv:addedTime
+	# pv:lastUpdated
 	
 	for ( split /,/, $sort ) {
 		if ( /^([+-])(.+)/ ) {
 			my $dir = $1 eq '+' ? 'ASC' : 'DESC';
 			
 			if ( $2 eq 'dc:title' ) {
-				push @sql, "tracks.titlesort $dir";
+				push @sql, "${table}.titlesort $dir";
 			}
 			elsif ( $2 eq 'dc:creator' || $2 eq 'upnp:artist' ) {
 				push @sql, "contributors.namesort $dir";
 				$tags .= 'a';
-			}
-			elsif ( $2 eq 'dc:date' ) {
-				push @sql, "tracks.timestamp $dir";
 			}
 			elsif ( $2 eq 'upnp:album' ) {
 				push @sql, "albums.titlesort $dir";
@@ -1069,6 +1075,20 @@ sub _decodeSortCriteria {
 			}
 			elsif ( $2 eq 'upnp:originalTrackNumber' ) {
 				push @sql, "tracks.tracknum $dir";
+			}
+			elsif ( $2 eq 'pv:modificationTime' || $2 eq 'dc:date' ) {
+				if ( $table eq 'tracks' ) {
+					push @sql, "${table}.timestamp $dir";
+				}
+				else {
+					push @sql, "${table}.mtime $dir";
+				}
+			}
+			elsif ( $2 eq 'pv:addedTime' ) {
+				push @sql, "${table}.added_time $dir";
+			}
+			elsif ( $2 eq 'pv:lastUpdated' ) {
+				push @sql, "${table}.updated_time $dir";
 			}
 		}
 	}
