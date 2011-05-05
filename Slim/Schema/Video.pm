@@ -14,9 +14,12 @@ sub updateOrCreateFromResult {
 	my $id;
 	my $url = Slim::Utils::Misc::fileURLFromPath($result->path);
 	
-	# Create title from path
-	my $title = basename($result->path);
-	$title =~ s/\.\w+$//;
+	# Create title and album from path
+	my ($title, $dirs, undef) = fileparse($result->path);
+	
+	# Album is parent directory
+	$dirs =~ s{\\}{/}g;
+	my ($album) = $dirs =~ m{([^/]+)/$};
 	
 	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
 	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
@@ -28,6 +31,7 @@ sub updateOrCreateFromResult {
 		title        => $title,
 		titlesearch  => $search,
 		titlesort    => $sort,
+		album        => $album,
 		video_codec  => $result->codec,
 		audio_codec  => 'TODO',
 		mime_type    => $result->mime_type,

@@ -6785,6 +6785,7 @@ sub videoTitlesQuery {
 	$tags =~ /n/ && do { $c->{'videos.mtime'} = 1 };
 	$tags =~ /D/ && do { $c->{'videos.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'videos.updated_time'} = 1 };
+	$tags =~ /l/ && do { $c->{'videos.album'} = 1 };
 
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
@@ -6865,6 +6866,7 @@ sub videoTitlesQuery {
 			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
 			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
 			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
 		
 			$chunkCount++;
 			
@@ -6961,6 +6963,7 @@ sub imageTitlesQuery {
 	$tags =~ /n/ && do { $c->{'images.mtime'} = 1 };
 	$tags =~ /D/ && do { $c->{'images.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'images.updated_time'} = 1 };
+	$tags =~ /l/ && do { $c->{'images.album'} = 1 };
 
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
@@ -7039,6 +7042,7 @@ sub imageTitlesQuery {
 			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'images.mtime'});
 			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
 			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});
 		
 			$chunkCount++;
 			

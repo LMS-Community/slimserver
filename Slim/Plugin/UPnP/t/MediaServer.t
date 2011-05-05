@@ -11,7 +11,7 @@ use Net::UPnP::ControlPoint;
 use Net::UPnP::AV::MediaServer;
 use XML::Fast;
 
-plan tests => 260;
+plan tests => 262;
 
 # Force a server to use, in case there is more than one on the network
 my $force_ip = shift;
@@ -1367,8 +1367,6 @@ my $video;
 	
 	my $menu = xml2hash( $res->{Result}->{t}, text => 't', array => [ 'container' ] );
 	my $container = $menu->{'DIDL-Lite'}->{container};
-	warn dump($menu);
-	exit;
 	
 	# Skip Various Artists artist if it's there
 	$video = $container->[0];
@@ -1376,6 +1374,7 @@ my $video;
 	like( $video->{'-id'}, qr{^/va/\d+/v$}, 'Video container id ok' );
 	is( $video->{'-parentID'}, '/a', 'Video container parentID ok' );
 	ok( $video->{'dc:title'}, 'Video container dc:title ok' );
+	ok( $video->{'upnp:album'}, 'Video container upnp:album ok' );
 	is( $video->{'upnp:class'}, 'object.container.person.musicArtist', 'Video container upnp:class ok' );
 	
 	# Test BrowseMetadata on videos item
@@ -1399,7 +1398,7 @@ my $video;
 	is( $container->{'dc:title'}, 'All Videos', '/va BrowseMetadata dc:title ok' );
 	is( $container->{'upnp:class'}, 'object.container', '/va BrowseMetadata upnp:class ok' );
 	
-	# Test BrowseMetadata on an artist
+	# Test BrowseMetadata on a video
 	$res = _action( $cd, 'Browse', {
 		BrowseFlag     => 'BrowseMetadata',
 		ObjectID       => $video->{'-id'},
@@ -1418,6 +1417,7 @@ my $video;
 	is( $container->{'-id'}, $video->{'-id'}, 'Video BrowseMetadata id ok' );
 	is( $container->{'-parentID'}, $video->{'-parentID'}, 'Video BrowseMetadata parentID ok' );
 	is( $container->{'dc:title'}, $video->{'dc:title'}, 'Video BrowseMetadata dc:title ok' );
+	is( $container->{'upnp:album'}, $video->{'upnp:album'}, 'Video BrowseMetadata upnp:album ok' );
 	is( $container->{'upnp:class'}, $video->{'upnp:class'}, 'Video BrowseMetadata upnp:class ok' );
 }
 

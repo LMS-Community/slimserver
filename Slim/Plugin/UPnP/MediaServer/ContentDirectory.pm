@@ -519,11 +519,11 @@ sub Browse {
 		elsif ( $id =~ m{^/va} ) { # All Videos
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDU"
-					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDU";
+					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUl"
+					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUl";
 			}
 			else {
-				$cmd = "video_titles $start $limit tags:dorfcwhtnDU";
+				$cmd = "video_titles $start $limit tags:dorfcwhtnDUl";
 			}
 		}
 		
@@ -531,11 +531,11 @@ sub Browse {
 		elsif ( $id =~ m{^/ia} ) { # All Images
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwhtnDU"
-					: "image_titles 0 1 image_id:$1 tags:ofwhtnDU";
+					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUl"
+					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUl";
 			}
 			else {
-				$cmd = "image_titles $start $limit tags:ofwhtnDU";
+				$cmd = "image_titles $start $limit tags:ofwhtnDUl";
 			}
 		}
 	
