@@ -130,12 +130,6 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiverecentsearches'],
 		[0, 1, 0, \&jiveRecentSearchQuery]);
 
-	Slim::Control::Request::addDispatch(['jiveplaytrackalbum'],
-		[1, 0, 1, \&jivePlayTrackAlbumCommand]);
-
-	Slim::Control::Request::addDispatch(['jiveplaytrackplaylist'],
-		[1, 0, 1, \&jivePlayTrackPlaylistCommand]);
-
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 1, \&dateQuery]);
 
@@ -2706,95 +2700,6 @@ sub menuNotification {
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
 }
 
-sub jivePlayTrackPlaylistCommand {
-
-	main::INFOLOG && $log->info("Begin function");
-
-	my $request    = shift;
-	my $client     = $request->client || return;
-	my $playlistID = $request->getParam('playlist_id');
-	my $listIndex  = $request->getParam('list_index');
-	
-	$client->execute( ["playlist", "clear"] );
-
-	if ( !defined ($playlistID) ) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# load the playlist
-	$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
-	# jump to the correct index
-	$client->execute( ["playlist", "jump", $listIndex] );
-
-	$request->setStatusDone();
-}
-
-sub jivePlayTrackAlbumCommand {
-
-	main::INFOLOG && $log->info("Begin function");
-
-	my $request    = shift;
-	my $client     = $request->client || return;
-	my $albumID    = $request->getParam('album_id');
-	my $artistID   = $request->getParam('artist_id');
-	my $trackID    = $request->getParam('track_id');
-	my $playlistID = $request->getParam('playlist_id');
-	my $folder_id  = $request->getParam('folder_id')|| undef;
-	my $listIndex  = $request->getParam('list_index');
- 	my $mode       = Slim::Player::Playlist::playlistMode($client);
-	
-	$client->execute( ["playlist", "clear"] );
-
-	# Database album browse is the simple case
-	if ( $albumID ) {
-		if ($artistID) {
-			$client->execute( ["playlist", "addtracks", { 'contributor.id' => $artistID, 'album.id' => $albumID } ] );
-		} else {
-			$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
-		}
-		$client->execute( ["playlist", "jump", $listIndex] );
-
-	}
-
-	elsif ( $playlistID ) {
-		# load the playlist
-		$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
-		# jump to the correct index
-		$client->execute( ["playlist", "jump", $listIndex] );
-	}
-
-	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item
-	elsif ( defined $folder_id && defined $listIndex ) {
-
-		my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-		Slim::Player::Playlist::shuffle($client, 0);
-
-		my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
-			id => $folder_id,
-		} );
-
-		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
-
-		# filter out folders
-		@{$items} = grep { Slim::Music::Info::isSong($_) }
-		# make sure we get a valid path
-		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $topLevelObj->path) }
-		@$items;
-
-		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
-
-		$client->execute(['playlist', 'clear']);
-		$client->execute(['playlist', 'addtracks', 'listref', $items]);
-		$client->execute(['playlist', 'jump', $listIndex]);
-
-		if ($wasShuffled) {
-			$client->execute(['playlist', 'shuffle', 1]);
-		}
-	}
-
-	$request->setStatusDone();
-}
 
 sub jivePlaylistsCommand {
 
