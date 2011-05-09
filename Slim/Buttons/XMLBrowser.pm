@@ -637,7 +637,7 @@ sub gotOPML {
 					$name .= " ($year)" if $year;
 				}
 		
-				if (my $artist = $item->{'artist'}) {
+				if ($prefs->get('showArtist') && (my $artist = $item->{'artist'})) {
 					$name .= sprintf(' %s %s', $client->string('BY'), $artist);
 				}
 				
@@ -1147,10 +1147,6 @@ sub _showPlayAction {
 			$string   = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
 			$duration = 10;
 		}
-
-		if (Slim::Buttons::Common::mode($client) ne 'playlist') {
-			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-		}
 	}
 
 	$client->showBriefly( {
@@ -1216,11 +1212,16 @@ sub playItem {
 		_showPlayAction($client, $action, $title);
 
 		Slim::Control::Request::executeRequest( $client, \@params );
+
+		if ($action ne 'add' && $action ne 'insert' && Slim::Buttons::Common::mode($client) ne 'playlist') {
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		}
 	}
 	
 	elsif ( $type =~ /audio/i ) {
+
 		_showPlayAction($client, $action, $title);
-		
+
 		if ( $others && $playalbum && scalar @{$others} ) {
 			# Emulate normal track behavior where playing a single track adds
 			# all other tracks from that album to the playlist.
@@ -1281,6 +1282,11 @@ sub playItem {
 			
 			$client->execute([ 'playlist', $action, $url, $title ]);
 		}
+
+		if ($action ne 'add' && $action ne 'insert' && Slim::Buttons::Common::mode($client) ne 'playlist') {
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		}
+		
 	}
 	elsif ($type eq 'playlist') {
 
