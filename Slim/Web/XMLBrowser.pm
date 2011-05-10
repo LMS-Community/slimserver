@@ -1118,6 +1118,10 @@ sub webLink {
 	# Which means any value with a & in it would be considered a distinct parameter. By using the
 	# raw path value from the request object and un-escaping after the splitting, we could fix this.
 	my ($params) = ($response->request->uri =~ m%clixmlbrowser/([^/]+)%);
+	if (!$params) {
+		($params) = ($args->{'path'} =~ m%clixmlbrowser/([^/]+)%);
+	}
+
 	my %params;
 
 	foreach (split(/\&/, $params)) {
