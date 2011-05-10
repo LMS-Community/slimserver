@@ -185,6 +185,10 @@ sub handleURI {
 		my @parts = split(/[,-]/, $lang);
 		$context->{lang} = uc $parts[0] if $parts[0];
 	}
+
+	if ( my $ua = ( $httpResponse->request->header('X-User-Agent') || $httpResponse->request->header('User-Agent') ) ) {
+		$context->{ua} = $ua;
+	}
 	
 	# Check our operational mode using our X-Jive header
 	# We must be delaing with a 1.1 client because X-Jive uses chunked transfers
@@ -363,6 +367,7 @@ sub requestMethod {
 
 		# Set language override for this request
 		my $lang = $context->{lang};
+		my $ua   = $context->{ua};
 
 		my $finish;
 
@@ -373,10 +378,15 @@ sub requestMethod {
 			$finish = sub {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
+				$client->controllerUA(undef);
 			};
 		}
 		elsif ( $lang ) {
 			$request->setLanguageOverride($lang);
+		}
+
+		if ( $ua && $client ) {
+			$client->controllerUA($ua);
 		}
 		
 		# fix the encoding and/or manage charset param

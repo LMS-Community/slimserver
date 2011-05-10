@@ -195,11 +195,13 @@ sub handler {
 		last if @errors;
 		
 		# Detect the language Jive wants content returned in
-		my $lang;
+		my ($lang, $ua);
 		if ( ref $conn ) {
 			if ( my $al = $conn->[HTTP_RESPONSE]->request->header('Accept-Language') ) {
 				$lang = uc $al;
 			}
+
+			$ua = $conn->[HTTP_RESPONSE]->request->header('X-User-Agent') || $conn->[HTTP_RESPONSE]->request->header('User-Agent');
 		}
 		
 		# Detect the user agent
@@ -436,6 +438,7 @@ sub handler {
 					type     => 'subscribe',
 					lang     => $lang,
 					agent    => $agent,
+					ua       => $ua,
 				} ); 
 				
 				if ( $result->{error} ) {
@@ -550,6 +553,7 @@ sub handler {
 					type     => 'request',
 					lang     => $lang,
 					agent    => $agent,
+					ua       => $ua,
 				} );
 				
 				if ( $result->{error} ) {
@@ -760,6 +764,7 @@ sub handleRequest {
 	my $type     = $params->{type};
 	my $lang     = $params->{lang};
 	my $agent    = $params->{agent};
+	my $ua       = $params->{ua};
 	
 	my $mac  = $cmd->[0];
 	my $args = $cmd->[1];
@@ -856,11 +861,16 @@ sub handleRequest {
 		}
 		$request->setAgent($agent);
 		
+		if ( $ua && $client ) {
+			$client->controllerUA($ua);
+		}
+		
 		# Finish is called when request is done to reset language and controlledBy
 		my $finish = sub {
 			if ( $client ) {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
+				$client->controllerUA(undef);
 			}
 		};
 		

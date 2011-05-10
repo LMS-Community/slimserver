@@ -1122,7 +1122,15 @@ sub _cliQuery_done {
 							$hash{'action'} = 'none';
 						}
 						
-						if ( $item->{type} && $item->{type} eq 'search' ) {
+						if ( $item->{type} && $item->{type} eq 'localservice' ) {
+							$request->addResultLoop( $loopname, $cnt, 'actions',  {
+								go => {
+									localservice => $item->{serviceId},
+								},
+							});
+						}
+
+						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
