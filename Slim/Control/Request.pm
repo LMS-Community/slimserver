@@ -574,6 +574,10 @@ sub init {
 	addDispatch(['playlist',       'playalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'playlistsinfo'],                                                   [1, 1, 1, \&Slim::Control::Queries::playlistPlaylistsinfoQuery]);
 	addDispatch(['playlist',       'playtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'playtrackalbum'],                                                  [1, 0, 1, \&Slim::Control::Commands::playTrackAlbumCommand]);
+	addDispatch(['jiveplaytrackalbum'],                                                                [1, 0, 1, \&Slim::Control::Commands::playTrackAlbumCommand]);
+        addDispatch(['playlist',       'playtrackplaylist'],                                               [1, 0, 1, \&Slim::Control::Commands::playTrackPlaylistCommand]);
+        addDispatch(['jiveplaytrackplaylist'],                                                             [1, 0, 1, \&Slim::Control::Commands::playTrackPlaylistCommand]);
 	addDispatch(['playlist',       'preview'],                                                         [1, 0, 1, \&Slim::Control::Commands::playlistPreviewCommand]);
 	addDispatch(['playlist',       'remote',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'repeat',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
