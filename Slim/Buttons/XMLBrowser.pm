@@ -928,6 +928,10 @@ sub overlaySymbol {
 		my $default = $item->{default};
 		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
 	}
+	elsif ( $item->{url} && ref $item->{url} eq 'CODE' && (!$item->{type} || $item->{type} ne 'audio') ) {
+		# Show rightarrow if there are more browseable levels below us
+		$overlay = $client->symbols('rightarrow');
+	}
 	elsif ( Slim::Control::XMLBrowser::hasAudio($item) ) {
 		$overlay = $client->symbols('notesymbol');
 	}
