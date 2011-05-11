@@ -1472,16 +1472,6 @@ sub getLanguageOverride {
 	return $_[0]->{'_langoverride'};
 }
 
-sub setAgent {
-	my ($self, $agent) = @_;
-	
-	$self->{'_agent'} = $agent;
-}
-
-sub getAgent {
-	return $_[0]->{'_agent'};
-}
-
 
 ################################################################################
 # Request mgmt

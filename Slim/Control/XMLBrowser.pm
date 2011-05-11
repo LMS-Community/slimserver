@@ -1872,7 +1872,7 @@ sub _defeatDestructiveTouchToPlay {
 	my ($request, $client) = @_;
 	my $pref;
 	
-	if (my $agent = $request->getAgent()) {
+	if (my $agent = $client->controllerUA) {
 		if ($agent =~ /squeezeplay/i) {
 			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
 			

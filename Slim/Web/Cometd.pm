@@ -201,15 +201,8 @@ sub handler {
 				$lang = uc $al;
 			}
 
+			# Detect the user agent
 			$ua = $conn->[HTTP_RESPONSE]->request->header('X-User-Agent') || $conn->[HTTP_RESPONSE]->request->header('User-Agent');
-		}
-		
-		# Detect the user agent
-		my $agent;
-		if ( ref $conn ) {
-			if ( my $al = $conn->[HTTP_RESPONSE]->request->header('User-Agent') ) {
-				$agent = $al;
-			}
 		}
 		
 		# If a client sends any request and we do not have a valid clid record
@@ -437,7 +430,6 @@ sub handler {
 					clid     => $responseClid,
 					type     => 'subscribe',
 					lang     => $lang,
-					agent    => $agent,
 					ua       => $ua,
 				} ); 
 				
@@ -552,7 +544,6 @@ sub handler {
 					clid     => $responseClid,
 					type     => 'request',
 					lang     => $lang,
-					agent    => $agent,
 					ua       => $ua,
 				} );
 				
@@ -763,7 +754,6 @@ sub handleRequest {
 	
 	my $type     = $params->{type};
 	my $lang     = $params->{lang};
-	my $agent    = $params->{agent};
 	my $ua       = $params->{ua};
 	
 	my $mac  = $cmd->[0];
@@ -859,7 +849,6 @@ sub handleRequest {
 		elsif ( $lang ) {
 			$request->setLanguageOverride($lang);
 		}
-		$request->setAgent($agent);
 		
 		if ( $ua && $client ) {
 			$client->controllerUA($ua);
