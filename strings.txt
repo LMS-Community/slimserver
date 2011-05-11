@@ -15543,6 +15543,69 @@ RADIO_TUNEIN
 	SV	Ange webbadress
 	ZH_CN	收音机网址
 
+RADIOIO
+	EN	RadioIO
+
+SHOUTCAST
+	EN	SHOUTcast
+
+RADIO_PROVIDERS_ABSOLUTE
+	EN	Absolute Radio UK
+
+RADIO_PROVIDERS_ACCURADIO
+	EN	AccuRadio
+
+RADIO_PROVIDERS_BBC
+	EN	BBC
+
+RADIO_PROVIDERS_CBC
+	EN	CBC
+
+RADIO_PROVIDERS_DIFM
+	CS	Importováno digitálně
+	DA	Digitally Imported
+	DE	Digitally Imported
+	EN	Digitally Imported
+	ES	Digitally Imported
+	FI	Digitally Imported (digitaalisesti tuotu)
+	FR	Digitally Imported
+	IT	Digitally Imported
+	NL	Digitaal geïmporteerd
+	NO	Digitally Imported
+	PL	cyfrowa muzyka z importu
+	RU	Digitally Imported
+	SV	Importeras digitalt
+
+RADIO_PROVIDERS_SOMAFM
+	EN	SomaFM
+
+RADIO_PROVIDERS_SKYFM
+	EN	SKY.fm
+
+RADIO_PROVIDERS_RADIODE
+	EN	radio.de
+
+RADIO_PROVIDERS_RADIOFR
+	EN	radio.fr
+
+RADIO_PROVIDERS_RADIOFEEDS
+	CS	RadioFeeds UK & Irsko
+	DA	RadioFeeds UK og Irland
+	DE	RadioFeeds UK & Ireland
+	EN	RadioFeeds UK & Ireland
+	ES	RadioFeeds UK & Ireland
+	FI	RadioFeeds (Iso-Britannia ja Irlanti)
+	FR	RadioFeeds RU et Irlande
+	IT	RadioFeeds UK & Ireland
+	NL	RadioFeeds UK en Ierland
+	NO	RadioFeeds UK & Ireland
+	PL	RadioFeeds Wielka Brytania i Irlandia
+	RU	Радиоканалы: Великобритания и Ирландия
+	SV	RadioFeeds UK & Ireland
+
+RADIO_PROVIDERS_RADIONOMY
+	EN	Radionomy
+
 URL
 	CS	URL
 	DA	Internetadresse
@@ -22898,6 +22961,21 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij środkowy przycisk.
 	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите центральную кнопку.
 	SV	Bläddra till Våra favoriter och tryck på mittenknappen.
+
+INTERNET_RADIO
+	CS	Internetové rádio
+	DA	Internetradio
+	DE	Internetradio
+	EN	Internet Radio
+	ES	Radio por Internet
+	FI	Nettiradio
+	FR	Radio Internet
+	IT	Radio Internet
+	NL	Internetradio
+	NO	Internett-radio
+	PL	Radio internetowe
+	RU	Радиостанции Интернета
+	SV	Webbradio
 
 HOWTO_INTERNET_RADIO
 	CS	Rolujte na "Best of Internet Radio" a stiskněte tlačítko DOPRAVA.
