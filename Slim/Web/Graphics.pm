@@ -232,7 +232,8 @@ sub artworkRequest {
 	}
 	
 	# Resolve full path if it's not already a full path (checks Unix and Windows path prefixes)
-	if ( $fullpath !~ m{^/} && $fullpath !~ /^[a-z]:\\/i ) {
+	# Bug 16814: We also need to check for UNC prefix
+	if ( $fullpath !~ m{^/} && $fullpath !~ /^[a-z]:\\/i && $fullpath !~ /^\\\\/i ) {
 		my $skin = $params->{skinOverride} || $prefs->get('skin');
 		main::INFOLOG && $isInfo && $log->info("  Looking for: $fullpath in skin $skin");	
 		$fullpath = $skinMgr->fixHttpPath($skin, $fullpath);

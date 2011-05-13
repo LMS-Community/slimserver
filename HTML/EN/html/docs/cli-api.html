@@ -54,6 +54,8 @@
 	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
 	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
 	<li>Removed the charset tagged parameter from all commands that supported it.</li>
+	<li>Added <a href = "#playlist playtrackalbum">playtrackalbum</a> command.</li>
+	<li>Added <a href = "#playlist playtrackplaylist">playtrackplaylist</a> command.</li>
 </ul>
 
 <hr>
@@ -1133,7 +1135,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <!--#########################################################################-->
 <hr>
 <h2 id="PC">
-	Players commands and queries
+	Player commands and queries
 </h2>
 <ul>
 	<li>
@@ -5563,6 +5565,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#playlist repeat">playlist repeat</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#playlist playtrackalbum">playlist playtrackalbum</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist playtrackplaylist">playlist playtrackplaylist</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#playlistcontrol">playlistcontrol</a></code></strong>
 	</li>
 </ul>
@@ -6334,6 +6342,7 @@ in the saved playlists folder.</p>
 
 <p>The "playlist repeat" command is used to indicate or query if the player will stop playing at the end of the playlist, repeat the current song indefinitely, or repeat the current playlist indefinitely. A value of "0" indicates that the player will stop at the end of the playlist, "1" indicates that the player will repeat the current song indefinitely and a value of "2" indicates that the player will repeat the entire playlist indefinitely. Used with no parameter, the command toggles the repeat state.</p>
 
+
 <p>Example:</p>
 
 <blockquote>
@@ -6343,6 +6352,91 @@ in the saved playlists folder.</p>
 	<p>Request: "04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;"<br>
 	Response: "04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;"</p>
 </blockquote>
+
+<p id="playlist playtrackalbum"><strong><code>&lt;playerid&gt; playlist playtrackalbum &lt;tagged parameters&gt;</code></strong></p>
+
+<p>The "playlist playtrackalbum" command is used to play all tracks from an album/playlist/folder, optionally jumping directly to a given track index.  One of these three tagged params is mandatory to this command: album_id, playlist_id, or folder_id.</p>
+
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>album_id</td>
+		<td>
+		Database ID of the album to be queued into the playlist.
+		</td>
+	</tr>
+	<tr>
+		<td>artist_id</td>
+		<td>
+		Database ID of the artist to be queued into the playlist. Used only when paired with an album id.
+		</td>
+	</tr>
+	<tr>
+		<td>playlist_id</td>
+		<td>
+		Database ID of a playlist to be queued into the playlist. Used only when no album id is given.
+		</td>
+	</tr>
+	<tr>
+		<td>folder_id</td>
+		<td>
+		Database ID of a browse folder to be queued into the playlist. Used only when no album id or playlist id are given.
+		</td>
+	</tr>
+	<tr>
+		<td>list_index</td>
+		<td>Index (0-based) of the track to begin playback. Defaults to 0</td>
+	</tr>
+</table>
+
+
+<p>Example:</p>
+
+<blockquote>
+	<p>Request: "04:20:00:12:23:45 playlist playtrackalbum album_id:344 list_index:8"<br>
+	Response: "04:20:00:12:23:45 playlist playtrackalbum album_id:344 list_index:8"</p>
+
+</blockquote>
+
+<p id="playlist playtrackplaylist"><strong><code>&lt;playerid&gt; playlist playtrackplaylist &lt;tagged parameters&gt;</code></strong></p>
+
+<p>The "playlist playtrackplaylist" command is used to play all tracks from a given playlist ID, starting with a given track.</p>
+
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>playlist_id</td>
+		<td>
+		ID of the playlist to be queued into the playlist. This tagged parameter is mandatory.
+		 </td>
+	</tr>
+	<tr>
+		<td>list_index</td>
+		<td>Index (0-based) of the track to begin playback. Defaults to 0</td>
+	</tr>
+</table>
+
+<p>Example:</p>
+
+<blockquote>
+	<p>Request: "04:20:00:12:23:45 playlist playtrackplaylist playlist_id:40 list_index:10"<br>
+	Response: "04:20:00:12:23:45 playlist playtrackplaylist playlist_id:40 list_index:10"</p>
+
+</blockquote>
+
+
 
 <br>
 <p id="playlistcontrol">

@@ -2186,7 +2186,7 @@ sub musicfolderQuery {
 					if ( $playalbum && ! $partyMode ) {
 						$actions->{'play'} = {
 							player => 0,
-							cmd    => ['jiveplaytrackalbum'],
+							cmd    => ['playlist', 'playtrackalbum'],
 							params => {
 								list_index => $index + $listIndex,
 								folder_id  => $topLevelObj->id,
@@ -2674,7 +2674,7 @@ sub playlistsTracksQuery {
 				},
 				'play' => {
 					'player' => 0,
-					'cmd' => ['jiveplaytrackplaylist'],
+					'cmd' => ['playlist', 'playtrackplaylist'],
 					'params' => {
 						'cmd' => 'load',
 						'playlist_id' => $playlistID,
@@ -4503,7 +4503,7 @@ sub titlesQuery {
 		if ( $playalbum && $albumID && ! $partyMode ) {
 			$base->{'actions'}{'play'} = {
 				player => 0,
-				cmd    => ['jiveplaytrackalbum'],
+				cmd    => ['playlist', 'playtrackalbum'],
 				itemsParams => 'params',
 				nextWindow => 'nowPlaying',
 			};
