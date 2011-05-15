@@ -443,9 +443,9 @@ sub gotOPML {
 
 	my $radioDefault;
 
-	my $index = 0;
-	for my $item ( @{ $opml->{'items'} || [] } ) {
-		
+	for (my $index = 0; $index < scalar @{ $opml->{'items'} || []}; ) {
+		my $item = $opml->{'items'}->[$index];
+			
 		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
