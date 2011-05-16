@@ -65,6 +65,7 @@
 					(see Settings/Interface/Title&nbsp;Format and Settings/Player/<i>player</i>/Basic&nbsp;Settings/Title&nbsp;Format in the Web UI).</li>
 			<li>XML Web-UI skin removed. Use CLI or JSON/RPC instead.</li>
 			<li>Fishbone, Handheld, Nokia770, ScreenReader and Touch skins removed. Only Default and Classic remain supported.</li>
+				<li>When used in the context of browse music folder, the cli command `playlistcontrol cmd:load folder_id:&lt;id&gt;  will only load the audio files that are contained in that directory, and will not load audio files from subdirectories within that directory. This was for support of fixing <a href='http://bugs.slimdevices.com/show_bug.cgi?id=17199'>bug 17199</a>. This represents a change in behavior with this command from previous versions of SBS.</li>
 			</ul>
 			<li>API for plugin developers to modify browsing experience (see <code>BrowseLibrary.pm</code> for documentation).</li>
 		</ul>
@@ -136,6 +137,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16922">#16992</a> - AudioScrobbler plugin repeatedly writes prefs file preventing disk spindown</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16791">#16791</a> - No tracks listed on compilation albums with an 'Album Artist' tag, but without a 'Compilation' tag, when browsing the artists menu using SB Controller (or iPeng)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17073">#17073</a> - Playlist edit drag-and-drop only works for first page</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17199">#17199</a> - Add support for a cli command to play an entire album worth of tracks, beginning at track X</li>
 		<li>SB Radio: Fixed hostname</li>
 		<li>SB Controller, Radio, Touch: Updated busybox to 1.16.2</li>
 	</ul>
