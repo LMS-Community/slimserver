@@ -106,7 +106,7 @@
 			[% IF pagesstart %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" title="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
 			[% IF pageprev || pageprev == '0' %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_previous.gif" alt="[% "PREVIOUS" | string %]" title="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 			[%- IF pageinfo.alphamap %]
-				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+				[%- FOREACH alphakey = pageinfo.alphaindex -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
 					[%- IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');">&nbsp;[% alphakey | html %]</span><wbr/>
 					[%- ELSE %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]#[% alphakey | uri %][% IF useJS %]')[% END %]">&nbsp;[% alphakey | html %]</a><wbr/>

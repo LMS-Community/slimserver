@@ -337,7 +337,7 @@ END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]">[% "FIRST" | string %]</a> [% END %]
 [% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]">[% "PREVIOUS" | string %]</a> [% END %]
 [%- IF pageinfo.alphamap %]
-[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+[%- FOREACH alphakey = pageinfo.alphaindex -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
  <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]

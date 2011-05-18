@@ -287,6 +287,7 @@ sub pageInfo {
 
 	my %pageinfo  = ();
 	my %alphamap  = ();
+	my @alphaindex = ();
 	my $itemCount = 0;
 	my $end;
 	
@@ -297,6 +298,7 @@ sub pageInfo {
 			$key = ' ' if !defined $key;
 			$alphamap{$key} = $itemCount;
 			$itemCount += $_->[1];
+			push (@alphaindex, $key);
 		}
 		
 		if ($args->{'itemCount'} && $args->{'itemCount'} > $itemCount) {
@@ -409,6 +411,7 @@ sub pageInfo {
 		}
 
 		$pageinfo{'alphamap'} = \%alphamap;
+		$pageinfo{'alphaindex'} = \@alphaindex;
 	}
 
 	# set the start index, accounting for alpha cases
