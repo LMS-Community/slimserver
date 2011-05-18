@@ -905,6 +905,7 @@ sub handleSearch {
 			'search'   => $searchString,
 			'timeout'  => $item->{'timeout'},
 			'parser'   => $item->{'parser'},
+			'item'     => $item, # passed to carry passthrough params forward
 		);
 		
 		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
