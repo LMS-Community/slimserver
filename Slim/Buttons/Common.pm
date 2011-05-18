@@ -750,7 +750,9 @@ our %functions = (
 
 			# xmlbrowser mode - save type and parser params to favorites too
 			if ($client->modeParam('modeName') && $client->modeParam('modeName') =~ /XMLBrowser/) {
-				$url   = $obj->{'play'} || $obj->{'url'};
+				$url   = $obj->{'favorites_url'};
+				$url ||= $obj->{'play'} if $obj->{'play'} && !ref $obj->{'play'};
+				$url ||= $obj->{'url'}  if $obj->{'url'}  && !ref $obj->{'url'};
 				$type  = $obj->{'type'} || 'link';
 				$title = $obj->{'name'};
 				$icon  = $obj->{'image'};
@@ -760,7 +762,7 @@ our %functions = (
 				}
 				
 				# There may be an alternate URL for playlist
-				if ( $type eq 'playlist' && $obj->{playlist} ) {
+				if ( $type eq 'playlist' && $obj->{playlist} && !ref $obj->{playlist}) {
 					$url = $obj->{playlist};
 				}
 				
