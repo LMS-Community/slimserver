@@ -1140,9 +1140,13 @@ sub webLink {
 	
 	my ($index, $quantity) = (($args->{'start'} || 0), ($args->{'itemsPerPage'} || $prefs->get('itemsPerPage')));
 	my $itemId = $args->{'index'};
-	if (defined $itemId && $itemId =~ /^(?:[a-f0-9]{8}\.)?(\d+)/) {
-		$index = $1;
-		$quantity = 1;
+	if (defined $itemId) {
+		my $i = $itemId;
+		$i =~ s/^(?:[a-f0-9]{8})?\.?//;	# strip sessionid if present
+		if ($i =~ /^(\d+)/) {
+			$index = $1;
+			$quantity = 1;
+		}
 	}
 	
 	push @verbs, ($index, $quantity);
