@@ -41,6 +41,25 @@ if ( main::SLIM_SERVICE ) {
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
+sub _cacheKey {
+	my ( $url, $client ) = @_;
+	
+	my $cachekey = $url;
+	
+	if ($client) {
+		$cachekey .= '-' . (main::SLIM_SERVICE ? $client->language : $client->languageOverride);
+	}
+	
+	return $cachekey . '_parsedXML';
+}
+
+sub getCachedFeed {
+	my ( $class, $url, $client ) = @_;
+	
+	my $cache = Slim::Utils::Cache->new();
+	return $cache->get( _cacheKey($url, $client) );
+}
+
 sub getFeedAsync {
 	my $class = shift;
 	my ( $cb, $ecb, $params ) = @_;
@@ -48,11 +67,8 @@ sub getFeedAsync {
 	my $url = $params->{'url'};
 	
 	# Try to load a cached copy of the parsed XML
-	# On SN we need to include the language in the cache key
 	my $cache = Slim::Utils::Cache->new();
-	my $cachekey = main::SLIM_SERVICE && $params->{client} ? $params->{client}->language : '';
-	$cachekey .= $url . '_parsedXML';
-	my $feed  = $cache->get($cachekey);
+	my $feed  = $cache->get( _cacheKey($url, $params->{client}) );
 
 	if ( $feed ) {
 
@@ -295,10 +311,7 @@ sub gotViaHTTP {
 				$log->info("Caching parsed XML for " . $http->url . " for $expires seconds");
 			}
 
-			my $client = $params->{params}->{client};
-			my $cachekey = main::SLIM_SERVICE && $client ? $client->language : '';
-			$cachekey .= $http->url() . '_parsedXML';
-			$cache->set( $cachekey, $feed, $expires );
+			$cache->set( _cacheKey($http->url, $params->{params}->{client}), $feed, $expires );
 
 		} elsif ( $expires && !$cache->get( $http->url() ) ) {
 
