@@ -367,6 +367,17 @@ sub getHeaders {
 			push @headers, 'X-Controller-UA', $controllerUA;
 		}
 		
+		# Add Accept-Language header
+		my $lang = $client->languageOverride(); # override from comet request
+			
+		if ( main::SLIM_SERVICE ) {
+			$lang ||= $prefs->client($client)->get('language');
+		}
+	
+		$lang ||= $prefs->get('language') || 'en';
+			
+		push @headers, 'Accept-Language', lc($lang);
+		
 		# Request JSON instead of XML, it is much faster to parse
 		push @headers, 'Accept', 'text/x-json, text/xml';
 		

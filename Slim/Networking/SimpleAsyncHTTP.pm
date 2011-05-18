@@ -114,7 +114,8 @@ sub _createHTTPRequest {
 	$self->url( $url );
 	
 	my $params = $self->_params;
-	
+	my $client = $params->{params}->{client};
+		
 	main::DEBUGLOG && $log->debug("${type}ing $url");
 	
 	# Check for cached response
@@ -122,7 +123,7 @@ sub _createHTTPRequest {
 		
 		my $cache = Slim::Utils::Cache->new();
 		
-		if ( my $data = $cache->get( $url ) ) {			
+		if ( my $data = $cache->get( _cacheKey($url, $client) ) ) {			
 			$self->cachedResponse( $data );
 			
 			# If the data was cached within the past 5 minutes,
@@ -165,7 +166,7 @@ sub _createHTTPRequest {
 	
 	# Add Accept-Language header
 	my $lang;
-	if ( my $client = $params->{params}->{client} ) {
+	if ( $client ) {
 		$lang = $client->languageOverride(); # override from comet request
 		
 		if ( main::SLIM_SERVICE ) {
@@ -258,6 +259,9 @@ sub onBody {
 	$self->headers( $res->headers );
 	
 	if ( !$http->saveAs ) {
+
+		my $params = $self->_params;
+		my $client = $params->{params}->{client};
 	
 		# Check if we are cached and got a "Not Modified" response
 		if ( $self->cachedResponse && $res->code == 304) {
@@ -268,7 +272,7 @@ sub onBody {
 			my $cache = Slim::Utils::Cache->new();
 			$self->cachedResponse->{_time} = time;
 			my $expires = $self->cachedResponse->{_expires} || undef;
-			$cache->set( $self->url, $self->cachedResponse, $expires );
+			$cache->set( _cacheKey($self->url, $client), $self->cachedResponse, $expires );
 		
 			return $self->sendCachedResponse();
 		}
@@ -297,7 +301,6 @@ sub onBody {
 		}
 		
 		# cache the response if requested
-		my $params = $self->_params;
 		if ( $params->{cache} ) {
 		
 			if ( Slim::Utils::Misc::shouldCacheURL( $self->url ) ) {
@@ -343,7 +346,7 @@ sub onBody {
 						$no_revalidate = 1;
 					}
 
-					$self->cacheResponse( $expires, $no_revalidate );
+					$self->cacheResponse( $expires, $no_revalidate, $client );
 				}
 				else {
 					if ( main::DEBUGLOG && $log->is_debug ) {
@@ -365,8 +368,20 @@ sub onBody {
 	return;
 }
 
+sub _cacheKey {
+	my ( $url, $client ) = @_;
+	
+	my $cachekey = $url;
+	
+	if ($client) {
+		$cachekey .= '-' . (main::SLIM_SERVICE ? $client->language : $client->languageOverride);
+	}
+	
+	return $cachekey;
+}
+
 sub cacheResponse {
-	my ( $self, $expires, $norevalidate ) = @_;
+	my ( $self, $expires, $norevalidate, $client ) = @_;
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
@@ -384,7 +399,7 @@ sub cacheResponse {
 		_no_revalidate => $norevalidate,
 	};
 
-	$cache->set( $self->url, $data, $expires );
+	$cache->set( _cacheKey($self->url, $client), $data, $expires );
 }
 
 sub sendCachedResponse {
