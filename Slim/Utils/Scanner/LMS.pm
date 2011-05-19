@@ -105,7 +105,7 @@ sub rescan {
 	# Begin scan	
 	my $s = Media::Scan->new( $paths, {
 		#loglevel => 5,
-		#async => $args->{no_async} ? 0 : 1,
+		async => $args->{no_async} ? 0 : 1,
 		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
 		thumbnails => [
@@ -189,19 +189,16 @@ sub rescan {
 		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] ); # XXX also needs the scan path?
 	}
 	
-=pod
 	# Setup async scan monitoring
 	if ( !$args->{no_async} ) {
 		$watcher = AnyEvent->io(
 			fh   => $s->async_fd,
 			poll => 'r',
 			cb   => sub {
-				warn "*** async_process\n";
 				$s->async_process;
 			},
 		);
 	}
-=cut	
 	
 	return $changes;
 	

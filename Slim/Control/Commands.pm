@@ -37,6 +37,8 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
+use Slim::Utils::Scanner::LMS;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
@@ -2638,22 +2640,25 @@ sub rescanCommand {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		my $dir = Slim::Utils::Misc::getAudioDir();
-
-		my %args = (
-			types    => 'list|audio',
-			scanName => 'directory',
-			progress => 1,
-		);
-
-		if ($playlistsOnly) {
-			$dir = Slim::Utils::Misc::getPlaylistDir();
-			$args{types} = 'list';
-		}
-
 		Slim::Utils::Progress->clear();
 		
-		Slim::Utils::Scanner::Local->rescan( $dir, \%args );
+		my $dirs = Slim::Utils::Misc::getMediaDirs();
+		
+		Slim::Utils::Scanner::LMS->rescan( $dirs, {
+			scanName => 'directory',
+			progress => 1,
+		} );
+		
+		# XXX until libmediascan supports audio, run the audio scanner now
+		for my $dir ( @{$dirs} ) {
+			main::INFOLOG && $log->info("Starting audio-only scan in: $dir");
+
+			Slim::Utils::Scanner::Local->rescan( $dir, {
+				types    => 'list|audio',
+				scanName => 'directory',
+				progress => 1,
+			} );
+		}
 	}
 
 	$request->setStatusDone();
