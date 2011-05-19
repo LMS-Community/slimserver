@@ -378,7 +378,7 @@ sub _cliQuery_done {
 				};
 				
 				# Check for a cached version of this subfeed URL
-				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
+				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'}, $request->client ) ) {
 					
 					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
 					_cliQuerySubFeed_done( $cached, $args );

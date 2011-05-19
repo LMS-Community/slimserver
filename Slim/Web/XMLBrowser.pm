@@ -360,7 +360,7 @@ sub handleFeed {
 				}
 				
 				# Check for a cached version of this subfeed URL
-				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
+				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'}, $client ) ) {
 					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
 					handleSubFeed( $cached, $args );
 				}
