@@ -1878,8 +1878,9 @@ sub execute {
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
+			my $error = "$@";
 			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-			logError("While trying to run function coderef [$funcName]: [$@]");
+			logError("While trying to run function coderef [$funcName]: [$error]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
 			
