@@ -164,6 +164,9 @@ sub scanURL {
 			}
 		}
 	}
+	else {
+		$url =~ s/#slim:.+$//;
+	}
 	
 	if ( $isAudio ) { 	 
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Remote stream $url known to be audio" ); 	 
