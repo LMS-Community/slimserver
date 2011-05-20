@@ -107,10 +107,8 @@ sub canDirectStream {
 		}
 	}
 
-	if ( main::SLIM_SERVICE ) {
-		# Strip noscan info from URL
-		$url =~ s/#slim:.+$//;
-	}
+	# Strip noscan info from URL
+	$url =~ s/#slim:.+$//;
 
 	return $url;
 }
