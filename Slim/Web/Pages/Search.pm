@@ -199,6 +199,8 @@ sub advancedSearch {
 		for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
 	
 			$type = (split /-/, $type)[0];
+			
+			next if $type =~ /^(?:SPDR|TEST)$/i;
 	
 			$types{$type} = string($type);
 		}
