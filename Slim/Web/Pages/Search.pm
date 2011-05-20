@@ -164,7 +164,7 @@ sub advancedSearch {
 	
 			$type = (split /-/, $type)[0];
 			
-			next if $type =~ /^SPDR$/i;
+			next if $type =~ /^(?:SPDR|TEST)$/i;
 	
 			$types{$type} = string($type);
 		}
