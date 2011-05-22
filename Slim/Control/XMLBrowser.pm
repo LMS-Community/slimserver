@@ -206,6 +206,8 @@ sub cliQuery {
 		}
 		
 		$feed =~ s/{QUERY}/$query/g;
+
+		$args{'url'} = $feed;
 	}
 	
 	# Lookup this browse session in cache if user is browsing below top-level
