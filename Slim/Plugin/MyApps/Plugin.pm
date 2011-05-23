@@ -31,6 +31,11 @@ sub feed {
 				sub {
 					my $feed = shift;
 
+					# override the text message saying no apps are installed
+					if (scalar @{$feed->{'items'}} == 1 && $feed->{'items'}->[0]->{'type'} eq 'text') {
+						$feed->{'items'} = [];
+					}
+
 					for my $app (@$nonSNApps) {
 
 						if ($app->condition($client)) {
