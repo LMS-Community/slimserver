@@ -31,12 +31,55 @@ sub new {
 	);
 	
 	# folder selectors
-	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT | wxTOP, 10);
-	$settingsSizer->AddSpacer(5);
-	$settingsSizer->Add(
-		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir', 'SETUP_AUDIODIR'),
-		0, wxEXPAND | wxLEFT | wxRIGHT, 10
-	);
+	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_MEDIADIRS')), 0, wxLEFT | wxTOP, 10);
+	
+	my $mediaDirsSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+	my $dirsBtnSizer   = Wx::BoxSizer->new(wxVERTICAL);
+	 
+	my $dirsList = Wx::ListBox->new($self, -1, wxDefaultPosition, wxDefaultSize, [], wxLB_EXTENDED);
+	my $mediadirs = Slim::GUI::ControlPanel->getPref('mediadirs');
+	if ($mediadirs && ref $mediadirs eq 'ARRAY') {
+		$dirsList->InsertItems($mediadirs, 0);
+	}
+	$mediaDirsSizer->Add($dirsList, 0, wxGROW | wxRIGHT, 10);
+	
+	my $btnAdd = Wx::Button->new($self, -1, string('ADD'));
+	$parent->addStatusListener($btnAdd);
+	$dirsBtnSizer->Add($btnAdd, 0);
+
+	my $btnRemove = Wx::Button->new($self, -1, string('DELETE'));
+	$parent->addStatusListener($btnRemove);
+	$dirsBtnSizer->Add($btnRemove, 0, wxTOP, 5);
+
+	$mediaDirsSizer->Add($dirsBtnSizer, 0, wxRIGHT, 10);
+	$settingsSizer->Add($mediaDirsSizer, 0, wxEXPAND | wxLEFT | wxTOP | wxRIGHT, 10);
+	
+	EVT_BUTTON($self, $btnAdd, sub {
+		my $dirsSelector = Wx::DirDialog->new($self);
+		if ($dirsSelector->ShowModal() == wxID_OK) {
+			if (my $path = $dirsSelector->GetPath()) {
+				$dirsList->Append($path);
+			}
+		}
+	});
+	
+	EVT_BUTTON($self, $btnRemove, sub {
+		my @selected = $dirsList->GetSelections();
+		foreach (reverse sort @selected) {
+			$dirsList->Delete($_);
+		}
+	});
+	
+	$parent->addApplyHandler($self, sub {
+		my $running = (shift == SC_STATE_RUNNING);
+
+		my @mediaDirs = $dirsList->GetStrings();
+		
+		if ($running && @mediaDirs && ref @mediaDirs eq 'ARRAY') {
+			Slim::GUI::ControlPanel->setPref('mediadirs', \@mediaDirs);
+		}
+	});
+
 
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
 	$settingsSizer->AddSpacer(5);
@@ -44,7 +87,7 @@ sub new {
 		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir', 'SETUP_PLAYLISTDIR'),
 		0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10
 	);
-
+	
 	my $iTunes = getPref('iTunes', 'state.prefs');
 	my $useItunesStr = ($svcMgr->checkServiceState() == SC_STATE_RUNNING)
 		? Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES')
