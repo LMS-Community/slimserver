@@ -6234,6 +6234,12 @@ SETUP_AUDIODIR_DESC
 	SV	Du kan ange en mapp med de musikfiler som ska sökas igenom och läggas till i ditt musikbibliotek.  Ange sökvägen till mappen nedan:  Om du importerar musikbibliotek från iTunes eller MusicIP kan du lämna fältet tomt.
 	ZH_CN	您可以指定Squeezebox Server所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MusicIP导入您音乐库信息，您可以让此资料栏空白。
 
+SETUP_MEDIADIRS
+	EN	Media Folders
+
+SETUP_MEDIADIRS_DESC
+	EN	You can specify one or more folders containing media files that Squeezebox Server will scan and add to your media library.  Enter the paths to the folder below.
+
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
 	DA	Mappe med afspilningslister
@@ -20259,6 +20265,21 @@ DIRECTORY_DELETED_PROGRESS
 	SV	Ta bort borttagna filer
 
 DIRECTORY_NEW_PROGRESS
+	CS	Prohledat nové soubory
+	DA	Søg efter nye filer
+	DE	Neue Dateien durchsuchen
+	EN	Scanning new files
+	ES	Examinar archivos nuevos
+	FI	Tarkista uudet tiedostot
+	FR	Analyse des nouveaux fichiers
+	IT	Analizza i nuovi file
+	NL	Nieuwe bestanden scannen
+	NO	Søk i nye filer
+	PL	Przeszukuj nowe pliki
+	RU	Сканировать новые файлы
+	SV	Sök igenom nya filer
+
+DIRECTORY_MEDIA_PROGRESS
 	CS	Prohledat nové soubory
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
