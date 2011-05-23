@@ -1451,7 +1451,17 @@ sub hasScrolling { 0 }
 sub apps {
 	my $client = shift;
 	
-	return $prefs->client($client)->get('apps') || {};
+	my %clientApps = %{$prefs->client($client)->get('apps') || {}};
+
+	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
+		for my $plugin (@$nonSNApps) {
+			if ($plugin->can('tag')) {
+				$clientApps{ $plugin->tag } = { plugin => $plugin };
+			}
+		}
+	}
+
+	return \%clientApps;
 }
 
 sub isAppEnabled {
