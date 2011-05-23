@@ -23,8 +23,6 @@ sub feed {
 
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 
-		my @nonSNApps = sort { ($a->can('weight') && $a->weight) <=> ($b->can('weight') && $b->weight) } @$nonSNApps;
-
 		return sub {
 			my ($client, $callback, $args) = @_;
 
@@ -33,7 +31,7 @@ sub feed {
 				sub {
 					my $feed = shift;
 
-					for my $app (@nonSNApps) {
+					for my $app (@$nonSNApps) {
 
 						if ($app->condition($client)) {
 
@@ -67,6 +65,8 @@ sub feed {
 							push @{$feed->{'items'}}, $item;
 						}
 					}
+
+					$feed->{'items'} = [ sort { $a->{'name'} cmp $b->{'name'} } @{$feed->{'items'}} ];
 
 					$callback->($feed);
 				},
