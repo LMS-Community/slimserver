@@ -159,27 +159,36 @@ sub getPref {
 		$prefFile = $serverPrefFile;
 	}
 
+	require YAML::Syck;
+	$YAML::Syck::ImplicitUnicode = 1;
+	
+	my $prefs = eval { YAML::Syck::LoadFile($prefFile) };
+
 	my $ret;
 
-	if (-r $prefFile) {
-
-		if (open(PREF, $prefFile)) {
-
-			local $_;
-			while (<PREF>) {
-			
-				# read YAML (server) and old style prefs (installer)
-				if (/^$pref(:| \=)? (.+)$/) {
-					$ret = $2;
-					$ret =~ s/^['"]//;
-					$ret =~ s/['"\s]*$//s;
-					last;
-				}
-			}
-
-			close(PREF);
-		}
+	if (!$@) {
+		$ret = $prefs->{$pref};
 	}
+
+#	if (-r $prefFile) {
+#
+#		if (open(PREF, $prefFile)) {
+#
+#			local $_;
+#			while (<PREF>) {
+#			
+#				# read YAML (server) and old style prefs (installer)
+#				if (/^$pref(:| \=)? (.+)$/) {
+#					$ret = $2;
+#					$ret =~ s/^['"]//;
+#					$ret =~ s/['"\s]*$//s;
+#					last;
+#				}
+#			}
+#
+#			close(PREF);
+#		}
+#	}
 
 	return $ret;
 }
