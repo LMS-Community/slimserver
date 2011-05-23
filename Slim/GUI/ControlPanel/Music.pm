@@ -33,26 +33,28 @@ sub new {
 	# folder selectors
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_MEDIADIRS')), 0, wxLEFT | wxTOP, 10);
 	
-	my $mediaDirsSizer = Wx::BoxSizer->new(wxHORIZONTAL);
-	my $dirsBtnSizer   = Wx::BoxSizer->new(wxVERTICAL);
+	my $mediaDirsSizer = Wx::BoxSizer->new(wxVERTICAL);
+	my $dirsBtnSizer   = Wx::BoxSizer->new(wxHORIZONTAL);
 	 
 	my $dirsList = Wx::ListBox->new($self, -1, wxDefaultPosition, wxDefaultSize, [], wxLB_EXTENDED);
 	my $mediadirs = Slim::GUI::ControlPanel->getPref('mediadirs');
 	if ($mediadirs && ref $mediadirs eq 'ARRAY') {
 		$dirsList->InsertItems($mediadirs, 0);
 	}
-	$mediaDirsSizer->Add($dirsList, 0, wxGROW | wxRIGHT, 10);
+	$mediaDirsSizer->Add($dirsList, 0, wxGROW, 10);
 	
 	my $btnAdd = Wx::Button->new($self, -1, string('ADD'));
 	$parent->addStatusListener($btnAdd);
 	$dirsBtnSizer->Add($btnAdd, 0);
-
+	$dirsBtnSizer->AddSpacer(5);
+	
 	my $btnRemove = Wx::Button->new($self, -1, string('DELETE'));
 	$parent->addStatusListener($btnRemove);
-	$dirsBtnSizer->Add($btnRemove, 0, wxTOP, 5);
+	$dirsBtnSizer->Add($btnRemove, 0);
 
-	$mediaDirsSizer->Add($dirsBtnSizer, 0, wxRIGHT, 10);
-	$settingsSizer->Add($mediaDirsSizer, 0, wxEXPAND | wxLEFT | wxTOP | wxRIGHT, 10);
+	$mediaDirsSizer->Add($dirsBtnSizer, 0, wxTOP, 5);
+	$settingsSizer->AddSpacer(5);
+	$settingsSizer->Add($mediaDirsSizer, 0, wxGROW | wxLEFT | wxRIGHT, 10);
 	
 	EVT_BUTTON($self, $btnAdd, sub {
 		my $dirsSelector = Wx::DirDialog->new($self);
@@ -108,7 +110,7 @@ sub new {
 		});
 	}
 
-	$mainSizer->Add($settingsSizer, 0, wxALL | wxGROW, 10);
+	$mainSizer->Add($settingsSizer, 0, wxALL | wxEXPAND, 10);
 	
 	$self->SetSizer($mainSizer);
 	
