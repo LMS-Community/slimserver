@@ -153,20 +153,22 @@ sub ignoreCaseArticles {
 	if (!$caseArticlesCache{$key}) {
 
 		use locale;
-
-		$caseArticlesCache{$key} = ignorePunct(ignoreArticles(uc($s)));
+		
+		my $value = ignorePunct(ignoreArticles(uc($s)));
 
 		# Remove characters beyond U+FFFF as MySQL doesn't like them in TEXT fields
-		$caseArticlesCache{$key} =~ s/[\x{10000}-\x{10ffff}]//g;
+		$value =~ s/[\x{10000}-\x{10ffff}]//g;
 
 		# strip leading & trailing spaces
-		$caseArticlesCache{$key} =~ s/^ +//o;
-		$caseArticlesCache{$key} =~ s/ +$//o;
+		$value =~ s/^ +//o;
+		$value =~ s/ +$//o;
 		
 		if ($transliterate) {
 			# Bug 16956, Transliterate Unicode characters
-			$caseArticlesCache{$key} = Slim::Utils::Unicode::utf8toLatin1Transliterate($s);
+			$value = Slim::Utils::Unicode::utf8toLatin1Transliterate($value);
 		}
+		
+		$caseArticlesCache{$key} = $value;
 	}
 
 	return $caseArticlesCache{$key};
