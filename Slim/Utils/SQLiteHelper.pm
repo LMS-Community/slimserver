@@ -588,6 +588,7 @@ sub _notifyFromScanner {
 		$request->setStatusDone();
 		
 		Slim::Music::Import->setAborted(0);
+		Slim::Music::Import->clearProgressInfo();
 		
 		return;
 	}
