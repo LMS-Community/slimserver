@@ -183,11 +183,6 @@ sub abortScan {
 		# we get a progress update
 		$ABORT = 1;
 		
-		if (blessed($class->scanningProcess) && $class->scanningProcess->alive) {
-			$class->scanningProcess->die();
-			$class->scanningProcess(undef);
-		}
-
 		$class->setIsScanning(0);
 	}
 }
