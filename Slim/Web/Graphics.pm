@@ -158,7 +158,30 @@ sub artworkRequest {
 			} );
 		}
 		elsif ( $id =~ /^-\d+$/ ) {
-			# XXX ID is a remote track
+			# if $id starts with a negative sign, ID is a remote track
+
+			# Bug 16491: Grab the remoteTrack's coverArt and do the resizing on the fly
+			my $remoteTrack = Slim::Schema::RemoteTrack->fetchById($id);
+			my $coverArtImage = $remoteTrack->coverArt();
+			if( $coverArtImage) {
+				require Slim::Utils::GDResizer;
+
+				my @arrSpec = split(',', $spec);
+				my ($width, $height, $mode, $bgcolor, $ext) = @arrSpec->[0] =~ /^(?:(\d+)x(\d+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+				my ($res, $format) = Slim::Utils::GDResizer->resize(
+					original => \$coverArtImage,
+					width    => $width,
+					height   => $height,
+					mode     => $mode,
+				);
+
+				my $ct = 'image/' . $format;
+				$ct =~ s/jpg/jpeg/;
+				$response->content_type($ct);
+				
+				$callback->( $client, $params, $res, @args );
+				return;
+			}
 		}
 		else {
 			# ID is the trackid, this is deprecated because
