@@ -996,11 +996,11 @@ sub infoSampleRate {
 	
 	my $item;
 	
-	if ( $track->samplerate ) {
+	if ( $sampleRate = $track->samplerate ) {
 		$item = {
 			type  => 'text',
 			label => 'SAMPLERATE',
-			name  => $track->prettySampleRate,
+			name  => sprintf('%.1f kHz', $sampleRate / 1000),
 		};
 	}
 	

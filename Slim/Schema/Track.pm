@@ -317,16 +317,6 @@ sub buildPrettyBitRate {
 	return 0;
 }	
 
-sub prettySampleRate {
-	my $self = shift;
-
-	my $sampleRate = $self->samplerate;
-
-	if ($sampleRate) {
-		return sprintf('%.1f kHz', $sampleRate / 1000);
-	}
-}
-
 # Wrappers around common functions
 sub isRemoteURL {
 	my $self = shift;
