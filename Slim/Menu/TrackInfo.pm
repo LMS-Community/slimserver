@@ -996,7 +996,7 @@ sub infoSampleRate {
 	
 	my $item;
 	
-	if ( $sampleRate = $track->samplerate ) {
+	if ( my $sampleRate = $track->samplerate ) {
 		$item = {
 			type  => 'text',
 			label => 'SAMPLERATE',
