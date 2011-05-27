@@ -160,7 +160,7 @@ sub launchScan {
 		push @scanArgs, '--debug', $debugArgs;
 	}
 	
-	$class->setIsScanning(1);
+	$class->setIsScanning('SETUP_WIPEDB');
 	
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)

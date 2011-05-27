@@ -141,7 +141,15 @@ sub rescan {
 	$pending{$next} = 0;
 	
 	if ( !main::SCANNER ) {
-		Slim::Music::Import->setIsScanning(1);
+		my $type = 'SETUP_STANDARDRESCAN';
+		if ( $args->{wipe} ) {
+			$type = 'SETUP_WIPEDB';
+		}
+		elsif ( $args->{types} eq 'list' ) {
+			$type = 'SETUP_PLAYLISTRESCAN';
+		}
+		
+		Slim::Music::Import->setIsScanning($type);
 	}
 	
 	# Initialize plugin hooks if any plugins want scan events.
