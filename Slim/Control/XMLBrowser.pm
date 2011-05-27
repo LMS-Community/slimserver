@@ -1105,6 +1105,10 @@ sub _cliQuery_done {
 							$itemParams->{'isContextMenu'} = 1;
 						}
 						
+						if ($item->{type} && $item->{type} eq 'slideshow') {
+							$itemParams->{slideshow} = 1;
+						}
+
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
