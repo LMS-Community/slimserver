@@ -91,6 +91,7 @@ sub ignoredItems {
 		'USB'       => '/',
 		'usr'       => '/',	
 		'var'       => '/',
+		'lib64'     => '/',
 		'lost+found'=> 1,
 	);
 }
