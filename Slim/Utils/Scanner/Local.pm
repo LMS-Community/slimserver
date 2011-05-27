@@ -141,7 +141,15 @@ sub rescan {
 	$pending{$next} = 0;
 	
 	if ( !main::SCANNER ) {
-		Slim::Music::Import->setIsScanning(1);
+		my $type = 'SETUP_STANDARDRESCAN';
+		if ( $args->{wipe} ) {
+			$type = 'SETUP_WIPEDB';
+		}
+		elsif ( $args->{types} eq 'list' ) {
+			$type = 'SETUP_PLAYLISTRESCAN';
+		}
+		
+		Slim::Music::Import->setIsScanning($type);
 	}
 	
 	# Initialize plugin hooks if any plugins want scan events.
@@ -226,7 +234,7 @@ sub rescan {
 		
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
-		if ( $inDBOnlyCount ) {
+		if ( $inDBOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $inDBOnly = $dbh->prepare_cached($inDBOnlySQL);
 			$inDBOnly->execute;
 			
@@ -247,6 +255,9 @@ sub rescan {
 			}
 			
 			my $handle_deleted = sub {
+				
+				return if hasAborted($progress, $args->{no_async});
+				
 				if ( $inDBOnly->fetch ) {
 					$progress && $progress->update($deleted);
 					$changes++;
@@ -279,7 +290,7 @@ sub rescan {
 		
 		$log->error( "Scanning new files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
-		if ( $onDiskOnlyCount ) {
+		if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $onDiskOnly = $dbh->prepare_cached($onDiskOnlySQL);
 			$onDiskOnly->execute;
 			
@@ -300,6 +311,9 @@ sub rescan {
 			}
 			
 			my $handle_new = sub {
+				
+				return if hasAborted($progress, $args->{no_async});
+				
 				if ( $onDiskOnly->fetch ) {
 					$progress && $progress->update($new);
 					$changes++;
@@ -332,7 +346,7 @@ sub rescan {
 		
 		$log->error( "Rescanning changed files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
-		if ( $changedOnlyCount ) {
+		if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $changedOnly = $dbh->prepare_cached($changedOnlySQL);
 			$changedOnly->execute;
 			
@@ -353,6 +367,9 @@ sub rescan {
 			}
 			
 			my $handle_changed = sub {
+				
+				return if hasAborted($progress, $args->{no_async});
+				
 				if ( $changedOnly->fetch ) {
 					$progress && $progress->update($changed);
 					$changes++;
@@ -383,8 +400,13 @@ sub rescan {
 			}
 		}
 		
+		
+		if ( hasAborted() ) {
+			# nothing to do here - should be handled in hasAborted()
+		}
+		
 		# Scan other directories found via shortcuts or aliases
-		if ( scalar @{$others} ) {
+		elsif ( scalar @{$others} ) {
 			if ( $args->{no_async} ) {
 				$class->rescan( $others, $args );
 			}
@@ -403,7 +425,7 @@ sub rescan {
 	} );
 	
 	# Continue scanning if we had more paths
-	if ( @{$paths} ) {
+	if ( @{$paths} && !Slim::Music::Import->hasAborted() ) {
 		if ( $args->{no_async} ) {
 			$class->rescan( $paths, $args );
 		}
@@ -413,6 +435,8 @@ sub rescan {
 	}
 	
 	if ( !main::SCANNER && $args->{no_async} ) {
+		hasAborted();
+
 		# All done, send a done event
 		Slim::Music::Import->setIsScanning(0);
 		Slim::Schema->wipeCaches();
@@ -420,6 +444,24 @@ sub rescan {
 	}
 	
 	return $changes;
+}
+
+sub hasAborted {
+	my ($progress, $no_async) = @_;
+	
+	if ( Slim::Music::Import->hasAborted() ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Scan aborted");
+		
+		if ( !main::SCANNER && !$no_async ) {
+			Slim::Music::Import->setAborted(0);
+			Slim::Music::Import->clearProgressInfo();
+			Slim::Music::Import->setIsScanning(0);
+			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+		}
+
+		$progress && $progress->final;
+		return 1;	
+	}
 }
 
 sub deleted {

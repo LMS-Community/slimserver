@@ -588,6 +588,7 @@ sub _notifyFromScanner {
 		$request->setStatusDone();
 		
 		Slim::Music::Import->setAborted(0);
+		Slim::Music::Import->clearProgressInfo();
 		
 		return;
 	}
@@ -602,7 +603,7 @@ sub _notifyFromScanner {
 		
 		Slim::Utils::Progress->clear;
 		
-		Slim::Music::Import->setIsScanning(1);
+		Slim::Music::Import->setIsScanning('SETUP_WIPEDB');
 		
 		# XXX if scanner doesn't report in with regular progress within a set time period
 		# assume scanner is dead.  This is hard to do, as scanner may block for an indefinite

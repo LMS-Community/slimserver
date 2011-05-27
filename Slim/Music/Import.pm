@@ -160,7 +160,7 @@ sub launchScan {
 		push @scanArgs, '--debug', $debugArgs;
 	}
 	
-	$class->setIsScanning(1);
+	$class->setIsScanning('SETUP_WIPEDB');
 	
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
@@ -183,11 +183,6 @@ sub abortScan {
 		# we get a progress update
 		$ABORT = 1;
 		
-		if (blessed($class->scanningProcess) && $class->scanningProcess->alive) {
-			$class->scanningProcess->die();
-			$class->scanningProcess(undef);
-		}
-
 		$class->setIsScanning(0);
 	}
 }
