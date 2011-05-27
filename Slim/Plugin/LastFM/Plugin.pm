@@ -110,9 +110,6 @@ sub initJive {
 	my $menu = $class->SUPER::initJive( %args );
 
 	return if !$menu;
-	
-	# TODO - XXX remove this once we've updated mysb.com
-	return $menu if !main::SLIM_SERVICE && !preferences('server')->get('use_sn_test');
 
 	$menu->[0]->{screensavers} = [
 		{
