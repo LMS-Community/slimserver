@@ -1,70 +1,57 @@
-# String file for RadioTime plugin
+# String file for TuneIn Radio plugin
 
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RADIOTIME_MODULE_NAME
-	CS	RadioTime
-	DA	RadioTime
-	DE	RadioTime
-	EN	RadioTime
-	ES	RadioTime
-	FI	RadioTime
-	FR	RadioTime
-	HE	RadioTime
-	IT	RadioTime
-	NL	RadioTime
-	NO	RadioTime
-	PL	RadioTime
-	RU	RadioTime
-	SV	RadioTime
+	CS	TuneIn Radio
+	DA	TuneIn Radio
+	DE	TuneIn Radio
+	EN	TuneIn Radio
+	ES	TuneIn Radio
+	FI	TuneIn Radio
+	FR	TuneIn Radio
+	HE	TuneIn Radio
+	IT	TuneIn Radio
+	NL	TuneIn Radio
+	NO	TuneIn Radio
+	PL	TuneIn Radio
+	RU	TuneIn Radio
+	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
-	CS	RadioTime - Místní Internetové rádio
-	DA	RadioTime: Lokal internetradio
-	DE	RadioTime - Zugang zu lokalen Internetradiosendern
-	EN	RadioTime - Local Internet Radio
-	ES	RadioTime - Radio por Internet local
-	FI	RadioTime - paikallinen internet-radio
-	FR	RadioTime – Radio Internet locale
-	IT	RadioTime: radio Internet locale
-	NL	RadioTime - Lokale internetradio
-	NO	RadioTime: Lokal Internett-radio
-	PL	RadioTime - lokalne radio internetowe
-	RU	RadioTime — местная радиостанция Интернета
-	SV	RadioTime – Lokal webbradio
+	CS	TuneIn Radio - Místní Internetové rádio
+	DA	TuneIn Radio: Lokal internetradio
+	DE	TuneIn Radio - Zugang zu lokalen Internetradiosendern
+	EN	TuneIn Radio - Local Internet Radio
+	ES	TuneIn Radio - Radio por Internet local
+	FI	TuneIn Radio - paikallinen internet-radio
+	FR	TuneIn Radio – Radio Internet locale
+	IT	TuneIn Radio: radio Internet locale
+	NL	TuneIn Radio - Lokale internetradio
+	NO	TuneIn Radio: Lokal Internett-radio
+	PL	TuneIn Radio - lokalne radio internetowe
+	RU	TuneIn Radio — местная радиостанция Интернета
+	SV	TuneIn Radio – Lokal webbradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
-	CS	radiotime
-	DA	radiotime
-	DE	radiotime
-	EN	radiotime
-	ES	radiotime
-	FI	radiotime
-	FR	RadioTime
-	HE	radiotime
-	IT	radiotime
-	NL	radiotime
-	NO	radiotime
-	PL	radiotime
-	RU	RadioTime
-	SV	radiotime
+	EN	TuneIn Radio
 
 PLUGIN_RADIOTIME_LOADING
-	CS	Nahrávám RadioTime...
-	DA	Indlæser RadioTime...
-	DE	RadioTime wird geladen ...
-	EN	Loading RadioTime...
-	ES	Cargando RadioTime...
-	FI	Ladataan RadioTime...
-	FR	Chargement RadioTime...
-	HE	טוען את RadioTime...
-	IT	Caricamento RadioTime in corso...
-	NL	RadioTime wordt geladen...
-	NO	Laster RadioTime...
-	PL	Ładowanie usługi RadioTime...
-	RU	Загрузка RadioTime...
-	SV	Läser in RadioTime ...
+	CS	Nahrávám TuneIn Radio...
+	DA	Indlæser TuneIn Radio...
+	DE	TuneIn Radio wird geladen ...
+	EN	Loading TuneIn Radio...
+	ES	Cargando TuneIn Radio...
+	FI	Ladataan TuneIn Radio...
+	FR	Chargement TuneIn Radio...
+	HE	טוען את TuneIn Radio...
+	IT	Caricamento TuneIn Radio in corso...
+	NL	TuneIn Radio wordt geladen...
+	NO	Laster TuneIn Radio...
+	PL	Ładowanie usługi TuneIn Radio...
+	RU	Загрузка TuneIn Radio...
+	SV	Läser in TuneIn Radio ...
 
 PLUGIN_RADIOTIME_OPTIONS
-	EN	RadioTime Options
+	EN	TuneIn Radio Options
 
