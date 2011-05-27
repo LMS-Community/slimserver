@@ -627,7 +627,11 @@ sub open {
 			# XXXX - this really needs to happen in the caller!
 			# No database access here. - dsully
 			# keep track of some stats for this track
-			if ( my $persistent = $track->retrievePersistent ) {
+			if ( Slim::Music::Import->stillScanning() ) {
+				# bug 16003 - don't try to update the persistent DB while a scan is running
+				main::DEBUGLOG && $log->is_debug && $log->debug("Don't update the persistent DB - it's locked by the scanner.");
+			}
+			elsif ( my $persistent = $track->retrievePersistent ) {
 				$persistent->set( playcount  => ( $persistent->playcount || 0 ) + 1 );
 				$persistent->set( lastplayed => time() );
 				$persistent->update;
