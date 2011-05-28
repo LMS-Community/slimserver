@@ -156,7 +156,7 @@ sub cliQuery {
 		my $nextIndex;
 		if ( defined $itemId && length($itemId) ) {
 			my @index = split(/\./, $itemId);
-			if (length($index[0] >= 8)) {
+			if (length($index[0]) >= 8) {
 				shift @index;	# discard sid
 			}
 			$levels = scalar @index;
