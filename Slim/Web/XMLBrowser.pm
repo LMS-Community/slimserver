@@ -117,7 +117,7 @@ sub handleWebIndex {
 		
 		if ( !$query ) {
 			my $index = $asyncArgs->[1]->{index};
-			($query) = $index =~ m/^_([^.]+)/;
+			($query) = $index =~ m/^(?:[a-f0-9]{8})?_([^.]+)/;
 			$query = uri_unescape( $query ) if $query;
 		}
 		
