@@ -2353,6 +2353,21 @@ sub suppressStatus {
 	return undef;
 }
 
+sub msgOnScreen2 {
+	my $client = shift;
+
+	if ($client->display->hasScreen2) {
+
+		my $screen2 = $client->modeParam('screen2active');
+		
+		if ($screen2 && $screen2 eq 'periodic') {
+			return 1;
+		}
+	}
+
+	return undef;
+}
+
 sub dateTime {
 	my $client = shift;
 	

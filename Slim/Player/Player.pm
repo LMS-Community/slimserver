@@ -1227,13 +1227,14 @@ sub _buffering {
 	# Only show buffering status if no user activity on player or we're on the Now Playing screen
 	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
 	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+	my $screen     = Slim::Buttons::Common::msgOnScreen2($client) ? 'screen2' : 'screen1';
 	
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 
 		if ( !$suppressPlayersMessage->($handler, $client, $song, $string) ) {
 			$client->display->updateMode(0);
 			$client->showBriefly({
-				line => [ $line1, $line2 ],
+				$screen => { line => [ $line1, $line2 ] },
 				jive => { type => 'song', text => [ $status, $args->{'title'} ], duration => 500 },
 				cli  => undef,
 			}, { duration => 1, block => 1 });

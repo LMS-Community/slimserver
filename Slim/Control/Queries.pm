@@ -1092,28 +1092,28 @@ sub displaystatusQuery {
 		$request->addResult('type', $type);
 
 		# return screen1 info if more than one screen
-		$parts = $parts->{'screen1'} if $parts->{'screen1'};
+		my $screen1 = $parts->{'screen1'} || $parts;
 
-		if ($subs eq 'bits' && $parts->{'bitsref'}) {
-			
+		if ($subs eq 'bits' && $screen1->{'bitsref'}) {
+
 			# send the display bitmap if it exists (graphics display)
 			use bytes;
 
-			my $bits = ${$parts->{'bitsref'}};
-			if ($parts->{'scroll'}) {
-				$bits |= substr(${$parts->{'scrollbitsref'}}, 0, $parts->{'overlaystart'}[$parts->{'scrollline'}]);
+			my $bits = ${$screen1->{'bitsref'}};
+			if ($screen1->{'scroll'}) {
+				$bits |= substr(${$screen1->{'scrollbitsref'}}, 0, $screen1->{'overlaystart'}[$screen1->{'scrollline'}]);
 			}
 
 			$request->addResult('bits', MIME::Base64::encode_base64($bits) );
-			$request->addResult('ext', $parts->{'extent'});
+			$request->addResult('ext', $screen1->{'extent'});
 
 		} elsif ($format eq 'cli') {
 
 			# format display for cli
-			for my $c (keys %$parts) {
+			for my $c (keys %$screen1) {
 				next unless $c =~ /^(line|center|overlay)$/;
-				for my $l (0..$#{$parts->{$c}}) {
-					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
+				for my $l (0..$#{$screen1->{$c}}) {
+					$request->addResult("$c$l", $screen1->{$c}[$l]) if ($screen1->{$c}[$l] ne '');
 				}
 			}
 
@@ -1129,7 +1129,7 @@ sub displaystatusQuery {
 					$request->addResult('display', $parts->{'jive'} );
 				}
 			} else {
-				$request->addResult('display', { 'text' => $parts->{'line'} || $parts->{'center'} });
+				$request->addResult('display', { 'text' => $screen1->{'line'} || $screen1->{'center'} });
 			}
 		}
 
