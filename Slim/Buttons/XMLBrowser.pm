@@ -67,6 +67,8 @@ sub setMode {
 	# Pre-filled menu of OPML items
 	if ( $opml ) {
 		gotOPML( $client, $url, $opml, {} );
+
+		$client->modeParam( handledTransition => 1 );
 		return;
 	}
 
@@ -86,6 +88,7 @@ sub setMode {
 
 		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 		
+		$client->modeParam( handledTransition => 1 );
 		return;
 	}
 		
@@ -200,6 +203,11 @@ sub setMode {
 	}
 	
 	# we're done.  gotFeed callback will finish setting up mode.
+
+	# xmlbrowser always handles the pushTransition into this mode
+	# - may have already transitioned to the destination mode if callbacks have already been called
+	# - or waiting for callback and should show block animation now without a transitions
+	$client->modeParam( handledTransition => 1 );
 }
 
 sub gotFeed {
