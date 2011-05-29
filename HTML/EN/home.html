@@ -44,9 +44,12 @@
 <div class="homeMenuSection">
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
-	[%- FOREACH link = additionalLinks.browse %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.browse %]
+		<li><a href="[% additionalLinks.browse.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
+	[%- FOREACH link = additionalLinks.browse; IF !additionalLinkOrder.browse.grep(link.key).size %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- END; END %]
 	</ul>
 </div>
 

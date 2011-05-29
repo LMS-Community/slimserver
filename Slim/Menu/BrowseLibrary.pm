@@ -263,7 +263,11 @@ sub registerNode {
 	$node->{'params'}->{'mode'} ||= $node->{'id'};
 	$nodes{$node->{'id'}} = $node;
 	$browseLibraryModeMap{$node->{'params'}->{'mode'}} = $node->{'feed'};
-	
+
+	# browse menu can contain a mix of browselibrary nodes and plugin nodes
+	# ensure they are sorted consistently on all interfaces by always comparing weights
+	Slim::Plugin::Base->getWeights()->{ $node->{'name'} } = $node->{'weight'};
+
 	$class->_scheduleMenuChanges($node, undef);
 	
 	return 1;
@@ -276,6 +280,7 @@ sub deregisterNode {
 		if ($browseLibraryModeMap{$node->{'params'}->{'mode'}} == $node->{'feed'}) {
 			delete $browseLibraryModeMap{$node->{'params'}->{'mode'}};
 		}
+		delete Slim::Plugin::Base->getWeights()->{ $node->{'name'} };
 		$class->_scheduleMenuChanges(undef, $node);
 	}
 }

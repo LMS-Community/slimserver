@@ -25,6 +25,8 @@ use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Prefs;
 use Slim::Player::Sync;
 
+use constant MENU_WEIGHT => 60;
+
 my %stopcommands = ();
 
 # Information on each clients random mix
@@ -89,6 +91,8 @@ $prefs->setValidate('int', 'newtracks' );
 sub getDisplayName {
 	return 'PLUGIN_RANDOMPLAY';
 }
+
+sub weight { MENU_WEIGHT }
 
 sub initPlugin {
 	my $class = shift;
@@ -256,7 +260,7 @@ sub initPlugin {
 		},
 		{
 			stringToken    => getDisplayName(),
-			weight         => 60,
+			weight         => MENU_WEIGHT,
 			id             => 'randomplay',
 			node           => 'myMusic',
 			isANode        => 1,

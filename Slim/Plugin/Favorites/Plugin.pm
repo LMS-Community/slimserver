@@ -38,6 +38,8 @@ if ( main::WEBUI ) {
 
 use Slim::Plugin::Favorites::Playlist;
 
+use constant MENU_WEIGHT => 55;
+
 my $log = logger('favorites');
 
 my $prefs = preferences('plugin.favorites');
@@ -100,6 +102,8 @@ sub initPlugin {
 
 
 sub modeName { 'FAVORITES' };
+
+sub weight { MENU_WEIGHT }
 
 sub setMode {
 	my $class = shift;
