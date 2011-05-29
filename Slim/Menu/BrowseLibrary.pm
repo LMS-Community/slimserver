@@ -629,6 +629,16 @@ sub getJiveMenu {
 			$menu{'homeMenuText'} = cstring($client, $node->{'homeMenuText'});
 		}
 		
+		# Default nodes use id to automatically set iconStyle on squeezeplay clients
+		# The following allow nodes to set the iconStyle or icon explicity
+		if ($node->{'iconStyle'}) {
+			$menu{'iconStyle'} = $node->{'iconStyle'};
+		}
+
+		if ($node->{'jiveIcon'}) {
+			$menu{'icon'} = $node->{'jiveIcon'};
+		}
+
 		push @myMusicMenu, \%menu;
 	}
 	
