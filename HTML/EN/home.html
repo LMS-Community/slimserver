@@ -45,7 +45,9 @@
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH item = additionalLinkOrder.browse %]
+		[%- IF additionalLinks.browse.exists(item) %]	
 		<li><a href="[% additionalLinks.browse.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
+		[%- END %]
 	[%- END %]
 	[%- FOREACH link = additionalLinks.browse; IF !additionalLinkOrder.browse.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
