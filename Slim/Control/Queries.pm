@@ -36,6 +36,7 @@ use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64 decode_base64);
 use Scalar::Util qw(blessed);
 use URI::Escape;
+use Tie::Cache::LRU::Expires;
 
 use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
@@ -56,6 +57,9 @@ my $prefs = preferences('server');
 
 # Frequently used data can be cached in memory, such as the list of albums for Jive
 my $cache = {};
+
+# small, short lived cache of folder entries to prevent repeated disk reads on BMF
+tie my %bmfCache, 'Tie::Cache::LRU::Expires', EXPIRES => 15, ENTRIES => 5;
 
 sub init {
 	my $class = shift;
@@ -1576,17 +1580,21 @@ sub musicfolderQuery {
 	my ($topLevelObj, $items, $count);
 	
 	# if this is a follow up query ($index > 0), try to read from the cache
-	if ($index > 0 && $cache->{bmf}
-		&& $cache->{bmf}->{id} eq ($params->{url} || $params->{id}) 
-		&& $cache->{bmf}->{ttl} > time()) {
-			
-		$items       = $cache->{bmf}->{items};
-		$topLevelObj = $cache->{bmf}->{topLevelObj};
-		$count       = $cache->{bmf}->{count};
+	if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
+		$items       = $cachedItem->{items};
+		$topLevelObj = $cachedItem->{topLevelObj};
+		$count       = $cachedItem->{count};
 	}
 	else {
-		
 		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+		
+		# cache results in case the same folder is queried again shortly 
+		# should speed up Jive BMF, as only the first chunk needs to run the full loop above
+		$bmfCache{ $params->{url} || $params->{id} || 0 } = {
+			items       => $items,
+			topLevelObj => $topLevelObj,
+			count       => $count,
+		};
 	}
 
 	if ($want_top) {
@@ -1654,12 +1662,12 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
-			$filename = $realName || Slim::Music::Info::fileName($url);
+			$realName ||= Slim::Music::Info::fileName($url);
 
-			my $textKey = uc(substr($filename, 0, 1));
+			my $textKey = uc(substr($realName, 0, 1));
 			
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-			$request->addResultLoop($loopname, $chunkCount, 'filename', $filename);
+			$request->addResultLoop($loopname, $chunkCount, 'filename', $realName);
 		
 			if (Slim::Music::Info::isDir($item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
@@ -1681,16 +1689,6 @@ sub musicfolderQuery {
 	}
 
 	$request->addResult('count', $count);
-
-	# cache results in case the same folder is queried again shortly 
-	# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-	$cache->{bmf} = {
-		id          => ($params->{url} || $params->{id}),
-		ttl         => (time() + 15),
-		items       => $items,
-		topLevelObj => $topLevelObj,
-		count       => $count,
-	};
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
