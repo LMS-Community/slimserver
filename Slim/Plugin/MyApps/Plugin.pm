@@ -26,59 +26,60 @@ sub feed {
 		return sub {
 			my ($client, $callback, $args) = @_;
 
-			Slim::Formats::XML->getFeedAsync(
+			my $mergeCB = sub {
 
-				sub {
-					my $feed = shift;
-
-					# override the text message saying no apps are installed
-					if (scalar @{$feed->{'items'}} == 1 && $feed->{'items'}->[0]->{'type'} eq 'text') {
-						$feed->{'items'} = [];
-					}
-
-					for my $app (@$nonSNApps) {
-
-						if ($app->condition($client)) {
-
-							my $name = Slim::Utils::Strings::getString($app->getDisplayName);
-							my $tag  = $app->can('tag') && $app->tag;
-							my $icon = $app->_pluginDataFor('icon');
-
-							my $item = {
-								name   => $name,
-								icon   => $icon,
-								type   => 'redirect',
-								player => {
-									mode => $app,
-									modeParams => {},
-								},
-							};
-
-							if ($tag) {
-								$item->{jive} = {
-									actions => {
-										go => {
-											cmd => [ $app->tag, 'items' ],
-											params => {
-												menu => $app->tag,
-											},
+				my $feed = shift;
+				
+				# override the text message saying no apps are installed
+				if (scalar @{$feed->{'items'}} == 1 && $feed->{'items'}->[0]->{'type'} eq 'text') {
+					$feed->{'items'} = [];
+				}
+				
+				for my $app (@$nonSNApps) {
+					
+					if ($app->condition($client)) {
+						
+						my $name = Slim::Utils::Strings::getString($app->getDisplayName);
+						my $tag  = $app->can('tag') && $app->tag;
+						my $icon = $app->_pluginDataFor('icon');
+						
+						my $item = {
+							name   => $name,
+							icon   => $icon,
+							type   => 'redirect',
+							player => {
+								mode => $app,
+								modeParams => {},
+							},
+						};
+						
+						if ($tag) {
+							$item->{jive} = {
+								actions => {
+									go => {
+										cmd => [ $app->tag, 'items' ],
+										params => {
+											menu => $app->tag,
 										},
 									},
-								};
-							}
-								
-							push @{$feed->{'items'}}, $item;
+								},
+							};
 						}
+						
+						push @{$feed->{'items'}}, $item;
 					}
+				}
+				
+				$feed->{'items'} = [ sort { $a->{'name'} cmp $b->{'name'} } @{$feed->{'items'}} ];
+				
+				$callback->($feed);
+			};
+				
+			Slim::Formats::XML->getFeedAsync(
 
-					$feed->{'items'} = [ sort { $a->{'name'} cmp $b->{'name'} } @{$feed->{'items'}} ];
+				$mergeCB, 
 
-					$callback->($feed);
-				},
-
-				sub { 
-					$callback->();
-				},
+				sub { $mergeCB->({ items => [] }) },	
 
 				{ client => $client, url => $feedUrl, timeout => 35 },
 			);
