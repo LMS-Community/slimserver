@@ -29,8 +29,10 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
+use Slim::Utils::Prefs;
 
 my $log = logger('menu.trackinfo');
+my $prefs = preferences('server');
 
 sub init {
 	my $class = shift;
@@ -38,7 +40,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'trackinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -216,7 +218,16 @@ sub registerDefaultInfoProviders {
 sub menu {
 	my ( $class, $client, $url, $track, $tags ) = @_;
 	$tags ||= {};
-
+	
+	# Protocol Handlers can define their own track info OPML menus
+	if ( $url ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('trackInfoURL') ) {
+			my $feed = $handler->trackInfoURL( $client, $url );
+			return $feed if $feed;
+		}
+	}
+	
 	# If we don't have an ordering, generate one.
 	# This will be triggered every time a change is made to the
 	# registered information providers, but only then. After
@@ -250,6 +261,12 @@ sub menu {
 		
 		if ( defined $ref->{func} ) {
 			
+			# skip jive-only items for non-jive UIs
+			return if $ref->{menuMode} && !$tags->{menuMode};
+			
+			# show artwork item to jive only if artwork exists
+			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
+			
 			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta, $tags ) };
 			if ( $@ ) {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
@@ -257,12 +274,6 @@ sub menu {
 			}
 			
 			return unless defined $item;
-			
-			# skip jive-only items for non-jive UIs
-			return if $ref->{menuMode} && !$tags->{menuMode};
-			
-			# show artwork item to jive only if artwork exists
-			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
 			
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
@@ -310,7 +321,9 @@ sub menu {
 		name  => $track->title || Slim::Music::Info::getCurrentTitle( $client, $url, 1 ),
 		type  => 'opml',
 		items => $items,
+		play  => $track->url,
 		cover => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($track->coverid || 0) . '/cover.jpg',
+		menuComplete => 1,
 	};
 }
 
@@ -322,102 +335,70 @@ sub infoContributors {
 	
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
-			type => 'text',
-			name => cstring($client, 'ARTIST') . cstring($client, 'COLON') . ' ' . $remoteMeta->{artist},
-
-			web  => {
-				type  => 'contributor',
-				group => 'ARTIST',
-				value => $remoteMeta->{artist},
-			},
+			type =>  'text',
+			name =>  $remoteMeta->{artist},
+			label => 'ARTIST',
 		};
 	}
 	else {
 		return if main::SLIM_SERVICE;
 		
+		my @roles = Slim::Schema::Contributor->contributorRoles;
+		
+		# Loop through each pref to see if the user wants to link to that contributor role.
+		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
+		$linkRoles{'ARTIST'} = 1;
+		$linkRoles{'TRACKARTIST'} = 1;
+		$linkRoles{'ALBUMARTIST'} = 1;
+		
 		# Loop through the contributor types and append
-		for my $role ( sort $track->contributorRoles ) {
+		for my $role ( @roles ) {
 			for my $contributor ( $track->contributorsOfType($role) ) {
-				my $id = $contributor->id;
-				
-				my $db = {   
-					hierarchy         => 'contributor,album,track',
-					level             => 1,
-					findCriteria      => {
-						'contributor.id'   => $id,
-						'contributor.role' => $role,
-					},
-					selectionCriteria => {
-						'track.id'       => $track->id,
-						'album.id'       => $track->albumid,
-						'contributor.id' => $id,
-					},
-				};
-
-				# XXX: Ideally this would point to another OPML provider like
-				# Slim::Menu::Library::Contributor
-				my $item = {
-					type => 'redirect',
-					name => cstring($client,  uc $role) . cstring($client, 'COLON') . ' ' . $contributor->name,
-
-					db   => $db,
-
-					player => {
-						mode  => 'browsedb',
-						modeParams => $db,
-					},
-
-					web  => {
-						url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
-						type  => 'contributor',
-						group => uc($role),
-						value => $contributor->name,
-					},
-
-					jive => {
-						actions => {
-							go => {
-								cmd    => [ 'albums' ],
-								params => {
-									menu      => 'track',
-									menu_all  => 1,
-									artist_id => $id,
-								},
-							},
-							play => {
-								player => 0,
-								cmd    => [ 'playlistcontrol' ],
-								params => {
-									cmd       => 'load',
-									artist_id => $id,
-								},
-							},
-							add => {
-								player => 0,
-								cmd    => [ 'playlistcontrol' ],
-								params => {
-									cmd       => 'add',
-									artist_id => $id,
-								},
-							},
-							'add-hold' => {
-								player => 0,
-								cmd    => [ 'playlistcontrol' ],
-								params => {
-									cmd       => 'insert',
-									artist_id => $id,
-								},
-							},
+				if ($linkRoles{$role}) {
+					my $id = $contributor->id;
+					
+					my %actions = (
+						allAvailableActionsDefined => 1,
+						items => {
+							command     => ['browselibrary', 'items'],
+							fixedParams => { mode => 'albums', artist_id => $id },
 						},
-						window => {
-							titleStyle => 'artists',
-							menuStyle  => 'album',
-							text       => $contributor->name,
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', artist_id => $id},
 						},
-					},
-				};
-				$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $contributor, 'obj_param' => 'artist_id' );
-				push @{$items}, $item;
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', artist_id => $id},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', artist_id => $id},
+						},								
+						info => {
+							command     => ['artistinfo', 'items'],
+							fixedParams => {artist_id => $id},
+						},								
+					);
+					$actions{'playall'} = $actions{'play'};
+					$actions{'addall'} = $actions{'add'};
+					
+					my $item = {
+						type    => 'playlist',
+						url     => 'blabla',
+						name    => $contributor->name,
+						label   => uc $role,
+						itemActions => \%actions,
+					};
+					push @{$items}, $item;
+				} else {
+					my $item = {
+						type    => 'text',
+						name    => $contributor->name,
+						label   => uc $role,
+					};
+					push @{$items}, $item;
+				}
 			}
 		}
 	}
@@ -451,6 +432,8 @@ sub playTrack {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
+	
 	my $play_string = cstring($client, 'PLAY');
 
 	my $actions;
@@ -481,24 +464,6 @@ sub playTrack {
 					track_id => $track->id,
 				},
 				nextWindow => 'nowPlaying',
-			},
-			add => {
-				player => 0,
-				cmd => [ 'playlistcontrol' ],
-				params => {
-					cmd => 'add',
-					track_id => $track->id,
-				},
-				nextWindow => 'parent',
-			},
-			'add-hold' => {
-				player => 0,
-				cmd => [ 'playlistcontrol' ],
-				params => {
-					cmd => 'insert',
-					track_id => $track->id,
-				},
-				nextWindow => 'parent',
 			},
 		};
 		# play is go
@@ -548,6 +513,8 @@ sub addTrack {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $actions;
 	# remove from playlist
@@ -621,96 +588,47 @@ sub infoAlbum {
 	
 	if ( $remoteMeta->{album} ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $remoteMeta->{album},
-
-			web  => {
-				group => 'album',
-				value => $remoteMeta->{album},
-			},
+			type =>  'text',
+			name =>  $remoteMeta->{album},
+			label => 'ALBUM',
 		};
 	}
 	elsif ( my $album = $track->album ) {
 		my $id = $album->id;
-		my $artist = $track->artist;
 
-		my $db = {
-			hierarchy         => 'album,track',
-			level             => 1,
-			findCriteria      => { 
-				'album.id'       => $id,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'tracks', album_id => $id },
 			},
-			selectionCriteria => {
-				'track.id'       => $track->id,
-				'album.id'       => $id,
-				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'load', album_id => $id},
 			},
-		};
-		
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'add', album_id => $id},
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'insert', album_id => $id},
+			},								
+			info => {
+				command     => ['albuminfo', 'items'],
+				fixedParams => {album_id => $id},
+			},								
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
+
 		$item = {
-			type => 'redirect',
-			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $album->name,
-
-			db   => $db,
-
-			player => {
-				mode  => 'browsedb',
-				modeParams => $db,
-			},
-
-			web  => {
-				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
-				group => 'album',
-				value => $album->name,
-			},
-
-			jive => {
-				actions => {
-					go => {
-						cmd    => [ 'tracks' ],
-						params => {
-							menu     => 'songinfo',
-							menu_all => 1,
-							album_id => $id,
-							sort     => 'tracknum',
-						},
-					},
-					play => {
-						player => 0,
-						cmd    => [ 'playlistcontrol' ],
-						params => {
-							cmd      => 'load',
-							album_id => $id,
-						},
-					},
-					add => {
-						player => 0,
-						cmd    => [ 'playlistcontrol' ],
-						params => {
-							cmd      => 'add',
-							album_id => $id,
-						},
-					},
-					'add-hold' => {
-						player => 0,
-						cmd    => [ 'playlistcontrol' ],
-						params => {
-							cmd      => 'insert',
-							album_id => $id,
-						},
-					},
-				},
-				window => {
-					titleStyle => 'album',
-					'icon-id'  => $track->id,
-					text       => $album->name,
-				},
-			},
+			type    => 'playlist',
+			url     => 'blabla',
+			name    => $album->name,
+			label   => 'ALBUM',
+			itemActions => \%actions,
 		};
-
-		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $album, 'obj_param' => 'album_id' );
-
 	}
 	
 	return $item;
@@ -724,70 +642,39 @@ sub infoGenres {
 	for my $genre ( $track->genres ) {
 		my $id = $genre->id;
 		
-		my $db = {
-			hierarchy         => 'genre,contributor,album,track',
-			level             => 1,
-			findCriteria      => {
-				'genre.id' => $id,
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'artists', genre_id => $id },
 			},
-			selectionCriteria => {
-				'track.id'       => $track->id,
-				'album.id'       => $track->albumid,
-				'contributor.id' => $track->artistid,
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'load', genre_id => $id},
 			},
-		};
-		
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'add', genre_id => $id},
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'insert', genre_id => $id},
+			},								
+			info => {
+				command     => ['genreinfo', 'items'],
+				fixedParams => {genre_id => $id},
+			},								
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
+
 		my $item = {
-			type => 'redirect',
-			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
-
-			db   => $db,
-
-			player => {
-				mode  => 'browsedb',
-				modeParams => $db,
-			},
-
-			web  => {
-				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
-				group => 'genre',
-				value => $genre->name,
-			},
-
-			jive => {
-				actions => {
-					go => {
-						cmd    => [ 'artists' ],
-						params => {
-							menu     => 'album',
-							menu_all => 1,
-							genre_id => $id,
-						},
-					},
-					play => {
-						player => 0,
-						cmd    => [ 'playlistcontrol' ],
-						params => {
-							cmd      => 'load',
-							genre_id => $id,
-						},
-					},
-					add => {
-						player => 0,
-						cmd    => [ 'playlistcontrol' ],
-						params => {
-							cmd      => 'add',
-							genre_id => $id,
-						},
-					},
-				},
-				window => {
-					titleStyle => 'genres',
-					text       => $genre->name,
-				}, 
-			},
+			type    => 'playlist',
+			url     => 'blabla',
+			name    => $genre->name,
+			label   => 'GENRE',
+			itemActions => \%actions,
 		};
-		$item->{'jive'}{'actions'}{'play-hold'} = _mixerItemHandler(obj => $genre, 'obj_param' => 'genre_id' );
 		push @{$items}, $item;
 	}
 	
@@ -801,80 +688,38 @@ sub infoYear {
 	
 	if ( my $year = $track->year ) {
 		
-		my $db = {
-			hierarchy         => 'year,album,track',
-			level             => 1,
-			findCriteria      => {
-				'year.id' => $year,
+		my %actions = (
+			allAvailableActionsDefined => 1,
+			items => {
+				command     => ['browselibrary', 'items'],
+				fixedParams => { mode => 'albums', year => $year },
 			},
-			selectionCriteria => {
-				'track.id'       => $track->id,
-				'album.id'       => $track->albumid,
-				'contributor.id' => $track->artistid,
+			play => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'load', year => $year},
 			},
-		};
+			add => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'add', year => $year},
+			},
+			insert => {
+				command     => ['playlistcontrol'],
+				fixedParams => {cmd => 'insert', year => $year},
+			},								
+			info => {
+				command     => ['yearinfo', 'items'],
+				fixedParams => {year => $year},
+			},								
+		);
+		$actions{'playall'} = $actions{'play'};
+		$actions{'addall'} = $actions{'add'};
 
 		$item = {
-			type => 'redirect',
-			name => cstring($client, 'YEAR') . cstring($client, 'COLON') . " $year",
-
-			db   => $db,
-
-			player => {
-				mode  => 'browsedb',
-				modeParams => $db,
-			},
-
-			web  => {
-				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
-				group => 'year',
-				value => $year,
-			},
-
-			jive => {
-				actions => {
-					go => {
-						cmd         => [ 'albums' ],
-						itemsParams => 'params',
-						params => {
-							year     => $year,
-							menu     => 'track',
-							menu_all => 1,
-						},
-					},
-					play => {
-						player      => 0,
-						itemsParams => 'params',
-						cmd         => [ 'playlistcontrol' ],
-						params      => {
-							year => $year,
-							cmd  => 'load',
-						},
-					},
-					add => {
-						player      => 0,
-						itemsParams => 'params',
-						cmd         => [ 'playlistcontrol' ],
-						params      => {
-							year => $year,
-							cmd  => 'add',
-						},
-					},
-					'add-hold' => {
-						player      => 0,
-						itemsParams => 'params',
-						cmd         => [ 'playlistcontrol' ],
-						params      => {
-							year => $year,
-							cmd  => 'insert',
-						},
-					},
-				},
-				window => {
-					menuStyle  => 'album',
-					titleStyle => 'years',
-				},
-			},
+			type    => 'playlist',
+			url     => 'blabla',
+			name    => $year,
+			label   => 'YEAR',
+			itemActions => \%actions,
 		};
 	}
 	
@@ -913,14 +758,13 @@ sub infoComment {
 				{
 					type => 'text',
 					wrap => 1,
-					name => cstring($client, 'COMMENT') . cstring($client, 'COLON') . " $comment",
+					name => $comment,
+					label => 'COMMENT',
+					
 				},
 			],
 			
-			web   => {
-				group  => 'comment',
-				unfold => 1,
-			}
+			unfold => 1,
 		};
 	}
 	
@@ -944,14 +788,12 @@ sub infoLyrics {
 				{
 					type => 'text',
 					wrap => 1,
-					name => cstring($client, 'LYRICS') . cstring($client, 'COLON') . " $lyrics",
+					name => $lyrics,
+					label => 'LYRICS',
 				},
 			],
 			
-			web   => {
-				group  => 'lyrics',
-				unfold => 1,
-			}
+			unfold => 1,
 		};
 	}
 	
@@ -964,10 +806,7 @@ sub infoMoreInfo {
 	return {
 		name => cstring($client, 'MOREINFO'),
 		isContextMenu => 1,
-		web  => {
-			group  => 'moreinfo',
-			unfold => 1,
-		},
+		unfold => 1,
 
 	};
 }
@@ -979,8 +818,9 @@ sub infoTrackNum {
 	
 	if ( my $tracknum = $track->tracknum ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'TRACK_NUMBER') . cstring($client, 'COLON') . " $tracknum",
+			type  => 'text',
+			label => 'TRACK_NUMBER',
+			name  => $tracknum,
 		};
 	}
 	
@@ -996,8 +836,9 @@ sub infoDisc {
 	
 	if ( blessed($album) && ($disc = ($track->disc || $album->disc)) && ($discc = $album->discc) ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'DISC') . cstring($client, 'COLON') . " $disc/$discc",
+			type  => 'text',
+			label => 'DISC',
+			name  => "$disc/$discc",
 		};
 	}
 	
@@ -1030,8 +871,9 @@ sub infoContentType {
 		my $ctString = Slim::Utils::Strings::stringExists($ct) ? cstring($client, uc($ct)) : $ct;
 
 		$item = {
-			type => 'text',
-			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . $ctString,
+			type  => 'text',
+			label => 'TYPE',
+			name  => $ctString,
 		};
 	}
 	
@@ -1045,8 +887,9 @@ sub infoDuration {
 	
 	if ( my $duration = $track->duration ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'LENGTH') . cstring($client, 'COLON') . " $duration",
+			type  => 'text',
+			label => 'LENGTH',
+			name  => $duration,
 		};
 	}
 	
@@ -1061,46 +904,33 @@ sub infoReplayGain {
 	my $album = $track->album;
 	
 	if ( my $replaygain = $track->replay_gain ) {
-		my $noclip = Slim::Player::ReplayGain::preventClipping( $replaygain, $track->replay_peak );
-		if ( $noclip < $replaygain ) {
-			# Gain was reduced to avoid clipping
-			push @{$items}, {
-				type => 'text',
-				name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' 
-					. sprintf( "%2.2f", $replaygain ) . ' dB (' 
-					. cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) . ')',
-			};
-		}
-		else {
-			push @{$items}, {
-				type => 'text',
-				name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
-			};
-		}
+		push @{$items}, _replainGainItem($client, $replaygain, $track->replay_peak, 'REPLAYGAIN');
 	}
 	
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
-			my $noclip = Slim::Player::ReplayGain::preventClipping( $albumreplaygain, $album->replay_peak );
-			if ( $noclip < $albumreplaygain ) {
-				# Gain was reduced to avoid clipping
-				push @{$items}, {
-					type => 'text',
-					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' 
-						. sprintf( "%2.2f", $albumreplaygain ) . ' dB (' 
-						. cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) . ')',
-				};
-			}
-			else {
-				push @{$items}, {
-					type => 'text',
-					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
-				};
-			}
+			push @{$items}, _replainGainItem($client, $albumreplaygain, $album->replay_peak, 'ALBUMREPLAYGAIN');
 		}
 	}
 	
 	return $items;
+}
+
+sub _replainGainItem {
+	my ($client, $replaygain, $replaygainpeak, $tag) = @_;
+	
+	my $noclip = Slim::Player::ReplayGain::preventClipping( $replaygain, $replaygainpeak );
+	my %item = (
+		type  => 'text',
+		label => $tag,
+		name  => sprintf( "%2.2f dB", $replaygain),
+	);
+	if ( $noclip < $replaygain ) {
+		# Gain was reduced to avoid clipping
+		$item{'name'} .= sprintf( " (%s)",
+				cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) ); 
+	}
+	return \%item;
 }
 
 sub infoRating {
@@ -1114,8 +944,9 @@ sub infoRating {
 	
 	if ( my $rating = Slim::Schema->rating($track) ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'RATING') . cstring($client, 'COLON') . ' ' . $rating,
+			type  => 'text',
+			label => 'RATING',
+			name  => $rating,
 		};
 	}
 	
@@ -1150,10 +981,9 @@ sub infoBitrate {
 			}
 			
 			$item = {
-				type => 'text',
-				name => sprintf( "%s: %s%s",
-					cstring($client, 'BITRATE'), $bitrate, $convert,
-				),
+				type  => 'text',
+				label => 'BITRATE',
+				name  => sprintf( "%s%s", $bitrate, $convert),
 			};
 		}
 	}
@@ -1166,10 +996,11 @@ sub infoSampleRate {
 	
 	my $item;
 	
-	if ( $track->samplerate ) {
+	if ( my $sampleRate = $track->samplerate ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'SAMPLERATE') . cstring($client, 'COLON') . ' ' . $track->prettySampleRate,
+			type  => 'text',
+			label => 'SAMPLERATE',
+			name  => sprintf('%.1f kHz', $sampleRate / 1000),
 		};
 	}
 	
@@ -1184,8 +1015,9 @@ sub infoSampleSize {
 	
 	if ( my $samplesize = $track->samplesize ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'SAMPLESIZE') . cstring($client, 'COLON') . " $samplesize " . cstring($client, 'BITS'),
+			type  => 'text',
+			label => 'SAMPLESIZE',
+			name  => $samplesize . cstring($client, 'BITS'),
 		};
 	}
 	
@@ -1199,8 +1031,9 @@ sub infoFileSize {
 	
 	if ( my $len = $track->filesize ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'FILELENGTH') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($len),
+			type  => 'text',
+			label => 'FILELENGTH',
+			name  => Slim::Utils::Misc::delimitThousands($len),
 		};
 	}
 	
@@ -1214,13 +1047,9 @@ sub infoRemoteTitle {
 	
 	if ( $track->remote && $remoteMeta->{title} ) {
 		$item = {
-			type => 'text',
-			name => cstring($client, 'TITLE') . cstring($client, 'COLON') . ' ' . $remoteMeta->{title},
-
-			web  => {
-				group => 'title',
-				value => $remoteMeta->{title},
-			},
+			type  => 'text',
+			label => 'TITLE',
+			name  => $remoteMeta->{title},
 		};
 	}
 	
@@ -1233,24 +1062,27 @@ sub infoUrl {
 	my $item;
 	
 	if ( my $turl = $track->url ) {
-		my $weblink;
-		
-		if ( !$track->isRemoteURL($turl) ) {
-			$weblink = '/music/' . $track->id . '/download';
-			
+		my ($tag, $name);
+		if ($track->isRemoteURL($turl)) {
+			$item = {
+				type  => 'text',
+				name  => Slim::Utils::Misc::unescape($turl),
+				label => 'URL',	
+			};
+		} else {
+			my $weblink = '/music/' . $track->id . '/download';
+
 			if ( $track->path && $track->path =~ m|(/[^/\\]+)$| ) {
 				$weblink .= $1;
 			}
+
+			$item = {
+				type  => 'text',
+				name  => Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
+				label => 'LOCATION',	
+				weblink => $weblink,
+			};
 		}
-		
-		$item = {
-			type => 'text',
-			name => $track->isRemoteURL($turl)
-				? cstring($client, 'URL') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
-				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8decode_locale( Slim::Utils::Misc::pathFromFileURL($turl) ),
-				
-			weblink => $weblink,
-		};
 	}
 	
 	return $item;
@@ -1265,7 +1097,8 @@ sub infoFileModTime {
 		if ( my $age = $track->modificationTime ) {
 			$item = {
 				type => 'text',
-				name => cstring($client, 'MODTIME') . cstring($client, 'COLON') . " $age",
+				label => 'MODTIME',	
+				name => $age,
 			};
 		}
 	}
@@ -1281,7 +1114,8 @@ sub infoTagVersion {
 	if ( my $ver = $track->tagversion ) {
 		$item = {
 			type => 'text',
-			name => cstring($client, 'TAGVERSION') . cstring($client, 'COLON') . " $ver",
+			label => 'TAGVERSION',	
+			name => $ver,
 		};
 	}
 	
@@ -1298,6 +1132,7 @@ sub infoTagDump {
 			name        => cstring($client, 'VIEW_TAGS'),
 			url         => \&tagDump,
 			passthrough => [ $track->path ],
+			isContextMenu => 1,
 		};
 	}
 	
@@ -1305,7 +1140,7 @@ sub infoTagDump {
 }
 
 sub tagDump {
-	my ( $client, $callback, $path ) = @_;
+	my ( $client, $callback, undef, $path ) = @_;
 	
 	my $menu = [];
 	
@@ -1378,17 +1213,6 @@ sub tagDump {
 	$callback->( $menu );
 }
 
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
-}
-
 sub _mixers {
 	my $Imports = Slim::Music::Import->importers;
 	my @mixers = ();
@@ -1448,20 +1272,38 @@ my $cachedFeed;
 sub cliQuery {
 	my $request = shift;
 	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
+	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
 	my $trackId        = $request->getParam('track_id');
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
-	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
+	my $playlist_index = $request->getParam('playlist_index');
 	
 	# special case-- playlist_index given but no trackId
 	if (defined($playlist_index) && ! $trackId ) {
-		my $song = Slim::Player::Playlist::song( $client, $playlist_index );
-		$trackId = $song->id;
-		$url     = $song->url;
-		$request->addParam('track_id', $trackId);
-		$request->addParam('url', $url);
+		if (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) {
+			$trackId = $song->id;
+			$url     = $song->url;
+			$request->addParam('track_id', $trackId);
+			$request->addParam('url', $url);
+		}
 	}
 		
 	my $tags = {
@@ -1477,23 +1319,11 @@ sub cliQuery {
 	
 	my $feed;
 	
-	# Protocol Handlers can define their own track info OPML menus
-	if ( $url ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-		if ( $handler && $handler->can('trackInfoURL') ) {
-			$feed = $handler->trackInfoURL( $client, $url );
-		}
-	}
-	
-	if ( !$feed ) {
-		# Default menu
-		if ( $url ) {
-			$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
-		}
-		else {
-			my $track = Slim::Schema->find( Track => $trackId );
-			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
-		}
+	if ($trackId) {
+		my $track = Slim::Schema->find( Track => $trackId );
+		$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
+	} else {
+		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
 	}
 	
 	$cachedFeed = $feed if $feed;

@@ -308,42 +308,6 @@ sub repeat {
 	return $prefs->client($client)->get('repeat');
 }
 
-sub playlistMode {
-	my $client  = shift;
-	my $mode    = shift;
-
-	$client     = $client->master();
-
-	# Bugs: 13896, 13689, 8878
-	# playlist/party mode is in conflict with 7.4 touch/press-to-play behavior
-	# fix for bug 13689 will be the complete fix, but for now ignore client pref and just always return 'off'
-	return 'off';
-
-	my $currentSetting = $prefs->client($client)->get('playlistmode');
-
-	if ( defined($mode) && $mode ne $currentSetting ) {
-		$prefs->client($client)->set('playlistmode', $mode);
-
-		my %modeStrings = (
-			disabled => 'PLAYLIST_MODE_DISABLED',
-			on       => 'PLAYLIST_MODE_ON',
-			off      => 'PLAYLIST_MODE_OFF',
-			party    => 'PARTY_MODE_ON',
-		);
-		$client->showBriefly({
-			duration => 3,
-			line     => [ "\n", $client->string($modeStrings{$mode}) ],
-			jive     => {
-				'type'    => 'popupplay',
-				'text'    => [ $client->string($modeStrings{$mode}) ],
-			}
-		});
-	}
-
-	return $prefs->client($client)->get('playlistmode');
-
-}
-
 sub copyPlaylist {
 	my $toClient   = shift;
 	my $fromClient = shift;

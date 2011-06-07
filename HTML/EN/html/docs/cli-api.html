@@ -47,15 +47,21 @@
 	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
 	<li>Added tag 'c' for <a href="#songinfo">songinfo</a> to return the track's coverid value, used for artwork URLs. If you were using the track's ID directly in artwork URLs, you should switch to using the coverid value.</li>
 	<li>Added <a href="#pragma">&quot;pragma&quot;</a> command for changing SQLite behavior.</li>
-	<li>Added artist_id tagged parameter to <a href="#artists">artists</a>.</li>
-	<li>Added album_id tagged parameter to <a href="#albums">albums</a>.</li>
+        <li>Added artist_id tagged parameter to <a href="#artists">artists</a>.</li>
+        <li>Added album_id tagged parameter to <a href="#albums">albums</a>.</li>
+	<li>Added sort order 'albumtrack' for <a href="#titles">titles</a> to return the tracks in the order album-title, track-number.</li>
+	<li>Added tag 'X' for <a href="#albums">albums</a> to return the album's replay-gain value.</li>
+	<li>Added tag 'S' for <a href="#albums">albums</a> to return the album's artist_id.</li>
+	<li>Added 'play_index' tagged parameter to <a href="#playlistcontrol">playlistcontrol</a>.</li>
+	<li>In extended queries, return all possible items if the &lt;itemsPerResponse&gt; parameter is omitted.</li>
+	<li>Add the 'u' tag to the &quot;<a href="#musicfolder">musicfolder</a>&quot; query</li>
 	<li>Added track_id tagged parameter to <a href="#titles">titles</a>.</li>
 	<li>Added genre_id tagged parameter to <a href="#genres">genres</a>.</li>
-	<li>Added year tagged parameter to <a href="#years">years</a>.</li>
+	<li>Added year and hasAlbums tagged parameters to <a href="#years">years</a>.</li>
 	<li>Added return_top tagged parameter to <a href="#musicfolder">musicfolder</a>.</li>
 	<li>Removed the charset tagged parameter from all commands that supported it.</li>
-	<li>Added <a href = "#playlist playtrackalbum">playtrackalbum</a> command.</li>
-	<li>Added <a href = "#playlist playtrackplaylist">playtrackplaylist</a> command.</li>
+	<li>Added the 'Z' tag to <a href="#albums">albums</a>, <a href="#artists">artists</a> and <a href="#genres">genres</a> queries.
+		It generates a indexList array or arrays in the result.</li>
 </ul>
 
 <hr>
@@ -399,6 +405,10 @@
 		each command to separate the multiple returned items. Data is
 		only returned when applicable, that is, all possible tags are
 		not always returned.
+	</p>
+	<p>
+		If the &lt;itemsPerResponse&gt; positional parameter and all tagged
+		parameters are omitted then all possible items are returned.
 	</p>
 </blockquote>
 <p>
@@ -3051,6 +3061,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter.
+		</td>
+	</tr>
+	<tr>
 		<td colspan="2">
 			<em>For each genre:</em>
 		</td>
@@ -3225,6 +3246,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			Number of results returned by the query. If no search string is 
 			present, this is the same value as returned by 
 			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter.
 		</td>
 	</tr>
 	<tr>
@@ -3438,6 +3470,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td>
+			Z
+		</td>
+		<td>
+			&nbsp;&nbsp;indexList
+		</td>
+		<td>
+			An array of arrays indicating how many items start with each key letter (or year for a year-dominated sort order).
+		</td>
+	</tr>
+	<tr>
 		<td></td>
 		<td>
 			<em>For each album:</em>
@@ -3550,6 +3593,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			S
+		</td>
+		<td>
+			&nbsp;&nbsp;artist_id
+		</td>
+		<td>
+			The album artist id (depends on server configuration).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			s
 		</td>
 		<td>
@@ -3557,6 +3611,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			The album's "textkey" is the first letter of the sorting key.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			X
+		</td>
+		<td>
+			&nbsp;&nbsp;album_replay_gain
+		</td>
+		<td>
+			The album's replay-gain.
 		</td>
 	</tr>
 </table>
@@ -3621,6 +3686,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Return only the specified year.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			hasAlbums:1
+		</td>
+		<td>
+			Return only years which are valid for albums.
 		</td>
 	</tr>
 </table>
@@ -3822,10 +3895,21 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			s
 		</td>
 		<td>
-			&nbsp;&nbsp;sortvalue, textkey
+			&nbsp;&nbsp;textkey
 		</td>
 		<td>
 			The item's "textkey" is the first letter of the sorting key.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			u
+		</td>
+		<td>
+			&nbsp;&nbsp;url
+		</td>
+		<td>
+			The item's full URL.
 		</td>
 	</tr>
 </table>
@@ -3970,7 +4054,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			s
 		</td>
 		<td>
-			&nbsp;&nbsp;sortvalue, textkey
+			&nbsp;&nbsp;textkey
 		</td>
 		<td>
 			The playlist's "textkey" is the first letter of the sorting key.
@@ -4486,6 +4570,95 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>a</b>
+		</td>
+		<td>
+			artist
+		</td>
+		<td>
+			Artist name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>A</b>
+		</td>
+		<td>
+			&lt;role&gt;
+		</td>
+		<td>
+			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
+			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>B</b>
+		</td>
+		<td>
+			buttons
+		</td>
+		<td>
+			A hash with button definitions. Only available for certain plugins such as Pandora.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>c</b>
+		</td>
+		<td>
+			coverid
+		</td>
+		<td>
+			coverid to use when constructing an artwork URL, such as /music/$coverid/cover.jpg
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>C</b>
+		</td>
+		<td>
+			compilation
+		</td>
+		<td>
+			1 if the album this track belongs to is a compilation
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>d</b>
+		</td>
+		<td>
+			duration
+		</td>
+		<td>
+			Song duration in seconds.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>e</b>
+		</td>
+		<td>
+			album_id
+		</td>
+		<td>
+			Album ID. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>f</b>
+		</td>
+		<td>
+			filesize
+		</td>
+		<td>
+			Song file length in bytes. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>g</b>
 		</td>
 		<td>
@@ -4508,106 +4681,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>p</b>
-		</td>
-		<td>
-			genre_id
-		</td>
-		<td>
-			Genre ID. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>P</b>
-		</td>
-		<td>
-			genre_ids
-		</td>
-		<td>
-			Genre IDs, separated by commas (only useful if the server is set to handle multiple items in tags).
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>a</b>
-		</td>
-		<td>
-			artist
-		</td>
-		<td>
-			Artist name.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>s</b>
-		</td>
-		<td>
-			artist_id
-		</td>
-		<td>
-			Artist ID.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>A</b>
-		</td>
-		<td>
-			&lt;role&gt;
-		</td>
-		<td>
-			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
-			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>S</b>
-		</td>
-		<td>
-			&lt;role&gt;_ids
-		</td>
-		<td>
-			For each role as defined above, the list of ids.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>l</b>
-		</td>
-		<td>
-			album
-		</td>
-		<td>
-			Album name. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>e</b>
-		</td>
-		<td>
-			album_id
-		</td>
-		<td>
-			Album ID. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>d</b>
-		</td>
-		<td>
-			duration
-		</td>
-		<td>
-			Song duration in seconds.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<b>i</b>
 		</td>
 		<td>
@@ -4619,112 +4692,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>q</b>
+			<b>I</b>
 		</td>
 		<td>
-			disccount
+			samplesize
 		</td>
 		<td>
-			Number of discs. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>t</b>
-		</td>
-		<td>
-			tracknum
-		</td>
-		<td>
-			Track number. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>y</b>
-		</td>
-		<td>
-			year
-		</td>
-		<td>
-			Song year. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>m</b>
-		</td>
-		<td>
-			bpm
-		</td>
-		<td>
-			Beats per minute. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>M</b>
-		</td>
-		<td>
-			musicmagic_mixable
-		</td>
-		<td>
-			1 if track is mixable, otherwise 0.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>k</b>
-		</td>
-		<td>
-			comment
-		</td>
-		<td>
-			Song comments, if any.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>o</b>
-		</td>
-		<td>
-			type
-		</td>
-		<td>
-			Content type. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>v</b>
-		</td>
-		<td>
-			tagversion
-		</td>
-		<td>
-			Version of tag information in song file. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>r</b>
-		</td>
-		<td>
-			bitrate
-		</td>
-		<td>
-			Song bitrate. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>f</b>
-		</td>
-		<td>
-			filesize
-		</td>
-		<td>
-			Song file length in bytes. Only if known.
+			Song sample size (in bits)
 		</td>
 	</tr>
 	<tr>
@@ -4753,6 +4727,72 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>k</b>
+		</td>
+		<td>
+			comment
+		</td>
+		<td>
+			Song comments, if any.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>K</b>
+		</td>
+		<td>
+			artwork_url
+		</td>
+		<td>
+			A full URL to remote artwork.  Only available for certain plugins such as Pandora and Rhapsody.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>l</b>
+		</td>
+		<td>
+			album
+		</td>
+		<td>
+			Album name. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>L</b>
+		</td>
+		<td>
+			info_link
+		</td>
+		<td>
+			A custom link to use for trackinfo. Only available for certain plugins such as Pandora.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>m</b>
+		</td>
+		<td>
+			bpm
+		</td>
+		<td>
+			Beats per minute. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>M</b>
+		</td>
+		<td>
+			musicmagic_mixable
+		</td>
+		<td>
+			1 if track is mixable, otherwise 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>n</b>
 		</td>
 		<td>
@@ -4764,35 +4804,68 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>C</b>
+			<b>N</b>
 		</td>
 		<td>
-			compilation
+			remote_title
 		</td>
 		<td>
-			1 if the album this track belongs to is a compilation
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>Y</b>
-		</td>
-		<td>
-			replay_gain
-		</td>
-		<td>
-			Replay gain (in dB), if any
+			Title of the internet radio station.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>X</b>
+			<b>o</b>
 		</td>
 		<td>
-			album_replay_gain
+			type
 		</td>
 		<td>
-			Replay gain of the album (in dB), if any
+			Content type. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>p</b>
+		</td>
+		<td>
+			genre_id
+		</td>
+		<td>
+			Genre ID. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>P</b>
+		</td>
+		<td>
+			genre_ids
+		</td>
+		<td>
+			Genre IDs, separated by commas (only useful if the server is set to handle multiple items in tags).
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>q</b>
+		</td>
+		<td>
+			disccount
+		</td>
+		<td>
+			Number of discs. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>r</b>
+		</td>
+		<td>
+			bitrate
+		</td>
+		<td>
+			Song bitrate. Only if known.
 		</td>
 	</tr>
 	<tr>
@@ -4808,6 +4881,39 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>s</b>
+		</td>
+		<td>
+			artist_id
+		</td>
+		<td>
+			Artist ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>S</b>
+		</td>
+		<td>
+			&lt;role&gt;_ids
+		</td>
+		<td>
+			For each role as defined above, the list of ids.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>t</b>
+		</td>
+		<td>
+			tracknum
+		</td>
+		<td>
+			Track number. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>T</b>
 		</td>
 		<td>
@@ -4819,17 +4925,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>I</b>
-		</td>
-		<td>
-			samplesize
-		</td>
-		<td>
-			Song sample size (in bits)
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<b>u</b>
 		</td>
 		<td>
@@ -4837,6 +4932,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Song file url.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>v</b>
+		</td>
+		<td>
+			tagversion
+		</td>
+		<td>
+			Version of tag information in song file. Only if known.
 		</td>
 	</tr>
 	<tr>
@@ -4863,57 +4969,35 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>N</b>
+			<b>X</b>
 		</td>
 		<td>
-			remote_title
+			album_replay_gain
 		</td>
 		<td>
-			Title of the internet radio station.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>c</b>
-		</td>
-		<td>
-			coverid
-		</td>
-		<td>
-			coverid to use when constructing an artwork URL, such as /music/$coverid/cover.jpg
+			Replay gain of the album (in dB), if any
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>K</b>
+			<b>y</b>
 		</td>
 		<td>
-			artwork_url
+			year
 		</td>
 		<td>
-			A full URL to remote artwork.  Only available for certain plugins such as Pandora and Rhapsody.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>B</b>
-		</td>
-		<td>
-			buttons
-		</td>
-		<td>
-			A hash with button definitions. Only available for certain plugins such as Pandora.
+			Song year. Only if known.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>L</b>
+			<b>Y</b>
 		</td>
 		<td>
-			info_link
+			replay_gain
 		</td>
 		<td>
-			A custom link to use for trackinfo. Only available for certain plugins such as Pandora.
+			Replay gain (in dB), if any
 		</td>
 	</tr>
 </table>
@@ -5028,9 +5112,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			sort
 		</td>
 		<td>
-			Sorting, one of &quot;title&quot; (the default) or 
+			Sorting, one of &quot;title&quot; (the default), 
 			&quot;tracknum&quot; (in which case the track field (&quot;t&quot;)
-			is added automatically to the response). Sorting by tracks is 
+			is added automatically to the response) or &quot;albumtrack&quot;
+			(in which case the track and album-title fields (&quot;lt&quot;)
+			are added automatically to the response). Sorting by tracks is 
 			possible only if tracks are defined and for a single album.
 		</td>
 	</tr>
@@ -5541,12 +5627,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</li>
 	<li>
 		<strong><code><a href="#playlist repeat">playlist repeat</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#playlist playtrackalbum">playlist playtrackalbum</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#playlist playtrackplaylist">playlist playtrackplaylist</a></code></strong>
 	</li>
 	<li>
 		<strong><code><a href="#playlistcontrol">playlistcontrol</a></code></strong>
@@ -6331,91 +6411,6 @@ in the saved playlists folder.</p>
 	Response: "04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;"</p>
 </blockquote>
 
-<p id="playlist playtrackalbum"><strong><code>&lt;playerid&gt; playlist playtrackalbum &lt;tagged parameters&gt;</code></strong></p>
-
-<p>The "playlist playtrackalbum" command is used to play all tracks from an album/playlist/folder, optionally jumping directly to a given track index.  One of these three tagged params is mandatory to this command: album_id, playlist_id, or folder_id.</p>
-
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>album_id</td>
-		<td>
-		Database ID of the album to be queued into the playlist.
-		</td>
-	</tr>
-	<tr>
-		<td>artist_id</td>
-		<td>
-		Database ID of the artist to be queued into the playlist. Used only when paired with an album id.
-		</td>
-	</tr>
-	<tr>
-		<td>playlist_id</td>
-		<td>
-		Database ID of a playlist to be queued into the playlist. Used only when no album id is given.
-		</td>
-	</tr>
-	<tr>
-		<td>folder_id</td>
-		<td>
-		Database ID of a browse folder to be queued into the playlist. Used only when no album id or playlist id are given.
-		</td>
-	</tr>
-	<tr>
-		<td>list_index</td>
-		<td>Index (0-based) of the track to begin playback. Defaults to 0</td>
-	</tr>
-</table>
-
-
-<p>Example:</p>
-
-<blockquote>
-	<p>Request: "04:20:00:12:23:45 playlist playtrackalbum album_id:344 list_index:8"<br>
-	Response: "04:20:00:12:23:45 playlist playtrackalbum album_id:344 list_index:8"</p>
-
-</blockquote>
-
-<p id="playlist playtrackplaylist"><strong><code>&lt;playerid&gt; playlist playtrackplaylist &lt;tagged parameters&gt;</code></strong></p>
-
-<p>The "playlist playtrackplaylist" command is used to play all tracks from a given playlist ID, starting with a given track.</p>
-
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>playlist_id</td>
-		<td>
-		ID of the playlist to be queued into the playlist. This tagged parameter is mandatory.
-		 </td>
-	</tr>
-	<tr>
-		<td>list_index</td>
-		<td>Index (0-based) of the track to begin playback. Defaults to 0</td>
-	</tr>
-</table>
-
-<p>Example:</p>
-
-<blockquote>
-	<p>Request: "04:20:00:12:23:45 playlist playtrackplaylist playlist_id:40 list_index:10"<br>
-	Response: "04:20:00:12:23:45 playlist playtrackplaylist playlist_id:40 list_index:10"</p>
-
-</blockquote>
-
-
-
 <br>
 <p id="playlistcontrol">
 	<strong>
@@ -6492,6 +6487,12 @@ in the saved playlists folder.</p>
 		<td>Playlist name, to restrict the results to this playlist_name. If this
 		    parameter is provided, then any genre_id, artist_id, album_id,
 		    track_id and/or playlist_id parameter is ignored.</td>
+	</tr>
+	<tr>
+		<td>play_index</td>
+		<td>If this parameter is provided along with &quot;cmd:load&quot; then
+		playback will start with the indicated track.
+		</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>

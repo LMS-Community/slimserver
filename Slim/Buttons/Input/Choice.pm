@@ -100,28 +100,28 @@ sub getItem {
 sub getItemName {
 	my $client = shift;
 	my $index  = shift; # optional
+	
+	# if name has been overridden by a function, this code will get that.
+	# A 'name' function in the item is preferred over a 'name' modeParam
 
-	if (!defined($index)) {
-
-		# if name has been overridden by a function, this code will get that.
-		my $name = getParam($client, 'name');
-		if ($name) {
-			return $name;
-		}
-	}
-
-	# name not overridden, get it from the item
 	my $item = getItem($client, $index);
-
-	if ( ref($item) && $item->{'name'} ) {
+	if ( ref($item) && $item->{'name'} && ref $item->{'name'} eq 'CODE' ) {
 		return $item->{'name'};
 	}
 	
+	if (my $name = $client->modeParam('name')) {
+		return $name;
+	}
+
 	# use lookupRef to find the item name if available
 	if ( my $lookup = $client->modeParam('lookupRef') ) {
 		return $lookup->( $client->modeParam('listIndex') || 0 );
 	}
 
+	if ( ref($item) && $item->{'name'}) {
+		return $item->{'name'};
+	}
+	
 	return $item;
 }
 
@@ -266,9 +266,10 @@ my %functions = (
 		exitInput($client,$functarg);
 	},
 
-	'passback' => \&passback,
-	'play'     => sub { callCallback('onPlay', @_) },
-	'add'      => sub { callCallback('onAdd', @_)  },
+	'passback'   => \&passback,
+	'play'       => sub { callCallback('onPlay', @_) },
+	'add'        => sub { callCallback('onAdd', @_)  },
+	'create_mix' => sub { callCallback('onCreateMix', @_)  },
 	
 	# right and left buttons is handled in exitInput
 

@@ -157,7 +157,7 @@ sub _artistid {
 	my $id = undef;
 
 	if (defined ($id = $self->get_column('primary_artist'))) {
-		main::INFOLOG && $log->info("Using cached primary artist");
+		main::DEBUGLOG && $log->debug("Using cached primary artist");
 		return wantarray ? ($id, $self->primary_artist) : $id;
 	}
 	
@@ -170,7 +170,7 @@ sub _artistid {
 	if ($artist) {
 		$self->set_column('primary_artist', $id = $artist->id);
 		$self->update;
-		main::INFOLOG && $log->info("Track ", $self->id, " caching primary artist $id -> ", $artist->name);
+		main::DEBUGLOG && $log->debug("Track ", $self->id, " caching primary artist $id -> ", $artist->name);
 	}
 	
 	return wantarray ? ($id, $artist) : $id;
@@ -316,16 +316,6 @@ sub buildPrettyBitRate {
 
 	return 0;
 }	
-
-sub prettySampleRate {
-	my $self = shift;
-
-	my $sampleRate = $self->samplerate;
-
-	if ($sampleRate) {
-		return sprintf('%.1f kHz', $sampleRate / 1000);
-	}
-}
 
 # Wrappers around common functions
 sub isRemoteURL {

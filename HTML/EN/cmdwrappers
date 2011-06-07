@@ -77,7 +77,7 @@
 [%# this is to wrap around an href which does a remove command, with default image reference %]
 [%- BLOCK removelink -%]
 	[%- PROCESS cmdlink
-		cmdtitle = "DELETE"
+		cmdtitle = "REMOVE_FROM_PLAYLIST"
 		cmdimage = "b_delete.gif" -%]
 [%- END -%]
 
@@ -163,6 +163,12 @@ END %]
 </ul></div>
 [%- END %]
 
+[% BLOCK dummycontainer %]
+<div>
+	[%- content | indent(4) %]
+</div>
+[%- END %]
+
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]">
 	[%- IF anchor %]
@@ -203,7 +209,16 @@ END %]
 			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 		[% ELSE %]
-			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %]
+					[% IF item.level %]&amp;level=[% item.level %][% END %]
+					[% item.attributes | html %]");'
+				[% ELSE %]
+					[% IF item.weblink %]
+						href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type != 'text' %]
+						href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
+					[% END %]
+				[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
 		[% END -%]
 	</div>
 
@@ -296,21 +311,7 @@ END %]
 [% END %]
 
 [% BLOCK iteminfo -%]
-	[%- IF item.descend %][% IF item.hierarchy -%]
-	[%- IF useAJAX AND (container == 'contentcontainer') AND item.itemobj -%]
-	<span  id='descend[% itemid %]' class="descendlinkbtn"                      onClick='showTree("[% itemid %]","[% item.hreftype %]","hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]")'>&nbsp;</span
-	><span id='wait[% itemid %]'    class="waitlinkbtn"  style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span
-	><span id='close[% itemid %]'   class="closelinkbtn" style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span>
-	[%- END %]
-	<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
-	[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
-
-		<!-- Include the artist for the album view -->
-		[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END -%]
-
-	[%- ELSE -%]
-		[% PROCESS trackinfo %]
-	[%- END %]
+	[% PROCESS trackinfo %]
 [%- END %]
 
 [% BLOCK songInfoPlayLinks %]
@@ -336,7 +337,7 @@ END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]">[% "FIRST" | string %]</a> [% END %]
 [% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]">[% "PREVIOUS" | string %]</a> [% END %]
 [%- IF pageinfo.alphamap %]
-[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+[%- FOREACH alphakey = pageinfo.alphaindex -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
  <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]

@@ -7,35 +7,6 @@ use base qw(Slim::Schema::ResultSet::Base);
 
 use Slim::Utils::Prefs;
 
-sub title {
-	my $self = shift;
-
-	return 'BROWSE_BY_SONG';
-}
-
-sub allTitle {
-	my $self = shift;
-
-	return 'ALL_SONGS';
-}
-
-sub pageBarResults {
-	my $self = shift;
-
-	my $table = $self->{'attrs'}{'alias'};
-	my $name  = "$table.titlesort";
-
-	# SUBSTR() is supported by both MySQL and SQLite
-	$self->search(undef, {
-		'select'     => [ \"SUBSTR($name, 1, 1)", { count => \"DISTINCT($table.id)" } ],
-		as           => [ 'letter', 'count' ],
-		group_by     => \"SUBSTR($name, 1, 1)",
-		result_class => 'Slim::Schema::PageBar',
-	});
-}
-
-sub ignoreArticles { 1 }
-
 sub searchColumn {
 	my $self  = shift;
 
@@ -62,39 +33,6 @@ sub orderBy {
 	my $self = shift;
 
 	return 'album.titlesort,me.disc,me.tracknum,me.titlesort';
-}
-
-sub browse {
-	my $self = shift;
-	my $find = shift;
-	my $cond = shift;
-	
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
-	my $collate = $sqlHelperClass->collate();
-	
-	my $sort = shift || "me.titlesort $collate";
-	
-	my $join = '';
-
-	# Only search for audio
-	$cond->{'me.audio'} = 1;
-
-	# If we need to order by album,titlesort, etc - join on album.
-	if ($sort) {
-
-		if ($sort =~ /album\./) {
-			$join = 'album';
-		}
-		
-		$sort =~ s/((?:\w+\.)?\w+sort)/$sqlHelperClass->prepend0($1) . " $collate"/eg;
-	}
-
-	# Join on album
-	return $self->search($self->fixupFindKeys($cond), {
-		'order_by' => $sort,
-		'distinct' => 'me.id',
-		'join'     => $join,
-	});
 }
 
 # XXX  - These are wrappers around the methods in Slim::Schema, which need to

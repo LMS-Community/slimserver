@@ -142,8 +142,9 @@ sub _add {
 			main::PERFMON && Slim::Utils::PerfMon->check('io', AnyEvent->time - $now, undef, $cb);
 			
 			if ( $@ ) {
+				my $error = "$@";
 				my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
-				logError("Select task failed calling $func: $@; fh=$fh");
+				logError("Select task failed calling $func: $error; fh=$fh");
 			}
 		},
 	);

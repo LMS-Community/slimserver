@@ -51,7 +51,6 @@ our $defaultPrefs = {
 	'shuffle'              => 0,
 	'titleFormat'          => [5, 1, 3, 6, 0],
 	'titleFormatCurr'      => 4,
-	'playlistmode'         => 'disabled',
 	'presets'              => [],
 };
 
@@ -63,13 +62,6 @@ $prefs->setValidate({
 		    && $new >= $client->mixerConstant($pref, 'min');
 	} 
 }, qw(bass treble));
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
-	Slim::Control::Jive::myMusicMenu(0, $client);
-}, 'playlistmode' );
 
 $prefs->setChange( sub {
 	my $value  = $_[1];
@@ -1459,7 +1451,17 @@ sub hasScrolling { 0 }
 sub apps {
 	my $client = shift;
 	
-	return $prefs->client($client)->get('apps') || {};
+	my %clientApps = %{$prefs->client($client)->get('apps') || {}};
+
+	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
+		for my $plugin (@$nonSNApps) {
+			if ($plugin->can('tag')) {
+				$clientApps{ $plugin->tag } = { plugin => $plugin };
+			}
+		}
+	}
+
+	return \%clientApps;
 }
 
 sub isAppEnabled {

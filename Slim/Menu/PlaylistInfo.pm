@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'playlistinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -74,6 +74,17 @@ sub registerDefaultInfoProviders {
 		func      => \&playPlaylist,
 	) );
 
+	$class->registerInfoProvider( addfavorite => (
+		menuMode  => 1,
+		after    => 'playitem',
+		func      => \&addFavorite,
+	) );
+
+	$class->registerInfoProvider( deleteplaylist => (
+		menuMode  => 1,
+		after    => 'addfavorite',
+		func      => \&deletePlaylist,
+	) );
 
 }
 
@@ -166,6 +177,7 @@ sub menu {
 		name  => $playlist->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
@@ -176,6 +188,8 @@ sub playPlaylist {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
+
 	my $play_string   = cstring($client, 'PLAY');
 
 	my $actions = {
@@ -187,24 +201,6 @@ sub playPlaylist {
 				cmd => 'load',
 			},
 			nextWindow => 'nowPlaying',
-		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				playlist_id => $playlist->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				playlist_id => $playlist->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -220,14 +216,14 @@ sub playPlaylist {
 	return $items;
 }
 
-sub addPlaylistNext {
+sub addPlaylistEnd {
 	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
 	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd );
 
 }
-sub addPlaylistEnd {
+sub addPlaylistNext {
 	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
@@ -240,6 +236,8 @@ sub addPlaylist {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $actions = {
 		go => {
@@ -266,24 +264,99 @@ sub addPlaylist {
 	return $items;
 }
 
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
+sub addFavorite {
+	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+
+	return [] if !blessed($client);
+
+	my $action = 'add';
+	my $token = 'JIVE_SAVE_TO_FAVORITES';
+	# first we check to see if the URL exists in favorites already
+	my $favIndex = undef;
+	if ( blessed($client) ) {
+		my $favs = Slim::Utils::Favorites->new($client);
+		$favIndex = $favs->findUrl($url);
+		if (defined($favIndex)) {
+			$action = 'delete';
+			$token = 'JIVE_DELETE_FROM_FAVORITES';
+		}
 	}
 	
-	return $findCriteria;
+	return [ {
+		type => 'text',
+		name => cstring($client, $token),
+		jive => {
+			actions => {
+				'go' => {
+					player => 0,
+					cmd    => [ 'jivefavorites', $action ],
+					params => {
+							title   => $playlist->name,
+							url     => $url,
+					},
+				},
+			},
+			style   => 'item',
+		}, 
+	} ];
+}
+
+sub deletePlaylist {
+	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+
+	return [] if !blessed($client);
+
+	###
+	# FIXME: bug 8670. This is the 7.1 workaround to deal with the %s in the EN string
+	my $string = cstring($client, 'JIVE_DELETE_PLAYLIST', $playlist->name);
+	$string =~ s/\\n/ /g;
+
+	return [ {
+		type => 'text',
+		name => $string,
+		jive => {
+			actions => {
+				'go' => {
+					player => 0,
+					cmd    => [ 'jiveplaylists', 'delete' ],
+					params => {
+						url	        => $url,
+						playlist_id => $playlist->id,
+						title       => $playlist->name,
+						menu        => 'track',
+						menu_all    => 1,
+					},
+				},
+			},
+			style   => 'item',
+		}, 
+	} ];
 }
 
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
 	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
+	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
-	my $playlistId        = $request->getParam('playlist_id');
+	my $playlistId     = $request->getParam('playlist_id');
 	my $menuMode       = $request->getParam('menu') || 0;
 	
 

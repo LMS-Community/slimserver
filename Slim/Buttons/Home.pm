@@ -29,8 +29,6 @@ navigating a configurable multilevel menu structure.
 
 use strict;
 
-use Slim::Buttons::BrowseDB;
-use Slim::Buttons::BrowseTree;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
@@ -159,15 +157,8 @@ sub init {
 		},
 	);
 
-	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
 
-sub _libraryChanged {
-	foreach ( Slim::Player::Client::clients() ) {
-		updateMenu($_);
-		$_->update();
-	}
-}
 
 =head2 forgetClient ( $client )
 

@@ -201,6 +201,7 @@ sub handler {
 				$lang = uc $al;
 			}
 
+			# Detect the user agent
 			$ua = $conn->[HTTP_RESPONSE]->request->header('X-User-Agent') || $conn->[HTTP_RESPONSE]->request->header('User-Agent');
 		}
 		

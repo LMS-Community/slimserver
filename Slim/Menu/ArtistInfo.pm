@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'artistinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -129,7 +129,7 @@ sub menu {
 				}
 			}
 			else {
-				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
+				$log->error( 'Artistinfo menu item "' . $ref->{name} . '" failed: not an arrayref or hashref' );
 			}				
 		}
 	};
@@ -163,6 +163,7 @@ sub menu {
 		name  => $artist->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
@@ -173,6 +174,8 @@ sub playArtist {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
+
 	my $play_string   = cstring($client, 'PLAY');
 
 	my $actions = {
@@ -184,24 +187,6 @@ sub playArtist {
 				cmd => 'load',
 			},
 			nextWindow => 'nowPlaying',
-		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				artist_id => $artist->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				artist_id => $artist->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -239,6 +224,7 @@ sub addArtist {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {
@@ -276,9 +262,30 @@ sub _findDBCriteria {
 	return $findCriteria;
 }
 
+# keep a very small cache of feeds to allow browsing into a artist info feed
+# we will be called again without $url or $artistId when browsing into the feed
+tie my %cachedFeed, 'Tie::Cache::LRU', 2;
+
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
+	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
 	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');
@@ -286,7 +293,7 @@ sub cliQuery {
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
-	
+	my $connectionId   = $request->connectionID;
 
 	my $tags = {
 		menuMode      => $menuMode,
@@ -294,22 +301,26 @@ sub cliQuery {
 		playlistIndex => $playlist_index,
 	};
 
-	unless ( $url || $artistId ) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
 	my $feed;
 	
 	# Default menu
 	if ( $url ) {
 		$feed = Slim::Menu::ArtistInfo->menu( $client, $url, undef, $tags );
 	}
-	else {
+	elsif ( $artistId ) {
 		my $artist = Slim::Schema->find( Contributor => $artistId );
 		$feed     = Slim::Menu::ArtistInfo->menu( $client, $artist->url, $artist, $tags );
 	}
+	elsif ( $cachedFeed{ $connectionId } ) {
+		$feed = $cachedFeed{ $connectionId };
+	}
+	else {
+		$request->setStatusBadParams();
+		return;
+	}
 	
+	$cachedFeed{ $connectionId } = $feed if $feed;
+
 	Slim::Control::XMLBrowser::cliQuery( 'artistinfo', $feed, $request );
 }
 

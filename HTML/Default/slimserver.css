@@ -83,7 +83,7 @@ a:hover, .link:hover,
 	zoom: 1;
 }
 
-.selectedItem a {
+.searchResultHeader, .selectedItem a {
 	font-weight: bold;
 }
 
@@ -430,9 +430,13 @@ div.pagetitleWithIcon {
 
 
 /* Home menu */
+.smallIcon .browsedbListItem,
+.homeMenuSection_expanded .homeMenuItem {
+	min-height: 15px;
+}
+
 .homeMenuSection_expanded .homeMenuItem {
 	padding-left: 34px;
-	min-height: 15px;
 }
 
 .homeMenuItem {
@@ -456,6 +460,7 @@ div.pagetitleWithIcon {
 
 .expandableHomeMenuItem { display: none; }
 
+.smallIcon .browsedbListItem .browseCover,
 .homeMenuItem .browseCover {
 	padding-top: 1px;
 	top: -7px;

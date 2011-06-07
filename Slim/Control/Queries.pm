@@ -36,6 +36,7 @@ use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64 decode_base64);
 use Scalar::Util qw(blessed);
 use URI::Escape;
+use Tie::Cache::LRU::Expires;
 
 use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
@@ -56,6 +57,9 @@ my $prefs = preferences('server');
 
 # Frequently used data can be cached in memory, such as the list of albums for Jive
 my $cache = {};
+
+# small, short lived cache of folder entries to prevent repeated disk reads on BMF
+tie my %bmfCache, 'Tie::Cache::LRU::Expires', EXPIRES => 15, ENTRIES => 5;
 
 sub init {
 	my $class = shift;
@@ -252,9 +256,6 @@ sub albumsQuery {
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
-	my %favorites;
-	$favorites{'url'}    = $request->getParam('favorites_url');
-	$favorites{'title'}  = $request->getParam('favorites_title');
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $tags          = $request->getParam('tags') || 'l';
@@ -266,23 +267,14 @@ sub albumsQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
-	my $menu          = $request->getParam('menu');
-	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
-	my $party         = $request->getParam('party') || 0;
 	
+	# FIXME: missing genrealbum, genreartistalbum
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	# menu/jive mgmt
-	my $menuMode = defined $menu;
-	my $useContextMenu = $request->getParam('useContextMenu');
-	my $partyMode = _partyModeCheck($request);
-	my $allSongs = $menuMode && defined $insert && !$partyMode;
-	my $insertAll = $allSongs && !$useContextMenu;
-	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
 	my $sql      = 'SELECT %s FROM albums ';
@@ -291,6 +283,7 @@ sub albumsQuery {
 	my $p        = [];
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	my $limit;
+	my $page_key = "SUBSTR(albums.titlesort,1,1)";
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -313,23 +306,29 @@ sub albumsQuery {
 			if ( $quantity && $quantity > $limit ) {
 				$quantity = $limit;
 			}
+			
+			$page_key = undef;
 		}
 		elsif ( $sort eq 'artflow' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
+			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'artistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
+			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'yearartistalbum' ) {
 			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
+			$page_key = "albums.year";
 		}
 		elsif ( $sort eq 'yearalbum' ) {
 			$order_by = "albums.year, albums.titlesort $collate";
+			$page_key = "albums.year";
 		}
 
 		if (specified($search)) {
@@ -356,9 +355,28 @@ sub albumsQuery {
 				$compilation = 1;
 			}
 			else {
+
 				$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
 				push @{$w}, 'contributor_album.contributor = ?';
 				push @{$p}, $contributorID;
+
+				my $cond = 'contributor_album.role IN (?, ?, ?';
+				
+				push @{$p}, (
+					Slim::Schema::Contributor->typeToRole('ARTIST'), 
+					Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
+					Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+				);
+		
+				# Loop through each pref to see if the user wants to show that contributor role.
+				foreach (Slim::Schema::Contributor->contributorRoles) {
+					if ($prefs->get(lc($_) . 'InArtists')) {
+						$cond .= ', ?';
+						push @{$p}, Slim::Schema::Contributor->typeToRole($_);
+					}
+				}
+				
+				push @{$w}, ($cond . ')');
 			}	
 		}
 	
@@ -379,24 +397,6 @@ sub albumsQuery {
 		}
 	}
 	
-	# Jive menu mode, needs contributor data and only a subset of columns
-	if ( $menuMode ) {
-		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
-		}
-		
-		map { $c->{$_} = 1 } qw(
-			albums.title
-			albums.artwork
-			contributors.name
-			contributors.namesort
-			albums.titlesort
-			albums.musicmagic_mixable
-			albums.disc
-			albums.discc
-		);
-	}
-
 	if ( $tags =~ /l/ ) {
 		# title/disc/discc is needed to construct (N of M) title
 		map { $c->{$_} = 1 } qw(albums.title albums.disc albums.discc);
@@ -426,6 +426,14 @@ sub albumsQuery {
 		$c->{'albums.compilation'} = 1;
 	}
 
+	if ( $tags =~ /X/ ) {
+		$c->{'albums.replay_gain'} = 1;
+	}
+
+	if ( $tags =~ /S/ ) {
+		$c->{'albums.contributor'} = 1;
+	}
+
 	if ( $tags =~ /a/ ) {
 		# If requesting artist data, join contributor
 		if ( $sql !~ /JOIN contributors/ ) {
@@ -440,9 +448,24 @@ sub albumsQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s .= join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	if ($page_key && $tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "$page_key, count(distinct albums.id)")
+			 . "GROUP BY $page_key ORDER BY $order_by ";
+		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		
+		if ($tags =~ /ZZ/) {
+			$request->setStatusDone();
+			return
+		}
+	}
+	
 	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
 	
 	# Add selected columns
@@ -452,131 +475,32 @@ sub albumsQuery {
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
-	my $dbh = Slim::Schema->dbh;
-	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
+	my $countsql = $sql;
+	$countsql .= ' LIMIT ' . $limit if $limit;
 	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
+		SELECT COUNT(*) FROM ( $countsql ) AS t1
 	}, undef, @{$p} );
 	
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
 	}
 
-	if ($menuMode) {
-
-		# Bug 5435, 8020
-		# on "new music" queries, return the count as being 
-		# the user setting for new music limit if available
-		# then fall back to the block size if the pref doesn't exist
-		if ( $sort eq 'new' ) {
-			my $pref_limit = $prefs->get('browseagelimit');
-			if ( !$pref_limit ) {
-				if ( $count > $quantity ) {
-					$count = $quantity;
-				}
-			}
-			else {
-				if ( $count > $pref_limit ) {
-					$count = $pref_limit;
-				}
-			}
-		}
-
-		# decide what is the next step down
-		# generally, we go to tracks after albums, so we get menu:track
-		# from the tracks we'll go to trackinfo
-		my $actioncmd = $menu . 's';
-		my $nextMenu = 'trackinfo';
-		
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => [$actioncmd],
-					'params' => {
-						'menu' => $nextMenu,
-						'menu_all' => '1',
-						'sort' => 'tracknum',
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					'nextWindow'  => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				}		
-			},
-		};
-		
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-
-		if ( $party || $partyMode ) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-
-		# adapt actions to SS preference
-		if (!$prefs->get('noGenreFilter') && defined $genreID) {
-			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
-			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
-			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
-		}	
-
-		if ( $useContextMenu ) {
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('album');
-		}
-		if ( $search ) {
-			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
-		}
-
-		$request->addResult('base', $base);
-	}
-	
 	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
 	$count += 0;
 
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
-
 	# now build the result
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	my $loopname = $menuMode?'item_loop':'albums_loop';
+	my $loopname = 'albums_loop';
 	my $chunkCount = 0;
-	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 	if ($valid) {
-
-		# first PLAY ALL item
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1);
-		}
 
 		# We need to know the 'No album' name so that those items
 		# which have been grouped together under it do not get the
@@ -586,6 +510,10 @@ sub albumsQuery {
 		my $noAlbumName = $request->string('NO_ALBUM');
 		
 		# Limit the real query
+		if ($limit && !$quantity) {
+			$quantity = "$limit";
+			$index ||= "0";
+		}
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
 		}
@@ -603,8 +531,6 @@ sub albumsQuery {
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 
-		my $artist;
-		
 		# Little function to construct nice title from title/disc counts
 		my $groupdiscs_pref = $prefs->get('groupdiscs');
 		my $construct_title = sub {
@@ -622,82 +548,33 @@ sub albumsQuery {
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			
-			#FIXME: see if multiple char textkey is doable for year/genre sort
-			my $textKey = '';
-			if ($sort eq 'artflow' || $sort eq 'artistalbum') {
-				utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
-				$textKey = substr $c->{'contributors.namesort'}, 0, 1;
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
+			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
+			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
+			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'});
+			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
+			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
+			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
+			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
+			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
+			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
+			if ($tags =~ /a/) {
+				# Bug 15313, this used to use $eachitem->artists which
+				# contains a lot of extra logic.  If this data is wrong we may
+				# need to fix how the album.contributor field is set
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
-			elsif ( $sort ne 'new' ) {
-				utf8::decode( $c->{'albums.titlesort'} ) if exists $c->{'albums.titlesort'};
-				$textKey = substr $c->{'albums.titlesort'}, 0, 1;
-			}
-
-			# Jive result formatting
-			if ($menuMode) {
-				
-				# we want the text to be album\nartist
-				$artist  = $c->{'contributors.name'};
-				my $text = $construct_title->();
-				if (defined $artist) {
-					$text = $text . "\n" . $artist;
+			if ($tags =~ /s/) {
+				#FIXME: see if multiple char textkey is doable for year/genre sort
+				my $textKey;
+				if ($sort eq 'artflow' || $sort eq 'artistalbum') {
+					utf8::decode( $c->{'contributors.namesort'} ) if exists $c->{'contributors.namesort'};
+					$textKey = substr $c->{'contributors.namesort'}, 0, 1;
+				} elsif ( $sort eq 'album' ) {
+					utf8::decode( $c->{'albums.titlesort'} ) if exists $c->{'albums.titlesort'};
+					$textKey = substr $c->{'albums.titlesort'}, 0, 1;
 				}
-
-				my $favorites_title = $text;
-				$favorites_title =~ s/\n/ - /g;
-
-				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
-				
-				my $id = $c->{'albums.id'};
-				$id += 0;
-
-				# the favorites url to be sent to jive is the album title here
-				# album id would be (much) better, but that would screw up the favorite on a rescan
-				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles( $c->{'albums.titlesearch'}, 1 ) );
-
-				my $params = {
-					'album_id'        => $id,
-					'favorites_url'   => $url,
-					'favorites_title' => $favorites_title,
-					'textkey'         => $textKey,
-				};
-				
-				if (defined $contributorID) {
-					$params->{artist_id} = $contributorID;
-				}
-
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
-
-				# artwork if we have it
-				if ( $c->{'albums.title'} ne $noAlbumName &&
-				    defined(my $iconId = $c->{'albums.artwork'})) {
-					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
-				}
-
-				_mixerItemParams(request => $request, mixable => $c->{'albums.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-			}
-			
-			# "raw" result formatting (for CLI or JSON RPC)
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
-				$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
-				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $c->{'albums.year'});
-				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $c->{'albums.artwork'});
-				$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'albums.title'});
-				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $c->{'albums.disc'});
-				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
-				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
-				if ($tags =~ /a/) {
-					# Bug 15313, this used to use $eachitem->artists which
-					# contains a lot of extra logic.  If this data is wrong we may
-					# need to fix how the album.contributor field is set
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
-				}
-				$tags =~ /s/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			
 			$chunkCount++;
@@ -705,55 +582,10 @@ sub albumsQuery {
 			main::idleStreams() if !($chunkCount % 5);
 		}
 
-		if ($menuMode) {
-			# Add Favorites as the last item, if applicable
-			my $lastChunk;
-			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
-				$lastChunk = 1;
-			}
-			# add an "all songs" at the bottom (artist album lists only)
-			if ($allSongs && $lastChunk && defined($contributorID)) {
-				my $beforeCount = $chunkCount;
-				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1, allSongs => 1, artist => $artist );
-				$totalCount++ if $beforeCount != $chunkCount;
-			}
-			if (!$useContextMenu) {
-				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
-			}
-		}
-	}
-	elsif ($totalCount > 1 && $menuMode && !$useContextMenu) {
-		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);	
 	}
 
-	if ($totalCount == 0 && $menuMode) {
-		# this is an empty resultset
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $totalCount);
-	}
+	$request->addResult('count', $count);
 
-	# Cache searches
-	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $jiveSearchCache = {
-			text        => $request->string('ALBUMS') . ": " . $search,
-			actions     => {
-					go => {
-						cmd => [ 'albums' ],
-						params => {
-							search => $request->getParam('search'),
-							menu_all => 1,
-							cached_search => 1,
-							menu   => $request->getParam('menu'),
-							_searchType => $request->getParam('_searchType'),
-						},
-					},
-			},
-			window      => { menuStyle => 'album' },
-		};
-		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
-	}
-	
 	$request->setStatusDone();
 }
 
@@ -783,26 +615,12 @@ sub artistsQuery {
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
-	my $menu     = $request->getParam('menu');
-	my $insert   = $request->getParam('menu_all');
 	my $to_cache = $request->getParam('cache');
-	my $party    = $request->getParam('party') || 0;
 	my $tags     = $request->getParam('tags') || '';
-	
-	my %favorites;
-	$favorites{'url'} = $request->getParam('favorites_url');
-	$favorites{'title'} = $request->getParam('favorites_title');
-	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $allAlbums = defined $genreID;
-	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
 	
 	my $va_pref = $prefs->get('variousArtistAutoIdentification');
 	
-	my $sql    = 'SELECT contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable FROM contributors ';
+	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';
 	my $w      = [];
 	my $w_va   = [ 'albums.compilation = 1' ];
@@ -912,29 +730,14 @@ sub artistsQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
-	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$sql .= "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
-	
-	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
-	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
-	
-	if ( !$stillScanning ) {
-		$cache->{$cacheKey} = $count;
-	}
-	
-	my $totalCount = $count || 0;
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
@@ -953,89 +756,51 @@ sub artistsQuery {
 		}
 		
 		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
+	}
 
-		# fix the index and counts if we have to include VA
-		$totalCount = _fixCount($count_va, \$index, \$quantity, $count);
+	my $indexList;
+	if ($tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "SUBSTR(contributors.namesort,1,1), count(distinct contributors.id)")
+			 . "GROUP BY SUBSTR(contributors.namesort,1,1) ORDER BY contributors.namesort $collate";
+		$indexList = $dbh->selectall_arrayref($pageSql, undef, @{$p});
+		
+		unshift @$indexList, ['#' => 1] if $indexList && $count_va;
+		
+		if ($tags =~ /ZZ/) {
+			$request->addResult('indexList', $indexList) if $indexList;
+			$request->setStatusDone();
+			return
+		}
+	}
 
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable')
+			. "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
+	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
+	
+	my $totalCount = $count || 0;
+
+	if ( $count_va ) {
 		# don't add the VA item on subsequent queries
 		$count_va = ($count_va && !$index);
+
+		# fix the index and counts if we have to include VA
+		$totalCount = _fixCount(1, \$index, \$quantity, $count);
 	}
 
 	# now build the result
 	
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# generally, we go to albums after artists, so we get menu:album
-		# from the albums we'll go to tracks
-		my $actioncmd = $menu . 's';
-		my $nextMenu = 'track';
-		
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => [$actioncmd],
-					'params' => {
-						menu     => $nextMenu,
-						menu_all => '1',
-					},
-					'itemsParams' => 'params'
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					'nextWindow'  => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params'
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params'
-				},
-			},
-			# style correctly the window that opens for the action element
-			'window' => {
-				'menuStyle'  => 'album',
-			},
-		};
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		if ($partyMode || $party) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-		if (!$prefs->get('noGenreFilter') && defined $genreID) {
-			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
-			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
-			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
-		}
-		if ( $useContextMenu ) {
-			# + is more
-			$base->{'actions'}->{'more'} = _contextMenuBase('artist');
-		}
-		if ( $search ) {
-			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
-		}
-		$request->addResult('base', $base);
-	}
-
-
-	$totalCount = _fixCount($insertAll, \$index, \$quantity, $totalCount);
-
 	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
@@ -1049,22 +814,16 @@ sub artistsQuery {
 	}
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	
+
 	# XXX for 'artists 0 1' with VA we need to force valid to 1
 	if ( $count_va && $index == 0 && $quantity == 0 ) {
 		$valid = 1;
 	}
-
-	my $loopname = $menuMode?'item_loop':'artists_loop';
+	
+	my $loopname = 'artists_loop';
 	my $chunkCount = 0;
-	$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 
 	if ($valid) {			
-		# first PLAY ALL item
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
-		
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
@@ -1085,40 +844,18 @@ sub artistsQuery {
 			
 			utf8::decode($name);
 			utf8::decode($namesort);
-			
-			my $textKey = substr($namesort, 0, 1);
-			# Bug 11070: Don't display large V at beginning of browse Artists
-			if ($count_va && $chunkCount == 0) {
-				$textKey = " ";
-			}
 
-			if ($menuMode){
-				$request->addResultLoop($loopname, $chunkCount, 'text', $name);
-
-				# the favorites url to be sent to jive is the artist name here
-				my $url = 'db:contributor.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($name, 1) );
-
-				my $params = {
-					'favorites_url'   => $url,
-					'favorites_title' => $name,
-					'artist_id' => $id, 
-					'textkey' => $textKey,
-				};
-				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
-			}
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-				$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
-				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+			$request->addResultLoop($loopname, $chunkCount, 'artist', $name);
+			if ($tags =~ /s/) {
+				# Bug 11070: Don't display large V at beginning of browse Artists
+				my $textKey = ($count_va && $chunkCount == 0) ? ' ' : substr($namesort, 0, 1);
+				$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
 			$chunkCount++;
 			
-			main::idleStreams() if !($chunkCount % 5);
+			main::idleStreams() if !($chunkCount % 10);
 		};
 		
 		# Add VA item first if necessary
@@ -1145,52 +882,11 @@ sub artistsQuery {
 			$process->();
 		}
 		
-		if ($menuMode) {
-			# Add Favorites as the last item, if applicable
-			my $lastChunk = 0;
-			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
-				$lastChunk = 1;
-			}
-
-			if ($allAlbums) {
-				($chunkCount, $totalCount) = _jiveGenreAllAlbums(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, genreID => $genreID, genreString => $genreString );
-			}
-
-			if (!$useContextMenu) {
-				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => ($lastChunk == 1), listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
-			}
-		}
-	}
-	elsif ($totalCount > 1 && $menuMode && $useContextMenu) {
-		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
-	}
-
-	if ($totalCount == 0 && $menuMode) {
-		# this is an empty resultset
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $totalCount);
 	}
 	
-	# Cache search result
-	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $jiveSearchCache = {
-			text        => $request->string('ARTISTS') . ": " . $search,
-			actions     => {
-					go => {
-						cmd => [ 'artists' ],
-						params => {
-							search => $request->getParam('search'),
-							menu   => $request->getParam('menu'),
-							menu_all => 1,
-							cached_search => 1,
-							_searchType => $request->getParam('_searchType'),
-						},
-					},
-			},
-		};
-		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
-	}
+	$request->addResult('indexList', $indexList) if $indexList;
+
+	$request->addResult('count', $totalCount);
 	
 	$request->setStatusDone();
 }
@@ -1400,28 +1096,28 @@ sub displaystatusQuery {
 		$request->addResult('type', $type);
 
 		# return screen1 info if more than one screen
-		$parts = $parts->{'screen1'} if $parts->{'screen1'};
+		my $screen1 = $parts->{'screen1'} || $parts;
 
-		if ($subs eq 'bits' && $parts->{'bitsref'}) {
-			
+		if ($subs eq 'bits' && $screen1->{'bitsref'}) {
+
 			# send the display bitmap if it exists (graphics display)
 			use bytes;
 
-			my $bits = ${$parts->{'bitsref'}};
-			if ($parts->{'scroll'}) {
-				$bits |= substr(${$parts->{'scrollbitsref'}}, 0, $parts->{'overlaystart'}[$parts->{'scrollline'}]);
+			my $bits = ${$screen1->{'bitsref'}};
+			if ($screen1->{'scroll'}) {
+				$bits |= substr(${$screen1->{'scrollbitsref'}}, 0, $screen1->{'overlaystart'}[$screen1->{'scrollline'}]);
 			}
 
 			$request->addResult('bits', MIME::Base64::encode_base64($bits) );
-			$request->addResult('ext', $parts->{'extent'});
+			$request->addResult('ext', $screen1->{'extent'});
 
 		} elsif ($format eq 'cli') {
 
 			# format display for cli
-			for my $c (keys %$parts) {
+			for my $c (keys %$screen1) {
 				next unless $c =~ /^(line|center|overlay)$/;
-				for my $l (0..$#{$parts->{$c}}) {
-					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
+				for my $l (0..$#{$screen1->{$c}}) {
+					$request->addResult("$c$l", $screen1->{$c}[$l]) if ($screen1->{$c}[$l] ne '');
 				}
 			}
 
@@ -1437,7 +1133,7 @@ sub displaystatusQuery {
 					$request->addResult('display', $parts->{'jive'} );
 				}
 			} else {
-				$request->addResult('display', { 'text' => $parts->{'line'} || $parts->{'center'} });
+				$request->addResult('display', { 'text' => $screen1->{'line'} || $screen1->{'center'} });
 			}
 		}
 
@@ -1545,18 +1241,9 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
-	my $menu          = $request->getParam('menu');
-	my $insert        = $request->getParam('menu_all');
-	my $party         = $request->getParam('party') || 0;
 	my $tags          = $request->getParam('tags') || '';
 	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode && $useContextMenu;
-	
-	my $sql  = 'SELECT DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable FROM genres ';
+	my $sql  = 'SELECT %s FROM genres ';
 	my $w    = [];
 	my $p    = [];
 
@@ -1624,16 +1311,29 @@ sub genresQuery {
 	
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	
+	my $dbh = Slim::Schema->dbh;
+	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$sql .= "ORDER BY genres.namesort $collate";
+	
+	if ($tags =~ /Z/) {
+		my $pageSql = sprintf($sql, "SUBSTR(genres.namesort,1,1), count(distinct genres.id)")
+			 . "GROUP BY SUBSTR(genres.namesort,1,1) ORDER BY genres.namesort $collate";
+		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
+		if ($tags =~ /ZZ/) {
+			$request->setStatusDone();
+			return
+		}
+	}
+	
+	$sql = sprintf($sql, 'DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable')
+			. "ORDER BY genres.namesort $collate";
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
-	
-	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
@@ -1648,86 +1348,18 @@ sub genresQuery {
 	
 	# now build the result
 	
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# generally, we go to artists after genres, so we get menu:artist
-		# from the artists we'll go to albums
-		my $actioncmd = $menu . 's';
-		my $nextMenu = 'album';
-		
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => [$actioncmd],
-					'params' => {
-						menu     => $nextMenu,
-						menu_all => '1',
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					'nextWindow'  => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				},
-			},
-		};
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-		if ($useContextMenu) {
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('genre');
-		}
-		if ( $search ) {
-			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
-		}
-		$request->addResult('base', $base);
-
-	}
-	
 	if ($stillScanning) {
 		$request->addResult('rescan', 1);
 	}
 
 	$count += 0;
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 
-		my $loopname = $menuMode?'item_loop':'genres_loop';
+		my $loopname = 'genres_loop';
 		my $chunkCount = 0;
-		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
-		
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
 		
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
@@ -1752,41 +1384,17 @@ sub genresQuery {
 			
 			my $textKey = substr($namesort, 0, 1);
 				
-			if ($menuMode) {
-				$request->addResultLoop($loopname, $chunkCount, 'text', $name);
-				
-				# here the url is the genre name
-				my $url = 'db:genre.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($name, 1) );
-				my $params = {
-					'genre_id'        => $id,
-					'genre_string'    => $name,
-					'textkey'         => $textKey,
-					'favorites_url'   => $url,
-					'favorites_title' => $name,
-				};
+			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+			$request->addResultLoop($loopname, $chunkCount, 'genre', $name);
+			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				_mixerItemParams(request => $request, mixable => $mixable ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
-			}
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-				$request->addResultLoop($loopname, $chunkCount, 'genre', $name);
-				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-			}
 			$chunkCount++;
 			
 			main::idleStreams() if !($chunkCount % 5);
 		}
 	}
 
-	if ($totalCount == 0 && $menuMode) {
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $totalCount);
-	}
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
@@ -1956,16 +1564,7 @@ sub musicfolderQuery {
 	my $folderId = $request->getParam('folder_id');
 	my $want_top = $request->getParam('return_top');
 	my $url      = $request->getParam('url');
-	my $menu     = $request->getParam('menu');
-	my $insert   = $request->getParam('menu_all');
-	my $party    = $request->getParam('party') || 0;
 	my $tags     = $request->getParam('tags') || '';
-	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
 	# url overrides any folderId
 	my $params = ();
@@ -1979,21 +1578,25 @@ sub musicfolderQuery {
 	
 	# Pull the directory list, which will be used for looping.
 	my ($topLevelObj, $items, $count);
-
+	
 	# if this is a follow up query ($index > 0), try to read from the cache
-	if ($index > 0 && $cache->{bmf}->[$party]
-		&& $cache->{bmf}->[$party]->{id} eq ($params->{url} || $params->{id}) 
-		&& $cache->{bmf}->[$party]->{ttl} > time()) {
-			
-		$items       = $cache->{bmf}->[$party]->{items};
-		$topLevelObj = $cache->{bmf}->[$party]->{topLevelObj};
-		$count       = $cache->{bmf}->[$party]->{count};
+	if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
+		$items       = $cachedItem->{items};
+		$topLevelObj = $cachedItem->{topLevelObj};
+		$count       = $cachedItem->{count};
 	}
 	else {
-		
 		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+		
+		# cache results in case the same folder is queried again shortly 
+		# should speed up Jive BMF, as only the first chunk needs to run the full loop above
+		$bmfCache{ $params->{url} || $params->{id} || 0 } = {
+			items       => $items,
+			topLevelObj => $topLevelObj,
+			count       => $count,
+		};
 	}
-	
+
 	if ($want_top) {
 		$items = [ $topLevelObj->url ];
 		$count = 1;
@@ -2015,65 +1618,6 @@ sub musicfolderQuery {
 		$playalbum = $prefs->get('playtrackalbum'); 
 	}
 
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# assume we have a folder, for other types we will override in the item
-		# we go to musicfolder from musicfolder :)
-
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => ["musicfolder"],
-					'params' => {
-						menu     => 'musicfolder',
-						menu_all => '1',
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					nextWindow => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				},
-			},
-		};
-
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-
-		if ($useContextMenu) {
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('folder');
-		}
-		
-		$request->addResult('base', $base);
-
-		$request->addResult('window', { text => $topLevelObj->title } ) if $topLevelObj->title;
-	}
-
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
@@ -2082,11 +1626,8 @@ sub musicfolderQuery {
 
 	if ($valid) {
 
-		my $loopname =  $menuMode ? 'item_loop' : 'folder_loop';
+		my $loopname = 'folder_loop';
 		my $chunkCount = 0;
-		$request->addResult( 'offset', $index ) if $menuMode;
-		
-		my $listIndex = 0;
 
 		for my $filename (@$items[$start..$end]) {
 
@@ -2121,219 +1662,33 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
-			$filename = $realName || Slim::Music::Info::fileName($url);
+			$realName ||= Slim::Music::Info::fileName($url);
 
-			my $textKey = uc(substr($filename, 0, 1));
+			my $textKey = uc(substr($realName, 0, 1));
 			
-			if ($menuMode) {
-				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
-
-				my $params = {
-					'textkey' => $textKey,
-				};
-				
-				# each item is different, but most items are folders
-				# the base assumes so above, we override it here
-
-				# assumed case, folder
-				if (Slim::Music::Info::isDir($item)) {
-
-					$params->{'folder_id'} = $id;
-
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
-					# Bug 13855: there is no Slim::Menu::Folderinfo so no context menu is available here
-				# song
-				} elsif (Slim::Music::Info::isSong($item)) {
-					
-					my $actions = {
-						'go' => {
-							'cmd' => ['trackinfo', 'items'],
-							'params' => {
-								'menu' => 'nowhere',
-								'track_id' => $id,
-								isContextMenu => 1,
-							},
-						},
-						'play' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'load',
-								'track_id' => $id,
-							},
-							nextWindow => 'nowPlaying',
-						},
-						'add' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'add',
-								'track_id' => $id,
-							},
-						},
-						'add-hold' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'insert',
-								'track_id' => $id,
-							},
-						},
-					};
-					
-					if ( $playalbum && ! $partyMode ) {
-						$actions->{'play'} = {
-							player => 0,
-							cmd    => ['playlist', 'playtrackalbum'],
-							params => {
-								list_index => $index + $listIndex,
-								folder_id  => $topLevelObj->id,
-							},
-							nextWindow => 'nowPlaying',
-						};
-					}
-					if ($useContextMenu) {
-						$actions->{'more'} = $actions->{'go'};
-						$actions->{'go'} = $actions->{'play'};
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-					}
-					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-
-					$listIndex++;
-
-				# playlist
-				} elsif (Slim::Music::Info::isPlaylist($item)) {
-					
-					my $actions = {
-						'go' => {
-							'cmd' => ['playlists', 'tracks'],
-							'params' => {
-								menu        => 'trackinfo',
-								menu_all    => '1',
-								playlist_id => $id,
-							},
-						},
-						'play' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'load',
-								'playlist_id' => $id,
-							},
-							nextWindow => 'nowPlaying',
-						},
-						'add' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'add',
-								'playlist_id' => $id,
-							},
-						},
-						'add-hold' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'insert',
-								'playlist_id' => $id,
-							},
-						},
-					};
-					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
-					if ($useContextMenu) {
-						$actions->{'more'} = $actions->{'go'};
-						$actions->{'go'} = $actions->{'play'};
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-					}
-				# not sure
-				} else {
-					
-					# don't know what that is, abort!
-					my $actions = {
-						'go' => {
-							'cmd' => ["musicfolder"],
-							'params' => {
-								'menu' => 'musicfolder',
-							},
-							'itemsParams' => 'params',
-						},
-						'play' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'load',
-							},
-							'nextWindow' => 'nowPlaying',
-							'itemsParams' => 'params',
-						},
-						'add' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'add',
-							},
-							'itemsParams' => 'params',
-						},
-						'add-hold' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'insert',
-							},
-							'itemsParams' => 'params',
-						},
-					};
-					if ($partyMode || $party) {
-						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-					}
-					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-				}
-
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+			$request->addResultLoop($loopname, $chunkCount, 'filename', $realName);
+		
+			if (Slim::Music::Info::isDir($item)) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
+			} elsif (Slim::Music::Info::isPlaylist($item)) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
+			} elsif (Slim::Music::Info::isSong($item)) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
+			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
+			} else {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 			}
 
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
-				$request->addResultLoop($loopname, $chunkCount, 'filename', $filename);
-			
-				if (Slim::Music::Info::isDir($item)) {
-					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
-				} elsif (Slim::Music::Info::isPlaylist($item)) {
-					$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
-				} elsif (Slim::Music::Info::isSong($item)) {
-					$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
-				} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
-					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
-				} else {
-					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
-				}
+			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 
-				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-			}
 			$chunkCount++;
 		}
 	}
 
-	if ($count == 0 && $menuMode) {
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $count);
-	}
-
-	# cache results in case the same folder is queried again shortly 
-	# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-	$cache->{bmf}->[$party] = {
-		id          => ($params->{url} || $params->{id}),
-		ttl         => (time() + 15),
-		items       => $items,
-		topLevelObj => $topLevelObj,
-		count       => $count,
-	};
+	$request->addResult('count', $count);
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
@@ -2597,7 +1952,7 @@ sub playlistXQuery {
 	$request->setStatusDone();
 }
 
-
+# XXX TODO: merge SQL-based code from 7.6/trunk
 sub playlistsTracksQuery {
 	my $request = shift;
 	
@@ -2620,183 +1975,57 @@ sub playlistsTracksQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-	my $menu          = $request->getParam('menu');
-	my $insert        = $request->getParam('menu_all');
-	my $useContextMenu = $request->getParam('useContextMenu');
-	
-	# menu/jive mgmt
-	my $menuMode = defined $menu;
-	my $insertAll = $menuMode && defined $insert && !$useContextMenu;
-		
+
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
-	
-	my $where    = '(tracks.content_type != "cpl" AND tracks.content_type != "src" AND tracks.content_type != "ssp" AND tracks.content_type != "dir")';
-	my $order_by = 'playlist_track.position';
-	
-	my $count;
-	my $start;
-	my $end;
-	
-	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
-		where      => $where,
-		sort       => $order_by,
-		playlistId => $playlistID,
-		limit      => sub {
-			$count = shift;
-			
-			my $valid;
 
-			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-			
-			return ($valid, $index, $quantity);
-		},
-	} );
-	
-	$totalCount = _fixCount($insertAll, \$index, \$quantity, $totalCount);
-	
-	if ($menuMode) {
+	my $iterator;
+	my @tracks;
 
-		# decide what is the next step down
-		# generally, we go to songingo after playlists tracks, so we get menu:trackinfo
-		# from the artists we'll go to albums
+	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
 
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => ['trackinfo', 'items'],
-					'params' => {
-						'menu' => 'nowhere',
-						'useContextMenu' => 1,
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlist', 'playtrackplaylist'],
-					'params' => {
-						'cmd' => 'load',
-						'playlist_id' => $playlistID,
-					},
-					'itemsParams' => 'params',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				},
-			},
-		};
-		if ( $useContextMenu ) {
-			# go is play
-			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('track');
-		}
-		$request->addResult('base', $base);
+	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
+		$iterator = $playlistObj->tracks();
+		$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
 	}
 
+	# now build the result
+	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
-	
-	$count += 0;
-	
-	my $loopname = $menuMode ? 'item_loop' : 'playlisttracks_loop';
-	
-	# this is the count of items in this part of the request (e.g., menu 100 200)
-	# not to be confused with $count, which is the count of the entire list
-	my $chunkCount = 0;
-	my $offset = $request->getParam('_index');
-	$request->addResult('offset', $offset) if $menuMode;
-	
-	if ( scalar @{$itemOrder} ) {
-		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-		
-		if ( $insertAll && !$useContextMenu ) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
 
-		my $cur = $start;
-		my $list_index = 0;
+	if (defined $iterator) {
+
+		my $count = $iterator->count();
+		$count += 0;
 		
-		for my $trackId ( @{$itemOrder} ) {
-			my $item = $items->{$trackId};
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+		if ($valid || $start == $end) {
+
+
+			my $cur = $start;
+			my $loopname = 'playlisttracks_loop';
+			my $chunkCount = 0;
 			
-			if ($menuMode) {
-				my $id = $item->{'tracks.id'};
-				$id += 0;
-				
-				my $params = {
-					'track_id'   => $id, 
-					'list_index' => $list_index + $offset,
-				};
-				
-				# Pass hash to title formatter, it will know what to do with our data
-				my $text = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item);
+			my $list_index = 0;
+			for my $eachitem ($iterator->slice($start, $end)) {
 
-				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
-				$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'nowPlaying');
-
-				$list_index++;
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ( $useContextMenu ) {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-				}
-			}
-			else {
-				_addSong($request, $loopname, $chunkCount, $item, $tags, 
-						"playlist index", $cur);
-			}
+				_addSong($request, $loopname, $chunkCount, $eachitem, $tags, "playlist index", $cur);
 				
-			$cur++;
-			$chunkCount++;
+				$cur++;
+				$chunkCount++;
+				
+				main::idleStreams();
+			}
 		}
+		$request->addResult("count", $count);
 
-			if ($menuMode) {
-				my $lastChunk;
-				if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') || $start == $end) {
-					$lastChunk = 1;
-				}
-				
-				if ($lastChunk) {				
-					my $playlistObj = Slim::Schema->find( Playlist => $playlistID );
+	} else {
 
-					# add a favorites link below play/add links
-					#Add another to result count
-					my %favorites;
-					$favorites{'title'} = $playlistObj->name;
-					$favorites{'url'} = $playlistObj->url;
-				
-					($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
-				
-					($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
-				}
-				else {
-					# bug 16947, 14360: $totalCount needs to be upped by two for all chunks, not just the last one
-					# this is to ensure that $totalCount correctly accounts for the 
-					# delete playlist and add to favorites menu items, even for the earlier chunks. 
-					# If SP gets conflicting counts on different chunks, it leads to badthings
-					if ($totalCount > 0) {
-						$totalCount += 2;
-					}
-				}
-			}
+		$request->addResult("count", 0);
 	}
-	
-	$request->addResult("count", $totalCount);
 
 	$request->setStatusDone();	
 }
@@ -2816,14 +2045,7 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
-	my $menu     = $request->getParam('menu');
-	my $insert   = $request->getParam('menu_all');
 	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
-	my $useContextMenu = $request->getParam('useContextMenu');
-
 	# Normalize any search parameters
 	if (defined $search) {
 		$search = Slim::Utils::Text::searchStringSplit($search);
@@ -2834,63 +2056,6 @@ sub playlistsQuery {
 	# now build the result
 	my $count = $rs->count;
 	
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# generally, we go to playlists tracks after playlists, so we get menu:track
-		# from the tracks we'll go to trackinfo
-		
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => ['playlists', 'tracks'],
-					'params' => {
-						menu     => 'trackinfo',
-						menu_all => '1',
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					'nextWindow'  => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				},
-			},
-		};
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-
-		if ($useContextMenu) {
-			# context menu for 'more' action
-			$base->{'actions'}{'more'} = _contextMenuBase('playlist');
-		}
-		if ( $search ) {
-			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
-		}
-		$request->addResult('base', $base);
-	}
-
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
@@ -2898,20 +2063,14 @@ sub playlistsQuery {
 	if (defined $rs) {
 
 		$count += 0;
-		my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 		
 		my ($valid, $start, $end) = $request->normalize(
 			scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
 			
-			my $loopname = $menuMode?'item_loop':'playlists_loop';
+			my $loopname = 'playlists_loop';
 			my $chunkCount = 0;
-			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
-
-			if ($insertAll) {
-				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-			}
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
@@ -2920,53 +2079,19 @@ sub playlistsQuery {
 				
 				my $textKey = substr($eachitem->namesort, 0, 1);
 
-				if ($menuMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->title);
-					my $params = {
-						'playlist_id' =>  $id, 
-						'textkey' => $textKey,
-						'favorites_url'   => $eachitem->url,
-						'favorites_title' => $eachitem->name,
-					};
+				$request->addResultLoop($loopname, $chunkCount, "id", $id);
+				$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
+				$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 
-					_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				} else {
-					$request->addResultLoop($loopname, $chunkCount, "id", $id);
-					$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
-					$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
-					$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-				}
 				$chunkCount++;
 				
 				main::idleStreams() if !($chunkCount % 5);
 			}
 		}
-		if ($totalCount == 0 && $menuMode) {
-			_jiveNoResults($request);
-		} else {
-			$request->addResult("count", $totalCount);
-		}
 
-		if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-			my $jiveSearchCache = {
-				text        => $request->string('PLAYLISTS') . ": " . $search,
-				actions     => {
-						go => {
-							cmd => [ 'playlists' ],
-							params => {
-								search => $request->getParam('search'),
-								menu   => $request->getParam('menu'),
-								menu_all => 1,
-								cached_search => 1,
-								_searchType => $request->getParam('_searchType'),
-							},
-						},
-				},
-			};
-			Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
-		}
-	
+		$request->addResult("count", $count);
+
 	} else {
 		$request->addResult("count", 0);
 	}
@@ -3777,7 +2902,6 @@ sub statusQuery {
 	my $repeat       = Slim::Player::Playlist::repeat($client);
 	my $shuffle      = Slim::Player::Playlist::shuffle($client);
 	my $songCount    = Slim::Player::Playlist::count($client);
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 
 	my $idx = 0;
 
@@ -3892,7 +3016,8 @@ sub statusQuery {
 	$shuffle += 0;
 	$request->addResult("playlist shuffle", $shuffle); 
 
-	$request->addResult("playlist mode", $playlistMode);
+	# Backwards compatibility - now obsolete
+	$request->addResult("playlist mode", 'off');
 
 	if (defined $client->sequenceNumber()) {
 		$request->addResult("seq_no", $client->sequenceNumber());
@@ -3910,7 +3035,7 @@ sub statusQuery {
 			"playlist_cur_index", 
 			$playlist_cur_index
 		);
-		$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
+		$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime());
 	}
 
 	$request->addResult("playlist_tracks", $songCount);
@@ -3961,20 +3086,20 @@ sub statusQuery {
 		for my $i (0..9) {
 			if ( ref($presets) eq 'ARRAY' && defined $presets->[$i] ) {
 				if ( ref($presets->[$i]) eq 'HASH') {	
-					$presetLoop->[$i] = 1;
+				$presetLoop->[$i] = 1;
 					for my $key (keys %{$presets->[$i]}) {
 						if (defined $presets->[$i]->{$key}) {
 							$presetData->[$i]->{$key} = $presets->[$i]->{$key};
 						}
 					}
-				} else {
-					$presetLoop->[$i] = 0;
+			} else {
+				$presetLoop->[$i] = 0;
 					$presetData->[$i] = {};
-				}
+			}
 			} else {
 				$presetLoop->[$i] = 0;
 				$presetData->[$i] = {};
-			}
+		}
 		}
 		$request->addResult('preset_loop', $presetLoop);
 		$request->addResult('preset_data', $presetData);
@@ -4182,7 +3307,7 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijJklmnopqrstvwxyzBCDEFHIJKLMNOQRTUVWXYZ'; # all letter EXCEPT u, A & S, G & P
+	my $tags  = 'abcdefghijJklmnopqrstvwxyzBCDEFHIJKLMNOQRTUVWXY'; # all letter EXCEPT u, A & S, G & P, Z
 	my $track;
 
 	# get our parameters
@@ -4359,22 +3484,6 @@ sub titlesQuery {
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
-	my $useContextMenu = $request->getParam('useContextMenu');
-
-	my %favorites;
-	$favorites{'url'} = $request->getParam('favorites_url');
-	$favorites{'title'} = $request->getParam('favorites_title');
-	
-	my $menu          = $request->getParam('menu');
-	my $insert        = $request->getParam('menu_all');
-	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
-	
-	# we only change the count if we're going to insert the play all item
-	my $addPlayAllItem = $search && $insertAll;
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
@@ -4395,11 +3504,10 @@ sub titlesQuery {
 			$order_by = $1;
 			$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
 		}
-	}
-	
-	# Jive menuMode needs some extra columns and joins. Set these using tags
-	if ( $menuMode ) {
-		$tags .= 'alcM'; # artist name, album title, coverid, mixable, joins will be setup below
+		elsif ($sort eq 'albumtrack') {
+			$tags .= 'tl';
+			$order_by = "albums.titlesort, tracks.disc, tracks.tracknum, tracks.titlesort $collate"; # XXX titlesort had prepended 0
+		}
 	}
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
@@ -4427,101 +3535,6 @@ sub titlesQuery {
 			return ($valid, $index, $quantity);
 		},
 	} );
-	
-	$totalCount = _fixCount($addPlayAllItem, \$index, \$quantity, $totalCount);
-
-	my $playalbum;
-	if ( $request->client ) {
-		$playalbum = $prefs->client($request->client)->get('playtrackalbum');
-	}
-
-	# if player pref for playtrack album is not set, get the old server pref.
-	if ( !defined $playalbum ) { 
-		$playalbum = $prefs->get('playtrackalbum'); 
-	}
-
-	# now build the result
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# generally, we go to songinfo after albums, so we get menu:track
-		# from songinfo we go nowhere...
-		my $nextMenu = 'nowhere';
-		
-		# build the base element
-		my $base = {
-			actions => {
-				go => {
-					cmd => [ 'trackinfo', 'items', ],
-						params => {
-							menu => $nextMenu,
-							useContextMenu => 1,
-						},
-					itemsParams => 'params',
-				},
-				more => {
-					cmd => [ 'trackinfo', 'items', ],
-						params => {
-							menu => $nextMenu,
-							useContextMenu => 1,
-						},
-					itemsParams => 'params',
-				},
-				play => {
-					player => 0,
-					cmd => ['playlistcontrol'],
-					params => {
-						cmd => 'load',
-					},
-					itemsParams => 'params',
-					nextWindow => 'nowPlaying',
-				},
-				add => {
-					player => 0,
-					cmd => ['playlistcontrol'],
-					params => {
-						cmd => 'add',
-					},
-					itemsParams => 'params',
-				},
-				'add-hold' => {
-					player => 0,
-					cmd => ['playlistcontrol'],
-					params => {
-						cmd => 'insert',
-					},
-					itemsParams => 'params',
-				},
-			},
-		};
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		
-		# Bug 5981
-		# special play handler for "play all tracks in album
-		# ignore this setting when in party mode
-		if ( $playalbum && $albumID && ! $partyMode ) {
-			$base->{'actions'}{'play'} = {
-				player => 0,
-				cmd    => ['playlist', 'playtrackalbum'],
-				itemsParams => 'params',
-				nextWindow => 'nowPlaying',
-			};
-		}
-
-		if ( $useContextMenu ) {
-			# go is play
-			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('track');
-		}
-		if ( $search ) {
-			$base->{'window'}->{'text'} = $request->string('SEARCHRESULTS');
-		}
-
-
-		$request->addResult('base', $base);
-	}
 
 	if ($stillScanning) {
 		$request->addResult("rescan", 1);
@@ -4529,137 +3542,25 @@ sub titlesQuery {
 
 	$count += 0;
 
-	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
+	my $loopname = 'titles_loop';
 	# this is the count of items in this part of the request (e.g., menu 100 200)
 	# not to be confused with $count, which is the count of the entire list
 	my $chunkCount = 0;
-	my $offset = $request->getParam('_index');
-	$request->addResult('offset', $offset) if $menuMode;
 
 	if ( scalar @{$itemOrder} ) {
-		
-		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-
-		# PLAY ALL item for search results
-		if ( $addPlayAllItem ) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
-		}
-
-		my $listIndex = 0;
 		
 		for my $trackId ( @{$itemOrder} ) {
 			my $item = $items->{$trackId};
 			
-			# jive formatting
-			if ($menuMode) {
-				
-				my $id = $item->{'tracks.id'};
-				$id += 0;
-				my $params = {
-					track_id => $id, 
-				};
-				if ( $playalbum && $albumID ) {
-					$params->{'album_id'}   = $albumID;
-					$params->{'list_index'} = $listIndex + $offset;
-					if ($contributorID) {
-						$params->{'artist_id'} = $contributorID;
-					}
-				}
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-			
-				if ($useContextMenu) {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-				}
-			
-				# open a window with icon etc...
-			
-				my $text = $item->{'tracks.title'};
-				my $album = $item->{'albums.title'};
-				
-				# Bug 7443, check for a track cover before using the album cover
-				my $iconId = $item->{'tracks.coverid'};
-				
-				# Pass hash to title formatter, it will know what to do with our data
-				my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item);
-				
-				my $window = {
-					'text' => $oneLineTrackTitle,
-				};
-				if ($menuStyle eq 'album') {
-					if ($useContextMenu) {
-						# press to play
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-					}
-
-					# format second line as 'artist - album'
-					my @secondLine = ();
-					if (defined(my $artistName = $item->{'contributors.name'})) {
-						push @secondLine, $artistName;
-					}
-					if (defined($album)) {
-						push @secondLine, $album;
-					}
-					my $secondLine = join(' - ', @secondLine);
-					$text = $text . "\n" . $secondLine;
-					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
-
-				} elsif ($menuStyle eq 'allSongs') {
-					$request->addResultLoop($loopname, $chunkCount, 'text', $item->{'tracks.title'});
-				} else {
-					$request->addResultLoop($loopname, $chunkCount, 'text', $oneLineTrackTitle);
-				}
-			
-				if (defined($iconId)) {
-					$window->{'icon-id'} = $iconId;
-					# show icon if we're doing press-to-play behavior
-					if ($menuStyle eq 'album' && $useContextMenu) {
-						$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
-					}
-				}
-
-				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
-				 _mixerItemParams(request => $request, mixable => $item->{'tracks.musicmagic_mixable'} ? 1 : 0, loopname => $loopname, chunkCount => $chunkCount, params => $params);
-			
-			}
-			
-			# regular formatting
-			else {		
-				_addSong($request, $loopname, $chunkCount, $item, $tags);
-			}
+			_addSong($request, $loopname, $chunkCount, $item, $tags);
 			
 			$chunkCount++;
-			$listIndex++;
 		}
 
 	}
 
-	if ($totalCount == 0 && $menuMode) {
-		# this is an empty resultset
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $totalCount);
-	}
+	$request->addResult('count', $totalCount);
 
-	if ( $menuMode && $search && $count > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $jiveSearchCache = {
-			text        => $request->string('SONGS') . ": " . $search,
-			actions     => {
-					go => {
-						cmd => [ 'tracks' ],
-						params => {
-							search => $request->getParam('search'),
-							menu   => $request->getParam('menu'),
-							menu_all => 1,
-							cached_search => 1,
-							_searchType => $request->getParam('_searchType'),
-						},
-					},
-			},
-			window       => { menuStyle => 'album' },
-		};
-		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
-	}
-	
 	$request->setStatusDone();
 }
 
@@ -4699,33 +3600,30 @@ sub yearsQuery {
 	
 	# get our parameters
 	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
+	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
-	my $menu          = $request->getParam('menu');
-	my $insert        = $request->getParam('menu_all');
-	my $party         = $request->getParam('party') || 0;
+	my $hasAlbums     = $request->getParam('hasAlbums');
 	
-	# menu/jive mgmt
-	my $menuMode  = defined $menu;
-	my $partyMode = _partyModeCheck($request);
-	my $useContextMenu = $request->getParam('useContextMenu');
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	# get them all by default
+	my $where = {};
 	
-	my $sql = 'SELECT id FROM years ';
-	my $w   = [];
+	my ($key, $table) = $hasAlbums ? ('year', 'albums') : ('id', 'years');
+	
+	my $sql = "SELECT DISTINCT $key FROM $table ";
+	my $w   = ["$key != '0'"];
 	my $p   = [];
-	
+
 	if (defined $year) {
-		push @{$w}, 'id = ?';
+		push @{$w}, "$key = ?";
 		push @{$p}, $year;
 	}
-	
+
 	if ( @{$w} ) {
 		$sql .= 'WHERE ';
 		$sql .= join( ' AND ', @{$w} );
 		$sql .= ' ';
 	}
-	
+
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
@@ -4735,94 +3633,24 @@ sub yearsQuery {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	}, undef, @{$p} );
 	
-	$sql .= 'ORDER BY id';
+	$sql .= "ORDER BY $key";
 
 	# now build the result
 	
-	if ($menuMode) {
-
-		# decide what is the next step down
-		# generally, we go to albums after years, so we get menu:album
-		# from the albums we'll go to tracks
-		my $actioncmd = $menu . 's';
-		my $nextMenu = 'track';
-		
-		# build the base element
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => [$actioncmd],
-					'params' => {
-						menu     => $nextMenu,
-						menu_all => '1',
-					},
-					'itemsParams' => 'params',
-				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
-					},
-					'itemsParams' => 'params',
-					'nextWindow'  => 'nowPlaying',
-				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
-					},
-					'itemsParams' => 'params',
-				},
-				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
-					},
-					'itemsParams' => 'params',
-				},
-			},
-			'window' => {
-				menuStyle   => 'album',
-			}
-		};
-		# sort by artist, year, album when sending the albums query
-		if ($actioncmd eq 'albums') {
-			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artistalbum';
-		}
-		if ($party || $partyMode) {
-			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
-		}
-		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$base->{'actions'} = _jivePresetBase($base->{'actions'});
-		if ($useContextMenu) {
-			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase('year');
-		}
-		$request->addResult('base', $base);
-	}
-
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
 
 	$count += 0;
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 
-		my $loopname = $menuMode?'item_loop':'years_loop';
+		my $loopname = 'years_loop';
 		my $chunkCount = 0;
-		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
-		
+
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= " LIMIT $index, $quantity ";
@@ -4831,7 +3659,7 @@ sub yearsQuery {
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Years query: $sql / " . Data::Dump::dump($p) );
 		}
-
+			
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 		
@@ -4841,35 +3669,13 @@ sub yearsQuery {
 		while ( $sth->fetch ) {
 			$id += 0;
 
-			my $url = defined $id ? 'db:year.id=' . $id : 0;
+			$request->addResultLoop($loopname, $chunkCount, 'year', $id);
 
-			if ($menuMode) {
-				$request->addResultLoop($loopname, $chunkCount, 'text', $id);
-
-				my $params = {
-					'year'            => $id,
-					# bug 6781: can't add a year to favorites
-					'favorites_url'   => $url,
-					'favorites_title' => $id,
-				};
-
-				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				if ($party || $partyMode) {
-					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
-				}
-			}
-			else {
-				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
-			}
 			$chunkCount++;
 		}
 	}
 
-	if ($totalCount == 0 && $menuMode) {
-		_jiveNoResults($request);
-	} else {
-		$request->addResult('count', $totalCount);
-	}
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
@@ -5213,224 +4019,6 @@ sub _addJiveSong {
 }
 
 
-sub _jiveNoResults {
-	my $request = shift;
-	my $search = $request->getParam('search');
-	$request->addResult('count', '1');
-	$request->addResult('offset', 0);
-
-	if (defined($search)) {
-		$request->addResultLoop('item_loop', 0, 'text', $request->string('NO_SEARCH_RESULTS'));
-	} else {
-		$request->addResultLoop('item_loop', 0, 'text', $request->string('EMPTY'));
-	}
-
-	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
-	$request->addResultLoop('item_loop', 0, 'action', 'none');
-}
-
-
-# sets base callbacks for presets 0-9
-sub _jivePresetBase {
-	my $actions = shift;
-	for my $preset (0..9) {
-		my $key = 'set-preset-' . $preset;
-		$actions->{$key} = {
-			player => 0,
-			cmd    => [ 'jivefavorites', 'set_preset', "key:$preset" ],
-			itemsParams => 'params',
-		};
-	}
-	return $actions;
-}
-
-sub _jiveAddToFavorites {
-
-	my %args       = @_;
-	my $chunkCount = $args{'chunkCount'};
-	my $listCount  = $args{'listCount'};
-	my $loopname   = $args{'loopname'};
-	my $request    = $args{'request'};
-	my $favorites  = $args{'favorites'};
-	my $start      = $args{'start'};
-	my $lastChunk  = $args{'lastChunk'};
-	my $includeArt = $args{'includeArt'};
-
-
-	return ($chunkCount, $listCount) unless $loopname && $favorites;
-	
-	# Do nothing unless Favorites are enabled
-	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-		return ($chunkCount, $listCount);
-	}
-
-	# we need %favorites populated or else we don't want this item
-	if (!$favorites->{'title'} || !$favorites->{'url'}) {
-		return ($chunkCount, $listCount);
-	}
-	
-	# We'll add a Favorites item to this request.
-	# We always bump listCount to indicate this request list will contain one more item at the end
-	$listCount++;
-
-	# Add the actual favorites item if we're in the last chunk
-	if ( $lastChunk ) {
-		my $action = 'add';
-		my $token = 'JIVE_SAVE_TO_FAVORITES';
-		# first we check to see if the URL exists in favorites already
-		my $client = $request->client();
-		my $favIndex = undef;
-		if ( blessed($client) ) {
-			my $favs = Slim::Utils::Favorites->new($client);
-			$favIndex = $favs->findUrl($favorites->{'url'});
-			if (defined($favIndex)) {
-				$action = 'delete';
-				$token = 'JIVE_DELETE_FROM_FAVORITES';
-			}
-		}
-
-		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
-		my $actions = {
-			'go' => {
-				player => 0,
-				cmd    => [ 'jivefavorites', $action ],
-				params => {
-						title   => $favorites->{'title'},
-						url     => $favorites->{'url'},
-				},
-			},
-		};
-		$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
-
-		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-
-		if ($includeArt) {
-			my $favicon = main::SLIM_SERVICE
-				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/favorites.png', 'external')
-				: '/html/images/favorites.png';
-				
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $favicon);
-		} else {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
-		}
-	
-		$chunkCount++;
-	}
-
-	return ($chunkCount, $listCount);
-}
-
-sub _jiveDeletePlaylist {
-
-	my %args          = @_;
-	my $chunkCount    = $args{'chunkCount'};
-	my $listCount     = $args{'listCount'};
-	my $loopname      = $args{'loopname'};
-	my $request       = $args{'request'};
-	my $start         = $args{'start'};
-	my $end           = $args{'end'};
-	my $lastChunk     = $args{'lastChunk'};
-	my $playlistURL   = $args{'playlistURL'};
-	my $playlistTitle = $args{'playlistTitle'};
-	my $playlistID    = $args{'playlistID'};
-
-	return ($chunkCount, $listCount) unless $loopname && $playlistURL;
-	
-	# Bug 10646, need to support deleting an empty playlist
-	#return ($chunkCount, $listCount) if $start == 0 && $end == 0;
-
-	# We always bump listCount to indicate this request list will contain one more item at the end
-	$listCount++;
-
-	# Add the actual favorites item if we're in the last chunk
-	if ( $lastChunk ) {
-		my $token = 'JIVE_DELETE_PLAYLIST';
-
-		###
-		# FIXME: bug 8670. This is the 7.1 workaround to deal with the %s in the EN string
-		my $string = $request->string($token, $playlistTitle);
-		$string =~ s/\\n/ /g;
-		$request->addResultLoop($loopname, $chunkCount, 'text', $string);
-		### 
-
-		my $actions = {
-			'go' => {
-				player => 0,
-				cmd    => [ 'jiveplaylists', 'delete' ],
-				params => {
-						url	        => $playlistURL,
-						playlist_id     => $playlistID,
-						title           => $playlistTitle,
-						menu		=> 'track',
-						menu_all	=> 1,
-				},
-			},
-		};
-
-		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
-		$chunkCount++;
-	}
-
-	return ($chunkCount, $listCount);
-}
-
-sub _jiveGenreAllAlbums {
-
-	my %args       = @_;
-	my $chunkCount = $args{'chunkCount'};
-	my $listCount  = $args{'listCount'};
-	my $loopname   = $args{'loopname'};
-	my $request    = $args{'request'};
-	my $start      = $args{'start'};
-	my $end        = $args{'end'};
-	my $lastChunk  = $args{'lastChunk'};
-	my $genreID    = $args{'genreID'};
-	my $genreString    = $args{'genreString'};
-	my $includeArt = $args{'includeArt'};
-
-	return ($chunkCount, $listCount) unless $loopname && $genreID;
-	return ($chunkCount, $listCount) if $start == 0 && $end == 0;
-	
-	# We always bump listCount to indicate this request list will contain one more item at the end
-	$listCount++;
-
-	# Add the actual favorites item if we're in the last chunk
-	if ( $lastChunk ) {
-		my $token = 'ALL_ALBUMS';
-		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
-		my $actions = {
-			'go' => {
-				player => 0,
-				cmd    => [ 'albums' ],
-				params => {
-						genre_id	=> $genreID,
-						menu		=> 'track',
-						menu_all	=> 1,
-				},
-			},
-		};
-
-		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'window', { text => "$genreString" });
-
-		if ($includeArt) {
-			my $playallicon = main::SLIM_SERVICE
-				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
-				: '/html/images/playall.png';
-				
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
-		} else {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
-		}
-	
-		$chunkCount++;
-	}
-
-	return ($chunkCount, $listCount);
-}
-
 my %tagMap = (
 	# Tag    Tag name             Token            Track method         Track field
 	#------------------------------------------------------------------------------
@@ -5440,7 +4028,7 @@ my %tagMap = (
 	                                                                    #titlesearch 
 	  'a' => ['artist',           'ARTIST',        'artistName'],       #->contributors
 	  'e' => ['album_id',         '',              'albumid'],          #album 
-	  'l' => ['album',            'ALBUM',         'albumname'],            #->album.title
+	  'l' => ['album',            'ALBUM',         'albumname'],        #->album.title
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
 	  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
@@ -5756,160 +4344,6 @@ sub _songData {
 	return \%returnHash;
 }
 
-sub _playAll {
-	my %args       = @_;
-	my $start      = $args{'start'};
-	my $end        = $args{'end'};
-	my $chunkCount = $args{'chunkCount'};
-	my $loopname   = $args{'loopname'};
-	my $request    = $args{'request'};
-	my $includeArt = $args{'includeArt'};
-	my $allSongs   = $args{'allSongs'} || 0;
-	my $artist     = $args{'artist'} || '';
-
-	# insert first item if needed
-	if ($start == 0 && $end == 0) {
-		# one item list, so do not add a play all and just return
-		return $chunkCount;
-	} elsif ($start == 0) {
-		# we're going to add a 'play all' and an 'add all'
-		# init some vars for each mode for use in the two item loop below
-		my %items = ( 	
-			'play' => {
-					'string'      => $request->string('JIVE_PLAY_ALL'),
-					'style'       => 'itemplay',
-					'playAction'  => 'playtracks',
-					'addAction'   => 'addtracks',
-					'playCmd'     => [ 'playlistcontrol' ],
-					'addCmd'      => [ 'playlistcontrol' ],
-					'addHoldCmd'      => [ 'playlistcontrol' ],
-					'params'      => { 
-						'play' =>  { cmd => 'load', },
-						'add'  =>  { 'cmd' => 'add',  },
-						'add-hold'  =>  { 'cmd' => 'insert',  },
-					},
-					'nextWindow'  => 'nowPlaying',
-			},
-			allSongs => { 
-					string     => $request->string('JIVE_ALL_SONGS') . "\n" . $artist,
-					style      => 'item',
-					playAction => 'playtracks',
-					addAction  => 'addtracks',
-					playCmd    => [ 'playlistcontrol' ],
-					addCmd     => [ 'playlistcontrol' ],
-					goCmd      => [ 'tracks' ],
-					addHoldCmd     => [ 'playlistcontrol' ],
-					params     => { 
-						go          =>  { menu => 1, menu_all => 1, sort => 'title', menuStyle => 'allSongs', },
-						play        =>  { cmd => 'load', },
-						add         =>  { cmd => 'add', },
-						'add-hold'  =>  { cmd => 'insert',  },
-					},
-			},
-		);
-
-		my @items = qw/ play /;
-
-		if ($allSongs) {
-			@items = ( 'allSongs' );
-		}
-
-		for my $mode (@items) {
-
-		$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
-		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
-
-		if ($includeArt) {
-			my $playallicon = main::SLIM_SERVICE
-				? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playall.png', 'external')
-				: '/html/images/playall.png';
-				
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $playallicon);
-		}
-
-		# get all our params
-		my $params = $request->getParamsCopy();
-		my $searchType = $request->getParam('_searchType');
-	
-		# remove keys starting with _ (internal or positional) and make copies
-		while (my ($key, $val) = each %{$params}) {
-			if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
-				next;
-			}
-			# search is a special case of _playAll, which needs to fire off a different cli command
-			if ($key eq 'search') {
-				# we don't need a cmd: tagged param for these
-				delete($items{$mode}{'params'}{'play'}{'cmd'});
-				delete($items{$mode}{'params'}{'add'}{'cmd'});
-				delete($items{$mode}{'params'}{'add-hold'}{'cmd'});
-				my $searchParam;
-				for my $button ('add', 'add-hold', 'play') {
-					if ($searchType eq 'artists') {
-						$searchParam = 'contributor.namesearch=' . $val;
-					} elsif ($searchType eq 'albums') {
-						$searchParam = 'album.titlesearch=' . $val;
-					} else {
-						$searchParam = 'track.titlesearch=' . $val;
-					}
-				}
-				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks', $searchParam ];
-				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks', $searchParam ];
-				$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks', $searchParam ];
-				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
-			} else {
-				$items{$mode}{'params'}{'add'}{$key}  = $val;
-				$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
-				$items{$mode}{'params'}{'play'}{$key} = $val;
-				$items{$mode}{'params'}{'go'}{$key} = $val;
-			}
-		}
-				
-		# override the actions, babe!
-		my $actions = {
-			'play' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'playCmd'},
-				'nextWindow' => 'nowPlaying',
-				'params' => $items{$mode}{'params'}{'play'},
-			},
-			'add' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'addCmd'},
-				'params' => $items{$mode}{'params'}{'add'},
-			},
-			'add-hold' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'addCmd'},
-				'params' => $items{$mode}{'params'}{'add-hold'},
-			},
-		};
-		if ($items{$mode}{'goCmd'}) {
-			$actions->{'go'} = {
-					'player' => 0,
-					'cmd'    => $items{$mode}{'goCmd'},
-					'params' => $items{$mode}{'params'}{'go'},
-			};
-		} else {
-			$actions->{'do'} = {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'playCmd'},
-				'params' => $items{$mode}{'params'}{'play'},
-			};
-			if ($items{$mode}{'nextWindow'}) {
-				$actions->{'do'}{'nextWindow'} = $items{$mode}{'nextWindow'};
-			}			
-		}
-		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$chunkCount++;
-
-		}
-
-	}
-
-	return $chunkCount;
-
-}
-
 # this is a silly little sub that allows jive cover art to be rendered in a large window
 sub showArtwork {
 
@@ -5936,7 +4370,7 @@ sub wipeCaches {
 }
 
 # fix the count in case we're adding additional items
-# (play all, VA etc.) to the resultset
+# (VA etc.) to the resultset
 sub _fixCount {
 	my $insertItem = shift;
 	my $index      = shift;
@@ -5945,7 +4379,7 @@ sub _fixCount {
 
 	my $totalCount = $count || 0;
 
-	if ($insertItem && $count > 1) {
+	if ($insertItem) {
 		$totalCount++;
 
 		# return one less result as we only add the additional item in the first chunk
@@ -6077,10 +4511,7 @@ sub mixerMenuQuery {
 		return;
 	}
 
-	my $obj_id = $request->getParam('obj_param') ? 
-			$request->getParam('obj_param') :
-			$request->getParam($obj_param);
-
+	my $obj_id = $request->getParam($obj_param);
 
 	my ($Imports, $mixers) = _mixers();
 	
@@ -6225,17 +4656,6 @@ sub _mixerItemHandler {
 		return undef;
 	}
 }
-
-sub _partyModeCheck {
-	my $request   = shift;
-	my $partyMode = 0;
-	if ($request->client) {
-		my $client = $request->client();
-		$partyMode = Slim::Player::Playlist::playlistMode($client);
-	}
-	return ($partyMode eq 'party');
-}
-
 
 sub _scanFailed {
 	my ($request, $info) = @_;
@@ -6443,12 +4863,14 @@ sub _getTagDataForTracks {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1;
 		
-		my $cond = 'contributor_track.role IN (?, ?';
+		my $cond = 'contributor_track.role IN (?, ?, ?';
 		
 		# Tag 'a' returns either ARTIST or TRACKARTIST role
+		# Bug 16791: Need to include ALBUMARTIST too
 		push @{$p}, (
 			Slim::Schema::Contributor->typeToRole('ARTIST'), 
 			Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
+			Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
 		);
 
 		# Loop through each pref to see if the user wants to show that contributor role.
@@ -6501,8 +4923,9 @@ sub _getTagDataForTracks {
 	
 	if ( scalar @{$w} ) {
 		$sql .= 'WHERE ';
-		$sql .= join( ' AND ', @{$w} );
-		$sql .= ' ';
+		my $s = join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
 	}
 	$sql .= 'GROUP BY tracks.id ';
 	

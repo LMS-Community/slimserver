@@ -98,14 +98,6 @@ sub registerDefaultInfoProviders {
 		
 	}
 	
-	else {
-		
-		$class->registerInfoProvider( searchMyMusic => (
-			isa  => 'top',
-			func => \&searchMyMusic,
-		) );
-		
-	}	
 }
 
 sub registerSearchProviders {
@@ -176,71 +168,6 @@ sub registerSearchProviders {
 	foreach (keys %existing_providers) {
 		$class->deregisterInfoProvider($_);
 	}
-}
-
-sub searchMyMusic {
-	my ( $client, $tags ) = @_;
-	my $items = [];
-	
-	my $jive = Slim::Control::Jive::searchMenu(1, $client);
-
-	my $search = Slim::Buttons::Search::searchTerm($client, $tags->{search});
-
-	my %queries = (
-		cstring($client, 'ARTISTS') => {
-			'search'    => $search,
-			'hierarchy' => 'contributor,album,track',
-			'level'     => 0,
-		},
-
-		cstring($client, 'ALBUMS')  => {
-			'search'    => $search,
-			'hierarchy' => 'album,track',
-			'level'     => 0,
-		},
-
-		cstring($client, 'SONGS')   => {
-			'search'    => $search,
-			'hierarchy' => 'track',
-			'level'     => 0,
-		},
-	);
-	
-
-	foreach my $item (@$jive) {
-		
-		next if $item->{text} eq cstring($client, 'PLAYLISTS') && !$tags->{menuMode};
-		
-		if ($item->{actions} && $item->{actions}->{go} && $item->{actions}->{go}->{params}) {
-			 $item->{actions}->{go}->{params}->{search} = $tags->{search};
-		}
-		
-		my $menuItem = {
-			name  => $item->{text},
-			type  => 'redirect',
-			jive  => {
-				actions => $item->{actions},
-				text    => $item->{text},
-				weight  => $item->{weight},
-				window  => $item->{window},
-			},
-		};
-		
-		if ($queries{$item->{text}}) {
-			$menuItem->{player} = {
-				mode  => 'browsedb',
-				modeParams => $queries{$item->{text}},
-			},
-		}
-		
-		push @$items, $menuItem;
-	}
-
-	return {
-		name  => cstring($client, 'MY_MUSIC'),
-		items => $items,
-		type  => 'opml',
-	};
 }
 
 sub menu {

@@ -56,7 +56,7 @@ my $log = logger('database.info');
 sub url {
 	my $self = shift;
 
-	return sprintf('db:album.titlesearch=%s', URI::Escape::uri_escape_utf8($self->titlesearch));
+	return sprintf('db:album.title=%s', URI::Escape::uri_escape_utf8($self->title));
 }
 
 sub name { 
@@ -286,6 +286,17 @@ sub rescan {
 			$dbh->do( "DELETE FROM albums WHERE id = ?", undef, $id );
 		}
 	}
+}
+
+sub duration {
+	my $self = shift;
+	
+	my $secs = 0;
+	foreach ($self->tracks) {
+		return if !defined $_->secs;
+		$secs += $_->secs;
+	}
+	return sprintf('%s:%02s', int($secs / 60), $secs % 60);
 }
 
 1;

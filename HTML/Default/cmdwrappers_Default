@@ -33,7 +33,7 @@
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id.defined %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="[% lineclass || 'browsedbListItem' %][% IF ((item.image || (levelName == 'album' || levelName == 'age')) && !(artwork && artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+		<div class="[% lineclass || 'browsedbListItem' %][% IF (hasArtwork && !artwork) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
 				[%- IF rightcontrols && rightcontrols != controls; PROCESS $rightcontrols; END %]
@@ -50,16 +50,11 @@
 		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;">
-				[% IF template.name.search('browsedb.html') %]
-					[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
-					<a [% PROCESS browseDbItemHRef %]>
-				[% ELSE %]
-					[%- itemImg = item.image ? "thumbnailItemImg" : "dummyItemImg" %]
-					[% IF item.weblink %]
-						<a href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type != 'text' %]
-						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
-					[% END %]
+				[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
+				[% IF item.weblink %]
+					<a href="[% item.weblink %]" target="_blank">
+				[% ELSIF item.type != 'text' %]
+					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
 				[% END %]
 				[% PROCESS $itemImg height="$item.size" %]</a>
 
@@ -78,53 +73,7 @@
 
 
 	[% BLOCK iteminfo -%]
-
-		[%- IF item.descend || (levelName == 'playlisttrack') %]
-
-			[% IF ((levelName == 'album' || levelName == 'age') && !(artwork && artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %]
-				[% IF levelName == 'playlisttrack'; item.coverThumb = item.item; END %]
-				<span class="browseCover">
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" noby=0 %][% IF item.hierarchy %]</a>[% END -%]
-				</span>
-				<div class="browseItemDetail">
-					[% IF levelName == 'playlisttrack';
-						includeArtist = item.includeArtist;
-						includeAlbum = item.includeAlbum;
-						PROCESS trackinfo item.includeArtist = 0 item.includeAlbum = 0; 
-						item.includeArtist = includeArtist;
-						item.includeAlbum = includeAlbum;
-					ELSE -%]
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END; END -%]
-				</div>
-				[% IF levelName == 'playlisttrack' && item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
-					<div class="browseItemDetail">
-						<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
-					</div>
-				[% END %]
-				[% IF item.showYear && item.year -%]
-					<div class="browseItemDetail">
-						<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
-					</div>
-				[% END %]
-				<div class="browseItemDetail">
-					[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj noby=1; END -%]
-				</div>
-
-			[% ELSE %]
-
-				[% IF levelName == 'playlisttrack'; PROCESS trackinfo; ELSE -%]
-				[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
-
-				[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>[% END -%]
-
-				<!-- Include the artist for the album view -->
-				[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END; END -%]
-
-			[% END %]
-
-		[%- ELSE -%]
-			[% PROCESS trackinfo %]
-		[%- END %]
+		[% PROCESS trackinfo %]
 	[%- END %]
 
 
@@ -142,7 +91,6 @@
 		[% ELSE %]
 			[% PROCESS favoritescontrol %]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
-			[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 			[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
 			[% FOREACH mixer = mixerlinks.values.sort -%]
@@ -158,7 +106,7 @@
 			[% IF pagesstart %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" title="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
 			[% IF pageprev || pageprev == '0' %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_previous.gif" alt="[% "PREVIOUS" | string %]" title="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 			[%- IF pageinfo.alphamap %]
-				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+				[%- FOREACH alphakey = pageinfo.alphaindex -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
 					[%- IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');">&nbsp;[% alphakey | html %]</span><wbr/>
 					[%- ELSE %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]#[% alphakey | uri %][% IF useJS %]')[% END %]">&nbsp;[% alphakey | html %]</a><wbr/>

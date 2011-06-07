@@ -15,6 +15,8 @@ use constant PLUGINMENU => 'PLUGINS';
 
 my $WEIGHTS = {};
 
+my $nonSNApps;
+
 sub initPlugin {
 	my $class = shift;
 	my $args  = shift;
@@ -80,6 +82,12 @@ sub initPlugin {
 
 		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);
 	}
+
+	# add 3rd party plugins which wish to be in the apps menu to nonSNApps list
+	if ($class->can('menu') && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
+		$nonSNApps ||= [];
+		push @$nonSNApps, $class;
+	}
 }
 
 sub getDisplayName {
@@ -131,6 +139,10 @@ sub getFunctions {
 }
 
 sub getWeights { $WEIGHTS }
+
+sub nonSNApps {
+	return !main::SLIM_SERVICE && $nonSNApps
+}
 
 1;
 

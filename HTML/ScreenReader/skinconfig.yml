@@ -1,6 +1,0 @@
----
-preprocess:
- - cmdwrappers_Handheld
- - cmdwrappers_ScreenReader
-skinparents:
- - Handheld

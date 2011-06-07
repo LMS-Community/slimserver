@@ -26,33 +26,24 @@ ELSE %]
 
 	[%
 	my_musicItems = BLOCK;
-		orderedLinks = ['BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_BY_GENRE', 'BROWSE_BY_YEAR', 'BROWSE_NEW_MUSIC', 'PLUGIN_RANDOMPLAY'];
-		FOREACH item = orderedLinks;
-			IF additionalLinks.browse.exists(item);
+		FOREACH item = additionalLinkOrder.browse;
+			IF additionalLinks.browse.exists(item);	
 				link = { key=item, value=additionalLinks.browse.$item };
-				PROCESS menuItem;
-			END;
-		END;
-		FOREACH link = additionalLinks.browse;
-			IF link.key.search('\W') || (link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size);
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
-				PROCESS menuItem;
-			ELSIF link.key == 'FAVORITES';
-				useFavorites = 1;
-			END;
-		END;
-		FOREACH link = additionalLinks.search;
-			IF link.key == 'SEARCHMUSIC';
-				control = BLOCK %]
-					<form method="GET" action="[% webroot %]search.html">
-						<input type="hidden" name="manualSearch" value="1"/>
-						<input type="hidden" name="livesearch" value="0"/>
-						<input type="hidden" name="player" value="[% playerid %]">
-						<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
-						<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
-					</form>
-				[% END;
-				PROCESS menuItem;
+				IF link.key == 'FAVORITES';
+					useFavorites = 1;
+				ELSIF link.key == 'SEARCH';
+					control = BLOCK %]
+ 						<form method="GET" action="[% webroot %]search.html">
+							<input type="hidden" name="player" value="[% playerid %]">
+							<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
+							<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
+						</form>
+					[% END;
+					PROCESS menuItem;
+				ELSE;
+					PROCESS menuItem;
+				END;
 			END;
 		END;
 	END;
@@ -207,7 +198,7 @@ ELSE %]
 				dontGetString = 1;
 				FOREACH entry = favorites;
 					control = BLOCK;
-						IF entry.type == "audio";
+						IF entry.type == "audio" || entry.type == "playlist";
 							WRAPPER playlink noTarget=1 -%]
 								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;

@@ -121,6 +121,15 @@ sub _players_done {
 	# Make a list of all apps for the web UI
 	my $allApps = {};
 	
+	# Add 3rd party plugins which have requested to be on the apps menu
+	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
+		for my $plugin (@$nonSNApps) {
+			if ($plugin->can('tag')) {
+				$allApps->{ $plugin->tag } = { plugin => $plugin };
+			}
+		}
+	}
+
 	# SN can provide string translations for new menu items
 	if ( $res->{strings} ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug( 'Adding SN-supplied strings: ' . Data::Dump::dump( $res->{strings} ) );

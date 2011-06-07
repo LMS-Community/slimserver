@@ -234,7 +234,6 @@ sub init {
 									'TRACKNUM. ARTIST - TITLE',
 									'TRACKNUM. TITLE (ARTIST)',
 									'TRACKNUM. TITLE - ARTIST - ALBUM',
-									'FILE.EXT',
 									'TRACKNUM. TITLE from ALBUM by ARTIST',
 									'TITLE (ARTIST)',
 									'ARTIST - TITLE'
@@ -785,7 +784,6 @@ sub init {
 
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
-			Slim::Buttons::BrowseTree->init;
 			require Slim::Music::MusicFolderScan;
 			Slim::Music::MusicFolderScan->init;
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
@@ -796,9 +794,6 @@ sub init {
 		require Slim::Music::PlaylistFolderScan;
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
-		for my $client (Slim::Player::Client::clients()) {
-			Slim::Buttons::Home::updateMenu($client);
-		}
 	}, 'playlistdir');
 
 	$prefs->setChange( sub {

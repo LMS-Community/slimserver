@@ -28,7 +28,7 @@
 			<li>All connected players are exposed as Media Renderers.</li>
 		</ul>
 		<li>Transcoding is now supported when requesting an HTTP download (/music/[id]/download[.extension]).</li>
-		<li>The default database is now SQLite. MySQL can still be used by selecting it on the Advanced -> Performance page.</li>
+		<li>The default database is now SQLite. MySQL can still be used using ones own installation.</li>
 		<li>Native decoding for WMA Pro (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=13324">#13324</a>)
 			and WMA Lossless (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=13323">#13323</a>) has been added to Radio and Touch.</li>
 		<li>Cue sheet support has been improved.  The following formats will currently work with cue sheets, including seeking:</li>
@@ -52,6 +52,23 @@
 	
 	<li>Other Major Changes:</li>
 	<ul>
+		<li>Major Rewrite of Library Browser</li>
+		<ul>
+			<li>A single core implementation supports WebUI, ip3k Player-UI (Boom, Transporter, Classic, SliMP3), SqueezePlay UI (Touch, Radio, Controller).</li>
+			<li>Features generally much more consistent across the different user interfaces.</li>
+			<li>Access to some features changed and some other features may behave differently or be unavailable:</li>
+			<ul>
+				<li>Playlist tracks listing includes artwork in Web and SqueezePlay UIs.</li>
+				<li>Add-as-favorite and Delete-playlist items from SqueezePlay playlist tracks listing moved to playlist context menu (More).</li>
+				<li><code>VBR_SCALE</code>, <code>BITRATE</code>, <code>TAGSIZE</code>, <code>VOLUME</code> (volume name), <code>PATH</code>, <code>FILE</code> and <code>EXT</code>
+					substitution items no longer available for title format configuration
+					(see Settings/Interface/Title&nbsp;Format and Settings/Player/<i>player</i>/Basic&nbsp;Settings/Title&nbsp;Format in the Web UI).</li>
+			<li>XML Web-UI skin removed. Use CLI or JSON/RPC instead.</li>
+			<li>Fishbone, Handheld, Nokia770, ScreenReader and Touch skins removed. Only Default and Classic remain supported.</li>
+				<li>When used in the context of browse music folder, the cli command `playlistcontrol cmd:load folder_id:&lt;id&gt;  will only load the audio files that are contained in that directory, and will not load audio files from subdirectories within that directory. This was for support of fixing <a href='http://bugs.slimdevices.com/show_bug.cgi?id=17199'>bug 17199</a>. This represents a change in behavior with this command from previous versions of SBS.</li>
+			</ul>
+			<li>API for plugin developers to modify browsing experience (see <code>BrowseLibrary.pm</code> for documentation).</li>
+		</ul>
 		<li>The CLI serverstatus lastscan field has been changed to more correctly report the timestamp of the last time the database was changed by the scanner.</li>
 		<li>The CLI charset tagged parameter has been removed from all commands that supported it. All input and output is now in UTF-8 (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=16834">#16834</a>).</li>
 	</ul>
@@ -59,9 +76,12 @@
 	
 	<li>Bug Fixes:</li>
 	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2735">#2735</a> - Add pagebar functionality to the CLI</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3161">#3161</a> - Need more aggressive auto-retry for internet radio</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5207">#5207</a> - I18n: Corrupt chars in Favorites</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6754">#6754</a> - Umlauts/accented characters don't show on player when browsing music folder</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7836">#7836</a> - Can't browse all albums by a following a track artist link</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8388">#8388</a> - Bug 8388 - Controller showing different input than what appears on SC</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8808">#8808</a> - Support transcoding on download URLs</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8877">#8877</a> - MP3 cue sheets are not gapless</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9947">#9947</a> - home.html is loaded several times when web UI is opened</li>
@@ -71,14 +91,21 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=10805">#10805</a> - FF/REW (scanning) broken within .cue files (not FLAC)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=11950">#11950</a> - Support FLAC CUE sheets without transcoding</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=13153">#13153</a> - Both web interface and squeezebox "hang" when one browses folders containing non-ascii chars</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=13284">#13284</a> - Composer in artist list, while not chosen in SC</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14117">#14117</a> - Sync streaming can consume lots of memory when one player connection slow</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14825">#14825</a> - Allow multiple stream.mp3 streams from the same IP address by specifying ?player=id_string</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14641">#14641</a> - Cannot playback doublebyte files from Favourites</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14662">#14662</a> - Playing a specific track while track shuffle is enabled will play another track</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14723">#14723</a> - Genre&gt;Various Artists&gt;Play All. Creates the same playlist whatever genre is chosen.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14832">#14823</a> - variousArtistsString & libraryname prefs don't handle non-latin characters correctly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14951">#14951</a> - Unicode search in Web UI broken</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15053">#15053</a> - #slim:noscan=1 makes a stream not playable</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=14971">#14971</a> - Default My Music browse menus can no longer be overridden/removed</li>
+                <li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15053">#15053</a> - #slim:noscan=1 makes a stream not playable</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15068">#15068</a> - Tracks without ALBUM tags not in browse menus</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15180">#15180</a> - Genres with only VA artist are 'Empty'</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15304">#15304</a> - "Play Other Songs In Album" doesn't work for "All Songs" of an artist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15460">#15460</a> - Track with Extended ASCII in directory name fails to appear in Browse Music Folder</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15553">#15553</a> - Album missing on Squeezebox Radio (album artist or composer but no artist)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15799">#15799</a> - When M3U playlists are written unicode characters in filenames are mangled</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15821">#15821</a> - Network interruption would leave "sticky" "File not found" message</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15826">#15826</a> - Need volume up / down events to be sent to SC even if at min or max</li>
@@ -92,11 +119,14 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16233">#16233</a> - mp3 stream with Xing header is handled wrong when proxied</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16275">#16275</a> - SB Touch: Rebuffering on 1st track</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16280">#16280</a> - SB Touch: Fix ambient light calculation.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16308">#16308</a> - All MySqueezebox apps ignore Shuffle setting.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16332">#16332</a> - SB Touch: Disable proximity LEDs after startup.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16337">#16337</a> - Album Sort Method is not applied when browsing artists.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16365">#16365</a> - SB Touch / Radio: Reduce ambient light sensor polling.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16442">#16442</a> - Choice of Transporter roll-off filter</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16443">#16443</a> - URL to repositories page has changed</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16459">#16459</a> - Scan progress time display showing negative seconds</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16466">#16466</a> - Can't browse via composer in 7.6.0 on Touch</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16495">#16495</a> - Now Playing 'expand' function is broken</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16620">#16620</a> - Added 'F' option to new artwork resizing</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16662">#16662</a> - Incorrect UTF8 encoding returned by CLI</li>
@@ -106,6 +136,10 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16708">#16708</a> - Internet Radio Search doesn't work in non-Default skins</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16814">#16814</a> - No artwork when using UNC audio path</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16922">#16992</a> - AudioScrobbler plugin repeatedly writes prefs file preventing disk spindown</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16791">#16791</a> - No tracks listed on compilation albums with an 'Album Artist' tag, but without a 'Compilation' tag, when browsing the artists menu using SB Controller (or iPeng)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17073">#17073</a> - Playlist edit drag-and-drop only works for first page</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17199">#17199</a> - Add support for a cli command to play an entire album worth of tracks, beginning at track X</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17205">#17205</a> - Accented characters not correctly sorted in pagebar</li>
 		<li>SB Radio: Fixed hostname</li>
 		<li>SB Controller, Radio, Touch: Updated busybox to 1.16.2</li>
 	</ul>

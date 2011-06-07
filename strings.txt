@@ -3548,23 +3548,23 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	ZH_CN	适用于调节服务器上TCP/IP网络参数的配置。
 
 SETUP_GROUP_TITLEFORMATS_DESC
-	CS	Zde jsou formáty k výběru jak na webovém rozhraní tak na přehrávačích. Chcete-li odstranit některý formát, smažte textové políčko; nový formát zadáte jeho vložením do prázdného políčka. Dostupné datové prvky jsou: CT (typ obsahu), TITLE, GENRE, TRACKNUM (číslo stopy jako celé číslo), FS (velikost souboru), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (celkem sekund), DURATION (minuty a sekundy), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (název jednotky), PATH, FILE, EXT (přípona souboru), LONGDATE (aktuální datum, dlouhé), SHORTDATE (aktuální datum, krátké), CURRTIME(aktuální čas). Prvky lze oddělovat čímkoli (nebo ničím). Oddělovače se používají pouze tehdy, jsou-li přítomny datové prvky.<br>Current selection je formát, který se bude používat na webových stránkách.
-	DA	De følgende formater kan vælges i både den webbaserede brugerflade og på afspillerne. Hvis du vil fravælge et format, skal feltet være tomt. Hvis du vil tilføje et nyt format, skal du gøre det i det tomme felt. Der er følgende dataelementer: CT (indholdstype), TITLE (titel), GENRE, TRACKNUM (nummer på cd'en angivet som et heltal), FS (filstørrelse), ARTIST (kunstner), COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (sekunder i alt), DURATION (varighed i minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE (bithastighed), TAGSIZE (mærkestørrelse), VOLUME (diskenhedens navn), PATH (sti), FILE (fil), EXT (filtypenavn), LONGDATE (dags dato, lang), SHORTDATE (dags dato, kort), CURRTIME (klokkeslæt). Elementerne kan adskilles af hvad som helst eller ingenting. Skilletegnene benyttes kun hvis der er dataelementer.<br>Det nuværende valg er det format som bruges på websiderne.
-	DE	Die folgenden Formate sind sowohl oben als auch auf dem Player verfügbar. Löschen Sie ein Textfeld, um das Format zu entfernen, und geben Sie ein neues in ein leeres Feld ein, um es hinzuzufügen. Folgende Datenelemente sind verfügbar: CT (Art des Inhalts), TITLE, BAND (Band/Orchester), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Spielzeit in Sekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Datenträgers), PATH, FILE, EXT (Dateinamenerweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit). Elemente können durch beliebige (oder keine) Zeichen getrennt werden. Die Trennzeichen werden nur verwendet, wenn die Datenelemente vorhanden sind.<br> Die aktuelle Auswahl gibt das Format an, das auf den Webseiten genutzt wird.
-	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
-	ES	Éstos son los formatos disponibles para seleccionar, tanto anteriormente como en la configuración del reproductor. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista, COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE (velocidad de bits), TAGSIZE (tamaño de etiqueta), VOLUME (nombre de volumen), PATH (ruta), FILE (archivo), EXT (extensión de archivo), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en la interfaz Web.
-	FI	Nämä ovat valittavissa olevat muodot sekä internet-liittymässä että soittimissa. Voit poistaa muodon tyhjentämällä tekstiruudun. Voit lisätä uuden muodon sijoittamalla sen tyhjään ruutuun. Käytettävissä olevat tietoelementit: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (raidan numero), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (kokonaiskesto sekunteinta), DURATION (minuutteina ja sekunteina), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (aseman nimi), PATH, FILE, EXT (tiedostotunniste), LONGDATE (nykyinen pvm, pitkä), SHORTDATE (nykyinen pvm, lyhyt), CURRTIME (nykyinen aika). Elementit voidaan erottaa millä tahansa (tai ei millään). Erottimia käytetään vain, jos tietoelementtejä on.<br>Nykyinen valinta on muoto, jota käytetään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacez la zone de saisie. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Ces éléments peuvent être entrecoupés de séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<br> La sélection en cours est le format qui sera utilisé dans les documents Web.
+	CS	Zde jsou formáty k výběru jak na webovém rozhraní tak na přehrávačích. Chcete-li odstranit některý formát, smažte textové políčko; nový formát zadáte jeho vložením do prázdného políčka. Dostupné datové prvky jsou: CT (typ obsahu), TITLE, GENRE, TRACKNUM (číslo stopy jako celé číslo), FS (velikost souboru), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (celkem sekund), DURATION (minuty a sekundy), BITRATE, LONGDATE (aktuální datum, dlouhé), SHORTDATE (aktuální datum, krátké), CURRTIME(aktuální čas). Prvky lze oddělovat čímkoli (nebo ničím). Oddělovače se používají pouze tehdy, jsou-li přítomny datové prvky.<br>Current selection je formát, který se bude používat na webových stránkách.
+	DA	De følgende formater kan vælges i både den webbaserede brugerflade og på afspillerne. Hvis du vil fravælge et format, skal feltet være tomt. Hvis du vil tilføje et nyt format, skal du gøre det i det tomme felt. Der er følgende dataelementer: CT (indholdstype), TITLE (titel), GENRE, TRACKNUM (nummer på cd'en angivet som et heltal), FS (filstørrelse), ARTIST (kunstner), COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (sekunder i alt), DURATION (varighed i minutter og sekunder), BITRATE (bithastighed), LONGDATE (dags dato, lang), SHORTDATE (dags dato, kort), CURRTIME (klokkeslæt). Elementerne kan adskilles af hvad som helst eller ingenting. Skilletegnene benyttes kun hvis der er dataelementer.<br>Det nuværende valg er det format som bruges på websiderne.
+	DE	Die folgenden Formate sind sowohl oben als auch auf dem Player verfügbar. Löschen Sie ein Textfeld, um das Format zu entfernen, und geben Sie ein neues in ein leeres Feld ein, um es hinzuzufügen. Folgende Datenelemente sind verfügbar: CT (Art des Inhalts), TITLE, BAND (Band/Orchester), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Spielzeit in Sekunden), DURATION (Minuten und Sekunden), BITRATE, LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit). Elemente können durch beliebige (oder keine) Zeichen getrennt werden. Die Trennzeichen werden nur verwendet, wenn die Datenelemente vorhanden sind.<br> Die aktuelle Auswahl gibt das Format an, das auf den Webseiten genutzt wird.
+	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), BITRATE, LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
+	ES	Éstos son los formatos disponibles para seleccionar, tanto anteriormente como en la configuración del reproductor. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista, COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en la interfaz Web.
+	FI	Nämä ovat valittavissa olevat muodot sekä internet-liittymässä että soittimissa. Voit poistaa muodon tyhjentämällä tekstiruudun. Voit lisätä uuden muodon sijoittamalla sen tyhjään ruutuun. Käytettävissä olevat tietoelementit: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (raidan numero), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (kokonaiskesto sekunteinta), DURATION (minuutteina ja sekunteina), BITRATE, LONGDATE (nykyinen pvm, pitkä), SHORTDATE (nykyinen pvm, lyhyt), CURRTIME (nykyinen aika). Elementit voidaan erottaa millä tahansa (tai ei millään). Erottimia käytetään vain, jos tietoelementtejä on.<br>Nykyinen valinta on muoto, jota käytetään WWW-sivuilla.
+	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacez la zone de saisie. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Ces éléments peuvent être entrecoupés de séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<br> La sélection en cours est le format qui sera utilisé dans les documents Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
-	IT	Questi sono i formati selezionabili sia per l'interfaccia web che per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, scriverne il testo nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE (bitrate), TAGSIZE (dimensioni dell'etichetta), VOLUME (titolo del volume), PATH (percorso), FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
-	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
-	NL	Dit zijn de indelingen die in de webinterface en op muzieksystemen kunnen worden geselecteerd. Als je een indeling wilt verwijderen, wis je het tekstvak. Wil je een nieuwe indeling invoeren, dan plaats je deze in het lege tekstvak. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als geheel getal), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumenaam), PATH, FILE, EXT (bestandsextensie), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). Elementen kunnen door alles (of niets) worden gescheiden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br>De huidige selectie is de indeling die op de webpagina's wordt gebruikt.
-	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og i spillere. Hvis du vil fjerne et format, fjerner du teksten i tekstboksen. Hvis du vil legge til et nytt format, legger du det inn i den tomme tekstboksen. Tilgjengelige dataelementer: CT (innholdstype), TITLE (sangtittel), GENRE (sjanger), TRACKNUM (spornummer, heltall), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND (band/gruppe), ALBUM, COMMENT (kommentar), YEAR (år), SECS (varighet i sekunder), DURATION (varighet i minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE (bithastighet), TAGSIZE (størrelse på etikett), VOLUME (dataområde), PATH (bane), FILE (filnavn), EXT (filetternavn), LONGDATE (gjeldende dato, langt format), SHORTDATE (gjeldende dato, kort format), CURRTIME (gjeldende klokkeslett). Du kan skille elementer med hva som helst (eller ingenting). Skilletegnene brukes bare hvis dataelementene finnes.<br>Gjeldende utvalg er formatet som blir brukt på nettsidene.
-	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (nazwa woluminu), PATH, FILE, EXT (rozszerzenie pliku), LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
+	IT	Questi sono i formati selezionabili sia per l'interfaccia web che per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, scriverne il testo nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE (bitrate), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
+	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、BITRATE（ビットレート)、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
+	NL	Dit zijn de indelingen die in de webinterface en op muzieksystemen kunnen worden geselecteerd. Als je een indeling wilt verwijderen, wis je het tekstvak. Wil je een nieuwe indeling invoeren, dan plaats je deze in het lege tekstvak. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als geheel getal), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). Elementen kunnen door alles (of niets) worden gescheiden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br>De huidige selectie is de indeling die op de webpagina's wordt gebruikt.
+	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og i spillere. Hvis du vil fjerne et format, fjerner du teksten i tekstboksen. Hvis du vil legge til et nytt format, legger du det inn i den tomme tekstboksen. Tilgjengelige dataelementer: CT (innholdstype), TITLE (sangtittel), GENRE (sjanger), TRACKNUM (spornummer, heltall), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND (band/gruppe), ALBUM, COMMENT (kommentar), YEAR (år), SECS (varighet i sekunder), DURATION (varighet i minutter og sekunder), BITRATE (bithastighet), LONGDATE (gjeldende dato, langt format), SHORTDATE (gjeldende dato, kort format), CURRTIME (gjeldende klokkeslett). Du kan skille elementer med hva som helst (eller ingenting). Skilletegnene brukes bare hvis dataelementene finnes.<br>Gjeldende utvalg er formatet som blir brukt på nettsidene.
+	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), BITRATE, LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
-	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>"Текущий выбор" — это формат, который будет использоваться на веб-страницах.
-	SV	Det här är formaten som går att välja i webbgränssnittet och på spelarna. Om du vill ta bort ett format rensar du textfältet. Om du vill lägga till ert nytt format anger du det i det tomma fältet. Följande dataelement kan väljas: CT (innehållstyp), TITLE, GENRE, TRACKNUM (spårnummer (ett heltal)), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filtillägg), LONGDATE (aktuellt datum, långt format), SHORTDATE (aktuellt datum, kort format), CURRTIME (aktuell tid). Element kan separeras av vad som helst (eller inget alls). Avgränsarna används endast om dataelementen är närvarande.<br>Det aktuella valet är det format som kommer att användas på webbsidorna.
-	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、VBR_SCALE (vbr/cbr)、BITRATE（比特率）、TAGSIZE（标签大小）、VOLUME（卷名）、PATH（路径）、FILE（文件名）、EXT（扩展名）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
+	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), BITRATE, LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>"Текущий выбор" — это формат, который будет использоваться на веб-страницах.
+	SV	Det här är formaten som går att välja i webbgränssnittet och på spelarna. Om du vill ta bort ett format rensar du textfältet. Om du vill lägga till ert nytt format anger du det i det tomma fältet. Följande dataelement kan väljas: CT (innehållstyp), TITLE, GENRE, TRACKNUM (spårnummer (ett heltal)), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, TLONGDATE (aktuellt datum, långt format), SHORTDATE (aktuellt datum, kort format), CURRTIME (aktuell tid). Element kan separeras av vad som helst (eller inget alls). Avgränsarna används endast om dataelementen är närvarande.<br>Det aktuella valet är det format som kommer att användas på webbsidorna.
+	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
 	CS	Hlavní menu
@@ -11031,6 +11031,25 @@ DISC
 	ZH_CN	光碟
 
 LENGTH
+	CS	Doba trvání
+	DA	Varighed
+	DE	Dauer
+	EN	Duration
+	ES	Duración
+	FI	Kesto
+	FR	Durée
+	HE	משך
+	IT	Durata
+	JA	長さ（時間）
+	NL	Duur
+	NO	Varighet
+	PL	Czas trwania
+	PT	Duração
+	RU	Продолжительность
+	SV	Varaktighet
+	ZH_CN	持久时间
+
+ALBUMLENGTH
 	CS	Doba trvání
 	DA	Varighed
 	DE	Dauer
@@ -22676,156 +22695,6 @@ STOP_SQUEEZEBOX_SERVER
 	PL	Zatrzymaj program Squeezebox Server
 	RU	Остановить Squeezebox Server
 	SV	Stoppa Squeezebox Server
-
-PLAYLIST_MODE
-	CS	Režim seznamu skladeb (Beta)
-	DA	Brug afspilningslister (beta)
-	DE	Wiedergabelisten-Modus (Beta)
-	EN	Playlist Mode (Beta)
-	ES	Modo de lista de reproducción (beta)
-	FI	Soittoluettelotila (beeta)
-	FR	Mode liste de lecture (Bêta)
-	IT	Modalità playlist (Beta)
-	NL	Afspeellijstmodus (bèta)
-	NO	Spillelistemodus (betaversjon)
-	PL	Tryb listy odtwarzania (beta)
-	RU	Режим плей-листа (бета-версия)
-	SV	Spellistläge (beta)
-
-JIVE_PLAYLIST_MODE_HELP
-	CS	Pokud je povolen režim seznamu skladeb, tlačítko přehrávání ovladače přidá aktuální položku na následující pozici v aktuálním seznamu skladeb. Pokud je tento režim zakázán, tlačítko přehrávání smaže aktuální seznam skladeb a začne okamžitě přehrávat danou položku.
-	DA	Når du har valgt at bruge afspilningslister, indsættes det valgte nummer i den næste position på den nuværende liste når du trykker på controllerens afspilningsknap. Hvis funktionen er slået fra, ryddes den nuværende afspilningsliste, og det valgte nummer bliver afspillet straks.
-	DE	Wenn der Wiedergabelisten-Modus aktiviert ist, kann mithilfe der Controller-Wiedergabetaste das aktuelle Element an die nächste Stelle in der Wiedergabeliste gesetzt werden. Ist dieser Modus deaktiviert, wird die aktuelle Wiedergabeliste durch die Wiedergabetaste gelöscht und das aktuelle Element sofort wiedergegeben.
-	EN	With playlist mode enabled, the controller's play button will add the current item to the next position in the current playlist. When disabled, the play button will clear the current playlist and immediately begin playback of the item.
-	ES	Con el modo de lista de reproducción activado, el botón de reproducción del controlador agregará el elemento actual a la siguiente posición en la lista de reproducción actual. Cuando se desactive, el botón de reproducción borrará la lista de reproducción actual e inmediatamente iniciará la reproducción del elemento.
-	FI	Kun soittoluettelotila on käytössä, ohjaimen toistopainike lisää valitun kohdan seuraavaan paikkaan nykyisessä soittoluettelossa. Kun tila ei ole käytössä, toistopainike tyhjentää nykyisen soittoluettelon ja käynnistää valitun kohteen toiston.
-	FR	Lorsque le mode de liste de lecture est activé, le bouton Lecture de la télécommande ajoute l'élément en cours à la suite de la liste en cours. Lorsque ce mode est désactivé, le bouton Lecture efface la liste en cours et lance la lecture du morceau sélectionné.
-	IT	Se la modalità playlist è attivata, il pulsante di riproduzione del controller consente di aggiungere l'elemento corrente nella posizione successiva della playlist corrente. Se la modalità è disattivata, il pulsante di riproduzione consente di svuotare la playlist corrente e di riprodurre immediatamente l'elemento.
-	NL	Wanneer de playlistmodus is ingeschakeld, wordt met de afspeelknop van de controller het huidige item aan de volgende positie in de huidige playlist toegevoegd. Wanneer deze modus is uitgeschakeld, wordt met de afspeelknop de huidige playlist gewist en wordt het item onmiddellijk afgespeeld.
-	NO	Når spillelistemodus er aktivert, legger spill-knappen på kontrollen til det gjeldende elementet på neste plass på gjeldende spilleliste. Når denne modusen er deaktivert, tømmer spill-knappen gjeldende spilleliste og begynner øyeblikkelig avspilling av elementet.
-	PL	Po włączeniu trybu listy odtwarzania naciśnięcie przycisku odtwarzania na kontrolerze spowoduje dodanie aktualnego elementu w następnej pozycji na bieżącej liście odtwarzania. Po wyłączeniu naciśnięcie przycisku odtwarzania spowoduje usunięcie bieżącej listy odtwarzania i natychmiastowe rozpoczęcie odtwarzania elementu.
-	RU	Если включен режим плей-листа, при нажатии кнопки воспроизведения контроллера текущий элемент добавляется на следующую позицию в плей-листе. Если этот режим выключен, при нажатии кнопки воспроизведения текущий плей-лист будет очищен, и начнется воспроизведение данного элемента.
-	SV	Om spellistan är aktiverad hamnar det aktuella objektet i nästa position i spellistan om du trycker på play. Om den däremot inte är aktiverad rensas spellistan samtidigt som objektet spelas upp direkt när du trycker på play.
-
-PLAYLIST_MODE_ON
-	CS	Režim seznamu skladeb zapnutý
-	DA	Brug afspilningslister til
-	DE	Wiedergabelisten-Modus aktiv
-	EN	Playlist Mode On
-	ES	Modo de lista de reproducción activado
-	FI	Soittoluettelotila käytössä
-	FR	Mode liste de lecture activé
-	IT	Modalità playlist attiva
-	NL	Playlistmodus aan
-	NO	Spillelistemodus på
-	PL	Tryb listy odtwarzania włączony
-	RU	Режим плей-листа вкл.
-	SV	Spellista på
-
-PLAYLIST_MODE_OFF
-	CS	Režim seznamu skladeb vypnutý
-	DA	Brug afspilningslister fra
-	DE	Wiedergabelisten-Modus aus
-	EN	Playlist Mode Off
-	ES	Modo de lista de reproducción desactivado
-	FI	Soittoluettelotila ei käytössä
-	FR	Mode liste de lecture désactivé
-	IT	Modalità playlist disattivata
-	NL	Playlistmodus uit
-	NO	Spillelistemodus av
-	PL	Tryb listy odtwarzania wyłączony
-	RU	Режим плей-листа выключен
-	SV	Spellista av
-
-PLAYLIST_MODE_ENABLED
-	CS	Režim seznamu skladeb povolený
-	DA	Brug afspilningslister er slået til
-	DE	Wiedergabelisten-Modus aktiviert
-	EN	Playlist Mode Enabled
-	ES	Modo de lista de reproducción activado
-	FI	Soittoluettelotila käytössä
-	FR	Mode liste de lecture activé
-	IT	Modalità playlist attivata
-	NL	Playlistmodus ingeschakeld
-	NO	Spillelistemodus aktivert
-	PL	Tryb listy odtwarzania włączony
-	RU	Режим плей-листа вкл.
-	SV	Spellista aktiverad
-
-PLAYLIST_MODE_DISABLED
-	CS	Režim seznamu skladeb zakázán
-	DA	Brug afspilningslister er slået fra
-	DE	Wiedergabelisten-Modus deaktiviert
-	EN	Playlist Mode Disabled
-	ES	Modo de lista de reproducción desactivado
-	FI	Soittoluettelotila poistettu käytöstä
-	FR	Mode liste de lecture désactivé
-	IT	Modalità playlist disattivata
-	NL	Playlistmodus uitgeschakeld
-	NO	Spillelistemodus deaktivert
-	PL	Tryb listy odtwarzania wyłączony
-	RU	Режим плей-листа выкл.
-	SV	Spellista avaktiverad
-
-PARTY_MODE
-	CS	Režim Party
-	DA	Partyfunktion
-	DE	Party-Modus
-	EN	Party Mode
-	ES	Modo de fiesta
-	FI	Juhlatila
-	FR	Mode fête
-	IT	Modalità Mix
-	NL	Feestmodus
-	NO	Festmodus
-	PL	Tryb imprezy
-	RU	Режим вечеринки
-	SV	Festläge
-
-PARTY
-	CS	Oslava
-	DA	Party
-	DE	Party
-	EN	Party
-	ES	Fiesta
-	FI	Juhlat
-	FR	Fête
-	IT	Mix
-	NL	Feest
-	NO	Fest
-	PL	Impreza
-	RU	Вечеринка
-	SV	Fest
-
-PARTY_MODE_ON
-	CS	Režim Party zapnutý
-	DA	Partyfunktion til
-	DE	Party-Modus aktiv
-	EN	Party Mode On
-	ES	Modo de fiesta activado
-	FI	Juhlatila käytössä
-	FR	Mode fête activé
-	IT	Modalità Mix attivata
-	NL	Feestmodus aan
-	NO	Festmodus på
-	PL	Tryb imprezy włączony
-	RU	Режим вечеринки вкл.
-	SV	Festläge på
-
-PARTY_MODE_OFF
-	CS	Režim Party vypnutý
-	DA	Partyfunktion fra
-	DE	Party-Modus aus
-	EN	Party Mode Off
-	ES	Modo de fiesta desactivado
-	FI	Juhlatila ei käytössä
-	FR	Mode fête désactivé
-	IT	Modalità Mix disattivata
-	NL	Feestmodus uit
-	NO	Festmodus av
-	PL	Tryb imprezy wyłączony
-	RU	Режим вечеринки выключен
-	SV	Festläge Av
 
 SIGNUP_LISTEN
 	CS	Poslouchejte hudbu!
