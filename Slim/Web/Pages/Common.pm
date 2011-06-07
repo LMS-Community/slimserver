@@ -51,7 +51,7 @@ sub _lcPlural {
 }
 
 sub addLibraryStats {
-	my ($class, $params, $rs, $previousLevel) = @_;
+	my ($class, $params) = @_;
 	
 	if (!Slim::Schema::hasLibrary()) {
 		return;
@@ -82,89 +82,13 @@ sub addLibraryStats {
 		return;
 	}
 
-	my %counts = ();
-	my $level  = $params->{'levelName'} || '';
-
-	# Albums needs a roles check, as it doesn't go through contributors first.
-	# if (defined $rs && !grep { 'contributorAlbums' } @{$rs->{'attrs'}->{'join'}}) {
-
-	#	if (my $roles = Slim::Schema->artistOnlyRoles) {
-
-			#$rs = $rs->search_related('contributorAlbums', {
-			#	'contributorAlbums.role' => { 'in' => $roles }
-			#});
-	#	}
-	#}
-
-	# The current level will always be a ->browse call, so just reuse the resultset.
-	if ($level eq 'album') {
-
-		# Bug 3351
-		if ( $previousLevel eq 'contributor' ) {
-			# This avoids duplicate joins on contributorAlbums, the proper roles
-			# are already selected since the $rs is already joined with contributorAlbums
-			$counts{'contributor'} = $rs->search_related('contributor');
-		}
-		else {
-			# filter out non-artist roles for contributor count
-			my $cond  = {};
-			my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
-			if ( $roles ) {
-				$cond->{'contributorAlbums.role'} = { 'in' => $roles };
-			}
-			$counts{'contributor'} = $rs->search_related('contributorAlbums')->search_related( 'contributor', $cond );
-		}
-		
-		$counts{'album'} = $rs;
-		$counts{'track'} = $rs->search_related('tracks');
-
-	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
-		
-		# Bug 3351, we can't use the $rs here, because it's a contributor RS that is already
-		# joined to genres.  We can use the genre RS that is stored in params however.
-		my $genreTracks = $params->{'genre'}->search_related('genreTracks')->search_related('track');
-
-		$counts{'album'}       = $genreTracks->search_related('album');
-		$counts{'contributor'} = $rs;
-		$counts{'track'}       = $genreTracks;
-
-	} elsif ($level eq 'track') {
-		
-		# Bug 3351, filter out non-artist roles for contributor count
-		my $cond = {};
-		my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
-		if ( $roles ) {
-			$cond->{'contributorTracks.role'} = { 'in' => $roles };
-		}
-		
-		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
-		$counts{'album'}       = $rs->search_related('album');
-		$counts{'track'}       = $rs;
-		
-	} else {
-
-		$counts{'album'}       = Slim::Schema->rs('Album')->browse;
-		$counts{'track'}       = Slim::Schema->rs('Track')->browse;
-		$counts{'contributor'} = Slim::Schema->rs('Contributor')->browse;
-	}
-
-	# Don't let any database errors here stop the page from displaying
-	eval {
-		$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
-		$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS'); 
-		$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
-	};
-	
-	if ( $@ ) {
-		$sqllog->error("Error building library counts: $@");
-		
-		$params->{'song_count'}   = 0;
-		$params->{'album_count'}  = 0;
-		$params->{'artist_count'} = 0;
-	}
+	my $totals = Slim::Schema->totals();
+	$params->{'album_count'}  = $class->_lcPlural($totals->{'album'}, 'ALBUM', 'ALBUMS');
+	$params->{'song_count'}   = $class->_lcPlural($totals->{'track'}, 'SONG', 'SONGS');
+	$params->{'artist_count'} = $class->_lcPlural($totals->{'contributor'}, 'ARTIST', 'ARTISTS');
 
 	if ( main::INFOLOG && $sqllog->is_info ) {
-		$sqllog->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
+		$sqllog->info(sprintf("Found %s, %s & %s", 
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}
@@ -356,46 +280,37 @@ sub options {
 sub pageInfo {
 	my ($class, $args) = @_;
 	
-	my $results      = $args->{'results'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
 	my $itemsPerPage = $args->{'perPage'} || $prefs->get('itemsPerPage');
+	my $index        = $args->{'indexList'};
 
 	my %pageinfo  = ();
 	my %alphamap  = ();
+	my @alphaindex = ();
 	my $itemCount = 0;
 	my $end;
-
-	# Use the ResultSet from pageBarResults to build our offset list.
-	if ($args->{'addAlpha'}) {
-
-		my $first = $results->first;
-
-		$alphamap{ Encode::decode('utf8', $first->get_column('letter')) } = 0;
-
-		$itemCount += $first->get_column('count');
-
-		while (my $row = $results->next) {
-
-			my $count  = $row->get_column('count');
-			my $letter = $row->get_column('letter');
-
-			# Set offset for subsequent letter rows to current # $itemCount
-			# (*before* we add number of items for this letter to $itemCount!)
-			$alphamap{ Encode::decode('utf8', $letter) } = $itemCount;
-
-			$itemCount += $count;
+	
+	if ($index) {
+		foreach (@$index) {
+			my $key = $_->[0];
+			utf8::decode($key);
+			$key = ' ' if !defined $key;
+			$alphamap{$key} = $itemCount;
+			$itemCount += $_->[1];
+			push (@alphaindex, $key);
 		}
+		
+		if ($args->{'itemCount'} && $args->{'itemCount'} > $itemCount) {
+			$itemCount = $args->{'itemCount'};
+		}
+	}
 
-	} else {
+	else {
 
 		if ($args->{'itemCount'}) {
 
 			$itemCount = $args->{'itemCount'}
-
-		} elsif ($results) {
-
-			$itemCount = $results->count;
 
 		} else {
 
@@ -449,7 +364,7 @@ sub pageInfo {
 	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
 	$pageinfo{'path'}         = $args->{'path'};
 
-	if ($args->{'addAlpha'} && $itemCount) {
+	if ($index && $itemCount) {
 
 		my @letterstarts = sort { $a <=> $b } values %alphamap;
 		my @pagestarts   = $letterstarts[0];
@@ -496,9 +411,10 @@ sub pageInfo {
 		}
 
 		$pageinfo{'alphamap'} = \%alphamap;
+		$pageinfo{'alphaindex'} = \@alphaindex;
 	}
 
-	# set the start index, accounding for alpha cases
+	# set the start index, accounting for alpha cases
 	$pageinfo{'startitem'} = $start || 0;
 
 	return \%pageinfo;

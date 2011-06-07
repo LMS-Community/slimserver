@@ -33,7 +33,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'folderinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 }
 
@@ -84,6 +84,8 @@ sub addFolderEnd {
 sub addFolder {
 	my ($client, $tags, $cmd, $label) = @_;
 
+	return [] if !blessed($client);
+
 	my $actions = {
 		go => {
 			player => 0,
@@ -111,6 +113,8 @@ sub addFolder {
 sub playFolder {
 	my ( $client, $tags) = @_;
 
+	return [] if !blessed($client);
+
 	my $actions = {
 		go => {
 			player => 0,
@@ -119,7 +123,7 @@ sub playFolder {
 				folder_id => $tags->{folder_id},
 				cmd => 'load',
 			},
-			nextWindow => 'parent',
+			nextWindow => 'nowPlaying',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -137,6 +141,23 @@ sub playFolder {
 
 sub cliQuery {
 	my $request = shift;
+	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
 	
 	my $client    = $request->client;
 	my $folder_id = $request->getParam('folder_id');

@@ -1,13 +1,10 @@
 [%- FILTER null %]
 [% 
 playerURI = player | uri;
-albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=$itemobj.album.id&amp;player=$playerURI\"";
-yearHRef = "href=\"${webroot}browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=$itemobj.year&amp;player=$playerURI\"";
+albumHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% itemobj.album.title | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/"[% END;
+yearHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% itemobj.year %])&amp;year=[% itemobj.year %]&amp;player=[% playerURI %]/"[% END;
 songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$playerURI\"";
-browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
-browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\"";
-browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist.id=$playlist.id$noEdit&amp;player=$playerURI\"";
 MoveUp   = "%2D1"; # -1
 minusOne = "%2D1"; # -1
 plusOne  = "%2B1"; # +1
@@ -124,12 +121,17 @@ this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 
 
 [%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.id | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the year of item %]
 [% BLOCK yearItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% item.year %])&amp;year=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
+[%- END %]
+
+[%# this is the href to the primary artist of item %]
+[% BLOCK artistItemHRef -%]
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% item.artist | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]
@@ -142,32 +144,14 @@ href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% player
 href="/music/[% item.coverArt %]/cover.jpg"
 [%- END %]
 
-[%# this is the href to the playlist item %]
-[% BLOCK browsePlaylistItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist.id=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
-[%- END %]
-
 [%# this is the link tree for the setup pages %]
 [% BLOCK setupItemHRef -%]
 href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid | uri %][% END %]"
 [%- END %]
 
-
-[%# this is the href to the browsedb page for item %]
-[%# no level info means its a music folder item %]
-[% BLOCK browseDbItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %][% IF item.orderBy %]&amp;orderBy=[% item.orderBy %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
-[%- END %]
-
 [%# this is the href to the browse page for a upnp item %]
 [% BLOCK browseUpnpItemHRef -%]
 href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% item.hierarchy | html%][% item.attributes | html %]&amp;player=[% playerURI %]"
-[%- END %]
-
-
-[%# this is the href to the browsetree page for item %]
-[% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is a generic href for item, or the item itself if no href present %]
@@ -190,9 +174,11 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	<img [% style %] 
 		src=
 		[% IF item.image %]
-		"[% item.image | resizeimage(height, height, '-') %]"
-		[% ELSE %]
+		"[% item.image | resizeimage(height, height, '-', webroot) %]"
+		[% ELSIF item.coverThumb %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% END %]"
+		[% ELSIF item.icon %]
+		"[% item.icon | resizeimage(height, height, '-', webroot) %]"
 		[% END %]
 	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 	alt=	"[% item.text | html %]

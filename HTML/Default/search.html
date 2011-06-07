@@ -1,43 +1,72 @@
 [%- pagetitle = 'SEARCHMUSIC' | string %]
 [%- pageicon = icons.SEARCHMUSIC %]
 [% extJsScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 	<script type="text/javascript">
 		Ext.onReady(function(){
-			new Ext.form.TextField({
+			var sinput = new Ext.form.TextField({
 				applyTo: 'livesearch',
 				validationDelay: 100,
 				validateOnBlur: false,
 				selectOnFocus: true,
 
-				validator: [% IF manualSearch; 'null'; ELSE %]function(value){
+				searches: [
+					[% FOREACH search = searches %]
+					{
+						id: 'result[% loop.index %]',
+						hd: 'header[% loop.index %]',
+						url: '[% search.values.0 %]'
+					}[% loop.last ? '' : ',' %]
+					[% END %]
+				],
+
+				validator: function(value, force){
 					var el;
 
-					if (value.length > 2) {
-						if (el = Ext.get('browsedbHeader'))
-							el.remove();
+					if (value.length > 2 || force) {
+						for (var i=0; i<this.searches.length; i++) {
+							if (el = Ext.get(this.searches[i].id)) {
+								// don't wait for an earlier update to finish
+								if (el.getUpdateManager().isUpdating())
+									el.getUpdateManager().abort();
 
-						if (el = Ext.get('browsedbList'))
-							el.remove();
+								el.load({
+									url: this.searches[i].url,
+									method: 'GET',
+									params: {
+										q: value,
+										player: player,
+										ajaxUpdate: 1,
+										ajaxSearch: 1,
+										index: i
+									},
+									callback: function(el, success, response, options) {
+										Highlighter.init();
+										SqueezeJS.UI.ScrollPanel.init();
 
-						el = Ext.get('search-results')
 
-						// don't wait for an earlier update to finish
-						if (el.getUpdateManager().isUpdating())
-							el.getUpdateManager().abort();
+										// we need to fix the URL, as the returned values are relative to the search path
+										var a = Ext.DomQuery.select("a[class=browseItemLink]", options.thisSearch.id);
+										for (i=0; i<a.length; i++) {
+											a[i].href = a[i].href.replace(/index.html/g, "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/");
+										}
+										var l = Ext.DomQuery.select("div[class*=browsedbListItem]", options.thisSearch.id).length;
+										var t = Ext.get(options.thisSearch.id).child('div[id="total"]');
+										var c = t ? parseInt(t.getAttribute('value')) : 0;
+										var m = '';
+										if (!c) {
+											m = '[%- "NONE" | string %]';
+										} else if (l && c && c > 1 && l < c) {
+											m += l + ' / ' + c + ': <a href="clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/X?index='
+												+ options.params.index + '&q=' + options.params.q + '">[%- "MORE" | string %]</a>...';
+										}
+										Ext.get(options.thisSearch.hd).update(m);
 
-						el.load('search.xml',
-							{
-								query: value,
-								player: player
-							},
-							function(){
-								Highlighter.init();
-								SqueezeJS.UI.ScrollPanel.init();
+									},
+									thisSearch : this.searches[i]
+								});
 							}
-						);
-					}
-					else if (el = Ext.get('search-results')) {
-						el.update('');
+						}
 					}
 
 					return true;
@@ -49,8 +78,11 @@
 			            this.validationTask.delay(this.validationDelay);
 			        }
 			    }
-				[% END %]
 			});
+
+			[% IF query %]
+			sinput.validator('[% query %]', true);
+			[% END %]
 
 			new Ext.Button({
 				renderTo: 'searchButton',
@@ -60,11 +92,13 @@
 					document.getElementById("searchForm").submit();
 				}
 			});
+
+			Browse.init();
 		});
 	</script>
 [% END %]
 [% pwd_list = BLOCK %]
-	<a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+	<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html dontscroll=browse_items.size %]
 
@@ -75,7 +109,6 @@
 			<td><span id="searchButton"></span></td>
 			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
-		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
 	</div>
@@ -84,31 +117,13 @@
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
-		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %]
-			<div class="pagerbox">
-				<div class="pagerbox_top"><div></div></div>
-				<div class="pagerbox_content">
-					[% PROCESS pagebar %]
-				</div>
-				<div class="pagerbox_bottom"><div></div></div>
-			</div>
-		[% END %]
 	</div>
 
-	<div id="search-results">
-		[% IF browse_items.size %]
-			<div id="browsedbList">
-	
-				[% FOREACH item = browse_items %]
-					[% PROCESS browsedbitems_list.html %]
-				[% END %]
-	
-			</div>
-		[% ELSIF manualSearch %]
-			<div id="browsedbList">
-				[% "NO_SEARCH_RESULTS" | string %]
-			</div>
-		[% END %]
+	<div id="browsedblist">
+	[% FOREACH search = searches %]
+		<div class="searchResultHeader">[% search.keys.0 %]: <span id="header[% loop.index %]"></span></div>
+		<div id="result[% loop.index %]"></div>
+	[% END %]
 	</div>
 
 [% PROCESS pagefooter.html %]

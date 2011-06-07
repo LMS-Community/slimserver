@@ -76,7 +76,7 @@ sub initJive {
 		stringToken    => (uc($name) eq $name) ? $name : undef, # Only use string() if it is uppercase
 		text           => $name,
 		id             => 'opml' . $args{tag},
-		node           => $args{node} || $args{menu},
+		node           => $args{node} || $args{menu} || 'plugins',
 		weight         => $class->weight,
 		displayWhenOff => 0,
 		window         => { 

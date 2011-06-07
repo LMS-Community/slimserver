@@ -159,6 +159,7 @@ sub menu {
 		name  => cstring($client, $class->name),
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
@@ -326,7 +327,7 @@ provider may also return more than one menu item by returning an arrayref.
   }
 
   sub myAction {
-      my ( $client, $callback, $foo, $bar ) = @_;
+      my ( $client, $callback, $params, $foo, $bar ) = @_;
 
       my $menu = {
           type => 'text',

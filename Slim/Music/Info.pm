@@ -1395,7 +1395,7 @@ sub typeFromSuffix {
 	my $path = shift;
 	my $defaultType = shift || 'unk';
 	
-	if (defined $path && $path =~ /\.([^.]+)$/) {
+	if (defined $path && $path =~ m%\.([^./]+)$%) {
 		return $suffixes{lc($1)};
 	}
 

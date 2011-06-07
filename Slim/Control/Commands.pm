@@ -754,95 +754,6 @@ sub playcontrolCommand {
 }
 
 
-sub playTrackPlaylistCommand {
-
-	main::INFOLOG && $log->info("Begin function");
-
-	my $request    = shift;
-	my $client     = $request->client || return;
-	my $playlistID = $request->getParam('playlist_id');
-	my $listIndex  = $request->getParam('list_index');
-	
-
-	if ( !defined ($playlistID) ) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# this command was redundant to playTrackAlbumCommand with a playlist_id tagged param, so just send the request there
-	playTrackAlbumCommand($request);
-
-	$request->setStatusDone();
-}
-
-
-sub playTrackAlbumCommand {
-
-	main::INFOLOG && $log->info("Begin function");
-
-	my $request    = shift;
-	my $client     = $request->client || return;
-	my $albumID    = $request->getParam('album_id');
-	my $artistID   = $request->getParam('artist_id');
-	my $trackID    = $request->getParam('track_id');
-	my $playlistID = $request->getParam('playlist_id');
-	my $folder_id  = $request->getParam('folder_id')|| undef;
-	my $listIndex  = $request->getParam('list_index') || 0;
- 	my $mode       = Slim::Player::Playlist::playlistMode($client);
-	
-	$client->execute( ["playlist", "clear"] );
-
-	# Database album browse is the simple case
-	if ( $albumID ) {
-		if ($artistID) {
-			$client->execute( ["playlist", "addtracks", { 'contributor.id' => $artistID, 'album.id' => $albumID } ] );
-		} else {
-			$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
-		}
-		$client->execute( ["playlist", "jump", $listIndex] );
-
-	}
-
-	elsif ( $playlistID ) {
-		# load the playlist
-		$client->execute( ["playlistcontrol", "cmd:load", "playlist_id:$playlistID" ]);
-		# jump to the correct index
-		$client->execute( ["playlist", "jump", $listIndex] );
-	}
-
-	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item
-	elsif ( defined $folder_id && defined $listIndex ) {
-
-		my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-		Slim::Player::Playlist::shuffle($client, 0);
-
-		my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
-			id => $folder_id,
-		} );
-
-		main::INFOLOG && $log->info("Playing all in folder, starting with $listIndex");
-
-		# filter out folders
-		@{$items} = grep { Slim::Music::Info::isSong($_) }
-		# make sure we get a valid path
-		map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $topLevelObj->path) }
-		@$items;
-
-		main::INFOLOG && $log->info("Load folder playlist, now starting at index: $listIndex");
-
-		$client->execute(['playlist', 'clear']);
-		$client->execute(['playlist', 'addtracks', 'listref', $items]);
-		$client->execute(['playlist', 'jump', $listIndex]);
-
-		if ($wasShuffled) {
-			$client->execute(['playlist', 'shuffle', 1]);
-		}
-	}
-
-	$request->setStatusDone();
-}
-
-
 sub playlistClearCommand {
 	my $request = shift;
 
@@ -854,12 +765,8 @@ sub playlistClearCommand {
 
 	# get the parameters
 	my $client = $request->client();
-	my $mode   = Slim::Player::Playlist::playlistMode($client);
 
 	Slim::Player::Playlist::stopAndClear($client);
-	if ( $mode eq 'on' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-	}
 
 	# called by currentPlaylistUpdateTime below
 	# $client->currentPlaylistChangeTime(Time::HiRes::time());
@@ -1202,12 +1109,6 @@ sub playlistSaveCommand {
 		$request->addResult('writeError', 1);
 	}
 	
-	# exit playlist mode if currently in playlist mode
-	my $mode = Slim::Player::Playlist::playlistMode($client);
-	if ( $mode eq 'on' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-	}
-
 	$request->addResult('__playlist_id', $playlistObj->id);
 
 	if ( ! $silent ) {
@@ -1221,21 +1122,6 @@ sub playlistSaveCommand {
 
 	$request->setStatusDone();
 }
-
-sub playlistModeCommand {
-
-	my $request   = shift;
-	my $client    = $request->client;
-	my $mode      = $request->getParam('_newvalue');
-
-	if ( defined($mode) ) {
-		Slim::Player::Playlist::playlistMode($client, $mode);
-	}
-
-	$request->setStatusDone();
-
-}
-
 
 sub playlistShuffleCommand {
 	my $request = shift;
@@ -1282,11 +1168,6 @@ sub playlistXalbumCommand {
 	my $artist   = $request->getParam('_artist');#p3
 	my $album    = $request->getParam('_album'); #p4
 	my $title    = $request->getParam('_title'); #p5
-
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'loadalbum') {
-		$cmd = 'insertalbum';
-	}
 
 	# Pass to parseSearchTerms
 	my $find     = {};
@@ -1392,11 +1273,6 @@ sub playlistXitemCommand {
 	my $noplay       = $request->getParam('noplay') || 0; # optional tagged param, used for resuming playlist after preview
 	my $wipePlaylist = $request->getParam('wipePlaylist') || 0; #optional tagged param, used for removing playlist after resume
 
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load') {
-		$cmd = 'insert';
-	}
-
 	if (!defined $item) {
 		$request->setStatusBadParams();
 		return;
@@ -1450,11 +1326,12 @@ sub playlistXitemCommand {
 		Slim::Music::Info::setCurrentTitle( $url, $title );
 	}
 
-	# check whether url is potentially for a local file or db entry, if so pass to playlistXtracksCommand
-	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
+	# check whether url is potentially for some sort of db entry, if so pass to playlistXtracksCommand
+	# But not for or local file:// URLs,  and this may mean 
+	# rescanning items already in the database but still allows playlist and other favorites to be played
 	
 	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
-	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
+	if ($path =~ /^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
@@ -1606,12 +1483,6 @@ sub playlistXitemCommand {
 					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
 				});
 		}
-		# if music isn't playing, hitting the play button should start playing music
-		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'insert' ) {
-			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-				Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
-			}
-		}
 
 	} else {
 		
@@ -1717,16 +1588,9 @@ sub playlistXtracksCommand {
 	my $fadeIn      = $request->getParam('_fadein');#p4
 	my $jumpToIndex = $request->getParam('_index');#p5, by default undef - see bug 2085
 
-	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
-
 	if (!defined $what) {
 		$request->setStatusBadParams();
 		return;
-	}
-
-	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'loadtracks' ) {
-		$cmd    = 'inserttracks';
 	}
 
 	my $load   = ($cmd eq 'loadtracks' || $cmd eq 'playtracks');
@@ -1766,11 +1630,6 @@ sub playlistXtracksCommand {
 
 	if ($insert) {
 		_insert_done($client, $size);
-		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') ) {
-			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-				Slim::Player::Source::playmode($client, 'play');
-			}
-		}
 		$request->addResult(index => (Slim::Player::Source::streamingSongIndex($client)+1));
 	}
 
@@ -1810,6 +1669,9 @@ sub playlistXtracksCommand {
 		}
 		
 		$client->execute(['playlist', 'jump', $jumpToIndex, $fadeIn]);
+		
+		# Reshuffle (again) to get playing song or album at start of list
+		Slim::Player::Playlist::reshuffle($client) if $load && defined $jumpToIndex && Slim::Player::Playlist::shuffle($client);
 		
 		$client->currentPlaylistModified(0);
 	}
@@ -1888,17 +1750,8 @@ sub playlistcontrolCommand {
 	# get the parameters
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
+	my $jumpIndex           = $request->getParam('play_index');
 
-	my $trackID             = $request->getParam('track_id');
-	my $albumID             = $request->getParam('album_id');
-	my $artistID            = $request->getParam('artist_id');
-	my $genreID             = $request->getParam('genre_id');
-	my $yearID              = $request->getParam('year_id');
-
-	my $goCmd               = $request->getParam('goCmd');
-	my $goMenu              = $request->getParam('goMenu');
-	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
-	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
 	}
@@ -1906,21 +1759,6 @@ sub playlistcontrolCommand {
 	if ($request->paramUndefinedOrNotOneOf($cmd, ['load', 'insert', 'add', 'delete'])) {
 		$request->setStatusBadParams();
 		return;
-	}
-
-	# when playlistmode is on, 'playlistcontrol insert' turns off playlist mode
-	if ( $playlistMode eq 'on' && $cmd eq 'insert' ) {
-		Slim::Player::Playlist::playlistMode($client, 'off');
-		return;
-	}
-	
-	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load' ) {
-		$cmd    = 'insert';
-	}
-	# when playlist mode is off, 'playlistcontrol add' turns on playlistmode
-	if ( $playlistMode eq 'off' && $cmd eq 'add' ) {
-		Slim::Player::Playlist::playlistMode($client, 'on');
 	}
 
 	my $load   = ($cmd eq 'load');
@@ -1947,32 +1785,60 @@ sub playlistcontrolCommand {
 			return;
 		}
 
-		if ( $add || $load || $insert ) {
+		if ( $add || $insert ) {
 			my $token;
 			if ($add) {
 				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
 			} elsif ($insert) {
 				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
-			} else {
-				$token = undef;
 			}
-			if ( defined($token) ) {
-				my $string = $client->string($token, $folder->title);
-				$client->showBriefly({ 
-					'jive' => { 
-						'type'    => 'popupplay',
-						'text'    => [ $string ],
-					}
-				});
-			}
+			my $string = $client->string($token, $folder->title);
+			$client->showBriefly({ 
+				'jive' => { 
+					'type'    => 'popupplay',
+					'text'    => [ $string ],
+				}
+			});
 		} 
 
-		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, $folder->url()]
-		);
+		if ( $load ) {
+	
+			my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+			Slim::Player::Playlist::shuffle($client, 0);
+
+			my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
+				id => $folderId,
+			} );
+
+			main::INFOLOG && $log->info("Playing all in folder, starting with $jumpIndex");
+
+			# filter out folders
+			@{$items} = grep { Slim::Music::Info::isSong($_) }
+			# make sure we get a valid path
+			map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $topLevelObj->path) }
+			@$items;
+
+			main::INFOLOG && $log->info("Load folder playlist, now starting at index: $jumpIndex");
+
+			$client->execute(['playlist', 'clear']);
+			$client->execute(['playlist', 'addtracks', 'listref', $items]);
+			$client->execute(['playlist', 'jump', $jumpIndex]);
+
+			if ($wasShuffled) {
+				$client->execute(['playlist', 'shuffle', 1]);
+			}
+		} else {
+			Slim::Control::Request::executeRequest(
+				$client, ['playlist', $cmd, $folder->url()]
+			);
+		}
+
 		$request->addResult('count', 1);
 		$request->setStatusDone();
 		return;
+
+
+
 	}
 
 	# if loading, first stop & clear everything
@@ -2000,10 +1866,7 @@ sub playlistcontrolCommand {
 		}
 	}
 
-	if (!$playlist_id && $request->getParam('playlist_id')) {
-
-		$playlist_id = $request->getParam('playlist_id');
-	}
+	$playlist_id ||= $request->getParam('playlist_id');
 
 	if ($playlist_id) {
 
@@ -2033,7 +1896,7 @@ sub playlistcontrolCommand {
 			$cmd .= "tracks";
 
 			Slim::Control::Request::executeRequest(
-				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id]
+				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex]
 			);
 
 			$request->addResult( 'count', $playlist->tracks->count() );
@@ -2061,6 +1924,7 @@ sub playlistcontrolCommand {
 		# sort them back!
 		@tracks = sort { $track_ids_order{$a->id()} <=> $track_ids_order{$b->id()} } @rawtracks;
 
+		$artwork = $tracks[0]->album->artwork || 0 if scalar @tracks == 1;
 
 	} else {
 
@@ -2133,15 +1997,8 @@ sub playlistcontrolCommand {
 		$cmd .= "tracks";
 
 		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, 'listRef', \@tracks]
+			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex]
 		);
-	}
-
-	# if music isn't playing, hitting the play button should start playing music
-	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $insert ) {
-		if ( Slim::Player::Source::playmode($client) ne 'play' ) {
-			Slim::Player::Source::playmode($client, 'play');
-		}
 	}
 
 	$request->addResult('count', scalar(@tracks));
@@ -3258,9 +3115,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$terms->{$key} = $value;
 
-			} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
-
-				$terms->{$1} = $2;
 			}
 		}
 	}
@@ -3352,11 +3206,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	}
 
 	# 
-	if (my $fieldKey = $find{'fieldInfo'}) {
-
-		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
-
-	} elsif ($find{'playlist.id'} && !$find{'me.id'}) {
+	if ($find{'playlist.id'} && !$find{'me.id'}) {
 
 		# Treat playlists specially - they are containers.
 		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});

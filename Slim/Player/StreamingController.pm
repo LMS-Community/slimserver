@@ -798,11 +798,24 @@ sub _playersMessage {
 
 	foreach my $client (@{$self->{'players'}}) {
 
+		my ($lines, $overlay);
+
 		my $line2 = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || $url;
+
+		# use full now playing display if NOW_PLAYING message to get overlay
+		if ($message eq 'NOW_PLAYING') {
+			my $songLines = $client->currentSongLines();
+			$lines   = $songLines->{'line'};
+			$overlay = $songLines->{'overlay'};
+		} else {
+			$lines = [ $line1, $line2 ];
+		}
+
+		my $screen = Slim::Buttons::Common::msgOnScreen2($client) ? 'screen2' : 'screen1';
 	
 		# Show an error message
 		$client->showBriefly( {
-			line => [ $line1, $line2 ],
+			$screen => { line => $lines, overlay => $overlay },
 			jive => { type => ($isError ? 'popupplay' : 'song'), text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
 		}, {
 			scroll    => 1,

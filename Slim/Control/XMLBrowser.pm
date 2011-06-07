@@ -31,6 +31,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Music::TitleFormatter;
 #use Slim::Utils::Timers;
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
@@ -42,6 +43,7 @@ sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 
 	main::INFOLOG && $log->info("cliQuery($query)");
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($request->getParamsCopy));
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
@@ -51,75 +53,149 @@ sub cliQuery {
 
 	$request->setStatusProcessing();
 	
-	# cache SBC queries for "Recent Search" menu
-	if (
-		   $request->isQuery([[$query], ['items']]) 
-		&& defined($request->getParam('menu')) 
-		&& defined($request->getParam('search'))
-		&& $request->getParam('cachesearch') # Bug 13044, allow some searches to not be cached
-	) {
-		
-		# make a best effort to make a labeled title for the search
-		my $queryTypes = {
-			rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
-			mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
-			radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
-			slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
-			live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
-			lma		=>	'PLUGIN_LMA_MODULE_NAME',
-		};
-		
-		my $title = $request->getParam('search');
-		
-		if ($queryTypes->{$query}) {
-			$title = $request->string($queryTypes->{$query}) . ": " . $title;
-		}
+	my $itemId     = $request->getParam('item_id');	# get our parameters
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	my $client     = $request->client();
 
-		my $jiveSearchCache = {
-			text     => $title,
-			actions  => {
-				go => {
-					player => 0,
-					cmd => [ $query, 'items' ],
-					params => {
-						'item_id' => $request->getParam('item_id'),
-						menu      => $query,
-						search    => $request->getParam('search'),
-					},
-				},
-			},
-		};
-		
-		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
+	# Bug 14100: sending requests that involve newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	if ( defined $index && $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
 	}
+	if ( defined $quantity && $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
+	
+	my $isPlayCommand = $request->isQuery([[$query], ['playlist']]);
+	
+	# Handle touch-to-play
+	if ($request->getParam('touchToPlay') && !$request->getParam('xmlBrowseInterimCM')
+		&& (!$isPlayCommand || $request->getParam('_method') eq 'play')) {
 
-	my $playlistControlCM = [];
+		$isPlayCommand = 1;
+		
+		# A hack to handle clients that cannot map the 'go' action
+		if (!$request->getParam('_method')) {
+			$request->addParam('_method', 'play');
+			$request->addResult('goNow', 'nowPlaying');
+		}
+		
+		my $playalbum = undef;
+		if ( $client ) {
+			$playalbum = $prefs->client($client)->get('playtrackalbum');
+		}
+	
+		# if player pref for playtrack album is not set, get the old server pref.
+		if ( !defined $playalbum ) {
+			$playalbum = $prefs->get('playtrackalbum');
+		}
+		
+		if ($playalbum && !$request->getParam('touchToPlaySingle')) {
+			$itemId =~ s/(.*)\.(\d+)/$1/;			# strip off last node
+			$request->addParam('playIndex', $2);	# and save in playIndex
+			$request->addParam('item_id', $itemId);
+		}
+		
+	}
+	
+	my %args = (
+		'request' => $request,
+		'client'  => $client,
+		'url'     => $feed,
+		'query'   => $query,
+		'expires' => $expires,
+		'timeout' => 35,
+	);
 
 	# If the feed is already XML data (e.g., local music CMs, favorites menus), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		
-		# Bug 15824-- push playlist control items for favorites item CMs
-		# note: making the judgment to put the playlistControl items in a CM by looking if the command is not '*info' is a hack
-		# 	*info menus need to not get these items though, since they deliver them through their own menus
-		my $localMusicInfoRequest = $request->getRequest(0) =~ /info$/;
-		if ( defined($request->getParam('xmlBrowseInterimCM')) && !$localMusicInfoRequest ) {
-			$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
-		}
-
 		main::DEBUGLOG && $log->debug("Feed is already XML data!");
 		
-		_cliQuery_done( $feed, {
-			'request'    => $request,
-			'client'     => $request->client,
-			'url'        => $feed->{'url'},
-			'query'      => $query,
-			'expires'    => $expires,
-			'playlistControlCM' => $playlistControlCM,
-		} );
+		$args{'url'} = $feed->{'url'};
+		_cliQuery_done( $feed, \%args );
 		return;
 	}
 	
-	my $itemId = $request->getParam('item_id');
+	# Some plugins may give us a callback we should use to get OPML data
+	# instead of fetching it ourselves.
+	if ( ref $feed eq 'CODE' ) {
+
+		my $callback = sub {
+			my $data = shift;
+			my $opml;
+
+			if ( ref $data eq 'HASH' ) {
+				$opml = $data;
+				$opml->{'type'}  ||= 'opml';
+				$opml->{'title'} ||= $data->{name} || $request->getParam('title');
+			} else {
+				$opml = {
+					type  => 'opml',
+					title => $request->getParam('title'),
+					items =>(ref $data ne 'ARRAY' ? [$data] : $data),
+				};
+			}
+
+			_cliQuery_done( $opml, \%args );
+		};
+		
+		my %args = (params => $request->getParamsCopy());
+
+		# If we are getting an intermediate level, then we just need the one item
+		# If we are getting the last level then we need all items if we are doing playall of some kind
+		
+		my $levels = 0;
+		my $nextIndex;
+		if ( defined $itemId && length($itemId) ) {
+			my @index = split(/\./, $itemId);
+			if (length($index[0]) >= 8) {
+				shift @index;	# discard sid
+			}
+			$levels = scalar @index;
+			($nextIndex) = $index[0] =~ /^(\d+)/;
+		}
+		
+		if (defined $index && $quantity && !$levels && !$isPlayCommand) {
+			if (defined $request->getParam('feedMode')) {
+				$args{'index'} = $index;
+				$args{'quantity'} = $quantity;
+			} else {
+				# hack to allow for some CM entries
+				my $j = 10; 
+				$j = $index if ($j > $index);
+				$args{'index'} = $index - $j;
+				$args{'quantity'} = $quantity + $j;
+			}
+		} elsif ($levels) {
+			$args{'index'} = $nextIndex;
+			$args{'quantity'} = 1;
+		}
+		
+		if ($request->getParam('menu')) {
+			if (my $sort = $prefs->get('jivealbumsort')) {
+				$args{'orderBy'} = 'sort:' . $sort;
+			}
+		}
+		
+		
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $feed );
+			$log->debug( "Fetching OPML from coderef $cbname" );
+		}
+
+		$feed->( $client, $callback, \%args);
+		
+		return;
+	}
+
 	
 	if ( $feed =~ /{QUERY}/ ) {
 		# Support top-level search
@@ -130,12 +206,10 @@ sub cliQuery {
 		}
 		
 		$feed =~ s/{QUERY}/$query/g;
+
+		$args{'url'} = $feed;
 	}
 	
-	if ( defined($request->getParam('xmlBrowseInterimCM')) ) {
-		$playlistControlCM = _playlistControlContextMenu({ request => $request, query => $query });
-	}
-
 	# Lookup this browse session in cache if user is browsing below top-level
 	# This avoids repated lookups to drill down the menu
 	if ( $itemId && $itemId =~ /^([a-f0-9]{8})/ ) {
@@ -150,20 +224,11 @@ sub cliQuery {
 			$request->addParam( item_id => "$itemId" ); # stringify for JSON
 		}
 		
-
 		my $cache = Slim::Utils::Cache->new;
 		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached session $sid" );
 				
-			_cliQuery_done( $cached, {
-				'request' => $request,
-				'client'  => $request->client,
-				'url'     => $feed,
-				'query'   => $query,
-				'expires' => $expires,
-				'playlistControlCM' => $playlistControlCM,
-				'timeout' => 35,
-			} );
+			_cliQuery_done( $cached, \%args );
 			return;
 		}
 	}
@@ -173,61 +238,73 @@ sub cliQuery {
 	Slim::Formats::XML->getFeedAsync(
 		\&_cliQuery_done,
 		\&_cliQuery_error,
-		{
-			'request'    => $request,
-			'client'     => $request->client,
-			'url'        => $feed,
-			'query'      => $query,
-			'expires'    => $expires,
-			'timeout'    => 35,
-			'playlistControlCM' => $playlistControlCM,
-#			'forceTitle' => $forceTitle,
-		}
+		\%args,
 	);
 
 }
 
+my @mapAttributes = (
+	{
+		key => 'DEFAULT',
+		func => sub {
+			my ($value, @args) = @_;
+			return sprintf('%s: %s', $args[0], $value);
+		},
+	},
+	{key => 'name', args => ['TITLE'],},
+	{key => 'url', args => ['URL'],
+		condition => sub {$_[0] && !ref$_[0]},
+	},
+	{key => 'description', args => ['DESCRIPTION'],},
+	{key => 'bitrate', args => ['BITRATE', 'KBPS'],
+		func => sub {
+			my ($value, @args) = @_;
+			return sprintf('%s: %s%s', $args[0], $value, $args[1]);
+		},
+	},
+	{key => 'duration', args => ['LENGTH'],
+		func => sub {
+			my ($value, @args) = @_;
+			return sprintf('%s: %s:%02s', int($value / 60), $value % 60);
+		},
+	},
+	{key => 'listeners', args => ['NUMBER_OF_LISTENERS'],},		# Shoutcast
+	{key => 'current_track', args => ['NOW_PLAYING'],},			# Shoutcast
+	{key => 'genre', args => ['GENRE'],},						# Shoutcast
+	{key => 'source', args => ['SOURCE'],},						# LMA
+);
+
 sub _cliQuery_done {
 	my ( $feed, $params ) = @_;
 
-	main::INFOLOG && $log->info("_cliQuery_done()");
-
 	my $request    = $params->{'request'};
 	my $query      = $params->{'query'};
-	my $expires    = $params->{'expires'};
-	my $timeout    = $params->{'timeout'};
-	my $playlistControlCM = $params->{'playlistControlCM'} || [];
 #	my $forceTitle = $params->{'forceTitle'};
+	my $client     = $request->client();
 	my $window;
 	
+	main::INFOLOG && $log->info("_cliQuery_done(): ", $request->getRequestString());
+
 	my $cache = Slim::Utils::Cache->new;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
+	my $xmlBrowseInterimCM = $request->getParam('xmlBrowseInterimCM');
+	my $xmlbrowserPlayControl = $request->getParam('xmlbrowserPlayControl');
 	
 	if ($request->isQuery([[$query], ['playlist']])) {
 		$isPlaylistCmd = 1;
 	}
 	elsif ($request->isQuery([[$query], ['items']])) {
-		$isItemQuery = 1;
+		if ($request->getParam('touchToPlay') && !$xmlBrowseInterimCM) {
+			$isPlaylistCmd = 1;
+		} else {
+			$isItemQuery = 1;
+		}
 	}
 
 	# get our parameters
 	my $index      = $request->getParam('_index') || 0;
 	my $quantity   = $request->getParam('_quantity') || 0;
-
-
-	# Bug 14100: sending requests that involve newWindow param from SP side results in no
-	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
-	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
-	# to the $request params
-	if ( $index =~ /:/ ) {
-		$request->addParam(split /:/, $index);
-		$index = 0;
-	}
-	if ( $quantity =~ /:/ ) {
-		$request->addParam(split /:/, $quantity);
-		$quantity = 200;
-	}
 	my $search     = $request->getParam('search');
 	my $want_url   = $request->getParam('want_url') || 0;
 	my $item_id    = $request->getParam('item_id');
@@ -237,7 +314,17 @@ sub _cliQuery_done {
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $feedMode = defined $request->getParam('feedMode');
 	
+	my $playalbum = undef;
+	if ( $client ) {
+		$playalbum = $prefs->client($client)->get('playtrackalbum');
+	}
+	# if player pref for playtrack album is not set, get the old server pref.
+	if ( !defined $playalbum ) {
+		$playalbum = $prefs->get('playtrackalbum');
+	}
+						
 	# Session ID for this browse session
  	my $sid;
 	
@@ -264,19 +351,13 @@ sub _cliQuery_done {
 	}
 	
 	my $subFeed = $feed;
+	$subFeed->{'offset'} ||= 0;
 	
-#	warn Data::Dump::dump($feed) . "\n";
-
 	my @crumbIndex = $sid ? ( $sid ) : ();
 	
 	# Add top-level search to index
-	if ( $search && !scalar @index ) {
-		if ( $sid ) {
-			@crumbIndex = ( $sid . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
-		}
-		else {
-			@crumbIndex = ( '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
-		}
+	if ( defined $search && !scalar @index ) {
+		@crumbIndex = ( ($sid || '') . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" ) );
 	}
 	
 	if ( $sid ) {
@@ -285,11 +366,8 @@ sub _cliQuery_done {
 		# cachetime is only set by parsers which known the content is dynamic and so can't be cached
 		# for all other cases we always cache for CACHE_TIME to ensure the menu stays the same throughout the session
 		my $cachetime = defined $feed->{'cachetime'} ? $feed->{'cachetime'} : CACHE_TIME;
-
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Caching session $sid for $cachetime" );
-		
 		eval { $cache->set( "xmlbrowser_$sid", $feed, $cachetime ) };
-
 		if ( $@ && $log->is_debug ) {
 			$log->debug("Session not cached: $@");
 		}
@@ -299,21 +377,24 @@ sub _cliQuery_done {
 
 		# descend to the selected item
 		my $depth = 0;
+		
 		for my $i ( @index ) {
 			main::DEBUGLOG && $log->debug("Considering item $i");
 
 			$depth++;
 			
 			my ($in) = $i =~ /^(\d+)/;
-			$subFeed = $subFeed->{'items'}->[$in];
-
+			$subFeed = $subFeed->{'items'}->[$in - $subFeed->{'offset'}];
+			$subFeed->{'offset'} ||= 0;
+			
+			push @crumbIndex, $i;
+			
+			$search = $subFeed->{'searchParam'} if (defined $subFeed->{'searchParam'});
+			
 			# Add search query to crumb list
-			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
+			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 				# Escape periods in the search string
-				push @crumbIndex, $i . '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
-			}
-			else {
-				push @crumbIndex, $i;
+				@crumbIndex[-1] .= '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
 			}
 			
 			# Change URL if there is a play attribute and it's the last item
@@ -349,14 +430,21 @@ sub _cliQuery_done {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
+			if ( (!$subFeed->{'type'} || ($subFeed->{'type'} ne 'audio')) && defined $subFeed->{'url'} && !$subFeed->{'fetched'}
+
+				# Only fetch playlist-with-parser types if playing - so favorites get the unsubstituted (long-lived) URL
+				#
+				# Unfortunately, we cannot do this because playtrackalbum & touchToPlay logic interfers by
+				# stripping the last component off the hierarchy.	
+				# && !($isItemQuery && $subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && $subFeed->{'parser'})
+			) {
 				
 				if ( $i =~ /(?:\d+)?_(.+)/ ) {
 					$search = uri_unescape($1);
 				}
 				
 				# Rewrite the URL if it was a search request
-				if ( $subFeed->{type} && $subFeed->{type} eq 'search' ) {
+				if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 					$subFeed->{url} =~ s/{QUERY}/$search/g;
 				}
 				
@@ -370,51 +458,72 @@ sub _cliQuery_done {
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 					'currentIndex' => \@crumbIndex,
 					'request'      => $request,
-					'client'       => $request->client,
+					'client'       => $client,
 					'query'        => $query,
-					'expires'      => $expires,
-					'timeout'      => $timeout,
-					'playlistControlCM' => $playlistControlCM,
+					'expires'      => $params->{'expires'},
+					'timeout'      => $params->{'timeout'},
 				};
 				
-				# Check for a cached version of this subfeed URL
-				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'}, $request->client ) ) {
-					
-					main::DEBUGLOG && $log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
-					_cliQuerySubFeed_done( $cached, $args );
-				}
-				
-				else {
+				if ( ref $subFeed->{url} eq 'CODE' ) {
 					
 					# Some plugins may give us a callback we should use to get OPML data
 					# instead of fetching it ourselves.
-					if ( ref $subFeed->{url} eq 'CODE' ) {
-						my $callback = sub {
-							my $menu = shift;
+					my $callback = sub {
+						my $data = shift;
+						my $opml;
 
-							if ( ref $menu ne 'ARRAY' ) {
-								$menu = [ $menu ];
-							}
-
-							my $opml = {
+						if ( ref $data eq 'HASH' ) {
+							$opml = $data;
+							$opml->{'type'}  ||= 'opml';
+							$opml->{'title'} = $args->{feedTitle};
+						} else {
+							$opml = {
 								type  => 'opml',
 								title => $args->{feedTitle},
-								items => $menu,
+								items => (ref $data ne 'ARRAY' ? [$data] : $data),
 							};
-
-							_cliQuerySubFeed_done( $opml, $args );
-						};
-						
-						my $pt = $subFeed->{passthrough} || [];
-
-						if ( main::DEBUGLOG && $log->is_debug ) {
-							my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
-							$log->debug( "Fetching OPML from coderef $cbname" );
 						}
-
-						return $subFeed->{url}->( $request->client, $callback, @{$pt} );
+						
+						_cliQuerySubFeed_done( $opml, $args );
+					};
+					
+					my $pt = $subFeed->{passthrough} || [];
+					my %args = (params => $feed->{'query'});
+					
+					if (defined $search && $subFeed->{type} && ($subFeed->{type} eq 'search' || defined $subFeed->{'searchParam'})) {
+						$args{'search'} = $search;
 					}
-								
+					
+					# If we are getting an intermediate level, then we just need the one item
+					# If we are getting the last level then we need all items if we are doing playall of some kind
+					
+					if (defined $index && $quantity && $depth == $levels && !$isPlaylistCmd) {
+						if ($feedMode) {
+							$args{'index'} = $index;
+							$args{'quantity'} = $quantity;
+						} else {
+							# hack to allow for some CM entries
+							my $j = 10; 
+							$j = $index if ($j > $index);
+							$args{'index'} = $index - $j;
+							$args{'quantity'} = $quantity + $j;
+						}
+					} elsif ($depth < $levels) {
+						$args{'index'} = $index[$depth];
+						$args{'quantity'} = 1;
+					}
+					
+					if ( main::DEBUGLOG && $log->is_debug ) {
+						my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
+						$log->debug( "Fetching OPML from coderef $cbname" );
+					}
+
+					$subFeed->{url}->( $client, $callback, \%args, @{$pt});
+				}
+				
+				# No need to check for a cached version of this subfeed URL as getFeedAsync() will do that
+
+				else {				
 					main::DEBUGLOG && $log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
 
 					Slim::Formats::XML->getFeedAsync(
@@ -437,72 +546,46 @@ sub _cliQuery_done {
 					)
 				) {
 				
+				if ($feedMode) {
+					$request->setRawResults($feed);
+					$request->setStatusDone();
+					return;
+				}
+				
 				main::DEBUGLOG && $log->debug("Adding results for audio or enclosure subfeed");
 
-				if ($menuMode) {
-
-					# decide what is the next step down
-					# generally, we go nowhere after this, so we get menu:nowhere...
-					# build the base element
-					my $base = {
-						'actions' => {
-							# no go, we ain't going anywhere!
-					
-							# we play/add the current track id
-							'play' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'play'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-								'nextWindow' => 'nowPlaying',
-							},
-							'add' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'add'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-							},
-							'add-hold' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'insert'],
-								'params' => {
-									'item_id' => "$item_id", # stringify for JSON
-								},
-							},
-						},
-					};
-					$request->addResult('base', $base);
-				}
-
-				$request->addResult('count', 1) if !$menuMode;
 				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
 				
 				my $cnt = 0;
 
 				if ($menuMode) {
-					for my $eachmenu (@$playlistControlCM) {
-						main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
-						$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-						$cnt++;
+					if ($xmlBrowseInterimCM) {
+						for my $eachmenu ( @{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) } ) {
+							main::INFOLOG && $log->info("adding playlist Control CM item $cnt");
+							$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+							$cnt++;
+						}
 					}
+				} # $menuMode
+				
+				else {
+					$request->addResult('count', 1);
 				}
-
+				
 				if ($valid) {
 					
 					my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 					$request->addResult('offset', $start) if $menuMode;
 
-					# create an ordered hash to store this stuff...
-					tie (my %hash, "Tie::IxHash");
+					my %hash;
+					# create an ordered hash to store this stuff... except not for menuMode
+					tie (%hash, "Tie::IxHash") unless $menuMode;
 
 					$hash{'id'} = "$item_id"; # stringify for JSON
 					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
 					$hash{'title'} = $subFeed->{'title'} if defined $subFeed->{'title'};
 					
-					my $hasAudio = defined(hasAudio($subFeed)) + 0;
-					$hash{'isaudio'} = $hasAudio;				
+					$hash{'isaudio'} = defined(hasAudio($subFeed)) + 0;				
 				
 					foreach my $data (keys %{$subFeed}) {
 						
@@ -528,173 +611,19 @@ sub _cliQuery_done {
 										
 					if ($menuMode) {
 						
-						# setup hash for different items between play and add
-						my %items = (
-							'play' => {
-								'string'  => $request->string('PLAY'),
-								'style'   => 'itemplay',
-								'cmd'     => 'play',
-							},
-							'add' => {
-								'string'  => $request->string('ADD'),
-								'style'   => 'itemadd',
-								'cmd'     => 'add',
-							},
-						);
-						
-					if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
-						for my $mode ( 'play', 'add' ) {
-							my $actions = {
-								'do' => {
-									'player' => 0,
-									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
-									'params' => {
-										'item_id' => "$item_id", # stringify for JSON
-									},
-									'nextWindow' => 'parent',
-								},
-								'play' => {
-									'player' => 0,
-									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
-									'params' => {
-										'item_id' => "$item_id", # stringify for JSON
-									},
-								},
-								# add always adds
-								'add' => {
-									'player' => 0,
-									'cmd'    => [$query, 'playlist', 'add'],
-									'params' => {
-										'item_id' => "$item_id", # stringify for JSON
-									},
-								},
-								'add-hold' => {
-									'player' => 0,
-									'cmd'    => [$query, 'playlist', 'insert'],
-									'params' => {
-										'item_id' => "$item_id", # stringify for JSON
-									},
-								},						};
-							$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
-							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-							$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
-							$cnt++;
-						}
-					}
-						
-						if ( my $title = $hash{name} ) {
-							my $text = $request->string('TITLE') . ": $title";
+						foreach my $att (@mapAttributes[1..$#mapAttributes]) {
+							my $key = $hash{$att->{'key'}};
+							next unless (defined $key && ($att->{'condition'} ? $att->{'condition'}->($key) : $key));
+							my $func = $att->{'func'} || $mapAttributes[0]->{'func'};
+							my $text = $func->($key, map {$request->string($_)} @{$att->{'args'}});
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
-						if ( my $url = $hash{url} ) {
-							my $text = $request->string('URL') . ": $url";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $desc = $hash{description} ) {
-							my $text = $request->string('DESCRIPTION') . ": $desc";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-
-						if ( my $bitrate = $hash{bitrate} ) {
-							my $text = $request->string('BITRATE') . ": $bitrate " . $request->string('KBPS');
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $duration = $hash{duration} ) {
-							$duration = sprintf('%s:%02s', int($duration / 60), $duration % 60);
-							my $text = $request->string('LENGTH') . ": $duration";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $listeners = $hash{listeners} ) {
-							# Shoutcast
-							my $text = $request->string('NUMBER_OF_LISTENERS') . ": $listeners";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $current_track = $hash{current_track} ) {
-							# Shoutcast
-							my $text = $request->string('NOW_PLAYING') . ": $current_track";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $genre = $hash{genre} ) {
-							# Shoutcast
-							my $text = $request->string('GENRE') . ": $genre";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-						
-						if ( my $source = $hash{source} ) {
-							# LMA
-							my $text = $request->string('SOURCE') . ": $source";
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
-							$cnt++;
-						}
-					if (! defined($request->getParam('xmlBrowseInterimCM')) ) {
-						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
-							# first see if $url is already a favorite
-							my $action = 'add';
- 							my $favIndex = undef;
-							my $token = 'JIVE_SAVE_TO_FAVORITES';
-							if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-								my $favs = Slim::Utils::Favorites->new($request->client);
-								$favIndex = $favs->findUrl($url);
-								if (defined($favIndex)) {
-									$action = 'delete';
-									$token = 'JIVE_DELETE_FROM_FAVORITES';
-								}
-							}
-							my $actions = {
-								'go' => {
-									player => 0,
-									cmd    => [ 'jivefavorites', $action ],
-									params => {
-										title   => $title,
-										url     => $url,
-										isContextMenu => 1,
-									},
-								},
-							};
-							$actions->{'go'}{'params'}{'icon'} = $hash{image} if defined($hash{image});
-							$actions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
-							my $string = $request->string($token);
-							$request->addResultLoop($loopname, $cnt, 'text', $string);
-							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-							$request->addResultLoop($loopname, $cnt, 'style', 'item');
-							$cnt++;
-						}
-					}
-
 						$request->addResult('count', $cnt);
-					}
+					} # $menuMode
 					
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -702,19 +631,36 @@ sub _cliQuery_done {
 				}
 				$request->setStatusDone();
 				return;
-			}
+			} # $isItemQuery && (audio || enclosure || description)
 		}
 	}
-
+	
+	if ($feedMode) {
+		$request->setRawResults($feed);
+		$request->setStatusDone();
+		return;
+	}
+				
 	if ($isPlaylistCmd) {
 
 		# get our parameters
-		my $client = $request->client();
 		my $method = $request->getParam('_method');
+		
+		my $playIndex = $request->getParam('playIndex');
+		
+		# playIndex will only be defined if we modified the item-Id earlier, for touchToPlay
+		if ($request->getParam('touchToPlay') && defined($playIndex)) {
+			if ($method =~ /^(add|play)$/ && $subFeed->{'items'}->[$playIndex]->{playall}) {
+				$method .= 'all';
+			} else {
+				$subFeed = $subFeed->{'items'}->[$playIndex];
+			}
+		}
 
 		main::INFOLOG && $log->info("Play an item ($method).");
 
 		if ($client && $method =~ /^(add|addall|play|playall|insert|load)$/i) {
+
 			# single item
 			if ((defined $subFeed->{'url'} && $subFeed->{'type'} eq 'audio' || defined $subFeed->{'enclosure'})
 				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})
@@ -747,6 +693,9 @@ sub _cliQuery_done {
 				
 					$client->execute([ 'playlist', $method, $url ]);
 				}
+				else {
+					main::INFOLOG && $log->info("No valid URL found for: ", $title);
+				}
 			}
 			
 			# play all streams of an item (or one stream if pref is unset)
@@ -764,10 +713,14 @@ sub _cliQuery_done {
 					elsif ( $item->{'play'} ) {
 						$url = $item->{'play'};
 					}
-
-					# Don't add non-audio items
-					next if !$url;
 					
+					# Don't add non-audio items
+					# In touch-to-play, only add items with the playall attribute
+					if (!$url || defined($playIndex) && !$item->{'playall'}) {
+						$playIndex-- if defined($playIndex) && $playIndex >= scalar @urls;
+						next;
+					}
+
 					# Set metadata about this URL
 					Slim::Music::Info::setRemoteMetadata( $url, {
 						title   => $item->{'name'} || $item->{'title'},
@@ -783,144 +736,232 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					if ( $method =~ /play|load/i ) {
-						$client->execute([ 'playlist', 'clear' ]);
-					}
-
-					my $play_index = $request->getParam('play_index') || 0;
-
 					my $cmd;
-					if ($method =~ /add/) {
+					if ( $method =~ /play|load/i ) {
+						$cmd = 'loadtracks';
+					} elsif ($method =~ /add/) {
 						$cmd = 'addtracks';
-					}
-					else {
+						$playIndex = undef;
+					} else {
 						$cmd = 'inserttracks';
+						$playIndex = undef;
 					}
 		
 					if ( main::INFOLOG && $log->is_info ) {
 						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					}
 	
-					$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+					$client->execute([ 'playlist', $cmd, 'listref', \@urls, undef, $playIndex ]);
 
 					# if we're adding or inserting, show a showBriefly
 					if ( $method =~ /add/ || $method eq 'insert' ) {
-						my $icon = $request->getParam('icon');
-						my $title = $request->getParam('favorites_title');
+						my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
+						my $title = $subFeed->{'name'} || $subFeed->{'title'};
 						_addingToPlaylist($client, $method, $title, $icon);
-					# if not, we jump to the correct track in the list
-					} else {
-						$client->execute([ 'playlist', 'jump', $play_index ]);
 					}
 				}
+				else {
+					main::INFOLOG && $log->info("No valid URL found for: ", ($subFeed->{'name'} || $subFeed->{'title'}));
+				}
+				
 			}
 		}
 		else {
 			$request->setStatusBadParams();
 			return;
 		}
-	}	
+	} # ENDIF $isPlaylistCmd
 
 	elsif ($isItemQuery) {
 
 		main::INFOLOG && $log->info("Get items.");
 		
-		# Bug 7024, display an "Empty" item instead of returning an empty list
-		if ( $menuMode && ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) ) {
-			$subFeed->{items} ||= [];
-			push @{ $subFeed->{items} }, {
-				type => 'text',
-				name => $request->string('EMPTY'),
-			};
-		}
-	
-		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
+		my $items = $subFeed->{'items'};
+		my $count = $subFeed->{'total'};;
+		$count ||= defined $items ? scalar @$items : 0;
 		
 		# now build the result
 	
 		my $hasImage = 0;
 		my $windowStyle;
-		my $play_index = 0;
+		my $presetFavSet = 0;
+		my $totalCount = $count;
+		my $allTouchToPlay = 1;
+		my $defeatDestructiveTouchToPlay = _defeatDestructiveTouchToPlay($request, $client);
+		my %actionParamsNeeded;
 		
-		if ($count) {
+		if ($menuMode && defined $xmlbrowserPlayControl) {
+
+			$totalCount = 0;
+			my $i = $xmlbrowserPlayControl - $subFeed->{'offset'};
+			if ($i < 0 || $i > $count) {
+				$log->error("Requested item index $xmlbrowserPlayControl out of range: ",
+					$subFeed->{'offset'}, '..', $subFeed->{'offset'} + $count -1);
+			} else {
+				my $item = $items->[$i];
+				for my $eachmenu (@{ 
+					_playlistControlContextMenu({
+						request     => $request,
+						query       => $query,
+						item        => $item,
+						subFeed     => $subFeed,
+						noFavorites => 1,
+						subItemId   => $xmlbrowserPlayControl,
+						playalbum   => 1,	# Allways add play-all item
+					})
+				})
+				{
+					$request->setResultLoopHash('item_loop', $totalCount, $eachmenu);
+					$totalCount++;
+				}
+				
+			}
+			$request->addResult('offset', 0);
+		}
+			
+		elsif ($menuMode || $count || $xmlBrowseInterimCM) {
 		
-			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-		
+			# Bug 7024, display an "Empty" item instead of returning an empty list
+			if ( $menuMode && !$count && !$xmlBrowseInterimCM) {
+				$items = [ { type => 'text', name => $request->string('EMPTY') } ];
+				$totalCount = $count = 1;
+			}
+			
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
 
 			if ($menuMode) {
-				for my $eachmenu (@$playlistControlCM) {
-					$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-					$cnt++;
-					$count++;
+
+				$request->addResult('offset', $index);
+
+				my $firstChunk = !$index;
+				if ($xmlBrowseInterimCM && !$subFeed->{'menuComplete'}) {
+					for my $eachmenu (@{ _playlistControlContextMenu({ request => $request, query => $query, item => $subFeed }) }) {
+						$totalCount = _fixCount(1, \$index, \$quantity, $totalCount);
+						
+						# Only add them the first time
+						if ($firstChunk) {
+							$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+							$cnt++;
+						}
+					}
 				}
+				
 			}
 
-			$request->addResult('offset', $start) if $menuMode;
-
+			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+		
 			if ($valid) {
+				
+				my $feedActions = $subFeed->{'actions'};
 				
 				# Title is preferred here as it will contain the real title from the subfeed,
 				# whereas name is the title of the menu item that led to this submenu and may
 				# not always match
-				$request->addResult( 'title', $subFeed->{'title'} || $subFeed->{'name'} );
+				if (my $title = $subFeed->{'title'} || $subFeed->{'name'}) {
+					if ($menuMode && $subFeed->{'name2'}) {
+						$title .= "\n" . $subFeed->{'name2'};
+					}
+					$request->addResult( 'title', $title );
+				}
 				
 				# decide what is the next step down
 				# we go to xxx items from xx items :)
 				my $base; my $params = {};
+				
 				if ($menuMode) {
-					# build the base element
-					$params = {
-						'menu' => $query,
-					};
-				
-					if ( $url ) {
-						$params->{'url'} = $url;
-					}
+					if (!$feedActions->{'allAvailableActionsDefined'}) {
+						# build the default base element
+						$params = {
+							'menu' => $query,
+						};
 					
-					if ( $trackId ) {
-						$params->{'track_id'} = $trackId;
-					}
+						if ( $url ) {
+							$params->{'url'} = $url;
+						}
+						
+						if ($feed->{'query'}) {
+							$params = {%$params, %{$feed->{'query'}}};
+						}
+						elsif ( $trackId ) {
+							$params->{'track_id'} = $trackId;
+						}
 				
-					$base = {
-						'actions' => {
-							'go' => {
-								'cmd' => [ $query, 'items' ],
-								'params' => $params,
-								'itemsParams' => 'params',
-							},
-							'play' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'play'],
-								'itemsParams' => 'params',
-								'params' => $params,
-								'nextWindow' => 'nowPlaying',
-							},
-							'add' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'add'],
-								'itemsParams' => 'params',
-								'params' => $params,
-							},
-							'add-hold' => {
-								'player' => 0,
-								'cmd' => [$query, 'playlist', 'insert'],
-								'itemsParams' => 'params',
-								'params' => $params,
-							},
-							'more' => {
-								'player' => 0,
-								'cmd' => [ $query, 'items' ],
-								'itemsParams' => 'params',
-								'params' => $params,
-								window => {
-									isContextMenu => 1,
+						$base = {
+							'actions' => {
+								'go' => {
+									'cmd' => [ $query, 'items' ],
+									'params' => $params,
+									'itemsParams' => 'params',
+								},
+								'play' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'play'],
+									'itemsParams' => 'params',
+									'params' => $params,
+									'nextWindow' => 'nowPlaying',
+								},
+								'add' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'add'],
+									'itemsParams' => 'params',
+									'params' => $params,
+								},
+								'add-hold' => {
+									'player' => 0,
+									'cmd' => [$query, 'playlist', 'insert'],
+									'itemsParams' => 'params',
+									'params' => $params,
+								},
+								'more' => {
+									player      => 0,
+									cmd         => [ $query, 'items' ],
+									itemsParams => 'params',
+									params      => $params,
+									window      => {isContextMenu => 1},
 								},
 							},
-						},
+						};
+					}
+					
+					if (my $feedActions = $subFeed->{'actions'}) {
+						my $n = 0;
+						
+						my $baseAction;
+						
+						if ($baseAction = _makeAction($feedActions, 'info', \%actionParamsNeeded, 1, 1)) {
+							$base->{'actions'}->{'more'} = $baseAction; $n++;
+						}
+						if ($baseAction = _makeAction($feedActions, 'items', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'go'} = $baseAction; $n++;
+						}
+						if ( $playalbum && ($baseAction = _makeAction($feedActions, 'playall', \%actionParamsNeeded, 1, 0, 'nowPlaying')) ) {
+							$base->{'actions'}->{'play'} = $baseAction; $n++;
+						} elsif (my $baseAction = _makeAction($feedActions, 'play', \%actionParamsNeeded, 1, 0, 'nowPlaying')) {
+							$base->{'actions'}->{'play'} = $baseAction; $n++;
+						}
+						if ( $playalbum && ($baseAction = _makeAction($feedActions, 'addall', \%actionParamsNeeded, 1)) ) {
+							$base->{'actions'}->{'add'} = $baseAction; $n++;
+						} elsif (my $baseAction = _makeAction($feedActions, 'add', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add'} = $baseAction; $n++;
+						}
+						if ($baseAction = _makeAction($feedActions, 'insert', \%actionParamsNeeded, 1)) {
+							$base->{'actions'}->{'add-hold'} = $baseAction; $n++;
+						}
+						
+						if ($n >= 5) {
+							$feedActions->{'allAvailableActionsDefined'} = 1;
+						}
+					}
+					
+					$base->{'actions'}->{'playControl'} = {
+						player      => 0,
+						window      => {isContextMenu => 1},
+						cmd         => [map {$request->getRequest($_)} (0 .. ($request->getRequestCount()-1))],
+						itemsParams => 'playControlParams',
+						params      => $request->getParamsCopy(),
 					};
-                			$base->{'actions'} = _jivePresetBase($base->{'actions'});
+					
 					$request->addResult('base', $base);
 				}
 
@@ -928,7 +969,7 @@ sub _cliQuery_done {
 				# include image and caption data
 				if ( $request->getParam('slideshow') ) {
 					my $images = [];
-					for my $item ( @{ $subFeed->{items} } ) {
+					for my $item ( @$items ) {
 						next unless $item->{image};
 						push @{$images}, {
 							image   => $item->{image},
@@ -943,50 +984,50 @@ sub _cliQuery_done {
 					return;
 				}
 
-				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+				my $itemIndex = $start - 1;
+				my $format  = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+								
+				$start -= $subFeed->{'offset'};
+				$end   -= $subFeed->{'offset'};
+				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'}, ' quantity=', scalar @$items);
+				
+				my $baseId = scalar @crumbIndex ? join('.', @crumbIndex, '') : '';
+				for my $item ( @$items[$start..$end] ) {
+					$itemIndex++;
 					
-					# Bug 15343, If we're adding items above in a context menu, we have to adjust our index values
-					if ( my $cmCount = scalar @{$playlistControlCM} ) {
-						$item->{_slim_id} = $start + $cnt - $cmCount;
-					}
-									
-					# create an ordered hash to store this stuff...
-					tie my %hash, "Tie::IxHash";
+					my $id = $baseId . $itemIndex;
 					
-					$hash{id}    = join('.', @crumbIndex, defined $item->{_slim_id} ? $item->{_slim_id} : $start + $cnt);
-					$hash{name}  = $item->{name}  if defined $item->{name};
-					$hash{type}  = $item->{type}  if defined $item->{type};
-					$hash{title} = $item->{title} if defined $item->{title};
-					$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
-					$hash{image} = $item->{image} if defined $item->{image};
-
-					my $hasAudio = defined(hasAudio($item)) + 0;
-					$hash{isaudio} = $hasAudio;
-					my $touchToPlay = defined(touchToPlay($item)) + 0;
-					
-					# Bug 7684, set hasitems to 1 if any of the following are true:
-					# type is not text or audio
-					# items array contains items
-					my $hasItems = 0;
-					
-					if ( !defined $item->{type} || $item->{type} !~ /^(?:text|audio)$/i ) {
-						$hasItems = 1;
-					}
-					elsif ( ref $item->{items} eq 'ARRAY' ) {
-						$hasItems = scalar @{ $item->{items} };
+					my $name;
+					if ($name = $item->{name}) {
+						if (defined $item->{'label'}) {
+							$name = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $name;
+						} elsif (($item->{'hasMetadata'} || '') eq 'track') {
+							$name = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item) || $name;
+						}
 					}
 					
-					$hash{hasitems} = $hasItems;
-
+					
 					if ($menuMode) {
+						my %hash;
+						
+						$hash{'type'}   = $item->{'type'}  if defined $item->{'type'};
+										# search|text|textarea|audio|playlist|link|opml|replace|redirect|radio
+										# radio is a radio-button selection item, not an internet-radio station 
+						my $nameOrTitle = $name || $item->{title} || '';
+						my $touchToPlay = defined(touchToPlay($item)) + 0;
+						
 						# if showBriefly is 1, send the name as a showBriefly
-						if ($item->{showBriefly} and ( $hash{name} || $hash{title} ) ) {
-							$request->client->showBriefly({ 
+						if ($item->{showBriefly} and ( $nameOrTitle ) ) {
+							$client->showBriefly({ 
 										'jive' => {
 											'type'    => 'popupplay',
-											'text'    => [ $hash{name} || $hash{title} ],
+											'text'    => [ $nameOrTitle ],
 										},
-									});
+									}) if $client;
+
+							# Skip this item
+							$totalCount--;
+
 							next;
 						}
 
@@ -996,50 +1037,49 @@ sub _cliQuery_done {
 						}
 									
 						# wrap = 1 and type = textarea render in the single textarea area above items
-						my $textarea;
-						if ( $item->{wrap} && $item->{name} ) {
+						if ( $item->{name} && $item->{wrap} || $item->{type} && $item->{type} eq 'textarea' ) {
 							$window->{textarea} = $item->{name};
-							$textarea = 1;
-						}
-						
-						if ( $item->{type} && $item->{type} eq 'textarea' ) {
-							$window->{textarea} = $item->{name};
-							$textarea = 1;
-						}
-						
-						if ( $textarea ) {
+
 							# Skip this item
-							$count--;
+							$totalCount--;
 							
-							# adjust item_id offsets because we have removed an item
-							my $cnt2 = 0;
-							for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
-								$subitem->{_slim_id} = $cnt2++;
-							}
-							
-							# If this is the only item, add an empty item list
+							# In case this is the only item, add an empty item list
 							$request->setResultLoopHash($loopname, 0, {});
 							
 							next;
 						}
 						
-						# Bug 13175, support custom windowStyle
+						# Avoid including album tracks and the like in context-menus
+						if ( $xmlBrowseInterimCM &&
+							($item->{play} || ($item->{type} && ($item->{type} eq 'audio')))
+							# Cannot do this if we might screw up paging - silly but unlikely
+							&& $totalCount < scalar($quantity) )
+						{
+							# Skip this item
+							$totalCount--;
+							next;
+						}
+						
+						# Bug 13175, support custom windowStyle - this is really naff
 						if ( $item->{style} ) {
 							$windowStyle = $item->{style};
 						}
 						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
 						if ( $item->{autoplays} ) {
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+							$hash{'style'} = 'itemplay';
 						}
 						
-						# Use 2-line icon_list style if line1/line2 values are provided
-						if ( $item->{line2} ) {
-							$windowStyle = 'icon_list';
-							$hash{name} = ( $item->{line1} || $hash{name} || $hash{title} ) . "\n" . $item->{line2};
+						my $itemText = $nameOrTitle;
+						if ($item->{'name2'}) {
+							$itemText .= "\n" . $item->{'name2'};
+							$windowStyle = 'icon_list' if !$windowStyle;
 						}
-
-						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
+						elsif ( $item->{line2} ) {
+							$windowStyle = 'icon_list';
+							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $item->{line2};
+						}
+						$hash{'text'} = $itemText;
 						
 						my $isPlayable = (
 							   $item->{play} 
@@ -1047,71 +1087,48 @@ sub _cliQuery_done {
 							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
 						);
 						
-						my $itemParams = {};
-						my $id = $hash{id};
-						
-						if ( !$item->{type} || $item->{type} ne 'text' ) {							
-							$itemParams = {
-								item_id => "$id", #stringify, make sure it's a string
-							};
+						if ($isPlayable) {
+							my $presetParams = _favoritesParams($item);
+							if ($presetParams && !$xmlBrowseInterimCM) {
+								$hash{'presetParams'} = $presetParams;
+								$presetFavSet = 1;
+							}
 						}
 
-						my $presetFavSet     = undef;
-						my $favorites_url    = $item->{play} || $item->{url};
-						my $favorites_title  = $item->{title} || $item->{name};
-						my $favorites_type   = $item->{play} ? 'audio' : ($item->{type} || 'audio');
-						
-						if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
-							$itemParams->{favorites_url}   = $favorites_url;
-							$itemParams->{favorites_title} = $favorites_title;
-							$itemParams->{favorites_type}  = $favorites_type;
-							
-							if ( $item->{image} ) {
-								$itemParams->{icon} = $item->{image};
-							}
-							if ( $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
-								$itemParams->{favorites_url} = $item->{playlist};
-							}
-							$itemParams->{type} = $item->{type} if $item->{type};
-							$itemParams->{parser} = $item->{parser} if $item->{parser};
-							$presetFavSet = 1;
+						my $itemParams = {};
+
+						if ( !$item->{type} || $item->{type} ne 'text' ) {							
+							$itemParams->{'item_id'} = "$id", #stringify, make sure it's a string
 						}
 
 						if ( $isPlayable || $item->{isContextMenu} ) {
 							$itemParams->{'isContextMenu'} = 1;
 						}
-
-						my %merged = %$params;
-						if ( scalar keys %{$itemParams} ) {
-							%merged = (%{$params}, %{$itemParams});
+						
+						if ($item->{type} && $item->{type} eq 'slideshow') {
+							$itemParams->{slideshow} = 1;
 						}
 
-						if ( $item->{image} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
-							$hasImage = 1;
-						}
+						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
+							$hash{'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id')} = $item->{icon};
+							$hasImage = 1;				
+						} elsif ( $item->{image} ) {
+							$hash{'icon'} = $item->{image};
+							$hasImage = 1;
+						}
+						if (my $coverid = $item->{'artwork_track_id'}) {
+							$hash{'icon-id'} = $coverid;
 							$hasImage = 1;
 						}
 
 						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
-							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
-							$request->addResultLoop($loopname, $cnt, 'action', 'none');
+							$hash{'style'} = 'itemNoAction';
+							$hash{'action'} = 'none';
 						}
 						
-						# Support type='db' for Track Info
-						if ( $item->{jive} ) {
-							$request->addResultLoop( $loopname, $cnt, 'actions', $item->{jive}->{actions} );
-							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'playHoldAction', 'icon-id') {
-								if ( $item->{jive}->{$key} ) {
-									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
-								}
-							}
-						}
-						
-						elsif ( $item->{type} && $item->{type} eq 'localservice' ) {
+						if ( $item->{type} && $item->{type} eq 'localservice' ) {
 							$request->addResultLoop( $loopname, $cnt, 'actions',  {
 								go => {
 									localservice => $item->{serviceId},
@@ -1127,8 +1144,8 @@ sub _cliQuery_done {
 								go => {
 									cmd    => [ $query, 'items' ],
 									params => {
+										%$params,
 										item_id     => "$id",
-										menu        => $query,
 										search      => '__TAGGEDINPUT__',
 										cachesearch => defined $item->{cachesearch} ? $item->{cachesearch} : 1, # Bug 13044, can this search be cached or not?
 									},
@@ -1153,19 +1170,22 @@ sub _cliQuery_done {
 								title => $item->{title} || $item->{name},
 							};
 							
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'input', $input );
+							$hash{'actions'} = $actions;
+							$hash{'input'} = $input;
 							if ($item->{nextWindow}) {
-								$request->addResultLoop( $loopname, $cnt, 'nextWindow', $item->{nextWindow} );
+								$hash{'nextWindow'} = $item->{nextWindow};
 							}
+							$allTouchToPlay = 0;
 						}
-						elsif ( !$isPlayable && !$touchToPlay ) {
+						
+						elsif ( !$isPlayable && !$touchToPlay && ($hash{'style'} || '') ne 'itemNoAction') {
+							
+							# I think that doing it this way means that, because $itemParams does not get
+							# added as 'params' if !$isPlayable, therefore all the other default actions will
+							# bump because SlimBrowser needs 'params' as specified in the base actions.
+							
 							my $actions = {
 								'go' => {
-									'cmd' => [ $query, 'items' ],
-									'params' => \%merged,
-								},
-								'add' => {
 									'cmd' => [ $query, 'items' ],
 									'params' => \%merged,
 								},
@@ -1175,78 +1195,154 @@ sub _cliQuery_done {
 								$actions->{go}{nextWindow} = $item->{nextWindow};
 								# Bug 15690 - if nextWindow is 'nowPlaying', assume this should be styled as a touch-to-play
 								if ( $item->{nextWindow} eq 'nowPlaying' ) {
-									$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+									$hash{'style'} = 'itemplay';
 								}
 							}
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
+							$hash{'actions'} = $actions;
+							$hash{'addAction'} = 'go';
+							$allTouchToPlay = 0;
 						}
-						elsif ( $touchToPlay ) {
-
-							my $playalbum = undef;
-							if ( $request->client ) {
-								$playalbum = $prefs->client($request->client)->get('playtrackalbum');
-							}
 						
-							# if player pref for playtrack album is not set, get the old server pref.
-							if ( !defined $playalbum ) {
-								$playalbum = $prefs->get('playtrackalbum');
+						elsif ( $touchToPlay ) {
+							if (!$defeatDestructiveTouchToPlay) {
+								$itemParams->{'touchToPlay'} = "$id"; # stringify, make sure it's a string
+								$itemParams->{'touchToPlaySingle'} = 1 if !$item->{'playall'};
+								
+								# not currently supported by 7.5 client
+								$hash{'goAction'} = 'play'; 
+								
+								$hash{'style'} = 'itemplay';
+							} else {
+								# not currently supported by 7.5 client
+								$hash{'goAction'} = 'playControl'; 
+								$hash{'playControlParams'} = {xmlbrowserPlayControl=>"$itemIndex"};
 							}
-
-							my $all = $playalbum && $item->{playall} ? 'all' : '';
+						}
+						else {
+							$allTouchToPlay = 0;
+						}
+						
+						my $itemActions = $item->{'itemActions'};
+						if ($itemActions) {
 							
-							my $actions = {
-								more => {
-									cmd         => [ $query, 'items' ],
-									params      => \%merged,
-									itemsParams => 'params',
-								},
-								go => {
-									player      => 0,
-									cmd         => [ $query, 'playlist', 'play' . $all ],
-									itemsParams => 'params',
-									params      => $itemParams,
-									nextWindow  => 'nowPlaying',
-								},
-								'add' => {
-									player      => 0,
-									cmd         => [ $query, 'playlist', 'add' . $all ],
-									itemsParams => 'params',
-									params      => $itemParams,
-								},
-								'add-hold' => {
-									player      => 0,
-									cmd         => [$query, 'playlist', 'insert'],
-									itemsParams => 'params',
-									params      => $itemParams,
+							my $actions;
+							if (!$itemActions->{'allAvailableActionsDefined'}) {
+								$actions = $hash{'actions'};
+							}
+							$actions ||= {};
+							
+							my $n = 0;
+							
+							if (my $action = _makeAction($itemActions, 'info', undef, 1, 1)) {
+								$actions->{'more'} = $action; $n++;
+							}
+							
+							# Need to be careful not to undo (effectively) a 'go' action mapping
+							# (could also consider other mappings but do not curretly)
+							my $goAction = $hash{'goAction'};
+
+							if (my $action = _makeAction($itemActions, 'items', undef, 1, 0, $item->{nextWindow})) {
+								# If 'go' is already mapped to something else (probably 'play')
+								# then leave it alone.
+								unless ($goAction) {
+									$actions->{'go'} = $action; $n++;
 								}
-							};
-							
-							if ( $playalbum && $item->{playall} ) {
-								# Clone params or we'll end up changing data for every action
-								my $cParams = Storable::dclone($itemParams);
-								
-								# Remember which item was pressed when playing so we can jump to it
-								$cParams->{play_index} = $play_index++;
-								
-								# Rewrite item_id if in 'all' mode, so it plays/adds all the
-								# tracks from the current level, not the single item
-								$cParams->{item_id} = "$item_id";
-								
-								$actions->{go}->{params}  = $cParams;
-								$actions->{add}->{params} = $cParams;
 							}
+							if (my $action = _makeAction($itemActions, 'play', undef, 1, 0, 'nowPlaying')) {
+								$actions->{'play'} = $action; $n++;
+								
+								# This test should really be repeated for all the other actions,
+								# in case 'go' is mapped to one of them, but that does not actually
+								# happen (would have to be somewhere in this module)
+								if ($goAction && $goAction eq 'play') {
+									$actions->{'go'} = $action;
+								}
+							}
+
+							if (my $action = _makeAction($itemActions, 'add', undef, 1)) {
+								$actions->{'add'} = $action; $n++;
+							}
+							if (my $action = _makeAction($itemActions, 'insert', undef, 1)) {
+								$actions->{'add-hold'} = $action; $n++;
+							}
+							$hash{'actions'} = $actions;
 							
-							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
-							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
-							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
+							if ($n >= 5) {
+								$itemActions->{'allAvailableActionsDefined'} = 1;
+							}
 						}
 
-						if ( scalar keys %{$itemParams} && $isPlayable ) {
-							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
+						if (!$itemActions->{'allAvailableActionsDefined'} && %actionParamsNeeded) {
+							foreach my $key (keys %actionParamsNeeded) {
+								my %params;
+								my @vars = @{$actionParamsNeeded{$key}};
+								for (my $i = 0; $i < scalar @vars; $i += 2) {
+									$params{$vars[$i]} = $item->{$vars[$i+1]};
+								}
+								$hash{$key} = \%params;
+							}
 						}
+						
+						if (   !$itemActions->{'allAvailableActionsDefined'}
+							&& !$feedActions->{'allAvailableActionsDefined'}
+							&& scalar keys %{$itemParams} && ($isPlayable || $touchToPlay) )
+						{
+							$hash{'params'} = $itemParams;
+						}
+						
+						if ( $item->{jive} ) {
+							my $actions = $hash{'actions'} || {};
+							while (my($name, $action) = each(%{$item->{jive}->{actions} || {}})) {
+								$actions->{$name} = $action;
+							}
+							$hash{'actions'} = $actions;
+							
+							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'icon-id') {
+								if ( $item->{jive}->{$key} ) {
+									$hash{$key} = $item->{jive}->{$key};
+								}
+							}
+						}
+						
+						if (exists $hash{'actions'} && scalar keys %{$hash{'actions'}}) {
+							delete $hash{'action'};
+							delete $hash{'style'} if $hash{'style'} eq 'itemNoAction';
+						}
+						
+						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
+						
+						$request->setResultLoopHash($loopname, $cnt, \%hash);
+
 					}
 					else {
+						# create an ordered hash to store this stuff...
+						tie my %hash, "Tie::IxHash";
+						
+						$hash{id}    = $id;
+						$hash{name}  = $name          if defined $name;
+						$hash{type}  = $item->{type}  if defined $item->{type};
+						$hash{title} = $item->{title} if defined $item->{title};
+						$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
+						$hash{image} = $item->{image} if defined $item->{image};
+	
+						$hash{isaudio} = defined(hasAudio($item)) + 0;
+						
+						# Bug 7684, set hasitems to 1 if any of the following are true:
+						# type is not text or audio
+						# items array contains items
+						{
+							my $hasItems = 0;
+							
+							if ( !defined $item->{type} || $item->{type} !~ /^(?:text|audio)$/i ) {
+								$hasItems = 1;
+							}
+							elsif ( ref $item->{items} eq 'ARRAY' ) {
+								$hasItems = scalar @{ $item->{items} };
+							}
+							
+							$hash{hasitems} = $hasItems;
+						}
+					
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
 					}
 					$cnt++;
@@ -1255,9 +1351,19 @@ sub _cliQuery_done {
 
 		}
 
-		$request->addResult('count', $count);
+		$request->addResult('count', $totalCount);
 		
 		if ($menuMode) {
+			
+			if ($request->getResult('base')) {
+				my $baseActions = $request->getResult('base')->{'actions'};
+				
+				_jivePresetBase($baseActions) if $presetFavSet;
+				
+				if ($allTouchToPlay) {
+					$baseActions->{'go'} = $defeatDestructiveTouchToPlay ? $baseActions->{'playControl'} : $baseActions->{'play'};
+				}
+			}
 			
 			if ( $windowStyle ) {
 				$window->{'windowStyle'} = $windowStyle;
@@ -1278,8 +1384,55 @@ sub _cliQuery_done {
 			if ($window) {
 				$request->addResult('window', $window );
 			}
+
+			# cache SBC queries for "Recent Search" menu
+			if ($search && ($request->getParam('cachesearch') || $subFeed->{'cachesearch'})) {	# Bug 13044, allow some searches to not be cached
+				
+				# XXX this is probably obsolete because of move to myapps
+				# make a best effort to make a labeled title for the search
+				my $queryTypes = {
+					rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
+					mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
+					radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
+					slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
+					live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
+					lma		=>	'PLUGIN_LMA_MODULE_NAME',
+				};
+				
+				my $title = $search;
+				
+				if ($queryTypes->{$query}) {
+					$title = $request->string($queryTypes->{$query}) . ": " . $title;
+				} elsif (my $key = $subFeed->{'cachesearch'}) {
+					if (length($key) > 1) {
+						$key = $request->string($key) if (uc($key) eq $key);
+						$title = $key . ': ' . $title;
+					}
+				}
+		
+				my $queryParams = $feed->{'query'} || {};
+				my $jiveSearchCache = {
+					text     => $title,
+					actions  => {
+						go => {
+							player => 0,
+							cmd => [ $query, 'items' ],
+							params => {
+								'item_id' => $request->getParam('item_id'),
+								menu      => $query,
+								search    => $search,
+								%$queryParams,
+							},
+						},
+					},
+				};
+				
+				Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
+			}
+			
 		}
-	}
+
+	} # ENDIF $isItemQuery
 	
 	$request->setStatusDone();
 }
@@ -1298,8 +1451,12 @@ sub _cliQuerySubFeed_done {
 		my @p = map { uri_unescape($_) } split / /, $feed->{command};
 		my $client = $params->{request}->client();
 		
-		main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
-		$client->execute( \@p );
+		if ($client) {
+			main::DEBUGLOG && $log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
+			$client->execute( \@p );
+		} else {
+			$log->error('No client to execute command for.');
+		}
 	}
 	
 	# insert the sub-feed data into the original feed
@@ -1313,7 +1470,7 @@ sub _cliQuerySubFeed_done {
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;
 		
-		$subFeed = $subFeed->{'items'}->[$i];
+		$subFeed = $subFeed->{'items'}->[$i - ($subFeed->{'offset'} || 0)];
 	}
 
 	if (($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' || $feed->{'replaceparent'}) && 
@@ -1342,6 +1499,12 @@ sub _cliQuerySubFeed_done {
 		main::DEBUGLOG && $log->is_debug && $log->debug("menu title was '" . $subFeed->{name} . "', changing to '" . $feed->{title} . "'");
 		$subFeed->{title} = $feed->{title};
 	}
+	if ($feed->{'actions'}) {
+		$subFeed->{'actions'} = $feed->{'actions'};
+	}
+	$subFeed->{'total'} = $feed->{'total'};
+	$subFeed->{'offset'} = $feed->{'offset'};
+	$subFeed->{'menuComplete'} = $feed->{'menuComplete'};
 	
 	# Mark this as coming from subFeed, so that we know to ignore forceRefresh
 	$params->{fromSubFeed} = 1;
@@ -1379,6 +1542,94 @@ sub _addingToPlaylist {
 	} );
 }
 
+sub findAction {
+	my ($feed, $item, $actionName) = @_;
+	
+	if ($item && $item->{'itemActions'} && $item->{'itemActions'}->{$actionName}) {
+		return wantarray ? ($item->{'itemActions'}->{$actionName}, {}) : $item->{'itemActions'}->{$actionName};
+	}
+	if ($item && $item->{'itemActions'} && $item->{'itemActions'}->{'allAvailableActionsDefined'}) {
+		return wantarray ? () : undef;
+	}
+	if ($feed && $feed->{'actions'} && $feed->{'actions'}->{$actionName}) {
+		return wantarray ? ($feed->{'actions'}->{$actionName}, $feed->{'actions'}) : $feed->{'actions'}->{$actionName};
+	}
+	return wantarray ? () : undef;
+}
+
+sub _makePlayAction {
+	my ($subFeed, $item, $name, $nextWindow, $query, $item_id, $playIndex) = @_;
+	
+	my %params;
+	my $cmd;
+	
+	if (my ($feedAction, $feedActions) = findAction($subFeed, $item, $name)) {
+		%params = %{$feedAction->{'fixedParams'}} if $feedAction->{'fixedParams'};
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			$params{$vars[$i]} = $item->{$vars[$i+1]};
+		}
+
+		$cmd = $feedAction->{'command'};
+	} else {
+		%params = (
+			'item_id' => $item_id,
+		);
+		$params{'playIndex'} = $playIndex if defined $playIndex;
+		
+		$cmd = [ $query, 'playlist', $name ],
+	}
+	
+	if ($cmd) {
+		$params{'menu'} = 1;
+
+		my %action = (
+			player      => 0,
+			cmd         => $cmd,
+			params      => \%params,
+		);
+		$action{'nextWindow'} = $nextWindow if $nextWindow;
+		
+		return \%action;
+	}
+	
+	return undef;
+}
+
+sub _makeAction {
+	my ($actions, $actionName, $actionParamsNeeded, $player, $contextMenu, $nextWindow) = @_;
+	
+	if (my $action = $actions->{$actionName}) {
+		if ( !($action->{'command'} && scalar @{$action->{'command'}}) ) {
+			return 'none';
+		}
+	
+		my $params = $action->{'fixedParams'} || {};
+		$params->{'menu'} ||= 1;
+		
+		my %action = (
+			cmd         => $action->{'command'},
+			params      => $params,
+		);
+		
+		$action{'player'} ||= 0 if $player;
+		$action{'window'} = {isContextMenu => 1} if $contextMenu;
+		$action{'nextWindow'} = $nextWindow if $nextWindow;
+		if (defined $actionParamsNeeded) {
+			if (exists $action->{'variables'}) {
+				if ($action->{'variables'}) {
+					$action{'itemsParams'} = $actionName . 'Params';
+					$actionParamsNeeded->{$action{'itemsParams'}} = $action->{'variables'};
+				}
+			} elsif ($actions->{'commonVariables'}) {
+				$action{'itemsParams'} = 'commonParams';
+				$actionParamsNeeded->{$action{'itemsParams'}} = $actions->{'commonVariables'};
+			}
+		}
+		return \%action;
+	}
+}
+
 sub _cliQuery_error {
 	my ( $err, $params ) = @_;
 	
@@ -1403,16 +1654,18 @@ sub _fixCount {
 
 	my $totalCount = $count || 0;
 
-	if ($insertItem && $count > 1) {
+	if ($insertItem) {
 		$totalCount++;
-		if (!$$index && $count == $$quantity) {
-			# count and qty are the same, don't do anything to index or quantity
-		# return one less result as we only add the additional item in the first chunk
-		} elsif ( !$$index ) {
-			$$quantity--;
-		# decrease the index in subsequent queries
-		} else {
-			$$index--;
+		if ($count) {
+			if (!$$index && $count == $$quantity) {
+				# count and qty are the same, don't do anything to index or quantity
+			# return one less result as we only add the additional item in the first chunk
+			} elsif ( !$$index ) {
+				$$quantity--;
+			# decrease the index in subsequent queries
+			} else {
+				$$index--;
+			}
 		}
 	}
 
@@ -1481,7 +1734,7 @@ sub _jivePresetBase {
 		$actions->{$key} = {
 			player => 0,
 			cmd    => [ 'jivefavorites', 'set_preset', "key:$preset" ],
-			itemsParams => 'params',
+			itemsParams => 'presetParams',
 		};
 	}
 	return $actions;
@@ -1492,98 +1745,166 @@ sub _playlistControlContextMenu {
 	my $args    = shift;
 	my $query   = $args->{'query'};
 	my $request = $args->{'request'};
-	my $client  = $request->client;
-	my $params  = $request->{_params};
-	my $itemParams = {
-		favorites_title => $params->{'favorites_title'},
-		favorites_url   => $params->{'favorites_url'},
-		favorites_type  => $params->{'favorites_type'},
-		menu => $params->{'menu'},
-		type => $params->{'type'},
-		icon => $params->{'icon'},
-		item_id => $params->{'item_id'},
-	};
+	my $item    = $args->{'item'};
 
-
-	my @contextMenu = (
-		{
-			text => $request->string('ADD_TO_END'),
-			actions => {
-				go => {
-				player => 0,
-					cmd    => [ $query, 'playlist', 'add'],
-					params => $itemParams,
-					nextWindow => 'parentNoRefresh',
-				},
+	my @contextMenu;
+	
+	# We only add playlist-control items for an item which is playable
+	if (hasAudio($item)) {
+		my $item_id = $request->getParam('item_id') || '';
+		my $sub_id  = $args->{'subItemId'};
+		my $subFeed = $args->{'subFeed'};
+		
+		if (defined $sub_id) {
+			$item_id .= '.' if length($item_id);
+			$item_id .= $sub_id;
+		}
+		
+		my $itemParams = {
+			menu    => $request->getParam('menu'),
+			item_id => $item_id,
+		};
+		
+		my $addPlayAll = (
+			   $args->{'playalbum'}
+			&& defined $sub_id
+			&& $subFeed && scalar @{$subFeed->{'items'} || []} > 1
+			&& ($subFeed->{'playall'} || $item->{'playall'})
+		);
+		
+		my $action;
+		
+		if ($action = _makePlayAction($subFeed, $item, 'add', 'parentNoRefresh', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string('ADD_TO_END'),
+				actions => {go => $action},
 			},
-		},
-		{
-			text => $request->string('PLAY_NEXT'),
-			actions => {
-				go => {
-				player => 0,
-					cmd    => [ $query, 'playlist', 'insert'],
-					params => $itemParams,
-					nextWindow => 'parentNoRefresh',
-				},
+		}
+		
+		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string('PLAY_NEXT'),
+				actions => {go => $action},
 			},
-		},
-		{
-			text => $request->string('PLAY'),
-			style => 'itemplay',
-			actions => {
-				go => {
-					player => 0,
-					cmd    => [ $query, 'playlist', 'play'],
-					params => $itemParams,
-					nextWindow => 'nowPlaying',
-				},
+		}
+		
+		if ($action = _makePlayAction($subFeed, $item, 'play', 'nowPlaying', $query, $item_id)) {
+			push @contextMenu, {
+				text => $request->string($addPlayAll ? 'PLAY_THIS_SONG' : 'PLAY'),
+				style => 'itemplay',
+				actions => {go => $action},
 			},
-		},
-	);
-
-	# Favorites handling
-	my $action = 'add';
- 	my $favIndex = undef;
-	my $token = 'JIVE_SAVE_TO_FAVORITES';
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-		my $favs = Slim::Utils::Favorites->new($request->client);
-		$favIndex = $favs->findUrl($itemParams->{favorites_url});
-		if (defined($favIndex)) {
-			$action = 'delete';
-			$token = 'JIVE_DELETE_FROM_FAVORITES';
+		}
+		
+		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $request->getParam('item_id'), $sub_id))) {
+			push @contextMenu, {
+				text => $request->string('JIVE_PLAY_ALL_SONGS'),
+				style => 'itemplay',
+				actions => {go => $action},
+			},
 		}
 	}
-	my $favoriteActions = {
-		'go' => {
-			player => 0,
-			cmd    => [ 'jivefavorites', $action ],
-			params => {
-				title   => $itemParams->{'favorites_title'},
-				url     => $itemParams->{'favorites_url'},
-				type    => $itemParams->{'favorites_type'},
-				isContextMenu => 1,
+
+	# Favorites handling
+	my $favParams;
+	if (($favParams = _favoritesParams($item)) && !$args->{'noFavorites'}) {
+	
+		my $action = 'add';
+	 	my $favIndex = undef;
+		my $token = 'JIVE_SAVE_TO_FAVORITES';
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+			my $favs = Slim::Utils::Favorites->new($request->client);
+			$favIndex = $favs->findUrl($favParams->{favorites_url});
+			if (defined($favIndex)) {
+				$action = 'delete';
+				$token = 'JIVE_DELETE_FROM_FAVORITES';
+			}
+		}
+		
+		my $favoriteActions = {
+			'go' => {
+				player => 0,
+				cmd    => [ 'jivefavorites', $action ],
+				params => {
+					title   => $favParams->{'favorites_title'},
+					url     => $favParams->{'favorites_url'},
+					type    => $favParams->{'favorites_type'},
+					parser  => $favParams->{'parser'},
+					isContextMenu => 1,
+				},
 			},
-		},
-	};
-	$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
-	$favoriteActions->{'go'}{'params'}{'icon'}    = $itemParams->{icon} if defined($itemParams->{icon});
+		};
+		$favoriteActions->{'go'}{'params'}{'item_id'} = "$favIndex" if defined($favIndex);
+		if (my $icon = $favParams->{'icon'} || $request->getParam('icon')) {
+			$favoriteActions->{'go'}{'params'}{'icon'} = $icon;
+		}
+	
+		push @contextMenu, {
+			text => $request->string($token),
+			actions => $favoriteActions,
+		};
+	}
 
-	my $string = $request->string($token);
-
-	push @contextMenu, {
-		text => $request->string($token),
-		actions => $favoriteActions,
-	};
-
-	my $numItems = scalar(@contextMenu);
-	$request->addResult('count', $numItems);
-	$request->addResult('offset', 0);
-	my $cnt = 0;
 	return \@contextMenu;
-
 }
 
+sub _favoritesParams {
+	my $item = shift;
+	
+	my $favorites_url    = $item->{favorites_url} || $item->{play} || $item->{url};
+	my $favorites_title  = $item->{title} || $item->{name};
+	
+	if ( $favorites_url && !ref $favorites_url && $favorites_title ) {
+		if ( !$item->{favorites_url} && $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} && !ref $item->{playlist}) {
+			$favorites_url = $item->{playlist};
+		}
+		
+		my %presetParams = (
+			favorites_url   => $favorites_url,
+			favorites_title => $favorites_title,
+			favorites_type  => $item->{play} ? 'audio' : ($item->{type} || 'audio'),
+		);
+		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
+		
+		if (my $icon = $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
+			$presetParams{'icon'} = $icon;
+		}
+		
+		return \%presetParams;
+	}
+}
+
+sub _defeatDestructiveTouchToPlay {
+	my ($request, $client) = @_;
+	my $pref;
+	
+	if ($client && (my $agent = $client->controllerUA)) {
+		if ($agent =~ /squeezeplay/i) {
+			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
+			
+			return 0 if $version < 7.6;
+			return 0 if $version eq '7.6' && $revision < 9337;
+		}
+	}
+	
+	$pref = $request->getParam('defeatDestructiveTouchToPlay');
+	$pref = $prefs->client($client)->get('defeatDestructiveTouchToPlay') if $client && !defined $pref;
+	$pref = $prefs->get('defeatDestructiveTouchToPlay') if !defined $pref;
+	
+	# Values:
+	# 0 => no defeat
+	# 1 => always defeat
+	# 2 => defeat if playlist length > 1
+	# 3 => defeat only if playing and current-playlist-length > 1
+	
+	return 0 if !$pref;
+	return 1 if $pref == 1 || !$client;
+	my $l = Slim::Player::Playlist::count($client);
+	return 0 if $l < 2;
+	return 0 if $pref == 3 && (!$client->isPlaying() || $l < 2);
+	
+	return 1;
+}
 
 1;
 

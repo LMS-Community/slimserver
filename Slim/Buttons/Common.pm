@@ -123,8 +123,6 @@ sub init {
 	
 	Slim::Buttons::Alarm::init();
 	Slim::Buttons::Block::init();
-	Slim::Buttons::BrowseDB::init();
-	Slim::Buttons::BrowseTree::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::XMLBrowser::init();
@@ -442,47 +440,39 @@ our %functions = (
 
 		} elsif ($button eq 'menu_browse_genre') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'genre,contributor,album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'genres', 'BROWSE_BY_GENRE');
 
-			$jump = 'BROWSE_BY_GENRE';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_artist') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'contributor,album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'artists', 'BROWSE_BY_ARTIST');
 
-			$jump = 'BROWSE_BY_ARTIST';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_album') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'album,track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'albums', 'BROWSE_BY_ALBUM');
 
-			$jump = 'BROWSE_BY_ALBUM';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_song') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'track',
-				'level'     => 0,
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'tracks', 'BROWSE_BY_SONG');
 
-			$jump = 'BROWSE_BY_SONG';
+			$jump = undef;
 
 		} elsif ($button eq 'menu_browse_music') {
 
-			Slim::Buttons::Common::pushMode($client, 'browsetree', {
-				'hierarchy' => '',
-			});
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'bmf', 'BROWSE_MUSIC_FOLDER');
 
-			$jump = 'BROWSE_MUSIC_FOLDER';
+			$jump = undef;
+
+		} elsif ($button eq 'menu_browse_playlists') {
+
+			Slim::Menu::BrowseLibrary->setMode($client, 'push', 'playlists', 'SAVED_PLAYLISTS');
+
+			$jump = undef;
 
 		} elsif ($button eq 'menu_synchronize') {
 
@@ -516,15 +506,6 @@ our %functions = (
 
 			$jump = 'SEARCH_FOR_SONGS';
 
-		} elsif ($button eq 'menu_browse_playlists') {
-
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'playlist,playlistTrack',
-				'level'     => 0,
-			});
-
-			$jump = 'SAVED_PLAYLISTS';
-
 		} elsif ($buttonarg =~ /^plugin/i) {
 
 			if (exists($modes{$buttonarg})) {
@@ -541,7 +522,7 @@ our %functions = (
 			$jump = 'SETTINGS';
 		}
 
-		Slim::Buttons::Home::jump($client,$jump);
+		Slim::Buttons::Home::jump($client,$jump) if defined $jump;
 
 		$client->update();
 	},
@@ -769,7 +750,9 @@ our %functions = (
 
 			# xmlbrowser mode - save type and parser params to favorites too
 			if ($client->modeParam('modeName') && $client->modeParam('modeName') =~ /XMLBrowser/) {
-				$url   = $obj->{'play'} || $obj->{'url'};
+				$url   = $obj->{'favorites_url'};
+				$url ||= $obj->{'play'} if $obj->{'play'} && !ref $obj->{'play'};
+				$url ||= $obj->{'url'}  if $obj->{'url'}  && !ref $obj->{'url'};
 				$type  = $obj->{'type'} || 'link';
 				$title = $obj->{'name'};
 				$icon  = $obj->{'image'};
@@ -779,7 +762,7 @@ our %functions = (
 				}
 				
 				# There may be an alternate URL for playlist
-				if ( $type eq 'playlist' && $obj->{playlist} ) {
+				if ( $type eq 'playlist' && $obj->{playlist} && !ref $obj->{playlist}) {
 					$url = $obj->{playlist};
 				}
 				
@@ -885,7 +868,7 @@ our %functions = (
 			my $url   = $preset->{URL};
 			my $title = $preset->{text};
 
-			if ( $preset->{parser} || $preset->{type} eq 'playlist' ) {
+			if ( $preset->{parser} || ($preset->{type} eq 'playlist' && Slim::Music::Info::isRemoteURL($url)) ) {
 
 				main::INFOLOG && $log->info("Playing preset number $digit $title $url via xmlbrowser");
 
@@ -2365,6 +2348,21 @@ sub suppressStatus {
 
 	if ($screen2 && $screen2 eq 'periodic') {
 		return 1;
+	}
+
+	return undef;
+}
+
+sub msgOnScreen2 {
+	my $client = shift;
+
+	if ($client->display->hasScreen2) {
+
+		my $screen2 = $client->modeParam('screen2active');
+		
+		if ($screen2 && $screen2 eq 'periodic') {
+			return 1;
+		}
 	}
 
 	return undef;

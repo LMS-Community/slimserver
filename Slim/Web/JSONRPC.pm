@@ -370,16 +370,18 @@ sub requestMethod {
 		my $ua   = $context->{ua};
 
 		my $finish;
-
-		if ( $client && $lang ) {
-			$client->languageOverride($lang);
-			$client->controlledBy('squeezeplay');
- 
+		
+		if ( $client ) {
 			$finish = sub {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
 				$client->controllerUA(undef);
 			};
+		}
+
+		if ( $client && $lang ) {
+			$client->languageOverride($lang);
+			$client->controlledBy('squeezeplay');
 		}
 		elsif ( $lang ) {
 			$request->setLanguageOverride($lang);

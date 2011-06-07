@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'genreinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -126,7 +126,7 @@ sub menu {
 				}
 			}
 			elsif ( ref $item eq 'HASH' ) {
-				return if $ref->{menuMode} && !$tags->{menuMode};
+				return if $item->{menuMode} && !$tags->{menuMode};
 				if ( scalar keys %{$item} ) {
 					push @{$items}, $item;
 				}
@@ -166,6 +166,7 @@ sub menu {
 		name  => $genre->name,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
@@ -175,6 +176,8 @@ sub playGenre {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $play_string   = cstring($client, 'PLAY');
 
@@ -187,24 +190,6 @@ sub playGenre {
 				cmd => 'load',
 			},
 			nextWindow => 'nowPlaying',
-		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				genre_id => $genre->id,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				genre_id => $genre->id,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -241,6 +226,7 @@ sub addGenre {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {
@@ -267,20 +253,26 @@ sub addGenre {
 	return $items;
 }
 
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
-}
-
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
+	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
 	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');

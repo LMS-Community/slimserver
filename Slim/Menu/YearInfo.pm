@@ -34,7 +34,7 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(
 		[ 'yearinfo', 'items', '_index', '_quantity' ],
-		[ 1, 1, 1, \&cliQuery ]
+		[ 0, 1, 1, \&cliQuery ]
 	);
 	
 	Slim::Control::Request::addDispatch(
@@ -156,6 +156,7 @@ sub menu {
 		name  => $year,
 		type  => 'opml',
 		items => $items,
+		menuComplete => 1,
 	};
 }
 
@@ -165,6 +166,8 @@ sub playYear {
 
 	my $items = [];
 	my $jive;
+
+	return $items if !blessed($client);
 	
 	my $play_string   = cstring($client, 'PLAY');
 
@@ -177,24 +180,6 @@ sub playYear {
 				cmd => 'load',
 			},
 			nextWindow => 'nowPlaying',
-		},
-		add => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				year => $year,
-				cmd => 'add',
-			},
-			nextWindow => 'parent',
-		},
-		'add-hold' => {
-			player => 0,
-			cmd => [ 'playlistcontrol' ],
-			params => {
-				year => $year,
-				cmd => 'insert',
-			},
-			nextWindow => 'parent',
 		},
 	};
 	$actions->{play} = $actions->{go};
@@ -233,6 +218,7 @@ sub addYear {
 	my $items = [];
 	my $jive;
 	
+	return $items if !blessed($client);
 
 	my $actions = {
 		go => {
@@ -258,20 +244,26 @@ sub addYear {
 	return $items;
 }
 
-sub _findDBCriteria {
-	my $db = shift;
-	
-	my $findCriteria = '';
-	foreach (keys %{$db->{findCriteria}}) {
-		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
-	}
-	
-	return $findCriteria;
-}
-
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
+	
+	# WebUI or newWindow param from SP side results in no
+	# _index _quantity args being sent, but XML Browser actually needs them, so they need to be hacked in
+	# here and the tagged params mistakenly put in _index and _quantity need to be re-added
+	# to the $request params
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	if ( $index =~ /:/ ) {
+		$request->addParam(split (/:/, $index));
+		$index = 0;
+		$request->addParam('_index', $index);
+	}
+	if ( $quantity =~ /:/ ) {
+		$request->addParam(split(/:/, $quantity));
+		$quantity = 200;
+		$request->addParam('_quantity', $quantity);
+	}
 	
 	my $client         = $request->client;
 	my $url            = $request->getParam('url');

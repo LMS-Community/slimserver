@@ -15,7 +15,7 @@
 	[% contrib = contributorTuple.name | html %]
 	
 	[% IF artwork || artwork == 0; artparam = "&amp;artwork=$artwork"; END %]
-	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs$artparam&amp;level=1&amp;player=$playerURI\" $target class=\"browseItemLink\"><span style=\"display:inline\">$contrib</span></a>" %]
+	[% contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artist.id %]&amp;[% artparam %]&amp;player=[% playerURI %]/" [% target %] class="browseItemLink"><span style="display:inline">[% contrib %]</span></a>[% END %]
 
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 

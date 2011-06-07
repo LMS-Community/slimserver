@@ -160,7 +160,6 @@ sub init {
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
 		[0, 0, 0, sub { return 1; }]);
 	
-	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 }
 
 sub _libraryChanged {
@@ -339,10 +338,9 @@ sub jiveSetAlbumSort {
 	my $client  = $request->client;
 	my $sort = $request->getParam('sortMe');
 	$prefs->set('jivealbumsort', $sort);
-	# resend the myMusic menus with the new sort pref set
-	myMusicMenu(0, $client);
 	$request->setStatusDone();
 }
+
 
 
 sub albumSortSettingsMenu {
@@ -1818,45 +1816,6 @@ sub playerTextMenu {
 
 }
 
-sub browseMusicFolder {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-	my $batch = shift;
-
-	# first we decide if $audiodir has been configured. If not, don't show this
-	# (this used to check that $audiodir was actually a directory,
-	# but no other UI does that so why should we?)
-	
-	my $return = 0;
-	if (Slim::Utils::Misc::getAudioDir()) {
-		main::INFOLOG && $log->info("Adding Browse Music Folder");
-		$return = {
-				text           => $client->string('BROWSE_MUSIC_FOLDER'),
-				id             => 'myMusicMusicFolder',
-				node           => 'myMusic',
-				weight         => 70,
-				actions        => {
-					go => {
-						cmd    => ['musicfolder'],
-						params => {
-							menu => 'musicfolder',
-						},
-					},
-				},
-			};
-	} else {
-		# if it disappeared, send a notification to get rid of it if it exists
-		main::INFOLOG && $log->info("Removing Browse Music Folder from Jive menu via notification");
-		deleteMenuItem('myMusicMusicFolder', $client);
-	}
-
-	if ($batch) {
-		return $return;
-	} else {
-		_notifyJive( [ $return ], $client);
-	}
-}
-
 sub repeatSettings {
 	my $client = shift;
 	my $batch = shift;
@@ -2359,298 +2318,34 @@ sub replayGainHash {
 	return \%return;
 }
 
+my %allMyMusicMenuItems;
+
 sub myMusicMenu {
 	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
 	my $batch = shift;
 	my $client = shift;
-	my $sort   = $prefs->get('jivealbumsort') || 'album';
-	my @myMusicMenu = ();
+
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&_libraryChanged);
 	
-	if (Slim::Schema::hasLibrary()) {
-		
-		@myMusicMenu = (
-			{
-				text           => $client->string('BROWSE_BY_ARTIST'),
-				homeMenuText   => $client->string('BROWSE_ARTISTS'),
-				id             => 'myMusicArtists',
-				node           => 'myMusic',
-				weight         => 10,
-				actions        => {
-					go => {
-						cmd    => ['artists'],
-						params => {
-							menu  => 'album',
-						},
-					},
-				},
-			},		
-			{
-				text           => $client->string('BROWSE_BY_ALBUM'),
-				homeMenuText   => $client->string('BROWSE_ALBUMS'),
-				id             => 'myMusicAlbums',
-				node           => 'myMusic',
-				weight         => 20,
-				actions        => {
-					go => {
-						cmd    => ['albums'],
-						params => {
-							menu     => 'track',
-							sort     => $sort,
-						},
-					},
-				},
-				window         => {
-					menuStyle => 'album',
-					menuStyle => 'album',
-				},
-			},
-			{
-				text           => $client->string('BROWSE_BY_GENRE'),
-				homeMenuText   => $client->string('BROWSE_GENRES'),
-				id             => 'myMusicGenres',
-				node           => 'myMusic',
-				weight         => 30,
-				actions        => {
-					go => {
-						cmd    => ['genres'],
-						params => {
-							menu  => 'artist',
-						},
-					},
-				},
-			},
-			{
-				text           => $client->string('BROWSE_BY_YEAR'),
-				homeMenuText   => $client->string('BROWSE_YEARS'),
-				id             => 'myMusicYears',
-				node           => 'myMusic',
-				weight         => 40,
-				actions        => {
-					go => {
-						cmd    => ['years'],
-						params => {
-							menu  => 'album',
-						},
-					},
-				},
-			},
-			{
-				text           => $client->string('BROWSE_NEW_MUSIC'),
-				id             => 'myMusicNewMusic',
-				node           => 'myMusic',
-				weight         => 50,
-				actions        => {
-					go => {
-						cmd    => ['albums'],
-						params => {
-							menu  => 'track',
-							sort  => 'new',
-						},
-					},
-				},
-				window        => {
-					menuStyle => 'album',
-				},
-			},
-			{
-				text           => $client->string('SAVED_PLAYLISTS'),
-				id             => 'myMusicPlaylists',
-				node           => 'myMusic',
-				weight         => 80,
-				actions        => {
-					go => {
-						cmd    => ['playlists'],
-						params => {
-							menu  => 'track',
-						},
-					},
-				},
-			},
-			{
-				text           => $client->string('SEARCH'),
-				id             => 'myMusicSearch',
-				node           => 'myMusic',
-				isANode        => 1,
-				weight         => 90,
-			},
-		);
-		# add the items for under mymusicSearch
-		my $searchMenu = searchMenu(1, $client);
-		@myMusicMenu = (@myMusicMenu, @$searchMenu);
 	
-		if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
-			push @myMusicMenu, $browseMusicFolder;
-		}
+	if (!$batch) {
+		my %newMenuItems = map {$_->{'id'} => 1} @$myMusicMenu;
+		my @myMusicMenuDelete = map +{id => $_, node => 'myMusic'}, (grep {!$newMenuItems{$_}} keys %allMyMusicMenuItems);
+			
+		_notifyJive(\@myMusicMenuDelete, $client, 'remove');
 	}
-
+	
+	foreach (@$myMusicMenu) {
+		$allMyMusicMenuItems{$_->{'id'}} = 1;
+	}
+	
 	if ($batch) {
-		return \@myMusicMenu;
+		return $myMusicMenu;
 	} else {
-		_emptyMyMusicMenu($client);
-		_notifyJive(\@myMusicMenu, $client);
+		_notifyJive($myMusicMenu, $client);
 	}
-
 }
 
-sub _emptyMyMusicMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-		
-	my @myMusicMenu = map +{id => $_, node => 'myMusic'},
-		qw(
-			myMusicArtists
-			myMusicAlbums
-			myMusicGenres
-			myMusicYears
-			myMusicNewMusic
-			myMusicPlaylists
-			myMusicSearch
-			myMusicMusicFolder
-		);
-
-	_notifyJive(\@myMusicMenu, $client, 'remove');
-}
-
-sub searchMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $batch = shift;
-	my $client = shift || undef;
-	my @searchMenu = (
-	{
-		text           => $client->string('ARTISTS'),
-		homeMenuText   => $client->string('ARTIST_SEARCH'),
-		id             => 'myMusicSearchArtists',
-		node           => 'myMusicSearch',
-		weight         => 10,
-		input => {
-			len  => 1, #bug 5318
-			processingPopup => {
-				text => $client->string('SEARCHING'),
-			},
-			help => {
-				text => $client->string('JIVE_SEARCHFOR_HELP')
-			},
-		},
-		actions => {
-			go => {
-				cmd => ['artists'],
-				params => {
-					menu     => 'album',
-					menu_all => '1',
-					useContextMenu => '1',
-					search   => '__TAGGEDINPUT__',
-					_searchType => 'artists',
-				},
-                        },
-		},
-                window => {
-                        text => $client->string('SEARCHFOR_ARTISTS'),
-                },
-	},
-	{
-		text           => $client->string('ALBUMS'),
-		homeMenuText   => $client->string('ALBUM_SEARCH'),
-		id             => 'myMusicSearchAlbums',
-		node           => 'myMusicSearch',
-		weight         => 20,
-		input => {
-			len  => 1, #bug 5318
-			processingPopup => {
-				text => $client->string('SEARCHING'),
-			},
-			help => {
-				text => $client->string('JIVE_SEARCHFOR_HELP')
-			},
-		},
-		actions => {
-			go => {
-				cmd => ['albums'],
-				params => {
-					menu     => 'track',
-					menu_all => '1',
-					useContextMenu => '1',
-					search   => '__TAGGEDINPUT__',
-					_searchType => 'albums',
-				},
-			},
-		},
-		window => {
-			text => $client->string('SEARCHFOR_ALBUMS'),
-			menuStyle  => 'album',
-		},
-	},
-	{
-		text           => $client->string('SONGS'),
-		homeMenuText   => $client->string('TRACK_SEARCH'),
-		id             => 'myMusicSearchSongs',
-		node           => 'myMusicSearch',
-		weight         => 30,
-		input => {
-			len  => 1, #bug 5318
-			processingPopup => {
-				text => $client->string('SEARCHING'),
-			},
-			help => {
-				text => $client->string('JIVE_SEARCHFOR_HELP')
-			},
-		},
-		actions => {
-			go => {
-				cmd => ['tracks'],
-				params => {
-					menu     => 'track',
-					menuStyle => 'album',
-					useContextMenu => '1',
-					menu_all => '1',
-					search   => '__TAGGEDINPUT__',
-					_searchType => 'tracks',
-				},
-                        },
-		},
-		window => {
-			text => $client->string('SEARCHFOR_SONGS'),
-			menuStyle => 'album',
-		},
-	},
-	{
-		text           => $client->string('PLAYLISTS'),
-		homeMenuText   => $client->string('PLAYLIST_SEARCH'),
-		id             => 'myMusicSearchPlaylists',
-		node           => 'myMusicSearch',
-		weight         => 40,
-		input => {
-			len  => 1, #bug 5318
-			processingPopup => {
-				text => $client->string('SEARCHING'),
-			},
-			help => {
-				text => $client->string('JIVE_SEARCHFOR_HELP')
-			},
-		},
-		actions => {
-			go => {
-				cmd => ['playlists'],
-				params => {
-					menu     => 'track',
-					menu_all => '1',
-					search   => '__TAGGEDINPUT__',
-				},
-                        },
-		},
-		window => {
-			text => $client->string('SEARCHFOR_PLAYLISTS'),
-		},
-	},
-
-	);
-
-	if ($batch) {
-		return \@searchMenu;
-	} else {
-		_notifyJive(\@searchMenu, $client);
-	}
-
-}
 
 sub globalSearchMenu {
 	my $client = shift || undef;
@@ -2924,6 +2619,7 @@ sub jiveFavoritesCommand {
 	my $url     = $request->getParam('url');
 	my $type    = $request->getParam('type');
 	my $icon    = $request->getParam('icon');
+	my $parser  = $request->getParam('parser');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
 	my $action = 'grandparent';
@@ -2935,7 +2631,6 @@ sub jiveFavoritesCommand {
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
 		my $type   = $request->getParam('favorites_type');
-		my $parser = $request->getParam('parser');
 
 		# if playlist_index is sent, that's for the current NP track, derive everything you need from it
 		my $playlist_index = $request->getParam('playlist_index');
@@ -2990,9 +2685,10 @@ sub jiveFavoritesCommand {
 					player => 0,
 					cmd    => ['favorites', $command ],
 					params => {
-						title => $title,
-						url   => $url,
-						type  => $type,
+						title  => $title,
+						url    => $url,
+						type   => $type,
+						parser => $parser,
 					},
 				},
 			},

@@ -31,9 +31,10 @@ use Slim::Control::XMLBrowser;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
+use Slim::Utils::Prefs;
 
-# XXXX - not the best category, but better than d_plugins, which is what it was.
 my $log = logger('formats.xml');
+my $prefs = preferences('server');
 
 sub init {
 	Slim::Buttons::Common::addMode('xmlbrowser', getFunctions(), \&setMode);
@@ -61,10 +62,13 @@ sub setMode {
 	my $url    = $client->modeParam('url');
 	my $parser = $client->modeParam('parser');
 	my $opml   = $client->modeParam('opml');
+	my $parent = $client->modeParam('parent');
 	
 	# Pre-filled menu of OPML items
 	if ( $opml ) {
 		gotOPML( $client, $url, $opml, {} );
+
+		$client->modeParam( handledTransition => 1 );
 		return;
 	}
 
@@ -83,83 +87,127 @@ sub setMode {
 		);
 
 		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+		
+		$client->modeParam( handledTransition => 1 );
+		return;
+	}
+		
+	# Grab expires param here, as the block will change the param stack
+	my $expires = $client->modeParam('expires');
+	
+	# the item is passed as a param so we can get passthrough params
+	my $item = $client->modeParam('item');
+	
+	# Adjust HTTP timeout value to match the API on the other end
+	my $timeout = $client->modeParam('timeout') || 5;
+	
+	# Should we remember where the user was browsing? (default: yes)
+	my $remember = $client->modeParam('remember');
+	if ( !defined $remember ) {
+		$remember = 1;
+	}
+	
+	# get modeParams before pusing block
+	my $modeParams = $client->modeParams();
 
-	} else {
+	# give user feedback while loading
+	$client->block();
+	
+	my $params = {
+		'client'    => $client,
+		'url'       => $url,
+		'expires'   => $expires,
+		'feedTitle' => $title,
+		'parser'    => $parser,
+		'item'      => $item,
+		'timeout'   => $timeout,
+		'remember'  => $remember,
+	};
+	
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($parent, $item, 
+		($item->{'type'} && $item->{'type'} eq 'audio') ? 'info' : 'items') )
+	{
 		
-		# Grab expires param here, as the block will change the param stack
-		my $expires = $client->modeParam('expires');
-		
-		# Callbacks to report success/failure of feeds.  This is used by the
-		# RSS plugin on SN to log errors.
-		my $onSuccess = $client->modeParam('onSuccess');
-		my $onFailure = $client->modeParam('onFailure');
-		
-		# the item is passed as a param so we can get passthrough params
-		my $item = $client->modeParam('item');
-		
-		# Adjust HTTP timeout value to match the API on the other end
-		my $timeout = $client->modeParam('timeout') || 5;
-		
-		# Should we remember where the user was browsing? (default: yes)
-		my $remember = $client->modeParam('remember');
-		if ( !defined $remember ) {
-			$remember = 1;
+		my @params = @{$feedAction->{'command'}};
+		push @params, (0, 0);	# All items requests take _index and _quantity parameters
+		if (my $params = $feedAction->{'fixedParams'}) {
+			push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 		}
-
-		# give user feedback while loading
-		$client->block();
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
+		}
 		
-		my $params = {
-			'client'    => $client,
-			'url'       => $url,
-			'expires'   => $expires,
-			'onSuccess' => $onSuccess,
-			'onFailure' => $onFailure,
-			'feedTitle' => $title,
-			'parser'    => $parser,
-			'item'      => $item,
-			'timeout'   => $timeout,
-			'remember'  => $remember,
+		main::INFOLOG && $log->is_info && $log->info('Use CLI command for feed: ', join(', ', @params));
+		
+		my $callback = sub {
+			my $opml = shift;
+			$opml->{'type'}  ||= 'opml';
+			$opml->{'title'} = $title;
+			gotFeed( $opml, $params );
 		};
+	
+	    push @params, 'feedMode:1';
+	    push @params, 'wantMetadata:1' unless ($item->{'hasMetadata'} || '') eq 'album';
+		my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
 		
-		# Some plugins may give us a callback we should use to get OPML data
-		# instead of fetching it ourselves.
-		if ( ref $url eq 'CODE' ) {
-			my $callback = sub {
-				my $menu = shift;
-				
-				if ( ref $menu ne 'ARRAY' ) {
-					$menu = [ $menu ];
-				}
-				
-				my $opml = {
+		# wrap async requests
+		if ( $proxiedRequest->isStatusProcessing ) {			
+			$proxiedRequest->callbackFunction( sub { $callback->($_[0]->getResults); } );
+		} else {
+			$callback->($proxiedRequest->getResults);
+		}
+	}
+	
+	# Some plugins may give us a callback we should use to get OPML data
+	# instead of fetching it ourselves.
+	elsif ( ref $url eq 'CODE' ) {
+		my $callback = sub {
+			my $data = shift;
+			my $opml;
+
+			if ( ref $data eq 'HASH' ) {
+				$opml = $data;
+				$opml->{'type'}  ||= 'opml';
+				$opml->{'title'} = $title;
+			} else {
+				$opml = {
 					type  => 'opml',
 					title => $title,
-					items => $menu,
+					items => (ref $data ne 'ARRAY' ? [$data] : $data),
 				};
-				
-				gotFeed( $opml, $params );
-			};
-			
-			# get passthrough params if supplied
-			my $pt = $item->{'passthrough'} || [];
-			
-			if ( main::DEBUGLOG && $log->is_debug ) {
-				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
-				$log->debug( "Fetching OPML from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, @{$pt} );
+			gotFeed( $opml, $params );
+		};
+		
+		# get passthrough params if supplied
+		my $pt = $item->{'passthrough'} || [];
+		
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
+			$log->debug( "Fetching OPML from coderef $cbname" );
 		}
 		
+		my $search = $modeParams->{'item'}->{'searchParam'} || $modeParams->{'search'};
+		
+		$url->( $client, $callback, {params => $modeParams, search => $search}, @{$pt});
+	}
+	
+	else {
 		Slim::Formats::XML->getFeedAsync( 
 			\&gotFeed,
 			\&gotError,
 			$params,
 		);
-
-		# we're done.  gotFeed callback will finish setting up mode.
 	}
+	
+	# we're done.  gotFeed callback will finish setting up mode.
+
+	# xmlbrowser always handles the pushTransition into this mode
+	# - may have already transitioned to the destination mode if callbacks have already been called
+	# - or waiting for callback and should show block animation now without a transitions
+	$client->modeParam( handledTransition => 1 );
 }
 
 sub gotFeed {
@@ -171,12 +219,6 @@ sub gotFeed {
 	# must unblock now, before pushMode is called by getRSS or gotOPML
 	$client->unblock;
 	
-	# notify success callback if necessary
-	if ( ref $params->{'onSuccess'} eq 'CODE' ) {
-		my $cb = $params->{'onSuccess'};
-		$cb->( $client, $url );
-	}
-
 	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
 	if ($feed->{'type'} eq 'rss') {
 
@@ -357,7 +399,7 @@ sub gotRSS {
 			my $client = shift;
 			my $item   = shift;
 			if (Slim::Control::XMLBrowser::hasDescription($item)) {
-				displayItemDescription($client, $item);
+				displayItemDescription($client, $item, $feed);
 			} else {
 				displayItemLink($client, $item);
 			}
@@ -366,7 +408,7 @@ sub gotRSS {
 		'onPlay' => sub {
 			my $client = shift;
 			my $item   = shift;
-			playItem($client, $item);
+			playItem($client, $item, $feed);
 		},
 
 		'onAdd' => sub {
@@ -376,7 +418,7 @@ sub gotRSS {
 			
 			my $action = $functarg eq 'single' ? 'add' : 'insert';
 			
-			playItem($client, $item, $action);
+			playItem($client, $item, $feed, $action);
 		},
 
 		'overlayRef' => \&overlaySymbol,
@@ -445,7 +487,11 @@ sub gotOPML {
 
 	for (my $index = 0; $index < scalar @{ $opml->{'items'} || []}; ) {
 		my $item = $opml->{'items'}->[$index];
-			
+		
+		if (my $label = delete $item->{'label'}) {
+			$item->{'name'} = $client->string($label) . $client->string('COLON') . ' ' . $item->{'name'};
+		}
+
 		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
@@ -472,7 +518,8 @@ sub gotOPML {
 		}
 		
 		# Check for a 'hide' param, if it's 'ip3k' skip the item in this UI
-		if ( $item->{hide} && $item->{hide} =~ /ip3k/ ) {
+		# of it is a playcontrol item - don't need those for ip3k
+		if ( ($item->{hide} && $item->{hide} =~ /ip3k/) || $item->{'playcontrol'}) {
 			splice @{ $opml->{items} }, $index, 1;
 			next;
 		}
@@ -585,8 +632,27 @@ sub gotOPML {
 		'isSorted'   => $opml->{sorted} || 0,
 		'lookupRef'  => sub {
 			my $index = shift;
-
-			return $opml->{'items'}->[$index]->{'name'};
+			my $item  = $opml->{'items'}->[$index];
+			my $hasMetadata = $item->{'hasMetadata'} || '';
+				
+			if ($hasMetadata eq 'track') {
+				return Slim::Music::Info::standardTitle($client, undef, $item) || $item->{name};
+			} elsif ($hasMetadata eq 'album') {
+				my $name = $item->{name};
+				
+				if ($prefs->get('showYear')) {
+					my $year = $item->{'year'};
+					$name .= " ($year)" if $year;
+				}
+		
+				if ($prefs->get('showArtist') && (my $artist = $item->{'artist'})) {
+					$name .= sprintf(' %s %s', $client->string('BY'), $artist);
+				}
+				
+				return $name;
+			} else {
+				return $item->{name};
+			}
 		},
 
 		'onRight'    => sub {
@@ -698,10 +764,11 @@ sub gotOPML {
 					'header'  => $title,
 					'headerAddCount' => 1,
 					'item'    => $item,
+					'parent'  => $opml,
 					'parser'  => $parser,
 				);
 
-				if ($isAudio) {
+				if ($isAudio && ref $itemURL ne 'CODE' && !Slim::Control::XMLBrowser::findAction($opml, $item, 'info')) {
 
 					# Additional info if known
 					my @details = ();
@@ -764,7 +831,7 @@ sub gotOPML {
 			}
 			elsif ( Slim::Control::XMLBrowser::hasDescription($item) ) {
 
-				displayItemDescription($client, $item);
+				displayItemDescription($client, $item, $opml);
 
 			} 
 			else {
@@ -779,11 +846,11 @@ sub gotOPML {
 
 			if ( $opml->{'playall'} || $item->{'playall'} ) {
 				# Play all items from this level
-				playItem( $client, $item, 'play', $opml->{'items'} );
+				playItem( $client, $item, $opml, 'play', $opml->{'items'} );
 			}
 			else {
 				# Play just a single item
-				playItem( $client, $item );
+				playItem( $client, $item, $opml );
 			}
 		},
 		'onAdd'      => sub {
@@ -793,7 +860,14 @@ sub gotOPML {
 			
 			my $action = $functarg eq 'single' ? 'add' : 'insert';
 			
-			playItem($client, $item, $action);
+			playItem($client, $item, $opml, $action);
+		},
+		'onCreateMix'     => sub {
+			my $client = shift;
+			my $item   = shift;
+
+			# Play just a single item
+			contextMenu( $client, $item, $opml );
 		},
 		
 		'overlayRef' => \&overlaySymbol,
@@ -836,8 +910,10 @@ sub handleSearch {
 			'modeName' => "XMLBrowser:$searchURL:$searchString",
 			'url'      => $searchURL,
 			'title'    => $searchString,
+			'search'   => $searchString,
 			'timeout'  => $item->{'timeout'},
 			'parser'   => $item->{'parser'},
+			'item'     => $item, # passed to carry passthrough params forward
 		);
 		
 		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
@@ -860,6 +936,10 @@ sub overlaySymbol {
 		# Display check box overlay for type=radio
 		my $default = $item->{default};
 		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
+	}
+	elsif ( $item->{url} && ref $item->{url} eq 'CODE' && (!$item->{type} || $item->{type} ne 'audio') ) {
+		# Show rightarrow if there are more browseable levels below us
+		$overlay = $client->symbols('rightarrow');
 	}
 	elsif ( Slim::Control::XMLBrowser::hasAudio($item) ) {
 		$overlay = $client->symbols('notesymbol');
@@ -900,6 +980,7 @@ sub _breakItemIntoLines {
 sub displayItemDescription {
 	my $client = shift;
 	my $item = shift;
+	my $opml = shift;
 
 	# verbose debug
 	#use Data::Dumper;
@@ -963,7 +1044,7 @@ sub displayItemDescription {
 			'onPlay'  => sub {
 				my $client = shift;
 				my $item   = $client->modeParam('item');
-				playItem($client, $item);
+				playItem($client, $item, $opml );
 			},
 
 			'onAdd'   => sub {
@@ -973,7 +1054,7 @@ sub displayItemDescription {
 				
 				my $action = $functarg eq 'single' ? 'add' : 'insert';
 				
-				playItem($client, $item, $action);
+				playItem($client, $item, $action, $opml);
 			},
 		);
 
@@ -1054,11 +1135,46 @@ sub displayItemLink {
 	Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
 }
 
+sub _showPlayAction {
+	my $client = shift;
+	my $action = shift;
+	my $title = shift;
+	
+	my $string;
+	my $duration;
+	
+	if ($action eq 'add') {
+		$string = $client->string('ADDING_TO_PLAYLIST');
+	}
+	elsif ( $action eq 'insert' ) {
+		$string = $client->string('INSERT_TO_PLAYLIST');
+	}
+	else {
+
+		if (Slim::Player::Playlist::shuffle($client)) {
+
+			$string = $client->string('PLAYING_RANDOMLY_FROM');
+
+		} else {
+
+			$string   = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
+			$duration = 10;
+		}
+	}
+
+	$client->showBriefly( {
+		'line' => [ $string, $title ]
+	}, {
+		'duration' => $duration
+	});
+}
+
 sub playItem {
 	my $client = shift;
 	my $item   = shift;
+	my $feed   = shift;
 	my $action = shift || 'play';
-	my $others = shift || [];      # other items to add to playlist (action=play only)
+	my $others = shift; 	     # other items to add to playlist (action=play only)
 
 	# verbose debug
 	#warn "playItem: " . Data::Dump::dump($item, $others) . "\n";
@@ -1078,60 +1194,48 @@ sub playItem {
 		$url  = $item->{'playlist'};
 		$type = 'playlist';
 	}
-	elsif ( $item->{'type'} eq 'redirect' && $item->{'player'} 
-		&& $item->{'player'}->{'mode'} && $item->{'player'}->{'mode'} eq 'browsedb'
-		&& $item->{'player'}->{'modeParams'}) {
-
-		my $functions = Slim::Buttons::BrowseDB::getFunctions();
-
-		if ($functions->{'play'}) {
-
-			foreach (keys %{ $item->{'player'}->{'modeParams'} }) {
-				$client->modeParam($_, $item->{'player'}->{'modeParams'}->{$_}); 
-			}
-			$client->modeParam('itemTitle', $item->{'name'});
-						
-			$functions->{'play'}->($client, $action, lc($action) eq 'add' ? 1 : 0);
-		} 
-	}
 	
 	main::DEBUGLOG && $log->debug("Playing item, action: $action, type: $type, $url");
 	
-	if ( $type =~ /audio/i ) {
+	my $playalbum = $prefs->client($client)->get('playtrackalbum');
 
-		my $string;
-		my $duration;
+	# if player pref for playtrack album is not set, get the old server pref.
+	if (!defined $playalbum) { $playalbum = $prefs->get('playtrackalbum'); }
+	
+	# Use action from item or parent feed if available
+
+	my $actionKey = $action;
+	if ($actionKey =~ /^(add|play)$/ && $others && $playalbum) {
+		$actionKey .= 'all';
+	}
+	
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, $actionKey)) {
 		
-		if ($action eq 'add') {
-			$string = $client->string('ADDING_TO_PLAYLIST');
+		my @params = @{$feedAction->{'command'}};
+		if (my $params = $feedAction->{'fixedParams'}) {
+			push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
 		}
-		elsif ( $action eq 'insert' ) {
-			$string = $client->string('INSERT_TO_PLAYLIST');
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
 		}
-		else {
-
-			if (Slim::Player::Playlist::shuffle($client)) {
-
-				$string = $client->string('PLAYING_RANDOMLY_FROM');
-
-			} else {
-
-				$string   = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
-				$duration = 10;
-			}
-
-			if (Slim::Buttons::Common::mode($client) ne 'playlist') {
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-			}
-		}
-
-		$client->showBriefly( {
-			'line' => [ $string, $title ]
-		}, {
-			'duration' => $duration
-		});
 		
-		if ( scalar @{$others} ) {
+		main::INFOLOG && $log->is_info && $log->info("Use CLI command for $action($actionKey): ", join(', ', @params));
+		
+		_showPlayAction($client, $action, $title);
+
+		Slim::Control::Request::executeRequest( $client, \@params );
+
+		if ($action ne 'add' && $action ne 'insert' && Slim::Buttons::Common::mode($client) ne 'playlist') {
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		}
+	}
+	
+	elsif ( $type =~ /audio/i ) {
+
+		_showPlayAction($client, $action, $title);
+
+		if ( $others && $playalbum && scalar @{$others} ) {
 			# Emulate normal track behavior where playing a single track adds
 			# all other tracks from that album to the playlist.
 			
@@ -1140,7 +1244,7 @@ sub playItem {
 			my @urls;
 			
 			# Index to jump to
-			my $index = 0;
+			my $index;
 			
 			my $count = 0;
 			
@@ -1177,11 +1281,8 @@ sub playItem {
 				$count++;
 			}
 			
-			my $cmd = $action eq 'add' ? 'addtracks' : 'inserttracks';
-			
-			$client->execute([ 'playlist', 'clear' ]);
-			$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
-			$client->execute([ 'playlist', 'jump', $index ]);
+			$index = undef if $action ne 'play';
+			$client->execute([ 'playlist', $action.'tracks', 'listref', \@urls, undef, $index ]);
 		}
 		else {
 			# Set metadata about this URL
@@ -1194,6 +1295,11 @@ sub playItem {
 			
 			$client->execute([ 'playlist', $action, $url, $title ]);
 		}
+
+		if ($action ne 'add' && $action ne 'insert' && Slim::Buttons::Common::mode($client) ne 'playlist') {
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		}
+		
 	}
 	elsif ($type eq 'playlist') {
 
@@ -1213,17 +1319,20 @@ sub playItem {
 		# we may have a callback as URL
 		if ( ref $url eq 'CODE' ) {
 			my $callback = sub {
-				my $menu = shift;
-				
-				if ( ref $menu ne 'ARRAY' ) {
-					$menu = [ $menu ];
+				my $data = shift;
+				my $opml;
+
+				if ( ref $data eq 'HASH' ) {
+					$opml = $data;
+					$opml->{'type'}  ||= 'opml';
+					$opml->{'title'} = $title;
+				} else {
+					$opml = {
+						type  => 'opml',
+						title => $title,
+						items => (ref $data ne 'ARRAY' ? [$data] : $data),
+					};
 				}
-				
-				my $opml = {
-					type  => 'opml',
-					title => $title,
-					items => $menu,
-				};
 				
 				gotPlaylist( $opml, $params );
 			};
@@ -1236,7 +1345,7 @@ sub playItem {
 				$log->debug( "Fetching OPML playlist from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, @{$pt} );
+			return $url->( $client, $callback, {}, @{$pt} );
 		}
 		
 		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item
@@ -1290,6 +1399,79 @@ sub playItem {
 		
 		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	}
+	else {
+
+		$client->bumpRight();
+	}
+}
+
+sub contextMenu {
+	my $client = shift;
+	my $item   = shift;
+	my $feed   = shift;
+
+	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
+	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || 'audio';
+	
+	my $expires = $client->modeParam('expires');
+	
+	# Adjust HTTP timeout value to match the API on the other end
+	my $timeout = $client->modeParam('timeout') || 5;
+	
+	# Should we remember where the user was browsing? (default: yes)
+	my $remember = $client->modeParam('remember');
+	if ( !defined $remember ) {
+		$remember = 1;
+	}
+	
+	# get modeParams before pusing block
+	my $modeParams = $client->modeParams();
+
+	my $params = {
+		'client'    => $client,
+		'expires'   => $expires,
+		'feedTitle' => $title,
+		'item'      => $item,
+		'timeout'   => $timeout,
+		'remember'  => $remember,
+	};
+	
+	main::DEBUGLOG && $log->debug("Context menu for :", $title);
+	
+	if (my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction($feed, $item, 'info')) {
+		
+		my @params = @{$feedAction->{'command'}};
+		if (my $params = $feedAction->{'fixedParams'}) {
+			push @params, map { $_ . ':' . $params->{$_}} keys %{$params};
+		}
+		my @vars = exists $feedAction->{'variables'} ? @{$feedAction->{'variables'}} : @{$feedActions->{'commonVariables'} || []};
+		for (my $i = 0; $i < scalar @vars; $i += 2) {
+			push @params, $vars[$i] . ':' . $item->{$vars[$i+1]};
+		}
+		
+		main::INFOLOG && $log->is_info && $log->info("Use CLI command for info: ", join(', ', @params));
+		
+		my $callback = sub {
+			my $opml = shift;
+			$opml->{'type'}  ||= 'opml';
+			$opml->{'title'} = $title;
+			
+			# XXX maybe bumpRight if no entries in menu
+			
+			gotFeed( $opml, $params );
+		};
+	
+	    push @params, 'feedMode:1';
+		my $proxiedRequest = Slim::Control::Request::executeRequest( $client, \@params );
+		
+		# wrap async requests
+		if ( $proxiedRequest->isStatusProcessing ) {			
+			$proxiedRequest->callbackFunction( sub { $callback->($_[0]->getResults); } );
+		} else {
+			$callback->($proxiedRequest->getResults);
+		}
+	}
+	
 	else {
 
 		$client->bumpRight();

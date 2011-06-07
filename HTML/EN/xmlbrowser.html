@@ -8,7 +8,7 @@
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name %]</a>
+			<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;sess=[% sess %]">[% crumb.name | html %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -22,9 +22,23 @@
 	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 [% END %][% END %]
 
+[%-
+	hasArtwork = 0;
+	contentwrapper = 'contentitem';
+	container = 'contentcontainer';
+	
+	UNLESS ajaxUpdate && ajaxUpdate >= 1;
+		FOREACH item = items;
+			IF item.image; hasArtwork = 1; LAST; END;	
+		END;
+	END;	
+	
+	IF 0 && artwork == 1 && hasArtwork; container = 'gallerycontainer'; contentwrapper = 'galleryitem'; END;
+-%]
+
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
 
-[% IF msg %][% WRAPPER contentcontainer %]
+[% IF msg %][% WRAPPER $container %]
 	<b>[% msg %]</b>
 [% END %][% END %]
 
@@ -50,14 +64,6 @@
 
 [%- odd = 1 %]
 [%- IF items.size -%]
-	 [%- # Maintain correct index values 	
-	 	UNLESS path == 'trackinfo.html'; 
-			FOREACH item = items; 	 
-				item.index = index _ (start + loop.index); 	 
-			END; 	 
-		END;
-	%]
-
 	[% IF hasPagebar %]
 		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
 		[% PROCESS pagebar %]
@@ -78,35 +84,96 @@
 			[% END %]
 		[% END %]</span>
 	[% END %]
+
+	[% BLOCK editcmd %]
+			href="[% webroot %]edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist_id=[% playlist_id %]&amp;itempos=[% item.play_index %]"
+	[% END %]
 	
-	[%- # treat track information specially
-	IF path == 'trackinfo.html';
+	[% BLOCK editcontrols %]
+		[% IF loop.count > 0 || loop.last %]
+			[% UNLESS useExtJS %]
+				[%- WRAPPER moveuplink noTarget=1 %]
+					[%- PROCESS editcmd cmd='up' %]
+				[% END %]
+	
+				[%- WRAPPER movedownlink noTarget=1 %]
+					[%- PROCESS editcmd cmd='down' %]
+				[% END %]
+			[% END %]
+			
+			[%- WRAPPER editlink noTarget=1 %]
+				[%- PROCESS editcmd cmd='edit' %]
+			[% END %]
+		
+			[%- WRAPPER removelink noTarget=1 %]
+				[%- PROCESS editcmd cmd='delete' %]
+			[% END %]
+		[% END %]
+	[% END %]
 
-		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
-
-		PROCESS songinfo_header.html albumFirst = 1
-			itemobj = {
-				id => sess,
-				album => details.album.0,
-				contributorRoles => details.contributors.keys,
-				contributors => details.contributors,
-				genres => details.genre,
-				year => details.year.0.id
-			}
-			plugin_meta = {
-				title => details.title.0.name 
-			};
-
+	[% BLOCK editform %]
+		<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
+			<input type="hidden" name="player" value=[% playerURI %]>
+			<input type="hidden" name="itempos" value=[% item.play_index %]>				
+			<input type="hidden" name="playlist_id" value=[% playlist_id %]>
+			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title %]">[% END %]
+			<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.url %]">
+			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
+			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
+		</form>
+	[% END %]
+	
+	[% IF playlist_id %]
+		<div class="playlistform">
+			<form method="get" action="[% webroot %]edit_playlist.html">
+				<table>
+					<tr>
+						<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlistTitle; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "ADD" | string %]" onclick='this.form.addItem.value=1'></td>
+						<td>
+							[% IF playlistTitle %]
+								<input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'>
+							[% END %]
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							[%- IF warning == 'RENAME_WARNING' %]
+								<input type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
+							[%- END %]
+							[%- IF warning == 'DELETE_WARNING' %]
+								<input type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
+							[%- END %]
+							<input type="hidden" name="playlist_id" value="[% playlist_id %]">
+							<input type="hidden" name="renamePlaylist" value="0">
+							<input type="hidden" name="editPlaylist" value="0">
+							<input type="hidden" name="deletePlaylist" value="0">
+							<input type="hidden" name="addItem" value="0">
+							<input type="hidden" name="player" value="[% player %]">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	[% END %]
+	
+	[%- IF songinfo;
+		PROCESS songinfo_header.html itemobj = songinfo;
 		image = undef;
 	END %]
 
-	[%- WRAPPER contentcontainer %]
+	[%- WRAPPER $container %]
 		[% IF image %]
 		<ul>
-			<a href="[% image %]" target="cover">
-				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
+			<a href="[% UNLESS image.match("^(\/|http)") %][% webroot %][% END %][% image %]" target="cover">
+				<img src="[% image | resizeimage(150, 150, '', webroot) %]" alt="coverArt">
 			</a>
 		</ul>
+		[% END %]
+		
+		[% IF playlist_id && addItem %]
+			[% PROCESS editform %]
 		[% END %]
 		
 		[% IF itemsHaveAudio %]
@@ -114,7 +181,7 @@
 				[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 				[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
+			[%- WRAPPER $contentwrapper leftcontrols = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
 			[%- END %]
 			[%- odd = (not odd) %]
@@ -134,11 +201,12 @@
 				[% END %]
 			[%- END %]
 			
-			[% IF item.type == 'search' && !item.weblink %]
+			[% IF playlist_id && edit && loop.index == itempos %]
+				[% PROCESS editform %]
+			[% ELSIF item.type == 'search' && !item.weblink %]
 				<form name="searchForm[% item.index || index _ (start + loop.index) %]" id="searchForm[% item.index || index _ (start + loop.index) %]" method="GET">
-					[% item.name || item.title %]
 					<input type="text" name="q" value=""/>
-					<input name="formsubmit" type="submit" class="stdclick" value="[% "SEARCH" | string %]" onClick = "document.getElementById('searchForm[% item.index || index _ (start + loop.index) %]').submit();"><p>
+					<input name="formsubmit" type="submit" class="stdclick" value="[% item.name || item.title %]" onClick = "document.getElementById('searchForm[% item.index || index _ (start + loop.index) %]').submit();"><p>
 					<input type="hidden" value="[% player %]" name="player" />
 					<input type="hidden" value="[% sess %]" name="sess">
 					<input type="hidden" value="[% item.index || index _ (start + loop.index) %]" name="index" />
@@ -149,15 +217,19 @@
 					onMouseOut="hideElements(['controls[% item.index || index _ (start + loop.index) %]'])">
 				[% END %]
 
-				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = (playlist_id ? 'editcontrols' : 'favoritescontrol') anchor = item.anchor %]
 					[% IF item.web.type == 'htmltemplate' %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]
+						[% IF item.label %]
+							[% item.label | string %]
+							[%- "COLON" | string %]
+						[% END %]	
 						[% IF item.weblink %]
 							<a href="[% item.weblink %]" target="_blank">
 						[% ELSIF item.type == 'redirect' %]
 							[% IF item.web.url %]
-							<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+							<a href="[% webroot %][% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
 							[% ELSE; NEXT %]
 							[% END %]
 						[% ELSIF !item.type.match('^text') %]
@@ -166,6 +238,20 @@
 						[% item.name || item.title || item.web.value %]
 						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
+						[% END %]
+						[% IF item.showYear && item.year %]
+							[% IF item.remote %]
+								([% item.year %])
+							[% ELSE %]
+								<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+							[% END %]
+						[% IF item.showArtist && item.artist %]
+							[% UNLESS noby %][% "BY" | string %] [% END %]
+							[% IF item.artist_id %]
+								<a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
+							[% ELSE %]
+								[% item.artist %]
+							[% END %]
 						[% END %]
 					[% END %]
 				[%- END %]
