@@ -1537,6 +1537,55 @@ sub _tracks {
 			if ($search) {
 				$actions{'playall'} = $actions{'play'};
 				$actions{'addall'} = $actions{'all'};
+			}
+			
+			my $extra;
+			if ($search && $search !~ /^sql=/) {
+				my $strings = Slim::Utils::Text::searchStringSplit($search)->[0];
+
+				my $sql;
+				if ( ref $strings eq 'ARRAY' ) {
+					$_ =~ s/'/''/g foreach @$strings;
+					$sql = '(' . join( ' OR ', map { "tracks.titlesearch LIKE '" . $_ . "'"} @$strings ) . ')';
+				} else {
+					$strings =~ s/'/''/g;		
+					$sql = "tracks.titlesearch LIKE '" . $strings . "'";
+				}
+				
+				my %params = (
+					mode       => 'tracks',
+					sort       => 'albumtrack',
+					menuStyle  => 'menuStyle:allSongs',
+					search     => 'sql=' . $sql,
+				);
+					
+				my %allSongsActions = (
+					allAvailableActionsDefined => 1,
+					
+					# relies on side-effect of context menu, really should implement a searchTracksinfo command
+					info   => {
+						command => [BROWSELIBRARY, 'items'],
+						fixedParams => {mode => 'tracks', search => $search, item_id => $results->{'count'}},
+					},
+					
+					# no 'items' item as no need to browse into this item
+					play   => {command => [BROWSELIBRARY, 'playlist', 'play'],   fixedParams => \%params},
+					add    => {command => [BROWSELIBRARY, 'playlist', 'add'],    fixedParams => \%params},
+					insert => {command => [BROWSELIBRARY, 'playlist', 'insert'], fixedParams => \%params},
+				);
+
+				$extra = [ {
+					name        => cstring($client, 'ALL_SONGS'),
+					icon        => 'html/images/albums.png',
+					type        => 'playlist',
+					# No url as we no not want to be able to browse this item,
+					# but cannot use type=text because this would stop Slim::Control::XMLBrowser
+					# adding play-control items in a context menu (see side-effect above for 'info' action)
+					playlist    => \&_tracks,
+					passthrough => [{ search => 'sql=' . $sql, sort => 'sort:albumtrack', menuStyle => 'menuStyle:allSongs' }],
+					itemActions => \%allSongsActions,
+				} ];
+			
 			} else {
 				$actions{'playall'} = {
 					command     => ['playlistcontrol'],
@@ -1562,7 +1611,7 @@ sub _tracks {
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
 			}
 
-			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, cover => $image}, undef;
+			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, cover => $image}, $extra;
 		},
 	);
 }

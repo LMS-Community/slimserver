@@ -1001,30 +1001,37 @@ sub displayItemDescription {
 	}
 
 	if (Slim::Control::XMLBrowser::hasAudio($item)) {
+		
+		if ($item->{'enclosure'} && $item->{'enclosure'}->{'url'}) {
 
-		push @lines, {
-			'name'      => '{XML_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
-			'value'     => $item->{'enclosure'}->{'url'},
-			'overlayRef'=> [ undef, $client->symbols('notesymbol') ],
-		};
-
-		# its a remote audio source, use remotetrackinfo
-		my %params = (
-			'header'    => $item->{'title'},
-			'headerAddCount' => 1,
-			'title'     => $item->{'title'},
-			'url'       => $item->{'enclosure'}->{'url'},
-			'details'   => \@lines,
-			'onRight'   => sub {
-				my $client = shift;
-				my $item = $client->modeParam('item');
-				displayItemLink($client, $item);
-			},
-			'hideTitle' => 1,
-			'hideURL'   => 1,
-		);
-
-		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+			push @lines, {
+				'name'      => '{XML_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
+				'value'     => $item->{'enclosure'}->{'url'},
+				'overlayRef'=> [ undef, $client->symbols('notesymbol') ],
+			};
+	
+			# its a remote audio source, use remotetrackinfo
+			my %params = (
+				'header'    => $item->{'title'},
+				'headerAddCount' => 1,
+				'title'     => $item->{'title'},
+				'url'       => $item->{'enclosure'}->{'url'},
+				'details'   => \@lines,
+				'onRight'   => sub {
+					my $client = shift;
+					my $item = $client->modeParam('item');
+					displayItemLink($client, $item);
+				},
+				'hideTitle' => 1,
+				'hideURL'   => 1,
+			);
+	
+			Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+		}
+		
+		else {
+			$client->bumpRight();
+		}
 
 	} else {
 		# its not audio, use INPUT.Choice to display...
