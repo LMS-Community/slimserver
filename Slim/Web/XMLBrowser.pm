@@ -985,6 +985,15 @@ sub handleFeed {
 		}
 	}
 	
+	# Ignore the All Songs link added by browse library at the end if we will add our own link.
+	# This is a horrible hack really.
+	if ($stash->{'items'}) {
+		my $item = $stash->{'items'}->[-1];
+		if ($item && $stash->{'itemsHaveAudio'} && $item->{'name'} && $item->{'name'} eq string('ALL_SONGS')) {
+			$item->{'ignore'} = 1;
+		}
+	}
+	
 #	$log->error(Data::Dump::dump($stash->{'items'}));
 
 	my $output = processTemplate($template, $stash);

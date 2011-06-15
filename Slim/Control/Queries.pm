@@ -4955,7 +4955,7 @@ sub _getTagDataForTracks {
 		my ($valid, $start, $end) = $limit->($total);
 		
 		if ( !$valid ) {
-			return wantarray ? ( {}, [], 0 ) : {};
+			return wantarray ? ( {}, [], $total ) : {};
 		}
 		
 		# Limit the real query
