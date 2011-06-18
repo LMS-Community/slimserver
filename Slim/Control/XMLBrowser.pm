@@ -1862,7 +1862,7 @@ sub _favoritesParams {
 		my %presetParams = (
 			favorites_url   => $favorites_url,
 			favorites_title => $favorites_title,
-			favorites_type  => $item->{play} ? 'audio' : ($item->{type} || 'audio'),
+			favorites_type  => $item->{favorites_type} || ($item->{play} ? 'audio' : ($item->{type} || 'audio')),
 		);
 		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
 		
