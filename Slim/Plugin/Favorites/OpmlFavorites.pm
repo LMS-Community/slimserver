@@ -178,11 +178,11 @@ sub _loadOldFavorites {
 sub xmlbrowser {
 	my $class = shift;
 
-	$class->SUPER::xmlbrowser;
+	my $hash = $class->SUPER::xmlbrowser;
 
-	$class->{'xmlhash'}->{'favorites'} = 1;
+	$hash->{'favorites'} = 1;
 
-	return $class->{'xmlhash'};
+	return $hash;
 }
 
 sub all {

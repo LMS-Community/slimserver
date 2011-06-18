@@ -720,9 +720,6 @@ sub cliBrowse {
 	}
 	else {
 		$feed = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
-		
-		# Bug 8768, don't let XMLBrowser modify our data
-		$feed = Storable::dclone($feed);
 	}
 
 	Slim::Control::XMLBrowser::cliQuery('favorites', $feed, $request);
