@@ -93,7 +93,7 @@ SETUP_XPLIR
 SETUP_XPLIR_NONE
 	CS	Žádný
 	DA	Ingen
-	DE	Keiner
+	DE	Keine
 	EN	None
 	ES	Ninguno
 	FI	Ei mitään

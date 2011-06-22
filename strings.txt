@@ -37,6 +37,7 @@ LANGUAGE_CHOICES
 	ZH_CN	简体中文 *
 
 LOCALE_WIN
+# SLT: please do not translate this value
 	CS	cze_cze
 	DA	dan_dnk
 	DE	deu_deu
@@ -55,6 +56,7 @@ LOCALE_WIN
 	ZH_CN	chs_chn
 
 LOCALE
+# SLT: please do not translate this value
 	CS	cs_CZ
 	DA	da_DK
 	DE	de_DE
@@ -94,11 +96,11 @@ COPYRIGHT
 	DA	© 2001-2011 Logitech - version 7.6.0
 	DE	© 2001-2011 Logitech Version 7.6.0
 	EN	© 2001-2011 Logitech Version 7.6.0
-	ES	© 2001-2011 Logitech versión 7.6.0
-	FI	© 2001-2011 Logitech-versio 7.6.0
+	ES	© 2001-2011 Logitech Versión 7.6.0
+	FI	© 2001-2011 Logitechin versio 7.6.0
 	FR	© 2001-2011 Logitech Version 7.6.0
-	IT	© 2001-2011 Logitech Versione 7.6.0
-	NL	© 2001-2011 Logitech Versie 7.6.0
+	IT	© 2001-2011 Logitech versione 7.6.0
+	NL	© 2001-2011 Logitech versie 7.6.0
 	NO	© 2001–2011 Logitech versjon 7.6.0
 	PL	© 2001-2011 Logitech wersja 7.6.0
 	RU	© Logitech, 2001-2011. Версия 7.6.0
@@ -127,11 +129,11 @@ VERSION
 	ES	Versión 7.6.0 / r%s
 	FI	Versio 7.6.0 / r%s
 	FR	Version 7.6.0 / r%s
-	IT	Versione 7.6.0 / r%s
+	IT	Versione 7.6.0/r%s
 	NL	Versie 7.6.0 / r%s
 	NO	Versjon 7.6.0 / r%s
 	PL	Wersja 7.6.0 / r%s
-	RU	Версия 7.6.0/r%s
+	RU	Версия 7.6.0 / r%s
 	SV	Version 7.6.0 / r%s
 
 CHOOSE_A_LANGUAGE
@@ -178,7 +180,7 @@ EN_SKIN
 	FI	Valo
 	FR	Léger
 	HE	פשוט
-	IT	Chiaro
+	IT	Leggero
 	JA	ライト
 	NL	Licht
 	NO	Lett
@@ -433,7 +435,7 @@ HOMEMENU
 	EN	Home
 	ES	Inicio
 	FI	Koti
-	FR	Menu d'accueil
+	FR	Accueil
 	HE	ראשי
 	IT	Pagina iniziale
 	JA	ホーム
@@ -625,13 +627,13 @@ MY_MUSIC
 MUSIC_STORES
 	CS	Hudební obchody
 	DA	Onlinemusikbutikker
-	DE	Musik Shops
+	DE	Musik-Shops
 	EN	Music Stores
 	ES	Tiendas de música
 	FI	Musiikkikaupat
 	FR	Magasins de musique
 	IT	Negozi di musica online
-	NL	Music Stores
+	NL	muziekwinkels
 	NO	Musikkbutikker
 	PL	Sklepy muzyczne
 	RU	Музыкальные магазины
@@ -772,7 +774,7 @@ NOW_PLAYING
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Nyt soi
-	FR	Lecture
+	FR	Lecture en cours
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
@@ -863,7 +865,7 @@ PLAYING
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Nyt soi
-	FR	Lecture
+	FR	Lecture en cours
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
@@ -3548,22 +3550,22 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	ZH_CN	适用于调节服务器上TCP/IP网络参数的配置。
 
 SETUP_GROUP_TITLEFORMATS_DESC
-	CS	Zde jsou formáty k výběru jak na webovém rozhraní tak na přehrávačích. Chcete-li odstranit některý formát, smažte textové políčko; nový formát zadáte jeho vložením do prázdného políčka. Dostupné datové prvky jsou: CT (typ obsahu), TITLE, GENRE, TRACKNUM (číslo stopy jako celé číslo), FS (velikost souboru), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (celkem sekund), DURATION (minuty a sekundy), BITRATE, LONGDATE (aktuální datum, dlouhé), SHORTDATE (aktuální datum, krátké), CURRTIME(aktuální čas). Prvky lze oddělovat čímkoli (nebo ničím). Oddělovače se používají pouze tehdy, jsou-li přítomny datové prvky.<br>Current selection je formát, který se bude používat na webových stránkách.
-	DA	De følgende formater kan vælges i både den webbaserede brugerflade og på afspillerne. Hvis du vil fravælge et format, skal feltet være tomt. Hvis du vil tilføje et nyt format, skal du gøre det i det tomme felt. Der er følgende dataelementer: CT (indholdstype), TITLE (titel), GENRE, TRACKNUM (nummer på cd'en angivet som et heltal), FS (filstørrelse), ARTIST (kunstner), COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (sekunder i alt), DURATION (varighed i minutter og sekunder), BITRATE (bithastighed), LONGDATE (dags dato, lang), SHORTDATE (dags dato, kort), CURRTIME (klokkeslæt). Elementerne kan adskilles af hvad som helst eller ingenting. Skilletegnene benyttes kun hvis der er dataelementer.<br>Det nuværende valg er det format som bruges på websiderne.
-	DE	Die folgenden Formate sind sowohl oben als auch auf dem Player verfügbar. Löschen Sie ein Textfeld, um das Format zu entfernen, und geben Sie ein neues in ein leeres Feld ein, um es hinzuzufügen. Folgende Datenelemente sind verfügbar: CT (Art des Inhalts), TITLE, BAND (Band/Orchester), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Spielzeit in Sekunden), DURATION (Minuten und Sekunden), BITRATE, LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit). Elemente können durch beliebige (oder keine) Zeichen getrennt werden. Die Trennzeichen werden nur verwendet, wenn die Datenelemente vorhanden sind.<br> Die aktuelle Auswahl gibt das Format an, das auf den Webseiten genutzt wird.
+	CS	Zde jsou formáty k výběru jak na webovém rozhraní tak na přehrávačích. Chcete-li odstranit některý formát, smažte textové políčko; nový formát zadáte jeho vložením do prázdného políčka. Dostupné datové prvky jsou: CT (typ obsahu), TITLE, GENRE, TRACKNUM (číslo stopy jako celé číslo), FS (velikost souboru), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (celkem sekund), DURATION (minuty a sekundy), BITRATE, LONGDATE (aktuální datum, dlouhé), SHORTDATE (aktuální datum, krátké), CURRTIME(aktuální čas). Prvky lze oddělovat čímkoli (nebo ničím). Oddělovače se používají pouze tehdy, jsou-li přítomny datové prvky.<br>The Current selection (Aktuálně vybraný formát) představuje formát, který se bude používat na webových stránkách.
+	DA	Disse formater kan vælges i både på den webbaserede brugerflade og i afspillerne. Du kan fjerne et format ved at rydde indholdet i en tekstboks. Du kan tilføje et nyt format ved at indtaste tekst i den tomme tekstboks. Mulige dataelementer er: CT (indholdstype), TITEL, GENRE, AFSPILNINGSNR (afspilningsnummer som et interval), FS (filstørrelse), KUNSTNER, KOMPONIST, DIRIGENT, BAND, ALBUM, KOMMENTAR, ÅR, SEK (samlet antal sekunder), VARIGHED (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, LONGDATE (dato, lang), SHORTDATE (dato, kort), CURRTIME (tid). Elementer kan adskilles af alle tegn (eller ingen). Skilletegn bruges kun hvis der er dataelementer.<br>Den aktuelle indstilling er det format der vil blive brugt på websiderne.
+	DE	Die folgenden Formate sind sowohl über die Web-Benutzeroberfläche als auch auf den Playern auswählbar. Löschen Sie ein Textfeld, um das Format zu entfernen, und geben Sie ein neues in ein leeres Feld ein, um es hinzuzufügen. Folgende Datenelemente sind verfügbar: CT (Art des Inhalts), TITLE, GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), COMPOSER (Komponist), CONDUCTOR (Dirigent), BAND, ALBUM, COMMENT, YEAR, SECS (Spielzeit in Sekunden), DURATION (Minuten und Sekunden), BITRATE, LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit). Elemente können durch beliebige (oder keine) Zeichen getrennt werden. Die Trennzeichen werden nur verwendet, wenn die Datenelemente vorhanden sind.<br> Die aktuelle Auswahl gibt das Format an, das auf den Webseiten genutzt wird.
 	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), BITRATE, LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
-	ES	Éstos son los formatos disponibles para seleccionar, tanto anteriormente como en la configuración del reproductor. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista, COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en la interfaz Web.
-	FI	Nämä ovat valittavissa olevat muodot sekä internet-liittymässä että soittimissa. Voit poistaa muodon tyhjentämällä tekstiruudun. Voit lisätä uuden muodon sijoittamalla sen tyhjään ruutuun. Käytettävissä olevat tietoelementit: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (raidan numero), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (kokonaiskesto sekunteinta), DURATION (minuutteina ja sekunteina), BITRATE, LONGDATE (nykyinen pvm, pitkä), SHORTDATE (nykyinen pvm, lyhyt), CURRTIME (nykyinen aika). Elementit voidaan erottaa millä tahansa (tai ei millään). Erottimia käytetään vain, jos tietoelementtejä on.<br>Nykyinen valinta on muoto, jota käytetään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacez la zone de saisie. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Ces éléments peuvent être entrecoupés de séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<br> La sélection en cours est le format qui sera utilisé dans les documents Web.
+	ES	Éstos son los formatos disponibles para seleccionar, tanto en la interfaz Web como en los reproductores. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista), COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), BITRATE (velocidad de bits), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en las páginas Web.
+	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
+	FR	Voici les formats disponibles. Ils peuvent être choisis dans l'interface Web et les platines. Pour supprimer un format, effacez le contenu de la zone de texte. Placez votre curseur dans la zone de texte vide pour saisir un nouveau format. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), COMPOSER (compositeur), CONDUCTOR (chef d'orchestre), BAND (groupe), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), BITRATE (débit binaire), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Vous pouvez utiliser des séparateurs entre chaque élément. Les séparateurs ne sont utilisés que si des données sont présentes.<br>La sélection en cours est le format qui sera utilisé dans les pages Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
-	IT	Questi sono i formati selezionabili sia per l'interfaccia web che per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, scriverne il testo nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE (bitrate), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
+	IT	Questi formati sono selezionabili sia per l'interfaccia Web, sia per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, immettere il testo appropriato nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano sotto forma di numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), BITRATE, LONGDATE (data corrente in formato esteso), SHORTDATE (data corrente in formato abbreviato), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzare separatori. I separatori vengono utilizzati solo in presenza di dati.<br>Nelle pagine Web verrà utilizzato il formato correntemente selezionato.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、BITRATE（ビットレート)、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
-	NL	Dit zijn de indelingen die in de webinterface en op muzieksystemen kunnen worden geselecteerd. Als je een indeling wilt verwijderen, wis je het tekstvak. Wil je een nieuwe indeling invoeren, dan plaats je deze in het lege tekstvak. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als geheel getal), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). Elementen kunnen door alles (of niets) worden gescheiden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br>De huidige selectie is de indeling die op de webpagina's wordt gebruikt.
-	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og i spillere. Hvis du vil fjerne et format, fjerner du teksten i tekstboksen. Hvis du vil legge til et nytt format, legger du det inn i den tomme tekstboksen. Tilgjengelige dataelementer: CT (innholdstype), TITLE (sangtittel), GENRE (sjanger), TRACKNUM (spornummer, heltall), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND (band/gruppe), ALBUM, COMMENT (kommentar), YEAR (år), SECS (varighet i sekunder), DURATION (varighet i minutter og sekunder), BITRATE (bithastighet), LONGDATE (gjeldende dato, langt format), SHORTDATE (gjeldende dato, kort format), CURRTIME (gjeldende klokkeslett). Du kan skille elementer med hva som helst (eller ingenting). Skilletegnene brukes bare hvis dataelementene finnes.<br>Gjeldende utvalg er formatet som blir brukt på nettsidene.
-	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), BITRATE, LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
+	NL	Dit zijn de indelingen die geselecteerd kunnen worden, zowel in de webinterface als in de instellingen van je muzieksysteem. Als je een indeling wilt verwijderen, maak je het tekstvakje leeg. Wil je een indeling toevoegen, dan zet je het in een leeg vakje. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als int), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), BITRATE, LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br> De huidige selectie is de indeling die op de webpagina's gebruikt zal worden.
+	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og på spillerne. Tøm boksen for å fjerne et format. Du legger til et nytt format ved å oppgi det i en tom boks. Tilgjengelige dataelementer er CT (innholdstype), TITLE (tittel), GENRE (sjanger), TRACKNUM (spornummer), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totalt antall sekunder, oppgitt som et heltall), DURATION (minutter og sekunder), BITRATE, LONGDATE (dagens dato i langt format), SHORTDATE (dagens dato i kort format) og CURRTIME (klokkeslett nå). Elementer kan separeres med ethvert tegn, eller ingen. Skilletegnet vises bare om dataelementet finnes.<br>Det valgte formatet er det som blir brukt på nettsidene.
+	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
-	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), BITRATE, LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>"Текущий выбор" — это формат, который будет использоваться на веб-страницах.
-	SV	Det här är formaten som går att välja i webbgränssnittet och på spelarna. Om du vill ta bort ett format rensar du textfältet. Om du vill lägga till ert nytt format anger du det i det tomma fältet. Följande dataelement kan väljas: CT (innehållstyp), TITLE, GENRE, TRACKNUM (spårnummer (ett heltal)), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, TLONGDATE (aktuellt datum, långt format), SHORTDATE (aktuellt datum, kort format), CURRTIME (aktuell tid). Element kan separeras av vad som helst (eller inget alls). Avgränsarna används endast om dataelementen är närvarande.<br>Det aktuella valet är det format som kommer att användas på webbsidorna.
+	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
+	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
 	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
@@ -3775,12 +3777,12 @@ SETUP_SCROLLPAUSE_DESC
 	FI	Voit muuttaa aikaa, jonka soitin odottaa, ennen kuin se alkaa tekstin poikittaisen vierityksen näytössä.  Anna sekunteina aika, jonka soitin odottaa, ennen kuin se aloittaa tekstin vierittämisen tai vieritysten välillä.  Jos annat arvoksi nollan, soitin ei odota ollenkaan, vaan vieritys alkaa välittömästi. Oletus on 3,6 sekuntia.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine n'active le défilement horizontal du texte sur l'écran. Spécifiez la durée en secondes à attendre avant le défilement. Spécifiez 0 pour un défilement continu. La valeur par défaut est 3,6 secondes.
 	HE	באפשרותך לכוונן את משך הזמן שבו הנגן ממתין לפני שמתחיל בגלילה אופקית של טקסט בתצוגה. הזן ערך, בשניות, עבור פרק הזמן שבו יש להמתין לפני גלילה או בין גלילות. הזן אפס כדי שלא לקיים השהייה כלל ולגלילה מיידית. ברירת המחדל היא 3.6 שניות.
-	IT	È possibile impostare il tempo che il lettore attende prima di iniziare lo scorrimento orizzontale del testo sullo schermo. Inserire un valore in secondi per la quantità di tempo da attendere prima di iniziare lo scorrimento e fra uno scorrimento e l'altro. Inserire zero per non attendere ed iniziare immediatamente lo scorrimento. Il valore predefinito è 3, 6 secondi.
+	IT	È possibile impostare il tempo che il lettore attende prima di iniziare lo scorrimento orizzontale del testo sullo schermo. Inserire un valore in secondi per la quantità di tempo da attendere prima di iniziare lo scorrimento e fra uno scorrimento e l'altro. Inserire zero per non attendere ed iniziare immediatamente lo scorrimento. Il valore predefinito è 3,6 secondi.
 	JA	ディスプレイスクロール開始までの時間を調節することができます。秒数を入力してください。「０」とすると、すぐに開始します。出荷時設定は3.6秒です。
 	NL	Je kunt aanpassen hoe lang het muzieksysteem wacht voordat het lopen van de tekst op het display start. Voer een waarde in (in seconden) die aangeeft hoe lang er gewacht moet worden voordat de tekst gaat lopen, of voordat de tekst herhaald wordt. Voer 0 in om helemaal niet te wachten en de tekst direct te laten lopen. De standaardinstelling is 3,6 seconden.
 	NO	Du kan justere hvor lenge spilleren venter før den starter sidelengs tekstrulling på skjermen. Angi hvor mange sekunder den skal vente før den ruller, eller mellom rulling. Skriv null hvis du ikke vil ha noen pause, men heller vil at teksten skal begynne å rulle med én gang. Standard er 3,6 sekunder.
 	PL	Czas, po jakim odtwarzacz rozpoczyna przewijanie tekstu w poziomie na ekranie odtwarzacza można dostosować. Wprowadź wartość oczekiwania w sekundach przed rozpoczęciem przewijania lub między kolejnymi przewijaniami. Wartość zero wyłącza oczekiwanie i powoduje natychmiastowe przewijanie. Wartość domyślna to 3,6 sekundy.
-	RU	Можно задать время, по истечении которого плеер начинает горизонтальную прокрутку текста на экране. Введите значение в секундах для времени ожидания до начала прокрутки или между прокрутками. Для немедленной прокрутки без пауз введите "0". Значение по умолчанию — 3,6 секунд.
+	RU	Можно задать время, по истечении которого плеер начинает горизонтальную прокрутку текста на экране. Введите значение в секундах для времени ожидания до начала прокрутки или между прокрутками. Для немедленной прокрутки без пауз введите «0». Значение по умолчанию — 3,6 с.
 	SV	Du kan justera fördröjningen innan textremsan börja rulla över spelarens display.  Ange ett värde (i sekunder) innan textremsan börjar rulla, eller innan den börjar på nytt efter att ha rullat en gång över displayen.  Ange noll om du vill att textremsan börjar rulla direkt utan fördröjning. Standard är 3,6 sekunder.
 	ZH_CN	您可调整播放机开始进行横跨文字卷动前的等待值。输入一个以秒为单位的等待值为在卷动之前或在卷动之间的等待时间。如要立刻进行卷动请输入零为等待值。缺省值为3.6秒。
 
@@ -3803,21 +3805,21 @@ SETUP_SCROLLRATE
 	ZH_CN	卷动速度
 
 SETUP_SCROLLRATE_DESC
-	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Scroll Pixels a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Scroll Pixels jednou za každou sekundu Scroll Rate). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,15 sekund pro jednořádkový, 0,1 sekundy pro velký text.
-	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden er bestemmende for hvor lang tid der går mellem at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles. De to indstillinger bestemmer tilsammen hastigheden og billedkvaliteten: Teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder. På en afspiller med et tegndisplay er indstillingen bestemmende for hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,15 sekund er standard ved enkeltlinjer, 0,1 sekund for stor skrift.
-	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Display vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert für eine Zeile ist 0,15 für zwei Zeilen 0,1 Sekunden.
+	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Scroll Pixels a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Scroll Pixels jednou za každou sekundu Scroll Rate). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,033 sekundy.
+	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden bestemmer hvor lang tid der går mellem, at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles for tilsammen at bestemme hastigheden og billedkvaliteten (teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder). På afspillere med et tegndisplay bestemmer indstillingen hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,033 sekunder er standard.
+	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Displays vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert ist 0,033 Sekunden.
 	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.033 seconds is the default.
-	ES	Se puede ajustar la velocidad a la que el texto se desplaza por la pantalla. La velocidad de desplazamiento define el tiempo que se tarda entre actualizaciones de pantalla. En un reproductor con una pantalla gráfica, se puede ajustar junto con Píxeles de desplazamiento para establecer la velocidad y la calidad de desplazamiento (el texto se moverá según el valor de Píxeles de desplazamiento en cada valor en segundos de Velocidad de desplazamiento). En un reproductor con una pantalla de caracteres, esto define la duración antes del desplazamiento al próximo carácter. Introduzca un valor, en segundos, para el tiempo de espera entre actualizaciones. Los número bajos hacen que el desplazamiento sea más rápido. 0,15 segundos es el valor predeterminado para una sola línea; 0,1 segundos para texto grande.
-	FI	Voi säätää millä nopeudella teksti vierii ruudulla. Vieritysnopeus määrittelee ruudunpäivitysten välisen ajan. Graafisen näytön omaavissa soittimissa, tätä voidaan säätää vierityspikselien kanssa vierityksen laadun määrittämiseksi. Merkkipohjaisissa näytöissä, tämä määrittelee kuinka kauan odotetaan, ennenkuin vieritetään seuraavaan merkkiin. Syötä arvo sekunneissa. Pienemmät arvot nopeuttavat vieritystä. 0.15 on yksirivisen näytön oletusarvo ja 0.1 suuren tekstin.
-	FR	Vous pouvez ajuster la vitesse de défilement du texte à l'écran. La vitesse de défilement permet de définir l'intervalle de temps entre les actualisations de l'écran. Pour une platine dotée d'un affichage graphique, vous pouvez ajuster cette valeur en combinaison avec la valeur de Pixels de défilement pour définir la vitesse et la qualité du défilement. Le texte se déplace d'un certain nombre de pixels après le nombre de secondes défini. Pour une platine dotée d'un affichage par caractères, cette valeur définit l'intervalle de temps avant le défilement vers le caractère suivant. Spécifiez une valeur en secondes pour cet intervalle. Plus la valeur est faible, plus le défilement est rapide. La valeur par défaut est 0,15 s pour l'affichage sur une seule ligne et 0,1 s pour la grande police.
+	ES	Se puede ajustar la velocidad a la que el texto se desplaza por la pantalla. La velocidad de desplazamiento define el tiempo que se tarda entre actualizaciones de pantalla. En un reproductor con una pantalla gráfica, se puede ajustar junto con Píxeles de desplazamiento para establecer la velocidad y la calidad de desplazamiento (el texto se moverá según el valor de Píxeles de desplazamiento en cada valor en segundos de Velocidad de desplazamiento). En un reproductor con una pantalla de caracteres, esto define la duración antes del desplazamiento al próximo carácter. Introduzca un valor, en segundos, para el tiempo de espera entre actualizaciones. Los número bajos hacen que el desplazamiento sea más rápido. El valor predeterminado es 0,033 segundos.
+	FI	Voi säätää millä nopeudella teksti vierii ruudulla. Vieritysnopeus määrittelee ruudunpäivitysten välisen ajan. Graafisen näytön omaavissa soittimissa, tätä voidaan säätää vierityspikselien kanssa vierityksen laadun määrittämiseksi. Merkkipohjaisissa näytöissä, tämä määrittelee kuinka kauan odotetaan, ennenkuin vieritetään seuraavaan merkkiin. Syötä arvo sekunneissa. Pienemmät arvot nopeuttavat vieritystä. 0.15 on yksirivisen näytön oletusarvo ja 0.1 kaksirivisen.
+	FR	Vous pouvez ajuster la vitesse de défilement du texte à l'écran. La vitesse de défilement définit l'intervalle de temps entre les rafraîchissements de l'écran. Sur une platine dotée d'un affichage graphique, vous pouvez ajuster cette valeur en combinaison avec la valeur de pixels de défilement pour définir la vitesse et la qualité du défilement. Le texte se déplace d'un certain nombre de pixels après le nombre de secondes défini. Pour une platine dotée d'un affichage par caractères, cette valeur définit l'intervalle de temps avant le défilement vers le caractère suivant. Spécifiez une valeur en secondes pour cet intervalle. Plus la valeur est faible, plus le défilement est rapide. La valeur par défaut est de 0,033 s.
 	HE	באפשרותך לכוונן את הקצב שבו טקסט נגלל נע על-פני המסך. קצב הגלילה מגדיר את משך הזמן בין עדכוני התצוגה. בנגן עם תצוגה גרפית, ניתן לכוונן הגדרה זו בשילוב עם ההגדרה של פיקסלים לגלילה כדי להגדיר את המהירות והכמות של הגלילה (הטקסט ינוע לפי 'פיקסלים לגלילה' בכל מספר השניות המוגדר ב'קצב גלילה'). בנגן עם תצוגת תווים, הגדרה זו קובעת את משך הזמן לפני הגלילה לתו הבא. הזן ערך, בשניות, עבור פרק הזמן בין עדכונים. ככל שהמספר נמוך יותר, הגלילה מהירה יותר. ערך ברירת המחדל הוא 0.15 עבור שורה אחת; 0.1 שניות עבור שורה כפולה.
-	IT	È possibile regolare la velocità alla quale il testo scorre sullo lo schermo. La velocità di scorrimento definisce l'intervallo di aggiornamento dello schermo. Su un lettore con schermo grafico può essere regolata congiuntamente all'impostazione di Pixel scorrimento per impostare la velocità e la qualità dello scorrimento (il testo si sposta del numero di pixel impostato e dopo l'intervallo di tempo impostato per la velocità di scorrimento). Su un lettore con uno schermo a caratteri questo valore definisce la durata tra la visualizzazione di un carattere e il successivo. Inserire un valore in secondi. Valori più bassi rendono lo scorrimento più veloce. Il valore predefinito per una riga singola è di 0,15 secondi e 0,1 secondi per testo di grandi dimensioni.
+	IT	È possibile regolare la velocità di scorrimento del testo sullo schermo, che definisce l'intervallo di aggiornamento dello schermo. In un lettore con display grafico, può essere regolata insieme all'impostazione Pixel scorrimento per impostare la velocità e la qualità dello scorrimento (il testo si sposta del numero di pixel specificato una volta trascorso l'intervallo di tempo impostato per la velocità di scorrimento). In un lettore con un display a caratteri, il valore definisce l'intervallo di tempo che trascorre tra la visualizzazione di un carattere e la visualizzazione di quello successivo. Immettere un valore espresso in secondi. Più basso è il valore, più veloce sarà lo scorrimento. Il valore predefinito è di 0,033 secondi.
 	JA	ディスプレイテキストの別の文字をスクロール開始するまでの時間を調節することができます。秒数を入力してください。出荷時設定は、1行フォントであれば0.15秒、2行フォントであれば0.10秒です。
-	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muzieksysteem met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens na het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een systeem met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde in, in seconden, voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. 0,15 seconden is de standaardwaarde voor tekst met enkele regelhoogte. 0,1 seconden is de standaardwaarde voor grote tekst.
-	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av displayet. På en spiller med grafisk display kan denne innstillingen benyttes sammen med Rullepiksler for å styre hastighet og kvalitet for rullingen. (Teksten vil rulle Rullepiksler for hvert Rullefrekvens-sekund.) På en spiller med tegndisplay vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere nummer vil gjøre rullingen raskere. 0,15 sekunder er standard for enkeltlinje-display, mens 0,1 sekunder er standard for stor skrift.
-	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna dla pojedynczego wiersza, 0,1 sekundy dla długiego tekstu.
-	RU	Можно настроить скорость прокрутки теста на экране. Параметр "Скорость прокрутки" определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром "Число пикселей прокрутки", при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. 0,15 с — значение по умолчанию для однострочного текста; 0,1 с — для текста крупным шрифтом.
-	SV	Du kan justera hastigheten för textremsan som rullar över displayen.Texthastigheten bestämmer hur ofta displayinformationen uppdateras. På spelare med grafisk display kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter varje gång det angivna antalet sekunder förlöpt. På spelare med teckendisplay anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,15 sekunder är standard för enradsvisning, 0,1 för stor text.
+	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muzieksysteem met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens volgens het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een muzieksysteem met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde, in seconden, in voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. De standaardwaarde is 0,033 seconden.
+	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av skjermen. På en spiller med grafisk skjerm kan denne innstillingen benyttes sammen med Rullepiksler for å styre rullehastighet og kvalitet. (Teksten vil rulle i henhold til Rullepiksler for hvert intervall angitt under Rullefrekvens.) På en spiller med tegnskjerm vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere tall vil gjøre rullingen raskere. 0,033 sekunder er standard.
+	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna.
+	RU	Можно настроить скорость прокрутки теста на экране. Параметр «Скорость прокрутки» определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром «Число пикселей прокрутки», при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. Значение по умолчанию 0,033 с.
+	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
@@ -4864,7 +4866,7 @@ SETUP_BUFFERSECS_DESC
 	NL	Bij het afspelen van een internetstream plaatst het muzieksysteem een kleine hoeveelheid gegevens in de buffer, voordat het afspelen start. Specificeer in seconden hoeveel audiogegevens moeten worden gebufferd. De standaardwaarde is 3, de maximumwaarde 30 seconden. Als de audio hapert, kan het helpen de buffer te vergroten.
 	NO	Ved avspilling av Internett-strømmer vil spilleren mellomlagre en liten datamengde før den begynner avspillingen. Angi størrelsen på dette mellomlageret (3–30 sekunder). Standardverdien er 3 sekunder. Hvis du opplever at lyden er hakkete, kan det hjelpe å øke denne verdien.
 	PL	Podczas odtwarzania strumienia internetowego odtwarzacz buforuje niewielką ilość danych przed rozpoczęciem odtwarzania. Określ ilość danych audio do buforowania w sekundach od 3 do 30. Wartość domyślna to 3 sekundy. Jeżeli dźwięk będzie odtwarzany z przerwami, zwiększenie tej wartości może rozwiązać problem.
-	RU	Перед воспроизведением интернет-потока плеер буферизует небольшой объем данных. Укажите размер буферизуемых аудиоданных в секундах, от 3 до 30. Значение по умолчанию — 3 секунды. Увеличив это значение, можно устранить прерывистость воспроизведения аудио.
+	RU	Перед воспроизведением интернет-потока плеер буферизует небольшой объем данных. Укажите размер буферизуемых аудиоданных в секундах, от 3 до 30. Значение по умолчанию — 3 с. Увеличив это значение, можно устранить прерывистость воспроизведения аудио.
 	SV	är strömmat innehåll spelas upp från internet buffrar spelaren en liten mängd data innan uppspelningen börjar.  Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder.  Om uppspelningen hackar kan det hjälpa att öka det här värdet.
 
 SETUP_MAXWMARATE
@@ -5382,7 +5384,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	NL	Wanneer er MP3-audio afgespeeld wordt, hebben sommige audio-ontvangers en D/A-omzetters wat extra tijd nodig om het decoderen van audio van het muzieksysteem te starten. Je kunt opgeven, in seconden, hoe lang er moet worden gewacht nadat het afspelen is gestart, voordat er MP3-audio wordt verzonden. De standaardwaarde is 0; de waarde 0,25 werkt voor vele muzieksystemen.
 	NO	Enkelte forsterkere og D/A-omformere trenger litt ekstra tid for å starte dekoding av mp3-lyd. Du kan angi hvor mange sekunder det skal gå fra du trykker «Play» til mp3-lyden begynner å sendes. Standardverdien er 0. Verdien 0,25 sekunder fungerer bra for mange mottakere.
 	PL	Niektóre odbiorniki audio i konwertery cyfrowo-analogowe wymagają krótkiego dodatkowego czasu na rozpoczęcie dekodowania dźwięku z odtwarzacza w przypadku odtwarzania plików MP3. Możliwe jest określenie czasu oczekiwania po naciśnięciu przycisku odtwarzania przed rozpoczęciem wysyłania dźwięku w formacie MP3. Wartość domyślna wynosi 0, a wartość 0,25 sekundy jest odpowiednia dla wielu odbiorników.
-	RU	Некоторым приемникам и цифро-аналоговым преобразователям (ЦАП) требуется некоторое время, чтобы начать перекодирование аудио с плеера при воспроизведении аудио в формате MP3. Можно указать время ожидания (в секундах), которое должно пройти с момента нажатия клавиши воспроизведения до передачи аудио в формате MP3. Значение по умолчанию — 0, для многих плееров рекомендуется задавать значение 0,25 сек.
+	RU	Некоторым приемникам и цифроаналоговым преобразователям (ЦАП) требуется определенное время, чтобы начать перекодирование аудио с плеера при воспроизведении аудио в формате MP3. Можно указать время ожидания (в секундах), которое должно пройти с момента нажатия клавиши воспроизведения до передачи аудио в формате MP3. Значение по умолчанию — 0, для многих плееров рекомендуется задавать значение 0,25 с.
 	SV	Vissa mottagare och D/A-omvandlare kräver lite längre tid innan avkodningen av ljud från spelaren kan börja när mp3-filer spelas upp.  Du kan ange fördröjningen, i sekunder, från det att du trycker på uppspelningsknappen tills det att mp3-ljudet börjar sändas.  Standardvärdet är 0, ett värde på 0,25 passar många mottagare.
 	ZH_CN	当播放MP3音频时，一些音频接收器和数模转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音频。缺省值为0。0.25秒的值对许多接收器都已相当足够。
 
@@ -5562,10 +5564,10 @@ SETUP_MP3STREAMINGMETHOD_DESC
 	FR	Il existe deux manières de diffuser un flux MP3 sur Internet. La diffusion directe permet à la platine de se connecter directement au serveur de diffusion audio, réduisant ainsi la charge sur le Squeezebox Server et permettant de poursuivre la lecture du flux en cas de perte de la connexion. La diffusion par proxy permet au Squeezebox Server de gérer la connexion et de transmettre le flux audio vers la platine. La diffusion directe est l'option sélectionnée par défaut. Si vous rencontrez des problèmes lors de la lecture des flux MP3, sélectionnez l'option de diffusion par proxy. Notez que si plusieurs platines sont synchronisées pour utiliser un flux MP3, c'est la diffusion proxy qui est utilisée afin de réduire l'utilisation de bande passante.
 	HE	בעת הפעלה של זרימת אינטרנט בתבנית MP3, ניתן להפעיל את הזרימה באחת משתי דרכים. זרימה ישירה גורמת לנגן ליצור חיבור ישיר לשרת הזרימה של השמע, לצמצום קל של העומס על Squeezebox Server וכדי לאפשר לזרימה להימשך במקרה של אובדן החיבור של Squeezebox Server. זרימה ב-Proxy גורמת ל-Squeezebox Server לטפל בחיבור, להעברת השמע לנגן. זרימה ישירה היא ברירת המחדל, אך אם אתה נתקל בבעיות עם זרימות של MP3, נסה לשנות את ההגדרה לזרימה ב-Proxy. שים לב שאם לפחות שני נגנים מסונכרנים לזרימה מסוג MP3, תמיד נעשה שימוש בזרימה ב-Proxy לצמצום השימוש ברוחב הפס.
 	IT	Quando si riproduce uno stream Internet MP3 si possono utilizzare due metodi. Con il metodo dello streaming diretto il riproduttore si collega direttamente al server di streaming audio. Ciò consente di ridurre leggermente il carico di Squeezebox Server e di proseguire la riproduzione dello stream anche nel caso in cui la connessione con Squeezebox Server venga persa. Con il metodo dello streaming tramite proxy la gestione della connessione viene effettuata da Squeezebox Server, il quale passa l'audio al riproduttore. Lo streaming diretto è il metodo predefinito. Se tuttavia si riscontrassero problemi con gli stream MP3, provare a utilizzare il metodo dello streaming tramite proxy. Si noti che se due o più lettori sono sincronizzati su uno stream MP3, viene sempre utilizzato il metodo dello streaming tramite proxy per ridurre l'utilizzo della banda.
-	NL	Het afspelen van een MP3 Internet stream kan op twee manieren. Directe streaming: Het muzieksysteem maakt een directe connectie naar de audio streaming server op het Internet. Dit geeft minder belasting op je Squeezebox Server en de MP3 stream speelt door als de connectie tussen het systeem en de Squeezebox Server verloren gaat. Proxy streaming: De Squeezebox Server zorgt voor de connectie en geeft de audio stream door aan het systeem. Directe streaming is de standaard. Probeer proxy streaming als je problemen hebt met directe streaming. Let op: Als je twee of meer systemen synchroniseert, wordt altijd automatisch proxy streaming ingesteld om de gebruikte bandbreedte te minimaliseren.
+	NL	Het afspelen van een mp3-internetstream kan op twee manieren. Directe streaming: het muzieksysteem maakt een directe verbinding met de server die de audio streamt. Je Squeezebox Server wordt hierdoor minder belast en de stream speelt door als de verbinding tussen het muzieksysteem en de Squeezebox Server wordt verbroken. Proxystreaming: de Squeezebox Server zorgt voor de verbinding en geeft de audiostream door aan het muzieksysteem. Directe streaming is de standaard, maar als dit problemen oplevert, kun je proxystreaming proberen. Let op: Als je twee of meer muzieksystemen synchroniseert op een mp3-stream, wordt proxystreaming automatisch ingesteld om zo de gebruikte bandbreedte te minimaliseren.
 	NO	Avspilling av mp3-strømmer fra Internett kan gjøres på to måter: Hvis du bruker direktestrøm oppretter spilleren en direkte forbindelse til serveren som sender lydstrømmen. Det gir litt mindre belastning på Squeezebox Server-maskinen, og strømmen kan spilles av selv om forbindelsen til denne blir brutt. Det er også mulig å sende datastrømmen gjennom Squeezebox Server, som da opptrer som en proxy. Dette kalles proxystrømming. Direktestrømming er standard, men hvis du får problemer med mp3-strømmer, kan du prøve å endre innstillingen til proxystrømming i stedet. Merk: hvis to eller flere spillere er synkronisert med en mp3-strøm, brukes proxystrømming alltid, for å redusere båndbreddebruken.
 	PL	Podczas odtwarzania internetowego strumienia MP3 przesyłanie strumieniowe wykonywane jest na dwa sposoby. Bezpośrednie przesyłanie strumieniowe powoduje połączenie z serwerem strumieniowego przesyłania dźwięku, co nieznacznie zmniejsza obciążenie programu Squeezebox Server i umożliwia kontynuację odtwarzania strumienia, jeżeli połączenie z programem Squeezebox Server zostanie utracone. Przesyłanie strumieniowe z wykorzystaniem serwera proxy powoduje, że program Squeezebox Server obsługuje połączenie, przekazując dźwięk do odtwarzacza. Bezpośrednie przesyłanie strumieniowe to metoda domyślna, ale w przypadku problemów ze strumieniami MP3 należy zmienić ustawienie na Przesyłanie strumieniowe przez serwer proxy. Należy pamiętać, że jeżeli ze strumieniem MP3 zsynchronizowane są co najmniej dwa odtwarzacze, zawsze używane jest przesyłanie strumieniowe przez serwer proxy w celu ograniczenia użycia przepustowości.
-	RU	Поддерживается 2 способа потоковой передачи МР3 из Интернета. При прямой передаче плеер напрямую подключается к серверу потокового аудио, что несколько уменьшает нагрузку на Squeezebox Server и позволяет продолжать воспроизведение потока в случае разрыва подключения к Squeezebox Server. При проксированной передаче Squeezebox Server обслуживает подключение, передавая аудиоданные плееру. По умолчанию задана прямая потоковая передача, но если возникают проблемы с потоком МР3, можно попробовать переключиться на опосредованную передачу. Помните: если 2 плеера и более настраиваются на 1 поток МР3, всегда применяется опосредованная передача, чтобы уменьшить использование пропускной способности.
+	RU	Поддерживается два способа потоковой передачи МР3 из Интернета. При прямой передаче плеер напрямую подключается к серверу потокового аудио, что несколько уменьшает нагрузку на Squeezebox Server и позволяет продолжать воспроизведение потока в случае разрыва подключения к Squeezebox Server. При передаче через прокси Squeezebox Server обслуживает подключение, передавая аудиоданные плееру. По умолчанию задана прямая потоковая передача, но если возникают проблемы с потоком МР3, можно попробовать переключиться на опосредованную передачу. Помните: если два и более плееров настраиваются на один поток МР3, всегда применяется опосредованная передача для сужения полосы пропускания.
 	SV	När du spelar upp en mp3-ström från internet kan det ske på två olika sätt.  Direktströmning innebär att spelaren ansluts direkt till servern som strömmen kommer ifrån, vilket minskar belastningen på Squeezebox Server något och gör det möjligt att fortsätta spela även om anslutningen till Squeezebox Server skulle brytas.  Proxyströmmning innebär att Squeezebox Server ansluts till servern och sedan vidarebefordrar ljudet till spelaren.  Direktströmning är standard. Om du har problem med mp3-strömmar kan du prova att ändra inställningen till Proxyströmning.  Observera att proxyströmning alltid används när flera spelare synkroniseras för att spela upp samma mp3-ström, eftersom detta sparar bandbredd.
 
 MP3_STREAMING_DIRECT
@@ -5601,24 +5603,79 @@ MP3_STREAMING_PROXIED
 	SV	Proxyströmning
 
 SETUP_OUTPUT_CHANNELS
-	DE	Kanal Ausgangsmodus
+	CS	Režim výstupních kanálů
+	DA	Outputkanal
+	DE	Ausgangs-Kanalmodus
 	EN	Output Channel Mode
+	ES	Modo de canal de salida
+	FI	Lähtökanavan tila
+	FR	Mode canal de sortie
+	IT	Modalità canale di uscita
+	NL	Uitvoermodus
+	NO	Modus for utgangskanal
+	PL	Tryb kanału wyjściowego
+	RU	Режим выходного канала
+	SV	Utgångskanalläge
 
 SETUP_OUTPUT_CHANNELS_DESC
-	DE	Sie können diesen Player nur den rechten oder linken Kanal wiedergeben lassen. So lässt sich z.B. ein Stereobild aus 2 synchronisierten Squeezebox Radios erzeugen.
+	CS	Tento přehrávač můžete nakonfigurovat, aby přehrával buď levý nebo pravý kanál. Tuto funkci můžete například využít k vytvoření stereo efektu ze 2 synchronizovaných rádií Squeezebox.
+	DA	Du kan konfigurere afspilleren til kun at spille i den venstre eller højre kanal. Dette kan bruges til at oprette et stereobillede fra to synkroniserede Squeezebox-radioer, f.eks.
+	DE	Sie können diesen Player so konfigurieren, dass er nur den linken oder rechten Kanal wiedergibt. Diese Option kann zum Beispiel verwendet werden, um ein Stereobild über zwei synchronisierte Squeezebox Radios zu erstellen.
 	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
+	ES	Puede configurar este reproductor para que sólo reproduzca el canal izquierdo o el derecho. Se puede usar, por ejemplo, para crear una imagen estéreo a partir de dos dispositivos Squeezebox Radio sincronizados.
+	FI	Voit määrittää soittimen toistamaan vain vasemmalla tai oikealla kanavalla. Näin voidaan luoda stereovaikutelma esimerkiksi kahdella synkronoidulla Squeezebox-radiolla.
+	FR	Vous pouvez configurer cette platine pour lire uniquement le canal droit ou gauche. Cette configuration vous permet par exemple de créer une image stéréo à partir de deux radios Squeezebox synchronisées.
+	IT	È possibile configurare il lettore affinché riproduca solo il canale destro o sinistro. Ciò risulta utile ad esempio per creare un'immagine stereo da due Squeezebox Radio sincronizzate.
+	NL	Je kunt dit muzieksysteem configureren zodat alleen via het linker- of rechterkanaal wordt afgespeeld. Zo kun je bijvoorbeeld 2 gesynchroniseerde Squeezebox Radio's in stereo-opstelling plaatsen.
+	NO	Du kan konfigurere spilleren slik at den kun spiller fra venstre eller høyre kanal. Slik kan du blant annet skape et stereobilde fra to synkroniserte Squeezebox Radio-spillere.
+	PL	Ten odtwarzacz można skonfigurować tak, aby odtwarzał tylko kanał prawy lub lewy. W ten sposób można na przykład utworzyć obraz stereo z 2 zsynchronizowanych odtwarzaczy Squeezebox Radio.
+	RU	Можно настроить этот плеер для воспроизведения только левого или правого канала. Например, с помощью этой функции можно создать стереоэффект, используя два синхронизированных радио Squeezebox.
+	SV	Du kan konfigurera den här spelaren att bara spela upp vänster eller höger kanal. Funktionen kan exempelvis användas för att skapa stereoeffekt med två synkroniserade Squeezebox Radio.
 
 OUTPUT_CHANNELS_NORMAL
+	CS	Oba kanály (Stereo)
+	DA	Begge kanaler (stereo)
 	DE	Beide Kanäle (Stereo)
 	EN	Both Channels (Stereo)
+	ES	Ambos canales (estéreo)
+	FI	Molemmat kanavat (stereo)
+	FR	Deux canaux (stéréo)
+	IT	Entrambi i canali (stereo)
+	NL	Beide kanalen (stereo)
+	NO	Begge kanalene (stereo)
+	PL	Oba kanały (stereo)
+	RU	Оба канала (стерео)
+	SV	Båda kanalerna (stereo)
 
 OUTPUT_CHANNELS_LEFT
+	CS	Levý kanál
+	DA	Venstre kanal
 	DE	Linker Kanal
 	EN	Left Channel
+	ES	Canal izquierdo
+	FI	Vasen kanava
+	FR	Canal gauche
+	IT	Canale sinistro
+	NL	Linkerkanaal
+	NO	Venstre kanal
+	PL	Kanał lewy
+	RU	Левый канал
+	SV	Vänster kanal
 
 OUTPUT_CHANNELS_RIGHT
+	CS	Pravý kanál
+	DA	Højre kanal
 	DE	Rechter Kanal
 	EN	Right Channel
+	ES	Canal derecho
+	FI	Oikea kanava
+	FR	Canal droit
+	IT	Canale destro
+	NL	Rechterkanaal
+	NO	Høyre kanal
+	PL	Kanał prawy
+	RU	Правый канал
+	SV	Höger kanal
 
 SETUP_TRANSITIONTYPE
 	CS	Prolínání
@@ -6744,16 +6801,64 @@ SETUP_COVERART_DESC
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
 SETUP_DOWNLOAD_ARTWORK
+	CS	Automaticky doplnit obal alba
+	DA	Hent albumcovere automatisk
+	DE	Plattenhülle automatisch vervollständigen
 	EN	Autocomplete Artwork
+	ES	Autocompletar carátula
+	FI	Viimeistele kansitaide automaattisesti
+	FR	Rechercher automatiquement la pochette
+	IT	Completamento automatico copertina
+	NL	Hoesafbeeldingen automatisch invullen
+	NO	Finn fram omslag automatisk
+	PL	Autouzupełnianie okładek
+	RU	Автоматически заполнить обложку
+	SV	Autokomplettera albumomslag
 
 SETUP_DOWNLOAD_ARTWORK_DESC
+	CS	Squeezebox Server se může v průběhu prohledávání knihovny pokusit o doplnění chybějících obalů alba vašich hudebních souborů. V průběhu tohoto procesu budou za účelem nalezení odpovídajícího obalu alba odeslány údaje o interpretovi a albu na server mysqueezebox.com. Upozornění: tento proces může výrazně zpomalit vyhledávání.<br><br>Obaly alba jsou poskytovány službou <a href="http://last.fm" target="_blank">Last.fm</a>.
+	DA	Squeezebox Server kan forsøge at hente manglende albumcovere til dine musikfiler mens dit bibliotek scannes. I denne proces sendes der oplysninger om kunstnere og album til mysqueezebox.com for at finde matchende albumcovere. Bemærk at denne proces kan gøre scanningen betydeligt langsommere.<br><br>Albumcovere leveres af <a href="http://last.fm" target="_blank">Last.fm</a>.
+	DE	Der Squeezebox Server kann beim Durchsuchen Ihrer Bibliothek fehlende Plattenhüllen für Ihre Musikdateien ergänzen. Bei diesem Vorgang werden Informationen zu Interpret und Album an mysqueezebox.com gesendet, um dort nach passenden Plattenhüllen zu suchen. Beachten Sie, dass dieser Prozess den Suchvorgang erheblich verlangsamen kann.<br><br>Plattenhüllen werden von <a href="http://last.fm" target="_blank">Last.fm</a> zur Verfügung gestellt.
 	EN	Squeezebox Server can try to complete missing artwork for your music files while it's scanning your library. This process will send artist and album information to mysqueezebox.com to discover matching cover art. Please note that this process can slow down scanning considerably.<br><br>Artwork is provided by <a href="http://last.fm" target="_blank">Last.fm</a>.
+	ES	Squeezebox Server puede intentar completar las carátulas que falten en los archivos de música mientras examina la biblioteca. Este proceso enviará información de álbum y artista a mysqueezebox.com para descubrir cubiertas que coincidan. Tenga en cuenta que este proceso puede ralentizar considerablemente el examen.<br><br>Las carátulas las proporciona <a href="http://last.fm" target="_blank">Last.fm</a>.
+	FI	Squeezebox-palvelin voi yrittää viimeistellä musiikkitiedostojen puuttuvan kansitaiteen, kun kirjastoa tarkistetaan. Esittäjän ja albumin tiedot lähetetään osoitteeseen mysqueezebox.com, josta täsmäävää kansitaidetta etsitään. Ota huomioon, että tämä saattaa hidastaa tarkistusta huomattavasti.<br><br>Kansitaiteen tarjoaa <a href="http://last.fm" target="_blank">Last.fm</a>.
+	FR	Squeezebox Server peut essayer de rechercher les pochettes manquantes de vos fichiers musicaux pendant qu'il analyse votre bibliothèque. Pour ce faire, il envoie les informations des artistes et des albums à mysqueezebox.com pour trouver les pochettes correspondantes. Veuillez noter que ce processus peut considérablement ralentir l'analyse.<br><br>Les pochettes sont fournies par <a href="http://last.fm" target="_blank">Last.fm</a>.
+	IT	È possibile tentare di inserire le copertine mancanti per i file musicali mediante Squeezebox Server durante l'analisi della libreria. Tale processo prevede l'invio di informazioni su album e artisti a mysqueezebox.com per individuare le copertine corrispondenti. Il processo può rallentare notevolmente l'analisi.<br><br>Le copertine vengono fornite da <a href="http://last.fm" target="_blank">Last.fm</a>.
+	NL	Squeezebox Server kan ontbrekende hoesafbeeldingen voor je opzoeken tijdens het scannen van je collectie. Hierbij worden gegevens van de artiest en het album verzonden naar mysqueezebox.com om te zien of er hoesafbeeldingen beschikbaar zijn. Houd er wel rekening mee dat dit het scanproces aanzienlijk kan vertragen.<br><br>Hoesafbeeldingen worden aangeboden door <a href="http://last.fm" target="_blank">Last.fm</a>.
+	NO	Squeezebox Server kan forsøke å sette inn manglende omslag for musikkfilene dine under søk i biblioteket. Denne prosessen sender artist- og albuminformasjon til mysqueezebox.com for å finne fram til riktig albumomslag. Prosessen kan føre til at søket tar betraktelig lengre tid.<br><br>Det er <a href="http://last.fm" target="_blank">Last.fm</a> som leverer albumomslag.
+	PL	Program Squeezebox Server może spróbować uzupełnić brakujące okładki do plików muzycznych podczas przeszukiwania biblioteki. W ramach tego procesu informacje o wykonawcy i albumie zostaną przesłane do witryny mysqueezebox.com w celu wykrycia pasującej okładki. Uwaga: proces ten może znacząco spowolnić przeszukiwanie biblioteki.<br><br>Okładki udostępnia serwis <a href="http://last.fm" target="_blank">Last.fm</a>.
+	RU	Squeezebox Server может попробовать найти недостающие обложки для музыкальных файлов в процессе сканирования медиатеки. При этом сведения об исполнителе и альбоме будут отправляться на mysqueezebox.com, чтобы найти соответствующую обложку. Нужно учитывать, что этот процесс может значительно замедлить сканирование.<br><br>Обложки предоставляются сайтом <a href="http://last.fm" target="_blank">Last.fm</a>.
+	SV	Squeezebox Server kan försöka komplettera albumomslag som saknas för musikfilerna medan ditt bibliotek genomsöks. I den här processen skickas information om artisten och albumet till mysqueezebox.com för att hitta ett matchande albumomslag. Observera att den här processen kan göra att sökningen går betydligt långsammare.<br><br>Albumomslagen tillhandahålls av <a href="http://last.fm" target="_blank">Last.fm</a>.
 
 SETUP_DOWNLOAD_ARTWORK_ON
+	CS	Stáhnout obal alba (zkušebně)
+	DA	Hent albumcover (forsøg)
+	DE	Plattenhülle herunterladen (experimentell)
 	EN	Download album artwork (experimental)
+	ES	Descargar carátula de álbum (experimental)
+	FI	Lataa albumin kansitaide (kokeellinen)
+	FR	Télécharger la pochette de l'album (expérimental)
+	IT	Scarica copertine album (sperimentale)
+	NL	Hoesafbeeldingen van albums downloaden (experiment)
+	NO	Last ned albumomslag (eksperimentell)
+	PL	Pobierz okładki albumów (funkcja eksperymentalna)
+	RU	Загрузить обложку альбома (экспериментально)
+	SV	Ladda ner albumomslag (betafunktion)
 
 SETUP_DOWNLOAD_ARTWORK_OFF
+	CS	Nestahovat obal alba
+	DA	Hent ikke albumcover
+	DE	Plattenhülle nicht herunterladen
 	EN	Don't download album artwork
+	ES	No descargar carátula de álbum
+	FI	Älä lataa albumin kansitaidetta
+	FR	Ne pas télécharger la pochette de l'album
+	IT	Non scaricare le copertine degli album
+	NL	Hoesafbeeldingen van albums niet downloaden
+	NO	Ikke last ned albumomslag
+	PL	Nie pobieraj okładek albumów
+	RU	Не загружать обложку альбома
+	SV	Ladda inte ner albumomslag
 
 SETUP_THUMBSIZE
 	CS	Velikost náhledů
@@ -7272,7 +7377,7 @@ SCREENSAVER_JUMP_BACK_NAME
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Nyt soi
-	FR	Lecture
+	FR	Lecture en cours
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
@@ -7886,19 +7991,64 @@ SETUP_BROWSEAGELIMIT_DESC
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
 
 SETUP_DBHIGHMEM
-	DE	Datenbank Speicherkonfiguration
+	CS	Konfigurovat paměť databáze
+	DA	Konfiguration af databasehukommelse
+	DE	Konfiguration des Datenbankspeichers
 	EN	Database Memory Config
+	ES	Configuración de memoria de base de datos
+	FI	Tietokannan muistin määritys
+	FR	Configuration de la mémoire de la base de données
+	IT	Configurazione memoria database
+	NL	Configuratie van databasegeheugen
+	NO	Konfigurering av databaseminne
+	PL	Konfiguracja pamięci bazy danych
+	RU	Настройка памяти базы данных
+	SV	Konfigurera databasminne
 
 SETUP_DBHIGHMEM_DESC
-	DE	Verfügt Ihr Server über ausreichend Arbeitsspeicher, kann die Leistung gesteigert werden, indem der Datenbank mehr Speicher zugewiesen wird. Wenn Sie diese Einstellung ändern, muss der Server neu gestartet werden.
+	CS	Pokud má váš server dostatek paměti, můžete zvýšit výkon navýšením objemu paměti dostupné pro databázi. Změna nastavení této možnosti vyžaduje restart serveru.
+	DA	Hvis serveren har tilstrækkelig hukommelse, kan du forbedre ydeevnen ved at øge hukommelsen i databasen. Hvis du ændrer denne indstilling, skal serveren genstartes.
+	DE	Wenn auf Ihrem Server genug Speicherplatz frei ist, können Sie die Leistung steigern, indem Sie den Speicherplatz für die Datenbank erhöhen. Um diese Option zu ändern, muss der Server neu gestartet werden.
 	EN	If your server has enough memory, you can obtain better performance by increasing the amount of memory available to the database. Changing this option requires a server restart.
+	ES	Si su servidor tiene memoria suficiente, puede mejorar el rendimiento si aumenta la cantidad de memoria disponible para la base de datos. El cambio de esta opción requiere reiniciar el servidor.
+	FI	Jos palvelimella on tarpeeksi muistia, voit parantaa suorituskykyä kasvattamalla tietokannan käytössä olevaa muistia. Asetuksen muuttaminen edellyttää palvelimen käynnistämistä uudelleen.
+	FR	Si votre serveur dispose d'une mémoire suffisante, vous pouvez améliorer la performance en augmentant la quantité de mémoire disponible pour la base de données. Si vous changez cette option, vous devez redémarrer le serveur.
+	IT	Se il server dispone di memoria sufficiente, è possibile ottenere prestazioni migliori incrementando la quantità di memoria disponibile per il database. Se si modifica l'opzione, sarà necessario riavviare il server.
+	NL	Als je server voldoende geheugen heeft, kun je je prestaties verbeteren door de hoeveelheid beschikbaar geheugen voor de database te verhogen. Als je deze optie wilt wijzigen, moet je de server opnieuw opstarten.
+	NO	Dersom serveren har nok minne, kan du forbedre ytelsen ved å øke mengden minne som er tilgjengelig for databasen. Du må starte serveren på nytt dersom du endrer dette alternativet.
+	PL	Jeżeli serwer ma wystarczająco dużo pamięci, można uzyskać lepszą wydajność, zwiększając ilość pamięci dostępnej dla bazy danych. Zmiana tej opcji wymaga ponownego uruchomienia serwera.
+	RU	Если на сервере достаточно памяти, можно повысить быстродействие за счет увеличения объема памяти, доступного базе данных. После изменения этого параметра необходимо перезапустить сервер.
+	SV	Om det finns tillräckligt med minne på servern kan du förbättra prestanda genom att öka mängden minne som är tillgängligt för databasen. När du gör den här ändringen måste servern startas om.
 
 SETUP_DBHIGHMEM_NORMAL
+	CS	Normální
+	DA	Normal
+	DE	Normal
 	EN	Normal
+	ES	Normal
+	FI	Normaali
+	FR	Normal
+	IT	Normale
+	NL	Normaal
+	NO	Normal
+	PL	Zwykły
+	RU	Обычный
+	SV	Normal
 
 SETUP_DBHIGHMEM_HIGH
-	DE	Hoch (empfohlen für Rechner mit min. 1GB Arbeitsspeicher) 
+	CS	Vysoký (doporučeno pro přístroje s 1+ GB RAM)
+	DA	Høj (anbefales til computere med 1+ GB RAM)
+	DE	Hoch (empfohlen für Computer mit 1 GB RAM und mehr)
 	EN	High (recommended for machines with 1+ GB RAM)
+	ES	Alta (recomendada para equipos con más de 1 GB de RAM)
+	FI	Korkea (suositus laitteisiin, joissa on yli 1 Gt RAM-muistia)
+	FR	Elevé (recommandé pour les machines disposant d'1 Go de RAM ou plus)
+	IT	Alta (opzione consigliata per computer con almeno 1 GB di RAM)
+	NL	Hoog (aanbevolen voor computers met 1+ GB RAM)
+	NO	Høy (anbefales for maskiner med 1 GB RAM eller mer)
+	PL	Wysoka (zalecana do komputerów mających ponad 1 GB pamięci RAM)
+	RU	Высокое (рекомендовано для компьютеров с объемом ОЗУ не менее 1 Гб)
+	SV	Hög (rekommenderas för datorer med mer än 1 GB RAM)
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -7997,7 +8147,7 @@ SETUP_LONGDATEFORMAT_DESC
 	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש עבור תאריכים ארוכים (כפי שמוצג בשעה שהנגן כבוי). נעשה שימוש במוסכמות הבאות באפשרויות המוצגות להלן:<br>WWWW מייצג את היום המלא בשבוע (יום שבת, יום ראשון וכו')<br>WWW מייצג את היום המקוצר בשבוע (שבת, ראשון וכו')<br>DD מייצג את היום בחודש (ללא הספרה אפס המובילה)<br>MM מייצג את החודש בשנה<p>YY מייצג את השנה בשתי ספרות<br>YYYY מייצג את השנה בארבע ספרות
 	IT	Questa opzione consente di impostare il formato da utilizzare per le date lunghe (come vengono visualizzate quando il lettore è spento). Nelle opzioni indicate di seguito sono utilizzate le seguenti convenzioni:<br> WWWW indica il giorno della settimana per esteso (lunedì, martedì e così via)<br>WWW indica il giorno della settimana abbreviato (lun, mar e così via)<br>DD indica il giorno del mese (senza zero iniziale)<br>MM indica il mese dell'anno<br>YY indica l'anno composto da due cifre<br>YYYY indica l'anno composto da quattro cifre
 	JA	このオプションは長い日付のフォーマットを選択します（プレーヤーがオフの状態のとき等）。<br>WWWW は長い曜日（月曜日、火曜日、等）を表します<br>WWWは短い曜日（月、火、等）を表します<br>DDは何日かを表します<br>MMは月を表します<br>YYは2桁の年を表します<br>WWWWは4桁の年を表します。
-	NL	Met deze optie wordt de lange datumnotatie ingesteld (zoals weergegeven wanneer het muzieksysteem uitstaat). In de onderstaande opties worden de volgende conventies gebruikt:<br> WWWW is de dag van de week voluit geschreven (zondag, maandag, enz.)<br> WWW is de afkorting van de dag van de week (zon, maa, enz.)<br> DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YY is het jaar in twee cijfers<br>YYYY is het jaar in vier cijfers
+	NL	Met deze optie wordt de lange datumnotatie ingesteld (zoals weergegeven wanneer het muzieksysteem uitstaat). In de onderstaande opties worden de volgende conventies gebruikt:<br>WWWW is de dag van de week voluit geschreven (zondag, maandag, enz.)<br>WWW is de afkorting van de dag van de week (zon, maa, enz.)<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YY is het jaar in twee cijfers <br>YYYY is het jaar in vier cijfers
 	NO	Denne innstillingen angir formatet for lange datoer (vises f.eks når spilleren er av). Følgende format benyttes i alternativene nedenfor:<br>WWWW er ukedag (lørdag, søndag, osv.)<br>WWW er forkortet navn på ukedag (lør, søn, osv.)<br>DD er dagen i måneden (uten null foran)<br>MM er måneden<br>YY er tosifret årstall<br>YYYY er firesifret årstall
 	PL	Ta opcja określa format używany w długich datach (wyświetlanych na przykład po wyłączeniu odtwarzacza). W poniższych opcjach używane są następujące konwencje:<br>WWWW to pełny dzień tygodnia (Sobota, Niedziela itp.)<br>WWW to skrócony dzień tygodnia (Sob, Nie itp.)<br>DD to dzień miesiąca (bez początkowego zera)<br>MM to miesiąc roku<br>RR to rok dwucyfrowy<br>RRRR to rok czterocyfrowy
 	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o cliente está desligado). São usadas as seguintes convenções para as opções abaixo
@@ -8198,7 +8348,7 @@ SETUP_TCPREADMAXIMUM
 	NO	Maksimalt antall leste TCP-sockets per passering
 	PL	Maksymalna liczba gniazd TCP do odczytania w jednym przebiegu
 	PT	Número máximo de sockets TCP a ler por passagem
-	RU	Максимальное число ТСР-сокетов, считываемых за 1 проходку
+	RU	Максимальное число ТСР-сокетов, считываемых за один проход
 	SV	Maximalt antal TCP-socketar som kan läsas per genomgång
 	ZH_CN	每次通行时读取TCP插口的最大数量
 
@@ -8430,7 +8580,7 @@ SETUP_FILTERRULE_DESC
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to Squeezebox Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to Squeezebox Server running on that same computer.
 	ES	Si se ha activado el bloqueo, se pueden introducir las direcciones desde las que se desea permitir la conexión a Squeezebox Server.<br><br>Este campo acepta una lista de direcciones IP específicas, comodines del tipo * e intervalos de direcciones IP en una lista separada por comas. Por ejemplo:<BR><BR><B>10.1.2.2</b> sólo permitirá la conexión de 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección IP con el formato 10.1.2.X<BR><BR><B>10.1.2.2-50</b> permitirá conexiones desde direcciones IP pertenecientes al intervalo 10.1.2.2 - 10.1.2.50<BR><BR>Por último, se pueden combinar varias entradas con comas, así: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>La dirección IP especial 127.0.0.1 permite que un navegador Web se conecte al Squeezebox Server que se esté ejecutando en ese mismo equipo.
 	FI	Jos estäminen on otettu käyttöön, voit kirjoittaa osoitteet, joiden sallit muodostaa yhteyden Squeezebox Serveriin.<br><br>Tähän kenttään voidaan lisätä luettelo tietyistä IP-osoitteista, *-tyylin yleismerkeistä ja pilkuilla erotettu luettelo IP-osoitteista. Esimerkiksi:<BR><BR><B>10.1.2.2</B> sallii ainoastaan osoitteen 10.1.2.2,<BR><BR><B>10.1.2.*</B> sallii IP-osoitteet, jotka sisältävät numerot 10.1.2.x,<BR><BR><B>10.1.2.2-50</B> sallii alueeseen 10.1.2.2 - 10.1.2.50 kuuluvat IP-osoitteet.<BR><BR>Jos osoitteita on useita, ne voidaan erottaa pilkuin, esimerkiksi näin: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>IP-osoite 127.0.0.1 sallii selaimen muodostaa yhteyden samassa tietokoneessa toimivaan Squeezebox Serveriin.
-	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Squeezebox Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule.<br>Exemple:<br><br><b>10.1.2.2</b>autorise uniquement cette adresse à se connecter<BR><BR><B>10.1.2.*</b>autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</b>autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple<b>10.1.2.2,172.16.1.*,192.168.1-254</b><BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Squeezebox Server s'ils se trouvent sur le même ordinateur.
+	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Squeezebox Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule.<br>Exemple:<BR<BR><B>10.1.2.2</B>autorise uniquement cette adresse à se connecter<BR><BR><B>10.1.2.*</B>autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B>autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Squeezebox Server s'ils se trouvent sur le même ordinateur.
 	HE	אם הפעלת את אפשרות החסימה, באפשרותך להזין את הכתובות שלהן ברצונך לאפשר להתחבר ל-Squeezebox Server.<br><br>בשדה זה ניתן להזין רשימה של כתובות IP ספציפיות, תווים כלליים כגון *, וטווחים של כתובות IP ברשימה המופרדת באמצעות פסיקים. לדוגמה:<BR><BR><B>‎10.1.2.2</B> יאפשר רק ל-‎‏10.1.2.2 להתחבר.<BR><BR><B>‎10.1.2.*‎</B>‎ יאפשר לכל גורם עם כתובת IP בתבנית ‎‎10.1.2.x להתחבר.<BR><BR><B>‎10.1.2.2-50</B> יאפשר לכתובות IP בטווח שבין ‎‎10.1.2.2 - 10.1.2.50‎ להתחבר.<BR><BR>לסיום, ניתן לשלב רשומות מרובות באמצעות פסיקים, לדוגמה, <B>‎10.1.2.2,172.16.1.*,192.168.1-254‎</B><BR><BR>כתובת ה-IP המיוחדת ‎127.0.0.1 מאפשרת לדפדפן אינטרנט להתחבר לשרת Squeezebox Server שפועל באותו מחשב.
 	IT	Se è stato attivato il blocco, è possibile inserire gli indirizzi a cui consentire la connessione a Squeezebox Server.<br><br>In questo campo è possibile inserire un elenco di indirizzi IP specifici, il carattere jolly * ed elenchi di intervalli di indirizzi IP separati da virgole. Ad esempio:<BR><BR>se si specifica<B>10.1.2.2</B>, viene accettata solo la connessione con l'indirizzo 10.1.2.2<BR><BR>se si specifica<B>10.1.2.*</B>, viene accettata la connessione con tutti gli indirizzi IP che iniziano con 10.1.2.x<BR><BR>se si specifica<B>10.1.2.2-50</B>, viene accettata la connessione con indirizzi IP compresi tra 10.1.2.2 e 10.1.2.50<BR><BR>Infine, è possibile specificare più indirizzi IP separandoli con virgole, ad esempio:<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 consente di connettere un browser Web a Squeezebox Server in esecuzione sullo stesso computer.
 	JA	ブロックする、と指定したのであれば、Squeezebox Serverに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがSqueezebox Serverに接続する時に接続を可能にします。
@@ -8657,7 +8807,7 @@ SETUP_REMOTESTREAMTIMEOUT
 	DA	Timeoutgrænse for internetradio
 	DE	Radiosender-Zeitlimit
 	EN	Radio Station Timeout
-	ES	Tiempo de espera para emisora de radio:
+	ES	Tiempo de espera para emisora de radio
 	FI	Radiokanavan aikakatkaisu
 	FR	Délai d'attente radio
 	HE	פסק זמן לתחנות רדיו
@@ -9410,9 +9560,9 @@ CURRENT_PLAYER
 	ZH_CN	当前的播放机：
 
 CHOOSE_PLAYER
-	CS	Zvolte přehrávač
+	CS	Zvolit přehrávač
 	DA	Vælg afspiller
-	DE	Player Auswahl
+	DE	Player wählen
 	EN	Choose Player
 	ES	Elegir reproductor
 	FI	Valitse soitin
@@ -10217,10 +10367,34 @@ BASS
 	ZH_CN	低音
 
 FIXED_VOLUME
+	CS	Pevně stanovená hlasitost
+	DA	Fast lydstyrke
+	DE	Festgelegte Lautstärke
 	EN	Fixed Volume
+	ES	Volumen fijo
+	FI	Kiinteä äänenvoimakkuus
+	FR	Volume fixé
+	IT	Volume fisso
+	NL	Vast volume
+	NO	Fast volum
+	PL	Stała głośność
+	RU	Фиксированная громкость
+	SV	Fast enhet
 
 FIXED_VOLUME_100
+	CS	Pevně stanovená hlasitost 100%
+	DA	Lydstyrken er fast 100 %
+	DE	Lautstärke auf 100 % festgelegt
 	EN	Fixed Volume 100%
+	ES	Volumen fijo 100%
+	FI	Kiinteä äänenvoimakkuus 100 %
+	FR	Volume fixé à 100 %
+	IT	Volume fisso 100%
+	NL	Volume vast op 100%
+	NO	Fast volum 100 %
+	PL	Stała głośność 100%
+	RU	Фиксированный объем 100 %
+	SV	Fast enhet 100 %
 
 STEREOXL
 	CS	StereoXL
@@ -11353,7 +11527,7 @@ WMAP
 	IT	WMA Pro
 	NL	WMA Pro
 	NO	WMAPro
-	PL	WMA Pro
+	PL	WMAPro
 	RU	WMA Pro
 	SV	WMA Pro
 
@@ -12442,7 +12616,7 @@ GALLERY
 SWITCH_TO_GALLERY
 	CS	Velký obal alba
 	DA	Store albumcovere
-	DE	Grosse Plattenhüllen
+	DE	Große Plattenhüllen
 	EN	Large Artwork
 	ES	Carátula de álbum grande
 	FI	Suuri kuva
@@ -14289,7 +14463,19 @@ CURRENT_WEB_SKIN
 	ZH_CN	当前的网外壳：
 
 WEB_NO_COOKIES_WARNING
+	CS	Váš prohlížeč nepřijímá soubory cookie. Může to mít za následek neočekávané chování při ovládání Squeezebox Server. Než budete pokračovat, povolte příjem souborů cookie ve vašem prohlížeči.
+	DA	Din browser accepterer ikke cookies. Det kan føre til uventede handlinger i brugen af din Squeezebox Server. Aktivér cookies i browseren inden du fortsætter.
+	DE	Ihr Browser akzeptiert keine Cookies. Dies kann zu unerwartetem Verhalten bei der Steuerung Ihres Squeezebox Servers führen. Aktivieren Sie Cookies in Ihrem Browser, bevor Sie fortfahren.
 	EN	Your browser does not accept cookies. This can lead to unexpected behaviour controlling your Squeezebox Server. Please enable cookies in your browser before you continue.
+	ES	Su navegador no acepta cookies. Esto puede provocar un comportamiento inesperado al controlar Squeezebox Server. Active las cookies en el navegador antes de continuar.
+	FI	Selaimesi ei hyväksy evästeitä. Tämä saattaa aiheuttaa yllätyksiä Squeezebox-palvelimen hallinnassa. Salli evästeet selaimesta ja jatka vasta sitten.
+	FR	Votre navigateur n'accepte pas les cookies. Ceci peut affecter le fonctionnement de votre Squeezebox Server. Veuillez activer les cookies dans votre navigateur avant de continuer.
+	IT	Il browser in uso non accetta i cookie. Ciò può provocare un comportamento imprevisto di Squeezebox Server. Prima di continuare, abilitare i cookie nel browser.
+	NL	Je browser accepteert geen cookies. Dit kan leiden tot onverwacht gedrag bij het bedienen van je Squeezebox Server. Schakel cookies in je browser in voordat je verdergaat.
+	NO	Nettleseren din godtar ikke informasjonskapsler. Dette kan føre til uønsket oppførsel ved bruk av Squeezebox Server. Aktiver informasjonskapsler i nettleseren før du fortsetter.
+	PL	Twoja przeglądarka nie akceptuje plików cookie. Może to wywołać nieoczekiwane skutki podczas sterowania programem Squeezebox Server. Włącz najpierw obsługę plików cookie w przeglądarce.
+	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Squeezebox Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
+	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Squeezebox Server. Aktivera cookies i din webbläsare innan du fortsätter.
 
 DISPLAY_PLUGINS
 	CS	Zobrazit nabídku Doplňky na přehrávači Slim:
@@ -14534,13 +14720,13 @@ NO_PLAYER_DETAILS
 	DA	<b>Hvis du har en Squeezebox eller Transporter:</b><ul><li>Kontroller at din afspiller er sluttet til, og at netværksindstillingerne er korrekte. Klik på opdateringsknappen når afspilleren er tilsluttet.</ul><p><b>Hvis du ikke har en Squeezebox eller Transporter:</b><ul><li>Du kan lytte til dit musikbibliotek vha. <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en softwareversion af Squeezebox.<li>Du kan også bruge et program til at afspille mp3-filer (fx Winamp eller iTunes) til at høre filerne sammen med Squeezebox Server ved at etablere forbindelse til denne adresse: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf Squeezebox Server zugreifen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as Winamp or iTunes) to listen to your music library with Squeezebox Server by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Squeezebox Server conectándose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	ES	<b>Si posee un dispositivo Squeezebox o Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un dispositivo Squeezebox o Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como Winamp o iTunes) para escuchar la biblioteca de música con Squeezebox Server conectándose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FI	<b>Jos sinulla on Squeezebox tai Transporter:</b><ul><li>Varmista, että soitin on liitetty ja että sen verkkoasetukset on määritetty oikein. Napsauta Päivitä-painiketta, kun soittimella on verkkoyhteys.</ul><p><b>Jos sinulla ei ole Squeezeboxia tai Transporteria:</b><ul><li>Voit kuunnella musiikkikirjastossasi olevaa musiikkia <a target="_top" href="/html/softsqueeze/index.html">SoftSqueezen</a> avulla. Se on Squeezeboxin ohjelmistoversio.<li>Voit käyttää MP3-soitinohjelmistoa (esim. Winamp tai iTunes) musiikkikirjastossasi olevan musiikin kuunteluun Squeezebox Serverin kanssa käymällä tässä URL-osoitteessa: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le Squeezebox Server en vous connectant à l'URL suivante: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le Squeezebox Server en vous connectant à l'URL suivante: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון Winamp או iTunes) כדי להאזין לספריית המוסיקה באמצעות Squeezebox Server על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	IT	<b>Se si possiede uno Squeezebox o un Transporter:</b><ul><li>Verificare che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale in Squeezebox Server tramite software per lettori MP3 (ad esempio Winamp o iTunes) accedendo al seguente URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
-	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je muzieksysteem op het netwerk is aangesloten en dat de netwerkinstellingen goed zijn. Klik op de knop Vernieuwen wanneer je systeem is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Squeezebox Server naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je muzieksysteem op het netwerk is aangesloten en dat de netwerkinstellingen kloppen. Klik op de knop Vernieuwen wanneer je systeem is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt mp3-spelersoftware (zoals Winamp of iTunes) gebruiken om met Squeezebox Server naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	NO	<b>Hvis du har en Squeezebox eller en Transporter:</b><ul><li>Kontroller at spilleren er plugget inn, og at nettverksinnstillingene stemmer. Klikk på Oppdater så snart spilleren er koplet til.</ul><p><b>Hvis du ikke har en Squeezebox eller en Transporter:</b><ul><li>Du kan lytte til musikkbiblioteket ditt med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvareversjon av Squeezebox.<li>Du kan bruke mp3-spiller-programvare (som Winamp eller iTunes) til å lytte til musikkbiblioteket ditt med Squeezebox Server ved å gå til denne url-en: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PL	<b>Jeżeli korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Sprawdź, czy odtwarzacz jest podłączony do źródła zasilania, a ustawienia sieciowe są prawidłowe. Po podłączeniu odtwarzacza kliknij przycisk Odśwież.</ul><p><b>Jeżeli nie korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Możesz słuchać muzyki z biblioteki, używając programu <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, programowej wersji urządzenia Squeezebox.<li>W celu słuchania muzyki z biblioteki w programie Squeezebox Server możesz użyć oprogramowania odtwarzacza plików MP3 (na przykład Winamp lub iTunes), przechodząc pod następujący adres URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
@@ -15563,49 +15749,158 @@ RADIO_TUNEIN
 	ZH_CN	收音机网址
 
 RADIOIO
+	CS	RadioIO
+	DA	RadioIO
+	DE	RadioIO
 	EN	RadioIO
+	ES	RadioIO
+	FI	RadioIO
+	FR	RadioIO
+	IT	RadioIO
+	NL	RadioIO
+	NO	RadioIO
+	PL	RadioIO
+	RU	RadioIO
+	SV	RadioIO
 
 SHOUTCAST
+	CS	SHOUTcast
+	DA	SHOUTcast
+	DE	SHOUTcast
 	EN	SHOUTcast
+	ES	SHOUTcast
+	FI	SHOUTcast
+	FR	SHOUTcast
+	IT	SHOUTcast
+	NL	SHOUTcast
+	NO	SHOUTcast
+	PL	SHOUTcast
+	RU	SHOUTcast
+	SV	SHOUTcast
 
 RADIO_PROVIDERS_ABSOLUTE
+	CS	Absolute Radio UK
+	DA	Absolute Radio UK
+	DE	Absolute Radio UK
 	EN	Absolute Radio UK
+	ES	Absolute Radio UK
+	FI	Absolute Radio UK
+	FR	Absolute Radio UK
+	IT	Absolute Radio UK
+	NL	Absolute Radio UK
+	NO	Absolute Radio UK
+	PL	Absolute Radio UK
+	RU	Absolute Radio UK
+	SV	Absolute Radio UK
 
 RADIO_PROVIDERS_ACCURADIO
+	CS	AccuRadio
+	DA	AccuRadio
+	DE	AccuRadio
 	EN	AccuRadio
+	ES	AccuRadio
+	FI	AccuRadio
+	FR	AccuRadio
+	IT	AccuRadio
+	NL	AccuRadio
+	NO	AccuRadio
+	PL	AccuRadio
+	RU	AccuRadio
+	SV	AccuRadio
 
 RADIO_PROVIDERS_BBC
+	CS	BBC
+	DA	BBC
+	DE	BBC
 	EN	BBC
+	ES	BBC
+	FI	BBC
+	FR	BBC
+	IT	BBC
+	NL	BBC
+	NO	BBC
+	PL	BBC
+	RU	BBC
+	SV	BBC
 
 RADIO_PROVIDERS_CBC
+	CS	CBC
+	DA	CBC
+	DE	CBC
 	EN	CBC
+	ES	CBC
+	FI	CBC
+	FR	CBC
+	IT	CBC
+	NL	CBC
+	NO	CBC
+	PL	CBC
+	RU	CBC
+	SV	CBC
 
 RADIO_PROVIDERS_DIFM
-	CS	Importováno digitálně
-	DA	Digitally Imported
-	DE	Digitally Imported
+# SLT: "Digitally Imported" is a product name, not to be translated (http://www.di.fm/)
 	EN	Digitally Imported
-	ES	Digitally Imported
-	FI	Digitally Imported (digitaalisesti tuotu)
-	FR	Digitally Imported
-	IT	Digitally Imported
-	NL	Digitaal geïmporteerd
-	NO	Digitally Imported
-	PL	cyfrowa muzyka z importu
-	RU	Digitally Imported
-	SV	Importeras digitalt
 
 RADIO_PROVIDERS_SOMAFM
+	CS	SomaFM
+	DA	SomaFM
+	DE	SomaFM
 	EN	SomaFM
+	ES	SomaFM
+	FI	SomaFM
+	FR	SomaFM
+	IT	SomaFM
+	NL	SomaFM
+	NO	SomaFM
+	PL	SomaFM
+	RU	SomaFM
+	SV	SomaFM
 
 RADIO_PROVIDERS_SKYFM
+	CS	SKY.fm
+	DA	SKY.fm
+	DE	SKY.fm
 	EN	SKY.fm
+	ES	SKY.fm
+	FI	SKY.fm
+	FR	SKY.fm
+	IT	SKY.fm
+	NL	SKY.fm
+	NO	SKY.fm
+	PL	SKY.fm
+	RU	SKY.fm
+	SV	SKY.fm
 
 RADIO_PROVIDERS_RADIODE
+	CS	radio.de
+	DA	radio.de
+	DE	radio.de
 	EN	radio.de
+	ES	radio.de
+	FI	radio.de
+	FR	radio.de
+	IT	radio.de
+	NL	radio.de
+	NO	radio.de
+	PL	radio.de
+	RU	radio.de
+	SV	radio.de
 
 RADIO_PROVIDERS_RADIOFR
+	CS	radio.fr
+	DA	radio.fr
+	DE	radio.fr
 	EN	radio.fr
+	ES	radio.fr
+	FI	radio.fr
+	FR	radio.fr
+	IT	radio.fr
+	NL	radio.fr
+	NO	radio.fr
+	PL	radio.fr
+	RU	radio.fr
+	SV	radio.fr
 
 RADIO_PROVIDERS_RADIOFEEDS
 	CS	RadioFeeds UK & Irsko
@@ -15616,14 +15911,26 @@ RADIO_PROVIDERS_RADIOFEEDS
 	FI	RadioFeeds (Iso-Britannia ja Irlanti)
 	FR	RadioFeeds RU et Irlande
 	IT	RadioFeeds UK & Ireland
-	NL	RadioFeeds UK en Ierland
+	NL	RadioFeeds UK & Ireland
 	NO	RadioFeeds UK & Ireland
 	PL	RadioFeeds Wielka Brytania i Irlandia
 	RU	Радиоканалы: Великобритания и Ирландия
 	SV	RadioFeeds UK & Ireland
 
 RADIO_PROVIDERS_RADIONOMY
+	CS	Radionomy
+	DA	Radionomy
+	DE	Radionomy
 	EN	Radionomy
+	ES	Radionomy
+	FI	Radionomy
+	FR	Radionomy
+	IT	Radionomy
+	NL	Radionomy
+	NO	Radionomy
+	PL	Radionomy
+	RU	Radionomy
+	SV	Radionomy
 
 URL
 	CS	URL
@@ -16988,20 +17295,20 @@ SETUP_SCROLLPIXELS
 	ZH_CN	卷动映像点
 
 SETUP_SCROLLPIXELS_DESC
-	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování.  Malé hodnoty s nízkými rychlostmi rolování vypadají dobře, ale vyžadují server o vyšším výkonu a nezahlcenou síť. Pokud máte pochybnosti, ponechte výchozí hodnotu 7 pixelů.  (Min 1, Max 20).
-	DA	På afspillere med et grafisk display kan du justere hvor mange pixel (punkter) teksten skal rulle i hvert af de intervaller du angav ovenfor. Sammen med indstillingen for rullehastighed bestemmer denne indstilling hvor hurtigt og i hvilken kvalitet teksten ruller hen over displayet. En lav værdi her kombineret med en lav rullehastighed vil få teksten til at se godt ud på displayet, men det kræver en kraftigere server og et netværk uden for meget trafik. Hvis du er i tvivl, bør du bruge standardindstillingen på 7 pixel (minimum er 1, maksimum er 20).
-	DE	Bei Playern mit grafischem Display können Sie festlegen, um wie viele Pixel pro oben definiertem Intervall sich die Laufschrift bewegen soll. Kombinieren Sie diese Einstellung mit der Laufschriftgeschwindigkeit, um das beste Ergebnis zu erzielen. Beachten Sie, dass geringere Werte bei einer langsameren Geschwindigkeit zwar besser aussehen, aber einen Server mit höherer Leistung und ein gering belastetes Netzwerk erfordern. Belassen Sie im Zweifelsfall den Standardwert von 7 Pixeln. (Min. 1, Max. 20).
+	CS	U přehrávače s grafickým displejem můžete upravit počet pixelů (bodů), o které bude přehrávač rolovat během každého intervalu zadaného výše. Toto číslo nastavte společně s Rychlostí rolování (Scroll Rate) a upravte rychlost a kvalitu rolování. Pokud máte pochybnosti, ponechte výchozí hodnotu 2 nebo 3 pixely.  (Min 1, Max 20).
+	DA	På afspillere med et grafisk display kan du justere hvor mange pixel (punkter) afspilleren skal rulle i hvert af de intervaller du angav ovenfor. Sammen med indstillingen for rullehastighed bestemmer denne indstilling hvor hurtigt og i hvilken kvalitet teksten ruller hen over displayet. Hvis du er i tvivl, bør du bruge standardindstillingen på 2 eller 3 pixel (minimum er 1, og maksimum er 20).
+	DE	Bei Playern mit grafischem Display können Sie festlegen, um wie viele Pixel pro oben definiertem Intervall sich die Laufschrift bewegen soll. Kombinieren Sie diese Einstellung mit der Laufschriftgeschwindigkeit, um das beste Ergebnis zu erzielen. Belassen Sie im Zweifelsfall den Standardwert von 2 oder 3 Pixeln (Min. 1, Max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  If in doubt leave as the default of 2 or 3 pixels.  (Min 1, Max 20).
-	ES	En un reproductor con una pantalla gráfica, se puede ajustar el número de píxeles (puntos) que el reproductor desplaza en cada intervalo definido anteriormente. Para ajustar la velocidad y la calidad de desplazamiento, ajuste este valor junto con la velocidad de desplazamiento. Tenga en cuenta que los valores pequeños con velocidades de desplazamiento bajas se ven bien, pero requieren un servidor con mejor rendimiento y una red sin congestiones. En caso de duda, deje el valor predeterminado de 7 píxeles. (Mínimo:1, máximo: 20).
-	FI	Jos soittimessa on graafinen näyttö, voit säätää, kuinka monta kuvapistettä soittimen näytössä vieritetään aina yllä määritetyin väliajoin.  Voit säätää vierityksen nopeutta ja tarkkuutta säätämällä tätä arvoa yhdessä vieritysnopeuden kanssa.  Huomaa, että pieni vieritysnopeus näyttää hyvältä, mutta vaatii enemmän suorituskykyä palvelimelta ja ruuhkatonta verkkoa.  Jos et ole varma, jätä arvo oletukseen, seitsemään kuvapisteeseen.  (pienin arvo 1, suurin 20)
-	FR	Sur une platine équipée d'un afficheur graphique, vous pouvez ajuster le nombre de points, ou pixels, dont la platine avance à chaque intervalle défini précédemment. Ajustez cette valeur en même temps que la Vitesse de défilement ci-dessus. Notez que des valeurs trop faibles augmentent la fluidité de l'affichage mais requièrent un serveur et un réseau performants. Dans le doute, conservez la valeur par défaut, de 7 pixels. (Min 1, Max 20).
+	ES	En un reproductor con una pantalla gráfica, se puede ajustar el número de píxeles (puntos) que el reproductor desplaza en cada intervalo definido anteriormente. Para ajustar la velocidad y la calidad de desplazamiento, ajuste este valor junto con la velocidad de desplazamiento. En caso de duda, deje el valor predeterminado de 2 o 3 píxeles (mínimo: 1, máximo: 20).
+	FI	Jos soittimessa on graafinen näyttö, voit määrittää, kuinka monta kuvapistettä soittimen näytössä vieritetään aina yllä määritetyin väliajoin. Voit säätää vierityksen nopeutta ja tarkkuutta säätämällä tätä arvoa yhdessä vieritysnopeuden kanssa. Jos et ole varma, jätä arvo oletukseen, kahteen tai kolmeen kuvapisteeseen (pienin arvo 1, suurin 20).
+	FR	Sur une platine équipée d'un affichage graphique, vous pouvez ajuster le nombre de pixels (points) dont la platine avance à chaque intervalle défini précédemment. Ajustez cette valeur en même temps que la vitesse de défilement pour régler la vitesse et la qualité de défilement. Dans le doute, conservez la valeur par défaut, de 2 ou 3 pixels (min. 1, max. 20).
 	HE	בנגן עם תצוגה גרפית, באפשרותך לכוונן את מספר הפיקסלים (נקודות) שהנגן גולל בכל מרווח זמן המוגדר לעיל. כוונן ערך זה בהתאם לקצב הגלילה כדי לכוונן את מהירות וכמות הגלילה. שים לב שערכים קטנים עם קצבי גלילה נמוכים נראים טוב, אך נדרשים עבורם שרת בעל ביצועים גבוהים ורשת פנויה. אם אינך יודע במה לבחור, השאר את ערך ברירת המחדל של 7 פיקסלים. (מינימום 1, מקסימום 20).
-	IT	In un lettore con schermo grafico è possibile impostare il numero di pixel che il lettore scorre nell'intervallo definito sopra. Impostare questo valore in combinazione con la velocità di scorrimento per regolare la velocità e la qualità. I valori minimi associati a una bassa velocità di scorrimento offrono un risultato migliore ma richiedono un server più potente e poco traffico di rete. In caso di dubbi, lasciare il valore predefinito di 7 pixel (minimo 1, massimo 20).
-	NL	Op een muzieksysteem met een grafisch display kun je het aantal pixels (punten) aanpassen waarmee de tekst in elk hierboven opgegeven interval loopt. Pas dit aan in combinatie met de tekstloopsnelheid om het tempo en de kwaliteit van de tekstloop in te stellen. Lage waarden met een lage tekstloopsnelheid tonen mooi, maar vereisen hogere serverprestaties en een goed netwerk. Laat bij twijfel de waarde op de standaard 7 pixels staan. (minimum 1, maximum 20).
-	NO	Hvis spilleren har en grafisk skjerm, kan du justere antall piksler (punkter) som spilleren ruller fram for hver tidsperiode som definert ovenfor. Juster denne verdien i forhold til Rullefrekvens for å justere hastighet og kvalitet. Husk at en lav verdi for Rullefrekvens ser bra ut, men krever en server med høyere ytelse og et nettverk som ikke er for trafikkert. Hvis du er usikker bør du bruke standardverdien på 7 piksler. (Minimumsverdi er 1, maksimum er 20.)
-	PL	W przypadku odtwarzacza z wyświetlaczem graficznym można dostosować liczbę pikseli (punktów), jaką odtwarzacz przewija w każdym okresie zdefiniowanym powyżej. Dostosuj tę opcję razem z opcją Szybkość przewijania w celu ustawienia szybkości przewijania i jakości. Należy pamiętać, że mniejsze wartości i niska szybkość przewijania poprawiają wygląd, ale wymagają serwera o większej wydajności i nieobciążonej sieci. W razie wątpliwości pozostaw wartość domyślną wynoszącą 7 pikseli (min. 1, maks. 20).
-	RU	На плеерах с графическим экраном можно выбрать число пикселей (точек), прокручиваемых плеером в течение каждого заданного выше интервала. Показатель настраивается вместе с параметром "Скорость прокрутки", при этом задается скорость прокрутки и качество. Обратите внимание, что небольшие значения этого параметра при низкой скорости прокрутки дают хороший результат, но требуют высокопроизводительного сервера и незагруженной сети. При сомнении оставьте значение по умолчанию равное 7 пикселям. (Минимум — 1, максимум — 20.)
-	SV	På spelare med grafisk display kan du ange hur många pixlar (bildpunkter) texten ska rulla i varje intervall (se ovan).  Justera det här värdet parallellt med värdet för rullningshastighet när du vill ställa in kvalitet och hastighet för rullande text.  Obs! Ett lågt värde kombinerat med låg rullhastighet gör att texten ser bra ut på displayen, men de kräver en server med höga prestanda och ett nätverk där trafiken inte är alltför tät.  Om du är osäker behåller du standardinställningen 7 bildpunkter.  (Du kan ange 1-20 bildpunkter.)
+	IT	In un lettore con display grafico è possibile impostare il numero di pixel scorsi dal lettore in ognuno degli intervalli sopra definiti. Impostare il valore insieme alla velocità di scorrimento per regolare la velocità e la qualità dello scorrimento. In caso di dubbi, mantenere il valore predefinito di 2 o 3 pixel (minimo 1, massimo 20).
+	NL	Op een muzieksysteem met een grafisch display kun je het aantal pixels (punten) aanpassen waarmee de tekst in elk hierboven opgegeven interval loopt. Pas dit aan in combinatie met de tekstloopsnelheid om het tempo en de kwaliteit van de tekstloop in te stellen. Houd bij twijfel de standaardwaarde van 2 of 3 pixels aan (minimaal 1, maximaal 20).
+	NO	Hvis spilleren har en grafisk skjerm, kan du justere antall piksler (punkter) som spilleren ruller gjennom for hver tidsperiode som er definert ovenfor. Juster denne verdien i forhold til Rullefrekvens for å justere hastighet og kvalitet. Hvis du er usikker, bør du bruke standardverdien på 2 eller 3 piksler. (Minimumsverdi er 1, maksimum er 20.)
+	PL	W przypadku odtwarzacza z wyświetlaczem graficznym można dostosować liczbę pikseli (punktów), jaką odtwarzacz przewija w każdym okresie zdefiniowanym powyżej. Dostosuj tę opcję razem z opcją Szybkość przewijania w celu ustawienia szybkości przewijania i jakości. W razie wątpliwości pozostaw wartość domyślną wynoszącą 2 lub 3 piksele (min. 1, maks. 20).
+	RU	На плеере с графическим экраном можно выбрать число пикселей (точек), прокручиваемых плеером в течение каждого заданного выше интервала.  Показатель настраивается вместе с параметром «Скорость прокрутки», при этом задается скорость прокрутки и качество.  Если есть сомнения, оставьте значение по умолчанию, равное 2 или 3 пикселям.  (мин. 1, макс. 20).
+	SV	På spelare med grafisk skärm kan du ange hur många pixlar (bildpunkter) texten ska rulla i varje intervall (se ovan). Justera det här värdet parallellt med värdet för rullningshastighet när du vill ställa in kvalitet och hastighet för rullande text. Om du är osäker behåller du standardinställningen 2-3 bildpunkter. (Du kan ange 1-20 bildpunkter.)
 	ZH_CN	在设有图形显示屏的播放机，你可以调节播放机在每一段间隔卷动映像点的数量。依据卷动率及您对显示速度和质量的要求加以调节。请注意，较小的值和较低的卷动率虽好，但必须配合高性能的服务器和非繁忙的网络方有效果。如有不详之处，请保留缺省值7个映像点。（最小为1，最大为20）。
 
 ANY_GENRE
@@ -17358,7 +17665,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	DE	Keine Laufschrift
 	EN	Do not scroll
 	ES	No desplazar
-	FI	Älä vieritä
+	FI	Ei vieritystä
 	FR	Pas de défilement
 	HE	ללא גלילה
 	IT	Non scorrere
@@ -17839,7 +18146,7 @@ OBJECT_RETRIEVAL_FAILURE
 SETUP_LARGETEXTFONT
 	CS	Písmo velkého textu
 	DA	Stor skrifttype
-	DE	Grosse Schrift
+	DE	Große Schrift
 	EN	Large Text Font
 	ES	Fuente de texto grande
 	FI	Suuren tekstin fontti
@@ -18234,7 +18541,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	DE	Oszillograph
 	EN	Spectrum Analyzer
 	ES	Analizador de espectro
-	FI	Asteikon analysointi
+	FI	Spektrianalysaattori
 	FR	Analyseur de spectre
 	HE	מנתח הספקטרום
 	IT	Analizzatore di spettro
@@ -18741,18 +19048,64 @@ WORDCLOCKOUTPUT_ENABLED
 	SV	Word clock-utsignal har aktiverats (Transporter är master)
 
 SETUP_ROLLOFFSLOW
-	DE	DAC Roll-off Filter
+	CS	DAC roll-off filtr
+	DA	DAC-dæmpningsfilter
+	DE	D/A-Wandler Roll-off-Filter
 	EN	DAC Roll-off Filter
+	ES	Filtro de desvanecimiento DAC
+	FI	DAC Roll-off -suodatin
+	FR	Filtre d'affaiblissement du convertisseur numérique-analogique
+	IT	Filtro DAC roll-off
+	NL	DAC Roll-off Filter
+	NO	DAC-dempingsfilter
+	PL	Filtr tłumienia przetwornika
+	RU	Сглаживающий фильтр цифроаналогового преобразователя (ЦАП)
+	SV	DAC Roll-Off-filter
 
 SETUP_ROLLOFFSLOW_DESC
-	DE	Der DAC des Transporters verfügt über 2 analoge Filtercharakteristiken. Standardmäßig wird ein Sharp Roll-off Filter genutzt. Wählen Sie hier zwischen Sharp Roll-off, oder Soft Roll-off Filter.
+	CS	Nastavíte-li pro AK4396 DAC možnost použití pomalého roll-off filtru, bude ve výchozím nastavení použit ostrý roll-off filtr. Tato možnost se vztahuje pouze na analogové výstupy.
+	DA	AK4396 DAC-standardindstillingerne til brug af et skarpt dæmpningsfilter med mulighed for at bruge et langsomt dæmpningsfilter i stedet. Denne mulighed påvirker kun analoge udgange.
+	DE	Der D/A-Wandler AK4396 verwendet standardmäßig einen steilen Roll-off-Filter. Es besteht die Möglichkeit, stattdessen einen langsamen Roll-off-Filter zu verwenden. Diese Option hat nur Auswirkungen auf die analogen Ausgänge.
 	EN	The AK4396 DAC defaults to using a sharp roll-off filter, with an option to use a slow roll-off filter instead. This option only affects the analog outputs.
+	ES	El DAC AK4396 usa como predeterminado un filtro de desvanecimiento seco, con una opción para usar un filtro de desvanecimiento lento en su lugar. Esta opción sólo afecta a las salidas analógicas.
+	FI	AK4396 DAC käyttää oletusarvoisesti sharp roll-off -suodatinta, mutta slow roll-off -suodatin on tarjolla vaihtoehtona. Tämä vaihtoehto koskee vain analogisia lähtöjä.
+	FR	Par défaut, l'AK4396 DAC utilise un filtre d'affaiblissement brusque avec une option lui permettant de le remplacer par un filtre d'affaiblissement amorti. Cette option affecte uniquement les sorties analogiques.
+	IT	Per impostazione predefinita, con il DAC AK4396 viene utilizzato un filtro sharp roll-off, con l'opzione di utilizzare un filtro slow roll-off come alternativa. L'opzione incide solo sulle uscite analogiche.
+	NL	De AK4396 DAC gebruikt standaard een sharp roll-off filter, met een slow roll-off filter als alternatief. Deze optie is alleen van invloed op de analoge uitgangen.
+	NO	AK4396 DAC bruker automatisk et skarpt dempingsfilter, men har også et alternativ for bruk av et sakte dempingsfilter. Dette alternativet påvirker kun analog lyd.
+	PL	Przetwornik AK4396 domyślnie stosuje filtr ostrego tłumienia, ale można opcjonalnie użyć filtru tłumienia łagodnego. Opcja ta ma wpływ tylko na wyjścia analogowe.
+	RU	Цифроаналоговый преобразователь AK4396 по умолчанию использует сильно сглаживающий фильтр; вместо него можно выбрать применение слабо сглаживающего фильтра. Этот параметр влияет только на аналоговые выходы.
+	SV	AK4396 DAC använder som standard ett Sharp Roll-Off-filter, med alternativet att använda ett långsamt dämpningsfilter i stället. Det här alternativet påverkar bara analoga utgångar.
 
 ROLLOFFSLOW_DISABLED
+	CS	Ostrý roll-off filtr
+	DA	Skarpt dæmpningsfilter
+	DE	Steiler Roll-off-Filter
 	EN	Sharp Roll-off Filter
+	ES	Filtro de desvanecimiento seco
+	FI	Sharp Roll-off -suodatin
+	FR	Filtre d'affaiblissement brusque
+	IT	Filtro sharp roll-off
+	NL	Sharp Roll-off Filter
+	NO	Skarpt dempingsfilter
+	PL	Filtr ostrego tłumienia
+	RU	Сильно сглаживающий фильтр
+	SV	Sharp Roll-Off-filter
 
 ROLLOFFSLOW_ENABLED
+	CS	Pomalý roll-off filtr
+	DA	Langsomt dæmpningsfilter
+	DE	Langsamer Roll-off-Filter
 	EN	Slow Roll-off Filter
+	ES	Filtro de desvanecimiento lento
+	FI	Slow Roll-off -suodatin
+	FR	Filtre d'affaiblissement amorti
+	IT	Filtro slow roll-off
+	NL	Slow Roll-off Filter
+	NO	Sakte dempingsfilter
+	PL	Filtr łagodnego tłumienia
+	RU	Слабо сглаживающий фильтр
+	SV	Slow Roll-Off-filter
 
 SETUP_POWEROFFDAC
 	CS	Vypnout AUDIO
@@ -19241,7 +19594,7 @@ DEBUG_SERVER_SCHEDULER
 DEBUG_SERVER
 	CS	Obecné informace o serveru
 	DA	Generelle oplysninger om server
-	DE	Allgemeine Server Informationen
+	DE	Allgemeine Server-Informationen
 	EN	General Server Information
 	ES	Información de servidor general
 	FI	Palvelimen yleiset tiedot
@@ -20203,7 +20556,7 @@ DIRECTORY_PROGRESS
 	SV	Mappsökning
 
 DISCOVERING_FILES_PROGRESS
-	CS	Hledám soubory
+	CS	Vyhledávání souborů
 	DA	Søger efter filer
 	DE	Dateien werden erkannt
 	EN	Discovering files
@@ -20215,10 +20568,10 @@ DISCOVERING_FILES_PROGRESS
 	NO	Ser etter filer
 	PL	Wykrywanie plików
 	RU	Обнаружение файлов
-	SV	Letar filer
+	SV	Leta filer
 
 DISCOVERING_DIRECTORY_PROGRESS
-	CS	Hledám soubory
+	CS	Vyhledávání souborů
 	DA	Søger efter filer
 	DE	Dateien werden erkannt
 	EN	Discovering files
@@ -20230,52 +20583,52 @@ DISCOVERING_DIRECTORY_PROGRESS
 	NO	Ser etter filer
 	PL	Wykrywanie plików
 	RU	Обнаружение файлов
-	SV	Letar filer
+	SV	Leta filer
 
 DISCOVERING_PLAYLIST_PROGRESS
-	CS	Hledám soubory
-	DA	Søger efter filer
+	CS	Hledání seznamů skladeb
+	DA	Finder afspilningslister
 	DE	Wiedergabelisten werden erkannt
 	EN	Discovering playlists
-	ES	Detectando archivos
-	FI	Etsitään tiedostoja
-	FR	Détection des fichiers
-	IT	Rilevazione file
-	NL	Bestanden detecteren
-	NO	Ser etter filer
-	PL	Wykrywanie plików
-	RU	Обнаружение файлов
-	SV	Letar filer
+	ES	Detectando listas de reproducción
+	FI	Soittoluetteloita etsitään
+	FR	Détection de listes de lecture
+	IT	Rilevazione playlist in corso
+	NL	Playlists detecteren
+	NO	Finner spillelister
+	PL	Trwa wykrywanie list odtwarzania
+	RU	Выбор плей-листов
+	SV	Leta spellistor
 
 DIRECTORY_DELETED_PROGRESS
-	CS	Odebrat smazané soubory
-	DA	Fjern slettede filer
-	DE	Gelöschte Dateien entfernen
+	CS	Odstraňování smazaných souborů
+	DA	Fjerner slettede filer
+	DE	Gelöschte Dateien werden entfernt
 	EN	Removing deleted files
-	ES	Quitar archivos eliminados
+	ES	Quitando archivos eliminados
 	FI	Poista poistetut tiedostot
-	FR	Enlever les fichiers supprimés
-	IT	Rimuovi file eliminati
+	FR	Enlèvement des fichiers supprimés
+	IT	Rimozione dei file eliminati in corso
 	NL	Verwijderde bestanden weghalen
-	NO	Fjern slettede filer
-	PL	Kasuj usunięte pliki
+	NO	Fjerner slettede filer
+	PL	Kasowanie usuniętych plików
 	RU	Убрать удаленные файлы
 	SV	Ta bort borttagna filer
 
 DIRECTORY_NEW_PROGRESS
-	CS	Prohledat nové soubory
-	DA	Søg efter nye filer
-	DE	Neue Dateien durchsuchen
+	CS	Vyhledávání nových souborů
+	DA	Scanner nye filer
+	DE	Neue Dateien werden durchsucht
 	EN	Scanning new files
-	ES	Examinar archivos nuevos
-	FI	Tarkista uudet tiedostot
+	ES	Examinando archivos nuevos
+	FI	Tarkistetaan uudet tiedostot
 	FR	Analyse des nouveaux fichiers
-	IT	Analizza i nuovi file
+	IT	Analisi di nuovi file in corso
 	NL	Nieuwe bestanden scannen
-	NO	Søk i nye filer
-	PL	Przeszukuj nowe pliki
-	RU	Сканировать новые файлы
-	SV	Sök igenom nya filer
+	NO	Søker i nye filer
+	PL	Trwa przeszukiwanie nowych plików
+	RU	Сканирование новых файлов
+	SV	Söka igenom nya filer
 
 DIRECTORY_CHANGED_PROGRESS
 	CS	Skenování změněných souborů
@@ -20293,34 +20646,34 @@ DIRECTORY_CHANGED_PROGRESS
 	SV	Söker igenom ändrade filer
 
 PLAYLIST_DELETED_PROGRESS
-	CS	Odebrat smazané seznamy skladeb
-	DA	Fjern slettede afspilningslister
-	DE	Gelöschte Wiedergabelisten entfernen
+	CS	Odstraňování smazaných seznamů skladeb
+	DA	Fjerner slettede afspilningslister
+	DE	Gelöschte Wiedergabelisten werden entfernt
 	EN	Removing deleted playlists
-	ES	Quitar listas de reproducción eliminadas
+	ES	Quitando listas de reproducción eliminadas
 	FI	Poista poistetut soittoluettelot
-	FR	Enlever les listes de lecture supprimées
-	IT	Rimuovi playlist eliminate
+	FR	Enlèvement des listes de lecture supprimées
+	IT	Rimozione delle playlist eliminate in corso
 	NL	Verwijderde playlists weghalen
-	NO	Fjern slettede spillelister
-	PL	Kasuj usunięte listy odtwarzania
+	NO	Fjerner slettede spillelister
+	PL	Kasowanie usuniętych list odtwarzania
 	RU	Убрать удаленные плей-листы
 	SV	Ta bort borttagna spellistor
 
 PLAYLIST_NEW_PROGRESS
-	CS	Prohledat nové seznamy skladeb
-	DA	Søg efter nye afspilningslister
-	DE	Neue Wiedergabelisten durchsuchen
+	CS	Vyhledávání nových seznamů skladeb
+	DA	Scanner nye afspilningslister
+	DE	Neue Wiedergabelisten werden durchsucht
 	EN	Scanning new playlists
-	ES	Examinar listas de reproducción nuevas
-	FI	Tarkista uudet soittoluettelot
-	FR	Analyser les nouvelles listes de lecture
-	IT	Analizza nuove playlist
+	ES	Examinando listas de reproducción nuevas
+	FI	Tarkistetaan uudet soittoluettelot
+	FR	Analyse des nouvelles listes de lecture
+	IT	Analisi di nuove playlist in corso
 	NL	Nieuwe playlists scannen
-	NO	Søk i nye spillelister
-	PL	Przeszukuj nowe listy odtwarzania
-	RU	Сканировать новые плей-листы
-	SV	Sök igenom nya spellistor
+	NO	Søker i nye spillelister
+	PL	Trwa przeszukiwanie nowych list odtwarzania
+	RU	Сканирование новых плей-листов
+	SV	Söka igenom nya spellistor
 
 PLAYLIST_CHANGED_PROGRESS
 	CS	Skenování změněných seznamů skladeb
@@ -20374,7 +20727,7 @@ PRECACHEARTWORK_PROGRESS
 	EN	Pre-caching Artwork
 	ES	Guardando carátula en caché previamente
 	FI	Levykansien tallennus valmiiksi välimuistiin
-	FR	Mise en cache de la pochette
+	FR	Mise en pré-cache de la pochette
 	IT	Pre-cache copertina
 	NL	Hoesafbeeldingen vooraf in cache opslaan
 	NO	Hurtigbufring av omslag på forhånd
@@ -20383,8 +20736,19 @@ PRECACHEARTWORK_PROGRESS
 	SV	Cachelagrat albumomslag
 
 DOWNLOADARTWORK_PROGRESS
-	DE	Plattenhüllen werden heruntergeladen
+	CS	Stahování obalu alba
+	DA	Henter albumcovere
+	DE	Plattenhülle wird heruntergeladen
 	EN	Downloading Artwork
+	ES	Descargando carátula
+	FI	Kansitaidetta ladataan
+	FR	Téléchargement de la pochette
+	IT	Download copertina in corso
+	NL	Hoesafbeeldingen downloaden
+	NO	Laster ned omslag
+	PL	Pobieranie okładek
+	RU	Загрузка обложки
+	SV	Ladda ner albumomslag
 
 CLEANUP1_PROGRESS
 	CS	Čištění databáze č.1
@@ -20600,7 +20964,7 @@ PLUGINS_CHANGED
 PLUGINS_CHANGED_NEED_RESTART
 	CS	Změny se projeví při příštím spuštění aplikace. <a href="%s">K restartování serveru klikněte sem.</a>
 	DA	Ændringerne vil træde i kraft næste gang programmet startes. <a href="%s">Klik her for at genstarte serveren nu.</a>
-	DE	Beim nächsten Neustart der Anwendung werden die Änderungen wirksam. <a href="%s">Klicken Sie hier, um den Server jetzt neu zu starten.</a>
+	DE	Beim nächsten Neustart der Anwendung werden die Änderungen wirksam.<a href="%s">Klicken Sie hier, um den Server jetzt neu zu starten.</a>
 	EN	Changes will take place at the next application restart. <a href="%s">Please click here to restart the server now.</a>
 	ES	Los cambios entrarán en vigor la próxima vez que se reinicie la aplicación. <a href="%s">Haga clic aquí para reiniciar el servidor ahora.</a>
 	FI	Muutokset tulevat voimaan, kun sovellus käynnistetään seuraavan kerran uudestaan. <a href="%s">Käynnistä palvelin uudelleen nyt napsauttamalla tästä.</a>
@@ -20824,13 +21188,49 @@ JIVE_DELETE_FROM_FAVORITES
 	SV	Ta bort favorit
 
 JIVE_OVERWRITE_PRESET_X
+	CS	Nahradit %s?
+	DA	Udskift %s?
+	DE	%s ersetzen?
 	EN	Replace %s?
+	ES	¿Sustituir %s?
+	FI	Korvataanko %s?
+	FR	Voulez-vous remplacer %s?
+	IT	Sostituire %s?
+	NL	%s vervangen?
+	NO	Vil du erstatte %s?
+	PL	Zastąpić %s?
+	RU	Заменить %s?
+	SV	Vill du ersätta %s?
 
 JIVE_SET_PRESET_X
+	CS	Nastavená předvolba %s
+	DA	Indstil genvejsknap %s
+	DE	Voreinstellung %s festlegen
 	EN	Set Preset %s
+	ES	Establecer memoria %s
+	FI	Määritä esiasetus %s
+	FR	Définir la présélection %s
+	IT	Imposta preimpostazione %s
+	NL	Voorinstelling %s instellen
+	NO	Angi forhåndsinnstilling %s
+	PL	Ustaw ustawienie zaprogramowane %s
+	RU	Задать предустановку %s
+	SV	Ange förinställning %s
 
 JIVE_SET_AS_PRESET
+	CS	Nastavit jako předvolbu
+	DA	Indstil som fast indstilling
+	DE	Als Voreinstellung festgelegt
 	EN	Set as Preset
+	ES	Establecer como memoria
+	FI	Määritä esiasetukseksi
+	FR	Définir comme présélection
+	IT	Imposta come predefinito
+	NL	Als voorinstelling instellen
+	NO	Gjør til forhåndsinnstilling
+	PL	Ustaw jako ustawienie zaprogramowane
+	RU	Задать в качестве предустановки
+	SV	Ange som förinställd
 
 JIVE_SAVE_TO_FAVORITES
 	CS	Uložit do Oblíbených
@@ -21852,7 +22252,7 @@ CONTROLPANEL_MUSIC_LIBRARY
 	NL	Bibliotheek
 	NO	Bibliotek
 	PL	Biblioteka
-	RU	Библиотека
+	RU	Медиатека
 	SV	Bibliotek
 
 CONTROLPANEL_AUTHENTICATION_REQUIRED
@@ -22160,7 +22560,7 @@ CONTROLPANEL_OK
 	DA	OK
 	DE	OK
 	EN	OK
-	ES	Aceptar
+	ES	Correcto
 	FI	OK
 	FR	OK
 	IT	OK
@@ -22673,7 +23073,7 @@ START_SQUEEZEBOX_SERVER
 	EN	Start Squeezebox Server
 	ES	Iniciar Squeezebox Server
 	FI	Käynnistä Squeezebox Server
-	FR	Démarrer le Squeezebox Server
+	FR	Démarrer Squeezebox Server
 	IT	Avvia Squeezebox Server
 	NL	Squeezebox Server starten
 	NO	Start Squeezebox Server
@@ -23215,12 +23615,48 @@ SD
 
 RETRYING
 # SLT: keep this short
+	CS	Chyba připojení, připojuji znovu...
+	DA	Forbindelse mistet, prøver igen...
+	DE	Verbindung unterbrochen, wiederholen...
 	EN	Connection lost, retrying...
+	ES	Conexión perdida, reintentando...
+	FI	Yhteys poikki. Uusi yritys...
+	FR	Tentative de reconnexion...
+	IT	Connessione persa, nuovo tentativo...
+	NL	Verbinding verbroken, nieuwe poging...
+	NO	Mistet forbindelsen, prøver igjen ...
+	PL	Wznawianie połączenia...
+	RU	Нет подключения, еще раз...
+	SV	Anslutning bröts. Försöker igen...
 
 RETRY_LIMIT_EXCEEDED
 # SLT: keep this short
+	CS	Pokusy o připojení selhaly
+	DA	Kunne ikke forbinde
+	DE	Erneute Verbindung fehlgeschlagen
 	EN	Connection retries failed
+	ES	Fallo reintentos conexión
+	FI	Yritys epäonnistui
+	FR	Echec des tentatives de connexion
+	IT	Tentativi di connessione falliti
+	NL	Verbindingspogingen mislukt
+	NO	Gjenopprettingsforsøk mislyktes
+	PL	Niepowodzenie prób połączenia
+	RU	Повторные попытки подключения закончились неудачей
+	SV	Anslutningsförsök misslyckades
 
 SYNC_ABOUT
+	CS	Pomocí funkce synchronizace přidejte jedno nebo více zařízení Squeezebox a využijte plný potenciál zvuku pokrývající více místností. Další informace naleznete na stránce Logitech.com.
+	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
+	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
 	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
+	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
+	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
+	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
+	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Logitech.com.
+	NL	Voeg een of meer Squeezebox-muzieksystemen toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Logitech.com voor meer informatie.
+	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Logitech.com for mer informasjon.
+	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Logitech.com.
+	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
+	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
 

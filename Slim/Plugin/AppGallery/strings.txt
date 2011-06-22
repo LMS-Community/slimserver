@@ -23,10 +23,10 @@ APP_CATEGORY_FEATURED
 	FR	Applications proposées
 	IT	Applicazioni esaminate
 	NL	Beschikbare toep.
-	NO	Anbefalte tjenester
+	NO	Anbefalte applikasjoner
 	PL	Polecane aplikacje
 	RU	Тематические приложения
-	SV	Tillgängliga applikationer
+	SV	Tillgängliga program
 
 APP_CATEGORY_CUSTOM_RADIO
 	CS	Uživatelské rádio
@@ -46,13 +46,13 @@ APP_CATEGORY_CUSTOM_RADIO
 APP_CATEGORY_MUSIC_STORES
 	CS	Hudební obchody
 	DA	Onlinemusikbutikker
-	DE	Musik Shops
+	DE	Musik-Shops
 	EN	Music Stores
 	ES	Tiendas de música
 	FI	Musiikkikaupat
 	FR	Magasins de musique
 	IT	Negozi di musica online
-	NL	Music Stores
+	NL	Muziekwinkels
 	NO	Musikkbutikker
 	PL	Sklepy muzyczne
 	RU	Музыкальные магазины
@@ -106,15 +106,15 @@ APP_CATEGORY_PODCAST_SERVICES
 APP_CATEGORY_RADIO_NETWORKS
 	CS	Rádiové sítě
 	DA	Radionetværk
-	DE	Radiosender
+	DE	Radio-Netzwerke
 	EN	Radio Networks
 	ES	Redes de radio
 	FI	Radioverkot
 	FR	Réseaux radio
 	IT	Reti di radio
-	NL	Radionetworken
+	NL	Radionetwerken
 	NO	Radionettverk
-	PL	Stacje radiowe
+	PL	Sieci radiowe
 	RU	Радиосети
 	SV	Radionätverk
 
@@ -142,8 +142,9 @@ APP_CATEGORY_UTILITIES
 	FI	Toiminnot
 	FR	Utilitaires
 	IT	Utilità
-	NL	Utility's
+	NL	Extra
 	NO	Verktøy
 	PL	Narzędzia
 	RU	Служебные программы
 	SV	Verktyg
+
