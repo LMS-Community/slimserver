@@ -5,15 +5,15 @@ They are written using Template Toolkit - http://www.template-toolkit.org/
 ---------
 
 Classic:
-	Owner: SlimDevices
+	Owner: Logitech Inc.
 	Description: This is the previous Official skin for Squeezebox Server
 
 Default:
-	Owner: SlimDevices
+	Owner: Logitech Inc.
 	Description: This is the Official skin for Squeezebox Server
 
 EN:
-	Owner: SlimDevices
+	Owner: Logitech Inc.
 	Description: Base template elements and generic fallback HTML for other skins.
 
 Previously available skins (Fishbone, Handheld, Nokia770, ScreenReader, Touch)
