@@ -916,7 +916,7 @@ sub handleFeed {
 			my $furl = _favoritesUrl($item);
 			if ($stash->{'action'} eq 'favadd') {
 
-				my $type = $item->{'type'} || 'link';
+				my $type = $item->{'favorites_type'} || $item->{'type'} || 'link';
 				
 				if ( $item->{'play'} 
 				    || ($type eq 'playlist' && $furl =~ /^(file|db):/)

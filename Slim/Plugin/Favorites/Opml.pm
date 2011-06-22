@@ -99,9 +99,6 @@ sub save {
 	my $cache = Slim::Utils::Cache->new();
 	$cache->remove( $class->fileurl . '_parsedXML' );
 
-	# remove cached hash for xmlbrowser
-	$class->{'xmlhash'} = undef;
-
     my $dir = $filename ? dirname($filename) : undef;
 
 	if (-w $dir) {
@@ -244,13 +241,8 @@ sub entry {
 sub xmlbrowser {
 	my $class = shift;
 
-	# xmlbrowser inserts subfeeds into this hash so these need to be invalidated after the cache time
-	if ($class->{'xmlhash'} && time() - $class->{'xmlhashcreated'} < $Slim::Formats::XML::XML_CACHE_TIME) {
-
-		return $class->{'xmlhash'};
-	}
-
-	$class->{'xmlhash'} = Slim::Formats::XML::parseOPML ( {
+	# Always create a new hash for xmlbrowser as it now modifies the hash
+	return Slim::Formats::XML::parseOPML ( {
 		'head' => {
 			'title' => $class->title,
 		},
@@ -258,13 +250,6 @@ sub xmlbrowser {
 			'outline' => Storable::dclone($class->toplevel),
 		}
 	} );
-
-	# set url to NONE to avoid xmlbrowser re-caching the hash needlessly
-	$class->{'xmlhash'}->{'url'} = 'NONE';
-
-	$class->{'xmlhashcreated'} = time();
-
-	return $class->{'xmlhash'};
 }
 
 1;

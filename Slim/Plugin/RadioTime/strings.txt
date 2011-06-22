@@ -20,38 +20,62 @@ PLUGIN_RADIOTIME_MODULE_NAME
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	CS	TuneIn Radio - Místní Internetové rádio
-	DA	TuneIn Radio: Lokal internetradio
-	DE	TuneIn Radio - Zugang zu lokalen Internetradiosendern
+	DA	TuneIn Radio - lokal internetradio
+	DE	TuneIn Radio - Lokale Internetradiosender
 	EN	TuneIn Radio - Local Internet Radio
 	ES	TuneIn Radio - Radio por Internet local
-	FI	TuneIn Radio - paikallinen internet-radio
-	FR	TuneIn Radio – Radio Internet locale
-	IT	TuneIn Radio: radio Internet locale
-	NL	TuneIn Radio - Lokale internetradio
+	FI	TuneIn Radio - paikallinen internetradio
+	FR	TuneIn Radio - Radio Internet locale
+	IT	TuneIn Radio - Radio Internet locale
+	NL	TuneIn Radio - lokale internetradio
 	NO	TuneIn Radio: Lokal Internett-radio
 	PL	TuneIn Radio - lokalne radio internetowe
-	RU	TuneIn Radio — местная радиостанция Интернета
+	RU	TuneIn Radio — местная интернет-радиостанция
 	SV	TuneIn Radio – Lokal webbradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
+	CS	TuneIn Radio
+	DA	TuneIn Radio
+	DE	TuneIn Radio
 	EN	TuneIn Radio
+	ES	TuneIn Radio
+	FI	TuneIn Radio
+	FR	TuneIn Radio
+	IT	TuneIn Radio
+	NL	TuneIn Radio
+	NO	TuneIn Radio
+	PL	TuneIn Radio
+	RU	TuneIn Radio
+	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_LOADING
-	CS	Nahrávám TuneIn Radio...
+	CS	Nahrávání TuneIn Radio...
 	DA	Indlæser TuneIn Radio...
-	DE	TuneIn Radio wird geladen ...
+	DE	TuneIn Radio wird geladen...
 	EN	Loading TuneIn Radio...
 	ES	Cargando TuneIn Radio...
 	FI	Ladataan TuneIn Radio...
-	FR	Chargement TuneIn Radio...
+	FR	Chargement de TuneIn Radio...
 	HE	טוען את TuneIn Radio...
-	IT	Caricamento TuneIn Radio in corso...
+	IT	Caricamento TuneIn Radio...
 	NL	TuneIn Radio wordt geladen...
-	NO	Laster TuneIn Radio...
+	NO	Laster TuneIn Radio ..
 	PL	Ładowanie usługi TuneIn Radio...
-	RU	Загрузка TuneIn Radio...
-	SV	Läser in TuneIn Radio ...
+	RU	Идет загрузка TuneIn Radio...
+	SV	Läser in TuneIn Radio...
 
 PLUGIN_RADIOTIME_OPTIONS
+	CS	Možnosti TuneIn Radio
+	DA	TuneIn Radio-indstillinger
+	DE	Optionen für TuneIn Radio
 	EN	TuneIn Radio Options
+	ES	Opciones de TuneIn Radio
+	FI	TuneIn Radion asetukset
+	FR	Options de TuneIn Radio
+	IT	Opzioni TuneIn Radio
+	NL	Opties voor TuneIn Radio
+	NO	Alternativer for TuneIn Radio
+	PL	Opcje TuneIn Radio
+	RU	Параметры TuneIn Radio
+	SV	Alternativ för TuneIn Radio
 

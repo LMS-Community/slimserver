@@ -14,7 +14,19 @@ PLUGIN_SPOTIFYLOGI_MODULE_NAME
 	SV	Spotify
 
 PLUGIN_SPOTIFYLOGI_MODULE_NAME_DESC
+	CS	Oficiální zásuvný modul služby Spotify. Poslouchejte službu Spotify na Radio nebo Touch.
+	DA	Officielt Spotify-udvidelsesmodul. Lyt til Spotify på Radio eller Touch.
+	DE	Offizielles Spotify-Plugin. Nutzen Sie Spotify über Ihr Squeezebox Radio oder Ihre Squeezebox Touch.
 	EN	Official Spotify plugin. Listen to Spotify on your Radio or Touch.
+	ES	Complemento de Spotify oficial. Escuche Spotify en su dispositivo Radio o Touch.
+	FI	Virallinen Spotify-laajennus. Kuuntele musiikkia Spotifysta radion tai Touchin välityksellä.
+	FR	Plugin Spotify officiel. Ecoutez Spotify sur votre Squeezebox Radio ou votre Squeezebox Touch.
+	IT	Plugin ufficiale di Spotify. Consente di ascoltare Spotify su Radio o Touch.
+	NL	Officiële plug-in van Spotify. Luister naar Spotify op je Radio of Touch.
+	NO	Offisiell plugin-modul for Spotify. Lytt til Spotify på en Radio- eller Touch-spiller.
+	PL	Oficjalny dodatek usługi Spotify. Umożliwia słuchanie usługi Spotify w urządzeniu Radio lub Touch.
+	RU	Официальный подключаемый модуль Spotify. Слушать Spotify на плеере Squeezebox Radio или Squeezebox Touch.
+	SV	Officiellt plugin-program för Spotify. Lyssna på Spotify via din radio eller Touch.
 
 PLUGIN_SPOTIFYLOGI_ERROR
 	CS	Chyba služby Spotify
@@ -23,9 +35,9 @@ PLUGIN_SPOTIFYLOGI_ERROR
 	EN	Spotify Error
 	ES	Error de Spotify
 	FI	Spotify-virhe
-	FR	Erreur Spotify
+	FR	Erreur de Spotify
 	IT	Errore Spotify
-	NL	Spotify-fout
+	NL	Fout in Spotify
 	NO	Spotify-feil
 	PL	Błąd Spotify
 	RU	Ошибка Spotify
@@ -40,7 +52,7 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	FI	Spotifyssä
 	FR	Sur Spotify
 	IT	Su Spotify
-	NL	Op Spotify
+	NL	Over Spotify
 	NO	På Spotify
 	PL	W Spotify
 	RU	На Spotify
@@ -78,13 +90,13 @@ SPOTIFY_ERROR_4
 
 SPOTIFY_ERROR_5
 	CS	Neplatný klíč aplikace.
-	DA	Ugyldig applikationsnøgle.
-	DE	Ungültiger Anwendungsschlüssel.
+	DA	Ugyldig programnøgle.
+	DE	Ungültiger Anwendungsschlüssel
 	EN	Invalid application key.
 	ES	Clave de aplicación no válida.
 	FI	Virheellinen sovellutusavain.
 	FR	Clé d'application non valide.
-	IT	Tasto applicazione non valido.
+	IT	Tasto dedicato non valido.
 	NL	Ongeldige toepassingssleutel.
 	NO	Ugyldig programnøkkel.
 	PL	Niepoprawny klucz aplikacji.
@@ -108,7 +120,7 @@ SPOTIFY_ERROR_6
 
 SPOTIFY_ERROR_7
 	CS	Uživatel byl zakázán.
-	DA	Brugeren er bortvist.
+	DA	Brugeren er blevet bortvist.
 	DE	Der Benutzer wurde gesperrt.
 	EN	User has been banned.
 	ES	El usuario ha sido vetado.
@@ -123,12 +135,12 @@ SPOTIFY_ERROR_7
 
 SPOTIFY_ERROR_8
 	CS	Nelze se spojit se serverem služby Spotify.
-	DA	Det var ikke muligt at kontakte Spotify-serveren.
+	DA	Det var ikke muligt at forbinde til Spotify-serveren.
 	DE	Es kann keine Verbindung zum Spotify-Server hergestellt werden.
 	EN	Unable to contact Spotify server.
 	ES	No se puede establecer contacto con servidor de Spotify.
 	FI	Spotify-palvelimeen ei saada yhteyttä.
-	FR	Contact du serveur Spotify impossible.
+	FR	Impossible de contacter le serveur Spotify.
 	IT	Impossibile contattare il server Spotify.
 	NL	Kan geen verbinding maken met Spotify-server.
 	NO	Kan ikke kontakte Spotify-serveren.
@@ -138,13 +150,13 @@ SPOTIFY_ERROR_8
 
 SPOTIFY_ERROR_9
 	CS	Klient příliš starý, aktualizujte firmware.
-	DA	Klientprogrammet er forældet, du skal opdatere firmwaren.
+	DA	Klientprogrammet er forældet. Du skal opdatere firmwaren.
 	DE	Client-Version zu alt. Aktualisieren Sie Ihre Firmware.
 	EN	Client too old, please update your firmware.
-	ES	Cliente demasiado antiguo, debe actualizar firmware.
+	ES	Cliente demasiado antiguo, debe actualizar el firmware.
 	FI	Asiakas on liian vanha, päivitä laiteohjelmisto.
 	FR	Le client est obsolète, veuillez mettre le micrologiciel à jour.
-	IT	Client troppo vecchio. Aggiornare il firmware.
+	IT	Client obsoleto. Aggiornare il firmware.
 	NL	Client is te oud. Update je firmware.
 	NO	Klienten er utdatert, oppdater fastvaren.
 	PL	Zbyt stara wersja klienta. Zaktualizuj oprogramowanie układowe.
@@ -186,7 +198,7 @@ SPOTIFY_ERROR_16
 	DA	Der opstod en ukendt fejl. Prøv igen.
 	DE	Ein unbekannter Fehler ist aufgetreten. Versuchen Sie es erneut.
 	EN	An unknown error occurred, please try again.
-	ES	Se ha producido un error desconocido. Inténtelo de nuevo.
+	ES	Se ha producido un error desconocido. Vuelva a intentarlo.
 	FI	Tapahtui tuntematon virhe, yritä uudelleen.
 	FR	Une erreur inconnue s'est produite. Veuillez réessayer.
 	IT	Errore sconosciuto. Riprovare.
@@ -201,7 +213,7 @@ SPOTIFY_ERROR_17
 	DA	Resursen er ved at blive indlæst. Prøv igen.
 	DE	Ressource wird geladen. Versuchen Sie es erneut.
 	EN	The resource is currently loading, please try again.
-	ES	El recurso se está cargando; inténtelo de nuevo.
+	ES	El recurso se está cargando; vuelva a intentarlo.
 	FI	Resurssia ladataan parhaillaan, kokeile myöhemmin uudelleen.
 	FR	La ressource est en cours de chargement, veuillez réessayer.
 	IT	La risorsa è in fase di caricamento. Riprovare.
@@ -229,7 +241,7 @@ SPOTIFY_ERROR_18
 SPOTIFY_ERROR_19
 	CS	Požadovaná operace není povolena.
 	DA	Det du forsøger, er ikke tilladt.
-	DE	Angeforderter Vorgang ist nicht zugelassen.
+	DE	Angeforderter Vorgang ist nicht zulässig.
 	EN	Requested operation is not allowed.
 	ES	No se permite la operación solicitada.
 	FI	Pyydetty toimenpide ei ole sallittu.
@@ -243,8 +255,8 @@ SPOTIFY_ERROR_19
 
 SPOTIFY_ERROR_100
 	CS	Nebyla zadána adresa URI služby Spotify pro přehrávání.
-	DA	Der er ikke angivet en URI-adresse til Spotify som kan afspilles.
-	DE	Kein Spotify-URI für die Wiedergabe angegeben.
+	DA	Der er ikke angivet en URI-adresse for Spotify der kan afspilles.
+	DE	Kein Spotify-URI für die Wiedergabe angegeben
 	EN	No Spotify URI specified for playback.
 	ES	No se ha especificado URI de Spotify para reproducción.
 	FI	Ei määrittyä Spotifyn URI-osoitetta toistolle
@@ -254,7 +266,7 @@ SPOTIFY_ERROR_100
 	NO	Ingen Spotify-URI angitt for avspilling.
 	PL	Nie określono adresu URI Spotify do odtwarzania.
 	RU	Не указан URI Spotify для воспроизведения.
-	SV	Det har inte angetts någon Spotify-URI för uppspelning.
+	SV	Ingen Spotify-URI har angetts för uppspelning.
 
 SPOTIFY_ERROR_101
 	CS	Neplatná adresa URI stopy služby Spotify.
@@ -278,26 +290,26 @@ SPOTIFY_ERROR_102
 	EN	Spotify has been stopped because your account is in use somewhere else.
 	ES	Spotify se ha detenido porque su cuenta ya está en uso en otra ubicación.
 	FI	Spotify on pysäytetty, koska tilisi on käytössä jossain muualla.
-	FR	Spotify a été arrêté car votre compte est en cours d'utilisation sur un autre ordinateur.
-	IT	Spotify è stato arrestato poiché l'account è in uso altrove.
+	FR	Spotify a été arrêté car votre compte est en cours d'utilisation sur un autre ordinateur ou dispositif.
+	IT	Spotify è stato arrestato poiché l'account è utilizzato da un'altra applicazione.
 	NL	Spotify is gestopt, omdat je account ergens anders wordt gebruikt.
-	NO	Spotify er stoppet fordi kontoen din er i bruk et annet sted.
+	NO	Spotify er stoppet, fordi kontoen din er i bruk et annet sted.
 	PL	Nastąpiło zatrzymanie usługi Spotify, ponieważ Twoje konto jest używane gdzie indziej.
 	RU	Работа Spotify остановлена, так как ваша учетная запись используется на другом компьютере.
 	SV	Spotify har stoppats eftersom ditt konto redan används någon annanstans.
 
 SPOTIFY_ERROR_103
 	CS	Tato stopa není dostupná ve vašem regionu.
-	DA	Du kan ikke høre dette nummer i dit område.
+	DA	Du kan ikke lytte til dette nummer i dit område.
 	DE	Dieser Titel ist in Ihrer Region nicht verfügbar.
 	EN	This track is not available in your region.
 	ES	Esta pista no está disponible en su región.
 	FI	Tämä kappale ei ole saatavilla alueellasi.
 	FR	Ce morceau n'est pas disponible dans votre région.
-	IT	Questo brano non è disponibile nel Paese di residenza.
+	IT	Questo brano non è disponibile nel paese di residenza.
 	NL	Dit nummer is niet verkrijgbaar in jouw regio.
 	NO	Dette sporet er ikke tilgjengelig i din region.
 	PL	Ten utwór jest niedostępny w Twoim regionie.
 	RU	Эта дорожка недоступна в вашем регионе.
-	SV	Det här spåret är inte tillgängligt i ditt område.
+	SV	Det här spåret är inte tillgängligt i din region.
 

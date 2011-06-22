@@ -72,7 +72,7 @@ PLUGIN_LFM_NO_TRACKS
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
 	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
-	SV	Det gick inte att hämta nästa spår. Tryck på Play om du vill försöka igen.
+	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_LFM_STREAM_FAILED
 	CS	Zvukový proud odpojen, přeskočení na další stopu.
@@ -152,4 +152,17 @@ PLUGIN_LFM_ON_LASTFM
 	SV	På Last.fm Radio
 
 PLUGIN_LFM_ARTIST_SLIDESHOW
+	CS	Last.fm: Prezentace interpreta
+	DA	Last.fm: Diasshow over kunstnere
+	DE	Last.fm: Diashow der Interpreten
 	EN	Last.fm: Artist Slideshow
+	ES	Last.fm: presentación de artista
+	FI	Last.fm: Artistin diaesitys
+	FR	Last.fm: diaporama de l'artiste
+	IT	Last.fm: Presentazione artista
+	NL	Last.fm: diavoorstelling van artiesten
+	NO	Last.fm: Lysbildefremvisning med artist
+	PL	Last.fm: Pokaz slajdów wykonawców
+	RU	Last.fm: Слайд-шоу исполнителя
+	SV	Last.fm: Bildspel med artister
+

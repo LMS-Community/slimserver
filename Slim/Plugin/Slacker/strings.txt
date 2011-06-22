@@ -60,7 +60,7 @@ PLUGIN_SLACKER_SESSION_BUMPED
 
 PLUGIN_SLACKER_NO_TRACKS
 	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
-	DA	Det næste spor kunne ikke hentes. Tryk på Afspil for at forsøge igen.
+	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
