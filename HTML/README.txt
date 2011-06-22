@@ -1,19 +1,19 @@
-These are HTML 'skins' for Squeezebox Server. 
+These are HTML 'skins' for Logitech Media Server. 
 
 They are written using Template Toolkit - http://www.template-toolkit.org/
 
 ---------
 
 Classic:
-	Owner: SlimDevices
-	Description: This is the previous Official skin for Squeezebox Server
+	Owner: Logitech Inc.
+	Description: This is the previous Official skin for Logitech Media Server
 
 Default:
-	Owner: SlimDevices
-	Description: This is the Official skin for Squeezebox Server
+	Owner: Logitech Inc.
+	Description: This is the Official skin for Logitech Media Server
 
 EN:
-	Owner: SlimDevices
+	Owner: Logitech Inc.
 	Description: Base template elements and generic fallback HTML for other skins.
 
 Previously available skins (Fishbone, Handheld, Nokia770, ScreenReader, Touch)
