@@ -12,7 +12,7 @@
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>
 	<type>2</type>
 	<targetApplication>
-		<id>Squeezebox Server</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.0a</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

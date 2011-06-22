@@ -13,7 +13,7 @@
 	<type>2</type>
 
 	<targetApplication>
-		<id>Squeezebox Server</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.3</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

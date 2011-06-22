@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Win32;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -355,7 +355,7 @@ sub ignoredItems {
 
 =head2 getDrives()
 
-Returns a list of drives available to Squeezebox Server, filtering out floppy drives etc.
+Returns a list of drives available to the server, filtering out floppy drives etc.
 
 =cut
 
@@ -417,7 +417,7 @@ sub isDriveReady {
 
 =head2 installPath()
 
-Returns the base installation directory of Squeezebox Server.
+Returns the base installation directory of Logitech Media Server.
 
 =cut
 
@@ -484,7 +484,7 @@ sub writablePath {
 
 		else {
 			# second attempt: use the Windows API (recommended by MS)
-			# use the "Common Application Data" folder to store Squeezebox Server configuration etc.
+			# use the "Common Application Data" folder to store Logitech Media Server configuration etc.
 			$writablePath = Win32::GetFolderPath(Win32::CSIDL_COMMON_APPDATA);
 			
 			# fall back if no path or invalid path is returned
@@ -647,7 +647,7 @@ sub setPriority {
 			return;
 		};
 
-		Slim::Utils::Log::logger('server')->info("Squeezebox Server changing process priority to $priorityClassName");
+		Slim::Utils::Log::logger('server')->info("Logitech Media Server changing process priority to $priorityClassName");
 
 		eval { $setPriorityClass->Call($processHandle, $priorityClass) };
 
@@ -798,7 +798,7 @@ sub getUpdateParams {
 	return if main::SLIM_SERVICE || main::SCANNER;
 	
 	if (!$PerlSvc::VERSION) {
-		Slim::Utils::Log::logger('server.update')->info("Running Squeezebox Server from the source - don't download the update.");
+		Slim::Utils::Log::logger('server.update')->info("Running Logitech Media Server from the source - don't download the update.");
 		return;
 	}
 	
@@ -846,7 +846,7 @@ sub restartServer {
 	
 
 	if (!$class->canRestartServer()) {
-		$log->warn("Squeezebox Server can't be restarted automatically on Windows if run from the perl source.");
+		$log->warn("Logitech Media Server can't be restarted automatically on Windows if run from the perl source.");
 		return;
 	}
 	
@@ -865,7 +865,7 @@ sub restartServer {
 			Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 			".")
 		) {
-			$log->error("Couldn't restart Squeezebox Server service (squeezesvc)");
+			$log->error("Couldn't restart Logitech Media Server service (squeezesvc)");
 		}
 	}
 	

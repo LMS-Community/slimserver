@@ -9,7 +9,7 @@ package Slim::Plugin::RandomPlay::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Squeezebox Server Copyright 2005-2009 Logitech.
+# Logitech Media Server Copyright 2005-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

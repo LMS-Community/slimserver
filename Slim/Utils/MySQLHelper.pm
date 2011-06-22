@@ -554,7 +554,7 @@ sub dbh {
 
 =head2 createDatabase( $dbh )
 
-Creates the initial Squeezebox Server database in MySQL.
+Creates the initial Logitech Media Server database in MySQL.
 
 'CREATE DATABASE slimserver'
 
@@ -642,7 +642,7 @@ sub pragma { }
 
 =head2 cleanup()
 
-Shut down MySQL when Squeezebox Server is shut down.
+Shut down MySQL when the server is shut down.
 
 =cut
 

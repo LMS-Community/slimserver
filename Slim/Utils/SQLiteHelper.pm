@@ -524,7 +524,7 @@ sub updateProgress {
 
 =head2 cleanup()
 
-Shut down when Squeezebox Server is shut down.
+Shut down when Logitech Media Server is shut down.
 
 =cut
 

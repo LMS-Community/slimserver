@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -369,13 +369,13 @@ sub init {
 
 	Slim::Utils::OSDetect::init();
 
-	# initialize Squeezebox Server subsystems
+	# initialize server subsystems
 	initSettings();
 
 	# Redirect STDERR to the log file.
 	tie *STDERR, 'Slim::Utils::Log::Trapper';
 
-	main::INFOLOG && $log->info("Squeezebox Server OS Specific init...");
+	main::INFOLOG && $log->info("OS Specific init...");
 
 	unless (main::ISWINDOWS) {
 		$SIG{'HUP'} = \&initSettings;
@@ -409,7 +409,7 @@ sub init {
 	# background if requested
 	if (!main::ISWINDOWS && $daemon) {
 
-		main::INFOLOG && $log->info("Squeezebox Server daemonizing...");
+		main::INFOLOG && $log->info("Server daemonizing...");
 		daemonize();
 
 	} else {
@@ -422,7 +422,7 @@ sub init {
 
 	# Change UID/GID after the pid & logfiles have been opened.
 	unless (Slim::Utils::OSDetect::getOS->dontSetUserAndGroup() || defined($user) eq "root") {
-		main::INFOLOG && $log->info("Squeezebox Server settings effective user and group if requested...");
+		main::INFOLOG && $log->info("Server settings effective user and group if requested...");
 		changeEffectiveUserAndGroup();		
 	}
 
@@ -439,14 +439,14 @@ sub init {
 		$prefs->set( server_uuid => UUID::Tiny::create_UUID_as_string( UUID::Tiny::UUID_V4() ) );
 	}
 
-	main::INFOLOG && $log->info("Squeezebox Server binary search path init...");
+	main::INFOLOG && $log->info("Server binary search path init...");
 	Slim::Utils::OSDetect::getOS->initSearchPath();
 
 	# Find plugins and process any new ones now so we can load their strings
-	main::INFOLOG && $log->info("Squeezebox Server PluginManager init...");
+	main::INFOLOG && $log->info("Server PluginManager init...");
 	Slim::Utils::PluginManager->init();
 
-	main::INFOLOG && $log->info("Squeezebox Server strings init...");
+	main::INFOLOG && $log->info("Server strings init...");
 	Slim::Utils::Strings::init();
 	
 	# Load appropriate DB module
@@ -458,7 +458,7 @@ sub init {
 	}
 
 	if ( $sqlHelperClass ) {
-		main::INFOLOG && $log->info("Squeezebox Server SQL init ($sqlHelperClass)...");
+		main::INFOLOG && $log->info("Server SQL init ($sqlHelperClass)...");
 		$sqlHelperClass->init();
 	}
 	
@@ -475,23 +475,23 @@ sub init {
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
-	main::INFOLOG && $log->info("Squeezebox Server Info init...");
+	main::INFOLOG && $log->info("Server Info init...");
 	Slim::Music::Info::init();
 
-	main::INFOLOG && $log->info("Squeezebox Server IR init...");
+	main::INFOLOG && $log->info("Server IR init...");
 	Slim::Hardware::IR::init();
 
-	main::INFOLOG && $log->info("Squeezebox Server Request init...");
+	main::INFOLOG && $log->info("Server Request init...");
 	Slim::Control::Request::init();
 	
-	main::INFOLOG && $log->info("Squeezebox Server Queries init...");
+	main::INFOLOG && $log->info("Server Queries init...");
 	Slim::Control::Queries->init();
 	
-	main::INFOLOG && $log->info("Squeezebox Server Buttons init...");
+	main::INFOLOG && $log->info("Server Buttons init...");
 	Slim::Buttons::Common::init();
 
 	if ($stdio) {
-		main::INFOLOG && $log->info("Squeezebox Server Stdio init...");
+		main::INFOLOG && $log->info("Server Stdio init...");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
@@ -523,7 +523,7 @@ sub init {
 	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
 	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
-	main::INFOLOG && $log->info("Squeezebox Server HTTP init...");
+	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
 
 	if (main::TRANSCODING) {
@@ -533,7 +533,7 @@ sub init {
 	}
 
 	if (WEBUI && !$nosetup) {
-		main::INFOLOG && $log->info("Squeezebox Server Web Settings init...");
+		main::INFOLOG && $log->info("Server Web Settings init...");
 		require Slim::Web::Setup;
 		Slim::Web::Setup::initSetup();
 	}
@@ -549,14 +549,14 @@ sub init {
 	Slim::Menu::FolderInfo->init();
 	Slim::Menu::GlobalSearch->init();
 
-	main::INFOLOG && $log->info('Squeezebox Server Alarms init...');
+	main::INFOLOG && $log->info('Server Alarms init...');
 	Slim::Utils::Alarm->init();
 
 	# load plugins before Jive init so MusicIP hooks to cached artist/genre queries from Jive->init() will take root
-	main::INFOLOG && $log->info("Squeezebox Server Load Plugins...");
+	main::INFOLOG && $log->info("Server Load Plugins...");
 	Slim::Utils::PluginManager->load();
 
-	main::INFOLOG && $log->info("Squeezebox Server Jive init...");
+	main::INFOLOG && $log->info("Server Jive init...");
 	Slim::Control::Jive->init();
 	
 	main::INFOLOG && $log->info("Remote Metadata init...");
@@ -568,7 +568,7 @@ sub init {
 		Slim::Utils::Log->reInit;
 	}
 
-	main::INFOLOG && $log->info("Squeezebox Server checkDataSource...");
+	main::INFOLOG && $log->info("Server checkDataSource...");
 	checkDataSource();
 	
 	if ( $prefs->get('autorescan') ) {
@@ -585,7 +585,7 @@ sub init {
 	}
 	
 	# regular server has a couple more initial operations.
-	main::INFOLOG && $log->info("Squeezebox Server persist playlists...");
+	main::INFOLOG && $log->info("Server persist playlists...");
 
 	if ($prefs->get('persistPlaylists')) {
 
@@ -610,7 +610,7 @@ sub init {
 	}
 
 	if ( main::PERFMON ) {
-		main::INFOLOG && $log->info("Squeezebox Server Perfwarn init...");
+		main::INFOLOG && $log->info("Server Perfwarn init...");
 		require Slim::Utils::PerfMon;
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
@@ -621,7 +621,7 @@ sub init {
 		\&Slim::Utils::Update::checkVersion,
 	);
 
-	main::INFOLOG && $log->info("Squeezebox Server HTTP enable...");
+	main::INFOLOG && $log->info("Server HTTP enable...");
 	Slim::Web::HTTP::init2();
 
 	# otherwise, get ready to loop
@@ -629,7 +629,7 @@ sub init {
 	
 	$inInit = 0;
 
-	main::INFOLOG && $log->info("Squeezebox Server done init...");
+	main::INFOLOG && $log->info("Server done init...");
 }
 
 sub main {
@@ -723,7 +723,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
-    --cachedir       => Directory for Squeezebox Server to save cached music and web data
+    --cachedir       => Directory for Logitech Media Server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.
                         Also slows down library processing considerably
     --logdir         => Specify folder location for log file
@@ -957,7 +957,7 @@ sub changeEffectiveUserAndGroup {
 	# Try starting as 'squeezeboxserver' instead.
 	if (!defined($user)) {
 		$user = 'squeezeboxserver';
-		print STDERR "Squeezebox Server must not be run as root!  Trying user $user instead.\n";
+		print STDERR "Logitech Media Server must not be run as root!  Trying user $user instead.\n";
 	}
 
 
@@ -994,7 +994,7 @@ sub changeEffectiveUserAndGroup {
 	# Check that we're definately not trying to start as root, e.g. if
 	# we were passed '--user root' or any other used with uid 0.
 	if ($uid == 0) {
-		print STDERR "Squeezebox Server must not be run as root! Only do this if you know what you're doing!!\n";
+		print STDERR "Logitech Media Server must not be run as root! Only do this if you know what you're doing!!\n";
 	}
 
 
@@ -1075,7 +1075,7 @@ sub forceStopServer {
 sub stopServer {
 	my $restart = shift;
 
-	logger('')->info( 'Squeezebox Server ' . ($restart && !$::norestart ? 'restarting...' : 'shutting down.') );
+	logger('')->info( 'Logitech Media Server ' . ($restart && !$::norestart ? 'restarting...' : 'shutting down.') );
 	
 	$::stop = 1;
 	
@@ -1092,7 +1092,7 @@ sub stopServer {
 }
 
 sub cleanup {
-	logger('')->info("Squeezebox Server cleaning up.");
+	logger('')->info("Logitech Media Server cleaning up.");
 	
 	$::stop = 1;
 
@@ -1125,7 +1125,7 @@ sub cleanup {
 sub save_pid_file {
 	my $process_id = shift || $$;
 
-	logger('')->info("Squeezebox Server saving pid file.");
+	logger('')->info("Logitech Media Server saving pid file.");
 
 	if (defined $pidfile) {
 		File::Slurp::write_file($pidfile, $process_id);

@@ -2,13 +2,13 @@ package Slim::Utils::Light;
 
 # $Id:  $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
 # This module provides some functions compatible with functions
-# from the core Squeezebox Server code, without their overhead.
+# from the core Logitech Media Server code, without their overhead.
 # These functions are called by helper applications like SqueezeTray
 # or the control panel. 
 

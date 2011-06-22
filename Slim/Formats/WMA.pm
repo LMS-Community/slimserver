@@ -2,7 +2,7 @@ package Slim::Formats::WMA;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -53,7 +53,7 @@ sub getTag {
 	
 	return unless $info->{song_length_ms};
 
-	# Map tags onto Squeezebox Server's preferred.
+	# Map tags onto Logitech Media Server's preferred.
 	while ( my ($old, $new) = each %tagMapping ) {
 		if ( exists $tags->{$old} ) {
 			$tags->{$new} = delete $tags->{$old};

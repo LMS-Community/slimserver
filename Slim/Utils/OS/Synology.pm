@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Synology;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -10,14 +10,14 @@ package Slim::Utils::OS::Synology;
 # Synology DiskStation (DS) include a wide range of NAS devices based on
 # several architectures (PPC, ARM, PPCe500v2, ARMv5, and maybe others). They
 # all use a custom and minimal Linux system (Linux 2.6 based). There are (to my
-# knowledge) three options to run Squeezebox Server on these devices:
+# knowledge) three options to run Logitech Media Server on these devices:
 #
 # 1) flipflip's SlimServer on DiskStation (SSODS) provides a system
-#    (libc, Perl, tools etc.) spcifically to run Squeezebox Server.
+#    (libc, Perl, tools etc.) spcifically to run Logitech Media Server.
 # 2) Synology recently added Perl to its standard system and provides an
-#    add-on Squeezebox Server package (via the DSM Package Management).
+#    add-on Logitech Media Server package (via the DSM Package Management).
 # 3) "Optware", a package for feed for numerous add-on packages from the
-#    NSLU2-Linux project, provides a Squeezebox Server package and its dependencies.
+#    NSLU2-Linux project, provides a Logitech Media Server package and its dependencies.
 #
 # This module is trying to provide customisations for all these options.
 
@@ -38,7 +38,7 @@ sub initDetails
 
 	$class->{osDetails}->{isDiskStation} = 1;
 
-	# check how this Squeezebox Server is run on the DiskStation
+	# check how this Logitech Media Server is run on the DiskStation
 	if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
 		&& "@INC" =~ m{/volume1/SSODS/lib/perl})
 	{

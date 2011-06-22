@@ -1,6 +1,6 @@
 #!/opt/sdi/bin/perl
 
-# Squeezebox Server Copyright (C) 2001-2009 Logitech.
+# Logitech Media Server Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -290,8 +290,8 @@ sub init {
 		'debug'   => $debug,
 	});
 
-	# initialize slimserver subsystems
-	msg("SlimServer settings init...\n");
+	# initialize server subsystems
+	msg("Server settings init...\n");
 	initSettings();
 
 	# Redirect STDERR to the log file.
@@ -299,7 +299,7 @@ sub init {
 
 	my $log = logger('server');
 
-	main::INFOLOG && $log->info("SlimServer OS Specific init...");
+	main::INFOLOG && $log->info("Server OS Specific init...");
 
 	unless (main::ISWINDOWS) {
 		$SIG{'HUP'} = \&initSettings;
@@ -354,25 +354,25 @@ sub init {
 =cut
 
 	# Find plugins and process any new ones now so we can load their strings
-	main::INFOLOG && $log->info("Squeezebox Server PluginManager init...");
+	main::INFOLOG && $log->info("Server PluginManager init...");
 	Slim::Utils::PluginManager->init();
 
-	main::INFOLOG && $log->info("SlimServer strings init...");
+	main::INFOLOG && $log->info("Server strings init...");
 	Slim::Utils::Strings::init();
 	
-	main::INFOLOG && $log->info("SlimServer Info init...");
+	main::INFOLOG && $log->info("Server Info init...");
 	Slim::Music::Info::init();
 
-	main::INFOLOG && $log->info("SlimServer IR init...");
+	main::INFOLOG && $log->info("Server IR init...");
 	Slim::Hardware::IR::init();
 
-	main::INFOLOG && $log->info("SlimServer Request init...");
+	main::INFOLOG && $log->info("Server Request init...");
 	Slim::Control::Request::init();
 	
-	main::INFOLOG && $log->info("SlimServer Buttons init...");
+	main::INFOLOG && $log->info("Server Buttons init...");
 	Slim::Buttons::Common::init();
 
-	main::INFOLOG && $log->info("SlimServer Graphic Fonts init...");
+	main::INFOLOG && $log->info("Server Graphic Fonts init...");
 	Slim::Display::Lib::Fonts::init();
 
 	main::INFOLOG && $log->info("Slimproto Init...");
@@ -394,14 +394,14 @@ sub init {
 	Slim::Menu::PlaylistInfo->init();
 	Slim::Menu::GlobalSearch->init();
 	
-	main::INFOLOG && $log->info('Squeezebox Server Alarms init...');
+	main::INFOLOG && $log->info('Server Alarms init...');
 	Slim::Utils::Alarm->init();
 
 	# load plugins before Jive init so MusicIP hooks to cached artist/genre queries from Jive->init() will take root
-	main::INFOLOG && $log->info("Squeezebox Server Load Plugins...");
+	main::INFOLOG && $log->info("Server Load Plugins...");
 	Slim::Utils::PluginManager->load();
 	
-	main::INFOLOG && $log->info("Squeezebox Server Jive init...");
+	main::INFOLOG && $log->info("Server Jive init...");
 	Slim::Control::Jive->init();
 	
 	main::INFOLOG && $log->info("Remote Metadata init...");
@@ -437,7 +437,7 @@ sub init {
 	
 	$inInit = 0;
 
-	main::INFOLOG && $log->info("SlimServer done init...");
+	main::INFOLOG && $log->info("Logitech Media Server done init...");
 }
 
 sub main {
@@ -524,7 +524,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --playlistdir    => The path to a directory of your playlist files.
-    --cachedir       => Directory for SlimServer to save cached music and web data
+    --cachedir       => Directory for Logitech Media Server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --noLogTimestamp => Don't add timestamp to log output
@@ -653,14 +653,14 @@ sub forceStopServer {
 #
 sub stopServer {
 
-	logger('')->info("SlimServer shutting down.");
+	logger('')->info("Logitech Media Server shutting down.");
 	cleanup();
 	exit();
 }
 
 sub cleanup {
 
-	logger('')->info("SlimServer cleaning up.");
+	logger('')->info("Logitech Media Server cleaning up.");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {

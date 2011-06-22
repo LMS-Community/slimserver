@@ -9,8 +9,8 @@
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
 		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
-		<modelDescription>Squeezebox Server UPnP/DLNA Plugin</modelDescription>
-		<modelName>Squeezebox Server [% device.version %]</modelName>
+		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
+		<modelName>Logitech Media Server [% device.version %]</modelName>
 		<modelNumber>1</modelNumber>
 		<modelURL>http://www.mysqueezebox.com/download</modelURL>
 		<serialNumber>[% device.serial %]</serialNumber>

@@ -956,9 +956,9 @@ use File::Spec::Functions qw(:ALL);
 use Digest::MD5;
 
 sub makeSecuritySecret {
-	# each Squeezebox Server installation should have a unique,
+	# each Logitech Media Server installation should have a unique,
 	# strongly random value for securitySecret. This routine
-	# will be called by the first time Squeezebox Server is started
+	# will be called by the first time the server is started
 	# to "seed" the prefs file with a value for this installation
 
 	my $hash = new Digest::MD5;

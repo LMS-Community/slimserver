@@ -2,7 +2,7 @@ package Slim::Music::Artwork;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -622,7 +622,7 @@ sub downloadArtwork {
 	
 	if ( main::SCANNER ) {
 		$ua = LWP::UserAgent->new(
-			agent   => 'Squeezebox Server/' . $::VERSION,
+			agent   => 'Logitech Media Server/' . $::VERSION,
 			timeout => 10,
 		);
 		$ua->default_header($authHeader->[0] => $authHeader->[1]);

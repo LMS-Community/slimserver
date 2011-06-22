@@ -2,7 +2,7 @@ package Slim::Web::Settings::Server::Index;
 
 # $Id: UserInterface.pm 13299 2007-09-27 08:59:36Z mherger $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

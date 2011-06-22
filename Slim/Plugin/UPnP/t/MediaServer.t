@@ -26,7 +26,7 @@ my $cd_events;
 print "# Searching for MediaServer:1...\n";
 my @dev_list = $cp->search( st => 'urn:schemas-upnp-org:device:MediaServer:1', mx => 1 );
 for my $dev ( @dev_list ) {
-	if ( $dev->getmodelname =~ /Squeezebox Server/ ) {
+	if ( $dev->getmodelname =~ /Logitech Media Server/ ) {
 		$ms = Net::UPnP::AV::MediaServer->new();
 		$ms->setdevice($dev);
 		
@@ -186,7 +186,7 @@ ok( !$cm_events->renew, 'CM renew after unsubscribe failed ok' );
 	is( $container->{'-id'}, 0, 'CD: BrowseMetadata ObjectID 0, id ok' );
 	is( $container->{'-parentID'}, -1, 'CD: BrowseMetadata ObjectID 0, parentID ok' );
 	is( $container->{'-searchable'}, 1, 'CD: BrowseMetadata ObjectID 0, searchable ok' );
-	like( $container->{'dc:title'}, qr/^Squeezebox Server/, 'CD: BrowseMetadata ObjectID 0, dc:title ok' );
+	like( $container->{'dc:title'}, qr/^Logitech Media Server/, 'CD: BrowseMetadata ObjectID 0, dc:title ok' );
 }
 
 # Browse music menu

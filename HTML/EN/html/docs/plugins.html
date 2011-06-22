@@ -1,16 +1,16 @@
-[% pagetitle = 'Squeezebox Server Plugins' %]
+[% pagetitle = 'Logitech Media Server Plugins' %]
 [% techinfo = '1' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
  <h4>Introduction</h4>
-<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the Squeezebox Server software. 
-The Squeezebox Server provides a method to load custom modules at startup which are then made available to the user via remote control menus. 
-Each plugin serves as an area within Squeezebox Server remote menu system, available from within the Plugins menu. Plugin files are stored in 
-the &quot;Plugins&quot; folder which is in the same folder as the Squeezebox Server software. For simple plugins, a single file in this folder will suffice.
+<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the Logitech Media Server software. 
+The server provides a method to load custom modules at startup which are then made available to the user via remote control menus. 
+Each plugin serves as an area within the server remote menu system, available from within the Plugins menu. Plugin files are stored in 
+the &quot;Plugins&quot; folder which is in the same folder as the server software. For simple plugins, a single file in this folder will suffice.
  For more complex plugins, you can store an entire set of files in a sub-folder, naming the main plugin file: Plugin.pm. The Plugin interface can 
  provide a very powerful 
-control and has complete access to the functionality of the Squeezebox Server. As with the rest of the Squeezebox Server, plugin modules are created 
+control and has complete access to the functionality of the server. As with the rest of the server, plugin modules are created 
 using the Perl language.</p>
 
 <h4>Perl Module Basics</h4>
@@ -20,8 +20,8 @@ using the Perl language.</p>
 		<p><pre>package Plugins::pluginname;</pre></p>
 		<p>Where <code>pluginname</code> is the name of the module (which should be the same as the filename, without the .pm extension.) This defines the 'namespace' for the module. It essentially sets up the module as an entity of its own, within the server environment. This allows you to then refer to the functions and variables within this plugin by the full reference Plugins::pluginname::function.</p>
 		<hr>
-		<h4>Squeezebox Server Plugin Hooks</h4>
-<p>Each level in the Squeezebox Server menu hierarchy is considered a &quot;mode&quot; by the Squeezebox Server. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and functions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
+		<h4>Logitech Media Server Plugin Hooks</h4>
+<p>Each level in the server menu hierarchy is considered a &quot;mode&quot; by the server. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and functions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
 <blockquote>
 <p><em>Example 1</em></p>
 <pre>
@@ -45,7 +45,7 @@ using the Perl language.</p>
 <hr>
 
 <h4>Modes</h4>
-<p>If you wish for your plugin to have a player display interface, then you will need to set up what is called a Mode.  The remote buttons are context sensitive, meaning that they can serve different roles when the Squeezebox Server is in different modes.  The setMode()
+<p>If you wish for your plugin to have a player display interface, then you will need to set up what is called a Mode.  The remote buttons are context sensitive, meaning that they can serve different roles when the server is in different modes.  The setMode()
 subroutine defines this mode.  Within this subroutine, there must be a definition for $client->lines, which is the text to be displayed on the
 Slim client while in this plugin mode.  Typically, this is labeled just as above, though it can be any name you wish. The lines subroutine, or other name
 if you have chosen one, returns a hash defining the display to be shown on the player.  This can be updated at any time from any point in the plugin module by using the
@@ -74,7 +74,7 @@ sub getNewModeFunctions &#123;
 </blockquote>
 <hr>
 <h4>Functions</h4>
-<p>The Squeezebox Server handles all commands from the remote control for each mode by creating a hash table of functions, each button having a subroutine associated with it.  The subroutine getFunctions() returns a reference to this hash, and can be any label you wish, although typically %functions is used. The call to point to this list is shown above in example 1. The function list, should look something like this example taken from rescan.pm, which is included with the Squeezebox Server:</p>
+<p>The server handles all commands from the remote control for each mode by creating a hash table of functions, each button having a subroutine associated with it.  The subroutine getFunctions() returns a reference to this hash, and can be any label you wish, although typically %functions is used. The call to point to this list is shown above in example 1. The function list, should look something like this example taken from rescan.pm, which is included with the server:</p>
 <blockquote>
 <p><em>Example 2</em></p>
 <pre>
@@ -113,7 +113,7 @@ rescan has been started.  The line "my $client = shift;" is very important here 
 function calls such as: </p>
 <blockquote>
 			<pre>$client->showBriefly();</pre></blockquote>
-		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the Squeezebox Server directory.</p>
+		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the Logitech Media Server directory.</p>
 
 <hr>
 <h4>Player Menu</h4>
@@ -153,7 +153,7 @@ $client->update();
 
 <hr>
 <h4>Strings</h4>
-<p>The plugin API also allows you to add in your own localization. The format of the strings list follows the same format as the strings.txt file used by the Squeezebox Server for localization. The function strings() can be used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
+<p>The plugin API also allows you to add in your own localization. The format of the strings list follows the same format as the strings.txt file used by the server for localization. The function strings() can be used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
 <blockquote>
 <p><em>Example 6</em></p>
 <pre>sub strings &#123; return '
@@ -173,7 +173,7 @@ MY_STRING
 <p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
 <hr>
 <h4>Web Interface</h4>
-<p>Squeezebox Server Plugins can expose their own web interface, accessible through
+<p>Logitech Media Server Plugins can expose their own web interface, accessible through
 the main server's web pages. To do this, include a function called 
 "webPages" which returns a list of two values: a hash reference to handler 
 functions for the plugin's pages, and a string representing the path of
@@ -186,8 +186,8 @@ regular expression "index\.(?:htm|xml)" will match the URL paths
 "index.html", "index.htm" or "index.xml".</p>
 
 <p>The index page string represents the URL path for a link that will
-be included in the "Plugins" section of the Squeezebox Server index
-page. When exposed through the Squeezebox Server's web interface, all plugin
+be included in the "Plugins" section of the server index
+page. When exposed through the server's web interface, all plugin
 web pages are prepended with the URL path
 http://&lt;host&gt;/plugins/&lt;pluginname&gt;/. However, neither the regular
 expression keys nor the index URL path need to take this prefix
@@ -207,7 +207,7 @@ into account.</p>
 </blockquote>
 
 <p>Plugins also have the option of adding links to other sections of
-the Squeezebox Server index page. Specifically, links can be added to the
+the server index page. Specifically, links can be added to the
 "browse", "search", "settings", "plugins" and "help" sections. Note
 that not all skins may support every section. Links can be added using
 the Slim::Web::Pages::addLinks() method. The method takes two
@@ -243,7 +243,7 @@ sub screenSaver {
 <dt>getScreensaverFunctions()</dt><dd>This subroutine, just like getFunctions points to the function has for the screensaver mode.</dd>
 <dt>setScreensaverMode</dt><dd>subroutine just like setMode to initialize anything you need for the screensaver mode.</dd>
 <dt>leaveScreensaverMode</dt><dd>subroutine to execute before the mode exits</dd>
-<dt>$client->string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by Squeezebox Server.</dd>
+<dt>$client->string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by server.</dd>
 </dl>
 
 <hr>
@@ -260,7 +260,7 @@ where external processes need to be informed or resources need to be freed when 
 
 <hr>
 <h4>Summary</h4>
-<p>Using the existing plugins as examples (one appears below) and this document as an explanation of what each section of the plugin can do, you should now be able to start working on a plugin of your own. Remember that this is only a framework to allow you to hook into the Squeezebox Server. There are always many other ways to implement the features of a plugin. As long as your provide the lines from the examples above, the server will try to work with your Plugin. The rest can be just about anything you want, including using any of functions and subroutines within the Squeezebox Server.  Remember, there's more than one way to do it.</p>
+<p>Using the existing plugins as examples (one appears below) and this document as an explanation of what each section of the plugin can do, you should now be able to start working on a plugin of your own. Remember that this is only a framework to allow you to hook into the server. There are always many other ways to implement the features of a plugin. As long as your provide the lines from the examples above, the server will try to work with your Plugin. The rest can be just about anything you want, including using any of functions and subroutines within the server.  Remember, there's more than one way to do it.</p>
 <p>Happy Coding!
 <hr>
 <h4>NOTE:</h4>
@@ -275,7 +275,7 @@ where external processes need to be informed or resources need to be freed when 
 #
 # This code is derived from code with the following copyright message:
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

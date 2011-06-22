@@ -523,7 +523,7 @@ my $cd;
 print "# Searching for MediaServer:1...\n";
 my @dev_list = $cp->search( st => 'urn:schemas-upnp-org:device:MediaServer:1', mx => 1 );
 for my $dev ( @dev_list ) {
-	if ( $dev->getmodelname !~ /^Squeezebox Server/ ) {
+	if ( $dev->getmodelname !~ /^Logitech Media Server/ ) {
 		my $ms = Net::UPnP::AV::MediaServer->new();
 		$ms->setdevice($dev);
 		

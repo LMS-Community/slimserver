@@ -125,7 +125,7 @@ END %]
 		cmdimage = "b_down.gif" -%]
 [%- END %]
 
-[%# this is the warning shown while Squeezebox Server is still scanning -%]
+[%# this is the warning shown while server is still scanning -%]
 [% BLOCK scanwarning %]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]

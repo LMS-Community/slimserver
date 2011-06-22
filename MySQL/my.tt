@@ -1,6 +1,6 @@
 # $Id$
 # 
-# Squeezebox Server specific MySQL Server config.
+# Logitech Media Server specific MySQL Server config.
 
 [mysqld]
 innodb

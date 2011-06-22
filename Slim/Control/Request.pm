@@ -1,11 +1,11 @@
 package Slim::Control::Request;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# This class implements a generic request mechanism for Squeezebox Server.
+# This class implements a generic request mechanism for Logitech Media Server.
 # More documentation is provided below the table of commands & queries
 
 =head1 NAME
@@ -14,7 +14,7 @@ Slim::Control::Request
 
 =head1 DESCRIPTION
 
-This class implements a generic request mechanism for Squeezebox Server.
+This class implements a generic request mechanism for Logitech Media Server.
 
 The general mechansim is to create a Request object and execute it. There is
 an option of specifying a callback function, to be called once the request is
@@ -350,7 +350,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 =head2 Adding a command
 
  To add a command to the dispatch table, use the addDispatch method. If the
- method is part of Squeezebox Server itself, please add it to the init method below
+ method is part of the server itself, please add it to the init method below
  and update the comment table at the top of the document. 
  In a plugin, call the method from your initPlugin subroutine.
 
@@ -677,7 +677,7 @@ sub init {
 
 	return if !main::WEBUI;
 
-	# Normal Squeezebox Server commands can be accessed with URLs like
+	# Normal Logitech Media Server commands can be accessed with URLs like
 	#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 	# Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
 	# not intended for use via the web interface!
@@ -1342,7 +1342,7 @@ my %statusMap = (
 	102 => 'Bad params!',
 	103 => 'Missing client!',
 	104 => 'Unknown in dispatch table',
-	105 => 'Bad Squeezebox Server config',
+	105 => 'Bad Logitech Media Server config',
 );
 
 # validate the Request, make sure we are dispatchable

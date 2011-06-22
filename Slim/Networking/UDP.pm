@@ -2,7 +2,7 @@ package Slim::Networking::UDP;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -39,7 +39,7 @@ sub init {
 	) or do {
 
 		# XXX - exiting in a deep sub is kinda bad. should propagate up.
-		logger('')->logdie("FATAL: There is already another copy of the Squeezebox Server running on this machine. ($!)");
+		logger('')->logdie("FATAL: There is already another copy of the Logitech Media Server running on this machine. ($!)");
 	};
 
 	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do { 

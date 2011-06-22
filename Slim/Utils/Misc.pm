@@ -2,7 +2,7 @@ package Slim::Utils::Misc;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -24,7 +24,7 @@ assert, bt, msg, msgf, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility 
- functions useful throughout Squeezebox Server and third party plugins.
+ functions useful throughout Logitech Media Server and third party plugins.
 
 =cut
 
@@ -1077,7 +1077,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server',
+		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server, Logitech Media Server',
 	);
 
 	return $userAgentString;
@@ -1157,7 +1157,7 @@ sub assert {
 
 =head2 bt( [ $return ] )
 
-	Useful for tracking the source of a problem during the execution of Squeezebox Server.
+	Useful for tracking the source of a problem during the execution of the server.
 	use bt() to output in the log a list of function calls leading up to the point 
 	where bt() has been used.
 
@@ -1209,7 +1209,7 @@ sub bt {
 
 =head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
 
-	Outputs an entry to the Squeezebox Server log file. 
+	Outputs an entry to the server log file. 
 	$entry is a string for the log.
 	optional argument $suppressTimestamp can be set to remove the event timestamp from the long entry.
 

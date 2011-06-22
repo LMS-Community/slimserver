@@ -2,7 +2,7 @@ package Slim::Buttons::Common;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -106,7 +106,7 @@ my $prefs = preferences('server');
 =head2 init( )
 
 This method must be called before all other Slim::Buttons::* modules.  It
-initialises all other Squeezebox Server core button modules and registers the "Now
+initialises all other Logitech Media Server core button modules and registers the "Now
 Playing" screensaver.
 
 =cut

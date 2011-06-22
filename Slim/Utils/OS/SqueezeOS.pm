@@ -95,7 +95,7 @@ my %prefSyncHandlers = (
 				$prefs->set('shortdateFormat', $1);
 			}
 
-			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Squeezebox Server
+			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Logitech Media Server
 			$prefs->set('timeFormat', $$data =~ /hours="24"/ ? '%H:%M' : '|%I:%M %p');
 
 			$prefs = Slim::Utils::Prefs::preferences('plugin.datetime');
@@ -138,12 +138,12 @@ sub postInitPrefs {
 
 	if ( !main::SCANNER ) {
 
-		# sync up prefs in case they were changed while Squeezebox Server wasn't running
+		# sync up prefs in case they were changed while the server wasn't running
 		foreach (keys %prefSyncHandlers) {
 			_syncPrefs($_);
 		}
 
-		# initialize prefs syncing between Squeezeplay and Squeezebox Server
+		# initialize prefs syncing between Squeezeplay and the server
 		eval {
 			require Linux::Inotify2;
 			import Linux::Inotify2;
@@ -168,7 +168,7 @@ sub postInitPrefs {
 			);
 		};
 
-		Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
+		Slim::Utils::Log::logError("Squeezeplay <-> Server prefs syncing failed to initialize: $@") if ($@);
 	}
 }
 
@@ -213,7 +213,7 @@ sub sqlHelperClass { 'Slim::Utils::SQLiteHelper' }
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Squeezebox Server directories we
+Argument $dir is a string to indicate which of the server directories we
 need information for.
 
 =cut

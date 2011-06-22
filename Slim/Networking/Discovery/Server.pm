@@ -2,7 +2,7 @@ package Slim::Networking::Discovery::Server;
 
 # $Id: Server.pm 15258 2007-12-13 15:29:14Z mherger $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -33,7 +33,7 @@ Slim::Networking::Discovery::Server
 
 =head1 DESCRIPTION
 
-This module implements a UDP discovery protocol, used by Squeezebox Server to discover other servers in the network.
+This module implements a UDP discovery protocol, used by Logitech Media Server to discover other servers in the network.
 
 
 =head1 FUNCTIONS
@@ -51,7 +51,7 @@ sub init {
 
 =head2 fetch_servers()
 
-Poll the Squeezebox Server/SlimServers in our network
+Poll the servers in our network
 
 =cut
 

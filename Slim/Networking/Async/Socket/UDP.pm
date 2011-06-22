@@ -2,7 +2,7 @@ package Slim::Networking::Async::Socket::UDP;
 
 # $Id$
 
-# Squeezebox Server Copyright 2003-2009 Logitech.
+# Logitech Media Server Copyright 2003-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

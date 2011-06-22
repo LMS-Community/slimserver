@@ -1,6 +1,6 @@
 package Slim::Utils::ServiceManager;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -64,7 +64,7 @@ sub init {
 	return bless $self, $class;
 }
 
-# Determine how the user wants to start Squeezebox Server
+# Determine how the user wants to start Logitech Media Server
 sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }
