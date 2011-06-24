@@ -6821,6 +6821,15 @@ SETUP_DOWNLOAD_ARTWORK_DESC
 	PL	Program Logitech Media Server może spróbować uzupełnić brakujące okładki do plików muzycznych podczas przeszukiwania biblioteki. W ramach tego procesu informacje o wykonawcy i albumie zostaną przesłane do witryny mysqueezebox.com w celu wykrycia pasującej okładki. Uwaga: proces ten może znacząco spowolnić przeszukiwanie biblioteki.<br><br>Okładki udostępnia serwis <a href="http://last.fm" target="_blank">Last.fm</a>.
 	RU	Logitech Media Server может попробовать найти недостающие обложки для музыкальных файлов в процессе сканирования медиатеки. При этом сведения об исполнителе и альбоме будут отправляться на mysqueezebox.com, чтобы найти соответствующую обложку. Нужно учитывать, что этот процесс может значительно замедлить сканирование.<br><br>Обложки предоставляются сайтом <a href="http://last.fm" target="_blank">Last.fm</a>.
 	SV	Logitech Media Server kan försöka komplettera albumomslag som saknas för musikfilerna medan ditt bibliotek genomsöks. I den här processen skickas information om artisten och albumet till mysqueezebox.com för att hitta ett matchande albumomslag. Observera att den här processen kan göra att sökningen går betydligt långsammare.<br><br>Albumomslagen tillhandahålls av <a href="http://last.fm" target="_blank">Last.fm</a>.
+	ES	Squeezebox Server puede intentar completar las carátulas que falten en los archivos de música mientras examina la biblioteca. Este proceso enviará información de álbum y artista a mysqueezebox.com para descubrir cubiertas que coincidan. Tenga en cuenta que este proceso puede ralentizar considerablemente el examen.<br><br>Las carátulas las proporciona <a href="http://last.fm" target="_blank">Last.fm</a>.
+	FI	Squeezebox-palvelin voi yrittää viimeistellä musiikkitiedostojen puuttuvan kansitaiteen, kun kirjastoa tarkistetaan. Esittäjän ja albumin tiedot lähetetään osoitteeseen mysqueezebox.com, josta täsmäävää kansitaidetta etsitään. Ota huomioon, että tämä saattaa hidastaa tarkistusta huomattavasti.<br><br>Kansitaiteen tarjoaa <a href="http://last.fm" target="_blank">Last.fm</a>.
+	FR	Squeezebox Server peut essayer de rechercher les pochettes manquantes de vos fichiers musicaux pendant qu'il analyse votre bibliothèque. Pour ce faire, il envoie les informations des artistes et des albums à mysqueezebox.com pour trouver les pochettes correspondantes. Veuillez noter que ce processus peut considérablement ralentir l'analyse.<br><br>Les pochettes sont fournies par <a href="http://last.fm" target="_blank">Last.fm</a>.
+	IT	È possibile tentare di inserire le copertine mancanti per i file musicali mediante Squeezebox Server durante l'analisi della libreria. Tale processo prevede l'invio di informazioni su album e artisti a mysqueezebox.com per individuare le copertine corrispondenti. Il processo può rallentare notevolmente l'analisi.<br><br>Le copertine vengono fornite da <a href="http://last.fm" target="_blank">Last.fm</a>.
+	NL	Squeezebox Server kan ontbrekende hoesafbeeldingen voor je opzoeken tijdens het scannen van je collectie. Hierbij worden gegevens van de artiest en het album verzonden naar mysqueezebox.com om te zien of er hoesafbeeldingen beschikbaar zijn. Houd er wel rekening mee dat dit het scanproces aanzienlijk kan vertragen.<br><br>Hoesafbeeldingen worden aangeboden door <a href="http://last.fm" target="_blank">Last.fm</a>.
+	NO	Squeezebox Server kan forsøke å sette inn manglende omslag for musikkfilene dine under søk i biblioteket. Denne prosessen sender artist- og albuminformasjon til mysqueezebox.com for å finne fram til riktig albumomslag. Prosessen kan føre til at søket tar betraktelig lengre tid.<br><br>Det er <a href="http://last.fm" target="_blank">Last.fm</a> som leverer albumomslag.
+	PL	Program Squeezebox Server może spróbować uzupełnić brakujące okładki do plików muzycznych podczas przeszukiwania biblioteki. W ramach tego procesu informacje o wykonawcy i albumie zostaną przesłane do witryny mysqueezebox.com w celu wykrycia pasującej okładki. Uwaga: proces ten może znacząco spowolnić przeszukiwanie biblioteki.<br><br>Okładki udostępnia serwis <a href="http://last.fm" target="_blank">Last.fm</a>.
+	RU	Squeezebox Server может попробовать найти недостающие обложки для музыкальных файлов в процессе сканирования медиатеки. При этом сведения об исполнителе и альбоме будут отправляться на mysqueezebox.com, чтобы найти соответствующую обложку. Нужно учитывать, что этот процесс может значительно замедлить сканирование.<br><br>Обложки предоставляются сайтом <a href="http://last.fm" target="_blank">Last.fm</a>.
+	SV	Squeezebox Server kan försöka komplettera albumomslag som saknas för musikfilerna medan ditt bibliotek genomsöks. I den här processen skickas information om artisten och albumet till mysqueezebox.com för att hitta ett matchande albumomslag. Observera att den här processen kan göra att sökningen går betydligt långsammare.<br><br>Albumomslagen tillhandahålls av <a href="http://last.fm" target="_blank">Last.fm</a>.
 
 SETUP_DOWNLOAD_ARTWORK_ON
 	CS	Stáhnout obal alba (zkušebně)
@@ -14439,6 +14448,15 @@ WEB_NO_COOKIES_WARNING
 	PL	Twoja przeglądarka nie akceptuje plików cookie. Może to wywołać nieoczekiwane skutki podczas sterowania programem Logitech Media Server. Włącz najpierw obsługę plików cookie w przeglądarce.
 	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Logitech Media Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
 	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Logitech Media Server. Aktivera cookies i din webbläsare innan du fortsätter.
+	ES	Su navegador no acepta cookies. Esto puede provocar un comportamiento inesperado al controlar Squeezebox Server. Active las cookies en el navegador antes de continuar.
+	FI	Selaimesi ei hyväksy evästeitä. Tämä saattaa aiheuttaa yllätyksiä Squeezebox-palvelimen hallinnassa. Salli evästeet selaimesta ja jatka vasta sitten.
+	FR	Votre navigateur n'accepte pas les cookies. Ceci peut affecter le fonctionnement de votre Squeezebox Server. Veuillez activer les cookies dans votre navigateur avant de continuer.
+	IT	Il browser in uso non accetta i cookie. Ciò può provocare un comportamento imprevisto di Squeezebox Server. Prima di continuare, abilitare i cookie nel browser.
+	NL	Je browser accepteert geen cookies. Dit kan leiden tot onverwacht gedrag bij het bedienen van je Squeezebox Server. Schakel cookies in je browser in voordat je verdergaat.
+	NO	Nettleseren din godtar ikke informasjonskapsler. Dette kan føre til uønsket oppførsel ved bruk av Squeezebox Server. Aktiver informasjonskapsler i nettleseren før du fortsetter.
+	PL	Twoja przeglądarka nie akceptuje plików cookie. Może to wywołać nieoczekiwane skutki podczas sterowania programem Squeezebox Server. Włącz najpierw obsługę plików cookie w przeglądarce.
+	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Squeezebox Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
+	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Squeezebox Server. Aktivera cookies i din webbläsare innan du fortsätter.
 
 DISPLAY_PLUGINS
 	CS	Zobrazit nabídku Doplňky na přehrávači Slim:
@@ -20601,15 +20619,15 @@ DIRECTORY_MEDIA_PROGRESS
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
 	EN	Scanning new files
-	ES	Examinar archivos nuevos
-	FI	Tarkista uudet tiedostot
+	ES	Examinando archivos nuevos
+	FI	Tarkistetaan uudet tiedostot
 	FR	Analyse des nouveaux fichiers
-	IT	Analizza i nuovi file
+	IT	Analisi di nuovi file in corso
 	NL	Nieuwe bestanden scannen
-	NO	Søk i nye filer
-	PL	Przeszukuj nowe pliki
-	RU	Сканировать новые файлы
-	SV	Sök igenom nya filer
+	NO	Søker i nye filer
+	PL	Trwa przeszukiwanie nowych plików
+	RU	Сканирование новых файлов
+	SV	Söka igenom nya filer
 
 DIRECTORY_CHANGED_PROGRESS
 	CS	Skenování změněných souborů

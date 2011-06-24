@@ -803,7 +803,7 @@ sub _playersMessage {
 		my $line2 = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || $url;
 
 		# use full now playing display if NOW_PLAYING message to get overlay
-		if ($message eq 'NOW_PLAYING') {
+		if ($message eq 'NOW_PLAYING' && $client->can('currentSongLines')) {
 			my $songLines = $client->currentSongLines();
 			$lines   = $songLines->{'line'};
 			$overlay = $songLines->{'overlay'};
