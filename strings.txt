@@ -2667,7 +2667,6 @@ LOGIN
 	SV	Logga in
 
 FREE_YOUR_MUSIC
-	CS	.
 	DA	Lyt til din musik!
 	DE	Befreien Sie Ihre Musik
 	EN	Free your music
