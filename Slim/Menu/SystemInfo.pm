@@ -218,15 +218,17 @@ sub infoLibrary {
 		};
 	}
 	
-	return Slim::Music::Import->stillScanning 
-	? {
-		name => cstring($client, 'RESCANNING_SHORT'),
-
-		web  => {
-			hide => 1,
-		},
-	} 
-	: {
+	elsif (Slim::Music::Import->stillScanning) {
+		return {
+			name => cstring($client, 'RESCANNING_SHORT'),
+	
+			web  => {
+				hide => 1,
+			},
+		}
+	}
+	
+	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
 
 		items => [
@@ -265,8 +267,33 @@ sub infoLibrary {
 			group  => 'library',
 			unfold => 1,
 		},
-
 	};
+
+	# XXX - no simple access to result sets for images/videos yet?
+
+	my $request = Slim::Control::Request::executeRequest( $client, ['video_titles', 0, 0] );
+	my $results = $request->getResults();
+
+	if ($results && $results->{count}) {
+		unshift @{ $items->{items} }, {
+			type => 'text',
+			name => cstring($client, 'INFORMATION_VIDEOS') . cstring($client, 'COLON') . ' '
+				. Slim::Utils::Misc::delimitThousands($results->{count}),
+		};
+	}
+
+	$request = Slim::Control::Request::executeRequest( $client, ['image_titles', 0, 0] );
+	$results = $request->getResults();
+
+	if ($results && $results->{count}) {
+		unshift @{ $items->{items} }, {
+			type => 'text',
+			name => cstring($client, 'INFORMATION_IMAGES') . cstring($client, 'COLON') . ' '
+				. Slim::Utils::Misc::delimitThousands($results->{count}),
+		};
+	}
+	
+	return $items
 }
 
 sub infoServer {
