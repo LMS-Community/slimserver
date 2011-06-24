@@ -17490,6 +17490,9 @@ MUSICSOURCE
 	RU	Источник музыки
 	SV	Musikkälla
 
+MEDIASOURCE
+	EN	Media Source
+
 MUSICSOURCE_SWITCH
 	CS	Zvolte prosím zdroj hudby, ke kterému chcete připojit svůj přehrávač.
 	DA	Vælg den musikkilde som afspilleren skal tilsluttes.

@@ -26,7 +26,7 @@ sub new {
 	$mainSizer->Add($self->getLibraryName($parent), 0, wxALL | wxGROW, 10);		
 	
 	my $settingsSizer = Wx::StaticBoxSizer->new(
-		Wx::StaticBox->new($self, -1, string('MUSICSOURCE')),
+		Wx::StaticBox->new($self, -1, string('MEDIASOURCE')),
 		wxVERTICAL
 	);
 	
