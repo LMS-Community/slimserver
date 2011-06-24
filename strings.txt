@@ -451,7 +451,7 @@ LIBRARY_CONTAINS
 	CS	Vaše hudební knihovna obsahuje
 	DA	Dit musikbibliotek indeholder
 	DE	Die Musikbibliothek enthält
-	EN	Your music library contains
+	EN	Your media library contains
 	ES	La biblioteca de música contiene
 	FI	Musiikkikirjaston sisältö:
 	FR	La collection contient
@@ -1210,25 +1210,6 @@ PLAYLIST_CANT_WRITE
 	PL	Nie można zapisać listy odtwarzania.
 	RU	Не удалось сохранить плей-лист.
 	SV	Spellistan gick inte att spara.
-
-BROWSING_MUSIC
-	CS	Procházení hudby...
-	DA	Gennemser musik...
-	DE	Musik wird durchsucht ...
-	EN	Browsing music...
-	ES	Examinando música...
-	FI	Tarkistetaan musiikkia...
-	FR	Parcours des morceaux...
-	HE	עיון במוסיקה...
-	IT	Ricerca musica...
-	JA	曲をブラウズしています...
-	NL	Bezig met bladeren door muziek...
-	NO	Blar gjennom musikk...
-	PL	Przeglądanie muzyki...
-	PT	Lista de músicas...
-	RU	Просмотр музыки...
-	SV	Bläddrar ...
-	ZH_CN	浏览音乐...
 
 NOW_PLAYING_FROM
 	CS	Právě hraje z:
@@ -6228,7 +6209,7 @@ SETUP_LIBRARY_NAME
 	CS	Název hudební knihovny
 	DA	Navn på musikbibliotek
 	DE	Name der Musiksammlung
-	EN	Music library name
+	EN	Media library name
 	ES	Nombre de biblioteca de música
 	FI	Musiikkikirjaston nimi
 	FR	Nom de la collection musicale
@@ -6243,7 +6224,7 @@ SETUP_LIBRARY_NAME_DESC
 	CS	Tak se bude jmenovat vaše hudební knihovna v menu "Moje hudba" vašeho Squeezebox.
 	DA	Dit musikbibliotek får dette navn i Squeezebox-menuen Musik.
 	DE	Das ist der Name der Squeezebox im Menü "Eigene Musik".
-	EN	This is how your music library will be named in your Squeezebox's "My Music" menu.
+	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
 	ES	Así es como se llamará la biblioteca de música en el menú de \"Mi música\" de Squeezebox.
 	FI	Näin musiikkikirjastosi nimetään Squeezeboxisi Oma musiikki -valikossa.
 	FR	Votre collection musicale est nommée de cette manière sous le menu "Ma musique" de la Squeezebox.
@@ -6411,7 +6392,7 @@ SETUP_RESCAN
 	CS	Znovu prohledat hudební knihovnu
 	DA	Gennemsøg musikbibliotek igen
 	DE	Musiksammlung erneut durchsuchen
-	EN	Rescan Music Library
+	EN	Rescan Media Library
 	ES	Volver a examinar la biblioteca de música
 	FI	Tarkista musiikkikirjasto uudelleen
 	FR	Analyser la collection musicale
@@ -6447,7 +6428,7 @@ SETUP_RESCAN_DESC
 	CS	Po klepnutí na Nové hledání Logitech Media Server prohledá vaši knihovnu hudby a přidá novou hudbu nebo aktualizuje skladby, které byly změněny.
 	DA	Klik på Gennemsøg igen for at få Logitech Media Server til at gennemsøge dit musikbibliotek og tilføje ny musik og opdatere ændrede numre.
 	DE	Klicken Sie auf 'Musiksammlung durchsuchen', damit Logitech Media Server die Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
-	EN	Click Rescan to have Logitech Media Server scan through your music library and add new music or update songs that have changed.
+	EN	Click Rescan to have Logitech Media Server scan through your media library and add new media or update files that have changed.
 	ES	Haga clic en Volver a examinar para que Logitech Media Server examine la biblioteca de música y agregue música nueva o actualice canciones que hayan cambiado.
 	FI	Valitse Tarkista uudelleen, jos haluat, että Logitech Media Server tarkistaa musiikkikirjastosi ja lisää uudet kappaleet tai päivittää kappaleet, jotka ovat muuttuneet.
 	FR	Cliquez sur Analyser et Logitech Media Server va à nouveau analyser son contenu.
@@ -6481,7 +6462,7 @@ SETUP_STANDARDRESCAN
 	CS	Hledat novou a změněnou hudbu
 	DA	Søg efter nye og ændrede musikfiler
 	DE	Nach neuen und veränderten Musikstücken suchen
-	EN	Look for new and changed music
+	EN	Look for new and changed media files
 	ES	Buscar música nueva y cambiada
 	FI	Etsi uusia ja muutettuja kappaleita
 	FR	Rechercher les morceaux ajoutés ou modifiés
@@ -6530,7 +6511,7 @@ SETUP_AUTO_RESCAN_DESC
 	CS	Logitech Media Server může sledovat vaší složku s hudbou a automaticky detekovat změny. Nové a změněné soubory by se měly ve vaší knihovně objevit během několika minut.
 	DA	Logitech Media Server kan holde øje med musikmapperne og automatisk registrere alle ændringer. Nye og ændrede filer bliver vist i biblioteket i løbet af et par minutter.
 	DE	Logitech Media Server kann den Musikordner durchsuchen und Änderungen automatisch erkennen.  Nach einigen Minuten sollten die neuen und geänderten Dateien in der Musiksammlung angezeigt werden.
-	EN	Logitech Media Server can watch your music folder and automatically detect changes.  New and changed files should appear in your library within several minutes.
+	EN	Logitech Media Server can watch your media folders and automatically detect changes.  New and changed files should appear in your library within several minutes.
 	ES	Logitech Media Server puede examinar la carpeta de música y detectar los cambios automáticamente. Los archivos nuevos y modificados aparecen en la biblioteca tras varios minutos.
 	FI	Logitech Media Server voi tarkastella musiikkikansiotasi ja havaita muutokset välittömästi. Uusien ja muutettujen tiedostojen pitäisi ilmestyä kirjastoosi muutaman minuutin sisällä.
 	FR	Logitech Media Server peut surveiller vos dossiers de musique et y détecter automatiquement toute modification. Tout fichier ajouté ou modifié s'affiche dans votre collection en l'espace de quelques minutes.
@@ -6560,7 +6541,7 @@ SETUP_AUTO_RESCAN_DISABLE
 	CS	Deaktivováno, pro novou hudbu použít ruční vyhledávání
 	DA	Deaktiveret – søg efter ny musik manuelt
 	DE	Deaktiviert, manuell nach neuer Musik suchen
-	EN	Disabled, manually scan for new music
+	EN	Disabled, manually scan for new media files
 	ES	Desactivado, examinar música nueva manualmente
 	FI	Poistettu käytöstä. Hae uutta musiikkia manuaalisesti.
 	FR	Désactivé, analyse manuelle des nouveaux morceaux
@@ -6605,7 +6586,7 @@ RESCANNING
 	CS	Logitech Media Server nyní znovu prohledává vaši hudební knihovnu.
 	DA	Logitech Media Server gennemsøger nu dit musikbibliotek.
 	DE	Logitech Media Server durchsucht Ihre Musiksammlung.
-	EN	Logitech Media Server is now rescanning your Music Library.
+	EN	Logitech Media Server is now rescanning your Media Library.
 	ES	Logitech Media Server está volviendo a examinar la biblioteca de música.
 	FI	Logitech Media Server tarkistaa musiikkikirjastoasi uudelleen.
 	FR	Logitech Media Server analyse maintenant la collection musicale.
@@ -6624,7 +6605,7 @@ RESCANNING_SHORT
 	CS	Nové prohledávání knihovny hudby...
 	DA	Gennemsøger musikbibliotek igen...
 	DE	Musiksammlung wird durchsucht ...
-	EN	Rescanning Music Library...
+	EN	Rescanning Media Library...
 	ES	Volviendo a examinar la biblioteca de música...
 	FI	Musiikkikirjasto tarkistetaan uudelleen...
 	FR	Analyse en cours...
@@ -6656,7 +6637,7 @@ SCAN_ABORTED
 	CS	Prohledávání bylo přerušeno. Chcete-li mít plný přístup ke své knihovně hudby, musíte spustit nové prohledávání.
 	DA	Gennemsøgningen er afbrudt. Du skal foretage gennemsøgningen en gang til for at få fuld adgang til musikbiblioteket.
 	DE	Der Scan wurde abgebrochen. Beachten Sie, dass Sie die Suche wiederholen müssen, um vollständigen Zugriff auf Ihre Musiksammlung zu erhalten.
-	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your music library.
+	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your media library.
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca de música deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää musiikkikirjastoa täysin.
 	FR	L'analyse a été interrompue. Notez que vous devrez exécuter une nouvelle fois une analyse afin d'obtenir l'accès complet à votre collection musicale.
@@ -7555,7 +7536,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	CS	Pokud hledáte hudbu, můžete pomocí Squeezebox hledat odpovídající položky obsahující slova, která začínají stejnými písmeny jako hledaný řetězec, nebo obsahující slova, která mají hledaný řetězec kdekoliv ve slově. Například hledání začátku slov "RAIN" najde položky se slovem "RAINBOW". Hledání uvnitř slov vrátí také položku obsahující slovo "TRAIN".
 	DA	Når du søger efter musik, kan Squeezebox enten finde elementer med ord som begynder på de samme bogstaver som din søgestreng, eller elementer med ord som indeholder søgestrengen et på et vilkårligt sted. For eksempel vil søgestrengen ved søgning efter begyndelse af ord finde elementer med ordet "RAINBOW". Søgning efter vilkårligt sted vil også returnere elementer som indeholder ordet "TRAIN".
 	DE	Beim Suchen können Sie Squeezebox anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes- Beispiel: Wenn Sie den Wortanfang nach 'RAIN' durchsuchen, werden Einträge mit 'RAINBOW' oder auch 'TRAIN' gefunden.
-	EN	When you search for music, you can have Squeezebox find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
+	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Squeezebox encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat musiikkihakuja, voit määrittää Squeezeboxin etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa.  Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
 	FR	Lors d'une recherche dans la bibliothèque, Squeezebox peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, TRAIN sera également renvoyé comme résultat.
@@ -8082,7 +8063,7 @@ SETUP_DISABLESTATISTICS_DESC
 	CS	Když se objeví první stránka Logitech Media Server, aplikace prohledá vaši knihovnu hudby a zjišťuje statistiku vaší knihovny, kterou poté zobrazí na první stránce. Můžete tuto funkci zakázat, což zkrátí dobu, po kterou se poprvé otevírá webové rozhraní, zvláště u velké knihovny hudby.
 	DA	Når Logitech Media Servers hovedmenu vises, bliver dit musikbibliotek gennemsøgt, og der laves en statistik som vises på forsiden. Du kan deaktivere denne funktion, og det vil forkorte den tid det tager at åbne den webbaserede brugerflade, navnlig hvis musikbiblioteket er stort.
 	DE	Beim Anzeigen der Logitech Media Server-Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Sie können diese Funktion deaktivieren, wodurch die Zeit zum Öffnen der Web-Benutzeroberfläche verringert wird, besonders wenn die Musiksammlung sehr groß ist.
-	EN	When the Logitech Media Server front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
+	EN	When the Logitech Media Server front page comes up, it scans your media library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large library.
 	ES	Cuando se muestra la pantalla inicial de Logitech Media Server, éste examina la biblioteca de música para obtener estadísticas de la biblioteca y mostrarlas en la página inicial. Se puede optar por desactivar este comportamiento, lo que acortará el tiempo necesario para abrir la interfaz Web, especialmente con una biblioteca de música de gran tamaño.
 	FI	Kun Logitech Media Serverin etusivu tulee näyttöön, Logitech Media Server tarkistaa musiikkikirjaston selvittääkseen kirjaston tilastot. Nämä tilastotiedot näytetään etusivulla.  Halutessasi voit poistaa toiminnon käytöstä. Tämä lyhentää aikaa, joka internet-liittymän avaamiseen kuluu, erityisesti jos musiikkikirjasto on suuri.
 	FR	Lorsque la page d'accueil du Logitech Media Server apparaît, celui-ci analyse votre collection musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la collection est importante.
@@ -8848,25 +8829,6 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	SV	Du kan ange hur länge Logitech Media Server ska försöka ansluta till en webbradiostation eller annan källa innan försöket ges upp. Ange tiden i sekunder nedan.
 	ZH_CN	您可以设置Logitech Media Server尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
 
-MP3DIR
-	CS	Vaše složka Hudba
-	DA	Din musikmappe
-	DE	Musikordner
-	EN	Your Music Folder
-	ES	Su carpeta de música
-	FI	Musiikkikansio
-	FR	Dossier de musique
-	HE	תיקיית המוסיקה שלך
-	IT	Cartella Musica
-	JA	インターネットラジオ接続タイムアウト（秒）:
-	NL	Je muziekmap
-	NO	Musikkmappe
-	PL	Twój folder muzyki
-	PT	Pasta de Música Pessoal
-	RU	Папка "Музыка"
-	SV	Din musikmapp
-	ZH_CN	您的音乐文件夹
-
 LANGUAGE
 	CS	Jazyk
 	DA	Sprog
@@ -9277,7 +9239,7 @@ SETUP_WIZARD_SHARE_WIN
 	CS	<br/><br/>Pokud chcete přistupovat ke své hudbě uložené na jiném počítači nebo na sdíleném síťovém disku, ujistěte se, že sdílený disk je připojen a je dostupný z vašeho souborového systému. Jakmile je disk dostupný, objeví se ve výběrovém okně vlevo. Pokud znáte cestu k disku, můžete ji zadat níže.
 	DA	<br/><br/>Hvis du vil have adgang til musikfiler som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet og der er adgang til det. Når drevet er tilgængeligt, kan det vælges i vinduet til venstre. Hvis du kender stien til drevet du vil have adgang til, kan du angive den nedenfor.
 	DE	<br/><br/>Wenn Sie auf Musik, die auf einem anderen Computer oder einem Netzlaufwerk gespeichert ist, zugreifen möchten, vergewissern Sie sich, dass das Laufwerk im Dateisystem verfügbar ist. Verfügbare Laufwerke werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Laufwerks kennen, geben Sie ihn unten ein.
-	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
+	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
 	ES	<br/><br/>Si desea acceder a música almacenada en otro ordenador o en una unidad de red compartida, asegúrese de que ésta está montada y disponible para su sistema de archivos. Cuando la unidad esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta de la unidad a la que quiere acceder, puede introducirla aquí.
 	FI	<br/><br/>Jos haluat käyttää musiikkitiedostoja, jotka on tallennettu toiseen tietokoneeseen tai jaettuun verkkoasemaan, varmista että jaettu asema on kiinnitetty ja tiedostojärjestelmän käytettävissä. Kun asema on käytettävissä, se ilmestyy näkyviin vasemmalla olevaan valintaikkunaan. Jos tiedät käyttämäsi aseman polun, kirjoita se alle.
 	FR	<br/><br/>Si vous souhaitez accéder à des morceaux stockés sur un autre ordinateur ou sur un lecteur partagé en réseau, vérifiez que le lecteur est monté et qu'il est disponible dans votre système de fichiers. Si le lecteur est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au lecteur, vous pouvez le spécifier ci-dessous.
@@ -9292,7 +9254,7 @@ SETUP_WIZARD_SHARE_OTHERS
 	CS	<br/><br/>Pokud chcete přistupovat ke své hudbě uložené na jiném počítači nebo na sdílené síťové jednotce, ujistěte se, že sdílena jednotka je připojena a je dostupná z vašeho souborového systému. Jakmile je jednotka dostupná, objeví se ve výběrovém okně vlevo. Pokud znáte cestu k jednotce, ke které chcete přistupovat, můžete ji zadat níže.
 	DA	<br/><br/>Hvis du vil have adgang til musikfiler som ligger på en anden computer eller et delt netværksdrev, skal du sikre dig at det delte drev er tilsluttet og der er adgang til det. Når drevet er tilgængeligt, kan det vælges i vinduet til venstre. Hvis du kender stien til drevet du vil have adgang til, kan du angive den nedenfor.
 	DE	<br/><br/>Wenn Sie auf Musik, die auf einem anderen Computer oder einem Netzwerk-Volume gespeichert ist, zugreifen möchten, vergewissern Sie sich, dass das Volume im Dateisystem verfügbar ist. Verfügbare Volumes werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Volume kennen, geben Sie ihn unten ein.
-	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
+	EN	<br/><br/>If you want to access any of your media stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
 	ES	<br/><br/>Si desea acceder a música almacenada en otro ordenador o en un volumen de red compartido, asegúrese de que éste está montado y disponible para su sistema de archivos. Cuando el volumen esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta del volumen al que quiere acceder, puede introducirla aquí.
 	FI	<br/><br/>Jos haluat käyttää musiikkitiedostoja, jotka on tallennettu toiseen tietokoneeseen tai jaettuun verkkoasemaan, varmista että jaettu asema on kiinnitetty ja tiedostojärjestelmän käytettävissä. Kun asema on käytettävissä, se ilmestyy näkyviin vasemmalla olevaan valintaikkunaan. Jos tiedät käyttämäsi aseman polun, kirjoita se alle.
 	FR	<br/><br/>Si vous souhaitez accéder à des morceaux stockés sur un autre ordinateur ou sur un volume partagé en réseau, vérifiez que le volume est monté et qu'il est disponible dans votre système de fichiers. Si le volume est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au volume, vous pouvez le spécifier ci-dessous.
@@ -12691,7 +12653,7 @@ BROWSE_MUSIC
 	CS	Knihovna hudby
 	DA	Musikbibliotek
 	DE	Musikbibliothek
-	EN	Music Library
+	EN	Media Library
 	ES	Biblioteca de música
 	FI	Musiikkikirjasto
 	FR	Collection musicale
@@ -13322,7 +13284,7 @@ SCAN_WARNING
 	CS	Logitech Media Server stále prohledává vaši knihovnu hudby,takže některé položky se v této oblasti ještě nezobrazí.
 	DA	Logitech Media Server gennemsøger stadig din musiksamling. Det kan betyde at nogle numre endnu ikke vises her.
 	DE	Logitech Media Server durchsucht immer noch den Musikordner. Deshalb werden evtl. einige Objekte noch nicht in diesem Bereich angezeigt.
-	EN	Logitech Media Server is still scanning your music library, so some items may not appear in this area yet.
+	EN	Logitech Media Server is still scanning your media library, so some items may not appear in this area yet.
 	ES	Logitech Media Server todavía está examinado la biblioteca de música, por lo que puede que algunos elementos no aparezcan aún en esta área.
 	FI	Logitech Media Server tarkistaa yhä musiikkikirjastoasi. Jotkin kohteet eivät ehkä näy vielä tässä kohdassa.
 	FR	Le Logitech Media Server n'a pas terminé d'analyser votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
@@ -13341,7 +13303,7 @@ HOME_SCAN_WARNING
 	CS	Logitech Media Server nyní prohledává vaši knihovnu skladeb. Prosím, počkejte, může to chvíli trvat.
 	DA	Logitech Media Server gennemsøger stadig dit musikbibliotek. Vent lidt, det kan godt tage et stykke tid.
 	DE	Logitech Media Server liest die Musikbibliothek. Dieser Vorgang kann eine Weile dauern.
-	EN	Logitech Media Server is still scanning your music library. Please be patient as this may take a while.
+	EN	Logitech Media Server is still scanning your media library. Please be patient as this may take a while.
 	ES	Logitech Media Server sigue examinado la biblioteca de música. Tenga paciencia ya que puede llevar cierto tiempo.
 	FI	Logitech Media Server tarkistaa yhä musiikkikirjastoasi. Ole kärsivällinen, sillä tähän saattaa kulua hetki.
 	FR	Le Logitech Media Server analyse le contenu de votre collection musicale. Veuillez patienter.
@@ -13358,7 +13320,7 @@ SCAN_CLICK
 	CS	Chcete-li procházet přímo svoji složku Hudba, klepněte na
 	DA	Hvis du vil gennemse hele din musiksamling, skal du klikke på
 	DE	Klicken Sie zum direkten Durchsuchen des Musikordners
-	EN	To browse your music folder directly, click
+	EN	To browse your media folder directly, click
 	ES	Para examinar directamente la carpeta de música, haga clic en
 	FI	Selaa musiikkikansiota suoraan napsauttamalla
 	FR	Pour parcourir votre dossier de musique directement, cliquer sur
@@ -13910,7 +13872,7 @@ DEBUG_SCANNER_CHOOSE
 	CS	Snímač hudby
 	DA	Musiksøgning
 	DE	Musikscanner
-	EN	Music Scanner
+	EN	Media Scanner
 	ES	Detector de música
 	FI	Musiikkihaku
 	FR	Analyseur de musique
@@ -14406,25 +14368,6 @@ FORGET_PLAYER_LINK
 	SV	Ta bort den här spelaren
 	ZH_CN	遗忘此播放机
 
-MP3DIR_IS_NOW
-	CS	Adresář, kde jsou vaše hudební soubory uloženy na vašem pevném disku:
-	DA	Mappen hvor dine musikfiler er gemt på harddisken:
-	DE	Das Verzeichnis, in dem sich ihre Musikdateien auf der Festplatte befinden:
-	EN	The directory where your music files are stored on your hard disk:
-	ES	La carpeta del disco duro donde se guardan los archivos de música:
-	FI	Hakemisto, johon musiikkitiedostot on tallennettu kiintolevyllä:
-	FR	Le dossier où vos fichiers MP3 sont stockés sur votre disque dur:
-	HE	הספרייה שבה מאוחסנים קובצי המוסיקה בדיסק הקשיח:
-	IT	La directory del disco rigido in cui sono memorizzati i file musicali:
-	JA	音楽ファイルが保存されているフォルダー :
-	NL	De map waarin je muziekbestanden op je vaste schijf worden opgeslagen:
-	NO	Katalogen på harddisken der MP3-filer er lagret:
-	PL	Katalog przechowywania plików muzycznych na dysku twardym:
-	PT	A directoria que tem os ficheiros MP3 no disco
-	RU	Каталог на жестком диске, где хранятся музыкальные файлы:
-	SV	Den mapp på hårddisken där dina musikfiler är lagrade:
-	ZH_CN	您的音乐文件存放在硬盘上的目录：
-
 SECONDS
 	CS	sekund
 	DA	sekunder
@@ -14918,7 +14861,7 @@ NEED_PATH
 	CS	Musíte zadat cestu k adresáři obsahujícímu vaše hudební soubory.
 	DA	Du skal angive stien til mappen med dine mp3-filer.
 	DE	Sie müssen einen Pfad zum Order mit den Musikdateien angeben.
-	EN	You need to specify a path to your directory containing your music files.
+	EN	You need to specify a path to your directory containing your media files.
 	ES	Debe especificar una ruta al directorio que contiene los archivos de música.
 	FI	Sinun on määritettävä polku hakemistoon, jossa musiikkitiedostot ovat.
 	FR	Vous devez spécifier le chemin d'accès au dossier qui contient vos fichiers MP3.
@@ -16443,7 +16386,7 @@ INFORMATION_MENU_SCAN
 	CS	Detaily hledání hudby
 	DA	Detaljer om musikindeksering
 	DE	Details zum Musik-Scan
-	EN	Music Scan Details
+	EN	Media Scan Details
 	ES	Detalles de examen de música
 	FI	Musiikkihaun tiedot
 	FR	Détails de l'analyse de la musique
@@ -20200,7 +20143,7 @@ DEBUG_SCAN_SCANNER
 	CS	Prohledávání adresáře hudby a seznamů skladeb
 	DA	Indeksering af mappe med musik og afspilningslister
 	DE	Musik & Wiedergabelisten Scanner
-	EN	Music & Playlist Folder Scanning
+	EN	Media & Playlist Folder Scanning
 	ES	Examen de carpetas de listas de reproducción y música
 	FI	Musiikki- ja soittoluettelokansioiden tarkistus
 	FR	Analyse du dossier de la musique et des listes de lecture
@@ -20230,7 +20173,7 @@ DEBUG_SCAN_AUTO
 	CS	Automatické prohledávání hudby a seznamu skladeb
 	DA	Automatisk søgning efter musik og afspilningslister
 	DE	Automatisches Durchsuchen der Musiksammlung und  Wiedergabeliste
-	EN	Automatic Music & Playlist Scanning
+	EN	Automatic Media & Playlist Scanning
 	ES	Examen automático de listas de reproducción y música
 	FI	Automaattinen musiikki- ja soittoluetteloiden tarkistus
 	FR	Analyse automatique des morceaux et des listes de lecture
@@ -20519,7 +20462,7 @@ SCANNER_PROGRESS
 	CS	Detaily hledání hudby
 	DA	Detaljer om musikindeksering
 	DE	Details zum Musik-Scan
-	EN	Music Scan Details
+	EN	Media Scan Details
 	ES	Detalles de examen de música
 	FI	Musiikkihaun tiedot
 	FR	Détails de l'analyse de la musique
@@ -20534,7 +20477,7 @@ FAILURE_PROGRESS
 	CS	Prohledávání hudby neočekávaně ukončeno (%s)
 	DA	Musiksøgningen blev afsluttet uventet (%s)
 	DE	Durchsuchen der Musiksammlung unerwartet abgebrochen (%s)
-	EN	Music scan terminated unexpectedly (%s)
+	EN	Media scan terminated unexpectedly (%s)
 	ES	El examen de música terminó inesperadamente (%s)
 	FI	Musiikkihaku lopetettiin odottamatta (%s)
 	FR	L'analyse de la musique s'est terminée de façon inattendue (%s)
@@ -20894,7 +20837,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	CS	Server ukončil prohledávání vaší sbírky hudby.
 	DA	Serveren er færdig med at gennemsøge din musiksamling.
 	DE	Der Server hat das Durchsuchen Ihrer Musiksammlung abgeschlossen.
-	EN	The server has finished scanning your music collection.
+	EN	The server has finished scanning your media library.
 	ES	El servidor ha finalizado el examen de su colección de música.
 	FI	Palvelin on nyt lopettanut musiikkikokoelmasi tarkistuksen.
 	FR	Le serveur a terminé d'analyser la collection musicale.
@@ -22910,7 +22853,7 @@ CLEANUP_MYSQL
 	CS	Smazat data MySQL (databáze informací o hudbě)
 	DA	Slet MySQL-data (database med oplysninger om musikken)
 	DE	MySQL-Daten löschen (Musikdatenbank)
-	EN	Delete MySQL data (music information database)
+	EN	Delete MySQL data (media information database)
 	ES	Eliminar datos de MySQL (base de datos de información de música)
 	FI	Poista MySQL-tiedot (musiikkitietokanta)
 	FR	Supprimer les données MySQL (base de données musicale)
@@ -22970,7 +22913,7 @@ CLEANUP_CACHE
 	CS	Smazat odkládací složku, včetně databáze hudby, vyrovnávací paměti obalů alb atd.
 	DA	Ryd op i cachemappen, herunder musikdatabasen, cachelagrede coverbilleder osv.
 	DE	Zwischenspeicher-Ordner mit Musikdatenbank, Plattenhüllen usw. bereinigen.
-	EN	Clean cache folder, including music database, artwork cache etc.
+	EN	Clean cache folder, including media library database, artwork cache etc.
 	ES	Limpiar carpeta de caché, incluidos base de datos de música, caché de carátulas, etc.
 	FI	Tyhjennä välimuistikansio, mukaan luettuna musiikkitietokanta, kansitaiteen välimuisti jne.
 	FR	Nettoyer le dossier cache, y compris la base de données musicale, les pochettes, etc.
@@ -23375,7 +23318,7 @@ CONTINUE_TO_SQUEEZEBOX_SERVER
 	CS	Pokračovat na Logitech Media Server pro správu nastavení k přehrávání vaší osobní sbírky hudby.
 	DA	Fortsæt til Logitech Media Server hvor du kan konfigurere indstillinger og afspille dine musikfiler.
 	DE	Weiter zu Logitech Media Server zum Verwalten der Einstellungen zur Wiedergabe Ihrer persönlichen Musiksammlung.
-	EN	Continue to Logitech Media Server to manage settings for playing your personal music collection.
+	EN	Continue to Logitech Media Server to manage settings for accessing your personal media library.
 	ES	Continuar a Logitech Media Server para administrar la configuración de reproducción de su colección de música personal.
 	FI	Jatka Logitech Media Serveriin. Siellä voit määrittää henkilökohtaisen musiikkikokoelmasi soittoasetukset.
 	FR	Continuez vers le Logitech Media Server pour gérer les réglages de lecture de votre collection musicale.
@@ -23542,7 +23485,7 @@ NO_LIBRARY
 	CS	Není nakonfigurována žádná hudební knihovna
 	DA	Der er ikke konfigureret et musikbibliotek
 	DE	Es ist keine Musiksammlung konfiguriert
-	EN	No music library configured
+	EN	No media library configured
 	ES	No hay ninguna biblioteca de música configurada
 	FI	Musiikkikirjastoa ei ole määritetty
 	FR	Aucune collection musicale n'a été configurée
