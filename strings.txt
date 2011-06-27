@@ -16923,6 +16923,12 @@ INFORMATION_TRACKS
 	SV	Totalt antal spår
 	ZH_CN	音轨总数
 
+INFORMATION_VIDEOS
+	EN	Total Videos
+
+INFORMATION_IMAGES
+	EN	Total Images
+
 INFORMATION_TIME
 	CS	Celková doba přehrávání
 	DA	Samlet spilletid
