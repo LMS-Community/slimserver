@@ -125,7 +125,7 @@ sub _players_done {
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 		for my $plugin (@$nonSNApps) {
 			if ($plugin->can('tag')) {
-				$allApps->{ $plugin->tag } = { plugin => $plugin };
+				$allApps->{ "nonsn_" . $plugin->tag } = { plugin => $plugin };
 			}
 		}
 	}
