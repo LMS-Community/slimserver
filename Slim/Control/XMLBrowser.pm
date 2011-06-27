@@ -1129,11 +1129,11 @@ sub _cliQuery_done {
 						}
 						
 						if ( $item->{type} && $item->{type} eq 'localservice' ) {
-							$request->addResultLoop( $loopname, $cnt, 'actions',  {
+							$hash{'actions'} = {
 								go => {
 									localservice => $item->{serviceId},
 								},
-							});
+							};
 						}
 
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
