@@ -873,6 +873,14 @@ sub gotOPML {
 		'overlayRef' => \&overlaySymbol,
 	);
 
+	# if a list has textkeys defined, use these for numberScroll within Input.Choice
+	if ($opml->{'sorted'} && $opml->{'items'}->[0] && defined $opml->{'items'}->[0]->{'textkey'}) {
+		$params{'textkeyRef'} = sub {
+			my $item = $opml->{'items'}->[shift] || return;
+			return $item->{'textkey'} || $item->{'name'};
+		};
+	}
+
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 

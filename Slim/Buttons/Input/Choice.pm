@@ -224,7 +224,7 @@ my %functions = (
 			$functarg,
 			$listRef,
 			$client->modeParam('isSorted') ? 1 : 0,
-			$client->modeParam('lookupRef'),
+			$client->modeParam('textkeyRef') || $client->modeParam('lookupRef'),
 		);
 
 		if (defined $newIndex) {
