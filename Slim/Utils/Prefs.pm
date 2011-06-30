@@ -159,7 +159,7 @@ sub init {
 		'rank-GAMES'                     => 20,
 		# Server Settings - Basic
 		'language'              => \&defaultLanguage,
-		'audiodir'              => \&defaultAudioDir,
+		'mediadirs'             => \&defaultMediaDirs,
 		'playlistdir'           => \&defaultPlaylistDir,
 		'autorescan'            => 0,
 		'autorescan_stat_interval' => 10,
@@ -346,7 +346,11 @@ sub init {
 		# Not sure where 5 and 6 went...
 		$prefs->migrate( 7, sub {
 			my $audiodir = $prefs->get('audiodir');
-			$prefs->set( mediadirs => [ $audiodir ] );
+
+			$prefs->set( mediadirs => defaultMediaDirs({
+				music => $audiodir
+			}) );
+			
 			$prefs->remove('audiodir');
 			1;
 		} );
@@ -980,14 +984,21 @@ sub defaultLanguage {
 	return Slim::Utils::OSDetect->getOS->getSystemLanguage;
 }
 
-sub defaultAudioDir {
-	my $path = Slim::Utils::OSDetect::dirsFor('music');
-
-	if ($path && -d $path) {
-		return $path;
-	} else {
-		return '';
+sub defaultMediaDirs {
+	my $defaults = shift;
+	
+	my @mediaDirs;
+	foreach my $medium ('music', 'videos', 'pictures') {
+		my $path = $defaults->{$medium} || Slim::Utils::OSDetect::dirsFor($medium);
+		
+		main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
+		
+		if ($path && -d $path) {
+			push @mediaDirs, $path;
+		}
 	}
+	
+	return \@mediaDirs;
 }
 
 sub defaultPlaylistDir {

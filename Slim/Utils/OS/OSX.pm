@@ -188,20 +188,29 @@ sub dirsFor {
 
 		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/Squeezebox');
 			
-	} elsif ($dir eq 'music') {
+	} elsif ($dir =~ /^(?:music|videos|pictures)$/) {
 
-		my $musicDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
+		my $mediaDir;
 		
-		if (!-d $musicDir) {
-			$musicDir = catdir($ENV{'HOME'}, 'Music');
+		if ($dir eq 'music') {
+			$mediaDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
+			if (!-d $mediaDir) {
+				$mediaDir = catdir($ENV{'HOME'}, 'Music');
+			}
+		}
+		elsif ($dir eq 'videos') {
+			$mediaDir = catdir($ENV{'HOME'}, 'Movies');
+		}
+		elsif ($dir eq 'pictures') {
+			$mediaDir = catdir($ENV{'HOME'}, 'Pictures');
 		}
 
 		# bug 1361 expand music folder if it's an alias, or SC won't start
-		if ( my $alias = $class->pathFromMacAlias($musicDir) ) {
-			$musicDir = $alias;
+		if ( my $alias = $class->pathFromMacAlias($mediaDir) ) {
+			$mediaDir = $alias;
 		}
 
-		push @dirs, $musicDir;
+		push @dirs, $mediaDir;
 
 	} elsif ($dir eq 'playlists') {
 		
