@@ -192,10 +192,13 @@ sub dirsFor {
 			undef $objWMI;
 		}
 
-		my $fallback = 'My Music';
-		$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
+		my $fallback;
 		
-		if ($dir eq 'videos') {
+		if ($dir eq 'music') {
+			$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
+			$fallback = 'My Music';
+		}
+		elsif ($dir eq 'videos') {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYVIDEO) unless $path;
 			$fallback = 'My Videos';
 		}
