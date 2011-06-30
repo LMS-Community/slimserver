@@ -1,18 +1,18 @@
 PLUGIN_SIRIUS_MODULE_NAME
-	CS	Internetové rádio SIRIUS
-	DA	Sirius Internetradio
-	DE	SIRIUS Internet Radio
-	EN	SIRIUS Internet Radio
-	ES	SIRIUS Internet Radio
-	FI	SIRIUS-internet-radio
-	FR	Radio Internet SIRIUS
-	HE	רדיו אינטרנט ‏SIRIUS
-	IT	Radio Internet SIRIUS
-	NL	SIRIUS-internetradio
-	NO	SIRIUS Internett-radio
-	PL	Radio internetowe SIRIUS
-	RU	Радиостанция Интернета SIRIUS
-	SV	Sirius-webbradio
+	CS	Internetové rádio SiriusXM
+	DA	SiriusXM Internetradio
+	DE	SiriusXM Internet Radio
+	EN	SiriusXM Internet Radio
+	ES	SiriusXM Internet Radio
+	FI	SiriusXM-internet-radio
+	FR	Radio Internet SiriusXM
+	HE	רדיו אינטרנט ‏SiriusXM
+	IT	Radio Internet SiriusXM
+	NL	SiriusXM-internetradio
+	NO	SiriusXM Internett-radio
+	PL	Radio internetowe SiriusXM
+	RU	Радиостанция Интернета SiriusXM
+	SV	SiriusXM-webbradio
 
 PLUGIN_SIRIUS_ERROR
 	CS	Chyba SIRIUS
