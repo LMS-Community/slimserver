@@ -565,7 +565,7 @@ sub _registerBaseNodes {
 			feed         => \&_bmf,
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
-			condition    => sub {return Slim::Schema::hasLibrary && $prefs->get('audiodir');},
+			condition    => sub {return Slim::Schema::hasLibrary && Slim::Utils::Misc::getAudioDir();},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 		},
@@ -577,7 +577,7 @@ sub _registerBaseNodes {
 			icon         => 'html/images/playlists.png',
 			condition    => \&Slim::Schema::hasLibrary,
 			condition    => sub {
-								return $prefs->get('playlistdir') ||
+								return Slim::Utils::Misc::getPlaylistDir() ||
 									# this might be expensive - perhaps need to cache this somehow
 					 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
 							},
