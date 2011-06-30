@@ -152,13 +152,14 @@ sub dirsFor {
 
 		push @dirs, $::prefsdir || $class->writablePath('prefs');
 
-	} elsif ($dir =~ /^(?:music|playlists)$/) {
+	} elsif ($dir =~ /^(?:music|playlists|videos|pictures)$/) {
 
 		my $path;
 
 		# Windows Home Server offers a Music share which is more likely to be used 
 		# than the administrator's My Music folder
-		if ($class->{osDetails}->{isWHS}) {
+		# XXX - should we continue to support WHS?
+		if ($class->{osDetails}->{isWHS} && $dir =~ /^(?:music|playlists)$/) {
 			my $objWMI = Win32::OLE->GetObject('winmgmts://./root/cimv2');
 			
 			if ( $objWMI && (my $shares = $objWMI->InstancesOf('Win32_Share')) ) {
@@ -191,7 +192,17 @@ sub dirsFor {
 			undef $objWMI;
 		}
 
+		my $fallback = 'My Music';
 		$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
+		
+		if ($dir eq 'videos') {
+			$path = Win32::GetFolderPath(Win32::CSIDL_MYVIDEO) unless $path;
+			$fallback = 'My Videos';
+		}
+		elsif ($dir eq 'pictures') {
+			$path = Win32::GetFolderPath(Win32::CSIDL_MYPICTURES) unless $path;
+			$fallback = 'My Pictures';
+		}
 		
 		# fall back if no path or invalid path is returned
 		if (!$path || $path eq Win32::GetFolderPath(0)) {
@@ -205,9 +216,9 @@ sub dirsFor {
 			);
 	
 			if (defined $swKey) {
-				if (!($path = $swKey->{'My Music'})) {
+				if (!($path = $swKey->{$fallback})) {
 					if ($path = $swKey->{'Personal'}) {
-						$path = catdir($path, 'My Music');
+						$path = catdir($path, $fallback);
 					}
 				}
 			}
