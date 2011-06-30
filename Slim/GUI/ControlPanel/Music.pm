@@ -77,7 +77,7 @@ sub new {
 
 		my @mediaDirs = $dirsList->GetStrings();
 		
-		if ($running && @mediaDirs && ref @mediaDirs eq 'ARRAY') {
+		if ($running && scalar @mediaDirs) {
 			Slim::GUI::ControlPanel->setPref('mediadirs', \@mediaDirs);
 		}
 	});
