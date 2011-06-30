@@ -648,7 +648,7 @@ sub getPlaylistDir {
 =cut
 
 sub getMediaDirs {
-	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get('mediadirs') } ];
+	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get('mediadirs') || [''] } ];
 }
 
 =head2 inAudioFolder( $)
