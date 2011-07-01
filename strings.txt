@@ -12662,7 +12662,7 @@ BROWSE_MUSIC
 	CS	Knihovna hudby
 	DA	Musikbibliotek
 	DE	Musikbibliothek
-	EN	Media Library
+	EN	Music Library
 	ES	Biblioteca de música
 	FI	Musiikkikirjasto
 	FR	Collection musicale
