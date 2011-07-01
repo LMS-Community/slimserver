@@ -194,7 +194,7 @@ sub dirsFor {
 
 		my $fallback;
 		
-		if ($dir eq 'music') {
+		if ($dir =~ /^(?:music|playlists)$/) {
 			$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
 			$fallback = 'My Music';
 		}
