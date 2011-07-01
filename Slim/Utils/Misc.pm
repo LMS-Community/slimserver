@@ -617,6 +617,30 @@ sub stripRel {
 	return $file;
 }
 
+=head2 getLibraryName()
+
+	Return the library's name, or the host name if none is defined
+
+=cut
+
+sub getLibraryName {
+	my $hostname = $prefs->get('libraryname') || '';
+	
+	if (!$hostname || $hostname =~ /^(?:''|"")$/) {
+		$hostname = Slim::Utils::Network::hostName();
+
+		# may return several lines of hostnames, just take the first.	
+		$hostname =~ s/\n.*//;
+	
+		# may return a dotted name, just take the first part
+		$hostname =~ s/\..*//;
+	}
+		
+	# Bug 13217, replace Unicode quote with ASCII version (commonly used in Mac server name)
+	$hostname =~ s/\x{2019}/'/g;
+
+	return $hostname;
+}
 
 =head2 getAudioDir()
 

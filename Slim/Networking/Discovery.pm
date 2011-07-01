@@ -35,20 +35,7 @@ Return a 17 character hostname, suitable for display on a client device.
 =cut
 
 sub serverHostname {
-	my $hostname = $prefs->get('libraryname');
-	
-	if (!$hostname) {
-		$hostname = Slim::Utils::Network::hostName();
-
-		# may return several lines of hostnames, just take the first.	
-		$hostname =~ s/\n.*//;
-	
-		# may return a dotted name, just take the first part
-		$hostname =~ s/\..*//;
-	}
-	
-	# Bug 13217, replace Unicode quote with ASCII version (commonly used in Mac server name)
-	$hostname =~ s/\x{2019}/'/g;
+	my $hostname = Slim::Utils::Misc::getLibraryName();
 	
 	# Hostname needs to be in ISO-8859-1 encoding to support the ip3k firmware font
 	$hostname = Slim::Utils::Unicode::encode('iso-8859-1', $hostname);
@@ -122,7 +109,7 @@ sub gotDiscoveryRequest {
 my %TLVhandlers = (
 	# Requests
 	'NAME' => sub { 
-		return $prefs->get('libraryname') || Slim::Utils::Network::hostName()
+		return Slim::Utils::Misc::getLibraryName()
 	},											       # send full host name - no truncation
 	'IPAD' => sub { $::httpaddr },                     # send ipaddress as a string only if it is set
 	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
