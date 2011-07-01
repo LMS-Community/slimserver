@@ -705,7 +705,7 @@ sub init {
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
 									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
-	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir audiodir artfolder) );
+	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
 	# allow users to set a port below 1024 on windows which does not require admin for this
@@ -770,6 +770,26 @@ sub init {
 					}
 		}, 'coverArt',
 	);
+	
+	# mediadirs must be a list of unique, valid folders
+	$prefs->setValidate({
+		validator => sub {
+			my $new = $_[1];
+			return 0 if ref $new ne 'ARRAY';
+
+			# don't accept duplicate entries
+			my %seen;
+			return 0 if scalar ( grep { !$seen{$_}++ } @{$new} ) != scalar @$new;
+			
+			foreach (@{ $new }) {
+				if (! (-d $_ || (main::ISWINDOWS && -d Win32::GetANSIPathName($_)) || -d Slim::Utils::Unicode::encode_locale($_)) ) {
+					return 0;
+				}
+			}
+
+			return 1;
+		}
+	}, 'mediadirs');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
