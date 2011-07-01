@@ -233,7 +233,7 @@ sub Browse {
 					id         => 0,
 					parentID   => -1,
 					type       => 'object.container',
-					title      => 'Logitech Media Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
+					title      => 'Logitech Media Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 					searchable => 1,
 				} ];
 			}
