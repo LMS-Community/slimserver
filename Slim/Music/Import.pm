@@ -300,7 +300,10 @@ sub runScan {
 			next;
 		}
 
-		$changes += $class->runImporter($importer);
+		# XXX tmp var is to avoid a strange "Can't coerce CODE to integer in addition (+)" error/bug
+		# even though there is no way this returns a coderef...
+		my $tmp = $class->runImporter($importer);
+		$changes += $tmp;
 	}
 
 	$class->scanPlaylistsOnly(0);
