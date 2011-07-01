@@ -252,7 +252,12 @@ sub set {
 		}
 
 		if (main::ISWINDOWS && $root->{'filepathPrefs'}->{ $pref }) {
-			$new = Win32::GetANSIPathName($new);
+			if ( ref $new eq 'ARRAY' ) {
+				$new = [ map { Win32::GetANSIPathName($_) } @{ $new } ]
+			}
+			else {
+				$new = Win32::GetANSIPathName($new);
+			}
 		}
 
 		$class->{'prefs'}->{ $pref } = $new;
