@@ -226,16 +226,18 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
 
-	if (defined $audiodir) {
-		push @searchdirs, (
-			catdir($audiodir, 'My Music', 'iTunes'),
-			catdir($audiodir, 'iTunes'),
-			$audiodir
-		);
+	if (scalar @{ $mediadirs }) {
+		foreach my $audiodir (@{ $mediadirs }) {
+			push @searchdirs, (
+				catdir($audiodir, 'My Music', 'iTunes'),
+				catdir($audiodir, 'iTunes'),
+				$audiodir
+			);
+		}
 	}
-
+	
 	for my $dir (@searchdirs) {
 		$path = catfile(($dir), 'iTunes Music Library.xml');
 
