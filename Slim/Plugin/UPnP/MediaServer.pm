@@ -71,7 +71,7 @@ sub description {
 	substr $serial, 0, 8, '106173c8';
 	
 	$params->{device} = {
-		name    => 'Squeezebox Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
+		name    => 'Squeezebox Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 		version => $::VERSION . ' r' . $::REVISION,
 		serial  => $serial,
 		uuid    => uc($server_uuid),

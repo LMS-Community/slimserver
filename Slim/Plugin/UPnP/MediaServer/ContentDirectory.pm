@@ -222,7 +222,7 @@ sub Browse {
 					id         => 0,
 					parentID   => -1,
 					type       => 'object.container',
-					title      => 'Squeezebox Server [' . xmlEscape($prefs->get('libraryname') || Slim::Utils::Network::hostName()) . ']',
+					title      => 'Squeezebox Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 					searchable => 1,
 				} ];
 			}
