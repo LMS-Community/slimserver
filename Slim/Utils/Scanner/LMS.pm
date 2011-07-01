@@ -144,7 +144,7 @@ sub rescan {
 		},
 		on_finish => sub {
 			my $stats = {};
-			$changes = $stats->{change_count} || 1; # XXX
+			#$changes = $stats->{change_count}; # XXX library should provide this?
 			
 			main::DEBUGLOG && $log->is_debug && $log->debug("Finished scanning");
 			
@@ -162,14 +162,14 @@ sub rescan {
 			
 			# Persist the count of "changes since last optimization"
 			# so for example adding 50 tracks, then 50 more would trigger optimize
-			$changes += _getChangeCount();
-			if ( $changes >= OPTIMIZE_THRESHOLD ) {
+			my $totalChanges = $changes + _getChangeCount();
+			if ( $totalChanges >= OPTIMIZE_THRESHOLD ) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Scan change count reached $changes, optimizing database");
 				Slim::Schema->optimizeDB();
 				_setChangeCount(0);
 			}
 			else {
-				_setChangeCount($changes);
+				_setChangeCount($totalChanges);
 			}
 			
 			if ( !main::SCANNER ) {

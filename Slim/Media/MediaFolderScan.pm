@@ -51,7 +51,7 @@ sub startScan {
 		main::INFOLOG && $log->info("Skipping media folder scan - no folders defined.");
 		$class->stillScanning(0);
 		Slim::Music::Import->endImporter($class);
-		return;
+		return 0;
 	}
 
 	$class->stillScanning(1);
