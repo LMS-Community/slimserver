@@ -299,18 +299,25 @@ sub gotPlaylist {
 		main::idleStreams();
 	}
 
-	my $action = $params->{'action'} || 'play';
+	if (@urls) {
+
+		my $action = $params->{'action'} || 'play';
 		
-	if ( $action eq 'play' ) {
-		$client->execute([ 'playlist', 'play', \@urls ]);
-		if (Slim::Buttons::Common::mode($client) ne 'playlist') {
-			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		if ( $action eq 'play' ) {
+			$client->execute([ 'playlist', 'play', \@urls ]);
+			if (Slim::Buttons::Common::mode($client) ne 'playlist') {
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+			}
 		}
-	}
-	else {
-		my $cmd = $action eq 'insert' ? 'inserttracks' : 'addtracks';
-		$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
-		Slim::Control::XMLBrowser::_addingToPlaylist($client, $action);
+		else {
+			my $cmd = $action eq 'insert' ? 'inserttracks' : 'addtracks';
+			$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+			Slim::Control::XMLBrowser::_addingToPlaylist($client, $action);
+		}
+
+	} else {
+
+		$client->showBriefly({ line => [ undef, $client->string('PLAYLIST_EMPTY') ] });
 	}
 }
 
