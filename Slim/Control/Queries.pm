@@ -5318,6 +5318,7 @@ sub imageTitlesQuery {
 	my $quantity      = $request->getParam('_quantity');
 	my $tags          = $request->getParam('tags') || 't';
 	my $search        = $request->getParam('search');
+	my $timeline      = $request->getParam('timeline');
 	my $sort          = $request->getParam('sort');
 	my $imageHash     = $request->getParam('image_id');
 	
@@ -5329,10 +5330,12 @@ sub imageTitlesQuery {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
 	my $sql      = 'SELECT %s FROM images ';
-	my $c        = { 'images.hash' => 1, 'images.titlesearch' => 1, 'images.titlesort' => 1 };
-	my $w        = [];
-	my $p        = [];
+	my $c        = { 'images.hash' => 1, 'images.titlesearch' => 1, 'images.titlesort' => 1 };	# columns
+	my $w        = [];																			# where
+	my $p        = [];																			# parameters
+	my $group_by = "images.hash";
 	my $order_by = "images.titlesort $collate";
+	my $id_col   = 'images.hash';
 	my $limit;
 	
 	# Normalize and add any search parameters
@@ -5358,7 +5361,41 @@ sub imageTitlesQuery {
 			}
 		}
 		
-		if ( $search && specified($search) ) {
+		if ( $timeline ) {
+			$search ||= '';
+			my ($year, $month, $day) = split('-', $search);
+			
+			$tags = '' if $timeline ne 'day';
+
+			# TODO - replace mtime with picture's date from EXIF tag when available
+			if ( $timeline eq 'years' ) {
+				$sql = sprintf $sql, "strftime('%Y', date(mtime, 'unixepoch')) AS 'year'";
+				$id_col = $order_by = $group_by = 'year';
+				$c = { year => 1 };
+			}
+			
+			elsif ( $timeline eq 'months' && $year ) {
+				$sql = sprintf $sql, "strftime('%m', date(mtime, 'unixepoch')) AS 'month'";
+				push @{$w}, "strftime('%Y', date(mtime, 'unixepoch')) == '$year'";
+				$id_col = $order_by = $group_by = 'month';
+				$c = { month => 1 };
+			}
+
+			elsif ( $timeline eq 'days' && $year && $month ) {
+				$sql = sprintf $sql, "strftime('%d', date(mtime, 'unixepoch')) AS 'day'";
+				push @{$w}, "strftime('%Y', date(mtime, 'unixepoch')) == '$year'";
+				push @{$w}, "strftime('%m', date(mtime, 'unixepoch')) == '$month'";
+				$id_col = $order_by = $group_by = 'day';
+				$c = { day => 1 };
+			}
+			
+			elsif ( $timeline eq 'day' && $year && $month && $day ) {
+				push @{$w}, "date(mtime, 'unixepoch') == '$year-$month-$day'";
+				$timeline = '';
+			}
+		}
+		
+		elsif ( $search && specified($search) ) {
 			if ( $search =~ s/^sql=// ) {
 				# Raw SQL search query
 				$search =~ s/;//g; # strip out any attempt at combining SQL statements
@@ -5393,12 +5430,13 @@ sub imageTitlesQuery {
 		$sql .= join( ' AND ', @{$w} );
 		$sql .= ' ';
 	}
-	$sql .= "GROUP BY images.hash ORDER BY $order_by ";
+	$sql .= "GROUP BY $group_by " if $group_by;
+	$sql .= "ORDER BY $order_by " if $order_by;
 	
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
 	my @cols = keys %{$c};
-	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols ) unless $timeline;
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
@@ -5456,7 +5494,7 @@ sub imageTitlesQuery {
 			}
 
 			# "raw" result formatting (for CLI or JSON RPC)
-			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'images.hash'});				
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{$id_col});				
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'images.title'});
 			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'images.mime_type'});
 			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
@@ -5466,7 +5504,13 @@ sub imageTitlesQuery {
 			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
 			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});
-		
+			
+			# browsing images by timeline Year -> Month -> Day
+			$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
+			$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
+			$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
+			$id_col =~ /^(?:year|month|day)$/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{$id_col});
+			
 			$chunkCount++;
 			
 			main::idleStreams() if !($chunkCount % 5);
