@@ -341,6 +341,15 @@ sub init {
 			$prefs->set('librarycachedir', $prefs->get('cachedir'));
 			1;
 		} );
+
+		# on Windows we don't provide a means to disable the autoprefs value any longer
+		# disable automatic scanning automatically, in case user had been using an earlier beta where it was enabled
+		$prefs->migrate( 8, sub {
+			if (main::ISWINDOWS && $prefs->get('autorescan')) {
+				$prefs->set( autorescan => 0 );
+			}
+			1;
+		} );
 	}
 
 	# migrate client prefs to version 2 - sync prefs changed
