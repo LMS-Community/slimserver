@@ -950,21 +950,18 @@ sub findAndScanDirectoryTree {
 		
 		my $url = $params->{'url'};
 		
-		# make sure we have a valid URL...
-		if (!defined $url) {
-			$url = Slim::Utils::Misc::getAudioDir();
+		if (defined $url) {
+			if (!Slim::Music::Info::isURL($url)) {
+				$url = fileURLFromPath($url);
+			}
+	
+			$topLevelObj = Slim::Schema->objectForUrl({
+				'url'      => $url,
+				'create'   => 1,
+				'readTags' => 1,
+				'commit'   => 1,
+			});
 		}
-
-		if (!Slim::Music::Info::isURL($url)) {
-			$url = fileURLFromPath($url);
-		}
-
-		$topLevelObj = Slim::Schema->objectForUrl({
-			'url'      => $url,
-			'create'   => 1,
-			'readTags' => 1,
-			'commit'   => 1,
-		});
 	}
 
 	if (main::ISMAC && blessed($topLevelObj) && $topLevelObj->can('path')) {
