@@ -3,6 +3,7 @@ package Slim::Schema::Image;
 use strict;
 
 use File::Basename;
+use Date::Parse qw(str2time);
 use Slim::Schema;
 use Slim::Utils::Misc;
 
@@ -14,8 +15,14 @@ sub updateOrCreateFromResult {
 	my $id;
 	my $url = Slim::Utils::Misc::fileURLFromPath($result->path);
 	
-	# Create title and album from path
-	my ($title, $dirs, undef) = fileparse($result->path);
+#Slim::Utils::Log::logError(Data::Dump::dump($result->tags));
+
+	my $exifData = $result->tags;
+
+	# Create title and album from path (if not in EXIF data)
+	my $title = $exifData->{XPTitle} || $exifData->{ImageDescription};
+	my ($filename, $dirs, undef) = fileparse($result->path);
+	$title ||= $filename;
 	
 	# Album is parent directory
 	$dirs =~ s{\\}{/}g;
@@ -24,6 +31,7 @@ sub updateOrCreateFromResult {
 	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
 	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
 	my $now = time();
+	my $creationDate = $exifData->{DateTimeOriginal} || $exifData->{DateTimeOriginal};
 	
 	my $hash = {
 		hash         => $result->hash,
@@ -40,6 +48,7 @@ sub updateOrCreateFromResult {
 		mtime        => $result->mtime,
 		added_time   => $now,
 		updated_time => $now,
+		original_time=> $creationDate ? str2time($creationDate) : $result->mtime,
 		filesize     => $result->size,
 	};
 	

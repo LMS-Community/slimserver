@@ -5381,28 +5381,28 @@ sub imageTitlesQuery {
 
 			# TODO - replace mtime with picture's date from EXIF tag when available
 			if ( $timeline eq 'years' ) {
-				$sql = sprintf $sql, "strftime('%Y', date(mtime, 'unixepoch')) AS 'year'";
+				$sql = sprintf $sql, "strftime('%Y', date(original_time, 'unixepoch')) AS 'year'";
 				$id_col = $order_by = $group_by = 'year';
 				$c = { year => 1 };
 			}
 			
 			elsif ( $timeline eq 'months' && $year ) {
-				$sql = sprintf $sql, "strftime('%m', date(mtime, 'unixepoch')) AS 'month'";
+				$sql = sprintf $sql, "strftime('%m', date(original_time, 'unixepoch')) AS 'month'";
 				push @{$w}, "strftime('%Y', date(mtime, 'unixepoch')) == '$year'";
 				$id_col = $order_by = $group_by = 'month';
 				$c = { month => 1 };
 			}
 
 			elsif ( $timeline eq 'days' && $year && $month ) {
-				$sql = sprintf $sql, "strftime('%d', date(mtime, 'unixepoch')) AS 'day'";
-				push @{$w}, "strftime('%Y', date(mtime, 'unixepoch')) == '$year'";
-				push @{$w}, "strftime('%m', date(mtime, 'unixepoch')) == '$month'";
+				$sql = sprintf $sql, "strftime('%d', date(original_time, 'unixepoch')) AS 'day'";
+				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
+				push @{$w}, "strftime('%m', date(original_time, 'unixepoch')) == '$month'";
 				$id_col = $order_by = $group_by = 'day';
 				$c = { day => 1 };
 			}
 			
 			elsif ( $timeline eq 'day' && $year && $month && $day ) {
-				push @{$w}, "date(mtime, 'unixepoch') == '$year-$month-$day'";
+				push @{$w}, "date(original_time, 'unixepoch') == '$year-$month-$day'";
 				$timeline = '';
 			}
 		}
