@@ -219,6 +219,15 @@ sub Browse {
 	#   All Videos (/va)                                       videos
 	#     Video 1 (/va/<hash>)                                 video_titles video_hash:<hash>
 	
+	# Images (/images)
+	# -----
+	#   All Pictures (/ia)                                    
+	#   By Date (/id)                                          image_titles timeline:years
+	#     2011 (/id/2011)                                      image_titles timeline:months search:2011
+	#       07 (/id/2011/07)                                   image_titles timeline:days search:2011-07
+	#         03 (/id/2011/07/03)                              image_titles timeline:day search:2011-07-03
+	#           Photo 1 (/id/2011/07/03/<id>)                  image_titles image_id:<id>
+	
 	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video|images)$}) ) { # top-level menu
 		my $type = 'object.container';
 		my $menu = [
@@ -296,10 +305,11 @@ sub Browse {
 			limit  => $limit,
 		} );
 	}
-	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia)$}) ) { # Image menu
+	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia|id)$}) ) { # Image menu
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
+			{ id => '/id', parentID => '/images', type => $type, title => $string->('DATE') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -536,6 +546,35 @@ sub Browse {
 			}
 			else {
 				$cmd = "image_titles $start $limit tags:ofwhtnDUl";
+			}
+		}
+
+		elsif ( $id =~ m{^/id} ) { # date hierarchy
+		
+			my ($tlId) = $id =~ m{^/id/(.+)};
+			my ($year, $month, $day, $pic) = $tlId ? split('/', $tlId) : ();
+		
+			if ( $pic ) {
+				$cmd = "image_titles 0 1 image_id:$pic tags:ofwhtnDUl";
+			}
+
+			# if we've got a full date, show pictures
+			elsif ( $year && $month && $day ) {
+				$cmd = "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUl";
+			}
+
+			# show days for a given month/year
+			elsif ( $year && $month ) {
+				$cmd = "image_titles $start $limit timeline:days search:$year-$month";
+			}
+
+			# show months for a given year
+			elsif ( $year ) {
+				$cmd = "image_titles $start $limit timeline:months search:$year";
+			}
+
+			elsif ( $id eq '/id' ) {
+				$cmd = "image_titles $start $limit timeline:years";
 			}
 		}
 	
@@ -875,13 +914,34 @@ sub _queryToDIDLLite {
 			 	. '</item>';
 		}
 	}
+	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days)/ ) {
+
+		my ($tlId) = $cmd =~ m{search:([\-\d]+)};
+		my ($year, $month, $day) = split('/', $tlId);
+
+		for my $image ( @{ $results->{images_loop} || [] } ) {
+			$count++;			
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
+				 # XXX
+			}
+			
+			$xml .= qq{<container id="${vid}" parentID="${parent}" restricted="1">}
+				. '<upnp:class>object.container</upnp:class>'
+				. '<dc:title>' . xmlEscape($image->{title}) . '</dc:title>'
+			 	. '</container>';
+		}
+	}
 	elsif ( $cmd =~ /^image_titles/ ) {
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $image->{id};
+
 			my $parent = $id;
 			
-			if ( $flag eq 'BrowseMetadata' ) { # point parent to the video's parent
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
 				 # XXX
 			}
 			
