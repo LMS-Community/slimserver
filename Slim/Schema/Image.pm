@@ -31,7 +31,7 @@ sub updateOrCreateFromResult {
 	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
 	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
 	my $now = time();
-	my $creationDate = $exifData->{DateTimeOriginal} || $exifData->{DateTimeOriginal};
+	my $creationDate = $exifData->{DateTimeOriginal} || $exifData->{DateTime};
 	
 	my $hash = {
 		hash         => $result->hash,
