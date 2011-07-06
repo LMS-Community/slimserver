@@ -1568,43 +1568,55 @@ sub musicfolderQuery {
 	
 	# url overrides any folderId
 	my $params = ();
+	my $mediaDirs = Slim::Utils::Misc::getMediaDirs();
 	
-	if (defined $url) {
-		$params->{'url'} = $url;
-	} else {
-		# findAndScanDirectory sorts it out if $folderId is undef
-		$params->{'id'} = $folderId;
-	}
-	
-	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count);
-	
-	# if this is a follow up query ($index > 0), try to read from the cache
-	if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
-		$items       = $cachedItem->{items};
-		$topLevelObj = $cachedItem->{topLevelObj};
-		$count       = $cachedItem->{count};
-	}
-	else {
-		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	my ($topLevelObj, $items, $count, $topPath);
+
+	if ( !defined $url && !defined $folderId && scalar(@$mediaDirs) > 1) {
 		
-		# cache results in case the same folder is queried again shortly 
-		# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-		$bmfCache{ $params->{url} || $params->{id} || 0 } = {
-			items       => $items,
-			topLevelObj => $topLevelObj,
-			count       => $count,
-		};
+		$items = $mediaDirs;
+		$count = scalar(@$items);
+		$topPath = '';
+
 	}
 
-	if ($want_top) {
-		$items = [ $topLevelObj->url ];
-		$count = 1;
-	}
-
-	# create filtered data
+	else {
+		if (defined $url) {
+			$params->{'url'} = $url;
+		}
+		elsif ($folderId) {
+			$params->{'id'} = $folderId;
+		}
+		elsif (scalar @$mediaDirs) {
+			$params->{'url'} = $mediaDirs->[0];
+		}
 	
-	my $topPath = $topLevelObj->path;
+		# if this is a follow up query ($index > 0), try to read from the cache
+		if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
+			$items       = $cachedItem->{items};
+			$topLevelObj = $cachedItem->{topLevelObj};
+			$count       = $cachedItem->{count};
+		}
+		else {
+			($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+		
+			# cache results in case the same folder is queried again shortly 
+			# should speed up Jive BMF, as only the first chunk needs to run the full loop above
+			$bmfCache{ $params->{url} || $params->{id} || 0 } = {
+				items       => $items,
+				topLevelObj => $topLevelObj,
+				count       => $count,
+			};
+		}
+
+		if ($want_top) {
+			$items = [ $topLevelObj->url ];
+			$count = 1;
+		}
+
+		# create filtered data
+		$topPath = $topLevelObj->path if blessed($topLevelObj);
+	}
 
 	# now build the result
 
@@ -1691,7 +1703,7 @@ sub musicfolderQuery {
 	$request->addResult('count', $count);
 
 	# we might have changed - flush to the db to be in sync.
-	$topLevelObj->update;
+	$topLevelObj->update if blessed($topLevelObj);
 	
 	$request->setStatusDone();
 }
