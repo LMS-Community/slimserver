@@ -334,7 +334,7 @@ sub Browse {
 		# BrowseDirectChildren will request the desired number of children
 		if ( $id =~ m{^/a} ) {
 			if ( $id =~ m{/l/(\d+)/t$} ) {
-				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
+				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -348,7 +348,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -357,7 +357,7 @@ sub Browse {
 					: "artists 0 1 artist_id:$1";
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 							
@@ -366,7 +366,7 @@ sub Browse {
 		}
 		elsif ( $id =~ m{^/l} ) {
 			if ( $id =~ m{/l/(\d+)/t$} ) {
-				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
+				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -380,7 +380,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -394,7 +394,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
-				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
+				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -403,7 +403,7 @@ sub Browse {
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -417,7 +417,7 @@ sub Browse {
 					: "genres 0 1 genre_id:$1"
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -431,7 +431,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
-				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
+				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -440,7 +440,7 @@ sub Browse {
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -449,7 +449,7 @@ sub Browse {
 					: "years 0 1 year:$1";
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -463,7 +463,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
-				if ( $sort && $sort !~ /^+upnp:originalTrackNumber$/ ) {
+				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -488,7 +488,7 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -497,7 +497,7 @@ sub Browse {
 					: "musicfolder 0 1 folder_id:$1 return_top:1";
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
@@ -516,7 +516,7 @@ sub Browse {
 					: "playlists 0 1 playlist_id:$1";
 			}
 			else {
-				if ( $sort && $sort !~ /^+dc:title$/ ) {
+				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
