@@ -12,6 +12,7 @@ package Slim::Plugin::UPnP::Common::Utils;
 use strict;
 
 use Scalar::Util qw(blessed);
+use POSIX qw(strftime);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -331,6 +332,10 @@ sub imageDetails {
 	
 	$xml .= '<upnp:class>object.item.imageItem.photo</upnp:class>'
 		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
+		
+	if ( $image->{original_time}) {
+		$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', localtime($image->{original_time})) ) . '</dc:date>'
+	}
 	
 	if ( $filterall || $filter =~ /upnp:album/ ) {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
