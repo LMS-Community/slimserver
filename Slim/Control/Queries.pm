@@ -5379,7 +5379,6 @@ sub imageTitlesQuery {
 			
 			$tags = '' if $timeline ne 'day';
 
-			# TODO - replace mtime with picture's date from EXIF tag when available
 			if ( $timeline eq 'years' ) {
 				$sql = sprintf $sql, "strftime('%Y', date(original_time, 'unixepoch')) AS 'year'";
 				$id_col = $order_by = $group_by = 'year';
@@ -5399,6 +5398,12 @@ sub imageTitlesQuery {
 				push @{$w}, "strftime('%m', date(original_time, 'unixepoch')) == '$month'";
 				$id_col = $order_by = $group_by = 'day';
 				$c = { day => 1 };
+			}
+
+			elsif ( $timeline eq 'days' ) {
+				$sql = sprintf $sql, "date(original_time, 'unixepoch') AS 'date'";
+				$id_col = $order_by = $group_by = 'date';
+				$c = { date => 1 };
 			}
 			
 			elsif ( $timeline eq 'day' && $year && $month && $day ) {
