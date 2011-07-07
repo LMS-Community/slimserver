@@ -729,8 +729,8 @@ sub _queryToDIDLLite {
 	}
 	elsif ( $cmd =~ /^albums/ ) {
 		# Fixup total for sort:new listing
-		if ( $cmd =~ /sort:new/ ) {
-			$total = $prefs->get('browseagelimit');
+		if ( $cmd =~ /sort:new/ && (my $max = $prefs->get('browseagelimit')) < $total) {
+			$total = $max if $max < $total;
 		}
 		
 		for my $album ( @{ $results->{albums_loop} || [] } ) {
