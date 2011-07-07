@@ -5400,10 +5400,11 @@ sub imageTitlesQuery {
 				$c = { day => 1 };
 			}
 
-			elsif ( $timeline eq 'days' ) {
-				$sql = sprintf $sql, "date(original_time, 'unixepoch') AS 'date'";
-				$id_col = $order_by = $group_by = 'date';
-				$c = { date => 1 };
+			elsif ( $timeline eq 'dates' ) {
+				my $dateFormat = $prefs->get('shortdateFormat');
+				$sql = sprintf $sql, "date(original_time, 'unixepoch') AS 'd', strftime('$dateFormat', date(original_time, 'unixepoch')) AS 'date'";
+				$id_col = $order_by = 'd';
+				$c = { d => 1, date => 1 };
 			}
 			
 			elsif ( $timeline eq 'day' && $year && $month && $day ) {
@@ -5493,6 +5494,7 @@ sub imageTitlesQuery {
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Image Titles query: $sql / " . Data::Dump::dump($p) );
 		}
+		$log->error(Data::Dump::dump($sql, $p));
 
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
@@ -5500,6 +5502,7 @@ sub imageTitlesQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
+			$log->error("$col");
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 		
@@ -5528,6 +5531,8 @@ sub imageTitlesQuery {
 			$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
 			$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
 			$id_col =~ /^(?:year|month|day)$/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{$id_col});
+
+			$c->{date} && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'date'});
 			
 			$chunkCount++;
 			
