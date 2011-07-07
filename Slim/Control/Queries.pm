@@ -5387,7 +5387,7 @@ sub imageTitlesQuery {
 			
 			elsif ( $timeline eq 'months' && $year ) {
 				$sql = sprintf $sql, "strftime('%m', date(original_time, 'unixepoch')) AS 'month'";
-				push @{$w}, "strftime('%Y', date(mtime, 'unixepoch')) == '$year'";
+				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
 				$id_col = $order_by = $group_by = 'month';
 				$c = { month => 1 };
 			}
