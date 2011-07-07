@@ -5,6 +5,7 @@ package Slim::Plugin::UPnP::MediaServer::ContentDirectory;
 use strict;
 
 use I18N::LangTags qw(extract_language_tags);
+use URI::Escape qw(uri_escape);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -223,6 +224,10 @@ sub Browse {
 	# -----
 	#   All Pictures (/ia)                                    
 	#   By Date (/id)                                          image_titles timeline:dates
+	#     2011-07-03 (/id/2011/07/03)                          image_titles timeline:day search:2011-07-03
+	#       Photo 1 (/id/2011/07/03/<id>)                      image_titles image_id:<id>
+	#   Albums (/il)                                           image_titles albums:1
+	#     Album 1 (/il/<id>)                                   image_titles albums:1 search:<id>
 	#   By Year (/it)                                          image_titles timeline:years
 	#     2011 (/it/2011)                                      image_titles timeline:months search:2011
 	#       07 (/it/2011/07)                                   image_titles timeline:days search:2011-07
@@ -306,9 +311,10 @@ sub Browse {
 			limit  => $limit,
 		} );
 	}
-	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia|id|it)$}) ) { # Image menu
+	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:ia|id|it|il)$}) ) { # Image menu
 		my $type = 'object.container';
 		my $menu = [
+			{ id => '/il', parentID => '/images', type => $type, title => $string->('ALBUMS') },
 			{ id => '/it', parentID => '/images', type => $type, title => $string->('YEAR') },
 			{ id => '/id', parentID => '/images', type => $type, title => $string->('DATE') },
 			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
@@ -548,6 +554,22 @@ sub Browse {
 			}
 			else {
 				$cmd = "image_titles $start $limit tags:ofwhtnDUl";
+			}
+		}
+		
+		elsif ( $id =~ m{^/il} ) {      # albums
+			my ($albumId) = $id =~ m{^/il/(.+)};
+			
+			if ( $albumId ) {
+				$albumId = uri_escape($albumId);
+				
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUl"
+					: "image_titles 0 1 albums:1";
+			}
+			
+			elsif ( $id eq '/il' ) {
+				$cmd = "image_titles $start $limit albums:1";
 			}
 		}
 
@@ -933,6 +955,22 @@ sub _queryToDIDLLite {
 		my ($tlId) = $cmd =~ m{search:([\-\d]+)};
 		my ($year, $month, $day) = split('/', $tlId);
 
+		for my $image ( @{ $results->{images_loop} || [] } ) {
+			$count++;			
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
+				 # XXX
+			}
+			
+			$xml .= qq{<container id="${vid}" parentID="${parent}" restricted="1">}
+				. '<upnp:class>object.container</upnp:class>'
+				. '<dc:title>' . xmlEscape($image->{title}) . '</dc:title>'
+			 	. '</container>';
+		}
+	}
+	elsif ( $cmd =~ /^image_titles.*albums:/ && $cmd !~ /search:/ ) {
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});

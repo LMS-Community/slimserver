@@ -5331,6 +5331,7 @@ sub imageTitlesQuery {
 	my $tags          = $request->getParam('tags') || 't';
 	my $search        = $request->getParam('search');
 	my $timeline      = $request->getParam('timeline');
+	my $albums        = $request->getParam('albums');
 	my $sort          = $request->getParam('sort');
 	my $imageHash     = $request->getParam('image_id');
 	
@@ -5348,6 +5349,7 @@ sub imageTitlesQuery {
 	my $group_by = "images.hash";
 	my $order_by = "images.titlesort $collate";
 	my $id_col   = 'images.hash';
+	my $title_col= 'images.title';
 	my $limit;
 	
 	# Normalize and add any search parameters
@@ -5377,18 +5379,18 @@ sub imageTitlesQuery {
 			$search ||= '';
 			my ($year, $month, $day) = split('-', $search);
 			
-			$tags = '' if $timeline ne 'day';
+			$tags = 't' if $timeline !~ /^(?:day|albums)$/;
 
 			if ( $timeline eq 'years' ) {
 				$sql = sprintf $sql, "strftime('%Y', date(original_time, 'unixepoch')) AS 'year'";
-				$id_col = $order_by = $group_by = 'year';
+				$id_col = $order_by = $group_by = $title_col = 'year';
 				$c = { year => 1 };
 			}
 			
 			elsif ( $timeline eq 'months' && $year ) {
 				$sql = sprintf $sql, "strftime('%m', date(original_time, 'unixepoch')) AS 'month'";
 				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
-				$id_col = $order_by = $group_by = 'month';
+				$id_col = $order_by = $group_by = $title_col = 'month';
 				$c = { month => 1 };
 			}
 
@@ -5396,7 +5398,7 @@ sub imageTitlesQuery {
 				$sql = sprintf $sql, "strftime('%d', date(original_time, 'unixepoch')) AS 'day'";
 				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
 				push @{$w}, "strftime('%m', date(original_time, 'unixepoch')) == '$month'";
-				$id_col = $order_by = $group_by = 'day';
+				$id_col = $order_by = $group_by = $title_col = 'day';
 				$c = { day => 1 };
 			}
 
@@ -5407,12 +5409,28 @@ sub imageTitlesQuery {
 
 				$sql = sprintf $sql, "strftime('$dateFormat', date(original_time, 'unixepoch')) AS 'date', strftime('%Y/%m/%d', date(original_time, 'unixepoch')) AS 'd'";
 				$id_col = $order_by = $group_by = 'd';
+				$title_col = 'date';
 				$c = { date => 1, d => 1 };
 			}
 			
 			elsif ( $timeline eq 'day' && $year && $month && $day ) {
 				push @{$w}, "date(original_time, 'unixepoch') == '$year-$month-$day'";
 				$timeline = '';
+			}
+		}
+		
+		elsif ( $albums ) {
+			if ( $search ) {
+				$search = URI::Escape::uri_unescape($search);
+				
+				$c->{'images.album'} = 1;
+				push @{$w}, "images.album == ?";
+				push @{$p}, $search;
+			}
+			else {
+				$c = { 'images.album' => 1 };
+				$id_col = $order_by = $group_by = $title_col = 'images.album';
+				$tags = 't';
 			}
 		}
 		
@@ -5436,7 +5454,7 @@ sub imageTitlesQuery {
 		}
 	}
 	
-	$tags =~ /t/ && do { $c->{'images.title'} = 1 };
+	$tags =~ /t/ && do { $c->{$title_col} = 1 };
 	$tags =~ /o/ && do { $c->{'images.mime_type'} = 1 };
 	$tags =~ /f/ && do { $c->{'images.filesize'} = 1 };
 	$tags =~ /w/ && do { $c->{'images.width'} = 1 };
@@ -5517,7 +5535,7 @@ sub imageTitlesQuery {
 
 			# "raw" result formatting (for CLI or JSON RPC)
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{$id_col});				
-			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'images.title'});
+			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{$title_col});
 			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'images.mime_type'});
 			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
 			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
@@ -5531,9 +5549,6 @@ sub imageTitlesQuery {
 			$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
 			$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
 			$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
-			$id_col =~ /^(?:year|month|day)$/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{$id_col});
-
-			$c->{date} && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'date'});
 			
 			$chunkCount++;
 			
