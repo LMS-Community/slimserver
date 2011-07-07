@@ -222,11 +222,12 @@ sub Browse {
 	# Images (/images)
 	# -----
 	#   All Pictures (/ia)                                    
-	#   By Date (/id)                                          image_titles timeline:years
-	#     2011 (/id/2011)                                      image_titles timeline:months search:2011
-	#       07 (/id/2011/07)                                   image_titles timeline:days search:2011-07
-	#         03 (/id/2011/07/03)                              image_titles timeline:day search:2011-07-03
-	#           Photo 1 (/id/2011/07/03/<id>)                  image_titles image_id:<id>
+	#   By Date (/id)                                          image_titles timeline:dates
+	#   By Year (/it)                                          image_titles timeline:years
+	#     2011 (/it/2011)                                      image_titles timeline:months search:2011
+	#       07 (/it/2011/07)                                   image_titles timeline:days search:2011-07
+	#         03 (/it/2011/07/03)                              image_titles timeline:day search:2011-07-03
+	#           Photo 1 (/it/2011/07/03/<id>)                  image_titles image_id:<id>
 	
 	if ( $id eq '0' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:music|video|images)$}) ) { # top-level menu
 		my $type = 'object.container';
@@ -309,7 +310,7 @@ sub Browse {
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
-			{ id => '/id', parentID => '/images', type => $type, title => $string->('DATE') },
+			{ id => '/it', parentID => '/images', type => $type, title => $string->('DATE') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -549,9 +550,9 @@ sub Browse {
 			}
 		}
 
-		elsif ( $id =~ m{^/id} ) { # date hierarchy
+		elsif ( $id =~ m{^/it} ) { # timeline hierarchy
 		
-			my ($tlId) = $id =~ m{^/id/(.+)};
+			my ($tlId) = $id =~ m{^/it/(.+)};
 			my ($year, $month, $day, $pic) = $tlId ? split('/', $tlId) : ();
 		
 			if ( $pic ) {
@@ -573,7 +574,7 @@ sub Browse {
 				$cmd = "image_titles $start $limit timeline:months search:$year";
 			}
 
-			elsif ( $id eq '/id' ) {
+			elsif ( $id eq '/it' ) {
 				$cmd = "image_titles $start $limit timeline:years";
 			}
 		}
