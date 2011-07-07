@@ -5402,9 +5402,12 @@ sub imageTitlesQuery {
 
 			elsif ( $timeline eq 'dates' ) {
 				my $dateFormat = $prefs->get('shortdateFormat');
-				$sql = sprintf $sql, "date(original_time, 'unixepoch') AS 'd', strftime('$dateFormat', date(original_time, 'unixepoch')) AS 'date'";
-				$id_col = $order_by = 'd';
-				$c = { d => 1, date => 1 };
+				# only a subset of strftime is supported in SQLite, eg. no two letter years
+				$dateFormat =~ s/%y/%Y/;
+
+				$sql = sprintf $sql, "strftime('$dateFormat', date(original_time, 'unixepoch')) AS 'date', strftime('%Y/%m/%d', date(original_time, 'unixepoch')) AS 'd'";
+				$id_col = $order_by = $group_by = 'd';
+				$c = { date => 1, d => 1 };
 			}
 			
 			elsif ( $timeline eq 'day' && $year && $month && $day ) {
@@ -5494,7 +5497,6 @@ sub imageTitlesQuery {
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Image Titles query: $sql / " . Data::Dump::dump($p) );
 		}
-		$log->error(Data::Dump::dump($sql, $p));
 
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
@@ -5502,7 +5504,6 @@ sub imageTitlesQuery {
 		# Bind selected columns in order
 		my $i = 1;
 		for my $col ( @cols ) {
-			$log->error("$col");
 			$sth->bind_col( $i++, \$c->{$col} );
 		}
 		

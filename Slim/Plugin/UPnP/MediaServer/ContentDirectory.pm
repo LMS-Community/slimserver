@@ -309,8 +309,9 @@ sub Browse {
 	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia|id)$}) ) { # Image menu
 		my $type = 'object.container';
 		my $menu = [
+			{ id => '/it', parentID => '/images', type => $type, title => $string->('YEAR') },
+			{ id => '/id', parentID => '/images', type => $type, title => $string->('DATE') },
 			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
-			{ id => '/it', parentID => '/images', type => $type, title => $string->('DATE') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -550,9 +551,9 @@ sub Browse {
 			}
 		}
 
-		elsif ( $id =~ m{^/it} ) { # timeline hierarchy
+		elsif ( $id =~ m{^/(?:it|id)} ) { # timeline hierarchy
 		
-			my ($tlId) = $id =~ m{^/it/(.+)};
+			my ($tlId) = $id =~ m{^/(?:it|id)/(.+)};
 			my ($year, $month, $day, $pic) = $tlId ? split('/', $tlId) : ();
 		
 			if ( $pic ) {
@@ -576,6 +577,10 @@ sub Browse {
 
 			elsif ( $id eq '/it' ) {
 				$cmd = "image_titles $start $limit timeline:years";
+			}
+
+			elsif ( $id eq '/id' ) {
+				$cmd = "image_titles $start $limit timeline:dates";
 			}
 		}
 	
@@ -915,7 +920,7 @@ sub _queryToDIDLLite {
 			 	. '</item>';
 		}
 	}
-	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days)/ ) {
+	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ ) {
 
 		my ($tlId) = $cmd =~ m{search:([\-\d]+)};
 		my ($year, $month, $day) = split('/', $tlId);
