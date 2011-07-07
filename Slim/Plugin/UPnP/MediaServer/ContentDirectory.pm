@@ -306,7 +306,7 @@ sub Browse {
 			limit  => $limit,
 		} );
 	}
-	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia|id)$}) ) { # Image menu
+	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:i|ia|id|it)$}) ) { # Image menu
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/it', parentID => '/images', type => $type, title => $string->('YEAR') },
@@ -557,22 +557,30 @@ sub Browse {
 			my ($year, $month, $day, $pic) = $tlId ? split('/', $tlId) : ();
 		
 			if ( $pic ) {
-				$cmd = "image_titles 0 1 image_id:$pic tags:ofwhtnDUl";
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUl"
+					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUl";
 			}
 
 			# if we've got a full date, show pictures
 			elsif ( $year && $month && $day ) {
-				$cmd = "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUl";
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUl"
+					: "image_titles 0 1 timeline:days search:$year-$month";
 			}
 
 			# show days for a given month/year
 			elsif ( $year && $month ) {
-				$cmd = "image_titles $start $limit timeline:days search:$year-$month";
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles $start $limit timeline:days search:$year-$month"
+					: "image_titles 0 1 timeline:months search:$year";
 			}
 
 			# show months for a given year
 			elsif ( $year ) {
-				$cmd = "image_titles $start $limit timeline:months search:$year";
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "image_titles $start $limit timeline:months search:$year"
+					: "image_titles 0 1 timeline:years";
 			}
 
 			elsif ( $id eq '/it' ) {
