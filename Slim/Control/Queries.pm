@@ -5500,6 +5500,7 @@ sub imageTitlesQuery {
 		
 		while ( $sth->fetch ) {
 			utf8::decode( $c->{'images.title'} ) if exists $c->{'images.title'};
+			utf8::decode( $c->{'images.album'} ) if exists $c->{'images.album'};
 			
 			if ( $sort ne 'new' ) {
 				utf8::decode( $c->{'images.titlesort'} ) if exists $c->{'images.titlesort'};
