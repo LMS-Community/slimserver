@@ -950,27 +950,9 @@ sub _queryToDIDLLite {
 			 	. '</item>';
 		}
 	}
-	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ ) {
+	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ 
+		|| ($cmd =~ /^image_titles.*albums:/ && $cmd !~ /search:/) ) {
 
-		my ($tlId) = $cmd =~ m{search:([\-\d]+)};
-		my ($year, $month, $day) = split('/', $tlId);
-
-		for my $image ( @{ $results->{images_loop} || [] } ) {
-			$count++;			
-			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});
-			my $parent = $id;
-			
-			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
-				 # XXX
-			}
-			
-			$xml .= qq{<container id="${vid}" parentID="${parent}" restricted="1">}
-				. '<upnp:class>object.container</upnp:class>'
-				. '<dc:title>' . xmlEscape($image->{title}) . '</dc:title>'
-			 	. '</container>';
-		}
-	}
-	elsif ( $cmd =~ /^image_titles.*albums:/ && $cmd !~ /search:/ ) {
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});
