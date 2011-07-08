@@ -5,7 +5,7 @@ package Slim::Plugin::UPnP::MediaServer::ContentDirectory;
 use strict;
 
 use I18N::LangTags qw(extract_language_tags);
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -561,7 +561,7 @@ sub Browse {
 			my ($albumId) = $id =~ m{^/il/(.+)};
 			
 			if ( $albumId ) {
-				$albumId = uri_escape($albumId);
+				$albumId = uri_escape_utf8($albumId);
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
 					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUl"

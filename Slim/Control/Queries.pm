@@ -5422,6 +5422,7 @@ sub imageTitlesQuery {
 		elsif ( $albums ) {
 			if ( $search ) {
 				$search = URI::Escape::uri_unescape($search);
+				utf8::decode($search);
 				
 				$c->{'images.album'} = 1;
 				push @{$w}, "images.album == ?";
