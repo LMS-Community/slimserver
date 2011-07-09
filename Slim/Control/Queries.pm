@@ -1546,14 +1546,17 @@ sub modeQuery {
 	$request->setStatusDone();
 }
 
-
 sub musicfolderQuery {
+	mediafolderQuery(@_);
+}
+
+sub mediafolderQuery {
 	my $request = shift;
 	
-	main::INFOLOG && $log->info("musicfolderQuery()");
+	main::INFOLOG && $log->info("mediafolderQuery()");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['musicfolder']])) {
+	if ($request->isNotQuery([['mediafolder']]) && $request->isNotQuery([['musicfolder']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1564,7 +1567,10 @@ sub musicfolderQuery {
 	my $folderId = $request->getParam('folder_id');
 	my $want_top = $request->getParam('return_top');
 	my $url      = $request->getParam('url');
+	my $type     = $request->getParam('type') || '';
 	my $tags     = $request->getParam('tags') || '';
+	
+	my $sql;		
 	
 	# url overrides any folderId
 	my $params = ();
@@ -1589,6 +1595,18 @@ sub musicfolderQuery {
 		}
 		elsif (scalar @$mediaDirs) {
 			$params->{'url'} = $mediaDirs->[0];
+		}
+
+		if ($type) {
+			$params->{typeRegEx} = Slim::Music::Info::validTypeExtensions($type);
+
+			# if we need the artwork, we'll have to look them up in their own tables for videos/images
+			if ($tags && $type eq 'image') {
+				$sql = 'SELECT * FROM images WHERE url = ?';
+			}
+			elsif ($tags && $type eq 'video') {
+				$sql = 'SELECT * FROM videos WHERE url = ?';
+			}
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
@@ -1629,6 +1647,8 @@ sub musicfolderQuery {
 
 		my $loopname = 'folder_loop';
 		my $chunkCount = 0;
+
+		my $sth = $sql ? Slim::Schema->dbh->prepare_cached($sql) : undef;
 
 		for my $filename (@$items[$start..$end]) {
 
@@ -1678,15 +1698,38 @@ sub musicfolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
 			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
+			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
+			
+				# only do this for images & videos where we'll need the hash for the artwork
+				if ($sth) {
+					$sth->execute($url);
+					
+					my $itemDetails = $sth->fetchrow_hashref;
+	
+					$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $itemDetails->{'mime_type'});
+					$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $itemDetails->{'filesize'});
+					$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $itemDetails->{'width'});
+					$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $itemDetails->{'height'});
+					$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $itemDetails->{'original_time'});
+					$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $itemDetails->{'added_time'});
+					$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $itemDetails->{'updated_time'});
+					$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $itemDetails->{'album'});
+					$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $itemDetails->{'hash'});
+				}
+				
 			} else {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 			}
 
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
+			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
 
 			$chunkCount++;
 		}
+		
+		$sth->finish() if $sth;
 	}
 
 	$request->addResult('count', $count);

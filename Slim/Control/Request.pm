@@ -525,7 +525,9 @@ sub init {
 	addDispatch(['mixer',          'volume',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'volume',         '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mode',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::modeQuery]);
+	# musicfolder is only here for backwards compatibility - it's calling mediafolder internally
 	addDispatch(['musicfolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::musicfolderQuery]);
+	addDispatch(['mediafolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::mediafolderQuery]);
 	addDispatch(['name',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::nameCommand]);
 	addDispatch(['name',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::nameQuery]);
 	addDispatch(['path',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);

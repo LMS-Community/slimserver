@@ -1014,7 +1014,7 @@ sub findAndScanDirectoryTree {
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ readDirectory($path) ];
+	my $items = [ readDirectory($path, $params->{typeRegEx}, $params->{excludeFile}) ];
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);

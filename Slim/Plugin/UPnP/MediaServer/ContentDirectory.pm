@@ -228,6 +228,8 @@ sub Browse {
 	#       Photo 1 (/id/2011/07/03/<id>)                      image_titles image_id:<id>
 	#   Albums (/il)                                           image_titles albums:1
 	#     Album 1 (/il/<id>)                                   image_titles albums:1 search:<id>
+	#   Folders (/if)                                          image_titles folders:1
+	#     Folder 1 (/if/<id>)                                  image_titles folders:1 search:<id>
 	#   By Year (/it)                                          image_titles timeline:years
 	#     2011 (/it/2011)                                      image_titles timeline:months search:2011
 	#       07 (/it/2011/07)                                   image_titles timeline:days search:2011-07
@@ -311,12 +313,13 @@ sub Browse {
 			limit  => $limit,
 		} );
 	}
-	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:ia|id|it|il)$}) ) { # Image menu
+	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:ia|id|it|il|if)$}) ) { # Image menu
 		my $type = 'object.container';
 		my $menu = [
 			{ id => '/il', parentID => '/images', type => $type, title => $string->('ALBUMS') },
 			{ id => '/it', parentID => '/images', type => $type, title => $string->('YEAR') },
 			{ id => '/id', parentID => '/images', type => $type, title => $string->('DATE') },
+			{ id => '/if', parentID => '/images', type => $type, title => $string->('FOLDERS') },
 			{ id => '/ia', parentID => '/images', type => $type, title => $string->('BROWSE_ALL_PICTURES') },
 		];
 		
@@ -554,6 +557,20 @@ sub Browse {
 			}
 			else {
 				$cmd = "image_titles $start $limit tags:ofwhtnDUl";
+			}
+		}
+		
+		elsif ( $id =~ m{^/if} ) {      # folders
+			my ($folderId) = $id =~ m{^/if/(.+)};
+
+			if ( $folderId ) {
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlJ"
+					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlJ";
+			}
+			
+			elsif ( $id eq '/if' ) {
+				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlJ";
 			}
 		}
 		
@@ -948,6 +965,35 @@ sub _queryToDIDLLite {
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
 			 	. videoDetails($video, $filter)
 			 	. '</item>';
+		}
+	}
+	# mediafolder query is being used by images and videos
+	elsif ( $cmd =~ /^mediafolder.*type:(?:image|video)/ ) {
+		
+		for my $item ( @{ $results->{folder_loop} || [] } ) {
+			$count++;
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
+				 # XXX
+			}
+			
+			my $type = $item->{type};
+			
+			if ( $type eq 'folder' || $type eq 'unknown' ) {
+				my $fid = $flag eq 'BrowseMetadata' ? $id : '/if/' . $item->{id};
+				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
+					. '<upnp:class>object.container.storageFolder</upnp:class>'
+					. '<dc:title>' . xmlEscape($item->{filename}) . '</dc:title>'
+					. '</container>';
+			}
+			elsif ( $type eq 'image' ) {
+				$item->{id} = $item->{hash};
+				my $fid = $flag eq 'BrowseMetadata' ? '/ia' : '/ia/' . $item->{id};
+				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
+				 	. imageDetails($item, $filter)
+				 	. '</item>';
+			}
 		}
 	}
 	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ 
