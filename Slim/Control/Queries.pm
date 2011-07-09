@@ -1607,17 +1607,6 @@ sub musicfolderQuery {
 	my $topPath = $topLevelObj->path;
 
 	# now build the result
-
-	my $playalbum;
-	if ( $request->client ) {
-		$playalbum = $prefs->client($request->client)->get('playtrackalbum');
-	}
-
-	# if player pref for playtrack album is not set, get the old server pref.
-	if ( !defined $playalbum ) { 
-		$playalbum = $prefs->get('playtrackalbum'); 
-	}
-
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
