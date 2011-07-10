@@ -1706,16 +1706,25 @@ sub mediafolderQuery {
 					$sth->execute($url);
 					
 					my $itemDetails = $sth->fetchrow_hashref;
+					
+					if ($type eq 'video') {
+						while ( my ($k, $v) = each(%$itemDetails) ) {
+							$itemDetails->{"videos.$k"} = $v if $k !~ /^videos\./;
+						}
+						
+						_videoData($request, $loopname, $chunkCount, $tags, $itemDetails);
+					}
+					
+					elsif ($type eq 'image') {
+						utf8::decode( $itemDetails->{'images.title'} ) if exists $itemDetails->{'images.title'};
+						utf8::decode( $itemDetails->{'images.album'} ) if exists $itemDetails->{'images.album'};
+
+						while ( my ($k, $v) = each(%$itemDetails) ) {
+							$itemDetails->{"images.$k"} = $v if $k !~ /^images\./;
+						}
+						_imageData($request, $loopname, $chunkCount, $tags, $itemDetails);
+					}
 	
-					$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $itemDetails->{'mime_type'});
-					$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $itemDetails->{'filesize'});
-					$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $itemDetails->{'width'});
-					$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $itemDetails->{'height'});
-					$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $itemDetails->{'original_time'});
-					$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $itemDetails->{'added_time'});
-					$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $itemDetails->{'updated_time'});
-					$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $itemDetails->{'album'});
-					$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $itemDetails->{'hash'});
 				}
 				
 			} else {
@@ -5315,25 +5324,14 @@ sub videoTitlesQuery {
 		}
 		
 		while ( $sth->fetch ) {
-			utf8::decode( $c->{'videos.title'} ) if exists $c->{'videos.title'};
-			
 			if ( $sort ne 'new' ) {
 				utf8::decode( $c->{'videos.titlesort'} ) if exists $c->{'videos.titlesort'};
 			}
 
 			# "raw" result formatting (for CLI or JSON RPC)
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'videos.hash'});				
-			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'videos.title'});
-			$tags =~ /d/ && $request->addResultLoop($loopname, $chunkCount, 'duration', $c->{'videos.secs'});
-			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'videos.mime_type'});
-			$tags =~ /r/ && $request->addResultLoop($loopname, $chunkCount, 'bitrate', $c->{'videos.bitrate'} / 1000);
-			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'videos.filesize'});
-			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
-			$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
-			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
-			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
-			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
-			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
+
+			_videoData($request, $loopname, $chunkCount, $tags, $c);
 		
 			$chunkCount++;
 			
@@ -5344,6 +5342,26 @@ sub videoTitlesQuery {
 	$request->addResult('count', $totalCount);
 	
 	$request->setStatusDone();
+}
+
+sub _videoData {
+	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
+
+	utf8::decode( $c->{'videos.title'} ) if exists $c->{'videos.title'};
+	utf8::decode( $c->{'videos.album'} ) if exists $c->{'videos.album'};
+
+	$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'videos.title'});
+	$tags =~ /d/ && $request->addResultLoop($loopname, $chunkCount, 'duration', $c->{'videos.secs'});
+	$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'videos.mime_type'});
+	$tags =~ /r/ && $request->addResultLoop($loopname, $chunkCount, 'bitrate', $c->{'videos.bitrate'} / 1000);
+	$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'videos.filesize'});
+	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
+	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
+	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
+	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
+	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
+	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
+	$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $c->{'videos.hash'});
 }
 
 # XXX needs to be more like titlesQuery, was originally copied from albumsQuery
@@ -5567,21 +5585,11 @@ sub imageTitlesQuery {
 			}
 
 			# "raw" result formatting (for CLI or JSON RPC)
-			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{$id_col});				
-			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{$title_col});
-			$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'images.mime_type'});
-			$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
-			$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
-			$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
-			$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $c->{'images.original_time'});
-			$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
-			$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
-			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{$id_col});
+							
+			$c->{title} = $c->{$title_col};
 			
-			# browsing images by timeline Year -> Month -> Day
-			$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
-			$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
-			$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
+			_imageData($request, $loopname, $chunkCount, $tags, $c);
 			
 			$chunkCount++;
 			
@@ -5593,6 +5601,28 @@ sub imageTitlesQuery {
 	
 	$request->setStatusDone();
 }
+
+
+sub _imageData {
+	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
+
+	$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'title'});
+	$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'images.mime_type'});
+	$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
+	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
+	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
+	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $c->{'images.original_time'});
+	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
+	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
+	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});
+	$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $c->{'images.hash'});
+			
+	# browsing images by timeline Year -> Month -> Day
+	$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
+	$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
+	$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
+}
+
 
 =head1 SEE ALSO
 

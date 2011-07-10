@@ -216,7 +216,8 @@ sub Browse {
 	# Video (/video)
 	# -----
 	# Browse Video Folder (/v)
-	#   Video Folder (/v/<hash>/v)
+	#   Video Folder (/vf)
+	#     Folder 1 (/vf/id)
 	#   All Videos (/va)                                       videos
 	#     Video 1 (/va/<hash>)                                 video_titles video_hash:<hash>
 	
@@ -293,10 +294,10 @@ sub Browse {
 			limit  => $limit,
 		} );
 	}
-	elsif ( $id eq '/video' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:v|va)$}) ) { # Video menu
+	elsif ( $id eq '/video' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:vf|va)$}) ) { # Video menu
 		my $type = 'object.container';
 		my $menu = [
-			{ id => '/v', parentID => '/video', type => $type, title => $string->('BROWSE_VIDEO_FOLDER') },
+			{ id => '/vf', parentID => '/video', type => $type, title => $string->('BROWSE_VIDEO_FOLDER') },
 			{ id => '/va', parentID => '/video', type => $type, title => $string->('BROWSE_ALL_VIDEOS') },
 		];
 		
@@ -545,6 +546,20 @@ sub Browse {
 			}
 			else {
 				$cmd = "video_titles $start $limit tags:dorfcwhtnDUl";
+			}
+		}
+		
+		elsif ( $id =~ m{^/vf} ) {      # folders
+			my ($folderId) = $id =~ m{^/vf/(.+)};
+
+			if ( $folderId ) {
+				$cmd = $flag eq 'BrowseDirectChildren'
+					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJ"
+					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJ";
+			}
+			
+			elsif ( $id eq '/vf' ) {
+				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJ";
 			}
 		}
 		
@@ -968,7 +983,35 @@ sub _queryToDIDLLite {
 		}
 	}
 	# mediafolder query is being used by images and videos
-	elsif ( $cmd =~ /^mediafolder.*type:(?:image|video)/ ) {
+	elsif ( $cmd =~ /^mediafolder.*type:video/ ) {
+		
+		for my $item ( @{ $results->{folder_loop} || [] } ) {
+			$count++;
+			my $parent = $id;
+			
+			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
+				 # XXX
+			}
+			
+			my $type = $item->{type};
+			
+			if ( $type eq 'folder' || $type eq 'unknown' ) {
+				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . $item->{id};
+				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
+					. '<upnp:class>object.container.storageFolder</upnp:class>'
+					. '<dc:title>' . xmlEscape($item->{filename}) . '</dc:title>'
+					. '</container>';
+			}
+			elsif ( $type eq 'video' ) {
+				$item->{id} = $item->{hash};
+				my $fid = $flag eq 'BrowseMetadata' ? '/va' : '/va/' . $item->{hash};
+				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
+				 	. videoDetails($item, $filter)
+				 	. '</item>';
+			}
+		}
+	}
+	elsif ( $cmd =~ /^mediafolder.*type:image/ ) {
 		
 		for my $item ( @{ $results->{folder_loop} || [] } ) {
 			$count++;
