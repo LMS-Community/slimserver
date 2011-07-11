@@ -996,7 +996,6 @@ sub _queryToDIDLLite {
 			}
 			
 			my $type = $item->{type};
-	warn Data::Dump::dump($item);
 			
 			if ( $type eq 'folder' || $type eq 'unknown' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . $item->{id};
