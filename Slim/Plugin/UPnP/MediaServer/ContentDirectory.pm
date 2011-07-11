@@ -492,19 +492,21 @@ sub Browse {
 			}
 		}
 		elsif ( $id =~ m{^/m} ) {
-			if ( $id =~ m{/t/(\d+)$} ) {
+			if ( $id =~ m{/m/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
 					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
+				my $fid = $1;
+				
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "musicfolder $start $limit folder_id:$1"
-					: "musicfolder 0 1 folder_id:$1 return_top:1";
+					? "musicfolder $start $limit folder_id:$fid"
+					: "musicfolder 0 1 folder_id:$fid return_top:1";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -994,6 +996,7 @@ sub _queryToDIDLLite {
 			}
 			
 			my $type = $item->{type};
+	warn Data::Dump::dump($item);
 			
 			if ( $type eq 'folder' || $type eq 'unknown' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . $item->{id};
