@@ -1675,12 +1675,17 @@ sub mediafolderQuery {
 				'readTags' => 1,
 			});
 	
-			if (!blessed($item) || !$item->can('content_type')) {
-	
+			my $id;
+
+			if ( (!blessed($item) || !$item->can('content_type')) 
+				&& (!$params->{typeRegEx} || $filename !~ $params->{typeRegEx}) )
+			{
 				next;
 			}
+			elsif (blessed($item)) {
+				$id = $item->id();
+			}
 
-			my $id = $item->id();
 			$id += 0;
 			
 			$realName ||= Slim::Music::Info::fileName($url);
