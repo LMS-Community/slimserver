@@ -1694,10 +1694,6 @@ sub mediafolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} elsif (Slim::Music::Info::isPlaylist($item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
-			} elsif (Slim::Music::Info::isSong($item)) {
-				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
-			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
-				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
 			
@@ -1727,6 +1723,10 @@ sub mediafolderQuery {
 	
 				}
 				
+			} elsif (Slim::Music::Info::isSong($item) && $type ne 'video') {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
+			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} else {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 			}
