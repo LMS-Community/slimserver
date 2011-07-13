@@ -2879,7 +2879,9 @@ sub wipecacheCommand {
 		
 		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 			# Wipe/rescan in-process on SqueezeOS
-			my $dir = Slim::Utils::Misc::getAudioDir();
+
+			# XXX - for the time being we're going to assume that the embedded server will only handle one folder
+			my $dir = Slim::Utils::Misc::getMediaDirs()->[0];
 			
 			my %args = (
 				types    => 'list|audio',
