@@ -679,14 +679,33 @@ sub getMediaDirs {
 	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get('mediadirs') || [''] } ];
 }
 
+=head2 inMediaFolder( $)
+
+	Check if argument is an item contained in one of the media folder trees
+
+=cut
+
+sub inMediaFolder {
+	my $path = shift;
+	my $mediadirs = getMediaDirs();
+	
+	foreach { @$mediadirs } {
+		return 1 if _checkInFolder($path, $_); 
+	}
+	
+	return 0;
+}
+
 =head2 inAudioFolder( $)
 
 	Check if argument is an item contained in the music folder tree
 
 =cut
 
+# XXX - is this function even used any more? Can't find any caller...
 sub inAudioFolder {
-	return _checkInFolder(shift, getAudioDir());
+	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead')
+	return inMediaFolder(shift);
 }
 
 =head2 inPlaylistFolder( $)
@@ -698,12 +717,6 @@ sub inAudioFolder {
 sub inPlaylistFolder {
 	return _checkInFolder(shift, getPlaylistDir());
 }
-
-=head2 inVideoFolder( $)
-
-	Check if argument is an item contained in the video tree
-
-=cut
 
 sub _checkInFolder {
 	my $path = shift || return;
