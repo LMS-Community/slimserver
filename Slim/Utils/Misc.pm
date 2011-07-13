@@ -689,7 +689,7 @@ sub inMediaFolder {
 	my $path = shift;
 	my $mediadirs = getMediaDirs();
 	
-	foreach { @$mediadirs } {
+	foreach ( @$mediadirs ) {
 		return 1 if _checkInFolder($path, $_); 
 	}
 	
@@ -704,7 +704,7 @@ sub inMediaFolder {
 
 # XXX - is this function even used any more? Can't find any caller...
 sub inAudioFolder {
-	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead')
+	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead');
 	return inMediaFolder(shift);
 }
 
