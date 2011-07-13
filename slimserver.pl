@@ -1033,12 +1033,17 @@ sub changeEffectiveUserAndGroup {
 
 sub checkDataSource {
 
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
+	my $modified = 0;
 
-	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
-		$audiodir =~ s|[/\\]$||;
-		$prefs->set('audiodir',$audiodir);
+	foreach my $audiodir (@$mediadirs) {
+		if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
+			$audiodir =~ s|[/\\]$||;
+			$modified++;
+		}
 	}
+
+	$prefs->set('mediadirs', $mediadirs) if $modified;
 
 	return if !Slim::Schema::hasLibrary();
 	
