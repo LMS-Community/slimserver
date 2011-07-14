@@ -83,7 +83,7 @@ PLUGIN_DEEZER_NO_NEXT_TRACK
 	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
-	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
 	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
