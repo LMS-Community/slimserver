@@ -10519,7 +10519,7 @@ NONE
 	DA	Ingen
 	DE	Keine
 	EN	None
-	ES	No
+	ES	Ninguno
 	FI	Ei mitään
 	FR	Aucun
 	HE	ללא
@@ -14613,7 +14613,7 @@ BY
 	HE	לפי
 	IT	di
 	JA	による
-	NL	door
+	NL	van
 	NO	av
 	PL	przez
 	PT	de
@@ -18781,7 +18781,7 @@ SETUP_PRIORITY_NORMAL
 	HE	רגילה
 	IT	Normale
 	NL	Normaal
-	NO	Standard
+	NO	Normal
 	PL	Zwykły
 	RU	Обычный
 	SV	Normal

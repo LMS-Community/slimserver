@@ -346,7 +346,7 @@ PLUGIN_EXTENSIONS_OTHERREPO_DESC
 PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	CS	Vezměte prosím na vědomí, že zásuvné moduly třetích stran nejsou podporovány společností Logitech a měly by být používány na vaše vlastní riziko. Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
 	DA	Bemærk at Logitech ikke yder support til udvidelsesmoduler fra tredjepart, og disse bruges på eget ansvar. Hvis du har brug for support, må du kontakte dem som har lavet udvidelsesmodulet.
-	DE	Logitech-Produkte unterstützen keine Plugins anderer Hersteller. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr. Kontaktieren Sie den Kundendienst der Plugin-Hersteller.
+	DE	Logitech Produkte unterstützen keine Plugins anderer Hersteller. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr. Kontaktieren Sie den Kundendienst der Plugin-Hersteller.
 	EN	Please note that 3rd party plugins are unsupported by Logitech and should be used at your own risk.  Please contact plugin authors for support.
 	ES	Tenga en cuenta que Logitech no admite complementos de terceros; usted los utiliza por su cuenta y riesgo. Para obtener ayuda, póngase en contacto con los autores de los complementos.
 	FI	Ota huomioon, että Logitech ei tue muiden osapuolten valmistamia laajennuksia. Kyseisiä laajennuksia käytetään omalla vastuulla. Ota yhteys laajennusten valmistajiin tuen saamiseksi.
@@ -394,7 +394,7 @@ PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
 	CS	Rozšíření Logitech
 	DA	Logitech-udvidelser
-	DE	Logitech-Erweiterungen
+	DE	Logitech Erweiterungen
 	EN	Logitech Extensions
 	ES	Extensiones Logitech
 	FI	Logitechin laajennukset

@@ -23,7 +23,7 @@ APP_CATEGORY_FEATURED
 	FR	Applications proposées
 	IT	Applicazioni esaminate
 	NL	Beschikbare toep.
-	NO	Anbefalte applikasjoner
+	NO	Anbefalte tjenester
 	PL	Polecane aplikacje
 	RU	Тематические приложения
 	SV	Tillgängliga program
