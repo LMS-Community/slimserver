@@ -20531,7 +20531,7 @@ DISCOVERING_FILES_PROGRESS
 	CS	Vyhledávání souborů
 	DA	Søger efter filer
 	DE	Dateien werden erkannt
-	EN	Discovering files
+	EN	Discovering music files
 	ES	Detectando archivos
 	FI	Etsitään tiedostoja
 	FR	Détection des fichiers
@@ -20591,7 +20591,7 @@ DIRECTORY_NEW_PROGRESS
 	CS	Vyhledávání nových souborů
 	DA	Scanner nye filer
 	DE	Neue Dateien werden durchsucht
-	EN	Scanning new files
+	EN	Scanning new music files
 	ES	Examinando archivos nuevos
 	FI	Tarkistetaan uudet tiedostot
 	FR	Analyse des nouveaux fichiers
@@ -20606,7 +20606,7 @@ DIRECTORY_MEDIA_PROGRESS
 	CS	Prohledat nové soubory
 	DA	Søg efter nye filer
 	DE	Neue Dateien durchsuchen
-	EN	Scanning new files
+	EN	Scanning new media files
 	ES	Examinando archivos nuevos
 	FI	Tarkistetaan uudet tiedostot
 	FR	Analyse des nouveaux fichiers
