@@ -569,11 +569,11 @@ sub Browse {
 		elsif ( $id =~ m{^/ia} ) { # All Images
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUl"
-					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUl";
+					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlO"
+					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlO";
 			}
 			else {
-				$cmd = "image_titles $start $limit tags:ofwhtnDUl";
+				$cmd = "image_titles $start $limit tags:ofwhtnDUlO";
 			}
 		}
 		
@@ -582,12 +582,12 @@ sub Browse {
 
 			if ( $folderId ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlJ"
-					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlJ";
+					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJ"
+					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJ";
 			}
 			
 			elsif ( $id eq '/if' ) {
-				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlJ";
+				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJ";
 			}
 		}
 		
@@ -598,7 +598,7 @@ sub Browse {
 				$albumId = uri_escape_utf8($albumId);
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUl"
+					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlO"
 					: "image_titles 0 1 albums:1";
 			}
 			
@@ -614,14 +614,14 @@ sub Browse {
 		
 			if ( $pic ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUl"
-					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUl";
+					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlO"
+					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlO";
 			}
 
 			# if we've got a full date, show pictures
 			elsif ( $year && $month && $day ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUl"
+					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlO"
 					: "image_titles 0 1 timeline:days search:$year-$month";
 			}
 
@@ -714,8 +714,16 @@ sub Search {
 	my ($sortsql, $stags) = _decodeSortCriteria($sort, $table);
 	$tags .= $stags;
 	
-	# Avoid 'A' and 'G' tags because they will run extra queries
-	$tags .= 'agldyorfTIctnDU';
+	if ($cmd eq 'image_titles') {
+		$tags .= 'ofwhtnDUlO';
+	}
+	elsif ($cmd eq 'video_titles') {
+		$tags .= 'dorfcwhtnDUl';
+	}
+	else {
+		# Avoid 'A' and 'G' tags because they will run extra queries
+		$tags .= 'agldyorfTIctnDU';
+	}
 	
 	if ( $sort && !$sortsql ) {
 		return [ 708 => 'Unsupported or invalid sort criteria' ];
