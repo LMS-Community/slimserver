@@ -5515,6 +5515,7 @@ sub imageTitlesQuery {
 	$tags =~ /f/ && do { $c->{'images.filesize'} = 1 };
 	$tags =~ /w/ && do { $c->{'images.width'} = 1 };
 	$tags =~ /h/ && do { $c->{'images.height'} = 1 };
+	$tags =~ /O/ && do { $c->{'images.orientation'} = 1 };
 	$tags =~ /n/ && do { $c->{'images.original_time'} = 1 };
 	$tags =~ /D/ && do { $c->{'images.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'images.updated_time'} = 1 };
@@ -5616,6 +5617,7 @@ sub _imageData {
 	$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
 	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
 	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
+	$tags =~ /O/ && $request->addResultLoop($loopname, $chunkCount, 'orientation', $c->{'images.orientation'});
 	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $c->{'images.original_time'});
 	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
 	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});

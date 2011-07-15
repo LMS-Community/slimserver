@@ -9,14 +9,23 @@ use Slim::Utils::Misc;
 
 # XXX DBIx::Class stuff needed?
 
+my %orientation = (
+	'top-left' =>     0,
+	'top-right' =>    1,
+	'bottom-right' => 2,
+	'bottom-left' =>  3,
+	'left-top' =>     4,
+	'right-top' =>    5,
+	'right-bottom' => 6,
+	'left-bottom' =>  7,
+);
+
 sub updateOrCreateFromResult {
 	my ( $class, $result ) = @_;
 	
 	my $id;
 	my $url = Slim::Utils::Misc::fileURLFromPath($result->path);
 	
-#Slim::Utils::Log::logError(Data::Dump::dump($result->tags));
-
 	my $exifData = $result->tags;
 
 	# Create title and album from path (if not in EXIF data)
@@ -50,6 +59,7 @@ sub updateOrCreateFromResult {
 		updated_time => $now,
 		original_time=> $creationDate ? str2time($creationDate) : $result->mtime,
 		filesize     => $result->size,
+		orientation  => $orientation{ lc($exifData->{Orientation} || '') } || 0,
 	};
 	
 	my $sth = Slim::Schema->dbh->prepare_cached('SELECT id FROM images WHERE url = ?');

@@ -142,6 +142,21 @@ sub artworkRequest {
 		main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
 	}
 	
+	# image request
+	elsif ( $path =~ m{^image/([0-9a-f]{8})/} ) {
+		my $id = $1;
+		
+		my $sth = Slim::Schema->dbh->prepare_cached( qq{
+			SELECT url FROM images WHERE hash = ?
+		} );
+		
+		$sth->execute($id);
+		my ($url) = $sth->fetchrow_array;
+		$sth->finish;
+		
+		$fullpath = Slim::Utils::Misc::pathFromFileURL($url) if $url;
+	}
+
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
 	elsif ( $path =~ m{^music/([^/]+)/} ) {

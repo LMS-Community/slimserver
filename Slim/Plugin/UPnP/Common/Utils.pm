@@ -13,6 +13,8 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use POSIX qw(strftime);
+use List::Util qw(min);
+
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -378,7 +380,17 @@ sub imageDetails {
 			$xml .= ' resolution="' . $image->{width} . 'x' . $image->{height} . '"';
 		}
 	
-		$xml .= '>' . absURL("/image/${hash}/download") . '</res>';
+		# if the image isn't default landscape mode, send it through the resizer to fix the orientation
+		if ( $image->{orientation} && ($image->{width} || $image->{height}) ) {
+			# XXX - PlugPlayer fails to display full size rotated images?
+			# limiting to full HD resolution for now, speeding up rendering considerably
+			my $maxSize = min(1920, ($image->{width} || 9999), ($image->{height} || 9999));
+			
+			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o") . '</res>';
+		}
+		else {
+			$xml .= '>' . absURL("/image/${hash}/download") . '</res>';
+		}
 	}
 	
 	return $xml;
