@@ -59,7 +59,7 @@ sub updateOrCreateFromResult {
 		updated_time => $now,
 		original_time=> $creationDate ? str2time($creationDate) : $result->mtime,
 		filesize     => $result->size,
-		orientation  => $orientation{ lc($exifData->{Orientation} || '') } || 0,
+		orientation  => $orientation{ lc($exifData->{Orientation} || '') } || 0,
 	};
 	
 	my $sth = Slim::Schema->dbh->prepare_cached('SELECT id FROM images WHERE url = ?');
