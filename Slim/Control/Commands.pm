@@ -2504,18 +2504,16 @@ sub rescanCommand {
 		Slim::Utils::Scanner::LMS->rescan( $dirs, {
 			scanName => 'directory',
 			progress => 1,
+			onFinished => sub {
+				# XXX until libmediascan supports audio, run the audio scanner now
+				Slim::Utils::Scanner::Local->rescan( $dirs, {
+					types    => 'list|audio',
+					scanName => 'directory',
+					progress => 1,
+				} );
+			}
 		} );
 		
-		# XXX until libmediascan supports audio, run the audio scanner now
-		for my $dir ( @{$dirs} ) {
-			main::INFOLOG && $log->info("Starting audio-only scan in: $dir");
-
-			Slim::Utils::Scanner::Local->rescan( $dir, {
-				types    => 'list|audio',
-				scanName => 'directory',
-				progress => 1,
-			} );
-		}
 	}
 
 	$request->setStatusDone();

@@ -69,7 +69,15 @@ sub rescan {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Rescanning " . join(", ", @{$paths}) );
 	
 	if ( !main::SCANNER ) {
-		Slim::Music::Import->setIsScanning(1);
+		my $type = 'SETUP_STANDARDRESCAN';
+		if ( $args->{wipe} ) {
+			$type = 'SETUP_WIPEDB';
+		}
+		elsif ( $args->{types} eq 'list' ) {
+			$type = 'SETUP_PLAYLISTRESCAN';
+		}
+		
+		Slim::Music::Import->setIsScanning($type);
 	}
 	
 	#$pending{$next} = 0;
@@ -181,6 +189,10 @@ sub rescan {
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 			}
 			
+			if ( $args->{onFinished}) {
+				$args->{onFinished}->();
+			}
+
 			# Stop async watcher
 			undef $watcher;
 		},
