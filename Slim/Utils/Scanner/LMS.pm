@@ -137,8 +137,9 @@ sub rescan {
 				if ( $p->cur_item ) {
 					$progress->update( $p->cur_item, $p->done );
 				}
-				else {
-					$progress->final;
+				
+				if ($p->total && $p->done && $p->done == $p->total) {
+					$progress->final($p->total);
 				}
 			}
 		},
