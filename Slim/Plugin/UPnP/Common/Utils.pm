@@ -379,12 +379,15 @@ sub imageDetails {
 		if ( ($filterall || $filter =~ /res\@resolution/) ) {
 			$xml .= ' resolution="' . $image->{width} . 'x' . $image->{height} . '"';
 		}
+		
+		my $maxSize = $prefs->get('maxUPnPImageSize');
 	
 		# if the image isn't default landscape mode, send it through the resizer to fix the orientation
-		if ( $image->{orientation} && ($image->{width} || $image->{height}) ) {
+		if ( $maxSize || ($image->{orientation} && ($image->{width} || $image->{height})) ) {
 			# XXX - PlugPlayer fails to display full size rotated images?
 			# limiting to full HD resolution for now, speeding up rendering considerably
-			my $maxSize = min(1920, ($image->{width} || 9999), ($image->{height} || 9999));
+			# XXX - don't use image's exact width/height, as this would cause the resizer to short-circuit without rotating the image first...
+			my $maxSize = min($maxSize || 9999, ($image->{width} || 9999) - 1, ($image->{height} || 9999) - 1);
 			
 			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o") . '</res>';
 		}

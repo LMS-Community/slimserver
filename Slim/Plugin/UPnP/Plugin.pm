@@ -16,6 +16,9 @@ use Slim::Plugin::UPnP::MediaRenderer;
 use Slim::Plugin::UPnP::MediaServer;
 use Slim::Plugin::UPnP::SOAPServer;
 
+use Slim::Utils::Prefs;
+my $prefs = preferences('server');
+
 use Slim::Utils::Log;
 
 my $log = Slim::Utils::Log->addLogCategory( {
@@ -26,6 +29,10 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub initPlugin {
 	my $class = shift;
+	
+	if ( !defined $prefs->get('maxUPnPImageSize')) {
+		$prefs->set('maxUPnPImageSize', 1920);
+	}
 	
 	# Core UPnP function
 	Slim::Plugin::UPnP::Discovery->init || return shutdownPlugin();
