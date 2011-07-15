@@ -129,23 +129,26 @@ sub rescan {
 		on_progress => sub {
 			if ($progress) {
 				my $p = shift;
+				my $total = $p->total;
 			
-				if ( $p->total && !$progress->total ) {
-					$progress->total( $p->total );
+				if ( $total && !$progress->total ) {
+					$progress->total( $total );
 				}
 			
 				if ( $p->cur_item ) {
 					$progress->update( $p->cur_item, $p->done );
 				}
 				
-				if ($p->total && $p->done && $p->done == $p->total) {
-					$progress->final($p->total);
+				if ($total && $p->done && $p->done == $total) {
+					$progress->final($total);
 				}
 			}
 		},
 		on_finish => sub {
 			my $stats = {};
 			#$changes = $stats->{change_count}; # XXX library should provide this?
+			
+			$progress && $progress->final;
 			
 			main::DEBUGLOG && $log->is_debug && $log->debug("Finished scanning");
 			
