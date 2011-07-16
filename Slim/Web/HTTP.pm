@@ -2648,7 +2648,6 @@ sub downloadMusicFile {
 					$out = AnyEvent::Handle->new(
 						fh         => $httpClient,
 						linger     => 0,
-						on_drain   => $writer,
 						timeout    => 300,
 						on_timeout => sub {
 							main::INFOLOG && $log->is_info && $log->info("Timing out transcoded download for $httpClient");
@@ -2662,6 +2661,10 @@ sub downloadMusicFile {
 							$writer->();
 						},						    
 					);
+					
+					# Bug 17212, Must add callback after object creation - references to $out within the $writer callback were
+					# failing when the on_drain callback was passed as a constructor argument
+					$out->on_drain($writer);
 				
 					return 1;
 				}

@@ -2407,7 +2407,7 @@ sub powerCommand {
 			$eachclient->power($newpower, 1) if $prefs->client($eachclient)->get('syncPower');
 			
 			# send an update for Jive player power menu
-			Slim::Control::Jive::playerPower($client);
+			Slim::Control::Jive::playerPower($eachclient);
 			
 		}
 	}
