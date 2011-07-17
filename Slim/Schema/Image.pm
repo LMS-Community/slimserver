@@ -40,7 +40,7 @@ sub updateOrCreateFromResult {
 	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
 	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
 	my $now = time();
-	my $creationDate = $exifData->{DateTimeOriginal} || $exifData->{DateTime};
+	my $creationDate = str2time($exifData->{DateTimeOriginal}) || str2time($exifData->{DateTime}) || $result->mtime || 0;
 	
 	my $hash = {
 		hash         => $result->hash,
@@ -57,7 +57,7 @@ sub updateOrCreateFromResult {
 		mtime        => $result->mtime,
 		added_time   => $now,
 		updated_time => $now,
-		original_time=> $creationDate ? str2time($creationDate) : $result->mtime,
+		original_time=> $creationDate,
 		filesize     => $result->size,
 		orientation  => $orientation{ lc($exifData->{Orientation} || '') } || 0,
 	};
