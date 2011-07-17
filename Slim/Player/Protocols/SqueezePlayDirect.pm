@@ -66,6 +66,11 @@ sub requestString {
 		$url .= "&start=" . encode_base64($newtime);
 	}
 
+	# add version so SqueezePlay client knows our capabilites to parse metadata
+	# version 0 (no version) - original 7.5 capability
+	# version 1 = ability to set title
+	$url .= "&ver=1";
+
 	return $url;
 }
 
