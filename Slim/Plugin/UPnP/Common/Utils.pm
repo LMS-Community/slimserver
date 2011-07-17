@@ -335,7 +335,9 @@ sub imageDetails {
 	$xml .= '<upnp:class>object.item.imageItem.photo</upnp:class>'
 		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
 		
-	if ( $image->{original_time}) {
+	if ( $image->{original_time} ) {
+		# XXX - Windows can't handle the negative timestamps? (issue 20902)
+		$image->{original_time} *= -1 if main::ISWINDOWS && $image->{original_time} < 0;
 		$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', localtime($image->{original_time})) ) . '</dc:date>'
 	}
 	
