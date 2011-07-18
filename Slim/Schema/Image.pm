@@ -29,7 +29,9 @@ sub updateOrCreateFromResult {
 	my $exifData = $result->tags;
 
 	# Create title and album from path (if not in EXIF data)
-	my $title = $exifData->{XPTitle} || $exifData->{ImageDescription};
+	my $title = Slim::Formats::XML::trim($exifData->{XPTitle})
+		|| Slim::Formats::XML::trim($exifData->{ImageDescription});
+		
 	my ($filename, $dirs, undef) = fileparse($result->path);
 	$title ||= $filename;
 	
