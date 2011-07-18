@@ -341,19 +341,6 @@ sub init {
 			$prefs->set('librarycachedir', $prefs->get('cachedir'));
 			1;
 		} );
-		
-		# Replace audiodir with mediadirs
-		# Not sure where 5 and 6 went...
-		$prefs->migrate( 7, sub {
-			my $audiodir = $prefs->get('audiodir');
-
-			$prefs->set( mediadirs => defaultMediaDirs({
-				music => $audiodir
-			}) );
-			
-			$prefs->remove('audiodir');
-			1;
-		} );
 
 		# on Windows we don't provide a means to disable the autoprefs value any longer
 		# disable automatic scanning automatically, in case user had been using an earlier beta where it was enabled
@@ -1014,11 +1001,18 @@ sub defaultLanguage {
 }
 
 sub defaultMediaDirs {
-	my $defaults = shift;
+	my $audiodir = $prefs->get('audiodir');
+
+	$prefs->remove('audiodir') if $audiodir;
 	
 	my @mediaDirs;
+	
+	# try to find the OS specific default folders for various media types
 	foreach my $medium ('music', 'videos', 'pictures') {
-		my $path = $defaults->{$medium} || Slim::Utils::OSDetect::dirsFor($medium);
+		my $path = $audiodir || Slim::Utils::OSDetect::dirsFor($medium);
+		
+		# we only use audiodir as the default path for music
+		$audiodir = undef;
 		
 		main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
 		
