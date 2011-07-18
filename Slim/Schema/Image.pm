@@ -5,6 +5,7 @@ use strict;
 use File::Basename;
 use Date::Parse qw(str2time);
 use Slim::Schema;
+use Slim::Formats::XML;
 use Slim::Utils::Misc;
 
 # XXX DBIx::Class stuff needed?
