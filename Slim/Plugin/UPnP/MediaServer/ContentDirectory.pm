@@ -133,7 +133,8 @@ sub Browse {
 	my $flag   = $args->{BrowseFlag};
 	my $filter = $args->{Filter};
 	my $start  = $args->{StartingIndex};
-	my $limit  = $args->{RequestedCount};
+	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
+	my $limit  = $args->{RequestedCount} || 200;
 	my $sort   = $args->{SortCriteria};
 	
 	my $cmd;
