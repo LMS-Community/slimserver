@@ -163,7 +163,7 @@ sub gotContainer {
 			my $infohref 
 				= 'href="' . $params->{webroot} 
 				. 'upnpinfo.html' . $args 
-				. '&metadata=1"';
+				. '&metadata=0"';
 			
 			push @{ $params->{browse_items} }, {
 				hierarchy   => $hier,
