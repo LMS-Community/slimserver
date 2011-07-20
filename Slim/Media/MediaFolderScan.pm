@@ -58,7 +58,7 @@ sub startScan {
 
 	my $changes = 0;
 
-	# get media folders without audio dirs	
+	# get media folders without audio dirs
 	$dirs = [ keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }} ];
 	
 	for my $dir ( @{$dirs} ) {
@@ -75,15 +75,17 @@ sub startScan {
 	main::INFOLOG && $log->info("Finished scan of media folder (changes: $changes).");
 	
 	# XXX until libmediascan supports audio, run the audio scanner now
-	for my $dir ( @{ Slim::Utils::Misc::getAudioDirs() } ) {
-		main::INFOLOG && $log->info("Starting audio-only scan in: $dir");
+	if ( $dirs = Slim::Utils::Misc::getAudioDirs() && scalar @{$dirs} ) {
+		main::INFOLOG && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
 		
-		$changes += Slim::Utils::Scanner::Local->rescan( $dir, {
+		my $c = Slim::Utils::Scanner::Local->rescan( $dirs, {
 			types    => 'audio',
 			scanName => 'directory',
 			no_async => 1,
 			progress => 1,
 		} );
+		
+		$changes += $c;
 	}
 
 	$class->stillScanning(0);
