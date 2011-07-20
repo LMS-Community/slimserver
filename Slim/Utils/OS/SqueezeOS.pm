@@ -130,10 +130,10 @@ sub postInitPrefs {
 	
 	_checkMediaAtStartup($prefs);
 	
-	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
+	$prefs->setChange( \&_onAudiodirChange, 'mediadirs', 'FIRST' );
 	$prefs->setChange( sub {
 		_updateLibraryname($prefs);
-	}, 'language', 'audiodir' );
+	}, 'language', 'mediadirs' );
 	$prefs->setChange( \&_onSNTimediffChange, 'sn_timediff');
 
 	if ( !main::SCANNER ) {
@@ -345,7 +345,7 @@ sub _setupMediaDir {
 			};
 		}
 		
-		$prefs->set( audiodir        => $path );
+		$prefs->set( mediadirs       => [ $path ] );
 		$prefs->set( librarycachedir => "$path/.Squeezebox/cache" );
 		
 		# Create a playlist dir if necessary
@@ -381,7 +381,7 @@ sub _onAudiodirChange {
 		} else {
 			# it is defined but not valid
 			warn "$audiodir cannot be used";
-			$prefs->set('audiodir', undef);
+			$prefs->set('mediadirs', []);
 		}
 	}
 }
@@ -414,7 +414,7 @@ sub _checkMediaAtStartup {
 	}
 	
 	# Something went wrong, don't use this audiodir
-	$prefs->set( audiodir => undef );
+	$prefs->set('mediadirs', []);
 }
 
 # Update system time if difference between system and SN time is bigger than 15 seconds
