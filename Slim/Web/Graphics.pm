@@ -167,7 +167,7 @@ sub artworkRequest {
 				require Slim::Utils::GDResizer;
 
 				my @arrSpec = split(',', $spec);
-				my ($width, $height, $mode, $bgcolor, $ext) = @arrSpec->[0] =~ /^(?:(\d+)x(\d+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+				my ($width, $height, $mode, $bgcolor, $ext) = $arrSpec->[0] =~ /^(?:(\d+)x(\d+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
 				my ($res, $format) = Slim::Utils::GDResizer->resize(
 					original => \$coverArtImage,
 					width    => $width,
