@@ -18,6 +18,21 @@ PLUGIN_PODCAST
 	RU	Подкасты
 	SV	Poddsändningar
 
+PODCAST_PLAYER
+	CS	Přehrávač pro Podcasty
+	DA	Podcastafspiller
+	DE	Podcast Player
+	EN	Podcast Player
+	ES	Reproductor de podcasts
+	FI	Podcast-soitin
+	FR	Lecteur de podcast
+	IT	Lettore podcast
+	NL	Podcast-speler
+	NO	Podkast-spiller
+	PL	Odtwarzacz podcastów
+	RU	Плеер подкастов
+	SV	Poddsändningsspelare
+
 PLUGIN_PODCAST_DESC
 	CS	Přístup k Podcasts
 	DA	Adgang til podcasts
