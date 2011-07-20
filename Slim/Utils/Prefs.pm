@@ -100,7 +100,7 @@ Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
 my $prefs = preferences('server');
 
 # File paths need to be prepared in order to correctly read the file system
-$prefs->setFilepaths(qw(mediadirs playlistdir cachedir librarycachedir coverArt));
+$prefs->setFilepaths(qw(mediadirs ignoreInAudioScan ignoreInVideoScan ignoreInImageScan playlistdir cachedir librarycachedir coverArt));
 
 
 =head2 preferences( $namespace )
@@ -193,6 +193,9 @@ sub init {
 		'disabledextensionsimages'   => '',
 		'disabledextensionsplaylist' => '',
 		'disabledformats'       => [],
+		'ignoreInAudioScan'     => [],
+		'ignoreInVideoScan'     => [],
+		'ignoreInImageScan'     => [],
 		# Server Settings - Networking
 		'webproxy'              => \&Slim::Utils::OSDetect::getProxy,
 		'httpport'              => 9000,
@@ -787,7 +790,7 @@ sub init {
 
 			return 1;
 		}
-	}, 'mediadirs');
+	}, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );

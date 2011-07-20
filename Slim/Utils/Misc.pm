@@ -653,8 +653,8 @@ sub getLibraryName {
 =cut
 
 sub getAudioDir {
-	logBacktrace("getAudioDir is deprecated, use getMediaDirs instead");
-	return getMediaDirs()->[0];
+	logBacktrace("getAudioDir is deprecated, use getAudioDirs instead");
+	return getAudioDirs()->[0];
 	
 	return Slim::Utils::Unicode::encode_locale($prefs->get('audiodir'));
 }
@@ -676,7 +676,37 @@ sub getPlaylistDir {
 =cut
 
 sub getMediaDirs {
-	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get('mediadirs') || [''] } ];
+	my $type = shift;
+	
+	my $mediadirs = getDirsPref('mediadirs');
+	
+	if ($type) {
+		my $ignoreList = { map { $_, 1 } @{ getDirsPref({
+			audio => 'ignoreInAudioScan',
+			video => 'ignoreInVideoScan',
+			image => 'ignoreInImageScan',
+		}->{$type}) } };
+		
+		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
+	}
+	
+	return $mediadirs
+}
+
+sub getAudioDirs {
+	return getMediaDirs('audio');
+}
+
+sub getVideoDirs {
+	return getMediaDirs('video');
+}
+
+sub getImageDirs {
+	return getMediaDirs('image');
+}
+
+sub getDirsPref {
+	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get($_[0]) || [''] } ];
 }
 
 =head2 inMediaFolder( $)

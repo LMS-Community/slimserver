@@ -152,7 +152,7 @@ sub read {
 		}
 		else {
 			# Check if the playlist entry is relative to audiodir
-			$mediadirs ||= Slim::Utils::Misc::getMediaDirs();
+			$mediadirs ||= Slim::Utils::Misc::getAudioDirs();
 			
 			foreach my $audiodir (@$mediadirs) {
 				$trackurl = Slim::Utils::Misc::fixPath($entry, $audiodir);

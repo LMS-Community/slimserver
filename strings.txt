@@ -6285,6 +6285,12 @@ SETUP_MEDIADIRS
 SETUP_MEDIADIRS_DESC
 	EN	You can specify one or more folders containing media files that Logitech Media Server will scan and add to your media library.  Enter the paths to the folder below.
 
+SETUP_MEDIADIRS_EXCLUSION_LIST
+	EN	Folders and Media Types
+
+SETUP_MEDIADIRS_EXCLUSION_LIST_DESC
+	EN	Define for every media folder what kind of media you want to use it for.
+
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
 	DA	Mappe med afspilningslister

@@ -226,7 +226,7 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
+	my $mediadirs = Slim::Utils::Misc::getAudioDirs();
 
 	if (scalar @{ $mediadirs }) {
 		foreach my $audiodir (@{ $mediadirs }) {

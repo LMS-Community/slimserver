@@ -100,6 +100,16 @@ sub rescan {
 		keys %{ Slim::Music::Info::disabledExtensions('video') },
 	];
 	
+	# if we're dealing with one folder only, filter out unwanted media types
+	# XXX - unfortunately we can only do this for single folders, as Media::Scan would apply the filter to all folders
+	if ( scalar @$paths == 1 ) {
+		my $mediafolder = $paths->[0];
+		
+		push @{$ignore}, 'VIDEO' if ( grep { $_ eq $mediafolder } @{ $prefs->get('ignoreInVideoScan') } );
+		push @{$ignore}, 'IMAGE' if ( grep { $_ eq $mediafolder } @{ $prefs->get('ignoreInImageScan') } );
+	}
+	
+	
 	# AnyEvent watcher for async scans
 	my $watcher;
 	

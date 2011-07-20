@@ -1574,7 +1574,7 @@ sub mediafolderQuery {
 	
 	# url overrides any folderId
 	my $params = ();
-	my $mediaDirs = Slim::Utils::Misc::getMediaDirs();
+	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
 	
 	my ($topLevelObj, $items, $count, $topPath);
 

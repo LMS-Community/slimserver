@@ -769,7 +769,7 @@ sub menuOptions {
 	MENU:
 	for my $menuOption (sort keys %home) {
 
-		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !scalar @{ Slim::Utils::Misc::getMediaDirs() }) {
+		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !scalar @{ Slim::Utils::Misc::getAudioDirs() }) {
 			next;
 		}
 

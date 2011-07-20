@@ -18,6 +18,26 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_MEDIADIRS_EXCLUSION_LIST" desc="SETUP_MEDIADIRS_EXCLUSION_LIST_DESC" %]
+		<br/>
+	[% END %]
+
+	<div class="settingSection">
+	<table border="0" cellspacing="0">
+		<tr><th>[% 'FOLDER' | string %]</th><th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th><th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th><th>[% 'VIDEO' | string %]</th></tr>
+
+		[% FOREACH mediadir = mediadirs %]
+			<tr>
+				<td class="[% odd ? "odd" : "even" %] firstColumn">[% mediadir.path %]</td>
+				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.audio %]checked="1" [% END %] class="stdedit" name="pref_ignoreInAudioScan[% loop.index %]" id="ignoreInAudioScan[% loop.index %]" value="1" /></td>
+				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.image %]checked="1" [% END %] class="stdedit" name="pref_ignoreInImageScan[% loop.index %]" id="ignoreInImageScan[% loop.index %]" value="1" /></td>
+				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" /></td>
+			</tr>
+		[% END %]
+		<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
+	</table>
+	</div>
+
 	[% WRAPPER setting title="SETUP_GROUP_FORMATS_CONVERSION" desc="SETUP_GROUP_FORMATS_CONVERSION_DESC" %]
 		<br/>
 	[% END %]

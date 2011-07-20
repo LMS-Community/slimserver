@@ -565,7 +565,7 @@ sub _registerBaseNodes {
 			feed         => \&_bmf,
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
-			condition    => sub {return Slim::Schema::hasLibrary && scalar @{ Slim::Utils::Misc::getMediaDirs() };},
+			condition    => sub {return Slim::Schema::hasLibrary && scalar @{ Slim::Utils::Misc::getAudioDirs() };},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 		},

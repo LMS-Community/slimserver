@@ -276,7 +276,7 @@ sub initPlugin {
 		# if this is the first time MIP is initialized, have it use
 		# - faster mixable status only scan (2) if a music folder is defined
 		# - slower full metadata import (1) if no music folder is defined
-		$prefs->set('musicip', scalar @{ Slim::Utils::Misc::getMediaDirs() } ? 2 : 1)  if !defined $enabled;
+		$prefs->set('musicip', scalar @{ Slim::Utils::Misc::getAudioDirs() } ? 2 : 1)  if !defined $enabled;
 
 		# this query should return an API error if Power Search is not available
 		$response = _syncHTTPRequest("/api/mix?filter=?length>120&length=1");
