@@ -212,8 +212,9 @@ sub gotContainer {
 	else {
 		$output = Slim::Web::HTTP::filltemplatefile( 'browsedb.html', $params );
 	}
-
 	$callback->( $client, $params, $output, $httpClient, $response );
+
 }
 
 1;
+
