@@ -2499,6 +2499,9 @@ sub rescanCommand {
 		}
 		
 		Slim::Utils::Progress->clear();
+		
+		# we only want to scan folders for video/pictures
+		@dirs = keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }};
 
 		# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
 		my $s;
