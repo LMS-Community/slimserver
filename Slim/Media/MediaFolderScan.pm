@@ -75,7 +75,7 @@ sub startScan {
 	main::INFOLOG && $log->info("Finished scan of media folder (changes: $changes).");
 	
 	# XXX until libmediascan supports audio, run the audio scanner now
-	if ( $dirs = Slim::Utils::Misc::getAudioDirs() && scalar @{$dirs} ) {
+	if ( ($dirs = Slim::Utils::Misc::getAudioDirs()) && scalar @{$dirs} ) {
 		main::INFOLOG && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
 		
 		my $c = Slim::Utils::Scanner::Local->rescan( $dirs, {
