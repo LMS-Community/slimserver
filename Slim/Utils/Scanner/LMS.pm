@@ -95,8 +95,10 @@ sub rescan {
 	# we need to udpate lastRescanTime
 	my $changes = 0;
 	
-	my $ignore = [];
-	# XXX Check for user-specified ignore types
+	my $ignore = [
+		keys %{ Slim::Music::Info::disabledExtensions('image') },
+		keys %{ Slim::Music::Info::disabledExtensions('video') },
+	];
 	
 	# AnyEvent watcher for async scans
 	my $watcher;

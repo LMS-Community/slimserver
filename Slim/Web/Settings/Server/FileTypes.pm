@@ -31,6 +31,8 @@ sub handler {
 	if ($paramRef->{'saveSettings'}) {
 
 		$prefs->set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
+		$prefs->set('disabledextensionsvideo',    $paramRef->{'disabledextensionsvideo'});
+		$prefs->set('disabledextensionsimages',   $paramRef->{'disabledextensionsimages'});
 		$prefs->set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
 
 		my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
@@ -117,6 +119,8 @@ sub handler {
 	$paramRef->{'formats'} = \@formats;
 
 	$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
+	$paramRef->{'disabledextensionsvideo'}  = $prefs->get('disabledextensionsvideo');
+	$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');
 	$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);

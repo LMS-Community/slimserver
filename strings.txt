@@ -4073,6 +4073,14 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	SV	Avaktiverade filtillägg för ljudfiler
 	ZH_CN	撤销音频文件扩展名
 
+SETUP_DISABLEDEXTENSIONSVIDEO
+	DE	Deaktivierte Video-Dateinamenerweiterungen
+	EN	Disabled Video File Extensions
+
+SETUP_DISABLEDEXTENSIONSIMAGES
+	DE	Deaktivierte Photo-Dateinamenerweiterungen
+	EN	Disabled Picture File Extensions
+
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	CS	Logitech Media Server vyhledá ve složce Hudba všechny podporované typy souborů (audio soubory a kompilační listy (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky Hudba, zadejte níže seznam přípon souborů oddělený čárkami. Například: cue, mp4, aac
 	DA	Logitech Media Server søger efter understøttede filtyper (lydfiler og afspilningslister) i mappen Musik. Hvis du vil forhindre at bestemte filtyper bliver behandlet når mappen bliver gennemsøgt, skal du angive filtypenavnene i en kommaadskilt liste nedenfor. For eksempel: cue, mp4, aac

@@ -189,6 +189,8 @@ sub init {
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
+		'disabledextensionsvideo'    => '',
+		'disabledextensionsimages'   => '',
 		'disabledextensionsplaylist' => '',
 		'disabledformats'       => [],
 		# Server Settings - Networking
