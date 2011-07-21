@@ -117,7 +117,7 @@ sub rescan {
 	if ( $args->{progress} ) {
 		$progress = Slim::Utils::Progress->new( {
 			type  => 'importer',
-			name  => $args->{scanName} . '_media',
+			name  => join(', ', @$paths) . '|' . $args->{scanName} . '_media',
 			bar	  => 1,
 		} );
 	}
