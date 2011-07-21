@@ -121,7 +121,7 @@ sub getFeedAsync {
 		'Icy-Metadata' => '',
 	);
 	
-	if ( main::SLIM_SERVICE && $url =~ /radiotime/ ) {
+	if ( main::SLIM_SERVICE && $url =~ /(?:radiotime|tunein\.com)/ ) {
 		# Add real client IP for Radiotime so they can do proper geo-location
 		$headers{'X-Forwarded-For'} = $params->{client}->ip;
 		
