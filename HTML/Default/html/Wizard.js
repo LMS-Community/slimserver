@@ -163,9 +163,9 @@ Wizard = {
 				},
 
 				audiodir_p: {
-					validator: function(){
-						this._validatePref('server', 'audiodir');
-					},
+					//validator: function(){
+					//	this._validatePref('server', 'audiodir');
+					//},
 
 					skip: function(){
 						return !this.useAudioDir;
