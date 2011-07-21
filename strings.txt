@@ -4085,7 +4085,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	CS	Logitech Media Server vyhledá ve složce Hudba všechny podporované typy souborů (audio soubory a kompilační listy (cue sheets)). Chcete-li zakázat zpracování některých typů souborů při prohledávání složky Hudba, zadejte níže seznam přípon souborů oddělený čárkami. Například: cue, mp4, aac
 	DA	Logitech Media Server søger efter understøttede filtyper (lydfiler og afspilningslister) i mappen Musik. Hvis du vil forhindre at bestemte filtyper bliver behandlet når mappen bliver gennemsøgt, skal du angive filtypenavnene i en kommaadskilt liste nedenfor. For eksempel: cue, mp4, aac
 	DE	Logitech Media Server durchsucht den Musikordner nach allen unterstützten Dateitypen (Audiodateien und Cue Sheets). Zum Deaktivieren bestimmter Dateitypen geben Sie unten eine durch Kommas getrennte Liste ein. Beispiel: cue, mp4, aac
-	EN	Logitech Media Server will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
+	EN	Logitech Media Server will look in the Media Folders for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	Logitech Media Server buscará en la carpeta de música todos los tipos de archivo compatibles (archivos de audio y archivos CUE). Para desactivar tipos de archivos específicos del proceso de examen de la carpeta de música, introduzca una lista separada por comas de extensiones de archivo a continuación. Por ejemplo: cue, mp4, aac
 	FI	Logitech Media Server etsii musiikkikansiosta kaikkia tuettuja tiedostotyyppejä (äänitiedostoja ja päivän ohjelmia). Jos haluat poistaa käytöstä tiettyjen tiedostotyyppien käsittelyn musiikkikansiohaun aikana, kirjoita alle pilkuilla erotettu luettelo tiedostotunnisteista, esim: cue, mp4, aac.
 	FR	Le Logitech Media Server recherche tous les types de fichiers audio et de cue sheets pris en charge dans le dossier de musique. Pour exclure un type de fichier audio de l'analyse, spécifiez une liste d'extensions séparées par une virgule ci-dessous. Exemple: cue, mp4, aac
@@ -4097,6 +4097,12 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	RU	Logitech Media Server выполняет в папке "Музыка" поиск всех поддерживаемых типов файлов (аудиофайлов и микрофонных материалов). Чтобы отключить обработку определенных типов файлов при сканировании папки "Музыка", введите список файловых расширений через запятую. Например: cue, mp4, aac
 	SV	Logitech Media Server söker igenom musikmappen efter alla filtyper som stöds (ljudfiler och cue-filer). Om du inte vill att alla filtyper ska bearbetas vid sökningen av musikmappen kan du ange filtilläggen för de filer som ska undantas nedan i en kommaavgränsad lista. Exempel: cue, mp4, aac
 	ZH_CN	Logitech Media Server会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
+
+SETUP_DISABLEDEXTENSIONSVIDEO_DESC
+	EN	The server will look in the Media Folders for all supported video file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: mov, mkv
+
+SETUP_DISABLEDEXTENSIONSIMAGES_DESC
+	EN	The server will look in the Media Folders for all supported picture file types. To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: bmp, gif
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	CS	Přípony souborů v seznamu skladeb nepovoleny
