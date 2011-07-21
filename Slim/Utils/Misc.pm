@@ -655,8 +655,6 @@ sub getLibraryName {
 sub getAudioDir {
 	logBacktrace("getAudioDir is deprecated, use getAudioDirs instead");
 	return getAudioDirs()->[0];
-	
-	return Slim::Utils::Unicode::encode_locale($prefs->get('audiodir'));
 }
 
 =head2 getPlaylistDir()
