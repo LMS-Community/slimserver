@@ -209,7 +209,7 @@ sub scanURL {
 		addWMAHeaders( $request );
 	}
 	
-	if ( main::SLIM_SERVICE && $url =~ /radiotime/ ) {
+	if ( main::SLIM_SERVICE && $url =~ /(?:radiotime|tunein\.com)/ ) {
 		# Add real client IP for Radiotime so they can do proper geo-location
 		$request->header( 'X-Forwarded-For' => $client->ip );
 	}

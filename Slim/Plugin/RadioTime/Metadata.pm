@@ -24,12 +24,12 @@ sub init {
 	my $class = shift;
 	
 	Slim::Formats::RemoteMetadata->registerParser(
-		match => qr/radiotime\.com/,
+		match => qr/(?:radiotime|tunein)\.com/,
 		func  => \&parser,
 	);
 	
 	Slim::Formats::RemoteMetadata->registerProvider(
-		match => qr/radiotime\.com/,
+		match => qr/(?:radiotime|tunein)\.com/,
 		func  => \&provider,
 	);
 }

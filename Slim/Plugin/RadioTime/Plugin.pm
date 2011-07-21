@@ -44,7 +44,7 @@ sub trackInfoHandler {
 	
 	my $item;
 	
-	if ( $url =~ m{^http://opml\.radiotime\.com} ) {
+	if ( $url =~ m{^http://opml\.(?:radiotime|tunein)\.com} ) {
 		$item = {
 			name => cstring($client, 'PLUGIN_RADIOTIME_OPTIONS'),
 			url  => __PACKAGE__->trackInfoURL( $client, $url ),
@@ -61,7 +61,7 @@ sub trackInfoURL {
 	my $rtinfo = URI->new($url)->query_form_hash;
 	my $serial = Digest::MD5::md5_hex( $client->uuid || $client->id );
 	
-	my $uri = URI->new('http://opml.radiotime.com/Options.ashx');
+	my $uri = URI->new('http://opml.(?:radiotime|tunein).com/Options.ashx');
 	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial );
 	
 	return $uri->as_string;

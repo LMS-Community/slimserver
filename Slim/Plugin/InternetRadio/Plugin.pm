@@ -246,7 +246,7 @@ sub feed {
 	}
 	else {
 		# RadioTime URLs require special handling
-		if ( $feed =~ /radiotime\.com/ ) {
+		if ( $feed =~ /(?:radiotime|tunein)\.com/ ) {
 			$code .= qq{
 sub feed {
 	my \$class = shift;
@@ -421,7 +421,7 @@ sub cantOpen {
 		return if $prefs->get('sn_disable_stats');
 	}
 	
-	if ( $error && $url =~ /radiotime\.com/ ) {
+	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
 		my ($id) = $url =~ /id=([^&]+)/;
 		if ( $id ) {
 			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=16'
