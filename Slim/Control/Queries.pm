@@ -2603,8 +2603,12 @@ sub serverstatusQuery {
 		if (Slim::Music::Import->stillScanning()) {
 			$request->addResult('rescan', "1");
 			if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+
+				# remove leading path information from the progress name
+				my $name = $p->name;
+				$name =~ s/(.*)\|//;
 	
-				$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
+				$request->addResult('progressname', $request->string($name . '_PROGRESS'));
 				$request->addResult('progressdone', $p->done);
 				$request->addResult('progresstotal', $p->total);
 			}
