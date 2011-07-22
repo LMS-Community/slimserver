@@ -2421,10 +2421,16 @@ sub rescanprogressQuery {
 
 		for my $p (@progress) {
 
+			my $name = $p->name;
+			if ($name =~ /(.*)\|(.*)/) {
+				$request->addResult('fullname', $request->string($2 . '_PROGRESS') . $request->string('COLON') . ' ' . $1);
+				$name = $2;
+			}
+
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
-			$request->addResult($p->name(), int($percComplete));
+			$request->addResult($name, int($percComplete));
 			
-			push @steps, $p->name();
+			push @steps, $name;
 
 			$total_time += ($p->finish || time()) - $p->start;
 			
