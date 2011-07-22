@@ -2,9 +2,7 @@
    
 This document describes the steps for installing the Logitech Media Server on Unix-like platforms.
 
-Version 5.8.3 or higher of Perl is required.
-
-Version 5.8.8 or higher of Perl is STRONGLY RECOMMENDED!
+Version 5.10.0 or higher of Perl is required.
 
 Additional information can be found on the Wiki at: http://wiki.slimdevices.com/
 
@@ -22,7 +20,7 @@ build-perl-modules script to run successfully, you must have You must have:
 
 - make
 
-- Perl 5.8.3 or greater, and the required development libs (if any; some
+- Perl 5.10.0 or greater, and the required development libs (if any; some
   platforms put this in a separate package, such as 'libperl-dev')
 
 - For XML::Parser to build properly - http://expat.sourceforge.net/
@@ -51,13 +49,13 @@ Linux Notes (RPM Install):
 FreeBSD Notes:
 
 	In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-	sufficient for use with the Logitech Media Server software, which requires 5.8.3 or greater.
+	sufficient for use with the Logitech Media Server software, which requires 5.10.0 or greater.
 
-	To upgrade Perl to 5.8:
+	To upgrade Perl to 5.10:
 
 	First become the superuser, then issue the following commands
 
-	# cd /usr/ports/lang/perl5.8
+	# cd /usr/ports/lang/perl5.10
 	# make install clean
 	# rehash
 	# use.perl port
