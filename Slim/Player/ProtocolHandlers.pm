@@ -140,7 +140,7 @@ sub iconForURL {
 	}
 
 	elsif ($url =~ /^db:album\.(\w+)=(.+)/) {
-		my $album = Slim::Schema->single('Album', { $1 => Slim::Utils::Misc::unescape($2) });
+		my $album = Slim::Schema->search('Album', { $1 => Slim::Utils::Misc::unescape($2) })->first;
 
 		if ($album && $album->artwork) {
 			return 'music/' . $album->artwork . '/cover.png';
