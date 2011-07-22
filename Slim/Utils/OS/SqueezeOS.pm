@@ -70,6 +70,8 @@ sub initPrefs {
 	$defaults->{maxPlaylistLength} = 100;
 	$defaults->{libraryname} = "Squeezebox Touch";
 	$defaults->{autorescan} = 1;
+	$defaults->{disabledextensionsvideo}  = 'VIDEO';		# don't scan videos on SqueezeOS
+	$defaults->{disabledextensionsimages} = 'bmp, gif, png' # scaling down non-jpg might use too much memory
 }
 
 my %prefSyncHandlers = (
