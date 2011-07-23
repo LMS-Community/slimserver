@@ -440,12 +440,13 @@ sub _cliQuery_done {
 			) {
 				
 				if ( $i =~ /(?:\d+)?_(.+)/ ) {
-					$search = uri_unescape($1);
+					$search = Slim::Utils::Unicode::utf8on(uri_unescape($1));
 				}
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
-					$subFeed->{url} =~ s/{QUERY}/$search/g;
+					my $encoded = URI::Escape::uri_escape_utf8($search);
+					$subFeed->{url} =~ s/{QUERY}/$encoded/g;
 				}
 				
 				# Setup passthrough args
