@@ -14,7 +14,7 @@ use constant MS_LOG_ERR    => 1;
 use constant MS_LOG_WARN   => 2;
 use constant MS_LOG_INFO   => 3;
 use constant MS_LOG_DEBUG  => 4;
-use constant MS_LOG_MEMORY => 5;
+use constant MS_LOG_MEMORY => 9;
 
 # Flags
 use constant MS_USE_EXTENSION   => 1;

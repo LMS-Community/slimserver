@@ -43,6 +43,24 @@ my %pending = ();
 # Coderefs to plugin handler functions
 my $pluginHandlers = {};
 
+sub hasAborted {
+	my ($progress, $no_async) = @_;
+
+	if ( Slim::Music::Import->hasAborted() ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Scan aborted");
+
+		if ( !main::SCANNER && !$no_async ) {
+			Slim::Music::Import->setAborted(0);
+			Slim::Music::Import->clearProgressInfo();
+			Slim::Music::Import->setIsScanning(0);
+			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+		}
+
+		$progress && $progress->final;
+		return 1;	
+	}
+}
+
 sub rescan {
 	my ( $class, $in_paths, $args ) = @_;
 	
@@ -110,9 +128,6 @@ sub rescan {
 	}
 	
 	
-	# AnyEvent watcher for async scans
-	my $watcher;
-	
 	my $progress;
 	if ( $args->{progress} ) {
 		$progress = Slim::Utils::Progress->new( {
@@ -122,9 +137,26 @@ sub rescan {
 		} );
 	}
 	
-	# Begin scan	
-	my $s = Media::Scan->new( $paths, {
-		#loglevel => 5,
+	# AnyEvent watcher for async scans
+	my $watcher;
+	
+	# Media::Scan object
+	my $s;
+	
+	# Flag set when a scan has been aborted
+	my $aborted = 0;
+	
+	# This callback checks if the user has aborted the scan
+	my $abortCheck = sub {
+		if ( !$aborted && hasAborted($progress, $args->{no_async}) ) {
+			$s->abort;
+			$aborted = 1;
+		}
+	};
+	
+	# Begin scan
+	$s = Media::Scan->new( $paths, {
+		loglevel => $log->is_debug ? MS_LOG_DEBUG : MS_LOG_WARN, # Set to MS_LOG_MEMORY for very verbose logging
 		async => $args->{no_async} ? 0 : 1,
 		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
@@ -138,17 +170,23 @@ sub rescan {
 			
 			# XXX flag for new/changed/deleted
 			new($result);
+			
+			$abortCheck->();
 		},
 		on_error => sub {
 			my $error = shift;
+			
 			$log->error(
 				'ERROR SCANNING ' . $error->path . ': ' . $error->error_string
 				. '(code ' . $error->error_code . ')'
 			);
+			
+			$abortCheck->();
 		},
 		on_progress => sub {
 			if ($progress) {
 				my $p = shift;
+				
 				my $total = $p->total;
 			
 				if ( $total && !$progress->total ) {
@@ -163,6 +201,8 @@ sub rescan {
 					$progress->final($total);
 				}
 			}
+			
+			$abortCheck->();
 		},
 		on_finish => sub {
 			my $stats = {};
@@ -224,6 +264,12 @@ sub rescan {
 			poll => 'r',
 			cb   => sub {
 				$s->async_process;
+				
+				if ($aborted) {
+					# Stop the IO watcher and destroy the Media::Scan object
+					undef $watcher;
+					undef $s;
+				}
 			},
 		);
 	}
@@ -477,6 +523,7 @@ sub rescan {
 
 }
 
+=pod
 sub deleted {
 	my $url = shift;
 	
@@ -678,6 +725,7 @@ sub deleted {
 		}
 	}
 }
+=cut
 
 sub new {
 	my $result = shift;
@@ -832,6 +880,7 @@ sub new {
 	}
 }
 
+=pod XXX
 sub changed {
 	my $url = shift;
 	
@@ -972,7 +1021,9 @@ sub changed {
 		new($url);
 	}
 }
+=cut
 
+=pod
 # Check if we're done with all our rescan tasks
 sub markDone {
 	my ( $path, $type, $changes ) = @_;
@@ -998,10 +1049,10 @@ sub markDone {
 	# Done with all tasks
 	if ( !main::SCANNER ) {
 
-=pod
+//=pod
 		# try to autocomplete artwork from mysqueezebox.com		
 		Slim::Music::Artwork->downloadArtwork( sub {
-=cut
+//=cut
 			
 			# Precache artwork, when done send rescan done event
 			Slim::Music::Artwork->precacheAllArtwork( sub {
@@ -1031,6 +1082,7 @@ sub markDone {
 	
 	%pending = ();
 }
+=cut
 
 =head2 scanPlaylistFileHandle( $playlist, $playlistFH )
 
@@ -1038,6 +1090,7 @@ Scan a playlist filehandle using L<Slim::Formats::Playlists>.
 
 =cut
 
+=pod
 sub scanPlaylistFileHandle {
 	my $playlist   = shift;
 	my $playlistFH = shift || return;
@@ -1136,7 +1189,9 @@ sub scanPlaylistFileHandle {
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
 }
+=cut
 
+=pod
 sub _content_type {
 	my $url = shift;
 	
@@ -1149,6 +1204,7 @@ sub _content_type {
 	
 	return $content_type || '';
 }
+=cut
 
 sub _getChangeCount {
 	my $sth = Slim::Schema->dbh->prepare_cached("SELECT value FROM metainformation WHERE name = 'scanChangeCount'");
