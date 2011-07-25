@@ -197,39 +197,20 @@ END %]
 
 [% BLOCK galleryitem %]
 <li>
-<div style="width:[% item.size %]px;">
-
-[%- IF anchor %]
-	<a name="[% anchor | uri %]"></a>
-[%- END -%]
-	<div class="artworkImage" style="width: [% item.size %];">
-
-		[%- IF item.coverThumb%]
+	<div style="width:[% item.size %]px;">
+		<div class="artworkImage" style="width: [% item.size %];">
 			<div style="width:[% item.size %]px;height:[% item.size %]px;overflow:hidden;">
-			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+				[% PROCESS thumbnailItemImg height="$item.size" %]
 			</div>
-		[% ELSE %]
-			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %]
-					[% IF item.level %]&amp;level=[% item.level %][% END %]
-					[% item.attributes | html %]");'
-				[% ELSE %]
-					[% IF item.weblink %]
-						href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type != 'text' %]
-						href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
-					[% END %]
-				[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
-		[% END -%]
-	</div>
+		</div>
 
-	[% SET class = 'even' odd = 0 %]
-	<div class="artworkControls" style="width:[% item.size + 2 %]px;">
-		[%- PROCESS $controls -%]
+		[% SET class = 'even' odd = 0 %]
+
+		<div class="artworkText" style="width:[% item.size %]px;"><span style="width:[% item.size %]px;">
+		[%- content | indent(4) %]
+		</span></div>
 	</div>
-	<div class="artworkText" style="width:[% item.size %]px;"><span style="width:[% item.size %]px;">
-	[%- content | indent(4) %]
-	</span></div>
-</div></li>
+</li>
 [%- END %]
 
 [%# these are the links to be shown with items on the playlist %]
