@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>659FB200-642F-11E0-AE3E-0800200C9A66</id>
+	<name>PLUGIN_ORANGE_LIVERADIO</name>
+	<module>Slim::Plugin::Orange::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_ORANGE_LIVERADIO</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/Orange</homepageURL>
+	<icon>plugins/Orange/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.5</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
