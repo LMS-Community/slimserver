@@ -188,6 +188,8 @@
 		[% END %]
 		
 		[%- FOREACH item = items %]
+		
+			[% IF item.ignore; NEXT; END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
