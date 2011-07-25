@@ -29,11 +29,14 @@
 	
 	UNLESS ajaxUpdate && ajaxUpdate >= 1;
 		FOREACH item = items;
-			IF item.image; hasArtwork = 1; LAST; END;	
+			IF item.image && item.type == 'text'; hasArtwork = 1; LAST; END;	
 		END;
 	END;	
 	
-	IF 0 && artwork == 1 && hasArtwork; container = 'gallerycontainer'; contentwrapper = 'galleryitem'; END;
+	IF hasArtwork;
+		container = 'gallerycontainer'; 
+		contentwrapper = 'galleryitem';
+	END;
 -%]
 
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
@@ -188,6 +191,8 @@
 		[% END %]
 		
 		[%- FOREACH item = items %]
+		
+			[% IF item.ignore; NEXT; END %]
 
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
@@ -221,6 +226,10 @@
 				[% END %]
 
 				[%- WRAPPER $contentwrapper leftcontrols = 'gencontrol' rightcontrols = (playlist_id ? 'editcontrols' : 'favoritescontrol') anchor = item.anchor %]
+					[% IF hasArtwork;
+						item.size = thumbSize || 100;
+					END %]
+
 					[% IF item.web.type == 'htmltemplate' %]
 						[% PROCESS $item.web.value %]
 					[% ELSE %]
