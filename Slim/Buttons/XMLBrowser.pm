@@ -652,7 +652,7 @@ sub gotOPML {
 					$name .= " ($year)" if $year;
 				}
 		
-				if ($prefs->get('showArtist') && (my $artist = $item->{'artist'})) {
+				if ($prefs->get('showArtist') && (my $artist = $item->{'artist'} || $item->{'name2'})) {
 					$name .= sprintf(' %s %s', $client->string('BY'), $artist);
 				}
 				

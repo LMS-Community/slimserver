@@ -343,14 +343,17 @@ useSpecialExt="-browse" %]
 							[% IF item.remote %]
 								([% item.year %])
 							[% ELSE %]
-								[% artwork != 2 ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
+								[% artwork != 2 && !ajaxSearch ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 							[% END %]
 						[% END %]
-						[% IF item.showArtist && item.artist %]
+						[% IF item.hasMetadata == "track" && item.name2 %]
+							([% item.name2 %])
+						[% END %]
+						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) %]
 							[% IF item.artist_id %]
-								[% IF artwork != 2; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
+								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist || item.name2 %]</a>
 							[% ELSE %]
-								[% IF artwork != 2; '<br>'; ELSE %][% 'BY' | string %][% END %] [% item.artist %]
+								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] [% item.artist || item.name2 %]
 							[% END %]
 						[% END %]
 					[% END %]

@@ -161,7 +161,7 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%]
-	[%- artistlist = '' %]
+	[%- year = artistlist = '' %]
 	[%- IF NOT height %][%# height = thumbSize || 100 %][% END %]
 	[%- IF NOT resizeParam %]
 		[%- resizeParam = 'p' %]
@@ -170,6 +170,8 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 	[%- IF item.artist %]
 		[%- itemobj=item.itemobj %][% artistlist = PROCESS artistsAsText.html %]
 	[% END -%]
+	[% IF item.year; year = " (" _ item.year _ ")"; END %]
+	[% details = ( item.album _ artistlist _ year)  | html -%]
 	[% FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	<img [% style %] 
 		src=
@@ -181,17 +183,9 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 		"[% item.icon | resizeimage(height, height, '-', webroot) %]"
 		[% END %]
 	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
-	alt=	"[% item.text | html %]
-		[%- artistlist | html %]
-		[%- IF item.year %]
-			 ([% item.year %])
-		[%- END -%]"
-	title=	"[% item.text | html %]
-		[%- artistlist | html %]
-		[%- IF item.year %]
-			([%- item.year %]) 
-		[%- END -%]"
-		onLoad="resize(this, [%- height %])">
+		alt   = "[% details %]"
+		title = "[% details %]"
+		onLoad= "resize(this, [%- height %])">
 	[% END %]
 [%- END %]
 
