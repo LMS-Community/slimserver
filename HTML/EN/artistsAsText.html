@@ -1,6 +1,6 @@
 [% UNLESS noby %] [% "BY" | string %] [% END %]
 [%- FILTER null %]
-[% contributorsText = [] %]
+[% contributorsText = [ item.artist ] %]
 
 [% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
 
