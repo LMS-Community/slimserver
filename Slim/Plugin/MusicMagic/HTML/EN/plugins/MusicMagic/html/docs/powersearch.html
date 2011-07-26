@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>MusicIP Mixer Help - Power Search</title>
+<meta name="description" content="MusicIP Mixer is the best tool on the market for creating custom playlists. Power searching is an advanced feature which allows you to create simple text-only filters which you can use in a variety of settings."/>
+<meta name="keywords" content="Powersearch, playlists, free download, custom playlists, mixes, music discovery, acoustic search, music analysis, music search engine"/>
+
+</head>
+
+<body  >
+
+
+
+<table width="803" border="0" align="center" cellpadding="0" cellspacing="0" class="contentTable">
+  <tr>
+  
+
+    <td width="550" valign="top" bgcolor="#FFFFFF" class="mainColumn">
+
+
+
+<div>
+
+<h2>MusicIP Mixer Help - Power Search</h2>
+
+<p>Power Search is an advanced feature of MusicIP Mixer, and requires an active registration key. <p>
+
+<div>Power Searching allows you to create simple text-only filters which you can use in a variety of settings.  For instance, you can go to the onscreen
+search control, and enter '?' to start a Power Search (currently, this 
+requires you to enable Power Search from the Power Tools preference panel).
+Then, you can type in a Power Search and press Enter to
+execute the search.  For instance, try this:
+
+<blockquote><p>
+<b>?songs by women</b></p>
+</blockquote>
+
+When you press Enter, the search will be applied, much like a filter.
+You can mix into the Power Search if you have Power Tools enabled -
+right-click on the Mix button and choose "Current List"</div>
+
+<div>You can also use Power Search in the HTTP API any place a filter is allowed -
+just make sure to start the Power Search with a question mark.  For instance,
+<blockquote><p>
+<b>/api/songs?filter=?songs+by+women</b></p>
+</blockquote></div>
+
+<div>If you having problems creating a valid Power Search, try to keep
+it simple.  The easiest rules will look like:
+
+<blockquote><p>
+<b>condition1 and condition2</b></p>
+</blockquote>
+or
+<blockquote><p>
+<b>condition1 or condition2</b></p>
+</blockquote>
+
+You can create more complicated conditions using parentheses.</div>
+
+<hr />
+
+<p>The following is a list of allowed keywords and their meanings.
+Most of these correspond with columns which can show up in the list of
+tracks, although a few can only be accessed through Power Searches.
+Fields are accurate as of the most recent refresh.</p>
+
+<table>
+<tr><td><b>added, dateadded</b></td><td>Timestamp when the track was added</td></tr>
+<tr><td><b>album</b></td><td>Name of the album</td></tr>
+<tr><td><b>albumartists</b></td><td>Number of artists on the album (integer)</td></tr>
+<tr><td><b>albumgenres</b></td><td>Number of genres associated with album (integer)</td></tr>
+<tr><td><b>albumtracks</b></td><td>Number of tracks on the album (integer)</td></tr>
+<tr><td><b>artist</b></td><td>Name of the artist</td></tr>
+<tr><td><b>artistalbums</b></td><td>Number of albums associated with artist (integer)</td></tr>
+<tr><td><b>artistgenres</b></td><td>Number of genres associated with artist (integer)</td></tr>
+<tr><td><b>artisttracks</b></td><td>Number of tracks by the artist (integer)</td></tr>
+<tr><td><b>bps, bitrate</b></td><td>Bitrate of the track (integer)</td></tr>
+<tr><td><b>composer</b></td><td>Name of the composer</td></tr>
+<tr><td><b>conductor</b></td><td>Name of the conductor</td></tr>
+<tr><td><b>drm, hasdrm</b></td><td>True if the track is restricted by DRM</td></tr>
+<tr><td><b>disabled</b></td><td>True if the track is disabled</td></tr>
+<tr><td><b>disk, partofset</b></td><td>Disk number, or part of set (includes A/B form if stored)</td></tr>
+<tr><td><b>enabled</b></td><td>True if the track is enabled</td></tr>
+<tr><td><b>file, filename, path</b></td><td>Full path of the track</td></tr>
+<tr><td><b>genre</b></td><td>Name of the genre (from your tags)</td></tr>
+<tr><td><b>hasanalysis</b></td><td>True if the track has analysis embedded</td></tr>
+<tr><td><b>hasimage</b></td><td>True if the track has an image embedded (does not consider folder images)</td></tr>
+<tr><td><b>haslyrics</b></td><td>True if the track has lyrics embedded</td></tr>
+<tr><td><b>lastplayed</b></td><td>Timestamp the file was last played (integer)</td></tr>
+<tr><td><b>length, seconds</b></td><td>Track length in seconds (integer)</td></tr>
+<tr><td><b>lyricist</b></td><td>Name of the lyricist</td></tr>
+<tr><td><b>modified, lastmodified</b></td><td>Timestamp the file was last modified</td></tr>
+<tr><td><b>now</b></td><td>Current timestamp</td></tr>
+<tr><td><b>orchestra</b></td><td>Name of the orchestra</td></tr>
+<tr><td><b>playcount</b></td><td>How many times the track has been played (integer)</td></tr>
+<tr><td><b>publisher</b></td><td>Name of the publisher</td></tr>
+<tr><td><b>rating</b></td><td>Track rating (integer)</td></tr>
+<tr><td><b>size, bytes</b></td><td>Size of the track in bytes</td></tr>
+<tr><td><b>songs, tracks</b></td><td>Place holder for creating searches (i.e. "songs by women")</td></tr>
+<tr><td><b>status</b></td><td>Track status</td></tr>
+<tr><td><b>title, name</b></td><td>Name of the song</td></tr>
+<tr><td><b>track</b></td><td>Track index (integer)</td></tr>
+<tr><td><b>unplayed</b></td><td>True if the track has never been played (according to stored info)</td></tr>
+<tr><td><b>vbr</b></td><td>True if the track has variable bitrate encoding</td></tr>
+<tr><td><b>year</b></td><td>Year (integer)</td></tr>
+<tr><td><b>X minutes, hours, days, weeks</b></td><td>Convert X from seconds to indicated units</td></tr>
+</table>
+
+<p>The following words were added in version 1.9, and expose information which
+is derived from MusicDNS. Note that all names are case insensitive.</p>
+
+<table>
+<tr><td><b>artistBegin</b></td><td>First year an artist released new music</td></tr>
+<tr><td><b>artistDNSgenre</b></td><td>MusicDNS genre for a given artist</td></tr>
+<tr><td><b>artistEnd</b></td><td>Last year an artist released new music</td></tr>
+<tr><td><b>artistReach</b></td><td>How popular an artist is based on MusicDNS (0..5)</td></tr>
+<tr><td><b>genreDNSgenre</b></td><td>MusicDNS genre for a given genre</td></tr>
+<tr><td><b>songBegin</b></td><td>First year a song was released</td></tr>
+<tr><td><b>songDNSgenre</b></td><td>MusicDNS genre for a given song</td></tr>
+<tr><td><b>songReach</b></td><td>How popular a song is based on MusicDNS (0..5)</td></tr>
+<tr><td><b>songRelativeReach</b></td><td>How popular a song is (relative to other songs by that artist) based on MusicDNS (0..5)</td></tr>
+</table>
+
+<hr />
+
+<p>The following is a list of supports operators (conditions).  You
+can either use english words, or mathematical/programming symbols.</p>
+
+<table>
+<tr><td><b>by <em>type</em></b></td><td>Special pattern for identifying artist types - currently supported are men, women, groups, collaborations. Artist types come from the MusicIP server - not all artists will have types.  Men and women only include solo artists.</td></tr>
+<tr><td><b>by <em>name</em></b></td><td>Shorthand for "artist contains name"</td></tr>
+<tr><td><b>with <em>condition</em></b></td><td>Shorthand for and</td></tr>
+<tr><td><b>without <em>condition</em></b></td><td>Shorthand for A and not B</td></tr>
+<tr><td><b>and, &amp;&amp;</b></td><td>Combine two conditions as A and B.</td></tr>
+<tr><td><b>or, ||</b></td><td>Combine two conditions as A or B.</td></tr>
+<tr><td><b>not, !</b></td><td>Negate a single condition (not A)</td></tr>
+<tr><td><b>is, =, ==</b></td><td>Compare two values for equality.</td></tr>
+<tr><td><b><!--is not,--> !=</b></td><td>Compare two values for inequality.</td></tr>
+<tr><td><b>contains</b></td><td>See if term A contains term B (i.e. A contains the subtext B).</td></tr>
+<tr><td><b>casecontains</b></td><td>The same as contians, except case must match exactly.</td></tr>
+<tr><td><b>strlen</b></td><td>The length of the preceding string (as in "artist strlen")</td></tr>
+<tr><td><b>&lt;, &lt;=, >, >=</b></td><td>Mathematical comparisons.</td></tr>
+<tr><td><b>-, +, *, /</b></td><td>Mathematical operators.</td></tr>
+</table>
+
+<p>You can also extend the Power Search vocabulary by defining your
+own <a href="powerwords.html">Power Words</a>.</p>
+
+
+
+
+</div>
+
+
+
+    </td>
+
+    <td width="50" valign="top" bgcolor="#FFFFFF" class="subColumn">&nbsp;</td>
+  </tr>
+</table>
+
+
+</body>
+</html>

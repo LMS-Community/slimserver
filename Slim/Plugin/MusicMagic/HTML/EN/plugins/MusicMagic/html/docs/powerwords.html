@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>MusicIP Mixer Help - Power Words</title>
+<meta name="description" content="MusicIP Mixer, the best tool on the market for creating custom playlists,has support for an extensible vocabulary to help you get the most out of your personal music library."/>
+<meta name="keywords" content="power words, playlists, free download, custom playlists, mixes, music discovery, acoustic search, music analysis, music search engine"/>
+</head>
+
+<body  >
+
+
+
+
+<table width="803" border="0" align="center" cellpadding="0" cellspacing="0" class="contentTable">
+  <tr>
+    <script language="javascript" type="text/javascript">od_displayImage('leftTile', '/graphics/left_tile', 4, 100, '', 'Variable Opacity Rules');</script>
+
+
+
+    <td width="550" valign="top" bgcolor="#FFFFFF" class="mainColumn">
+
+
+
+<div>
+
+<h2>MusicIP Mixer Help - Power Words</h2>
+
+<P>MusicIP Mixer has support for an extensible vocabulary inside Power
+Search.  You can define your own words in terms of existing terms, and
+they will be usable in their own Power Searches.</P>
+
+<p>To to this, create a file called powerwords.txt, and store
+it where the default cache is located (on Windows, this is the
+installation folder).  Each line will contain a definition
+or an alias.  You can add comments by starting the line with any
+symbol besides _.</P>
+
+<P><B>Aliases</B>: You can create a new alias which represents any
+existing word, by writing the line
+<pre>
+und=and
+</pre>
+
+In this case, it means whenever the word &quot;und&quot; is used,
+it has the same meaning as &quot;and&quot;.  You can define
+as many aliases as you like, but the right-hand side should alway
+be a basic word or definition (not another alias).  The entire
+<a href="powersearch.html">Power Search vocabulary</a> is available.</P>
+
+<P><b>Definitions:</b> A definition lets you create a new word which
+represents an existing boolean expression.  You can use these to create
+a more intuitive vocabulary based on how you think about your own
+music collection.  You can create a new definition like this:
+<pre>
+crappy: bps <= 96
+recent: added > now - 7 days
+</pre>
+
+Thus, &quot;crappy&quot; now means songs with a bitrate less than or equal to 96. &quot;recent&quot; now means songs added within the last 7 days.</P>
+
+<P>With these definitions in place, you can do a search &quot;recent crappy songs&quot; to select all low bitrate downloads in the last 7 days (presumably to delete them!).</P>
+
+<p>
+Here are some more examples:
+<pre>
+favorite: rating > 3
+rap: genre contains "rap"
+country: genre contains "country"
+rock: genre contains "rock"
+classical: genre contains "classical"
+christmas: title contains "jingle" or title contains "christmas"
+artwork: hasimage
+protected: drm
+tiny: bytes < 1000000
+dead: status contains "unanalyzable"
+mixable: status startswith "analyzed" or status contains "identified"
+unmixable: !mixable
+old: year < 1950 and year != 0
+fifties: year >= 1950 and year < 1960
+sixties: year >= 1960 and year < 1970
+seventies: year >= 1970 and year < 1980
+eighties: year >= 1980 and year < 1990
+nineties: year >= 1900 and year < 2000
+mp3: file endswith ".mp3"
+wma: file endswith ".wma"
+</pre>
+
+
+</div>
+
+
+
+    </td>
+
+    <td width="50" valign="top" bgcolor="#FFFFFF" class="subColumn">&nbsp;</td>
+  </tr>
+</table>
+
+
+
+</body>
+</html>

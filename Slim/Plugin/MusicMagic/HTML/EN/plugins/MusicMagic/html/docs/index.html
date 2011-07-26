@@ -1,0 +1,135 @@
+<html>
+<head>
+	<TITLE>MusicIP Documentation</TITLE>
+</head>
+<body>
+	<h1>MusicIP Documentation</h1>
+	
+	<h2>Official documentation</h2>
+	
+	<ul>
+		<li><a href="httpprotocol.html">HTTP Protocol</a></li>
+		<li><a href="customtags.html">Custom Tags</a></li>
+		<li><a href="powersearch.html">Power Search</a></li>
+		<li><a href="powerwords.html">Power Words</a></li>
+	</ul>
+
+	<h2>Potential source of interest: index.html of the web server as used on Linux</h2>
+	
+	<p>The following code is being used in the Linux implementation's web UI to MusicIP.
+	It might be of interest for server management tasks like adding tracks to the collection.</p>
+	
+	<pre>
+	&lt;HTML&gt;
+		&lt;HEAD&gt;
+		&lt;TITLE&gt;MusicMagic Server&lt;/TITLE&gt;
+		&lt;/HEAD&gt;
+		&lt;BODY&gt;
+		&lt;h1&gt;MusicMagic Server&lt;/h1&gt;
+		
+		&lt;h3&gt;Current Cache&lt;/h3&gt;
+		
+		&lt;table width=%100&gt;
+		    &lt;TR&gt;
+		    &lt;TD width=5%&gt;&amp;nbsp;&lt;/TD&gt;
+		    &lt;TD width=35%&gt;
+		&lt;table&gt;
+		    &lt;tr&gt;&lt;td&gt;Total songs&lt;/td&gt;&lt;td align=right&gt;&lt;?total?&gt;&lt;/td&gt;&lt;/tr&gt;
+		    &lt;tr&gt;&lt;td&gt;Mixable songs&lt;/td&gt;&lt;td align=right&gt;&lt;?mixable?&gt;&lt;/td&gt;&lt;/tr&gt;
+		    &lt;tr&gt;&lt;td&gt;Songs to validate&lt;/td&gt;&lt;td align=right&gt;&lt;?todo?&gt;&lt;/td&gt;&lt;/tr&gt;
+		    &lt;tr&gt;&lt;td colspan=2&gt;&lt;?active?&gt;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;
+		    &lt;!-- NYI: Usage stats?  Log file? --&gt;
+		&lt;/table&gt;
+		&lt;/TD&gt;&lt;TD width=60%&gt;
+		
+		&lt;form action=&quot;/server/add&quot;&gt;
+		    &lt;input type=submit value=&quot;Add Music&quot;&gt;
+		    &lt;input type=text name=root&gt; &lt;i&gt;enter root folder of music&lt;/i&gt;
+		&lt;/form&gt;
+		
+		&lt;form action=&quot;/server/search&quot;&gt;
+		    &lt;input type=submit value=&quot;Search Songs&quot;&gt;
+		    &lt;input type=text name=query&gt; &lt;i&gt;enter text to match songs&lt;/i&gt;
+		&lt;/form&gt;
+		
+		&lt;form action=&quot;/server/refresh&quot;&gt;
+		    &lt;input type=submit value=&quot;Refresh Songs&quot;&gt;
+		&lt;/form&gt;
+		
+		&lt;!-- Only show this if the cache is obsolete --&gt;
+		&lt;?reloadstart?&gt;
+		&lt;form action=&quot;/server/reload&quot;&gt;
+		    &lt;input type=submit value=&quot;Reload Cache&quot;&gt; &lt;i&gt;Cache has been modified on disk&lt;/i&gt;
+		&lt;/form&gt;
+		&lt;?reloadstop?&gt;
+		&lt;!-- NYI: Overwrite cache option as well? --&gt;
+		
+		&lt;/TD&gt;&lt;/tR&gt;
+		&lt;/TABLE&gt;
+		
+		&lt;hr&gt;
+		
+		&lt;h3&gt;Validation&lt;/h3&gt;
+		
+		&lt;!-- Processor load options on Windows --&gt;
+		&lt;!-- NYI: Only for win32 --&gt;
+		&lt;?cpustart?&gt;
+		&lt;form action=&quot;/server/updateProcessorUse&quot;&gt;
+		    Processor use 
+		&lt;select name=&quot;use&quot; onchange=&quot;submit()&quot;&gt;&lt;?cpu?&gt;&lt;/select&gt;
+		 &lt;i&gt;(affects time to complete validation)&lt;/i&gt;
+		&lt;/form&gt;
+		&lt;?cpustop?&gt;
+		
+		&lt;form action=&quot;/server/validate&quot;&gt;
+		    &lt;input type=submit name=&quot;action&quot; value=&quot;Start Validation&quot;&gt;
+		    &lt;input type=submit name=&quot;action&quot; value=&quot;Stop Validation&quot;&gt;
+		&lt;/form&gt;
+		
+		&lt;hr&gt;
+		
+		&lt;h3&gt;Mix Settings&lt;/h3&gt;
+		
+		&lt;form action=&quot;/server/updateMixSettings&quot;&gt;
+		&lt;table&gt;
+		  &lt;tr&gt;&lt;td&gt;Artist style&lt;/td&gt;&lt;td&gt;
+		    &lt;select name=style&gt;&lt;?style?&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;
+		  &lt;tr&gt;&lt;td&gt;Variety&lt;/td&gt;&lt;td&gt;
+		    &lt;select name=variety&gt;&lt;?variety?&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;
+		  &lt;tr&gt;&lt;td&gt;Mix size&lt;/td&gt;&lt;td&gt;
+		    &lt;input name=&quot;size&quot; value=&quot;&lt;?mixsize?&gt;&quot; type=text size=20&gt; 
+		    &lt;select name=&quot;type&quot;&gt;&lt;?mixtype?&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;
+		  &lt;tr&gt;&lt;td&gt;No duplicates within&lt;/td&gt;&lt;td&gt;
+		    &lt;input name=&quot;dupsize&quot; value=&quot;&lt;?dupsize?&gt;&quot; type=text size=20&gt; 
+		    &lt;select name=&quot;duptype&quot;&gt;&lt;?duptype?&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;
+		  &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;
+		    &lt;input name=&quot;seed&quot; &lt;?seed?&gt; type=checkbox&gt; Always include seed songs in mix&lt;/td&gt;&lt;/tr&gt;
+		  &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;input type=submit value=&quot;Update Settings&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+		&lt;/table&gt;
+		&lt;/form&gt;
+		
+		&lt;hr&gt;
+		
+		&lt;h3&gt;Server Settings&lt;/h3&gt;
+		
+		&lt;form action=&quot;/server/updateServerSettings&quot;&gt;
+		&lt;table&gt;
+		
+		&lt;tr&gt;&lt;td colspan=4&gt;&lt;input name=proxy &lt;?proxy?&gt; type=checkbox&gt;Enable proxy&lt;/td&gt;&lt;/tr&gt;
+		
+		&lt;tr&gt;&lt;td&gt;Host&lt;/td&gt;&lt;td&gt;&lt;input name=host value=&quot;&lt;?host?&gt;&quot; size=40 type=text&gt;&lt;/td&gt;&lt;td&gt;Port&lt;/td&gt;&lt;td&gt;&lt;input name=port value=&quot;&lt;?port?&gt;&quot; type=text&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;
+		
+		&lt;tr&gt;&lt;td colspan=4&gt;&lt;input name=auth &lt;?auth?&gt; type=checkbox&gt;Enable proxy authentication&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;
+		&lt;tr&gt;&lt;td&gt;Username&lt;/td&gt;&lt;td&gt;&lt;input name=user value=&quot;&lt;?user?&gt;&quot; size=40 type=text&gt;&lt;/td&gt;&lt;td&gt;Password&lt;/td&gt;&lt;td&gt;&lt;input name=password value=&quot;&lt;?password?&gt;&quot; type=password&gt;&lt;/td&gt;&lt;/tr&gt;
+		&lt;/table&gt;
+		&lt;input type=submit value=&quot;Update Settings&quot;&gt;
+		&lt;/form&gt;
+		
+		&lt;form action=&quot;/server/test&quot;&gt;
+		&lt;input type=submit value=&quot;Test Connection&quot;&gt;
+		&lt;/form&gt;
+		&lt;/BODY&gt;
+	&lt;/HTML&gt;
+	</pre>
+</body>
+</html>
