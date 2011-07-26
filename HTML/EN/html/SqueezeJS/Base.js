@@ -997,7 +997,7 @@ function resize(src, width) {
 		width = Math.min(150, parseInt(width));
 	}
 
-	if (src.height > width)
+	if (src.height > width && src.height > src.width)
 		src.height = width;
 	else if (src.width > width || !src.width)
 		src.width = width;
