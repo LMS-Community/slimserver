@@ -1012,17 +1012,31 @@ sub defaultMediaDirs {
 	
 	my @mediaDirs;
 	
-	# try to find the OS specific default folders for various media types
-	foreach my $medium ('music', 'videos', 'pictures') {
-		my $path = $audiodir || Slim::Utils::OSDetect::dirsFor($medium);
+	# if an audiodir had been there before, configure LMS as we did in SBS: audio only
+	if ($audiodir) {
+		# set mediadirs to the former audiodir
+		push @mediaDirs, $audiodir;
 		
-		# we only use audiodir as the default path for music
-		$audiodir = undef;
-		
-		main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
-		
-		if ($path && -d $path) {
-			push @mediaDirs, $path;
+		# add the audiodir to the list of sources to be ignored by the other scans
+		foreach ('ignoreInVideoScan', 'ignoreInImageScan') {
+			my $ignoreDirs = $prefs->get($_) || [];
+			
+			push @$ignoreDirs, $audiodir;
+			$prefs->set($_, $ignoreDirs);
+		}
+	}
+	
+	# new LMS installation: default to all media folders
+	else {
+		# try to find the OS specific default folders for various media types
+		foreach my $medium ('music', 'videos', 'pictures') {
+			my $path = Slim::Utils::OSDetect::dirsFor($medium);
+			
+			main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
+			
+			if ($path && -d $path) {
+				push @mediaDirs, $path;
+			}
 		}
 	}
 	
