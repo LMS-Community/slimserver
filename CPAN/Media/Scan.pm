@@ -22,13 +22,14 @@ use constant MS_FULL_SCAN       => 1 << 1;
 use constant MS_RESCAN          => 1 << 2;
 use constant MS_INCLUDE_DELETED => 1 << 3;
 use constant MS_WATCH_CHANGES   => 1 << 4;
+use constant MS_CLEARDB         => 1 << 5;
 
 our $VERSION = '0.01';
 
 our @EXPORT = qw(
     MS_LOG_ERR MS_LOG_WARN MS_LOG_INFO MS_LOG_DEBUG MS_LOG_MEMORY
     MS_USE_EXTENSION MS_FULL_SCAN MS_RESCAN MS_INCLUDE_DELETED
-    MS_WATCH_CHANGES
+    MS_WATCH_CHANGES MS_CLEARDB
 );
 
 require XSLoader;
@@ -74,6 +75,7 @@ An OR'ed list of flags, the possible flags are:
     MS_INCLUDE_DELETED - The result callback will be called for files that have been deleted
                          since the last scan.
     MS_WATCH_CHANGES   - Continue watching for changes after the scan has completed.
+    MS_CLEARDB         - Wipe the internal libmediascan database before scanning.
 
 =item ignore (default: none)
 
