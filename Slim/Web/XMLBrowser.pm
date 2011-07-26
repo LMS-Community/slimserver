@@ -268,6 +268,7 @@ sub handleFeed {
 			push @crumbIndex, $i;
 			my $crumbText = join '.', @crumbIndex;
 			
+			$superFeed->{offset} ||= 0;
 			main::DEBUGLOG && $log->is_debug && $log->debug("Considering $i=$in ($crumbText) from ", $stash->{'index'}, ' offset=', $superFeed->{'offset'});
 			
 			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
