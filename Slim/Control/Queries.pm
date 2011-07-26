@@ -3141,7 +3141,7 @@ sub statusQuery {
 		
 		if ( $menuMode ) {
 			# Set required tags for menuMode
-			$tags = 'AalKNcx';
+			$tags = 'aAlKNcx';
 		}
 		else {
 			$tags = 'gald' if !defined $tags;
@@ -3908,7 +3908,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'AalKNcx',			# tags needed for our entities
+		'aAlKNcx',			# tags needed for our entities
 	);
 	
 	my $isRemote = $songData->{remote};
