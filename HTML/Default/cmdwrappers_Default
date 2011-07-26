@@ -55,6 +55,8 @@
 					<a href="[% item.weblink %]" target="_blank">
 				[% ELSIF item.type != 'text' %]
 					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
+				[% ELSIF item.type == "text" && item.image %]
+					<a href="[% item.image %]" target="_blank">
 				[% END %]
 				[% PROCESS $itemImg height="$item.size" %]</a>
 
