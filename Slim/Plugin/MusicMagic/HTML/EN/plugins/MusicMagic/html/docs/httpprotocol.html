@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>MusicIP Mixer Help - HTTP Protocol</title>
+<meta name="description" content="The MusicIP Mixer API is a HTTP based protocol for third party applications to interact programmatically with the MusicIP Mixer. The same API works for MusicIP's Windows, Linux, and Mac products, so all platforms can be supported with one set of code."/>
+<meta name="keywords" content="playlists, free download, custom playlists, mixes, music discovery, acoustic search, music analysis, music search engine"/>
+
+
+</head>
+
+<body  >
+
+
+
+
+<table width="803" border="0" align="center" cellpadding="0" cellspacing="0" class="contentTable">
+  <tr>
+
+    <td width="550" valign="top" bgcolor="#FFFFFF" class="mainColumn">
+
+
+
+<div>
+
+<h2>MusicIP Mixer Help - HTTP Protocol</h2>
+
+<P>The MusicIP Mixer API is a HTTP based protocol for third party 
+applications to interact programmatically with the MusicIP Mixer.
+The same API works for our Windows, Linux, and Mac products, so you can
+support all these platforms with one set of code.</P>
+
+<P>In order to use this API, you must have a running copy of the 
+MusicIP Mixer.</P>
+
+<HR>
+
+<P>To start the MusicIP Mixer API, go to the Services section of the preferences
+dialog, select <B>MusicIP Mixer API</B>, and press start.  If you exit MusicIP Mixer with services
+running, they will restart automatically when MusicIP Mixer restarts.</P>
+
+
+<P>This will cause MusicIP Mixer to accept connections on the Server
+Port as though it were an http server. You can test the API by
+pointing a web browser to the appropriate port
+(e.g. http://localhost:10002) where localhost is the machine running
+MusicIP Mixer, and 10002 is the port passed to mmserver.</P>
+
+<P>The following commands are supported. All urls must be preceeded
+with <code>&quot;/api/&quot;</code> (for example: <code>http://localhost:10002/api/shutdown</code>).
+As we get more use out of the API, we expect the number of available commands to increase.
+If the version listed is higher than the current release version, this means the command is only
+available in a development or beta build, but will be available in the indicated release.
+</P>
+
+<table border=1 width="100%">
+
+<TR><TD><b>Command</b></TD><TD><b>Arguments, Effect and Return Values</b></TD><TD><b>Version</b></TD></TR>
+<TR><TD VALIGN="top"><i>empty</i></TD><TD>Returns a simple HTML form for testing the MusicIP Mixer API.</TD><TD>&nbsp; </TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="artists">artists</a></TD>
+  <TD>Returns a list of all the artists. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>filter</B>=name</TD><TD>Use the named filter when creating the list (default none)<br>If there is no such filter the name may refer to a genre as an implicit filter.
+<i>1.5</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>showCount</B></TD><TD>Prefix each artist with the number of songs by that artist</TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="albums">albums</a></TD>
+  <TD>Returns a list of all the albums. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>artist=</B>name</TD><TD>Only include albums with at least one song by the named artist</TD></TR>
+  <TR><TD VALIGN="top"><B>bysong</B></TD><TD>Return key song from each album (useful for other api calls) <i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>extended</B></TD><TD>Return album in artist@@name format <i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>filter</B>=name</TD><TD>Use the named filter when creating the list (default none)<br>If there is no such filter the name may refer to a genre as an implicit filter.
+<i>1.5</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>showCount</B></TD><TD>Prefix each album with the number of songs on that album</TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.5.1</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="cacheid">cacheid</a></TD>
+  <TD>Returns the timestamp when the cache was last modified. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>contents</B></TD><TD>Only show when contents were last modified (songs, playlists, analysis info) <i>1.1.5.1</i></TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+
+<TR>
+  <TD VALIGN="top"><a name="duplicates">duplicates</a></TD>
+  <TD>Returns a list of all the songs which have duplicates (same as Library/List Duplicates). Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>content</B>= (json|m3u|text|xspf)</TD><TD>Set the returned mime type (default text)
+<br><i>json|xspf requires 1.5</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>short</B></TD><TD>Return short-style names (Windows only) <i>1.1.4</i></TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="filters">filters</a></TD>
+  <TD>Returns a list of all the filters. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>showCount</B></TD><TD>Prefix each filter with the number of songs in that filter</TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="flush">flush</a></TD>
+  <TD>Flush any changes made to the current cache. There are no parameters.
+  On success, it returns the number 1 (as text).  On failure, it returns the
+  number 0 (as text).
+</TD><TD VALIGN="top">1.7</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="genres">genres</a></TD>
+  <TD>Returns a list of all the genres. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>filter</B>=name</TD><TD>Use the named filter when creating the list (default none)
+<i>1.6</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>showCount</B></TD><TD>Prefix each genres with the number of songs in that genre</TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentMixGenre">getCurrentMixGenre</a></TD><TD>Returns the current settings of the &quot;Restrict mix to selected genre&quot; flag, which will be used by the <a href="#mix">mix</a> command. This is the same as the current user setting in the application.
+</TD><TD VALIGN="top">1.1.6</TD></TR>
+
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentRejectSize">getCurrentRejectSize</a></TD><TD>Returns the current size which will be used to limit duplicate artists by the <a href="#mix">mix</a> command. This is the same as the current user setting in the application.
+</TD><TD VALIGN="top">1.1.6</TD></TR>
+<TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentRejectType">getCurrentRejectType</a></TD><TD>Returns the current type which will be used to limit duplicate artists by the <a href="#mix">mix</a> command. This is the same as the current user setting in the application.
+</TD><TD VALIGN="top">1.1.6</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentMixSize">getCurrentMixSize</a></TD><TD>Returns the current mix size which will be used by the <a href="#mix">mix</a> command. This is the same as the current user setting in the application.
+</TD><TD VALIGN="top">1.1.4</TD></TR>
+<TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentMixSizeType">getCurrentMixSizeType</a></TD><TD>Returns the current mix size type which will be used by the <a href="#mix">mix</a> command. This is the same as the current user setting in the application.  The return value is tracks, min, or mbytes.
+</TD><TD VALIGN="top">1.1.4</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentMixStyle">getCurrentMixStyle</a></TD><TD>Returns the current mix style which will be used by the <a href="#mix">mix</a> command. This is the same as the current artist style user setting in the application.
+</TD><TD VALIGN="top">1.1.4</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentMixVariety">getCurrentMixVariety</a></TD><TD>Returns the current mix variety which will be used by the <a href="#mix">mix</a> command. This is the same as the current variety user setting in the application.
+</TD><TD VALIGN="top">1.1.4</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getCurrentTrack">getCurrentTrack</a></TD><TD>Returns the full path of the currently playing track, if any. Paused tracks still count as current.  (Windows only)
+</TD><TD VALIGN="top">1.8</TD></TR>
+
+<TR>
+<TD VALIGN="top"><a name="getLastPlayed">getLastPlayed</a></TD><TD>Returns the timestamp the song was last played. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+   Returned value is the timestamp, or -1 if the song was not recognized.
+</TD><TD VALIGN="top">1.1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getLyrics">getLyrics</a></TD><TD>Returns the lyrics of the indicated song. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+   Returned value is the lyrics, if present.
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getPlayCount">getPlayCount</a></TD><TD>Returns the play count of the indicated song. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+   Returned value is the play count, or -1 if the song was not recognized.
+</TD><TD VALIGN="top">1.1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getPlaylist">getPlaylist</a></TD><TD>Returns the list of filenames for all songs in the indicated playlist. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>content</B>= (json|m3u|text|xspf)</TD><TD>Set the returned mime type (default text) <i>1.1.4, json|xspf requires 1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>short</B></TD><TD>Return short-style names (Windows only) <i>1.1.4</i></TD></TR>
+  <TR><TD VALIGN="top"><B>index</B>=listindex</TD><TD>&nbsp;</TD></TR>
+    <!-- <TR><TD>file=fullpath</TD><TD><i>NYI</i></TD></TR> -->
+    <TR><TD VALIGN="top"><B>name</B>=listname</TD><TD>&nbsp;</TD></TR>
+    <TR><TD VALIGN="top"><B>detail</B></TD><TD>Return the playlist attributes instead of the contents. Returned fields may include name, file, added, modified.<i>1.1.5</i></TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getRating">getRating</a></TD><TD>Returns the rating of the indicated song. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+   Returned value is the rating 0-5, or -1 if the song was not recognized.
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getSong">getSong</a></TD>
+  <TD>Returns information about the indicated song. Parameters are:
+  <table>
+    <!-- <TR><TD>id</TD><TD>Choose a song by id</TD></TR> -->
+    <TR><TD VALIGN="top"><B>index</B></TD><TD>Choose a song by index</TD></TR>
+    <TR><TD VALIGN="top"><B>file</B></TD><TD>Choose a song by file</TD></TR>
+  </table>
+  Returned value is a list of attributes, 1 per line.  The first word is the field name, and the rest of the line is the field value.  Some fields may not be present if there is no associated value. Current fields are:<BR>
+name, artist, album, album-id, file, genre, track, active, seconds, bytes, year, bitrate, composer, conductor, orchestra, lyricist, rating, modified, lastplayed, playcount, added
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="getSongCount">getSongCount</a></TD>
+  <TD>Returns the number of songs currently in the cache.
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+<TD VALIGN="top"><a name="getStatus">getStatus</a></TD><TD>Returns a string describing the current mixer status. Current values include <tt>adding</tt>, <tt>analyzing</tt> and <tt>idle</tt>.
+</TD><TD VALIGN="top">1.1.5.1</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="incrementPlayCount">incrementPlayCount</a></TD><TD>Increment the play count of the indicated song by one. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+   Returned value is the number of songs affected (0 if the song was not recognized).
+</TD><TD VALIGN="top">1.1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="mix">mix</a></TD>
+  <TD>Return a dynamic playlist.  Parameters are:
+
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a seed song</TD></TR>
+  <TR><TD VALIGN="top"><B>artist</B>=name</TD><TD>Choose a seed artist</TD></TR>
+  <TR><TD VALIGN="top"><B>album</B>=fullpath</TD><TD>Choose a seed album.  fullpath is any song from the album</TD></TR>
+  <TR><TD VALIGN="top"><B>album</B>= artistname@@ albumname</TD><TD>Choose a seed album.  (example: &quot;The Beatles@@The White Album&quot;)</TD></TR>
+  <TR><TD VALIGN="top"><B>mixgenre</B>=boolean</TD><TD>Restrict mix to the genre of the seed <i>1.1.6</i></TD></TR>
+  <TR><TD VALIGN="top"><B>mood</B>=name</TD><TD>Make a mood mix based on the given mood <i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>playlist</B>=name||fullpath</TD><TD>Choose all songs in the playlist as seeds <i>1.1.5.1</i></TD></TR>
+  <TR><TD VALIGN="top"><B>recipe</B>=name</TD><TD>Use the indicated recipe when making the mix (Windows only) <i>1.8</i></TD></TR>
+  <TR><TD VALIGN="top"><B>rejectsize</B>=#</TD><TD>Set the number of items to skip before repeating artists <i>1.1.6</i></TD></TR>
+  <TR><TD VALIGN="top"><B>rejecttype</B>= (tracks|min|mbytes)</TD><TD>Set the units for rejectsize (default tracks) <i>1.1.6</i></TD></TR>
+  <TR><TD VALIGN="top"><B>size</B>=#</TD><TD>Set the size of the list (default 12)</TD></TR>
+  <TR><TD VALIGN="top"><B>sizetype</B>= (tracks|min|mbytes)</TD><TD>Set the units for size (default tracks)</TD></TR>
+  <TR><TD VALIGN="top"><B>style</B>=#</TD><TD>Set the style slider (default 20, range is 0..200)</TD></TR>
+  <TR><TD VALIGN="top"><B>variety</B>=#</TD><TD>Set the variety slider (default 0, range is 0..9))</TD></TR>
+  <TR><TD VALIGN="top"><B>filter</B>=name</TD><TD>Use the named filter when creating the playlist (default none)<BR>If there is no such filter, the name may refer to a genre as an implicit filter.</TD></TR>
+  <TR><TD VALIGN="top"><B>content</B>= (json|m3u|text|xspf)</TD><TD>Set the returned mime type (default text)
+<br><i>json|xspf requires 1.5</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>short</B></TD><TD>Return short-style names (Windows only) <i>1.1.4</i></TD></TR>
+  </table>
+  You may specify any number of songs, artists or albums as seeds, but you may not mix different types in a single request.
+  If no seeds are set, a random song will be chosen from within the current filter.<BR><BR>
+As of version 1.1.4, the above default values are replaced with the current application settings
+from the mix preferences (on some platforms).
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="moods">moods</a></TD>
+  <TD>Returns a list of all the moods. Call this without parameters.  This
+will only return information on platforms supporting the Moods menu.
+<!--
+ but you can pass the following:
+  <table>
+  <TR><TD VALIGN="top"><B>detail</B></TD><TD>Return full attributes for each playlist.  Attributes may include: name, file, added, modified.  Each playlist will be separated with a blank line in this mode <i>1.1.5</i></TD></TR>
+  </table>
+-->
+</TD><TD VALIGN="top">1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="playlists">playlists</a></TD>
+  <TD>Returns a list of all the playlists. Normally you would call this without parameters, but you can pass the following:
+  <table>
+  <TR><TD VALIGN="top"><B>detail</B></TD><TD>Return full attributes for each playlist.  Attributes may include: name, file, added, modified.  Each playlist will be separated with a blank line in this mode <i>1.1.5</i></TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="recipes">recipes</a></TD>
+  <TD>Returns a list of all the recipes. Call this without parameters.  This
+will only return information on platforms supportings recipes (headless on all platforms, and Windows 1.8 or later).
+</TD><TD VALIGN="top">1.8</TD></TR>
+
+<TR>
+<TD VALIGN="top"><a name="setLastPlayed">setLastPlayed</a></TD><TD>Set the time the indicated song was last played. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>force</B></TD><TD>Set time even if less than currently stored <i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>song=</B>fullpath</TD><TD>Choose a song</TD></TR>
+  <TR><TD VALIGN="top"><B>time=</B>timestamp</TD><TD>The new timestamp, either in seconds from 0 hours, 0 minutes, 0 seconds, January 1, 1970, or as follows: 2005-02-22T23:56:06Z.  You may also use the word &quot;now&quot; to set the last played time to the current time.
+</TD></TR>
+  </table>
+   Returned value is the number of songs which were changed.
+</TD><TD VALIGN="top">1.1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="setPlayCount">setPlayCount</a></TD><TD>Set the play count of the indicated song. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>force</B></TD><TD>Set count even if less than currently stored <i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>count</B>=number</TD><TD>The new play count</TD></TR>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  </table>
+  Returned value is the number of songs which were changed.
+</TD><TD VALIGN="top">1.1.5</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="setRating">setRating</a></TD><TD>Set the rating of the indicated song. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  <TR><TD VALIGN="top"><B>rating</B>=number</TD><TD>The new rating, 0-5.</TD></TR>
+  </table>
+   Returned value is the number of songs which had ratings changed.
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="shutdown">shutdown</a></TD>
+  <TD>Exit the mixer</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="songs">songs</a></TD>
+  <TD>Returns a list of all the songs (as a playlist). As of version 1.5, if you pass no artists or albums, all songs are returned. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>album</B>=fullpath</TD><TD>Only include songs from the named album.  fullpath is any song from the album</TD></TR>
+  <TR><TD VALIGN="top"><B>album</B>= artistname@@ albumname</TD><TD>Only include songs from the named album.  (example: &quot;Pink Floyd@@Dark Side of the Moon&quot;)</TD></TR>
+  <TR><TD VALIGN="top"><B>artist=</B>name</TD><TD>Only include songs by the named artist</TD></TR>
+  <TR><TD VALIGN="top"><B>content</B>= (json|m3u|text|xspf)</TD><TD>Set the returned mime type (default text)
+<br><i>json|xspf requires 1.5</i>
+</TD></TR>
+<TR><TD VALIGN="top"><B>filter</B>=name</TD><TD>Use the named filter when creating the playlist (default none)<br>If there is no such filter the name may refer to a genre as an implicit filter.
+<i>1.5</i>
+</TD></TR>
+  <TR><TD VALIGN="top"><B>extended</B></TD><TD>Return extended info for each song (as in the <a href="#getSong">getSong</a> command). This ignores the content and short options.<i>1.5</i></TD></TR>
+  <TR><TD VALIGN="top"><B>short</B></TD><TD>Return short-style names (Windows only)</TD></TR>
+  </table>
+</TD><TD VALIGN="top">1.1.5.1</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="status">status</a></TD><TD>Return the status of the indicated item. Parameters are:
+  <table>
+  <TR><TD VALIGN="top"><B>song</B>=fullpath</TD><TD>Choose a song</TD></TR>
+  <TR><TD VALIGN="top"><B>artist</B>=name</TD><TD>Choose a artist</TD></TR>
+    <!-- <TR><TD>album=fullpath</TD><TD>Choose a seed album.  fullpath is any song from the album</TD></TR> -->
+  </table>
+
+Returned value is an integer.
+<table>
+<TR><TD>0</TD><TD>==> item cannot be used to create mixes</TD></TR>
+<TR><TD>1</TD><TD>==> item can be used to create mixes</TD></TR>
+</table>
+
+</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+<TR>
+  <TD VALIGN="top"><a name="version">version</a></TD>
+  <TD>Return the version number of the current mixer as text.</TD><TD VALIGN="top">1.1.3</TD></TR>
+
+</table>
+
+<P>There are also several methods available for working with <a href="customtags.html">custom tags</a>.</p>
+
+
+</div>
+
+
+
+    </td>
+
+    <td width="50" valign="top" bgcolor="#FFFFFF" class="subColumn">&nbsp;</td>
+  </tr>
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>MusicIP Mixer Help - Custom Tags</title>
+<meta name="description" content="MusicIP Mixer supports custom tagging of songs within your music library. This is a highly extensible system for arbitrarily adding information to your database."/>
+<meta name="keywords" content="custom tags, playlists, free download, custom playlists, mixes, music discovery, acoustic search, music analysis, music search engine"/>
+
+</head>
+
+<body  >
+
+
+
+<table width="803" border="0" align="center" cellpadding="0" cellspacing="0" class="contentTable">
+  <tr>
+
+
+    <td width="550" valign="top" bgcolor="#FFFFFF" class="mainColumn">
+
+
+
+<div>
+
+<h2>MusicIP Mixer Help - Custom Tags</h2>
+
+<P>Version 1.5 supports custom tagging of songs.  This is a highly
+extensible system for arbitrarily adding information to your database.
+At this point, the feature is experimental.  User feedback will help
+determine how best to take advantage of this feature.</P>
+
+<P>At the most basic level, you can associate an arbitrary number of
+keywords and values with any song.  This lets you, for example, import
+metadata which is not directly supported in the current version of
+MusicIP Mixer.  This import must be done via the <a
+href="httpprotocol.html">HTTP API</a>.  The data can be seamlessly integrated into <A
+href="powersearch.html">Power Searches</A> by defining custom <a
+href="powerwords.html">Power Words</a>.</p>
+
+<P>You may find it easiest to start with the <a
+href="#examples">examples</a> at the bottom of this page.</P>
+
+<h2>HTTP API</h2>
+
+<P>Additional API methods:</P>
+
+<CENTER>
+<TABLE BORDER=1>
+
+<TR><TD><b>Command</b></TD><TD><b>Arguments, Effect and Return Values</b></TD><TD><b>Version</b></TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="getAlbumField"></a>getAlbumField</TD>
+  <TD>Returns the value of a selected key for the indicated album. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being accessed</TD></TR>
+  <TR><TD VALIGN=top><B>album</B>=name</TD><TD><B>Required.</B> Indicates the album for which the information is being retrieved.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="setAlbumField"></a>setAlbumField</TD>
+  <TD>Assigns the key/value pair to the indicated albums. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being assigned</TD></TR>
+  <TR><TD VALIGN=top><B>album</B>=name</TD><TD><B>Required.</B> Indicates the album for which the information is being assigned.  Multiple albums can be assigned by passing this parameter multiple times.</TD></TR>
+  <TR><TD VALIGN=top><B>value</B>=text</TD><TD><B>Required.</B> Indicates the value being assigned to the given key.  Omit the text portion to delete a key.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="getArtistField"></a>getArtistField</TD>
+  <TD>Returns the value of a selected key for the indicated artist. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being accessed</TD></TR>
+  <TR><TD VALIGN=top><B>artist</B>=name</TD><TD><B>Required.</B> Indicates the artist for which the information is being retrieved.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="setArtistField"></a>setArtistField</TD>
+  <TD>Assigns the key/value pair to the indicated artists. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being assigned</TD></TR>
+  <TR><TD VALIGN=top><B>artist</B>=name</TD><TD><B>Required.</B> Indicates the artist for which the information is being assigned.  Multiple artists can be assigned by passing this parameter multiple times.</TD></TR>
+  <TR><TD VALIGN=top><B>value</B>=text</TD><TD><B>Required.</B> Indicates the value being assigned to the given key.  Omit the text portion to delete a key.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="getPlaylistField"></a>getPlaylistField</TD>
+  <TD>Returns the value of a selected key for the indicated playlist. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being accessed</TD></TR>
+  <TR><TD VALIGN=top><B>playlist</B>=name||path</TD><TD><B>Required.</B> Indicates the playlist for which the information is being retrieved.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="setPlaylistField"></a>setPlaylistField</TD>
+  <TD>Assigns the key/value pair to the indicated playlists. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being assigned</TD></TR>
+  <TR><TD VALIGN=top><B>playlist</B>=name||path</TD><TD><B>Required.</B> Indicates the playlist for which the information is being assigned.  Multiple playlists can be assigned by passing this parameter multiple times.</TD></TR>
+  <TR><TD VALIGN=top><B>value</B>=text</TD><TD><B>Required.</B> Indicates the value being assigned to the given key.  Omit the text portion to delete a key.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.8</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="getSongField"></a>getSongField</TD>
+  <TD>Returns the value of a selected key for the indicated song. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being accessed</TD></TR>
+  <TR><TD VALIGN=top><B>song</B>=fullpath</TD><TD><B>Required.</B> Indicates the song for which the information is being retrieved.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.5</TD></TR>
+
+<TR>
+  <TD VALIGN=top><a name="setSongField"></a>setSongField</TD>
+  <TD>Assigns the key/value pair to the indicated songs. Parameters are:
+  <TABLE>
+  <TR><TD VALIGN=top><B>key</B>=name</TD><TD><B>Required.</B> Indicates the key being assigned</TD></TR>
+  <TR><TD VALIGN=top><B>playlist</B>=name||fullpath</TD><TD>Assign the key/value pair to all songs in the given playlist</TD></TR>
+  <TR><TD VALIGN=top><B>song</B>=fullpath</TD><TD>Indicates the song for which the information is being assigned.  Multiple songs can be assigned by passing this parameter multiple times.</TD></TR>
+  <TR><TD VALIGN=top><B>title</B>=name</TD><TD>Indicates the name of the song to assign the value to. <i>1.8</i></TD></TR>
+  <TR><TD VALIGN=top><B>value</B>=text</TD><TD><B>Required.</B> Indicates the value being assigned to the given key.  Omit the text portion to delete a key.</TD></TR>
+  </TABLE>
+</TD><TD VALIGN=top>1.5</TD></TR>
+
+</TABLE></CENTER>
+
+<h2>User Power Searches</h2>
+
+<P>You can access custom tags using the following syntax:
+
+<blockquote>
+field key
+</blockquote>
+
+The field will be automatically treated as a string or number
+depending on context.  Fields you will be using repeatedly
+should be added to your powerwords.txt file for convenience.
+Quotes around the key are optional unless the key is multiple
+words, has unusual characters, or is also defined as a keyword.</P>
+
+<h2><a name="examples"></a>Examples</h2>
+
+<P><B>Example 1: Beats Per Minute</B></P>
+
+<P>If your files have BPM stored from external tools, you could
+write a program to archive this info into the MusicIP Mixer cache.
+The URLs would look something like this:
+<blockquote>
+    /api/setSongField?song=filename&key=bpm&value=120
+</blockquote>
+To use BPM in a Power Search, you can do this:
+<blockquote>
+    field "bpm"
+</blockquote>
+Adding the following alias to your powerwords.txt file:
+<blockquote>
+    bpm: field "bpm"
+</blockquote>
+will let you simply refer to this as bpm. Now you can do
+higher level queries like:
+<blockquote>
+    120 &lt; bpm and bpm &lt; 130
+</blockquote>
+or define more Power Words:
+<blockquote>
+    fast: bpm > 180
+</blockquote>
+which would let you search for &quot;fast songs&quot;.
+</P>
+
+<P><B>Example 2: Mood Tags</B></P>
+
+<P>
+If you want to define your own tags which describe the mood of certain
+tracks, (metadata based moods instead of acoustical ones), you could
+create a custom tag called &quot;moods&quot;, and associated whatever
+moods you want.  Using the mmmexec program, it would look like this:
+<blockquote>
+    mmmexec -set mood=sad file.mp3
+</blockquote>
+To access this from a Power Search, use something like this:
+<blockquote>
+    field "mood" contains "sad"
+</blockquote>
+The powerwords.txt definition would look like this:
+<blockquote>
+    sad: field "mood" contains "sad"
+</blockquote>
+And now you can search for &quot;sad songs&quot;. </P>
+
+<P><B>Further Ideas</B></P>
+
+<P>Any metadata you can associate with your songs can be stored in
+your MusicIP Mixer cache.  For instance, you could make accessible
+your Comments tags, your ReplayGain tags, Billboard Positions of
+songs, whatever you can imagine.  By combining custom tags and Power
+Words, you can create your own personal search vocabulary, which you
+can share with others.</P>
+
+
+</div>
+
+
+
+
+    </td>
+
+    <td width="50" valign="top" bgcolor="#FFFFFF" class="subColumn">&nbsp;</td>
+  </tr>
+</table>
+
+
+
+</body>
+</html>
