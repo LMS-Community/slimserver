@@ -2,7 +2,7 @@ package Slim::Utils::Scanner::Local::Async;
 
 # $Id$
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 #
@@ -52,7 +52,7 @@ sub find {
 	if ( $args->{progress} ) {
 		$progress = Slim::Utils::Progress->new( {
 			type  => 'importer',
-			name  => $args->{scanName} ? 'discovering_' . $args->{scanName} : 'discovering_files',
+			name  => $path . '|' . ($args->{scanName} ? 'discovering_' . $args->{scanName} : 'discovering_files'),
 		} );
 	}
 	

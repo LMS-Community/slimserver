@@ -1,0 +1,30 @@
+PLUGIN_UPNP_MODULE_NAME
+	CS	Rozhraní média UPnP/DLNA
+	DA	UPnP/DLNA-mediegrænseflade
+	DE	UPnP/DLNA Media Interface
+	EN	UPnP/DLNA Media Interface
+	ES	Interfaz multimedia UPnP/DLNA
+	FI	UPnP/DLNA Media -käyttöliittymä
+	FR	Interface multimédia UPnP/DLNA
+	IT	Interfaccia multimediale UPnP/DLNA
+	NL	UPnP/DLNA Media Interface
+	NO	UPnP/DLNA-mediegrensesnitt
+	PL	Interfejs multimedialny UPnP/DLNA
+	RU	Интерфейс UPnP/DLNA Media
+	SV	Mediagränssnittet UPnP/DLNA
+
+PLUGIN_UPNP_MODULE_NAME_DESC
+	CS	Přidá UPnP/DLNA AV MediaServer a MediaRenderer, a povolí přístup ostatních zařízení na místní síti.
+	DA	Tilføjer en UPnP/DLNA AV MediaServer og MediaRenderer som giver adgang til andre enheder på det lokale netværk.
+	DE	Fügt einen UPnP/DLNA AV MediaServer und MediaRenderer hinzu und ermöglicht so den Zugriff anderer Geräte auf das lokale Netzwerk.
+	EN	Adds a UPnP/DLNA AV MediaServer and MediaRenderer, enabling access by other devices on the local network.
+	ES	Agrega un MediaServer y un MediaRenderer AV UPnP/DLNA, lo que permite el acceso de otros dispositivos en la red local.
+	FI	Lisää UPnP/DLNA AV MediaServer -palvelimen ja MediaRendererin, jolloin muiden laitteiden pääsy paikalliseen verkkoon sallitaan.
+	FR	Ajoute un MediaServer et un MediaRenderer UPnP/DLNA AV pour permettre l'accès au réseau local à d'autres dispositifs.
+	IT	Aggiunge un UPnP/DLNA AV MediaServer and MediaRenderer, consentendo l'accesso alla rete locale da parte di altri dispositivi.
+	NL	Hiermee worden een UPnP/DLNA AV MediaServer en MediaRenderer toegevoegd, die zorgen voor toegang tot andere apparaten op het lokale netwerk.
+	NO	Legger til en UPnP/DLNA AV MediaServer og MediaRenderer, slik at andre enheter på det lokale nettverket får tilgang.
+	PL	Dodaje urządzenie MediaServer i MediaRenderer audio-wideo standardu UPnP/DLNA, umożliwiając dostęp innym urządzeniom w sieci lokalnej.
+	RU	Добавляет UPnP/DLNA AV MediaServer и MediaRenderer, предоставляя возможность доступа с других устройств в локальной сети.
+	SV	Lägger till en UPnP/DLNA AV MediaServer och MediaRenderer som möjliggör åtkomst för andra enheter i det lokala nätverket.
+

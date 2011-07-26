@@ -2,7 +2,7 @@ package Slim::bootstrap;
 
 # $Id$
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2
 
@@ -38,7 +38,7 @@ use Slim::Utils::OSDetect;
 # same, Dynaloader fails.
 #
 # The workaround is to munge @INC and eval'ing the known modules that
-# we include with Squeezebox Server, first checking our CPAN path, then if
+# we include with Logitech Media Server, first checking our CPAN path, then if
 # there are any modules that couldn't be loaded, splicing CPAN/ out,
 # and attempting to load the system version of the module. When we are
 # done, put our CPAN/ path back in @INC.
@@ -204,7 +204,7 @@ If 7.6 is outdated by the time you read this, Replace "7.6" with the major versi
 You should never need to do this if you're on Windows or Mac OSX. If the installers
 don't work for you, ask for help and/or report a bug.
 
-of Squeezebox Server you are running.
+of Logitech Media Server you are running.
 
 *******
 
@@ -223,7 +223,7 @@ of Squeezebox Server you are running.
 	my $failed = check_valid_versions();
 	if ( scalar keys %{$failed} ) {
 	
-		print "The following CPAN modules were found but cannot work with Squeezebox Server:\n";
+		print "The following CPAN modules were found but cannot work with Logitech Media Server:\n";
 		
 		for my $module ( sort keys %{$failed} ) {
 			if ( $failed->{$module}->{loaded} eq $failed->{$module}->{need} && $failed->{$module}->{msg} ) {
@@ -238,7 +238,7 @@ of Squeezebox Server you are running.
 		print "To fix this problem you have several options:\n";
 		print "1. Install the latest version of the module(s) using CPAN: sudo cpan Some::Module\n";
 		print "2. Update the module's package using apt-get, yum, etc.\n";
-		print "3. Run the .tar.gz version of Squeezebox Server which includes all required CPAN modules.\n";
+		print "3. Run the .tar.gz version of Logitech Media Server which includes all required CPAN modules.\n";
 		print "\n";
 		
 		exit;
@@ -294,8 +294,8 @@ sub tryModuleLoad {
 			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
 			if ($@ =~ /cannot restore segment prot after reloc/) {
 
-				print STDERR "** Squeezebox Server Error:\n";
-				print STDERR "** SELinux settings prevented Squeezebox Server from starting.\n";
+				print STDERR "** Logitech Media Server Error:\n";
+				print STDERR "** SELinux settings prevented Logitech Media Server from starting.\n";
 				print STDERR "** See http://wiki.slimdevices.com/index.cgi?RPM for more information.\n\n";
 				exit;
 			}
@@ -435,7 +435,7 @@ sub sigquit {
 	exit();
 }
 
-# Aliased to END in Squeezebox Server & scanner, as Log::Log4perl installs an END
+# Aliased to END in the server & scanner, as Log::Log4perl installs an END
 # handler, which needs to run last.
 sub theEND {
 

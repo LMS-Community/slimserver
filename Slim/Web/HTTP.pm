@@ -2,7 +2,7 @@ package Slim::Web::HTTP;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -557,7 +557,7 @@ sub processHTTP {
 		# CSRF: make list of params passed by HTTP client
 		my %csrfReqParams;
 		
-		# XXX - unfortunately Squeezebox Server uses a query form
+		# XXX - unfortunately Logitech Media Server uses a query form
 		# that can have a key without a value, yet it's
 		# differnet from a key with an empty value. So we have
 		# to parse out like this.
@@ -645,7 +645,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( !main::WEBUI || $path =~ m{^(?:html|music|plugins|apps|settings|firmware|clixmlbrowser)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|image|plugins|apps|settings|firmware|clixmlbrowser)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -983,7 +983,7 @@ sub generateHTTPResponse {
 		$contentType = 'application/octet-stream';
 	}
 	
-	if ( $path =~ /music\/\d+\/download/ ) {
+	if ( $path =~ /(?:music|video|image)\/[0-9a-f]+\/download/ ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
 	}
@@ -1160,7 +1160,7 @@ sub generateHTTPResponse {
 
 			return 0;
 
-		} elsif ($path =~ m{music/([^/]+)/(cover|thumb)} || 
+		} elsif ($path =~ m{(?:image|music)/([^/]+)/(cover|thumb)} || 
 			$path =~ m{^plugins/cache/icons} || 
 			$path =~ /\/\w+_(X|\d+)x(X|\d+)
 	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character
@@ -1222,17 +1222,31 @@ sub generateHTTPResponse {
 				$response,
 			);
 
-		} elsif ($path =~ /music\/(\d+)\/download/) {
+		} elsif ($path =~ /(?:music|video|image)\/([0-9a-f]+)\/download/) {
 			# Bug 10730
 			my $id = $1;
 			
-			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for file download");
-			delete $keepAlives{$httpClient};
-			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
-			$response->header( Connection => 'close' );
+			if ( $path =~ /music|video/ ) {
+				main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for large file download");
+				delete $keepAlives{$httpClient};
+				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+				$response->header( Connection => 'close' );
+			}
 
-			if ( downloadMusicFile($httpClient, $response, $id) ) {
-				return 0;
+			if ( $path =~ /music/ ) {
+				if ( downloadMusicFile($httpClient, $response, $id) ) {
+					return 0;
+				}
+			}
+			elsif ( $path =~ /video/ ) {
+				if ( downloadVideoFile($httpClient, $response, $id) ) {
+					return 0;
+				}
+			}
+			elsif ( $path =~ /image/ ) {
+				if ( downloadImageFile($httpClient, $response, $id) ) {
+					return 0;
+				}
 			}
 
 		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
@@ -1664,7 +1678,7 @@ sub _stringifyHeaders {
 
 	$data .= sprintf("%s %s %s%s", $response->protocol(), $code, HTTP::Status::status_message($code) || "", $CRLF);
 
-	$data .= sprintf("Server: Squeezebox Server (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
+	$data .= sprintf("Server: Logitech Media Server (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
 
 	$data .= $response->headers_as_string($CRLF);
 
@@ -2671,6 +2685,34 @@ sub downloadMusicFile {
 			
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
 			
+		return 1;
+	}
+	
+	return;
+}
+
+sub downloadVideoFile {
+	my ($httpClient, $response, $id) = @_;
+
+	require Slim::Schema::Video;
+	my $video = Slim::Schema::Video->findhash($id);
+
+	if ($video) {			
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}) );
+		return 1;
+	}
+	
+	return;
+}
+
+sub downloadImageFile {
+	my ($httpClient, $response, $hash) = @_;
+
+	require Slim::Schema::Image;
+	my $image = Slim::Schema::Image->findhash($hash);
+
+	if ($image) {			
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}) );
 		return 1;
 	}
 	

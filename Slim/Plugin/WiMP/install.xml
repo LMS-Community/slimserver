@@ -11,7 +11,7 @@
 	<icon>plugins/WiMP/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>
-		<id>Squeezebox Server</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.5</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

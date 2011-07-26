@@ -2,7 +2,7 @@ package Slim::Player::Squeezebox2;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -862,7 +862,7 @@ sub audio_outputs_enable {
 }
 
 
-# The following settings are sync'd between the player firmware and Squeezebox Server
+# The following settings are sync'd between the player firmware and Logitech Media Server
 our $pref_settings = {
 	'playername' => {
 		firmwareid => 0,
@@ -949,7 +949,7 @@ sub setPlayerSetting {
 	}
 }
 
-# Allow the firmware to update a pref in Squeezebox Server
+# Allow the firmware to update a pref in Logitech Media Server
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;

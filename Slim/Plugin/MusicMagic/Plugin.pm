@@ -2,7 +2,7 @@ package Slim::Plugin::MusicMagic::Plugin;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech
+# Logitech Media Server Copyright 2001-2011 Logitech
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -276,7 +276,7 @@ sub initPlugin {
 		# if this is the first time MIP is initialized, have it use
 		# - faster mixable status only scan (2) if a music folder is defined
 		# - slower full metadata import (1) if no music folder is defined
-		$prefs->set('musicip', Slim::Utils::Misc::getAudioDir() ? 2 : 1)  if !defined $enabled;
+		$prefs->set('musicip', scalar @{ Slim::Utils::Misc::getAudioDirs() } ? 2 : 1)  if !defined $enabled;
 
 		# this query should return an API error if Power Search is not available
 		$response = _syncHTTPRequest("/api/mix?filter=?length>120&length=1");

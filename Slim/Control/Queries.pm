@@ -2,7 +2,7 @@ package Slim::Control::Queries;
 
 # $Id:  $
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +20,7 @@ Slim::Control::Queries
 
 =head1 DESCRIPTION
 
-L<Slim::Control::Queries> implements most Squeezebox Server queries and is designed to 
+L<Slim::Control::Queries> implements most Logitech Media Server queries and is designed to 
  be exclusively called through Request.pm and the mechanisms it defines.
 
  Except for subscribe-able queries (such as status and serverstatus), there are no
@@ -1546,14 +1546,17 @@ sub modeQuery {
 	$request->setStatusDone();
 }
 
-
 sub musicfolderQuery {
+	mediafolderQuery(@_);
+}
+
+sub mediafolderQuery {
 	my $request = shift;
 	
-	main::INFOLOG && $log->info("musicfolderQuery()");
+	main::INFOLOG && $log->info("mediafolderQuery()");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['musicfolder']])) {
+	if ($request->isNotQuery([['mediafolder']]) && $request->isNotQuery([['musicfolder']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1564,47 +1567,74 @@ sub musicfolderQuery {
 	my $folderId = $request->getParam('folder_id');
 	my $want_top = $request->getParam('return_top');
 	my $url      = $request->getParam('url');
+	my $type     = $request->getParam('type') || '';
 	my $tags     = $request->getParam('tags') || '';
+	
+	my $sql;		
 	
 	# url overrides any folderId
 	my $params = ();
+	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
 	
-	if (defined $url) {
-		$params->{'url'} = $url;
-	} else {
-		# findAndScanDirectory sorts it out if $folderId is undef
-		$params->{'id'} = $folderId;
-	}
-	
-	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count);
-	
-	# if this is a follow up query ($index > 0), try to read from the cache
-	if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
-		$items       = $cachedItem->{items};
-		$topLevelObj = $cachedItem->{topLevelObj};
-		$count       = $cachedItem->{count};
-	}
-	else {
-		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	my ($topLevelObj, $items, $count, $topPath);
+
+	if ( !defined $url && !defined $folderId && scalar(@$mediaDirs) > 1) {
 		
-		# cache results in case the same folder is queried again shortly 
-		# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-		$bmfCache{ $params->{url} || $params->{id} || 0 } = {
-			items       => $items,
-			topLevelObj => $topLevelObj,
-			count       => $count,
-		};
+		$items = $mediaDirs;
+		$count = scalar(@$items);
+		$topPath = '';
+
 	}
 
-	if ($want_top) {
-		$items = [ $topLevelObj->url ];
-		$count = 1;
-	}
+	else {
+		if (defined $url) {
+			$params->{'url'} = $url;
+		}
+		elsif ($folderId) {
+			$params->{'id'} = $folderId;
+		}
+		elsif (scalar @$mediaDirs) {
+			$params->{'url'} = $mediaDirs->[0];
+		}
 
-	# create filtered data
+		if ($type) {
+			$params->{typeRegEx} = Slim::Music::Info::validTypeExtensions($type);
+
+			# if we need the artwork, we'll have to look them up in their own tables for videos/images
+			if ($tags && $type eq 'image') {
+				$sql = 'SELECT * FROM images WHERE url = ?';
+			}
+			elsif ($tags && $type eq 'video') {
+				$sql = 'SELECT * FROM videos WHERE url = ?';
+			}
+		}
 	
-	my $topPath = $topLevelObj->path;
+		# if this is a follow up query ($index > 0), try to read from the cache
+		if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
+			$items       = $cachedItem->{items};
+			$topLevelObj = $cachedItem->{topLevelObj};
+			$count       = $cachedItem->{count};
+		}
+		else {
+			($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+		
+			# cache results in case the same folder is queried again shortly 
+			# should speed up Jive BMF, as only the first chunk needs to run the full loop above
+			$bmfCache{ $params->{url} || $params->{id} || 0 } = {
+				items       => $items,
+				topLevelObj => $topLevelObj,
+				count       => $count,
+			};
+		}
+
+		if ($want_top) {
+			$items = [ $topLevelObj->url ];
+			$count = 1;
+		}
+
+		# create filtered data
+		$topPath = $topLevelObj->path if blessed($topLevelObj);
+	}
 
 	# now build the result
 	if (Slim::Music::Import->stillScanning()) {
@@ -1617,6 +1647,8 @@ sub musicfolderQuery {
 
 		my $loopname = 'folder_loop';
 		my $chunkCount = 0;
+
+		my $sth = $sql ? Slim::Schema->dbh->prepare_cached($sql) : undef;
 
 		for my $filename (@$items[$start..$end]) {
 
@@ -1643,12 +1675,17 @@ sub musicfolderQuery {
 				'readTags' => 1,
 			});
 	
-			if (!blessed($item) || !$item->can('content_type')) {
-	
+			my $id;
+
+			if ( (!blessed($item) || !$item->can('content_type')) 
+				&& (!$params->{typeRegEx} || $filename !~ $params->{typeRegEx}) )
+			{
 				next;
 			}
+			elsif (blessed($item)) {
+				$id = $item->id();
+			}
 
-			my $id = $item->id();
 			$id += 0;
 			
 			$realName ||= Slim::Music::Info::fileName($url);
@@ -1662,7 +1699,36 @@ sub musicfolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} elsif (Slim::Music::Info::isPlaylist($item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
-			} elsif (Slim::Music::Info::isSong($item)) {
+			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
+				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
+			
+				# only do this for images & videos where we'll need the hash for the artwork
+				if ($sth) {
+					$sth->execute($url);
+					
+					my $itemDetails = $sth->fetchrow_hashref;
+					
+					if ($type eq 'video') {
+						while ( my ($k, $v) = each(%$itemDetails) ) {
+							$itemDetails->{"videos.$k"} = $v if $k !~ /^videos\./;
+						}
+						
+						_videoData($request, $loopname, $chunkCount, $tags, $itemDetails);
+					}
+					
+					elsif ($type eq 'image') {
+						utf8::decode( $itemDetails->{'images.title'} ) if exists $itemDetails->{'images.title'};
+						utf8::decode( $itemDetails->{'images.album'} ) if exists $itemDetails->{'images.album'};
+
+						while ( my ($k, $v) = each(%$itemDetails) ) {
+							$itemDetails->{"images.$k"} = $v if $k !~ /^images\./;
+						}
+						_imageData($request, $loopname, $chunkCount, $tags, $itemDetails);
+					}
+	
+				}
+				
+			} elsif (Slim::Music::Info::isSong($item) && $type ne 'video') {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
 			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
@@ -1672,15 +1738,18 @@ sub musicfolderQuery {
 
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
+			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
 
 			$chunkCount++;
 		}
+		
+		$sth->finish() if $sth;
 	}
 
 	$request->addResult('count', $count);
 
 	# we might have changed - flush to the db to be in sync.
-	$topLevelObj->update;
+	$topLevelObj->update if blessed($topLevelObj);
 	
 	$request->setStatusDone();
 }
@@ -2352,10 +2421,16 @@ sub rescanprogressQuery {
 
 		for my $p (@progress) {
 
+			my $name = $p->name;
+			if ($name =~ /(.*)\|(.*)/) {
+				$request->addResult('fullname', $request->string($2 . '_PROGRESS') . $request->string('COLON') . ' ' . $1);
+				$name = $2;
+			}
+
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
-			$request->addResult($p->name(), int($percComplete));
+			$request->addResult($name, int($percComplete));
 			
-			push @steps, $p->name();
+			push @steps, $name;
 
 			$total_time += ($p->finish || time()) - $p->start;
 			
@@ -2534,8 +2609,12 @@ sub serverstatusQuery {
 		if (Slim::Music::Import->stillScanning()) {
 			$request->addResult('rescan', "1");
 			if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+
+				# remove leading path information from the progress name
+				my $name = $p->name;
+				$name =~ s/(.*)\|//;
 	
-				$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
+				$request->addResult('progressname', $request->string($name . '_PROGRESS'));
 				$request->addResult('progressdone', $p->done);
 				$request->addResult('progresstotal', $p->total);
 			}
@@ -4020,6 +4099,8 @@ my %tagMap = (
 	  'l' => ['album',            'ALBUM',         'albumname'],        #->album.title
 	  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 	  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
+	  'D' => ['addedTime',        'ADDTIME',       'addedTime'],        #added_time
+	  'U' => ['lastUpdated',      'UPDTIME',       'lastUpdated'],      #updated_time
 	  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
 	                                                                    #tag 
 	  'i' => ['disc',             'DISC',          'disc'],             #disc
@@ -4101,7 +4182,9 @@ my %colMap = (
 	f => 'tracks.filesize',
 	j => sub { $_[0]->{'tracks.cover'} ? 1 : 0 },
 	J => 'albums.artwork',
-	n => sub { Slim::Schema::Track->buildModificationTime( $_[0]->{'tracks.timestamp'} ) },
+	n => 'tracks.timestamp',
+	D => 'tracks.added_time',
+	U => 'tracks.updated_time',
 	C => sub { $_[0]->{'albums.compilation'} ? 1 : 0 },
 	Y => 'tracks.replay_gain',
 	X => 'albums.replay_gain',
@@ -4826,6 +4909,8 @@ sub _getTagDataForTracks {
 	$tags =~ /f/ && do { $c->{'tracks.filesize'} = 1 };
 	$tags =~ /j/ && do { $c->{'tracks.cover'} = 1 };
 	$tags =~ /n/ && do { $c->{'tracks.timestamp'} = 1 };
+	$tags =~ /D/ && do { $c->{'tracks.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'tracks.updated_time'} = 1 };
 	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
 	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
 	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
@@ -4833,8 +4918,7 @@ sub _getTagDataForTracks {
 	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
 	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
 	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
-	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
-	
+	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };	
 	$tags =~ /g/ && do {
 		$join_genres->();
 		$c->{'genres.name'} = 1;
@@ -5103,6 +5187,459 @@ sub _getTagDataForTracks {
 	
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
+
+### Video support
+
+# XXX needs to be more like titlesQuery, was originally copied from albumsQuery
+sub videoTitlesQuery {
+	my $request = shift;
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $tags          = $request->getParam('tags') || 't';
+	my $search        = $request->getParam('search');
+	my $sort          = $request->getParam('sort');
+	my $videoHash     = $request->getParam('video_id');
+	
+	#if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
+	#	$request->setStatusBadParams();
+	#	return;
+	#}
+
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
+	my $sql      = 'SELECT %s FROM videos ';
+	my $c        = { 'videos.hash' => 1, 'videos.titlesearch' => 1, 'videos.titlesort' => 1 };
+	my $w        = [];
+	my $p        = [];
+	my $order_by = "videos.titlesort $collate";
+	my $limit;
+	
+	# Normalize and add any search parameters
+	if ( defined $videoHash ) {
+		push @{$w}, 'videos.hash = ?';
+		push @{$p}, $videoHash;
+	}
+	# ignore everything if $videoID was specified
+	else {
+		if ($sort) {
+			if ( $sort eq 'new' ) {
+				$limit = $prefs->get('browseagelimit') || 100;
+				$order_by = "videos.added_time desc";
+
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
+				}
+			}
+			elsif ( $sort =~ /^sql=(.+)/ ) {
+				$order_by = $1;
+				$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
+			}
+		}
+
+		if ( $search && specified($search) ) {
+			if ( $search =~ s/^sql=// ) {
+				# Raw SQL search query
+				$search =~ s/;//g; # strip out any attempt at combining SQL statements
+				push @{$w}, $search;
+			}
+			else {
+				my $strings = Slim::Utils::Text::searchStringSplit($search);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'videos.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {		
+					push @{$w}, 'videos.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
+			}
+		}
+	}
+	
+	$tags =~ /t/ && do { $c->{'videos.title'} = 1 };
+	$tags =~ /d/ && do { $c->{'videos.secs'} = 1 };
+	$tags =~ /o/ && do { $c->{'videos.mime_type'} = 1 };
+	$tags =~ /r/ && do { $c->{'videos.bitrate'} = 1 };
+	$tags =~ /f/ && do { $c->{'videos.filesize'} = 1 };
+	$tags =~ /w/ && do { $c->{'videos.width'} = 1 };
+	$tags =~ /h/ && do { $c->{'videos.height'} = 1 };
+	$tags =~ /n/ && do { $c->{'videos.mtime'} = 1 };
+	$tags =~ /D/ && do { $c->{'videos.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'videos.updated_time'} = 1 };
+	$tags =~ /l/ && do { $c->{'videos.album'} = 1 };
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= "GROUP BY videos.hash ORDER BY $order_by ";
+	
+	# Add selected columns
+	# Bug 15997, AS mapping needed for MySQL
+	my @cols = keys %{$c};
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
+	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
+
+	if ($stillScanning) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my $totalCount = $count;
+
+	# now build the result
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	my $loopname = 'videos_loop';
+	my $chunkCount = 0;
+
+	if ($valid) {		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Video Titles query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		# Bind selected columns in order
+		my $i = 1;
+		for my $col ( @cols ) {
+			$sth->bind_col( $i++, \$c->{$col} );
+		}
+		
+		while ( $sth->fetch ) {
+			if ( $sort ne 'new' ) {
+				utf8::decode( $c->{'videos.titlesort'} ) if exists $c->{'videos.titlesort'};
+			}
+
+			# "raw" result formatting (for CLI or JSON RPC)
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'videos.hash'});				
+
+			_videoData($request, $loopname, $chunkCount, $tags, $c);
+		
+			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
+		}
+	}
+
+	$request->addResult('count', $totalCount);
+	
+	$request->setStatusDone();
+}
+
+sub _videoData {
+	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
+
+	utf8::decode( $c->{'videos.title'} ) if exists $c->{'videos.title'};
+	utf8::decode( $c->{'videos.album'} ) if exists $c->{'videos.album'};
+
+	$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'videos.title'});
+	$tags =~ /d/ && $request->addResultLoop($loopname, $chunkCount, 'duration', $c->{'videos.secs'});
+	$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'videos.mime_type'});
+	$tags =~ /r/ && $request->addResultLoop($loopname, $chunkCount, 'bitrate', $c->{'videos.bitrate'} / 1000);
+	$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'videos.filesize'});
+	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
+	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
+	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
+	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
+	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
+	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
+	$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $c->{'videos.hash'});
+}
+
+# XXX needs to be more like titlesQuery, was originally copied from albumsQuery
+sub imageTitlesQuery {
+	my $request = shift;
+
+	if (!Slim::Schema::hasLibrary()) {
+		$request->setStatusNotDispatchable();
+		return;
+	}
+	
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+	
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $tags          = $request->getParam('tags') || 't';
+	my $search        = $request->getParam('search');
+	my $timeline      = $request->getParam('timeline');
+	my $albums        = $request->getParam('albums');
+	my $sort          = $request->getParam('sort');
+	my $imageHash     = $request->getParam('image_id');
+	
+	#if ($sort && $request->paramNotOneOfIfDefined($sort, ['new'])) {
+	#	$request->setStatusBadParams();
+	#	return;
+	#}
+
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	
+	my $sql      = 'SELECT %s FROM images ';
+	my $c        = { 'images.hash' => 1, 'images.titlesearch' => 1, 'images.titlesort' => 1 };	# columns
+	my $w        = [];																			# where
+	my $p        = [];																			# parameters
+	my $group_by = "images.hash";
+	my $order_by = "images.titlesort $collate";
+	my $id_col   = 'images.hash';
+	my $title_col= 'images.title';
+	my $limit;
+	
+	# Normalize and add any search parameters
+	if ( defined $imageHash ) {
+		push @{$w}, 'images.hash = ?';
+		push @{$p}, $imageHash;
+	}
+	# ignore everything if $imageHash was specified
+	else {
+		if ($sort) {
+			if ( $sort eq 'new' ) {
+				$limit = $prefs->get('browseagelimit') || 100;
+				$order_by = "images.added_time desc";
+
+				# Force quantity to not exceed max
+				if ( $quantity && $quantity > $limit ) {
+					$quantity = $limit;
+				}
+			}
+			elsif ( $sort =~ /^sql=(.+)/ ) {
+				$order_by = $1;
+				$order_by =~ s/;//g; # strip out any attempt at combining SQL statements
+			}
+		}
+		
+		if ( $timeline ) {
+			$search ||= '';
+			my ($year, $month, $day) = split('-', $search);
+			
+			$tags = 't' if $timeline !~ /^(?:day|albums)$/;
+
+			if ( $timeline eq 'years' ) {
+				$sql = sprintf $sql, "strftime('%Y', date(original_time, 'unixepoch')) AS 'year'";
+				$id_col = $order_by = $group_by = $title_col = 'year';
+				$c = { year => 1 };
+			}
+			
+			elsif ( $timeline eq 'months' && $year ) {
+				$sql = sprintf $sql, "strftime('%m', date(original_time, 'unixepoch')) AS 'month'";
+				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
+				$id_col = $order_by = $group_by = $title_col = 'month';
+				$c = { month => 1 };
+			}
+
+			elsif ( $timeline eq 'days' && $year && $month ) {
+				$sql = sprintf $sql, "strftime('%d', date(original_time, 'unixepoch')) AS 'day'";
+				push @{$w}, "strftime('%Y', date(original_time, 'unixepoch')) == '$year'";
+				push @{$w}, "strftime('%m', date(original_time, 'unixepoch')) == '$month'";
+				$id_col = $order_by = $group_by = $title_col = 'day';
+				$c = { day => 1 };
+			}
+
+			elsif ( $timeline eq 'dates' ) {
+				my $dateFormat = $prefs->get('shortdateFormat');
+				# only a subset of strftime is supported in SQLite, eg. no two letter years
+				$dateFormat =~ s/%y/%Y/;
+
+				$sql = sprintf $sql, "strftime('$dateFormat', date(original_time, 'unixepoch')) AS 'date', strftime('%Y/%m/%d', date(original_time, 'unixepoch')) AS 'd'";
+				$id_col = $order_by = $group_by = 'd';
+				$title_col = 'date';
+				$c = { date => 1, d => 1 };
+			}
+			
+			elsif ( $timeline eq 'day' && $year && $month && $day ) {
+				push @{$w}, "date(original_time, 'unixepoch') == '$year-$month-$day'";
+				$timeline = '';
+			}
+		}
+		
+		elsif ( $albums ) {
+			if ( $search ) {
+				$search = URI::Escape::uri_unescape($search);
+				utf8::decode($search);
+				
+				$c->{'images.album'} = 1;
+				push @{$w}, "images.album == ?";
+				push @{$p}, $search;
+			}
+			else {
+				$c = { 'images.album' => 1 };
+				$id_col = $order_by = $group_by = $title_col = 'images.album';
+				$tags = 't';
+			}
+		}
+		
+		elsif ( $search && specified($search) ) {
+			if ( $search =~ s/^sql=// ) {
+				# Raw SQL search query
+				$search =~ s/;//g; # strip out any attempt at combining SQL statements
+				push @{$w}, $search;
+			}
+			else {
+				my $strings = Slim::Utils::Text::searchStringSplit($search);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'images.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {		
+					push @{$w}, 'images.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
+			}
+		}
+	}
+	
+	$tags =~ /t/ && do { $c->{$title_col} = 1 };
+	$tags =~ /o/ && do { $c->{'images.mime_type'} = 1 };
+	$tags =~ /f/ && do { $c->{'images.filesize'} = 1 };
+	$tags =~ /w/ && do { $c->{'images.width'} = 1 };
+	$tags =~ /h/ && do { $c->{'images.height'} = 1 };
+	$tags =~ /O/ && do { $c->{'images.orientation'} = 1 };
+	$tags =~ /n/ && do { $c->{'images.original_time'} = 1 };
+	$tags =~ /D/ && do { $c->{'images.added_time'} = 1 };
+	$tags =~ /U/ && do { $c->{'images.updated_time'} = 1 };
+	$tags =~ /l/ && do { $c->{'images.album'} = 1 };
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		$sql .= join( ' AND ', @{$w} );
+		$sql .= ' ';
+	}
+	$sql .= "GROUP BY $group_by " if $group_by;
+	$sql .= "ORDER BY $order_by " if $order_by;
+	
+	# Add selected columns
+	# Bug 15997, AS mapping needed for MySQL
+	my @cols = keys %{$c};
+	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols ) unless $timeline;
+	
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	# Get count of all results, the count is cached until the next rescan done event
+	my $cacheKey = $sql . join( '', @{$p} );
+	
+	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	}, undef, @{$p} );
+	
+	if ( !$stillScanning ) {
+		$cache->{$cacheKey} = $count;
+	}
+
+	if ($stillScanning) {
+		$request->addResult('rescan', 1);
+	}
+
+	$count += 0;
+
+	my $totalCount = $count;
+
+	# now build the result
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	my $loopname = 'images_loop';
+	my $chunkCount = 0;
+
+	if ($valid) {		
+		# Limit the real query
+		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+			$sql .= "LIMIT $index, $quantity ";
+		}
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Image Titles query: $sql / " . Data::Dump::dump($p) );
+		}
+
+		my $sth = $dbh->prepare_cached($sql);
+		$sth->execute( @{$p} );
+		
+		# Bind selected columns in order
+		my $i = 1;
+		for my $col ( @cols ) {
+			$sth->bind_col( $i++, \$c->{$col} );
+		}
+		
+		while ( $sth->fetch ) {
+			utf8::decode( $c->{'images.title'} ) if exists $c->{'images.title'};
+			utf8::decode( $c->{'images.album'} ) if exists $c->{'images.album'};
+			
+			if ( $sort ne 'new' ) {
+				utf8::decode( $c->{'images.titlesort'} ) if exists $c->{'images.titlesort'};
+			}
+
+			# "raw" result formatting (for CLI or JSON RPC)
+			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{$id_col});
+							
+			$c->{title} = $c->{$title_col};
+			
+			_imageData($request, $loopname, $chunkCount, $tags, $c);
+			
+			$chunkCount++;
+			
+			main::idleStreams() if !($chunkCount % 5);
+		}
+	}
+
+	$request->addResult('count', $totalCount);
+	
+	$request->setStatusDone();
+}
+
+
+sub _imageData {
+	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
+
+	$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'title'});
+	$tags =~ /o/ && $request->addResultLoop($loopname, $chunkCount, 'mime_type', $c->{'images.mime_type'});
+	$tags =~ /f/ && $request->addResultLoop($loopname, $chunkCount, 'filesize', $c->{'images.filesize'});
+	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'images.width'});
+	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
+	$tags =~ /O/ && $request->addResultLoop($loopname, $chunkCount, 'orientation', $c->{'images.orientation'});
+	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $c->{'images.original_time'});
+	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
+	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
+	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});
+	$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $c->{'images.hash'});
+			
+	# browsing images by timeline Year -> Month -> Day
+	$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
+	$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
+	$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
+}
+
 
 =head1 SEE ALSO
 

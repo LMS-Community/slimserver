@@ -2,7 +2,7 @@ package Slim::Utils::Progress;
 
 # $Id$
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -207,12 +207,13 @@ sub update {
 		$elapsed = 0.01;
 	}
     
-	my $rate = $done / $elapsed;
-	$self->rate($rate);
+	if ( my $rate = $done / $elapsed ) {
+		$self->rate($rate);
 	
-	if ( my $total = $self->total ) {
-		# Calculate new ETA value if we know the total
-		$self->eta( int( ( $total - $done ) / $rate ) );
+		if ( my $total = $self->total ) {
+			# Calculate new ETA value if we know the total
+			$self->eta( int( ( $total - $done ) / $rate ) );
+		}
 	}
 
 	if ( $self->dball || $now > $self->dbup + UPDATE_DB_INTERVAL ) {

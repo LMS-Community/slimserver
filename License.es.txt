@@ -12,7 +12,7 @@ case where no particular license is given.
 
 Each of the software products we ship are licensed as follows:
 
-- All of Squeezebox Server's perl code is licensed for redistribution 
+- All of Logitech Media Server's perl code is licensed for redistribution 
 or inclusion in other software per version 2 of the GPL license, 
 included below for your convenience. 
 
@@ -22,10 +22,10 @@ included below for your convenience.
   See Graphics/CODE2000.HTM for more information.
 
 - Certain integral components of Slim Server, such as CPAN modules, 
-are (c) of their respective authors, and are included in Squeezebox Server
+are (c) of their respective authors, and are included in Logitech Media Server
 per their respective licenses.
 
-- Certain ancillary programs included in the Squeezebox Server distribution 
+- Certain ancillary programs included in the Logitech Media Server distribution 
 on our web site are licensed to us only for direct distribution to
 end-users. These include the Windows installer and Activestate 
 binaries. 

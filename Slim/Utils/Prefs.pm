@@ -100,7 +100,7 @@ Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
 my $prefs = preferences('server');
 
 # File paths need to be prepared in order to correctly read the file system
-$prefs->setFilepaths(qw(audiodir playlistdir cachedir librarycachedir coverArt));
+$prefs->setFilepaths(qw(mediadirs ignoreInAudioScan ignoreInVideoScan ignoreInImageScan playlistdir cachedir librarycachedir coverArt));
 
 
 =head2 preferences( $namespace )
@@ -159,7 +159,7 @@ sub init {
 		'rank-GAMES'                     => 20,
 		# Server Settings - Basic
 		'language'              => \&defaultLanguage,
-		'audiodir'              => \&defaultAudioDir,
+		'mediadirs'             => \&defaultMediaDirs,
 		'playlistdir'           => \&defaultPlaylistDir,
 		'autorescan'            => 0,
 		'autorescan_stat_interval' => 10,
@@ -189,8 +189,13 @@ sub init {
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
+		'disabledextensionsvideo'    => '',
+		'disabledextensionsimages'   => '',
 		'disabledextensionsplaylist' => '',
 		'disabledformats'       => [],
+		'ignoreInAudioScan'     => [],
+		'ignoreInVideoScan'     => [],
+		'ignoreInImageScan'     => [],
 		# Server Settings - Networking
 		'webproxy'              => \&Slim::Utils::OSDetect::getProxy,
 		'httpport'              => 9000,
@@ -701,7 +706,7 @@ sub init {
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
 									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
-	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir audiodir artfolder) );
+	$prefs->setValidate( 'dir',   qw(cachedir librarycachedir playlistdir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
 	# allow users to set a port below 1024 on windows which does not require admin for this
@@ -766,6 +771,26 @@ sub init {
 					}
 		}, 'coverArt',
 	);
+	
+	# mediadirs must be a list of unique, valid folders
+	$prefs->setValidate({
+		validator => sub {
+			my $new = $_[1];
+			return 0 if ref $new ne 'ARRAY';
+
+			# don't accept duplicate entries
+			my %seen;
+			return 0 if scalar ( grep { !$seen{$_}++ } @{$new} ) != scalar @$new;
+			
+			foreach (@{ $new }) {
+				if (! (-d $_ || (main::ISWINDOWS && -d Win32::GetANSIPathName($_)) || -d Slim::Utils::Unicode::encode_locale($_)) ) {
+					return 0;
+				}
+			}
+
+			return 1;
+		}
+	}, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
@@ -793,10 +818,10 @@ sub init {
 
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
-			require Slim::Music::MusicFolderScan;
-			Slim::Music::MusicFolderScan->init;
+			require Slim::Media::MediaFolderScan;
+			Slim::Media::MediaFolderScan->init;
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
-		}, 'audiodir');
+		}, 'mediadirs');
 	}
 
 	$prefs->setChange( sub {
@@ -956,9 +981,9 @@ use File::Spec::Functions qw(:ALL);
 use Digest::MD5;
 
 sub makeSecuritySecret {
-	# each Squeezebox Server installation should have a unique,
+	# each Logitech Media Server installation should have a unique,
 	# strongly random value for securitySecret. This routine
-	# will be called by the first time Squeezebox Server is started
+	# will be called by the first time the server is started
 	# to "seed" the prefs file with a value for this installation
 
 	my $hash = new Digest::MD5;
@@ -980,14 +1005,42 @@ sub defaultLanguage {
 	return Slim::Utils::OSDetect->getOS->getSystemLanguage;
 }
 
-sub defaultAudioDir {
-	my $path = Slim::Utils::OSDetect::dirsFor('music');
+sub defaultMediaDirs {
+	my $audiodir = $prefs->get('audiodir');
 
-	if ($path && -d $path) {
-		return $path;
-	} else {
-		return '';
+	$prefs->remove('audiodir') if $audiodir;
+	
+	my @mediaDirs;
+	
+	# if an audiodir had been there before, configure LMS as we did in SBS: audio only
+	if ($audiodir) {
+		# set mediadirs to the former audiodir
+		push @mediaDirs, $audiodir;
+		
+		# add the audiodir to the list of sources to be ignored by the other scans
+		foreach ('ignoreInVideoScan', 'ignoreInImageScan') {
+			my $ignoreDirs = $prefs->get($_) || [];
+			
+			push @$ignoreDirs, $audiodir;
+			$prefs->set($_, $ignoreDirs);
+		}
 	}
+	
+	# new LMS installation: default to all media folders
+	else {
+		# try to find the OS specific default folders for various media types
+		foreach my $medium ('music', 'videos', 'pictures') {
+			my $path = Slim::Utils::OSDetect::dirsFor($medium);
+			
+			main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
+			
+			if ($path && -d $path) {
+				push @mediaDirs, $path;
+			}
+		}
+	}
+	
+	return \@mediaDirs;
 }
 
 sub defaultPlaylistDir {

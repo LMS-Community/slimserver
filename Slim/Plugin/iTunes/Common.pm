@@ -1,6 +1,6 @@
 package Slim::Plugin::iTunes::Common;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -19,7 +19,7 @@ package Slim::Plugin::iTunes::Common;
 #
 #	ignoredisableditunestracks
 #		-- if this is set (1), songs that are 'disabled' (unchecked)
-#		in iTunes will still be available to Squeezebox Server.  If this is
+#		in iTunes will still be available to Logitech Media Server.  If this is
 #		unset (0) or undefined, disabled songs will be skipped.
 #
 #	itunesscaninterval
@@ -226,16 +226,18 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $mediadirs = Slim::Utils::Misc::getAudioDirs();
 
-	if (defined $audiodir) {
-		push @searchdirs, (
-			catdir($audiodir, 'My Music', 'iTunes'),
-			catdir($audiodir, 'iTunes'),
-			$audiodir
-		);
+	if (scalar @{ $mediadirs }) {
+		foreach my $audiodir (@{ $mediadirs }) {
+			push @searchdirs, (
+				catdir($audiodir, 'My Music', 'iTunes'),
+				catdir($audiodir, 'iTunes'),
+				$audiodir
+			);
+		}
 	}
-
+	
 	for my $dir (@searchdirs) {
 		$path = catfile(($dir), 'iTunes Music Library.xml');
 

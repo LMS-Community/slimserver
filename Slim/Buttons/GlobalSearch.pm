@@ -27,7 +27,7 @@ Slim::Buttons::GlobalSearch
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::GlobalSearch> is a Squeezebox Server module to easily
+L<Slim::Buttons::GlobalSearch> is a Logitech Media Server module to easily
 search content in any search provider available to the server
 
 =cut

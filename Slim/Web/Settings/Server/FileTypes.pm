@@ -2,7 +2,7 @@ package Slim::Web::Settings::Server::FileTypes;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -27,12 +27,41 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
+	my $ignoreFolders = {
+		audio => { map { $_, 1 } @{Slim::Utils::Misc::getDirsPref('ignoreInAudioScan')} },
+		video => { map { $_, 1 } @{Slim::Utils::Misc::getDirsPref('ignoreInVideoScan')} },
+		image => { map { $_, 1 } @{Slim::Utils::Misc::getDirsPref('ignoreInImageScan')} },
+	};
+	
+	$paramRef->{mediadirs} = [];
+	foreach ( @{Slim::Utils::Misc::getMediaDirs()} ) {
+		push @{$paramRef->{mediadirs}}, {
+			path => $_,
+			audio => $ignoreFolders->{audio}->{$_},
+			video => $ignoreFolders->{video}->{$_},
+			image => $ignoreFolders->{image}->{$_},
+		}
+	}
+
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
 
 		$prefs->set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
+		$prefs->set('disabledextensionsvideo',    $paramRef->{'disabledextensionsvideo'});
+		$prefs->set('disabledextensionsimages',   $paramRef->{'disabledextensionsimages'});
 		$prefs->set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
 
+		for ( my $x = 0; $x < scalar @{ $paramRef->{mediadirs} }; $x++ ) {
+			$paramRef->{mediadirs}->[$x]->{audio} = $paramRef->{"pref_ignoreInAudioScan$x"} ? 0 : 1;
+			$paramRef->{mediadirs}->[$x]->{video} = $paramRef->{"pref_ignoreInVideoScan$x"} ? 0 : 1;
+			$paramRef->{mediadirs}->[$x]->{image} = $paramRef->{"pref_ignoreInImageScan$x"} ? 0 : 1;
+		}
+		
+		$prefs->set('ignoreInAudioScan', [ map { $_->{path} } grep { $_->{audio} } @{$paramRef->{mediadirs}} ]);
+		$prefs->set('ignoreInVideoScan', [ map { $_->{path} } grep { $_->{video} } @{$paramRef->{mediadirs}} ]);
+		$prefs->set('ignoreInImageScan', [ map { $_->{path} } grep { $_->{image} } @{$paramRef->{mediadirs}} ]);
+		
+		
 		my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
 
 		my @disabled = ();
@@ -117,6 +146,8 @@ sub handler {
 	$paramRef->{'formats'} = \@formats;
 
 	$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
+	$paramRef->{'disabledextensionsvideo'}  = $prefs->get('disabledextensionsvideo');
+	$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');
 	$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);

@@ -11,7 +11,7 @@
 	<homepageURL>http://www.mysqueezebox.com/appgallery/Live365</homepageURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
-		<id>Squeezebox Server</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.0a</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

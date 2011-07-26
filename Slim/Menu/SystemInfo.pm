@@ -2,7 +2,7 @@ package Slim::Menu::SystemInfo;
 
 # $Id: $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -218,15 +218,17 @@ sub infoLibrary {
 		};
 	}
 	
-	return Slim::Music::Import->stillScanning 
-	? {
-		name => cstring($client, 'RESCANNING_SHORT'),
-
-		web  => {
-			hide => 1,
-		},
-	} 
-	: {
+	elsif (Slim::Music::Import->stillScanning) {
+		return {
+			name => cstring($client, 'RESCANNING_SHORT'),
+	
+			web  => {
+				hide => 1,
+			},
+		}
+	}
+	
+	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
 
 		items => [
@@ -265,8 +267,29 @@ sub infoLibrary {
 			group  => 'library',
 			unfold => 1,
 		},
-
 	};
+
+	# XXX - no simple access to result sets for images/videos yet?
+
+	my $request = Slim::Control::Request::executeRequest( $client, ['video_titles', 0, 0] );
+	my $results = $request->getResults();
+
+	unshift @{ $items->{items} }, {
+		type => 'text',
+		name => cstring($client, 'INFORMATION_VIDEOS') . cstring($client, 'COLON') . ' '
+			. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
+	};
+
+	$request = Slim::Control::Request::executeRequest( $client, ['image_titles', 0, 0] );
+	$results = $request->getResults();
+
+	unshift @{ $items->{items} }, {
+		type => 'text',
+		name => cstring($client, 'INFORMATION_IMAGES') . cstring($client, 'COLON') . ' '
+			. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
+	};
+	
+	return $items
 }
 
 sub infoServer {
@@ -280,7 +303,7 @@ sub infoServer {
 	my $items = [
 		{
 			type => 'text',
-			name => sprintf("%s%s %s - %s @ %s",
+			name => sprintf("Logitech Media Server %s%s %s - %s @ %s",
 						cstring($client, 'INFORMATION_VERSION'),
 						cstring($client, 'COLON'),
 						$::VERSION,

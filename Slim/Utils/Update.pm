@@ -25,8 +25,10 @@ my $versionFile;
 
 sub checkVersion {
 	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter).*\.(dmg|exe)(\.tmp)?$/i);			
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|exe)(\.tmp)?$/i);			
 
+# XXX - disable update checks until we're set up on the server side
+return;
 	return unless $prefs->get('checkVersion');
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
@@ -99,7 +101,7 @@ sub checkVersionCB {
 		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($version);
 		
-		main::DEBUGLOG && $log->debug($version || 'No new Squeezebox Server version available');
+		main::DEBUGLOG && $log->debug($version || 'No new Logitech Media Server version available');
 
 		# reset the update flag
 		setUpdateInstaller();
@@ -107,7 +109,7 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 			
-			main::INFOLOG && $log->info('Triggering automatic Squeezebox Server update download...');
+			main::INFOLOG && $log->info('Triggering automatic Logitech Media Server update download...');
 			getUpdate($version);
 		}
 		
@@ -207,12 +209,12 @@ sub downloadAsyncDone {
 	
 	# make sure we got the file
 	if (!-e $tmpFile) {
-		$log->warn("Squeezebox Server installer download failed: file '$tmpFile' not stored on disk?!?");
+		$log->warn("Logitech Media Server installer download failed: file '$tmpFile' not stored on disk?!?");
 		return;
 	}
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->warn( sprintf("Squeezebox Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("Logitech Media Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}

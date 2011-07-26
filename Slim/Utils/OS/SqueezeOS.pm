@@ -70,6 +70,8 @@ sub initPrefs {
 	$defaults->{maxPlaylistLength} = 100;
 	$defaults->{libraryname} = "Squeezebox Touch";
 	$defaults->{autorescan} = 1;
+	$defaults->{disabledextensionsvideo}  = 'VIDEO';		# don't scan videos on SqueezeOS
+	$defaults->{disabledextensionsimages} = 'bmp, gif, png' # scaling down non-jpg might use too much memory
 }
 
 my %prefSyncHandlers = (
@@ -95,7 +97,7 @@ my %prefSyncHandlers = (
 				$prefs->set('shortdateFormat', $1);
 			}
 
-			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Squeezebox Server
+			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Logitech Media Server
 			$prefs->set('timeFormat', $$data =~ /hours="24"/ ? '%H:%M' : '|%I:%M %p');
 
 			$prefs = Slim::Utils::Prefs::preferences('plugin.datetime');
@@ -130,20 +132,20 @@ sub postInitPrefs {
 	
 	_checkMediaAtStartup($prefs);
 	
-	$prefs->setChange( \&_onAudiodirChange, 'audiodir', 'FIRST' );
+	$prefs->setChange( \&_onAudiodirChange, 'mediadirs', 'FIRST' );
 	$prefs->setChange( sub {
 		_updateLibraryname($prefs);
-	}, 'language', 'audiodir' );
+	}, 'language', 'mediadirs' );
 	$prefs->setChange( \&_onSNTimediffChange, 'sn_timediff');
 
 	if ( !main::SCANNER ) {
 
-		# sync up prefs in case they were changed while Squeezebox Server wasn't running
+		# sync up prefs in case they were changed while the server wasn't running
 		foreach (keys %prefSyncHandlers) {
 			_syncPrefs($_);
 		}
 
-		# initialize prefs syncing between Squeezeplay and Squeezebox Server
+		# initialize prefs syncing between Squeezeplay and the server
 		eval {
 			require Linux::Inotify2;
 			import Linux::Inotify2;
@@ -168,7 +170,7 @@ sub postInitPrefs {
 			);
 		};
 
-		Slim::Utils::Log::logError("Squeezeplay <-> Squeezebox Server prefs syncing failed to initialize: $@") if ($@);
+		Slim::Utils::Log::logError("Squeezeplay <-> Server prefs syncing failed to initialize: $@") if ($@);
 	}
 }
 
@@ -181,8 +183,9 @@ sub _updateLibraryname {
 	
 	# remove media name
 	$libraryname =~ s/ \(.*?(?:USB|SD).*?\)$//i;
-	 
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+
+	# XXX - for the time being we're going to assume that the embedded server will only handle one folder
+	my $audiodir = Slim::Utils::Misc::getAudioDirs()->[0];
 	if ( $audiodir && $audiodir =~ m{/(mmcblk|sd[a-z]\d)}i ) {
 		$libraryname = sprintf( "%s (%s)", $libraryname, Slim::Utils::Strings::getString($1 =~ /mmc/ ? 'SD' : 'USB') );
 	}
@@ -213,7 +216,7 @@ sub sqlHelperClass { 'Slim::Utils::SQLiteHelper' }
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Squeezebox Server directories we
+Argument $dir is a string to indicate which of the server directories we
 need information for.
 
 =cut
@@ -344,7 +347,7 @@ sub _setupMediaDir {
 			};
 		}
 		
-		$prefs->set( audiodir        => $path );
+		$prefs->set( mediadirs       => [ $path ] );
 		$prefs->set( librarycachedir => "$path/.Squeezebox/cache" );
 		
 		# Create a playlist dir if necessary
@@ -369,8 +372,9 @@ sub _setupMediaDir {
 sub _onAudiodirChange {
 	require Slim::Utils::Prefs;
 	my $prefs = Slim::Utils::Prefs::preferences('server');
-    
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+
+	# XXX - for the time being we're going to assume that the embedded server will only handle one folder
+	my $audiodir = Slim::Utils::Misc::getAudioDirs()->[0];
 	
 	if ($audiodir) {
 		if (_setupMediaDir($audiodir, $prefs)) {
@@ -379,7 +383,7 @@ sub _onAudiodirChange {
 		} else {
 			# it is defined but not valid
 			warn "$audiodir cannot be used";
-			$prefs->set('audiodir', undef);
+			$prefs->set('mediadirs', []);
 		}
 	}
 }
@@ -412,7 +416,7 @@ sub _checkMediaAtStartup {
 	}
 	
 	# Something went wrong, don't use this audiodir
-	$prefs->set( audiodir => undef );
+	$prefs->set('mediadirs', []);
 }
 
 # Update system time if difference between system and SN time is bigger than 15 seconds

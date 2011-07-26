@@ -2,7 +2,7 @@ package Slim::Control::Commands;
 
 # $Id: Commands.pm 5121 2005-11-09 17:07:36Z dsully $
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +20,7 @@ Slim::Control::Commands
 
 =head1 DESCRIPTION
 
-Implements most Squeezebox Server commands and is designed to be exclusively called
+Implements most Logitech Media Server commands and is designed to be exclusively called
 through Request.pm and the mechanisms it defines.
 
 =cut
@@ -37,6 +37,8 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
+use Slim::Utils::Scanner::LMS;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
@@ -272,7 +274,7 @@ sub clientConnectCommand {
 			$host = 2;
 		}
 		elsif ( $host eq '0' ) {
-			# Squeezebox Server (used on SN)
+			# Logitech Media Server (used on SN)
 		}
 		else {
 			$host = Slim::Utils::Network::intip($host);
@@ -2488,29 +2490,45 @@ sub rescanCommand {
 	# get our parameters
 	my $playlistsOnly = $request->getParam('_playlists') || 0;
 	
-	# if we're scanning allready, don't do it twice
-	if (!Slim::Music::Import->stillScanning()) {
+	my @dirs = @{ Slim::Utils::Misc::getMediaDirs() };
+	# if we're scanning already, don't do it twice
+	if (!Slim::Music::Import->stillScanning() && scalar @dirs) {
 		
 		if ( $prefs->get('autorescan') ) {
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
-		my $dir = Slim::Utils::Misc::getAudioDir();
-
-		my %args = (
-			types    => 'list|audio',
-			scanName => 'directory',
-			progress => 1,
-		);
-
-		if ($playlistsOnly) {
-			$dir = Slim::Utils::Misc::getPlaylistDir();
-			$args{types} = 'list';
-		}
-
 		Slim::Utils::Progress->clear();
 		
-		Slim::Utils::Scanner::Local->rescan( $dir, \%args );
+		# we only want to scan folders for video/pictures
+		@dirs = keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }};
+
+		# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
+		my $s;
+		$s = sub {
+			Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
+				scanName => 'directory',
+				progress => 1,
+				onFinished => sub {
+					if (scalar @dirs) {
+						# XXX - delay call to self for a second, or we segfault
+						Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
+					}
+					
+					else {
+						my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+						# XXX until libmediascan supports audio, run the audio scanner now
+						Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+							types    => 'list|audio',
+							scanName => 'directory',
+							progress => 1,
+						} );
+					}
+				}
+			} );
+		};
+		
+		$s->();
 	}
 
 	$request->setStatusDone();
@@ -2874,7 +2892,9 @@ sub wipecacheCommand {
 		
 		if ( Slim::Utils::OSDetect::isSqueezeOS() ) {
 			# Wipe/rescan in-process on SqueezeOS
-			my $dir = Slim::Utils::Misc::getAudioDir();
+
+			# XXX - for the time being we're going to assume that the embedded server will only handle one folder
+			my $dir = Slim::Utils::Misc::getAudioDirs()->[0];
 			
 			my %args = (
 				types    => 'list|audio',

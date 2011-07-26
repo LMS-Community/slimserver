@@ -1,6 +1,6 @@
 package Slim::Web::Settings::Server::Wizard;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -22,7 +22,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $serverPrefs = preferences('server');
-my @prefs = ('audiodir', 'playlistdir');
+my @prefs = ('mediadirs', 'playlistdir');
 
 sub page {
 	return 'settings/server/wizard.html';
@@ -89,9 +89,10 @@ sub handler {
 		if ($paramRef->{saveSettings}) {
 				
 			# if a scan is running and one of the music sources has changed, abort scan
-			if ($pref =~ /^(?:audiodir|playlistdir)$/ 
-				&& $paramRef->{$pref} ne $serverPrefs->get($pref) 
-				&& Slim::Music::Import->stillScanning) 
+			if ( 
+				( ($pref eq 'playlistdir' && $paramRef->{$pref} ne $serverPrefs->get($pref))
+					|| ($pref eq 'mediadirs' && scalar (grep { $_ ne $paramRef->{$pref} } @{ $serverPrefs->get($pref) }))
+				) && Slim::Music::Import->stillScanning ) 
 			{
 				main::DEBUGLOG && $log->debug('Aborting running scan, as user re-configured music source in the wizard');
 				Slim::Music::Import->abortScan();
@@ -103,13 +104,25 @@ sub handler {
 				$paramRef->{$pref} = $paramRef->{$pref} ? 0 : 1;
 			}
 
-			$serverPrefs->set($pref, $paramRef->{$pref});
+			if ($pref eq 'mediadirs') {
+				$serverPrefs->set($pref, [ $paramRef->{$pref} ]);
+			}
+			else {
+				$serverPrefs->set($pref, $paramRef->{$pref});
+			}
 		}
 
 		if (main::DEBUGLOG && $log->is_debug) {
  			$log->debug("$pref: " . $serverPrefs->get($pref));
 		}
-		$paramRef->{prefs}->{$pref} = $serverPrefs->get($pref);
+		
+		if ($pref eq 'mediadirs') {
+			my $mediadirs = $serverPrefs->get($pref);
+			$paramRef->{prefs}->{$pref} = scalar @$mediadirs ? $mediadirs->[0] : '';
+		}
+		else {
+			$paramRef->{prefs}->{$pref} = $serverPrefs->get($pref);
+		}
 	}
 
 	$paramRef->{useiTunes} = preferences('plugin.itunes')->get('itunes');

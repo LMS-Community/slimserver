@@ -2,7 +2,7 @@ package Slim::Utils::Scanner;
 
 # $Id$
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -148,14 +148,14 @@ sub findFilesMatching {
 			$url  = Slim::Utils::OS::Win32->fileURLFromShortcut($url) || next;
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 
-			my $audiodir = Slim::Utils::Misc::getAudioDir();
+			my $mediadirs = Slim::Utils::Misc::getMediaDirs();
 
 			# Bug: 2485:
 			# Use Path::Class to determine if the file points to a
 			# directory above us - if so, that's a loop and we need to break it.
-			if ( dir($file)->subsumes($topDir) || ($audiodir && dir($file)->subsumes($audiodir)) ) {
+			if ( dir($file)->subsumes($topDir) || ($mediadirs && grep { dir($file)->subsumes($_) } @$mediadirs) ) {
 
-				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
+				logWarning("Found an infinite loop! Breaking out.");
 				next;
 			}
 

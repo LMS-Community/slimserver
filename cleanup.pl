@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w -ICPAN
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@
 
 require 5.008_001;
 
-use constant SPLASH_LOGO => 'logitech-squeezebox.png';
+use constant SPLASH_LOGO => 'logitech-media-server.png';
 
 # don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
 my $splash;

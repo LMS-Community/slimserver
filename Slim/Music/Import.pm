@@ -1,6 +1,6 @@
 package Slim::Music::Import;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -300,7 +300,10 @@ sub runScan {
 			next;
 		}
 
-		$changes += $class->runImporter($importer);
+		# XXX tmp var is to avoid a strange "Can't coerce CODE to integer in addition (+)" error/bug
+		# even though there is no way this returns a coderef...
+		my $tmp = $class->runImporter($importer);
+		$changes += $tmp;
 	}
 
 	$class->scanPlaylistsOnly(0);
@@ -649,7 +652,7 @@ sub _checkLibraryStatus {
 
 =head1 SEE ALSO
 
-L<Slim::Music::MusicFolderScan>
+L<Slim::Media::MediaFolderScan>
 
 L<Slim::Music::PlaylistFolderScan>
 

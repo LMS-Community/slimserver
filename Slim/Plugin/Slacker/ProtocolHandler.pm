@@ -23,7 +23,6 @@ my $fav_off  = main::SLIM_SERVICE ? 'static/images/playerControl/slacker_fav_but
 # XXX: Port to new streaming
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
-# XXX: needs testing in Squeezebox Server
 sub new {
 	my $class  = shift;
 	my $args   = shift;

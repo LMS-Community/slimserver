@@ -6,7 +6,7 @@ package Slim::Plugin::Rescan::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -201,8 +201,10 @@ sub progressHeader {
 	my $p = $progress[$index];
 	
 	if (blessed($p) && $p->name) {
-	
-		my $line = $client->string($p->name.'_PROGRESS');
+
+		my $line = $p->name =~ /(.*)\|(.*)/ 
+					? ($client->string($2 . '_PROGRESS') . $client->string('COLON') . ' ' . $1)
+					: $client->string($p->name . '_PROGRESS');
 	
 		if ($p->active) {
 

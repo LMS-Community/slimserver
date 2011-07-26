@@ -2,7 +2,7 @@ package Slim::Plugin::Favorites::Playlist;
 
 # $Id$
 
-# Class to allow importing of playlist formats understood by Squeezebox Server into opml files
+# Class to allow importing of playlist formats understood by Logitech Media Server into opml files
 
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);

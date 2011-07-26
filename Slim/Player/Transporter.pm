@@ -1,8 +1,8 @@
 package Slim::Player::Transporter;
 
-# $Id$
+# $Id: /sd/slim/7.6/branches/lms/server/Slim/Player/Transporter.pm 78224 2011-06-22T16:26:39.511256Z mherger  $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

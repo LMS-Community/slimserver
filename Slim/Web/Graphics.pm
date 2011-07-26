@@ -144,14 +144,19 @@ sub artworkRequest {
 	
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
-	elsif ( $path =~ m{^music/([^/]+)/} ) {
-		my $id = $1;
+	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image)/([0-9a-f]{8})/} ) {
+		my ($type, $id) = ($1, $2);
 		
 		# Fetch the url and cover values
 		my $sth;
 		my ($url, $cover);
 		
-		if ( $id =~ /^[0-9a-f]{8}$/ ) {
+		if ( $type eq 'image' ) {
+			$sth = Slim::Schema->dbh->prepare_cached( qq{
+				SELECT url, hash FROM images WHERE hash = ?
+			} );
+		}
+		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
 			# ID is a coverid
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, cover FROM tracks WHERE coverid = ?
@@ -199,7 +204,12 @@ sub artworkRequest {
 		
 		if ( !$url || !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
-			$path = $id =~ /^-/ ? 'html/images/radio_' : 'html/images/cover_';
+			if ($type eq 'image') {
+				$path = 'html/images/icon_grey_';			
+			}
+			else {
+				$path = $id =~ /^-/ ? 'html/images/radio_' : 'html/images/cover_';
+			}
 			$path .= $spec;
 			$path =~ s/\.\w+//;
 			$path =~ s/_$//;
@@ -226,10 +236,10 @@ sub artworkRequest {
 			my $skin = $params->{skinOverride} || $prefs->get('skin');			
 			$fullpath = $skinMgr->fixHttpPath($skin, $path);
 		}
-		else {
+		elsif ( $path =~ /^music/ ) {
 			# Image to resize is either a cover path or the audio file if cover is
 			# a number (length of embedded art)
-			$fullpath = $cover =~ /^\d+$/
+			$fullpath = ($cover =~ /^\d+$/ || $type eq 'image')
 				? Slim::Utils::Misc::pathFromFileURL($url)
 				: $cover;
 		}

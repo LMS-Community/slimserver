@@ -2,7 +2,7 @@ package Slim::Formats::FLAC;
 
 # $tagsd: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -369,7 +369,7 @@ sub _getXMLTags {
 	# retrieve the xml content from the flac
 	my $xml = $s->{tags}->{APPLICATION}->{$PEEM} || return 0;
 
-	# TODO: parse this using the same xml modules Squeezebox Server uses to parse iTunes
+	# TODO: parse this using the same xml modules Logitech Media Server uses to parse iTunes
 	# even better, use RDF::Simple::Parser
 
 	# crude regex matching until we get a real rdf/xml parser in place

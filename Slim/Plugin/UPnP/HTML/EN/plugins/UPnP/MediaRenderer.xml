@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+	<specVersion>
+		<major>1</major>
+		<minor>0</minor>
+	</specVersion>
+	<device>
+		<deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+		<friendlyName>[% device.name %]</friendlyName>
+		<manufacturer>Logitech</manufacturer>
+		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
+		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
+		<modelName>[% device.model %]</modelName>
+		<modelNumber>1</modelNumber>
+		<modelURL>[% device.url %]</modelURL>
+		<serialNumber>[% device.serial %]</serialNumber>
+		<UDN>uuid:[% device.uuid %]</UDN>
+		<iconList>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>250</width>
+				<height>250</height>
+				<depth>24</depth>
+				<url>[% device.icon %]</url>
+			</icon>
+		</iconList>
+		<serviceList>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:RenderingControl</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaRenderer/RenderingControl.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaRenderer/RenderingControl/control?player=[% device.id_esc %]</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaRenderer/RenderingControl/eventsub?player=[% device.id_esc %]</eventSubURL>
+			</service>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaRenderer/ConnectionManager.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaRenderer/ConnectionManager/control?player=[% device.id_esc %]</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaRenderer/ConnectionManager/eventsub?player=[% device.id_esc %]</eventSubURL>
+			</service>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaRenderer/AVTransport.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaRenderer/AVTransport/control?player=[% device.id_esc %]</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaRenderer/AVTransport/eventsub?player=[% device.id_esc %]</eventSubURL>
+			</service>
+		</serviceList>
+		<presentationURL>[% serverURL %]</presentationURL>
+	</device>
+</root>

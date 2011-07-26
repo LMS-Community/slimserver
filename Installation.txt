@@ -1,10 +1,8 @@
-                                Welcome to Squeezebox Server 
+                              Welcome to Logitech Media Server 
    
-This document describes the steps for installing the Squeezebox Server on Unix-like platforms.
+This document describes the steps for installing the Logitech Media Server on Unix-like platforms.
 
-Version 5.8.3 or higher of Perl is required.
-
-Version 5.8.8 or higher of Perl is STRONGLY RECOMMENDED!
+Version 5.10.0 or higher of Perl is required.
 
 Additional information can be found on the Wiki at: http://wiki.slimdevices.com/
 
@@ -22,7 +20,7 @@ build-perl-modules script to run successfully, you must have You must have:
 
 - make
 
-- Perl 5.8.3 or greater, and the required development libs (if any; some
+- Perl 5.10.0 or greater, and the required development libs (if any; some
   platforms put this in a separate package, such as 'libperl-dev')
 
 - For XML::Parser to build properly - http://expat.sourceforge.net/
@@ -51,20 +49,20 @@ Linux Notes (RPM Install):
 FreeBSD Notes:
 
 	In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-	sufficient for use with the Squeezebox Server software, which requires 5.8.3 or greater.
+	sufficient for use with the Logitech Media Server software, which requires 5.10.0 or greater.
 
-	To upgrade Perl to 5.8:
+	To upgrade Perl to 5.10:
 
 	First become the superuser, then issue the following commands
 
-	# cd /usr/ports/lang/perl5.8
+	# cd /usr/ports/lang/perl5.10
 	# make install clean
 	# rehash
 	# use.perl port
 
 	The Linux standard installation creates a user, slimserver, that owns
 	all the appropriate files and is the login account for the 
-	Squeezebox Server daemon. There is no requirement that the server daemon
+	Logitech Media Server daemon. There is no requirement that the server daemon
 	execute with extensive priviledges. As always, executing the perl programs
 	as "root" is not good security practice.
 
@@ -80,10 +78,10 @@ Tarball Notes:
 	This will start up the server and run itself in the background.
 
 	Visit the URL that's printed out with your web browser to configure your 
-	Squeezebox Server and see the complete documentation.
+	Logitech Media Server and see the complete documentation.
 
 	As part of the debugging support, if there is no /etc/slimserver.conf file, or
-	if it is not readable when the Squeezebox Server starts, it will look for ~.slimserver.conf
+	if it is not readable when the Logitech Media Server starts, it will look for ~.slimserver.conf
 	that is, the normally hidden file .slimserver.conf in the home directory of 
 	the current user.
 
@@ -91,5 +89,5 @@ Tarball Notes:
 	For more verbose messages, start the program with the options of --d_server
 
 	To refresh the configuration parameters, you can simply delete the /etc/slimserver.conf
-	file (or rename it to something else). This will cause the Squeezebox Server to
+	file (or rename it to something else). This will cause the Logitech Media Server to
 	search for the ~.slimserver.conf, and failing that, to recreate it with default values.

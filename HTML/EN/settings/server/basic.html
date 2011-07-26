@@ -28,11 +28,15 @@
 		[% END %]
 	[% END %]
 
-	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_AUDIODIR" desc="SETUP_AUDIODIR_DESC" %]
-			<input type="text" class="stdedit selectFolder" name="pref_audiodir" id="audiodir" value="[% prefs.pref_audiodir %]" size="40">
+	[% WRAPPER setting title="SETUP_MEDIADIRS" desc="SETUP_MEDIADIRS_DESC" %]
+		[% FOREACH path = prefs.pref_mediadirs %]
+			<div>
+				<input type="text" class="stdedit selectFolder" name="pref_mediadirs[% loop.index %]" id="mediadirs[% loop.index %]" value="[% path %]" size="40"><br/>&nbsp;
+			</div>
 		[% END %]
+	[% END %]
 
+	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir %]" size="40">
 		[% END %]

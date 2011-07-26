@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Debian;
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -32,7 +32,7 @@ sub initDetails {
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Squeezebox Server directories we
+Argument $dir is a string to indicate which of the server directories we
 need information for.
 
 =cut

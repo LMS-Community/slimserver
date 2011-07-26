@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+	<specVersion>
+		<major>1</major>
+		<minor>0</minor>
+	</specVersion>
+	<device>
+		<deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+		<friendlyName>[% device.name %]</friendlyName>
+		<manufacturer>Logitech</manufacturer>
+		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
+		<modelDescription>Logitech Media Server UPnP/DLNA Plugin</modelDescription>
+		<modelName>Logitech Media Server [% device.version %]</modelName>
+		<modelNumber>1</modelNumber>
+		<modelURL>http://www.mysqueezebox.com/download</modelURL>
+		<serialNumber>[% device.serial %]</serialNumber>
+		<UDN>uuid:[% device.uuid %]</UDN>
+		<iconList>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>512</width>
+				<height>512</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_512x512.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>250</width>
+				<height>250</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_250x250.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>120</width>
+				<height>120</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_120x120.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>48</width>
+				<height>48</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_48x48.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>32</width>
+				<height>32</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_32x32.png</url>
+			</icon>
+		</iconList>
+		<serviceList>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaServer/ContentDirectory.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaServer/ContentDirectory/control</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaServer/ContentDirectory/eventsub</eventSubURL>
+			</service>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaServer/ConnectionManager.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaServer/ConnectionManager/control</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaServer/ConnectionManager/eventsub</eventSubURL>
+			</service>
+			<service>
+				<serviceType>urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1</serviceType>
+				<serviceId>urn:microsoft.com:serviceId:X_MS_MediaReceiverRegistrar</serviceId>
+				<SCPDURL>/plugins/UPnP/MediaServer/MediaReceiverRegistrar.xml</SCPDURL>
+				<controlURL>/plugins/UPnP/MediaServer/MediaReceiverRegistrar/control</controlURL>
+				<eventSubURL>http://[% eventAddr %]/plugins/UPnP/MediaServer/MediaReceiverRegistrar/eventsub</eventSubURL>
+			</service>
+		</serviceList>
+		<presentationURL>[% serverURL %]</presentationURL>
+	</device>
+</root>

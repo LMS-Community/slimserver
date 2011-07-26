@@ -2,7 +2,7 @@ package Slim::Formats::Movie;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -53,6 +53,11 @@ sub getTag {
 	
 	return unless $info->{song_length_ms};
 	
+	# skip files with video tracks
+	for my $track ( @{ $info->{tracks} } ) {
+		return if exists $track->{width};
+	}
+	
 	# map the existing tag names to the expected tag names
 	$class->_doTagMapping($tags);
 
@@ -63,7 +68,7 @@ sub getTag {
 	$tags->{BITRATE} = $info->{avg_bitrate};
 	
 	if ( my $track = $info->{tracks}->[0] ) {
-		# MP4 file	
+		# MP4 file
 		$tags->{SAMPLESIZE} = $track->{bits_per_sample};
 		$tags->{CHANNELS}   = $track->{channels};
 

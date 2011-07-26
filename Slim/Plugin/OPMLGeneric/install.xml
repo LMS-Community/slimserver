@@ -10,7 +10,7 @@
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type>
 	<targetApplication>
-		<id>Squeezebox Server</id>
+		<id>Logitech Media Server</id>
 		<minVersion>7.4</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

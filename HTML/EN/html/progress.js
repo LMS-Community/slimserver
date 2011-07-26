@@ -4,7 +4,7 @@ function ajaxProgressCallback(theData) {
 	
 	var elems = ['Name', 'Done', 'Total', 'Active', 'Time', 'Bar', 'Info'];
 	
-	for (var i=0; i <= 10; i++) {
+	for (var i=0; i <= 50; i++) {
 	
 		// only show the count if it is more than one item
 		if (parsedData['Total'+i] > 1) {

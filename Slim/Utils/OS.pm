@@ -2,7 +2,7 @@ package Slim::Utils::OS;
 
 # $Id: Base.pm 21790 2008-07-15 20:18:07Z andy $
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -129,7 +129,7 @@ sub initMySQL {
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the Squeezebox Server directories we
+Argument $dir is a string to indicate which of the Logitech Media Server directories we
 need information for.
 
 =cut
@@ -365,7 +365,7 @@ sub setPriority {
 	return unless defined $priority && $priority =~ /^-?\d+$/;
 
 	# For *nix, including OSX, set whatever priority the user gives us.
-	Slim::Utils::Log::logger('server')->info("Squeezebox Server changing process priority to $priority");
+	Slim::Utils::Log::logger('server')->info("Logitech Media Server changing process priority to $priority");
 
 	eval { setpriority (0, 0, $priority); };
 
@@ -394,7 +394,7 @@ sub getPriority {
 
 =head2 initUpdate( )
 
-Initialize download of a potential updated Squeezebox Server version. 
+Initialize download of a potential updated Logitech Media Server version. 
 Not needed on Linux distributions which do manage the update through their repositories.
 
 =cut
@@ -408,7 +408,7 @@ sub installerOS { '' };
 
 =head2 directFirmwareDownload( )
 
-Return true if you don't want Squeezebox Server to download and cache firmware
+Return true if you don't want the server to download and cache firmware
 upgrades for your players. It will then tell the player to download them directly
 from SqueezeNetwork.
 
@@ -421,7 +421,7 @@ sub directFirmwareDownload { 0 };
 
 =head2 restartServer( )
 
-Squeezebox Server can initiate a restart on some systems. 
+The server can initiate a restart on some systems. 
 This should call main::cleanup() or stopServer() to cleanly shut down before restarting
 
 =cut

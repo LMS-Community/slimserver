@@ -191,7 +191,12 @@ sub setFilepaths {
 		}
 
 		if ( $class->{'prefs'}->{ $pref } ) {
-			$class->{'prefs'}->{ $pref } = Win32::GetANSIPathName($class->{'prefs'}->{ $pref });
+			if ( ref $class->{'prefs'}->{ $pref } eq 'ARRAY' ) {
+				$class->{'prefs'}->{ $pref } = [ map { Win32::GetANSIPathName($_) } @{ $class->{'prefs'}->{ $pref } } ]
+			}
+			else {
+				$class->{'prefs'}->{ $pref } = Win32::GetANSIPathName($class->{'prefs'}->{ $pref });
+			}
 		}
 
 		$class->{'filepathPrefs'}->{ $pref } = 1;

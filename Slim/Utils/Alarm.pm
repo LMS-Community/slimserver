@@ -4,7 +4,7 @@ use strict;
 # Max Spicer, May 2008
 # This code is derived from code with the following copyright message:
 #
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -35,7 +35,7 @@ Slim::Utils::Alarm;
 
 =head1 DESCRIPTION
 
-This class implements Squeezebox Server alarms (alarm clock functionality) and provides methods for manipulating them.
+This class implements alarms (alarm clock functionality) and provides methods for manipulating them.
 
 Two types of alarm are implemented - daily alarms and calendar alarms.  Daily alarms have a time component and a specified subset of weekdays on which to sound e.g. 09:00 on Monday, Saturday and Sunday.  Calendar alarms have a time specified as an epoch value, representing an absolute date and time on which they sound e.g. 09:30 on 21/4/2008.
 
@@ -1183,7 +1183,7 @@ sub _timeout {
 
 =head2 init
 
-Initialise Squeezebox Server alarm functionality.  This should be called on server startup (probably from slimserver.pl).
+Initialise Logitech Media Server alarm functionality.  This should be called on server startup (probably from slimserver.pl).
 
 =cut
 

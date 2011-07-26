@@ -1,4 +1,4 @@
-These are HTML 'skins' for Squeezebox Server. 
+These are HTML 'skins' for Logitech Media Server. 
 
 They are written using Template Toolkit - http://www.template-toolkit.org/
 
@@ -6,11 +6,11 @@ They are written using Template Toolkit - http://www.template-toolkit.org/
 
 Classic:
 	Owner: Logitech Inc.
-	Description: This is the previous Official skin for Squeezebox Server
+	Description: This is the previous Official skin for Logitech Media Server
 
 Default:
 	Owner: Logitech Inc.
-	Description: This is the Official skin for Squeezebox Server
+	Description: This is the Official skin for Logitech Media Server
 
 EN:
 	Owner: Logitech Inc.

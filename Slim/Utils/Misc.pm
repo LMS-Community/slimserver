@@ -2,7 +2,7 @@ package Slim::Utils::Misc;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -24,7 +24,7 @@ assert, bt, msg, msgf, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility 
- functions useful throughout Squeezebox Server and third party plugins.
+ functions useful throughout Logitech Media Server and third party plugins.
 
 =cut
 
@@ -518,10 +518,10 @@ sub fixPath {
 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
 	my $savedplaylistdir = Slim::Utils::Misc::getPlaylistDir();
 
-	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
+	if (scalar @$mediadirs && grep { $file =~ /^\Q$_\E/ } @$mediadirs) {
 
 		$fixed = $file;
 
@@ -529,7 +529,7 @@ sub fixPath {
 
 		$fixed = $file;
 
-	} elsif (Slim::Music::Info::isURL($file) && (!defined($audiodir) || ! -r catfile($audiodir, $file))) {
+	} elsif (Slim::Music::Info::isURL($file) && (!scalar @$mediadirs || !grep {-r catfile($_, $file)} @$mediadirs)) {
 
 		$fixed = $file;
 
@@ -567,6 +567,10 @@ sub fixPath {
 		$fixed = $file;
 
 	} else {
+
+		# XXX - don't know how to handle this case: should we even return an untested value?
+		my $audiodir = $mediadirs->[0];
+		logBacktrace("Dealing with single audiodir ($audiodir) instead of mediadirs " . Data::Dump::dump($mediadirs));
 
 		$file =~ s/\Q$audiodir\E//;
 		$fixed = catfile($audiodir, $file);
@@ -649,7 +653,8 @@ sub getLibraryName {
 =cut
 
 sub getAudioDir {
-	return Slim::Utils::Unicode::encode_locale($prefs->get('audiodir'));
+	logBacktrace("getAudioDir is deprecated, use getAudioDirs instead");
+	return getAudioDirs()->[0];
 }
 
 =head2 getPlaylistDir()
@@ -662,14 +667,73 @@ sub getPlaylistDir {
 	return Slim::Utils::Unicode::encode_locale($prefs->get('playlistdir'));
 }
 
+=head2 getMediaDirs()
+
+	Returns an arrayref of all media directories.
+
+=cut
+
+sub getMediaDirs {
+	my $type = shift;
+	
+	my $mediadirs = getDirsPref('mediadirs');
+	
+	if ($type) {
+		my $ignoreList = { map { $_, 1 } @{ getDirsPref({
+			audio => 'ignoreInAudioScan',
+			video => 'ignoreInVideoScan',
+			image => 'ignoreInImageScan',
+		}->{$type}) } };
+		
+		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
+	}
+	
+	return $mediadirs
+}
+
+sub getAudioDirs {
+	return getMediaDirs('audio');
+}
+
+sub getVideoDirs {
+	return getMediaDirs('video');
+}
+
+sub getImageDirs {
+	return getMediaDirs('image');
+}
+
+sub getDirsPref {
+	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get($_[0]) || [''] } ];
+}
+
+=head2 inMediaFolder( $)
+
+	Check if argument is an item contained in one of the media folder trees
+
+=cut
+
+sub inMediaFolder {
+	my $path = shift;
+	my $mediadirs = getMediaDirs();
+	
+	foreach ( @$mediadirs ) {
+		return 1 if _checkInFolder($path, $_); 
+	}
+	
+	return 0;
+}
+
 =head2 inAudioFolder( $)
 
 	Check if argument is an item contained in the music folder tree
 
 =cut
 
+# XXX - is this function even used any more? Can't find any caller...
 sub inAudioFolder {
-	return _checkInFolder(shift, getAudioDir());
+	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead');
+	return inMediaFolder(shift);
 }
 
 =head2 inPlaylistFolder( $)
@@ -931,21 +995,18 @@ sub findAndScanDirectoryTree {
 		
 		my $url = $params->{'url'};
 		
-		# make sure we have a valid URL...
-		if (!defined $url) {
-			$url = Slim::Utils::Misc::getAudioDir();
+		if (defined $url) {
+			if (!Slim::Music::Info::isURL($url)) {
+				$url = fileURLFromPath($url);
+			}
+	
+			$topLevelObj = Slim::Schema->objectForUrl({
+				'url'      => $url,
+				'create'   => 1,
+				'readTags' => 1,
+				'commit'   => 1,
+			});
 		}
-
-		if (!Slim::Music::Info::isURL($url)) {
-			$url = fileURLFromPath($url);
-		}
-
-		$topLevelObj = Slim::Schema->objectForUrl({
-			'url'      => $url,
-			'create'   => 1,
-			'readTags' => 1,
-			'commit'   => 1,
-		});
 	}
 
 	if (main::ISMAC && blessed($topLevelObj) && $topLevelObj->can('path')) {
@@ -998,7 +1059,7 @@ sub findAndScanDirectoryTree {
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ readDirectory($path) ];
+	my $items = [ readDirectory($path, $params->{typeRegEx}, $params->{excludeFile}) ];
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);
@@ -1082,7 +1143,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server',
+		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server, Logitech Media Server',
 	);
 
 	return $userAgentString;
@@ -1162,7 +1223,7 @@ sub assert {
 
 =head2 bt( [ $return ] )
 
-	Useful for tracking the source of a problem during the execution of Squeezebox Server.
+	Useful for tracking the source of a problem during the execution of the server.
 	use bt() to output in the log a list of function calls leading up to the point 
 	where bt() has been used.
 
@@ -1214,7 +1275,7 @@ sub bt {
 
 =head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
 
-	Outputs an entry to the Squeezebox Server log file. 
+	Outputs an entry to the server log file. 
 	$entry is a string for the log.
 	optional argument $suppressTimestamp can be set to remove the event timestamp from the long entry.
 

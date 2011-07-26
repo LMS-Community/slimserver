@@ -96,7 +96,7 @@ sub title {
 	);
 }
 
-# return the raw title untainted by Squeezebox Server logic
+# return the raw title untainted by Logitech Media Server logic
 sub rawtitle {
 	my $self = shift;
 	

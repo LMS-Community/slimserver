@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -71,7 +71,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
-use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -80,6 +79,7 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
+use Slim::Media::MediaFolderScan;
 
 if ( INFOLOG || DEBUGLOG ) {
     require Data::Dump;
@@ -193,7 +193,7 @@ sub main {
 	
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	$log->error("Starting Squeezebox Server scanner (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server scanner (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);
@@ -214,7 +214,7 @@ sub main {
 	}
 	
 	if ( $sqlHelperClass ) {
-		main::INFOLOG && $log->info("Squeezebox Server SQL init...");
+		main::INFOLOG && $log->info("Server SQL init...");
 		$sqlHelperClass->init();
 	}
 
@@ -251,8 +251,8 @@ sub main {
 
 	} else {
 
+		Slim::Media::MediaFolderScan->init;
 		Slim::Music::PlaylistFolderScan->init;
-		Slim::Music::MusicFolderScan->init;
 	}
 	
 	# Load any plugins that define import modules
@@ -262,7 +262,7 @@ sub main {
 
 	checkDataSource();
 
-	main::INFOLOG && $log->info("Squeezebox Server Scanner done init...\n");
+	main::INFOLOG && $log->info("Scanner done init...\n");
 	
 	# Perform pre-scan steps specific to the database type, i.e. SQLite needs to copy to a new file
 	$sqlHelperClass->beforeScan();
@@ -371,23 +371,23 @@ sub main {
 sub initializeFrameworks {
 	my $log = shift;
 
-	main::INFOLOG && $log->info("Squeezebox Server OSDetect init...");
+	main::INFOLOG && $log->info("Server OSDetect init...");
 
 	Slim::Utils::OSDetect::init();
 	Slim::Utils::OSDetect::getOS->initSearchPath();
 
-	# initialize Squeezebox Server subsystems
-	main::INFOLOG && $log->info("Squeezebox Server settings init...");
+	# initialize Server subsystems
+	main::INFOLOG && $log->info("Server settings init...");
 
 	Slim::Utils::Prefs::init();
 
 	Slim::Utils::Prefs::makeCacheDir();	
 
-	main::INFOLOG && $log->info("Squeezebox Server strings init...");
+	main::INFOLOG && $log->info("Server strings init...");
 
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-	main::INFOLOG && $log->info("Squeezebox Server Info init...");
+	main::INFOLOG && $log->info("Server Info init...");
 
 	Slim::Music::Info::init();
 
@@ -464,12 +464,17 @@ sub cleanup {
 }
 
 sub checkDataSource {
-	my $audiodir = Slim::Utils::Misc::getAudioDir();
+	my $mediadirs = Slim::Utils::Misc::getMediaDirs();
+	my $modified = 0;
 
-	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
-		$audiodir =~ s|[/\\]$||;
-		$prefs->set('audiodir',$audiodir);
+	foreach my $audiodir (@$mediadirs) {
+		if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
+			$audiodir =~ s|[/\\]$||;
+			$modified++;
+		}
 	}
+
+	$prefs->set('mediadirs', $mediadirs) if $modified;
 
 	return if !Slim::Schema::hasLibrary();
 	

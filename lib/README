@@ -1,11 +1,11 @@
-$Id$
+$Id: /sd/slim/7.6/branches/lms/server/lib/README 78224 2011-06-22T16:26:39.511256Z mherger  $
 
 ------
 
-This directory contains library modules from CPAN which have been modified for Squeezebox Server.
+This directory contains library modules from CPAN which have been modified for Logitech Media Server.
 
 We've made every effort to send patches to the upstream authors, but either
-the changes are Squeezebox Server specific, or we simply haven't heard back from
+the changes are Logitech Media Server specific, or we simply haven't heard back from
 the author, reside in a separate directory than the pristine top level CPAN/ dir.
 
 If a patch has been accepted by the author, then the module should be moved

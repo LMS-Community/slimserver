@@ -2,7 +2,7 @@ package Slim::Web::Pages::Common;
 
 # $Id$
 
-# Squeezebox Server Copyright 2001-2009 Logitech.
+# Logitech Media Server Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -63,8 +63,11 @@ sub addLibraryStats {
 
 		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
 
+			my $name = $p->name;
+			$name =~ s/(.*)\|//;
+			
 			$params->{'progress'} = {
-				'name' => $p->name,
+				'name' => $name,
 				'bar'  => Slim::Web::Pages::Progress::progressBar($p, 40),
 				'obj'  => $p,
 			}
