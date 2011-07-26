@@ -65,6 +65,7 @@ sub startScan {
 		main::INFOLOG && $log->info("Starting media folder scan in: $dir" );
 		my $c = Slim::Utils::Scanner::LMS->rescan( $dir, {
 			scanName => 'directory',
+			wipe     => main::SCANNER && $main::wipe ? 1 : 0, # XXX ugly
 			no_async => 1,
 			progress => 1,
 		} );

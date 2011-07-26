@@ -66,11 +66,6 @@ sub rescan {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	# Wipe if requested
-	if ( $args->{wipe} ) {
-		Slim::Schema->wipeAllData;
-	}
-	
 	if ( ref $in_paths ne 'ARRAY' ) {
 		$in_paths = [ $in_paths ];
 	}
@@ -154,10 +149,21 @@ sub rescan {
 		}
 	};
 	
+	# Scan options
+	my $flags = MS_USE_EXTENSION; # Scan by extension only, no guessing
+	if ( $args->{wipe} ) {
+		$flags |= MS_CLEARDB | MS_FULL_SCAN; # Scan everything and clear the internal libmediascan database
+	}
+	else {
+		$flags |= MS_RESCAN | MS_INCLUDE_DELETED; # Only scan files that have changed size or timestamp,
+		                                          # and notify us of files that have been deleted
+	}
+	
 	# Begin scan
 	$s = Media::Scan->new( $paths, {
-		loglevel => $log->is_debug ? MS_LOG_DEBUG : MS_LOG_WARN, # Set to MS_LOG_MEMORY for very verbose logging
+		loglevel => $log->is_debug ? MS_LOG_DEBUG : MS_LOG_ERR, # Set to MS_LOG_MEMORY for very verbose logging
 		async => $args->{no_async} ? 0 : 1,
+		flags => $flags,
 		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
 		thumbnails => [
