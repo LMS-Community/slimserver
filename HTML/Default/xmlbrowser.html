@@ -337,7 +337,21 @@ useSpecialExt="-browse" %]
 							[%- "COLON" | string %]
 						[% END %]	
 						[% WRAPPER weblink %]
-							[% (item.web.value || item.name || item.title) | html_line_break %]
+							[% title = (item.web.value || item.name || item.title) %]
+							[% title | html_line_break %]
+
+							[% IF item.hasMetadata == 'track' && !item.name2 %]
+							[%  # add the track artist if it's different from the album artist
+								artist = item.trackartist || item.artist;
+								IF !title.match(artist) && ( 
+									(item.albumartist && artist != item.albumartist)
+									|| artist != item.artist
+									|| itemobj.compilation
+								);
+									"BY" | string; " $artist";
+								END; 
+							%]
+							[% END %]
 						[% END %]
 						[% IF item.showYear && item.year %]
 							[% IF item.remote %]
@@ -347,7 +361,7 @@ useSpecialExt="-browse" %]
 							[% END %]
 						[% END %]
 						[% IF item.hasMetadata == "track" && item.name2 %]
-							([% item.name2 %])
+							[% "BY" | string; " " _ item.name2 %]
 						[% END %]
 						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) %]
 							[% IF item.artist_id %]
