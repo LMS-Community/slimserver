@@ -47,7 +47,9 @@
 
 		[% 
 			roles = itemobj.contributorRoles || itemobj.contributors.keys;
-			FOREACH role = roles.sort
+			FOREACH role = roles.sort;
+	
+			IF (itemobj.album.compilation || itemobj.compilation) && role != "ALBUMARTIST"; NEXT; END;
 		 %]
 
 			[% contributors = itemobj.contributors.${role} || itemobj.contributorsOfType(role) || itemobj.album.artistsForRoles(role) %]
