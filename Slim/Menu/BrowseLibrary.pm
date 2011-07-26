@@ -1455,7 +1455,7 @@ sub _tracks {
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
-	my $tags       = 'dtuxgaliqyorf';
+	my $tags       = 'dtuxgaAliqyorf';
 	
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
 		$search = $args->{'search'};
@@ -1498,6 +1498,9 @@ sub _tracks {
 				$_->{'type'}          = 'audio';
 				$_->{'playall'}       = 1;
 				$_->{'play_index'}    = $offset++;
+				
+				# bug 17340 - in track lists we give the trackartist precedence over the artist
+				$_->{'artist'} = $_->{'trackartist'} if $_->{'trackartist'};
 				
 				my $name2;
 				$name2 = $_->{'artist'} if $addArtistToName2;
