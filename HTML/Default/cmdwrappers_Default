@@ -58,7 +58,7 @@
 				[% ELSIF item.type == "text" && item.image %]
 					<a href="[% item.image %]" target="_blank">
 				[% END %]
-				[% PROCESS $itemImg height="$item.size" %]</a>
+				[% PROCESS $itemImg height="$item.size" style = 'style="width:' _ item.size _ 'px;height:' _ item.size _ 'px;"' %]</a>
 
 				<span class="browsedbControls">
 					[%- PROCESS $controls -%]
