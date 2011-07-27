@@ -755,7 +755,10 @@ sub handleFeed {
 		}
 		
 		my $item_index = $start;
-		my $format  = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+		my $format = $stash->{ajaxSearch}
+			? 'TRACKNUM. TITLE - ALBUM - ARTIST'
+			: $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+
 		foreach (@{ $stash->{'items'} }) {
 			if ( !defined $stash->{'index'} ) {
 				$_->{'index'} = $item_index++;

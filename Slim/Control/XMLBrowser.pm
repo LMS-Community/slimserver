@@ -991,6 +991,8 @@ sub _cliQuery_done {
 				$start -= $subFeed->{'offset'};
 				$end   -= $subFeed->{'offset'};
 				main::DEBUGLOG && $log->is_debug && $log->debug("Getting slice $start..$end: $totalCount; offset=", $subFeed->{'offset'}, ' quantity=', scalar @$items);
+		
+				my $search = $subFeed->{type} && $subFeed->{type} eq 'search';
 				
 				my $baseId = scalar @crumbIndex ? join('.', @crumbIndex, '') : '';
 				for my $item ( @$items[$start..$end] ) {
@@ -1002,7 +1004,7 @@ sub _cliQuery_done {
 					if ($name = $item->{name}) {
 						if (defined $item->{'label'}) {
 							$name = $request->string($item->{'label'}) . $request->string('COLON') . ' ' .  $name;
-						} elsif (($item->{'hasMetadata'} || '') eq 'track') {
+						} elsif (!$search && ($item->{'hasMetadata'} || '') eq 'track') {
 							$name = Slim::Music::TitleFormatter::infoFormat(undef, $format, 'TITLE', $item) || $name;
 						}
 					}
