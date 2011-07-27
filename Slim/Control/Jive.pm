@@ -11,6 +11,7 @@ use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use URI;
 
+use Slim::Menu::BrowseLibrary;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Player::Playlist;

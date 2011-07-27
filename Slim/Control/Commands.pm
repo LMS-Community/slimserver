@@ -1280,7 +1280,7 @@ sub playlistXitemCommand {
 
 	main::INFOLOG && $log->info("cmd: $cmd, item: $item, title: $title, fadeIn: ", ($fadeIn ? $fadeIn : 'undef'));
 
-	my $jumpToIndex; # This should be undef - see bug 2085
+	my $jumpToIndex = $request->getParam('play_index'); # This should be undef (by default) - see bug 2085
 	my $results;
 	
 	if ( main::SLIM_SERVICE ) {
@@ -1801,44 +1801,13 @@ sub playlistcontrolCommand {
 			});
 		} 
 
-		if ( $load ) {
-	
-			my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-			Slim::Player::Playlist::shuffle($client, 0);
-
-			my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
-				id => $folderId,
-			} );
-
-			main::INFOLOG && $log->info("Playing all in folder, starting with $jumpIndex");
-
-			# filter out folders
-			@{$items} = grep { Slim::Music::Info::isSong($_) }
-			# make sure we get a valid path
-			map { ref $_ ? $_ : Slim::Utils::Misc::fixPath($_, $topLevelObj->path) }
-			@$items;
-
-			main::INFOLOG && $log->info("Load folder playlist, now starting at index: $jumpIndex");
-
-			$client->execute(['playlist', 'clear']);
-			$client->execute(['playlist', 'addtracks', 'listref', $items]);
-			$client->execute(['playlist', 'jump', $jumpIndex]);
-
-			if ($wasShuffled) {
-				$client->execute(['playlist', 'shuffle', 1]);
-			}
-		} else {
-			Slim::Control::Request::executeRequest(
-				$client, ['playlist', $cmd, $folder->url()]
-			);
-		}
+		Slim::Control::Request::executeRequest(
+			$client, ['playlist', $cmd, $folder->url(), ($load && $jumpIndex ? 'play_index:' . $jumpIndex : undef) ]
+		);
 
 		$request->addResult('count', 1);
 		$request->setStatusDone();
 		return;
-
-
-
 	}
 
 	# if loading, first stop & clear everything
