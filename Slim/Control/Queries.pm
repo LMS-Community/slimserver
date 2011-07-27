@@ -3216,8 +3216,8 @@ sub statusQuery {
 					# Use songData for track, if remote use the object directly
 					my $data = $_->remote ? $_ : $songData->{$_->id};
 
-					# 17352 - under some circumstances we would end up with empty $data - don't continue
-					# see above: should not happen!
+					# 17352 - when the db is not fully populated yet, and a stored player playlist
+					# references a track not in the db yet, we can fail
 					next if !$data;
 
 					if ($menuMode) {
