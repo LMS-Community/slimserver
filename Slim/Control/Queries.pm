@@ -3216,6 +3216,10 @@ sub statusQuery {
 					# Use songData for track, if remote use the object directly
 					my $data = $_->remote ? $_ : $songData->{$_->id};
 
+					# 17352 - under some circumstances we would end up with empty $data - don't continue
+					# see above: should not happen!
+					next if !$data;
+
 					if ($menuMode) {
 						_addJiveSong($request, $loop, $count, $idx, $data);
 						# add clear and save playlist items at the bottom
@@ -4162,6 +4166,8 @@ sub _songData {
 	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
+	
+	warn Data::Dump::dump($pathOrObj);
 	
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
