@@ -1640,6 +1640,18 @@ sub _bmf {
 							command     => ['folderinfo', 'items'],
 							fixedParams => {folder_id =>  $_->{'id'}},
 						},
+						play => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'load', folder_id =>  $_->{'id'}},
+						},
+						add => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'add', folder_id =>  $_->{'id'}},
+						},
+						insert => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'insert', folder_id =>  $_->{'id'}},
+						},
 					};
 					$gotsubfolder = 1;
 				}  elsif ($_->{'type'} eq 'track') {
