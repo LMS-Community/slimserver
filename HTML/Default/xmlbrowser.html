@@ -360,9 +360,6 @@ useSpecialExt="-browse" %]
 								[% artwork != 2 && !ajaxSearch ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 							[% END %]
 						[% END %]
-						[% IF item.hasMetadata == "track" && item.name2 %]
-							[% "BY" | string; " " _ item.name2 %]
-						[% END %]
 						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) %]
 							[% IF item.artist_id %]
 								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist || item.name2 %]</a>

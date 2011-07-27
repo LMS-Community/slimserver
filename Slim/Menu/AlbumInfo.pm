@@ -119,7 +119,7 @@ sub registerDefaultInfoProviders {
 }
 
 sub menu {
-	my ( $class, $client, $url, $album, $tags ) = @_;
+	my ( $class, $client, $url, $album, $tags, $filter ) = @_;
 	$tags ||= {};
 
 	# If we don't have an ordering, generate one.
@@ -149,7 +149,7 @@ sub menu {
 		
 		if ( defined $ref->{func} ) {
 			
-			my $item = eval { $ref->{func}->( $client, $url, $album, $remoteMeta, $tags ) };
+			my $item = eval { $ref->{func}->( $client, $url, $album, $remoteMeta, $tags, $filter ) };
 			if ( $@ ) {
 				$log->error( 'Album menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
@@ -406,14 +406,14 @@ sub showArtwork {
 }
 
 sub playAlbum {
-	my ( $client, $url, $album, $remoteMeta, $tags) = @_;
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter) = @_;
 
 	return undef if !blessed($client);
 	
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],
-			fixedParams => {cmd => 'load', album_id => $album->id},
+			fixedParams => {cmd => 'load', album_id => $album->id, %$filter},
 		},
 	};
 	$actions->{'play'} = $actions->{'items'};
@@ -429,24 +429,24 @@ sub playAlbum {
 }
 	
 sub addAlbumEnd {
-	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
-	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'ADD_TO_END', 'add' );
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
+	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'ADD_TO_END', 'add', $filter );
 }
 
 sub addAlbumNext {
-	my ( $client, $url, $album, $remoteMeta, $tags ) = @_;
-	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'PLAY_NEXT', 'insert' );
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
+	addAlbum( $client, $url, $album, $remoteMeta, $tags, 'PLAY_NEXT', 'insert', $filter );
 }
 
 sub addAlbum {
-	my ( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd ) = @_;
+	my ( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd, $filter ) = @_;
 
 	return undef if !blessed($client);
 	
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],
-			fixedParams => {cmd => $cmd, album_id => $album->id},
+			fixedParams => {cmd => $cmd, album_id => $album->id, %$filter},
 		},
 	};
 	$actions->{'play'} = $actions->{'items'};
@@ -510,6 +510,12 @@ sub cliQuery {
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
 	
+	my %filter;
+	foreach (qw(artist_id genre_id year)) {
+		if (my $arg = $request->getParam($_)) {
+			$filter{$_} = $arg;
+		}
+	}	
 
 	my $tags = {
 		menuMode      => $menuMode,
@@ -526,11 +532,11 @@ sub cliQuery {
 	
 	# Default menu
 	if ( $url ) {
-		$feed = Slim::Menu::AlbumInfo->menu( $client, $url, undef, $tags );
+		$feed = Slim::Menu::AlbumInfo->menu( $client, $url, undef, $tags, \%filter );
 	}
 	else {
 		my $album = Slim::Schema->find( Album => $albumId );
-		$feed     = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, $tags );
+		$feed     = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, $tags, \%filter );
 	}
 	
 	Slim::Control::XMLBrowser::cliQuery( 'albuminfo', $feed, $request );
