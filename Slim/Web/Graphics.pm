@@ -236,7 +236,7 @@ sub artworkRequest {
 			my $skin = $params->{skinOverride} || $prefs->get('skin');			
 			$fullpath = $skinMgr->fixHttpPath($skin, $path);
 		}
-		elsif ( $path =~ /^music/ ) {
+		else {
 			# Image to resize is either a cover path or the audio file if cover is
 			# a number (length of embedded art)
 			$fullpath = ($cover =~ /^\d+$/ || $type eq 'image')
