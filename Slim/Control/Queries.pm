@@ -4167,8 +4167,6 @@ sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
 	
-	warn Data::Dump::dump($pathOrObj);
-	
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
 		return _songDataFromHash($request, $pathOrObj, $tags);
