@@ -1395,42 +1395,36 @@ sub _albums {
 				} ];
 			}
 			
+			my $params = _tagsToParams(\@searchTags);
 			my %actions = (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [album_id => 'id'],
 				info => {
 					command     => ['albuminfo', 'items'],
+					fixedParams => $params,
 				},
 				items => {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {
 						mode       => 'tracks',
-						%{&_tagsToParams(\@searchTags)},
+						%$params,
 					},
 				},
 				play => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
-				},
-				playall => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
+					fixedParams => {cmd => 'load', %$params},
 				},
 				add => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
-				},
-				addall => {
-					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
+					fixedParams => {cmd => 'add', %$params},
 				},
 				insert => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert'},
+					fixedParams => {cmd => 'insert', %$params},
 				},
 				remove => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'delete'},
+					fixedParams => {cmd => 'delete', %$params},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};
