@@ -4451,8 +4451,12 @@ sub contextMenuQuery {
 	if (defined($menu)) {
 		# send the command to *info, where * is the param given to the menu command
 		my $command = $menu . 'info';
-		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ $command, 'items', $index, $quantity, @requestParams ] );
-		
+		$proxiedRequest = Slim::Control::Request->new( $client->id, [ $command, 'items', $index, $quantity, @requestParams ] );
+
+		# Bug 17357, propagate the connectionID as info handlers cache sessions based on this
+		$proxiedRequest->connectionID( $request->connectionID );
+		$proxiedRequest->execute();
+
 		# Bug 13744, wrap async requests
 		if ( $proxiedRequest->isStatusProcessing ) {			
 			$proxiedRequest->callbackFunction( sub {
