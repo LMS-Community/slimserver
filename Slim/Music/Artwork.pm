@@ -130,7 +130,7 @@ sub findStandaloneArtwork {
 			
 			# Prefer cover/folder/album/thumb, then just take the first image
 			my $filelist = join( '|', @files );
-			if ( my @preferred = grep { basename($_) =~ qr/^(?:$filelist)/i } @found ) {
+			if ( my @preferred = grep { basename($_) =~ qr/^(?:$filelist)\./i } @found ) {
 				$art = $preferred[0];
 			}
 			else {

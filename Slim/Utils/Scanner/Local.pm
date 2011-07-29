@@ -220,9 +220,11 @@ sub rescan {
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
 		
-		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
+		# only remove missing tracks when looking for audio tracks
+		my $inDBOnlyCount = 0;
+		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
-		} );
+		} ) if $args->{types} =~ /audio/;
     	
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
