@@ -220,9 +220,11 @@ sub rescan {
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
 		
-		my ($inDBOnlyCount) = $dbh->selectrow_array( qq{
+		# only remove missing tracks on audiodir scans, but not when searching for playlists only
+		my $inDBOnlyCount = 0;
+		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
-		} );
+		} ) if $args->{types} ne 'list';
     	
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
