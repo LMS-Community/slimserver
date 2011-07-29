@@ -50,6 +50,12 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
 	'DESCRIPTION'               => 'COMMENT',
 
+	# J.River once again.. can't these people use existing standards?
+	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',
+	'PEAK LEVEL'                => 'REPLAYGAIN_TRACK_PEAK',
+	'DISC #'                    => 'DISC',
+	'ALBUM ARTIST'              => 'ALBUMARTIST',
+
 	# for dBpoweramp CD Ripper
 	'TOTALDISCS'                => 'DISCC',
 );
