@@ -119,7 +119,7 @@ sub findStandaloneArtwork {
 			my $types = qr/\.(?:jpe?g|png|gif)$/i;
 			
 			my $files = File::Next::files( {
-				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types) },
+				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },
 				descend_filter => sub { 0 },
 			}, $parentDir );
 	
