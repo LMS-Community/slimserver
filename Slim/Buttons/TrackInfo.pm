@@ -59,6 +59,15 @@ sub setMode {
 	my $track = $client->modeParam('track');
 	my $url   = blessed($track) ? $track->url : $track;
 	
+	# XXX temporary fix for ip3k trackinfo, Alan please review
+	# Protocol Handlers can setup their own track info	 
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);	 
+	if ( $handler && $handler->can('trackInfo') ) {	 
+		# trackInfo method is responsible for pushing its own mode	 
+		$handler->trackInfo( $client, $track );	 
+		return;	 
+	}
+	
 	my $getMenu = sub {
 		my ( $client, $callback ) = @_;
 		
