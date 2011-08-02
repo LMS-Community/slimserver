@@ -543,7 +543,8 @@ sub _cliQuery_done {
 					(
 						($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') || 
 						$subFeed->{'enclosure'} ||
-						$subFeed->{'description'}	
+						# Bug 17385 - rss feeds include description at non leaf levels	
+						($subFeed->{'description'} && $subFeed->{'type'} ne 'rss')
 					)
 				) {
 				
