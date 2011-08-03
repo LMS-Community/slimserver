@@ -388,7 +388,7 @@ useSpecialExt="-browse" %]
 [% BLOCK itemIcon %]
 	[% WRAPPER weblink %]
 	<span class="browseCover">
-		<img src="[% url | resizeimage(size, size, 'f', webroot) %]" width="[% size %]">
+		<img src="[% url | resizeimage(size, size, 'f', webroot) %]" onLoad="resize(this, [%- size %])">
 	</span>
 	[% END %]
 	<div class="[% class %]">
