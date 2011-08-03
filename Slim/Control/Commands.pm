@@ -37,6 +37,7 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
