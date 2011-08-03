@@ -20,12 +20,12 @@
 				[% IF item.plugin_meta.cover || item.plugin_meta.icon %]
 					[%# Display plugin cover or icon %]
 					[% IF item.plugin_meta.cover %]
-					<img src="[% item.plugin_meta.cover | resizeimage(50, 50) %]" width="50" height="50">
+					<img src="[% item.plugin_meta.cover | resizeimage(50, 50) %]" width="50" height="50" onLoad="resize(this, 50)">
 					[% ELSIF item.plugin_meta.icon %]
-					<img src="[% item.plugin_meta.icon | resizeimage(50, 50, resizeParam) %]">
+					<img src="[% item.plugin_meta.icon | resizeimage(50, 50, resizeParam) %]" onLoad="resize(this, 50)">
 					[% END %]
 				[% ELSE %]
-					<img src="[% ("/music/" _ item.itemobj.coverid _ "/cover") | resizeimage(50, 50) %]">
+					<img src="[% ("/music/" _ (item.itemobj.coverid || 0) _ "/cover") | resizeimage(50, 50) %]" onLoad="resize(this, 50)">
 				[% END %]
 				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>

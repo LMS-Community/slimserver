@@ -9,7 +9,7 @@ IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
 END;
 FOREACH item = items;
-	IF item.image && item.type != 'audio';
+	IF item.image && (item.type != 'audio' || playlist_id);
 		hasArtwork = 1;
 		LAST;
 	END;	
@@ -388,7 +388,7 @@ useSpecialExt="-browse" %]
 [% BLOCK itemIcon %]
 	[% WRAPPER weblink %]
 	<span class="browseCover">
-		<img src="[% url | resizeimage(size, size, 'f', webroot) %]" width="[% size %]">
+		<img src="[% url | resizeimage(size, size, 'f', webroot) %]" onLoad="resize(this, [%- size %])">
 	</span>
 	[% END %]
 	<div class="[% class %]">
