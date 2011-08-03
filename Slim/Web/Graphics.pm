@@ -121,15 +121,8 @@ sub artworkRequest {
 
 	main::DEBUGLOG && $isInfo && $log->info("  Resize specification: $spec");
 	
-	# Special cases:
-	# /music/current/cover.jpg (mentioned in CLI docs)
-	if ( $path =~ m{^music/current} ) {
-		# XXX
-		main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
-	}
-	
 	# /music/all_items (used in BrowseDB, just returns html/images/albums.png)
-	elsif ( $path =~ m{^music/all_items} ) {
+	if ( $path =~ m{^music/all_items} ) {
 		# Poor choice of special names...
 		$spec =~ s{^items/[^_]+_}{};
 		$path = 'html/images/albums_' . $spec;
@@ -146,6 +139,17 @@ sub artworkRequest {
 	# or the old trackid format
 	elsif ( $path =~ m{^music/([^/]+)/} ) {
 		my $id = $1;
+		
+		# Special case:
+		# /music/current/cover.jpg (mentioned in CLI docs)
+		if ( $id eq 'current' && $client ) {
+			my $trackObj = Slim::Player::Playlist::song($client);
+			$id = $trackObj->coverid if $trackObj && blessed $trackObj;
+			
+			$path =~ s/current/$id/;
+
+			main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
+		}
 		
 		# Fetch the url and cover values
 		my $sth;
