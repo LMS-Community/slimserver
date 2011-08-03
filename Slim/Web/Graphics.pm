@@ -209,6 +209,9 @@ sub artworkRequest {
 			$path =~ s/_$//;
 			$path .= '.png';
 			
+			# our default artwork are PNG files
+			$spec =~ s/\.\w+$/.png/;
+			
 			# Don't allow browsers to cache this error image
 			$no_cache = 1;
 			
