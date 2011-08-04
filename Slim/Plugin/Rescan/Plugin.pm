@@ -202,7 +202,9 @@ sub progressHeader {
 	
 	if (blessed($p) && $p->name) {
 	
-		my $line = $client->string($p->name.'_PROGRESS');
+		my $line = $p->name =~ /(.*)\|(.*)/ 
+					? ($client->string($2 . '_PROGRESS') . $client->string('COLON') . ' ' . $1)
+					: $client->string($p->name . '_PROGRESS');
 	
 		if ($p->active) {
 

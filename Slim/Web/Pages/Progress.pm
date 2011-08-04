@@ -51,10 +51,19 @@ sub progress {
 			my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
 	
 			my $item = {
-				'obj'  => $p,
+				'obj'  => {},
 				'bar'  => $bar,
 				'time' => sprintf("%02d:%02d:%02d", $hrs, $mins, $sec),
 			};
+	
+			foreach ($p->columns) {
+				$item->{obj}->{$_} = $p->$_();
+			}
+			
+			if ($p->name =~ /(.*)\|(.*)/) {
+				$item->{fullname} = string($2 . '_PROGRESS') . string('COLON') . ' ' . $1;
+				$item->{obj}->{name} = $2;
+			}
 	
 			$total_time += $runtime;
 	

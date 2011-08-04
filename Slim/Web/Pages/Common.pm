@@ -63,8 +63,11 @@ sub addLibraryStats {
 
 		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
 
+			my $name = $p->name;
+			$name =~ s/(.*)\|//;
+
 			$params->{'progress'} = {
-				'name' => $p->name,
+				'name' => $name,
 				'bar'  => Slim::Web::Pages::Progress::progressBar($p, 40),
 				'obj'  => $p,
 			}

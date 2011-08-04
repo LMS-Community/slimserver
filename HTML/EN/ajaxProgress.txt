@@ -1,7 +1,7 @@
 [% num = 0 %]
 [% FOREACH item = progress_items %]
 
-Name[% num %]|[% item.obj.name _ "_PROGRESS" | string %]
+Name[% num %]|[% IF item.fullname; item.fullname; ELSE; item.obj.name _ "_PROGRESS" | string; END %]
 Done[% num %]|[% item.obj.done %]
 Total[% num %]|[% item.obj.total || item.obj.done %]
 Active[% num %]|[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]

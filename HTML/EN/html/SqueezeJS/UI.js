@@ -2166,7 +2166,7 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 				}
 				
 				// hide results from previous scans
-				for (var i=scans.length; i<=10; i++) {
+				for (var i=scans.length; i<=50; i++) {
 					Ext.get('progress'+i).setDisplayed(false);
 				}
 			}

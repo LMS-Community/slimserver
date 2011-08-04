@@ -2351,11 +2351,17 @@ sub rescanprogressQuery {
 		my @steps;
 
 		for my $p (@progress) {
+			
+			my $name = $p->name;
+			if ($name =~ /(.*)\|(.*)/) {
+				$request->addResult('fullname', $request->string($2 . '_PROGRESS') . $request->string('COLON') . ' ' . $1);
+				$name = $2;
+			}
 
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
-			$request->addResult($p->name(), int($percComplete));
+			$request->addResult($name, int($percComplete));
 			
-			push @steps, $p->name();
+			push @steps, $name;
 
 			$total_time += ($p->finish || time()) - $p->start;
 			
@@ -2535,7 +2541,11 @@ sub serverstatusQuery {
 			$request->addResult('rescan', "1");
 			if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
 	
-				$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
+				# remove leading path information from the progress name
+				my $name = $p->name;
+				$name =~ s/(.*)\|//;
+	
+				$request->addResult('progressname', $request->string($name . '_PROGRESS'));
 				$request->addResult('progressdone', $p->done);
 				$request->addResult('progresstotal', $p->total);
 			}

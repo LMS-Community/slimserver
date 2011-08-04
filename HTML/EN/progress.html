@@ -45,7 +45,7 @@
 	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
 
 	[% odd = 1 %]
-	[% FOREACH num = [0..10] %]
+	[% FOREACH num = [0..50] %]
 
 		<div id="progress[% num %]" style="display:none">
 			<div class="odd">

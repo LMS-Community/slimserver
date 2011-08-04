@@ -249,7 +249,7 @@ sub rescan {
 			if ( $args->{progress} ) {
 				$progress = Slim::Utils::Progress->new( {
 					type  => 'importer',
-					name  => $args->{scanName} . '_deleted',
+					name  => $next . '|' . ($args->{scanName} . '_deleted'),
 					bar	  => 1,
 					every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
 					total => $inDBOnlyCount,
@@ -305,7 +305,7 @@ sub rescan {
 			if ( $args->{progress} ) {
 				$progress = Slim::Utils::Progress->new( {
 					type  => 'importer',
-					name  => $args->{scanName} . '_new',
+					name  => $next . '|' . ($args->{scanName} . '_new'),
 					bar   => 1,
 					every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
 					total => $onDiskOnlyCount,
@@ -361,7 +361,7 @@ sub rescan {
 			if ( $args->{progress} ) {
 				$progress = Slim::Utils::Progress->new( {
 					type  => 'importer',
-					name  => $args->{scanName} . '_changed',
+					name  => $next . '|' . ($args->{scanName} . '_changed'),
 					bar   => 1,
 					every => ($args->{scanName} && $args->{scanName} eq 'playlist'), # record all playists in the db
 					total => $changedOnlyCount,
