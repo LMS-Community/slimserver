@@ -2427,12 +2427,6 @@ sub rescanprogressQuery {
 				$name = $2;
 			}
 
-			my $name = $p->name;
-			if ($name =~ /(.*)\|(.*)/) {
-				$request->addResult('fullname', $request->string($2 . '_PROGRESS') . $request->string('COLON') . ' ' . $1);
-				$name = $2;
-			}
-
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
 			$request->addResult($name, int($percComplete));
 			
