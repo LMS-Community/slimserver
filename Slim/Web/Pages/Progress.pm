@@ -65,6 +65,15 @@ sub progress {
 				$item->{obj}->{name} = $2;
 			}
 	
+			foreach ($p->columns) {
+				$item->{obj}->{$_} = $p->$_();
+			}
+			
+			if ($p->name =~ /(.*)\|(.*)/) {
+				$item->{fullname} = string($2 . '_PROGRESS') . string('COLON') . ' ' . $1;
+				$item->{obj}->{name} = $2;
+			}
+	
 			$total_time += $runtime;
 	
 			push @{$params->{'progress_items'}}, $item;
