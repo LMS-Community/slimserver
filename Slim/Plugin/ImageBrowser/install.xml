@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<extension>
+	<id>e102b4d0-b86a-11e0-aff2-0800200c9a66</id>
+	<name>PLUGIN_IMAGEBROWSER_MODULE_NAME</name>
+	<module>Slim::Plugin::ImageBrowser::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC</description>
+	<creator>Michael Herger</creator>
+	<email>michael@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<icon>plugins/ImageBrowser/html/images/icon.png</icon>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.6</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
