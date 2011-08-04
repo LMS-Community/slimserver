@@ -442,7 +442,7 @@ sub addAlbum {
 	my ( $client, $url, $album, $remoteMeta, $tags, $add_string, $cmd, $filter ) = @_;
 
 	return undef if !blessed($client);
-	
+logBacktrace('') if !$filter;	
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],

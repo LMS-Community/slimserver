@@ -136,6 +136,7 @@ sub loadModules {
 		$libPath,
 	);
 
+@INC = grep { $_ !~ /5\.8/ } @INC;
 	$d_startup && printf("Got \@INC containing:\n%s\n\n", join("\n", @INC));
 
 	# This works like 'use lib'
