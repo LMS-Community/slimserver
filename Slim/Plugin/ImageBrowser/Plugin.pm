@@ -4,11 +4,13 @@ package Slim::Plugin::ImageBrowser::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use POSIX qw(strftime);
 use XML::Simple;
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 use Slim::Plugin::UPnP::Common::Utils qw(absURL);
 
 my $log = Slim::Utils::Log->addLogCategory( {
@@ -183,12 +185,22 @@ sub cliSlideshowQuery {
 	my $results = $sub->getResults;
 	my $imageInfo = $results->{images_loop}->[0];
 	
-	$request->addResult( data => [{
-		image => "image/$id/cover{resizeParams}",
-		name  => $imageInfo->{title},
-		date  => $imageInfo->{date} || '',
-		owner => $imageInfo->{album} || '',
-	}] );
+	my $item = {
+		image   => "image/$id/cover{resizeParams}",
+		caption => $imageInfo->{title},
+		owner   => $imageInfo->{album} || '',
+	};
+	
+	my $date;
+	if ( $imageInfo->{original_time} ) {
+		my @time = localtime($imageInfo->{original_time});
+		
+		if (scalar @time > 5) {
+			$item->{date} = strftime(preferences('server')->get('shortdateFormat'), @time);
+		}
+	}
+	
+	$request->addResult( data => [ $item ] );
 	$request->addResult( offset => 0 );
 	$request->setStatusDone();
 }
