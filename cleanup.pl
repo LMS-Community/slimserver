@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -ICPAN
+#!/usr/bin/env perl -w -ICPAN
 
 # Logitech Media Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or

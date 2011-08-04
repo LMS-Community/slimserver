@@ -119,9 +119,9 @@ $prefs->setChange(
 			
 			my $interval = $prefs->get('scan_interval') || 3600;
 			
-			main::INFOLOG && $log->info("re-setting checker for $interval seconds from now.");
+			main::INFOLOG && $log->info("re-setting scaninterval to $interval seconds.");
 			
-			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::MusicMagic::Plugin::checker);
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 120, \&Slim::Plugin::MusicMagic::Plugin::checker);
 	},
 'scan_interval');
 
@@ -531,7 +531,10 @@ sub _statusOK {
 			return 0;
 		}
 
-		if ((time - $lastScanTime) > $scanInterval) {
+		my $timePassed = time() - $lastScanTime;
+		main::DEBUGLOG && $log->debug("Time passed since last scan: $timePassed   -   rescan interval: $scanInterval");
+
+		if ($timePassed > $scanInterval) {
 
 			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
