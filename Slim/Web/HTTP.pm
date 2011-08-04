@@ -1043,7 +1043,7 @@ sub generateHTTPResponse {
 		$response->header('Cache-Control' => 'max-age=' . $max);
 	}
 
-	if ($contentType =~ /text/ && $path !~ /memoryusage/) {
+	if ($contentType =~ /text/ && $path !~ /(?:json|memoryusage)/) {
 
 		$params->{'params'} = {};
 
@@ -1063,7 +1063,7 @@ sub generateHTTPResponse {
 		$path = 'html/mypage.ico';
 		$isStatic = 1;
 	}
-	elsif ( $path =~ /\.css|\.js|robots\.txt/ ) {
+	elsif ( $path =~ /\.css|\.js(?!on)|robots\.txt/ ) {
 		$isStatic = 1;
 	}
 	elsif (    $path =~ m{html/} 
