@@ -577,6 +577,11 @@ sub parseOPML {
 		$opml->{sorted} = $xml->{sorted};
 	}
 	
+	# respect cache time as returned by the data source
+	if ( defined $head->{cachetime} ) {
+		$opml->{cachetime} = $head->{cachetime} + 0;
+	}
+	
 	# Optional windowId to support nextWindow
 	if ( $head->{windowId} ) {
 		$opml->{windowId} = $head->{windowId};
