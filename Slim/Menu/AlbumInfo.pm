@@ -413,7 +413,7 @@ sub playAlbum {
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],
-			fixedParams => {cmd => 'load', album_id => $album->id, %$filter},
+			fixedParams => {cmd => 'load', album_id => $album->id, %{ $filter || {} }},
 		},
 	};
 	$actions->{'play'} = $actions->{'items'};
@@ -446,7 +446,7 @@ sub addAlbum {
 	my $actions = {
 		items => {
 			command     => [ 'playlistcontrol' ],
-			fixedParams => {cmd => $cmd, album_id => $album->id, %$filter},
+			fixedParams => {cmd => $cmd, album_id => $album->id, %{ $filter || {} }},
 		},
 	};
 	$actions->{'play'} = $actions->{'items'};
