@@ -62,6 +62,9 @@ sub condition {
 	return 1;
 }
 
+# Don't add this item to any menu
+sub playerMenu { }
+
 
 # fetch content from UPnP handler, and convert into OPML as understood by XMLBrowser
 sub renderOPML {
@@ -159,6 +162,9 @@ sub renderOPML {
 	return \$data;
 }
 
+
+# return a slideshow type json structure
+# XXX - currently only for single images, might be extended to show real slideshows
 sub cliSlideshowQuery {
 	my $request = shift;
 
