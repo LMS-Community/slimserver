@@ -4160,11 +4160,13 @@ sub _songDataFromHash {
 		}
 		else {					
 			my $map = $colMap{$tag};
-		
-			my $value = ref $map eq 'CODE' ? $map->($res) : $res->{$map};
 
-			if (defined $value && $value ne '') {
-				$returnHash{ $tagref->[0] } = $value;
+			if ($map) {
+				my $value = ref $map eq 'CODE' ? $map->($res) : $res->{$map};
+	
+				if (defined $value && $value ne '') {
+					$returnHash{ $tagref->[0] } = $value;
+				}
 			}
 		}
 	}		
