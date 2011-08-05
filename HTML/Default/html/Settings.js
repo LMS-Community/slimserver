@@ -128,10 +128,12 @@ Settings = {
 
 	showSettingsPage : function(page) {
 		if (page.id == 'PLAYER') {
-			page = SqueezeJS.getCookie('Squeezebox-playersettings');
+			var page2 = SqueezeJS.getCookie('Squeezebox-playersettings');
 
-			if (page == null || page == 'null')
-				page = 'settings/player/basic.html?';
+			if (page2 == null || page2 == 'null')
+				page = page.url || 'settings/player/basic.html?';
+			else
+				page = page2;
 		}
 
 		else if (page.id == 'ADVANCED_SETTINGS') {
