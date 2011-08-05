@@ -5,6 +5,7 @@ package Slim::Plugin::ImageBrowser::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 use POSIX qw(strftime);
+use Date::Parse qw(strptime);
 use XML::Simple;
 use JSON::XS::VersionOneAndTwo;
 
@@ -15,30 +16,21 @@ use Slim::Plugin::UPnP::Common::Utils qw(absURL);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.imagebrowser',
-	defaultLevel => 'WARN',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_IMAGEBROWSER_MODULE_NAME',
 } );
 
-use constant CONTENTURL => 'plugins/imagegallery/content.json';
 use constant PLUGIN_TAG => 'imagebrowser';
 
 sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin(
-		feed   => absURL( '/' . CONTENTURL ),
+		feed   => \&renderOPML,
 		tag    => PLUGIN_TAG,
 		node   => 'extras',		# used for SP
 		menu   => 'plugins',	# used in web UI
 	);
-	
-	Slim::Control::Request::addDispatch(
-		[ PLUGIN_TAG, 'slideshow' ],
-		[ 0, 1, 1, \&cliSlideshowQuery ]
-	);
-	
-	
-	Slim::Web::Pages->addPageFunction( CONTENTURL, \&renderOPML );
 }
 
 # we depend on Slim::Plugin::UPnP::Plugin
@@ -70,12 +62,19 @@ sub playerMenu { }
 
 # fetch content from UPnP handler, and convert into OPML as understood by XMLBrowser
 sub renderOPML {
-	my ($client, $params) = @_;
+	my ($client, $cb, $params, $args) = @_;
 	
+	my $wantSlideshow;
+	if ( $params && $params->{params} && ($wantSlideshow = $params->{params}->{slideshow}) ) {
+		$args = {
+			id => '/ia/' . $params->{params}->{id}
+		};
+	}
+
 	my ($data, $count, $total) = Slim::Plugin::UPnP::MediaServer::ContentDirectory->Browse(undef, {
 		BrowseFlag     => 'BrowseDirectChildren',
 		Filter         => '*',
-		ObjectID       => $params->{id} || '/images',
+		ObjectID       => $args->{id} || '/images',
 		RequestedCount => 999999,		# get them all, XMLBrowser does the paging... a good idea?
 		SortCriteria   => $params->{sort} || '+dc:title',
 		StartingIndex  => $params->{start} || 0,
@@ -83,7 +82,7 @@ sub renderOPML {
 	
 	$data = $data->name('Result')->value();
 	
-	my $xml = eval { XMLin($data) };
+	my $xml = $data ? eval { XMLin($data) } : {};
 
 	if ( $@ ) {
 		$log->error( "Unable to parse: " . $@ );
@@ -91,7 +90,8 @@ sub renderOPML {
 	}
 	
 	my $items = [];
-
+	my $dateFormat = preferences('server')->get('shortdateFormat');
+	
 	foreach my $itemLoop ($xml->{container}, $xml->{item}) {
 	
 		# normalize hash?!?
@@ -105,26 +105,37 @@ sub renderOPML {
 			if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 				push @$items, {
 					type => 'link',
-					text => $item->{'dc:title'},
-					url  => absURL( '/' . CONTENTURL ) . "?id=$id",
-				}
+					name => $item->{'dc:title'},
+					url  => \&renderOPML,
+					# show folder icon if we have images and folders in the same view only
+					icon => $xml->{item} ? 'html/images/icon_folder.png' : undef,
+					passthrough => [ {
+						id => $id
+					} ],
+				} if !$wantSlideshow;
 			}
-			
+
 			elsif ( $item->{'upnp:class'} eq 'object.item.imageItem.photo' ) {
 				my ($id) = $item->{'upnp:icon'} =~ m{(?:music|image)/([0-9a-f]{8})/};
+				my $date = $item->{'dc:date'} ? strftime($dateFormat, strptime($item->{'dc:date'})) : '';
 				
-				push @$items, {
-					type => 'link',
-					text => $item->{'dc:title'},
+				push @$items, $wantSlideshow 
+				? {
+					image => "image/$id/cover{resizeParams}",
+					name  => $item->{'dc:title'},
 					owner => $item->{'upnp:album'},
-					date => $item->{'dc:date'},
+					date  => $date,
+				}
+				: {
+					type => 'link',
+					name => $item->{'dc:title'} . ($date ? ' - ' . $date : ''),
 					weblink => $item->{res}->{content},
 					image => $item->{'upnp:icon'},
 					jive => $id ? {
 						actions => {
 							go => {
 								player => 0,
-								cmd => [ PLUGIN_TAG, 'slideshow' ],
+								cmd => [ PLUGIN_TAG, 'items' ],
 								params => {
 									id => $id,
 									slideshow => 1,
@@ -145,64 +156,14 @@ sub renderOPML {
 	
 	push @$items, {
 		type => 'text',
-		text => Slim::Utils::Strings::clientString($client, 'EMPTY'),
+		name => Slim::Utils::Strings::clientString($client, 'EMPTY'),
 	} if not scalar @$items;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug( Data::Dump::dump($items) );
-	
-	# create OPML
-	$data = eval { to_json({
-		body => {
-			outline => $items,
-		},
-		head => {
-			title => Slim::Utils::Strings::clientString($client, 'PLUGIN_IMAGEBROWSER_MODULE_NAME'),
-			cachetime => 0,		# don't cache result
-		},
-	}) };
 
-	return \$data;
-}
-
-
-# return a slideshow type json structure
-# XXX - currently only for single images, might be extended to show real slideshows
-sub cliSlideshowQuery {
-	my $request = shift;
-
-	if ($request->isNotQuery([[PLUGIN_TAG]])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	$request->setStatusProcessing();
-	
-	my $id = $request->getParam('id');
-	
-	my $sub = Slim::Control::Request->new( undef, [ 'image_titles', 0, 1, 'image_id:' . $id, 'tags:tnl' ] );
-	$sub->execute();
-	
-	my $results = $sub->getResults;
-	my $imageInfo = $results->{images_loop}->[0];
-	
-	my $item = {
-		image   => "image/$id/cover{resizeParams}",
-		caption => $imageInfo->{title},
-		owner   => $imageInfo->{album} || '',
-	};
-	
-	my $date;
-	if ( $imageInfo->{original_time} ) {
-		my @time = localtime($imageInfo->{original_time});
-		
-		if (scalar @time > 5) {
-			$item->{date} = strftime(preferences('server')->get('shortdateFormat'), @time);
-		}
-	}
-	
-	$request->addResult( data => [ $item ] );
-	$request->addResult( offset => 0 );
-	$request->setStatusDone();
+	$cb->({
+		items => $items,
+	});
 }
 
 1;
