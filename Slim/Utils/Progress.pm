@@ -237,7 +237,7 @@ sub update {
 			my $total = $self->total;
 		
 			my $sqlHelperClass = $os->sqlHelperClass();
-			$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${total}-" );
+			$sqlHelperClass->updateProgress( "progress:${start}||${type}||${name}||${done}||${total}||" );
 		}
 	}
 
@@ -283,7 +283,7 @@ sub final {
 		$done = 1 if !defined $done;
 		
 		my $sqlHelperClass = $os->sqlHelperClass();
-		$sqlHelperClass->updateProgress( "progress:${start}-${type}-${name}-${done}-${done}-${finish}" );
+		$sqlHelperClass->updateProgress( "progress:${start}||${type}||${name}||${done}||${done}||${finish}" );
 				
 		if ( $self->bar ) {
 			$self->_finalBar($done);
