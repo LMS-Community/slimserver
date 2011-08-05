@@ -4158,15 +4158,13 @@ sub _songDataFromHash {
 				}
 			}
 		}
-		else {					
-			my $map = $colMap{$tag};
+		# eg. the web UI is requesting some tags which are only available for remote tracks,
+		# such as 'B' (custom button handler). They would return empty here - ignore them.
+		elsif ( my $map = $colMap{$tag} ) {
+			my $value = ref $map eq 'CODE' ? $map->($res) : $res->{$map};
 
-			if ($map) {
-				my $value = ref $map eq 'CODE' ? $map->($res) : $res->{$map};
-	
-				if (defined $value && $value ne '') {
-					$returnHash{ $tagref->[0] } = $value;
-				}
+			if (defined $value && $value ne '') {
+				$returnHash{ $tagref->[0] } = $value;
 			}
 		}
 	}		
