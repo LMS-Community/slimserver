@@ -609,7 +609,7 @@ sub _notifyFromScanner {
 		# assume scanner is dead.  This is hard to do, as scanner may block for an indefinite
 		# amount of time with slow network filesystems, or a large amount of files.
 	}
-	elsif ( $msg =~ /^progress:([^-]+)-([^-]+)-([^-]+)-([^-]*)-([^-]*)-([^-]+)?/ ) {
+	elsif ( $msg =~ /^progress:(.+?)\|\|(.+?)\|\|(.+?)\|\|(.*?)\|\|(.*?)\|\|(.+)?/ ) {
 		if ( $SCANNING  && Slim::Schema::hasLibrary() ) {
 			# update progress
 			my ($start, $type, $name, $done, $total, $finish) = ($1, $2, $3, $4, $5, $6);
