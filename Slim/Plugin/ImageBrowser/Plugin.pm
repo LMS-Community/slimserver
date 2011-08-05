@@ -1,6 +1,6 @@
 package Slim::Plugin::ImageBrowser::Plugin;
 
-# $Id:  $
+# $Id$
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
