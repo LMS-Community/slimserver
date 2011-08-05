@@ -2,6 +2,11 @@ package Slim::Plugin::ImageBrowser::Plugin;
 
 # $Id$
 
+# Logitech Media Server Copyright 2001-2011 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 use POSIX qw(strftime);
@@ -26,12 +31,13 @@ sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin(
-		feed   => \&renderOPML,
+		feed   => \&handleFeed,
 		tag    => PLUGIN_TAG,
 		node   => 'extras',		# used for SP
 		menu   => 'plugins',	# used in web UI
 	);
 }
+
 
 # we depend on Slim::Plugin::UPnP::Plugin
 # can probably be removed if we move SOAP::Lite to the main CPAN folder 
@@ -60,39 +66,57 @@ sub condition {
 sub playerMenu { }
 
 
+# Extend initJive to setup albums screensavers
+sub initJive {
+	my ( $class, %args ) = @_;
+	
+	my $menu = $class->SUPER::initJive( %args );
+	
+	return if !$menu;
+	
+	my $data = _parseOPML('/il');
+	my $screensavers = [];
+	
+	my $albums = $data->{container};
+	
+	if ($albums->{id} && $albums->{'upnp:class'}) {
+		$albums = {
+			$albums->{id} => $albums,
+		};
+	}
+	
+	while ( my ($id, $item) = each( %$albums ) ) {
+		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
+			push @$screensavers, {
+				cmd    => [ $args{tag}, 'items', 'id:' . $id, 'slideshow:1' ],
+				text => $item->{'dc:title'},
+			}
+		}
+	}
+	
+	$menu->[0]->{screensavers} = $screensavers;
+	
+	return $menu;
+}			
+
+
 # fetch content from UPnP handler, and convert into OPML as understood by XMLBrowser
-sub renderOPML {
+sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
+	
+	my $qid = $args->{id} || '';
 	
 	my $wantSlideshow;
 	if ( $params && $params->{params} && ($wantSlideshow = $params->{params}->{slideshow}) ) {
-		$args = {
-			id => '/ia/' . $params->{params}->{id}
-		};
+		$qid = $params->{params}->{id};
 	}
 
-	my ($data, $count, $total) = Slim::Plugin::UPnP::MediaServer::ContentDirectory->Browse(undef, {
-		BrowseFlag     => 'BrowseDirectChildren',
-		Filter         => '*',
-		ObjectID       => $args->{id} || '/images',
-		RequestedCount => 999999,		# get them all, XMLBrowser does the paging... a good idea?
-		SortCriteria   => $params->{sort} || '+dc:title',
-		StartingIndex  => $params->{start} || 0,
-	});	
-	
-	$data = $data->name('Result')->value();
-	
-	my $xml = $data ? eval { XMLin($data) } : {};
-
-	if ( $@ ) {
-		$log->error( "Unable to parse: " . $@ );
-		$xml = {};
-	}
+	my $data = _parseOPML($qid, $params->{start}, $params->{sort});
 	
 	my $items = [];
 	my $dateFormat = preferences('server')->get('shortdateFormat');
 	
-	foreach my $itemLoop ($xml->{container}, $xml->{item}) {
+	foreach my $itemLoop ($data->{container}, $data->{item}) {
 	
 		# normalize hash?!?
 		if ($itemLoop->{id} && $itemLoop->{'upnp:class'}) {
@@ -106,9 +130,9 @@ sub renderOPML {
 				push @$items, {
 					type => 'link',
 					name => $item->{'dc:title'},
-					url  => \&renderOPML,
+					url  => \&handleFeed,
 					# show folder icon if we have images and folders in the same view only
-					icon => $xml->{item} ? 'html/images/icon_folder.png' : undef,
+					icon => $data->{item} ? 'html/images/icon_folder.png' : undef,
 					passthrough => [ {
 						id => $id
 					} ],
@@ -137,7 +161,7 @@ sub renderOPML {
 								player => 0,
 								cmd => [ PLUGIN_TAG, 'items' ],
 								params => {
-									id => $id,
+									id => "/ia/$id",
 									slideshow => 1,
 								}
 							},
@@ -164,6 +188,30 @@ sub renderOPML {
 	$cb->({
 		items => $items,
 	});
+}
+
+sub _parseOPML {
+	my ($id, $start, $sort) = @_;
+	
+	my ($data, $count, $total) = Slim::Plugin::UPnP::MediaServer::ContentDirectory->Browse(undef, {
+		BrowseFlag     => 'BrowseDirectChildren',
+		Filter         => '*',
+		ObjectID       => $id || '/images',
+		RequestedCount => 999999,		# get them all, XMLBrowser does the paging... a good idea?
+		SortCriteria   => $sort || '+dc:title',
+		StartingIndex  => $start || 0,
+	});	
+	
+	$data = $data->name('Result')->value();
+	
+	my $parsed = $data ? eval { XMLin($data) } : {};
+
+	if ( $@ ) {
+		$log->error( "Unable to parse: " . $@ );
+		$parsed = {};
+	}
+	
+	return $parsed;
 }
 
 1;
