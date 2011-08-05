@@ -253,7 +253,7 @@ sub genre {
 	
 	return if main::SLIM_SERVICE;
 
-	return $self->genres->single;
+	return $self->genres->first;
 }
 
 sub comment {
