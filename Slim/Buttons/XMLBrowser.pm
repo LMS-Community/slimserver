@@ -191,7 +191,7 @@ sub setMode {
 		
 		my $search = $modeParams->{'item'}->{'searchParam'} || $modeParams->{'search'};
 		
-		$url->( $client, $callback, {params => $modeParams, search => $search}, @{$pt});
+		$url->( $client, $callback, {isButton => 1, params => $modeParams, search => $search}, @{$pt});
 	}
 	
 	else {
@@ -1367,7 +1367,7 @@ sub playItem {
 				$log->debug( "Fetching OPML playlist from coderef $cbname" );
 			}
 			
-			return $url->( $client, $callback, {}, @{$pt} );
+			return $url->( $client, $callback, { isButton => 1 }, @{$pt} );
 		}
 		
 		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item
