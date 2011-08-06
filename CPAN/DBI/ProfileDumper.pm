@@ -177,7 +177,7 @@ use DBI::Profile;
 
 our @ISA = ("DBI::Profile");
 
-our $VERSION = sprintf("2.%06d", q$Revision: 9894 $ =~ /(\d+)/o);
+our $VERSION = sprintf("2.%06d", q$Revision: 13956 $ =~ /(\d+)/o);
 
 use Carp qw(croak);
 use Fcntl qw(:flock);
@@ -200,6 +200,9 @@ sub new {
 
     # provide a default filename
     $self->filename("dbi.prof") unless $self->filename;
+
+    DBI->trace_msg("$self: @{[ %$self ]}\n",0)
+        if $self->{Trace} && $self->{Trace} >= 2;
 
     return $self;
 }
@@ -237,6 +240,12 @@ sub flush_to_disk {
           or croak("Unable to open '$filename' for $class output: $!");
     } else {
         # create new file (or overwrite existing)
+        if (-f $filename) {
+            my $bak = $filename.'.prev';
+            unlink($bak);
+            rename($filename, $bak)
+                or warn "Error renaming $filename to $bak: $!\n";
+        }
         open($fh, ">", $filename) 
           or croak("Unable to open '$filename' for $class output: $!");
     }

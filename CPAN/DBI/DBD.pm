@@ -5,10 +5,10 @@ use vars qw($VERSION);	# set $VERSION early so we don't confuse PAUSE/CPAN etc
 
 # don't use Revision here because that's not in svn:keywords so that the
 # examples that use it below won't be messed up
-$VERSION = sprintf("12.%06d", q$Id: DBD.pm 11723 2008-09-02 10:09:51Z mjevans $ =~ /(\d+)/o);
+$VERSION = sprintf("12.%06d", q$Id: DBD.pm 14600 2010-12-21 23:08:28Z timbo $ =~ /(\d+)/o);
 
 
-# $Id: DBD.pm 11723 2008-09-02 10:09:51Z mjevans $
+# $Id: DBD.pm 14600 2010-12-21 23:08:28Z timbo $
 #
 # Copyright (c) 1997-2006 Jonathan Leffler, Jochen Wiedmann, Steffen
 # Goeldner and Tim Bunce
@@ -216,7 +216,7 @@ I<configure_requires> attributes which newer CPAN modules understand.
 You use these to tell the CPAN module (and CPANPLUS) that your build
 and configure mechanisms require DBI. The best reference for META.yml
 (at the time of writing) is
-L<http://module-build.sourceforge.net/META-spec-v1.2.html>. You can find
+L<http://module-build.sourceforge.net/META-spec-v1.4.html>. You can find
 a reasonable example of a F<META.yml> in DBD::ODBC.
 
 The F<lib/Bundle/DBD/Driver.pm> file allows you to specify other Perl
@@ -1816,7 +1816,7 @@ passed as the sixth argument.
 Since B<DBI> post v1.607, if a C<dbd_db_login6_sv()> macro is defined (for
 a function like dbd_db_login6 but with scalar pointers for the dbname,
 username and password), it will be used instead. This will allow your
-login6 function to see if there are any unicode characters in the
+login6 function to see if there are any Unicode characters in the
 dbname.
 
 People used to just pick Oracle's F<dbdimp.c> and use the same names,
@@ -1849,7 +1849,7 @@ of code. (Of course keep an eye on other people's work.)
   };
 
   /*  Rename functions for avoiding name clashes; prototypes are  */
-  /*  in dbd_xst.h                                                */
+  /*  in dbd_xsh.h                                                */
   #define dbd_init            drv_dr_init
   #define dbd_db_login6_sv    drv_db_login_sv
   #define dbd_db_do           drv_db_do
@@ -1952,7 +1952,7 @@ which were added in B<DBI> 1.41:
   DBIh_SET_ERR_CHAR(h, imp_xxh, err_c, err_i, errstr, state, method);
 
 For C<DBIh_SET_ERR_SV> the I<err>, I<errstr>, I<state>, and I<method>
-parameters are C<SV*>.
+parameters are C<SV*> (use &sv_undef instead of NULL).
 
 For C<DBIh_SET_ERR_CHAR> the I<err_c>, I<errstr>, I<state>, I<method>
 parameters are C<char*>.
@@ -2307,6 +2307,10 @@ C<dbd_db_connect()> above:
 This is where a statement will really be executed.
 
   int dbd_st_execute(SV* sth, imp_sth_t* imp_sth);
+
+C<dbd_st_execute> should return -2 for any error, -1 if the number of
+rows affected is unknown else it should be the number of affected
+(updated, inserted) rows.
 
 Note that you must be aware a statement may be executed repeatedly.
 Also, you should not expect that C<finish()> will be called between two
@@ -2904,7 +2908,7 @@ call a method the DBI merges the handles settings into its own for the
 duration of the call: the trace flags of the handle are OR'd into the
 trace flags of the DBI, and if the handle has a higher trace level
 then the DBI trace level is raised to match it. The previous DBI trace
-setings are restored when the called method returns.
+settings are restored when the called method returns.
 
 =head2 Trace Level
 
@@ -3104,6 +3108,54 @@ should be set to contain the returned data.
 The pure Perl equivalent is the C<$sth-E<gt>_set_fbav($data)> method, as
 described in the part on pure Perl drivers.
 
+=head2 Casting strings to Perl types based on a SQL type
+
+DBI from 1.611 (and DBIXS_REVISION 13606) defines the
+sql_type_cast_svpv method which may be used to cast a string
+representation of a value to a more specific Perl type based on a SQL
+type. You should consider using this method when processing bound
+column data as it provides some support for the TYPE bind_col
+attribute which is rarely used in drivers.
+
+  int sql_type_cast_svpv(pTHX_ SV *sv, int sql_type, U32 flags, void *v)
+
+C<sv> is what you would like cast, C<sql_type> is one of the DBI defined
+SQL types (e.g., C<SQL_INTEGER>) and C<flags> is a bitmask as follows:
+
+=over
+
+=item DBIstcf_STRICT
+
+If set this indicates you want an error state returned if the cast
+cannot be performed.
+
+=item DBIstcf_DISCARD_STRING
+
+If set and the pv portion of the C<sv> is cast then this will cause
+sv's pv to be freed up.
+
+=back
+
+sql_type_cast_svpv returns the following states:
+
+ -2 sql_type is not handled - sv not changed
+ -1 sv is undef, sv not changed
+  0 sv could not be cast cleanly and DBIstcf_STRICT was specified
+  1 sv could not be case cleanly and DBIstcf_STRICT was not specified
+  2 sv was cast ok
+
+The current implementation of sql_type_cast_svpv supports
+C<SQL_INTEGER>, C<SQL_DOUBLE> and C<SQL_NUMERIC>. C<SQL_INTEGER> uses
+sv_2iv and hence may set IV, UV or NV depending on the
+number. C<SQL_DOUBLE> uses sv_2nv so may set NV and C<SQL_NUMERIC>
+will set IV or UV or NV.
+
+DBIstcf_STRICT should be implemented as the StrictlyTyped attribute
+and DBIstcf_DISCARD_STRING implemented as the DiscardString attribute
+to the bind_col method and both default to off.
+
+See DBD::Oracle for an example of how this is used.
+
 =head1 SUBCLASSING DBI DRIVERS
 
 This is definitely an open subject. It can be done, as demonstrated by
@@ -3272,40 +3324,83 @@ sub dbd_edit_mm_attribs {
 	if @_;
     _inst_checks();
 
+    # what can be done
+    my %test_variants = (
+	p => {	name => "DBI::PurePerl",
+		match => qr/^\d/,
+		add => [ '$ENV{DBI_PUREPERL} = 2',
+			 'END { delete $ENV{DBI_PUREPERL}; }' ],
+	},
+	g => {	name => "DBD::Gofer",
+		match => qr/^\d/,
+		add => [ q{$ENV{DBI_AUTOPROXY} = 'dbi:Gofer:transport=null;policy=pedantic'},
+			 q|END { delete $ENV{DBI_AUTOPROXY}; }| ],
+	},
+	n => {	name => "DBI::SQL::Nano",
+		match => qr/^(?:48dbi_dbd_sqlengine|49dbd_file|5\ddbm_\w+|85gofer)\.t$/,
+		add => [ q{$ENV{DBI_SQL_NANO} = 1},
+			 q|END { delete $ENV{DBI_SQL_NANO}; }| ],
+	},
+    #   mx => {	name => "DBD::Multiplex",
+    #           add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Multiplex:';} ],
+    #   }
+    #   px => {	name => "DBD::Proxy",
+    #		need mechanism for starting/stopping the proxy server
+    #		add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Proxy:XXX';} ],
+    #   }
+    );
+
     # decide what needs doing
+    $dbd_attr->{create_pp_tests} or delete $test_variants{p};
+    $dbd_attr->{create_nano_tests} or delete $test_variants{n};
+    $dbd_attr->{create_gap_tests} or delete $test_variants{g};
+
+    # expand for all combinations
+    my @all_keys = my @tv_keys = sort keys %test_variants;
+    while( @tv_keys ) {
+	my $cur_key = shift @tv_keys;
+	last if( 1 < length $cur_key );
+	my @new_keys;
+	foreach my $remain (@tv_keys) {
+	    push @new_keys, $cur_key . $remain unless $remain =~ /$cur_key/;
+	}
+	push @tv_keys, @new_keys;
+	push @all_keys, @new_keys;
+    }
+
+    my %uniq_keys;
+    foreach my $key (@all_keys) {
+	@tv_keys = sort split //, $key;
+	my $ordered = join( '', @tv_keys );
+	$uniq_keys{$ordered} = 1;
+    }
+    @all_keys = sort { length $a <=> length $b or $a cmp $b } keys %uniq_keys;
 
     # do whatever needs doing
-    if ($dbd_attr->{create_pp_tests}) {
+    if( keys %test_variants ) {
 	# XXX need to convert this to work within the generated Makefile
 	# so 'make' creates them and 'make clean' deletes them
-	my %test_variants = (
-	    p => {	name => "DBI::PurePerl",
-			add => [ '$ENV{DBI_PUREPERL} = 2' ],
-	    },
-	    g => {	name => "DBD::Gofer",
-			add => [ q{$ENV{DBI_AUTOPROXY} = 'dbi:Gofer:transport=null;policy=pedantic'} ],
-	    },
-	    xgp => {	name => "PurePerl & Gofer",
-			add => [ q{$ENV{DBI_PUREPERL} = 2; $ENV{DBI_AUTOPROXY} = 'dbi:Gofer:transport=null;policy=pedantic'} ],
-	    },
-	#   mx => {	name => "DBD::Multiplex",
-	#               add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Multiplex:';} ],
-	#   }
-	#   px => {	name => "DBD::Proxy",
-	#		need mechanism for starting/stopping the proxy server
-	#		add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Proxy:XXX';} ],
-	#   }
-	);
-
 	opendir DIR, 't' or die "Can't read 't' directory: $!";
 	my @tests = grep { /\.t$/ } readdir DIR;
 	closedir DIR;
 
-        while ( my ($v_type, $v_info) = each %test_variants ) {
-            printf "Creating test wrappers for $v_info->{name}:\n";
+        foreach my $test_combo (@all_keys) {
+	    @tv_keys = split //, $test_combo;
+	    my @test_names = map { $test_variants{$_}->{name} } @tv_keys;
+            printf "Creating test wrappers for " . join( " + ", @test_names ) . ":\n";
+	    my @test_matches = map { $test_variants{$_}->{match} } @tv_keys;
+	    my @test_adds;
+	    foreach my $test_add ( map { $test_variants{$_}->{add} } @tv_keys) {
+		push @test_adds, @$test_add;
+	    }
+	    my $v_type = $test_combo;
+	    $v_type = 'x' . $v_type if length( $v_type ) > 1;
 
+	TEST:
             foreach my $test (sort @tests) {
-                next if $test !~ /^\d/;
+		foreach my $match (@test_matches) {
+		    next TEST if $test !~ $match;
+		}
                 my $usethr = ($test =~ /(\d+|\b)thr/ && $] >= 5.008 && $Config{useithreads});
                 my $v_test = "t/zv${v_type}_$test";
                 my $v_perl = ($test =~ /taint/) ? "perl -wT" : "perl -w";
@@ -3313,7 +3408,7 @@ sub dbd_edit_mm_attribs {
 		open PPT, ">$v_test" or warn "Can't create $v_test: $!";
 		print PPT "#!$v_perl\n";
 		print PPT "use threads;\n" if $usethr;
-		print PPT "$_;\n" foreach @{$v_info->{add}};
+		print PPT "$_;\n" foreach @test_adds;
 		print PPT "require './t/$test'; # or warn \$!;\n";
 		close PPT or warn "Error writing $v_test: $!";
 	    }

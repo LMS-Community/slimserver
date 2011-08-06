@@ -71,7 +71,7 @@ the DBI.
 
 The profile data is accumulated as 'leaves on a tree'. The 'path' through the
 branches of the tree to a particular leaf is determined dynamically for each sample.
-This is a key feature of DBI profiliing.
+This is a key feature of DBI profiling.
 
 For each profiled method call the DBI walks along the Path and uses each value
 in the Path to step into and grow the Data tree.
@@ -189,7 +189,7 @@ So "2" is the same as "!Statement" and "6" (2+4) is the same as
 negative number will reverse the path. Thus "-6" will group by method name then
 statement.
 
-The spliting and parsing of string values assigned to the Profile
+The splitting and parsing of string values assigned to the Profile
 attribute may seem a little odd, but there's a good reason for it.
 Remember that attributes can be embedded in the Data Source Name
 string which can be passed in to a script as a parameter. For
@@ -266,7 +266,7 @@ inherited the selectrow_arrayref method provided by the DBI.
 But you'll note that there is only one call to
 DBD::_::db::selectrow_arrayref but another 99 to
 DBD::mysql::db::selectrow_arrayref. Currently the first
-call Pern't record the true location. That may change.
+call doesn't record the true location. That may change.
 
 B<!Caller>
 
@@ -368,9 +368,9 @@ The default results format looks like this:
 
 Which shows the total time spent inside the DBI, with a count of
 the total number of method calls and the name of the script being
-run, then a formated version of the profile data tree.
+run, then a formatted version of the profile data tree.
 
-If the results are being formated when the perl process is exiting
+If the results are being formatted when the perl process is exiting
 (which is usually the case when the DBI_PROFILE environment variable
 is used) then the percentage of time the process spent inside the
 DBI is also shown. If the process is not exiting then the percentage is
@@ -491,13 +491,13 @@ ref to an empty array.
   );
 
 Returns the collected data ($dbh->{Profile}{Data}) reformatted into a list of formatted strings.
-In scalar context the list is returned as a single contatenated string.
+In scalar context the list is returned as a single concatenated string.
 
 A hashref can be used to pass in arguments, the default values are shown in the example above.
 
 The C<node> and <path> arguments are passed to as_node_path_list().
 
-The C<separator> argument is used to join the elemets of the path for each leaf node.
+The C<separator> argument is used to join the elements of the path for each leaf node.
 
 The C<sortsub> argument is used to pass in a ref to a sub that will order the list.
 The subroutine will be passed a reference to the array returned by
@@ -525,7 +525,7 @@ The arguments to sprintf are:
 
 =head1 CUSTOM DATA MANIPULATION
 
-Recall that C<$h->{Profile}->{Data}> is a reference to the collected data.
+Recall that C<< $h->{Profile}->{Data} >> is a reference to the collected data.
 Either to a 'leaf' array (when the Path is empty, i.e., DBI_PROFILE env var is 1),
 or a reference to hash containing values that are either further hash
 references or leaf array references.
@@ -678,7 +678,7 @@ use Carp;
 
 use DBI qw(dbi_time dbi_profile dbi_profile_merge_nodes dbi_profile_merge);
 
-$VERSION = sprintf("2.%06d", q$Revision: 10916 $ =~ /(\d+)/o);
+$VERSION = sprintf("2.%06d", q$Revision: 14123 $ =~ /(\d+)/o);
 
 
 @ISA = qw(Exporter);
@@ -721,7 +721,7 @@ sub _auto_new {
     $arg =~ s/^DBI::/2\/DBI::/
         and carp "Automatically changed old-style DBI::Profile specification to $arg";
 
-    # it's a path/module/arg/arg/arg list
+    # it's a path/module/k1:v1:k2:v2:... list
     my ($path, $package, $args) = split /\//, $arg, 3;
     my @args = (defined $args) ? split(/:/, $args, -1) : ();
     my @Path;
@@ -926,11 +926,14 @@ sub on_destroy {
     return unless $self->{Data};
     my $detail = $self->format();
     $ON_DESTROY_DUMP->($detail) if $detail;
+    $self->{Data} = undef;
 }
 
 sub DESTROY {
     my $self = shift;
     local $@;
+    DBI->trace_msg("profile data DESTROY\n",0)
+        if (($self->{Trace}||0) >= 2);
     eval { $self->on_destroy };
     if ($@) {
         chomp $@;
