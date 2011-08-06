@@ -1356,7 +1356,7 @@ sub _createTrack {
 
 		# retrievePersistent will always return undef or a track metadata object
 		if ( !$trackPersistentHash ) {
-			$persistentColumnValueHash->{added}  = $columnValueHash->{timestamp};
+			$persistentColumnValueHash->{added}  = time();
 			$persistentColumnValueHash->{url}    = $columnValueHash->{url};
 			$persistentColumnValueHash->{urlmd5} = $columnValueHash->{urlmd5};
 			

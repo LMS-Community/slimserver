@@ -147,7 +147,7 @@ sub cliQuery {
 			_cliQuery_done( $opml, \%args );
 		};
 		
-		my %args = (params => $request->getParamsCopy());
+		my %args = (params => $request->getParamsCopy(), isControl => 1);
 
 		# If we are getting an intermediate level, then we just need the one item
 		# If we are getting the last level then we need all items if we are doing playall of some kind
@@ -489,7 +489,7 @@ sub _cliQuery_done {
 					};
 					
 					my $pt = $subFeed->{passthrough} || [];
-					my %args = (params => $feed->{'query'});
+					my %args = (params => $feed->{'query'}, isControl => 1);
 					
 					if (defined $search && $subFeed->{type} && ($subFeed->{type} eq 'search' || defined $subFeed->{'searchParam'})) {
 						$args{'search'} = $search;

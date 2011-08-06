@@ -1,6 +1,6 @@
 package DBI::DBD::Metadata;
 
-# $Id: Metadata.pm 8696 2007-01-24 23:12:38Z timbo $
+# $Id: Metadata.pm 14213 2010-06-30 19:29:18Z mjevans $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann,
 # Steffen Goeldner and Tim Bunce
@@ -18,7 +18,7 @@ use DBI::Const::GetInfoType qw(%GetInfoType);
 @ISA = qw(Exporter);
 @EXPORT = qw(write_getinfo_pm write_typeinfo_pm);
 
-$VERSION = sprintf("2.%06d", q$Revision: 8696 $ =~ /(\d+)/o);
+$VERSION = sprintf("2.%06d", q$Revision: 14213 $ =~ /(\d+)/o);
 
 
 use strict;
@@ -33,13 +33,13 @@ The idea is to extract metadata information from a good quality
 ODBC driver and use it to generate code and data to use in your own
 DBI driver for the same database.
 
-For generating code to support the get_info method:
+To generate code to support the get_info method:
 
   perl -MDBI::DBD::Metadata -e "write_getinfo_pm('dbi:ODBC:dsn-name','user','pass','Driver')"
 
   perl -MDBI::DBD::Metadata -e write_getinfo_pm dbi:ODBC:foo_db username password Driver
 
-For generating code to support the type_info method:
+To generate code to support the type_info method:
 
   perl -MDBI::DBD::Metadata -e "write_typeinfo_pm('dbi:ODBC:dsn-name','user','pass','Driver')"
 
@@ -48,7 +48,7 @@ For generating code to support the type_info method:
 Where C<dbi:ODBC:dsn-name> is the connection to use to extract the
 data, and C<Driver> is the name of the driver you want the code
 generated for (the driver name gets embedded into the output in
-many places).
+numerous places).
 
 =head1 Generating a GetInfo package for a driver
 
@@ -58,13 +58,13 @@ DBD::Driver::GetInfo package on standard output.
 This method generates a DBD::Driver::GetInfo package from the data
 source you specified in the parameter list or in the environment
 variable DBI_DSN.
-DBD::Driver::GetInfo should help a DBD author implementing the DBI
+DBD::Driver::GetInfo should help a DBD author implement the DBI
 get_info() method.
-Because you are just creating this package, it's very unlikely that
+Because you are just creating this package, it is very unlikely that
 DBD::Driver already provides a good implementation for get_info().
 Thus you will probably connect via DBD::ODBC.
 
-Once you are sure that it is producing semi-sane data, you would
+Once you are sure that it is producing reasonably sane data, you should
 typically redirect the standard output to lib/DBD/Driver/GetInfo.pm, and
 then hand edit the result.
 Do not forget to update your Makefile.PL and MANIFEST to include this as
@@ -79,7 +79,7 @@ The generator assumes that most values are static and places these
 values directly in the %info hash.
 A few examples show the use of CODE references and the implementation
 via subroutines.
-It is very likely that you have to write additional subroutines for
+It is very likely that you will have to write additional subroutines for
 values depending on the session state or server version, e.g.
 SQL_DBMS_VER.
 
@@ -227,7 +227,7 @@ where the odbc_dsn is a DSN for one of the driver's databases.
 The user and pass parameters are the other optional connection
 parameters that will be provided to the DBI connect method.
 
-Once you are sure that it is producing semi-sane data, you would
+Once you are sure that it is producing reasonably sane data, you should
 typically redirect the standard output to lib/DBD/Driver/TypeInfo.pm,
 and then hand edit the result if necessary.
 Do not forget to update your Makefile.PL and MANIFEST to include this as

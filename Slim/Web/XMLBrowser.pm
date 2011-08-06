@@ -108,7 +108,7 @@ sub handleWebIndex {
 		
 		# XXX: maybe need to pass orderBy through
 		
-		return $feed->( $client, $callback, {wantMetadata => 1, wantIndex => 1, params => $asyncArgs->[1]}, @{$pt});
+		return $feed->( $client, $callback, {isWeb => 1, wantMetadata => 1, wantIndex => 1, params => $asyncArgs->[1]}, @{$pt});
 	}
 	
 	# Handle type = search at the top level, i.e. Radio Search
@@ -475,7 +475,7 @@ sub handleFeed {
 					}
 
 					# XXX: maybe need to pass orderBy through
-					my %args = (wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'});
+					my %args = (isWeb => 1, wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'});
 					my $index = $stash->{'start'};
 
 					if ($depth == $levels) {
