@@ -3976,16 +3976,18 @@ sub _addJiveSong {
 	if ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
 	}
+	elsif ( main::SLIM_SERVICE ) {
+		# send radio placeholder art when on mysb.com
+		$request->addResultLoop($loop, $count, 'icon-id',
+			Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
+		);
+	}
 	elsif ( defined $iconId ) {
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
 	elsif ( $isRemote ) {
 		# send radio placeholder art for remote tracks with no art
-		my $radioicon = main::SLIM_SERVICE
-			? Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
-			: '/html/images/radio.png';
-
-		$request->addResultLoop($loop, $count, 'icon-id', $radioicon);
+		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/radio.png');
 	}
 
 	# split to three discrete elements for NP screen
