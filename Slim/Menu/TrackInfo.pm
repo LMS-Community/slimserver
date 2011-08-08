@@ -1213,6 +1213,7 @@ sub tagDump {
 	$callback->( $menu );
 }
 
+=pod
 sub _mixers {
 	my $Imports = Slim::Music::Import->importers;
 	my @mixers = ();
@@ -1266,6 +1267,7 @@ sub _mixerItemHandler {
 		return undef;
 	}
 }
+=cut
 
 my $cachedFeed;
 

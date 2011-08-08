@@ -4472,6 +4472,8 @@ sub _fixCount {
 	return $totalCount;
 }
 
+=pod
+XXX - mixermenu no longer supported?
 sub _mixerItemParams {
 	my %args       = @_;
 	my $chunkCount = $args{'chunkCount'};
@@ -4504,6 +4506,7 @@ sub _mixerItemParams {
 		return;
 	}
 }
+=cut
 
 # contextMenuQuery is a wrapper for producing context menus for various objects
 sub contextMenuQuery {
@@ -4654,6 +4657,8 @@ sub _mixers {
 	return ($Imports, \@mixers);
 }
 
+=pod
+XXX - no longer being used?
 sub _mixerBase {
 
 	my ($Imports, $mixers) = _mixers();
@@ -4673,6 +4678,7 @@ sub _mixerBase {
 		return undef;	
 	}
 }
+=cut
 
 # currently this sends back a callback that is only for tracks
 # to be expanded to work with artist/album/etc. later
