@@ -1408,28 +1408,28 @@ sub _prepare_mix {
 }
 
 sub trackInfoHandler {
-	my $return = _objectInfoHandler( @_, 'track' );
+	my $return = _objectInfoHandler( 'track', @_ );
 	return $return;
 }
 
 sub albumInfoHandler {
-	my $return = _objectInfoHandler( @_, 'album' );
+	my $return = _objectInfoHandler( 'album', @_ );
 	return $return;
 }
 
 sub artistInfoHandler {
-	my $return = _objectInfoHandler( @_, 'artist' );
+	my $return = _objectInfoHandler( 'artist', @_ );
 	return $return;
 }
 
 sub genreInfoHandler {
-	my $return = _objectInfoHandler( @_, 'genre' );
+	my $return = _objectInfoHandler( 'genre', @_ );
 	return $return;
 }
 
 sub _objectInfoHandler {
 	
-	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
+	my ( $objectType, $client, $url, $obj, $remoteMeta, $tags ) = @_;
 	$tags ||= {};
 
 	my $mixable = $obj->musicmagic_mixable;
