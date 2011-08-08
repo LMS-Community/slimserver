@@ -145,6 +145,11 @@ sub find {
 		
 		$count++;
 		
+		# XXX Not sure why, but sometimes there is no cached stat data available?!
+		if ( !(stat _)[9] ) {
+			stat $file;
+		}
+		
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),
 			(stat _)[9], # mtime
@@ -155,7 +160,10 @@ sub find {
 	};
 	
 	if ( $args->{no_async} ) {
-		while ( $walk->() ) {}
+		my $i = 0;
+		while ( $walk->() ) {
+			main::SCANNER && ++$i % 200 == 0 && Slim::Schema->forceCommit;
+		}
 	}
 	else {	
 		Slim::Utils::Scheduler::add_task( $walk );

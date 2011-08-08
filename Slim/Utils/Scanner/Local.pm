@@ -27,6 +27,9 @@ use constant PENDING_CHANGED => 0x04;
 # If more than this many items are changed during a scan, the database is optimized
 use constant OPTIMIZE_THRESHOLD => 100;
 
+# Number of items to process at once, this value will affect the max size of the WAL file
+use constant CHUNK_SIZE => 50;
+
 my $log   = logger('scan.scanner');
 my $prefs = preferences('server');
 
@@ -175,13 +178,14 @@ sub rescan {
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
 		my $dbh = Slim::Schema->dbh;
+		my $startTime = time();
 		
 		# Generate 3 lists of files:
 		
 		# 1. Files that no longer exist on disk
 		#    and are not virtual (from a cue sheet)
 		my $inDBOnlySQL = qq{
-			SELECT DISTINCT url
+			SELECT DISTINCT(url)
 			FROM            tracks
 			WHERE           url NOT IN (
 				SELECT url FROM scanned_files
@@ -193,11 +197,15 @@ sub rescan {
 		};
 		
 		# 2. Files that are new and not in the database.
+		# The check against startTime is because the paged queries would
+		# skip tracks that were already entered
 		my $onDiskOnlySQL = qq{
-			SELECT DISTINCT url
+			SELECT DISTINCT(url)
 			FROM            scanned_files
 			WHERE           url NOT IN (
-				SELECT url FROM tracks
+				SELECT DISTINCT(tracks.url) FROM tracks
+				JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5
+				WHERE tracks_persistent.added < $startTime
 			)
 			AND             url LIKE '$basedir%'
 			AND             filesize != 0
@@ -206,7 +214,7 @@ sub rescan {
 		# 3. Files that have changed mtime or size.
 		# XXX can this query be optimized more?
 		my $changedOnlySQL = qq{
-			SELECT scanned_files.url
+			SELECT DISTINCT(scanned_files.url)
 			FROM scanned_files
 			JOIN tracks ON (
 				scanned_files.url = tracks.url
@@ -237,11 +245,8 @@ sub rescan {
 		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $inDBOnlyCount && !Slim::Music::Import->hasAborted() ) {
-			my $inDBOnly = $dbh->prepare_cached($inDBOnlySQL);
-			$inDBOnly->execute;
-			
-			my $deleted;
-			$inDBOnly->bind_col(1, \$deleted);
+			my $inDBOnlySth;
+			my $inDBOnlyDone = 0;
 
 			$pending{$next} |= PENDING_DELETE;
 			
@@ -256,34 +261,56 @@ sub rescan {
 				} );
 			}
 			
+			my $deleted;
 			my $handle_deleted = sub {
+				if ( hasAborted($progress, $args->{no_async}) ) {
+					$inDBOnlySth && $inDBOnlySth->finish;
+					return 0;
+				}
 				
-				return if hasAborted($progress, $args->{no_async});
+				# Page through the files, this is to avoid a long-running read query which 
+				# would prevent WAL checkpoints from occurring.
+				if ( !$inDBOnlySth ) {
+					my $sql = $inDBOnlySQL . " LIMIT $inDBOnlyDone, " . CHUNK_SIZE;
+					$inDBOnlySth = $dbh->prepare($sql);
+					$inDBOnlySth->execute;
+					$inDBOnlySth->bind_col(1, \$deleted);
+				}
 				
-				if ( $inDBOnly->fetch ) {
-					$progress && $progress->update($deleted);
+				if ( $inDBOnlySth->fetch ) {
+					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($deleted) );
 					$changes++;
+					$inDBOnlyDone++;
 					
 					deleted($deleted);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_DELETE, $changes ) unless $args->{no_async};
-				
-					$progress && $progress->final;
+					my $more = 1;
 					
-					return 0;
+					if ( !$inDBOnlySth->rows ) {
+						markDone( $next => PENDING_DELETE, $changes ) unless $args->{no_async};
+						
+						$progress && $progress->final;
+						$inDBOnlySth->finish;
+						$more = 0;
+					}
+					else {
+						# Continue paging with the next chunk
+						$inDBOnlySth->finish;
+						undef $inDBOnlySth;
+					}
+					
+					# Commit for every chunk when using scanner.pl
+					main::SCANNER && Slim::Schema->forceCommit;
+					
+					return $more;
 				}
 			};
 			
 			if ( $args->{no_async} ) {
-				my $i = 0;
-				while ( $handle_deleted->() ) {
-					if (++$i % 200 == 0) {
-						Slim::Schema->forceCommit;
-					}
-				}
+				while ( $handle_deleted->() ) { }
 			}
 			else {
 				Slim::Utils::Scheduler::add_ordered_task( $handle_deleted );
@@ -293,11 +320,8 @@ sub rescan {
 		$log->error( "Scanning new files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
-			my $onDiskOnly = $dbh->prepare_cached($onDiskOnlySQL);
-			$onDiskOnly->execute;
-			
-			my $new;
-			$onDiskOnly->bind_col(1, \$new);
+			my $onDiskOnlySth;
+			my $onDiskOnlyDone = 0;			
 			
 			$pending{$next} |= PENDING_NEW;
 			
@@ -312,34 +336,56 @@ sub rescan {
 				} );
 			}
 			
+			my $new;
 			my $handle_new = sub {
+				if ( hasAborted($progress, $args->{no_async}) ) {
+					$onDiskOnlySth && $onDiskOnlySth->finish;
+					return 0;
+				}
 				
-				return if hasAborted($progress, $args->{no_async});
+				# Page through the files, this is to avoid a long-running read query which 
+				# would prevent WAL checkpoints from occurring.
+				if ( !$onDiskOnlySth ) {
+					my $sql = $onDiskOnlySQL . " LIMIT $onDiskOnlyDone, " . CHUNK_SIZE;
+					$onDiskOnlySth = $dbh->prepare($sql);
+					$onDiskOnlySth->execute;
+					$onDiskOnlySth->bind_col(1, \$new);
+				}
 				
-				if ( $onDiskOnly->fetch ) {
-					$progress && $progress->update($new);
+				if ( $onDiskOnlySth->fetch ) {
+					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($new) );
 					$changes++;
+					$onDiskOnlyDone++;
 				
 					new($new);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_NEW, $changes ) unless $args->{no_async};
-				
-					$progress && $progress->final;
+					my $more = 1;
 					
-					return 0;
+					if ( !$onDiskOnlySth->rows ) {
+						markDone( $next => PENDING_NEW, $changes ) unless $args->{no_async};
+						
+						$progress && $progress->final;
+						$onDiskOnlySth->finish;
+						$more = 0;
+					}
+					else {
+						# Continue paging with the next chunk
+						$onDiskOnlySth->finish;
+						undef $onDiskOnlySth;
+					}
+					
+					# Commit for every chunk when using scanner.pl
+					main::SCANNER && Slim::Schema->forceCommit;
+					
+					return $more;
 				}
 			};
 			
 			if ( $args->{no_async} ) {
-				my $i = 0;
-				while ( $handle_new->() ) {
-					if (++$i % 200 == 0) {
-						Slim::Schema->forceCommit;
-					}
-				}
+				while ( $handle_new->() ) { }
 			}
 			else {
 				Slim::Utils::Scheduler::add_ordered_task( $handle_new );
@@ -349,11 +395,8 @@ sub rescan {
 		$log->error( "Rescanning changed files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
-			my $changedOnly = $dbh->prepare_cached($changedOnlySQL);
-			$changedOnly->execute;
-			
-			my $changed;
-			$changedOnly->bind_col(1, \$changed);
+			my $changedOnlySth;
+			my $changedOnlyDone = 0;
 						
 			$pending{$next} |= PENDING_CHANGED;
 			
@@ -368,34 +411,56 @@ sub rescan {
 				} );
 			}
 			
+			my $changed;
 			my $handle_changed = sub {
+				if ( hasAborted($progress, $args->{no_async}) ) {
+					$changedOnlySth && $changedOnlySth->finish;
+					return 0;
+				}
 				
-				return if hasAborted($progress, $args->{no_async});
+				# Page through the files, this is to avoid a long-running read query which 
+				# would prevent WAL checkpoints from occurring.
+				if ( !$changedOnlySth ) {
+					my $sql = $changedOnlySQL . " LIMIT $changedOnlyDone, " . CHUNK_SIZE;
+					$changedOnlySth = $dbh->prepare($sql);
+					$changedOnlySth->execute;
+					$changedOnlySth->bind_col(1, \$changed);
+				}
 				
-				if ( $changedOnly->fetch ) {
-					$progress && $progress->update($changed);
+				if ( $changedOnlySth->fetch ) {
+					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($changed) );
 					$changes++;
-					
+					$changedOnlyDone++;
+				
 					changed($changed);
 					
 					return 1;
 				}
 				else {
-					markDone( $next => PENDING_CHANGED, $changes ) unless $args->{no_async};
-				
-					$progress && $progress->final;
+					my $more = 1;
 					
-					return 0;
+					if ( !$changedOnlySth->rows ) {
+						markDone( $next => PENDING_CHANGED, $changes ) unless $args->{no_async};
+						
+						$progress && $progress->final;
+						$changedOnlySth->finish;
+						$more = 0;
+					}
+					else {
+						# Continue paging with the next chunk
+						$changedOnlySth->finish;
+						undef $changedOnlySth;
+					}
+					
+					# Commit for every chunk when using scanner.pl
+					main::SCANNER && Slim::Schema->forceCommit;
+					
+					return $more;
 				}	
 			};
 			
 			if ( $args->{no_async} ) {
-				my $i = 0;
-				while ( $handle_changed->() ) {
-					if (++$i % 200 == 0) {
-						Slim::Schema->forceCommit;
-					}
-				}
+				while ( $handle_changed->() ) { }
 			}
 			else {
 				Slim::Utils::Scheduler::add_ordered_task( $handle_changed );
