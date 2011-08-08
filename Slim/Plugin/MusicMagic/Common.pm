@@ -62,6 +62,10 @@ sub checkDefaults {
 	if (!defined $prefs->get('port')) {
 		$prefs->set('port',10002);
 	}
+	
+	if (!preferences('server')->get('rank-MUSICMAGIC_MOODS')) {
+		preferences('server')->set('rank-MUSICMAGIC_MOODS', 95);
+	}
 }
 
 sub grabFilters {
