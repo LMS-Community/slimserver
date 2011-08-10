@@ -20558,7 +20558,7 @@ DISCOVERING_FILES_PROGRESS
 	CS	Vyhledávání souborů
 	DA	Søger efter filer
 	DE	Dateien werden erkannt
-	EN	Discovering files
+	EN	Discovering files/directories
 	ES	Detectando archivos
 	FI	Etsitään tiedostoja
 	FR	Détection des fichiers
@@ -20573,7 +20573,7 @@ DISCOVERING_DIRECTORY_PROGRESS
 	CS	Vyhledávání souborů
 	DA	Søger efter filer
 	DE	Dateien werden erkannt
-	EN	Discovering files
+	EN	Discovering files/directories
 	ES	Detectando archivos
 	FI	Etsitään tiedostoja
 	FR	Détection des fichiers
