@@ -154,6 +154,7 @@ sub startScan {
 	$currentITunesMusicLibraryDate = (stat($file))[9];
 
 	main::INFOLOG && $log->info("Parsing file: $file");
+	main::INFOLOG && $log->info("iTunes music_path: " . $prefs->get('music_path'));
 
 	if (!defined $file) {
 
