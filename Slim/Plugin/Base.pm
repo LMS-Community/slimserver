@@ -140,6 +140,11 @@ sub getFunctions {
 
 sub getWeights { $WEIGHTS }
 
+sub addWeight {
+	my ($class, $name, $weight) = @_;
+	$WEIGHTS->{$name} = $weight if $name && $weight;
+}
+
 sub nonSNApps {
 	return !main::SLIM_SERVICE && $nonSNApps
 }

@@ -30,6 +30,8 @@ use Slim::Plugin::MusicMagic::PlayerSettings;
 
 use Slim::Utils::Favorites;
 
+use constant MENU_WEIGHT => 95;
+
 my $initialized = 0;
 my $MMSport;
 my $canPowerSearch;
@@ -386,6 +388,9 @@ sub initPlugin {
 					'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 				});
 			}
+			
+			# set the weight of the moods menu
+			Slim::Plugin::Base->addWeight('MUSICMAGIC_MOODS', MENU_WEIGHT);
 	
 			Slim::Web::Pages->addPageLinks("icons", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
@@ -393,7 +398,7 @@ sub initPlugin {
 			
 			Slim::Control::Jive::registerPluginMenu([{
 				stringToken    => 'MUSICMAGIC_MOODS',
-				weight         => 95,
+				weight         => MENU_WEIGHT,
 				id             => 'moods',
 				node           => 'myMusic',
 				actions => {
