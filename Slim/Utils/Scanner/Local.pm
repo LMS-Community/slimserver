@@ -178,7 +178,11 @@ sub rescan {
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
 		my $dbh = Slim::Schema->dbh;
-		my $startTime = time();
+		
+		# Use the most recent existing track ID to prevent paged onDiskOnly query
+		# from missing any files. This will be 0 during a wipe
+		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
+		$maxTrackId ||= 0;
 		
 		# Generate 3 lists of files:
 		
@@ -197,15 +201,12 @@ sub rescan {
 		};
 		
 		# 2. Files that are new and not in the database.
-		# The check against startTime is because the paged queries would
-		# skip tracks that were already entered
 		my $onDiskOnlySQL = qq{
 			SELECT DISTINCT(url)
 			FROM            scanned_files
 			WHERE           url NOT IN (
-				SELECT DISTINCT(tracks.url) FROM tracks
-				JOIN tracks_persistent ON tracks_persistent.urlmd5 = tracks.urlmd5
-				WHERE tracks_persistent.added < $startTime
+				SELECT url FROM tracks
+				WHERE id <= $maxTrackId
 			)
 			AND             url LIKE '$basedir%'
 			AND             filesize != 0
