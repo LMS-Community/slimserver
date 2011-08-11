@@ -13,7 +13,7 @@ use Slim::Utils::Strings qw(cstring);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.orange',
-	defaultLevel => 'DEBUG',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_ORANGE_LIVERADIO',
 } );
 
