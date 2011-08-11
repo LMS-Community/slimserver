@@ -851,6 +851,12 @@ sub _createOrUpdateAlbum {
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
+	# Bug 17322, strip leading/trailing spaces from name
+	if ( $title ) {
+		$title =~ s/^ +//;
+		$title =~ s/ +$//;
+	}
+	
 	# Bug 4361, Some programs (iTunes) tag things as Disc 1/1, but
 	# we want to ignore that or the group discs logic below gets confused
 	# Bug 10583 - Revert disc 1/1 change.
@@ -1293,19 +1299,24 @@ sub _createOrUpdateAlbum {
 sub _createYear {
 	my ($self, $year) = @_;
 	
-	if (defined $year && $year =~ /^\d+$/) {
-	
-		# Using native DBI here to improve performance during scanning
-		my $dbh = Slim::Schema->dbh;
-			
-		my $sth = $dbh->prepare_cached('SELECT 1 FROM years WHERE id = ?');
-		$sth->execute($year);
-		my ($exists) = $sth->fetchrow_array;
-		$sth->finish;
+	if (defined $year) {
+		# Bug 17322, strip leading/trailing spaces from name
+		$year =~ s/^ +//;
+		$year =~ s/ +$//;
 		
-		if ( !$exists ) {
-			$sth = $dbh->prepare_cached( 'INSERT INTO years (id) VALUES (?)' );
+		if ($year =~ /^\d+$/) {
+			# Using native DBI here to improve performance during scanning
+			my $dbh = Slim::Schema->dbh;
+			
+			my $sth = $dbh->prepare_cached('SELECT 1 FROM years WHERE id = ?');
 			$sth->execute($year);
+			my ($exists) = $sth->fetchrow_array;
+			$sth->finish;
+		
+			if ( !$exists ) {
+				$sth = $dbh->prepare_cached( 'INSERT INTO years (id) VALUES (?)' );
+				$sth->execute($year);
+			}
 		}
 	}
 }
@@ -2627,6 +2638,12 @@ sub _createGenre {
 
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
+	if ($genre) {
+		# Bug 17322, strip leading/trailing spaces from name
+		$genre =~ s/^ +//;
+		$genre =~ s/ +$//;
+	}
+	
 	if ($create && !$genre && !blessed($_unknownGenre)) {
 
 		my $genreName = string('NO_GENRE');
@@ -2784,6 +2801,10 @@ sub _mergeAndCreateContributors {
 	for my $tag (Slim::Schema::Contributor->contributorRoles) {
 
 		my $contributor = $attributes->{$tag} || next;
+		
+		# Bug 17322, strip leading/trailing spaces from name
+		$contributor =~ s/^ +//;
+		$contributor =~ s/ +$//;
 
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
