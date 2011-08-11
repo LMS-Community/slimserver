@@ -981,7 +981,7 @@ sub _queryToDIDLLite {
 	elsif ( $cmd =~ /^video_titles/ ) {		
 		for my $video ( @{ $results->{videos_loop} || [] } ) {
 			$count++;			
-			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $video->{id};
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . xmlEscape($video->{id});
 			my $parent = $id;
 			
 			if ( $flag eq 'BrowseMetadata' ) { # point parent to the video's parent
@@ -1007,7 +1007,7 @@ sub _queryToDIDLLite {
 			my $type = $item->{type};
 			
 			if ( $type eq 'folder' || $type eq 'unknown' ) {
-				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . $item->{id};
+				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
 					. '<dc:title>' . xmlEscape($item->{filename}) . '</dc:title>'
@@ -1015,7 +1015,7 @@ sub _queryToDIDLLite {
 			}
 			elsif ( $type eq 'video' ) {
 				$item->{id} = $item->{hash};
-				my $fid = $flag eq 'BrowseMetadata' ? '/va' : '/va/' . $item->{hash};
+				my $fid = $flag eq 'BrowseMetadata' ? '/va' : '/va/' . xmlEscape($item->{hash});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
 				 	. videoDetails($item, $filter)
 				 	. '</item>';
@@ -1035,7 +1035,7 @@ sub _queryToDIDLLite {
 			my $type = $item->{type};
 			
 			if ( $type eq 'folder' || $type eq 'unknown' ) {
-				my $fid = $flag eq 'BrowseMetadata' ? $id : '/if/' . $item->{id};
+				my $fid = $flag eq 'BrowseMetadata' ? $id : '/if/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
 					. '<dc:title>' . xmlEscape($item->{filename}) . '</dc:title>'
@@ -1043,7 +1043,7 @@ sub _queryToDIDLLite {
 			}
 			elsif ( $type eq 'image' ) {
 				$item->{id} = $item->{hash};
-				my $fid = $flag eq 'BrowseMetadata' ? '/ia' : '/ia/' . $item->{id};
+				my $fid = $flag eq 'BrowseMetadata' ? '/ia' : '/ia/' . xmlEscape($item->{id});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
 				 	. imageDetails($item, $filter)
 				 	. '</item>';
@@ -1055,7 +1055,7 @@ sub _queryToDIDLLite {
 
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
-			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . $image->{id});
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . xmlEscape($image->{id}));
 			my $parent = $id;
 			
 			if ( $flag eq 'BrowseMetadata' ) { # point parent to the image's parent
@@ -1071,7 +1071,7 @@ sub _queryToDIDLLite {
 	elsif ( $cmd =~ /^image_titles/ ) {
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
-			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . $image->{id};
+			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . xmlEscape($image->{id});
 
 			my $parent = $id;
 			
