@@ -2051,15 +2051,15 @@ SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
 	},
 
 	onScannerUpdate : function(result){
-		if (!this.el)
-			this.el = Ext.get(this.initialConfig.renderTo);
+		if (!this.progressEl)
+			this.progressEl = Ext.get(this.initialConfig.renderTo);
 		
-		if (!this.el)
+		if (!this.progressEl)
 			return;
 
 		if (result.rescan) {
-			if (!this.el.isVisible())
-				this.show();
+			if (!this.progressEl.isVisible())
+				this.showNow();
 
 			var el;
 			if ((el = Ext.get(this.info)) && result.progresstotal)
@@ -2073,17 +2073,18 @@ SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
 				el.update(result.progresstotal || 0);
 			}
 		}
-		else if (this.el.isVisible()) {
-			this.hide();
+		else if (this.progressEl.isVisible()) {
+			this.hideNow();
 		}
 	},
 
-	show : function(){
-		this.el.fadeIn();
+	showNow : function(){
+		this.progressEl.fadeIn();
 	},
 
-	hide : function(){
-		this.el.fadeOut();
+	hideNow : function(){
+		console.log('hide');
+		this.progressEl.fadeOut();
 	}
 });
 

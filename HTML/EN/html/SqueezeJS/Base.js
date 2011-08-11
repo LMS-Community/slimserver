@@ -152,7 +152,7 @@ function _init() {
 							if (response && response.result) {
 								this.fireEvent('serverstatus', response.result);
 
-								if (response.result.rescan || this.playerStatus.rescan) {
+								if (response.result.rescan || this.playerStatus.rescan || this.playerStatus.rescan != response.result.rescan) {
 									this.playerStatus.rescan = response.result.rescan;
 									this.fireEvent('scannerupdate', response.result);
 								}

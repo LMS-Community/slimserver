@@ -437,7 +437,14 @@ sub albumsQuery {
 	if ( $tags =~ /a/ ) {
 		# If requesting artist data, join contributor
 		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+			if ( $sql =~ /JOIN contributor_album/ ) {
+				# Bug 17364, if looking for an artist_id value, we need to join contributors via contributor_album
+				# or No Album will not be found properly
+				$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
+			}
+			else {
+				$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+			}
 		}
 		$c->{'contributors.name'} = 1;
 	}

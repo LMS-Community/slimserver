@@ -435,12 +435,8 @@ sub processAnchor {
 			if ( $ct eq 'mp3' ) {
 				# MP3 only - We need to skip past the LAME header so the first chunk
 				# doesn't get truncated by the firmware thinking it needs to remove encoder padding
-				# XXX: MP3 needs lots more work in order to make it gapless, I plan to use the technique pcutmp3 uses
-				# to add silence frame(s) and rewrite LAME tags to achieve proper splitting
-				# http://www.hydrogenaudio.org/forums/index.php?showtopic=35654
-				# http://jaybeee.themixingbowl.org/other/pcutmp3.jar
 				seek $fh, 0, 0;
-				my $s = Audio::Scan->scan_fh( mp3 => $fh, 0x01 );
+				my $s = Audio::Scan->scan_fh( mp3 => $fh, { filter => 0x01 } );
 				if ( $s->{info}->{lame_encoder_version} ) {
 					my $next = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + 1 );
 					$attributesHash->{'OFFSET'} += $next;

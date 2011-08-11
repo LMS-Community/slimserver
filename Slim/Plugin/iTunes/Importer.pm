@@ -361,7 +361,7 @@ sub handleTrack {
 		return 1;
 	}
 
-	main::DEBUGLOG && $log->debug("Got a track named $curTrack->{'Name'} location: $url");
+	main::DEBUGLOG && $log->debug("Got a track id $id named '$curTrack->{'Name'}' location: $url");
 
 	if ($url && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isHTTPURL($url))) {
 
