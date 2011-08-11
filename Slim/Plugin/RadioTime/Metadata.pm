@@ -218,6 +218,10 @@ sub _gotMetadata {
 	if ( $meta->{cover} ) {
 		my $cache = Slim::Utils::Cache->new();
 		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 * 7 );
+
+		if ( my $song = $client->playingSong() ) {
+			$song->pluginData( httpCover => $meta->{cover} );
+		}
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
