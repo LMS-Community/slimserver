@@ -63,15 +63,18 @@ sub findStandaloneArtwork {
 	
 	# Files to look for
 	my @files = qw(cover folder album thumb);
+	
+	# User-defined artwork format
+	my $coverFormat = $prefs->get('coverArt');
 
 	if ( !defined $art ) {
 		my $parentDir = Path::Class::dir( Slim::Utils::Misc::pathFromFileURL($dirurl) );
 		
 		# coverArt/artfolder pref support
-		if ( my $coverFormat = $prefs->get('coverArt') ) {
+		if ( $coverFormat ) {
 			# If the user has specified a pattern to match the artwork on, we need
 			# to generate that pattern. This is nasty.
-			if ( $coverFormat && $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
+			if ( $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
 				my $suffix = $2 ? $2 : '.jpg';
 
 				# Merge attributes to use with TitleFormatter
@@ -139,8 +142,12 @@ sub findStandaloneArtwork {
 		}
 	
 		# Cache found artwork for this directory to speed up later tracks
-		%findArtCache = () if scalar keys %findArtCache > 32;
-		$findArtCache{$dirurl} = $art;
+		# No caching if using a user-defined artwork format, the user may have multiple
+		# files in a single directory with different artwork
+		if ( !$coverFormat ) {
+			%findArtCache = () if scalar keys %findArtCache > 32;
+			$findArtCache{$dirurl} = $art;
+		}
 	}
 	
 	$isInfo && $log->info("Using $art");

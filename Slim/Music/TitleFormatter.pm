@@ -278,12 +278,20 @@ sub init {
 
 	$parsedFormats{'FILE'} = sub {
 		
+		my $url;
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{file} || '';
+			if ( $_[0]->{url} ) {
+				$url = $_[0]->{url};
+			}
+			else {
+				return $_[0]->{file} || '';
+			}
+		}
+		else {
+			$url = $_[0]->get('url');
 		}
 
 		my $output = '';
-		my $url = $_[0]->get('url');
 
 		if ($url) {
 
