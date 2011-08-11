@@ -102,7 +102,7 @@ sub artworkRequest {
 		$response->content_type($ct);
 		
 		# Cache music URLs for 1 year, others for 1 day
-		my $exptime = $path =~ /^music/ ? ONE_YEAR : ONE_DAY;
+		my $exptime = $path =~ /^(?:music|image|video)/ ? ONE_YEAR : ONE_DAY;
 		
 		$response->header( 'Cache-Control' => 'max-age=' . $exptime );
 		$response->expires( time() + $exptime );
