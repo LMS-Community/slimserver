@@ -1160,7 +1160,7 @@ sub generateHTTPResponse {
 
 			return 0;
 
-		} elsif ($path =~ m{(?:image|music)/([^/]+)/(cover|thumb)} || 
+		} elsif ($path =~ m{(?:image|music|video)/([^/]+)/(cover|thumb)} || 
 			$path =~ m{^plugins/cache/icons} || 
 			$path =~ /\/\w+_(X|\d+)x(X|\d+)
 	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character

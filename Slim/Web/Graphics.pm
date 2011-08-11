@@ -137,7 +137,7 @@ sub artworkRequest {
 	
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
-	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image)/([0-9a-f]{8})/} ) {
+	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image|video)/([0-9a-f]{8})/} ) {
 		my ($type, $id) = ($1, $2);
 		
 		# Special case:
@@ -159,6 +159,9 @@ sub artworkRequest {
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, hash FROM images WHERE hash = ?
 			} );
+		}
+		elsif ( $type eq 'video' ) {
+			# do nothing here - just don't follow the other routes
 		}
 		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
 			# ID is a coverid
@@ -209,11 +212,18 @@ sub artworkRequest {
 		if ( !$url || !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
 			if ($type eq 'image') {
-				$path = 'html/images/icon_grey_';			
+				$path = "html/images/icon_photo_";			
+			}
+			elsif ($type eq 'video') {
+				$path = "html/images/icon_video_";			
+			}
+			elsif ($id =~ /^-/) {
+				$path = 'html/images/radio_';	
 			}
 			else {
-				$path = $id =~ /^-/ ? 'html/images/radio_' : 'html/images/cover_';
+				$path = 'html/images/cover_';
 			}
+			
 			$path .= $spec;
 			$path =~ s/\.\w+//;
 			$path =~ s/_$//;

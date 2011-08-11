@@ -267,11 +267,11 @@ sub videoDetails {
 	}
 	
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
 	}
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
+		$xml .= '<upnp:icon>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:icon>';
 	}
 	
 	# mtime is used for all values as fallback
@@ -348,11 +348,11 @@ sub imageDetails {
 	}
 	
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
 	}
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/music/${hash}/cover_300x300_o") . '</upnp:icon>';
+		$xml .= '<upnp:icon>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:icon>';
 	}
 	
 	# mtime is used for all values as fallback
