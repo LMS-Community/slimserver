@@ -84,9 +84,9 @@ sub throw_exception {
 
 	} elsif ($msg =~ /SQLite.*(?:database disk image is malformed|is not a database)/i) {
 		
-		$msg =~ m|/(squeezebox(?:-persistent)?\.db)|i;
+		$msg =~ m{/((?:library|persist)\.db)}i;
 		
-		my $dbfile = $1 || 'squeezebox.db';
+		my $dbfile = $1 || 'library.db';
 
 		$dbfile = File::Spec->catfile( preferences('server')->get('librarycachedir'), $dbfile );
 
