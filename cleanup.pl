@@ -13,7 +13,7 @@
 
 require 5.008_001;
 
-use constant SPLASH_LOGO => 'logitech-media-server.png';
+use constant SPLASH_LOGO => 'lms_splash.png';
 
 # don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
 my $splash;
