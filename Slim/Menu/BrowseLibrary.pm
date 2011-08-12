@@ -823,10 +823,10 @@ sub _generic {
 	}
 	
 	if (!$result->{items} || !scalar @{ $result->{items} }) {
-		push @{ $result->{items} }, {
+		$result->{items} = [ {
 			type  => 'text',
 			title => cstring($client, 'EMPTY'),
-		};
+		} ];
 		
 		$result->{total} = 1;
 	}
