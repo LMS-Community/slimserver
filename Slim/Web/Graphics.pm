@@ -117,7 +117,8 @@ sub artworkRequest {
 	
 	# Parse out spec from path
 	# WxH[_m][_bg][.ext]
-	my ($spec) = File::Basename::basename($path) =~ /_?((?:\d+x\d+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
+	# 'X' can be used instead of either W or H to determine automatically
+	my ($spec) = File::Basename::basename($path) =~ /_?((?:[0-9X]+x[0-9X]+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/;
 
 	main::DEBUGLOG && $isInfo && $log->info("  Resize specification: $spec");
 	
@@ -171,7 +172,7 @@ sub artworkRequest {
 				require Slim::Utils::GDResizer;
 
 				my @arrSpec = split(',', $spec);
-				my ($width, $height, $mode, $bgcolor, $ext) = $arrSpec[0] =~ /^(?:(\d+)x(\d+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+				my ($width, $height, $mode, $bgcolor, $ext) = $arrSpec[0] =~ /^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
 				my ($res, $format) = Slim::Utils::GDResizer->resize(
 					original => \$coverArtImage,
 					width    => $width,
