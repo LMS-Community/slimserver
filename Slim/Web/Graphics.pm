@@ -95,10 +95,6 @@ sub artworkRequest {
 	
 	# XXX remote URLs (from protocol handler icon)
 	
-	# XXX - temporarily map image/video cover files back to music/cover, as long as the scanner is not fixed
-	$path =~ s/^(video|image)\//music\//;
-	my $type = $1;		# XXX - keep track of what kind of image we wanted
-	
 	# Check cache for this path
 	if ( my $c = _cached($path) ) {
 		my $ct = 'image/' . $c->{content_type};
@@ -142,8 +138,7 @@ sub artworkRequest {
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
 	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image|video)/([0-9a-f]{8})/} ) {
-		# XXX - temporarily ignore the type here, see declaration further up
-		my ($typeXX, $id) = ($1, $2);
+		my ($type, $id) = ($1, $2);
 		
 		# Special case:
 		# /music/current/cover.jpg (mentioned in CLI docs)

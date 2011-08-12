@@ -737,8 +737,10 @@ sub new {
 	my $result = shift;
 	
 	my $work;
+	my $coverPrefix = 'music';
 	
 	if ( $result->type == 1 ) { # Video
+		$coverPrefix = 'video';
 		$work = sub {
 			main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new video " . $result->path);
 			
@@ -757,6 +759,7 @@ sub new {
 		};
 	}
 	elsif ( $result->type == 3 ) { # Image
+		$coverPrefix = 'image';
 		$work = sub {
 			main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new image " . $result->path);
 			
@@ -793,7 +796,7 @@ sub new {
 		# XXX thumbs need refactoring to include width, height, type
 		# For now, only cache the first one. Cache uses /music/hash to
 		# take advantage of existing artwork code
-		my $key = 'music/' . $result->hash . "/cover_${width}x${width}_o";
+		my $key = "$coverPrefix/" . $result->hash . "/cover_${width}x${width}_o";
 		Slim::Utils::ArtworkCache->new->set( $key, $cached );
 		
 		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) 
