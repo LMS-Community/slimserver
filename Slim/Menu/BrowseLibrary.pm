@@ -821,6 +821,15 @@ sub _generic {
 			push @{$result->{'items'}}, @$extraItems;
 		}
 	}
+	
+	if (!$result->{items} || !scalar @{ $result->{items} }) {
+		push @{ $result->{items} }, {
+			type  => 'text',
+			title => cstring($client, 'EMPTY'),
+		};
+		
+		$result->{total} = 1;
+	}
 		
 #	$log->error(Data::Dump::dump($result));
 
