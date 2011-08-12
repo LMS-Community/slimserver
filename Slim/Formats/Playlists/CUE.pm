@@ -432,7 +432,7 @@ sub processAnchor {
 		else {
 			$attributesHash->{'OFFSET'} = $header;
 			
-			if ( $ct eq 'mp3' ) {
+			if ( $ct eq 'mp3' && $attributesHash->{LAYER_ID} == 1 ) { # LAYER_ID 1 == mp3
 				# MP3 only - We need to skip past the LAME header so the first chunk
 				# doesn't get truncated by the firmware thinking it needs to remove encoder padding
 				seek $fh, 0, 0;

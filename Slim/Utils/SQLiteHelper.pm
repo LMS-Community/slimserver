@@ -22,7 +22,6 @@ use strict;
 
 use Digest::MD5 qw(md5_hex);
 use File::Basename;
-use File::Copy ();
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
@@ -77,7 +76,8 @@ sub init {
 	}
 	
 	# Reset dbsource pref if it's not for SQLite
-	if ( $prefs->get('dbsource') !~ /^dbi:SQLite/ ) {
+	#                                              ... or if it's using the long filename Windows doesn't like
+	if ( $prefs->get('dbsource') !~ /^dbi:SQLite/ || $prefs->get('dbsource') !~ /library\.db/ ) {
 		$prefs->set( dbsource => default_dbsource() );
 		$prefs->set( dbsource => $class->source() );
 	}
@@ -103,7 +103,12 @@ sub source {
 		$source = "dbi:SQLite:dbname=$db";
 	}
 	else {
-		$source = sprintf( $prefs->get('dbsource'), catfile( $prefs->get('librarycachedir'), 'squeezebox.db' ) );
+		my $dbFile = catfile( $prefs->get('librarycachedir'), 'library.db' );
+
+		# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Perl/Windows can't handle the long version
+		_migrateDBFile(catfile( $prefs->get('librarycachedir'), 'squeezebox.db' ), $dbFile);
+		
+		$source = sprintf( $prefs->get('dbsource'), $dbFile );
 	}
 	
 	return $source;
@@ -113,7 +118,7 @@ sub on_connect_do {
 	my $class = shift;
 	
 	my $sql = [
-		'PRAGMA synchronous = NORMAL',
+		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = WAL',
 		'PRAGMA foreign_keys = ON',
 		'PRAGMA wal_autocheckpoint = 200',
@@ -133,11 +138,29 @@ sub on_connect_do {
 	
 	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file
-	my $persistentdb = $class->_dbFile('squeezebox-persistent.db');
+	my $persistentdb = $class->_dbFile('persist.db');
+
+	# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Windows can't handle the long version
+	_migrateDBFile($class->_dbFile('squeezebox-persistent.db'), $persistentdb);
+
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
 	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
 	
 	return $sql;
+}
+
+sub _migrateDBFile {
+	my ($src, $dst) = @_;
+	
+	return if -f $dst || !-r $src;
+	
+	require File::Copy;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug("trying to rename $src to $dst");
+	
+	if ( !File::Copy::move( $src, $dst ) ) {
+		$log->error("Unable to rename $src to $dst: $!. Please remove it manually.");
+	}
 }
 
 my $hasICU;
@@ -319,6 +342,9 @@ sub postConnect {
 	my ( $class, $dbh ) = @_;
 	
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
+	
+	# http://search.cpan.org/~adamk/DBD-SQLite-1.33/lib/DBD/SQLite.pm#Transaction_and_Database_Locking
+	$dbh->{sqlite_use_immediate_transaction} = 1;
 	
 	# Reset collation load state
 	$currentICU = '';

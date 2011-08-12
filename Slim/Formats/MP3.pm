@@ -133,6 +133,7 @@ sub getTag {
 	$tags->{STEREO}     = $info->{stereo};
 	$tags->{CHANNELS}   = $info->{stereo} ? 2 : 1;
 	$tags->{RATE}       = $info->{samplerate};
+	$tags->{LAYER_ID}   = $info->{layer}; # 2 = mp2, 1 = mp3
 	
 	if ( $info->{vbr} ) {
 		$tags->{VBR_SCALE} = 1;

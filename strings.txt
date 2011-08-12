@@ -13065,6 +13065,10 @@ BROWSE_ALL_PICTURES
 	RU	Все изображения
 	SV	Alla bilder
 
+BROWSE_MUSIC_FOLDER_WHILE_SCANNING
+	DE	Der Musikordner steht nicht zur Verfügung, solange die Medienbibliothek durchsucht wird.
+	EN	Music Folder is not available while scanning.
+
 SYNCHRONIZE
 	CS	Synchronizovat
 	DA	Synkroniser

@@ -13,17 +13,6 @@ use Digest::MD5 ();
 use File::Spec::Functions qw(catfile);
 use Time::HiRes ();
 
-use constant DB_FILENAME => 'ArtworkCache.db';
-
-{
-	if ( $File::Spec::ISA[0] eq 'File::Spec::Unix' ) {
-		*fast_catfile = sub { join( "/", @_ ) };
-	}
-	else {
-		*fast_catfile = sub { catfile(@_) };
-	}
-}
-
 my $singleton;
 
 sub new {
@@ -163,7 +152,16 @@ sub _init_db {
 	my $self = shift;
 	my $retry = shift;
 	
-	my $dbfile = fast_catfile( $self->{root}, DB_FILENAME );
+	my $dbfile    = catfile( $self->{root}, 'artwork.db' );
+	my $oldDBfile = catfile( $self->{root}, 'ArtworkCache.db' );
+	
+	if (!-f $dbfile && -r $oldDBfile) {
+		require File::Copy;
+		
+		if ( !File::Copy::move( $oldDBfile, $dbfile ) ) {
+			warn "Unable to rename $oldDBfile to $dbfile: $!. Please do so manually!";
+		}
+	}
 	
 	my $dbh;
 	
@@ -172,9 +170,10 @@ sub _init_db {
 			AutoCommit => 1,
 			PrintError => 0,
 			RaiseError => 1,
+			sqlite_use_immediate_transaction => 1,
 		} );
 		
-		$dbh->do('PRAGMA synchronous = NORMAL');
+		$dbh->do('PRAGMA synchronous = OFF');
 		$dbh->do('PRAGMA journal_mode = WAL');
 		$dbh->do('PRAGMA wal_autocheckpoint = 200');
 	

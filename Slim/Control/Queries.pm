@@ -1579,6 +1579,18 @@ sub mediafolderQuery {
 	
 	my $sql;		
 	
+	# Bug 17436, don't allow BMF if a scan is running
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+		$request->addResult('count', 1);
+		
+		$request->addResultLoop('folder_loop', 0, 'filename', $request->string('BROWSE_MUSIC_FOLDER_WHILE_SCANNING'));
+		$request->addResultLoop('folder_loop', 0, 'type', 'text');
+		
+		$request->setStatusDone();
+		return;
+	}
+	
 	# url overrides any folderId
 	my $params = ();
 	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
@@ -1644,9 +1656,6 @@ sub mediafolderQuery {
 	}
 
 	# now build the result
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult("rescan", 1);
-	}
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
