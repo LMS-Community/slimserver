@@ -118,7 +118,7 @@ sub on_connect_do {
 	my $class = shift;
 	
 	my $sql = [
-		'PRAGMA synchronous = NORMAL',
+		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = WAL',
 		'PRAGMA foreign_keys = ON',
 		'PRAGMA wal_autocheckpoint = 200',
@@ -342,6 +342,9 @@ sub postConnect {
 	my ( $class, $dbh ) = @_;
 	
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
+	
+	# http://search.cpan.org/~adamk/DBD-SQLite-1.33/lib/DBD/SQLite.pm#Transaction_and_Database_Locking
+	$dbh->{sqlite_use_immediate_transaction} = 1;
 	
 	# Reset collation load state
 	$currentICU = '';

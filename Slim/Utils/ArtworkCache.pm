@@ -170,9 +170,10 @@ sub _init_db {
 			AutoCommit => 1,
 			PrintError => 0,
 			RaiseError => 1,
+			sqlite_use_immediate_transaction => 1,
 		} );
 		
-		$dbh->do('PRAGMA synchronous = NORMAL');
+		$dbh->do('PRAGMA synchronous = OFF');
 		$dbh->do('PRAGMA journal_mode = WAL');
 		$dbh->do('PRAGMA wal_autocheckpoint = 200');
 	
