@@ -12919,6 +12919,9 @@ BROWSE_MUSIC_FOLDER
 	SV	Musikmapp
 	ZH_CN	浏览音乐文件夹
 
+BROWSE_MUSIC_FOLDER_WHILE_SCANNING
+	EN	Music Folder is not available while scanning.
+
 SYNCHRONIZE
 	CS	Synchronizovat
 	DA	Synkroniser
