@@ -28,7 +28,7 @@ PLUGIN_INFOBROWSER_DESC
 	NO	Hent informasjon fra Internett-kilder og på skjermene til serveren, fjernkontrollen og spilleren. Du finner mer informasjon om å legge til flere informasjonskilder under Innstillinger.
 	PL	Pobierz informacje ze źródeł internetowych i zobacz je na wyświetlaczu pilota, serwera lub odtwarzacza. Informacje na temat dodawania kolejnych źródeł informacji zawiera sekcja ustawień.
 	RU	Извлекайте информацию из Интернета и отображайте ее на экране плеера, сервера или пульта ДУ. Сведения о добавлении дополнительных источников информации см. в разделе "Настройки".
-	SV	Hämta information från internet och visa den på fjärrkontrollen, servern eller spelarnas displayer.  Se avsnittet om inställningar för mer information om att lägga till fler informationskällor.
+	SV	Hämta information från Internet och visa den på fjärrkontrollen, servern eller spelarnas skärmar. Se avsnittet om inställningar för mer information om att lägga till fler informationskällor.
 
 SETUP_PLUGIN_INFOBROWSER_DESC
 	CS	Informační Prohlížeč vám umožňuje číst informace z internetových zdrojů na displeji dálkového ovladače vašeho Squeezeboxu, serveru nebo přehrávače. Více informací lze připojit s použitím webového rozhraní pod Doplňky/Informační prohlížeč.
@@ -43,7 +43,7 @@ SETUP_PLUGIN_INFOBROWSER_DESC
 	NO	Med informasjonsleseren kan du lese informasjon fra Internett-kilder på Squeezebox-fjernkontrollen, serveren eller spillerskjermen. Du kan legge til flere informasjonskilder ved å bruke webgrensesnittet under Tillegg/Informasjonsleser.
 	PL	Przeglądarka informacji umożliwia odczytanie informacji ze źródeł internetowych na wyświetlaczu pilota urządzenia Squeezebox, serwera lub odtwarzacza. Kolejne źródła informacji można dodać za pomocą interfejsu internetowego w obszarze Dodatki/Przeglądarka informacji.
 	RU	Информационный браузер позволяет просматривать информацию из Интернета на экране плеера, сервера или пульта ДУ Squeezebox. Веб-интерфейс позволяет добавлять дополнительные источники ("Дополнения/Информационный браузер").
-	SV	Med infoläsaren kan du visa information från internetkällor på Squeezebox-fjärrkontrollen, servern eller spelarens display. Du kan lägga till fler informationskällor via menyn Extrafunktioner/Infoläsare i webbgränssnittet .
+	SV	Med infoläsaren kan du visa information från Internetkällor på Squeezebox-fjärrkontrollen, servern eller spelarens skärm. Du kan lägga till fler informationskällor via menyn Extrafunktioner/Infoläsare i webbgränssnittet.
 
 SETUP_PLUGIN_INFOBROWSER_RESET
 	CS	Resetovat

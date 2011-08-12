@@ -339,7 +339,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla aleatoria de música de la biblioteca:
 	FI	Valitse satunnainen musiikkikokoelma kirjastostasi:
-	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre collection:
+	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre bibliothèque:
 	HE	בחר מיקס אקראי של מוסיקה מהספרייה:
 	IT	Scegliere una raccolta casuale di musica dalla libreria:
 	NL	Een willekeurige mix van muziek uit je collectie kiezen:

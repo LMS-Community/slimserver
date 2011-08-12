@@ -1334,19 +1334,19 @@ PLAYLIST_NO_ITEMS_FOUND
 
 PLAYLIST_PROBLEM_CONNECTING
 	CS	Chyba: Nelze se připojit a načíst seznam skladeb
-	DA	Fejl: Der kan ikke etableres forbindelse, så afspilningslisten kan ikke hentes
+	DA	Fejl: Kan ikke tilslutte for at hente spillelisten
 	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener lista de reproducción
 	FI	Virhe: ei voi muodostaa yhteyttä soittoluettelon noutoa varten
 	FR	Erreur: connexion impossible pour récupérer la liste de lecture
 	HE	שגיאה: לא ניתן להתחבר לאחזור רשימת ההשמעה
-	IT	Errore: impossibile eseguire la connessione per recuperare la playlist
+	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
-	NO	Feil: Kan ikke kople til for å hente spilleliste
+	NO	Feil: Kan ikke koble til for å hente spilleliste
 	PL	Błąd: nie można nawiązać połączenia w celu pobrania listy odtwarzania
 	RU	Ошибка: сбой подключения для получения плей-листа
-	SV	Fel: Det går inte att ansluta för att hämta spellistan.
+	SV	Fel: Kan inte ansluta för att hämta spellista
 
 PLAYLIST_NOT_A_PLAYLIST
 	DA	Fejl: Adressen henviser ikke til en afspilningsliste

@@ -20,7 +20,7 @@ PLUGIN_NAPSTER_MY_NAPSTER_LIBRARY
 	EN	Napster Library
 	ES	Biblioteca Napster
 	FI	Napster-kirjasto
-	FR	Collection Napster
+	FR	Bibliothèque Napster
 	IT	Libreria Napster
 	NL	Napster-collectie
 	NO	Napster-bibliotek
@@ -72,7 +72,7 @@ PLUGIN_NAPSTER_GETTING_STREAM_INFO
 	NO	Henter informasjon om strøm...
 	PL	Pobieranie informacji o strumieniu...
 	RU	Получение информации о потоке...
-	SV	Hämtar ströminformation ...
+	SV	Hämtar ströminformation...
 
 PLUGIN_NAPSTER_STREAM_FAILED
 	CS	Selhání zvukového proudu, přechod na další stopu.

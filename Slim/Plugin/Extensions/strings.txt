@@ -19,14 +19,14 @@ PLUGIN_EXTENSIONS_DESC
 	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für Logitech Media Server automatisch heruntergeladen und installiert.
 	EN	Extension downloader allows automated download and installation of optional features for Logitech Media Server.
 	ES	El Descargador de extensiones permite descargar e instalar automáticamente funciones opcionales para el servidor Squeezebox.
-	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Squeezebox-palvelimelle.
-	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour Logitech Media Server.
+	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia Logitech Media Serverille.
+	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour le Logitech Media Server.
 	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per Logitech Media Server.
 	NL	Met de extensiedownloader kunnen optionele functies voor Logitech Media Server automatisch worden gedownload en geïnstalleerd.
 	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for Logitech Media Server helt gratis og helt automatisk.
-	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji serwera Squeezebox.
+	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji programu Logitech Media Server.
 	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера Squeezebox.
-	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Logitech Media Server.
+	SV	Med hjälp av nedladdningsprogrammet kan du ladda ner olika tillägg till Logitech Media Server.
 
 PLUGIN_EXTENSIONS_REPOS
 	CS	Doplňkové archívy
@@ -46,13 +46,13 @@ PLUGIN_EXTENSIONS_REPOS
 PLUGIN_EXTENSIONS_REPOS_DESC
 	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">zde</a>.
 	DA	Du kan tilføje adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor. Der findes en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
-	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben. Eine Liste von Repository-URLs ist <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">hier</a> verfügbar.
+	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben. Eine Liste von Repository-URLs ist <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> verfügbar.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
 	ES	Puede agregar repositorios de extensiones de otros fabricantes adicionales si introduce la URL para el siguiente repositorio. Encontrará una lista de direcciones URL de repositorios <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">aquí</a>.
-	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">täällä</a>.
+	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">täällä</a>.
 	FR	Vous pouvez ajouter des répertoires supplémentaires tiers en saisissant l'URL des répertoires ci-dessous. Pour obtenir une liste de répertoires supplémentaires, cliquez <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">ici</a>.
 	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendo l'URL del relativo archivio di seguito. Un elenco di URL degli archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">qui</a>.
-	NL	Je kunt opslagruimten voor externe uitbreidingen toevoegen door de URL voor onderstaande opslagruimte in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target=”wiki”>hier</a> voor een lijst met opslag-URL's.
+	NL	Je kunt opslagruimten voor externe uitbreidingen toevoegen door de URL voor onderstaande opslagruimte in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">tutaj</a>.
 	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">здесь</a>.
@@ -71,7 +71,7 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	NO	<b>Advarsel: </b>Siden serveren automatisk laster ned programvare fra lagrene du angir, må du være sikker på at du stoler på eieren av lageret.
 	PL	<b>Ostrzeżenie:</b> Ponieważ serwer automatycznie pobiera oprogramowanie z wybranych repozytoriów, należy upewnić się, że są to zaufane źródła.
 	RU	<b>Предупреждение.</b> Вы должны полностью доверять владельцу репозитория, поскольку сервер будет загружать из него ПО автоматически.
-	SV	<b>Obs!</b> Eftersom servern laddar ned program automatiskt från den servern du anger är det viktigt att du litar på databasens ägare.
+	SV	<b>Obs!</b> Eftersom servern laddar ner program automatiskt från den server du anger är det viktigt att du litar på databasens ägare.
 
 PLUGIN_EXTENSIONS_PLUGINS
 	CS	Pluginy Logitech Media Server
@@ -301,7 +301,7 @@ PLUGIN_EXTENSIONS_AUTO
 PLUGIN_EXTENSIONS_AUTO_DESC
 	CS	Umožnit, aby Logitech Media Server automaticky kontroloval aktualizace nainstalovaných zásuvných modulů a stahoval je tak, aby byly připraveny k použití při příštím spuštění serveru. Pokud tato možnost není vybrána, můžete zásuvné moduly aktualizovat ručně prostřednictvím této stránky nastavení.
 	DA	Du kan indstille Squeezebox-serveren til automatisk at søge efter opdateringer til de installerede udvidelsesmoduler og hente dem, så de er klar til at blive brugt næste gang serveren startes. Hvis du ikke vælger denne mulighed, kan du opdatere udvidelsesmodulerne manuelt via denne side.
-	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch den Logitech Media Server, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
+	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch Logitech Media Server, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
 	EN	Allow the Logitech Media Server to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
 	ES	Permite a Logitech Media Server buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
 	FI	Salli Logitech Media Serverin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
@@ -309,9 +309,9 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	IT	Consente a Logitech Media Server di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
 	NL	Logitech Media Server toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je plug-ins handmatig bijwerken via deze instellingenpagina.
 	NO	La Logitech Media Server se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
-	PL	Zezwala serwerowi Squeezebox na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
+	PL	Zezwala programowi Logitech Media Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
-	SV	Tillåt Squeezebox-servern att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ned den som är redo att användas när servern startas om nästa gång. Om det här alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
+	SV	Tillåt Logitech Media Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
 PLUGIN_EXTENSIONS_OTHERREPO
 	CS	Zobrazit veškeré zásuvné moduly třetích stran

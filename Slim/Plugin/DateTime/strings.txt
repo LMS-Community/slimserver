@@ -51,34 +51,34 @@ SETUP_GROUP_DATETIME_DESC
 	SV	De här inställningar styr hur skärmsläckaren med datum och tid fungerar
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
-	CS	Výchozí nastavení server
+	CS	Výchozí nastavení serveru
 	DA	Server standard
 	DE	Server-Standard
 	EN	Server Default
-	ES	Predeterminado de Logitech Media Server
-	FI	Server -oletus
-	FR	Défaut serveur
+	ES	Valor predeterminado de servidor
+	FI	Palvelimen oletusasetus
+	FR	Valeur par défaut du serveur
 	HE	ברירת המחדל של Logitech Media Server
-	IT	Impostazioni predefinite di server
+	IT	Impostazioni predefinite server
 	NL	Standaardinstellingen van Logitech Media Server
-	NO	Server-standard
-	PL	Domyślny program Logitech Media Server
-	RU	Server по умолчанию
+	NO	Serverstandard
+	PL	Domyślne ustawienie serwera
+	RU	Серверное значение по умолчанию
 	SV	Server-standard
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
-	CS	Výchozí nastavení server
+	CS	Výchozí nastavení serveru
 	DA	Server standard
 	DE	Server-Standard
 	EN	Server Default
-	ES	Predeterminado de Logitech Media Server
-	FI	Server -oletus
+	ES	Valor predeterminado de servidor
+	FI	Palvelimen oletusasetus
 	FR	Défaut serveur
 	HE	ברירת המחדל של Logitech Media Server
 	IT	Impostazioni predefinite di server
 	NL	Standaardinstellingen van Logitech Media Server
 	NO	Server-standard
-	PL	Domyślny program Logitech Media Server
-	RU	Server по умолчанию
+	PL	Domyślne ustawienie serwera
+	RU	Серверное значение по умолчанию
 	SV	Server-standard
 

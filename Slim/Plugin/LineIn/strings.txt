@@ -86,7 +86,7 @@ LINE_IN_LEVEL_DESC
 	FI	Tällä asetuksella voit säätää linjatulon äänenvoimakkuutta.
 	FR	A l'aide de ce paramètre, vous pouvez régler le gain de l'entrée ligne.
 	IT	Questa impostazione consente di regolare il guadagno dell'ingresso.
-	NL	Met deze instelling kunt u de lijningangsaanpassing bijstellen.
+	NL	Met deze instelling kun je de lijningangsaanpassing bijstellen.
 	NO	Du kan bruke denne innstillingen til å justere gain for lydinngang.
 	PL	To ustawienie umożliwia dostosowanie wzmocnienia wejścia liniowego.
 	RU	С помощью этой настройки можно задать коэффициент усиления для линейного входа.

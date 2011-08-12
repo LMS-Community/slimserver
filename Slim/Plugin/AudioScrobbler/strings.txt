@@ -41,7 +41,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	NO	Angi brukernavn og passord for Last.fm. Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer.
 	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm. W celu przesłania informacji o utworach z różnych odtwarzaczy na różne konta można wprowadzić dane z kilku kont.
 	RU	Введите имя пользователя и пароль Last.fm. Можно указать несколько учетных записей, чтобы передавать дорожки с разных плееров в разные учетные записи.
-	SV	Ange användarnamn och lösenord för Last.fm.  Du kan ange flera konton för att skicka spår från olika spelare till olika konton.
+	SV	Ange användarnamn och lösenord för Last.fm. Du kan ange flera konton för att skicka spår från olika spelare till olika konton.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
 	CS	Pro vymazání existujícího účtu zaškrtněte rámeček vedle účtu.
@@ -251,7 +251,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	NO	Advarsel: Innsending av spor er deaktivert i hele systemet. Hvis du vil sende informasjon om avspilte spor fra denne spilleren, må du aktivere innstillingen Send alle spor under Avansert -> Last.fm Audioscrobbler.
 	PL	Ostrzeżenie: wysyłanie informacji o wszystkich utworach jest globalnie wyłączone. Aby przesyłać informacje do tego odtwarzacza, włącz ustawienie przesyłania informacji o wszystkich utworach, wybierając opcję Zaawansowane -> Last.fm Audioscrobbler.
 	RU	Предупреждение. Параметр "Передавать все дорожки" глобально отключен. Чтобы передавать информацию о дорожках для этого плеера, перейдите на "Дополнительно" -> "Last.fm Аудиоскробблер" и включите "Передавать все дорожки".
-	SV	Varning! Rapporteringen är globalt avaktiverad.  Om du vill rapportera spårinformation från den här spelaren aktiverar du inställningen under Avancerat > Last.fm Audioscrobbler.
+	SV	Varning! Rapporteringen är globalt avaktiverad. Om du vill rapportera spårinformation från den här spelaren aktiverar du inställningen under Avancerat > Last.fm Audioscrobbler.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	CS	Poznámka: Musíte také povolit Audioscrobbler pro každý přehrávač. Klikněte na záložku přehrávače a poté zvolte položku Last.fm Audioscrobbler pro každý přehrávač, který chcete převést.
@@ -266,7 +266,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	NO	Merk: Du må også aktivere Audioscrobbler for hver spiller. Klikk på kategorien Spiller, og velg Last.fm Audioscrobbler-elementet for hver spiller du vil bruke med Audioscrobbler.
 	PL	Uwaga: Funkcję Audioscrobbler należy włączyć dla każdego odtwarzacza. Kliknij kartę Odtwarzacz, a następnie wybierz pozycję Last.fm Audioscrobbler dla każdego odtwarzacza, z którego chcesz wysłać informacje.
 	RU	Примечание. Нужно также включить скробблер для каждого плеера. Щелкните вкладку "Плеер" и выберите элемент "Скробблер Last.fm" для каждого плеера, который необходимо скробблить.
-	SV	Obs! Du måste också aktivera Audioscrobbler för varje spelare.  Klicka på fliken Spelare och markera sedan Last.fm Audioscrobbler för varje spelare du vill skrobbla från.
+	SV	Obs! Du måste också aktivera Audioscrobbler för varje spelare. Klicka på fliken Spelare och markera sedan Last.fm Audioscrobbler för varje spelare du vill skrobbla från.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	CS	Chyba při ověřování vašeho účtu u Last.fm. Zkuste znovu později. (%s)

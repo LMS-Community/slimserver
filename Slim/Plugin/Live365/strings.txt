@@ -60,5 +60,5 @@ PLUGIN_LIVE365_NO_URL
 	NO	Kan ikke hente adresse for lyd. Trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać adresu URL źródła dźwięku. Naciśnij przycisk PLAY, aby spróbować ponownie.
 	RU	Невозможно извлечь URL аудио. Нажмите PLAY, чтобы повторить попытку.
-	SV	Det går inte att hämta ljudwebbadressen.  Tryck på Play om du vill försöka igen.
+	SV	Det går inte att hämta ljudwebbadressen. Tryck på Play om du vill försöka igen.
 

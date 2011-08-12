@@ -167,19 +167,19 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	EN	When your iTunes Music Library changes Logitech Media Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
 	ES	Cuando cambie la biblioteca de música de iTunes, Logitech Media Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que el servidor esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero desactiva la recarga.
 	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Logitech Media Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka palvelin odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
-	FR	Le Logitech Media Server importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
+	FR	Le Logitech Media Server importe automatiquement les informations de la bibliothèque musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la bibliothèque musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר ספריית המוסיקה של iTunes משתנה, Logitech Media Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Logitech Media Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica la libreria musicale di iTunes, Logitech Media Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
 	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door Logitech Media Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når musikkbiblioteket til iTunes endres, importerer Logitech Media Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
 	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Logitech Media Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Logitech Media Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
 	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Logitech Media Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
-	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Logitech Media Server.  Du kan ange en minimitid (i sekunder) som servern ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
+	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Logitech Media Server. Du kan ange en minimitid (i sekunder) som servern ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的iTunes音乐库改变时，Logitech Media Server将自动地导入最新音乐库信息。您可以指定Logitech Media Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
 	CS	Umístění hudební knihovny .xml  iTunes
-	DA	Placering af iTunes Musik Library.xml
+	DA	Placering af iTunes Music Library.xml
 	DE	Speicherort von iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
 	ES	Ubicación del archivo iTunes Music Library.xml
@@ -216,7 +216,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
 #SLT: this term should match the one used in iTunes/Preferences/Advanced
 	CS	Složka iTunes Média
-	DA	iTunes-musikmappe
+	DA	iTunes-mediemappe
 	DE	Ordner 'iTunes Media'
 	EN	iTunes Media Folder
 	ES	Carpeta iTunes Media
@@ -234,7 +234,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CS	Pokud běží iTunes na jiném počítači než Logitech Media Server, můžete zde specifikovat explicitní cestu ke složce iTunes Music. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Logitech Media Server.
-	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til iTunes-musikmappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
+	DA	Hvis iTunes kører på en anden computer end Logitech Media Server, kan du angive stien til iTunes-mediemappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Logitech Media Server.
 	DE	Falls iTunes auf einem anderen Rechner als Logitech Media Server ausgeführt wird, können Sie hier den vollständigen Pfad zum Ordner 'iTunes Media' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Logitech Media Server installiert ist.
 	EN	If you are running iTunes on a different computer than Logitech Media Server, you may specify an explicit path to the iTunes Media folder here.  Leave this blank if you are running iTunes on the same computer as Logitech Media Server.
 	ES	Si ejecuta iTunes en un equipo distinto al de Logitech Media Server, puede especificar aquí una ruta explícita a la carpeta iTunes Media. Deje en blanco si ejecuta iTunes en el mismo equipo que Logitech Media Server.
@@ -247,7 +247,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	NO	Hvis du kjører iTunes på en annen datamaskin enn Logitech Media Server, kan du angi banen til iTunes Media-mappen her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som Logitech Media Server.
 	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program Logitech Media Server, w tym miejscu można określić katalog iTunes Media. Jeżeli program iTunes działa na tym samym komputerze co program Logitech Media Server, pozostaw to pole puste.
 	RU	Если iTunes и Logitech Media Server установлены на разных компьютерах, можно напрямую задать путь к папке "iTunes Media" в iTunes. Если приложение iTunes установлено на том же компьютере, что и Logitech Media Server, оставьте поле пустым.
-	SV	Om du kör iTunes på en annan dator än den där du kör Logitech Media Server så anger du sökvägen till iTunes-mediamappen här. Lämna fältet tomt om iTunes körs på samma dator som Logitech Media Server.
+	SV	Om du kör iTunes på en annan dator än den där du kör Logitech Media Server så anger du sökvägen till iTunes-mediemappen här. Lämna fältet tomt om iTunes körs på samma dator som Logitech Media Server.
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
@@ -281,7 +281,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med Logitech Media Server. Du kan endre dette nedenfor.
 	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie Logitech Media Server. Działanie tej funkcji można zmienić poniżej.
 	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в Logitech Media Server. Изменить эту настройку можно ниже.
-	SV	När du avmarkerar en låt i iTunes visas den som standard inte längre när du bläddrar bland dina låtar i Logitech Media Server.  Du kan ändra den här funktionen nedan.
+	SV	När du avmarkerar en låt i iTunes visas den som standard inte längre när du bläddrar bland dina låtar i Logitech Media Server. Du kan ändra den här funktionen nedan.
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览Logitech Media Server的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
