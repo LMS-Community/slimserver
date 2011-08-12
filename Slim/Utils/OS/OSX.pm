@@ -193,10 +193,11 @@ sub dirsFor {
 		my $mediaDir;
 		
 		if ($dir eq 'music') {
-			$mediaDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
-			if (!-d $mediaDir) {
+			# DHG wants LMS to default to the full Music folder, not only iTunes
+#			$mediaDir = catdir($ENV{'HOME'}, 'Music', 'iTunes');
+#			if (!-d $mediaDir) {
 				$mediaDir = catdir($ENV{'HOME'}, 'Music');
-			}
+#			}
 		}
 		elsif ($dir eq 'videos') {
 			$mediaDir = catdir($ENV{'HOME'}, 'Movies');
