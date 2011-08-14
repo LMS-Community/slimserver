@@ -38,9 +38,6 @@ sub resize {
 		my $cache = Slim::Utils::ArtworkCache->new();
 		my $cacheroot = $cache->getRoot();
 		
-		# Change artwork cache locking mode so daemon can write to it
-		$cache->pragma('locking_mode = NORMAL');
-		
 		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize (pending requests: $pending_requests)");
 		
 		$pending_requests++;
@@ -51,8 +48,7 @@ sub resize {
 				main::DEBUGLOG && $isDebug && $log->debug("daemon failed to connect: $!");
 				
 				if ( --$pending_requests == 0 ) {
-					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
-					$cache->pragma('locking_mode = EXCLUSIVE');
+					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
 				}
 				
 				# Fallback to resizing the old way
@@ -70,8 +66,7 @@ sub resize {
 				$handle && $handle->destroy;
 				
 				if ( --$pending_requests == 0 ) {
-					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
-					$cache->pragma('locking_mode = EXCLUSIVE');
+					main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
 				}
 				
 				# Fallback to resizing the old way
@@ -93,8 +88,7 @@ sub resize {
 					Slim::Utils::Timers::killTimers(undef, $timeout);
 					
 					if ( --$pending_requests == 0 ) {
-						main::DEBUGLOG && $isDebug && $log->debug("no more pending requests, resetting exclusive mode");
-						$cache->pragma('locking_mode = EXCLUSIVE');
+						main::DEBUGLOG && $isDebug && $log->debug("no more pending requests");
 					}
 					
 					$callback && $callback->();

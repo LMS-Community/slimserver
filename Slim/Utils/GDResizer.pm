@@ -43,7 +43,7 @@ sub resize {
 	
 	$debug      = $args{debug} if defined $args{debug};
 	
-	my ($offset, $length); # used if an audio file is passed in
+	my ($offset, $length) = (0, 0); # used if an audio file is passed in
 	
 	if ( $file && !-e $file ) {
 		die "Unable to resize from $file: File does not exist\n";
@@ -471,7 +471,7 @@ sub gdresize {
 		}
 	}
 	else {
-		my ($width, $height, $mode, $bgcolor, $ext) = $spec->[0] =~ /^(?:(\d+)x(\d+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+		my ($width, $height, $mode, $bgcolor, $ext) = $spec->[0] =~ /^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
 				
 		# XXX If cache is available, pull pre-cached size values from cache
 		# to see if we can use a smaller version of this image than the source
