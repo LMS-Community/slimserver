@@ -128,6 +128,12 @@ sub add {
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = $args->{'sortBy'} ? Slim::Music::Info::splitTag($args->{'sortBy'}) : @artistList;
 	
+	# Bug 9725, split MusicBrainz tag to support multiple artists
+	my @brainzIDList;
+	if ($brainzID) {
+		@brainzIDList = Slim::Music::Info::splitTag($brainzID);
+	}
+	
 	# Using native DBI here to improve performance during scanning
 	my $dbh = Slim::Schema->dbh;
 
@@ -137,6 +143,7 @@ sub add {
 		my $name   = $artistList[$i];
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name, 1);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
+		my $mbid   = $brainzIDList[$i];
 		
 		my $sth = $dbh->prepare_cached( 'SELECT id FROM contributors WHERE name = ?' );
 		$sth->execute($name);
@@ -150,7 +157,7 @@ sub add {
 				VALUES
 				(?, ?, ?, ?)
 			} );
-			$sth->execute( $name, $sort, $search, $brainzID );
+			$sth->execute( $name, $sort, $search, $mbid );
 			$id = $dbh->last_insert_id(undef, undef, undef, undef);
 		}
 		else {
