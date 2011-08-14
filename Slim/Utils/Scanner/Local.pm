@@ -247,7 +247,6 @@ sub rescan {
 		
 		if ( $inDBOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $inDBOnlySth;
-			my $inDBOnlyDone = 0;
 
 			$pending{$next} |= PENDING_DELETE;
 			
@@ -271,8 +270,10 @@ sub rescan {
 				
 				# Page through the files, this is to avoid a long-running read query which 
 				# would prevent WAL checkpoints from occurring.
+				# Note: Bug 17438, this limit query always uses the first items, because it
+				# will be removing those tracks before the next query is run.
 				if ( !$inDBOnlySth ) {
-					my $sql = $inDBOnlySQL . " LIMIT $inDBOnlyDone, " . CHUNK_SIZE;
+					my $sql = $inDBOnlySQL . " LIMIT 0, " . CHUNK_SIZE;
 					$inDBOnlySth = $dbh->prepare($sql);
 					$inDBOnlySth->execute;
 					$inDBOnlySth->bind_col(1, \$deleted);
@@ -281,7 +282,6 @@ sub rescan {
 				if ( $inDBOnlySth->fetch ) {
 					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($deleted) );
 					$changes++;
-					$inDBOnlyDone++;
 					
 					deleted($deleted);
 					
