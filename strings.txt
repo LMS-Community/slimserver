@@ -23073,14 +23073,14 @@ CLEANUP_COMMAND_LINE
 	RU	Параметры командной строки:
 	SV	Alternativ för kommandoraden:
 
-CLEANUP_MYSQL
+CLEANUP_DB
 	CS	Smazat data MySQL (databáze informací o médiích)
 	DA	Slet MySQL-data (database med oplysninger om mediefiler)
-	DE	MySQL-Daten löschen (Mediendatenbank)
-	EN	Delete MySQL data (media information database)
+	DE	Mediendatenbank löschen
+	EN	Delete media information database
 	ES	Eliminar datos de MySQL (base de datos multimedia)
 	FI	Poista MySQL-tiedot (mediatietokanta)
-	FR	Supprimer les données MySQL (base de données multimédia)
+	FR	Supprimer la base de données multimédia
 	IT	Elimina dati MySQL (database di informazioni sui file multimediali)
 	NL	MySQL-gegevens verwijderen (database met mediagegevens)
 	NO	Slett MySQL-data (medieinformasjonsdatabase)

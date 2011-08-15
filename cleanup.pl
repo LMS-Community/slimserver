@@ -80,7 +80,7 @@ sub main {
 		exit;
 	}
 
-	my ($all, $cache, $filecache, $mysql, $prefs, $logs);
+	my ($all, $cache, $filecache, $database, $prefs, $logs);
 	
 	Getopt::Long::GetOptions(
 		'all'       => \$all,
@@ -88,7 +88,7 @@ sub main {
 		'filecache' => \$filecache,
 		'prefs'     => \$prefs,
 		'logs'      => \$logs,
-		'mysql'     => \$mysql,
+		'database'  => \$database,
 	);
 	
 	my $folders = getFolderList({
@@ -97,7 +97,7 @@ sub main {
 		'filecache' => $filecache,
 		'prefs'     => $prefs,
 		'logs'      => $logs,
-		'mysql'     => $mysql,
+		'database'  => $database,
 	});
 		
 	unless (scalar @$folders) {
@@ -130,11 +130,11 @@ sub main {
 
 sub usage {
 	my $usage = <<EOF;
-%s: $0 [--all] [--cache] [--mysql] [--filecache] [--prefs] [--logs]
+%s: $0 [--all] [--cache] [--database] [--filecache] [--prefs] [--logs]
 
 %s
 
-	--mysql        %s
+	--database     %s
 	--filecache    %s
 	--prefs        %s
 	--logs         %s
@@ -147,7 +147,7 @@ EOF
 	print sprintf($usage, 
 		Slim::Utils::Light::string('CLEANUP_USAGE'), 
 		Slim::Utils::Light::string('CLEANUP_COMMAND_LINE'),
-		Slim::Utils::Light::string('CLEANUP_MYSQL'),
+		Slim::Utils::Light::string('CLEANUP_DB'),
 		Slim::Utils::Light::string('CLEANUP_FILECACHE'),
 		Slim::Utils::Light::string('CLEANUP_PREFS'),
 		Slim::Utils::Light::string('CLEANUP_LOGS'),
@@ -181,15 +181,35 @@ sub getFolderList {
 		};
 	}
 		
-	if ($args->{mysql}) {
+	if ($args->{database}) {
 		push @folders, {
-			label   => 'MySQL data',
+			label   => 'Musiclibrary data',
 			folders => [
+				File::Spec::Functions::catdir($cacheFolder, 'library.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'library.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'library.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'persist.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'persist.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'persist.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-wal'),
+
+				# some legacy files...
 				File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
 				File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
 				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
 				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
 				File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-wal'),
 			],
 		};
 	}
@@ -232,8 +252,8 @@ sub options {
 	
 		{
 	
-			name     => 'mysql',
-			title    => Slim::Utils::Light::string('CLEANUP_MYSQL'),
+			name     => 'database',
+			title    => Slim::Utils::Light::string('CLEANUP_DB'),
 			position => [30, 60],
 		},
 	
