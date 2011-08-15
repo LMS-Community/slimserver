@@ -55,7 +55,7 @@ PLUGIN_EXTENSIONS_REPOS_DESC
 	NL	Je kunt opslagruimten voor externe uitbreidingen toevoegen door de URL voor onderstaande opslagruimte in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">tutaj</a>.
-	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">здесь</a>.
+	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">здесь</a>.
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">lista</a> med adresser till databaser.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING

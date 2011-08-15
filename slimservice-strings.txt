@@ -92,7 +92,7 @@ ABOUT
 	JP	mysqueezebox.com V.%s, 製作:
 	NL	mysqueezebox.com V.%s, geschreven door:
 	NO	mysqueezebox.com versjon %s, skrevet av:
-	PL	mysqueezebox.com wer. %s, autor:
+	PL	mysqueezebox.com V.%s, autor:
 	PT	mysqueezebox.com v.%s, escrito por
 	RU	mysqueezebox.com V.%s, авторы:
 	SV	mysqueezebox.com v.%s, skriven av:

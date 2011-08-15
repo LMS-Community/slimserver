@@ -6316,8 +6316,8 @@ SETUP_LIBRARY_NAME_DESC
 	IT	La libreria musicale viene denominata in questo modo nel menu "Musica" di Squeezebox.
 	NL	Dit is de naam waarmee je muziekcollectie in het Squeezebox-menu Mijn muziek verschijnt.
 	NO	Slik vises navnet på musikkbiblioteket i menyen Min musikk på Squeezebox.
-	PL	Taką nazwę będzie miała biblioteka muzyki w menu „Moja muzyka” urządzenia Squeezebox.
-	RU	Это имя медиатеки будет отображаться в меню Squeezebox "Моя музыка".
+	PL	Taką nazwę będzie miała biblioteka multimedialna w menu „Moje multimedia” urządzenia Squeezebox.
+	RU	Это имя библиотеки мультимедиа будет отображаться в меню Squeezebox "Мои файлы мультимедиа".
 	SV	Det här är namnet på ditt musikbibliotek som visas i Squeezebox-menyn Min musik.
 
 SETUP_AUDIODIR
