@@ -420,7 +420,7 @@ useSpecialExt="-browse" %]
 		details = [];
 		IF item.owner; details.push(item.owner); END;
 		IF item.date; details.push(item.date); END;
-		IF details.size; "(" _ details.join(' - ') _ ")"; END;
+		IF details.size && !content.match("img src"); "(" _ details.join(' - ') _ ")"; END;
 	 %]
 		</a>
 	[% END %]
