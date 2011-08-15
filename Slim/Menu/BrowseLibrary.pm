@@ -743,6 +743,23 @@ sub _generic {
 		$getIndexList   # boolean:   (optional)
 	) = @_;
 	
+	if (!Slim::Schema::hasLibrary()) {
+	
+		$log->warn('Database not fully initialized yet - return dummy placeholder');
+	
+		logBacktrace('no callback') unless $callback;
+	
+		$callback->({
+			items => [ {
+				type  => 'text',
+				title => cstring($client, 'LIBRARY_NOT_READY'),
+			} ],
+			total => 1
+		});
+		
+		return;
+	}
+	
 	my $index = $args->{'index'} || 0;
 	my $quantity = $args->{'quantity'};
 	

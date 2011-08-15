@@ -23521,6 +23521,21 @@ NO_LIBRARY
 	RU	Нет настроенных медиатек
 	SV	Inget musikbibliotek konfigurerat
 
+LIBRARY_NOT_READY
+	CS	Není nakonfigurována žádná hudební knihovna
+	DA	Der er ikke konfigureret et musikbibliotek
+	DE	Es ist keine Musiksammlung konfiguriert, oder sie steht noch nicht zur Verfügung.
+	EN	No music library configured or not ready to be used
+	ES	No hay ninguna biblioteca de música configurada
+	FI	Musiikkikirjastoa ei ole määritetty
+	FR	Aucune collection musicale n'a été configurée
+	IT	Nessuna libreria musicale configurata
+	NL	Er is geen muziekcollectie geconfigureerd
+	NO	Ingen musikkbiblioteker er konfigurert
+	PL	Nie skonfigurowano biblioteki muzyki
+	RU	Нет настроенных медиатек
+	SV	Inget musikbibliotek konfigurerat
+
 PRESETS_NOT_DEFINED
 	CS	Přednastavené #%s nedefinováno.
 	DA	Fast indstilling #%s er ikke defineret.
