@@ -97,11 +97,13 @@ Settings = {
 				
 			return Settings._confirmPageChange(function(btn, a, b){
 				if (btn == 'no' || btn == 'yes') {
-					if (btn == 'yes')
-						this.submitSettings();
+					if (btn == 'yes') {
+						this.submitSettings(function() {
+							tb.activate(tab);
+						});
+					}
 
 					this._resetModified();
-					tb.activate(tab);
 				}
 
 			}.createDelegate(this));
@@ -118,7 +120,9 @@ Settings = {
 		new Ext.Button({
 			renderTo: 'save',
 			text: SqueezeJS.string('apply'),
-			handler: this.submitSettings,
+			handler: function() {
+				this.submitSettings()
+			},
 			scope: this
 		});
 
@@ -161,16 +165,9 @@ Settings = {
 		}
 	},
 
-	submitSettings : function() {
+	submitSettings : function(cb) {
 		try { 
-			frames.settings.Settings.Page.submit();
-			// dirty hack to give Opera a second to finish the submit...
-			if (Ext.isOpera) {
-				var date = new Date();
-				var curDate = null;
-				do { curDate = new Date(); } 
-				while(curDate-date < 500);
-			}
+			frames.settings.Settings.Page.submit(cb);
 		}
 		catch(e){ return false; }
 		return true;
@@ -200,12 +197,14 @@ Settings = {
 			var url = cb;
 			cb = function(btn){
 				if (btn == 'no' || btn == 'yes') {
-					if (btn == 'yes')
-						this.submitSettings();
+					if (btn == 'yes') {
+						this.submitSettings(function() {
+							try { frames.settings.location = url; }
+							catch(e) { location = url; }
+						});
+					}
 
 					this._resetModified();
-					try { frames.settings.location = url; }
-					catch(e) { location = url; }
 				}
 			};
 		}
@@ -460,7 +459,7 @@ Settings.Page = function(){
 			});
 		},
 		
-		submit : function(ajax, cb) {
+		submit : function(cb) {
 			var items = Ext.query('input.invalid');
 
 			for(var i = 0; i < items.length; i++) {
@@ -473,7 +472,18 @@ Settings.Page = function(){
 
 			// block first attempt to save if there are invalid values
 			if (items.length == 0 || invalidWarned) {
-				document.forms.settingsForm.submit();
+				if (cb) {
+					Ext.Ajax.request({
+						form: document.forms.settingsForm,
+						callback: function() {
+							console.log('done!');
+							cb();
+						}
+					});
+				}
+				else {
+					document.forms.settingsForm.submit();
+				}
 			}
 			else
 				invalidWarned = true;
