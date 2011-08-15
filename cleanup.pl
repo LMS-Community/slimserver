@@ -185,6 +185,10 @@ sub getFolderList {
 		push @folders, {
 			label   => 'Musiclibrary data',
 			folders => [
+				File::Spec::Functions::catdir($cacheFolder, 'libmediascan.db'),
+				File::Spec::Functions::catdir($cacheFolder, '__db.001'),
+				File::Spec::Functions::catdir($cacheFolder, '__db.002'),
+				File::Spec::Functions::catdir($cacheFolder, '__db.003'),
 				File::Spec::Functions::catdir($cacheFolder, 'library.db'),
 				File::Spec::Functions::catdir($cacheFolder, 'library.db-shm'),
 				File::Spec::Functions::catdir($cacheFolder, 'library.db-wal'),
