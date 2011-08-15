@@ -207,6 +207,7 @@ use Slim::Menu::SystemInfo;
 use Slim::Menu::PlaylistInfo;
 use Slim::Menu::FolderInfo;
 use Slim::Menu::GlobalSearch;
+use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
 use Slim::Music::Import;
 use Slim::Utils::OSDetect;
@@ -578,11 +579,8 @@ sub init {
 		Slim::Utils::AutoRescan->init();
 	}
 
-	if (Slim::Schema::hasLibrary()) {
-		main::INFOLOG && $log->info("Library Browser init...");
-		require Slim::Menu::BrowseLibrary;
-		Slim::Menu::BrowseLibrary->init();
-	}
+	main::INFOLOG && $log->info("Library Browser init...");
+	Slim::Menu::BrowseLibrary->init();
 	
 	# regular server has a couple more initial operations.
 	main::INFOLOG && $log->info("Server persist playlists...");
