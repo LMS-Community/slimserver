@@ -22,6 +22,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+use constant MENU_WEIGHT => 999;
+
 our %devices             = ();
 our $registeredCallbacks = [];
 
@@ -195,6 +197,9 @@ sub addDeviceMenus {
 			       . '&hierarchy=0&title=' . uri_escape( $params{title} )
 		}
 	);
+					
+	# not really a plugin, but still set the weight of the menu item
+	Slim::Plugin::Base->addWeight($name, MENU_WEIGHT);
 }
 
 sub removeDeviceMenus {
