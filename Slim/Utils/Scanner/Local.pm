@@ -857,7 +857,7 @@ sub changed {
 				SELECT DISTINCT(contributor) FROM contributor_track WHERE track = ?
 			} );
 			$sth->execute( $origTrack->{id} );
-			$orig->{contribs} = $sth->fetchall_arrayref;
+			$orig->{contribs} = $sth->fetchall_arrayref( {} );
 			$sth->finish;
 			
 			# Fetch all genres used on the original track
@@ -865,7 +865,7 @@ sub changed {
 				SELECT genre FROM genre_track WHERE track = ?
 			} );
 			$sth->execute( $origTrack->{id} );
-			$orig->{genres} = $sth->fetchall_arrayref;
+			$orig->{genres} = $sth->fetchall_arrayref( {} );
 			$sth->finish;
 			
 			# Scan tags & update track row
@@ -885,7 +885,7 @@ sub changed {
 			# Tell Contributors to rescan, if no other tracks left, remove contributor.
 			# This will also remove entries from contributor_track and contributor_album
 			for my $contrib ( @{ $orig->{contribs} } ) {
-				Slim::Schema::Contributor->rescan( $contrib->[0] );
+				Slim::Schema::Contributor->rescan( $contrib->{contributor} );
 			}
 			
 			my $album = $track->album;
@@ -919,13 +919,13 @@ sub changed {
 			# Rescan comments
 			
 			# Rescan genre, to check for no longer used genres
-			my $origGenres = join( ',', sort map { $_->[0] } @{ $orig->{genres} } );
+			my $origGenres = join( ',', sort map { $_->{genre} } @{ $orig->{genres} } );
 			my $newGenres  = join( ',', sort map { $_->id } $track->genres );
 			
 			if ( $origGenres ne $newGenres ) {
 				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed genre(s) $origGenres -> $newGenres" );
 				
-				Slim::Schema::Genre->rescan( @{ $orig->{genres} } );
+				Slim::Schema::Genre->rescan( map { $_->{genre} } @{ $orig->{genres} } );
 			}
 			
 			# Bug 8034, Rescan years if year value changed, to remove the old year
