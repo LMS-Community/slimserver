@@ -822,7 +822,7 @@ sub _generic {
 		}
 	}
 	
-	if (!$result->{items} || !scalar @{ $result->{items} }) {
+	if ( !$args->{search} && (!$result->{items} || !scalar @{ $result->{items} }) ) {
 		$result->{items} = [ {
 			type  => 'text',
 			title => cstring($client, 'EMPTY'),

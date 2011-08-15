@@ -1222,6 +1222,8 @@ sub _makeWebLink {
 sub _makePlayLink {
 	my ($feedActions, $item, $action) = @_;
 	
+	return undef if $item->{type} && $item->{type} eq 'text';
+	
 	my ($feedAction, $feedActions) = Slim::Control::XMLBrowser::findAction({actions => $feedActions}, $item, $action);
 	if ($feedAction) {
 		my @p = @{$feedAction->{'command'}};
