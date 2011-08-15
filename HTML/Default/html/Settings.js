@@ -475,10 +475,7 @@ Settings.Page = function(){
 				if (cb) {
 					Ext.Ajax.request({
 						form: document.forms.settingsForm,
-						callback: function() {
-							console.log('done!');
-							cb();
-						}
+						callback: cb
 					});
 				}
 				else {
