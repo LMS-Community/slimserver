@@ -315,7 +315,9 @@ useSpecialExt="-browse" %]
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
 					END %]
 
-					[% IF item.image %]
+					[% IF !hasArtwork %]
+						[% # don't do anything as we consider this list a list without artwork, eg. tracks %]
+					[% ELSIF item.image %]
 						[% IF artwork == 0 %]
 							[% PROCESS itemIcon url=item.image size=50 class="browseItemDetail" %]
 						[% END %]
@@ -369,7 +371,7 @@ useSpecialExt="-browse" %]
 						[% END %]
 					[% END %]
 
-					[% IF (item.icon && artwork != 1) || (item.image && artwork== 0) || (hasArtwork && artwork == 0) %]
+					[% IF !hasArtwork; ELSIF (item.icon && artwork != 1) || (item.image && artwork== 0) || (hasArtwork && artwork == 0) %]
 						</div>
 					[% END %]
 				[%- END %]
