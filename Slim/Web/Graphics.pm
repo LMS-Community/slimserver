@@ -272,14 +272,16 @@ sub artworkRequest {
 	
 	# Support pre-sized files already in place, this is used on SB Touch
 	# for app icons because it can't handle resizing so many icons at once
-	if ( $fullpath && $fullpath =~ /\.(?:jpg|png|gif)$/i ) {
-		# Add the spec back to the fullpath
+	if ( $fullpath && $fullpath =~ /(\.(?:jpg|png|gif))$/i ) {
+		my $ext = $1;
+		
+		# Add the spec back to the fullpath if there's more than the extension
 		my $fullpathspec = $fullpath;
 		
-		if ( $spec ) {
-			$fullpathspec =~ s/(\.\w+)$/_${spec}$1/;
+		if ( $spec && $spec ne $ext ) {
+			$fullpathspec =~ s/($ext)$/_${spec}$1/;
 		}
-		
+
 		if ( -e $fullpathspec ) {
 			main::INFOLOG && $isInfo && $log->info("  Using existing pre-cached file: $fullpathspec");
 		
