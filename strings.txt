@@ -6306,19 +6306,19 @@ SETUP_LIBRARY_NAME
 	SV	Mediebiblioteksnamn
 
 SETUP_LIBRARY_NAME_DESC
-	CS	Tak se bude jmenovat vaše hudební knihovna v menu "Moje hudba" vašeho Squeezebox.
-	DA	Dit musikbibliotek får dette navn i Squeezebox-menuen Musik.
-	DE	Das ist der Name der Squeezebox im Menü "Eigene Musik".
+	CS	Tak se bude jmenovat vaše knihovna médií v menu "Moje média" vašeho Squeezebox.
+	DA	Dit mediebibliotek får dette navn i Squeezebox-menuen Mine multimedier.
+	DE	Das ist der Name der Medienbibliothek im Squeezebox-Menü 'Eigene Medien'.
 	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
-	ES	Así es como se llamará la biblioteca de música en el menú de \"Mi música\" de Squeezebox.
-	FI	Näin musiikkikirjastosi nimetään Squeezeboxisi Oma musiikki -valikossa.
-	FR	Votre collection musicale est nommée de cette manière sous le menu "Ma musique" de la Squeezebox.
-	IT	La libreria musicale viene denominata in questo modo nel menu "Musica" di Squeezebox.
-	NL	Dit is de naam waarmee je muziekcollectie in het Squeezebox-menu Mijn muziek verschijnt.
-	NO	Slik vises navnet på musikkbiblioteket i menyen Min musikk på Squeezebox.
+	ES	Así es como se llamará la biblioteca multimedia en el menú de \"Mi material multimedia\" de Squeezebox.
+	FI	Näin mediakirjastosi nimetään Squeezeboxisi Oma media -valikossa.
+	FR	Votre bibliothèque multimédia est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
+	IT	La libreria multimediale viene denominata in questo modo nel menu dei file multimediali di Squeezebox.
+	NL	Dit is de naam waarmee je mediacollectie in het Squeezebox-menu Mijn media verschijnt.
+	NO	Slik vises navnet på mediebiblioteket i menyen Mine mediefiler på Squeezebox.
 	PL	Taką nazwę będzie miała biblioteka multimedialna w menu „Moje multimedia” urządzenia Squeezebox.
 	RU	Это имя библиотеки мультимедиа будет отображаться в меню Squeezebox "Мои файлы мультимедиа".
-	SV	Det här är namnet på ditt musikbibliotek som visas i Squeezebox-menyn Min musik.
+	SV	Det här är namnet på ditt mediebibliotek som visas i Squeezebox-menyn My Media.
 
 SETUP_AUDIODIR
 	CS	Složka Hudba
@@ -7014,7 +7014,7 @@ SETUP_THUMBSIZE_DESC
 	DA	Angiv størrelsen i pixel (25-250) på de miniaturebilleder som anvendes ved gennemsyn efter cover. Standardværdien er 100.
 	DE	Wählen Sie die Größe der Plattenhüllen-Miniaturen in Pixeln (25-250). Standardwert ist 100.
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
-	ES	Elija el tamaño en píxeles (25-250) para el tamaño predeterminado de la imagen en miniatura cuando se examina por carátula. El valor predeterminado es 100.
+	ES	Elija el tamaño en píxeles (25-250) para el tamaño predeterminado de la imagen en miniatura cuando se examina por material gráfico. El valor predeterminado es 100.
 	FI	Valitse kansikuvia haettaessa käytettyjen oletuspienoiskuvien koko kuvapisteinä (25-250). Oletusarvo on 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode Parcourir les pochettes. La valeur par défaut est 100.
 	HE	בחר את הגודל בפיקסלים (25-250) עבור התמונה הממוזערת המוגדרת כברירת מחדל בעת עיון לפי עטיפה. ברירת המחדל היא 100.
