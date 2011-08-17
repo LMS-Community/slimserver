@@ -90,7 +90,7 @@ sub findhash {
 			WHERE (	urlmd5 = ? OR musicbrainz_id = ? )
 		} );
 		
-		$sth->execute( $mbid, $urlmd5 );
+		$sth->execute( $urlmd5, $mbid );
 	}
 	else {
 		$sth = Slim::Schema->dbh->prepare_cached( qq{
