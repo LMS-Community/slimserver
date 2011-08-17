@@ -52,9 +52,9 @@ sub _cached {
 	if ( my $cached = $cache->get($path) ) {
 		if ( my $orig = $cached->{original_path} ) {
 			# Check mtime of original artwork has not changed,
-			# unless it's a /music path, where we don't care if
+			# unless it's a /music|/video|/image path, where we don't care if
 			# it has changed.  The scanner should deal with changes there.
-			if ( $path !~ /^music/ && -r $orig ) {
+			if ( $path !~ m{^(?:music|image|video)/} && -r $orig ) {
 				my $mtime = (stat _)[9];
 				if ( $cached->{mtime} != $mtime ) {
 					main::INFOLOG && $isInfo && $log->info( "  current mtime $mtime != cached mtime " . $cached->{mtime} );
