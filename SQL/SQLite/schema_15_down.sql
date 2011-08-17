@@ -1,0 +1,1 @@
+-- empty placeholder to skip schema versions defined in 7.7/trunk
