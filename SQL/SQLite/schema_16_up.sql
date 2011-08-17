@@ -43,34 +43,7 @@ CREATE TABLE tracks (
 	coverid char(8) default NULL, 
 	cover_cached char(1) default NULL, 
 	virtual char(1) default NULL,
+	added_time int(10) default NULL,
+	updated_time int(10) default NULL,
 	FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
 );
-
--- create temporary table to de-duplicate persistent data
--- see http://bugs.slimdevices.com/show_bug.cgi?id=17456
-DROP TABLE IF EXISTS temp;
-CREATE TEMPORARY TABLE temp 
-	AS SELECT * FROM persistentdb.tracks_persistent;
-
-DELETE FROM persistentdb.tracks_persistent;
-
--- try to consolidate duplicates
-INSERT INTO persistentdb.tracks_persistent (
-	url,
-	musicbrainz_id,
-	added,
-	rating,
-	playCount,
-	lastPlayed,
-	urlmd5
-) SELECT 
-	MAX(url), 
-	MAX(musicbrainz_id), 
-	MIN(added), 
-	MAX(rating), 
-	SUM(playCount), 
-	MAX(lastPlayed), 
-	MAX(urlmd5)
-FROM temp GROUP BY urlmd5, musicbrainz_id;
-
-DROP TABLE temp;
