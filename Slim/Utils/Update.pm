@@ -27,8 +27,6 @@ sub checkVersion {
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|exe)(\.tmp)?$/i);			
 
-# XXX - disable update checks until we're set up on the server side
-return;
 	return unless $prefs->get('checkVersion');
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
@@ -68,7 +66,7 @@ return;
 
 	main::INFOLOG && $log->info("Checking version now.");
 
-	my $url  = Slim::Networking::SqueezeNetwork->url(
+	my $url = Slim::Networking::SqueezeNetwork->url(
 		sprintf(
 			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s", 
 			$::VERSION, 
@@ -79,6 +77,9 @@ return;
 			$prefs->get('server_uuid'),
 		)
 	);
+	
+	# XXX - check on test.mysb.com while in LMS beta...
+	$url =~ s/www\.(?!test)/test\./;
 		
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
@@ -304,7 +305,6 @@ sub installerIsUpToDate {
 
 	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
 		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision and revision
-	
 }
 
 sub cleanup {
