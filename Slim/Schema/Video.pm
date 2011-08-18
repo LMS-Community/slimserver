@@ -21,6 +21,11 @@ sub updateOrCreateFromResult {
 	$dirs =~ s{\\}{/}g;
 	my ($album) = $dirs =~ m{([^/]+)/$};
 	
+	# Use video title/album tags if available
+	my $tags = $result->tags;
+	$title = $tags->{title} if $tags->{title}; # these keys should always be lowercase from ffmpeg
+	$album = $tags->{album} if $tags->{album};
+	
 	my $sort = Slim::Utils::Text::ignoreCaseArticles($title);
 	my $search = Slim::Utils::Text::ignoreCaseArticles($title, 1);
 	my $now = time();
