@@ -84,7 +84,7 @@ sub initPlugin {
 	}
 
 	# add 3rd party plugins which wish to be in the apps menu to nonSNApps list
-	if ($class->can('menu') && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
+	if ($class->can('menu') && $class->menu && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
 		$nonSNApps ||= [];
 		push @$nonSNApps, $class;
 	}

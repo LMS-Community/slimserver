@@ -521,7 +521,7 @@ sub albumsQuery {
 			$quantity = "$limit";
 			$index ||= "0";
 		}
-		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
+		if ( $index =~ /^\d+$/ && defined $quantity && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
 		}
 
@@ -786,7 +786,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	$cacheKey = $sql . join( '', @{$p} );
 	
 	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
@@ -3954,6 +3954,9 @@ sub _addJiveSong {
 	# XXX may want to include all contributor roles here?
 	my (%artists, @artists);
 	foreach ('albumartist', 'trackartist', 'artist') {
+		
+		next if !$songData->{$_};
+		
 		foreach my $a ( split (/, /, $songData->{$_}) ) {
 			if ( $a && !$artists{$a} ) {
 				push @artists, $a;
@@ -4979,7 +4982,7 @@ sub _getTagDataForTracks {
 		}
 		
 		# Limit the real query
-		if ( $start =~ /^\d+$/ && $end =~ /^\d+$/ ) {
+		if ( $start =~ /^\d+$/ && defined $end && $end =~ /^\d+$/ ) {
 			$sql .= "LIMIT $start, $end ";
 		}
 	}

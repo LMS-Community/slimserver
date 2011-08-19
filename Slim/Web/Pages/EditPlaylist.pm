@@ -43,7 +43,6 @@ sub editplaylist {
 		return deletePlaylist(@_);
 	}
 
-	my $playlist_id = $params->{'playlist_id'};
 	# 0 base
 	my $itemPos = ($params->{'itempos'} || 0);
 
