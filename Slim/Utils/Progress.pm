@@ -310,10 +310,15 @@ my $progress_json = [];
 sub _write_json {
 	my ( $self, $file ) = @_;
 	
+	my $name = $self->name;
+	if ($name =~ /(.*)\|(.*)/) {
+		$name = $2;
+	}
+	
 	my $data = {
 		start  => $self->start,
 		type   => $self->type,
-		name   => $self->name,
+		name   => $name,
 		done   => $self->done,
 		total  => $self->total,
 		eta    => $self->eta,
