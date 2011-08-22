@@ -403,6 +403,7 @@ sub updateProgress {
 	if ( $res->is_success ) {
 		if ( $res->content =~ /abort/ ) {
 			logWarning('Server aborted scan, shutting down');
+			Slim::Utils::Progress->clear;
 			exit;
 		}
 		else {
@@ -480,8 +481,6 @@ sub _notifyFromScanner {
 	if ( Slim::Music::Import->hasAborted ) {
 		$request->addResult( abort => 1 );
 		$request->setStatusDone();
-		
-		Slim::Music::Import->setAborted(0);
 		
 		return;
 	}
