@@ -345,11 +345,7 @@ sub infoContributors {
 		
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 		
-		# Loop through each pref to see if the user wants to link to that contributor role.
-		my %linkRoles = map {$_ => $prefs->get(lc($_) . 'InArtists')} @roles;
-		$linkRoles{'ARTIST'} = 1;
-		$linkRoles{'TRACKARTIST'} = 1;
-		$linkRoles{'ALBUMARTIST'} = 1;
+		my %linkRoles = map {$_ => 1} @roles;
 		
 		# Loop through the contributor types and append
 		for my $role ( @roles ) {

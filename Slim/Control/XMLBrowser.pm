@@ -394,7 +394,7 @@ sub _cliQuery_done {
 			# Add search query to crumb list
 			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && defined $search ) {
 				# Escape periods in the search string
-				@crumbIndex[-1] .= '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
+				$crumbIndex[-1] .= '_' . uri_escape_utf8( $search, "^A-Za-z0-9" );
 			}
 			
 			# Change URL if there is a play attribute and it's the last item

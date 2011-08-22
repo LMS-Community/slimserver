@@ -1050,7 +1050,7 @@ sub new {
 		# extract any remaining params
 		for (;$i < scalar @$requestLineRef; $i++) {
 			
-			if ($found->[3] && $requestLineRef->[$i] =~ /([^:]+):(.*)/) {
+			if ($found->[3] && $requestLineRef->[$i] && $requestLineRef->[$i] =~ /([^:]+):(.*)/) {
 				
 				# tagged params
 				$params{$1} = $2;

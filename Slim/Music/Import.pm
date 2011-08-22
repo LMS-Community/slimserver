@@ -183,13 +183,21 @@ sub abortScan {
 		# we get a progress update
 		$ABORT = 1;
 		
-		$class->setIsScanning(0);
+		$class->setIsScanning(0) if !$class->externalScannerRunning;
 	}
 }
 
 sub hasAborted { $ABORT }
 
 sub setAborted { shift; $ABORT = shift; }
+
+sub externalScannerRunning {
+	my $class = shift;
+	
+	return 1 if main::SCANNER;
+	
+	return (blessed($class->scanningProcess) && $class->scanningProcess->alive) ? 1 : 0;
+}
 
 =head2 lastScanTime()
 
@@ -618,9 +626,13 @@ sub stillScanning {
 	return 0 if main::SLIM_SERVICE;
 	return 0 if !Slim::Schema::hasLibrary();
 	
+	# clean up progress etc. in case the external scanner crashed
 	if (blessed($class->scanningProcess) && !$class->scanningProcess->alive) {
 		$class->scanningProcess(undef);
 		$class->setIsScanning(0);
+		
+		Slim::Utils::Progress->cleanup('importer');
+		
 		return 0;
 	}
 	

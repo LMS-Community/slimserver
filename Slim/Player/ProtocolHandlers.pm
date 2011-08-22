@@ -40,12 +40,14 @@ my %iconHandlers = ();
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
-	if ($protocolHandlers{$protocol}) {
-		return 1;
-	}
-
-	if (exists $protocolHandlers{$protocol}) {
-		return 0;
+	if (defined $protocol) {
+		if ($protocolHandlers{$protocol}) {
+			return 1;
+		}
+	
+		if (exists $protocolHandlers{$protocol}) {
+			return 0;
+		}
 	}
 
 	return undef;

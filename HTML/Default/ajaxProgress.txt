@@ -12,6 +12,6 @@
 			'Info':'[% item.obj.info | utf8decode | uri | html | replace("'", "%27") %]'
 		}[% IF !loop.last; ","; END; END %]
 	],
-	'message':'[% message %]',
+	'message':'[% message | html | replace("'", "%27") %]',
 	'total_time':'[% total_time %]'
 }

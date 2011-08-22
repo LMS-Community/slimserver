@@ -453,7 +453,7 @@ sub handler {
 					
 					# If the request was not async, tell the manager to deliver the results to all subscribers
 					if ( exists $result->{data} ) {
-						if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+						if ( $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
 							push @{$events}, $result;
 							
 							# We might be in delayed response mode, but we don't want to delay
@@ -571,7 +571,7 @@ sub handler {
 					
 						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
-							if ( $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
+							if ( $conn->[HTTP_CLIENT]->transport && $conn->[HTTP_CLIENT]->transport eq 'long-polling' ) {
 								push @{$events}, $result;
 							}
 							else {
@@ -643,7 +643,7 @@ sub sendResponse {
 	}
 	
 	if ($httpResponse) {
-		if ( $httpClient->transport eq 'long-polling' ) {
+		if ( $httpClient->transport && $httpClient->transport eq 'long-polling' ) {
 			# Finish a long-poll cycle by sending all pending events and removing the timer			
 			Slim::Utils::Timers::killTimers($httpClient, \&sendResponse);
 		}
@@ -669,7 +669,7 @@ sub sendHTTPResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
-	if ( $httpClient->transport eq 'long-polling' ) {
+	if ( $httpClient->transport && $httpClient->transport eq 'long-polling' ) {
 		# Remove the active connection info from manager until
 		# the client makes a new /meta/(re)?connect request
 		$manager->remove_connection( $httpClient->clid );

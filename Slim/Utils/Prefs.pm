@@ -916,7 +916,7 @@ sub init {
 	
 	# Rebuild Jive cache if VA setting is changed
 	$prefs->setChange( sub {
-		Slim::Control::Queries::wipeCaches();
+		Slim::Schema->wipeCaches();
 	}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
 
 	# Reset IR state if preference change
