@@ -2172,14 +2172,14 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 			}
 
 			if (result.message && result['total_time']) {
-				Ext.get('message').update(result.message + '<br>' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
+				Ext.get('message').update(decodeURIComponent(result.message) + '<br>' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
 				
 				if (Ext.get('abortscanlink'))
 					Ext.get('abortscanlink').hide();
 			}
 
 			else
-				Ext.get('message').update(result.message);
+				Ext.get('message').update(decodeURIComponent(result.message));
 
 			progressTimer.delay(5000)
 		}
