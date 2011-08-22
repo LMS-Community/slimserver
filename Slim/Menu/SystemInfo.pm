@@ -218,40 +218,44 @@ sub infoLibrary {
 		};
 	}
 	
-	return Slim::Music::Import->stillScanning 
-	? {
-		name => cstring($client, 'RESCANNING_SHORT'),
-
-		web  => {
-			hide => 1,
-		},
-	} 
-	: {
+	elsif (Slim::Music::Import->stillScanning) {
+		return {
+			name => cstring($client, 'RESCANNING_SHORT'),
+	
+			web  => {
+				hide => 1,
+			},
+		} 
+	}
+	
+	my $totals = Slim::Schema->totals;
+	
+	return {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
 
 		items => [
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_TRACKS') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 })),
+							. Slim::Utils::Misc::delimitThousands($totals->{track}),
 			},
 
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_ALBUMS') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album')),
+							. Slim::Utils::Misc::delimitThousands($totals->{album}),
 			},
 
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_ARTISTS') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Misc::delimitThousands(Slim::Schema->totals()->{'contributor'}),
+							. Slim::Utils::Misc::delimitThousands($totals->{'contributor'}),
 			},
 
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_GENRES') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre')),
+							. Slim::Utils::Misc::delimitThousands($totals->{genre}),
 			},
 
 			{
