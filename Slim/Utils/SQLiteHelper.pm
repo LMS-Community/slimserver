@@ -404,6 +404,18 @@ sub updateProgress {
 		if ( $res->content =~ /abort/ ) {
 			logWarning('Server aborted scan, shutting down');
 			Slim::Utils::Progress->clear;
+			
+			# let the user know we aborted the scan
+			my $progress = Slim::Utils::Progress->new( { 
+				type  => 'importer',
+				name  => 'failure',
+				total => 1,
+				every => 1, 
+			} );
+			$progress->update('SCAN_ABORTED');
+			
+			Slim::Music::Import->setIsScanning(0);
+			
 			exit;
 		}
 		else {

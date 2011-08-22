@@ -183,13 +183,22 @@ sub abortScan {
 		# we get a progress update
 		$ABORT = 1;
 		
-		$class->setIsScanning(0);
+		$class->setIsScanning(0) if !$class->externalScannerRunning;
 	}
 }
 
 sub hasAborted { $ABORT }
 
 sub setAborted { shift; $ABORT = shift; }
+
+sub externalScannerRunning {
+	my $class = shift;
+	
+	return 1 if main::SCANNER;
+	
+	my $isScanning = $class->stillScanning || '';
+	return $isScanning && $isScanning eq 'SETUP_WIPEDB';
+}
 
 =head2 lastScanTime()
 
