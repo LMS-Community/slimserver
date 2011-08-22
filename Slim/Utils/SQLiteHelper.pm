@@ -481,7 +481,8 @@ sub _notifyFromScanner {
 	if ( Slim::Music::Import->hasAborted ) {
 		$request->addResult( abort => 1 );
 		$request->setStatusDone();
-		
+
+		Slim::Music::Import->setAborted(0);		
 		return;
 	}
 	
