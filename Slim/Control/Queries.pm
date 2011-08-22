@@ -1698,6 +1698,10 @@ sub musicfolderQuery {
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
 	
+	# this is not always needed, but if only single tracks were added through BMF,
+	# the caches would get out of sync
+	Slim::Schema->wipeCaches;
+	
 	$request->setStatusDone();
 }
 
