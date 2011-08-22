@@ -358,6 +358,35 @@ sub clear {
 	}
 }
 
+=head2 cleanup
+
+Sometimes the external scanner doesn't finish in a controlled way. Clean up the progress data
+by flagging active steps inactive, and adding a message telling the user something went wrong (if needed); 
+
+=cut
+
+sub cleanup {
+	my ($class, $type) = @_;
+
+	my $dbh = Slim::Schema->dbh;
+	
+	my $sth = $dbh->prepare( qq{
+	    UPDATE progress
+	    SET    active = 0, finish = ?, info = ''
+	    WHERE  type = ? AND active = 1 AND name != 'failure'
+	} );
+	my $found = $sth->execute( time(), $type );
+	
+	# if there was invalid data, flag the process as failed
+	if ( $found && $found > 0 ) {
+		$dbh->do(
+			"INSERT INTO progress (type, name, info) VALUES (?, 'failure', ?)",
+			undef,
+			$type, $type
+		);
+	}	
+}
+
 # The following code is adapted from Mail::SpamAssassin::Util::Progress which ships
 # with the following license:
 #
