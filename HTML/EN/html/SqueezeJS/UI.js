@@ -2083,7 +2083,6 @@ SqueezeJS.UI.ScannerInfo = Ext.extend(Ext.Component, {
 	},
 
 	hideNow : function(){
-		console.log('hide');
 		this.progressEl.fadeOut();
 	}
 });
