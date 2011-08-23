@@ -230,7 +230,7 @@ sub infoLibrary {
 	
 	my $totals = Slim::Schema->totals;
 	
-	return {
+	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
 
 		items => [
@@ -291,7 +291,7 @@ sub infoLibrary {
 			. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
 	};
 	
-	return $items
+	return $items;
 }
 
 sub infoServer {
