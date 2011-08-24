@@ -122,6 +122,12 @@ sub rescan {
 		push @{$ignore}, 'IMAGE' if ( grep { $_ eq $mediafolder } @{ $prefs->get('ignoreInImageScan') } );
 	}
 	
+	my $ignore_dirs = [
+		'ite',  # iTunes Extras (purchased movies)
+		'itlp', # iTunes LP data (purchased music)
+		# XXX Add Aperture and iPhoto entries
+		# XXX Make this a pref?
+	];
 	
 	my $progress;
 	if ( $args->{progress} ) {
@@ -166,6 +172,7 @@ sub rescan {
 		flags => $flags,
 		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
+		ignore_dirs => $ignore_dirs,
 		thumbnails => [
 			{ width => 300 }, # XXX
 		],
