@@ -22874,20 +22874,9 @@ CLEANUP_COMMAND_LINE
 	RU	Параметры командной строки:
 	SV	Alternativ för kommandoraden:
 
-CLEANUP_MYSQL
-	CS	Smazat data MySQL (databáze informací o hudbě)
-	DA	Slet MySQL-data (database med oplysninger om musikken)
-	DE	MySQL-Daten löschen (Musikdatenbank)
-	EN	Delete MySQL data (music information database)
-	ES	Eliminar datos de MySQL (base de datos de información de música)
-	FI	Poista MySQL-tiedot (musiikkitietokanta)
-	FR	Supprimer les données MySQL (base de données musicale)
-	IT	Elimina dati MySQL (database di informazioni sulla musica)
-	NL	MySQL-gegevens (database met muziekinformatie) verwijderen
-	NO	Slett MySQL-data (musikkinformasjonsdatabase)
-	PL	Usuń dane MySQL (baza danych informacji muzycznych)
-	RU	Удалить данные MySQL (база данных информации о музыке)
-	SV	Ta bort MySQL-data (databasen med musikinformation)
+CLEANUP_DB
+	DE	Musikdatenbank löschen
+	EN	Delete music information database
 
 CLEANUP_FILECACHE
 	CS	Vymazat odkládací paměť souborů obalů alb, šablon apod.
