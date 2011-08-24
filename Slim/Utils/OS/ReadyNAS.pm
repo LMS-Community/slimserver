@@ -96,9 +96,4 @@ sub ignoredItems {
 	);
 }
 
-#sub scanner {
-#	return the path to the C based scanner
-#	return '/usr/sbin/sc-scanner';
-#}
-
 1;
