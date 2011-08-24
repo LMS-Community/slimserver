@@ -151,7 +151,7 @@ sub init {
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
 	if ( $@ && !main::SLIM_SERVICE ) {
-		logWarning("Creating new database - empty database or database from 6.3.x found");
+		logWarning("Creating new database - empty, outdated or invalid database found");
 
 		eval {
 			$dbh->do('DROP TABLE IF EXISTS metainformation');
