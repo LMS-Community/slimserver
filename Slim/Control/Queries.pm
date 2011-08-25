@@ -4101,12 +4101,6 @@ sub _addJiveSong {
 	# deliver as one formatted multi-line string for NP playlist screen
 	$request->addResultLoop($loop, $count, 'text', $text);
 
-	if ( ! $isRemote ) {
-		my $actions;
-		$actions->{'play-hold'} = _mixerItemHandler(obj => $track, request => $request, chunkCount => $count, 'obj_param' => 'track_id', loopname => $loop );
-		$request->addResultLoop( $loop, $count, 'actions', $actions );
-	}
-
 	my $params = {
 		'track_id' => ($songData->{'id'} + 0), 
 		'playlist_index' => $index,
@@ -4497,42 +4491,6 @@ sub _fixCount {
 	return $totalCount;
 }
 
-=pod
-XXX - mixermenu no longer supported?
-sub _mixerItemParams {
-	my %args       = @_;
-	my $chunkCount = $args{'chunkCount'};
-	my $loopname   = $args{'loopname'};
-	my $params     = $args{'params'};
-	my $request    = $args{'request'};
-	my $obj        = $args{'obj'};
-	my $mixable    = $args{'mixable'}; # optional flag if item is mixable, avoids mixable() call
-
-	my ($Imports, $mixers) = _mixers();
-
-	# one enabled mixer available
-	if ( scalar(@$mixers) == 1 ) {
-		my $mixer = $mixers->[0];
-		if ( !defined $mixable && $mixer->mixable($obj) ) {
-
-		}
-		else {
-			my $unmixable = {
-				player => 0,
-				cmd    => ['jiveunmixable'],
-				params => {
-					contextToken => $Imports->{$mixer}->{contextToken},
-				},
-			};
-			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $unmixable } );
-		}
-	}
-	else {
-		return;
-	}
-}
-=cut
-
 # contextMenuQuery is a wrapper for producing context menus for various objects
 sub contextMenuQuery {
 
@@ -4589,122 +4547,6 @@ sub contextMenuQuery {
 
 }
 
-sub mixerMenuQuery {
-
-	$log->debug('Begin Function');
-	my $request = shift;
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['mixermenu']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $trackID       = $request->getParam('track_id');
-	my $genreID       = $request->getParam('genre_id');
-	my $artistID      = $request->getParam('artist_id');
-	my $albumID       = $request->getParam('album_id');
-				
-	# look for the $obj_param first from an obj_param key, then from track_id, artist_id, album_id, genre_id
-	my $obj_param     = $request->getParam('obj_param') ? $request->getParam('obj_param') :
-				$trackID  ? 'track_id'  :
-				$artistID ? 'artist_id' :
-				$albumID  ? 'album_id'  :
-				$genreID  ? 'genre_id'  :
-				undef;
-
-	# an $obj_param is necessary for this query
-	if ( !defined($obj_param) ) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $obj_id = $request->getParam($obj_param);
-
-	my ($Imports, $mixers) = _mixers();
-	
-	$request->addResult('offset', 0 );
-	$request->addResult('window', { menuStyle => '' } );
-	my $chunkCount = 0;
-
-	# fetch the object
-	my $obj;
-	if ($obj_param eq 'track_id') {
-		$obj = Slim::Schema->find('Track', $obj_id);
-	} elsif ($obj_param eq 'artist_id') {
-		$obj = Slim::Schema->find('Contributor', $obj_id);
-	} elsif ($obj_param eq 'album_id') {
-		$obj = Slim::Schema->find('Album', $obj_id);
-	} elsif ($obj_param eq 'genre_id') {
-		$obj = Slim::Schema->find('Genre', $obj_id);
-	}
-
-	my @mixable_mixers;
-	for my $mixer (@$mixers) {
-		if ( blessed($obj) && $mixer->mixable($obj) ) {
-			push @mixable_mixers, $mixer;
-		}
-	}
-
-	if ( scalar(@mixable_mixers) == 0 ) {
-		$request->addResult('count', 1);
-		$request->addResultLoop('item_loop', 0, 'text', $request->string('NO_MIXERS_AVAILABLE') );
-		$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
-	} else {
-		$request->addResult('count', scalar(@mixable_mixers) );
-		for my $mixer ( @mixable_mixers ) {
-			my $token = $Imports->{$mixer}->{'contextToken'};
-			my $string = $request->string($token);
-			$request->addResultLoop('item_loop', $chunkCount, 'text', $string);
-			my $actions;
-			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
-			$command->{'params'}{'menu'} = 1;
-			$command->{'params'}{$obj_param} = $obj->id;
-			$actions->{go} = $command;
-			$request->addResultLoop('item_loop', $chunkCount, 'actions', $actions);
-			$chunkCount++;
-		}
-	}
-	$request->setStatusDone();
-
-}
-
-sub _mixers {
-	my $Imports = Slim::Music::Import->importers;
-	my @mixers = ();
-	for my $import (keys %{$Imports}) {
-		next if !$Imports->{$import}->{'mixer'};
-		next if !$Imports->{$import}->{'use'};
-		next if !$Imports->{$import}->{'cliBase'};
-		next if !$Imports->{$import}->{'contextToken'};
-		push @mixers, $import;
-	}
-	return ($Imports, \@mixers);
-}
-
-=pod
-XXX - no longer being used?
-sub _mixerBase {
-
-	my ($Imports, $mixers) = _mixers();
-	
-	# one enabled mixer available
-	if ( scalar(@$mixers) == 1 ) {
-		return $Imports->{$mixers->[0]}->{'cliBase'};
-	} elsif (@$mixers) {
-		return {
-			player => 0,
-			cmd    => ['mixermenu'],
-			params => {
-			},
-			itemsParams => 'params',
-		};
-	} else {
-		return undef;	
-	}
-}
-=cut
-
 # currently this sends back a callback that is only for tracks
 # to be expanded to work with artist/album/etc. later
 sub _contextMenuBase {
@@ -4723,49 +4565,6 @@ sub _contextMenuBase {
 		},
 	};
 
-}
-
-sub _mixerItemHandler {
-	my %args       = @_;
-	my $chunkCount = $args{'chunkCount'};
-	my $loopname   = $args{'loopname'};
-	my $obj        = $args{'obj'};
-	my $obj_param  = $args{'obj_param'};
-	my $request    = $args{'request'};
-
-	my ($Imports, $mixers) = _mixers();
-	
-	if (scalar(@$mixers) == 1 && blessed($obj)) {
-		my $mixer = $mixers->[0];
-		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
-			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
-			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
-			$command->{'params'}{'menu'} = 1;
-			$command->{'params'}{$obj_param} = $obj->id;
-			return $command;
-		} else {
-			return (
-				{
-					player => 0,
-					cmd    => ['jiveunmixable'],
-					params => {
-						contextToken => $Imports->{$mixer}->{contextToken},
-					},
-				}
-			);
-			
-		}
-	} elsif ( scalar(@$mixers) && blessed($obj) ) {
-		return {
-			player => 0,
-			cmd    => ['mixermenu'],
-			params => {
-				$obj_param => $obj->id,
-			},
-		};
-	} else {
-		return undef;
-	}
 }
 
 sub _scanFailed {

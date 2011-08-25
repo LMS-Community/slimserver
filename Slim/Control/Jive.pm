@@ -113,9 +113,6 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveplayertextsettings', '_whatFont', '_index', '_quantity'],
 		[1, 1, 0, \&playerTextMenu]);
 
-	Slim::Control::Request::addDispatch(['jiveunmixable'],
-		[1, 1, 1, \&jiveUnmixableMessage]);
-
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
 		[1, 0, 1, \&albumSortSettingsMenu]);
 
@@ -2442,32 +2439,6 @@ sub jivePlaylistsCommand {
 
 	$request->setStatusDone();
 
-}
-
-sub jiveUnmixableMessage {
-	my $request = shift;
-	my $service = $request->getParam('contextToken');
-	my $serviceString = $request->string($service);
-
-       my @menu = (
-               {
-                       text    => $request->string('OK'),
-                       actions => {
-                               go => {
-                                       player => 0,
-                                       cmd    => [ 'jiveblankcommand' ],
-                               },
-                       },
-                       nextWindow => 'parent',
-               }
-       );
-
-       $request->addResult('offset', 0);
-       $request->addResult('count', 1);
-       $request->addResult('item_loop', \@menu);
-       $request->addResult('window', { textarea => $request->string('UNMIXABLE', $serviceString), });
-
-        $request->setStatusDone();
 }
 
 sub jiveAlarmCommand {
