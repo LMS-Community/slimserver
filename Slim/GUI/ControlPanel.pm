@@ -15,7 +15,6 @@ use File::Slurp;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
-use Slim::GUI::ControlPanel::InitialSettings;
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Music;
 use Slim::GUI::ControlPanel::Account;
@@ -70,6 +69,8 @@ sub new {
 	} );
 
 	if ($initialSetup) {
+		
+		require Slim::GUI::ControlPanel::InitialSettings;
 		
 		$mainSizer->Add(Slim::GUI::ControlPanel::InitialSettings->new($panel, $self), 1, wxALL | wxGROW, 10);
 		
