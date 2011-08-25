@@ -1213,62 +1213,6 @@ sub tagDump {
 	$callback->( $menu );
 }
 
-=pod
-sub _mixers {
-	my $Imports = Slim::Music::Import->importers;
-	my @mixers = ();
-	for my $import (keys %{$Imports}) {
-		next if !$Imports->{$import}->{'mixer'};
-		next if !$Imports->{$import}->{'use'};
-		next if !$Imports->{$import}->{'cliBase'};
-		next if !$Imports->{$import}->{'contextToken'};
-		push @mixers, $import;
-	}
-	return ($Imports, \@mixers);
-}
-
-sub _mixerItemHandler {
-	my %args       = @_;
-	my $obj        = $args{'obj'};
-	my $obj_param  = $args{'obj_param'};
-
-	my ($Imports, $mixers) = _mixers();
-	
-	if (scalar(@$mixers) == 1 && blessed($obj)) {
-		my $mixer = $mixers->[0];
-		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
-			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
-			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
-			$command->{'params'}{'menu'} = 1;
-			$command->{'params'}{$obj_param} = $obj->id;
-			return $command;
-		} else {
-			return (
-				{
-					player => 0,
-					cmd    => ['jiveunmixable'],
-					params => {
-						contextToken => $Imports->{$mixer}->{contextToken},
-					},
-				}
-			);
-			
-		}
-	} elsif ( scalar(@$mixers) && blessed($obj) ) {
-		return {
-			player => 0,
-			cmd    => ['contextmenu'],
-			params => {
-				menu => 'track',
-				$obj_param => $obj->id,
-			},
-		};
-	} else {
-		return undef;
-	}
-}
-=cut
-
 my $cachedFeed;
 
 sub cliQuery {
