@@ -159,10 +159,9 @@ sub getPref {
 		$prefFile = $serverPrefFile;
 	}
 
-	require YAML::Syck;
-	$YAML::Syck::ImplicitUnicode = 1;
+	require YAML::XS;
 	
-	my $prefs = eval { YAML::Syck::LoadFile($prefFile) };
+	my $prefs = eval { YAML::XS::LoadFile($prefFile) };
 
 	my $ret;
 

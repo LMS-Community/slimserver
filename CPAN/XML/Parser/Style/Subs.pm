@@ -1,4 +1,4 @@
-# $Id: Subs.pm,v 1.1 2003/07/27 16:07:49 matt Exp $
+# $Id: Subs.pm,v 1.1 2003-07-27 16:07:49 matt Exp $
 
 package XML::Parser::Style::Subs;
 

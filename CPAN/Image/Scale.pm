@@ -7,7 +7,7 @@ use constant IMAGE_SCALE_TYPE_GD_FIXED => 1;
 use constant IMAGE_SCALE_TYPE_GM       => 2;
 use constant IMAGE_SCALE_TYPE_GM_FIXED => 3;
 
-our $VERSION = '0.06';
+our $VERSION = '0.08';
 
 require XSLoader;
 XSLoader::load('Image::Scale', $VERSION);
@@ -262,25 +262,30 @@ format was not built.
 
 =head1 PERFORMANCE
 
-These numbers were gathered on my 2.4ghz MacBook Pro.
+These numbers were gathered on my 2.4ghz MacBook Pro with version 0.06.
 
-JPEG image, 1425x1425 -> 200x200 (libjpeg v8 with scaling)
+JPEG image, 1425x1425 -> 100x100 (libjpeg-turbo 1.0.0 with pre-scaling)
+Note that GD does not support JPEG pre-scaling which results
+in very poor performance and high memory usage. These numbers also include
+returning the resized image as a JPEG.
 
-    GD copyResampled                        21.9/s
-    resize_gm( { filter => 'Triangle' } )   65.7/s
-    resize_gd_fixed_point                   67.9/s
-    resize_gd                               69.4/s
-    resize_gm_fixed_point                   74.5/s
+    GD copyResampled                        4.8/s
+    resize_gm( { filter => 'Triangle' } )   127/s
+    resize_gd_fixed_point                   128/s
+    resize_gd                               131/s
+    resize_gm_fixed_point                   133/s
 
-PNG image, 512x768 -> 200x133 (libpng 1.4.3)
+PNG image, 350x350 -> 100x100 (libpng 1.4.3)
+libpng is quite slow, probably because they were forced to remove a lot of assembly
+code recently. These numbers also include returning the resized image as a PNG.
 
-    GD copyResampled                        14.7/s
-    resize_gm( { filter => 'Triangle' } )   26.2/s
-    resize_gm_fixed_point                   27.7/s
-    resize_gd                               29.9/s
-    resize_gd_fixed_point                   31.9/s
+    GD copyResampled                        46.1/s
+    resize_gm( { filter => 'Triangle' } )   61.4/s
+    resize_gm_fixed_point                   64.9/s
+    resize_gd                               76.0/s
+    resize_gd_fixed_point                   77.6/s
 
-Here are some numbers from a machine without floating-point support.
+Here are some numbers from a machine without floating-point support (version 0.01).
 (Marvell SheevaPlug 1.2ghz ARM9, JPEG 1425x1425 -> 200x200, libjpeg 6b with scaling)
 
     GD copyResampled                        1.08/s
@@ -290,7 +295,7 @@ Here are some numbers from a machine without floating-point support.
     resize_gm_fixed_point                   9.44/s
 
 And finally, from an even slower machine, the 240mhz Netgear ReadyNAS Duo which
-has extremely poor floating-point performance.
+has extremely poor floating-point performance (version 0.01).
 (JPEG 1425x1425 -> 200x200, libjpeg 6b with scaling)
 
     resize_gd                               0.029/s (34.5 s/iter)

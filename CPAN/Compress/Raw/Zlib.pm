@@ -13,7 +13,7 @@ use warnings ;
 use bytes ;
 our ($VERSION, $XS_VERSION, @ISA, @EXPORT, $AUTOLOAD);
 
-$VERSION = '2.017';
+$VERSION = '2.033';
 $XS_VERSION = $VERSION; 
 $VERSION = eval $VERSION;
 
@@ -60,6 +60,7 @@ $VERSION = eval $VERSION;
         Z_STREAM_END
         Z_STREAM_ERROR
         Z_SYNC_FLUSH
+        Z_TREES
         Z_UNKNOWN
         Z_VERSION_ERROR
 
@@ -563,6 +564,7 @@ Compress::Raw::Zlib - Low-Level Interface to zlib compression library
     ($i, $status) = new Compress::Raw::Zlib::Inflate( [OPT] ) ;
     $status = $i->inflate($input, $output [, $eof]) ;
     $status = $i->inflateSync($input) ;
+    $i->inflateReset() ;
     $i->dict_adler() ;
     $d->crc32() ;
     $d->adler32() ;
@@ -629,7 +631,7 @@ The default is C<Z_DEFAULT_COMPRESSION>.
 =item B<-Method>
 
 Defines the compression method. The only valid value at present (and
-the default) is Z_DEFLATED.
+the default) is C<Z_DEFLATED>.
 
 =item B<-WindowBits>
 
@@ -659,7 +661,7 @@ Defines the strategy used to tune the compression. The valid values are
 C<Z_DEFAULT_STRATEGY>, C<Z_FILTERED>, C<Z_RLE>, C<Z_FIXED> and
 C<Z_HUFFMAN_ONLY>.
 
-The default is Z_DEFAULT_STRATEGY.
+The default is C<Z_DEFAULT_STRATEGY>.
 
 =item B<-Dictionary>
 
@@ -1100,6 +1102,14 @@ Note I<full flush points> are not present by default in compressed
 data streams. They must have been added explicitly when the data stream
 was created by calling C<Compress::Deflate::flush>  with C<Z_FULL_FLUSH>.
 
+=head2 B<$status = $i-E<gt>inflateReset() >
+
+This method will reset the inflation object C<$i>. It can be used when you
+are uncompressing multiple data streams and want to use the same object to
+uncompress each of them. 
+
+Returns C<Z_OK> if successful.
+
 =head2 B<$i-E<gt>dict_adler()>
 
 Returns the adler32 value for the dictionary.
@@ -1369,11 +1379,10 @@ C<$input>.
 
 =head1 ACCESSING ZIP FILES
 
-Although it is possible (with some effort on your part) to use this
-module to access .zip files, there is a module on CPAN that will do all
-the hard work for you. Check out the C<Archive::Zip> module on CPAN at
-
-    http://www.cpan.org/modules/by-module/Archive/Archive-Zip-*.tar.gz    
+Although it is possible (with some effort on your part) to use this module
+to access .zip files, there are other perl modules available that will
+do all the hard work for you. Check out C<Archive::Zip>,
+C<IO::Compress::Zip> and C<IO::Uncompress::Unzip>.
 
 =head1 CONSTANTS
 
@@ -1382,7 +1391,7 @@ of I<Compress::Raw::Zlib>.
 
 =head1 SEE ALSO
 
-L<Compress::Zlib>, L<IO::Compress::Gzip>, L<IO::Uncompress::Gunzip>, L<IO::Compress::Deflate>, L<IO::Uncompress::Inflate>, L<IO::Compress::RawDeflate>, L<IO::Uncompress::RawInflate>, L<IO::Compress::Bzip2>, L<IO::Uncompress::Bunzip2>, L<IO::Compress::Lzop>, L<IO::Uncompress::UnLzop>, L<IO::Compress::Lzf>, L<IO::Uncompress::UnLzf>, L<IO::Uncompress::AnyInflate>, L<IO::Uncompress::AnyUncompress>
+L<Compress::Zlib>, L<IO::Compress::Gzip>, L<IO::Uncompress::Gunzip>, L<IO::Compress::Deflate>, L<IO::Uncompress::Inflate>, L<IO::Compress::RawDeflate>, L<IO::Uncompress::RawInflate>, L<IO::Compress::Bzip2>, L<IO::Uncompress::Bunzip2>, L<IO::Compress::Lzma>, L<IO::Uncompress::UnLzma>, L<IO::Compress::Xz>, L<IO::Uncompress::UnXz>, L<IO::Compress::Lzop>, L<IO::Uncompress::UnLzop>, L<IO::Compress::Lzf>, L<IO::Uncompress::UnLzf>, L<IO::Uncompress::AnyInflate>, L<IO::Uncompress::AnyUncompress>
 
 L<Compress::Zlib::FAQ|Compress::Zlib::FAQ>
 
@@ -1413,7 +1422,7 @@ See the Changes file.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2009 Paul Marquess. All rights reserved.
+Copyright (c) 2005-2011 Paul Marquess. All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

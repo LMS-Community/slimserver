@@ -1,6 +1,6 @@
 package HTML::Parser;
 
-# Copyright 1996-2008, Gisle Aas.
+# Copyright 1996-2009, Gisle Aas.
 # Copyright 1999-2000, Michael A. Chase.
 #
 # This library is free software; you can redistribute it and/or
@@ -9,7 +9,7 @@ package HTML::Parser;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = "3.60";
+$VERSION = "3.68";
 
 require HTML::Entities;
 
@@ -92,7 +92,7 @@ sub parse_file
     if (!ref($file) && ref(\$file) ne "GLOB") {
         # Assume $file is a filename
         local(*F);
-        open(F, $file) || return undef;
+        open(F, "<", $file) || return undef;
 	binmode(F);  # should we? good for byte counts
         $opened++;
         $file = *F;
@@ -240,13 +240,12 @@ to the C<HTML::Parser> object:
 
 =item $p->parse( $string )
 
-Parse $string as the next chunk of the HTML document.  The return
-value is normally a reference to the parser object (i.e. $p).
-Handlers invoked should not attempt to modify the $string in-place until
-$p->parse returns.
+Parse $string as the next chunk of the HTML document.  Handlers invoked should
+not attempt to modify the $string in-place until $p->parse returns.
 
-If an invoked event handler aborts parsing by calling $p->eof, then
-$p->parse() will return a FALSE value.
+If an invoked event handler aborts parsing by calling $p->eof, then $p->parse()
+will return a FALSE value.  Otherwise the return value is a reference to the
+parser object ($p).
 
 =item $p->parse( $code_ref )
 
@@ -690,7 +689,7 @@ The first column on a line is 0.
 Dtext causes the decoded text to be passed.  General entities are
 automatically decoded unless the event was inside a CDATA section or
 was between literal start and end tags (C<script>, C<style>,
-C<xmp>, C<iframe> and C<plaintext>).
+C<xmp>, C<iframe>, C<title>, C<textarea> and C<plaintext>).
 
 The Unicode character set is assumed for entity decoding.  With Perl
 version 5.6 or earlier only the Latin-1 range is supported, and
@@ -709,7 +708,7 @@ C<comment>, C<process>, C<start_document> or C<end_document>.
 
 Is_cdata causes a TRUE value to be passed if the event is inside a CDATA
 section or between literal start and end tags (C<script>,
-C<style>, C<xmp>, C<iframe> and C<plaintext>).
+C<style>, C<xmp>, C<iframe>, C<title>, C<textarea> and C<plaintext>).
 
 if the flag is FALSE for a text event, then you should normally
 either use C<dtext> or decode the entities yourself before the text is
@@ -892,7 +891,7 @@ likely to find is <!DOCTYPE ...>.
 Example:
 
   <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-  "http://www.w3.org/TR/html40/strict.dtd">
+      "http://www.w3.org/TR/html4/strict.dtd">
 
 DTDs inside <!DOCTYPE ...> will confuse HTML::Parser.
 
@@ -955,7 +954,7 @@ of whitespace between two text events.
 
 =head2 Unicode
 
-The C<HTML::Parser> can parse Unicode strings when running under
+C<HTML::Parser> can parse Unicode strings when running under
 perl-5.8 or better.  If Unicode is passed to $p->parse() then chunks
 of Unicode will be reported to the handlers.  The offset and length
 argspecs will also report their position in terms of characters.
@@ -1225,10 +1224,10 @@ L<HTML::LinkExtor>, L<HTML::Form>
 
 L<HTML::TreeBuilder> (part of the I<HTML-Tree> distribution)
 
-http://www.w3.org/TR/html4
+L<http://www.w3.org/TR/html4/>
 
 More information about marked sections and processing instructions may
-be found at C<http://www.sgml.u-net.com/book/sgml-8.htm>.
+be found at L<http://www.is-thought.co.uk/book/sgml-8.htm>.
 
 =head1 COPYRIGHT
 

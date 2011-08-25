@@ -44,7 +44,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use base 'Exporter';
 use base 'DynaLoader';

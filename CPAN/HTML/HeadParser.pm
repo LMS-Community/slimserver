@@ -87,7 +87,7 @@ use HTML::Entities ();
 use strict;
 use vars qw($VERSION $DEBUG);
 #$DEBUG = 1;
-$VERSION = "3.60";
+$VERSION = "3.66";
 
 =item $hp = HTML::HeadParser->new
 
@@ -99,7 +99,7 @@ methods as defined by the C<HTTP::Headers> class.  Normally it will be
 of some class that is a or delegates to the C<HTTP::Headers> class.
 
 If no $header is given C<HTML::HeadParser> will create an
-C<HTTP::Header> object by itself (initially empty).
+C<HTTP::Headers> object by itself (initially empty).
 
 =cut
 
@@ -111,7 +111,10 @@ sub new
 	$header = HTTP::Headers->new;
     }
 
-    my $self = $class->SUPER::new(api_version => 2,
+    my $self = $class->SUPER::new(api_version => 3,
+				  start_h => ["start", "self,tagname,attr"],
+				  end_h   => ["end",   "self,tagname"],
+				  text_h  => ["text",  "self,text"],
 				  ignore_elements => [qw(script style)],
 				 );
     $self->{'header'} = $header;
@@ -154,7 +157,10 @@ sub flush_text   # internal
     $text =~ s/\s+/ /g;
     print "FLUSH $tag => '$text'\n"  if $DEBUG;
     if ($tag eq 'title') {
+	my $decoded;
+	$decoded = utf8::decode($text) if $self->utf8_mode && defined &utf8::decode;
 	HTML::Entities::decode($text);
+	utf8::encode($text) if $decoded;
 	$self->{'header'}->push_header(Title => $text);
     }
     $self->{'tag'} = $self->{'text'} = '';
@@ -175,7 +181,10 @@ sub flush_text   # internal
 # <!ENTITY % head.content "TITLE & BASE?">
 # <!ELEMENT HEAD O O (%head.content;) +(%head.misc;)>
 #
-# Added in HTML 5: noscript, eventsource, command
+# From HTML 5 as of WD-html5-20090825:
+#
+# One or more elements of metadata content, [...]
+# => base, command, link, meta, noscript, script, style, title
 
 sub start
 {
@@ -203,8 +212,7 @@ sub start
 	# This is a non-standard header.  Perhaps we should just ignore
 	# this element
 	$self->{'header'}->push_header(Isindex => $attr->{prompt} || '?');
-    } elsif ($tag =~ /^(?:title|(?:no)?script|style|object
-		      |eventsource|command)$/x) {
+    } elsif ($tag =~ /^(?:title|noscript|object|command)$/) {
 	# Just remember tag.  Initialize header when we see the end tag.
 	$self->{'tag'} = $tag;
     } elsif ($tag eq 'link') {

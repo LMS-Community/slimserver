@@ -14,7 +14,7 @@ Class to allow loading of the old 6.0/6.1/6.2/6.3/6.5 YAML based server preferen
 
 use strict;
 
-use YAML::Syck;
+use YAML::XS;
 use FindBin qw($Bin);
 use Slim::Utils::Log;
 
@@ -65,7 +65,7 @@ sub _oldPrefs {
 
 		$log->info("using old preference file $oldprefs for conversion") if $oldprefs;
 
-		$oldprefs = eval { LoadFile($path) };
+		$oldprefs = eval { YAML::XS::LoadFile($path) };
 
 		if (!$@ && ref $oldprefs eq 'HASH') {
 

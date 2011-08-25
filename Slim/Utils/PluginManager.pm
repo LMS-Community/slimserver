@@ -16,7 +16,7 @@ use File::Path;
 use FindBin qw($Bin);
 use Path::Class qw(dir);
 use XML::Simple;
-use YAML::Syck;
+use YAML::XS;
 use Config;
 
 use Slim::Utils::Log;
@@ -523,7 +523,7 @@ sub _writePluginCache {
 	# add the cacheinfo data
 	$plugins->{'__cacheinfo'} = $cacheInfo;
 
-	YAML::Syck::DumpFile($class->_pluginCacheFile, $plugins);
+	YAML::XS::DumpFile($class->_pluginCacheFile, $plugins);
 
 	delete $plugins->{'__cacheinfo'};
 }
@@ -545,7 +545,7 @@ sub _loadPluginCache {
 
 	main::INFOLOG && $log->info("Loading plugin cache file.");
 
-	$plugins = YAML::Syck::LoadFile($file);
+	$plugins = YAML::XS::LoadFile($file);
 
 	$cacheInfo = delete $plugins->{'__cacheinfo'} || { 
 		'version' => -1,

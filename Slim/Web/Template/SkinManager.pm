@@ -13,7 +13,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use Template;
 use URI::Escape qw(uri_escape);
-use YAML::Syck qw(LoadFile);
+use YAML::XS;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -137,7 +137,7 @@ sub addSkinTemplate {
 
 		if (-r $skinConfig) {
 
-			$skinSettings = eval { LoadFile($skinConfig) };
+			$skinSettings = eval { YAML::XS::LoadFile($skinConfig) };
 
 			if ($@) {
 				logError("Could not load skin configuration file: $skinConfig\n$!");

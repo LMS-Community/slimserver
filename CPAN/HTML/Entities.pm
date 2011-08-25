@@ -1,5 +1,7 @@
 package HTML::Entities;
 
+=encoding utf8
+
 =head1 NAME
 
 HTML::Entities - Encode or decode strings with HTML entities
@@ -14,7 +16,7 @@ HTML::Entities - Encode or decode strings with HTML entities
 
 For example, this:
 
- $input = "vis-à-vis Beyoncé's naïve\npapier-mâché résumé";
+ $input = "vis-Ã -vis BeyoncÃ©'s naÃ¯ve\npapier-mÃ¢chÃ© rÃ©sumÃ©";
  print encode_entities($input), "\n"
 
 Prints this out:
@@ -68,7 +70,7 @@ misfeature.
 
    $string = "foo&nbspbar";
    _decode_entities($string, { nb => "@", nbsp => "\xA0" }, 1);
-   print $string;  # will print "foo bar"
+   print $string;  # will print "fooÂ bar"
 
 This routine is exported by default.
 
@@ -77,14 +79,21 @@ This routine is exported by default.
 =item encode_entities( $string, $unsafe_chars )
 
 This routine replaces unsafe characters in $string with their entity
-representation. A second argument can be given to specify which
-characters to consider unsafe (i.e., which to escape). The default set
-of characters to encode are control chars, high-bit chars, and the
-C<< < >>, C<< & >>, C<< > >>, C<< ' >> and C<< " >>
-characters.  But this, for example, would encode I<just> the
-C<< < >>, C<< & >>, C<< > >>, and C<< " >> characters:
+representation. A second argument can be given to specify which characters to
+consider unsafe.  The unsafe characters is specified using the regular
+expression character class syntax (what you find within brackets in regular
+expressions).
+
+The default set of characters to encode are control chars, high-bit chars, and
+the C<< < >>, C<< & >>, C<< > >>, C<< ' >> and C<< " >> characters.  But this,
+for example, would encode I<just> the C<< < >>, C<< & >>, C<< > >>, and C<< "
+>> characters:
 
   $encoded = encode_entities($input, '<>&"');
+
+and this would only encode non-plain ascii:
+
+  $encoded = encode_entities($input, '^\n\x20-\x25\x27-\x7e');
 
 This routine is exported by default.
 
@@ -139,7 +148,7 @@ require Exporter;
 @EXPORT = qw(encode_entities decode_entities _decode_entities);
 @EXPORT_OK = qw(%entity2char %char2entity encode_entities_numeric);
 
-$VERSION = "3.60";
+$VERSION = "3.68";
 sub Version { $VERSION; }
 
 require HTML::Parser;  # for fast XS implemented decode_entities
@@ -427,23 +436,6 @@ for (0 .. 255) {
 
 my %subst;  # compiled encoding regexps
 
-sub decode_entities_old
-{
-    my $array;
-    if (defined wantarray) {
-	$array = [@_]; # copy
-    } else {
-	$array = \@_;  # modify in-place
-    }
-    my $c;
-    for (@$array) {
-	s/(&\#(\d+);?)/$2 < 256 ? chr($2) : $1/eg;
-	s/(&\#[xX]([0-9a-fA-F]+);?)/$c = hex($2); $c < 256 ? chr($c) : $1/eg;
-	s/(&(\w+);?)/$entity2char{$2} || $1/eg;
-    }
-    wantarray ? @$array : $array->[0];
-}
-
 sub encode_entities
 {
     return undef unless defined $_[0];
@@ -457,7 +449,10 @@ sub encode_entities
     if (defined $_[1] and length $_[1]) {
 	unless (exists $subst{$_[1]}) {
 	    # Because we can't compile regex we fake it with a cached sub
-	    my $code = "sub {\$_[0] =~ s/([$_[1]])/\$char2entity{\$1} || num_entity(\$1)/ge; }";
+	    my $chars = $_[1];
+	    $chars =~ s,(?<!\\)([]/]),\\$1,g;
+	    $chars =~ s,(?<!\\)\\\z,\\\\,;
+	    my $code = "sub {\$_[0] =~ s/([$chars])/\$char2entity{\$1} || num_entity(\$1)/ge; }";
 	    $subst{$_[1]} = eval $code;
 	    die( $@ . " while trying to turn range: \"$_[1]\"\n "
 	      . "into code: $code\n "

@@ -52,7 +52,7 @@ use Slim::Utils::OSDetect;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(version Time::HiRes DBI EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::Syck Sub::Name);
+my @default_required_modules = qw(version Time::HiRes DBI EV XML::Parser::Expat HTML::Parser JSON::XS Digest::SHA1 YAML::XS Sub::Name);
 my @default_optional_modules = ();
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
@@ -275,15 +275,6 @@ sub tryModuleLoad {
 		local $^W = 0;
 
 		eval "use $module ()";
-
-		# NB: YAML::Syck has a local $@; in it's BEGIN, so if XSLoader
-		# or Dynaloader fails, the module still appears to load. Try
-		# to run a function to see if it's really been loaded.
-		if ($module eq 'YAML::Syck') {
-
-			eval { no warnings; YAML::Syck::Dump({}) };
-		}
-
 		if ($@) {
 
 			if ($d_startup || $warnOnFail) {

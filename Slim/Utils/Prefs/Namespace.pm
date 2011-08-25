@@ -23,14 +23,12 @@ use strict;
 use base qw(Slim::Utils::Prefs::Base);
 
 use File::Spec::Functions qw(:ALL);
-use YAML::Syck;
+use YAML::XS;
 
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs::Client;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
-
-$YAML::Syck::ImplicitUnicode = 1;
 
 my $log = logger('prefs');
 
@@ -262,7 +260,7 @@ sub _load {
 
 	if (-r $class->{'file'}) {
 
-		$prefs = eval { LoadFile($class->{'file'}) };
+		$prefs = eval { YAML::XS::LoadFile($class->{'file'}) };
 
 		if ($@) {
 			main::INFOLOG && $log->info("can't read $class->{'file'} : $@");
@@ -327,7 +325,7 @@ sub savenow {
 		my $path = $class->{'file'} . '.tmp';
 
 		open(OUT,'>:utf8', $path) or die "$!";
-		print OUT Dump($class->{'prefs'});
+		print OUT YAML::XS::Dump($class->{'prefs'});
 		close OUT;
 
 		if (-w $path) {

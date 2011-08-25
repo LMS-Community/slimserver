@@ -1,5 +1,5 @@
 This directory contains binary encoding maps for some selected encodings.
-If they are placed in a directoy listed in @XML::Parser::Expat::Encoding_Path,
+If they are placed in a directory listed in @XML::Parser::Expat::Encoding_Path,
 then they are automaticly loaded by the XML::Parser::Expat::load_encoding
 function as needed. Otherwise you may load what you need directly by
 explicity calling this function.

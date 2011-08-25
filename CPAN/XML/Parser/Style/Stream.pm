@@ -1,4 +1,4 @@
-# $Id: Stream.pm,v 1.1 2003/07/27 16:07:49 matt Exp $
+# $Id: Stream.pm,v 1.1 2003-07-27 16:07:49 matt Exp $
 
 package XML::Parser::Style::Stream;
 use strict;
