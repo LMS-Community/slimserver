@@ -313,7 +313,7 @@ sub load {
 		}
 
 		# add skin folders even in noweb mode: we'll need them for the icons
-		if ( !main::SLIM_SERVICE ) {
+		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 			# Add any available HTML to TT's INCLUDE_PATH
 			my $htmlDir = catdir($baseDir, 'HTML');
 
