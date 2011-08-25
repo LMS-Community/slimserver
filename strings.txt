@@ -23074,19 +23074,8 @@ CLEANUP_COMMAND_LINE
 	SV	Alternativ för kommandoraden:
 
 CLEANUP_DB
-	CS	Smazat data MySQL (databáze informací o médiích)
-	DA	Slet MySQL-data (database med oplysninger om mediefiler)
 	DE	Mediendatenbank löschen
 	EN	Delete media information database
-	ES	Eliminar datos de MySQL (base de datos multimedia)
-	FI	Poista MySQL-tiedot (mediatietokanta)
-	FR	Supprimer la base de données multimédia
-	IT	Elimina dati MySQL (database di informazioni sui file multimediali)
-	NL	MySQL-gegevens verwijderen (database met mediagegevens)
-	NO	Slett MySQL-data (medieinformasjonsdatabase)
-	PL	Usuń dane MySQL (baza danych informacji o multimediach)
-	RU	Удалить данные MySQL (база данных информации о мультимедиа)
-	SV	Ta bort MySQL-data (databasen med medieinformation)
 
 CLEANUP_FILECACHE
 	CS	Vymazat odkládací paměť souborů obalů alb, šablon apod.
