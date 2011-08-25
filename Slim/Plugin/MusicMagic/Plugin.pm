@@ -746,7 +746,7 @@ sub mixerFunction {
 	my $descend   = $paramref->{'descend'};
 
 	my @levels    = split(",", $hierarchy);
-	my $mix       = [];
+	my $mix;
 	my $mixSeed   = '';
 
 	my $currentItem = $items->[$listIndex];
@@ -755,6 +755,24 @@ sub mixerFunction {
 	if ( $trackinfo ) {
 		$currentItem = $track;
 		$levels[$level] = 'track';
+		
+	# use _prepare_mix for artist/album/genre
+	# XXX - consolidate all mixes to using this method!
+	} elsif ($paramref->{track_id} || $paramref->{artist_id} || $paramref->{album_id} || $paramref->{genre_id}) {
+		my $params = {
+#			song        => $paramref->{'song_id'}, 
+			track       => $paramref->{'track_id'},
+			artist      => $paramref->{'artist_id'},
+#			contributor => $paramref->{'contributor_id'},
+			album       => $paramref->{'album_id'},
+			genre       => $paramref->{'genre_id'},
+#			year        => $paramref->{'year'},
+#			mood        => $paramref->{'mood'},
+#			playlist    => $paramref->{'playlist'},
+		};
+	
+		$mix = _prepare_mix($client, $params);
+		
 	# then moods
 	} elsif ($paramref->{'mood'}) {
 		$mixSeed = $currentItem;
@@ -780,8 +798,11 @@ sub mixerFunction {
 		$mixSeed = $currentItem->name;
 	}
 
+	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
+		# nothing to do here - we already got a mix using _prepare_mix
+	}
 	# Bug: 7478: special handling for playlist tracks.
-	if ($levels[$level] eq 'playlistTrack' || $trackinfo ) {
+	elsif ($levels[$level] eq 'playlistTrack' || $trackinfo ) {
 
 		$mixSeed = $currentItem->path;
 		$mix = getMix($client, $mixSeed, 'track');
@@ -1439,8 +1460,6 @@ sub _objectInfoHandler {
 
 	my $mixable = $obj->musicmagic_mixable;
 
-	my $playerMenu = {};
-
 	my $special;
 	if ($objectType eq 'album') {
 		$special->{'actionParam'} = 'album_id';
@@ -1461,53 +1480,33 @@ sub _objectInfoHandler {
 		$special->{'actionParam'} = 'track_id';
 		$special->{'modeParam'}   = 'track';
 		$special->{'urlKey'}      = 'song';
-		$playerMenu = {
-			mode => 'musicmagic_mix',
-			modeParams => {
-				'track' => $obj,
-			},
-		};
-	}
-
-	my $jive = {};
-	if ( $tags->{menuMode} ) {
-		my $actions;
-		if ( $mixable ) {
-			$actions = {
-				go => {
-					player => 0,
-					cmd    => [ 'musicip', 'mix' ],
-					params => {
-						menu     => 1,
-						useContextMenu => 1,
-						$special->{actionParam} => $obj->id,
-					},
-				},
-			};
-		} else {
-			$actions = {
-				do => {
-					player => 0,
-					cmd    => [ 'jiveunmixable' ],
-					params => {
-						contextToken => 'MUSICMAGIC_MIX',
-					},
-				},
-			};
-
-		}
-
-		$jive->{actions} = $actions;
 	}
 
 	if ( $mixable ) {
 		return {
 			type      => 'redirect',
-			jive      => $jive,
+			jive      => {
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ 'musicip', 'mix' ],
+						params => {
+							menu     => 1,
+							useContextMenu => 1,
+							$special->{actionParam} => $obj->id,
+						},
+					},
+				}
+			},
 			name      => cstring($client, 'MUSICIP_CREATEMIX'),
 			favorites => 0,
 
-			player => $playerMenu,
+			player => {
+				mode => 'musicmagic_mix',
+				modeParams => {
+					$special->{actionParam} => $obj->id,
+				},
+			},
 
 			web  => {
 				group => 'mixers',
