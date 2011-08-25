@@ -26,8 +26,6 @@ sub initDetails {
 sub initPrefs {
 	my ($class, $prefs) = @_;
 	
-	$prefs->{dbsource} = 'dbi:mysql:database=slimserver';
-	
 	# if this is a sparc based ReadyNAS, do some performance tweaks
 	if ($class->{osDetails}->{osArch} =~ /sparc/) {	
 		$prefs->{scannerPriority}   = 20;
