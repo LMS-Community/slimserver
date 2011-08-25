@@ -336,6 +336,11 @@ sub parseDirectHeaders {
 	
 	foreach my $header (@headers) {
 	
+		# Tidy up header to make no stray nulls or \n have been left by caller.
+		$header =~ s/[\0]*$//;
+		$header =~ s/\r/\n/g;
+		$header =~ s/\n\n/\n/g;
+
 		$isDebug && $directlog->debug("header-ds: $header");
 
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {

@@ -312,7 +312,8 @@ sub load {
 			Slim::Utils::Misc::addFindBinPaths( catdir($binDir, Slim::Utils::OSDetect::details()->{'binArch'}), $binDir );
 		}
 
-		if ( main::WEBUI ) {
+		# add skin folders even in noweb mode: we'll need them for the icons
+		if ( !main::SLIM_SERVICE ) {
 			# Add any available HTML to TT's INCLUDE_PATH
 			my $htmlDir = catdir($baseDir, 'HTML');
 
