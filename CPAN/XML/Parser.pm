@@ -16,7 +16,7 @@ use Carp;
 
 BEGIN {
   require XML::Parser::Expat;
-  $VERSION = '2.40';
+  $VERSION = '2.41';
   die "Parser.pm and Expat.pm versions don't match"
     unless $VERSION eq $XML::Parser::Expat::VERSION;
 }
@@ -375,8 +375,8 @@ These options are then passed on to the Expat object on each parse call.
 They can also be given as extra arguments to the parse methods, in which
 case they override options given at XML::Parser creation time.
 
-The behavior of the parser is controlled either by C<L</Style>> and/or
-C<L</Handlers>> options, or by L</setHandlers> method. These all provide
+The behavior of the parser is controlled either by C<L</STYLES>> and/or
+C<L</HANDLERS>> options, or by L</setHandlers> method. These all provide
 mechanisms for XML::Parser to set the handlers needed by XML::Parser::Expat.
 If neither C<Style> nor C<Handlers> are specified, then parsing just
 checks the document for being well-formed.
