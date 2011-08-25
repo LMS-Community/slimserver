@@ -40,7 +40,7 @@ if ( main::SLIM_SERVICE ) {
 		SETUP_PLAYER_CODE
 	);
 	
-	require YAML::Syck;
+	require YAML::XS;
 }
 
 our %menuParams = ();
@@ -848,7 +848,7 @@ sub init {
 			},
 		};
 		
-		my $timezones = YAML::Syck::LoadFile( $main::SN_PATH . "/config/timezones.yml" );
+		my $timezones = YAML::XS::LoadFile( $main::SN_PATH . "/config/timezones.yml" );
 		
 		$menuParams{'SETTINGS'}->{'submenus'}->{'TIMEZONE'} = {
 			'useMode' => 'INPUT.Choice',
