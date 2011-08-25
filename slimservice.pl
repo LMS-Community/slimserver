@@ -527,7 +527,6 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --cachedir       => Directory for Logitech Media Server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
-    --noLogTimestamp => Don't add timestamp to log output
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
     --stdio          => Use standard in and out as a command line interface 

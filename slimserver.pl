@@ -726,7 +726,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
                         Also slows down library processing considerably
     --logdir         => Specify folder location for log file
     --logfile        => Specify a file for error logging.  Specify 'syslog' to log to syslog.
-    --noLogTimestamp => Don't add timestamp to log output
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
     --stdio          => Use standard in and out as a command line interface 
@@ -826,10 +825,10 @@ sub initOptions {
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	);
 
-	initLogging();
-
 	# make --logging and --debug synonyms, but prefer --logging
 	$debug = $logging if ($logging);
+
+	initLogging();
 
 	if ($help || !$gotOptions) {
 		showUsage();
