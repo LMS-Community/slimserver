@@ -186,8 +186,8 @@ sub loadModules {
 		print "The following modules failed to load: $failed\n\n";
 		
 		if ( main::ISWINDOWS ) {
-			print "To run from source on Windows, please install ActivePerl 5.10.  ActivePerl 5.8.8 is no longer supported.\n";
-			print "http://www.activestate.com/activeperl/\n\n";
+			print "To run from source on Windows, please install ActivePerl 5.14.1.  ActivePerl 5.10.0 is no longer supported.\n";
+			print "http://downloads.activestate.com/ActivePerl/releases/5.14.1.1401/ActivePerl-5.14.1.1401-MSWin32-x86-294969.msi\n\n";
 		}
 		else {
 			print qq{
