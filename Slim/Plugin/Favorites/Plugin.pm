@@ -98,6 +98,11 @@ sub initPlugin {
 		after => 'playitem',
 		func  => \&artistInfoHandler,
 	) );
+	# Playlist Info handler
+	Slim::Menu::PlaylistInfo->registerInfoProvider( favorites => (
+		after => 'playitem',
+		func  => \&playlistInfoHandler,
+	) );
 }
 
 
@@ -1012,6 +1017,11 @@ sub albumInfoHandler {
 
 sub artistInfoHandler {
 	my $return = _objectInfoHandler( @_, 'artist');
+	return $return;
+}
+
+sub playlistInfoHandler {
+	my $return = _objectInfoHandler( @_, 'playlist');
 	return $return;
 }
 
