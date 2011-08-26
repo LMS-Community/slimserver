@@ -28,7 +28,12 @@ IF hasArtwork && !(ajaxUpdate && ajaxUpdate >= 1);
 	titleRight = BLOCK %]
 		<div id="viewSelect"></div>
 	[% END; 
+ELSIF hasArtwork && ajaxSearch;
+	artwork = 2;
 END;
+
+USE Prefs;
+includeArtist = !Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')}.match('ARTIST');
 
 useSpecialExt="-browse" %]
 
@@ -315,8 +320,8 @@ useSpecialExt="-browse" %]
 						itemobj.id = loop.count _ (ajaxUpdate ? index : '');
 					END %]
 
-					[% IF !hasArtwork %]
-						[% # don't do anything as we consider this list a list without artwork, eg. tracks %]
+					[% IF !hasArtwork || artwork == 2 %]
+						[% # don't do anything as we consider this list a list without artwork, eg. tracks, or if we're in text only mode %]
 					[% ELSIF item.image %]
 						[% IF artwork == 0 %]
 							[% PROCESS itemIcon url=item.image size=50 class="browseItemDetail" %]
@@ -345,7 +350,8 @@ useSpecialExt="-browse" %]
 							[% IF item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
 								artist = item.trackartist || item.artist;
-								IF !title.match(artist) && ( 
+
+								IF includeArtist && ( 
 									(item.albumartist && artist != item.albumartist)
 									|| artist != item.artist
 									|| itemobj.compilation
