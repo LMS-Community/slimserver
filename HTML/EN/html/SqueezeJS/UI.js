@@ -1915,7 +1915,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 });
 
 
-if (Ext.slider) {
+if (Ext.slider && Ext.slider.SingleSlider) {
 	
 	SqueezeJS.UI.SliderInput = Ext.extend(Ext.slider.SingleSlider, {
 		tpl: new Ext.Template('<span></span>'),
