@@ -32,6 +32,9 @@ ELSIF hasArtwork && ajaxSearch;
 	artwork = 2;
 END;
 
+USE Prefs;
+includeArtist = !Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')}.match('ARTIST');
+
 useSpecialExt="-browse" %]
 
 [%- extJsScripts = BLOCK -%]
@@ -347,7 +350,8 @@ useSpecialExt="-browse" %]
 							[% IF item.hasMetadata == 'track' && !item.name2 %]
 							[%  # add the track artist if it's different from the album artist
 								artist = item.trackartist || item.artist;
-								IF !title.match(artist) && ( 
+
+								IF includeArtist && ( 
 									(item.albumartist && artist != item.albumartist)
 									|| artist != item.artist
 									|| itemobj.compilation
