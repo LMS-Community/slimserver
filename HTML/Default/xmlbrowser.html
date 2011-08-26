@@ -28,6 +28,8 @@ IF hasArtwork && !(ajaxUpdate && ajaxUpdate >= 1);
 	titleRight = BLOCK %]
 		<div id="viewSelect"></div>
 	[% END; 
+ELSIF hasArtwork && ajaxSearch;
+	artwork = 2;
 END;
 
 useSpecialExt="-browse" %]
