@@ -182,7 +182,7 @@ useSpecialExt="-browse" %]
 		[% END %]
 			
 		[% IF item.mixersLink; WRAPPER cmdlink cmdimage='b_mmmix.gif' cmdtitle='MORE' %]
-			href="[% webroot %][% item.mixersLink %]&player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]
+			href="[% webroot %][% item.mixersLink %]?player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]
 		[% END; END %]
 
 	[% END %]
