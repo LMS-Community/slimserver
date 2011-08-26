@@ -56,9 +56,14 @@ sub registerDefaultInfoProviders {
 	
 	$class->SUPER::registerDefaultInfoProviders();
 
+	$class->registerInfoProvider( playlistitemcount => (
+		after    => 'top',
+		func      => \&playlistItemCount,
+	) );
+
 	$class->registerInfoProvider( addplaylist => (
 		menuMode  => 1,
-		after    => 'top',
+		after    => 'playlistitemcount',
 		func      => \&addPlaylistEnd,
 	) );
 
@@ -175,6 +180,22 @@ sub menu {
 	};
 }
 
+sub playlistItemCount {
+	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
+	
+	my $items = [];
+	my $jive;
+	
+	return $items if !blessed($client) || !blessed($playlist);
+	
+	push @{$items}, {
+		type => 'text',
+		name => cstring($client, 'INFORMATION_TRACKS') . cstring('COLON') . ' ' 
+			. Slim::Utils::Misc::delimitThousands($playlist->tracks()->count),
+	};
+	
+	return $items;
+}
 
 sub playPlaylist {
 	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
