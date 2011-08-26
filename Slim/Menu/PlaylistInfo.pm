@@ -74,15 +74,9 @@ sub registerDefaultInfoProviders {
 		func      => \&playPlaylist,
 	) );
 
-	$class->registerInfoProvider( addfavorite => (
-		menuMode  => 1,
-		after    => 'playitem',
-		func      => \&addFavorite,
-	) );
-
 	$class->registerInfoProvider( deleteplaylist => (
 		menuMode  => 1,
-		after    => 'addfavorite',
+		after    => 'favorites',
 		func      => \&deletePlaylist,
 	) );
 
@@ -223,6 +217,7 @@ sub addPlaylistEnd {
 	addPlaylist( $client, $url, $playlist, $remoteMeta, $tags, $add_string, $cmd );
 
 }
+
 sub addPlaylistNext {
 	my ( $client, $url, $playlist, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
@@ -262,43 +257,6 @@ sub addPlaylist {
 	};
 	
 	return $items;
-}
-
-sub addFavorite {
-	my ( $client, $url, $playlist, $remoteMeta, $tags) = @_;
-
-	return [] if !blessed($client);
-
-	my $action = 'add';
-	my $token = 'JIVE_SAVE_TO_FAVORITES';
-	# first we check to see if the URL exists in favorites already
-	my $favIndex = undef;
-	if ( blessed($client) ) {
-		my $favs = Slim::Utils::Favorites->new($client);
-		$favIndex = $favs->findUrl($url);
-		if (defined($favIndex)) {
-			$action = 'delete';
-			$token = 'JIVE_DELETE_FROM_FAVORITES';
-		}
-	}
-	
-	return [ {
-		type => 'text',
-		name => cstring($client, $token),
-		jive => {
-			actions => {
-				'go' => {
-					player => 0,
-					cmd    => [ 'jivefavorites', $action ],
-					params => {
-							title   => $playlist->name,
-							url     => $url,
-					},
-				},
-			},
-			style   => 'item',
-		}, 
-	} ];
 }
 
 sub deletePlaylist {
