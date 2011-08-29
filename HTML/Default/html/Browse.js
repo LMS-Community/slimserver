@@ -164,6 +164,10 @@ Browse.XMLBrowser = {
 		this._playAddLink('insert', query, index, sess);
 	},
 	
+	removeLink: function(query, index, sess) {
+		this._playAddLink('remove', query, index, sess);
+	},
+	
 	_playAddLink: function(action, query, index, sess, showBriefly) {
 		this._doRequest(this.template.apply({
 				action: action,

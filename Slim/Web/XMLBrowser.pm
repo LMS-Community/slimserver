@@ -277,6 +277,9 @@ sub handleFeed {
 			my $searchQuery;
 			
 			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && defined $stash->{'q'} ) {
+				# bug 17373 - remove period from search expression, as it breaks our index (and is ignored during the search anyway)
+				$stash->{q} =~ s/\./ /g;
+
 				$crumbText .= '_' . uri_escape_utf8( $stash->{q}, "^A-Za-z0-9" );
 				$searchQuery = $stash->{'q'};
 			}
@@ -309,7 +312,7 @@ sub handleFeed {
 			if ( 
 			       $subFeed->{'playlist'}
 				&& $depth == $levels
-				&& $stash->{'action'} =~ /^(?:playall|addall|insert)$/
+				&& $stash->{'action'} =~ /^(?:playall|addall|insert|remove)$/
 			) {
 				$subFeed->{'type'} = 'playlist';
 				$subFeed->{'url'}  = $subFeed->{'playlist'};
@@ -624,7 +627,7 @@ sub handleFeed {
 		}
 	}
 	# play all/add all
-	elsif ( $client && $action && $action =~ /^(playall|addall|insert)$/ ) {
+	elsif ( $client && $action && $action =~ /^(playall|addall|insert|remove)$/ ) {
 		$action =~ s/all$//;
 		
 		my @urls;
@@ -663,6 +666,8 @@ sub handleFeed {
 			}
 			if ($action eq 'insert') {
 				$client->execute([ 'playlist', 'inserttracks', 'listRef', \@urls ]);
+			} elsif ($action eq 'remove') {
+				$client->execute([ 'playlist', 'deletetracks', 'listRef', \@urls ]);
 			} else {
 				$client->execute([ 'playlist', $action, \@urls ]);
 			}
@@ -908,6 +913,10 @@ sub handleFeed {
 						Slim::Utils::Misc::escape($stash->{'playUrl'});
 					$details->{'addLink'} = 'anyurl?p0=playlist&p1=add&p2=' . 
 						Slim::Utils::Misc::escape($stash->{'playUrl'});
+					$details->{'insertLink'} = 'anyurl?p0=playlist&p1=insert&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
+					$details->{'removeLink'} = 'anyurl?p0=playlist&p1=deleteitem&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
 				}
 	
 				$stash->{'songinfo'} = $details;
@@ -1127,7 +1136,7 @@ sub webLink {
 	my $allArgs = \@_;
 
 	# get parameters and construct CLI command
-	# Bug 17181: Unfortunately were un-escaping the request path parameter before we split it into separate parameters.
+	# Bug 17181: Unfortunately we're un-escaping the request path parameter before we split it into separate parameters.
 	# Which means any value with a & in it would be considered a distinct parameter. By using the
 	# raw path value from the request object and un-escaping after the splitting, we could fix this.
 	my ($params) = ($response->request->uri =~ m%clixmlbrowser/([^/]+)%);
