@@ -113,9 +113,12 @@ sub throw_exception {
 
 			return $self->_dbh;
 		}
-		
-	}
 
+	} elsif ($msg =~ /SQLite.*no such table: sqlite_stat1/i) {
+		# no need to croak on a new restart from scratch, users think it's a bad thing
+		return;
+	}
+	
 	logBacktrace($msg);
 
 	# Need to propagate the real error so that DBIx::Class::Storage will
