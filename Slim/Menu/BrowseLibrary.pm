@@ -1073,6 +1073,10 @@ sub _artists {
 							command     => ['playlistcontrol'],
 							fixedParams => {cmd => 'insert', %$params},
 						},
+						remove => {
+							command     => ['playlistcontrol'],
+							fixedParams => {cmd => 'delete', %$params},
+						},
 					},					
 				} ];
 			}
@@ -1106,6 +1110,7 @@ sub _artists {
 					play   => {command => [BROWSELIBRARY, 'playlist', 'play'],   fixedParams => \%params},
 					add    => {command => [BROWSELIBRARY, 'playlist', 'add'],    fixedParams => \%params},
 					insert => {command => [BROWSELIBRARY, 'playlist', 'insert'], fixedParams => \%params},
+					remove => {command => [BROWSELIBRARY, 'playlist', 'delete'], fixedParams => \%params},
 				);
 
 				$extra = [ {
@@ -1143,6 +1148,10 @@ sub _artists {
 				insert => {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'insert', %$params},
+				},
+				remove => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'delete', %$params},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};
@@ -1408,6 +1417,7 @@ sub _albums {
 					play   => {command => [BROWSELIBRARY, 'playlist', 'play'],   fixedParams => \%params},
 					add    => {command => [BROWSELIBRARY, 'playlist', 'add'],    fixedParams => \%params},
 					insert => {command => [BROWSELIBRARY, 'playlist', 'insert'], fixedParams => \%params},
+					remove => {command => [BROWSELIBRARY, 'playlist', 'delete'], fixedParams => \%params},
 				);
 
 				$extra = [ {
@@ -1553,6 +1563,10 @@ sub _tracks {
 				insert => {
 					command     => ['playlistcontrol'],
 					fixedParams => {cmd => 'insert'},
+				},
+				remove => {
+					command     => ['playlistcontrol'],
+					fixedParams => {cmd => 'delete'},
 				},
 			);
 			$actions{'items'} = $actions{'info'};	# XXX, not sure about this, probably harmless but unnecessary

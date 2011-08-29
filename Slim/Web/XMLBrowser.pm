@@ -312,7 +312,7 @@ sub handleFeed {
 			if ( 
 			       $subFeed->{'playlist'}
 				&& $depth == $levels
-				&& $stash->{'action'} =~ /^(?:playall|addall|insert)$/
+				&& $stash->{'action'} =~ /^(?:playall|addall|insert|remove)$/
 			) {
 				$subFeed->{'type'} = 'playlist';
 				$subFeed->{'url'}  = $subFeed->{'playlist'};
@@ -627,7 +627,7 @@ sub handleFeed {
 		}
 	}
 	# play all/add all
-	elsif ( $client && $action && $action =~ /^(playall|addall|insert)$/ ) {
+	elsif ( $client && $action && $action =~ /^(playall|addall|insert|remove)$/ ) {
 		$action =~ s/all$//;
 		
 		my @urls;
@@ -666,6 +666,8 @@ sub handleFeed {
 			}
 			if ($action eq 'insert') {
 				$client->execute([ 'playlist', 'inserttracks', 'listRef', \@urls ]);
+			} elsif ($action eq 'remove') {
+				$client->execute([ 'playlist', 'deletetracks', 'listRef', \@urls ]);
 			} else {
 				$client->execute([ 'playlist', $action, \@urls ]);
 			}
@@ -910,6 +912,10 @@ sub handleFeed {
 					$details->{'playLink'} = 'anyurl?p0=playlist&p1=play&p2=' . 
 						Slim::Utils::Misc::escape($stash->{'playUrl'});
 					$details->{'addLink'} = 'anyurl?p0=playlist&p1=add&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
+					$details->{'insertLink'} = 'anyurl?p0=playlist&p1=insert&p2=' . 
+						Slim::Utils::Misc::escape($stash->{'playUrl'});
+					$details->{'removeLink'} = 'anyurl?p0=playlist&p1=deleteitem&p2=' . 
 						Slim::Utils::Misc::escape($stash->{'playUrl'});
 				}
 	
