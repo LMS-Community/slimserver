@@ -2936,16 +2936,16 @@ sub lastError { $LAST_ERROR }
 sub totals {
 	my $class = shift;
 	
-	if ( !exists $TOTAL_CACHE{album} ) {
+	if ( !$TOTAL_CACHE{album} ) {
 		$TOTAL_CACHE{album} = $class->count('Album');
 	}
-	if ( !exists $TOTAL_CACHE{contributor} ) {
+	if ( !$TOTAL_CACHE{contributor} ) {
 		$TOTAL_CACHE{contributor} = $class->rs('Contributor')->countTotal;
 	}
-	if ( !exists $TOTAL_CACHE{genre} ) {
+	if ( !$TOTAL_CACHE{genre} ) {
 		$TOTAL_CACHE{genre} = $class->count('Genre');
 	}
-	if ( !exists $TOTAL_CACHE{track} ) {
+	if ( !$TOTAL_CACHE{track} ) {
 		# Bug 13215, this used to be $class->rs('Track')->browse->count but this generates a slow query
 		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('SELECT COUNT(*) FROM tracks WHERE audio = 1');
