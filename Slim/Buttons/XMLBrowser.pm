@@ -330,7 +330,7 @@ sub gotRSS {
 		!($feed->{'xmlns:slim'} && !$feed->{'description'})) {
 
 		my %desc = (
-			'name'       => '{XML_FEED_DESCRIPTION}',
+			'title'      => '{XML_FEED_DESCRIPTION}',
 			'value'      => 'description',
 			'onRight'    => sub {
 				my $client = shift;
