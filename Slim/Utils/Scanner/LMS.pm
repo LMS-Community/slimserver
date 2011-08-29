@@ -209,10 +209,6 @@ sub rescan {
 				if ( $p->cur_item ) {
 					$progress->update( $p->cur_item, $p->done );
 				}
-				
-				if ($total && $p->done && $p->done == $total) {
-					$progress->final($total);
-				}
 			}
 			
 			$abortCheck->();
