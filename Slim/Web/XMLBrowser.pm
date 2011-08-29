@@ -277,6 +277,9 @@ sub handleFeed {
 			my $searchQuery;
 			
 			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && defined $stash->{'q'} ) {
+				# bug 17373 - remove period from search expression, as it breaks our index (and is ignored during the search anyway)
+				$stash->{q} =~ s/\./ /g;
+
 				$crumbText .= '_' . uri_escape_utf8( $stash->{q}, "^A-Za-z0-9" );
 				$searchQuery = $stash->{'q'};
 			}
@@ -1127,7 +1130,7 @@ sub webLink {
 	my $allArgs = \@_;
 
 	# get parameters and construct CLI command
-	# Bug 17181: Unfortunately were un-escaping the request path parameter before we split it into separate parameters.
+	# Bug 17181: Unfortunately we're un-escaping the request path parameter before we split it into separate parameters.
 	# Which means any value with a & in it would be considered a distinct parameter. By using the
 	# raw path value from the request object and un-escaping after the splitting, we could fix this.
 	my ($params) = ($response->request->uri =~ m%clixmlbrowser/([^/]+)%);
