@@ -908,6 +908,7 @@ sub _createOrUpdateAlbum {
 				titlesearch => Slim::Utils::Text::ignoreCaseArticles($sortkey, 1),
 				compilation => $isCompilation, # XXX why set compilation?
 				year        => 0,
+				contributor => $self->variousArtistsObject->id,
 			};
 			
 			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
