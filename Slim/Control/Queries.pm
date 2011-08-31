@@ -65,9 +65,11 @@ sub init {
 	my $class = shift;
 	
 	# Wipe cached data after rescan
-	Slim::Control::Request::subscribe( sub {
-		$class->wipeCaches;
-	}, [['rescan'], ['done']] );
+	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+		Slim::Control::Request::subscribe( sub {
+			$class->wipeCaches;
+		}, [['rescan'], ['done']] );
+	}
 }
 
 sub alarmPlaylistsQuery {
