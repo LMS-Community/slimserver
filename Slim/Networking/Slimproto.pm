@@ -1002,7 +1002,7 @@ sub _proxy_handler {
 
 sub _shut_handler {
 	my $client = shift;
-	slimproto_close($client->tcpsock);
+	slimproto_close($client->tcpsock) if $client->tcpsock;
 }
 
 my $warnNoSB1Support = 0;
