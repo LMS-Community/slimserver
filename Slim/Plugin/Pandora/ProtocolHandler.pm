@@ -447,7 +447,7 @@ sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
 	my $song = $forceCurrent ? $client->streamingSong() : $client->playingSong();
-	return unless $song;
+	return {} unless $song;
 	
 	my $icon = $class->getIcon();
 	
