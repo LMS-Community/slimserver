@@ -46,6 +46,8 @@ Multiple handlers may be registered, and they are called in the order they were 
 my @onNewTrack;
 my @onDeletedTrack;
 my @onChangedTrack;
+my @onNewImage;
+my @onNewVideo;
 my @onNewPlaylist;
 my @onDeletedPlaylist;
 my @onFinished;
@@ -82,6 +84,42 @@ sub onChangedTrack {
 	my ( $class, $opts ) = @_;
 	
 	push @onChangedTrack, $opts;
+}
+
+=head2 Slim::Utils::Scanner::API->onNewImage( { cb => $cb } )
+
+Register a handler that will be called when a new image is scanned.
+
+The callback is passed an image hashref with all scan data. Note that images differ
+from tracks, and there is no support for Slim::Schema objects for images. To alter the
+data, call Slim::Schema::Image->updateOrCreateFromHash($hashref).
+
+Multiple handlers may be registered, and they are called in the order they were registered.
+
+=cut
+
+sub onNewImage {
+	my ( $class, $opts ) = @_;
+	
+	push @onNewImage, $opts;
+}
+
+=head2 Slim::Utils::Scanner::API->onNewVideo( { cb => $cb } )
+
+Register a handler that will be called when a new video is scanned.
+
+The callback is passed a video hashref with all scan data. Note that videos differ
+from tracks, and there is no support for Slim::Schema objects for videos. To alter the
+data, call Slim::Schema::Video->updateOrCreateFromHash($hashref).
+
+Multiple handlers may be registered, and they are called in the order they were registered.
+
+=cut
+
+sub onNewVideo {
+	my ( $class, $opts ) = @_;
+	
+	push @onNewVideo, $opts;
 }
 
 =head2 Slim::Utils::Scanner::API->onNewPlaylist( \%options )
@@ -146,17 +184,27 @@ sub _makeDispatcher {
 		my $opts = shift; # { id, url, obj (sometimes) }
 		
 		for my $h ( @{$handlers} ) {
-			my $arg1 = $opts->{id};
+			if ( $opts->{id} ) { # Tracks, with object support
+				my $arg1 = $opts->{id};
 						
-			if ( $h->{want_object} ) {
-				$arg1 = $opts->{obj} ||= Slim::Schema->rs($objectClass)->find($arg1);
-			}
+				if ( $h->{want_object} ) {
+					$arg1 = $opts->{obj} ||= Slim::Schema->rs($objectClass)->find($arg1);
+				}
 			
-			eval { $h->{cb}->( $arg1, $opts->{url} ) };
-			if ( $@ ) {
-				require Slim::Utils::PerlRunTime;
-				my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
-				Slim::Utils::Log::logError("Error in $type handler for ID " . $opts->{id} . " ($method): $@");
+				eval { $h->{cb}->( $arg1, $opts->{url} ) };
+				if ( $@ ) {
+					require Slim::Utils::PerlRunTime;
+					my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{url} . " ($method): $@");
+				}
+			}
+			else { # Images/Videos
+				eval { $h->{cb}->( $opts->{hashref} ) };
+				if ( $@ ) {
+					require Slim::Utils::PerlRunTime;
+					my $method = Slim::Utils::PerlRunTime::realNameForCodeRef( $h->{cb} );
+					Slim::Utils::Log::logError("Error in $type plugin handler for " . $opts->{hashref}->{url} . " ($method): $@");
+				}
 			}
 		}
 	};
@@ -186,6 +234,12 @@ sub getHandlers {
 		onNewTrackHandler        => _makeDispatcher( \@onNewTrack, 'Track', 'onNewTrack' ),
 		onDeletedTrackHandler    => _makeDispatcher( \@onDeletedTrack, 'Track', 'onDeletedTrack' ),
 		onChangedTrackHandler    => _makeDispatcher( \@onChangedTrack, 'Track', 'onChangedTrack' ),
+		onNewImageHandler        => _makeDispatcher( \@onNewImage, undef, 'onNewImage' ),
+		# onDeletedImageHandler
+		# onChangedImageHandler
+		onNewVideoHandler        => _makeDispatcher( \@onNewVideo, undef, 'onNewVideo' ),
+		# onDeletedVideoHandler
+		# onChangedVideoHandler
 		onNewPlaylistHandler     => _makeDispatcher( \@onNewPlaylist, 'Playlist', 'onNewPlaylist' ),
 		onDeletedPlaylistHandler => _makeDispatcher( \@onDeletedPlaylist, 'Playlist', 'onDeletedPlaylist' ),
 		onFinishedHandler        => _makeFinishedDispatcher( \@onFinished ),

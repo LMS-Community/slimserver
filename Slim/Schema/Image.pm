@@ -24,7 +24,6 @@ my %orientation = (
 sub updateOrCreateFromResult {
 	my ( $class, $result ) = @_;
 	
-	my $id;
 	my $url = Slim::Utils::Misc::fileURLFromPath($result->path);
 	
 	my $exifData = $result->tags;
@@ -65,13 +64,20 @@ sub updateOrCreateFromResult {
 		orientation  => $orientation{ lc($exifData->{Orientation} || '') } || 0,
 	};
 	
+	return $class->updateOrCreateFromHash($hash);
+}
+
+sub updateOrCreateFromHash {
+	my ( $class, $hash ) = @_;
+	
 	my $sth = Slim::Schema->dbh->prepare_cached('SELECT id FROM images WHERE url = ?');
-	$sth->execute($url);
-	($id) = $sth->fetchrow_array;
+	$sth->execute( $hash->{url} );
+	my ($id) = $sth->fetchrow_array;
 	$sth->finish;
 	
 	if ( !$id ) {
 	    $id = Slim::Schema->_insertHash( images => $hash );
+		$hash->{id} = $id;
 	}
 	else {
 		$hash->{id} = $id;
@@ -82,7 +88,7 @@ sub updateOrCreateFromResult {
 		Slim::Schema->_updateHash( images => $hash, 'id' );
 	}
 	
-	return $id;
+	return $hash;
 }
 
 sub findhash {

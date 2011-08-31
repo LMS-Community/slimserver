@@ -747,17 +747,16 @@ sub new {
 		$work = sub {
 			main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new video " . $result->path);
 			
-			my $id = Slim::Schema::Video->updateOrCreateFromResult($result);
+			my $video = Slim::Schema::Video->updateOrCreateFromResult($result);
 			
-			if ( !defined $id ) {
+			if ( !defined $video ) {
 				$log->error( 'ERROR SCANNING VIDEO ' . $result->path . ': ' . Slim::Schema->lastError );
 				return;
 			}
 			
 			# plugin hook
-			# XXX document video handlers
 			if ( my $handler = $pluginHandlers->{onNewVideoHandler} ) {
-				$handler->( { id => $id, path => $result->path } );
+				$handler->( { hashref => $video } );
 			}
 		};
 	}
@@ -766,17 +765,16 @@ sub new {
 		$work = sub {
 			main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new image " . $result->path);
 			
-			my $id = Slim::Schema::Image->updateOrCreateFromResult($result);
+			my $image = Slim::Schema::Image->updateOrCreateFromResult($result);
 			
-			if ( !defined $id ) {
+			if ( !defined $image ) {
 				$log->error( 'ERROR SCANNING IMAGE ' . $result->path . ': ' . Slim::Schema->lastError );
 				return;
 			}
 			
 			# plugin hook
-			# XXX document image handlers
 			if ( my $handler = $pluginHandlers->{onNewImageHandler} ) {
-				$handler->( { id => $id, path => $result->path } );
+				$handler->( { hashref => $image } );
 			}
 		};
 	}
