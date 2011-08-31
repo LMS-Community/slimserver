@@ -903,16 +903,13 @@ sub init {
 	if ( main::SLIM_SERVICE ) {
 		# Update players.name database field if name is changed
 		$prefs->setChange( sub {
-			my $name   = $_[1];
+			my $name   = $_[1] || return;
 			my $client = $_[2] || return;
+			
+			return if $name eq 'nil';
 			
 			$client->playerData->name( $name );
 			$client->playerData->update;
-				
-			# Also update the value in firmware
-			# This is handled by another setChange for playername,
-			# but the prefs code only allows one setChange action per pref
-			$client->setPlayerSetting( playername => $name );
 		}, 'playername' );
 	}
 }
