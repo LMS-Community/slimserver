@@ -117,6 +117,11 @@ sub rescan {
 	# Wipe if requested
 	if ( $args->{wipe} ) {
 		Slim::Schema->wipeAllData;
+
+		# Wipe cached data used for Jive, i.e. albums query data
+		if (!main::SCANNER) {	
+			Slim::Control::Queries::wipeCaches();
+		}
 	}
 	
 	# Default to a recursive scan

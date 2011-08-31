@@ -184,6 +184,7 @@ sub abortScan {
 		$ABORT = 1;
 		
 		$class->setIsScanning(0) if !$class->externalScannerRunning;
+		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 	}
 }
 

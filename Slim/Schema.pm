@@ -260,6 +260,11 @@ sub init {
 
 		$prefs->set('migratedMovCT' => 1);
 	}
+	
+	# Wipe cached data after rescan
+	Slim::Control::Request::subscribe( sub {
+		$class->wipeCaches;
+	}, [['rescan'], ['done']] );
 
 	$initialized = 1;
 }
@@ -2027,11 +2032,6 @@ sub wipeCaches {
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
-	
-	# Wipe cached data used for Jive, i.e. albums query data
-	if (!main::SCANNER) {	
-		Slim::Control::Queries::wipeCaches();
-	}
 	
 	main::INFOLOG && logger('scan.import')->info("Wiped all in-memory caches.");
 }
