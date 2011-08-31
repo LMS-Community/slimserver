@@ -54,6 +54,16 @@ sub processControl {
 	
 	my $request = $response->request;
 	
+	# DLNA 7.2.5.6, return HTTP/1.1 regardless of the request version
+	$response->protocol('HTTP/1.1');
+	
+	$response->header( 'Content-Type' => 'text/xml; charset="utf-8"' );
+	$response->header( Ext => '' );
+	
+	$response->remove_header('Server');
+	$response->header( Server => Slim::Plugin::UPnP::Discovery->server() );
+	$response->header( Date => time2str( time() ) );
+	
 	# We only handle text/xml content
 	if ( !$request->header('Content-Type') || $request->header('Content-Type') !~ m{^text/xml}i ) {
 		$log->warn( 'SOAPServer: Invalid content-type for request: ' . $request->header('Content-Type') );
@@ -119,7 +129,7 @@ sub processControl {
 	$body = $body->{ $method };
 
 	# If it is an empty string, turn it into undef
-	if ( defined $body and !ref( $body ) and $body eq '' ) {
+	if ( defined $body && !ref $body && $body =~ /^\s*$/ ) {
 		$body = undef;
 	}
 	
@@ -167,12 +177,6 @@ sub processControl {
 		$response->code( $SOAP::Constants::HTTP_ON_SUCCESS_CODE );
 	}
 	
-	$response->header( 'Content-Type' => 'text/xml; charset="utf-8"' );
-	$response->header( Ext => '' );
-	
-	$response->remove_header('Server');
-	$response->header( Server => Slim::Plugin::UPnP::Discovery->server() ); 
-	$response->header( Date => time2str( time() ) );
 	$response->header( 'Content-Length' => length($content) );
 	
 	Slim::Web::HTTP::addHTTPResponse( $httpClient, $response, \$content	);
@@ -204,23 +208,19 @@ sub fault {
 		'fault',
 		$SOAP::Constants::FAULT_CLIENT,
 		'UPnPError',
-		SOAP::Data->value(
-			SOAP::Data->name( 
-				errorCode => $error_code
-			)->type('int'),
-			SOAP::Data->name(
-				errorDescription => $desc
-			)->type('string'),
-		),
+		SOAP::Data->name( UPnPError =>
+			\SOAP::Data->value(
+				SOAP::Data->name( 
+					errorCode => $error_code
+				)->type('int'),
+				SOAP::Data->name(
+					errorDescription => $desc
+				)->type('string'),
+			),
+ 		),
 	);
 	
-	$response->code( 500 );
-	$response->header( 'Content-Type' => 'text/xml; charset="utf-8"' );
-	$response->header( Ext => '' );
-	
-	$response->remove_header('Server');
-	$response->header( Server => Slim::Plugin::UPnP::Discovery->server() ); 
-	$response->header( Date => time2str( time() ) );
+	$response->code( $SOAP::Constants::HTTP_ON_FAULT_CODE );
 	$response->header( 'Content-Length' => length($content) );
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
