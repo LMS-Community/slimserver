@@ -2206,6 +2206,8 @@ sub _retrieveTrack {
 	if (Slim::Music::Info::isRemoteURL($url)) {
 		return Slim::Schema::RemoteTrack->fetch($url, $playlist);
 	}
+	
+	return if main::SLIM_SERVICE; # if MySB gets past here, we have an invalid remote URL
 
 	# Keep the last track per dirname.
 	my $dirname = dirname($url);
