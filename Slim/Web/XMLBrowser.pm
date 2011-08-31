@@ -904,9 +904,28 @@ sub handleFeed {
 				}
 				delete $details->{'unfold'};
 			}
-			
-			if (scalar keys %$details) {
+
+			$feed->{'favorites_url'} ||= $stash->{'playUrl'};
+
+			if (($feed->{'hasMetadata'} eq 'album')) {
+				my $morelink = _makeWebLink({
+					actions => { 
+						info => { 
+							command =>   ['albuminfo', 'items'], 
+							variables => [ 'album_id', 'id' ],
+						},
+					},
+				},$feed, 'info', sprintf('%s (%s)', string('INFORMATION'), ($feed->{'album'} || '')));
 				
+				$details->{'mixersLink'} = $morelink if $morelink;
+			}
+				
+			if ($feed->{'favorites_url'} && $favs) {
+				$details->{'favorites_url'} = $feed->{'favorites_url'};
+				$details->{'favorites'} = $favs->hasUrl($feed->{'favorites_url'}) ? 2 : 1;
+			}
+
+			if (scalar keys %$details) {
 				# This is really just for Trackinfo
 				if ($stash->{'playUrl'}) {
 					$details->{'playLink'} = 'anyurl?p0=playlist&p1=play&p2=' . 
