@@ -9,7 +9,7 @@
 		<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
 		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 			[% "FROM" | string %]
-			<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/" target="browser">[% item.itemobj.album.title | html %]</a>
+			<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.itemobj.album.title | html %]</a>
 		[% END %]
 		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 		</span>

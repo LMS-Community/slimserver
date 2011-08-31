@@ -607,7 +607,7 @@ SqueezeJS.SonginfoParser = {
 		},
 		linked : {
 			title : new Ext.Template('<a href="' + webroot +'{link}?player={player}&amp;item={id}" target="browser">{title}</a>'),
-			album : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle={title}&amp;album_id={id}&amp;player={player}/" target="browser">{album}</a>'),
+			album : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;album_id={id}&amp;player={player}/index.html?index=0" target="browser">{album}</a>'),
 			contributor : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;artist_id={id}&amp;player={player}/" target="browser">{contributor}</a>'),
 			year : new Ext.Template('<a href="' + webroot + 'clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle={title}&amp;year={year}&amp;player={player}/" target="browser">{year}</a>'),
 			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" {width} {height}></a>')

@@ -1335,6 +1335,10 @@ sub generateHTTPResponse {
 				);
 			}
 			
+		} elsif ( $path =~ /anyurl/ ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug('anyurl - parameters processed, return dummy content to prevent 404');
+			$$body = 'anyurl processed';
+			
 		} else {
 			# who knows why we're here, we just know that something ain't right
 			$$body = undef;
