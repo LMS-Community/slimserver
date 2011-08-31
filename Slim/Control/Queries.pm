@@ -66,7 +66,7 @@ sub init {
 	
 	# Wipe cached data after rescan
 	Slim::Control::Request::subscribe( sub {
-		$class->wipeCaches;
+		Slim::Schema->wipeCaches;
 	}, [['rescan'], ['done']] );
 }
 
