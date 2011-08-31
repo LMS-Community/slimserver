@@ -2917,7 +2917,6 @@ sub statusQuery {
 	
 	my $connected    = $client->connected() || 0;
 	my $power        = $client->power();
-	my $ip           = $client->ipport();
 	my $repeat       = Slim::Player::Playlist::repeat($client);
 	my $shuffle      = Slim::Player::Playlist::shuffle($client);
 	my $songCount    = Slim::Player::Playlist::count($client);
@@ -2940,9 +2939,11 @@ sub statusQuery {
 	}
 	
 	# add player info...
-	$request->addResult("player_name", $client->name());
+	if (my $name = $client->name()) {
+		$request->addResult("player_name", $name);
+	}
 	$request->addResult("player_connected", $connected);
-	$request->addResult("player_ip", $ip);
+	$request->addResult("player_ip", $client->ipport()) if $connected;
 
 	# add showBriefly info
 	if ($client->display->renderCache->{showBriefly}
