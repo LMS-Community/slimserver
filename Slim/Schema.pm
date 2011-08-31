@@ -264,7 +264,9 @@ sub init {
 		}
 
 		$prefs->set('migratedMovCT' => 1);
+	}
 	
+	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 		# Wipe cached data after rescan
 		Slim::Control::Request::subscribe( sub {
 			$class->wipeCaches;
