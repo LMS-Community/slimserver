@@ -629,6 +629,7 @@ sub stillScanning {
 		$class->setIsScanning(0);
 		
 		Slim::Utils::Progress->cleanup('importer');
+		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 		
 		return 0;
 	}

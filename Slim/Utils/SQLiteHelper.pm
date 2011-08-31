@@ -524,8 +524,6 @@ sub _notifyFromScanner {
 		
 		if ( $SCANNING ) {		
 			$SCANNING = 0;
-			
-			Slim::Music::Import->setIsScanning(0);
 		}
 		else {
 			# XXX handle players with track objects that are now outdated?
@@ -536,14 +534,12 @@ sub _notifyFromScanner {
 			
 			# Close ArtworkCache to zero out WAL file, it'll be reopened when needed
 			Slim::Utils::ArtworkCache->new->close;
-		
-			Slim::Music::Import->setIsScanning(0);
-			
-			# Clear caches, like the vaObj, etc after scanning has been finished.
-			Slim::Schema->wipeCaches;
-
-			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 		}
+
+		Slim::Music::Import->setIsScanning(0);
+			
+		# Clear caches, like the vaObj, etc after scanning has been finished.
+		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 	}
 	
 	$request->setStatusDone();
