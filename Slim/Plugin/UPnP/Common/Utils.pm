@@ -8,6 +8,10 @@ package Slim::Plugin::UPnP::Common::Utils;
 # <pv:lastPlayedTime>2010-02-10T16:02:37</pv:lastPlayedTime>
 # <pv:addedTime>1261090276</pv:addedTime>
 # <pv:modificationTime>1250180640</pv:modificationTime>
+#
+# Support time-based seek DLNA (OP=11), can use Media::Scan/Audio::Scan to seek
+# Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
+# Multiple NIC support
 
 use strict;
 
@@ -23,6 +27,13 @@ our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetail
 
 my $log   = logger('plugin.upnp');
 my $prefs = preferences('server');
+
+use constant DLNA_FLAGS        => sprintf "%.8x%.24x", (1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+use constant DLNA_FLAGS_IMAGES => sprintf "%.8x%.24x", (1 << 23) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+
+my %DLNA_MAP = (
+	'audio/mpeg' => 'DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS(),
+);
 
 sub xmlEscape {
 	my $text = shift;
@@ -169,6 +180,7 @@ sub trackDetails {
 	
 	if ( my $coverid = ($track->{coverid} || $track->{'tracks.coverid'}) ) {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+			# XXX 7.3.61.3, dlna:profileID JPEG_TN and full size
 			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
 		}
 		
@@ -210,7 +222,15 @@ sub trackDetails {
 		}
 		
 		for my $type ( $native_type, @other_types ) {
-			$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+			# XXX Need to add correct DLNA profile detection into Audio::Scan
+			my $dlna = $DLNA_MAP{$type} || '*';
+			
+			# Add DLNA.ORG_CI=1 for transcoded content
+			if ( $type ne $native_type ) {
+				$dlna =~ s/;/;DLNA.ORG_CI=1;/;
+			}
+			
+			$xml .= '<res protocolInfo="http-get:*:' . $type . ':' . $dlna . '"';
 		
 			if ( ($filterall || $filter =~ /res\@size/) && $type eq $native_type ) {
 				# Size only available for native type
@@ -266,6 +286,7 @@ sub videoDetails {
 		$xml .= '<upnp:album>' . xmlEscape($video->{album} || $video->{'videos.album'}) . '</upnp:album>';
 	}
 	
+	# XXX albumArtURI needed for video?
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
 	}
@@ -298,8 +319,13 @@ sub videoDetails {
 		}
 		
 		my $type = $video->{mime_type} || $video->{'videos.mime_type'};
-
-		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+		
+		my $dlna = '*';
+		if ( my $profile = $video->{dlna_profile} || $video->{'videos.dlna_profile'} ) {
+			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS();
+		}
+		
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ":${dlna}\"";
 	
 		if ( ($filterall || $filter =~ /res\@size/) ) {
 			$xml .= ' size="' . ($video->{filesize} || $video->{'videos.filesize'}) . '"';
@@ -347,6 +373,7 @@ sub imageDetails {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
 	}
 	
+	# XXX albumArtURI needed for images?
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
 	}
@@ -374,8 +401,14 @@ sub imageDetails {
 	
 	if ( $filterall || $filter =~ /res/ ) {
 		my $type = $image->{mime_type} || $image->{'images.mime_type'};
+		my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'};
 
-		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+		my $dlna = '*';
+		if ( my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'} ) {
+			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS_IMAGES();
+		}
+		
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ":${dlna}\"";
 	
 		if ( ($filterall || $filter =~ /res\@size/) ) {
 			$xml .= ' size="' . ($image->{filesize} || $image->{'images.filesize'}) . '"';

@@ -75,6 +75,10 @@ sub GetProtocolInfo {
 sub GetCurrentConnectionInfo {
 	my ( $class, $client, $args ) = @_;
 	
+	if ( !exists $args->{ConnectionID} ) {
+		return [ 402 ];
+	}
+	
 	if ( $args->{ConnectionID} != 0 ) {
 		return [ 706 => 'Invalid connection reference' ];
 	}
@@ -96,6 +100,9 @@ sub _sourceProtocols {
 	my $class = shift;
 	
 	if ( !$SourceProtocolInfo ) {
+		# XXX add image/video stuff
+		# XXX Remove/support PCM?
+		
 		my $flags = sprintf "%.8x%.24x",
 			(1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
 
@@ -130,11 +137,6 @@ sub _sourceProtocols {
 			"http-get:*:application/ogg:DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 			"http-get:*:audio/x-flac:DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
 		);
-		
-		# XXX Disable DLNA stuff for now
-		for ( @formats ) {
-			s/:DLNA.+/:\*/;
-		}
 		
 		$SourceProtocolInfo = \@formats;
 	}

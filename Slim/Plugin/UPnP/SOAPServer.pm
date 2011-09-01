@@ -170,7 +170,7 @@ sub processControl {
 	);
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Result: $content" );
+		#$log->debug( "Result: $content" );
 	}
 	
 	if ( !defined $response->code ) {

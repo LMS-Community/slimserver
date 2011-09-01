@@ -6,6 +6,7 @@
 	</specVersion>
 	<device>
 		<deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+		<dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
 		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
@@ -45,11 +46,18 @@
 				<url>/plugins/UPnP/logo_48x48.png</url>
 			</icon>
 			<icon>
-				<mimetype>image/png</mimetype>
-				<width>32</width>
-				<height>32</height>
+				<mimetype>image/jpeg</mimetype>
+				<width>120</width>
+				<height>120</height>
 				<depth>24</depth>
-				<url>/plugins/UPnP/logo_32x32.png</url>
+				<url>/plugins/UPnP/logo_120x120.jpg</url>
+			</icon>
+			<icon>
+				<mimetype>image/jpeg</mimetype>
+				<width>48</width>
+				<height>48</height>
+				<depth>24</depth>
+				<url>/plugins/UPnP/logo_48x48.jpg</url>
 			</icon>
 		</iconList>
 		<serviceList>

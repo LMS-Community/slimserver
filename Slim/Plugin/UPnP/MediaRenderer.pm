@@ -19,73 +19,74 @@ use Slim::Utils::Prefs;
 use Slim::Web::HTTP;
 
 my $log = logger('plugin.upnp');
+my $prefs = preferences('server');
 
 # Some meta info about each player type for the description file
 my %models = (
 	slimp3      => {
 		modelName => 'SliMP3',
 		url       => 'http://wiki.slimdevices.com/index.php/SLIMP3',
-		icon      => '/html/images/Players/slimp3_250x250.png',
+		icon      => '/html/images/Players/slimp3',
 	},
 	Squeezebox  => {
 		modelName => 'Squeezebox 1',
 		url       => 'http://wiki.slimdevices.com/index.php/Squeezebox',
-		icon      => '/html/images/Players/squeezebox_250x250.png',
+		icon      => '/html/images/Players/squeezebox',
 	},
 	squeezebox2 => {
 		modelName => 'Squeezebox 2',
 		url       => 'http://wiki.slimdevices.com/index.php/Squeezebox2',
-		icon      => '/html/images/Players/squeezebox_250x250.png',
+		icon      => '/html/images/Players/squeezebox',
 	},
 	squeezebox3 => {
 		modelName => 'Squeezebox 3',
 		url       => 'http://www.slimdevices.com/pi_squeezebox.html',
-		icon      => '/html/images/Players/squeezebox3_250x250.png',
+		icon      => '/html/images/Players/squeezebox3',
 	},
 	transporter => {
 		modelName => 'Transporter',
 		url       => 'http://www.slimdevices.com/pi_transporter.html',
-		icon      => '/html/images/Players/transporter_250x250.png',
+		icon      => '/html/images/Players/transporter',
 	},
 	receiver    => {
 		modelName => 'Squeezebox Receiver',
 		url       => 'http://www.slimdevices.com/pi_receiver.html',
-		icon      => '/html/images/Players/receiver_250x250.png',
+		icon      => '/html/images/Players/receiver',
 	},
 	boom        => {
 		modelName => 'Squeezebox Boom',
 		url       => 'http://www.slimdevices.com/pi_boom.html',
-		icon      => '/html/images/Players/boom_250x250.png',
+		icon      => '/html/images/Players/boom',
 	},
 	softsqueeze => {
 		modelName => 'Softsqueeze',
 		url       => 'http://wiki.slimdevices.com/index.php/SoftSqueeze',
-		icon      => '/html/images/Players/softsqueeze_250x250.png',
+		icon      => '/html/images/Players/softsqueeze',
 	},
 	controller  => {
 		modelName => 'Squeezebox Controller',
 		url       => 'http://www.slimdevices.com/pi_controller.html',
-		icon      => '/html/images/Players/controller_250x250.png',
+		icon      => '/html/images/Players/controller',
 	},
 	squeezeplay => {
 		modelName => 'SqueezePlay',
 		url       => 'http://wiki.slimdevices.com/index.php/SqueezePlay',
-		icon      => '/html/images/Players/squeezeplay_250x250.png',
+		icon      => '/html/images/Players/squeezeplay',
 	},
 	baby        => {
 		modelName => 'Squeezebox Radio',
 		url       => 'http://wiki.slimdevices.com/index.php/Squeezebox_Radio',
-		icon      => '/html/images/Players/baby_250x250.png',
+		icon      => '/html/images/Players/baby',
 	},
 	fab4        => {
 		modelName => 'Squeezebox Touch',
 		url       => 'http://wiki.slimdevices.com/index.php/Squeezebox_Touch',
-		icon      => '/html/images/Players/fab4_250x250.png',
+		icon      => '/html/images/Players/fab4',
 	},
 	default     => {
 		modelName => 'Squeezebox',
 		url       => 'http://www.slimdevices.com',
-		icon      => '/html/images/slimdevices_logo_250x250.png',
+		icon      => '/html/images/slimdevices_logo',
 	},
 );
 
@@ -146,11 +147,9 @@ sub newClient {
 	my $uuid = Slim::Plugin::UPnP::Discovery->uuid($client);
 	$client->pluginData( uuid => $uuid );
 	
-	my $hostport = Slim::Utils::Network::serverAddr() . ':' . preferences('server')->get('httpport');
-	
 	Slim::Plugin::UPnP::Discovery->register(
 		uuid     => $uuid,
-		url      => "http://$hostport/plugins/UPnP/MediaRenderer.xml?player=" . uri_escape( $client->id ),
+		url      => '/plugins/UPnP/MediaRenderer.xml?player=' . uri_escape( $client->id ),
 		ttl      => 1800,
 		device   => 'urn:schemas-upnp-org:device:MediaRenderer:1',
 		services => [
@@ -191,8 +190,10 @@ sub description {
 		return \'';
 	}
 	
-	my $hostport  = Slim::Utils::Network::serverAddr() . ':' . preferences('server')->get('httpport');
-	my $eventaddr = Slim::Utils::Network::serverAddr() . ':' . Slim::Plugin::UPnP::Events->port;
+	# Use the IP the request came in on, for proper multi-homed support
+	my ($addr) = split /:/, $params->{host};
+	my $hostport  = $addr . ':' . $prefs->get('httpport');
+	my $eventaddr = $addr . ':' . Slim::Plugin::UPnP::Events->port;
 	
 	my $info = $models{ $client->model(1) } || $models{default};
 	

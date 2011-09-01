@@ -133,8 +133,7 @@ sub Browse {
 	my $flag   = $args->{BrowseFlag};
 	my $filter = $args->{Filter};
 	my $start  = $args->{StartingIndex};
-	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
-	my $limit  = $args->{RequestedCount} || 200;
+	my $limit  = $args->{RequestedCount};
 	my $sort   = $args->{SortCriteria};
 	
 	my $cmd;
@@ -143,8 +142,24 @@ sub Browse {
 	my $count = 0;
 	my $total = 0;
 	
+	# Missing arguments result in a 402 Invalid Args error
+	if ( !defined $id || !defined $flag || !defined $filter || !defined $start || !defined $limit || !defined $sort ) {
+		return [ 402 ];
+	}
+	
 	if ( $flag !~ /^(?:BrowseMetadata|BrowseDirectChildren)$/ ) {
 		return [ 720 => 'Cannot process the request (invalid BrowseFlag)' ];
+	}
+	
+	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
+	if ( $limit == 0 ) {
+		$limit = 200;
+	}
+	
+	# Verify sort
+	my ($valid, undef) = _decodeSortCriteria($sort, '');
+	if ( $sort && !$valid ) {
+		return [ 709 => 'Unsupported or invalid sort criteria' ];
 	}
 	
 	# Strings are needed for the top-level and years menus
@@ -279,7 +294,7 @@ sub Browse {
 			{ id => '/y', parentID => '/music', type => $type, title => $string->('BROWSE_BY_YEAR') },
 			{ id => '/n', parentID => '/music', type => $type, title => $string->('BROWSE_NEW_MUSIC') },
 			{ id => '/m', parentID => '/music', type => $type, title => $string->('BROWSE_MUSIC_FOLDER') },
-			{ id => '/p', parentID => '/music', type => $type, title => $string->('PLAYLISTS') },
+			#{ id => '/p', parentID => '/music', type => $type, title => $string->('PLAYLISTS') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -350,13 +365,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -382,13 +397,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -401,8 +416,8 @@ sub Browse {
 		elsif ( $id =~ m{^/g} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
@@ -410,7 +425,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
@@ -438,8 +453,8 @@ sub Browse {
 		elsif ( $id =~ m{^/y} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
@@ -447,7 +462,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
@@ -470,8 +485,8 @@ sub Browse {
 		elsif ( $id =~ m{^/n} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
@@ -479,7 +494,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
 					: "albums 0 1 album_id:$1 tags:alyj";
 			}
 			else {
@@ -495,8 +510,8 @@ sub Browse {
 		elsif ( $id =~ m{^/m} ) {
 			if ( $id =~ m{/m/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
 				my $fid = $1;
@@ -520,12 +535,12 @@ sub Browse {
 		elsif ( $id =~ m{^/p} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{^/p/(\d+)/t$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDU"
+					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDUN"
 					: "playlists 0 1 playlist_id:$1";
 			}
 			else {
@@ -537,18 +552,18 @@ sub Browse {
 			}
 		}
 		elsif ( $id =~ m{^/t/(\d+)$} ) {
-			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 		}
 		
 		### Video
 		elsif ( $id =~ m{^/va} ) { # All Videos
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUl"
-					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUl";
+					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUlN"
+					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUlN";
 			}
 			else {
-				$cmd = "video_titles $start $limit tags:dorfcwhtnDUl";
+				$cmd = "video_titles $start $limit tags:dorfcwhtnDUlN";
 			}
 		}
 		
@@ -557,12 +572,12 @@ sub Browse {
 
 			if ( $folderId ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJ"
-					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJ";
+					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJN"
+					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJN";
 			}
 			
 			elsif ( $id eq '/vf' ) {
-				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJ";
+				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJN";
 			}
 		}
 		
@@ -570,11 +585,11 @@ sub Browse {
 		elsif ( $id =~ m{^/ia} ) { # All Images
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlO"
-					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlO";
+					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlON"
+					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlON";
 			}
 			else {
-				$cmd = "image_titles $start $limit tags:ofwhtnDUlO";
+				$cmd = "image_titles $start $limit tags:ofwhtnDUlON";
 			}
 		}
 		
@@ -583,12 +598,12 @@ sub Browse {
 
 			if ( $folderId ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJ"
-					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJ";
+					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJN"
+					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJN";
 			}
 			
 			elsif ( $id eq '/if' ) {
-				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJ";
+				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJN";
 			}
 		}
 		
@@ -599,7 +614,7 @@ sub Browse {
 				$albumId = uri_escape_utf8($albumId);
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlO"
+					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlON"
 					: "image_titles 0 1 albums:1";
 			}
 			
@@ -615,15 +630,15 @@ sub Browse {
 		
 			if ( $pic ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlO"
-					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlO";
+					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlON"
+					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlON";
 			}
 
 			# if we've got a full date, show pictures
 			elsif ( $year && $month && $day ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlO"
-					: "image_titles 0 1 timeline:days search:$year-$month";
+					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlON"
+					: "image_titles 0 1 timeline:days search:$year-$month"; # XXX should this have tags?
 			}
 
 			# show days for a given month/year
@@ -706,8 +721,13 @@ sub Search {
 	my $count = 0;
 	my $total = 0;
 	
-	if ( $id != 0 ) {
-		return [ 708 => 'Unsupported or invalid search criteria (only ContainerID 0 is supported)' ];
+	# Missing arguments result in a 402 Invalid Args error
+	if ( !defined $id || !defined $search || !defined $filter || !defined $start || !defined $limit || !defined $sort ) {
+		return [ 402 ];
+	}
+	
+	if ( $id ne '0' ) {
+		return [ 710 => 'No such container' ];
 	}
 	
 	my ($cmd, $table, $searchsql, $tags) = _decodeSearchCriteria($search);
@@ -727,7 +747,7 @@ sub Search {
 	}
 	
 	if ( $sort && !$sortsql ) {
-		return [ 708 => 'Unsupported or invalid sort criteria' ];
+		return [ 709 => 'Unsupported or invalid sort criteria' ];
 	}
 	
 	if ( !$cmd ) {
@@ -823,7 +843,7 @@ sub _queryToDIDLLite {
 			
 			my $coverid = $album->{artwork_track_id};
 			
-			# XXX musicAlbum should have childCount attr (per DLNA)
+			# XXX musicAlbum should have upnp:genre and @childCount, although not required (DLNA 7.3.25.3)
 			$xml .= qq{<container id="${aid}" parentID="${parent}" restricted="1">}
 				. '<upnp:class>object.container.album.musicAlbum</upnp:class>'
 				. '<dc:title>' . xmlEscape($album->{album}) . '</dc:title>';
@@ -835,7 +855,7 @@ sub _queryToDIDLLite {
 				$xml .= '<upnp:artist>' . xmlEscape($album->{artist}) . '</upnp:artist>';
 			}
 			if ( $filterall || $filter =~ /dc:date/ ) {
-				$xml .= '<dc:date>' . xmlEscape($album->{year}) . '-01-01</dc:date>'; # DLNA requires MM-DD
+				$xml .= '<dc:date>' . xmlEscape( sprintf("%04d", $album->{year}) ) . '-01-01</dc:date>'; # DLNA requires MM-DD
 			}
 			if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
@@ -894,7 +914,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $folder->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				$count++;
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -913,7 +933,7 @@ sub _queryToDIDLLite {
 		}
 		
 		if ( scalar @trackIds ) {
-			my $tracks = Slim::Control::Queries::_getTagDataForTracks( 'AGldyorfTIct', {
+			my $tracks = Slim::Control::Queries::_getTagDataForTracks( 'AGldyorfTIctnDU', {
 				trackIds => \@trackIds,
 			} );
 			
@@ -1006,7 +1026,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $item->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -1034,7 +1054,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $item->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/if/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -1164,7 +1184,8 @@ sub _decodeSearchCriteria {
 	my $tags = '';
 	
 	if ( $search eq '*' ) {
-		return '1=1';
+		# XXX need to search all types together
+		return ( $cmd, $table, '1=1', $tags );
 	}
 	
 	# Fix quotes and apos

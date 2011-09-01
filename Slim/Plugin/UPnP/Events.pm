@@ -10,6 +10,7 @@ use HTTP::Daemon;
 use HTTP::Date;
 use URI;
 use URI::QueryParam;
+use UUID::Tiny ();
 
 use Slim::Networking::Async;
 use Slim::Networking::Select;
@@ -46,6 +47,8 @@ sub init {
 	}
 	
 	Slim::Networking::Select::addRead( $SERVER, \&accept );
+	
+	main::DEBUGLOG && $log->debug( 'GENA listening on port ' . $SERVER->sockport );
 	
 	return 1;
 }
@@ -229,7 +232,7 @@ sub subscribe {
 		$service =~ s{/}{::}g;
 		my $serviceClass = "Slim::Plugin::UPnP::$service";
 		
-		$uuid = random_uuid();
+		$uuid = uc( UUID::Tiny::create_UUID_as_string( UUID::Tiny::UUID_V4() ) );
 		
 		$SUBS{ $uuid } = {
 			active    => 0, # Sub is not active until we send it to the subscriber
@@ -417,7 +420,7 @@ sub sendNotify {
 		content_ref => \$notify,
 		Timeout     => 30,
 		onError     => sub {
-			$log->warn( 'Event failed to notify to ' . $uri->host . ':' . $uri->port . ': ' . $_[1] );
+			main::DEBUGLOG && $log->is_debug && $log->debug( 'Event failed to notify to ' . $uri->host . ':' . $uri->port . ': ' . $_[1] );
 			# XXX: try next callback URL, may not be required per DLNA
 		},
 		onRead      => sub {
@@ -450,20 +453,6 @@ sub expire {
 		
 		$log->is_debug && $log->debug( "Expired $uuid ($serviceClass)" );
 	}
-}
-
-sub random_uuid {
-	my @chars = ('A'..'F', 0..9);
-  	
-	my @string;
-	push @string, $chars[ int( rand(16) ) ] for ( 1..32 );
-	
-	splice @string, 8, 0, '-';
-	splice @string, 13, 0, '-';
-	splice @string, 18, 0, '-';
-	splice @string, 23, 0, '-';
-	
-	return join( '', @string );
 }
 
 1;

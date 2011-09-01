@@ -1486,6 +1486,19 @@ sub sendStreamingFile {
 			${*$fh}{rangeCounter} = 0;
 		}
 	}
+	
+	# Reject TimeSeekRange.dlna.org requests XXX support this later
+	if ( $response->request->header('TimeSeekRange.dlna.org') ) {
+		$response->code(406);
+		$httpClient->send_response($response);
+		closeHTTPSocket($httpClient);
+		return;
+	}
+	
+	# Respond to realTimeInfo.dlna.org (DLNA 7.4.72)
+	if ( $response->request->header('realTimeInfo.dlna.org') ) {
+		$response->header( 'realTimeInfo.dlna.org' => 'DLNA.ORG_TLAG=*' );
+	}
 
 	my $headers = _stringifyHeaders($response) . $CRLF;
 	
@@ -2502,6 +2515,18 @@ sub protect { if ( main::WEBUI ) {
 
 sub downloadMusicFile {
 	my ($httpClient, $response, $id) = @_;
+	
+	# Support transferMode.dlna.org (DLNA 7.4.49)
+	my $tm = $response->request->header('transferMode.dlna.org') || 'Streaming';
+	if ( $tm =~ /^(?:Streaming|Background)$/i ) {
+		$response->header( 'transferMode.dlna.org' => $tm );
+	}
+	else {
+		$response->code(406);
+		$httpClient->send_response($response);
+		closeHTTPSocket($httpClient);
+		return;
+	}
 
 	my $obj = Slim::Schema->find('Track', $id);
 
@@ -2597,6 +2622,12 @@ sub downloadMusicFile {
 						# Use chunked TE for HTTP/1.1 clients
 						$response->header( 'Transfer-Encoding' => 'chunked' );
 					}
+					
+					# Add DLNA HTTP header, with ORG_CI to indicate transcoding
+					if ( $outFormat eq 'mp3' ) {
+						my $dlna = "DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+						$response->header( 'contentFeatures.dlna.org' => $dlna );
+					}
 				
 					my $headers = _stringifyHeaders($response) . $CRLF;
 
@@ -2686,7 +2717,14 @@ sub downloadMusicFile {
 		main::INFOLOG && $log->is_info && $log->info("Opening $obj for download...");
 			
 		my $ct = $Slim::Music::Info::types{$obj->content_type()};
-			
+		
+		# Add DLNA HTTP header
+		#if ( my $pn = $obj->dlna_profile ) {
+			my $pn = 'MP3';
+			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+			$response->header( 'contentFeatures.dlna.org' => $dlna );
+		#}
+		
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
 			
 		return 1;
@@ -2701,7 +2739,25 @@ sub downloadVideoFile {
 	require Slim::Schema::Video;
 	my $video = Slim::Schema::Video->findhash($id);
 
-	if ($video) {			
+	if ($video) {
+		# Add DLNA HTTP header
+		if ( my $pn = $video->{dlna_profile} ) {
+			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+			$response->header( 'contentFeatures.dlna.org' => $dlna );
+		}
+		
+		# Support transferMode.dlna.org (DLNA 7.4.49)
+		my $tm = $response->request->header('transferMode.dlna.org') || 'Streaming';
+		if ( $tm =~ /^(?:Streaming|Background)$/i ) {
+			$response->header( 'transferMode.dlna.org' => $tm );
+		}
+		else {
+			$response->code(406);
+			$httpClient->send_response($response);
+			closeHTTPSocket($httpClient);
+			return;
+		}
+				
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}) );
 		return 1;
 	}
@@ -2715,7 +2771,25 @@ sub downloadImageFile {
 	require Slim::Schema::Image;
 	my $image = Slim::Schema::Image->findhash($hash);
 
-	if ($image) {			
+	if ($image) {
+		# Add DLNA HTTP header
+		if ( my $pn = $image->{dlna_profile} ) {
+			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
+			$response->header( 'contentFeatures.dlna.org' => $dlna );
+		}
+		
+		# Support transferMode.dlna.org (DLNA 7.4.49)
+		my $tm = $response->request->header('transferMode.dlna.org') || 'Interactive';
+		if ( $tm =~ /^(?:Interactive|Background)$/i ) {
+			$response->header( 'transferMode.dlna.org' => $tm );
+		}
+		else {
+			$response->code(406);
+			$httpClient->send_response($response);
+			closeHTTPSocket($httpClient);
+			return;
+		}
+				
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}) );
 		return 1;
 	}
