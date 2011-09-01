@@ -919,11 +919,6 @@ sub handleFeed {
 				
 				$details->{'mixersLink'} = $morelink if $morelink;
 			}
-				
-			if ($feed->{'favorites_url'} && $favs) {
-				$details->{'favorites_url'} = $feed->{'favorites_url'};
-				$details->{'favorites'} = $favs->hasUrl($feed->{'favorites_url'}) ? 2 : 1;
-			}
 
 			if (scalar keys %$details) {
 				# This is really just for Trackinfo
@@ -937,7 +932,12 @@ sub handleFeed {
 					$details->{'removeLink'} = 'anyurl?p0=playlist&p1=deleteitem&p2=' . 
 						Slim::Utils::Misc::escape($stash->{'playUrl'});
 				}
-	
+				
+				if ($feed->{'favorites_url'} && $favs) {
+					$details->{'favorites_url'} = $feed->{'favorites_url'};
+					$details->{'favorites'} = $favs->hasUrl($feed->{'favorites_url'}) ? 2 : 1;
+				}
+
 				$stash->{'songinfo'} = $details;
 			}
 		}
