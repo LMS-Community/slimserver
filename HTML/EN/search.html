@@ -18,7 +18,7 @@
 [% ELSE %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
-		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
+		<input type="text" id="query" name="query" size="40" value="[% query | html %]"/>
 
 [% END %]
 
