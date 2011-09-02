@@ -360,13 +360,15 @@ sub Browse {
 		# BrowseDirectChildren will request the desired number of children
 		if ( $id =~ m{^/a} ) {
 			if ( $id =~ m{/l/(\d+)/t$} ) {
+				my $album_id = $1;
+				
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
-					: "albums 0 1 album_id:$1 tags:alyj";
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
@@ -374,13 +376,15 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
+				my $artist_id = $1;
+				
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "albums $start $limit artist_id:$1 sort:album tags:alyj"
-					: "artists 0 1 artist_id:$1";
+					? "albums $start $limit artist_id:$artist_id sort:album tags:alyj"
+					: "artists 0 1 artist_id:$artist_id";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -392,13 +396,15 @@ sub Browse {
 		}
 		elsif ( $id =~ m{^/l} ) {
 			if ( $id =~ m{/l/(\d+)/t$} ) {
+				my $album_id = $1;
+				
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
-					: "albums 0 1 album_id:$1 tags:alyj";
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
@@ -420,22 +426,26 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
+				my $album_id = $1;
+				
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
-					: "albums 0 1 album_id:$1 tags:alyj";
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
+				my ($genre_id, $artist_id) = ($1, $2);
+				
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "albums $start $limit genre_id:$1 artist_id:$2 sort:album tags:alyj"
-					: "artists 0 1 genre_id:$1 artist_id:$2";
+					? "albums $start $limit genre_id:$genre_id artist_id:$artist_id sort:album tags:alyj"
+					: "artists 0 1 genre_id:$genre_id artist_id:$artist_id";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
@@ -457,22 +467,26 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
+				my $album_id = $1;
+				
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
-					: "albums 0 1 album_id:$1 tags:alyj";
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
+				my $year = $1;
+				
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "albums $start $limit year:$1 sort:album tags:alyj"
-					: "years 0 1 year:$1";
+					? "albums $start $limit year:$year sort:album tags:alyj"
+					: "years 0 1 year:$year";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -489,13 +503,15 @@ sub Browse {
 					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
+				my $album_id = $1;
+				
 				if ( $sort && $sort !~ /^\+upnp:originalTrackNumber$/ ) {
 					$log->warn('Unsupported sort: ' . Data::Dump::dump($args));
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$1 sort:tracknum tags:AGldyorfTIctnDUN"
-					: "albums 0 1 album_id:$1 tags:alyj";
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			else {
 				# Limit results to pref or 100

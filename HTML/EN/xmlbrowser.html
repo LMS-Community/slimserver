@@ -58,7 +58,7 @@
 
 [% IF search %]
 	<form id="searchForm" name="searchForm" method="GET">
-		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
+		<input type="text" id="query" name="query" size="40" value="[% query | html %]"/>
 		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]" onClick = "document.searchForm.submit();"><p>
 		<input type="hidden" value="[% player %]" name="player">
 		<input type="hidden" value="[% sess %]" name="sess">
@@ -119,7 +119,7 @@
 			<input type="hidden" name="player" value=[% playerURI %]>
 			<input type="hidden" name="itempos" value=[% item.play_index %]>				
 			<input type="hidden" name="playlist_id" value=[% playlist_id %]>
-			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title %]">[% END %]
+			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title | html %]">[% END %]
 			<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.url %]">
 			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
 			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>

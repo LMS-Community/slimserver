@@ -24,7 +24,7 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_LIBRARY_NAME" desc="SETUP_LIBRARY_NAME_DESC" %]
-			<input type="text" class="stdedit" name="pref_libraryname" id="libraryname" value="[% prefs.pref_libraryname %]" size="40">
+			<input type="text" class="stdedit" name="pref_libraryname" id="libraryname" value="[% prefs.pref_libraryname | html %]" size="40">
 		[% END %]
 	[% END %]
 

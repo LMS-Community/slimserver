@@ -81,7 +81,7 @@
 			});
 
 			[% IF query %]
-			sinput.validator('[% query %]', true);
+			sinput.validator('[% query | replace("'", " ") %]', true);
 			[% END %]
 
 			new Ext.Button({
@@ -105,7 +105,7 @@
 	<div class="searchHeader">
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<table><tr>
-			<td><input type="text" id="livesearch" name="query" size="30" value="[% query %]" autocomplete="off"/></td>
+			<td><input type="text" id="livesearch" name="query" size="30" value="[% query | html %]" autocomplete="off"/></td>
 			<td><span id="searchButton"></span></td>
 			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
