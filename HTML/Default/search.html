@@ -81,7 +81,7 @@
 			});
 
 			[% IF query %]
-			sinput.validator('[% query %]', true);
+			sinput.validator('[% query | replace("'", " ") %]', true);
 			[% END %]
 
 			new Ext.Button({
