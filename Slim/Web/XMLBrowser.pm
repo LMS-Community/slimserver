@@ -850,6 +850,14 @@ sub handleFeed {
 						}
 						$item->{'ignore'} = 1;
 						$item->{'type'} = 'redirect';
+					
+						# if this is a compilation, provide a link to the album with all artists
+						if ($label eq 'COMPILATION' && $stash->{artist_id}) {
+							$details->{album} = {
+								id   => $feed->{id},
+								title  => $feed->{name},
+							};
+						}
 					}
 				}
 
