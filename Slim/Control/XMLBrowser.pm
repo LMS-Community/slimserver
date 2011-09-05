@@ -1326,9 +1326,13 @@ sub _cliQuery_done {
 						$hash{name}  = $name          if defined $name;
 						$hash{type}  = $item->{type}  if defined $item->{type};
 						$hash{title} = $item->{title} if defined $item->{title};
-						$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
 						$hash{image} = $item->{image} if defined $item->{image};
-	
+
+						# add url entries if requested unless they are coderefs as this breaks serialisation
+						if ($want_url && defined $item->{url} && (!ref $item->{url} || ref $item->{url} ne 'CODE')) {
+							$hash{url} = $item->{url};
+						}	
+
 						$hash{isaudio} = defined(hasAudio($item)) + 0;
 						
 						# Bug 7684, set hasitems to 1 if any of the following are true:
