@@ -24,10 +24,10 @@
 	<div id="linkedSongInfoItems">
 		[% IF songInfoPlayLinks; songInfoPlayLinks; END %]
 
-		[%- albumInfo = BLOCK%]
+		[%- albumInfo = BLOCK %]
 			[% IF itemobj.album %] 
 				[% IF itemobj.album.id %] 
-					[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% itemobj.album.title || itemobj.album.name | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
+					[% item = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% itemobj.album.title || itemobj.album.name | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/index.html?album_id=[% itemobj.album.id %]&amp;mode=albums&amp;index=0" [% UNLESS notarget %]target="browser"[% END %]>[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
 				[% ELSIF itemobj.album.link %] 
 					[% item = BLOCK %]<a href="[% webroot %][% itemobj.album.link %]&amp;player=[% playerURI %]" class="browseItemLink">
 						[% itemobj.album.title || itemobj.album.name | html %]</a>[% END %]
