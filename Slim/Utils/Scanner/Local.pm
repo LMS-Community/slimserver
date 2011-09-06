@@ -168,7 +168,7 @@ sub rescan {
 		$pluginHandlers = Slim::Utils::Scanner::API->getHandlers();
 	}
 	
-	$log->error("Discovering files in $next");
+	$log->error("Discovering audio files in $next");
 	
 	# Keep track of the number of changes we've made so we can decide
 	# if we should optimize the database or not, and also so we know if
@@ -248,7 +248,7 @@ sub rescan {
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} );
 		
-		$log->error( "Removing deleted files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
+		$log->error( "Removing deleted audio files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $inDBOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $inDBOnlySth;
@@ -323,7 +323,7 @@ sub rescan {
 			}
 		}
 		
-		$log->error( "Scanning new files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
+		$log->error( "Scanning new audio files ($onDiskOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $onDiskOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $onDiskOnlySth;
@@ -398,7 +398,7 @@ sub rescan {
 			}
 		}
 		
-		$log->error( "Rescanning changed files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
+		$log->error( "Rescanning changed audio files ($changedOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
 		if ( $changedOnlyCount && !Slim::Music::Import->hasAborted() ) {
 			my $changedOnlySth;
@@ -546,7 +546,7 @@ sub deleted {
 	my $content_type = _content_type($url);
 	
 	if ( Slim::Music::Info::isSong($url, $content_type) ) {
-		$log->error("Handling deleted track $url") unless main::SCANNER && $main::progress;
+		$log->error("Handling deleted audio file $url") unless main::SCANNER && $main::progress;
 
 		# XXX no DBIC objects
 		my $track = Slim::Schema->rs('Track')->search( url => $url )->single;
@@ -746,7 +746,7 @@ sub new {
 	if ( Slim::Music::Info::isSong($url) ) {
 		
 		# This costs too much to do all the time, and it fills the log
-		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new track $url");
+		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) && $log->info("Handling new audio track $url");
 		
 		$work = sub {
 			# We need to make a quick check to make sure this track has not already
@@ -766,7 +766,7 @@ sub new {
 			} );
 			
 			if ( !defined $trackid ) {
-				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING audio file $url: " . Slim::Schema->lastError );
 				return;
 			}
 			
@@ -801,7 +801,7 @@ sub new {
 			} );
 		
 			if ( !defined $playlist ) {
-				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING playlist $url: " . Slim::Schema->lastError );
 				return;
 			}
 
@@ -837,7 +837,7 @@ sub changed {
 	my $content_type = _content_type($url);
 	
 	if ( Slim::Music::Info::isSong($url, $content_type) ) {
-		$log->error("Handling changed track $url") unless main::SCANNER && $main::progress;
+		$log->error("Handling changed audio track $url") unless main::SCANNER && $main::progress;
 		
 		my $work = sub {
 			# Fetch some original track, album, contributors, and genre information
@@ -882,7 +882,7 @@ sub changed {
 			} );
 			
 			if ( !defined $track ) {
-				$log->error( "ERROR SCANNING $url: " . Slim::Schema->lastError );
+				$log->error( "ERROR SCANNING audio file $url: " . Slim::Schema->lastError );
 				return;
 			}
 			
