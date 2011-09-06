@@ -38,15 +38,16 @@ sub getTag {
 	return unless $info->{song_length_ms};
 	
 	# Add file info
-	$tags->{OFFSET}     = $info->{audio_offset};
-	$tags->{SIZE}       = $info->{audio_size};
-	$tags->{SECS}       = $info->{song_length_ms} / 1000;
-	$tags->{RATE}       = $info->{samplerate};
-	$tags->{BITRATE}    = $info->{bitrate};
-	$tags->{CHANNELS}   = $info->{channels};
-	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
-	$tags->{BLOCKALIGN} = $info->{block_align};
-	$tags->{ENDIAN}     = 0;
+	$tags->{OFFSET}       = $info->{audio_offset};
+	$tags->{SIZE}         = $info->{audio_size};
+	$tags->{SECS}         = $info->{song_length_ms} / 1000;
+	$tags->{RATE}         = $info->{samplerate};
+	$tags->{BITRATE}      = $info->{bitrate};
+	$tags->{CHANNELS}     = $info->{channels};
+	$tags->{SAMPLESIZE}   = $info->{bits_per_sample};
+	$tags->{BLOCKALIGN}   = $info->{block_align};
+	$tags->{ENDIAN}       = 0;
+	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	
 	# Map ID3 tags if file has them
 	if ( $info->{id3_version} ) {

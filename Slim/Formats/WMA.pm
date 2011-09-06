@@ -63,15 +63,16 @@ sub getTag {
 	# Add additional info
 	my $stream = $info->{streams}->[0];
 	
-	$tags->{SIZE}	    = $info->{file_size};
-	$tags->{SECS}	    = $info->{song_length_ms} / 1000;
-	$tags->{RATE}	    = $stream->{samplerate};
-	$tags->{SAMPLESIZE} = $stream->{bits_per_sample};
-	$tags->{BITRATE}    = $info->{max_bitrate};
-	$tags->{DRM}        = $stream->{encrypted};
-	$tags->{CHANNELS}   = $stream->{channels};
-	$tags->{LOSSLESS}   = $info->{lossless};
-	$tags->{STEREO}     = $tags->{CHANNELS} == 2 ? 1 : 0;
+	$tags->{SIZE}	      = $info->{file_size};
+	$tags->{SECS}	      = $info->{song_length_ms} / 1000;
+	$tags->{RATE}	      = $stream->{samplerate};
+	$tags->{SAMPLESIZE}   = $stream->{bits_per_sample};
+	$tags->{BITRATE}      = $info->{max_bitrate};
+	$tags->{DRM}          = $stream->{encrypted};
+	$tags->{CHANNELS}     = $stream->{channels};
+	$tags->{LOSSLESS}     = $info->{lossless};
+	$tags->{STEREO}       = $tags->{CHANNELS} == 2 ? 1 : 0;
+	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	
 	if ( $tags->{IsVBR} ) {
 		$tags->{VBR_SCALE} = 1;

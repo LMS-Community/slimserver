@@ -125,15 +125,16 @@ sub getTag {
 	$class->doTagMapping($tags);
 	
 	# Map info into tags
-	$tags->{TAGVERSION} = $info->{id3_version};
-	$tags->{OFFSET}     = $info->{audio_offset};
-	$tags->{SIZE}       = $info->{audio_size};
-	$tags->{SECS}       = $info->{song_length_ms} / 1000;
-	$tags->{BITRATE}    = $info->{bitrate};
-	$tags->{STEREO}     = $info->{stereo};
-	$tags->{CHANNELS}   = $info->{stereo} ? 2 : 1;
-	$tags->{RATE}       = $info->{samplerate};
-	$tags->{LAYER_ID}   = $info->{layer}; # 2 = mp2, 1 = mp3
+	$tags->{TAGVERSION}   = $info->{id3_version};
+	$tags->{OFFSET}       = $info->{audio_offset};
+	$tags->{SIZE}         = $info->{audio_size};
+	$tags->{SECS}         = $info->{song_length_ms} / 1000;
+	$tags->{BITRATE}      = $info->{bitrate};
+	$tags->{STEREO}       = $info->{stereo};
+	$tags->{CHANNELS}     = $info->{stereo} ? 2 : 1;
+	$tags->{RATE}         = $info->{samplerate};
+	$tags->{LAYER_ID}     = $info->{layer}; # 2 = mp2, 1 = mp3
+	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	
 	if ( $info->{vbr} ) {
 		$tags->{VBR_SCALE} = 1;

@@ -2719,11 +2719,10 @@ sub downloadMusicFile {
 		my $ct = $Slim::Music::Info::types{$obj->content_type()};
 		
 		# Add DLNA HTTP header
-		#if ( my $pn = $obj->dlna_profile ) {
-			my $pn = 'MP3';
+		if ( my $pn = $obj->dlna_profile ) {
 			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 			$response->header( 'contentFeatures.dlna.org' => $dlna );
-		#}
+		}
 		
 		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
 			
