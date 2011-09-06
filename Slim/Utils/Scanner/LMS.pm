@@ -209,6 +209,9 @@ sub rescan {
 				if ( $p->cur_item ) {
 					$progress->update( $p->cur_item, $p->done );
 				}
+				
+				# Commit for every chunk when using scanner.pl
+				main::SCANNER && Slim::Schema->forceCommit;
 			}
 			
 			$abortCheck->();
