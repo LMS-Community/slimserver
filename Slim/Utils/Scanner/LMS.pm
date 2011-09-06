@@ -203,6 +203,9 @@ sub rescan {
 				my $total = $p->total;
 			
 				if ( $total && !$progress->total ) {
+					# Initial progress data, report the total number in the log too
+					$log->error( "Scanning new media files ($total)" ) unless main::SCANNER && $main::progress;
+					
 					$progress->total( $total );
 				}
 			
