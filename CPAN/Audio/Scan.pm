@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '0.90';
+our $VERSION = '0.91';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -394,6 +394,7 @@ The following metadata about a file may be returned:
     bitrate (in bps, determined using Xing/LAME/VBRI if possible, or average in the worst case)
     samplerate (in kHz)
     vbr (1 if file is VBR)
+    dlna_profile (if file is compliant)
 
     If a Xing header is found:
     xing_frames
@@ -480,6 +481,7 @@ The following metadata about a file may be returned:
     minor_version
     song_length_ms
     timescale
+    dlna_profile (if file is compliant)
     tracks (array of tracks in the file)
         Each track may contain:
         
@@ -548,6 +550,7 @@ The following metadata about a file is returned:
     profile (Main, LC, or SSR)
     samplerate (in kHz)
     song_length_ms (duration in milliseconds)
+    dlna_profile (if file is compliant)
 
 =head1 OGG VORBIS
 
@@ -656,6 +659,7 @@ want to find out more about any of these values.
     seekable (boolean, whether the file is seekable or not)
     send_duration_ms
     song_length_ms (the actual length of the audio, in milliseconds)
+    dlna_profile (if file is compliant)
 
 STREAMS
 
@@ -720,6 +724,7 @@ The following metadata about a file may be returned.
     bits_per_sample
     block_align
     channels
+    dlna_profile (if file is compliant)
     file_size
     format (WAV format code, 1 == PCM)
     id3_version (if an ID3v2 tag is found)
@@ -773,6 +778,7 @@ The following metadata about a file may be returned.
     channels
     compression_name (if AIFC)
     compression_type (if AIFC)
+    dlna_profile (if file is compliant)
     file_size
     id3_version (if an ID3v2 tag is found)
     samplerate (in kHz)
