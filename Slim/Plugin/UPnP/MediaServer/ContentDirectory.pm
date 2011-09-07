@@ -748,6 +748,11 @@ sub Search {
 		return [ 710 => 'No such container' ];
 	}
 	
+	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
+	if ( $limit == 0 ) {
+		$limit = 200;
+	}
+	
 	my ($cmd, $table, $searchsql, $tags) = _decodeSearchCriteria($search);
 
 	my ($sortsql, $stags) = _decodeSortCriteria($sort, $table);
