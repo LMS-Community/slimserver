@@ -99,6 +99,8 @@ sub absURL {
 		$addr = Slim::Utils::Network::serverAddr();
 	}
 	
+	($addr) = split /:/, $addr; # remove port in case it gets here from the Host header
+	
 	my $hostport = $addr . ':' . $prefs->get('httpport');
 	
 	return xmlEscape("http://${hostport}${path}");
