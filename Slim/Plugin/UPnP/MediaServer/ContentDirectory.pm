@@ -113,7 +113,7 @@ sub unsubscribe {
 
 sub GetSearchCapabilities {	
 	return SOAP::Data->name(
-		SearchCaps => 'dc:title,dc:creator,upnp:artist,upnp:album,upnp:genre',
+		SearchCaps => 'dc:title,dc:creator,upnp:artist,upnp:album,upnp:genre,upnp:class,@id,@refID',
 	);
 }
 
@@ -1211,8 +1211,16 @@ sub _arrayToDIDLLite {
 			}
 			$xml .= qq{>}
 				. "<upnp:class>${type}</upnp:class>"
-				. '<dc:title>' . xmlEscape($title) . '</dc:title>'
-				. '</container>';
+				. '<dc:title>' . xmlEscape($title) . '</dc:title>';
+			
+			# DLNA 7.3.67.4, add searchClass info
+			if ($id == 0) {
+				$xml .= qq{<upnp:searchClass includeDerived="0">object.item.audioItem</upnp:searchClass>}
+					  . qq{<upnp:searchClass includeDerived="0">object.item.imageItem</upnp:searchClass>}
+					  . qq{<upnp:searchClass includeDerived="0">object.item.videoItem</upnp:searchClass>};
+			}
+			
+			$xml .= '</container>';
 		}
 	}
 	
@@ -1266,6 +1274,7 @@ sub _decodeSearchCriteria {
 
 	$search =~ s/\@id/${table}.${idcol}/g;
 	$search =~ s/\@refID exists (?:true|false)/1=1/ig;
+	$search =~ s/upnp:class exists (?:true|false)/1=1/ig;
 
 	# Replace 'exists true' and 'exists false'
 	$search =~ s/exists\s+true/IS NOT NULL/ig;
