@@ -93,15 +93,19 @@ sub hmsToSecs {
 }
 
 sub absURL {
-	my $path = shift;
+	my ($path, $addr) = @_;
 	
-	my $hostport = Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport');
+	if ( !$addr ) {
+		$addr = Slim::Utils::Network::serverAddr();
+	}
+	
+	my $hostport = $addr . ':' . $prefs->get('httpport');
 	
 	return xmlEscape("http://${hostport}${path}");
 }
 
 sub trackDetails {
-	my ( $track, $filter ) = @_;
+	my ( $track, $filter, $request_addr ) = @_;
 	
 	my $filterall = ($filter eq '*');
 	
@@ -186,12 +190,12 @@ sub trackDetails {
 	if ( my $coverid = ($track->{coverid} || $track->{'tracks.coverid'}) ) {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 			# XXX 7.3.61.3, dlna:profileID JPEG_TN and full size
-			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
+			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 		}
 		
 		if ( $filterall || $filter =~ /upnp:icon/ ) {
 			my $thumbSize = $prefs->get('thumbSize') || 100;
-			$xml .= '<upnp:icon>' . absURL("/music/$coverid/cover_${thumbSize}x${thumbSize}_o") . '</upnp:icon>';
+			$xml .= '<upnp:icon>' . absURL("/music/$coverid/cover_${thumbSize}x${thumbSize}_o", $request_addr) . '</upnp:icon>';
 		}
 	}
 	
@@ -290,7 +294,7 @@ sub trackDetails {
 				$ext = 'mp3?bitrate=320';
 			}
 		
-			$xml .= '>' . absURL('/music/' . ($track->{id} || $track->{'tracks.id'}) . '/download.' . $ext) . '</res>';
+			$xml .= '>' . absURL('/music/' . ($track->{id} || $track->{'tracks.id'}) . '/download.' . $ext, $request_addr) . '</res>';
 		}
 	}
 	
@@ -298,7 +302,7 @@ sub trackDetails {
 }
 
 sub videoDetails {
-	my ( $video, $filter ) = @_;
+	my ( $video, $filter, $request_addr ) = @_;
 	
 	my $filterall = ($filter eq '*');
 	
@@ -318,11 +322,11 @@ sub videoDetails {
 	
 	# XXX albumArtURI needed for video?
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o", $request_addr) . '</upnp:albumArtURI>';
 	}
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:icon>';
+		$xml .= '<upnp:icon>' . absURL("/video/${hash}/cover_300x300_o", $request_addr) . '</upnp:icon>';
 	}
 	
 	# mtime is used for all values as fallback
@@ -370,14 +374,14 @@ sub videoDetails {
 			$xml .= ' resolution="' . $video->{width} . 'x' . $video->{height} . '"';
 		}
 	
-		$xml .= '>' . absURL("/video/${hash}/download") . '</res>';
+		$xml .= '>' . absURL("/video/${hash}/download", $request_addr) . '</res>';
 	}
 	
 	return $xml;
 }
 
 sub imageDetails {
-	my ( $image, $filter ) = @_;
+	my ( $image, $filter, $request_addr ) = @_;
 	
 	my $filterall = ($filter eq '*');
 	
@@ -405,11 +409,11 @@ sub imageDetails {
 	
 	# XXX albumArtURI needed for images?
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o", $request_addr) . '</upnp:albumArtURI>';
 	}
 	
 	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:icon>';
+		$xml .= '<upnp:icon>' . absURL("/image/${hash}/cover_300x300_o", $request_addr) . '</upnp:icon>';
 	}
 	
 	# mtime is used for all values as fallback
@@ -456,10 +460,10 @@ sub imageDetails {
 			# XXX - don't use image's exact width/height, as this would cause the resizer to short-circuit without rotating the image first...
 			my $maxSize = min($maxSize || 9999, ($image->{width} || 9999) - 1, ($image->{height} || 9999) - 1);
 			
-			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o") . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o", $request_addr) . '</res>';
 		}
 		else {
-			$xml .= '>' . absURL("/image/${hash}/download") . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/download", $request_addr) . '</res>';
 		}
 	}
 	

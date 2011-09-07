@@ -127,7 +127,9 @@ sub GetSystemUpdateID {
 }
 
 sub Browse {
-	my ( $class, undef, $args, $headers ) = @_;
+	my ( $class, undef, $args, $headers, $request_addr ) = @_;
+	
+	warn "Browse, request_addr $request_addr\n";
 	
 	my $id     = $args->{ObjectID};
 	my $flag   = $args->{BrowseFlag};
@@ -709,6 +711,8 @@ sub Browse {
 			parentID => $parentID,
 			filter   => $filter,
 			string   => $string,
+			
+			request_addr => $request_addr,
 		} );
 	}
 		
@@ -723,7 +727,7 @@ sub Browse {
 }
 
 sub Search {
-	my ( $class, undef, $args, $headers ) = @_;
+	my ( $class, undef, $args, $headers, $request_addr ) = @_;
 	
 	my $id     = $args->{ContainerID};
 	my $search = $args->{SearchCriteria} || '*';
@@ -795,6 +799,8 @@ sub Search {
 		flag     => '',
 		id       => $table eq 'tracks' ? '/t' : $table eq 'videos' ? '/v' : '/i',
 		filter   => $filter,
+		
+		request_addr => $request_addr,
 	} );
 	
 	return (
@@ -814,6 +820,8 @@ sub _queryToDIDLLite {
 	my $id       = $args->{id};
 	my $parentID = $args->{parentID};
 	my $filter   = $args->{filter};
+	
+	my $request_addr = $args->{request_addr};
 	
 	my $count    = 0;
 	my $total    = $results->{count};
@@ -874,7 +882,7 @@ sub _queryToDIDLLite {
 				$xml .= '<dc:date>' . xmlEscape( sprintf("%04d", $album->{year}) ) . '-01-01</dc:date>'; # DLNA requires MM-DD
 			}
 			if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
+				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 			}
 			
 			$xml .= '</container>';
@@ -963,7 +971,7 @@ sub _queryToDIDLLite {
 				$tid =~ s{m/(\d+)$}{t/$1};
 				
 				$xml .= qq{<item id="${tid}" parentID="${id}" restricted="1">}
-				 	. trackDetails($track, $filter)
+				 	. trackDetails($track, $filter, $request_addr)
 					. '</item>';
 			}
 		}			
@@ -984,7 +992,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${tid}" parentID="${parent}" restricted="1">}
-			 	. trackDetails($track, $filter)
+			 	. trackDetails($track, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -999,7 +1007,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${tid}" parentID="${parent}" restricted="1">}
-			 	. trackDetails($track, $filter)
+			 	. trackDetails($track, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -1025,7 +1033,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
-			 	. videoDetails($video, $filter)
+			 	. videoDetails($video, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -1053,7 +1061,7 @@ sub _queryToDIDLLite {
 				$item->{id} = $item->{hash};
 				my $fid = $flag eq 'BrowseMetadata' ? '/va' : '/va/' . xmlEscape($item->{hash});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
-				 	. videoDetails($item, $filter)
+				 	. videoDetails($item, $filter, $request_addr)
 				 	. '</item>';
 			}
 		}
@@ -1081,7 +1089,7 @@ sub _queryToDIDLLite {
 				$item->{id} = $item->{hash};
 				my $fid = $flag eq 'BrowseMetadata' ? '/ia' : '/ia/' . xmlEscape($item->{id});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
-				 	. imageDetails($item, $filter)
+				 	. imageDetails($item, $filter, $request_addr)
 				 	. '</item>';
 			}
 		}
@@ -1116,7 +1124,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
-			 	. imageDetails($image, $filter)
+			 	. imageDetails($image, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
