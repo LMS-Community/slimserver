@@ -157,7 +157,7 @@ sub _read {
 			# Ignore packets without MX
 			return unless defined $mx;
 			
-			$log->is_debug && $log->debug( "M-SEARCH for $st (mx: $mx)" );
+			$log->is_debug && $log->debug( "M-SEARCH from $iaddr:$port for $st (mx: $mx)" );
 			
 			# Most devices seem to ignore the mx value and reply quickly
 			if ( $mx > 3 ) {

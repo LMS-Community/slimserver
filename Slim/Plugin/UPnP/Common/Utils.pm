@@ -240,7 +240,13 @@ sub trackDetails {
 			my $ext = Slim::Music::Info::mimeToType($type);
 			
 			if ( $type eq $native_type ) {
-				$dlna = $track->{dlna_profile} || $track->{'tracks.dlna_profile'} || '*';
+				my $profile = $track->{dlna_profile} || $track->{'tracks.dlna_profile'};
+				if ( $profile ) {
+					$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+				}
+				else {
+					$dlna = '*';
+				}
 			}
 			else {
 				# Add DLNA.ORG_CI=1 for transcoded content
@@ -250,6 +256,7 @@ sub trackDetails {
 				elsif ( $type eq 'audio/L16' ) {
 					$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 					
+					$ext = 'pcm';
 					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
 						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
 				}
