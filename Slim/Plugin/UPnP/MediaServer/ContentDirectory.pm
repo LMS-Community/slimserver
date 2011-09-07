@@ -1095,6 +1095,8 @@ sub _queryToDIDLLite {
 	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ 
 		|| ($cmd =~ /^image_titles.*albums:/ && $cmd !~ /search:/) ) {
 
+		$id = xmlEscape($id); # id has a title that may contain & for example
+		
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . xmlEscape($image->{id}));
@@ -1111,6 +1113,8 @@ sub _queryToDIDLLite {
 		}
 	}
 	elsif ( $cmd =~ /^image_titles/ ) {
+		$id = xmlEscape($id); # id has a title that may contain & for example
+		
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . xmlEscape($image->{id});
