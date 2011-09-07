@@ -72,7 +72,7 @@ sub xmlUnescape {
 sub secsToHMS {
 	my $secs = shift;
 	
-	my $elapsed = sprintf '%d:%02d:%02d', int($secs / 3600), int($secs / 60), $secs % 60;
+	my $elapsed = sprintf '%d:%02d:%02d', int($secs / 3600) % 24, int($secs / 60) % 60, $secs % 60;
 	
 	if ( $secs =~ /(\.\d+)$/ ) {
 		my $frac = sprintf( '%.3f', $1 );
