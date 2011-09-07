@@ -10,6 +10,7 @@ use URI::Escape qw(uri_escape_utf8);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Text;
 use Slim::Web::HTTP;
 
 use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails imageDetails);
@@ -1252,6 +1253,13 @@ sub _decodeSearchCriteria {
 		}
 	}
 	
+	# Tweak all title/namesearch columns to use the normalized version
+	if ( $search =~ /(dc:title|dc:creator|upnp:artist|upnp:album|upnp:genre)\s+contains\s+"([^"]+)"/ ) {
+		my $field = $1;
+		my $query = Slim::Utils::Text::ignoreCaseArticles($2, 1);
+		$search =~ s/${field}\s+contains\s+"[^"]+"/${field} contains "$query"/;
+	}
+	
 	# Replace 'contains "x"' and 'doesNotContain "x" with 'LIKE "%X%"' and 'NOT LIKE "%X%"'
 	$search =~ s/contains\s+"([^"]+)"/LIKE "%%\U$1%%"/ig;
 	$search =~ s/doesNotContain\s+"([^"]+)"/NOT LIKE "%%\U$1%%"/ig;
@@ -1263,8 +1271,9 @@ sub _decodeSearchCriteria {
 	$search =~ s/exists\s+true/IS NOT NULL/ig;
 	$search =~ s/exists\s+false/IS NULL/ig;
 	
-	# Replace properties
-	$search =~ s/dc:title/${table}.titlesearch/g;
+	# Replace properties, checks for LIKE are to avoid changing 'dc:title = "literal"'
+	$search =~ s/dc:title LIKE/${table}.titlesearch LIKE/g;
+	$search =~ s/dc:title/${table}.title/g; # will handle 'dc:title =', 'dc:title exists', etc
 	
 	if ( $search =~ s/pv:lastUpdated/${table}.updated_time/g ) {
 		$tags .= 'U';
@@ -1272,19 +1281,31 @@ sub _decodeSearchCriteria {
 	
 	if ( $cmd eq 'titles' ) {
 		# These search params are only valid for audio
-		if ( $search =~ s/dc:creator/contributors.namesearch/g ) {
+		if ( $search =~ s/dc:creator LIKE/contributors.namesearch LIKE/g ) {
+			$tags .= 'a';
+		}
+		if ( $search =~ s/dc:creator/contributors.name/g ) {
 			$tags .= 'a';
 		}
 	
-		if ( $search =~ s/upnp:artist/contributors.namesearch/g ) {
+		if ( $search =~ s/upnp:artist LIKE/contributors.namesearch LIKE/g ) {
+			$tags .= 'a';
+		}
+		if ( $search =~ s/upnp:artist/contributors.name/g ) {
 			$tags .= 'a';
 		}
 	
-		if ( $search =~ s/upnp:album/albums.titlesearch/g ) {
+		if ( $search =~ s/upnp:album LIKE/albums.titlesearch LIKE/g ) {
+			$tags .= 'l';
+		}
+		if ( $search =~ s/upnp:album/albums.title/g ) {
 			$tags .= 'l';
 		}
 	
-		if ( $search =~ s/upnp:genre/genres.namesearch/g ) {
+		if ( $search =~ s/upnp:genre LIKE/genres.namesearch LIKE/g ) {
+			$tags .= 'g';
+		}
+		if ( $search =~ s/upnp:genre/genres.name/g ) {
 			$tags .= 'g';
 		}
 	}
