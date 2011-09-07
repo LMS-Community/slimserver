@@ -1470,8 +1470,18 @@ sub sendStreamingFile {
 			my $total = $last - $first + 1;
 			
 			if ( $first > $size ) {
-				# invalid
+				# invalid (past end of file)
 				$response->code(416);
+				$response->headers->remove_content_headers;
+				$httpClient->send_response($response);
+				closeHTTPSocket($httpClient);
+				return;
+			}
+			
+			if ( $total < 1 ) {
+				# invalid (first > last)
+				$response->code(400);
+				$response->headers->remove_content_headers;
 				$httpClient->send_response($response);
 				closeHTTPSocket($httpClient);
 				return;
