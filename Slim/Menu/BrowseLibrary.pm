@@ -1637,6 +1637,7 @@ sub _tracks {
 			}
 			
 			my $albumMetadata;
+			my $albumInfo;
 			my $image;
 			if ($getMetadata) {
 				my ($albumId) = grep {/album_id:/} @searchTags;
@@ -1646,9 +1647,17 @@ sub _tracks {
 				$albumMetadata = $feed->{'items'} if $feed;
 				
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
+
+				$albumInfo = { 
+					info => { 
+						command =>   ['albuminfo', 'items'], 
+						variables => [ 'album_id', 'id' ],
+					},
+				};
 			}
 
-			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, cover => $image}, $extra;
+			return {items => $items, actions => \%actions, sorted => 0, albumData => $albumMetadata, albumInfo => $albumInfo, 
+					cover => $image}, $extra;
 		},
 	);
 }

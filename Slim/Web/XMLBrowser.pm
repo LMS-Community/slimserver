@@ -915,16 +915,11 @@ sub handleFeed {
 
 			$feed->{'favorites_url'} ||= $stash->{'playUrl'};
 
-			if (($feed->{'hasMetadata'} eq 'album')) {
-				my $morelink = _makeWebLink({
-					actions => { 
-						info => { 
-							command =>   ['albuminfo', 'items'], 
-							variables => [ 'album_id', 'id' ],
-						},
-					},
-				},$feed, 'info', sprintf('%s (%s)', string('INFORMATION'), ($feed->{'album'} || '')));
-				
+			if ($feed->{'hasMetadata'} eq 'album' && $feed->{'albumInfo'}) {
+
+				my $morelink = _makeWebLink({ actions => $feed->{'albumInfo'} }, $feed, 'info', 
+											sprintf('%s (%s)', string('INFORMATION'), ($feed->{'album'} || '')));
+
 				$details->{'mixersLink'} = $morelink if $morelink;
 			}
 
@@ -1107,7 +1102,7 @@ sub handleSubFeed {
 	# Pass-through forceRefresh flag
 	$subFeed->{forceRefresh} = 1 if $feed->{forceRefresh};
 	
-	foreach (qw(offset total actions image cover albumData orderByList indexList playlist_id playlistTitle)) {
+	foreach (qw(offset total actions image cover albumData albumInfo orderByList indexList playlist_id playlistTitle)) {
 		$subFeed->{$_} = $feed->{$_} if defined $feed->{$_};
 	}
 	
