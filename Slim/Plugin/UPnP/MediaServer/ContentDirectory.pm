@@ -1071,6 +1071,9 @@ sub _queryToDIDLLite {
 				 	. videoDetails($item, $filter, $request_addr)
 				 	. '</item>';
 			}
+			else {
+				$count--; # skip other types
+			}
 		}
 	}
 	elsif ( $cmd =~ /^mediafolder.*type:image/ ) {
@@ -1098,6 +1101,9 @@ sub _queryToDIDLLite {
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
 				 	. imageDetails($item, $filter, $request_addr)
 				 	. '</item>';
+			}
+			else {
+				$count--; # skip other types
 			}
 		}
 	}
@@ -1141,11 +1147,6 @@ sub _queryToDIDLLite {
 	}
 	
 	$xml .= '</DIDL-Lite>';
-	
-	# Return empty string if we got no results
-	if ( $count == 0 ) {
-		$xml = '';
-	}
 	
 	return ($xml, $count, $total);
 }
