@@ -228,6 +228,19 @@ sub firePendingTimer {
 	return;
 }
 
+=head2 timeChanged()
+
+Notify this subsystem that the system clock has been changed
+
+=cut
+
+sub timeChanged {
+	EV::now_update;
+	
+	# We could possibly consider going through the list of times adjusting
+	# when they should fire but it is probably not worth it.
+}
+
 sub _makeTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
 	
