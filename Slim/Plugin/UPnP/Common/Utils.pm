@@ -181,7 +181,7 @@ sub trackDetails {
 		}
 	}
 	
-	if ( my @genres = split /, /, $track->{genres} ) {
+	if ( my @genres = split /, /, ($track->{genres} || $track->{genre} || $track->{'genres.name'}) ) { # XXX we don't actually fetch multiple genres currently
 		if ( $filterall || $filter =~ /upnp:genre/ ) {
 			for my $genre ( @genres ) {
 				$xml .= '<upnp:genre>' . xmlEscape($genre) . '</upnp:genre>';
