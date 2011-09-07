@@ -4,8 +4,11 @@ package Slim::Plugin::UPnP::MediaServer::ConnectionManager;
 
 use strict;
 
+use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Web::HTTP;
+
+use Slim::Plugin::UPnP::Common::Utils qw(DLNA_FLAGS DLNA_FLAGS_IMAGES);
 
 my $log = logger('plugin.upnp');
 
@@ -18,9 +21,17 @@ sub init {
 		'plugins/UPnP/MediaServer/ConnectionManager.xml',
 		\&description,
 	);
+	
+	# Wipe protocol info after a rescan
+	Slim::Control::Request::subscribe( \&refreshSourceProtocolInfo, [['rescan'], ['done']] );
 }
 
 sub shutdown { }
+
+sub refreshSourceProtocolInfo {
+	$SourceProtocolInfo = undef;
+	# XXX needs evented
+}
 
 sub description {
 	my ( $client, $params ) = @_;
@@ -100,27 +111,74 @@ sub _sourceProtocols {
 	my $class = shift;
 	
 	if ( !$SourceProtocolInfo ) {
-		# XXX add image/video stuff
-		# XXX add other audio profiles
+		my @formats;
 		
-		my $flags = sprintf "%.8x%.24x",
-			(1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+		# There are just too many profiles to list them all by default, so scan the database
+		# for all the ones we have actually scanned
+		my $dbh = Slim::Schema->dbh;
+		
+		my $audio = $dbh->selectall_arrayref( qq{
+			SELECT dlna_profile, content_type, samplerate, channels
+			FROM tracks
+			WHERE audio = 1
+		}, { Slice => {} } );
+		
+		my $images = $dbh->selectall_arrayref( qq{
+			SELECT DISTINCT(dlna_profile), mime_type
+			FROM images
+		}, { Slice => {} } );
+		
+		my $videos = $dbh->selectall_arrayref( qq{
+			SELECT DISTINCT(dlna_profile), mime_type
+			FROM videos
+		}, { Slice => {} } );
 
-		my @formats = (
-			"http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_FLAGS=$flags", # transcoded MP3, no seeking
-			"http-get:*:audio/L16:DLNA.ORG_PN=LPCM;DLNA.ORG_FLAGS=$flags", # transcoded PCM, no seeking
-			"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=AAC_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=HEAAC_L2_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=AAC_ISO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=AAC_ISO_320;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=HEAAC_L2_ISO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMABASE;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAFULL;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAPRO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:application/ogg:*",
-			"http-get:*:audio/x-flac:*",
-		);
+		# Audio profiles, will have duplicates...
+		my %seen = ();
+		for my $row ( @{$audio} ) {
+			my $mime;			
+			if ( $row->{content_type} =~ /^(?:wav|aif|pcm)$/ ) {
+				$mime = 'audio/L16;rate=' . $row->{samplerate} . ';channels=' . $row->{channels};
+			}
+			else {
+				$mime = $Slim::Music::Info::types{ $row->{content_type} };
+			}
+			
+			my $key = $mime . $row->{dlna_profile};
+			next if $seen{$key}++;
+			
+			if ( $row->{dlna_profile} ) {
+				push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile};
+			}
+			else {
+				push @formats, "http-get:*:$mime:*";
+			}
+		}
+		
+		# Special audio transcoding profile for PCM
+		if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
+			push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
+		}
+		
+		# Image profiles
+		for my $row ( @{$images} ) {
+			if ( $row->{dlna_profile} ) {
+				push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+			}
+			else {
+				push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+			}
+		}
+		
+		# Video profiles
+		for my $row ( @{$videos} ) {
+			if ( $row->{dlna_profile} ) {
+				push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+			}
+			else {
+				push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+			}
+		}
 		
 		$SourceProtocolInfo = \@formats;
 	}
