@@ -452,6 +452,8 @@ sub settimeofday {
 	
 	if ( $@ ) {
 		Slim::Utils::Log::logWarning("settimeofday($epoch) failed: $@");
+	} else {
+		Slim::Utils::Timers::timeChanged();
 	}
 }
 
