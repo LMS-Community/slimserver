@@ -350,7 +350,7 @@ sub processHTTP {
 
 	main::DEBUGLOG && $isDebug && $log->info("Reading request...");
 
-	my $request    = $httpClient->get_request();
+	my $request    = $httpClient->get_request(); # XXX this will hang on the rare case a client does not send a full HTTP request
 	# socket half-closed from client
 	if (!defined $request) {
 
@@ -384,10 +384,8 @@ sub processHTTP {
 	# this bundles up all our response headers and content
 	my $response = HTTP::Response->new();
 
-	# by default, respond in kind.
-	$response->protocol($request->protocol());
+	$response->protocol('HTTP/1.1');
 	$response->request($request);
-
 
 	# handle stuff we know about or abort
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD' || $request->method() eq 'POST') {
@@ -1231,6 +1229,16 @@ sub generateHTTPResponse {
 				delete $keepAlives{$httpClient};
 				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 				$response->header( Connection => 'close' );
+			}
+			
+			# Reject bad getContentFeatures requests (DLNA 7.4.26.5)
+			if ( my $gcf = $response->request->header('getContentFeatures.dlna.org') ) {
+				if ( $gcf ne '1' ) {
+					$response->code(400);
+					$httpClient->send_response($response);
+					closeHTTPSocket($httpClient);
+					return 0;
+				}
 			}
 
 			if ( $path =~ /music/ ) {
