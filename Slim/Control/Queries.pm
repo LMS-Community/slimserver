@@ -1698,6 +1698,7 @@ sub mediafolderQuery {
 			if ( (!blessed($item) || !$item->can('content_type')) 
 				&& (!$params->{typeRegEx} || $filename !~ $params->{typeRegEx}) )
 			{
+				$count--;
 				next;
 			}
 			elsif (blessed($item)) {

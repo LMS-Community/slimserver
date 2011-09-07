@@ -1073,6 +1073,7 @@ sub _queryToDIDLLite {
 			}
 			else {
 				$count--; # skip other types
+				$total--;
 			}
 		}
 	}
@@ -1104,6 +1105,7 @@ sub _queryToDIDLLite {
 			}
 			else {
 				$count--; # skip other types
+				$total--;
 			}
 		}
 	}
