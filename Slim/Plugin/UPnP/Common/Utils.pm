@@ -398,10 +398,12 @@ sub imageDetails {
 		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
 		
 	if ( $image->{original_time} ) {
-		my @time = localtime($image->{original_time});
+		if ( $filterall || $filter =~ /dc:date/ ) {
+			my @time = localtime($image->{original_time});
 		
-		if (scalar @time > 5) {
-			$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', @time) ) . '</dc:date>'
+			if (scalar @time > 5) {
+				$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', @time) ) . '</dc:date>'
+			}
 		}
 	}
 	

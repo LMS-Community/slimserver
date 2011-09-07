@@ -283,6 +283,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/music' || ($flag eq 'BrowseMetadata' && length($id) == 2) ) { # Music menu, or metadata for a music menu item
@@ -308,6 +309,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/video' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:vf|va)$}) ) { # Video menu
@@ -328,6 +330,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:ia|id|it|il|if)$}) ) { # Image menu
@@ -351,6 +354,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	else {
@@ -1153,9 +1157,12 @@ sub _arrayToDIDLLite {
 	my $sort   = $args->{sort};
 	my $start  = $args->{start};
 	my $limit  = $args->{limit};
+	my $filter = $args->{filter};
 	
 	my $count = 0;
 	my $total = 0;
+	
+	my $filterall = ($filter eq '*');
 	
 	my $xml = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
 	
@@ -1194,7 +1201,11 @@ sub _arrayToDIDLLite {
 		my $searchable = $item->{searchable} || 0;
 		
 		if ( $type =~ /container/ ) {
-			$xml .= qq{<container id="${id}" parentID="${parentID}" restricted="1" searchable="${searchable}">}
+			$xml .= qq{<container id="${id}" parentID="${parentID}" restricted="1"};
+			if ( $filterall || $filter =~ /\@searchable/ ) {
+				$xml .= qq{ searchable="${searchable}"};
+			}
+			$xml .= qq{>}
 				. "<upnp:class>${type}</upnp:class>"
 				. '<dc:title>' . xmlEscape($title) . '</dc:title>'
 				. '</container>';
