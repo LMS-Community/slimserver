@@ -1235,6 +1235,7 @@ sub generateHTTPResponse {
 			if ( my $gcf = $response->request->header('getContentFeatures.dlna.org') ) {
 				if ( $gcf ne '1' ) {
 					$response->code(400);
+					$response->headers->remove_content_headers;
 					$httpClient->send_response($response);
 					closeHTTPSocket($httpClient);
 					return 0;
@@ -1508,6 +1509,7 @@ sub sendStreamingFile {
 	# Reject TimeSeekRange.dlna.org requests XXX support this later
 	if ( $response->request->header('TimeSeekRange.dlna.org') ) {
 		$response->code(406);
+		$response->headers->remove_content_headers;
 		$httpClient->send_response($response);
 		closeHTTPSocket($httpClient);
 		return;
@@ -2541,6 +2543,7 @@ sub downloadMusicFile {
 	}
 	else {
 		$response->code(406);
+		$response->headers->remove_content_headers;
 		$httpClient->send_response($response);
 		closeHTTPSocket($httpClient);
 		return;
@@ -2579,7 +2582,8 @@ sub downloadMusicFile {
 					if ( !$transcoder ) {
 						$log->error("Couldn't transcode " . $obj->url . " to $outFormat: $error");
 					
-						$response->code(400);					
+						$response->code(400);
+						$response->headers->remove_content_headers;				
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
@@ -2591,7 +2595,8 @@ sub downloadMusicFile {
 					if ( !$command ) {
 						$log->error("Couldn't create transcoder command-line for " . $obj->url . " to $outFormat");
 					
-						$response->code(400);					
+						$response->code(400);
+						$response->headers->remove_content_headers;					
 						addHTTPResponse($httpClient, $response, \'', 1, 0);
 						return 1;
 					}
@@ -2742,7 +2747,8 @@ sub downloadMusicFile {
 					# Transcoding is not enabled, return 400
 					$log->error("Transcoding is not enabled for " . $obj->url . " to $outFormat");
 				
-					$response->code(400);					
+					$response->code(400);	
+					$response->headers->remove_content_headers;				
 					addHTTPResponse($httpClient, $response, \'', 1, 0);
 					return 1;
 				}
@@ -2787,6 +2793,7 @@ sub downloadVideoFile {
 		}
 		else {
 			$response->code(406);
+			$response->headers->remove_content_headers;
 			$httpClient->send_response($response);
 			closeHTTPSocket($httpClient);
 			return;
@@ -2819,6 +2826,7 @@ sub downloadImageFile {
 		}
 		else {
 			$response->code(406);
+			$response->headers->remove_content_headers;
 			$httpClient->send_response($response);
 			closeHTTPSocket($httpClient);
 			return;
