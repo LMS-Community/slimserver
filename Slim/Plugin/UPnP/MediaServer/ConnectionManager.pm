@@ -8,8 +8,6 @@ use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Web::HTTP;
 
-use Slim::Plugin::UPnP::Common::Utils qw(DLNA_FLAGS DLNA_FLAGS_IMAGES);
-
 my $log = logger('plugin.upnp');
 
 my $SourceProtocolInfo;
