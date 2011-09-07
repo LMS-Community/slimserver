@@ -12,6 +12,7 @@ use strict;
 
 use Digest::MD5 qw(md5_hex);
 use HTTP::Date;
+use Network::IPv4Addr ();
 use Socket;
 
 use Slim::Networking::Select;
@@ -28,6 +29,9 @@ use constant SSDP_PORT => 1900;
 
 # sockets (one per active interface) for both multicasting and unicast replies
 my %SOCKS;
+
+# map of local IPs -> CIDR
+my %CIDR;
 
 my $SERVER;
 
@@ -64,6 +68,7 @@ sub init {
 				next unless $if->is_running && $if->is_multicast;
 				my $addr = $if->address || next;
 				push @addresses, $addr;
+				$CIDR{$addr} = Network::IPv4Addr::ipv4_parse($addr, $if->netmask);
 			}
 		};
 	}
@@ -78,6 +83,7 @@ sub init {
 			);
 
 			if ( $sock ) {
+				$sock->mcast_add( SSDP_HOST, $addr );
 				$SOCKS{$addr} = $sock;
 			}
 			else {
@@ -85,7 +91,7 @@ sub init {
 			}
 		}
 	}
-		
+	
 	# Setup a single multicast socket for listening on all interfaces
 	# Listening on each single-interface socket does not seem to work right
 	my $listensock = Slim::Networking::Async::Socket::UDP->new(
@@ -95,14 +101,14 @@ sub init {
 	);
 	
 	if ( $listensock ) {
-		$listensock->mcast_add( SSDP_HOST );
+		$listensock->mcast_add( SSDP_HOST, '0.0.0.0' );
 		Slim::Networking::Select::addRead( $listensock, \&_read );
 		$SOCKS{'0.0.0.0'} = $listensock;
 	}
 	else {
 		$log->warn("Unable to open UPnP multicast socket on 0.0.0.0: ($!)");
 	}
-	
+
 	if ( !scalar keys %SOCKS ) {
 		$log->error("Unable to open any UPnP multicast discovery sockets, you may have other UPnP software running or a permissions problem.");
 		return;
@@ -440,21 +446,28 @@ sub _advertise {
 	elsif ( $type eq 'reply' ) {
 		# send unicast UDP to source IP/port, delayed by random interval less than MX
 		my $send = sub {
-			main::DEBUGLOG && $isDebug && $log->debug(
-				'Replying to ' . $dest->{addr} . ':' . $dest->{port}
-				. ' with ' . scalar(@out) . ' packets'
-				. ': ' . Data::Dump::dump(\@out)
-			);
-			
 			my $addr = sockaddr_in( $dest->{port}, inet_aton( $dest->{addr} ) );
+			
+			# Determine which of our local addresses is on the same subnet as the destination
+			my $local_addr;
+			for my $a ( keys %SOCKS ) {
+				if ( exists $CIDR{$a} && Network::IPv4Addr::ipv4_in_network($CIDR{$a}, $dest->{addr}) ) {
+					$local_addr = $a;
+					last;
+				}
+			}
+			if ( !$local_addr ) {
+				$local_addr = Slim::Utils::Network::serverAddr(); # default
+			}
 			
 			for my $pkt ( @out ) {
 				# Construct absolute address
 				my $copy = $pkt;
+				$copy =~ s{Location: }{Location: http://$local_addr:$port};
 				
-				# XXX need to determine which of our local addresses is on the same subnet as $addr...
-				my $host = Slim::Utils::Network::serverAddr();
-				$copy =~ s{Location: }{Location: http://$host:$port};
+				main::DEBUGLOG && $isDebug && $log->debug(
+					'Replying to ' . $dest->{addr} . ':' . $dest->{port} . ': ' . Data::Dump::dump($copy)
+				);
 				
 				$dest->{sock}->send( $copy, 0, $addr ) or die "Unable to send UDP reply packet: $!";
 			}
