@@ -163,6 +163,12 @@ sub _read {
 			# Ignore packets without MX
 			return unless defined $mx;
 			
+			# DLNA 7.2.3.5, ignore M-SEARCH with source port 1900 or <1024
+			if ($port == 1900 || $port <= 1024) {
+				$log->warn( "Ignoring illegal M-SEARCH request from $iaddr:$port (port must not be 1900 or <=1024)" );
+				return;
+			}
+			
 			$log->is_debug && $log->debug( "M-SEARCH from $iaddr:$port for $st (mx: $mx)" );
 			
 			# Most devices seem to ignore the mx value and reply quickly
