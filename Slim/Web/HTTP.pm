@@ -2545,6 +2545,8 @@ sub downloadMusicFile {
 					my ($bitrate) = $uri =~ m{bitrate=(\d+)};
 					my ($quality) = $uri =~ m{quality=(\d)};
 					$quality = 9 unless $quality =~ /^[0-9]$/;
+					
+					$outFormat = 'pcm' if $outFormat =~ /^(?:aiff?|wav)$/;
 				
 					my ($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 						$obj,
@@ -2605,7 +2607,13 @@ sub downloadMusicFile {
 						Slim::Utils::Network::blocking($in, 0);
 					}
 				
-					$response->content_type( $Slim::Music::Info::types{$outFormat} );
+					if ($outFormat eq 'pcm') {
+						# Construct special PCM content-type
+						$response->content_type( 'audio/L16;rate=' . $obj->samplerate . ';channels=' . $obj->channels );
+					}
+					else {
+						$response->content_type( $Slim::Music::Info::types{$outFormat} );
+					}
 				
 					# Tell client range requests are not supported
 					$response->header( 'Accept-Ranges' => 'none' );
@@ -2623,9 +2631,15 @@ sub downloadMusicFile {
 						$response->header( 'Transfer-Encoding' => 'chunked' );
 					}
 					
-					# Add DLNA HTTP header, with ORG_CI to indicate transcoding
+					# Add DLNA HTTP header, with ORG_CI to indicate transcoding, and lack of ORG_OP to indicate no seeking
+					my $dlna;
 					if ( $outFormat eq 'mp3' ) {
-						my $dlna = "DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+						$dlna = 'DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+					}
+					elsif ( $outFormat eq 'pcm' ) {
+						$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+					}
+					if ($dlna) {
 						$response->header( 'contentFeatures.dlna.org' => $dlna );
 					}
 				
@@ -2667,6 +2681,9 @@ sub downloadMusicFile {
 								if ($is11) {
 									# Add last empty chunk
 									$out->push_write( '0' . $CRLF . $CRLF );
+								}
+								else {
+									$writer->(); # clean up & close
 								}
 							}
 							else {

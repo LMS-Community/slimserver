@@ -367,13 +367,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUNH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
 				my $artist_id = $1;
@@ -403,13 +403,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUNH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -422,8 +422,8 @@ sub Browse {
 		elsif ( $id =~ m{^/g} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -433,7 +433,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUNH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
@@ -463,8 +463,8 @@ sub Browse {
 		elsif ( $id =~ m{^/y} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -474,7 +474,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUNH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
@@ -499,8 +499,8 @@ sub Browse {
 		elsif ( $id =~ m{^/n} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -510,7 +510,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUN"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUNH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			else {
@@ -526,8 +526,8 @@ sub Browse {
 		elsif ( $id =~ m{^/m} ) {
 			if ( $id =~ m{/m/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
 				my $fid = $1;
@@ -551,12 +551,12 @@ sub Browse {
 		elsif ( $id =~ m{^/p} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUN"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUNH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 			}
 			elsif ( $id =~ m{^/p/(\d+)/t$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDUN"
+					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDUNH"
 					: "playlists 0 1 playlist_id:$1";
 			}
 			else {
@@ -568,7 +568,7 @@ sub Browse {
 			}
 		}
 		elsif ( $id =~ m{^/t/(\d+)$} ) {
-			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUN";
+			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUNH";
 		}
 		
 		### Video

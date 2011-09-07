@@ -4141,7 +4141,7 @@ my %tagMap = (
 	  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
 	  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
 	  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
-	                                                                    #channels 
+	  'H' => ['channels',         'CHANNELS',      'channels'],         #channels 
 	                                                                    #block_alignment
 	                                                                    #endian 
 	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
@@ -4222,6 +4222,7 @@ my %colMap = (
 	w => 'tracks.lyrics',
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
+	H => 'tracks.channels',
 );
 
 sub _songDataFromHash {
@@ -4755,6 +4756,7 @@ sub _getTagDataForTracks {
 	$tags =~ /D/ && do { $c->{'tracks.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'tracks.updated_time'} = 1 };
 	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
+	$tags =~ /H/ && do { $c->{'tracks.channels'} = 1 };
 	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
 	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
 	$tags =~ /w/ && do { $c->{'tracks.lyrics'} = 1 };

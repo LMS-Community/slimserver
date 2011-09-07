@@ -20,6 +20,7 @@ use POSIX qw(strftime);
 use List::Util qw(min);
 
 use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 use Exporter::Lite;
@@ -31,9 +32,13 @@ my $prefs = preferences('server');
 use constant DLNA_FLAGS        => sprintf "%.8x%.24x", (1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
 use constant DLNA_FLAGS_IMAGES => sprintf "%.8x%.24x", (1 << 23) | (1 << 22) | (1 << 21) | (1 << 20), 0;
 
-my %DLNA_MAP = (
-	'audio/mpeg' => 'DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS(),
-);
+my $HAS_LAME;
+sub HAS_LAME {
+	return $HAS_LAME if defined $HAS_LAME;
+	
+	$HAS_LAME = Slim::Utils::Misc::findbin('lame') ? 1 : 0;
+	return $HAS_LAME;
+}
 
 sub xmlEscape {
 	my $text = shift;
@@ -214,20 +219,40 @@ sub trackDetails {
 		}
 		
 		# We need to provide a <res> for the native file, as well as compatability formats via transcoding
-		my $native_type = $Slim::Music::Info::types{ $track->{type} || $track->{'tracks.content_type'} };
+		my $content_type = $track->{type} || $track->{'tracks.content_type'};
+		my $native_type = $Slim::Music::Info::types{$content_type};
+		
+		# Setup transcoding formats for non-PCM/MP3 content
 		my @other_types;
-		if ( $native_type ne 'audio/mpeg' ) {
-			push @other_types, 'audio/mpeg';
-			# XXX audio/L16
+		if ( $content_type !~ /^(?:mp3|aif|pcm|wav)$/ ) {
+			push @other_types, 'audio/mpeg' if HAS_LAME();
+			push @other_types, 'audio/L16';
+		}
+		else {
+			# Fix PCM type string
+			if ( $content_type ne 'mp3' ) {
+				$native_type = 'audio/L16';
+			}
 		}
 		
 		for my $type ( $native_type, @other_types ) {
-			# XXX Need to add correct DLNA profile detection into Audio::Scan
-			my $dlna = $DLNA_MAP{$type} || '*';
+			my $dlna;
+			my $ext = Slim::Music::Info::mimeToType($type);
 			
-			# Add DLNA.ORG_CI=1 for transcoded content
-			if ( $type ne $native_type ) {
-				$dlna =~ s/;/;DLNA.ORG_CI=1;/;
+			if ( $type eq $native_type ) {
+				$dlna = $track->{dlna_profile} || $track->{'tracks.dlna_profile'} || '*';
+			}
+			else {
+				# Add DLNA.ORG_CI=1 for transcoded content
+				if ( $type eq 'audio/mpeg' ) {
+					$dlna = 'DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+				}
+				elsif ( $type eq 'audio/L16' ) {
+					$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+					
+					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
+						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
+				}
 			}
 			
 			$xml .= '<res protocolInfo="http-get:*:' . $type . ':' . $dlna . '"';
@@ -253,8 +278,6 @@ sub trackDetails {
 			if ( $filterall || $filter =~ /res\@sampleFrequency/ ) {
 				$xml .= ' sampleFrequency="' . ($track->{samplerate} || $track->{'tracks.samplerate'}) . '"';
 			}
-			
-			my $ext = Slim::Music::Info::mimeToType($type);
 			
 			if ( $ext eq 'mp3' ) {
 				$ext = 'mp3?bitrate=320';
