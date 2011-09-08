@@ -139,10 +139,17 @@ sub rescan {
 	}
 	
 	my $ignore_dirs = [
-		'.ite',  # iTunes Extras (purchased movies)
-		'.itlp', # iTunes LP data (purchased music)
-		# XXX Add Aperture and iPhoto entries
-		# XXX Make this a pref?
+		'.ite',       # iTunes Extras (purchased movies)
+		'.itlp',      # iTunes LP data (purchased music)
+		'.aplibrary', # Aperture data file
+		'.apvault',   # Aperture backup file
+		'.rcproject', # iMovie project
+		'.noindex',   # iPhoto
+		'.eyetv',
+		# various versions of the Windows trash - http://en.wikipedia.org/wiki/Trash_(computing)#Microsoft_Windows
+		'$RECYCLE.BIN', # Windows Vista+
+		'RECYCLER',   # NT/2000/XP
+		#'Recycled',   # Windows 9x
 	];
 	
 	my $progress;
