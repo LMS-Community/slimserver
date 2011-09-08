@@ -191,13 +191,10 @@ sub trackDetails {
 	
 	if ( my $coverid = ($track->{coverid} || $track->{'tracks.coverid'}) ) {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-			# XXX 7.3.61.3, dlna:profileID JPEG_TN and full size
+			# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+			$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+				. absURL("/music/$coverid/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
 			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
-		}
-		
-		if ( $filterall || $filter =~ /upnp:icon/ ) {
-			my $thumbSize = $prefs->get('thumbSize') || 100;
-			$xml .= '<upnp:icon>' . absURL("/music/$coverid/cover_${thumbSize}x${thumbSize}_o", $request_addr) . '</upnp:icon>';
 		}
 	}
 	
@@ -322,14 +319,16 @@ sub videoDetails {
 		$xml .= '<upnp:album>' . xmlEscape($video->{album} || $video->{'videos.album'}) . '</upnp:album>';
 	}
 	
-	# XXX albumArtURI needed for video?
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, this will probably break things
+	# so leaving this albumArtURI code here which can be uncommented if clients don't work with the res thumbnail
+=pod
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o", $request_addr) . '</upnp:albumArtURI>';
+		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
-	
-	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/video/${hash}/cover_300x300_o", $request_addr) . '</upnp:icon>';
-	}
+=cut
 	
 	# mtime is used for all values as fallback
 	my $mtime = $video->{mtime} || $video->{'videos.mtime'};
@@ -377,6 +376,14 @@ sub videoDetails {
 		}
 	
 		$xml .= '>' . absURL("/video/${hash}/download", $request_addr) . '</res>';
+		
+		# DLNA 7.3.60, provide video thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_160x160_m.png", $request_addr)
+			. '</res>';
 	}
 	
 	return $xml;
@@ -411,14 +418,16 @@ sub imageDetails {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
 	}
 	
-	# XXX albumArtURI needed for images?
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, this will probably break things
+	# so leaving this albumArtURI code here which can be uncommented if clients don't work with the res thumbnail
+=pod
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o", $request_addr) . '</upnp:albumArtURI>';
+		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
-	
-	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/image/${hash}/cover_300x300_o", $request_addr) . '</upnp:icon>';
-	}
+=cut
 	
 	# mtime is used for all values as fallback
 	my $mtime = $image->{mtime} || $image->{'images.mtime'};
@@ -469,6 +478,14 @@ sub imageDetails {
 		else {
 			$xml .= '>' . absURL("/image/${hash}/download", $request_addr) . '</res>';
 		}
+		
+		# DLNA 7.3.60, provide video thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_160x160_m.png", $request_addr)
+			. '</res>';
 	}
 	
 	return $xml;

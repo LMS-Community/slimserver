@@ -889,7 +889,10 @@ sub _queryToDIDLLite {
 			if ( $filterall || $filter =~ /dc:date/ ) {
 				$xml .= '<dc:date>' . xmlEscape( sprintf("%04d", $album->{year}) ) . '-01-01</dc:date>'; # DLNA requires MM-DD
 			}
-			if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
+			if ( $coverid && ($filterall || $filter =~ /upnp:albumArtURI/) ) {
+				# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+				$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+					. absURL("/music/$coverid/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
 				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 			}
 			
@@ -1214,7 +1217,7 @@ sub _arrayToDIDLLite {
 				. '<dc:title>' . xmlEscape($title) . '</dc:title>';
 			
 			# DLNA 7.3.67.4, add searchClass info
-			if ($id == 0) {
+			if ($id == 0 && ($filterall || $filter =~ /upnp:searchClass/) ) {
 				$xml .= qq{<upnp:searchClass includeDerived="0">object.item.audioItem</upnp:searchClass>}
 					  . qq{<upnp:searchClass includeDerived="0">object.item.imageItem</upnp:searchClass>}
 					  . qq{<upnp:searchClass includeDerived="0">object.item.videoItem</upnp:searchClass>};
