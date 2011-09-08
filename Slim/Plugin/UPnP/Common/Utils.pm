@@ -11,7 +11,6 @@ package Slim::Plugin::UPnP::Common::Utils;
 #
 # Support time-based seek DLNA (OP=11), can use Media::Scan/Audio::Scan to seek
 # Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
-# Multiple NIC support
 
 use strict;
 
@@ -245,10 +244,12 @@ sub trackDetails {
 			if ( $type eq $native_type ) {
 				my $profile = $track->{dlna_profile} || $track->{'tracks.dlna_profile'};
 				if ( $profile ) {
-					$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+					my $canseek = ($profile eq 'MP3' || $profile =~ /^WMA/);
+					$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
 				}
 				else {
-					$dlna = '*';
+					my $canseek = ($type eq 'audio/x-flac' || $type eq 'audio/x-ogg');
+					$dlna = 'DLNA.ORG_OP=' . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
 				}
 			}
 			else {
@@ -355,6 +356,7 @@ sub videoDetails {
 		
 		my $dlna = '*';
 		if ( my $profile = $video->{dlna_profile} || $video->{'videos.dlna_profile'} ) {
+			# XXX support time-based video seeking via Media::Scan
 			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS();
 		}
 		

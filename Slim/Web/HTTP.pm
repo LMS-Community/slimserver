@@ -1448,7 +1448,7 @@ sub generateHTTPResponse {
 }
 
 sub sendStreamingFile {
-	my ( $httpClient, $response, $contentType, $file ) = @_;
+	my ( $httpClient, $response, $contentType, $file, $objOrHash ) = @_;
 	
 	# Send the file down - and hint to the browser
 	# the correct filename to save it as.
@@ -1462,8 +1462,72 @@ sub sendStreamingFile {
 	
 	my $fh = FileHandle->new($file);
 	
+	# Range/TimeSeekRange
+	my $range   = $response->request->header('Range');
+	my $tsrange = $response->request->header('TimeSeekRange.dlna.org');
+	
+	# If a Range is already provided, ignore TimeSeekRange
+	if ( $tsrange && !$range ) {
+		# Translate TimeSeekRange into byte range
+		my $valid = 0;
+		
+		my $formatClass = blessed($objOrHash) ? Slim::Formats->classForFormat($objOrHash->content_type) : undef;
+		
+		# Ignore TimeSeekRange unless we have a valid format class (currently this only supports audio)
+		if ( $formatClass && Slim::Formats->loadTagFormatForType($objOrHash->content_type) && $formatClass->can('findFrameBoundaries') ) {
+			# Valid is: npt=(start time)-(end time)
+			# A time may be either a fractional seconds (sss.fff), or hhh:mm:ss.fff
+			# End is optional
+			if ( $tsrange =~ /^npt=([^-]+)-([^\s]*)$/ ) {
+				my $start = $1 || 0;
+				my $end   = $2;
+			
+				my $startbytes = 0;
+				my $endbytes = $size - 1;
+			
+				if ( $start =~ /:/ ) {
+					my ($h, $m, $s) = split /:/, $start;
+					$start = ($h * 3600) + ($m * 60) + $s;
+				}
+				
+				if ( $start > 0 ) {
+					$startbytes = $formatClass->findFrameBoundaries($fh, undef, $start);
+					main::DEBUGLOG && $log->is_debug && $log->debug("TimeSeekRange.dlna.org: Found start byte offset $startbytes for time $start");
+				}
+			
+				if ( $end ) {
+					if ( $end =~ /:/ ) {
+						my ($h, $m, $s) = split /:/, $end;
+						$end = ($h * 3600) + ($m * 60) + $s;
+					}
+					
+					$endbytes = $formatClass->findFrameBoundaries($fh, undef, $end);
+					main::DEBUGLOG && $log->is_debug && $log->debug("TimeSeekRange.dlna.org: Found end offset $endbytes for time $end");
+				}
+				
+				if ( $startbytes >= 0 && $endbytes >= 0 ) {
+					# Create a valid Range request, which will be handled by the below range code
+					$range = "bytes=${startbytes}-${endbytes}";
+					$valid = 1;
+					
+					my $duration = $objOrHash->secs;
+					$response->header( 'TimeSeekRange.dlna.org' => "npt=${start}-${end}/${duration} bytes=${startbytes}-${endbytes}/${size}" );
+				}
+			}
+		}
+		
+		if ( !$valid ) {
+			$log->warn("Invalid TimeSeekRange.dlna.org request: $tsrange");
+			$response->code(406);
+			$response->headers->remove_content_headers;
+			$httpClient->send_response($response);
+			closeHTTPSocket($httpClient);
+			return;
+		}
+	}
+	
 	# Support Range requests
-	if ( my $range = $response->request->header('Range') ) {
+	if ( $range ) {
 		# Only support a single range request, and no support for suffix requests
 		if ( $range =~ m/^bytes=(\d+)-(\d+)?$/ ) {
 			my $first = $1 || 0;
@@ -1504,15 +1568,6 @@ sub sendStreamingFile {
 			${*$fh}{rangeTotal}   = $total;
 			${*$fh}{rangeCounter} = 0;
 		}
-	}
-	
-	# Reject TimeSeekRange.dlna.org requests XXX support this later
-	if ( $response->request->header('TimeSeekRange.dlna.org') ) {
-		$response->code(406);
-		$response->headers->remove_content_headers;
-		$httpClient->send_response($response);
-		closeHTTPSocket($httpClient);
-		return;
 	}
 	
 	# Respond to realTimeInfo.dlna.org (DLNA 7.4.72)
@@ -2761,11 +2816,12 @@ sub downloadMusicFile {
 		
 		# Add DLNA HTTP header
 		if ( my $pn = $obj->dlna_profile ) {
-			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+			my $canseek = ($pn eq 'MP3' || $pn =~ /^WMA/);
+			my $dlna = "DLNA.ORG_PN=${pn};DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
 			$response->header( 'contentFeatures.dlna.org' => $dlna );
 		}
 		
-		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url), $obj );
 			
 		return 1;
 	}
@@ -2799,7 +2855,7 @@ sub downloadVideoFile {
 			return;
 		}
 				
-		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}) );
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $video->{mime_type}, Slim::Utils::Misc::pathFromFileURL($video->{url}), $video );
 		return 1;
 	}
 	
@@ -2832,7 +2888,7 @@ sub downloadImageFile {
 			return;
 		}
 				
-		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}) );
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, $image->{mime_type}, Slim::Utils::Misc::pathFromFileURL($image->{url}), $image );
 		return 1;
 	}
 	
