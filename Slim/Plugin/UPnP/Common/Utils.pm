@@ -318,17 +318,15 @@ sub videoDetails {
 	if ( $filterall || $filter =~ /upnp:album/ ) {
 		$xml .= '<upnp:album>' . xmlEscape($video->{album} || $video->{'videos.album'}) . '</upnp:album>';
 	}
-	
-	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, this will probably break things
-	# so leaving this albumArtURI code here which can be uncommented if clients don't work with the res thumbnail
-=pod
+
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
+	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
 		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
 			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
 		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
-=cut
 	
 	# mtime is used for all values as fallback
 	my $mtime = $video->{mtime} || $video->{'videos.mtime'};
@@ -417,10 +415,10 @@ sub imageDetails {
 	if ( $filterall || $filter =~ /upnp:album/ ) {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
 	}
-	
-	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, this will probably break things
-	# so leaving this albumArtURI code here which can be uncommented if clients don't work with the res thumbnail
-=pod
+
+=pod	
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
+	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
 		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'

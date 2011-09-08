@@ -163,6 +163,7 @@ sub artworkRequest {
 		}
 		elsif ( $type eq 'video' ) {
 			# do nothing here - just don't follow the other routes
+			# XXX support resizing video on demand
 		}
 		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
 			# ID is a coverid
