@@ -424,8 +424,8 @@ Command line options:
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file
 	--logconfig    Specify pre-defined logging configuration file
-    --noimage      Disable scanning for images.
-    --novideo      Disable scanning for videos.
+	--noimage      Disable scanning for images.
+	--novideo      Disable scanning for videos.
 	--nodebuglog   Disable all debug-level logging (compiled out).
 	--noinfolog    Disable all debug-level & info-level logging (compiled out).
 	--nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
