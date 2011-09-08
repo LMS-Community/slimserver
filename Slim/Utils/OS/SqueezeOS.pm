@@ -310,6 +310,8 @@ sub skipPlugins {
 			Extensions JiveExtras
 			
 			iTunes MusicMagic PreventStandby Rescan TT xPL
+			
+			UPnP
 		),
 		$class->SUPER::skipPlugins(),
 	);

@@ -696,11 +696,11 @@ sub getAudioDirs {
 }
 
 sub getVideoDirs {
-	return getMediaDirs('video');
+	return main::VIDEO ? getMediaDirs('video') : [];
 }
 
 sub getImageDirs {
-	return getMediaDirs('image');
+	return main::IMAGE ? getMediaDirs('image') : [];
 }
 
 sub getDirsPref {

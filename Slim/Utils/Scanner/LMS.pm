@@ -64,6 +64,15 @@ sub hasAborted {
 sub rescan {
 	my ( $class, $in_paths, $args ) = @_;
 	
+	# don't continue if image and video processing have been disabled
+	if ( !main::IMAGE && !main::VIDEO ) {
+		if ( $args->{onFinished}) {
+			$args->{onFinished}->();
+		}
+		
+		return;
+	}
+	
 	my $dbh = Slim::Schema->dbh;
 	
 	if ( ref $in_paths ne 'ARRAY' ) {
@@ -120,6 +129,13 @@ sub rescan {
 		
 		push @{$ignore}, 'VIDEO' if ( grep { $_ eq $mediafolder } @{ $prefs->get('ignoreInVideoScan') } );
 		push @{$ignore}, 'IMAGE' if ( grep { $_ eq $mediafolder } @{ $prefs->get('ignoreInImageScan') } );
+	}
+	
+	if ( !main::IMAGE ) {
+		push @{$ignore}, 'IMAGE';
+	}
+	elsif ( !main::VIDEO ) {
+		push @{$ignore}, 'VIDEO'
 	}
 	
 	my $ignore_dirs = [
