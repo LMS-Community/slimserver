@@ -10,7 +10,9 @@ use Slim::Web::HTTP;
 
 my $log = logger('plugin.upnp');
 
-my $SourceProtocolInfo;
+use constant EVENT_RATE => 0.2;
+
+my $STATE;
 
 sub init {
 	my $class = shift;
@@ -20,6 +22,15 @@ sub init {
 		\&description,
 	);
 	
+	
+ 	$STATE = {
+		SourceProtocolInfo   => _sourceProtocols(),
+		SinkProtocolInfo     => '',
+		CurrentConnectionIDs => 0,
+		_subscribers         => 0,
+		_last_evented        => 0,
+	};
+	
 	# Wipe protocol info after a rescan
 	Slim::Control::Request::subscribe( \&refreshSourceProtocolInfo, [['rescan'], ['done']] );
 }
@@ -27,8 +38,8 @@ sub init {
 sub shutdown { }
 
 sub refreshSourceProtocolInfo {
-	$SourceProtocolInfo = undef;
-	# XXX needs evented
+	$STATE->{SourceProtocolInfo} = _sourceProtocols();
+	__PACKAGE__->event('SourceProtocolInfo');
 }
 
 sub description {
@@ -44,22 +55,68 @@ sub description {
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
 	
-	my $source = $class->_sourceProtocols;
+	# Bump the number of subscribers
+	$STATE->{_subscribers}++;
 	
-	# Send initial notify with complete data
-	Slim::Plugin::UPnP::Events->notify(
-		service => $class,
-		id      => $uuid, # only notify this UUID, since this is an initial notify
-		data    => {
-			SourceProtocolInfo   => join( ',', @{$source} ),
-			SinkProtocolInfo     => '',
-			CurrentConnectionIDs => 0,
-		},
-	);
+	# Send initial event
+	sendEvent($uuid);
 }
 
-sub unsubscribe {
-	# Nothing to do
+sub event {
+	my ( $class, $var ) = @_;
+	
+	if ( $STATE->{_subscribers} ) {
+		# Don't send more often than every 0.2 seconds
+		Slim::Utils::Timers::killTimers( undef, \&sendEvent );
+		
+		my $lastAt = $STATE->{_last_evented};
+		my $sendAt = Time::HiRes::time();
+		
+		if ( $sendAt - $lastAt < EVENT_RATE ) {
+			$sendAt += EVENT_RATE - ($sendAt - $lastAt);
+		}
+		
+		Slim::Utils::Timers::setTimer(
+			undef,
+			$sendAt,
+			\&sendEvent,
+			$var,
+		);
+	}
+}
+
+sub sendEvent {
+	my ( $uuid, $var ) = @_;
+	
+	if ( $var ) {
+		# Event 1 variable
+		Slim::Plugin::UPnP::Events->notify(
+			service => __PACKAGE__,
+			id      => $uuid || 0, # 0 will notify everyone
+			data    => {
+				$var => $STATE->{$var},
+			},
+		);
+	}
+	else {
+		# Event all
+		Slim::Plugin::UPnP::Events->notify(
+			service => __PACKAGE__,
+			id      => $uuid || 0, # will notify everyone
+			data    => {
+				map { $_ => $STATE->{$_} } grep { ! /^_/ } keys %{$STATE}
+			},
+		);
+	}
+	
+	# Indicate when last event was sent
+	$STATE->{_last_evented} = Time::HiRes::time();
+}
+
+sub unsubscribe {	
+	if ( $STATE->{_subscribers} > 0 ) {
+		$STATE->{_subscribers}--;
+	}
 }
 
 ### Action methods
@@ -73,10 +130,8 @@ sub GetCurrentConnectionIDs {
 sub GetProtocolInfo {
 	my $class = shift;
 	
-	my $source = $class->_sourceProtocols;
-	
 	return (
-		SOAP::Data->name( Source => join ',', @{$source} ),
+		SOAP::Data->name( Source => $class->_sourceProtocols ),
 		SOAP::Data->name( Sink   => '' ),
 	);
 }
@@ -108,80 +163,76 @@ sub GetCurrentConnectionInfo {
 sub _sourceProtocols {
 	my $class = shift;
 	
-	if ( !$SourceProtocolInfo ) {
-		my @formats;
-		
-		# There are just too many profiles to list them all by default, so scan the database
-		# for all the ones we have actually scanned
-		my $dbh = Slim::Schema->dbh;
-		
-		my $audio = $dbh->selectall_arrayref( qq{
-			SELECT dlna_profile, content_type, samplerate, channels
-			FROM tracks
-			WHERE audio = 1
-		}, { Slice => {} } );
-		
-		my $images = $dbh->selectall_arrayref( qq{
-			SELECT DISTINCT(dlna_profile), mime_type
-			FROM images
-		}, { Slice => {} } );
-		
-		my $videos = $dbh->selectall_arrayref( qq{
-			SELECT DISTINCT(dlna_profile), mime_type
-			FROM videos
-		}, { Slice => {} } );
+	my @formats;
+	
+	# There are just too many profiles to list them all by default, so scan the database
+	# for all the ones we have actually scanned
+	my $dbh = Slim::Schema->dbh;
+	
+	my $audio = $dbh->selectall_arrayref( qq{
+		SELECT dlna_profile, content_type, samplerate, channels
+		FROM tracks
+		WHERE audio = 1
+	}, { Slice => {} } );
+	
+	my $images = $dbh->selectall_arrayref( qq{
+		SELECT DISTINCT(dlna_profile), mime_type
+		FROM images
+	}, { Slice => {} } );
+	
+	my $videos = $dbh->selectall_arrayref( qq{
+		SELECT DISTINCT(dlna_profile), mime_type
+		FROM videos
+	}, { Slice => {} } );
 
-		# Audio profiles, will have duplicates...
-		my %seen = ();
-		for my $row ( @{$audio} ) {
-			my $mime;			
-			if ( $row->{content_type} =~ /^(?:wav|aif|pcm)$/ ) {
-				$mime = 'audio/L16;rate=' . $row->{samplerate} . ';channels=' . $row->{channels};
-			}
-			else {
-				$mime = $Slim::Music::Info::types{ $row->{content_type} };
-			}
-			
-			my $key = $mime . $row->{dlna_profile};
-			next if $seen{$key}++;
-			
-			if ( $row->{dlna_profile} ) {
-				push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile};
-			}
-			else {
-				push @formats, "http-get:*:$mime:*";
-			}
+	# Audio profiles, will have duplicates...
+	my %seen = ();
+	for my $row ( @{$audio} ) {
+		my $mime;			
+		if ( $row->{content_type} =~ /^(?:wav|aif|pcm)$/ ) {
+			$mime = 'audio/L16;rate=' . $row->{samplerate} . ';channels=' . $row->{channels};
+		}
+		else {
+			$mime = $Slim::Music::Info::types{ $row->{content_type} };
 		}
 		
-		# Special audio transcoding profile for PCM
-		if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
-			push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
-		}
+		my $key = $mime . $row->{dlna_profile};
+		next if $seen{$key}++;
 		
-		# Image profiles
-		for my $row ( @{$images} ) {
-			if ( $row->{dlna_profile} ) {
-				push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
-			}
-			else {
-				push @formats, "http-get:*:" . $row->{mime_type} . ":*";
-			}
+		if ( $row->{dlna_profile} ) {
+			push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile};
 		}
-		
-		# Video profiles
-		for my $row ( @{$videos} ) {
-			if ( $row->{dlna_profile} ) {
-				push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
-			}
-			else {
-				push @formats, "http-get:*:" . $row->{mime_type} . ":*";
-			}
+		else {
+			push @formats, "http-get:*:$mime:*";
 		}
-		
-		$SourceProtocolInfo = \@formats;
 	}
 	
-	return $SourceProtocolInfo;
+	# Special audio transcoding profile for PCM
+	if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
+		push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
+	}
+	
+	# Image profiles
+	for my $row ( @{$images} ) {
+		if ( $row->{dlna_profile} ) {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+		}
+		else {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+		}
+	}
+	
+	# Video profiles
+	for my $row ( @{$videos} ) {
+		if ( $row->{dlna_profile} ) {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+		}
+		else {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+		}
+	}
+	
+	return join( ',', @formats );
 }		
 
 1;

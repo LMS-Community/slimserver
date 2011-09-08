@@ -58,11 +58,13 @@ sub description {
 ### Eventing
 
 sub subscribe {
+	my ( $class, $client, $uuid ) = @_;
+	
 	# Bump the number of subscribers
 	$STATE->{_subscribers}++;
 	
 	# Send initial event
-	sendEvent( undef, 'SystemUpdateID' );
+	sendEvent( $uuid, 'SystemUpdateID' );
 }
 
 sub event {
@@ -89,11 +91,11 @@ sub event {
 }
 
 sub sendEvent {
-	my ( undef, $var ) = @_;
+	my ( $uuid, $var ) = @_;
 	
 	Slim::Plugin::UPnP::Events->notify(
 		service => __PACKAGE__,
-		id      => 0, # will notify everyone
+		id      => $uuid || 0, # 0 will notify everyone
 		data    => {
 			$var => $STATE->{$var},
 		},
