@@ -139,8 +139,8 @@ sub rescan {
 	}
 	
 	my $ignore_dirs = [
-		'ite',  # iTunes Extras (purchased movies)
-		'itlp', # iTunes LP data (purchased music)
+		'.ite',  # iTunes Extras (purchased movies)
+		'.itlp', # iTunes LP data (purchased music)
 		# XXX Add Aperture and iPhoto entries
 		# XXX Make this a pref?
 	];
