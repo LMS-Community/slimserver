@@ -147,7 +147,7 @@ sub init {
 		$dbh->do('SELECT name FROM metainformation') || die $dbh->errstr;
 
 		# always reset the isScanning flag upon restart
-		$dbh->do("UPDATE metainformation SET value = '0' WHERE name = 'isScanning'");
+		Slim::Utils::OSDetect::isSqueezeOS() && $dbh->do("UPDATE metainformation SET value = '0' WHERE name = 'isScanning'");
 	};
 
 	# If we couldn't select our new 'name' column, then drop the
