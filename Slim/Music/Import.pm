@@ -118,6 +118,9 @@ sub launchScan {
 	if (defined $::logdir && -d $::logdir) {
 		$args->{"logdir=$::logdir"} = 1;
 	}
+	
+	$args->{"noimage"} = 1 if !main::IMAGE;
+	$args->{"novideo"} = 1 if !main::VIDEO;
 
 	# Set scanner priority.  Use the current server priority unless 
 	# scannerPriority has been specified.

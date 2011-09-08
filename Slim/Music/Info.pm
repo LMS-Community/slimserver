@@ -1308,10 +1308,10 @@ sub validTypeExtensions {
 
 	# XXX - these should be read from a shared source with Media::Scan
 	if ($findTypes eq 'image') {
-		@extensions = grep { !$disabled->{$_} } qw(jpg png gif bmp jpeg);
+		@extensions = grep { !$disabled->{$_} } qw(jpg png gif bmp jpeg) if main::IMAGE;
 	}
 	elsif ($findTypes eq 'video') {
-		@extensions = grep { !$disabled->{$_} } qw(asf avi divx flv hdmov m1v m2p m2t m2ts m2v m4v mkv mov mpg mpeg mpe mp2p mp2t mp4 mts pes ps ts vob webm wmv xvid 3gp 3g2 3gp2 3gpp mjpg);
+		@extensions = grep { !$disabled->{$_} } qw(asf avi divx flv hdmov m1v m2p m2t m2ts m2v m4v mkv mov mpg mpeg mpe mp2p mp2t mp4 mts pes ps ts vob webm wmv xvid 3gp 3g2 3gp2 3gpp mjpg) if main::VIDEO;
 	}
 	# audio files, playlists
 	else {

@@ -26,6 +26,8 @@ use constant DEBUGLOG     => ( grep { /--nodebuglog/ } @ARGV ) ? 0 : 1;
 use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
+use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
+use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
@@ -101,7 +103,7 @@ die $@ if $@;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $force, $cleanup, $prefsFile, $priority);
-	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics);
+	our ($quiet, $dbtype, $logfile, $logdir, $logconf, $debug, $help, $nodebuglog, $noinfolog, $nostatistics, $noimages, $novideo);
 
 	our $LogTimestamp = 1;
 	
@@ -120,6 +122,8 @@ sub main {
 		'prefsfile=s'  => \$prefsFile,
 		'pidfile=s'    => \$pidfile,
 		# prefsdir parsed by Slim::Utils::Prefs
+		'noimage'      => \$noimages,
+		'novideo'      => \$novideo,
 		'nodebuglog'   => \$nodebuglog,
 		'noinfolog'    => \$noinfolog,
 		'nostatistics' => \$nostatistics,
@@ -420,6 +424,8 @@ Command line options:
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file
 	--logconfig    Specify pre-defined logging configuration file
+    --noimage      Disable scanning for images.
+    --novideo      Disable scanning for videos.
 	--nodebuglog   Disable all debug-level logging (compiled out).
 	--noinfolog    Disable all debug-level & info-level logging (compiled out).
 	--nostatistics Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).

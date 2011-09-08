@@ -24,6 +24,8 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
+use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
+use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 
@@ -308,10 +310,12 @@ our (
 	$noserver,
 	$norestart,
 	$noupnp,
-	$noweb,     # used in scanner to prevent loading of Slim::Web::Pages etc.
+	$noweb,
 	$notranscoding,
 	$nodebuglog,
 	$noinfolog,
+	$noimages,
+	$novideo,
 	$nosb1slimp3sync,
 	$nostatistics,
 	$stdio,
@@ -718,6 +722,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
+          [--noimage] [--novideo]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -762,6 +767,8 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
+    --noimage        => Disable scanning for images.
+    --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
@@ -809,6 +816,8 @@ sub initOptions {
 		'quiet'	        => \$quiet,
 		'nodebuglog'    => \$nodebuglog,
 		'noinfolog'     => \$noinfolog,
+		'noimage'       => \$noimages,
+		'novideo'       => \$novideo,
 		'norestart'     => \$norestart,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,

@@ -9,34 +9,41 @@
 			<input type=text class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist %]" size="40">
 		[% END %]
 
-		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSVIDEO" desc="SETUP_DISABLEDEXTENSIONSVIDEO_DESC" %]
+		[% IF !novideo; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSVIDEO" desc="SETUP_DISABLEDEXTENSIONSVIDEO_DESC" %]
 			<input type=text class="stdedit" name="disabledextensionsvideo" id="disabledextensionsvideo" value="[% disabledextensionsvideo %]" size="40">
-		[% END %]
+		[% END; END %]
 
-		[% WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSIMAGES" desc="SETUP_DISABLEDEXTENSIONSIMAGES_DESC" %]
+		[% IF !noimage; WRAPPER settingGroup title="SETUP_DISABLEDEXTENSIONSIMAGES" desc="SETUP_DISABLEDEXTENSIONSIMAGES_DESC" %]
 			<input type=text class="stdedit" name="disabledextensionsimages" id="disabledextensionsimages" value="[% disabledextensionsimages %]" size="40">
-		[% END %]
+		[% END; END %]
 	[% END %]
 
+	[% IF !noimage || !novideo %]
 	[% WRAPPER setting title="SETUP_MEDIADIRS_EXCLUSION_LIST" desc="SETUP_MEDIADIRS_EXCLUSION_LIST_DESC" %]
 		<br/>
 	[% END %]
 
 	<div class="settingSection">
 	<table border="0" cellspacing="0">
-		<tr><th>[% 'FOLDER' | string %]</th><th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th><th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th><th>[% 'VIDEO' | string %]</th></tr>
+		<tr>
+			<th>[% 'FOLDER' | string %]</th>
+			<th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th>
+			[% IF !noimage %]<th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th>[% END %]
+			[% IF !novideo %]<th>[% 'VIDEO' | string %]</th>[% END %]
+		</tr>
 
 		[% FOREACH mediadir = mediadirs %]
 			<tr>
 				<td class="[% odd ? "odd" : "even" %] firstColumn">[% mediadir.path %]</td>
 				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.audio %]checked="1" [% END %] class="stdedit" name="pref_ignoreInAudioScan[% loop.index %]" id="ignoreInAudioScan[% loop.index %]" value="1" /></td>
-				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.image %]checked="1" [% END %] class="stdedit" name="pref_ignoreInImageScan[% loop.index %]" id="ignoreInImageScan[% loop.index %]" value="1" /></td>
-				<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" /></td>
+				[% IF !noimage %]<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.image %]checked="1" [% END %] class="stdedit" name="pref_ignoreInImageScan[% loop.index %]" id="ignoreInImageScan[% loop.index %]" value="1" /></td>[% END %]
+				[% IF !novideo %]<td class="[% odd ? "odd" : "even" %]" align="center"><input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" /></td>[% END %]
 			</tr>
 		[% END %]
 		<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
 	</table>
 	</div>
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_GROUP_FORMATS_CONVERSION" desc="SETUP_GROUP_FORMATS_CONVERSION_DESC" %]
 		<br/>
