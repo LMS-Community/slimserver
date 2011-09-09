@@ -807,15 +807,6 @@ sub _stat_handler {
 		$stat->{'fullness'} = $fullnessB;
 	}
 	
-	# Use milliseconds for the song-elapsed-time if defined and have not suffered truncation
-	if (defined $stat->{'elapsed_milliseconds'}) {
-		my $songElapsed = $stat->{'elapsed_milliseconds'} / 1000;
-		if ($songElapsed < $stat->{'elapsed_seconds'}) {
-			$songElapsed = $stat->{'elapsed_seconds'};
-		}
-		$client->songElapsedSeconds($songElapsed);
-	}
-
 	if (defined($stat->{'output_buffer_fullness'})) {
 
 		$client->outputBufferFullness($stat->{'output_buffer_fullness'});
@@ -914,7 +905,7 @@ sub getLatency {
 
 sub getPlayPointData {
 	my $client = shift;
-	return ($status{$client}->{'jiffies'}, $status{$client}->{'elapsed_milliseconds'});
+	return ($status{$client}->{'jiffies'}, $status{$client}->{'elapsed_milliseconds'}, $status{$client}->{'elapsed_seconds'});
 }
 	
 sub _update_request_handler {

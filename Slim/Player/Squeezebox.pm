@@ -216,17 +216,6 @@ sub play {
 }
 
 #
-# tell the client to unpause the decoder
-#
-sub resume {
-	my $client = shift;
-	
-	$client->stream('u');
-	$client->SUPER::resume();
-	return 1;
-}
-
-#
 # pause
 #
 sub pause {
@@ -1047,7 +1036,7 @@ sub stream {
 		$replayGain = int($interval * 1000);
 	}
 	elsif ($command eq 'u') {
-		 $replayGain = $interval;
+		$replayGain = $interval;
 	}
 	elsif ($command eq 't') {
 		$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);

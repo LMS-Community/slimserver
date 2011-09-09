@@ -312,6 +312,26 @@ sub requestStatus {
 	shift->sendFrame('i2cc');
 }
 
+#
+# tell the client to unpause the decoder
+#
+sub resume {
+	my ($client, $at) = @_;
+	
+	if ($at) {
+		Slim::Utils::Timers::setHighTimer(
+			$client,
+			$at - $client->packetLatency(),
+			\&_unpauseAfterInterval
+		);
+	} else {
+		$client->stream('u');
+	}
+	
+	$client->SUPER::resume();
+	return 1;
+}
+
 sub startAt {
 	my ($client, $at) = @_;
 

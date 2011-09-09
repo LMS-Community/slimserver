@@ -168,22 +168,37 @@ sub stop {
 	# to 0, since we rely on them for time display and may
 	# have to wait to get a status message with the correct
 	# values.
-	$client->songElapsedSeconds(0);
 	$client->outputBufferFullness(0);
 
 }
 
 sub songElapsedSeconds {
 	my $client = shift;
+	
+	return 0 if $client->isStopped() || defined $_[0];
 
-	# Ignore values sent by the client if we're in the stopped
-	# state, since they may be out of sync.
-	if (defined($_[0]) && 
-	    Slim::Player::Source::playmode($client) eq 'stop') {
-		$client->SUPER::songElapsedSeconds(0);
+	my ($jiffies, $elapsedMilliseconds, $elapsedSeconds) = Slim::Networking::Slimproto::getPlayPointData($client);
+
+	return 0 unless $elapsedMilliseconds || $elapsedSeconds;
+	
+	# Use milliseconds for the song-elapsed-time if has not suffered truncation
+	my $songElapsed;
+	if (defined $elapsedMilliseconds) {
+		$songElapsed = $elapsedMilliseconds / 1000;
+		if ($songElapsed < $elapsedSeconds) {
+			$songElapsed = $elapsedSeconds + ($elapsedMilliseconds % 1000) / 1000;
+		}
+	} else {
+		$songElapsed = $elapsedSeconds;
 	}
-
-	return $client->SUPER::songElapsedSeconds(@_);
+	
+	if ($client->isPlaying(1)) {
+		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
+		logBacktrace($client->id, ": songElapsed=$songElapsed, jiffies=$jiffies, timeDiff=$timeDiff");
+		$songElapsed += $timeDiff if ($timeDiff > 0);
+	}
+	
+	return $songElapsed;
 }
 
 sub canDirectStream {
@@ -270,6 +285,26 @@ sub statHandler {
 		}
 	}	
 	
+}
+
+#
+# tell the client to unpause the decoder
+#
+sub resume {
+	my ($client, $at) = @_;
+	
+	if ($at) {
+		Slim::Utils::Timers::setHighTimer(
+			$client,
+			$at - $client->packetLatency(),
+			\&_unpauseAfterInterval
+		);
+	} else {
+		$client->stream('u');
+	}
+	
+	$client->SUPER::resume();
+	return 1;
 }
 
 sub startAt {
