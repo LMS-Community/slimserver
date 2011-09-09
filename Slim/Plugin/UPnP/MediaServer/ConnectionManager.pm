@@ -200,7 +200,8 @@ sub _sourceProtocols {
 		next if $seen{$key}++;
 		
 		if ( $row->{dlna_profile} ) {
-			push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile};
+			my $canseek = ($row->{dlna_profile} eq 'MP3' || $row->{dlna_profile} =~ /^WMA/);
+			push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
 		}
 		else {
 			push @formats, "http-get:*:$mime:*";
@@ -215,19 +216,19 @@ sub _sourceProtocols {
 	# Image profiles
 	for my $row ( @{$images} ) {
 		if ( $row->{dlna_profile} ) {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
 		}
 		else {
 			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
 		}
 	}
-	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN";
-	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN";
+	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
+	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
 	
 	# Video profiles
 	for my $row ( @{$videos} ) {
 		if ( $row->{dlna_profile} ) {
-			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile};
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ';DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 		}
 		else {
 			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
