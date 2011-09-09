@@ -1444,6 +1444,8 @@ sub maxSupportedSamplerate {
 
 sub canDecodeRhapsody { 0 };
 
+sub canImmediateCrossfade { 0 };
+
 sub hidden { 0 }
 
 sub hasScrolling { 0 }
