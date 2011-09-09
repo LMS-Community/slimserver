@@ -82,7 +82,7 @@ sub initJive {
 	foreach my $item ( @$albums ) {
 		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 			push @$screensavers, {
-				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'slideshow:1' ],
+				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'slideshow:1', 'slideshowId:' . $item->{id} ],
 				text => $item->{'dc:title'},
 			}
 		}
@@ -100,18 +100,25 @@ sub handleFeed {
 	
 	my $qid = $args->{id} || '';
 	
-	my $wantSlideshow;
-	if ( $params && $params->{params} && ($wantSlideshow = $params->{params}->{slideshow}) ) {
-		$qid = $params->{params}->{id};
+	my ($wantSlideshow, $firstSlide);
+	if ( $params && $params->{params} && $params->{params}->{slideshow} ) {
+		$wantSlideshow = $params->{params}->{id};
+		$qid = $params->{params}->{slideshowId};
+		main::DEBUGLOG && $log->debug("Start slideshow at item ID $wantSlideshow");
 	}
 
 	my $data = _parseOPML($qid, $params->{start}, $params->{sort});
 	
 	my $items = [];
 	my $dateFormat = preferences('server')->get('shortdateFormat');
-	
+
+	my $thumbSize = preferences('server')->get('thumbSize') || 100;
+	my $resizeParams = "_${thumbSize}x${thumbSize}_o";
+
+	my $x = 0;
 	foreach my $itemLoop ($data->{container}, $data->{item}) {
 		foreach my $item ( @$itemLoop ) {
+
 			if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 				push @$items, {
 					type => 'link',
@@ -128,6 +135,14 @@ sub handleFeed {
 			elsif ( $item->{'upnp:class'} eq 'object.item.imageItem.photo' ) {
 				my ($id) = $item->{'upnp:icon'} =~ m{(?:music|image)/([0-9a-f]{8})/};
 				my $date = $item->{'dc:date'} ? strftime($dateFormat, strptime($item->{'dc:date'})) : '';
+				
+				if ( $wantSlideshow && !$firstSlide && $id eq $wantSlideshow ) {
+					$firstSlide = $x;
+				}
+				
+				# request smaller version for faster display
+				# XXX - ugly: we should be able to request the valid resize params from the mediaserver
+				$item->{'upnp:icon'} =~ s/_300x300_o/$resizeParams/;
 				
 				push @$items, $wantSlideshow 
 				? {
@@ -147,8 +162,9 @@ sub handleFeed {
 								player => 0,
 								cmd => [ PLUGIN_TAG, 'items' ],
 								params => {
-									id => "/ia/$id",
+									id => $id,
 									slideshow => 1,
+									slideshowId => $qid,
 								}
 							},
 						}
@@ -160,8 +176,16 @@ sub handleFeed {
 				# what here?
 				$log->error('unhandled upnp:class? ' . Data::Dump::dump($item));
 			}
+			
+			$x++;
 		}
 		
+	}
+	
+	# if we want a slide show, make sure we start at the selected image
+	if ( $wantSlideshow && $firstSlide && $firstSlide < @$items ) {
+		my @tail = splice(@$items, $firstSlide);
+		unshift(@$items, @tail);
 	}
 	
 	push @$items, {
