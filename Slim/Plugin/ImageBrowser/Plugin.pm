@@ -79,16 +79,10 @@ sub initJive {
 	
 	my $albums = $data->{container};
 	
-	if ($albums->{id} && $albums->{'upnp:class'}) {
-		$albums = {
-			$albums->{id} => $albums,
-		};
-	}
-	
-	while ( my ($id, $item) = each( %$albums ) ) {
+	foreach my $item ( @$albums ) {
 		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 			push @$screensavers, {
-				cmd    => [ $args{tag}, 'items', 'id:' . $id, 'slideshow:1' ],
+				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'slideshow:1' ],
 				text => $item->{'dc:title'},
 			}
 		}
@@ -117,15 +111,7 @@ sub handleFeed {
 	my $dateFormat = preferences('server')->get('shortdateFormat');
 	
 	foreach my $itemLoop ($data->{container}, $data->{item}) {
-	
-		# normalize hash?!?
-		if ($itemLoop->{id} && $itemLoop->{'upnp:class'}) {
-			$itemLoop = {
-				$itemLoop->{id} => $itemLoop,
-			};
-		}
-	
-		while ( my ($id, $item) = each( %$itemLoop ) ) {
+		foreach my $item ( @$itemLoop ) {
 			if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 				push @$items, {
 					type => 'link',
@@ -134,7 +120,7 @@ sub handleFeed {
 					# show folder icon if we have images and folders in the same view only
 					icon => $data->{item} ? 'html/images/icon_folder.png' : undef,
 					passthrough => [ {
-						id => $id
+						id => $item->{id}
 					} ],
 				} if !$wantSlideshow;
 			}
@@ -204,7 +190,9 @@ sub _parseOPML {
 	
 	$data = $data->name('Result')->value();
 	
-	my $parsed = $data ? eval { XMLin($data) } : {};
+	my $parsed = $data ? eval { 
+		XMLin($data, KeyAttr => ['container', 'item'], ForceArray => ['container', 'item']) 
+	} : {};
 
 	if ( $@ ) {
 		$log->error( "Unable to parse: " . $@ );

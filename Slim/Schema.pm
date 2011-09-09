@@ -150,6 +150,9 @@ sub init {
 		# as the schema numbers might be overlapping, not causing a re-build
 		$dbh->do('SELECT id FROM images LIMIT 1') || die $dbh->errstr;
 		$dbh->do('SELECT id FROM videos LIMIT 1') || die $dbh->errstr;
+
+		# always reset the isScanning flag upon restart
+		Slim::Utils::OSDetect::isSqueezeOS() && $dbh->do("UPDATE metainformation SET value = '0' WHERE name = 'isScanning'");
 	};
 
 	# If we couldn't select our new 'name' column, then drop the
