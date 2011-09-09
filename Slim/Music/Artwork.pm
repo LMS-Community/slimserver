@@ -119,7 +119,8 @@ sub findStandaloneArtwork {
 		
 		if ( !$art ) {
 			# Find all image files in the file directory
-			my $types = qr/\.(?:jpe?g|png|gif)$/i;
+			# bug 17555 - disable GIF on Touch for now
+			my $types = Slim::Utils::OSDetect::isSqueezeOS() ? qr/\.(?:jpe?g|png)$/i : qr/\.(?:jpe?g|png|gif)$/i;
 			
 			my $files = File::Next::files( {
 				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },

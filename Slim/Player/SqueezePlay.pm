@@ -238,6 +238,13 @@ sub skipAhead {
 	
 	return $ret;
 }
+
+sub forceReady {
+	my $client = shift;
+	
+	$client->readyToStream(1);
+}
+
 1;
 
 __END__

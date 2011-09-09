@@ -216,17 +216,6 @@ sub play {
 }
 
 #
-# tell the client to unpause the decoder
-#
-sub resume {
-	my $client = shift;
-	
-	$client->stream('u');
-	$client->SUPER::resume();
-	return 1;
-}
-
-#
 # pause
 #
 sub pause {
@@ -560,7 +549,7 @@ sub opened {
 #	u8_t threshold;		// [1]	Kb of input buffer data before we autostart or notify the server of buffer fullness
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t transition_period;	// [1]	seconds over which transition should happen
-#	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
+#	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out, '5' = crossfade-immediate
 #	u8_t flags;	// [1]	0x80 - loop infinitely
 #               //      0x40 - stream without restarting decoder
 #               //      0x20 - Rtmp (SqueezePlay only)
@@ -931,6 +920,9 @@ sub stream_s {
 	if ($params->{'fadeIn'}) {
 		$transitionType = 2;
 		$transitionDuration = $params->{'fadeIn'};
+	} elsif ($params->{'crossFade'}) {
+		$transitionType = 5;
+		$transitionDuration = $params->{'crossFade'};
 	} else {
 		$transitionType = $prefs->client($master)->get('transitionType') || 0;
 		$transitionDuration = $prefs->client($master)->get('transitionDuration') || 0;
@@ -1047,7 +1039,7 @@ sub stream {
 		$replayGain = int($interval * 1000);
 	}
 	elsif ($command eq 'u') {
-		 $replayGain = $interval;
+		$replayGain = $interval;
 	}
 	elsif ($command eq 't') {
 		$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);

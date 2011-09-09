@@ -391,7 +391,6 @@ sub stop {
 	# to 0, since we rely on them for time display and may
 	# have to wait to get a status message with the correct
 	# values.
-	$client->songElapsedSeconds(0);
 	$client->outputBufferFullness(0);
 
 	if ( scalar keys %{ $client->pendingPrefChanges() } ) {
@@ -416,14 +415,30 @@ sub stop {
 
 sub songElapsedSeconds {
 	my $client = shift;
+	
+	return 0 if $client->isStopped() || defined $_[0];
 
-	# Ignore values sent by the client if we're in the stopped
-	# state, since they may be out of sync.
-	if (defined($_[0]) && $client->isStopped()) {
-		return $client->SUPER::songElapsedSeconds(0);
+	my ($jiffies, $elapsedMilliseconds, $elapsedSeconds) = Slim::Networking::Slimproto::getPlayPointData($client);
+
+	return 0 unless $elapsedMilliseconds || $elapsedSeconds;
+	
+	# Use milliseconds for the song-elapsed-time if has not suffered truncation
+	my $songElapsed;
+	if (defined $elapsedMilliseconds) {
+		$songElapsed = $elapsedMilliseconds / 1000;
+		if ($songElapsed < $elapsedSeconds) {
+			$songElapsed = $elapsedSeconds + ($elapsedMilliseconds % 1000) / 1000;
+		}
+	} else {
+		$songElapsed = $elapsedSeconds;
 	}
-
-	return $client->SUPER::songElapsedSeconds(@_);
+	
+	if ($client->isPlaying(1)) {
+		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
+		$songElapsed += $timeDiff if ($timeDiff > 0);
+	}
+	
+	return $songElapsed;
 }
 
 sub canDirectStream {
@@ -1029,17 +1044,22 @@ sub pcm_sample_rates {
 sub playPoint {
 	my $client = shift;
 
-	my ($jiffies, $elapsedMilliseconds) = Slim::Networking::Slimproto::getPlayPointData($client);
+	my ($jiffies, $elapsedMilliseconds, $elapsedSeconds) = Slim::Networking::Slimproto::getPlayPointData($client);
 
 	return unless $elapsedMilliseconds;
 
 	my $statusTime = $client->jiffiesToTimestamp($jiffies);
 	my $apparentStreamStartTime = $statusTime - ($elapsedMilliseconds / 1000);
 
+	my $songElapsed = $elapsedMilliseconds / 1000;
+	if ($songElapsed < $elapsedSeconds) {
+		$songElapsed = $elapsedSeconds + ($elapsedMilliseconds % 1000) / 1000;
+	}
+
 	0 && logger('player.sync')->debug($client->id() . " playPoint: jiffies=$jiffies, epoch="
 		. ($client->jiffiesEpoch) . ", statusTime=$statusTime, elapsedMilliseconds=$elapsedMilliseconds");
 
-	return [$statusTime, $apparentStreamStartTime];
+	return [$statusTime, $apparentStreamStartTime, $songElapsed];
 }
 
 sub startAt {
@@ -1048,6 +1068,14 @@ sub startAt {
 	main::DEBUGLOG && $synclog->is_debug && $synclog->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
 
 	$client->stream( 'u', { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } );
+	return 1;
+}
+
+sub resume {
+	my ($client, $at) = @_;
+	
+	$client->stream('u', ($at ? { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } : undef));
+	$client->SUPER::resume();
 	return 1;
 }
 
