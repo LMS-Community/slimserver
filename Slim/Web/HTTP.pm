@@ -1467,6 +1467,7 @@ sub sendStreamingFile {
 	my $tsrange = $response->request->header('TimeSeekRange.dlna.org');
 	
 	# If a Range is already provided, ignore TimeSeekRange
+	my $isTSR;
 	if ( $tsrange && !$range ) {
 		# Translate TimeSeekRange into byte range
 		my $valid = 0;
@@ -1505,20 +1506,42 @@ sub sendStreamingFile {
 					main::DEBUGLOG && $log->is_debug && $log->debug("TimeSeekRange.dlna.org: Found end offset $endbytes for time $end");
 				}
 				
+				if ( $startbytes == -1 && $endbytes == -1 ) {
+					# DLNA 7.4.40.8, a valid time range syntax but out of range for the media
+					$response->code(416);
+				}
+				else {
+					# If only the end is -1, assume it was seeking too near the end, and set it to $size
+					if ($endbytes == -1) {
+						$endbytes = $size - 1;
+					}
+				}
+				
 				if ( $startbytes >= 0 && $endbytes >= 0 ) {
 					# Create a valid Range request, which will be handled by the below range code
 					$range = "bytes=${startbytes}-${endbytes}";
+					$isTSR = 1;
 					$valid = 1;
 					
 					my $duration = $objOrHash->secs;
+					$end ||= $duration;
 					$response->header( 'TimeSeekRange.dlna.org' => "npt=${start}-${end}/${duration} bytes=${startbytes}-${endbytes}/${size}" );
+					
+					# If npt is "0-" don't perform a range request
+					if ($start == 0 && $end == $duration) {
+						$range = undef;
+					}
 				}
+			}
+			else {
+				# DLNA 7.4.40.9, bad npt format is a 400 error
+				$response->code(400);
 			}
 		}
 		
 		if ( !$valid ) {
 			$log->warn("Invalid TimeSeekRange.dlna.org request: $tsrange");
-			$response->code(406);
+			$response->code(406) unless $response->code >= 400;
 			$response->headers->remove_content_headers;
 			$httpClient->send_response($response);
 			closeHTTPSocket($httpClient);
@@ -1560,8 +1583,13 @@ sub sendStreamingFile {
 		
 			seek $fh, $first, 0;
 		
-			$response->code( 206 );
-			$response->header( 'Content-Range' => "bytes $first-$last/$size" );
+			if ( $isTSR ) { # DLNA 7.4.40.7 A time seek uses 200 status and doesn't include Content-Range, ugh
+				$response->code(200);
+			}
+			else {
+				$response->code( 206 );
+				$response->header( 'Content-Range' => "bytes $first-$last/$size" );
+			}
 			$response->content_length( $total );
 		
 			# Save total value for use later in sendStreamingResponse

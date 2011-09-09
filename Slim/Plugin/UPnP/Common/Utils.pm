@@ -3,7 +3,9 @@ package Slim::Plugin::UPnP::Common::Utils;
 ### TODO
 #
 # Support time-based seek for video using Media::Scan
+# DLNA 7.3.59.2, ALLIP
 # Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
+# /cover URLs don't support Range requests, or have correct *.dlna.org header support
 
 use strict;
 
