@@ -221,6 +221,8 @@ sub _sourceProtocols {
 			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
 		}
 	}
+	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN";
+	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN";
 	
 	# Video profiles
 	for my $row ( @{$videos} ) {
