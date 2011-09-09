@@ -54,7 +54,7 @@ sub throw_exception {
 	my ($self, $msg) = @_;
 
 	# Try and bring up the database if we can't connect.
-	if ($msg =~ /Connection failed/) {
+	if ($msg =~ /Connection failed/ && $sqlHelperClass =~ /MySQL/i) {
 
 		my $lockFile = File::Spec->catdir(preferences('server')->get('librarycachedir'), 'mysql.startup');
 
