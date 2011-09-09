@@ -59,7 +59,29 @@ sub init {
 	
 	my @addresses;
 	if ( main::ISWINDOWS ) {
-		# XXX Dig through the registry for Win32: http://www.perlmonks.org/?node_id=166645
+		# based on http://msdn.microsoft.com/en-us/library/aa394595(v=VS.85).aspx
+		require Win32::OLE;
+		
+		my $objWMIService = Win32::OLE->GetObject('winmgmts:\\\\.\\root\\cimv2');
+		
+		if ($objWMIService) {
+			my $ipConfigSet = $objWMIService->ExecQuery("Select IPAddress, IPSubnet from Win32_NetworkAdapterConfiguration");
+			
+			foreach my $ipconfig (in $ipConfigSet) {
+				my $subnets   = $ipconfig->{IPSubnet};
+				my $addresses = $ipconfig->{IPAddress};
+				
+				next unless $subnets && $addresses;
+				
+				for (my $i = 0; $i < @$addresses; $i++) {
+					if (my ($addr) = $addresses->[$i] =~ /^(\d+\.\d+.\d+.\d+)$/ ){
+						push @addresses, $addr;
+						$CIDR{$addr} = Network::IPv4Addr::ipv4_parse($addr, $subnets->[$i]);
+					}
+				}
+			} 
+		}
+		# XXX - what if we fail?
 	}
 	else {
 		eval {
