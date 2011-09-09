@@ -15,7 +15,7 @@ use Slim::Web::HTTP;
 
 use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails imageDetails);
 
-use constant EVENT_RATE => 0.2;
+use constant EVENT_RATE => 2;
 
 my $log = logger('plugin.upnp');
 my $prefs = preferences('server');
