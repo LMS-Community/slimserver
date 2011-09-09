@@ -138,18 +138,29 @@ sub rescan {
 		push @{$ignore}, 'VIDEO'
 	}
 	
+	# some of these are duplicates of the Slim::Utils::OS->ignoreItems
+	# but we can't use those values, as they're supposed to be exact matches
+	# whereas ignore_dirs can be substring matches too
 	my $ignore_dirs = [
+		# OSX
 		'.ite',       # iTunes Extras (purchased movies)
 		'.itlp',      # iTunes LP data (purchased music)
 		'.aplibrary', # Aperture data file
 		'.apvault',   # Aperture backup file
 		'.rcproject', # iMovie project
 		'.noindex',   # iPhoto
-		'.eyetv',
+		'.eyetv',     # EyeTV recording
+		'TheVolumeSettingsFolder',
+		'TheFindByContentFolder',
+		'Network Trash Folder',
 		# various versions of the Windows trash - http://en.wikipedia.org/wiki/Trash_(computing)#Microsoft_Windows
 		'$RECYCLE.BIN', # Windows Vista+
+		'$Recycle.Bin',
 		'RECYCLER',   # NT/2000/XP
-		#'Recycled',   # Windows 9x
+		#'Recycled',   # Windows 9x, too generic a term to be enabled
+		'System Volume Information',
+		# Synology/QNAP
+		'@eaDir',	
 	];
 	
 	my $progress;
