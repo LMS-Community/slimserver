@@ -396,7 +396,7 @@ sub imageDetails {
 			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o") . '</res>';
 		}
 		else {
-			$xml .= '>' . absURL("/image/${hash}/download") . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/cover") . '</res>';
 		}
 	}
 	
