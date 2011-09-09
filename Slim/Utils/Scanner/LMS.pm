@@ -208,7 +208,9 @@ sub rescan {
 		ignore => $ignore,
 		ignore_dirs => $ignore_dirs,
 		thumbnails => [
-			{ width => 300 }, # XXX
+			{ width => 300 },        # XXX
+			# Web UI large thumbnails
+			{ width => $prefs->get('thumbSize') || 100 },
 		],
 		on_result => sub {
 			my $result = shift;
