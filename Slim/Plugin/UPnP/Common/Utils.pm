@@ -2,13 +2,6 @@ package Slim::Plugin::UPnP::Common::Utils;
 
 ### TODO
 #
-# Add pv namespace to trackDetails, xmlns:pv="http://www.pv.com/pvns/", for example:
-# <pv:rating>2</pv:rating>
-# <pv:playcount>2016</pv:playcount>
-# <pv:lastPlayedTime>2010-02-10T16:02:37</pv:lastPlayedTime>
-# <pv:addedTime>1261090276</pv:addedTime>
-# <pv:modificationTime>1250180640</pv:modificationTime>
-#
 # Support time-based seek for video using Media::Scan
 # Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
 
@@ -429,8 +422,8 @@ sub imageDetails {
 	}
 =cut
 	
-	# mtime is used for all values as fallback
-	my $mtime = $image->{mtime} || $image->{'images.mtime'};
+	# XXX is this OK to use as modificationTime?
+	my $mtime = $image->{original_time} || $image->{'images.original_time'};
 	
 	if ( $filterall || $filter =~ /pv:modificationTime/ ) {
 		$xml .= "<pv:modificationTime>${mtime}</pv:modificationTime>";
