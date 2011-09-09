@@ -474,7 +474,7 @@ sub imageDetails {
 			$xml .= '>' . absURL("/image/${hash}/cover", $request_addr) . '</res>';
 		}
 		
-		# DLNA 7.3.60, provide video thumbnails as <res> items
+		# DLNA 7.3.60, provide image thumbnails as <res> items
 		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
 			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr)
 			. '</res>';
