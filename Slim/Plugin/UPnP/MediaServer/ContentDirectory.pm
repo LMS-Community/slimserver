@@ -836,7 +836,7 @@ sub _queryToDIDLLite {
 	my $count    = 0;
 	my $total    = $results->{count};
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	if ( ref $cmd eq 'ARRAY' ) {
 		$cmd = join( ' ', @{$cmd} );
@@ -1171,7 +1171,7 @@ sub _arrayToDIDLLite {
 	my $count = 0;
 	my $total = 0;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
 	

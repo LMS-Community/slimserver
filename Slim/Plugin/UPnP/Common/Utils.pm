@@ -101,7 +101,7 @@ sub absURL {
 sub trackDetails {
 	my ( $track, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	if ( blessed($track) ) {
 		# Convert from a Track object
@@ -297,7 +297,7 @@ sub trackDetails {
 sub videoDetails {
 	my ( $video, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml;
 	
@@ -385,7 +385,7 @@ sub videoDetails {
 sub imageDetails {
 	my ( $image, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml;
 	
