@@ -9,7 +9,7 @@ package Slim::Plugin::UPnP::Common::Utils;
 # <pv:addedTime>1261090276</pv:addedTime>
 # <pv:modificationTime>1250180640</pv:modificationTime>
 #
-# Support time-based seek DLNA (OP=11), can use Media::Scan/Audio::Scan to seek
+# Support time-based seek for video using Media::Scan
 # Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
 
 use strict;
@@ -476,7 +476,7 @@ sub imageDetails {
 			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o", $request_addr) . '</res>';
 		}
 		else {
-			$xml .= '>' . absURL("/image/${hash}/download", $request_addr) . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/cover", $request_addr) . '</res>';
 		}
 		
 		# DLNA 7.3.60, provide video thumbnails as <res> items
