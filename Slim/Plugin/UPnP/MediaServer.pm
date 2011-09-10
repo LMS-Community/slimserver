@@ -17,6 +17,9 @@ use Slim::Web::HTTP;
 my $log = logger('plugin.upnp');
 my $prefs = preferences('server');
 
+# Need a global flag so we don't call setChange multiple times
+my $prefChangeSet = 0;
+
 sub init {
 	my $class = shift;
 	
@@ -28,20 +31,32 @@ sub init {
 	Slim::Plugin::UPnP::MediaServer::ContentDirectory->init;
 	Slim::Plugin::UPnP::MediaServer::MediaReceiverRegistrar->init;
 	
-	my $hostport = Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport');
-	
 	Slim::Plugin::UPnP::Discovery->register(
 		uuid     => uc( $prefs->get('server_uuid') ),
-		url      => "http://$hostport/plugins/UPnP/MediaServer.xml",
+		url      => '/plugins/UPnP/MediaServer.xml',
 		ttl      => 1800,
 		device   => 'urn:schemas-upnp-org:device:MediaServer:1',
 		services => [
 			'urn:schemas-upnp-org:service:ConnectionManager:1',
 			'urn:schemas-upnp-org:service:ContentDirectory:1',
+			'urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1',
 		],
 	);
 	
+	if ( !$prefChangeSet ) {
+		# Watch if the user changes the library name, so we can reinit
+		$prefs->setChange( \&reinit, 'libraryname' );
+		$prefChangeSet = 1;
+	}
+	
 	$log->info('UPnP MediaServer initialized');
+}
+
+sub reinit {	
+	$log->debug("libraryname pref changed, re-initializing UPnP MediaServer");
+	
+	__PACKAGE__->shutdown;
+	__PACKAGE__->init;
 }
 
 sub shutdown {
@@ -51,13 +66,17 @@ sub shutdown {
 	Slim::Plugin::UPnP::MediaServer::ConnectionManager->shutdown;
 	Slim::Plugin::UPnP::MediaServer::ContentDirectory->shutdown;
 	Slim::Plugin::UPnP::MediaServer::MediaReceiverRegistrar->shutdown;
+	
+	Slim::Plugin::UPnP::Discovery->unregister( uc( $prefs->get('server_uuid') ) );
 }
 
 sub description {
 	my ( $client, $params ) = @_;
 	
-	my $hostport  = Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport');
-	my $eventaddr = Slim::Utils::Network::serverAddr() . ':' . Slim::Plugin::UPnP::Events->port;
+	# Use the IP the request came in on, for proper multi-homed support
+	my ($addr) = split /:/, $params->{host};
+	my $hostport  = $addr . ':' . $prefs->get('httpport');
+	my $eventaddr = $addr . ':' . Slim::Plugin::UPnP::Events->port;
 	
 	my $server_uuid = $prefs->get('server_uuid');
 	
@@ -66,7 +85,7 @@ sub description {
 	$params->{eventAddr}  = $eventaddr;
 	
 	# Replace the first 8 chars of server_uuid with a constant value that identifies this
-	# as an SBS server
+	# as an LMS server. This is used by LMP to trigger some special processing.
 	my $serial = $server_uuid;
 	substr $serial, 0, 8, '106173c8';
 	

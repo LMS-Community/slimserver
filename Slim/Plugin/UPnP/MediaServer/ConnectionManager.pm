@@ -4,12 +4,15 @@ package Slim::Plugin::UPnP::MediaServer::ConnectionManager;
 
 use strict;
 
+use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Web::HTTP;
 
 my $log = logger('plugin.upnp');
 
-my $SourceProtocolInfo;
+use constant EVENT_RATE => 0.2;
+
+my $STATE;
 
 sub init {
 	my $class = shift;
@@ -18,9 +21,26 @@ sub init {
 		'plugins/UPnP/MediaServer/ConnectionManager.xml',
 		\&description,
 	);
+	
+	
+ 	$STATE = {
+		SourceProtocolInfo   => _sourceProtocols(),
+		SinkProtocolInfo     => '',
+		CurrentConnectionIDs => 0,
+		_subscribers         => 0,
+		_last_evented        => 0,
+	};
+	
+	# Wipe protocol info after a rescan
+	Slim::Control::Request::subscribe( \&refreshSourceProtocolInfo, [['rescan'], ['done']] );
 }
 
 sub shutdown { }
+
+sub refreshSourceProtocolInfo {
+	$STATE->{SourceProtocolInfo} = _sourceProtocols();
+	__PACKAGE__->event('SourceProtocolInfo');
+}
 
 sub description {
 	my ( $client, $params ) = @_;
@@ -35,22 +55,68 @@ sub description {
 sub subscribe {
 	my ( $class, $client, $uuid ) = @_;
 	
-	my $source = $class->_sourceProtocols;
+	# Bump the number of subscribers
+	$STATE->{_subscribers}++;
 	
-	# Send initial notify with complete data
-	Slim::Plugin::UPnP::Events->notify(
-		service => $class,
-		id      => $uuid, # only notify this UUID, since this is an initial notify
-		data    => {
-			SourceProtocolInfo   => join( ',', @{$source} ),
-			SinkProtocolInfo     => '',
-			CurrentConnectionIDs => 0,
-		},
-	);
+	# Send initial event
+	sendEvent($uuid);
 }
 
-sub unsubscribe {
-	# Nothing to do
+sub event {
+	my ( $class, $var ) = @_;
+	
+	if ( $STATE->{_subscribers} ) {
+		# Don't send more often than every 0.2 seconds
+		Slim::Utils::Timers::killTimers( undef, \&sendEvent );
+		
+		my $lastAt = $STATE->{_last_evented};
+		my $sendAt = Time::HiRes::time();
+		
+		if ( $sendAt - $lastAt < EVENT_RATE ) {
+			$sendAt += EVENT_RATE - ($sendAt - $lastAt);
+		}
+		
+		Slim::Utils::Timers::setTimer(
+			undef,
+			$sendAt,
+			\&sendEvent,
+			$var,
+		);
+	}
+}
+
+sub sendEvent {
+	my ( $uuid, $var ) = @_;
+	
+	if ( $var ) {
+		# Event 1 variable
+		Slim::Plugin::UPnP::Events->notify(
+			service => __PACKAGE__,
+			id      => $uuid || 0, # 0 will notify everyone
+			data    => {
+				$var => $STATE->{$var},
+			},
+		);
+	}
+	else {
+		# Event all
+		Slim::Plugin::UPnP::Events->notify(
+			service => __PACKAGE__,
+			id      => $uuid || 0, # will notify everyone
+			data    => {
+				map { $_ => $STATE->{$_} } grep { ! /^_/ } keys %{$STATE}
+			},
+		);
+	}
+	
+	# Indicate when last event was sent
+	$STATE->{_last_evented} = Time::HiRes::time();
+}
+
+sub unsubscribe {	
+	if ( $STATE->{_subscribers} > 0 ) {
+		$STATE->{_subscribers}--;
+	}
 }
 
 ### Action methods
@@ -64,16 +130,18 @@ sub GetCurrentConnectionIDs {
 sub GetProtocolInfo {
 	my $class = shift;
 	
-	my $source = $class->_sourceProtocols;
-	
 	return (
-		SOAP::Data->name( Source => join ',', @{$source} ),
+		SOAP::Data->name( Source => $class->_sourceProtocols ),
 		SOAP::Data->name( Sink   => '' ),
 	);
 }
 
 sub GetCurrentConnectionInfo {
 	my ( $class, $client, $args ) = @_;
+	
+	if ( !exists $args->{ConnectionID} ) {
+		return [ 402 ];
+	}
 	
 	if ( $args->{ConnectionID} != 0 ) {
 		return [ 706 => 'Invalid connection reference' ];
@@ -95,51 +163,79 @@ sub GetCurrentConnectionInfo {
 sub _sourceProtocols {
 	my $class = shift;
 	
-	if ( !$SourceProtocolInfo ) {
-		my $flags = sprintf "%.8x%.24x",
-			(1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+	my @formats;
+	
+	# There are just too many profiles to list them all by default, so scan the database
+	# for all the ones we have actually scanned
+	my $dbh = Slim::Schema->dbh;
+	
+	my $audio = $dbh->selectall_arrayref( qq{
+		SELECT dlna_profile, content_type, samplerate, channels
+		FROM tracks
+		WHERE audio = 1
+	}, { Slice => {} } );
+	
+	my $images = $dbh->selectall_arrayref( qq{
+		SELECT DISTINCT(dlna_profile), mime_type
+		FROM images
+	}, { Slice => {} } );
+	
+	my $videos = $dbh->selectall_arrayref( qq{
+		SELECT DISTINCT(dlna_profile), mime_type
+		FROM videos
+	}, { Slice => {} } );
 
-		my @formats = (
-			"http-get:*:audio/mpeg:DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=8000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=8000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=11025;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=11025;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=12000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=12000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=16000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=16000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=22050;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=22050;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=24000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=24000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=32000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=32000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=44100;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=48000;channels=1:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/L16;rate=48000;channels=2:DLNA.ORG_PN=LPCM;DLNA.ORG_OP=01,DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=AAC_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/vnd.dlna.adts:DLNA.ORG_PN=HEAAC_L2_ADTS;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=AAC_ISO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=AAC_ISO_320;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/mp4:DLNA.ORG_PN=HEAAC_L2_ISO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMABASE;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAFULL;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-ms-wma:DLNA.ORG_PN=WMAPRO;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:application/ogg:DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-			"http-get:*:audio/x-flac:DLNA.ORG_OP=01;DLNA.ORG_FLAGS=$flags",
-		);
-		
-		# XXX Disable DLNA stuff for now
-		for ( @formats ) {
-			s/:DLNA.+/:\*/;
+	# Audio profiles, will have duplicates...
+	my %seen = ();
+	for my $row ( @{$audio} ) {
+		my $mime;			
+		if ( $row->{content_type} =~ /^(?:wav|aif|pcm)$/ ) {
+			$mime = 'audio/L16;rate=' . $row->{samplerate} . ';channels=' . $row->{channels};
+		}
+		else {
+			$mime = $Slim::Music::Info::types{ $row->{content_type} };
 		}
 		
-		$SourceProtocolInfo = \@formats;
+		my $key = $mime . $row->{dlna_profile};
+		next if $seen{$key}++;
+		
+		if ( $row->{dlna_profile} ) {
+			my $canseek = ($row->{dlna_profile} eq 'MP3' || $row->{dlna_profile} =~ /^WMA/);
+			push @formats, "http-get:*:$mime:DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
+		}
+		else {
+			push @formats, "http-get:*:$mime:*";
+		}
 	}
 	
-	return $SourceProtocolInfo;
+	# Special audio transcoding profile for PCM
+	if ( !exists $seen{ 'audio/L16;rate=44100;channels=2LPCM' } ) {
+		push @formats, "http-get:*:audio/L16;rate=44100;channels=2:DLNA.ORG_PN=LPCM";
+	}
+	
+	# Image profiles
+	for my $row ( @{$images} ) {
+		if ( $row->{dlna_profile} ) {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ";DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
+		}
+		else {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+		}
+	}
+	push @formats, "http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
+	push @formats, "http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=00f00000000000000000000000000000";
+	
+	# Video profiles
+	for my $row ( @{$videos} ) {
+		if ( $row->{dlna_profile} ) {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":DLNA.ORG_PN=" . $row->{dlna_profile} . ';DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+		}
+		else {
+			push @formats, "http-get:*:" . $row->{mime_type} . ":*";
+		}
+	}
+	
+	return join( ',', @formats );
 }		
 
 1;

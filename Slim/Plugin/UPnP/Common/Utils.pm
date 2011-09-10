@@ -2,12 +2,10 @@ package Slim::Plugin::UPnP::Common::Utils;
 
 ### TODO
 #
-# Add pv namespace to trackDetails, xmlns:pv="http://www.pv.com/pvns/", for example:
-# <pv:rating>2</pv:rating>
-# <pv:playcount>2016</pv:playcount>
-# <pv:lastPlayedTime>2010-02-10T16:02:37</pv:lastPlayedTime>
-# <pv:addedTime>1261090276</pv:addedTime>
-# <pv:modificationTime>1250180640</pv:modificationTime>
+# Support time-based seek for video using Media::Scan
+# DLNA 7.3.59.2, ALLIP
+# Avoid using duplicate ObjectIDs for the same item under different paths, use refID instead?
+# /cover URLs don't support Range requests, or have correct *.dlna.org header support
 
 use strict;
 
@@ -16,6 +14,7 @@ use POSIX qw(strftime);
 use List::Util qw(min);
 
 use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 use Exporter::Lite;
@@ -23,6 +22,17 @@ our @EXPORT_OK = qw(xmlEscape xmlUnescape secsToHMS hmsToSecs absURL trackDetail
 
 my $log   = logger('plugin.upnp');
 my $prefs = preferences('server');
+
+use constant DLNA_FLAGS        => sprintf "%.8x%.24x", (1 << 24) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+use constant DLNA_FLAGS_IMAGES => sprintf "%.8x%.24x", (1 << 23) | (1 << 22) | (1 << 21) | (1 << 20), 0;
+
+my $HAS_LAME;
+sub HAS_LAME {
+	return $HAS_LAME if defined $HAS_LAME;
+	
+	$HAS_LAME = Slim::Utils::Misc::findbin('lame') ? 1 : 0;
+	return $HAS_LAME;
+}
 
 sub xmlEscape {
 	my $text = shift;
@@ -56,7 +66,7 @@ sub xmlUnescape {
 sub secsToHMS {
 	my $secs = shift;
 	
-	my $elapsed = sprintf '%d:%02d:%02d', int($secs / 3600), int($secs / 60), $secs % 60;
+	my $elapsed = sprintf '%d:%02d:%02d', int($secs / 3600) % 24, int($secs / 60) % 60, $secs % 60;
 	
 	if ( $secs =~ /(\.\d+)$/ ) {
 		my $frac = sprintf( '%.3f', $1 );
@@ -77,17 +87,23 @@ sub hmsToSecs {
 }
 
 sub absURL {
-	my $path = shift;
+	my ($path, $addr) = @_;
 	
-	my $hostport = Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport');
+	if ( !$addr ) {
+		$addr = Slim::Utils::Network::serverAddr();
+	}
+	
+	($addr) = split /:/, $addr; # remove port in case it gets here from the Host header
+	
+	my $hostport = $addr . ':' . $prefs->get('httpport');
 	
 	return xmlEscape("http://${hostport}${path}");
 }
 
 sub trackDetails {
-	my ( $track, $filter ) = @_;
+	my ( $track, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	if ( blessed($track) ) {
 		# Convert from a Track object
@@ -159,7 +175,7 @@ sub trackDetails {
 		}
 	}
 	
-	if ( my @genres = split /, /, $track->{genres} ) {
+	if ( my @genres = split /, /, ($track->{genres} || $track->{genre} || $track->{'genres.name'}) ) { # XXX we don't actually fetch multiple genres currently
 		if ( $filterall || $filter =~ /upnp:genre/ ) {
 			for my $genre ( @genres ) {
 				$xml .= '<upnp:genre>' . xmlEscape($genre) . '</upnp:genre>';
@@ -169,12 +185,10 @@ sub trackDetails {
 	
 	if ( my $coverid = ($track->{coverid} || $track->{'tracks.coverid'}) ) {
 		if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
-		}
-		
-		if ( $filterall || $filter =~ /upnp:icon/ ) {
-			my $thumbSize = $prefs->get('thumbSize') || 100;
-			$xml .= '<upnp:icon>' . absURL("/music/$coverid/cover_${thumbSize}x${thumbSize}_o") . '</upnp:icon>';
+			# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+			$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+				. absURL("/music/$coverid/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+			$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 		}
 	}
 	
@@ -202,15 +216,52 @@ sub trackDetails {
 		}
 		
 		# We need to provide a <res> for the native file, as well as compatability formats via transcoding
-		my $native_type = $Slim::Music::Info::types{ $track->{type} || $track->{'tracks.content_type'} };
+		my $content_type = $track->{type} || $track->{'tracks.content_type'};
+		my $native_type = $Slim::Music::Info::types{$content_type};
+		
+		# Setup transcoding formats for non-PCM/MP3 content
 		my @other_types;
-		if ( $native_type ne 'audio/mpeg' ) {
-			push @other_types, 'audio/mpeg';
-			# XXX audio/L16
+		if ( $content_type !~ /^(?:mp3|aif|pcm|wav)$/ ) {
+			push @other_types, 'audio/mpeg' if HAS_LAME();
+			push @other_types, 'audio/L16';
+		}
+		else {
+			# Fix PCM type string
+			if ( $content_type ne 'mp3' ) {
+				$native_type = 'audio/L16';
+			}
 		}
 		
 		for my $type ( $native_type, @other_types ) {
-			$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+			my $dlna;
+			my $ext = Slim::Music::Info::mimeToType($type);
+			
+			if ( $type eq $native_type ) {
+				my $profile = $track->{dlna_profile} || $track->{'tracks.dlna_profile'};
+				if ( $profile ) {
+					my $canseek = ($profile eq 'MP3' || $profile =~ /^WMA/);
+					$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=" . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
+				}
+				else {
+					my $canseek = ($type eq 'audio/x-flac' || $type eq 'audio/x-ogg');
+					$dlna = 'DLNA.ORG_OP=' . ($canseek ? '11' : '01') . ";DLNA.ORG_FLAGS=01700000000000000000000000000000";
+				}
+			}
+			else {
+				# Add DLNA.ORG_CI=1 for transcoded content
+				if ( $type eq 'audio/mpeg' ) {
+					$dlna = 'DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+				}
+				elsif ( $type eq 'audio/L16' ) {
+					$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
+					
+					$ext = 'pcm';
+					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
+						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
+				}
+			}
+			
+			$xml .= '<res protocolInfo="http-get:*:' . $type . ':' . $dlna . '"';
 		
 			if ( ($filterall || $filter =~ /res\@size/) && $type eq $native_type ) {
 				# Size only available for native type
@@ -234,13 +285,11 @@ sub trackDetails {
 				$xml .= ' sampleFrequency="' . ($track->{samplerate} || $track->{'tracks.samplerate'}) . '"';
 			}
 			
-			my $ext = Slim::Music::Info::mimeToType($type);
-			
 			if ( $ext eq 'mp3' ) {
 				$ext = 'mp3?bitrate=320';
 			}
 		
-			$xml .= '>' . absURL('/music/' . ($track->{id} || $track->{'tracks.id'}) . '/download.' . $ext) . '</res>';
+			$xml .= '>' . absURL('/music/' . ($track->{id} || $track->{'tracks.id'}) . '/download.' . $ext, $request_addr) . '</res>';
 		}
 	}
 	
@@ -248,9 +297,9 @@ sub trackDetails {
 }
 
 sub videoDetails {
-	my ( $video, $filter ) = @_;
+	my ( $video, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml;
 	
@@ -265,13 +314,14 @@ sub videoDetails {
 	if ( $filterall || $filter =~ /upnp:album/ ) {
 		$xml .= '<upnp:album>' . xmlEscape($video->{album} || $video->{'videos.album'}) . '</upnp:album>';
 	}
-	
+
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
+	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
-	}
-	
-	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/video/${hash}/cover_300x300_o") . '</upnp:icon>';
+		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/video/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
 	
 	# mtime is used for all values as fallback
@@ -298,8 +348,14 @@ sub videoDetails {
 		}
 		
 		my $type = $video->{mime_type} || $video->{'videos.mime_type'};
-
-		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+		
+		my $dlna = '*';
+		if ( my $profile = $video->{dlna_profile} || $video->{'videos.dlna_profile'} ) {
+			# XXX support time-based video seeking via Media::Scan
+			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS();
+		}
+		
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ":${dlna}\"";
 	
 		if ( ($filterall || $filter =~ /res\@size/) ) {
 			$xml .= ' size="' . ($video->{filesize} || $video->{'videos.filesize'}) . '"';
@@ -314,16 +370,24 @@ sub videoDetails {
 			$xml .= ' resolution="' . $video->{width} . 'x' . $video->{height} . '"';
 		}
 	
-		$xml .= '>' . absURL("/video/${hash}/download") . '</res>';
+		$xml .= '>' . absURL("/video/${hash}/download", $request_addr) . '</res>';
+		
+		# DLNA 7.3.60, provide video thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_160x160_m.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/video/${hash}/cover_160x160_m.png", $request_addr)
+			. '</res>';
 	}
 	
 	return $xml;
 }
 
 sub imageDetails {
-	my ( $image, $filter ) = @_;
+	my ( $image, $filter, $request_addr ) = @_;
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml;
 	
@@ -336,27 +400,32 @@ sub imageDetails {
 		. '<dc:title>' . xmlEscape($image->{title} || $image->{'images.title'}) . '</dc:title>';
 		
 	if ( $image->{original_time} ) {
-		my @time = localtime($image->{original_time});
+		if ( $filterall || $filter =~ /dc:date/ ) {
+			my @time = localtime($image->{original_time});
 		
-		if (scalar @time > 5) {
-			$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', @time) ) . '</dc:date>'
+			if (scalar @time > 5) {
+				$xml .= '<dc:date>' . xmlEscape( strftime('%Y-%m-%d', @time) ) . '</dc:date>'
+			}
 		}
 	}
 	
 	if ( $filterall || $filter =~ /upnp:album/ ) {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
 	}
-	
+
+=pod	
+	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
+	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:albumArtURI>';
+		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
 	}
+=cut
 	
-	if ( $filterall || $filter =~ /upnp:icon/ ) {
-		$xml .= '<upnp:icon>' . absURL("/image/${hash}/cover_300x300_o") . '</upnp:icon>';
-	}
-	
-	# mtime is used for all values as fallback
-	my $mtime = $image->{mtime} || $image->{'images.mtime'};
+	# XXX is this OK to use as modificationTime?
+	my $mtime = $image->{original_time} || $image->{'images.original_time'};
 	
 	if ( $filterall || $filter =~ /pv:modificationTime/ ) {
 		$xml .= "<pv:modificationTime>${mtime}</pv:modificationTime>";
@@ -374,8 +443,14 @@ sub imageDetails {
 	
 	if ( $filterall || $filter =~ /res/ ) {
 		my $type = $image->{mime_type} || $image->{'images.mime_type'};
+		my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'};
 
-		$xml .= '<res protocolInfo="http-get:*:' . $type . ':*"';
+		my $dlna = '*';
+		if ( my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'} ) {
+			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS_IMAGES();
+		}
+		
+		$xml .= '<res protocolInfo="http-get:*:' . $type . ":${dlna}\"";
 	
 		if ( ($filterall || $filter =~ /res\@size/) ) {
 			$xml .= ' size="' . ($image->{filesize} || $image->{'images.filesize'}) . '"';
@@ -393,11 +468,19 @@ sub imageDetails {
 			# XXX - don't use image's exact width/height, as this would cause the resizer to short-circuit without rotating the image first...
 			my $maxSize = min($maxSize || 9999, ($image->{width} || 9999) - 1, ($image->{height} || 9999) - 1);
 			
-			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o") . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o", $request_addr) . '</res>';
 		}
 		else {
-			$xml .= '>' . absURL("/image/${hash}/cover") . '</res>';
+			$xml .= '>' . absURL("/image/${hash}/cover", $request_addr) . '</res>';
 		}
+		
+		# DLNA 7.3.60, provide image thumbnails as <res> items
+		$xml .= '<res protocolInfo="http-get:*:image/jpeg:DLNA.ORG_PN=JPEG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr)
+			. '</res>';
+		$xml .= '<res protocolInfo="http-get:*:image/png:DLNA.ORG_PN=PNG_TN;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=' . DLNA_FLAGS_IMAGES() . '">'
+			. absURL("/image/${hash}/cover_160x160_m.png", $request_addr)
+			. '</res>';
 	}
 	
 	return $xml;

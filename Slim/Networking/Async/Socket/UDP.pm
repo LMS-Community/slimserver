@@ -34,36 +34,39 @@ sub mcast_send {
 	
 	my ( $addr, $port ) = split /:/, $host;
 	
+	my $dest_addr = sockaddr_in( $port, inet_aton( $addr ) );
+	send( $self, $msg, 0, $dest_addr );
+}
+
+# configure a socket for multicast
+sub mcast_add {
+	my ( $self, $mcast_host, $if_addr ) = @_;
+	
+	my ($mcast_addr) = split /:/, $mcast_host;
+	
+	# Tell the kernel that we want multicast messages on this interface
+	setsockopt(
+		$self,
+		getprotobyname('ip') || 0,
+		_constant('IP_ADD_MEMBERSHIP'),
+		inet_aton($mcast_addr) . inet_aton($if_addr)
+	) || logError("While adding multicast membership, UPnP may not work properly: $!");
+	
+	# Configure outgoing multicast messages to use the desired interface
+	setsockopt(
+		$self,
+		getprotobyname('ip') || 0,
+		_constant('IP_MULTICAST_IF'),
+		inet_aton($if_addr)
+	) || logError("While setting IP_MULTICAST_IF, UPnP may not work properly: $!");
+	
+	# Allow our multicast packets to be routed with TTL 4
 	setsockopt(
 		$self,
 		getprotobyname('ip') || 0,
 		_constant('IP_MULTICAST_TTL'),
 		pack 'I', 4,
-
-	) || do {
-
-		logError("While setting multicast TTL: $!");
-		return;
-	};
-	
-	my $dest_addr = sockaddr_in( $port, inet_aton( $addr ) );
-	send( $self, $msg, 0, $dest_addr );
-}
-
-# listen for multicast responses
-sub mcast_add {
-	my ( $self, $host ) = @_;
-	
-	my ( $addr, $port ) = split /:/, $host;
-	
-	my $ip_mreq = inet_aton( $addr ) . INADDR_ANY;
-	
-	setsockopt(
-		$self,
-		getprotobyname('ip') || 0,
-		_constant('IP_ADD_MEMBERSHIP'),
-		$ip_mreq
-	) || logError("While adding multicast membership, UPnP may not work properly: $!");
+	) || logError("While setting multicast TTL, UPnP may not work properly: $!");
 }
 
 sub _constant {
@@ -72,14 +75,15 @@ sub _constant {
 	my %names = (
 		'IP_MULTICAST_TTL'  => 0,
 		'IP_ADD_MEMBERSHIP' => 1,
+		'IP_MULTICAST_IF'   => 2,
 	);
 	
 	my %constants = (
-		'MSWin32' => [10,12],
-		'cygwin'  => [3,5],
-		'darwin'  => [10,12],
-		'freebsd' => [10,12],
-		'default' => [33,35],
+		'MSWin32' => [10,12,9],
+		'cygwin'  => [3,5,2],
+		'darwin'  => [10,12,9],
+		'freebsd' => [10,12,9],
+		'default' => [33,35,32],
 	);
 	
 	my $index = $names{$name};

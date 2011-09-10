@@ -1698,6 +1698,7 @@ sub mediafolderQuery {
 			if ( (!blessed($item) || !$item->can('content_type')) 
 				&& (!$params->{typeRegEx} || $filename !~ $params->{typeRegEx}) )
 			{
+				$count--;
 				next;
 			}
 			elsif (blessed($item)) {
@@ -4141,7 +4142,8 @@ my %tagMap = (
 	  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
 	  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
 	  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
-	                                                                    #channels 
+	  'H' => ['channels',         'CHANNELS',      'channels'],         #channels 
+	  'F' => ['dlna_profile',     'DLNA_PROFILE',  'dlna_profile'],     #dlna_profile
 	                                                                    #block_alignment
 	                                                                    #endian 
 	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
@@ -4209,6 +4211,7 @@ my %colMap = (
 	j => sub { $_[0]->{'tracks.cover'} ? 1 : 0 },
 	J => 'albums.artwork',
 	n => 'tracks.timestamp',
+	F => 'tracks.dlna_profile',
 	D => 'tracks.added_time',
 	U => 'tracks.updated_time',
 	C => sub { $_[0]->{'albums.compilation'} ? 1 : 0 },
@@ -4221,6 +4224,7 @@ my %colMap = (
 	w => 'tracks.lyrics',
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
+	H => 'tracks.channels',
 );
 
 sub _songDataFromHash {
@@ -4750,9 +4754,11 @@ sub _getTagDataForTracks {
 	$tags =~ /f/ && do { $c->{'tracks.filesize'} = 1 };
 	$tags =~ /j/ && do { $c->{'tracks.cover'} = 1 };
 	$tags =~ /n/ && do { $c->{'tracks.timestamp'} = 1 };
+	$tags =~ /F/ && do { $c->{'tracks.dlna_profile'} = 1 };
 	$tags =~ /D/ && do { $c->{'tracks.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'tracks.updated_time'} = 1 };
 	$tags =~ /T/ && do { $c->{'tracks.samplerate'} = 1 };
+	$tags =~ /H/ && do { $c->{'tracks.channels'} = 1 };
 	$tags =~ /I/ && do { $c->{'tracks.samplesize'} = 1 };
 	$tags =~ /u/ && do { $c->{'tracks.url'} = 1 };
 	$tags =~ /w/ && do { $c->{'tracks.lyrics'} = 1 };
@@ -5115,6 +5121,7 @@ sub videoTitlesQuery {
 	$tags =~ /w/ && do { $c->{'videos.width'} = 1 };
 	$tags =~ /h/ && do { $c->{'videos.height'} = 1 };
 	$tags =~ /n/ && do { $c->{'videos.mtime'} = 1 };
+	$tags =~ /F/ && do { $c->{'videos.dlna_profile'} = 1 };
 	$tags =~ /D/ && do { $c->{'videos.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'videos.updated_time'} = 1 };
 	$tags =~ /l/ && do { $c->{'videos.album'} = 1 };
@@ -5214,6 +5221,7 @@ sub _videoData {
 	$tags =~ /w/ && $request->addResultLoop($loopname, $chunkCount, 'width', $c->{'videos.width'});
 	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'videos.height'});
 	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'mtime', $c->{'videos.mtime'});
+	$tags =~ /F/ && $request->addResultLoop($loopname, $chunkCount, 'dlna_profile', $c->{'videos.dlna_profile'});
 	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'videos.added_time'});
 	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
 	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
@@ -5368,6 +5376,7 @@ sub imageTitlesQuery {
 	$tags =~ /h/ && do { $c->{'images.height'} = 1 };
 	$tags =~ /O/ && do { $c->{'images.orientation'} = 1 };
 	$tags =~ /n/ && do { $c->{'images.original_time'} = 1 };
+	$tags =~ /F/ && do { $c->{'images.dlna_profile'} = 1 };
 	$tags =~ /D/ && do { $c->{'images.added_time'} = 1 };
 	$tags =~ /U/ && do { $c->{'images.updated_time'} = 1 };
 	$tags =~ /l/ && do { $c->{'images.album'} = 1 };
@@ -5470,6 +5479,7 @@ sub _imageData {
 	$tags =~ /h/ && $request->addResultLoop($loopname, $chunkCount, 'height', $c->{'images.height'});
 	$tags =~ /O/ && $request->addResultLoop($loopname, $chunkCount, 'orientation', $c->{'images.orientation'});
 	$tags =~ /n/ && $request->addResultLoop($loopname, $chunkCount, 'original_time', $c->{'images.original_time'});
+	$tags =~ /F/ && $request->addResultLoop($loopname, $chunkCount, 'dlna_profile', $c->{'images.dlna_profile'});
 	$tags =~ /D/ && $request->addResultLoop($loopname, $chunkCount, 'added_time', $c->{'images.added_time'});
 	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'images.updated_time'});
 	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'images.album'});

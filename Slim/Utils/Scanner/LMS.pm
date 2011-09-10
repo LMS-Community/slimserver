@@ -208,7 +208,8 @@ sub rescan {
 		ignore => $ignore,
 		ignore_dirs => $ignore_dirs,
 		thumbnails => [
-			{ width => 300 },        # XXX
+			{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
+			{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
 			# Web UI large thumbnails
 			{ width => $prefs->get('thumbSize') || 100 },
 		],
@@ -836,10 +837,7 @@ sub new {
 		my $width = $thumb->{width};
 		my $height = $thumb->{height};
 		
-		# XXX thumbs need refactoring to include width, height, type
-		# For now, only cache the first one. Cache uses /music/hash to
-		# take advantage of existing artwork code
-		my $key = "$coverPrefix/" . $result->hash . "/cover_${width}x${width}_o";
+		my $key = "$coverPrefix/" . $result->hash . "/cover_${width}x${width}_m." . $cached->{content_type};
 		Slim::Utils::ArtworkCache->new->set( $key, $cached );
 		
 		main::INFOLOG && $log->is_info && !(main::SCANNER && $main::progress) 

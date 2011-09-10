@@ -6,6 +6,7 @@
 	</specVersion>
 	<device>
 		<deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+		<dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMR-1.50</dlna:X_DLNADOC>
 		<friendlyName>[% device.name %]</friendlyName>
 		<manufacturer>Logitech</manufacturer>
 		<manufacturerURL>http://www.mysqueezebox.com</manufacturerURL>
@@ -18,10 +19,31 @@
 		<iconList>
 			<icon>
 				<mimetype>image/png</mimetype>
-				<width>250</width>
-				<height>250</height>
+				<width>120</width>
+				<height>120</height>
 				<depth>24</depth>
-				<url>[% device.icon %]</url>
+				<url>[% device.icon %]_120x120.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/png</mimetype>
+				<width>48</width>
+				<height>48</height>
+				<depth>24</depth>
+				<url>[% device.icon %]_48x48.png</url>
+			</icon>
+			<icon>
+				<mimetype>image/jpeg</mimetype>
+				<width>120</width>
+				<height>120</height>
+				<depth>24</depth>
+				<url>[% device.icon %]_120x120.jpg</url>
+			</icon>
+			<icon>
+				<mimetype>image/jpeg</mimetype>
+				<width>48</width>
+				<height>48</height>
+				<depth>24</depth>
+				<url>[% device.icon %]_48x48.jpg</url>
 			</icon>
 		</iconList>
 		<serviceList>

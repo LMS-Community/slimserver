@@ -56,15 +56,16 @@ sub getTag {
 	return unless $info->{song_length_ms};
 
 	# Add file info
-	$tags->{OFFSET}     = $info->{audio_offset};
-	$tags->{SIZE}       = $info->{audio_size};
-	$tags->{SECS}       = $info->{song_length_ms} / 1000;
-	$tags->{RATE}       = $info->{samplerate};
-	$tags->{BITRATE}    = $info->{bitrate};
-	$tags->{CHANNELS}   = $info->{channels};
-	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
-	$tags->{BLOCKALIGN} = $info->{block_align};
-	$tags->{ENDIAN}     = 1;
+	$tags->{OFFSET}       = $info->{audio_offset};
+	$tags->{SIZE}         = $info->{audio_size};
+	$tags->{SECS}         = $info->{song_length_ms} / 1000;
+	$tags->{RATE}         = $info->{samplerate};
+	$tags->{BITRATE}      = $info->{bitrate};
+	$tags->{CHANNELS}     = $info->{channels};
+	$tags->{SAMPLESIZE}   = $info->{bits_per_sample};
+	$tags->{BLOCKALIGN}   = $info->{block_align};
+	$tags->{ENDIAN}       = 1;
+	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	
 	# Support AIFC little-endian files
 	if ( $info->{compression_type} && $info->{compression_type} eq 'sowt' ) {

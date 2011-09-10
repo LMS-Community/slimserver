@@ -10,11 +10,12 @@ use URI::Escape qw(uri_escape_utf8);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Text;
 use Slim::Web::HTTP;
 
 use Slim::Plugin::UPnP::Common::Utils qw(xmlEscape absURL secsToHMS trackDetails videoDetails imageDetails);
 
-use constant EVENT_RATE => 0.2;
+use constant EVENT_RATE => 2;
 
 my $log = logger('plugin.upnp');
 my $prefs = preferences('server');
@@ -57,11 +58,13 @@ sub description {
 ### Eventing
 
 sub subscribe {
+	my ( $class, $client, $uuid ) = @_;
+	
 	# Bump the number of subscribers
 	$STATE->{_subscribers}++;
 	
 	# Send initial event
-	sendEvent( undef, 'SystemUpdateID' );
+	sendEvent( $uuid, 'SystemUpdateID' );
 }
 
 sub event {
@@ -88,11 +91,11 @@ sub event {
 }
 
 sub sendEvent {
-	my ( undef, $var ) = @_;
+	my ( $uuid, $var ) = @_;
 	
 	Slim::Plugin::UPnP::Events->notify(
 		service => __PACKAGE__,
-		id      => 0, # will notify everyone
+		id      => $uuid || 0, # 0 will notify everyone
 		data    => {
 			$var => $STATE->{$var},
 		},
@@ -112,7 +115,7 @@ sub unsubscribe {
 
 sub GetSearchCapabilities {	
 	return SOAP::Data->name(
-		SearchCaps => 'dc:title,dc:creator,upnp:artist,upnp:album,upnp:genre',
+		SearchCaps => 'dc:title,dc:creator,upnp:artist,upnp:album,upnp:genre,upnp:class,@id,@refID',
 	);
 }
 
@@ -127,14 +130,13 @@ sub GetSystemUpdateID {
 }
 
 sub Browse {
-	my ( $class, undef, $args, $headers ) = @_;
+	my ( $class, undef, $args, $headers, $request_addr ) = @_;
 	
 	my $id     = $args->{ObjectID};
 	my $flag   = $args->{BrowseFlag};
 	my $filter = $args->{Filter};
 	my $start  = $args->{StartingIndex};
-	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
-	my $limit  = $args->{RequestedCount} || 200;
+	my $limit  = $args->{RequestedCount};
 	my $sort   = $args->{SortCriteria};
 	
 	my $cmd;
@@ -143,8 +145,24 @@ sub Browse {
 	my $count = 0;
 	my $total = 0;
 	
+	# Missing arguments result in a 402 Invalid Args error
+	if ( !defined $id || !defined $flag || !defined $filter || !defined $start || !defined $limit || !defined $sort ) {
+		return [ 402 ];
+	}
+	
 	if ( $flag !~ /^(?:BrowseMetadata|BrowseDirectChildren)$/ ) {
 		return [ 720 => 'Cannot process the request (invalid BrowseFlag)' ];
+	}
+	
+	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
+	if ( $limit == 0 ) {
+		$limit = 200;
+	}
+	
+	# Verify sort
+	my ($valid, undef) = _decodeSortCriteria($sort, '');
+	if ( $sort && !$valid ) {
+		return [ 709 => 'Unsupported or invalid sort criteria' ];
 	}
 	
 	# Strings are needed for the top-level and years menus
@@ -268,6 +286,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/music' || ($flag eq 'BrowseMetadata' && length($id) == 2) ) { # Music menu, or metadata for a music menu item
@@ -279,7 +298,7 @@ sub Browse {
 			{ id => '/y', parentID => '/music', type => $type, title => $string->('BROWSE_BY_YEAR') },
 			{ id => '/n', parentID => '/music', type => $type, title => $string->('BROWSE_NEW_MUSIC') },
 			{ id => '/m', parentID => '/music', type => $type, title => $string->('BROWSE_MUSIC_FOLDER') },
-			{ id => '/p', parentID => '/music', type => $type, title => $string->('PLAYLISTS') },
+			#{ id => '/p', parentID => '/music', type => $type, title => $string->('PLAYLISTS') },
 		];
 		
 		if ( $flag eq 'BrowseMetadata' ) {
@@ -293,6 +312,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/video' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:vf|va)$}) ) { # Video menu
@@ -313,6 +333,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	elsif ( $id eq '/images' || ($flag eq 'BrowseMetadata' && $id =~ m{^/(?:ia|id|it|il|if)$}) ) { # Image menu
@@ -336,6 +357,7 @@ sub Browse {
 			sort   => $sort,
 			start  => $start,
 			limit  => $limit,
+			filter => $filter,
 		} );
 	}
 	else {
@@ -352,13 +374,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUFH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{/a/(\d+)/l$} ) {
 				my $artist_id = $1;
@@ -388,13 +410,13 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUFH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			else {
 				if ( $sort && $sort !~ /^\+dc:title$/ ) {
@@ -407,8 +429,8 @@ sub Browse {
 		elsif ( $id =~ m{^/g} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{^/g/\d+/a/\d+/l/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -418,7 +440,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUFH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{^/g/(\d+)/a/(\d+)/l$} ) {
@@ -448,8 +470,8 @@ sub Browse {
 		elsif ( $id =~ m{^/y} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{/l/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -459,7 +481,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUFH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			elsif ( $id =~ m{/y/(\d+)/l$} ) {
@@ -484,8 +506,8 @@ sub Browse {
 		elsif ( $id =~ m{^/n} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{/n/(\d+)/t$} ) {
 				my $album_id = $1;
@@ -495,7 +517,7 @@ sub Browse {
 				}
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDU"
+					? "titles $start $limit album_id:$album_id sort:tracknum tags:AGldyorfTIctnDUFH"
 					: "albums 0 1 album_id:$album_id tags:alyj";
 			}
 			else {
@@ -511,8 +533,8 @@ sub Browse {
 		elsif ( $id =~ m{^/m} ) {
 			if ( $id =~ m{/m/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{/m/(\d+)/m$} ) {
 				my $fid = $1;
@@ -536,12 +558,12 @@ sub Browse {
 		elsif ( $id =~ m{^/p} ) {
 			if ( $id =~ m{/t/(\d+)$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDU"
-					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+					? "titles $start $limit track_id:$1 tags:AGldyorfTIctnDUFH"
+					: "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 			}
 			elsif ( $id =~ m{^/p/(\d+)/t$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDU"
+					? "playlists tracks $start $limit playlist_id:$1 tags:AGldyorfTIctnDUFH"
 					: "playlists 0 1 playlist_id:$1";
 			}
 			else {
@@ -553,18 +575,18 @@ sub Browse {
 			}
 		}
 		elsif ( $id =~ m{^/t/(\d+)$} ) {
-			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDU";
+			$cmd = "titles 0 1 track_id:$1 tags:AGldyorfTIctnDUFH";
 		}
 		
 		### Video
 		elsif ( $id =~ m{^/va} ) { # All Videos
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUl"
-					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUl";
+					? "video_titles $start $limit video_id:$1 tags:dorfcwhtnDUlF"
+					: "video_titles 0 1 video_id:$1 tags:dorfcwhtnDUlF";
 			}
 			else {
-				$cmd = "video_titles $start $limit tags:dorfcwhtnDUl";
+				$cmd = "video_titles $start $limit tags:dorfcwhtnDUlF";
 			}
 		}
 		
@@ -573,12 +595,12 @@ sub Browse {
 
 			if ( $folderId ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJ"
-					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJ";
+					? "mediafolder $start $limit type:video folder_id:$folderId tags:dorfcwhtnDUlJF"
+					: "mediafolder 0 1 type:video folder_id:$folderId return_top:1 tags:dorfcwhtnDUlJF";
 			}
 			
 			elsif ( $id eq '/vf' ) {
-				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJ";
+				$cmd = "mediafolder $start $limit type:video tags:dorfcwhtnDUlJF";
 			}
 		}
 		
@@ -586,11 +608,11 @@ sub Browse {
 		elsif ( $id =~ m{^/ia} ) { # All Images
 			if ( $id =~ m{/([0-9a-f]{8})$} ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlO"
-					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlO";
+					? "image_titles $start $limit image_id:$1 tags:ofwhtnDUlOF"
+					: "image_titles 0 1 image_id:$1 tags:ofwhtnDUlOF";
 			}
 			else {
-				$cmd = "image_titles $start $limit tags:ofwhtnDUlO";
+				$cmd = "image_titles $start $limit tags:ofwhtnDUlOF";
 			}
 		}
 		
@@ -599,12 +621,12 @@ sub Browse {
 
 			if ( $folderId ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJ"
-					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJ";
+					? "mediafolder $start $limit type:image folder_id:$folderId tags:ofwhtnDUlOJF"
+					: "mediafolder 0 1 type:image folder_id:$folderId return_top:1 tags:ofwhtnDUlOJF";
 			}
 			
 			elsif ( $id eq '/if' ) {
-				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJ";
+				$cmd = "mediafolder $start $limit type:image tags:ofwhtnDUlOJF";
 			}
 		}
 		
@@ -615,7 +637,7 @@ sub Browse {
 				$albumId = uri_escape_utf8($albumId);
 				
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlO"
+					? "image_titles $start $limit albums:1 search:$albumId tags:ofwhtnDUlOF"
 					: "image_titles 0 1 albums:1";
 			}
 			
@@ -631,15 +653,15 @@ sub Browse {
 		
 			if ( $pic ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlO"
-					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlO";
+					? "image_titles 0 1 image_id:$pic tags:ofwhtnDUlOF"
+					: "image_titles 0 1 timeline:day search:$year-$month-$day tags:ofwhtnDUlOF";
 			}
 
 			# if we've got a full date, show pictures
 			elsif ( $year && $month && $day ) {
 				$cmd = $flag eq 'BrowseDirectChildren'
-					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlO"
-					: "image_titles 0 1 timeline:days search:$year-$month";
+					? "image_titles $start $limit timeline:day search:$year-$month-$day tags:ofwhtnDUlOF"
+					: "image_titles 0 1 timeline:days search:$year-$month"; # XXX should this have tags?
 			}
 
 			# show days for a given month/year
@@ -694,6 +716,8 @@ sub Browse {
 			parentID => $parentID,
 			filter   => $filter,
 			string   => $string,
+			
+			request_addr => $request_addr,
 		} );
 	}
 		
@@ -708,7 +732,7 @@ sub Browse {
 }
 
 sub Search {
-	my ( $class, undef, $args, $headers ) = @_;
+	my ( $class, undef, $args, $headers, $request_addr ) = @_;
 	
 	my $id     = $args->{ContainerID};
 	my $search = $args->{SearchCriteria} || '*';
@@ -722,8 +746,18 @@ sub Search {
 	my $count = 0;
 	my $total = 0;
 	
-	if ( $id != 0 ) {
-		return [ 708 => 'Unsupported or invalid search criteria (only ContainerID 0 is supported)' ];
+	# Missing arguments result in a 402 Invalid Args error
+	if ( !defined $id || !defined $search || !defined $filter || !defined $start || !defined $limit || !defined $sort ) {
+		return [ 402 ];
+	}
+	
+	if ( $id ne '0' ) {
+		return [ 710 => 'No such container' ];
+	}
+	
+	# spec says "RequestedCount=0 indicates request all entries.", but we don't want to kill the server, only return 200 items
+	if ( $limit == 0 ) {
+		$limit = 200;
 	}
 	
 	my ($cmd, $table, $searchsql, $tags) = _decodeSearchCriteria($search);
@@ -732,18 +766,18 @@ sub Search {
 	$tags .= $stags;
 	
 	if ($cmd eq 'image_titles') {
-		$tags .= 'ofwhtnDUlO';
+		$tags .= 'ofwhtnDUlOF';
 	}
 	elsif ($cmd eq 'video_titles') {
-		$tags .= 'dorfcwhtnDUl';
+		$tags .= 'dorfcwhtnDUlF';
 	}
 	else {
 		# Avoid 'A' and 'G' tags because they will run extra queries
-		$tags .= 'agldyorfTIctnDU';
+		$tags .= 'agldyorfTIctnDUFH';
 	}
 	
 	if ( $sort && !$sortsql ) {
-		return [ 708 => 'Unsupported or invalid sort criteria' ];
+		return [ 709 => 'Unsupported or invalid sort criteria' ];
 	}
 	
 	if ( !$cmd ) {
@@ -775,6 +809,8 @@ sub Search {
 		flag     => '',
 		id       => $table eq 'tracks' ? '/t' : $table eq 'videos' ? '/v' : '/i',
 		filter   => $filter,
+		
+		request_addr => $request_addr,
 	} );
 	
 	return (
@@ -795,10 +831,12 @@ sub _queryToDIDLLite {
 	my $parentID = $args->{parentID};
 	my $filter   = $args->{filter};
 	
+	my $request_addr = $args->{request_addr};
+	
 	my $count    = 0;
 	my $total    = $results->{count};
 	
-	my $filterall = ($filter eq '*');
+	my $filterall = ($filter =~ /\*/);
 	
 	if ( ref $cmd eq 'ARRAY' ) {
 		$cmd = join( ' ', @{$cmd} );
@@ -839,7 +877,7 @@ sub _queryToDIDLLite {
 			
 			my $coverid = $album->{artwork_track_id};
 			
-			# XXX musicAlbum should have childCount attr (per DLNA)
+			# XXX musicAlbum should have upnp:genre and @childCount, although not required (DLNA 7.3.25.3)
 			$xml .= qq{<container id="${aid}" parentID="${parent}" restricted="1">}
 				. '<upnp:class>object.container.album.musicAlbum</upnp:class>'
 				. '<dc:title>' . xmlEscape($album->{album}) . '</dc:title>';
@@ -851,10 +889,13 @@ sub _queryToDIDLLite {
 				$xml .= '<upnp:artist>' . xmlEscape($album->{artist}) . '</upnp:artist>';
 			}
 			if ( $filterall || $filter =~ /dc:date/ ) {
-				$xml .= '<dc:date>' . xmlEscape($album->{year}) . '-01-01</dc:date>'; # DLNA requires MM-DD
+				$xml .= '<dc:date>' . xmlEscape( sprintf("%04d", $album->{year}) ) . '-01-01</dc:date>'; # DLNA requires MM-DD
 			}
-			if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
-				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover") . '</upnp:albumArtURI>';
+			if ( $coverid && ($filterall || $filter =~ /upnp:albumArtURI/) ) {
+				# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
+				$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+					. absURL("/music/$coverid/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
+				$xml .= '<upnp:albumArtURI>' . absURL("/music/$coverid/cover", $request_addr) . '</upnp:albumArtURI>';
 			}
 			
 			$xml .= '</container>';
@@ -910,7 +951,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $folder->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				$count++;
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -929,7 +970,7 @@ sub _queryToDIDLLite {
 		}
 		
 		if ( scalar @trackIds ) {
-			my $tracks = Slim::Control::Queries::_getTagDataForTracks( 'AGldyorfTIct', {
+			my $tracks = Slim::Control::Queries::_getTagDataForTracks( 'AGldyorfTIctnDUFH', {
 				trackIds => \@trackIds,
 			} );
 			
@@ -943,7 +984,7 @@ sub _queryToDIDLLite {
 				$tid =~ s{m/(\d+)$}{t/$1};
 				
 				$xml .= qq{<item id="${tid}" parentID="${id}" restricted="1">}
-				 	. trackDetails($track, $filter)
+				 	. trackDetails($track, $filter, $request_addr)
 					. '</item>';
 			}
 		}			
@@ -964,7 +1005,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${tid}" parentID="${parent}" restricted="1">}
-			 	. trackDetails($track, $filter)
+			 	. trackDetails($track, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -979,7 +1020,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${tid}" parentID="${parent}" restricted="1">}
-			 	. trackDetails($track, $filter)
+			 	. trackDetails($track, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -1005,7 +1046,7 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
-			 	. videoDetails($video, $filter)
+			 	. videoDetails($video, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
@@ -1022,7 +1063,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $item->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/vf/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -1033,8 +1074,12 @@ sub _queryToDIDLLite {
 				$item->{id} = $item->{hash};
 				my $fid = $flag eq 'BrowseMetadata' ? '/va' : '/va/' . xmlEscape($item->{hash});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
-				 	. videoDetails($item, $filter)
+				 	. videoDetails($item, $filter, $request_addr)
 				 	. '</item>';
+			}
+			else {
+				$count--; # skip other types
+				$total--;
 			}
 		}
 	}
@@ -1050,7 +1095,7 @@ sub _queryToDIDLLite {
 			
 			my $type = $item->{type};
 			
-			if ( $type eq 'folder' || $type eq 'unknown' ) {
+			if ( $type eq 'folder' ) {
 				my $fid = $flag eq 'BrowseMetadata' ? $id : '/if/' . xmlEscape($item->{id});
 				$xml .= qq{<container id="${fid}" parentID="${parent}" restricted="1">}
 					. '<upnp:class>object.container.storageFolder</upnp:class>'
@@ -1061,14 +1106,20 @@ sub _queryToDIDLLite {
 				$item->{id} = $item->{hash};
 				my $fid = $flag eq 'BrowseMetadata' ? '/ia' : '/ia/' . xmlEscape($item->{id});
 				$xml .= qq{<item id="${fid}" parentID="${parent}" restricted="1">}
-				 	. imageDetails($item, $filter)
+				 	. imageDetails($item, $filter, $request_addr)
 				 	. '</item>';
+			}
+			else {
+				$count--; # skip other types
+				$total--;
 			}
 		}
 	}
 	elsif ( $cmd =~ /^image_titles.*timeline:(?:years|months|days|dates)/ 
 		|| ($cmd =~ /^image_titles.*albums:/ && $cmd !~ /search:/) ) {
 
+		$id = xmlEscape($id); # id has a title that may contain & for example
+		
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : ($id . '/' . xmlEscape($image->{id}));
@@ -1085,6 +1136,8 @@ sub _queryToDIDLLite {
 		}
 	}
 	elsif ( $cmd =~ /^image_titles/ ) {
+		$id = xmlEscape($id); # id has a title that may contain & for example
+		
 		for my $image ( @{ $results->{images_loop} || [] } ) {
 			$count++;			
 			my $vid    = $flag eq 'BrowseMetadata' ? $id : $id . '/' . xmlEscape($image->{id});
@@ -1096,17 +1149,12 @@ sub _queryToDIDLLite {
 			}
 			
 			$xml .= qq{<item id="${vid}" parentID="${parent}" restricted="1">}
-			 	. imageDetails($image, $filter)
+			 	. imageDetails($image, $filter, $request_addr)
 			 	. '</item>';
 		}
 	}
 	
 	$xml .= '</DIDL-Lite>';
-	
-	# Return empty string if we got no results
-	if ( $count == 0 ) {
-		$xml = '';
-	}
 	
 	return ($xml, $count, $total);
 }
@@ -1118,9 +1166,12 @@ sub _arrayToDIDLLite {
 	my $sort   = $args->{sort};
 	my $start  = $args->{start};
 	my $limit  = $args->{limit};
+	my $filter = $args->{filter};
 	
 	my $count = 0;
 	my $total = 0;
+	
+	my $filterall = ($filter =~ /\*/);
 	
 	my $xml = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
 	
@@ -1159,10 +1210,22 @@ sub _arrayToDIDLLite {
 		my $searchable = $item->{searchable} || 0;
 		
 		if ( $type =~ /container/ ) {
-			$xml .= qq{<container id="${id}" parentID="${parentID}" restricted="1" searchable="${searchable}">}
+			$xml .= qq{<container id="${id}" parentID="${parentID}" restricted="1"};
+			if ( $filterall || $filter =~ /\@searchable/ ) {
+				$xml .= qq{ searchable="${searchable}"};
+			}
+			$xml .= qq{>}
 				. "<upnp:class>${type}</upnp:class>"
-				. '<dc:title>' . xmlEscape($title) . '</dc:title>'
-				. '</container>';
+				. '<dc:title>' . xmlEscape($title) . '</dc:title>';
+			
+			# DLNA 7.3.67.4, add searchClass info
+			if ($id == 0 && ($filterall || $filter =~ /upnp:searchClass/) ) {
+				$xml .= qq{<upnp:searchClass includeDerived="0">object.item.audioItem</upnp:searchClass>}
+					  . qq{<upnp:searchClass includeDerived="0">object.item.imageItem</upnp:searchClass>}
+					  . qq{<upnp:searchClass includeDerived="0">object.item.videoItem</upnp:searchClass>};
+			}
+			
+			$xml .= '</container>';
 		}
 	}
 	
@@ -1180,7 +1243,8 @@ sub _decodeSearchCriteria {
 	my $tags = '';
 	
 	if ( $search eq '*' ) {
-		return '1=1';
+		# XXX need to search all types together
+		return ( $cmd, $table, '1=1', $tags );
 	}
 	
 	# Fix quotes and apos
@@ -1202,19 +1266,28 @@ sub _decodeSearchCriteria {
 		}
 	}
 	
+	# Tweak all title/namesearch columns to use the normalized version
+	if ( $search =~ /(dc:title|dc:creator|upnp:artist|upnp:album|upnp:genre)\s+contains\s+"([^"]+)"/ ) {
+		my $field = $1;
+		my $query = Slim::Utils::Text::ignoreCaseArticles($2, 1);
+		$search =~ s/${field}\s+contains\s+"[^"]+"/${field} contains "$query"/;
+	}
+	
 	# Replace 'contains "x"' and 'doesNotContain "x" with 'LIKE "%X%"' and 'NOT LIKE "%X%"'
 	$search =~ s/contains\s+"([^"]+)"/LIKE "%%\U$1%%"/ig;
 	$search =~ s/doesNotContain\s+"([^"]+)"/NOT LIKE "%%\U$1%%"/ig;
 
 	$search =~ s/\@id/${table}.${idcol}/g;
 	$search =~ s/\@refID exists (?:true|false)/1=1/ig;
+	$search =~ s/upnp:class exists (?:true|false)/1=1/ig;
 
 	# Replace 'exists true' and 'exists false'
 	$search =~ s/exists\s+true/IS NOT NULL/ig;
 	$search =~ s/exists\s+false/IS NULL/ig;
 	
-	# Replace properties
-	$search =~ s/dc:title/${table}.titlesearch/g;
+	# Replace properties, checks for LIKE are to avoid changing 'dc:title = "literal"'
+	$search =~ s/dc:title LIKE/${table}.titlesearch LIKE/g;
+	$search =~ s/dc:title/${table}.title/g; # will handle 'dc:title =', 'dc:title exists', etc
 	
 	if ( $search =~ s/pv:lastUpdated/${table}.updated_time/g ) {
 		$tags .= 'U';
@@ -1222,19 +1295,31 @@ sub _decodeSearchCriteria {
 	
 	if ( $cmd eq 'titles' ) {
 		# These search params are only valid for audio
-		if ( $search =~ s/dc:creator/contributors.namesearch/g ) {
+		if ( $search =~ s/dc:creator LIKE/contributors.namesearch LIKE/g ) {
+			$tags .= 'a';
+		}
+		if ( $search =~ s/dc:creator/contributors.name/g ) {
 			$tags .= 'a';
 		}
 	
-		if ( $search =~ s/upnp:artist/contributors.namesearch/g ) {
+		if ( $search =~ s/upnp:artist LIKE/contributors.namesearch LIKE/g ) {
+			$tags .= 'a';
+		}
+		if ( $search =~ s/upnp:artist/contributors.name/g ) {
 			$tags .= 'a';
 		}
 	
-		if ( $search =~ s/upnp:album/albums.titlesearch/g ) {
+		if ( $search =~ s/upnp:album LIKE/albums.titlesearch LIKE/g ) {
+			$tags .= 'l';
+		}
+		if ( $search =~ s/upnp:album/albums.title/g ) {
 			$tags .= 'l';
 		}
 	
-		if ( $search =~ s/upnp:genre/genres.namesearch/g ) {
+		if ( $search =~ s/upnp:genre LIKE/genres.namesearch LIKE/g ) {
+			$tags .= 'g';
+		}
+		if ( $search =~ s/upnp:genre/genres.name/g ) {
 			$tags .= 'g';
 		}
 	}

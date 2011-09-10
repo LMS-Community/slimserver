@@ -24,7 +24,7 @@ our @allColumns = (qw(
 	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
 	timestamp added_time updated_time filesize disc remote audio audio_size audio_offset year secs
 	cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
-	bpm tagversion drm musicmagic_mixable
+	bpm tagversion drm musicmagic_mixable dlna_profile
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual
 ));
 

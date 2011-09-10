@@ -61,11 +61,12 @@ sub getTag {
 	# map the existing tag names to the expected tag names
 	$class->_doTagMapping($tags);
 
-	$tags->{OFFSET}  = 0;
-	$tags->{RATE}    = $info->{samplerate};
-	$tags->{SIZE}    = $info->{file_size};
-	$tags->{SECS}    = $info->{song_length_ms} / 1000;
-	$tags->{BITRATE} = $info->{avg_bitrate};
+	$tags->{OFFSET}       = 0;
+	$tags->{RATE}         = $info->{samplerate};
+	$tags->{SIZE}         = $info->{file_size};
+	$tags->{SECS}         = $info->{song_length_ms} / 1000;
+	$tags->{BITRATE}      = $info->{avg_bitrate};
+	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
 	
 	if ( my $track = $info->{tracks}->[0] ) {
 		# MP4 file

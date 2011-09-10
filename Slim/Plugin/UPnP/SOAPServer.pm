@@ -136,7 +136,7 @@ sub processControl {
 	main::INFOLOG && $log->is_info && $log->info( "Invoking ${serviceClass}->${method}( " . Data::Dump::dump($body) . ' )' );
 	
 	# Invoke the method
-	my @result = eval {	$serviceClass->$method( $client, $body || {}, $request->headers ) };
+	my @result = eval {	$serviceClass->$method( $client, $body || {}, $request->headers, $request->header('Host') || $request->uri->host ) };
 	
 	#warn Data::Dump::dump(\@result) . "\n";
 	
@@ -170,7 +170,7 @@ sub processControl {
 	);
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Result: $content" );
+		#$log->debug( "Result: $content" );
 	}
 	
 	if ( !defined $response->code ) {

@@ -12,20 +12,26 @@ use strict;
 
 use Digest::MD5 qw(md5_hex);
 use HTTP::Date;
+use Network::IPv4Addr ();
 use Socket;
 
 use Slim::Networking::Select;
 use Slim::Networking::Async::Socket::UDP;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 my $log = logger('plugin.upnp');
+my $prefs = preferences('server');
 
 use constant SSDP_HOST => '239.255.255.250:1900';
 use constant SSDP_PORT => 1900;
 
-# socket for both multicasting and unicast replies
-my $SOCK;
+# sockets (one per active interface) for both multicasting and unicast replies
+my %SOCKS;
+
+# map of local IPs -> CIDR
+my %CIDR;
 
 my $SERVER;
 
@@ -37,7 +43,7 @@ sub init {
 	
 	# Construct Server header for later use
 	my $details = Slim::Utils::OSDetect::details();
-	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 SqueezeboxServer/' . $::VERSION . '/' . $::REVISION;
+	$SERVER = $details->{os} . '/' . $details->{osArch} . ' UPnP/1.0 DLNADOC/1.50 LogitechMediaServer/' . $::VERSION . '/' . $::REVISION;
 
 	# Test if we can use ReusePort
 	my $hasReusePort = eval {
@@ -50,27 +56,87 @@ sub init {
 		$s->close;
 		return 1;
 	};
+	
+	my @addresses;
+	if ( main::ISWINDOWS ) {
+		# based on http://msdn.microsoft.com/en-us/library/aa394595(v=VS.85).aspx
+		require Win32::OLE;
+		
+		my $objWMIService = Win32::OLE->GetObject('winmgmts:\\\\.\\root\\cimv2');
+		
+		if ($objWMIService) {
+			my $ipConfigSet = $objWMIService->ExecQuery("Select IPAddress, IPSubnet from Win32_NetworkAdapterConfiguration");
+			
+			foreach my $ipconfig (in $ipConfigSet) {
+				my $subnets   = $ipconfig->{IPSubnet};
+				my $addresses = $ipconfig->{IPAddress};
+				
+				next unless $subnets && $addresses;
+				
+				for (my $i = 0; $i < @$addresses; $i++) {
+					if (my ($addr) = $addresses->[$i] =~ /^(\d+\.\d+.\d+.\d+)$/ ){
+						push @addresses, $addr;
+						$CIDR{$addr} = Network::IPv4Addr::ipv4_parse($addr, $subnets->[$i]);
+					}
+				}
+			} 
+		}
+		# XXX - what if we fail?
+	}
+	else {
+		eval {
+			require IO::Interface::Simple;
+			for my $if ( IO::Interface::Simple->interfaces ) {
+				next unless $if->is_running && $if->is_multicast;
+				my $addr = $if->address || next;
+				push @addresses, $addr;
+				$CIDR{$addr} = Network::IPv4Addr::ipv4_parse($addr, $if->netmask);
+			}
+		};
+	}
 
-	# Setup our multicast socket
-	$SOCK = Slim::Networking::Async::Socket::UDP->new(
+	if ( @addresses ) {
+		for my $addr ( sort @addresses ) {					
+			my $sock = Slim::Networking::Async::Socket::UDP->new(
+				LocalAddr => $addr,
+				LocalPort => SSDP_PORT,
+				ReuseAddr => 1,
+				ReusePort => $hasReusePort ? 1 : 0,
+			);
+
+			if ( $sock ) {
+				$sock->mcast_add( SSDP_HOST, $addr );
+				$SOCKS{$addr} = $sock;
+			}
+			else {
+				$log->warn("Unable to open UPnP multicast socket on $addr: ($!)");
+			}
+		}
+	}
+	
+	# Setup a single multicast socket for listening on all interfaces
+	# Listening on each single-interface socket does not seem to work right
+	my $listensock = Slim::Networking::Async::Socket::UDP->new(
 		LocalPort => SSDP_PORT,
 		ReuseAddr => 1,
 		ReusePort => $hasReusePort ? 1 : 0,
 	);
 	
-	if ( !$SOCK ) {
-		$log->error("Unable to open UPnP multicast discovery socket: ($!) You may have other UPnP software running or a permissions problem.");
+	if ( $listensock ) {
+		$listensock->mcast_add( SSDP_HOST, '0.0.0.0' );
+		Slim::Networking::Select::addRead( $listensock, \&_read );
+		$SOCKS{'0.0.0.0'} = $listensock;
+	}
+	else {
+		$log->warn("Unable to open UPnP multicast socket on 0.0.0.0: ($!)");
+	}
+
+	if ( !scalar keys %SOCKS ) {
+		$log->error("Unable to open any UPnP multicast discovery sockets, you may have other UPnP software running or a permissions problem.");
 		return;
 	}
 	
-	# listen for multicasts on this socket
-	$SOCK->mcast_add( SSDP_HOST );
-	
-	# This socket will continue to live and receive events as
-	# long as SqueezeCenter is running
-	Slim::Networking::Select::addRead( $SOCK, \&_read );
-	
-	$log->info('UPnP Discovery initialized');
+	main::INFOLOG && $log->is_info && $log->info( 'UPnP Discovery initialized for interfaces: ' . join(', ', sort keys %SOCKS) );
 	
 	return 1;
 }
@@ -84,13 +150,11 @@ sub shutdown {
 		$class->unregister($uuid);
 	}
 	
-	if ( defined $SOCK ) {
-		Slim::Networking::Select::removeRead( $SOCK );
-	
-		$SOCK->close;
-	
-		$SOCK = undef;
+	while ( my ($addr, $sock) = each %SOCKS ) {
+		Slim::Networking::Select::removeRead( $sock ) if $addr eq '0.0.0.0';
+		$sock->close;
 	}
+	%SOCKS = ();
 	
 	$log->info('UPnP Discovery shutdown');
 }
@@ -121,7 +185,13 @@ sub _read {
 			# Ignore packets without MX
 			return unless defined $mx;
 			
-			$log->is_debug && $log->debug( "M-SEARCH for $st (mx: $mx)" );
+			# DLNA 7.2.3.5, ignore M-SEARCH with source port 1900 or <1024
+			if ($port == 1900 || $port <= 1024) {
+				$log->warn( "Ignoring illegal M-SEARCH request from $iaddr:$port (port must not be 1900 or <=1024)" );
+				return;
+			}
+			
+			$log->is_debug && $log->debug( "M-SEARCH from $iaddr:$port for $st (mx: $mx)" );
 			
 			# Most devices seem to ignore the mx value and reply quickly
 			if ( $mx > 3 ) {
@@ -192,6 +262,7 @@ sub _read {
 					__PACKAGE__->_advertise(
 						type => 'reply',
 						dest => {
+							sock => $sock,
 							addr => $iaddr,
 							port => $port,
 						},
@@ -213,18 +284,15 @@ sub register {
 	# and when the device disconnects or the server shuts down
 	$UUIDS{ $args{uuid} } = \%args;
 	
-	# Send a byebye message before any alive messages
-	$class->_advertise(
-		type => 'byebye',
-		msgs => [ {
-			NT  => 'upnp:rootdevice',
-			USN => 'uuid:' . $args{uuid} . '::upnp:rootdevice',
-		} ],
-	);
-	
 	my $msgs = $class->_construct_messages(
 		type => 'all',
 		%args,
+	);
+	
+	# Send byebye messages before any alive messages
+	$class->_advertise(
+		type => 'byebye',
+		msgs => $msgs,
 	);
 	
 	$class->_advertise(
@@ -236,7 +304,8 @@ sub register {
 	
 	# Schedule resending of alive packets at random interval less than 1/2 the ttl
 	my $resend = int( rand( $args{ttl} / 2 ) );
-	$log->is_debug && $log->debug( "Will resend notify packets in $resend sec" );
+	main::DEBUGLOG && $log->is_debug && $log->debug( "Sending initial alive packets for " . $args{uuid} . ", will resend notify packets in $resend sec" );
+	Slim::Utils::Timers::killTimers( $class, \&reregister );
 	Slim::Utils::Timers::setTimer(
 		$class,
 		time() + $resend,
@@ -264,6 +333,7 @@ sub reregister {
 		
 		my $resend = int( rand( $args->{ttl}/ 2 ) );
 		$log->is_debug && $log->debug( "Will resend notify packets in $resend sec" );
+		Slim::Utils::Timers::killTimers( $class, \&reregister );
 		Slim::Utils::Timers::setTimer(
 			$class,
 			time() + $resend,
@@ -287,6 +357,8 @@ sub unregister {
 		type => 'byebye',
 		msgs => $msgs,
 	);
+	
+	Slim::Utils::Timers::killTimers( $class, \&reregister );
 }
 
 # Generate a static UUID for a client, using UUID or hash of MAC
@@ -306,6 +378,8 @@ sub uuid {
 sub _advertise {
 	my ( $class, %args ) = @_;
 	
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
+	
 	my $type = $args{type};
 	my $dest = $args{dest};
 	my $msgs = $args{msgs};
@@ -314,6 +388,8 @@ sub _advertise {
 	my $mx   = $args{mx};
 	
 	my @out;
+	
+	my $port = $prefs->get('httpport');
 	
 	if ( $type eq 'byebye' ) {
 		for my $msg ( @{$msgs} ) {
@@ -328,7 +404,7 @@ sub _advertise {
 		}
 	}
 	elsif ( $type eq 'alive' ) {
-		for my $msg ( @{$msgs} ) {	
+		for my $msg ( @{$msgs} ) {
 			push @out, join "\x0D\x0A", (
 				'NOTIFY * HTTP/1.1',
 				'Host: ' . SSDP_HOST,
@@ -360,11 +436,13 @@ sub _advertise {
 	
 	if ( $type eq 'byebye' ) {
 		# Send immediately, each packet twice
-		$log->is_debug && $log->debug( 'Sending ' . scalar(@out) . ' byebye packets' );
+		while ( my ($addr, $sock) = each %SOCKS ) {
+			main::DEBUGLOG && $isDebug && $log->debug( 'Sending ' . scalar(@out) . " byebye packets on $addr" );
 		
-		for my $pkt ( @out ) {
-			for ( 1..2 ) {
-				$SOCK->mcast_send( $pkt, SSDP_HOST );
+			for my $pkt ( @out ) {
+				for ( 1..2 ) {
+					$sock->mcast_send( $pkt, SSDP_HOST );
+				}
 			}
 		}
 	}
@@ -372,9 +450,21 @@ sub _advertise {
 		# Wait a random interval < 100ms and send the full set of requests
 		# Send them again 1/2 second later in case one gets lost
 		my $send = sub {
-			$log->is_debug && $log->debug( 'Sending ' . scalar(@out) . ' alive packets' );
-			for my $pkt ( @out ) {
-				$SOCK->mcast_send( $pkt, SSDP_HOST );
+			while ( my ($addr, $sock) = each %SOCKS ) {
+				main::DEBUGLOG && $isDebug && $log->debug( 'Sending ' . scalar(@out) . " alive packets on $addr" );
+				
+				if ( $addr eq '0.0.0.0' ) {
+					# Use default network address
+					$addr = Slim::Utils::Network::serverAddr();
+				}
+				
+				for my $pkt ( @out ) {
+					# Construct absolute address
+					my $copy = $pkt;
+					$copy =~ s{Location: }{Location: http://$addr:$port};
+					
+					$sock->mcast_send( $copy, SSDP_HOST );
+				}
 			}
 		};
 
@@ -384,16 +474,30 @@ sub _advertise {
 	elsif ( $type eq 'reply' ) {
 		# send unicast UDP to source IP/port, delayed by random interval less than MX
 		my $send = sub {
-			$log->is_debug && $log->debug(
-				'Replying to ' . $dest->{addr} . ':' . $dest->{port}
-				. ' with ' . scalar(@out) . ' packets'
-				. ': ' . Data::Dump::dump(\@out)
-			);
-			
 			my $addr = sockaddr_in( $dest->{port}, inet_aton( $dest->{addr} ) );
 			
+			# Determine which of our local addresses is on the same subnet as the destination
+			my $local_addr;
+			for my $a ( keys %SOCKS ) {
+				if ( exists $CIDR{$a} && Network::IPv4Addr::ipv4_in_network($CIDR{$a}, $dest->{addr}) ) {
+					$local_addr = $a;
+					last;
+				}
+			}
+			if ( !$local_addr ) {
+				$local_addr = Slim::Utils::Network::serverAddr(); # default
+			}
+			
 			for my $pkt ( @out ) {
-				$SOCK->send( $pkt, 0, $addr ) or die "Unable to send UDP reply packet: $!";
+				# Construct absolute address
+				my $copy = $pkt;
+				$copy =~ s{Location: }{Location: http://$local_addr:$port};
+				
+				main::DEBUGLOG && $isDebug && $log->debug(
+					'Replying to ' . $dest->{addr} . ':' . $dest->{port} . ': ' . Data::Dump::dump($copy)
+				);
+				
+				$dest->{sock}->send( $copy, 0, $addr ) or die "Unable to send UDP reply packet: $!";
 			}
 		};
 		
