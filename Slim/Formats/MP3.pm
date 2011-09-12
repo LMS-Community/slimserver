@@ -144,7 +144,6 @@ sub getTag {
 	# when scanning we brokenly align by bytes.
 	# XXX: needed?
 	$tags->{BLOCKALIGN} = 1;
-	warn Data::Dump::dump($tags);
 
 	return $tags;
 }
