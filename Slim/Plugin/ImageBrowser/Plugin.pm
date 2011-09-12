@@ -19,6 +19,8 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 use Slim::Plugin::UPnP::Common::Utils qw(absURL);
 
+my $prefs = preferences('server');
+
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.imagebrowser',
 	defaultLevel => 'ERROR',
@@ -110,11 +112,11 @@ sub handleFeed {
 	my $data = _parseOPML($qid, $params->{start}, $params->{sort});
 	
 	my $items = [];
-	my $dateFormat = preferences('server')->get('shortdateFormat');
-
-	my $thumbSize = preferences('server')->get('thumbSize') || 100;
-	my $resizeParams = "_${thumbSize}x${thumbSize}_o";
-
+	my $dateFormat   = $prefs->get('shortdateFormat');
+	my $thumbSize    = $prefs->get('thumbSize') || 100;
+	my $resizeParams = $params->{isWeb} ? "_${thumbSize}x${thumbSize}_m.png" : '.png';
+	my $maxSize      = $prefs->get('maxUPnPImageSize');
+	
 	my $x = 0;
 	foreach my $itemLoop ($data->{container}, $data->{item}) {
 		foreach my $item ( @$itemLoop ) {
@@ -133,16 +135,12 @@ sub handleFeed {
 			}
 
 			elsif ( $item->{'upnp:class'} eq 'object.item.imageItem.photo' ) {
-				my ($id) = $item->{'upnp:icon'} =~ m{(?:music|image)/([0-9a-f]{8})/};
+				my $id   = _getId($item);
 				my $date = $item->{'dc:date'} ? strftime($dateFormat, strptime($item->{'dc:date'})) : '';
 				
 				if ( $wantSlideshow && !$firstSlide && $id eq $wantSlideshow ) {
 					$firstSlide = $x;
 				}
-				
-				# request smaller version for faster display
-				# XXX - ugly: we should be able to request the valid resize params from the mediaserver
-				$item->{'upnp:icon'} =~ s/_300x300_o/$resizeParams/;
 				
 				push @$items, $wantSlideshow 
 				? {
@@ -154,8 +152,8 @@ sub handleFeed {
 				: {
 					type => 'link',
 					name => $item->{'dc:title'} . ($date ? ' - ' . $date : ''),
-					weblink => $item->{res}->{content},
-					image => $item->{'upnp:icon'},
+					weblink => $id ? "/image/$id/cover_${maxSize}x${maxSize}_o" : undef,
+					image => $id ? "/image/$id/cover$resizeParams" : undef,
 					jive => $id ? {
 						actions => {
 							go => {
@@ -215,7 +213,7 @@ sub _parseOPML {
 	$data = $data->name('Result')->value();
 	
 	my $parsed = $data ? eval { 
-		XMLin($data, KeyAttr => ['container', 'item'], ForceArray => ['container', 'item']) 
+		XMLin($data, KeyAttr => ['container', 'item'], ForceArray => ['container', 'item', 'res']) 
 	} : {};
 
 	if ( $@ ) {
@@ -224,6 +222,25 @@ sub _parseOPML {
 	}
 	
 	return $parsed;
+}
+
+sub _getId {
+	my $item = shift;
+	
+	return unless $item && $item->{res} && ref $item->{res} eq 'ARRAY';
+
+	my $id;
+	foreach ( @{$item->{res}} ) {
+		if ( ($id) = $_->{content} =~ m{image/([0-9a-f]{8})/} ) {
+			last;
+		}
+	}
+	
+	if (!$id) {
+		($id) = $item->{'upnp:icon'} =~ m{image/([0-9a-f]{8})/};
+	}
+	
+	return $id;
 }
 
 1;
