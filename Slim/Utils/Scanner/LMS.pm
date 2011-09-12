@@ -208,10 +208,14 @@ sub rescan {
 		ignore => $ignore,
 		ignore_dirs => $ignore_dirs,
 		thumbnails => [
+			# DLNA
 			{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
 			{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
+			# SP
+			{ format => 'PNG', width => 41, height => 41 },    # jive/baby
+			{ format => 'PNG', width => 40, height => 40 },    # fab4 touch
 			# Web UI large thumbnails
-			{ width => $prefs->get('thumbSize') || 100 },
+			{ format => 'PNG', width => $prefs->get('thumbSize') || 100, height => $prefs->get('thumbSize') || 100 },
 		],
 		on_result => sub {
 			my $result = shift;
@@ -239,7 +243,7 @@ sub rescan {
 				
 				my $total = $p->total;
 			
-				if ( $total && !$progress->total ) {
+				if ( $total && (!$progress->total || $progress->total < $total) ) {
 					# Initial progress data, report the total number in the log too
 					$log->error( "Scanning new media files ($total)" ) unless main::SCANNER && $main::progress;
 					
