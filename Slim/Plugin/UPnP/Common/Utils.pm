@@ -255,7 +255,7 @@ sub trackDetails {
 				elsif ( $type eq 'audio/L16' ) {
 					$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 					
-					$ext = 'pcm';
+					$ext = 'aif';
 					$type .= ';rate=' . ($track->{samplerate} || $track->{'tracks.samplerate'})
 						. ';channels=' . ($track->{channels} || $track->{'tracks.channels'});
 				}

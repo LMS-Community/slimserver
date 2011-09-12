@@ -2650,7 +2650,8 @@ sub downloadMusicFile {
 					my ($quality) = $uri =~ m{quality=(\d)};
 					$quality = 9 unless $quality =~ /^[0-9]$/;
 					
-					$outFormat = 'pcm' if $outFormat =~ /^(?:aiff?|wav)$/;
+					# Use aif because DLNA specifies big-endian format
+					$outFormat = 'aif' if $outFormat =~ /^(?:aiff?|wav)$/;
 				
 					my ($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 						$obj,
@@ -2713,7 +2714,7 @@ sub downloadMusicFile {
 						Slim::Utils::Network::blocking($in, 0);
 					}
 				
-					if ($outFormat eq 'pcm') {
+					if ($outFormat eq 'aif') {
 						# Construct special PCM content-type
 						$response->content_type( 'audio/L16;rate=' . $obj->samplerate . ';channels=' . $obj->channels );
 					}
@@ -2742,7 +2743,7 @@ sub downloadMusicFile {
 					if ( $outFormat eq 'mp3' ) {
 						$dlna = 'DLNA.ORG_PN=MP3;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 					}
-					elsif ( $outFormat eq 'pcm' ) {
+					elsif ( $outFormat eq 'aif' ) {
 						$dlna = 'DLNA.ORG_PN=LPCM;DLNA.ORG_CI=1;DLNA.ORG_FLAGS=01700000000000000000000000000000';
 					}
 					if ($dlna) {
