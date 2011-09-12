@@ -63,6 +63,7 @@ sub getTag {
 	$tags->{SECS}     = $info->{song_length_ms} / 1000;
 	$tags->{RATE}     = $info->{samplerate};
 	$tags->{CHANNELS} = $info->{channels};
+	$tags->{HASH}     = sprintf "%x", $info->{jenkins_hash};
 	
 	$class->doTagMapping($tags);
 

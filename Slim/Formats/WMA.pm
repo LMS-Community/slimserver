@@ -73,6 +73,7 @@ sub getTag {
 	$tags->{LOSSLESS}     = $info->{lossless};
 	$tags->{STEREO}       = $tags->{CHANNELS} == 2 ? 1 : 0;
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
+	$tags->{HASH}         = sprintf "%x", $info->{jenkins_hash};
 	
 	if ( $tags->{IsVBR} ) {
 		$tags->{VBR_SCALE} = 1;

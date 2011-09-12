@@ -66,6 +66,7 @@ sub getTag {
 	$tags->{BLOCKALIGN}   = $info->{block_align};
 	$tags->{ENDIAN}       = 1;
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
+	$tags->{HASH}         = sprintf "%x", $info->{jenkins_hash};
 	
 	# Support AIFC little-endian files
 	if ( $info->{compression_type} && $info->{compression_type} eq 'sowt' ) {

@@ -260,6 +260,7 @@ sub _addInfoTags {
 	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
 	$tags->{CHANNELS}   = $info->{channels};
 	$tags->{LOSSLESS}   = 1;
+	$tags->{HASH}       = sprintf "%x", $info->{jenkins_hash};
 	
 	# Map ID3 tags if file has them
 	if ( $info->{id3_version} ) {

@@ -48,6 +48,7 @@ sub getTag {
 	$tags->{BLOCKALIGN}   = $info->{block_align};
 	$tags->{ENDIAN}       = 0;
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
+	$tags->{HASH}         = sprintf "%x", $info->{jenkins_hash};
 	
 	# Map ID3 tags if file has them
 	if ( $info->{id3_version} ) {

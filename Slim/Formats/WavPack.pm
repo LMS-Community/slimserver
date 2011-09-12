@@ -28,6 +28,7 @@ sub getTag {
 	$tags->{SAMPLESIZE} = $info->{bits_per_sample};
 	$tags->{CHANNELS}   = $info->{channels};
 	$tags->{VBR_SCALE}  = 1;
+	$tags->{HASH}       = sprintf "%x", $info->{jenkins_hash};
 	
 	Slim::Formats::APE->doTagMapping($tags);
 

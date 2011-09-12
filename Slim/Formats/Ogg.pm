@@ -98,6 +98,7 @@ sub getTag {
 	$tags->{STEREO}   = $info->{channels} == 2 ? 1 : 0;
 	$tags->{CHANNELS} = $info->{channels};
 	$tags->{RATE}	  = $info->{samplerate};
+	$tags->{HASH}     = sprintf "%x", $info->{jenkins_hash};
 
 	if ( defined $info->{bitrate_upper} && defined $info->{bitrate_lower} ) {
 		if ( $info->{bitrate_upper} != $info->{bitrate_lower} ) {

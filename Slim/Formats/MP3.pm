@@ -135,6 +135,7 @@ sub getTag {
 	$tags->{RATE}         = $info->{samplerate};
 	$tags->{LAYER_ID}     = $info->{layer}; # 2 = mp2, 1 = mp3
 	$tags->{DLNA_PROFILE} = $info->{dlna_profile} || undef;
+	$tags->{HASH}         = sprintf "%x", $info->{jenkins_hash};
 	
 	if ( $info->{vbr} ) {
 		$tags->{VBR_SCALE} = 1;
@@ -143,6 +144,7 @@ sub getTag {
 	# when scanning we brokenly align by bytes.
 	# XXX: needed?
 	$tags->{BLOCKALIGN} = 1;
+	warn Data::Dump::dump($tags);
 
 	return $tags;
 }
