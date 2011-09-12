@@ -272,6 +272,11 @@ sub _resizeImage {
 			);
 		}
 		
+		# $url comes with resizing parameters
+		elsif ( $url =~ /_?((?:[0-9X]+x[0-9X]+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
+			return $url;
+		}
+		
 		# sometimes we'll need to prepend the webroot to our url
 		$url = $prefix . $url unless $url =~ m{^/};
 
