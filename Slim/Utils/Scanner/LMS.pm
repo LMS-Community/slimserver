@@ -208,8 +208,12 @@ sub rescan {
 		ignore => $ignore,
 		ignore_dirs => $ignore_dirs,
 		thumbnails => [
+			# DLNA
 			{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
 			{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
+			# SP
+			{ format => 'PNG', width => 41, height => 41 },    # jive/baby
+			{ format => 'PNG', width => 40, height => 40 },    # fab4 touch
 			# Web UI large thumbnails
 			{ format => 'PNG', width => $prefs->get('thumbSize') || 100, height => $prefs->get('thumbSize') || 100 },
 		],
