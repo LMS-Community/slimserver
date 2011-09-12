@@ -273,7 +273,7 @@ sub _resizeImage {
 		}
 		
 		# $url comes with resizing parameters
-		elsif ( $url =~ /_?((?:[0-9X]+x[0-9X]+)?(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
+		elsif ( $url =~ /_((?:[0-9X]+x[0-9X]+)(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
 			return $url;
 		}
 		
