@@ -211,7 +211,7 @@ sub rescan {
 			{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
 			{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
 			# Web UI large thumbnails
-			{ width => $prefs->get('thumbSize') || 100 },
+			{ format => 'PNG', width => $prefs->get('thumbSize') || 100, height => $prefs->get('thumbSize') || 100 },
 		],
 		on_result => sub {
 			my $result = shift;
