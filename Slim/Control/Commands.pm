@@ -37,12 +37,15 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
-use Slim::Utils::Scanner::LMS;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
 if ( !main::SLIM_SERVICE ) {
 	require Slim::Utils::Scanner::Local;
+	
+	if (main::IMAGE || main::VIDEO) {
+		require Slim::Utils::Scanner::LMS;
+	}
 }
 
 my $log = logger('control.command');
@@ -2475,32 +2478,43 @@ sub rescanCommand {
 		# we only want to scan folders for video/pictures
 		@dirs = keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }};
 
-		# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
-		my $s;
-		$s = sub {
-			Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
+		if (main::IMAGE || main::VIDEO) {
+			# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
+			my $s;
+			$s = sub {
+				Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
+					scanName => 'directory',
+					progress => 1,
+					onFinished => sub {
+						if (scalar @dirs) {
+							# XXX - delay call to self for a second, or we segfault
+							Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
+						}
+					
+						else {
+							my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+							# XXX until libmediascan supports audio, run the audio scanner now
+							Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+								types    => 'list|audio',
+								scanName => 'directory',
+								progress => 1,
+							} );
+						}
+					}
+				} );
+			};
+			
+			$s->();
+		}
+		else {
+			my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+			# XXX until libmediascan supports audio, run the audio scanner now
+			Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+				types    => 'list|audio',
 				scanName => 'directory',
 				progress => 1,
-				onFinished => sub {
-					if (scalar @dirs) {
-						# XXX - delay call to self for a second, or we segfault
-						Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
-					}
-					
-					else {
-						my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-						# XXX until libmediascan supports audio, run the audio scanner now
-						Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-							types    => 'list|audio',
-							scanName => 'directory',
-							progress => 1,
-						} );
-					}
-				}
 			} );
-		};
-		
-		$s->();
+		}
 	}
 
 	$request->setStatusDone();

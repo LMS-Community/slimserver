@@ -48,6 +48,11 @@ sub condition {
 	
 	return $enabled if defined $enabled;
 	
+ 	if ( $main::noupnp ) { # not checking the noupnp pref here, it's a web UI setting for the old client only
+		$enabled = 0;
+		return 0;
+	}
+	
 	eval {
 		require Slim::Plugin::UPnP::Plugin;
 		require Slim::Plugin::UPnP::MediaServer::ContentDirectory;
@@ -71,6 +76,8 @@ sub playerMenu { }
 # Extend initJive to setup albums screensavers
 sub initJive {
 	my ( $class, %args ) = @_;
+	
+	return if !$enabled;
 	
 	my $menu = $class->SUPER::initJive( %args );
 	

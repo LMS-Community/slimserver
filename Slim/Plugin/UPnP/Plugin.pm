@@ -10,12 +10,6 @@ package Slim::Plugin::UPnP::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
-use Slim::Plugin::UPnP::Discovery;
-use Slim::Plugin::UPnP::Events;
-use Slim::Plugin::UPnP::MediaRenderer;
-use Slim::Plugin::UPnP::MediaServer;
-use Slim::Plugin::UPnP::SOAPServer;
-
 use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
@@ -30,22 +24,36 @@ my $log = Slim::Utils::Log->addLogCategory( {
 sub initPlugin {
 	my $class = shift;
 	
+	return if $main::noupnp; # not checking the noupnp pref here, it's a web UI setting for the old client only
+	
 	if ( !defined $prefs->get('maxUPnPImageSize')) {
 		$prefs->set('maxUPnPImageSize', 1920);
 	}
 	
+	# Modules are loaded using require to save memory in noupnp mode
+	
 	# Core UPnP function
+	require Slim::Plugin::UPnP::Discovery;
 	Slim::Plugin::UPnP::Discovery->init || return shutdownPlugin();
+	
+	require Slim::Plugin::UPnP::Events;
 	Slim::Plugin::UPnP::Events->init    || return shutdownPlugin();
+	
+	require Slim::Plugin::UPnP::SOAPServer;
 	Slim::Plugin::UPnP::SOAPServer->init;
 
 	# Devices
+	require Slim::Plugin::UPnP::MediaServer;
 	Slim::Plugin::UPnP::MediaServer->init;
+	
+	require Slim::Plugin::UPnP::MediaRenderer;
 	Slim::Plugin::UPnP::MediaRenderer->init;
 }
 
 sub shutdownPlugin {
 	my $class = shift;
+	
+	return if $main::noupnp;
 	
 	Slim::Plugin::UPnP::MediaServer->shutdown;
 	Slim::Plugin::UPnP::MediaRenderer->shutdown;
