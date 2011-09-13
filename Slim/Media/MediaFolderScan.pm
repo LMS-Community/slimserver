@@ -21,7 +21,6 @@ use base qw(Class::Data::Inheritable);
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Scanner::Local;
-use Slim::Utils::Scanner::LMS;
 use Slim::Utils::Prefs;
 
 {
@@ -34,6 +33,10 @@ my $prefs = preferences('server');
 
 sub init {
 	my $class = shift;
+	
+	if ( main::IMAGE || main::VIDEO ) {
+		require Slim::Utils::Scanner::LMS;
+	}
 	
 	Slim::Music::Import->addImporter( $class, {
 		type   => 'file',
@@ -58,22 +61,24 @@ sub startScan {
 
 	my $changes = 0;
 
-	# get media folders without audio dirs
-	$dirs = [ keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }} ];
+	if ( main::IMAGE || main::VIDEO ) {
+		# get media folders without audio dirs
+		$dirs = [ keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }} ];
 	
-	for my $dir ( @{$dirs} ) {
-		main::INFOLOG && $log->info("Starting media folder scan in: $dir" );
-		my $c = Slim::Utils::Scanner::LMS->rescan( $dir, {
-			scanName => 'directory',
-			wipe     => main::SCANNER && $main::wipe ? 1 : 0, # XXX ugly
-			no_async => 1,
-			progress => 1,
-		} );
+		for my $dir ( @{$dirs} ) {
+			main::INFOLOG && $log->info("Starting media folder scan in: $dir" );
+			my $c = Slim::Utils::Scanner::LMS->rescan( $dir, {
+				scanName => 'directory',
+				wipe     => main::SCANNER && $main::wipe ? 1 : 0, # XXX ugly
+				no_async => 1,
+				progress => 1,
+			} );
 		
-		$changes += $c;
-	}
+			$changes += $c;
+		}
 	
-	main::INFOLOG && $log->info("Finished scan of media folder (changes: $changes).");
+		main::INFOLOG && $log->info("Finished scan of media folder (changes: $changes).");
+	}
 	
 	# XXX until libmediascan supports audio, run the audio scanner now
 	if ( ($dirs = Slim::Utils::Misc::getAudioDirs()) && scalar @{$dirs} ) {
