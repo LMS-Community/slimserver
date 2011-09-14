@@ -77,7 +77,7 @@ sub playerMenu { }
 sub initJive {
 	my ( $class, %args ) = @_;
 	
-	return if !$enabled;
+	return if !$class->condition;
 	
 	my $menu = $class->SUPER::initJive( %args );
 	

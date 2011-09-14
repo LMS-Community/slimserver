@@ -6,6 +6,7 @@ use strict;
 
 use I18N::LangTags qw(extract_language_tags);
 use URI::Escape qw(uri_escape_utf8);
+use SOAP::Lite;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;

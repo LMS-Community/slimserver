@@ -189,7 +189,7 @@ sub logRotate {
 		
 		$file = catdir($dir, $file);
 
-		# max. log size (default: 10MB)
+		# max. log size (default: 100MB)
 		if (-s $file > $maxSize) {
 
 			# keep one old copy		
