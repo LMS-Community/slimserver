@@ -405,6 +405,9 @@ sub canAutoUpdate { 0 };
 sub installerExtension { '' };
 sub installerOS { '' };
 
+# XXX - disable AutoRescan for all but SqueezeOS for now
+sub canAutoRescan { 0 };
+
 
 =head2 directFirmwareDownload( )
 
