@@ -121,7 +121,7 @@ sub find {
 			$childgrp->add( aio_stat( $file, sub {
 				$todo--;
 				
-				$_[0] && die "stat of $file failed: $!";
+				$_[0] && return;
 
 				if ( -d _ ) {
 					if ( Slim::Utils::Misc::folderFilter( $file, 0, $types ) ) {
