@@ -31,6 +31,8 @@ use constant PLUGIN_TAG => 'imagebrowser';
 
 sub initPlugin {
 	my $class = shift;
+	
+	return unless $class->condition;
 
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -48,7 +50,8 @@ sub condition {
 	
 	return $enabled if defined $enabled;
 	
- 	if ( $main::noupnp ) { # not checking the noupnp pref here, it's a web UI setting for the old client only
+	# not checking the noupnp pref here, it's a web UI setting for the old client only
+ 	if ( $main::noupnp || !main::IMAGE ) {
 		$enabled = 0;
 		return 0;
 	}
@@ -175,14 +178,14 @@ sub handleFeed {
 						}
 					} : undef
 				};
+			
+				$x++;
 			}
 			
 			else {
 				# what here?
 				$log->error('unhandled upnp:class? ' . Data::Dump::dump($item));
 			}
-			
-			$x++;
 		}
 		
 	}
