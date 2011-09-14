@@ -488,10 +488,15 @@ sub rescan {
 			}
 		}
 		
-		# If nothing changed, send a rescan done event
+		# If nothing changed, notify API handlers and send a rescan done event
 		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
 			if ( !main::SCANNER && !$args->{no_async} ) {
 				Slim::Music::Import->setIsScanning(0);
+				
+				if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
+					$handler->(0);
+				}
+				
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 			}
 		}
