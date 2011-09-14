@@ -576,7 +576,7 @@ sub init {
 	main::INFOLOG && $log->info("Server checkDataSource...");
 	checkDataSource();
 	
-	if ( $prefs->get('autorescan') ) {
+	if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
 		require Slim::Utils::AutoRescan;
 		
 		main::INFOLOG && $log->info('Auto-rescan init...');

@@ -502,7 +502,8 @@ sub _notifyFromScanner {
 		# Scanner has started
 		$SCANNING = 1;
 		
-		if ( $prefs->get('autorescan') ) {
+		if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		

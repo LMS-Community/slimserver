@@ -268,6 +268,13 @@ sub pathFromFileURL {
 		}
 	}
 
+	# Bug 17530, $file is in raw bytes but will have the UTF8 flag enabled.
+	# This causes problems if the file is later passed to stat().
+	if (utf8::is_utf8($file)) {
+		utf8::decode($file);
+		utf8::encode($file);
+	}
+
 	if (!$noCache) {
 		%fileToPathCache = () if scalar keys %fileToPathCache > 32;
 		$fileToPathCache{$url} = $file;

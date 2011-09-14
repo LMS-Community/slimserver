@@ -2469,7 +2469,8 @@ sub rescanCommand {
 	# if we're scanning already, don't do it twice
 	if (!Slim::Music::Import->stillScanning() && scalar @dirs) {
 		
-		if ( $prefs->get('autorescan') ) {
+		if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
+			require Slim::Utils::AutoRescan;
 			Slim::Utils::AutoRescan->shutdown;
 		}
 		
@@ -2869,7 +2870,7 @@ sub wipecacheCommand {
 			$client->execute([qw(playlist clear)]);
 		}
 		
-		if ( $prefs->get('autorescan') ) {
+		if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
 			require Slim::Utils::AutoRescan;
 			Slim::Utils::AutoRescan->shutdown;
 		}

@@ -459,4 +459,6 @@ sub settimeofday {
 	}
 }
 
+sub canAutoRescan { 1 };
+
 1;

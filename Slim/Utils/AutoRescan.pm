@@ -33,11 +33,15 @@ my $osclass;
 sub init {
 	my $class = shift;
 	
+	return unless Slim::Utils::OSDetect::getOS->canAutoRescan;
+	
 	my $audiodir = Slim::Utils::Misc::getAudioDir() || return;
 	
 	Slim::Schema->init();
 	
 	# Try to load a filesystem watch module
+=pod
+	# We should not even get here!
 	if ( main::ISMAC ) {
 		eval { require Slim::Utils::AutoRescan::OSX };
 		if ( $@ ) {
@@ -50,7 +54,6 @@ sub init {
 	elsif ( main::ISWINDOWS ) {
 		# XXX I'm not happy with ChangeNotify, needs to be rewritten to use the ReadDirectoryChangesW API
 		# See http://www.perlmonks.org/?node=366446
-=pod
 		eval { require Slim::Utils::AutoRescan::Win32 };
 		if ( $@ ) {
 			$log->error( "Error loading Win32 auto-rescan module, falling back to stat-based monitoring ($@)" );
@@ -58,9 +61,10 @@ sub init {
 		else {
 			$osclass = 'Slim::Utils::AutoRescan::Win32';
 		}
-=cut
 	}
-	elsif ( Slim::Utils::OSDetect::isLinux() ) {
+=cut
+
+	if ( Slim::Utils::OSDetect::isLinux() ) {
 		eval { require Slim::Utils::AutoRescan::Linux };
 		if ( $@ ) {
 			$log->error( "Error loading Linux auto-rescan module, falling back to stat-based monitoring ($@)" );
