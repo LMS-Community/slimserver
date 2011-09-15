@@ -1038,7 +1038,7 @@ sub defaultMediaDirs {
 	return \@mediaDirs;
 }
 
-# when using default folders for a given medium, exclude it from other medium's scans
+# when using default folders for a given media type, exclude it from other media's scans
 sub defaultMediaIgnoreFolders {
 	my ($type, $dir) = @_;
 
