@@ -50,10 +50,20 @@ sub dirsFor {
 
 	my @dirs;
 
-	if ($dir =~ /^(?:music|playlists)$/) {
+	if ($dir =~ /^(?:music|videos|pictures|playlists)$/) {
 
 		# let's do some optimistic tests
-		my $path = catdir('/', 'media', 'Music');
+		my $path;
+		
+		if ($dir =~ /(?:music|playlists)/) {
+			$path = catdir('/', 'media', 'Music');
+		}
+		elsif ($dir eq 'videos') {
+			$path = catdir('/', 'media', 'Videos');
+		}
+		elsif ($dir eq 'pictures') {
+			$path = catdir('/', 'media', 'Pictures');
+		}
 		
 		unless ($path && -r $path) {
 			$path = $class->SUPER::dirsFor($dir);

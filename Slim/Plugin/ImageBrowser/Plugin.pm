@@ -94,7 +94,7 @@ sub initJive {
 	foreach my $item ( @$albums ) {
 		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
 			push @$screensavers, {
-				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'slideshow:1', 'slideshowId:' . $item->{id} ],
+				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'type:slideshow', 'slideshowId:' . $item->{id} ],
 				text => $item->{'dc:title'},
 			}
 		}
@@ -113,7 +113,7 @@ sub handleFeed {
 	my $qid = $args->{id} || '';
 	
 	my ($wantSlideshow, $firstSlide);
-	if ( $params && $params->{params} && $params->{params}->{slideshow} ) {
+	if ( $params && $params->{params} && ($params->{params}->{type} eq 'slideshow' || $params->{params}->{slideshow}) ) {
 		$wantSlideshow = $params->{params}->{id};
 		$qid = $params->{params}->{slideshowId};
 		main::DEBUGLOG && $log->debug("Start slideshow at item ID $wantSlideshow");
@@ -160,7 +160,6 @@ sub handleFeed {
 					date  => $date,
 				}
 				: {
-					type => 'link',
 					name => $item->{'dc:title'} . ($date ? ' - ' . $date : ''),
 					weblink => $id ? "/image/$id/cover_${maxSize}x${maxSize}_o" : undef,
 					image => $id ? "/image/$id/cover$resizeParams" : undef,
@@ -171,7 +170,7 @@ sub handleFeed {
 								cmd => [ PLUGIN_TAG, 'items' ],
 								params => {
 									id => $id,
-									slideshow => 1,
+									type => 'slideshow',
 									slideshowId => $qid,
 								}
 							},

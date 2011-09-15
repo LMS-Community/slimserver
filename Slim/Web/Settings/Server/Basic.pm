@@ -27,19 +27,8 @@ sub prefs {
 	return ($prefs, qw(language playlistdir libraryname) );
 }
 
-# FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...
-
-#for my $importer (qw(iTunes MusicMagic)) {
-
-#	if (exists $Slim::Music::Import::Importers{"Slim::Plugin::".$importer."::Plugin"}) {
-#		push @prefs, lc($importer);
-#	}
-#}
-
 sub handler {
 	my ($class, $client, $paramRef) = @_;
-
-	# prefs setting handled by SUPER::handler
 
 	if ($paramRef->{'pref_rescan'}) {
 
@@ -95,12 +84,26 @@ sub handler {
 		my @paths;
 		my %oldPaths = map { $_ => 1 } @{ $prefs->get('mediadirs') || [] };
 
+		my $ignoreFolders = {
+			audio => [],
+			video => [],
+			image => [],
+		};
+
 		for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
 			if (my $path = $paramRef->{"pref_mediadirs$i"}) {
 				delete $oldPaths{$path};
 				push @paths, $path;
+				
+				push @{ $ignoreFolders->{audio} }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
+				push @{ $ignoreFolders->{video} }, $path if !$paramRef->{"pref_ignoreInVideoScan$i"};
+				push @{ $ignoreFolders->{image} }, $path if !$paramRef->{"pref_ignoreInImageScan$i"};
 			}
 		}
+		
+		$prefs->set('ignoreInAudioScan', $ignoreFolders->{audio});
+		$prefs->set('ignoreInVideoScan', $ignoreFolders->{video});
+		$prefs->set('ignoreInImageScan', $ignoreFolders->{image});
 
 		my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
 		$prefs->set('mediadirs', \@paths) if keys %oldPaths || !$oldCount || scalar @paths != $oldCount;
@@ -109,7 +112,29 @@ sub handler {
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 	
-	$paramRef->{'prefs'}->{ 'pref_mediadirs' } = [ @{ $prefs->get('mediadirs') || [] }, '' ];
+	my $ignoreFolders = {
+		audio => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInAudioScan') } },
+		video => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInVideoScan') } },
+		image => { map { $_, 1 } @{ Slim::Utils::Misc::getDirsPref('ignoreInImageScan') } },
+	};
+	
+	$paramRef->{mediadirs} = [];
+	foreach ( @{ Slim::Utils::Misc::getMediaDirs() } ) {
+		push @{ $paramRef->{mediadirs} }, {
+			path  => $_,
+			audio => $ignoreFolders->{audio}->{$_},
+			video => $ignoreFolders->{video}->{$_},
+			image => $ignoreFolders->{image}->{$_},
+		}
+	}
+
+	# add an empty input field for an additional mediadir input field
+	push @{$paramRef->{mediadirs}}, {
+		path  => '',
+	};
+
+	$paramRef->{'noimage'} = 1 if !main::IMAGE;
+	$paramRef->{'novideo'} = 1 if !main::VIDEO;
 
 	return $class->SUPER::handler($client, $paramRef);
 }

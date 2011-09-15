@@ -6386,36 +6386,6 @@ SETUP_MEDIADIRS_DESC
 	RU	Можно указать одну или несколько папок, содержащую файлы мультимедиа, которые Logitech Media Server будет сканировать и добавлять в библиотеку мультимедиа.  Введите пути к папкам ниже.
 	SV	Du kan ange en eller flera mappar som innehåller mediefiler som Logitech Media Server ska söka igenom och lägga till i ditt mediebibliotek. Ange sökvägarna till mappen nedan.
 
-SETUP_MEDIADIRS_EXCLUSION_LIST
-	CS	Složky a typy médií
-	DA	Mapper og medietyper
-	DE	Ordner und Medientypen
-	EN	Folders and Media Types
-	ES	Carpetas y tipos de material multimedia
-	FI	Kansiot ja mediatyypit
-	FR	Dossiers et types de média
-	IT	Tipi di cartelle e di file multimediali
-	NL	Mappen en mediatypen
-	NO	Mapper og medietyper
-	PL	Foldery i typy multimediów
-	RU	Папки и типы мультимедиа
-	SV	Mappar och medietyper
-
-SETUP_MEDIADIRS_EXCLUSION_LIST_DESC
-	CS	Pro každou složku s médii definujte, na jaký druh médií ji chcete použít.
-	DA	Angiv hvilken form for medie du vil bruge til hver mediemappe.
-	DE	Geben Sie bei jedem Medienordner an, für welche Art von Medien Sie ihn verwenden möchten.
-	EN	Define for every media folder what kind of media you want to use it for.
-	ES	Defina para qué tipo de material desea usar cada carpeta de material multimedia.
-	FI	Määritä kullekin mediakansiolle mediatyyppi, jota haluat kansiossa käyttää.
-	FR	Définissez pour chaque dossier multimédia le média qu'il doit stocker.
-	IT	Indicare per ciascuna cartella di file multimediali il tipo di supporto multimediale per cui si desidera utilizzarla.
-	NL	Geef voor elke mediamap op voor welk type media je het wilt gebruiken.
-	NO	Definer hvilke mediefiler du vil bruke hver mediemappe til.
-	PL	W odniesieniu do każdego folderu multimedialnego określ, do jakich multimediów ma on być przeznaczony.
-	RU	Для каждой папки мультимедиа укажите, для какого типа файлов ее планируется использовать.
-	SV	Ange för varje mediemapp vilken typ av mediefiler du vill använda den till.
-
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
 	DA	Mappe med afspilningslister

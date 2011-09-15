@@ -1015,12 +1015,7 @@ sub defaultMediaDirs {
 		push @mediaDirs, $audiodir;
 		
 		# add the audiodir to the list of sources to be ignored by the other scans
-		foreach ('ignoreInVideoScan', 'ignoreInImageScan') {
-			my $ignoreDirs = $prefs->get($_) || [];
-			
-			push @$ignoreDirs, $audiodir;
-			$prefs->set($_, $ignoreDirs);
-		}
+		defaultMediaIgnoreFolders('music', $audiodir);
 	}
 	
 	# new LMS installation: default to all media folders
@@ -1033,11 +1028,32 @@ sub defaultMediaDirs {
 			
 			if ($path && -d $path) {
 				push @mediaDirs, $path;
+				
+				# ignore media from other media's scan
+				defaultMediaIgnoreFolders($medium, $path);
 			}
 		}
 	}
 	
 	return \@mediaDirs;
+}
+
+# when using default folders for a given media type, exclude it from other media's scans
+sub defaultMediaIgnoreFolders {
+	my ($type, $dir) = @_;
+
+	my %ignoreDirs = (
+		music    => ['ignoreInVideoScan', 'ignoreInImageScan'],
+		videos   => ['ignoreInAudioScan', 'ignoreInImageScan'],
+		pictures => ['ignoreInVideoScan', 'ignoreInAudioScan'],
+	);
+
+	foreach ( @{ $ignoreDirs{$type} } ) {
+		my $ignoreDirs = $prefs->get($_) || [];
+		
+		push @$ignoreDirs, $dir;
+		$prefs->set($_, $ignoreDirs);
+	}				
 }
 
 sub defaultPlaylistDir {
