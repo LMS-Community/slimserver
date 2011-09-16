@@ -284,7 +284,7 @@ sub getUpdateInstaller {
 
 		chomp;
 		
-		if (/(?:Squeezebox|SqueezeCenter).*/) {
+		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
 			$updateInstaller = $_;
 			last;
 		}
