@@ -132,6 +132,11 @@ sub handleFeed {
 		foreach my $item ( @$itemLoop ) {
 
 			if ( $item->{'upnp:class'} =~ /^object.container/ ) {
+				
+				# don't show "All images" item: listing tens of thousands of images can kill some clients
+				next if $item->{id} eq '/ia';
+				next if $wantSlideshow;
+ 
 				push @$items, {
 					type => 'link',
 					name => $item->{'dc:title'},
@@ -141,7 +146,7 @@ sub handleFeed {
 					passthrough => [ {
 						id => $item->{id}
 					} ],
-				} if !$wantSlideshow;
+				};
 			}
 
 			elsif ( $item->{'upnp:class'} eq 'object.item.imageItem.photo' ) {
@@ -183,6 +188,7 @@ sub handleFeed {
 			
 			else {
 				# what here?
+				require Data::Dump;
 				$log->error('unhandled upnp:class? ' . Data::Dump::dump($item));
 			}
 		}

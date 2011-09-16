@@ -35,6 +35,8 @@ use constant INFOLOG       => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC => 0;
 use constant STATISTICS    => 0;
 use constant WEBUI         => 0;
+use constant IMAGE         => 0;
+use constant VIDEO         => 0;
 use constant ISWINDOWS     => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC         => ( $^O =~ /darwin/i ) ? 1 : 0;
 

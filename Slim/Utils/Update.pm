@@ -28,6 +28,8 @@ sub checkVersion {
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|exe)(\.tmp)?$/i);			
 
 	return unless $prefs->get('checkVersion');
+	
+	return if $::REVISION eq 'TRUNK';
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
@@ -284,7 +286,7 @@ sub getUpdateInstaller {
 
 		chomp;
 		
-		if (/(?:Squeezebox|SqueezeCenter).*/) {
+		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -312,7 +314,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^(?:Squeezebox|SqueezeCenter).*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
 }
 
 1;

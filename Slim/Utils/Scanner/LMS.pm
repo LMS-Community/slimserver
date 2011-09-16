@@ -153,6 +153,7 @@ sub rescan {
 		'TheVolumeSettingsFolder',
 		'TheFindByContentFolder',
 		'Network Trash Folder',
+		'iPod Photo Cache',
 		# various versions of the Windows trash - http://en.wikipedia.org/wiki/Trash_(computing)#Microsoft_Windows
 		'$RECYCLE.BIN', # Windows Vista+
 		'$Recycle.Bin',

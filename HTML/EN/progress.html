@@ -42,7 +42,7 @@
 		<div>[% "SCAN_ABORTED" | string %]</div>
 	[% END %]
 
-	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
+	[% IF desc && type && !ajaxUpdate %]<div id="browsedbHeader"><br/>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
 
 	[% odd = 1 %]
 	[% FOREACH num = [0..50] %]
