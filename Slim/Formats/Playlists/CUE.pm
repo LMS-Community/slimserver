@@ -46,6 +46,9 @@ sub parse {
 
 		return;
 	}
+	
+	# Bug 11289, strip BOM from first line
+	$lines->[0] = Slim::Utils::Unicode::stripBOM($lines->[0]);
 
 	for my $line (@$lines) {
 

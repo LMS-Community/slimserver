@@ -2507,6 +2507,12 @@ sub _preCheckAttributes {
 	for my $tag (qw(YEAR RATING)) {
 		$attributes->{$tag} ||= 0;
 	}
+	
+	# Bug 4803, ensure rating is an integer that fits into tinyint
+	if ( $attributes->{RATING} && ($attributes->{RATING} !~ /^\d+$/ || $attributes->{RATING} > 255) ) {
+		logWarning("Invalid RATING tag '" . $attributes->{RATING} . "' in " . Slim::Utils::Misc::pathFromFileURL($url));
+		$attributes->{RATING} = 0;
+	}
 
 	if (defined $attributes->{'TRACKNUM'}) {
 		$attributes->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributes->{'TRACKNUM'});
