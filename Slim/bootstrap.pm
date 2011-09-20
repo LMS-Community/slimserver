@@ -108,6 +108,9 @@ sub loadModules {
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
 	
+	# Check for use64bitint Perls
+	my $is64bitint = $arch =~ /64int/;
+	
 	# Some ARM platforms use different arch strings, just assume any arm*linux system
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
@@ -118,6 +121,10 @@ sub loadModules {
 	# Same thing with PPC
 	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 		$arch = 'powerpc-linux-thread-multi';
+	}
+	
+	if ($is64bitint) {
+		$arch .= '-64int';
 	}
 
 	my $perlmajorversion = $Config{'version'};
