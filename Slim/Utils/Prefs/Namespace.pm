@@ -325,7 +325,7 @@ sub savenow {
 	eval {
 		my $path = $class->{'file'} . '.tmp';
 
-		open(OUT,'>:utf8', $path) or die "$!";
+		open OUT, '>', $path or die "$!";
 		print OUT YAML::XS::Dump($class->{'prefs'});
 		close OUT;
 
