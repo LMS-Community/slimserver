@@ -263,7 +263,8 @@ sub _load {
 		$prefs = eval { YAML::XS::LoadFile($class->{'file'}) };
 
 		if ($@) {
-			$log->error("Unable to read prefs from $class->{'file'} : $@");
+			# log4perl is not yet initialized
+			warn("Unable to read prefs from $class->{'file'} : $@\n");
 		}
 
 		$class->setFilepaths(keys %{$class->{'filepathPrefs'}});
