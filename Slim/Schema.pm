@@ -921,7 +921,7 @@ sub _createOrUpdateAlbum {
 				title       => $noAlbum,
 				titlesort   => $sortkey,
 				titlesearch => Slim::Utils::Text::ignoreCaseArticles($sortkey, 1),
-				compilation => $isCompilation, # XXX why set compilation?
+				compilation => 0, # Will be set to 1 below, if needed
 				year        => 0,
 				contributor => $self->variousArtistsObject->id,
 			};
@@ -929,6 +929,19 @@ sub _createOrUpdateAlbum {
 			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Created NO ALBUM as id: [%d]", $_unknownAlbumId));
+		}
+		else {
+			# Bug 17370, detect if No Album is a "compilation" (more than 1 artist with No Album)
+			# We have to check the other tracks already on this album, and if the artists differ 
+			# from the current track's artists, we have a compilation
+			my $is_comp = $self->mergeSingleVAAlbum( $_unknownAlbumId, 1 );
+
+			if ( $is_comp ) {
+				$self->_updateHash( albums => {
+					id          => $_unknownAlbumId,
+					compilation => 1,
+				}, 'id' );
+			}
 		}
 
 		main::DEBUGLOG && $isDebug && $log->debug("-- Track has no album");
