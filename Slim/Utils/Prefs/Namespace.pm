@@ -263,7 +263,7 @@ sub _load {
 		$prefs = eval { YAML::XS::LoadFile($class->{'file'}) };
 
 		if ($@) {
-			main::INFOLOG && $log->info("can't read $class->{'file'} : $@");
+			$log->error("Unable to read prefs from $class->{'file'} : $@");
 		}
 
 		$class->setFilepaths(keys %{$class->{'filepathPrefs'}});
