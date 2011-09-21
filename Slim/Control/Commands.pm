@@ -2506,25 +2506,24 @@ sub rescanCommand {
 				# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
 				my $s;
 				$s = sub {
-					Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
-						scanName => 'directory',
-						progress => 1,
+					my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+					# XXX until libmediascan supports audio, run the audio scanner now
+					Slim::Utils::Scanner::Local->rescan( $audiodirs, {
+						types      => 'list|audio',
+						scanName   => 'directory',
+						progress   => 1,
 						onFinished => sub {
-							if (scalar @dirs) {
-								# XXX - delay call to self for a second, or we segfault
-								Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
-							}
-					
-							else {
-								my $audiodirs = Slim::Utils::Misc::getAudioDirs();
-								# XXX until libmediascan supports audio, run the audio scanner now
-								Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-									types    => 'list|audio',
-									scanName => 'directory',
-									progress => 1,
-								} );
-							}
-						}
+							Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
+								scanName => 'directory',
+								progress => 1,
+								onFinished => sub {
+									if (scalar @dirs) {
+										# XXX - delay call to self for a second, or we segfault
+										Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
+									}
+								},
+							} );
+						},
 					} );
 				};
 			

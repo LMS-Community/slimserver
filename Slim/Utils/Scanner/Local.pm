@@ -296,7 +296,7 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$inDBOnlySth->rows ) {
-						markDone( $next => PENDING_DELETE, $changes ) unless $args->{no_async};
+						markDone( $next => PENDING_DELETE, $changes, $args->{onFinished} ) unless $args->{no_async};
 						
 						$progress && $progress->final;
 						$inDBOnlySth->finish;
@@ -371,7 +371,7 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$onDiskOnlySth->rows ) {
-						markDone( $next => PENDING_NEW, $changes ) unless $args->{no_async};
+						markDone( $next => PENDING_NEW, $changes, $args->{onFinished} ) unless $args->{no_async};
 						
 						$progress && $progress->final;
 						$onDiskOnlySth->finish;
@@ -446,7 +446,7 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$changedOnlySth->rows ) {
-						markDone( $next => PENDING_CHANGED, $changes ) unless $args->{no_async};
+						markDone( $next => PENDING_CHANGED, $changes, $args->{onFinished} ) unless $args->{no_async};
 						
 						$progress && $progress->final;
 						$changedOnlySth->finish;
@@ -498,6 +498,10 @@ sub rescan {
 				}
 				
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+				
+				if ( $args->{onFinished} ) {
+					$args->{onFinished}->();
+				}
 			}
 		}
 	} );
@@ -975,7 +979,7 @@ sub changed {
 
 # Check if we're done with all our rescan tasks
 sub markDone {
-	my ( $path, $type, $changes ) = @_;
+	my ( $path, $type, $changes, $onFinished ) = @_;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
 	
@@ -1025,6 +1029,10 @@ sub markDone {
 				
 				Slim::Music::Import->setIsScanning(0);
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+				
+				if ($onFinished) {
+					$onFinished->();
+				}
 			} );
 	}
 	

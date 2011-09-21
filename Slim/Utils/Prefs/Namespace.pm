@@ -263,7 +263,8 @@ sub _load {
 		$prefs = eval { YAML::XS::LoadFile($class->{'file'}) };
 
 		if ($@) {
-			main::INFOLOG && $log->info("can't read $class->{'file'} : $@");
+			# log4perl is not yet initialized
+			warn("Unable to read prefs from $class->{'file'} : $@\n");
 		}
 
 		$class->setFilepaths(keys %{$class->{'filepathPrefs'}});
@@ -324,7 +325,7 @@ sub savenow {
 	eval {
 		my $path = $class->{'file'} . '.tmp';
 
-		open(OUT,'>:utf8', $path) or die "$!";
+		open OUT, '>', $path or die "$!";
 		print OUT YAML::XS::Dump($class->{'prefs'});
 		close OUT;
 
