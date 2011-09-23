@@ -305,6 +305,9 @@ sub rescan {
 
 			# Stop async watcher
 			undef $watcher;
+			
+			# Clean up Media::Scan thread, etc
+			undef $s;
 		},
 	} );
 	
