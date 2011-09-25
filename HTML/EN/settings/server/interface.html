@@ -25,7 +25,7 @@
 		[% WRAPPER settingGroup title="SETUP_SHOWYEAR" desc="SETUP_SHOWYEAR_DESC" %]
 			<select class="stdedit" name="pref_showYear" id="showYear">
 	
-				<option [% IF NOT prefs.pref_showYears %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
+				<option [% IF NOT prefs.pref_showYear %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
 				<option [% IF prefs.pref_showYear %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
 			
 			</select>
