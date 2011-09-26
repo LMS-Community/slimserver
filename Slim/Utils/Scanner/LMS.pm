@@ -154,6 +154,7 @@ sub rescan {
 		'TheFindByContentFolder',
 		'Network Trash Folder',
 		'iPod Photo Cache',
+		'iPhoto Library/Thumbnails',
 		# various versions of the Windows trash - http://en.wikipedia.org/wiki/Trash_(computing)#Microsoft_Windows
 		'$RECYCLE.BIN', # Windows Vista+
 		'$Recycle.Bin',
@@ -304,6 +305,9 @@ sub rescan {
 
 			# Stop async watcher
 			undef $watcher;
+			
+			# Clean up Media::Scan thread, etc
+			undef $s;
 		},
 	} );
 	

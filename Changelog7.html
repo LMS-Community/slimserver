@@ -2,11 +2,13 @@
 <ul>
 	<li>New Features:</li>
 	<ul>
-		<li>UPnP/DLNA support:</li>
+		<li>DLNA/UPnP support:</li>
 		<ul>
 			<li>Media library is exposed as a Media Server.</li>
 			<li>All connected players are exposed as Media Renderers (experimental).</li>
 		</ul>
+		<li>Image and video file scanning support has been added and is exposed via the DLNA media server.</li>
+		<li>Multiple media directories can now be specified. Each directory can be configured for audio, images, and/or video.</li>
 	</ul>
 	<br />
 
@@ -20,14 +22,17 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4803">#4803</a> - Scanner does not validate RATING tags</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5091">#5091</a> - DLNA (UPnP) Server Support</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=11289">#11289</a> - Scanner ignores first line of cue sheet if it has a UTF-8 BOM</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17090">#17090</a> - WMA seeking fails if file does not contain an ASF_Index object</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17213">#17213</a> - Error message installing SBS 32398 on Ubuntu 11.04</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17242">#17242</a> - Perl 5.12 modules in CPAN/arch not compatible with Debian Wheezy</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17358">#17358</a> - Importers (MusicIP, iTunes) are not run during a rescan</li>
 	</ul>
 	<br />
 </ul>
 
-<h2><a name="v7.6.2" id="v7.6.2"></a>Version 7.6.2</h2>
+<h2><a name="v7.6.2" id="v7.6.2"></a>Version 7.6.2 - unreleased</h2>
 <ul>
 	<li>Bug Fixes:</li>
 	<ul>
