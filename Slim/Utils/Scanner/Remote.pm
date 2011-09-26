@@ -356,8 +356,11 @@ sub readRemoteHeaders {
 	
 	# Bug 3396, some m4a audio is incorrectly served as audio/mpeg.
 	# In this case, prefer the file extension to the content-type
-	if ( $url =~ /(m4a|aac)$/i && $type eq 'mp3' ) {
-		$type = 'mov';
+	if ( $url =~ /aac$/i && ($type eq 'mp3' || $type eq 'txt') ) {
+		$type = 'aac';
+	}
+	elsif ( $url =~ /(?:m4a|mp4)$/i && ($type eq 'mp3' || $type eq 'txt') ) {
+		$type = 'mp4';
 	}
 
 	# bug 15491 - some radio services are too lazy to correctly configure their servers
