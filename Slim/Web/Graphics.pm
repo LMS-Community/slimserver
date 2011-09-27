@@ -293,7 +293,8 @@ sub artworkRequest {
 	
 	# Support pre-sized files already in place, this is used on SB Touch
 	# for app icons because it can't handle resizing so many icons at once
-	if ( $fullpath && $fullpath =~ /(\.(?:jpg|png|gif))$/i ) {
+	# It is also used for requests for /cover (the original file)
+	if ( $fullpath && $fullpath =~ /(\.(?:jpe?g|jpe|png|gif|bmp))$/i ) {
 		my $ext = $1;
 		
 		# Add the spec back to the fullpath if there's more than the extension
@@ -308,7 +309,7 @@ sub artworkRequest {
 		
 			my ($ext) = $fullpathspec =~ /\.(\w+)$/;
 			my $ct = 'image/' . $ext;
-			$ct =~ s/jpg/jpeg/;
+			$ct =~ s/(?:jpg|jpe)/jpeg/;
 			$response->content_type($ct);
 		
 			my $exptime = ONE_DAY;
