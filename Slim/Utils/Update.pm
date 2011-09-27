@@ -80,9 +80,6 @@ sub checkVersion {
 		)
 	);
 	
-	# XXX - check on test.mysb.com while in LMS beta...
-	$url =~ s/www\.(?!test)/test\./;
-		
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
