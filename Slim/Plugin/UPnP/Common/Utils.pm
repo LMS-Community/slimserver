@@ -413,16 +413,15 @@ sub imageDetails {
 		$xml .= '<upnp:album>' . xmlEscape($image->{album} || $image->{'images.album'}) . '</upnp:album>';
 	}
 
-=pod	
 	# DLNA 7.3.60 specifies that image/video thumbnails should be provided in a separate <res> item, but a lot
 	# of clients need albumArtURI. We will return both methods
 	if ( $filterall || $filter =~ /upnp:albumArtURI/ ) {
 		# DLNA 7.3.61.1, provide multiple albumArtURI items, at least one of which is JPEG_TN (160x160)
 		$xml .= '<upnp:albumArtURI dlna:profileID="JPEG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
 			. absURL("/image/${hash}/cover_160x160_m.jpg", $request_addr) . '</upnp:albumArtURI>';
-		$xml .= '<upnp:albumArtURI>' . absURL("/image/${hash}/cover", $request_addr) . '</upnp:albumArtURI>';
+		$xml .= '<upnp:albumArtURI dlna:profileID="PNG_TN" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">'
+			. absURL("/image/${hash}/cover_160x160_m.png", $request_addr) . '</upnp:albumArtURI>';
 	}
-=cut
 	
 	# XXX is this OK to use as modificationTime?
 	my $mtime = $image->{original_time} || $image->{'images.original_time'};
@@ -444,15 +443,26 @@ sub imageDetails {
 	if ( $filterall || $filter =~ /res/ ) {
 		my $type = $image->{mime_type} || $image->{'images.mime_type'};
 		my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'};
+		my $transcoded = 0;
+		
+		# Don't serve BMP files directly, they are too huge and most clients can't render them anyway.
+		# Always serve them as JPG
+		if ( $type =~ /bmp/ ) {
+			$transcoded = 1;
+			$type = 'image/jpeg';
+			$profile = 'JPEG_LRG';
+		}
 
 		my $dlna = '*';
-		if ( my $profile = $image->{dlna_profile} || $image->{'images.dlna_profile'} ) {
-			$dlna = "DLNA.ORG_PN=${profile};DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS_IMAGES();
+		if ($profile) {
+			$dlna  = "DLNA.ORG_PN=${profile};";
+			$dlna .= "DLNA.ORG_CI=1;" if $transcoded;
+			$dlna .= "DLNA.ORG_OP=01;DLNA.ORG_FLAGS=" . DLNA_FLAGS_IMAGES();
 		}
 		
 		$xml .= '<res protocolInfo="http-get:*:' . $type . ":${dlna}\"";
 	
-		if ( ($filterall || $filter =~ /res\@size/) ) {
+		if ( !$transcoded && ($filterall || $filter =~ /res\@size/) ) {
 			$xml .= ' size="' . ($image->{filesize} || $image->{'images.filesize'}) . '"';
 		}
 		if ( ($filterall || $filter =~ /res\@resolution/) ) {
@@ -471,7 +481,12 @@ sub imageDetails {
 			$xml .= '>' . absURL("/image/${hash}/cover_${maxSize}x${maxSize}_o", $request_addr) . '</res>';
 		}
 		else {
-			$xml .= '>' . absURL("/image/${hash}/cover", $request_addr) . '</res>';
+			if ($transcoded) {
+				$xml .= '>' . absURL("/image/${hash}/cover.jpg", $request_addr) . '</res>';
+			}
+			else {
+				$xml .= '>' . absURL("/image/${hash}/cover", $request_addr) . '</res>';
+			}
 		}
 		
 		# DLNA 7.3.60, provide image thumbnails as <res> items
