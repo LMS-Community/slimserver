@@ -32,4 +32,6 @@ PLUGIN_ORANGE_ERROR
 	SV	Liveradio-fel
 
 PLUGIN_ORANGE_OPTIONS
+	DE	Orange Liveradio Optionen 
 	EN	Orange Liveradio Options
+	FR	Options Orange Liveradio
