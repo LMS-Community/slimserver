@@ -2,4 +2,5 @@ PLUGIN_IMAGEBROWSER_MODULE_NAME
 	EN	Image Browser
 
 PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC
+	DE	Betrachte deine Bilder auf deiner Squeezebox oder im Logitech Media Server Web-Interface.
 	EN	Browse and view images on your Squeezebox or in your Logitech Media Server web interface.
