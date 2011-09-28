@@ -194,7 +194,7 @@ sub songElapsedSeconds {
 	
 	if ($client->isPlaying(1)) {
 		my $timeDiff = Time::HiRes::time() - $client->jiffiesToTimestamp($jiffies);
-		logBacktrace($client->id, ": songElapsed=$songElapsed, jiffies=$jiffies, timeDiff=$timeDiff");
+		#logBacktrace($client->id, ": songElapsed=$songElapsed, jiffies=$jiffies, timeDiff=$timeDiff");
 		$songElapsed += $timeDiff if ($timeDiff > 0);
 	}
 	
