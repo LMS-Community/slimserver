@@ -581,6 +581,13 @@ sub gotOPML {
 							$refresh->( $client, sub {
 								my $refreshed = shift;
 								
+								if (ref $refreshed ne 'HASH') {
+									$log->error('Cannot refresh menu; did not get HASH from refresh callback');
+									Slim::Buttons::Common::popMode($client);
+									$client->update;
+									return;
+								}
+								
 								# Get the INPUT.Choice mode and replace a few things
 								my $choice = $client->modeParameterStack->[-1];
 								$choice->{item}     = $refreshed;

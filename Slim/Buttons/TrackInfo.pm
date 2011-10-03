@@ -59,15 +59,6 @@ sub setMode {
 	my $track = $client->modeParam('track');
 	my $url   = blessed($track) ? $track->url : $track;
 	
-	# XXX temporary fix for ip3k trackinfo, Alan please review
-	# Protocol Handlers can setup their own track info	 
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);	 
-	if ( $handler && $handler->can('trackInfo') ) {	 
-		# trackInfo method is responsible for pushing its own mode	 
-		$handler->trackInfo( $client, $track );	 
-		return;	 
-	}
-	
 	my $getMenu = sub {
 		my ( $client, $callback ) = @_;
 		
@@ -75,6 +66,7 @@ sub setMode {
 		
 		if ( $callback ) {
 			# Callback is used during a menu refresh
+			# Will not work if URL is returned instead of OPML
 			$callback->( $menu );
 		}
 		else {
@@ -84,10 +76,12 @@ sub setMode {
 	
 	my %params = (
 		modeName  => 'TrackInfo',
-		opml      => $getMenu->( $client ),
 		onRefresh => $getMenu,
 		timeout   => 35,
 	);
+	
+	my $feed = $getMenu->( $client );
+	$params{ref $feed eq 'HASH' ? 'opml' : 'url'} = $feed;
 	
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
