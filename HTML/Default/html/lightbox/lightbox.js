@@ -138,7 +138,7 @@ Ext.ux.Lightbox = (function(){
             }
         },
 
-        open: function(image, sel, group) {
+        open: function(image, sel, group, slideWindow) {
             group = group || false;
             this.setViewSize();
             els.overlay.fadeIn({
@@ -152,7 +152,7 @@ Ext.ux.Lightbox = (function(){
                         images.push([image.href, image.title]);
                     }
                     else {
-                        var setItems = Ext.query(sel);
+                        var setItems = slideWindow ? slideWindow.Ext.query(sel) : Ext.query(sel);
                         Ext.each(setItems, function(item) {
                             if(item.href) {
                                 images.push([item.href, item.title]);
@@ -220,9 +220,27 @@ Ext.ux.Lightbox = (function(){
         resizeImage: function(w, h){
             var wCur = els.outerImageContainer.getWidth();
             var hCur = els.outerImageContainer.getHeight();
+            
+            var viewSize = this.getViewSize();        
+            var closeHeight = 120;
 
             var wNew = (w + this.borderSize * 2);
-            var hNew = (h + this.borderSize * 2);
+            var hNew = (h + this.borderSize * 2) - closeHeight;
+            
+            var ratio = h/w;
+            
+            if (wNew > viewSize[0]) {
+            	wNew = viewSize[0];
+            	hNew = hNew / ratio - closeHeight;
+            }
+
+            if (hNew > viewSize[1]) {
+            	hNew = viewSize[1] - closeHeight;
+            	wNew = hNew / ratio;
+            }
+
+            w = wNew - this.borderSize * 2;
+            h = hNew - this.borderSize * 2;
 
             var wDiff = wCur - wNew;
             var hDiff = hCur - hNew;
@@ -235,6 +253,8 @@ Ext.ux.Lightbox = (function(){
 
                 els.outerDataContainer.setWidth(wNew + 'px');
 
+                els.image.setWidth(w);
+                els.image.setHeight(h);
                 this.showImage();
             };
             
