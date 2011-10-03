@@ -21,7 +21,7 @@
 
 #ux-lightbox-outerImageContainer {
     position: relative;
-    background-color: #f3efec;
+    background-color: white;
     width: 250px;
     height: 250px;
     margin: 0 auto;
@@ -68,7 +68,7 @@
 }
 
 #ux-lightbox-navPrev { left: 0; float: left;}
-#ux-lightbox-navNext { right: 0; float: right;}
+#ux-lightbox-navNext { right: 1px; float: right;}
 #ux-lightbox-navPrev:hover, #ux-lightbox-navPrev:visited:hover { background: url(images/prev.gif) left 33% no-repeat; }
 #ux-lightbox-navNext:hover, #ux-lightbox-navNext:visited:hover { background: url(images/next.gif) right 33% no-repeat; }
 #ux-lightbox-outerDataContainer {
@@ -78,7 +78,7 @@
 
 #ux-lightbox-dataContainer{
     font: 10px Verdana, Helvetica, sans-serif;
-    background-color: #f3efec;
+    background-color: white;
     overflow: auto;
     line-height: 1.4em;
 }
