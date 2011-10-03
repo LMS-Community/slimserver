@@ -839,9 +839,13 @@ SqueezeJS.UI.Highlight.prototype = {
 		target = Ext.get(target);
 		if (target.hasClass('browseItemDetail') || target.hasClass('playlistSongDetail'))
 			target = Ext.get(target.findParentNode('div'));
-
-		var el = target.child('a.browseItemLink');
-		if (el && el.dom.href) {
+		
+		else if (target.dom.localName = 'img' && target.findParentNode('div.thumbArtwork', 5))
+			target = Ext.get(target.findParentNode('div'));
+			
+		var el;
+		
+		if ( (el = target.child('a.browseItemLink')) && el.dom.href ) {
 			if (el.dom.target) {
 				try {
 					if (parent.frames[el.dom.target]) {
@@ -851,11 +855,6 @@ SqueezeJS.UI.Highlight.prototype = {
 					else if (frames[el.dom.target]) {
 						parent.frames[el.dom.target].location.href = el.dom.href;
 					}
-
-					// can't always open a new window as eg. settings will cause a CSRF warning
-					// just enforce clicking the exact link instead of the highlighter in these cases
-//					else
-//						window.open(el.dom.href, el.dom.target);
 				}
 				catch(e) {
 					location.href = el.dom.href;
@@ -864,6 +863,16 @@ SqueezeJS.UI.Highlight.prototype = {
 			else {
 				location.href = el.dom.href;
 			}
+		}
+		
+		else if ( target.hasClass('slideImage') || (el = target.child('a.slideImage')) ) {
+			if (target.hasClass('slideImage'))
+				el = Ext.get(target);
+			
+			if (Ext.ux.Lightbox)
+				Ext.ux.Lightbox.open(el.dom, 'div.artworkText a.slideImage', true, window);
+			else if (parent.Ext.ux.Lightbox)
+				parent.Ext.ux.Lightbox.open(el.dom, 'div.artworkText a.slideImage', true, window);
 		}
 	}
 }

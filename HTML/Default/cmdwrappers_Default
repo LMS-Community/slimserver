@@ -52,11 +52,11 @@
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;">
 				[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
 				[% IF item.weblink %]
-					<a href="[% item.weblink %]" target="_blank">
+					<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %]>
 				[% ELSIF item.type != 'text' %]
 					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
 				[% ELSIF item.type == "text" && item.image %]
-					<a href="[% item.image %]" target="_blank">
+					<a href="[% item.image %]" target="_blank" [% slideshowHelpers %]>
 				[% END %]
 				[% PROCESS $itemImg height="$item.size" style = 'style="max-width:' _ item.size _ 'px;max-height:' _ item.size _ 'px;"' %]</a>
 

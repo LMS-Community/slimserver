@@ -138,7 +138,7 @@ sub handleFeed {
 				next if $wantSlideshow;
  
 				push @$items, {
-					type => 'link',
+					type => $params->{isWeb} ? 'slideshow' : 'link',
 					name => $item->{'dc:title'},
 					url  => \&handleFeed,
 					# show folder icon if we have images and folders in the same view only

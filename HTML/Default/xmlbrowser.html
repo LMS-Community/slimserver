@@ -35,6 +35,10 @@ END;
 USE Prefs;
 includeArtist = !Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')}.match('ARTIST');
 
+IF slideshow;
+	slideshowHelpers = 'class="slideImage" onClick="return false;"';
+END;
+
 useSpecialExt="-browse" %]
 
 [%- extJsScripts = BLOCK -%]
@@ -59,6 +63,11 @@ useSpecialExt="-browse" %]
 		</script>
 
 	[% ELSE %]
+	
+		[% IF slideshowTest %]
+		<link rel="stylesheet" type="text/css" href="[% webroot %]html/lightbox/lightbox.css?r=[% revision %]" />
+		<script type="text/javascript" src="[% webroot %]html/lightbox/lightbox.js?r=[% revision %]"></script>
+		[% END %]
 
 		<script type="text/javascript">
 			var orderByList;
@@ -423,7 +432,7 @@ useSpecialExt="-browse" %]
 
 [% BLOCK weblink %]
 	[% IF item.weblink %]
-		<a href="[% item.weblink %]" target="_blank">
+		<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %]>
 	[% ELSIF item.link %]
 		<a href="[% webroot %][% item.link %]&amp;player=[% player | uri %]" target="_blank">
 	[% ELSIF item.type == 'redirect' %]
@@ -434,7 +443,7 @@ useSpecialExt="-browse" %]
 	[% ELSIF !item.type.match('^text') %]
 		<a href="[% path %]?[% multiquery %][% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 	[% ELSIF item.type == "text" && item.image %]
-		<a href="[% item.image %]" target="_blank">
+		<a href="[% item.image %]" target="_blank" [% slideshowHelpers %]>
 	[% END %]
 	
 	[% content %]
