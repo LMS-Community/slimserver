@@ -225,13 +225,13 @@ Ext.ux.Lightbox = (function(){
             var closeHeight = 120;
 
             var wNew = (w + this.borderSize * 2);
-            var hNew = (h + this.borderSize * 2) - closeHeight;
+            var hNew = (h + this.borderSize * 2);
             
             var ratio = h/w;
             
             if (wNew > viewSize[0]) {
             	wNew = viewSize[0];
-            	hNew = hNew / ratio - closeHeight;
+            	hNew = hNew / ratio;
             }
 
             if (hNew > viewSize[1]) {
