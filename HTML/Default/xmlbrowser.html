@@ -396,7 +396,7 @@ useSpecialExt="-browse" %]
 						[% END %]
 					[% END %]
 
-					[% IF !hasArtwork; ELSIF (item.icon && artwork != 1) || (item.image && artwork== 0) || (hasArtwork && artwork == 0) %]
+					[% IF !hasArtwork || artwork == 2; ELSIF (item.icon && artwork != 1) || (item.image && artwork== 0) || (hasArtwork && artwork == 0) %]
 						</div>
 					[% END %]
 				[%- END %]
