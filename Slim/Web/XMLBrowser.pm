@@ -297,6 +297,10 @@ sub handleFeed {
 				'index' => $crumbText,
 			};
 
+			if ( $subFeed->{type} && $subFeed->{type} eq 'slideshow' ) {
+				$stash->{slideshow} = 1;
+			}
+
 			# Change type to audio if it's an action request and we have a play attribute
 			# and it's the last item
 			if ( 
