@@ -505,7 +505,7 @@ sub precacheAllArtwork {
 			}
 			
 			# Callback after resize is finished, needed for async resizing
-			my $finished = sub {				
+			my $finished = sub {			
 				if ($isEnabled) {
 					# Update the rest of the tracks on this album
 					# to use the same coverid and cover_cached status
@@ -529,11 +529,11 @@ sub precacheAllArtwork {
 					: $cover;
 			
 				$isDebug && $importlog->debug( "Pre-caching artwork for " . $album_title . " from $path" );
-			
-				Slim::Utils::ImageResizer->resize($path, "music/$coverid/cover_", join(',', @specs), $finished);
 				
 				# have scheduler wait for the finished callback
 				Slim::Utils::Scheduler::pause() if !main::SCANNER;
+			
+				Slim::Utils::ImageResizer->resize($path, "music/$coverid/cover_", join(',', @specs), $finished);
 			}
 			else {
 				$finished->();
