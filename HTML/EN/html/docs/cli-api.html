@@ -42,7 +42,14 @@
 </p>
 
 <hr>
-<h4 id="7">Changes starting from Squeezebox Server 7.6</h4>
+<h4 id="7.7">Changes starting from Squeezebox Server 7.7</h4>
+<ul>
+	<li>Extended <a href="#rescan">&quot;rescan&quot;</a> with optional singledir parameter</li>
+</ul>
+
+
+<hr>
+<h4 id="7.6">Changes starting from Squeezebox Server 7.6</h4>
 <ul>
 	<li>Added tag 'M' for <a href="#songinfo">songinfo</a> to return track musicmagic_mixable value.</li>
 	<li>Added tag 'c' for <a href="#songinfo">songinfo</a> to return the track's coverid value, used for artwork URLs. If you were using the track's ID directly in artwork URLs, you should switch to using the coverid value.</li>
@@ -65,7 +72,7 @@
 </ul>
 
 <hr>
-<h4 id="7">Changes starting from Squeezebox Server 7.5.1</h4>
+<h4 id="7.5">Changes starting from Squeezebox Server 7.5.1</h4>
 <ul>
 	<li>Added <a href="#playlist preview">&quot;playlist preview&quot;</a> command.</li>
 	<li>Extended <a href="#playlist resume">&quot;playlist resume&quot;</a> with optional noplay and wipePlaylist tagged params.</li>
@@ -74,7 +81,7 @@
 
 
 <hr>
-<h4 id="7">Changes starting from Squeezebox Server 7.4</h4>
+<h4 id="7.4">Changes starting from Squeezebox Server 7.4</h4>
 <ul>
 	<li>The music_services command is now apps.</li>
 	<li>Added &quot;pause&quot; & &quot;stop&quot; subtypes to &quot;playlist&quot; notifications.</li>
@@ -83,7 +90,7 @@
 </ul>
 
 <hr>
-<h4 id="7">Changes starting from Squeezebox Server 7.3</h4>
+<h4 id="7.3">Changes starting from Squeezebox Server 7.3</h4>
 <ul>
 	<li>Added 'icon' tag to radios and music_services response.</li>
 	<li>Added <a href="#syncgroups">&quot;syncgroups&quot;</a> query to get a list of sync groups and their members.</li>
@@ -91,7 +98,7 @@
 </ul>
 
 <hr>
-<h4 id="7">Changes starting from Squeezebox Server 7.2</h4>
+<h4 id="7.2">Changes starting from Squeezebox Server 7.2</h4>
 <p>
 	The following syntax changes apply to the CLI in Squeezebox Server 7.2. <strong>These 
 	changes may impact CLI clients.</strong>
@@ -2636,7 +2643,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			rescan 
-			&lt;|playlists|external|?&gt;
+			&lt;|playlists|external|full singlefolder|?&gt;
 		</code>
 	</strong>
 </p>
@@ -2646,10 +2653,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	indicated (&quot;rescan playlists&quot;), only the playlist directory is
 	rescanned. If &quot;external&quot; is requested, the rescan will be performed
 	using the external scanner process instead of the in-process scanner.
+	If &quot;full file://some/path&quot; is defined, then only this path will be scanned.
 	Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
-	server is currently scanning. Scanning occurs when the server starts and 
-	following &quot;rescan&quot; and 
-	&quot;<a href="#wipecache">wipecache</a>&quot; commands.
+	server is currently scanning.
+</p>
+<p>
+	Scanning occurs when the server starts and 
+	following &quot;rescan&quot; and &quot;<a href="#wipecache">wipecache</a>&quot; commands.
 </p>
 <p>
 	Examples:
