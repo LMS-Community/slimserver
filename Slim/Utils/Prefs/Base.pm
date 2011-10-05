@@ -301,7 +301,7 @@ sub set {
 						$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
 					}
 				
-					$func->($pref, $new, $obj);
+					$func->($pref, $new, $obj, $old);
 				}
 			}
 		}

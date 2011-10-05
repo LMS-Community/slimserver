@@ -818,9 +818,30 @@ sub init {
 
 	if ( !main::SCANNER ) {
 		$prefs->setChange( sub {
-			require Slim::Media::MediaFolderScan;
-			Slim::Media::MediaFolderScan->init;
-			Slim::Control::Request::executeRequest(undef, ['wipecache']);
+			my $newValues = $_[1];
+			my $oldValues = $_[3];
+			
+			
+			my %new = map { $_ => 1 } @$newValues;
+	
+			# get old paths which no longer exist:
+			my @old = grep {
+				delete $new{$_} != 1;
+			} @$oldValues;
+			
+			# in order to get rid of stale entries trigger full rescan if path has been removed
+			if (scalar @old) {
+				main::INFOLOG && logger('scan.scanner')->info('removed folder from mediadirs - trigger wipecache: ' . Data::Dump::dump(@old));
+				Slim::Control::Request::executeRequest(undef, ['wipecache']);
+			}
+
+			# if only new paths were added, only scan those folders
+			else {
+				foreach (keys %new) {
+					main::INFOLOG && logger('scan.scanner')->info('added folder to mediadirs - trigger rescan of new folder only: ' . $_);
+					Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
+				}
+			}
 		}, 'mediadirs');
 	}
 
