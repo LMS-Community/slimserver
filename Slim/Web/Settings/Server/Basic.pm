@@ -90,10 +90,15 @@ sub handler {
 			image => [],
 		};
 
+		my $singleDirScan;
 		for (my $i = 0; defined $paramRef->{"pref_mediadirs$i"}; $i++) {
 			if (my $path = $paramRef->{"pref_mediadirs$i"}) {
 				delete $oldPaths{$path};
 				push @paths, $path;
+
+				if ($paramRef->{"pref_rescan_mediadir$i"}) {
+					$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
+				}
 				
 				push @{ $ignoreFolders->{audio} }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
 				push @{ $ignoreFolders->{video} }, $path if !$paramRef->{"pref_ignoreInVideoScan$i"};
@@ -106,7 +111,14 @@ sub handler {
 		$prefs->set('ignoreInImageScan', $ignoreFolders->{image});
 
 		my $oldCount = scalar @{ $prefs->get('mediadirs') || [] };
-		$prefs->set('mediadirs', \@paths) if keys %oldPaths || !$oldCount || scalar @paths != $oldCount;
+		
+		if ( keys %oldPaths || !$oldCount || scalar @paths != $oldCount ) {
+			$prefs->set('mediadirs', \@paths);
+		}
+		# only run single folder scan if the paths haven't changed (which would trigger a rescan anyway)
+		elsif ( $singleDirScan ) {
+			Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', $singleDirScan ] );
+		}
 	}
 
 	$paramRef->{'newVersion'}  = $::newVersion;

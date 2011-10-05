@@ -35,6 +35,7 @@
 				<th>[% 'MUSIC' | string %]&nbsp;&nbsp;</th>
 				[% IF !noimage %]<th>[% 'PICTURES' | string %]&nbsp;&nbsp;</th>[% END %]
 				[% IF !novideo %]<th>[% 'VIDEO' | string %]</th>[% END %]
+				<th>&nbsp;</th>
 			</tr>
 
 		[% FOREACH mediadir = mediadirs %]
@@ -51,6 +52,9 @@
 				[% IF !novideo %]<td class="[% odd ? "odd" : "even" %]" align="center">
 					<input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" />
 				</td>[% END %]
+				<td class="[% odd ? "odd" : "even" %]" align="center" style="padding: 0 5px">
+					[% IF mediadir.path %]<input name="pref_rescan_mediadir[% loop.index %]" type=submit value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %] />[% END %]
+				</td>
 			</tr>
 			[% END %]
 
