@@ -18,6 +18,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 use Slim::Plugin::UPnP::Common::Utils qw(absURL);
+use Slim::Plugin::UPnP::MediaServer::ContentDirectory;
 
 my $prefs = preferences('server');
 
@@ -51,21 +52,8 @@ sub condition {
 	return $enabled if defined $enabled;
 	
 	# not checking the noupnp pref here, it's a web UI setting for the old client only
- 	if ( $main::noupnp || !main::IMAGE ) {
+ 	if ( !main::IMAGE ) {
 		$enabled = 0;
-		return 0;
-	}
-	
-	eval {
-		require Slim::Plugin::UPnP::Plugin;
-		require Slim::Plugin::UPnP::MediaServer::ContentDirectory;
-		$enabled = 1;
-	};
-
-	if ($@) {
-		$enabled = 0;
-		main::DEBUGLOG && $log->is_debug && $log->debug($@);
-		$log->warn("The ImageBrowser plugin requires the UPnP plugin to be enabled");
 		return 0;
 	}	
 
