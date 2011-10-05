@@ -2463,7 +2463,12 @@ sub rescanCommand {
 	}
 
 	# get our parameters
-	my $mode = $request->getParam('_mode') || 0;
+	my $mode = $request->getParam('_mode') || 'full';
+	my $singledir = $request->getParam('_singledir');
+	
+	if ($singledir) {
+		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
+	}
 	
 	# Bug 17358, if any plugin importers are enabled such as iTunes/MusicIP, run an old-style external rescan
 	# XXX Rewrite iTunes and MusicIP to support async rescan
@@ -2479,7 +2484,7 @@ sub rescanCommand {
 		if ( !Slim::Music::Import->stillScanning() ) {
 			my %args = (
 				rescan  => 1,
-				cleanup => 1,	
+				cleanup => 1,
 			);
 
 			Slim::Music::Import->launchScan(\%args);
@@ -2500,37 +2505,56 @@ sub rescanCommand {
 			Slim::Utils::Progress->clear();
 		
 			# we only want to scan folders for video/pictures
-			@dirs = keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }};
+			my %seen = (); # to avoid duplicates
+			@dirs = grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() };
+			
+			if ($singledir) {
+				@dirs = grep { /$singledir/ } @dirs;
+			}
 
 			if ((main::IMAGE || main::VIDEO) && $mode ne 'playlists') {
 				# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan
-				my $s;
-				$s = sub {
+				my $lms;
+				$lms = sub {
+					Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
+						scanName   => 'directory',
+						progress   => 1,
+						onFinished => sub {
+							if (scalar @dirs) {
+								# XXX - delay call to self for a second, or we segfault
+								Slim::Utils::Timers::setTimer(undef, time() + 1, $lms);
+							}
+						},
+					} );
+				};
+				
+				# Audio scan is run first, when done, the LMS scanner is run
+				my $audio;
+				$audio = sub {
 					my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+					
+					if ($singledir) {
+						$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
+					}
+					
 					# XXX until libmediascan supports audio, run the audio scanner now
 					Slim::Utils::Scanner::Local->rescan( $audiodirs, {
 						types      => 'list|audio',
 						scanName   => 'directory',
 						progress   => 1,
-						onFinished => sub {
-							Slim::Utils::Scanner::LMS->rescan( shift @dirs, {
-								scanName => 'directory',
-								progress => 1,
-								onFinished => sub {
-									if (scalar @dirs) {
-										# XXX - delay call to self for a second, or we segfault
-										Slim::Utils::Timers::setTimer(undef, time() + 1, $s);
-									}
-								},
-							} );
-						},
+						onFinished => $lms,
 					} );
 				};
 			
-				$s->();
+				$audio->();
 			}
 			else {
 				my $audiodirs = Slim::Utils::Misc::getAudioDirs();
+				
+				if ($singledir) {
+					$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
+				}
+				
 				# XXX until libmediascan supports audio, run the audio scanner now
 				Slim::Utils::Scanner::Local->rescan( $audiodirs, {
 					types    => $mode eq 'playlists' ? 'list' : 'list|audio',

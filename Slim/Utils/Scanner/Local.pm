@@ -178,7 +178,10 @@ sub rescan {
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
-		my $others = shift || []; # other dirs we need to scan (shortcuts/aliases)
+		
+		# Save any other dirs we need to scan (shortcuts/aliases)
+		my $others = shift || [];
+		push @{$paths}, @{$others};
 		
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
@@ -296,7 +299,10 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$inDBOnlySth->rows ) {
-						markDone( $next => PENDING_DELETE, $changes, $args->{onFinished} ) unless $args->{no_async};
+						if ( !$args->{no_async} ) {
+							$args->{paths} = $paths;
+							markDone( $next => PENDING_DELETE, $changes, $args );
+						}
 						
 						$progress && $progress->final;
 						$inDBOnlySth->finish;
@@ -371,7 +377,10 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$onDiskOnlySth->rows ) {
-						markDone( $next => PENDING_NEW, $changes, $args->{onFinished} ) unless $args->{no_async};
+						if ( !$args->{no_async} ) {
+							$args->{paths} = $paths;
+							markDone( $next => PENDING_NEW, $changes, $args );
+						}
 						
 						$progress && $progress->final;
 						$onDiskOnlySth->finish;
@@ -446,7 +455,10 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$changedOnlySth->rows ) {
-						markDone( $next => PENDING_CHANGED, $changes, $args->{onFinished} ) unless $args->{no_async};
+						if ( !$args->{no_async} ) {
+							$args->{paths} = $paths;
+							markDone( $next => PENDING_CHANGED, $changes, $args );
+						}
 						
 						$progress && $progress->final;
 						$changedOnlySth->finish;
@@ -478,18 +490,8 @@ sub rescan {
 			# nothing to do here - should be handled in hasAborted()
 		}
 		
-		# Scan other directories found via shortcuts or aliases
-		elsif ( scalar @{$others} ) {
-			if ( $args->{no_async} ) {
-				$class->rescan( $others, $args );
-			}
-			else {
-				Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $others, $args );
-			}
-		}
-		
-		# If nothing changed, notify API handlers and send a rescan done event
-		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
+		# If nothing changed, and we have no more paths to scan, notify API handlers and send a rescan done event
+		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount && !scalar @{$paths} ) {
 			if ( !main::SCANNER && !$args->{no_async} ) {
 				Slim::Music::Import->setIsScanning(0);
 				
@@ -507,24 +509,23 @@ sub rescan {
 	} );
 	
 	# Continue scanning if we had more paths
-	if ( @{$paths} && !Slim::Music::Import->hasAborted() ) {
-		if ( $args->{no_async} ) {
+	if ( $args->{no_async} ) {	
+		if ( @{$paths} && !Slim::Music::Import->hasAborted() ) {
 			$class->rescan( $paths, $args );
 		}
-		else {
-			Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $paths, $args );
-		}
-	}
-	
-	if ( !main::SCANNER && $args->{no_async} ) {
-		hasAborted();
+			
+		if ( !main::SCANNER ) {
+			hasAborted();
 
-		# All done, send a done event
-		Slim::Music::Import->setIsScanning(0);
-		Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+			# All done, send a done event
+			Slim::Music::Import->setIsScanning(0);
+			Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+		}
+		
+		return $changes;
 	}
 	
-	return $changes;
+	return;
 }
 
 sub hasAborted {
@@ -979,7 +980,7 @@ sub changed {
 
 # Check if we're done with all our rescan tasks
 sub markDone {
-	my ( $path, $type, $changes, $onFinished ) = @_;
+	my ( $path, $type, $changes, $args ) = @_;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
 	
@@ -990,6 +991,13 @@ sub markDone {
 		if ( $pending{$task} > 0 ) {
 			return;
 		}
+	}
+	
+	# If more paths need to be scanned, we aren't done, schedule the next path scan
+	my $paths = delete $args->{paths};
+	if ( scalar @{$paths} ) {
+		Slim::Utils::Timers::setTimer( __PACKAGE__, AnyEvent->now, \&rescan, $paths, $args );
+		return;
 	}
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("All rescan tasks finished (total changes: $changes)");
@@ -1030,8 +1038,8 @@ sub markDone {
 				Slim::Music::Import->setIsScanning(0);
 				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
 				
-				if ($onFinished) {
-					$onFinished->();
+				if ( $args->{onFinished} ) {
+					$args->{onFinished}->();
 				}
 			} );
 	}

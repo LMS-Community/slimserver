@@ -77,8 +77,10 @@ sub startScan {
 
 	if ( main::IMAGE || main::VIDEO ) {
 		# get media folders without audio dirs
-		$dirs = [ keys %{{ map { $_, 1 } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } }} ];
+		my %seen = (); # to avoid duplicates
+		$dirs = [ grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } ];
 	
+		# XXX any good reason this doesn't just pass all dirs?
 		for my $dir ( @{$dirs} ) {
 			main::INFOLOG && $log->info("Starting media folder scan in: $dir" );
 			my $c = Slim::Utils::Scanner::LMS->rescan( $dir, {
