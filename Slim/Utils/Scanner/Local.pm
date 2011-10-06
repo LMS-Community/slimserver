@@ -488,21 +488,27 @@ sub rescan {
 		
 		if ( hasAborted() ) {
 			# nothing to do here - should be handled in hasAborted()
-		}
-		
-		# If nothing changed, and we have no more paths to scan, notify API handlers and send a rescan done event
-		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount && !scalar @{$paths} ) {
+		}		
+		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
 			if ( !main::SCANNER && !$args->{no_async} ) {
-				Slim::Music::Import->setIsScanning(0);
-				
-				if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
-					$handler->(0);
+				# Nothing changed, but we may have more paths to scan
+				if ( scalar @{$paths} ) {
+					Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $paths, $args );
 				}
 				
-				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
-				
-				if ( $args->{onFinished} ) {
-					$args->{onFinished}->();
+				# No more paths to scan, notify API handlers and send a rescan done event
+				else {
+					Slim::Music::Import->setIsScanning(0);
+			
+					if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
+						$handler->(0);
+					}
+			
+					Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+			
+					if ( $args->{onFinished} ) {
+						$args->{onFinished}->();
+					}
 				}
 			}
 		}
