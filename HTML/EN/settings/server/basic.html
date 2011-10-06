@@ -7,6 +7,27 @@
 					Settings.activate('INFORMATION');
 				})
 			}
+
+			// check for rescan, disable/enable rescan buttons if needed
+			new Ext.util.TaskRunner().start({
+				run: function(items) {
+					SqueezeJS.Controller.request({
+						params: [ '', [ "rescan", "?" ] ],
+			
+						success: function(response) {
+							response = Ext.util.JSON.decode(response.responseText);
+
+							if (response && response.result) {
+								items.each(function(item) {
+									item.dom.disabled = response.result['_rescan'] ? true : false;
+								});
+							}
+						}
+					})
+				},
+				args: [ Ext.select('.disableOnScan') ],
+				interval: 2000
+			});
 		});
 	</script>
 [% END %]
@@ -53,7 +74,7 @@
 					<input type=checkbox [% IF !mediadir.video %]checked="1" [% END %] class="stdedit" name="pref_ignoreInVideoScan[% loop.index %]" id="ignoreInVideoScan[% loop.index %]" value="1" />
 				</td>[% END %]
 				<td class="[% odd ? "odd" : "even" %]" align="center" style="padding: 0 5px">
-					[% IF mediadir.path %]<input name="pref_rescan_mediadir[% loop.index %]" type=submit value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %] />[% END %]
+					[% IF mediadir.path %]<input name="pref_rescan_mediadir[% loop.index %]" type=submit value="[% "SETUP_RESCAN_BUTTON" | string %]" class="stdclick disableOnScan" [% IF scanning %]disabled[% END %] />[% END %]
 				</td>
 			</tr>
 			[% END %]
@@ -69,7 +90,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
-		<select class="stdedit" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
+		<select class="stdedit disableOnScan" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
 
 		[% FOREACH option = {
 			'1rescan'   => 'SETUP_STANDARDRESCAN',
@@ -80,7 +101,7 @@
 		[%- END -%]
 		
 		</select>
-		<input name="pref_rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
+		<input name="pref_rescan" type="submit" class="stdclick disableOnScan" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 	
