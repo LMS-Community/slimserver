@@ -116,15 +116,13 @@ sub loadModules {
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
 		$arch = 'arm-linux-gnueabi-thread-multi';
+		$arch .= '-64int' if $is64bitint;
 	}
 	
 	# Same thing with PPC
 	if ( $arch =~ /^(?:ppc|powerpc).*linux/ ) {
 		$arch = 'powerpc-linux-thread-multi';
-	}
-	
-	if ($is64bitint) {
-		$arch .= '-64int';
+		$arch .= '-64int' if $is64bitint;
 	}
 
 	my $perlmajorversion = $Config{'version'};
