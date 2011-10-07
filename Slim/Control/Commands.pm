@@ -2462,6 +2462,10 @@ sub rescanCommand {
 		return;
 	}
 
+	if ( Slim::Music::Import->stillScanning() ) {
+		Slim::Music::Import->queueScanTask($request);
+	}	
+
 	# get our parameters
 	my $mode = $request->getParam('_mode') || 'full';
 	my $singledir = $request->getParam('_singledir');
@@ -2905,6 +2909,10 @@ sub wipecacheCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
+
+	if ( Slim::Music::Import->stillScanning() ) {
+		Slim::Music::Import->queueScanTask($request);
+	}	
 
 	# no parameters
 	
