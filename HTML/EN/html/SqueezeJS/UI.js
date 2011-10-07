@@ -840,7 +840,7 @@ SqueezeJS.UI.Highlight.prototype = {
 		if (target.hasClass('browseItemDetail') || target.hasClass('playlistSongDetail'))
 			target = Ext.get(target.findParentNode('div'));
 		
-		else if (target.dom.localName = 'img' && target.findParentNode('div.thumbArtwork', 5))
+		else if (target.dom.localName = 'img' && (target.findParentNode('div.thumbArtwork', 5) || target.findParentNode('div.itemWithCover', 5)))
 			target = Ext.get(target.findParentNode('div'));
 			
 		var el;
@@ -868,11 +868,18 @@ SqueezeJS.UI.Highlight.prototype = {
 		else if ( target.hasClass('slideImage') || (el = target.child('a.slideImage')) ) {
 			if (target.hasClass('slideImage'))
 				el = Ext.get(target);
-			
+
+			// we need different selectors depending on the artwork browse mode chosen
+			var selector = 'div.browseItemDetail a.slideImage';                  // small artwork
+			if (SqueezeJS.getCookie( 'Squeezebox-albumView') == 1)
+				selector = 'div.artworkText a.slideImage';                       // large artwork
+			else if (SqueezeJS.getCookie( 'Squeezebox-albumView') == 2)
+				selector = 'a.slideImage';                                       // text only
+
 			if (Ext.ux.Lightbox)
-				Ext.ux.Lightbox.open(el.dom, 'div.artworkText a.slideImage', true, window);
+				Ext.ux.Lightbox.open(el.dom, selector, true, window);
 			else if (parent.Ext.ux.Lightbox)
-				parent.Ext.ux.Lightbox.open(el.dom, 'div.artworkText a.slideImage', true, window);
+				parent.Ext.ux.Lightbox.open(el.dom, selector, true, window);
 		}
 	}
 }
