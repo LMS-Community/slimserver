@@ -167,7 +167,7 @@ Ext.ux.Lightbox = (function(){
                     // calculate top and left offset for the lightbox
                     var pageScroll = Ext.fly(document).getScroll();
 
-                    var lightboxTop = pageScroll.top + (Ext.lib.Dom.getViewportHeight() / 10);
+                    var lightboxTop = Math.min(pageScroll.top + (Ext.lib.Dom.getViewportHeight() / 10), 40);
                     var lightboxLeft = pageScroll.left;
                     els.lightbox.setStyle({
                         top: lightboxTop + 'px',
@@ -222,7 +222,7 @@ Ext.ux.Lightbox = (function(){
             var hCur = els.outerImageContainer.getHeight();
             
             var viewSize = this.getViewSize();        
-            var closeHeight = 120;
+            var closeHeight = 100;
 
             var wNew = (w + this.borderSize * 2);
             var hNew = (h + this.borderSize * 2);
@@ -231,16 +231,17 @@ Ext.ux.Lightbox = (function(){
             
             if (wNew > viewSize[0]) {
             	wNew = viewSize[0];
-            	hNew = hNew / ratio;
+            	h = wNew * ratio;
+            	hNew = h + this.borderSize * 2;
+	            w = wNew - this.borderSize * 2;
             }
-
-            if (hNew > viewSize[1]) {
+            
+            if (hNew > viewSize[1] - closeHeight) {
             	hNew = viewSize[1] - closeHeight;
             	wNew = hNew / ratio;
+	            w = wNew - this.borderSize * 2;
+	            h = hNew - this.borderSize * 2;
             }
-
-            w = wNew - this.borderSize * 2;
-            h = hNew - this.borderSize * 2;
 
             var wDiff = wCur - wNew;
             var hDiff = hCur - hNew;
