@@ -2462,9 +2462,12 @@ sub rescanCommand {
 		return;
 	}
 
-	if ( Slim::Music::Import->stillScanning() ) {
+	# if scan is running or we're told to queue up requests, return quickly
+	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks ) {
 		Slim::Music::Import->queueScanTask($request);
-	}	
+		$request->setStatusDone();
+		return;
+	}
 
 	# get our parameters
 	my $mode = $request->getParam('_mode') || 'full';
@@ -2485,21 +2488,19 @@ sub rescanCommand {
 	
 	if ( $mode eq 'external' ) {
 		# The old way of rescanning using scanner.pl
-		if ( !Slim::Music::Import->stillScanning() ) {
-			my %args = (
-				rescan  => 1,
-				cleanup => 1,
-			);
+		my %args = (
+			rescan  => 1,
+			cleanup => 1,
+		);
 
-			Slim::Music::Import->launchScan(\%args);
-		}
+		Slim::Music::Import->launchScan(\%args);
 	}
 	else {
 		# In-process scan   
 	
 		my @dirs = @{ Slim::Utils::Misc::getMediaDirs() };
 		# if we're scanning already, don't do it twice
-		if (!Slim::Music::Import->stillScanning() && scalar @dirs) {
+		if (scalar @dirs) {
 		
 			if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {
 				require Slim::Utils::AutoRescan;
@@ -2910,14 +2911,12 @@ sub wipecacheCommand {
 		return;
 	}
 
-	if ( Slim::Music::Import->stillScanning() ) {
+	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks ) {
 		Slim::Music::Import->queueScanTask($request);
-	}	
-
-	# no parameters
+	}
 	
-	# if we're scanning allready, don't do it twice
-	if (!Slim::Music::Import->stillScanning()) {
+	# if we're scanning already, don't do it twice
+	else {
 
 		# Clear all the active clients's playlists
 		for my $client (Slim::Player::Client::clients()) {

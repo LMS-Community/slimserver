@@ -63,7 +63,7 @@ use Slim::Utils::Progress;
 {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly scanningProcess)) {
+	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly scanningProcess doQueueScanTasks)) {
 
 		$class->mk_classdata($accessor);
 	}
@@ -682,22 +682,24 @@ sub initScanQueue {
 
 	main::DEBUGLOG && $log->debug("initialize scan queue");
 
-	Slim::Control::Request::subscribe( sub {
-		#$log->error('scan done!');
-		my @keys = keys %scanQueue;
-		
-		my $k    = shift @keys;
-		my $next = delete $scanQueue{$k};
-		
-		main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k;
-		#$log->error('no more scan to run!') unless $k;
+	Slim::Control::Request::subscribe( \&nextScanTask, [['rescan'], ['done']] );
+}
 
-		$next->execute() if $next;
+sub nextScanTask {
+	return if main::SLIM_SERVICE || main::SCANNER || __PACKAGE__->stillScanning;
+	
+	#$log->error('scan done!');
+	my @keys = keys %scanQueue;
+	
+	my $k    = shift @keys;
+	my $next = delete $scanQueue{$k};
+	
+	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k;
+	#$log->error('no more scan to run!') unless $k;
 
-		main::DEBUGLOG && $log->debug('remaining scans in queue:' . Data::Dump::dump(%scanQueue));
-		
-		# trigger next scan
-	}, [['rescan'], ['done']] );
+	$next->execute() if $next;
+
+	main::DEBUGLOG && $log->debug('remaining scans in queue:' . Data::Dump::dump(%scanQueue));
 }
 
 sub queueScanTask {
