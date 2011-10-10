@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>1B354CB1-0CFF-46BF-840A-715A036C6264</id>
+	<name>PLUGIN_MOG_MODULE_NAME</name>
+	<module>Slim::Plugin::MOG::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_MOG_MODULE_NAME</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/appgallery/mog</homepageURL>
+	<icon>plugins/mog/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.5</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
