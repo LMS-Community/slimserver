@@ -821,7 +821,6 @@ sub init {
 			my $newValues = $_[1];
 			my $oldValues = $_[3];
 			
-			
 			my %new = map { $_ => 1 } @$newValues;
 	
 			# get old paths which no longer exist:
@@ -843,6 +842,32 @@ sub init {
 				}
 			}
 		}, 'mediadirs');
+
+		$prefs->setChange( sub {
+			my $newValues = $_[1];
+			my $oldValues = $_[3];
+			
+			my %old = map { $_ => 1 } @$oldValues;
+	
+			# get new exclusion paths which did not exist previously:
+			my @new = grep {
+				delete $old{$_} != 1;
+			} @$newValues;
+
+			# in order to get rid of stale entries trigger full rescan if path has been added
+			if (scalar @new) {
+				main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
+				Slim::Control::Request::executeRequest(undef, ['wipecache']);
+			}
+
+			# if only new paths were added, only scan those folders
+			else {
+				foreach (keys %old) {
+					main::INFOLOG && logger('scan.scanner')->info('removed folder from exclusion list - trigger rescan of new folder only: ' . $_);
+					Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
+				}
+			}
+		}, 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
 	}
 
 	$prefs->setChange( sub {
