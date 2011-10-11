@@ -727,6 +727,14 @@ sub deleted {
 			$sth->execute( $playlist->{id} );
 		};
 	}
+	else {
+		# Bug 17452, handle everything else by just deleting the record. This will be used for 'fec' and 'cur' types
+		$log->error("Handling deleted file $url") unless main::SCANNER && $main::progress;
+		
+		$dbh->do( qq{
+			DELETE FROM tracks WHERE url = ?
+		}, {}, $url );
+	}
 	
 	if ( $work ) {
 		if ( $dbh->{AutoCommit} ) {
