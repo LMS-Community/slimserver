@@ -49,15 +49,15 @@ sub new {
 	
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
+	my $track     = $song->pluginData('info') || {};
 	
-	main::DEBUGLOG && $log->debug( 'Remote streaming mog track: ' . $streamUrl );
+	main::DEBUGLOG && $log->debug( 'Remote streaming MOG track: ' . $streamUrl );
 
 	my $sock = $class->SUPER::new( {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		# XXX - 320kbps is best effort - can we make this dynamically set?
-		bitrate => 320_000,
+		bitrate => ($track->{bitrate} || 320) * 1000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
@@ -91,11 +91,32 @@ sub parseHeaders {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
-	my $length;
+	my $song  = $client->streamingSong();
+	my $track = $song->pluginData('info');
 	
-	my $bitrate = 320_000;
+	my $duration = $track->{duration};
+	
+	my $length;
+	my $rangelength;
 
-	$client->streamingSong->bitrate($bitrate);
+	foreach my $header (@headers) {
+		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
+			$length = $1;
+		}
+		elsif ( $header =~ m{^Content-Range: .+/(.*)}i ) {
+			$rangelength = $1;
+			last;
+		}
+	}
+	
+	if ( $rangelength ) {
+		$length = $rangelength;
+	}
+	
+	my $bitrate = $track->{bitrate} * 1000;
+	
+	$song->bitrate($bitrate);
+	$song->duration($duration);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
@@ -206,11 +227,12 @@ sub _gotTrack {
 		duration  => $info->{duration},
 		genre     => $info->{genre},
 		year      => $info->{year},
-		bitrate   => '320k CBR',
+		bitrate   => ($info->{bitrate} || 320). 'k CBR',
 		type      => 'MP3 (MOG)',
 		info_link => 'plugins/mog/trackinfo.html',
 	};
 	
+	$song->pluginData( info => $info );
 	$song->duration( $info->{duration} );
 
 	my $cache = Slim::Utils::Cache->new;
@@ -338,7 +360,7 @@ sub _gotBulkMetadata {
 			duration  => $track->{duration},
 			genre     => $track->{genre},
 			year      => $track->{year},
-			bitrate   => '320k CBR',
+			bitrate   => '320k CBR', # XXX bulk API call does not know the actual bitrate, it will be replaced in _gotTrack
 			type      => 'MP3 (MOG)',
 			info_link => 'plugins/mog/trackinfo.html',
 			icon      => $icon,
@@ -465,29 +487,6 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	return Slim::Plugin::MOG::Plugin->_pluginDataFor('icon');
-}
-
-sub getSeekData {
-	my ( $class, $client, $song, $newtime ) = @_;
-	
-	# Determine byte offset and song length in bytes
-	my $meta = $class->getMetadataFor( $client, $song->track()->url );
-	
-	my $duration = $meta->{duration} || return;
-	
-	# Don't seek past the end
-	if ( $newtime >= $duration ) {
-		$log->error('Attempt to seek past end of MOG track, ignoring');
-		return;
-	}
-	
-	# XXX - we need to figure out the real bitrate from MOG's response
-	my $bitrate = 320;
-	
-	return {
-		sourceStreamOffset => ( ( $bitrate * 1000 ) / 8 ) * $newtime,
-		timeOffset         => $newtime,
-	};
 }
 
 # SN only, re-init upon reconnection
