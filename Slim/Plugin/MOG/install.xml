@@ -8,7 +8,7 @@
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/mog</homepageURL>
-	<icon>plugins/mog/html/images/icon.png</icon>
+	<icon>plugins/MOG/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>
 		<id>Squeezebox Server</id>
