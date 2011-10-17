@@ -648,8 +648,12 @@ sub stream_s {
 		if ( $track ) {
 			$pcmsamplesize = $client->pcm_sample_sizes($track);
 			$pcmsamplerate = $client->pcm_sample_rates($track);
-			$pcmendian     = $track->endian() == 1 ? 0 : 1;
 			$pcmchannels   = $track->channels() || '2';
+			
+			# Bug 16341, Don't adjust endian value if file is being transcoded to aif
+			if ( $track->content_type eq 'aif' ) {
+				$pcmendian = $track->endian() == 1 ? 0 : 1;
+			}
 		 }
 
 	} elsif ($format eq 'flc') {
