@@ -31,7 +31,7 @@ sub supportsArtworkExport {
 
 	my $version = $itunes->Version;
 	
-	if ( Slim::Utils::Versions->compareVersions($version, '7.7') ) {
+	if ( Slim::Utils::Versions->compareVersions($version, '7.7') >= 0 ) {
 		# 7.7+ required for persistent ID support
 		return 1;
 	}
