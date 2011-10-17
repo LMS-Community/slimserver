@@ -10,6 +10,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Versions;
 
 my $log   = logger('plugin.itunes');
 my $prefs = preferences('plugin.itunes');
@@ -30,7 +31,7 @@ sub supportsArtworkExport {
 
 	my $version = $itunes->Version;
 	
-	if ( $version ge '7.7' ) {
+	if ( Slim::Utils::Versions->compareVersions($version, '7.7') ) {
 		# 7.7+ required for persistent ID support
 		return 1;
 	}
