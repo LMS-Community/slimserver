@@ -491,7 +491,9 @@ sub _gotBulkMetadata {
 			icon      => $icon,
 		};
 
-		$cache->set( 'wimp_meta_' . $trackId, $meta, 86400 );
+		# if bitrate is not set, we have invalid data - only cache for a few minutes
+		# if we didn't cache at all, we'd keep on hammering our servers
+		$cache->set( 'wimp_meta_' . $trackId, $meta, $bitrate ? 86400 : 500 );
 	}
 	
 	# Update the playlist time so the web will refresh, etc
