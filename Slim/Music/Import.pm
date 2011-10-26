@@ -673,8 +673,10 @@ sub _checkLibraryStatus {
 sub initScanQueue {
 	my $class = shift;
 
-	#$log->error("don't initialize queue - we're slimservice or scanner or already initialized:" . Data::Dump::dump(%scanQueue)) if %scanQueue || main::SLIM_SERVICE || main::SCANNER;
-	return if %scanQueue || main::SLIM_SERVICE || main::SCANNER;
+	if ( %scanQueue || main::SLIM_SERVICE || main::SCANNER ) {
+		main::DEBUGLOG && $log->debug("don't initialize queue - we're slimservice or scanner or already initialized");
+		return;
+	}
 	
 	require Tie::IxHash;
 	
@@ -688,14 +690,12 @@ sub initScanQueue {
 sub nextScanTask {
 	return if main::SLIM_SERVICE || main::SCANNER || __PACKAGE__->stillScanning;
 	
-	#$log->error('scan done!');
 	my @keys = keys %scanQueue;
 	
 	my $k    = shift @keys;
 	my $next = delete $scanQueue{$k};
 	
-	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k;
-	#$log->error('no more scan to run!') unless $k;
+	main::DEBUGLOG && $log->debug('triggering next scan: ' . $k) if $k && $next;
 
 	$next->execute() if $next;
 
@@ -705,20 +705,20 @@ sub nextScanTask {
 sub queueScanTask {
 	my ($class, $request) = @_;
 	
-	#$log->error('do not add scan, we are slimservice or scanner or no request') if main::SLIM_SERVICE || main::SCANNER || !$request;
-	return if main::SLIM_SERVICE || main::SCANNER || !$request;
+	if ( main::SLIM_SERVICE || main::SCANNER || !$request || $request->isNotCommand([['wipecache', 'rescan']]) ) {
+		$log->error('do not add scan, we are slimservice or scanner or there is no valid request');
+		return;
+	}
 
 	$class->initScanQueue();
 
-	#$log->error('existing queue:' . Data::Dump::dump(%scanQueue));
-
-	# no need to queue anything if a wipecache is already in the pipeline
-	main::DEBUGLOG && $log->debug('wipecache is in queue - nothing to do!') if $scanQueue{wipecache};
-	return if $scanQueue{wipecache};
+	# no need to queue anything if a wipecache or full rescan is already in the pipeline
+	if ( $scanQueue{wipecache} || ($request->isCommand([['rescan']]) && $scanQueue{'rescan||'}) ) {
+		main::DEBUGLOG && $log->debug(($scanQueue{wipecache} ? 'wipecache' : 'full rescan') . ' is in queue - nothing to do!');
+		return;
+	}
 
 	if ( $request->isCommand([['rescan']]) ) {
-		#$log->error('rescan');
-
 		my $type      = 'rescan';
 		my $mode      = $request->getParam('_mode') || '';
 		my $singledir = $request->getParam('_singledir') || '';
@@ -730,12 +730,12 @@ sub queueScanTask {
 		}
 
 		my $k = "$type|$mode|$singledir";
-	
-		#$log->error("key for new request: $k");
 		
 		# no need to add duplicate scan
-		main::DEBUGLOG && $log->debug('scan is already in queue - skip it') if $scanQueue{$k};
-		return if $scanQueue{$k};
+		if ( $scanQueue{$k} ) {
+			main::DEBUGLOG && $log->debug("scan $k is already in queue - skip it");
+			return;
+		}
 
 		main::DEBUGLOG && $log->debug("adding scan $k to queue");
 		$scanQueue{$k} = $request->virginCopy();
@@ -746,11 +746,10 @@ sub queueScanTask {
 		# wipecache removes all existing rescans from the queue
 		$class->clearScanQueue;
 
-		#$log->error("adding wipecache to queue");
 		$scanQueue{wipecache} = $request->virginCopy();
 	}
 	else {
-		main::DEBUGLOG && $log->debug('No scan request');
+		$log->error('No scan request - we should not get here: ' . Data::Dump::dump($request));
 	}
 }
 
