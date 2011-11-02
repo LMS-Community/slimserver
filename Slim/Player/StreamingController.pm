@@ -869,6 +869,7 @@ sub nextsong {
 			$prefs->get('reshuffleOnRepeat')) {
 			
 			Slim::Player::Playlist::reshuffle($client, 1);
+			$client->currentPlaylistUpdateTime(Time::HiRes::time()); # bug 17643
 		}
 		$nextsong = 0;
 	}
