@@ -79,6 +79,15 @@ sub dirsFor {
 }
 
 
+# log rotation on ReadyNAS seems to be broken - let's take care of this
+sub logRotate {
+	my $class   = shift;
+	my $dir     = shift || $class->dirsFor('log');
+
+    Slim::Utils::OS->logRotate($dir);
+}
+
+
 sub ignoredItems {
 	return (
 		'bin'       => '/',
