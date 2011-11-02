@@ -30,7 +30,7 @@
 				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>
 			<div class="playlistSongDetail">
-				<a href="[% webroot _ info_link %]?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink"><span>[% item.title | html %]</span></a>
+				<a href="[% webroot _ info_link %]?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink"><span>[% (item.plugin_meta.title || item.title) | html %]</span></a>
 			</div>
 			[%# current_title is for radio streams %]
 			[% IF item.current_title %]
@@ -38,13 +38,21 @@
 				[% item.current_title | html %]
 			</div>
 			[% END %]
-			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+			[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
 				<div class="playlistSongDetail">
-					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% item.itemobj.album.title | html %]</span></a>
+					[% IF item.itemobj.album %]
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% (item.itemobj.album.title || item.plugin_meta.album) | html %]</span></a>
+					[% ELSE; item.plugin_meta.album; END %]
 				</div>
 			[% END %]
 			<div class="playlistSongDetail">
-				[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1; END %]
+				[% IF item.includeArtist;
+					IF item.artist && item.artist != item.noArtist; 
+						PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1;
+					ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
+						item.plugin_meta.artist;
+					END;
+				END %]
 			</div>
 		[% END %]
 		<div class="playlistControls">

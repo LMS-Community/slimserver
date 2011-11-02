@@ -504,7 +504,7 @@ sub displayAsHTML {
 	my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
 	# Go directly to infoFormat, as standardTitle is more client oriented.
-	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE');
+	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE', $form->{'plugin_meta'});
 	$form->{'item'}     = $self->id;
 	$form->{'itemobj'}  = $self;
 
@@ -529,6 +529,9 @@ sub displayAsHTML {
 			}
 
 			$form->{'artistsWithAttributes'} = \@info;
+		}
+		elsif ($form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'}) {
+			$form->{'includeArtist'} = 1;
 		}
 	}
 

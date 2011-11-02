@@ -169,33 +169,6 @@ sub playlist {
 		}
 
 		my %form = ();
-
-		$track->displayAsHTML(\%form);
-
-		$form{'num'}       = $itemnum;
-		$form{'levelName'} = 'track';
-		$form{'odd'}       = ($itemnum + $offset) % 2;
-
-		if ($itemnum == $currsongind) {
-			$form{'currentsong'} = "current";
-
-			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-				# For remote streams, add both the current title and the station title if they differ
-				$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track, undef, $titleFormat) || $track->url;
-				my $title_only    = Slim::Music::Info::standardTitle(undef, $track, undef, 'TITLE');
-				my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
-				if ( $current_title && $current_title ne $form{'title'} && $current_title ne $title_only ) {
-					$form{'current_title'} = $current_title;
-				}
-			} else {
-				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
-			}
-
-		} else {
-
-			$form{'currentsong'} = undef;
-			$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat);
-		}
 		
 		# See if a protocol handler can provide more metadata
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
@@ -208,6 +181,32 @@ sub playlist {
 			}
 		}
 
+		$track->displayAsHTML(\%form);
+
+		$form{'num'}       = $itemnum;
+		$form{'levelName'} = 'track';
+		$form{'odd'}       = ($itemnum + $offset) % 2;
+
+		if ($itemnum == $currsongind) {
+			$form{'currentsong'} = "current";
+
+			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
+				# For remote streams, add both the current title and the station title if they differ
+				$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, $titleFormat) || $track->url;
+				my $title_only    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, 'TITLE');
+				my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web', $form{'plugin_meta'});
+				if ( $current_title && $current_title ne $form{'title'} && $current_title ne $title_only ) {
+					$form{'current_title'} = $current_title;
+				}
+			} else {
+				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}) || $track->url;
+			}
+
+		} else {
+
+			$form{'currentsong'} = undef;
+			$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
+		}
 		$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 
 		push @{$params->{'playlist_items'}}, \%form;

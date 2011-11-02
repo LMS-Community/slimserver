@@ -7,11 +7,21 @@
 		<span class="exlisting">
 		[% END %]
 		<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
-		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+		[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
 			[% "FROM" | string %]
-			<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/" target="browser">[% item.itemobj.album.title | html %]</a>
+			[% IF item.itemobj.album %]
+				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.itemobj.album.title | html %]</a>
+			[% ELSE; item.plugin_meta.album; END %]
 		[% END %]
-		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		[% IF item.includeArtist;
+			IF item.artist && item.artist != item.noArtist; 
+				PROCESS artistsAsHTML.html itemobj = item.itemobj;
+			ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
+				"BY" | string;
+				" ";
+				item.plugin_meta.artist;
+			END;
+		END %]
 		</span>
 		[%# current_title is for radio streams %]
 		[% IF item.current_title %]
