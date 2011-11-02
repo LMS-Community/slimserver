@@ -201,6 +201,22 @@ sub rescan {
 		                                          # and notify us of files that have been deleted
 	}
 	
+	my $thumbnails = [
+		# DLNA
+		{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
+		{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
+	];
+	
+	if ( $prefs->get('precacheArtwork') == 2 ) {
+		push @$thumbnails, (
+			# SP
+			{ format => 'PNG', width => 41, height => 41 },    # jive/baby
+			{ format => 'PNG', width => 40, height => 40 },    # fab4 touch
+			# Web UI large thumbnails
+			{ format => 'PNG', width => $prefs->get('thumbSize') || 100, height => $prefs->get('thumbSize') || 100 },
+		);
+	}
+	
 	# Begin scan
 	$s = Media::Scan->new( $paths, {
 		loglevel => $log->is_debug ? MS_LOG_DEBUG : MS_LOG_ERR, # Set to MS_LOG_MEMORY for very verbose logging
@@ -209,16 +225,7 @@ sub rescan {
 		cachedir => $prefs->get('librarycachedir'),
 		ignore => $ignore,
 		ignore_dirs => $ignore_dirs,
-		thumbnails => [
-			# DLNA
-			{ format => 'JPEG', width => 160, height => 160 }, # for JPEG_TN
-			{ format => 'PNG', width => 160, height => 160 },  # for PNG_TN
-			# SP
-			{ format => 'PNG', width => 41, height => 41 },    # jive/baby
-			{ format => 'PNG', width => 40, height => 40 },    # fab4 touch
-			# Web UI large thumbnails
-			{ format => 'PNG', width => $prefs->get('thumbSize') || 100, height => $prefs->get('thumbSize') || 100 },
-		],
+		thumbnails => $thumbnails,
 		on_result => sub {
 			my $result = shift;
 			

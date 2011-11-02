@@ -18815,11 +18815,15 @@ SETUP_PRECACHEARTWORK_DESC
 	RU	По умолчанию все обложки, обнаруженные в ходе сканирования, автоматически изменяют размер и кэшируются, чтобы улучшить производительность при работе в Squeezebox Controller или веб-интерфейсе. Поскольку данная функция может замедлить сканирование, ее можно отключить.
 	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
 
+SETUP_PRECACHEARTWORK_ALL
+	DE	Plattenhüllen, Fotos und Videos zwischenspeichern
+	EN	Pre-cache album, photo and video artwork
+
 SETUP_PRECACHEARTWORK_ENABLED
 	CS	Ukládat obaly alb do odkládací paměti
 	DA	Gem coverbilleder i cachelager
 	DE	Plattenhüllen zwischenspeichern
-	EN	Pre-cache artwork
+	EN	Pre-cache album artwork
 	ES	Guardar carátula en caché previamente
 	FI	Tallenna levykannet valmiiksi välimuistiin
 	FR	Mettre la pochette en pré-cache
