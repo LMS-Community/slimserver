@@ -527,7 +527,7 @@ sub _playlistCallback {
 	my ($trackId, $radioId) = getIds($url);
 	
 	if ( $radioId ) {
-		main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks..." );
+		main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks... $radioId" );
 		
 		my $pos = Slim::Player::Source::playingSongIndex($client);
 
@@ -542,6 +542,40 @@ sub _playlistCallback {
 			_getRadioTracks($client, $radioId, MAX_RADIO_QUEUE - $length);
 		}
 	}
+}
+
+# set diversity of the currently playing radio station
+sub setRadioDiversity {
+	my $request = shift;
+	my $client  = $request->client();
+	
+	$log->error($client);
+	return unless defined $client;
+	
+	# ignore if user is not using Pandora
+	my $song = $client->playingSong() || return;
+	my $url = $song->currentTrack()->url;
+
+	my ($trackId, $radioId) = getIds($url);
+	my $diversity = $request->getParam('_diversity') || 0;
+	
+	$radioId =~ s/([at].+v)(\d+)/$1$diversity/;
+
+	# only continue if we're actually playing a radio station
+	return unless $trackId && $radioId;
+
+	# remove queued tracks
+	my $pos    = Slim::Player::Source::playingSongIndex($client);
+	my $length = Slim::Player::Playlist::count($client);
+
+	$pos++;
+	while ($length-- > $pos) {
+		$client->execute([ 'playlist', 'delete', $pos ]);
+	}
+	
+	_getRadioTracks($client, $radioId, 10);
+	
+	$request->setStatusDone();
 }
 
 sub trackInfoURL {

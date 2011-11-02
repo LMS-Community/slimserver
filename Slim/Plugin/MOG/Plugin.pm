@@ -19,7 +19,6 @@ my $log = Slim::Utils::Log->addLogCategory( {
 sub initPlugin {
 	my $class = shift;
 
-
 	Slim::Player::ProtocolHandlers->registerHandler(
 		mog => 'Slim::Plugin::MOG::ProtocolHandler'
 	);
@@ -28,6 +27,10 @@ sub initPlugin {
 		qr|squeezenetwork\.com.*/api/mog/|, 
 		sub { $class->_pluginDataFor('icon') }
 	);
+
+	# add custom commands to control radio's diversity
+	Slim::Control::Request::addDispatch(['mog', 'radiodiversity', '_diversity'],
+		[0, 1, 1, \&Slim::Plugin::MOG::ProtocolHandler::setRadioDiversity]);
 	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
