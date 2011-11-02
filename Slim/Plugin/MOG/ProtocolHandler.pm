@@ -16,6 +16,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 use Slim::Utils::Prefs;
 
+use constant MAX_RADIO_QUEUE => 10;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.mog',
@@ -131,40 +132,106 @@ sub getNextTrack {
 	my $client = $song->master();
 	my $url    = $song->track()->url;
 
-	$song->pluginData( radioTrackURL => undef );
-	$song->pluginData( radioTitle    => undef );
-	$song->pluginData( radioTrack    => undef );
 	$song->pluginData( abandonSong   => 0 );
 	
-	my $params = {
+	_getTrack($client, $song, {
 		song      => $song,
 		url       => $url,
 		successCb => $successCb,
 		errorCb   => $errorCb,
-	};
-		_getTrack($params);
+	});
+}
 
+sub _getRadioTracks {
+	my ( $client, $id, $count ) = @_;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Getting tracks for station $id from SN");
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_gotRadioTracks,
+		sub {
+			my $http  = shift;
+			
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug( 'getRadioTracks failed: ' . $http->error );
+			}
+		},
+		{
+			client  => $client,
+			radioId => $id,
+		},
+	);
+	
+	$http->get(
+		Slim::Networking::SqueezeNetwork->url(
+			'/api/mog/v1/playback/getRadioTracks?radioid=' . $id . '&count=' . $count
+		)
+	);
+}
+
+sub _gotRadioTracks {
+	my $http = shift;
+
+	my $client = $http->params->{client};
+
+	my $info = eval { from_json( $http->content ) };
+
+	if ( $@ ) {
+		$log->error(Data::Dump::dump($info, $@));
+	}
+	else {
+		my $icon   = __PACKAGE__->getIcon();
+		my $cache  = Slim::Utils::Cache->new;
+		
+		if ( main::DEBUGLOG && $log->is_debug ) {
+			$log->debug( 'getRadioTracks ok: ' . Data::Dump::dump($info) );
+		}
+		
+		my @urls;
+		foreach my $track ( @$info ) {
+			next unless ref $track eq 'HASH';
+		
+			# cache the metadata we need for display
+			my $trackId = delete $track->{id};
+			
+			my $meta = {
+				artist    => $track->{artist},
+				album     => $track->{album},
+				title     => $track->{title},
+				cover     => $track->{cover} || $icon,
+				duration  => $track->{duration},
+				genre     => $track->{genre},
+				year      => $track->{year},
+				bitrate   => '320k CBR', # XXX bulk API call does not know the actual bitrate, it will be replaced in _gotTrack
+				type      => 'MP3 (MOG)',
+				info_link => 'plugins/mog/trackinfo.html',
+				icon      => $icon,
+			};
+		
+			$cache->set( 'mog_meta_' . $trackId, $meta, 86400 );
+
+			my $url = 'mog://' . $http->params->{radioId} . '-' . $trackId . '.mp3';
+			push @urls, $url;
+		}
+
+		$client->execute([ 'playlist', 'addtracks', 'listRef', \@urls ]);
+		$client->execute([ 'play' ]);
+		
+		# Update the playlist time so the web will refresh, etc
+		$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+		
+		Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+	}
 }
 
 sub _getTrack {
-	my $params  = shift;
-	
-	my $song    = $params->{song};
-	my @players = $song->master()->syncGroupActiveMembers();
-	
-	# Fetch the track info
-	_getTrackInfo( $song->master(), undef, $params );
-}
-
-sub _getTrackInfo {
-	my ( $client, undef, $params ) = @_;
-	my $song   = $params->{song};
+	my ( $client, $song, $params ) = @_;
 	
 	return if $song->pluginData('abandonSong');
 	
 	# Get track URL for the next track
-	my ($trackId) = $params->{url} =~ m{mog://(.+)\.mp3};
-	
+	my ($trackId, $radioId) = getIds($params->{url});
+
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
@@ -202,8 +269,9 @@ sub _getTrackInfo {
 	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN');
 	
 	$http->get(
+		# XXX - this call is to be renamed to getMediaURL, it's only kept here until we update mysb.com for backwards compatibility
 		Slim::Networking::SqueezeNetwork->url(
-			'/api/mog/v1/playback/playStream?trackid=' . uri_escape_utf8($trackId)
+			'/api/mog/v1/playback/playStream?trackid=' . ($trackId || '') . '&radioid=' . ($radioId || '')
 		)
 	);
 }
@@ -271,7 +339,7 @@ sub getMetadataFor {
 	my $cache = Slim::Utils::Cache->new;
 	
 	# If metadata is not here, fetch it so the next poll will include the data
-	my ($trackId) = $url =~ m{mog://(.+)\.mp3};
+	my ($trackId) = getIds($url);
 	my $meta      = $cache->get( 'mog_meta_' . $trackId );
 	
 	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
@@ -279,11 +347,10 @@ sub getMetadataFor {
 		my @need;
 		
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
-			my $trackURL = blessed($track) ? $track->url : $track;
-			if ( $trackURL =~ m{mog://(.+)\.mp3} ) {
-				my $id = $1;
-				if ( !$cache->get("mog_meta_$id") ) {
-					push @need, $id;
+			my ($trackURL) = blessed($track) ? $track->url : $track;
+			if ( my ($trackId) = getIds($trackURL) ) {
+				if ( !$cache->get("mog_meta_$trackId") ) {
+					push @need, $trackId;
 				}
 			}
 		}
@@ -292,26 +359,28 @@ sub getMetadataFor {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
-		$client->master->pluginData( fetchingMeta => 1 );
+		if (scalar @need) {
+			$client->master->pluginData( fetchingMeta => 1 );
+			
+			my $metaUrl = Slim::Networking::SqueezeNetwork->url(
+				"/api/mog/v1/playback/getBulkMetadata"
+			);
 		
-		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
-			"/api/mog/v1/playback/getBulkMetadata"
-		);
-	
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&_gotBulkMetadata,
-			\&_gotBulkMetadataError,
-			{
-				client  => $client,
-				timeout => 60,
-			},
-		);
+			my $http = Slim::Networking::SqueezeNetwork->new(
+				\&_gotBulkMetadata,
+				\&_gotBulkMetadataError,
+				{
+					client  => $client,
+					timeout => 60,
+				},
+			);
 
-		$http->post(
-			$metaUrl,
-			'Content-Type' => 'application/x-www-form-urlencoded',
-			'trackids=' . join( ',', @need ),
-		);
+			$http->post(
+				$metaUrl,
+				'Content-Type' => 'application/x-www-form-urlencoded',
+				'trackids=' . join( ',', @need ),
+			);
+		}
 	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
@@ -322,6 +391,23 @@ sub getMetadataFor {
 		icon      => $icon,
 		cover     => $icon,
 	};
+}
+
+sub getIds {
+	my $url = shift;
+
+	my ($radioId, $trackId);
+
+	# radio track
+	if ( $url =~ m{mog://([at].+v\d+)-(.+)\.mp3}) {
+		$radioId = $1;
+		$trackId = $2;
+	}
+	else {
+		($trackId) = $url =~ m{mog://(.+)\.mp3};
+	}
+	
+	return ($trackId, $radioId);
 }
 
 sub _gotBulkMetadata {
@@ -339,7 +425,7 @@ sub _gotBulkMetadata {
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
+		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks: " . Data::Dump::dump($info) );
 	}
 	
 	# Cache metadata
@@ -421,7 +507,7 @@ sub _playlistCallback {
 	my $request = shift;
 
 	my $client  = $request->client();
-	my $p1      = $request->getRequest(1);
+	my $event   = $request->getRequest(1);
 	
 	return unless defined $client;
 	
@@ -429,33 +515,43 @@ sub _playlistCallback {
 	my $song = $client->playingSong();
 	
 	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
-		# User stopped playing MOG 
-
+		# User stopped playing MOG
 		main::DEBUGLOG && $log->debug( "Stopped MOG, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
 		
 		return;
 	}
+
+	my $url = $song->track->url;
+
+	my ($trackId, $radioId) = getIds($url);
 	
-	if ( $song->pluginData('radioTrackURL') && $p1 eq 'newsong' ) {
-		# A new song has started playing.  We use this to change titles
+	if ( $radioId ) {
+		main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks..." );
 		
-		my $title = $song->pluginData('radioTitle');
+		my $pos = Slim::Player::Source::playingSongIndex($client);
+
+		# remove played/skipped tracks from queue
+		while ($pos-- > 0) {
+			$client->execute([ 'playlist', 'delete', 0 ]);
+		}
 		
-		main::DEBUGLOG && $log->debug("Setting title for radio station to $title");
+		my $length = Slim::Player::Playlist::count($client);
 		
-		Slim::Music::Info::setCurrentTitle( $song->track()->url, $title );
+		if ($length < MAX_RADIO_QUEUE) {
+			_getRadioTracks($client, $radioId, MAX_RADIO_QUEUE - $length);
+		}
 	}
 }
 
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 	
-	my ($trackId) = $url =~ m{mog://(.+)\.mp3};
+	my ($trackId, $radioId) = getIds($url);
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/mog/v1/opml/trackinfo?trackid=' . $trackId
+		'/api/mog/v1/opml/trackinfo?trackid=' . ($trackId || '') . '&radioid=' . ($radioId || '')
 	);
 	
 	return $trackInfoURL;
@@ -498,7 +594,7 @@ sub reinit {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Re-init MOG - $url");
 	
 	my $cache     = Slim::Utils::Cache->new;
-	my ($trackId) = $url =~ m{mog://(.+)\.mp3};
+	my ($trackId, $radioId) = getIds($url);
 	my $meta      = $cache->get( 'mog_meta_' . $trackId );
 	
 	if ( $meta ) {
