@@ -186,6 +186,13 @@ sub _gotRadioTracks {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( 'getRadioTracks ok: ' . Data::Dump::dump($info) );
 		}
+
+		my $song = $client->playingSong();
+		my $currentId = 0;
+		
+		if ($song && $song->track) {
+			($currentId) = getIds($song->track->url || '');
+		}
 		
 		my @tracks;
 		foreach my $track ( @$info ) {
@@ -193,6 +200,9 @@ sub _gotRadioTracks {
 		
 			# cache the metadata we need for display
 			my $trackId = delete $track->{id};
+			
+			# don't queue track which we're already playing
+			next if $trackId == $currentId;
 			
 			my $meta = {
 				artist    => $track->{artist},
