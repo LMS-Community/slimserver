@@ -187,7 +187,7 @@ sub _gotRadioTracks {
 			$log->debug( 'getRadioTracks ok: ' . Data::Dump::dump($info) );
 		}
 		
-		my @urls;
+		my @tracks;
 		foreach my $track ( @$info ) {
 			next unless ref $track eq 'HASH';
 		
@@ -211,10 +211,21 @@ sub _gotRadioTracks {
 			$cache->set( 'mog_meta_' . $trackId, $meta, 86400 );
 
 			my $url = 'mog://' . $http->params->{radioId} . '-' . $trackId . '.mp3';
-			push @urls, $url;
+			
+			push @tracks, Slim::Schema->updateOrCreate( {
+				'url'        => $url,
+				'attributes' => {
+					title    => $meta->{title},
+					album    => $meta->{album},
+					cover    => $meta->{cover},
+					duration => $meta->{duration},
+					year     => $meta->{year},
+					CT       => 'mp3',
+				},
+			} );
 		}
 
-		$client->execute([ 'playlist', 'addtracks', 'listRef', \@urls ]);
+		$client->execute([ 'playlist', 'addtracks', 'listRef', \@tracks ]);
 		$client->execute([ 'play' ]);
 		
 		# Update the playlist time so the web will refresh, etc
@@ -527,8 +538,6 @@ sub _playlistCallback {
 	my ($trackId, $radioId) = getIds($url);
 	
 	if ( $radioId ) {
-		main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks... $radioId" );
-		
 		my $pos = Slim::Player::Source::playingSongIndex($client);
 
 		# remove played/skipped tracks from queue
@@ -539,6 +548,7 @@ sub _playlistCallback {
 		my $length = Slim::Player::Playlist::count($client);
 		
 		if ($length < MIN_RADIO_QUEUE) {
+			main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks... $radioId" );
 			_getRadioTracks($client, $radioId);
 		}
 	}
