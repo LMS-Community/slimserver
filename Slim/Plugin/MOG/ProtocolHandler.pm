@@ -16,7 +16,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 use Slim::Utils::Prefs;
 
-use constant MAX_RADIO_QUEUE => 10;
+use constant MIN_RADIO_QUEUE => 10;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.mog',
@@ -143,7 +143,7 @@ sub getNextTrack {
 }
 
 sub _getRadioTracks {
-	my ( $client, $id, $count ) = @_;
+	my ( $client, $id ) = @_;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Getting tracks for station $id from SN");
 	
@@ -164,7 +164,7 @@ sub _getRadioTracks {
 	
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
-			'/api/mog/v1/playback/getRadioTracks?radioid=' . $id . '&count=' . $count
+			'/api/mog/v1/playback/getRadioTracks?radioid=' . $id
 		)
 	);
 }
@@ -538,8 +538,8 @@ sub _playlistCallback {
 		
 		my $length = Slim::Player::Playlist::count($client);
 		
-		if ($length < MAX_RADIO_QUEUE) {
-			_getRadioTracks($client, $radioId, MAX_RADIO_QUEUE - $length);
+		if ($length < MIN_RADIO_QUEUE) {
+			_getRadioTracks($client, $radioId);
 		}
 	}
 }
@@ -573,7 +573,7 @@ sub setRadioDiversity {
 		$client->execute([ 'playlist', 'delete', $pos ]);
 	}
 	
-	_getRadioTracks($client, $radioId, 10);
+	_getRadioTracks($client, $radioId);
 	
 	$request->setStatusDone();
 }
