@@ -135,6 +135,9 @@ sub launchScan {
 	if (defined $scannerPriority && $scannerPriority ne "") {
 		$args->{"priority=$scannerPriority"} = 1;
 	}
+	
+	# bug 17639 - pass singledir value if defined
+	my $singledir = delete $args->{singledir} || '';
 
 	my @scanArgs = map { "--$_" } keys %{$args};
 
@@ -162,6 +165,10 @@ sub launchScan {
 	if ( $debugArgs ) {
 		$debugArgs =~ s/,$//;
 		push @scanArgs, '--debug', $debugArgs;
+	}
+	
+	if ( $singledir ) {
+		push @scanArgs, $singledir;
 	}
 	
 	$class->setIsScanning($args->{wipe} ? 'SETUP_WIPEDB' : 'SETUP_STANDARDRESCAN');

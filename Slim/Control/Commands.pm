@@ -2492,6 +2492,8 @@ sub rescanCommand {
 			rescan  => 1,
 			cleanup => 1,
 		);
+		
+		$args{singledir} = $singledir if $singledir;
 
 		Slim::Music::Import->launchScan(\%args);
 	}
