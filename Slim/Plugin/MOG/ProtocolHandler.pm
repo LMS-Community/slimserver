@@ -266,11 +266,12 @@ sub _getTrack {
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
+				_gotTrack( $client, $info, $params );
+				
 				if ( main::DEBUGLOG && $log->is_debug ) {
+					delete $info->{url};
 					$log->debug( 'getTrackInfo ok: ' . Data::Dump::dump($info) );
 				}
-				
-				_gotTrack( $client, $info, $params );
 			}
 		},
 		sub {
