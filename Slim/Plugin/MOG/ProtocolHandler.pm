@@ -549,19 +549,30 @@ sub _playlistCallback {
 	my ($trackId, $radioId) = getIds($url);
 	
 	if ( $radioId ) {
-		my $pos = Slim::Player::Source::playingSongIndex($client);
+		# disable repeat in radio mode
+		Slim::Player::Playlist::repeat($client, 0);
+		
+		Slim::Utils::Timers::killTimers($client, \&_cleanupRadioTracks);
+		Slim::Utils::Timers::setTimer($client, time() + 5, \&_cleanupRadioTracks, $radioId);
+	}
+}
 
-		# remove played/skipped tracks from queue
-		while ($pos-- > 0) {
-			$client->execute([ 'playlist', 'delete', 0 ]);
-		}
-		
-		my $length = Slim::Player::Playlist::count($client);
-		
-		if ($length < MIN_RADIO_QUEUE) {
-			main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks... $radioId" );
-			_getRadioTracks($client, $radioId);
-		}
+sub _cleanupRadioTracks {
+	my ($client, $radioId) = @_;
+	
+	my $pos = Slim::Player::Source::playingSongIndex($client);
+
+	# remove played/skipped tracks from queue
+	if ($pos > 0) {
+		my @tracks = Slim::Player::Playlist::songs($client, 0, $pos-1);
+		$client->execute([ 'playlist', 'deletetracks', 'listRef', \@tracks ]) if scalar @tracks;
+	}
+	
+	my $length = Slim::Player::Playlist::count($client);
+	
+	if ($length < MIN_RADIO_QUEUE) {
+		main::DEBUGLOG && $log->debug( "Need to queue up new MOG Radio tracks... $radioId" );
+		_getRadioTracks($client, $radioId);
 	}
 }
 
