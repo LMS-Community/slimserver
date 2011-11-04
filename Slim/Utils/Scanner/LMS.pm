@@ -73,11 +73,14 @@ sub rescan {
 		return;
 	}
 	
-	my $dbh = Slim::Schema->dbh;
-	
 	if ( ref $in_paths ne 'ARRAY' ) {
 		$in_paths = [ $in_paths ];
 	}
+	
+	# bug 17674 - don't continue if there's no path defined
+	return unless @$in_paths;
+
+	my $dbh = Slim::Schema->dbh;
 	
 	my $paths = [];
 	for my $p ( @{$in_paths} ) {
