@@ -841,7 +841,8 @@ SqueezeJS.UI.Highlight.prototype = {
 		if (target.hasClass('browseItemDetail') || target.hasClass('playlistSongDetail'))
 			target = Ext.get(target.findParentNode('div'));
 		
-		else if (target.dom.localName = 'img' && !target.findParentNode('span.browsedbControls', 3) && (target.findParentNode('div.thumbArtwork', 5) || target.findParentNode('div.itemWithCover', 5)))
+		else if (target.dom.localName = 'img' && !target.findParentNode('span.browsedbControls', 3) && !target.findParentNode('div.playlistControls', 3) 
+				&& (target.findParentNode('div.thumbArtwork', 5) || target.findParentNode('div.itemWithCover', 5)))
 			target = Ext.get(target.findParentNode('div'));
 			
 		var el;
