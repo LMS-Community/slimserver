@@ -219,8 +219,15 @@ sub load {
 		}
 
 		if (defined $state && $state eq 'disabled') {
-			$log->warn("Skipping plugin: $name - disabled");
-			next;
+			# bug 17647 - we must re-enable an enforced plugin if it has been disabled
+			if ( $plugins->{$name}->{'enforce'} ) {
+				$log->warn("Re-enabling plugin as it is enforced: $name");
+				$state = $class->_needsEnable($name);
+			}
+			else {
+				$log->warn("Skipping plugin: $name - disabled");
+				next;
+			}
 		}
 
 		# Skip plugins that can't be loaded.
