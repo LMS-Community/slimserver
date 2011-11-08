@@ -74,21 +74,22 @@ sub initJive {
 	
 	return if !$menu;
 	
-	my $data = _parseOPML('/il');
-	my $screensavers = [];
-	
-	my $albums = $data->{container};
-	
-	foreach my $item ( @$albums ) {
-		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
-			push @$screensavers, {
-				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'type:slideshow', 'slideshowId:' . $item->{id} ],
-				text => $item->{'dc:title'},
-			}
-		}
-	}
-	
-	$menu->[0]->{screensavers} = $screensavers;
+	# bug 17737 - we need a better design, make screensavers optional, selectable etc.
+#	my $data = _parseOPML('/il');
+#	my $screensavers = [];
+#	
+#	my $albums = $data->{container};
+#	
+#	foreach my $item ( @$albums ) {
+#		if ( $item->{'upnp:class'} =~ /^object.container/ ) {
+#			push @$screensavers, {
+#				cmd    => [ $args{tag}, 'items', 'id:' . $item->{id}, 'type:slideshow', 'slideshowId:' . $item->{id} ],
+#				text => $item->{'dc:title'},
+#			}
+#		}
+#	}
+#	
+#	$menu->[0]->{screensavers} = $screensavers;
 	
 	return $menu;
 }			
