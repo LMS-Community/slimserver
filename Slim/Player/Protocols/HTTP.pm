@@ -349,7 +349,8 @@ sub parseDirectHeaders {
 		}
 		
 		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
-			$bitrate = $1 * 1000;
+			$bitrate = $1;
+			$bitrate *= 1000 if $bitrate < 1000;
 		}
 	
 		elsif ($header =~ /^icy-metaint:\s*(.+)/i) {
