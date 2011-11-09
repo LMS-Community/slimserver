@@ -1086,7 +1086,7 @@ sub rebuffer {
 }
 
 sub buffering {
-	my ($client, $bufferThreshold) = @_;
+	my ($client, $bufferThreshold, $outputThreshold) = @_;
 	
 	my $song = $client->streamingSong();
 	my $url = $song->currentTrack()->url;
@@ -1103,7 +1103,7 @@ sub buffering {
 		$client,
 		Time::HiRes::time() + 0.125,
 		\&_buffering,
-		{song => $song, threshold => $bufferThreshold, title => $title, cover => $cover}
+		{song => $song, threshold => $bufferThreshold, outputThreshold => $outputThreshold, title => $title, cover => $cover}
 	);
 }
 

@@ -179,6 +179,12 @@ sub play {
 
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
+		my $bufferSecs = $prefs->get('bufferSecs') || 3;
+		if ( main::SLIM_SERVICE ) {
+			# Per-client buffer secs pref on SN
+			$bufferSecs = $prefs->client($client)->get('bufferSecs') || 3;
+		}
+			
 		# begin playback once we have this much data in the decode buffer (in KB)
 		$params->{bufferThreshold} = 20;
 		
@@ -189,12 +195,6 @@ sub play {
 
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
 		elsif ( my $bitrate = $controller->song()->streambitrate() ) {
-			my $bufferSecs = $prefs->get('bufferSecs') || 3;
-			
-			if ( main::SLIM_SERVICE ) {
-				# Per-client buffer secs pref on SN
-				$bufferSecs = $prefs->client($client)->get('bufferSecs') || 3;
-			}
 			
 			$params->{bufferThreshold} = ( int($bitrate / 8) * $bufferSecs ) / 1000;
 			
@@ -202,7 +202,7 @@ sub play {
 			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
 		}
 		
-		$client->buffering($params->{bufferThreshold} * 1024);
+		$client->buffering($params->{bufferThreshold} * 1024, $bufferSecs * 44100 * 2 * 4);
 	}
 
 	$client->bufferReady(0);
