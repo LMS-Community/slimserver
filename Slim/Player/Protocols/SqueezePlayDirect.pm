@@ -25,6 +25,8 @@ sub isRemote { 1 }
 
 sub isAudio { 1 }
 
+sub usePlayerProxyStreaming { 0 } # 0 => do not use player-proxy-streaming
+
 sub contentType { 'spdr' }
 
 sub formatOverride { 'spdr' }

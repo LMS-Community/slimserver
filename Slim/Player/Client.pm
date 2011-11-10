@@ -1446,6 +1446,8 @@ sub canDecodeRhapsody { 0 };
 
 sub canImmediateCrossfade { 0 };
 
+sub proxyAddress { undef };
+
 sub hidden { 0 }
 
 sub hasScrolling { 0 }

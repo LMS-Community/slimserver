@@ -45,6 +45,7 @@ BEGIN {
 		hasPreAmp
 		hasDisableDac
 		spDirectHandlers
+		proxyAddress
 	));
 }
 
@@ -66,6 +67,7 @@ sub new {
 		hasPreAmp               => 0,
 		hasDisableDac           => 0,
 		spDirectHandlers        => undef,
+		proxyAddress            => undef,
 	);
 
 	return $client;
@@ -86,6 +88,7 @@ my %CapabilitiesMap = (
 	HasDisableDac           => 'hasDisableDac',
 	SyncgroupID             => undef,
 	Spdirect                => 'spDirectHandlers',
+	Proxy                   => 'proxyAddress',
 
 	# deprecated
 	model                   => '_model',

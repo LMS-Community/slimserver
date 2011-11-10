@@ -560,7 +560,7 @@ sub opened {
 #               //      0x01 - polarity inversion left
 #				
 #	u8_t output_threshold`;	// [1]	Amount of output buffer data before playback starts in tenths of second.
-#	u8_t reserved;		// [1]	reserved
+#	u8_t slaves;		// [1]	number of proxy stream connections to serve
 #	u32_t replay_gain;	// [4]	replay gain in 16.16 fixed point, 0 means none
 #	u16_t server_port;	// [2]	server's port
 #	u32_t server_ip;	// [4]	server's IP
@@ -798,6 +798,14 @@ sub stream_s {
 		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
+	} elsif (my $proxy = $params->{'proxyStream'}) {
+
+		$request_string = ' ';	# need at least a byte to keep ip3k happy
+		my ($pserver, $pport) = split (/:/, $proxy);
+		$server_port = $pport;
+		$server_ip = Slim::Utils::Network::intip($pserver);
+		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
+
 	} elsif ($isDirect) {
 
 		# Logger for direct streaming
@@ -998,7 +1006,7 @@ sub stream_s {
 		$transitionType,
 		$flags,		# flags	     
 		$outputThreshold,
-		0,		# reserved
+		($params->{'slaveStreams'} || 0),
 		$replayGain,	
 		$server_port || $prefs->get('httpport'),  # use slim server's IP
 		$server_ip || 0,

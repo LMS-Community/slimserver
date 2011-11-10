@@ -77,5 +77,10 @@ sub track {
 	return shift->{'song'}->currentTrack();
 }
 
+sub playerProxyStreaming {
+	my $self = shift;
+	$self->{'playerProxyStreaming'} = shift if @_;
+	return $self->{'playerProxyStreaming'};
+}
 
 1;

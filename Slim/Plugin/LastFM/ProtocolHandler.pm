@@ -53,6 +53,8 @@ sub isAudioURL () { 1 }
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
 
+sub usePlayerProxyStreaming { 1 } # 1 => player-proxy-streaming necessary for sync
+
 sub canSeek { 0 }
 sub getSeekDataByPosition { undef }
 sub getSeekData { undef }

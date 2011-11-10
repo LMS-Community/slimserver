@@ -22,6 +22,8 @@ sub shouldLoop { 1 }
 # Some sounds are small, use a small buffer threshold
 sub bufferThreshold { 10 }
 
+sub usePlayerProxyStreaming { 0 } # 1 => do not use player-proxy-streaming
+
 sub canSeek { 0 }
 
 sub isAudioURL { 1 }
