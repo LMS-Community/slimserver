@@ -284,6 +284,9 @@ sub rescan {
 		if ( !$count ) {
 			main::DEBUGLOG && $slog->is_debug && $slog->debug("Removing unused album: $id");	
 			$dbh->do( "DELETE FROM albums WHERE id = ?", undef, $id );
+			
+			# Bug 17283, this removed album may be cached as lastAlbum in Schema
+			Slim::Schema->wipeLastAlbumCache($id);
 		}
 	}
 }

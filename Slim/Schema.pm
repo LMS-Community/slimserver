@@ -61,7 +61,7 @@ my $prefs = preferences('server');
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', undef);
 
 # Hash of stuff about the last Album created
-our $lastAlbum;
+our $lastAlbum = {};
 
 # Optimization to cache content type for track entries rather than look them up everytime.
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
@@ -2063,8 +2063,23 @@ sub wipeCaches {
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
+	$lastAlbum = {};
 	
 	main::INFOLOG && logger('scan.import')->info("Wiped all in-memory caches.");
+}
+
+=head2 wipeLastAlbumCache($id)
+
+Wipe the lastAlbum cache, if it contains the album $id
+
+=cut
+
+sub wipeLastAlbumCache {
+	my ( $self, $id ) = @_;
+	
+	if ( defined $id && exists $lastAlbum->{id} && $lastAlbum->{id} == $id ) {
+		$lastAlbum = {};
+	}
 }
 
 =head2 wipeAllData()
