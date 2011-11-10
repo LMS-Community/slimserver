@@ -165,7 +165,7 @@ sub _canonicalize_expiration_time {
 
 	# "If value is less than 60*60*24*30 (30 days), time is assumed to be
 	# relative from the present. If larger, it's considered an absolute Unix time."
-	if ( $expiry < 2592000 ) {
+	if ( $expiry <= 2592000 ) {
 		$expiry += time();
 	}
 	
