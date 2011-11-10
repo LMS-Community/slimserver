@@ -28,8 +28,6 @@ if ( main::SLIM_SERVICE ) {
 }
 
 use constant SLIMPROTO_PORT   => 3483;
-use constant LATENCY_LIST_MAX => 10;
-use constant LATENCY_LIST_MIN => 6;
 
 our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
 my $log       = logger('network.protocol.slimproto');
@@ -64,8 +62,6 @@ our %prxy_seen;		     # PRXY msg already seen, per socket
 our %sock2client;	     # reference to client for each sonnected sock
 our %heartbeat;          # the last time we heard from a client
 our %status;
-our %latencyList;        # last few latencies
-our %latency;            # current published latency
 
 our %callbacksRAWI;
 
@@ -233,7 +229,7 @@ sub check_all_clients {
 			next;
 		}
 		
-		# Always ask for status requests so we can use the result for latency tracking
+		# Always ask for a status request so we can initialize the epoch
 		$client->requestStatus();
 	}
 
@@ -263,8 +259,6 @@ sub slimproto_close {
 		}
 		
 		delete $heartbeat{ $client->id };
-		delete $latency{ $client };
-		delete $latencyList{ $client };
 		
 		$client->tcpsock(undef);
 
@@ -769,24 +763,7 @@ sub _stat_handler {
 		# 53 = future firmware (correct length)
 		$stat->{'error_code'} = 0;
 	}
-		
-	# Track latency if we have a server timestamp
-	if ( $stat->{'server_timestamp'} ) {
-		my $latency = (int($now * 1000 % 0xffffffff) - $stat->{'server_timestamp'}) / 2;
-	
-		push (@{$latencyList{$client}}, $latency) if ($latency >= 0 && $latency < 1000);
-		shift(@{$latencyList{$client}}) if (@{$latencyList{$client}} > LATENCY_LIST_MAX);
-
-		$latency{$client} = Slim::Utils::Misc::min($latencyList{$client}) if (@{$latencyList{$client}} >= LATENCY_LIST_MIN);
-		
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug(
-				$client->id() . " latency=$latency{$client}, from ("
-				. join(', ', @{$latencyList{$client}}) . ')'
-			);
-		}
-	}	
-		
+				
 	$client->trackJiffiesEpoch($stat->{'jiffies'}, $now);
 
 	$stat->{'bytes_received'} = $stat->{'bytes_received_H'} * 2**32 + $stat->{'bytes_received_L'}; 
@@ -897,10 +874,6 @@ sub _stat_handler {
 		}
 	}
 =cut
-}
-
-sub getLatency {
-	return $latency{shift} || 0;
 }
 
 sub getPlayPointData {
@@ -1278,8 +1251,6 @@ sub _hello_handler {
 	}
 
 	$sock2client{$s} = $client;
-	
-	$latencyList{$client} = [];
 	
 	# Bug 10634 - reset the jiffiesEpoch so that any drift during a long disconnection is reset immediately
 	$client->jiffiesEpoch(undef);

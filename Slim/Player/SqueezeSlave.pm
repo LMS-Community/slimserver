@@ -237,16 +237,6 @@ sub pcm_sample_rates {
 	return defined $rate ? $rate : '3';
 }
 
-sub packetLatency {
-	my $client = shift;
-	
-	return (
-		Slim::Networking::Slimproto::getLatency($client) / 1000
-		||
-		$client->SUPER::packetLatency()
-	);
-}
-
 sub statHandler {
 	my ($client, $code) = @_;
 	

@@ -1054,7 +1054,7 @@ sub stream {
 		$replayGain = $interval;
 	}
 	elsif ($command eq 't') {
-		$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);
+		$replayGain = 0;	# stop using this method to track latency - it is too unreliable
 	}
 	else {
 		$replayGain = $client->canDoReplayGain($params->{replay_gain});
