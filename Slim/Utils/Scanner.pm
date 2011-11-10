@@ -321,7 +321,7 @@ sub scanDirectory {
 	$progress->total( scalar @{$files} ) if $progress;
 
 	# If we're starting with a clean db - don't bother with searching for a track
-	my $method   = $::wipe ? 'newTrack' : 'updateOrCreate';
+	my $method   = $::wipe ? '_newTrack' : 'updateOrCreate';
 
 	for my $file (@{$files}) {
 		
