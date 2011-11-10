@@ -8,11 +8,6 @@ package Slim::Utils::ArtworkCache;
 
 use strict;
 
-use DBD::SQLite;
-use Digest::MD5 ();
-use File::Spec::Functions qw(catfile);
-use Time::HiRes ();
-
 my $singleton;
 
 sub new {
@@ -20,49 +15,45 @@ sub new {
 	my $root = shift;
 	
 	if ( !$singleton ) {
-		if ( !defined $root ) {
-			require Slim::Utils::Prefs;
-			$root = Slim::Utils::Prefs::preferences('server')->get('librarycachedir');
-			
-			# Update root value if librarycachedir changes
-			Slim::Utils::Prefs::preferences('server')->setChange( sub {
-				$singleton->wipe;
-				$singleton->setRoot( $_[1] );
-				$singleton->_init_db;
-			}, 'librarycachedir' );
-		}
-		
-		$singleton = bless { root => $root }, $class;
+		$singleton = Slim::Utils::DbArtworkCache->new($root);
 	}
 	
 	return $singleton;
 }
 
-sub getRoot {
-	return shift->{root};
-}
+1;
 
-sub setRoot {
-	my ( $self, $root ) = @_;
-	
-	$self->{root} = $root;
-}
+package Slim::Utils::DbArtworkCache;
 
-sub wipe {
+use base 'Slim::Utils::DbCache';
+use File::Spec::Functions qw(catfile);
+
+sub new {
 	my $self = shift;
-	
-	if ( $self->{dbh} ) {
-		$self->{dbh}->do('DELETE FROM cache'); # truncate
-		$self->_close_db;
+	my $root  = shift;
+
+	if ( !defined $root ) {
+		require Slim::Utils::Prefs;
+		# the artwork cache needs to be in the same place as the library data for TinyLMS
+		$root = Slim::Utils::Prefs::preferences('server')->get('librarycachedir');
+		
+		# Update root value if librarycachedir changes
+		Slim::Utils::Prefs::preferences('server')->setChange( sub {
+			$self->wipe;
+			$self->setRoot( $_[1] );
+			$self->_init_db;
+		}, 'librarycachedir' );
 	}
+	
+	return $self->SUPER::new({
+		namespace => 'artwork',
+		noexpiry => 1,
+		root => $root
+	});
 }
 
 sub set {
 	my ( $self, $key, $data ) = @_;
-	
-	if ( !$self->{dbh} ) {
-		$self->_init_db;
-	}
 	
 	# packed data is stored as follows:
 	# 3 bytes type (jpg/png/gif)
@@ -83,16 +74,7 @@ sub set {
 	# Prepend the packed header to the original data
 	substr $$ref, 0, 0, $packed;
 	
-	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
-	# Have to concat 2 values here so it works on a 32-bit machine
-	my $md5 = Digest::MD5::md5_hex($key);
-	my $id = hex( substr($md5, 0, 8) ) . hex( substr($md5, 8, 7) );
-	
-	# Insert or replace the value
-	my $set = $self->{set_sth};
-	$set->bind_param( 1, $id );
-	$set->bind_param( 2, $$ref, DBI::SQL_BLOB );
-	$set->execute;
+	$self->SUPER::set($key, $$ref);
 	
 	# Remove the packed header
 	substr $$ref, 0, length($packed), '';
@@ -101,19 +83,7 @@ sub set {
 sub get {
 	my ( $self, $key ) = @_;
 	
-	if ( !$self->{dbh} ) {
-		$self->_init_db;
-	}
-	
-	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
-	# Have to concat 2 values here so it works on a 32-bit machine
-	my $md5 = Digest::MD5::md5_hex($key);
-	my $id = hex( substr($md5, 0, 8) ) . hex( substr($md5, 8, 7) );
-	
-	my $get = $self->{get_sth};
-	$get->execute($id);
-	
-	my ($buf) = $get->fetchrow_array;
+	my $buf = $self->SUPER::get($key);
 	
 	return unless defined $buf;
 	
@@ -129,30 +99,11 @@ sub get {
 	};
 }
 
-sub pragma {
-	my ( $self, $pragma ) = @_;
-	
-	my $dbh = $self->{dbh} || $self->_init_db;
-	
-	$dbh->do("PRAGMA $pragma");
-	
-	if ( $pragma =~ /locking_mode/ ) {
-		# if changing the locking_mode we need to run a statement to change the lock
-		$dbh->do('SELECT 1 FROM cache LIMIT 1');
-	}
-}
-
-sub close {
-	my $self = shift;
-	
-	$self->_close_db;
-}
-
 sub _init_db {
-	my $self = shift;
+	my $self  = shift;
 	my $retry = shift;
 	
-	my $dbfile    = catfile( $self->{root}, 'artwork.db' );
+	my $dbfile    = $self->_get_dbfile;
 	my $oldDBfile = catfile( $self->{root}, 'ArtworkCache.db' );
 	
 	if (!-f $dbfile && -r $oldDBfile) {
@@ -163,58 +114,7 @@ sub _init_db {
 		}
 	}
 	
-	my $dbh;
-	
-	eval {
-		$dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
-			AutoCommit => 1,
-			PrintError => 0,
-			RaiseError => 1,
-			sqlite_use_immediate_transaction => 1,
-		} );
-		
-		$dbh->do('PRAGMA synchronous = OFF');
-		$dbh->do('PRAGMA journal_mode = WAL');
-		$dbh->do('PRAGMA wal_autocheckpoint = 200');
-	
-		# Create the table, note that using an integer primary key
-		# is much faster than any other kind of key, such as a char
-		# because it doesn't have to create an index
-		$dbh->do('CREATE TABLE IF NOT EXISTS cache (k INTEGER PRIMARY KEY, v BLOB)');
-	};
-	
-	if ( $@ ) {
-		if ( $retry ) {
-			# Give up after 2 tries
-			die "Unable to read/create $dbfile\n";
-		}
-		
-		# Something was wrong with the database, delete it and try again
-		$self->wipe;
-		
-		return $self->_init_db(1);
-	}
-	
-	# Prepare statements we need
-	$self->{set_sth} = $dbh->prepare('INSERT OR REPLACE INTO cache (k, v) VALUES (?, ?)');
-	$self->{get_sth} = $dbh->prepare('SELECT v FROM cache WHERE k = ?');
-	
-	$self->{dbh} = $dbh;
-	
-	return $dbh;
-}
-
-sub _close_db {
-	my $self = shift;
-	
-	if ( $self->{dbh} ) {
-		$self->{set_sth}->finish;
-		$self->{get_sth}->finish;
-		
-		$self->{dbh}->disconnect;
-	
-		delete $self->{$_} for qw(set_sth get_sth dbh);
-	}
+	return $self->SUPER::_init_db($retry);
 }
 
 1;

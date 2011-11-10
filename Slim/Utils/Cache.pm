@@ -24,7 +24,7 @@ $cache->cleanup;
 
 =head1 DESCRIPTION
 
-A simple cache for arbitrary data using L<Cache::FileCache>.
+A simple cache for arbitrary data using SQLite, providing an interface similar to Cache::Cache
 
 =head1 METHODS
 
@@ -40,32 +40,25 @@ Creates a new Slim::Utils::Cache instance.
 
 =head1 SEE ALSO
 
-L<Cache::Cache> and L<Cache::FileCache>.
+L<Cache::Cache>.
 
 =cut
 
 use strict;
 
-use Cache::FileCache ();
-
+use Slim::Utils::DbCache;
 use Slim::Utils::Log;
-use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-my $DEFAULT_EXPIRES_TIME = '1 hour';
+use constant PURGE_INTERVAL    => 3600 * 8;  # interval between purge cycles
+use constant PURGE_RETRY       => 3600;      # retry time if players are on
+use constant PURGE_NEXT        => 30;        # purge next namespace
 
-my $PURGE_INTERVAL = 60 * 60 * 24; # interval between purge cycles
-my $PURGE_RETRY    = 60 * 60;      # retry time if players are on
-my $PURGE_NEXT     = 30;           # purge next namespace
-
-my $defaultNameSpace = 'FileCache';
-my $defaultVersion = 1;
+use constant DEFAULT_NAMESPACE => 'cache';
+use constant DEFAULT_VERSION   => 1;
 
 # hash of caches which we have created by namespace
 my %caches = ();
-
-# hash of roots to use for caches
-my %nameSpaceRoot;
 
 my @thisCycle = (); # namespaces to be purged this purge cycle
 my @eachCycle = (); # namespaces to be purged every PURGE_INTERVAL
@@ -77,8 +70,9 @@ my $log = logger('server');
 # create proxy methods
 {
 	my @methods = qw(
-		get set get_object set_object
-		clear purge remove size
+		get set
+	#	get_object set_object size
+		clear purge remove 
 	);
 		
 	no strict 'refs';
@@ -102,7 +96,7 @@ my $log = logger('server');
 				
 				# "If value is less than 60*60*24*30 (30 days), time is assumed to be
 				# relative from the present. If larger, it's considered an absolute Unix time."
-				if ( $expire > 2592000 ) {
+				if ( $expire < 2592000 ) {
 					$expire += time();
 				}
 			}
@@ -117,7 +111,6 @@ my $log = logger('server');
 		};
 	}
 }
-
 
 sub init {
 	my $class = shift;
@@ -137,7 +130,7 @@ sub init {
 
 sub new {
 	my $class = shift;
-	my $namespace = shift || $defaultNameSpace;
+	my $namespace = shift || DEFAULT_NAMESPACE;
 
 	# return existing instance if exists for this namespace
 	return $caches{$namespace} if $caches{$namespace};
@@ -145,8 +138,8 @@ sub new {
 	# otherwise create new cache object taking acount of additional params
 	my ($version, $noPeriodicPurge);
 
-	if ($namespace eq $defaultNameSpace) {
-		$version = $defaultVersion;
+	if ($namespace eq DEFAULT_NAMESPACE) {
+		$version = DEFAULT_VERSION;
 	} else {
 		$version = shift || 0;
 		$noPeriodicPurge = shift;
@@ -161,12 +154,20 @@ sub new {
 		return $caches{$namespace};
 	}
 
-	my $cache = Cache::FileCache->new( {
-		namespace          => $namespace,
-		default_expires_in => $DEFAULT_EXPIRES_TIME,
-		cache_root         => ($nameSpaceRoot{$namespace} || preferences('server')->get('cachedir')),
-		directory_umask    => umask(),
+	my $prefs = preferences('server');
+
+	my $cache = Slim::Utils::DbCache->new( {
+		namespace => $namespace,
 	} );
+
+	# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
+	if ( $prefs->get('dbhighmem') ) {
+		$cache->pragma('cache_size = 20000');
+		$cache->pragma('temp_store = MEMORY');
+	}
+	else {
+		$cache->pragma('cache_size = 300');
+	}
 	
 	my $self = bless {
 		_cache => $cache,
@@ -179,7 +180,7 @@ sub new {
 
 		main::INFOLOG && $log->info("Version changed for cache: $namespace - clearing out old entries");
 		$self->clear();
-		$self->set('Slim::Utils::Cache-version', $version, 'never');
+		$self->set('Slim::Utils::Cache-version', $version, -1);
 
 	}
 
@@ -196,12 +197,12 @@ sub cleanup {
 	# NB Purging is expensive and blocks the server
 	#
 	# namespaces with $noPeriodicPurge set are only purged at server startup
-	# others are purged at max once per $PURGE_INTERVAL.
+	# others are purged at max once per PURGE_INTERVAL.
 	#
 	# To allow disks to spin down, each namespace is purged within a short period 
-	# and then no purging is done for $PURGE_INTERVAL
+	# and then no purging is done for PURGE_INTERVAL
 	#
-	# After the startup purge, if any players are on it reschedules in $PURGE_RETRY
+	# After the startup purge, if any players are on it reschedules in PURGE_RETRY
 
 	my $namespace; # namespace to purge this call
 	my $interval;  # interval to next call
@@ -215,7 +216,7 @@ sub cleanup {
 			if ($client->power()) {
 				unshift @thisCycle, $namespace;
 				$namespace = undef;
-				$interval = $PURGE_RETRY;
+				$interval = PURGE_RETRY;
 				last;
 			}
 		}
@@ -223,45 +224,31 @@ sub cleanup {
 
 	unless ($interval) {
 		if (@thisCycle) {
-			$interval = $startUpPurge ? 0.1 : $PURGE_NEXT;
+			$interval = $startUpPurge ? 0.1 : PURGE_NEXT;
 		} else {
-			$interval = $PURGE_INTERVAL;
-			$startUpPurge = 0;
+			$interval = PURGE_INTERVAL;
 			push @thisCycle, @eachCycle;
+			
+			# always run one purging task at startup
+			$namespace ||= shift @thisCycle if $startUpPurge;
+			$startUpPurge = 0;
 		}
 	}
 	
-	my $now = Time::HiRes::time();
+	my $now = time();
 	
 	if ($namespace && $caches{$namespace}) {
 
 		my $cache = $caches{$namespace};
 		my $lastpurge = $cache->get('Slim::Utils::Cache-purgetime');
 
-		unless ($lastpurge && ($now - $lastpurge) < $PURGE_INTERVAL) {
+		unless ($lastpurge && ($now - $lastpurge) < PURGE_INTERVAL) {
 			my $start = $now;
 			
-			if ( !main::ISWINDOWS && !Slim::Utils::OSDetect::isSqueezeOS() ) {
-				# Fork a child to purge the cache, as it's a slow operation
-				if ( my $pid = fork ) {
-					# parent
-				}
-				else {
-					# child
-					$cache->purge;
-					
-					# Skip END processing
-					$main::daemon = 1;
-					
-					exit;
-				}
-			}
-			else {
-				$cache->purge;
-			}
+			$cache->purge;
 			
-			$cache->set('Slim::Utils::Cache-purgetime', $start, 'never');
-			$now = Time::HiRes::time();
+			$cache->set('Slim::Utils::Cache-purgetime', $start, '-1');
+			$now = time();
 			if ( main::INFOLOG && $log->is_info ) {
 				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
 			}
