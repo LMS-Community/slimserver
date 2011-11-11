@@ -388,7 +388,7 @@ sub _parseResponse {
 
 		my $cache = Slim::Utils::Cache->new;
 		
-		$cache->set( $args->{'name'} . '_XML', $xml, 86400 * 30 );
+		$cache->set( $args->{'name'} . '_XML', $xml, 300 );
 	}
 
 	_parseXML($args, $xml);
