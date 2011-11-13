@@ -156,11 +156,21 @@ sub close {
 sub _canonicalize_expiration_time {
 	my ( $expiry ) = @_;
 	
+	# see below - 'never' would crash 
+	$expiry = -1 if $expiry eq 'never';
+	
 	if ( $expiry && $expiry !~ /^[\-]*\d+$/ ) {
-		#Slim::Utils::Log::logBacktrace($expiry);
-		
 		# Not a number, need to canonicalize it
-		$expiry = Cache::BaseCache::Canonicalize_Expiration_Time($expiry);
+		# sometimes this fails on existing code, eg. with 'never'?
+		$expiry = eval { Cache::BaseCache::Canonicalize_Expiration_Time($expiry) };
+		
+		if ($@) {
+			require Slim::Utils::Log;
+			Slim::Utils::Log::logBacktrace($@);
+			Slim::Utils::Log->logger('server')->error('Falling back to default expiry time: ' . DEFAULT_EXPIRES_TIME);
+			
+			$expiry = DEFAULT_EXPIRES_TIME;
+		}
 	}
 
 	# "If value is less than 60*60*24*30 (30 days), time is assumed to be
