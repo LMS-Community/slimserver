@@ -186,8 +186,14 @@ sub _canonicalize_expiration_time {
 sub _get_dbfile {
 	my $self = shift;
 	
-	# XXX - namespace should not be longer than 8 characters on Windows, as it was causing DB corruption
-	return catfile( $self->{root}, $self->{namespace} . '.db' );
+	my $namespace = $self->{namespace};
+	
+	# namespace should not be longer than 8 characters on Windows, as it was causing DB corruption
+	if ( main::ISWINDOWS && length($namespace > 8) ) {
+		$namespace = lc(substr($namespace, 0, 4)) . substr(Digest::MD5::md5_hex($namespace), 0, 4);
+	}
+	
+	return catfile( $self->{root}, $namespace . '.db' );
 }
 
 sub _init_db {
