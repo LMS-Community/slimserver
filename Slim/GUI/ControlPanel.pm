@@ -397,7 +397,7 @@ sub serverRequest {
 	$ua->timeout(2);
 	
 	if ($credentials && $credentials->{username} && $credentials->{password}) {
-		$ua->credentials($baseUrl, string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
+		$ua->credentials($baseUrl, Slim::Utils::Light::string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
 	}
 
 	return if $needAuthentication;
@@ -418,7 +418,7 @@ sub serverRequest {
 				password => $loginDialog->password,
 			};
 		
-			$ua->credentials($baseUrl, string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
+			$ua->credentials($baseUrl, Slim::Utils::Light::string('SQUEEZEBOX_SERVER'), $credentials->{username}, $credentials->{password});
 		
 			$response = $ua->request($req);
 		}
