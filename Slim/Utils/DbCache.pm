@@ -192,6 +192,10 @@ sub _get_dbfile {
 	if ( main::ISWINDOWS && length($namespace) > 8 ) {
 		$namespace = lc(substr($namespace, 0, 4)) . substr(Digest::MD5::md5_hex($namespace), 0, 4);
 	}
+	# some plugins use paths in their namespace - which was compatible with FileCache, but no longer is
+	elsif ( !main::ISWINDOWS ) {
+		$namespace =~ s/\//-/g;
+	}
 	
 	return catfile( $self->{root}, $namespace . '.db' );
 }
