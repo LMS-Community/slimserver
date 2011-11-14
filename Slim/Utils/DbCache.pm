@@ -189,7 +189,7 @@ sub _get_dbfile {
 	my $namespace = $self->{namespace};
 	
 	# namespace should not be longer than 8 characters on Windows, as it was causing DB corruption
-	if ( main::ISWINDOWS && length($namespace > 8) ) {
+	if ( main::ISWINDOWS && length($namespace) > 8 ) {
 		$namespace = lc(substr($namespace, 0, 4)) . substr(Digest::MD5::md5_hex($namespace), 0, 4);
 	}
 	
