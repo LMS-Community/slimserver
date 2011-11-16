@@ -495,7 +495,7 @@ sub _extract_inc {
     my $inc = "$par_temp/inc";
     my $dlext = do {
         require Config;
-        (defined %Config::Config) ? $Config::Config{dlext} : '';
+        %Config::Config ? $Config::Config{dlext} : '';
     };
 
     if (!-d $inc) {

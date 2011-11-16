@@ -70,7 +70,7 @@ sub _bootstrap {
     # XXX: Multi-platform .dll support in PARs needs better than $Config.
     $dlext ||= do {
         require Config;
-        (defined %Config::Config) ? $Config::Config{dlext} : '';
+        %Config::Config ? $Config::Config{dlext} : '';
     };
 
     my $modpname = join((($^O eq 'MacOS') ? ':' : '/'), @modparts);
