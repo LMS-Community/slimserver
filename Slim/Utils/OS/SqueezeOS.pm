@@ -351,6 +351,9 @@ sub _setupMediaDir {
 		
 		$prefs->set( mediadirs       => [ $path ] );
 		$prefs->set( librarycachedir => "$path/.Squeezebox/cache" );
+
+		# reset dbsource, it needs to be re-configured
+		$prefs->set( 'dbsource', '' );
 		
 		# Create a playlist dir if necessary
 		my $playlistdir = "$path/Playlists";
