@@ -196,7 +196,7 @@ sub _sourceProtocols {
 			$mime = $Slim::Music::Info::types{ $row->{content_type} };
 		}
 		
-		my $key = $mime . $row->{dlna_profile};
+		my $key = $mime . ($row->{dlna_profile} || '');
 		next if $seen{$key}++;
 		
 		if ( $row->{dlna_profile} ) {
