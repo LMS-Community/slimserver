@@ -1,0 +1,2 @@
+-- schema_16 recreated tracks but forgot to recreate all the indicies
+-- Not required for MySQL, since we didn't recreate the tracks table.

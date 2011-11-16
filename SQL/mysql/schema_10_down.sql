@@ -13,4 +13,4 @@ CREATE TABLE playlist_track (
   INDEX playlistIndex (playlist),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`playlist`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;

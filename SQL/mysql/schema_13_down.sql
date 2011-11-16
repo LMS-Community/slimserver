@@ -1,0 +1,4 @@
+
+DROP TABLE IF EXISTS videos;
+
+DROP TABLE IF EXISTS images;
