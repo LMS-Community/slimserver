@@ -1166,8 +1166,14 @@ sub _artists {
 sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
-	
-	_generic($client, $callback, $args, 'genres', \@searchTags,
+	my $search     = $pt->{'search'};
+
+	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		$search = $args->{'search'};
+	}
+		
+	_generic($client, $callback, $args, 'genres', 
+		[@searchTags, ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
