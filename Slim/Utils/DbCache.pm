@@ -157,7 +157,7 @@ sub _canonicalize_expiration_time {
 	my ( $expiry ) = @_;
 	
 	# see below - 'never' would crash 
-	$expiry = -1 if $expiry eq 'never';
+	return -1 if $expiry eq 'never' || $expiry eq '-1';
 	
 	if ( $expiry && $expiry !~ /^[\-]*\d+$/ ) {
 		# Not a number, need to canonicalize it
@@ -175,7 +175,7 @@ sub _canonicalize_expiration_time {
 
 	# "If value is less than 60*60*24*30 (30 days), time is assumed to be
 	# relative from the present. If larger, it's considered an absolute Unix time."
-	if ( $expiry <= 2592000 ) {
+	if ( $expiry <= 2592000 && $expiry > -1 ) {
 		$expiry += time();
 	}
 	
