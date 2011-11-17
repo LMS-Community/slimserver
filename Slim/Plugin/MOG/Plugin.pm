@@ -12,7 +12,7 @@ use Slim::Utils::Strings qw(cstring);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.mog',
-	defaultLevel => 'DEBUG',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_MOG_MODULE_NAME',
 } );
 
