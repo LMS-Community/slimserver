@@ -2470,7 +2470,8 @@ sub rescanCommand {
 	}
 
 	# get our parameters
-	my $mode = $request->getParam('_mode') || 'full';
+	my $originalMode;
+	my $mode = $originalMode = $request->getParam('_mode') || 'full';
 	my $singledir = $request->getParam('_singledir');
 	
 	if ($singledir) {
@@ -2489,9 +2490,15 @@ sub rescanCommand {
 	if ( $mode eq 'external' ) {
 		# The old way of rescanning using scanner.pl
 		my %args = (
-			rescan  => 1,
 			cleanup => 1,
 		);
+
+		if ($originalMode eq 'playlists') {
+			$args{playlists} = 1;
+		}
+		else {
+			$args{rescan} = 1;
+		}		
 		
 		$args{singledir} = $singledir if $singledir;
 
@@ -2555,6 +2562,16 @@ sub rescanCommand {
 			
 				$audio->();
 			}
+			elsif ($mode eq 'playlists') {
+				my $playlistdir = Slim::Utils::Misc::getPlaylistDir();
+				
+				# XXX until libmediascan supports audio, run the audio scanner now
+				Slim::Utils::Scanner::Local->rescan( $playlistdir, {
+					types    => 'list',
+					scanName => 'playlist',
+					progress => 1,
+				} );
+			}
 			else {
 				my $audiodirs = Slim::Utils::Misc::getAudioDirs();
 				
@@ -2564,8 +2581,8 @@ sub rescanCommand {
 				
 				# XXX until libmediascan supports audio, run the audio scanner now
 				Slim::Utils::Scanner::Local->rescan( $audiodirs, {
-					types    => $mode eq 'playlists' ? 'list' : 'list|audio',
-					scanName => $mode eq 'playlists' ? 'playlist' : 'directory',
+					types    => 'list|audio',
+					scanName => 'directory',
 					progress => 1,
 				} );
 			}
