@@ -337,6 +337,7 @@ sub _gotNextRadioTrack {
 		album     => $track->{displayAlbumName},
 		title     => $track->{name},
 		cover     => $track->{cover},
+		duration  => $track->{playbackSeconds},
 		bitrate   => '192k CBR',
 		type      => 'MP3 (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
