@@ -226,6 +226,10 @@ sub init {
 	$class->storage->debugobj('Slim::Schema::Debug');
 
 	$class->updateDebug;
+	
+	# Bug 17609, avoid a possible locking issue by ensuring VA object is up to date at init time
+	# instead of waiting until the first time it's called, for example through artistsQuery.
+	$class->variousArtistsObject;
 
 	$class->schemaUpdated($update);
 	
@@ -1864,7 +1868,7 @@ Returns a singleton object representing the artist 'Various Artists'
 =cut
 
 sub variousArtistsObject {
-	my $self = shift;
+	my $class = shift;
 
 	my $vaString = Slim::Music::Info::variousArtistString();
 
@@ -1872,7 +1876,7 @@ sub variousArtistsObject {
 	# XXX - exception should go here. Coming soon.
 	if (!blessed($vaObj) || !$vaObj->can('name')) {
 
-		$vaObj  = $self->rs('Contributor')->update_or_create({
+		$vaObj  = $class->rs('Contributor')->update_or_create({
 			'name'       => $vaString,
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles($vaString, 1),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles($vaString),
