@@ -873,15 +873,16 @@ sub artistsQuery {
 			
 			# bug 15328 - get the VA name in the language requested by the client
 			#             but only do so if the user isn't using a custom name
-			if ( $vaObj->name eq Slim::Utils::Strings::string('VARIOUSARTISTS') ) {
-				
-				# we can change the name as it will be updated anyway next them the VA object is requested
-				$vaObj->name( $request->string('VARIOUSARTISTS') );
+			my $vaName     = $vaObj->name;
+			my $vaNamesort = $vaObj->namesort;
+			if ( $vaName eq Slim::Utils::Strings::string('VARIOUSARTISTS') ) {
+				$vaName     = $request->string('VARIOUSARTISTS');
+				$vaNamesort = Slim::Utils::Text::ignoreCaseArticles($vaName);
 			}
 			
 			$id       = $vaObj->id;
-			$name     = $vaObj->name;
-			$namesort = $vaObj->namesort;
+			$name     = $vaName;
+			$namesort = $vaNamesort;
 			$mixable  = 0;
 			
 			$process->();
