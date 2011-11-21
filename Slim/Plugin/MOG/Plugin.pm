@@ -6,6 +6,7 @@ use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
 use URI::Split qw(uri_split);
+use URI::Escape qw(uri_escape_utf8);
 use Slim::Plugin::MOG::ProtocolHandler;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw(cstring);
@@ -31,6 +32,12 @@ sub initPlugin {
 	# add custom commands to control radio's diversity
 	Slim::Control::Request::addDispatch(['mog', 'radiodiversity', '_diversity'],
 		[0, 1, 1, \&Slim::Plugin::MOG::ProtocolHandler::setRadioDiversity]);
+
+		# Track Info item
+	Slim::Menu::TrackInfo->registerInfoProvider( mog => (
+		after => 'middle',
+		func  => \&trackInfoMenu,
+	) );
 	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
@@ -77,6 +84,35 @@ sub initPlugin {
 		is_app => 1,
 	);	
 
+}
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+
+	return unless $client;
+
+	# Only show if in the app list
+	return unless $client->isAppEnabled('mog');
+	
+	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
+	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
+	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
+	
+	if ( $artist || $album || $title ) {
+	
+		my $snURL = Slim::Networking::SqueezeNetwork->url(
+			'/api/mog/v1/opml/context?artist=' . uri_escape_utf8($artist)
+			. '&album=' . uri_escape_utf8($album)
+			. '&track='	. uri_escape_utf8($title)
+		);
+
+		return {
+			type      => 'link',
+			name      => $client->string('PLUGIN_ON_MOG'),
+			url       => $snURL,
+			favorites => 0,
+		};
+	}
 }
 
 sub getDisplayName () {
