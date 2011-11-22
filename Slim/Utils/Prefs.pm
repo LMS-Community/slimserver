@@ -856,8 +856,15 @@ sub init {
 
 			# in order to get rid of stale entries trigger full rescan if path has been added
 			if (scalar @new) {
-				main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
-				Slim::Control::Request::executeRequest(undef, ['wipecache']);
+				my %mediadirs = map { $_ => 1 } @{ Slim::Utils::Misc::getMediaDirs() };
+
+				if (!scalar grep { $mediadirs{$_} } @new) {
+					main::INFOLOG && logger('scan.scanner')->info("added folder to exclusion list which is not in mediadirs yet - don't trigger scan: " . Data::Dump::dump(@new));
+				}
+				else {
+					main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
+					Slim::Control::Request::executeRequest(undef, ['wipecache']);
+				}
 			}
 
 			# if only new paths were added, only scan those folders
