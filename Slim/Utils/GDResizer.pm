@@ -125,7 +125,17 @@ sub resize {
 	main::idleStreams() unless main::RESIZER;
 	
 	if ( $mode eq 'm' || $mode eq 'p' ) {
-		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height}\n";
+		# Bug 17140, switch to png if image will contain any padded space
+		if ( $format ne 'png' ) {
+			if ( $width && $in_width && ($in_height / $in_width) != ($height / $width) ) {
+				$format = 'png';
+			}
+			elsif ( $height && $in_height && ($in_width / $in_height) != ($width / $height) ) {
+				$format = 'png';
+			}
+		}
+			
+		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height} $format\n";
 		
 		$im->resize( {
 			width       => $width,
@@ -138,7 +148,7 @@ sub resize {
 	elsif ( $mode eq 'F' ) {
 		# Requested size is bigger than original -> return original size
 		if (( $width >= $in_width ) && ( $height >= $in_height)) {
-			$debug && warn "Return original size ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height}\n";
+			$debug && warn "Return original size ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height} $format\n";
 			$im->resize( {
 				width       => $in_width,
 				height      => $in_height,
@@ -147,7 +157,7 @@ sub resize {
 			} );
 		# Requested size is smaller than original -> resize to requested size
 		} else {
-			$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height}\n";
+			$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height} $format\n";
 			$im->resize( {
 				width       => $width,
 				height      => $height,
@@ -158,7 +168,7 @@ sub resize {
 	}
 
 	else { # mode 'o', only use the width
-		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}xX\n";
+		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}xX $format\n";
 		
 		$im->resize( {
 			width => $width,
