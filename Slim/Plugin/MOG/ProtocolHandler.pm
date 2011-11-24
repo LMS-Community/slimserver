@@ -329,6 +329,11 @@ sub _gotTrack {
 
 	$cache->set( 'mog_meta_' . $info->{id}, $meta, 86400 );
 
+	# Update the playlist time so the web will refresh, etc
+	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+	
+	Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+
 	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 	# When done, callback will continue on to playback
 	my $dns = Slim::Networking::Async->new;
