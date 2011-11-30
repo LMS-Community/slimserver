@@ -1211,7 +1211,7 @@ sub _hello_handler {
 
 		$client->macaddress($mac);
 		$client->init($deviceids[$deviceid], $capabilities, $syncgroupid);
-		$client->reconnect($paddr, $revision, $s, 0, undef, $syncgroupid);  # don't "reconnect" if the player is new.
+		$client->reconnect($paddr, $revision, $s, (main::SLIM_SERVICE && $reconnect), undef, $syncgroupid);  # don't "reconnect" if the player is new except on SN.
 
 	} else {
 

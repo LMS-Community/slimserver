@@ -66,6 +66,7 @@ sub syncname {
 sub restoreSync {
 	my $client = shift;
 	my $syncgroupid = shift;
+	my $noRestart = shift;
 	
 	if ($client->controller()->allPlayers() > 1) {
 		# already synced (this can get called more than once when a player first connects)
@@ -86,7 +87,7 @@ sub restoreSync {
 			my $othermasterID = $prefs->client($other)->get('syncgroupid');
 
 			if ($othermasterID && ($othermasterID eq $syncgroupid)) {
-				$other->execute( [ 'sync', $client->id ] );
+				$other->execute( [ 'sync', $client->id, 'noRestart:' . ($noRestart ? '1' : '0') ] );
 				last;
 			}
 		}

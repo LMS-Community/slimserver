@@ -2867,6 +2867,7 @@ sub syncCommand {
 	# get our parameters
 	my $client   = $request->client();
 	my $newbuddy = $request->getParam('_indexid-');
+	my $noRestart= $request->getParam('noRestart');
 	
 	if (!defined $newbuddy) {
 		$request->setStatusBadParams();
@@ -2890,7 +2891,7 @@ sub syncCommand {
 			}
 		}
 		
-		$client->controller()->sync($buddy) if defined $buddy;
+		$client->controller()->sync($buddy, $noRestart) if defined $buddy;
 	}
 	
 	$request->setStatusDone();

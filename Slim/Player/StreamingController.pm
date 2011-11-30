@@ -1908,7 +1908,7 @@ sub localEndOfStream {
 }
 
 sub sync {
-	my ($self, $player) = @_;
+	my ($self, $player, $noRestart) = @_;
 
 	if ($player->controller() == $self) {
 		main::INFOLOG && $synclog->info($self->{'masterId'} . " sync-group already contains: " . $player->id());
@@ -1920,8 +1920,9 @@ sub sync {
 	
 	my $other = $player->controller();
 	if (@{$other->{'allPlayers'}} > 1) {
-		$other->unsync($player);	# will also stop it, if necessary		
-	} elsif (!$other->isStopped()) {
+		$other->unsync($player);	# will also stop it, if necessary
+		$noRestart = 0;	
+	} elsif (!$noRestart && !$other->isStopped()) {
 		_stopClient($player);
 	}
 
@@ -1964,7 +1965,7 @@ sub sync {
 		
 		if (isPaused($self)) {
 			_pauseStreaming($self, playingSong($self));
-		} elsif (!isStopped($self)) {
+		} elsif (!$noRestart && !isStopped($self)) {
 			_JumpToTime($self, undef, {newtime => playingSongElapsed($self), restartIfNoSeek => 1});
 		}
 	} else {

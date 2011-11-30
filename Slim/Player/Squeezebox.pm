@@ -64,7 +64,7 @@ sub reconnect {
 	}
 	
 	# check if there is a sync group to restore
-	Slim::Player::Sync::restoreSync($client, $syncgroupid);
+	Slim::Player::Sync::restoreSync($client, $syncgroupid, (main::SLIM_SERVICE && $reconnect));
 	
 	if ( main::SLIM_SERVICE ) {
 		# SN supports reconnecting from another instance
