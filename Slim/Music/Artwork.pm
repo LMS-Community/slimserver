@@ -113,6 +113,11 @@ sub findStandaloneArtwork {
 				}
 			}
 			elsif ( defined $coverFormat ) {
+				if ( main::ISWINDOWS ) {
+					# Remove illegal characters from filename.
+					$coverFormat =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
+				}
+
 				push @files, $coverFormat;
 			}
 		}
