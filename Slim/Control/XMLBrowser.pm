@@ -1904,9 +1904,11 @@ sub _defeatDestructiveTouchToPlay {
 	# 1 => always defeat
 	# 2 => defeat if playlist length > 1
 	# 3 => defeat only if playing and current-playlist-length > 1
+	# 4 => defeat only if playing and current item not a radio stream
 	
 	return 0 if !$pref;
 	return 1 if $pref == 1 || !$client;
+	return ($client->isPlaying() && $client->playingSong()->duration()) if $pref == 4;
 	my $l = Slim::Player::Playlist::count($client);
 	return 0 if $l < 2;
 	return 0 if $pref == 3 && (!$client->isPlaying() || $l < 2);
