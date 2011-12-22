@@ -1445,7 +1445,7 @@ sub playlistXitemCommand {
 
 	if ($cmd =~ /^(play|load)$/) { 
 
-		$jumpToIndex = 0;
+		$jumpToIndex = 0 if !defined $jumpToIndex;
 
 	} elsif ($cmd eq "resume" && Slim::Music::Info::isM3U($path)) {
 
