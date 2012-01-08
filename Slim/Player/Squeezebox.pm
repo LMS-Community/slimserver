@@ -904,7 +904,15 @@ sub stream_s {
 	$flags |= 0x40 if $params->{reconnect};
 	$flags |= 0x80 if $params->{loop};
 	$flags |= 0x03 & ($prefs->client($client)->get('polarityInversion') || 0);
-	$flags |= (($prefs->client($client)->get('outputChannels') || 0) & 0x03) << 2;
+	
+	# If the output channels pref is set, and the player is synced to at least 1 other active player
+	# we tell the player to only play the desired channel. If not actively synced, the player will play
+	# in stereo.
+	if ( my $outputChannels = $prefs->client($client)->get('outputChannels') ) {
+		if ( $client->isSynced(1) ) { # use active player count
+			$flags |= ($outputChannels & 0x03) << 2;
+		}
+	}
 
 	if ($handler->can('slimprotoFlags')) {
 		$flags |= $handler->slimprotoFlags($client, $url, $isDirect);
