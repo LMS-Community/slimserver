@@ -9133,7 +9133,7 @@ SETUP_SN_VALIDATION_FAILED
 	DA	Der opstod en uventet fejl under validering af din konto på mysqueezebox.com. Kontroller at din netværksforbindelse fungerer som den skal.
 	DE	Unerwarteter Fehler beim Prüfen Ihres mysqueezebox.com-Kontos. Überprüfen Sie, ob die Netzwerkverbindung ordnungsgemäß funktioniert.
 	EN	An unexpected error occurred while validating your mysqueezebox.com account. Please make sure network connectivity is working fine.
-	ES	Se ha producido un error inesperado mientras validaba su cuenta de squeezebox.com. Asegúrese de que la conexión de red funciona correctamente.
+	ES	Se ha producido un error inesperado mientras validaba su cuenta de mysqueezebox.com. Asegúrese de que la conexión de red funciona correctamente.
 	FI	Odottamaton virhe mysqueezebox.com-tilisi vahvistamisessa. Tarkista, että verkkoyhteys toimii.
 	FR	Une erreur inattendue est survenue lors de la validation de votre compte mysqueezebox.com. Vérifiez que la connectivité réseau fonctionne correctement.
 	IT	Si è verificato un errore imprevisto durante la convalida dell'account mysqueezebox.com. Verificare che la connessione della rete funzioni correttamente.
