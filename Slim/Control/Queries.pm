@@ -1669,9 +1669,10 @@ sub mediafolderQuery {
 
 		my $sth = $sql ? Slim::Schema->dbh->prepare_cached($sql) : undef;
 
-		for my $filename (@$items[$start..$end]) {
+		my $x = -1;
+		for my $filename (@$items) {
 
-			my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || next;
+			my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || '';
 			my $realName;
 
 			# Amazingly, this just works. :)
@@ -1688,11 +1689,13 @@ sub mediafolderQuery {
 				}
 			}
 	
-			my $item = Slim::Schema->objectForUrl({
+			my $item;
+			
+			Slim::Schema->objectForUrl({
 				'url'      => $url,
 				'create'   => 1,
 				'readTags' => 1,
-			});
+			}) if $url;
 	
 			my $id;
 
@@ -1704,6 +1707,15 @@ sub mediafolderQuery {
 			}
 			elsif (blessed($item)) {
 				$id = $item->id();
+			}
+
+			$x++;
+			
+			if ($x < $start) {
+				next;
+			}
+			elsif ($x > $end) {
+				last;
 			}
 
 			$id += 0;
