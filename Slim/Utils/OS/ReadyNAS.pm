@@ -70,8 +70,29 @@ sub dirsFor {
 		}
 		
 		push @dirs, $path;
-	}
-	else {
+	
+	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
+
+		push @dirs, "/c/.squeezeboxserver/$dir";
+
+	} elsif ($dir eq 'Plugins') {
+			
+		push @dirs, $class->SUPER::dirsFor($dir);
+		push @dirs, "/c/.squeezeboxserver/Plugins";
+		
+	} elsif ($dir =~ /^(?:prefs)$/) {
+
+		push @dirs, $::prefsdir || "/c/.squeezeboxserver/prefs";
+
+	} elsif ($dir eq 'log') {
+
+		push @dirs, $::logdir || "/c/.squeezeboxserver/log";
+
+	} elsif ($dir eq 'cache') {
+
+		push @dirs, $::cachedir || "/c/.squeezeboxserver/cache";
+
+	} else {
 		@dirs = $class->SUPER::dirsFor($dir);
 	}
 
