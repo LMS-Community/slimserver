@@ -71,10 +71,6 @@ sub dirsFor {
 		
 		push @dirs, $path;
 	
-	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
-
-		push @dirs, "/c/.squeezeboxserver/$dir";
-
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
