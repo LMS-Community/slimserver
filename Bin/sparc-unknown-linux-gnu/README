@@ -1,0 +1,15 @@
+The following binaries were built from Netgear's modified sources, they include some optimized ASM routines for the Padre CPU:
+  mp42aac
+  aac2wav
+  alac
+
+Source: http://www.readynas.com/download/GPL/RNR4_RND4_RND2_4.1.6_WW_src.zip
+
+* mp42aac is in the AP4 directory
+* aac2wav is in the hxplayer directory
+* alac is in the alac_decoder directory
+
+Read the README.INFRANT files in each directory for build instructions.
+
+faad was compiled with:
+-DFIXED_POINT -DPADRE -O3
