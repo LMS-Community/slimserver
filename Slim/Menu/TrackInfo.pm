@@ -440,6 +440,11 @@ sub playTrack {
 
 	# "Play Song" in current playlist context is 'jump'
 	if ( $tags->{menuContext} eq 'playlist' ) {
+		
+		# do not add item if this is current track and already playing
+		return [] if $tags->{playlistIndex} == Slim::Player::Source::playingSongIndex($client)
+					&& $client->isPlaying();
+		
 		$actions = {
 			go => {
 				player => 0,
@@ -485,10 +490,7 @@ sub playTrack {
 sub addTrackNext {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $string = cstring($client, 'PLAY_NEXT');
-	my $cmd = 'insert';
-	if ( $tags->{menuContext} eq 'playlist' ) {
-		$cmd = 'playlistnext';
-	}
+	my $cmd = $tags->{menuContext} eq 'playlist' ? 'playlistnext' : 'insert';
 	
 	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
 }
@@ -496,13 +498,15 @@ sub addTrackNext {
 sub addTrackEnd {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 
-	my $string = cstring($client, 'ADD_TO_END');
-	my $cmd = 'add';
+	my ($string, $cmd);
 
 	# "Add Song" in current playlist context is 'delete'
 	if ( $tags->{menuContext} eq 'playlist' ) {
 		$string = cstring($client, 'REMOVE_FROM_PLAYLIST');
-		$cmd = 'delete';
+		$cmd    = 'delete';
+	} else {
+		$string = cstring($client, 'ADD_TO_END');
+		$cmd    = 'add';
 	}
 	
 	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
@@ -519,7 +523,10 @@ sub addTrack {
 	my $actions;
 	# remove from playlist
 	if ( $cmd eq 'delete' ) {
-		$string  = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		
+		# Do not add this item if only one item in playlist
+		return [] if Slim::Player::Playlist::count($client) < 2;
+
 		$actions = {
 			go => {
 				player     => 0,
@@ -534,7 +541,15 @@ sub addTrack {
 
 	# play next in the playlist context
 	} elsif ( $cmd eq 'playlistnext' ) {
+		
+		# Do not add this item if only one item in playlist
+		return [] if Slim::Player::Playlist::count($client) < 2;
+
 		my $moveTo = Slim::Player::Source::playingSongIndex($client) || 0;
+		
+		# do not add item if this is current track or already the next track
+		return [] if $tags->{playlistIndex} == $moveTo || $tags->{playlistIndex} == $moveTo+1;
+		
 		if ( $tags->{playlistIndex} > $moveTo ) {
 			$moveTo = $moveTo + 1;
 		}
