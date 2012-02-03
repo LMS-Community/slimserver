@@ -1691,7 +1691,7 @@ sub mediafolderQuery {
 	
 			my $item;
 			
-			Slim::Schema->objectForUrl({
+			$item = Slim::Schema->objectForUrl({
 				'url'      => $url,
 				'create'   => 1,
 				'readTags' => 1,
