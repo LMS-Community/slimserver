@@ -1678,6 +1678,9 @@ sub _Rebuffer {				# pause(noFadeOut) -> Buffering(rebuffering)
 		$player->pause();
 		$player->rebuffer();
 	}
+	
+	# Bug 17877: need to save resumeTime here so that synchronized-resume works after the rebuffer
+	$self->{'resumeTime'} = playingSongElapsed($self);
 }
 
 ####################################################################
