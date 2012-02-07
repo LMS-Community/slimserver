@@ -194,6 +194,9 @@ sub _sourceProtocols {
 		}
 		else {
 			$mime = $Slim::Music::Info::types{ $row->{content_type} };
+			
+			# Bug 17882, use DLNA-required audio/mp4 instead of audio/m4a
+			$mime = 'audio/mp4' if $mime eq 'audio/m4a';
 		}
 		
 		my $key = $mime . ($row->{dlna_profile} || '');

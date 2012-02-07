@@ -219,6 +219,9 @@ sub trackDetails {
 		my $content_type = $track->{type} || $track->{'tracks.content_type'};
 		my $native_type = $Slim::Music::Info::types{$content_type};
 		
+		# Bug 17882, use DLNA-required audio/mp4 instead of audio/m4a
+		$native_type = 'audio/mp4' if $native_type eq 'audio/m4a';
+		
 		# Setup transcoding formats for non-PCM/MP3 content
 		my @other_types;
 		if ( $content_type !~ /^(?:mp3|aif|pcm|wav)$/ ) {
