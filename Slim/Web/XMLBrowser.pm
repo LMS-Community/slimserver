@@ -277,6 +277,9 @@ sub handleFeed {
 			my $searchQuery;
 			
 			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && defined $stash->{'q'} ) {
+				# bug 17373 - remove period from search expression, as it breaks our index (and is ignored during the search anyway)
+				$stash->{q} =~ s/\./ /g;
+
 				$crumbText .= '_' . uri_escape_utf8( $stash->{q}, "^A-Za-z0-9" );
 				$searchQuery = $stash->{'q'};
 			}
@@ -1183,14 +1186,8 @@ sub webLink {
 		return;
 	}
 	
-	# Bug 17373: rewrite the index arg from raw uri if present as it will already be unescaped which breaks search encoding of index
-	# (this is the same issue as bug 17181)
-	my ($itemId) = ($response->request->uri =~ m%index=(.*?)&%);
-	if ($itemId) {
-		$args->{'index'} = $itemId;
-	}
-
 	my ($index, $quantity) = (($args->{'start'} || 0), ($args->{'itemsPerPage'} || $prefs->get('itemsPerPage')));
+	my $itemId = $args->{'index'};
 	if (defined $itemId) {
 		my $i = $itemId;
 		$i =~ s/^(?:[a-f0-9]{8})?\.?//;	# strip sessionid if present
