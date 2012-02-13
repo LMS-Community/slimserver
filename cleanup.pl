@@ -14,10 +14,12 @@
 require 5.008_001;
 
 use constant SPLASH_LOGO => 'lms_splash.png';
+use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
+use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 
 # don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
 my $splash;
-my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
+my $useWx = (!ISMAC || $^X =~ /wxPerl/i) && eval {
 	require Wx;
 	
 	showSplashScreen();
@@ -28,7 +30,7 @@ my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
 	return 1;
 };
 
-print "$@\n" if $@;
+print "$@\n" if $@ && ISWINDOWS;
 
 use strict;
 use Socket;
@@ -38,8 +40,6 @@ use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
 use constant DEBUG        => 1;
-use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
-use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant TRANSCODING  => 0;
 use constant PERFMON      => 0;
 use constant DEBUGLOG     => 0;
@@ -80,7 +80,7 @@ sub main {
 		exit;
 	}
 
-	my ($all, $cache, $filecache, $database, $prefs, $logs);
+	my ($all, $cache, $filecache, $database, $prefs, $logs, $dryrun);
 	
 	Getopt::Long::GetOptions(
 		'all'       => \$all,
@@ -89,6 +89,7 @@ sub main {
 		'prefs'     => \$prefs,
 		'logs'      => \$logs,
 		'database'  => \$database,
+		'dryrun'    => \$dryrun,
 	);
 	
 	my $folders = getFolderList({
@@ -123,7 +124,7 @@ sub main {
 		}
 	}
 
-	cleanup($folders);
+	cleanup($folders, $dryrun);
 	
 	print sprintf("\n%s\n\n", Slim::Utils::Light::string('CLEANUP_PLEASE_RESTART_SC'));
 }
@@ -143,6 +144,8 @@ sub usage {
 
 	--all     (!!) %s
 	
+	--dryrun       %s
+	
 EOF
 	print sprintf($usage, 
 		Slim::Utils::Light::string('CLEANUP_USAGE'), 
@@ -153,6 +156,7 @@ EOF
 		Slim::Utils::Light::string('CLEANUP_LOGS'),
 		Slim::Utils::Light::string('CLEANUP_CACHE'),
 		Slim::Utils::Light::string('CLEANUP_ALL'),
+		Slim::Utils::Light::string('CLEANUP_DRYRUN'),
 	);
 }
 
@@ -163,6 +167,26 @@ sub getFolderList {
 	my $cacheFolder = Slim::Utils::Light::getPref('cachedir') || $os->dirsFor('cache');
 
 	push @folders, _target('cache', 'cache') if ($args->{all} || $args->{cache});
+	
+	push @folders, {
+		label   => 'some legacy files',
+		folders => [
+			File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
+			File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
+			File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-shm'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-wal'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-shm'),
+			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-wal'),
+			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db'),
+			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-shm'),
+			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-wal'),
+		],
+	};
 	
 	if ($args->{filecache}) {
 		push @folders, {
@@ -175,8 +199,17 @@ sub getFolderList {
 				File::Spec::Functions::catdir($cacheFolder, 'fonts.bin'),
 				File::Spec::Functions::catdir($cacheFolder, 'strings.bin'),
 				File::Spec::Functions::catdir($cacheFolder, 'templates'),
+				File::Spec::Functions::catdir($cacheFolder, 'updates'),
 				File::Spec::Functions::catdir($cacheFolder, 'cookies.dat'),
 				File::Spec::Functions::catdir($cacheFolder, 'plugin-data.yaml'),
+
+				File::Spec::Functions::catdir($cacheFolder, 'cache.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'cache.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'cache.db-wal'),
+
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-wal'),
 			],
 		};
 	}
@@ -195,25 +228,6 @@ sub getFolderList {
 				File::Spec::Functions::catdir($cacheFolder, 'persist.db'),
 				File::Spec::Functions::catdir($cacheFolder, 'persist.db-shm'),
 				File::Spec::Functions::catdir($cacheFolder, 'persist.db-wal'),
-				File::Spec::Functions::catdir($cacheFolder, 'artwork.db'),
-				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-shm'),
-				File::Spec::Functions::catdir($cacheFolder, 'artwork.db-wal'),
-
-				# some legacy files...
-				File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
-				File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
-				File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-shm'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-wal'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-shm'),
-				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-wal'),
-				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db'),
-				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-shm'),
-				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-wal'),
 			],
 		};
 	}
@@ -302,10 +316,8 @@ sub checkForSC {
 }
 
 sub cleanup {
-	my $folders = shift;
+	my ($folders, $dryrun) = @_;
 
-	my $fallbackFolder = $os->dirsFor('');
-		
 	for my $item (@$folders) {
 		print sprintf("\n%s %s...\n", Slim::Utils::Light::string('CLEANUP_DELETING'), $item->{label}) unless $useWx;
 		
@@ -313,6 +325,8 @@ sub cleanup {
 			next unless $_;
 			
 			print "-> $_\n" if (-e $_ && !$useWx);
+			
+			next if $dryrun;
 
 			if (-d $_) {
 				File::Path::rmtree($_);

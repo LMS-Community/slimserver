@@ -23134,6 +23134,10 @@ CLEANUP_ALL
 	PL	Usuń wszystkie - nie rób tego, jeśli nie masz całkowitej pewności!
 	RU	Очистить все — не выполняйте эту команду, если не уверены!
 	SV	Utplåna allt – Gör inte detta om du inte är helt säker på vad du gör!
+	
+CLEANUP_DRYRUN
+	DE	Bereinigung nicht wirklich durchführen, aber eine Liste der betroffenen Ordner und Dateien anzeigen.
+	EN	Don't actually run the cleanup, but show which files and folders would be removed.
 
 CLEANUP_DELETING
 	CS	Mazání
