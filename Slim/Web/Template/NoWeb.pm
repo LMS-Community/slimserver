@@ -172,6 +172,18 @@ sub fixHttpPath {
 			$found = $fullpath;
 		}
 
+		# bug 17841 - don't allow directory traversal, ignore requests to files outside the HTML base directories
+		if ($found && $found =~ /\.\./) {
+			# we probably don't use Cwd anywhere else
+			require Cwd;
+			$found = Cwd::abs_path($found);
+			
+			# reset path if it's outside the skin path ($dir)
+			if ($found !~ m|$dir|) {
+				$found = '';
+			}
+		}
+
 		if ($found) {
 
 			main::INFOLOG && $log->is_info && $log->info("Found path $found");
