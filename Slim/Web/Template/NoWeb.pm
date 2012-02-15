@@ -179,7 +179,7 @@ sub fixHttpPath {
 			$found = Cwd::abs_path($found);
 			
 			# reset path if it's outside the skin path ($dir)
-			if ($found !~ m|$dir|) {
+			if ($found !~ m|^$dir|) {
 				$found = '';
 			}
 		}
