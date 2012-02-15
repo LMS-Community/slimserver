@@ -6,6 +6,7 @@ package Slim::Plugin::MP3tunes::Plugin;
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+use Date::Parse;
 
 use Slim::Formats::RemoteMetadata;
 use Slim::Networking::SqueezeNetwork;
@@ -70,6 +71,18 @@ sub setLockerInfo {
 		my $album    = $2;
 		my $tracknum = $3;
 		my $title    = $4;
+		
+		# DAR.fm has slightly different formatting: $title would be the same as the track no.
+		# let's shuffle things around to get the recording title as the track title
+		if ($artist && $title && $title + 0 == $tracknum) {
+			$title = $artist;
+			$artist = '';
+			
+			if (my $date = Date::Parse::str2time($album)) {
+				$album  = Slim::Utils::DateTime::shortDateF($date);
+			}
+		}
+		
 		my $cover;
 		
 		if ( $url =~ /hasArt=1/ ) {
