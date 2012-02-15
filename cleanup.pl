@@ -168,25 +168,27 @@ sub getFolderList {
 
 	push @folders, _target('cache', 'cache') if ($args->{all} || $args->{cache});
 	
-	push @folders, {
-		label   => 'some legacy files',
-		folders => [
-			File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
-			File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
-			File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-shm'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-wal'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-shm'),
-			File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-wal'),
-			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db'),
-			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-shm'),
-			File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-wal'),
-		],
-	};
+	if ($args->{all} || $args->{prefs} || $args->{cache} || $args->{filecache} || $args->{logs} || $args->{database}) {
+		push @folders, {
+			label   => 'some legacy files',
+			folders => [
+				File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
+				File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
+				File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezebox-persistent.db-wal'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-shm'),
+				File::Spec::Functions::catdir($cacheFolder, 'ArtworkCache.db-wal'),
+			],
+		};
+	}
 	
 	if ($args->{filecache}) {
 		push @folders, {
