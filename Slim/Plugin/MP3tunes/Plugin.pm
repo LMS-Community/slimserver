@@ -78,6 +78,12 @@ sub setLockerInfo {
 			$title = $artist;
 			$artist = '';
 			
+			# DAR.fm appends the station name to the title - move it to the $artist value
+			if ($title =~ s/ \((.*?)\)$//) {
+				$artist = $1;
+			}
+			
+			# try to localize the recording date
 			if (my $date = Date::Parse::str2time($album)) {
 				$album  = Slim::Utils::DateTime::shortDateF($date);
 			}
