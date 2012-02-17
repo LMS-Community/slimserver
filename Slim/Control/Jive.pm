@@ -2941,8 +2941,12 @@ sub appMenus {
 		if ( my $plugin = $apps->{$app}->{plugin} ) {
 			# Make sure it's enabled
 			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
+				
 				# Get the predefined menu for this plugin
-				if ( my ($globalMenu) = grep { $_->{text} && $_->{text} eq $pluginInfo->{name} } @appMenus ) {				
+				if ( my ($globalMenu) = grep {
+					( $_->{uuid} && lc($_->{uuid}) eq lc($pluginInfo->{id}) )
+					|| ( $_->{text} && $_->{text} eq $pluginInfo->{name} )
+				} @appMenus ) {				
 					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
 				
 					# Clone the existing menu and set the node
@@ -2956,6 +2960,12 @@ sub appMenus {
 
 					# flag as an app
 					$clone->{isApp} = 1;
+					
+					# use icon as defined by MySB to allow for white-label solutions
+					if ( my $icon = $apps->{$app}->{icon} ) {
+						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
+						$clone->{window}->{'icon-id'} = $icon ;
+					}
 
 					push @{$menu}, $clone;
 				}
