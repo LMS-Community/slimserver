@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <extension>
-	<id>1B354CB1-0CFF-46BF-840A-715A036C6264</id>
+	<id>4f729f30-5c70-11e1-b86c-0800200c9a66</id>
 	<name>PLUGIN_MOG_MODULE_NAME</name>
 	<module>Slim::Plugin::MOG::Plugin</module>
 	<version>1.0</version>
