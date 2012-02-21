@@ -182,7 +182,7 @@ sub _players_done {
 			# and just copy it to the my_apps list
 			if ( $info->{plugin} ) {
 				if ( my $plugin = Slim::Utils::PluginManager->isEnabled( $info->{plugin} ) ) {
-					_updateWebLink($plugin->{name}, $app);
+					_updateWebLink($plugin->{name}, $app, $info);
 				}
 			}
 			elsif ( $info->{type} eq 'opml' ) {
@@ -291,12 +291,29 @@ sub _players_done {
 sub _updateWebLink {
 	my $name = shift;
 	my $id   = shift;
+	my $info = shift;
 	
 	my $disabled = $prefs->get('sn_disabled_plugins');
 	return if $disabled && grep /^$id$/i, @$disabled;
 	
-	my $url = Slim::Web::Pages->getPageLink( 'apps', $name );
-	Slim::Web::Pages->addPageLinks( 'my_apps', { $name => $url } );
+	if ($info && $info->{title} && $name && $info->{title} ne $name) {
+		my $url = Slim::Web::Pages->getPageLink( 'apps', $name );
+		Slim::Web::Pages->addPageLinks( 'my_apps', { $info->{title} => $url } );
+		
+		# use icon as defined by MySB to allow for white-label solutions
+		if ( my $icon = $info->{icon} ) {
+			my $pluginData = Slim::Utils::PluginManager->dataForPlugin($info->{plugin});
+			$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
+			$pluginData->{icon} = $icon;
+			
+			Slim::Web::Pages->addPageLinks("icons", { $name => $icon });
+			Slim::Web::Pages->addPageLinks("icons", { $info->{title} => $icon });
+		}
+	}
+	else {
+		my $url = Slim::Web::Pages->getPageLink( 'apps', $name );
+		Slim::Web::Pages->addPageLinks( 'my_apps', { $name => $url } );
+	}
 }
 
 sub _players_error {
