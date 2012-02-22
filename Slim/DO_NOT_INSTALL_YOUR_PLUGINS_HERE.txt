@@ -1,4 +1,4 @@
-Don't install anything here - it could be wiped during the next update. 
+Don't install anything here - it could be wiped during the next update.
 Thanks.
 
 The Slim/Plugin folder is for plugins installed with Logitech Media Server only. 
