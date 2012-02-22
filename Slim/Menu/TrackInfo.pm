@@ -53,6 +53,8 @@ sub name {
 	return 'SONG_INFO';
 }
 
+my $emptyItemList = [{ignore => 1}];
+
 ##
 # Register all the information providers that we provide.
 # This order is defined at http://wiki.slimdevices.com/index.php/UserInterfaceHierarchy
@@ -441,6 +443,10 @@ sub playTrack {
 	# "Play Song" in current playlist context is 'jump'
 	if ( $tags->{menuContext} eq 'playlist' ) {
 		
+		# do not add item if this is current track and already playing
+		return $emptyItemList if $tags->{playlistIndex} == Slim::Player::Source::playingSongIndex($client)
+					&& $client->isPlaying();
+		
 		$actions = {
 			go => {
 				player => 0,
@@ -519,6 +525,9 @@ sub addTrack {
 	my $actions;
 	# remove from playlist
 	if ( $cmd eq 'delete' ) {
+		
+		# Do not add this item if only one item in playlist
+		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
 		$actions = {
 			go => {
@@ -534,8 +543,14 @@ sub addTrack {
 
 	# play next in the playlist context
 	} elsif ( $cmd eq 'playlistnext' ) {
+		
+		# Do not add this item if only one item in playlist
+		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
 
 		my $moveTo = Slim::Player::Source::playingSongIndex($client) || 0;
+		
+		# do not add item if this is current track or already the next track
+		return $emptyItemList if $tags->{playlistIndex} == $moveTo || $tags->{playlistIndex} == $moveTo+1;
 		
 		if ( $tags->{playlistIndex} > $moveTo ) {
 			$moveTo = $moveTo + 1;

@@ -524,9 +524,9 @@ sub gotOPML {
 			}
 		}
 		
-		# Check for a 'hide' param, if it's 'ip3k' skip the item in this UI
-		# of it is a playcontrol item - don't need those for ip3k
-		if ( ($item->{hide} && $item->{hide} =~ /ip3k/) || $item->{'playcontrol'}) {
+		# Check for an 'ignore' param, a 'hide' == 'ip3k' param (probably obsolete) and skip the item in this UI
+		# or it is a playcontrol item - don't need those for ip3k
+		if ( $item->{ignore} || ($item->{hide} && $item->{hide} =~ /ip3k/) || $item->{'playcontrol'}) {
 			splice @{ $opml->{items} }, $index, 1;
 			next;
 		}

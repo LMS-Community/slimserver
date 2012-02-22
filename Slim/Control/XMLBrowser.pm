@@ -999,6 +999,12 @@ sub _cliQuery_done {
 				for my $item ( @$items[$start..$end] ) {
 					$itemIndex++;
 					
+					if ($item->{ignore}) {
+						# Skip this item
+						$totalCount--;
+						next;
+					}
+					
 					my $id = $baseId . $itemIndex;
 					
 					my $name;
