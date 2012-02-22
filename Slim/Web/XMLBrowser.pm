@@ -1300,6 +1300,10 @@ sub _makePlayLink {
 			my $link = 'anyurl?p0=playlist&p1=' . $action . '&p2=' . Slim::Utils::Misc::escape($playUrl);
 	
 			my $title = $item->{'title'} || $item->{'name'};
+			
+			# bug 17881: don't set the track title when we're dealing with a local file, and the title is the filename (BMF)
+			$title = '' if $title && $item->{filename} && $item->{filename} eq $title;
+			
 			$link .= '&p3=' . Slim::Utils::Misc::escape($title) if $title;
 			 
 			return $link;
