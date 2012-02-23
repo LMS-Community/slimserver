@@ -235,7 +235,7 @@ sub _gotTrack {
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
 		bitrate   => $info->{bitrate} . 'k CBR',
-		type      => 'MP3 (WiMP)',
+		type      => 'MP3',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
@@ -444,7 +444,7 @@ sub getMetadataFor {
 	
 	return $meta || {
 		bitrate   => '256k CBR',
-		type      => 'MP3 (WiMP)',
+		type      => 'MP3',
 		icon      => $icon,
 		cover     => $icon,
 	};
@@ -486,7 +486,7 @@ sub _gotBulkMetadata {
 		my $meta = {
 			%{$track},
 			bitrate   => $bitrate . 'k CBR',
-			type      => 'MP3 (WiMP)',
+			type      => 'MP3',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
 		};
