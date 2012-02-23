@@ -161,6 +161,9 @@ sub myLibraryMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my $name = 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY';
+	if ($client->isAppEnabled('rhapsodyeu')) {
+		$name = 'PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY';
+	}
 	
 	my %params = (
 		header   => $name,
@@ -275,8 +278,16 @@ sub trackInfoMenu {
 	
 	return unless $client;
 	
+	my $label;
+	if ($client->isAppEnabled('rhapsodydirect')) {
+		$label = 'PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY';
+	}
+	elsif ($client->isAppEnabled('rhapsodyeu')) {
+		$label = 'PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU';
+	}
+	
 	# Only show if in the app list
-	return unless $client->isAppEnabled('rhapsodydirect');
+	return unless $label;
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
@@ -294,7 +305,7 @@ sub trackInfoMenu {
 	if ( $artist && ( $album || $title ) ) {
 		return {
 			type      => 'link',
-			name      => $client->string('PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY'),
+			name      => $client->string($label),
 			url       => $snURL,
 			favorites => 0,
 		};

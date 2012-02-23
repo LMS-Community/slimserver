@@ -43,6 +43,21 @@ PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
 	RU	Медиатека Rhapsody
 	SV	Rhapsody-bibliotek
 
+PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY
+	CS	Knihovna Napster
+	DA	Napster-bibliotek
+	DE	Napster-Bibliothek
+	EN	Napster Library
+	ES	Biblioteca Napster
+	FI	Napster-kirjasto
+	FR	Bibliothèque Napster
+	IT	Libreria Napster
+	NL	Napster-collectie
+	NO	Napster-bibliotek
+	PL	Biblioteka usługi Napster
+	RU	Медиатека Napster
+	SV	Napster-bibliotek
+
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	CS	Chyba Rhapsody
 	DA	Rhapsody-fejl
@@ -282,6 +297,21 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
 	PL	W usłudze Rhapsody
 	RU	На Rhapsody
 	SV	På Rhapsody
+
+PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
+	CS	Na Napster
+	DA	På Napster
+	DE	Auf Napster
+	EN	On Napster
+	ES	En Napster
+	FI	Napsterissa
+	FR	Sur Napster
+	IT	Su Napster
+	NL	Op Napster
+	NO	På Napster
+	PL	W usłudze Napster
+	RU	На Napster
+	SV	På Napster
 
 PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
 	CS	Není možné najít adresu pro Rhapsody.
