@@ -407,7 +407,10 @@ our %functions = (
 
 			$client->execute(["stop"]);
 
-			Slim::Buttons::Common::pushMode($client, 'playlist');
+			# Push into playlist, unless already there 
+			if (Slim::Buttons::Common::mode($client) ne 'playlist') {
+				Slim::Buttons::Common::pushMode($client, 'playlist');
+			}
 
 			$client->showBriefly( {
 				'line' => [ "", $client->string('STOPPING') ],
