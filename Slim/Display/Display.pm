@@ -283,7 +283,7 @@ sub showBriefly {
 
 	# notify cli/jive of the show briefly message
 	if ($display->notifyLevel >= 1) {
-		$display->notify('showbriefly', $parts);
+		$display->notify('showbriefly', $parts, $duration);
 	}
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
@@ -904,9 +904,10 @@ sub notify {
 	my $display = shift;
 	my $type    = shift;
 	my $info    = shift;
+	my $duration= shift;
 
 	# send a notification for this display update to 'displaystatus' queries
-	Slim::Control::Request->new($display->client->id, ['displaynotify', $type, $info])->notify('displaystatus');
+	Slim::Control::Request->new($display->client->id, ['displaynotify', $type, $info, $duration])->notify('displaystatus');
 }
 
 =head1 SEE ALSO

@@ -1056,9 +1056,10 @@ sub displaystatusQuery_filter {
 	my $myclientid = $self->clientid() || return 0; 
 	return 0 if $clientid ne $myclientid;
 
-	my $subs  = $self->getParam('subscribe');
-	my $type  = $request->getParam('_type');
-	my $parts = $request->getParam('_parts');
+	my $subs     = $self->getParam('subscribe');
+	my $type     = $request->getParam('_type');
+	my $parts    = $request->getParam('_parts');
+	my $duration = $request->getParam('_duration');
 
 	# check displaynotify type against subscription ('showbriefly', 'update', 'bits', 'all')
 	if ($subs eq $type || ($subs eq 'bits' && $type ne 'showbriefly') || $subs eq 'all') {
@@ -1072,8 +1073,9 @@ sub displaystatusQuery_filter {
 		return 0 if ($type eq 'update' && !$self->client->display->renderCache->{'screen1'}->{'changed'});
 
 		# store display info in subscription request so it can be accessed by displaystatusQuery
-		$pd->{'type'}  = $type;
-		$pd->{'parts'} = $parts;
+		$pd->{'type'}     = $type;
+		$pd->{'parts'}    = $parts;
+		$pd->{'duration'} = $duration;
 
 		# execute the query immediately
 		$self->__autoexecute;
@@ -1098,10 +1100,11 @@ sub displaystatusQuery {
 	# return any previously stored display info from displaynotify
 	if (my $pd = $request->privateData) {
 
-		my $client= $request->client;
-		my $format= $pd->{'format'};
-		my $type  = $pd->{'type'};
-		my $parts = $type eq 'showbriefly' ? $pd->{'parts'} : $client->display->renderCache;
+		my $client   = $request->client;
+		my $format   = $pd->{'format'};
+		my $type     = $pd->{'type'};
+		my $parts    = $type eq 'showbriefly' ? $pd->{'parts'} : $client->display->renderCache;
+		my $duration = $pd->{'duration'};
 
 		$request->addResult('type', $type);
 
@@ -1143,7 +1146,13 @@ sub displaystatusQuery {
 					$request->addResult('display', $parts->{'jive'} );
 				}
 			} else {
-				$request->addResult('display', { 'text' => $screen1->{'line'} || $screen1->{'center'} });
+				my $display = { 
+					'text' => $screen1->{'line'} || $screen1->{'center'}
+				};
+				
+				$display->{duration} = $duration if $duration;
+				
+				$request->addResult('display', $display);
 			}
 		}
 

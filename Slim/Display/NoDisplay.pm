@@ -62,6 +62,16 @@ sub displayWidth { 0 }
 sub maxBrightness {}
 sub symbols {return $_[1];}
 
+
+sub notify {
+	my ($display, $type, $info, $duration) = @_;
+	
+	# Squeezeplay is expecting duration in milliseconds - we're going to assume any value < 1000 to be seconds
+	$duration *= 1000 if $duration && $duration < 1000;
+
+	$display->SUPER::notify($type, $info, $duration)
+}
+
 =head1 SEE ALSO
 
 L<Slim::Display::Display>

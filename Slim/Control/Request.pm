@@ -653,7 +653,7 @@ sub init {
 	addDispatch(['library',        'changed',        '_newvalue'],                                     [0, 0, 0, undef]);
 	addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
 	addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
-	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
+	addDispatch(['displaynotify',  '_type',          '_parts', '_duration'],                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'sound',          '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'end',            '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'snooze',         '_id'],                                           [1, 0, 0, undef]);
