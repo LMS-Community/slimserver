@@ -28,8 +28,6 @@ sub checkVersion {
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|exe)(\.tmp)?$/i);			
 
 	return unless $prefs->get('checkVersion');
-	
-	return if $::REVISION eq 'TRUNK';
 
 	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
@@ -70,13 +68,14 @@ sub checkVersion {
 
 	my $url = Slim::Networking::SqueezeNetwork->url(
 		sprintf(
-			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s", 
+			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
 			$::VERSION, 
 			$::REVISION, 
 			Slim::Utils::Strings::getLanguage(),
 			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
 			$os->installerOS(),
 			$prefs->get('server_uuid'),
+			Slim::Player::Client::clientCount(),
 		)
 	);
 	
@@ -94,6 +93,9 @@ sub checkVersion {
 # called when check version request is complete
 sub checkVersionCB {
 	my $http = shift;
+	
+	# Ignore update check results for users running from svn
+	return if $::REVISION eq 'TRUNK';
 
 	# store result in global variable, to be displayed by browser
 	if ($http->code =~ /^2\d\d/) {
@@ -127,6 +129,9 @@ sub checkVersionCB {
 # called only if check version request fails
 sub checkVersionError {
 	my $http = shift;
+	
+	# Ignore update check results for users running from svn
+	return if $::REVISION eq 'TRUNK';
 
 	my $proxy = $prefs->get('webproxy');
 
