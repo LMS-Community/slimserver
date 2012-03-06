@@ -759,8 +759,21 @@ SqueezeJS.SonginfoParser = {
 			if (result.playlist_loop[0].artwork_url) {
 				coverart = result.playlist_loop[0].artwork_url;
 
+				var publicURL = (coverart.search(/^http:/) != -1);
+				
+				if (publicURL) {
+					var parts = coverart.match(/^http:\/\/(.+)/);
+					
+					// don't use image proxy when dealing with private IP addresses
+					if (parts && parts[1].match(/^\d+/) && (
+						parts[1].match(/^192\.168/) || parts[1].match(/^172\.16\./) || parts[1].match(/^10\./)
+					)) {
+						publicURL = false;
+					}
+				}
+				
 				// SqueezeJS.externalImageProxy must be a template accepting url and size values
-				if (coverart && width && SqueezeJS.externalImageProxy && coverart.search(/^http:/) != -1) {
+				if (coverart && width && SqueezeJS.externalImageProxy && publicURL) {
 					coverart = SqueezeJS.externalImageProxy.apply({
 						url: encodeURIComponent(coverart),
 						size: width
@@ -768,7 +781,7 @@ SqueezeJS.SonginfoParser = {
 				}
 
 				// some internal logos come without resizing parameters - add them here if size is defined
-				else if (coverart && width && coverart.search(/^http:/) == -1) {
+				else if (coverart && width && !publicURL) {
 					coverart = coverart.replace(/(icon)(\.\w+)$/, "$1_" + width + 'x' + width + "_p$2");
 				}
 			}
