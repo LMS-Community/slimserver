@@ -60,9 +60,10 @@ sub initDetails {
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
 	
-	# bug 14590 - what we're really interested in is whether we're running on Vista or later
-	# leaving isVista in in case somebody was using it
+	# This covers Vista or later
 	$class->{osDetails}->{'isWin6+'} = ($major >= 6);
+	
+	# some features are Vista only, no longer supported in Windows 7
 	$class->{osDetails}->{isVista}   = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
 
 	# let's clean up our temporary folders (pdk* folders)
