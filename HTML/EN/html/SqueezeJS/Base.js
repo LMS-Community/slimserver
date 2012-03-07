@@ -766,7 +766,7 @@ SqueezeJS.SonginfoParser = {
 					
 					// don't use image proxy when dealing with private IP addresses
 					if (parts && parts[1].match(/^\d+/) && (
-						parts[1].match(/^192\.168/) || parts[1].match(/^172\.16\./) || parts[1].match(/^10\./)
+						parts[1].match(/^192\.168\./) || parts[1].match(/^172\.(?:1[6-9]|2\d|3[01])\./) || parts[1].match(/^10\./)
 					)) {
 						publicURL = false;
 					}
