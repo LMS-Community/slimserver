@@ -23170,19 +23170,19 @@ CONTROLPANEL_NO_STATUS
 	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Logitech Media Server inte körs.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Některé volby jsou zakázány, protože nejste administrátor. Abyste mohli tyto volby používat, spusťte \ntento nástroj jako administrátor.
-	DA	Nogle af mulighederne er deaktiveret fordi du ikke er administrator. Du skal køre\ndette værktøj som administrator for at kunne bruge dem.
-	DE	Manche Optionen sind deaktiviert, da Sie nicht als Administrator angemeldet sind. Führen Sie dieses \nTool als Administrator aus, damit Sie sie nutzen können.
-	EN	Some of the options are disabled, because you're not administrator. Please run \nthis tool as an administrator to be able to use them.
-	ES	Algunas de las opciones están desactivadas, porque no es un administrador. Ejecute \nesta herramienta como administrador para poder usarlas.
-	FI	Osa toiminnoista on poistettu käytöstä, koska et ole järjestelmänvalvoja. Suorita \ntämä työkalu järjestelmänvalvojana, jos haluat käyttää näitä toimintoja.
-	FR	Certaines options sont désactivées, car vous n'êtes pas l'administrateur. Exécutez\ncet outil en tant qu'administrateur pour pouvoir utiliser toutes ses fonctions.
-	IT	Alcune opzioni sono disattivate poiché non si hanno diritti di amministratore. Per utilizzarle, eseguire\nquesto strumento come amministratore.
-	NL	Bepaalde opties zijn uitgeschakeld, omdat je geen beheerder bent. Voer \ndeze tool als beheerder uit om de opties te kunnen gebruiken.
-	NO	Noen av alternativene er deaktivert fordi du ikke har administratorrettigheter. Du må logge på som administrator og deretter kjøre \ndette verktøyet for å kunne bruke dem.
-	PL	Niektóre opcje są wyłączone, ponieważ nie jesteś administratorem. Uruchom \nto narzędzie jako administrator, aby możliwe było użycie tych opcji.
-	RU	Некоторые параметры отключены, поскольку вы не являетесь администратором. Запустите \nэту утилиту от имени администратора, и они станут доступны.
-	SV	En del alternativ är inte tillgängliga eftersom du inte är administratör. Kör \ndetta verktyg som administratör om du vill komma åt dem.
+	CS	Některé volby jsou zakázány, protože nejste administrátor. Abyste mohli tyto volby používat, spusťte tento nástroj jako administrátor.
+	DA	Nogle af mulighederne er deaktiveret fordi du ikke er administrator. Du skal køre dette værktøj som administrator for at kunne bruge dem.
+	DE	Sie haben keine Berechtigung, Hintergrunddienste zu installieren, oder zu starten/stoppen. Bitte starten Sie dieses Tool aus dem Startmenü mittels der rechten Maustaste als Administrator.
+	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start this tool as an administrator from the Windows Start Menu using the context menu.
+	ES	Algunas de las opciones están desactivadas, porque no es un administrador. Ejecute esta herramienta como administrador para poder usarlas.
+	FI	Osa toiminnoista on poistettu käytöstä, koska et ole järjestelmänvalvoja. Suorita tämä työkalu järjestelmänvalvojana, jos haluat käyttää näitä toimintoja.
+	FR	Certaines options sont désactivées, car vous n'êtes pas l'administrateur. Exécutez cet outil en tant qu'administrateur pour pouvoir utiliser toutes ses fonctions.
+	IT	Alcune opzioni sono disattivate poiché non si hanno diritti di amministratore. Per utilizzarle, eseguire questo strumento come amministratore.
+	NL	Bepaalde opties zijn uitgeschakeld, omdat je geen beheerder bent. Voer deze tool als beheerder uit om de opties te kunnen gebruiken.
+	NO	Noen av alternativene er deaktivert fordi du ikke har administratorrettigheter. Du må logge på som administrator og deretter kjøre dette verktøyet for å kunne bruke dem.
+	PL	Niektóre opcje są wyłączone, ponieważ nie jesteś administratorem. Uruchom to narzędzie jako administrator, aby możliwe było użycie tych opcji.
+	RU	Некоторые параметры отключены, поскольку вы не являетесь администратором. Запустите эту утилиту от имени администратора, и они станут доступны.
+	SV	En del alternativ är inte tillgängliga eftersom du inte är administratör. Kör detta verktyg som administratör om du vill komma åt dem.
 
 RUN_AT_BOOT
 	CS	Spustit automaticky při startu systému

@@ -33,7 +33,11 @@ sub new {
 		my $string = string($noAdminWarning);
 		$string    =~ s/\\n/\n/g;
 		
-		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
+		my $warning = Wx::StaticText->new($self, -1, $string);
+		$warning->SetForegroundColour(wxRED);
+		my ($width) = $parent->GetSizeWH();
+		$warning->Wrap($width - 70) if $width && $width > 200;
+		$mainSizer->Add($warning, 0, wxALL, 10);
 	}
 
 
