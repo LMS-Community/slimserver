@@ -23172,8 +23172,8 @@ CONTROLPANEL_NO_STATUS
 CONTROLPANEL_NEED_ADMINISTRATOR
 	CS	Některé volby jsou zakázány, protože nejste administrátor. Abyste mohli tyto volby používat, spusťte tento nástroj jako administrátor.
 	DA	Nogle af mulighederne er deaktiveret fordi du ikke er administrator. Du skal køre dette værktøj som administrator for at kunne bruge dem.
-	DE	Sie haben keine Berechtigung, Hintergrunddienste zu installieren, oder zu starten/stoppen. Bitte starten Sie dieses Tool aus dem Startmenü mittels der rechten Maustaste als Administrator.
-	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start this tool as an administrator from the Windows Start Menu using the context menu.
+	DE	Sie haben keine Berechtigung, Hintergrunddienste zu installieren oder zu starten/stoppen. Bitte starten Sie dieses Tool aus dem Startmenü mittels der rechten Maustaste als Administrator.
+	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
 	ES	Algunas de las opciones están desactivadas, porque no es un administrador. Ejecute esta herramienta como administrador para poder usarlas.
 	FI	Osa toiminnoista on poistettu käytöstä, koska et ole järjestelmänvalvoja. Suorita tämä työkalu järjestelmänvalvojana, jos haluat käyttää näitä toimintoja.
 	FR	Certaines options sont désactivées, car vous n'êtes pas l'administrateur. Exécutez cet outil en tant qu'administrateur pour pouvoir utiliser toutes ses fonctions.
