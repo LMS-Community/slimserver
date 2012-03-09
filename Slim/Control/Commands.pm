@@ -2550,6 +2550,10 @@ sub rescanCommand {
 					if ($singledir) {
 						$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
 					}
+					else {
+						# scan playlist folder too
+						push @$audiodirs, Slim::Utils::Misc::getPlaylistDir();
+					}
 					
 					# XXX until libmediascan supports audio, run the audio scanner now
 					Slim::Utils::Scanner::Local->rescan( $audiodirs, {
@@ -2577,6 +2581,10 @@ sub rescanCommand {
 				
 				if ($singledir) {
 					$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
+				}
+				else {
+					# scan playlist folder too
+					push @$audiodirs, Slim::Utils::Misc::getPlaylistDir();
 				}
 				
 				# XXX until libmediascan supports audio, run the audio scanner now
