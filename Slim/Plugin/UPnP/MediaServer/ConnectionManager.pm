@@ -238,7 +238,15 @@ sub _sourceProtocols {
 		}
 	}
 	
-	return join( ',', @formats );
+	# Bug 17885, sort all wildcard formats to the end of the list
+	# Based on example at http://perldoc.perl.org/functions/sort.html
+	my @sortedFormats = sort {
+		($a =~ /(\*)$/)[0] cmp ($b =~ /(\*)$/)[0]
+		||
+		uc($a) cmp uc($b)
+	} @formats;
+	
+	return join( ',', @sortedFormats );
 }		
 
 1;
