@@ -166,7 +166,7 @@ sub main {
 		'debug'   => $debug,
 	});
 
-	if ($help || (!$rescan && !$wipe && !$playlists && !scalar @ARGV)) {
+	if ($help || (!$rescan && !$wipe && !$playlists)) {
 		usage();
 		exit;
 	}
@@ -311,29 +311,16 @@ sub main {
 	# exceptions properly, it should croak(), so the exception is
 	# propagated to the higher levels.
 	#
-	# We've been passed an explict path or URL - deal with that.
-	if (scalar @ARGV) {
 
-		for my $url (@ARGV) {
+	# Use our Importers to scan.
+	eval {
 
-			eval { Slim::Utils::Scanner->scanPathOrURL({ 
-				'url'      => $url,
-				'progress' => 1, 
-			}) };
+		if ($wipe) {
+			Slim::Music::Import->resetImporters;
 		}
 
-	} else {
-
-		# Otherwise just use our Importers to scan.
-		eval {
-
-			if ($wipe) {
-				Slim::Music::Import->resetImporters;
-			}
-
-			$changes = Slim::Music::Import->runScan;
-		};
-	}
+		$changes = Slim::Music::Import->runScan;
+	};
 
 	if ($@) {
 
@@ -408,7 +395,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [debug options] [--rescan] [--wipe] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe]
 
 Command line options:
 
@@ -434,9 +421,7 @@ Command line options:
 	
 Examples:
 
-	$0 --rescan /Users/dsully/Music
-
-	$0 http://www.somafm.com/groovesalad.pls
+	$0 --rescan
 
 EOF
 
