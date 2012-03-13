@@ -177,7 +177,6 @@ sub savePluginCallback {
 	} elsif ($type eq 'backspace') {
 
 		Slim::Buttons::Common::popModeRight($client);
-		Slim::Buttons::Common::popModeRight($client);
 	
 	} else {
 
