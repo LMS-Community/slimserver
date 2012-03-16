@@ -1122,7 +1122,7 @@ sub _checkPlaying {
 	
 	main::DEBUGLOG && $isDebug && $log->debug( 'Current playmode: ' . Slim::Player::Source::playmode($client) );
 
-	if (!$client->isPlaying) {
+	if (!$client->isPlaying('really')) {
 		main::DEBUGLOG && $isDebug && $log->debug('Alarm active but client not playing');
 		$self->_playFallback();
 	}
