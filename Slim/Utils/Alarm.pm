@@ -647,7 +647,7 @@ sub sound {
 			# if this is a squeezeplay-based player on or after r8312, fallback alarm comes from client-side only
 		}
 		else {
-			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
+			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 90, \&_checkPlaying);
 		}
 
 		# Allow a slight delay for things to load up then tell the user what's going on
