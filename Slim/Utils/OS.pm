@@ -422,19 +422,20 @@ Use this if you are running the server on low spec hardware or flash with limite
 sub directFirmwareDownload { 0 };
 
 
-=head2 restartServer( )
+=head2 restartServer( ) and canRestartServer
 
-The server can initiate a restart on some systems. 
-This should call main::cleanup() or stopServer() to cleanly shut down before restarting
+The server can initiate a restart on some systems.
+These methods must only be called from main::restartServer and
+main::canRestartServer which supervise other cleanup operations.
+
+The implementations of the methods are redefined in each of the
+OS implementations that can support the restart feature.
 
 =cut
 
-sub restartServer {
-	my $class = shift;
-	main::stopServer(1) if $class->canRestartServer();
-}
+sub restartServer { 0 }
 
-sub canRestartServer { 1 }
+sub canRestartServer { 0 }
 
 sub progressJSON { }
 

@@ -2853,7 +2853,7 @@ sub stopServer {
 
 	# pass true value if we want to restart the server
 	if ($request->isCommand([['restartserver']])) {
-		Slim::Utils::OSDetect->getOS()->restartServer();
+		main::restartServer();
 	}
 	else {
 		main::stopServer();

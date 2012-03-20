@@ -652,6 +652,10 @@ sub forceStopServer {
 #
 # Clean up resources and exit.
 #
+sub restartServer {
+	stopServer();
+}
+
 sub stopServer {
 
 	logger('')->info("Logitech Media Server shutting down.");

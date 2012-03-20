@@ -128,4 +128,23 @@ sub migratePrefsFolder {
 # leave log rotation to the system
 sub logRotate {}
 
+sub canRestartServer { 1 }
+
+sub restartServer {
+
+	my $class = shift;
+	my ($progFile, $progArgs)  = @_;
+
+	# Prefer to execute the script directly if possible, otherwise
+	# invoke the interpreter to start the script.
+	#
+	# The difference between the two approaches is visible on
+	# some systems in the process title. See the process name
+	# in /proc/$$/stat on Linux as an example.
+
+	my $execProg = (-x $progFile) ? $progFile : $^X;
+
+	return exec($execProg, $progFile, @$progArgs);
+}
+
 1;

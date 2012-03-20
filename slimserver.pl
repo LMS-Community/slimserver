@@ -924,11 +924,13 @@ sub daemonize {
 	}
 
 	open STDOUT, '>>/dev/null';
-	
+
+	# Do not attempt to daemonize again.
+	@argv = grep { $_ ne '--daemon' } @argv;
+
 	# On Leopard, GD will crash because you can't run CoreServices code in a forked child,
 	# so we have to exec as well.
 	if ( $^O =~ /darwin/ ) {
-		@argv = grep { $_ ne '--daemon' } @argv;
 		exec $^X . ' "' . $0 . '" ' . join( ' ', @argv );
 		exit;
 	}
@@ -1083,22 +1085,39 @@ sub forceStopServer {
 #
 # Clean up resources and exit.
 #
-sub stopServer {
-	my $restart = shift;
+# All server code must direct stop and restart requests here and should
+# not attempt to manipulate or interrogate the OS specific code directly.
+#
+sub canRestartServer {
+	return !$::norestart && Slim::Utils::OSDetect->getOS()->canRestartServer();
+}
 
-	logger('')->info( 'Logitech Media Server ' . ($restart && !$::norestart ? 'restarting...' : 'shutting down.') );
-	
-	$::stop = 1;
-	
-	cleanup();
-	
-	if ($restart && !$::norestart
-		&& Slim::Utils::OSDetect->getOS()->canRestartServer() 
-		&& !main::ISWINDOWS)
-	{
-		exec($^X, $0, @argv);
+sub restartServer {
+
+	if ( canRestartServer() ) {
+		cleanup();
+		logger('')->info( 'Logitech Media Server restarting...' );
+		
+		if ( !Slim::Utils::OSDetect->getOS()->restartServer($0, \@argv) ) {
+			logger('')->error("Unable to restart Logitech Media Server");
+		}
 	}
 
+	# XXX - shouldn't we ignore the restart command if we can't restart?
+	else {
+		logger('')->error("Unable to restart Logitech Media Server - shutting down.");
+		stopServer();
+	}
+
+	exit();
+}
+
+sub stopServer {
+
+	cleanup();
+
+	logger('')->info( 'Logitech Media Server shutting down.' );
+	
 	exit();
 }
 

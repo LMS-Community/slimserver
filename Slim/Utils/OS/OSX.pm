@@ -436,11 +436,19 @@ sub canAutoUpdate { 1 }
 sub installerExtension { 'dmg' }; 
 sub installerOS { 'osx' }
 
+sub canRestartServer { 1 }
+
 sub restartServer {
 	my $class  = shift;
 	my $helper = Slim::Utils::Misc::findbin('restart-server.sh');
 
-	system("'$helper' &") if $helper;
+	if ($helper) {
+		system("'$helper' &");
+		# XXX - the restart helper doesn't validate its success
+		return 1;
+	}
+
+	return 0;
 }
 
 

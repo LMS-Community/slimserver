@@ -882,6 +882,9 @@ sub restartServer {
 		) {
 			$log->error("Couldn't restart Logitech Media Server service (squeezesvc)");
 		}
+		else {
+			return 1;
+		}
 	}
 	
 	elsif ($PerlSvc::VERSION) {
@@ -890,13 +893,16 @@ sub restartServer {
 		if (open(RESTART, ">$restartFlag")) {
 			close RESTART;
 			main::stopServer();
+			return 1;
 		}
 		
 		else {
 			$log->error("Can't write restart flag ($restartFlag) - don't shut down");
 		}
 	}
-};
+
+	return;
+}
 
 sub canRestartServer { return $PerlSvc::VERSION ? 1 : 0; }
 

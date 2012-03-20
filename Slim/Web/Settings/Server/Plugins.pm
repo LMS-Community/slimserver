@@ -15,8 +15,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
 
-my $os = Slim::Utils::OSDetect->getOS();
-
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('SETUP_PLUGINS');
 }
@@ -84,7 +82,7 @@ sub getRestartMessage {
 	my ($class, $paramRef, $noRestartMsg) = @_;
 	
 	# show a link/button to restart SC if this is supported by this platform
-	if ($os->canRestartServer()) {
+	if (main::canRestartServer()) {
 				
 		$paramRef->{'restartUrl'} = $paramRef->{webroot} . $paramRef->{path} . '?restart=1';
 		$paramRef->{'restartUrl'} .= '&rand=' . $paramRef->{'rand'} if $paramRef->{'rand'};
@@ -109,7 +107,7 @@ sub getRestartMessage {
 sub restartServer {
 	my ($class, $paramRef, $needsRestart) = @_;
 	
-	if ($needsRestart && $paramRef->{restart} && $os->canRestartServer()) {
+	if ($needsRestart && $paramRef->{restart} && main::canRestartServer()) {
 		
 		$paramRef->{'warning'} = '<span id="popupWarning">'
 			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
@@ -130,7 +128,7 @@ sub _restartServer {
 
 	} else {
 
-		$os->restartServer();
+		main::restartServer();
 	}
 }
 
