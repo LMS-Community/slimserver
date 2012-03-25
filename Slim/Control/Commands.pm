@@ -557,6 +557,12 @@ sub mixerCommand {
 	if (defined $sequenceNumber) {
 		$client->sequenceNumber($sequenceNumber)
 	}
+	
+	my $controllerSequenceId = $request->getParam('controllerSequenceId');
+	if (defined $controllerSequenceId) {
+		$client->controllerSequenceId($controllerSequenceId)
+		$client->controllerSequenceNumber($request->getParam('controllerSequenceNumber'))
+	}
 
 	my @buddies;
 
@@ -640,6 +646,11 @@ sub mixerCommand {
 		}
 	}
 		
+	if (defined $controllerSequenceId) {
+		$client->controllerSequenceId(undef)
+		$client->controllerSequenceNumber(undef)
+	}
+
 	$request->setStatusDone();
 }
 

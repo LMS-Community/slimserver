@@ -294,7 +294,10 @@ sub volume {
 		my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
 		my $data;
-		if (defined($client->sequenceNumber())) {
+		if (defined($client->controllerSequenceId())) {
+			$data = pack('NNCCNNNa6', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain,
+				($client->controllerSequenceNumber() || 0), $client->controllerSequenceId());
+		elsif (defined($client->sequenceNumber())) {
 			$data = pack('NNCCNNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain, $client->sequenceNumber());
 		}
 		else {

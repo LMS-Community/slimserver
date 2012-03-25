@@ -208,6 +208,12 @@ sub new {
 		#It is used to allow the player to act as the master for the locally maintained parameter.
 		sequenceNumber          => 0,
 
+		# The (controllerSequenceId, controllerSequenceNumber) tuple is used to enable synchronization of commands 
+		# sent to the player via the server and via an additional, out-of-band mechanism (currently UDAP).
+		# It is used to enable the player to discard duplicate commands received via both channels.
+		controllerSequenceId    => undef,
+		controllerSequenceNumber=> undef,
+
 		# streaming control
 		controller              => undef,
 		bufferReady             => 0,
