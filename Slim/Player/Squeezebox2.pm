@@ -297,6 +297,7 @@ sub volume {
 		if (defined($client->controllerSequenceId())) {
 			$data = pack('NNCCNNNa6', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain,
 				($client->controllerSequenceNumber() || 0), $client->controllerSequenceId());
+		}
 		elsif (defined($client->sequenceNumber())) {
 			$data = pack('NNCCNNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain, $client->sequenceNumber());
 		}
