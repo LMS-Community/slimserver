@@ -110,6 +110,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
 								knobPos knobTime knobSync
 								sequenceNumber
+								controllerSequenceId controllerSequenceNumber
 								controller
 								bufferReady readyToStream connecting streamStartTimestamp
 								streamformat streamingsocket remoteStreamStartTime
