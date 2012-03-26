@@ -28,7 +28,6 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
-	my ($secs, $artist, $album, $title, $trackurl);
 	my $foundBOM = 0;
 	my $fh;
 	my $mediadirs;
@@ -52,6 +51,8 @@ sub read {
 	main::INFOLOG && $log->info("Parsing M3U: $url");
 
 	while (my $entry = <$fh>) {
+	
+		my ($secs, $artist, $album, $title, $trackurl);
 
 		chomp($entry);
 
@@ -146,9 +147,6 @@ sub read {
 				'ARTIST' => $artist,
 				'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
 			} );
-
-			# reset the title
-			($secs, $artist, $album, $title, $trackurl) = ();
 		}
 		else {
 			# Check if the playlist entry is relative to audiodir
