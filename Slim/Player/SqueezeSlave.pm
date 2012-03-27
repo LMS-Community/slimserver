@@ -27,7 +27,7 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'replayGainMode'     => 0,
-	'minSyncAdjust'      => 30,	# ms
+	'minSyncAdjust'      => 30, # ms
 	'maxBitrate'         => 0,  # no bitrate limiting
 };
 
@@ -228,7 +228,7 @@ sub pcm_sample_rates {
 				 44100 => '3',
 				 48000 => '4',
 				 16000 => '7',
-				 88200 => '10',
+				 88200 => ':',
 				 96000 => '9',
 				 );
 
