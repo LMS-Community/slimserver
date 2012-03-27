@@ -203,6 +203,33 @@ sub formats {
 	return @{shift->myFormats};
 }
 
+sub pcm_sample_rates {
+	my $client = shift;
+	my $track = shift;
+
+	# extend rate lookup table to allow for up to 192k playback with 3rd party kernels and squeezeplay desktop
+	# note: higher rates only used if supported by MaxSampleRate returned by player
+	my %pcm_sample_rates = (
+		  8000 => '5',
+	 	 11025 => '0',
+		 12000 => '6',
+		 22050 => '1',
+		 24000 => '8',
+		 32000 => '2',
+		 44100 => '3',
+		 48000 => '4',
+		 16000 => '7',
+		 88200 => ':',
+		 96000 => '9',
+		176400 => ';',
+		192000 => '<',
+	);
+	
+	my $rate = $pcm_sample_rates{$track->samplerate()};
+	
+	return defined $rate ? $rate : '3';
+}
+
 sub fade_volume {
 	my ($client, $fade, $callback, $callbackargs) = @_;
 
