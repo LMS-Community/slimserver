@@ -935,8 +935,21 @@ sub playlistJumpCommand {
 	my $showStatus = sub {
 		my $jiveIconStyle = shift || undef;
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client), jiveIconStyle => $jiveIconStyle });
-			$parts->{'jive'}->{'duration'} = 10000 if $parts && $parts->{'jive'}; # 10s: nice and long to avoid bouncing displays
+			my $parts = $client->currentSongLines({
+					suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
+					jiveIconStyle => $jiveIconStyle,
+				});
+				
+			# awy: We used to set $parts->{'jive'}->{'duration'} = 10000 here in order to
+			# ensure that the new track title is pushed to the first line of the display
+			# and stays there until a new playerStatus arrives. This can take quite a
+			# long time under some circumstances, such as with slow servers. However,
+			# setting the delay here affected both the duration of the new title on the
+			# display and that of the the Play pop-up icon if the command was invoked via IR.
+			# Having the popup hang around for 10s can be irritating (bug 17758). Given that
+			# the player has control of title change itself, it can set a long duration
+			# on just that element and use the default show-briefly duration for the popup.
+			
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
 			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 		}
