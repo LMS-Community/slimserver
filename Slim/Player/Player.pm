@@ -1235,7 +1235,8 @@ sub _buffering {
 			$client->display->updateMode(0);
 			$client->showBriefly({
 				$screen => { line => [ $line1, $line2 ] },
-				jive => { type => 'song', text => [ $status, $args->{'title'} ], duration => 500 },
+				# Bug 17937: leave the title alone (empty string is noticed in SP) for these sorts of message
+				jive => { type => 'song', text => [ $status, ''], duration => 500 },
 				cli  => undef,
 			}, { duration => 1, block => 1 });
 		}
