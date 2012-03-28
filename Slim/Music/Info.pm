@@ -520,6 +520,18 @@ sub setCurrentTitle {
 	
 			# For some purposes, a change of title is a newsong...
 			Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'newsong', $title ] );
+		
+			# Bug 17174: Inform other players that may be listening to the same station
+			# We only do this if we have a client with this setCurrentTitle(),
+			# which will be the case for in-stream metadata.
+			foreach ( Slim::Player::Client::clients() ) {
+				next unless $_ && $_->controller() && $_->isPlaying();
+				next if $_ == $client;                   # Ignore the client above
+				next if Slim::Player::Sync::isSlave($_); # And only include masters of any sync-group
+				if ( (Slim::Player::Playlist::url($_) || '') eq $url ) {
+					Slim::Control::Request::notifyFromArray( $_, [ 'playlist', 'newsong', $title ] );
+				}
+			}
 		}
 
 		main::INFOLOG && $log->info("Setting title for $url to $title");	
