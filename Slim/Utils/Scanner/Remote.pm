@@ -460,6 +460,17 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
+		elsif ( $type eq 'ogg' ) {
+
+			# Read the header to allow support for oggflac as it requires different decode path
+			main::DEBUGLOG && $log->is_debug && $log->debug('Reading Ogg header');
+			
+			$http->read_body( {
+				readLimit   => 64,
+				onBody      => \&parseOggHeader,
+				passthrough => [ $track, $args ],
+			} );
+		}
 		else {
 			# If URL was mms but content-type is not wma, change URL
 			if ( $track->url =~ /^mms/i ) {
@@ -714,6 +725,29 @@ sub parseAACHeader {
 		main::DEBUGLOG && $log->is_debug && $log->debug("AAC samplerate: $samplerate");
 	}
 	
+	# All done
+	$cb->( $track, undef, @{$pt} );
+}
+
+sub parseOggHeader {
+	my ( $http, $track, $args ) = @_;
+	
+	my $client = $args->{client};
+	my $cb	   = $args->{cb} || sub {};
+	my $pt	   = $args->{pt} || [];
+
+	my $header = $http->response->content;
+	my $data   = substr($header, 28);
+
+	# search for Ogg FLAC headers within the data - if so change the content type to ogf for OggFlac
+	# OggFlac header defined: http://flac.sourceforge.net/ogg_mapping.html
+	if (substr($data, 0, 5) eq "\x7fFLAC" && substr($data, 9,4) eq 'fLaC') {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Ogg stream is OggFlac - setting content type [ogf]");
+		Slim::Schema->clearContentTypeCache( $track->url );
+		Slim::Music::Info::setContentType( $track->url, 'ogf' );
+		$track->content_type('ogf');
+	}
+
 	# All done
 	$cb->( $track, undef, @{$pt} );
 }

@@ -656,7 +656,7 @@ sub stream_s {
 			}
 		 }
 
-	} elsif ($format eq 'flc') {
+	} elsif ($format eq 'flc' || $format eq 'ogf') {
 
 		$formatbyte      = 'f';
 		$pcmsamplesize   = '?';
@@ -670,6 +670,13 @@ sub stream_s {
 			if ( $track->samplerate() && $track->samplerate() >= 88200 ) {
 		    	$outputThreshold = 20;
 			}
+		}
+
+		# Oggflac support for Squeezeplay - uses same decoder with flag to indicate ogg transport stream 
+		# increase default output buffer threshold as this is used for high bitrate internet radio streams
+		if ($format eq 'ogf') {
+			$pcmsamplesize   = 'o';
+			$outputThreshold = 20;
 		}
 
 	} elsif ( $format =~ /(?:wma|asx)/ ) {

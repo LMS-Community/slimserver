@@ -76,6 +76,12 @@ sub getTag {
 	my $tags = $s->{tags};
 	
 	return unless $info->{song_length_ms};
+
+	# Use Formats::FLAC for OggFlac and force the content type
+	if ($s->{info}->{ogg_type} eq 'flac') {
+		Slim::Formats->loadTagFormatForType('flc');
+		return (Slim::Formats::FLAC->_getStandardTag($s), 'ogf');
+	}
 	
 	# Map tags
 	while ( my ($old, $new) = each %tagMapping ) {

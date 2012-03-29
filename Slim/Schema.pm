@@ -728,6 +728,12 @@ sub contentType {
 	return $contentType;
 }
 
+# The contentTypeCache can used above can erroneously be set to type inferred from url path - allow it to be cleared
+sub clearContentTypeCache {
+	my ($self, $urlOrObj) = @_;
+	delete $contentTypeCache{$urlOrObj};
+}
+
 =head2 objectForUrl( $args )
 
 The workhorse for getting L<Slim::Schema::Track> or L<Slim::Schema::Playlist>

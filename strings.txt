@@ -11776,6 +11776,22 @@ OGG
 	RU	Ogg Vorbis
 	SV	Ogg Vorbis
 
+OGF
+	CS	Ogg FLAC
+	DA	Ogg FLAC
+	DE	Ogg FLAC
+	EN	Ogg FLAC
+	ES	Ogg FLAC
+	FI	Ogg FLAC
+	FR	Ogg FLAC
+	HE	Ogg FLAC
+	IT	Ogg FLAC
+	NL	Ogg FLAC
+	NO	Ogg FLAC
+	PL	Ogg FLAC
+	RU	Ogg FLAC
+	SV	Ogg FLAC
+
 MODIFIED
 	CS	Upraveno
 	DA	Ændret

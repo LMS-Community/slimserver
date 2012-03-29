@@ -63,6 +63,7 @@ sub init {
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',
 		'wvp' => 'Slim::Formats::WavPack',
+		'ogf' => 'Slim::Formats::OggFLAC',
 
 		# Playlist types
 		'asx' => 'Slim::Formats::Playlists::ASX',
@@ -168,7 +169,11 @@ sub readTags {
 					}
 				}
 
-				$tags = $tagReaderClass->getTag($filepath, $anchor);
+				($tags, my $ctOverride) = $tagReaderClass->getTag($filepath, $anchor);
+
+				if ($ctOverride) {
+					$type = $ctOverride;
+				}
 				
 				$loadedTagClasses{$type} = 1;
 			}
