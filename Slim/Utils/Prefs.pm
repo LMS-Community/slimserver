@@ -253,6 +253,7 @@ sub init {
 		'thumbSize'             => 100,
 		# Server Settings - jive UI
 		'jivealbumsort'		=> 'album',
+		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream
 		# Server Settings - mysqueezebox.com
 		'sn_sync'               => 1,
 		'sn_disable_stats'		=> 0,

@@ -1791,6 +1791,7 @@ sub _playlistControlContextMenu {
 		if ($action = _makePlayAction($subFeed, $item, 'add', 'parentNoRefresh', $query, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('ADD_TO_END'),
+				style => 'item_add',
 				actions => {go => $action},
 			},
 		}
@@ -1805,7 +1806,7 @@ sub _playlistControlContextMenu {
 		if ($action = _makePlayAction($subFeed, $item, 'play', 'nowPlaying', $query, $item_id)) {
 			push @contextMenu, {
 				text => $request->string($addPlayAll ? 'PLAY_THIS_SONG' : 'PLAY'),
-				style => 'itemplay',
+				style => 'item_play',
 				actions => {go => $action},
 			},
 		}
@@ -1813,7 +1814,6 @@ sub _playlistControlContextMenu {
 		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
-				style => 'itemplay',
 				actions => {go => $action},
 			},
 		}
@@ -1914,7 +1914,7 @@ sub _defeatDestructiveTouchToPlay {
 	
 	return 0 if !$pref;
 	return 1 if $pref == 1 || !$client;
-	return ($client->isPlaying() && $client->playingSong()->duration()) if $pref == 4;
+	return ($client->isPlaying() && $client->playingSong()->duration() && !$client->playingSong()->isPlaylist()) if $pref == 4;
 	my $l = Slim::Player::Playlist::count($client);
 	return 0 if $l < 2;
 	return 0 if $pref == 3 && (!$client->isPlaying() || $l < 2);
