@@ -176,6 +176,10 @@ sub handler {
 				# Pull clientId out of response channel
 				($clid) = $obj->{data}->{response} =~ m{/([0-9a-f]{8})/};
 			}
+			elsif ( $obj->{channel} =~ m{^/slim/unsubscribe} && $obj->{data} ) {
+				# Pull clientId out of unsubscribe
+				($clid) = $obj->{data}->{unsubscribe} =~ m{/([0-9a-f]{8})/};
+			}
 			
 			# Register client with HTTP connection
 			if ( $clid ) {
@@ -189,10 +193,14 @@ sub handler {
 					error   => 'No clientId found',
 					id      => $obj->{id},
 				};
+				
+				# No point in trying to process requests without a clientId
+				# Given that we are not sending advice to the client, the pending
+				# requests may just get dropped but what can we do?
+				$log->error('Invalid request without clientId - discarding remaining requests in packet');
+				last;
 			}
 		}
-		
-		last if @errors;
 		
 		# Detect the language Jive wants content returned in
 		my ($lang, $ua);
@@ -325,76 +333,42 @@ sub handler {
 		}
 		elsif ( $obj->{channel} eq '/meta/subscribe' ) {
 			
-			if ( !$manager->is_valid_clid( $clid ) ) {
-				# Invalid clientId, send advice to re-handshake
-				
-				push @{$events}, {
-					channel    => '/meta/subscribe',
-					clientId   => undef,
-					successful => JSON::XS::false,
-					timestamp  => time2str( time() ),
-					error      => 'invalid clientId',
-					advice     => {
-						reconnect => 'handshake',
-						interval  => 0,
-					}
-				};
+			my $subscriptions = $obj->{subscription};
+		
+			# a channel name or a channel pattern or an array of channel names and channel patterns.
+			if ( !ref $subscriptions ) {
+				$subscriptions = [ $subscriptions ];
 			}
-			else {
-				my $subscriptions = $obj->{subscription};
-			
-				# a channel name or a channel pattern or an array of channel names and channel patterns.
-				if ( !ref $subscriptions ) {
-					$subscriptions = [ $subscriptions ];
-				}
-			
-				$manager->add_channels( $clid, $subscriptions );
-			
-				for my $sub ( @{$subscriptions} ) {
-					push @{$events}, {
-						channel      => '/meta/subscribe',
-						clientId     => $clid,
-						successful   => JSON::XS::true,
-						subscription => $sub,
-					};
-				}
+		
+			$manager->add_channels( $clid, $subscriptions );
+		
+			for my $sub ( @{$subscriptions} ) {
+				push @{$events}, {
+					channel      => '/meta/subscribe',
+					clientId     => $clid,
+					successful   => JSON::XS::true,
+					subscription => $sub,
+				};
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/unsubscribe' ) {
 			
-			if ( !$manager->is_valid_clid( $clid ) ) {
-				# Invalid clientId, send advice to re-handshake
-				
-				push @{$events}, {
-					channel    => '/meta/unsubscribe',
-					clientId   => undef,
-					successful => JSON::XS::false,
-					timestamp  => time2str( time() ),
-					error      => 'invalid clientId',
-					advice     => {
-						reconnect => 'handshake',
-						interval  => 0,
-					}
-				};
+			my $subscriptions = $obj->{subscription};
+		
+			# a channel name or a channel pattern or an array of channel names and channel patterns.
+			if ( !ref $subscriptions ) {
+				$subscriptions = [ $subscriptions ];
 			}
-			else {
-				my $subscriptions = $obj->{subscription};
-			
-				# a channel name or a channel pattern or an array of channel names and channel patterns.
-				if ( !ref $subscriptions ) {
-					$subscriptions = [ $subscriptions ];
-				}
-			
-				$manager->remove_channels( $clid, $subscriptions );
-			
-				for my $sub ( @{$subscriptions} ) {
-					push @{$events}, {
-						channel      => '/meta/unsubscribe',
-						clientId     => $clid,
-						subscription => $sub,
-						successful   => JSON::XS::true,
-					};
-				}
+		
+			$manager->remove_channels( $clid, $subscriptions );
+		
+			for my $sub ( @{$subscriptions} ) {
+				push @{$events}, {
+					channel      => '/meta/unsubscribe',
+					clientId     => $clid,
+					subscription => $sub,
+					successful   => JSON::XS::true,
+				};
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
@@ -441,7 +415,10 @@ sub handler {
 						id      => $id,
 					};
 					
+					push @errors, \%error;
+
 					if ($result->{'errorNeedClient'}) {
+						$log->error('errorNeedsClient: ', join(', ', $request->[0], @{$request->[1]}));
 						# Force reconnect because client not connected.
 						# We should not need to force a new handshake, just a reconect.
 						# Any successful subscribes will have the acknowledgements in the $events queue
@@ -450,9 +427,12 @@ sub handler {
 						$error{'advice'} = {
 							reconnect => 'retry',
 						};
+						
+						# The client will stop processing responses after this error with reconnect advice
+						# so stop processing further requests.
+						last;
 					}
 						
-					push @errors, \%error;
 				}
 				else {
 					push @{$events}, {
@@ -930,7 +910,7 @@ sub handleRequest {
 sub requestCallback {
 	my $request = shift;
 	
-	my ($channel, $id, $priority, $clid) = split /\|/, $request->source, 4;
+	my ($channel, $id, $priority, $clid) = split (/\|/, $request->source, 4);
 	
 	main::DEBUGLOG && $log->debug( "requestCallback got results for $channel / $id" );
 	

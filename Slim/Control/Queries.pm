@@ -3004,9 +3004,10 @@ sub statusQuery {
 	# accomodate the fact we can be called automatically when the client is gone
 	if (!defined($client)) {
 		$request->addResult('error', "invalid player");
-		$request->registerAutoExecute('-');
-		$request->setStatusDone();
-		return;
+		# Still need to (re)register the autoexec if this is a subscription so
+		# that the subscription does not dissappear while a Comet client thinks
+		# that it is still valid.
+		goto do_it_again;
 	}
 	
 	my $connected    = $client->connected() || 0;
@@ -3404,7 +3405,7 @@ sub statusQuery {
 		}
 	}
 
-
+do_it_again:
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setting up subscription");
