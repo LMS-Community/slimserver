@@ -481,9 +481,10 @@ sub playTrack {
 	$jive->{style} = 'itemplay';
 
 	push @{$items}, {
-		type => 'text',
-		name => $play_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => 'play',
+		name        => $play_string,
+		jive        => $jive, 
 	};
 	
 	return $items;
@@ -492,30 +493,37 @@ sub playTrack {
 sub addTrackNext {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $string = cstring($client, 'PLAY_NEXT');
-	my $cmd = $tags->{menuContext} eq 'playlist' ? 'playlistnext' : 'insert';
+	my ($cmd, $playcontrol);
+	if ($tags->{menuContext} eq 'playlist') {
+		$cmd         = 'playlistnext';
+	} else {
+		$cmd         = 'insert';
+		$playcontrol = 'insert'
+	}
 	
-	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd, $playcontrol );
 }
 
 sub addTrackEnd {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 
-	my ($string, $cmd);
+	my ($string, $cmd, $playcontrol);
 
 	# "Add Song" in current playlist context is 'delete'
 	if ( $tags->{menuContext} eq 'playlist' ) {
-		$string = cstring($client, 'REMOVE_FROM_PLAYLIST');
-		$cmd    = 'delete';
+		$string      = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		$cmd         = 'delete';
 	} else {
-		$string = cstring($client, 'ADD_TO_END');
-		$cmd    = 'add';
+		$string      = cstring($client, 'ADD_TO_END');
+		$cmd         = 'add';
+		$playcontrol = 'add'
 	}
 	
-	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd );
+	return addTrack( $client, $url, $track, $remoteMeta, $tags, $string, $cmd, $playcontrol );
 }
 
 sub addTrack {
-	my ( $client, $url, $track, $remoteMeta, $tags , $string, $cmd ) = @_;
+	my ( $client, $url, $track, $remoteMeta, $tags , $string, $cmd, $playcontrol ) = @_;
 
 	my $items = [];
 	my $jive;
@@ -590,9 +598,10 @@ sub addTrack {
 	$jive->{actions} = $actions;
 
 	push @{$items}, {
-		type => 'text',
-		name => $string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => $playcontrol,
+		name        => $string,
+		jive        => $jive,
 	};
 	
 	return $items;

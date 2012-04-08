@@ -101,9 +101,10 @@ sub addFolder {
 	$actions->{add}  = $actions->{go};
 
 	return [ {
-		type => 'text',
-		name => $label,
-		jive => {
+		type        => 'text',
+		playcontrol => $cmd,
+		name        => $label,
+		jive        => {
 			actions => $actions
 		}, 
 	} ];
@@ -130,9 +131,10 @@ sub playFolder {
 	$actions->{add}  = $actions->{go};
 
 	return [ {
-		type => 'text',
-		name => cstring($client, 'PLAY'),
-		jive => {
+		type        => 'text',
+		playcontrol => 'play',
+		name        => cstring($client, 'PLAY'),
+		jive        => {
 			actions => $actions
 		}, 
 	} ];

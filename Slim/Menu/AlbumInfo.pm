@@ -424,7 +424,6 @@ sub playAlbum {
 		type        => 'text',
 		playcontrol => 'play',
 		name        => cstring($client, 'PLAY'),
-		jive        => {style => 'itemplay'},
 	};
 }
 	

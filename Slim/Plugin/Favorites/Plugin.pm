@@ -1031,7 +1031,7 @@ sub _objectInfoHandler {
 	
 	my $index = Slim::Utils::Favorites->new($client)->findUrl($url);
 	
-	my $jive;
+	my $jive = {style => 'item_fav'};
 	my $title;
 	if ($objectType eq 'artist') {
 		$title = $obj->name;

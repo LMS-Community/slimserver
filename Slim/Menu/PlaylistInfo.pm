@@ -223,9 +223,10 @@ sub playPlaylist {
 	$jive->{actions} = $actions;
 	$jive->{style} = 'itemplay';
 	push @{$items}, {
-		type => 'text',
-		name => $play_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => 'play',
+		name        => $play_string,
+		jive        => $jive, 
 	};
 	
 	return $items;
@@ -272,9 +273,10 @@ sub addPlaylist {
 	$jive->{actions} = $actions;
 
 	push @{$items}, {
-		type => 'text',
-		name => $add_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => $cmd,
+		name        => $add_string,
+		jive        => $jive, 
 	};
 	
 	return $items;

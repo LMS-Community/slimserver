@@ -195,9 +195,10 @@ sub playArtist {
 	$jive->{style} = 'itemplay';
 
 	push @{$items}, {
-		type => 'text',
-		name => $play_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => 'play',
+		name        => $play_string,
+		jive        => $jive, 
 	};
 	
 	return $items;
@@ -243,9 +244,10 @@ sub addArtist {
 	$jive->{actions} = $actions;
 
 	push @{$items}, {
-		type => 'text',
-		name => $add_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => $cmd,
+		name        => $add_string,
+		jive        => $jive, 
 	};
 	
 	return $items;

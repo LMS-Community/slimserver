@@ -188,9 +188,10 @@ sub playYear {
 	$jive->{style} = 'itemplay';
 
 	push @{$items}, {
-		type => 'text',
-		name => $play_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => 'play',
+		name        => $play_string,
+		jive        => $jive, 
 	};
 	
 	return $items;
@@ -200,7 +201,7 @@ sub addYearEnd {
 	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'ADD_TO_END');
 	my $cmd = 'add';
-	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd ); 
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_add'); 
 }
 
 
@@ -208,7 +209,7 @@ sub addYearNext {
 	my ( $client, $url, $year, $remoteMeta, $tags ) = @_;
 	my $add_string   = cstring($client, 'PLAY_NEXT');
 	my $cmd = 'insert';
-	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd ); 
+	addYear( $client, $url, $year, $remoteMeta, $tags, $add_string, $cmd, 'item_insert' ); 
 }
 
 
@@ -237,9 +238,10 @@ sub addYear {
 	$jive->{actions} = $actions;
 
 	push @{$items}, {
-		type => 'text',
-		name => $add_string,
-		jive => $jive, 
+		type        => 'text',
+		playcontrol => $cmd,
+		name        => $add_string,
+		jive        => $jive, 
 	};
 	return $items;
 }

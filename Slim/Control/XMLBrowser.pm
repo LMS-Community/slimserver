@@ -1080,6 +1080,12 @@ sub _cliQuery_done {
 							$hash{'style'} = 'itemplay';
 						}
 						
+						elsif (my $playcontrol = $item->{'playcontrol'}) {
+							if    ($playcontrol eq 'play')   {$hash{'style'} = 'item_play';}
+							elsif ($playcontrol eq 'add')    {$hash{'style'} = 'item_add';}
+							elsif ($playcontrol eq 'insert') {$hash{'style'} = 'item_insert';}
+						}
+						
 						my $itemText = $nameOrTitle;
 						if ($item->{'name2'}) {
 							$itemText .= "\n" . $item->{'name2'};
@@ -1134,7 +1140,7 @@ sub _cliQuery_done {
 						}
 
 						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
-							$hash{'style'} = 'itemNoAction';
+							$hash{'style'} ||= 'itemNoAction';
 							$hash{'action'} = 'none';
 						}
 						
@@ -1799,6 +1805,7 @@ sub _playlistControlContextMenu {
 		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('PLAY_NEXT'),
+				style => 'item_insert',
 				actions => {go => $action},
 			},
 		}
@@ -1814,6 +1821,7 @@ sub _playlistControlContextMenu {
 		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
+				style => 'item_playall',
 				actions => {go => $action},
 			},
 		}
@@ -1855,6 +1863,7 @@ sub _playlistControlContextMenu {
 	
 		push @contextMenu, {
 			text => $request->string($token),
+			style => 'item_fav',
 			actions => $favoriteActions,
 		};
 	}
