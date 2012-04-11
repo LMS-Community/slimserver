@@ -3180,6 +3180,29 @@ sub statusQuery {
 			$request->addResult('alarm_next', defined $alarmNext ? $alarmNext + 0 : 0);
 		}
 
+		# NEW ALARM CODE
+		# Add alarm version so a player can do the right thing
+		$request->addResult('alarm_version', 2);
+
+		# The alarm_state and alarm_next are only good for an alarm in the next 24 hours
+		#  but we need the next alarm (which could be further away than 24 hours)
+		my $alarmNextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
+
+		if($alarmNextAlarm and $alarmNextAlarm->enabled()) {
+			# Get epoch seconds
+			my $alarmNext2 = $alarmNextAlarm->nextDue();
+			$request->addResult('alarm_next2', $alarmNext2);
+			# Get repeat status
+			my $alarmRepeat = $alarmNextAlarm->repeat();
+			$request->addResult('alarm_repeat', $alarmRepeat);
+			# Get days alarm is active
+			my $alarmDays = "";
+			for my $i (0..6) {
+				$alarmDays .= $alarmNextAlarm->day($i) ? "1" : "0";
+			}
+			$request->addResult('alarm_days', $alarmDays);
+		}
+
 		# send client pref for alarm snooze
 		my $alarm_snooze_seconds = $prefs->client($client)->get('alarmSnoozeSeconds');
 		$request->addResult('alarm_snooze_seconds', defined $alarm_snooze_seconds ? $alarm_snooze_seconds + 0 : 540);
