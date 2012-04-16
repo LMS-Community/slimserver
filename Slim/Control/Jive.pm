@@ -1608,6 +1608,31 @@ sub playerSettingsMenu {
 			},
 		},
 	}
+	
+	# allow player linked to anonymous user accounts to be assigned to existing/new named user account
+	if ( main::SLIM_SERVICE && $client->hasAnonymousAccount ) {
+		push @menu, {
+			text           => $client->string("SB_ACCOUNT"),
+			actions => {
+				go => {
+					cmd    => [ 'opml_generic', 'items' ],
+					params => {
+						menu     => 'opml_generic',
+						opml_url => Slim::Networking::SqueezeNetwork->url( '/api/v1/register' ),
+					},
+					player => 0,
+				},
+			},
+			id             => 'registerPlayer',
+			node           => 'home', # XXX - 'settings'?,
+			weight         => 105,
+			window         => {
+				# XXX - need own icon
+				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
+			},
+		};
+	}
+
 
 	if ($batch) {
 		return \@menu;
