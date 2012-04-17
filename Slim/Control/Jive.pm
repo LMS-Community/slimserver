@@ -1618,7 +1618,7 @@ sub playerSettingsMenu {
 					cmd    => [ 'opml_generic', 'items' ],
 					params => {
 						menu     => 'opml_generic',
-						opml_url => Slim::Networking::SqueezeNetwork->url( '/api/v1/register' ),
+						opml_url => Slim::Networking::SqueezeNetwork->url( '/api/register/v1/opml' ),
 					},
 					player => 0,
 				},
