@@ -515,7 +515,7 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'u') {$value = "$end";}
 		elsif ($v eq 't') {$value = Slim::Utils::DateTime::fracSecToMinSec($start);}
 		elsif ($v eq 'v') {$value = Slim::Utils::DateTime::fracSecToMinSec($end);}
-		elsif ($v eq 'w') {$value = $start - $end;}
+		elsif ($v eq 'w') {$value = $end - $start;}
 
 		elsif ($v eq 'b') {$value = ($transcoder->{'rateLimit'} || 320) * 1000;}
 		elsif ($v eq 'B') {$value = ($transcoder->{'rateLimit'} || 320);}
