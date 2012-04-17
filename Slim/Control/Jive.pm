@@ -1632,7 +1632,9 @@ sub playerSettingsMenu {
 			},
 		};
 	}
-
+	elsif ( main::SLIM_SERVICE ) {
+		_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
+	}
 
 	if ($batch) {
 		return \@menu;
