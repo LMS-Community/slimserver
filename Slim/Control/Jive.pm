@@ -1624,8 +1624,8 @@ sub playerSettingsMenu {
 				},
 			},
 			id             => 'registerPlayer',
-			node           => 'home', # XXX - 'settings'?,
-			weight         => 105,
+			node           => 'settings',
+			weight         => 99,
 			window         => {
 				# XXX - need own icon
 				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
