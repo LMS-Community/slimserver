@@ -619,7 +619,7 @@ RADIO
 	CS	Rádio
 	DA	Radio
 	DE	Radio
-	EN	Internet
+	EN	Radio
 	ES	Radio
 	FI	Radio
 	FR	Radio
@@ -23410,7 +23410,7 @@ INTERNET_RADIO
 	CS	Rádio
 	DA	Radio
 	DE	Radio
-	EN	Internet
+	EN	Radio
 	ES	Radio
 	FI	Radio
 	FR	Radio
