@@ -345,16 +345,17 @@ sub _fetchArtwork {
 		main::DEBUGLOG && $log->debug( 'Getting TuneIn artwork based on metadata:', Data::Dump::dump($track) );
 		
 		# keep track of the station logo in case we don't get track artwork
-		if ( my $song = $client->playingSong() ) {
-			#                                                                                    [ps] => podcast or station
-			#                                                                                            t => Thumbnail
-			#                                                                                             q => sQuare
-			#                                                                                              g => Giant
-			#                                                                                               d => meDium
-			if ( !$song->pluginData('stationLogo') && $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i ) {
+		#                                             [ps] => podcast or station
+		#                                                     t => Thumbnail
+		#                                                      q => sQuare
+		#                                                       g => Giant
+		#                                                        d => meDium
+		if ( $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i && (my $song = $client->playingSong()) ) {
+			if ( !$song->pluginData('stationLogo') ) {
 				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
 				
 				$song->pluginData( stationLogo => $track->{cover} );
+				$client->pluginData( stationLogo => $track->{cover} );
 			}
 		}
 		
