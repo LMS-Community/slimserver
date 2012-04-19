@@ -627,7 +627,7 @@ RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
-	RU	Радиостанции Интернета
+	RU	Радиостанции
 	SV	Radio
 
 MUSIC_SERVICES
@@ -23418,7 +23418,7 @@ INTERNET_RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
-	RU	Радиостанции Интернета
+	RU	Радиостанции
 	SV	Radio
 
 HOWTO_INTERNET_RADIO
