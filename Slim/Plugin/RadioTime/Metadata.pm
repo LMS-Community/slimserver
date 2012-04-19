@@ -345,15 +345,17 @@ sub _fetchArtwork {
 		main::DEBUGLOG && $log->debug( 'Getting TuneIn artwork based on metadata:', Data::Dump::dump($track) );
 		
 		# keep track of the station logo in case we don't get track artwork
-		#                                                                                    [ps] => podcast or station
-		#                                                                                            t => Thumbnail
-		#                                                                                             q => sQuare
-		#                                                                                              g => Giant
-		#                                                                                               d => meDium
-		if ( !$client->pluginData('stationLogo') && $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i ) {
-			main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
-			
-			$client->pluginData( stationLogo => $track->{cover} );
+		if ( my $song = $client->playingSong() ) {
+			#                                                                                    [ps] => podcast or station
+			#                                                                                            t => Thumbnail
+			#                                                                                             q => sQuare
+			#                                                                                              g => Giant
+			#                                                                                               d => meDium
+			if ( !$song->pluginData('stationLogo') && $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i ) {
+				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
+				
+				$song->pluginData( stationLogo => $track->{cover} );
+			}
 		}
 		
 		if ( $track && $track->{title} && $track->{artist} ) {
@@ -397,7 +399,7 @@ sub _gotArtwork {
 
 	my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef ) };
 	
-	if ( $@ ) {
+	if ( $@ || !$feed ) {
 		main::DEBUGLOG && $log->debug( "Error fetching TuneIn artwork: $@" );
 	}
 	else  {
@@ -406,6 +408,7 @@ sub _gotArtwork {
 	
 	if ( $feed && $feed->{items} && $feed->{items}->[0] && (my $key = $feed->{items}->[0]->{album_art} || $feed->{items}->[0]->{artist_art}) ) {
 		my $config = $client->pluginData('artworkConfig');
+		# grab "g"iant artwork
 		my $artworkUrl = $config->{albumarturl} . $key . 'g.jpg';
 		
 		setArtwork($client, $url, $artworkUrl);
