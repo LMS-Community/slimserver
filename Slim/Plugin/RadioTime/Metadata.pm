@@ -108,7 +108,17 @@ sub parser {
 				$client->master->pluginData( metadata => undef );
 			}
 
-			fetchArtwork($client, $url, 'delayed');
+			# Check for an image URL in the metadata.
+			my $artworkUrl;
+			if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
+				$artworkUrl = $1;
+				if ( $artworkUrl !~ /\.(?:jpe?g|gif|png)$/i ) {
+					$artworkUrl = undef;
+				}
+			}
+
+			# lookup artwork unless it's been defined in the metadata (eg. Radio Paradise)
+			fetchArtwork($client, $url, 'delayed') unless $artworkUrl;
 			
 			# Let the default metadata handler process the Icy metadata
 			$client->master->pluginData( hasIcy => $url );
