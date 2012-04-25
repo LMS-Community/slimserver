@@ -59,12 +59,19 @@ sub trackInfoURL {
 	
 	# Bug 15569, special case for RadioTime stations, use their trackinfo menu
 	my $rtinfo = URI->new($url)->query_form_hash;
-	my $serial = Digest::MD5::md5_hex( $client->uuid || $client->id );
+	my $serial = $class->getSerial($client);
 	
 	my $uri = URI->new('http://opml.radiotime.com/Options.ashx');
 	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial );
 	
 	return $uri->as_string;
+}
+
+sub getSerial {
+	my ( $class, $client ) = @_;
+
+	return '' unless $client;
+	return Digest::MD5::md5_hex( $client->uuid || $client->id );
 }
 
 1;

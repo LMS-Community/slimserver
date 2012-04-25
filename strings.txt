@@ -616,22 +616,19 @@ SCREENSAVERS
 	ZH_CN	屏幕保护程序
 
 RADIO
-	CS	Internetové rádio
-	DA	Internetradio
-	DE	Internetradio
-	EN	Internet Radio
-	ES	Radio por Internet
-	FI	Nettiradio
-	FR	Radio Internet
-	HE	רדיו באינטרנט
-	IT	Radio Internet
-	JA	インターネットラジオ
-	NL	Internetradio
-	NO	Internett-radio
-	PL	Radio internetowe
-	RU	Радиостанции Интернета
-	SV	Webbradio
-	ZH_CN	互联网收音机
+	CS	Rádio
+	DA	Radio
+	DE	Radio
+	EN	Radio
+	ES	Radio
+	FI	Radio
+	FR	Radio
+	IT	Radio
+	NL	Radio
+	NO	Radio
+	PL	Radio
+	RU	Радиостанции
+	SV	Radio
 
 MUSIC_SERVICES
 	CS	Hudební služby
@@ -23426,19 +23423,19 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	SV	Bläddra till Våra favoriter och tryck på mittenknappen.
 
 INTERNET_RADIO
-	CS	Internetové rádio
-	DA	Internetradio
-	DE	Internetradio
-	EN	Internet Radio
-	ES	Radio por Internet
-	FI	Nettiradio
-	FR	Radio Internet
-	IT	Radio Internet
-	NL	Internetradio
-	NO	Internett-radio
-	PL	Radio internetowe
-	RU	Радиостанции Интернета
-	SV	Webbradio
+	CS	Rádio
+	DA	Radio
+	DE	Radio
+	EN	Radio
+	ES	Radio
+	FI	Radio
+	FR	Radio
+	IT	Radio
+	NL	Radio
+	NO	Radio
+	PL	Radio
+	RU	Радиостанции
+	SV	Radio
 
 HOWTO_INTERNET_RADIO
 	CS	Rolujte na "Best of Internet Radio" a stiskněte tlačítko DOPRAVA.

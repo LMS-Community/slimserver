@@ -8,6 +8,8 @@ use Slim::Formats::RemoteMetadata;
 use Slim::Formats::XML;
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Plugin::RadioTime::Plugin;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -16,7 +18,9 @@ use URI::Escape qw(uri_escape_utf8);
 my $log   = logger('formats.metadata');
 my $prefs = preferences('plugin.radiotime');
 
-use constant META_URL => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=16';
+use constant PARTNER_ID => 16;
+use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID;
+use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID . '&serial=';
 
 my $ICON = Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon');
 
@@ -34,6 +38,48 @@ sub init {
 	);
 }
 
+sub getConfig {
+	my $client = shift;
+	
+	Slim::Utils::Timers::killTimers( $client, \&getConfig );
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_gotConfig,
+		\&_gotConfig, # TODO - error handler
+		{
+			client  => $client,
+			timeout => 30,
+		},
+	);
+	
+	Slim::Utils::Timers::setTimer(
+		$client,
+		time() + 60*60*23,	# repeat at least every 24h
+		\&getConfig,
+	);
+
+	$http->get( CONFIG_URL . Slim::Plugin::RadioTime::Plugin->getSerial($client) );
+}
+
+sub _gotConfig {
+	my $http   = shift;
+	my $client = $http->params('client');
+	
+	my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef ) };
+
+	if ( $@ ) {
+		main::DEBUGLOG && $log->debug( "Error fetching TuneIn artwork configuration: $@" );
+	}
+	elsif ( $feed && $feed->{items} && (my $config = $feed->{items}->[0]) ) {
+		if ( (my $lookup = $config->{'albumart.lookupurl'}) && (my $url = $config->{'albumart.url'}) ) {
+			$client->pluginData( artworkConfig => {
+				lookupurl   => $lookup,
+				albumarturl => $url,
+			} );
+		}
+	}
+}
+
 sub defaultMeta {
 	my ( $client, $url ) = @_;
 	
@@ -47,6 +93,10 @@ sub defaultMeta {
 sub parser {
 	my ( $client, $url, $metadata ) = @_;
 	
+	if ( $client && !$client->pluginData('artworkConfig') ) {
+		getConfig($client);
+	}
+
 	# If a station is providing Icy metadata, disable metadata
 	# provided by RadioTime
 	if ( $metadata =~ /StreamTitle=\'([^']+)\'/ ) {
@@ -57,6 +107,18 @@ sub parser {
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 				$client->master->pluginData( metadata => undef );
 			}
+
+			# Check for an image URL in the metadata.
+			my $artworkUrl;
+			if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
+				$artworkUrl = $1;
+				if ( $artworkUrl !~ /\.(?:jpe?g|gif|png)$/i ) {
+					$artworkUrl = undef;
+				}
+			}
+
+			# lookup artwork unless it's been defined in the metadata (eg. Radio Paradise)
+			fetchArtwork($client, $url, 'delayed') unless $artworkUrl;
 			
 			# Let the default metadata handler process the Icy metadata
 			$client->master->pluginData( hasIcy => $url );
@@ -73,6 +135,8 @@ sub parser {
 			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 			$client->master->pluginData( metadata => undef );
 		}
+
+		fetchArtwork($client, $url, 'delayed');
 		
 		# Let the default metadata handler process the WMA metadata
 		$client->master->pluginData( hasIcy => $url );
@@ -216,12 +280,7 @@ sub _gotMetadata {
 	
 	# Also cache the image URL in case the stream has other metadata
 	if ( $meta->{cover} ) {
-		my $cache = Slim::Utils::Cache->new();
-		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 * 7 );
-
-		if ( my $song = $client->playingSong() ) {
-			$song->pluginData( httpCover => $meta->{cover} );
-		}
+		setArtwork($client, $url, $meta->{cover});
 	}
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
@@ -229,6 +288,8 @@ sub _gotMetadata {
 	}
 	
 	$client->master->pluginData( metadata => $meta );
+	
+	fetchArtwork($client, $url);
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug( "Will check metadata again in $ttl seconds" );
 	
@@ -256,6 +317,131 @@ sub _gotMetadataError {
 	$meta->{_url} = $url;
 	
 	$client->master->pluginData( metadata => $meta );
+}
+
+
+sub fetchArtwork {
+	my ($client, $url, $delayed) = @_;
+	
+	main::DEBUGLOG && $log->debug( "Getting artwork for $url" );
+	
+	Slim::Utils::Timers::killTimers( $client, \&_fetchArtwork );
+
+	if ($delayed) {
+		$delayed = Slim::Music::Info::getStreamDelay($client);
+
+		# if the stream has ICY metadata, give it a moment to parse it
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + $delayed + 1,
+			\&_fetchArtwork,
+			$url
+		);
+	}
+	else {
+		_fetchArtwork($client, $url);
+	}
+}
+
+sub _fetchArtwork {
+	my ( $client, $url ) = @_;
+	
+	my $config  = $client->pluginData('artworkConfig') || return;
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+
+	if ( $handler && $handler->can('getMetadataFor') ) {
+		my $track = $handler->getMetadataFor( $client, $url );
+
+		main::DEBUGLOG && $log->debug( 'Getting TuneIn artwork based on metadata:', Data::Dump::dump($track) );
+		
+		# keep track of the station logo in case we don't get track artwork
+		#                                             [ps] => podcast or station
+		#                                                     t => Thumbnail
+		#                                                      q => sQuare
+		#                                                       g => Giant
+		#                                                        d => meDium
+		if ( $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i && (my $song = $client->playingSong()) ) {
+			if ( !$song->pluginData('stationLogo') ) {
+				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
+				
+				$song->pluginData( stationLogo => $track->{cover} );
+				$client->pluginData( stationLogo => $track->{cover} );
+			}
+		}
+		
+		if ( $track && $track->{title} && $track->{artist} ) {
+			
+			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&serial=%s&artist=%s&title=%s',
+				PARTNER_ID,
+				Slim::Plugin::RadioTime::Plugin->getSerial($client),
+				$track->{artist},
+				$track->{title},
+			);
+			
+			return if $client->master->pluginData('fetchingArtwork') && $client->master->pluginData('fetchingArtwork') eq $lookupurl;
+			
+			$client->master->pluginData( fetchingArtwork => $lookupurl );
+	
+			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+				\&_gotArtwork,
+				\&_gotArtwork, # we'll happily fall back to the station artwork if we fail
+				{
+					client     => $client,
+					url        => $url,
+					timeout    => 30,
+				},
+			);
+			
+			$http->get( $lookupurl );
+		}
+		# fallback to station artwork
+		elsif ( my $artworkUrl = $client->pluginData('stationLogo') ) {
+			setArtwork($client, $url, $artworkUrl);
+		}
+	}
+}
+
+sub _gotArtwork {
+	my $http   = shift;
+	my $client = $http->params('client');
+	my $url    = $http->params('url');
+	
+	$client->master->pluginData( fetchingArtwork => 0 );
+
+	my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef ) };
+	
+	if ( $@ || !$feed ) {
+		main::DEBUGLOG && $log->debug( "Error fetching TuneIn artwork: $@" );
+	}
+	else  {
+		main::DEBUGLOG && $log->debug( 'Received TuneIn track artwork information: ', Data::Dump::dump($feed) );
+	}
+	
+	if ( $feed && $feed->{items} && $feed->{items}->[0] && (my $key = $feed->{items}->[0]->{album_art} || $feed->{items}->[0]->{artist_art}) ) {
+		my $config = $client->pluginData('artworkConfig');
+		# grab "g"iant artwork
+		my $artworkUrl = $config->{albumarturl} . $key . 'g.jpg';
+		
+		setArtwork($client, $url, $artworkUrl);
+	}
+	# fallback to station artwork
+	elsif ( my $artworkUrl = $client->pluginData('stationLogo') ) {
+		setArtwork($client, $url, $artworkUrl);
+	}
+}
+
+sub setArtwork {
+	my ($client, $url, $artworkUrl) = @_;
+			
+	my $cache = Slim::Utils::Cache->new();
+	$cache->set( "remote_image_$url", $artworkUrl, 3600 );
+	
+	if ( my $song = $client->playingSong() ) {
+		$song->pluginData( httpCover => $artworkUrl );
+
+		main::DEBUGLOG && $log->debug("Updating stream artwork to $artworkUrl");
+		Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
+	}
 }
 
 1;
