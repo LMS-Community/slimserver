@@ -551,7 +551,7 @@ sub infoSqueezeNetwork {
 					# don't show the anonymous account information
 					name => cstring($client, 'INFORMATION_SN_ACCOUNT') . cstring($client, 'COLON') . ' ' . 
 						( $client->playerData->userid->email =~ /^!anonymous_[\da-f]+$/i 
-							? cstring($client, 'UNK') 
+							? cstring($client, 'NONE') 
 							: $client->playerData->userid->email
 						),
 				}
