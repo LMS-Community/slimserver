@@ -91,7 +91,7 @@ sub description {
 	
 	$params->{device} = {
 		name    => 'Logitech Media Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
-		version => $::VERSION . ' r' . $::REVISION,
+		version => $::VERSION . $::REVISION,
 		serial  => $serial,
 		uuid    => uc($server_uuid),
 	};

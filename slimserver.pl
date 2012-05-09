@@ -351,7 +351,7 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->error("Starting Logitech Media Server (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server (v$VERSION, $REVISION, $BUILDDATE) perl $]");
 
 	if ($diag) { 
 		eval "use diagnostics";

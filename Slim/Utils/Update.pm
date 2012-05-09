@@ -36,7 +36,7 @@ sub checkVersion {
 	# reset update download status in case our system is up to date
 	if ( $installer && installerIsUpToDate($installer) ) {
 		
-		main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
+		main::INFOLOG && $log->info("We're up to date (v$::VERSION, $::REVISION). Reset update notifiers.");
 		
 		$::newVersion = undef;
 		setUpdateInstaller();
@@ -163,7 +163,7 @@ sub getUpdate {
 
 		# don't re-download if we're up to date
 		if (installerIsUpToDate($file)) {
-			main::INFOLOG && $log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
+			main::INFOLOG && $log->info("We're up to date (v$::VERSION, $::REVISION). Reset update notifiers.");
 			
 			setUpdateInstaller();
 			return;
