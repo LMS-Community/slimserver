@@ -373,6 +373,12 @@ sub canSkip {
 	return 1;
 }
 
+sub canRew {
+	my ( $class, $url ) = @_;
+	
+	return $url =~ m{^slacker://(?:pid|songid|tid)/([^.]+)\.mp3} ? 1 : 0;
+}
+
 # Disallow skips after the limit is reached
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
@@ -401,7 +407,7 @@ sub canDoAction {
 	}
 	
 	if ( $action eq 'rew' ) {
-		return 0;
+		return $class->canRew($url);
 	}
 	
 	return 1;
@@ -687,14 +693,14 @@ sub getMetadataFor {
 			duration    => $track->{tlen},
 			replay_gain => $track->{audiogain},
 			# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
-			cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
+			cover       => $track->{cover} || 'http://images.slacker.com/covers/1400/' . $track->{albumid},
 			icon        => $icon,
 			bitrate     => '128k CBR',
 			type        => 'MP3 (Slacker)',
 			info_link   => 'plugins/slacker/trackinfo.html',
 			buttons     => {
 				# disable REW/Previous button
-				rew => 0,
+				rew => $class->canRew($url) || 0,
 				# disable FWD when you've reached skip limit
 				fwd => canSkip($client) ? 1 : 0,
 

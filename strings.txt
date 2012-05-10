@@ -107,19 +107,19 @@ COPYRIGHT
 	SV	© 2001–2011 Logitech Version 7.8.0
 
 COPYRIGHT_LOGITECH
-	CS	© 2001-2011 Logitech
-	DA	© 2001-2011 Logitech
-	DE	© 2001-2011 Logitech
-	EN	© 2001-2011 Logitech
-	ES	© 2001-2011 Logitech
-	FI	© 2001-2011 Logitech
-	FR	© 2001-2011 Logitech
-	IT	© 2001-2011 Logitech
-	NL	© 2001-2011 Logitech
-	NO	© 2001-2011 Logitech
-	PL	© 2001-2011 Logitech
-	RU	© Logitech, 2001-2011
-	SV	© 2001-2011 Logitech
+	CS	© 2001-2012 Logitech
+	DA	© 2001-2012 Logitech
+	DE	© 2001-2012 Logitech
+	EN	© 2001-2012 Logitech
+	ES	© 2001-2012 Logitech
+	FI	© 2001-2012 Logitech
+	FR	© 2001-2012 Logitech
+	IT	© 2001-2012 Logitech
+	NL	© 2001-2012 Logitech
+	NO	© 2001-2012 Logitech
+	PL	© 2001-2012 Logitech
+	RU	© Logitech, 2001-2012
+	SV	© 2001-2012 Logitech
 
 VERSION
 	CS	Verze 7.8.0 / r%s

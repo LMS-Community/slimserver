@@ -197,7 +197,7 @@ sub main {
 	
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	$log->error("Starting Logitech Media Server scanner (v$VERSION, r$REVISION, $BUILDDATE) perl $]");
+	$log->error("Starting Logitech Media Server scanner (v$VERSION, $REVISION, $BUILDDATE) perl $]");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);
