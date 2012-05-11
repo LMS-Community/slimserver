@@ -11961,7 +11961,7 @@ THOUSANDS_SEP
 	JA	,
 	NL	,
 	NO	.
-	PL	
+	PL	 
 	PT	.
 	RU	,
 	SV	 
