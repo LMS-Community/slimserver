@@ -180,7 +180,7 @@ EN_SKIN
 	FI	Valo
 	FR	Léger
 	HE	פשוט
-	IT	Leggero
+	IT	Chiaro
 	JA	ライト
 	NL	Licht
 	NO	Lett
@@ -513,12 +513,18 @@ PICTURES
 	SV	Bilder
 
 PICTURE
+	CS	Obrázek
+	DA	Billede
 	DE	Bild
 	EN	Picture
-	ES	Imágen
-	FR	Image
+	ES	Imagen
+	FI	Kuva
+	FR	Photo
+	IT	Immagine
 	NL	Foto
-	NO	Bild
+	NO	Bilde
+	PL	Obraz
+	RU	Фото
 	SV	Bild
 
 SETTINGS
@@ -627,7 +633,7 @@ RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
-	RU	Радиостанции
+	RU	Радиостанция
 	SV	Radio
 
 MUSIC_SERVICES
@@ -992,7 +998,7 @@ REMOVING_FROM_PLAYLIST
 	EN	Removing from playlist:
 	ES	Quitando de la lista de reproducción:
 	FI	Poistetaan soittoluettelosta:
-	FR	Supprime de la liste de lecture :
+	FR	Supprime de la liste de lecture:
 	HE	הסרה מרשימת ההשמעה:
 	IT	Rimozione dalla playlist:
 	JA	プレイ リストから削除する:
@@ -2956,7 +2962,7 @@ PROBLEM_CONNECTING
 	EN	Problem: Can't connect to server for:
 	ES	Problema: No se puede conectar al servidor:
 	FI	Ongelma: ei voi muodostaa yhteyttä palvelimeen:
-	FR	Problème: impossible de joindre le serveur :
+	FR	Problème: impossible de joindre le serveur:
 	HE	בעיה: אין אפשרות להתחבר לשרת עבור:
 	IT	Problema: impossibile connettersi al server per:
 	JA	エラー: 接続できません:
@@ -3026,7 +3032,7 @@ PROBLEM_CONVERT_FILE_WMA_LOSSLESS
 	EN	Problem: WMA Lossless requires Windows
 	ES	Problema: WMA Lossless requiere Windows
 	FI	Ongelma: Häviötön WMA vaatii Windowsin
-	FR	Problème : le format WMA Lossless nécessite Windows
+	FR	Problème: le format WMA Lossless nécessite Windows
 	IT	Problema: WMA Lossless richiede Windows
 	NL	Probleem: WMA Lossless vereist Windows
 	NO	Problem: WMA Lossless krever Windows
@@ -3222,7 +3228,7 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	ES	Error al cargar la secuencia remota de %s: (%s)
 	FI	Virhe ladattaessa etäsyötettä kohteelle %s: (%s)
-	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s: (%s).
+	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s: (%s)
 	HE	אירעה שגיאה במהלך טעינת ההזנה מרחוק עבור %s: ‏(%s)
 	IT	Errore durante il tentativo di caricamento del feed remoto per %s: (%s)
 	NL	Fout tijdens laden van externe feed voor %s: (%s)
@@ -4903,7 +4909,7 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
 	ES	Éste es un control de volumen secundario que sólo es aplicable a las salidas analógicas de Squeezebox. Introduzca el valor de atenuación en decibelios. El intervalo está entre 0,0 y 63,0 en pasos de 0,5 db. El valor predeterminado es 0 (para volumen máximo). ADVERTENCIA: Si la potencia del amplificador puede reventar los altavoces, conviene usar un atenuador de línea, preamplificador o receptor como medida de seguridad.
 	FI	Tämä on toissijainen äänenvoimakkuuden säädin, joka ohjaa vain Squeezeboxin analogisia lähtöjä. Kirjoita vaimennuksen määrä desibeleinä. Alue on 0,0–63,0 puolen desibelin välein. Oletusarvo on 0 (täysi äänenvoimakkuus). VAROITUS: jos vahvistimesi on riittävän tehokas vaurioittamaan kaiuttimia, suojana tulisi yhä käyttää vastaanotinta, esivahvistinta tai linjavaimenninta.
-	FR	Il s'agit de la commande secondaire de volume qui s'applique uniquement aux sorties analogiques de la Squeezebox. Spécifiez la quantité d'atténuation en décibels. La plage s'étend de 0,0 db à 63,0 db, avec incréments de 0,5 db. La valeur par défaut est 0 (pour un volume complet). Avertissement : si votre amplificateur est assez puissant pour détruire des enceintes, vous devez utiliser un récepteur, un préamplificateur ou un atténuateur de ligne pour des raisons de sécurité.
+	FR	Il s'agit de la commande secondaire de volume qui s'applique uniquement aux sorties analogiques de la Squeezebox. Spécifiez la quantité d'atténuation en décibels. La plage s'étend de 0,0 db à 63,0 db, avec incréments de 0,5 db. La valeur par défaut est 0 (pour un volume complet). Avertissement: si votre amplificateur est assez puissant pour détruire des enceintes, vous devez utiliser un récepteur, un préamplificateur ou un atténuateur de ligne pour des raisons de sécurité.
 	HE	זוהי בקרת עוצמת קול משנית אשר חלה רק על רכיבי פלט אנלוגיים ב-Squeezebox. הזן את רמת ההיחלשות בדציבלים. הטווח הוא בין 0.0-63.0 במרווחים של 0.5 דציבלים. ברירת המחדל היא 0 (עבור עוצמת קול מלאה). אזהרה: אם עוצמת המגבר שברשותך מספיקה כדי לגרום נזק לרמקולים, יש להשתמש במקלט, מגבר קדם או מכשיר להפחתת עוצמה של אותות כאמצעי בטיחות!
 	IT	Si tratta di un controllo di volume secondario che si applica solo alle uscite analogiche dello Squeezebox. Inserire il livello di attenuazione in decibel. L'intervallo va da 0,0 a 63, 0 in incrementi di 0,5. L'impostazione predefinita è 0 (volume massimo). ATTENZIONE: l'amplificatore potrebbe danneggiare le casse in caso di volume elevato. Per sicurezza si consiglia di utilizzare un amplificatore integrato, un preamplificatore o un attenuatore di linea.
 	NL	Dit is een secundaire volume-instelling die alleen van toepassing is op de analoge uitgangen van de Squeezebox. Geef de demping op in decibels. Het bereik gaat van 0,0 tot 63,0 in stappen van 0,5 dB. De standaard is 0 (voor volledig volume). WAARSCHUWING: Als je versterker krachtig genoeg is om je speakers op te blazen, is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
@@ -5848,7 +5854,7 @@ TRANSITION_CROSSFADE
 	FI	Ristihäivytys
 	FR	Transitions
 	HE	מעבר הדרגתי
-	IT	Dissolv. incrociata
+	IT	Dissolvenza incrociata
 	NL	Crossfade
 	NO	Krysstoning
 	PL	Przenikanie
@@ -7305,7 +7311,7 @@ SETUP_AUTO_DOWNLOAD_1
 	EN	Automatically download updates when they're available.
 	ES	Descargar actualizaciones automáticamente cuando estén disponibles.
 	FI	Lataa päivitykset automaattisesti, kun ne ovat saatavilla.
-	FR	Télécharger automatiquement les mises à jour disponibles.
+	FR	Télécharger automatiquement les mises à jour disponibles
 	IT	Scarica automaticamente gli aggiornamenti quando sono disponibili.
 	NL	Updates automatisch downloaden wanneer deze beschikbaar zijn.
 	NO	Last ned oppdateringer automatisk når de blir tilgjengelige.
@@ -8687,7 +8693,7 @@ SETUP_FILTERRULE_DESC
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to Logitech Media Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to Logitech Media Server running on that same computer.
 	ES	Si se ha activado el bloqueo, se pueden introducir las direcciones desde las que se desea permitir la conexión a Logitech Media Server.<br><br>Este campo acepta una lista de direcciones IP específicas, comodines del tipo * e intervalos de direcciones IP en una lista separada por comas. Por ejemplo:<BR><BR><B>10.1.2.2</b> sólo permitirá la conexión de 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección IP con el formato 10.1.2.X<BR><BR><B>10.1.2.2-50</b> permitirá conexiones desde direcciones IP pertenecientes al intervalo 10.1.2.2 - 10.1.2.50<BR><BR>Por último, se pueden combinar varias entradas con comas, así: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>La dirección IP especial 127.0.0.1 permite que un navegador Web se conecte al Logitech Media Server que se esté ejecutando en ese mismo equipo.
 	FI	Jos estäminen on otettu käyttöön, voit kirjoittaa osoitteet, joiden sallit muodostaa yhteyden Logitech Media Serveriin.<br><br>Tähän kenttään voidaan lisätä luettelo tietyistä IP-osoitteista, *-tyylin yleismerkeistä ja pilkuilla erotettu luettelo IP-osoitteista. Esimerkiksi:<BR><BR><B>10.1.2.2</B> sallii ainoastaan osoitteen 10.1.2.2,<BR><BR><B>10.1.2.*</B> sallii IP-osoitteet, jotka sisältävät numerot 10.1.2.x,<BR><BR><B>10.1.2.2-50</B> sallii alueeseen 10.1.2.2 - 10.1.2.50 kuuluvat IP-osoitteet.<BR><BR>Jos osoitteita on useita, ne voidaan erottaa pilkuin, esimerkiksi näin: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>IP-osoite 127.0.0.1 sallii selaimen muodostaa yhteyden samassa tietokoneessa toimivaan Logitech Media Serveriin.
-	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Logitech Media Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule.<br>Exemple:<BR><BR><B>10.1.2.2</B>autorise uniquement cette adresse à se connecter<BR><BR><B>10.1.2.*</B>autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B>autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Logitech Media Server s'ils se trouvent sur le même ordinateur.
+	FR	Si vous avez activé le blocage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au Logitech Media Server.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère générique * et des intervalles d'adresses IP, le tout séparé par une virgule. Exemple:<BR><BR><B>10.1.2.2</B>autorise uniquement cette adresse à se connecter<BR><BR><B>10.1.2.*</B>autorise toutes les adresses dont les trois premières composantes sont 10, 1 et 2 à se connecter<BR><BR><B>10.1.2.2,10.1.3.*,10.1.4.2-50</B>autorise l'adresse 10.1.2.2, toutes les adresses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.<BR><BR>Enfin, vous pouvez combiner des entrées à l'aide de virgules, par exemple<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'adresse IP 127.0.0.1 autorise un navigateur Web à se connecter au Logitech Media Server s'ils se trouvent sur le même ordinateur.
 	HE	אם הפעלת את אפשרות החסימה, באפשרותך להזין את הכתובות שלהן ברצונך לאפשר להתחבר ל-Logitech Media Server.<br><br>בשדה זה ניתן להזין רשימה של כתובות IP ספציפיות, תווים כלליים כגון *, וטווחים של כתובות IP ברשימה המופרדת באמצעות פסיקים. לדוגמה:<BR><BR><B>‎10.1.2.2</B> יאפשר רק ל-‎‏10.1.2.2 להתחבר.<BR><BR><B>‎10.1.2.*‎</B>‎ יאפשר לכל גורם עם כתובת IP בתבנית ‎‎10.1.2.x להתחבר.<BR><BR><B>‎10.1.2.2-50</B> יאפשר לכתובות IP בטווח שבין ‎‎10.1.2.2 - 10.1.2.50‎ להתחבר.<BR><BR>לסיום, ניתן לשלב רשומות מרובות באמצעות פסיקים, לדוגמה, <B>‎10.1.2.2,172.16.1.*,192.168.1-254‎</B><BR><BR>כתובת ה-IP המיוחדת ‎127.0.0.1 מאפשרת לדפדפן אינטרנט להתחבר לשרת Logitech Media Server שפועל באותו מחשב.
 	IT	Se è stato attivato il blocco, è possibile inserire gli indirizzi a cui consentire la connessione a Logitech Media Server.<br><br>In questo campo è possibile inserire un elenco di indirizzi IP specifici, il carattere jolly * ed elenchi di intervalli di indirizzi IP separati da virgole. Ad esempio:<BR><BR>se si specifica<B>10.1.2.2</B>, viene accettata solo la connessione con l'indirizzo 10.1.2.2<BR><BR>se si specifica<B>10.1.2.*</B>, viene accettata la connessione con tutti gli indirizzi IP che iniziano con 10.1.2.x<BR><BR>se si specifica<B>10.1.2.2-50</B>, viene accettata la connessione con indirizzi IP compresi tra 10.1.2.2 e 10.1.2.50<BR><BR>Infine, è possibile specificare più indirizzi IP separandoli con virgole, ad esempio:<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 consente di connettere un browser Web a Logitech Media Server in esecuzione sullo stesso computer.
 	JA	ブロックする、と指定したのであれば、Logitech Media Serverに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがLogitech Media Serverに接続する時に接続を可能にします。
@@ -11949,13 +11955,13 @@ THOUSANDS_SEP
 	EN	,
 	ES	.
 	FI	 
-	FR	 
+	FR	,
 	HE	,
 	IT	.
 	JA	,
 	NL	,
 	NO	.
-	PL	 
+	PL	
 	PT	.
 	RU	,
 	SV	 
@@ -12283,7 +12289,7 @@ NO_LIMIT
 GENRES
 	CS	Žánry
 	DA	Genrer
-	DE	Stilrichtung
+	DE	Stilrichtungen
 	EN	Genres
 	ES	Géneros
 	FI	Genret
@@ -13042,8 +13048,19 @@ BROWSE_ALL_PICTURES
 	SV	Alla bilder
 
 BROWSE_MUSIC_FOLDER_WHILE_SCANNING
-	DE	Der Musikordner steht nicht zur Verfügung, solange die Medienbibliothek durchsucht wird.
+	CS	Složka Hudba není v průběhu skenování k dispozici.
+	DA	Musikmappe kan ikke vælges, mens der scannes.
+	DE	Musikordner ist während des Scanvorgangs nicht verfügbar.
 	EN	Music Folder is not available while scanning.
+	ES	La carpeta Música no está disponible al examinar.
+	FI	Musiikkikansio ei ole käytettävissä tarkistuksen aikana.
+	FR	Le dossier de musique n'est pas disponible pour l'analyse.
+	IT	La cartella Musica non è disponibile durante l’analisi.
+	NL	Muziekmap is niet beschikbaar tijdens het scannen.
+	NO	Musikkmappen er ikke tilgjengelig når søk pågår.
+	PL	Folder muzyczny nie jest dostępny do przeskanowania.
+	RU	Во время сканирования папка "Музыка" недоступна.
+	SV	Musikmappen är inte tillgänglig under sökning.
 
 SYNCHRONIZE
 	CS	Synchronizovat
@@ -15191,7 +15208,7 @@ SEARCH
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
-	IT	Ricerca
+	IT	Cerca
 	JA	音楽を検索する
 	NL	Zoeken
 	NO	Søk
@@ -15210,7 +15227,7 @@ GLOBAL_SEARCH
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
-	IT	Ricerca
+	IT	Cerca
 	JA	音楽を検索する
 	NL	Zoeken
 	NO	Søk
@@ -15245,7 +15262,7 @@ SEARCHMUSIC
 	FI	Etsi musiikkia
 	FR	Rechercher
 	HE	איתור מוסיקה
-	IT	Ricerca musica
+	IT	Cerca musica
 	JA	音楽を検索する
 	NL	Muziek zoeken
 	NO	Søk i musikk
@@ -15298,7 +15315,7 @@ SEARCHFOR_ARTIST
 	FI	Hae artistia
 	FR	Rechercher des artistes
 	HE	איתור מבצע
-	IT	Ricerca artista
+	IT	Cerca artista
 	JA	アーチストを検索する
 	NL	Naar artiest zoeken
 	NO	Søk etter artist
@@ -15317,7 +15334,7 @@ SEARCHFOR_ARTISTS
 	FI	Hae artisteja
 	FR	Rechercher des artistes
 	HE	איתור מבצעים
-	IT	Ricerca artisti
+	IT	Cerca artisti
 	JA	アーチストを検索する
 	NL	Naar artiesten zoeken
 	NO	Søk etter artister
@@ -15340,7 +15357,7 @@ SEARCHFOR_ALBUM
 	FI	Etsi levy
 	FR	Rechercher un album
 	HE	איתור אלבום
-	IT	Ricerca album
+	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Naar album zoeken
 	NO	Søk etter album
@@ -15359,7 +15376,7 @@ SEARCHFOR_ALBUMS
 	FI	Etsi levyjä
 	FR	Rechercher des albums
 	HE	איתור אלבומים
-	IT	Ricerca album
+	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Naar albums zoeken
 	NO	Søk etter album
@@ -15382,7 +15399,7 @@ SEARCHFOR_SONGS
 	FI	Hae kappaleita
 	FR	Rechercher des morceaux
 	HE	איתור שירים
-	IT	Ricerca brani
+	IT	Cerca brani
 	JA	曲を検索する
 	NL	Naar liedjes zoeken
 	NO	Søk etter sanger
@@ -15405,7 +15422,7 @@ SEARCHFOR_SONGTITLE
 	FI	Hae kappaleen nimeä
 	FR	Rechercher des morceaux
 	HE	איתור שם שיר
-	IT	Ricerca titolo brano
+	IT	Cerca titolo brano
 	JA	曲のタイトルを検索する
 	NL	Naar titels van liedjes zoeken
 	NO	Søk etter sangtittel
@@ -15424,7 +15441,7 @@ SEARCH_FOR_ARTISTS
 	FI	Hae artisteja
 	FR	Rechercher des artistes
 	HE	איתור מבצעים
-	IT	Ricerca artisti
+	IT	Cerca artisti
 	JA	アーチストを検索する
 	NL	Naar artiesten zoeken
 	NO	Søk etter artister
@@ -15443,7 +15460,7 @@ SEARCH_FOR_ALBUMS
 	FI	Etsi levyjä
 	FR	Rechercher des albums
 	HE	איתור אלבומים
-	IT	Ricerca album
+	IT	Cerca album
 	JA	アルバムを検索する
 	NL	Naar albums zoeken
 	NO	Søk etter album
@@ -15462,7 +15479,7 @@ SEARCH_FOR_SONGS
 	FI	Hae kappaleita
 	FR	Rechercher des morceaux
 	HE	איתור שירים
-	IT	Ricerca brani
+	IT	Cerca brani
 	JA	曲を検索する
 	NL	Naar liedjes zoeken
 	NO	Søk etter sanger
@@ -15481,7 +15498,7 @@ SEARCH_STREAMS
 	FI	Etsi
 	FR	Recherche
 	HE	חיפוש
-	IT	Ricerca
+	IT	Cerca
 	NL	Zoeken
 	NO	Søk
 	PL	Szukaj
@@ -17067,7 +17084,7 @@ INFORMATION_VIDEOS
 	EN	Total Videos
 	ES	Total de vídeos
 	FI	Videot kokonaisuudessaan
-	FR	Total de vidéos
+	FR	Vidéos
 	IT	Video totali
 	NL	Totaalaantal video's
 	NO	Totalt antall videoer
@@ -17082,7 +17099,7 @@ INFORMATION_IMAGES
 	EN	Total Images
 	ES	Total de imágenes
 	FI	Kuvia yhteensä
-	FR	Total d'images
+	FR	Images
 	IT	Immagini totali
 	NL	Totaalaantal afbeeldingen
 	NO	Totalt antall bilder
@@ -18813,22 +18830,33 @@ SETUP_PRECACHEARTWORK_DESC
 	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
 
 SETUP_PRECACHEARTWORK_ALL
-	DE	Plattenhüllen, Fotos und Videos zwischenspeichern
+	CS	Ukládat obaly alb, fotografie a videa do mezipaměti cache
+	DA	Gemme albumcovers samt andre albumrelaterede mediefiler
+	DE	Alben, Fotos und Videos zwischenspeichern
 	EN	Pre-cache album, photo and video artwork
+	ES	Guardar carátula de álbum, fotografía y vídeo en caché previamente
+	FI	Tallentaa levynkannet, valokuvat ja videot valmiiksi välimuistiin
+	FR	Mettre la pochette de l'album, les photos et les vidéos en pré-cache
+	IT	Inserire le copertine di album, foto e video nella pre-cache
+	NL	Afbeeldingen van albums, foto's en video's vooraf in cache opslaan
+	NO	Forhåndsbufre album, fotografier og videoer
+	PL	Buforuj wstępnie materiały graficzne do płyt, zdjęć i filmów wideo
+	RU	Pre-cache album, photo and video artwork
+	SV	Cachelagra omslag för album, foton och videor
 
 SETUP_PRECACHEARTWORK_ENABLED
-	CS	Ukládat obaly alb do odkládací paměti
-	DA	Gem coverbilleder i cachelager
+	CS	Ukládat obaly alb do mezipaměti cache
+	DA	Gemme coverbilleder
 	DE	Plattenhüllen zwischenspeichern
 	EN	Pre-cache album artwork
-	ES	Guardar carátula en caché previamente
+	ES	Guardar carátula de álbum en caché previamente
 	FI	Tallenna levykannet valmiiksi välimuistiin
-	FR	Mettre la pochette en pré-cache
-	IT	Copertina in pre-cache
-	NL	Hoesafbeeldingen vooraf in cache opslaan
-	NO	Hurtigbufre omslag på forhånd
-	PL	Buforuj wstępnie okładkę
-	RU	Предварительно кэшировать обложки
+	FR	Mettre la pochette de l'album en pré-cache
+	IT	Copertina album in pre-cache
+	NL	Afbeeldingen van albums vooraf in cache opslaan
+	NO	Forhåndsbufre albumomslag
+	PL	Buforuj wstępnie okładkę płyty
+	RU	Предварительно кэшировать обложку альбома
 	SV	Cachelagra albumomslag
 
 SETUP_PRECACHEARTWORK_DISABLED
@@ -20723,34 +20751,34 @@ DIRECTORY_PROGRESS
 	SV	Mappsökning
 
 DISCOVERING_FILES_PROGRESS
-	CS	Vyhledávání hudebních souborů
-	DA	Søger efter musikfiler
-	DE	Musikdateien werden erkannt
+	CS	Vyhledávání hudebních souborů/adresářů
+	DA	Sådan finder du musikfiler/-mapper
+	DE	Musikdateien/-verzeichnisse werden erkannt
 	EN	Discovering music files/directories
-	ES	Detectando archivos de música
-	FI	Musiikkitiedostoja etsitään
-	FR	Détection des fichiers musicaux
-	IT	Rilevazione dei file musicali
-	NL	Muziekbestanden detecteren
-	NO	Ser etter musikkfiler
-	PL	Wykrywanie plików muzycznych
-	RU	Обнаружение музыкальных файлов
-	SV	Leta musikfiler
+	ES	Detectando archivos/directorios de música
+	FI	Musiikkitiedostojen ja hakemistojen etsiminen
+	FR	Détection des dossiers/fichiers musicaux
+	IT	Rilevamento di file/directory di musica
+	NL	Muziekbestanden/-mappen detecteren
+	NO	Ser etter musikkfiler/-kataloger
+	PL	Wykrywanie plików muzycznych i katalogów
+	RU	Поиск файлов/папок с музыкой
+	SV	Leta efter musikfiler/kataloger
 
 DISCOVERING_DIRECTORY_PROGRESS
-	CS	Vyhledávání souborů
-	DA	Søger efter filer
-	DE	Dateien werden erkannt
+	CS	Vyhledávání souborů/adresářů
+	DA	Sådan finder du filer/mapper
+	DE	Dateien/Verzeichnisse werden erkannt
 	EN	Discovering files/directories
-	ES	Detectando archivos
-	FI	Etsitään tiedostoja
-	FR	Détection des fichiers
-	IT	Rilevazione file
-	NL	Bestanden detecteren
-	NO	Ser etter filer
-	PL	Wykrywanie plików
-	RU	Обнаружение файлов
-	SV	Leta filer
+	ES	Detectando archivos/directorios
+	FI	Tiedostojen ja hakemistojen etsiminen
+	FR	Détection des fichiers/répertoires
+	IT	Rilevamento di file/directory
+	NL	Bestanden/mappen detecteren
+	NO	Finne filer/kataloger
+	PL	Wykrywanie plików i katalogów
+	RU	Поиск файлов/папок
+	SV	Leta efter filer/kataloger
 
 DISCOVERING_PLAYLIST_PROGRESS
 	CS	Hledání seznamů skladeb
@@ -23054,8 +23082,19 @@ CLEANUP_COMMAND_LINE
 	SV	Alternativ för kommandoraden:
 
 CLEANUP_DB
+	CS	Odstranit databázi informací o médiích
+	DA	Slet databasen med medieinformationer
 	DE	Mediendatenbank löschen
 	EN	Delete media information database
+	ES	Eliminar base de datos multimedia
+	FI	Poista mediatietokanta
+	FR	Supprimer la base de données multimédia
+	IT	Elimina database informazioni file multimediali
+	NL	Database met mediagegevens verwijderen
+	NO	Slett medieinformasjonsdatabase
+	PL	Usuń bazę danych z informacjami o multimediach
+	RU	Удалить базу данных информации о мультимедиа
+	SV	Ta bort databas med medieinformation
 
 CLEANUP_FILECACHE
 	CS	Vymazat odkládací paměť souborů obalů alb, šablon apod.
@@ -23131,10 +23170,21 @@ CLEANUP_ALL
 	PL	Usuń wszystkie - nie rób tego, jeśli nie masz całkowitej pewności!
 	RU	Очистить все — не выполняйте эту команду, если не уверены!
 	SV	Utplåna allt – Gör inte detta om du inte är helt säker på vad du gör!
-	
+
 CLEANUP_DRYRUN
-	DE	Bereinigung nicht wirklich durchführen, aber eine Liste der betroffenen Ordner und Dateien anzeigen.
+	CS	Nespustí přímo čištění, ale zobrazí, které soubory a složky budou odstraněny.
+	DA	Kør ikke oprydningen nu, men vis hvilke filer, der ville blive fjernet ved en oprydning.
+	DE	Bereinigung nicht wirklich ausführen, sondern nur betroffene Ordner und Dateien anzeigen
 	EN	Don't actually run the cleanup, but show which files and folders would be removed.
+	ES	No ejecutar la limpieza, pero mostrar qué archivos y carpetas se eliminarían.
+	FI	Älä suorita puhdistusta, mutta näytä mitkä tiedostot ja kansiot poistettaisiin.
+	FR	Affiche les fichiers et dossiers devant être supprimés sans effectuer de nettoyage.
+	IT	Non esegue la pulizia ma mostra i file e le cartelle che verranno rimossi.
+	NL	Voer de opschoning niet uit, maar laat zien welke bestanden en mappen verwijderd zouden worden.
+	NO	Ikke kjør faktisk opprydding, bare vis hvilke filer og mapper som ville blitt fjernet.
+	PL	Nie uruchamiaj czyszczenia, lecz pokaż pliki i foldery do usunięcia.
+	RU	Не производить очистку, только отобразить файлы и папки, которые были бы удалены.
+	SV	Kör inte rensningen, men visa vilka filer och mappar som skulle tas bort.
 
 CLEANUP_DELETING
 	CS	Mazání
@@ -23167,19 +23217,19 @@ CONTROLPANEL_NO_STATUS
 	SV	Det finns ingen statusinformation. Tänk på att statusinformationen inte kan visas när Logitech Media Server inte körs.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
-	CS	Některé volby jsou zakázány, protože nejste administrátor. Abyste mohli tyto volby používat, spusťte tento nástroj jako administrátor.
-	DA	Nogle af mulighederne er deaktiveret fordi du ikke er administrator. Du skal køre dette værktøj som administrator for at kunne bruge dem.
-	DE	Sie haben keine Berechtigung, Hintergrunddienste zu installieren oder zu starten/stoppen. Bitte starten Sie dieses Tool aus dem Startmenü mittels der rechten Maustaste als Administrator.
+	CS	Nemáte práva instalovat nebo spouštět/zastavovat procesy Logitech Media Server na pozadí. Spusťte ovládací panel z nabídky Start systému Windows prostřednictvím kontextové nabídky vyvolané pravým klepnutím tlačítka, a klepněte na možnost „Spustit jako správce“.
+	DA	Du har ikke rettigheder til at installere eller starte/stoppe baggrundstjenesten Logitech Media Server. Start kontrolpanelet fra Startmenuen i Windows – via højrekliksmenuen klikker du på "Kør som administrator".
+	DE	Sie sind nicht dazu berechtigt, den Logitech Media Server-Hintergrunddienst zu installieren oder zu starten bzw. anzuhalten. Öffnen Sie die Systemsteuerung im Windows-Startmenü über das Kontextmenü und wählen Sie 'Als Administrator ausführen'.
 	EN	You don't have privileges to install or start/stop the Logitech Media Server background service. Please start the control panel from the Windows Start Menu, via the right click context menu, and click "Run as Administrator".
-	ES	Algunas de las opciones están desactivadas, porque no es un administrador. Ejecute esta herramienta como administrador para poder usarlas.
-	FI	Osa toiminnoista on poistettu käytöstä, koska et ole järjestelmänvalvoja. Suorita tämä työkalu järjestelmänvalvojana, jos haluat käyttää näitä toimintoja.
-	FR	Certaines options sont désactivées, car vous n'êtes pas l'administrateur. Exécutez cet outil en tant qu'administrateur pour pouvoir utiliser toutes ses fonctions.
-	IT	Alcune opzioni sono disattivate poiché non si hanno diritti di amministratore. Per utilizzarle, eseguire questo strumento come amministratore.
-	NL	Bepaalde opties zijn uitgeschakeld, omdat je geen beheerder bent. Voer deze tool als beheerder uit om de opties te kunnen gebruiken.
-	NO	Noen av alternativene er deaktivert fordi du ikke har administratorrettigheter. Du må logge på som administrator og deretter kjøre dette verktøyet for å kunne bruke dem.
-	PL	Niektóre opcje są wyłączone, ponieważ nie jesteś administratorem. Uruchom to narzędzie jako administrator, aby możliwe było użycie tych opcji.
-	RU	Некоторые параметры отключены, поскольку вы не являетесь администратором. Запустите эту утилиту от имени администратора, и они станут доступны.
-	SV	En del alternativ är inte tillgängliga eftersom du inte är administratör. Kör detta verktyg som administratör om du vill komma åt dem.
+	ES	No tiene privilegios para instalar o iniciar/detener el servicio en segundo plano Logitech Media Server. Inicie el Panel de control desde el menú Inicio de Windows, mediante el menú contextual de botón derecho y haga clic en "Ejecutar como administrador".
+	FI	Sinulla ei ole tarvittavia oikeuksia asentaa, käynnistää tai pysäyttää Logitech Media Serverin taustapalvelua. Avaa Windowsin Käynnistä-valikosta palvelimen ohjauspaneeli napsauttamalla kakkospainiketta ja valitse pikavalikosta Suorita järjestelmänvalvojana.
+	FR	Vous ne disposez pas des droits pour installer ou arrêter/démarrer le service d'arrière-plan Logitech Media Server. Démarrez le Panneau de configuration en cliquant dessus à l'aide du bouton droit dans le menu Démarrer de Windows et en sélectionnant Exécuter en tant qu'administrateur.
+	IT	Non si dispone dei privilegi per installare o avviare/arrestare il servizio in background di Logitech Media Server. Aprire il Pannello di controllo dal menu Start di Windows utilizzando il menu di scelta rapida visualizzabile facendo clic con il pulsante destro del mouse, quindi fare clic su "Esegui come amministratore".
+	NL	Je hebt geen rechten om de achtergrondservice van Logitech Media Server te installeren of te starten/stoppen. Start het Configuratiescherm vanuit het menu Start in Windows via de rechtermuisknop en klik in het snelmenu op 'Als administrator uitvoeren'.
+	NO	Du har ikke rettighetene som trengs for å installere eller starte/stoppe bakgrunnstjenesten Logitech Media Server. Start kontrollpanelet fra Start-menyen i Windows ved å høyreklikke og velge Kjør som administrator.
+	PL	Brak uprawnień do uruchomienia lub zatrzymania działającej w tle usługi Logitech Media Server. Kliknij menu Start, ustaw kursor myszy nad Panelem sterowania, kliknij prawym przyciskiem myszy i wybierz polecenie Uruchom jako administrator.
+	RU	У вас нет прав на установку и запуск/остановку фоновой службы Logitech Media Server. Откройте панель управления с помощью меню "Пуск" Windows и, открыв щелчком правой кнопки мыши контекстное меню, выберите в нем пункт "Запуск от имени администратора".
+	SV	Du har inte behörighet att installera eller starta/stoppa Logitech Media Server-bakgrundstjänsten. Starta kontrollpanelen från Start-menyn i Windows via den snabbmeny som visas när du högerklickar och klicka på Kör som administratör.
 
 RUN_AT_BOOT
 	CS	Spustit automaticky při startu systému
@@ -23418,7 +23468,7 @@ INTERNET_RADIO
 	NL	Radio
 	NO	Radio
 	PL	Radio
-	RU	Радиостанции
+	RU	Радиостанция
 	SV	Radio
 
 HOWTO_INTERNET_RADIO
@@ -23694,19 +23744,19 @@ NO_LIBRARY
 	SV	Inget mediebibliotek konfigurerat
 
 LIBRARY_NOT_READY
-	CS	Není nakonfigurována žádná hudební knihovna
-	DA	Der er ikke konfigureret et musikbibliotek
-	DE	Es ist keine Musiksammlung konfiguriert, oder sie steht noch nicht zur Verfügung.
+	CS	Nenakonfigurována žádná hudební knihovna nebo není připravena k použití
+	DA	Der er ikke konfigureret et musikbibliotek, eller det konfigurerede musikbibliotek er ikke klar
+	DE	Es ist keine Musiksammlung konfiguriert oder verwendbar
 	EN	No music library configured or not ready to be used
-	ES	No hay ninguna biblioteca de música configurada
-	FI	Musiikkikirjastoa ei ole määritetty
-	FR	Aucune collection musicale n'a été configurée
-	IT	Nessuna libreria musicale configurata
-	NL	Er is geen muziekcollectie geconfigureerd
-	NO	Ingen musikkbiblioteker er konfigurert
-	PL	Nie skonfigurowano biblioteki muzyki
-	RU	Нет настроенных медиатек
-	SV	Inget musikbibliotek konfigurerat
+	ES	No hay ninguna biblioteca de música configurada o no está lista para usar
+	FI	Musiikkikirjastoa ei ole määritetty tai se ei ole käyttövalmis
+	FR	Aucune bibliothèque musicale configurée ou prête à l'utilisation
+	IT	Nessuna libreria musicale configurata o non pronta all’uso
+	NL	Geen muziekcollectie geconfigureerd of muziekcollectie is niet klaar voor gebruik
+	NO	Ingen musikkbibliotek er konfigurert, eller så er ingen bibliotek klare til å brukes
+	PL	Biblioteka muzyczna nie została skonfigurowana lub nie jest gotowa do użycia
+	RU	Нет настроенных музыкальных библиотек, или они не готовы к использованию
+	SV	Inget musikbibliotek är konfigurerat eller redo att användas
 
 PRESETS_NOT_DEFINED
 	CS	Přednastavené #%s nedefinováno.

@@ -17,21 +17,32 @@ PLUGIN_ORANGE_FAVORITES
 	SV	Orange Liveradio-favoriter
 
 PLUGIN_ORANGE_ERROR
-	CS	Chyba LiveRadio
-	DA	LiveRadio-fejl
+	CS	Liveradio - chyba
+	DA	Liveradio har angivet en fejl
 	DE	LiveRadio-Fehler
 	EN	LiveRadio Error
-	ES	ERROR de LiveRadio
-	FI	LiveRadio-virhe
-	FR	Erreur LiveRadio
-	IT	Errore di LiveRadio
-	NL	LiveRadio-foutmelding
+	ES	Error de LiveRadio
+	FI	LiveRadion virhe
+	FR	Erreur Liveradio
+	IT	Errore LiveRadio
+	NL	Fout bij Liveradio
 	NO	LiveRadio-feil
-	PL	Błąd usługi LiveRadio
-	RU	Ошибка LiveRadio
-	SV	Liveradio-fel
+	PL	Błąd usługi Liveradio
+	RU	LiveRadio Error
+	SV	LiveRadio-fel
 
 PLUGIN_ORANGE_OPTIONS
-	DE	Orange Liveradio Optionen 
+	CS	Orange Liveradio - možnosti
+	DA	Orange Liveradio, valgmuligheder
+	DE	Optionen für Orange Liveradio
 	EN	Orange Liveradio Options
+	ES	Opciones de Orange Liveradio
+	FI	Orange Liveradion asetukset
 	FR	Options Orange Liveradio
+	IT	Opzioni Orange Liveradio
+	NL	Opties voor Orange Liveradio
+	NO	Alternativer for Orange Liveradio
+	PL	Opcje usługi Orange Liveradio
+	RU	Orange Liveradio Options
+	SV	Alternativ för Orange Liveradio
+
