@@ -811,7 +811,7 @@ sub _playersMessage {
 			$lines = [ $line1, $line2 ];
 		}
 
-		my $screen = Slim::Buttons::Common::msgOnScreen2($client) ? 'screen2' : 'screen1';
+		my $screen = (main::IP3K && Slim::Buttons::Common::msgOnScreen2($client)) ? 'screen2' : 'screen1';
 	
 		# Show an error message
 		$client->showBriefly( {
@@ -2295,7 +2295,7 @@ sub playerTrackStarted {
 	_eventAction($self, 'Started');
 
 	# sync the button mode periodic update to the track time
-	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
+	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1) if main::IP3K;
 }
 
 sub playerReadyToStream {

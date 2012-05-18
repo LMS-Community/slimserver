@@ -974,10 +974,12 @@ sub init {
 	}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
 
 	# Reset IR state if preference change
-	$prefs->setChange( sub {
-		my $client = $_[2] || return;
-		Slim::Hardware::IR::initClient($client);
-	}, qw(disabledirsets irmap) );
+	if ( main::IP3K ) {
+		$prefs->setChange( sub {
+			my $client = $_[2] || return;
+			Slim::Hardware::IR::initClient($client);
+		}, qw(disabledirsets irmap) ) ;
+	}
 	
 	if ( main::SLIM_SERVICE ) {
 		# Update players.name database field if name is changed

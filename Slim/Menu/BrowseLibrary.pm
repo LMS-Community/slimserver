@@ -311,7 +311,7 @@ sub init {
 
 #	$class->_initSubmenus();
 	
-    $class->_initModes();
+    $class->_initModes() if main::IP3K;
     
     Slim::Menu::GlobalSearch->registerInfoProvider( searchMyMusic => (
 			isa  => 'top',

@@ -41,6 +41,8 @@ use constant ISWINDOWS     => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC         => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS => 1;
 use constant SERVICES      => 1;
+use constant IP3K          => 1;
+
 
 my $sn_config;
 our $SN_PATH; # path to squeezenetwork directory
@@ -156,9 +158,7 @@ use Slim::Buttons::Input::Bar;
 use Slim::Buttons::Settings;
 use Slim::Player::Client;
 use Slim::Control::Request;
-use Slim::Display::Lib::Fonts;
 #use Slim::Web::HTTP;
-use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
 use Slim::Menu::AlbumInfo;
 use Slim::Menu::ArtistInfo;
@@ -367,18 +367,38 @@ sub init {
 	main::INFOLOG && $log->info("Server Info init...");
 	Slim::Music::Info::init();
 
-	main::INFOLOG && $log->info("Server IR init...");
-	Slim::Hardware::IR::init();
+	if (IP3K) {
+		main::INFOLOG && $log->info("Server IR init...");
+		require Slim::Hardware::IR;
+		Slim::Hardware::IR::init();
+	}
 
 	main::INFOLOG && $log->info("Server Request init...");
 	Slim::Control::Request::init();
 	
-	main::INFOLOG && $log->info("Server Buttons init...");
-	Slim::Buttons::Common::init();
-
-	main::INFOLOG && $log->info("Server Graphic Fonts init...");
-	Slim::Display::Lib::Fonts::init();
-
+	if (IP3K) {
+		main::INFOLOG && $log->info("Server Buttons init...");
+		
+		require Slim::Buttons::Common;
+		require Slim::Buttons::Home;
+		require Slim::Buttons::Power;
+		require Slim::Buttons::Search;
+		require Slim::Buttons::ScreenSaver;
+		require Slim::Buttons::Synchronize;
+		require Slim::Buttons::Input::Text;
+		require Slim::Buttons::Input::Time;
+		require Slim::Buttons::Input::List;
+		require Slim::Buttons::Input::Choice;
+		require Slim::Buttons::Input::Bar;
+		require Slim::Buttons::Settings;
+		
+		Slim::Buttons::Common::init();
+		
+		main::INFOLOG && $log->info("Server Graphic Fonts init...");
+		require Slim::Display::Lib::Fonts;
+		Slim::Display::Lib::Fonts::init();
+	}
+	
 	main::INFOLOG && $log->info("Slimproto Init...");
 	Slim::Networking::Slimproto::init();
 
@@ -477,8 +497,10 @@ sub idle {
 	# This flag indicates we have pending IR or request events to handle
 	my $pendingEvents = 0;
 	
-	# process IR queue
-	$pendingEvents = Slim::Hardware::IR::idle();
+	if (IP3K) {
+		# process IR queue
+		$pendingEvents = Slim::Hardware::IR::idle();
+	}
 	
 	if ( !$pendingEvents ) {
 		# empty notifcation queue, only if no IR events are pending

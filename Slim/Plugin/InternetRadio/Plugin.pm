@@ -132,10 +132,12 @@ sub buildMenus {
 		$class->generate( $item );
 	}
 	
-	# Update main menu in case players were connected before the menus were created
-	for my $client ( Slim::Player::Client::clients() ) {
-		Slim::Buttons::Home::updateMenu($client);
-		$client->update;
+	if (main::IP3K) {
+		# Update main menu in case players were connected before the menus were created
+		for my $client ( Slim::Player::Client::clients() ) {
+			Slim::Buttons::Home::updateMenu($client);
+			$client->update;
+		}
 	}
 }
 

@@ -20,7 +20,6 @@ use base qw(Slim::Plugin::Base);
 
 use Tie::Cache::LRU;
 
-use Slim::Buttons::Common;
 use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -80,8 +79,11 @@ sub initPlugin {
 	# register notifications
 	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
 
-	# register new mode for deletion of favorites	
-	Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
+	if (main::IP3K) {
+		# register new mode for deletion of favorites
+		require Slim::Buttons::Common;	
+		Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
+	}
 	
 	# Track Info handler
 	Slim::Menu::TrackInfo->registerInfoProvider( favorites => (

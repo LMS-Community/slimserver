@@ -1061,27 +1061,27 @@ sub _hello_handler {
 		slimproto_close($s);
 		return;
 
-	} elsif ($deviceids[$deviceid] eq 'squeezebox2') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'squeezebox2') {
 
 		$client_class  = 'Slim::Player::Squeezebox2';
 		$display_class = 'Slim::Display::Squeezebox2';
 
-	} elsif ($deviceids[$deviceid] eq 'receiver') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'receiver') {
 
 		$client_class  = 'Slim::Player::Receiver';
 		$display_class = 'Slim::Display::NoDisplay';
 
-	} elsif ($deviceids[$deviceid] eq 'boom') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'boom') {
 
 		$client_class  = 'Slim::Player::Boom';
 		$display_class = 'Slim::Display::Boom';
 
-	} elsif ($deviceids[$deviceid] eq 'transporter') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'transporter') {
 
 		$client_class  = 'Slim::Player::Transporter';
 		$display_class = 'Slim::Display::Transporter';
 
-	} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'squeezebox') {	
 
 		if (main::SB1SLIMP3SYNC) {
 			$client_class  = 'Slim::Player::Squeezebox1';
@@ -1106,22 +1106,22 @@ sub _hello_handler {
 			return;
 		}
 
-	} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'softsqueeze') {
 
 		$client_class  = 'Slim::Player::SoftSqueeze';
 		$display_class = 'Slim::Display::Squeezebox2';
 
-	} elsif ($deviceids[$deviceid] eq 'softsqueeze3') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'softsqueeze3') {
 
 		$client_class = 'Slim::Player::SoftSqueeze';
 		$display_class = 'Slim::Display::Transporter';
 
-	} elsif ($deviceids[$deviceid] eq 'softboom') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'softboom') {
 
 		$client_class = 'Slim::Player::SoftSqueeze';
 		$display_class = 'Slim::Display::Boom';
 
-	} elsif ($deviceids[$deviceid] eq 'squeezeslave') {
+	} elsif (main::IP3K && $deviceids[$deviceid] eq 'squeezeslave') {
 
 		$client_class = 'Slim::Player::SqueezeSlave';
 		$display_class = 'Slim::Display::Text';
@@ -1342,7 +1342,7 @@ sub _hello_handler {
 	} else {
 
 		# workaround to handle multiple firmware versions causing blocking modes to stack
-		while (Slim::Buttons::Common::mode($client) eq 'block') {
+		while (main::IP3K && Slim::Buttons::Common::mode($client) eq 'block') {
 			$client->unblock();
 		}
 

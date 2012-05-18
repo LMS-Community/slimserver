@@ -414,7 +414,7 @@ sub removeTrack {
 		Slim::Buttons::Playlist::showingNowPlaying($client) ?
 			undef : 
 			Slim::Buttons::Playlist::browseplaylistindex($client)
-	);
+	) if main::IP3K;
 	
 	return $nTracks;
 }
@@ -542,10 +542,12 @@ sub refreshPlaylist {
 	my $client = shift;
 	my $index = shift;
 
-	# make sure we're displaying the new current song in the playlist view.
-	for my $everybuddy ($client->syncGroupActiveMembers()) {
-		if ($everybuddy->isPlayer()) {
-			Slim::Buttons::Playlist::jump($everybuddy,$index);
+	if (main::IP3K) {
+		# make sure we're displaying the new current song in the playlist view.
+		for my $everybuddy ($client->syncGroupActiveMembers()) {
+			if ($everybuddy->isPlayer()) {
+				Slim::Buttons::Playlist::jump($everybuddy,$index);
+			}
 		}
 	}
 }

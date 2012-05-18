@@ -11,7 +11,6 @@ use File::Spec::Functions qw(catfile);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Control::Request;
-use Slim::Hardware::IR;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -256,7 +255,8 @@ sub _syncDown_done {
 				if ( $data->{ts} > $cprefs->timestamp($pref) ) {
 
 					# special handling needed to rewrite disabledirsets with full pathname
-					if ( $pref eq 'disabledirsets' ) {
+					if ( main::IP3K && $pref eq 'disabledirsets' ) {
+						require Slim::Hardware::IR;
 						# Force array pref
 						if ( !ref $data->{value} ) {
 							$data->{value} = [ $data->{value} ];
@@ -460,7 +460,7 @@ sub syncUp {
 			}
 			
 			# special handling needed to rewrite disabledirsets with no pathname
-			if ( $pref eq 'disabledirsets' ) {
+			if ( main::IP3K && $pref eq 'disabledirsets' ) {
 				$value = [ map { basename($_) } @{$value} ];
 			}
 			

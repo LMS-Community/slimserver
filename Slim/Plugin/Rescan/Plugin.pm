@@ -70,7 +70,7 @@ sub initPlugin {
 		}
 	);
 	
-	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode);
+	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode) if main::IP3K;
 
 	$class->SUPER::initPlugin();
 	

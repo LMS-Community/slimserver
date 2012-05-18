@@ -7,10 +7,6 @@ package Slim::Plugin::Base;
 use strict;
 use Slim::Utils::Log;
 
-if ( !main::SCANNER ) {
-	require Slim::Buttons::Home;
-}
-
 use constant PLUGINMENU => 'PLUGINS';
 
 my $WEIGHTS = {};
@@ -33,8 +29,10 @@ sub initPlugin {
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
 	# ambiguous function name if there ever was) in a closure so that it
 	# can be called as class method.
-	if ( !main::SCANNER && $class->can('setMode') && $mode ) {
-
+	if ( main::IP3K && !main::SCANNER && $class->can('setMode') && $mode ) {
+		require Slim::Buttons::Common;
+		require Slim::Buttons::Home;
+		
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
 		Slim::Buttons::Common::addMode($mode, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
@@ -78,7 +76,7 @@ sub initPlugin {
 		}
 	}
 
-	if ($class->can('defaultMap') && !main::SCANNER) {
+	if ($class->can('defaultMap') && main::IP3K && !main::SCANNER) {
 
 		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);
 	}

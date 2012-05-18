@@ -19,8 +19,6 @@ use Scalar::Util qw(blessed);
 
 use base qw(Slim::Player::Client);
 
-use Slim::Buttons::SqueezeNetwork;
-use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Player::Source;
 use Slim::Player::Playlist;
@@ -39,7 +37,6 @@ our $defaultPrefs = {
 	'digitalVolumeControl' => 1,
 	'preampVolumeControl'  => 0,
 	'disabledirsets'       => [],
-	'irmap'                => sub { Slim::Hardware::IR::defaultMapFile() },
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -73,11 +70,15 @@ our $defaultPrefs = {
 	'playDelay'            => 0,	# ms
 };
 
-$prefs->migrateClient(9, sub {
-	my $cprefs = shift;
-	$cprefs->set('irmap' => Slim::Hardware::IR::defaultMapFile()) if $cprefs->get('irmap') =~ /SqueezeCenter/i;
-	1;
-});
+if (main::IP3K) {
+	$defaultPrefs->{'irmap'} = sub { Slim::Hardware::IR::defaultMapFile() };
+	
+	$prefs->migrateClient(9, sub {
+		my $cprefs = shift;
+		$cprefs->set('irmap' => Slim::Hardware::IR::defaultMapFile()) if $cprefs->get('irmap') =~ /SqueezeCenter/i;
+		1;
+	});
+}
 
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
 
@@ -105,8 +106,11 @@ sub init {
 
 	$client->SUPER::init(@_);
 
-	Slim::Hardware::IR::initClient($client);
-	Slim::Buttons::Home::updateMenu($client);
+	if (main::IP3K) {
+		require Slim::Hardware::IR;
+		Slim::Hardware::IR::initClient($client);
+		Slim::Buttons::Home::updateMenu($client);
+	}
 
 	# fire it up!
 	$client->power($prefs->client($client)->get('power'));
@@ -199,7 +203,7 @@ sub power {
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
-	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
+	return unless ((main::IP3K && !defined(Slim::Buttons::Common::mode($client))) || ($currOn != $on));
 
 	my $resume = $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
@@ -253,7 +257,7 @@ sub power {
 		$client->killAnimation();
 		$client->brightness($prefs->client($client)->get('powerOffBrightness'));
 
-		Slim::Buttons::Common::setMode($client, 'off');
+		Slim::Buttons::Common::setMode($client, 'off') if main::IP3K;
 
 	} else {
 
@@ -268,7 +272,7 @@ sub power {
 
 		$client->updateMode(2); # block updates to hide mode change
 
-		Slim::Buttons::Common::setMode($client, 'home');
+		Slim::Buttons::Common::setMode($client, 'home') if main::IP3K;
 
 		$client->updateMode(0); # unblock updates
 			
@@ -1139,7 +1143,7 @@ sub _buffering {
 	if ( $buffering == 2 && (time() > $client->bufferStarted() + 30) ) {
 		# Only show rebuffering failed status if no user activity on player or we're on the Now Playing screen
 		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
-		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+		my $lastIR     = (main::IP3K && Slim::Hardware::IR::lastIRTime($client)) || 0;
 
 		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
 		
@@ -1225,9 +1229,9 @@ sub _buffering {
 	}
 	
 	# Only show buffering status if no user activity on player or we're on the Now Playing screen
-	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
-	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
-	my $screen     = Slim::Buttons::Common::msgOnScreen2($client) ? 'screen2' : 'screen1';
+	my $nowPlaying = (main::IP3K ? Slim::Buttons::Playlist::showingNowPlaying($client) : 1);
+	my $lastIR     = (main::IP3K && Slim::Hardware::IR::lastIRTime($client)) || 0;
+	my $screen     = (main::IP3K && Slim::Buttons::Common::msgOnScreen2($client)) ? 'screen2' : 'screen1';
 	
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 

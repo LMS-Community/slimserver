@@ -32,7 +32,7 @@ sub validFor {
 	my $class = shift;
 	my $client = shift;
 	
-	return $client->hasIR;
+	return main::IP3K && $client->hasIR;
 }
 
 sub prefs {

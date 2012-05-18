@@ -49,6 +49,7 @@ use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => 0;
 use constant LOCAL_PLAYERS=> 0;
 use constant SERVICES     => 0;
+use constant IP3K         => 0;
 
 # load these later, don't need them right now
 require File::Path;

@@ -506,9 +506,6 @@ sub init {
 	addDispatch(['info',           'total',          'artists',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'songs',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
-	addDispatch(['ir',             '_ircode',        '_time'],                                         [1, 0, 0, \&Slim::Control::Commands::irCommand]);
-	addDispatch(['irenable',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::irenableQuery]);
-	addDispatch(['irenable',       '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::irenableCommand]);
 	addDispatch(['linesperscreen', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
 	addDispatch(['logging'],                                                                           [0, 0, 1, \&Slim::Control::Commands::loggingCommand]);
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
@@ -636,6 +633,12 @@ sub init {
 	addDispatch(['rating',         '_item',          '_rating'],                                       [0, 0, 0, \&Slim::Control::Commands::ratingCommand]);
 	addDispatch(['video_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::videoTitlesQuery]);
 	addDispatch(['image_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::imageTitlesQuery]);
+
+	if (main::IP3K) {
+		addDispatch(['ir',             '_ircode',        '_time'],                                     [1, 0, 0, \&Slim::Control::Commands::irCommand]);
+		addDispatch(['irenable',       '?'],                                                           [1, 1, 0, \&Slim::Control::Queries::irenableQuery]);
+		addDispatch(['irenable',       '_newvalue'],                                                   [1, 0, 0, \&Slim::Control::Commands::irenableCommand]);
+	}
 
 # NOTIFICATIONS
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);

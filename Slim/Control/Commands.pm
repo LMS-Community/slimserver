@@ -758,7 +758,7 @@ sub playcontrolCommand {
 			
 			# give user feedback of new mode and current song
 			if ($client->isPlayer()) {
-				my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
+				my $parts = $client->currentSongLines({ suppressDisplay => (main::IP3K ? Slim::Buttons::Common::suppressStatus($client) : 0) });
 				if ($suppressShowBriefly) {
 					$parts->{jive} = undef;
 				}
@@ -936,7 +936,7 @@ sub playlistJumpCommand {
 		my $jiveIconStyle = shift || undef;
 		if ($client->isPlayer()) {
 			my $parts = $client->currentSongLines({
-					suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
+					suppressDisplay => (main::IP3K ? Slim::Buttons::Common::suppressStatus($client) : 0),
 					jiveIconStyle => $jiveIconStyle,
 				});
 				
@@ -951,7 +951,7 @@ sub playlistJumpCommand {
 			# on just that element and use the default show-briefly duration for the popup.
 			
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
-			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
+			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1) if main::IP3K;
 		}
 	};
 

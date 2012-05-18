@@ -30,6 +30,7 @@ use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS=> ( grep { /--nolocalplayers/ } @ARGV ) ? 0 : 1;
 use constant SERVICES     => ( grep { /--noremoteservices/ } @ARGV ) ? 0 : 1;
+use constant IP3K         => ( grep { /--noip3kplayers/ } @ARGV ) ? 0 : 1;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 use constant SLIMDISCOVERY_PORT => 3483;	# UDP
@@ -191,23 +192,10 @@ if (!$@) {
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
-use Slim::Buttons::Common;
-use Slim::Buttons::Home;
-use Slim::Buttons::Power;
-use Slim::Buttons::Search;
-use Slim::Buttons::ScreenSaver;
 use Slim::Utils::PluginManager;
-use Slim::Buttons::Synchronize;
-use Slim::Buttons::Input::Text;
-use Slim::Buttons::Input::Time;
-use Slim::Buttons::Input::List;
-use Slim::Buttons::Input::Choice;
-use Slim::Buttons::Input::Bar;
-use Slim::Buttons::Settings;
 use Slim::Player::Client;
 use Slim::Control::Request;
 use Slim::Web::HTTP;
-use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
 use Slim::Menu::AlbumInfo;
 use Slim::Menu::ArtistInfo;
@@ -324,6 +312,7 @@ our (
 	$nosb1slimp3sync,
 	$nolocalplayers,
 	$noremoteservices,
+	$noip3kplayers,
 	$nostatistics,
 	$stdio,
 	$stop,
@@ -493,8 +482,11 @@ sub init {
 	main::INFOLOG && $log->info("Server Info init...");
 	Slim::Music::Info::init();
 
-	main::INFOLOG && $log->info("Server IR init...");
-	Slim::Hardware::IR::init();
+	if (IP3K) {
+		main::INFOLOG && $log->info("Server IR init...");
+		require Slim::Hardware::IR;
+		Slim::Hardware::IR::init();
+	}
 
 	main::INFOLOG && $log->info("Server Request init...");
 	Slim::Control::Request::init();
@@ -502,9 +494,25 @@ sub init {
 	main::INFOLOG && $log->info("Server Queries init...");
 	Slim::Control::Queries->init();
 	
-	main::INFOLOG && $log->info("Server Buttons init...");
-	Slim::Buttons::Common::init();
-
+	if (IP3K) {
+		main::INFOLOG && $log->info("Server Buttons init...");
+		
+		require Slim::Buttons::Common;
+		require Slim::Buttons::Home;
+		require Slim::Buttons::Power;
+		require Slim::Buttons::Search;
+		require Slim::Buttons::ScreenSaver;
+		require Slim::Buttons::Synchronize;
+		require Slim::Buttons::Input::Text;
+		require Slim::Buttons::Input::Time;
+		require Slim::Buttons::Input::List;
+		require Slim::Buttons::Input::Choice;
+		require Slim::Buttons::Input::Bar;
+		require Slim::Buttons::Settings;
+		
+		Slim::Buttons::Common::init();
+	}
+	
 	if ($stdio) {
 		main::INFOLOG && $log->info("Server Stdio init...");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
@@ -684,8 +692,10 @@ sub idle {
 	# This flag indicates we have pending IR or request events to handle
 	my $pendingEvents = 0;
 	
-	# process IR queue
-	$pendingEvents = Slim::Hardware::IR::idle();
+	if (IP3K) {
+		# process IR queue
+		$pendingEvents = Slim::Hardware::IR::idle();
+	}
 	
 	if ( !$pendingEvents ) {
 		# empty notifcation queue, only if no IR events are pending
@@ -738,7 +748,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo] [--nolocalplayers] [--noremoteservices]
+          [--noimage] [--novideo] [--nolocalplayers] [--noremoteservices] [--noip3kplayers]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -785,6 +795,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --notranscoding  => Disable transcoding support.
     --nolocalplayers => Disable support for locally-connected players.
     --noremoteservices=> Disable support for remote services (Internet radio, etc.)
+    --noip3kplayers  => Disable support for ip3k players (Boom, Classic, Transporter, Receiver)
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
@@ -844,6 +855,7 @@ sub initOptions {
 		'nosb1slimp3sync'=> \$nosb1slimp3sync,
 		'nolocalplayers'=> \$nolocalplayers,
 		'noremoteservices'=> \$noremoteservices,
+		'noip3kplayers' => \$noip3kplayers,
 		'notranscoding' => \$notranscoding,
 		'noweb'         => \$noweb,
 		'failsafe'      => \$failsafe,
