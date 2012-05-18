@@ -32,6 +32,7 @@ use constant WEBUI        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant HAS_AIO      => 0;
+use constant LOCAL_PLAYERS=> 0;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 use constant SLIMDISCOVERY_PORT => 3483;	# UDP

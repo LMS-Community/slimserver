@@ -28,6 +28,7 @@ use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
 use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant LOCAL_PLAYERS=> ( grep { /--nolocalplayers/ } @ARGV ) ? 0 : 1;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 use constant SLIMDISCOVERY_PORT => 3483;	# UDP
@@ -233,9 +234,7 @@ use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::Update;
-use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Utils::Firmware;
 use Slim::Control::Jive;
 use Slim::Formats::RemoteMetadata;
 
@@ -323,6 +322,7 @@ our (
 	$noimages,
 	$novideo,
 	$nosb1slimp3sync,
+	$nolocalplayers,
 	$nostatistics,
 	$stdio,
 	$stop,
@@ -483,9 +483,12 @@ sub init {
 	main::INFOLOG && $log->info("SqueezeNetwork Init...");
 	Slim::Networking::SqueezeNetwork->init();
 	
-	main::INFOLOG && $log->info("Firmware init...");
-	Slim::Utils::Firmware->init;
-
+	if (LOCAL_PLAYERS) {
+		main::INFOLOG && $log->info("Firmware init...");
+		require Slim::Utils::Firmware;
+		Slim::Utils::Firmware->init;
+	}
+	
 	main::INFOLOG && $log->info("Server Info init...");
 	Slim::Music::Info::init();
 
@@ -509,8 +512,11 @@ sub init {
 	main::INFOLOG && $log->info("UDP init...");
 	Slim::Networking::UDP::init();
 
-	main::INFOLOG && $log->info("Slimproto Init...");
-	Slim::Networking::Slimproto::init();
+	if (LOCAL_PLAYERS) {
+		main::INFOLOG && $log->info("Slimproto Init...");
+		require Slim::Networking::Slimproto;
+		Slim::Networking::Slimproto::init();
+	}
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
@@ -728,7 +734,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo]
+          [--noimage] [--novideo] [--nolocalplayers]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -773,6 +779,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nosb1slimp3sync=> Disable support for SliMP3s, SB1s and associated synchronization
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
+    --nolocalplayers => Disable support for locally-connected players.
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
@@ -830,6 +837,7 @@ sub initOptions {
 		'nostatistics'  => \$nostatistics,
 		'noupnp'        => \$noupnp,
 		'nosb1slimp3sync'=> \$nosb1slimp3sync,
+		'nolocalplayers'=> \$nolocalplayers,
 		'notranscoding' => \$notranscoding,
 		'noweb'         => \$noweb,
 		'failsafe'      => \$failsafe,

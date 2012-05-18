@@ -2209,7 +2209,7 @@ sub firmwareUpgradeQuery_filter {
 sub firmwareUpgradeQuery {
 	my $request = shift;
 
-	if ( $request->isNotQuery([['firmwareupgrade']]) ) {
+	if ( !main::LOCAL_PLAYERS || $request->isNotQuery([['firmwareupgrade']]) ) {
 		$request->setStatusBadDispatch();
 		return;
 	}
