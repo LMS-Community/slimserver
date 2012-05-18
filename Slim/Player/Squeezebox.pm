@@ -19,7 +19,6 @@ use MIME::Base64;
 use Scalar::Util qw(blessed);
 use Socket qw(:crlf);
 
-use Slim::Hardware::IR;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ReplayGain;
 use Slim::Utils::Log;
