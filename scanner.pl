@@ -33,6 +33,12 @@ use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant HAS_AIO      => 0;
 
+# IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
+use constant SLIMDISCOVERY_PORT => 3483;	# UDP
+use constant SLIMPROTO_PORT     => 3483;	# TCP
+use constant WEB_PORT           => 9000;
+use constant CLI_PORT           => 9090;
+
 # Tell PerlApp to bundle these modules
 if (0) {
 	require 'auto/Compress/Raw/Zlib/autosplit.ix';

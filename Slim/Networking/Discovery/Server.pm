@@ -69,7 +69,7 @@ sub fetch_servers {
 	my $opt = $udpsock->sockopt(SO_BROADCAST);
 	$udpsock->sockopt(SO_BROADCAST, 1);
 
-	my $ipaddr = sockaddr_in(3483, inet_aton('255.255.255.255'));
+	my $ipaddr = sockaddr_in(main::SLIMDISCOVERY_PORT, inet_aton('255.255.255.255'));
 	$udpsock->send($discovery_packet, 0, $ipaddr);
 	
 	$udpsock->sockopt(SO_BROADCAST, $opt);

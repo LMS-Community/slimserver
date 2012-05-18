@@ -198,7 +198,7 @@ sub init {
 		'ignoreInImageScan'     => [],
 		# Server Settings - Networking
 		'webproxy'              => \&Slim::Utils::OSDetect::getProxy,
-		'httpport'              => 9000,
+		'httpport'              => main::WEB_PORT,
 		'bufferSecs'            => 3,
 		'remotestreamtimeout'   => 15,
 		'maxWMArate'            => 9999,

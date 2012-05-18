@@ -27,8 +27,6 @@ if ( main::SLIM_SERVICE ) {
 	require SDI::Service::Player::SqueezeNetworkClient;
 }
 
-use constant SLIMPROTO_PORT   => 3483;
-
 our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
 my $log       = logger('network.protocol.slimproto');
 my $faclog    = logger('factorytest');
@@ -105,7 +103,7 @@ sub clearCallbackRAWI {
 }
 
 sub init {
-	my $listenerport = SLIMPROTO_PORT;
+	my $listenerport = main::SLIMPROTO_PORT;
 	
 	if ( main::SLIM_SERVICE ) {
 		# Let SlimService run on any port

@@ -21,9 +21,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 
-# IANA-assigned port for the Slim protocol, used by all Slim Devices hardware.
-use constant SERVERPORT => 3483;
-
 my $udpsock = undef;
 
 my $log = logger('network.protocol');
@@ -33,7 +30,7 @@ sub init {
 	#my $udpsock = IO::Socket::INET->new(
 	$udpsock = IO::Socket::INET->new(
 		Proto     => 'udp',
-		LocalPort => SERVERPORT,
+		LocalPort => main::SLIMDISCOVERY_PORT,
 		LocalAddr => $main::localClientNetAddr
 
 	) or do {

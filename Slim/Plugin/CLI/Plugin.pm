@@ -68,7 +68,7 @@ my $prefs = preferences('plugin.cli');
 
 if ( !main::SLIM_SERVICE ) {
 	$prefs->migrate(1, sub {
-		$prefs->set('cliport', Slim::Utils::Prefs::OldPrefs->get('cliport') || 9090); 1;
+		$prefs->set('cliport', Slim::Utils::Prefs::OldPrefs->get('cliport') || main::CLI_PORT); 1;
 	});
 }
 
