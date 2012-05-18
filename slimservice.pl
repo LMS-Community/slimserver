@@ -40,6 +40,7 @@ use constant VIDEO         => 0;
 use constant ISWINDOWS     => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC         => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS => 1;
+use constant SERVICES      => 1;
 
 my $sn_config;
 our $SN_PATH; # path to squeezenetwork directory

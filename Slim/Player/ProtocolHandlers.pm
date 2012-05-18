@@ -20,14 +20,17 @@ use Slim::Music::Info;
 # have a zero value
 my %protocolHandlers = ( 
 	file     => qw(Slim::Player::Protocols::File),
-	http     => qw(Slim::Player::Protocols::HTTP),
-	icy      => qw(Slim::Player::Protocols::HTTP),
-	mms      => qw(Slim::Player::Protocols::MMS),
-	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
 	playlist => 0,
 	db       => 1,
 );
 
+if (main::SERVICES) {
+	$protocolHandlers{'http'} = qw(Slim::Player::Protocols::HTTP);
+	$protocolHandlers{'icy'}  = qw(Slim::Player::Protocols::HTTP);
+	$protocolHandlers{'mms'}  = qw(Slim::Player::Protocols::MMS);
+	$protocolHandlers{'spdr'} = qw(Slim::Player::Protocols::SqueezePlayDirect);
+}	
+	
 my %localHandlers = (
 	file     => 1,
 	db       => 1,

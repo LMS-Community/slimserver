@@ -29,6 +29,7 @@ use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS=> ( grep { /--nolocalplayers/ } @ARGV ) ? 0 : 1;
+use constant SERVICES     => ( grep { /--noremoteservices/ } @ARGV ) ? 0 : 1;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 use constant SLIMDISCOVERY_PORT => 3483;	# UDP
@@ -236,7 +237,6 @@ use Slim::Utils::Timers;
 use Slim::Utils::Update;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Control::Jive;
-use Slim::Formats::RemoteMetadata;
 
 if ( SB1SLIMP3SYNC ) {
 	require Slim::Player::SB1SliMP3Sync;
@@ -323,6 +323,7 @@ our (
 	$novideo,
 	$nosb1slimp3sync,
 	$nolocalplayers,
+	$noremoteservices,
 	$nostatistics,
 	$stdio,
 	$stop,
@@ -520,7 +521,6 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
-	Slim::Schema::RemoteTrack->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");
@@ -576,8 +576,12 @@ sub init {
 	main::INFOLOG && $log->info("Server Jive init...");
 	Slim::Control::Jive->init();
 	
-	main::INFOLOG && $log->info("Remote Metadata init...");
-	Slim::Formats::RemoteMetadata->init();
+	if (SERVICES) {
+		main::INFOLOG && $log->info("Remote Metadata init...");
+		Slim::Formats::RemoteMetadata->init();
+		
+		Slim::Schema::RemoteTrack->init();
+	}
 	
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
@@ -734,7 +738,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo] [--nolocalplayers]
+          [--noimage] [--novideo] [--nolocalplayers] [--noremoteservices]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -780,6 +784,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nostatistics   => Disable the TracksPersistent table used to keep to statistics across rescans (compiled out).
     --notranscoding  => Disable transcoding support.
     --nolocalplayers => Disable support for locally-connected players.
+    --noremoteservices=> Disable support for remote services (Internet radio, etc.)
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
@@ -838,6 +843,7 @@ sub initOptions {
 		'noupnp'        => \$noupnp,
 		'nosb1slimp3sync'=> \$nosb1slimp3sync,
 		'nolocalplayers'=> \$nolocalplayers,
+		'noremoteservices'=> \$noremoteservices,
 		'notranscoding' => \$notranscoding,
 		'noweb'         => \$noweb,
 		'failsafe'      => \$failsafe,

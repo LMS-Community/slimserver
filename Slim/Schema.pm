@@ -50,9 +50,6 @@ use Slim::Utils::Progress;
 use Slim::Utils::Prefs;
 use Slim::Schema::Debug;
 
-use Slim::Schema::RemoteTrack;
-use Slim::Schema::RemotePlaylist;
-
 my $log = logger('database.info');
 
 my $prefs = preferences('server');
@@ -125,6 +122,11 @@ sub init {
 	my ( $class, $dsn, $sql ) = @_;
 	
 	return if $initialized;
+	
+	if (main::SERVICES) {
+		require Slim::Schema::RemoteTrack;
+		require Slim::Schema::RemotePlaylist;
+	}
 	
 	my $dbh = $class->_connect($dsn, $sql) || do {
 
@@ -617,7 +619,7 @@ sub find {
 	
 	# If we only have a single attribute and it is not a reference and it is negative
 	# then this indicates a remote track.
-	if (@_ == 1 && ! ref $_[0] && $_[0] < 0) {
+	if (main::SERVICES && @_ == 1 && ! ref $_[0] && $_[0] < 0) {
 		return Slim::Schema::RemoteTrack->fetchById($_[0]);
 	}
 	
@@ -1758,7 +1760,7 @@ sub updateOrCreateBase {
 	}
 
 	# Short-circuit for remote tracks
-	if (Slim::Music::Info::isRemoteURL($url)) {
+	if (main::SERVICES && Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
 
 		($attributeHash, undef) = $self->_preCheckAttributes({
@@ -2244,7 +2246,7 @@ sub _retrieveTrack {
 
 	my $track;
 	
-	if (Slim::Music::Info::isRemoteURL($url)) {
+	if (main::SERVICES && Slim::Music::Info::isRemoteURL($url)) {
 		return Slim::Schema::RemoteTrack->fetch($url, $playlist);
 	}
 	
