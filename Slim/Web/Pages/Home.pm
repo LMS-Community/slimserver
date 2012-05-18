@@ -152,8 +152,8 @@ sub home {
 			)
 			|| 
 			(
-				lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
-				lc( Slim::Buttons::Home::cmpString($client, $b) )
+				lc( Slim::Utils::Strings::cmpString($client, $a) ) cmp
+				lc( Slim::Utils::Strings::cmpString($client, $b) )
 			)
 		}
 		keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };

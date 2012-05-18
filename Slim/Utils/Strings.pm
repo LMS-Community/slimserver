@@ -516,6 +516,28 @@ sub clientString {
 
 *cstring = \&clientString;
 
+=head2 cmpString( $client, $token )
+
+Same as clientString but throws no error if string not defined.
+(moved from )
+
+=cut
+
+sub cmpString {
+	my $client = shift;
+	my $string = shift;
+
+	if ( Slim::Utils::Strings::stringExists($string) ) {
+
+		return defined $client
+			? $client->string($string)
+			: Slim::Utils::Strings::string($string);
+	}
+
+	return $string;
+}
+
+
 =head2 getString ( $token )
 
 Return localised string for token $token, or token itself.

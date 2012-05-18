@@ -542,20 +542,6 @@ sub homeExitHandler {
 	}
 }
 
-sub cmpString {
-	my $client = shift;
-	my $string = shift;
-
-	if ( Slim::Utils::Strings::stringExists($string) ) {
-
-		return defined $client
-			? $client->string($string)
-			: Slim::Utils::Strings::string($string);
-	}
-
-	return $string;
-}
-
 # load the submenu hash keys into an array of valid entries.
 sub createList {
 	my $client   = shift;
@@ -590,7 +576,7 @@ sub createList {
 			||
 			($weighted && ($prefs->get("rank-$b") || 0) <=> ($prefs->get("rank-$a") || 0))
 			|| 
-			(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))
+			(lc(Slim::Utils::Strings::cmpString($client, $a)) cmp lc(Slim::Utils::Strings::cmpString($client, $b)))
 		} keys %{$params->{'submenus'}}) {
 
 		# Leakage of the DigitalInput plugin..
