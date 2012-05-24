@@ -139,10 +139,10 @@ PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	DE	Rhapsody/Napster wird auf diesem Player nicht unterstützt. Sie benötigen eine Squeezebox2 oder höher.
 	EN	This player does not support Rhapsody/Napster.  A Squeezebox2 or higher is required.
 	ES	Este reproductor es incompatible con Rhapsody/Napster. Se necesita Squeezebox2 o posterior.
-	FI	Tämä soitin ei tue Rhapsodya/Napster. Vaaditaan Squeezebox2 tai uudempi.
-	FR	Cette platine ne prend pas en charge Rhapsody/Napster. Vous devez disposer de la version Squeezebox2 ou d'une version supérieure.
+	FI	Tämä soitin ei tue Rhapsodya/Napsteria. Vaaditaan Squeezebox2 tai uudempi.
+	FR	Cette platine ne prend pas en charge Rhapsody/Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
 	IT	Questo lettore non supporta Rhapsody/Napster. È necessario utilizzare Squeezebox2 o versione successiva.
-	NL	Dit muzieksysteem ondersteunt Rhapsody/Napster niet. Een Squeezebox2 of hoger is vereist.
+	NL	Dit muzieksysteem biedt geen ondersteuning voor Rhapsody/Napster. Een Squeezebox2 of hoger is vereist.
 	NO	Denne spilleren støtter ikke Rhapsody/Napster. En Squeezebox2 eller høyere er påkrevd.
 	PL	Ten odtwarzacz nie obsługuje usługi Rhapsody/Napster. Wymagane jest urządzenie Squeezebox2 lub nowsze.
 	RU	Этот плеер не поддерживает Rhapsody/Napster. Требуется Squeezebox2 или более высокой версии.

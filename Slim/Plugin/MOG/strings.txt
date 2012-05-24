@@ -1,8 +1,8 @@
 PLUGIN_MOG_ADD_ALL_PLAYLIST
-	EN	Add All to Mog Playlist 
+	EN	Add All to MOG Playlist 
 
 PLUGIN_ADD_TRACK_PLAYLIST
-	EN	Add track to Mog Playlist
+	EN	Add track to MOG Playlist
 
 PLUGIN_MOG_PLAYLIST
 	EN	MOG Playlist Options
@@ -11,7 +11,7 @@ PLUGIN_MOG_BOOKMARKS
 	EN	MOG Favorites Options
 
 PLUGIN_MOG
-	EN	Mog
+	EN	MOG
 
 PLUGIN_MOG_MODULE_NAME
 	EN	MOG

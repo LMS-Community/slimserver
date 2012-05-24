@@ -59,7 +59,7 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	FI	Palvelimen oletusasetus
 	FR	Valeur par défaut du serveur
 	HE	ברירת המחדל של Logitech Media Server
-	IT	Impostazioni predefinite server
+	IT	Impostazioni predefinite di server
 	NL	Standaardinstellingen van Logitech Media Server
 	NO	Serverstandard
 	PL	Domyślne ustawienie serwera
