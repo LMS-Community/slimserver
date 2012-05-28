@@ -555,16 +555,14 @@ sub forgetClient {
 	my $client = shift;
 	
 	if ($client) {
-		$client->controller()->unsync($client, 'keepSyncGroupId');
-		
-		$client->display->forgetDisplay();
-		
 		# Clean up global variables used in various modules
-		Slim::Buttons::Common::forgetClient($client);
-		Slim::Buttons::Home::forgetClient($client);
-		Slim::Buttons::Input::Choice::forgetClient($client);
-		Slim::Buttons::Playlist::forgetClient($client);
-		Slim::Buttons::Search::forgetClient($client);
+		if (main::IP3K) {
+			Slim::Buttons::Common::forgetClient($client);
+			Slim::Buttons::Home::forgetClient($client);
+			Slim::Buttons::Input::Choice::forgetClient($client);
+			Slim::Buttons::Playlist::forgetClient($client);
+			Slim::Buttons::Search::forgetClient($client);
+		}
 		Slim::Utils::Alarm->forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		
@@ -574,11 +572,17 @@ sub forgetClient {
 		
 		delete $clientHash{ $client->id };
 		
-		# stop watching this player
-		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
+		if (main::LOCAL_PLAYERS) {
+			$client->controller()->unsync($client, 'keepSyncGroupId');
+			
+			$client->display->forgetDisplay();
 		
-		# Bug 15860: Force the connection shut if it is not already
-		Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
+			# stop watching this player
+			delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
+			
+			# Bug 15860: Force the connection shut if it is not already
+			Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
+		}
 	}
 }
 

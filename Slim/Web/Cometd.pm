@@ -798,20 +798,26 @@ sub handleRequest {
 	
 	my $client;
 	my $clientid;
+	my $disconnected;
 	
 	if ( my $mac = $cmd->[0] ) {
 		$client   = Slim::Player::Client::getClient($mac);
-		$clientid = blessed($client) ? $client->id : undef;
+		$clientid = blessed($client) ? $client->id : $mac;
 		
-		# Special case, allow menu requests with a disconnected client
-		if ( !$clientid && $args->[0] eq 'menu' ) {
-			# set the clientid anyway, will trigger special handling in S::C::Request to store as diconnected clientid
-			$clientid = $mac;
-		}
+		# Letting a clientid go through here without a connected player
+		# assuming that S::C::Request will throw error if needed.
 		
 		if ( $client ) {
 			# Update the client's last activity time, since they did something through Comet
 			$client->lastActivityTime( Time::HiRes::time() );
+		}
+		
+		# XXX a test is needed here, probably want to base this on other parameters
+		# about whether this is the kind of player that should always be disconnected.
+		if (!main::SLIM_SERVICE && !$client && $mac) {
+			require Slim::Player::Disconnected;
+			$client = Slim::Player::Disconnected->new($mac);
+			$disconnected = 1;
 		}
 	}
 	
@@ -854,6 +860,7 @@ sub handleRequest {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
 				$client->controllerUA(undef);
+				$client->forgetClient if $disconnected;
 			}
 		};
 		
