@@ -440,7 +440,7 @@ sub requestMethod {
 		
 	} else {
 
-		$log->error("request not dispatchable!");
+		$log->error("request not dispatchable: ", to_json($commandargs));
 		Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 		return;
 	}	
