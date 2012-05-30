@@ -12,7 +12,7 @@ use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(encode_base64);
 use URI::Escape qw(uri_escape);
 
-if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+if ( !main::SLIM_SERVICE && !main::SCANNER && main::LOCAL_PLAYERS ) {
 	# init() is never called on SN so these aren't used
 	require Slim::Networking::SqueezeNetwork::Players;
 	require Slim::Networking::SqueezeNetwork::PrefSync;
@@ -168,7 +168,7 @@ sub _init_done {
 	}
 	
 	# Init the Internet Radio menu
-	if ( $json->{radio_menu} ) {
+	if ( main::SERVICES && $json->{radio_menu} ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') ) {
 			Slim::Plugin::InternetRadio::Plugin->buildMenus( $json->{radio_menu} );
 		}
@@ -180,13 +180,13 @@ sub _init_done {
 	}
 
 	# Init pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->init() if $prefs->get('sn_sync');
+	Slim::Networking::SqueezeNetwork::PrefSync->init() if main::LOCAL_PLAYERS && $prefs->get('sn_sync');
 	
 	# Init polling for list of SN-connected players
-	Slim::Networking::SqueezeNetwork::Players->init();
+	Slim::Networking::SqueezeNetwork::Players->init() if main::LOCAL_PLAYERS;
 	
 	# Init stats
-	Slim::Networking::SqueezeNetwork::Stats->init( $json );
+	Slim::Networking::SqueezeNetwork::Stats->init( $json ) if main::LOCAL_PLAYERS;
 
 	
 	# add link to mysb.com favorites to our local favorites list
@@ -254,13 +254,13 @@ sub shutdown {
 	$prefs->remove('sn_session');
 	
 	# Shutdown pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+	Slim::Networking::SqueezeNetwork::PrefSync->shutdown() if main::LOCAL_PLAYERS;
 	
 	# Shutdown player list fetch
-	Slim::Networking::SqueezeNetwork::Players->shutdown();
+	Slim::Networking::SqueezeNetwork::Players->shutdown() if main::LOCAL_PLAYERS;
 	
 	# Shutdown stats
-	Slim::Networking::SqueezeNetwork::Stats->shutdown();
+	Slim::Networking::SqueezeNetwork::Stats->shutdown() if main::LOCAL_PLAYERS;
 }
 
 # Return a correct URL for mysqueezebox.com

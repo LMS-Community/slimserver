@@ -37,7 +37,6 @@ use Socket qw(:crlf SOMAXCONN SOL_SOCKET SO_SNDBUF inet_ntoa);
 use Storable qw(thaw);
 
 use Slim::Networking::Select;
-use Slim::Player::HTTP;
 use Slim::Music::Info;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
@@ -540,7 +539,7 @@ sub processHTTP {
 		# Icy-MetaData
 		$sendMetaData{$httpClient} = 0;
 		
-		if ($request->header('Icy-MetaData')) {
+		if (main::LOCAL_PLAYERS && $request->header('Icy-MetaData')) {
 			$sendMetaData{$httpClient} = 1;
 		}
 
@@ -812,7 +811,7 @@ sub processURL {
 	}
 
 	# is this an HTTP stream?
-	if (!defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
+	if (main::LOCAL_PLAYERS && !defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
 		
 		# Bug 14825, allow multiple stream.mp3 clients from the same address with a player param
 		my $address = $params->{player} || $peeraddr{$httpClient};
@@ -828,6 +827,7 @@ sub processURL {
 			main::INFOLOG && $log->is_info && $log->info("New http client at $address");
 
 			if ($paddr) {
+				require Slim::Player::HTTP;
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
 				$client->init();
 				
@@ -883,25 +883,27 @@ sub processURL {
 		}
 	}
 
-	# if we don't have a player specified, just pick one if there is one...
-	$client = Slim::Player::Client::clientRandom() if !defined $client;
-
 	if (blessed($client) && $client->can('id')) {
 
 		$peerclient{$httpClient} = $client->id;
 	}
 
-	if ($client && $client->isa("Slim::Player::SLIMP3")) {
-
-		$params->{'playermodel'} = 'slimp3';
-	} elsif ($client && $client->isa("Slim::Player::Transporter")) {
-
-		$params->{'playermodel'} = 'transporter';
-	} else {
-
-		$params->{'playermodel'} = 'squeezebox';
+	if (main::LOCAL_PLAYERS) {
+		# if we don't have a player specified, just pick one if there is one...
+		$client = Slim::Player::Client::clientRandom() if !defined $client;
+	
+		if ($client && $client->isa("Slim::Player::SLIMP3")) {
+	
+			$params->{'playermodel'} = 'slimp3';
+		} elsif ($client && $client->isa("Slim::Player::Transporter")) {
+	
+			$params->{'playermodel'} = 'transporter';
+		} else {
+	
+			$params->{'playermodel'} = 'squeezebox';
+		}
 	}
-
+	
 	my @callbackargs = ($client, $httpClient, $response, $params);
 
 	# only execute a command if we have a command.
@@ -1130,7 +1132,7 @@ sub generateHTTPResponse {
 		
 			main::PERFMON && $startTime && Slim::Utils::PerfMon->check('web', AnyEvent->time - $startTime, "Page: $path");
 
-		} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
+		} elsif (main::LOCAL_PLAYERS && $path =~ /^(?:stream\.mp3|stream)$/o) {
 			# Bug 15380, return correct content-type depending on what we're streaming
 			if ( my $sc = $client->controller()->songStreamController() ) {
 				if ( my $song = $sc->song() ) {
@@ -1487,7 +1489,7 @@ sub sendStreamingFile {
 				my $endbytes = $size - 1;
 			
 				if ( $start =~ /:/ ) {
-					my ($h, $m, $s) = split /:/, $start;
+					my ($h, $m, $s) = split (/:/, $start);
 					$start = ($h * 3600) + ($m * 60) + $s;
 				}
 				
@@ -1498,7 +1500,7 @@ sub sendStreamingFile {
 			
 				if ( $end ) {
 					if ( $end =~ /:/ ) {
-						my ($h, $m, $s) = split /:/, $end;
+						my ($h, $m, $s) = split (/:/, $end);
 						$end = ($h * 3600) + ($m * 60) + $s;
 					}
 					
@@ -2248,7 +2250,7 @@ sub sendStreamingResponse {
 	}
 	
 	# try to send metadata, if appropriate
-	if ($sendMetaData{$httpClient}) {
+	if (main::LOCAL_PLAYERS && $sendMetaData{$httpClient}) {
 
 		# if the metadata would appear in the middle of this message, just send the bit before
 		main::INFOLOG && $isInfo && $log->info("metadata bytes: $metaDataBytes{$httpClient}");
@@ -2392,7 +2394,7 @@ sub tryStreamingLater {
 sub forgetClient {
 	my $client = shift;
 
-	if (defined($client->streamingsocket)) {
+	if ($client && defined($client->streamingsocket)) {
 		closeStreamingSocket($client->streamingsocket);
 	}
 }

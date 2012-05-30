@@ -210,8 +210,6 @@ use Slim::Music::Info;
 use Slim::Music::Import;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
-use Slim::Player::Sync;
-use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
@@ -513,6 +511,8 @@ sub init {
 
 	if (LOCAL_PLAYERS) {
 		main::INFOLOG && $log->info("Slimproto Init...");
+		require Slim::Player::Source;
+		require Slim::Player::Sync;
 		require Slim::Networking::Slimproto;
 		Slim::Networking::Slimproto::init();
 	}
@@ -564,9 +564,12 @@ sub init {
 	Slim::Menu::FolderInfo->init();
 	Slim::Menu::GlobalSearch->init();
 
-	main::INFOLOG && $log->info('Server Alarms init...');
-	Slim::Utils::Alarm->init();
-
+	if (LOCAL_PLAYERS) {
+		main::INFOLOG && $log->info('Server Alarms init...');
+		require Slim::Utils::Alarm;
+		Slim::Utils::Alarm->init();
+	}
+	
 	# load plugins before Jive init so MusicIP hooks to cached artist/genre queries from Jive->init() will take root
 	main::INFOLOG && $log->info("Server Load Plugins...");
 	Slim::Utils::PluginManager->load();
@@ -600,14 +603,16 @@ sub init {
 	main::INFOLOG && $log->info("Library Browser init...");
 	Slim::Menu::BrowseLibrary->init();
 	
-	# regular server has a couple more initial operations.
-	main::INFOLOG && $log->info("Server persist playlists...");
-
-	if ($prefs->get('persistPlaylists')) {
-
-		Slim::Control::Request::subscribe(
-			\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
-		);
+	if (LOCAL_PLAYERS) {
+		# regular server has a couple more initial operations.
+		main::INFOLOG && $log->info("Server persist playlists...");
+	
+		if ($prefs->get('persistPlaylists')) {
+	
+			Slim::Control::Request::subscribe(
+				\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
+			);
+		}
 	}
 
 	# pull in the memory usage module if requested.
@@ -1164,7 +1169,7 @@ sub cleanup {
 
 	Slim::Utils::Prefs::writeAll();
 
-	if ($prefs->get('persistPlaylists')) {
+	if (main::LOCAL_PLAYERS && $prefs->get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}

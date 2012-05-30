@@ -479,7 +479,7 @@ sub init {
 					}
 				}
 
-				if (! $duplicate) {
+				if (main::LOCAL_PLAYERS && ! $duplicate) {
 					my $newAlarm = Slim::Utils::Alarm->new($client, $time->[$day]);
 					$newAlarm->enabled($alarm->[$day]);
 					$newAlarm->everyDay(0);
@@ -895,7 +895,7 @@ sub init {
 		} else {
 			Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 		}
-	}, 'persistPlaylists');
+	}, 'persistPlaylists') if main::LOCAL_PLAYERS;
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;

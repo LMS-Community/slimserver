@@ -19,14 +19,12 @@ use base qw(Slim::Utils::Accessor);
 use Scalar::Util qw(blessed);
 use Storable qw(nfreeze);
 
-use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Timers;
-use Slim::Player::StreamingController;
 
 if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 	require Slim::Control::Request;
@@ -54,38 +52,40 @@ our $defaultPrefs = {
 	'presets'              => [],
 };
 
-$prefs->setValidate({
-	validator => sub {
-		my ($pref, $new, $params, $old, $client) = @_;
-		
-		return $new <= $client->mixerConstant($pref, 'max') 
-		    && $new >= $client->mixerConstant($pref, 'min');
-	} 
-}, qw(bass treble));
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Control::Jive::repeatSettings($client);
-}, 'repeat' );
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Control::Jive::shuffleSettings($client);
-}, 'shuffle' );
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Utils::Alarm->alarmsEnabledChanged($client);
-}, 'alarmsEnabled' );
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Utils::Alarm->defaultVolumeChanged($client);
-}, 'alarmDefaultVolume' );
+if (main::LOCAL_PLAYERS) {
+	$prefs->setValidate({
+		validator => sub {
+			my ($pref, $new, $params, $old, $client) = @_;
+			
+			return $new <= $client->mixerConstant($pref, 'max') 
+			    && $new >= $client->mixerConstant($pref, 'min');
+		} 
+	}, qw(bass treble));
+	
+	$prefs->setChange( sub {
+		my $value  = $_[1];
+		my $client = $_[2] || return;
+		Slim::Control::Jive::repeatSettings($client);
+	}, 'repeat' );
+	
+	$prefs->setChange( sub {
+		my $value  = $_[1];
+		my $client = $_[2] || return;
+		Slim::Control::Jive::shuffleSettings($client);
+	}, 'shuffle' );
+	
+	$prefs->setChange( sub {
+		my $value  = $_[1];
+		my $client = $_[2] || return;
+		Slim::Utils::Alarm->alarmsEnabledChanged($client);
+	}, 'alarmsEnabled' );
+	
+	$prefs->setChange( sub {
+		my $value  = $_[1];
+		my $client = $_[2] || return;
+		Slim::Utils::Alarm->defaultVolumeChanged($client);
+	}, 'alarmDefaultVolume' );
+}
 
 # deprecated, use $client->maxVolume
 our $maxVolume = 100;
@@ -315,10 +315,14 @@ sub new {
 		$client->loadPrefs();
 	}
 
-	$client->controller(Slim::Player::StreamingController->new($client));
-
-	if (!main::SCANNER) {	
-		Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
+	if (main::LOCAL_PLAYERS) {
+		require Slim::Player::StreamingController;
+		
+		$client->controller(Slim::Player::StreamingController->new($client));
+	
+		if (!main::SCANNER) {	
+			Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
+		}
 	}
 
 	return $client;
@@ -334,7 +338,7 @@ sub init {
 		$client->display->init();
 	}
 
-	Slim::Utils::Alarm->loadAlarms($client);
+	Slim::Utils::Alarm->loadAlarms($client) if main::LOCAL_PLAYERS;
 }
 
 sub initPrefs {
@@ -390,7 +394,7 @@ Returns the number of known clients.
 =cut
 
 sub clientCount {
-	return scalar( clients() );
+	return scalar( main::LOCAL_PLAYERS ? clients() : 0 );
 }
 
 =head2 clientIPs()
@@ -522,7 +526,7 @@ sub getClient {
 	my $id  = shift || return undef;
 	my $ret = $clientHash{$id};
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE || !main::LOCAL_PLAYERS ) {
 		# There is no point making the below lookups, which add massive
 		# amounts of DB calls when name() is called and lots of other
 		# clients are connected
@@ -563,16 +567,15 @@ sub forgetClient {
 			Slim::Buttons::Playlist::forgetClient($client);
 			Slim::Buttons::Search::forgetClient($client);
 		}
-		Slim::Utils::Alarm->forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		
 		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 			Slim::Web::HTTP::forgetClient($client);
 		}
 		
-		delete $clientHash{ $client->id };
-		
 		if (main::LOCAL_PLAYERS) {
+			Slim::Utils::Alarm->forgetClient($client) if main::LOCAL_PLAYERS;
+	
 			$client->controller()->unsync($client, 'keepSyncGroupId');
 			
 			$client->display->forgetDisplay();
@@ -583,8 +586,115 @@ sub forgetClient {
 			# Bug 15860: Force the connection shut if it is not already
 			Slim::Networking::Slimproto::slimproto_close($client->tcpsock()) if defined $client->tcpsock();
 		}
+
+		delete $clientHash{ $client->id };
 	}
 }
+
+# Wrapper method so "execute" can be called as an object method on $client.
+sub execute {
+	my $self = shift;
+
+	return Slim::Control::Request::executeRequest($self, @_);
+}
+
+# stub out display functions, some players may not have them.
+sub update {}
+sub killAnimation {}
+sub endAnimation {}
+sub showBriefly {}
+sub pushLeft {}
+sub pushRight {}
+sub doEasterEgg {}
+sub displayHeight {}
+sub bumpLeft {}
+sub bumpRight {}
+sub bumpUp {}
+sub bumpDown {}
+sub scrollBottom {}
+sub parseLines {}
+sub playingModeOptions {}
+sub block{}
+sub symbols{}
+sub unblock{}
+sub updateKnob{}
+sub prevline1 {}
+sub prevline2 {}
+sub currBrightness {}
+sub linesPerScreen {}
+sub knobListPos {}
+sub setPlayerSetting {}
+sub modelName {}
+
+sub pluginData {
+	my ( $client, $key, $value ) = @_;
+	
+	my $namespace;
+	
+	# if called from a plugin, we automatically use the plugin's namespace for keys
+	my $package;
+	if ( main::SLIM_SERVICE ) {
+		# pluginData is called from SNClient, need to increase caller stack
+		$package = caller(1);
+	}
+	else {
+		$package = caller(0);
+	}
+	
+	if ( $package =~ /^(?:Slim::Plugin|Plugins)::(\w+)/ ) {
+		$namespace = $1;
+	}
+	
+	if ( $namespace && !defined $key ) {
+		return $client->_pluginData->{$namespace};
+	}
+	
+	if ( defined $value ) {
+		if ( $namespace ) {
+			$client->_pluginData->{$namespace}->{$key} = $value;
+		}
+		else {
+			$client->_pluginData->{$key} = $value;
+		}
+	}
+	
+	if ( $namespace ) {
+		my $val = $client->_pluginData->{$namespace}->{$key};
+		return ( defined $val ) ? $val : undef;
+	}
+	else {
+		return $client->_pluginData;
+	}
+}
+
+# return formatted date/time strings - overwritten in SN to respect timezone
+sub timeF {
+	return Slim::Utils::DateTime::timeF(
+		undef, 
+		preferences('plugin.datetime')->client($_[0])->get('timeFormat')
+	);
+}
+
+sub longDateF {
+	return Slim::Utils::DateTime::longDateF(
+		undef, 
+		preferences('plugin.datetime')->client($_[0])->get('dateFormat')
+	);
+}
+
+sub shortDateF {
+	return Slim::Utils::DateTime::shortDateF();
+}
+
+sub revisionNumber { $_[0]->revision }
+
+###############################################################
+#
+# Methods only relevant for locally-attached players from here on
+
+return 1 if !main::LOCAL_PLAYERS;
+
+use Slim::Player::Sync;
 
 sub startup {
 	my $client = shift;
@@ -650,13 +760,6 @@ sub initial_add_done {
 
 		$client->execute(['play']);
 	}
-}
-
-# Wrapper method so "execute" can be called as an object method on $client.
-sub execute {
-	my $self = shift;
-
-	return Slim::Control::Request::executeRequest($self, @_);
 }
 
 sub needsUpgrade {
@@ -920,34 +1023,6 @@ sub _mixerPrefs {
 
 	return $prefs->client($client)->get($pref);
 }
-
-# stub out display functions, some players may not have them.
-sub update {}
-sub killAnimation {}
-sub endAnimation {}
-sub showBriefly {}
-sub pushLeft {}
-sub pushRight {}
-sub doEasterEgg {}
-sub displayHeight {}
-sub bumpLeft {}
-sub bumpRight {}
-sub bumpUp {}
-sub bumpDown {}
-sub scrollBottom {}
-sub parseLines {}
-sub playingModeOptions {}
-sub block{}
-sub symbols{}
-sub unblock{}
-sub updateKnob{}
-sub prevline1 {}
-sub prevline2 {}
-sub currBrightness {}
-sub linesPerScreen {}
-sub knobListPos {}
-sub setPlayerSetting {}
-sub modelName {}
 
 sub pause {
 	my $client = shift;
@@ -1248,47 +1323,6 @@ sub currentPlaylistChangeTime {
 	$client->_currentPlaylistChangeTime(@_);
 }
 
-sub pluginData {
-	my ( $client, $key, $value ) = @_;
-	
-	my $namespace;
-	
-	# if called from a plugin, we automatically use the plugin's namespace for keys
-	my $package;
-	if ( main::SLIM_SERVICE ) {
-		# pluginData is called from SNClient, need to increase caller stack
-		$package = caller(1);
-	}
-	else {
-		$package = caller(0);
-	}
-	
-	if ( $package =~ /^(?:Slim::Plugin|Plugins)::(\w+)/ ) {
-		$namespace = $1;
-	}
-	
-	if ( $namespace && !defined $key ) {
-		return $client->_pluginData->{$namespace};
-	}
-	
-	if ( defined $value ) {
-		if ( $namespace ) {
-			$client->_pluginData->{$namespace}->{$key} = $value;
-		}
-		else {
-			$client->_pluginData->{$key} = $value;
-		}
-	}
-	
-	if ( $namespace ) {
-		my $val = $client->_pluginData->{$namespace}->{$key};
-		return ( defined $val ) ? $val : undef;
-	}
-	else {
-		return $client->_pluginData;
-	}
-}
-
 sub playPoint {
 	my $client = shift;
 	if (@_) {
@@ -1430,25 +1464,6 @@ sub syncedWithNames {
 
 }
 	
-# return formatted date/time strings - overwritten in SN to respect timezone
-sub timeF {
-	return Slim::Utils::DateTime::timeF(
-		undef, 
-		preferences('plugin.datetime')->client($_[0])->get('timeFormat')
-	);
-}
-
-sub longDateF {
-	return Slim::Utils::DateTime::longDateF(
-		undef, 
-		preferences('plugin.datetime')->client($_[0])->get('dateFormat')
-	);
-}
-
-sub shortDateF {
-	return Slim::Utils::DateTime::shortDateF();
-}
-
 sub maxSupportedSamplerate {
 	return 48000;
 }
@@ -1489,6 +1504,6 @@ sub isAppEnabled {
 	return;
 }
 
-sub revisionNumber { $_[0]->revision }
+
 
 1;

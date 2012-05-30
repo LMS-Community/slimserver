@@ -441,7 +441,7 @@ sub playTrack {
 	my $actions;
 
 	# "Play Song" in current playlist context is 'jump'
-	if ( $tags->{menuContext} eq 'playlist' ) {
+	if ( main::LOCAL_PLAYERS && $tags->{menuContext} eq 'playlist' ) {
 		
 		# do not add item if this is current track and already playing
 		return $emptyItemList if $tags->{playlistIndex} == Slim::Player::Source::playingSongIndex($client)
@@ -494,7 +494,7 @@ sub addTrackNext {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
 	my $string = cstring($client, 'PLAY_NEXT');
 	my ($cmd, $playcontrol);
-	if ($tags->{menuContext} eq 'playlist') {
+	if (main::LOCAL_PLAYERS && $tags->{menuContext} eq 'playlist') {
 		$cmd         = 'playlistnext';
 	} else {
 		$cmd         = 'insert';
@@ -510,7 +510,7 @@ sub addTrackEnd {
 	my ($string, $cmd, $playcontrol);
 
 	# "Add Song" in current playlist context is 'delete'
-	if ( $tags->{menuContext} eq 'playlist' ) {
+	if ( main::LOCAL_PLAYERS && $tags->{menuContext} eq 'playlist' ) {
 		$string      = cstring($client, 'REMOVE_FROM_PLAYLIST');
 		$cmd         = 'delete';
 	} else {
@@ -550,7 +550,7 @@ sub addTrack {
 		$actions->{'add-hold'} = $actions->{go};
 
 	# play next in the playlist context
-	} elsif ( $cmd eq 'playlistnext' ) {
+	} elsif ( main::LOCAL_PLAYERS && $cmd eq 'playlistnext' ) {
 		
 		# Do not add this item if only one item in playlist
 		return $emptyItemList if Slim::Player::Playlist::count($client) < 2;
@@ -1269,7 +1269,7 @@ sub cliQuery {
 	my $playlist_index = $request->getParam('playlist_index');
 	
 	# special case-- playlist_index given but no trackId
-	if (defined($playlist_index) && ! $trackId ) {
+	if (main::LOCAL_PLAYERS && defined($playlist_index) && ! $trackId ) {
 		if (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) {
 			$trackId = $song->id;
 			$url     = $song->url;

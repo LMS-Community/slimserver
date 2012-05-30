@@ -53,77 +53,79 @@ sub init {
        #        |  |  |  |Function to call
        #        C  Q  T  F
 
+	if (main::LOCAL_PLAYERS) {
+		Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], 
+			[1, 1, 1, \&alarmSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['jiveupdatealarm', '_index', '_quantity'], 
+			[1, 1, 1, \&alarmUpdateMenu]);
+	
+		Slim::Control::Request::addDispatch(['jiveupdatealarmdays', '_index', '_quantity'], 
+			[1, 1, 1, \&alarmUpdateDays]);
+	
+		Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'],
+			[1, 1, 1, \&syncSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'],
+			[1, 1, 1, \&sleepSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['jivetonesettings', '_index', '_quantity'],
+			[1, 1, 1, \&toneSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['jivefixedvolumesettings', '_index', '_quantity'],
+			[1, 1, 1, \&fixedVolumeSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['jivestereoxl', '_index', '_quantity'],
+			[1, 1, 1, \&stereoXLQuery]);
+	
+		Slim::Control::Request::addDispatch(['jivelineout', '_index', '_quantity'],
+			[1, 1, 1, \&lineOutQuery]);
+	
+		Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
+			[1, 1, 1, \&crossfadeSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'],
+			[1, 1, 1, \&replaygainSettingsQuery]);
+	
+		Slim::Control::Request::addDispatch(['jivealarm'],
+			[1, 0, 1, \&jiveAlarmCommand]);
+	
+		Slim::Control::Request::addDispatch(['jiveendoftracksleep', '_index', '_quantity' ],
+			[1, 1, 1, \&endOfTrackSleepCommand]);
+	
+		Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
+			[1, 0, 1, \&jiveFavoritesCommand]);
+	
+		Slim::Control::Request::addDispatch(['jivepresets', '_index', '_quantity' ],
+			[1, 1, 1, \&jivePresetsMenu]);
+	
+		Slim::Control::Request::addDispatch(['jivealarmvolume'],
+			[1, 0, 1, \&jiveAlarmVolumeSlider ]);
+	
+		Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings', '_index', '_quantity'],
+			[1, 1, 0, \&playerBrightnessMenu]);
+	
+		Slim::Control::Request::addDispatch(['jiveplayertextsettings', '_whatFont', '_index', '_quantity'],
+			[1, 1, 0, \&playerTextMenu]);
+
+		Slim::Control::Request::addDispatch(['jivesync' ],
+			[1, 0, 1, \&jiveSyncCommand]);
+	
+		Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ],
+			[1, 0, 1, \&jivePlaylistsCommand]);
+	
+		Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
+			[1, 1, 1, \&jiveDummyCommand]);
+	}
+	
 	Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
 		[2, 1, 1, \&menuQuery]);
-
-	Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], 
-		[1, 1, 1, \&alarmSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['jiveupdatealarm', '_index', '_quantity'], 
-		[1, 1, 1, \&alarmUpdateMenu]);
-
-	Slim::Control::Request::addDispatch(['jiveupdatealarmdays', '_index', '_quantity'], 
-		[1, 1, 1, \&alarmUpdateDays]);
-
-	Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'],
-		[1, 1, 1, \&syncSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'],
-		[1, 1, 1, \&sleepSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['jivetonesettings', '_index', '_quantity'],
-		[1, 1, 1, \&toneSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['jivefixedvolumesettings', '_index', '_quantity'],
-		[1, 1, 1, \&fixedVolumeSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['jivestereoxl', '_index', '_quantity'],
-		[1, 1, 1, \&stereoXLQuery]);
-
-	Slim::Control::Request::addDispatch(['jivelineout', '_index', '_quantity'],
-		[1, 1, 1, \&lineOutQuery]);
-
-	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
-		[1, 1, 1, \&crossfadeSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'],
-		[1, 1, 1, \&replaygainSettingsQuery]);
-
-	Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
-		[1, 1, 1, \&jiveDummyCommand]);
-
-	Slim::Control::Request::addDispatch(['jivealarm'],
-		[1, 0, 1, \&jiveAlarmCommand]);
-
-	Slim::Control::Request::addDispatch(['jiveendoftracksleep', '_index', '_quantity' ],
-		[1, 1, 1, \&endOfTrackSleepCommand]);
-
-	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
-		[1, 0, 1, \&jiveFavoritesCommand]);
-
-	Slim::Control::Request::addDispatch(['jivepresets', '_index', '_quantity' ],
-		[1, 1, 1, \&jivePresetsMenu]);
-
-	Slim::Control::Request::addDispatch(['jivealarmvolume'],
-		[1, 0, 1, \&jiveAlarmVolumeSlider ]);
-
-	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings', '_index', '_quantity'],
-		[1, 1, 0, \&playerBrightnessMenu]);
-
-	Slim::Control::Request::addDispatch(['jiveplayertextsettings', '_whatFont', '_index', '_quantity'],
-		[1, 1, 0, \&playerTextMenu]);
 
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
 		[1, 0, 1, \&albumSortSettingsMenu]);
 
 	Slim::Control::Request::addDispatch(['jivesetalbumsort'],
 		[1, 0, 1, \&jiveSetAlbumSort]);
-
-	Slim::Control::Request::addDispatch(['jivesync' ],
-		[1, 0, 1, \&jiveSyncCommand]);
-
-	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ],
-		[1, 0, 1, \&jivePlaylistsCommand]);
 
 	Slim::Control::Request::addDispatch(['jiverecentsearches'],
 		[0, 1, 0, \&jiveRecentSearchQuery]);
@@ -273,7 +275,7 @@ sub mainMenu {
 			isANode        => 1,
 			node           => 'home',
 		},
-		{
+		!main::LOCAL_PLAYERS ? () : {
 			stringToken    => 'FAVORITES',
 			id             => 'favorites',
 			node           => 'home',
@@ -289,9 +291,9 @@ sub mainMenu {
 		},
 
 		@pluginMenus,
-		@{playerPower($client, 1)},
-		@{playerSettingsMenu($client, 1)},
-		@{
+		!main::LOCAL_PLAYERS ? () : @{playerPower($client, 1)},
+		!main::LOCAL_PLAYERS ? () : @{playerSettingsMenu($client, 1)},
+		!main::LOCAL_PLAYERS ? () : @{
 			# The Digital Input plugin could be disabled
 			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')) {
 				Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client);
@@ -299,7 +301,7 @@ sub mainMenu {
 				[];
 			}
 		},
-		@{
+		!main::LOCAL_PLAYERS ? () : @{
 			# The Line In plugin could be disabled
 			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
 				Slim::Plugin::LineIn::Plugin::lineInItem($client, 0);
@@ -307,7 +309,7 @@ sub mainMenu {
 				[];
 			}
 		},
-		@{
+		!main::LOCAL_PLAYERS ? () : @{
 			# The Audioscrobbler plugin could be disabled
 			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::AudioScrobbler::Plugin')) {
 				Slim::Plugin::AudioScrobbler::Plugin::jiveSettings($client);
@@ -315,13 +317,13 @@ sub mainMenu {
 				[];
 			}
 		},
-		@{internetRadioMenu($client)},
+		main::SERVICES ? @{internetRadioMenu($client)} : (),
 		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
 		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
 		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
-		@{appMenus($client, 1)},
+		main::SERVICES ? @{appMenus($client, 1)} : (),
 
-		@{globalSearchMenu($client)},		
+		main::SERVICES ? @{globalSearchMenu($client)} : (),		
 	);
 
 	if ( !$direct ) {
@@ -583,6 +585,646 @@ sub _purgeMenu {
 	}
 	return \@purgedMenu;
 }
+
+
+sub sliceAndShip {
+	my ($request, $client, $menu) = @_;
+	my $numitems = scalar(@$menu);
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	$request->addResult("count", $numitems);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+
+	if ($valid) {
+		my $cnt = 0;
+		$request->addResult('offset', $start);
+
+		for my $eachmenu (@$menu[$start..$end]) {
+			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+			$cnt++;
+		}
+	}
+	$request->setStatusDone()
+}
+
+# returns a single item for the homeMenu if radios is a valid command
+sub internetRadioMenu {
+	main::INFOLOG && $log->info("Begin function");
+	my $client = shift;
+	
+	return () if !main::SERVICES;
+	
+	my @command = ('radios', 0, 200, 'menu:radio');
+
+	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
+	my $validQuery = $test_request->isValidQuery();
+
+	my @menu = ();
+	
+	if ($validQuery && $test_request->getResult('count')) {
+		push @menu,
+		{
+			text           => $client->string('RADIO'),
+			id             => 'radios',
+			node           => 'home',
+			weight         => 20,
+			actions        => {
+				go => {
+					cmd => ['radios'],
+					params => {
+						menu => 'radio',
+					},
+				},
+			},
+			window        => {
+					menuStyle => 'album',
+			},
+		};
+	}
+
+	return \@menu;
+
+}
+
+sub _clientId {
+	my $client = shift;
+	my $id = 'all';
+	if ( blessed($client) && $client->id() ) {
+		$id = $client->id();
+	}
+	return $id;
+}
+	
+sub _notifyJive {
+	my ($menu, $client, $action) = @_;
+	$action ||= 'add';
+	
+	my $id = _clientId($client);
+	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
+	
+	$menuForExport = [ map { _localizeMenuItemText( $client, $_ ) } @{$menuForExport} ];
+	
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, $action, $id ] );
+}
+
+sub dateQuery_filter {
+	my ($self, $request) = @_;
+
+	# if time is to be set, pass along the new time value to the listeners
+	if (my $newTime = $request->getParam('set')) {
+		$self->privateData($newTime);
+		return 1;
+	}
+
+	$self->privateData(0);
+	return 0;
+}
+
+sub dateQuery {
+	# XXX dateQuery uses registerAutoExecute which is called for every notification!
+	# (See Request.pm "send the notification to all filters...")
+	# An easy workaround here is to abort on any more params in @_
+	return if @_ > 1;
+	
+	my $request = shift;
+
+	if ( $request->isNotQuery([['date']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $newTime = $request->getParam('set') || 0;
+
+	# it time is expliciely set, we'll have to notify our listeners
+	if ($newTime) {
+		$request->notify();
+	}
+	else {
+		$newTime = $request->privateData() || 0;
+		$request->privateData(0);
+	}
+
+	# 7.5+ SP devices use epoch time now, much simpler
+	$request->addResult( 'date_epoch', $newTime || time() );
+
+	# This is the field 7.3 and earlier players expect.
+	#  7.4 is smart enough to take no action when missing
+	#  the date_utc field it expects.
+	# If they are hitting 7.5 SN/SC code, they're about to
+	#  be upgraded anyways, but we should avoid mucking
+	#  with their clock in the meantime.  These crafted "all-zeros"
+	#  responses will avoid Lua errors, but the "date"
+	#  command implemented by busybox will fail out on this
+	#  data and take no action due to it resulting in a
+	#  negative time_t value.
+	$request->addResult( 'date', '0000-00-00T00:00:00+00:00' );
+
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+		$request->registerAutoExecute($timeout, \&dateQuery_filter);		
+	}
+
+	$request->setStatusDone();
+}
+
+sub firmwareUpgradeQuery_filter {
+	my $self = shift;
+	my $request = shift;
+
+	# update the query if new firmware downloaded for this machine type
+	if ($request->isCommand([['fwdownloaded']]) && 
+		(($request->getParam('machine') || 'jive') eq ($self->getParam('_machine') || 'jive')) ) {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub firmwareUpgradeQuery {
+	my $request = shift;
+
+	if ( !main::LOCAL_PLAYERS || $request->isNotQuery([['firmwareupgrade']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $firmwareVersion = $request->getParam('firmwareVersion');
+	my $model           = $request->getParam('machine') || 'jive';
+	
+	# always send the upgrade url this is also used if the user opts to upgrade
+	if ( my $url = Slim::Utils::Firmware->url($model) ) {
+		# Bug 6828, Send relative firmware URLs for Jive versions which support it
+		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
+		
+		# return full url when running SqueezeOS - we'll serve the direct download link from squeezenetwork
+		if ( $cur_rev >= 1659 && !Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
+			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
+		}
+		else {
+			$request->addResult( firmwareUrl => $url );
+		}
+	}
+	
+	if ( Slim::Utils::Firmware->need_upgrade( $firmwareVersion, $model ) ) {
+		# if this is true a firmware upgrade is forced
+		$request->addResult( firmwareUpgrade => 1 );
+	}
+	else {
+		$request->addResult( firmwareUpgrade => 0 );
+	}
+
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+		$request->registerAutoExecute($timeout, \&firmwareUpgradeQuery_filter);
+	}
+
+	$request->setStatusDone();
+
+}
+
+my %allMyMusicMenuItems;
+
+sub myMusicMenu {
+	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
+	my $batch = shift;
+	my $client = shift;
+
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&_libraryChanged);
+	
+	
+	if (!$batch) {
+		my %newMenuItems = map {$_->{'id'} => 1} @$myMusicMenu;
+		my @myMusicMenuDelete = map +{id => $_, node => 'myMusic'}, (grep {!$newMenuItems{$_}} keys %allMyMusicMenuItems);
+			
+		_notifyJive(\@myMusicMenuDelete, $client, 'remove');
+	}
+	
+	foreach (@$myMusicMenu) {
+		$allMyMusicMenuItems{$_->{'id'}} = 1;
+	}
+	
+	if ($batch) {
+		return $myMusicMenu;
+	} else {
+		_notifyJive($myMusicMenu, $client);
+	}
+}
+
+
+# send a notification for menustatus
+sub menuNotification {
+	# the lines below are needed as menu notifications are done via notifyFromArray, but
+	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
+	my $request  = shift;
+	my $dataRef          = $request->getParam('_data')   || return;
+	my $action   	     = $request->getParam('_action') || 'add';
+	my $client           = $request->clientid();
+	main::INFOLOG && $log->is_info && $log->info("Menustatus notification sent:", $action, '->', ($client || 'all'));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
+}
+
+
+sub _jiveNoResults {
+	my $request = shift;
+	$request->addResult('count', '1');
+	$request->addResult('offset', 0);
+	$request->addResultLoop('item_loop', 0, 'text', $request->string('EMPTY'));
+	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
+	$request->addResultLoop('item_loop', 0, 'action', 'none');
+}
+
+sub cacheSearch {
+	my $request = shift;
+	my $search  = shift;
+	
+	# Don't cache searches on SN
+	return if main::SLIM_SERVICE;
+
+	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
+		unshift (@recentSearches, $search);
+	}
+	recentSearchMenu($request->client, 0);
+}
+
+sub recentSearchMenu {
+	my $client  = shift;
+	my $batch   = shift;
+
+	my @recentSearchMenu = ();
+	return \@recentSearchMenu unless $client;
+
+	if (scalar(@recentSearches) == 1) {
+		push @recentSearchMenu,
+		{
+			text           => $client->string('RECENT_SEARCHES'),
+			id             => 'homeSearchRecent',
+			node           => 'home',
+			weight         => 111,
+			actions => {
+				go => {
+					cmd => ['jiverecentsearches'],
+       	                 },
+			},
+			window => {
+				text => $client->string('RECENT_SEARCHES'),
+			},
+		};
+		push @recentSearchMenu,
+		{
+			text           => $client->string('RECENT_SEARCHES'),
+			id             => 'myMusicSearchRecent',
+			node           => 'myMusicSearch',
+			noCustom       => 1,
+			weight         => 50,
+			actions => {
+				go => {
+					cmd => ['jiverecentsearches'],
+       	                 	},
+			},
+			window => {
+				text => $client->string('RECENT_SEARCHES'),
+			},
+		};	
+		if (!$batch) {
+			_notifyJive(\@recentSearchMenu, $client);
+		}
+	}
+	return \@recentSearchMenu;
+
+}
+
+sub jiveRecentSearchQuery {
+
+	my $request = shift;
+	main::INFOLOG && $log->info("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['jiverecentsearches']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $totalCount = scalar(@recentSearches);
+	if ($totalCount == 0) {
+		# this is an empty resultset
+		_jiveNoResults($request);
+	} else {
+		my $maxCount = 200;
+		$totalCount = $totalCount > $maxCount ? ($maxCount - 1) : $totalCount;
+		$request->addResult('count', $totalCount);
+		$request->addResult('offset', 0);
+		for my $i (0..$totalCount) {
+			last unless $recentSearches[$i];
+			my $href = $recentSearches[$i];
+			for my $key (keys %$href) {
+				$request->addResultLoop('item_loop', $i, $key, $href->{$key});
+			}
+		}
+	}
+	$request->setStatusDone();
+}
+
+
+# The following allow download of extensions (applets, wallpaper and sounds) from SC to jive
+
+# hash of providers for extension information
+my %extensionProviders = ();
+
+sub registerExtensionProvider {
+	my $name     = shift;
+	my $provider = shift;
+	my $optstr   = shift;
+
+	main::INFOLOG && $log->info("adding extension provider $name" . ($optstr ? " optstr: $optstr" : ""));
+
+	$extensionProviders{ $name } = { provider => $provider, optstr => $optstr };
+}
+
+sub removeExtensionProvider {
+	my $name = shift;
+
+	main::INFOLOG && $log->info("deleting extension provider $name");
+
+	delete $extensionProviders{ $name };
+}
+
+# return all extensions available for a specific type, version and target
+# uses extension providers to provide a list of extensions available for the query criteria
+# these are async so they can fetch and parse data to build a list of extensions
+sub extensionsQuery {
+	my $request = shift;
+ 
+	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound|patche)s/; # S:P:Extensions always appends 's' to type
+	my $version= $request->getParam('version');
+	my $target = $request->getParam('target');
+	my $optstr = $request->getParam('optstr');
+
+	if (!defined $type) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my @providers;
+	my $language  = $Slim::Utils::Strings::currentLang;
+
+	# remove optional providers if key is included in the query and it does not match
+	# this allows SP to select whether optional providers are used to build the list
+	for my $provider (keys %extensionProviders) {
+		if (!$optstr || !defined $extensionProviders{$provider}->{'optstr'} || $optstr =~ /$extensionProviders{$provider}->{optstr}/) {
+			push @providers, $provider;
+		}
+	}
+
+	if (scalar @providers) {
+
+		$request->privateData( { remaining => scalar @providers, results => [] } );
+
+		$request->setStatusProcessing;
+
+		for my $provider (@providers) {
+
+			$extensionProviders{$provider}->{'provider'}->( {
+				'name'   => $provider, 
+				'type'   => $type, 
+				'target' => $target,
+				'version'=> $version, 
+				'lang'   => $language,
+				'details'=> 1,
+				'cb'     => \&_extensionsQueryCB,
+				'pt'     => [ $request ]
+			});
+		}
+
+	} else {
+
+		$request->addResult("count", 0);
+
+		$request->setStatusDone();
+	}
+}
+
+sub _extensionsQueryCB {
+	my $request= shift;
+	my $res    = shift;
+	my $data   = $request->privateData;
+
+	splice @{$data->{'results'}}, 0, 0, @$res;
+
+	if ( ! --$data->{'remaining'} ) {
+
+		# create a list of entries with the duplicates removed, favoring higher version numbers
+
+		# pass 1 - find max versions
+		my $max = {};
+
+		for my $entry (@{$data->{'results'}}) {
+
+			my $name = $entry->{'name'};
+
+			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
+
+				$max->{$name} = $entry->{'version'};
+			}
+		}
+
+		# pass 2 - build list containing single entry for per extension
+		my @results = ();
+
+		for my $entry (@{$data->{'results'}}) {
+
+			my $name = $entry->{'name'};
+
+			if (exists $max->{$name} && (!defined $max->{$name} || $max->{$name} eq $entry->{'version'})) {
+
+				push @results, $entry;
+
+				delete $max->{$name};
+			}
+		}
+
+		my $cnt = 0;
+
+		for my $entry ( sort { $a->{'title'} cmp $b->{'title'} } @results ) {
+
+			$request->setResultLoopHash('item_loop', $cnt++, $entry);
+		}
+
+		$request->addResult("count", $cnt);
+
+		$request->setStatusDone();
+	}
+}
+
+sub appMenus {
+	my $client = shift;
+	my $batch  = shift;
+	
+	my $isInfo = main::INFOLOG && $log->is_info;
+	
+	return () if !main::SERVICES;
+	
+	my $apps = $client->apps;
+	my $menu = [];
+	
+	my $disabledPlugins = Slim::Utils::PluginManager->disabledPlugins();
+	my @disabled = map { $disabledPlugins->{$_}->{name} } keys %{$disabledPlugins};
+	
+	# We want to add nodes for the following items:
+	# My Apps (node = null)
+	# Home menu apps (node = home)
+	# If a home menu app is not already defined in @appMenus,
+	# i.e. pure OPML apps such as SomaFM
+	# create one for it using the generic OPML handler
+	
+	for my $app ( keys %{$apps} ) {
+		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
+		
+		# Is this app supported by a local plugin?
+		if ( my $plugin = $apps->{$app}->{plugin} ) {
+			# Make sure it's enabled
+			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
+				
+				# Get the predefined menu for this plugin
+				if ( my ($globalMenu) = grep {
+					( $_->{uuid} && lc($_->{uuid}) eq lc($pluginInfo->{id}) )
+					|| ( $_->{text} && $_->{text} eq $pluginInfo->{name} )
+				} @appMenus ) {				
+					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
+				
+					# Clone the existing menu and set the node
+					my $clone = Storable::dclone($globalMenu);
+
+					# Set node to home or null
+					$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+
+					# Use title from app list
+					$clone->{stringToken} = $apps->{$app}->{title};
+
+					# flag as an app
+					$clone->{isApp} = 1;
+					
+					# use icon as defined by MySB to allow for white-label solutions
+					if ( my $icon = $apps->{$app}->{icon} ) {
+						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
+						$clone->{window}->{'icon-id'} = $icon ;
+					}
+
+					push @{$menu}, $clone;
+				}
+			}
+			else {
+				# Bug 13627, Make sure the app is not for a plugin that has been disabled.
+				# We could browse menus for a disabled plugin like Last.fm, but playback
+				# would be impossible.
+				main::INFOLOG && $isInfo && $log->info( "App: $app, not displaying because plugin is disabled" );
+				next;
+			}
+		}
+		else {			
+			# For type=opml, use generic handler
+			if ( $apps->{$app}->{type} eq 'opml' ) {
+				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
+				
+				my $url = $apps->{$app}->{url} =~ /^http/
+					? $apps->{$app}->{url} 
+					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
+				
+				my $icon = $apps->{$app}->{icon} =~ /^http/
+					? $apps->{$app}->{icon} 
+					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
+				
+				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+				
+				push @{$menu}, {
+					actions => {
+						go => {
+							cmd    => [ 'opml_generic', 'items' ],
+							params => {
+								menu     => 'opml_generic',
+								opml_url => $url,
+							},
+							player => 0,
+						},
+					},
+					displayWhenOff => 0,
+					id             => 'opml' . $app,
+					isApp		=> 1,
+					node           => $node,
+					text           => $apps->{$app}->{title},
+					window         => {
+						'icon-id'  => $icon,
+					},
+				};
+			}
+		}
+	}
+	
+	return [] if !scalar @{$menu};
+	
+	# Alpha sort and add weighting
+	my $weight = 25; # After Search
+	
+	my @sorted =
+	 	map { $_->{weight} = $weight++; $_ } 
+		sort { $a->{text} cmp $b->{text} }
+		@{$menu};
+	
+	if ( $batch ) {
+		return \@sorted;
+	}
+	else {
+		_notifyJive(\@sorted, $client);
+	}
+}
+
+sub _localizeMenuItemText {
+	my ( $client, $item ) = @_;
+	
+	return unless $client;
+	
+	# Don't alter the global data
+	my $clone = Storable::dclone($item);
+	
+	if ( $clone->{stringToken} ) {
+		if ( $clone->{stringToken} eq uc( $clone->{stringToken} ) && Slim::Utils::Strings::stringExists( $clone->{stringToken} ) ) {
+			$clone->{text} = $client->string( delete $clone->{stringToken} );
+		}
+		else {
+			$clone->{text} = delete $clone->{stringToken};
+		}
+	}
+	elsif ( $clone->{text} && $clone->{text} eq uc( $clone->{text} ) && Slim::Utils::Strings::stringExists( $clone->{text} ) ) {
+		$clone->{text} = $client->string( $clone->{text} );
+	}
+	
+	# call string() for screensaver titles
+	if ( $clone->{screensavers} ) {
+		for my $s ( @{ $clone->{screensavers} } ) {
+			$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
+		}
+	}
+	
+	# call string() for input text if necessary
+	if ( my $input = $clone->{input} ) {
+		if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
+			$input->{title}        = $client->string( $input->{title} );
+			$input->{help}->{text} = $client->string( $input->{help}->{text} );
+			$input->{processingPopup}->{text} = $client->string( $input->{processingPopup}->{text} );
+			$input->{softbutton1}  = $client->string( $input->{softbutton1} );
+			$input->{softbutton2}  = $client->string( $input->{softbutton2} );
+		}
+	}
+	
+	return $clone;
+}
+
+
+###############################################################
+#
+# Methods only relevant for locally-attached players from here on
+
+return 1 if !main::LOCAL_PLAYERS;
 
 
 sub alarmSettingsQuery {
@@ -1272,64 +1914,6 @@ sub replaygainSettingsQuery {
 	sliceAndShip($request, $client, \@menu);
 }
 
-
-sub sliceAndShip {
-	my ($request, $client, $menu) = @_;
-	my $numitems = scalar(@$menu);
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-
-	$request->addResult("count", $numitems);
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
-
-	if ($valid) {
-		my $cnt = 0;
-		$request->addResult('offset', $start);
-
-		for my $eachmenu (@$menu[$start..$end]) {
-			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-			$cnt++;
-		}
-	}
-	$request->setStatusDone()
-}
-
-# returns a single item for the homeMenu if radios is a valid command
-sub internetRadioMenu {
-	main::INFOLOG && $log->info("Begin function");
-	my $client = shift;
-	my @command = ('radios', 0, 200, 'menu:radio');
-
-	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
-	my $validQuery = $test_request->isValidQuery();
-
-	my @menu = ();
-	
-	if ($validQuery && $test_request->getResult('count')) {
-		push @menu,
-		{
-			text           => $client->string('RADIO'),
-			id             => 'radios',
-			node           => 'home',
-			weight         => 20,
-			actions        => {
-				go => {
-					cmd => ['radios'],
-					params => {
-						menu => 'radio',
-					},
-				},
-			},
-			window        => {
-					menuStyle => 'album',
-			},
-		};
-	}
-
-	return \@menu;
-
-}
-
 sub playerSettingsMenu {
 
 	main::INFOLOG && $log->info("Begin function");
@@ -1337,7 +1921,7 @@ sub playerSettingsMenu {
 	my $batch = shift;
 
 	my @menu = ();
-	return \@menu unless $client;
+	return \@menu unless $client && !$client->isa('Slim::Player::Disconnected');
 
  	push @menu, {
 		text           => $client->string('AUDIO_SETTINGS'),
@@ -1916,27 +2500,6 @@ sub shuffleSettings {
 	}
 }
 
-sub _clientId {
-	my $client = shift;
-	my $id = 'all';
-	if ( blessed($client) && $client->id() ) {
-		$id = $client->id();
-	}
-	return $id;
-}
-	
-sub _notifyJive {
-	my ($menu, $client, $action) = @_;
-	$action ||= 'add';
-	
-	my $id = _clientId($client);
-	my $menuForExport = $action eq 'add' ? _purgeMenu($menu) : $menu;
-	
-	$menuForExport = [ map { _localizeMenuItemText( $client, $_ ) } @{$menuForExport} ];
-	
-	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, $action, $id ] );
-}
-
 sub howManyPlayersToSyncWith {
 	my $client = shift;
 	return 0 if $client->isa('Slim::Player::Disconnected');
@@ -2133,121 +2696,6 @@ sub jiveSyncCommand {
 	$request->setStatusDone();
 }
 
-sub dateQuery_filter {
-	my ($self, $request) = @_;
-
-	# if time is to be set, pass along the new time value to the listeners
-	if (my $newTime = $request->getParam('set')) {
-		$self->privateData($newTime);
-		return 1;
-	}
-
-	$self->privateData(0);
-	return 0;
-}
-
-sub dateQuery {
-	# XXX dateQuery uses registerAutoExecute which is called for every notification!
-	# (See Request.pm "send the notification to all filters...")
-	# An easy workaround here is to abort on any more params in @_
-	return if @_ > 1;
-	
-	my $request = shift;
-
-	if ( $request->isNotQuery([['date']]) ) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	my $newTime = $request->getParam('set') || 0;
-
-	# it time is expliciely set, we'll have to notify our listeners
-	if ($newTime) {
-		$request->notify();
-	}
-	else {
-		$newTime = $request->privateData() || 0;
-		$request->privateData(0);
-	}
-
-	# 7.5+ SP devices use epoch time now, much simpler
-	$request->addResult( 'date_epoch', $newTime || time() );
-
-	# This is the field 7.3 and earlier players expect.
-	#  7.4 is smart enough to take no action when missing
-	#  the date_utc field it expects.
-	# If they are hitting 7.5 SN/SC code, they're about to
-	#  be upgraded anyways, but we should avoid mucking
-	#  with their clock in the meantime.  These crafted "all-zeros"
-	#  responses will avoid Lua errors, but the "date"
-	#  command implemented by busybox will fail out on this
-	#  data and take no action due to it resulting in a
-	#  negative time_t value.
-	$request->addResult( 'date', '0000-00-00T00:00:00+00:00' );
-
-	# manage the subscription
-	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$request->registerAutoExecute($timeout, \&dateQuery_filter);		
-	}
-
-	$request->setStatusDone();
-}
-
-sub firmwareUpgradeQuery_filter {
-	my $self = shift;
-	my $request = shift;
-
-	# update the query if new firmware downloaded for this machine type
-	if ($request->isCommand([['fwdownloaded']]) && 
-		(($request->getParam('machine') || 'jive') eq ($self->getParam('_machine') || 'jive')) ) {
-		return 1;
-	}
-
-	return 0;
-}
-
-sub firmwareUpgradeQuery {
-	my $request = shift;
-
-	if ( !main::LOCAL_PLAYERS || $request->isNotQuery([['firmwareupgrade']]) ) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $firmwareVersion = $request->getParam('firmwareVersion');
-	my $model           = $request->getParam('machine') || 'jive';
-	
-	# always send the upgrade url this is also used if the user opts to upgrade
-	if ( my $url = Slim::Utils::Firmware->url($model) ) {
-		# Bug 6828, Send relative firmware URLs for Jive versions which support it
-		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
-		
-		# return full url when running SqueezeOS - we'll serve the direct download link from squeezenetwork
-		if ( $cur_rev >= 1659 && !Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
-			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
-		}
-		else {
-			$request->addResult( firmwareUrl => $url );
-		}
-	}
-	
-	if ( Slim::Utils::Firmware->need_upgrade( $firmwareVersion, $model ) ) {
-		# if this is true a firmware upgrade is forced
-		$request->addResult( firmwareUpgrade => 1 );
-	}
-	else {
-		$request->addResult( firmwareUpgrade => 0 );
-	}
-
-	# manage the subscription
-	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$request->registerAutoExecute($timeout, \&firmwareUpgradeQuery_filter);
-	}
-
-	$request->setStatusDone();
-
-}
-
 sub playerPower {
 
 	my $client = shift;
@@ -2343,35 +2791,6 @@ sub replayGainHash {
 	return \%return;
 }
 
-my %allMyMusicMenuItems;
-
-sub myMusicMenu {
-	main::INFOLOG && $log->info("Begin function: ", (Slim::Schema::hasLibrary() ? 'library' : 'no library'));
-	my $batch = shift;
-	my $client = shift;
-
-	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&_libraryChanged);
-	
-	
-	if (!$batch) {
-		my %newMenuItems = map {$_->{'id'} => 1} @$myMusicMenu;
-		my @myMusicMenuDelete = map +{id => $_, node => 'myMusic'}, (grep {!$newMenuItems{$_}} keys %allMyMusicMenuItems);
-			
-		_notifyJive(\@myMusicMenuDelete, $client, 'remove');
-	}
-	
-	foreach (@$myMusicMenu) {
-		$allMyMusicMenuItems{$_->{'id'}} = 1;
-	}
-	
-	if ($batch) {
-		return $myMusicMenu;
-	} else {
-		_notifyJive($myMusicMenu, $client);
-	}
-}
-
-
 sub globalSearchMenu {
 	my $client = shift || undef;
 
@@ -2408,18 +2827,41 @@ sub globalSearchMenu {
 	return \@searchMenu;	
 }
 
-# send a notification for menustatus
-sub menuNotification {
-	# the lines below are needed as menu notifications are done via notifyFromArray, but
-	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
-	my $request  = shift;
-	my $dataRef          = $request->getParam('_data')   || return;
-	my $action   	     = $request->getParam('_action') || 'add';
-	my $client           = $request->clientid();
-	main::INFOLOG && $log->is_info && $log->info("Menustatus notification sent:", $action, '->', ($client || 'all'));
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($dataRef));
-}
+sub globalSearchMenu {
+	my $client = shift || undef;
 
+	my @searchMenu = ({
+		stringToken	   => 'SEARCH',
+		text           => $client->string('SEARCH'),
+		homeMenuText   => $client->string('SEARCH'),
+		id             => 'globalSearch',
+		node           => 'home',
+		weight         => 22, # after internet radio
+		input => {
+			len  => 1, #bug 5318
+			processingPopup => {
+				text => $client->string('SEARCHING'),
+			},
+			help => {
+				text => $client->string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['globalsearch', 'items'],
+				params => {
+					menu     => 'globalsearch',
+					search   => '__TAGGEDINPUT__',
+				},
+			},
+		},
+		window => {
+			text => $client->string('SEARCH'),
+		},
+	});
+
+	return \@searchMenu;	
+}
 
 sub jivePlaylistsCommand {
 
@@ -2707,400 +3149,9 @@ sub jiveFavoritesCommand {
 		
 } 
 
-sub _jiveNoResults {
-	my $request = shift;
-	$request->addResult('count', '1');
-	$request->addResult('offset', 0);
-	$request->addResultLoop('item_loop', 0, 'text', $request->string('EMPTY'));
-	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
-	$request->addResultLoop('item_loop', 0, 'action', 'none');
-}
-
-sub cacheSearch {
-	my $request = shift;
-	my $search  = shift;
-	
-	# Don't cache searches on SN
-	return if main::SLIM_SERVICE;
-
-	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
-		unshift (@recentSearches, $search);
-	}
-	recentSearchMenu($request->client, 0);
-}
-
-sub recentSearchMenu {
-	my $client  = shift;
-	my $batch   = shift;
-
-	my @recentSearchMenu = ();
-	return \@recentSearchMenu unless $client;
-
-	if (scalar(@recentSearches) == 1) {
-		push @recentSearchMenu,
-		{
-			text           => $client->string('RECENT_SEARCHES'),
-			id             => 'homeSearchRecent',
-			node           => 'home',
-			weight         => 111,
-			actions => {
-				go => {
-					cmd => ['jiverecentsearches'],
-       	                 },
-			},
-			window => {
-				text => $client->string('RECENT_SEARCHES'),
-			},
-		};
-		push @recentSearchMenu,
-		{
-			text           => $client->string('RECENT_SEARCHES'),
-			id             => 'myMusicSearchRecent',
-			node           => 'myMusicSearch',
-			noCustom       => 1,
-			weight         => 50,
-			actions => {
-				go => {
-					cmd => ['jiverecentsearches'],
-       	                 	},
-			},
-			window => {
-				text => $client->string('RECENT_SEARCHES'),
-			},
-		};	
-		if (!$batch) {
-			_notifyJive(\@recentSearchMenu, $client);
-		}
-	}
-	return \@recentSearchMenu;
-
-}
-
-sub jiveRecentSearchQuery {
-
-	my $request = shift;
-	main::INFOLOG && $log->info("Begin Function");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['jiverecentsearches']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $totalCount = scalar(@recentSearches);
-	if ($totalCount == 0) {
-		# this is an empty resultset
-		_jiveNoResults($request);
-	} else {
-		my $maxCount = 200;
-		$totalCount = $totalCount > $maxCount ? ($maxCount - 1) : $totalCount;
-		$request->addResult('count', $totalCount);
-		$request->addResult('offset', 0);
-		for my $i (0..$totalCount) {
-			last unless $recentSearches[$i];
-			my $href = $recentSearches[$i];
-			for my $key (keys %$href) {
-				$request->addResultLoop('item_loop', $i, $key, $href->{$key});
-			}
-		}
-	}
-	$request->setStatusDone();
-}
-
 sub jiveDummyCommand {
 	return;
 }
 
-
-# The following allow download of extensions (applets, wallpaper and sounds) from SC to jive
-
-# hash of providers for extension information
-my %extensionProviders = ();
-
-sub registerExtensionProvider {
-	my $name     = shift;
-	my $provider = shift;
-	my $optstr   = shift;
-
-	main::INFOLOG && $log->info("adding extension provider $name" . ($optstr ? " optstr: $optstr" : ""));
-
-	$extensionProviders{ $name } = { provider => $provider, optstr => $optstr };
-}
-
-sub removeExtensionProvider {
-	my $name = shift;
-
-	main::INFOLOG && $log->info("deleting extension provider $name");
-
-	delete $extensionProviders{ $name };
-}
-
-# return all extensions available for a specific type, version and target
-# uses extension providers to provide a list of extensions available for the query criteria
-# these are async so they can fetch and parse data to build a list of extensions
-sub extensionsQuery {
-	my $request = shift;
- 
-	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound|patche)s/; # S:P:Extensions always appends 's' to type
-	my $version= $request->getParam('version');
-	my $target = $request->getParam('target');
-	my $optstr = $request->getParam('optstr');
-
-	if (!defined $type) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my @providers;
-	my $language  = $Slim::Utils::Strings::currentLang;
-
-	# remove optional providers if key is included in the query and it does not match
-	# this allows SP to select whether optional providers are used to build the list
-	for my $provider (keys %extensionProviders) {
-		if (!$optstr || !defined $extensionProviders{$provider}->{'optstr'} || $optstr =~ /$extensionProviders{$provider}->{optstr}/) {
-			push @providers, $provider;
-		}
-	}
-
-	if (scalar @providers) {
-
-		$request->privateData( { remaining => scalar @providers, results => [] } );
-
-		$request->setStatusProcessing;
-
-		for my $provider (@providers) {
-
-			$extensionProviders{$provider}->{'provider'}->( {
-				'name'   => $provider, 
-				'type'   => $type, 
-				'target' => $target,
-				'version'=> $version, 
-				'lang'   => $language,
-				'details'=> 1,
-				'cb'     => \&_extensionsQueryCB,
-				'pt'     => [ $request ]
-			});
-		}
-
-	} else {
-
-		$request->addResult("count", 0);
-
-		$request->setStatusDone();
-	}
-}
-
-sub _extensionsQueryCB {
-	my $request= shift;
-	my $res    = shift;
-	my $data   = $request->privateData;
-
-	splice @{$data->{'results'}}, 0, 0, @$res;
-
-	if ( ! --$data->{'remaining'} ) {
-
-		# create a list of entries with the duplicates removed, favoring higher version numbers
-
-		# pass 1 - find max versions
-		my $max = {};
-
-		for my $entry (@{$data->{'results'}}) {
-
-			my $name = $entry->{'name'};
-
-			if (!defined $max->{$name} || Slim::Utils::Versions->compareVersions($entry->{'version'}, $max->{$name}) > 0) {
-
-				$max->{$name} = $entry->{'version'};
-			}
-		}
-
-		# pass 2 - build list containing single entry for per extension
-		my @results = ();
-
-		for my $entry (@{$data->{'results'}}) {
-
-			my $name = $entry->{'name'};
-
-			if (exists $max->{$name} && (!defined $max->{$name} || $max->{$name} eq $entry->{'version'})) {
-
-				push @results, $entry;
-
-				delete $max->{$name};
-			}
-		}
-
-		my $cnt = 0;
-
-		for my $entry ( sort { $a->{'title'} cmp $b->{'title'} } @results ) {
-
-			$request->setResultLoopHash('item_loop', $cnt++, $entry);
-		}
-
-		$request->addResult("count", $cnt);
-
-		$request->setStatusDone();
-	}
-}
-
-sub appMenus {
-	my $client = shift;
-	my $batch  = shift;
-	
-	my $isInfo = main::INFOLOG && $log->is_info;
-	
-	my $apps = $client->apps;
-	my $menu = [];
-	
-	my $disabledPlugins = Slim::Utils::PluginManager->disabledPlugins();
-	my @disabled = map { $disabledPlugins->{$_}->{name} } keys %{$disabledPlugins};
-	
-	# We want to add nodes for the following items:
-	# My Apps (node = null)
-	# Home menu apps (node = home)
-	# If a home menu app is not already defined in @appMenus,
-	# i.e. pure OPML apps such as SomaFM
-	# create one for it using the generic OPML handler
-	
-	for my $app ( keys %{$apps} ) {
-		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
-		
-		# Is this app supported by a local plugin?
-		if ( my $plugin = $apps->{$app}->{plugin} ) {
-			# Make sure it's enabled
-			if ( my $pluginInfo = Slim::Utils::PluginManager->isEnabled($plugin) ) {
-				
-				# Get the predefined menu for this plugin
-				if ( my ($globalMenu) = grep {
-					( $_->{uuid} && lc($_->{uuid}) eq lc($pluginInfo->{id}) )
-					|| ( $_->{text} && $_->{text} eq $pluginInfo->{name} )
-				} @appMenus ) {				
-					main::INFOLOG && $isInfo && $log->info( "App: $app, using plugin $plugin" );
-				
-					# Clone the existing menu and set the node
-					my $clone = Storable::dclone($globalMenu);
-
-					# Set node to home or null
-					$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
-
-					# Use title from app list
-					$clone->{stringToken} = $apps->{$app}->{title};
-
-					# flag as an app
-					$clone->{isApp} = 1;
-					
-					# use icon as defined by MySB to allow for white-label solutions
-					if ( my $icon = $apps->{$app}->{icon} ) {
-						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
-						$clone->{window}->{'icon-id'} = $icon ;
-					}
-
-					push @{$menu}, $clone;
-				}
-			}
-			else {
-				# Bug 13627, Make sure the app is not for a plugin that has been disabled.
-				# We could browse menus for a disabled plugin like Last.fm, but playback
-				# would be impossible.
-				main::INFOLOG && $isInfo && $log->info( "App: $app, not displaying because plugin is disabled" );
-				next;
-			}
-		}
-		else {			
-			# For type=opml, use generic handler
-			if ( $apps->{$app}->{type} eq 'opml' ) {
-				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
-				
-				my $url = $apps->{$app}->{url} =~ /^http/
-					? $apps->{$app}->{url} 
-					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
-				
-				my $icon = $apps->{$app}->{icon} =~ /^http/
-					? $apps->{$app}->{icon} 
-					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
-				
-				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
-				
-				push @{$menu}, {
-					actions => {
-						go => {
-							cmd    => [ 'opml_generic', 'items' ],
-							params => {
-								menu     => 'opml_generic',
-								opml_url => $url,
-							},
-							player => 0,
-						},
-					},
-					displayWhenOff => 0,
-					id             => 'opml' . $app,
-					isApp		=> 1,
-					node           => $node,
-					text           => $apps->{$app}->{title},
-					window         => {
-						'icon-id'  => $icon,
-					},
-				};
-			}
-		}
-	}
-	
-	return [] if !scalar @{$menu};
-	
-	# Alpha sort and add weighting
-	my $weight = 25; # After Search
-	
-	my @sorted =
-	 	map { $_->{weight} = $weight++; $_ } 
-		sort { $a->{text} cmp $b->{text} }
-		@{$menu};
-	
-	if ( $batch ) {
-		return \@sorted;
-	}
-	else {
-		_notifyJive(\@sorted, $client);
-	}
-}
-
-sub _localizeMenuItemText {
-	my ( $client, $item ) = @_;
-	
-	return unless $client;
-	
-	# Don't alter the global data
-	my $clone = Storable::dclone($item);
-	
-	if ( $clone->{stringToken} ) {
-		if ( $clone->{stringToken} eq uc( $clone->{stringToken} ) && Slim::Utils::Strings::stringExists( $clone->{stringToken} ) ) {
-			$clone->{text} = $client->string( delete $clone->{stringToken} );
-		}
-		else {
-			$clone->{text} = delete $clone->{stringToken};
-		}
-	}
-	elsif ( $clone->{text} && $clone->{text} eq uc( $clone->{text} ) && Slim::Utils::Strings::stringExists( $clone->{text} ) ) {
-		$clone->{text} = $client->string( $clone->{text} );
-	}
-	
-	# call string() for screensaver titles
-	if ( $clone->{screensavers} ) {
-		for my $s ( @{ $clone->{screensavers} } ) {
-			$s->{text} = $client->string( delete $s->{stringToken} ) if $s->{stringToken};
-		}
-	}
-	
-	# call string() for input text if necessary
-	if ( my $input = $clone->{input} ) {
-		if ( $input->{title} && $input->{title} eq uc( $input->{title} ) ) {
-			$input->{title}        = $client->string( $input->{title} );
-			$input->{help}->{text} = $client->string( $input->{help}->{text} );
-			$input->{processingPopup}->{text} = $client->string( $input->{processingPopup}->{text} );
-			$input->{softbutton1}  = $client->string( $input->{softbutton1} );
-			$input->{softbutton2}  = $client->string( $input->{softbutton2} );
-		}
-	}
-	
-	return $clone;
-}
 
 1;

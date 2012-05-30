@@ -691,7 +691,7 @@ sub _cliQuery_done {
 						ct      => $subFeed->{'mime'},
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
-					} );
+					} ) if main::SERVICES;
 				
 					$client->execute([ 'playlist', $method, $url ]);
 				}
@@ -729,7 +729,7 @@ sub _cliQuery_done {
 						ct      => $item->{'mime'},
 						secs    => $item->{'duration'},
 						bitrate => $item->{'bitrate'},
-					} );
+					} ) if main::SERVICES;
 					
 					main::idleStreams();
 					

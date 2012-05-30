@@ -12,7 +12,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Formats::Playlists::M3U;
 use Slim::Player::Source;
-use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;

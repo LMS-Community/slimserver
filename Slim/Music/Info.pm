@@ -547,18 +547,20 @@ sub getCurrentTitle {
 	my $web    = shift || 0;
 	my $meta   = shift;
 	
-	if ( blessed($client) ) {
-		# Let plugins control the current title if they want
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-		if ( $handler && $handler->can('getCurrentTitle') ) {
-		    if ( my $title = $handler->getCurrentTitle( $client, $url ) ) {
-		        return $title;
-	        }
-	    }
-	}
-	
-	if ( !$meta && $currentTitles{$url} ) {
-		return $currentTitles{$url};
+	if (main::SERVICES) {
+		if ( blessed($client) ) {
+			# Let plugins control the current title if they want
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+			if ( $handler && $handler->can('getCurrentTitle') ) {
+			    if ( my $title = $handler->getCurrentTitle( $client, $url ) ) {
+			        return $title;
+		        }
+		    }
+		}
+		
+		if ( !$meta && $currentTitles{$url} ) {
+			return $currentTitles{$url};
+		}
 	}
 	
 	# If the request came from the web, we don't want to format the title
