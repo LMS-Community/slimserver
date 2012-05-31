@@ -30,7 +30,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
-require Slim::Player::Sync;
+use Slim::Player::LocalPlaylist;
+use Slim::Player::Sync;
 
 my $prefs = preferences('server');
 
@@ -71,6 +72,15 @@ $prefs->setChange( sub {
 ###############################################################
 #
 # Methods only relevant for locally-attached players from here on
+
+sub getPlaylist {
+	my $client = shift->master();
+	
+	if (my $p = $client->_playlist) {return $p;}
+	
+	# XXX - May want to move this to StreamingController
+	return $client->_playlist(Slim::Player::LocalPlaylist->new($client));
+}
 
 
 sub startup {

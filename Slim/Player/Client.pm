@@ -91,8 +91,8 @@ use constant KNOB_NOACCELERATION => 0x02;
 								_tempVolume musicInfoTextCache metaTitle languageOverride controlledBy controllerUA password currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								alarmData knobData
-								modeStack modeParameterStack playlist chunks
-								shufflelist shuffleInhibit syncSelections searchTerm
+								modeStack modeParameterStack playlist _playlist chunks
+								shuffleInhibit syncSelections searchTerm
 								updatePending httpState
 								disconnected
 							));
@@ -205,7 +205,7 @@ sub new {
 
 		# playlist state
 		playlist                => [],
-		shufflelist             => [],
+		_playlist               => undef,				# Will probably migrate to StreamingController
 		shuffleInhibit          => undef,
 		startupPlaylistLoading  => undef,
 		_currentPlaylist        => undef,
