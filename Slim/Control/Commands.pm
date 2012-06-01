@@ -321,7 +321,8 @@ sub playlistXitemCommand {
 		&& Slim::Player::Playlist::count($client) == 1
 		&& $client->playingSong()	
 		&& $path eq $client->playingSong()->track()->url()
-		&& !$noplay )
+		&& !$noplay
+		&& !$client->isa('Slim::Player::Disconnected') )
 	{
 		# Bug 16154: use more-precise control measures
 		# so that we only leave it playing if fully in Playing state already.
@@ -391,6 +392,11 @@ sub playlistXitemCommand {
 	} elsif ($cmd eq "resume" && Slim::Music::Info::isM3U($path)) {
 
 		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
+
+	} else {
+		
+		$jumpToIndex = undef;
+		
 	}
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -408,7 +414,7 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my $foundItems = shift;
 
-				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, 1);
+				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, -1, undef, $request);
 
 				_insert_done(
 					$client,
@@ -468,7 +474,7 @@ sub playlistXitemCommand {
 					$noShuffle = 1;
 				}
 
-				Slim::Player::Playlist::addTracks($client, $foundItems, 0);
+				Slim::Player::Playlist::addTracks($client, $foundItems, $cmd eq 'add' ? -3 : -2, $jumpToIndex, $request);
 
 				_playlistXitem_load_done(
 					$client,
@@ -562,6 +568,10 @@ sub playlistXtracksCommand {
 
 		@tracks = _playlistXtracksCommand_parseSearchRef($client, $what, $listref);
 
+	} elsif ($what =~ /dataRef/i) {
+
+		@tracks = _playlistXtracksCommand_parseDataRef($client, $what, $listref);
+
 	} else {
 
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
@@ -571,7 +581,7 @@ sub playlistXtracksCommand {
 
 	# add or remove the found songs
 	if ($load || $add || $insert) {
-		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert);
+		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert ? -1 : $add ? -3 : -2, $load ? ($jumpToIndex || 0) : undef, $request);
 	}
 
 	if ($insert) {
@@ -583,12 +593,12 @@ sub playlistXtracksCommand {
 		Slim::Player::Playlist::removeMultipleTracks($client, \@tracks);
 	}
 
-	if (main::LOCAL_PLAYERS && ($load || $add)) {
+	if (main::LOCAL_PLAYERS && ($load || $add) && !$client->isa('Slim::Player::Disconnected')) {
 		Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
 		$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
 	}
 
-	if ($load) {
+	if (main::LOCAL_PLAYERS && $load && !$client->isa('Slim::Player::Disconnected')) {
 		# The user may have stopped in the middle of a
 		# saved playlist - resume if we can. Bug 1582
 		my $playlistObj = $client->currentPlaylist();
@@ -1588,13 +1598,13 @@ sub _playlistXitem_load_done {
 	my ($client, $index, $request, $url, $error, $noShuffle, $fadeIn, $noplay, $wipePlaylist) = @_;
 	
 	# dont' keep current song on loading a playlist
-	if ( main::LOCAL_PLAYERS && !$noShuffle ) {
+	if ( main::LOCAL_PLAYERS && !$noShuffle  && !$client->isa('Slim::Player::Disconnected')) {
 		Slim::Player::Playlist::reshuffle($client,
 			(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
 		);
 	}
 
-	if (defined($index)) {
+	if (main::LOCAL_PLAYERS && defined($index) && !$client->isa('Slim::Player::Disconnected')) {
 		$client->execute(['playlist', 'jump', $index, $fadeIn, $noplay ]);
 	}
 
@@ -1795,7 +1805,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			$client->currentPlaylist($playlist);
+			$client->currentPlaylist($playlist) if main::LOCAL_PLAYERS && !$client->isa('Slim::Player::Disconnected');
 
 			return $playlist->tracks;
 		}
@@ -1853,6 +1863,42 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		return Slim::Schema->rs('Track')->search(\%find, \%attrs)->distinct->all;
 	}
+}
+
+my %mapAttributes = (
+	artist => 'artistname',
+	album => 'albumname',
+	duration => 'secs',
+	type => 'content_type',
+	disccount => 'discc',
+	genre => undef,
+);
+
+
+sub _playlistXtracksCommand_parseDataRef {
+	my $client  = shift;
+	my $term    = shift;
+	my $list    = shift;
+	
+	my @tracks = ();
+	for ( @$list ) {
+		my $url = delete $_->{url};
+		
+		while (my($from, $to) = each %mapAttributes) {
+			my $v = delete($_->{$from});
+			if ($to && defined $v) {
+				$_->{$to} = $v;
+			}
+		}
+		
+		my $track = Slim::Schema->updateOrCreate({
+			url        => $url,
+			attributes => $_,
+		});
+		push @tracks, $track if blessed($track) && $track->id;
+	}
+
+	return @tracks;
 }
 
 sub _playlistXtracksCommand_constructTrackList {

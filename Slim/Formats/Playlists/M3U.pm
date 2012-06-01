@@ -28,6 +28,7 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
+	my ($secs, $artist, $album, $title, $trackurl);
 	my $foundBOM = 0;
 	my $fh;
 	my $mediadirs;
@@ -52,8 +53,6 @@ sub read {
 
 	while (my $entry = <$fh>) {
 	
-		my ($secs, $artist, $album, $title, $trackurl);
-
 		chomp($entry);
 
 		# strip carriage return from dos playlists
@@ -169,10 +168,11 @@ sub read {
 					last;
 				}
 	
-				# reset the title
-				($secs, $artist, $album, $title, $trackurl) = ();
 			}
 		}
+		
+		# reset the title, etc.
+		($secs, $artist, $album, $title, $trackurl) = ();
 	}
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -270,10 +270,14 @@ sub write {
 
 		if ($addTitles) {
 			
-			my $title = $track->title;
-			my $secs = int($track->secs || -1);
+			my $title  = $track->title;
+			my $artist = $track->artistName || '';
+			my $album  = $track->albumname || '';
+			my $secs   = int($track->secs || -1);
 
-			if ($title) {
+			if ($title && ($artist || $album)) {
+				print $output "#EXTINF:$secs,<$artist> - <$album> - <$title>\n";
+			} elsif ($title) {
 				print $output "#EXTINF:$secs,$title\n";
 			}
 		}

@@ -332,7 +332,7 @@ sub parseDirectHeaders {
 	}
 	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
-	my ($rangeLength, $startOffset);
+	my ($rangeLength, $startOffset, $startTimeOffset, $duration);
 	
 	foreach my $header (@headers) {
 	
@@ -374,6 +374,14 @@ sub parseDirectHeaders {
 			$startOffset = $1;
 		}
 		
+		# TimeSeekRange.Dlna.Org: npt=199.111111111111-294.661/294.661 bytes=3285974-4814717/4814718
+		elsif ($header =~ m%TimeSeekRange.Dlna.Org: npt=([\d.]+)-([\d.]+)/([\d.]+) bytes=(\d+)-(\d+)/(\d+)%i) {
+			$rangeLength     = $6;
+			$startOffset     = $4;
+			$duration        = $3;
+			$startTimeOffset = $1;
+		}
+		
 		# mp3tunes metadata, this is a bit of hack but creating
 		# an mp3tunes protocol handler is overkill
 		elsif ( $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
@@ -406,11 +414,12 @@ sub parseDirectHeaders {
 		$song->streamLength($streamLength);
 		
 		# However we got here, we want to know that we did not start at the beginning, if possible
-		if ($startOffset) {
-			
+		if ($startTimeOffset) {
+			$song->startOffset($startTimeOffset);
+		} elsif ($startOffset) {
 			
 			# Assume saved duration is more accurate that by calculating from length and bitrate
-			my $duration = Slim::Music::Info::getDuration($url);
+			$duration ||= Slim::Music::Info::getDuration($url);
 			$duration ||= $length * 8 / $bitrate if $bitrate;
 			
 			if ($duration) {

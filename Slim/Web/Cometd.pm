@@ -170,7 +170,8 @@ sub handler {
 			}
 			elsif ( $obj->{channel} eq '/meta/handshake' ) {
 				$clid = Slim::Utils::Misc::createUUID(); 
-				$manager->add_client( $clid );
+				$manager->add_client( $clid, $obj->{ext} ? $obj->{ext}->{uuid} : undef,
+					$obj->{ext} ? $obj->{ext}->{server} : undef);
 			}
 			elsif ( $obj->{channel} =~ m{^/slim/(?:subscribe|request)} && $obj->{data} ) {
 				# Pull clientId out of response channel
@@ -817,6 +818,12 @@ sub handleRequest {
 		if (!main::SLIM_SERVICE && !$client && $mac) {
 			require Slim::Player::Disconnected;
 			$client = Slim::Player::Disconnected->new($mac);
+			if (my $uuid = $manager->get_client_uuid($clid)) {
+				$client->authenticator('uuid:' . $uuid);
+			}
+			if (my $server = $manager->get_client_server($clid)) {
+				$client->server($server);
+			}
 			$disconnected = 1;
 		}
 	}

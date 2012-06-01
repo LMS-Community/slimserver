@@ -36,7 +36,7 @@ my @allAttributes = (qw(
 	artistname albumname coverurl type info_link
 	
 	title titlesort titlesearch album tracknum
-	timestamp filesize disc audio audio_size audio_offset year
+	timestamp filesize disc discc audio audio_size audio_offset year
 	cover vbr_scale samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
@@ -259,6 +259,10 @@ sub updateOrCreate {
 		$self->setAttributes($attributes);
 	} else {
 		$self = $class->new($url, $attributes);
+	}
+	
+	if (!$self->content_type) {
+		$self->content_type(Slim::Music::Info::typeFromPath($url));
 	}
 	
 	return $self;

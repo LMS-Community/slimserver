@@ -3396,6 +3396,30 @@ sub _getTagDataForTracks {
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
 
+# Helper for DelegatedPlaylist support
+
+sub getTagDataForTracks {
+	my ($request, $tags, $tracks) = @_;
+	
+	my @trackIds = grep (defined $_, map { (!defined $_ || $_->remote) ? undef : $_->id } @$tracks);
+	
+	# get hash of tagged data for all tracks
+	my $songData = _getTagDataForTracks( $tags, {
+		trackIds => \@trackIds,
+	} ) if scalar @trackIds;
+	
+	my @items;
+	
+	foreach (@$tracks) {
+		# Use songData for track, if remote use the object directly
+		if (my $data = $_->remote ? $_ : $songData->{$_->id}) {
+			push @items, _songData($request, $data, $tags);
+		}
+	}
+	
+	return \@items;
+}
+
 ### Video support
 
 # XXX needs to be more like titlesQuery, was originally copied from albumsQuery

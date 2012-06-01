@@ -191,7 +191,7 @@ sub gotTLVRequest {
 		return;
 	}
 
-	main::INFOLOG && $log->info("sending response");
+	main::INFOLOG && $log->info("sending response: ", Data::Dump::dump($response));
 
 	$udpsock->send($response, 0, $clientpaddr);
 }

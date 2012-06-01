@@ -28,6 +28,8 @@ sub new {
 		conn     => {},         # client connection(s)
 		events   => {},         # clients and their pending events
 		channels => \%channels, # all channels and who is subscribed to them
+		uuid     => {},			# Client's UUID
+		server   => {},			# Client's Server (syntax to be defined)
 	};
 	
 	bless $self, ref $class || $class;
@@ -35,10 +37,12 @@ sub new {
 
 # Add a new client and connection created during handshake
 sub add_client {
-	my ( $self, $clid ) = @_;
+	my ( $self, $clid, $uuid, $server ) = @_;
 	
 	# Pending events for this clid
 	$self->{events}->{$clid} = [];
+	$self->{uuid}->{$clid} = $uuid if $uuid;
+	$self->{server}->{$clid} = $server if $server;
 	
 	main::DEBUGLOG && $log->debug("add_client: $clid");
 	
@@ -66,7 +70,20 @@ sub get_connection {
 	my ( $self, $clid ) = @_;
 	
 	return $self->{conn}->{$clid};
-}		
+}
+
+sub get_client_uuid {
+	my ( $self, $clid ) = @_;
+	
+	return $self->{uuid}->{$clid};
+}
+
+sub get_client_server {
+	my ( $self, $clid ) = @_;
+	
+	return $self->{server}->{$clid};
+}
+
 
 sub clid_for_connection {
 	my ( $self, $conn ) = @_;
@@ -87,6 +104,8 @@ sub remove_client {
 	
 	delete $self->{conn}->{$clid};
 	delete $self->{events}->{$clid};
+	delete $self->{uuid}->{$clid};
+	delete $self->{server}->{$clid};
 	
 	$self->remove_channels( $clid );
 	

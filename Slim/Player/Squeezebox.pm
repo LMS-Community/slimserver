@@ -797,11 +797,9 @@ sub stream_s {
 	# doesn't get an outdated fullness result
 	Slim::Networking::Slimproto::fullness( $client, 0 );
 	
-	if ( $handler->isa('Slim::Player::Protocols::SqueezePlayDirect') ) {
+	if ($handler->can('getStreamRequestParams')) {
 
-		main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
-
-		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
+		($server_ip, $server_port, $request_string) = $handler->getStreamRequestParams($client, $url, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 	} elsif (my $proxy = $params->{'proxyStream'}) {
@@ -850,7 +848,7 @@ sub stream_s {
 		}
 		$server_port = $port;
 
-		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
+		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});
 		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 		if (!$server_port || !$server_ip) {

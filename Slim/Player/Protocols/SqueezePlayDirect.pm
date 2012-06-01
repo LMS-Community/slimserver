@@ -43,9 +43,18 @@ sub canDirectStream {
 	}
 }
 
+sub getStreamRequestParams() {
+	my ($class, $client, $url, $seekdata) = @_;
+	
+	return (undef, undef, $class->requestString($client, $url, undef, $seekdata));
+}
+
+
 sub requestString {
 	my ($class, $client, $url, undef, $seekdata) = @_;
 	my $song = $client->streamingSong;
+	
+	main::INFOLOG && logger('player.streaming.direct')->info("SqueezePlay direct stream: $url");
 
 	my ($paramstr) = $url =~ /spdr:\/\/.+\?(.*)/;
 

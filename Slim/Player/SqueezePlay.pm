@@ -46,6 +46,7 @@ BEGIN {
 		hasDisableDac
 		spDirectHandlers
 		proxyAddress
+		lmsUrls
 	));
 }
 
@@ -68,6 +69,7 @@ sub new {
 		hasDisableDac           => 0,
 		spDirectHandlers        => undef,
 		proxyAddress            => undef,
+		lmsUrls                 => 0,
 	);
 
 	return $client;
@@ -89,6 +91,7 @@ my %CapabilitiesMap = (
 	SyncgroupID             => undef,
 	Spdirect                => 'spDirectHandlers',
 	Proxy                   => 'proxyAddress',
+	LmsUrls                 => 'lmsUrls',
 
 	# deprecated
 	model                   => '_model',

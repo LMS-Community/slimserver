@@ -856,6 +856,8 @@ sub canImmediateCrossfade { 0 };
 
 sub proxyAddress { undef };
 
+sub lmsUrls { undef };
+
 sub hidden { 0 }
 
 sub hasScrolling { 0 }

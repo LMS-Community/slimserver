@@ -174,9 +174,13 @@ sub playList {
 }
 
 sub addTracks {
-	my ($self, $client, $tracksRef, $insert) = @_;
+	my ($self, $client, $tracksRef, $position) = @_;
 	
+	$position = -3 if !defined $position;
+		
 	my $playlist = $self->{'items'};
+	
+	@$playlist = () if $position == -2;
 	
 	my $maxPlaylistLength = $prefs->get('maxPlaylistLength');
 	
@@ -187,14 +191,18 @@ sub addTracks {
 		# 1. If we have already-played stuff at the start of the playlist that we can remove, then remove that first
 		my $canRemove = Slim::Player::Source::playingSongIndex($client) || 0;
 		$canRemove = $need if $canRemove > $need;
+		
+		$canRemove = $position if ($position >= 0 && $position < $canRemove);
 
 		if ($canRemove) {
 			main::INFOLOG && $log->info("Removing $canRemove tracks from start of playlist");
-			$need -= $self->removeTrack($client, 0, $canRemove);
+			my $removed = $self->removeTrack($client, 0, $canRemove);
+			$need -= $removed;
+			$position -= $removed if $position > 0;
 		}
 	}
 		
-	if ($need > 0 && $insert) {
+	if ($need > 0 && $position == -2) {
 		# 2. If inserting, then try to remove stuff from the end of the playlist
 		my $streamingSongIndex = Slim::Player::Source::streamingSongIndex($client) || 0;
 		my $canRemove = $#{$playlist} - $streamingSongIndex;
@@ -205,6 +213,18 @@ sub addTracks {
 			$need -= $self->removeTrack($client, scalar @{$playlist} - $canRemove, $canRemove);
 		}
 	}
+	
+	if ($need > 0 && $position > (Slim::Player::Source::streamingSongIndex($client) || 0)) {
+		my $canRemove = $#{$playlist} - $position;
+		$canRemove = $need if $canRemove > $need;
+
+		if ($canRemove) {
+			main::INFOLOG && $log->info("Removing $canRemove tracks from end of playlist");
+			$need -= $self->removeTrack($client, scalar @{$playlist} - $canRemove, $canRemove);
+		}
+	}
+	
+	$position = -3 if $position > scalar @{$playlist} - 1;
 	
 	my $canAdd;
 	my $errorMsg;
@@ -234,29 +254,29 @@ sub addTracks {
 		});
 	}
 	
-	if ($insert) {
-		_insert_done($self, $client, $canAdd);
+	if ($position > -2) {
+		_insert_done($self, $client, $canAdd, $position);
 	}
 	
 	return $canAdd;
 }
 
 sub _insert_done {
-	my ($self, $client, $size, $callbackf, $callbackargs) = @_;
+	my ($self, $client, $size, $to) = @_;
 
-	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	$to = Slim::Player::Source::streamingSongIndex($client)+1 if $to == -1;
 	my $moveFrom = $self->count() - $size;
 
 	if ($self->shuffle($client)) {
 		my @reshuffled = ($moveFrom .. ($moveFrom + $size - 1));
 		if ($self->count() != $size) {	
-			splice @{$self->{'shuffled'}}, $playlistIndex, 0, @reshuffled;
+			splice @{$self->{'shuffled'}}, $to, 0, @reshuffled;
 		} else {
 			push @{$self->{'shuffled'}}, @reshuffled;
 		}
 	} else {
 		if ($self->count() != $size) {
-			$self->moveSong($client, $moveFrom, $playlistIndex, $size);
+			$self->moveSong($client, $moveFrom, $to, $size);
 		}
 		$self->reshuffle($client);
 	}

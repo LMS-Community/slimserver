@@ -36,7 +36,11 @@ sub shuffleList {return $_[0]->getPlaylist()->shuffleList(@_);}
 # $client
 sub playList {return $_[0]->getPlaylist()->playList(@_);}
 
-# $client, $tracksRef, $insert
+# $client, $tracksRef, $position, $jumpIndex, $request
+# $position:i=0..n => before current-playlist track i
+#           -1     => after current track (insert)
+#			-2     => replace all
+# 			-3     => at end (append), default
 sub addTracks {return $_[0]->getPlaylist()->addTracks(@_);}
 
 # $client, $shuffle
@@ -52,7 +56,7 @@ sub repeat {return $_[0]->getPlaylist()->repeat(@_);}
 sub copyPlaylist {return $_[0]->getPlaylist()->copyPlaylist(@_);}
 
 # $client, $tracknum, $nTracks
-sub removeTrack {return $_[0]->getPlaylist()->removeMultipleTracks(@_);}
+sub removeTrack {return $_[0]->getPlaylist()->removeTrack(@_);}
 
 # $client, $tracks
 sub removeMultipleTracks {return $_[0]->getPlaylist()->removeMultipleTracks(@_);}

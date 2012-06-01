@@ -32,6 +32,10 @@ BEGIN {
 	}
 }
 
+{
+	__PACKAGE__->mk_accessor('rw', qw(authenticator server));
+}
+
 sub new {
 	my ( $class, $id ) = @_;
 	
@@ -44,6 +48,18 @@ sub new {
 
 	return $client;
 }
+
+use Slim::Player::DelegatedPlaylist;
+
+sub getPlaylist {
+	my $client = shift;
+	
+	if (my $p = $client->_playlist) {return $p;}
+	
+	return $client->_playlist(Slim::Player::DelegatedPlaylist->new($client));
+}
+
+
 
 # dummy methods
 sub hidden         { 1 }
