@@ -1,17 +1,5 @@
 PLUGIN_APP_GALLERY_MODULE_NAME
-	CS	Aplikační galerie
-	DA	Programgalleri
-	DE	Anwendungsgalerie
-	EN	App Gallery
-	ES	Galería de aplicaciones
-	FI	Sovellusvalikoima
-	FR	Diaporama d'applications
-	IT	Galleria applicazioni
-	NL	Toep.gallerie
-	NO	Tjenesteliste
-	PL	Galeria aplikacji
-	RU	Галерея приложений
-	SV	Applikationsgalleri
+	EN	Music Services
 
 APP_CATEGORY_FEATURED
 	CS	Hlavní aplikace
