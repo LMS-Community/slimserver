@@ -907,7 +907,7 @@ sub metadata {
 	elsif (($handler = $self->_currentTrackHandler()) && $handler->can('getMetadataFor')
 		|| ($handler = $self->handler()) && $handler->can('getMetadataFor') )
 	{
-		return $handler->songMetadata($self->master, $self->currentTrackHandler()->url, 0);
+		return $handler->getMetadataFor($self->master, $self->currentTrackHandler()->url, 0);
 	}
 	
 	return undef;
