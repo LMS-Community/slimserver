@@ -30,13 +30,13 @@ sub init {
 	#my $udpsock = IO::Socket::INET->new(
 	$udpsock = IO::Socket::INET->new(
 		Proto     => 'udp',
-		LocalPort => main::SLIMDISCOVERY_PORT,
+		LocalPort => main::UEMLDISCOVERY_PORT,
 		LocalAddr => $main::localClientNetAddr
 
 	) or do {
 
 		# XXX - exiting in a deep sub is kinda bad. should propagate up.
-		logger('')->logdie("FATAL: There is already another copy of the Logitech Media Server running on this machine. ($!)");
+		logger('')->logdie("FATAL: There is already another copy of the UE Music Server running on this machine. ($!)");
 	};
 
 	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do { 
@@ -49,21 +49,45 @@ sub init {
 	Slim::Networking::Discovery::Server::init() if Slim::Utils::OSDetect::details->{osName} !~ /Windows 2000/i;
 	Slim::Networking::Discovery::Players::init();
 
-	# say hello to the old slimp3 clients that we might remember...
-	for my $clientID (@{ preferences('server')->get('slimp3clients') || [] }) {
-
-		# make sure any new preferences get set to default values
-		assert($clientID);
-
-		# skip client addrs that aren't dotted-4 with a port
-		next if $clientID !~ /\d+\.\d+\.\d+\.\d+:\d+/;
-
-		main::INFOLOG && $log->info("Discovery init: Saying hello to $clientID");
-
-		Slim::Networking::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientID));
+	if (main::LOCAL_PLAYERS) {
+		my $sock = IO::Socket::INET->new(
+			Proto     => 'udp',
+			LocalPort => main::SLIMDISCOVERY_PORT,
+			LocalAddr => $main::localClientNetAddr
+	
+		) or do {
+	
+			# XXX - exiting in a deep sub is kinda bad. should propagate up.
+			logger('')->logdie("FATAL: There is already another copy of the UE Music Server or Logitech Media Server running on this machine. ($!)");
+		};
+	
+		defined(Slim::Utils::Network::blocking($sock, 0)) || do { 
+	
+			logger('')->logdie("FATAL: Discovery init: Cannot set port nonblocking");
+		};
+	
+		Slim::Networking::Select::addRead($sock, \&readUDP);
 		
-		# throttle the broadcasts
-		select(undef, undef, undef, 0.05);
+		$udpsock = $sock;
+	}
+	
+	if (main::SB1SLIMP3SYNC) {
+		# say hello to the old slimp3 clients that we might remember...
+		for my $clientID (@{ preferences('server')->get('slimp3clients') || [] }) {
+	
+			# make sure any new preferences get set to default values
+			assert($clientID);
+	
+			# skip client addrs that aren't dotted-4 with a port
+			next if $clientID !~ /\d+\.\d+\.\d+\.\d+:\d+/;
+	
+			main::INFOLOG && $log->info("Discovery init: Saying hello to $clientID");
+	
+			Slim::Networking::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientID));
+			
+			# throttle the broadcasts
+			select(undef, undef, undef, 0.05);
+		}
 	}
 }
 

@@ -34,10 +34,11 @@ use constant IP3K         => 0;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 # IANA-requested port for the UEML-discovery and UEML-HTTP protocols is 3546
-use constant SLIMDISCOVERY_PORT => 3546;	# UDP
-use constant SLIMPROTO_PORT     => 33483;	# TCP
+use constant SLIMDISCOVERY_PORT => 3483;	# UDP
+use constant UEMLDISCOVERY_PORT => 3546;	# UDP
+use constant SLIMPROTO_PORT     => 3483;	# TCP
 use constant WEB_PORT           => 3546;	# LMS uses 9000
-use constant CLI_PORT           => 33303;	# LMS uses 9090
+use constant CLI_PORT           => 9090;	# LMS uses 9090
 
 use Config;
 my %check_inc;
