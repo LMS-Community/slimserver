@@ -694,11 +694,12 @@ sub revisionNumber { $_[0]->revision }
 
 return 1 if !main::LOCAL_PLAYERS;
 
-use Slim::Player::Sync;
 
 sub startup {
 	my $client = shift;
 	my $syncgroupid = shift;
+	
+	require Slim::Player::Sync;
 
 	Slim::Player::Sync::restoreSync($client, $syncgroupid);
 	

@@ -21,7 +21,6 @@ use XML::Simple;
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Networking::SqueezeNetwork;
-use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;

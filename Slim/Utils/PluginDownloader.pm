@@ -223,6 +223,8 @@ sub downloading {
 
 sub periodicCheckForUpdates {
 	my $class = shift;
+	
+	return unless Slim::Utils::PluginManager->isEnabled('Extensions');
 
 	$class->checkForUpdates;
 

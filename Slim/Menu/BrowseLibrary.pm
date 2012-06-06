@@ -144,6 +144,7 @@ use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
+use Slim::Control::XMLBrowser;
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
