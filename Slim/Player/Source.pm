@@ -90,7 +90,7 @@ sub playmode {
 	
 	# bug 6971
 	# set the player power item on Jive to whatever our power setting now is
-	Slim::Control::Jive::playerPower($client);
+	Slim::Control::LocalPlayers::Jive::playerPower($client) if main::LOCAL_PLAYERS;
 	
 	my $return = _returnPlayMode($controller, $client);
 	
