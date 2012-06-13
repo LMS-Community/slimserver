@@ -1095,11 +1095,7 @@ sub playerSettingsMenu {
 			text           => $client->string("SB_ACCOUNT"),
 			actions => {
 				go => {
-					cmd    => [ 'opml_generic', 'items' ],
-					params => {
-						menu     => 'opml_generic',
-						opml_url => Slim::Networking::SqueezeNetwork->url( '/api/register/v1/opml' ),
-					},
+					cmd    => [ 'register', 0, 100, 'service:SN', 'is_anon' ],
 					player => 0,
 				},
 			},
