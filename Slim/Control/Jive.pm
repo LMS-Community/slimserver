@@ -687,8 +687,13 @@ sub firmwareUpgradeQuery_filter {
 
 sub firmwareUpgradeQuery {
 	my $request = shift;
-
-	if ( !main::LOCAL_PLAYERS || $request->isNotQuery([['firmwareupgrade']]) ) {
+	
+	if ( !main::LOCAL_PLAYERS ) {
+		$request->setStatusDone();
+		return;
+	}
+	
+	if ( $request->isNotQuery([['firmwareupgrade']]) ) {
 		$request->setStatusBadDispatch();
 		return;
 	}

@@ -560,6 +560,12 @@ sub execute {
 	return Slim::Control::Request::executeRequest($self, @_);
 }
 
+sub string {
+	$_[0]->display && return shift->display->string(@_);
+}
+
+sub hasDigitalIn() { return 0; }
+
 # stub out display functions, some players may not have them.
 sub update {}
 sub killAnimation {}

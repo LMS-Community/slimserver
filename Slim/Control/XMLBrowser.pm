@@ -1923,6 +1923,7 @@ sub _defeatDestructiveTouchToPlay {
 	
 	return 0 if !$pref;
 	return 1 if $pref == 1 || !$client;
+	return 1 if !main::LOCAL_PLAYERS;
 	return ($client->isPlaying() && $client->playingSong()->duration() && !$client->playingSong()->isPlaylist()) if $pref == 4;
 	my $l = Slim::Player::Playlist::count($client);
 	return 0 if $l < 2;

@@ -621,13 +621,15 @@ sub playlistXtracksCommand {
 		
 		$client->currentPlaylistModified(0);
 	}
-
-	if ($add || $insert || $delete) {
-		$client->currentPlaylistModified(1);
-	}
-
-	if ($load || $add || $insert || $delete) {
-		$client->currentPlaylistUpdateTime(Time::HiRes::time());
+	
+	if (main::LOCAL_PLAYERS) {
+		if ($add || $insert || $delete) {
+			$client->currentPlaylistModified(1);
+		}
+	
+		if ($load || $add || $insert || $delete) {
+			$client->currentPlaylistUpdateTime(Time::HiRes::time());
+		}
 	}
 
 	$request->setStatusDone();
