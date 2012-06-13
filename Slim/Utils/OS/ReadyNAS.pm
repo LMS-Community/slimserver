@@ -74,19 +74,19 @@ sub dirsFor {
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
-		push @dirs, "/c/.squeezeboxserver/Plugins";
+		push @dirs, "/c/.uemusiclibrary/Plugins";
 		
 	} elsif ($dir =~ /^(?:prefs)$/) {
 
-		push @dirs, $::prefsdir || "/c/.squeezeboxserver/prefs";
+		push @dirs, $::prefsdir || "/c/.uemusiclibrary/prefs";
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || "/c/.squeezeboxserver/log";
+		push @dirs, $::logdir || "/c/.uemusiclibrary/log";
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || "/c/.squeezeboxserver/cache";
+		push @dirs, $::cachedir || "/c/.uemusiclibrary/cache";
 
 	} else {
 		@dirs = $class->SUPER::dirsFor($dir);

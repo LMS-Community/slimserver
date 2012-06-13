@@ -40,21 +40,21 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
-		push @dirs, "/usr/share/squeezeboxserver/$dir";
+		push @dirs, "/usr/share/uemusiclibrary/$dir";
 
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
-		push @dirs, "/usr/share/squeezeboxserver/Plugins";
+		push @dirs, "/usr/share/uemusiclibrary/Plugins";
 		push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		
 	} elsif ($dir =~ /^(?:strings|revision)$/) {
 
-		push @dirs, "/usr/share/squeezeboxserver";
+		push @dirs, "/usr/share/uemusiclibrary";
 
 	} elsif ($dir eq 'libpath') {
 
-		push @dirs, "/usr/share/squeezeboxserver";
+		push @dirs, "/usr/share/uemusiclibrary";
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
@@ -64,19 +64,19 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 
-		push @dirs, "/etc/squeezeboxserver";
+		push @dirs, "/etc/uemusiclibrary";
 
 	} elsif ($dir eq 'prefs') {
 
-		push @dirs, $::prefsdir || "/var/lib/squeezeboxserver/prefs";
+		push @dirs, $::prefsdir || "/var/lib/uemusiclibrary/prefs";
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || "/var/log/squeezeboxserver";
+		push @dirs, $::logdir || "/var/log/uemusiclibrary";
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || "/var/lib/squeezeboxserver/cache";
+		push @dirs, $::cachedir || "/var/lib/uemusiclibrary/cache";
 
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
@@ -92,7 +92,7 @@ sub dirsFor {
 
 
 sub scanner {
-	return '/usr/libexec/squeezeboxserver-scanner';
+	return '/usr/libexec/uemusiclibrary-scanner';
 }
 
 
