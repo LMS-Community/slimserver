@@ -16,7 +16,7 @@ use Win32::TieRegistry ('Delimiter' => '/');
 
 use constant SC_USER_REGISTRY_KEY => 'CUser/Software/Logitech/SqueezeCenter';
 use constant SB_USER_REGISTRY_KEY => 'CUser/Software/Logitech/Squeezebox';
-use constant SC_SERVICE_NAME => 'eumlsvc';
+use constant SC_SERVICE_NAME => 'uemlsvc';
 
 use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
