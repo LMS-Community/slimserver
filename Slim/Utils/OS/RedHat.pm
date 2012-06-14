@@ -46,6 +46,7 @@ sub dirsFor {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
 		push @dirs, "/usr/share/uemusiclibrary/Plugins";
+		push @dirs, "/usr/share/uemusiclibrary/Slim/Plugin";
 		push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		
 	} elsif ($dir =~ /^(?:strings|revision)$/) {
