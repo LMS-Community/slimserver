@@ -10,6 +10,17 @@ package Slim::Web::Settings::Server::Index;
 use strict;
 use base qw(Slim::Web::Settings);
 
+sub new {
+	my $class = shift;
+	
+	# register the settings page as the main landing page when local players are not supported
+	if (!main::LOCAL_PLAYERS) {
+		Slim::Web::Pages->addPageFunction(qr/^$/, sub {$class->handler(@_)});
+	}
+	
+	return $class->SUPER::new(@_);	
+}
+
 sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('settings/index.html');
 }

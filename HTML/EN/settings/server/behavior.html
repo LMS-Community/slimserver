@@ -75,32 +75,32 @@
 		</select>
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_PERSISTPLAYLISTS" desc="SETUP_PERSISTPLAYLISTS_DESC"%]
+	[% IF prefs.exists('pref_persistPlaylists'); WRAPPER setting title="SETUP_PERSISTPLAYLISTS" desc="SETUP_PERSISTPLAYLISTS_DESC"%]
 		<select class="stdedit" name="pref_persistPlaylists" id="persistPlaylists">
 
 			<option [% IF NOT prefs.pref_persistPlaylists %]selected [% END %]value="0">[% 'SETUP_PERSISTPLAYLISTS_0' | string %]</option>
 			<option [% IF prefs.pref_persistPlaylists %]selected [% END %]value="1">[% 'SETUP_PERSISTPLAYLISTS_1' | string %]</option>
 		
 		</select>
-	[% END %]
+	[% END; END %]
 
-	[% WRAPPER setting title="SETUP_RESHUFFLEONREPEAT" desc="SETUP_RESHUFFLEONREPEAT_DESC"%]
+	[% IF prefs.exists('pref_reshuffleOnRepeat'); WRAPPER setting title="SETUP_RESHUFFLEONREPEAT" desc="SETUP_RESHUFFLEONREPEAT_DESC"%]
 		<select class="stdedit" name="pref_reshuffleOnRepeat" id="reshuffleOnRepeat">
 
 			<option [% IF NOT prefs.pref_reshuffleOnRepeat %]selected [% END %]value="0">[% 'SETUP_RESHUFFLEONREPEAT_0' | string %]</option>
 			<option [% IF prefs.pref_reshuffleOnRepeat %]selected [% END %]value="1">[% 'SETUP_RESHUFFLEONREPEAT_1' | string %]</option>
 		
 		</select>
-	[% END %]
+	[% END; END %]
 
-	[% WRAPPER setting title="SETUP_SAVESHUFFLED" desc="SETUP_SAVESHUFFLED_DESC"%]
+	[% IF prefs.exists('pref_saveShuffled'); WRAPPER setting title="SETUP_SAVESHUFFLED" desc="SETUP_SAVESHUFFLED_DESC"%]
 		<select class="stdedit" name="pref_saveShuffled" id="saveShuffled">
 
 			<option [% IF NOT prefs.pref_saveShuffled %]selected [% END %]value="0">[% 'SETUP_SAVESHUFFLED_0' | string %]</option>
 			<option [% IF prefs.pref_saveShuffled %]selected [% END %]value="1">[% 'SETUP_SAVESHUFFLED_1' | string %]</option>
 		
 		</select>
-	[% END %]
+	[% END; END %]
 
 	[%# Only display this setting if there is more than 1 rating implementation installed %]
 	[% IF ratingImplementations.size > 1 %]

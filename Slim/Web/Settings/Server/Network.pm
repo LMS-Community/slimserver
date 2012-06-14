@@ -25,16 +25,20 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate noupnp);
+	my @prefs = qw(webproxy httpport noupnp);
 
-	# only show following for SLIMP3
-	if ($Slim::Player::SLIMP3::SLIMP3Connected) {
-		push @prefs, 'udpChunkSize';
-	}
-	
-	# only show following if we have multiple players
-	if (Slim::Player::Client::clients() > 1) {
-		push @prefs, 'syncStartDelay';
+	if (main::LOCAL_PLAYERS) {
+		push @prefs, qw(bufferSecs remotestreamtimeout maxWMArate);
+		
+		# only show following for SLIMP3
+		if ($Slim::Player::SLIMP3::SLIMP3Connected) {
+			push @prefs, 'udpChunkSize';
+		}
+		
+		# only show following if we have multiple players
+		if (Slim::Player::Client::clients() > 1) {
+			push @prefs, 'syncStartDelay';
+		}
 	}
 
 	return ($prefs, @prefs);

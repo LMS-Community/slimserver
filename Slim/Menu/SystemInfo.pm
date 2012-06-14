@@ -371,7 +371,7 @@ sub infoServer {
 		type => 'text',
 		name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
 					. Slim::Player::Client::clientCount,
-	};
+	} if main::LOCAL_PLAYERS;
 
 	return {
 		name  => cstring($client, 'INFORMATION_MENU_SERVER'),

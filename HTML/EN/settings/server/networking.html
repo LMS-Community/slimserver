@@ -7,6 +7,7 @@
 		<input type=text class="stdedit" name="pref_httpport" id="httpport" value="[% prefs.pref_httpport %]" size="15">
 	[% END %]
 
+	[% IF prefs.exists('pref_remotestreamtimeout') && prefs.exists('pref_bufferSecs') && prefs.exists('pref_maxWMArate') %]
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_BUFFERSECS" desc="SETUP_BUFFERSECS_DESC" %]
 			<input type=text class="stdedit sliderInput_3_30_1" name="pref_bufferSecs" id="bufferSecs" value="[% prefs.pref_bufferSecs %]" size="15">
@@ -30,10 +31,10 @@
 				<input type=text class="stdedit" name="pref_syncStartDelay" id="syncStartDelay" value="[% prefs.pref_syncStartDelay %]" size="15">
 			[% END %]
 		[% END %]
-
+	[% END %]
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_NOUPNP" desc="SETUP_NOUPNP_DESC" %]
+	[% IF prefs.exists('pref_noupnp'); WRAPPER setting title="SETUP_NOUPNP" desc="SETUP_NOUPNP_DESC" %]
 		<select class="stdedit" name="pref_noupnp" id="noupnp">
 			<option [% IF prefs.pref_noupnp == 0 %]selected="selected" [% END %]value="0">
 				[% 'SETUP_UPNP_ENABLE' | string %]
@@ -42,7 +43,7 @@
 				[% 'SETUP_UPNP_DISABLE' | string %]
 			</option>
 		</select>
-	[% END %]
+	[% END; END %]
 
 	[% IF prefs.exists('pref_tcpReadMaximum') || prefs.exists('pref_tcpWriteMaximum') || prefs.exists('pref_udpChunkSize') %]
 		[% WRAPPER settingSection %]

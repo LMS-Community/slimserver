@@ -23,7 +23,7 @@ sub initSetup {
 		Menu 
 		Remote 
 		Synchronization
-	);
+	) if main::LOCAL_PLAYERS;
 	
 	push @classes, map { 
 		join('::', qw(Slim Web Settings Server), $_) 
@@ -38,13 +38,18 @@ sub initSetup {
 		Plugins 
 		Security 
 		Software 
-		SqueezeNetwork 
 		Status 
 		TextFormatting 
-		UserInterface 
 		Wizard
 	);
-	
+
+	push @classes, map { 
+		join('::', qw(Slim Web Settings Server), $_) 
+	} qw(
+		SqueezeNetwork 
+		UserInterface 
+	) if main::LOCAL_PLAYERS;
+
 	if (main::TRANSCODING) {
 		push @classes, 'Slim::Web::Settings::Server::FileTypes';
 	}

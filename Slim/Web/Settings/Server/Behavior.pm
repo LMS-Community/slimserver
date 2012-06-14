@@ -21,12 +21,17 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'),
-			qw(noGenreFilter searchSubString ignoredarticles splitList
-			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
-			   conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist 
-			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation)
-		   );
+	my @prefs = qw(noGenreFilter searchSubString ignoredarticles splitList
+		browseagelimit groupdiscs composerInArtists
+		conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist 
+		useTPE2AsAlbumArtist variousArtistsString ratingImplementation
+	);
+	
+	if (main::LOCAL_PLAYERS) {
+		push @prefs, 'persistPlaylists', 'reshuffleOnRepeat', 'saveShuffled'
+	}
+	
+	return (preferences('server'), @prefs);
 }
 
 sub handler {
