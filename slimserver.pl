@@ -49,9 +49,9 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 package PerlSvc;
 
 our %Config = (
-	DisplayName => 'Logitech Media Server',
-	Description => "Logitech Media Server - streaming media server",
-	ServiceName => "squeezesvc",
+	DisplayName => 'UE Media Libraray',
+	Description => 'UE Media Libraray',
+	ServiceName => 'uemlsvc',
 	StartNow    => 0,
 );
 

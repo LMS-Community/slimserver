@@ -16,7 +16,7 @@ use Win32::TieRegistry ('Delimiter' => '/');
 
 use constant SC_USER_REGISTRY_KEY => 'CUser/Software/Logitech/SqueezeCenter';
 use constant SB_USER_REGISTRY_KEY => 'CUser/Software/Logitech/Squeezebox';
-use constant SC_SERVICE_NAME => 'squeezesvc';
+use constant SC_SERVICE_NAME => 'eumlsvc';
 
 use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
@@ -27,7 +27,7 @@ my $svcHelper;
 sub init {
 	my $class = shift;
 	$class = $class->SUPER::init();
-	$svcHelper = catdir( Win32::GetShortPathName( $os->dirsFor('base') ), 'server', 'squeezesvc.exe' );
+	$svcHelper = catdir( Win32::GetShortPathName( $os->dirsFor('base') ), 'server', 'uemlsvc.exe' );
 	
 	return $class;
 }
@@ -38,7 +38,7 @@ sub getStartupType {
 
 	Win32::Service::GetServices('', \%services);
 
-	if (grep {$services{$_} =~ /squeezesvc/} keys %services) {
+	if (grep {$services{$_} =~ /uemlsvc/} keys %services) {
 		return SC_STARTUP_TYPE_SERVICE;
 	}
 
@@ -137,7 +137,7 @@ sub start {
 
 	else {
 
-		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'SqueezeSvr.exe' ) );
+		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'ueml.exe' ) );
 		
 		if ($params) {
 			$params = "$appExe $params";
@@ -239,7 +239,7 @@ sub getProcessID {
 	}
 
 	# Windows sometimes only displays squeez~1.exe or similar
-	my $pid = ($p->GetProcessPid(qr/^squeez(esvr|~\d).exe$/i))[1];
+	my $pid = ($p->GetProcessPid(qr/^ueml.exe$/i))[1];
 
 	return $pid || -1;
 }

@@ -127,7 +127,7 @@ sub new {
 	if (main::ISWINDOWS) {
 		require Win32::TieRegistry;
 		$Win32::TieRegistry::Registry->Delimiter('/');
-		my $serviceUser = $Win32::TieRegistry::Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
+		my $serviceUser = $Win32::TieRegistry::Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/uemlsvc/ObjectName'} || '';
 		$serviceUser = '' if $serviceUser =~ /^(?:LocalSystem)$/i;
 		
 		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
