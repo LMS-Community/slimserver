@@ -9,7 +9,7 @@ package Slim::Utils::Light;
 
 # This module provides some functions compatible with functions
 # from the core Logitech Media Server code, without their overhead.
-# These functions are called by helper applications like SqueezeTray
+# These functions are called by helper applications like the tray icon
 # or the control panel. 
 
 use Exporter::Lite;

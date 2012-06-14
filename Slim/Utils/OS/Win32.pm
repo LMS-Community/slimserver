@@ -19,6 +19,8 @@ Win32::OLE->Option(CP => Win32::OLE::CP_UTF8);
 
 use base qw(Slim::Utils::OS);
 
+use constant REG_KEY => 'LMachine/Software/Logitech/UEML/';
+
 my $driveList  = {};
 my $driveState = {};
 my $writablePath;
@@ -441,7 +443,7 @@ sub installPath {
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
 	my $swKey = $Win32::TieRegistry::Registry->Open(
-		'LMachine/Software/Logitech/Squeezebox/', 
+		REG_KEY
 		{ 
 			Access => Win32::TieRegistry::KEY_READ(), 
 			Delimiter =>'/' 
@@ -456,7 +458,7 @@ sub installPath {
 	# search in legacy SlimServer folder, too
 	my $installDir;
 	PF: foreach my $programFolder ($ENV{ProgramFiles}, 'C:/Program Files') {
-		foreach my $ourFolder ('Squeezebox', 'SqueezeCenter', 'SlimServer') {
+		foreach my $ourFolder ('Logitech/UE Media Library') {
 
 			$installDir = File::Spec->catdir($programFolder, $ourFolder);
 			last PF if (-d $installDir);
@@ -486,7 +488,7 @@ sub writablePath {
 
 		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Logitech/Squeezebox/', 
+			REG_KEY, 
 			{ 
 				Access => Win32::TieRegistry::KEY_READ(), 
 				Delimiter =>'/' 
@@ -530,11 +532,11 @@ sub writablePath {
 				}
 			}
 			
-			$writablePath = catdir($writablePath, 'Squeezebox') unless $writablePath eq $Bin;
+			$writablePath = catdir($writablePath, 'Logitech/UE Media Library') unless $writablePath eq $Bin;
 			
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/Software/Logitech/Squeezebox/', 
+				REG_KEY, 
 				{ 
 					Delimiter =>'/' 
 				}
@@ -867,7 +869,7 @@ sub restartServer {
 	
 	if ($PerlSvc::VERSION && PerlSvc::RunningAsService()) {
 
-		my $svcHelper = Win32::GetShortPathName( catdir( $class->installPath, 'server', 'squeezesvc.exe' ) );
+		my $svcHelper = Win32::GetShortPathName( catdir( $class->installPath, 'server', 'uemlsvc.exe' ) );
 		my $processObj;
 
 		Slim::bootstrap::tryModuleLoad('Win32::Process');
@@ -880,7 +882,7 @@ sub restartServer {
 			Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 			".")
 		) {
-			$log->error("Couldn't restart Logitech Media Server service (squeezesvc)");
+			$log->error("Unable to restart UE Music Library service (uemlsvc)");
 		}
 		else {
 			return 1;
