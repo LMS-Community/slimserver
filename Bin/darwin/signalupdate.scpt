@@ -25,9 +25,9 @@ on run argv
 			set the allNotificationsList to {"Squeezebox Notification"}
 			set the enabledNotificationsList to {"Squeezebox Notification"}
 			
-			register as application "Logitech Media Server" all notifications allNotificationsList default notifications enabledNotificationsList
+			register as application "UE Music Library" all notifications allNotificationsList default notifications enabledNotificationsList
 		
-			notify with name "Squeezebox Notification" title "Logitech Media Server" description msg application name "Logitech Media Server" image from location "file:///Library/PreferencePanes/Squeezebox.prefPane/Contents/Resources/icon.icns"
+			notify with name "Squeezebox Notification" title "UE Music Library" description msg application name "UE Music Library" image from location "file:///Library/PreferencePanes/Squeezebox.prefPane/Contents/Resources/icon.icns"
 		end tell
 		
 		return "1"

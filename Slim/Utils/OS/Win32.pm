@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Win32;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -434,7 +434,7 @@ sub isDriveReady {
 
 =head2 installPath()
 
-Returns the base installation directory of Logitech Media Server.
+Returns the base installation directory of the server.
 
 =cut
 
@@ -501,7 +501,7 @@ sub writablePath {
 
 		else {
 			# second attempt: use the Windows API (recommended by MS)
-			# use the "Common Application Data" folder to store Logitech Media Server configuration etc.
+			# use the "Common Application Data" folder to store the server configuration etc.
 			$writablePath = Win32::GetFolderPath(Win32::CSIDL_COMMON_APPDATA);
 			
 			# fall back if no path or invalid path is returned
@@ -664,7 +664,7 @@ sub setPriority {
 			return;
 		};
 
-		Slim::Utils::Log::logger('server')->info("Logitech Media Server changing process priority to $priorityClassName");
+		Slim::Utils::Log::logger('server')->info("Changing process priority to $priorityClassName");
 
 		eval { $setPriorityClass->Call($processHandle, $priorityClass) };
 
@@ -815,7 +815,7 @@ sub getUpdateParams {
 	return if main::SLIM_SERVICE || main::SCANNER;
 	
 	if (!$PerlSvc::VERSION) {
-		Slim::Utils::Log::logger('server.update')->info("Running Logitech Media Server from the source - don't download the update.");
+		Slim::Utils::Log::logger('server.update')->info("Running server from the source - don't download the update.");
 		return;
 	}
 	
@@ -863,7 +863,7 @@ sub restartServer {
 	
 
 	if (!$class->canRestartServer()) {
-		$log->warn("Logitech Media Server can't be restarted automatically on Windows if run from the perl source.");
+		$log->warn("The server can't be restarted automatically on Windows if run from the perl source.");
 		return;
 	}
 	

@@ -2,7 +2,7 @@ package Slim::Music::Artwork;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -646,7 +646,7 @@ sub downloadArtwork {
 	
 	if ( main::SCANNER ) {
 		$ua = LWP::UserAgent->new(
-			agent   => 'Logitech Media Server/' . $::VERSION,
+			agent   => 'UE Music Library/' . $::VERSION,
 			timeout => 10,
 		);
 		$ua->default_header($authHeader->[0] => $authHeader->[1]);

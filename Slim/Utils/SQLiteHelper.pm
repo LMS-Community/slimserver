@@ -435,7 +435,7 @@ sub updateProgress {
 
 =head2 cleanup()
 
-Shut down when Logitech Media Server is shut down.
+Shut down when the server is shut down.
 
 =cut
 

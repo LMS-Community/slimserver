@@ -2,7 +2,7 @@ package Slim::Buttons::Power;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::Power
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Power> is a Logitech Media Server module to add an 'off' mode.
+L<Slim::Buttons::Power> is a module to add an 'off' mode.
 The players are never truly off, instead entering and leaving this 
 mode in reaction to the power button.
 

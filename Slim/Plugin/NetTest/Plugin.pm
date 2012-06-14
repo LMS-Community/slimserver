@@ -1,10 +1,10 @@
-# Plugin for Logitech Media Server to test network bandwidth
+# Plugin for the server to test network bandwidth
 #
 # $Id$
 
 # This code is derived from code with the following copyright message:
 #
-# Logitech Media Server Copyright 2005-2011 Logitech.
+# Copyright 2005-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

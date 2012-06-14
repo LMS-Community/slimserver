@@ -2,7 +2,7 @@ package Slim::Utils::OSDetect;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -30,7 +30,7 @@ my ($os, $isWindows, $isMac, $isLinux);
 
 =head2 OS( )
 
-returns a string to indicate the detected operating system currently running Logitech Media Server.
+returns a string to indicate the detected operating system currently running the server.
 
 =cut
 

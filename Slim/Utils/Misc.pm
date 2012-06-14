@@ -2,7 +2,7 @@ package Slim::Utils::Misc;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -24,7 +24,7 @@ assert, bt, msg, msgf, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility 
- functions useful throughout Logitech Media Server and third party plugins.
+ functions useful throughout the server and third party plugins.
 
 =cut
 
@@ -1150,7 +1150,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server, Logitech Media Server',
+		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'UE Music Library',
 	);
 
 	return $userAgentString;

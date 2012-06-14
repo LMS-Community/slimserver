@@ -1,11 +1,11 @@
 package Slim::Control::Request;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# This class implements a generic request mechanism for Logitech Media Server.
+# This class implements a generic request mechanism for the server.
 # More documentation is provided below the table of commands & queries
 
 =head1 NAME
@@ -14,7 +14,7 @@ Slim::Control::Request
 
 =head1 DESCRIPTION
 
-This class implements a generic request mechanism for Logitech Media Server.
+This class implements a generic request mechanism for the server.
 
 The general mechansim is to create a Request object and execute it. There is
 an option of specifying a callback function, to be called once the request is
@@ -689,7 +689,7 @@ sub init {
 
 	return if !main::WEBUI;
 
-	# Normal Logitech Media Server commands can be accessed with URLs like
+	# Normal server commands can be accessed with URLs like
 	#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 	# Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
 	# not intended for use via the web interface!
@@ -1354,7 +1354,7 @@ my %statusMap = (
 	102 => 'Bad params!',
 	103 => 'Missing client!',
 	104 => 'Unknown in dispatch table',
-	105 => 'Bad Logitech Media Server config',
+	105 => 'Bad UE Music Library config',
 );
 
 # validate the Request, make sure we are dispatchable

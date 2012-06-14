@@ -17,7 +17,7 @@
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/iTunes/settings/itunes.html</optionsURL>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>UE Music Library</id>
 		<minVersion>7.0a</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

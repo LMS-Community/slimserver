@@ -90,7 +90,7 @@ sub description {
 	substr $serial, 0, 8, '106173c8';
 	
 	$params->{device} = {
-		name    => 'Logitech Media Server [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
+		name    => 'UE Music Library [' . xmlEscape(Slim::Utils::Misc::getLibraryName()) . ']',
 		version => $::VERSION . $::REVISION,
 		serial  => $serial,
 		uuid    => uc($server_uuid),

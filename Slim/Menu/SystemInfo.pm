@@ -2,7 +2,7 @@ package Slim::Menu::SystemInfo;
 
 # $Id: $
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -310,7 +310,7 @@ sub infoServer {
 	my $items = [
 		{
 			type => 'text',
-			name => sprintf("Logitech Media Server %s%s %s - %s @ %s",
+			name => sprintf("UE Music Library %s%s %s - %s @ %s",
 						cstring($client, 'INFORMATION_VERSION'),
 						cstring($client, 'COLON'),
 						$::VERSION,

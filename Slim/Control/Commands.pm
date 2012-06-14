@@ -2,7 +2,7 @@ package Slim::Control::Commands;
 
 # $Id: Commands.pm 5121 2005-11-09 17:07:36Z dsully $
 #
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +20,7 @@ Slim::Control::Commands
 
 =head1 DESCRIPTION
 
-Implements most Logitech Media Server commands and is designed to be exclusively called
+Implements most server commands and is designed to be exclusively called
 through Request.pm and the mechanisms it defines.
 
 =cut

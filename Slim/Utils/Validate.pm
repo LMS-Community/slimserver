@@ -2,7 +2,7 @@ package Slim::Utils::Validate;
 
 # $Id: Validate.pm 11972 2007-05-12 07:32:19Z kdf $
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

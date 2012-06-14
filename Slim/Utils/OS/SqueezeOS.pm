@@ -97,7 +97,7 @@ my %prefSyncHandlers = (
 				$prefs->set('shortdateFormat', $1);
 			}
 
-			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats as Logitech Media Server
+			# Squeezeplay only knows 12 vs. 24h time, but no fancy formats like the server
 			$prefs->set('timeFormat', $$data =~ /hours="24"/ ? '%H:%M' : '|%I:%M %p');
 
 			$prefs = Slim::Utils::Prefs::preferences('plugin.datetime');

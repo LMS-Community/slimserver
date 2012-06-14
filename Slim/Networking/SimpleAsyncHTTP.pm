@@ -2,14 +2,14 @@ package Slim::Networking::SimpleAsyncHTTP;
 
 # $Id$
 
-# Logitech Media Server Copyright 2003-2011 Logitech.
+# Copyright 2003-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# this class provides non-blocking http requests from Logitech Media Server.
+# this class provides non-blocking http requests from the server.
 # That is, use this class for your http requests to ensure that
-# Logitech Media Server does not become unresponsive, or allow music to pause,
+# the server does not become unresponsive, or allow music to pause,
 # while your code waits for a response
 
 # This class is intended for plugins and other code needing simply to
@@ -674,7 +674,7 @@ $http->get("http://www.slimdevices.com");
 
 =head1 DESCRIPTION
 
-This class provides a way within the Logitech Media Server to make an http
+This class provides a way within the server to make an http
 request in an asynchronous, non-blocking way.  This is important
 because the server will remain responsive and continue streaming audio
 while your code waits for the response.

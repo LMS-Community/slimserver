@@ -1,6 +1,6 @@
 package Slim::Utils::OS::Synology;
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -10,10 +10,10 @@ package Slim::Utils::OS::Synology;
 # Synology DiskStation (DS) include a wide range of NAS devices based on
 # several architectures (PPC, ARM, PPCe500v2, ARMv5, and maybe others). They
 # all use a custom and minimal Linux system (Linux 2.6 based). There are (to my
-# knowledge) three options to run Logitech Media Server on these devices:
+# knowledge) three options to run the server on these devices:
 #
 # 1) flipflip's SlimServer on DiskStation (SSODS) provides a system
-#    (libc, Perl, tools etc.) spcifically to run Logitech Media Server.
+#    (libc, Perl, tools etc.) spcifically to run the server.
 # 2) Synology recently added Perl to its standard system and provides an
 #    add-on Logitech Media Server package (via the DSM Package Management).
 # 3) "Optware", a package for feed for numerous add-on packages from the
@@ -38,7 +38,7 @@ sub initDetails
 
 	$class->{osDetails}->{isDiskStation} = 1;
 
-	# check how this Logitech Media Server is run on the DiskStation
+	# check how this server is run on the DiskStation
 	if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
 		&& "@INC" =~ m{/volume1/SSODS/lib/perl})
 	{

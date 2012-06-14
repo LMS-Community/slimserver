@@ -1,6 +1,6 @@
 package Slim::Plugin::InfoBrowser::Plugin;
 
-# InfoBrowser - an extensible information parser for Logitech Media Server 7.0
+# InfoBrowser - an extensible information parser for the server 7.0
 #
 # $Id$
 #

@@ -2,7 +2,7 @@ package Slim::Buttons::Input::Text;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -25,7 +25,7 @@ Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::Text> is a reusable Logitech Media Server module for creating a standard UI
+L<Slim::Buttons::Input::Text> is a reusable module for creating a standard UI
 for inputting Text. Client parameters may determine the character sets available, and set
 any actions done on the resulting text. Callers include Slim::Buttons::Search.
 

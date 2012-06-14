@@ -96,7 +96,7 @@ sub title {
 	);
 }
 
-# return the raw title untainted by Logitech Media Server logic
+# return the raw title untainted by the server logic
 sub rawtitle {
 	my $self = shift;
 	

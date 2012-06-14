@@ -1,6 +1,6 @@
 #!/opt/sdi/bin/perl
 
-# Logitech Media Server Copyright (C) 2001-2009 Logitech.
+# Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -469,7 +469,7 @@ sub init {
 	
 	$inInit = 0;
 
-	main::INFOLOG && $log->info("Logitech Media Server done init...");
+	main::INFOLOG && $log->info("Service done init...");
 }
 
 sub main {
@@ -558,7 +558,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --playlistdir    => The path to a directory of your playlist files.
-    --cachedir       => Directory for Logitech Media Server to save cached music and web data
+    --cachedir       => Directory for server to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
@@ -690,14 +690,14 @@ sub restartServer {
 
 sub stopServer {
 
-	logger('')->info("Logitech Media Server shutting down.");
+	logger('')->info("Service shutting down.");
 	cleanup();
 	exit();
 }
 
 sub cleanup {
 
-	logger('')->info("Logitech Media Server cleaning up.");
+	logger('')->info("Service cleaning up.");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {

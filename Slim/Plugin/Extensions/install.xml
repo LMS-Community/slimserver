@@ -10,7 +10,7 @@
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
 	<targetApplication>
-		<id>Logitech Media Server</id>
+		<id>UE Music Library</id>
 		<minVersion>7.3</minVersion>
         <maxVersion>*</maxVersion>
 	</targetApplication>

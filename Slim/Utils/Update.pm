@@ -103,7 +103,7 @@ sub checkVersionCB {
 		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($version);
 		
-		main::DEBUGLOG && $log->debug($version || 'No new Logitech Media Server version available');
+		main::DEBUGLOG && $log->debug($version || 'No new server version available');
 
 		# reset the update flag
 		setUpdateInstaller();
@@ -111,7 +111,7 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 			
-			main::INFOLOG && $log->info('Triggering automatic Logitech Media Server update download...');
+			main::INFOLOG && $log->info('Triggering automatic server update download...');
 			getUpdate($version);
 		}
 		
@@ -214,12 +214,12 @@ sub downloadAsyncDone {
 	
 	# make sure we got the file
 	if (!-e $tmpFile) {
-		$log->warn("Logitech Media Server installer download failed: file '$tmpFile' not stored on disk?!?");
+		$log->warn("Server installer download failed: file '$tmpFile' not stored on disk?!?");
 		return;
 	}
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->warn( sprintf("Logitech Media Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}

@@ -554,7 +554,7 @@ sub dbh {
 
 =head2 createDatabase( $dbh )
 
-Creates the initial Logitech Media Server database in MySQL.
+Creates the initial database in MySQL.
 
 'CREATE DATABASE slimserver'
 

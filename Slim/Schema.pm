@@ -2,7 +2,7 @@ package Slim::Schema;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -17,7 +17,7 @@ my $track = Slim::Schema->objectForUrl($url);
 
 =head1 DESCRIPTION
 
-L<Slim::Schema> is the main entry point for all interactions with Logitech Media Server's
+L<Slim::Schema> is the main entry point for all interactions with the server's
 database backend. It provides an ORM abstraction layer on top of L<DBI>,
 acting as a subclass of L<DBIx::Class::Schema>.
 
@@ -511,7 +511,7 @@ sub migrateDB {
 
 	} else {
 
-		# this occurs if a user downgrades Logitech Media Server to a version with an older schema and which does not include
+		# this occurs if a user downgrades the server to a version with an older schema and which does not include
 		# the required downgrade sql scripts - attempt to drop and create the database at current schema version
 
 		if ( $log->is_warn ) {

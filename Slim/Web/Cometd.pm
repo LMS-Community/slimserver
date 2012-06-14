@@ -2,7 +2,7 @@ package Slim::Web::Cometd;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -372,7 +372,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
-			# A request to execute & subscribe to some Logitech Media Server event
+			# A request to execute & subscribe to some server event
 			
 			# A valid /slim/subscribe message looks like this:
 			# {
@@ -476,7 +476,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
-			# A request to unsubscribe from a Logitech Media Server event, this is not the same as /meta/unsubscribe
+			# A request to unsubscribe from a server event, this is not the same as /meta/unsubscribe
 			
 			# A valid /slim/unsubscribe message looks like this:
 			# {
@@ -509,7 +509,7 @@ sub handler {
 			};
 		}
 		elsif ( $obj->{channel} eq '/slim/request' ) {
-			# A request to execute a one-time Logitech Media Server event
+			# A request to execute a one-time server event
 			
 			# A valid /slim/request message looks like this:
 			# {

@@ -2,7 +2,7 @@ package Slim::Networking::Select;
 
 # $Id$
 
-# Logitech Media Server Copyright 2003-2011 Logitech.
+# Copyright 2003-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -24,7 +24,7 @@ Slim::Utils::Select::addRead( $socket, \&callback )
 
 =head1 DESCRIPTION
 
-This module encapsulates all select() related code, handled by Logitech Media Server's main loop.
+This module encapsulates all select() related code, handled by the server's main loop.
 
 Usually, you'll want to use higher such as L<Slim::Networking::Async::HTTP>.
 

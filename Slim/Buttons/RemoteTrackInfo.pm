@@ -2,7 +2,7 @@ package Slim::Buttons::RemoteTrackInfo;
 
 # $Id$
 
-# Logitech Media Server Copyright 2001-2011 Logitech.
+# Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::RemoteTrackInfo
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::RemoteTrackInfo> is a Logitech Media Server module to create a UI for viewing information 
+L<Slim::Buttons::RemoteTrackInfo> is a module to create a UI for viewing information 
 about remote tracks.
 
 =cut

@@ -58,9 +58,9 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	ES	Valor predeterminado de servidor
 	FI	Palvelimen oletusasetus
 	FR	Valeur par défaut du serveur
-	HE	ברירת המחדל של Logitech Media Server
+	HE	ברירת המחדל של UE Music Library
 	IT	Impostazioni predefinite di server
-	NL	Standaardinstellingen van Logitech Media Server
+	NL	Standaardinstellingen van UE Music Library
 	NO	Serverstandard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию
@@ -74,9 +74,9 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	ES	Valor predeterminado de servidor
 	FI	Palvelimen oletusasetus
 	FR	Défaut serveur
-	HE	ברירת המחדל של Logitech Media Server
+	HE	ברירת המחדל של UE Music Library
 	IT	Impostazioni predefinite di server
-	NL	Standaardinstellingen van Logitech Media Server
+	NL	Standaardinstellingen van UE Music Library
 	NO	Server-standard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию

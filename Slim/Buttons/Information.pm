@@ -28,10 +28,10 @@ Slim::Buttons::Information
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Information> is a Logitech Media Server module to display player library
+L<Slim::Buttons::Information> is a module to display player library
 and module information.
 
-Displays various bits of information relating to the Logitech Media Server,
+Displays various bits of information relating to the server,
 the current player, the music library and the installed plug-in
 modules.
 
