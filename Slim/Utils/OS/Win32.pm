@@ -443,7 +443,7 @@ sub installPath {
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
 	my $swKey = $Win32::TieRegistry::Registry->Open(
-		REG_KEY
+		REG_KEY,
 		{ 
 			Access => Win32::TieRegistry::KEY_READ(), 
 			Delimiter =>'/' 
