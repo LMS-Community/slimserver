@@ -73,19 +73,19 @@ sub initDetails {
 
 	# XXX - do we still need this? They're empty on my system, and created if needed in some other place anyway
 	for my $dir (
-		'Library/Application Support/Squeezebox',
-		'Library/Application Support/Squeezebox/Plugins', 
-		'Library/Application Support/Squeezebox/Graphics',
-		'Library/Application Support/Squeezebox/html',
-		'Library/Application Support/Squeezebox/IR',
-		'Library/Logs/Squeezebox'
+		'Library/Application Support/UEMusicLibrary',
+		'Library/Application Support/UEMusicLibrary/Plugins', 
+		'Library/Application Support/UEMusicLibrary/Graphics',
+		'Library/Application Support/UEMusicLibrary/html',
+		'Library/Application Support/UEMusicLibrary/IR',
+		'Library/Logs/UEMusicLibrary'
 	) {
 
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
 	}
 
-	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/Squeezebox";
-	unshift @INC, "/Library/Application Support/Squeezebox";
+	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/UEMusicLibrary";
+	unshift @INC, "/Library/Application Support/UEMusicLibrary";
 	
 	return $class->{osDetails};
 }
@@ -160,17 +160,17 @@ sub dirsFor {
 		#	$dir = lc($dir);
 		#}
 
-		push @dirs, "$ENV{'HOME'}/Library/Application Support/Squeezebox/$dir";
-		push @dirs, "/Library/Application Support/Squeezebox/$dir";
+		push @dirs, "$ENV{'HOME'}/Library/Application Support/UEMusicLibrary/$dir";
+		push @dirs, "/Library/Application Support/UEMusicLibrary/$dir";
 		push @dirs, catdir($Bin, $dir);
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || catdir($ENV{'HOME'}, '/Library/Logs/Squeezebox');
+		push @dirs, $::logdir || catdir($ENV{'HOME'}, '/Library/Logs/UEMusicLibrary');
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || catdir($ENV{'HOME'}, '/Library/Caches/Squeezebox');
+		push @dirs, $::cachedir || catdir($ENV{'HOME'}, '/Library/Caches/UEMusicLibrary');
 
 	} elsif ($dir eq 'oldprefs') {
 
@@ -186,7 +186,7 @@ sub dirsFor {
 
 	} elsif ($dir eq 'prefs') {
 
-		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/Squeezebox');
+		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/UEMusicLibrary');
 			
 	} elsif ($dir =~ /^(?:music|videos|pictures)$/) {
 
