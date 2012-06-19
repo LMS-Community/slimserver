@@ -1058,6 +1058,11 @@ sub appMenus {
 						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
 						$clone->{window}->{'icon-id'} = $icon ;
 					}
+					
+					if ( my $icon_tile = $apps->{$app}->{icon_tile} ) {
+						$icon_tile = Slim::Networking::SqueezeNetwork->url( $icon_tile, 'external' ) unless $icon_tile =~ /^http/;
+						$clone->{window}->{'icon-tile'} = $icon_tile;
+					}
 
 					push @{$menu}, $clone;
 				}
@@ -1083,6 +1088,13 @@ sub appMenus {
 					? $apps->{$app}->{icon} 
 					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
 				
+				my $icon_tile = '';
+				if ( $apps->{$app}->{icon_tile} ) {
+					$icon_tile = $apps->{$app}->{icon_tile} =~ /^http/
+						? $apps->{$app}->{icon_tile} 
+						: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon_tile}, 'external' );
+				}
+				
 				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
 				
 				push @{$menu}, {
@@ -1102,7 +1114,8 @@ sub appMenus {
 					node           => $node,
 					text           => $apps->{$app}->{title},
 					window         => {
-						'icon-id'  => $icon,
+						'icon-id'   => $icon,
+						'icon-tile' => $icon_tile,
 					},
 				};
 			}
