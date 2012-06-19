@@ -109,6 +109,15 @@ sub init {
 	
 	Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
 		[1, 1, 1, \&jiveDummyCommand]);
+	
+	if (!main::SLIM_SERVICE) {
+		Slim::Control::Request::addDispatch(['service', 'get_nonce'],
+		[0, 1, 1, sub {
+			my $request = shift;
+			$request->addResult( result => 0 );
+			$request->setStatusDone();
+		}]) ;
+	}
 }
 
 sub sliceAndShip {
