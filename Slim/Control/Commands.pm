@@ -218,6 +218,7 @@ sub playlistXitemCommand {
 	my $fadeIn   = $cmd eq 'play' ? $request->getParam('_fadein') : undef;
 	my $noplay       = $request->getParam('noplay') || 0; # optional tagged param, used for resuming playlist after preview
 	my $wipePlaylist = $request->getParam('wipePlaylist') || 0; #optional tagged param, used for removing playlist after resume
+	my $icon     = $request->getParam('icon');	# optional tagged param, used for popups
 
 	if (!defined $item) {
 		$request->setStatusBadParams();
@@ -403,6 +404,9 @@ sub playlistXitemCommand {
 		$log->info(sprintf("jumpToIndex: %s", (defined $jumpToIndex ? $jumpToIndex : 'undef')));
 	}
 
+	my @infoTags = (Slim::Music::Info::title($path) || $path);
+	push @infoTags, $icon if $icon;
+
 	if ($cmd =~ /^(insert|insertlist)$/) {
 
 		my @dirItems     = ();
@@ -414,7 +418,7 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my $foundItems = shift;
 
-				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, -1, undef, $request);
+				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, -1, undef, $request, @infoTags);
 
 				_insert_done(
 					$client,
@@ -426,37 +430,9 @@ sub playlistXitemCommand {
 				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
-		if ( $cmd eq 'insert' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
-
-			my $insert = Slim::Music::Info::title($path) || $path;
-			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', $insert);
-			my @line = split("\n", $msg);
-			$client->showBriefly({
-					'line' => [ @line ],
-					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
-				});
-		}
 
 	} else {
 		
-		# Display some feedback for the player on remote URLs
-		# XXX - why only remote URLs?
-		if ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
-
-			my $insert = Slim::Music::Info::title($path) || $path;
-			$client->showBriefly( {
-				line => [
-					$client->string('ADDING_TO_PLAYLIST'),
-					$insert,
-				],
-				jive => {
-					type => 'popupplay',
-					text => [ 
-						$client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert)
-					],
-				},
-			} );
-		}
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
@@ -474,7 +450,8 @@ sub playlistXitemCommand {
 					$noShuffle = 1;
 				}
 
-				Slim::Player::Playlist::addTracks($client, $foundItems, $cmd eq 'add' ? -3 : -2, $jumpToIndex, $request);
+				Slim::Player::Playlist::addTracks($client, $foundItems, $cmd eq 'add' ? -3 : -2,
+					$jumpToIndex, $request, @infoTags);
 
 				_playlistXitem_load_done(
 					$client,
@@ -581,7 +558,9 @@ sub playlistXtracksCommand {
 
 	# add or remove the found songs
 	if ($load || $add || $insert) {
-		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert ? -1 : $add ? -3 : -2, $load ? ($jumpToIndex || 0) : undef, $request);
+		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert ? -1 : $add ? -3 : -2,
+			$load ? ($jumpToIndex || 0) : undef, $request,
+			$request->getParam('infoText'), $request->getParam('infoIcon'));
 	}
 
 	if ($insert) {
@@ -694,22 +673,6 @@ sub playlistcontrolCommand {
 			return;
 		}
 
-		if ( $add || $insert ) {
-			my $token;
-			if ($add) {
-				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
-			} elsif ($insert) {
-				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
-			}
-			my $string = $client->string($token, $folder->title);
-			$client->showBriefly({ 
-				'jive' => { 
-					'type'    => 'popupplay',
-					'text'    => [ $string ],
-				}
-			});
-		} 
-
 		Slim::Control::Request::executeRequest(
 			$client, ['playlist', $cmd, $folder->url(), ($load && $jumpIndex ? 'play_index:' . $jumpIndex : undef) ]
 		);
@@ -728,7 +691,7 @@ sub playlistcontrolCommand {
 	my @tracks = ();
 
 	# info line and artwork to display if sucessful
-	my @info;
+	my $info;
 	my $artwork;
 
 	# Bug: 2373 - allow the user to specify a playlist name
@@ -753,28 +716,10 @@ sub playlistcontrolCommand {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			if ( $add || $load || $insert ) {
-				my $token;
-				if ($add) {
-					$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
-				} elsif ($insert) {
-					$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
-				} else {
-					$token = 'JIVE_POPUP_NOW_PLAYING';
-				}
-				my $string = $client->string($token, $playlist->title);
-				$client->showBriefly({ 
-					'jive' => { 
-						'type'    => 'popupplay',
-						'text'    => [ $string ],
-					}
-				});			
-			}
-
 			$cmd .= "tracks";
 
 			Slim::Control::Request::executeRequest(
-				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex]
+				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex, 'infoText:' . $playlist->title]
 			);
 
 			$request->addResult( 'count', $playlist->tracks->count() );
@@ -812,24 +757,24 @@ sub playlistcontrolCommand {
 		
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
 			$what->{'genre.id'} = $genre_id;
-			$info[0] = Slim::Schema->find('Genre', $genre_id)->name;
+			$info    = Slim::Schema->find('Genre', $genre_id)->name;
 		}
 
 		if (defined(my $artist_id = $request->getParam('artist_id'))) {
 			$what->{'contributor.id'} = $artist_id;
-			$info[0] = Slim::Schema->find('Contributor', $artist_id)->name;
+			$info    = Slim::Schema->find('Contributor', $artist_id)->name;
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
 			$what->{'album.id'} = $album_id;
 			my $album = Slim::Schema->find('Album', $album_id);
-			@info    = ( $album->title, $album->contributors->first->name );
+			$info    = $album->title;
 			$artwork = $album->artwork || 0;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
 			$what->{'year.id'} = $year;
-			$info[0] = $year;
+			$info    = $year;
 		}
 
 		# Fred: form year_id DEPRECATED in 7.0
@@ -843,39 +788,19 @@ sub playlistcontrolCommand {
 
 	# don't call Xtracks if we got no songs
 	if (@tracks) {
+		
+		my @infoTags;
 
 		if ($load || $add || $insert) {
-
-			$info[0] ||= $tracks[0]->title;
-			my $token;
-			my $showBriefly = 1;
-			if ($add) {
-				$token = 'JIVE_POPUP_ADDING';
-			} elsif ($insert) {
-				$token = 'JIVE_POPUP_TO_PLAY_NEXT';
-			} else {
-				$token = 'JIVE_POPUP_NOW_PLAYING';
-				$showBriefly = undef;
-			}
-			# not to be shown for now playing, as we're pushing to now playing screen now and no need for showBriefly
-			if ($showBriefly) {
-				my $string = $client->string($token);
-				$client->showBriefly({ 
-					'jive' => { 
-						'type'    => 'mixed',
-						'style'   => 'add',
-						'text'    => [ $string, $info[0] ],
-						'icon-id' => defined $artwork ? $artwork : '/html/images/cover.png',
-					}
-				});
-			}
-
+			$info ||= $tracks[0]->title;
+			@infoTags = ('infoText:' . $info);
+			push @infoTags, "infoIcon:$artwork" if $artwork;
 		}
 
 		$cmd .= "tracks";
 
 		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex]
+			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex, @infoTags]
 		);
 	}
 

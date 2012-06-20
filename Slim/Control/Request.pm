@@ -494,22 +494,22 @@ sub init {
 	# musicfolder is only here for backwards compatibility - it's calling mediafolder internally
 	addDispatch(['musicfolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::musicfolderQuery]);
 	addDispatch(['mediafolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::mediafolderQuery]);
-	addDispatch(['playlist',       'add',            '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'add',            '_item',      '_title'],                          [1, 0, 1, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'addalbum',       '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
-	addDispatch(['playlist',       'addtracks',      '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'addtracks',      '_what',      '_listref'],                        [1, 0, 1, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'append',         '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'deletealbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
-	addDispatch(['playlist',       'insert',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'insert',         '_item'],                                         [1, 0, 1, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertlist',     '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertalbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
-	addDispatch(['playlist',       'inserttracks',   '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'inserttracks',   '_what',      '_listref'],                        [1, 0, 1, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'load',           '_item'],                                         [1, 0, 1, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'loadalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
-	addDispatch(['playlist',       'loadtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'loadtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 1, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'play',           '_item',      '_title',      '_fadein'],          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'playalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'playlistsinfo'],                                                   [1, 1, 1, \&Slim::Control::Queries::playlistPlaylistsinfoQuery]);
-	addDispatch(['playlist',       'playtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'playtracks',     '_what',      '_listref',    '_fadein', '_index'],[1, 0, 1, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlistcontrol'],                                                                   [1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
 	addDispatch(['playlists',      '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsQuery]);
 	addDispatch(['playlists',      'edit'],                                                            [0, 0, 1, \&Slim::Control::Commands::playlistsEditCommand]);

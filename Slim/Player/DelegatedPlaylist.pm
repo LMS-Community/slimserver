@@ -57,7 +57,7 @@ sub playList {logBacktrace('Unexpected call');}
 
 # $client, $tracksRef, $position, $jumpIndex, $request
 sub addTracks {
-	my ($self, $client, $tracksRef, $position, $jumpIndex, $request) = @_;
+	my ($self, $client, $tracksRef, $position, $jumpIndex, $request, $text, $icon) = @_;
 	
 	my $urlprefix = 'lms://' . $prefs->get('server_uuid') . '/music/';
 	
@@ -89,8 +89,6 @@ sub addTracks {
 		if (my $coverid = delete $_->{'coverid'}) {
 			$_->{'coverurl'} = $urlprefix . $coverid . '/cover' if $coverid > 0;
 		}
-		
-		$log->error(Data::Dump::dump($_));
 	}
 	
 	my $cmd;
@@ -105,7 +103,17 @@ sub addTracks {
 		$log->warn('Unsupported playlist position: ', $position);
 	}
 	
-	my $playCommand = [ 'playlist', $cmd, 'dataRef', $tracks, undef, $jumpIndex ];
+	my @infoTags;
+	push @infoTags, 'infoText:' . $text if $text;
+	if ($icon) {
+		if ($icon =~ /^https?:/) {
+			push @infoTags, 'infoIcon:'. $icon;
+		} elsif ($icon =~ /^[a-f0-9]+$/) {
+			push @infoTags, 'infoIcon:'. $urlprefix . $icon . '/cover';
+		}
+	}
+	
+	my $playCommand = [ 'playlist', $cmd, 'dataRef', $tracks, undef, $jumpIndex, @infoTags ];
 	
 	my $json = to_json({
 		  		id            => 1,

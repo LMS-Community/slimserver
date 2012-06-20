@@ -174,7 +174,7 @@ sub playList {
 }
 
 sub addTracks {
-	my ($self, $client, $tracksRef, $position) = @_;
+	my ($self, $client, $tracksRef, $position, undef, undef, $infoText, $icon) = @_;
 	
 	$position = -3 if !defined $position;
 		
@@ -252,6 +252,35 @@ sub addTracks {
 			firstline => 0,
 			duration  => 5,
 		});
+	} elsif ($infoText && ($position == -1 || $position == -3)) {
+		if ($icon) {
+			my @line = ($client->string(
+				$position == -1
+					? 'JIVE_POPUP_TO_PLAY_NEXT'
+					: 'JIVE_POPUP_ADDING'),
+				$infoText);
+			$client->showBriefly({
+					'line' => \@line,
+					'jive' => {
+						'type'    => 'mixed',
+						'style'   => 'add',
+						'text'    => \@line,
+						'icon'    => $icon,
+					}
+				});
+		} else {
+			my $msg = $client->string(
+				$position == -1
+					? 'JIVE_POPUP_ADDING_TO_PLAY_NEXT'
+					: 'JIVE_POPUP_ADDING_TO_PLAYLIST',
+				$infoText);
+			my @line = split("\n", $msg);
+			$client->showBriefly({
+					'line' => [ @line ],
+					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
+				});
+			
+		}
 	}
 	
 	if ($position > -2) {

@@ -692,8 +692,13 @@ sub _cliQuery_done {
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
 					} ) if main::SERVICES;
-				
-					$client->execute([ 'playlist', $method, $url ]);
+					
+					my @infoTags;
+					if (my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon')) {
+						push @infoTags, 'icon:' . $icon;
+					}
+					
+					$client->execute([ 'playlist', $method, $url, undef, @infoTags ]);
 				}
 				else {
 					main::INFOLOG && $log->info("No valid URL found for: ", $title);
@@ -752,15 +757,12 @@ sub _cliQuery_done {
 					if ( main::INFOLOG && $log->is_info ) {
 						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					}
-	
-					$client->execute([ 'playlist', $cmd, 'listref', \@urls, undef, $playIndex ]);
+					
+					my @infoTags = ('infoText:' . ($subFeed->{'name'} || $subFeed->{'title'}));
+					my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
+					push @infoTags, 'infoIcon:' . $icon if $icon;
+					$client->execute([ 'playlist', $cmd, 'listref', \@urls, undef, $playIndex, @infoTags ]);
 
-					# if we're adding or inserting, show a showBriefly
-					if ( $method =~ /add/ || $method eq 'insert' ) {
-						my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
-						my $title = $subFeed->{'name'} || $subFeed->{'title'};
-						_addingToPlaylist($client, $method, $title, $icon);
-					}
 				}
 				else {
 					main::INFOLOG && $log->info("No valid URL found for: ", ($subFeed->{'name'} || $subFeed->{'title'}));
@@ -1535,31 +1537,6 @@ sub _cliQuerySubFeed_done {
 	}
 			
 	_cliQuery_done( $parent, $params );
-}
-
-sub _addingToPlaylist {
-	my $client = shift;
-	my $action = shift || 'add';
-	my $title  = shift;
-	my $icon   = shift;
-
-	my $string = $action eq 'add'
-		? $client->string('ADDING_TO_PLAYLIST')
-		: $client->string('INSERT_TO_PLAYLIST');
-
-	my $jivestring = $action eq 'add' 
-		? $client->string('JIVE_POPUP_ADDING')
-		: $client->string('JIVE_POPUP_TO_PLAY_NEXT');
-
-	$client->showBriefly( { 
-		line => [ $string ],
-		jive => {
-			type => 'mixed',
-			text => [ $jivestring, $title ],
-			style => 'add',
-			'icon-id' => defined $icon ? $icon : '/html/images/cover.png',
-		},
-	} );
 }
 
 sub findAction {
