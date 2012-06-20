@@ -25,11 +25,11 @@ sub new {
 	tie my %channels, 'Tie::RegexpHash';
 	
 	my $self = {
-		conn     => {},         # client connection(s)
-		events   => {},         # clients and their pending events
-		channels => \%channels, # all channels and who is subscribed to them
-		uuid     => {},			# Client's UUID
-		server   => {},			# Client's Server (syntax to be defined)
+		conn          => {},         # client connection(s)
+		events        => {},         # clients and their pending events
+		channels      => \%channels, # all channels and who is subscribed to them
+		authenticator => {},         # Client's authenticator
+		server        => {},         # Client's Server (syntax to be defined)
 	};
 	
 	bless $self, ref $class || $class;
@@ -37,11 +37,11 @@ sub new {
 
 # Add a new client and connection created during handshake
 sub add_client {
-	my ( $self, $clid, $uuid, $server ) = @_;
+	my ( $self, $clid, $authenticator, $server ) = @_;
 	
 	# Pending events for this clid
 	$self->{events}->{$clid} = [];
-	$self->{uuid}->{$clid} = $uuid if $uuid;
+	$self->{authenticator}->{$clid} = $authenticator if $authenticator;
 	$self->{server}->{$clid} = $server if $server;
 	
 	main::DEBUGLOG && $log->debug("add_client: $clid");
@@ -72,10 +72,10 @@ sub get_connection {
 	return $self->{conn}->{$clid};
 }
 
-sub get_client_uuid {
+sub get_client_authenticator {
 	my ( $self, $clid ) = @_;
 	
-	return $self->{uuid}->{$clid};
+	return $self->{authenticator}->{$clid};
 }
 
 sub get_client_server {
@@ -104,7 +104,7 @@ sub remove_client {
 	
 	delete $self->{conn}->{$clid};
 	delete $self->{events}->{$clid};
-	delete $self->{uuid}->{$clid};
+	delete $self->{authenticator}->{$clid};
 	delete $self->{server}->{$clid};
 	
 	$self->remove_channels( $clid );
