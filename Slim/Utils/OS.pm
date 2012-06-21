@@ -58,7 +58,19 @@ sub sqlHelperClass {
 }
 
 # Skip obsolete plugins, they should be deleted by installers
-sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));}
+sub skipPlugins {
+	my @skip = (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));
+	
+	if ( !main::SERVICES ) {
+		# Skip all music service plugins when running in UEML mode
+		push @skip, (qw(Amazon AppGallery AudioScrobbler Classical Deezer DigitalInput Facebook
+			Flickr InternetRadio LMA LastFM Live365 MOG MP3tunes Mediafly MusicMagic MyApps Orange
+			Pandora Podcast RSSNews RadioTime RhapsodyDirect Sirius Slacker Sounds SpotifyLogi UPnP
+			WiMP));
+	}
+	
+	return @skip;
+}
 
 =head2 initSearchPath( )
 
