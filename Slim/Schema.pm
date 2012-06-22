@@ -1762,6 +1762,7 @@ sub updateOrCreateBase {
 	# Short-circuit for remote tracks
 	if (main::SERVICES && Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
+		eval "use $class"; # XXX Alan: not sure why this is needed
 
 		($attributeHash, undef) = $self->_preCheckAttributes({
 			'url'        => $url,
