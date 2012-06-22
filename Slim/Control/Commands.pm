@@ -353,32 +353,34 @@ sub playlistXitemCommand {
 
 	my $fixedPath = Slim::Utils::Misc::fixPath($path);
 
-	if ($cmd =~ /^(play|load|resume)$/) {
-
-		Slim::Player::Playlist::stopAndClear($client);
-
-		$client->currentPlaylist( $fixedPath );
-
-		if ( main::INFOLOG && $log->is_info ) {
-			$log->info("currentPlaylist:" .  $fixedPath );
+	if (main::LOCAL_PLAYERS) {
+		if ($cmd =~ /^(play|load|resume)$/) {
+	
+			Slim::Player::Playlist::stopAndClear($client);
+	
+			$client->currentPlaylist( $fixedPath );
+	
+			if ( main::INFOLOG && $log->is_info ) {
+				$log->info("currentPlaylist:" .  $fixedPath );
+			}
+	
+			$client->currentPlaylistModified(0);
+	
+		} elsif ($cmd =~ /^(add|append)$/) {
+	
+			$client->currentPlaylist( $fixedPath );
+			$client->currentPlaylistModified(1);
+	
+			if ( main::INFOLOG && $log->is_info ) {
+				$log->info("currentPlaylist:" .  $fixedPath );
+			}
+	
+		} else {
+	
+			$client->currentPlaylistModified(1);
 		}
-
-		$client->currentPlaylistModified(0);
-
-	} elsif ($cmd =~ /^(add|append)$/) {
-
-		$client->currentPlaylist( $fixedPath );
-		$client->currentPlaylistModified(1);
-
-		if ( main::INFOLOG && $log->is_info ) {
-			$log->info("currentPlaylist:" .  $fixedPath );
-		}
-
-	} else {
-
-		$client->currentPlaylistModified(1);
 	}
-
+	
 	if (!Slim::Music::Info::isRemoteURL( $fixedPath ) && Slim::Music::Info::isFileURL( $fixedPath ) ) {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($fixedPath);
