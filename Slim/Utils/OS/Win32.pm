@@ -458,7 +458,7 @@ sub installPath {
 	# search in legacy SlimServer folder, too
 	my $installDir;
 	PF: foreach my $programFolder ($ENV{ProgramFiles}, 'C:/Program Files') {
-		foreach my $ourFolder ('Logitech/UE Media Library') {
+		foreach my $ourFolder ('Logitech/UE Music Library') {
 
 			$installDir = File::Spec->catdir($programFolder, $ourFolder);
 			last PF if (-d $installDir);
@@ -532,7 +532,7 @@ sub writablePath {
 				}
 			}
 			
-			$writablePath = catdir($writablePath, 'Logitech/UE Media Library') unless $writablePath eq $Bin;
+			$writablePath = catdir($writablePath, 'Logitech/UE Music Library') unless $writablePath eq $Bin;
 			
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
