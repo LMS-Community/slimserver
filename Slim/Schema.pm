@@ -94,6 +94,13 @@ my %RS_CACHE = ();
 # Cache library totals
 my %TOTAL_CACHE = ();
 
+BEGIN {
+	if (main::SERVICES) {
+		require Slim::Schema::RemoteTrack;
+		require Slim::Schema::RemotePlaylist;
+	}
+}
+
 # DB-handle cache
 my $_dbh;
 
@@ -122,11 +129,6 @@ sub init {
 	my ( $class, $dsn, $sql ) = @_;
 	
 	return if $initialized;
-	
-	if (main::SERVICES) {
-		require Slim::Schema::RemoteTrack;
-		require Slim::Schema::RemotePlaylist;
-	}
 	
 	my $dbh = $class->_connect($dsn, $sql) || do {
 
@@ -1762,7 +1764,6 @@ sub updateOrCreateBase {
 	# Short-circuit for remote tracks
 	if (main::SERVICES && Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
-		eval "use $class"; # XXX Alan: not sure why this is needed
 
 		($attributeHash, undef) = $self->_preCheckAttributes({
 			'url'        => $url,
