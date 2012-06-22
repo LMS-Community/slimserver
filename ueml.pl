@@ -24,8 +24,8 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => 0;
 use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
+use constant IMAGE        => 0;
+use constant VIDEO        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS=> 0;
@@ -49,8 +49,8 @@ $ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
 package PerlSvc;
 
 our %Config = (
-	DisplayName => 'UE Media Libraray',
-	Description => 'UE Media Libraray',
+	DisplayName => 'UE Music Library',
+	Description => 'UE Music Library',
 	ServiceName => 'uemlsvc',
 	StartNow    => 0,
 );
@@ -462,8 +462,10 @@ sub init {
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
 	
-	main::INFOLOG && $log->info("SqueezeNetwork Init...");
-	Slim::Networking::SqueezeNetwork->init();
+	if (SERVICES || LOCAL_PLAYERS) {
+		main::INFOLOG && $log->info("SqueezeNetwork Init...");
+		Slim::Networking::SqueezeNetwork->init();
+	}
 	
 	if (LOCAL_PLAYERS) {
 		main::INFOLOG && $log->info("Firmware init...");
@@ -747,7 +749,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--norestart]
-          [--noimage] [--novideo]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -789,9 +790,6 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --noserver       => Disable web access server settings, but leave player settings accessible.
                         Settings changes are not preserved.
     --noweb          => Disable web interface. JSON-RPC, Comet, and artwork web APIs are still enabled.
-    --noimage        => Disable scanning for images.
-    --novideo        => Disable scanning for videos.
-    --upnp           => Enable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --failsafe       => Don't load plugins
@@ -838,12 +836,9 @@ sub initOptions {
 		'quiet'	        => \$quiet,
 		'nodebuglog'    => \$ignored_option,
 		'noinfolog'     => \$ignored_option,
-		'noimage'       => \$ignored_option,
-		'novideo'       => \$ignored_option,
 		'norestart'     => \$norestart,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
-		'upnp!'         => sub {$noupnp = !$_[1]},
 		'web!'          => \$ignored_option,
 		'failsafe'      => \$failsafe,
 		'perfwarn=s'    => \$perfwarn,  # content parsed by PerfMon if set
