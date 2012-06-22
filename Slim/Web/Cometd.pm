@@ -19,6 +19,7 @@ package Slim::Web::Cometd;
 use strict;
 
 use bytes;
+use Digest::SHA1 qw(sha1_base64);
 use HTTP::Date;
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
@@ -174,7 +175,8 @@ sub handler {
 				if($obj->{ext}) {
 					$authenticator = $obj->{ext}->{authenticator};
 					if (!$authenticator && $obj->{ext}->{uuid}) {
-						$authenticator = 'uuid:'. $obj->{ext}->{uuid};
+						$authenticator = 'mac=' . $obj->{ext}->{mac} 
+							. ' auth=' . sha1_base64($obj->{ext}->{mac} . $obj->{ext}->{uuid});
 					}
 					$server = $obj->{ext}->{server};
 				}

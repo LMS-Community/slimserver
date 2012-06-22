@@ -10,6 +10,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use JSON::XS::VersionOneAndTwo;
 
+use Slim::Utils::Compress;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -120,7 +121,6 @@ sub addTracks {
 				method        => "slim.request",
 				params        => [ $client->id, $playCommand ],
 				client        => $client->id,
-				authenticator => $client->authenticator(),
 			});
 	
 	my ($http, $url);
@@ -151,7 +151,19 @@ sub addTracks {
 	
 	main::INFOLOG && $log->info("Sending playlist to ", $url);
 	
-	$http->post($url, $json);
+	# Always gzip this data, we know SN can handle it
+	my $output = '';
+	if ( Slim::Utils::Compress::gzip( { in => \$json, out => \$output } ) ) {
+		$http->post(
+			$url,
+			'X-UEML-Auth'      => $client->authenticator,
+			'Content-Encoding' => 'gzip',
+			$output,
+		);
+	}
+	else {
+		$http->post($url, $json);
+	}
 }
 
 # $client, $shuffle
