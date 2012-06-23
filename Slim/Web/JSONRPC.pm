@@ -111,12 +111,26 @@ sub handleURI {
 	# Parse the input
 	# Convert JSON to Perl
 	# FIXME: JSON 1.0 accepts multiple requests ? How do we parse that efficiently?
-	my $procedure = from_json($input);
-	
-	
+
+	# Decompress POST body if necessary
+	my $out;
+	my $procedure;
+	if ( $httpResponse->request->header('Content-Encoding') eq 'gzip' ) {
+			if (Slim::Utils::Compress::hasZlib()) {
+			Slim::Utils::Compress::gunzip( { in => \$input, out => \$out } );
+			$procedure = eval { from_json($out) };
+		} else {
+			$log->error('Zlib not available for compressed request');
+			Slim::Web::HTTP::closeHTTPSocket($httpClient);
+			return;
+		}
+	} else {
+		$procedure = eval { from_json($input) };
+	}
+		
 	# Validate the procedure
 	# We must get a JSON object, i.e. a hash
-	if (ref($procedure) ne 'HASH') {
+	if ($@ || ref($procedure) ne 'HASH') {
 		
 		$log->warn("Cannot parse POST data into Perl hash => closing connection");
 		
