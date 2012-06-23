@@ -1467,6 +1467,7 @@ sub sendStreamingFile {
 	# Range/TimeSeekRange
 	my $range   = $response->request->header('Range');
 	my $tsrange = $response->request->header('TimeSeekRange.dlna.org');
+	my ($initialAudioBlock, $initialAudioBlockLength) = (undef, 0);
 	
 	# If a Range is already provided, ignore TimeSeekRange
 	my $isTSR;
@@ -1520,6 +1521,21 @@ sub sendStreamingFile {
 				}
 				
 				if ( $startbytes >= 0 && $endbytes >= 0 ) {
+					
+					if ($formatClass && $formatClass->can('getInitialAudioBlock')) {
+						$initialAudioBlock = $formatClass->getInitialAudioBlock($fh, $objOrHash, $start);
+					}
+					
+					if ($initialAudioBlock) {
+						$initialAudioBlockLength = length($initialAudioBlock);
+						main::DEBUGLOG && $log->debug("Got initial audio block of size $initialAudioBlockLength");
+						if ($startbytes <= $initialAudioBlockLength) {
+							# Might as well just play from the start normally
+							$startbytes = 0;
+							$initialAudioBlock = undef;
+						}
+					}
+					
 					# Create a valid Range request, which will be handled by the below range code
 					$range = "bytes=${startbytes}-${endbytes}";
 					$isTSR = 1;
@@ -1527,7 +1543,8 @@ sub sendStreamingFile {
 					
 					my $duration = $objOrHash->secs;
 					$end ||= $duration;
-					$response->header( 'TimeSeekRange.dlna.org' => "npt=${start}-${end}/${duration} bytes=${startbytes}-${endbytes}/${size}" );
+					my $startcount = $startbytes - $initialAudioBlockLength; $startcount = 0 if $startcount < 0;
+					$response->header( 'TimeSeekRange.dlna.org' => "npt=${start}-${end}/${duration} bytes=${startcount}-${endbytes}/${size}" );
 					
 					# If npt is "0-" don't perform a range request
 					if ($start == 0 && $end == $duration) {
@@ -1590,7 +1607,8 @@ sub sendStreamingFile {
 			}
 			else {
 				$response->code( 206 );
-				$response->header( 'Content-Range' => "bytes $first-$last/$size" );
+				my $startcount = $first - $initialAudioBlockLength; $startcount = 0 if $startcount < 0;
+				$response->header( 'Content-Range' => "bytes $startcount-$last/$size" );
 			}
 			$response->content_length( $total );
 		
@@ -1606,6 +1624,8 @@ sub sendStreamingFile {
 	}
 
 	my $headers = _stringifyHeaders($response) . $CRLF;
+	
+	$headers .= $initialAudioBlock if $initialAudioBlockLength;
 	
 	# For a range request, reduce rangeCounter to account for header size
 	if ( ${*$fh}{rangeTotal} ) {
