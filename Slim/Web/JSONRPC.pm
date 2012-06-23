@@ -379,8 +379,12 @@ sub requestMethod {
 		$clientid = $playername;
 		require Slim::Player::Disconnected;
 		$client = Slim::Player::Disconnected->new($clientid);
-		$client->authenticator($context->{'procedure'}->{'authenticator'});
-		$client->server($context->{'procedure'}->{'server'});
+		if (my $httpResponse = $context->{'httpResponse'}) {
+			if (my $sid = $httpResponse->request->header('x-sdi-squeezenetwork-session')) {
+				$client->authenticator('sid=' . $sid);
+			}
+			$client->server($httpResponse->request->header('x-controlling-server'));
+		}
 		$disconnected = 1;
 	}
 	
