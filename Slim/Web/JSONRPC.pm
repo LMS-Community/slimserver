@@ -360,6 +360,16 @@ sub requestMethod {
 		main::INFOLOG && $log->info("Parsing command: Found client [$clientid]");
 	}
 
+	my $disconnected;
+	if (!main::SLIM_SERVICE && !$client && $playername =~ /^(?-:[\dA-Fa-f]{2}:){5}[\dA-Fa-f]{2}$/) {
+		$clientid = $playername;
+		require Slim::Player::Disconnected;
+		$client = Slim::Player::Disconnected->new($clientid);
+		$client->authenticator($context->{'procedure'}->{'authenticator'});
+		$client->server($context->{'procedure'}->{'server'});
+		$disconnected = 1;
+	}
+	
 	# create a request
 	my $request = Slim::Control::Request->new($clientid, $commandargs);
 
@@ -376,6 +386,7 @@ sub requestMethod {
 				$client->languageOverride(undef);
 				$client->controlledBy(undef);
 				$client->controllerUA(undef);
+				$client->forgetClient if $disconnected;
 			};
 		}
 
