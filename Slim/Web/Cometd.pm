@@ -180,6 +180,8 @@ sub handler {
 					}
 					$server = $obj->{ext}->{server};
 				}
+				# XXX server value from SP includes the Cometd port number
+				$server =~ s/:\d+$//g;
 				$manager->add_client( $clid, $authenticator, $server );
 			}
 			elsif ( $obj->{channel} =~ m{^/slim/(?:subscribe|request)} && $obj->{data} ) {
