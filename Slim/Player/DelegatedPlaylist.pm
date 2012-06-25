@@ -88,7 +88,7 @@ sub addTracks {
 		}
 		
 		if (my $coverid = delete $_->{'coverid'}) {
-			$_->{'coverurl'} = $urlprefix . $coverid . '/cover' if $coverid > 0;
+			$_->{'coverurl'} = $urlprefix . $coverid . '/cover';
 		}
 	}
 	
