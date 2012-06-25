@@ -223,7 +223,7 @@ my %localTagMapping = (
 sub setAttributes {
 	my ($self, $attributes) = @_;
 	
-#	main::DEBUGLOG && $log->debug("$url: $self => ", Data::Dump::dump($attributes));
+#	main::DEBUGLOG && $log->debug($self->_url . " => ", Data::Dump::dump($attributes));
 	
 	while (my($key, $value) = each %{$attributes}) {
 		next if !defined $value; # XXX not sure about this
@@ -325,5 +325,19 @@ sub duration {
 }
 
 sub coverid { $_[0]->id }
+
+sub as_hash {
+	my $self = shift;
+	
+	my $hash = {};
+	
+	for my $key ( @allAttributes ) {
+		next if !defined $self->$key;
+		next if $key eq '_url'; # redundant
+		$hash->{$key} = $self->$key;
+	}
+	
+	return $hash;	
+}
 
 1;
