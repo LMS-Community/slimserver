@@ -542,7 +542,6 @@ sub init {
 		Slim::Music::PlaylistFolderScan->init();
 	}
 	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
-	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
 
 	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
