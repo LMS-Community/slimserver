@@ -146,7 +146,7 @@ sub addTracks {
 	$http ||= Slim::Networking::SimpleAsyncHTTP->new(
 		sub {},
 		sub { $log->error("Problem sending playlist request to $url: ", shift->error); },
-		{ timeout => 10 }
+		{ timeout => 10, client => $client }
 	);
 	
 	main::INFOLOG && $log->info("Sending playlist to ", $url);
@@ -162,7 +162,11 @@ sub addTracks {
 		);
 	}
 	else {
-		$http->post($url, $json);
+		$http->post(
+			$url,
+			'X-UEML-Auth' => $client->authenticator,
+			$json,
+		);
 	}
 }
 
