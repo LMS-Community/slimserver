@@ -2638,6 +2638,13 @@ sub protect { if ( main::WEBUI ) {
 	Slim::Web::HTTP::CSRF->protect(@_);
 } }
 
+# Some 'native' formats are streamed with a different format to their container
+my %streamFormatMap = (
+	wav => 'pcm',
+	mp4 => 'aac',
+	m4a => 'aac',
+);
+
 sub downloadMusicFile {
 	my ($httpClient, $response, $id) = @_;
 	
@@ -2862,8 +2869,14 @@ sub downloadMusicFile {
 		}
 		
 		main::INFOLOG && $log->is_info && $log->info("Opening $obj for download...");
-			
-		my $ct = $Slim::Music::Info::types{$obj->content_type()};
+		
+		my $format = $obj->content_type;
+		# Set the correct format for WAV/AAC playback
+		if ( exists $streamFormatMap{$format} ) {
+			$format = $streamFormatMap{$format};
+		}
+		
+		my $ct = $Slim::Music::Info::types{$format};
 		
 		# Add DLNA HTTP header
 		if ( my $pn = $obj->dlna_profile ) {
