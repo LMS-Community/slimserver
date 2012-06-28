@@ -8707,44 +8707,6 @@ SETUP_FILTERRULE_DESC
 
 #miscellaneous setup strings
 
-SETUP_NEW_VALUE
-	CS	Nová hodnota pro
-	DA	Ny værdi for
-	DE	Neuer Wert für
-	EN	New value for
-	ES	Nuevo valor para
-	FI	Uusi arvo kohteelle
-	FR	Nouvelle valeur pour
-	HE	ערך חדש עבור
-	IT	Nuovo valore per
-	JA	新しい数値:
-	NL	Nieuwe waarde voor
-	NO	Ny verdi for
-	PL	Nowa wartość dla
-	PT	Novo valor para
-	RU	Новое значение для
-	SV	Nytt värde för
-	ZH_CN	新的值为：
-
-SETUP_BAD_VALUE
-	CS	Zadána neplatná hodnota: %s
-	DA	Ugyldig værdig angivet: %s
-	DE	Ungültiger Wert angegeben: %s
-	EN	Invalid value specified: %s
-	ES	Valor especificado no válido: %s
-	FI	Virheellinen arvo: %s
-	FR	Valeur non valide: %s
-	HE	צוין ערך לא חוקי: %s
-	IT	Valore specificato non valido: %s
-	JA	無効な数値が指定されました: %s
-	NL	Ongeldige waarde opgegeven: %s
-	NO	Ugyldig verdi oppgitt: %s
-	PL	Określono nieprawidłową wartość: %s
-	PT	Valor especificado inválido
-	RU	Задано недопустимое значение: %s
-	SV	Ogiltigt värde har angetts: %s
-	ZH_CN	指定价值无效: %s
-
 SETTINGS_INVALIDVALUE
 	CS	Neplatná hodnota "%s" pro %s
 	DA	Værdien "%s" for %s er ugyldig
@@ -13771,25 +13733,6 @@ SERVER_SETTINGS
 	RU	Настройки сервера
 	SV	Serverinställningar
 	ZH_CN	服务器设置
-
-SQUEEZEBOX_SERVER_SETTINGS
-	CS	Nastavení UE Music Library
-	DA	Indstillinger for UE Music Library
-	DE	UE Music Library-Einstellungen
-	EN	UE Music Library Settings
-	ES	Configuración de UE Music Library
-	FI	UE Music Libraryin asetukset
-	FR	Réglages du UE Music Library
-	HE	הגדרות UE Music Library
-	IT	Impostazioni di UE Music Library
-	JA	UE Music Libraryセッティング
-	NL	Instellingen van UE Music Library
-	NO	Innstillinger for UE Music Library
-	PL	Ustawienia programu UE Music Library
-	PT	Configurações do UE Music Library
-	RU	Настройки UE Music Library
-	SV	UE Music Library-inställningar
-	ZH_CN	UE Music Library设置
 
 INTERFACE_SETTINGS
 	CS	Rozhraní
@@ -21322,66 +21265,6 @@ JIVE_PLAY_ALL_SONGS
 	RU	Воспроизвести все песни
 	SV	Spela upp alla låtar
 
-JIVE_PLAY_ALL
-	CS	Přehrát vše
-	DA	Afspil alle
-	DE	Alle wiedergeben
-	EN	Play all
-	ES	Reproducir todo
-	FI	Toista kaikki
-	FR	Tout lire
-	IT	Riproduci tutto
-	NL	Alles afspelen
-	NO	Spill av alle
-	PL	Odtwórz wszystko
-	RU	Воспроизвести все
-	SV	Spela upp alla
-
-JIVE_ALL_SONGS
-	CS	Všechny skladby
-	DA	Alle numre
-	DE	Alle Titel
-	EN	All songs
-	ES	Todas las canciones
-	FI	Kaikki kappaleet
-	FR	Tous les morceaux
-	IT	Tutti i brani
-	NL	Alle nummers
-	NO	Alle sanger
-	PL	Wszystkie utwory
-	RU	Все песни
-	SV	Alla låtar
-
-JIVE_ADD_ALL_SONGS
-	CS	Přidat všechny skladby
-	DA	Tilføj alle numre
-	DE	Alle Lieder hinzufügen
-	EN	Add all songs
-	ES	Agregar todas las canciones
-	FI	Lisää kaikki kappaleet
-	FR	Ajouter tous les morceaux
-	IT	Aggiungi tutti i brani
-	NL	Alle liedjes toevoegen
-	NO	Legg til alle sanger
-	PL	Dodaj wszystkie utwory
-	RU	Добавить все песни
-	SV	Lägg till alla låtar
-
-JIVE_ADD_ALL
-	CS	Přidat vše
-	DA	Tilføj alle
-	DE	Alle hinzufügen
-	EN	Add all
-	ES	Agregar todo
-	FI	Lisää kaikki
-	FR	Tout ajouter
-	IT	Aggiungi tutto
-	NL	Alles toevoegen
-	NO	Legg til alle
-	PL	Dodaj wszystkie
-	RU	Добавить все
-	SV	Lägg till alla
-
 JIVE_DELETE_PLAYLIST
 	CS	Smazat seznam skladeb\n%s
 	DA	Slet afspilningsliste\n%s
@@ -21443,21 +21326,6 @@ JIVE_SET_PRESET_X
 	RU	Задать предустановку %s
 	SV	Ange förinställning %s
 
-JIVE_SET_AS_PRESET
-	CS	Nastavit jako předvolbu
-	DA	Indstil som fast indstilling
-	DE	Als Voreinstellung festgelegt
-	EN	Set as Preset
-	ES	Establecer como memoria
-	FI	Määritä esiasetukseksi
-	FR	Définir comme présélection
-	IT	Imposta come predefinito
-	NL	Als voorinstelling instellen
-	NO	Gjør til forhåndsinnstilling
-	PL	Ustaw jako ustawienie zaprogramowane
-	RU	Задать в качестве предустановки
-	SV	Ange som förinställd
-
 JIVE_SAVE_TO_FAVORITES
 	CS	Uložit do Oblíbených
 	DA	Føj til favoritter
@@ -21472,36 +21340,6 @@ JIVE_SAVE_TO_FAVORITES
 	PL	Zapisz w ulubionych
 	RU	Сохранить в избранном
 	SV	Spara i Favoriter
-
-JIVE_ADD_THIS_SONG
-	CS	Přidat do aktuálního seznamu skladeb
-	DA	Føj til afspilningslisten
-	DE	Der aktuellen Wiedergabeliste hinzufügen
-	EN	Add to Current Playlist
-	ES	Agregar a la lista de reproducción actual
-	FI	Lisää nykyiseen soittoluetteloon
-	FR	Ajouter à la liste de lecture en cours
-	IT	Aggiungi alla playlist corrente
-	NL	Aan huidige playlist toevoegen
-	NO	Legg til i gjeldende spilleliste
-	PL	Dodaj do aktualnej listy odtwarzania
-	RU	Добавить в текущий плей-лист
-	SV	Lägg till i aktuell spellista
-
-JIVE_PLAY_THIS_SONG
-	CS	Přehrát tuto skladbu
-	DA	Afspil dette nummer
-	DE	Diesen Titel wiedergeben
-	EN	Play this Song
-	ES	Reproducir esta canción
-	FI	Soita tämä kappale
-	FR	Lire ce morceau
-	IT	Riproduci questo brano
-	NL	Dit liedje afspelen
-	NO	Spill denne sangen
-	PL	Odtwórz ten utwór
-	RU	Воспроизвести эту песню
-	SV	Spela upp den här låten
 
 ADD_TO_END
 	CS	Přidat na konec
@@ -21683,36 +21521,6 @@ JIVE_POPUP_ADDING
 	RU	Добавление
 	SV	Lägger till
 
-JIVE_POPUP_REMOVING
-	CS	Odstraňování
-	DA	Fjerner
-	DE	Entfernen von
-	EN	Removing
-	ES	Quitando
-	FI	Poistetaan
-	FR	Suppression
-	IT	Rimozione
-	NL	Bezig met verwijderen
-	NO	Fjerner
-	PL	Usuwanie
-	RU	Удаление
-	SV	Tar bort
-
-JIVE_POPUP_REMOVING_FROM_PLAYLIST
-	CS	Odstraňování \n%s\nze seznamu skladeb...
-	DA	Fjerner\n%s\nfra afspilningsliste...
-	DE	\n%s\nwird aus Wiedergabeliste entfernt...
-	EN	Removing\n%s\nfrom Playlist...
-	ES	Quitando\n%s\nde la lista de reproducción...
-	FI	Poistetaan\n%s\nsoittoluettelosta...
-	FR	Suppression de\n%s\nde la liste de lecture...
-	IT	Eliminazione di\n%s\ndalla playlist in corso...
-	NL	Bezig met verwijderen van\n%s\nuit playlist...
-	NO	Fjerner\n%s\nfra spillelisten ...
-	PL	Usuwanie\n%s\nz listy odtwarzania...
-	RU	Удаление\n%s\nиз плей-листа...
-	SV	Tar bort\n%s\nfrån spellistan...
-
 JIVE_POPUP_TO_PLAY_NEXT
 	CS	přehrát další...
 	DA	bliver spillet næste gang...
@@ -21727,51 +21535,6 @@ JIVE_POPUP_TO_PLAY_NEXT
 	PL	do odtworzenia jako następny...
 	RU	воспроизвести след...
 	SV	spelar härnäst...
-
-JIVE_POPUP_TO_PLAYLIST
-	CS	do seznamu skladeb...
-	DA	til afspilningsliste...
-	DE	in Wiedergabeliste...
-	EN	to Playlist...
-	ES	a lista de reproducción...
-	FI	soittoluetteloon...
-	FR	vers la liste de lecture...
-	IT	alla playlist in corso...
-	NL	aan playlist...
-	NO	i spilleliste...
-	PL	do listy odtwarzania...
-	RU	в плей-лист...
-	SV	till spellista...
-
-JIVE_POPUP_FROM_PLAYLIST
-	CS	ze seznamu skladeb...
-	DA	fra afspilningsliste...
-	DE	aus Wiedergabeliste...
-	EN	from Playlist...
-	ES	de lista de reproducción...
-	FI	soittoluettelosta...
-	FR	à partir de la liste de lecture...
-	IT	dalla playlist in corso...
-	NL	uit playlist...
-	NO	fra spilleliste...
-	PL	z listy odtwarzania...
-	RU	из плей-листа...
-	SV	från spellista...
-
-JIVE_POPUP_NOW_PLAYING
-	CS	Právě hraje\n%s
-	DA	Nu spiller\n%s
-	DE	Aktueller Titel\n%s
-	EN	Now Playing\n%s
-	ES	Reproducción en curso\n%s
-	FI	Nyt soi\n%s
-	FR	Lecture \n%s en cours
-	IT	Riproduzione in corso di\n%s
-	NL	Speelt nu\n%s
-	NO	Spilles nå\n%s
-	PL	Teraz odtwarzane\n%s
-	RU	Воспроизводится\n%s
-	SV	Nu spelas\n%s
 
 JIVE_TURN_PLAYER_ON
 	CS	Zapnout %s
@@ -21817,36 +21580,6 @@ PLAYER_NAME
 	PL	Nazwa
 	RU	Имя
 	SV	Namn
-
-JIVE_PLAYER_MODEL
-	CS	Model
-	DA	Model
-	DE	Modell
-	EN	Model
-	ES	Modelo
-	FI	Malli
-	FR	Modèle
-	IT	Modello
-	NL	Model
-	NO	Modell
-	PL	Model
-	RU	Модель
-	SV	Modell
-
-JIVE_PLAYER_FIRMWARE_VERSION
-	CS	Verze firmwaru
-	DA	Firmwareversion
-	DE	Firmware-Version
-	EN	FW Version
-	ES	Versión de FW
-	FI	FW-versio
-	FR	Version FW
-	IT	Versione FW
-	NL	FW-versie
-	NO	Fastvareversjon
-	PL	Wersja oprogramowania układowego
-	RU	Версия микропрограммы
-	SV	Version av inbyggd programvara
 
 CANCEL
 	CS	Storno

@@ -13,51 +13,6 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
 	RU	Rhapsody
 	SV	Rhapsody
 
-PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
-	CS	Rhapsody
-	DA	Rhapsody
-	DE	Rhapsody
-	EN	Rhapsody
-	ES	Rhapsody
-	FI	Rhapsody
-	FR	Rhapsody
-	IT	Rhapsody
-	NL	Rhapsody
-	NO	Rhapsody
-	PL	Rhapsody
-	RU	Rhapsody
-	SV	Rhapsody
-
-PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
-	CS	Knihovna Rhapsody
-	DA	Rhapsody-bibliotek
-	DE	Rhapsody Library
-	EN	Rhapsody Library
-	ES	Biblioteca Rhapsody
-	FI	Rhapsody-kirjasto
-	FR	Bibliothèque Rhapsody
-	IT	Libreria Rhapsody
-	NL	Rhapsody-collectie
-	NO	Rhapsody-bibliotek
-	PL	Biblioteka usługi Rhapsody
-	RU	Медиатека Rhapsody
-	SV	Rhapsody-bibliotek
-
-PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY
-	CS	Knihovna Napster
-	DA	Napster-bibliotek
-	DE	Napster-Bibliothek
-	EN	Napster Library
-	ES	Biblioteca Napster
-	FI	Napster-kirjasto
-	FR	Bibliothèque Napster
-	IT	Libreria Napster
-	NL	Napster-collectie
-	NO	Napster-bibliotek
-	PL	Biblioteka usługi Napster
-	RU	Медиатека Napster
-	SV	Napster-bibliotek
-
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	CS	Chyba Rhapsody
 	DA	Rhapsody-fejl
@@ -72,66 +27,6 @@ PLUGIN_RHAPSODY_DIRECT_ERROR
 	PL	Błąd usługi Rhapsody
 	RU	Ошибка Rhapsody
 	SV	Rhapsody-fel
-
-PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
-	CS	Interní chyba Rhapsody: %s
-	DA	Intern Rhapsody-fejl: %s
-	DE	Interner Rhapsody-Fehler: %s
-	EN	Internal Rhapsody Error: %s
-	ES	Error interno de Rhapsody: %s
-	FI	Sisäinen Rhapsodyn virhe: %s
-	FR	Erreur interne Rhapsody: %s
-	IT	Errore interno di Rhapsody: %s
-	NL	Interne Rhapsody-foutmelding: %s
-	NO	Intern Rhapsody-feil: %s
-	PL	Błąd wewnętrzny usługi Rhapsody: %s
-	RU	Внутренняя ошибка Rhapsody: %s
-	SV	Internt Rhapsody-fel: %s
-
-PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
-	CS	Neplatná odezva přehrávače na Rhapsody.
-	DA	Ugyldigt Rhapsody-svar fra afspilleren.
-	DE	Ungültige Rhapsody-Reaktion vom Player.
-	EN	Invalid Rhapsody response from player.
-	ES	Respuesta no válida de Rhapsody desde reproductor.
-	FI	Virheellinen Rhapsodyn vastaus soittimelta.
-	FR	Réponse Rhapsody non valide de la part de la platine.
-	IT	Risposta Rhapsody non valida dal lettore.
-	NL	Ongeldige Rhapsody-respons van muzieksysteem.
-	NO	Ugyldig Rhapsody-respons fra spilleren.
-	PL	Nieprawidłowa odpowiedź dla usługi Rhapsody z odtwarzacza.
-	RU	Недействительный ответ Rhapsody от плеера.
-	SV	Ogiltigt Rhapsody-svar från spelaren.
-
-PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
-	CS	Není možná komunikace s Rhapsody.
-	DA	Det var ikke muligt at kommunikere med Rhapsody.
-	DE	Verbindung mit Rhapsody nicht möglich.
-	EN	Unable to communicate with Rhapsody.
-	ES	Imposible comunicarse con Rhapsody.
-	FI	Tietoliikenne Rhapsodyn kanssa ei onnistu.
-	FR	Communication avec Rhapsody impossible.
-	IT	Impossibile comunicare con Rhapsody.
-	NL	Geen communicatie mogelijk met Rhapsody.
-	NO	Kan ikke kommunisere med Rhapsody.
-	PL	Nie można połączyć się z usługą Rhapsody.
-	RU	Взаимодействие с Rhapsody невозможно.
-	SV	Det går inte att kommunicera med Rhapsody.
-
-PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
-	CS	Přehrávač nebyl schopen komunikace s Rhapsody.
-	DA	Afspilleren kunne ikke kommunikere med Rhapsody.
-	DE	Player konnte keine Verbindung mit Rhapsody herstellen.
-	EN	Player was unable to communicate with Rhapsody.
-	ES	El reproductor no se pudo comunicar con Rhapsody.
-	FI	Soitin ei voinut kommunikoida Rhapsodyn kanssa.
-	FR	La platine n'a pas pu communiquer avec Rhapsody.
-	IT	Il lettore non è stato in grado di comunicare con Rhapsody.
-	NL	Muzieksysteem kan niet met Rhapsody communiceren.
-	NO	Spilleren kunne ikke kommunisere med Rhapsody.
-	PL	Odtwarzacz nie mógł połączyć się z usługą Rhapsody.
-	RU	Плееру не удалось обменяться данными с Rhapsody.
-	SV	Det gick inte att upprätta någon kommunikation mellan spelaren och Rhapsody.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	CS	Tento přehrávač nepodporuje Rhapsody/Napster. Je vyžadován Squeezebox2 nebo vyšší.
@@ -148,21 +43,6 @@ PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	RU	Этот плеер не поддерживает Rhapsody/Napster. Требуется Squeezebox2 или более высокой версии.
 	SV	Spelaren har inte stöd för Rhapsody/Napster. Squeezebox 2 eller senare krävs.
 
-PLUGIN_RHAPSODY_DIRECT_US_ONLY
-	CS	Omlouváme se, Rhapsody je nyní dostupná pouze v USA.
-	DA	Beklager, men Rhapsody kan foreløbig kun benyttes i USA.
-	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
-	EN	Sorry, Rhapsody is currently available in the U.S. only.
-	ES	Rhapsody sólo está disponible en EE UU.
-	FI	Rhapsody on tällä hetkellä tarjolla vain Yhdysvalloissa.
-	FR	Rhapsody est uniquement disponible aux Etats-Unis actuellement.
-	IT	Spiacenti, al momento Rhapsody è disponibile solo negli USA.
-	NL	Sorry, Rhapsody is momenteel alleen beschikbaar in de VS.
-	NO	Beklager, Rhapsody er for øyeblikket bare tilgjengelig i USA.
-	PL	Niestety usługa Rhapsody jest aktualnie dostępna tylko w USA.
-	RU	Извините, сейчас служба Rhapsody доступна только в США.
-	SV	Rhapsody är för närvarande endast tillgängligt i USA.
-
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	CS	Selhání zvukového proudu, přechod na další stopu.
 	DA	Fejl i lydstream, springer til næste spor.
@@ -177,36 +57,6 @@ PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.
 	RU	Сбой аудиопотока. Переход на следующую дорожку.
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
-
-PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
-	CS	Přihlašování do Rhapsody...
-	DA	Logger på Rhapsody...
-	DE	Anmelden bei Rhapsody läuft ...
-	EN	Logging in to Rhapsody...
-	ES	Iniciando sesión en Rhapsody...
-	FI	Kirjaudutaan Rhapsodyyn...
-	FR	Connexion à Rhapsody...
-	IT	Accesso a Rhapsody...
-	NL	Bezig met aanmelden bij Rhapsody...
-	NO	Logger på Rhapsody...
-	PL	Logowanie w usłudze Rhapsody...
-	RU	Вход в систему Rhapsody...
-	SV	Loggar in på Rhapsody...
-
-PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
-	CS	Získávání informací o stopě...
-	DA	Henter oplysninger om nummer...
-	DE	Titelinfos werden geladen...
-	EN	Getting track info...
-	ES	Obteniendo información de pista...
-	FI	Haetaan raidan tietoja...
-	FR	Obtention des informations sur le morceau...
-	IT	Recupero informazioni sul brano in corso...
-	NL	Nummerinfo wordt opgehaald...
-	NO	Henter informasjon om spor...
-	PL	Pobieranie informacji o utworze...
-	RU	Получение информации о дорожке...
-	SV	Hämtar spårinformation...
 
 PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	CS	Není možné načíst stopu pro kanál.
@@ -238,21 +88,6 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
-PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
-	CS	Není možné získat detaily o účtu ze mysqueezebox.com.
-	DA	Det var ikke muligt at hente kontodetaljer fra mysqueezebox.com.
-	DE	Konnte über das mysqueezebox.com keine Kontoinformationen finden.
-	EN	Unable to retrieve account details from mysqueezebox.com.
-	ES	Imposible obtener detalles de cuenta mysqueezebox.com.
-	FI	Tilitietojen hakeminen mysqueezebox.com-verkosta ei onnistu.
-	FR	Impossible de récupérer les détails du compte de mysqueezebox.com.
-	IT	Impossibile recuperare i dettagli dell'account mysqueezebox.com.
-	NL	Kan accountgegevens niet ophalen via mysqueezebox.com.
-	NO	Får ikke til å hente kontodetaljer fra mysqueezebox.com.
-	PL	Nie można pobrać szczegółów konta z usługi mysqueezebox.com.
-	RU	Невозможно извлечь сведения учетной записи из mysqueezebox.com.
-	SV	Det gick inte att hämta kontodetaljer från mysqueezebox.com.
-
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	CS	Neplatná relace přehrávání. Současně jsou povoleny pouze tři proudy.
 	DA	Ugyldig afspilningssession. Der kan højst vælges tre streams ad gangen.
@@ -267,21 +102,6 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	PL	Nieprawidłowa sesja odtwarzania. Jednocześnie dozwolone jest odtwarzanie maksymalnie trzech strumieni.
 	RU	Недействительный сеанс воспроизведения. Одновременно допускается не более 3 потоков.
 	SV	Felaktig uppspelningssession. Endast tre strömmar kan spelas upp samtidigt.
-
-PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
-	CS	Rhapsody nemůže přehrávat s tolika synchronizovanými přehrávači. Odsynchronizujte laskavě jeden nebo více přehrávačů.
-	DA	Rhapsody kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
-	DE	Rhapsody funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
-	EN	Rhapsody cannot play with this many players synced.  Please unsync one or more players.
-	ES	Rhapsody no puede reproducir con tantos reproductores sincronizados. Debe desincronizar al menos uno de ellos.
-	FI	Rhapsody ei toimi, jos näin monta soitinta on synkronoitu.  Poista yhden tai useamman soittimen synkronointi.
-	FR	Rhapsody ne peut fonctionner avec autant de platines synchronisées. Veuillez désynchroniser au moins une platine.
-	IT	Impossibile utilizzare Rhapsody con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
-	NL	Rhapsody kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
-	NO	Rhapsody kan ikke brukes med så mange synkroniserte spillere. Du må fjerne én eller flere spillere fra synkroniseringen.
-	PL	Odtwarzanie przez usługę Rhapsody przy takiej liczbie zsynchronizowanych odtwarzaczy jest niemożliwe. Wyłącz synchronizację co najmniej jednego odtwarzacza.
-	RU	Rhapsody не может воспроизводить, когда синхронизируется так много плееров. Отмените синхронизацию для одного или нескольких плееров.
-	SV	Det går inte att spela upp från Rhapsody när så många spelare har synkroniserats. Ta bort en eller flera spelare ur synkroniseringsgruppen.
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
 	CS	Na Rhapsody
@@ -312,21 +132,6 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY_EU
 	PL	W usłudze Napster
 	RU	На Napster
 	SV	På Napster
-
-PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
-	CS	Není možné najít adresu pro Rhapsody.
-	DA	Adressen til Rhapsody blev ikke fundet.
-	DE	Adresse für Rhapsody nicht gefunden.
-	EN	Unable to find address for Rhapsody.
-	ES	No se puede encontrar la dirección de Rhapsody.
-	FI	Rhapsodyn osoitetta ei löydy.
-	FR	Adresse de Rhapsody introuvable.
-	IT	Impossibile trovare l'indirizzo di Rhapsody.
-	NL	Kan adres voor Rhapsody niet vinden.
-	NO	Fant ikke adresse til Rhapsody.
-	PL	Nie można znaleźć adresu dla usługi Rhapsody.
-	RU	Невозможно найти адрес для Rhapsody.
-	SV	Det gick inte att hitta någon Rhapsody-adress.
 
 PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	CS	K použití Rhapsody stiskněte a podržte JAS k aktualizaci vašeho firmware.

@@ -13,21 +13,6 @@ PLUGIN_DEEZER_MODULE_NAME
 	RU	Deezer
 	SV	Deezer
 
-PLUGIN_DEEZER_ON_DEEZER
-	CS	Na Deezer
-	DA	På Deezer
-	DE	Auf Deezer
-	EN	On Deezer
-	ES	En Deezer
-	FI	Deezerissä
-	FR	Sur Deezer
-	IT	Su Deezer
-	NL	Op Deezer
-	NO	På Deezer
-	PL	W usłudze Deezer
-	RU	На Deezer
-	SV	På Deezer
-
 PLUGIN_DEEZER_STREAM_FAILED
 	CS	Selhání zvukového proudu, přechod na další stopu.
 	DA	Fejl i lydstream, springer til næste spor.

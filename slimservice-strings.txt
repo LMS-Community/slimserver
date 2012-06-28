@@ -53,18 +53,6 @@ SQUEEZENETWORK_HOME_TEST
 	NO	mysqueezebox.com - Test
 	SV	mysqueezebox.com – Test
 
-SQUEEZENETWORK_HOME_VAR
-	DA	mysqueezebox.com - %s
-	DE	mysqueezebox.com - %s
-	EN	mysqueezebox.com - %s
-	ES	mysqueezebox.com - %s
-	FI	mysqueezebox.com - %s
-	FR	mysqueezebox.com - %s
-	IT	mysqueezebox.com - %s
-	NL	mysqueezebox.com - %s
-	NO	mysqueezebox.com - %s
-	SV	mysqueezebox.com – %s
-
 APPLICATION
 	DA	mysqueezebox.com
 	DE	mysqueezebox.com

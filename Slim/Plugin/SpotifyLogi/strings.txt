@@ -28,21 +28,6 @@ PLUGIN_SPOTIFYLOGI_MODULE_NAME_DESC
 	RU	Официальный подключаемый модуль Spotify. Слушать Spotify на плеере Squeezebox Radio или Squeezebox Touch.
 	SV	Officiellt plugin-program för Spotify. Lyssna på Spotify via din radio eller Touch.
 
-PLUGIN_SPOTIFYLOGI_ERROR
-	CS	Chyba služby Spotify
-	DA	Spotify-fejl
-	DE	Spotify-Fehler
-	EN	Spotify Error
-	ES	Error de Spotify
-	FI	Spotify-virhe
-	FR	Erreur de Spotify
-	IT	Errore Spotify
-	NL	Fout in Spotify
-	NO	Spotify-feil
-	PL	Błąd Spotify
-	RU	Ошибка Spotify
-	SV	Spotify-fel
-
 PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	CS	Na službě Spotify
 	DA	På Spotify

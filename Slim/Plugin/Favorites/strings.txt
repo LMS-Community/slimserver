@@ -34,22 +34,6 @@ FAVORITES_NONE_DEFINED
 	RU	Выбранное не существует
 	SV	Det finns inga favoriter
 
-FAVORITES_PLAYING
-	CS	Přehrávání Oblíbené položky #%s
-	DA	Afspiller favorit nr. %s
-	DE	Favorit Nr. %s läuft ...
-	EN	Playing favorite #%s
-	ES	Reproduciendo favorito nº %s
-	FI	Soitetaan suosikki #%s
-	FR	Lecture du favori n°%s
-	HE	השמעת פריט מועדף ‎#%s
-	IT	Riproduzione del brano preferito #%s
-	NL	Favoriet #%s wordt afgespeeld
-	NO	Spiller favoritt nr. %s
-	PL	Odtwarzanie ulubionego nr %s
-	RU	Воспроизводится выбранное #%s
-	SV	Spelar favorit nr %s
-
 FAVORITES_FAVORITE_NUM
 	CS	Oblíbená položka #
 	DA	Favorit nr.
@@ -67,36 +51,6 @@ FAVORITES_FAVORITE_NUM
 	SV	Favorit nr
 	ZH_CN	最喜爱#
 
-FAVORITES_HOTKEYS
-	CS	Horké klávesy
-	DA	Genvejstaster
-	DE	Abkürzungstasten
-	EN	Hotkeys
-	ES	Teclas de acceso rápido
-	FI	Pikanäppäimet
-	FR	Raccourcis
-	IT	Tasti di scelta rapida
-	NL	Sneltoetsen
-	NO	Hurtigknapper
-	PL	Klawisze dostępu
-	RU	Сочетания клавиш
-	SV	Snabbtangenter
-
-FAVORITES_FAVORITE
-	CS	Oblíbené položky
-	DA	Favorit
-	DE	Favorit
-	EN	Favorite
-	ES	Favorito
-	FI	Suosikki
-	FR	Favori
-	IT	Preferito
-	NL	Favoriet
-	NO	Favoritt
-	PL	Ulubiony
-	RU	Выбранное
-	SV	Favorit
-
 FAVORITES_RIGHT_TO_DELETE
 	CS	Odstranit Oblíbenou položku
 	DA	Slet favorit
@@ -111,23 +65,6 @@ FAVORITES_RIGHT_TO_DELETE
 	PL	Usuń ulubiony
 	RU	Удалить выбранное
 	SV	Ta bort favorit
-
-FAVORITES_NOT_A_FAVORITE
-	CS	Není oblíbené
-	DA	Ikke en favorit
-	DE	Kein Favorit
-	EN	Not a favorite
-	ES	No es un favorito
-	FI	Ei suosikki
-	FR	Pas un favori
-	HE	לא מוגדר כפריט מועדף
-	IT	Non è un preferito
-	NL	Geen favoriet
-	NO	Ikke en favoritt
-	PL	Nie ulubiony
-	RU	Не входит в выбранное
-	SV	Ingen favorit
-	ZH_CN	不是最喜爱的
 
 FAVORITES_ADDING
 	CS	Ukládání Oblíbených položek...
@@ -430,36 +367,6 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	PL	Nowy ulubiony
 	RU	Новое выбранное
 	SV	Ny favorit
-
-PLUGIN_FAVORITES_NEWURL
-	CS	Nové URL
-	DA	Ny adresse
-	DE	Neue URL
-	EN	New URL
-	ES	URL nueva
-	FI	Uusi URL
-	FR	Nouvelle URL
-	IT	Nuovo URL
-	NL	Nieuwe URL
-	NO	Ny url
-	PL	Nowy adres URL
-	RU	Новый URL
-	SV	Ny webbadress
-
-PLUGIN_FAVORITES_LOADERROR
-	CS	Chyba při nahrávání souboru
-	DA	Fejl ved indlæsning af fil
-	DE	Fehler beim Laden der Datei
-	EN	Error Loading File
-	ES	Error al cargar archivo
-	FI	Virhe ladattaessa tiedostoa
-	FR	Erreur de chargement du fichier
-	IT	Errore durante il caricamento del file
-	NL	Fout tijdens laden bestand
-	NO	Feil ved lasting av fil
-	PL	Błąd ładowania pliku
-	RU	Ошибка при загрузке файла
-	SV	Fel vid inläsning av filen
 
 PLUGIN_FAVORITES_REMOTELOADERROR
 	CS	Chyba při nahrávání URL
