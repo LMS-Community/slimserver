@@ -674,7 +674,7 @@ sub directHeaders {
 
 				$directlog->warn("Direct stream failed for url: [$url]");
 
-				$client->failedDirectStream();
+				$client->failedDirectStream($client->string('PROBLEM_CONVERT_FILE'));
 			}
 			
 			# Bug 6482, refresh the cached Track object in the client playlist from the database
