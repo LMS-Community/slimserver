@@ -1077,7 +1077,11 @@ sub defaultMediaDirs {
 	# new LMS installation: default to all media folders
 	else {
 		# try to find the OS specific default folders for various media types
-		foreach my $medium ('music', 'videos', 'pictures') {
+		my @media = qw(music);
+		push @media, 'videos' if main::VIDEO;
+		push @media, 'pictures' if main::IMAGE;
+		
+		foreach my $medium (@media) {
 			my $path = Slim::Utils::OSDetect::dirsFor($medium);
 			
 			main::DEBUGLOG && $log && $log->debug("Setting default path for medium '$medium' to '$path' if available.");
@@ -1114,6 +1118,9 @@ sub defaultMediaIgnoreFolders {
 
 sub defaultPlaylistDir {
 	my $path = Slim::Utils::OSDetect::dirsFor('playlists');
+	
+	# we don't need a playlist folder unless the user can create his own playlists
+	return '' unless main::LOCAL_PLAYERS;
 
 	if ($path) {
 
