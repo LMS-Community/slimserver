@@ -1,6 +1,6 @@
 tell application "System Preferences"
 		
-	set current pane to pane id "com.slimdevices.slim"
+	set current pane to pane id "com.logitech.ueml"
 		
 	activate
 		
