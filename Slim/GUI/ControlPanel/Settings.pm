@@ -72,16 +72,20 @@ sub new {
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 		$btnStartStop->SetSize( $btnStartStop->GetBestSize() );
 	});
-	$statusSizer->Add($btnStartStop, 0, wxLEFT, 10);
+	$statusSizer->Add($btnStartStop, 0, wxLEFT | (main::THIRDPARTY ? undef : wxBOTTOM), 10);
 
-	my $cbStartSafeMode = Wx::CheckBox->new($self, -1, string('RUN_FAILSAFE'));
-	$parent->addStatusListener($cbStartSafeMode, sub {
-		$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
-	});
-	$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 10);
-
-	# check box if server is running in failsafe mode
-	$cbStartSafeMode->SetValue( $svcMgr->checkServiceState() == SC_STATE_RUNNING && Slim::GUI::ControlPanel->getPref('failsafe') );
+	my $cbStartSafeMode;
+	
+	if (main::THIRDPARTY) {
+		$cbStartSafeMode = Wx::CheckBox->new($self, -1, string('RUN_FAILSAFE'));
+		$parent->addStatusListener($cbStartSafeMode, sub {
+			$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
+		});
+		$statusSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP | wxBOTTOM, 10);
+	
+		# check box if server is running in failsafe mode
+		$cbStartSafeMode->SetValue( $svcMgr->checkServiceState() == SC_STATE_RUNNING && Slim::GUI::ControlPanel->getPref('failsafe') );
+	}
 
 	@startupOptions = map { string($_) } @startupOptions;
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
@@ -98,7 +102,7 @@ sub new {
 		# starting SC is heavily platform dependant
 		else {
 			&$setStartupModeHandler() if $setStartupModeHandler;
-			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe --debug server=debug,server.plugins=debug --d_startup' : undef);
+			$svcMgr->start((main::THIRDPARTY && $cbStartSafeMode->IsChecked()) ? '--failsafe --debug server=debug,server.plugins=debug --d_startup' : undef);
 			$parent->checkServiceStatus();
 		}
 	});
@@ -176,14 +180,16 @@ sub new {
 			$setStartupMode = 0;
 		};
 		
-		# doubleclick action for tray icon
-		my $lbDoubleClickHandler = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL'), string('CONTROLPANEL_TRAY_DOUBLECLICK_WEB') ]);
-		$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} || 0);
-		
-		$parent->addApplyHandler($lbDoubleClickHandler, sub {
-			$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
-		});
-		$startupSizer->Add($lbDoubleClickHandler, 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+		if (main::LOCAL_PLAYERS) {
+			# doubleclick action for tray icon
+			my $lbDoubleClickHandler = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL'), string('CONTROLPANEL_TRAY_DOUBLECLICK_WEB') ]);
+			$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} || 0);
+			
+			$parent->addApplyHandler($lbDoubleClickHandler, sub {
+				$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
+			});
+			$startupSizer->Add($lbDoubleClickHandler, 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+		}
 	}
 		
 	$parent->addApplyHandler($lbStartupMode, $setStartupModeHandler);

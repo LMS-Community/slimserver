@@ -17,10 +17,14 @@ use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Music;
-use Slim::GUI::ControlPanel::Account;
 use Slim::GUI::ControlPanel::Advanced;
 use Slim::GUI::ControlPanel::Status;
 use Slim::GUI::ControlPanel::Diagnostics;
+
+ if (main::LOCAL_PLAYERS) {
+	require Slim::GUI::ControlPanel::Account;
+}
+
 use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
 
@@ -93,7 +97,7 @@ sub new {
 	
 		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('CONTROLPANEL_SERVERSTATUS'), 1);
 		$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
-		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT')) if main::LOCAL_PLAYERS;
 		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook, $self), string('INFORMATION'));
@@ -309,7 +313,7 @@ sub getBaseUrl {
 				$credentials && $credentials->{username} && $credentials->{password}
 				? $credentials->{username} . ':' . $credentials->{password} . '@'
 				: ''
-			) . '127.0.0.1:' . (Slim::Utils::Light::getPref('httpport') || 9000),
+			) . '127.0.0.1:' . (Slim::Utils::Light::getPref('httpport') || main::WEB_PORT),
 			ttl => time() + 15,
 		};
 	}

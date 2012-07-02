@@ -87,15 +87,17 @@ sub new {
 	}
 	
 	
-	my $webSizer = Wx::StaticBoxSizer->new(
-		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_WEB_UI')),
-		wxVERTICAL
-	);
+	if (main::LOCAL_PLAYERS) {
+		my $webSizer = Wx::StaticBoxSizer->new(
+			Wx::StaticBox->new($self, -1, string('CONTROLPANEL_WEB_UI')),
+			wxVERTICAL
+		);
+		
+		$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/', 'CONTROLPANEL_WEB_CONTROL_DESC', 250) , 0, wxLEFT | wxTOP, 10 );
+		$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/settings/index.html', 'CONTROLPANEL_ADVANCED_SETTINGS_DESC', 250) , 0, wxALL, 10 );
 	
-	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/', 'CONTROLPANEL_WEB_CONTROL_DESC', 250) , 0, wxLEFT | wxTOP, 10 );
-	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/settings/index.html', 'CONTROLPANEL_ADVANCED_SETTINGS_DESC', 250) , 0, wxALL, 10 );
-
-	$mainSizer->Add($webSizer, 0, wxALL | wxGROW, 10);
+		$mainSizer->Add($webSizer, 0, wxALL | wxGROW, 10);
+	}
 
 
 	my $logSizer = Wx::StaticBoxSizer->new(

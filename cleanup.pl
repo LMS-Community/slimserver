@@ -47,9 +47,18 @@ use constant INFOLOG      => 0;
 use constant STATISTICS   => 0;
 use constant SB1SLIMP3SYNC=> 0;
 use constant WEBUI        => 0;
-use constant LOCAL_PLAYERS=> 0;
+use constant LOCAL_PLAYERS=> $ENV{nolocalplayers} ? 0 : 1;
 use constant SERVICES     => 0;
 use constant IP3K         => 0;
+use constant THIRDPARTY   => $ENV{no3rdpartyplugins} ? 0 : 1;
+
+# IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
+# IANA-requested port for the UEML-discovery and UEML-HTTP protocols is 3546
+use constant SLIMDISCOVERY_PORT => 3483;	# UDP
+use constant UEMLDISCOVERY_PORT => 3546;	# UDP
+use constant SLIMPROTO_PORT     => 3483;	# TCP
+use constant WEB_PORT           => LOCAL_PLAYERS ? 9000 : 3546;
+use constant CLI_PORT           => 9090;
 
 # load these later, don't need them right now
 require File::Path;

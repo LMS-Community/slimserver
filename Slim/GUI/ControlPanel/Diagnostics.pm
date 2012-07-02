@@ -48,11 +48,14 @@ sub new {
 		$_[0] ? string('RUNNING') : string('STOPPED');
 	});
 	$self->_addItem($scSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getHostIP);
-	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
-		checkPort(getHostIP(), '3483', $_[0]);
-	});
 	
-	my $httpPort = Slim::GUI::ControlPanel->getPref('httpport') || 9000;
+	if (main::LOCAL_PLAYERS) {
+		$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', main::SLIMPROTO_PORT, 'slimproto'), sub {
+			checkPort(getHostIP(), main::SLIMPROTO_PORT, $_[0]);
+		});
+	}
+	
+	my $httpPort = Slim::GUI::ControlPanel->getPref('httpport') || main::WEB_PORT;
 	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $httpPort, 'HTTP'), sub {
 		my $isRunning = shift;
 		my ($state, $stateString) = checkPort(getHostIP(), $httpPort, 1);
@@ -114,10 +117,12 @@ sub new {
 		return $stateString;
 	});
 
-	my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
-	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort, 'CLI'), sub {
-		checkPort(getHostIP(), $cliPort, $_[0]);
-	});
+	if (main::LOCAL_PLAYERS) {
+		my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
+		$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort, 'CLI'), sub {
+			checkPort(getHostIP(), $cliPort, $_[0]);
+		});
+	}
 	
 	$scBoxSizer->Add($scSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($scBoxSizer, 0, wxALL | wxGROW, 10);

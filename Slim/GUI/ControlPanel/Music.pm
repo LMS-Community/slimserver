@@ -54,7 +54,7 @@ sub new {
 
 	$mediaDirsSizer->Add($dirsBtnSizer, 0, wxTOP, 5);
 	$settingsSizer->AddSpacer(5);
-	$settingsSizer->Add($mediaDirsSizer, 0, wxGROW | wxLEFT | wxRIGHT, 10);
+	$settingsSizer->Add($mediaDirsSizer, 0, wxGROW | wxLEFT | wxRIGHT | (main::LOCAL_PLAYERS ? undef : wxBOTTOM), 10);
 	
 	EVT_BUTTON($self, $btnAdd, sub {
 		my $dirsSelector = Wx::DirDialog->new($self);
@@ -83,12 +83,14 @@ sub new {
 	});
 
 
-	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
-	$settingsSizer->AddSpacer(5);
-	$settingsSizer->Add(
-		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir', 'SETUP_PLAYLISTDIR'),
-		0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10
-	);
+	if (main::LOCAL_PLAYERS) {
+		$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
+		$settingsSizer->AddSpacer(5);
+		$settingsSizer->Add(
+			Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir', 'SETUP_PLAYLISTDIR'),
+			0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10
+		);
+	}
 	
 	my $iTunes = getPref('iTunes', 'state.prefs');
 	my $useItunesStr = ($svcMgr->checkServiceState() == SC_STATE_RUNNING)
