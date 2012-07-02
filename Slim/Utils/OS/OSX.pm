@@ -81,7 +81,7 @@ sub initDetails {
 		'Library/Logs/UEMusicLibrary'
 	) {
 
-		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
+		eval 'mkpath("$ENV{\'HOME\'}/$dir");' if ($dir !~ /Plugins/ || main::THIRDPARTY);
 	}
 
 	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/UEMusicLibrary";
@@ -152,17 +152,11 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
 
-		# For some reason the dir is lowercase on OS X.
-		# FRED: it may have been eons ago but today it is HTML; most of
-		# the time anyway OS X is not case sensitive so it does not really
-		# matter...
-		#if ($dir eq 'HTML') {
-		#	$dir = lc($dir);
-		#}
-
-		push @dirs, "$ENV{'HOME'}/Library/Application Support/UEMusicLibrary/$dir";
-		push @dirs, "/Library/Application Support/UEMusicLibrary/$dir";
-		push @dirs, catdir($Bin, $dir);
+		if ($dir !~ /Plugins/ || main::THIRDPARTY) {
+			push @dirs, "$ENV{'HOME'}/Library/Application Support/UEMusicLibrary/$dir";
+			push @dirs, "/Library/Application Support/UEMusicLibrary/$dir";
+			push @dirs, catdir($Bin, $dir);
+		}
 
 	} elsif ($dir eq 'log') {
 

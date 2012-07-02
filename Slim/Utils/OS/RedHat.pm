@@ -45,7 +45,7 @@ sub dirsFor {
 	} elsif ($dir eq 'Plugins') {
 			
 		push @dirs, $class->SUPER::dirsFor($dir);
-		push @dirs, "/usr/share/uemusiclibrary/Plugins";
+		push @dirs, "/usr/share/uemusiclibrary/Plugins" if main::THIRDPARTY;
 		push @dirs, "/usr/share/uemusiclibrary/Slim/Plugin";
 		push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		

@@ -35,7 +35,6 @@ sub initSetup {
 		Index 
 		Network 
 		Performance 
-		Plugins 
 		Security 
 		Software 
 		Status 
@@ -49,6 +48,10 @@ sub initSetup {
 		SqueezeNetwork 
 		UserInterface 
 	) if main::LOCAL_PLAYERS;
+	
+	if (main::THIRDPARTY) {
+		push @classes, 'Slim::Web::Settings::Server::Plugins';
+	}
 
 	if (main::TRANSCODING) {
 		push @classes, 'Slim::Web::Settings::Server::FileTypes';

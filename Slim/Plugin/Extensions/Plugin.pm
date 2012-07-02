@@ -136,6 +136,9 @@ my $otherRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/other.xml
 
 sub initPlugin {
 	my $class = shift;
+	
+	# don't initialize if 3rd party plugins are disabled
+	return if !main::THIRDPARTY;
 
 	$class->SUPER::initPlugin;
 

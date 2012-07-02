@@ -31,6 +31,7 @@ use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS=> ( grep { /--nolocalplayers/ } @ARGV ) ? 0 : 1;
 use constant SERVICES     => ( grep { /--noremoteservices/ } @ARGV ) ? 0 : 1;
 use constant IP3K         => ( grep { /--noip3kplayers/ } @ARGV ) ? 0 : 1;
+use constant THIRDPARTY   => ( grep { /--no3rdpartyplugins/ } @ARGV ) ? 0 : 1;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 # IANA-requested port for the UEML-discovery and UEML-HTTP protocols is 3546
@@ -745,7 +746,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo] [--nolocalplayers] [--noremoteservices] [--noip3kplayers]
+          [--noimage] [--novideo] [--nolocalplayers] [--noremoteservices] [--noip3kplayers] [--no3rdpartyplugins ]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
 
     --help           => Show this usage information.
@@ -793,6 +794,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --nolocalplayers => Disable support for locally-connected players.
     --noremoteservices=> Disable support for remote services (Internet radio, etc.)
     --noip3kplayers  => Disable support for ip3k players (Boom, Classic, Transporter, Receiver)
+    --no3rdpartyplugins=> Disable support for 3rd party plugins
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem

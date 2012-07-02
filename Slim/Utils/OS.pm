@@ -157,7 +157,7 @@ sub dirsFor {
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
 
 		# add on path to plugins installed by Extension installer, NB this can only be called after Prefs is loaded
-		push @dirs, catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir'), 'InstalledPlugins', 'Plugins' );
+		push @dirs, catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir'), 'InstalledPlugins', 'Plugins' ) if main::THIRDPARTY;
 	}
 
 	elsif ($dir eq 'updates') {

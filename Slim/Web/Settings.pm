@@ -201,6 +201,7 @@ sub handler {
 			if (/ITUNES/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') }
 			elsif (/PLUGIN_PODCAST/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin') }
 			elsif (/BASIC_PLAYER_SETTINGS|SQUEEZENETWORK_SETTINGS|INTERFACE_SETTINGS/) { main::LOCAL_PLAYERS }
+			elsif (/SETUP_PLUGINS/) { main::THIRDPARTY }
 			else { 1 }
 		}
 		(

@@ -31,6 +31,7 @@ use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCAL_PLAYERS=> 0;
 use constant SERVICES     => 0;
 use constant IP3K         => 0;
+use constant THIRDPARTY   => 0;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 # IANA-requested port for the UEML-discovery and UEML-HTTP protocols is 3546

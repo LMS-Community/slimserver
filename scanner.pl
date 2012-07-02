@@ -35,6 +35,7 @@ use constant HAS_AIO      => 0;
 use constant LOCAL_PLAYERS=> 0;
 use constant SERVICES     => 1;
 use constant IP3K         => 0;
+use constant THIRDPARTY   => ( grep { /--no3rdpartyplugins/ } @ARGV ) ? 0 : 1;
 
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware is 3483.
 # IANA-requested port for the UEML-discovery and UEML-HTTP protocols is 3546
