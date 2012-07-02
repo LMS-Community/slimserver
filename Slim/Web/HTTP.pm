@@ -158,7 +158,7 @@ sub openport {
 	my $testSocket;
 	
 	# start our listener
-	foreach my $port ($listenerport, 9000..9010, 9100, 8000, 10000) {
+	foreach my $port ($listenerport, main::WEB_PORT, 9000..9010, 9100, 8000, 10000) {
 		
 		next if $tested{$port};
 		

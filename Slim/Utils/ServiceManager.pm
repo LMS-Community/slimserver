@@ -105,7 +105,7 @@ sub getServiceState {
 }
 
 sub checkForHTTP {
-	my $httpPort = getPref('httpport') || 9000;
+	my $httpPort = getPref('httpport') || main::WEB_PORT;
 
 	# Use low-level socket code. IO::Socket returns a 'Invalid Descriptor'
 	# erorr. It also sucks more memory than it should.
