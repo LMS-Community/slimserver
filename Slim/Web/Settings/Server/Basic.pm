@@ -24,7 +24,10 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(language playlistdir libraryname) );
+	my @prefs = qw(language libraryname);
+	
+	push @prefs, 'playlistdir' if main::LOCAL_PLAYERS;
+	return ($prefs, @prefs);
 }
 
 sub handler {

@@ -83,11 +83,11 @@
 		</table>
 	[% END %]
 
-	[% WRAPPER settingSection %]
+	[% IF prefs.exists('pref_playlistdir'); WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir %]" size="40">
 		[% END %]
-	[% END %]
+	[% END; END %]
 
 	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
 		<select class="stdedit disableOnScan" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
