@@ -1100,6 +1100,26 @@ sub playerSettingsMenu {
 	
 	# allow player linked to anonymous user accounts to be assigned to existing/new named user account
 	if ( main::SLIM_SERVICE && $client->hasAnonymousAccount ) {
+		# XXX Create PIN menu call
+		push @menu, {
+			text           => $client->string("CREATE_PIN"),
+			actions => {
+				go => {
+					cmd    => [ 'get_pin', 0, 100 ],
+					player => 0,
+				},
+			},
+			id             => 'get_pin',
+			node           => 'settings',
+			weight         => 99,
+			window         => {
+				# XXX - need own icon
+				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
+			},
+		};
+		
+		# XXX Move this menu under Settings / Developer
+=pod
 		push @menu, {
 			text           => $client->string("SB_ACCOUNT"),
 			actions => {
@@ -1116,6 +1136,7 @@ sub playerSettingsMenu {
 				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
 			},
 		};
+=cut
 	}
 	elsif ( main::SLIM_SERVICE ) {
 		_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
