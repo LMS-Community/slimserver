@@ -288,7 +288,7 @@ sub getUpdateInstaller {
 
 		chomp;
 		
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
+		if (/(?:UE Music Library|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -316,7 +316,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^(?:UE Music Library|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
 }
 
 1;

@@ -942,6 +942,7 @@ sub init {
 		$prefs->setChange( sub {
 			# XXX the sn.com hostnames can be removed later
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
+			$cookieJar->clear( 'www.uesmartradio.com' );
 			$cookieJar->clear( 'www.squeezenetwork.com' );
 			$cookieJar->clear( 'www.test.squeezenetwork.com' );
 			$cookieJar->clear( 'www.mysqueezebox.com' );
@@ -1127,7 +1128,7 @@ sub defaultPlaylistDir {
 		# We've seen people have the defaultPlayListDir be a file. So
 		# change the path slightly to allow for that.
 		if (-f $path) {
-			$path .= 'Squeezebox';
+			$path .= 'UEMusicLibrary';
 		}
 
 		if (!-d $path) {

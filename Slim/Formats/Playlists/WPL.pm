@@ -85,7 +85,7 @@ sub read {
 sub write {
 	my $class   = shift;
 	my $listref = shift;
-	my $playlistname = shift || "Squeezebox " . Slim::Utils::Strings::string("PLAYLIST");
+	my $playlistname = shift || "UE Smart Radio " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename = shift;
 
 	# Handles version 1.0 WPL Windows Medial Playlist files...

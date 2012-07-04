@@ -77,7 +77,7 @@ sub connectSC {
 	my ( $client, $method ) = @_;
 	
 	Slim::Buttons::Settings::switchServer( $client, {
-		name  => 'Squeezebox Server',
+		name  => 'UE Music Library',
 		value => 0,
 	} );
 }

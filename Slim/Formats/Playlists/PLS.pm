@@ -95,7 +95,7 @@ sub read {
 sub write {
 	my $class        = shift;
 	my $listRef      = shift;
-	my $playlistname = shift || "Squeezebox " . Slim::Utils::Strings::string("PLAYLIST");
+	my $playlistname = shift || "UE Smart Radio " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename     = shift;
 
 	main::INFOLOG && $log->info("Writing out: $filename");

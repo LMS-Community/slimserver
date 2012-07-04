@@ -354,23 +354,23 @@ SLIMP3_HOME
 	ZH_CN	SLIMP3主页
 
 SQUEEZEBOX_HOME
-	CS	Squeezebox Doma
-	DA	Squeezebox Hovedmenu
-	DE	Squeezebox-Hauptmenü
-	EN	Squeezebox Home
-	ES	Inicio de Squeezebox
-	FI	Squeezebox - koti
-	FR	Menu Squeezebox
-	HE	Squeezebox - ראשי
-	IT	Pagina iniziale Squeezebox
-	JA	Squeezebox ホーム
-	NL	Squeezebox-hoofdmenu
-	NO	Squeezebox hovedmeny
-	PL	Squeezebox — strona główna
-	PT	Início Squeezebox
-	RU	Главное меню Squeezebox
-	SV	Squeezebox Hem
-	ZH_CN	Squeezebox主页
+	CS	Smart Radio Doma
+	DA	Smart Radio Hovedmenu
+	DE	Smart Radio-Hauptmenü
+	EN	Smart Radio Home
+	ES	Inicio de Smart Radio
+	FI	Smart Radio - koti
+	FR	Menu Smart Radio
+	HE	Smart Radio - ראשי
+	IT	Pagina iniziale Smart Radio
+	JA	Smart Radio ホーム
+	NL	Smart Radio-hoofdmenu
+	NO	Smart Radio hovedmeny
+	PL	Smart Radio — strona główna
+	PT	Início Smart Radio
+	RU	Главное меню Smart Radio
+	SV	Smart Radio Hem
+	ZH_CN	Smart Radio主页
 
 SQUEEZEBOX2_HOME
 	CS	Squeezebox Doma
@@ -2416,20 +2416,20 @@ SLIMP3
 	SV	SLIMP3
 
 SQUEEZEBOX
-	CS	Squeezebox
-	DA	Squeezebox
-	DE	Squeezebox
-	EN	Squeezebox
-	ES	Squeezebox
-	FI	Squeezebox
-	FR	Squeezebox
-	HE	Squeezebox
-	IT	Squeezebox
-	NL	Squeezebox
-	NO	Squeezebox
-	PL	Squeezebox
-	RU	Squeezebox
-	SV	Squeezebox
+	CS	Smart Radio
+	DA	Smart Radio
+	DE	Smart Radio
+	EN	Smart Radio
+	ES	Smart Radio
+	FI	Smart Radio
+	FR	Smart Radio
+	HE	Smart Radio
+	IT	Smart Radio
+	NL	Smart Radio
+	NO	Smart Radio
+	PL	Smart Radio
+	RU	Smart Radio
+	SV	Smart Radio
 
 SQUEEZEBOX2
 	CS	Squeezebox2/v3
@@ -2518,23 +2518,23 @@ WELCOME_TO_SQUEEZEBOX_SERVER
 	ZH_CN	欢迎使用UE Music Library
 
 WELCOME_TO_SQUEEZEBOX
-	CS	Vítejte ve Squeezeboxu
-	DA	Velkommen til Squeezebox
-	DE	Willkommen bei Squeezebox
-	EN	Welcome to Squeezebox
-	ES	Bienvenido a Squeezebox
-	FI	Tervetuloa Squeezeboxiin
-	FR	Bienvenue dans la Squeezebox
-	HE	ברוך הבא ל-Squeezebox
-	IT	Benvenuti in Squeezebox
-	JA	Squeezeboxへようこそ
-	NL	Welkom bij Squeezebox
-	NO	Velkommen til Squeezebox
-	PL	Squeezebox — Zapraszamy
-	PT	Bem-vindo ao Squeezebox
-	RU	Добро пожаловать в Squeezebox
-	SV	Välkommen till Squeezebox!
-	ZH_CN	欢迎使用Squeezebox
+	CS	Vítejte ve UE Smart Radiou
+	DA	Velkommen til UE Smart Radio
+	DE	Willkommen bei UE Smart Radio
+	EN	Welcome to UE Smart Radio
+	ES	Bienvenido a UE Smart Radio
+	FI	Tervetuloa UE Smart Radioiin
+	FR	Bienvenue dans la UE Smart Radio
+	HE	ברוך הבא ל-UE Smart Radio
+	IT	Benvenuti in UE Smart Radio
+	JA	UE Smart Radioへようこそ
+	NL	Welkom bij UE Smart Radio
+	NO	Velkommen til UE Smart Radio
+	PL	UE Smart Radio — Zapraszamy
+	PT	Bem-vindo ao UE Smart Radio
+	RU	Добро пожаловать в UE Smart Radio
+	SV	Välkommen till UE Smart Radio!
+	ZH_CN	欢迎使用UE Smart Radio
 
 WELCOME_TO_SQUEEZEBOX2
 	CS	Vítejte ve Squeezeboxu
@@ -2703,23 +2703,23 @@ FREE_YOUR_MUSIC
 	ZH_CN	释放您的音乐！
 
 UPDATING_FIRMWARE_SQUEEZEBOX
-	CS	Aktualizace firmwaru Squeezebox.
-	DA	Opdaterer Squeezebox-firmware.
-	DE	Squeezebox-Firmware wird aktualisiert ...
-	EN	Updating Squeezebox firmware.
-	ES	Actualizando firmware de Squeezebox.
-	FI	Squeezeboxin laitteisto-ohjelmiston päivitys.
-	FR	Mise à jour du micrologiciel Squeezebox
-	HE	שדרוג הקושחה של Squeezebox.
-	IT	Aggiornamento firmware Squeezebox.
+	CS	Aktualizace firmwaru Smart Radio.
+	DA	Opdaterer Smart Radio-firmware.
+	DE	Smart Radio-Firmware wird aktualisiert ...
+	EN	Updating Smart Radio firmware.
+	ES	Actualizando firmware de Smart Radio.
+	FI	Smart Radioin laitteisto-ohjelmiston päivitys.
+	FR	Mise à jour du micrologiciel Smart Radio
+	HE	שדרוג הקושחה של Smart Radio.
+	IT	Aggiornamento firmware Smart Radio.
 	JA	ファームウェアをアップデートしています
-	NL	Squeezebox-firmware wordt bijgewerkt.
-	NO	Oppdaterer Squeezebox-fastvare.
-	PL	Aktualizowanie oprogramowania układowego urządzenia Squeezebox.
+	NL	Smart Radio-firmware wordt bijgewerkt.
+	NO	Oppdaterer Smart Radio-fastvare.
+	PL	Aktualizowanie oprogramowania układowego urządzenia Smart Radio.
 	PT	Atualizando firmware ...
-	RU	Обновление микропрограммы Squeezebox.
-	SV	Uppdaterar Squeezebox inbyggda programvara
-	ZH_CN	更新Squeezebox韧件
+	RU	Обновление микропрограммы Smart Radio.
+	SV	Uppdaterar Smart Radio inbyggda programvara
+	ZH_CN	更新Smart Radio韧件
 
 UPDATING_FIRMWARE_SQUEEZEBOX2
 	CS	Aktualizace firmwaru Squeezebox.
@@ -5701,19 +5701,19 @@ SETUP_OUTPUT_CHANNELS
 	SV	Utgångskanalläge
 
 SETUP_OUTPUT_CHANNELS_DESC
-	CS	Tento přehrávač můžete nakonfigurovat, aby přehrával buď levý nebo pravý kanál. Tuto funkci můžete například využít k vytvoření stereo efektu ze 2 synchronizovaných rádií Squeezebox.
-	DA	Du kan konfigurere afspilleren til kun at spille i den venstre eller højre kanal. Dette kan bruges til at oprette et stereobillede fra to synkroniserede Squeezebox-radioer, f.eks.
-	DE	Sie können diesen Player so konfigurieren, dass er nur den linken oder rechten Kanal wiedergibt. Diese Option kann zum Beispiel verwendet werden, um ein Stereobild über zwei synchronisierte Squeezebox Radios zu erstellen.
-	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced Squeezebox Radios, for example.
-	ES	Puede configurar este reproductor para que sólo reproduzca el canal izquierdo o el derecho. Se puede usar, por ejemplo, para crear una imagen estéreo a partir de dos dispositivos Squeezebox Radio sincronizados.
-	FI	Voit määrittää soittimen toistamaan vain vasemmalla tai oikealla kanavalla. Näin voidaan luoda stereovaikutelma esimerkiksi kahdella synkronoidulla Squeezebox-radiolla.
-	FR	Vous pouvez configurer cette platine pour lire uniquement le canal droit ou gauche. Cette configuration vous permet par exemple de créer une image stéréo à partir de deux radios Squeezebox synchronisées.
-	IT	È possibile configurare il lettore affinché riproduca solo il canale destro o sinistro. Ciò risulta utile ad esempio per creare un'immagine stereo da due Squeezebox Radio sincronizzate.
-	NL	Je kunt dit muzieksysteem configureren zodat alleen via het linker- of rechterkanaal wordt afgespeeld. Zo kun je bijvoorbeeld 2 gesynchroniseerde Squeezebox Radio's in stereo-opstelling plaatsen.
-	NO	Du kan konfigurere spilleren slik at den kun spiller fra venstre eller høyre kanal. Slik kan du blant annet skape et stereobilde fra to synkroniserte Squeezebox Radio-spillere.
-	PL	Ten odtwarzacz można skonfigurować tak, aby odtwarzał tylko kanał prawy lub lewy. W ten sposób można na przykład utworzyć obraz stereo z 2 zsynchronizowanych odtwarzaczy Squeezebox Radio.
-	RU	Можно настроить этот плеер для воспроизведения только левого или правого канала. Например, с помощью этой функции можно создать стереоэффект, используя два синхронизированных радио Squeezebox.
-	SV	Du kan konfigurera den här spelaren att bara spela upp vänster eller höger kanal. Funktionen kan exempelvis användas för att skapa stereoeffekt med två synkroniserade Squeezebox Radio.
+	CS	Tento přehrávač můžete nakonfigurovat, aby přehrával buď levý nebo pravý kanál. Tuto funkci můžete například využít k vytvoření stereo efektu ze 2 synchronizovaných rádií UE Smart Radio.
+	DA	Du kan konfigurere afspilleren til kun at spille i den venstre eller højre kanal. Dette kan bruges til at oprette et stereobillede fra to synkroniserede UE Smart Radio-radioer, f.eks.
+	DE	Sie können diesen Player so konfigurieren, dass er nur den linken oder rechten Kanal wiedergibt. Diese Option kann zum Beispiel verwendet werden, um ein Stereobild über zwei synchronisierte UE Smart Radios zu erstellen.
+	EN	You can configure this player to play only the left or right channel. This can be used to create a stereo image from 2 synced UE Smart Radios, for example.
+	ES	Puede configurar este reproductor para que sólo reproduzca el canal izquierdo o el derecho. Se puede usar, por ejemplo, para crear una imagen estéreo a partir de dos dispositivos UE Smart Radio sincronizados.
+	FI	Voit määrittää soittimen toistamaan vain vasemmalla tai oikealla kanavalla. Näin voidaan luoda stereovaikutelma esimerkiksi kahdella synkronoidulla UE Smart Radio-radiolla.
+	FR	Vous pouvez configurer cette platine pour lire uniquement le canal droit ou gauche. Cette configuration vous permet par exemple de créer une image stéréo à partir de deux radios UE Smart Radio synchronisées.
+	IT	È possibile configurare il lettore affinché riproduca solo il canale destro o sinistro. Ciò risulta utile ad esempio per creare un'immagine stereo da due UE Smart Radio sincronizzate.
+	NL	Je kunt dit muzieksysteem configureren zodat alleen via het linker- of rechterkanaal wordt afgespeeld. Zo kun je bijvoorbeeld 2 gesynchroniseerde UE Smart Radio's in stereo-opstelling plaatsen.
+	NO	Du kan konfigurere spilleren slik at den kun spiller fra venstre eller høyre kanal. Slik kan du blant annet skape et stereobilde fra to synkroniserte UE Smart Radio-spillere.
+	PL	Ten odtwarzacz można skonfigurować tak, aby odtwarzał tylko kanał prawy lub lewy. W ten sposób można na przykład utworzyć obraz stereo z 2 zsynchronizowanych odtwarzaczy UE Smart Radio.
+	RU	Можно настроить этот плеер для воспроизведения только левого или правого канала. Например, с помощью этой функции можно создать стереоэффект, используя два синхронизированных радио UE Smart Radio.
+	SV	Du kan konfigurera den här spelaren att bara spela upp vänster eller höger kanal. Funktionen kan exempelvis användas för att skapa stereoeffekt med två synkroniserade UE Smart Radio.
 
 OUTPUT_CHANNELS_NORMAL
 	CS	Oba kanály (Stereo)
@@ -6318,19 +6318,19 @@ SETUP_LIBRARY_NAME
 	SV	Mediebiblioteksnamn
 
 SETUP_LIBRARY_NAME_DESC
-	CS	Tak se bude jmenovat vaše knihovna médií v menu "Moje média" vašeho Squeezebox.
-	DA	Dit mediebibliotek får dette navn i Squeezebox-menuen Mine multimedier.
-	DE	Das ist der Name der Medienbibliothek im Squeezebox-Menü 'Eigene Medien'.
-	EN	This is how your media library will be named in your Squeezebox's "My Media" menu.
-	ES	Así es como se llamará la biblioteca multimedia en el menú de \"Mi material multimedia\" de Squeezebox.
-	FI	Näin mediakirjastosi nimetään Squeezeboxisi Oma media -valikossa.
-	FR	Votre bibliothèque multimédia est nommée ainsi sous le menu "Mes médias" de la Squeezebox.
-	IT	La libreria multimediale viene denominata in questo modo nel menu dei file multimediali di Squeezebox.
-	NL	Dit is de naam waarmee je mediacollectie in het Squeezebox-menu Mijn media verschijnt.
-	NO	Slik vises navnet på mediebiblioteket i menyen Mine mediefiler på Squeezebox.
-	PL	Taką nazwę będzie miała biblioteka multimedialna w menu „Moje multimedia” urządzenia Squeezebox.
-	RU	Это имя библиотеки мультимедиа будет отображаться в меню Squeezebox "Мои файлы мультимедиа".
-	SV	Det här är namnet på ditt mediebibliotek som visas i Squeezebox-menyn My Media.
+	CS	Tak se bude jmenovat vaše knihovna médií v menu "Moje média" vašeho Smart Radio.
+	DA	Dit mediebibliotek får dette navn i Smart Radio-menuen Mine multimedier.
+	DE	Das ist der Name der Medienbibliothek im Smart Radio-Menü 'Eigene Medien'.
+	EN	This is how your media library will be named in your Smart Radio's "My Media" menu.
+	ES	Así es como se llamará la biblioteca multimedia en el menú de \"Mi material multimedia\" de Smart Radio.
+	FI	Näin mediakirjastosi nimetään Smart Radioisi Oma media -valikossa.
+	FR	Votre bibliothèque multimédia est nommée ainsi sous le menu "Mes médias" de la Smart Radio.
+	IT	La libreria multimediale viene denominata in questo modo nel menu dei file multimediali di Smart Radio.
+	NL	Dit is de naam waarmee je mediacollectie in het Smart Radio-menu Mijn media verschijnt.
+	NO	Slik vises navnet på mediebiblioteket i menyen Mine mediefiler på Smart Radio.
+	PL	Taką nazwę będzie miała biblioteka multimedialna w menu „Moje multimedia” urządzenia Smart Radio.
+	RU	Это имя библиотеки мультимедиа будет отображаться в меню Smart Radio "Мои файлы мультимедиа".
+	SV	Det här är namnet på ditt mediebibliotek som visas i Smart Radio-menyn My Media.
 
 SETUP_AUDIODIR
 	CS	Složka Hudba
@@ -9380,18 +9380,18 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 
 SETUP_WIZARD_SUMMARY_DESC
 	CS	UE Music Library nyní používá následující nastavení:
-	DA	Squeezebox benytter nu følgende indstillinger:
-	DE	Squeezebox nutzt jetzt folgende Einstellungen:
-	EN	Squeezebox is now using the following settings:
-	ES	Squeezebox está usando esta configuración:
-	FI	Squeezebox käyttää nyt seuraavia asetuksia:
-	FR	La Squeezebox utilise les réglages suivants:
-	IT	Squeezebox utilizza attualmente le impostazioni seguenti:
-	NL	Squeezebox gebruikt nu de volgende instellingen:
-	NO	Squeezebox bruker nå følgende innstillinger:
-	PL	Program Squeezebox aktualnie korzysta z następujących ustawień:
-	RU	В Squeezebox используются следующие настройки:
-	SV	Squeezebox använder nu följande inställningar:
+	DA	UE Smart Radio benytter nu følgende indstillinger:
+	DE	UE Smart Radio nutzt jetzt folgende Einstellungen:
+	EN	UE Smart Radio is now using the following settings:
+	ES	UE Smart Radio está usando esta configuración:
+	FI	UE Smart Radio käyttää nyt seuraavia asetuksia:
+	FR	La UE Smart Radio utilise les réglages suivants:
+	IT	UE Smart Radio utilizza attualmente le impostazioni seguenti:
+	NL	UE Smart Radio gebruikt nu de volgende instellingen:
+	NO	UE Smart Radio bruker nå følgende innstillinger:
+	PL	Program UE Smart Radio aktualnie korzysta z następujących ustawień:
+	RU	В UE Smart Radio используются следующие настройки:
+	SV	UE Smart Radio använder nu följande inställningar:
 
 SETUP_WIZARD_SUMMARY_SQN
 	CS	Účet mysqueezebox.com:
@@ -9439,19 +9439,19 @@ SETUP_WIZARD_DONE
 	SV	Konfigurationen av UE Music Library är klar!
 
 SETUP_WIZARD_DONE_DESC
-	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš Squeezebox.<br/><br/>Pokud jste zvolili místní zdroj hudby, UE Music Library nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">kliknutím sem</a> pokračovat na dálkové ovládání UE Music Library.
-	DA	Indstillingerne er gemt. Nu kan du begynde at bruge Squeezebox.<br/><br/>Hvis du valgte en lokal musikkilde, begynder UE Music Library at indeksere din musiksamling. Du skal bare have lidt tålmodighed, det varer ikke længe før du kan lytte til alle dine musikfiler.<br/><br/>Du kan lukke vinduet eller <a href="/">klikke her</a> for at gå til UE Music Librarys fjernbetjening.
-	DE	Die Einstellungen wurden gespeichert. Sie können die Squeezebox jetzt verwenden.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt UE Music Library mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier</a> klicken, um UE Music Library Remote Control aufzurufen.
-	EN	Your settings have been saved. You're now ready to use your Squeezebox.<br/><br/>If you selected a local music source, UE Music Library will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to UE Music Library Remote Control.
-	ES	La configuración se ha guardado. Ya puede empezar a utilizar Squeezebox.<br/><br/>Si ha seleccionado un origen de música local, UE Music Library iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">hacer clic aquí</a> para pasar a UE Music Library Remote Control.
-	FI	Asetukset on tallennettu. Olet nyt valmis käyttämään Squeezeboxia.<br/><br/>Jos valitsit paikallisen musiikkilähteen, UE Music Library aloittaa nyt kokoelmasi indeksoinnin. Ole kärsivällinen &mdash; voit pian käyttää kaikkia musiikkitiedostojasi.<br/><br/>Voit nyt sulkea tämän ikkunan tai jatkaa UE Music Libraryin kaukosäätimeen <a href="/">napsauttamalla tästä</a>.
-	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la Squeezebox.<br/><br/>Si vous avez sélectionné une source musicale locale, le UE Music Library va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à la télécommande du UE Music Library.
-	IT	Le impostazioni sono state salvate. È ora possibile utilizzare lo Squeezebox.<br/><br/>Se è stata selezionata una sorgente musicale locale, UE Music Library avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per passare a UE Music Library Remote Control.
-	NL	Je instellingen zijn opgeslagen. Je kunt Squeezebox nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert Squeezebox nu je collectie. Een moment geduld &mdash; je kunt al snel bij al je muziekbestanden.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar UE Music Library Remote Control te gaan.
-	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk Squeezebox.<br/><br/>Hvis du velger en lokal musikkilde, vil UE Music Library nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til nettgrensesnittet til UE Music Library.
-	PL	Ustawienia zostały zapisane. Możesz teraz korzystać z programu Squeezebox.<br/><br/>Jeżeli wybrano lokalne źródło muzyki, program UE Music Library rozpocznie indeksowanie kolekcji. Prosimy o cierpliwość &mdash; wkrótce uzyskasz dostęp do wszystkich plików muzycznych.<br/><br/>Możesz teraz zamknąć to okno lub <a href="/">kliknąć tutaj</a>, aby przejść do programu UE Music Library Remote Control.
-	RU	Ваши настройки сохранены. Теперь можно начать работу с программой Squeezebox.<br/><br/>Если выбран локальный источник музыкальных файлов, UE Music Library начнет индексировать коллекцию. Пожалуйста, подождите: скоро все музыкальные файлы будут доступны.<br/><br/>Теперь можно закрыть это окно или <a href="/">щелкнуть здесь</a>, чтобы перейти к пульту ДУ UE Music Library.
-	SV	Inställningarna har sparats. Nu kan du börja använda Squeezebox. <br/><br/>Om du har valt en lokal musikkälla kommer din samling nu att indexeras. Det kan ta en liten stund, men du får snart tillgång till dina musikfiler.<br/><br/>Nu kan du stänga det här fönstret eller <a href="/">klicka här</a> för att fortsätta till fjärrstyrningen av UE Music Library.
+	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš UE Smart Radio.<br/><br/>Pokud jste zvolili místní zdroj hudby, UE Music Library nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">kliknutím sem</a> pokračovat na dálkové ovládání UE Music Library.
+	DA	Indstillingerne er gemt. Nu kan du begynde at bruge UE Smart Radio.<br/><br/>Hvis du valgte en lokal musikkilde, begynder UE Music Library at indeksere din musiksamling. Du skal bare have lidt tålmodighed, det varer ikke længe før du kan lytte til alle dine musikfiler.<br/><br/>Du kan lukke vinduet eller <a href="/">klikke her</a> for at gå til UE Music Librarys fjernbetjening.
+	DE	Die Einstellungen wurden gespeichert. Sie können die UE Smart Radio jetzt verwenden.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt UE Music Library mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier</a> klicken, um UE Music Library Remote Control aufzurufen.
+	EN	Your settings have been saved. You're now ready to use your UE Smart Radio.<br/><br/>If you selected a local music source, UE Music Library will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to UE Music Library Remote Control.
+	ES	La configuración se ha guardado. Ya puede empezar a utilizar UE Smart Radio.<br/><br/>Si ha seleccionado un origen de música local, UE Music Library iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">hacer clic aquí</a> para pasar a UE Music Library Remote Control.
+	FI	Asetukset on tallennettu. Olet nyt valmis käyttämään UE Smart Radioia.<br/><br/>Jos valitsit paikallisen musiikkilähteen, UE Music Library aloittaa nyt kokoelmasi indeksoinnin. Ole kärsivällinen &mdash; voit pian käyttää kaikkia musiikkitiedostojasi.<br/><br/>Voit nyt sulkea tämän ikkunan tai jatkaa UE Music Libraryin kaukosäätimeen <a href="/">napsauttamalla tästä</a>.
+	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la UE Smart Radio.<br/><br/>Si vous avez sélectionné une source musicale locale, le UE Music Library va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à la télécommande du UE Music Library.
+	IT	Le impostazioni sono state salvate. È ora possibile utilizzare lo UE Smart Radio.<br/><br/>Se è stata selezionata una sorgente musicale locale, UE Music Library avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per passare a UE Music Library Remote Control.
+	NL	Je instellingen zijn opgeslagen. Je kunt UE Smart Radio nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert Smart Radio nu je collectie. Een moment geduld &mdash; je kunt al snel bij al je muziekbestanden.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar UE Music Library Remote Control te gaan.
+	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk UE Smart Radio.<br/><br/>Hvis du velger en lokal musikkilde, vil UE Music Library nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til nettgrensesnittet til UE Music Library.
+	PL	Ustawienia zostały zapisane. Możesz teraz korzystać z programu UE Smart Radio.<br/><br/>Jeżeli wybrano lokalne źródło muzyki, program UE Music Library rozpocznie indeksowanie kolekcji. Prosimy o cierpliwość &mdash; wkrótce uzyskasz dostęp do wszystkich plików muzycznych.<br/><br/>Możesz teraz zamknąć to okno lub <a href="/">kliknąć tutaj</a>, aby przejść do programu UE Music Library Remote Control.
+	RU	Ваши настройки сохранены. Теперь можно начать работу с программой UE Smart Radio.<br/><br/>Если выбран локальный источник музыкальных файлов, UE Music Library начнет индексировать коллекцию. Пожалуйста, подождите: скоро все музыкальные файлы будут доступны.<br/><br/>Теперь можно закрыть это окно или <a href="/">щелкнуть здесь</a>, чтобы перейти к пульту ДУ UE Music Library.
+	SV	Inställningarna har sparats. Nu kan du börja använda UE Smart Radio. <br/><br/>Om du har valt en lokal musikkälla kommer din samling nu att indexeras. Det kan ta en liten stund, men du får snart tillgång till dina musikfiler.<br/><br/>Nu kan du stänga det här fönstret eller <a href="/">klicka här</a> för att fortsätta till fjärrstyrningen av UE Music Library.
 
 SETUP_WIZARD_NEXT
 	CS	Další
@@ -14646,23 +14646,23 @@ SLIMP3_MUSIC_PLAYER
 	ZH_CN	SLIMP3播放机
 
 SQUEEZEBOX_MUSIC_PLAYER
-	CS	Přehrávač hudby Squeezebox
-	DA	Squeezebox-afspiller
-	DE	Squeezebox-Musikplayer
-	EN	Squeezebox Music Player
-	ES	Reproductor de música Squeezebox
-	FI	Squeezebox-soitin
-	FR	Platine Squeezebox
-	HE	נגן מוסיקה Squeezebox
-	IT	Lettore musicale Squeezebox
-	JA	Squeezeboxプレーヤー
-	NL	Squeezebox-muzieksysteem
-	NO	Squeezebox musikkspiller
-	PL	Odtwarzacz muzyczny Squeezebox
-	PT	Leitor de Música Squeezebox
-	RU	Музыкальный плеер Squeezebox
-	SV	Squeezebox-musikspelare
-	ZH_CN	Squeezebox播放机
+	CS	Přehrávač hudby UE Smart Radio
+	DA	UE Smart Radio
+	DE	UE Smart Radio
+	EN	UE Smart Radio
+	ES	Reproductor de música UE Smart Radio
+	FI	UE Smart Radio-soitin
+	FR	Platine UE Smart Radio
+	HE	נגן מוסיקה UE Smart Radio
+	IT	Lettore musicale UE Smart Radio
+	JA	UE Smart Radioプレーヤー
+	NL	UE Smart Radio-muzieksysteem
+	NO	UE Smart Radio musikkspiller
+	PL	Odtwarzacz muzyczny UE Smart Radio
+	PT	Leitor de Música UE Smart Radio
+	RU	Музыкальный плеер UE Smart Radio
+	SV	UE Smart Radio-musikspelare
+	ZH_CN	UE Smart Radio播放机
 
 SQUEEZEBOX2_MUSIC_PLAYER
 	CS	Přehrávač hudby Squeezebox
@@ -16450,19 +16450,19 @@ INFORMATION
 	ZH_CN	信息
 
 JIVE_SQUEEZEBOX_INFORMATION
-	CS	Informace Squeezebox
-	DA	Oplysninger om Squeezebox
-	DE	Informationen zur Squeezebox
-	EN	Squeezebox Information
-	ES	Información de Squeezebox
-	FI	Squeezeboxin tiedot
-	FR	Informations sur la Squeezebox
-	IT	Informazioni su Squeezebox
-	NL	Squeezebox-informatie
-	NO	Informasjon om Squeezebox
-	PL	Squeezebox – informacje
-	RU	Информация Squeezebox
-	SV	Squeezebox-information
+	CS	Informace Smart Radio
+	DA	Oplysninger om Smart Radio
+	DE	Informationen zur Smart Radio
+	EN	Smart Radio Information
+	ES	Información de Smart Radio
+	FI	Smart Radioin tiedot
+	FR	Informations sur la Smart Radio
+	IT	Informazioni su Smart Radio
+	NL	Smart Radio-informatie
+	NO	Informasjon om Smart Radio
+	PL	Smart Radio – informacje
+	RU	Информация Smart Radio
+	SV	Smart Radio-information
 
 INFORMATION_MENU_PLAYER
 	CS	Informace o přehrávači

@@ -29,19 +29,19 @@ PLUGIN_WIMP_GETTING_TRACK_DETAILS
 	SV	Hämtar spårinformation...
 
 PLUGIN_WIMP_ERROR_LOGGED_OUT
-	CS	Je nám líto - ke službě WiMP se nelze připojit z jiného zařízení, pokud je používána v přehrávači Squeezebox. Zkuste službu WiMP použít z přehrávače Squeezebox.
-	DA	Vi beklager. Du kan ikke oprette forbindelse til WiMP fra en anden enhed mens den er i brug på din Squeezebox. Prøv at bruge WiMP igen på din Squeezebox.
-	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu WiMP herzustellen, während Sie den Dienst auf Ihrer Squeezebox nutzen. Versuchen Sie erneut, WiMP auf Ihrer Squeezebox zu verwenden.
-	EN	We're sorry - you can't connect to WiMP from another device while using it on your Squeezebox. Please try again to use WiMP on your Squeezebox.
-	ES	Lamentablemente, no es posible conectarse a WiMP desde otro dispositivo mientras se usa en Squeezebox. Vuelva a intentar usar WiMP en Squeezebox.
-	FI	Valitettavasti et voi muodostaa yhteyttä WiMP:hen muulta laitteelta, kun käytät sitä Squeezeboxissa. Yritä WiMP:n käyttämistä Squeezeboxissa uudelleen.
-	FR	Vous ne pouvez pas vous connecter à WiMP à partir d'un autre dispositif lorsque vous l'utilisez sur votre Squeezebox. Veuillez réessayer d'utiliser WiMP sur votre Squeezebox.
-	IT	Impossibile eseguire la connessione a WiMP da un altro dispositivo durante l'utilizzo con Squeezebox. Riprovare a utilizzare WiMP in Squeezebox.
-	NL	Wanneer je WiMP op je Squeezebox gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met WiMP via je Squeezebox.
-	NO	Beklager, du kan ikke kople til WiMP fra en annen enhet mens du bruker tjenesten på Squeezebox. Prøv å bruke WiMP på Squeezebox igjen.
-	PL	Niestety, nie możesz połączyć się z usługą WiMP z innego urządzenia, kiedy używasz jej w urządzeniu Squeezebox. Spróbuj ponownie, aby użyć usługi WiMP w urządzeniu Squeezebox.
-	RU	С другого устройства нельзя подключаться к службе WiMP, когда она используется на плеере Squeezebox. Попробуйте снова использовать WiMP на плеере Squeezebox.
-	SV	Du kan tyvärr inte ansluta till WiMP från en annan enhet medan du använder den i din Squeezebox. Försök igen att använda WiMP i din Squeezebox.
+	CS	Je nám líto - ke službě WiMP se nelze připojit z jiného zařízení, pokud je používána v přehrávači UE Smart Radio. Zkuste službu WiMP použít z přehrávače Smart Radio.
+	DA	Vi beklager. Du kan ikke oprette forbindelse til WiMP fra en anden enhed mens den er i brug på din UE Smart Radio. Prøv at bruge WiMP igen på din Smart Radio.
+	DE	Es ist leider nicht möglich, über ein anderes Gerät eine Verbindung zu WiMP herzustellen, während Sie den Dienst auf Ihrer UE Smart Radio nutzen. Versuchen Sie erneut, WiMP auf Ihrer Smart Radio zu verwenden.
+	EN	We're sorry - you can't connect to WiMP from another device while using it on your UE Smart Radio. Please try again to use WiMP on your Smart Radio.
+	ES	Lamentablemente, no es posible conectarse a WiMP desde otro dispositivo mientras se usa en UE Smart Radio. Vuelva a intentar usar WiMP en Smart Radio.
+	FI	Valitettavasti et voi muodostaa yhteyttä WiMP:hen muulta laitteelta, kun käytät sitä UE Smart Radioissa. Yritä WiMP:n käyttämistä Smart Radioissa uudelleen.
+	FR	Vous ne pouvez pas vous connecter à WiMP à partir d'un autre dispositif lorsque vous l'utilisez sur votre UE Smart Radio. Veuillez réessayer d'utiliser WiMP sur votre Smart Radio.
+	IT	Impossibile eseguire la connessione a WiMP da un altro dispositivo durante l'utilizzo con UE Smart Radio. Riprovare a utilizzare WiMP in Smart Radio.
+	NL	Wanneer je WiMP op je UE Smart Radio gebruikt, kun je er helaas geen verbinding mee maken vanaf een ander apparaat. Probeer nogmaals om verbinding te maken met WiMP via je Smart Radio.
+	NO	Beklager, du kan ikke kople til WiMP fra en annen enhet mens du bruker tjenesten på UE Smart Radio. Prøv å bruke WiMP på Smart Radio igjen.
+	PL	Niestety, nie możesz połączyć się z usługą WiMP z innego urządzenia, kiedy używasz jej w urządzeniu UE Smart Radio. Spróbuj ponownie, aby użyć usługi WiMP w urządzeniu Smart Radio.
+	RU	С другого устройства нельзя подключаться к службе WiMP, когда она используется на плеере UE Smart Radio. Попробуйте снова использовать WiMP на плеере Smart Radio.
+	SV	Du kan tyvärr inte ansluta till WiMP från en annan enhet medan du använder den i din UE Smart Radio. Försök igen att använda WiMP i din Smart Radio.
 
 PLUGIN_WIMP_ERROR
 	CS	Chyba služby WiMP

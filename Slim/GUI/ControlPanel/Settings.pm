@@ -16,6 +16,8 @@ use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
+use constant SB_USER_REGISTRY_KEY => 'CUser/Software/Logitech/UEML';
+
 my ($progressPoll, $btnRescan, $setStartupMode, $setStartupModeHandler);
 
 sub new {
@@ -183,10 +185,10 @@ sub new {
 		if (main::LOCAL_PLAYERS) {
 			# doubleclick action for tray icon
 			my $lbDoubleClickHandler = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('CONTROLPANEL_TRAY_DOUBLECLICK_CONTROLPANEL'), string('CONTROLPANEL_TRAY_DOUBLECLICK_WEB') ]);
-			$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} || 0);
+			$lbDoubleClickHandler->SetSelection($Win32::TieRegistry::Registry->{SB_USER_REGISTRY_KEY . '/DefaultToWebUI'} || 0);
 			
 			$parent->addApplyHandler($lbDoubleClickHandler, sub {
-				$Win32::TieRegistry::Registry->{'CUser/Software/Logitech/Squeezebox/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
+				$Win32::TieRegistry::Registry->{SB_USER_REGISTRY_KEY . '/DefaultToWebUI'} = $lbDoubleClickHandler->GetSelection() ? '1' : '0'; 
 			});
 			$startupSizer->Add($lbDoubleClickHandler, 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 		}
