@@ -12,78 +12,78 @@ CHOOSE_A_TIMEZONE
 	SV	Välj tidszon
 
 SERVER_VERSION
-	CS	Verze uesmartradio.com
-	DA	uesmartradio.com-version
-	DE	uesmartradio.com Version
-	EN	uesmartradio.com Version
-	ES	uesmartradio.com versión
-	FI	uesmartradio.com in versio
-	FR	Version de uesmartradio.com
-	HE	גרסת uesmartradio.com
-	IT	Versione di uesmartradio.com
+	CS	Verze UEsmartradio.com
+	DA	UEsmartradio.com-version
+	DE	UEsmartradio.com Version
+	EN	UEsmartradio.com Version
+	ES	UEsmartradio.com versión
+	FI	UEsmartradio.com in versio
+	FR	Version de UEsmartradio.com
+	HE	גרסת UEsmartradio.com
+	IT	Versione di UEsmartradio.com
 	JP	スリムサーバー・バージョン
-	NL	uesmartradio.com-versie
-	NO	uesmartradio.com-versjon
-	PL	Wersja programu uesmartradio.com
-	PT	Versão do uesmartradio.com
-	RU	Версия uesmartradio.com
-	SV	uesmartradio.com-version
+	NL	UEsmartradio.com-versie
+	NO	UEsmartradio.com-versjon
+	PL	Wersja programu UEsmartradio.com
+	PT	Versão do UEsmartradio.com
+	RU	Версия UEsmartradio.com
+	SV	UEsmartradio.com-version
 
 SQUEEZENETWORK_HOME
-	DA	uesmartradio.com
-	DE	uesmartradio.com
-	EN	uesmartradio.com
-	ES	uesmartradio.com
-	FI	uesmartradio.com
-	FR	uesmartradio.com
-	IT	uesmartradio.com
-	NL	uesmartradio.com
-	NO	uesmartradio.com
-	SV	uesmartradio.com
+	DA	UEsmartradio.com
+	DE	UEsmartradio.com
+	EN	UEsmartradio.com
+	ES	UEsmartradio.com
+	FI	UEsmartradio.com
+	FR	UEsmartradio.com
+	IT	UEsmartradio.com
+	NL	UEsmartradio.com
+	NO	UEsmartradio.com
+	SV	UEsmartradio.com
 
 SQUEEZENETWORK_HOME_TEST
-	DA	uesmartradio.com - Test
-	DE	uesmartradio.com - Test
-	EN	uesmartradio.com - Test
-	ES	uesmartradio.com - Prueba
-	FI	uesmartradio.com - testi
-	FR	uesmartradio.com - Test
-	IT	uesmartradio.com - Test
-	NL	uesmartradio.com - Test
-	NO	uesmartradio.com - Test
-	SV	uesmartradio.com – Test
+	DA	UEsmartradio.com - Test
+	DE	UEsmartradio.com - Test
+	EN	UEsmartradio.com - Test
+	ES	UEsmartradio.com - Prueba
+	FI	UEsmartradio.com - testi
+	FR	UEsmartradio.com - Test
+	IT	UEsmartradio.com - Test
+	NL	UEsmartradio.com - Test
+	NO	UEsmartradio.com - Test
+	SV	UEsmartradio.com – Test
 
 APPLICATION
-	DA	uesmartradio.com
-	DE	uesmartradio.com
-	EN	uesmartradio.com
-	ES	uesmartradio.com
-	FI	uesmartradio.com
-	FR	uesmartradio.com
-	HE	uesmartradio.com
-	IT	uesmartradio.com
-	NL	uesmartradio.com
-	NO	uesmartradio.com
-	SV	uesmartradio.com
+	DA	UEsmartradio.com
+	DE	UEsmartradio.com
+	EN	UEsmartradio.com
+	ES	UEsmartradio.com
+	FI	UEsmartradio.com
+	FR	UEsmartradio.com
+	HE	UEsmartradio.com
+	IT	UEsmartradio.com
+	NL	UEsmartradio.com
+	NO	UEsmartradio.com
+	SV	UEsmartradio.com
 
 ABOUT
-	CS	uesmartradio.com V.%s, napsal:
-	DA	uesmartradio.com version %s, skrevet af:
-	DE	uesmartradio.com V.%s, entwickelt von:
-	DK	uesmartradio.com V.%s, skrevet af:
-	EN	uesmartradio.com V.%s, written by:
-	ES	uesmartradio.com v. %s, escrito por:
-	FI	uesmartradio.com V.%s, teksti:
-	FR	uesmartradio.com V.%s, écrit par :
-	HE	‏uesmartradio.com V.%s, נכתב על-ידי:
-	IT	uesmartradio.com V.%s, scritto da:
-	JP	uesmartradio.com V.%s, 製作:
-	NL	uesmartradio.com V.%s, geschreven door:
-	NO	uesmartradio.com versjon %s, skrevet av:
-	PL	uesmartradio.com V.%s, autor:
-	PT	uesmartradio.com v.%s, escrito por
-	RU	uesmartradio.com V.%s, авторы:
-	SV	uesmartradio.com v.%s, skriven av:
+	CS	UEsmartradio.com V.%s, napsal:
+	DA	UEsmartradio.com version %s, skrevet af:
+	DE	UEsmartradio.com V.%s, entwickelt von:
+	DK	UEsmartradio.com V.%s, skrevet af:
+	EN	UEsmartradio.com V.%s, written by:
+	ES	UEsmartradio.com v. %s, escrito por:
+	FI	UEsmartradio.com V.%s, teksti:
+	FR	UEsmartradio.com V.%s, écrit par :
+	HE	‏UEsmartradio.com V.%s, נכתב על-ידי:
+	IT	UEsmartradio.com V.%s, scritto da:
+	JP	UEsmartradio.com V.%s, 製作:
+	NL	UEsmartradio.com V.%s, geschreven door:
+	NO	UEsmartradio.com versjon %s, skrevet av:
+	PL	UEsmartradio.com V.%s, autor:
+	PT	UEsmartradio.com v.%s, escrito por
+	RU	UEsmartradio.com V.%s, авторы:
+	SV	UEsmartradio.com v.%s, skriven av:
 
 OTHER_SERVICES
 	DA	Ekstra
@@ -125,19 +125,19 @@ CURRENT_TIME
 	SV	Aktuell
 
 WELCOME_TO_APPLICATION
-	DA	Velkommen til uesmartradio.com
-	DE	Willkommen beim uesmartradio.com
-	DK	Velkommen til uesmartradio.com
-	EN	Welcome to uesmartradio.com
-	ES	¡Bienvenido a uesmartradio.com!
-	FI	Tervetuloa uesmartradio.com-verkkoon
-	FR	Bienvenue sur uesmartradio.com
-	HE	ברוך הבא ל-uesmartradio.com
-	IT	Benvenuti in uesmartradio.com
-	NL	Welkom bij uesmartradio.com
-	NO	Velkommen til uesmartradio.com
-	PT	Bem-vindo ao uesmartradio.com
-	SV	Välkommen till uesmartradio.com
+	DA	Velkommen til UEsmartradio.com
+	DE	Willkommen beim UEsmartradio.com
+	DK	Velkommen til UEsmartradio.com
+	EN	Welcome to UEsmartradio.com
+	ES	¡Bienvenido a UEsmartradio.com!
+	FI	Tervetuloa UEsmartradio.com-verkkoon
+	FR	Bienvenue sur UEsmartradio.com
+	HE	ברוך הבא ל-UEsmartradio.com
+	IT	Benvenuti in UEsmartradio.com
+	NL	Welkom bij UEsmartradio.com
+	NO	Velkommen til UEsmartradio.com
+	PT	Bem-vindo ao UEsmartradio.com
+	SV	Välkommen till UEsmartradio.com
 
 WELCOME_MESSAGE
 	DE	Rocken Sie los!
@@ -1229,16 +1229,16 @@ FAVORITES
 	SV	Favoriter
 
 SQUEEZENETWORK_SIGNUP
-	DA	Gå til www.uesmartradio.com for at registrere
-	DE	Besuchen Sie zum Registriern www.uesmartradio.com
-	EN	Visit www.uesmartradio.com to register
-	ES	Visite www.uesmartradio.com para registrarse
-	FI	Rekisteröidy osoitteessa www.uesmartradio.com
-	FR	Rendez-vous sur www.uesmartradio.com pour l'inscription
-	IT	Visitare il sito Web www.uesmartradio.com per registrarsi
-	NL	Ga naar www.uesmartradio.com om je te registreren
-	NO	Gå til www.uesmartradio.com for å registrere deg
-	SV	Registrera dig på www.uesmartradio.com
+	DA	Gå til www.UEsmartradio.com for at registrere
+	DE	Besuchen Sie zum Registriern www.UEsmartradio.com
+	EN	Visit www.UEsmartradio.com to register
+	ES	Visite www.UEsmartradio.com para registrarse
+	FI	Rekisteröidy osoitteessa www.UEsmartradio.com
+	FR	Rendez-vous sur www.UEsmartradio.com pour l'inscription
+	IT	Visitare il sito Web www.UEsmartradio.com per registrarsi
+	NL	Ga naar www.UEsmartradio.com om je te registreren
+	NO	Gå til www.UEsmartradio.com for å registrere deg
+	SV	Registrera dig på www.UEsmartradio.com
 
 SQUEEZENETWORK_PIN
 	DA	Afspillerens pinkode: %s
@@ -1267,30 +1267,30 @@ HTM
 	SV	HTML
 
 SQUEEZENETWORK_ERROR
-	DA	uesmartradio.com-fejl
-	DE	uesmartradio.com-Fehler
-	EN	uesmartradio.com Error
-	ES	Error de uesmartradio.com
-	FI	uesmartradio.comin virhe
-	FR	Erreur de uesmartradio.com
-	HE	שגיאה ב-uesmartradio.com
-	IT	Errore di uesmartradio.com
-	NL	uesmartradio.com-fout
-	NO	uesmartradio.com-feil
-	SV	uesmartradio.com-fel
+	DA	UEsmartradio.com-fejl
+	DE	UEsmartradio.com-Fehler
+	EN	UEsmartradio.com Error
+	ES	Error de UEsmartradio.com
+	FI	UEsmartradio.comin virhe
+	FR	Erreur de UEsmartradio.com
+	HE	שגיאה ב-UEsmartradio.com
+	IT	Errore di UEsmartradio.com
+	NL	UEsmartradio.com-fout
+	NO	UEsmartradio.com-feil
+	SV	UEsmartradio.com-fel
 
 INVALID_MAC
-	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte www.uesmartradio.com/support for at få hjælp.
-	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Besuchen Sie bitte www.uesmartradio.com/support.
-	EN	Problem: Your player needs to have its MAC address reset. Please visit www.uesmartradio.com/support for assistance.
-	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con www.uesmartradio.com/support para solicitar asistencia.
-	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen www.uesmartradio.com/support.
-	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse www.uesmartradio.com/support.
-	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל www.uesmartradio.com/support לקבלת סיוע.
-	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare www.uesmartradio.com/support.
-	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via www.uesmartradio.com/support voor hulp.
-	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt www.uesmartradio.com/support for hjelp.
-	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (www.uesmartradio.com/support).
+	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte www.UEsmartradio.com/support for at få hjælp.
+	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Besuchen Sie bitte www.UEsmartradio.com/support.
+	EN	Problem: Your player needs to have its MAC address reset. Please visit www.UEsmartradio.com/support for assistance.
+	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con www.UEsmartradio.com/support para solicitar asistencia.
+	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen www.UEsmartradio.com/support.
+	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse www.UEsmartradio.com/support.
+	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל www.UEsmartradio.com/support לקבלת סיוע.
+	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare www.UEsmartradio.com/support.
+	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via www.UEsmartradio.com/support voor hulp.
+	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt www.UEsmartradio.com/support for hjelp.
+	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (www.UEsmartradio.com/support).
 
 PLAYLIST_NO_ITEMS_FOUND
 	CS	Chyba: V seznamu skladeb nebyly nalezeny žádné položky
@@ -1363,14 +1363,14 @@ SYNC_FIRMWARE_UPGRADE
 	SV	Om du vill aktivera stödet för synkronisering håller du ljusstyrkeknappen nedtryckt för att uppdatera alla spelare du vill synkronisera.
 
 INFORMATION_MENU_SERVER
-	CS	uesmartradio.com
-	DA	Oplysninger om uesmartradio.com
-	EN	uesmartradio.com Information
-	FI	uesmartradio.comin tiedot
-	NO	uesmartradio.com-informasjon
-	PL	uesmartradio.com
-	RU	uesmartradio.com
-	SV	uesmartradio.com-information
+	CS	UEsmartradio.com
+	DA	Oplysninger om UEsmartradio.com
+	EN	UEsmartradio.com Information
+	FI	UEsmartradio.comin tiedot
+	NO	UEsmartradio.com-informasjon
+	PL	UEsmartradio.com
+	RU	UEsmartradio.com
+	SV	UEsmartradio.com-information
 
 INFORMATION_DATACENTER
 	DA	Datacenter
