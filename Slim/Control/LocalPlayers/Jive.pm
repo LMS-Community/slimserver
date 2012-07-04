@@ -1110,8 +1110,8 @@ sub playerSettingsMenu {
 				},
 			},
 			id             => 'get_pin',
-			node           => 'settings',
-			weight         => 99,
+			node           => 'advancedSettings',
+			weight         => 10,
 			window         => {
 				# XXX - need own icon
 				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
