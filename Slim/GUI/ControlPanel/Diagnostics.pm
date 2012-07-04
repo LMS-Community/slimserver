@@ -20,7 +20,8 @@ use Slim::Utils::ServiceManager;
 
 my $svcMgr = Slim::Utils::ServiceManager->new();
 
-use constant SN => 'www.mysqueezebox.com';
+use constant SN   => 'www.mysqueezebox.com';
+use constant UESR => 'www.uesmartradio.com';
 
 my @checks;
 my $cache;
@@ -128,41 +129,41 @@ sub new {
 	$mainSizer->Add($scBoxSizer, 0, wxALL | wxGROW, 10);
 
 
-	my $snBoxSizer = Wx::StaticBoxSizer->new( 
-		Wx::StaticBox->new($self, -1, string('SQUEEZENETWORK')),
+	my $uesrBoxSizer = Wx::StaticBoxSizer->new( 
+		Wx::StaticBox->new($self, -1, string('UESMARTRADIO')),
 		wxVERTICAL
 	);
-	my $snSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
-	$snSizer->AddGrowableCol(0, 2);
-	$snSizer->AddGrowableCol(1, 1);
-	$snSizer->SetFlexibleDirection(wxHORIZONTAL);
+	my $uesrSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
+	$uesrSizer->AddGrowableCol(0, 2);
+	$uesrSizer->AddGrowableCol(1, 1);
+	$uesrSizer->SetFlexibleDirection(wxHORIZONTAL);
 
-	$self->_addItem($snSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getSNAddress);
+	$self->_addItem($uesrSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getUESRAddress);
 
 	# check port 80 on squeezenetwork, as echo isn't available
-	my ($snPing, $snPort);
-	$self->_addItem($snSizer, string('CONTROLPANEL_PING'), sub {
+	my ($uesrPing, $uesrPort);
+	$self->_addItem($uesrSizer, string('CONTROLPANEL_PING'), sub {
 		my $state;
-		($snPing, $state) = checkPing(SN, 80, 1);
+		($uesrPing, $state) = checkPing(UESR, 80, 1);
 		return $state;
 	});
 	
-	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
+	$self->_addItem($uesrSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
 		my $state;
 
 		if (Slim::GUI::ControlPanel->getPref('webproxy')) {
-			$alertBox->AppendText(string('CONTROLPANEL_SN_PROXY') . "\n\n");
+			$alertBox->AppendText(string('CONTROLPANEL_UESR_PROXY') . "\n\n");
 			$state = string('CONTROLPANEL_FAILED');
 		}
 		
 		else {
-			($snPort, $state) = checkPort(getSNAddress(), '3483', 1);
+			($uesrPort, $state) = checkPort(getUESRAddress(), '3483', 1);
 		}
 
 		return $state;
 	});
 	
-	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
+	$self->_addItem($uesrSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
 		my $proxy = Slim::GUI::ControlPanel->getPref('webproxy');
 
 		# only do the more expensive http request if using a proxy
@@ -172,20 +173,20 @@ sub new {
 			my $ua = LWP::UserAgent->new( timeout => 3 );
 			$ua->proxy('http', "http://$proxy");
 
-			my $result  = $ua->get('http://' . getSNAddress() . ':9000');
+			my $result  = $ua->get('http://' . getUESRAddress() . ':9000');
 
 			return string( $result->is_success ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED' );
 		}
 
 		else {
-			return checkPort(getSNAddress(), '9000', 1);
+			return checkPort(getUESRAddress(), '9000', 1);
 		}
 	});
 	
 	push @checks, {
 		cb => sub {
-			if (!$snPing || !$snPort) {
-				$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE'));
+			if (!$uesrPing || !$uesrPort) {
+				$alertBox->AppendText(string('CONTROLPANEL_UESR_FAILURE'));
 				$alertBox->AppendText("\n");
 				$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE_DESC'));
 				$alertBox->AppendText("\n\n");
@@ -193,8 +194,79 @@ sub new {
 		},
 	};
 	
-	$snBoxSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
-	$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
+	$uesrBoxSizer->Add($uesrSizer, 0, wxALL | wxGROW, 10);
+	$mainSizer->Add($uesrBoxSizer, 0, wxALL | wxGROW, 10);
+
+
+	if (LOCAL_PLAYERS) {
+		my $snBoxSizer = Wx::StaticBoxSizer->new( 
+			Wx::StaticBox->new($self, -1, string('SQUEEZENETWORK')),
+			wxVERTICAL
+		);
+		my $snSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
+		$snSizer->AddGrowableCol(0, 2);
+		$snSizer->AddGrowableCol(1, 1);
+		$snSizer->SetFlexibleDirection(wxHORIZONTAL);
+	
+		$self->_addItem($snSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getSNAddress);
+	
+		# check port 80 on squeezenetwork, as echo isn't available
+		my ($snPing, $snPort);
+		$self->_addItem($snSizer, string('CONTROLPANEL_PING'), sub {
+			my $state;
+			($snPing, $state) = checkPing(SN, 80, 1);
+			return $state;
+		});
+		
+		$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
+			my $state;
+	
+			if (Slim::GUI::ControlPanel->getPref('webproxy')) {
+				$alertBox->AppendText(string('CONTROLPANEL_SN_PROXY') . "\n\n");
+				$state = string('CONTROLPANEL_FAILED');
+			}
+			
+			else {
+				($snPort, $state) = checkPort(getSNAddress(), '3483', 1);
+			}
+	
+			return $state;
+		});
+		
+		$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
+			my $proxy = Slim::GUI::ControlPanel->getPref('webproxy');
+	
+			# only do the more expensive http request if using a proxy
+			if ($proxy) {
+				require LWP::UserAgent;
+	
+				my $ua = LWP::UserAgent->new( timeout => 3 );
+				$ua->proxy('http', "http://$proxy");
+	
+				my $result  = $ua->get('http://' . getSNAddress() . ':9000');
+	
+				return string( $result->is_success ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED' );
+			}
+	
+			else {
+				return checkPort(getSNAddress(), '9000', 1);
+			}
+		});
+		
+		push @checks, {
+			cb => sub {
+				if (!$snPing || !$snPort) {
+					$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE'));
+					$alertBox->AppendText("\n");
+					$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE_DESC'));
+					$alertBox->AppendText("\n\n");
+				}
+			},
+		};
+		
+		$snBoxSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
+		$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
+	}
 
 
 	my $alertBoxSizer = Wx::StaticBoxSizer->new( 
@@ -351,19 +423,29 @@ sub getHostIP {
 }
 
 sub getSNAddress {
-	return $cache->{SN}->{IP} if $cache->{SN} && $cache->{SN}->{ttl} < time;
-	
-	my @addrs = (gethostbyname(SN))[4];
-	
-	my $snAddress;
-	$snAddress = inet_ntoa($addrs[0]) if defined $addrs[0];
+	return _getServerAddress(SN);
+}
 
-	$cache->{SN} = {
+sub getUESRAddress {
+	return _getServerAddress(UESR);
+}
+
+sub _getServerAddress {
+	my $host = shift;
+	
+	return $cache->{$host}->{IP} if $cache->{$host} && $cache->{$host}->{ttl} < time;
+	
+	my @addrs = (gethostbyname($host))[4];
+	
+	my $address;
+	$address = inet_ntoa($addrs[0]) if defined $addrs[0];
+
+	$cache->{$host} = {
 		ttl => time() + 60,
-		IP  => $snAddress,
+		IP  => $address,
 	} ;
 	
-	return $snAddress;
+	return $address;
 }
 
 sub checkPort {
