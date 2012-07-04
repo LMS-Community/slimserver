@@ -25,6 +25,8 @@ our $SECURE_IP;
 sub initPlugin {
 	my $class = shift;
 	
+	return unless main::SERVICES && main::LOCAL_PLAYERS;
+	
 	Slim::Player::ProtocolHandlers->registerHandler(
 		rhapd => 'Slim::Plugin::RhapsodyDirect::ProtocolHandler'
 	);

@@ -12,78 +12,78 @@ CHOOSE_A_TIMEZONE
 	SV	Välj tidszon
 
 SERVER_VERSION
-	CS	Verze mysqueezebox.com
-	DA	mysqueezebox.com-version
-	DE	mysqueezebox.com Version
-	EN	mysqueezebox.com Version
-	ES	mysqueezebox.com versión
-	FI	mysqueezebox.com in versio
-	FR	Version de mysqueezebox.com
-	HE	גרסת mysqueezebox.com
-	IT	Versione di mysqueezebox.com
+	CS	Verze uesmartradio.com
+	DA	uesmartradio.com-version
+	DE	uesmartradio.com Version
+	EN	uesmartradio.com Version
+	ES	uesmartradio.com versión
+	FI	uesmartradio.com in versio
+	FR	Version de uesmartradio.com
+	HE	גרסת uesmartradio.com
+	IT	Versione di uesmartradio.com
 	JP	スリムサーバー・バージョン
-	NL	mysqueezebox.com-versie
-	NO	mysqueezebox.com-versjon
-	PL	Wersja programu mysqueezebox.com
-	PT	Versão do mysqueezebox.com
-	RU	Версия mysqueezebox.com
-	SV	mysqueezebox.com-version
+	NL	uesmartradio.com-versie
+	NO	uesmartradio.com-versjon
+	PL	Wersja programu uesmartradio.com
+	PT	Versão do uesmartradio.com
+	RU	Версия uesmartradio.com
+	SV	uesmartradio.com-version
 
 SQUEEZENETWORK_HOME
-	DA	mysqueezebox.com
-	DE	mysqueezebox.com
-	EN	mysqueezebox.com
-	ES	mysqueezebox.com
-	FI	mysqueezebox.com
-	FR	mysqueezebox.com
-	IT	mysqueezebox.com
-	NL	mysqueezebox.com
-	NO	mysqueezebox.com
-	SV	mysqueezebox.com
+	DA	uesmartradio.com
+	DE	uesmartradio.com
+	EN	uesmartradio.com
+	ES	uesmartradio.com
+	FI	uesmartradio.com
+	FR	uesmartradio.com
+	IT	uesmartradio.com
+	NL	uesmartradio.com
+	NO	uesmartradio.com
+	SV	uesmartradio.com
 
 SQUEEZENETWORK_HOME_TEST
-	DA	mysqueezebox.com - Test
-	DE	mysqueezebox.com - Test
-	EN	mysqueezebox.com - Test
-	ES	mysqueezebox.com - Prueba
-	FI	mysqueezebox.com - testi
-	FR	mysqueezebox.com - Test
-	IT	mysqueezebox.com - Test
-	NL	mysqueezebox.com - Test
-	NO	mysqueezebox.com - Test
-	SV	mysqueezebox.com – Test
+	DA	uesmartradio.com - Test
+	DE	uesmartradio.com - Test
+	EN	uesmartradio.com - Test
+	ES	uesmartradio.com - Prueba
+	FI	uesmartradio.com - testi
+	FR	uesmartradio.com - Test
+	IT	uesmartradio.com - Test
+	NL	uesmartradio.com - Test
+	NO	uesmartradio.com - Test
+	SV	uesmartradio.com – Test
 
 APPLICATION
-	DA	mysqueezebox.com
-	DE	mysqueezebox.com
-	EN	mysqueezebox.com
-	ES	mysqueezebox.com
-	FI	mysqueezebox.com
-	FR	mysqueezebox.com
-	HE	mysqueezebox.com
-	IT	mysqueezebox.com
-	NL	mysqueezebox.com
-	NO	mysqueezebox.com
-	SV	mysqueezebox.com
+	DA	uesmartradio.com
+	DE	uesmartradio.com
+	EN	uesmartradio.com
+	ES	uesmartradio.com
+	FI	uesmartradio.com
+	FR	uesmartradio.com
+	HE	uesmartradio.com
+	IT	uesmartradio.com
+	NL	uesmartradio.com
+	NO	uesmartradio.com
+	SV	uesmartradio.com
 
 ABOUT
-	CS	mysqueezebox.com V.%s, napsal:
-	DA	mysqueezebox.com version %s, skrevet af:
-	DE	mysqueezebox.com V.%s, entwickelt von:
-	DK	mysqueezebox.com V.%s, skrevet af:
-	EN	mysqueezebox.com V.%s, written by:
-	ES	mysqueezebox.com v. %s, escrito por:
-	FI	mysqueezebox.com V.%s, teksti:
-	FR	mysqueezebox.com V.%s, écrit par :
-	HE	‏mysqueezebox.com V.%s, נכתב על-ידי:
-	IT	mysqueezebox.com V.%s, scritto da:
-	JP	mysqueezebox.com V.%s, 製作:
-	NL	mysqueezebox.com V.%s, geschreven door:
-	NO	mysqueezebox.com versjon %s, skrevet av:
-	PL	mysqueezebox.com V.%s, autor:
-	PT	mysqueezebox.com v.%s, escrito por
-	RU	mysqueezebox.com V.%s, авторы:
-	SV	mysqueezebox.com v.%s, skriven av:
+	CS	uesmartradio.com V.%s, napsal:
+	DA	uesmartradio.com version %s, skrevet af:
+	DE	uesmartradio.com V.%s, entwickelt von:
+	DK	uesmartradio.com V.%s, skrevet af:
+	EN	uesmartradio.com V.%s, written by:
+	ES	uesmartradio.com v. %s, escrito por:
+	FI	uesmartradio.com V.%s, teksti:
+	FR	uesmartradio.com V.%s, écrit par :
+	HE	‏uesmartradio.com V.%s, נכתב על-ידי:
+	IT	uesmartradio.com V.%s, scritto da:
+	JP	uesmartradio.com V.%s, 製作:
+	NL	uesmartradio.com V.%s, geschreven door:
+	NO	uesmartradio.com versjon %s, skrevet av:
+	PL	uesmartradio.com V.%s, autor:
+	PT	uesmartradio.com v.%s, escrito por
+	RU	uesmartradio.com V.%s, авторы:
+	SV	uesmartradio.com v.%s, skriven av:
 
 OTHER_SERVICES
 	DA	Ekstra
@@ -125,19 +125,19 @@ CURRENT_TIME
 	SV	Aktuell
 
 WELCOME_TO_APPLICATION
-	DA	Velkommen til mysqueezebox.com
-	DE	Willkommen beim mysqueezebox.com
-	DK	Velkommen til mysqueezebox.com
-	EN	Welcome to mysqueezebox.com
-	ES	¡Bienvenido a mysqueezebox.com!
-	FI	Tervetuloa mysqueezebox.com-verkkoon
-	FR	Bienvenue sur mysqueezebox.com
-	HE	ברוך הבא ל-mysqueezebox.com
-	IT	Benvenuti in mysqueezebox.com
-	NL	Welkom bij mysqueezebox.com
-	NO	Velkommen til mysqueezebox.com
-	PT	Bem-vindo ao mysqueezebox.com
-	SV	Välkommen till mysqueezebox.com
+	DA	Velkommen til uesmartradio.com
+	DE	Willkommen beim uesmartradio.com
+	DK	Velkommen til uesmartradio.com
+	EN	Welcome to uesmartradio.com
+	ES	¡Bienvenido a uesmartradio.com!
+	FI	Tervetuloa uesmartradio.com-verkkoon
+	FR	Bienvenue sur uesmartradio.com
+	HE	ברוך הבא ל-uesmartradio.com
+	IT	Benvenuti in uesmartradio.com
+	NL	Welkom bij uesmartradio.com
+	NO	Velkommen til uesmartradio.com
+	PT	Bem-vindo ao uesmartradio.com
+	SV	Välkommen till uesmartradio.com
 
 WELCOME_MESSAGE
 	DE	Rocken Sie los!
@@ -1229,28 +1229,16 @@ FAVORITES
 	SV	Favoriter
 
 SQUEEZENETWORK_SIGNUP
-	DA	Gå til www.mysqueezebox.com for at registrere
-	DE	Besuchen Sie zum Registriern www.mysqueezebox.com
-	EN	Visit www.mysqueezebox.com to register
-	ES	Visite www.mysqueezebox.com para registrarse
-	FI	Rekisteröidy osoitteessa www.mysqueezebox.com
-	FR	Rendez-vous sur www.mysqueezebox.com pour l'inscription
-	IT	Visitare il sito Web www.mysqueezebox.com per registrarsi
-	NL	Ga naar www.mysqueezebox.com om je te registreren
-	NO	Gå til www.mysqueezebox.com for å registrere deg
-	SV	Registrera dig på www.mysqueezebox.com
-
-SQUEEZENETWORK_SIGNUP_BOOMCAT
-	DA	Gå til www.mysqueezebox.com for at registrere
-	DE	Besuchen Sie zum Registrieren boom.mysqueezebox.com
-	EN	Visit boom.mysqueezebox.com to register
-	ES	Visite boom.mysqueezebox.com para registrarse
-	FI	Rekisteröidy osoitteessa boom.mysqueezebox.com
-	FR	Rendez-vous sur boom.mysqueezebox.com pour l'inscription
-	IT	Visitare il sito boom.mysqueezebox.com per registrarsi
-	NL	Ga naar boom.mysqueezebox.com  om je te registreren
-	NO	Gå til boom.mysqueezebox.com for å registrere deg
-	SV	Registrera dig på boom.mysqueezebox.com
+	DA	Gå til www.uesmartradio.com for at registrere
+	DE	Besuchen Sie zum Registriern www.uesmartradio.com
+	EN	Visit www.uesmartradio.com to register
+	ES	Visite www.uesmartradio.com para registrarse
+	FI	Rekisteröidy osoitteessa www.uesmartradio.com
+	FR	Rendez-vous sur www.uesmartradio.com pour l'inscription
+	IT	Visitare il sito Web www.uesmartradio.com per registrarsi
+	NL	Ga naar www.uesmartradio.com om je te registreren
+	NO	Gå til www.uesmartradio.com for å registrere deg
+	SV	Registrera dig på www.uesmartradio.com
 
 SQUEEZENETWORK_PIN
 	DA	Afspillerens pinkode: %s
@@ -1279,30 +1267,30 @@ HTM
 	SV	HTML
 
 SQUEEZENETWORK_ERROR
-	DA	mysqueezebox.com-fejl
-	DE	mysqueezebox.com-Fehler
-	EN	mysqueezebox.com Error
-	ES	Error de mysqueezebox.com
-	FI	mysqueezebox.comin virhe
-	FR	Erreur de mysqueezebox.com
-	HE	שגיאה ב-mysqueezebox.com
-	IT	Errore di mysqueezebox.com
-	NL	mysqueezebox.com-fout
-	NO	mysqueezebox.com-feil
-	SV	mysqueezebox.com-fel
+	DA	uesmartradio.com-fejl
+	DE	uesmartradio.com-Fehler
+	EN	uesmartradio.com Error
+	ES	Error de uesmartradio.com
+	FI	uesmartradio.comin virhe
+	FR	Erreur de uesmartradio.com
+	HE	שגיאה ב-uesmartradio.com
+	IT	Errore di uesmartradio.com
+	NL	uesmartradio.com-fout
+	NO	uesmartradio.com-feil
+	SV	uesmartradio.com-fel
 
 INVALID_MAC
-	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte www.mysqueezebox.com/support for at få hjælp.
-	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Besuchen Sie bitte www.mysqueezebox.com/support.
-	EN	Problem: Your player needs to have its MAC address reset. Please visit www.mysqueezebox.com/support for assistance.
-	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con www.mysqueezebox.com/support para solicitar asistencia.
-	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen www.mysqueezebox.com/support.
-	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse www.mysqueezebox.com/support.
-	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל www.mysqueezebox.com/support לקבלת סיוע.
-	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare www.mysqueezebox.com/support.
-	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via www.mysqueezebox.com/support voor hulp.
-	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt www.mysqueezebox.com/support for hjelp.
-	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (www.mysqueezebox.com/support).
+	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte www.uesmartradio.com/support for at få hjælp.
+	DE	Problem: Die MAC-Adresse des Player muss zurückgesetzt werden. Besuchen Sie bitte www.uesmartradio.com/support.
+	EN	Problem: Your player needs to have its MAC address reset. Please visit www.uesmartradio.com/support for assistance.
+	ES	Problema: debe restablecer la dirección MAC del reproductor. Póngase en contacto con www.uesmartradio.com/support para solicitar asistencia.
+	FI	Ongelma: Soittimen MAC-osoite täytyy palauttaa. Ota yhteyttä osoitteeseen www.uesmartradio.com/support.
+	FR	Problème: vous devez réinitialiser l'adresse MAC de votre platine. Contactez l'assistance à l'adresse www.uesmartradio.com/support.
+	HE	בעיה: יש לאפס את כתובת ה-MAC של הנגן. פנה אל www.uesmartradio.com/support לקבלת סיוע.
+	IT	Problema: è necessario reimpostare l'indirizzo MAC del lettore. Per assistenza, contattare www.uesmartradio.com/support.
+	NL	Probleem: Het MAC-adres van je muzieksysteem moet opnieuw worden ingesteld. Neem contact op via www.uesmartradio.com/support voor hulp.
+	NO	Problem: Mac-adressen på spilleren din må tilbakestilles. Kontakt www.uesmartradio.com/support for hjelp.
+	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (www.uesmartradio.com/support).
 
 PLAYLIST_NO_ITEMS_FOUND
 	CS	Chyba: V seznamu skladeb nebyly nalezeny žádné položky
@@ -1375,14 +1363,14 @@ SYNC_FIRMWARE_UPGRADE
 	SV	Om du vill aktivera stödet för synkronisering håller du ljusstyrkeknappen nedtryckt för att uppdatera alla spelare du vill synkronisera.
 
 INFORMATION_MENU_SERVER
-	CS	mysqueezebox.com
-	DA	Oplysninger om mysqueezebox.com
-	EN	mysqueezebox.com Information
-	FI	mysqueezebox.comin tiedot
-	NO	mysqueezebox.com-informasjon
-	PL	mysqueezebox.com
-	RU	mysqueezebox.com
-	SV	mysqueezebox.com-information
+	CS	uesmartradio.com
+	DA	Oplysninger om uesmartradio.com
+	EN	uesmartradio.com Information
+	FI	uesmartradio.comin tiedot
+	NO	uesmartradio.com-informasjon
+	PL	uesmartradio.com
+	RU	uesmartradio.com
+	SV	uesmartradio.com-information
 
 INFORMATION_DATACENTER
 	DA	Datacenter

@@ -74,7 +74,7 @@ BEGIN {
 		# Local development
 		my $conf = "$FindBin::Bin/slimservice.conf";
 		if ( !-e $conf ) {
-			die "Please create $conf with the path to the mysqueezebox.com directory\n";
+			die "Please create $conf with the path to the server directory\n";
 		}
 		$SN_PATH = File::Slurp::read_file( $conf );
 		chomp $SN_PATH;

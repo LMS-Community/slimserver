@@ -35,7 +35,7 @@ sub resolve {
 	
 	my $host = $args->{host};
 	
-	if ( main::SLIM_SERVICE && $host =~ /^www\.(squeezenetwork|mysqueezebox)\.com$/ ) {
+	if ( main::SLIM_SERVICE && $host =~ /^www\.(squeezenetwork|mysqueezebox|uesmartradio)\.com$/ ) {
 		# Check /etc/hosts on MySB to determine internal datacenter address instead of public
 		my $localip;
 		my $mtime = (stat('/etc/hosts'))[9];

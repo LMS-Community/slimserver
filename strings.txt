@@ -7203,23 +7203,23 @@ SETUP_CHECKVERSION
 	ZH_CN	软件更新
 
 SETUP_CHECKVERSION_DESC
-	CS	UE Music Library se každý den může automaticky připojit k mysqueezebox.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní UE Music Library se zobrazí zpráva.
-	DA	UE Music Library kan automatisk etablere forbindelse til mysqueezebox.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i UE Music Librarys webbaserede brugerflade.
-	DE	UE Music Library kann automatisch jeden Tag Verbindung mit mysqueezebox.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von UE Music Library gemeldet.
-	EN	UE Music Library can automatically connect to mysqueezebox.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in UE Music Library's web interface.
-	ES	UE Music Library se puede conectar automáticamente a mysqueezebox.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de UE Music Library.
-	FI	UE Music Library voi muodostaa automaattisesti yhteyden sivustoon mysqueezebox.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, UE Music Libraryin internet-liittymään tulee ilmoitus siitä.
-	FR	Le serveur peut se connecter tous les jours automatiquement à mysqueezebox.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
-	HE	השרת יכול להתחבר באופן אוטומטי לכתובת mysqueezebox.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של UE Music Library.
-	IT	UE Music Library può collegarsi automaticamente al sito mysqueezebox.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di UE Music Library.
-	JA	サーバーソフトウェアは、毎日mysqueezebox.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
-	NL	UE Music Library kan elke dag automatisch verbinding maken met 'mysqueezebox.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van UE Music Library.
-	NO	UE Music Library kan automatisk sjekke mysqueezebox.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
-	PL	Program UE Music Library może codziennie automatycznie łączyć się z witryną mysqueezebox.com w celu sprawdzenia dostępności zaktualizowanej wersji oprogramowania. Jeżeli będzie ono dostępne, w interfejsie internetowym programu UE Music Library zostanie wyświetlony komunikat.
-	PT	O servidor poderá ligar-se automaticamente a mysqueezebox.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
-	RU	UE Music Library может каждый день автоматически подключаться к сайту mysqueezebox.com и проверять наличие обновленных версий программы. При обнаружении новой версии в веб-интерфейсе UE Music Library появится соответствующее сообщение.
-	SV	UE Music Library kan automatiskt kopplas upp mot mysqueezebox.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
-	ZH_CN	服务器能够每天自动地连接到mysqueezebox.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在UE Music Library的网界面。
+	CS	UE Music Library se každý den může automaticky připojit k uesmartradio.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní UE Music Library se zobrazí zpráva.
+	DA	UE Music Library kan automatisk etablere forbindelse til uesmartradio.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i UE Music Librarys webbaserede brugerflade.
+	DE	UE Music Library kann automatisch jeden Tag Verbindung mit uesmartradio.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von UE Music Library gemeldet.
+	EN	UE Music Library can automatically connect to uesmartradio.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in UE Music Library's web interface.
+	ES	UE Music Library se puede conectar automáticamente a uesmartradio.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de UE Music Library.
+	FI	UE Music Library voi muodostaa automaattisesti yhteyden sivustoon uesmartradio.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, UE Music Libraryin internet-liittymään tulee ilmoitus siitä.
+	FR	Le serveur peut se connecter tous les jours automatiquement à uesmartradio.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
+	HE	השרת יכול להתחבר באופן אוטומטי לכתובת uesmartradio.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של UE Music Library.
+	IT	UE Music Library può collegarsi automaticamente al sito uesmartradio.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di UE Music Library.
+	JA	サーバーソフトウェアは、毎日uesmartradio.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
+	NL	UE Music Library kan elke dag automatisch verbinding maken met 'uesmartradio.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van UE Music Library.
+	NO	UE Music Library kan automatisk sjekke uesmartradio.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
+	PL	Program UE Music Library może codziennie automatycznie łączyć się z witryną uesmartradio.com w celu sprawdzenia dostępności zaktualizowanej wersji oprogramowania. Jeżeli będzie ono dostępne, w interfejsie internetowym programu UE Music Library zostanie wyświetlony komunikat.
+	PT	O servidor poderá ligar-se automaticamente a uesmartradio.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
+	RU	UE Music Library может каждый день автоматически подключаться к сайту uesmartradio.com и проверять наличие обновленных версий программы. При обнаружении новой версии в веб-интерфейсе UE Music Library появится соответствующее сообщение.
+	SV	UE Music Library kan automatiskt kopplas upp mot uesmartradio.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
+	ZH_CN	服务器能够每天自动地连接到uesmartradio.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在UE Music Library的网界面。
 
 SETUP_CHECKVERSION_1
 	CS	Automaticky kontrolovat aktualizace softwaru
@@ -9090,7 +9090,7 @@ SETUP_SN_VALID_LOGIN
 	NL	Verbonden met mysqueezebox.com.
 	NO	Koplet til mysqueezebox.com.
 	PL	Połączenie z usługą mysqueezebox.com powiodło się.
-	RU	Подключение к mysqueesebox.com успешно установлено.
+	RU	Подключение к mysqueezebox.com успешно установлено.
 	SV	Ansluten till mysqueezebox.com
 
 SETUP_SN_VALIDATION_FAILED
@@ -17508,6 +17508,9 @@ SQUEEZENETWORK
 	SV	mysqueezebox.com
 	ZH_CN	mysqueezebox.com
 
+UESMARTRADIO
+	EN	uesmartradio.com
+
 SQUEEZENETWORK_CONNECT
 	CS	mysqueezebox.com
 	DA	mysqueezebox.com
@@ -22559,6 +22562,21 @@ CONTROLPANEL_SN_FAILURE
 	RU	Не удалось подключиться к mysqueezebox.com
 	SV	Det gick inte att kommunicera med mysqueezebox.com
 
+CONTROLPANEL_UESR_FAILURE
+	CS	Nebyli jsme schopni úspěšně komunikovat se uesmartradio.com
+	DA	Det var ikke muligt at kommunikere med uesmartradio.com
+	DE	Es konnte keine Verbindung zu uesmartradio.com hergestellt werden.
+	EN	We were not able to successfully communicate with uesmartradio.com
+	ES	No ha sido posible comunicarse correctamente con uesmartradio.com
+	FI	Kommunikointi osoitteen uesmartradio.com kanssa ei onnistunut
+	FR	Communication avec uesmartradio.com impossible.
+	IT	Impossibile comunicare con uesmartradio.com
+	NL	Communicatie met uesmartradio.com niet mogelijk
+	NO	Vi kunne ikke kommunisere med uesmartradio.com
+	PL	Próba nawiązania komunikacji z witryną uesmartradio.com nie powiodła się
+	RU	Не удалось подключиться к uesmartradio.com
+	SV	Det gick inte att kommunicera med uesmartradio.com
+
 CONTROLPANEL_SN_FAILURE_DESC
 	CS	Může jít o přechodný problém internetu nebo o omezení zavedené vaším ISP. Pokud problém přetrvává, ujistěte se, že váš firewall neblokuje odchozí komunikaci.
 	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side. Hvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
@@ -22588,6 +22606,21 @@ CONTROLPANEL_SN_PROXY
 	PL	Program UE Music Library jest skonfigurowany w celu użycia serwera proxy. W przypadku takiej konfiguracji nie można przetestować połączenia z witryną mysqueezebox.com na porcie 3483.
 	RU	Обнаружено, что ваш UE Music Library настроен на использование прокси-сервера. В такой конфигурации подключение к сайту mysqueezebox.com на порту 3483 невозможно проверить.
 	SV	När UE Music Library har konfigurerats för användning med en proxyserver går det inte att kontrollera anslutningen till port 3483 på mysqueezebox.com.
+
+CONTROLPANEL_UESR_PROXY
+	CS	Zjistili jsme, že váš UE Music Library je konfigurován k použití proxy serveru. V této konfiguraci nemůže být testována konektivita k uesmartradio.com na portu 3483.
+	DA	Din UE Music Library er indstillet til at bruge en proxyserver. Det betyder at forbindelsen til uesmartradio.com via port 3483 ikke kan afprøves.
+	DE	Ihr UE Music Library ist für die Verwendung eines Proxyservers konfiguriert. Bei dieser Konfiguration kann die Verbindung zu uesmartradio.com über Port 3483 nicht getestet werden.
+	EN	We've seen that your UE Music Library is configured to use a proxy server. In this configuration connectivity to uesmartradio.com on port 3483 can't be tested.
+	ES	Hemos comprobado que UE Music Library está configurado para utilizar un servidor proxy. Esta configuración no permite comprobar la conectividad a uesmartradio.com en el puerto 3483.
+	FI	UE Music Library on määritetty käyttämään välityspalvelinta. Tässä kokoonpanossa yhteyttä sivustoon uesmartradio.com portin 3483 kautta ei voi testata.
+	FR	La configuration de votre UE Music Library indique l'utilisation d'un serveur proxy. Cette configuration ne permet pas de tester la connectivité à uesmartradio.com sur le port 3483.
+	IT	È stato rilevato che UE Music Library è configurato per utilizzare un server proxy. Con questa configurazione non è possibile verificare la connessione con uesmartradio.com sulla porta 3483.
+	NL	Je UE Music Library is geconfigureerd voor gebruik van een proxyserver. In deze configuratie kan de verbinding met 'uesmartradio.com' op poort 3483 niet getest worden.
+	NO	UE Music Library er konfigurert til å bruke en proxy-server. Med denne konfigureringen kan ikke tilkoplingen til uesmartradio.com på port 3483 testes.
+	PL	Program UE Music Library jest skonfigurowany w celu użycia serwera proxy. W przypadku takiej konfiguracji nie można przetestować połączenia z witryną uesmartradio.com na porcie 3483.
+	RU	Обнаружено, что ваш UE Music Library настроен на использование прокси-сервера. В такой конфигурации подключение к сайту uesmartradio.com на порту 3483 невозможно проверить.
+	SV	När UE Music Library har konfigurerats för användning med en proxyserver går det inte att kontrollera anslutningen till port 3483 på uesmartradio.com.
 
 CONTROLPANEL_PORTCONFLICT
 	CS	UE Music Library není v provozu, ale nějaká aplikace používá stejný port (%s).
@@ -23650,5 +23683,5 @@ SYNC_ABOUT
 	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
 
 CREATE_PIN
-	EN	Create PIN
+	EN	Generate PIN
 

@@ -1406,7 +1406,7 @@ sub shouldCacheURL {
 	
 	if ( main::SLIM_SERVICE ) {
 		# Don't cache URLs local to SN, it can break translations, etc
-		return 0 if $host =~ /(?:mysqueezebox|squeezenetwork)/;
+		return 0 if $host =~ /(?:mysqueezebox|squeezenetwork|uesmartradio)/;
 	}
 	
 	# If the host doesn't start with a number, cache it

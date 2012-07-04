@@ -67,6 +67,8 @@ my @stop_errors = (
 sub initPlugin {
 	my $class = shift;
 	
+	return unless main::SERVICES && main::LOCAL_PLAYERS;
+	
 	Slim::Player::ProtocolHandlers->registerHandler(
 		spotify => 'Slim::Plugin::SpotifyLogi::ProtocolHandler'
 	);

@@ -35,6 +35,7 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
+	uesr    => 'www.uesmartradio.com',
 	sn      => 'www.mysqueezebox.com',
 	update  => 'update.mysqueezebox.com',
 	test    => 'www.test.mysqueezebox.com',
@@ -50,6 +51,7 @@ if ( main::SLIM_SERVICE ) {
 	
 	my $sn_server = __PACKAGE__->get_server('sn');
 	
+	# XXX - can't we rely on $internal_http_host here as well?
 	my $mysb_host = SDI::Util::SNConfig::get_config_value('use_test_sn')
 		? 'www.test.mysqueezebox.com'
 		: 'www.mysqueezebox.com';
@@ -267,6 +269,8 @@ sub shutdown {
 sub url {
 	my ( $class, $path, $external ) = @_;
 	
+	return $path if $path =~ m|^https?://|;
+	
 	# There are 3 scenarios:
 	# 1. Local dev, running SN on localhost:3000
 	# 2. An SN instance, needs to access using an internal IP
@@ -282,6 +286,10 @@ sub url {
         elsif ( $ENV{SN_DEV} ) {
 			$base = 'http://127.0.0.1:3000';  # Local dev
 		}
+	}
+	# some calls need to be directed at specific hosts
+	elsif ( !main::SLIM_SERVICE && grep /$external/i, keys %$_Servers ) {
+		$base = 'http://' . $class->get_server($external);
 	}
 	
 	$base ||= 'http://' . $class->get_server('sn');

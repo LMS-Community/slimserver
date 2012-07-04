@@ -76,7 +76,7 @@ sub checkVersion {
 			$os->installerOS(),
 			$prefs->get('server_uuid'),
 			Slim::Player::Client::clientCount(),
-		)
+		), 'uesr'
 	);
 	
 	main::DEBUGLOG && $log->debug("Using URL: $url");

@@ -333,6 +333,10 @@ sub disconnectCommand {
 		main::DEBUGLOG && $log->debug("Sending disconnect request for $remoteClient to $server");
 		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
 	}
+	
+	elsif ( $server =~ /^www\.uesmartradio\.com$/i ) {
+		# do not disconnect from uesmartradio.com - player can't connect anywhere else
+	}
 
 	else {
 
