@@ -141,6 +141,7 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
+use Slim::Plugin::Base;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
