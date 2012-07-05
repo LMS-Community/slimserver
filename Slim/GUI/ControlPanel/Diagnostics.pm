@@ -198,7 +198,7 @@ sub new {
 	$mainSizer->Add($uesrBoxSizer, 0, wxALL | wxGROW, 10);
 
 
-	if (LOCAL_PLAYERS) {
+	if (main::LOCAL_PLAYERS) {
 		my $snBoxSizer = Wx::StaticBoxSizer->new( 
 			Wx::StaticBox->new($self, -1, string('SQUEEZENETWORK')),
 			wxVERTICAL
