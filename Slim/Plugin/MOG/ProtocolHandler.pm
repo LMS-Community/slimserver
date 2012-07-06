@@ -99,10 +99,14 @@ sub parseDirectHeaders {
 	
 	my $length;
 	my $rangelength;
+	my $redir;
 
 	foreach my $header (@headers) {
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
+		}
+		elsif ($header =~ /^Location:\s*(.*)/i) {
+			$redir = $1;
 		}
 		elsif ( $header =~ m{^Content-Range: .+/(.*)}i ) {
 			$rangelength = $1;
@@ -120,7 +124,7 @@ sub parseDirectHeaders {
 	$song->duration($duration);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
+	return (undef, $bitrate, 0, $redir, 'mp3', $length, undef);
 }
 
 # Don't allow looping
