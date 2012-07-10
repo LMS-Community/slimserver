@@ -174,7 +174,7 @@ sub playList {
 }
 
 sub addTracks {
-	my ($self, $client, $tracksRef, $position, undef, undef, $infoText, $icon) = @_;
+	my ($self, $client, $tracksRef, $position, undef, undef, $infoText, $icon, $callback) = @_;
 	
 	$position = -3 if !defined $position;
 		
@@ -287,7 +287,7 @@ sub addTracks {
 		_insert_done($self, $client, $canAdd, $position);
 	}
 	
-	return $canAdd;
+	$callback->() if $callback;
 }
 
 sub _insert_done {

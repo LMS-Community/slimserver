@@ -58,7 +58,7 @@ sub playList {logBacktrace('Unexpected call');}
 
 # $client, $tracksRef, $position, $jumpIndex, $request
 sub addTracks {
-	my ($self, $client, $tracksRef, $position, $jumpIndex, $request, $text, $icon) = @_;
+	my ($self, $client, $tracksRef, $position, $jumpIndex, $request, $text, $icon, $callback) = @_;
 	
 	my $urlprefix = 'lms://' . $prefs->get('server_uuid') . '/music/';
 	
@@ -144,13 +144,18 @@ sub addTracks {
 	}
 	
 	$http ||= Slim::Networking::SimpleAsyncHTTP->new(
-		sub {},
-		sub { $log->error("Problem sending playlist request to $url: ", shift->error); },
+		sub {$callback->() if $callback},
+		sub {
+			$log->error("Problem sending playlist request to $url: ", $_[0]->error);
+			$callback->("$url: " . $_[0]->error) if $callback;
+		},
 		{ timeout => 10, client => $client }
 	);
 	
 	main::INFOLOG && $log->info("Sending playlist to ", $url);
 	
+	$request->setStatusProcessing() if $request;
+
 	# Always gzip this data, we know SN can handle it
 	my $output = '';
 	if ( Slim::Utils::Compress::gzip( { in => \$json, out => \$output } ) ) {

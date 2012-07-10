@@ -195,9 +195,15 @@ sub playlistXalbumCommand {
 
 	$cmd =~ s/album/tracks/;
 
-	Slim::Control::Request::executeRequest($client, ['playlist', $cmd, 'listRef', \@results]);
-
-	$request->setStatusDone();
+	Slim::Control::Request::executeRequest($client, ['playlist', $cmd, 'listRef', \@results],
+		sub {
+			$request->setRawResults($_[0]->getResults());
+			$request->addResult('count', scalar(@results));
+			$request->setStatusDone();
+		}
+	);
+	
+	$request->setStatusProcessing() unless $request->isStatusDone();
 }
 
 
@@ -281,8 +287,15 @@ sub playlistXitemCommand {
 	if ($path =~ /^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
-			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn]);
-			$request->setStatusDone();
+			$client->execute(['playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn],
+				sub {
+					$request->setRawResults($_[0]->getResults());
+					$request->addResult('count', scalar(@tracks));
+					$request->setStatusDone();
+				}
+			);
+			
+			$request->setStatusProcessing() unless $request->isStatusDone();
 			return;
 		}
 	}
@@ -396,7 +409,7 @@ sub playlistXitemCommand {
 	}
 
 	my @infoTags = (Slim::Music::Info::title($path) || $path);
-	push @infoTags, $icon if $icon;
+	push @infoTags, $icon;
 
 	if ($cmd =~ /^(insert|insertlist)$/) {
 
@@ -409,14 +422,17 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my $foundItems = shift;
 
-				my $added = Slim::Player::Playlist::addTracks($client, $foundItems, -1, undef, $request, @infoTags);
+				Slim::Player::Playlist::addTracks($client, $foundItems, -1, undef, $request, @infoTags,
+					sub {
+						if (my $error = shift) {
+							$request->addResult(error => $error);
+						}
+						
+						_insert_done($client);
 
-				_insert_done(
-					$client,
-					$added,
+						playlistXitemCommand_done( $client, $request, $path );
+					}
 				);
-
-				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
 
@@ -440,22 +456,27 @@ sub playlistXitemCommand {
 				}
 
 				Slim::Player::Playlist::addTracks($client, $foundItems, $cmd eq 'add' ? -3 : -2,
-					$jumpToIndex, $request, @infoTags);
+					$jumpToIndex, $request, @infoTags,
+					sub {
+						if (my $error = shift) {
+							$request->addResult(error => $error);
+						}
+						
+						_playlistXitem_load_done(
+							$client,
+							$jumpToIndex,
+							$request,
+							Slim::Utils::Misc::fixPath($path),
+							$error,
+							$noShuffle,
+							$fadeIn,
+							$noplay,
+							$wipePlaylist,
+						);
 
-				_playlistXitem_load_done(
-					$client,
-					$jumpToIndex,
-					$request,
-					Slim::Utils::Misc::fixPath($path),
-					$error,
-					$noShuffle,
-					$fadeIn,
-					$noplay,
-					$wipePlaylist,
+						playlistXitemCommand_done( $client, $request, $path );
+					}
 				);
-
-
-				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
 
@@ -539,72 +560,81 @@ sub playlistXtracksCommand {
 
 	my $size;
 
+	my $callback = sub {
+		if (my $error = shift) {
+			$request->addResult(error => $error);
+		}
+		
+		if ($insert) {
+			_insert_done($client);
+			$request->addResult(index => (Slim::Player::Source::streamingSongIndex($client)+1));
+		}
+	
+		if ($delete) {
+			Slim::Player::Playlist::removeMultipleTracks($client, \@tracks);
+		}
+	
+		if (main::LOCAL_PLAYERS && ($load || $add) && !$client->isa('Slim::Player::Disconnected')) {
+			Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
+			$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
+		}
+	
+		if (main::LOCAL_PLAYERS && $load && !$client->isa('Slim::Player::Disconnected')) {
+			# The user may have stopped in the middle of a
+			# saved playlist - resume if we can. Bug 1582
+			my $playlistObj = $client->currentPlaylist();
+	
+			if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
+	
+				if (!defined $jumpToIndex && !Slim::Player::Playlist::shuffle($client)) {
+					$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $client->currentPlaylist->path );
+				}
+	
+				# And set a callback so that we can
+				# update CURTRACK when the song changes.
+				Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
+			}
+			# bug 14662: Playing a specific track while track shuffle is enabled will play another track
+			elsif (defined $jumpToIndex && Slim::Player::Playlist::shuffle($client)) {
+				my $shuffleList = Slim::Player::Playlist::shuffleList($client);
+				for (my $i = 0; $i < scalar @$shuffleList; $i++) {
+					if ($shuffleList->[$i] == $jumpToIndex) {
+						$jumpToIndex = $i;
+						last;
+					}
+				}
+			}
+			
+			$client->execute(['playlist', 'jump', $jumpToIndex, $fadeIn]);
+			
+			# Reshuffle (again) to get playing song or album at start of list
+			Slim::Player::Playlist::reshuffle($client) if $load && defined $jumpToIndex && Slim::Player::Playlist::shuffle($client);
+			
+			$client->currentPlaylistModified(0);
+		}
+		
+		if (main::LOCAL_PLAYERS) {
+			if ($add || $insert || $delete) {
+				$client->currentPlaylistModified(1);
+			}
+		
+			if ($load || $add || $insert || $delete) {
+				$client->currentPlaylistUpdateTime(Time::HiRes::time());
+			}
+		}
+	
+		$request->setStatusDone();
+	};
+	
 	# add or remove the found songs
 	if ($load || $add || $insert) {
 		$size = Slim::Player::Playlist::addTracks($client, \@tracks, $insert ? -1 : $add ? -3 : -2,
 			$load ? ($jumpToIndex || 0) : undef, $request,
-			$request->getParam('infoText'), $request->getParam('infoIcon'));
+			$request->getParam('infoText'), $request->getParam('infoIcon'),
+			$callback);
+	} else {
+		$callback->();
 	}
-
-	if ($insert) {
-		_insert_done($client, $size);
-		$request->addResult(index => (Slim::Player::Source::streamingSongIndex($client)+1));
-	}
-
-	if ($delete) {
-		Slim::Player::Playlist::removeMultipleTracks($client, \@tracks);
-	}
-
-	if (main::LOCAL_PLAYERS && ($load || $add) && !$client->isa('Slim::Player::Disconnected')) {
-		Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
-		$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
-	}
-
-	if (main::LOCAL_PLAYERS && $load && !$client->isa('Slim::Player::Disconnected')) {
-		# The user may have stopped in the middle of a
-		# saved playlist - resume if we can. Bug 1582
-		my $playlistObj = $client->currentPlaylist();
-
-		if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
-
-			if (!defined $jumpToIndex && !Slim::Player::Playlist::shuffle($client)) {
-				$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $client->currentPlaylist->path );
-			}
-
-			# And set a callback so that we can
-			# update CURTRACK when the song changes.
-			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
-		}
-		# bug 14662: Playing a specific track while track shuffle is enabled will play another track
-		elsif (defined $jumpToIndex && Slim::Player::Playlist::shuffle($client)) {
-			my $shuffleList = Slim::Player::Playlist::shuffleList($client);
-			for (my $i = 0; $i < scalar @$shuffleList; $i++) {
-				if ($shuffleList->[$i] == $jumpToIndex) {
-					$jumpToIndex = $i;
-					last;
-				}
-			}
-		}
-		
-		$client->execute(['playlist', 'jump', $jumpToIndex, $fadeIn]);
-		
-		# Reshuffle (again) to get playing song or album at start of list
-		Slim::Player::Playlist::reshuffle($client) if $load && defined $jumpToIndex && Slim::Player::Playlist::shuffle($client);
-		
-		$client->currentPlaylistModified(0);
-	}
-	
-	if (main::LOCAL_PLAYERS) {
-		if ($add || $insert || $delete) {
-			$client->currentPlaylistModified(1);
-		}
-	
-		if ($load || $add || $insert || $delete) {
-			$client->currentPlaylistUpdateTime(Time::HiRes::time());
-		}
-	}
-
-	$request->setStatusDone();
 }
 
 sub playlistcontrolCommand {
@@ -657,11 +687,16 @@ sub playlistcontrolCommand {
 		}
 
 		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, $folder->url(), ($load && $jumpIndex ? 'play_index:' . $jumpIndex : undef) ]
+			$client,
+			['playlist', $cmd, $folder->url(), ($load && $jumpIndex ? 'play_index:' . $jumpIndex : undef) ],
+			sub {
+				$request->setRawResults($_[0]->getResults());
+				$request->addResult('count', 1);
+				$request->setStatusDone();
+			}
 		);
-
-		$request->addResult('count', 1);
-		$request->setStatusDone();
+		
+		$request->setStatusProcessing() unless $request->isStatusDone();
 		return;
 	}
 
@@ -702,13 +737,16 @@ sub playlistcontrolCommand {
 			$cmd .= "tracks";
 
 			Slim::Control::Request::executeRequest(
-				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex, 'infoText:' . $playlist->title]
+				$client,
+				['playlist', $cmd, 'playlist.id=' . $playlist_id, undef, undef, $jumpIndex, 'infoText:' . $playlist->title],
+				sub {
+					$request->setRawResults($_[0]->getResults());
+					$request->addResult('count', $playlist->tracks->count());
+					$request->setStatusDone();
+				}
 			);
 
-			$request->addResult( 'count', $playlist->tracks->count() );
-
-			$request->setStatusDone();
-			
+			$request->setStatusProcessing() unless $request->isStatusDone();
 			return;
 		}
 
@@ -783,13 +821,19 @@ sub playlistcontrolCommand {
 		$cmd .= "tracks";
 
 		Slim::Control::Request::executeRequest(
-			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex, @infoTags]
+			$client, ['playlist', $cmd, 'listRef', \@tracks, undef, $jumpIndex, @infoTags],
+			sub {
+				$request->setRawResults($_[0]->getResults());
+				$request->addResult('count', scalar(@tracks));
+				$request->setStatusDone();
+			}
 		);
+		
+		$request->setStatusProcessing() unless $request->isStatusDone();
+	} else {
+		$request->addResult('count', 0);
+		$request->setStatusDone();
 	}
-
-	$request->addResult('count', scalar(@tracks));
-
-	$request->setStatusDone();
 }
 
 
@@ -1527,7 +1571,7 @@ sub _playlistXitem_load_done {
 
 
 sub _insert_done {
-	my ($client, $size) = @_;
+	my ($client) = @_;
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
 }

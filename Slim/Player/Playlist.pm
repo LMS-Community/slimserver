@@ -36,7 +36,7 @@ sub shuffleList {return $_[0]->getPlaylist()->shuffleList(@_);}
 # $client
 sub playList {return $_[0]->getPlaylist()->playList(@_);}
 
-# $client, $tracksRef, $position, $jumpIndex, $request, $text, $icon
+# $client, $tracksRef, $position, $jumpIndex, $request, $text, $icon, $callback
 # $position:i=0..n => before current-playlist track i
 #           -1     => after current track (insert)
 #			-2     => replace all
