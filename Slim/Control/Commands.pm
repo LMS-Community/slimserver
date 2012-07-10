@@ -333,17 +333,6 @@ sub playlistXitemCommand {
 			Slim::Player::Source::playmode($client, 'play', undef, undef, $fadeIn);
 		}
 		
-		# XXX: this should not be calling a request callback directly!
-		# It should be handled by $request->setStatusDone
-		if ( my $callbackf = $request->callbackFunction ) {
-			if ( my $callbackargs = $request->callbackArguments ) {
-				$callbackf->( @{$callbackargs} );
-			}
-			else {
-				$callbackf->( $request );
-			}
-		}
-		
 		playlistXitemCommand_done($client, $request, $path);
 		
 		main::DEBUGLOG && $log->debug("done.");
@@ -425,8 +414,6 @@ sub playlistXitemCommand {
 				_insert_done(
 					$client,
 					$added,
-					$request->callbackFunction,
-					$request->callbackArguments,
 				);
 
 				playlistXitemCommand_done( $client, $request, $path );
@@ -484,12 +471,6 @@ sub playlistXitemCommand {
 # Called after insert/load async callbacks are finished
 sub playlistXitemCommand_done {
 	my ( $client, $request, $path ) = @_;
-
-	# The callback, if any, will be called by _load/_insert_done, so
-	# don't call it now
-	# Hmm, in fact the request is not done until load/insert is called.
-	# addToList is asynchronous. load/insert should call request done...
-	$request->callbackEnabled(0);
 
 	# Update the parameter item with the correct path
 	# Not sure anyone depends on this behaviour...
@@ -1535,17 +1516,6 @@ sub _playlistXitem_load_done {
 		$client->execute(['playlist', 'jump', $index, $fadeIn, $noplay ]);
 	}
 
-	# XXX: this should not be calling a request callback directly!
-	# It should be handled by $request->setStatusDone
-	if ( my $callbackf = $request->callbackFunction ) {
-		if ( my $callbackargs = $request->callbackArguments ) {
-			$callbackf->( @{$callbackargs} );
-		}
-		else {
-			$callbackf->( $request );
-		}
-	}
-
 	if ($wipePlaylist) {
 		my $playlistObj = Slim::Schema->objectForUrl($url);
 		_wipePlaylist($playlistObj);
@@ -1557,9 +1527,7 @@ sub _playlistXitem_load_done {
 
 
 sub _insert_done {
-	my ($client, $size, $callbackf, $callbackargs) = @_;
-
-	$callbackf && (&$callbackf(@$callbackargs));
+	my ($client, $size) = @_;
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
 }
