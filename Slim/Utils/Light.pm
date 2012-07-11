@@ -206,7 +206,7 @@ sub checkForUpdate {
 
 		chomp;
 		
-		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
+		if (/(?:UEMusicLibrary|ueml|LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
 			$installer = $_;
 			last;
 		}
