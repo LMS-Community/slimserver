@@ -206,7 +206,7 @@ sub checkForUpdate {
 
 		chomp;
 		
-		if (/(?:Squeezebox|SqueezeCenter).*/) {
+		if (/(?:LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
 			$installer = $_;
 			last;
 		}
