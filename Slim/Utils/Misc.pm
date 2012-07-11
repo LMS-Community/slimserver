@@ -393,18 +393,15 @@ sub stripAnchorFromURL {
 
 Split a URL $string into (host, port, path)
 
-This relies on the schemes as specified by any registered handlers.
-
-Otherwise we could use L<URI>
+This must also work with schemes as specified by any registered handlers,
+so we cannot just use L<URI>
 
 =cut
 
 sub crackURL {
 	my ($string) = @_;
 
-	my $urlstring = join('|', Slim::Player::ProtocolHandlers->registeredHandlers);
-
-	$string =~ m|(?:$urlstring)://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
+	$string =~ m|$URI::scheme_re://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
