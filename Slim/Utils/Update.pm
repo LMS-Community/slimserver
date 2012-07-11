@@ -25,7 +25,7 @@ my $versionFile;
 
 sub checkVersion {
 	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|exe)(\.tmp)?$/i);			
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:ueml|UEMusicLibrary|Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|zip|exe)(\.tmp)?$/i);			
 
 	return unless $prefs->get('checkVersion');
 
@@ -68,7 +68,7 @@ sub checkVersion {
 
 	my $url = Slim::Networking::SqueezeNetwork->url(
 		sprintf(
-			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
+			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d&ueml=%d", 
 			$::VERSION, 
 			$::REVISION, 
 			Slim::Utils::Strings::getLanguage(),
@@ -76,6 +76,7 @@ sub checkVersion {
 			$os->installerOS(),
 			$prefs->get('server_uuid'),
 			Slim::Player::Client::clientCount(),
+			main::LOCAL_PLAYERS ? 0 : 1,
 		), 'uesr'
 	);
 	
@@ -288,7 +289,7 @@ sub getUpdateInstaller {
 
 		chomp;
 		
-		if (/(?:UE Music Library|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*/) {
+		if (/(?:ueml|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*/i) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -316,7 +317,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^(?:UE Music Library|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^(?:ueml|UEMusicLibrary|LogitechMediaServer|Squeezebox|SqueezeCenter).*\.$ext$/i);
 }
 
 1;

@@ -818,29 +818,31 @@ sub getUpdateParams {
 		Slim::Utils::Log::logger('server.update')->info("Running server from the source - don't download the update.");
 		return;
 	}
-	
-	require Win32::NetResource;
-	
+
 	my $downloaddir;
 	
-	if ($class->{osDetails}->{isWHS}) {
-
-		my $share;
-		Win32::NetResource::NetShareGetInfo('software', $share);
-
-		# this is ugly... FR uses a localized share name
-		if (!$share || !$share->{path}) {
-			Win32::NetResource::NetShareGetInfo('logiciel', $share);
-		}
-		
-		if ($share && $share->{path}) {
-			$downloaddir = $share->{path};
-
-			if (-e catdir($downloaddir, "Add-Ins")) {
-				$downloaddir = catdir($downloaddir, "Add-Ins");
-			}
-		}
-	}
+# XXX - we no longer support the WHS packages
+#	require Win32::NetResource;
+#	
+#	
+#	if ($class->{osDetails}->{isWHS}) {
+#
+#		my $share;
+#		Win32::NetResource::NetShareGetInfo('software', $share);
+#
+#		# this is ugly... FR uses a localized share name
+#		if (!$share || !$share->{path}) {
+#			Win32::NetResource::NetShareGetInfo('logiciel', $share);
+#		}
+#		
+#		if ($share && $share->{path}) {
+#			$downloaddir = $share->{path};
+#
+#			if (-e catdir($downloaddir, "Add-Ins")) {
+#				$downloaddir = catdir($downloaddir, "Add-Ins");
+#			}
+#		}
+#	}
 	
 	return {
 		path => $downloaddir,
@@ -850,11 +852,8 @@ sub getUpdateParams {
 sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
-sub installerExtension { '(?:exe|msi)' }; 
-sub installerOS { 
-	my $class = shift;
-	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
-}
+sub installerExtension { 'exe' }; 
+sub installerOS { 'win' }
 
 sub restartServer {
 	my $class = shift;
