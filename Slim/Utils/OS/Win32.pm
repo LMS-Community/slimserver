@@ -161,7 +161,6 @@ sub dirsFor {
 
 		# Windows Home Server offers a Music share which is more likely to be used 
 		# than the administrator's My Music folder
-		# XXX - should we continue to support WHS?
 		if ($class->{osDetails}->{isWHS} && $dir =~ /^(?:music|playlists)$/) {
 			my $objWMI = Win32::OLE->GetObject('winmgmts://./root/cimv2');
 			
@@ -819,33 +818,8 @@ sub getUpdateParams {
 		return;
 	}
 
-	my $downloaddir;
-	
-# XXX - we no longer support the WHS packages
-#	require Win32::NetResource;
-#	
-#	
-#	if ($class->{osDetails}->{isWHS}) {
-#
-#		my $share;
-#		Win32::NetResource::NetShareGetInfo('software', $share);
-#
-#		# this is ugly... FR uses a localized share name
-#		if (!$share || !$share->{path}) {
-#			Win32::NetResource::NetShareGetInfo('logiciel', $share);
-#		}
-#		
-#		if ($share && $share->{path}) {
-#			$downloaddir = $share->{path};
-#
-#			if (-e catdir($downloaddir, "Add-Ins")) {
-#				$downloaddir = catdir($downloaddir, "Add-Ins");
-#			}
-#		}
-#	}
-	
 	return {
-		path => $downloaddir,
+		path => $class->dirsFor('updates'),
 	};
 }
 
