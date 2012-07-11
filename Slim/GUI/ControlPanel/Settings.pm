@@ -206,11 +206,13 @@ sub new {
 
 	my $rescanBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 	
-	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [
+	my $rescanOptions = [
 		string('SETUP_STANDARDRESCAN'),
 		string('SETUP_WIPEDB'),
-		string('SETUP_PLAYLISTRESCAN'),
-	]);
+	];
+	push @$rescanOptions, string('SETUP_PLAYLISTRESCAN') if main::LOCAL_PLAYERS;
+	
+	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], $rescanOptions);
 	$rescanMode->SetSelection(0);
 	$rescanBtnSizer->Add($rescanMode);
 	$parent->addStatusListener($rescanMode);
