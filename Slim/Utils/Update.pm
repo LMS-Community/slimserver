@@ -77,7 +77,7 @@ sub checkVersion {
 			$prefs->get('server_uuid'),
 			Slim::Player::Client::clientCount(),
 			main::LOCAL_PLAYERS ? 0 : 1,
-		), 'uesr'
+		), $ENV{SN_DEV} ? undef : 'uesr'
 	);
 	
 	main::DEBUGLOG && $log->debug("Using URL: $url");
@@ -155,7 +155,8 @@ sub getUpdate {
 	
 	cleanup($params->{path}, 'tmp');
 
-	if ( $url && Slim::Music::Info::isURL($url) ) {
+
+	if ( $url && $url =~ /^https?:/ ) {
 		
 		main::INFOLOG && $log->info("URL to download update from: $url");
 
@@ -200,7 +201,7 @@ sub getUpdate {
 		$download->get( $url );
 	}
 	else {
-		$log->error("Didn't receive valid update URL: " . substr($url, 0, 50) . (length($url) > 50 ? '...' : ''));
+		$log->error("Didn't receive valid update URL: $url");
 	}
 }
 
@@ -219,7 +220,13 @@ sub downloadAsyncDone {
 		return;
 	}
 
-	if (-s _ != $http->headers->content_length()) {
+	elsif ($http->headers->content_type =~ /text/) {
+		$log->warn("Server installer download failed: file isn't a binary");
+		unlink $tmpFile;
+		return;
+	}
+	
+	elsif (-s _ != $http->headers->content_length) {
 		$log->warn( sprintf("Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
