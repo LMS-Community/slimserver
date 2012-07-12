@@ -483,7 +483,8 @@ sub getMetadataFor {
 				# disable FWD when you've reached skip limit
 				fwd => canSkip($client) ? 1 : 0,
 				# replace repeat with Thumbs Up
-				repeat  => {
+				repeat => 0,
+				like  => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_up_button.png' : 'html/images/btn_thumbs_up.gif',
 					jiveStyle => $track->{allowFeedback} ? 'thumbsUp' : 'thumbsUpDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_LIKE'),
@@ -491,7 +492,8 @@ sub getMetadataFor {
 				},
 
 				# replace shuffle with Thumbs Down
-				shuffle => {
+				shuffle => 0,
+				dislike => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_down_button.png' : 'html/images/btn_thumbs_down.gif',
 					jiveStyle => $track->{allowFeedback} ? 'thumbsDown' : 'thumbsDownDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_DONT_LIKE'),

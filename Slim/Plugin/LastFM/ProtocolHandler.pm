@@ -356,7 +356,8 @@ sub getMetadataFor {
 				fwd => canSkip($client) ? 1 : 0,
 
 				# replace repeat with Love
-				repeat  => {
+				repeat => 0,
+				like  => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/love_button.png' : 'html/images/btn_lastfm_love.gif',
 					jiveStyle => 'love',
 					tooltip => $client->string('PLUGIN_LFM_LOVE'),
@@ -364,7 +365,8 @@ sub getMetadataFor {
 				},
 
 				# replace shuffle with Ban
-				shuffle => {
+				shuffle => 0,
+				dislike => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/ban_button.png' : 'html/images/btn_lastfm_ban.gif',
 					jiveStyle => 'hate',
 					tooltip => $client->string('PLUGIN_LFM_BAN'),

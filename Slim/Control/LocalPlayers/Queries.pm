@@ -1268,10 +1268,8 @@ sub statusQuery {
 		
 		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
-		if ($track->remote) {
-			$tags .= "B"; # include button remapping
-			my $metadata = _songData($request, $track, $tags);
-			$request->addResult('remoteMeta', $metadata);
+		if (my $metadata = _songData($request, $track, 'B')) { # get button remapping
+			$request->addResult('buttons', $metadata->{'buttons'}) if $metadata->{'buttons'};
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song

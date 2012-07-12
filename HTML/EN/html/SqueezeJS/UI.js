@@ -140,10 +140,9 @@ if (Ext.Button) {
 			if (this.cmd_id) {
 	
 				// update custom handler for stations overwriting default behavior
-				if (result.playlist_loop && result.playlist_loop[0] 
-					&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
+				if (result.buttons && result.buttons[this.cmd_id]) {
 		
-					var btn = result.playlist_loop[0].buttons[this.cmd_id];
+					var btn = result.buttons[this.cmd_id];
 		
 					if (btn.cls)
 						this.setClass(btn.cls);
@@ -280,8 +279,8 @@ if (Ext.Button) {
 		},
 	
 		onPlayerStateChange: function(result){
-			if (result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].buttons) {
-				try { this.setDisabled(!result.playlist_loop[0].buttons.rew) }
+			if (result.buttons) {
+				try { this.setDisabled(Ext.isDefined(result.buttons.rew) && !result.buttons.rew) }
 				catch(e){}
 			}
 			else if (this.disabled)
@@ -315,11 +314,20 @@ if (Ext.Button) {
 		handler: function(){
 			if (this.power)
 				SqueezeJS.Controller.playerControl(this.skipCmd);
+		},
+		
+		onPlayerStateChange: function(result){
+			if (result.buttons) {
+				try { this.setDisabled(Ext.isDefined(result.buttons.fwd) && !result.buttons.fwd) }
+				catch(e){}
+			}
+			else if (this.disabled)
+				this.enable();
 		}
 	});
 	
 	SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
-		cmd_id: 'repeat',
+		cmd_id: 'like',
 		state: -1,
 	
 		initComponent : function(){
@@ -353,7 +361,7 @@ if (Ext.Button) {
 	});
 	
 	SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
-		cmd_id: 'shuffle',
+		cmd_id: 'dislike',
 		state: -1,
 	
 		initComponent : function(){
