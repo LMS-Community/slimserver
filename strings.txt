@@ -16562,19 +16562,19 @@ INFORMATION_MENU_MODULE
 	SV	Plugin-moduler
 
 INFORMATION_PLAYER_NAME
-	CS	Squeezebox název
-	DA	Navn på Squeezebox
-	DE	Squeezebox-Name
-	EN	Squeezebox Name
-	ES	Nombre de Squeezebox
-	FI	Squeezeboxin nimi
-	FR	Nom de la Squeezebox
-	IT	Nome Squeezebox
-	NL	Squeezebox-naam
-	NO	Navn på Squeezebox
-	PL	Nazwa usługi Squeezebox
-	RU	Название Squeezebox
-	SV	Squeezebox-namn
+	CS	Smart Radio název
+	DA	Navn på Smart Radio
+	DE	Smart Radio-Name
+	EN	Smart Radio Name
+	ES	Nombre de Smart Radio
+	FI	Smart Radioin nimi
+	FR	Nom de la Smart Radio
+	IT	Nome Smart Radio
+	NL	Smart Radio-naam
+	NO	Navn på Smart Radio
+	PL	Nazwa usługi Smart Radio
+	RU	Название Smart Radio
+	SV	Smart Radio-namn
 
 INFORMATION_PLAYER_NAME_ABBR
 	CS	Název
@@ -23668,19 +23668,19 @@ RETRY_LIMIT_EXCEEDED
 	SV	Anslutningsförsök misslyckades
 
 SYNC_ABOUT
-	CS	Pomocí funkce synchronizace přidejte jedno nebo více zařízení Squeezebox a využijte plný potenciál zvuku pokrývající více místností. Další informace naleznete na stránce Logitech.com.
-	DA	Tilføj en eller flere Squeezeboxe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
-	DE	Fügen Sie eine oder mehrere Squeezeboxen hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
-	EN	Add one or more additional Squeezeboxes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
-	ES	Agregue uno o más dispositivos Squeezebox adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
-	FI	Lisää yksi tai useampi Squeezebox, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
-	FR	Ajoutez une ou plusieurs Squeezebox à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
-	IT	Aggiungere uno o più Squeezebox per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Logitech.com.
-	NL	Voeg een of meer Squeezebox-muzieksystemen toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Logitech.com voor meer informatie.
-	NO	Legg til én eller flere Squeezebox-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Logitech.com for mer informasjon.
-	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Logitech.com.
-	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
-	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
+	CS	Pomocí funkce synchronizace přidejte jedno nebo více zařízení Smart Radio a využijte plný potenciál zvuku pokrývající více místností. Další informace naleznete na stránce Logitech.com.
+	DA	Tilføj en eller flere Smart Radioe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
+	DE	Fügen Sie eine oder mehrere Smart Radios hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
+	EN	Add one or more additional Smart Radioes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
+	ES	Agregue uno o más dispositivos Smart Radio adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
+	FI	Lisää yksi tai useampi Smart Radio, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
+	FR	Ajoutez une ou plusieurs Smart Radio à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
+	IT	Aggiungere uno o più Smart Radio per utilizzare la funzione Sincronizza, ottenendo il massimo dal sistema audio per più locali. Per ulteriori informazioni, visitare il sito Web Logitech.com.
+	NL	Voeg een of meer Smart Radio-muzieksystemen toe om ze te synchroniseren voor optimale audio in meerdere kamers tegelijk. Ga naar Logitech.com voor meer informatie.
+	NO	Legg til én eller flere Smart Radio-spillere dersom du ønsker å bruke synkroniseringsfunksjonen til å få mest mulig ut av flerromslyd. Besøk Logitech.com for mer informasjon.
+	PL	Dodaj jeden lub więcej urządzeń Smart Radio, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Logitech.com.
+	RU	Добавьте еще один или несколько плееров Smart Radio, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
+	SV	Om du lägger till en eller flera ytterligare Smart Radio-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
 
 CREATE_PIN
 	EN	Generate PIN
