@@ -1119,7 +1119,6 @@ sub playerSettingsMenu {
 		};
 		
 		# XXX Move this menu under Settings / Developer
-=pod
 		push @menu, {
 			text           => $client->string("SB_ACCOUNT"),
 			actions => {
@@ -1129,14 +1128,13 @@ sub playerSettingsMenu {
 				},
 			},
 			id             => 'registerPlayer',
-			node           => 'settings',
+			node           => 'developerSettings',
 			weight         => 99,
 			window         => {
 				# XXX - need own icon
 				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
 			},
 		};
-=cut
 	}
 	elsif ( main::SLIM_SERVICE ) {
 		_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
