@@ -439,11 +439,14 @@ sub requestMethod {
 		if ($request->isStatusError()) {
 			$finish->() if $finish;
 
-			if ( $log->is_error ) {
-				$log->error("Request failed with error: " . $request->getStatusText);
-			}
+			$log->error("Request failed with error: ", $request->getStatusText);
 			
-			Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
+			writeResponse( $context,
+				{
+					error  => $request->getStatusText,
+					result => undef,
+					id     => $context->{'procedure'}->{'id'},
+				} );
 			return;
 
  		} else {
@@ -469,8 +472,13 @@ sub requestMethod {
 		
 	} else {
 
+		writeResponse( $context,
+			{
+				error  => "request not dispatchable",
+				result => undef,
+				id     => $context->{'procedure'}->{'id'},
+			} );
 		$log->error("request not dispatchable: ", to_json($commandargs));
-		Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 		return;
 	}	
 }
