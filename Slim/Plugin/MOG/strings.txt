@@ -1,5 +1,5 @@
 PLUGIN_MOG_ADD_ALL_PLAYLIST
-	EN	Add All to MOG Playlist 
+	EN	Add All to MOG Playlist
 
 PLUGIN_ADD_TRACK_PLAYLIST
 	EN	Add track to MOG Playlist
@@ -30,3 +30,4 @@ PLUGIN_ON_MOG
 	PL	W usłudze MOG
 	RU	На MOG
 	SV	På MOG
+

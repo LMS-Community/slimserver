@@ -17,7 +17,7 @@ PLUGIN_SPOTIFYLOGI_MODULE_NAME_DESC
 	CS	Oficiální zásuvný modul služby Spotify. Poslouchejte službu Spotify na UE Smart Radio nebo Touch.
 	DA	Officielt Spotify-udvidelsesmodul. Lyt til Spotify på UE Smart Radio eller Touch.
 	DE	Offizielles Spotify-Plugin. Nutzen Sie Spotify über Ihr UE Smart Radio oder Ihre Touch.
-	EN	Official Spotify plugin. Listen to Spotify on your UE Smart UE Smart Radio.
+	EN	Official Spotify plugin. Listen to Spotify on your UE Smart Radio.
 	ES	Complemento de Spotify oficial. Escuche Spotify en su dispositivo UE Smart Radio o Touch.
 	FI	Virallinen Spotify-laajennus. Kuuntele musiikkia Spotifysta UE Smart Radion tai Touchin välityksellä.
 	FR	Plugin Spotify officiel. Ecoutez Spotify sur votre UE Smart Radio ou votre Touch.
