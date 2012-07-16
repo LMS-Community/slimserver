@@ -123,6 +123,20 @@ sub addTracks {
 				client        => $client->id,
 			});
 	
+	my $cb = sub {
+		my ($http) = @_;
+		
+		my $error = $http->error;
+		
+		if (!$error) {
+			my $res = eval { from_json( $http->content ) };
+			$error = $res->{'error'} if $res;
+		}
+		
+		$log->error("Problem sending playlist request to ", $http->url, ": $error") if $error;
+		$callback->($error) if $callback;
+	};
+	
 	my ($http, $url);
 	
 	if (my $server = $client->server()) {
@@ -137,21 +151,15 @@ sub addTracks {
 	# Otherwise assume player is on SN - XXX should get this data from request
 	else {
 		$http = Slim::Networking::SqueezeNetwork->new(
-			sub {$callback->() if $callback},
-			sub {
-				$log->error("Problem sending playlist request to SN: ", $_[0]->error);
-				$callback->($_[0]->error) if $callback;
-			},
+			$cb,
+			$cb,
 		);
 		$url = $http->url('/jsonrpc.js');
 	}
 	
 	$http ||= Slim::Networking::SimpleAsyncHTTP->new(
-		sub {$callback->() if $callback},
-		sub {
-			$log->error("Problem sending playlist request to $url: ", $_[0]->error);
-			$callback->("$url: " . $_[0]->error) if $callback;
-		},
+		$cb,
+		$cb,
 		{ timeout => 10, client => $client }
 	);
 	
