@@ -137,8 +137,11 @@ sub addTracks {
 	# Otherwise assume player is on SN - XXX should get this data from request
 	else {
 		$http = Slim::Networking::SqueezeNetwork->new(
-			sub {},
-			sub { $log->error("Problem sending playlist request to SN: ", shift->error); },
+			sub {$callback->() if $callback},
+			sub {
+				$log->error("Problem sending playlist request to SN: ", $_[0]->error);
+				$callback->($_[0]->error) if $callback;
+			},
 		);
 		$url = $http->url('/jsonrpc.js');
 	}
