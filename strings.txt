@@ -314,7 +314,7 @@ ABOUT_SLIMDEVICES
 	CS	O společnosti Slim Devices/Logitech
 	DA	Om Slim Devices/Logitech
 	DE	Info zu Slim Devices/Logitech
-	EN	About Slim Devices/Logitech
+	EN	About Logitech | UE
 	ES	Acerca de Slim Devices/Logitech
 	FI	Tietoja Slim Device -laitteista / Logitechistä
 	FR	A propos de Slim Devices
@@ -2642,7 +2642,7 @@ WELCOME_TO_SQUEEZEPLAY
 	CS	Vítejte ve SqueezePlay
 	DA	Velkommen til SqueezePlay
 	DE	Willkommen bei SqueezePlay!
-	EN	Welcome to SqueezePlay
+	EN	Welcome to Smart Radio
 	ES	Bienvenido a SqueezePlay
 	FI	Tervetuloa SqueezePlayhin
 	FR	Bienvenue dans SqueezePlay
@@ -4643,7 +4643,7 @@ SETUP_SYNCHRONIZE_DESC
 	CS	Přehrávač může být synchronizován s jinými přehrávači a umožnit jim přehrávat současně stejnou skladbu. Ze seznamu dostupných synchronizačních skupin si vyberte přehrávače, s kterými chcete synchronizovat. Synchronizaci ukončíte volbou Bez synchronizace.
 	DA	Afspilleren kan synkroniseres med andre afspillere, således at alle afspillerne spiller det samme nummer på samme tid. Vælg de afspillere du vil synkronisere, fra listen over de synkroniseringsgrupper som kan anvendes. Vælg Ingen synkronisering for at stoppe synkroniseringen.
 	DE	Der Player kann mit anderen Playern synchronisiert werden, um simultan dieselbe Musik wiederzugeben. Wählen Sie die gewünschten Player aus der Liste der verfügbaren Synchronisierungsgruppen. Wählen Sie 'Keine Synchronisierung', um die Funktion zu deaktivieren.
-	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
+	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize from the list of available players. Choose No Synchronization to stop synchronization.
 	ES	El reproductor se puede sincronizar con otros reproductores, lo que les permite reproducir la misma música simultáneamente. Elija los reproductores con los que desear realizar la sincronización en la lista de grupos de sincronización disponibles. Elija Sin sincronización para detener la sincronización.
 	FI	Soitin voidaan synkronoida muiden soitinten kanssa. Tällöin soittimilla voidaan soittaa samaa musiikkia samanaikaisesti. Valitse synkronoitavat soittimet valittavissa olevien synkronointiryhmien luettelosta. Lopeta synkronointi valitsemalla Ei synkronointia.
 	FR	La platine peut se synchroniser à d'autres platines pour lire la même musique qu'elles. Choisissez les platines avec lesquelles vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom de la platine en cours pour arrêter la synchronisation.
@@ -5247,7 +5247,7 @@ SETUP_UPNP_DISABLE
 	CS	Vypnuto, nehledat další UPnP servery médií.
 	DA	Deaktiveret. Søg ikke efter andre UPnP-medieservere.
 	DE	Nein, nicht nach UPnP-Medienservern suchen.
-	EN	Disabled, do not look for other UPnP media servers.
+	EN	Disabled (do not look for other UPnP media servers).
 	ES	Desactivado, no buscar otros servidores de medios UPnP.
 	FI	Ei käytössä, älä etsi muita UPnP-mediapalvelimia.
 	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP.
@@ -6758,7 +6758,7 @@ SCAN_ABORTED
 	CS	Prohledávání bylo přerušeno. Chcete-li mít plný přístup ke své knihovně médií, musíte spustit nové prohledávání.
 	DA	Gennemsøgningen er afbrudt. Du skal foretage gennemsøgningen en gang til for at få fuld adgang til biblioteket.
 	DE	Der Scan wurde abgebrochen. Beachten Sie, dass Sie die Suche wiederholen müssen, um vollständigen Zugriff auf Ihre Medienbibliothek zu erhalten.
-	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your media library.
+	EN	Scan stopped. Run another scan to get full access to your media library.
 	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca multimedia deberá volver a ejecutar un examen.
 	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää mediakirjaston kaikkia toimintoja.
 	FR	L'analyse a été interrompue. Notez que vous devrez lancer une nouvelle analyse pour obtenir l'accès complet à votre bibliothèque multimédia.
@@ -7206,7 +7206,7 @@ SETUP_CHECKVERSION_DESC
 	CS	UE Music Library se každý den může automaticky připojit k UEsmartradio.com a zkontrolovat, zda není k dispozici aktualizovaná verze softwaru. Pokud je, na webovém rozhraní UE Music Library se zobrazí zpráva.
 	DA	UE Music Library kan automatisk etablere forbindelse til UEsmartradio.com hver dag og tjekke om der er udgivet en opdateret version af programmet. Hvis der er, vises en meddelelse i UE Music Librarys webbaserede brugerflade.
 	DE	UE Music Library kann automatisch jeden Tag Verbindung mit UEsmartradio.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von UE Music Library gemeldet.
-	EN	UE Music Library can automatically connect to UEsmartradio.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in UE Music Library's web interface.
+	EN	UE Music Library can automatically connect to uesmartradio.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in UE Music Library's web interface.
 	ES	UE Music Library se puede conectar automáticamente a UEsmartradio.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de UE Music Library.
 	FI	UE Music Library voi muodostaa automaattisesti yhteyden sivustoon UEsmartradio.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, UE Music Libraryin internet-liittymään tulee ilmoitus siitä.
 	FR	Le serveur peut se connecter tous les jours automatiquement à UEsmartradio.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
@@ -7657,7 +7657,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	CS	Pokud hledáte mediální soubory, můžete pomocí serveru hledat odpovídající položky obsahující slova, která začínají stejnými písmeny jako hledaný řetězec, nebo obsahující slova, která mají hledaný řetězec kdekoliv ve slově. Například hledání začátku slov "RAIN" najde položky se slovem "RAINBOW". Hledání uvnitř slov vrátí také položku obsahující slovo "TRAIN".
 	DA	Når du søger efter mediefiler, kan serveren enten finde elementer med ord som begynder med de samme bogstaver som din søgestreng, eller ord som indeholder søgestrengen et vilkårligt sted i ordet. For eksempel vil søgestrengen ved søgning efter "RAIN" i begyndelsen finde elementer med ordet "RAINBOW". Søgning efter vilkårlige steder i ord vil også returnere elementer som indeholder ordet "TRAIN".
 	DE	Beim Suchen nach Mediendateien können Sie den Server anweisen, nur am Wortanfang nach Zeichenfolgen zu suchen oder an einer beliebigen Stelle im Wort. Beispiel: Wenn Sie den Wortanfang nach 'RAIN' durchsuchen, werden auch Einträge mit dem Wort 'RAINBOW' gefunden. Wird innerhalb des Wortes gesucht, werden auch Wörter wie 'TRAIN' gefunden.
-	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
+	EN	When you search for media files, you can have your server find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" would return items like "RAINBOW".  Searching within words would also return items like "TRAIN".
 	ES	Cuando se busca material multimedia, se puede hacer que el servidor encuentre coincidencias con elementos que contengan palabras que empiecen por las mismas letras que la cadena de búsqueda o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar principios de palabras por "RAIN" encontraría elementos con la palabra "RAINBOW". Buscar dentro de palabras también encontraría elementos con la palabra "TRAIN".
 	FI	Kun suoritat mediahakuja, voit määrittää palvelimen etsimään vastaavuuksia kahdella tavalla. Se voi joko etsiä sanoja, jotka alkavat samoilla kirjaimilla kuin hakumerkkijono, tai se voi etsiä sanoja, jotka sisältävät hakumerkkijonon jossakin kohtaa sanaa. Jos se esimerkiksi hakee sanoja, joiden alussa on "RAIN", se löytäisi esimerkiksi sanan "RAINBOW".  Jos se suorittaisi haun sanojen sisällä, se löytäisi myös sanan "TRAIN".
 	FR	Lors d'une recherche parmi les fichiers multimédias, le serveur peut afficher comme résultat les éléments contenant les mots spécifiés ou seulement les éléments dont le nom débute par les mots spécifiés. Par exemple, une recherche sur RAIN affichera les morceaux contenant le mot RAINBOW si vous sélectionnez la recherche par début de mot. Si vous sélectionnez l'option de recherche à l'intérieur des mots, TRAIN sera également renvoyé comme résultat.
@@ -8899,7 +8899,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	CS	Můžete zadat dobu, po kterou se UE Music Library bude pokoušet připojit k internetovému rádiu nebo jinému zdroji. Níže zadejte dobu v sekundách.
 	DA	Du kan angive hvor lang tid UE Music Library skal forsøge at etablere forbindelse til internetradiostationer eller andre kilder før der gives op. Angiv tidsrummet i sekunder nedenfor.
 	DE	Sie können festlegen, wie lange UE Music Library versucht, eine Verbindung zu einem Internetradiosender oder einer anderen Quelle herzustellen. Geben Sie die Wartezeit in Sekunden ein.
-	EN	You can set the length of time that UE Music Library will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
+	EN	You can set the length of time during which UE Music Library will try to connect to a music source before giving up. Enter the amount of time below. in seconds.
 	ES	Se puede establecer el tiempo en el que UE Music Library tratará de conectarse a una emisora de radio por Internet o a otro origen antes de abandonar. Introduzca el tiempo, en segundos, a continuación.
 	FI	Voit määrittää ajan, jonka UE Music Library yrittää muodostaa yhteyttä internet-radiokanavaan tai muuhun lähteeseen, ennen kuin se antaa periksi. Kirjoita aika sekunteina alle.
 	FR	Vous pouvez définir la durée maximale pendant laquelle le UE Music Library tentera de se connecter à une radio Internet ou à une autre source distante. Spécifiez cette durée en secondes ci-dessous.
@@ -9187,7 +9187,7 @@ SETUP_SN_SYNC_DISABLE
 	CS	Zakázáno, neudržovat nastavení přehrávače v synchronizaci.
 	DA	Deaktiveret. Synkroniser ikke afspillerindstillinger.
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
-	EN	Disabled, do not keep player settings in sync.
+	EN	Disabled (do not keep player settings in sync).
 	ES	Desactivado, no mantener sincronizadas configuraciones de reproductor.
 	FI	Poissa käytöstä. Soitinten asetuksia ei pidetä synkronoituna.
 	FR	Désactivé. Ne pas synchroniser les réglages de platine.
@@ -9442,7 +9442,7 @@ SETUP_WIZARD_DONE_DESC
 	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš UE Smart Radio.<br/><br/>Pokud jste zvolili místní zdroj hudby, UE Music Library nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">kliknutím sem</a> pokračovat na dálkové ovládání UE Music Library.
 	DA	Indstillingerne er gemt. Nu kan du begynde at bruge UE Smart Radio.<br/><br/>Hvis du valgte en lokal musikkilde, begynder UE Music Library at indeksere din musiksamling. Du skal bare have lidt tålmodighed, det varer ikke længe før du kan lytte til alle dine musikfiler.<br/><br/>Du kan lukke vinduet eller <a href="/">klikke her</a> for at gå til UE Music Librarys fjernbetjening.
 	DE	Die Einstellungen wurden gespeichert. Sie können die UE Smart Radio jetzt verwenden.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt UE Music Library mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier</a> klicken, um UE Music Library Remote Control aufzurufen.
-	EN	Your settings have been saved. You're now ready to use your UE Smart Radio.<br/><br/>If you selected a local music source, UE Music Library will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to UE Music Library Remote Control.
+	EN	Your settings have been saved. You're now ready to use your UE Smart Radio.<br/><br/>If you selected a local music source, UE Music Library will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You may close this window now.
 	ES	La configuración se ha guardado. Ya puede empezar a utilizar UE Smart Radio.<br/><br/>Si ha seleccionado un origen de música local, UE Music Library iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">hacer clic aquí</a> para pasar a UE Music Library Remote Control.
 	FI	Asetukset on tallennettu. Olet nyt valmis käyttämään UE Smart Radioia.<br/><br/>Jos valitsit paikallisen musiikkilähteen, UE Music Library aloittaa nyt kokoelmasi indeksoinnin. Ole kärsivällinen &mdash; voit pian käyttää kaikkia musiikkitiedostojasi.<br/><br/>Voit nyt sulkea tämän ikkunan tai jatkaa UE Music Libraryin kaukosäätimeen <a href="/">napsauttamalla tästä</a>.
 	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser la UE Smart Radio.<br/><br/>Si vous avez sélectionné une source musicale locale, le UE Music Library va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder à la télécommande du UE Music Library.
@@ -13422,7 +13422,7 @@ SCAN_WARNING
 	CS	UE Music Library stále prohledává vaši knihovnu médií,takže některé položky se v této oblasti ještě nezobrazí.
 	DA	UE Music Library gennemsøger stadig dit mediebibliotek. Det kan betyde at nogle elementer endnu ikke vises her.
 	DE	UE Music Library durchsucht immer noch die Medienbibliothek. Deshalb werden evtl. einige Objekte noch nicht in diesem Bereich angezeigt.
-	EN	UE Music Library is still scanning your media library, so some items may not appear in this area yet.
+	EN	UE Music Library is still scanning your music library.  Some items may not appear in this area yet.
 	ES	UE Music Library todavía está examinado la biblioteca multimedia, por lo que algunos elementos quizás no aparezcan aún en esta sección.
 	FI	UE Music Library tarkistaa yhä mediakirjastoasi. Jotkin kohteet eivät välttämättä vielä näy tässä kohdassa.
 	FR	Le UE Music Library n'a pas terminé d'analyser votre bibliothèque multimédia. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
@@ -13441,7 +13441,7 @@ HOME_SCAN_WARNING
 	CS	UE Music Library stále prohledává vaši knihovnu médií. Prosím počkejte, může to chvíli trvat.
 	DA	UE Music Library gennemsøger stadig dit mediebibliotek. Vent lidt. Det kan godt tage et stykke tid.
 	DE	UE Music Library durchsucht immer noch die Medienbibliothek. Dieser Vorgang kann eine Weile dauern.
-	EN	UE Music Library is still scanning your media library. Please be patient as this may take a while.
+	EN	The UE Music Library software is still scanning your music library. Please wait...
 	ES	UE Music Library sigue examinado la biblioteca multimedia. Tenga paciencia ya que esto puede tardar.
 	FI	UE Music Library tarkistaa yhä mediakirjastoasi. Odota rauhassa, sillä tähän saattaa kulua hetki.
 	FR	Le UE Music Library analyse le contenu de votre bibliothèque multimédia. Veuillez patienter.
@@ -16095,7 +16095,7 @@ RADIO_TUNEIN_CHOOSE
 	CS	Naladit
 	DA	Stil ind
 	DE	Sender wählen
-	EN	Tune In
+	EN	TuneIn
 	ES	Sintonizar
 	FI	Virittäydy kanavalle
 	FR	Connecter
@@ -21393,7 +21393,7 @@ JIVE_SEARCHFOR_HELP
 	CS	Pomocí kolečka měňte písmena a stisknutím prostředního tlačítka proveďte výběr. Chcete-li spustit hledání, stiskněte znovu prostřední tlačítko.
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at begynde søgningen.
 	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Starten der Suche die mittlere Taste erneut.
-	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
+	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press Play to start your search.
 	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para iniciar la búsqueda.
 	FI	Voit vaihtaa kirjainta vierityskiekolla ja valita kirjaimen keskipainikkeella. Käynnistä haku painamalla keskipainiketta uudelleen.
 	FR	Utiliser la molette pour choisir une lettre, puis appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
@@ -22551,7 +22551,7 @@ CONTROLPANEL_SN_FAILURE
 	CS	Nebyli jsme schopni úspěšně komunikovat se mysqueezebox.com
 	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
 	DE	Es konnte keine Verbindung zu mysqueezebox.com hergestellt werden.
-	EN	We were not able to successfully communicate with mysqueezebox.com
+	EN	Unable to reach mysqueezebox.com
 	ES	No ha sido posible comunicarse correctamente con mysqueezebox.com
 	FI	Kommunikointi osoitteen mysqueezebox.com kanssa ei onnistunut
 	FR	Communication avec mysqueezebox.com impossible.
@@ -23671,7 +23671,7 @@ SYNC_ABOUT
 	CS	Pomocí funkce synchronizace přidejte jedno nebo více zařízení Smart Radio a využijte plný potenciál zvuku pokrývající více místností. Další informace naleznete na stránce Logitech.com.
 	DA	Tilføj en eller flere Smart Radioe så du kan bruge funktionen Synkronisering, og få fuld udbytte af lyden i flere rum. Du kan finde flere oplysninger på Logitech.com.
 	DE	Fügen Sie eine oder mehrere Smart Radios hinzu, um die Synchronisierungsfunktion zu verwenden und das volle Potenzial eines Audiosystems für mehrere Räume zu nutzen. Weitere Informationen erhalten Sie unter www.logitech.com.
-	EN	Add one or more additional Smart Radioes to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
+	EN	Add one or more additional Smart Radios to use the Synchronize feature and realize the full potential of multi-room audio. Visit Logitech.com for more information.
 	ES	Agregue uno o más dispositivos Smart Radio adicionales para usar la función Sincronizar y aprovechar todas las posibilidades del audio en varias habitaciones. Visite Logitech.com para obtener más información.
 	FI	Lisää yksi tai useampi Smart Radio, jotta voit käyttää synkronointitoimintoa ja toteuttaa monihuoneäänijärjestelmän mahdollisuudet. Lisätietoja on osoitteessa Logitech.com.
 	FR	Ajoutez une ou plusieurs Smart Radio à synchroniser et explorez tout le potentiel de votre système audio multipièce. Visitez le site Web Logitech.com pour obtenir plus d'informations.
