@@ -152,6 +152,28 @@ sub getMetadataFor {
 				bitrate   => $info->{prefs}->{bitrate} . 'k VBR',
 				info_link => 'plugins/spotifylogi/trackinfo.html',
 				type      => 'Ogg Vorbis (Spotify)',
+				buttons     => {
+					# button for Star
+					like => {
+						# XXX - not the correct icons
+						icon    => main::SLIM_SERVICE ? 'static/images/icons/spotify/starred.png' : 'html/images/btn_lastfm_love.gif',
+						jiveStyle => 'love',
+						tooltip => 'Star track',
+						command => [ 'spotify', 'star', $url ],
+					},
+					
+					# button for Service menu
+					service => {
+						icon    => $class->getIcon($url),
+						command => [ 'spotifylogi', 'items' ],
+						params  => [ 'menu:1' ],
+						window  => {
+							title      => $client->string('PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
+							nextWindow => 'menu',
+						},
+					},
+					
+				}
 			};
 		}
 	}

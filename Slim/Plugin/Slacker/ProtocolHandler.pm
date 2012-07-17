@@ -705,7 +705,8 @@ sub getMetadataFor {
 				fwd => canSkip($client) ? 1 : 0,
 
 				# replace repeat with Mark as Fav
-				repeat  => {
+				repeat => 0,
+				like  => {
 					icon    => $fav_icon,
 					jiveStyle => 'love',
 					tooltip => Slim::Utils::Strings::string($fav_tip),
@@ -713,11 +714,23 @@ sub getMetadataFor {
 				},
 
 				# replace shuffle with Ban Track
-				shuffle => {
+				shuffle => 0,
+				dislike => {
 					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/ban_button.png' : 'html/images/btn_slacker_ban.gif',
 					jiveStyle => 'hate',
 					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 					command => [ 'slacker', 'rate', 'B' ],
+				},
+				
+				# button for Service menu
+				service => {
+					icon    => $class->getIcon($url),
+					command => [ 'slacker', 'items' ],
+					params  => [ 'menu:1' ],
+					window  => {
+						title      => $client->string('PLUGIN_SLACKER_MODULE_NAME'),
+						nextWindow => 'menu',
+					},
 				},
 			}
 		};

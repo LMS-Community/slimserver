@@ -372,6 +372,17 @@ sub getMetadataFor {
 					tooltip => $client->string('PLUGIN_LFM_BAN'),
 					command => [ 'lfm', 'rate', 'B' ],
 				},
+
+				# button for Service menu
+				service => {
+					icon    => $class->getIcon($url),
+					command => [ 'lfm', 'items' ],
+					params  => [ 'menu:1' ],
+					window  => {
+						title      => $client->string('PLUGIN_LFM_MODULE_NAME'),
+						nextWindow => 'menu',
+					},
+				},
 			}
 		};
 	}

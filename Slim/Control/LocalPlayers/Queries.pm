@@ -1268,8 +1268,32 @@ sub statusQuery {
 		
 		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
-		if (my $metadata = _songData($request, $track, 'B')) { # get button remapping
-			$request->addResult('buttons', $metadata->{'buttons'}) if $metadata->{'buttons'};
+		{
+			my $metadata = _songData($request, $track, 'B') || {};	# get button remapping
+			my $buttons = $metadata->{'buttons'} || {};
+			
+			if (Slim::Utils::Favorites->enabled && !$buttons->{'favourite'}) {
+				$buttons->{'favourite'} = {
+					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/favorites_button.png' : 'html/images/favorites.png',
+					jiveStyle => 'love',
+					tooltip => 'Tag or Favorite',
+					command => [ 'jivedummycommand' ],	# pass URL
+				};
+			}
+			
+			if (!$buttons->{'service'}) {
+				if ($track->url =~ /(?:radiotime|tunein)\.com/) {
+					# button for Service menu
+					$buttons->{'service'} = {
+						icon    => main::SLIM_SERVICE ? 'static/images/icons/tuneinradio.png' : 'html/images/radio.png',
+						window  => {
+							nextWindow => 'radios',
+						},
+					};
+				}
+			}
+			
+			$request->addResult('buttons', $buttons) if $buttons;
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song
