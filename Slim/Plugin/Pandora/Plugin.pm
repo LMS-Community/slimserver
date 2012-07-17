@@ -172,9 +172,13 @@ sub _rateTrackOK {
 	}
 	
 	# Parse the text out of the JSON
-	my ($text) = $http->content =~ m/"text":"([^"]+)/;
-	utf8::decode($text);	
-	$request->addResult( $text );
+	if (my ($text) = $http->content =~ m/"text":"([^"]+)/) {
+		my ($title) = $http->content =~ m/"title":"([^"]+)/;
+		utf8::decode($text);	
+		utf8::decode($title);	
+		$client->showBriefly({line => [$title, $text]});
+		$request->addResult( $text );
+	}
 	
 	$request->setStatusDone();
 }
@@ -186,6 +190,15 @@ sub _rateTrackError {
 	my $request = $http->params('request');
 	
 	main::DEBUGLOG && $log->debug( "Rating submit error: $error" );
+	
+	# Parse the text out of the JSON
+	if (my ($text) = $http->content =~ m/"text":"([^"]+)/) {
+		my ($title) = $http->content =~ m/"title":"([^"]+)/;
+		utf8::decode($text);	
+		utf8::decode($title);	
+		$client->showBriefly({line => [$title, $text]});
+		$request->addResult( $text );
+	}
 	
 	# Not sure what status to use here
 	$request->setStatusBadParams();

@@ -43,6 +43,9 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	RU	На Spotify
 	SV	På Spotify
 
+PLUGIN_SPOTIFYLOGI_STARRED
+	EN	%s has been starred on Spotify.
+
 SPOTIFY_ERROR_3
 	CS	Tuto stopu nelze přehrát.
 	DA	Dette nummer kan ikke afspilles.

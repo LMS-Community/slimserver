@@ -199,6 +199,14 @@ sub star {
 	
 	$client->sendFrame( spds => \$data );
 	
+	my $title = 'Track';
+	if ( my $song = $client->currentSongForUrl($uri) ) {
+		if ( my $info = $song->pluginData('info') ) {		
+			$title = $info->{title};
+		}
+	}
+	$client->showBriefly({line => [$client->string('PLUGIN_SPOTIFYLOGI_STARRED', $title)]});
+	
 	$request->setStatusDone();
 }
 
