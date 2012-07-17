@@ -1027,6 +1027,7 @@ sub _cliQuery_done {
 										# radio is a radio-button selection item, not an internet-radio station 
 						my $nameOrTitle = $name || $item->{title} || '';
 						my $touchToPlay = defined(touchToPlay($item)) + 0;
+						$hash{'button'} = $item->{'button'} if defined $item->{'button'};
 						
 						# if showBriefly is 1, send the name as a showBriefly
 						if ($item->{showBriefly} and ( $nameOrTitle ) ) {

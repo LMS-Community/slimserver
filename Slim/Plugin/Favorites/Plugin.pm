@@ -1061,6 +1061,7 @@ sub _objectInfoHandler {
 				type        => 'text',
 				name        => cstring($client, 'JIVE_SAVE_TO_FAVORITES'),
 				jive        => $jive,
+				button      => 'favorite',
 			};
 		} else {
 			return {
@@ -1094,6 +1095,7 @@ sub _objectInfoHandler {
 				type        => 'text',
 				name        => cstring($client, 'JIVE_DELETE_FROM_FAVORITES'),
 				jive        => $jive,
+				button      => 'favorite',
 			};
 	
 		} else {
