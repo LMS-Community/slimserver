@@ -1843,6 +1843,7 @@ sub _playlistControlContextMenu {
 			text => $request->string($token),
 			style => 'item_fav',
 			actions => $favoriteActions,
+			button => 'favorite',
 		};
 	}
 
