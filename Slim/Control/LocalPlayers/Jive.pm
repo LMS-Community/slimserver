@@ -1100,7 +1100,6 @@ sub playerSettingsMenu {
 	
 	# allow player linked to anonymous user accounts to be assigned to existing/new named user account
 	if ( main::SLIM_SERVICE && $client->hasAnonymousAccount ) {
-		# XXX Create PIN menu call
 		push @menu, {
 			text           => $client->string("CREATE_PIN"),
 			actions => {
@@ -1113,12 +1112,10 @@ sub playerSettingsMenu {
 			node           => 'advancedSettings',
 			weight         => 10,
 			window         => {
-				# XXX - need own icon
-				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
+				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/icon_settings_generatepin.png', 'external' ),
 			},
 		};
 		
-		# XXX Move this menu under Settings / Developer
 		push @menu, {
 			text           => $client->string("SB_ACCOUNT"),
 			actions => {
@@ -1132,7 +1129,7 @@ sub playerSettingsMenu {
 			weight         => 99,
 			window         => {
 				# XXX - need own icon
-				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
+				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/icon_settings_account.png', 'external' ),
 			},
 		};
 	}
