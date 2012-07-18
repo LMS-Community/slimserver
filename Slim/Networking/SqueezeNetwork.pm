@@ -43,11 +43,13 @@ my $_Servers = {
 
 # Used only on SN
 my $internal_http_host;
+my $public_http_host;
 my $_sn_hosts;
 my $_sn_hosts_re;
 
 if ( main::SLIM_SERVICE ) {
 	$internal_http_host = SDI::Util::SNConfig::get_config_value('internal_http_host');
+	$public_http_host   = SDI::Util::SNConfig::get_config_value('host');
 	
 	my $sn_server = __PACKAGE__->get_server('sn');
 	
@@ -65,6 +67,7 @@ if ( main::SLIM_SERVICE ) {
 			$mysb_host,
 			$sn_host,
 			$internal_http_host,
+			$public_http_host,
 			($ENV{SN_DEV} ? '127.0.0.1' : ())
 		)
 	);
@@ -271,10 +274,11 @@ sub url {
 	
 	return $path if $path =~ m|^https?://|;
 	
-	# There are 3 scenarios:
+	# There are several scenarios:
 	# 1. Local dev, running SN on localhost:3000
 	# 2. An SN instance, needs to access using an internal IP
 	# 3. Public user
+	# 4. a named external host
 	my $base;
 	
 	$path ||= '';
@@ -290,6 +294,9 @@ sub url {
 	# some calls need to be directed at specific hosts
 	elsif ( !main::SLIM_SERVICE && grep /$external/i, keys %$_Servers ) {
 		$base = 'http://' . $class->get_server($external);
+	}
+	elsif ( main::SLIM_SERVICE && $external ) {
+		$base = 'http://' . $public_http_host;
 	}
 	
 	$base ||= 'http://' . $class->get_server('sn');
