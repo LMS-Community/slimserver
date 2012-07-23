@@ -794,7 +794,7 @@ sub cliAdd {
 
 			main::INFOLOG && $log->info("adding entry $title - $url");
 			
-			my $index = $favs->add( $url, $title );
+			my $index = $favs->add( $url, $title, $type, $parser, $hotkey, $icon );
 			
 			$request->addResult( 'count', 1 );
 			
