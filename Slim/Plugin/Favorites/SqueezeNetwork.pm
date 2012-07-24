@@ -46,7 +46,7 @@ sub all {
 }
 
 sub add {
-	my ( $self, $url, $title ) = @_;
+	my ( $self, $url, $title, $type, $parser, $hotkey, $icon ) = @_;
 	
 	if ( blessed($url) && $url->can('url') ) {
 		$url = $url->url;
@@ -65,6 +65,7 @@ sub add {
 			userid => $self->{userid},
 			url    => $url,
 			title  => $title,
+			icon   => $icon,
 			num    => $max + 1,
 		} );
 		
@@ -162,6 +163,7 @@ sub entry {
 			title => $fav->title,
 			text  => $fav->title,
 			URL   => $fav->url,
+			icon  => $fav->icon,
 			type  => 'audio',
 		};
 	}
