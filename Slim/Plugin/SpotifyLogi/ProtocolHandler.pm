@@ -31,6 +31,19 @@ sub audioScrobblerSource {
 	return 'P';
 }
 
+my $staticButtons = {
+	service => {
+		icon    => __PACKAGE__->getIcon(),
+		command => [ 'spotifylogi', 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string('PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
+			nextWindow => 'menu',
+		},
+	},
+};
+
+
 # Suppress some messages during initial connection, at Spotify's request
 sub suppressPlayersMessage {
 	my ( $class, $client, $song, $string ) = @_;
@@ -162,16 +175,7 @@ sub getMetadataFor {
 						command => [ 'spotify', 'star', $url ],
 					},
 					
-					# button for Service menu
-					service => {
-						icon    => $class->getIcon($url),
-						command => [ 'spotifylogi', 'items' ],
-						params  => [ 'menu:1' ],
-						window  => {
-							title      => $client->string('PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
-							nextWindow => 'menu',
-						},
-					},
+					%$staticButtons,
 					
 				}
 			};
@@ -269,6 +273,7 @@ sub _gotBulkMetadata {
 			type      => 'Ogg Vorbis (Spotify)',
 			info_link => 'plugins/spotifylogi/trackinfo.html',
 			icon      => $icon,
+			buttons   => $staticButtons,
 		};
 	
 		$cache->set( 'spotify_meta_' . $trackId, $meta, 86400 );

@@ -302,6 +302,18 @@ sub _getTrack {
 	);
 }
 
+my $staticButtons = {
+	service => {
+		icon    => __PACKAGE__->getIcon(),
+		command => [ 'mog', 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string('PLUGIN_MOG_MODULE_NAME'),
+			nextWindow => 'menu',
+		},
+	},
+};
+
 sub _gotTrack {
 	my ( $client, $info, $params ) = @_;
 	
@@ -324,6 +336,7 @@ sub _gotTrack {
 		bitrate   => ($info->{bitrate} || 320). 'k CBR',
 		type      => 'MP3 (MOG)',
 		info_link => 'plugins/mog/trackinfo.html',
+		buttons   => $staticButtons,
 	};
 	
 	$song->pluginData( info => $info );
@@ -421,6 +434,7 @@ sub getMetadataFor {
 		type      => 'MP3 (MOG)',
 		icon      => $icon,
 		cover     => $icon,
+		buttons   => $staticButtons,
 	};
 }
 
@@ -481,6 +495,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (MOG)',
 			info_link => 'plugins/mog/trackinfo.html',
 			icon      => $icon,
+			buttons   => $staticButtons,
 		};
 	
 		$cache->set( 'mog_meta_' . $trackId, $meta, 86400 );

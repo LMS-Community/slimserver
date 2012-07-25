@@ -32,6 +32,19 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp3' }
 
+my $staticButtons = {
+	service => {
+		icon    => __PACKAGE__->getIcon(),
+		command => [ 'rhapsodydirect', 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string('PLUGIN_RHAPSODY_DIRECT_MODULE_NAME'),
+			nextWindow => 'menu',
+		},
+	},
+};
+
+
 # default buffer 3 seconds of 192k audio
 sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
 
@@ -345,6 +358,7 @@ sub _gotNextRadioTrack {
 		buttons   => {
 			# disable REW/Previous button in radio mode
 			rew => 0,
+			%$staticButtons,
 		},
 	};
 	
@@ -537,6 +551,7 @@ sub getMetadataFor {
 				type      => 'MP3 (Rhapsody)',
 				icon      => $icon,
 				cover     => $icon,
+				buttons   => $staticButtons,
 			};
 		}
 	}
@@ -596,6 +611,7 @@ sub getMetadataFor {
 		type      => 'MP3 (Rhapsody)',
 		icon      => $icon,
 		cover     => $icon,
+		buttons   => $staticButtons,
 	};
 }
 
@@ -632,6 +648,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Rhapsody)',
 			info_link => 'plugins/rhapsodydirect/trackinfo.html',
 			icon      => $icon,
+			buttons   => $staticButtons,
 		};
 	
 		$cache->set( 'rhapsody_meta_' . $trackId, $meta, 86400 );

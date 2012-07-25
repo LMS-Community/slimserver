@@ -236,6 +236,18 @@ sub _getNextRadioTrack {
 	$http->get( $radioURL );
 }
 
+my $staticButtons = {
+	service => {
+		icon    => __PACKAGE__->getIcon(),
+		command => [ 'deezer', 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string('PLUGIN_DEEZER_MODULE_NAME'),
+			nextWindow => 'menu',
+		},
+	},
+};
+
 sub _gotNextRadioTrack {
 	my $http   = shift;
 	my $client = $http->params->{client};
@@ -290,6 +302,7 @@ sub _gotNextRadioTrack {
 		buttons   => {
 			fwd => $track->{canSkip} ? 1 : 0,
 			rew => 0,
+			%$staticButtons,
 		},
 	};
 	
@@ -388,6 +401,7 @@ sub _gotTrack {
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
+		buttons   => $staticButtons,
 	};
 	
 	$song->duration( $info->{duration} );
@@ -529,6 +543,7 @@ sub getMetadataFor {
 				type      => 'MP3 (Deezer)',
 				icon      => $icon,
 				cover     => $icon,
+				buttons   => $staticButtons,
 			};
 		}
 	}
@@ -588,6 +603,7 @@ sub getMetadataFor {
 		type      => 'MP3 (Deezer)',
 		icon      => $icon,
 		cover     => $icon,
+		buttons   => $staticButtons,
 	};
 }
 
@@ -628,6 +644,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Deezer)',
 			info_link => 'plugins/deezer/trackinfo.html',
 			icon      => $icon,
+			buttons   => $staticButtons,
 		};
 	
 		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );

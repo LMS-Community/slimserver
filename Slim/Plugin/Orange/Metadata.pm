@@ -17,6 +17,18 @@ my $ICON = Slim::Plugin::Orange::Plugin->_pluginDataFor('icon');
 
 my $log  = logger('plugin.orange');
 
+my $staticButtons = {
+	service => {
+		icon    => __PACKAGE__->getIcon(),
+		command => [ 'orange', 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string('PLUGIN_ORANGE_LIVERADIO'),
+			nextWindow => 'menu',
+		},
+	},
+};
+
 sub init {
 	my $class = shift;
 	
@@ -39,6 +51,7 @@ sub defaultMeta {
 		icon  => $ICON,
 		type  => $client->string('RADIO'),
 		ttl   => time() + 30,
+		buttons => $staticButtons,
 	};
 }
 
@@ -137,6 +150,8 @@ sub _gotMetadata {
 	if ($meta->{ttl} < time()) {
 		$meta->{ttl} = time() + ($meta->{ttl} || 60); 
 	}
+	
+	$meta->{'buttons'} = $staticButtons;
 
 	$client->master->pluginData( fetchingMeta => 0 );
 	$client->master->pluginData( metadata => $meta );

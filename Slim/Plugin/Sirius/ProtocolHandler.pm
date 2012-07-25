@@ -443,6 +443,19 @@ sub getMetadataFor {
 		cover   => $logo,
 		bitrate => $bitrate . 'k CBR',
 		type    => 'WMA (Sirius)',
+		buttons => 	{
+			service => {
+				icon    => __PACKAGE__->getIcon(),
+				command => [ 'orange', 'items' ],
+				params  => [ 'menu:1' ],
+				window  => {
+					title      => $client->string('PLUGIN_ORANGE_LIVERADIO'),
+					nextWindow => 'menu',
+				},
+			},
+		},
+	},
+		
 	};
 }
 
