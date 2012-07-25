@@ -39,7 +39,7 @@ sub defaultMeta {
 		icon  => $ICON,
 		type  => $client->string('RADIO'),
 		ttl   => time() + 30,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'orange', PLUGIN_ORANGE_LIVERADIO)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'orange', 'PLUGIN_ORANGE_LIVERADIO')},
 	};
 }
 
