@@ -238,7 +238,7 @@ sub _gotTrack {
 		type      => 'MP3',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', 'PLUGIN_WIMP_MODULE_NAME')},
 	};
 	
 	$song->duration( $info->{duration} );
@@ -448,7 +448,7 @@ sub getMetadataFor {
 		type      => 'MP3',
 		icon      => $icon,
 		cover     => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', 'PLUGIN_WIMP_MODULE_NAME')},
 	};
 }
 
@@ -491,7 +491,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', 'PLUGIN_WIMP_MODULE_NAME')},
 		};
 
 		# if bitrate is not set, we have invalid data - only cache for a few minutes

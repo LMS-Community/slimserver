@@ -324,7 +324,7 @@ sub _gotTrack {
 		bitrate   => ($info->{bitrate} || 320). 'k CBR',
 		type      => 'MP3 (MOG)',
 		info_link => 'plugins/mog/trackinfo.html',
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', PLUGIN_MOG_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', 'PLUGIN_MOG_MODULE_NAME')},
 	};
 	
 	$song->pluginData( info => $info );
@@ -422,7 +422,7 @@ sub getMetadataFor {
 		type      => 'MP3 (MOG)',
 		icon      => $icon,
 		cover     => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', PLUGIN_MOG_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', 'PLUGIN_MOG_MODULE_NAME')},
 	};
 }
 
@@ -483,7 +483,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (MOG)',
 			info_link => 'plugins/mog/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', PLUGIN_MOG_MODULE_NAME)},
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'mog', 'PLUGIN_MOG_MODULE_NAME')},
 		};
 	
 		$cache->set( 'mog_meta_' . $trackId, $meta, 86400 );

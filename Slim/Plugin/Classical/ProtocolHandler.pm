@@ -132,7 +132,7 @@ sub gotNextTrack {
 		type      => 'MP3 (Classical.com)',
 		info_link => 'plugins/classical/trackinfo.html',
 		icon      => __PACKAGE__->getIcon(),
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', PLUGIN_CLASSICAL_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', 'PLUGIN_CLASSICAL_MODULE_NAME')},
 	}; 
 	
 	my $cache = Slim::Utils::Cache->new;
@@ -339,7 +339,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Classical.com)',
 			info_link => 'plugins/classical/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', PLUGIN_CLASSICAL_MODULE_NAME)},
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', 'PLUGIN_CLASSICAL_MODULE_NAME')},
 		};
 	
 		$cache->set( 'classical_meta_' . $track->{id}, $meta, 86400 );

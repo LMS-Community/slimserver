@@ -162,7 +162,7 @@ sub getMetadataFor {
 						command => [ 'spotify', 'star', $url ],
 					},
 					
-					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', PLUGIN_SPOTIFYLOGI_MODULE_NAME),
+					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
 				}
 			};
 		}
@@ -259,7 +259,7 @@ sub _gotBulkMetadata {
 			type      => 'Ogg Vorbis (Spotify)',
 			info_link => 'plugins/spotifylogi/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', PLUGIN_SPOTIFYLOGI_MODULE_NAME)},
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME')},
 		};
 	
 		$cache->set( 'spotify_meta_' . $trackId, $meta, 86400 );

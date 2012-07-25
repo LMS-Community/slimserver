@@ -345,7 +345,7 @@ sub _gotNextRadioTrack {
 		buttons   => {
 			# disable REW/Previous button in radio mode
 			rew => 0,
-			service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', PLUGIN_RHAPSODY_DIRECT_MODULE_NAME),
+			service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME'),
 		},
 	};
 	
@@ -538,7 +538,7 @@ sub getMetadataFor {
 				type      => 'MP3 (Rhapsody)',
 				icon      => $icon,
 				cover     => $icon,
-				buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', PLUGIN_RHAPSODY_DIRECT_MODULE_NAME)},
+				buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME')},
 			};
 		}
 	}
@@ -598,7 +598,7 @@ sub getMetadataFor {
 		type      => 'MP3 (Rhapsody)',
 		icon      => $icon,
 		cover     => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', PLUGIN_RHAPSODY_DIRECT_MODULE_NAME)},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME')},
 	};
 }
 
@@ -635,7 +635,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Rhapsody)',
 			info_link => 'plugins/rhapsodydirect/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', PLUGIN_RHAPSODY_DIRECT_MODULE_NAME)},
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'rhapsodydirect', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME')},
 		};
 	
 		$cache->set( 'rhapsody_meta_' . $trackId, $meta, 86400 );
