@@ -1268,16 +1268,21 @@ sub statusQuery {
 		
 		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
-		{
-			my $metadata = _songData($request, $track, 'B') || {};	# get button remapping
+		if ($track) {
+			my $metadata = _songData($request, $track, 'NKB') || {};	# get button remapping, title and artwork
 			my $buttons = $metadata->{'buttons'} || {};
 			
-			if (Slim::Utils::Favorites->enabled && !$buttons->{'favourite'}) {
-				$buttons->{'favourite'} = {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/favorites_button.png' : 'html/images/favorites.png',
+			if (Slim::Utils::Favorites->enabled && !$buttons->{'favorite'}) {
+				$buttons->{'favorite'} = {
+					icon      => main::SLIM_SERVICE ? 'static/images/icons/favorites.png' : 'html/images/favorites.png',
 					jiveStyle => 'love',
-					tooltip => 'Tag or Favorite',
-					command => [ 'jivedummycommand' ],	# pass URL
+					tooltip   => 'Favorite',
+					command   => ['favorites', 'add'],
+					params    => {
+						title  => $metadata->{'remote_title'} || $metadata->{'title'},
+						url    => $track->url,
+						icon   => $metadata->{'artwork_url'},
+					},
 				};
 			}
 			
