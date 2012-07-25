@@ -90,18 +90,6 @@ sub getNextTrack {
 	$http->get( $trackURL );
 }
 
-my $staticButtons = {
-	service => {
-		icon    => __PACKAGE__->getIcon(),
-		command => [ 'classical', 'items' ],
-		params  => [ 'menu:1' ],
-		window  => {
-			title      => $client->string('PLUGIN_CLASSICAL_MODULE_NAME'),
-			nextWindow => 'menu',
-		},
-	},
-};
-
 sub gotNextTrack {
 	my $http   = shift;
 	my $client = $http->params->{client};
@@ -144,8 +132,8 @@ sub gotNextTrack {
 		type      => 'MP3 (Classical.com)',
 		info_link => 'plugins/classical/trackinfo.html',
 		icon      => __PACKAGE__->getIcon(),
-		buttons   => $staticButtons,
-	};
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', PLUGIN_CLASSICAL_MODULE_NAME)},
+	}; 
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'classical_meta_' . $track->{id}, $meta, 86400 );
@@ -351,7 +339,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Classical.com)',
 			info_link => 'plugins/classical/trackinfo.html',
 			icon      => $icon,
-			buttons   => $staticButtons,
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'classical', PLUGIN_CLASSICAL_MODULE_NAME)},
 		};
 	
 		$cache->set( 'classical_meta_' . $track->{id}, $meta, 86400 );

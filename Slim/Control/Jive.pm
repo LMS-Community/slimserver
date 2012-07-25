@@ -1217,4 +1217,18 @@ sub globalSearchMenu {
 	return \@searchMenu;	
 }
 
+sub simpleServiceButton {
+	my ($client, $icon, $service, $name) = @_;
+	
+	return {
+		icon    => $icon,
+		command => [ $service, 'items' ],
+		params  => [ 'menu:1' ],
+		window  => {
+			title      => $client->string($name),
+			nextWindow => 'menu',
+		},
+	};
+}
+
 1;

@@ -31,19 +31,6 @@ sub audioScrobblerSource {
 	return 'P';
 }
 
-my $staticButtons = {
-	service => {
-		icon    => __PACKAGE__->getIcon(),
-		command => [ 'spotifylogi', 'items' ],
-		params  => [ 'menu:1' ],
-		window  => {
-			title      => $client->string('PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
-			nextWindow => 'menu',
-		},
-	},
-};
-
-
 # Suppress some messages during initial connection, at Spotify's request
 sub suppressPlayersMessage {
 	my ( $class, $client, $song, $string ) = @_;
@@ -175,8 +162,7 @@ sub getMetadataFor {
 						command => [ 'spotify', 'star', $url ],
 					},
 					
-					%$staticButtons,
-					
+					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', PLUGIN_SPOTIFYLOGI_MODULE_NAME),
 				}
 			};
 		}
@@ -273,7 +259,7 @@ sub _gotBulkMetadata {
 			type      => 'Ogg Vorbis (Spotify)',
 			info_link => 'plugins/spotifylogi/trackinfo.html',
 			icon      => $icon,
-			buttons   => $staticButtons,
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', PLUGIN_SPOTIFYLOGI_MODULE_NAME)},
 		};
 	
 		$cache->set( 'spotify_meta_' . $trackId, $meta, 86400 );

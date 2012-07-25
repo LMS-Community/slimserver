@@ -31,18 +31,6 @@ sub bufferThreshold {
 	return 32 * ($prefs->get('bufferSecs') || 3); 
 }
 
-my $staticButtons = {
-	service => {
-		icon    => __PACKAGE__->getIcon(),
-		command => [ 'wimp', 'items' ],
-		params  => [ 'menu:1' ],
-		window  => {
-			title      => $client->string('PLUGIN_WIMP_MODULE_NAME'),
-			nextWindow => 'menu',
-		},
-	},
-};
-
 sub canSeek { 1 }
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
@@ -250,7 +238,7 @@ sub _gotTrack {
 		type      => 'MP3',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
-		buttons   => $staticButtons,
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
 	};
 	
 	$song->duration( $info->{duration} );
@@ -460,7 +448,7 @@ sub getMetadataFor {
 		type      => 'MP3',
 		icon      => $icon,
 		cover     => $icon,
-		buttons   => $staticButtons,
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
 	};
 }
 
@@ -503,7 +491,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
-			buttons   => $staticButtons,
+			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'wimp', PLUGIN_WIMP_MODULE_NAME)},
 		};
 
 		# if bitrate is not set, we have invalid data - only cache for a few minutes
