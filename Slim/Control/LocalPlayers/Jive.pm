@@ -1943,6 +1943,7 @@ sub jiveFavoritesCommand {
 			text   => $title,
 			type   => $type,
 			parser => $parser,
+			icon   => $icon,
 		} );
 
 		$client->showBriefly({
@@ -1976,6 +1977,7 @@ sub jiveFavoritesCommand {
 						url    => $url,
 						type   => $type,
 						parser => $parser,
+						icon   => $icon,
 					},
 				},
 			},
