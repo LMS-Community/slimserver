@@ -139,7 +139,7 @@ sub _gotMetadata {
 		$meta->{ttl} = time() + ($meta->{ttl} || 60); 
 	}
 	
-	$meta->{'buttons'} = { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'orange', PLUGIN_ORANGE_LIVERADIO)};
+	$meta->{'buttons'} = { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'orange', 'PLUGIN_ORANGE_LIVERADIO')};
 
 	$client->master->pluginData( fetchingMeta => 0 );
 	$client->master->pluginData( metadata => $meta );
