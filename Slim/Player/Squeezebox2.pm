@@ -620,7 +620,10 @@ sub directHeaders {
 				# Store the old URL so we can update its bitrate/content-type/etc
 				$redirects->{ $redir } = $url;			
 				
-				$client->stop();
+				# For any track-based services that use redirects (e.g. MOG Australia) this stop will
+				# cause each track to get cut off at the end. It doesn't appear to be necessary but
+				# just in case I'll leave it here commented out. -Andy
+				# $client->stop();
 
 				$controller->song->streamUrl($redir);
 				$client->play({
