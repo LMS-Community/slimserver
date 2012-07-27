@@ -1052,6 +1052,7 @@ sub _objectInfoHandler {
 					params => {
 						title   => $title,
 						url     => $obj->url,
+						icon    => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($obj->coverid || 0) . '/cover.jpg',
 						isContextMenu => 1,
 					},
 				},
