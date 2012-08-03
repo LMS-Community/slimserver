@@ -1048,7 +1048,7 @@ sub _objectInfoHandler {
 			my $actions = {
 				go => {
 					player => 0,
-					cmd    => [ 'jivefavorites', 'add' ],
+					cmd    => [ 'favorites', 'add' ],
 					params => {
 						title   => $title,
 						url     => $obj->url,
@@ -1058,6 +1058,7 @@ sub _objectInfoHandler {
 				},
 			};
 			$jive->{actions} = $actions;
+			$jive->{nextWindow} = 'grandparent';
 			return {
 				type        => 'text',
 				name        => cstring($client, 'JIVE_SAVE_TO_FAVORITES'),

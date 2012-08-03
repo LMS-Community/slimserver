@@ -1824,7 +1824,7 @@ sub _playlistControlContextMenu {
 		my $favoriteActions = {
 			'go' => {
 				player => 0,
-				cmd    => [ 'jivefavorites', $action ],
+				cmd    => [ 'favorites', $action ],
 				params => {
 					title   => $favParams->{'favorites_title'},
 					url     => $favParams->{'favorites_url'},
@@ -1844,6 +1844,7 @@ sub _playlistControlContextMenu {
 			style => 'item_fav',
 			actions => $favoriteActions,
 			button => 'favorite',
+			nextWindow => 'grandparent',
 		};
 	}
 
