@@ -1147,6 +1147,26 @@ sub _cliQuery_done {
 							$hash{'action'} = 'none';
 						}
 						
+						if ($item->{type} && $item->{type} eq 'displayStyle') {
+							# itemBanner
+							if ($item->{'displayStyle'} eq 'itemBanner') {
+								$hash{'icon'} = $item->{'icon'};
+								$hash{'displayStyle'} ||= 'itemBanner';
+							}
+							
+							# itemCredentials
+							if ($item->{'displayStyle'} eq 'itemCredentials') {
+								$hash{'displayStyle'} ||= 'itemCredentials';
+								$hash{'style'} ||= 'itemNoAction';
+								$hash{'actions'} = {
+									go => {
+										params => $item->{params},
+										paramLabels => $item->{paramLabels}
+									}
+								};
+							}
+						}
+						
 						if ( $item->{type} && $item->{type} eq 'localservice' ) {
 							$hash{'actions'} = {
 								go => {
