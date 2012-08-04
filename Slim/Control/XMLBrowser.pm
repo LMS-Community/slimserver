@@ -1147,6 +1147,44 @@ sub _cliQuery_done {
 							$hash{'action'} = 'none';
 						}
 						
+						if ($item->{type} && $item->{type} eq 'displayStyle') {
+							# itemBanner
+							if ($item->{'displayStyle'} eq 'itemBanner') {
+								$hash{'icon'} = $item->{'icon'};
+								$hash{'displayStyle'} ||= 'itemBanner';
+							}
+							
+							# itemCredentials
+							if ($item->{'displayStyle'} eq 'itemCredentials') {
+								$hash{'displayStyle'} ||= 'itemCredentials';
+								$hash{'style'} ||= 'itemNoAction';
+								$hash{'actions'} = {
+									go => {
+										params => $item->{params},
+										paramLabels => $item->{paramLabels}
+									}
+								};
+							}
+						}
+						
+						if ($item->{type} && $item->{type} eq 'link') {
+							# link behaves as sign-in
+							if ($item->{'displayStyle'} eq 'serviceLogin') {
+								$hash{'displayStyle'} ||= $item->{'displayStyle'};
+								$hash{'style'} ||= 'itemNoAction';
+								$hash{'actions'} = {
+									go => {
+										cmd => [ $query, 'serviceLogin' ],
+										params => {
+											%$params,
+											item_id => "$id",
+											params => ["username:__USERNAME__, password:__PASSWORD__"]
+										}
+									}
+								};
+							}
+						}
+						
 						if ( $item->{type} && $item->{type} eq 'localservice' ) {
 							$hash{'actions'} = {
 								go => {
