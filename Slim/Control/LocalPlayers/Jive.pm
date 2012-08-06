@@ -1099,7 +1099,7 @@ sub playerSettingsMenu {
 	}
 	
 	# allow player linked to anonymous user accounts to be assigned to existing/new named user account
-	if ( main::SLIM_SERVICE && $client->hasAnonymousAccount ) {
+	if ( main::SLIM_SERVICE ) {
 		push @menu, {
 			text           => $client->string("CREATE_PIN"),
 			actions => {
@@ -1116,25 +1116,27 @@ sub playerSettingsMenu {
 			},
 		};
 		
-		push @menu, {
-			text           => $client->string("SB_ACCOUNT"),
-			actions => {
-				go => {
-					cmd    => [ 'register', 0, 100, 'service:SN', 'is_anon' ],
-					player => 0,
+		if ( $client->hasAnonymousAccount ) {
+			push @menu, {
+				text           => $client->string("SB_ACCOUNT"),
+				actions => {
+					go => {
+						cmd    => [ 'register', 0, 100, 'service:SN', 'is_anon' ],
+						player => 0,
+					},
 				},
-			},
-			id             => 'registerPlayer',
-			node           => 'developerSettings',
-			weight         => 99,
-			window         => {
-				# XXX - need own icon
-				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/icon_settings_account.png', 'external' ),
-			},
-		};
-	}
-	elsif ( main::SLIM_SERVICE ) {
-		_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
+				id             => 'registerPlayer',
+				node           => 'developerSettings',
+				weight         => 99,
+				window         => {
+					# XXX - need own icon
+					'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/icon_settings_account.png', 'external' ),
+				},
+			};
+		}
+		else {
+			_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
+		}
 	}
 
 	if ($batch) {
