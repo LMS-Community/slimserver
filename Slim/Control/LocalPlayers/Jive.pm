@@ -80,6 +80,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'],
 		[1, 1, 1, \&replaygainSettingsQuery]);
 	
+	Slim::Control::Request::addDispatch(['outputchannelsettings', '_index', '_quantity'],
+		[1, 1, 1, \&outputChannelSettingsQuery]);
+	
 	Slim::Control::Request::addDispatch(['jivealarm'],
 		[1, 0, 1, \&jiveAlarmCommand]);
 	
@@ -819,6 +822,24 @@ sub replaygainSettingsQuery {
 	sliceAndShip($request, $client, \@menu);
 }
 
+sub outputChannelSettingsQuery {
+	my $request = shift;
+	my $client  = $request->client();
+	my $val     = $prefs->client($client)->get('outputChannels');
+	my @strings = (
+		'OUTPUT_CHANNELS_NORMAL',
+		'OUTPUT_CHANNELS_LEFT',
+		'OUTPUT_CHANNELS_RIGHT',
+	);
+	my @menu;
+
+	push @menu, outputChannelsHash($client, $val, $prefs, \@strings, 0);
+	push @menu, outputChannelsHash($client, $val, $prefs, \@strings, 1);
+	push @menu, outputChannelsHash($client, $val, $prefs, \@strings, 2);
+
+	sliceAndShip($request, $client, \@menu);
+}
+
 sub playerSettingsMenu {
 
 	main::INFOLOG && $log->info("Begin function");
@@ -1043,6 +1064,23 @@ sub playerSettingsMenu {
 				  },
 			},
 		};	
+	}
+	
+	# output channels (output only left/right)
+	if ($client->hasOutputChannels) {
+		push @menu, {
+			text           => $client->string("SETUP_OUTPUT_CHANNELS"),
+			id             => 'settingsOutputChannels',
+			iconStyle      => 'hm_settingsAudio',
+			node           => 'settingsAudio',
+			weight         => 50,
+			actions        => {
+				  go => {
+					cmd    => ['outputchannelsettings'],
+					player => 0,
+				  },
+			},
+		};
 	}
 
 	# brightness settings for players with displays 
@@ -1710,6 +1748,21 @@ sub replayGainHash {
 	return \%return;
 }
 
+sub outputChannelsHash {
+	
+	my ($client, $val, $prefs, $strings, $thisValue) = @_;
+	my %return = (
+		text    => $client->string($strings->[$thisValue]),
+		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
+		actions => {
+			do => {
+				player => 0,
+				cmd => ['playerpref', 'outputChannels', "$thisValue"],
+			},
+		},
+	);
+	return \%return;
+}
 
 sub jivePlaylistsCommand {
 
