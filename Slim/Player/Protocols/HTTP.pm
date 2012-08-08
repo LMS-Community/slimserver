@@ -717,6 +717,15 @@ sub getMetadataFor {
 		else {
 			$title = $currentTitle;
 		}
+		
+		main::DEBUGLOG && $log->debug('Received title: '.Data::Dump::dump($title));
+		
+		# Some station has ill-formatted title such as
+		# "text=\"Edge Of Seventeen\" song_spot=\"M\" MediaBaseId=\"1096418\" itunesTrackId=\"219393906\" amgTrackId=\"0\" amgArtistId=\"0\" TAID=\"1063\" TPID=\"1047268\" cartcutId=\"0704273001\""
+		
+		if ($title && $title =~ m/^text="([^"]+)"/) {
+			$title = $1;
+		}
 	}
 	
 	# Remember playlist URL
