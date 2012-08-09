@@ -13,8 +13,6 @@ use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 
-my $ICON = Slim::Plugin::Orange::Plugin->_pluginDataFor('icon');
-
 my $log  = logger('plugin.orange');
 
 sub init {
@@ -34,12 +32,14 @@ sub init {
 sub defaultMeta {
 	my ( $client, $url ) = @_;
 	
+	my $icon = __PACKAGE__->getIcon();
+	
 	return {
 		title => Slim::Music::Info::getCurrentTitle($url),
-		icon  => $ICON,
+		icon  => $icon,
 		type  => $client->string('RADIO'),
 		ttl   => time() + 30,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'orange', 'PLUGIN_ORANGE_LIVERADIO')},
+		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, $icon, 'orange', 'PLUGIN_ORANGE_LIVERADIO')},
 	};
 }
 
@@ -217,6 +217,10 @@ sub parser {
 	}
 	
 	return 1;
+}
+
+sub getIcon {
+	return Slim::Plugin::Orange::Plugin->_pluginDataFor('icon');
 }
 
 1;
