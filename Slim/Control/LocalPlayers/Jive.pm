@@ -857,6 +857,14 @@ sub playerSettingsMenu {
 		weight         => 35,
 	};
 	
+	push @menu, {
+		text           => $client->string('SQUEEZEBOX'),
+		id             => 'settingsSmartRadio',
+		node           => 'settings',
+		isANode        => 1,
+		weight         => 75,
+	};
+
 	# always add repeat
 	push @menu, repeatSettings($client, 1);
 
@@ -992,7 +1000,7 @@ sub playerSettingsMenu {
 	push @menu, {
 		text           => $client->string( 'JIVE_SQUEEZEBOX_INFORMATION' ),
 		id             => 'settingsInformation',
-		node           => 'advancedSettings',
+		node           => 'developerSettings',
 		weight         => 100,
 		actions        => {
 				go =>	{
@@ -1008,7 +1016,7 @@ sub playerSettingsMenu {
 	push @menu, {
 		text           => $client->string('INFORMATION_PLAYER_NAME'),
 		id             => 'settingsPlayerNameChange',
-		node           => 'settings',
+		node           => 'settingsSmartRadio',
 		weight         => 67,
 		input          => {
 			initialText  => $client->name(),
@@ -1191,7 +1199,7 @@ sub syncMenuItem {
 	my $return = {
 		text           => $client->string("SYNCHRONIZE"),
 		id             => 'settingsSync',
-		node           => 'settings',
+		node           => 'settingsSmartRadio',
 		weight         => 70,
 		actions        => {
 			go => {
