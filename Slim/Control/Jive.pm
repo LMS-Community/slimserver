@@ -1075,7 +1075,7 @@ sub appMenus {
 				next;
 			}
 		}
-		else {			
+		else {
 			# For type=opml, use generic handler
 			if ( $apps->{$app}->{type} eq 'opml' ) {
 				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
@@ -1097,7 +1097,7 @@ sub appMenus {
 				
 				my $node = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
 				
-				push @{$menu}, {
+				my $newService = {
 					actions => {
 						go => {
 							cmd    => [ 'opml_generic', 'items' ],
@@ -1118,6 +1118,9 @@ sub appMenus {
 						'icon-tile' => $icon_tile,
 					},
 				};
+				
+				push (@{$menu}, $newService);
+				push (@appMenus, $newService);
 			}
 		}
 	}
@@ -1131,7 +1134,7 @@ sub appMenus {
 	 	map { $_->{weight} = $weight++; $_ } 
 		sort { $a->{text} cmp $b->{text} }
 		@{$menu};
-	
+		
 	if ( $batch ) {
 		return \@sorted;
 	}
