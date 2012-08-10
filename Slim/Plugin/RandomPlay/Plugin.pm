@@ -97,6 +97,9 @@ sub weight { MENU_WEIGHT }
 sub initPlugin {
 	my $class = shift;
 	
+	# Cannot work without local players support
+	return unless main::LOCAL_PLAYERS;
+	
 	# Regenerate the genre map after a rescan.
 	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
 	
