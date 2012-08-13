@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_MOG_MODULE_NAME</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/mog</homepageURL>
 	<icon>plugins/MOG/html/images/icon.png</icon>

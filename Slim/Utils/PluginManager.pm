@@ -204,6 +204,12 @@ sub load {
 		# Initialize all plugins into the disabled list, they are removed below
 		# if they are loaded
 		$disabled->{$module} = $plugins->{$name};
+		
+		# most plugins will require a local player to work - let's exclude them in UEML
+		if ( !main::SLIM_SERVICE && !main::LOCAL_PLAYERS && ( !defined $manifest->{requiresLocalPlayer} || $manifest->{requiresLocalPlayer} ) ) {
+			$log->debug("Skipping plugin: $name - requires local player support");
+			next;
+		} 
 
 		if ( main::SLIM_SERVICE && $name =~ /^Plugins/ ) {
 			# Skip 3rd party plugins on SN

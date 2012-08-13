@@ -7,7 +7,7 @@
         <version>1.0</version>
         <description>PLUGIN_SCREENSAVER_DATETIME_DESC</description>
         <creator>Logitech</creator>
-
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.mysqueezebox.com/support</homepageURL>

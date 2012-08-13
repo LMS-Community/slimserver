@@ -7,6 +7,7 @@
         <version>1.0</version>
         <description>PLUGIN_XPL</description>
         <creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 
 	<defaultState>disabled</defaultState>
         

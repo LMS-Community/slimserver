@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_OPML_GENERIC_MODULE_NAME</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<enforce>1</enforce>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>

@@ -8,6 +8,7 @@
 	<version>1.0</version>
 	<description>MUSICMAGIC_DESC</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 
 	<defaultState>
 		<mac>enabled</mac>

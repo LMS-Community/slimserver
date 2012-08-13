@@ -6,6 +6,7 @@
   <version>1.0</version>
   <description>PLUGIN_NETTEST_DESC</description>
   <creator>Triode</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
   <email>triode1@btinternet.com</email>
 
   <defaultState>enabled</defaultState>

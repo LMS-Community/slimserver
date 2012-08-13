@@ -7,6 +7,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_INFOBROWSER_DESC</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>

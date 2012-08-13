@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC</description>
 	<creator>Michael Herger</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<email>michael@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
 	<icon>plugins/ImageBrowser/html/images/icon.png</icon>

@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_SLACKER_MODULE_NAME</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/Slacker</homepageURL>
 	<icon>plugins/Slacker/html/images/icon.png</icon>

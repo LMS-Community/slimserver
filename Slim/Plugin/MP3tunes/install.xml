@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_MP3TUNES_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/MP3tunes</homepageURL>
 	<icon>plugins/MP3tunes/html/images/icon.png</icon>

@@ -6,6 +6,7 @@
 	<version>1.0</version>
 	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
 	<creator>Logitech</creator>
+	<requiresLocalPlayer>true</requiresLocalPlayer>
 	<defaultState>enabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>        
 	<homepageURL>http://www.mysqueezebox.com/appgallery/LastFM</homepageURL>
