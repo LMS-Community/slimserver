@@ -269,6 +269,12 @@ sub mainMenu {
 
 		main::SERVICES ? @{globalSearchMenu($client)} : (),		
 	);
+	
+	# Don't send the TuneIn My Presets item if the user doesn't have a TuneIn account
+	# XXX LMS support
+	if ( !Slim::Plugin::InternetRadio::Plugin->radiotimeUsername($client) ) {
+		@menu = grep { $_->{id} ne 'opmlpresets' } @menu;
+	}
 
 	if ( !$direct ) {
 		_notifyJive(\@menu, $client);
