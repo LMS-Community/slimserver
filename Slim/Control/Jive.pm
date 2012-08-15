@@ -272,7 +272,7 @@ sub mainMenu {
 	
 	# Don't send the TuneIn My Presets item if the user doesn't have a TuneIn account
 	# XXX LMS support
-	if ( !Slim::Plugin::InternetRadio::Plugin->radiotimeUsername($client) ) {
+	if ( main::SLIM_SERVICE && !Slim::Plugin::InternetRadio::Plugin->radiotimeUsername($client) ) {
 		@menu = grep { $_->{id} ne 'opmlpresets' } @menu;
 	}
 
