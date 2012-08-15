@@ -966,6 +966,11 @@ sub _cliQuery_done {
 						params      => $request->getParamsCopy(),
 					};
 					
+					# Pass through appId if login is required (for mobile app use)
+					if ( $subFeed->{loginRequired} ) {
+						$base->{loginRequired} = $subFeed->{loginRequired};
+					}
+					
 					$request->addResult('base', $base);
 				}
 

@@ -592,6 +592,11 @@ sub parseOPML {
 		$opml->{forceRefresh} = 1;
 	}
 	
+	# loginRequired flag defined in head for use in mobile app login
+	if ( $head->{loginRequired} ) {
+		$opml->{loginRequired} = $head->{loginRequired};
+	}
+	
 	$xml = undef;
 
 	# Don't leak
