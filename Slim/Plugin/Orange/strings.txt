@@ -1,5 +1,17 @@
 PLUGIN_ORANGE_LIVERADIO
+	CS	Orange Liveradio
+	DA	Orange Liveradio
+	DE	Orange Liveradio
 	EN	Orange Liveradio
+	ES	Orange Liveradio
+	FI	Orange Liveradio
+	FR	Orange Liveradio
+	IT	Orange Liveradio
+	NL	Orange Liveradio
+	NO	Orange Liveradio
+	PL	Orange Liveradio
+	RU	Orange Liveradio
+	SV	Orange Liveradio
 
 PLUGIN_ORANGE_FAVORITES
 	CS	Orange Liveradio – oblíbené
@@ -28,7 +40,7 @@ PLUGIN_ORANGE_ERROR
 	NL	Fout bij Liveradio
 	NO	LiveRadio-feil
 	PL	Błąd usługi Liveradio
-	RU	LiveRadio Error
+	RU	Ошибка LiveRadio
 	SV	LiveRadio-fel
 
 PLUGIN_ORANGE_OPTIONS
@@ -43,6 +55,6 @@ PLUGIN_ORANGE_OPTIONS
 	NL	Opties voor Orange Liveradio
 	NO	Alternativer for Orange Liveradio
 	PL	Opcje usługi Orange Liveradio
-	RU	Orange Liveradio Options
+	RU	Параметры Orange Liveradio
 	SV	Alternativ för Orange Liveradio
 

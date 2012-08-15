@@ -1,6 +1,30 @@
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME
+	CS	UE Music Library
+	DA	UE Music Library
+	DE	UE Music Library
 	EN	UE Music Library
+	ES	UE Music Library
+	FI	UE Music Library
+	FR	UE Music Library
+	IT	UE Music Library
+	NL	UE Music Library
+	NO	UE Music Library
+	PL	UE Music Library
+	RU	UE Music Library
+	SV	UE Music Library
 
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
+	CS	Přehrávání hudby z UE Music Library.
+	DA	Musikafspilning fra UE Music Library.
+	DE	Musikwiedergabe über die UE Music Library.
 	EN	Music playback from UE Music Library.
+	ES	Reproducción de música desde UE Music Library.
+	FI	Musiikin soittaminen UE Music Librarysta.
+	FR	Lecture de musique d'UE Music Library.
+	IT	Riproduzione musicale da UE Music Library.
+	NL	Muziek afspelen vanuit UE Music Library.
+	NO	Musikkavspilling fra UE Music Library.
+	PL	Odtwarzanie muzyki z programu UE Music Library.
+	RU	Воспроизведение музыки с UE Music Library.
+	SV	Musikuppspelning från UE Music Library.
 

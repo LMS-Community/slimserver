@@ -50,7 +50,7 @@ PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
 	DA	Streamen er stoppet. Du har ikke længere ret til at høre den.
 	DE	Stream angehalten, Berechtigung zum Hören abgelaufen.
 	EN	Stream stopped, you are no longer authorized to listen.
-	ES	Se ha detenido la secuencia. No tiene autorización para escuchar.
+	ES	Se ha detenido stream. No tiene autorización para escuchar.
 	FI	Virta pysäytettiin, sinulla ei ole enää kuunteluoikeuksia.
 	FR	Flux arrêté, vous n'êtes plus autorisé à l'écouter.
 	HE	הזרימה הופסקה, אינך מורשה עוד להאזין.
@@ -83,7 +83,7 @@ PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED
 	DE	Wenn Sie SIRIUS verwenden möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
 	EN	To use SIRIUS, press and hold BRIGHTNESS to update your firmware.
 	ES	Para usar SIRIUS, mantenga pulsado BRIGHTNESS para actualizar el firmware.
-	FI	Jos haluat käyttää SIRIUSta, päivitä laitteisto-ohjelmisto pitämällä Kirkkaus-painike pohjassa.
+	FI	Jos haluat käyttää SIRIUSta, päivitä laiteohjelmisto pitämällä Kirkkaus-painike pohjassa.
 	FR	Pour utiliser SIRIUS, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
 	IT	Per usare SIRIUS, tenere premuto BRIGHTNESS per aggiornare il firmware.
 	NL	Als je SIRIUS wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.

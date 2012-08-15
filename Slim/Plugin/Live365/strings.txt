@@ -23,7 +23,7 @@ PLUGIN_LIVE365_MODULE_NAME_DESC
 	DE	Zugriff auf Live365 Internet Radio
 	EN	Access to Live365 Internet Radio stations
 	ES	Acceso a emisoras de radio por Internet Live365
-	FI	Yhteys Live365-internet-radiokanaviin
+	FI	Yhteys Live365-verkkoradiokanaviin
 	FR	Accès aux stations de radio Internet Live365
 	IT	Accesso alle stazioni radio Internet Live365
 	NL	Toegang tot Live365-internetradiostations
@@ -49,12 +49,12 @@ PLUGIN_LIVE365_ERROR
 
 PLUGIN_LIVE365_NO_URL
 	CS	Není možné načíst audio URL.  K opětovnému pokusu stiskněte znovu PLAY.
-	DA	Adressen kunne ikke hentes. Tryk på Afspil, og prøv igen.
+	DA	URL-adressen kunne ikke hentes. Tryk på Afspil, og prøv igen.
 	DE	Audio-URL konnte nicht geladen werden. Drücken Sie PLAY.
 	EN	Unable to retrieve audio URL.  Press PLAY to try again.
 	ES	Imposible obtener URL de audio. Pulse PLAY para volver a intentarlo.
-	FI	Ääni-URL:n noutaminen ei onnistu.  Yritä uudelleen painamalla toistonäppäintä.
-	FR	Impossible d'obtenir l'URL audio, appuyez sur PLAY pour réessayer.
+	FI	Ääntä sisältävän URL-osoitteen noutaminen ei onnistu.  Yritä uudelleen painamalla toistopainiketta.
+	FR	Impossible d'obtenir l'URL audio. Appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare URL audio. Premere PLAY per riprovare.
 	NL	Kan audio-URL niet ophalen. Druk op PLAY om het opnieuw te proberen.
 	NO	Kan ikke hente adresse for lyd. Trykk på PLAY for å prøve på nytt.

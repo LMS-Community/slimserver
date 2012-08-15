@@ -24,7 +24,7 @@ PLUGIN_SONGSCANNER_DESC
 	EN	Player interface for jumping to arbitrary positions within the currently playing song
 	ES	Interfaz del reproductor para saltar a posiciones aleatorias dentro de la canción que se está reproduciendo en ese momento
 	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä
-	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture
+	FR	Interface du lecteur permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione
 	NL	Muzieksysteeminterface om naar willekeurige posities in het huidige nummer te springen
 	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av
@@ -53,7 +53,7 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
 	EN	Cannot scan through track because duration unknown
 	ES	No se puede examinar la pista porque se desconoce su duración
-	FI	Raitaa ei voi selata, koska sen kestoa ei tunneta
+	FI	Kappaletta ei voi selata, koska sen kestoa ei tunneta
 	FR	Impossible d'analyser la piste car la durée est inconnue
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
 	NL	Kan niet door nummer scannen omdat duur onbekend is
@@ -68,7 +68,7 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 	DE	Kein Titel
 	EN	No track
 	ES	No hay ninguna pista
-	FI	Ei raitaa
+	FI	Ei kappaletta
 	FR	Aucune piste
 	IT	Nessun brano
 	NL	Geen nummer
@@ -79,7 +79,7 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 
 PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	CS	Dosažena maximální rychlost převíjení vpřed
-	DA	Der kan ikke spoles hurtigere
+	DA	Der kan ikke spoles hurtigere frem
 	DE	Maximale Vorspulgeschwindigkeit erreicht
 	EN	Maximum fast-forward rate reached
 	ES	Se ha alcanzado la velocidad máxima de avance rápido
@@ -94,7 +94,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 
 PLUGIN_SONGSCANNER_MAX_RATE_REW
 	CS	Dosažena maximální rychlost zpětného převíjení
-	DA	Der kan ikke spoles hurtigere
+	DA	Der kan ikke spoles hurtigere tilbage
 	DE	Maximale Rückspulgeschwindigkeit erreicht
 	EN	Maximum rewind rate reached
 	ES	Se ha alcanzado la velocidad máxima de rebobinado

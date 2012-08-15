@@ -72,7 +72,7 @@ SETUP_MIX_TYPE
 	DE	Mix: Typ
 	EN	Mix Type
 	ES	Tipo de mezcla
-	FI	Miksin tyyppi
+	FI	Sekoituksen tyyppi
 	FR	Type de mix
 	HE	סוג מיקס של 
 	IT	Tipo di raccolta
@@ -89,7 +89,7 @@ SETUP_MIX_SIZE
 	DE	Mix: Größe
 	EN	Mix Size
 	ES	Tamaño de mezcla
-	FI	Miksin koko
+	FI	Sekoituksen koko
 	FR	Taille du mix
 	HE	גודל מיקס של
 	IT	Dimensioni della raccolta
@@ -106,7 +106,7 @@ SETUP_MIX_SIZE_DESC
 	DE	Mix-Größe wählen
 	EN	Choose Mix Size
 	ES	Elegir tamaño de mezcla
-	FI	Valitse miksin koko
+	FI	Valitse sekoituksen koko
 	FR	Sélectionner la taille du mix
 	HE	בחירת גודל מיקס
 	IT	Scegliere le dimensioni della raccolta
@@ -123,7 +123,7 @@ SETUP_MIX_FILTER
 	DE	Mixfilter
 	EN	Mix Filter
 	ES	Filtro de mezcla
-	FI	Miksin suodatin
+	FI	Sekoituksen suodatin
 	FR	Filtre de mix
 	HE	מסנן מיקסים של 
 	IT	Filtro raccolta
@@ -140,11 +140,11 @@ SETUP_MIX_FILTER_DESC
 	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im UE Music Library angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in UE Music Library.
 	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en UE Music Library.
-	FI	Voit luoda nimettyjä suodatinehtojoukkoja MusicIP:ssä, valita haluamasi suodattimet tässä olevasta luettelosta ja ottaa nämä suodattimet käyttöön MusicIP-mikseissä UE Music Libraryissä.
-	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le UE Music Library.
+	FI	Voit luoda nimettyjä suodatinehtojoukkoja MusicIP:ssä, valita haluamasi suodattimet tässä olevasta luettelosta ja ottaa nämä suodattimet käyttöön MusicIP-sekoituksissa UE Music Libraryssa.
+	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans UE Music Library.
 	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-UE Music Library.
 	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in UE Music Library.
-	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in UE Music Library toe te passen.
+	NL	Je kunt een set met filtervoorwaarden maken en een naam geven in MusicIP en hier uit de lijst ervoor kiezen deze filters toe te passen op MusicIP Mixes in UE Music Library.
 	NO	Du kan lage og gi navn til dine egne sett med filterbetingelser i MusicIP, og velge fra denne listen for å bruke disse filtrene på MusicIP-mikser i UE Music Library.
 	PL	W usłudze MusicIP można utworzyć zestawy filtrów warunków oraz nadać im nazwy, a następnie wybrać je z listy w tym miejscu w celu zastosowania filtrów do składanek usługi MusicIP w programie UE Music Library.
 	RU	В MusicIP можно создавать именованные наборы фильтров и, выбирая из списка, применять эти фильтры к миксам MusicIP в UE Music Library.
@@ -157,7 +157,7 @@ SETUP_MIX_GENRE
 	DE	Mix: Musikstil
 	EN	Mix Genre
 	ES	Género de mezcla
-	FI	Miksin genre
+	FI	Sekoituksen genre
 	FR	Genre de mix
 	HE	סגנון מיקס של 
 	IT	Genere raccolta
@@ -174,7 +174,7 @@ SETUP_MIX_GENRE_DESC
 	DE	Beschränkung des Mix auf die Musikstile des Seeds (Standardwert: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
 	ES	Restringir la mezcla al género de la canción inicial (valor predeterminado: no)
-	FI	Rajoita miksi siemenen genreen (oletus: ei)
+	FI	Rajoita sekoitus alkuperäiseen genreen (oletus: ei)
 	FR	Limiter le mix au genre de la source (par défaut: non)
 	HE	הגבלת המיקס לסגנון המקור (ברירת המחדל: לא)
 	IT	Consente di limitare il filtro al genere musicale. L'impostazione predefinita è no.
@@ -226,10 +226,10 @@ SETUP_REJECT_SIZE_DESC
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
 	ES	Establecer el número de elementos a omitir antes de repetir un tipo. (Valor predeterminado: 12)
 	FI	Määritä ohitettavien kohteiden määrä ennen tyypin toistamista. (Oletus: 12)
-	FR	Définissez le nombre d'éléments à ignorer avant de répéter un type. La valeur par défaut est 12.
+	FR	Définissez le nombre d'éléments à ignorer avant de répéter un type. La valeur par défaut est de 12.
 	HE	הגדר את מספר הפריטים שיש לדלג עליהם לפני חזרה על סוג. (ברירת המחדל: 12)
-	IT	Consente di impostare il numero di elementi da saltare prima di ripetere un tipo. Il valore predefinito è 12.
-	NL	Slet het aantal items in dat overgeslagen moet worden, voordat een type herhaald wordt (standaard: 12).
+	IT	Consente di impostare il numero di elementi da saltare prima di ripetere un tipo. Il valore predefinito è 12
+	NL	Stel het aantal items in dat overgeslagen moet worden, voordat een type herhaald wordt (standaard: 12).
 	NO	Angi hvor mange elementer som skal hoppes over før en type gjentas. (Standard: 12)
 	PL	Ustaw liczbę elementów do pominięcia przed powtórzeniem typu (domyślnie: 12).
 	RU	Укажите количество элементов, которые следует пропустить перед повторением типа. (По умолчанию: 12)
@@ -242,7 +242,7 @@ SETUP_MIX_STYLE
 	DE	Mix: Stil
 	EN	Mix Style
 	ES	Estilo de mezcla
-	FI	Miksin tyyli
+	FI	Sekoituksen tyyli
 	FR	Style du mix
 	HE	סגנון מיקס של 
 	IT	Stile della raccolta
@@ -276,7 +276,7 @@ SETUP_MIX_VARIETY
 	DE	Mix: Vielseitigkeit
 	EN	Mix Variety
 	ES	Variedad de mezcla
-	FI	Miksivalikoima
+	FI	Sekoitusvalikoima
 	FR	Variété du mix
 	HE	מגוון במיקס של 
 	IT	Varietà della raccolta
@@ -293,7 +293,7 @@ SETUP_MIX_VARIETY_DESC
 	DE	Wie vielseitig soll der Mix sein? 0 = weniger (Standard), 9 = mehr
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
 	ES	Nivel de variedad en la mezcla (0 = menos [predeterminado], 9 = más)
-	FI	Kuinka paljon vaihtelua miksissä ( 0 = vähemmän (oletus), 9 = enemmän )
+	FI	Vaihtelun määrä sekoituksessa ( 0 = vähemmän (oletus), 9 = enemmän )
 	FR	Variété du mix (0=faible (par défaut), 9=élevée)
 	HE	רמת המגוון במיקס (0 = פחות (ברירת המחדל), 9 = יותר)
 	IT	Livello di varietà della raccolta. 0 indica il livello minimo (impostazione predefinita), 9 quello massimo.
@@ -310,7 +310,7 @@ MUSICMAGIC_MIXING
 	DE	MusicIP-Mixing
 	EN	MusicIP Mixing
 	ES	Mezcla de MusicIP
-	FI	MusicIP:n miksaus
+	FI	MusicIP:n sekoitustoiminto
 	FR	Mixage MusicIP Mix
 	HE	עריכת מיקס של MusicIP
 	IT	Raccolta MusicIP
@@ -327,8 +327,8 @@ SETUP_MMMPLAYERSETTINGS
 	DE	Mix-Player-Einstellungen
 	EN	Player settings for each mix
 	ES	Configuración de reproductor para cada mezcla
-	FI	Soittimen asetukset kutakin miksiä varten
-	FR	Réglages de la platine pour chaque mix
+	FI	Soittimen asetukset kutakin sekoitusta varten
+	FR	Réglages du lecteur pour chaque mix
 	HE	הגדרות נגן  עבור כל מיקס
 	IT	Impostazioni del lettore per ogni raccolta
 	NL	Muzieksysteeminstellingen voor elke mix
@@ -341,14 +341,14 @@ SETUP_MMMPLAYERSETTINGS
 SETUP_MMMPLAYERSETTINGS_DESC
 	CS	Před vytvořením mixu můžete zvolit přidělení přístupu k mixovacím nastavením Music IP pro každý přehrávač. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
 	DA	Du kan vælge at give hver enkelt afspiller adgang til indstillingerne for MusicIP Mix før du opretter et miks. Alle indstillinger som vælges på afspilleren, har forrang frem for serverindstillingerne indtil de ændres igen på afspilleren. Hvis du vil gå videre og begynde at oprette et miks vha. de eksisterende indstillinger på afspilleren og serveren, skal du vælge Nej.
-	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie 'Nein'.
+	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie "Nein".
 	EN	You may choose to give each player access to the MusicIP mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
 	ES	Se puede optar por conceder a cada reproductor acceso a la configuración de mezcla de MusicIP antes de que se genere una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración del servidor y se conservará hasta que se cambie desde el reproductor. Si desea pasar directamente a la creación de una mezcla, usando sólo la configuración de reproductor/servidor existente, elija No.
-	FI	Halutessasi voit sallia MusicIP-miksin asetusten käytön kullekin soittimelle ennen miksin luomista.  Soittimen valitsemat asetukset korvaavat palvelimen asetukset ja säilyvät, kunnes niitä muutetaan soittimessa. Jos haluat hypätä suoraan miksin luomiseen ja käyttää ainoastaan soittimen tai palvelimen olemassa olevia asetuksia, valitse ei.
-	FR	Vous pouvez choisir de donner à chaque platine accès aux réglages du mix MusicIP avant de générer un mix. Tous les réglages définis à partir de la platine remplacent les réglages du serveur, jusqu'à ce qu'ils soient à nouveau modifiés à partir de la platine. Si vous souhaitez passer cette étape et créer directement un mix à l'aide des paramètres du serveur ou de la platine existants, sélectionnez non.
+	FI	Halutessasi voit sallia MusicIP-sekoituksen asetusten käytön kullekin soittimelle ennen sekoituksen luomista.  Soittimen valitsemat asetukset korvaavat palvelimen asetukset ja säilyvät, kunnes niitä muutetaan soittimessa. Jos haluat hypätä suoraan sekoituksen luomiseen ja käyttää ainoastaan soittimen tai palvelimen olemassa olevia asetuksia, valitse ei.
+	FR	Vous pouvez choisir de donner à chaque lecteur accès aux paramètres du mix MusicIP avant de générer un mix. Tous les paramètres définis à partir du lecteur remplacent les paramètres du serveur, jusqu'à ce qu'ils soient à nouveau modifiés à partir du lecteur. Si vous souhaitez passer cette étape et créer directement un mix à l'aide des paramètres du serveur ou du lecteur existants, sélectionnez non.
 	HE	באפשרותך לבחור להעניק לכל נגן גישה להגדרות המיקס של MusicIP לפני הפקת מיקס. הגדרות שנבחרו בנגן יעקפו הגדרות שנבחרו בשרת ויישארו בתוקף עד שישונו שוב בנגן. אם ברצונך לדלג ישירות לשלב של יצירת מיקס, באמצעות ההגדרות הנוכחיות של הנגן/השרת בלבד, בחר 'לא'.
 	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
-	NL	Je kunt ervoor kiezen elk muzieksysteem toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Muzieksysteeminstellingen vervangen de serverinstellingen en blijven van kracht tot ze via het systeem veranderd worden. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
+	NL	Je kunt ervoor kiezen elk muzieksysteem toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Muzieksysteeminstellingen vervangen de serverinstellingen en blijven van kracht tot ze via het systeem veranderd worden. Kies Nee als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
 	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer serverinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og serverinnstillinger, velger du nei.
 	PL	Przed utworzeniem składanki każdemu odtwarzaczowi można umożliwić uzyskanie dostępu do ustawień składanki w usłudze MusicIP. Ustawienia wybrane w odtwarzaczu zastąpią ustawienia na serwerze i pozostaną stałe do momentu ponownej zmiany w odtwarzaczu. Jeżeli chcesz od razu przejść do tworzenia składanki z wykorzystaniem istniejących ustawień odtwarzacza/serwera, wybierz opcję Nie.
 	RU	Перед созданием микса можно предоставить каждому плееру доступ к настройкам микса MusicIP. Настройки, заданные через плеер, переопределяют настройки сервера и сохраняются, пока вы снова не измените их через плеер. Чтобы сразу перейти к созданию микса, используя настройки плеера/сервера, выберите "Нет".
@@ -361,7 +361,7 @@ SETUP_MMMSETTINGS
 	DE	MusicIP-Mix: Einstellungen
 	EN	MusicIP Mix Settings
 	ES	Configuración de mezcla de MusicIP
-	FI	MusicIP-miksin asetukset
+	FI	MusicIP-sekoituksen asetukset
 	FR	Réglages du mix MusicIP
 	HE	הגדרות מיקס של MusicIP
 	IT	Impostazioni per la raccolta MusicIP
@@ -378,7 +378,7 @@ MUSICMAGIC_MIXRIGHT
 	DE	(Zum Mixen RECHTS drücken)
 	EN	(Go right to Mix)
 	ES	(Pulse DERECHA para mezclar)
-	FI	(siirry suoraan miksiin)
+	FI	(siirry suoraan sekoitukseen)
 	FR	(DROITE pour accéder au mix)
 	HE	(עבור ימינה אל 'מיקס')
 	IT	(Premere DESTRA per creare raccolta)
@@ -445,16 +445,16 @@ SETUP_MUSICMAGIC
 SETUP_MUSICMAGIC_DESC
 	CS	UE Music Library může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, umělců a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného statusu, obzvláště při prohledávání pouze nových a změněných skladeb.
 	DA	UE Music Library kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
-	DE	UE Music Library kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
+	DE	Die UE Music Library kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können sie auch dazu nutzen, nur Instant Mixes auf Stilrichtungs-, Interpreten- und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
 	EN	UE Music Library can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
 	ES	UE Music Library puede usar el programa MusicIP como origen para la información de título y de género. O se puede usar sólo para generar mezclas instantáneas por género, artista y canción. Leer la información de título y género es mucho más lento que leer sólo el estado mezclable, especialmente cuando se examina sólo en busca de canciones nuevas y cambiadas.
-	FI	UE Music Library voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös käyttää sitä ainoastaan välittömien miksien luomiseen genre-, artisti- ja kappaletasolla. Nimi- ja genretietojen lukeminen on paljon hitaampaa kuin ainoastaan miksattavien tietojen lukeminen, erityisesti, kun etsitään vain uusia ja muutettuja kappaleita.
-	FR	Le UE Music Library peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer uniquement des mix instantanés par genre, par artiste ou par morceau. La lecture des informations de titre et de genre est plus lente que la lecture de l'état mixable uniquement, en particulier lors de la recherche des nouveaux morceaux ou des morceaux modifiés.
+	FI	UE Music Library voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös käyttää sitä ainoastaan välittömien sekoitusten luomiseen genre-, artisti- ja kappaletasolla. Nimi- ja genretietojen lukeminen on paljon hitaampaa kuin ainoastaan sekoitettavien tietojen lukeminen erityisesti, kun etsitään vain uusia ja muutettuja kappaleita.
+	FR	UE Music Library peut utiliser le programme MusicIP comme source pour les titres et les genres. Vous pouvez également générer uniquement des mix instantanés par genre, par artiste ou par morceau. La lecture des informations de titre et de genre est plus lente que la lecture de l'état mixable uniquement, en particulier lors de la recherche des nouveaux morceaux ou des morceaux modifiés.
 	IT	In UE Music Library il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. In alternativa è possibile utilizzarlo solo per generare raccolte rapide in base al genere, all'artista e ai brani. La lettura di informazioni relative a titolo e genere risulta molto più lenta della lettura limitata allo stato della raccolta, in particolare durante la ricerca dei soli brani nuovi e modificati.
-	NL	UE Music Library kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Je kunt het ook gebruiken om alleen instantmixen te maken op genre, artiest en liedje. Het lezen van titel- en genre-informatie is veel langzamer dan het lezen van alleen de mixbaarheidsstatus, vooral wanneer er alleen op nieuwe en gewijzigde liedjes wordt gescand.
+	NL	UE Music Library kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Je kunt het ook gebruiken om alleen snelle mixen te maken op genre, artiest en liedje. Het lezen van titel- en genre-informatie is veel langzamer dan het lezen van alleen de mixbaarheidsstatus, vooral wanneer er alleen op nieuwe en gewijzigde liedjes wordt gescand.
 	NO	UE Music Library kan bruke MusicIP-programmet som kilde for tittel- og sjangerinformasjon, eller du kan bruke det til å lage mikser på et øyeblikk ut fra sjanger, artist og sang. Det går mye saktere å lese tittel- og sjangerinformasjon enn miksstatusen, særlig når du kun søker etter nye og endrede sanger.
 	PL	Program UE Music Library może użyć usługi MusicIP jako źródła informacji o tytułach i gatunkach. Można też użyć go tylko do szybkiego wygenerowania składanek na poziomie gatunku, wykonawcy i utworu. Odczytywanie informacji o tytule i gatunku trwa znacznie dłużej niż odczytywanie tylko stanu możliwości utworzenia składanki, szczególnie w przypadku wyszukiwania nowej i zmienionej muzyki.
-	RU	UE Music Library может получать от программы MusicIP информацию о названии и жанре. Можно также создавать мгновенные миксы по жанрам, исполнителям и песням. Считывание информации о названии и жанре происходит намного дольше, чем просто считывание состояния микшируемости (особенно при поиске только новых и измененных песен).
+	RU	UE Music Library может получать от программы MusicIP информацию о названии и жанре. Можно также создавать быстрые миксы по жанрам, исполнителям и песням. Считывание информации о названии и жанре происходит намного дольше, чем просто считывание состояния микшируемости (особенно при поиске только новых и измененных песен).
 	SV	UE Music Library kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
 
 MMMMIXTYPE_TRACKS
@@ -463,7 +463,7 @@ MMMMIXTYPE_TRACKS
 	DE	Anzahl Titel
 	EN	Number of Tracks
 	ES	Número de pistas
-	FI	Raitojen määrä
+	FI	Kappaleiden määrä
 	FR	Nombre de pistes
 	HE	מספר רצועות
 	IT	Numero di brani
@@ -528,11 +528,11 @@ SETUP_MUSICMAGICSCANINTERVAL
 SETUP_MUSICMAGICSCANINTERVAL_DESC
 	CS	Když se změní databáze vašeho MusicIP Database, UE Music Library automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude UE Music Library čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačítání.
 	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i UE Music Library. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i UE Music Library. Hvis værdien er 0, genindlæses den ikke.
-	DE	Wenn sich die MusicIP-Datenbank ändert, importiert UE Music Library die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die UE Music Library mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
+	DE	Wenn sich die MusicIP-Datenbank ändert, importiert die UE Music Library die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die die UE Music Library mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your MusicIP Database changes, UE Music Library will automatically import the library information.  You can specify the minimum amount of time (in seconds) that UE Music Library will wait before reloading your MusicIP Database again. A value of zero disables the reload.
 	ES	Cuando cambie la base de datos de MusicIP, UE Music Library importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que UE Music Library esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero desactiva la recarga.
 	FI	Jos MusicIP-tietokanta muuttuu, UE Music Library tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka UE Music Library odottaa, ennen kuin se lataa MusicIP-tietokannan uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
-	FR	Le UE Music Library importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le UE Music Library actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
+	FR	UE Music Library importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel UE Music Library actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר מסד הנתונים של MusicIP משתנה, UE Music Library מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על UE Music Library להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica il database di MusicIP, UE Music Library importa automaticamente i dati della libreria. È possibile specificare per UE Music Library il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
 	NL	Wanneer je MusicIP-database verandert, worden de collectiegegevens automatisch door UE Music Library geïmporteerd. Je kunt opgeven (in seconden) hoe lang UE Music Library minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
@@ -565,11 +565,11 @@ SETUP_MMSPORT_DESC
 	DE	Mit dem MusicIP Service API können Sie einen HTTP-Anschluss für Anfragen an das MusicIP API auswählen. Geben Sie dieselbe Anschlussnummer wie in MusicIP Mixer ein.
 	EN	The MusicIP Service API allows the selection of an http port to use for queries to the MusicIP API. Enter the port number here to match the setting you have chosen in MusicIP Mixer settings.
 	ES	La API de servicios de MusicIP permite seleccionar un puerto HTTP para usarlo para consultas a la API de MusicIP. Introduzca aquí el número de puerto para que coincida con el elegido en la configuración del mezclador de MusicIP.
-	FI	MusicIP-palvelun API sallii MusicIP:n API-pyynnöissä käytetyn HTTP-portin valinnan. Kirjoita tähän portin numero, joka vastaa MusicIP Mixerin asetuksissa valitsemaasi portin numeroa.
-	FR	L'API du service MusicIP permet de sélectionner un port HTTP à utiliser pour les requêtes. Saisissez ici le numéro de port spécifié dans les réglages MusicIP Mixer.
+	FI	MusicIP-palvelun API sallii MusicIP:n API-pyynnöissä käytetyn HTTP-portin valinnan. Kirjoita tähän portin numero, joka vastaa MusicIP Mixerin asetuksista valittua portin numeroa.
+	FR	L'API du service MusicIP permet de sélectionner un port HTTP à utiliser pour les requêtes. Saisissez ici le numéro de port spécifié dans les paramètres MusicIP Mixer.
 	HE	ממשק תוכנת היישום (API) של שירות MusicIP מאפשרת לבחור יציאת http לשימוש עבור שאילתות ל-API של MusicIP. הזן בשדה זה את מספר היציאה בהתאם להגדרה שבחרת בהגדרות יוצר המיקסים של MusicIP.
-	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
-	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
+	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni del mixer MusicIP.
+	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API. Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
 	NO	I tjeneste-API-en for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-en. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
 	PL	Interfejs API usługi MusicIP umożliwia wybranie portu http używanego w celu wysyłania zapytań do tego interfejsu. Wprowadź tutaj numer portu zgodny z wybranymi miksera w usłudze MusicIP.
 	RU	Интерфейс MusicIP Service API позволяет выбрать НТТР-порт для запросов к MusicIP API. Введите здесь номер порта, соответствующий вашим настройкам MusicIP Mixer.
@@ -582,7 +582,7 @@ MUSICMAGIC_MIX
 	DE	MusicIP-Mix
 	EN	MusicIP Mix
 	ES	Mezcla de MusicIP
-	FI	MusicIP-miksi
+	FI	MusicIP-sekoitus
 	FR	Mix MusicIP
 	HE	מיקס של MusicIP
 	IT	Raccolta MusicIP
@@ -599,7 +599,7 @@ MUSICMAGIC_MOODS
 	DE	MusicIP-Stimmungs-Mix
 	EN	MusicIP Mood Mix
 	ES	Mezcla de ambiente de MusicIP
-	FI	MusicIP Mood Mix
+	FI	MusicIP-sekoitus mielialan mukaan
 	FR	Mix d'ambiances MusicIP
 	HE	מיקס מצב רוח של MusicIP
 	IT	Raccolta MusicIP per stati d'animo
@@ -616,7 +616,7 @@ DEBUG_PLUGIN_MUSICIP
 	DE	MusicIP-Mix & Export
 	EN	MusicIP Mix & Export Logging
 	ES	Registro de mezclas y exportación de MusicIP
-	FI	MusicIP-miksin ja -viennin kirjaus
+	FI	MusicIP-sekoituksen ja -viennin kirjaus
 	FR	Journalisation des mix et exportations MusicIP
 	IT	Registrazione esportazione e mix MusicIP
 	NL	Registratie van MusicIP-mix en -export
@@ -646,7 +646,7 @@ MUSICIP_PLAYTHISMIX
 	DE	Diesen Mix wiedergeben
 	EN	Play this mix
 	ES	Reproducir esta mezcla
-	FI	Soita tämä miksi
+	FI	Soita tämä sekoitus
 	FR	Lire ce mix
 	IT	Riproduci raccolta
 	NL	Deze mix afspelen
@@ -661,7 +661,7 @@ MUSICIP_CREATEMIX
 	DE	MusicIP-Mix erstellen
 	EN	Create MusicIP Mix
 	ES	Crear mezcla de MusicIP
-	FI	Luo MusicIP-miksi
+	FI	Luo MusicIP-sekoitus
 	FR	Créer un mix MusicIP
 	IT	Crea raccolta MusicIP
 	NL	MusicIP-mix maken
@@ -691,7 +691,7 @@ MUSICIP_MIXABLE_CHECK
 	DE	Nur mischbaren Status von MusicIP lesen (schneller)
 	EN	Only read mixable status from MusicIP (faster)
 	ES	Sólo leer estado mezclable de MusicIP (más rápido)
-	FI	Lue vain miksattava tila MusicIP:stä (nopeampi)
+	FI	Lue vain sekoitettava tila MusicIP:stä (nopeampi)
 	FR	Lire uniquement l'état mixable de MusicIP (plus rapide)
 	IT	Leggi solo lo stato della raccolta da MusicIP (più rapido)
 	NL	Alleen mixbaarheidsstatus van MusicIP lezen (sneller)

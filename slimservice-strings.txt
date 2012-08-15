@@ -161,15 +161,15 @@ SETUP_GROUP_MENUITEMS
 	DE	Anpassen des Hauptmenüs
 	EN	Home Menu Customization
 	ES	Menú Inicio
-	FI	Kotivalikon mukauttaminen
-	FR	Personnalisation du menu principal
+	FI	Aloitusvalikon mukautus
+	FR	Personnalisation du Menu principal
 	HE	התאמה אישית של התפריט הראשי
-	IT	Personalizzazione menu iniziale
-	NL	Hoofdmenu aanpassen
-	NO	Tilpassing av hovedmeny
+	IT	Menu iniziale
+	NL	Aanpassing hoofdmenu
+	NO	Tilpass hovedmenyen
 	PL	Dostosowywanie menu strony głównej
 	RU	Настройка главного меню
-	SV	Anpassning av startmenyn
+	SV	Konfigurering av huvudmenyn
 
 SETUP_PLAYER_CODE
 	DA	Afspillerens pinkode
@@ -1306,7 +1306,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	NO	Feil: Spillelisten er tom
 	PL	Błąd: nie znaleziono elementów na liście odtwarzania
 	RU	Ошибка: не найдены элементы плей-листа
-	SV	Fel: Spellistan är tom.
+	SV	Fel: Spellistan är tom
 
 PLAYLIST_PROBLEM_CONNECTING
 	CS	Chyba: Nelze se připojit a načíst seznam skladeb
@@ -1314,10 +1314,10 @@ PLAYLIST_PROBLEM_CONNECTING
 	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener lista de reproducción
-	FI	Virhe: ei voi muodostaa yhteyttä soittoluettelon noutoa varten
+	FI	Virhe: yhteyttä ei voida muodostaa soittoluettelon noutoa varten
 	FR	Erreur: connexion impossible pour récupérer la liste de lecture
 	HE	שגיאה: לא ניתן להתחבר לאחזור רשימת ההשמעה
-	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
+	IT	Errore: impossibile eseguire la connessione per recuperare la playlist
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
 	NO	Feil: Kan ikke koble til for å hente spilleliste
 	PL	Błąd: nie można nawiązać połączenia w celu pobrania listy odtwarzania

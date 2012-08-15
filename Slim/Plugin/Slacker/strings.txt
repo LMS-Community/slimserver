@@ -16,10 +16,10 @@ PLUGIN_SLACKER_MODULE_NAME
 PLUGIN_SLACKER_GETTING_TRACK_DETAILS
 	CS	Získávám podrobnosti o stopě...
 	DA	Henter detaljer om nummer...
-	DE	Titelinfos werden geladen ...
+	DE	Titelinfos werden geladen...
 	EN	Fetching track details...
 	ES	Obteniendo detalles de pista...
-	FI	Noudetaan raidan tietoja...
+	FI	Noudetaan kappaleen tietoja...
 	FR	Récupération des détails du morceau...
 	IT	Recupero informazioni sul brano in corso...
 	NL	Nummerdetails worden opgehaald...
@@ -49,7 +49,7 @@ PLUGIN_SLACKER_SESSION_BUMPED
 	DE	Sie haben sich an einem anderen Gerät angemeldet. Zum Neustart PLAY drücken.
 	EN	You have logged in on another device, press PLAY to restart.
 	ES	Ha iniciado sesión en otro dispositivo, pulse PLAY para reiniciar.
-	FI	Olet kirjautunut toiseen laitteeseen, käynnistä uudelleen painamalla toistonäppäintä.
+	FI	Olet kirjautunut toiseen laitteeseen, käynnistä uudelleen painamalla toistopainiketta.
 	FR	Vous vous êtes connecté à un autre dispositif, appuyez sur PLAY pour redémarrer.
 	IT	Ci si è connessi a un altro dispositivo. Premere PLAY per ricominciare.
 	NL	Je hebt je bij een ander apparaat aangemeld, druk op PLAY om opnieuw te starten.
@@ -64,7 +64,7 @@ PLUGIN_SLACKER_NO_TRACKS
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
-	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
+	FI	Seuraavaa kappaletta ei voi hakea, yritä uudelleen painamalla toistopainiketta.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
@@ -78,8 +78,8 @@ PLUGIN_SLACKER_STREAM_FAILED
 	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
-	ES	Secuencia de audio desconectada; salto a pista siguiente.
-	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan raitaan.
+	ES	Stream de audio desconectada; salto a pista siguiente.
+	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan kappaleeseen.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
 	IT	Stream audio disconnesso. Passaggio al brano seguente.
@@ -95,7 +95,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
-	FI	Tunnittaisten ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
+	FI	Tunneittain tehtävien ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
 	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
 	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
 	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
@@ -108,14 +108,14 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED
 PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
 	CS	Stanice nedostupná: překročen limit přeskočení za hodinu. Můžete přepnout na jinou stanici nebo zkusit znovu později.
 	DA	Stationen er ikke tilgængelig: Det er ikke muligt at springe over flere numre i denne time. Du kan skifte til en anden station eller prøve igen senere.
-	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie auf anderen Sender aufrufen oder es später erneut versuchen.
+	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie können zu einem anderen Sender wechseln oder es später erneut versuchen.
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
 	ES	Emisora no disponible: se ha excedido el límite de omisiones por hora. Puede cambiar a otra emisora o volver a intentarlo más tarde.
 	FI	Asema ei ole käytettävissä: tunnittainen ohitusraja ylittyi.  Vaihda toiselle kanavalle tai yritä myöhemmin uudelleen.
 	FR	Station non disponible: nombre limite de sauts par heure dépassé. Vous pouvez basculer vers une autre station ou réessayer ultérieurement.
 	IT	Stazione non disponibile: limite orario superato. È possibile passare a un'altra stazione o riprovare più tardi.
 	NL	Station niet beschikbaar: uurlimiet voor springen overschreden. Je kunt naar een ander station overschakelen of het later opnieuw proberen.
-	NO	Stasjonen er utilgjengelig: grensen for hvor mange sanger du kan hoppe over per time har blitt overskredet. Du kan bytte stasjon eller prøve på nytt senere.
+	NO	Stasjonen er utilgjengelig: grensen for hvor mange sanger du kan hoppe over per time, har blitt overskredet. Du kan bytte stasjon eller prøve på nytt senere.
 	PL	Stacja niedostępna: godzinowy limit pomijania przekroczony. Możesz przełączyć się na inną stację lub spróbować ponownie później.
 	RU	Станция недоступна: превышен часовой лимит пропускания. Вы можете переключиться на другую станцию или повторить попытку позже.
 	SV	Station är inte tillgänglig: Du har använt alla dina överhoppningar för den här timmen. Du kan byta till en annan station eller försöka igen senare.

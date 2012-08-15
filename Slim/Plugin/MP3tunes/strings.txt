@@ -20,7 +20,7 @@ PLUGIN_MP3TUNES_MODULE_NAME_DESC
 	EN	Access music from your MP3tunes Music Locker. This plugin requires a mysqueezebox.com account.
 	ES	Acceso a música en su Armario de música de MP3tunes. Este extra requiere una cuenta mysqueezebox.com.
 	FI	Käytä MP3tunes-musiikkilokerossa olevaa musiikkia. Laajennus vaatii mysqueezebox.com-tilin.
-	FR	Accès à la musique de votre librairie musicale en ligne MP3tunes. Cet extra nécessite un compte mysqueezebox.com.
+	FR	Accès à la musique de votre librairie musicale en ligne MP3tunes. Ce plug-in nécessite un compte mysqueezebox.com.
 	IT	Accesso ai brani del raccoglitore musicale MP3tunes. Questo plugin richiede un account mysqueezebox.com.
 	NL	Roep muziek vanuit je MP3tunes-muziekkluis op. Voor deze extra is een mysqueezebox.com-account vereist.
 	NO	Hent musikk fra MP3tunes Music Locker. Du må ha en konto på mysqueezebox.com for å kunne bruke denne plugin-modulen.

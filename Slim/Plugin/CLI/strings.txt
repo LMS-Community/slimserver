@@ -25,13 +25,13 @@ PLUGIN_CLI_DESC
 	EN	The Command Line Interface plugin allows UE Smart Radio software and the players to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 	ES	El complemento de interfaz de línea de comandos permite el control remoto del software y de los reproductores UE Smart Radio a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
 	FI	Komentorivikäyttöliittymälaajennuksen avulla UE Smart Radioin ohjelmistoa ja soittimia voidaan kauko-ohjata TCP/IP-yhteyden välityksellä, esimerkiksi AMX:n, Crestronin tai jonkin muun kolmannen osapuolen automaatiojärjestelmän avulla.
-	FR	Le plugin d'interface de ligne de commande permet de contrôler le logiciel UE Smart Radio et les platines à distance par le biais d'une connexion TCP/IP, par exemple par un système d'automatisation tiers, tel qu'AMX ou Crestron.
+	FR	Le plug-in d'interface de ligne de commande permet de contrôler le logiciel UE Smart Radio et les lecteurs à distance par le biais d'une connexion TCP/IP, par exemple par un système d'automatisation tiers, tel qu'AMX ou Crestron.
 	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-UE Music Library וב-UE Smart Radio באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
 	IT	Il plugin dell'interfaccia della riga di comando consente di controllare UE Smart Radio e i lettori in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
 	NL	Dankzij de plug-in van de opdrachtregelinterface is het mogelijk om de UE Smart Radio-software en systemen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
 	NO	Med kommandolinjegrensesnittet kan UE Smart Radio-programvaren og spillerne kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.
 	PL	Dodatek interfejsu wiersza polecenia umożliwia obsługę oprogramowania UE Smart Radio i odtwarzaczy zdalnie przez połączenie TCP/IP, na przykład przez automatyczny system innej firmy, taki jak AMX lub Crestron.
-	RU	Плагин "Интерфейс командной строки" позволяет управлять UE Smart Radio и плеерами удаленно по подключению TCP/IP, например, с помощью сторонней автоматической системы, такой как AMX или Crestron.
+	RU	Подключаемый модуль "Интерфейс командной строки" позволяет управлять UE Smart Radio и плеерами удаленно по подключению TCP/IP, например, с помощью сторонней автоматической системы, такой как AMX или Crestron.
 	SV	Med plugin-programmet för kommandoradsgränssnitt kan UE Smart Radio-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part såsom AMX eller Crestron.
 
 SETUP_CLIPORT
@@ -60,7 +60,7 @@ SETUP_CLIPORT_DESC
 	EN	You can change the port number that is used to by a command line interface to control the player.
 	ES	Se puede cambiar el número de puerto que se usa para controlar el reproductor con la línea de comandos.
 	FI	Voit vaihtaa sen portin numeroa, jonka välityksellä komentorivikäyttöliittymä ohjaa soitinta.
-	FR	Vous pouvez changer le port utilisé par l'interface de ligne de commande pour contrôler la platine.
+	FR	Vous pouvez changer le port utilisé par l'interface de ligne de commande pour contrôler le lecteur.
 	HE	באפשרותך לשנות את מספר היציאה המשמשת את ממשק שורת הפקודה לשליטה בנגן.
 	IT	È possibile modificare il numero della porta usata dall'interfaccia a riga di comando per controllare il lettore.
 	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。

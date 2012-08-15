@@ -58,12 +58,12 @@ PLUGIN_RSSNEWS_WAIT
 	FI	Odota, pyydetään syötettä...
 	FR	Veuillez patienter, connexion au flux...
 	HE	אנא המתן, מבקש הזנה...
-	IT	Attendere. Richiesta feed in corso...
+	IT	Attendere, richiesta feed in corso...
 	NL	Kanaal wordt opgevraagd. Een ogenblik geduld.
 	NO	Vent litt, sender forespørsel om feed...
 	PL	Czekaj, trwa żądanie połączenia ze źródłem...
 	RU	Подождите, запрос на веб-канал выполняется...
-	SV	Begär flöde. Vänta...
+	SV	Begär flöde...
 
 PLUGIN_RSSNEWS_ERROR
 	CS	Načtení RSS kanálů selhalo
@@ -100,15 +100,15 @@ PLUGIN_RSSNEWS_SCREENSAVER
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	CS	Plugin informačního proužku RSS News může být použit k prohlížení a zobrazování položek z RSS kanálů. Níže uvedené preference mohou být použity k určení, který RSS kanál použít, a k ovládání způsobu jejich zobrazení. Po skončení klikněte na tlačítko Změnit.
 	DA	Udvidelsesmodulet til lysavisen med RSS-nyheder kan bruges til at se nyheder fra RSS-feeds. I indstillingerne nedenfor kan du vælge hvilke RSS-feeds der skal bruges, og hvordan de skal vises. Klik på Skift når du har valgt indstillinger.
-	DE	Mit dem Plugin 'RSS-Nachrichtenticker' können Artikel aus RSS-Feeds angezeigt werden. Mit den folgenden Einstellungen können Sie festlegen, welche RSS-Feeds wie angezeigt werden sollen. Klicken Sie auf 'Ändern', wenn Sie fertig sind.
+	DE	Mit dem Plugin "RSS-Nachrichtenticker" können Artikel aus RSS-Feeds angezeigt werden. Mit den folgenden Einstellungen können Sie festlegen, welche RSS-Feeds wie angezeigt werden sollen. Klicken Sie auf "Ändern", wenn Sie fertig sind.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 	ES	El complemento de teletipo de noticias RSS se puede usar para examinar y mostrar elementos de fuentes RSS. Las preferencias siguientes se pueden usar para determinar qué fuentes RSS se deben usar y para controlar cómo deben mostrarse. Haga clic en el botón Cambiar cuando haya finalizado.
 	FI	RSS News Ticker -laajennuksen avulla voidaan selata ja näyttää RSS-syötteiden kohteita. Alla olevilla asetuksilla voidaan määrittää, mitä RSS-syötteitä käytetään ja miten syötteet näytetään. Kun olet valmis, valitse Muuta.
-	FR	Le plugin Agrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les modifications effectuées.
+	FR	Le plug-in Agrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur le lecteur. Cliquez sur Modifier une fois les modifications effectuées.
 	HE	ניתן להשתמש ביישום ה-Plugin 'טיקר RSS של חדשות' לעיון בפריטים מהזנות RSS ולהצגתם. ניתן להשתמש בהעדפות שלהלן כדי לקבוע באילו הזנות RSS להשתמש וכדי לשלוט באופן ההצגה שלהן. לסיום, לחץ על הלחצן 'שנה'.
 	IT	È possibile utilizzare il plugin RSS News Ticker per sfogliare e visualizzare argomenti dei feed RSS. Per specificare i feed RSS da utilizzare e impostarne il tipo di visualizzazione, utilizzare le preferenze indicate di seguito. Al termine delle operazioni, fare clic sul pulsante Cambia.
-	NL	Met de plug-in voor RSS-nieuwsberichten kun je items van RSS-kanalen bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS-kanalen je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop 'Veranderen' wanneer je klaar bent.
-	NO	Plugin-modulen rss-nyhetstelegraf kan brukes til å lese og vise elementer fra rss-feeder. Du kan bruke innstillingene nedenfor til å avgjøre hvilke rss-feeder du vil bruke, og kontrollere hvordan de vises. Klikk på Endre når du er ferdig.
+	NL	Met de plug-in voor RSS-nieuwsberichten kun je items van RSS-kanalen bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS-kanalen je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop Wijzigen' wanneer je klaar bent.
+	NO	Plugin-modulen for rss-nyhetstelegraf kan brukes til å lese og vise elementer fra rss-feeder. Du kan bruke innstillingene nedenfor til å avgjøre hvilke rss-feeder du vil bruke, og kontrollere hvordan de vises. Klikk på Endre når du er ferdig.
 	PL	Dodatek Wiadomości RSS umożliwia przeglądanie i wyświetlanie elementów ze źródeł RSS. Poniższe preferencje pozwalają określić, które źródła RSS mają zostać użyte oraz dostosować sposób ich wyświetlania. Po zakończeniu kliknij przycisk Zmień.
 	RU	Плагин "Новостной RSS-канал" позволяет просматривать и отображать элементы RSS-каналов. С помощью следующих настроек можно определить перечень RSS-каналов и управлять их отображением. После завершения настройки нажмите кнопку "Изменить".
 	SV	Med plugin-programmet RSS-nyhetsticker kan du söka efter och visa innehåll från RSS-flöden. Nedan kan du ange vilka RSS-flöden som ska användas och hur de ska visas. Klicka på Ändra när du är klar.
@@ -127,7 +127,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	NO	Tilbakestill standard rss-feeder
 	PL	Zresetuj domyślne źródła RSS
 	RU	Восстановить RSS-каналы по умолчанию
-	SV	Återställ till standard-RSS-flöden.
+	SV	Återställ till standard-RSS-flöden
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	CS	Položky zobrazené na jednom kanále
@@ -148,14 +148,14 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	CS	Maximální počet položek zobrazených pro každý zdroj, když je spořič obrazovky aktivní. Vyšší hodnota znamená, že spořič obrazovky zobrazí více položek před přepnutím na další zdroj.
 	DA	Det maksimale antal overskrifter fra hvert feed der kan vises mens pauseskærmen er aktiv. En høj værdi betyder at der vises flere overskrifter før der skiftes til det næste feed.
-	DE	Die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine größere Anzahl bedeutet, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
+	DE	Die Anzahl der Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine größere Anzahl bedeutet, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
 	ES	El número máximo de elementos mostrados para cada fuente mientras el protector de pantalla está activo. Un valor más alto implica que el protector de pantalla mostrará más elementos antes de pasar a la fuente siguiente.
 	FI	Enimmäismäärä kohteita, jotka näytetään syötettä kohden, kun näytönsäästäjä on aktiivinen. Suuri arvo merkitsee sitä, että näytönsäästäjä näyttää useampia kohteita, ennen kuin se vaihtaa seuraavaan syötteeseen.
-	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Un nombre élevé signifie que l'écran de veille affiche plus d'éléments avant de passer au flux suivant.
+	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Une valeur élevée signifie que l'écran de veille affiche davantage d'éléments avant de passer au flux suivant.
 	HE	המספר המרבי של פריטים המוצגים עבור כל הזנה בשעה ששומר המסך פעיל. ערך גבוה מסמל שיוצגו בשומר המסך יותר פריטים לפני מעבר להזנה הבאה.
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
-	NL	Het maximumaantal items dat per kanaal wordt weergegeven terwijl de schermbeveiliger actief is. Een hogere waarde betekent dat de schermbeveiliger meer items laat zien, voordat deze naar het volgende kanaal springt.
+	NL	Het maximumaantal items dat per kanaal wordt weergegeven terwijl de schermbeveiliger actief is. Een hogere waarde betekent dat de schermbeveiliger meer items laat zien, voordat deze naar het volgende kanaal overschakelt.
 	NO	Maksimalt antall elementer som vises for hver feed mens skjermspareren er aktiv. En høyere verdi gjør at skjermspareren viser flere elementer før den bytter til neste feed.
 	PL	Maksymalna liczba elementów wyświetlanych dla każdego źródła, gdy aktywny jest wygaszacz ekranu. Większa wartość oznacza, że wygaszacz ekranu wyświetli więcej elementów przed przejściem do kolejnego źródła.
 	RU	Макс. количество элементов, которые отображаются для каждого канала, пока активна экранная заставка. Чем выше значение, тем больше элементов будет отображаться экранной заставкой перед переключением на следующий канал.
@@ -184,7 +184,7 @@ SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	ES	Fuente no válida - %s
 	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
-	IT	Feed non valido. %s
+	IT	Feed non valido - %s
 	NL	Ongeldig kanaal - %s
 	NO	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s

@@ -34,11 +34,11 @@ PLUGIN_PANDORA_STREAM_FAILED
 	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
-	ES	Secuencia de audio desconectada; salto a pista siguiente.
-	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan raitaan.
+	ES	Stream de audio desconectada; salto a pista siguiente.
+	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan kappaleeseen.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Stream audio disconnesso. Passaggio al brano seguente.
+	IT	Stream audio disconnesso.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm frakoplet, hopper til neste spor.
 	PL	Strumień audio odłączony, przechodzenie do następnego utworu.
@@ -83,7 +83,7 @@ PLUGIN_PANDORA_SKIPS_EXCEEDED
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
-	FI	Tunnittaisten ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
+	FI	Tunneittain tehtävien ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
 	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
 	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
 	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
@@ -99,7 +99,7 @@ PLUGIN_PANDORA_NO_TRACKS
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
-	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
+	FI	Seuraavaa kappaletta ei voi hakea, yritä uudelleen painamalla toistopainiketta.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
@@ -115,7 +115,7 @@ PLUGIN_PANDORA_IDLE_STOPPING
 	DE	Erlaubte Pandora-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	Pandora idle time exceeded, press PLAY to continue listening.
 	ES	Se ha excedido el tiempo de inactividad en Pandora. Pulse PLAY para continuar escuchando.
-	FI	Pandoran joutoaika ylittyi. Jatka kuuntelua painamalla toistonäppäintä.
+	FI	Pandoran joutoaika ylittyi. Jatka kuuntelua painamalla toistopainiketta.
 	FR	Temps d'inactivité Pandora dépassé, appuyez sur PLAY pour continuer l'écoute.
 	HE	חריגה ממשך הזמן המוקצב לחוסר פעילות ב-Pandora, לחץ על PLAY (הפעלה) כדי להמשיך בהאזנה.
 	IT	Tempo di inattività di Pandora superato. Premere PLAY per proseguire l'ascolto.

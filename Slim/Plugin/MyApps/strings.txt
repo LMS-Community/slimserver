@@ -1,3 +1,15 @@
 PLUGIN_MY_APPS_MODULE_NAME
+	CS	Moje služby
+	DA	Mine tjenester
+	DE	Meine Dienste
 	EN	My Services
+	ES	Mis servicios
+	FI	Omat palvelut
+	FR	Mes services
+	IT	I miei servizi
+	NL	Mijn services
+	NO	Tjenester
+	PL	Moje usługi
+	RU	Мои службы
+	SV	Mina tjänster
 

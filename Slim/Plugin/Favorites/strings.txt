@@ -131,13 +131,13 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	CS	Plugin Oblíbené vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Doplňky" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
-	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
+	DE	Das Favoriten-Plugin erlaubt es auch, OPML-basierte Wiedergabelisten auf dem Server zu durchsuchen und zu bearbeiten. Aktivieren Sie die folgende Option, um diesen Modus unter "Extras" auf der Server-Startseite anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
-	FI	Suosikit-laajennuksen avulla voit selata opml-pohjaisia soittoluetteloita ja muokata palvelimeen tallennettuja opml-soittoluetteloita. Lisää tämä tila kohtaan Muut palvelimen kotisivulla valitsemalla alla oleva vaihtoehto.
-	FR	Le plugin des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
+	FI	Suosikit-laajennuksen avulla voit selata opml-pohjaisia soittoluetteloita ja muokata palvelimeen tallennettuja opml-soittoluetteloita. Lisää tämä tila kohtaan Muut palvelimen aloitussivulla valitsemalla alla oleva vaihtoehto.
+	FR	Le plug-in des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
 	IT	Il plugin dei preferiti consente anche di sfogliare le playlist in formato OPML e di modificare le playlist OPML memorizzate nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
-	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorkijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
+	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorbladeren en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
 	NO	Med plugin-modulen for favoritter kan du bla i opml-baserte spillelister, og redigere opml-baserte spillelister som er lagret på serveren din. Du kan legge til denne modusen under "Tillegg" i hovedmenyen til serveren ved å velge alternativet nedenfor.
 	PL	Dodatek do ulubionych elementów umożliwia także przeglądanie i edytowanie list odtwarzania opartych na języku opml zapisanych na serwerze. Wybierz opcję poniżej, aby dodać ten tryb w obszarze „Dodatki” na stronie głównej serwera.
 	RU	Плагин "Выбранное" позволяет просматривать плей-листы OPML, а также редактировать те из них, что хранятся на сервере. Выберите вариант ниже, чтобы добавить этот режим в раздел "Дополнения" на домашней странице сервера.
@@ -190,7 +190,7 @@ PLUGIN_FAVORITES_IMPORT
 
 PLUGIN_FAVORITES_LOADFILE
 	CS	URL nebo název souboru
-	DA	Adresse eller filnavn
+	DA	URL-adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -220,7 +220,7 @@ PLUGIN_FAVORITES_SAVEFILE
 
 PLUGIN_FAVORITES_IMPORTFILE
 	CS	URL nebo název souboru
-	DA	Adresse eller filnavn
+	DA	URL-adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -370,7 +370,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 
 PLUGIN_FAVORITES_REMOTELOADERROR
 	CS	Chyba při nahrávání URL
-	DA	Fejl ved indlæsning af adresse
+	DA	Fejl ved indlæsning af URL-adresse
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
 	ES	Error al cargar URL
@@ -404,7 +404,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 	DE	Fehler beim Import von Wiedergabelisten
 	EN	Error Importing Playlist
 	ES	Error al importar lista de reproducción
-	FI	Virhe soittoluettelon tuomisessa
+	FI	Virhe soittoluettelon tuonnissa
 	FR	Erreur au cours de l'importation de la liste de lecture
 	IT	Errore durante l'importazione della playlist
 	NL	Fout tijdens importeren van playlist
@@ -445,7 +445,7 @@ PLUGIN_FAVORITES_NAME
 
 PLUGIN_FAVORITES_URL
 	CS	URL
-	DA	Internetadresse
+	DA	URL-adresse
 	DE	URL
 	EN	URL
 	ES	URL

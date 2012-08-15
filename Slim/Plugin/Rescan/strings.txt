@@ -26,7 +26,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	ES	Examen automático de biblioteca
 	FI	Kirjaston automaattinen tarkistus
 	FR	Analyse de bibliothèque automatique
-	IT	Analisi automatica della libreria in corso...
+	IT	Analisi automatica della libreria in corso
 	NL	Automatisch collectie scannen
 	NO	Automatisk bibliotekssøk
 	PL	Automatyczne ponowne przeszukiwanie biblioteki
@@ -158,19 +158,19 @@ PLUGIN_RESCAN_TIMER_ON
 	NO	Søkekontroll er på
 	PL	Timer ponownego przeszukiwania WŁĄCZONY
 	RU	Таймер повторного сканирования включен
-	SV	Sökningstimern är aktiverad.
+	SV	Sökningstimern är aktiverad
 
 PLUGIN_RESCAN_TIMER_DESC
 	CS	Můžete vybrat povolení plánovaného prohledání vaší hudební knihovny každých 24 hodin. K použití této vlastnosti nastavte čas a přepněte časovač prohledávání na ZAPNUTO.
-	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Du indstiller klokkeslættet og indstiller Timer for gennemsøgning til TIL
-	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
+	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Indstil klokkeslættet og slå Timer for gennemsøgning TIL for at bruge funktionen.
+	DE	Sie können ihre Musiksammlung automatisch alle 24 Stunden durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie "Automatisches Durchsuchen".
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede optar por permitir que se vuelva a examinar la biblioteca de música de forma programada cada 24 horas. Establezca la hora y el Temporizador para volver a examinar en ACTIVADO para utilizar esta característica.
 	FI	Voit sallia musiikkikirjastosi ajoitetun uudelleentarkistuksen 24 tunnin välein.  Voit ottaa toiminnon käyttöön määrittämällä ajan ja asettamalla uudelleentarkistuksen ajastimen päälle.
-	FR	Vous pouvez faire en sorte que le serveur analyse à nouveau le contenu de votre bibliothèque toutes les 24 heures. Définissez l'heure et activez Programmation de l'analyse pour utiliser cette fonctionnalité.
+	FR	Vous pouvez faire en sorte que le serveur analyse à nouveau le contenu de votre bibliothèque musicale toutes les 24 heures. Définissez l'heure et activez Programmation de l'analyse pour utiliser cette fonctionnalité.
 	HE	באפשרותך לבחור לאפשר סריקה חוזרת מתוזמנת של ספריית המוסיקה שלך מדי 24 שעות. קבע את השעה והגדר את 'קוצב-זמן לסריקה חוזרת' ל'מופעל' כדי להשתמש במאפיין זה.
 	IT	È possibile impostare la pianificazione dell'analisi della libreria musicale ogni 24 ore. Per utilizzare questa funzione, è sufficiente impostare l'ora di esecuzione e attivare il timer dell'analisi.
-	NL	Je kunt je muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
+	NL	Je kunt je muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de Timer voor opnieuw scannen op AAN om deze functie te gebruiken.
 	NO	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
 	PL	Możliwe jest zezwolenie na zaplanowane ponowne przeszukiwanie biblioteki muzyki co 24 godziny. Aby korzystać z tej funkcji, ustaw godzinę i Timer ponownego przeszukiwania na WŁĄCZONY.
 	RU	Вы можете запланировать проверку своей медиатеки каждые 24 часа. Для этого укажите время и включите таймер повторного сканирования.
@@ -190,7 +190,7 @@ PLUGIN_RESCAN_TIMER_OFF
 	NO	Søkekontroll er av
 	PL	Timer ponownego przeszukiwania WYŁĄCZONY
 	RU	Таймер повторного сканирования выключен
-	SV	Sökningstimern är avaktiverad.
+	SV	Sökningstimern är avaktiverad
 
 PLUGIN_RESCAN_TIMER_TYPE
 	CS	Typ prohledávání
@@ -213,13 +213,13 @@ PLUGIN_RESCAN_PLEASE_WAIT
 	DA	Vent lidt
 	DE	Bitte warten
 	EN	Please Wait
-	ES	Espere un momento
+	ES	Espere
 	FI	Odota
 	FR	Veuillez patienter
 	IT	Attendere
-	NL	Even wachten
+	NL	Een ogenblik geduld
 	NO	Vent litt
 	PL	Czekaj
 	RU	Подождите
-	SV	Ett ögonblick...
+	SV	Ett ögonblick
 

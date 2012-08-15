@@ -14,18 +14,18 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
-	CS	Stahovač doplňků umožňuje automatické stahování a instalaci volitelných vlastností Squezebox server.
+	CS	Stahovač doplňků umožňuje automatické stahování a instalaci volitelných vlastností UE Music Library.
 	DA	Du kan vælge om der automatisk skal hentes og installeres en række udvidelser til Squeezebox-serveren.
 	DE	Mit dem Erweiterungs-Downloader werden optionale Funktionen für UE Music Library automatisch heruntergeladen und installiert.
 	EN	Extension downloader allows automated download and installation of optional features for UE Music Library.
-	ES	El Descargador de extensiones permite descargar e instalar automáticamente funciones opcionales para el servidor Squeezebox.
-	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia UE Music Libraryille.
-	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour le UE Music Library.
+	ES	El Descargador de extensiones permite descargar e instalar automáticamente funciones opcionales para el UE Music Library.
+	FI	Laajennusten latausjärjestelmä saattaa ladata ja asentaa automaattisesti erilaisia lisäosia UE Music Librarylle.
+	FR	L'outil de téléchargement d'extensions permet le téléchargement et l'installation automatisés de fonctionnalités optionnelles pour UE Music Library.
 	IT	L'utilità di download delle estensioni consente il download e l'installazione automatici di funzionalità facoltative per UE Music Library.
 	NL	Met de extensiedownloader kunnen optionele functies voor UE Music Library automatisch worden gedownload en geïnstalleerd.
 	NO	Med Nedlasting av utvidelser kan du laste ned en rekke valgfrie funksjoner for UE Music Library helt gratis og helt automatisk.
 	PL	Moduł pobierania dodatków umożliwia automatyczne pobieranie i instalację opcjonalnych funkcji programu UE Music Library.
-	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера Squeezebox.
+	RU	Загрузчик расширений позволяет автоматически загружать и устанавливать дополнительные средства для сервера UE Music Library.
 	SV	Med hjälp av nedladdningsprogrammet kan du ladda ner olika tillägg till UE Music Library.
 
 PLUGIN_EXTENSIONS_REPOS
@@ -45,15 +45,15 @@ PLUGIN_EXTENSIONS_REPOS
 
 PLUGIN_EXTENSIONS_REPOS_DESC
 	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">zde</a>.
-	DA	Du kan tilføje adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor. Der findes en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
+	DA	Du kan tilføje URL-adresser på tredjepartslagersteder med udvidelsesmoduler ved at angive URL-adressen for lagerstedet nedenfor. Der findes en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
 	DE	Sie können weitere Repositories von Drittanbietern hinzufügen, indem Sie deren URL unten angeben. Eine Liste von Repository-URLs ist <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> verfügbar.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">here</a>.
 	ES	Puede agregar repositorios de extensiones de otros fabricantes adicionales si introduce la URL para el siguiente repositorio. Encontrará una lista de direcciones URL de repositorios <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">aquí</a>.
-	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">täällä</a>.
+	FI	Voit lisätä muiden valmistajien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">täällä</a>.
 	FR	Vous pouvez ajouter des répertoires supplémentaires tiers en saisissant l'URL des répertoires ci-dessous. Pour obtenir une liste de répertoires supplémentaires, cliquez <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">ici</a>.
 	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendo l'URL del relativo archivio di seguito. Un elenco di URL degli archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">qui</a>.
 	NL	Je kunt opslagruimten voor externe uitbreidingen toevoegen door de URL voor onderstaande opslagruimte in te voeren. Klik <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">hier</a> voor een lijst met opslag-URL's.
-	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
+	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi nettadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">her</a>.
 	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">tutaj</a>.
 	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URL репозиториев см. <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">здесь</a>.
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/Squeezebox_Server_repositories" target="wiki">lista</a> med adresser till databaser.
@@ -79,8 +79,8 @@ PLUGIN_EXTENSIONS_RESTART_MSG
 	DE	UE Music Library muss neu gestartet werden, damit die Änderungen in Kraft treten.
 	EN	Please restart UE Music Library for the changes to take effect.
 	ES	Reinicie UE Music Library para que los cambios entren en vigor.
-	FI	Käynnistä UE Music Library uudelleen, jotta muutokset tulevat voimaan.
-	FR	Redémarrez le UE Music Library pour appliquer les modifications.
+	FI	Käynnistä UE Music Library uudelleen, jotta muutokset astuvat voimaan.
+	FR	Redémarrez UE Music Library pour appliquer les modifications.
 	IT	Per applicare le modifiche, è necessario riavviare UE Music Library.
 	NL	Start UE Music Library opnieuw om de wijzigingen door te voeren.
 	NO	Du må starte UE Music Library på nytt for at endringene skal tre i kraft.
@@ -124,7 +124,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 	DE	Sie wollen die folgenden Erweiterungen installieren:
 	EN	You are about to install:
 	ES	Está a punto de instalar:
-	FI	Aiot asentaa tämän:
+	FI	Olet asentamassa tämän:
 	FR	Vous êtes en train d'installer:
 	IT	Sta per essere installato:
 	NL	Je wilt het volgende installeren:
@@ -136,13 +136,13 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 PLUGIN_EXTENSIONS_WARNING_POPUP2
 	CS	Instalujte pouze doplňky vytvořené důvěryhodnými autory. Škodlivý software může poškodit váš počítač nebo vést k narušení vašeho soukromí.
 	DA	Du bør kun installere udvidelsesmoduler fra forfattere du har tillid til, så du ikke kommer til at installere noget som er skadeligt og kan ødelægge computeren eller afsløre oplysninger om dig.
-	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören, oder ihre Privatsphäre verletzen.
+	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören oder ihre Privatsphäre verletzen.
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
-	ES	Instale extensiones únicamente de autores de confianza. El software malintencionado puede dañar el equipo o invadir su privacidad.
+	ES	Instale únicamente extensiones de autores de confianza. El software malintencionado puede dañar el equipo o invadir su privacidad.
 	FI	Asenna laajennuksia vain tekijöiltä, joihin luotat. Haittaohjelmistot saattavat vaurioittaa tietokonettasi tai loukata tietosuojaasi.
 	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder à vos données personnelles.
 	IT	Installare solo le estensioni create dagli autori fidati. Il software dannoso può danneggiare il computer o violare la privacy degli utenti.
-	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
+	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Schadelijke software kan je computer beschadigen en je privacy schenden.
 	NO	Du bør kun installere utvidelser fra forfattere du har tillit til. Skadelig programvare kan skade datamaskinen og sette personvernet i fare.
 	PL	Instaluj tylko rozszerzenia od zaufanych autorów. Złośliwe oprogramowanie może spowodować uszkodzenie komputera lub naruszenie prywatności.
 	RU	Устанавливайте расширения только проверенных авторов. Вредоносное ПО может повредить компьютер или нарушить конфиденциальность данных.
@@ -155,7 +155,7 @@ PLUGIN_EXTENSIONS_ACTIVE
 	EN	Active plugins
 	ES	Complementos activos
 	FI	Aktiiviset laajennukset
-	FR	Plugins activés
+	FR	Plug-ins activés
 	IT	Plugin attivi
 	NL	Actieve plug-ins
 	NO	Aktive plugin-moduler
@@ -170,7 +170,7 @@ PLUGIN_EXTENSIONS_INACTIVE
 	EN	Inactive plugins
 	ES	Complementos inactivos
 	FI	Ei-aktiiviset laajennukset
-	FR	Plugins non activés
+	FR	Plug-ins non activés
 	IT	Plugin disattivi
 	NL	Inactieve plug-ins
 	NO	Inaktive plugin-moduler
@@ -185,7 +185,7 @@ PLUGIN_EXTENSIONS_UPDATES
 	EN	Updated plugins available
 	ES	Hay complementos actualizados disponibles
 	FI	Saatavilla päivitettyjä laajennuksia
-	FR	Plugins mis à jour disponibles
+	FR	Plug-ins mis à jour disponibles
 	IT	Sono disponibili plugin aggiornati
 	NL	Er zijn bijgewerkte plug-ins beschikbaar
 	NO	Oppdaterte plugin-moduler er tilgjengelige
@@ -200,7 +200,7 @@ PLUGIN_EXTENSIONS_AUTO
 	EN	Update plugins automatically
 	ES	Actualizar complementos automáticamente
 	FI	Päivitä laajennukset automaattisesti
-	FR	Mettre à jour les plugins automatiquement
+	FR	Mettre à jour les plug-ins automatiquement
 	IT	Aggiorna plugin automaticamente
 	NL	Plug-ins automatisch bijwerken
 	NO	Oppdater plugin-moduler automatisk
@@ -210,17 +210,17 @@ PLUGIN_EXTENSIONS_AUTO
 
 PLUGIN_EXTENSIONS_AUTO_DESC
 	CS	Umožnit, aby UE Music Library automaticky kontroloval aktualizace nainstalovaných zásuvných modulů a stahoval je tak, aby byly připraveny k použití při příštím spuštění serveru. Pokud tato možnost není vybrána, můžete zásuvné moduly aktualizovat ručně prostřednictvím této stránky nastavení.
-	DA	Du kan indstille Squeezebox-serveren til automatisk at søge efter opdateringer til de installerede udvidelsesmoduler og hente dem, så de er klar til at blive brugt næste gang serveren startes. Hvis du ikke vælger denne mulighed, kan du opdatere udvidelsesmodulerne manuelt via denne side.
-	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch UE Music Library, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
+	DA	Du kan indstille UE Music Library til automatisk at søge efter opdateringer til de installerede udvidelsesmoduler og hente dem, så de er klar til at blive brugt næste gang serveren startes.  Hvis du ikke vælger denne mulighed, kan du opdatere udvidelsesmodulerne manuelt via denne side.
+	DE	Aktivieren Sie die Option für die automatische Suche nach Updates für installierte Plugins und das Herunterladen dieser Updates durch die UE Music Library, sodass sie beim nächsten Start des Servers zur Verfügung stehen. Wenn diese Option nicht aktiviert ist, können Sie die Plugins über diese Seite für Einstellungen manuell aktualisieren.
 	EN	Allow the UE Music Library to automatically check for updates to installed plugins and download them ready to be used when the server is next restarted.  If this option is not selected you may manually update plugins through this settings page.
 	ES	Permite a UE Music Library buscar actualizaciones para los complementos instalados y descargarlas automáticamente para que estén listas la próxima vez que se reinicie el servidor. Si no selecciona esta opción, podrá actualizar los complementos manualmente a través de la página de configuración.
-	FI	Salli UE Music Libraryin hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivun kautta.
-	FR	Autoriser le UE Music Library à rechercher automatiquement les mises à jour des plugins installés et à les télécharger de manière à être appliqués au redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plugins manuellement en accédant à cette page de paramètres.
+	FI	Salli UE Music Libraryn hakea asennettujen laajennusten päivitykset automaattisesti ja ladata ne, jotta ne ovat käyttövalmiita seuraavalla palvelimen käynnistyskerralla. Jos tämä asetus ei ole valittuna, voit päivittää laajennukset manuaalisesti Asetukset-sivulta.
+	FR	Autoriser UE Music Library à rechercher automatiquement les mises à jour des plug-ins installés et à les télécharger de manière à être appliqués au redémarrage du serveur. Si cette option n'est pas sélectionnée, vous pouvez mettre à jour les plug-ins manuellement en accédant à cette page de paramètres.
 	IT	Consente a UE Music Library di verificare automaticamente la disponibilità di aggiornamenti ai plugin installati e di scaricarli ed utilizzarli la prossima volta che si riavvia il server. Se questa opzione non è selezionata, è possibile aggiornare i plugin manualmente tramite questa pagina di impostazioni.
 	NL	UE Music Library toestaan automatisch op updates voor geïnstalleerde plug-ins te controleren en deze te downloaden voor gebruik wanneer de server opnieuw wordt opgestart. Als deze optie niet is geselecteerd, kun je plug-ins handmatig bijwerken via deze instellingenpagina.
 	NO	La UE Music Library se etter oppdateringer for installerte plugin-moduler automatisk, og laste dem ned så de kan brukes neste gang serveren startes på nytt. Hvis du ikke merker av for dette, kan du oppdatere plugin-modulene manuelt på denne siden.
 	PL	Zezwala programowi UE Music Library na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
-	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
+	RU	Разрешить серверу UE Music Library автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
 	SV	Tillåt UE Music Library att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
 PLUGIN_EXTENSIONS_OTHERREPO
@@ -230,7 +230,7 @@ PLUGIN_EXTENSIONS_OTHERREPO
 	EN	Show all 3rd party plugins
 	ES	Mostrar todos los complementos de terceros
 	FI	Näytä kaikki muiden valmistajien laajennukset
-	FR	Afficher tous les plugins tiers
+	FR	Afficher tous les plug-ins tiers
 	IT	Mostra tutti i plugin di terzi
 	NL	Alle plug-ins van derden weergeven
 	NO	Vis alle tredjeparts plugin-moduler
@@ -240,12 +240,12 @@ PLUGIN_EXTENSIONS_OTHERREPO
 
 PLUGIN_EXTENSIONS_OTHERREPO_DESC
 	CS	Zobrazit všechny zásuvné moduly třetích stran, které pochází od členů komunity Squeezebox. Mějte na paměti, že tyto zásuvné moduly nejsou podporovány a měly by být používány jen na vlastní riziko.
-	DA	Vis alle andre udvidelsesmoduler fra tredjeparter som er lavet af Squeezebox-brugergruppen. Bemærk at der ikke ydes support til disse udvidelsesmoduler, så du bruger dem på eget ansvar.
+	DA	Vis alle andre tredjepartsudvidelsesmoduler som er lavet af medlemmer af Squeezebox-brugergruppen. Bemærk at der ikke ydes support til disse udvidelsesmoduler, så du bruger dem på eget ansvar.
 	DE	Zeigen Sie alle Plugins anderer Hersteller an, die von Mitgliedern der Squeezebox-Community beigetragen wurden. Diese Plugins werden nicht unterstützt. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr.
 	EN	Show all other 3rd party plugins contributed by members of the Squeezebox community.  Note these plugins are unsupported and should be used at your own risk.
 	ES	Muestra los complementos de terceros proporcionados por los miembros de la comunidad de Squeezebox. Tenga en cuenta que estos complementos no son compatibles y que usted los utiliza por su cuenta y riesgo.
-	FI	Näytä kaikki muut muiden valmistajien tekemät laajennukset. Niistä ovat vastanneet Squeezebox-yhteisön jäsenet. Huomaa, että näitä laajennuksia ei tueta ja että käyttäjät käyttävät niitä omalla vastuullaan.
-	FR	Afficher tous les autres plugins tiers provenant de membres de la communauté Squeezebox. Notez que ces plugins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
+	FI	Näytä kaikki muut muiden valmistajien laajennukset. Niistä ovat vastanneet Squeezebox-yhteisön jäsenet. Huomaa, että näitä laajennuksia ei tueta ja että käyttäjät käyttävät niitä omalla vastuullaan.
+	FR	Affiche tous les autres plug-ins tiers provenant de membres de la communauté Squeezebox. Notez que ces plug-ins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
 	IT	Mostra tutti gli altri plugin di terzi forniti dai membri della community Squeezebox. Tenere presente che tali plugin non sono supportati e pertanto vanno utilizzati a proprio rischio.
 	NL	Alle andere plug-ins van derden weergeven die leden van de Squeezebox-community hebben bijgedragen. N.B. Deze plug-ins worden niet ondersteund en worden op eigen risico gebruikt.
 	NO	Vis alle andre tredjeparts plugin-moduler som er laget av Squeezebox-brukere. Merk: disse plugin-modulene støttes ikke, og du bruker dem på egen risiko.
@@ -255,15 +255,15 @@ PLUGIN_EXTENSIONS_OTHERREPO_DESC
 
 PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	CS	Vezměte prosím na vědomí, že zásuvné moduly třetích stran nejsou podporovány společností Logitech a měly by být používány na vaše vlastní riziko. Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
-	DA	Bemærk at Logitech ikke yder support til udvidelsesmoduler fra tredjepart, og disse bruges på eget ansvar. Hvis du har brug for support, må du kontakte dem som har lavet udvidelsesmodulet.
+	DA	Bemærk at Logitech ikke yder support til udvidelsesmoduler fra tredjepart, og disse bruges på eget ansvar. Hvis du har brug for support, bedes du kontakte producenten af udvidelsesmodulet.
 	DE	Logitech Produkte unterstützen keine Plugins anderer Hersteller. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr. Kontaktieren Sie den Kundendienst der Plugin-Hersteller.
 	EN	Please note that 3rd party plugins are unsupported by Logitech and should be used at your own risk.  Please contact plugin authors for support.
 	ES	Tenga en cuenta que Logitech no admite complementos de terceros; usted los utiliza por su cuenta y riesgo. Para obtener ayuda, póngase en contacto con los autores de los complementos.
 	FI	Ota huomioon, että Logitech ei tue muiden osapuolten valmistamia laajennuksia. Kyseisiä laajennuksia käytetään omalla vastuulla. Ota yhteys laajennusten valmistajiin tuen saamiseksi.
-	FR	Veuillez noter que les plugins tiers ne sont pas pris en charge par Logitech et que vous les utilisez à vos propres risques. Veuillez contacter les auteurs des plugins pour obtenir de l'aide.
+	FR	Veuillez noter que les plug-ins tiers ne sont pas pris en charge par Logitech et que vous les utilisez à vos propres risques. Veuillez contacter les auteurs des plug-ins pour obtenir de l'aide.
 	IT	Tenere presente che i plugin di terzi non sono supportati da Logitech e pertanto vanno utilizzati a proprio rischio. Per assistenza, rivolgersi all'autore del plugin.
-	NL	Plug-ins van derden worden niet ondersteund door Logitech en gebruik hiervan is op eigen risico. Neem contact op met de auteur van de plug-in voor ondersteuning.
-	NO	Merk: Logitech støtter ikke plugin-moduler fra tredjeparter, du bruker disse på egen risiko. Du kan kontakte de som laget modulen for støtte.
+	NL	Plug-ins van derden worden niet ondersteund door Logitech en het gebruik hiervan is op eigen risico. Neem contact op met de auteur van de plug-in voor ondersteuning.
+	NO	Merk: Logitech støtter ikke plugin-moduler fra tredjeparter, du bruker disse på egen risiko. Du kan kontakte produsenten av modulen for støtte.
 	PL	Uwaga! Dodatki innych firm są nieobsługiwane przez oprogramowanie firmy Logitech i powinny być używane na własną odpowiedzialność. W celu uzyskania pomocy skontaktuj się z autorem dodatku.
 	RU	Следует помнить, что Logitech не предоставляет поддержку для подключаемых модулей сторонних изготовителей, ответственность за использование которых должен нести пользователь. За поддержкой обращайтесь к авторам подключаемого модуля.
 	SV	Observera att plugin-program från tredje part inte stöds av Logitech och används på egen risk. Kontakta författaren till plugin-programmen för support.
@@ -276,7 +276,7 @@ PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 	EN	Recommended 3rd party plugins
 	ES	Complementos de terceros recomendados
 	FI	Suositellut muiden valmistajien laajennukset
-	FR	Plugins tiers recommandés
+	FR	Plug-ins tiers recommandés
 	IT	Plugin di terzi consigliati
 	NL	Aanbevolen plug-ins van derden
 	NO	Anbefalte tredjeparts plugin-moduler
@@ -292,7 +292,7 @@ PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 	EN	Other 3rd party plugins
 	ES	Otros complementos de terceros
 	FI	Muiden valmistajien laajennukset
-	FR	Autres plugins tiers
+	FR	Autres plug-ins tiers
 	IT	Altri plugin di terzi
 	NL	Andere plug-ins van derden
 	NO	Andre tredjeparts plugin-moduler

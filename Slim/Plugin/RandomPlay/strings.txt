@@ -8,7 +8,7 @@ PLUGIN_RANDOMPLAY
 	DE	Zufallsmix
 	EN	Random Mix
 	ES	Mezcla aleatoria
-	FI	Satunnainen valikoima
+	FI	Satunnainen sekoitus
 	FR	Mix aléatoire
 	HE	מיקס אקראי
 	IT	Raccolta casuale
@@ -39,7 +39,7 @@ PLUGIN_RANDOM_DISABLED
 	DE	Zufallsmix angehalten
 	EN	Random Mix Stopped
 	ES	Mezcla aleatoria detenida
-	FI	Satunnaisen valikoiman toisto lopetettiin
+	FI	Satunnaisen sekoituksen toisto lopetettiin
 	FR	Mix aléatoire arrêté
 	HE	המיקס האקראי נעצר
 	IT	Raccolta casuale interrotta
@@ -55,7 +55,7 @@ PLUGIN_RANDOM_TRACK
 	DE	Titelmix
 	EN	Song Mix
 	ES	Mezcla de canciones
-	FI	Kappalevalikoima
+	FI	Kappalesekoitus
 	FR	Morceaux aléatoires
 	IT	Raccolta di brani
 	NL	Nummermix
@@ -102,7 +102,7 @@ PLUGIN_RANDOM_ALBUM
 	DE	Albummix
 	EN	Album Mix
 	ES	Mezcla de álbumes
-	FI	Levyvalikoima
+	FI	Levysekoitus
 	FR	Albums aléatoires
 	IT	Raccolta di album
 	NL	Albummix
@@ -165,7 +165,7 @@ PLUGIN_RANDOM_CONTRIBUTOR
 	DE	Interpretenmix
 	EN	Artist Mix
 	ES	Mezcla de artistas
-	FI	Artistivalikoima
+	FI	Artistisekoitus
 	FR	Artistes aléatoires
 	IT	Raccolta di artisti
 	NL	Artiestenmix
@@ -228,7 +228,7 @@ PLUGIN_RANDOM_YEAR
 	DE	Jahrgangsmix
 	EN	Year Mix
 	ES	Mezcla de años
-	FI	Vuosivalikoima
+	FI	Vuosisekoitus
 	FR	Années aléatoires
 	IT	Raccolta di anni
 	NL	Jaarmix
@@ -338,7 +338,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	DE	Wählen Sie einen zufälligen Musikmix aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla aleatoria de música de la biblioteca:
-	FI	Valitse satunnainen musiikkikokoelma kirjastostasi:
+	FI	Valitse satunnainen musiikkisekoitus kirjastostasi:
 	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre bibliothèque:
 	HE	בחר מיקס אקראי של מוסיקה מהספרייה:
 	IT	Scegliere una raccolta casuale di musica dalla libreria:
@@ -418,7 +418,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	DE	Im Mix einzuschließende Stilrichtungen:
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en la mezcla:
-	FI	Miksiin sisällytettävät genret:
+	FI	Sekoitukseen sisällytettävät genret:
 	FR	Genres à inclure dans le mix:
 	HE	סגנונות שיש לכלול במיקס:
 	IT	Generi musicali da includere nella raccolta:
@@ -431,7 +431,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 PLUGIN_RANDOM_CHOOSE_GENRES
 	CS	Zvolit žánry
 	DA	Vælg genrer
-	DE	Stilrichtungen wählen
+	DE	Stilrichtung wählen
 	EN	Choose Genres
 	ES	Elegir géneros
 	FI	Valitse genret
@@ -505,15 +505,15 @@ PLUGIN_RANDOM_CONTINUOUS_MODE
 	NO	Legg til nye elementer når de gamle er ferdigspilt
 	PL	Dodaj nowe elementy po zakończeniu odtwarzania starych
 	RU	Добавить новые элементы по завершении старых
-	SV	Lägg till nya objekt när de gamla tar slut.
+	SV	Lägg till nya objekt när de gamla tar slut
 
 PLUGIN_RANDOM_GENERAL_HELP
 	CS	Do vašeho mixu můžete kdykoli přidávat nebo z něj odstraňovat skladby. K zastavení náhodně zvoleného mixu vymažte váš seznam skladeb nebo klikněte na
 	DA	Du kan altid tilføje og fjerne numre fra dit miks. Du kan stoppe et tilfældigt miks ved at rydde afspilningslisten eller klikke for at
-	DE	Sie können jederzeit Titel aus dem Mix entfernen oder neue hinzufügen. Zum Anhalten des Zufallsmix leeren Sie die Wiedergabeliste oder klicken, um
+	DE	Sie können jederzeit Titel aus dem Mix entfernen oder neue hinzufügen. Zum Anhalten des Zufallsmixes leeren Sie die Wiedergabeliste oder klicken Sie, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 	ES	Se pueden agregar o quitar canciones de la mezcla en cualquier momento. Para detener una mezcla aleatoria, borre la lista de reproducción o haga clic para
-	FI	Miksiin voidaan lisätä kappaleita ja siitä voidaan poistaa kappaleita koska tahansa. Jos haluat lopettaa satunnaisen miksin soittamisen, tyhjennä soittoluettelo tai napsauta
+	FI	Sekoitukseen voidaan lisätä kappaleita ja siitä voidaan poistaa kappaleita koska tahansa. Jos haluat lopettaa satunnaisen sekoituksen soittamisen, tyhjennä soittoluettelo tai napsauta
 	FR	Vous pouvez ajouter ou supprimer des morceaux du mix à tout moment. Pour arrêter un mix aléatoire, videz votre liste de lecture ou cliquez ici pour
 	HE	באפשרותך להוסיף שירים למיקס או להסירם בכל עת. כדי לעצור מיקס אקראי, נקה את רשימת ההשמעה או לחץ כדי
 	IT	È possibile aggiungere o rimuovere brani dalla raccolta in qualsiasi momento. Per interrompere una raccolta casuale, svuotare la playlist o fare clic per
@@ -529,7 +529,7 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	DE	Drücken Sie RECHTS um
 	EN	Press RIGHT to
 	ES	Pulse DERECHA para
-	FI	Paina oikeaa näppäintä
+	FI	Paina oikeanpuoleista näppäintä
 	FR	Appuyez sur DROITE pour
 	HE	לחץ על הלחצן ימינה כדי
 	IT	Premere il pulsante DESTRA per

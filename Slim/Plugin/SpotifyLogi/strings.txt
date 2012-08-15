@@ -14,18 +14,18 @@ PLUGIN_SPOTIFYLOGI_MODULE_NAME
 	SV	Spotify
 
 PLUGIN_SPOTIFYLOGI_MODULE_NAME_DESC
-	CS	Oficiální zásuvný modul služby Spotify. Poslouchejte službu Spotify na UE Smart Radio nebo Touch.
-	DA	Officielt Spotify-udvidelsesmodul. Lyt til Spotify på UE Smart Radio eller Touch.
-	DE	Offizielles Spotify-Plugin. Nutzen Sie Spotify über Ihr UE Smart Radio oder Ihre Touch.
+	CS	Oficiální zásuvný modul služby Spotify. Poslouchejte službu Spotify na vašem přehrávači UE Smart Radio.
+	DA	Officielt Spotify-udvidelsesmodul. Lyt til Spotify på UE Smart Radio.
+	DE	Offizielles Spotify-Plugin. Nutzen Sie Spotify über Ihr UE Smart Radio.
 	EN	Official Spotify plugin. Listen to Spotify on your UE Smart Radio.
-	ES	Complemento de Spotify oficial. Escuche Spotify en su dispositivo UE Smart Radio o Touch.
-	FI	Virallinen Spotify-laajennus. Kuuntele musiikkia Spotifysta UE Smart Radion tai Touchin välityksellä.
-	FR	Plugin Spotify officiel. Ecoutez Spotify sur votre UE Smart Radio ou votre Touch.
-	IT	Plugin ufficiale di Spotify. Consente di ascoltare Spotify su UE Smart Radio o Touch.
+	ES	Complemento de Spotify oficial. Escuche Spotify en su dispositivo UE Smart Radio.
+	FI	Virallinen Spotify-laajennus. Kuuntele musiikkia Spotifysta UE Smart Radion välityksellä.
+	FR	Plug-in Spotify officiel. Ecoutez Spotify sur votre UE Smart Radio.
+	IT	Plugin ufficiale di Spotify. Consente di ascoltare Spotify su UE Smart Radio.
 	NL	Officiële plug-in van Spotify. Luister naar Spotify op je UE Smart Radio of Touch.
-	NO	Offisiell plugin-modul for Spotify. Lytt til Spotify på en UE Smart Radio- eller Touch-spiller.
-	PL	Oficjalny dodatek usługi Spotify. Umożliwia słuchanie usługi Spotify w urządzeniu UE Smart Radio lub Touch.
-	RU	Официальный подключаемый модуль Spotify. Слушать Spotify на плеере UE Smart Radio или Touch.
+	NO	Offisiell plugin-modul for Spotify. Lytt til Spotify på en UE Smart Radio.
+	PL	Oficjalny dodatek usługi Spotify. Umożliwia słuchanie dźwięku z usługi Spotify na urządzeniu UE Smart Radio.
+	RU	Официальный подключаемый модуль Spotify. Слушайте Spotify на плеере UE Smart Radio или Touch.
 	SV	Officiellt plugin-program för Spotify. Lyssna på Spotify via din UE Smart Radio eller Touch.
 
 PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
@@ -34,7 +34,7 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	DE	In Spotify
 	EN	On Spotify
 	ES	En Spotify
-	FI	Spotifyssä
+	FI	Spotifyssa
 	FR	Sur Spotify
 	IT	Su Spotify
 	NL	Over Spotify
@@ -44,7 +44,19 @@ PLUGIN_SPOTIFYLOGI_ON_SPOTIFY
 	SV	På Spotify
 
 PLUGIN_SPOTIFYLOGI_STARRED
+	CS	%s byl označen hvězdou na službě Spotify.
+	DA	%s er blevet markeret med en stjerne på Spotify.
+	DE	%s wurde erfolgreich der Spotify-Favoritenliste hinzugefügt.
 	EN	%s has been starred on Spotify.
+	ES	%s se ha destacado en Spotify.
+	FI	%s on tähditetty Spotifyssa.
+	FR	%s possède maintenant une étoile sur Spotify.
+	IT	%s è stato contrassegnato con stelle su Spotify.
+	NL	%s is gedeeld op Spotify.
+	NO	%s er merket med stjerne på Spotify.
+	PL	%s oznaczono gwiazdkami w usłudze Spotify.
+	RU	%s имеет отметку звездочкой на Spotify.
+	SV	%s har stjärnsatts på Spotify.
 
 SPOTIFY_ERROR_3
 	CS	Tuto stopu nelze přehrát.
@@ -189,12 +201,12 @@ SPOTIFY_ERROR_16
 	ES	Se ha producido un error desconocido. Vuelva a intentarlo.
 	FI	Tapahtui tuntematon virhe, yritä uudelleen.
 	FR	Une erreur inconnue s'est produite. Veuillez réessayer.
-	IT	Errore sconosciuto. Riprovare.
+	IT	Si è verificato un errore sconosciuto, riprovare.
 	NL	Er is een onbekende fout opgetreden. Probeer het opnieuw.
 	NO	Det oppsto en ukjent feil. Prøv igjen.
 	PL	Wystąpił nieznany błąd. Spróbuj ponownie.
 	RU	Произошла неизвестная ошибка, повторите попытку.
-	SV	Ett okänt fel uppstod. Försök igen.
+	SV	Ett okänt fel inträffade, försök igen.
 
 SPOTIFY_ERROR_17
 	CS	Zdroj se právě načítá, zkuste to znovu.
@@ -216,7 +228,7 @@ SPOTIFY_ERROR_18
 	DA	Det var ikke muligt at finde en stream med dette nummer.
 	DE	Für diesen Titel wurde kein Stream gefunden.
 	EN	Unable to find a stream for this track.
-	ES	No se ha encontrado una secuencia para esta pista.
+	ES	No se ha encontrado stream para esta pista.
 	FI	Tälle kappaleelle ei löydy virtaa.
 	FR	Impossible de trouver un flux pour ce morceau.
 	IT	Impossibile trovare lo stream di questo brano.
@@ -247,7 +259,7 @@ SPOTIFY_ERROR_100
 	DE	Kein Spotify-URI für die Wiedergabe angegeben
 	EN	No Spotify URI specified for playback.
 	ES	No se ha especificado URI de Spotify para reproducción.
-	FI	Ei määrittyä Spotifyn URI-osoitetta toistolle
+	FI	Spotifyn URI-osoitetta ei ole määritetty toistolle.
 	FR	Aucun URI Spotify spécifié pour la lecture.
 	IT	Nessun URI Spotify specificato per la riproduzione.
 	NL	Geen Spotify-URI opgegeven voor afspelen.

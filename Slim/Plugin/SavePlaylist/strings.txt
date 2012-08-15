@@ -9,7 +9,7 @@ SAVE_PLAYLIST_DESC
 	EN	Save Playlists from the Player UI
 	ES	Guardar listas de reproducción desde la interfaz del reproductor
 	FI	Tallenna soittoluettelot soittimen käyttöliittymästä
-	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
+	FR	Enregistrer des listes de lecture à partir de l'interface du lecteur
 	IT	Salva playlist dall'interfaccia del lettore
 	NL	Playlists uit de muzieksysteem-UI opslaan
 	NO	Lagre spillelister fra spillergrensesnittet

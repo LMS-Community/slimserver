@@ -19,13 +19,13 @@ PLUGIN_FLICKR_SCREENSAVER_MINE
 	DE	Flickr: Eigene Fotos
 	EN	Flickr: My Photos
 	ES	Flickr: Mis fotos
-	FI	Flickr: My Photos
+	FI	Flickr: omat valokuvat
 	FR	Flickr: mes photos
 	IT	Flickr: Foto
 	NL	Flickr: Mijn afbeeldingen
 	NO	Flickr: Bilder
 	PL	Flickr: moje zdjęcia
-	RU	Flickr: My Photos
+	RU	Flickr: мои фото
 	SV	Flickr: My Photos
 
 PLUGIN_FLICKR_SCREENSAVER_CONTACTS
@@ -34,13 +34,13 @@ PLUGIN_FLICKR_SCREENSAVER_CONTACTS
 	DE	Flickr: Kontakte
 	EN	Flickr: My Contacts
 	ES	Flickr: Mis contactos
-	FI	Flickr: My Contacts
+	FI	Flickr: omat yhteystiedot
 	FR	Flickr: mes contacts
 	IT	Flickr: Contatti
 	NL	Flickr: Mijn contactpersonen
 	NO	Flickr: Kontakter
 	PL	Flickr: moje kontakty
-	RU	Flickr: My Contacts
+	RU	Flickr: мои контакты
 	SV	Flickr: My Contacts
 
 PLUGIN_FLICKR_SCREENSAVER_INTERESTING
@@ -79,13 +79,13 @@ PLUGIN_FLICKR_SCREENSAVER_FAVORITES
 	DE	Flickr: Favoriten
 	EN	Flickr: Favorites
 	ES	Flickr: Favoritos
-	FI	Flickr: Favorites
+	FI	Flickr: suosikit
 	FR	Flickr: favoris
 	IT	Flickr: Preferiti
 	NL	Flickr: Favorieten
 	NO	Flickr: Favoritter
 	PL	Flickr: ulubione
-	RU	Flickr: Favorites
+	RU	Flickr: выбранное
 	SV	Flickr: Favorites
 
 PLUGIN_FLICKR_ON_FLICKR

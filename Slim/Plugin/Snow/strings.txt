@@ -187,7 +187,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	FI	Nyt soi, taustalla sataa lunta
 	FR	Lecture + neige en arrière-plan
 	HE	מושמע כעת, שלג נופל מאחור
-	IT	Riproduzione in corso. Nevicata sullo sfondo.
+	IT	Riproduzione in corso, neve che cade dietro
 	NL	Speelt nu, sneeuw valt achter
 	NO	Spilles nå, med snø i bakgrunnen
 	PL	Teraz odtwarzane, śnieg w tle
@@ -200,10 +200,10 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	ES	Reproduciendo, la nieve cae delante
-	FI	Nyt soi, edustassa sataa lunta
+	FI	Nyt soi, edustalla sataa lunta
 	FR	Lecture + neige au premier plan
 	HE	מושמע כעת, שלג נופל מלפנים
-	IT	Riproduzione in corso. Nevicata in primo piano.
+	IT	Riproduzione in corso, neve che cade davanti
 	NL	Speelt nu, sneeuw valt voor
 	NO	Spilles nå, med snø i forgrunnen
 	PL	Teraz odtwarzane, śnieg na pierwszym planie
@@ -359,14 +359,14 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	DA	NYTÅR!
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
-	ES	AÑO NUEVO.
+	ES	AÑO NUEVO
 	FI	UUTTA VUOTTA!
 	FR	ANNEE!
 	HE	ישראל!
-	IT	NUOVO!
+	IT	NUOVO !
 	NL	nieuwjaar!
 	NO	NYTTÅR!
 	PL	NOWEGO ROKU!
 	RU	НОВОГО ГОДА!
-	SV	NYTT ÅR!
+	SV	NYTT ÅR !
 

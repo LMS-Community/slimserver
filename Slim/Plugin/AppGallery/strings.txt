@@ -1,5 +1,17 @@
 PLUGIN_APP_GALLERY_MODULE_NAME
+	CS	Hudební služby
+	DA	Musiktjenester
+	DE	Musikdienste
 	EN	Music Services
+	ES	Servicios de música
+	FI	Musiikkipalvelut
+	FR	Services musicaux
+	IT	Servizi di musica
+	NL	Muziekservices
+	NO	Musikktjenester
+	PL	Usługi muzyczne
+	RU	Музыкальные службы
+	SV	Musiktjänster
 
 APP_CATEGORY_FEATURED
 	CS	Hlavní aplikace
@@ -7,7 +19,7 @@ APP_CATEGORY_FEATURED
 	DE	Vorgestellte Anwendungen
 	EN	Featured Apps
 	ES	Aplicaciones destacadas
-	FI	Sisältää sovellukset
+	FI	Sisältyvät sovellukset
 	FR	Applications proposées
 	IT	Applicazioni esaminate
 	NL	Beschikbare toep.

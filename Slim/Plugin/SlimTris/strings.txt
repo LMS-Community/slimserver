@@ -26,7 +26,7 @@ SLIMTRIS_DESC
 	ES	¡Tetris para Squeezebox o Transporter!
 	FI	Tetris Squeezeboxille tai Transporterille
 	FR	Jouez à Tetris sur la Squeezebox ou sur Transporter.
-	IT	Tetris per Squeezebox o Transporter
+	IT	Tetris per Squeezebox o Transporter!
 	NL	Tetris voor je Squeezebox of Transporter!
 	NO	Tetris for Squeezebox eller Transporter.
 	PL	Tetris dla urządzenia Squeezebox lub Transporter!

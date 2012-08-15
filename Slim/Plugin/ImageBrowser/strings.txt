@@ -10,7 +10,7 @@ PLUGIN_IMAGEBROWSER_MODULE_NAME
 	NL	Afbeeldingsbrowser
 	NO	Bildeleser
 	PL	Przeglądarka obrazów
-	RU	Image Browser
+	RU	Просмотр изображений
 	SV	Bildväljare
 
 PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC
@@ -19,12 +19,12 @@ PLUGIN_IMAGEBROWSER_MODULE_NAME_DESC
 	DE	Suchen Sie nach Bildern auf Ihrer Squeezebox oder der UE Music Library-Web-Benutzeroberfläche und zeigen Sie sie an.
 	EN	Browse and view images on your Squeezebox or in your UE Music Library web interface.
 	ES	Examine y vea imágenes en su Squeezebox o en la interfaz Web de su UE Music Library.
-	FI	Selaa ja katsele kuvia Squeezeboxissa tai UE Music Libraryin verkkokäyttöliittymässä.
+	FI	Selaa ja katsele kuvia Squeezeboxissa tai UE Music Libraryn selainkäyttöliittymässä.
 	FR	Parcourez et affichez vos images sur votre Squeezebox ou dans votre interface Web UE Music Library.
 	IT	Cerca e mostra immagini su Squeezebox o nell’interfaccia Web di UE Music Library.
 	NL	Zoek en bekijk afbeeldingen op je Squeezebox of in de webinterface van UE Music Library.
 	NO	Bla i og vis bilder på Squeezebox eller i nettgrensesnittet til UE Music Library.
 	PL	Przeglądaj i wyświetlaj obrazy na odtwarzaczu Squeezebox lub w interfejsie WWW programu UE Music Library.
-	RU	Browse and view images on your Squeezebox or in your UE Music Library web interface.
+	RU	Ищите и просматривайте изображения в вашем веб-интерфейсе Squeezebox или UE Music Library.
 	SV	Bläddra bland och visa bilder på din Squeezebox eller i gränssnittet för din UE Music Library.
 

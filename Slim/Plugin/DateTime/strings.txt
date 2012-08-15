@@ -60,7 +60,7 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	FR	Valeur par défaut du serveur
 	HE	ברירת המחדל של UE Music Library
 	IT	Impostazioni predefinite di server
-	NL	Standaardinstellingen van UE Music Library
+	NL	Standaardwaarde server
 	NO	Serverstandard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию
@@ -73,11 +73,11 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	EN	Server Default
 	ES	Valor predeterminado de servidor
 	FI	Palvelimen oletusasetus
-	FR	Défaut serveur
+	FR	Valeur par défaut du serveur
 	HE	ברירת המחדל של UE Music Library
 	IT	Impostazioni predefinite di server
-	NL	Standaardinstellingen van UE Music Library
-	NO	Server-standard
+	NL	Standaardwaarde server
+	NO	Serverstandard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию
 	SV	Server-standard

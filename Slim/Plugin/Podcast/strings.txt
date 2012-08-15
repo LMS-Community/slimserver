@@ -62,7 +62,7 @@ PODCAST_NOTHING_TO_PLAY
 	NO	Ingenting å spille av
 	PL	Brak elementów do odtworzenia
 	RU	Нет песен для воспроизведения
-	SV	Det finns inget att spela.
+	SV	Det finns inget att spela
 
 PODCAST_GROUP_DESC
 	CS	Plugin Podcast Browser vám umožňuje prohlížet a poslouchat podcasty.
@@ -182,7 +182,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	ES	Fuente no válida - %s
 	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
-	IT	Feed non valido. %s
+	IT	Feed non valido - %s
 	NL	Ongeldig kanaal - %s
 	NO	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s

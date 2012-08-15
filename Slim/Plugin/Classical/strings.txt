@@ -48,7 +48,7 @@ PLUGIN_CLASSICAL_NO_INFO
 	DA	Der kunne ikke hentes oplysninger om streamen.
 	DE	Stream-Info kann nicht abgerufen werden.
 	EN	Unable to retrieve stream info.
-	ES	Imposible obtener información de secuencia.
+	ES	Imposible obtener información de stream.
 	FI	Virran tietoja ei voi noutaa.
 	FR	Impossible de récupérer les informations sur le flux.
 	IT	Impossibile recuperare le informazioni sullo stream.
@@ -63,10 +63,10 @@ PLUGIN_CLASSICAL_STREAM_FAILED
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
-	ES	Error de secuencia de audio; salto a pista siguiente.
-	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan raitaan.
+	ES	Error de stream de audio; salto a pista siguiente.
+	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan kappaleeseen.
 	FR	Echec du flux audio, lecture du morceau suivant.
-	IT	Errore di stream audio. Passaggio al brano seguente.
+	IT	Errore di stream audio.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
 	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.

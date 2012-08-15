@@ -35,7 +35,7 @@ PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	EN	This player does not support Rhapsody/Napster.  A Squeezebox2 or higher is required.
 	ES	Este reproductor es incompatible con Rhapsody/Napster. Se necesita Squeezebox2 o posterior.
 	FI	Tämä soitin ei tue Rhapsodya/Napsteria. Vaaditaan Squeezebox2 tai uudempi.
-	FR	Cette platine ne prend pas en charge Rhapsody/Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
+	FR	Ce lecteur ne prend pas en charge Rhapsody/Napster. Vous devez disposer de Squeezebox2 ou d'une version ultérieure.
 	IT	Questo lettore non supporta Rhapsody/Napster. È necessario utilizzare Squeezebox2 o versione successiva.
 	NL	Dit muzieksysteem biedt geen ondersteuning voor Rhapsody/Napster. Een Squeezebox2 of hoger is vereist.
 	NO	Denne spilleren støtter ikke Rhapsody/Napster. En Squeezebox2 eller høyere er påkrevd.
@@ -48,8 +48,8 @@ PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
-	ES	Error de secuencia de audio; salto a pista siguiente.
-	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan raitaan.
+	ES	Error de stream de audio; salto a pista siguiente.
+	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan kappaleeseen.
 	FR	Echec du flux audio, lecture du morceau suivant.
 	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
@@ -64,7 +64,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	DE	Titel für Sender konnte nicht geladen werden.
 	EN	Unable to retrieve track for channel.
 	ES	Imposible obtener pista para canal.
-	FI	Ei voi noutaa raitaa kanavaa varten.
+	FI	Ei voi noutaa kappaletta kanavaa varten.
 	FR	Impossible de récupérer le morceau pour le canal.
 	IT	Impossibile recuperare brano per canale.
 	NL	Kan nummer voor kanaal niet ophalen.
@@ -79,7 +79,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
-	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
+	FI	Seuraavaa kappaletta ei voi hakea, yritä uudelleen painamalla toistopainiketta.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
@@ -93,7 +93,7 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	DA	Ugyldig afspilningssession. Der kan højst vælges tre streams ad gangen.
 	DE	Ungültige Wiedergabesitzung. Gleichzeitig dürfen maximal nur drei Streams genutzt werden.
 	EN	Invalid playback session. A max of three streams are allowed at one time.
-	ES	Sesión de reproducción no válida. Se permite un máximo de tres secuencias simultáneas.
+	ES	Sesión de reproducción no válida. Se permite un máximo de tres streams simultáneas.
 	FI	Toistoistunto ei kelpaa. Yhdellä kertaa sallitaan korkeintaan kolme virtaa.
 	FR	Session de lecture non valide. Seuls trois flux peuvent être lus en même temps.
 	IT	Sessione di riproduzione non valida. È consentito un massimo di tre stream per volta.
@@ -139,7 +139,7 @@ PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	DE	Wenn Sie Rhapsody nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
 	EN	To use Rhapsody, press and hold BRIGHTNESS to update your firmware.
 	ES	Para usar Rhapsody, mantenga pulsado BRIGHTNESS para actualizar el firmware.
-	FI	Jos haluat käyttää Rhapsodyä, päivitä laitteisto-ohjelmisto pitämällä Kirkkaus-painike pohjassa.
+	FI	Jos haluat käyttää Rhapsodya, päivitä laiteohjelmisto pitämällä Kirkkaus-painike pohjassa.
 	FR	Pour utiliser Rhapsody, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
 	IT	Per usare Rhapsody, tenere premuto BRIGHTNESS per aggiornare il firmware.
 	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
