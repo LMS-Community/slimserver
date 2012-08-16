@@ -914,24 +914,16 @@ sub cliDelete {
 	my $url    = $request->getParam('url');
 	my $title  = $request->getParam('title');
 	
-	if ( main::SLIM_SERVICE ) {
-		my $favs = Slim::Utils::Favorites->new($client);
-		
-		$favs->deleteUrl($url);
-	}
-	else {
-		# XXX: refactor to use Slim::Utils::Favorites
-		my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+	my $favs = Slim::Utils::Favorites->new($client);
 
-		if (!defined $index || !defined $favs->entry($index)) {
-			if ($url) {
-				$favs->deleteUrl($url);
-			} else {
-				$request->setStatusBadParams();
-				return;
-			}
+	if (!defined $index || !defined $favs->entry($index)) {
+		if ($url) {
+			$favs->deleteUrl($url);
+		} else {
+			$request->setStatusBadParams();
+			return;
 		}
-
+	} else {
 		$favs->deleteIndex($index);
 	}
 
@@ -1052,7 +1044,8 @@ sub _objectInfoHandler {
 					params => {
 						title   => $title,
 						url     => $obj->url,
-						icon    => $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . ($obj->coverid || 0) . '/cover.jpg',
+						icon    => $remoteMeta->{cover} || $remoteMeta->{icon}
+							|| '/music/' . ($obj->can('coverid') ? ($obj->coverid || 0) : 0) . '/cover.jpg',
 						isContextMenu => 1,
 					},
 				},
