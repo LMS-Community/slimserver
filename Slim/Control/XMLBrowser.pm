@@ -1924,6 +1924,8 @@ sub _defeatDestructiveTouchToPlay {
 	my ($request, $client) = @_;
 	my $pref;
 	
+	return 0 if $request->isQuery([['favorites'], ['items', 'playlist']]);
+	
 	if ($client && (my $agent = $client->controllerUA)) {
 		if ($agent =~ /squeezeplay/i) {
 			my ($version, $revision) = ($agent =~ m%/(\d+(?:\.\d+)?)[.\d]*-r(\d+)%);
