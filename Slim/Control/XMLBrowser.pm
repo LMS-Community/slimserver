@@ -926,6 +926,10 @@ sub _cliQuery_done {
 								},
 							},
 						};
+						
+						if ($request->getParam('__goIsPlay')) {
+							$base->{'actions'}->{'go'} = $base->{'actions'}->{'play'};
+						}
 					}
 					
 					if (my $feedActions = $subFeed->{'actions'}) {

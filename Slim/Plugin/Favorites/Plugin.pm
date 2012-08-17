@@ -729,6 +729,7 @@ sub cliBrowse {
 		$feed = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
 	}
 
+	$request->addParam('__goIsPlay', 1);
 	Slim::Control::XMLBrowser::cliQuery('favorites', $feed, $request);
 }
 
