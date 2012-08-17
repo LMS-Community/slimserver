@@ -2500,6 +2500,10 @@ sub _setStreamingState {
 sub _persistState {
 	my $self = shift;
 	
+	# Do not persist state while in TRACKWAIT because this is not meaningful to restore
+	# Rely on subsequent event (possibly resent by player after reconnect) to trigger next action
+	return if $self->{streamingState} == TRACKWAIT;
+	
 	# Persist playing/streaming state to the SN database
 	# This assists in seamless resume of a player if it gets moved
 	# to another instance.
