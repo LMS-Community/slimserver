@@ -102,6 +102,9 @@ sub rawtitle {
 	
 	return $self->get_column('title');
 }
+sub coverid {
+	return shift->artwork;
+}
 
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort, $anchortextRef) = @_;
