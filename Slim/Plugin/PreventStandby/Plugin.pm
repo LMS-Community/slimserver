@@ -30,7 +30,6 @@ package Slim::Plugin::PreventStandby::Plugin;
 #                    power feature to mimic Nigel Burch's proposed patch behavior.
 
 use strict;
-use Win32::API;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -50,7 +49,7 @@ my $lastchecktime = time;
 
 # Number of intervals that the cliets have been idle.
 my $hasbeenidle = 0;
-
+my $osDriver;
 
 my $prefs = preferences('plugin.preventstandby');
 
@@ -78,6 +77,17 @@ sub getDisplayName {
 
 
 sub initPlugin {
+	if ( !main::SLIM_SERVICE ) {
+		if (main::ISWINDOWS) {
+			require Slim::Plugin::PreventStandby::Win32;
+			$osDriver = Slim::Plugin::PreventStandby::Win32->new();
+		}
+		
+		elsif ($^O =~/darwin/i) {
+			require Slim::Plugin::PreventStandby::OSX;
+			$osDriver = Slim::Plugin::PreventStandby::OSX->new(INTERVAL);
+		}
+	}
 	
 	if ( main::WEBUI ) {
 		Slim::Plugin::PreventStandby::Settings->new;
@@ -118,18 +128,13 @@ sub checkClientActivity {
 			}
 		}
 	}
-
-	my $SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
-
+	
 	# If idletime is set to zero in settings, ALWAYS prevent standby..
 	# Otherwise, only prevent standby if we're still in the idle time-out period..
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
 		
-		if (defined $SetThreadExecutionState) {
-			
-			main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
-			$SetThreadExecutionState->Call(1);
-		}
+		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
+		$osDriver->setBusy(1);
 	}
 	
 	else {
@@ -143,7 +148,7 @@ sub checkClientActivity {
 		undef, 
 		time + INTERVAL, 
 		\&checkClientActivity
-	) if $SetThreadExecutionState;
+	) if $osDriver->canSetBusy();
 
 	return 1;
 }
