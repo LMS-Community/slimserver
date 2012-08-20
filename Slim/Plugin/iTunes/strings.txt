@@ -315,7 +315,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	NO	Ikke inkluder sanger som ikke er markert
 	PL	Nie dodawaj niezaznaczonych utworów
 	RU	Не включать неотмеченные песни
-	SV	Ta inte med omarkerade låtar
+	SV	Ta inte med omarkerade låtar.
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
 DEBUG_PLUGIN_ITUNES

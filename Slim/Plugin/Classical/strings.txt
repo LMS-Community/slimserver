@@ -66,7 +66,7 @@ PLUGIN_CLASSICAL_STREAM_FAILED
 	ES	Error de stream de audio; salto a pista siguiente.
 	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan kappaleeseen.
 	FR	Echec du flux audio, lecture du morceau suivant.
-	IT	Errore di stream audio.
+	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
 	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.

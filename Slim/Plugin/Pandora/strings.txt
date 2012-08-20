@@ -38,7 +38,7 @@ PLUGIN_PANDORA_STREAM_FAILED
 	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan kappaleeseen.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Stream audio disconnesso.
+	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm frakoplet, hopper til neste spor.
 	PL	Strumień audio odłączony, przechodzenie do następnego utworu.

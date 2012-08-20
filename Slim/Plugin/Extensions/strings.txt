@@ -245,7 +245,7 @@ PLUGIN_EXTENSIONS_OTHERREPO_DESC
 	EN	Show all other 3rd party plugins contributed by members of the Squeezebox community.  Note these plugins are unsupported and should be used at your own risk.
 	ES	Muestra los complementos de terceros proporcionados por los miembros de la comunidad de Squeezebox. Tenga en cuenta que estos complementos no son compatibles y que usted los utiliza por su cuenta y riesgo.
 	FI	Näytä kaikki muut muiden valmistajien laajennukset. Niistä ovat vastanneet Squeezebox-yhteisön jäsenet. Huomaa, että näitä laajennuksia ei tueta ja että käyttäjät käyttävät niitä omalla vastuullaan.
-	FR	Affiche tous les autres plug-ins tiers provenant de membres de la communauté Squeezebox. Notez que ces plug-ins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
+	FR	Afficher tous les autres plug-ins tiers provenant de membres de la communauté Squeezebox. Notez que ces plug-ins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
 	IT	Mostra tutti gli altri plugin di terzi forniti dai membri della community Squeezebox. Tenere presente che tali plugin non sono supportati e pertanto vanno utilizzati a proprio rischio.
 	NL	Alle andere plug-ins van derden weergeven die leden van de Squeezebox-community hebben bijgedragen. N.B. Deze plug-ins worden niet ondersteund en worden op eigen risico gebruikt.
 	NO	Vis alle andre tredjeparts plugin-moduler som er laget av Squeezebox-brukere. Merk: disse plugin-modulene støttes ikke, og du bruker dem på egen risiko.

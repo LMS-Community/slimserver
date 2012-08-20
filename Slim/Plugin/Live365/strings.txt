@@ -54,7 +54,7 @@ PLUGIN_LIVE365_NO_URL
 	EN	Unable to retrieve audio URL.  Press PLAY to try again.
 	ES	Imposible obtener URL de audio. Pulse PLAY para volver a intentarlo.
 	FI	Ääntä sisältävän URL-osoitteen noutaminen ei onnistu.  Yritä uudelleen painamalla toistopainiketta.
-	FR	Impossible d'obtenir l'URL audio. Appuyez sur PLAY pour réessayer.
+	FR	Impossible d'obtenir l'URL audio, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare URL audio. Premere PLAY per riprovare.
 	NL	Kan audio-URL niet ophalen. Druk op PLAY om het opnieuw te proberen.
 	NO	Kan ikke hente adresse for lyd. Trykk på PLAY for å prøve på nytt.

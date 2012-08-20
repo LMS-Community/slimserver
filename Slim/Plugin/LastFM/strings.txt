@@ -67,12 +67,12 @@ PLUGIN_LFM_NO_TRACKS
 	FI	Seuraavaa kappaletta ei voi hakea, yritä uudelleen painamalla toistopainiketta.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
-	IT	Impossibile recuperare brano successivo.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
 	RU	Невозможно извлечь следующую дорожку. Нажмите кнопку воспроизведения, чтобы повторить попытку.
-	SV	Det gick inte att hämta nästa spår.
+	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_LFM_STREAM_FAILED
 	CS	Zvukový proud odpojen, přeskočení na další stopu.
@@ -83,7 +83,7 @@ PLUGIN_LFM_STREAM_FAILED
 	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan kappaleeseen.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Stream audio disconnesso.
+	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm frakoplet, hopper til neste spor.
 	PL	Strumień audio odłączony, przechodzenie do następnego utworu.

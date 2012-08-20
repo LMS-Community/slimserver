@@ -62,7 +62,7 @@ PODCAST_NOTHING_TO_PLAY
 	NO	Ingenting å spille av
 	PL	Brak elementów do odtworzenia
 	RU	Нет песен для воспроизведения
-	SV	Det finns inget att spela
+	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
 	CS	Plugin Podcast Browser vám umožňuje prohlížet a poslouchat podcasty.

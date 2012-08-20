@@ -22,7 +22,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	EN	This plugin monitors your UE Smart Radio players and prevents the system from going into power saving standby mode while music is playing, UE Music Library is scanning, players are updating, etc. It will also prevent the system from prematurely going into standby two minutes after wake-on-lan.
 	ES	Este complemento supervisa los reproductores UE Smart Radio e impide que el sistema pase al modo de espera para ahorro de energía mientras se está reproduciendo música, UE Music Library está explorando, los reproductores se están actualizando, etc. También impedirá que el sistema pase prematuramente al modo de espera dos minutos después de Wake On LAN.
 	FI	Tämä laajennus valvoo UE Smart Radio -soittimia ja estää järjestelmää siirtymästä virtaa säästävään valmiustilaan esimerkiksi silloin, kun musiikkia soitetaan, UE Music Library suorittaa tarkistusta tai soittimia päivitetään.
-	FR	Ce plugin surveille les lecteurs UE Smart Radio et empêche le système de passer en mode veille (d'économie d'énergie) lorsqu'un morceau est en cours de lecture, UE Music Library est en cours d'analyse, les lecteur sont mis à jour, ainsi que deux minutes après l'activation de la fonction de réveil par LAN.
+	FR	Ce plug-in surveille les lecteurs UE Smart Radio et empêche le système de passer en mode veille (d'économie d'énergie) lorsqu'un morceau est en cours de lecture, UE Music Library est en cours d'analyse, les lecteur sont mis à jour, ainsi que deux minutes après l'activation de la fonction de réveil par LAN.
 	IT	Questo plugin tiene sotto controllo i lettori UE Smart Radio e impedisce che nel sistema venga attivata la modalità standby durante la riproduzione della musica, l'analisi di UE Smart Radio, l'aggiornamento dei lettori e così via.
 	NL	Deze plug-in houd je UE Smart Radio-systemen in de gaten en voorkomt dat het systeem naar energiebesparende stand-bymodus gaat terwijl er bijvoorbeeld muziek speelt, UE Music Library een scan uitvoert of systemen worden bijgewerkt.
 	NO	Denne plugin-modulen overvåker UE Smart Radio-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens UE Music Library søker, mens spillere oppdateres osv.
@@ -67,7 +67,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON
 	EN	Prohibit standby if players are on?
 	ES	¿Prohibir modo de espera si los reproductores están encendidos?
 	FI	Estetäänkö valmiustilaan siirtyminen, jos soittimet ovat päällä?
-	FR	Interdire la mise en veille si des lecteur sont allumés?
+	FR	Interdire la mise en veille si des lecteurs sont allumés?
 	IT	Non attivare la modalità standby se i lettori sono accesi?
 	NL	Stand-by beletten als systemen aanstaan?
 	NO	Forhindre hvilemodus hvis spillerne er slått på?
@@ -82,7 +82,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
 	EN	Enable this setting to prohibit system standby while players are turned on, i.e. not displaying the clock.
 	ES	Active esta opción para prohibir el modo de espera del sistema mientras los reproductores están encendidos, es decir cuando no muestren el reloj.
 	FI	Ottamalla tämän asetuksen käyttöön estät järjestelmää siirtymästä valmiustilaan soitinten ollessa päällä, eli silloin, kun kelloa ei näy.
-	FR	Activez ce réglage pour interdire la mise en veille du système lorsque des lecteur sont allumés (l'horloge n'est pas affichée).
+	FR	Activez ce réglage pour interdire la mise en veille du système lorsque des lecteurs sont allumés (l'horloge n'est pas affichée).
 	IT	Attivare questa impostazione per impedire l'attivazione della modalità standby quando i lettori sono accesi, vale a dire quando non visualizzano l'orologio.
 	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muzieksystemen actief zijn, d.w.z. niet de klok weergeven.
 	NO	Når denne innstillingen er aktivert, forhindrer den systemet fra å gå hvilemodus mens spillerne er slått på (altså når de ikke viser klokken).

@@ -505,7 +505,7 @@ PLUGIN_RANDOM_CONTINUOUS_MODE
 	NO	Legg til nye elementer når de gamle er ferdigspilt
 	PL	Dodaj nowe elementy po zakończeniu odtwarzania starych
 	RU	Добавить новые элементы по завершении старых
-	SV	Lägg till nya objekt när de gamla tar slut
+	SV	Lägg till nya objekt när de gamla tar slut.
 
 PLUGIN_RANDOM_GENERAL_HELP
 	CS	Do vašeho mixu můžete kdykoli přidávat nebo z něj odstraňovat skladby. K zastavení náhodně zvoleného mixu vymažte váš seznam skladeb nebo klikněte na

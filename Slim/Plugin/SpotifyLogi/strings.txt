@@ -201,7 +201,7 @@ SPOTIFY_ERROR_16
 	ES	Se ha producido un error desconocido. Vuelva a intentarlo.
 	FI	Tapahtui tuntematon virhe, yritä uudelleen.
 	FR	Une erreur inconnue s'est produite. Veuillez réessayer.
-	IT	Si è verificato un errore sconosciuto, riprovare.
+	IT	Errore sconosciuto. Riprovare.
 	NL	Er is een onbekende fout opgetreden. Probeer het opnieuw.
 	NO	Det oppsto en ukjent feil. Prøv igjen.
 	PL	Wystąpił nieznany błąd. Spróbuj ponownie.

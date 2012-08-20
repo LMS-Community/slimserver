@@ -63,7 +63,7 @@ PLUGIN_RSSNEWS_WAIT
 	NO	Vent litt, sender forespørsel om feed...
 	PL	Czekaj, trwa żądanie połączenia ze źródłem...
 	RU	Подождите, запрос на веб-канал выполняется...
-	SV	Begär flöde...
+	SV	Begär flöde. Vänta...
 
 PLUGIN_RSSNEWS_ERROR
 	CS	Načtení RSS kanálů selhalo
@@ -127,7 +127,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	NO	Tilbakestill standard rss-feeder
 	PL	Zresetuj domyślne źródła RSS
 	RU	Восстановить RSS-каналы по умолчанию
-	SV	Återställ till standard-RSS-flöden
+	SV	Återställ till standard-RSS-flöden.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	CS	Položky zobrazené na jednom kanále
@@ -152,7 +152,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
 	ES	El número máximo de elementos mostrados para cada fuente mientras el protector de pantalla está activo. Un valor más alto implica que el protector de pantalla mostrará más elementos antes de pasar a la fuente siguiente.
 	FI	Enimmäismäärä kohteita, jotka näytetään syötettä kohden, kun näytönsäästäjä on aktiivinen. Suuri arvo merkitsee sitä, että näytönsäästäjä näyttää useampia kohteita, ennen kuin se vaihtaa seuraavaan syötteeseen.
-	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Une valeur élevée signifie que l'écran de veille affiche davantage d'éléments avant de passer au flux suivant.
+	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Un nombre élevé signifie que l'écran de veille affiche plus d'éléments avant de passer au flux suivant.
 	HE	המספר המרבי של פריטים המוצגים עבור כל הזנה בשעה ששומר המסך פעיל. ערך גבוה מסמל שיוצגו בשומר המסך יותר פריטים לפני מעבר להזנה הבאה.
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
 	NL	Het maximumaantal items dat per kanaal wordt weergegeven terwijl de schermbeveiliger actief is. Een hogere waarde betekent dat de schermbeveiliger meer items laat zien, voordat deze naar het volgende kanaal overschakelt.

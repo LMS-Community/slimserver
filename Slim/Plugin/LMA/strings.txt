@@ -31,7 +31,7 @@ PLUGIN_LMA_MODULE_NAME_DESC
 	NO	Tilgang til Live Music Archive.
 	PL	Uzyskaj dostęp do usługi Live Music Archive.
 	RU	Доступ к архиву живой музыки.
-	SV	Tillgång till Live Music Archive.
+	SV	Tillgång till Live Music Archive
 
 PLUGIN_LMA_LOADING
 	CS	Nahrávám hudební archív Live...
