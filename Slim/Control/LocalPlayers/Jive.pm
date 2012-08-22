@@ -1989,6 +1989,19 @@ sub jiveFavoritesCommand {
 			$url     = $song->url;
 			$type    = 'audio';
 			$title   = $song->title;
+			$icon    = $song->coverurl if $song->can('coverurl');
+			if (!$icon) {
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+				if ( $handler && $handler->can('getMetadataFor') ) {
+					my $remoteMeta = $handler->getMetadataFor( $request->client, $url);
+					$icon = $remoteMeta->{'cover'};
+				}
+			}
+			if (!$icon && !$song->remote) {
+				if(my $coverid = $song->coverid) {
+					$icon = '/music/' . $coverid . '/cover';
+				}
+			}
 		}
 
 		# favorite needs to be saved as either a playlist or default to audio
@@ -2014,6 +2027,11 @@ sub jiveFavoritesCommand {
 				text     => [ $client->string('PRESET_ADDING', $preset), $title ],
 			},
 		});
+		
+		# Make all presets favourites too
+		if (my $favs = Slim::Utils::Favorites->new($client)) {
+			$favs->add($url, $title, $type, $parser, undef, $icon) unless defined $favs->findUrl($url);
+		}
 	} else {
 
 		my @favorites_menu = (
