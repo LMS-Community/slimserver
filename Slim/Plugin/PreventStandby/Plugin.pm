@@ -90,7 +90,7 @@ sub initPlugin {
 		}
 	}
 	
-	if (!$handler->canSetBusy) {
+	if (!$handler) {
 		$log->warn("Failed to initialize plugin - can't prevent standby mode.");
 		return;
 	}

@@ -9,21 +9,22 @@ use strict;
 use Proc::Background;
 
 use Slim::Utils::Log;
-use Slim::Utils::Prefs;
 
 my $log   = logger('plugin.preventstandby');
-my $prefs = preferences('plugin.preventstandby');
 
-my $caffeinate;
+my $command;
 my $process;
 
 sub new {
 	my ($class, $i) = @_;
 
-	$caffeinate = Slim::Utils::Misc::findbin('caffeinate');
+	$command = Slim::Utils::Misc::findbin('pmset');
 	
-	if (!$caffeinate) {
-		$log->warn("Didn't find caffeinate tool - standby can't be prevented!");
+	if ($command) {
+		$command .= ' noidle';
+	}
+	else {
+		$log->warn("Didn't find pmset tool - standby can't be prevented!");
 	}
 	
 	return $class;
@@ -36,19 +37,13 @@ sub cleanup {
 
 sub setBusy {
 	if (!$process || !$process->alive) {
-		$log->debug("Running caffeinate to keep system alive: $caffeinate");
-		
-		# run caffeinate for a loooong time - we're going to kill it if needed
-		$process = Proc::Background->new("$caffeinate -i -t " . 3600 * 24 * 7);
+		$log->debug("Injecting some caffein to keep system alive: '$command'");
+		$process = Proc::Background->new($command);
 	}
 }
 
 sub setIdle {
 	shift->cleanup;
-}
-
-sub canSetBusy {
-	return $caffeinate ? 1 : 0;
 }
 
 1;

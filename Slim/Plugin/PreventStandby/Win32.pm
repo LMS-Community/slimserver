@@ -13,19 +13,13 @@ my $SetThreadExecutionState;
 sub new {
 	my $class = shift;
 
-	$SetThreadExecutionState => Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N')
+	$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N') || return;
 	
 	return $class;
 }
 
 sub setBusy {
-	if ($SetThreadExecutionState) {
-		$SetThreadExecutionState->Call(1);
-	}
-}
-
-sub canSetBusy {
-	return $SetThreadExecutionState ? 1 : 0;
+	$SetThreadExecutionState->Call(1);
 }
 
 # some stubs we need for compatibility with the OSX implementation
