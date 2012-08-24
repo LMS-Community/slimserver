@@ -916,6 +916,13 @@ sub cliDelete {
 	my $title  = $request->getParam('title');
 	
 	my $favs = Slim::Utils::Favorites->new($client);
+	
+	if (defined $index && $index =~ /,/) {
+		main::DEBUGLOG && $log->debug("deleting list by index: $index");
+		$favs->deleteIndex($_) foreach sort {$b <=> $a} split(/,/, $index);
+		$request->setStatusDone();
+		return;
+	}
 
 	if (!defined $index || !defined $favs->entry($index)) {
 		if ($url) {

@@ -9023,9 +9023,12 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<td>
 			The id of a favorite or level to be deleted. The id represents the hierarchical 
 			structure of the file using a dotted syntax similar to the one used
-			in SNMP, like eg. 2.0.9.3. 
+			in SNMP, like eg. 2.0.9.3.
 			<br>
 			Either this parameter or &quot;url&quot; is mandatory. This takes precedence.
+			<br>
+			If this parameter is a comma-separated list, then each of the items will be deleted
+			and the &quot;url&quot parameter will be ignored.
 		</td>
 	<tr>
 	</tr>
