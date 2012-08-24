@@ -6,40 +6,49 @@ package Slim::Plugin::PreventStandby::OSX;
 # version 2.
 
 use strict;
+use Proc::Background;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
-my $log = logger('plugin.preventstandby');
+my $log   = logger('plugin.preventstandby');
+my $prefs = preferences('plugin.preventstandby');
+
+my $caffeinate;
+my $process;
 
 sub new {
-	my ($class, $interval) = @_;
+	my ($class, $i) = @_;
 
-	my $self = {
-		caffeinate => Slim::Utils::Misc::findbin('caffeinate'), # || '/usr/bin/caffeinate',
-		interval   => ($interval || 60) + 5,
-	};
+	$caffeinate = Slim::Utils::Misc::findbin('caffeinate');
 	
-	if (!$self->{caffeinate}) {
+	if (!$caffeinate) {
 		$log->warn("Didn't find caffeinate tool - standby can't be prevented!");
 	}
 	
-	return bless $self, $class;
+	return $class;
 }
 
-sub setBusy {
-	my $self = shift;
-	
-	if (my $caffeinate = $self->{caffeinate}) {
-		$log->debug("Running caffeinate to keep system alive: $caffeinate");
+# shut down caffeinate when the plugin is being shut down
+sub cleanup {
+	$process->die if $process;
+};
 
-		my $interval = $self->{interval};
-		`$caffeinate -i -t $interval`;
+sub setBusy {
+	if (!$process || !$process->alive) {
+		$log->debug("Running caffeinate to keep system alive: $caffeinate");
+		
+		# run caffeinate for a loooong time - we're going to kill it if needed
+		$process = Proc::Background->new("$caffeinate -i -t " . 3600 * 24 * 7);
 	}
-	
+}
+
+sub setIdle {
+	shift->cleanup;
 }
 
 sub canSetBusy {
-	return shift->{caffeinate} ? 1 : 0;
+	return $caffeinate ? 1 : 0;
 }
 
 1;

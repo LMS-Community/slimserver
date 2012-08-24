@@ -30,6 +30,7 @@ package Slim::Plugin::PreventStandby::Plugin;
 #                    power feature to mimic Nigel Burch's proposed patch behavior.
 
 use strict;
+use Time::HiRes;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -49,7 +50,7 @@ my $lastchecktime = time;
 
 # Number of intervals that the cliets have been idle.
 my $hasbeenidle = 0;
-my $osDriver;
+my $handler;
 
 my $prefs = preferences('plugin.preventstandby');
 
@@ -80,13 +81,18 @@ sub initPlugin {
 	if ( !main::SLIM_SERVICE ) {
 		if (main::ISWINDOWS) {
 			require Slim::Plugin::PreventStandby::Win32;
-			$osDriver = Slim::Plugin::PreventStandby::Win32->new();
+			$handler = Slim::Plugin::PreventStandby::Win32->new();
 		}
 		
 		elsif ($^O =~/darwin/i) {
 			require Slim::Plugin::PreventStandby::OSX;
-			$osDriver = Slim::Plugin::PreventStandby::OSX->new(INTERVAL);
+			$handler = Slim::Plugin::PreventStandby::OSX->new();
 		}
+	}
+	
+	if (!$handler->canSetBusy) {
+		$log->warn("Failed to initialize plugin - can't prevent standby mode.");
+		return;
 	}
 	
 	if ( main::WEBUI ) {
@@ -134,11 +140,12 @@ sub checkClientActivity {
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
 		
 		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
-		$osDriver->setBusy(1);
+		$handler->setBusy();
 	}
 	
 	else {
 		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
+		$handler->setIdle();
 	}
 
 	$lastchecktime = $currenttime;
@@ -148,7 +155,7 @@ sub checkClientActivity {
 		undef, 
 		time + INTERVAL, 
 		\&checkClientActivity
-	) if $osDriver->canSetBusy();
+	);
 
 	return 1;
 }
@@ -164,7 +171,7 @@ sub _playersBusy {
 			return 1;
 		}
 		
-		if ( $client->isUpgrading() || $client->isPlaying() ) {
+		if ( $client->isUpgrading() || $client->isPlaying() || (Time::HiRes::time() - $client->lastActivityTime <= INTERVAL) ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
 			return 1;
 		}
@@ -222,6 +229,7 @@ sub checkpower_change {
 
 sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
+	$handler->cleanup();
 }
 
 1;
