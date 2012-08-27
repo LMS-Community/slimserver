@@ -4,7 +4,7 @@
 	<id>BFACABFD-6334-4743-95BA-43A60E159560</id>
 	<name>PLUGIN_PREVENTSTANDBY</name>
 	<module>Slim::Plugin::PreventStandby::Plugin</module>
-	<version>2.0</version>
+	<version>3.0</version>
 	<description>PLUGIN_PREVENTSTANDBY_DESC</description>
 	<creator>Gordon Harris, Julian Neil, Slim Devices/Logitech</creator>
 

@@ -5,8 +5,7 @@ package Slim::Plugin::PreventStandby::Plugin;
 # PreventStandby.pm by Julian Neil (julian.neil@internode.on.net)
 #
 # Prevent the server machine from going into standby when it is streaming
-# music to any clients.  Only works in Windows because it uses the CPAN
-# Win32:API module.
+# music to any clients.
 #
 # Excuse my perl.. first time I've ever used it.
 #
@@ -28,6 +27,8 @@ package Slim::Plugin::PreventStandby::Plugin;
 #
 #       2009-01-12 - Cleaned up some content in strings.txt, added optional check
 #                    power feature to mimic Nigel Burch's proposed patch behavior.
+#
+# 3.0 - 2012-08-26 - add support for OSX, plus infrastructure to add more
 
 use strict;
 use Time::HiRes;
