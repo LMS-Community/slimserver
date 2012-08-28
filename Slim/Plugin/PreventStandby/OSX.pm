@@ -9,6 +9,7 @@ use strict;
 use Proc::Background;
 
 use Slim::Utils::Log;
+use Slim::Plugin::PreventStandby::Plugin;
 
 my $log   = logger('plugin.preventstandby');
 
@@ -28,6 +29,11 @@ sub new {
 	}
 	
 	return $class;
+}
+
+sub isBusy {
+	my ($class, $currenttime) = @_;
+	return !Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) && Slim::Plugin::PreventStandby::Plugin->_playersBusy();
 }
 
 # shut down caffeinate when the plugin is being shut down

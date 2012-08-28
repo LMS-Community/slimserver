@@ -8,6 +8,8 @@ package Slim::Plugin::PreventStandby::Win32;
 use strict;
 use Win32::API;
 
+use Slim::Plugin::PreventStandby::Plugin;
+
 my $SetThreadExecutionState;
 
 sub new {
@@ -16,6 +18,11 @@ sub new {
 	$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N') || return;
 	
 	return $class;
+}
+
+sub isBusy {
+	my ($class, $currenttime) = @_;
+	return Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) || Slim::Plugin::PreventStandby::Plugin->_playersBusy();
 }
 
 sub setBusy {

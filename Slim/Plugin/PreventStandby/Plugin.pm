@@ -120,7 +120,7 @@ sub checkClientActivity {
 	
 	if ($idletime) {
 		
-		if ( Slim::Music::Import->stillScanning() || _hasResumed($currenttime) || _playersBusy() ) {
+		if ( Slim::Music::Import->stillScanning() || $handler->isBusy($currenttime) ) {
 			
 			$hasbeenidle = 0;
 			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
@@ -181,7 +181,7 @@ sub _playersBusy {
 }
 
 sub _hasResumed {
-	my $currenttime = shift;
+	my ($class, $currenttime) = @_;
 
 	# We've resumed if the current time is more than two minutes later than the last check time, or
 	# if the current time is earlier than the last check time (system time change)
