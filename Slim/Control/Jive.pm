@@ -234,7 +234,7 @@ sub mainMenu {
 			},
 		},
 
-		@pluginMenus,
+		@{pluginMenus($client)},
 		!main::LOCAL_PLAYERS ? () : @{Slim::Control::LocalPlayers::Jive::playerPower($client, 1)},
 		!main::LOCAL_PLAYERS ? () : @{Slim::Control::LocalPlayers::Jive::playerSettingsMenu($client, 1)},
 		!main::LOCAL_PLAYERS ? () : @{
@@ -764,6 +764,17 @@ sub myMusicMenu {
 	} else {
 		_notifyJive($myMusicMenu, $client);
 	}
+}
+
+sub pluginMenus {
+	my $client = shift;
+	
+	# UE Smart Radio can't handle plugins which try to deal with the client object directly
+	return [ grep {
+		$_->{ canDisconnectedMode } ? $_ : undef;
+	} @pluginMenus ] if $client->isa('Slim::Player::Disconnected');
+
+	return \@pluginMenus;
 }
 
 
