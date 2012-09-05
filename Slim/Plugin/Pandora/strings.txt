@@ -13,6 +13,21 @@ PLUGIN_PANDORA_MODULE_NAME
 	RU	Pandora
 	SV	Pandora
 
+PLUGIN_PANDORA_MODULE_NAME_DESC
+	CS	Pandora představuje nový druh rádia. Zadejte své oblíbené songy či  interprety a vychutnejte si stanice vytvořené jen pro vás. Poslouchejte hudbu, jak dlouho chcete, a to vše zdarma.
+	DA	Pandora. Det er en ny slags radio. Angiv dine yndlingsnumre eller -kunstnere, og lyt til en station der er skabt kun til dig. Du kan lytte lige så meget du vil helt gratis.
+	DE	Pandora ist eine neue Art von Radio. Geben Sie einen Lieblingstitel oder -interpreten ein und es werden auf Sie zugeschnittene Sender erstellt. Sie können so viel hören, wie Sie möchten – kostenlos.
+	EN	Pandora. It's a new kind of radio. Enter your favorite songs or artists, and enjoy stations created just for you. Listen as much as you'd like for free.
+	ES	Pandora. Un nuevo tipo de radio. Introduzca sus canciones o artistas favoritos, y disfrute de emisoras creadas sólo para usted. Puede escuchar toda la música que quiera de forma gratuita.
+	FI	Pandora. Uudenlainen radio. Valitse suosikkikappaleesi tai -artistisi, ja sinulle luodaan oma kanava niiden pohjalta. Voit kuunnella ilmaiseksi niin paljon musiikkia kuin haluat.
+	FR	Pandora. Radio nouvelle génération. Spécifiez vos chansons et artistes préférés et appréciez les stations créées selon vos goûts. Ecoutez sans limite gratuitement.
+	IT	Pandora è una nuova tipologia di radio. Specificare i brani e gli artisti preferiti per ascoltare stazioni radio personalizzate. L'ascolto è gratuito e illimitato.
+	NL	Pandora. Een nieuw soort radio. Voer je favoriete nummers of artiesten in, en geniet van stations die speciaal voor jou zijn gemaakt. Luister zo vaak je wilt, gratis.
+	NO	Pandora. En ny type radio. Oppgi favorittsangene eller -artistene dine og lytt til stasjoner opprettet kun for deg. Det er helt gratis.
+	PL	Pandora. Nowy rodzaj radia. Wprowadź swoje ulubione utwory i wykonawców, a następnie słuchaj stacji stworzonych specjalnie dla Ciebie. Możesz słuchać tyle, ile tylko chcesz - bezpłatnie.
+	RU	Pandora. Это новый вид радио. Укажите ваши любимые песни или исполнителей и наслаждайтесь станциями, созданными специально для вас. Бесплатно слушайте, сколько пожелаете.
+	SV	Pandora – en ny sorts radio. Ange några av dina favoritlåtar eller -artister, och njut av radiostationer som skräddarsys för dig. Lyssna hur mycket du vill, det är gratis.
+
 PLUGIN_PANDORA_ERROR
 	CS	Chyba Pandora
 	DA	Pandora-fejl
