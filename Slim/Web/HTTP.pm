@@ -101,6 +101,7 @@ our %streamingFiles = ();
 our %peeraddr       = ();
 our %peerclient     = ();
 our %keepAlives     = ();
+my  $lastActivityTime;
 
 my  $skinMgr;
 
@@ -1641,6 +1642,8 @@ sub sendStreamingFile {
 	# Disable metadata in case this client sent an Icy-Metadata header
 	$sendMetaData{$httpClient} = 0;
 
+	$lastActivityTime = time();
+
 	addStreamingResponse($httpClient, $headers);
 }
 
@@ -2054,6 +2057,8 @@ sub sendResponse {
 			'keep-alive timeout',
 		);
 	}
+
+	$lastActivityTime = time();
 }
 
 =pod
@@ -2390,6 +2395,8 @@ sub sendStreamingResponse {
 			${*$streamingFile}{rangeCounter} += $sentbytes;
 		}
 	}
+
+	$lastActivityTime = time();
 
 	return $sentbytes;
 }
@@ -2957,6 +2964,10 @@ sub downloadImageFile {
 	}
 	
 	return;
+}
+
+sub lastActivityTime {
+	return $lastActivityTime || 0;
 }
 
 1;

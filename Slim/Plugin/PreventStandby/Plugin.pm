@@ -163,6 +163,12 @@ sub checkClientActivity {
 
 sub _playersBusy {
 	
+	# has there been any http traffic since last check?
+	if ( Time::HiRes::time() - Slim::Web::HTTP->lastActivityTime <= INTERVAL ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("There has been HTTP traffic since last check...");
+		return 1;
+	}
+	
 	my $checkpower = $prefs->get('checkpower');
 	
 	for my $client (Slim::Player::Client::clients()) {
