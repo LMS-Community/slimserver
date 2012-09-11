@@ -578,6 +578,8 @@ sub playlistXtracksCommand {
 			Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
 			$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
 		}
+		
+		$request->addResult(count => scalar @tracks);
 	
 		if (main::LOCAL_PLAYERS && $load && $client->isLocalPlayer) {
 			# The user may have stopped in the middle of a
@@ -1799,6 +1801,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		# limit & offset may have been populated above.
 		$attrs{'order_by'} = $sort || $trackSort;
 		$attrs{'join'}     = [ map { $_ } values %joinMap ];
+		$attrs{'rows'}     = $attrs{'limit'} if $attrs{'limit'};
 
 		return Slim::Schema->rs('Track')->search(\%find, \%attrs)->distinct->all;
 	}

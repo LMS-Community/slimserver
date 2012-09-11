@@ -80,6 +80,7 @@ sub modelName      { 'Dummy Client' }
 sub decoder        { }
 sub vfd            { undef }
 sub canPowerOff    { 0 }
+sub master         { shift }
 
 # SLIM_SERVICE
 sub getControllerPIN { }

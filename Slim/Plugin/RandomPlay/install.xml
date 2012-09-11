@@ -8,7 +8,7 @@
         <description>PLUGIN_RANDOM_DESC</description>
         <playerMenu>BROWSE_MUSIC</playerMenu>
         <creator>Logitech</creator>
-	<requiresLocalPlayer>true</requiresLocalPlayer>
+	<requiresLocalPlayer>0</requiresLocalPlayer>
 
 	<defaultState>enabled</defaultState>
         
