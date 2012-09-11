@@ -107,7 +107,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								revision _needsUpgrade isUpgrading
 								macaddress paddr udpsock tcpsock
 								irRefTime irRefTimeStored ircodes irmaps lastirtime lastircode lastircodebytes lastirbutton
-								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
+								startirhold irtimediff irrepeattime irenable _epochirtime _lastActivityTime
 								knobPos knobTime knobSync
 								sequenceNumber
 								controllerSequenceId controllerSequenceNumber
@@ -200,7 +200,7 @@ sub new {
 		irrepeattime            => 0,
 		irenable                => 1,
 		_epochirtime            => Time::HiRes::time(),
-		lastActivityTime        => 0,                   #  last time this client performed some action (IR, CLI, web)
+		_lastActivityTime       => 0,                   #  last time this client performed some action (IR, CLI, web)
 		knobPos                 => undef,
 		knobTime                => undef,
 		knobSync                => 0,
@@ -1196,6 +1196,19 @@ sub epochirtime {
 	}
 	
 	return $client->_epochirtime;
+}
+
+sub lastActivityTime {
+	my $client = shift;
+	
+	if ( @_ ) {
+		$client->_lastActivityTime($_[0]);
+		
+		# tell our listeners that some client was active
+		Slim::Control::Request::notifyFromArray($client, ['clientactivity']);
+	}
+	
+	return $client->_lastActivityTime;
 }
 
 sub currentplayingsong {
