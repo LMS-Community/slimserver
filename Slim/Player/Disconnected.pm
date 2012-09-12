@@ -59,10 +59,9 @@ sub getPlaylist {
 	return $client->_playlist(Slim::Player::DelegatedPlaylist->new($client));
 }
 
-
+sub isLocalPlayer { 0 }
 
 # dummy methods
-sub hidden         { 1 }
 sub bytesReceived  { }
 sub connected      { 0 }
 sub update         { }

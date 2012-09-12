@@ -336,7 +336,7 @@ sub playlistXitemCommand {
 		&& $client->playingSong()	
 		&& $path eq $client->playingSong()->track()->url()
 		&& !$noplay
-		&& !$client->isa('Slim::Player::Disconnected') )
+		&& $client->isLocalPlayer )
 	{
 		# Bug 16154: use more-precise control measures
 		# so that we only leave it playing if fully in Playing state already.
@@ -574,12 +574,12 @@ sub playlistXtracksCommand {
 			Slim::Player::Playlist::removeMultipleTracks($client, \@tracks);
 		}
 	
-		if (main::LOCAL_PLAYERS && ($load || $add) && !$client->isa('Slim::Player::Disconnected')) {
+		if (main::LOCAL_PLAYERS && ($load || $add) && $client->isLocalPlayer) {
 			Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
 			$request->addResult(index => (Slim::Player::Playlist::count($client) - $size));	# does not mean much if shuffled
 		}
 	
-		if (main::LOCAL_PLAYERS && $load && !$client->isa('Slim::Player::Disconnected')) {
+		if (main::LOCAL_PLAYERS && $load && $client->isLocalPlayer) {
 			# The user may have stopped in the middle of a
 			# saved playlist - resume if we can. Bug 1582
 			my $playlistObj = $client->currentPlaylist();
@@ -1550,13 +1550,13 @@ sub _playlistXitem_load_done {
 	my ($client, $index, $request, $url, $error, $noShuffle, $fadeIn, $noplay, $wipePlaylist) = @_;
 	
 	# dont' keep current song on loading a playlist
-	if ( main::LOCAL_PLAYERS && !$noShuffle  && !$client->isa('Slim::Player::Disconnected')) {
+	if ( main::LOCAL_PLAYERS && !$noShuffle  && $client->isLocalPlayer) {
 		Slim::Player::Playlist::reshuffle($client,
 			(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
 		);
 	}
 
-	if (main::LOCAL_PLAYERS && defined($index) && !$client->isa('Slim::Player::Disconnected')) {
+	if (main::LOCAL_PLAYERS && defined($index) && $client->isLocalPlayer) {
 		$client->execute(['playlist', 'jump', $index, $fadeIn, $noplay ]);
 	}
 
@@ -1744,7 +1744,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			$client->currentPlaylist($playlist) if main::LOCAL_PLAYERS && !$client->isa('Slim::Player::Disconnected');
+			$client->currentPlaylist($playlist) if main::LOCAL_PLAYERS && $client->isLocalPlayer;
 
 			return $playlist->tracks;
 		}

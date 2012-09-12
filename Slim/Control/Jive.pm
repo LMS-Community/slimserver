@@ -772,7 +772,7 @@ sub pluginMenus {
 	# UE Smart Radio can't handle plugins which try to deal with the client object directly
 	return [ grep {
 		$_->{ canDisconnectedMode } ? $_ : undef;
-	} @pluginMenus ] if $client->isa('Slim::Player::Disconnected');
+	} @pluginMenus ] unless $client->isLocalPlayer;
 
 	return \@pluginMenus;
 }

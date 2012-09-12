@@ -858,7 +858,7 @@ sub proxyAddress { undef };
 
 sub lmsUrls { undef };
 
-sub hidden { 0 }
+sub isLocalPlayer { 1 }
 
 sub hasScrolling { 0 }
 

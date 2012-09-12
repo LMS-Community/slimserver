@@ -330,7 +330,7 @@ Returns an array of all client objects.
 =cut
 
 sub clients {
-	return grep { !$_->hidden } values %clientHash;
+	return grep { $_->isLocalPlayer } values %clientHash;
 }
 
 =head2 resetPrefs()

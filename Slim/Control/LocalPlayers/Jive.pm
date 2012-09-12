@@ -847,7 +847,7 @@ sub playerSettingsMenu {
 	my $batch = shift;
 
 	my @menu = ();
-	return \@menu unless $client && !$client->isa('Slim::Player::Disconnected');
+	return \@menu unless $client && $client->isLocalPlayer;
 
  	push @menu, {
 		text           => $client->string('AUDIO_SETTINGS'),
@@ -1467,7 +1467,7 @@ sub shuffleSettings {
 
 sub _howManyPlayersToSyncWith {
 	my $client = shift;
-	return 0 if $client->isa('Slim::Player::Disconnected');
+	return 0 unless $client->isLocalPlayer;
 	
 	my @playerSyncList = Slim::Player::Client::clients();
 	my $synchablePlayers = 0;

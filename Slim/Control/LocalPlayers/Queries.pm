@@ -960,7 +960,7 @@ sub statusQuery {
 	my $useContextMenu = $request->getParam('useContextMenu');
 
 	# accomodate the fact we can be called automatically when the client is gone
-	if (!defined($client) || $client->isa('Slim::Player::Disconnected')) {
+	if (!defined($client) || !$client->isLocalPlayer) {
 		$request->addResult('error', "invalid player");
 		# Still need to (re)register the autoexec if this is a subscription so
 		# that the subscription does not dissappear while a Comet client thinks
