@@ -638,7 +638,6 @@ sub init {
 	addDispatch(['image_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::imageTitlesQuery]);
 
 # NOTIFICATIONS
-	addDispatch(['clientactivity'],                                                                    [0, 0, 0, undef]);
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);
 	addDispatch(['client',         'new'],                                                             [1, 0, 0, undef]);
 	addDispatch(['client',         'reconnect'],                                                       [1, 0, 0, undef]);

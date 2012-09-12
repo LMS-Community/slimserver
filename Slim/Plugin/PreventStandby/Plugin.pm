@@ -100,13 +100,12 @@ sub initPlugin {
 		Slim::Plugin::PreventStandby::Settings->new;
 	}
 
-	Slim::Control::Request::subscribe(sub {
-		# only check for activity if we're getting close to idle state
-		return unless $hasbeenidle;
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug("Client activity was signaled");
-		checkClientActivity();
-	}, [[ 'clientactivity' ]]);
+	if (my $idletime = $prefs->get('idletime')) {
+		$log->debug("System standby now allowed after $idletime minutes of player idle time.")
+	}
+	else {
+		$log->debug("System standby now prohibited.")
+	}
 
 	checkClientActivity();
 }
@@ -142,12 +141,12 @@ sub checkClientActivity {
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
 		
 		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
-		$handler->setBusy($currenttime);
+		$handler->setBusy();
 	}
 	
 	else {
 		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
-		$handler->setIdle($currenttime);
+		$handler->setIdle();
 	}
 
 	$lastchecktime = $currenttime;
@@ -207,12 +206,10 @@ sub idletime_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if (main::DEBUGLOG) {
-		if ($value) {
-			$log->debug("System standby now allowed after $value minutes of player idle time.")
-		} else {
-			$log->debug("System standby now prohibited.")
-		}
+	if ($value) {
+		$log->debug("System standby now allowed after $value minutes of player idle time.")
+	} else {
+		$log->debug("System standby now prohibited.")
 	}
 }
 
@@ -226,15 +223,9 @@ sub checkpower_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if ($value && main::DEBUGLOG) {
+	if ($value) {
 		$log->debug("System standby now prohibited when players are powered on.")
 	}
-}
-
-sub hasBeenIdle {
-	my ($class, $newValue) = @_;
-	$hasbeenidle = $newValue if $newValue;
-	return $hasbeenidle;
 }
 
 sub shutdownPlugin {

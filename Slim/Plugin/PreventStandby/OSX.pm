@@ -8,13 +8,10 @@ package Slim::Plugin::PreventStandby::OSX;
 use strict;
 use Proc::Background;
 
-use Slim::Plugin::PreventStandby::Plugin;
 use Slim::Utils::Log;
-use Slim::Utils::Prefs;
-use Slim::Utils::Timers;
+use Slim::Plugin::PreventStandby::Plugin;
 
 my $log   = logger('plugin.preventstandby');
-my $prefs = preferences('plugin.preventstandby');
 
 my $command;
 my $process;
@@ -29,52 +26,26 @@ sub new {
 	}
 	else {
 		$log->warn("Didn't find pmset tool - standby can't be prevented!");
-		return;
 	}
 	
 	return $class;
 }
 
 sub isBusy {
-	return Slim::Plugin::PreventStandby::Plugin->_playersBusy();
+	my ($class, $currenttime) = @_;
+	return !Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) && Slim::Plugin::PreventStandby::Plugin->_playersBusy();
 }
 
-# shut down pmset when the plugin is being shut down
+# shut down caffeinate when the plugin is being shut down
 sub cleanup {
 	$process->die if $process;
 };
 
 sub setBusy {
-	my ($class, $currenttime) = @_;
-
-	# Bug 8141: when coming out of standby, we don't want to keep the system alive for the full defined idle time
-	# OSX 10.8+ often resumes for some clean up work etc. In those cases only keep LMS awake for a few minutes
-	# before we can determine that we are really busy. Then either go back to sleep or to business as usual.
-	if ( Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) ) {
-		my $idletime = $prefs->get('idletime');
-
-		Slim::Utils::Timers::killTimers( undef, \&_setShortIdleTime );
-		if ($idletime && $idletime > 2) {
-			Slim::Utils::Timers::setTimer(
-				undef, 
-				time + 60, 
-				\&_setShortIdleTime
-			);
-		}
-	}
-	
 	if (!$process || !$process->alive) {
-		main::DEBUGLOG && $log->debug("Injecting some caffeine to keep system alive: '$command'");
+		$log->debug("Injecting some caffein to keep system alive: '$command'");
 		$process = Proc::Background->new($command);
 	}
-}
-
-sub _setShortIdleTime {
-	my $idletime = $prefs->get('idletime');
-
-	main::DEBUGLOG && $log->debug("System came out of standby - keep alive for only a few minutes");
-
-	Slim::Plugin::PreventStandby::Plugin->hasBeenIdle($idletime - 2) if $idletime && $idletime > 2;
 }
 
 sub setIdle {
