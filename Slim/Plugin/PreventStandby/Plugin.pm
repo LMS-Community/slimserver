@@ -51,7 +51,7 @@ my $lastchecktime = time;
 
 # Number of intervals that the cliets have been idle.
 my $hasbeenidle = 0;
-my $handler;
+my ($handler, $pollInterval);
 
 my $prefs = preferences('plugin.preventstandby');
 
@@ -76,7 +76,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 sub getDisplayName {
 	return 'PLUGIN_PREVENTSTANDBY';
 }
-
 
 sub initPlugin {
 	if ( !main::SLIM_SERVICE ) {
@@ -106,6 +105,8 @@ sub initPlugin {
 	else {
 		$log->debug("System standby now prohibited.")
 	}
+	
+	$pollInterval = $handler->pollInterval || INTERVAL;
 
 	checkClientActivity();
 }
@@ -141,12 +142,12 @@ sub checkClientActivity {
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
 		
 		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
-		$handler->setBusy();
+		$handler->setBusy($currenttime);
 	}
 	
 	else {
 		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
-		$handler->setIdle();
+		$handler->setIdle($currenttime);
 	}
 
 	$lastchecktime = $currenttime;
@@ -154,7 +155,7 @@ sub checkClientActivity {
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
 	Slim::Utils::Timers::setTimer(
 		undef, 
-		time + INTERVAL, 
+		time + $pollInterval, 
 		\&checkClientActivity
 	);
 
@@ -212,10 +213,12 @@ sub idletime_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if ($value) {
-		$log->debug("System standby now allowed after $value minutes of player idle time.")
-	} else {
-		$log->debug("System standby now prohibited.")
+	if (main::DEBUGLOG) {
+		if ($value) {
+			$log->debug("System standby now allowed after $value minutes of player idle time.")
+		} else {
+			$log->debug("System standby now prohibited.")
+		}
 	}
 }
 
@@ -229,15 +232,41 @@ sub checkpower_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if ($value) {
+	if (main::DEBUGLOG && $value) {
 		$log->debug("System standby now prohibited when players are powered on.")
 	}
+}
+
+sub hasBeenIdle {
+	my ($class, $newValue) = @_;
+	$hasbeenidle = $newValue if $newValue;
+	return $hasbeenidle;
 }
 
 sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
 	$handler->cleanup();
 }
+
+1;
+
+# base class for OS dependent implementations
+package Slim::Plugin::PreventStandby::OS;
+
+use strict;
+use Slim::Plugin::PreventStandby::Plugin;
+
+sub new {}
+
+sub isBusy {
+	my ($class, $currenttime) = @_;
+	return Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) || Slim::Plugin::PreventStandby::Plugin->_playersBusy();
+}
+
+sub setBusy {}
+sub setIdle {}
+sub cleanup {}
+sub pollInterval {}
 
 1;
 

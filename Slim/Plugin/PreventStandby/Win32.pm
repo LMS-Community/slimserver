@@ -5,10 +5,10 @@ package Slim::Plugin::PreventStandby::Win32;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+use base qw(Slim::Plugin::PreventStandby::OS);
+
 use strict;
 use Win32::API;
-
-use Slim::Plugin::PreventStandby::Plugin;
 
 my $SetThreadExecutionState;
 
@@ -20,18 +20,9 @@ sub new {
 	return $class;
 }
 
-sub isBusy {
-	my ($class, $currenttime) = @_;
-	return Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) || Slim::Plugin::PreventStandby::Plugin->_playersBusy();
-}
-
 sub setBusy {
 	$SetThreadExecutionState->Call(1);
 }
-
-# some stubs we need for compatibility with the OSX implementation
-sub cleanup {};
-sub setIdle {};
 
 1;
 
