@@ -275,7 +275,10 @@ sub mainMenu {
 				go => {
 					cmd => ['smartradio_upgrade'],
 				}
-			}
+			},
+			window => {
+				'icon-id' => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/ue.png', 'external' ),
+			},
 		} : (),
 		main::SLIM_SERVICE ? () : {
 			stringToken    => 'MY_MUSIC',
