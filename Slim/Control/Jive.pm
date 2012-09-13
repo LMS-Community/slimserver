@@ -266,14 +266,14 @@ sub mainMenu {
 	my @menu = map {
 		_localizeMenuItemText( $client, $_ );
 	}(
-		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_sb2sr_migration') ) ? {
+		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_radio2sr_migration') ) ? {
 			stringToken => 'MIGRATE_PLAYER',
 			weight      => 1,
 			id          => 'makeMeSmart',
 			node        => 'home',
 			actions     => {
 				go => {
-					cmd => ['smart_radio_migration'],
+					cmd => ['smartradio_upgrade'],
 				}
 			}
 		} : (),
