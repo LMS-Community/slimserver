@@ -64,7 +64,7 @@ sub set {
 		$self->_init_db;
 	}
 	
-	$expiry = defined $expiry ? _canonicalize_expiration_time($expiry) : $self->{default_expires_in};
+	$expiry = _canonicalize_expiration_time(defined $expiry ? $expiry : $self->{default_expires_in});
 
 	my $id = _key($key);
 	
