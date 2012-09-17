@@ -10,7 +10,6 @@ package Slim::Plugin::MusicMagic::Buttons;
 use strict;
 
 use Slim::Plugin::MusicMagic::Plugin;
-use Slim::Plugin::MusicMagic::PlayerSettings;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
@@ -26,8 +25,6 @@ our %mixFunctions = ();
 
 sub init {
 	return unless main::IP3K;
-	
-	Slim::Plugin::MusicMagic::PlayerSettings::init();
 
 	$mixFunctions{'play'} = \&playMix;
 
@@ -109,7 +106,6 @@ sub setMoodMode {
 			my $method = shift;
 
 			if ($method eq 'right') {
-				
 				mixerFunction($client);
 			}
 			elsif ($method eq 'left') {
@@ -130,7 +126,7 @@ sub setMixMode {
 		return;
 	}
 
-	mixerFunction($client, $prefs->get('player_settings') ? 1 : 0);
+	mixerFunction($client);
 }
 
 sub specialPushLeft {
@@ -161,17 +157,10 @@ sub specialPushLeft {
 }
 
 sub mixerFunction {
-	my ($client, $noSettings, $track) = @_;
+	my ($client, undef, $track) = @_;
 
 	# look for parentParams (needed when multiple mixers have been used)
 	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack->[-1];
-	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
-	if ($prefs->get('player_settings') && !$noSettings) {
-
-		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings', { 'parentParams' => $paramref });
-		return;
-
-	}
 
 	$track ||= $paramref->{'track'};
 	my $trackinfo = ( defined($track) && blessed($track) && $track->path ) ? 1 : 0;

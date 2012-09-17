@@ -13,18 +13,6 @@
 	[% END %]
 
 	[% WRAPPER settingSection %]
-		[% IF prefs.exists('pref_player_settings') %]
-			[% WRAPPER settingGroup title="SETUP_MMMPLAYERSETTINGS" desc="SETUP_MMMPLAYERSETTINGS_DESC" %]
-				<select class="stdedit" name="pref_player_settings" id="player_settings">
-		
-					<option [% IF NOT prefs.pref_player_settings %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
-					<option [% IF prefs.pref_player_settings %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
-				
-				</select>
-	
-			[% END %]
-		[% END %]
-
 		[% WRAPPER settingGroup title="SETUP_MIX_SIZE" desc="SETUP_MIX_SIZE_DESC" %]
 			<select class="stdedit" name="pref_mix_type" id="mix_type">
 	

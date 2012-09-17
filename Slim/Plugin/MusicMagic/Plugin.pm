@@ -27,7 +27,6 @@ if ( main::WEBUI ) {
 use Slim::Plugin::MusicMagic::Common;
 
 if (main::IP3K) {
-	require Slim::Plugin::MusicMagic::PlayerSettings;
 	require Slim::Plugin::MusicMagic::Buttons;
 }
 

@@ -42,7 +42,6 @@ $prefs->init($defaults);
 $prefs->migrate(1, sub {
 	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
 	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || $defaults->{scan_interval});
-	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0);
 	$prefs->set('port',            Slim::Utils::Prefs::OldPrefs->get('MMSport') || $defaults->{port});
 	$prefs->set('mix_filter',      Slim::Utils::Prefs::OldPrefs->get('MMMFilter') || $defaults->{mix_filter});
 	$prefs->set('reject_size',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectSize') || $defaults->{reject_size});
@@ -70,7 +69,6 @@ $prefs->migrate(2, sub {
 
 	$prefs->set('musicip',         $oldPrefs->get('musicmagic'));
 	$prefs->set('scan_interval',   $oldPrefs->get('scan_interval') || $defaults->{scan_interval});
-	$prefs->set('player_settings', $oldPrefs->get('player_settings') || 0);
 	$prefs->set('port',            $oldPrefs->get('port') || $defaults->{port});
 	$prefs->set('mix_filter',      $oldPrefs->get('mix_filter') || $defaults->{mix_filter});
 	$prefs->set('reject_size',     $oldPrefs->get('reject_size') || $defaults->{reject_size});
