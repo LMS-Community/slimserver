@@ -64,7 +64,7 @@ sub skipPlugins {
 	if ( !main::SERVICES ) {
 		# Skip all music service plugins when running in UEML mode
 		push @skip, (qw(Amazon AppGallery AudioScrobbler Classical Deezer DigitalInput Facebook
-			Flickr InternetRadio LMA LastFM Live365 MOG MP3tunes Mediafly MusicMagic MyApps Orange
+			Flickr InternetRadio LMA LastFM Live365 MOG MP3tunes Mediafly MyApps Orange
 			Pandora Podcast RSSNews RadioTime RhapsodyDirect Sirius Slacker Sounds SpotifyLogi UPnP
 			WiMP));
 	}
