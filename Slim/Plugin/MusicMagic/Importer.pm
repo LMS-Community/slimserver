@@ -84,8 +84,6 @@ sub initPlugin {
 
 	return 1 if $initialized;
 
-	Slim::Plugin::MusicMagic::Common::checkDefaults();
-
 	$MMSport = $prefs->get('port');
 
 	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");

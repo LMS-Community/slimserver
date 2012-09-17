@@ -11,8 +11,6 @@ use strict;
 use URI::Escape;
 
 use Slim::Utils::Log;
-use Slim::Utils::Misc;
-use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
@@ -23,46 +21,140 @@ my $log = logger('plugin.musicip');
 
 my $prefs = preferences('plugin.musicip');
 
+my $defaults = {
+	musicip         => 0,
+	mix_filter      => '',
+	mix_genre       => '',
+	mix_type        => 0,
+	mix_style       => 0,
+	mix_variety     => 0,
+	mix_size        => 50,
+	playlist_prefix => '',
+	playlist_suffix => '',
+	reject_type     => 0,
+	reject_size     => 50,
+	scan_interval   => 3600,
+	port            => 10002,
+};
+
+$prefs->init($defaults);
+
+$prefs->migrate(1, sub {
+	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || $defaults->{scan_interval});
+	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0);
+	$prefs->set('port',            Slim::Utils::Prefs::OldPrefs->get('MMSport') || $defaults->{port});
+	$prefs->set('mix_filter',      Slim::Utils::Prefs::OldPrefs->get('MMMFilter') || $defaults->{mix_filter});
+	$prefs->set('reject_size',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectSize') || $defaults->{reject_size});
+	$prefs->set('reject_type',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectType') || $defaults->{reject_type});
+	$prefs->set('mix_genre',       Slim::Utils::Prefs::OldPrefs->get('MMMMixGenre') || $defaults->{mix_genre});
+	$prefs->set('mix_variety',     Slim::Utils::Prefs::OldPrefs->get('MMMVariety') || $defaults->{mix_variety});
+	$prefs->set('mix_style',       Slim::Utils::Prefs::OldPrefs->get('MMMStyle') || $defaults->{mix_style});
+	$prefs->set('mix_type',        Slim::Utils::Prefs::OldPrefs->get('MMMMixType') || $defaults->{mix_type});
+	$prefs->set('mix_size',        Slim::Utils::Prefs::OldPrefs->get('MMMSize') ||$defaults->{mix_size});
+	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || '');
+	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistsuffix') || '');
+
+	$prefs->set('musicmagic', 0) unless defined $prefs->get('musicmagic'); # default to on if not previously set
+	
+	# use new naming of the old default wasn't changed
+	if ($prefs->get('playlist_prefix') eq 'MusicMagic: ') {
+		$prefs->set('playlist_prefix', 'MusicIP: ');
+	}
+
+	1;
+});
+
+$prefs->migrate(2, sub {
+	my $oldPrefs = preferences('plugin.musicmagic'); 
+
+	$prefs->set('musicip',         $oldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   $oldPrefs->get('scan_interval') || $defaults->{scan_interval});
+	$prefs->set('player_settings', $oldPrefs->get('player_settings') || 0);
+	$prefs->set('port',            $oldPrefs->get('port') || $defaults->{port});
+	$prefs->set('mix_filter',      $oldPrefs->get('mix_filter') || $defaults->{mix_filter});
+	$prefs->set('reject_size',     $oldPrefs->get('reject_size') || $defaults->{reject_size});
+	$prefs->set('reject_type',     $oldPrefs->get('reject_type') || $defaults->{reject_type});
+	$prefs->set('mix_genre',       $oldPrefs->get('mix_genre') || $defaults->{mix_genre});
+	$prefs->set('mix_variety',     $oldPrefs->get('mix_variety') || $defaults->{mix_variety});
+	$prefs->set('mix_style',       $oldPrefs->get('mix_style') || $defaults->{mix_style});
+	$prefs->set('mix_type',        $oldPrefs->get('mix_type') || $defaults->{mix_type});
+	$prefs->set('mix_size',        $oldPrefs->get('mix_size') ||$defaults->{mix_size});
+	$prefs->set('playlist_prefix', $oldPrefs->get('playlist_prefix') || '');
+	$prefs->set('playlist_suffix', $oldPrefs->get('playlist_suffix') || '');
+
+	my $prefix = $prefs->get('playlist_prefix');
+	if ($prefix =~ /MusicMagic/) {
+		$prefix =~ s/MusicMagic/MusicIP/g;
+		$prefs->set('playlist_prefix', $prefix);
+	}
+
+	$prefs->remove('musicmagic');
+
+	1;
+});
+
+$prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
+
+$prefs->setChange(
+	sub {
+		my $newval = $_[1];
+		
+		if ($newval) {
+			Slim::Plugin::MusicMagic::Plugin->initPlugin();
+		}
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
+
+		for my $c (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($c);
+		}
+	},
+	'musicip',
+);
+
+$prefs->setChange(
+	sub {
+			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
+			
+			my $interval = $prefs->get('scan_interval') || 3600;
+			
+			main::INFOLOG && $log->info("re-setting scaninterval to $interval seconds.");
+			
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 120, \&Slim::Plugin::MusicMagic::Plugin::checker);
+	},
+'scan_interval');
+
+$prefs->migrateClient(1, sub {
+	my ($clientprefs, $client) = @_;
+	
+	$clientprefs->set('mix_filter',  Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMFilter') || $defaults->{mix_filter});
+	$clientprefs->set('reject_size', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectSize') || $defaults->{reject_size});
+	$clientprefs->set('reject_type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectType') || $defaults->{reject_type});
+	$clientprefs->set('mix_genre',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixGenre') || $defaults->{mix_genre});
+	$clientprefs->set('mix_variety', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMVariety') || $defaults->{mix_variety});
+	$clientprefs->set('mix_style',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMStyle') || $defaults->{mix_style});
+	$clientprefs->set('mix_type',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixType') || $defaults->{mix_type});
+	$clientprefs->set('mix_size',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMSize') || $defaults->{mix_size});
+	1;
+});
+
+$prefs->migrateClient(2, sub {
+	my ($clientprefs, $client) = @_;
+	
+	my $oldPrefs = preferences('plugin.musicmagic');
+	$clientprefs->set('mix_filter',  $oldPrefs->client($client)->get($client, 'mix_filter') || $defaults->{mix_filter});
+	$clientprefs->set('reject_size', $oldPrefs->client($client)->get($client, 'reject_size') || $defaults->{reject_size});
+	$clientprefs->set('reject_type', $oldPrefs->client($client)->get($client, 'reject_type') || $defaults->{reject_type});
+	$clientprefs->set('mix_genre',   $oldPrefs->client($client)->get($client, 'mix_genre') || $defaults->{mix_genre});
+	$clientprefs->set('mix_variety', $oldPrefs->client($client)->get($client, 'mix_variety') || $defaults->{mix_variety});
+	$clientprefs->set('mix_style',   $oldPrefs->client($client)->get($client, 'mix_style') || $defaults->{mix_style});
+	$clientprefs->set('mix_type',    $oldPrefs->client($client)->get($client, 'mix_type') || $defaults->{mix_type});
+	$clientprefs->set('mix_size',    $oldPrefs->client($client)->get($client, 'mix_size') || $defaults->{mix_size});
+	1;
+});
+
 my %filterHash = ();
-
-sub checkDefaults {
-
-	if (!defined $prefs->get('musicip')) {
-		$prefs->set('musicip',0)
-	}
-
-	if (!defined $prefs->get('mix_type')) {
-		$prefs->set('mix_type',0)
-	}
-
-	if (!defined $prefs->get('mix_style')) {
-		$prefs->set('mix_style',0);
-	}
-
-	if (!defined $prefs->get('mix_variety')) {
-		$prefs->set('mix_variety',0);
-	}
-
-	if (!defined $prefs->get('mix_size')) {
-		$prefs->set('mix_size',12);
-	}
-
-	if (!defined $prefs->get('playlist_prefix')) {
-		$prefs->set('playlist_prefix','');
-	}
-
-	if (!defined $prefs->get('playlist_suffix')) {
-		$prefs->set('playlist_suffix','');
-	}
-
-	if (!defined $prefs->get('scan_interval')) {
-		$prefs->set('scan_interval',3600);
-	}
-
-	if (!defined $prefs->get('port')) {
-		$prefs->set('port',10002);
-	}
-}
 
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
