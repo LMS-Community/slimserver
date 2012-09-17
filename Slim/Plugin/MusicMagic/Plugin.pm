@@ -16,7 +16,6 @@ use URI::Escape qw(uri_escape_utf8);
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Prefs;
 
@@ -29,6 +28,7 @@ use Slim::Plugin::MusicMagic::Common;
 
 if (main::IP3K) {
 	require Slim::Plugin::MusicMagic::PlayerSettings;
+	require Slim::Plugin::MusicMagic::Buttons;
 }
 
 use Slim::Utils::Favorites;
@@ -46,12 +46,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.musicip');
 
-our %mixMap  = (
-	'add.single' => 'play_1',
-	'add.hold'   => 'play_2'
-);
-
-our %mixFunctions = ();
+my $cache = Slim::Utils::Cache->new;
 
 our %validMixTypes = (
 	'track'    => 'song',
@@ -176,8 +171,6 @@ sub initPlugin {
 			main::INFOLOG && $log->info('Power Search enabled');
 		}
 
-		Slim::Plugin::MusicMagic::PlayerSettings::init() if main::IP3K;
-
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
@@ -258,17 +251,11 @@ sub initPlugin {
 			func     => \&genreInfoHandler,
 		) );
 
+		Slim::Plugin::MusicMagic::Buttons::init() if main::IP3K;
 
 		if (scalar @{grabMoods()}) {
 
-			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
-
-			my $params = {
-				'useMode'  => 'musicmagic_moods',
-				'mood'     => 'none',
-			}; 
-			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
-			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
+			Slim::Plugin::MusicMagic::Buttons::initMoods() if main::IP3K;
 
 			if ( main::WEBUI ) {
 				Slim::Web::Pages->addPageLinks("browse", {
@@ -305,11 +292,6 @@ sub initPlugin {
 		}
 	}
 
-	$mixFunctions{'play'} = \&playMix;
-
-	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions, \&setMixMode);
-	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
-
 	if ( main::WEBUI ) {
 		Slim::Web::Pages->addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
 		Slim::Web::Pages->addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
@@ -319,48 +301,7 @@ sub initPlugin {
 }
 
 sub defaultMap {
-	#Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
-
-	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix', \%mixMap);
-}
-
-sub playMix {
-	my $client = shift;
-	my $button = shift;
-	my $append = shift || 0;
-
-	my $line1;
-	my $playAddInsert;
-	
-	if ($append == 1) {
-
-		$line1 = $client->string('ADDING_TO_PLAYLIST');
-		$playAddInsert = 'addtracks';
-
-	} elsif ($append == 2) {
-
-		$line1 = $client->string('INSERT_TO_PLAYLIST');
-		$playAddInsert = 'inserttracks';
-
-	} elsif (Slim::Player::Playlist::shuffle($client)) {
-
-		$line1 = $client->string('PLAYING_RANDOMLY_FROM');
-		$playAddInsert = 'playtracks';
-
-	} else {
-
-		$line1 = $client->string('NOW_PLAYING_FROM');
-		$playAddInsert = 'playtracks';
-	}
-
-	my $line2 = $client->modeParam('stringHeader') ? $client->string($client->modeParam('header')) : $client->modeParam('header');
-	
-	$client->showBriefly({
-		'line'    => [ $line1, $line2] ,
-		'overlay' => [ $client->symbols('notesymbol'),],
-	}, { 'duration' => 2});
-
-	$client->execute(["playlist", $playAddInsert, "listref", $client->modeParam('listRef')]);
+	Slim::Plugin::MusicMagic::Buttons::defaultMap() if main::IP3K;
 }
 
 sub isMusicLibraryFileChanged {
@@ -489,12 +430,6 @@ sub _musicipError {
 	$log->error( $error || "MusicIP: http error, no response.");
 }
 
-sub prefName {
-	my $class = shift;
-
-	return lc($class->title);
-}
-
 sub title {
 	my $class = shift;
 
@@ -525,13 +460,13 @@ sub grabMoods {
 
 		@moods = split(/\n/, Slim::Utils::Unicode::utf8encode_locale($response->content));
 
-		if ($log->is_debug && scalar @moods) {
+		if (main::DEBUGLOG && $log->is_debug && scalar @moods) {
 
-			main::DEBUGLOG && $log->debug("Found moods:");
+			$log->debug("Found moods:");
 
 			for my $mood (@moods) {
 
-				main::DEBUGLOG && $log->debug("\t$mood");
+				$log->debug("\t$mood");
 			}
 		}
 	}
@@ -539,190 +474,6 @@ sub grabMoods {
 	return \@moods;
 }
 
-sub setMoodMode {
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	my %params = (
-		'header'         => $client->string('MUSICMAGIC_MOODS'),
-		'listRef'        => &grabMoods,
-		'headerAddCount' => 1,
-		'overlayRef'     => sub {return (undef, $client->symbols('rightarrow'));},
-		'mood'           => 'none',
-		'callback'       => sub {
-			my $client = shift;
-			my $method = shift;
-
-			if ($method eq 'right') {
-				
-				mixerFunction($client);
-			}
-			elsif ($method eq 'left') {
-				Slim::Buttons::Common::popModeRight($client);
-			}
-		},
-	);
-
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
-}
-
-sub setMixMode {
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	mixerFunction($client, $prefs->get('player_settings') ? 1 : 0);
-}
-
-sub specialPushLeft {
-	my $client   = shift;
-	my $step     = shift;
-
-	my $now  = Time::HiRes::time();
-	my $when = $now + 0.5;
-	
-	my $mixer  = Slim::Utils::Strings::string('MUSICMAGIC_MIXING');
-
-	if ($step == 0) {
-
-		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(undef, { 'line' => [$mixer,''] });
-		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
-
-	} elsif ($step == 3) {
-
-		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft( { 'line' => [$mixer."...",''] }, undef);
-
-	} else {
-
-		$client->update( { 'line' => [$mixer.("." x $step),''] });
-		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
-	}
-}
-
-sub mixerFunction {
-	my ($client, $noSettings, $track) = @_;
-
-	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack->[-1];
-	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
-	if ($prefs->get('player_settings') && !$noSettings) {
-
-		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings', { 'parentParams' => $paramref });
-		return;
-
-	}
-
-	$track ||= $paramref->{'track'};
-	my $trackinfo = ( defined($track) && blessed($track) && $track->path ) ? 1 : 0;
-
-	my $listIndex = $paramref->{'listIndex'};
-	my $items     = $paramref->{'listRef'};
-	my $hierarchy = $paramref->{'hierarchy'};
-	my $level     = $paramref->{'level'} || 0;
-	my $descend   = $paramref->{'descend'};
-
-	my @levels    = split(",", $hierarchy);
-	my $mix;
-	my $mixSeed   = '';
-
-	my $currentItem = $items->[$listIndex];
-
-	# start by checking for a passed track (trackinfo)
-	if ( $trackinfo ) {
-		$currentItem = $track;
-		$levels[$level] = 'track';
-		
-	# use _prepare_mix for artist/album/genre
-	# XXX - consolidate all mixes to using this method!
-	} elsif ($paramref->{track_id} || $paramref->{artist_id} || $paramref->{album_id} || $paramref->{genre_id}) {
-		my $params = {
-#			song        => $paramref->{'song_id'}, 
-			track       => $paramref->{'track_id'},
-			artist      => $paramref->{'artist_id'},
-#			contributor => $paramref->{'contributor_id'},
-			album       => $paramref->{'album_id'},
-			genre       => $paramref->{'genre_id'},
-#			year        => $paramref->{'year'},
-#			mood        => $paramref->{'mood'},
-#			playlist    => $paramref->{'playlist'},
-		};
-	
-		$mix = _prepare_mix($client, $params);
-		
-	# then moods
-	} elsif ($paramref->{'mood'}) {
-		$mixSeed = $currentItem;
-		$levels[$level] = 'mood';
-	
-	# if we've chosen a particular song
-	} elsif (!$descend || $levels[$level] eq 'track') {
-
-		$mixSeed = $currentItem->path;
-
-	} elsif ($levels[$level] eq 'album' || $levels[$level] eq 'age') {
-
-		$mixSeed = $currentItem->tracks->next->path;
-
-	} elsif ($levels[$level] eq 'contributor') {
-		
-		# MusicIP uses artist instead of contributor.
-		$levels[$level] = 'artist';
-		$mixSeed = $currentItem->name;
-	
-	} elsif ($levels[$level] eq 'genre') {
-		
-		$mixSeed = $currentItem->name;
-	}
-
-	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
-		# nothing to do here - we already got a mix using _prepare_mix
-	}
-	# Bug: 7478: special handling for playlist tracks.
-	elsif ($levels[$level] eq 'playlistTrack' || $trackinfo ) {
-
-		$mixSeed = $currentItem->path;
-		$mix = getMix($client, $mixSeed, 'track');
-
-	} elsif ($currentItem && ($paramref->{'mood'} || $currentItem->musicmagic_mixable)) {
-
-		# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-		$mix = getMix($client, $mixSeed, $levels[$level]);
-	}
-
-	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
-		my %params = (
-			'listRef'        => $mix,
-			'externRef'      => \&Slim::Music::Info::standardTitle,
-			'header'         => 'MUSICMAGIC_MIX',
-			'headerAddCount' => 1,
-			'stringHeader'   => 1,
-			'callback'       => \&mixExitHandler,
-			'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
-			'overlayRefArgs' => 'C',
-			'parentMode'     => 'musicmagic_mix',
-		);
-		
-		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-
-		specialPushLeft($client, 0);
-
-	} else {
-
-		# don't do anything if nothing is mixable
-		$client->bumpRight;
-	}
-}
 
 sub mixerlink {
 	my $item = shift;
@@ -754,25 +505,6 @@ sub mixerlink {
 	}
 
 	return $form;
-}
-
-sub mixExitHandler {
-	my ($client,$exittype) = @_;
-	
-	$exittype = uc($exittype);
-
-	if ($exittype eq 'LEFT') {
-
-		Slim::Buttons::Common::popModeRight($client);
-
-	} elsif ($exittype eq 'RIGHT') {
-
-		my $valueref = $client->modeParam('valueRef');
-
-		Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $$valueref });
-
-		$client->pushLeft();
-	}
 }
 
 sub getMix {
@@ -1175,7 +907,7 @@ sub cliMix {
 		}
 
 		if ($menuMode) {
-			Slim::Control::Queries::_addJiveSong($request, $loopname, $chunkCount, $chunkCount, $trackObj);
+			_addJiveSong($request, $loopname, $chunkCount, $chunkCount, $trackObj);
 		} else {
 			Slim::Control::Queries::_addSong($request, $loopname, $chunkCount, $trackObj, $tags);
 		}
@@ -1184,6 +916,72 @@ sub cliMix {
 
 	$request->addResult('count', $chunkCount);
 	$request->setStatusDone();
+}
+
+sub _addJiveSong {
+	my $request = shift; # request
+	my $loop    = shift; # loop
+	my $count   = shift; # loop index
+	my $index   = shift; # playlist index
+	my $track   = shift || return;
+	
+	return Slim::Control::Queries::_addJiveSong($request, $loop, $count, $index, $track) if main::LOCAL_PLAYERS;
+	
+	# continue with a simplified versoin of _addJiveSong if Slim::Control::Queries::_addJiveSong is not available
+	# XXX - why is _addJiveSong not available?
+	my $songData  = Slim::Control::Queries::_songData(
+		$request,
+		$track,
+		'aAlKNcx',			# tags needed for our entities
+	);
+	
+	$request->addResultLoop($loop, $count, 'trackType', 'local');
+	
+	my $text   = $songData->{title};
+	my $album  = $songData->{album};
+	my $artist = $songData->{artist};
+	
+	# Bug 15779, include other role data
+	# XXX may want to include all contributor roles here?
+	my (%artists, @artists);
+	foreach ('albumartist', 'trackartist', 'artist') {
+		
+		next if !$songData->{$_};
+		
+		foreach my $a ( split (/, /, $songData->{$_}) ) {
+			if ( $a && !$artists{$a} ) {
+				push @artists, $a;
+				$artists{$a} = 1;
+			}
+		}
+	}
+	$artist = join(', ', @artists);
+	
+	my @secondLine;
+	push @secondLine, $artist if defined $artist;
+	push @secondLine, $album if defined $album;
+	my $secondLine = join(' - ', @secondLine);
+	
+	$text .= "\n" . $secondLine;
+
+	# Bug 7443, check for a track cover before using the album cover
+	my $iconId = $songData->{coverid};
+	
+	if ( defined($songData->{artwork_url}) ) {
+		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
+	}
+	elsif ( defined $iconId ) {
+		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+	}
+
+	$request->addResultLoop($loop, $count, 'text', $text);
+
+	my $params = {
+		'track_id' => ($songData->{'id'} + 0), 
+		'playlist_index' => $index,
+	};
+	$request->addResultLoop($loop, $count, 'params', $params);
+	$request->addResultLoop($loop, $count, 'style', 'itemplay');
 }
 
 sub cliPlayMix {
@@ -1200,10 +998,12 @@ sub cliPlayMix {
 	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
 	my $insert = !$request->isNotCommand([['musicip'], ['insert']]);
 
+	my $mix = main::LOCAL_PLAYERS ? $client->modeParam('musicmagic_mix') : $cache->get($client->id . 'listref');
+
 	$client->execute(["playlist",	$add ? "addtracks" 
 					: $insert ? "inserttracks"
 					: "playtracks", 
-			"listref=musicmagic_mix"]);
+			"listref", $mix]);
 }
 
 sub _prepare_mix {
@@ -1309,7 +1109,10 @@ sub _prepare_mix {
 		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
 	}
 
-	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
+	if (defined $mix && ref $mix eq "ARRAY" && defined $client && $client->isa('Slim::Player::Disconnected')) {
+		# disconnected players can't keep a listref in the modeParam - store in cache instead
+		$cache->set($client->id . 'listref', $mix, 86400);
+	} elsif (defined $mix && ref $mix eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
 		$client->modeParam('musicmagic_mix', $mix);

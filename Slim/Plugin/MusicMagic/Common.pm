@@ -106,8 +106,10 @@ $prefs->setChange(
 		
 		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
 
-		for my $c (Slim::Player::Client::clients()) {
-			Slim::Buttons::Home::updateMenu($c);
+		if ( main::IP3K ) {
+			for my $c (Slim::Player::Client::clients()) {
+				Slim::Buttons::Home::updateMenu($c);
+			}
 		}
 	},
 	'musicip',
