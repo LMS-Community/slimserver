@@ -21,7 +21,7 @@ use Slim::Utils::Prefs;
 
 if ( main::WEBUI ) {
 	require Slim::Plugin::MusicMagic::Settings;
-	require Slim::Plugin::MusicMagic::ClientSettings;
+	require Slim::Plugin::MusicMagic::ClientSettings if main::LOCAL_PLAYERS;
 }
 
 use Slim::Plugin::MusicMagic::Common;
@@ -516,52 +516,37 @@ sub getMix {
 	my $res;
 	my @type = qw(tracks min mbytes);
 	
-	my %args;
+	my %args = (
+		# Set the size of the list (default 12)
+		'size'       => $prefs->get('mix_size') || 12,
+
+		# (tracks|min|mb) Set the units for size (default tracks)
+		'sizetype'   => $type[$prefs->get('mix_type') || 0],
+
+		# Set the style slider (default 20)
+		'style'      => $prefs->get('mix_style') || 20,
+
+		# Set the variety slider (default 0)
+		'variety'    => $prefs->get('mix_variety') || 0,
+
+		# mix genres or stick with that of the seed. (Default: match seed)
+		'mixgenre'   => $prefs->get('mix_genre') || 0,
+
+		# Set the number of songs before allowing dupes (default 12)
+		'rejectsize' => $prefs->get('reject_size') || 12,
+	);
 	 
-	if (defined $client) {
-		%args = (
-			# Set the size of the list (default 12)
-			'size'       => $prefs->client($client)->get('mix_size') || $prefs->get('mix_size'),
-	
-			# (tracks|min|mb) Set the units for size (default tracks)
-			'sizetype'   => $type[$prefs->client($client)->get('mix_type') || $prefs->get('mix_type')],
-	
-			# Set the style slider (default 20)
-			'style'      => $prefs->client($client)->get('mix_style') || $prefs->get('mix_style'),
-	
-			# Set the variety slider (default 0)
-			'variety'    => $prefs->client($client)->get('mix_variety') || $prefs->get('mix_variety'),
-
-			# mix genres or stick with that of the seed. (Default: match seed)
-			'mixgenre'   => $prefs->client($client)->get('mix_genre') || $prefs->get('mix_genre'),
-	
-			# Set the number of songs before allowing dupes (default 12)
-			'rejectsize' => $prefs->client($client)->get('reject_size') || $prefs->get('reject_size'),
-		);
-	} else {
-		%args = (
-			# Set the size of the list (default 12)
-			'size'       => $prefs->get('mix_size') || 12,
-	
-			# (tracks|min|mb) Set the units for size (default tracks)
-			'sizetype'   => $type[$prefs->get('mix_type') || 0],
-	
-			# Set the style slider (default 20)
-			'style'      => $prefs->get('mix_style') || 20,
-	
-			# Set the variety slider (default 0)
-			'variety'    => $prefs->get('mix_variety') || 0,
-
-			# mix genres or stick with that of the seed. (Default: match seed)
-			'mixgenre'   => $prefs->get('mix_genre') || 0,
-	
-			# Set the number of songs before allowing dupes (default 12)
-			'rejectsize' => $prefs->get('reject_size') || 12,
-		);
+	if (main::LOCAL_PLAYERS && defined $client) {
+		$args{size}       = $prefs->client($client)->get('mix_size') if $prefs->client($client)->get('mix_size');
+		$args{sizetype}   = $type[$prefs->client($client)->get('mix_type')] if defined $prefs->client($client)->get('mix_type');
+		$args{style}      = $prefs->client($client)->get('mix_style') if defined $prefs->client($client)->get('mix_style');
+		$args{variety}    = $prefs->client($client)->get('mix_variety') if defined $prefs->client($client)->get('mix_variety');
+		$args{mixgenre}   = $prefs->client($client)->get('mix_genre') if $prefs->client($client)->get('mix_genre');
+		$args{rejectsize} = $prefs->client($client)->get('reject_size') if $prefs->client($client)->get('reject_size');
 	}
 
 	# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
-	my $rejectType = defined $client ?
+	my $rejectType = main::LOCAL_PLAYERS && defined $client ?
 		($prefs->client($client)->get('reject_type') || $prefs->get('reject_type')) : 
 		($prefs->get('reject_type') || 0);
 	
@@ -570,7 +555,7 @@ sub getMix {
 		$args{'rejecttype'} = $type[$rejectType];
 	}
 
-	my $filter = defined $client ? $prefs->client($client)->get('mix_filter') || $prefs->get('mix_filter') : $prefs->get('mix_filter');
+	my $filter = main::LOCAL_PLAYERS && defined $client ? $prefs->client($client)->get('mix_filter') || $prefs->get('mix_filter') : $prefs->get('mix_filter');
 
 	if ($filter) {
 
@@ -734,9 +719,6 @@ sub cliMoods {
 		$request->setStatusBadDispatch();
 		return;
 	}
-
-	# get our parameters
-	my $client = $request->client();	
 
 	my $moods = grabMoods();
 
@@ -997,7 +979,7 @@ sub cliPlayMix {
 	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
 	my $insert = !$request->isNotCommand([['musicip'], ['insert']]);
 
-	my $mix = main::LOCAL_PLAYERS ? $client->modeParam('musicmagic_mix') : $cache->get($client->id . 'listref');
+	my $mix = $client->isa('Slim::Player::Disconnected') ? $cache->get($client->id . 'listref') : $client->modeParam('musicmagic_mix');
 
 	$client->execute(["playlist",	$add ? "addtracks" 
 					: $insert ? "inserttracks"
@@ -1111,10 +1093,12 @@ sub _prepare_mix {
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client && $client->isa('Slim::Player::Disconnected')) {
 		# disconnected players can't keep a listref in the modeParam - store in cache instead
 		$cache->set($client->id . 'listref', $mix, 86400);
+		
 	} elsif (defined $mix && ref $mix eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
 		$client->modeParam('musicmagic_mix', $mix);
+		
 	} elsif (!defined $mix || ref $mix ne "ARRAY") {
 		$mix = [];
 	}

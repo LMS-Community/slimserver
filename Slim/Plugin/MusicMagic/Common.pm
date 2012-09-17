@@ -125,34 +125,36 @@ $prefs->setChange(
 	},
 'scan_interval');
 
-$prefs->migrateClient(1, sub {
-	my ($clientprefs, $client) = @_;
+if (main::LOCAL_PLAYERS) {
+	$prefs->migrateClient(1, sub {
+		my ($clientprefs, $client) = @_;
+		
+		$clientprefs->set('mix_filter',  Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMFilter') || $defaults->{mix_filter});
+		$clientprefs->set('reject_size', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectSize') || $defaults->{reject_size});
+		$clientprefs->set('reject_type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectType') || $defaults->{reject_type});
+		$clientprefs->set('mix_genre',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixGenre') || $defaults->{mix_genre});
+		$clientprefs->set('mix_variety', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMVariety') || $defaults->{mix_variety});
+		$clientprefs->set('mix_style',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMStyle') || $defaults->{mix_style});
+		$clientprefs->set('mix_type',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixType') || $defaults->{mix_type});
+		$clientprefs->set('mix_size',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMSize') || $defaults->{mix_size});
+		1;
+	});
 	
-	$clientprefs->set('mix_filter',  Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMFilter') || $defaults->{mix_filter});
-	$clientprefs->set('reject_size', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectSize') || $defaults->{reject_size});
-	$clientprefs->set('reject_type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectType') || $defaults->{reject_type});
-	$clientprefs->set('mix_genre',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixGenre') || $defaults->{mix_genre});
-	$clientprefs->set('mix_variety', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMVariety') || $defaults->{mix_variety});
-	$clientprefs->set('mix_style',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMStyle') || $defaults->{mix_style});
-	$clientprefs->set('mix_type',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixType') || $defaults->{mix_type});
-	$clientprefs->set('mix_size',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMSize') || $defaults->{mix_size});
-	1;
-});
-
-$prefs->migrateClient(2, sub {
-	my ($clientprefs, $client) = @_;
-	
-	my $oldPrefs = preferences('plugin.musicmagic');
-	$clientprefs->set('mix_filter',  $oldPrefs->client($client)->get($client, 'mix_filter') || $defaults->{mix_filter});
-	$clientprefs->set('reject_size', $oldPrefs->client($client)->get($client, 'reject_size') || $defaults->{reject_size});
-	$clientprefs->set('reject_type', $oldPrefs->client($client)->get($client, 'reject_type') || $defaults->{reject_type});
-	$clientprefs->set('mix_genre',   $oldPrefs->client($client)->get($client, 'mix_genre') || $defaults->{mix_genre});
-	$clientprefs->set('mix_variety', $oldPrefs->client($client)->get($client, 'mix_variety') || $defaults->{mix_variety});
-	$clientprefs->set('mix_style',   $oldPrefs->client($client)->get($client, 'mix_style') || $defaults->{mix_style});
-	$clientprefs->set('mix_type',    $oldPrefs->client($client)->get($client, 'mix_type') || $defaults->{mix_type});
-	$clientprefs->set('mix_size',    $oldPrefs->client($client)->get($client, 'mix_size') || $defaults->{mix_size});
-	1;
-});
+	$prefs->migrateClient(2, sub {
+		my ($clientprefs, $client) = @_;
+		
+		my $oldPrefs = preferences('plugin.musicmagic');
+		$clientprefs->set('mix_filter',  $oldPrefs->client($client)->get($client, 'mix_filter') || $defaults->{mix_filter});
+		$clientprefs->set('reject_size', $oldPrefs->client($client)->get($client, 'reject_size') || $defaults->{reject_size});
+		$clientprefs->set('reject_type', $oldPrefs->client($client)->get($client, 'reject_type') || $defaults->{reject_type});
+		$clientprefs->set('mix_genre',   $oldPrefs->client($client)->get($client, 'mix_genre') || $defaults->{mix_genre});
+		$clientprefs->set('mix_variety', $oldPrefs->client($client)->get($client, 'mix_variety') || $defaults->{mix_variety});
+		$clientprefs->set('mix_style',   $oldPrefs->client($client)->get($client, 'mix_style') || $defaults->{mix_style});
+		$clientprefs->set('mix_type',    $oldPrefs->client($client)->get($client, 'mix_type') || $defaults->{mix_type});
+		$clientprefs->set('mix_size',    $oldPrefs->client($client)->get($client, 'mix_size') || $defaults->{mix_size});
+		1;
+	});
+}
 
 my %filterHash = ();
 
@@ -221,16 +223,17 @@ sub _gotFilters {
 		$filterHash{$filter} = $filter;
 	}
 
-	# remove filter from client settings if it doesn't exist any more
-	foreach my $client (Slim::Player::Client::clients()) {
-
-		unless ( $filterHash{ $prefs->client($client)->get('mix_filter') } ) {
-
-			$log->warn('Filter "' . $prefs->client($client)->get('mix_filter') . '" does no longer exist - resetting');
-			$prefs->client($client)->set('mix_filter', 0);
-
+	if (main::LOCAL_PLAYERS) {
+		# remove filter from client settings if it doesn't exist any more
+		foreach my $client (Slim::Player::Client::clients()) {
+	
+			unless ( $filterHash{ $prefs->client($client)->get('mix_filter') } ) {
+	
+				$log->warn('Filter "' . $prefs->client($client)->get('mix_filter') . '" does no longer exist - resetting');
+				$prefs->client($client)->set('mix_filter', 0);
+	
+			}
 		}
-
 	}
 
 	unless ( $filterHash{ $prefs->get('mix_filter') } ) {
