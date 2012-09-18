@@ -202,7 +202,7 @@ sub initPlugin {
 		# initialize the filter list
 		Slim::Plugin::MusicMagic::Common->grabFilters();
 		
-		if ( main::WEBUI ) {	
+		if ( main::WEBUI && main::LOCAL_PLAYERS ) {	
 			Slim::Plugin::MusicMagic::ClientSettings->new;
 		}
 
@@ -287,6 +287,7 @@ sub initPlugin {
 					'icon-id'  => 'plugins/MusicMagic/html/images/icon.png',
 					titleStyle => 'moods'
 				},
+				canDisconnectedMode => 1,
 			}]);
 		}
 	}
@@ -847,8 +848,8 @@ sub cliMix {
 		$request->addResult('offset', 0);
 		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
 		my $thisWindow = {
-				'windowStyle' => 'icon_list',
-				'text'       => $request->string('MUSICMAGIC_MIX'),
+			'windowStyle' => 'icon_list',
+			'text'       => $request->string('MUSICMAGIC_MIX'),
 		};
 		$request->addResult('window', $thisWindow);
 
@@ -979,7 +980,7 @@ sub cliPlayMix {
 	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
 	my $insert = !$request->isNotCommand([['musicip'], ['insert']]);
 
-	my $mix = $client->isa('Slim::Player::Disconnected') ? $cache->get($client->id . 'listref') : $client->modeParam('musicmagic_mix');
+	my $mix = $client->isLocalPlayer ? $client->modeParam('musicmagic_mix') : $cache->get($client->id . 'listref');
 
 	$client->execute(["playlist",	$add ? "addtracks" 
 					: $insert ? "inserttracks"
@@ -1090,7 +1091,7 @@ sub _prepare_mix {
 		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
 	}
 
-	if (defined $mix && ref $mix eq "ARRAY" && defined $client && $client->isa('Slim::Player::Disconnected')) {
+	if (defined $mix && ref $mix eq "ARRAY" && defined $client && !$client->isLocalPlayer) {
 		# disconnected players can't keep a listref in the modeParam - store in cache instead
 		$cache->set($client->id . 'listref', $mix, 86400);
 		
