@@ -17,13 +17,19 @@ package Slim::Plugin::RandomPlay::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
-use Slim::Buttons::Home;
+if ( main::IP3K ) {
+	require Slim::Buttons::Home;
+}
+
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Prefs;
-use Slim::Player::Sync;
+
+if ( main::LOCAL_PLAYERS ) {
+	require Slim::Player::Sync;
+}
 
 use constant MENU_WEIGHT => 60;
 
@@ -146,7 +152,7 @@ sub initPlugin {
 
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
-		[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
+		[['playlist'], ['newsong', 'delete', keys %stopcommands]]) if main::LOCAL_PLAYERS;
 
 	# Regenerate the genre map after a rescan.
 	Slim::Control::Request::subscribe(\&generateGenreNameMap, [['rescan'], ['done']]);
@@ -172,7 +178,7 @@ sub initPlugin {
 	);
 
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
-	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
+	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart) if main::IP3K;
 
 	my @item = (
 		{
@@ -308,7 +314,7 @@ sub _shutdown {
 	Slim::Control::Jive::deleteMenuItem('randomplaymenu');
 	
 	# remove player-UI mode
-	Slim::Buttons::Common::setFunction('randomPlay', sub {});
+	Slim::Buttons::Common::setFunction('randomPlay', sub {}) if main::IP3K;
 	
 	# remove web menus
 	webPages();
@@ -980,7 +986,7 @@ sub playRandom {
 			}
 
 			# Don't do showBrieflys if visualiser screensavers are running as the display messes up
-			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
+			if (main::IP3K && Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 				$client->showBriefly( {
 					jive   => undef,
@@ -1002,7 +1008,7 @@ sub playRandom {
 
 		# Don't do showBrieflys if visualiser screensavers are running as 
 		# the display messes up
-		if (main::LOCAL_PLAYERS && $client->isLocalPlayer && Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
+		if (main::LOCAL_PLAYERS && $client->isLocalPlayer && main::IP3K && Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 			$client->showBriefly( {
 				jive => undef,
@@ -1169,6 +1175,8 @@ sub setMode {
 	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
+	
+	return unless main::IP3K;
 	
 	if (!$initialized) {
 		$client->bumpRight();
