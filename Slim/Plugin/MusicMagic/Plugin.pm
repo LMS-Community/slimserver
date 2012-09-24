@@ -907,10 +907,6 @@ sub _addJiveSong {
 	my $index   = shift; # playlist index
 	my $track   = shift || return;
 	
-	return Slim::Control::Queries::_addJiveSong($request, $loop, $count, $index, $track) if main::LOCAL_PLAYERS;
-	
-	# continue with a simplified versoin of _addJiveSong if Slim::Control::Queries::_addJiveSong is not available
-	# XXX - why is _addJiveSong not available?
 	my $songData  = Slim::Control::Queries::_songData(
 		$request,
 		$track,
