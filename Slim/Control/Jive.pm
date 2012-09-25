@@ -266,7 +266,7 @@ sub mainMenu {
 	my @menu = map {
 		_localizeMenuItemText( $client, $_ );
 	}(
-		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_radio2sr_migration') ) ? {
+		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_radio2sr_migration', 'force') ) ? {
 			stringToken => 'MIGRATE_PLAYER',
 			weight      => 1,
 			id          => 'makeMeSmart',
@@ -581,6 +581,8 @@ sub deleteAllMenuItems {
 	for my $menu ( @pluginMenus, @appMenus ) {
 		push @menuDelete, { id => $menu->{id} };
 	}
+
+	push @menuDelete, { id => 'makeMeSmart' } if main::SLIM_SERVICE;
 	
 	main::INFOLOG && $log->is_info && $log->info( $client->id . ' removing menu items: ' . Data::Dump::dump(\@menuDelete) );
 	
