@@ -120,19 +120,20 @@ sub checkClientActivity {
 	my $idletime = $prefs->get('idletime');
 	
 	if ($idletime) {
+		$idletime *= 60;
 		
 		if ( Slim::Music::Import->stillScanning() || $handler->isBusy($currenttime) ) {
 			
 			$hasbeenidle = 0;
-			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 		}
 		
 		else {
 			
-			$hasbeenidle++;
+			$hasbeenidle += $pollInterval;
 			
 			if ($hasbeenidle < $idletime) {
-				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 			}
 		}
 	}
@@ -146,7 +147,7 @@ sub checkClientActivity {
 	}
 	
 	else {
-		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
+		main::INFOLOG && $log->is_info && $log->info("Players have been idle for " . ($hasbeenidle / 60) . " minutes. Allowing System Standby...");
 		$handler->setIdle($currenttime);
 	}
 
@@ -233,7 +234,7 @@ sub checkpower_change {
 
 sub hasBeenIdle {
 	my ($class, $newValue) = @_;
-	$hasbeenidle = $newValue if $newValue;
+	$hasbeenidle = $newValue*60 if $newValue;
 	return $hasbeenidle;
 }
 
