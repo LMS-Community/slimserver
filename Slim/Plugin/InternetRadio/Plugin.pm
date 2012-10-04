@@ -363,7 +363,7 @@ sub radiotimeUsername {
 	
 	# XXX LMS support
 	if ( main::SLIM_SERVICE && $client ) {
-		if ( my $json = $prefs->client($client)->get( 'plugin_radiotime_accounts', undef, 'UserPref' ) ) {
+		if ( my $json = $prefs->client($client)->get( 'plugin_radiotime_accounts', 'force', 'UserPref' ) ) {
 			if ( my $accounts = eval { from_json($json) } ) {
 				if ( my $username = $accounts->[0]->{username} ) {
 					return $username;
