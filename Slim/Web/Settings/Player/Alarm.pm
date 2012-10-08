@@ -163,6 +163,7 @@ sub saveAlarm {
 	$alarm->time($t);
 	$alarm->enabled( $paramRef->{'alarm_enable' . $id} );
 	$alarm->repeat( $paramRef->{'alarm_repeat' . $id} );
+	$alarm->shufflemode( $paramRef->{'alarm_shufflemode' . $id} );
 
 	for my $day (0 .. 6) {
 
