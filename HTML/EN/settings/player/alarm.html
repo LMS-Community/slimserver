@@ -55,6 +55,21 @@
 			</select>
 		[% END %]
 	
+		[% alarmTitle = "SHUFFLE" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+			<select class="stdedit" name="alarm_shufflemode[% alarm.id %]" id="alarm_shufflemode[% alarm.id %]">
+
+				[% FOREACH option = {
+					'0' => 'SHUFFLE_OFF',
+					'1' => 'SHUFFLE_ON_SONGS',
+					'2' => 'SHUFFLE_ON_ALBUMS',
+				} %]
+					<option [% IF alarm.shufflemode == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+
+			</select>
+		[% END %]
+
 		[% alarmTitle = "ALARM_ALARM_REPEAT" | string %]
 		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="ALARM_ALARM_REPEAT_DESC" %]
 			<select class="stdedit" name="alarm_repeat[% alarm.id %]" id="alarm_repeat[% alarm.id %]">

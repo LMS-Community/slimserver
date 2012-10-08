@@ -117,6 +117,7 @@ sub new {
 		_days => (! defined $time || $time < 86400) ? [(1) x 7] : undef,
 		_enabled => 0,
 		_repeat => 1,
+		_shufflemode => 0,
 		_playlist => undef,
 		_title => undef,
 		_volume => undef, # Use default volume
@@ -252,6 +253,24 @@ sub repeat {
 	$self->{_repeat} = $newValue if defined $newValue;
 	
 	return $self->{_repeat};
+}
+=head3 shufflemode ( [0/1/2] )
+
+Sets/returns the shuffle mode that will be used for the playlist for this alarm.
+
+  0 = no shuffling
+  1 = shuffle-by-song
+  2 = shuffle-by-album
+
+=cut
+
+sub shufflemode {
+	my $self = shift;
+	my $newValue = shift;
+
+	$self->{_shufflemode} = $newValue if defined $newValue;
+
+	return $self->{_shufflemode};
 }
 
 =head3 time( [ $time ] )
@@ -1069,6 +1088,7 @@ sub _createSaveable {
 		_days => $self->{_days},
 		_enabled => $self->{_enabled},
 		_repeat => $self->{_repeat},
+		_shufflemode => $self->{_shufflemode},
 		_playlist => $self->{_playlist},
 		_title => $self->{_title},
 		_volume => $self->{_volume},
@@ -1359,6 +1379,7 @@ sub loadAlarms {
 		$alarm->{_days} = $prefAlarm->{_days};
 		$alarm->{_enabled} = $prefAlarm->{_enabled};
 		$alarm->{_repeat} = $prefAlarm->{_repeat};
+		$alarm->{_shufflemode} = $prefAlarm->{_shufflemode};
 		$alarm->{_playlist} = $prefAlarm->{_playlist};
 		$alarm->{_title} = $prefAlarm->{_title};
 		$alarm->{_volume} = $prefAlarm->{_volume};
