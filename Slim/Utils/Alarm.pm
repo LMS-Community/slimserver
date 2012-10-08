@@ -641,6 +641,13 @@ sub sound {
 			$client->execute(['mixer', 'volume', $self->volume]);
 		}
 
+		# Set the player shuffle mode prior to loading
+		# playlist
+		if (defined $self->shufflemode) {
+		  main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist shufflemode: ' . $self->shufflemode);
+		  $client->execute(['playlist', 'shuffle', $self->shufflemode]);
+		}
+
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
 			main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist url: ' . $self->playlist);
