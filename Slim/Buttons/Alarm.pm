@@ -45,6 +45,13 @@ my @daysMenu = (
 	{ title => 'ALARM_DAY0', type => 'checkbox', checked => \&dayEnabled, toggleFunc => \&toggleDay, params => {day => 0} },
 );
 
+# Alarm playlist shuffle option menu
+my @shuffleModeMenu = (
+	{ title => 'SHUFFLE_OFF',       type => 'checkbox', checked => \&shuffleModeSelected, toggleFunc => \&toggleShuffleMode, params => {shuffleMode => 0} },
+	{ title => 'SHUFFLE_ON_SONGS',  type => 'checkbox', checked => \&shuffleModeSelected, toggleFunc => \&toggleShuffleMode, params => {shuffleMode => 1} },
+	{ title => 'SHUFFLE_ON_ALBUMS', type => 'checkbox', checked => \&shuffleModeSelected, toggleFunc => \&toggleShuffleMode, params => {shuffleMode => 2} },
+);
+
 # Menu to confirm removal of an alarm
 my @deleteMenu = (
 	{
@@ -123,6 +130,11 @@ my @alarmMenu = (
 		title	=> 'ALARM_SELECT_PLAYLIST',
 		type	=> 'menu',
 		items => \&buildPlaylistMenu, 
+	},
+	{
+		title	=> 'SHUFFLE',
+		type	=> 'menu',
+		items => \@shuffleModeMenu,
 	},
 	{
 		title	=> 'ALARM_ALARM_REPEAT',
@@ -257,6 +269,30 @@ sub dayEnabled {
 		# $day should be [0-6]
 		return $alarm->day($day);  
 	}
+}
+
+sub toggleShuffleMode {
+	my $client = shift;
+	my $item = shift;
+
+	my $alarm = $client->modeParam('alarm_alarm');
+	my $shuffleMode = $item->{params}->{shuffleMode};
+
+	main::DEBUGLOG && $log->debug("toggleShuffleMode called for mode: $shuffleMode");
+
+	$alarm->shufflemode($shuffleMode);
+	saveAlarm($client, $alarm);
+}
+
+# Return whether the current alarm shuffle mode is set to a specific mode
+sub shuffleModeSelected {
+	my $client = shift;
+	my $item = shift;
+
+	my $alarm = $client->modeParam('alarm_alarm');
+	my $shuffleMode = $item->{params}->{shuffleMode};
+
+	return $alarm->shufflemode == $shuffleMode;
 }
 
 sub init {
