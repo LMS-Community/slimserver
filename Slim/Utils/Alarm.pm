@@ -643,6 +643,8 @@ sub sound {
 
 		# Set the player shuffle mode prior to loading
 		# playlist
+		my $currentShuffleMode = $prefs->client($client)->get('shuffle');
+		$self->{_originalShuffleMode} = $currentShuffleMode;
 		if (defined $self->shufflemode) {
 		  main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist shufflemode: ' . $self->shufflemode);
 		  $client->execute(['playlist', 'shuffle', $self->shufflemode]);
@@ -921,6 +923,11 @@ sub stop {
 			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
+
+		# Restore client shuffle mode
+		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
+		$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+
 		# Bug: 12760, 9569 - Return power state to that prior to the alarm
 		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
 		$client->power($self->{_originalPower});
