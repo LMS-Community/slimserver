@@ -117,6 +117,7 @@ sub new {
 		_days => (! defined $time || $time < 86400) ? [(1) x 7] : undef,
 		_enabled => 0,
 		_repeat => 1,
+		_shufflemode => 0,
 		_playlist => undef,
 		_title => undef,
 		_volume => undef, # Use default volume
@@ -252,6 +253,24 @@ sub repeat {
 	$self->{_repeat} = $newValue if defined $newValue;
 	
 	return $self->{_repeat};
+}
+=head3 shufflemode ( [0/1/2] )
+
+Sets/returns the shuffle mode that will be used for the playlist for this alarm.
+
+  0 = no shuffling
+  1 = shuffle-by-song
+  2 = shuffle-by-album
+
+=cut
+
+sub shufflemode {
+	my $self = shift;
+	my $newValue = shift;
+
+	$self->{_shufflemode} = $newValue if defined $newValue;
+
+	return $self->{_shufflemode};
 }
 
 =head3 time( [ $time ] )
@@ -622,6 +641,15 @@ sub sound {
 			$client->execute(['mixer', 'volume', $self->volume]);
 		}
 
+		# Set the player shuffle mode prior to loading
+		# playlist
+		my $currentShuffleMode = $prefs->client($client)->get('shuffle');
+		$self->{_originalShuffleMode} = $currentShuffleMode;
+		if (defined $self->shufflemode) {
+		  main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist shufflemode: ' . $self->shufflemode);
+		  $client->execute(['playlist', 'shuffle', $self->shufflemode]);
+		}
+
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
 			main::DEBUGLOG && $isDebug && $log->debug('Alarm playlist url: ' . $self->playlist);
@@ -895,6 +923,11 @@ sub stop {
 			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
+
+		# Restore client shuffle mode
+		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
+		$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+
 		# Bug: 12760, 9569 - Return power state to that prior to the alarm
 		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
 		$client->power($self->{_originalPower});
@@ -1069,6 +1102,7 @@ sub _createSaveable {
 		_days => $self->{_days},
 		_enabled => $self->{_enabled},
 		_repeat => $self->{_repeat},
+		_shufflemode => $self->{_shufflemode},
 		_playlist => $self->{_playlist},
 		_title => $self->{_title},
 		_volume => $self->{_volume},
@@ -1359,6 +1393,7 @@ sub loadAlarms {
 		$alarm->{_days} = $prefAlarm->{_days};
 		$alarm->{_enabled} = $prefAlarm->{_enabled};
 		$alarm->{_repeat} = $prefAlarm->{_repeat};
+		$alarm->{_shufflemode} = $prefAlarm->{_shufflemode};
 		$alarm->{_playlist} = $prefAlarm->{_playlist};
 		$alarm->{_title} = $prefAlarm->{_title};
 		$alarm->{_volume} = $prefAlarm->{_volume};
