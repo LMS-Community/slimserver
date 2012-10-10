@@ -85,7 +85,7 @@ sub alarmCommand {
 	my $client      = $request->client();
 	my $cmd         = $request->getParam('_cmd');
 
-	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume playlisturl url cmd );
+	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume shufflemode playlisturl url cmd );
 
 	# legacy support for "bare" alarm cli command (i.e., sending all tagged params)
 	my $params;
@@ -195,6 +195,7 @@ sub alarmCommand {
 			}
 
 			$alarm->volume($params->{volume}) if defined $params->{volume};
+			$alarm->shufflemode($params->{shufflemode}) if defined $params->{shufflemode};
 			$alarm->enabled($params->{enabled}) if defined $params->{enabled};
 			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
 
