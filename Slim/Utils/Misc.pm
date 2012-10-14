@@ -852,15 +852,7 @@ sub fileFilter {
 	elsif ($validRE && -f _) {
 		return 0 if $item !~ $validRE;
 	}
-	elsif ($validRE && -l _ && defined ($target = readlink($fullpath))) {
-		# fix relative/absolute path
-		$target = ($target =~ /^\// ? $target : catdir($dirname, $target));
 
-		if (-f $target) {
-			return 0 if $target !~ $validRE;
-		}
-	}
-	
 	return 1;
 }
 
