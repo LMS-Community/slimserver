@@ -1772,6 +1772,9 @@ sub updateOrCreateBase {
 		
 		return $class->updateOrCreate($track ? $track : $url, $attributeHash);
 	}
+	
+	# Bail if we're on slimservice and get here to avoid trying to access track table, etc
+	return if main::SLIM_SERVICE;
 
 	# Track will be defined or not based on the assignment above.
 	if ( !defined $track && !$isNew ) {
