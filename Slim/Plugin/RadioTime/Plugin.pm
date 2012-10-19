@@ -40,8 +40,10 @@ sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
 sub playerMenu { }
 
 sub trackInfoHandler {
-	my ( $client, $url, $track ) = @_;
+	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
+	return unless $client;
+
 	my $item;
 	
 	if ( $url =~ m{^http://opml\.(?:radiotime|tunein)\.com} ) {
@@ -49,6 +51,26 @@ sub trackInfoHandler {
 			name => cstring($client, 'PLUGIN_RADIOTIME_OPTIONS'),
 			url  => __PACKAGE__->trackInfoURL( $client, $url ),
 		};
+	}
+	else {
+		my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
+		my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
+		
+		if ( $artist || $title ) {
+			my $snURL = Slim::Networking::SqueezeNetwork->url(
+				'/api/tunein/v1/opml/context?artist='
+					. uri_escape_utf8($artist)
+					. '&track='
+					. uri_escape_utf8($title)
+			);
+	
+			$item = {
+				type      => 'link',
+				name      => $client->string('PLUGIN_RADIOTIME_ON_TUNEIN'),
+				url       => $snURL,
+				favorites => 0,
+			};
+		}
 	}
 	
 	return $item;

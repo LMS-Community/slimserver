@@ -47,3 +47,5 @@ PLUGIN_RADIOTIME_OPTIONS
 	RU	Параметры TuneIn Radio
 	SV	Alternativ för TuneIn Radio
 
+PLUGIN_RADIOTIME_ON_TUNEIN
+	EN	On TuneIn Radio
