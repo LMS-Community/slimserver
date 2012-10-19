@@ -227,9 +227,6 @@ sub trackInfoMenu {
 	
 	return unless $client;
 
-	# Pandora/TuneIn don't want to be inter-linked?!?
-	return if $url =~ m{^http://opml\.(?:radiotime|tunein)\.com};
-	
 	# Only show if in the app list
 	return unless $client->isAppEnabled('pandora');
 	
