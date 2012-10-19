@@ -17,6 +17,7 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use Digest::MD5 ();
 use URI;
+use URI::Escape qw(uri_escape_utf8);
 use URI::QueryParam;
 use Slim::Plugin::RadioTime::Metadata;
 use Slim::Utils::Strings qw(cstring);
@@ -32,6 +33,12 @@ sub initPlugin {
 		before => 'playitem',
 		func   => \&trackInfoHandler,
 	) );
+
+	# need a second trackinfo handler to add the On TuneIn item towards the bottom of the list
+	Slim::Menu::TrackInfo->registerInfoProvider( onRadioTime => (
+		before => 'middle',
+		func   => \&trackInfoOnMenuHandler,
+	) );
 }
 
 sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
@@ -40,7 +47,7 @@ sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }
 sub playerMenu { }
 
 sub trackInfoHandler {
-	my ( $client, $url, $track, $remoteMeta ) = @_;
+	my ( $client, $url, $track ) = @_;
 	
 	return unless $client;
 
@@ -52,7 +59,18 @@ sub trackInfoHandler {
 			url  => __PACKAGE__->trackInfoURL( $client, $url ),
 		};
 	}
-	else {
+	
+	return $item;
+}
+
+sub trackInfoOnMenuHandler {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	return unless $client;
+
+	my $item;
+	
+	if ( $url !~ m{^http://opml\.(?:radiotime|tunein)\.com} ) {
 		my $artist = $track->remote ? $remoteMeta->{artist} : $track->artistName;
 		my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 		
