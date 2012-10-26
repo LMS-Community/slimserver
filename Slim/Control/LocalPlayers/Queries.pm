@@ -1269,7 +1269,7 @@ sub statusQuery {
 		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
 		if ($track) {
-			my $metadata = _songData($request, $track, 'NKB') || {};	# get button remapping, title and artwork
+			my $metadata = _songData($request, $track, 'ONKB') || {};	# get button remapping, title and artwork
 			my $buttons = $metadata->{'buttons'} || {};
 			
 			if (Slim::Utils::Favorites->enabled && !$buttons->{'favorite'}) {
@@ -1290,7 +1290,7 @@ sub statusQuery {
 				if ($track->url =~ /(?:radiotime|tunein)\.com/) {
 					# button for Service menu
 					$buttons->{'service'} = {
-						icon    => main::SLIM_SERVICE ? 'static/images/icons/tuneinradio.png' : 'html/images/radio.png',
+						icon    => Slim::Plugin::RadioTime::Metadata->getIcon(),
 						window  => {
 							nextWindow => 'radios',
 						},
@@ -1299,6 +1299,7 @@ sub statusQuery {
 			}
 			
 			$request->addResult('buttons', $buttons) if $buttons;
+			$request->addResult('icon', $metadata->{icon}) if $metadata->{icon};
 		}
 
 		# if repeat is 1 (song) and modecurrent, then show the current song

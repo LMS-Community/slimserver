@@ -2596,6 +2596,7 @@ my %tagMap = (
 
 	  'c' => ['coverid',          'COVERID',       'coverid'],          # coverid
 	  'K' => ['artwork_url',      '',              'coverurl'],         # artwork URL, not in db
+	  'O' => ['icon',             '',              'icon'],             # music service's icon (not the track's artwork!)
 	  'B' => ['buttons',          '',              'buttons'],          # radio stream special buttons
 	  'L' => ['info_link',        '',              'info_link'],        # special trackinfo link for i.e. Pandora
 	  'N' => ['remote_title'],                                          # remote stream title
@@ -2759,6 +2760,7 @@ sub _songData {
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
 			$remoteMeta->{B} = $remoteMeta->{buttons};
 			$remoteMeta->{L} = $remoteMeta->{info_link};
+			$remoteMeta->{O} = $remoteMeta->{icon};
 		}
 	}
 	
@@ -2802,6 +2804,11 @@ sub _songData {
 		# only include it if it is true
 		elsif ($tag eq 'x' && $isRemote) {
 			$returnHash{$tagref->[0]} = 1;
+		}
+		
+		# service icon
+		elsif ($tag eq 'O' && $remoteMeta->{O}) {
+			$returnHash{$tagref->[0]} = $remoteMeta->{O};
 		}
 		
 		# special case artists (tag A and S)

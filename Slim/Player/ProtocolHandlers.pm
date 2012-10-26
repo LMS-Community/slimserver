@@ -115,11 +115,13 @@ sub iconHandlerForURL {
 	
 	my $handler;
 	foreach (keys %iconHandlers) {
-		if ($url =~ /$_/) {
+		if ($url =~ /$_/i) {
 			$handler = $iconHandlers{$_};
 			last;
 		}
 	}
+	
+	warn Data::Dump::dump(%iconHandlers, $url) unless $handler;
 
 	return $handler;
 }

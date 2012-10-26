@@ -184,7 +184,7 @@ sub initPlugin {
 	
 	my \$iconre = '$iconRE';
 	
-	if ( \$iconre ) {
+	if ( \$iconre && \$iconre ne 'radiotime' ) {
 		Slim::Player::ProtocolHandlers->registerIconHandler(
 	        qr/\$iconre/,
 	        sub { return \$class->_pluginDataFor('icon'); }
