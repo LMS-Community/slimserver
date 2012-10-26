@@ -793,13 +793,16 @@ sub getMetadataFor {
 		my $type = uc( $track->content_type ) . ' '
 			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
 		
+		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
+		
 		return {
 			artist   => $artist,
 			title    => $title,
 			type     => $type,
 			bitrate  => $track->prettyBitRate,
 			duration => $track->secs,
-			cover    => $cover,
+			icon     => $icon,
+			cover    => $cover || $icon,
 		};
 	}
 	
@@ -807,7 +810,7 @@ sub getMetadataFor {
 }
 
 sub getIcon {
-	my ( $class, $url ) = @_;
+	my ( $class, $url, $noFallback ) = @_;
 
 	my $handler;
 
@@ -815,11 +818,11 @@ sub getIcon {
 		return &{$handler};
 	}
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && !$noFallback ) {
 		return Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external');
 	}
 
-	return 'html/images/radio.png';
+	return $noFallback ? '' : 'html/images/radio.png';
 }
 
 sub canSeek {

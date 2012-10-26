@@ -22,7 +22,7 @@ use constant PARTNER_ID => 16;
 use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID;
 use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID . '&serial=';
 
-my $ICON = Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon');
+my $ICON;
 
 sub init {
 	my $class = shift;
@@ -36,6 +36,8 @@ sub init {
 		match => qr/(?:radiotime|tunein)\.com/,
 		func  => \&provider,
 	);
+
+	$ICON = Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon');
 }
 
 sub getConfig {
@@ -86,6 +88,7 @@ sub defaultMeta {
 	return {
 		title => Slim::Music::Info::getCurrentTitle($url),
 		icon  => $ICON,
+		cover => $ICON,
 		type  => $client->string('RADIO'),
 	};
 }

@@ -1820,7 +1820,7 @@ sub _playlistTracks {
 				$_->{'name'}          = $_->{'title'};
 				$_->{'name2'}		  = $_->{'artist'} . ' - ' . $_->{'album'};
 				
-				if ( $_->{'coverid'} ) {
+				if ( $_->{'coverid'} && !($_->{'remote'} && $_->{artwork_url}) ) {
 					$_->{'artwork_track_id'} = $_->{'coverid'};
 				}
 				
