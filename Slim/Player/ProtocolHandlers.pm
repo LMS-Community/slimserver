@@ -120,8 +120,6 @@ sub iconHandlerForURL {
 			last;
 		}
 	}
-	
-	warn Data::Dump::dump(%iconHandlers, $url) unless $handler;
 
 	return $handler;
 }

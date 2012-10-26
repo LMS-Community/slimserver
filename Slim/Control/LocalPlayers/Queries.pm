@@ -1268,6 +1268,8 @@ sub statusQuery {
 		
 		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
+		my $service_icon;
+
 		if ($track) {
 			my $metadata = _songData($request, $track, 'ONKB') || {};	# get button remapping, title and artwork
 			my $buttons = $metadata->{'buttons'} || {};
@@ -1299,8 +1301,11 @@ sub statusQuery {
 			}
 			
 			$request->addResult('buttons', $buttons) if $buttons;
-			$request->addResult('icon', $metadata->{icon}) if $metadata->{icon};
+			$service_icon = $metadata->{icon};
 		}
+
+		# always provide some service icon - fall back to the default icon if needed
+		$request->addResult('service_icon', $service_icon || Slim::Player::Protocols::HTTP->getIcon(''));
 
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {

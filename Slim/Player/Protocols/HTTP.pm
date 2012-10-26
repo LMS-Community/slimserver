@@ -829,7 +829,6 @@ sub getIcon {
 
 	my $handler;
 
-$log->error($url);
 	if ( ($handler = Slim::Player::ProtocolHandlers->iconHandlerForURL($url)) && ref $handler eq 'CODE' ) {
 		return &{$handler};
 	}
