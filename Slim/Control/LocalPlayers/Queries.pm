@@ -1276,7 +1276,7 @@ sub statusQuery {
 			
 			if (Slim::Utils::Favorites->enabled && !$buttons->{'favorite'}) {
 				$buttons->{'favorite'} = {
-					icon      => main::SLIM_SERVICE ? 'static/images/icons/favorites.png' : 'html/images/favorites.png',
+					icon      => main::SLIM_SERVICE ? Slim::Networking::SqueezeNetwork->url('static/images/icons/favorites.png', 'external') : 'html/images/favorites.png',
 					jiveStyle => 'love',
 					tooltip   => 'Favorite',
 					command   => ['favorites', 'add'],
@@ -1288,17 +1288,21 @@ sub statusQuery {
 				};
 			}
 			
-			if (!$buttons->{'service'}) {
-				if ($track->url =~ /(?:radiotime|tunein)\.com/) {
-					# button for Service menu
-					$buttons->{'service'} = {
-						icon    => Slim::Plugin::RadioTime::Metadata->getIcon(),
-						window  => {
-							nextWindow => 'radios',
-						},
-					};
-				}
-			}
+#			if (!$buttons->{'service'}) {
+#				if ($track->url =~ /(?:radiotime|tunein)\.com/) {
+#					# button for Service menu
+#					$buttons->{'service'} = {
+#						icon    => Slim::Plugin::RadioTime::Metadata->getIcon(),
+#						window  => {
+#							nextWindow => 'radios',
+#						},
+#					};
+#				}
+#			}
+			
+			# XXX - delete service button for now. It has never been used the way it should have.
+			# Once we decide really not to use it we should remove the service icon creators in all plugins
+			delete $buttons->{service};
 			
 			$request->addResult('buttons', $buttons) if $buttons;
 			$service_icon = $metadata->{icon};
