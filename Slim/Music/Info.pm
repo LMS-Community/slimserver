@@ -86,6 +86,22 @@ sub init {
 		return 0;
 	}
 
+	if (main::SLIM_SERVICE) {
+		require SDI::Util::Services;
+		
+		my $apps = SDI::Util::Services->getServiceDetails();
+	
+		foreach my $app ( values %{$apps} ) {
+			if ( $app->{icon} && (my $iconre = $app->{iconre}) ) {
+				my $icon = Slim::Networking::SqueezeNetwork->url($app->{icon}, 'external');
+				Slim::Player::ProtocolHandlers->registerIconHandler(
+					qr/$iconre/,
+					sub { return $icon; }
+				);
+			}
+		}
+	}
+
 	return 1;
 }
 
