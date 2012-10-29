@@ -290,6 +290,7 @@ sub gotPlaylist {
 		# Set metadata about this URL
 		Slim::Music::Info::setRemoteMetadata( $item->{'url'}, {
 			title   => $item->{'name'} || $item->{'title'} || $item->{'text'},
+			cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'},
 			ct      => $item->{'mime'},
 			secs    => $item->{'duration'},
 			bitrate => $item->{'bitrate'},
@@ -1299,6 +1300,7 @@ sub playItem {
 				# Set metadata about this URL
 				Slim::Music::Info::setRemoteMetadata( $otherURL, {
 					title   => $title,
+					cover   => $other->{'cover'} || $other->{'image'} || $other->{'icon'},
 					ct      => $other->{'mime'},
 					secs    => $other->{'duration'},
 					bitrate => $other->{'bitrate'},
@@ -1317,6 +1319,7 @@ sub playItem {
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
 				title   => $title,
+				cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'},
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},

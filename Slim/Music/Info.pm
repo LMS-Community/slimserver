@@ -86,6 +86,22 @@ sub init {
 		return 0;
 	}
 
+	if (main::SLIM_SERVICE) {
+		require SDI::Util::Services;
+		
+		my $apps = SDI::Util::Services->getServiceDetails();
+	
+		foreach my $app ( values %{$apps} ) {
+			if ( $app->{icon} && (my $iconre = $app->{iconre}) ) {
+				my $icon = Slim::Networking::SqueezeNetwork->url($app->{icon}, 'external');
+				Slim::Player::ProtocolHandlers->registerIconHandler(
+					qr/$iconre/,
+					sub { return $icon; }
+				);
+			}
+		}
+	}
+
 	return 1;
 }
 
@@ -469,6 +485,11 @@ sub setRemoteMetadata {
 	if ( $meta->{title} ) {
 		# set current title, after setting track->title so that calls to displayText do not cache empty title
 		setCurrentTitle( $url, $meta->{title} );
+	}
+	
+	if ( $meta->{cover} ) {
+		my $cache = Slim::Utils::Cache->new();
+		$cache->set( "remote_image_$url", $meta->{cover}, 3600 );
 	}
 
 	if ( $meta->{bitrate} ) {

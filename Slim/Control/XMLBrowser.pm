@@ -685,16 +685,19 @@ sub _cliQuery_done {
 
 					main::INFOLOG && $log->info("$method $url");
 					
+					my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $subFeed->{'icon'} || $request->getParam('icon');
+					
 					# Set metadata about this URL
 					Slim::Music::Info::setRemoteMetadata( $url, {
 						title   => $title,
+						cover   => $icon,
 						ct      => $subFeed->{'mime'},
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
 					} ) if main::SERVICES;
 					
 					my @infoTags;
-					if (my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon')) {
+					if ($icon) {
 						push @infoTags, 'icon:' . $icon;
 					}
 					
@@ -731,6 +734,7 @@ sub _cliQuery_done {
 					# Set metadata about this URL
 					Slim::Music::Info::setRemoteMetadata( $url, {
 						title   => $item->{'name'} || $item->{'title'},
+						cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'} || $request->getParam('icon'),
 						ct      => $item->{'mime'},
 						secs    => $item->{'duration'},
 						bitrate => $item->{'bitrate'},
