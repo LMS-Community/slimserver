@@ -1276,7 +1276,7 @@ sub statusQuery {
 			
 			if (Slim::Utils::Favorites->enabled && !$buttons->{'favorite'}) {
 				$buttons->{'favorite'} = {
-					icon      => main::SLIM_SERVICE ? Slim::Networking::SqueezeNetwork->url('static/images/icons/favorites.png', 'external') : 'html/images/favorites.png',
+					icon      => main::SLIM_SERVICE ? Slim::Networking::SqueezeNetwork->url('/static/images/icons/favorites.png', 'external') : 'html/images/favorites.png',
 					jiveStyle => 'love',
 					tooltip   => 'Favorite',
 					command   => ['favorites', 'add'],
