@@ -443,7 +443,7 @@ sub getMetadataFor {
 		cover   => $logo,
 		bitrate => $bitrate . 'k CBR',
 		type    => 'WMA (Sirius)',
-		buttons => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'sirius', 'PLUGIN_SIRIUS_MODULE_NAME')},
+#		buttons => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'sirius', 'PLUGIN_SIRIUS_MODULE_NAME')},
 	};
 }
 

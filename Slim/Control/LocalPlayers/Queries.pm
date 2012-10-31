@@ -1288,6 +1288,7 @@ sub statusQuery {
 				};
 			}
 			
+			# XXX - ignore service button for now. It has never been used the way it should have.
 #			if (!$buttons->{'service'}) {
 #				if ($track->url =~ /(?:radiotime|tunein)\.com/) {
 #					# button for Service menu
@@ -1299,10 +1300,6 @@ sub statusQuery {
 #					};
 #				}
 #			}
-			
-			# XXX - delete service button for now. It has never been used the way it should have.
-			# Once we decide really not to use it we should remove the service icon creators in all plugins
-			delete $buttons->{service};
 			
 			$request->addResult('buttons', $buttons) if $buttons;
 			$service_icon = $metadata->{icon};

@@ -723,15 +723,15 @@ sub getMetadataFor {
 				},
 				
 				# button for Service menu
-				service => {
-					icon    => $class->getIcon($url),
-					command => [ 'slacker', 'items' ],
-					params  => [ 'menu:1' ],
-					window  => {
-						title      => $client->string('PLUGIN_SLACKER_MODULE_NAME'),
-						nextWindow => 'menu',
-					},
-				},
+#				service => {
+#					icon    => $class->getIcon($url),
+#					command => [ 'slacker', 'items' ],
+#					params  => [ 'menu:1' ],
+#					window  => {
+#						title      => $client->string('PLUGIN_SLACKER_MODULE_NAME'),
+#						nextWindow => 'menu',
+#					},
+#				},
 			}
 		};
 	}
