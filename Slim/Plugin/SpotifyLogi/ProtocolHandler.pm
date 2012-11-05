@@ -135,7 +135,7 @@ sub onStream {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 	
-	my $icon = Slim::Networking::SqueezeNetwork->url('/static/images/icons/spotify/album.png');
+	my $icon = __PACKAGE__->getIcon();
 	
 	# Rewrite URL if it came from Triode's plugin
 	$url =~ s{^spotify:track}{spotify://track};
@@ -221,7 +221,7 @@ sub getMetadataFor {
 		bitrate   => '320k VBR',
 		type      => 'Ogg Vorbis (Spotify)',
 		icon      => $icon,
-		cover     => $icon,
+		cover     => Slim::Networking::SqueezeNetwork->url('/static/images/icons/spotify/album.png'),
 		info_link => 'plugins/spotifylogi/trackinfo.html',
 	};
 }
