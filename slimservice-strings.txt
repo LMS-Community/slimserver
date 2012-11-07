@@ -1447,4 +1447,6 @@ MESSAGE_COUNT
 	EN	Messages (%d)
 	ES	Mensajes (%d)
 	IT	Messaggi (%d)
-	
+
+MIGRATE_PLAYER
+	EN	Switch to UE Smart Radio
