@@ -414,6 +414,9 @@ sub getMetadataFor {
 			);
 		}
 	}
+	else {
+		$meta->{icon} ||= $icon;
+	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
 	
