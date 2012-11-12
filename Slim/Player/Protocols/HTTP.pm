@@ -808,7 +808,7 @@ sub getMetadataFor {
 		my $type = uc( $track->content_type ) . ' '
 			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
 		
-		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
+		my $icon = $class->getIcon($playlistURL, 'no fallback artwork') || $class->getIcon($url);
 		
 		return {
 			artist   => $artist,
