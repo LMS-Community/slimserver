@@ -169,6 +169,16 @@ sub _players_done {
 			}
 		}
 	}
+
+	foreach my $app ( values %{$allApps} ) {
+		if ( $app->{icon} && (my $iconre = $app->{iconre}) ) {
+			my $icon = Slim::Networking::SqueezeNetwork->url($app->{icon}, 'external');
+			Slim::Player::ProtocolHandlers->registerIconHandler(
+		        qr/$iconre/,
+		        sub { return $icon; }
+		    );
+		}
+	}
 	
 	# Setup apps for the web and classic player UI.
 	if ( main::WEBUI ) {

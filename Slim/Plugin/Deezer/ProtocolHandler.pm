@@ -290,7 +290,7 @@ sub _gotNextRadioTrack {
 		buttons   => {
 			fwd => $track->{canSkip} ? 1 : 0,
 			rew => 0,
-			service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME'),
+#			service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME'),
 		},
 	};
 	
@@ -389,7 +389,7 @@ sub _gotTrack {
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
+#		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
 	};
 	
 	$song->duration( $info->{duration} );
@@ -531,7 +531,7 @@ sub getMetadataFor {
 				type      => 'MP3 (Deezer)',
 				icon      => $icon,
 				cover     => $icon,
-				buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
+#				buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
 			};
 		}
 	}
@@ -591,7 +591,7 @@ sub getMetadataFor {
 		type      => 'MP3 (Deezer)',
 		icon      => $icon,
 		cover     => $icon,
-		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
+#		buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
 	};
 }
 
@@ -632,7 +632,7 @@ sub _gotBulkMetadata {
 			type      => 'MP3 (Deezer)',
 			info_link => 'plugins/deezer/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
+#			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'deezer', 'PLUGIN_DEEZER_MODULE_NAME')},
 		};
 	
 		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );

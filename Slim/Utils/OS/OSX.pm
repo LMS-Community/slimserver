@@ -427,7 +427,7 @@ sub _signalUpdateReady {
 
 sub canAutoUpdate { 1 }
 
-sub installerExtension { 'zip' }; 
+sub installerExtension { 'pkg' }; 
 sub installerOS { 'osx' }
 
 sub canRestartServer { 1 }

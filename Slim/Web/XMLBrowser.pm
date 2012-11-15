@@ -615,6 +615,7 @@ sub handleFeed {
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
 				title   => $title,
+				cover   => $streamItem->{'cover'} || $streamItem->{'image'} || $streamItem->{'icon'},
 				ct      => $streamItem->{'mime'},
 				secs    => $streamItem->{'duration'},
 				bitrate => $streamItem->{'bitrate'},
@@ -653,6 +654,7 @@ sub handleFeed {
 			# Set metadata about this URL
 			Slim::Music::Info::setRemoteMetadata( $url, {
 				title   => $item->{'name'} || $item->{'title'},
+				cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'},
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},

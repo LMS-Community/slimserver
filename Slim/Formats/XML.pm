@@ -15,7 +15,7 @@ use File::Slurp;
 use HTML::Entities;
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(weaken);
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape uri_escape_utf8);
 use XML::Simple;
 
 use Slim::Music::Info;
@@ -123,6 +123,13 @@ sub getFeedAsync {
 	if ( main::SLIM_SERVICE && $url =~ /(?:radiotime|tunein\.com)/ ) {
 		# Add real client IP for Radiotime so they can do proper geo-location
 		$headers{'X-Forwarded-For'} = $params->{client}->ip;
+		
+		# Add the RadioTime username
+		if ( $url !~ /username/ && $params->{query} && $params->{query} eq 'presets' 
+			&& ( my $username = Slim::Plugin::InternetRadio::Plugin->radiotimeUsername($params->{client}) )
+		) {
+			$url .= '&username=' . uri_escape_utf8($username);
+		}
 		
 =pod
 		# XXX try to track down a bug

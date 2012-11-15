@@ -25,7 +25,7 @@ my $versionFile;
 
 sub checkVersion {
 	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:ueml|UEMusicLibrary|Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|zip|exe)(\.tmp)?$/i);			
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:ueml|UEMusicLibrary|Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(dmg|zip|pkg|exe)(\.tmp)?$/i);			
 
 	return unless $prefs->get('checkVersion');
 

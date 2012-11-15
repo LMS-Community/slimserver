@@ -114,6 +114,7 @@ sub getMetadataFor {
 		artist      => $track->artistname,
 		album       => $track->albumname,
 		cover       => $track->coverurl,
+		icon        => __PACKAGE__->getIcon(),
 		duration    => $track->secs,
 		replay_gain => $track->replay_gain,
 		type        => cstring($client, uc($track->content_type)),
@@ -131,6 +132,10 @@ sub reinit {
 	main::DEBUGLOG && $log->debug("Re-init RemoteLibrary - $currentURL");
 	
 	return 1;
+}
+
+sub getIcon {
+	return Slim::Networking::SqueezeNetwork->url( '/static/images/icons/icon_ueml.png', 'remote' );
 }
 
 1;

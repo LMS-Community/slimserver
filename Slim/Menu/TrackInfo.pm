@@ -993,7 +993,7 @@ sub infoBitrate {
 			my ($song, $sourcebitrate, $streambitrate);
 			my $convert = '';
 			
-			if (blessed($client) && ($song = $client->currentSongForUrl($track->url))
+			if (blessed($client) && $client->isLocalPlayer && ($song = $client->currentSongForUrl($track->url))
 				&& ($sourcebitrate = $song->bitrate())
 				&& ($streambitrate = $song->streambitrate())
 				&& $sourcebitrate != $streambitrate)

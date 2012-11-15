@@ -135,7 +135,7 @@ sub onStream {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 	
-	my $icon = Slim::Networking::SqueezeNetwork->url('/static/images/icons/spotify/album.png');
+	my $icon = __PACKAGE__->getIcon();
 	
 	# Rewrite URL if it came from Triode's plugin
 	$url =~ s{^spotify:track}{spotify://track};
@@ -162,7 +162,7 @@ sub getMetadataFor {
 						command => [ 'spotify', 'star', $url ],
 					},
 					
-					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
+#					service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME'),
 				}
 			};
 		}
@@ -221,7 +221,7 @@ sub getMetadataFor {
 		bitrate   => '320k VBR',
 		type      => 'Ogg Vorbis (Spotify)',
 		icon      => $icon,
-		cover     => $icon,
+		cover     => Slim::Networking::SqueezeNetwork->url('/static/images/icons/spotify/album.png'),
 		info_link => 'plugins/spotifylogi/trackinfo.html',
 	};
 }
@@ -259,7 +259,7 @@ sub _gotBulkMetadata {
 			type      => 'Ogg Vorbis (Spotify)',
 			info_link => 'plugins/spotifylogi/trackinfo.html',
 			icon      => $icon,
-			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME')},
+#			buttons   => { service => Slim::Control::Jive::simpleServiceButton($client, __PACKAGE__->getIcon(), 'spotifylogi', 'PLUGIN_SPOTIFYLOGI_MODULE_NAME')},
 		};
 	
 		$cache->set( 'spotify_meta_' . $trackId, $meta, 86400 );

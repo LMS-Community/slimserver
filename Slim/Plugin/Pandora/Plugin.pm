@@ -226,7 +226,7 @@ sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
 	return unless $client;
-	
+
 	# Only show if in the app list
 	return unless $client->isAppEnabled('pandora');
 	

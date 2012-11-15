@@ -6,6 +6,7 @@ package Slim::Player::Playlist;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
 
 #
 # accessors for playlist information

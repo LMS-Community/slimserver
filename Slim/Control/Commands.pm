@@ -440,7 +440,7 @@ sub playlistXitemCommand {
 		
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
-			'listRef'  => Slim::Player::Playlist::playList($client),
+			'listRef'  => $client->isLocalPlayer ? Slim::Player::Playlist::playList($client) : undef,		# where is listRef being used anyway?
 			'client'   => $client,
 			'cmd'      => $cmd,
 			'callback' => sub {
@@ -497,7 +497,7 @@ sub playlistXitemCommand_done {
 	# Not sure anyone depends on this behaviour...
 	$request->addParam('_item', $path);
 
-	$client->currentPlaylistUpdateTime(Time::HiRes::time());
+	$client->isLocalPlayer && $client->currentPlaylistUpdateTime(Time::HiRes::time());
 
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 

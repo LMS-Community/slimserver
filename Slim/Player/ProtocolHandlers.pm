@@ -19,10 +19,13 @@ use Slim::Music::Info;
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
 # have a zero value
 my %protocolHandlers = ( 
-	file     => qw(Slim::Player::Protocols::File),
 	playlist => 0,
 	db       => 1,
 );
+
+if (main::LOCAL_PLAYERS) {
+	$protocolHandlers{'file'} = qw(Slim::Player::Protocols::File);
+}
 
 if (main::SERVICES) {
 	$protocolHandlers{'http'} = qw(Slim::Player::Protocols::HTTP);
@@ -115,7 +118,7 @@ sub iconHandlerForURL {
 	
 	my $handler;
 	foreach (keys %iconHandlers) {
-		if ($url =~ /$_/) {
+		if ($url =~ /$_/i) {
 			$handler = $iconHandlers{$_};
 			last;
 		}
