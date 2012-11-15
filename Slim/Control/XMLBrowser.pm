@@ -1607,7 +1607,7 @@ sub findAction {
 }
 
 sub _makePlayAction {
-	my ($subFeed, $item, $name, $nextWindow, $query, $item_id, $playIndex) = @_;
+	my ($subFeed, $item, $name, $nextWindow, $query, $mode, $item_id, $playIndex) = @_;
 	
 	my %params;
 	my $cmd;
@@ -1625,6 +1625,7 @@ sub _makePlayAction {
 			'item_id' => $item_id,
 		);
 		$params{'playIndex'} = $playIndex if defined $playIndex;
+		$params{'mode'}      = $mode if defined $mode;
 		
 		$cmd = [ $query, 'playlist', $name ],
 	}
@@ -1801,6 +1802,7 @@ sub _playlistControlContextMenu {
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
 		my $item_id = $request->getParam('item_id') || '';
+		my $mode    = $request->getParam('mode');
 		my $sub_id  = $args->{'subItemId'};
 		my $subFeed = $args->{'subFeed'};
 		
@@ -1823,7 +1825,7 @@ sub _playlistControlContextMenu {
 		
 		my $action;
 		
-		if ($action = _makePlayAction($subFeed, $item, 'add', 'parentNoRefresh', $query, $item_id)) {
+		if ($action = _makePlayAction($subFeed, $item, 'add', 'parentNoRefresh', $query, $mode, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('ADD_TO_END'),
 				style => 'item_add',
@@ -1831,7 +1833,7 @@ sub _playlistControlContextMenu {
 			},
 		}
 		
-		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $item_id)) {
+		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $mode, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('PLAY_NEXT'),
 				style => 'item_insert',
@@ -1839,7 +1841,7 @@ sub _playlistControlContextMenu {
 			},
 		}
 		
-		if ($action = _makePlayAction($subFeed, $item, 'play', 'nowPlaying', $query, $item_id)) {
+		if ($action = _makePlayAction($subFeed, $item, 'play', 'nowPlaying', $query, $mode, $item_id)) {
 			push @contextMenu, {
 				text => $request->string($addPlayAll ? 'PLAY_THIS_SONG' : 'PLAY'),
 				style => 'item_play',
@@ -1847,7 +1849,7 @@ sub _playlistControlContextMenu {
 			},
 		}
 		
-		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $request->getParam('item_id'), $sub_id))) {
+		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
 				style => 'item_playall',
