@@ -482,6 +482,10 @@ sub infoReplayGain {
 	}
 }
 
+# keep a very small cache of feeds to allow browsing into a artist info feed
+# we will be called again without $url or $albumId when browsing into the feed
+tie my %cachedFeed, 'Tie::Cache::LRU', 2;
+
 sub cliQuery {
 	$log->debug('cliQuery');
 	my $request = shift;
@@ -509,6 +513,7 @@ sub cliQuery {
 	my $menuMode       = $request->getParam('menu') || 0;
 	my $menuContext    = $request->getParam('context') || 'normal';
 	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
+	my $connectionId   = $request->connectionID;
 	
 	my %filter;
 	foreach (qw(artist_id genre_id year)) {
@@ -522,11 +527,6 @@ sub cliQuery {
 		menuContext   => $menuContext,
 		playlistIndex => $playlist_index,
 	};
-
-	unless ( $url || $albumId ) {
-		$request->setStatusBadParams();
-		return;
-	}
 	
 	my $feed;
 	
@@ -534,10 +534,19 @@ sub cliQuery {
 	if ( $url ) {
 		$feed = Slim::Menu::AlbumInfo->menu( $client, $url, undef, $tags, \%filter );
 	}
-	else {
+	elsif ( $albumId ) {
 		my $album = Slim::Schema->find( Album => $albumId );
 		$feed     = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, $tags, \%filter );
 	}
+	elsif ( $cachedFeed{ $connectionId } ) {
+		$feed = $cachedFeed{ $connectionId };
+	}
+	else {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	$cachedFeed{ $connectionId } = $feed if $feed;
 	
 	Slim::Control::XMLBrowser::cliQuery( 'albuminfo', $feed, $request );
 }
