@@ -108,7 +108,7 @@ sub menu {
 			
 			my $item = eval { $ref->{func}->( $client, $url, $artist, $remoteMeta, $tags ) };
 			if ( $@ ) {
-				$log->error( 'Album menu item "' . $ref->{name} . '" failed: ' . $@ );
+				$log->error( 'Artist menu item "' . $ref->{name} . '" failed: ' . $@ );
 				return;
 			}
 			
