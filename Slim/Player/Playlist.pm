@@ -6,6 +6,7 @@ package Slim::Player::Playlist;
 # version 2.
 
 use strict;
+use File::Spec::Functions qw(catfile);
 use Scalar::Util qw(blessed);
 
 #
