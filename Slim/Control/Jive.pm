@@ -805,6 +805,65 @@ sub alarmUpdateMenu {
 	};
 	push @menu, $playlistChoice;
 
+	my $currentShuffleMode = $alarm->shufflemode;
+	my @shuffleMode_menu= (
+		{
+			text    => $client->string('SHUFFLE_OFF'),
+			radio   => ($currentShuffleMode == 0) + 0,
+			onClick => 'refreshOrigin',
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['alarm', 'update'],
+					params => {
+						id => $params->{id},
+						shufflemode => 0,
+					},
+				},
+			},
+			nextWindow => 'refresh',
+		},
+		{
+			text    => $client->string('SHUFFLE_ON_SONGS'),
+			radio   => ($currentShuffleMode == 1) + 0,
+			onClick => 'refreshOrigin',
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['alarm', 'update'],
+					params => {
+						id => $params->{id},
+						shufflemode => 1,
+					},
+				},
+			},
+			nextWindow => 'refresh',
+		},
+		{
+			text    => $client->string('SHUFFLE_ON_ALBUMS'),
+			radio   => ($currentShuffleMode == 2) + 0,
+			onClick => 'refreshOrigin',
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['alarm', 'update'],
+					params => {
+						id => $params->{id},
+						shufflemode => 2,
+					},
+				},
+			},
+			nextWindow => 'refresh',
+		},
+	);
+	my $shuffleMode = {
+		text      => $client->string('SHUFFLE'),
+		count     => scalar(@shuffleMode_menu),
+		offset    => 0,
+		item_loop => \@shuffleMode_menu,
+	};
+	push @menu, $shuffleMode;
+
 	my $repeat = $alarm->repeat();
 	my $repeatOn = {
 		text     => $client->string("ALARM_ALARM_REPEAT"),
