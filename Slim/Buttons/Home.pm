@@ -940,6 +940,8 @@ sub updateMenu {
 		next unless $apps->{$app}->{home_menu} == 1;
 		
 		my $title = $apps->{$app}->{title};
+		next unless $title;
+		
 		if ( $title eq uc($title) ) {
 			$title = $client->string($title);
 		}

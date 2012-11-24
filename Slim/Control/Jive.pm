@@ -266,6 +266,20 @@ sub mainMenu {
 	my @menu = map {
 		_localizeMenuItemText( $client, $_ );
 	}(
+		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_radio2sr_migration', 'force') ) ? {
+			stringToken => 'MIGRATE_PLAYER',
+			weight      => 1,
+			id          => 'makeMeSmart',
+			node        => 'home',
+			actions     => {
+				go => {
+					cmd => ['smartradio_upgrade'],
+				}
+			},
+			window => {
+				'icon-id' => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/ue.png', 'external' ),
+			},
+		} : (),
 		main::SLIM_SERVICE ? () : {
 			stringToken    => 'MY_MUSIC',
 			weight         => 11,
@@ -567,6 +581,8 @@ sub deleteAllMenuItems {
 	for my $menu ( @pluginMenus, @appMenus ) {
 		push @menuDelete, { id => $menu->{id} };
 	}
+
+	push @menuDelete, { id => 'makeMeSmart' } if main::SLIM_SERVICE;
 	
 	main::INFOLOG && $log->is_info && $log->info( $client->id . ' removing menu items: ' . Data::Dump::dump(\@menuDelete) );
 	
