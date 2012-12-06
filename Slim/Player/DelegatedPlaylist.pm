@@ -76,7 +76,7 @@ sub addTracks {
 		}
 	}
 	
-	my $tags = 'uoaltiqydrTIHYKgAc';
+	my $tags = 'uoaltiqydrTIHYKgAcE';
 
 	my $tracks = Slim::Control::Queries::getTagDataForTracks($request, $tags, $tracksRef);
 	
