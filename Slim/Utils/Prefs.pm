@@ -188,7 +188,7 @@ sub init {
 		'variousArtistsString'  => undef,
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
-		'disabledextensionsaudio'    => 'ape,mpc',
+		'disabledextensionsaudio'    => 'ape,mpc,wv',
 		'disabledextensionsvideo'    => '',
 		'disabledextensionsimages'   => '',
 		'disabledextensionsplaylist' => '',
