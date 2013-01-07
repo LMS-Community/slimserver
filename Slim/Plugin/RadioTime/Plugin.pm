@@ -102,7 +102,7 @@ sub trackInfoURL {
 	my $serial = $class->getSerial($client);
 	
 	my $uri = URI->new('http://opml.radiotime.com/Options.ashx');
-	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial );
+	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial, mode => $rtinfo->{mode} );
 	
 	return $uri->as_string;
 }
