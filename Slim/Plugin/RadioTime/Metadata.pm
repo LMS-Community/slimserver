@@ -379,8 +379,9 @@ sub _fetchArtwork {
 		
 		if ( $track && $track->{title} && $track->{artist} ) {
 			
-			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&serial=%s&artist=%s&title=%s',
+			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&mode=%s&serial=%s&artist=%s&title=%s',
 				PARTNER_ID,
+				MODE,
 				Slim::Plugin::RadioTime::Plugin->getSerial($client),
 				$track->{artist},
 				$track->{title},
