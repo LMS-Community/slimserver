@@ -697,6 +697,8 @@ sub init {
 		1;
 	} );	
 
+	# migrateClient 15 is in Slim::Plugin::DateTime::Plugin
+
 	# initialise any new prefs
 	$prefs->init(\%defaults);
 	
