@@ -37,17 +37,7 @@ sub initPlugin {
 					# Do nothing, menu is returned via SN login
 				}
 				else {
-					my $http = Slim::Networking::SqueezeNetwork->new(
-						\&_gotRadio,
-						\&_gotRadioError,
-						{
-							Timeout => 30,
-						},
-					);
-					
-					my $url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio');
-					
-					$http->get($url);
+					$class->_initRadio();
 				}
 			},
 		);
@@ -67,6 +57,20 @@ sub initPlugin {
 	return;
 }
 
+sub _initRadio {
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_gotRadio,
+		\&_gotRadioError,
+		{
+			Timeout => 30,
+		},
+	);
+	
+	my $url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio');
+	
+	$http->get($url);
+}
+
 sub _gotRadio {
 	my $http = shift;
 	
@@ -84,11 +88,23 @@ sub _gotRadio {
 	__PACKAGE__->buildMenus( $json->{radio_menu} );
 }
 
+my $retry = 5;
 sub _gotRadioError {
 	my $http  = shift;
 	my $error = $http->error;
 	
 	$log->error( "Unable to retrieve radio directory from SN: $error" );
+	
+	# retry in a bit, but don't wait any longer than 5 minutes 
+	$retry ||= 5;
+	$retry = $retry > 300 ? $retry : ($retry * 2);
+	
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + $retry,
+		\&_initRadio
+	);
+	
 }
 
 sub buildMenus {
