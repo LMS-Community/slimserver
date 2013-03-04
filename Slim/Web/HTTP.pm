@@ -643,7 +643,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|image|plugins|apps|settings|firmware|clixmlbrowser)/}i || Slim::Web::Pages->isRawDownload($path) ) {
+			if ( !main::WEBUI || $path =~ m{^(?:html|music|video|image|plugins|apps|settings|firmware|clixmlbrowser|imageproxy)/}i || Slim::Web::Pages->isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && $skinMgr->isaSkin($1)) {
@@ -1159,7 +1159,7 @@ sub generateHTTPResponse {
 			return 0;
 
 		} elsif ($path =~ m{(?:image|music|video)/([^/]+)/(cover|thumb)} || 
-			$path =~ m{^plugins/cache/icons} || 
+			$path =~ m{^(?:plugins/cache/icons|imageproxy)} || 
 			$path =~ /\/\w+_(X|\d+)x(X|\d+)
 	                        (?:_([mpsSfFco]))?        # resizeMode, given by a single character
 	                        (?:_[\da-fA-F]+)? 		# background color, optional
