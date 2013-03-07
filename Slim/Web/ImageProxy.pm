@@ -64,16 +64,28 @@ sub getImage {
 	$http->get( $url );
 }
 
+# Return a proxied image URL if
+# - the given url is a fully qualified url, and
+# - the use_local_imageproxy pref is set (optional, as long as mysb.com is around), or
+# - a custom handler for the given url has been defined (eg. radiotime), or
+# - or the $force parameter is passed in
+#
+# $force can be used to create custom handlers dealing with custom "urls".
+# Eg. there could be a pattern to only pass some album id, together with a keyword, 
+# like "spotify::album::123456". It's then up to the image handler to get the real url.
 sub proxiedImage {
-	my ($url) = @_;
+	my ($url, $force) = @_;
 
 	# use external proxy on mysb.com
 	return $url if main::SLIM_SERVICE;
 
 	# only proxy external URLs
-	return $url unless $url && $url =~ /^https?:/;
+	return $url unless $force || ($url && $url =~ /^https?:/);
 
-	#main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
+	# don't use for all external URLs just yet, but only for URLs which have a handler defined
+	return $url unless $force || $prefs->get('use_local_imageproxy') || __PACKAGE__->getHandlerFor($url);
+
+	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
 	
 	my $ext = '.png';
 	
