@@ -133,7 +133,7 @@ sub pragma {
 	
 	if ( my $dbh = $self->_init_db ) {
 		$dbh->do("PRAGMA $pragma");
-warn "$pragma";		
+
 		if ( $pragma =~ /locking_mode/ ) {
 			# if changing the locking_mode we need to run a statement to change the lock
 			$dbh->do('SELECT 1 FROM cache LIMIT 1');
