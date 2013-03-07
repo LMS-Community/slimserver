@@ -15,7 +15,7 @@ sub new {
 	my $root = shift;
 	
 	if ( !$singleton ) {
-		$singleton = Slim::Utils::DbArtworkCache->new($root);
+		$singleton = Slim::Utils::DbArtworkCache->new($root, 'artwork');
 	}
 	
 	return $singleton;
@@ -29,8 +29,7 @@ use base 'Slim::Utils::DbCache';
 use File::Spec::Functions qw(catfile);
 
 sub new {
-	my $self = shift;
-	my $root  = shift;
+	my ($self, $root, $namespace, $expires) = @_;
 
 	if ( !defined $root ) {
 		require Slim::Utils::Prefs;
@@ -46,9 +45,10 @@ sub new {
 	}
 	
 	return $self->SUPER::new({
-		namespace => 'artwork',
-		noexpiry => 1,
-		root => $root
+		root      => $root,
+		namespace => $namespace || 'artwork',
+		noexpiry  => $expires ? 0 : 1,
+		default_expires_in => $expires,
 	});
 }
 
@@ -106,7 +106,7 @@ sub _init_db {
 	my $dbfile    = $self->_get_dbfile;
 	my $oldDBfile = catfile( $self->{root}, 'ArtworkCache.db' );
 	
-	if (!-f $dbfile && -r $oldDBfile) {
+	if ($self->{namespace} eq 'artwork' && !-f $dbfile && -r $oldDBfile) {
 		require File::Copy;
 		
 		if ( !File::Copy::move( $oldDBfile, $dbfile ) ) {

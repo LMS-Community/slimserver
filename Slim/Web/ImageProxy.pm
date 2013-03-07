@@ -21,7 +21,8 @@ tie my %handlers, 'Tie::RegexpHash';
 use constant ONE_YEAR => 86400 * 365;
 
 my $log   = logger('artwork.imageproxy');
-my $cache = Slim::Utils::ArtworkCache->new();
+my $prefs = preferences('server');
+my $cache = Slim::Web::ImageProxy::Cache->new();
 
 sub getImage {
 	my ($class, $client, $path, $params, $callback, $spec, @args) = @_;
@@ -98,7 +99,7 @@ sub _gotArtwork {
 	$ct =~ s/image\///;
 
 	# unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
-	my $fullpath = catdir( preferences('server')->get('cachedir'), Digest::MD5::md5_hex($cachekey) );
+	my $fullpath = catdir( $prefs->get('cachedir'), Digest::MD5::md5_hex($cachekey) );
 	File::Slurp::write_file($fullpath, $http->content);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
@@ -129,7 +130,7 @@ sub _gotArtwork {
 		}
 	
 		$callback && $callback->( $client, $params, $body, @$args );
-	} );
+	}, $cache );
 }
 
 sub _gotArtworkError {
@@ -186,6 +187,73 @@ sub registerHandler {
 sub getHandlerFor {
 	my ( $class, $url ) = @_;
 	return $handlers{ $url };
+}
+
+1;
+
+
+# custom artwork cache, extended to expire content after 30 days
+package Slim::Web::ImageProxy::Cache;
+
+use base 'Slim::Utils::DbArtworkCache';
+
+use strict;
+
+my $cache;
+
+sub new {
+	my $class = shift;
+	my $root = shift;
+
+	if ( !$cache ) {
+		$cache = Slim::Utils::DbArtworkCache->new($root, 'imgproxy', 86400*30);
+
+		# Set highmem params for the artwork cache
+		if ( $prefs->get('dbhighmem') ) {
+			$cache->pragma('cache_size = 20000');
+			$cache->pragma('temp_store = MEMORY');
+		}
+		else {
+			$cache->pragma('cache_size = 300');
+		}
+
+		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+			# start purge routine in a few seconds
+			require Slim::Utils::Timers;
+			Slim::Utils::Timers::setTimer( undef, time() + 10 + int(rand(5)), \&cleanup );
+		}
+	}
+	
+	return $cache;
+}
+
+sub cleanup {
+	my ($class, $force) = @_;
+	
+	# after startup don't purge if a player is on - retry later
+	my $interval;
+	
+	unless ($force) {
+		for my $client ( Slim::Player::Client::clients() ) {
+			if ($client->power()) {
+				main::INFOLOG && $log->is_info && $log->info('Skipping cache purge due to client activity: ' . $client->name);
+				$interval = 600;
+				last;
+			}
+		}
+	}
+	
+	my $now = time();
+	
+	if (!$interval) {
+		my $start = $now;
+			
+		$cache->purge;
+			
+		main::INFOLOG && $log->is_info && $log->info(sprintf("ImageProxy cache purge: %f sec", $now - $start));
+	}
+
+	Slim::Utils::Timers::setTimer( undef, $now + ($interval || 86400), \&cleanup );
 }
 
 1;
