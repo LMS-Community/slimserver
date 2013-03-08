@@ -79,8 +79,7 @@ PLUGIN_RADIOTIME_OPTIONS
 	RU	Параметры TuneIn Radio
 	SV	Alternativ för TuneIn Radio
 
-
-PLUGIN_RADIOTIME_LANGUAGE
+RADIOTIME_LANGUAGE
 	CS	Podle jazyka
 	DA	Efter Sprog
 	DE	Nach Sprache
@@ -95,7 +94,7 @@ PLUGIN_RADIOTIME_LANGUAGE
 	RU	По языкам
 	SV	Efter språk
 
-PLUGIN_RADIOTIME_LOCAL
+RADIOTIME_LOCAL
 	CS	Místní rozhlas
 	DA	Lokal Radio
 	DE	Lokales Radio
@@ -110,7 +109,7 @@ PLUGIN_RADIOTIME_LOCAL
 	RU	Местное радио
 	SV	Lokalradio
 
-PLUGIN_RADIOTIME_LOCATION
+RADIOTIME_LOCATION
 	CS	Podle lokality
 	DA	Efter sted
 	DE	Nach Standort
@@ -125,7 +124,7 @@ PLUGIN_RADIOTIME_LOCATION
 	RU	По регионам
 	SV	Efter land
 
-PLUGIN_RADIOTIME_WORLD
+RADIOTIME_WORLD
 	CS	Podle lokality
 	DA	Efter sted
 	DE	Nach Standort
@@ -140,7 +139,7 @@ PLUGIN_RADIOTIME_WORLD
 	RU	По регионам
 	SV	Efter land
 
-PLUGIN_RADIOTIME_MUSIC
+RADIOTIME_MUSIC
 	CS	Hudba
 	DA	Musik
 	DE	Musik
@@ -155,7 +154,7 @@ PLUGIN_RADIOTIME_MUSIC
 	RU	Музыка
 	SV	Musik
 
-PLUGIN_RADIOTIME_NEWS
+RADIOTIME_NEWS
 	CS	Novinky
 	DA	Nyheder
 	DE	Nachrichten
@@ -170,7 +169,7 @@ PLUGIN_RADIOTIME_NEWS
 	RU	Новости
 	SV	Nyheter
 
-PLUGIN_RADIOTIME_PODCAST
+RADIOTIME_PODCAST
 	CS	Podcasty
 	DA	Podcasts
 	DE	Podcasts
@@ -185,7 +184,7 @@ PLUGIN_RADIOTIME_PODCAST
 	RU	Подкасты
 	SV	Poddsändningar
 
-PLUGIN_RADIOTIME_SEARCH
+RADIOTIME_SEARCH
 	CS	Vyhledávání TuneIn
 	DA	Søg i TuneIn
 	DE	TuneIn durchsuchen
@@ -200,7 +199,7 @@ PLUGIN_RADIOTIME_SEARCH
 	RU	Поиск на TuneIn
 	SV	Sök på TuneIn
 
-PLUGIN_RADIOTIME_SPORTS
+RADIOTIME_SPORTS
 	CS	Sportovní
 	DA	Sport
 	DE	Sport
@@ -215,7 +214,7 @@ PLUGIN_RADIOTIME_SPORTS
 	RU	Спорт
 	SV	Sport
 
-PLUGIN_RADIOTIME_TALK
+RADIOTIME_TALK
 	CS	Mluvit
 	DA	Tale
 	DE	Talksendungen
@@ -230,7 +229,7 @@ PLUGIN_RADIOTIME_TALK
 	RU	Разговорное
 	SV	Pratradio
 
-PLUGIN_RADIOTIME_MY_PRESETS
+RADIOTIME_MY_PRESETS
 	CS	Mé Předvolby
 	DA	Mine forvalg
 	DE	Eigene Voreinstellungen

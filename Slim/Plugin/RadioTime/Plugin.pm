@@ -103,7 +103,7 @@ sub parseMenu {
 			push @$menu, $item;
 			
 			# TTP 864, Use the string token for name instead of whatever translated name we get
-			$item->{name} = 'PLUGIN_RADIOTIME_' . uc( $item->{class} );
+			$item->{name} = 'RADIOTIME_' . uc( $item->{class} );
 		}
 		
 		# Add special My Presets item that shows up for users with an account
@@ -113,7 +113,7 @@ sub parseMenu {
 			icon   => ICONS->{presets} || ICONS->{default},
 			iconre => 'radiotime',
 			items  => [],
-			name   => 'PLUGIN_RADIOTIME_MY_PRESETS',
+			name   => 'RADIOTIME_MY_PRESETS',
 			type   => 'link',
 			weight => 5,
 		};
