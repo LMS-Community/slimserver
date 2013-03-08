@@ -5,15 +5,6 @@ package Slim::Plugin::InternetRadio::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
-use Digest::MD5 ();
-use File::Basename qw(basename);
-use File::Path qw(mkpath);
-use File::Spec::Functions qw(catdir catfile);
-use HTTP::Date;
-use JSON::XS::VersionOneAndTwo;
-use Tie::IxHash;
-use URI::Escape qw(uri_escape_utf8);
-
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Plugin::RadioTime::Plugin;
 use Slim::Utils::Log;
@@ -21,9 +12,6 @@ use Slim::Utils::Prefs;
 
 my $log   = logger('plugin.radio');
 my $prefs = preferences('server');
-
-my $MENU  = [];
-my $ICONS = {};
 
 sub initPlugin {
 	my $class = shift;
@@ -104,8 +92,6 @@ sub _gotRadioError {
 sub buildMenus {
 	my ( $class, $items ) = @_;
 	
-	$MENU = $items;
-	
 	for my $item ( @{$items} ) {
 		$class->generate( $item );
 	}
@@ -139,7 +125,10 @@ sub generate {
 		$filter = $item->{filter}; # XXX needed?
 		$append = $item->{append};
 	}
-	
+	elsif ( $feed =~ /username=([^&]+)/ ) {
+		Slim::Plugin::RadioTime::Plugin->setUsername($1);
+	}
+
 	# Bug 14245, this class may already exist if it was created on startup with no SN account,
 	# and then we tried to re-create it after an SN account has been entered
 	my $pclass = "${package}::${subclass}";
@@ -273,57 +262,7 @@ sub setFeed { \$localFeed = \$_[1] }
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
 
-	# In order of preference
-	tie my %rtFormats, 'Tie::IxHash', (
-		aac     => 'aac',
-		ogg     => 'ogg',
-		mp3     => 'mp3',
-		wmpro   => 'wmap',
-		wma     => 'wma',
-		wmvoice => 'wma',
-		# Real Player is supported through the AlienBBC plugin
-		real    => 'rtsp',
-	);
-
-	my @formats = keys %rtFormats;
-	my $id = '';
-	
-	if ($client) {
-		my %playerFormats = map { $_ => 1 } $client->formats;
-	
-		# RadioTime's listing defaults to giving us mp3 and wma streams only,
-		# but we support a few more
-		@formats = grep {
-		
-			# format played natively on player?
-			my $canPlay = $playerFormats{$rtFormats{$_}};
-				
-			if ( !$canPlay && main::TRANSCODING ) {
-	
-				foreach my $supported (keys %playerFormats) {
-					
-					if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
-						$canPlay = 1;
-						last;
-					}
-	
-				}
-			}
-	
-			$canPlay;
-	
-		} keys %rtFormats;
-		
-		$id = $client->uuid || $client->id;
-	}
-
-	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
-	$feed .= 'formats=' . join(',', @formats);
-	
-	# Bug 15568, pass obfuscated serial to RadioTime
-	$feed .= '&serial=' . Digest::MD5::md5_hex($id);
-	
-	return $feed;
+	return Slim::Plugin::RadioTime::Plugin->fixUrl($feed, $client);
 }
 
 sub _pluginDataFor {
@@ -347,35 +286,7 @@ sub cantOpen {
 	}
 	
 	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
-		my ($id) = $url =~ /id=([^&]+)/;
-		if ( $id ) {
-			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=16'
-				. '&id=' . uri_escape_utf8($id)
-				. '&message=' . uri_escape_utf8($error);
-		
-			main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to RadioTime: $reportUrl");
-		
-			my $http = Slim::Networking::SimpleAsyncHTTP->new(
-				sub {
-					main::INFOLOG && $log->is_info && $log->info("RadioTime failure report OK");
-				},
-				sub {
-					my $http = shift;
-					main::INFOLOG && $log->is_info && $log->info( "RadioTime failure report failed: " . $http->error );
-				},
-				{
-					timeout => 30,
-				},
-			);
-		
-			$http->get($reportUrl);
-			
-			if ( main::SLIM_SERVICE ) {
-				# Let's log these on SN too
-				$error =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=RadioTime-Error rtid=${id} error=\"${error}\"");
-			}
-		}
+		Slim::Plugin::RadioTime::Plugin->reportError($url, $error);
 	}
 }
 

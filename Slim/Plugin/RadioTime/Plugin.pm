@@ -16,8 +16,11 @@ use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
 use Digest::MD5 ();
+use Tie::IxHash;
 use URI;
 use URI::QueryParam;
+use URI::Escape qw(uri_escape_utf8);
+
 use Slim::Plugin::RadioTime::Metadata;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -38,7 +41,10 @@ use constant ICONS => {
 	default  => '/plugins/RadioTime/html/images/radio.png',
 };
 
-use constant MAIN_URL => 'http://opml.radiotime.com/Index.aspx?partnerId=' . $Slim::Plugin::RadioTime::Metadata::PARTNERID;
+use constant PARTNER_ID  => 16;
+use constant MAIN_URL    => 'http://opml.radiotime.com/Index.aspx?partnerId=' . PARTNER_ID;
+use constant ERROR_URL   => 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=' . PARTNER_ID;
+use constant PRESETS_URL => 'http://opml.radiotime.com/Browse.ashx?c=presets&partnerId=' . PARTNER_ID;
 
 my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
@@ -101,9 +107,8 @@ sub parseMenu {
 		}
 		
 		# Add special My Presets item that shows up for users with an account
-		# TODO - deal with username/password
 		unshift @{$menu}, {
-			URL    => 'http://opml.radiotime.com/Browse.ashx?c=presets&partnerId=16',
+			URL    => PRESETS_URL,
 			class  => 'presets',
 			icon   => ICONS->{presets} || ICONS->{default},
 			iconre => 'radiotime',
@@ -115,6 +120,64 @@ sub parseMenu {
 	}
 	
 	return $menu;
+}
+
+sub fixUrl {
+	my ($class, $feed, $client) = @_;
+	
+	# In order of preference
+	tie my %rtFormats, 'Tie::IxHash', (
+		aac     => 'aac',
+		ogg     => 'ogg',
+		mp3     => 'mp3',
+		wmpro   => 'wmap',
+		wma     => 'wma',
+		wmvoice => 'wma',
+		# Real Player is supported through the AlienBBC plugin
+		real    => 'rtsp',
+	);
+
+	my @formats = keys %rtFormats;
+	
+	if ($client) {
+		my %playerFormats = map { $_ => 1 } $client->formats;
+	
+		# RadioTime's listing defaults to giving us mp3 and wma streams only,
+		# but we support a few more
+		@formats = grep {
+		
+			# format played natively on player?
+			my $canPlay = $playerFormats{$rtFormats{$_}};
+				
+			if ( !$canPlay && main::TRANSCODING ) {
+				require Slim::Player::TranscodingHelper;
+	
+				foreach my $supported (keys %playerFormats) {
+					
+					if ( Slim::Player::TranscodingHelper::checkBin(sprintf('%s-%s-*-*', $rtFormats{$_}, $supported)) ) {
+						$canPlay = 1;
+						last;
+					}
+	
+				}
+			}
+	
+			$canPlay;
+	
+		} keys %rtFormats;
+	}
+
+	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
+	$feed .= 'formats=' . join(',', @formats);
+	
+	# Bug 15568, pass obfuscated serial to RadioTime
+	$feed .= '&serial=' . $class->getSerial($client);
+	
+	if ( $feed =~ /presets/ && $feed !~ /username=/ && (my $username = $class->getUsername) ) {
+		$feed .= '&username=' . uri_escape_utf8($username);
+	}
+
+	return $feed;
 }
 
 sub trackInfoHandler {
@@ -166,6 +229,51 @@ sub getUsername {
 	}
 	else {
 		return $prefs->get('username');
+	}
+}
+
+# set username as parsed form mysb.com url (unless it's already defined)
+sub setUsername {
+	my ( $class, $username ) = @_;
+	
+	return if main::SLIM_SERVICE || !$username || $prefs->get('username');
+	
+	$prefs->set('username', $username);
+}
+
+sub reportError {
+	my ($class, $url, $error) = @_;
+	
+	return unless $error && $url =~ /(?:radiotime|tunein)\.com/;
+		
+	my ($id) = $url =~ /id=([^&]+)/;
+	if ( $id ) {
+		my $reportUrl = ERROR_URL
+			. '&id=' . uri_escape_utf8($id)
+			. '&message=' . uri_escape_utf8($error);
+	
+		main::INFOLOG && $log->is_info && $log->info("Reporting stream failure to RadioTime: $reportUrl");
+	
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			sub {
+				main::INFOLOG && $log->is_info && $log->info("RadioTime failure report OK");
+			},
+			sub {
+				my $http = shift;
+				main::INFOLOG && $log->is_info && $log->info( "RadioTime failure report failed: " . $http->error );
+			},
+			{
+				timeout => 30,
+			},
+		);
+	
+		$http->get($reportUrl);
+		
+		if ( main::SLIM_SERVICE ) {
+			# Let's log these on SN too
+			$error =~ s/"/'/g;
+			SDI::Util::Syslog::error("service=RadioTime-Error rtid=${id} error=\"${error}\"");
+		}
 	}
 }
 
