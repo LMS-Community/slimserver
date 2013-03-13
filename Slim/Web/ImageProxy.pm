@@ -111,7 +111,7 @@ sub _gotArtwork {
 	$ct =~ s/image\///;
 
 	# unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
-	my $fullpath = catdir( $prefs->get('cachedir'), Digest::MD5::md5_hex($cachekey) );
+	my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($cachekey) );
 	File::Slurp::write_file($fullpath, $http->content);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
