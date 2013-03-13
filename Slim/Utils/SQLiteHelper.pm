@@ -12,8 +12,6 @@ Slim::Utils::SQLiteHelper->init
 
 =head1 DESCRIPTION
 
-Currently only used for SN
-
 =head1 METHODS
 
 =cut
@@ -61,20 +59,6 @@ sub init {
 		die "DBD::SQLite version 1.34 or higher required\n";
 	}
 	
-	if ( main::SLIM_SERVICE ) {
-		# Create new empty database every time we startup on SN
-		require File::Slurp;
-		require FindBin;
-		
-		my $text = File::Slurp::read_file( "$FindBin::Bin/SQL/slimservice/slimservice-sqlite.sql" );
-		
-		$text =~ s/\s*--.*$//g;
-		for my $sql ( split (/;/, $text) ) {
-			next unless $sql =~ /\w/;
-			$dbh->do($sql);
-		}
-	}
-	
 	# Reset dbsource pref if it's not for SQLite
 	#                                              ... or if it's using the long filename Windows doesn't like
 	if ( $prefs->get('dbsource') !~ /^dbi:SQLite/ || $prefs->get('dbsource') !~ /library\.db/ ) {
@@ -82,7 +66,7 @@ sub init {
 		$prefs->set( dbsource => $class->source() );
 	}
 	
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	if ( !main::SCANNER ) {
 		# Event handler for notifications from scanner process
 		Slim::Control::Request::addDispatch(
 			['scanner', 'notify', '_msg'],
@@ -93,23 +77,13 @@ sub init {
 
 sub source {
 	my $source;
-	
-	if ( main::SLIM_SERVICE ) {
-		my $config = SDI::Util::SNConfig::get_config();
-		my $db = ( $config->{database}->{sqlite_path} || '.' ) . "/slimservice.$$.db";
-		
-		unlink $db if -e $db;
-		
-		$source = "dbi:SQLite:dbname=$db";
-	}
-	else {
-		my $dbFile = catfile( $prefs->get('librarycachedir'), 'library.db' );
 
-		# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Perl/Windows can't handle the long version
-		_migrateDBFile(catfile( $prefs->get('librarycachedir'), 'squeezebox.db' ), $dbFile);
-		
-		$source = sprintf( $prefs->get('dbsource'), $dbFile );
-	}
+	my $dbFile = catfile( $prefs->get('librarycachedir'), 'library.db' );
+
+	# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Perl/Windows can't handle the long version
+	_migrateDBFile(catfile( $prefs->get('librarycachedir'), 'squeezebox.db' ), $dbFile);
+	
+	$source = sprintf( $prefs->get('dbsource'), $dbFile );
 	
 	return $source;
 }

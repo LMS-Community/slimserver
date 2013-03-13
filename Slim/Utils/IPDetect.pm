@@ -57,13 +57,6 @@ sub _init {
 	if ($detectedIP) {
 		return;
 	}
-	
-	if ( main::SLIM_SERVICE ) {
-		if ( my $ipaddr_vpn = SDI::Util::SNConfig::get_config_value('ipaddr_vpn') ) {
-			$detectedIP = $ipaddr_vpn;
-			return;
-		}
-	}
 
 	# This code used to try and connect to www.google.com:80 in order to
 	# find the local IP address.

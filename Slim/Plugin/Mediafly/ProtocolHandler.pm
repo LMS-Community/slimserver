@@ -423,46 +423,4 @@ sub postExperience {
 	}
 }
 
-# SN only
-# Re-init Mediafly when a player reconnects
-sub reinit {
-	my ( $class, $client, $song ) = @_;
-
-	my $url = $song->currentTrack->url();
-	
-	main::DEBUGLOG && $log->debug("Re-init Mediafly - $url");
-
-	if ( my $track = $song->pluginData() ) {
-		# We have previous data about the currently-playing song
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Reset song duration/progress bar
-		if ( $track->{secs} ) {
-			# On a timer because $client->currentsongqueue does not exist yet
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					
-					$client->streamingProgressBar( {
-						url      => $url,
-						duration => $track->{secs},
-					} );
-				},
-			);
-		}
-	}
-	else {
-		# No data, just restart the current station
-		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
-
-		$client->execute( [ 'playlist', 'play', $url ] );
-	}
-	
-	return 1;
-}
-
 1;

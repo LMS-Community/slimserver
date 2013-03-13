@@ -224,16 +224,7 @@ sub splitTime {
 }
 
 sub hasAmPm {
-
-	if (main::SLIM_SERVICE) {
-		
-		return $prefs->client(shift)->get('timeFormat') =~ /%p/;
-	}
-
-	else {
-
-		return $prefs->get('timeFormat') =~ /(?:%p|%I)/;
-	}
+	return $prefs->get('timeFormat') =~ /(?:%p|%I)/;
 }
 
 =head2 bcdTime ( $time )

@@ -24,25 +24,11 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 use Slim::Buttons::SqueezeNetwork;
-
-if ( !main::SLIM_SERVICE ) {
-	require Slim::Networking::Discovery::Server;
-}
+use Slim::Networking::Discovery::Server;
 
 my $prefs = preferences('server');
 
 our @defaultSettingsChoices = qw(SHUFFLE REPEAT ALARM SYNCHRONIZE AUDIO_SETTINGS DISPLAY_SETTINGS);
-
-if ( main::SLIM_SERVICE ) {
-	push @defaultSettingsChoices, qw(
-		LANGUAGE
-		TIMEZONE
-		SETUP_PLAYER_CODE
-	);
-	
-	require YAML::XS;
-}
-
 our %menuParams = ();
 our %functions = ();
 
@@ -660,14 +646,6 @@ sub init {
 								my $modes = $client->display->modes;
 								my @opts  = ();
 								my $clock;
-
-								if (main::SLIM_SERVICE) {
-
-									# we want the clock on SN too
-									($clock) = grep { 
-										$modes->[$_]{desc}->[0] eq 'CLOCK';
-									} 0..$#{$modes};
-								}
 								
 								my $x     = 0;
 		
@@ -805,7 +783,7 @@ sub init {
 					'overlayRef'     => sub {
 						my ($client, $item) = @_;
 						return [undef, 
-							( !main::SLIM_SERVICE && Slim::Networking::Discovery::Server::is_self($item->{value}) )
+							Slim::Networking::Discovery::Server::is_self($item->{value})
 							? Slim::Buttons::Common::checkBoxOverlay($client, 1)
 							: $client->symbols('rightarrow')
 						];
@@ -815,157 +793,6 @@ sub init {
 			},
 		},
 	);
-	
-	if ( main::SLIM_SERVICE ) {
-		
-		# language choices
-		my $languageHash       = Slim::Utils::Strings::languageOptions(); # all langs
-		my @languageChoices    = ();
-
-		# build array of name value pairs for INPUT.Choice
-		for my $key ( sort keys %{$languageHash} ) {
-
-			push @languageChoices, {
-				value => $key, 
-				name  => $languageHash->{$key}
-			};
-		}
-	
-		$menuParams{'SETTINGS'}->{'submenus'}->{'LANGUAGE'} = {
-			'useMode'        => 'INPUT.Choice',
-			'condition'      => sub { 1 },
-			'listRef'        => \@languageChoices,
-			'headerArgs'     => 'C',
-			'header'         => '{SETUP_LANGUAGE}',
-			'headerAddCount'=> 1,
-			'pref'           => 'language',
-			'initialValue'   => sub { $prefs->client($_[0])->get('language') },
-			'onRight'        => sub {
-				my ($client, $item) = @_;
-				$prefs->client($client)->set('language', $item->{value});
-				# Refresh string cache
-				$client->display->displayStrings( Slim::Utils::Strings::clientStrings($client) );
-			},
-		};
-		
-		my $timezones = YAML::XS::LoadFile( $main::SN_PATH . "/config/timezones.yml" );
-		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'TIMEZONE'} = {
-			'useMode' => 'INPUT.Choice',
-			'condition' => sub { 1 },
-			'listRef' => $timezones,
-			'header'  => '{TIMEZONE}',
-			'headerAddCount' => 1,
-			'onRight' => sub {
-				my ($client, $item) = @_;
-				$prefs->client($client)->set('timezone', $item->value);
-			},
-			'initialValue' => sub {
-				my $client = shift;
-				
-				my $timezone
-					=  $prefs->client($client)->get('timezone') 
-					|| $client->playerData->userid->timezone;
-				
-				return $timezone;
-			},
-			'pref'       => 'timezone',
-			'overlayRef' => sub {
-				my ($client, $item) = @_;
-				my $timezone = $item->value;
-				my $returnMe = $client->formatTime($timezone);
-				
-				my $user_timezone
-					=  $prefs->client($client)->get('timezone') 
-					|| $client->playerData->userid->timezone;
-				
-				$returnMe   .= ' ' . Slim::Buttons::Common::checkBoxOverlay( 
-					$client, 
-					$user_timezone eq $timezone
-				);
-				return [undef, $returnMe];
-			},
-		};
-		
-		# Insert Time/Date format menu items in Display
-		my @old = splice @{ $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'listRef'} }, 5, 2, qw(
-			SETUP_TIMEFORMAT
-			SETUP_LONGDATEFORMAT
-		);		
-		push @{ $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'listRef'} }, @old;
-		
-		# time format choices
-		# list copied from Slim::Web::Setup.
-		# choices showing seconds removed
-		my %timeFormatDetail = (
-			q(%H:%M)    => 'hh:mm (24h)',
-			q(%H.%M)    => 'hh.mm (24h)',
-			q(%H,%M)    => 'hh,mm (24h)',
-			q(%Hh%M)    => "hh'h'mm (24h)",
-			q(%l:%M %p) => 'h:mm pm (12h)',
-			q(%k:%M)    => 'h:mm (24h)',
-			q(%k.%M)    => 'h.mm (24h)',
-			q(%k,%M)    => 'h,mm (24h)',
-			q(%kh%M)    => "h'h'mm (24h)",
-		);
-
-		my @timeFormatChoices = keys %timeFormatDetail;
-		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'SETUP_TIMEFORMAT'} = {
-			'useMode'      => 'INPUT.Choice',
-			'condition'    => sub { 1 },
-			'listRef'      => \@timeFormatChoices,
-			'header'       => "{SETUP_TIMEFORMAT}",
-			'headerAddCount'=> 1,
-			'name'         => sub {
-				my ($client, $item) = @_;
-				# format current time in current format option
-				return $client->timeF(undef, undef, $item) . ' - ' . $timeFormatDetail{$item};
-			},
-			'onRight'      => sub {
-				my ($client, $item) = @_;
-				$prefs->client($client)->set('timeFormat',$item);
-			},
-			'initialValue' => sub { $prefs->client($_[0])->get('timeFormat') },
-			'pref'         => 'timeFormat',
-		};
-		
-		my @dateFormatChoices = (
-			q(%A, %B %e, %Y),
-			q(%a, %b %e, %Y),
-			q(%a, %b %e, '%y),
-			q(%A, %e %B %Y),
-			q(%A, %e. %B %Y),
-			q(%a, %e %b %Y),
-			q(%a, %e. %b %Y),
-			q(%A %e %B %Y),
-			q(%A %e. %B %Y),
-			q(%a %e %b %Y),
-			q(%a %e. %b %Y),
-		);
-		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'SETUP_LONGDATEFORMAT'} = {
-			'useMode'     => 'INPUT.Choice',
-			'condition'   => sub { 1 },
-			'listRef'     => \@dateFormatChoices,
-			'header'      => "{SETUP_LONGDATEFORMAT}",
-			'headerAddCount'=> 1,
-			'name'        => sub {
-				my ($client, $item) = @_;
-				# format current time in current format option
-				return $client->longDateF(undef, undef, $item);
-			},
-			'onRight'     => sub {
-				my ($client, $item) = @_;
-				$prefs->client($client)->set('longdateFormat', $item);
-			},
-			'initialValue' => sub { $prefs->client($_[0])->get('longdateFormat') },
-			'pref'         => 'longdateFormat',
-		};
-		
-		# Delete menu items we don't want on SN
-		delete $menuParams{'SETTINGS'}->{'submenus'}->{'AUDIO_SETTINGS'}->{'submenus'}->{'REPLAYGAIN'};
-	}
 
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
 	Slim::Buttons::Home::addMenuOption('MUSICSOURCE', $menuParams{'SETTINGS'}->{'submenus'}->{'MUSICSOURCE'});
@@ -1141,22 +968,14 @@ sub serverListInit {
 
 	my @servers;
 	
-	if ( main::SLIM_SERVICE ) {
-		@servers = ({
-			name => $client->string('SQUEEZEBOX_SERVER'),
-			value => 0
-		});
-	}
-	else {
-		my $servers = Slim::Networking::Discovery::Server::getServerList();
+	my $servers = Slim::Networking::Discovery::Server::getServerList();
 
-		foreach (sort keys %$servers) {
-			push @servers, {
-				name => Slim::Utils::Strings::getString($_),
-				value => Slim::Networking::Discovery::Server::getServerAddress($_)
-			};
-		}	
-	}
+	foreach (sort keys %$servers) {
+		push @servers, {
+			name => Slim::Utils::Strings::getString($_),
+			value => Slim::Networking::Discovery::Server::getServerAddress($_)
+		};
+	}	
 
 	push @servers, {
 		name => $client->string('SQUEEZENETWORK'),
@@ -1173,7 +992,7 @@ sub switchServer {
 		Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
 	} 
 
-	elsif ( !main::SLIM_SERVICE && Slim::Networking::Discovery::Server::is_self($server->{value}) ) {
+	elsif ( Slim::Networking::Discovery::Server::is_self($server->{value}) ) {
 		$client->bumpRight();
 	}
 	else {

@@ -125,11 +125,6 @@ sub initPlugin {
 		\&leaveScreenSaverRssNews,
 		'PLUGIN_RSSNEWS_SCREENSAVER'
 	);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Feeds are per-client on SN, so don't try to load global feeds
-		return;
-	}
 
 	if (main::DEBUGLOG && $log->is_debug) {
 
@@ -167,16 +162,11 @@ sub setMode {
 		return;
 	}
 	
-	my @feeds = ();
-	if ( main::SLIM_SERVICE ) {
-		@feeds = feedsForClient($client);
-	}
-	
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header => '{PLUGIN_RSSNEWS}',
 		headerAddCount => 1,
-		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
+		listRef => $prefs->get('feeds'),
 		modeName => 'RSS Plugin',
 		onRight => sub {
 			my $client = shift;
@@ -298,13 +288,7 @@ sub tickerUpdate {
 sub getNextFeed {
 	my $client = shift;
 
-	my @feeds = ();
-	if ( main::SLIM_SERVICE ) {
-		@feeds = feedsForClient($client);
-	}
-	else {
-		@feeds = @{ $prefs->get('feeds') };
-	}
+	my @feeds = @{ $prefs->get('feeds') };
 	
 	# select the next feed and fetch it
 	my $index = $savers->{$client}->{feed_index} || 0;
@@ -374,15 +358,7 @@ sub gotError {
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
 	
-	my @feeds = ();
-	if ( main::SLIM_SERVICE ) {
-		@feeds = feedsForClient($client);
-	}
-	else {
-		@feeds = @{ $prefs->get('feeds') };
-	}
-	
-	if ( $errors >= scalar @feeds ) {
+	if ( $errors >= scalar @{ $prefs->get('feeds') } ) {
 
 		$log->error("All feeds failed, giving up!!");
 		
@@ -564,17 +540,9 @@ sub tickerLines {
 		my $format = preferences('server')->get('timeFormat');
 		$format =~ s/.\%S//i;
 		
-		my $overlay;
-		if ( main::SLIM_SERVICE ) {
-			$overlay = $client->timeF();
-		}
-		else {
-			$overlay = Slim::Utils::DateTime::timeF(undef,$format);
-		}
-		
 		$parts = {
 			'line'   => [ $line1 ],
-			'overlay' => [ $overlay ],
+			'overlay' => [ Slim::Utils::DateTime::timeF(undef,$format) ],
 			'ticker' => [ undef, $line2 ],
 		};
 
@@ -593,40 +561,6 @@ sub tickerLines {
 	$savers->{$client}->{newfeed} = $new_feed_next;
 
 	return $parts;
-}
-
-# SN only
-sub feedsForClient {
-	my $client = shift;
-	
-	my $userid = $client->playerData->userid->id;
-	
-	my @f = SDI::Service::Model::FavoriteFeed->search(
-		userid => $userid,
-		{ order_by => 'num' }
-	);
-													  
-	my @feeds = map { 
-		{ 
-			name  => Slim::Utils::Unicode::utf8decode($_->title), 
-			value => $_->url,
-		}
-	} @f;
-	
-	# check if the user deleted feeds so we don't load the defaults
-	my $deletedFeeds = preferences('server')->client($client)->get('deleted_feeds');
-	
-	# Populate with all default feeds
-	if ( !scalar @feeds && !$deletedFeeds ) {
-		@feeds = map { 
-			{ 
-				name  => $_->title, 
-				value => $_->url,
-			}
-		} SDI::Service::Model::FavoriteFeed->addDefaults( $userid );
-	}
-	
-	return @feeds;
 }
 
 1;

@@ -64,13 +64,6 @@ sub loadConversionTables {
 		push @convertFiles, catdir($baseDir, 'custom-convert.conf');
 	}
 	
-	if ( main::SLIM_SERVICE ) {
-		# save time by only including native formats on SN
-		@convertFiles = (
-			catdir($FindBin::Bin, 'slimservice-convert.conf'),
-		);
-	}
-	
 	foreach my $convertFileName (@convertFiles) {
 
 		# can't read? next.

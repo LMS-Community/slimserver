@@ -17,14 +17,8 @@ use strict;
 use vars qw(@ISA);
 
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require SDI::Service::Player::SqueezeNetworkClient;
-		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
-	}
-	else {
-		require Slim::Player::Squeezebox2;
-		push @ISA, qw(Slim::Player::Squeezebox2);
-	}
+	require Slim::Player::Squeezebox2;
+	push @ISA, qw(Slim::Player::Squeezebox2);
 }
 
 use MIME::Base64;
@@ -371,11 +365,6 @@ sub hasFrontPanel {
 }
 
 sub hasRolloff { 1 }
-
-# SN only, this checks that the player's firmware version supports compression
-sub hasCompression {
-	return shift->revision >= 30;
-}
 
 # Do we have support for client-side scrolling?
 sub hasScrolling {

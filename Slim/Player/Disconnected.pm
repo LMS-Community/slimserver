@@ -22,14 +22,8 @@ use Slim::Player::Client;
 use Slim::Display::NoDisplay;
 
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require SDI::Service::Player::SqueezeNetworkClient;
-		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
-	}
-	else {
-		require Slim::Player::Client;
-		push @ISA, qw(Slim::Player::Client);
-	}
+	require Slim::Player::Client;
+	push @ISA, qw(Slim::Player::Client);
 }
 
 sub new {
@@ -65,8 +59,5 @@ sub modelName      { 'Dummy Client' }
 sub decoder        { }
 sub vfd            { undef }
 sub canPowerOff    { 0 }
-
-# SLIM_SERVICE
-sub getControllerPIN { }
 
 1;

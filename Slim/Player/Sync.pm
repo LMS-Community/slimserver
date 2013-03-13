@@ -101,31 +101,11 @@ sub canSyncWith {
 	my @buddies = ();
 
 	if (blessed($client) && $client->isPlayer()) {
-		
-		# SN, can only sync with players on the same account
-		my $userid;
-		if ( main::SLIM_SERVICE ) {
-			$userid = $client->playerData->userid;
-		}
 
 		for my $otherclient (Slim::Player::Client::clients()) {
 
 			# skip ourself
 			next if ($client eq $otherclient);
-			
-			# On SN, only sync with players on the current account
-			if ( main::SLIM_SERVICE ) {
-				next if $userid != $otherclient->playerData->userid;
-				
-				# Skip players with old firmware
-				if (
-					( $otherclient->model eq 'squeezebox2' && $otherclient->playerData->rev < 82 )
-					||
-					( $otherclient->model eq 'transporter' && $otherclient->playerData->rev < 32 )
-				) {
-					next;
-				}
-			}
 
 			# we only sync slimproto devices
 			next if (!$otherclient->isPlayer());

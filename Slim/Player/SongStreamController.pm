@@ -77,6 +77,7 @@ sub track {
 	return shift->{'song'}->currentTrack();
 }
 
+# XXX - still needed in LMS mode?
 sub playerProxyStreaming {
 	my $self = shift;
 	$self->{'playerProxyStreaming'} = shift if @_;

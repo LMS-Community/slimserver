@@ -270,24 +270,22 @@ sub init {
 		Slim::Control::Request::addDispatch(['prefset', '_namespace', '_prefname', '_newvalue'], [0, 0, 1, undef]);
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		# migrate old prefs across
-		$prefs->migrate(1, sub {
-			unless (-d $path) { mkdir $path; }
-			unless (-d $path) { logError("can't create new preferences directory at $path"); }
+	# migrate old prefs across
+	$prefs->migrate(1, sub {
+		unless (-d $path) { mkdir $path; }
+		unless (-d $path) { logError("can't create new preferences directory at $path"); }
 
-			for my $pref (keys %defaults) {
-				my $old = Slim::Utils::Prefs::OldPrefs->get($pref);
+		for my $pref (keys %defaults) {
+			my $old = Slim::Utils::Prefs::OldPrefs->get($pref);
 
-				# bug 7237: don't migrate dbsource if we're upgrading from SS6.3
-				next if $pref eq 'dbsource' && $old && $old =~ /SQLite/i;
+			# bug 7237: don't migrate dbsource if we're upgrading from SS6.3
+			next if $pref eq 'dbsource' && $old && $old =~ /SQLite/i;
 
-				$prefs->set($pref, $old) if !$prefs->exists($pref) && defined $old;
-			}
+			$prefs->set($pref, $old) if !$prefs->exists($pref) && defined $old;
+		}
 
-			1;
-		});
-	}
+		1;
+	});
 	
 	unless (-d $path && -w $path) {
 		logError("unable to write to preferences directory $path");
@@ -298,65 +296,63 @@ sub init {
 		$prefs->set( 'rank-PLUGIN_PICKS_MODULE_NAME' => 25 );
 	} );
 
-	if ( !main::SLIM_SERVICE ) {
-		# migrate old preferences to new client preferences
-		$prefs->migrateClient(1, sub {
-			my ($clientprefs, $client) = @_;
+	# migrate old preferences to new client preferences
+	$prefs->migrateClient(1, sub {
+		my ($clientprefs, $client) = @_;
 
-			my @migrate = qw(
-							 alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist
-							 powerOnresume lame maxBitrate lameQuality
-							 synchronize syncVolume syncPower powerOffDac disableDac transitionType transitionDuration digitalVolumeControl
-							 mp3SilencePrelude preampVolumeControl digitalOutputEncoding clockSource polarityInversion wordClockOutput
-							 replayGainMode mp3StreamingMethod
-							 playername titleFormat titleFormatCurr playingDisplayMode playingDisplayModes
-							 screensaver alarmsaver idlesaver offsaver screensavertimeout visualMode visualModes
-							 powerOnBrightness powerOffBrightness idleBrightness autobrightness
-							 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
-							 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont
-							 irmap disabledirsets
-							 power mute volume bass treble pitch repeat shuffle currentSong
-							);
+		my @migrate = qw(
+						 alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist
+						 powerOnresume lame maxBitrate lameQuality
+						 synchronize syncVolume syncPower powerOffDac disableDac transitionType transitionDuration digitalVolumeControl
+						 mp3SilencePrelude preampVolumeControl digitalOutputEncoding clockSource polarityInversion wordClockOutput
+						 replayGainMode mp3StreamingMethod
+						 playername titleFormat titleFormatCurr playingDisplayMode playingDisplayModes
+						 screensaver alarmsaver idlesaver offsaver screensavertimeout visualMode visualModes
+						 powerOnBrightness powerOffBrightness idleBrightness autobrightness
+						 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
+						 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont
+						 irmap disabledirsets
+						 power mute volume bass treble pitch repeat shuffle currentSong
+						);
 
-			my $toMigrate;
+		my $toMigrate;
 
-			for my $pref (@migrate) {
-				my $old = Slim::Utils::Prefs::OldPrefs->clientGet($client, $pref);
-				$toMigrate->{$pref} = $old if defined $old;
-			}
+		for my $pref (@migrate) {
+			my $old = Slim::Utils::Prefs::OldPrefs->clientGet($client, $pref);
+			$toMigrate->{$pref} = $old if defined $old;
+		}
 
-			# create migrated version using init as will not call the onchange callbacks
-			$clientprefs->init($toMigrate);
+		# create migrated version using init as will not call the onchange callbacks
+		$clientprefs->init($toMigrate);
+	
+		1;
+	});
+
+	$prefs->migrate( 3, sub {
 		
-			1;
-		});
-
-		$prefs->migrate( 3, sub {
+		if ($prefs->exists('cachedir') && $prefs->get('cachedir') =~ /SqueezeCenter/i) {
 			
-			if ($prefs->exists('cachedir') && $prefs->get('cachedir') =~ /SqueezeCenter/i) {
-				
-				$prefs->set('cachedir', defaultCacheDir());
-				makeCacheDir();
-				
-			}
+			$prefs->set('cachedir', defaultCacheDir());
+			makeCacheDir();
 			
-			1;
-		} );
+		}
 		
-		$prefs->migrate( 4, sub {
-			$prefs->set('librarycachedir', $prefs->get('cachedir'));
-			1;
-		} );
+		1;
+	} );
+	
+	$prefs->migrate( 4, sub {
+		$prefs->set('librarycachedir', $prefs->get('cachedir'));
+		1;
+	} );
 
-		# on Windows we don't provide a means to disable the autoprefs value any longer
-		# disable automatic scanning automatically, in case user had been using an earlier beta where it was enabled
-		$prefs->migrate( 8, sub {
-			if (main::ISWINDOWS && $prefs->get('autorescan')) {
-				$prefs->set( autorescan => 0 );
-			}
-			1;
-		} );
-	}
+	# on Windows we don't provide a means to disable the autoprefs value any longer
+	# disable automatic scanning automatically, in case user had been using an earlier beta where it was enabled
+	$prefs->migrate( 8, sub {
+		if (main::ISWINDOWS && $prefs->get('autorescan')) {
+			$prefs->set( autorescan => 0 );
+		}
+		1;
+	} );
 
 	# migrate client prefs to version 2 - sync prefs changed
 	$prefs->migrateClient(2, sub {
@@ -516,49 +512,47 @@ sub init {
 		return 1;
 	} );
 
-	if ( !main::SLIM_SERVICE ) {
-		# Bug 8555, add Clock as an option to the Boom display options if it currently the previous default
-		$prefs->migrateClient( 7, sub {
-			my ( $cprefs, $client ) = @_;
-			if ( $client->isa('Slim::Player::Boom') ) {
-				if ( my $existing = $cprefs->get('playingDisplayModes') ) {
-					if (scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
-						$cprefs->set('playingDisplayModes', [0..10]);
-					}
+	# Bug 8555, add Clock as an option to the Boom display options if it currently the previous default
+	$prefs->migrateClient( 7, sub {
+		my ( $cprefs, $client ) = @_;
+		if ( $client->isa('Slim::Player::Boom') ) {
+			if ( my $existing = $cprefs->get('playingDisplayModes') ) {
+				if (scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
+					$cprefs->set('playingDisplayModes', [0..10]);
 				}
 			}
-			1;
-		} );
+		}
+		1;
+	} );
+	
+	# Add Music Stores menu item after Music Services
+	$prefs->migrateClient( 8, sub {
+		my ( $cprefs, $client ) = @_;
+		my $menuItem = $cprefs->get('menuItem');
 		
-		# Add Music Stores menu item after Music Services
-		$prefs->migrateClient( 8, sub {
-			my ( $cprefs, $client ) = @_;
-			my $menuItem = $cprefs->get('menuItem');
-			
-			# Ignore if MUSIC_STORES is already present
-			return 1 if grep /MUSIC_STORES/, @{$menuItem};
-			
-			my $done = 0;
-			my $i = 0;
-			for my $item ( @{$menuItem} ) {
-				$i++;
-				if ( $item eq 'MUSIC_SERVICES' ) {
-					splice @{$menuItem}, $i, 0, 'MUSIC_STORES';
-					$done = 1;
-					last;
-				}
-			}
-			
-			if ( !$done ) {
-				# Just add the item at the end
-				push @{$menuItem}, 'MUSIC_STORES';
-			}
+		# Ignore if MUSIC_STORES is already present
+		return 1 if grep /MUSIC_STORES/, @{$menuItem};
 		
-			$cprefs->set( menuItem => $menuItem );
-			
-			1;
-		} );
-	}
+		my $done = 0;
+		my $i = 0;
+		for my $item ( @{$menuItem} ) {
+			$i++;
+			if ( $item eq 'MUSIC_SERVICES' ) {
+				splice @{$menuItem}, $i, 0, 'MUSIC_STORES';
+				$done = 1;
+				last;
+			}
+		}
+		
+		if ( !$done ) {
+			# Just add the item at the end
+			push @{$menuItem}, 'MUSIC_STORES';
+		}
+	
+		$cprefs->set( menuItem => $menuItem );
+		
+		1;
+	} );
 	
 	# migrateClient 9 is in Slim::Player::Player
 	
@@ -571,7 +565,7 @@ sub init {
 		if ( Slim::Utils::Favorites->enabled ) {
 			my $fav = Slim::Utils::Favorites->new($client);
 
-			my $uuid    = main::SLIM_SERVICE ? undef : $prefs->get('server_uuid');
+			my $uuid    = $prefs->get('server_uuid');
 			my $presets = [];
 
 			for my $hotkey ( @{ $fav->hotkeys } ) {
@@ -597,27 +591,25 @@ sub init {
 		1;
 	} );
 	
-	if ( !main::SLIM_SERVICE ) {
-		# Bug 13229, migrate menuItem pref so everyone gets the correct menu structure for 7.4
-		$prefs->migrateClient( 11, sub {
-			my ( $cprefs, $client ) = @_;
-			my $defaults = $Slim::Player::Player::defaultPrefs;
+	# Bug 13229, migrate menuItem pref so everyone gets the correct menu structure for 7.4
+	$prefs->migrateClient( 11, sub {
+		my ( $cprefs, $client ) = @_;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
 
-			if ( $client->hasDigitalIn ) {
-				$defaults = $Slim::Player::Transporter::defaultPrefs;
-			}
+		if ( $client->hasDigitalIn ) {
+			$defaults = $Slim::Player::Transporter::defaultPrefs;
+		}
 
-			if ( $client->isa('Slim::Player::Boom') ) {
-				$defaults = $Slim::Player::Boom::defaultPrefs;
-			}
+		if ( $client->isa('Slim::Player::Boom') ) {
+			$defaults = $Slim::Player::Boom::defaultPrefs;
+		}
 
-			if ($defaults && defined $defaults->{menuItem}) {
-				# clone for each client
-				$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) );
-			}
-			1;
-		} );
-	}
+		if ($defaults && defined $defaults->{menuItem}) {
+			# clone for each client
+			$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) );
+		}
+		1;
+	} );
 	
 	# Bug 14406, fill out missing presets from favorites, if necessary
 	$prefs->migrateClient( 12, sub {
@@ -626,7 +618,7 @@ sub init {
 		if ( Slim::Utils::Favorites->enabled ) {
 			my $fav = Slim::Utils::Favorites->new($client);
 
-			my $uuid    = main::SLIM_SERVICE ? undef : $prefs->get('server_uuid');
+			my $uuid    = $prefs->get('server_uuid');
 			my $presets = $cprefs->get('presets') || [];
 			
 			my $index = 0;
@@ -656,33 +648,31 @@ sub init {
 	} );
 	
 	# add global search to menu if client is still using default menu items
-	if ( !main::SLIM_SERVICE ) {
-		$prefs->migrateClient( 13, sub {
-			my ( $cprefs, $client ) = @_;
-			
-			my $defaults = $Slim::Player::Player::defaultPrefs;
+	$prefs->migrateClient( 13, sub {
+		my ( $cprefs, $client ) = @_;
 		
-			if ( $client->hasDigitalIn ) {
-				$defaults = $Slim::Player::Transporter::defaultPrefs;
-			}
-		
-			if ( $client->isa('Slim::Player::Boom') ) {
-				$defaults = $Slim::Player::Boom::defaultPrefs;
-			}
+		my $defaults = $Slim::Player::Player::defaultPrefs;
 	
-			if ($defaults && defined $defaults->{menuItem}) {
-				
-				my @oldDefaults  = grep { $_ !~ /GLOBAL_SEARCH/ } @{ $defaults->{menuItem} };
-				my @currentPrefs = @{ $cprefs->get('menuItem') };
+		if ( $client->hasDigitalIn ) {
+			$defaults = $Slim::Player::Transporter::defaultPrefs;
+		}
+	
+		if ( $client->isa('Slim::Player::Boom') ) {
+			$defaults = $Slim::Player::Boom::defaultPrefs;
+		}
 
-				# only replace menu if user didn't customize it
-				if ("@oldDefaults" eq "@currentPrefs") {
-					$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) );
-				}
+		if ($defaults && defined $defaults->{menuItem}) {
+			
+			my @oldDefaults  = grep { $_ !~ /GLOBAL_SEARCH/ } @{ $defaults->{menuItem} };
+			my @currentPrefs = @{ $cprefs->get('menuItem') };
+
+			# only replace menu if user didn't customize it
+			if ("@oldDefaults" eq "@currentPrefs") {
+				$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) );
 			}
-			1;
-		} );
-	}
+		}
+		1;
+	} );
 	
 	# Update scrolling prefs for client-side scrolling
 	$prefs->migrateClient( 14, sub {
@@ -798,10 +788,7 @@ sub init {
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
 	
-	if ( !main::SLIM_SERVICE ) {
-		# All languages are always loaded on SN
-		$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
-	}
+	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 	
 	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
 		$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
@@ -940,35 +927,30 @@ sub init {
 	}, 'timeFormat');
 
 	# Clear SN cookies from the cookie jar if the session changes
-	if ( !main::SLIM_SERVICE ) {
-		$prefs->setChange( sub {
-			# XXX the sn.com hostnames can be removed later
-			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
-			$cookieJar->clear( 'www.squeezenetwork.com' );
-			$cookieJar->clear( 'www.test.squeezenetwork.com' );
-			$cookieJar->clear( 'www.mysqueezebox.com' );
-			$cookieJar->clear( 'www.test.mysqueezebox.com' );
-			if ( $ENV{SN_DEV} ) {
-				$cookieJar->clear( '127.0.0.1' );
-			}
-			$cookieJar->save();
-			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
-		}, 'sn_session' );
+	$prefs->setChange( sub {
+		# XXX the sn.com hostnames can be removed later
+		my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
+		$cookieJar->clear( 'www.squeezenetwork.com' );
+		$cookieJar->clear( 'www.test.squeezenetwork.com' );
+		$cookieJar->clear( 'www.mysqueezebox.com' );
+		$cookieJar->clear( 'www.test.mysqueezebox.com' );
+		$cookieJar->save();
+		main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
+	}, 'sn_session' );
+	
+	$prefs->setChange( sub {
+		Slim::Utils::Timers::setTimer(
+			$_[1],
+			time() + 30,
+			sub {
+				my $isDisabled = shift;
+				my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
+				
+				$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
+			},
+		);
 		
-		$prefs->setChange( sub {
-			Slim::Utils::Timers::setTimer(
-				$_[1],
-				time() + 30,
-				sub {
-					my $isDisabled = shift;
-					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
-					
-					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
-				},
-			);
-			
-		}, 'sn_disable_stats');
-	}
+	}, 'sn_disable_stats');
 	
 	# Rebuild Jive cache if VA setting is changed
 	$prefs->setChange( sub {
@@ -980,19 +962,6 @@ sub init {
 		my $client = $_[2] || return;
 		Slim::Hardware::IR::initClient($client);
 	}, qw(disabledirsets irmap) );
-	
-	if ( main::SLIM_SERVICE ) {
-		# Update players.name database field if name is changed
-		$prefs->setChange( sub {
-			my $name   = $_[1] || return;
-			my $client = $_[2] || return;
-			
-			return if $name eq 'nil';
-			
-			$client->playerData->name( $name );
-			$client->playerData->update;
-		}, 'playername' );
-	}
 }
 
 =head2 writeAll( )

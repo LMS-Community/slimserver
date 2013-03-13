@@ -27,11 +27,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
 
-if ($main::SLIM_SERVICE) {
-	require Slim::Utils::Timers;
-	require JSON::XS::VersionOneAndTwo;
-}
-
 my $log = logger('menu.globalsearch');
 
 sub init {
@@ -51,53 +46,6 @@ sub init {
 
 sub name {
 	return 'GLOBAL_SEARCH';
-}
-
-sub registerDefaultInfoProviders {
-	my $class = shift;
-	my $retry = shift;
-	
-	$class->SUPER::registerDefaultInfoProviders();
-	
-	# fetch the list of all search providers
-	if (main::SLIM_SERVICE) {
-		
-		my $_error_handler = sub {
-			my $http = shift;
-
-			main::DEBUGLOG && $log->error( 'Error getting search providers: ' . $http->error );
-
-			# retry again
-			if ( !$retry ) {
-				Slim::Utils::Timers::setTimer(
-					undef,
-					time() + 10,
-					sub {
-						__PACKAGE__->registerDefaultInfoProviders(1)
-					},
-				);
-			}
-		};
-		
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			sub {
-				my $http = shift;
-				my $res = eval { JSON::XS::VersionOneAndTwo::decode_json( $http->content ) };
-
-				if ( $@ || ref $res ne 'ARRAY' ) {
-					$http->error( $@ || 'Invalid search provider list: ' . $http->content );
-					return $_error_handler->( $http );
-				}
-				
-				$class->registerSearchProviders($res);
-			},
-			$_error_handler,
-		);
-		
-		$http->get( Slim::Networking::SqueezeNetwork->url('/api/v1/searchproviders') );
-		
-	}
-	
 }
 
 sub registerSearchProviders {

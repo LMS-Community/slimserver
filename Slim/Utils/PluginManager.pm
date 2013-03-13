@@ -205,11 +205,6 @@ sub load {
 		# if they are loaded
 		$disabled->{$module} = $plugins->{$name};
 
-		if ( main::SLIM_SERVICE && $name =~ /^Plugins/ ) {
-			# Skip 3rd party plugins on SN
-			next;
-		}
-
 		# in failsafe mode skip all plugins which aren't required
 		next if ($main::failsafe && !$plugins->{$name}->{'enforce'});
 
@@ -303,11 +298,6 @@ sub load {
 				delete $disabled->{$module};
 			}
 		}
-		
-		if ( main::SLIM_SERVICE ) {
-			# no web stuff for SN
-			next;
-		}
 
 		# Add any Bin dirs to findbin search path
 		my $binDir = catdir($baseDir, 'Bin');
@@ -320,7 +310,7 @@ sub load {
 		}
 
 		# add skin folders even in noweb mode: we'll need them for the icons
-		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+		if ( !main::SCANNER ) {
 			# Add any available HTML to TT's INCLUDE_PATH
 			my $htmlDir = catdir($baseDir, 'HTML');
 
@@ -519,11 +509,6 @@ sub _pluginCacheFile {
 
 sub _writePluginCache {
 	my $class = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Don't bother with cache, assume all plugins are OK
-		return;
-	}
 
 	main::INFOLOG && $log->info("Writing out plugin cache file.");
 
@@ -537,11 +522,6 @@ sub _writePluginCache {
 
 sub _loadPluginCache {
 	my $class = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Don't bother with cache, assume all plugins are OK
-		return;
-	}
 
 	my $file = $class->_pluginCacheFile;
 
@@ -642,7 +622,6 @@ sub _parseInstallManifest {
 	}
 
 	if ( exists $SKIP{$pluginName} ) {
-		# Disabled on SN
 		return;
 	}
 

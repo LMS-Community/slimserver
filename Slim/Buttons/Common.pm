@@ -51,11 +51,6 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Block;
 use Slim::Utils::Prefs;
 
-if ( main::SLIM_SERVICE ) {
-	# needed for some SN-only modes
-	require SDI::Service::Buttons::SetupWizard;
-}
-
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
 
@@ -135,10 +130,6 @@ sub init {
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
 	Slim::Buttons::Volume::init();
-	
-	if ( main::SLIM_SERVICE ) {
-		SDI::Service::Buttons::SetupWizard::init();
-	}
 
 	addSaver('playlist', undef, undef, undef, 'SCREENSAVER_JUMP_TO_NOW_PLAYING', 'PLAY');
 }
@@ -1371,12 +1362,6 @@ our %functions = (
 	},
 );
 
-# Delete Browse/Search on SN
-if ( main::SLIM_SERVICE ) {
-	$functions{browse} = sub {};
-	$functions{search} = sub {};
-}
-
 sub getFunction {
 	my $client     = shift || return;
 	my $function   = shift || return;
@@ -2060,12 +2045,6 @@ sub pushMode {
 
 			if ($@) {
 				logError("Couldn't execute mode exit function: $@");
-				
-				if ( main::SLIM_SERVICE ) {
-					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
-					$@ =~ s/"/'/g;
-					SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
-				}
 			}
 		}
 	}
@@ -2100,12 +2079,6 @@ sub pushMode {
 
 	if ($@) {
 		logError("Couldn't push into new mode: [$setmode] !: $@");
-		
-		if ( main::SLIM_SERVICE ) {
-			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($newModeFunction);
-			$@ =~ s/"/'/g;
-			SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
-		}
 
 		pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 		pop @{$client->modeStack};
@@ -2168,12 +2141,6 @@ sub popMode {
 
 			if ($@) {
 				logError("Couldn't execute mode exit function: $@");
-				
-				if ( main::SLIM_SERVICE ) {
-					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
-					$@ =~ s/"/'/g;
-					SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
-				}
 			}
 		}
 	}
@@ -2194,12 +2161,6 @@ sub popMode {
 
 		if ($@) {
 			logError("Couldn't execute setMode on pop: $@");
-			
-			if ( main::SLIM_SERVICE ) {
-				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($fun);
-				$@ =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
-			}
 		}
 	}
 
@@ -2381,7 +2342,6 @@ sub dateTime {
 		$line = Slim::Plugin::DateTime::Plugin::dateTimeLines($client);
 	} else {
 		# Fall back to a more basic date/time display
-		# client-specific date/time on SN
 		$line = {
 			'center' => [ $client->longDateF(), $client->timeF() ],
 		};
@@ -2471,12 +2431,6 @@ sub _periodicUpdate {
 
 		if ($@) {
 			logError("bad screen2 lines: $@");
-			
-			if ( main::SLIM_SERVICE ) {
-				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
-				$@ =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=SS-Common method=${name} error=\"$@\"");
-			}
 		}
 
 		$display->update($screen2, undef, 1);

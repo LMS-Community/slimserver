@@ -14,14 +14,8 @@ use strict;
 use vars qw(@ISA);
 
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require SDI::Service::Player::SqueezeNetworkClient;
-		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
-	}
-	else {
-		require Slim::Player::Squeezebox2;
-		push @ISA, qw(Slim::Player::Squeezebox2);
-	}
+	require Slim::Player::Squeezebox2;
+	push @ISA, qw(Slim::Player::Squeezebox2);
 }
 
 use Slim::Player::ProtocolHandlers;

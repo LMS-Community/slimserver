@@ -56,19 +56,6 @@ sub initPlugin {
 		is_app => 1,
 	);
 	
-	if ( main::SLIM_SERVICE ) {
-		my $menu = {
-			useMode => sub { $class->setMode(@_) },
-			header  => 'PLUGIN_LFM_MODULE_NAME',
-		};
-		
-		# Add as top-level item choice
-		Slim::Buttons::Home::addMenuOption(
-			'PLUGIN_LFM_MODULE_NAME',
-			$menu,
-		);
-	}
-	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 

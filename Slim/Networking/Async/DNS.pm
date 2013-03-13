@@ -35,45 +35,6 @@ sub resolve {
 	
 	my $host = $args->{host};
 	
-	if ( main::SLIM_SERVICE && $host =~ /^www\.(squeezenetwork|mysqueezebox)\.com$/ ) {
-		# Check /etc/hosts on MySB to determine internal datacenter address instead of public
-		my $localip;
-		my $mtime = (stat('/etc/hosts'))[9];
-		
-		if ( my $cached = $cache{$host} ) {
-			if ( $cached->{mtime} == $mtime ) {
-				my $addr = $cached->{addr};
-				main::DEBUGLOG && $log->is_debug && $log->debug( "Using cached DNS response $addr for $host" );
-
-				$args->{cb}->( $addr, @{ $args->{pt} || [] } );
-				return;
-			}
-		}
-		
-		open my $fh, '<', '/etc/hosts';
-		my $etchosts = do { local $/; <$fh> };
-		close $fh;
-		
-		for my $line ( split /\n/, $etchosts ) {
-			next unless $line =~ /^\d/;
-			my ($ip, $hostnames) = $line =~ /^([\d.]+)\s(.+)/;
-			if ( $hostnames =~ /$host/i ) {
-				$localip = $ip;
-				last;
-			}
-		}
-		
-		if ($localip) {
-			$cache{$host} = {
-				addr  => $localip,
-				mtime => $mtime,
-			};
-			
-			$args->{cb}->( $localip, @{ $args->{pt} || [] } );
-			return;
-		}
-	}
-	
 	# Check cache
 	if ( exists $cache{ $host } ) {
 		if ( $cache{ $host }->{expires} > time() ) {

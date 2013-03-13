@@ -14,11 +14,7 @@ if ( main::WEBUI ) {
  	require Slim::Plugin::DateTime::Settings;
 }
 
-if ( main::SLIM_SERVICE ) {
-	require DateTime;
-}
-
-my $prefs = preferences(main::SLIM_SERVICE ? 'server' : 'plugin.datetime');
+my $prefs = preferences('plugin.datetime');
 
 $prefs->migrate(1, sub {
 	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '');
@@ -39,23 +35,6 @@ $prefs->migrateClient(3, sub {
 	$clientprefs->set('dateFormat', $clientprefs->get('dateformat'));
 	1;
 });
-
-# in order to make the change from all lower to camel-case work on mysb.com we need to remove
-# the old pref first, as MySQL is trating content in a case insensitive way
-if ( main::SLIM_SERVICE ) {
-	$prefs->migrateClient(15, sub {
-	       my ($clientprefs, $client) = @_;
-	       my $dateformat = $clientprefs->get('dateformat') || $clientprefs->get('dateFormat');
-	       my $timeformat = $clientprefs->get('timeformat') || $clientprefs->get('timeformat');
-	       
-	       $clientprefs->remove('dateformat', 'timeformat');
-	       
-	       $clientprefs->set('timeFormat', $timeformat) if $timeformat;
-	       $clientprefs->set('dateFormat', $dateformat) if $dateformat;
-	       
-	       1;
-	});
-}
 
 $prefs->setChange( sub {
 	my $client = $_[2];
@@ -147,38 +126,11 @@ sub screensaverDateTimelines {
 	my $args   = shift;
 
 	my $flash  = $args->{'flash'}; # set when called from animation callback
-	
-	if ( main::SLIM_SERVICE ) {
-		my $snInterval;
-		
-		if ( !$flash ) {	
-			# Align updates at each minute change so we only have to run once a minute instead
-			# of every few seconds
-			my $sec = (localtime(time))[0];
-			$snInterval = 60 - $sec;		
-		}
-		else {
-			# OK to update every second while flashing an alarm icon
-			$snInterval = 1;
-		}
-		
-		$client->modeParam( modeUpdateInterval => $snInterval );
-		Slim::Buttons::Common::startPeriodicUpdates( $client, time() + $snInterval );
-	}
 
 	if (Slim::Utils::Alarm->getCurrentAlarm($client) && !$flash) {
 		# schedule another update to remove the alarm symbol during alarm
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time + 0.5, \&_flashAlarm);
 	}
-	
-# BUG 3964: comment out until Dean has a final word on the UI for this.	
-# 	if ($client->display->hasScreen2) {
-# 		if ($client->display->linesPerScreen == 1) {
-# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateFormat'))];
-# 		} else {
-# 			$display->{'screen2'} = {};
-# 		}
-# 	}
 
 	return dateTimeLines($client, $flash);
 }

@@ -137,11 +137,6 @@ sub initPlugin {
 		});
 
 	Slim::Control::Jive::registerAppMenu(\@item);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Feeds are per-client on SN, so don't try to load global feeds
-		return;
-	}
 
 	updateOPMLCache( $prefs->get('feeds') );
 }
@@ -167,16 +162,11 @@ sub setMode {
 		return;
 	}
 	
-	my @feeds = ();
-	if ( main::SLIM_SERVICE ) {
-		@feeds = feedsForClient($client);
-	}
-
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header => '{PLUGIN_PODCAST}',
 		headerAddCount => 1,
-		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
+		listRef => $prefs->get('feeds'),
 		modeName => 'Podcast Plugin',
 		onRight => sub {
 			my $client = shift;
@@ -242,32 +232,6 @@ sub cliQuery {
 	
 	main::DEBUGLOG && $log->debug('Enter');
 	
-	if ( main::SLIM_SERVICE ) {
-		my $client = $request->client;
-		my @feeds  = feedsForClient($client);
-		
-		my $outline = [];
-		
-		for my $item ( @feeds ) {
-			push @{$outline}, {
-				name  => $item->{name},
-				url   => $item->{value},
-				value => $item->{value},
-				type  => $item->{type} || 'link',
-				items => [],
-			};
-		}
-
-		my $opml = {
-			title => $client->string('PLUGIN_PODCAST'),
-			type  => 'opml',
-			items => $outline,
-		};
-		
-		Slim::Control::XMLBrowser::cliQuery('podcast', $opml, $request);
-		return;
-	}
-	
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'podcasts_opml' );
@@ -299,40 +263,6 @@ sub updateOPMLCache {
 		
 	my $cache = Slim::Utils::Cache->new();
 	$cache->set( 'podcasts_opml', $opml, '10days' );
-}
-
-# SN only
-sub feedsForClient {
-	my $client = shift;
-	
-	my $userid = $client->playerData->userid->id;
-	
-	my @f = SDI::Service::Model::FavoritePodcast->search(
-		userid => $userid,
-		{ order_by => 'num' }
-	);
-													  
-	my @feeds = map { 
-		{ 
-			name  => $_->title, 
-			value => $_->url,
-		}
-	} @f;
-	
-	# check if the user deleted feeds so we don't load the defaults
-	my $deletedFeeds = preferences('server')->client($client)->get('deleted_podcasts');
-	
-	# Populate with all default feeds
-	if ( !scalar @feeds && !$deletedFeeds ) {
-		@feeds = map { 
-			{ 
-				name  => $_->title, 
-				value => $_->url,
-			}
-		} SDI::Service::Model::FavoritePodcast->addDefaults( $userid );
-	}
-	
-	return @feeds;
 }
 
 1;

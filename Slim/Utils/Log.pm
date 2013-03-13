@@ -92,7 +92,7 @@ sub init {
 	}
 
 	# call poor man's log rotation
-	if (!main::SCANNER && !main::SLIM_SERVICE) {
+	if (!main::SCANNER) {
 		
 		Slim::Utils::OSDetect::getOS->logRotate($logDir);
 	}
@@ -721,10 +721,6 @@ sub defaultConfigFile {
 	my $dir;
 	eval { $dir = Slim::Utils::Prefs::dir() };
 	$dir ||= Slim::Utils::OSDetect::dirsFor('prefs');
-	
-	if ( main::SLIM_SERVICE ) {
-		$dir = Slim::Utils::OSDetect::dirsFor('log');
-	}
 
 	if (defined $dir && -d $dir) {
 

@@ -1889,11 +1889,6 @@ sub execute {
 			logError("While trying to run function coderef [$funcName]: [$error]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
-			
-			if ( main::SLIM_SERVICE ) {
-				$@ =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=SS-Request method=${funcName} error=\"$@\"");
-			}
 		}
 	}
 	
@@ -1963,12 +1958,6 @@ sub jumpbacktofunc {
 
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
-			
-			if ( main::SLIM_SERVICE ) {
-				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-				$@ =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=SS-Request method=${name} error=\"$@\"");
-			}
 		}
 	}
 	
@@ -1997,12 +1986,6 @@ sub callback {
 				if ($@) { 
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
-					
-					if ( main::SLIM_SERVICE ) {
-						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-						$@ =~ s/"/'/g;
-						SDI::Util::Syslog::error("service=SS-Request method=${name} error=\"$@\"");
-					}
 				}
 			
 			# else use the provided arguments
@@ -2013,12 +1996,6 @@ sub callback {
 				if ($@) { 
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
-					
-					if ( main::SLIM_SERVICE ) {
-						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-						$@ =~ s/"/'/g;
-						SDI::Util::Syslog::error("service=SS-Request method=${name} error=\"$@\"");
-					}
 				}
 			}
 		}
@@ -2083,12 +2060,6 @@ sub notify {
 			
 			if ($@) {
 				logError("Failed notify: $@");
-				
-				if ( main::SLIM_SERVICE ) {
-					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
-					$@ =~ s/"/'/g;
-					SDI::Util::Syslog::error("service=SS-Request method=${name} error=\"$@\"");
-				}
 			}
 			
 			main::PERFMON && Slim::Utils::PerfMon->check('notify', AnyEvent->time - $now, undef, $notifyFuncRef);
@@ -2116,11 +2087,6 @@ sub notify {
 						if ($@) {
 							my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 							logError("While trying to run function coderef [$funcName]: [$@]");
-							
-							if ( main::SLIM_SERVICE ) {
-								$@ =~ s/"/'/g;
-								SDI::Util::Syslog::error("service=SS-Request method=${funcName} error=\"$@\"");
-							}
 							
 							next;
 						}
@@ -2530,11 +2496,6 @@ sub __autoexecute{
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
 		$deleteSub = 1;
-		
-		if ( main::SLIM_SERVICE ) {
-			$@ =~ s/"/'/g;
-			SDI::Util::Syslog::error("service=SS-Request method=${funcName} error=\"$@\"");
-		}
 	}
 	
 	if ($deleteSub) {

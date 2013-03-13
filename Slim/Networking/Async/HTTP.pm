@@ -194,7 +194,7 @@ sub add_headers {
 	}
 
 	# Add cookies
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	if ( !main::SCANNER ) {
 		$cookieJar->add_cookie_header( $self->request );
 	}
 }
@@ -319,9 +319,7 @@ sub _http_read {
 		$self->response->request( $self->request );
 
 		# Save cookies
-		if ( !main::SLIM_SERVICE ) {
-			$cookieJar->extract_cookies( $self->response );
-		}
+		$cookieJar->extract_cookies( $self->response );
 		
 		if ( main::DEBUGLOG && $log->is_debug ) {
 

@@ -810,7 +810,7 @@ sub cleanupTempDirs {
 sub getUpdateParams {
 	my ($class, $url) = @_;
 
-	return if main::SLIM_SERVICE || main::SCANNER;
+	return if main::SCANNER;
 	
 	if (!$PerlSvc::VERSION) {
 		Slim::Utils::Log::logger('server.update')->info("Running Logitech Media Server from the source - don't download the update.");

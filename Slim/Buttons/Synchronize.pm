@@ -100,23 +100,6 @@ sub setMode {
 		return;
 	}
 	
-	if ( main::SLIM_SERVICE ) {
-		# Require firmware 82/32 or higher to sync
-		if (
-			( $client->model eq 'squeezebox2' && $client->playerData->rev < 82 )
-			||
-			( $client->model eq 'transporter' && $client->playerData->rev < 32 )
-		) {
-
-			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
-				header  => '{SYNC_FIRMWARE_UPGRADE_REQUIRED}',
-				listRef => [ '{SYNC_FIRMWARE_UPGRADE}' ],
-			} );
-
-			return;
-		}
-	}
-	
 	loadList($client);
 	
 	my %params = (
