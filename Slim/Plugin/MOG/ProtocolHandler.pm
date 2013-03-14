@@ -661,7 +661,7 @@ sub getIcon {
 }
 
 # SN only, re-init upon reconnection
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	my $url = $song->track->url();
@@ -699,7 +699,7 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 1;
 

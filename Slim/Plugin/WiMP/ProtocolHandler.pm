@@ -519,7 +519,7 @@ sub getIcon {
 }
 
 # SN only, re-init upon reconnection
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
@@ -556,7 +556,7 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 sub _getStreamParams {
 	$_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3)}i;

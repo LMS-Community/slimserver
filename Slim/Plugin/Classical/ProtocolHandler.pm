@@ -367,7 +367,7 @@ sub getIcon {
 
 # SN only
 # Re-init when a player reconnects
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 
 	my $url = $song->currentTrack->url();
@@ -399,6 +399,6 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 1;
