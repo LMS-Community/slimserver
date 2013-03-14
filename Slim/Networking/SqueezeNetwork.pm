@@ -16,7 +16,6 @@ if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 	# init() is never called on SN so these aren't used
 	require Slim::Networking::SqueezeNetwork::Players;
 	require Slim::Networking::SqueezeNetwork::PrefSync;
-	require Slim::Networking::SqueezeNetwork::Stats;
 }
 
 use Slim::Utils::IPDetect;
@@ -185,8 +184,12 @@ sub _init_done {
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
 	
-	# Init stats
-	Slim::Networking::SqueezeNetwork::Stats->init( $json );
+	# Init stats - don't even load the module unless stats are enabled
+	# let's not bother about re-initialising if pref is changed - there's no user-noticeable effect anyway 
+	if (!$prefs->get('sn_disable_stats')) {
+		require Slim::Networking::SqueezeNetwork::Stats;
+		Slim::Networking::SqueezeNetwork::Stats->init( $json );
+	}
 
 	
 	# add link to mysb.com favorites to our local favorites list
@@ -260,7 +263,9 @@ sub shutdown {
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
 	
 	# Shutdown stats
-	Slim::Networking::SqueezeNetwork::Stats->shutdown();
+	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::Stats', 'shutdown') ) {
+		Slim::Networking::SqueezeNetwork::Stats->shutdown();
+	}
 }
 
 # Return a correct URL for mysqueezebox.com
