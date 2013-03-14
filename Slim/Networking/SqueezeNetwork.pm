@@ -15,7 +15,6 @@ use URI::Escape qw(uri_escape);
 if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 	# init() is never called on SN so these aren't used
 	require Slim::Networking::SqueezeNetwork::Players;
-	require Slim::Networking::SqueezeNetwork::PrefSync;
 }
 
 use Slim::Utils::IPDetect;
@@ -179,7 +178,10 @@ sub _init_done {
 	}
 
 	# Init pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->init() if $prefs->get('sn_sync');
+	if ( $prefs->get('sn_sync') ) {
+		require Slim::Networking::SqueezeNetwork::PrefSync;
+		Slim::Networking::SqueezeNetwork::PrefSync->init();
+	}
 	
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
@@ -257,8 +259,10 @@ sub shutdown {
 	$prefs->remove('sn_session');
 	
 	# Shutdown pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
-	
+	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+		Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+	}
+		
 	# Shutdown player list fetch
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
 	
