@@ -15,8 +15,6 @@ use URI::Escape qw(uri_escape);
 if ( !main::SCANNER ) {
 	# init() is never called on SN so these aren't used
 	require Slim::Networking::SqueezeNetwork::Players;
-	require Slim::Networking::SqueezeNetwork::PrefSync;
-	require Slim::Networking::SqueezeNetwork::Stats;
 }
 
 use Slim::Utils::IPDetect;
@@ -146,13 +144,20 @@ sub _init_done {
 	}
 
 	# Init pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->init() if $prefs->get('sn_sync');
+	if ( $prefs->get('sn_sync') ) {
+		require Slim::Networking::SqueezeNetwork::PrefSync;
+		Slim::Networking::SqueezeNetwork::PrefSync->init();
+	}
 	
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
 	
-	# Init stats
-	Slim::Networking::SqueezeNetwork::Stats->init( $json );
+	# Init stats - don't even load the module unless stats are enabled
+	# let's not bother about re-initialising if pref is changed - there's no user-noticeable effect anyway 
+	if (!$prefs->get('sn_disable_stats')) {
+		require Slim::Networking::SqueezeNetwork::Stats;
+		Slim::Networking::SqueezeNetwork::Stats->init( $json );
+	}
 
 	# add link to mysb.com favorites to our local favorites list
 	if ( $json->{favorites_url} ) {
@@ -219,13 +224,17 @@ sub shutdown {
 	$prefs->remove('sn_session');
 	
 	# Shutdown pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
-	
+	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+		Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+	}
+		
 	# Shutdown player list fetch
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
 	
 	# Shutdown stats
-	Slim::Networking::SqueezeNetwork::Stats->shutdown();
+	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::Stats', 'shutdown') ) {
+		Slim::Networking::SqueezeNetwork::Stats->shutdown();
+	}
 }
 
 # Return a correct URL for mysqueezebox.com

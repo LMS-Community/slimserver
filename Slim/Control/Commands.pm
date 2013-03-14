@@ -2628,8 +2628,12 @@ sub setSNCredentialsCommand {
 	if ( defined $sync ) {
 		$prefs->set('sn_sync', $sync);
 	
-		Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+		if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+			Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+		}
+		
 		if ( $sync ) {
+			require Slim::Networking::SqueezeNetwork::PrefSync;
 			Slim::Networking::SqueezeNetwork::PrefSync->init();
 		}
 	}
