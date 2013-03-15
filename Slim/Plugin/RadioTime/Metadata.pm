@@ -15,7 +15,7 @@ use Slim::Utils::Prefs;
 
 use URI::Escape qw(uri_escape_utf8);
 
-my $log   = logger('formats.metadata');
+my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
 
 use constant PARTNER_ID => 16;
@@ -200,13 +200,7 @@ sub fetchMetadata {
 	my ($stationId) = $url =~ m/(?:station)?id=([^&]+)/i; # support old-style stationId= and new id= URLs
 	return unless $stationId;
 	
-	my $username;
-	if ( main::SLIM_SERVICE ) {
-		$username = preferences('server')->client($client)->get('plugin_radiotime_username', 'force');
-	}
-	else {
-		$username = $prefs->get('username');
-	}
+	my $username = Slim::Plugin::RadioTime::Plugin->getUsername($client);
 	
 	my $metaUrl = META_URL . '&id=' . $stationId;
 	

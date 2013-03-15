@@ -2497,7 +2497,7 @@ sub _setStreamingState {
 	}
 }
 
-sub _persistState {
+sub _persistState { if (main::SLIM_SERVICE) {
 	my $self = shift;
 	
 	# Persist playing/streaming state to the SN database
@@ -2510,6 +2510,6 @@ sub _persistState {
 		# Only update if serviceip matches
 		$client->playerData->updatePlaymode( $state, Slim::Utils::IPDetect::IP_port() );
 	}
-}
+} }
 
 1;

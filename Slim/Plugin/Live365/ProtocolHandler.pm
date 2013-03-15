@@ -277,7 +277,7 @@ sub getIcon {
 }
 
 # SN only
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	my $url = $song->currentTrack->url();
@@ -302,6 +302,6 @@ sub reinit {
 	);
 	
 	return 1;
-}
+} }
 
 1;

@@ -49,8 +49,12 @@ sub handler {
 		if ( defined $params->{pref_sn_sync} ) {
 			$prefs->set( 'sn_sync', $params->{pref_sn_sync} );
 
-			Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+				Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			}
+			
 			if ( $params->{pref_sn_sync} ) {
+				require Slim::Networking::SqueezeNetwork::PrefSync;
 				Slim::Networking::SqueezeNetwork::PrefSync->init();
 			}
 			
