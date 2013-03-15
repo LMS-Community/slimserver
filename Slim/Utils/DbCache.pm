@@ -226,6 +226,9 @@ sub _init_db {
 			$dbh->do('CREATE TABLE IF NOT EXISTS cache (k INTEGER PRIMARY KEY, v BLOB, t INTEGER)');
 			$dbh->do('CREATE INDEX IF NOT EXISTS expiry ON cache (t)');
 		}
+
+		# run a simple query which would cause a corrupted file to bail out
+		$dbh->do('SELECT COUNT(*) FROM cache');
 	};
 	
 	if ( $@ ) {
@@ -234,11 +237,22 @@ sub _init_db {
 			die "Unable to read/create $dbfile\n";
 		}
 		
+		warn "$@Delete the file $dbfile and start from scratch.\n";
+		
 		# Something was wrong with the database, delete it and try again
-		$self->wipe;
+		unlink $dbfile;
 		
 		return $self->_init_db(1);
 	}
+
+	# set up error handler to log the db file causing problems
+	$dbh->{HandleError} = sub {
+		my ($msg, $handle, $value) = @_;
+
+		require Slim::Utils::Log;
+		Slim::Utils::Log::logError($msg);
+		Slim::Utils::Log::logError($self->_get_dbfile);
+	};
 	
 	# Prepare statements we need
 	if ($self->{noexpiry}) {
