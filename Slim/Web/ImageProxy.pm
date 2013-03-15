@@ -28,6 +28,24 @@ sub getImage {
 	my ($class, $client, $path, $params, $callback, $spec, @args) = @_;
 	
 	main::DEBUGLOG && $log->debug("Get artwork for URL: $path");
+
+	# check the cache for this url
+	if ( my $cached = $cache->get($path) ) {
+		my $ct = 'image/' . $cached->{content_type};
+		$ct =~ s/jpg/jpeg/;
+
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Got cached artwork of type ' . $ct . ' and ' . length(${$cached->{data_ref}}) . ' bytes length' );
+
+		my $response = $args[1];
+		
+		$response->content_type($ct);
+		$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
+		$response->expires( time() + ONE_YEAR );
+
+		$callback && $callback->( $client, $params, $cached->{data_ref}, @args );
+		
+		return;
+	}
 	
 	my ($url) = $path =~ m|imageproxy/(.*)/[^/]*|;
 
@@ -112,7 +130,7 @@ sub _gotArtwork {
 
 	# unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
 	my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($cachekey) );
-	File::Slurp::write_file($fullpath, $http->content);
+	File::Slurp::write_file($fullpath, $http->contentRef);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
 
@@ -218,7 +236,7 @@ sub new {
 	my $root = shift;
 
 	if ( !$cache ) {
-		$cache = Slim::Utils::DbArtworkCache->new($root, 'imgproxy', 86400*30);
+		$cache = $class->SUPER::new($root, 'imgproxy', 86400*30);
 
 		# Set highmem params for the artwork cache
 		if ( $prefs->get('dbhighmem') ) {
