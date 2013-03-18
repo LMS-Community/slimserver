@@ -597,10 +597,12 @@ sub getMetadataFor {
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance
 sub reinit {
-	my $class = shift;
-	
-	# Same as HTTP::reinit
-	Slim::Player::Protocols::HTTP->reinit( @_ );
+	if ( main::SLIM_SERVICE ) {
+		my $class = shift;
+		
+		# Same as HTTP::reinit
+		Slim::Player::Protocols::HTTP->reinit( @_ );
+	}
 }
 
 1;

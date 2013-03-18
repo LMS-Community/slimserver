@@ -2,6 +2,7 @@
 <ul>
 	<li>New Features:</li>
 	<ul>
+		<li>Modify Internet Radio integration to work independently from mysb.com if needed.</li>
 		<li>Replace custom OSX installer with a standard installation package (.pkg file). Please note that 
 		the OSX build now requires OSX 10.5 as a minimum.</li>
 		<li>Make the OSX PrefPane 64-bit compatible.</li>
@@ -25,6 +26,11 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17950">#17950</a> - %w macros (stream seconds duration) returns negative value</li>
 	</ul>
 	<br />
+	<li>Other:</li>
+	<ul>
+		<li>Removed Mediafly plugin - the service has shut down in March 2012.</li>
+	</ul>
+	<br />
 </ul>
 
 <h2><a name="v7.7.3" id="v7.7.3"></a>Version 7.7.3</h2>
@@ -38,6 +44,9 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li>Artwork cache would grow forever</li>
+		<li>Fix default expiry duration in cache code - it would expire immediately if not overwritten in the caller.</li>
+		<li>Improve recovery from corrupted cache files</li>
 	</ul>
 	<br />
 </ul>

@@ -256,7 +256,7 @@ sub init {
 		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream
 		# Server Settings - mysqueezebox.com
 		'sn_sync'               => 1,
-		'sn_disable_stats'		=> 0,
+		'sn_disable_stats'		=> 1,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
@@ -697,6 +697,8 @@ sub init {
 		
 		1;
 	} );	
+
+	# migrateClient 15 is in Slim::Plugin::DateTime::Plugin
 
 	# initialise any new prefs
 	$prefs->init(\%defaults);

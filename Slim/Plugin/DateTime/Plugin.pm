@@ -40,6 +40,23 @@ $prefs->migrateClient(3, sub {
 	1;
 });
 
+# in order to make the change from all lower to camel-case work on mysb.com we need to remove
+# the old pref first, as MySQL is trating content in a case insensitive way
+if ( main::SLIM_SERVICE ) {
+	$prefs->migrateClient(15, sub {
+	       my ($clientprefs, $client) = @_;
+	       my $dateformat = $clientprefs->get('dateformat') || $clientprefs->get('dateFormat');
+	       my $timeformat = $clientprefs->get('timeformat') || $clientprefs->get('timeformat');
+	       
+	       $clientprefs->remove('dateformat', 'timeformat');
+	       
+	       $clientprefs->set('timeFormat', $timeformat) if $timeformat;
+	       $clientprefs->set('dateFormat', $dateformat) if $dateformat;
+	       
+	       1;
+	});
+}
+
 $prefs->setChange( sub {
 	my $client = $_[2];
 	if ($client->isa("Slim::Player::Boom")) {

@@ -656,7 +656,7 @@ sub getIcon {
 }
 
 # SN only, re-init upon reconnection
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
@@ -693,6 +693,6 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 1;

@@ -15,7 +15,7 @@ use File::Slurp;
 use HTML::Entities;
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(weaken);
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape uri_escape_utf8);
 use XML::Simple;
 
 use Slim::Music::Info;
@@ -146,6 +146,15 @@ sub getFeedAsync {
 			$tb{ $params->{client}->ip } = Algorithm::TokenBucket->new( 0.5, 5 );
 		}
 =cut
+	}
+
+	if ( $url =~ /(?:radiotime|tunein\.com)/ ) {
+		# Add the RadioTime username
+		if ( $url !~ /username/ && $url =~ /(?:presets|title)/ 
+			&& ( my $username = Slim::Plugin::RadioTime::Plugin->getUsername($params->{client}) )
+		) {
+			$url .= '&username=' . uri_escape_utf8($username);
+		}
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers or login first
