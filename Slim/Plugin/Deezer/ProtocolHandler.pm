@@ -370,6 +370,11 @@ sub _gotTrack {
     
     return if $song->pluginData('abandonSong');
 	
+	if (!$info->{url}) {
+		_gotTrackError('No stream URL found', $client, $params);
+		return;
+	}
+	
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
 
