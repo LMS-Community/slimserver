@@ -36,6 +36,11 @@ sub init {
 		match => qr/(?:radiotime|tunein)\.com/,
 		func  => \&provider,
 	);
+	
+	Slim::Web::ImageProxy->registerHandler(
+		match => qr/cloudfront\.net\/[ps]?\d+[tqgd]?\.(?:jpe?g|png|gif)$/,
+		func  => \&artworkUrl,
+	);
 }
 
 sub getConfig {
@@ -354,7 +359,7 @@ sub _fetchArtwork {
 		#                                                      q => sQuare
 		#                                                       g => Giant
 		#                                                        d => meDium
-		if ( $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]\.(?:jpg|jpeg|png|gif)$}i && (my $song = $client->playingSong()) ) {
+		if ( $track->{cover} && $track->{cover} =~ m{/[ps]\d+[tqgd]?\.(?:jpg|jpeg|png|gif)$}i && (my $song = $client->playingSong()) ) {
 			if ( !$song->pluginData('stationLogo') ) {
 				main::DEBUGLOG && $log->debug( 'Storing default station artwork: ' . $track->{cover} );
 				
@@ -436,6 +441,57 @@ sub setArtwork {
 		main::DEBUGLOG && $log->debug("Updating stream artwork to $artworkUrl");
 		Slim::Control::Request::notifyFromArray( $client, [ 'newmetadata' ] );
 	}
+}
+
+
+# TuneIn image sizes:
+# t.jpg = 75x75 Thumbnail
+# q.jpg = 145x145 sQuare
+# d.jpg = 300x300 meDium
+# g.jpg = 600x600 Giant
+my $sizeMap = {
+	75  => 't',
+	145 => 'q',
+	300 => 'd',
+	600 => 'g',
+};
+
+# this method tries to figure out the smallest file to be downloaded to fit the client's needs
+# it uses the plugin's knowledge about available file sizes to optimize bandwidth and processing requirements
+sub artworkUrl {
+	my ($url, $spec) = @_;
+	
+	main::DEBUGLOG && $log->debug("TuneIn artwork - let's get the smallest version fitting our needs: $url, $spec");
+	
+	my ($logo, $id, $size) = $url =~ m{/([ps]?)(\d+)([tqgd]?)\.(jpg|jpeg|png|gif)$}i;
+	$size = lc($size || '');
+		
+	# sometimes the sQuare image differs from the others for _logos_
+	# don't use the larger, non-square in this case, otherwide default to largest
+	$size = 'g' unless $logo && $size; 
+
+	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+
+	if ($width || $height) {
+		$width  ||= $height;
+		$height ||= $width;
+		
+		my $min = ($width > $height ? $width : $height);
+
+		# get smallest size larger than what we need
+		foreach (sort { $a <=> $b } keys %$sizeMap) {
+			if ($_ >= $min || $sizeMap->{$_} eq $size) {
+				$size = $sizeMap->{$_};
+				last;
+			}
+		}
+	}
+
+	$url =~ s/[tqgd]?\.$ext$/$size.$ext/ if $size;
+	
+	main::DEBUGLOG && $log->debug("Going to get $url");
+	
+	return $url;
 }
 
 1;

@@ -21,6 +21,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Unicode;
+use Slim::Web::ImageProxy;
 
 BEGIN {
 	# Use our custom Template::Context subclass
@@ -254,26 +255,24 @@ sub _resizeImage {
 	return sub {
 		my $url = shift;
 
+		# use local imageproxy to resize image (if enabled)
+		$url = Slim::Web::ImageProxy::proxiedImage($url);
+
 		# don't use imageproxy on local network
 		if ( $url =~ m{^http://(?:192\.168\.|172\.1[6-9]\.|172\.2\d\.|172\.3[01]\.|10\.|127\.0|localhost)}i && !$ENV{SN_DEV} ) {
 			# XXX - we might consider a local imageproxy handling local URLs and files
 			return $url;
 		}
 		
-		# external resource
-		elsif ( $url =~ m{^http://} ) {
+		# fall back to using external image proxy for external resources
+		elsif ( $url =~ m{^https?://} ) {
 			return Slim::Networking::SqueezeNetwork->url(
 				"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
 			);
 		}
-		elsif ( $url =~ m{^http} ) {
-			return Slim::Networking::SqueezeNetwork->url(
-				"/public/imageproxy?w=$width&h=$height&u=$url"
-			);
-		}
 		
 		# $url comes with resizing parameters
-		elsif ( $url =~ /_((?:[0-9X]+x[0-9X]+)(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
+		if ( $url =~ /_((?:[0-9X]+x[0-9X]+)(?:_\w)?(?:_[\da-fA-F]+)?(?:\.\w+)?)$/ ) {
 			return $url;
 		}
 		
@@ -285,7 +284,7 @@ sub _resizeImage {
 		$resizeParams .= "x$height" if $height;
 
 		# music artwork
-		if ( $url =~ m{^(/music/.*/cover)(?:\.jpg)?$} ) {
+		if ( $url =~ m{^(/music/.*/cover)(?:\.jpg)?$} || $url =~ m{(.*imageproxy/.*/image)(?:\.(jpe?g|png|gif))} ) {
 			return $1 . $resizeParams . '_o';
 		}
 		

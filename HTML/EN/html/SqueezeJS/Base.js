@@ -782,7 +782,7 @@ SqueezeJS.SonginfoParser = {
 
 				// some internal logos come without resizing parameters - add them here if size is defined
 				else if (coverart && width && !publicURL) {
-					coverart = coverart.replace(/(icon)(\.\w+)$/, "$1_" + width + 'x' + width + "_p$2");
+					coverart = coverart.replace(/(icon|image|cover)(\.\w+)$/, "$1_" + width + 'x' + width + "_p$2");
 				}
 			}
 			else {

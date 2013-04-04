@@ -78,13 +78,13 @@ sub resize {
 	# Short-circuit if no width/height specified, and formats match, return original image
 	if ( !$width && !$height ) {
 		if ( !$explicit_format || ($explicit_format eq $in_format) ) {
-			return $file ? (_slurp($file, $offset, $length), $in_format) : ($origref, $in_format);
+			return $file ? (_slurp($file, $length ? $offset : undef, $length || undef), $in_format) : ($origref, $in_format);
 		}
 	}
 	
 	# Abort if invalid params
 	if ( ($width && $width !~ /^\d+$/) || ($height && $height !~ /^\d+$/) ) {
-		return $file ? (_slurp($file, $offset, $length), $in_format) : ($origref, $in_format);
+		return $file ? (_slurp($file, $length ? $offset : undef, $length || undef), $in_format) : ($origref, $in_format);
 	}
 	
 	# Fixup bgcolor and convert from hex
