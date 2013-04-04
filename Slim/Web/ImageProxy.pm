@@ -84,7 +84,7 @@ sub getImage {
 
 # Return a proxied image URL if
 # - the given url is a fully qualified url, and
-# - the use_local_imageproxy pref is set (optional, as long as mysb.com is around), or
+# - the useLocalImageproxy pref is set (optional, as long as mysb.com is around), or
 # - a custom handler for the given url has been defined (eg. radiotime), or
 # - or the $force parameter is passed in
 #
@@ -101,7 +101,7 @@ sub proxiedImage {
 	return $url unless $force || ($url && $url =~ /^https?:/);
 
 	# don't use for all external URLs just yet, but only for URLs which have a handler defined
-	return $url unless $force || $prefs->get('use_local_imageproxy') || __PACKAGE__->getHandlerFor($url);
+	return $url unless $force || $prefs->get('useLocalImageproxy') || __PACKAGE__->getHandlerFor($url);
 
 	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
 	
