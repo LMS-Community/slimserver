@@ -873,6 +873,7 @@ sub logLevels {
 		'server.timers'              => 'ERROR',
 
 		'artwork'                    => 'ERROR',
+		'artwork.imageproxy'         => 'ERROR',
 		'favorites'                  => 'ERROR',
 		'prefs'                      => 'ERROR',
 		'factorytest'                => 'ERROR',

@@ -19728,6 +19728,9 @@ DEBUG_ARTWORK
 	RU	Показ и сопоставление обложек
 	SV	Visning och matchning av albumomslag
 
+DEBUG_ARTWORK_IMAGEPROXY
+	EN	Artwork Resizing Proxy
+
 DEBUG_FACTORYTEST
 	CS	Informace použité při výrobních zkouškách
 	DA	Oplysninger brugt ved fabrikstest
