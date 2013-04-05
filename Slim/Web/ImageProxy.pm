@@ -24,6 +24,8 @@ my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
 my $cache = Slim::Web::ImageProxy::Cache->new();
 
+my %queue;
+
 sub getImage {
 	my ($class, $client, $path, $params, $callback, $spec, @args) = @_;
 	
@@ -64,22 +66,111 @@ sub getImage {
 	
 	main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
 	
+	$queue{$url} ||= [];
+	
+	# we're going to queue up requests, so we don't need to download 
+	# the same file multiple times due to a race condition
+	push @{ $queue{$url} }, {
+		client   => $client,
+		cachekey => $path,
+		params   => $params,
+		callback => $callback,
+		spec     => $spec,
+		args     => \@args,
+	};
+	
+	# no need to do the http request if we're already fetching it
+	return if scalar @{ $queue{$url} } > 1;
+	
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotArtwork,
 		\&_gotArtworkError,
 		{
-			client   => $client,
-			spec     => $spec,
 			timeout  => 15,
 			cache    => 1,
-			cachekey => $path,
-			params   => $params,
-			callback => $callback,
-			args     => \@args,
 		},
 	);
 	
 	$http->get( $url );
+}
+
+sub _gotArtwork {
+	my $http = shift;
+	my $url  = $http->url;
+	
+	my $ct = $http->headers->content_type;
+	$ct =~ s/jpeg/jpg/;
+	$ct =~ s/image\///;
+
+	# unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
+	my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($url) );
+	File::Slurp::write_file($fullpath, $http->contentRef);
+
+	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
+
+	while ( my $item = shift @{ $queue{$http->url} }) {
+		my $client   = $item->{client};
+		my $spec     = $item->{spec};
+		my $args     = $item->{args};
+		my $params   = $item->{params};
+		my $callback = $item->{callback};
+		my $cachekey = $item->{cachekey};
+		
+		Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
+			# Resized image should now be in cache
+			my $body;
+			my $response = $args->[1];
+		
+			if ( my $c = $cache->get($cachekey) ) {
+				$body = $c->{data_ref};
+				
+				my $ct = 'image/' . $c->{content_type};
+				$ct =~ s/jpg/jpeg/;
+				$response->content_type($ct);
+				$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
+				$response->expires( time() + ONE_YEAR );
+			}
+			else {
+				# resize command failed, return 500
+				main::INFOLOG && $log->info("  Resize failed, returning 500");
+				$log->error("Artwork resize for $cachekey failed");
+				
+				_artworkError( $client, $params, \'', 500, $callback, @$args );
+				return;
+			}
+		
+			$callback && $callback->( $client, $params, $body, @$args );
+		}, $cache );
+	}
+
+	unlink $fullpath;
+}
+
+sub _gotArtworkError {
+	my $http     = shift;
+	my $client   = $http->params('client');
+	my $params   = $http->params('params');
+	my $callback = $http->params('callback');
+	my $args     = $http->params('args');
+
+	# File does not exist, return 404
+	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
+	
+	my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
+	_artworkError( $client, $params, $body, 404, $callback, @$args );
+}
+
+sub _artworkError {
+	my ($client, $params, $body, $code, $callback, @args) = @_;
+
+	my $response = $args[1];
+
+	$response->code($code);
+	$response->content_type('text/html');
+	$response->expires( time() - 1 );
+	$response->header( 'Cache-Control' => 'no-cache' );
+		
+	$callback->( $client, $params, $body, @args );
 }
 
 # Return a proxied image URL if
@@ -113,81 +204,6 @@ sub proxiedImage {
 	}
 	
 	return 'imageproxy/' . uri_escape_utf8($url) . '/image' . $ext;
-}
-
-sub _gotArtwork {
-	my $http     = shift;
-	my $client   = $http->params('client');
-	my $spec     = $http->params('spec');
-	my $cachekey = $http->params('cachekey');
-	my $params   = $http->params('params');
-	my $callback = $http->params('callback');
-	my $args     = $http->params('args');
-	
-	my $ct = $http->headers->content_type;
-	$ct =~ s/jpeg/jpg/;
-	$ct =~ s/image\///;
-
-	# unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
-	my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($cachekey) );
-	File::Slurp::write_file($fullpath, $http->contentRef);
-
-	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
-
-	Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
-		# Resized image should now be in cache
-		my $body;
-		my $response = $args->[1];
-	
-		unlink $fullpath;
-	
-		if ( my $c = $cache->get($cachekey) ) {
-			$body = $c->{data_ref};
-			
-			my $ct = 'image/' . $c->{content_type};
-			$ct =~ s/jpg/jpeg/;
-			$response->content_type($ct);
-			$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
-			$response->expires( time() + ONE_YEAR );
-		}
-		else {
-			# resize command failed, return 500
-			main::INFOLOG && $log->info("  Resize failed, returning 500");
-			$log->error("Artwork resize for $cachekey failed");
-			
-			_artworkError( $client, $params, \'', 500, $callback, @$args );
-			return;
-		}
-	
-		$callback && $callback->( $client, $params, $body, @$args );
-	}, $cache );
-}
-
-sub _gotArtworkError {
-	my $http     = shift;
-	my $client   = $http->params('client');
-	my $params   = $http->params('params');
-	my $callback = $http->params('callback');
-	my $args     = $http->params('args');
-
-	# File does not exist, return 404
-	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
-	
-	my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-	_artworkError( $client, $params, $body, 404, $callback, @$args );
-}
-
-sub _artworkError {
-	my ($client, $params, $body, $code, $callback, @args) = @_;
-
-	my $response = $args[1];
-
-	$response->code($code);
-	$response->content_type('text/html');
-	$response->expires( time() - 1 );
-	$response->header( 'Cache-Control' => 'no-cache' );
-		
-	$callback->( $client, $params, $body, @args );
 }
 
 # allow plugins to register custom handlers for the image url
