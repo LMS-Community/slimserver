@@ -37,8 +37,11 @@ sub init {
 		func  => \&provider,
 	);
 	
+	# match one of the following types of artwork:
+	# http://xxx.cloudfront.net/293541660g.jpg
+	# http://xxx.cloudfront.net/gn/6LN8BZKP0Mg.jpg
 	Slim::Web::ImageProxy->registerHandler(
-		match => qr/cloudfront\.net\/[ps]?\d+[tqgd]?\.(?:jpe?g|png|gif)$/,
+		match => qr/cloudfront\.net\/(?:[ps]?\d+|gn\/[A-Z0-9]+)[tqgd]?\.(?:jpe?g|png|gif)$/,
 		func  => \&artworkUrl,
 	);
 }
@@ -470,21 +473,18 @@ sub artworkUrl {
 	# don't use the larger, non-square in this case, otherwide default to largest
 	$size = 'g' unless $logo && $size; 
 
-	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+	my $ext = (Slim::Web::Graphics->parseSpec($spec))[4];
+	
+	my $min = Slim::Web::ImageProxy->getRightSize($spec, $sizeMap);
 
-	if ($width || $height) {
-		$width  ||= $height;
-		$height ||= $width;
-		
-		my $min = ($width > $height ? $width : $height);
-
-		# get smallest size larger than what we need
-		foreach (sort { $a <=> $b } keys %$sizeMap) {
-			if ($_ >= $min || $sizeMap->{$_} eq $size) {
-				$size = $sizeMap->{$_};
-				last;
-			}
+	# we use either the min required, or the maximum as defined above
+	foreach (sort keys %$sizeMap) {
+		if ($sizeMap->{$_} eq $min) {
+			$size = $min;
+			last;
 		}
+
+		last if $sizeMap->{$_} eq $size;
 	}
 
 	$url =~ s/[tqgd]?\.$ext$/$size.$ext/ if $size;

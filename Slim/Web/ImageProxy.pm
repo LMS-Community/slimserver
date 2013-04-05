@@ -219,6 +219,34 @@ sub getHandlerFor {
 	return $handlers{ $url };
 }
 
+# helper method to get the correc sizing parameter out of a list of possible sizes
+# my $size = Slim::Web::ImageProxy->getRightSize("180x180_m.jpg", {
+# 	70  => 's',
+#	150 => 'm',
+#	300 => 'l',
+#	600 => 'g',
+# });
+# -> would return 'l', which is the smallest to cover 180px width/height
+sub getRightSize {
+	my $class = shift;
+	my $spec  = shift;      # resizing specification
+	my $sizes = shift;      # a list of size/param tuples - param will be returned for the smallest fit
+
+	my ($width, $height) = Slim::Web::Graphics->parseSpec($spec);
+
+	if ($width || $height) {
+		$width  ||= $height;
+		$height ||= $width;
+		
+		my $min = ($width > $height ? $width : $height);
+
+		# get smallest size larger than what we need
+		foreach (sort keys %$sizes) {
+			return $sizes->{$_} if $_ >= $min;
+		}
+	}
+}
+
 1;
 
 
