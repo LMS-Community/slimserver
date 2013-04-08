@@ -266,7 +266,8 @@ sub getRightSize {
 		my $min = ($width > $height ? $width : $height);
 
 		# get smallest size larger than what we need
-		foreach (sort keys %$sizes) {
+		# use <=> comparison to make sure the sort is done numerically!
+		foreach (sort { $a <=> $b } keys %$sizes) {
 			return $sizes->{$_} if $_ >= $min;
 		}
 	}
