@@ -108,7 +108,7 @@ sub _gotArtwork {
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
 
-	while ( my $item = shift @{ $queue{$http->url} }) {
+	while ( my $item = shift @{ $queue{$url} }) {
 		my $client   = $item->{client};
 		my $spec     = $item->{spec};
 		my $args     = $item->{args};
@@ -142,22 +142,31 @@ sub _gotArtwork {
 			$callback && $callback->( $client, $params, $body, @$args );
 		}, $cache );
 	}
+	
+	delete $queue{$url};
 
 	unlink $fullpath;
 }
 
 sub _gotArtworkError {
 	my $http     = shift;
-	my $client   = $http->params('client');
-	my $params   = $http->params('params');
-	my $callback = $http->params('callback');
-	my $args     = $http->params('args');
+	my $url  = $http->url;
 
 	# File does not exist, return 404
 	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
+
+	# XXX - process the full queue
+	while ( my $item = shift @{ $queue{$url} }) {
+		my $client   = $item->{client};
+		my $args     = $item->{args};
+		my $params   = $item->{params};
+		my $callback = $item->{callback};
 	
-	my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-	_artworkError( $client, $params, $body, 404, $callback, @$args );
+		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
+		_artworkError( $client, $params, $body, 404, $callback, @$args );
+	}
+	
+	delete $queue{$url};
 }
 
 sub _artworkError {
