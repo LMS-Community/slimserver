@@ -34,6 +34,8 @@ sub init {
 		$cache->pragma('temp_store = MEMORY');
 	}
 
+	Slim::Web::ImageProxy->init();
+
 	if (main::SCANNER) {
 		require Slim::Web::Template::NoWeb;
 		$skinMgr = Slim::Web::Template::NoWeb->new();

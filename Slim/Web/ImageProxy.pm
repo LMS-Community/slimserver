@@ -11,7 +11,7 @@ use Exporter::Lite;
 our @EXPORT_OK = qw(proxiedImage);
 
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Utils::ArtworkCache;
+use Slim::Utils::Misc;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Web::Graphics;
@@ -22,9 +22,16 @@ use constant ONE_YEAR => 86400 * 365;
 
 my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
-my $cache = Slim::Web::ImageProxy::Cache->new();
+my $cache;
 
 my %queue;
+
+sub init {
+ 	$cache ||= Slim::Web::ImageProxy::Cache->new();
+
+	# clean up  stale cache files
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^imgproxy_[a-f0-9]+$/i);			
+}
 
 sub getImage {
 	my ($class, $client, $path, $params, $callback, $spec, @args) = @_;
@@ -32,6 +39,8 @@ sub getImage {
 	main::DEBUGLOG && $log->debug("Get artwork for URL: $path");
 
 	# check the cache for this url
+ 	$cache ||= Slim::Web::ImageProxy::Cache->new();
+
 	if ( my $cached = $cache->get($path) ) {
 		my $ct = 'image/' . $cached->{content_type};
 		$ct =~ s/jpg/jpeg/;
@@ -107,6 +116,8 @@ sub _gotArtwork {
 	File::Slurp::write_file($fullpath, $http->contentRef);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
+
+ 	$cache ||= Slim::Web::ImageProxy::Cache->new();
 
 	while ( my $item = shift @{ $queue{$url} }) {
 		my $client   = $item->{client};
