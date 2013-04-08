@@ -226,9 +226,6 @@ sub _init_db {
 			$dbh->do('CREATE TABLE IF NOT EXISTS cache (k INTEGER PRIMARY KEY, v BLOB, t INTEGER)');
 			$dbh->do('CREATE INDEX IF NOT EXISTS expiry ON cache (t)');
 		}
-
-		# run a simple query which would cause a corrupted file to bail out
-		$dbh->do('SELECT COUNT(*) FROM cache');
 	};
 	
 	if ( $@ ) {
