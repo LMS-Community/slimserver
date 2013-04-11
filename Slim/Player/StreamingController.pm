@@ -2474,8 +2474,14 @@ sub _setPlayingState {
 	main::INFOLOG && $log->info("new playing state $PlayingStateName[$newState]");
 	
 	if ( main::SLIM_SERVICE ) {
-		$self->_persistState();
+		Slim::Utils::Timers::killTimers( $self, \&_persistState );
+		Slim::Utils::Timers::setTimer(
+			$self,
+			Time::HiRes::time() + 5,
+			\&_persistState,
+		);
 	}
+
 
 	if ($newState != BUFFERING && $newState != WAITING_TO_SYNC) {$self->{'rebuffering'} = 0;}
 }
@@ -2493,11 +2499,16 @@ sub _setStreamingState {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		$self->_persistState();
+		Slim::Utils::Timers::killTimers( $self, \&_persistState );
+		Slim::Utils::Timers::setTimer(
+			$self,
+			Time::HiRes::time() + 5,
+			\&_persistState,
+		);
 	}
 }
 
-sub _persistState {
+sub _persistState { if ( main::SLIM_SERVICE ) {
 	my $self = shift;
 	
 	# Persist playing/streaming state to the SN database
@@ -2505,11 +2516,11 @@ sub _persistState {
 	# to another instance.
 	my $state = $PlayingStateName[ $self->{playingState} ] 
 		. '-' . $StreamingStateName[ $self->{streamingState} ];
-	
+
 	for my $client ( $self->activePlayers ) {
 		# Only update if serviceip matches
 		$client->playerData->updatePlaymode( $state, Slim::Utils::IPDetect::IP_port() );
 	}
-}
+} }
 
 1;
