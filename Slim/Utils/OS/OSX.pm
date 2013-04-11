@@ -433,7 +433,7 @@ sub _signalUpdateReady {
 
 sub canAutoUpdate { 1 }
 
-sub installerExtension { 'dmg' }; 
+sub installerExtension { 'pkg' }; 
 sub installerOS { 'osx' }
 
 sub restartServer {

@@ -1,19 +1,19 @@
 # String file for PreventStandby plugin
 
 PLUGIN_PREVENTSTANDBY
-	CS	Windows: Zabránit přechodu systému do pohotovostního režimu
-	DA	Windows: Forhindrer at systemet går på standby
-	DE	Windows: Standbymodus verhindern
-	EN	Windows: Prevent System Standby
-	ES	Windows: Impedir modo de espera del sistema
-	FI	Windows: estä järjestelmän siirtyminen valmiustilaan
-	FR	Windows: empêcher la mise en veille du système
-	IT	Windows: impedisci standby del sistema
-	NL	Windows: Voorkomen dat systeem naar stand-by gaat
-	NO	Windows: Hindre hvilemodus
-	PL	Windows: zapobiegaj przejściu systemu do trybu wstrzymania
-	RU	Windows: не переходить в режим ожидания
-	SV	Windows: Förhindra viloläge
+	CS	Zabránit přechodu systému do pohotovostního režimu
+	DA	Forhindrer at systemet går på standby
+	DE	Standbymodus verhindern
+	EN	Prevent System Standby
+	ES	Impedir modo de espera del sistema
+	FI	Estä järjestelmän siirtyminen valmiustilaan
+	FR	Empêcher la mise en veille du système
+	IT	Impedisci standby del sistema
+	NL	Voorkomen dat systeem naar stand-by gaat
+	NO	Hindre hvilemodus
+	PL	Zapobiegaj przejściu systemu do trybu wstrzymania
+	RU	не переходить в режим ожидания
+	SV	Förhindra viloläge
 
 PLUGIN_PREVENTSTANDBY_DESC
 	CS	Tento plugin monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Logitech Media Server, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
