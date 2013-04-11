@@ -76,6 +76,7 @@ sub initPlugin {
 	$prefs->init({
 		enable_scrobbling => 1,
 		include_radio     => 0,
+		account           => 0,
 	});
 	
 	# Subscribe to new song events
@@ -399,14 +400,20 @@ sub _handshakeError {
 sub newsongCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
+
+	# Check if this player has an account selected
+	if ( ! (my $account = $prefs->client($client)->get('account')) ) {
+		
+		# set a zero value so we don't need to query the DB any more in the future
+		$prefs->client($client)->set('account', 0) if main::SLIM_SERVICE && !defined $account;
+		
+		return ;
+	}
 	
 	# If synced, only listen to the master
 	if ( $client->isSynced() ) {
 		return unless Slim::Player::Sync::isMaster($client);
 	}
-
-	# Check if this player has an account selected
-	return if !$prefs->client($client)->get('account');
 	
 	my $accounts = getAccounts($client);
 	
