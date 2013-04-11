@@ -533,7 +533,7 @@ sub fixPath {
 
 		$fixed = $file;
 
-	} elsif (Slim::Music::Info::isURL($file) && (!scalar @$mediadirs || !grep {-r catfile($_, $file)} @$mediadirs)) {
+	} elsif ( ($file =~ m|^file://|i || Slim::Music::Info::isURL($file)) && (!scalar @$mediadirs || !grep {-r catfile($_, $file)} @$mediadirs) ) {
 
 		$fixed = $file;
 
@@ -574,7 +574,7 @@ sub fixPath {
 
 		# XXX - don't know how to handle this case: should we even return an untested value?
 		my $audiodir = $mediadirs->[0];
-		logBacktrace("Dealing with single audiodir ($audiodir) instead of mediadirs " . Data::Dump::dump($mediadirs));
+		$scannerlog->is_warn && logBacktrace("Dealing with single audiodir ($audiodir) instead of mediadirs " . Data::Dump::dump($mediadirs));
 
 		$file =~ s/\Q$audiodir\E//;
 		$fixed = catfile($audiodir, $file);
@@ -589,10 +589,10 @@ sub fixPath {
 		$fixed = canonpath(fixPathCase($fixed));
 
 		# Fixes Bug: 2757, but breaks a lot more: 3681, 3682 & 3683
-		if (-l $fixed) {
+		#if (-l $fixed) {
 
 			#$fixed = readlink($fixed);
-		}
+		#}
 	}
 
 	if ($file ne $fixed) {

@@ -423,7 +423,7 @@ sub cantOpen {
 	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
 		my ($id) = $url =~ /id=([^&]+)/;
 		if ( $id ) {
-			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=16'
+			my $reportUrl = 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=16&mode=smartradio'
 				. '&id=' . uri_escape_utf8($id)
 				. '&message=' . uri_escape_utf8($error);
 		

@@ -19,8 +19,9 @@ my $log   = logger('formats.metadata');
 my $prefs = preferences('plugin.radiotime');
 
 use constant PARTNER_ID => 16;
-use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID;
-use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID . '&serial=';
+use constant MODE       => 'smartradio';
+use constant META_URL   => 'http://opml.radiotime.com/NowPlaying.aspx?partnerId=' . PARTNER_ID . '&mode=' . MODE;
+use constant CONFIG_URL => 'http://opml.radiotime.com/Config.ashx?c=api&partnerId=' . PARTNER_ID. '&mode=' . MODE . '&serial=';
 
 my $ICON;
 
@@ -378,8 +379,9 @@ sub _fetchArtwork {
 		
 		if ( $track && $track->{title} && $track->{artist} ) {
 			
-			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&serial=%s&artist=%s&title=%s',
+			my $lookupurl = sprintf($config->{lookupurl} . '?partnerId=%s&mode=%s&serial=%s&artist=%s&title=%s',
 				PARTNER_ID,
+				MODE,
 				Slim::Plugin::RadioTime::Plugin->getSerial($client),
 				$track->{artist},
 				$track->{title},

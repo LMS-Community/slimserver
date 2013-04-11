@@ -2580,7 +2580,7 @@ my %tagMap = (
 	  'H' => ['channels',         'CHANNELS',      'channels'],         #channels 
 	  'F' => ['dlna_profile',     'DLNA_PROFILE',  'dlna_profile'],     #dlna_profile
 	                                                                    #block_alignment
-	                                                                    #endian 
+	  'E' => ['endian',           'ENDIAN',        'endian'],           #endian 
 	  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
 	  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
 	# 'z' => ['drm',              '',              'drm'],              #drm
@@ -2661,6 +2661,7 @@ my %colMap = (
 	x => sub { $_[0]->{'tracks.remote'} ? 1 : 0 },
 	c => 'tracks.coverid',
 	H => 'tracks.channels',
+	E => 'tracks.endian',
 );
 
 sub _songDataFromHash {
@@ -3133,7 +3134,8 @@ sub _getTagDataForTracks {
 	$tags =~ /x/ && do { $c->{'tracks.remote'} = 1 };
 	$tags =~ /c/ && do { $c->{'tracks.coverid'} = 1 };
 	$tags =~ /Y/ && do { $c->{'tracks.replay_gain'} = 1 };
-	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };	
+	$tags =~ /i/ && do { $c->{'tracks.disc'} = 1 };
+	$tags =~ /E/ && do { $c->{'tracks.endian'} = 1 };
 	$tags =~ /g/ && do {
 		$join_genres->();
 		$c->{'genres.name'} = 1;
