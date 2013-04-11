@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 
 <extension>
-		<id>BFACABFD-6334-4743-95BA-43A60E159560</id>
-		<name>PLUGIN_PREVENTSTANDBY</name>
-		<module>Slim::Plugin::PreventStandby::Plugin</module>
-		<version>2.0</version>
-		<description>PLUGIN_PREVENTSTANDBY_DESC</description>
-		<creator>Gordon Harris, Julian Neil, Slim Devices/Logitech</creator>
+	<id>BFACABFD-6334-4743-95BA-43A60E159560</id>
+	<name>PLUGIN_PREVENTSTANDBY</name>
+	<module>Slim::Plugin::PreventStandby::Plugin</module>
+	<version>3.0</version>
+	<description>PLUGIN_PREVENTSTANDBY_DESC</description>
+	<creator>Gordon Harris, Julian Neil, Slim Devices/Logitech</creator>
 
-		<defaultState>enabled</defaultState>
+	<defaultState>enabled</defaultState>
 
-		<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
-		<optionsURL>plugins/PreventStandby/settings/basic.html</optionsURL>
-		<type>2</type><!-- type=extension -->
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<optionsURL>plugins/PreventStandby/settings/basic.html</optionsURL>
+	<type>2</type><!-- type=extension -->
 
-		<targetApplication>
-				<id>Logitech Media Server</id>
-				<minVersion>7.0a</minVersion>
-				<maxVersion>*</maxVersion>
-		</targetApplication>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
 
-		<targetPlatform>Windows</targetPlatform>
-
+	<targetPlatform>Windows</targetPlatform>
+	<targetPlatform>Darwin</targetPlatform><!--  OSX internal name -->
 </extension>
