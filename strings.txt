@@ -18890,6 +18890,22 @@ SETUP_PRECACHEARTWORK_DISABLED
 	RU	Не кэшировать обложки предварительно
 	SV	Cachelagra inte albumomslag
 
+SETUP_IMAGEPROXY
+	DE	Plattenhüllen Grössenanpassung
+	EN	Artwork resizing
+
+SETUP_IMAGEPROXY_DESC
+	DE	Bevor Plattenhüllen zu den Endgeräten geschickt werden, werden sie zu Gunster bester Qualität und Performance in der Grösse angepasst. Dies erfolgt standardmässig auf mysqueezebox.com. Sollten Sie eine interne Quelle verwenden, welche von mysqueezebox.com nicht erreicht werden kann, oder unabhängiger von mysqueezebox.com sein, so verwenden Sie die Logitech Media Server gestützte Grössenanpassung.
+	EN	In order to get best quality artwork and performance on the devices, artwork files are resized before being sent to the client. By default this is handled by mysqueezebox.com. If you want to be independent from mysqueezebox.com or are running an internal streaming source, you might want to use Logitech Media Server's internal resizing.
+
+SETUP_IMAGEPROXY_REMOTE
+	DE	Plattenhüllen auf mysqueezebox.com anpassen
+	EN	Use mysqueezebox.com to resize artwork
+
+SETUP_IMAGEPROXY_LOCAL
+	DE	Plattenhüllen lokal in Logitech Media Server anpassen
+	EN	Use Logitech Media Server to resize artwork
+
 SETUP_SERVERPRIORITY
 	CS	Priorita serveru
 	DA	Serverprioritet
@@ -19711,6 +19727,9 @@ DEBUG_ARTWORK
 	PL	Wyświetlanie i dopasowywanie okładek
 	RU	Показ и сопоставление обложек
 	SV	Visning och matchning av albumomslag
+
+DEBUG_ARTWORK_IMAGEPROXY
+	EN	Artwork Resizing Proxy
 
 DEBUG_FACTORYTEST
 	CS	Informace použité při výrobních zkouškách

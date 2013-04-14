@@ -24,7 +24,7 @@ sub page {
 
 sub prefs {
 	my @prefs = ( $prefs, qw(dbhighmem disableStatistics serverPriority scannerPriority 
- 				precacheArtwork maxPlaylistLength) );
+ 				precacheArtwork maxPlaylistLength useLocalImageproxy) );
  	push @prefs, qw(autorescan autorescan_stat_interval) if Slim::Utils::OSDetect::getOS->canAutoRescan;
  	return @prefs;
 }

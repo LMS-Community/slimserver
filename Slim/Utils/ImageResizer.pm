@@ -23,7 +23,7 @@ my ($gdresizein, $gdresizeout, $gdresizeproc);
 my $pending_requests = 0;
 
 sub resize {
-	my ($class, $file, $cachekey, $specs, $callback) = @_;
+	my ($class, $file, $cachekey, $specs, $callback, $cache) = @_;
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
@@ -35,7 +35,7 @@ sub resize {
 		require AnyEvent::Handle;
 		
 		# Get cache root for passing to daemon
-		my $cache = Slim::Utils::ArtworkCache->new();
+		$cache      ||= Slim::Utils::ArtworkCache->new();
 		my $cacheroot = $cache->getRoot();
 		
 		main::DEBUGLOG && $isDebug && $log->debug("Using gdresized daemon to resize (pending requests: $pending_requests)");
@@ -52,7 +52,7 @@ sub resize {
 				}
 				
 				# Fallback to resizing the old way
-				sync_resize($file, $cachekey, $specs, $callback);
+				sync_resize($file, $cachekey, $specs, $callback, $cache);
 				
 				return;
 			};
@@ -70,7 +70,7 @@ sub resize {
 				}
 				
 				# Fallback to resizing the old way
-				sync_resize($file, $cachekey, $specs, $callback);
+				sync_resize($file, $cachekey, $specs, $callback, $cache);
 			};
 			Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + SOCKET_TIMEOUT, $timeout );
 			
@@ -105,12 +105,12 @@ sub resize {
 	}
 	else {
 		# No daemon, resize synchronously in-process
-		return sync_resize($file, $cachekey, $specs, $callback);
+		return sync_resize($file, $cachekey, $specs, $callback, $cache);
 	}
 }
 
 sub sync_resize {
-	my ( $file, $cachekey, $specs, $callback ) = @_;
+	my ( $file, $cachekey, $specs, $callback, $cache ) = @_;
 	
 	require Slim::Utils::GDResizer;
 	
@@ -121,7 +121,7 @@ sub sync_resize {
 		Slim::Utils::GDResizer->gdresize(
 			file      => $file,
 			spec      => \@spec,
-			cache     => Slim::Utils::ArtworkCache->new(),
+			cache     => $cache || Slim::Utils::ArtworkCache->new(),
 			cachekey  => $cachekey,
 			debug     => $isDebug,
 		);

@@ -44,6 +44,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 use Slim::Utils::Text;
+use Slim::Web::ImageProxy qw(proxiedImage);
 
 {
 	if (main::ISWINDOWS) {
@@ -4116,7 +4117,7 @@ sub _addJiveSong {
 	my $iconId = $songData->{coverid};
 	
 	if ( defined($songData->{artwork_url}) ) {
-		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
+		$request->addResultLoop( $loop, $count, 'icon', proxiedImage($songData->{artwork_url}) );
 	}
 	elsif ( main::SLIM_SERVICE ) {
 		# send radio placeholder art when on mysb.com
@@ -4479,6 +4480,10 @@ sub _songData {
 			if (($tag eq 'R' || $tag eq 'x') && $value == 0) {
 				$value = undef;
 			}
+			# we might need to proxy the image request to resize it
+			elsif ($tag eq 'K' && $value) {
+				$value = proxiedImage($value); 
+			}
 			
 			# if we have a value
 			if (defined $value && $value ne '') {
@@ -4502,7 +4507,7 @@ sub showArtwork {
 	my $id = $request->getParam('_artworkid');
 
 	if ($id =~ /:\/\//) {
-		$request->addResult('artworkUrl'  => $id);
+		$request->addResult('artworkUrl'  => proxiedImage($id));
 	} else {
 		$request->addResult('artworkId'  => $id);
 	}

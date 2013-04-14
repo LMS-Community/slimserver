@@ -28,6 +28,15 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_IMAGEPROXY" desc="SETUP_IMAGEPROXY_DESC" %]
+		<select class="stdedit" name="pref_useLocalImageproxy" id="useLocalImageproxy">
+
+			<option [% IF NOT prefs.pref_useLocalImageproxy %]selected [% END %]value="0">[% 'SETUP_IMAGEPROXY_REMOTE' | getstring %]</option>
+			<option [% IF prefs.pref_useLocalImageproxy %]selected [% END %]value="1">[% 'SETUP_IMAGEPROXY_LOCAL' | getstring %]</option>
+		
+		</select>
+	[% END %]
+
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
 			<select class="stdedit" name="pref_serverPriority" id="serverPriority">

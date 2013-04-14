@@ -12,6 +12,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::ArtworkCache;
 use Slim::Utils::Prefs;
 use Slim::Utils::ImageResizer;
+use Slim::Web::ImageProxy;
 
 use constant ONE_DAY  => 86400;
 use constant ONE_YEAR => ONE_DAY * 365;
@@ -32,6 +33,8 @@ sub init {
 		$cache->pragma('cache_size = 20000');
 		$cache->pragma('temp_store = MEMORY');
 	}
+
+	Slim::Web::ImageProxy->init();
 
 	if (main::SCANNER) {
 		require Slim::Web::Template::NoWeb;
@@ -136,6 +139,12 @@ sub artworkRequest {
 		main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
 	}
 	
+	# local image proxy for remote URLs
+	elsif ( $path =~ m{^imageproxy/} ) {
+		Slim::Web::ImageProxy->getImage($client, $path, $params, $callback, $spec, @args);
+		return;
+	}
+	
 	# If path begins with "music" it's a cover path using either coverid
 	# or the old trackid format
 	elsif ( $path =~ m{^(music)/([^/]+)/} || $path =~ m{^(image|video)/([0-9a-f]{8})/} ) {
@@ -181,7 +190,7 @@ sub artworkRequest {
 				require Slim::Utils::GDResizer;
 
 				my @arrSpec = split(',', $spec);
-				my ($width, $height, $mode, $bgcolor, $ext) = $arrSpec[0] =~ /^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+				my ($width, $height, $mode, $bgcolor, $ext) = __PACKAGE__->parseSpec($arrSpec[0]);
 				my ($res, $format) = Slim::Utils::GDResizer->resize(
 					original => \$coverArtImage,
 					width    => $width,
@@ -383,6 +392,13 @@ sub artworkRequest {
 	}
 	
 	return;
+}
+
+sub parseSpec {
+	my ($class, $spec) = @_;
+	my ($width, $height, $mode, $bgcolor, $ext) = $spec =~ /^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/;
+	
+	return ($width, $height, $mode, $bgcolor, $ext);
 }
 
 1;

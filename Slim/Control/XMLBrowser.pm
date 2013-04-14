@@ -33,6 +33,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Music::TitleFormatter;
 #use Slim::Utils::Timers;
+use Slim::Web::ImageProxy qw(proxiedImage);
 
 use constant CACHE_TIME => 3600; # how long to cache browse sessions
 
@@ -757,7 +758,7 @@ sub _cliQuery_done {
 
 					# if we're adding or inserting, show a showBriefly
 					if ( $method =~ /add/ || $method eq 'insert' ) {
-						my $icon = $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon');
+						my $icon = proxiedImage($subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'));
 						my $title = $subFeed->{'name'} || $subFeed->{'title'};
 						_addingToPlaylist($client, $method, $title, $icon);
 					}
@@ -974,7 +975,7 @@ sub _cliQuery_done {
 					for my $item ( @$items ) {
 						next unless $item->{image};
 						push @{$images}, {
-							image   => $item->{image},
+							image   => proxiedImage($item->{image}),
 							caption => $item->{name},
 							date    => $item->{date},
 							owner   => $item->{owner},
@@ -1128,10 +1129,10 @@ sub _cliQuery_done {
 						my %merged = (%{$params}, %{$itemParams});
 
 						if ( $item->{icon} ) {
-							$hash{'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id')} = $item->{icon};
-							$hasImage = 1;				
+							$hash{'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id')} = proxiedImage($item->{icon});
+							$hasImage = 1;
 						} elsif ( $item->{image} ) {
-							$hash{'icon'} = $item->{image};
+							$hash{'icon'} = proxiedImage($item->{image});
 							$hasImage = 1;
 						}
 						if (my $coverid = $item->{'artwork_track_id'}) {
@@ -1338,7 +1339,7 @@ sub _cliQuery_done {
 						$hash{name}  = $name          if defined $name;
 						$hash{type}  = $item->{type}  if defined $item->{type};
 						$hash{title} = $item->{title} if defined $item->{title};
-						$hash{image} = $item->{image} if defined $item->{image};
+						$hash{image} = proxiedImage($item->{image}) if defined $item->{image};
 
 						# add url entries if requested unless they are coderefs as this breaks serialisation
 						if ($want_url && defined $item->{url} && (!ref $item->{url} || ref $item->{url} ne 'CODE')) {
@@ -1557,7 +1558,7 @@ sub _addingToPlaylist {
 			type => 'mixed',
 			text => [ $jivestring, $title ],
 			style => 'add',
-			'icon-id' => defined $icon ? $icon : '/html/images/cover.png',
+			'icon-id' => defined $icon ? proxiedImage($icon) : '/html/images/cover.png',
 		},
 	} );
 }
@@ -1892,7 +1893,7 @@ sub _favoritesParams {
 		$presetParams{'parser'} = $item->{'parser'} if $item->{'parser'};
 		
 		if (my $icon = $item->{'image'} || $item->{'icon'} || $item->{'cover'}) {
-			$presetParams{'icon'} = $icon;
+			$presetParams{'icon'} = proxiedImage($icon);
 		}
 		
 		return \%presetParams;
