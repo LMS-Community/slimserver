@@ -125,6 +125,16 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 		[% END %]
 	[% END %]
 
+	[% IF defeatDestructiveTouchToPlay.defined %]
+		[% WRAPPER setting title="SETUP_DEFEAT_DESTRUCTIVE_TTP" desc="SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC" %]
+			<select class="stdedit" name="defeatDestructiveTouchToPlay" id="defeatDestructiveTouchToPlay">
+				[% FOREACH i IN [0..4] %]
+					<option [% IF defeatDestructiveTouchToPlay == i %]selected [% END %]value="[% i %]">[% "SETUP_DEFEAT_DESTRUCTIVE_TTP_${i}" | string %]</option>
+				[%- END -%]
+			</select>
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_RESET_PLAYER" desc="SETUP_RESET_PLAYER_DESC" %]
 		<input type="button" onclick="[% useExtJS ? "Settings." : '' %]resetPlayer('[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1')" value="[% "SETUP_RESET_PLAYER" | string %]">
 	[% END %]

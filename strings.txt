@@ -23935,3 +23935,32 @@ SYNC_ABOUT
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
 	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
 
+SETUP_DEFEAT_DESTRUCTIVE_TTP
+# SLT - try to keep this as short as possible...
+	DE	Destruktive "Wiedergabe durch Berühren" unterdrücken 
+	EN	Defeat destructive Touch-To-Play
+
+SETUP_DEFEAT_DESTRUCTIVE_TTP_DESC
+	DE	Durch das Berühren/auswählen eines Musikstückes auf der Squeezebox kann versehentlich eine aktuelle Wiedergabeliste ersetzt werden. Dieses destruktive Verhalten kann mit dieser Einstellunge kontrolliert weren.
+	EN	When touching/selecting a playable item on your Squeezebox, you can accidentally replace what is currently playing. This destructive behaviour can be controlled using this parameter. 
+
+SETUP_DEFEAT_DESTRUCTIVE_TTP_0
+	DE	Destruktives Verhalten nicht unterdrücken
+	EN	Do not defeat
+
+SETUP_DEFEAT_DESTRUCTIVE_TTP_1
+	DE	Vor dem Ersetzen der Wiedergabeliste immer nachfragen
+	EN	Always ask before playing your selection
+
+SETUP_DEFEAT_DESTRUCTIVE_TTP_2
+	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält
+	EN	Defeat if current playlist has more than one track
+
+SETUP_DEFEAT_DESTRUCTIVE_TTP_3
+	DE	Nachfragen, wenn die aktuelle Wiedergabeliste mehr als einen Titel enthält und die Wiedergabe läuft
+	EN	Defeat only if playing and current playlist has more than one track
+	
+SETUP_DEFEAT_DESTRUCTIVE_TTP_4
+	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
+	EN	Defeat only if playing and current item is not a radio stream
+	
