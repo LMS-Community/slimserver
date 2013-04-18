@@ -101,7 +101,7 @@ sub handler {
 			$prefs->client($client)->set($pref, \@array);
 		}
 
-		if ($client->isPlayer && $client->model eq 'squeezeplay' && defined $paramRef->{'defeatDestructiveTouchToPlay'}) {
+		if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay') && defined $paramRef->{'defeatDestructiveTouchToPlay'}) {
 			$prefs->client($client)->set('defeatDestructiveTouchToPlay', $paramRef->{'defeatDestructiveTouchToPlay'});
 		}
 	}
@@ -126,7 +126,7 @@ sub handler {
 		
 	$paramRef->{'playericon'} = $class->getPlayerIcon($client);
 
-	if ($client->isPlayer && $client->model eq 'squeezeplay') {
+	if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay')) {
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->client($client)->get('defeatDestructiveTouchToPlay');
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->get('defeatDestructiveTouchToPlay') unless defined $paramRef->{'defeatDestructiveTouchToPlay'};
 	}
