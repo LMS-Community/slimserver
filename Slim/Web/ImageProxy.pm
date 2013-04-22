@@ -205,9 +205,6 @@ sub _artworkError {
 sub proxiedImage {
 	my ($url, $force) = @_;
 
-	# use external proxy on mysb.com
-	return $url if main::SLIM_SERVICE;
-
 	# only proxy external URLs
 	return $url unless $force || ($url && $url =~ /^https?:/);
 
@@ -312,7 +309,7 @@ sub new {
 			$cache->pragma('cache_size = 300');
 		}
 
-		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+		if ( !main::SCANNER ) {
 			# start purge routine in a few seconds
 			require Slim::Utils::Timers;
 			Slim::Utils::Timers::setTimer( undef, time() + 10 + int(rand(5)), \&cleanup );

@@ -91,20 +91,18 @@ sub randomGUID {
 
 sub canDirectStream {
 	my ($classOrSelf, $client, $url, $inType) = @_;
-	
-	if ( !main::SLIM_SERVICE ) {
-		# When synced, we don't direct stream so that the server can proxy a single
-		# stream for all players
-		if ( $client->isSynced(1) ) {
 
-			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf(
-					"[%s] Not direct streaming because player is synced", $client->id
-				));
-			}
+	# When synced, we don't direct stream so that the server can proxy a single
+	# stream for all players
+	if ( $client->isSynced(1) ) {
 
-			return 0;
+		if ( main::INFOLOG && $log->is_info ) {
+			$log->info(sprintf(
+				"[%s] Not direct streaming because player is synced", $client->id
+			));
 		}
+
+		return 0;
 	}
 
 	# Strip noscan info from URL
@@ -129,14 +127,7 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy;
-	
-	if ( main::SLIM_SERVICE ) {
-		$proxy = $prefs->client($client)->get('webproxy');
-	}
-	else {
-		$proxy = $prefs->get('webproxy');
-	}
+	my $proxy = $prefs->get('webproxy');
 	
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
@@ -593,16 +584,6 @@ sub getMetadataFor {
 	my $class = shift;
 	
 	Slim::Player::Protocols::HTTP->getMetadataFor( @_ );
-}
-
-# reinit is used on SN to maintain seamless playback when bumped to another instance
-sub reinit {
-	if ( main::SLIM_SERVICE ) {
-		my $class = shift;
-		
-		# Same as HTTP::reinit
-		Slim::Player::Protocols::HTTP->reinit( @_ );
-	}
 }
 
 1;

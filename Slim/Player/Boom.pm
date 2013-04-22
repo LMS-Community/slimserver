@@ -14,14 +14,8 @@ use strict;
 use vars qw(@ISA);
 
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require SDI::Service::Player::SqueezeNetworkClient;
-		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
-	}
-	else {
-		require Slim::Player::Squeezebox2;
-		push @ISA, qw(Slim::Player::Squeezebox2);
-	}
+	require Slim::Player::Squeezebox2;
+	push @ISA, qw(Slim::Player::Squeezebox2);
 }
 
 use Slim::Hardware::BacklightLED;
@@ -243,9 +237,6 @@ sub hasLineIn {
 	return 1;
 }
 
-# SN only, this checks that the player's firmware version supports compression
-sub hasCompression { 1 }
-
 # Do we have support for client-side scrolling?
 sub hasScrolling {
 	return shift->revision >= 55;
@@ -463,13 +454,7 @@ sub setRTCTime {
 	my $client = shift;
 	my $data;
 
-	my $dateTimeFormat;
-	if ( main::SLIM_SERVICE ) {
-		$dateTimeFormat = $prefs->client($client)->get('timeFormat') || $prefs->get('timeFormat');
-	}
-	else {
-		$dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeFormat') || $prefs->get('timeFormat');
-	}
+	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeFormat') || $prefs->get('timeFormat');
 
 	# Set 12h / 24h display mode accordingly; mark time as being valid (i.e. set)
 	#
@@ -494,19 +479,7 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 
 	# Sync actual time in RTC
-	my ($sec, $min, $hour);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Adjust for the user's timezone
-		my $dt = $client->datetime;
-		
-		$sec  = $dt->sec;
-		$min  = $dt->min;
-		$hour = $dt->hour;
-	}
-	else {
-		($sec, $min, $hour) = (localtime())[0..2];
-	}
+	my ($sec, $min, $hour) = (localtime())[0..2];
 	
 	my ($sssBCD, $mmmBCD, $hhhBCD) = Slim::Utils::DateTime::bcdTime($sec, $min, $hour);
 

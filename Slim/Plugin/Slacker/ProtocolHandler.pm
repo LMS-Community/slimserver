@@ -17,8 +17,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 
-my $fav_on   = main::SLIM_SERVICE ? 'static/images/playerControl/slacker_fav_on_button.png' : 'html/images/btn_slacker_fav_on.gif'; 
-my $fav_off  = main::SLIM_SERVICE ? 'static/images/playerControl/slacker_fav_button.png' : 'html/images/btn_slacker_fav.gif'; 
+my $fav_on   = 'html/images/btn_slacker_fav_on.gif'; 
+my $fav_off  = 'html/images/btn_slacker_fav.gif'; 
 
 # XXX: Port to new streaming
 
@@ -97,12 +97,6 @@ sub handleError {
 			header  => '{PLUGIN_SLACKER_ERROR}',
 			listRef => [ $error ],
 		} );
-		
-		if ( main::SLIM_SERVICE ) {
-			SDI::Service::EventLog->log(
-				$client, 'slacker_error', $error,
-			);
-		}
 	}
 }
 
@@ -614,55 +608,6 @@ sub trackInfoURL {
 	return $trackInfoURL;
 }
 
-# Re-init Slacker when a player reconnects
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	my $url = $song->currentTrack->url();
-	
-	main::DEBUGLOG && $log->debug("Re-init Slacker - $url");
-	
-	if ( my $track = $client->master->pluginData('currentTrack') ) {
-		# We have previous data about the currently-playing song
-		
-		# Restart elapsed second timer
-		Slim::Utils::Timers::killTimers( $client, \&trackElapsed );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + 1,
-			\&trackElapsed,
-		);
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Reset song duration/progress bar
-		if ( $track->{tlen} ) {			
-			# On a timer because $client->currentsongqueue does not exist yet
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					
-					$client->streamingProgressBar( {
-						url      => $url,
-						duration => $track->{tlen},
-					} );
-				},
-			);
-		}
-	}
-	else {
-		# No data, just restart the current station
-		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
-
-		$client->execute( [ 'playlist', 'play', $url ] );
-	}
-	
-	return 1;
-} }
-
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
@@ -714,7 +659,7 @@ sub getMetadataFor {
 
 				# replace shuffle with Ban Track
 				shuffle => {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/ban_button.png' : 'html/images/btn_slacker_ban.gif',
+					icon    => 'html/images/btn_slacker_ban.gif',
 					jiveStyle => 'hate',
 					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 					command => [ 'slacker', 'rate', 'B' ],

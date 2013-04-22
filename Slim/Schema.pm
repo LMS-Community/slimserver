@@ -158,7 +158,7 @@ sub init {
 	# If we couldn't select our new 'name' column, then drop the
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
-	if ( $@ && !main::SLIM_SERVICE ) {
+	if ( $@ ) {
 		logWarning("Creating new database - empty, outdated or invalid database found");
 
 		eval {
@@ -167,43 +167,27 @@ sub init {
 		}
 	}
 
-	my $update;
-	
-	if ( main::SLIM_SERVICE ) {
-		$update = 1;
-	}
-	else {
-		$update = $class->migrateDB;
-	}
+	my $update = $class->migrateDB;
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
-	if ( main::SLIM_SERVICE ) {
-		$class->load_classes(qw/
-			Playlist
-			PlaylistTrack
-			Track
-		/);
-	}
-	else {
-		$class->load_classes(qw/
-			Album
-			Comment
-			Contributor
-			ContributorAlbum
-			ContributorTrack
-			Genre
-			GenreTrack
-			MetaInformation
-			Playlist
-			PlaylistTrack
-			Rescan
-			Track
-			Year
-			Progress
-		/);
-		$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
-	}
+	$class->load_classes(qw/
+		Album
+		Comment
+		Contributor
+		ContributorAlbum
+		ContributorTrack
+		Genre
+		GenreTrack
+		MetaInformation
+		Playlist
+		PlaylistTrack
+		Rescan
+		Track
+		Year
+		Progress
+	/);
+	$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
 
 	# Build all our class accessors and populate them.
 	for my $accessor (qw(lastTrackURL lastTrack trackAttrs trackPersistentAttrs driver schemaUpdated)) {
@@ -232,23 +216,9 @@ sub init {
 	$class->variousArtistsObject;
 
 	$class->schemaUpdated($update);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Create new empty database every time we startup
-		require File::Slurp;
-		require FindBin;
-		
-		my $text = File::Slurp::read_file( "$FindBin::Bin/SQL/slimservice/slimservice-sqlite.sql" );
-		
-		$text =~ s/\s*--.*$//g;
-		for my $sql ( split (/;/, $text) ) {
-			next unless $sql =~ /\w/;
-			$dbh->do($sql);
-		}
-	}
 
 	# Migrate the old Mov content type to mp4 and aac - done here as at pref migration time, the database is not loaded
-	if ( !main::SLIM_SERVICE && !main::SCANNER &&
+	if ( !main::SCANNER &&
 		 !$prefs->get('migratedMovCT') && Slim::Schema->count('Track', { 'me.content_type' => 'mov' }) ) {
 
 		$log->warn("Migrating 'mov' tracks to new database format");
@@ -273,7 +243,7 @@ sub init {
 		$prefs->set('migratedMovCT' => 1);
 	}
 	
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	if ( !main::SCANNER ) {
 		# Wipe cached data after rescan
 		Slim::Control::Request::subscribe( sub {
 			$class->wipeCaches;
@@ -357,13 +327,6 @@ sub disconnect {
 	my $class = shift;
 
 	eval { $class->storage->dbh->disconnect };
-	
-	if ( main::SLIM_SERVICE ) {
-		# Delete the database file on shutdown
-		my $config = SDI::Util::SNConfig::get_config();
-		my $db = ( $config->{database}->{sqlite_path} || '.' ) . "/slimservice.$$.db";
-		unlink $db;
-	}
 
 	$initialized = 0;
 }
@@ -400,10 +363,6 @@ WARNING - All data in the database will be dropped!
 
 sub wipeDB {
 	my $class = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		return;
-	}
 	
 	my $log = logger('scan.import');
 
@@ -463,10 +422,6 @@ data files handed to L<DBIx::Migration>.
 
 sub migrateDB {
 	my $class = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		return;
-	}
 
 	my $dbh = $class->storage->dbh;
 	my ($driver, $source, $username, $password) = $class->sourceInformation;
@@ -1362,7 +1317,7 @@ sub _createYear {
 sub _createComments {
 	my ($self, $comments, $trackId) = @_;
 	
-	if ( !main::SLIM_SERVICE && $comments ) {
+	if ( $comments ) {
 		# Using native DBI here to improve performance during scanning
 		my $dbh = Slim::Schema->dbh;
 		
@@ -1768,9 +1723,6 @@ sub updateOrCreateBase {
 		
 		return $class->updateOrCreate($track ? $track : $url, $attributeHash);
 	}
-	
-	# Bail if we're on slimservice and get here to avoid trying to access track table, etc
-	return if main::SLIM_SERVICE;
 
 	# Track will be defined or not based on the assignment above.
 	if ( !defined $track && !$isNew ) {
@@ -2250,8 +2202,6 @@ sub _retrieveTrack {
 	if (Slim::Music::Info::isRemoteURL($url)) {
 		return Slim::Schema::RemoteTrack->fetch($url, $playlist);
 	}
-	
-	return if main::SLIM_SERVICE; # if MySB gets past here, we have an invalid remote URL
 
 	# Keep the last track per dirname.
 	my $dirname = dirname($url);
@@ -2630,23 +2580,21 @@ sub _preCheckAttributes {
 		$attributes->{'LYRICS'} = join("\n", @{$attributes->{'LYRICS'}});
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		# The ARTISTSORT and ALBUMARTISTSORT tags are normalized in Contributor->add()
-		# since the tag may need to be split.  See bugs #295 and #4584.
-		#
-		# Push these back until we have a Track object.
-		for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
-			COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
-			COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
-			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
-			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
-			ALBUMARTISTSORT
-		)) {
+	# The ARTISTSORT and ALBUMARTISTSORT tags are normalized in Contributor->add()
+	# since the tag may need to be split.  See bugs #295 and #4584.
+	#
+	# Push these back until we have a Track object.
+	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
+		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
+		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
+		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
+		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+		ALBUMARTISTSORT
+	)) {
 
-			next unless defined $attributes->{$tag};
+		next unless defined $attributes->{$tag};
 
-			$deferredAttributes->{$tag} = delete $attributes->{$tag};
-		}
+		$deferredAttributes->{$tag} = delete $attributes->{$tag};
 	}
 	
 	# If embedded artwork was found, store the length of the artwork
@@ -2832,7 +2780,7 @@ sub _postCheckAttributes {
 	# Save any changes - such as album.
 	$track->update;
 	
-	$self->_createComments($attributes->{'COMMENT'}, $trackId) if !main::SLIM_SERVICE;
+	$self->_createComments($attributes->{'COMMENT'}, $trackId);
 	
 	# refcount--
 	%{$contributors} = ();

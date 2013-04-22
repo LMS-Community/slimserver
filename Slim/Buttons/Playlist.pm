@@ -168,14 +168,6 @@ sub init {
 				$client->bumpRight();
 
 			} else {
-				
-				if ( main::SLIM_SERVICE ) {
-					# On SN, some players may be blocked from viewing track info
-					if ( $client->blocksTrackInfo ) {
-						$client->bumpRight();
-						return;
-					}
-				}
 
 				Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', {
 					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),

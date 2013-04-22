@@ -307,12 +307,6 @@ sub handleDirectError {
 	
 	$http->get( $snURL );
 	
-	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog->log(
-			$client, 'pandora_error', "[$response] $status_line",
-		);
-	}
-	
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_PANDORA_STREAM_FAILED');
 }
 
@@ -484,7 +478,7 @@ sub getMetadataFor {
 				fwd => canSkip($client) ? 1 : 0,
 				# replace repeat with Thumbs Up
 				repeat  => {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_up_button.png' : 'html/images/btn_thumbs_up.gif',
+					icon    => 'html/images/btn_thumbs_up.gif',
 					jiveStyle => $track->{allowFeedback} ? 'thumbsUp' : 'thumbsUpDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_LIKE'),
 					command => $track->{allowFeedback} ? [ 'pandora', 'rate', 1 ] : [ 'jivedummycommand' ],
@@ -492,7 +486,7 @@ sub getMetadataFor {
 
 				# replace shuffle with Thumbs Down
 				shuffle => {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/thumbs_down_button.png' : 'html/images/btn_thumbs_down.gif',
+					icon    => 'html/images/btn_thumbs_down.gif',
 					jiveStyle => $track->{allowFeedback} ? 'thumbsDown' : 'thumbsDownDisabled',
 					tooltip => $client->string('PLUGIN_PANDORA_I_DONT_LIKE'),
 					command => $track->{allowFeedback} ? [ 'pandora', 'rate', 0 ] : [ 'jivedummycommand' ],
@@ -516,47 +510,5 @@ sub getIcon {
 
 	return Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon');
 }
-
-# SN only
-# Re-init Pandora when a player reconnects
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-
-	my $url = $song->track->url();
-	
-	main::DEBUGLOG && $log->debug("Re-init Pandora - $url");
-
-	if ( my $track = $song->pluginData() ) {
-		# We have previous data about the currently-playing song
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Reset song duration/progress bar
-		if ( $track->{secs} ) {
-			# On a timer because $client->currentsongqueue does not exist yet
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					
-					$client->streamingProgressBar( {
-						url      => $url,
-						duration => $track->{secs},
-					} );
-				},
-			);
-		}
-	}
-	else {
-		# No data, just restart the current station
-		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
-
-		$client->execute( [ 'playlist', 'play', $url ] );
-	}
-	
-	return 1;
-} }
 
 1;

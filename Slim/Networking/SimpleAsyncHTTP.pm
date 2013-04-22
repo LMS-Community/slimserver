@@ -45,12 +45,6 @@ BEGIN {
 	sub hasZlib {
 		return $hasZlib if defined $hasZlib;
 		
-		if ( main::SLIM_SERVICE ) {
-			# Disable gzip overhead on SN
-			$hasZlib = 0;
-			return;
-		}
-		
 		$hasZlib = 0;
 		eval { 
 			require Compress::Raw::Zlib;
@@ -167,10 +161,6 @@ sub _createHTTPRequest {
 	my $lang;
 	if ( $client ) {
 		$lang = $client->languageOverride(); # override from comet request
-		
-		if ( main::SLIM_SERVICE ) {
-			$lang ||= $prefs->client($client)->get('language');
-		}
 	}
 
 	$lang ||= $prefs->get('language') || 'en';
@@ -373,7 +363,7 @@ sub _cacheKey {
 	my $cachekey = $url;
 	
 	if ($client) {
-		$cachekey .= '-' . (main::SLIM_SERVICE ? $client->language : $client->languageOverride);
+		$cachekey .= '-' . $client->languageOverride;
 	}
 	
 	return $cachekey;

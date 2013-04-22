@@ -31,13 +31,6 @@ use Slim::Utils::Strings qw(string);
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
 
-# trying to track down a bug
-my %tb;
-if ( main::SLIM_SERVICE ) {
-	require Algorithm::TokenBucket;
-	tie %tb, 'Tie::Cache::LRU', 100;
-}
-
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
@@ -47,7 +40,7 @@ sub _cacheKey {
 	my $cachekey = $url;
 	
 	if ($client) {
-		$cachekey .= '-' . (main::SLIM_SERVICE ? $client->language : $client->languageOverride);
+		$cachekey .= '-' . $client->languageOverride;
 	}
 	
 	return $cachekey . '_parsedXML';
@@ -120,33 +113,6 @@ sub getFeedAsync {
 		'User-Agent'   => $ua,
 		'Icy-Metadata' => '',
 	);
-	
-	if ( main::SLIM_SERVICE && $url =~ /(?:radiotime|tunein\.com)/ ) {
-		# Add real client IP for Radiotime so they can do proper geo-location
-		$headers{'X-Forwarded-For'} = $params->{client}->ip;
-		
-=pod
-		# XXX try to track down a bug
-		my $b = $tb{ $params->{client}->ip };
-		if ( $b ) {
-			if ( !$b->conform(1) ) {
-				# wipe bucket
-				delete $tb{ $params->{client}->ip };
-				
-				# Fail
-				$ecb->( string('ERROR_RATE_LIMITED'), $params );
-				return;
-			}
-			else {
-				$b->count(1);
-			}
-		}
-		else {
-			# 1 req every 2 seconds, burst 5
-			$tb{ $params->{client}->ip } = Algorithm::TokenBucket->new( 0.5, 5 );
-		}
-=cut
-	}
 
 	if ( $url =~ /(?:radiotime|tunein\.com)/ ) {
 		# Add the RadioTime username
@@ -161,10 +127,7 @@ sub getFeedAsync {
 	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) && !$params->{no_sn} ) {
 		
 		# Sometimes from the web we won't have a client, so pick a random one
-		# (Never use random client on SN)
-		if ( !main::SLIM_SERVICE ) {
-			$params->{client} ||= Slim::Player::Client::clientRandom();
-		}
+		$params->{client} ||= Slim::Player::Client::clientRandom();
 		
 		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders( $params->{client} );
 		while ( my ($k, $v) = each %snHeaders ) {
@@ -304,14 +267,6 @@ sub gotViaHTTP {
 		} else {
 
 			$expires = $XML_CACHE_TIME;
-		}
-		
-		# Bug 14409, don't cache the RadioTime local menu on SN
-		if ( main::SLIM_SERVICE ) {
-			if ( $http->url =~ /radiotime.*local/ ) {
-				$feed->{nocache} = 1;
-				$expires = 0;
-			}
 		}
 
 		if ( !$feed->{'nocache'} ) {

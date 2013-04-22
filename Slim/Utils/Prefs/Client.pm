@@ -53,7 +53,7 @@ sub migrate {
 	my $self   = shift;
 	my $client = shift;
 	
-	my $cversion = $self->get( '_version', 'force' ) || 0; # On SN, force _version to come from the DB
+	my $cversion = $self->get( '_version', 'force' ) || 0;
 
 	for my $version (sort keys %{ $self->{parent}->{'migratecb'}}) {
 		
@@ -62,11 +62,6 @@ sub migrate {
 			if ( $self->{parent}->{'migratecb'}->{ $version }->($self, $client)) {
 				
 				main::INFOLOG && $log->info("migrating client prefs $self->{parent}->{'namespace'}:$self->{'clientid'} to version $version");
-				
-				if ( main::SLIM_SERVICE ) {
-					# Store _version in the database on SN
-					$self->set( '_version' => $version );
-				}
 
 				$self->{'prefs'}->{'_version'} = $version;
 				

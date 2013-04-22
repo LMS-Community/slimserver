@@ -86,11 +86,6 @@ sub hasDisableDac { 1 };
 sub hasServ { 1 };
 sub hasOutputChannels { 1 }
 
-# SN only, this checks that the player's firmware version supports compression
-sub hasCompression {
-	return shift->revision >= 80;
-}
-
 # Do we have support for client-side scrolling?
 sub hasScrolling {
 	return shift->revision >= 135;

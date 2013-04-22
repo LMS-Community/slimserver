@@ -19,11 +19,6 @@ my $log = logger('formats.metadata');
 # Keep a cache of up to 100 remote tracks at a time.
 my $cacheSize = 100;
 
-if ( main::SLIM_SERVICE ) {
-	# Keep a much larger remote track cache on SN
-	$cacheSize = 2000;
-}
-
 tie our %Cache, 'Tie::Cache::LRU', $cacheSize;
 tie our %idIndex, 'Tie::Cache::LRU', $cacheSize;
 

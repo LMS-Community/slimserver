@@ -93,42 +93,38 @@ sub registerDefaultInfoProviders {
 		func  => \&infoContributors,
 	) );
 
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( album => (
-			after => 'contributors',
-			func  => \&infoAlbum,
-		) );
+	$class->registerInfoProvider( album => (
+		after => 'contributors',
+		func  => \&infoAlbum,
+	) );
 
-		$class->registerInfoProvider( genres => (
-			after => 'album',
-			func  => \&infoGenres,
-		) );
-	}
+	$class->registerInfoProvider( genres => (
+		after => 'album',
+		func  => \&infoGenres,
+	) );
 
 	$class->registerInfoProvider( remotetitle => (
-		after => main::SLIM_SERVICE ? 'top' : 'album',
+		after => 'album',
 		func  => \&infoRemoteTitle,
 	) );
 	
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( year => (
-			after => 'genres',
-			func  => \&infoYear,
-		) );
+	$class->registerInfoProvider( year => (
+		after => 'genres',
+		func  => \&infoYear,
+	) );
 
-		$class->registerInfoProvider( comment => (
-			after => 'year',
-			func  => \&infoComment,
-		) );
+	$class->registerInfoProvider( comment => (
+		after => 'year',
+		func  => \&infoComment,
+	) );
 
-		$class->registerInfoProvider( lyrics => (
-			after => 'comment',
-			func  => \&infoLyrics,
-		) );
-	}
+	$class->registerInfoProvider( lyrics => (
+		after => 'comment',
+		func  => \&infoLyrics,
+	) );
 	
 	$class->registerInfoProvider( moreinfo => (
-		after => main::SLIM_SERVICE ? 'remotetitle' : 'comment',
+		after => 'comment',
 		func  => \&infoMoreInfo,
 	) );
 	
@@ -343,8 +339,6 @@ sub infoContributors {
 		};
 	}
 	else {
-		return if main::SLIM_SERVICE;
-		
 		my @roles = Slim::Schema::Contributor->contributorRoles;
 		
 		# Loop through each pref to see if the user wants to link to that contributor role.
@@ -961,10 +955,6 @@ sub _replainGainItem {
 
 sub infoRating {
 	my ( $client, $url, $track ) = @_;
-	
-	if ( main::SLIM_SERVICE ) {
-		return;
-	}
 	
 	my $item;
 	

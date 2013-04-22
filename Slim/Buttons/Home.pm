@@ -75,30 +75,6 @@ sub init {
 			if (defined $client && $client->linesPerScreen() == 1) {
 				return $client->doubleString($string);
 			}
-			
-			# special case for SN - show alarm settings & PIN code
-			if ( main::SLIM_SERVICE ) {
-				
-				if ($string eq 'ALARM') {
-					# if alarm set, show "enabled" text
-					# XXX: This used to show the time, but with multi-day alarms, that doesn't make sense now
-					my $append = '';
-
-					my $alarmOn 
-						= $prefs->client($client)->get('alarm')->[0] 
-						|| $prefs->client($client)->get('alarm')->[ $client->datetime->day_of_week ];
-					
-					if ( $alarmOn ) {
-						$append = " (" . $client->string('MCON'). ")";
-					}
-					return $client->string($string) . $append;
-				}
-				elsif ( $string eq 'MESSAGE_COUNT' ) {
-					my $count = $client->playerData->userid->messageCount;
-					
-					return $client->string( $string, $count );
-				}
-			}
 
 			return ( uc($string) eq $string ) ? $client->string($string) : $string;
 		},
@@ -124,13 +100,6 @@ sub init {
 			'useMode' => 'playlist'
 		},
 	);
-	
-	if ( main::SLIM_SERVICE ) {
-		$home{ALARM} = {
-			'useMode'   => 'alarm',
-			'externRef' => sub {return 'test';},
-		};
-	}
 
 	# Align actions as per Bug 8929 - in home menu add and play just go right.
 	# When on Now Playing item, preserve the Clear Playlist shortcut
@@ -309,27 +278,6 @@ sub setMode {
 		}
 
 		return;
-	}
-	
-	if ( main::SLIM_SERVICE ) {
-		# if player not yet linked to an account, or unauthorized, force client to signup/login
-		if ( $client->playerData->userid == 1 || !$client->playerData->authorized ) {
-			# Push into registration menu
-			my $name  = 'SB_ACCOUNT';
-						
-			my %params = (
-				header   => $name,
-				modeName => $name,
-				url      => Slim::Networking::SqueezeNetwork->url('/api/register/v1/opml'),
-				title    => '',
-				timeout  => 35,
-				blockPop => 1, # don't allow user to exit the menu
-			);
-			
-			Slim::Buttons::Common::setMode( $client, 'xmlbrowser', \%params );
-			
-			return;
-		}
 	}
 	
 	updateMenu($client);
@@ -564,22 +512,6 @@ sub createList {
 
 	my @list = ();
 	
-	# SLIM_SERVICE, user can hide menu items
-	my %disabledMenus = ();
-	if ( main::SLIM_SERVICE ) {
-		my $disabledPref = $prefs->client($client)->get('disabledMenus') || [];
-		
-		if ( !ref $disabledPref ) {
-			$disabledPref = [ $disabledPref ];
-		}
-		
-		for my $item ( @{ $disabledPref } ) {
-			# Only look at '_sub' items, the others are top-level menu items
-			next unless $item =~ s/_sub$//;
-			$disabledMenus{$item} = 1;
-		}
-	}
-	
 	# Get sort order for plugins
 	my $pluginWeights = Slim::Plugin::Base->getWeights();
 
@@ -610,35 +542,6 @@ sub createList {
 		
 		if ( my $condition = $params->{submenus}->{$sub}->{condition} ) {
 			next unless $condition->( $client );
-		}
-		
-		if ( main::SLIM_SERVICE ) {
-			# Hide disabled menus
-			if ( exists $disabledMenus{$sub} ) {
-				next;
-			}
-			
-			# Don't display Info Browser in player UI
-			if ( $sub eq 'PLUGIN_INFOBROWSER' ) {
-				next;
-			}
-			
-			# Hide plugins if necessary (private, beta, etc)
-			if ( !$client->canSeePlugin($sub) ) {
-				next;
-			}
-			
-			# Hide out-of-country services on SN
-			my $allowed = $client->playerData->userid->allowedServices();
-
-			my $check = $sub;
-			$check   =~ s/_//g;
-
-			for my $plugin ( keys %{ $allowed->{disabled} } ) {
-				if ( $check =~ /$plugin/i ) {
-					next SUB;
-				}
-			}
 		}
 
 		push @list, $sub;
@@ -719,10 +622,6 @@ Requires $client object.
 
 sub homeheader {
 	my $client = $_[0];
-
-	if ( main::SLIM_SERVICE ) {
-		return $client->snHomeName();
-	}
 
 	if ($client->isa("Slim::Player::SLIMP3")) {
 
@@ -856,29 +755,6 @@ sub updateMenu {
 	my $client = shift;
 	my @home = ();
 	
-	# User can hide menu items on SN
-	my %disabledMenus  = ();
-	my $hasSpecialMenu = 0;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Some players on SN may have specially-defined menus
-		if ( @home = $client->specialMenu() ) {
-			$hasSpecialMenu = 1;
-		}
-		
-		my $disabledPref = $prefs->client($client)->get('disabledMenus') || [];
-	
-		if ( !ref $disabledPref ) {
-			$disabledPref = [ $disabledPref ];
-		}
-
-		for my $item ( @{ $disabledPref } ) {
-			# Only look at non-sub item
-			next if $item =~ /_sub$/;
-			$disabledMenus{$item} = 1;
-		}
-	}
-	
 	my $menuItem = $prefs->client($client)->get('menuItem');
 	if ( !ref $menuItem ) {
 		$menuItem = [ $menuItem ];
@@ -914,13 +790,6 @@ sub updateMenu {
 		if (defined $plugin) {
 
 			$menuItem = $plugin->{'name'};
-		}
-		
-		if ( main::SLIM_SERVICE ) {
-			# Skip all other menu items if we got a special menu above
-			next if $hasSpecialMenu;
-			
-			next if exists $disabledMenus{$menuItem};
 		}
 		
 		push @home, $menuItem;
@@ -998,38 +867,6 @@ sub updateMenu {
 	
 	# Insert app menu after radio
 	splice @home, 3, 0, @sorted;
-
-=pod
-XXX old ip3k messages code, I don't think we'll be needing this anymore	
-	if ( main::SLIM_SERVICE && !$hasSpecialMenu ) {
-		# Bug 13230, display a one-time message to users about this menu change
-		# Not shown for users with a special menu
-		my $mode = 'MESSAGE_COUNT';
-		if ( !exists $home{$mode} ) {
-			my $url = Slim::Networking::SqueezeNetwork->url('/api/messages/v1/opml');
-			
-			addMenuOption( $mode => sub {
-				my $client = shift;
-		
-				my %params = (
-					header   => $mode,
-					modeName => $mode,
-					url      => $url,
-					title    => $mode,
-					timeout  => 35,
-				);
-		
-				Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-		
-				$client->modeParam( handledTransition => 1 );
-			} );
-		}
-		
-		if ( $client->playerData->userid->messageCount ) {
-			unshift @home, 'MESSAGE_COUNT';
-		}
-	}
-=cut
 
 	$homeChoices{$client} = \@home;
 

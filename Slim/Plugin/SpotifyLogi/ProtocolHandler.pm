@@ -288,16 +288,4 @@ sub getIcon {
 	return Slim::Plugin::SpotifyLogi::Plugin->_pluginDataFor('icon');
 }
 
-# SN only, re-init upon reconnection
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	# Reset song duration/progress bar
-	my $currentURL = $song->streamUrl();
-	
-	main::DEBUGLOG && $log->debug("Re-init Spotify - $currentURL");
-	
-	return 1;
-} }
-
 1;

@@ -90,7 +90,7 @@ sub initSearchPath {
 
 	# add path to Extension installer loaded plugins to @INC, NB this can only be done here as it requires Prefs to be loaded
 	# and the cachedir pref to be set before we can do it.  Prefs requires OSDetect so we can't do it at init time of OSDetect.
-	if (!main::SLIM_SERVICE && (my $cache = Slim::Utils::Prefs::preferences('server')->get('cachedir')) ) {
+	if ( my $cache = Slim::Utils::Prefs::preferences('server')->get('cachedir') ) {
 		unshift @INC, catdir($cache, 'InstalledPlugins');
 	}
 }

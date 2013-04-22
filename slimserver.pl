@@ -675,7 +675,7 @@ sub idle {
 		# empty notifcation queue, only if no IR events are pending
 		$pendingEvents = Slim::Control::Request::checkNotifications();
 		
-		if ( !main::SLIM_SERVICE && !$pendingEvents ) {
+		if ( !$pendingEvents ) {
 			# run scheduled tasks, only if no other events are pending
 			$pendingEvents = Slim::Utils::Scheduler::run_tasks();
 		}

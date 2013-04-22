@@ -32,8 +32,8 @@ sub initPlugin {
 	
 	# Note: Deezer does not wish to be included in context menus
 	# that is why a track info menu item is not created here
-	
-	if ( !main::SLIM_SERVICE ) {
+
+	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 
 			'plugins/deezer/trackinfo.html',

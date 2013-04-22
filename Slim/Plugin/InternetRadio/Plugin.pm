@@ -40,19 +40,6 @@ sub initPlugin {
 }
 
 sub _initRadio {
-	if ( main::SLIM_SERVICE ) {
-		# On SN, fetch the list of radio menu items directly
-		require SDI::Util::RadioMenus;
-		
-		my $menus = SDI::Util::RadioMenus->menus(
-			uri_prefix => 'http://' . Slim::Networking::SqueezeNetwork->get_server('sn'),
-		);
-		
-		__PACKAGE__->buildMenus( $menus );
-		
-		return;
-	}
-	
 	Slim::Formats::XML->getFeedAsync(
 		\&_gotRadio,
 		\&_gotRadioError,
@@ -118,14 +105,7 @@ sub generate {
 	my $icon    = $item->{icon};
 	my $iconRE  = $item->{iconre} || 0;
 	
-	# SN needs to dynamically filter radio plugins per-user and append values such as RT username
-	my $filter;
-	my $append;
-	if ( main::SLIM_SERVICE ) {
-		$filter = $item->{filter}; # XXX needed?
-		$append = $item->{append};
-	}
-	elsif ( $feed =~ /username=([^&]+)/ ) {
+	if ( $feed =~ /username=([^&]+)/ ) {
 		Slim::Plugin::RadioTime::Plugin->setUsername($1);
 	}
 
@@ -156,14 +136,6 @@ use strict;
 use base qw($package);
 
 };
-
-	if ( main::SLIM_SERVICE ) {
-		$code .= qq{
-use Slim::Utils::Prefs;
-
-my \$prefs = preferences('server');
-};
-	}
 	
 	$code .= qq{
 sub initPlugin {
@@ -194,27 +166,9 @@ sub playerMenu { 'RADIO' }
 
 };
 
-	if ( main::SLIM_SERVICE && $append ) {
-		# Feed method must append a pref to the URL
+	# RadioTime URLs require special handling
+	if ( $feed =~ /(?:radiotime|tunein)\.com/ ) {
 		$code .= qq{
-sub feed {
-	my ( \$class, \$client ) = \@_;
-	
-	my \$val = \$prefs->client(\$client)->get('$append');
-	
-	my \$feed = '$feed';
-	
-	\$feed .= ( \$feed =~ /\\\?/ ) ? '&' : '?';
-	\$feed .= \$val;
-	
-	return \$class->radiotimeFeed( \$feed, \$client );
-}
-};
-	}
-	else {
-		# RadioTime URLs require special handling
-		if ( $feed =~ /(?:radiotime|tunein)\.com/ ) {
-			$code .= qq{
 sub feed {
 	my \$class = shift;
 	
@@ -223,12 +177,11 @@ sub feed {
 	return \$class->radiotimeFeed( \$feed, \@_ );
 }
 };
-		}
-		else {
-			$code .= qq{
+	}
+	else {
+		$code .= qq{
 sub feed { getFeed() }
 };
-		}
 	}
 
 	$code .= qq{
@@ -279,11 +232,8 @@ sub cantOpen {
 	my $url   = $request->getParam('_url');
 	my $error = $request->getParam('_error');
 	
-	if ( !main::SLIM_SERVICE ) {
-		# Do not report if the user has turned off stats reporting
-		# Reporting is always enabled on SN
-		return if $prefs->get('sn_disable_stats');
-	}
+	# Do not report if the user has turned off stats reporting
+	return if $prefs->get('sn_disable_stats');
 	
 	if ( $error && $url =~ /(?:radiotime|tunein)\.com/ ) {
 		Slim::Plugin::RadioTime::Plugin->reportError($url, $error);

@@ -123,50 +123,8 @@ sub scanURL {
 	# In some cases, a remote protocol may always be audio and not need scanning
 	# This is not used by any core code, but some plugins require it
 	my $isAudio = Slim::Music::Info::isAudioURL($url);
-	
-	if ( main::SLIM_SERVICE ) {
-		# We use a special fragment in the URL starting with #slim to force certain things:
-		# noscan - don't scan the URL, needed for UK-only stations
-		# aid=N  - when not scanning, we won't know what audio stream to use, so aid will force
-		#          a specific stream to use, needed for BBC which uses stream 2 for 48kbps
-		#
-		# Example: mms://wmlive-acl.bbc.co.uk/wms/radio1/radio1_nb_e1s1#slim:noscan=1,aid=2
-		if ( $url =~ /#slim:(.+)$/ ) {
-			my $opts   = $1;
-			my $params = {};
-			
-			$url =~ s/#slim:.+$//;
-			
-			# XXX: may create duplicate track entries
-			$track->url( $url );
-			$track->update;
 
-			for my $p ( split /,/, $opts ) {
-				my ($key, $value) = split /=/, $p;
-				$params->{$key} = $value;
-			}
-			
-			if ( $params->{noscan} ) {
-				$isAudio = 1;
-			}
-			
-			if ( $params->{aid} ) {
-				my $song = $args->{song};
-				my $sd = $song->scanData();
-				if (!defined $sd) {
-					$song->scanData($sd = {});
-				} 
-				$sd->{$url} = {
-					streamNum => $params->{aid},
-					metadata  => undef,
-					headers   => undef,
-				};
-			}
-		}
-	}
-	else {
-		$url =~ s/#slim:.+$//;
-	}
+	$url =~ s/#slim:.+$//;
 	
 	if ( $isAudio ) { 	 
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Remote stream $url known to be audio" ); 	 
@@ -209,11 +167,6 @@ sub scanURL {
 		addWMAHeaders( $request );
 	}
 	
-	if ( main::SLIM_SERVICE && $url =~ /(?:radiotime|tunein\.com|bbc\.co\.uk)/ ) {
-		# Add real client IP for Radiotime so they can do proper geo-location
-		$request->header( 'X-Forwarded-For' => $client->ip );
-	}
-	
 	# If the URL is on SqueezeNetwork, add session headers
 	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
 		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders($client);
@@ -238,10 +191,6 @@ sub scanURL {
 				my ( $http, $error ) = @_;
 
 				logError("Can't connect to remote server to retrieve playlist for, ", $request->uri, ": $error.");
-			
-				if ( main::SLIM_SERVICE ) {
-					$client->logStreamEvent( 'failed-scan', { error => $error } );
-				}
 				
 				$track->error( $error );
 
@@ -449,7 +398,7 @@ sub readRemoteHeaders {
 				passthrough => [ $track, $args ],
 			} );
 		}
-		elsif ( !main::SLIM_SERVICE && $type eq 'aac' ) {
+		elsif ( $type eq 'aac' ) {
 			# Bug 16379, AAC streams require extra processing to check for the samplerate
 			
 			main::DEBUGLOG && $log->is_debug && $log->debug('Reading AAC header');
@@ -816,10 +765,6 @@ sub streamAudioData {
 		
 		if ( $@ ) {
 			$log->error("Unable to scan bitrate for " . $track->url . ": $@");
-			if ( main::SLIM_SERVICE ) {
-				$@ =~ s/"/'/g;
-				SDI::Util::Syslog::error("service=Audio-Scan method=scanBitrate error=\"$@ " . $track->url . "\"");
-			}
 			$bitrate = 0;
 		}
 		

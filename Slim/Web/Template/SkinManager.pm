@@ -259,7 +259,7 @@ sub _resizeImage {
 		$url = Slim::Web::ImageProxy::proxiedImage($url);
 
 		# don't use imageproxy on local network
-		if ( $url =~ m{^http://(?:192\.168\.|172\.1[6-9]\.|172\.2\d\.|172\.3[01]\.|10\.|127\.0|localhost)}i && !$ENV{SN_DEV} ) {
+		if ( $url =~ m{^http://(?:192\.168\.|172\.1[6-9]\.|172\.2\d\.|172\.3[01]\.|10\.|127\.0|localhost)}i ) {
 			# XXX - we might consider a local imageproxy handling local URLs and files
 			return $url;
 		}

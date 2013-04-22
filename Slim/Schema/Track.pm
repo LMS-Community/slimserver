@@ -28,23 +28,6 @@ our @allColumns = (qw(
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual
 ));
 
-if ( main::SLIM_SERVICE ) {
-	my @snColumns = (qw(
-		id url content_type title tracknum
-		filesize remote secs vbr_scale bitrate
-	));
-	
-	# Empty stubs for other columns
-	for my $col ( @allColumns ) {
-		if ( !grep { /^$col$/ } @snColumns ) {
-			no strict 'refs';
-			*$col = sub {};
-		}
-	}
-	
-	@allColumns = @snColumns;
-}
-
 {
 	my $class = __PACKAGE__;
 
@@ -57,22 +40,17 @@ if ( main::SLIM_SERVICE ) {
 
 	$class->set_primary_key('id');
 	
-	if ( !main::SLIM_SERVICE ) {
-		# setup our relationships
-		$class->belongs_to('album' => 'Slim::Schema::Album');
-		$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
-		
-		$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
-		$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
+	# setup our relationships
+	$class->belongs_to('album' => 'Slim::Schema::Album');
+	$class->belongs_to('primary_artist'  => 'Slim::Schema::Contributor');
+	
+	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
+	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
-		$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
+	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 
-		if ($] > 5.007) {
-			$class->utf8_columns(qw/title titlesort lyrics/);
-		}
-	}
-	else {
-		$class->utf8_columns('title');
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/title titlesort lyrics/);
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
@@ -126,8 +104,6 @@ sub attributes {
 
 sub albumid {
 	my $self = shift;
-	
-	return if main::SLIM_SERVICE;
 
 	return $self->get_column('album');
 }
@@ -151,8 +127,6 @@ sub artistName {
 
 sub _artistid {
 	my $self = shift;
-	
-	return if main::SLIM_SERVICE;
 	
 	my $id = undef;
 
@@ -185,8 +159,6 @@ sub artistid {
 sub artist {
 	my $self = shift;
 	
-	return if main::SLIM_SERVICE;
-	
 	my ($id, $artist) = $self->_artistid;
 	
 	return $artist;
@@ -194,8 +166,6 @@ sub artist {
 
 sub artists {
 	my $self = shift;
-	
-	return if main::SLIM_SERVICE;
 
 	# Bug 4024 - include both ARTIST & TRACKARTIST here.
 	return $self->contributorsOfType(qw(ARTIST TRACKARTIST))->all;
@@ -250,8 +220,6 @@ sub band {
 
 sub genre {
 	my $self = shift;
-	
-	return if main::SLIM_SERVICE;
 
 	return $self->genres->first;
 }

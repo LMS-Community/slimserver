@@ -40,12 +40,10 @@ use Slim::Utils::Scanner;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
-if ( !main::SLIM_SERVICE ) {
-	require Slim::Utils::Scanner::Local;
+use Slim::Utils::Scanner::Local;
 	
-	if (main::IMAGE || main::VIDEO) {
-		require Slim::Utils::Scanner::LMS;
-	}
+if (main::IMAGE || main::VIDEO) {
+	require Slim::Utils::Scanner::LMS;
 }
 
 my $log = logger('control.command');
@@ -1313,19 +1311,6 @@ sub playlistXitemCommand {
 
 	my $jumpToIndex = $request->getParam('play_index'); # This should be undef (by default) - see bug 2085
 	my $results;
-	
-	if ( main::SLIM_SERVICE ) {
-		# If the item is a base64+storable string, decode it.
-		# This is used for sending multiple URLs from the web
-		# XXX: JSON::XS is faster than Storable
-		use MIME::Base64 qw(decode_base64);
-		use Storable qw(thaw);
-		
-		if ( !ref $item && $item =~ /^base64:/ ) {
-			$item =~ s/^base64://;
-			$item = thaw( decode_base64( $item ) );
-		}
-	}
 	
 	# If we're playing a list of URLs (from XMLBrowser), only work on the first item
 	my $list;
@@ -3201,10 +3186,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		. $sqlHelperClass->append0("me.titlesort") . " $collate";
 		
 	my $trackSort = "me.disc, me.tracknum, " . $sqlHelperClass->append0("me.titlesort") . " $collate";
-	
-	if ( main::SLIM_SERVICE || !Slim::Schema::hasLibrary()) {
-		return ();
-	}
 
 	# Setup joins as needed - we want to end up with Tracks in the end.
 	my %joinMap = ();

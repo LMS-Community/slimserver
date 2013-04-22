@@ -81,35 +81,6 @@ my $log = logger('server');
 			return shift->{_cache}->$method(@_);
 		};
 	}
-	
-	# SN uses memcached, so we need to convert expiration units to seconds
-	if ( main::SLIM_SERVICE ) {
-		no warnings 'redefine';
-		
-		*{ __PACKAGE__ . "::set" } = sub {
-			my $self   = shift;
-			my $expire = $_[2];
-			
-			if ( $expire && $expire !~ /^\d+$/ ) {
-				# Not a number, need to canonicalize it
-				$expire = Cache::BaseCache::Canonicalize_Expiration_Time($expire);
-				
-				# "If value is less than 60*60*24*30 (30 days), time is assumed to be
-				# relative from the present. If larger, it's considered an absolute Unix time."
-				if ( $expire < 2592000 ) {
-					$expire += time();
-				}
-			}
-			
-			# Bug 7654, an expiration time of 0 is intended to mean 'don't cache'
-			# but memcached treats this as 'never expires'
-			if ( defined $expire && $expire == 0 ) {
-				$expire = 1;
-			}
-			
-			return $self->{_cache}->set( $_[0], $_[1], $expire );
-		};
-	}
 }
 
 sub init {
@@ -118,7 +89,7 @@ sub init {
 	# cause the default cache to be created if it is not already
 	__PACKAGE__->new();
 
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	if ( !main::SCANNER ) {
 		# start purge routine in 10 seconds to purge all caches created during server and plugin startup
 		require Slim::Utils::Timers;
 		Slim::Utils::Timers::setTimer( undef, time() + 10, \&cleanup );
@@ -143,15 +114,6 @@ sub new {
 	} else {
 		$version = shift || 0;
 		$noPeriodicPurge = shift;
-	}
-	
-	# On SN, use memcached for a global cache instead of FileCache
-	if ( main::SLIM_SERVICE ) {		
-		$caches{$namespace} = bless {
-			_cache => SDI::Util::Memcached->new(),
-		}, $class;
-		
-		return $caches{$namespace};
 	}
 
 	my $prefs = preferences('server');

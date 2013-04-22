@@ -679,7 +679,6 @@ sub pluginData {
 	my ( $self, $key, $value ) = @_;
 	
 	my $ret;
-	my $dirty = 0;
 	
 	if ( !defined $self->_pluginData() ) {
 		$self->_pluginData({});
@@ -692,21 +691,13 @@ sub pluginData {
 	if ( ref $key eq 'HASH' ) {
 		# Assign an entire hash to pluginData
 		$ret = $self->_pluginData($key);
-		$dirty = 1;
 	}
 	else {
 		if ( defined $value ) {
 			$self->_pluginData()->{$key} = $value;
-			$dirty = 1;
 		}
 		
 		$ret = $self->_pluginData()->{$key};
-	}
-	
-	if ( main::SLIM_SERVICE && $dirty ) {
-		# On SN, we have to persist the song pluginData to the database
-		# in order to support seamless resume on reconnect
-		$self->master()->persistSongPluginData($self);
 	}
 	
 	return $ret;
