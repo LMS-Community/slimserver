@@ -789,8 +789,13 @@ sub handleFeed {
 			}
 			
 			# keep track of station icons
-			if ( my $cover = ($_->{image} || $_->{cover}) ) {
-				$cache->set("remote_image_" . $_->{url}, $cover, 86400 * 30);
+			if ( 
+				( $_->{play} || $_->{playlist} || ($_->{type} && ($_->{type} eq 'audio' || $_->{type} eq 'playlist')) )
+				&& $_->{url} =~ /^http/ 
+				&& $_->{url} !~ m|\.com/api/\w+/v1/opml| 
+				&& ( my $cover = $_->{image} || $_->{cover} )
+			) {
+				$cache->set("remote_image_" . $_->{url}, $cover, 86400);
 			}
 		}
 

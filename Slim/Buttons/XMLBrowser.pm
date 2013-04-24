@@ -531,6 +531,16 @@ sub gotOPML {
 			splice @{ $opml->{items} }, $index, 1;
 			next;
 		}
+
+		# keep track of station icons
+		if ( 
+			( $item->{play} || $item->{playlist} || ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist')) )
+			&& $item->{url} =~ /^http/ 
+			&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
+			&& ( my $cover = $item->{image} || $item->{cover} )
+		) {
+			Slim::Utils::Cache->new->set("remote_image_" . $item->{url}, $cover, 86400);
+		}
 		
 		# Wrap text if needed
 		if ( $item->{'wrap'} ) {
