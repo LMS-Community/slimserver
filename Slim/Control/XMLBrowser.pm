@@ -1025,7 +1025,13 @@ sub _cliQuery_done {
 					);
 			
 					# keep track of station icons
-					if ( $isPlayable && $item->{url} =~ /^http/ && $item->{url} !~ m|\.com/api/\w+/v1/opml| && (my $cover = ($item->{image} || $item->{cover})) ) {
+					if ( 
+						$isPlayable 
+						&& $item->{url} =~ /^http/ 
+						&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
+						&& (my $cover = ($item->{image} || $item->{cover})) 
+						&& !Slim::Utils::Cache->new->get("remote_image_" . $item->{url})
+					) {
 						$cache->set("remote_image_" . $item->{url}, $cover, 86400);
 					}
 					
