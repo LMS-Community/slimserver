@@ -538,6 +538,7 @@ sub gotOPML {
 			&& $item->{url} =~ /^http/ 
 			&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
 			&& ( my $cover = $item->{image} || $item->{cover} )
+			&& !Slim::Utils::Cache->new->get("remote_image_" . $item->{url})
 		) {
 			Slim::Utils::Cache->new->set("remote_image_" . $item->{url}, $cover, 86400);
 		}

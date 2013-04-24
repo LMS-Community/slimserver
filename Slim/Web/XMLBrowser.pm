@@ -794,6 +794,7 @@ sub handleFeed {
 				&& $_->{url} =~ /^http/ 
 				&& $_->{url} !~ m|\.com/api/\w+/v1/opml| 
 				&& ( my $cover = $_->{image} || $_->{cover} )
+				&& !Slim::Utils::Cache->new->get("remote_image_" . $_->{url})
 			) {
 				$cache->set("remote_image_" . $_->{url}, $cover, 86400);
 			}
