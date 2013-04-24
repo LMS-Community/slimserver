@@ -691,6 +691,7 @@ sub _cliQuery_done {
 						ct      => $subFeed->{'mime'},
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
+						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'),
 					} );
 				
 					$client->execute([ 'playlist', $method, $url ]);
@@ -729,6 +730,7 @@ sub _cliQuery_done {
 						ct      => $item->{'mime'},
 						secs    => $item->{'duration'},
 						bitrate => $item->{'bitrate'},
+						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'),
 					} );
 					
 					main::idleStreams();

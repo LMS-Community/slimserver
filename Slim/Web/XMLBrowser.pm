@@ -619,6 +619,7 @@ sub handleFeed {
 				ct      => $streamItem->{'mime'},
 				secs    => $streamItem->{'duration'},
 				bitrate => $streamItem->{'bitrate'},
+				cover   => $streamItem->{'image'} || $streamItem->{'cover'},
 			} );
 		
 			$client->execute([ 'playlist', $action, $url ]);
@@ -660,6 +661,7 @@ sub handleFeed {
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
+				cover   => $item->{'image'} || $item->{'cover'},
 			} );
 			
 			main::idleStreams();
@@ -802,6 +804,11 @@ sub handleFeed {
 					$_->{'showYear'}   = 1 if ($prefs->get('showYear')   && $_->{'year'});
 					$_->{'showArtist'} = 1 if ($prefs->get('showArtist') && $_->{'artist'});
 				}
+			}
+			
+			# keep track of station icons
+			if ( my $cover = ($_->{image} || $_->{cover}) ) {
+				$cache->set("remote_image_" . $_->{url}, $cover, 86400 * 30);
 			}
 		}
 

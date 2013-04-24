@@ -293,6 +293,7 @@ sub gotPlaylist {
 			ct      => $item->{'mime'},
 			secs    => $item->{'duration'},
 			bitrate => $item->{'bitrate'},
+			cover   => $item->{'image'} || $item->{'cover'},
 		} );
 		
 		# This loop may have a lot of items and a lot of database updates
@@ -1302,6 +1303,7 @@ sub playItem {
 					ct      => $other->{'mime'},
 					secs    => $other->{'duration'},
 					bitrate => $other->{'bitrate'},
+					cover   => $other->{'image'} || $other->{'cover'},
 				} );
 
 				# This loop may have a lot of items and a lot of database updates
@@ -1320,6 +1322,7 @@ sub playItem {
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
+				cover   => $item->{'image'} || $item->{'cover'},
 			} );
 			
 			$client->execute([ 'playlist', $action, $url, $title ]);
