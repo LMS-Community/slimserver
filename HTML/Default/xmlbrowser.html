@@ -14,7 +14,7 @@ IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
 END;
 FOREACH item = items;
-	IF item.image && (item.type != 'audio' || playlist_id);
+	IF item.image && (item.type != 'audio' || playlist_id || item.url.match("^http"));
 		hasArtwork = 1;
 		LAST;
 	END;	
