@@ -1018,6 +1018,16 @@ sub _cliQuery_done {
 						}
 					}
 					
+					my $isPlayable = (
+						   $item->{play} 
+						|| $item->{playlist} 
+						|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
+					);
+			
+					# keep track of station icons
+					if ( $isPlayable && $item->{url} =~ /^http/ && $item->{url} !~ m|\.com/api/\w+/v1/opml| && (my $cover = ($item->{image} || $item->{cover})) ) {
+						$cache->set("remote_image_" . $item->{url}, $cover, 86400);
+					}
 					
 					if ($menuMode) {
 						my %hash;
@@ -1092,12 +1102,6 @@ sub _cliQuery_done {
 							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $line2;
 						}
 						$hash{'text'} = $itemText;
-						
-						my $isPlayable = (
-							   $item->{play} 
-							|| $item->{playlist} 
-							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
-						);
 						
 						if ($isPlayable) {
 							my $presetParams = _favoritesParams($item);
