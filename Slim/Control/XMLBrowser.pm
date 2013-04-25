@@ -1110,9 +1110,9 @@ sub _cliQuery_done {
 							$itemText .= "\n" . $item->{'name2'};
 							$windowStyle = 'icon_list' if !$windowStyle;
 						}
-						elsif ( $item->{line2} ) {
+						elsif ( my $line2 = $item->{line2} || $item->{subtext} ) { # subtext is returned by TuneIn's OPML
 							$windowStyle = 'icon_list';
-							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $item->{line2};
+							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $line2;
 						}
 						$hash{'text'} = $itemText;
 						
