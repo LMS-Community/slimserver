@@ -948,7 +948,7 @@ sub _bye_handler {
 	}
 }
 
-sub _proxy_handler {
+sub _proxy_handler { if (main::SLIM_SERVICE) {
 	my $s = shift;
 	my $data_ref = shift;
 
@@ -960,7 +960,7 @@ sub _proxy_handler {
 		$ipport{$s} = sprintf("%u.%u.%u.%u:%u", unpack("CCCCn", $$data_ref));
 		$prxy_seen{$s} = 1;
 	}
-}
+} }
 
 sub _shut_handler {
 	my $client = shift;

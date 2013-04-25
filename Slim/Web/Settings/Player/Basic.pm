@@ -100,6 +100,10 @@ sub handler {
 
 			$prefs->client($client)->set($pref, \@array);
 		}
+
+		if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay') && defined $paramRef->{'defeatDestructiveTouchToPlay'}) {
+			$prefs->client($client)->set('defeatDestructiveTouchToPlay', $paramRef->{'defeatDestructiveTouchToPlay'});
+		}
 	}
 
 	$paramRef->{'prefs'}->{'pref_playername'} ||= $client->name;
@@ -121,13 +125,18 @@ sub handler {
 	$paramRef->{'macaddress'} = $client->macaddress;
 		
 	$paramRef->{'playericon'} = $class->getPlayerIcon($client);
+
+	if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay')) {
+		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->client($client)->get('defeatDestructiveTouchToPlay');
+		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->get('defeatDestructiveTouchToPlay') unless defined $paramRef->{'defeatDestructiveTouchToPlay'};
+	}
 	
 	my $page = $class->SUPER::handler($client, $paramRef);
 
 	if ($client && $client->display->isa('Slim::Display::Transporter')) {
 		Slim::Buttons::Common::updateScreen2Mode($client);
 	}
-
+	
 	return $page;
 }
 

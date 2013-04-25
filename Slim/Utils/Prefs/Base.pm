@@ -446,7 +446,8 @@ sub init {
 
 	for my $pref (keys %$hash) {
 
-		if (!exists $class->{'prefs'}->{ $pref }) {
+		# Initialize the value if it doesn't exist, or exists as an undef value
+		if (!exists $class->{'prefs'}->{ $pref } || !defined $class->{'prefs'}->{ $pref }) {
 
 			my $value;
 

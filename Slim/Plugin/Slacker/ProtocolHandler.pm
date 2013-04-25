@@ -615,7 +615,7 @@ sub trackInfoURL {
 }
 
 # Re-init Slacker when a player reconnects
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	my $url = $song->currentTrack->url();
@@ -661,7 +661,7 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {

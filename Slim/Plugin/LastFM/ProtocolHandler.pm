@@ -77,13 +77,13 @@ sub audioScrobblerSource {
 	return;
 }
 
-sub logError {
+sub logError { if (main::SLIM_SERVICE) {
 	my ( $client, $error ) = @_;
 	
 	SDI::Service::EventLog->log( 
 		$client, 'lastfm_error', $error,
 	);
-}
+} }
 
 sub scanUrl {
 	my ($class, $url, $args) = @_;
@@ -405,7 +405,7 @@ sub getIcon {
 
 # SN only
 # Re-init Last.fm when a player reconnects
-sub reinit {
+sub reinit { if ( main::SLIM_SERVICE ) {
 	my ( $class, $client, $song ) = @_;
 	
 	if ( my $track = $song->pluginData() ) {
@@ -441,6 +441,6 @@ sub reinit {
 	}
 	
 	return 1;
-}
+} }
 
 1;

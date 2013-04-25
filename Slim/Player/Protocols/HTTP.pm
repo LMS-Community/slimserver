@@ -906,20 +906,22 @@ sub getSeekDataByPosition {
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance
 sub reinit {
-	my ( $class, $client, $song ) = @_;
-	
-	main::DEBUGLOG && $log->debug("Re-init HTTP");
-	
-	# Back to Now Playing
-	Slim::Buttons::Common::pushMode( $client, 'playlist' );
-	
-	# Trigger event logging timer for this stream
-	Slim::Control::Request::notifyFromArray(
-		$client,
-		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $song->streamUrl() ), 0 ]
-	);
-	
-	return 1;
+	if ( main::SLIM_SERVICE ) {
+		my ( $class, $client, $song ) = @_;
+		
+		main::DEBUGLOG && $log->debug("Re-init HTTP");
+		
+		# Back to Now Playing
+		Slim::Buttons::Common::pushMode( $client, 'playlist' );
+		
+		# Trigger event logging timer for this stream
+		Slim::Control::Request::notifyFromArray(
+			$client,
+			[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $song->streamUrl() ), 0 ]
+		);
+		
+		return 1;
+	}
 }
 
 1;

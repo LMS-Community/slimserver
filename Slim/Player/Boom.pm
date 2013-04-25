@@ -463,10 +463,12 @@ sub setRTCTime {
 	my $client = shift;
 	my $data;
 
-	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeFormat') || $prefs->get('timeFormat');
-	
+	my $dateTimeFormat;
 	if ( main::SLIM_SERVICE ) {
 		$dateTimeFormat = $prefs->client($client)->get('timeFormat') || $prefs->get('timeFormat');
+	}
+	else {
+		$dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeFormat') || $prefs->get('timeFormat');
 	}
 
 	# Set 12h / 24h display mode accordingly; mark time as being valid (i.e. set)

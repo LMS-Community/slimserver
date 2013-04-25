@@ -152,7 +152,7 @@ sub getDisplayName () {
 sub playerMenu { }
 
 # SLIM_SERVICE
-sub myLibraryMode {
+sub myLibraryMode { if (main::SLIM_SERVICE) {
 	my ( $class, $client, $method ) = @_;
 
 	if ($method eq 'pop') {
@@ -179,7 +179,7 @@ sub myLibraryMode {
 
 	# we'll handle the push in a callback
 	$client->modeParam( handledTransition => 1 );
-}
+} }
 # /SLIM_SERVICE
 
 sub handleError {

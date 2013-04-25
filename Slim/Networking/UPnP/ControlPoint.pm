@@ -87,12 +87,11 @@ MX: $mx
 }
 
 # SLIM_SERVICE only, a way for code to add a device
-sub addDevice {
+sub addDevice { if (main::SLIM_SERVICE) {
 	my $device = shift;
 	
 	$devices->{ $device->getudn } = $device;
-}
-# /SLIM_SERVICE
+} }
 
 # Stop listening for UPnP events
 sub shutdown {
