@@ -408,6 +408,8 @@ sub gotRSS {
 			my $item   = shift;
 			if (Slim::Control::XMLBrowser::hasDescription($item)) {
 				displayItemDescription($client, $item, $feed);
+			} elsif ($item->{items}) {
+				gotRSS($client, $url, $item, $params);
 			} else {
 				displayItemLink($client, $item);
 			}

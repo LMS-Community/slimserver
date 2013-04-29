@@ -580,19 +580,3 @@ PLUGIN_FAVORITES_REMOVE
 	PL	Usuń z ulubionych
 	RU	Удалить из выбранного
 	SV	Ta bort från favoriter
-
-PLUGIN_FAVORITES_ON_MYSB
-	CS	Na mysqueezebox.com
-	DA	På mysqueezebox.com
-	DE	Auf mysqueezebox.com
-	EN	On mysqueezebox.com
-	ES	En mysqueezebox.com
-	FI	Sivustolla mysqueezebox.com
-	FR	Sur mysqueezebox.com
-	IT	Su mysqueezebox.com
-	NL	Op mysqueezebox.com
-	NO	På mysqueezebox.com
-	PL	W witrynie mysqueezebox.com
-	RU	На mysqueezebox.com
-	SV	På mysqueezebox.com
-

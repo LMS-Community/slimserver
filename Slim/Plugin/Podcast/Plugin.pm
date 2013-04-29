@@ -1,25 +1,23 @@
 package Slim::Plugin::Podcast::Plugin;
 
-# $Id$
-
-# Copyright 2005-2009 Logitech
+# Copyright 2005-2013 Logitech
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
 use strict;
-use base qw(Slim::Plugin::Base);
+use base qw(Slim::Plugin::OPMLBased);
 
-use HTML::Entities;
-use XML::Simple;
-
-use Slim::Formats::XML;
+use Slim::Plugin::Podcast::Parser;
 use Slim::Utils::Cache;
-use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
+use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string);
+use Slim::Utils::Timers;
+
+use constant PROGRESS_INTERVAL => main::SLIM_SERVICE ? 15 : 5;     # update progress tracker every x seconds
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.podcast',
@@ -28,27 +26,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $prefs = preferences('plugin.podcast');
-
-use constant FEED_VERSION => 2; # bump this number when changing the defaults below
-
-sub DEFAULT_FEEDS {
-	[
-	{
-		name  => 'Odeo',
-		value => 'http://'
-			. Slim::Networking::SqueezeNetwork->get_server('sn')
-			. '/opml/odeo.opml',
-	},
-	{
-		name  => 'PodcastAlley Top 50',
-		value => 'http://podcastalley.com/PodcastAlleyTop50.opml'
-	},
-	{
-		name  => 'PodcastAlley 10 Newest',
-		value => 'http://podcastalley.com/PodcastAlley10Newest.opml'
-	},
-	];
-}
+my $cache;
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
@@ -68,241 +46,143 @@ $prefs->migrate(1, sub {
 	1;
 });
 
-# migrate to latest version of default feeds if they have not been modified
-$prefs->migrate(FEED_VERSION, sub {
-	$prefs->set('feeds', DEFAULT_FEEDS()) unless $prefs->get('modified');
-	1;
-});
-
-if ( main::WEBUI ) {
- 	require Slim::Plugin::Podcast::Settings;
-}
-
-my $cli_next;
-
 sub initPlugin {
 	my $class = shift;
 
-	main::INFOLOG && $log->info("Initializing.");
-
-	if ( main::WEBUI ) {
-		Slim::Plugin::Podcast::Settings->new;
-	}
-
-	$class->SUPER::initPlugin();
-
-	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
-
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
-	Slim::Control::Request::addDispatch(['podcast', 'items', '_index', '_quantity'],
-        [0, 1, 1, \&cliQuery]);
-	Slim::Control::Request::addDispatch(['podcast', 'playlist', '_method' ],
-		[1, 1, 1, \&cliQuery]);
-
-	if (main::DEBUGLOG && $log->is_debug) {
-
-		$log->debug("Feed Info:");
-
-		for my $feed (@{$prefs->get('feeds')}) {
-
-			$log->debug(join(', ', $feed->{'name'}, $feed->{'value'}));
-		}
-
-		$log->debug('');
-	}
-
-	my @item = ({
-			stringToken    => getDisplayName(),
-			text           => getDisplayName(),
-			weight         => 20,
-			id             => 'podcast',
-			'icon-id'      => $class->_pluginDataFor('icon'),
-			displayWhenOff => 0,
-			window         => { 
-				titleStyle	=> 'album',
-				'icon-id'	=> $class->_pluginDataFor('icon'),
-			},
-			actions => {
-				go =>      {
-					'cmd' => ['podcast', 'items'],
-					'params' => {
-						'menu' => 'podcast',
-					},
-				},
-			},
-		});
-
-	Slim::Control::Jive::registerAppMenu(\@item);
+	$cache = Slim::Utils::Cache->new();
 	
-	if ( main::SLIM_SERVICE ) {
-		# Feeds are per-client on SN, so don't try to load global feeds
-		return;
+	# wait a little before we try to grab podcasts from SN
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 15,
+		\&importFromSN,
+	);
+		
+	if (main::WEBUI) {
+		require Slim::Plugin::Podcast::Settings;
+		Slim::Plugin::Podcast::Settings->new();
 	}
 
-	updateOPMLCache( $prefs->get('feeds') );
+	$class->SUPER::initPlugin(
+		feed   => \&handleFeed,
+		tag    => 'podcastv2',
+		node   => 'extras',		# used for SP
+		menu   => 'plugins',	# used in web UI
+	);
+}
+
+sub handleFeed {
+	my ($client, $cb, $params, $args) = @_;
+
+	# hook in to new song event - show "jump to last position" menu if matching a podcast
+	Slim::Control::Request::subscribe(\&songChangeCallback, [['playlist'], ['newsong', 'pause', 'stop']]);
+
+	my $items = [];
+	
+#	my @feeds = main::SLIM_SERVICE ? feedsForClient($client) : @{$prefs->get('feeds')}; 
+	my @feeds = @{$prefs->get('feeds')}; 
+	
+	foreach ( @feeds ) {
+		push @$items, {
+			name => $_->{name},
+			url  => $_->{value},
+			parser => 'Slim::Plugin::Podcast::Parser',
+		}
+	}
+	
+	$cb->({
+		items => $items,
+	});
+}
+
+sub songChangeCallback {
+	my $request = shift;
+
+	my $client = $request->client() || return;
+	
+	# If synced, only listen to the master
+	if ( $client->isSynced() ) {
+		return unless Slim::Player::Sync::isMaster($client);
+	}
+
+	my $url = Slim::Player::Playlist::url($client);
+	
+	if ( $url =~ /#slimpodcast/ && $request->isCommand([['playlist'], ['newsong']]) ) {
+		my $key = 'podcast-position-' . $url;
+		if ( my $newPos = $cache->get($key) ) {
+			$cache->remove($key);
+			Slim::Player::Source::gototime($client, $newPos);
+			$log->error("jump to position $newPos");
+		}
+		
+		$url =~ s/#slimpodcast.*//;
+	}
+
+	if ( defined $cache->get('podcast-' . $url) ) {
+		main::DEBUGLOG && $log->debug('Setting up timer to track podcast progress...');	
+		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + PROGRESS_INTERVAL,
+			\&_trackProgress,
+			$url,
+		);
+	}
+}
+
+# if this is a podcast, set up a timer to track progress
+sub _trackProgress {
+	my $client = shift || return;
+	my $url    = shift || return;
+
+	return unless Slim::Player::Playlist::url($client) =~ /$url/;
+
+	Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
+
+	my $key = 'podcast-' . $url;
+	if ( defined $cache->get($key) ) {
+		$cache->set($key, Slim::Player::Source::songTime($client), '30days');
+
+		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state for ' . $client->name . ': ' . Slim::Player::Source::songTime($client));
+	
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + PROGRESS_INTERVAL,
+			\&_trackProgress,
+			$url,
+		) if $client->isPlaying;
+	}
 }
 
 sub getDisplayName {
 	return 'PLUGIN_PODCAST';
 }
 
-# Don't add this item to any menu
-sub playerMenu { }
-
-sub getFunctions {
-	return {};
-}
-
-sub setMode {
-	my $class =  shift;
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
+sub importFromSN {
+	my $feeds = $prefs->get('feeds');
+	my %urls  = map { $_->{value} => 1 } @$feeds;
 	
-	my @feeds = ();
-	if ( main::SLIM_SERVICE ) {
-		@feeds = feedsForClient($client);
-	}
+	foreach ( @{ Slim::Utils::Favorites->new->toplevel } ) {
+		my $url = $_->{URL};
 
-	# use INPUT.Choice to display the list of feeds
-	my %params = (
-		header => '{PLUGIN_PODCAST}',
-		headerAddCount => 1,
-		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
-		modeName => 'Podcast Plugin',
-		onRight => sub {
-			my $client = shift;
-			my $item = shift;
-			my %params = (
-				url     => $item->{'value'},
-				title   => $item->{'name'},
-				timeout => 35,
-			);
-			Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
-		},
-		onPlay => sub {
-			my $client = shift;
-			my $item = shift;
-			# url is also a playlist
-			$client->execute(['playlist', 'play', $item->{'value'}, $item->{'name'}]);
-		},
-		onAdd => sub {
-			my $client = shift;
-			my $item = shift;
-			# url is also a playlist
-			$client->execute(['playlist', 'add', $item->{'value'}, $item->{'name'}]);
-		},
+		next unless $url =~ m|^http://.*mysqueezebox\.com/public/opml/.*/favorites\.opml|;
 
-		overlayRef => sub {
-			my $client = shift;
-			return [ undef, $client->symbols('rightarrow') ];
-		},
-	);
-
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
-}
-
-sub webPages {
-	my $class = shift;
-
-	my $title = getDisplayName();
-	my $url   = 'plugins/Podcast/index.html';
-	
-	Slim::Web::Pages->addPageLinks('plugins', { $title => $url });
-	
-	Slim::Web::HTTP::CSRF->protectURI($url);
-
-	Slim::Web::Pages->addPageFunction(
-		$url => sub {
-			my $client = $_[0];
-			
-			# Get OPML list of feeds from cache
-			my $cache = Slim::Utils::Cache->new();
-			my $opml = $cache->get( 'podcasts_opml' );
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				client => $client,
-				feed   => $opml,
-				title  => $title,
-				args   => \@_
-			} );
-		},
-	);
-}
-
-sub cliQuery {
-	my $request = shift;
-	
-	main::DEBUGLOG && $log->debug('Enter');
-	
-	if ( main::SLIM_SERVICE ) {
-		my $client = $request->client;
-		my @feeds  = feedsForClient($client);
+		$url =~ s/favorites/podcasts/;
 		
-		my $outline = [];
-		
-		for my $item ( @feeds ) {
-			push @{$outline}, {
-				name  => $item->{name},
-				url   => $item->{value},
-				value => $item->{value},
-				type  => $item->{type} || 'link',
-				items => [],
+		if (!$urls{$url}) {
+			$log->error("add $url!");
+			push @$feeds, {
+				value => $url, 
+				name  => string('ON_MYSB')
 			};
 		}
-
-		my $opml = {
-			title => $client->string('PLUGIN_PODCAST'),
-			type  => 'opml',
-			items => $outline,
-		};
-		
-		Slim::Control::XMLBrowser::cliQuery('podcast', $opml, $request);
-		return;
 	}
-	
-	# Get OPML list of feeds from cache
-	my $cache = Slim::Utils::Cache->new();
-	my $opml = $cache->get( 'podcasts_opml' );
-	Slim::Control::XMLBrowser::cliQuery('podcast', $opml, $request);
-}
-
-# Update the hashref of podcast feeds for use with the web UI
-sub updateOPMLCache {
-	my $feeds = shift;
-
-	my $outline = [];
-
-	for my $item ( @{$feeds} ) {
-		push @{$outline}, {
-			'name'  => $item->{'name'},
-			'url'   => $item->{'value'},
-			'value' => $item->{'value'},
-			'type'  => $item->{'type'} || 'lnk',
-			'items' => [],
-		};
-	}
-	
-	my $opml = {
-		'title' => string('PLUGIN_PODCAST'),
-		'url'   => 'podcasts_opml',			# Used so XMLBrowser can look this up in cache
-		'type'  => 'opml',
-		'items' => $outline,
-	};
-		
-	my $cache = Slim::Utils::Cache->new();
-	$cache->set( 'podcasts_opml', $opml, '10days' );
 }
 
 # SN only
-sub feedsForClient {
+# XXX - do we still run this plugin on SN?
+=pod
+sub feedsForClient { if (main::SLIM_SERVICE) {
 	my $client = shift;
 	
 	my $userid = $client->playerData->userid->id;
@@ -333,6 +213,7 @@ sub feedsForClient {
 	}
 	
 	return @feeds;
-}
+} }
+=cut
 
 1;

@@ -23964,3 +23964,17 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	
+ON_MYSB
+	CS	Na mysqueezebox.com
+	DA	På mysqueezebox.com
+	DE	Auf mysqueezebox.com
+	EN	On mysqueezebox.com
+	ES	En mysqueezebox.com
+	FI	Sivustolla mysqueezebox.com
+	FR	Sur mysqueezebox.com
+	IT	Su mysqueezebox.com
+	NL	Op mysqueezebox.com
+	NO	På mysqueezebox.com
+	PL	W witrynie mysqueezebox.com
+	RU	На mysqueezebox.com
+	SV	På mysqueezebox.com

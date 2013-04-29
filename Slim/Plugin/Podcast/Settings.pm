@@ -26,14 +26,6 @@ sub page {
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
-	if ( $params->{reset} ) {
-
-		$prefs->set( feeds => Slim::Plugin::Podcast::Plugin::DEFAULT_FEEDS() );
-		$prefs->set( modified => 0 );
-
-		Slim::Plugin::Podcast::Plugin::updateOPMLCache(Slim::Plugin::Podcast::Plugin::DEFAULT_FEEDS());
-	}
-	
 	my @feeds = @{ $prefs->get('feeds') };
 
 	if ( $params->{saveSettings} ) {
@@ -91,8 +83,6 @@ sub saveSettings {
 	$prefs->set( feeds => $feeds );
 	$prefs->set( modified => 1 );
 
-	Slim::Plugin::Podcast::Plugin::updateOPMLCache($feeds);
-	
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs} }, [ $feed->{value}, $feed->{name} ];
 	}
