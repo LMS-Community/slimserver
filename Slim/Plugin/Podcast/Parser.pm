@@ -1,10 +1,11 @@
 package Slim::Plugin::Podcast::Parser;
 
-use Date::Parse qw(strptime);
+use Date::Parse qw(strptime str2time);
 use URI;
 
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 
@@ -43,6 +44,9 @@ sub parse {
 			my $url       = $enclosure->{url} . '#slimpodcast';
 			
 			$cache->set('podcast-position-' . $url, $position, '10days');
+			
+			$position = Slim::Utils::DateTime::timeFormat($position);
+			$position =~ s/^0+[:\.]//;
 
 			$item->{items} = [{
 				name => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
@@ -52,7 +56,6 @@ sub parse {
 					url    => $url,
 				},
 				duration => $item->{duration},
-				gototime => $position,
 			},{
 				name => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				enclosure => {
@@ -64,7 +67,7 @@ sub parse {
 			}];
 		}
 
-		$item->{line2} = $item->{pubdate};
+		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
 	}
 	
 	$feed->{nocache} = 1;

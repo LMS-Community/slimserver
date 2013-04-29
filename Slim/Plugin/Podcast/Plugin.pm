@@ -95,7 +95,7 @@ sub handleFeed {
 	my ($client, $cb, $params, $args) = @_;
 
 	# hook in to new song event - show "jump to last position" menu if matching a podcast
-	Slim::Control::Request::subscribe(\&newSongCallback, [['playlist'], ['newsong']]);
+	Slim::Control::Request::subscribe(\&songChangeCallback, [['playlist'], ['newsong', 'pause', 'stop']]);
 
 	my $items = [];
 	
@@ -112,7 +112,7 @@ sub handleFeed {
 	});
 }
 
-sub newSongCallback {
+sub songChangeCallback {
 	my $request = shift;
 
 	my $client = $request->client() || return;
@@ -124,7 +124,7 @@ sub newSongCallback {
 
 	my $url = Slim::Player::Playlist::url($client);
 	
-	if ( $url =~ /#slimpodcast/ ) {
+	if ( $url =~ /#slimpodcast/ && $request->isCommand([['playlist'], ['newsong']]) ) {
 		my $key = 'podcast-position-' . $url;
 		if ( my $newPos = $cache->get($key) ) {
 			$cache->remove($key);
@@ -134,13 +134,17 @@ sub newSongCallback {
 		
 		$url =~ s/#slimpodcast.*//;
 	}
-	
-	Slim::Utils::Timers::setTimer(
-		$client,
-		time() + PROGRESS_INTERVAL,
-		\&_trackProgress,
-		$url,
-	);
+
+	if ( defined $cache->get('podcast-' . $url) ) {
+		main::DEBUGLOG && $log->debug('Setting up timer to track podcast progress...');	
+		Slim::Utils::Timers::killTimers( $client, \&_trackProgress );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + PROGRESS_INTERVAL,
+			\&_trackProgress,
+			$url,
+		);
+	}
 }
 
 # if this is a podcast, set up a timer to track progress
@@ -155,13 +159,15 @@ sub _trackProgress {
 	my $key = 'podcast-' . $url;
 	if ( defined $cache->get($key) ) {
 		$cache->set($key, Slim::Player::Source::songTime($client), '30days');
+
+		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state for ' . $client->name . ': ' . Slim::Player::Source::songTime($client));
 	
 		Slim::Utils::Timers::setTimer(
 			$client,
 			time() + PROGRESS_INTERVAL,
 			\&_trackProgress,
 			$url,
-		);
+		) if $client->isPlaying;
 	}
 }
 
