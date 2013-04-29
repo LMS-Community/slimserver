@@ -49,7 +49,7 @@ sub parse {
 			$position =~ s/^0+[:\.]//;
 
 			$item->{items} = [{
-				name => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
+				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
@@ -57,7 +57,7 @@ sub parse {
 				},
 				duration => $item->{duration},
 			},{
-				name => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
+				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
@@ -68,9 +68,11 @@ sub parse {
 		}
 
 		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
+		$item->{'xmlns:slim'} = 1;
 	}
 	
 	$feed->{nocache} = 1;
+	$feed->{cachetime} = 0;
 	
 	return $feed;
 }
