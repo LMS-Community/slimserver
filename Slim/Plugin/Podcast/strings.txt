@@ -189,3 +189,10 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s
 
+PLUGIN_PODCAST_PLAY_FROM_BEGINNING
+	DE	Vom Anfang an wiedergeben
+	EN	Play from the beginning
+
+PLUGIN_PODCAST_PLAY_FROM_POSITION_X
+	DE	Von der letzten Position wiedergeben (%s)
+	EN	Play from last position (%s)
