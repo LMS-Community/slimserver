@@ -71,7 +71,8 @@ sub handleFeed {
 
 	my $items = [];
 	
-	my @feeds = main::SLIM_SERVICE ? feedsForClient($client) : @{$prefs->get('feeds')}; 
+#	my @feeds = main::SLIM_SERVICE ? feedsForClient($client) : @{$prefs->get('feeds')}; 
+	my @feeds = @{$prefs->get('feeds')}; 
 	
 	foreach ( @feeds ) {
 		push @$items, {
@@ -151,6 +152,7 @@ sub getDisplayName {
 
 # SN only
 # XXX - do we still run this plugin on SN?
+=pod
 sub feedsForClient { if (main::SLIM_SERVICE) {
 	my $client = shift;
 	
@@ -183,5 +185,6 @@ sub feedsForClient { if (main::SLIM_SERVICE) {
 	
 	return @feeds;
 } }
+=cut
 
 1;
