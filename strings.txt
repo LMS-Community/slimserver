@@ -23900,3 +23900,17 @@ SYNC_ABOUT
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Logitech.com.
 	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Logitech.com.
 
+ON_MYSB
+	CS	Na mysqueezebox.com
+	DA	På mysqueezebox.com
+	DE	Auf mysqueezebox.com
+	EN	On mysqueezebox.com
+	ES	En mysqueezebox.com
+	FI	Sivustolla mysqueezebox.com
+	FR	Sur mysqueezebox.com
+	IT	Su mysqueezebox.com
+	NL	Op mysqueezebox.com
+	NO	På mysqueezebox.com
+	PL	W witrynie mysqueezebox.com
+	RU	На mysqueezebox.com
+	SV	På mysqueezebox.com
