@@ -1688,15 +1688,14 @@ added and should contain a title key, whose value is the display name for a play
 key, whose value is the url for the playlist.  The title values will be passed through
 $client->string if they are enclosed in curly braces.
 
-For example, the RandomPlay plugin could register its mixes as possible alarm playlists as follows
-(in fact, RandomPlay is special and is registered differently, but you get the idea...):
+For example, the RandomPlay plugin does register its mixes as possible alarm playlists as follows
 
 	Slim::Utils::Alarm->addPlaylists('PLUGIN_RANDOMPLAY',
 		[
-			{ title => '{PLUGIN_RANDOM_TRACK}', url => 'randomplay:track' },
-			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay:contributor' },
-			{ title => '{PLUGIN_RANDOM_ALBUM}', url => 'randomplay:album' },
-			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay:year' },
+			{ title => '{PLUGIN_RANDOM_TRACK}', url => 'randomplay://track' },
+			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://contributor' },
+			{ title => '{PLUGIN_RANDOM_ALBUM}', url => 'randomplay://album' },
+			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
 		]
 	);
 
@@ -1790,23 +1789,12 @@ sub getPlaylists {
 					url => $playlist->url
 				};
 		}
+
 		@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
 		push @playlists, {
-				type => 'PLAYLISTS',
-				items => \@savedArray,
-			};
-
-		# Add random mixes
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
-			if ( my $mixes = Slim::Plugin::RandomPlay::Plugin->getAlarmPlaylists() ) {
-				foreach my $mixType (@$mixes) {
-					push @playlists, {
-							type => $mixType->{type},
-							items => $mixType->{items},
-						};
-				}
-			}
-		}
+			type => 'PLAYLISTS',
+			items => \@savedArray,
+		};
 	}
 
 	# Add natural sounds
