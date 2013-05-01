@@ -259,6 +259,24 @@ sub initPlugin {
 			},
 		},
 		{
+			stringToken    => 'PLUGIN_RANDOM_DISABLE',
+			id      => 'randomdisable',
+			weight  => 100,
+			style   => 'itemplay',
+			nextWindow => 'refresh',
+			node    => 'randomplay',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'disable' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'randomplay', 'disable' ],
+				},
+			},
+		},
+		{
 			stringToken    => getDisplayName(),
 			weight         => MENU_WEIGHT,
 			id             => 'randomplay',
@@ -810,12 +828,12 @@ sub playRandom {
 
 	if ($numItems) {
 
-		if (0 && !$addOnly) {
-			my $request = $client->execute(['stop']);
-			$request->source('PLUGIN_RANDOMPLAY');
-			$request = $client->execute(['power', '1']);
-			$request->source('PLUGIN_RANDOMPLAY');
-		}
+#		if (0 && !$addOnly) {
+#			my $request = $client->execute(['stop']);
+#			$request->source('PLUGIN_RANDOMPLAY');
+#			$request = $client->execute(['power', '1']);
+#			$request->source('PLUGIN_RANDOMPLAY');
+#		}
 
 		my $find = {};
 
@@ -931,11 +949,13 @@ sub playRandom {
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 			$client->showBriefly( {
-				jive => undef,
+				jive => $client->pluginData('disableMix') ? string('PLUGIN_RANDOM_DISABLED') : undef,
 				'line' => [ string('PLUGIN_RANDOMPLAY'), string('PLUGIN_RANDOM_DISABLED') ]
 			} );
+			
 		}
 
+		$client->pluginData( disableMix => 0 );
 		$mixInfo{$client->master()->id} = undef;
 
 	} else {
@@ -1301,6 +1321,22 @@ sub cliRequest {
 
 	my $client = $request->client();
 
+	# return quickly if we lack some information	
+	if ($mode && $mode eq 'disable' && $client) {
+		
+		# nothing to do here unless a mix is going on
+		if ( !$mixInfo{$client->master()->id} ) {
+			$request->setStatusDone();
+			return;
+		}
+		
+		$client->pluginData( disableMix => 1 );
+	}
+	elsif (!defined $mode || !(scalar grep /$mode/, @mixTypes) || !$client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
 	if (my $genre = $request->getParam('genre_id')){
 		my $name = Slim::Schema->find('Genre', $genre)->name;
 		
@@ -1317,12 +1353,6 @@ sub cliRequest {
 
 		# need to reset mix list when changing genres
 		$mixInfo{$client->master()->id}->{'idList'} = undef;
-	}
-	
-
-	if (!defined $mode || !(scalar grep /$mode/, @mixTypes) || !$client) {
-		$request->setStatusBadParams();
-		return;
 	}
 
 	playRandom($client, $mode);

@@ -33,6 +33,11 @@ PLUGIN_RANDOM_DESC
 	RU	Музыкальный автомат для ваших песен
 	SV	Jukebox för din musik
 
+PLUGIN_RANDOM_DISABLE
+	DE	Zufallsmix anhalten
+	EN	Stop Random Mix
+	FR	Arrête mix aléatoire
+
 PLUGIN_RANDOM_DISABLED
 	CS	Náhodně zvolený mix zastaven
 	DA	Tilfældigt miks er stoppet
