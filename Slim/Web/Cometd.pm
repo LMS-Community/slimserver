@@ -46,6 +46,7 @@ use constant RETRY_DELAY      => 5000;
 
 use constant LONG_POLLING_INTERVAL => 0;     # client can request again immediately
 use constant LONG_POLLING_TIMEOUT  => 60000; # server will wait up to 60s for events to send
+use constant LONG_POLLING_AUTOKILL => 180000; # server waits 3m for new poll before auto disconnecting client
 
 # indicies used for $conn in handler()
 use constant HTTP_CLIENT      => 0;
@@ -667,6 +668,16 @@ sub sendHTTPResponse {
 		# Remove the active connection info from manager until
 		# the client makes a new /meta/(re)?connect request
 		$manager->remove_connection( $httpClient->clid );
+
+		# Forcibly disconnect the client if we don't receive a new poll request.
+		# A new connect/reconnect will cancel this timer.
+		# Prevents excessive build up of queued events for a quiescent client,
+		# or a client that terminates without issuing 'meta/disconnect'.
+		Slim::Utils::Timers::setTimer(
+			$httpClient->clid,
+			Time::HiRes::time() + ( LONG_POLLING_AUTOKILL / 1000),
+			\&disconnectClient,
+		);
 	}
 	
 	$out = eval { to_json($out) };
@@ -967,6 +978,9 @@ sub webCloseHandler {
 		# Make sure the connection we lost is the current (newest) connection
 		# we are using. This was the source of a bug with long-polling because
 		# browsers can use either of 2 connections for any given request.
+
+		# A client using long-polling may never be detected here, as it does not have an
+		# 'active' connection after a response is sent. Autokill handled in sendHTTPResponse.
 		my $conn = $manager->get_connection($clid);
 		if ( $conn && $conn->[HTTP_CLIENT] == $httpClient ) {
 			$manager->remove_connection( $clid );
