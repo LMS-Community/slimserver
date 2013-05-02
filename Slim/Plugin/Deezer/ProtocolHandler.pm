@@ -281,7 +281,7 @@ sub _gotNextRadioTrack {
 		artist    => $track->{artist_name},
 		album     => $track->{album_name},
 		title     => $track->{title},
-		duration  => $track->{duration},
+		duration  => $track->{duration} || 200,
 		cover     => $track->{cover} || $icon,
 		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
@@ -293,7 +293,7 @@ sub _gotNextRadioTrack {
 		},
 	};
 	
-	$song->duration( $track->{duration} );
+	$song->duration( $meta->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
@@ -370,6 +370,11 @@ sub _gotTrack {
     
     return if $song->pluginData('abandonSong');
 	
+	if (!$info->{url}) {
+		_gotTrackError('No stream URL found', $client, $params);
+		return;
+	}
+	
 	# Save the media URL for use in strm
 	$song->streamUrl($info->{url});
 
@@ -383,14 +388,14 @@ sub _gotTrack {
 		album     => $info->{album_name},
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
-		duration  => $info->{duration},
+		duration  => $info->{duration} || 200,
 		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
 	};
 	
-	$song->duration( $info->{duration} );
+	$song->duration( $meta->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );
@@ -571,6 +576,7 @@ sub getMetadataFor {
 			{
 				client  => $client,
 				timeout => 60,
+				trackIds=> \@need,
 			},
 		);
 
@@ -594,6 +600,7 @@ sub getMetadataFor {
 sub _gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
+	my $trackIds = $http->params->{trackIds};
 	
 	$client->master->pluginData( fetchingMeta => 0 );
 	
@@ -601,6 +608,7 @@ sub _gotBulkMetadata {
 	
 	if ( $@ || ref $info ne 'ARRAY' ) {
 		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
+		_invalidateTracks($client, $trackIds);
 		return;
 	}
 	
@@ -611,6 +619,8 @@ sub _gotBulkMetadata {
 	# Cache metadata
 	my $cache = Slim::Utils::Cache->new;
 	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	
+	my %trackIds = map { $_ => 1 } @$trackIds;
 
 	for my $track ( @{$info} ) {
 		next unless ref $track eq 'HASH';
@@ -631,6 +641,14 @@ sub _gotBulkMetadata {
 		};
 	
 		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );
+		
+		delete $trackIds{$trackId};
+	}
+	
+	# see whether some tracks didn't get any data back
+	$trackIds = [ keys %trackIds ];
+	if ( scalar @$trackIds ) {
+		_invalidateTracks($client, $trackIds);
 	}
 	
 	# Update the playlist time so the web will refresh, etc
@@ -644,9 +662,33 @@ sub _gotBulkMetadataError {
 	my $client = $http->params('client');
 	my $error  = $http->error;
 	
+	_invalidateTracks($client, $http->params->{trackIds});
+	
 	$client->master->pluginData( fetchingMeta => 0 );
 	
 	$log->warn("Error getting track metadata from SN: $error");
+}
+
+sub _invalidateTracks {
+	my ($client, $trackIds) = @_;
+	
+	return unless $trackIds && ref $trackIds eq 'ARRAY';
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug("Disable track(s) lack of metadata: " . join(', ', @$trackIds));
+
+	my $cache = Slim::Utils::Cache->new;
+	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+
+	# set default meta data for tracks without meta data
+	foreach ( @$trackIds ) {
+		$cache->set('deezer_meta_' . $_, {
+			bitrate   => '320k CBR',
+			type      => 'MP3 (Deezer)',
+			icon      => $icon,
+			cover     => $icon,
+		},
+		3600);
+	}	
 }
 
 sub getIcon {
