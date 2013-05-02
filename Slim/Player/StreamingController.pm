@@ -2474,14 +2474,8 @@ sub _setPlayingState {
 	main::INFOLOG && $log->info("new playing state $PlayingStateName[$newState]");
 	
 	if ( main::SLIM_SERVICE ) {
-		Slim::Utils::Timers::killTimers( $self, \&_persistState );
-		Slim::Utils::Timers::setTimer(
-			$self,
-			Time::HiRes::time() + 5,
-			\&_persistState,
-		);
+		$self->_persistState();
 	}
-
 
 	if ($newState != BUFFERING && $newState != WAITING_TO_SYNC) {$self->{'rebuffering'} = 0;}
 }
@@ -2499,12 +2493,7 @@ sub _setStreamingState {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		Slim::Utils::Timers::killTimers( $self, \&_persistState );
-		Slim::Utils::Timers::setTimer(
-			$self,
-			Time::HiRes::time() + 5,
-			\&_persistState,
-		);
+		$self->_persistState();
 	}
 }
 
@@ -2514,13 +2503,24 @@ sub _persistState { if ( main::SLIM_SERVICE ) {
 	# Do not persist state while in TRACKWAIT because this is not meaningful to restore
 	# Rely on subsequent event (possibly resent by player after reconnect) to trigger next action
 	return if $self->{streamingState} == TRACKWAIT;
+
+	Slim::Utils::Timers::killTimers( $self, \&_bufferPersistState );
+	Slim::Utils::Timers::setTimer(
+		$self,
+		Time::HiRes::time() + 0.500,
+		\&_bufferPersistState,
+	);
+}
+
+sub _bufferPersistState {
+	my $self = shift;
 	
 	# Persist playing/streaming state to the SN database
 	# This assists in seamless resume of a player if it gets moved
 	# to another instance.
 	my $state = $PlayingStateName[ $self->{playingState} ] 
 		. '-' . $StreamingStateName[ $self->{streamingState} ];
-
+	
 	for my $client ( $self->activePlayers ) {
 		# Only update if serviceip matches
 		$client->playerData->updatePlaymode( $state, Slim::Utils::IPDetect::IP_port() );
