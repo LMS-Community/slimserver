@@ -6,10 +6,7 @@ use URI;
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
 use Slim::Utils::DateTime;
-use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
-
-my $log = logger('plugin.podcast');
 
 sub parse {
 	my ($class, $http, $params) = @_;
@@ -22,8 +19,21 @@ sub parse {
 	my $feed = Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef, $http->headers()->content_type );
 
 	foreach my $item ( @{$feed->{items}} ) {
+		if ($item->{type} && $item->{type} eq 'link') {
+			$item->{parser} = $class;
+		}
+
+		next unless $item->{enclosure} && keys %{$item->{enclosure}};
+		
+		$item->{line1} = $item->{title} || $item->{name};
+		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
+		$item->{'xmlns:slim'} = 1;
+		
 		# some podcasts come with formatted duration ("00:54:23") - convert into seconds
-		my ($s, $m, $h) = strptime($item->{duration});
+		my $duration = $item->{duration};
+		$duration =~ s/00:(\d\d:\d\d)/$1/;
+		
+		my ($s, $m, $h) = strptime($item->{duration} || 0);
 		
 		if ($s || $m || $h) {
 			$item->{duration} = $h*3600 + $m*60 + $s;
@@ -36,8 +46,10 @@ sub parse {
 			$cache->set($key, 0, '30days');
 		}
 		
+		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0));
+		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
-		if ( $item->{enclosure} && $position && $position < $item->{duration} - 15 ) {
+		if ( $position && $position < $item->{duration} - 15 ) {
 			delete $item->{description};     # remove description, or xmlbrowser would consider this to be a RSS feed
 
 			my $enclosure = delete $item->{enclosure};
@@ -50,6 +62,7 @@ sub parse {
 
 			$item->{items} = [{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
+				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_POSITION_X', $position),
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
@@ -58,6 +71,7 @@ sub parse {
 				duration => $item->{duration},
 			},{
 				title => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
+				name  => cstring($client, 'PLUGIN_PODCAST_PLAY_FROM_BEGINNING'),
 				enclosure => {
 					type   => $enclosure->{type},
 					length => $enclosure->{length},
@@ -65,10 +79,21 @@ sub parse {
 				},
 				duration => $item->{duration},
 			}];
+			
+			$item->{type} = 'link';
+
+			$progress = $client->symbols($client->progressBar(12, 0.5, 0));
 		}
 
-		$item->{line2} = Slim::Utils::DateTime::longDateF(str2time($item->{pubdate})) if $item->{pubdate};
-		$item->{'xmlns:slim'} = 1;
+		$item->{title} = $progress . '  ' . $item->{title} if $progress;
+
+		if ($position && $duration) {
+			$position = "$position / $duration";
+			$item->{line2} = $item->{line2} ? $item->{line2} . ' (' . $position . ')' : $position;
+		}
+		elsif ($duration) {
+			$item->{line2} = $item->{line2} ? $item->{line2} . ' (' . $duration . ')' : $duration;
+		}
 	}
 	
 	$feed->{nocache} = 1;

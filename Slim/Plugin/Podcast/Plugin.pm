@@ -170,7 +170,6 @@ sub importFromSN {
 		$url =~ s/favorites/podcasts/;
 		
 		if (!$urls{$url}) {
-			$log->error("add $url!");
 			push @$feeds, {
 				value => $url, 
 				name  => string('ON_MYSB')
