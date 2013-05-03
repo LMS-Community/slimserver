@@ -71,6 +71,9 @@ sub saveSettings {
 		$ordered = [ $ordered ] unless ref $ordered eq 'ARRAY';
 	
 		my @new = map { $feeds->[$_] } @$ordered;
+		
+		# push newly added stream (if any) on new feeds list
+		push @new, $feeds->[-1] if scalar @$feeds > scalar @new;
 		$feeds = \@new;
 		
 		my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
