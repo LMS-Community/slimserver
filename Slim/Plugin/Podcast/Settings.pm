@@ -63,25 +63,34 @@ sub handler {
 
 sub saveSettings {
 	my ( $class, $client, $feeds, $params ) = @_;
+
+	if ( $params->{saveSettings} ) {
+		
+		# save re-ordered stream list
+		my $ordered = $params->{feedorder};
+		$ordered = [ $ordered ] unless ref $ordered eq 'ARRAY';
 	
-	my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
-
-	for my $deleteItem  (@delete ) {
+		my @new = map { $feeds->[$_] } @$ordered;
+		$feeds = \@new;
 		
-		next unless defined $deleteItem;
-		
-		my $i = 0;
-		while ( $i < scalar @{$feeds} ) {
-			if ( $deleteItem eq $feeds->[$i]->{value} ) {
-				splice @{$feeds}, $i, 1;
-				next;
+		my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
+	
+		for my $deleteItem (@delete) {
+			
+			next unless defined $deleteItem;
+			
+			my $i = 0;
+			while ( $i < scalar @{$feeds} ) {
+				if ( $deleteItem eq $feeds->[$i]->{value} ) {
+					splice @{$feeds}, $i, 1;
+					next;
+				}
+				$i++;
 			}
-			$i++;
 		}
+	
+		$prefs->set( feeds => $feeds );
 	}
-
-	$prefs->set( feeds => $feeds );
-	$prefs->set( modified => 1 );
 
 	for my $feed ( @{$feeds} ) {
 		push @{ $params->{prefs} }, [ $feed->{value}, $feed->{name} ];

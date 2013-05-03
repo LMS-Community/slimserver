@@ -40,7 +40,6 @@ $prefs->migrate(1, sub {
 
 	if (@feeds) {
 		$prefs->set('feeds', \@feeds);
-		$prefs->set('modified', 1);
 	}
 
 	1;
