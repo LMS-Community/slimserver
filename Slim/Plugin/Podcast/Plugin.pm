@@ -28,6 +28,10 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.podcast');
 my $cache;
 
+$prefs->init({
+	feeds => [],
+});
+
 # migrate old prefs across
 $prefs->migrate(1, sub {
 	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names') || [] };
@@ -111,7 +115,6 @@ sub songChangeCallback {
 		if ( my $newPos = $cache->get($key) ) {
 			$cache->remove($key);
 			Slim::Player::Source::gototime($client, $newPos);
-			$log->error("jump to position $newPos");
 		}
 		
 		$url =~ s/#slimpodcast.*//;
