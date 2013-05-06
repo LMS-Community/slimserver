@@ -11,7 +11,6 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use Slim::Plugin::Podcast::Parser;
 use Slim::Utils::Cache;
-use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
@@ -53,13 +52,6 @@ sub initPlugin {
 	my $class = shift;
 
 	$cache = Slim::Utils::Cache->new();
-	
-	# wait a little before we try to grab podcasts from SN
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time() + 15,
-		\&importFromSN,
-	);
 		
 	if (main::WEBUI) {
 		require Slim::Plugin::Podcast::Settings;
@@ -158,26 +150,6 @@ sub _trackProgress {
 
 sub getDisplayName {
 	return 'PLUGIN_PODCAST';
-}
-
-sub importFromSN {
-	my $feeds = $prefs->get('feeds');
-	my %urls  = map { $_->{value} => 1 } @$feeds;
-	
-	foreach ( @{ Slim::Utils::Favorites->new->toplevel } ) {
-		my $url = $_->{URL};
-
-		next unless $url =~ m|^http://.*mysqueezebox\.com/public/opml/.*/favorites\.opml|;
-
-		$url =~ s/favorites/podcasts/;
-		
-		if (!$urls{$url}) {
-			push @$feeds, {
-				value => $url, 
-				name  => string('ON_MYSB')
-			};
-		}
-	}
 }
 
 # SN only
