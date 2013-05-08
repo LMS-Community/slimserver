@@ -470,23 +470,40 @@ sub precacheAllArtwork {
 	my @specs;
 	
 	if ($isEnabled) {
-		if (Slim::Utils::OSDetect::isSqueezeOS()) {
-			@specs = (
-				'75x75_p',  # iPeng
-				'64x64_m',	# Fab4 10'-UI Album list
-				'41x41_m',	# Jive/Baby Album list
-				'40x40_m',	# Fab4 Album list
-			);
-		} else {
+		@specs = (
+			'64x64_m',	# Fab4 10'-UI Album list
+			'41x41_m',	# Jive/Baby Album list
+			'40x40_m',	# Fab4 Album list
+		);
+
+		if (!Slim::Utils::OSDetect::isSqueezeOS()) {
 			my $thumbSize = $prefs->get('thumbSize') || 100;
-			@specs = (
+			
+			push(@specs, 
 				"${thumbSize}x${thumbSize}_o", # Web UI large thumbnails
-				'75x75_p',	# iPeng
-				'64x64_m',	# Fab4 10'-UI Album list
-				'50x50_o',	# Web UI small thumbnails
-				'41x41_m',	# Jive/Baby Album list
-				'40x40_m',	# Fab4 Album list
+				'75x75_p',  # iPeng, Controller App (high-res displays) 
+				'50x50_o',	# Web UI small thumbnails, Controller App (low-res display)
 			);
+			
+			if ( my $customSpecs = $prefs->get('customArtSpecs') ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("Adding custom artwork resizing specs:\n" . Data::Dump::dump($customSpecs));
+				push @specs, keys %$customSpecs;
+			} 
+
+			# sort by size, so we can batch convert
+			@specs = sort {
+				my ($sizeA) = $a =~ /^(\d+)/;
+				my ($sizeB) = $b =~ /^(\d+)/;
+				$b <=> $a;
+			# XXX - this is duplicated from Slim::Web::Graphics->parseSpec, which is not loaded in scanner mode
+			} grep {
+				/^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/
+			# remove duplicates
+			} keys %{{
+				map {$_ => 1} @specs
+			}};
+
+			main::DEBUGLOG && $log->is_debug && $log->debug("Full list of artwork pre-cache specs:\n" . Data::Dump::dump(@specs));
 		}
 		
 		require Slim::Utils::ImageResizer;

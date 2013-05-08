@@ -43,6 +43,17 @@ sub handler {
 				Slim::Utils::AutoRescan->shutdown;
 			}
 		}
+		
+		my $specs = $prefs->get('customArtSpecs');
+		
+		my @delete = @{ ref $paramRef->{delete} eq 'ARRAY' ? $paramRef->{delete} : [ $paramRef->{delete} ] };
+	
+		for my $deleteItem (@delete) {
+			delete $specs->{$deleteItem};
+		}
+	
+		$prefs->set( customArtSpecs => $specs );
+		
 	}
 	
 	# Restart message if dbhighmem is changed
@@ -67,6 +78,8 @@ sub handler {
 			  15 => 'SETUP_PRIORITY_LOW'
 			}->{$_} } (-20 .. 20)
 	};
+	
+	$paramRef->{pref_customArtSpecs} = $prefs->get('customArtSpecs');
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

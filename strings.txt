@@ -18890,6 +18890,10 @@ SETUP_PRECACHEARTWORK_DISABLED
 	RU	Не кэшировать обложки предварительно
 	SV	Cachelagra inte albumomslag
 
+SETUP_PRECACHEARTWORK_CUSTOM_SPECS
+	DE	Spezifikationen für Zwischenspeicherung
+	EN	Custom pre-caching specifications
+	
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing

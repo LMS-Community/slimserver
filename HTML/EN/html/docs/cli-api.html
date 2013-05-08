@@ -673,6 +673,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#pref">pref</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#artworkspec">artworkspec</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#logging">logging</a></code></strong>
 	</li>
 	<li>
@@ -926,6 +929,31 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<br>
 		Response: &quot;pref playlistdir 
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="artworkspec">
+	<strong>
+		<code>
+			artworkspec add
+			&lt;specification&gt;
+			&lt;name&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;artworkspec&quot; command allows the caller to set custom artwor resizing
+	specifications. These are being used during a media scan to pre-cache artwork in the
+	given size and format. The name is optional, but allows to recognize, which client
+	would have registered a specification.	
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		&quot;artworkspec add 300x300_p My%20Favorite%20Controller%20App&quot;
 	</p>
 </blockquote>
 

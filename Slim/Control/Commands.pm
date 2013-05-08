@@ -230,6 +230,40 @@ sub alarmCommand {
 	$request->setStatusDone();
 }
 
+
+sub artworkspecCommand {
+	my $request = shift;
+	
+	# get the parameters
+	my $name = $request->getParam('_name') || '';
+	my $spec = $request->getParam('_spec');
+
+	# check this is the correct command.
+	if ( !$spec || $request->isNotCommand([['artworkspec'], ['add']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# do some sanity checking
+	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+	if ($width && $height) {
+		my $specs = $prefs->get('customArtSpecs') || {};
+		
+		my $oldName = $specs->{$spec};
+		if ( $oldName && $oldName !~ /$name/ ) {
+			$specs->{$spec} = "$oldName, $name";
+		}
+		elsif ( !$oldName ) {
+			$specs->{$spec} = $name;
+		}
+		
+		$prefs->set('customArtSpecs', $specs);
+	}
+	
+	$request->setStatusDone();
+}
+
+
 sub buttonCommand {
 	my $request = shift;
 
