@@ -28,6 +28,7 @@ use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
 use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
+use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
 
 use Config;
 my %check_inc;
@@ -531,6 +532,12 @@ sub init {
 	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
 
+	if (main::LOCALFILE) {
+		main::INFOLOG && $log->info("Registering LocalFile protocol handler..");
+		require Slim::Player::ProtocolHandlers;
+		Slim::Player::ProtocolHandlers->registerHandler(file => 'Slim::Player::Protocols::LocalFile');
+	}
+
 	if (main::TRANSCODING) {
 		main::INFOLOG && $log->info("Source conversion init..");
 		require Slim::Player::TranscodingHelper;
@@ -724,6 +731,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
           [--noimage] [--novideo]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
+          [--localfile]
 
     --help           => Show this usage information.
     --cachedir       => Directory for Logitech Media Server to save cached music and web data
@@ -778,6 +786,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
                         which don't have full utf8 locale installed
     --dbtype         => Force database type (valid values are MySQL or SQLite)
     --logging        => Enable logging for the specified comma separated categories
+    --localfile      => Enable LocalFile protocol handling for locally connected squeezelite service
 
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
