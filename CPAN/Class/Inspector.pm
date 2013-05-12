@@ -121,7 +121,7 @@ sub _loaded {
 	# Handle by far the two most common cases
 	# This is very fast and handles 99% of cases.
 	return 1 if defined ${"${name}::VERSION"};
-	return 1 if defined @{"${name}::ISA"};
+	return 1 if @{"${name}::ISA"};
 
 	# Are there any symbol table entries other than other namespaces
 	foreach ( keys %{"${name}::"} ) {

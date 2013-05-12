@@ -21,7 +21,7 @@ sub cursor { shift->cursor_class(@_); }
 package # Hide from PAUSE
     DBIx::Class::Storage::NESTED_ROLLBACK_EXCEPTION;
 
-use overload '"' => sub {
+use overload '""' => sub {
   'DBIx::Class::Storage::NESTED_ROLLBACK_EXCEPTION'
 };
 
