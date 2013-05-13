@@ -71,7 +71,7 @@ sub skipPlugins {
 	my $class = shift;
 	
 	return (
-		qw(JiveExtras MusicMagic MyRadio PreventStandby RS232 RandomPlay Rescan SavePlaylist SlimTris Snow SN iTunes xPL NetTest UPnP),
+		qw(Podcast JiveExtras MusicMagic MyRadio PreventStandby RS232 RandomPlay Rescan SavePlaylist SlimTris Snow SN iTunes xPL NetTest UPnP ImageBrowser),
 		$class->SUPER::skipPlugins(),
 	);
 }

@@ -311,7 +311,7 @@ sub skipPlugins {
 			
 			iTunes MusicMagic PreventStandby Rescan TT xPL
 			
-			UPnP
+			UPnP ImageBrowser
 		),
 		$class->SUPER::skipPlugins(),
 	);
