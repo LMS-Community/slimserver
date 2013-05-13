@@ -247,7 +247,7 @@ sub artworkspecCommand {
 	# do some sanity checking
 	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
 	if ($width && $height && $mode) {
-		my $specs = Storable::dclone($prefs->get('customArtSpecs')) || {};
+		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
 		
 		my $oldName = $specs->{$spec};
 		if ( $oldName && $oldName !~ /$name/ ) {
