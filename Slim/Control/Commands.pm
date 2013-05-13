@@ -246,8 +246,8 @@ sub artworkspecCommand {
 	
 	# do some sanity checking
 	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
-	if ($width && $height) {
-		my $specs = $prefs->get('customArtSpecs') || {};
+	if ($width && $height && $mode) {
+		my $specs = Storable::dclone($prefs->get('customArtSpecs')) || {};
 		
 		my $oldName = $specs->{$spec};
 		if ( $oldName && $oldName !~ /$name/ ) {
@@ -258,6 +258,9 @@ sub artworkspecCommand {
 		}
 		
 		$prefs->set('customArtSpecs', $specs);
+	}
+	else {
+		$log->error('Invalid artwork resizing specification: ' . $spec);
 	}
 	
 	$request->setStatusDone();

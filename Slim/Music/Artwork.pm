@@ -400,6 +400,7 @@ sub _readCoverArtFiles {
 sub precacheAllArtwork {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
+	my $force = shift; # sometimes we want all artwork to be re-rendered
 	
 	my $isDebug = main::DEBUGLOG && $importlog->is_debug;
 	
@@ -423,7 +424,9 @@ sub precacheAllArtwork {
 		JOIN   albums ON (tracks.album = albums.id)
 		WHERE  tracks.cover != '0'
 		AND    tracks.coverid IS NOT NULL
-		AND    tracks.cover_cached IS NULL
+	}
+	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
+	. qq{ 
 		GROUP BY tracks.cover
  	};
 
