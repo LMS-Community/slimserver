@@ -244,20 +244,26 @@ sub artworkspecCommand {
 		return;
 	}
 	
+	main::DEBUGLOG && $log->debug("Registering artwork resizing spec: $spec ($name)");
+	
 	# do some sanity checking
 	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
-	if ($width && $height) {
-		my $specs = $prefs->get('customArtSpecs') || {};
-		
+	if ($width && $height && $mode) {
+		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
+
 		my $oldName = $specs->{$spec};
 		if ( $oldName && $oldName !~ /$name/ ) {
 			$specs->{$spec} = "$oldName, $name";
 		}
-		elsif ( !$oldName ) {
+		# don't duplicate standard specs!
+		elsif ( !$oldName && !(scalar grep /$spec/, Slim::Music::Artwork::getResizeSpecs()) ) {
 			$specs->{$spec} = $name;
 		}
 		
 		$prefs->set('customArtSpecs', $specs);
+	}
+	else {
+		$log->error('Invalid artwork resizing specification: ' . $spec);
 	}
 	
 	$request->setStatusDone();

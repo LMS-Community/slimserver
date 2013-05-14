@@ -44,7 +44,7 @@ sub handler {
 			}
 		}
 		
-		my $specs = $prefs->get('customArtSpecs');
+		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
 		
 		my @delete = @{ ref $paramRef->{delete} eq 'ARRAY' ? $paramRef->{delete} : [ $paramRef->{delete} ] };
 	

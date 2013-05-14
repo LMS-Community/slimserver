@@ -400,6 +400,7 @@ sub _readCoverArtFiles {
 sub precacheAllArtwork {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
+	my $force = shift; # sometimes we want all artwork to be re-rendered
 	
 	my $isDebug = main::DEBUGLOG && $importlog->is_debug;
 	
@@ -423,7 +424,9 @@ sub precacheAllArtwork {
 		JOIN   albums ON (tracks.album = albums.id)
 		WHERE  tracks.cover != '0'
 		AND    tracks.coverid IS NOT NULL
-		AND    tracks.cover_cached IS NULL
+	}
+	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
+	. qq{ 
 		GROUP BY tracks.cover
  	};
 
@@ -470,41 +473,7 @@ sub precacheAllArtwork {
 	my @specs;
 	
 	if ($isEnabled) {
-		@specs = (
-			'64x64_m',	# Fab4 10'-UI Album list
-			'41x41_m',	# Jive/Baby Album list
-			'40x40_m',	# Fab4 Album list
-		);
-
-		if (!Slim::Utils::OSDetect::isSqueezeOS()) {
-			my $thumbSize = $prefs->get('thumbSize') || 100;
-			
-			push(@specs, 
-				"${thumbSize}x${thumbSize}_o", # Web UI large thumbnails
-				'75x75_p',  # iPeng, Controller App (high-res displays) 
-				'50x50_o',	# Web UI small thumbnails, Controller App (low-res display)
-			);
-			
-			if ( my $customSpecs = $prefs->get('customArtSpecs') ) {
-				main::DEBUGLOG && $log->is_debug && $log->debug("Adding custom artwork resizing specs:\n" . Data::Dump::dump($customSpecs));
-				push @specs, keys %$customSpecs;
-			} 
-
-			# sort by size, so we can batch convert
-			@specs = sort {
-				my ($sizeA) = $a =~ /^(\d+)/;
-				my ($sizeB) = $b =~ /^(\d+)/;
-				$b <=> $a;
-			# XXX - this is duplicated from Slim::Web::Graphics->parseSpec, which is not loaded in scanner mode
-			} grep {
-				/^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/
-			# remove duplicates
-			} keys %{{
-				map {$_ => 1} @specs
-			}};
-
-			main::DEBUGLOG && $log->is_debug && $log->debug("Full list of artwork pre-cache specs:\n" . Data::Dump::dump(@specs));
-		}
+		@specs = getResizeSpecs();
 		
 		require Slim::Utils::ImageResizer;
 	}
@@ -583,6 +552,46 @@ sub precacheAllArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}	
+}
+
+sub getResizeSpecs {
+	my @specs = (
+		'64x64_m',	# Fab4 10'-UI Album list
+		'41x41_m',	# Jive/Baby Album list
+		'40x40_m',	# Fab4 Album list
+	);
+
+	if (!Slim::Utils::OSDetect::isSqueezeOS()) {
+		my $thumbSize = $prefs->get('thumbSize') || 100;
+		
+		push(@specs, 
+			"${thumbSize}x${thumbSize}_o", # Web UI large thumbnails
+			'75x75_p',  # iPeng, Controller App (high-res displays) 
+			'50x50_o',	# Web UI small thumbnails, Controller App (low-res display)
+		);
+		
+		if ( my $customSpecs = $prefs->get('customArtSpecs') ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Adding custom artwork resizing specs:\n" . Data::Dump::dump($customSpecs));
+			push @specs, keys %$customSpecs;
+		} 
+
+		# sort by size, so we can batch convert
+		@specs = sort {
+			my ($sizeA) = $a =~ /^(\d+)/;
+			my ($sizeB) = $b =~ /^(\d+)/;
+			$b <=> $a;
+		# XXX - this is duplicated from Slim::Web::Graphics->parseSpec, which is not loaded in scanner mode
+		} grep {
+			/^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/
+		# remove duplicates
+		} keys %{{
+			map {$_ => 1} @specs
+		}};
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("Full list of artwork pre-cache specs:\n" . Data::Dump::dump(@specs));
+	}
+	
+	return @specs;
 }
 
 =pod We don't have an artwork provider for this feature.
