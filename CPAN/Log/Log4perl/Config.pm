@@ -837,7 +837,7 @@ sub allowed_code_ops {
     }
     else {
         # give back 'undef' instead of an empty arrayref
-        unless( defined @Log::Log4perl::ALLOWED_CODE_OPS_IN_CONFIG_FILE ) {
+        unless( @Log::Log4perl::ALLOWED_CODE_OPS_IN_CONFIG_FILE ) {
             return;
         }
     }

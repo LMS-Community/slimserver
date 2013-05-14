@@ -223,6 +223,8 @@ sub pcm_sample_rates {
 		 96000 => '9',
 		176400 => ';',
 		192000 => '<',
+		352800 => '=',
+		384000 => '>',
 	);
 	
 	my $rate = $pcm_sample_rates{$track->samplerate()};
