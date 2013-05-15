@@ -17,6 +17,7 @@ use constant SCANNER      => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant DEBUG        => ( grep { /--debug/ } @ARGV ) ? 1 : 0;
 use constant SOCKET_PATH  => '/tmp/sbs_artwork';
+use constant LOCALFILE    => 0;
 
 # Copied from Slim::bootstrap to reduce memory overhead of unnecessary stuff
 BEGIN {
