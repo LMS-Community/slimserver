@@ -27,7 +27,7 @@ my $cache;
 my %queue;
 
 sub init {
- 	$cache ||= Slim::Web::ImageProxy::Cache->new();
+ 	$cache ||= Slim::Web::ImageProxy::Cache->new() unless main::SLIM_SERVICE;
 
 	# clean up  stale cache files
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^imgproxy_[a-f0-9]+$/i);			
@@ -63,8 +63,7 @@ sub getImage {
 	if ( !$url ) {
 		main::INFOLOG && $log->info("Artwork ID not found, returning 404");
 
-		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-		_artworkError( $client, $params, $body, 404, $callback, @args );
+		_artworkError( $client, $params, $spec, 404, $callback, @args );
 		return;
 	}
 	
@@ -95,7 +94,7 @@ sub getImage {
 		\&_gotArtwork,
 		\&_gotArtworkError,
 		{
-			timeout  => 15,
+			timeout  => 30,
 			cache    => 1,
 		},
 	);
@@ -146,7 +145,7 @@ sub _gotArtwork {
 				main::INFOLOG && $log->info("  Resize failed, returning 500");
 				$log->error("Artwork resize for $cachekey failed");
 				
-				_artworkError( $client, $params, \'', 500, $callback, @$args );
+				_artworkError( $client, $params, $spec, 500, $callback, @$args );
 				return;
 			}
 		
@@ -169,28 +168,41 @@ sub _gotArtworkError {
 	# XXX - process the full queue
 	while ( my $item = shift @{ $queue{$url} }) {
 		my $client   = $item->{client};
+		my $spec     = $item->{spec};
 		my $args     = $item->{args};
 		my $params   = $item->{params};
 		my $callback = $item->{callback};
 	
-		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-		_artworkError( $client, $params, $body, 404, $callback, @$args );
+		_artworkError( $client, $params, $spec, 404, $callback, @$args );
 	}
 	
 	delete $queue{$url};
 }
 
 sub _artworkError {
-	my ($client, $params, $body, $code, $callback, @args) = @_;
+	my ($client, $params, $spec, $code, $callback, @args) = @_;
 
 	my $response = $args[1];
 
-	$response->code($code);
-	$response->content_type('text/html');
+	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+	
+	require Slim::Utils::GDResizer;
+	my ($res, $format) = Slim::Utils::GDResizer->resize(
+		file   => Slim::Web::HTTP::fixHttpPath($params->{'skinOverride'} || $prefs->get('skin'), 'html/images/radio.png'),
+		width  => $width,
+		height => $height,
+		mode   => $mode,
+	);
+
+	my $ct = 'image/' . $format;
+	$ct =~ s/jpg/jpeg/;
+
+	$response->content_type($ct);
+#	$response->code($code);
 	$response->expires( time() - 1 );
 	$response->header( 'Cache-Control' => 'no-cache' );
-		
-	$callback->( $client, $params, $body, @args );
+	
+	$callback->( $client, $params, $res, @args );
 }
 
 # Return a proxied image URL if
@@ -229,6 +241,9 @@ sub proxiedImage {
 # allow plugins to register custom handlers for the image url
 sub registerHandler {
 	my ( $class, %params ) = @_;
+	
+	# not available on SN
+	return if main::SLIM_SERVICE;
 	
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerProvider called without a regular expression ' . ref $params{match} );
