@@ -486,6 +486,8 @@ sub precacheAllArtwork {
 	
 	my $i = 0;
 	
+	my %artCount;
+	
 	my $work = sub {
 		if ( $sth->fetch ) {
 			# Make sure album.artwork points to this track, as it may not
@@ -494,6 +496,8 @@ sub precacheAllArtwork {
 			if ( $album_artwork && $album_artwork ne $coverid ) {
 				$sth_update_albums->execute( $coverid, $albumid );
 			}
+			
+			$artCount{$albumid}++;
 			
 			# Callback after resize is finished, needed for async resizing
 			my $finished = sub {			
@@ -532,6 +536,31 @@ sub precacheAllArtwork {
 			
 			return 1;
 		}
+		
+		# for albums where we have different track artwork, use the first track's cover as the album artwork
+		my $sth_get_album_art = $dbh->prepare( qq{
+			SELECT tracks.coverid
+			FROM   tracks
+			WHERE  tracks.album = ?
+			AND    tracks.coverid IS NOT NULL
+			ORDER BY tracks.disc, tracks.tracknum
+			LIMIT 1
+	 	});
+	 	
+	 	$i = 0;
+
+		while ( my ($albumId, $trackCount) = each %artCount ) {
+			
+			next unless $trackCount > 1;
+
+			$sth_get_album_art->execute($albumId);
+			my ($coverId) = $sth_get_album_art->fetchrow_array;
+			
+			$sth_update_albums->execute( $coverId, $albumId ) if $coverId;
+			
+		}
+
+		%artCount = ();
 		
 		$progress->final;
 		
