@@ -80,6 +80,7 @@ use constant PARTNER_ID  => 16;
 use constant MAIN_URL    => 'http://opml.radiotime.com/Index.aspx?partnerId=' . PARTNER_ID;
 use constant ERROR_URL   => 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=' . PARTNER_ID;
 use constant PRESETS_URL => 'http://opml.radiotime.com/Browse.ashx?c=presets&partnerId=' . PARTNER_ID;
+use constant OPTIONS_URL => 'http://opml.radiotime.com/Options.ashx?partnerId=' . PARTNER_ID . '&id=';
 
 my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
@@ -204,17 +205,18 @@ sub fixUrl {
 		} keys %rtFormats;
 	}
 
-	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
-	$feed .= 'formats=' . join(',', @formats);
+	my $uri    = URI->new($feed);
+	my $rtinfo = $uri->query_form_hash;
 	
-	# Bug 15568, pass obfuscated serial to RadioTime
-	$feed .= '&serial=' . $class->getSerial($client);
+	$rtinfo->{serial}    ||= $class->getSerial($client);
+	$rtinfo->{partnerId} ||= PARTNER_ID;
+	$rtinfo->{username}  ||= $class->getUsername if $feed =~ /presets/;
+	$rtinfo->{formats}     = join(',', @formats);
+	$rtinfo->{id}          = $rtinfo->{sid} || $rtinfo->{id};
 	
-	if ( $feed =~ /presets/ && $feed !~ /username=/ && (my $username = $class->getUsername) ) {
-		$feed .= '&username=' . uri_escape_utf8($username);
-	}
+	$uri->query_form( %$rtinfo );
 
-	return $feed;
+	return $uri->as_string;
 }
 
 sub trackInfoHandler {
@@ -232,17 +234,13 @@ sub trackInfoHandler {
 	return $item;
 }
 
+# Bug 15569, special case for RadioTime stations, use their trackinfo menu
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 	
-	# Bug 15569, special case for RadioTime stations, use their trackinfo menu
 	my $rtinfo = URI->new($url)->query_form_hash;
-	my $serial = $class->getSerial($client);
 	
-	my $uri = URI->new('http://opml.radiotime.com/Options.ashx');
-	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial );
-	
-	return $uri->as_string;
+	return $class->fixUrl(OPTIONS_URL . ($rtinfo->{sid} || $rtinfo->{id}), $client);
 }
 
 sub getSerial {
