@@ -1800,7 +1800,7 @@ sub _playlistTracks {
 	my $offset     = $args->{'index'} || 0;
 	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
-		['tags:dtuxgaliqykorfJK', $menuStyle, @searchTags],
+		['tags:dtuxgaliqykorfcJK', $menuStyle, @searchTags],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlisttracks_loop'};
@@ -1817,7 +1817,11 @@ sub _playlistTracks {
 				$_->{'hasMetadata'}   = 'track';
 				
 				$_->{'name'}          = $_->{'title'};
-				$_->{'name2'}		  = $_->{'artist'};
+				$_->{'name2'}		  = $_->{'artist'} . ' - ' . $_->{'album'};
+				
+				if ( $_->{'coverid'} ) {
+					$_->{'artwork_track_id'} = $_->{'coverid'};
+				}
 				
 				$_->{'image'}         = ($_->{'artwork_track_id'}
 										? 'music/' . $_->{'artwork_track_id'} . '/cover'
