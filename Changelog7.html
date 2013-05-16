@@ -14,6 +14,7 @@
 		<li>Support for Ogg FLAC in the server and Squeezeplay-based players</li>
 		<li>Added support for setting alarm playlist shuffle mode (thanks hickinbottoms!)</li>
 		<li>Allow clients to register artwork resizing specifications to be pre-cached during the media scan.</li>
+		<li>Add Triode LocalFile 'loc' ProtocolHandler support for squeezelite.</li>
 	</ul>
 	<br />
 
@@ -31,6 +32,8 @@
 	<li>Other:</li>
 	<ul>
 		<li>Removed Mediafly plugin - the service has shut down in March 2012.</li>
+		<li>Recognise Fedora as being a Red Hat system.</li>
+		<li>Improve Perl 5.16 compatibility to silence some warnings.</li>
 	</ul>
 	<br />
 </ul>
@@ -55,6 +58,7 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8141">#8141</a> - Macintosh: Prevent Sleep While Playing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17635">#17635</a> - Search results have album art instead of track art</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18036">#18036</a> - Cometd client manager fails to purge dead clients causing memory leakage</li>
 		<li>Artwork cache would grow forever</li>
 		<li>Fix default expiry duration in cache code - it would expire immediately if not overwritten in the caller.</li>

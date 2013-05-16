@@ -353,7 +353,7 @@ function _init() {
 		getStatus : function(){
 			if (this.player) {
 				this.playerRequest({
-					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLN" ],
+					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLNJ" ],
 					failure: this._updateStatus,
 					success: this._updateStatus,
 					scope: this
@@ -786,7 +786,7 @@ SqueezeJS.SonginfoParser = {
 				}
 			}
 			else {
-				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].id, width);
+				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].artwork_track_id || result.playlist_loop[0].id, width);
 			}
 		}
 

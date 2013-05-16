@@ -1508,7 +1508,7 @@ sub _tracks {
 	my ($addAlbumToName2, $addArtistToName2);
 	if ($addAlbumToName2  = !(grep {/album_id:/} @searchTags)) {
 		$addArtistToName2 = !(grep {/artist_id:/} @searchTags);
-		$tags            .= 'JK'; # artwork
+		$tags            .= 'cJK'; # artwork
 	}
 	
 	_generic($client, $callback, $args, 'titles',
@@ -1545,6 +1545,10 @@ sub _tracks {
 					$name2 .= $_->{'album'};
 				}
 				if ($name2) {
+					if ( $_->{'coverid'} ) {
+						$_->{'artwork_track_id'} = $_->{'coverid'};
+					}
+
 					$_->{'name2'}     = $name2;
 					$_->{'image'}     = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 					$_->{'image'}   ||= $_->{'artwork_url'} if $_->{'artwork_url'};

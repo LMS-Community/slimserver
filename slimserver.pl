@@ -532,12 +532,6 @@ sub init {
 	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
 
-	if (main::LOCALFILE) {
-		main::INFOLOG && $log->info("Registering LocalFile protocol handler..");
-		require Slim::Player::ProtocolHandlers;
-		Slim::Player::ProtocolHandlers->registerHandler(file => 'Slim::Player::Protocols::LocalFile');
-	}
-
 	if (main::TRANSCODING) {
 		main::INFOLOG && $log->info("Source conversion init..");
 		require Slim::Player::TranscodingHelper;
