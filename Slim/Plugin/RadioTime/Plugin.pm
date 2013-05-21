@@ -214,9 +214,12 @@ sub fixUrl {
 	$rtinfo->{formats}     = join(',', @formats);
 	$rtinfo->{id}          = $rtinfo->{sid} || $rtinfo->{id};
 	
+	# don't pass the query, as our {QUERY} placeholder would become URI encoded, which is confusing xmlbrowser
+	my $query = delete $rtinfo->{query};
+	
 	$uri->query_form( %$rtinfo );
 
-	return $uri->as_string;
+	return $uri->as_string . ($query ? "&query=$query" : '');
 }
 
 sub trackInfoHandler {
