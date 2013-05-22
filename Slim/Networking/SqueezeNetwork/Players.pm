@@ -190,7 +190,6 @@ sub _players_done {
 
 				my $icon = $info->{icon};
 				if ( $icon !~ /^http/ ) {
-					# XXX: fix the template to use imageproxy to resize this icon
 					$icon = Slim::Networking::SqueezeNetwork->url($icon);
 				}
 				

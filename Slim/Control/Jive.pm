@@ -3066,7 +3066,7 @@ sub appMenus {
 					# use icon as defined by MySB to allow for white-label solutions
 					if ( my $icon = $apps->{$app}->{icon} ) {
 						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
-						$clone->{window}->{'icon-id'} = $icon ;
+						$clone->{window}->{'icon-id'} = Slim::Web::ImageProxy::proxiedImage($icon);
 					}
 
 					push @{$menu}, $clone;
@@ -3112,7 +3112,7 @@ sub appMenus {
 					node           => $node,
 					text           => $apps->{$app}->{title},
 					window         => {
-						'icon-id'  => $icon,
+						'icon-id'  => Slim::Web::ImageProxy::proxiedImage($icon),
 					},
 				};
 			}

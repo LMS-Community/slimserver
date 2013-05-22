@@ -1148,7 +1148,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 						if (my $coverid = $item->{'artwork_track_id'}) {
-							$hash{'icon-id'} = $coverid;
+							$hash{'icon-id'} = proxiedImage($coverid);
 							$hasImage = 1;
 						}
 
@@ -1326,11 +1326,13 @@ sub _cliQuery_done {
 							}
 							$hash{'actions'} = $actions;
 							
-							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'icon-id') {
+							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow') {
 								if ( $item->{jive}->{$key} ) {
 									$hash{$key} = $item->{jive}->{$key};
 								}
 							}
+							
+							$hash{'icon-id'} = proxiedImage($item->{jive}->{'icon-id'}) if $item->{jive}->{'icon-id'};
 						}
 						
 						if (exists $hash{'actions'} && scalar keys %{$hash{'actions'}}) {

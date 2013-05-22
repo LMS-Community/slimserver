@@ -4126,7 +4126,7 @@ sub _addJiveSong {
 		);
 	}
 	elsif ( defined $iconId ) {
-		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+		$request->addResultLoop($loop, $count, 'icon-id', proxiedImage($iconId));
 	}
 	elsif ( $isRemote ) {
 		# send radio placeholder art for remote tracks with no art
