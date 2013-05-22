@@ -30,11 +30,16 @@ my $optimiseAccessors = 1;
 
 my $log = logger('prefs');
 
-# some prefs changes come in bursts - buffer DB updates for a few milliseconds on SN
+# some prefs changes come in bursts - buffer DB updates on SN
 my %delayedWrites = main::SLIM_SERVICE ? (
 	volume => 1.000,  # buffer volume changes for a full second
 	mute   => 1.000,
-	sn_songPluginData => 5
+	power  => 1,
+	currentSong   => 1,
+	pandora_track => 5,
+	sn_PluginData => 5,
+	sn_songPluginData => 5,
+	playingAtPowerOff => 1,
 ) : undef;
 
 =head2 get( $prefname )
