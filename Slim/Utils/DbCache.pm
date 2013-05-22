@@ -50,8 +50,8 @@ sub setRoot {
 sub wipe {
 	my $self = shift;
 	
-	if ( $self->{dbh} ) {
-		$self->{dbh}->do('DELETE FROM cache'); # truncate
+	if ( my $dbh = $self->_init_db ) {
+		$dbh->do('DELETE FROM cache'); # truncate
 		$self->_close_db;
 	}
 }
@@ -60,9 +60,7 @@ sub wipe {
 sub set {
 	my ( $self, $key, $data, $expiry ) = @_;
 	
-	if ( !$self->{dbh} ) {
-		$self->_init_db;
-	}
+	$self->_init_db;
 	
 	$expiry = _canonicalize_expiration_time(defined $expiry ? $expiry : $self->{default_expires_in});
 
@@ -83,9 +81,7 @@ sub set {
 sub get {
 	my ( $self, $key ) = @_;
 	
-	if ( !$self->{dbh} ) {
-		$self->_init_db;
-	}
+	$self->_init_db;
 
 	my $id = _key($key);
 
@@ -109,9 +105,7 @@ sub get {
 sub remove {
 	my ( $self, $key ) = @_;
 
-	if ( !$self->{dbh} ) {
-		$self->_init_db;
-	}
+	$self->_init_db;
 	
 	my $id = _key($key);
 	$self->{delete_sth}->execute($id);
@@ -120,7 +114,7 @@ sub remove {
 sub purge {
 	my ( $self ) = @_;
 	
-	my $dbh = $self->{dbh} || $self->_init_db;
+	my $dbh = $self->_init_db;
 	
 	$dbh->do('DELETE FROM cache WHERE t >= 0 AND t < ' . time());
 }
@@ -137,13 +131,13 @@ sub _key {
 sub pragma {
 	my ( $self, $pragma ) = @_;
 	
-	my $dbh = $self->{dbh} || $self->_init_db;
-	
-	$dbh->do("PRAGMA $pragma");
-	
-	if ( $pragma =~ /locking_mode/ ) {
-		# if changing the locking_mode we need to run a statement to change the lock
-		$dbh->do('SELECT 1 FROM cache LIMIT 1');
+	if ( my $dbh = $self->_init_db ) {
+		$dbh->do("PRAGMA $pragma");
+
+		if ( $pragma =~ /locking_mode/ ) {
+			# if changing the locking_mode we need to run a statement to change the lock
+			$dbh->do('SELECT 1 FROM cache LIMIT 1');
+		}
 	}
 }
 
@@ -204,6 +198,8 @@ sub _init_db {
 	my $self  = shift;
 	my $retry = shift;
 	
+	return $self->{dbh} if $self->{dbh};
+	
 	my $dbfile = $self->_get_dbfile;
 	
 	my $dbh;
@@ -238,11 +234,22 @@ sub _init_db {
 			die "Unable to read/create $dbfile\n";
 		}
 		
+		warn "$@Delete the file $dbfile and start from scratch.\n";
+		
 		# Something was wrong with the database, delete it and try again
-		$self->wipe;
+		unlink $dbfile;
 		
 		return $self->_init_db(1);
 	}
+
+	# set up error handler to log the db file causing problems
+	$dbh->{HandleError} = sub {
+		my ($msg, $handle, $value) = @_;
+
+		require Slim::Utils::Log;
+		Slim::Utils::Log::logError($msg);
+		Slim::Utils::Log::logError($self->_get_dbfile);
+	};
 	
 	# Prepare statements we need
 	if ($self->{noexpiry}) {

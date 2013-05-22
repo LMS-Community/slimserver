@@ -5,8 +5,7 @@ package Slim::Plugin::PreventStandby::Plugin;
 # PreventStandby.pm by Julian Neil (julian.neil@internode.on.net)
 #
 # Prevent the server machine from going into standby when it is streaming
-# music to any clients.  Only works in Windows because it uses the CPAN
-# Win32:API module.
+# music to any clients.
 #
 # Excuse my perl.. first time I've ever used it.
 #
@@ -28,9 +27,11 @@ package Slim::Plugin::PreventStandby::Plugin;
 #
 #       2009-01-12 - Cleaned up some content in strings.txt, added optional check
 #                    power feature to mimic Nigel Burch's proposed patch behavior.
+#
+# 3.0 - 2012-08-26 - add support for OSX, plus infrastructure to add more
 
 use strict;
-use Win32::API;
+use Time::HiRes;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -50,7 +51,7 @@ my $lastchecktime = time;
 
 # Number of intervals that the cliets have been idle.
 my $hasbeenidle = 0;
-
+my ($handler, $pollInterval);
 
 my $prefs = preferences('plugin.preventstandby');
 
@@ -76,8 +77,23 @@ sub getDisplayName {
 	return 'PLUGIN_PREVENTSTANDBY';
 }
 
-
 sub initPlugin {
+	if ( !main::SLIM_SERVICE ) {
+		if (main::ISWINDOWS) {
+			require Slim::Plugin::PreventStandby::Win32;
+			$handler = Slim::Plugin::PreventStandby::Win32->new();
+		}
+		
+		elsif ($^O =~/darwin/i) {
+			require Slim::Plugin::PreventStandby::OSX;
+			$handler = Slim::Plugin::PreventStandby::OSX->new();
+		}
+	}
+	
+	if (!$handler) {
+		$log->warn("Failed to initialize plugin - can't prevent standby mode.");
+		return;
+	}
 	
 	if ( main::WEBUI ) {
 		Slim::Plugin::PreventStandby::Settings->new;
@@ -89,6 +105,8 @@ sub initPlugin {
 	else {
 		$log->debug("System standby now prohibited.")
 	}
+	
+	$pollInterval = $handler->pollInterval || INTERVAL;
 
 	checkClientActivity();
 }
@@ -102,38 +120,35 @@ sub checkClientActivity {
 	my $idletime = $prefs->get('idletime');
 	
 	if ($idletime) {
+		$idletime *= 60;
 		
-		if ( Slim::Music::Import->stillScanning() || _hasResumed($currenttime) || _playersBusy() ) {
+		if ( Slim::Music::Import->stillScanning() || $handler->isBusy($currenttime) ) {
 			
 			$hasbeenidle = 0;
-			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Resetting idle counter.    " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 		}
 		
 		else {
 			
-			$hasbeenidle++;
+			$hasbeenidle += $pollInterval;
 			
 			if ($hasbeenidle < $idletime) {
-				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Incrementing idle counter. " . (($idletime - $hasbeenidle) / 60) . " minutes left in allowed idle period.");
 			}
 		}
 	}
-
-	my $SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
-
+	
 	# If idletime is set to zero in settings, ALWAYS prevent standby..
 	# Otherwise, only prevent standby if we're still in the idle time-out period..
 	if ( (!$idletime) || $hasbeenidle < $idletime) {
 		
-		if (defined $SetThreadExecutionState) {
-			
-			main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
-			$SetThreadExecutionState->Call(1);
-		}
+		main::INFOLOG && $log->is_info && $log->info("Preventing System Standby...");
+		$handler->setBusy($currenttime);
 	}
 	
 	else {
-		main::INFOLOG && $log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
+		main::INFOLOG && $log->is_info && $log->info("Players have been idle for " . ($hasbeenidle / 60) . " minutes. Allowing System Standby...");
+		$handler->setIdle($currenttime);
 	}
 
 	$lastchecktime = $currenttime;
@@ -141,9 +156,9 @@ sub checkClientActivity {
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
 	Slim::Utils::Timers::setTimer(
 		undef, 
-		time + INTERVAL, 
+		time + $pollInterval, 
 		\&checkClientActivity
-	) if $SetThreadExecutionState;
+	);
 
 	return 1;
 }
@@ -159,7 +174,7 @@ sub _playersBusy {
 			return 1;
 		}
 		
-		if ( $client->isUpgrading() || $client->isPlaying() ) {
+		if ( $client->isUpgrading() || $client->isPlaying() || (Time::HiRes::time() - $client->lastActivityTime <= INTERVAL) ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
 			return 1;
 		}
@@ -168,7 +183,7 @@ sub _playersBusy {
 }
 
 sub _hasResumed {
-	my $currenttime = shift;
+	my ($class, $currenttime) = @_;
 
 	# We've resumed if the current time is more than two minutes later than the last check time, or
 	# if the current time is earlier than the last check time (system time change)
@@ -193,10 +208,12 @@ sub idletime_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if ($value) {
-		$log->debug("System standby now allowed after $value minutes of player idle time.")
-	} else {
-		$log->debug("System standby now prohibited.")
+	if (main::DEBUGLOG) {
+		if ($value) {
+			$log->debug("System standby now allowed after $value minutes of player idle time.")
+		} else {
+			$log->debug("System standby now prohibited.")
+		}
 	}
 }
 
@@ -210,14 +227,41 @@ sub checkpower_change {
 	# Reset our counter on prefs change..
 	$hasbeenidle = 0;
 
-	if ($value) {
+	if (main::DEBUGLOG && $value) {
 		$log->debug("System standby now prohibited when players are powered on.")
 	}
 }
 
+sub hasBeenIdle {
+	my ($class, $newValue) = @_;
+	$hasbeenidle = $newValue*60 if $newValue;
+	return $hasbeenidle;
+}
+
 sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
+	$handler->cleanup();
 }
+
+1;
+
+# base class for OS dependent implementations
+package Slim::Plugin::PreventStandby::OS;
+
+use strict;
+use Slim::Plugin::PreventStandby::Plugin;
+
+sub new {}
+
+sub isBusy {
+	my ($class, $currenttime) = @_;
+	return Slim::Plugin::PreventStandby::Plugin->_hasResumed($currenttime) || Slim::Plugin::PreventStandby::Plugin->_playersBusy();
+}
+
+sub setBusy {}
+sub setIdle {}
+sub cleanup {}
+sub pollInterval {}
 
 1;
 

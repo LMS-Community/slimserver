@@ -1,5 +1,13 @@
 <h2><a name="v7.7.3" id="v7.7.3"></a>Version 7.7.3</h2>
 <ul>
+	<li>New Features:</li>
+	<ul>
+		<li>Replace custom OSX installer with a standard installation package (.pkg file). Please note that 
+		the OSX build now requires OSX 10.5 as a minimum.</li>
+		<li>Make the OSX PrefPane 64-bit compatible.</li>
+	</ul>
+	<br />
+
 	<li>Server Changes:</li>
 	<ul>
 		<li>Improved support for radio station artwork. Improved radio station browsing.</li>
@@ -9,6 +17,13 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8141">#8141</a> - Macintosh: Prevent Sleep While Playing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16409">#16409</a> - Playlists menu should show album/artist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17635">#17635</a> - Search results have album art instead of track art</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18036">#18036</a> - Cometd client manager fails to purge dead clients causing memory leakage</li>
+		<li>Artwork cache would grow forever</li>
+		<li>Fix default expiry duration in cache code - it would expire immediately if not overwritten in the caller.</li>
+		<li>Improve recovery from corrupted cache files</li>
 	</ul>
 	<br />
 </ul>

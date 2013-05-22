@@ -3266,7 +3266,7 @@ sub statusQuery {
 		
 		if ( $menuMode ) {
 			# Set required tags for menuMode
-			$tags = 'aAlKNcx';
+			$tags = 'aAlKNcxJ';
 		}
 		else {
 			$tags = 'gald' if !defined $tags;
@@ -4037,7 +4037,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'aAlKNcx',			# tags needed for our entities
+		'aAlKNcxJ',			# tags needed for our entities
 	);
 	
 	my $isRemote = $songData->{remote};
@@ -4089,7 +4089,7 @@ sub _addJiveSong {
 	$text .= "\n" . $secondLine;
 
 	# Bug 7443, check for a track cover before using the album cover
-	my $iconId = $songData->{coverid};
+	my $iconId = $songData->{coverid} || $songData->{artwork_track_id};
 	
 	if ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
