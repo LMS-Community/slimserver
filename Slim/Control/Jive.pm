@@ -452,7 +452,8 @@ sub registerAppMenu {
 
 	my $isInfo = $log->is_info;
 
-	my %seen;
+	# if there already is a plugin dealing with the same ID, don't initialize the mysb.com app
+	my %seen = map { $_->{id} => 1 } @pluginMenus;
 	my @new;
 
 	for my $href (@$menuArray, reverse @appMenus) {
@@ -522,6 +523,13 @@ sub registerPluginMenu {
 	for my $href (@$menuArray, reverse @pluginMenus) {
 		my $id = $href->{'id'};
 		my $node = $href->{'node'};
+		
+		# allow plugins to add themselves to the My Apps menu
+		if ($href->{node} && $href->{node} eq 'apps') {
+			$href->{node} = '';
+			$href->{isApp} ||= 1;
+		}
+		
 		if ($id) {
 			if (!$seen{$id}) {
 				main::INFOLOG && $isInfo && $log->info("registering menuitem " . $id . " to " . $node );

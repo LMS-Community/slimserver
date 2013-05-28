@@ -60,10 +60,11 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
-		tag    => 'podcastv2',
-		node   => 'extras',		# used for SP
-		menu   => 'plugins',	# used in web UI
+		tag    => 'podcasts',
+		menu   => 'apps',
 	);
+	
+	$class->addNonSNApp();
 }
 
 sub handleFeed {
