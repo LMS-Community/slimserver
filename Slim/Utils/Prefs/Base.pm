@@ -30,6 +30,18 @@ my $optimiseAccessors = 1;
 
 my $log = logger('prefs');
 
+# some prefs changes come in bursts - buffer DB updates on SN
+my %delayedWrites = main::SLIM_SERVICE ? (
+	volume => 1.000,  # buffer volume changes for a full second
+	mute   => 1.000,
+	power  => 1,
+	currentSong   => 1,
+	pandora_track => 5,
+	sn_PluginData => 5,
+	sn_songPluginData => 5,
+	playingAtPowerOff => 1,
+) : undef;
+
 =head2 get( $prefname )
 
 Returns the current value of preference $prefname.
@@ -286,11 +298,22 @@ sub set {
 						$nspref = $ns . '_' . $pref;
 					}
 					
-					if ( ref $new eq 'ARRAY' ) {
-						SDI::Service::Model::PlayerPref->quick_update_array( $client->playerData, $nspref, $new );
+					my $k = $client->id . $nspref;
+
+					if ( my $delay = $delayedWrites{$nspref} ) {
+						# need to use $client & $nspref as key or only the really last pref change for a client would apply
+						Slim::Utils::Timers::killTimers( $k, \&_savePref );
+						Slim::Utils::Timers::setTimer(
+							$k,
+							Time::HiRes::time() + $delay,
+							\&_savePref,
+							$client,
+							$nspref,
+							$new,
+						);
 					}
 					else {
-						SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $nspref, $new );
+						_savePref($k, $client, $nspref, $new);
 					}
 				}
 			}
@@ -334,6 +357,17 @@ sub set {
 	}
 }
 
+sub _savePref { if ( main::SLIM_SERVICE ) {
+	my ($k, $client, $pref, $value) = @_;
+
+	if ( ref $value eq 'ARRAY' ) {
+		SDI::Service::Model::PlayerPref->quick_update_array( $client->playerData, $pref, $value );
+	}
+	else {
+		SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $pref, $value );
+	}
+} }
+					
 # SLIM_SERVICE only, the bulkSet method
 # sets all prefs passed in first, then runs all onchange handlers
 # This avoids extra db queries when a change handler uses a pref not yet loaded
