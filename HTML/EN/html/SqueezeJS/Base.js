@@ -8,7 +8,6 @@ var SqueezeJS = {
 	string : function(s){ return this.Strings[s]; },
 	
 	contributorRoles : new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist'),
-	coverFileSuffix : Ext.isIE6 ? 'gif' : 'png',
 
 	Controller : null
 };
@@ -794,7 +793,7 @@ SqueezeJS.SonginfoParser = {
 	},
 	
 	defaultCoverart : function(coverid, width) {
-		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
+		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.png' : '');
 	}
 };
 
