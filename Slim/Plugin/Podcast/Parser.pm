@@ -46,6 +46,15 @@ sub parse {
 			$cache->set($key, 0, '30days');
 		}
 		
+		# do we have duration stored from previous playback?
+		if ( !$item->{duration} ) {
+			my $trackObj = Slim::Schema->objectForUrl( { url => $item->{enclosure}->{url} } );
+			$item->{duration} = $trackObj->duration if $trackObj && blessed $trackObj;
+
+			# fall back to cached value - if available
+			$item->{duration} ||= $cache->get("$key-duration");
+		}
+		
 		my $progress = $client->symbols($client->progressBar(12, $position ? 1 : 0, 0));
 		
 		# if we've played this podcast before, add a menu level to ask whether to continue or start from scratch
@@ -86,6 +95,18 @@ sub parse {
 		}
 
 		$item->{title} = $progress . '  ' . $item->{title} if $progress;
+		
+		if ( $item->{duration} && !$duration ) {
+			my $s = $item->{duration};
+			my $h = int($s / (60*60));
+			my $m = int(($s - $h * 60 * 60) / 60);
+			$s = int($s - $h * 60 * 60 - $m * 60);
+			$s = "0$s" if length($s) < 2;
+			$m = "0$m" if length($m) < 2 && $h;
+			
+			$duration = join(':', $m, $s);
+			$duration = join(':', $h, $duration) if $h;
+		}
 
 		if ($position && $duration) {
 			$position = "$position / $duration";
