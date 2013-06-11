@@ -137,6 +137,9 @@ sub _trackProgress {
 	my $key = 'podcast-' . $url;
 	if ( defined $cache->get($key) ) {
 		$cache->set($key, Slim::Player::Source::songTime($client), '30days');
+		
+		# track objects aren't persistent across server restarts - keep our own list of podcast durations in the cache
+		$cache->set("$key-duration", Slim::Player::Source::playingSongDuration($client), '30days') unless $cache->get("$key-duration");
 
 		main::DEBUGLOG && $log->is_debug && $log->debug('Updating podcast progress state for ' . $client->name . ': ' . Slim::Player::Source::songTime($client));
 	
