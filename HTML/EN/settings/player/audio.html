@@ -356,19 +356,25 @@
 	[% END %]
 
 	[% IF prefs.exists('pref_replayGainMode') %]
-		[% WRAPPER setting title="SETUP_REPLAYGAINMODE" desc="SETUP_REPLAYGAINMODE_DESC" %]
-			<select class="stdedit" name="pref_replayGainMode" id="pref_replayGainMode">
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_REPLAYGAINMODE" desc="SETUP_REPLAYGAINMODE_DESC" %]
+				<select class="stdedit" name="pref_replayGainMode" id="pref_replayGainMode">
+		
+				[% FOREACH option = {
+					'0' => 'REPLAYGAIN_DISABLED',
+					'1' => 'REPLAYGAIN_TRACK_GAIN',
+					'2' => 'REPLAYGAIN_ALBUM_GAIN',
+					'3' => 'REPLAYGAIN_SMART_GAIN',
+				} %]
+					<option [% IF prefs.pref_replayGainMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+				
+				</select>
+			[% END %]
 	
-			[% FOREACH option = {
-				'0' => 'REPLAYGAIN_DISABLED',
-				'1' => 'REPLAYGAIN_TRACK_GAIN',
-				'2' => 'REPLAYGAIN_ALBUM_GAIN',
-				'3' => 'REPLAYGAIN_SMART_GAIN',
-			} %]
-				<option [% IF prefs.pref_replayGainMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-			[%- END -%]
-			
-			</select>
+			[% WRAPPER settingGroup title="SETUP_REPLAYGAIN_REMOTE" desc="SETUP_REPLAYGAIN_REMOTE_DESC" %]
+				<input type="text" class="stdedit sliderInput_-20_20_0.1" name="pref_remoteReplayGain" id="pref_remoteReplayGain" value="[% prefs.pref_remoteReplayGain %]" size="5">
+			[% END %]
 		[% END %]
 	[% END %]
 	
