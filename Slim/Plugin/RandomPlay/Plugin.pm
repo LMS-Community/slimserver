@@ -54,10 +54,10 @@ my $genres;
 my $functions;
 my $htmlTemplate = 'plugins/RandomPlay/list.html';
 
-my $log          = Slim::Utils::Log->addLogCategory({
+my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.randomplay',
 	'defaultLevel' => 'ERROR',
-	'description'  => getDisplayName(),
+	'description'  => __PACKAGE__->getDisplayName(),
 });
 
 my $prefs = preferences('plugin.randomplay');
@@ -121,10 +121,6 @@ $prefs->setChange(sub {
 }, 'exclude_genres');
 
 $prefs->setValidate('int', 'newtracks');
-
-sub getDisplayName {
-	return 'PLUGIN_RANDOMPLAY';
-}
 
 sub weight { MENU_WEIGHT }
 
@@ -278,7 +274,7 @@ sub initPlugin {
 			},
 		},
 		{
-			stringToken    => getDisplayName(),
+			stringToken    => $class->getDisplayName(),
 			weight         => MENU_WEIGHT,
 			id             => 'randomplay',
 			node           => 'myMusic',
@@ -524,7 +520,7 @@ sub findAndAdd {
 	}
 
 	my @results;
-	if ( !($limit && scalar @$idList) ) {
+	if ( !scalar @$idList ) {
 		main::DEBUGLOG && $log->debug('Initialize ID list to be randomized');
 		
 		# Search the database for all items of $type which match find criteria
@@ -565,35 +561,24 @@ sub findAndAdd {
 			$type = 'track';
 		}
 
-		my $rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
-
-		if ($limit) {
-
-			# Get ids for all results from find and store in @$idList so they can be used in repeat calls
-			@$idList = $rs->distinct->get_column('me.id')->all;
-
-		} 
-		else {
-
-			# We want all results from the result set, but need to randomise them
-			my @all = $rs->all;
-
-			while (@all) {
-				push @results, (splice @all, rand @all, 1);
+		# get track IDs for our criteria in random order
+		my $rs = Slim::Schema->rs($type)->search(
+			$find, 
+			{ 
+				'join' => \@joins, 
+				'order_by' => Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction()
 			}
-		}
+		);
+
+		# Get ids for all results from find and store in @$idList so they can be used in repeat calls
+		@$idList = $rs->distinct->get_column('me.id')->all;
 	}
 	elsif ($type eq 'year') {
 		$type = 'track';
 	}
 	
-	if ($limit && scalar @$idList) {
-		# use previous id list as same find criteria as last call, select a random set of them
-		my @randomIds;
-
-		for (my $i = 0; $i < $limit && scalar @$idList; ++$i) {
-			push @randomIds, (splice @$idList, rand @$idList, 1);
-		}
+	if (scalar @$idList) {
+		my @randomIds = splice @$idList, 0, $limit;
 
 		# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
 		@results = Slim::Schema->rs($type)->search(
