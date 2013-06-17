@@ -1102,7 +1102,7 @@ sub _cliQuery_done {
 						elsif (my $playcontrol = $item->{'playcontrol'}) {
 							if    ($playcontrol eq 'play')   {$hash{'style'} = 'item_play';}
 							elsif ($playcontrol eq 'add')    {$hash{'style'} = 'item_add';}
-							elsif ($playcontrol eq 'insert') {$hash{'style'} = 'item_insert';}
+							elsif ($playcontrol eq 'insert' && $client->revision !~ /^7\.[0-7]/) {$hash{'style'} = 'item_insert';}
 						}
 						
 						my $itemText = $nameOrTitle;
@@ -1784,6 +1784,8 @@ sub _playlistControlContextMenu {
 	my $item    = $args->{'item'};
 
 	my @contextMenu;
+
+	my $canIcons = $request && $request->client && ($request->client->revision !~ /^7\.[0-7]/);
 	
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
@@ -1822,7 +1824,7 @@ sub _playlistControlContextMenu {
 		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $mode, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('PLAY_NEXT'),
-				style => 'item_insert',
+				style => $canIcons ? 'item_insert' : 'itemNoAction',
 				actions => {go => $action},
 			},
 		}
@@ -1838,7 +1840,7 @@ sub _playlistControlContextMenu {
 		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
-				style => 'item_playall',
+				style => $canIcons ? 'item_playall' : 'itemNoAction',
 				actions => {go => $action},
 			},
 		}
@@ -1880,7 +1882,7 @@ sub _playlistControlContextMenu {
 	
 		push @contextMenu, {
 			text => $request->string($token),
-			style => 'item_fav',
+			style => $canIcons ? 'item_fav' : 'itemNoAction',
 			actions => $favoriteActions,
 		};
 	}
