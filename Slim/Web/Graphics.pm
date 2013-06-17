@@ -185,8 +185,8 @@ sub artworkRequest {
 
 			# Bug 16491: Grab the remoteTrack's coverArt and do the resizing on the fly
 			my $remoteTrack = Slim::Schema::RemoteTrack->fetchById($id);
-			my $coverArtImage = $remoteTrack->coverArt();
-			if( $coverArtImage) {
+
+			if ( $remoteTrack && (my $coverArtImage = $remoteTrack->coverArt()) ) {
 				require Slim::Utils::GDResizer;
 
 				my @arrSpec = split(',', $spec);
