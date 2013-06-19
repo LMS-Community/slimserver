@@ -67,6 +67,9 @@ sub initDetails {
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
 	
+	# give some fallback value
+	$class->{osDetails}->{osName} ||= sprintf('Windows (%s, %s, %s)', $major, $minor, $producttype);
+	
 	# This covers Vista or later
 	$class->{osDetails}->{'isWin6+'} = ($major >= 6);
 	
