@@ -148,14 +148,15 @@ sub parseMetadata {
 	}
 	
 	# Assume Icy metadata as first guess
-	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
-		
-		main::DEBUGLOG && $log->is_debug && $log->debug("Icy metadata received: $metadata");
+	# BUG 15896 - treat as single line, as some stations add cr/lf to the song title field
+	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/s)) {
 	
-		# Bug 15896, a stream had CRLF in the metadata
-		$metadata =~ s/\s*[\r\n]+\s*/; /g;
+		main::DEBUGLOG && $log->is_debug && $log->debug("Icy metadata received: $metadata");
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1);
+
+		# Bug 15896, a stream had CRLF in the metadata
+		$newTitle =~ s/\s*[\r\n]+\s*//g;
 
 		# capitalize titles that are all lowercase
 		# XXX: Why do we do this?  Shouldn't we let metadata display as-is?
@@ -172,7 +173,7 @@ sub parseMetadata {
 		
 		# Check for an image URL in the metadata.
 		my $artworkUrl;
-		if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
+		if ( $metadata =~ /StreamUrl=\'([^']+)\'/i ) {
 			$artworkUrl = $1;
 			if ( $artworkUrl !~ /\.(?:jpe?g|gif|png)$/i ) {
 				$artworkUrl = undef;
