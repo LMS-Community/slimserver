@@ -30,6 +30,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
+use Digest::MD5 qw(md5_hex);
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 
@@ -1077,13 +1078,13 @@ sub playlistSaveCommand {
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
 	$title = Slim::Utils::Misc::cleanupFilename($title);
-
+	my $url = Slim::Utils::Misc::fileURLFromPath(
+		catfile( Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
+	);
 
 	my $playlistObj = Slim::Schema->updateOrCreate({
-
-		'url' => Slim::Utils::Misc::fileURLFromPath(
-			catfile( Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
-		),
+		'url' => $url,
+		'urlmd5' => md5_hex($url),
 		'playlist' => 1,
 		'attributes' => {
 			'TITLE' => $title,
@@ -2328,6 +2329,7 @@ sub playlistsRenameCommand {
 		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 
 		$playlistObj->set_column('url', $newUrl);
+		$playlistObj->set_column('urlmd5', md5_hex($newUrl));
 		$playlistObj->set_column('title', $newName);
 		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCaseArticles($newName, 1));
