@@ -1078,13 +1078,13 @@ sub playlistSaveCommand {
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
 	$title = Slim::Utils::Misc::cleanupFilename($title);
-	my $url = Slim::Utils::Misc::fileURLFromPath(
-		catfile( Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
-	);
+
 
 	my $playlistObj = Slim::Schema->updateOrCreate({
-		'url' => $url,
-		'urlmd5' => md5_hex($url),
+
+		'url' => Slim::Utils::Misc::fileURLFromPath(
+			catfile( Slim::Utils::Misc::getPlaylistDir(), Slim::Utils::Unicode::encode_locale($title) . '.m3u')
+		),
 		'playlist' => 1,
 		'attributes' => {
 			'TITLE' => $title,
