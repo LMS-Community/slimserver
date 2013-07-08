@@ -161,7 +161,9 @@ sub initPlugin {
         [1, 0, 0, \&chooseGenre]);
 	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
         [1, 0, 0, \&genreSelectAllOrNone]);
-	
+	Slim::Control::Request::addDispatch(['randomplayisactive'],
+		[1, 1, 0, \&cliIsActive]);
+			
 	Slim::Player::ProtocolHandlers->registerHandler(
 		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
 	);
@@ -1217,6 +1219,14 @@ sub cliRequest {
 	$request->setStatusDone();
 }
 
+sub cliIsActive {
+	my $request = shift;
+  	my $client = $request->client();
+
+	$request->addResult('_randomplayisactive', active($client) );
+	$request->setStatusDone();
+}
+
 
 # legacy method to allow mapping to remote buttons
 sub getFunctions {
@@ -1316,11 +1326,7 @@ sub handleWebSettings {
 sub active {
 	my $client = shift;
 	
-	if ( $client->master->pluginData('type') ) {
-		return 1;
-	}
-	
-	return 0;
+	return $client->master->pluginData('type');
 }
 
 # Called by Slim::Utils::Alarm to get the playlists that should be presented as options
