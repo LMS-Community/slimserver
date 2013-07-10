@@ -35,7 +35,7 @@ sub getFlavor {
 	
 		return 'Debian';
 	
-	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
+	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release' || -f '/etc/fedora-release') {
 		
 		return 'Red Hat';
 	

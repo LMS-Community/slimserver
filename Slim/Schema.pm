@@ -1761,6 +1761,9 @@ sub updateOrCreateBase {
 		return undef;
 	}
 
+	# make sure we always have an up to date md5 hash value
+	$attributeHash->{urlmd5} = md5_hex($url);
+
 	# Short-circuit for remote tracks
 	if (main::SERVICES && Slim::Music::Info::isRemoteURL($url)) {
 		my $class = $playlist ? 'Slim::Schema::RemotePlaylist' : 'Slim::Schema::RemoteTrack';
