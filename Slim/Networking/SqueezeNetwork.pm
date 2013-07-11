@@ -35,7 +35,7 @@ my $prefs = preferences('server');
 my $_Servers = {
 	sn      => 'www.mysqueezebox.com',
 	update  => 'update.mysqueezebox.com',
-	test    => 'snmh.mysqueezebox.com',
+	test    => 'www.test.mysqueezebox.com',
 };
 
 # Used only on SN
