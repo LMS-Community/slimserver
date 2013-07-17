@@ -1343,8 +1343,16 @@ sub _albums {
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'artist_id'}) {
+
+					# bug 17542 - get primary artist if it's different from the artist we're browsing albums for
+					if ($artistId) {
+						my $albumArtist = Slim::Schema->find('Contributor', $_->{'artist_id'})->name;
+						$_->{'artist'} = $albumArtist if $albumArtist;
+					}
+
 					$_->{'name2'} = $_->{'artist'};
-				} 
+				}
+
 				if (!$wantMeta) {
 					delete $_->{'artist'};
 				}
