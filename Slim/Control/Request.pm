@@ -2230,7 +2230,7 @@ Handle encoding for external commands.
 sub fixEncoding {
 	my $self = shift || return;
 	
-	map {utf8::decode($_) unless ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'}};
+	map { utf8::decode($_) unless !defined($_) || ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'} };
 }
 
 ################################################################################
