@@ -303,13 +303,41 @@ sub albumsQuery {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
+			$order_by = "tracks.timestamp desc";
 			
 			# Force quantity to not exceed max
 			if ( $quantity && $quantity > $limit ) {
 				$quantity = $limit;
 			}
-			
+
+			# cache the most recent album IDs - need to query the tracks table, which is expensive
+			if ( !Slim::Music::Import->stillScanning() ) {
+				my $ids = $cache->{'newAlbumIds'} || [];
+				
+				if (!scalar @$ids) {
+					# get the list of album IDs ordered by timestamp
+					$ids = Slim::Schema->dbh->selectcol_arrayref( qq{
+						SELECT tracks.album
+						FROM tracks
+						WHERE tracks.album > 0
+						GROUP BY tracks.album
+						ORDER BY tracks.timestamp DESC
+					}, { Slice => {} } );
+					
+					$cache->{newAlbumIds} = $ids;
+				}
+
+				my $start = scalar($index);
+				my $end   = $start + scalar($quantity || scalar($limit)-1);
+				if ($end >= scalar @$ids) {
+					$end = scalar(@$ids) - 1;
+				}
+				push @{$w}, 'albums.id IN (' . join(',', @$ids[$start..$end]) . ')';
+
+				# reset $index, as we're already limiting results using the id list
+				$index = 0;
+			}
+
 			$page_key = undef;
 		}
 		elsif ( $sort eq 'artflow' ) {
@@ -490,6 +518,13 @@ sub albumsQuery {
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
+	
+	if ( $sort eq 'new' && $cache->{newAlbumIds} ) {
+		my $albumCount = scalar @{$cache->{newAlbumIds}};
+		$albumCount    = $limit if ($limit && $limit < $albumCount);
+		$cache->{$cacheKey} ||= $albumCount;
+		$limit = undef;
+	}
 	
 	my $countsql = $sql;
 	$countsql .= ' LIMIT ' . $limit if $limit;

@@ -1480,7 +1480,8 @@ sub _albums {
 				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
 			}, $extra;
 		},
-		$tags, $pt->{'wantIndex'},
+		# no need for an index bar in New Music mode
+		$tags, $pt->{'wantIndex'} && !($sort && $sort eq 'sort:new'),
 	);
 }
 
