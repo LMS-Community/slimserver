@@ -311,7 +311,7 @@ sub albumsQuery {
 			}
 
 			# cache the most recent album IDs - need to query the tracks table, which is expensive
-			if ( !Slim::Music::Import->stillScanning() ) {
+			if ( !$search && !Slim::Music::Import->stillScanning() ) {
 				my $ids = $cache->{'newAlbumIds'} || [];
 				
 				if (!scalar @$ids) {
@@ -519,7 +519,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
-	if ( $sort eq 'new' && $cache->{newAlbumIds} ) {
+	if ( $sort eq 'new' && $cache->{newAlbumIds} && !$search ) {
 		my $albumCount = scalar @{$cache->{newAlbumIds}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
