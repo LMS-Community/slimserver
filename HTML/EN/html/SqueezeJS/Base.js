@@ -753,7 +753,6 @@ SqueezeJS.SonginfoParser = {
 	coverartUrl : function(result, width){
 		var coverart = this.defaultCoverart(0, width);
 		var link;
-
 		if (result.playlist_tracks > 0) {
 			if (result.playlist_loop[0].artwork_url) {
 				coverart = result.playlist_loop[0].artwork_url;
@@ -788,6 +787,9 @@ SqueezeJS.SonginfoParser = {
 				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].artwork_track_id || result.playlist_loop[0].id, width);
 			}
 		}
+		
+		if (coverart.match(/^imageproxy/))
+			coverart = '/' + coverart;
 
 		return coverart;
 	},
