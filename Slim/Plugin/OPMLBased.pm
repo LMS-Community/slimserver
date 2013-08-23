@@ -9,6 +9,7 @@ use base 'Slim::Plugin::Base';
 
 use Slim::Utils::Prefs;
 use Slim::Control::XMLBrowser;
+use Slim::Web::ImageProxy qw(proxiedImage);
 
 if ( main::WEBUI ) {
  	require Slim::Web::XMLBrowser;
@@ -69,7 +70,7 @@ sub initJive {
 		}
 	}
 
-	my $icon = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $icon = $class->_pluginDataFor('icon') ? proxiedImage($class->_pluginDataFor('icon')) : 'html/images/radio.png';
 	my $name = $class->getDisplayName();
 	
 	my @jiveMenu = ( {
@@ -192,7 +193,7 @@ sub cliRadiosQuery {
 	my ( $class, $args, $cli_menu ) = @_;
 	my $tag  = $args->{tag};
 
-	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $icon   = $class->_pluginDataFor('icon') ? proxiedImage($class->_pluginDataFor('icon')) : 'html/images/radio.png';
 	my $weight = $class->weight;
 
 	return sub {

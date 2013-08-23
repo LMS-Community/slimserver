@@ -281,7 +281,7 @@ sub _gotNextRadioTrack {
 		artist    => $track->{artist_name},
 		album     => $track->{album_name},
 		title     => $track->{title},
-		duration  => $track->{duration},
+		duration  => $track->{duration} || 200,
 		cover     => $track->{cover} || $icon,
 		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
@@ -293,7 +293,7 @@ sub _gotNextRadioTrack {
 		},
 	};
 	
-	$song->duration( $track->{duration} );
+	$song->duration( $meta->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
@@ -388,14 +388,14 @@ sub _gotTrack {
 		album     => $info->{album_name},
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
-		duration  => $info->{duration},
+		duration  => $info->{duration} || 200,
 		bitrate   => '320k CBR',
 		type      => 'MP3 (Deezer)',
 		info_link => 'plugins/deezer/trackinfo.html',
 		icon      => $icon,
 	};
 	
-	$song->duration( $info->{duration} );
+	$song->duration( $meta->{duration} );
 	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'deezer_meta_' . $info->{id}, $meta, 86400 );

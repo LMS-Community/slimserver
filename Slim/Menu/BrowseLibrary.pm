@@ -1342,7 +1342,8 @@ sub _albums {
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'artist_id'}) {
 					$_->{'name2'} = $_->{'artist'};
-				} 
+				}
+
 				if (!$wantMeta) {
 					delete $_->{'artist'};
 				}
@@ -1479,7 +1480,8 @@ sub _albums {
 				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
 			}, $extra;
 		},
-		$tags, $pt->{'wantIndex'},
+		# no need for an index bar in New Music mode
+		$tags, $pt->{'wantIndex'} && !($sort && $sort eq 'sort:new'),
 	);
 }
 
@@ -1508,7 +1510,7 @@ sub _tracks {
 	my ($addAlbumToName2, $addArtistToName2);
 	if ($addAlbumToName2  = !(grep {/album_id:/} @searchTags)) {
 		$addArtistToName2 = !(grep {/artist_id:/} @searchTags);
-		$tags            .= 'JK'; # artwork
+		$tags            .= 'cJK'; # artwork
 	}
 	
 	_generic($client, $callback, $args, 'titles',
@@ -1545,6 +1547,10 @@ sub _tracks {
 					$name2 .= $_->{'album'};
 				}
 				if ($name2) {
+					if ( $_->{'coverid'} ) {
+						$_->{'artwork_track_id'} = $_->{'coverid'};
+					}
+
 					$_->{'name2'}     = $name2;
 					$_->{'image'}     = 'music/' . $_->{'artwork_track_id'} . '/cover' if $_->{'artwork_track_id'};
 					$_->{'image'}   ||= $_->{'artwork_url'} if $_->{'artwork_url'};
@@ -1796,7 +1802,7 @@ sub _playlistTracks {
 	my $offset     = $args->{'index'} || 0;
 	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
-		['tags:dtuxgaliqykorfJK', $menuStyle, @searchTags],
+		['tags:dtuxgaliqykorfcJK', $menuStyle, @searchTags],
 		sub {
 			my $results = shift;
 			my $items = $results->{'playlisttracks_loop'};
@@ -1813,7 +1819,11 @@ sub _playlistTracks {
 				$_->{'hasMetadata'}   = 'track';
 				
 				$_->{'name'}          = $_->{'title'};
-				$_->{'name2'}		  = $_->{'artist'};
+				$_->{'name2'}		  = $_->{'artist'} . ' - ' . $_->{'album'};
+				
+				if ( $_->{'coverid'} ) {
+					$_->{'artwork_track_id'} = $_->{'coverid'};
+				}
 				
 				$_->{'image'}         = ($_->{'artwork_track_id'}
 										? 'music/' . $_->{'artwork_track_id'} . '/cover'

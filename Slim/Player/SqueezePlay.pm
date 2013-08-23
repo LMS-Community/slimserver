@@ -207,7 +207,7 @@ sub pcm_sample_rates {
 	my $client = shift;
 	my $track = shift;
 
-	# extend rate lookup table to allow for up to 192k playback with 3rd party kernels and squeezeplay desktop
+	# extend rate lookup table to allow for up to 384k playback with 3rd party kernels and squeezeplay desktop
 	# note: higher rates only used if supported by MaxSampleRate returned by player
 	my %pcm_sample_rates = (
 		  8000 => '5',
@@ -223,6 +223,8 @@ sub pcm_sample_rates {
 		 96000 => '9',
 		176400 => ';',
 		192000 => '<',
+		352800 => '=',
+		384000 => '>',
 	);
 	
 	my $rate = $pcm_sample_rates{$track->samplerate()};

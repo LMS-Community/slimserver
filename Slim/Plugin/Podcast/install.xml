@@ -4,7 +4,7 @@
 	<id>6B19E1A4-3C82-415D-A4C1-5B706B8D2ED1</id>
         <name>PLUGIN_PODCAST</name>
         <module>Slim::Plugin::Podcast::Plugin</module>
-        <version>1.0</version>
+        <version>2.0</version>
         <description>PLUGIN_PODCAST_DESC</description>
         <creator>Logitech</creator>
 

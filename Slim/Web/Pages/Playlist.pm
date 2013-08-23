@@ -186,6 +186,7 @@ sub playlist {
 		$form{'num'}       = $itemnum;
 		$form{'levelName'} = 'track';
 		$form{'odd'}       = ($itemnum + $offset) % 2;
+		$form{'artwork_track_id'} = $track->album->artwork unless $track->coverid;
 
 		if ($itemnum == $currsongind) {
 			$form{'currentsong'} = "current";

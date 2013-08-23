@@ -9,7 +9,7 @@ IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
 END;
 FOREACH item = items;
-	IF item.image && (item.type != 'audio' || playlist_id);
+	IF item.image && (item.type != 'audio' || playlist_id || item.url.match("^http"));
 		hasArtwork = 1;
 		LAST;
 	END;	
@@ -259,10 +259,10 @@ useSpecialExt="-browse" %]
 					<tr>
 						<td colspan="4">
 							[%- IF warning == 'RENAME_WARNING' %]
-								<input type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
+								<input type="checkbox" name="overwrite" id="overwrite"><label for="overwrite"> [% "CONFIRM_OVERWRITE" | string %]</label>
 							[%- END %]
 							[%- IF warning == 'DELETE_WARNING' %]
-								<input type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
+								<input type="checkbox" name="confirm" id="confirm"><label for="confirm"> [% "CONFIRM_DELETE" | string %]</label>
 							[%- END %]
 							<input type="hidden" name="playlist_id" value="[% playlist_id %]">
 							<input type="hidden" name="renamePlaylist" value="0">
@@ -396,7 +396,10 @@ useSpecialExt="-browse" %]
 								[% artwork != 2 && !ajaxSearch ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 							[% END %]
 						[% END %]
-						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) %]
+						[% IF playlist_id && !item.name.match(item.album) %]
+							[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'FROM' | string %] [% END; item.album %]
+						[% END %]
+						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) || (playlist_id && item.name2 && !item.name.match(item.name2)) %]
 							[% IF item.artist_id %]
 								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %] <a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist || item.name2 %]</a>
 							[% ELSE %]

@@ -47,9 +47,16 @@ sub initDetails {
 	$class->{osDetails}->{'osName'} =~ s/\/.Net//;
 	$class->{osDetails}->{'osName'} =~ s/2003/Server 2003/;
 	
-	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
+	# TODO: remove this code as soon as Win32::GetOSName supports latest Windows versions
+
+	# The version numbers for Windows 7 and Windows Server 2008 R2 are identical; the PRODUCTTYPE field must be used to differentiate between them.
 	if ($major == 6 && $minor == 1 && $producttype != 1) {
 		$class->{osDetails}->{'osName'} = 'Windows 2008 Server R2';
+	}
+
+	# The version numbers for Windows 8 and Windows Server 2012 are identical; the PRODUCTTYPE field must be used to differentiate between them.
+	elsif ($major == 6 && $minor == 2) {
+		$class->{osDetails}->{'osName'} = $producttype != 1 ? 'Windows 2012 Server' : 'Windows 8';
 	}
 
 	# Windows 2003 && suitemask 0x00008000 -> WHS
@@ -59,6 +66,9 @@ sub initDetails {
 		$class->{osDetails}->{'osName'} = 'Windows Home Server';
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
+	
+	# give some fallback value
+	$class->{osDetails}->{osName} ||= sprintf('Windows (%s, %s, %s)', $major, $minor, $producttype);
 	
 	# This covers Vista or later
 	$class->{osDetails}->{'isWin6+'} = ($major >= 6);

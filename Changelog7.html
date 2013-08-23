@@ -2,28 +2,31 @@
 <ul>
 	<li>New Features:</li>
 	<ul>
+		<li>Re-implement Podcast plugin to support all players. Allow resuming a podcast you partially
+		listened to before.</li>
 		<li>Modify Internet Radio integration to work independently from mysb.com if needed.</li>
 		<li>A new generic image resizing proxy is now built in to LMS. It can be used instead of the 
 		image proxy hosted on mysqueezebox.com, or independently by plugins to eg. resize artwork 
 		local to your network (and therefore not reachable by the remote proxy).</li> 
-		<li>Replace custom OSX installer with a standard installation package (.pkg file). Please note that 
-		the OSX build now requires OSX 10.5 as a minimum.</li>
-		<li>Make the OSX PrefPane 64-bit compatible.</li>
 		<li>The default behaviour on power-on is changed to resume what was playing before power-off.
 		This change will only apply to new players attached to the server;
 		the behaviour for existing players can be changed with Settings / Player / Audio.</li>
 		<li>Support for Ogg FLAC in the server and Squeezeplay-based players</li>
 		<li>Added support for setting alarm playlist shuffle mode (thanks hickinbottoms!)</li>
+		<li>Volume adjustment for Internet Radio (feature request <a href="http://bugs.slimdevices.com/show_bug.cgi?id=2431">#2431</a>)
+		<li>Allow clients to register artwork resizing specifications to be pre-cached during the media scan.</li>
+		<li>Add Triode LocalFile 'loc' ProtocolHandler support for squeezelite.</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8141">#8141</a> - Macintosh: Prevent Sleep While Playing</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8180">#8180</a> - Squeezecenter prevents user logout after restart </li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17174">#17174</a> - Title info doesn't update correctly when multiple SBs are playing same station</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17634">#17634</a> - Random art represents an album as cover art, if there is track art available</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17729">#17729</a> - On Linux SBS 7.4.1 and above: service cannot be stopped or restarted after an 'internal' restart</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17758">#17758</a> - Pop up symbols linger too long on the screen</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17920">#17920</a> - TuneIn Radio Options Context Menu - Results returned are unnecessarily limited and frequently 'not available'</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17933">#17933</a> - Failure to parse m3u playlists with relative paths</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17937">#17937</a> - Now Playing information can alternate between station and current-track titles at track skip</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17950">#17950</a> - %w macros (stream seconds duration) returns negative value</li>
@@ -32,6 +35,9 @@
 	<li>Other:</li>
 	<ul>
 		<li>Removed Mediafly plugin - the service has shut down in March 2012.</li>
+		<li>Recognise Fedora as being a Red Hat system.</li>
+		<li>Improve Perl 5.16 compatibility to silence some warnings.</li>
+		<li>Don't enforce PNG when showing full size artwork, but only when resizing is requested. Converting a large JPG would result in a huge PNG</li>
 	</ul>
 	<br />
 </ul>
@@ -52,10 +58,25 @@
 		<li>Remove legacy Napster plugin. Napster now is a Rhapsody company.</li>
 	</ul>
 	<br />
+	
+	<li>Platform Support:</li>
+	<ul>
+		<li>Mac OSX 10.9 Mavericks, which has Perl 5.16, is now supported.</li>
+		<li>Perl 5.16 modules for Linux systems have been added.</li>
+	</ul>
+	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8141">#8141</a> - Macintosh: Prevent Sleep While Playing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15896">#15896</a> - Missing metadata information due to cr/lf in title information</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16409">#16409</a> - Playlists menu should show album/artist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17542">#17542</a> - Albums not credited to Album Artist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17635">#17635</a> - Search results have album art instead of track art</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17894">#17894</a> - urlmd5 column in tracks table aren't set correctly for FLAC + CUE images</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18036">#18036</a> - Cometd client manager fails to purge dead clients causing memory leakage</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18043">#18043</a> - urlmd5 column in tracks table not set properly for new playlists</li>
+		<li>Fix "cannot request non-http url" issue when bringing up the context menu on a remote stream</li>
 		<li>Artwork cache would grow forever</li>
 		<li>Fix default expiry duration in cache code - it would expire immediately if not overwritten in the caller.</li>
 		<li>Improve recovery from corrupted cache files</li>

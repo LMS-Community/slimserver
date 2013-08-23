@@ -201,7 +201,7 @@ sub _init_done {
 		
 		if ( !defined $favs->findUrl($json->{favorites_url}) ) {
 
-			$favs->add( $json->{favorites_url}, Slim::Utils::Strings::string('PLUGIN_FAVORITES_ON_MYSB'), undef, undef, undef, 'html/images/favorites.png' );
+			$favs->add( $json->{favorites_url}, Slim::Utils::Strings::string('ON_MYSB'), undef, undef, undef, 'html/images/favorites.png' );
 
 		}
 	}

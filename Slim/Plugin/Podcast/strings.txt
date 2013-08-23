@@ -189,3 +189,22 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s
 
+PLUGIN_PODCAST_IMPORT
+	DE	Podcast Liste importieren
+	EN	Import podcasts
+
+PLUGIN_PODCAST_IMPORT_FROM_MYSB
+	DE	Podcasts von mysqueezebox.com importieren
+	EN	Import podcasts from mysqueezebox.com
+
+PLUGIN_PODCAST_IMPORT_FROM_MYSB_FAILED
+	DE	Konnte keine Podcast Liste auf mysqueezebox.com finden. Ev. ist die mysqueezebox.com Integration nicht konfiguriert.
+	EN	Didn't find a podcast list for your mysqueezebox.com account, or account credentials are not set.
+
+PLUGIN_PODCAST_PLAY_FROM_BEGINNING
+	DE	Vom Anfang an wiedergeben
+	EN	Play from the beginning
+
+PLUGIN_PODCAST_PLAY_FROM_POSITION_X
+	DE	Von der letzten Position wiedergeben (%s)
+	EN	Play from last position (%s)

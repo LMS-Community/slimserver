@@ -42,6 +42,11 @@ sub fetchGainMode {
 
 		return 0;
 	}
+	
+	# only support track gain for remote streams
+	if ($track->remote) {
+		return preventClipping( $track->replay_gain() || $prefs->client($client)->get('remoteReplayGain'), $track->replay_peak() );
+	}
 
 	# Mode 1 is use track gain
 	if ($rgmode == 1) {

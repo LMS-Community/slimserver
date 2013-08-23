@@ -26,25 +26,61 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
 
-use constant ICONS => {
-	presets  => '/plugins/RadioTime/html/images/radiopresets.png',
-	local    => '/plugins/RadioTime/html/images/radiolocal.png',
-	music    => '/plugins/RadioTime/html/images/radiomusic.png',
-	news     => '/plugins/RadioTime/html/images/radionews.png',
-	sports   => '/plugins/RadioTime/html/images/radiosports.png',
-	talk     => '/plugins/RadioTime/html/images/radiotalk.png',
-	location => '/plugins/RadioTime/html/images/radioworld.png',
-	language => '/plugins/RadioTime/html/images/radioworld.png',
-	world    => '/plugins/RadioTime/html/images/radioworld.png',
-	search   => '/plugins/RadioTime/html/images/radiosearch.png',
-	podcast  => '/plugins/RadioTime/html/images/podcasts.png',
-	default  => '/plugins/RadioTime/html/images/radio.png',
+use constant MENUS => {
+	presets => {
+		icon   => '/plugins/RadioTime/html/images/radiopresets.png',
+		weight => 5,
+	},
+	local => {
+		icon   => '/plugins/RadioTime/html/images/radiolocal.png',
+		weight => 20,
+	},
+	music => {
+		icon   => '/plugins/RadioTime/html/images/radiomusic.png',
+		weight => 30,
+	},
+	sports => {
+		icon   => '/plugins/RadioTime/html/images/radiosports.png',
+		weight => 40,
+	},
+	news => {
+		icon   => '/plugins/RadioTime/html/images/radionews.png',
+		weight => 45,
+	},
+	talk => {
+		icon   => '/plugins/RadioTime/html/images/radiotalk.png',
+		weight => 50,
+	},
+	location => {
+		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		weight => 55,
+	},
+	language => {
+		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		weight => 56,
+	},
+	world => {
+		icon   => '/plugins/RadioTime/html/images/radioworld.png',
+		weight => 60,
+	},
+	podcast => {
+		icon   => '/plugins/RadioTime/html/images/podcasts.png',
+		weight => 70,
+	},
+	search => {
+		icon   => '/plugins/RadioTime/html/images/radiosearch.png',
+		weight => 110,
+	},
+	default => {
+		icon => '/plugins/RadioTime/html/images/radio.png',
+	},
 };
 
 use constant PARTNER_ID  => 16;
 use constant MAIN_URL    => 'http://opml.radiotime.com/Index.aspx?partnerId=' . PARTNER_ID;
 use constant ERROR_URL   => 'http://opml.radiotime.com/Report.ashx?c=stream&partnerId=' . PARTNER_ID;
 use constant PRESETS_URL => 'http://opml.radiotime.com/Browse.ashx?c=presets&partnerId=' . PARTNER_ID;
+use constant OPTIONS_URL => 'http://opml.radiotime.com/Options.ashx?partnerId=' . PARTNER_ID . '&id=';
 
 my $log   = logger('plugin.radio');
 my $prefs = preferences('plugin.radiotime');
@@ -86,7 +122,7 @@ sub parseMenu {
 	my $menu = [];
 
 	if ( $opml && $opml->{items} ) {
-		my $weight = 10;
+		my $weight = 0;
 
 		# customize TuneIn's main opml stream to get artwork etc.
 		for my $item ( @{ $opml->{items} } ) {
@@ -94,28 +130,30 @@ sub parseMenu {
 			
 			# remap 'location' to 'world' so it gets merged with mysb's menu if needed
 			my $key = delete $item->{key};
-			$item->{class} = $key eq 'location' ? 'world' : $key;
+			my $class = $key eq 'location' ? 'world' : $key;
+			$item->{class} = ucfirst($class);
+			
+			$weight = MENUS->{$class}->{weight} || ++$weight;
 			
 			$item->{URL}   = delete $item->{url};
-			$item->{icon}  = ICONS->{$item->{class}} || ICONS->{'default'};
+			$item->{icon}  = MENUS->{$class}->{icon} || MENUS->{'default'}->{icon};
 			$item->{iconre} = 'radiotime';
-			$item->{weight} = ++$weight;
+			$item->{weight} = $weight;
 			push @$menu, $item;
 			
 			# TTP 864, Use the string token for name instead of whatever translated name we get
-			$item->{name} = 'RADIOTIME_' . uc( $item->{class} );
+			$item->{name} = 'RADIOTIME_' . uc($class);
 		}
 		
 		# Add special My Presets item that shows up for users with an account
 		unshift @{$menu}, {
 			URL    => PRESETS_URL,
 			class  => 'presets',
-			icon   => ICONS->{presets} || ICONS->{default},
+			icon   => MENUS->{presets}->{icon},
 			iconre => 'radiotime',
-			items  => [],
 			name   => 'RADIOTIME_MY_PRESETS',
 			type   => 'link',
-			weight => 5,
+			weight => MENUS->{presets}->{weight},
 		};
 	}
 	
@@ -167,17 +205,21 @@ sub fixUrl {
 		} keys %rtFormats;
 	}
 
-	$feed .= ( $feed =~ /\?/ ) ? '&' : '?';
-	$feed .= 'formats=' . join(',', @formats);
+	my $uri    = URI->new($feed);
+	my $rtinfo = $uri->query_form_hash;
 	
-	# Bug 15568, pass obfuscated serial to RadioTime
-	$feed .= '&serial=' . $class->getSerial($client);
+	$rtinfo->{serial}    ||= $class->getSerial($client);
+	$rtinfo->{partnerId} ||= PARTNER_ID;
+	$rtinfo->{username}  ||= $class->getUsername if $feed =~ /presets/;
+	$rtinfo->{formats}     = join(',', @formats);
+	$rtinfo->{id}          = $rtinfo->{sid} || $rtinfo->{id};
 	
-	if ( $feed =~ /presets/ && $feed !~ /username=/ && (my $username = $class->getUsername) ) {
-		$feed .= '&username=' . uri_escape_utf8($username);
-	}
+	# don't pass the query, as our {QUERY} placeholder would become URI encoded, which is confusing xmlbrowser
+	my $query = delete $rtinfo->{query};
+	
+	$uri->query_form( %$rtinfo );
 
-	return $feed;
+	return $uri->as_string . ($query ? "&query=$query" : '');
 }
 
 sub trackInfoHandler {
@@ -195,17 +237,13 @@ sub trackInfoHandler {
 	return $item;
 }
 
+# Bug 15569, special case for RadioTime stations, use their trackinfo menu
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
 	
-	# Bug 15569, special case for RadioTime stations, use their trackinfo menu
 	my $rtinfo = URI->new($url)->query_form_hash;
-	my $serial = $class->getSerial($client);
 	
-	my $uri = URI->new('http://opml.radiotime.com/Options.ashx');
-	$uri->query_form( id => $rtinfo->{id}, partnerId => $rtinfo->{partnerId}, serial => $serial );
-	
-	return $uri->as_string;
+	return $class->fixUrl(OPTIONS_URL . ($rtinfo->{sid} || $rtinfo->{id}), $client);
 }
 
 sub getSerial {

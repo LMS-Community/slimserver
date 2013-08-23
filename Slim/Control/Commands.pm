@@ -30,6 +30,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
+use Digest::MD5 qw(md5_hex);
 use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 
@@ -229,6 +230,46 @@ sub alarmCommand {
 	# calling the callback and notifying, etc...
 	$request->setStatusDone();
 }
+
+
+sub artworkspecCommand {
+	my $request = shift;
+	
+	# get the parameters
+	my $name = $request->getParam('_name') || '';
+	my $spec = $request->getParam('_spec');
+
+	# check this is the correct command.
+	if ( !$spec || $request->isNotCommand([['artworkspec'], ['add']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	main::DEBUGLOG && $log->debug("Registering artwork resizing spec: $spec ($name)");
+	
+	# do some sanity checking
+	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+	if ($width && $height && $mode) {
+		my $specs = Storable::dclone($prefs->get('customArtSpecs'));
+
+		my $oldName = $specs->{$spec};
+		if ( $oldName && $oldName !~ /$name/ ) {
+			$specs->{$spec} = "$oldName, $name";
+		}
+		# don't duplicate standard specs!
+		elsif ( !$oldName && !(scalar grep /$spec/, Slim::Music::Artwork::getResizeSpecs()) ) {
+			$specs->{$spec} = $name;
+		}
+		
+		$prefs->set('customArtSpecs', $specs);
+	}
+	else {
+		$log->error('Invalid artwork resizing specification: ' . $spec);
+	}
+	
+	$request->setStatusDone();
+}
+
 
 sub buttonCommand {
 	my $request = shift;
@@ -1987,7 +2028,7 @@ sub playlistcontrolCommand {
 						'type'    => 'mixed',
 						'style'   => 'add',
 						'text'    => [ $string, $info[0] ],
-						'icon-id' => defined $artwork ? $artwork : '/html/images/cover.png',
+						'icon-id' => defined $artwork ? Slim::Web::ImageProxy::proxiedImage($artwork) : '/html/images/cover.png',
 					}
 				});
 			}
@@ -2353,6 +2394,7 @@ sub playlistsRenameCommand {
 		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 
 		$playlistObj->set_column('url', $newUrl);
+		$playlistObj->set_column('urlmd5', md5_hex($newUrl));
 		$playlistObj->set_column('title', $newName);
 		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCaseArticles($newName, 1));

@@ -452,7 +452,8 @@ sub registerAppMenu {
 
 	my $isInfo = $log->is_info;
 
-	my %seen;
+	# if there already is a plugin dealing with the same ID, don't initialize the mysb.com app
+	my %seen = map { $_->{id} => 1 } @pluginMenus;
 	my @new;
 
 	for my $href (@$menuArray, reverse @appMenus) {
@@ -522,6 +523,13 @@ sub registerPluginMenu {
 	for my $href (@$menuArray, reverse @pluginMenus) {
 		my $id = $href->{'id'};
 		my $node = $href->{'node'};
+		
+		# allow plugins to add themselves to the My Apps menu
+		if ($href->{node} && $href->{node} eq 'apps') {
+			$href->{node} = '';
+			$href->{isApp} ||= 1;
+		}
+		
 		if ($id) {
 			if (!$seen{$id}) {
 				main::INFOLOG && $isInfo && $log->info("registering menuitem " . $id . " to " . $node );
@@ -3066,7 +3074,7 @@ sub appMenus {
 					# use icon as defined by MySB to allow for white-label solutions
 					if ( my $icon = $apps->{$app}->{icon} ) {
 						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
-						$clone->{window}->{'icon-id'} = $icon ;
+						$clone->{window}->{'icon-id'} = Slim::Web::ImageProxy::proxiedImage($icon);
 					}
 
 					push @{$menu}, $clone;
@@ -3112,7 +3120,7 @@ sub appMenus {
 					node           => $node,
 					text           => $apps->{$app}->{title},
 					window         => {
-						'icon-id'  => $icon,
+						'icon-id'  => Slim::Web::ImageProxy::proxiedImage($icon),
 					},
 				};
 			}

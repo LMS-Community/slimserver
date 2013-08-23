@@ -1031,7 +1031,9 @@ sub _objectInfoHandler {
 	
 	my $index = Slim::Utils::Favorites->new($client)->findUrl($url);
 	
-	my $jive = {style => 'item_fav'};
+	my $jive = {
+		style => $client->revision !~ /^7\.[0-7]/ ? 'item_fav' : 'itemNoAction'
+	};
 	my $title;
 	if ($objectType eq 'artist') {
 		$title = $obj->name;

@@ -19,7 +19,7 @@ use Slim::Music::Info;
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
 # have a zero value
 my %protocolHandlers = ( 
-	file     => qw(Slim::Player::Protocols::File),
+	file     => main::LOCALFILE ? qw(Slim::Player::Protocols::LocalFile) : qw(Slim::Player::Protocols::File),
 	http     => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),

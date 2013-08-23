@@ -82,7 +82,7 @@ sub prefs {
 	}
 	
 	if ($client->canDoReplayGain(0)) {
-		push @prefs,'replayGainMode';
+		push @prefs, 'replayGainMode', 'remoteReplayGain';
 	}
 	
 	if ($client->hasHeadSubOut()) {

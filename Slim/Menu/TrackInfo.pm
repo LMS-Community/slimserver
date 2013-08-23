@@ -1284,18 +1284,16 @@ sub cliQuery {
 		playlistIndex => $playlist_index,
 	};
 
-	unless ( $url || $trackId ) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
 	my $feed;
 	
-	if ($trackId) {
-		my $track = Slim::Schema->find( Track => $trackId );
-		$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags ) if $track;
-	} else {
+	if ( $trackId && (my $track = Slim::Schema->find( Track => $trackId )) ) {
+		$feed = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags );
+	} elsif ( $url ) {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
+	} else {
+		$log->error("Didn't get either valid trackId or url.");
+		$request->setStatusBadParams();
+		return;
 	}
 	
 	$cachedFeed = $feed if $feed;

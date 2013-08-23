@@ -673,6 +673,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#pref">pref</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#artworkspec">artworkspec</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#logging">logging</a></code></strong>
 	</li>
 	<li>
@@ -926,6 +929,31 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<br>
 		Response: &quot;pref playlistdir 
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="artworkspec">
+	<strong>
+		<code>
+			artworkspec add
+			&lt;specification&gt;
+			&lt;name&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;artworkspec&quot; command allows the caller to set custom artwor resizing
+	specifications. These are being used during a media scan to pre-cache artwork in the
+	given size and format. The name is optional, but allows to recognize, which client
+	would have registered a specification.	
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		&quot;artworkspec add 300x300_p My%20Favorite%20Controller%20App&quot;
 	</p>
 </blockquote>
 
@@ -7811,6 +7839,80 @@ in the saved playlists folder.</p>
         "alarm snooze_end" when a snooze ends (and the alarm resumes).  "id" gives the id of the alarm.
 </p>
 
+<!-- 3rd party supported notification! -->
+<br>
+
+<p id="getExternalVolumeInfo">
+	<strong>
+		<code>
+			&lt;playerid&gt; getexternalvolumeinfo &lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+
+<p>
+	This notification notifies a client that a plugin supports volume change capability for a player.
+	This capability will override (from a user point of view) the "digitalVolumeControl" flag that indicates whether a player's output is fixed to a certain volume (typically 100%).
+	This will be used by pluginjs providing external volume control, e.g. for an amplifier (IRBlaster being an example). In this scenario, the volume output of the player is typically fixed but there is still a volume control capability and the plugin control the amp's volume instead.
+	The purpose of this notification is to let a client know that there is a volume control capability associated to a player.
+</p>
+<p>
+	Sending a "getexternalvolumeinfo" command triggers all plugins supporting the feature to return a notification about their capabilities for each player for which they provide these capabilities.
+	The command may be sent to a specific player but typically a plugin will ignore this and respond to any getexternalvolumeinfo command for each player.
+</p>
+<p>
+	Please note that this notification is only supported by some 3rd party plugins. It's not part of the core server functionality.
+</p>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			relative
+		</td>
+		<td>
+			A boolean value stating that a plugin is able to provide relative volume change capability for this player as in "mixer volume +5"
+		</td>
+	</tr>
+	<tr>
+		<td>
+			precise
+		</td>
+		<td>
+			A boolean value stating that a plugin is able to provide precise volume change capability for this player as in "mixer volume 75"
+		</td>
+	</tr>
+	<tr>
+		<td>
+			plugin
+		</td>
+		<td>
+			is an optional string naming the plugin providing the capability
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		<b>Request: &quot;getexternalvolumeinfo&lt;LF&gt;&quot;</b>
+		<br>
+		Response 1: &quot;a5:41:d2:cd:cd:05 getexternalvolumeinfo relative:1 plugin:IRBlaster&quot;
+		<br>
+		Response 2: &quot;a5:41:d2:cd:cd:05 getexternalvolumeinfo precise:1 plugin:DenonSerial&quot;
+	</p>
+</blockquote> 
+
 <!--#########################################################################-->
 <!-- ALARM COMMANDS                                                          -->
 <!--#########################################################################-->
@@ -9304,6 +9406,28 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		Request:  &quot;04:20:00:12:23:45 randomplaygenreselectall 1&lt;LF&gt;&quot;
 		<br>
 		Response:  &quot;04:20:00:12:23:45 randomplaychoosegenre 1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<p id="randomplayisactive">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			randomplayisactive
+		</code>
+	</strong>
+</p>
+<p>
+	Get to know whether RandomPlay is active for a given player, and what kind of mix it's playing.
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;04:20:00:12:23:45 randomplaygisactive&quot;
+		<br>
+		Response:  &quot;04:20:00:12:23:45 randomplayisactive album&quot;
 	</p>
 </blockquote>
 

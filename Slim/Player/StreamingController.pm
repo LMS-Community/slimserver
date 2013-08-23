@@ -816,7 +816,12 @@ sub _playersMessage {
 		# Show an error message
 		$client->showBriefly( {
 			$screen => { line => $lines, overlay => $overlay },
-			jive => { type => ($isError ? 'popupplay' : 'song'), text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
+			jive => { 
+				type => ($isError ? 'popupplay' : 'song'), 
+				text => [ $line1, $line2 ], 
+				$iconType => Slim::Web::ImageProxy::proxiedImage($icon), 
+				duration => $duration * 1000
+			},
 		}, {
 			scroll    => 1,
 			firstline => 1,
@@ -2497,7 +2502,22 @@ sub _setStreamingState {
 	}
 }
 
-sub _persistState { if (main::SLIM_SERVICE) {
+sub _persistState { if ( main::SLIM_SERVICE ) {
+	my $self = shift;
+	
+	# Do not persist state while in TRACKWAIT because this is not meaningful to restore
+	# Rely on subsequent event (possibly resent by player after reconnect) to trigger next action
+	return if $self->{streamingState} == TRACKWAIT;
+
+	Slim::Utils::Timers::killTimers( $self, \&_bufferPersistState );
+	Slim::Utils::Timers::setTimer(
+		$self,
+		Time::HiRes::time() + 0.500,
+		\&_bufferPersistState,
+	);
+}
+
+sub _bufferPersistState {
 	my $self = shift;
 	
 	# Persist playing/streaming state to the SN database

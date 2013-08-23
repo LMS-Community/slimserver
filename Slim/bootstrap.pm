@@ -191,8 +191,8 @@ sub loadModules {
 		print "The following modules failed to load: $failed\n\n";
 		
 		if ( main::ISWINDOWS ) {
-			print "To run from source on Windows, please install ActivePerl 5.14.1.  ActivePerl 5.10.0 is no longer supported.\n";
-			print "http://downloads.activestate.com/ActivePerl/releases/5.14.1.1401/ActivePerl-5.14.1.1401-MSWin32-x86-294969.msi\n\n";
+			print "To run from source on Windows, please install ActivePerl 5.14.  ActivePerl 5.10.0 is no longer supported.\n";
+			print "http://downloads.activestate.com/ActivePerl/releases/\n\n";
 		}
 		else {
 			print qq{
@@ -203,13 +203,11 @@ NOTE:
 If you're running some unsupported Linux/Unix platform, please use the buildme.sh 
 script located here:
 
-http://svn.slimdevices.com/repos/slim/7.7/trunk/vendor/CPAN/
+https://github.com/Logitech/slimserver-vendor/tree/public/7.8/CPAN
 
-If 7.7 is outdated by the time you read this, Replace "7.7" with the major version
+If 7.8 is outdated by the time you read this, Replace "7.8" with the major version
 You should never need to do this if you're on Windows or Mac OSX. If the installers
 don't work for you, ask for help and/or report a bug.
-
-of Logitech Media Server you are running.
 
 *******
 

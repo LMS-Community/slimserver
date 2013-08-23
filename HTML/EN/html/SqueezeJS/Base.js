@@ -8,7 +8,6 @@ var SqueezeJS = {
 	string : function(s){ return this.Strings[s]; },
 	
 	contributorRoles : new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist'),
-	coverFileSuffix : Ext.isIE6 ? 'gif' : 'png',
 
 	Controller : null
 };
@@ -353,7 +352,7 @@ function _init() {
 		getStatus : function(){
 			if (this.player) {
 				this.playerRequest({
-					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLN" ],
+					params: [ "status", "-", 1, "tags:cgABbehldiqtyrSuoKLNJ" ],
 					failure: this._updateStatus,
 					success: this._updateStatus,
 					scope: this
@@ -754,7 +753,6 @@ SqueezeJS.SonginfoParser = {
 	coverartUrl : function(result, width){
 		var coverart = this.defaultCoverart(0, width);
 		var link;
-
 		if (result.playlist_tracks > 0) {
 			if (result.playlist_loop[0].artwork_url) {
 				coverart = result.playlist_loop[0].artwork_url;
@@ -786,15 +784,18 @@ SqueezeJS.SonginfoParser = {
 				}
 			}
 			else {
-				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].id, width);
+				coverart = this.defaultCoverart(result.playlist_loop[0].coverid || result.playlist_loop[0].artwork_track_id || result.playlist_loop[0].id, width);
 			}
 		}
+		
+		if (coverart.match(/^imageproxy/))
+			coverart = '/' + coverart;
 
 		return coverart;
 	},
 	
 	defaultCoverart : function(coverid, width) {
-		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.' : '.') + SqueezeJS.coverFileSuffix;
+		return SqueezeJS.Controller.getBaseUrl() + '/music/' + (coverid || 0) + '/cover' + (width ? '_' + width + 'x' + width + '_p.png' : '');
 	}
 };
 

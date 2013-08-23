@@ -209,6 +209,7 @@ sub init {
 		'serverPriority'        => '',
 		'scannerPriority'       => 0,
 		'precacheArtwork'       => 1,
+		'customArtSpecs'        => {},
 		'maxPlaylistLength'     => 500,
 		# Server Settings - Security
 		'filterHosts'           => 0,
@@ -801,103 +802,131 @@ sub init {
 	if ( !main::SLIM_SERVICE ) {
 		# All languages are always loaded on SN
 		$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
-	}
+
+		$prefs->setChange( 
+			sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
+			qw(splitList groupdiscs useTPE2AsAlbumArtist)
+		);
 	
-	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
-		$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
-	}
-
-	$prefs->setChange( 
-		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist)
-	);
-
-	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
-
-	$prefs->setChange( sub {
-		Slim::Utils::Text::clearCaseArticleCache();
-		Slim::Control::Request::executeRequest(undef, ['wipecache'])
-	}, 'ignoredarticles');
-
-	if ( !main::SCANNER ) {
+		$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
+	
 		$prefs->setChange( sub {
-			my $newValues = $_[1];
-			my $oldValues = $_[3];
-			
-			my %new = map { $_ => 1 } @$newValues;
+			Slim::Utils::Text::clearCaseArticleCache();
+			Slim::Control::Request::executeRequest(undef, ['wipecache'])
+		}, 'ignoredarticles');
 	
-			# get old paths which no longer exist:
-			my @old = grep {
-				delete $new{$_} != 1;
-			} @$oldValues;
-			
-			# in order to get rid of stale entries trigger full rescan if path has been removed
-			if (scalar @old) {
-				main::INFOLOG && logger('scan.scanner')->info('removed folder from mediadirs - trigger wipecache: ' . Data::Dump::dump(@old));
-				Slim::Control::Request::executeRequest(undef, ['wipecache']);
+		if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
+			$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+
+			if ( !main::SCANNER ) {
+				$prefs->setChange( sub {
+					return if Slim::Music::Import->stillScanning;
+					
+					my $newValues = $_[1];
+					my $oldValues = $_[3];
+
+					my @new = grep {
+						!defined $oldValues->{$_};
+					} keys %$newValues;
+
+					# trigger artwork scan if we've got a new specification only
+					if ( scalar @new ) {
+						require Slim::Music::Artwork;
+						
+						Slim::Music::Import->setIsScanning('PRECACHEARTWORK_PROGRESS');
+						Slim::Music::Artwork->precacheAllArtwork(sub {
+							Slim::Music::Import->setIsScanning(0);
+						}, 1);
+					}
+				}, 'customArtSpecs');
 			}
+		}
 
-			# if only new paths were added, only scan those folders
-			else {
-				foreach (keys %new) {
-					main::INFOLOG && logger('scan.scanner')->info('added folder to mediadirs - trigger rescan of new folder only: ' . $_);
-					Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
-				}
-			}
-		}, 'mediadirs');
-
-		$prefs->setChange( sub {
-			my $newValues = $_[1];
-			my $oldValues = $_[3];
-			
-			my %old = map { $_ => 1 } @$oldValues;
-	
-			# get new exclusion paths which did not exist previously:
-			my @new = grep {
-				delete $old{$_} != 1;
-			} @$newValues;
-
-			# in order to get rid of stale entries trigger full rescan if path has been added
-			if (scalar @new) {
-				my %mediadirs = map { $_ => 1 } @{ Slim::Utils::Misc::getMediaDirs() };
-
-				if (!scalar grep { $mediadirs{$_} } @new) {
-					main::INFOLOG && logger('scan.scanner')->info("added folder to exclusion list which is not in mediadirs yet - don't trigger scan: " . Data::Dump::dump(@new));
-				}
-				else {
-					main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
+		if ( !main::SCANNER ) {
+			$prefs->setChange( sub {
+				my $newValues = $_[1];
+				my $oldValues = $_[3];
+				
+				my %new = map { $_ => 1 } @$newValues;
+		
+				# get old paths which no longer exist:
+				my @old = grep {
+					delete $new{$_} != 1;
+				} @$oldValues;
+				
+				# in order to get rid of stale entries trigger full rescan if path has been removed
+				if (scalar @old) {
+					main::INFOLOG && logger('scan.scanner')->info('removed folder from mediadirs - trigger wipecache: ' . Data::Dump::dump(@old));
 					Slim::Control::Request::executeRequest(undef, ['wipecache']);
 				}
-			}
-
-			# if only new paths were added, only scan those folders
-			else {
-				foreach (keys %old) {
-					main::INFOLOG && logger('scan.scanner')->info('removed folder from exclusion list - trigger rescan of new folder only: ' . $_);
-					Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
+	
+				# if only new paths were added, only scan those folders
+				else {
+					foreach (keys %new) {
+						main::INFOLOG && logger('scan.scanner')->info('added folder to mediadirs - trigger rescan of new folder only: ' . $_);
+						Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
+					}
 				}
-			}
-		}, 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
-	}
-
-	$prefs->setChange( sub {
-		require Slim::Music::PlaylistFolderScan;
-		Slim::Music::PlaylistFolderScan->init;
-		Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
-	}, 'playlistdir');
-
-	$prefs->setChange( sub {
-		if ($_[1]) {
-			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]);
-			for my $client (Slim::Player::Client::clients()) {
-				next if Slim::Player::Sync::isSlave($client);
-				my $request = Slim::Control::Request->new($client, ['playlist','load_done']);
-				Slim::Player::Playlist::modifyPlaylistCallback($request);
-			}
-		} else {
-			Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
+			}, 'mediadirs');
+	
+			$prefs->setChange( sub {
+				my $newValues = $_[1];
+				my $oldValues = $_[3];
+				
+				my %old = map { $_ => 1 } @$oldValues;
+		
+				# get new exclusion paths which did not exist previously:
+				my @new = grep {
+					delete $old{$_} != 1;
+				} @$newValues;
+	
+				# in order to get rid of stale entries trigger full rescan if path has been added
+				if (scalar @new) {
+					my %mediadirs = map { $_ => 1 } @{ Slim::Utils::Misc::getMediaDirs() };
+	
+					if (!scalar grep { $mediadirs{$_} } @new) {
+						main::INFOLOG && logger('scan.scanner')->info("added folder to exclusion list which is not in mediadirs yet - don't trigger scan: " . Data::Dump::dump(@new));
+					}
+					else {
+						main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
+						Slim::Control::Request::executeRequest(undef, ['wipecache']);
+					}
+				}
+	
+				# if only new paths were added, only scan those folders
+				else {
+					foreach (keys %old) {
+						main::INFOLOG && logger('scan.scanner')->info('removed folder from exclusion list - trigger rescan of new folder only: ' . $_);
+						Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', Slim::Utils::Misc::fileURLFromPath($_) ] );
+					}
+				}
+			}, 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
+	
+			$prefs->setChange( sub {
+				require Slim::Music::PlaylistFolderScan;
+				Slim::Music::PlaylistFolderScan->init;
+				Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
+			}, 'playlistdir');
+		
+			$prefs->setChange( sub {
+				if ($_[1]) {
+					Slim::Control::Request::subscribe(\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]);
+					for my $client (Slim::Player::Client::clients()) {
+						next if Slim::Player::Sync::isSlave($client);
+						my $request = Slim::Control::Request->new($client, ['playlist','load_done']);
+						Slim::Player::Playlist::modifyPlaylistCallback($request);
+					}
+				} else {
+					Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
+				}
+			}, 'persistPlaylists');
+	
+			# Rebuild Jive cache if VA setting is changed
+			$prefs->setChange( sub {
+				Slim::Schema->wipeCaches();
+			}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
 		}
-	}, 'persistPlaylists');
+	}
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
@@ -969,11 +998,6 @@ sub init {
 			
 		}, 'sn_disable_stats');
 	}
-	
-	# Rebuild Jive cache if VA setting is changed
-	$prefs->setChange( sub {
-		Slim::Schema->wipeCaches();
-	}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
 
 	# Reset IR state if preference change
 	$prefs->setChange( sub {

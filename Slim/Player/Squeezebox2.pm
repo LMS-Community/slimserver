@@ -45,6 +45,7 @@ our $defaultPrefs = {
 	'transitionDuration' => 10,
 	'transitionSmart'    => 1,
 	'replayGainMode'     => 0,
+	'remoteReplayGain'   => -5,
 	'disableDac'         => 0,
 	'minSyncAdjust'      => 10,	# ms
 	'snLastSyncUp'       => -1,
@@ -52,6 +53,8 @@ our $defaultPrefs = {
 	'snSyncInterval'     => 30,
 	'outputChannels'     => 0,
 };
+
+$prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
 
 # Keep track of direct stream redirects
 our $redirects = {};
