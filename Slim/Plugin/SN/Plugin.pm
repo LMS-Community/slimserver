@@ -25,8 +25,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 my @defaultServices = (qw(
 	classical
 	deezer
-	mediafly
-	napster
 	pandora
 	rhapd
 	slacker
