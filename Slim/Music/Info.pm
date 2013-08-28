@@ -776,7 +776,12 @@ sub displayText {
 		$cache->{$format} = $text;
 	}
 
-	$client ? $client->musicInfoTextCache($cache) : $musicInfoTextCache = $cache;
+	if ($client) {
+		$client->musicInfoTextCache($cache);
+	}
+	else {
+		$musicInfoTextCache = $cache;
+	}
 
 	return $text;
 }
