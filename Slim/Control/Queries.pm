@@ -282,6 +282,9 @@ sub albumsQuery {
 			}
 		}
 		$c->{'contributors.name'} = 1;
+		
+		# if albums for a specific contributor are requested, then we need the album's contributor, too
+		$c->{'albums.contributor'} = $contributorID;
 	}
 	
 	if ( $tags =~ /s/ ) {
@@ -402,8 +405,14 @@ sub albumsQuery {
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 			if ($tags =~ /a/) {
 				# Bug 15313, this used to use $eachitem->artists which
-				# contains a lot of extra logic.  If this data is wrong we may
-				# need to fix how the album.contributor field is set
+				# contains a lot of extra logic.
+
+				# Bug 17542: If the album artist is different from the current track's artist,
+				# use the album artist instead of the track artist (if available)
+				if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
+					$c->{'contributors.name'} = Slim::Schema->find('Contributor', $c->{'albums.contributor'})->name || $c->{'contributors.name'};
+				}
+
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
 			if ($tags =~ /s/) {
