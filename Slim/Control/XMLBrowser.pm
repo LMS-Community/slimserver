@@ -265,7 +265,7 @@ my @mapAttributes = (
 	{key => 'duration', args => ['LENGTH'],
 		func => sub {
 			my ($value, @args) = @_;
-			return sprintf('%s: %s:%02s', int($value / 60), $value % 60);
+			return sprintf('%s: %s:%02s', $args[0], int($value / 60), $value % 60);
 		},
 	},
 	{key => 'listeners', args => ['NUMBER_OF_LISTENERS'],},		# Shoutcast
