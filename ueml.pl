@@ -269,7 +269,7 @@ our @AUTHORS = (
 
 my $prefs        = preferences('server');
 
-our $VERSION     = '10.0.2';
+our $VERSION     = '10.0.3';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 our $audiodir    = undef;
