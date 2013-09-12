@@ -44,7 +44,7 @@ sub init {
 	# Subs for all regular track attributes
 	for my $attr (keys %{Slim::Schema::Track->attributes}) {
 
-		$parsedFormats{uc $attr} = sub {
+		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
 				return $_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '';
@@ -219,19 +219,46 @@ sub init {
 		return (defined $output ? $output : '');
 	};
 
-	# add comment and duration
-	for my $attr (qw(comment duration)) {
+	# add comment
+	$parsedFormats{uc('COMMENT')} = sub {
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{comment} || $_[0]->{'tracks.comment'} || '';
+		}
 
-		$parsedFormats{uc($attr)} = sub {
-		
-			if ( ref $_[0] eq 'HASH' ) {
-				return $_[0]->{$attr} || $_[0]->{"tracks.$attr"} || '';
+		my $output = $_[0]->comment();
+		return (defined $output ? $output : '');
+	};
+
+	# duration - already formatted for local tracks, but often seconds only for remote tracks
+	$parsedFormats{'DURATION'} = sub {
+		if ( ref $_[0] eq 'HASH' ) {
+			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || '';
+			
+			# format if we got a number only
+			return sprintf('%s:%02s', int($duration / 60), $duration % 60) if $duration * 1 eq $duration;
+			return $duration;
+		}
+
+		my $output = $_[0]->duration();
+		return (defined $output ? $output : '');
+	};
+
+	# dito for bitrate: format if needed
+	$parsedFormats{BITRATE} = sub {
+		if ( ref $_[0] eq 'HASH' ) {
+			my $bitrate = $_[0]->{bitrate} || $_[0]->{'tracks.bitrate'} || '';
+
+			if ( $bitrate * 1 eq $bitrate ) {
+				# assume we're dealing with bits vs. kb if number is larger than 5000 (should cover hires)
+				$bitrate /= 1000 if $bitrate > 5000;
+				$bitrate = sprintf('%d%s', $bitrate, string('KBPS'));
 			}
 
-			my $output = $_[0]->$attr();
-			return (defined $output ? $output : '');
-		};
-	}
+			return $bitrate || '';
+		}
+
+		return Slim::Music::Info::getCurrentBitrate($_[0]->url) || $_[0]->prettyBitRate;
+	};
 	
 	# add file info
 	$parsedFormats{'VOLUME'} = sub {
