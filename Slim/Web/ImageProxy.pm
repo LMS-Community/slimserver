@@ -87,19 +87,25 @@ sub getImage {
 		args     => \@args,
 	};
 	
-	# no need to do the http request if we're already fetching it
-	return if scalar @{ $queue{$url} } > 1;
-	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_gotArtwork,
-		\&_gotArtworkError,
-		{
-			timeout  => 30,
-			cache    => 1,
-		},
-	);
-	
-	$http->get( $url );
+	if ( $url =~ /^file:/ ) {
+		my $path = Slim::Utils::Misc::pathFromFileURL($url);
+		_resizeFromFile($url, $path);
+	}
+	elsif ( $url =~ /^https?:/ ) {
+		# no need to do the http request if we're already fetching it
+		return if scalar @{ $queue{$url} } > 1;
+		
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			\&_gotArtwork,
+			\&_gotArtworkError,
+			{
+				timeout  => 30,
+				cache    => 1,
+			},
+		);
+		
+		$http->get( $url );
+	}
 }
 
 sub _gotArtwork {
@@ -115,6 +121,34 @@ sub _gotArtwork {
 	File::Slurp::write_file($fullpath, $http->contentRef);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
+
+	_resizeFromFile($url, $fullpath);
+
+	unlink $fullpath;
+}
+
+sub _gotArtworkError {
+	my $http     = shift;
+	my $url  = $http->url;
+
+	# File does not exist, return 404
+	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
+
+	while ( my $item = shift @{ $queue{$url} }) {
+		my $client   = $item->{client};
+		my $spec     = $item->{spec};
+		my $args     = $item->{args};
+		my $params   = $item->{params};
+		my $callback = $item->{callback};
+	
+		_artworkError( $client, $params, $spec, 404, $callback, @$args );
+	}
+	
+	delete $queue{$url};
+}
+
+sub _resizeFromFile {
+	my ($url, $fullpath) = @_;
 
  	$cache ||= Slim::Web::ImageProxy::Cache->new();
 
@@ -151,29 +185,6 @@ sub _gotArtwork {
 		
 			$callback && $callback->( $client, $params, $body, @$args );
 		}, $cache );
-	}
-	
-	delete $queue{$url};
-
-	unlink $fullpath;
-}
-
-sub _gotArtworkError {
-	my $http     = shift;
-	my $url  = $http->url;
-
-	# File does not exist, return 404
-	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
-
-	# XXX - process the full queue
-	while ( my $item = shift @{ $queue{$url} }) {
-		my $client   = $item->{client};
-		my $spec     = $item->{spec};
-		my $args     = $item->{args};
-		my $params   = $item->{params};
-		my $callback = $item->{callback};
-	
-		_artworkError( $client, $params, $spec, 404, $callback, @$args );
 	}
 	
 	delete $queue{$url};
