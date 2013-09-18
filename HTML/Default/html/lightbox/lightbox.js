@@ -290,7 +290,7 @@ Ext.ux.Lightbox = (function(){
             var detailsWidth = els.data.getWidth(true) - els.navClose.getWidth() - 10;
             els.details.setWidth((detailsWidth > 0 ? detailsWidth : 0) + 'px');
             
-            els.caption.update(images[activeImage][1]);
+            els.caption.update('<a href="' + images[activeImage][0] + '" target="_blank">' + images[activeImage][1] + '</a>');
 
             els.caption.show();
             if (images.length > 1) {
