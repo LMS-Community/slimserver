@@ -11,6 +11,10 @@ body {
 	background-color: #FFFFFF;
 }
 
+body, input, select {
+	font-family: sans-serif;
+}
+
 .odd {
 }
 
@@ -21,7 +25,6 @@ body {
 .largeAttribute {
 	font-weight: bold;
 	font-style: normal;
-	font-family: Verdana, Helvetica, sans-serif;
 	text-decoration: none;
 	white-space: nowrap;
 	font-size: 17px;
@@ -49,7 +52,7 @@ div#homeMenu {
 }
 
 .settingSection {
-	border-bottom: 2px solid;
+	border-bottom: 1px solid;
 	padding-bottom: 5px;
 }
 
@@ -61,6 +64,8 @@ div#homeMenu {
 	overflow: auto;
 	width: 100%;
 	height: 50%;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
 }
 
 #settingsRegion {
@@ -91,7 +96,7 @@ div#homeMenu {
 }
 
 div#playList {
-	border-top: 2px solid;
+	border-top: 1px solid;
 	height: auto;
 	width: auto;
 }
