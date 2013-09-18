@@ -149,13 +149,13 @@ Ext.ux.Lightbox = (function(){
 
                     var index = 0;
                     if(!group) {
-                        images.push([image.href, image.title]);
+                        images.push([image.href, image.title || image.text]);
                     }
                     else {
                         var setItems = slideWindow ? slideWindow.Ext.query(sel) : Ext.query(sel);
                         Ext.each(setItems, function(item) {
                             if(item.href) {
-                                images.push([item.href, item.title]);
+                                images.push([item.href, item.title || item.text]);
                             }
                         });
 
