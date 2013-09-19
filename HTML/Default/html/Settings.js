@@ -134,7 +134,7 @@ Settings = {
 		if (page.id == 'PLAYER') {
 			var page2 = SqueezeJS.getCookie('Squeezebox-playersettings');
 
-			if (page2 == null || page2 == 'null')
+			if (page2 == null || page2 == 'null' || page2 == '')
 				page = page.url || 'settings/player/basic.html?';
 			else
 				page = page2;
@@ -143,7 +143,7 @@ Settings = {
 		else if (page.id == 'ADVANCED_SETTINGS') {
 			page = SqueezeJS.getCookie('Squeezebox-advancedsettings');
 
-			if (page == null || page == 'null')
+			if (page == null || page == 'null' || page == '')
 				page = 'settings/server/formatting.html?';
 		}
 
