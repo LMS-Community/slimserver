@@ -102,6 +102,8 @@ sub get {
 sub _init_db {
 	my $self  = shift;
 	my $retry = shift;
+
+	return $self->{dbh} if $self->{dbh};
 	
 	my $dbfile    = $self->_get_dbfile;
 	my $oldDBfile = catfile( $self->{root}, 'ArtworkCache.db' );

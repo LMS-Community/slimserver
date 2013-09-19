@@ -302,6 +302,7 @@ sub fileURLFromPath {
 	
 	# All paths should be in raw bytes, warn if it appears to be UTF-8
 	# XXX remove this later, before release
+=pod
 	if ( utf8::is_utf8($path) ) {
 		my $test = $path;
 		utf8::decode($test);
@@ -311,6 +312,7 @@ sub fileURLFromPath {
 			bt();
 		}
 	}
+=cut
 	
 	# Bug 15511
 	# URI::file->new() will strip trailing space from path. Use a trailing / to defeat this if necessary.
