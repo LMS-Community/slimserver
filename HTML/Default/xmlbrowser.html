@@ -451,7 +451,7 @@ useSpecialExt="-browse" %]
 	[% ELSIF !item.type.match('^text') %]
 		<a href="[% path %]?[% multiquery %][% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 	[% ELSIF item.type == "text" && item.image %]
-		<a href="[% item.image %]" target="_blank" [% slideshowHelpers %]>
+		<a href="[% UNLESS item.image.match("^(\/|http)") %][% webroot %][% END %][% item.image %]" target="_blank" [% slideshowHelpers %]>
 	[% END %]
 	
 	[% content %]
