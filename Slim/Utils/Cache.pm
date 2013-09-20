@@ -154,20 +154,9 @@ sub new {
 		return $caches{$namespace};
 	}
 
-	my $prefs = preferences('server');
-
 	my $cache = Slim::Utils::DbCache->new( {
 		namespace => $namespace,
 	} );
-
-	# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
-	if ( $prefs->get('dbhighmem') ) {
-		$cache->pragma('cache_size = 20000');
-		$cache->pragma('temp_store = MEMORY');
-	}
-	else {
-		$cache->pragma('cache_size = 300');
-	}
 	
 	my $self = bless {
 		_cache => $cache,

@@ -329,15 +329,6 @@ sub new {
 	if ( !$cache ) {
 		$cache = $class->SUPER::new($root, 'imgproxy', 86400*30);
 
-		# Set highmem params for the artwork cache
-		if ( $prefs->get('dbhighmem') ) {
-			$cache->pragma('cache_size = 20000');
-			$cache->pragma('temp_store = MEMORY');
-		}
-		else {
-			$cache->pragma('cache_size = 300');
-		}
-
 		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 			# start purge routine in a few seconds
 			require Slim::Utils::Timers;

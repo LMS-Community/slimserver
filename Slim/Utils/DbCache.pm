@@ -214,7 +214,19 @@ sub _init_db {
 		
 		$dbh->do('PRAGMA synchronous = OFF');
 		$dbh->do('PRAGMA journal_mode = WAL');
-		$dbh->do('PRAGMA wal_autocheckpoint = 200');
+		# scanner is heavy on writes, server on reads - tweak accordingly
+		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
+
+		require Slim::Utils::Prefs;
+	
+		# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
+		if ( Slim::Utils::Prefs::preferences('server')->get('dbhighmem') ) {
+			$dbh->do('PRAGMA cache_size = 20000');
+			$dbh->do('PRAGMA temp_store = MEMORY');
+		}
+		else {
+			$dbh->do('PRAGMA cache_size = 300');
+		}
 	
 		# Create the table, note that using an integer primary key
 		# is much faster than any other kind of key, such as a char
