@@ -421,7 +421,7 @@ sub settingsExitHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'RIGHT') {
 
-		$prefs->set($client->modeParam('pref'), ${$client->modeParam('valueRef')});
+		$prefs->set('time', ${$client->modeParam('valueRef')});
 
 		$client->showBriefly({line=>[$client->string('PLUGIN_RESCAN_TIMER_SAVED')]});
 

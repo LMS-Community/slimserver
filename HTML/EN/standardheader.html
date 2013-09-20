@@ -9,3 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="[% webroot %]rtl.css"/>
 	[% IF lefttoright %]<style>table, td, th, tr { text-align: left; }</style>[% END %]
 [% END %]
+[% IF mobileBrowser %]
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" type="text/css" href="[% webroot %]mobile.css"/>
+[% END %]

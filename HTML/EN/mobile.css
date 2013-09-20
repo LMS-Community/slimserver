@@ -1,0 +1,11 @@
+.prefHead {
+	text-transform: none;
+}
+
+.hiddenDesc, .settingSection img.playericon {
+	display: none;
+}
+
+td.even {
+	background-color: transparent;
+}

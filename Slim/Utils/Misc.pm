@@ -302,6 +302,7 @@ sub fileURLFromPath {
 	
 	# All paths should be in raw bytes, warn if it appears to be UTF-8
 	# XXX remove this later, before release
+=pod
 	if ( utf8::is_utf8($path) ) {
 		my $test = $path;
 		utf8::decode($test);
@@ -311,6 +312,7 @@ sub fileURLFromPath {
 			bt();
 		}
 	}
+=cut
 	
 	# Bug 15511
 	# URI::file->new() will strip trailing space from path. Use a trailing / to defeat this if necessary.
@@ -507,6 +509,11 @@ sub fixPath {
 		# Abort early if on SN
 		return $file;
 	}
+	
+	# sometimes a playlist parser would send us invalid data like html/xml code - skip it
+	if ( $file =~ /\s*<.*>/ ) {
+		return $file;
+	}
 
 	if (Slim::Music::Info::isFileURL($base)) {
 		$base = pathFromFileURL($base);
@@ -574,7 +581,7 @@ sub fixPath {
 
 		# XXX - don't know how to handle this case: should we even return an untested value?
 		my $audiodir = $mediadirs->[0];
-		$scannerlog->is_warn && logBacktrace("Dealing with single audiodir ($audiodir) instead of mediadirs " . Data::Dump::dump($mediadirs));
+		scalar @$mediadirs > 1 && logBacktrace("Dealing with single audiodir ($audiodir) instead of mediadirs " . Data::Dump::dump($file, $mediadirs));
 
 		$file =~ s/\Q$audiodir\E//;
 		$fixed = catfile($audiodir, $file);

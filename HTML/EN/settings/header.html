@@ -1,3 +1,6 @@
+[% IF userAgent.match('(?i)Android|WebKit.*Mobile|MSIE.*Mobile|Opera Mini');
+      mobileBrowser = 1;
+   END %]
 [%- BLOCK pluginLink -%]
 	[% IF enabled && settings.length > 0 %]
 		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerURI %]">[% 'SETTINGS' | string %]</a>
@@ -31,7 +34,7 @@
 [% END %]
 
 [% IF playerid && needsClient; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
-[% noSpacer = 1; PROCESS pageheader.html %]
+[% noSpacer = 1; PROCESS pageheader.html noHomeLink=mobileBrowser %]
 
 <div id="statusarea" class="statusarea">
 	[%- IF warning %]
