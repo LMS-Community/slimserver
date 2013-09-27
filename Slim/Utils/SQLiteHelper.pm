@@ -95,7 +95,7 @@ sub on_connect_do {
 		'PRAGMA synchronous = OFF',
 		'PRAGMA journal_mode = WAL',
 		'PRAGMA foreign_keys = ON',
-		'PRAGMA wal_autocheckpoint = 200',
+		'PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200),
 	];
 	
 	# Wweak some memory-related pragmas if dbhighmem is enabled

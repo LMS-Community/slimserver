@@ -293,6 +293,7 @@ sub gotPlaylist {
 			ct      => $item->{'mime'},
 			secs    => $item->{'duration'},
 			bitrate => $item->{'bitrate'},
+			cover   => $item->{'image'} || $item->{'cover'},
 		} );
 		
 		# This loop may have a lot of items and a lot of database updates
@@ -407,6 +408,8 @@ sub gotRSS {
 			my $item   = shift;
 			if (Slim::Control::XMLBrowser::hasDescription($item)) {
 				displayItemDescription($client, $item, $feed);
+			} elsif ($item->{items}) {
+				gotRSS($client, $url, $item, $params);
 			} else {
 				displayItemLink($client, $item);
 			}
@@ -529,6 +532,17 @@ sub gotOPML {
 		if ( $item->{ignore} || ($item->{hide} && $item->{hide} =~ /ip3k/) || $item->{'playcontrol'}) {
 			splice @{ $opml->{items} }, $index, 1;
 			next;
+		}
+
+		# keep track of station icons
+		if ( 
+			( $item->{play} || $item->{playlist} || ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist')) )
+			&& $item->{url} =~ /^http/ 
+			&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
+			&& ( my $cover = $item->{image} || $item->{cover} )
+			&& !Slim::Utils::Cache->new->get("remote_image_" . $item->{url})
+		) {
+			Slim::Utils::Cache->new->set("remote_image_" . $item->{url}, $cover, 86400);
 		}
 		
 		# Wrap text if needed
@@ -1302,6 +1316,7 @@ sub playItem {
 					ct      => $other->{'mime'},
 					secs    => $other->{'duration'},
 					bitrate => $other->{'bitrate'},
+					cover   => $other->{'image'} || $other->{'cover'},
 				} );
 
 				# This loop may have a lot of items and a lot of database updates
@@ -1320,6 +1335,7 @@ sub playItem {
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
+				cover   => $item->{'image'} || $item->{'cover'},
 			} );
 			
 			$client->execute([ 'playlist', $action, $url, $title ]);

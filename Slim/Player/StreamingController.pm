@@ -816,7 +816,12 @@ sub _playersMessage {
 		# Show an error message
 		$client->showBriefly( {
 			$screen => { line => $lines, overlay => $overlay },
-			jive => { type => ($isError ? 'popupplay' : 'song'), text => [ $line1, $line2 ], $iconType => $icon, duration => $duration * 1000},
+			jive => { 
+				type => ($isError ? 'popupplay' : 'song'), 
+				text => [ $line1, $line2 ], 
+				$iconType => Slim::Web::ImageProxy::proxiedImage($icon), 
+				duration => $duration * 1000
+			},
 		}, {
 			scroll    => 1,
 			firstline => 1,

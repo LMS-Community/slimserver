@@ -213,6 +213,7 @@ my %localTagMapping = (
 	conductor              => undef,
 	band                   => undef,
 	remote                 => undef,
+	urlmd5                 => undef,
 );
 
 sub setAttributes {

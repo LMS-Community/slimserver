@@ -176,6 +176,10 @@ sub _players_done {
 		Slim::Web::Pages->delPageCategory('my_apps');
 		
 		for my $app ( keys %{$allApps} ) {
+			
+			# don't initialize if we have a local plugin overriding the mysb.com service
+			next if $allApps->{'nonsn_' . $app};
+			
 			my $info = $allApps->{$app};
 			
 			# If this app is supported by a local plugin, we'll use the webpage already setup for it
@@ -190,7 +194,6 @@ sub _players_done {
 
 				my $icon = $info->{icon};
 				if ( $icon !~ /^http/ ) {
-					# XXX: fix the template to use imageproxy to resize this icon
 					$icon = Slim::Networking::SqueezeNetwork->url($icon);
 				}
 				

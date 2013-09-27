@@ -27,12 +27,6 @@ my $cache;
 sub init {
 	# Get cache for artwork
 	$cache = Slim::Utils::ArtworkCache->new();
-	
-	# Set highmem params for the artwork cache
-	if ( $prefs->get('dbhighmem') ) {
-		$cache->pragma('cache_size = 20000');
-		$cache->pragma('temp_store = MEMORY');
-	}
 
 	Slim::Web::ImageProxy->init();
 
@@ -185,8 +179,8 @@ sub artworkRequest {
 
 			# Bug 16491: Grab the remoteTrack's coverArt and do the resizing on the fly
 			my $remoteTrack = Slim::Schema::RemoteTrack->fetchById($id);
-			my $coverArtImage = $remoteTrack->coverArt();
-			if( $coverArtImage) {
+
+			if ( $remoteTrack && (my $coverArtImage = $remoteTrack->coverArt()) ) {
 				require Slim::Utils::GDResizer;
 
 				my @arrSpec = split(',', $spec);

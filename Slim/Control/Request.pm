@@ -484,6 +484,7 @@ sub init {
 	addDispatch(['albums',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::albumsQuery]);
 	addDispatch(['artist',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['artists',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::artistsQuery]);
+	addDispatch(['artworkspec',    'add',            '_spec',      '_name'],                           [0, 0, 0, \&Slim::Control::Commands::artworkspecCommand]);
 	addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
 	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
@@ -2196,7 +2197,7 @@ Handle encoding for external commands.
 sub fixEncoding {
 	my $self = shift || return;
 	
-	map {utf8::decode($_) unless ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'}};
+	map { utf8::decode($_) unless !defined($_) || ref $_ || utf8::is_utf8($_)} values %{$self->{'_params'} };
 }
 
 ################################################################################

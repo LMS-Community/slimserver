@@ -20,7 +20,9 @@
 					artwork = webroot _ artwork;
 				END;
 			-%]
-			<img src="[% artwork %]" onLoad="resize(this)"/>
+			<a href="[% artwork %]" target="cover">
+				<img src="[% artwork %]" onLoad="resize(this)"/>
+			</a>
 		</span>
 	</div>
 

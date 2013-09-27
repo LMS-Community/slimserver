@@ -303,13 +303,41 @@ sub albumsQuery {
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
-			$order_by = "tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort $collate";
+			$order_by = "tracks.timestamp desc";
 			
 			# Force quantity to not exceed max
 			if ( $quantity && $quantity > $limit ) {
 				$quantity = $limit;
 			}
-			
+
+			# cache the most recent album IDs - need to query the tracks table, which is expensive
+			if ( !$search && !Slim::Music::Import->stillScanning() ) {
+				my $ids = $cache->{'newAlbumIds'} || [];
+				
+				if (!scalar @$ids) {
+					# get the list of album IDs ordered by timestamp
+					$ids = Slim::Schema->dbh->selectcol_arrayref( qq{
+						SELECT tracks.album
+						FROM tracks
+						WHERE tracks.album > 0
+						GROUP BY tracks.album
+						ORDER BY tracks.timestamp DESC
+					}, { Slice => {} } );
+					
+					$cache->{newAlbumIds} = $ids;
+				}
+
+				my $start = scalar($index);
+				my $end   = $start + scalar($quantity || scalar($limit)-1);
+				if ($end >= scalar @$ids) {
+					$end = scalar(@$ids) - 1;
+				}
+				push @{$w}, 'albums.id IN (' . join(',', @$ids[$start..$end]) . ')';
+
+				# reset $index, as we're already limiting results using the id list
+				$index = 0;
+			}
+
 			$page_key = undef;
 		}
 		elsif ( $sort eq 'artflow' ) {
@@ -450,6 +478,9 @@ sub albumsQuery {
 			}
 		}
 		$c->{'contributors.name'} = 1;
+		
+		# if albums for a specific contributor are requested, then we need the album's contributor, too
+		$c->{'albums.contributor'} = $contributorID;
 	}
 	
 	if ( $tags =~ /s/ ) {
@@ -487,6 +518,13 @@ sub albumsQuery {
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
+	
+	if ( $sort eq 'new' && $cache->{newAlbumIds} && !$search ) {
+		my $albumCount = scalar @{$cache->{newAlbumIds}};
+		$albumCount    = $limit if ($limit && $limit < $albumCount);
+		$cache->{$cacheKey} ||= $albumCount;
+		$limit = undef;
+	}
 	
 	my $countsql = $sql;
 	$countsql .= ' LIMIT ' . $limit if $limit;
@@ -570,8 +608,14 @@ sub albumsQuery {
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 			if ($tags =~ /a/) {
 				# Bug 15313, this used to use $eachitem->artists which
-				# contains a lot of extra logic.  If this data is wrong we may
-				# need to fix how the album.contributor field is set
+				# contains a lot of extra logic.
+
+				# Bug 17542: If the album artist is different from the current track's artist,
+				# use the album artist instead of the track artist (if available)
+				if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
+					$c->{'contributors.name'} = Slim::Schema->find('Contributor', $c->{'albums.contributor'})->name || $c->{'contributors.name'};
+				}
+
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
 			if ($tags =~ /s/) {
@@ -1607,8 +1651,37 @@ sub mediafolderQuery {
 	# url overrides any folderId
 	my $params = ();
 	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
-	
-	my ($topLevelObj, $items, $count, $topPath);
+
+	my ($topLevelObj, $items, $count, $topPath, $realName);
+				
+	my $filter = sub {
+		my ($filename, $topPath) = @_;
+		
+		my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || '';
+
+		# Amazingly, this just works. :)
+		# Do the cheap compare for osName first - so non-windows users
+		# won't take the penalty for the lookup.
+		if (main::ISWINDOWS && Slim::Music::Info::isWinShortcut($url)) {
+			($realName, $url) = Slim::Utils::OS::Win32->getShortcut($url);
+		}
+		
+		elsif (main::ISMAC) {
+			if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($url) ) {
+				$url = $alias;
+			}
+		}
+
+		my $item = Slim::Schema->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1,
+		}) if $url;
+
+		if ( blessed($item) && $item->can('content_type') && (!$params->{typeRegEx} || $filename =~ $params->{typeRegEx}) ) {
+			return $item;
+		}
+	};
 
 	if ( !defined $url && !defined $folderId && scalar(@$mediaDirs) > 1) {
 		
@@ -1642,21 +1715,33 @@ sub mediafolderQuery {
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
-		if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} || 0 }) {
+		if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} }) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
 			$count       = $cachedItem->{count};
+			
+			# bump the timeout on the cache
+			$bmfCache{$params->{url} || $params->{id}} = $cachedItem;
 		}
 		else {
-			($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+			my $files;
+			($topLevelObj, $files, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+
+			$topPath = blessed($topLevelObj) ? $topLevelObj->path : '';
+			
+			$items = [ grep {
+				$filter->($_, $topPath);
+			} @$files ];
+
+			$count = scalar @$items;
 		
 			# cache results in case the same folder is queried again shortly 
 			# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-			$bmfCache{ $params->{url} || $params->{id} || 0 } = {
+			$bmfCache{ $params->{url} || $params->{id} } = {
 				items       => $items,
 				topLevelObj => $topLevelObj,
 				count       => $count,
-			};
+			} if scalar @$items > 100 && ($params->{url} || $params->{id});
 		}
 
 		if ($want_top) {
@@ -1679,39 +1764,17 @@ sub mediafolderQuery {
 
 		my $sth = $sql ? Slim::Schema->dbh->prepare_cached($sql) : undef;
 
-		my $x = -1;
-		for my $filename (@$items) {
+		my $x = $start-1;
+		for my $filename (@$items[$start..$end]) {
 
-			my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || '';
-			my $realName;
-
-			# Amazingly, this just works. :)
-			# Do the cheap compare for osName first - so non-windows users
-			# won't take the penalty for the lookup.
-			if (main::ISWINDOWS && Slim::Music::Info::isWinShortcut($url)) {
-
-				($realName, $url) = Slim::Utils::OS::Win32->getShortcut($url);
-			}
-			
-			elsif (main::ISMAC) {
-				if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($url) ) {
-					$url = $alias;
-				}
-			}
-	
-			my $item;
-			
-			$item = Slim::Schema->objectForUrl({
-				'url'      => $url,
-				'create'   => 1,
-				'readTags' => 1,
-			}) if $url;
-	
 			my $id;
+			$realName = '';
+			my $item = $filter->($filename, $topPath) || '';
 
 			if ( (!blessed($item) || !$item->can('content_type')) 
 				&& (!$params->{typeRegEx} || $filename !~ $params->{typeRegEx}) )
 			{
+				logError("Invalid item found in pre-filtered list - this should not happen! ($topPath -> $filename)");
 				$count--;
 				next;
 			}
@@ -1721,14 +1784,9 @@ sub mediafolderQuery {
 
 			$x++;
 			
-			if ($x < $start) {
-				next;
-			}
-			elsif ($x > $end) {
-				last;
-			}
-
 			$id += 0;
+
+			my $url = $item->url;
 			
 			$realName ||= Slim::Music::Info::fileName($url);
 
@@ -3286,7 +3344,7 @@ sub statusQuery {
 		
 		if ( $menuMode ) {
 			# Set required tags for menuMode
-			$tags = 'aAlKNcx';
+			$tags = 'aAlKNcxJ';
 		}
 		else {
 			$tags = 'gald' if !defined $tags;
@@ -4038,7 +4096,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'aAlKNcx',			# tags needed for our entities
+		'aAlKNcxJ',			# tags needed for our entities
 	);
 	
 	my $isRemote = $songData->{remote};
@@ -4090,13 +4148,13 @@ sub _addJiveSong {
 	$text .= "\n" . $secondLine;
 
 	# Bug 7443, check for a track cover before using the album cover
-	my $iconId = $songData->{coverid};
+	my $iconId = $songData->{coverid} || $songData->{artwork_track_id};
 	
 	if ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', proxiedImage($songData->{artwork_url}) );
 	}
 	elsif ( defined $iconId ) {
-		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+		$request->addResultLoop($loop, $count, 'icon-id', proxiedImage($iconId));
 	}
 	elsif ( $isRemote ) {
 		# send radio placeholder art for remote tracks with no art

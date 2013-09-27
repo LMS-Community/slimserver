@@ -1,44 +1,62 @@
+[% extJsScripts = BLOCK %]
+	<script type="text/javascript">
+		Ext.onReady(function(){ 
+			new SqueezeJS.UI.Sortable({
+				el: 'podcasts_draggable',
+				selector: 'table#podcasts_draggable tr.podcast_draggable'
+			});
+		});
+	</script>
+[% END %]
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_PODCAST"%]
 		 [% "PODCAST_GROUP_DESC" | string %]
 	[% END %]
 
+	<style>
+		.podcasts td { padding-top: 5px; }
+		.podcasts .firstColumn { padding-bottom: 15px; }
+	</style>
+
 	<div class="settingSection">
 
-	<table border="0">
+	<table border="0" class="podcasts" id="podcasts_draggable">
 
 		<tr>
-			<td class="firstColumn"><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]</label></td>
-			<td colspan="2"><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
-		</tr>
-
-		<tr>
-			<td>
-				<label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label>
+			<td class="firstColumn prefHead">
+				[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]
 			</td>
 			<td colspan="2">
-				[% "DELETE" | string %]
+				<input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" />
 			</td>
 		</tr>
 
-	[% FOREACH pref = prefs %]
-
 		<tr>
-
-			<td><label for="feeds" class="stdlabel">[% pref.1 %]</label></td>
-
-			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
-
-			<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
-
+			<td class="prefHead">
+				[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]
+			</td>
+			<td>
+				[% "DELETE" | string %]
+			</td>
+			<td>&nbsp;</td>
 		</tr>
 
-	[% END %]
+		[% FOREACH pref = prefs %]
+		<tr class="podcast_draggable">
+			<input name="feedorder" type="hidden" value="[% loop.index %]">
+			<td>[% pref.1 %]</label></td>
+			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
+			<td><div>[% pref.0 %]</div></td>
+		</tr>
+		[% END %]
 
 	</table>
 
-	<input name="reset" type="submit" class="stdclick" value="[% "SETUP_PLUGIN_PODCAST_RESET" | string %]">
-
 	</div>
+	
+	[% WRAPPER setting title="PLUGIN_PODCAST_IMPORT" desc="" %]
+		<input type="submit" name="importFromMySB" value="[% "PLUGIN_PODCAST_IMPORT_FROM_MYSB" | string %]" />
+	[% END %]
+	
 [% PROCESS settings/footer.html %]

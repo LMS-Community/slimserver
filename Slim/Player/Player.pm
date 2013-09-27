@@ -646,7 +646,7 @@ sub currentSongLines {
 		};
 		
 		if ( $imgKey ) {
-			$jive->{$imgKey} = $artwork;
+			$jive->{$imgKey} = Slim::Web::ImageProxy::proxiedImage($artwork);
 		}
 	}
 
@@ -1125,7 +1125,11 @@ sub _buffering {
 
 			$client->showBriefly( {
 				line => [ $line1, $line2 ],
-				jive => { type => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} },
+				jive => { 
+					type => 'popupplay', 
+					text => [ $failedString ], 
+					'icon-id' => Slim::Web::ImageProxy::proxiedImage($args->{'cover'})
+				},
 				cli  => undef,
 			}, { duration => 2 } );
 		}

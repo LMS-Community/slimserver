@@ -83,8 +83,7 @@ sub initPlugin {
 
 	# add 3rd party plugins which wish to be in the apps menu to nonSNApps list
 	if ($class->can('menu') && $class->menu && $class->menu eq 'apps' && $class =~ /^Plugins::/) {
-		$nonSNApps ||= [];
-		push @$nonSNApps, $class;
+		$class->addNonSNApp();
 	}
 }
 
@@ -134,6 +133,13 @@ sub getWeights { $WEIGHTS }
 sub addWeight {
 	my ($class, $name, $weight) = @_;
 	$WEIGHTS->{$name} = $weight if $name && $weight;
+}
+
+sub addNonSNApp {
+	my $class = shift;
+	
+	$nonSNApps ||= [];
+	push @$nonSNApps, $class;
 }
 
 sub nonSNApps {

@@ -60,8 +60,7 @@ sub _gotRadio {
 
 my $retry = 5;
 sub _gotRadioError {
-	my $http  = shift;
-	my $error = $http->error;
+	my $error = shift;
 	
 	$log->error( "Unable to retrieve radio directory from SN: $error" );
 	

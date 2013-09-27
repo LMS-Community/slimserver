@@ -63,8 +63,7 @@ sub getImage {
 	if ( !$url ) {
 		main::INFOLOG && $log->info("Artwork ID not found, returning 404");
 
-		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-		_artworkError( $client, $params, $body, 404, $callback, @args );
+		_artworkError( $client, $params, $spec, 404, $callback, @args );
 		return;
 	}
 	
@@ -88,19 +87,25 @@ sub getImage {
 		args     => \@args,
 	};
 	
-	# no need to do the http request if we're already fetching it
-	return if scalar @{ $queue{$url} } > 1;
-	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_gotArtwork,
-		\&_gotArtworkError,
-		{
-			timeout  => 15,
-			cache    => 1,
-		},
-	);
-	
-	$http->get( $url );
+	if ( $url =~ /^file:/ ) {
+		my $path = Slim::Utils::Misc::pathFromFileURL($url);
+		_resizeFromFile($url, $path);
+	}
+	elsif ( $url =~ /^https?:/ ) {
+		# no need to do the http request if we're already fetching it
+		return if scalar @{ $queue{$url} } > 1;
+		
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			\&_gotArtwork,
+			\&_gotArtworkError,
+			{
+				timeout  => 30,
+				cache    => 1,
+			},
+		);
+		
+		$http->get( $url );
+	}
 }
 
 sub _gotArtwork {
@@ -116,6 +121,34 @@ sub _gotArtwork {
 	File::Slurp::write_file($fullpath, $http->contentRef);
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Received artwork of type ' . $ct . ' and ' . $http->headers->content_length . ' bytes length' );
+
+	_resizeFromFile($url, $fullpath);
+
+	unlink $fullpath;
+}
+
+sub _gotArtworkError {
+	my $http     = shift;
+	my $url  = $http->url;
+
+	# File does not exist, return 404
+	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
+
+	while ( my $item = shift @{ $queue{$url} }) {
+		my $client   = $item->{client};
+		my $spec     = $item->{spec};
+		my $args     = $item->{args};
+		my $params   = $item->{params};
+		my $callback = $item->{callback};
+	
+		_artworkError( $client, $params, $spec, 404, $callback, @$args );
+	}
+	
+	delete $queue{$url};
+}
+
+sub _resizeFromFile {
+	my ($url, $fullpath) = @_;
 
  	$cache ||= Slim::Web::ImageProxy::Cache->new();
 
@@ -146,7 +179,7 @@ sub _gotArtwork {
 				main::INFOLOG && $log->info("  Resize failed, returning 500");
 				$log->error("Artwork resize for $cachekey failed");
 				
-				_artworkError( $client, $params, \'', 500, $callback, @$args );
+				_artworkError( $client, $params, $spec, 500, $callback, @$args );
 				return;
 			}
 		
@@ -155,42 +188,32 @@ sub _gotArtwork {
 	}
 	
 	delete $queue{$url};
-
-	unlink $fullpath;
-}
-
-sub _gotArtworkError {
-	my $http     = shift;
-	my $url  = $http->url;
-
-	# File does not exist, return 404
-	main::INFOLOG && $log->info("Artwork not found, returning 404: " . $http->url);
-
-	# XXX - process the full queue
-	while ( my $item = shift @{ $queue{$url} }) {
-		my $client   = $item->{client};
-		my $args     = $item->{args};
-		my $params   = $item->{params};
-		my $callback = $item->{callback};
-	
-		my $body = Slim::Web::HTTP::filltemplatefile('html/errors/404.html', $params);
-		_artworkError( $client, $params, $body, 404, $callback, @$args );
-	}
-	
-	delete $queue{$url};
 }
 
 sub _artworkError {
-	my ($client, $params, $body, $code, $callback, @args) = @_;
+	my ($client, $params, $spec, $code, $callback, @args) = @_;
 
 	my $response = $args[1];
 
-	$response->code($code);
-	$response->content_type('text/html');
+	my ($width, $height, $mode, $bgcolor, $ext) = Slim::Web::Graphics->parseSpec($spec);
+	
+	require Slim::Utils::GDResizer;
+	my ($res, $format) = Slim::Utils::GDResizer->resize(
+		file   => Slim::Web::HTTP::fixHttpPath($params->{'skinOverride'} || $prefs->get('skin'), 'html/images/radio.png'),
+		width  => $width,
+		height => $height,
+		mode   => $mode,
+	);
+
+	my $ct = 'image/' . $format;
+	$ct =~ s/jpg/jpeg/;
+
+	$response->content_type($ct);
+#	$response->code($code);
 	$response->expires( time() - 1 );
 	$response->header( 'Cache-Control' => 'no-cache' );
-		
-	$callback->( $client, $params, $body, @args );
+	
+	$callback->( $client, $params, $res, @args );
 }
 
 # Return a proxied image URL if
@@ -299,15 +322,6 @@ sub new {
 
 	if ( !$cache ) {
 		$cache = $class->SUPER::new($root, 'imgproxy', 86400*30);
-
-		# Set highmem params for the artwork cache
-		if ( $prefs->get('dbhighmem') ) {
-			$cache->pragma('cache_size = 20000');
-			$cache->pragma('temp_store = MEMORY');
-		}
-		else {
-			$cache->pragma('cache_size = 300');
-		}
 
 		if ( !main::SCANNER ) {
 			# start purge routine in a few seconds

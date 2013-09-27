@@ -266,7 +266,7 @@ my @mapAttributes = (
 	{key => 'duration', args => ['LENGTH'],
 		func => sub {
 			my ($value, @args) = @_;
-			return sprintf('%s: %s:%02s', int($value / 60), $value % 60);
+			return sprintf('%s: %s:%02s', $args[0], int($value / 60), $value % 60);
 		},
 	},
 	{key => 'listeners', args => ['NUMBER_OF_LISTENERS'],},		# Shoutcast
@@ -692,6 +692,7 @@ sub _cliQuery_done {
 						ct      => $subFeed->{'mime'},
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
+						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'),
 					} );
 				
 					$client->execute([ 'playlist', $method, $url ]);
@@ -730,6 +731,7 @@ sub _cliQuery_done {
 						ct      => $item->{'mime'},
 						secs    => $item->{'duration'},
 						bitrate => $item->{'bitrate'},
+						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'),
 					} );
 					
 					main::idleStreams();
@@ -1017,6 +1019,22 @@ sub _cliQuery_done {
 						}
 					}
 					
+					my $isPlayable = (
+						   $item->{play} 
+						|| $item->{playlist} 
+						|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
+					);
+			
+					# keep track of station icons
+					if ( 
+						$isPlayable 
+						&& $item->{url} =~ /^http/ 
+						&& $item->{url} !~ m|\.com/api/\w+/v1/opml| 
+						&& (my $cover = ($item->{image} || $item->{cover})) 
+						&& !Slim::Utils::Cache->new->get("remote_image_" . $item->{url})
+					) {
+						$cache->set("remote_image_" . $item->{url}, $cover, 86400);
+					}
 					
 					if ($menuMode) {
 						my %hash;
@@ -1084,7 +1102,7 @@ sub _cliQuery_done {
 						elsif (my $playcontrol = $item->{'playcontrol'}) {
 							if    ($playcontrol eq 'play')   {$hash{'style'} = 'item_play';}
 							elsif ($playcontrol eq 'add')    {$hash{'style'} = 'item_add';}
-							elsif ($playcontrol eq 'insert') {$hash{'style'} = 'item_insert';}
+							elsif ($playcontrol eq 'insert' && $client->revision !~ /^7\.[0-7]/) {$hash{'style'} = 'item_insert';}
 						}
 						
 						my $itemText = $nameOrTitle;
@@ -1092,17 +1110,11 @@ sub _cliQuery_done {
 							$itemText .= "\n" . $item->{'name2'};
 							$windowStyle = 'icon_list' if !$windowStyle;
 						}
-						elsif ( $item->{line2} ) {
+						elsif ( my $line2 = $item->{line2} || $item->{subtext} ) { # subtext is returned by TuneIn's OPML
 							$windowStyle = 'icon_list';
-							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $item->{line2};
+							$itemText = ( $item->{line1} || $nameOrTitle ) . "\n" . $line2;
 						}
 						$hash{'text'} = $itemText;
-						
-						my $isPlayable = (
-							   $item->{play} 
-							|| $item->{playlist} 
-							|| ($item->{type} && ($item->{type} eq 'audio' || $item->{type} eq 'playlist'))
-						);
 						
 						if ($isPlayable) {
 							my $presetParams = _favoritesParams($item);
@@ -1136,7 +1148,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 						if (my $coverid = $item->{'artwork_track_id'}) {
-							$hash{'icon-id'} = $coverid;
+							$hash{'icon-id'} = proxiedImage($coverid);
 							$hasImage = 1;
 						}
 
@@ -1314,11 +1326,13 @@ sub _cliQuery_done {
 							}
 							$hash{'actions'} = $actions;
 							
-							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow', 'icon-id') {
+							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow') {
 								if ( $item->{jive}->{$key} ) {
 									$hash{$key} = $item->{jive}->{$key};
 								}
 							}
+							
+							$hash{'icon-id'} = proxiedImage($item->{jive}->{'icon-id'}) if $item->{jive}->{'icon-id'};
 						}
 						
 						if (exists $hash{'actions'} && scalar keys %{$hash{'actions'}}) {
@@ -1770,6 +1784,8 @@ sub _playlistControlContextMenu {
 	my $item    = $args->{'item'};
 
 	my @contextMenu;
+
+	my $canIcons = $request && $request->client && ($request->client->revision !~ /^7\.[0-7]/);
 	
 	# We only add playlist-control items for an item which is playable
 	if (hasAudio($item)) {
@@ -1808,7 +1824,7 @@ sub _playlistControlContextMenu {
 		if ($action = _makePlayAction($subFeed, $item, 'insert', 'parentNoRefresh', $query, $mode, $item_id)) {
 			push @contextMenu, {
 				text => $request->string('PLAY_NEXT'),
-				style => 'item_insert',
+				style => $canIcons ? 'item_insert' : 'itemNoAction',
 				actions => {go => $action},
 			},
 		}
@@ -1824,7 +1840,7 @@ sub _playlistControlContextMenu {
 		if ($addPlayAll && ($action = _makePlayAction($subFeed, $item, 'playall', 'nowPlaying', $query, $mode, $request->getParam('item_id'), $sub_id))) {
 			push @contextMenu, {
 				text => $request->string('JIVE_PLAY_ALL_SONGS'),
-				style => 'item_playall',
+				style => $canIcons ? 'item_playall' : 'itemNoAction',
 				actions => {go => $action},
 			},
 		}
@@ -1866,7 +1882,7 @@ sub _playlistControlContextMenu {
 	
 		push @contextMenu, {
 			text => $request->string($token),
-			style => 'item_fav',
+			style => $canIcons ? 'item_fav' : 'itemNoAction',
 			actions => $favoriteActions,
 		};
 	}

@@ -620,6 +620,7 @@ sub handleFeed {
 				ct      => $streamItem->{'mime'},
 				secs    => $streamItem->{'duration'},
 				bitrate => $streamItem->{'bitrate'},
+				cover   => $streamItem->{'image'} || $streamItem->{'cover'},
 			} );
 		
 			$client->execute([ 'playlist', $action, $url ]);
@@ -658,6 +659,7 @@ sub handleFeed {
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
+				cover   => $item->{'image'} || $item->{'cover'},
 			} );
 			
 			main::idleStreams();
@@ -784,6 +786,17 @@ sub handleFeed {
 					$_->{'showYear'}   = 1 if ($prefs->get('showYear')   && $_->{'year'});
 					$_->{'showArtist'} = 1 if ($prefs->get('showArtist') && $_->{'artist'});
 				}
+			}
+			
+			# keep track of station icons
+			if ( 
+				( $_->{play} || $_->{playlist} || ($_->{type} && ($_->{type} eq 'audio' || $_->{type} eq 'playlist')) )
+				&& $_->{url} =~ /^http/ 
+				&& $_->{url} !~ m|\.com/api/\w+/v1/opml| 
+				&& ( my $cover = $_->{image} || $_->{cover} )
+				&& !Slim::Utils::Cache->new->get("remote_image_" . $_->{url})
+			) {
+				$cache->set("remote_image_" . $_->{url}, $cover, 86400);
 			}
 		}
 

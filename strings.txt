@@ -5504,6 +5504,14 @@ SETUP_REPLAYGAINMODE_DESC
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
 	SV	Vissa ljudspår innehåller volymjusteringar (Replay Gain), information som kan användas för att få alla spår och album att spelas upp med samma volym Om det finns sådan här information kan spelaren använda den. Volymutjämning av spår (Track Gain) kan användas för att se till att alla spår har samma volym. Volymutjämning av album kan användas för att se till att alla album har samma volym utan att volymskillnader mellan olika låtar på ett album ändras. Smart volymutjämning innebär att ser till att volymutjämningen av album används när låtar som spelas upp efter varandra kommer från samma album, medan volymutjämningen av spår används med blandade spellistor.
 
+SETUP_REPLAYGAIN_REMOTE
+	DE	Anpassung für Internet-Streams
+	EN	Default adjustment for remote streams
+	
+SETUP_REPLAYGAIN_REMOTE_DESC
+	DE	Internet Streaming Dienst haben stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
+	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
+
 REPLAYGAIN_DISABLED
 	CS	Žádné nastavení hlasitosti
 	DA	Ingen lydstyrkeregulering
@@ -18890,6 +18898,10 @@ SETUP_PRECACHEARTWORK_DISABLED
 	RU	Не кэшировать обложки предварительно
 	SV	Cachelagra inte albumomslag
 
+SETUP_PRECACHEARTWORK_CUSTOM_SPECS
+	DE	Spezifikationen für Zwischenspeicherung
+	EN	Custom pre-caching specifications
+	
 SETUP_IMAGEPROXY
 	DE	Plattenhüllen Grössenanpassung
 	EN	Artwork resizing
@@ -23964,3 +23976,17 @@ SETUP_DEFEAT_DESTRUCTIVE_TTP_4
 	DE	Nachfragen, wenn die Wiedergabe läuft, und aktuell keine Radiostation wiedergegeben wird
 	EN	Defeat only if playing and current item is not a radio stream
 	
+ON_MYSB
+	CS	Na mysqueezebox.com
+	DA	På mysqueezebox.com
+	DE	Auf mysqueezebox.com
+	EN	On mysqueezebox.com
+	ES	En mysqueezebox.com
+	FI	Sivustolla mysqueezebox.com
+	FR	Sur mysqueezebox.com
+	IT	Su mysqueezebox.com
+	NL	Op mysqueezebox.com
+	NO	På mysqueezebox.com
+	PL	W witrynie mysqueezebox.com
+	RU	На mysqueezebox.com
+	SV	På mysqueezebox.com

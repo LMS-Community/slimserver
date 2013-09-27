@@ -30,6 +30,7 @@ use Tie::Cache::LRU;
 use Slim::Formats;
 use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -476,6 +477,10 @@ sub setRemoteMetadata {
 		$currentBitrates{$url} = $track->prettyBitRate;
 	}
 	
+	if ( $meta->{cover} && $url =~ m|^http| ) {
+		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, 'never');
+	}
+	
 	return $track;
 }
 
@@ -788,7 +793,12 @@ sub displayText {
 		$cache->{$format} = $text;
 	}
 
-	$client ? $client->musicInfoTextCache($cache) : $musicInfoTextCache = $cache;
+	if ($client) {
+		$client->musicInfoTextCache($cache);
+	}
+	else {
+		$musicInfoTextCache = $cache;
+	}
 
 	return $text;
 }

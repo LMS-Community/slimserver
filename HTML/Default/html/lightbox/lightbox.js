@@ -149,13 +149,13 @@ Ext.ux.Lightbox = (function(){
 
                     var index = 0;
                     if(!group) {
-                        images.push([image.href, image.title]);
+                        images.push([image.href, image.title || image.text]);
                     }
                     else {
                         var setItems = slideWindow ? slideWindow.Ext.query(sel) : Ext.query(sel);
                         Ext.each(setItems, function(item) {
                             if(item.href) {
-                                images.push([item.href, item.title]);
+                                images.push([item.href, item.title || item.text]);
                             }
                         });
 
@@ -290,7 +290,7 @@ Ext.ux.Lightbox = (function(){
             var detailsWidth = els.data.getWidth(true) - els.navClose.getWidth() - 10;
             els.details.setWidth((detailsWidth > 0 ? detailsWidth : 0) + 'px');
             
-            els.caption.update(images[activeImage][1]);
+            els.caption.update('<a href="' + images[activeImage][0] + '" target="_blank">' + images[activeImage][1] + '</a>');
 
             els.caption.show();
             if (images.length > 1) {

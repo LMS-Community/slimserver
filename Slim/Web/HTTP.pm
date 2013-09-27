@@ -806,8 +806,14 @@ sub processURL {
 		$client = Slim::Player::Client::getClient($params->{"player"});
 		
 		if ( blessed($client) ) {
-			# Update the client's last activity time, since they did something through the web
-			$client->lastActivityTime( Time::HiRes::time() );
+			if ( $path =~ m|plugins/UPnP/|i ) {
+				# Bug 18053 - we're ignoring upnp requests, as these aren't our clients being active but whatever else
+				main::DEBUGLOG && $log->is_debug && $log->debug("Don't update the client's lastActivityTime - this is a UPnP request. ($path)");
+			}
+			else {
+				# Update the client's last activity time, since they did something through the web
+				$client->lastActivityTime( Time::HiRes::time() );
+			}
 		}
 	}
 

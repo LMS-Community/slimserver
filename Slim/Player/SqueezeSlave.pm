@@ -27,9 +27,12 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'replayGainMode'     => 0,
+	'remoteReplayGain'   => -5,
 	'minSyncAdjust'      => 30, # ms
 	'maxBitrate'         => 0,  # no bitrate limiting
 };
+
+$prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
 
 sub initPrefs {
 	my $client = shift;

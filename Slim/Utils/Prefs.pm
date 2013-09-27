@@ -209,6 +209,7 @@ sub init {
 		'serverPriority'        => '',
 		'scannerPriority'       => 0,
 		'precacheArtwork'       => 1,
+		'customArtSpecs'        => {},
 		'maxPlaylistLength'     => 500,
 		# Server Settings - Security
 		'filterHosts'           => 0,
