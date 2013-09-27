@@ -27,12 +27,6 @@ my $cache;
 sub init {
 	# Get cache for artwork
 	$cache = Slim::Utils::ArtworkCache->new();
-	
-	# Set highmem params for the artwork cache
-	if ( $prefs->get('dbhighmem') ) {
-		$cache->pragma('cache_size = 20000');
-		$cache->pragma('temp_store = MEMORY');
-	}
 
 	Slim::Web::ImageProxy->init();
 
