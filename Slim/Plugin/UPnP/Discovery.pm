@@ -480,7 +480,9 @@ sub _advertise {
 			my $local_addr;
 			for my $a ( keys %SOCKS ) {
 				if ( exists $CIDR{$a} && Network::IPv4Addr::ipv4_in_network($CIDR{$a}, $dest->{addr}) ) {
-					$local_addr = $a;
+					if ( $a ne '0.0.0.0' ) {
+						$local_addr = $a;
+					}
 					last;
 				}
 			}
