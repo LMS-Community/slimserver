@@ -66,46 +66,53 @@ sub getImage {
 		_artworkError( $client, $params, $spec, 404, $callback, @args );
 		return;
 	}
+
+	my $handleProxiedUrl = sub {
+		my $url = shift;
+		
+		main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
+		
+		$queue{$url} ||= [];
+		
+		# we're going to queue up requests, so we don't need to download 
+		# the same file multiple times due to a race condition
+		push @{ $queue{$url} }, {
+			client   => $client,
+			cachekey => $path,
+			params   => $params,
+			callback => $callback,
+			spec     => $spec,
+			args     => \@args,
+		};
+		
+		if ( $url =~ /^file:/ ) {
+			my $path = Slim::Utils::Misc::pathFromFileURL($url);
+			_resizeFromFile($url, $path);
+		}
+		elsif ( $url =~ /^https?:/ ) {
+			# no need to do the http request if we're already fetching it
+			return if scalar @{ $queue{$url} } > 1;
+			
+			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+				\&_gotArtwork,
+				\&_gotArtworkError,
+				{
+					timeout  => 30,
+					cache    => 1,
+				},
+			);
+			
+			$http->get( $url );
+		}
+	};
 	
 	# some plugin might have registered to deal with this image URL
 	if ( my $handler = $class->getHandlerFor($url) ) {
-		$url = $handler->($url, $spec);
+		$url = $handler->($url, $spec, $handleProxiedUrl);
+		return unless defined $url;
 	}
 	
-	main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
-	
-	$queue{$url} ||= [];
-	
-	# we're going to queue up requests, so we don't need to download 
-	# the same file multiple times due to a race condition
-	push @{ $queue{$url} }, {
-		client   => $client,
-		cachekey => $path,
-		params   => $params,
-		callback => $callback,
-		spec     => $spec,
-		args     => \@args,
-	};
-	
-	if ( $url =~ /^file:/ ) {
-		my $path = Slim::Utils::Misc::pathFromFileURL($url);
-		_resizeFromFile($url, $path);
-	}
-	elsif ( $url =~ /^https?:/ ) {
-		# no need to do the http request if we're already fetching it
-		return if scalar @{ $queue{$url} } > 1;
-		
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			\&_gotArtwork,
-			\&_gotArtworkError,
-			{
-				timeout  => 30,
-				cache    => 1,
-			},
-		);
-		
-		$http->get( $url );
-	}
+	$handleProxiedUrl->($url);
 }
 
 sub _gotArtwork {
