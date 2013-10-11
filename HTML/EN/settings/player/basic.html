@@ -47,7 +47,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 	[% END %]
 
 
-	[% IF prefs.pref_titleFormat; WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
+	[% IF prefs.pref_titleFormat; WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_PLAYER_TITLEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_titleFormat %]
 			<div>
 				<input type=radio [% IF prefs.pref_titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="pref_titleFormatCurr" class="stdedit">
