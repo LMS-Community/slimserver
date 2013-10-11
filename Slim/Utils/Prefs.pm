@@ -925,6 +925,10 @@ sub init {
 			$prefs->setChange( sub {
 				Slim::Schema->wipeCaches();
 			}, 'variousArtistAutoIdentification', 'composerInArtists', 'conductorInArtists', 'bandInArtists');
+
+			$prefs->setChange( sub {
+				Slim::Control::Queries->wipeCaches();
+			}, 'browseagelimit');
 		}
 	}
 
