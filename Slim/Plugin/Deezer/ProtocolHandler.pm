@@ -316,10 +316,15 @@ sub _getTrack {
 	my $song   = $params->{song};
 	my $client = $song->master();
 	
-	return if $song->pluginData('abandonSong');
-	
 	# Get track URL for the next track
 	my ($trackId) = $params->{url} =~ m{deezer://(.+)\.mp3};
+	
+	my $error;
+	if ( $song->pluginData('abandonSong') || ($error = Slim::Utils::Cache->new->get('deezer_ignore_' . $trackId)) ) {
+		$log->warn('Ignoring track, as it is known to be invalid: ' . $trackId);
+		_gotTrackError($error || 'Invalid track ID', $client, $params);
+		return;
+	}
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
@@ -648,7 +653,7 @@ sub _gotBulkMetadata {
 	# see whether some tracks didn't get any data back
 	$trackIds = [ keys %trackIds ];
 	if ( scalar @$trackIds ) {
-		_invalidateTracks($client, $trackIds);
+		_invalidateTracks($client, $trackIds, 'no data');
 	}
 	
 	# Update the playlist time so the web will refresh, etc
@@ -670,7 +675,7 @@ sub _gotBulkMetadataError {
 }
 
 sub _invalidateTracks {
-	my ($client, $trackIds) = @_;
+	my ($client, $trackIds, $banForGood) = @_;
 	
 	return unless $trackIds && ref $trackIds eq 'ARRAY';
 	
@@ -688,7 +693,10 @@ sub _invalidateTracks {
 			cover     => $icon,
 		},
 		3600);
-	}	
+		
+		# don't even try again for a while if we hit an invalid track ID
+		$cache->set('deezer_ignore_' . $_, $banForGood, 86400 * 7) if $banForGood;
+	}
 }
 
 sub getIcon {
