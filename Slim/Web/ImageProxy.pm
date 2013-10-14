@@ -40,8 +40,15 @@ sub getImage {
 
 	# check the cache for this url
  	$cache ||= Slim::Web::ImageProxy::Cache->new();
+ 	
+ 	my $path2;
 
-	if ( my $cached = $cache->get($path) ) {
+	# some clients require the .png ending, but we don't store it in the cache - try them both 	
+ 	if ($path =~ /(.*)\.png$/) {
+		$path2 = $1;
+ 	}
+
+	if ( my $cached = $cache->get($path) || ($path2 && $cache->get($path2)) ) {
 		my $ct = 'image/' . $cached->{content_type};
 		$ct =~ s/jpg/jpeg/;
 
