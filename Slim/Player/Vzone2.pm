@@ -85,7 +85,7 @@ our $player_features = {
 	'minPitch'						=> 100,
 	'model'							=> 'Vzone2',
 	'modelName'						=> 'Vzone', 
-	'formats'						=> qw(aac ogg flc mp3 pcm),
+	'formats'						=> [ "aac", "ogg", "flc", "mp3" ],
 	'canDirectStream'				=> undef,
 	'canLoop'						=> 0,
 	'pcm_sample_rates'				=> undef,
@@ -220,20 +220,16 @@ sub modelName {
 
 sub formats {
 	my $client = shift;
-	#not sure if this code here is working
-	#my $m = $client->getFeature('formats');
-	#$testlog->error('**** formats');
-	#$testlog->error('**** formats ['.@$m.']');
-	#$testlog->error('**** formats orig ['.qw(aac ogg flc mp3 pcm).']');
-	#$testlog->error('**** formats');
-	#return $m;
-	
+	my $m = $client->getFeature('formats');
+	$testlog->debug('supported formats ['.Dumper($m).']');
+
 	if ($client->revision == 2) {
 		# VZONE2 Hardware Client Version 2 Only support flc pcm mp3
 		return qw(flc mp3 pcm);
 	} else {
-		# VZONE2 Hardware Client Version 3 and Higher Support ogg aac flc pcm mp3
-		return qw(aac ogg flc mp3 pcm);
+		# VZONE2 Hardware Client Version 3 and Higher supported formats
+		# should be specified by the player_features obtained
+		return @$m;
 	}
 }
 
