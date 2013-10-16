@@ -3,6 +3,8 @@ package Slim::Player::Vzone2;
 # $Id$
 
 # Squeezebox Server Copyright 2001-2009 Logitech.
+# Vzone2 Client File Copyright 2013 The Navvo Group.
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -40,7 +42,7 @@ use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
-my $featuresDB = preferences('vzone', '/tmp/');
+my $featuresDB = preferences('vzone');
 
 my $log       = logger('network.protocol.slimproto');
 my $prefslog  = logger('prefs');
