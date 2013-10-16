@@ -30,6 +30,8 @@ if ( main::SLIM_SERVICE ) {
 use constant SLIMPROTO_PORT   => 3483;
 
 our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
+my %deviceClasses;
+
 my $log       = logger('network.protocol.slimproto');
 my $faclog    = logger('factorytest');
 my $synclog   = logger('player.sync');
@@ -87,6 +89,30 @@ our %message_handlers = (
 	'ALSS' => \&_ambient_light_sensor_handler,
 	'SHUT' => \&_shut_handler,			# slimprox, not to be used by clients.
 );
+
+sub addPlayerClass {
+	my ($self, $id, $name, $classes) = @_;
+	
+	$id ||= 0;
+
+	if ($id < scalar @deviceids) {
+		$log->error("Device ID $id is already reserved: " . $deviceids[$id]);
+		return;
+	}
+	elsif ( !$name || !($classes && $classes->{client} && $classes->{display}) ) {
+		$log->error("Invalid player class definition: " . Data::Dump::dump($name, $classes));
+		return;
+	}
+	elsif (grep /$name/, @deviceids) {
+		$log->error("Device ID $name already exists!");
+		return;
+	}
+	
+	$deviceids[$id] = $name;
+	$deviceClasses{$id} = $classes;
+	
+	main::DEBUGLOG && $log->is_debug && $log->debug("Registered player ID $name ($id)");
+}
 
 sub addHandler {
 	my $op = shift;
@@ -1132,6 +1158,11 @@ sub _hello_handler {
 
 		$client_class  = 'Slim::Player::SqueezePlay';
 		$display_class = 'Slim::Display::NoDisplay';
+
+	} elsif (my $classes = $deviceClasses{$deviceid}) {
+		
+		$client_class  = $classes->{client};
+		$display_class = $classes->{display};
 
 	} else {
 
