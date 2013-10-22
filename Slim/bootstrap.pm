@@ -115,7 +115,9 @@ sub loadModules {
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
-		$arch = 'arm-linux-gnueabi-thread-multi';
+		$arch = $arch =~ /gnueabihf/ 
+			? 'arm-linux-gnueabihf-thread-multi' 
+			: 'arm-linux-gnueabi-thread-multi';
 		$arch .= '-64int' if $is64bitint;
 	}
 	
