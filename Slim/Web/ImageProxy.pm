@@ -77,6 +77,13 @@ sub getImage {
 	my $handleProxiedUrl = sub {
 		my $url = shift;
 		
+		if ( !$url ) {
+			main::INFOLOG && $log->info("No artwork found, returning 404");
+	
+			_artworkError( $client, $params, $spec, 404, $callback, @args );
+			return;
+		}
+
 		main::DEBUGLOG && $log->debug("Found URL to get artwork: $url");
 		
 		$queue{$url} ||= [];
