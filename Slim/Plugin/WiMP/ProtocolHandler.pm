@@ -24,11 +24,19 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub isRemote { 1 }
 
-sub getFormatForURL { return 'mp3' }
+sub getFormatForURL {
+	my ($class, $url) = @_;
+	
+	my ($trackId, $format) = _getStreamParams( $url );
+	return $format;
+}
 
-# default buffer 3 seconds of 256kbps audio
+# default buffer 3 seconds of 256kbps MP3/768kbps FLAC audio
 sub bufferThreshold {
-	return 32 * ($prefs->get('bufferSecs') || 3); 
+	my ($client, $url) = @_;
+	
+	my ($trackId, $format) = _getStreamParams( $url );
+	return ($format eq 'flac' ? 96 : 32) * ($prefs->get('bufferSecs') || 3); 
 }
 
 sub canSeek { 1 }
@@ -42,6 +50,7 @@ sub new {
 	
 	my $song      = $args->{song};
 	my $streamUrl = $song->streamUrl() || return;
+	my ($trackId, $format) = _getStreamParams( $args->{url} || '' );
 	
 	main::DEBUGLOG && $log->debug( 'Remote streaming WiMP track: ' . $streamUrl );
 
@@ -49,10 +58,10 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 256_000,
+		bitrate => $format eq 'flac' ? 800_00 : 256_000,
 	} ) || return;
 	
-	${*$sock}{contentType} = 'audio/mpeg';
+	${*$sock}{contentType} = $format eq 'flac' ? 'audio/flac' : 'audio/mpeg';
 
 	return $sock;
 }
@@ -204,7 +213,7 @@ sub _getTrack {
 		},
 	);
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Getting next track playback info from SN for ' . $params->{url});
 	
 	$http->get(
 		Slim::Networking::SqueezeNetwork->url(
@@ -235,7 +244,7 @@ sub _gotTrack {
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
 		bitrate   => $info->{bitrate} . 'k CBR',
-		type      => 'MP3',
+		type      => $params->{url} =~ /\.flac/ ? 'FLAC' : 'MP3',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
 	};
@@ -336,13 +345,14 @@ sub parseHeaders {
 
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
-	
-	my $bitrate = 256_000;
+
+	my $isFlac  = grep m{Content.*audio/(?:x-|)flac}i, @headers;
+	my $bitrate = $isFlac ? 800_000 : 256_000;
 
 	$client->streamingSong->bitrate($bitrate);
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, $bitrate, 0, '', 'mp3');
+	return (undef, $bitrate, 0, '', $isFlac ? 'flc' : 'mp3');
 }
 
 # URL used for CLI trackinfo queries
@@ -486,7 +496,7 @@ sub _gotBulkMetadata {
 		my $meta = {
 			%{$track},
 			bitrate   => $bitrate . 'k CBR',
-			type      => 'MP3',
+			type      => $bitrate*1 > 320 ? 'FLAC' : 'MP3',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
 		};
@@ -559,7 +569,7 @@ sub reinit {
 }
 
 sub _getStreamParams {
-	$_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3)}i;
+	$_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3|flac)}i;
 	return ($1, lc($2 || 'mp3') );
 }
 
