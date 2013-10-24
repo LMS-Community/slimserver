@@ -33,7 +33,9 @@ sub getFormatForURL {
 
 # default buffer 3 seconds of 256kbps MP3/768kbps FLAC audio
 sub bufferThreshold {
-	my ($client, $url) = @_;
+	my ($class, $client, $url) = @_;
+
+	$url = $client->playingSong()->track()->url() unless $url =~ /\.(?:fla?c|mp3)$/;
 	
 	my ($trackId, $format) = _getStreamParams( $url );
 	return ($format eq 'flac' ? 96 : 32) * ($prefs->get('bufferSecs') || 3); 
@@ -243,7 +245,7 @@ sub _gotTrack {
 		title     => $info->{title},
 		cover     => $info->{cover} || $icon,
 		duration  => $info->{duration},
-		bitrate   => $info->{bitrate} . 'k CBR',
+		bitrate   => $params->{url} =~ /\.flac/ ? 'PCM VBR' : ($info->{bitrate} . 'k CBR'),
 		type      => $params->{url} =~ /\.flac/ ? 'FLAC' : 'MP3',
 		info_link => 'plugins/wimp/trackinfo.html',
 		icon      => $icon,
@@ -497,7 +499,7 @@ sub _gotBulkMetadata {
 		
 		my $meta = {
 			%{$track},
-			bitrate   => $bitrate . 'k CBR',
+			bitrate   => $bitrate*1 > 320 ? 'PCM VBR ' : ($bitrate . 'k CBR'),
 			type      => $bitrate*1 > 320 ? 'FLAC' : 'MP3',
 			info_link => 'plugins/wimp/trackinfo.html',
 			icon      => $icon,
