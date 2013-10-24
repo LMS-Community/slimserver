@@ -346,6 +346,8 @@ sub parseHeaders {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
+	
 	my $isFlac  = grep m{Content.*audio/(?:x-|)flac}i, @headers;
 	my $bitrate = $isFlac ? 800_000 : 256_000;
 
