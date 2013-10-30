@@ -325,7 +325,11 @@ sub webPages {
 	my $title = $class->getDisplayName();
 	my $url   = 'plugins/' . $class->tag() . '/index.html';
 	
-	Slim::Web::Pages->addPageLinks( $class->menu(), { $title => $url } );
+	# default location for plugins is 'plugins' in the web UI, but 'extras' in SP...
+	my $menu  = $class->menu();
+	$menu = 'plugins' if $menu eq 'extras';
+	
+	Slim::Web::Pages->addPageLinks( $menu, { $title => $url } );
 	
 	if ( $class->can('condition') ) {
 		Slim::Web::Pages->addPageCondition( $title, sub { $class->condition(shift); } );
