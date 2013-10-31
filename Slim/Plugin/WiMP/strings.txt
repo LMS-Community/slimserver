@@ -73,3 +73,7 @@ PLUGIN_WIMP_ON_WIMP
 	RU	На WiMP
 	SV	Om WiMP
 
+
+PLUGIN_WIMP_INVALID_TRACK_ID
+	DE	Fehlende oder ungültige ID
+	EN	Missing or invalid track ID
