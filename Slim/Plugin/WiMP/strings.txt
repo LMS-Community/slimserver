@@ -76,3 +76,7 @@ PLUGIN_WIMP_ON_WIMP
 PLUGIN_WIMP_STREAM_FAILED
 	DE	Fehler beim Lesen des Datenstroms
 	EN	Failed to play stream
+
+PLUGIN_WIMP_INVALID_TRACK_ID
+	DE	Fehlende oder ungültige ID
+	EN	Missing or invalid track ID
