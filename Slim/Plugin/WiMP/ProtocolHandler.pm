@@ -171,6 +171,11 @@ sub _getTrack {
 	# Get track URL for the next track
 	my ($trackId, $format) = _getStreamParams( $params->{url} );
 	
+	if (!$trackId) {
+		_gotTrackError( $client->string('PLUGIN_WIMP_INVALID_TRACK_ID'), $client, $params );
+		return;
+	}
+	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
@@ -399,45 +404,46 @@ sub getMetadataFor {
 	
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId, $format) = _getStreamParams( $url );
-	my $meta = $cache->get( 'wimp_meta_' . $trackId );
+	my $meta = $cache->get( 'wimp_meta_' . ($trackId || '') );
 	
 	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
 		# Go fetch metadata for all tracks on the playlist without metadata
-		my @need;
+		my %need;
 		
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
 			if ( my ($id) = _getStreamParams( $trackURL ) ) {
-				if ( !$cache->get("wimp_meta_$id") ) {
-					push @need, $id;
+				if ( $id && !$cache->get("wimp_meta_$id") ) {
+					$need{$id}++;
 				}
 			}
 		}
 		
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
+		if (keys %need) {
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug( "Need to fetch metadata for: " . join( ', ', keys %need ) );
+			}
+			$client->master->pluginData( fetchingMeta => 1 );
+			
+			my $metaUrl = Slim::Networking::SqueezeNetwork->url(
+				"/api/wimp/v1/playback/getBulkMetadata"
+			);
+			
+			my $http = Slim::Networking::SqueezeNetwork->new(
+				\&_gotBulkMetadata,
+				\&_gotBulkMetadataError,
+				{
+					client  => $client,
+					timeout => 60,
+				},
+			);
+	
+			$http->post(
+				$metaUrl,
+				'Content-Type' => 'application/x-www-form-urlencoded',
+				'trackIds=' . join( ',', keys %need ),
+			);
 		}
-		
-		$client->master->pluginData( fetchingMeta => 1 );
-		
-		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
-			"/api/wimp/v1/playback/getBulkMetadata"
-		);
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&_gotBulkMetadata,
-			\&_gotBulkMetadataError,
-			{
-				client  => $client,
-				timeout => 60,
-			},
-		);
-
-		$http->post(
-			$metaUrl,
-			'Content-Type' => 'application/x-www-form-urlencoded',
-			'trackIds=' . join( ',', @need ),
-		);
 	}
 	
 	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
@@ -529,7 +535,7 @@ sub reinit {
 	
 	my $cache     = Slim::Utils::Cache->new;
 	my ($trackId) = _getStreamParams( $url );
-	my $meta      = $cache->get( 'wimp_meta_' . $trackId );
+	my $meta      = $cache->get( 'wimp_meta_' . ($trackId || '') );
 	
 	if ( $meta ) {			
 		# Back to Now Playing
@@ -559,8 +565,9 @@ sub reinit {
 }
 
 sub _getStreamParams {
-	$_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3)}i;
-	return ($1, lc($2 || 'mp3') );
+	if ( $_[0] =~ m{wimp://(.+)\.(m4a|aac|mp3)}i ) {
+		return ($1, lc($2) );
+	}
 }
 
 1;
