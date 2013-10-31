@@ -29,6 +29,7 @@ my $cache;
 
 $prefs->init({
 	feeds => [],
+	skipSecs => 15,
 });
 
 # migrate old prefs across
@@ -57,6 +58,12 @@ sub initPlugin {
 		require Slim::Plugin::Podcast::Settings;
 		Slim::Plugin::Podcast::Settings->new();
 	}
+	
+	# Track Info item: jump back X seconds
+	Slim::Menu::TrackInfo->registerInfoProvider( podcastRew => (
+		before => 'top',
+		func   => \&trackInfoMenu,
+	) );
 
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -155,6 +162,47 @@ sub _trackProgress {
 sub getDisplayName {
 	return 'PLUGIN_PODCAST';
 }
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	return unless $url && $client && $client->isPlaying;
+	
+	my $song = Slim::Player::Source::playingSong($client);
+	return unless $song && $song->canSeek;
+
+	$url =~ s/#slimpodcast.*//;
+
+	if ( $url && defined $cache->get('podcast-' . $url) ) {
+		my $title = $client->string('PLUGIN_PODCAST_SKIP_BACK', $prefs->get('skipSecs'));
+		
+		return [{
+			name => $title,
+			url  => sub {
+				my ($client, $cb, $params) = @_;
+				
+				my $position = Slim::Player::Source::songTime($client);
+				my $newPos   = $position > $prefs->get('skipSecs') ? $position - $prefs->get('skipSecs') : 0;
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Skipping from position %s back to %s", $position, $newPos));
+
+				Slim::Player::Source::gototime($client, $newPos);
+			
+				$cb->({
+					items => [{
+						name        => $title,
+						showBriefly => 1,
+						nowPlaying  => 1, # then return to Now Playing
+					}]
+				});
+			},
+			nextWindow => 'parent',
+		}];
+	}
+	
+	return;
+}
+
 
 # SN only
 # XXX - do we still run this plugin on SN?

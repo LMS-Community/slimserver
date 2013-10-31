@@ -25,6 +25,10 @@ sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('plugins/Podcast/settings/basic.html');
 }
 
+sub prefs {
+	return ($prefs, qw(skipSecs));
+}
+
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
@@ -78,7 +82,7 @@ sub saveSettings {
 	}
 
 	for my $feed ( @{$feeds} ) {
-		push @{ $params->{prefs} }, [ $feed->{value}, $feed->{name} ];
+		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
 	}
 	
 	my $body = $class->SUPER::handler($client, $params);
