@@ -77,7 +77,7 @@ sub getImage {
 	my $handleProxiedUrl = sub {
 		my $url = shift;
 		
-		if ( !$url ) {
+		if ( !$url || $url !~ /^(?:file|https?):/i ) {
 			main::INFOLOG && $log->info("No artwork found, returning 404");
 	
 			_artworkError( $client, $params, $spec, 404, $callback, @args );
