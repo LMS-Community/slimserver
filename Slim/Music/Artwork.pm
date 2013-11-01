@@ -452,7 +452,9 @@ sub precacheAllArtwork {
 		if ( main::SCANNER ) {
 			Slim::Music::Import->endImporter('precacheArtwork');
 		}
-		
+
+		# wipe internal cache
+		%findArtCache = ();		
 		return;
 	}
 
@@ -552,6 +554,9 @@ sub precacheAllArtwork {
 		$log->error( "precacheArtwork finished in " . $progress->duration );
 		
 		$cb && $cb->();
+
+		# wipe internal cache
+		%findArtCache = ();		
 		
 		return 0;
 	};
