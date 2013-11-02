@@ -114,9 +114,6 @@ sub find {
 sub rescan {
 	my ( $class, $paths, $args ) = @_;
 	
-	# get rid of empty entries in our $paths list
-	$paths = [ grep { $_ } @$paths ];
-	
 	# Wipe if requested
 	if ( $args->{wipe} ) {
 		Slim::Schema->wipeAllData;
@@ -135,6 +132,9 @@ sub rescan {
 	if ( ref $paths ne 'ARRAY' ) {
 		$paths = [ $paths ];
 	}
+	
+	# get rid of empty entries in our $paths list
+	$paths = [ grep { $_ } @$paths ];
 	
 	my $next = shift @{$paths};
 	
