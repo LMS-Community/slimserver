@@ -219,7 +219,7 @@ sub browsePlaylists {
 			timeout => 35,
 			args    => $allArgs,
 			title   => 'SAVED_PLAYLISTS',
-			path    => '/clixmlbrowser/clicmd=browselibrary+items&linktitle=SAVED_PLAYLISTS&mode=playlists/',
+			path    => 'clixmlbrowser/clicmd=browselibrary+items&linktitle=SAVED_PLAYLISTS&mode=playlists/',
 		} );
 	};
 
