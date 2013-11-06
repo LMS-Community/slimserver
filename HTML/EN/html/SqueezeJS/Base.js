@@ -23,10 +23,15 @@ function _init() {
 	var p = (window == window.parent ? null : window.parent);
 	while (p) {
 
-		if (p.SqueezeJS && p.SqueezeJS.Controller) {
-			// proxy to parent Controller
-			SqueezeJS.Controller = p.SqueezeJS.Controller;
-			return;
+		try {
+			if (p.SqueezeJS && p.SqueezeJS.Controller) {
+				// proxy to parent Controller
+				SqueezeJS.Controller = p.SqueezeJS.Controller;
+				return;
+			}
+		}
+		catch {
+			break;
 		}
 	
 		if (p == p.parent)
