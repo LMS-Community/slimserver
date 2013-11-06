@@ -29,7 +29,7 @@ function _init() {
 				return;
 			}
 		}
-		catch {
+		catch(e) {
 			break;
 		}
 	
