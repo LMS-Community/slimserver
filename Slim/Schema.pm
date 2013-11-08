@@ -2469,11 +2469,15 @@ sub _preCheckAttributes {
 
 	# Copy the incoming hash, so we don't modify it
 	my $attributes = {};
+	my %mappedValues;
 
 	# Normalize attribute names
 	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+		# don't overwrite mapped values
+		next if $mappedValues{$key};
+
 		if ( my $mappedKey = $tagMapping{lc($key)} ) {
-			$attributes->{ uc($mappedKey) } = $val;
+			$mappedValues{ uc($mappedKey) } = $attributes->{ uc($mappedKey) } = $val;
 		}
 		else {
 			$attributes->{ $key } = $val;
