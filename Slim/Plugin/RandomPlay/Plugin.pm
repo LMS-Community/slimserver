@@ -532,20 +532,42 @@ sub findAndAdd {
 		# all genres, this clause will be ignored by find, so all genres will be used.
 		my $filteredGenres = getFilteredGenres();
 		my $excludedGenres = getFilteredGenres(1);
+		my $skipCondition;
 
 		# Only look for genre tracks if we have some, but not all
 		# genres selected. Or no genres selected.
 		if ((scalar @$filteredGenres > 0 && scalar @$excludedGenres != 0) || 
 		     scalar @$filteredGenres != 0 && scalar @$excludedGenres > 0) {
 
+			my %skipGenres = map { $_ => 1 } @$excludedGenres;
+
 			$find->{'genreTracks.genre'} = { 'in' => $filteredGenres };
 
 			# Pull in the right tables to do our searches
 			if ($type =~ /track|year/) {
 				push @joins, 'genreTracks';
+				
+				if (@$excludedGenres) {
+					$skipCondition = sub {
+						if ( scalar (my @genres = $_[0]->genres) > 1 ) {
+							return grep { $skipGenres{$_->id} } @genres;
+						}
+					}
+				}
 			} 
 			elsif ($type eq 'album') {
 				push @joins, { 'tracks' => 'genreTracks' };
+				
+				if (@$excludedGenres) {
+					$skipCondition = sub {
+						foreach my $track ($_[0]->tracks->all) {
+							if ( scalar (my @genres = $track->genres) > 1 ) {
+								return grep { $skipGenres{$_->id} } @genres;
+							}
+						}
+						return;
+					}
+				}
 			} 
 			elsif ($type eq 'contributor') {
 				push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
@@ -571,15 +593,13 @@ sub findAndAdd {
 				'order_by' => Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction()
 			}
 		);
-
-		# Get ids for all results from find and store in @$idList so they can be used in repeat calls
-		$excludedGenres = (@$excludedGenres && $type eq 'track') ? { map { $_ => 1 } @$excludedGenres } : undef;
 		
+		my %seen;
 		while (my $r = $rs->next) {
+			next if $seen{$r->id}++;
+
 			# skip items which have multiple genres, and where one genre is on the exclusions list
-			if ( $excludedGenres && scalar (my @genres = $r->genres) > 1 ) {
-				next if grep { $excludedGenres->{$_->id} } @genres;
-			}
+			next if $skipCondition && $skipCondition->($r);
 			push @$idList, $r->id;
 		}
 	}
