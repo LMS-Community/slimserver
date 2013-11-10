@@ -573,7 +573,15 @@ sub findAndAdd {
 		);
 
 		# Get ids for all results from find and store in @$idList so they can be used in repeat calls
-		@$idList = $rs->distinct->get_column('me.id')->all;
+		$excludedGenres = @$excludedGenres ? { map { $_ => 1 } @$excludedGenres } : undef;
+		
+		while (my $r = $rs->next) {
+			# skip items which have multiple genres, and where one genre is on the exclusions list
+			if ( $excludedGenres && scalar (my @genres = $r->genres) > 1 ) {
+				next if grep { $excludedGenres->{$_->id} } @genres;
+			}
+			push @$idList, $r->id;
+		}
 	}
 	elsif ($type eq 'year') {
 		$type = 'track';
