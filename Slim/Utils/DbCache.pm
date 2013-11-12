@@ -7,7 +7,6 @@ package Slim::Utils::DbCache;
 
 use strict;
 
-use Cache::BaseCache;
 use DBD::SQLite;
 use Digest::MD5 ();
 use File::Spec::Functions qw(catfile);
@@ -156,7 +155,10 @@ sub _canonicalize_expiration_time {
 	if ( $expiry && $expiry !~ /^[\-]*\d+$/ ) {
 		# Not a number, need to canonicalize it
 		# sometimes this fails on existing code, eg. with 'never'?
-		$expiry = eval { Cache::BaseCache::Canonicalize_Expiration_Time($expiry) };
+		$expiry = eval { 
+			require Cache::BaseCache;
+			Cache::BaseCache::Canonicalize_Expiration_Time($expiry)
+		};
 		
 		if ($@) {
 			require Slim::Utils::Log;
@@ -165,6 +167,9 @@ sub _canonicalize_expiration_time {
 			
 			$expiry = DEFAULT_EXPIRES_TIME;
 		}
+		
+		# Canonicalize_Expiration_Time would return seconds for eg. 3 months - always add current time
+		$expiry += time() if $expiry >= 0;
 	}
 
 	# "If value is less than 60*60*24*30 (30 days), time is assumed to be
