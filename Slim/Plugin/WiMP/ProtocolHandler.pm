@@ -60,7 +60,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => $format eq 'flac' ? 800_00 : 256_000,
+		bitrate => $format eq 'flac' ? 800_000 : 256_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = $format eq 'flac' ? 'audio/flac' : 'audio/mpeg';
