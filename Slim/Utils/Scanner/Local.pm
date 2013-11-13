@@ -920,12 +920,31 @@ sub changed {
 			}
 			
 			my $album = $track->album;
-			
-			# XXX Check for newer cover.jpg here?
 					
 			# Add/replace coverid
 			$track->coverid(undef);
 			$track->cover_cached(undef);
+			
+			# Check for cover.jpg here
+			if ( !$track->cover ) {
+				# store track properties in a hash
+				my %columnValueHash = map { $_ => $track->$_() } keys %{$track->attributes};
+				$columnValueHash{primary_artist} = $columnValueHash{primary_artist}->id if $columnValueHash{primary_artist};
+
+				# Track does not have embedded artwork, look for standalone cover
+				# findStandaloneArtwork returns either a full path to cover art or 0
+				# to indicate no artwork was found.
+				my $cover = Slim::Music::Artwork->findStandaloneArtwork(
+					\%columnValueHash, 
+					{}, 
+					Slim::Utils::Misc::fileURLFromPath(
+						dirname(Slim::Utils::Misc::pathFromFileURL($url))
+					),
+				);
+				
+				$track->cover($cover) if $cover;
+			}
+			
 			$track->update;
 				
 			# Make sure album.artwork points to this track, so the album

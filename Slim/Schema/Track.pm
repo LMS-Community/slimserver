@@ -648,14 +648,14 @@ sub coverid {
 	if ( !defined $val ) {
 		# Initialize coverid value
 		if ( $self->cover ) {
-			my $coverid = $self->generateCoverId( {
+			$val = $self->generateCoverId( {
 				cover => $self->cover,
 				url   => $self->url,
 				mtime => $self->timestamp,
 				size  => $self->filesize,
 			} );
 			
-			$self->_coverid($coverid);
+			$self->_coverid($val);
 			$self->update;
 		}
 	}
