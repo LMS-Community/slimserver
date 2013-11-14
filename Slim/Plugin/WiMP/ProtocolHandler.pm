@@ -199,9 +199,9 @@ sub _getTrack {
 				_gotTrackError( $@ || $info->{error}, $client, $params );
 			}
 			else {
-				if ( main::DEBUGLOG && $log->is_debug ) {
-					$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
-				}
+				#if ( main::DEBUGLOG && $log->is_debug ) {
+				#	$log->debug( 'getTrack ok: ' . Data::Dump::dump($info) );
+				#}
 				
 				_gotTrack( $client, $info, $params );
 			}
@@ -353,7 +353,7 @@ sub parseHeaders {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
+	#main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump(@headers));
 	
 	my $isFlac  = grep m{Content.*audio/(?:x-|)flac}i, @headers;
 	my $bitrate = $isFlac ? 800_000 : 256_000;
