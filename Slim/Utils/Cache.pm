@@ -92,6 +92,7 @@ my $log = logger('server');
 			
 			if ( $expire && $expire !~ /^\d+$/ ) {
 				# Not a number, need to canonicalize it
+				require Cache::BaseCache;
 				$expire = Cache::BaseCache::Canonicalize_Expiration_Time($expire);
 				
 				# "If value is less than 60*60*24*30 (30 days), time is assumed to be
