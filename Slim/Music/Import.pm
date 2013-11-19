@@ -391,6 +391,9 @@ sub runScanPostProcessing {
 
 	# If we ever find an artwork provider...
 	#Slim::Music::Artwork->downloadArtwork();
+
+	# update standalone artwork if it's been changed without the music file being changed (don't run on a wipe & rescan)
+	Slim::Music::Artwork->updateStandaloneArtwork() unless $class->stillScanning =~ /wipe/i;
 	
 	# Pre-cache resized artwork
 	$importsRunning{'precacheArtwork'} = Time::HiRes::time();

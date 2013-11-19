@@ -160,6 +160,164 @@ sub findStandaloneArtwork {
 	return $art || 0;
 }
 
+sub updateStandaloneArtwork {
+	my $class = shift;
+	my $cb    = shift; # optional callback when done (main process async mode)
+	
+	my $dbh = Slim::Schema->dbh;
+		
+	# Find all tracks with un-cached artwork:
+	# * All distinct cover values where cover isn't 0 and cover_cached is null
+	# * Tracks share the same cover art when the cover field is the same
+	#   (same path or same embedded art length).
+	my $sql = qq{
+		SELECT
+			tracks.id,
+			tracks.url,
+			tracks.cover,
+			tracks.coverid,
+			albums.id AS albumid,
+			albums.title AS album_title,
+			albums.artwork AS album_artwork
+		FROM  tracks
+		JOIN  albums ON (tracks.album = albums.id)
+		WHERE tracks.cover LIKE '%jpg' OR tracks.cover LIKE '%jpeg' OR tracks.cover LIKE '%png' OR tracks.cover LIKE '%gif' OR tracks.coverid IS NULL
+		GROUP BY tracks.cover, tracks.album
+ 	};
+
+	my $sth_update_tracks = $dbh->prepare( qq{
+	    UPDATE tracks
+	    SET    cover = ?, coverid = ?, cover_cached = NULL
+	    WHERE  album = ?
+	} );
+	
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
+
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $sql ) AS t1
+	} );
+	
+	$log->error("Starting updateStandaloneArtwork for $count albums");
+	
+	if ( !$count ) {
+		$cb && $cb->();
+		main::SCANNER && Slim::Music::Import->endImporter('updateStandaloneArtwork');
+		return;
+	}
+
+	my $progress = Slim::Utils::Progress->new( { 
+		type  => 'importer',
+		name  => 'updateStandaloneArtwork',
+		total => $count, 
+		bar   => 1,
+	} );
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute;
+	
+	my ($trackid, $url, $cover, $coverid, $albumid, $album_title, $album_artwork);
+	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
+	
+	my $i = 0;
+	
+	my $work = sub {
+		if ( $sth->fetch ) {
+			my $newCoverId;
+			
+			$progress->update( $album_title );
+
+			# check for updated artwork
+			if ( $cover ) {
+				$newCoverId = Slim::Schema::Track->generateCoverId({
+					cover => $cover,
+					url   => $url,
+				});
+			}
+			
+			# check for new artwork to unchanged file
+			# - !$cover: there wasn't any previously
+			# - !$newCoverId: existing file has disappeared
+			if ( !$cover || !$newCoverId ) {
+				# store properties in a hash
+				my $track = Slim::Schema->find('Track', $trackid);
+				
+				if ($track) {
+					my %columnValueHash = map { $_ => $track->$_() } keys %{$track->attributes};
+					$columnValueHash{primary_artist} = $columnValueHash{primary_artist}->id if $columnValueHash{primary_artist};
+
+					my $newCover = Slim::Music::Artwork->findStandaloneArtwork(
+						\%columnValueHash,
+						{}, 
+						Slim::Utils::Misc::fileURLFromPath(
+							dirname(Slim::Utils::Misc::pathFromFileURL($url))
+						),
+					);
+					
+					if ($newCover) {
+						$cover = $newCover;
+
+						$newCoverId = Slim::Schema::Track->generateCoverId({
+							cover => $newCover,
+							url   => $url,
+						});
+					}
+				}
+			}
+			
+			if ( $newCoverId && ($coverid || '') ne $newCoverId ) {
+				# Make sure album.artwork points to this track, as it may not
+				# be pointing there now because we did not join tracks via the
+				# artwork column.
+				if ( ($album_artwork || '') ne $newCoverId ) {
+					$sth_update_albums->execute( $newCoverId, $albumid );
+				}
+	
+				# Update the rest of the tracks on this album
+				# to use the same coverid and cover_cached status
+				$sth_update_tracks->execute( $cover, $newCoverId, $albumid );
+
+				if ( ++$i % 50 == 0 ) {
+					Slim::Schema->forceCommit;
+				}
+				
+				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
+			}
+			# cover art has disappeared
+			elsif ( !$newCoverId ) {
+				$sth_update_albums->execute( undef, $albumid );
+				$sth_update_tracks->execute( 0, undef, $albumid );
+
+				$log->warn('Artwork has been removed for ' . $album_title);
+			}
+			
+			return 1;
+		}
+		
+		$progress->final;
+		
+		$log->error( "updateStandaloneArtwork finished in " . $progress->duration );
+		
+		$cb && $cb->();
+		
+		return 0;
+	};
+	
+	if ( main::SCANNER ) {
+		# Non-async mode in scanner
+		while ( $work->() ) { }
+		
+		Slim::Music::Import->endImporter('updateStandaloneArtwork');
+	}
+	else {
+		# Run async in main process
+		Slim::Utils::Scheduler::add_ordered_task($work);
+	}	
+}
+
 sub getImageContentAndType {
 	my $class = shift;
 	my $path  = shift;

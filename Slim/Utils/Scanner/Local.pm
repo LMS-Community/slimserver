@@ -494,6 +494,8 @@ sub rescan {
 		}		
 		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
 			if ( !main::SCANNER && !$args->{no_async} ) {
+				markDone( $next => '', $changes, $args );
+				
 				# Nothing changed, but we may have more paths to scan
 				if ( scalar @{$paths} ) {
 					Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $paths, $args );
@@ -1018,9 +1020,9 @@ sub changed {
 sub markDone {
 	my ( $path, $type, $changes, $args ) = @_;
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
+	$type && $path && main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
 	
-	$pending{$path} &= ~$type;
+	$pending{$path} &= ~$type if $type;
 	
 	# Check all pending tasks, make sure all are done before notifying
 	for my $task ( keys %pending ) {
@@ -1030,7 +1032,7 @@ sub markDone {
 	}
 	
 	# If more paths need to be scanned, we aren't done, schedule the next path scan
-	my $paths = delete $args->{paths};
+	my $paths = delete $args->{paths} || [];
 	if ( scalar @{$paths} ) {
 		Slim::Utils::Timers::setTimer( __PACKAGE__, AnyEvent->now, \&rescan, $paths, $args );
 		return;
@@ -1050,7 +1052,8 @@ sub markDone {
 		# try to autocomplete artwork from mysqueezebox.com		
 		Slim::Music::Artwork->downloadArtwork( sub {
 =cut
-			
+		Slim::Music::Artwork->updateStandaloneArtwork( sub {
+
 			# Precache artwork, when done send rescan done event
 			Slim::Music::Artwork->precacheAllArtwork( sub {
 				# Update the last rescan time if any changes were made
@@ -1078,6 +1081,8 @@ sub markDone {
 					$args->{onFinished}->();
 				}
 			} );
+
+		} );
 	}
 	
 	%pending = ();

@@ -20996,6 +20996,10 @@ MERGEVA_PROGRESS
 	RU	Объединить неск. исполнителей
 	SV	Slå ihop Blandade artister
 
+UPDATESTANDALONEARTWORK_PROGRESS
+	DE	Nach aktualisierten Plattenhüllen suchen
+	EN	Find updated coverart files
+
 PRECACHEARTWORK_PROGRESS
 	CS	Příprava ukládání obalu do mezipaměti
 	DA	Gem coverbilleder i cachelager
