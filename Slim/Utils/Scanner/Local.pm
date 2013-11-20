@@ -494,8 +494,6 @@ sub rescan {
 		}		
 		elsif ( !$inDBOnlyCount && !$onDiskOnlyCount && !$changedOnlyCount ) {
 			if ( !main::SCANNER && !$args->{no_async} ) {
-				markDone( $next => '', $changes, $args );
-				
 				# Nothing changed, but we may have more paths to scan
 				if ( scalar @{$paths} ) {
 					Slim::Utils::Timers::setTimer( $class, AnyEvent->now, \&rescan, $paths, $args );
@@ -503,6 +501,8 @@ sub rescan {
 				
 				# No more paths to scan, notify API handlers and send a rescan done event
 				else {
+					markDone( undef, undef, $changes, $args );
+
 					Slim::Music::Import->setIsScanning(0);
 			
 					if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
