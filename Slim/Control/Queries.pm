@@ -1678,7 +1678,7 @@ sub mediafolderQuery {
 			'readTags' => 1,
 		}) if $url;
 
-		if ( blessed($item) && $item->can('content_type') && (!$params->{typeRegEx} || $filename =~ $params->{typeRegEx}) ) {
+		if ( (blessed($item) && $item->can('content_type')) || ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) ) {
 			return $item;
 		}
 	};
@@ -1715,13 +1715,13 @@ sub mediafolderQuery {
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
-		if (my $cachedItem = $bmfCache{ $params->{url} || $params->{id} }) {
+		if (my $cachedItem = $bmfCache{ ($params->{url} || $params->{id} || '') . $type }) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
 			$count       = $cachedItem->{count};
 			
 			# bump the timeout on the cache
-			$bmfCache{$params->{url} || $params->{id}} = $cachedItem;
+			$bmfCache{ ($params->{url} || $params->{id}) . $type } = $cachedItem;
 		}
 		else {
 			my $files;
@@ -1737,7 +1737,7 @@ sub mediafolderQuery {
 		
 			# cache results in case the same folder is queried again shortly 
 			# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-			$bmfCache{ $params->{url} || $params->{id} } = {
+			$bmfCache{ ($params->{url} || $params->{id}) . $type } = {
 				items       => $items,
 				topLevelObj => $topLevelObj,
 				count       => $count,
