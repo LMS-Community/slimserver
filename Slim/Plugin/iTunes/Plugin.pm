@@ -97,6 +97,13 @@ sub initPlugin {
 		Slim::Plugin::iTunes::Settings->new;
 	}
 
+	# register importer, but don't initialize it, as it's only being run in the external scanner
+	Slim::Music::Import->addImporter('Slim::Plugin::iTunes::Importer', {
+		'type'   => 'file',
+		'weight' => 20,
+		'use'    => $prefs->get('itunes'),
+	});
+
 	return 1 if $class->initialized;
 
 	if (!$class->canUseiTunesLibrary) {

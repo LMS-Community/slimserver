@@ -219,6 +219,7 @@ use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
+use Slim::Utils::Scanner::Local;
 use Slim::Utils::Scheduler;
 use Slim::Networking::Async::DNS;
 use Slim::Networking::Select;
@@ -509,6 +510,8 @@ sub init {
 
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
+	
+	Slim::Schema->init();
 	Slim::Schema::RemoteTrack->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
@@ -517,18 +520,14 @@ sub init {
 		Slim::Utils::UPnPMediaServer::init();
 	}
 	
-# XXX - MH: do we even need to actually initialize these importers? They're not used in the server code afaict, but scanner only.
-	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
-	if (Slim::Utils::Misc::getMediaDirs()) {
-		require Slim::Media::MediaFolderScan;
-		Slim::Media::MediaFolderScan->init();
-	}
-	if (Slim::Utils::Misc::getPlaylistDir()) {
-		require Slim::Music::PlaylistFolderScan;
-		Slim::Music::PlaylistFolderScan->init();
-	}
-	initClass('Slim::Plugin::iTunes::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('iTunes');
-	initClass('Slim::Plugin::MusicMagic::Importer') if Slim::Utils::PluginManager->isConfiguredEnabled('MusicMagic');
+	# Register the default importers - necessary to ensure that Slim::Schema::init() is called
+	# but no need to initialize it, as it's being run in external scanner mode only
+	# XXX - we should be able to handle this differently
+	Slim::Music::Import->addImporter( 'Slim::Media::MediaFolderScan', {
+		type   => 'file',
+		weight => 1,
+		use    => 1,
+	} );
 
 	main::INFOLOG && $log->info("Server HTTP init...");
 	Slim::Web::HTTP::init();
