@@ -231,6 +231,7 @@ sub doneScanning {
 	Slim::Music::Import->endImporter($class);
 }
 
+my $i;
 sub handleTrack {
 	my $class    = shift;
 	my $curTrack = shift;
@@ -243,6 +244,7 @@ sub handleTrack {
 
 	# Always update the progress, even if we return.
 	$progress->update;
+	time() > $i && ($i = time + 5) && Slim::Schema->forceCommit;
 
 	# We got nothin
 	if (scalar keys %{$curTrack} == 0) {
@@ -483,6 +485,7 @@ sub handlePlaylist {
 
 	# Always update the progress.
 	$progress->update($name);
+	time() > $i && ($i = time + 5) && Slim::Schema->forceCommit;
 
 	# this is the "all tracks" playlist - skip it
 	return if $name eq '####!####';
