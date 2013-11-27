@@ -34,10 +34,6 @@ my $prefs = preferences('server');
 sub init {
 	my $class = shift;
 	
-	if ( main::IMAGE || main::VIDEO ) {
-		require Slim::Utils::Scanner::LMS;
-	}
-	
 	Slim::Music::Import->addImporter( $class, {
 		type   => 'file',
 		weight => 1,
@@ -75,7 +71,9 @@ sub startScan {
 		$changes += $c;
 	}
 
-	if ( main::IMAGE || main::VIDEO ) {
+	if ( (main::IMAGE || main::VIDEO) && (main::SCANNER || Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin')) ) {
+		require Slim::Utils::Scanner::LMS;
+
 		# get media folders without audio dirs
 		my %seen = (); # to avoid duplicates
 		$dirs = [ grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } ];

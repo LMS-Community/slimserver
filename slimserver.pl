@@ -517,6 +517,7 @@ sub init {
 		Slim::Utils::UPnPMediaServer::init();
 	}
 	
+# XXX - MH: do we even need to actually initialize these importers? They're not used in the server code afaict, but scanner only.
 	# Load the relevant importers - necessary to ensure that Slim::Schema::init() is called.
 	if (Slim::Utils::Misc::getMediaDirs()) {
 		require Slim::Media::MediaFolderScan;

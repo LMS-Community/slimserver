@@ -65,7 +65,7 @@ sub rescan {
 	my ( $class, $in_paths, $args ) = @_;
 	
 	# don't continue if image and video processing have been disabled
-	if ( !main::IMAGE && !main::VIDEO ) {
+	if ( (!main::IMAGE && !main::VIDEO) || (!main::SCANNER && !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin')) ) {
 		if ( $args->{onFinished}) {
 			$args->{onFinished}->();
 		}

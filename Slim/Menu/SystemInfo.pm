@@ -271,29 +271,32 @@ sub infoLibrary {
 		},
 	};
 
-	my ($request, $results);
+	# don't bother counting images/videos unless media are enabled
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ) {
+		my ($request, $results);
+		
+		# XXX - no simple access to result sets for images/videos yet?
+		if (main::VIDEO) {
+			$request = Slim::Control::Request::executeRequest( $client, ['video_titles', 0, 0] );
+			$results = $request->getResults();
+		
+			unshift @{ $items->{items} }, {
+				type => 'text',
+				name => cstring($client, 'INFORMATION_VIDEOS') . cstring($client, 'COLON') . ' '
+					. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
+			};
+		}
 	
-	# XXX - no simple access to result sets for images/videos yet?
-	if (main::VIDEO) {
-		$request = Slim::Control::Request::executeRequest( $client, ['video_titles', 0, 0] );
-		$results = $request->getResults();
-	
-		unshift @{ $items->{items} }, {
-			type => 'text',
-			name => cstring($client, 'INFORMATION_VIDEOS') . cstring($client, 'COLON') . ' '
-				. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
-		};
-	}
-
-	if (main::IMAGE) {
-		$request = Slim::Control::Request::executeRequest( $client, ['image_titles', 0, 0] );
-		$results = $request->getResults();
-	
-		unshift @{ $items->{items} }, {
-			type => 'text',
-			name => cstring($client, 'INFORMATION_IMAGES') . cstring($client, 'COLON') . ' '
-				. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
-		};
+		if (main::IMAGE) {
+			$request = Slim::Control::Request::executeRequest( $client, ['image_titles', 0, 0] );
+			$results = $request->getResults();
+		
+			unshift @{ $items->{items} }, {
+				type => 'text',
+				name => cstring($client, 'INFORMATION_IMAGES') . cstring($client, 'COLON') . ' '
+					. ($results && $results->{count} ? Slim::Utils::Misc::delimitThousands($results->{count}) : 0),
+			};
+		}
 	}
 	
 	return $items;
