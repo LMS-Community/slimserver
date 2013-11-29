@@ -272,7 +272,7 @@ sub infoLibrary {
 	};
 
 	# don't bother counting images/videos unless media are enabled
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ) {
+	if ( main::MEDIASUPPORT ) {
 		my ($request, $results);
 		
 		# XXX - no simple access to result sets for images/videos yet?

@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate noupnp);
+	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate);
 
 	# only show following for SLIMP3
 	if ($Slim::Player::SLIMP3::SLIMP3Connected) {
@@ -35,6 +35,10 @@ sub prefs {
 	# only show following if we have multiple players
 	if (Slim::Player::Client::clients() > 1) {
 		push @prefs, 'syncStartDelay';
+	}
+	
+	if (!main::NOUPNP) {
+		push @prefs, 'noupnp';
 	}
 
 	return ($prefs, @prefs);

@@ -71,7 +71,7 @@ sub startScan {
 		$changes += $c;
 	}
 
-	if ( (main::IMAGE || main::VIDEO) && (main::SCANNER || Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin')) ) {
+	if ( main::MEDIASUPPORT ) {
 		require Slim::Utils::Scanner::LMS;
 
 		# get media folders without audio dirs

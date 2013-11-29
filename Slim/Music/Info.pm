@@ -1329,12 +1329,11 @@ sub validTypeExtensions {
 	my $disabled   = disabledExtensions($findTypes);
 
 	# XXX - these should be read from a shared source with Media::Scan
-	my $hasUPnP = main::SCANNER || (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
 	if ($findTypes eq 'image') {
-		@extensions = grep { !$disabled->{$_} } qw(jpg png gif bmp jpeg) if main::IMAGE && $hasUPnP;
+		@extensions = grep { !$disabled->{$_} } qw(jpg png gif bmp jpeg) if main::IMAGE && main::MEDIASUPPORT;
 	}
 	elsif ($findTypes eq 'video') {
-		@extensions = grep { !$disabled->{$_} } qw(asf avi divx flv hdmov m1v m2p m2t m2ts m2v m4v mkv mov mpg mpeg mpe mp2p mp2t mp4 mts pes ps ts vob webm wmv xvid 3gp 3g2 3gp2 3gpp mjpg) if main::VIDEO && $hasUPnP;
+		@extensions = grep { !$disabled->{$_} } qw(asf avi divx flv hdmov m1v m2p m2t m2ts m2v m4v mkv mov mpg mpeg mpe mp2p mp2t mp4 mts pes ps ts vob webm wmv xvid 3gp 3g2 3gp2 3gpp mjpg) if main::VIDEO && main::MEDIASUPPORT;
 	}
 	# audio files, playlists
 	else {

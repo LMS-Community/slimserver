@@ -123,9 +123,8 @@ sub handler {
 	$paramRef->{'disabledextensionsimages'} = $prefs->get('disabledextensionsimages');
 	$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
 
-	my $noUPnP = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 0 : 1;
-	$paramRef->{'noimage'} = 1 if !main::IMAGE || $noUPnP;
-	$paramRef->{'novideo'} = 1 if !main::VIDEO || $noUPnP;
+	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
+	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

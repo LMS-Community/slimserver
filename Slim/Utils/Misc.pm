@@ -710,11 +710,11 @@ sub getAudioDirs {
 }
 
 sub getVideoDirs {
-	return main::VIDEO && (main::SCANNER || Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin')) ? getMediaDirs('video') : [];
+	return (main::VIDEO && main::MEDIASUPPORT) ? getMediaDirs('video') : [];
 }
 
 sub getImageDirs {
-	return main::IMAGE && (main::SCANNER || Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin')) ? getMediaDirs('image') : [];
+	return (main::IMAGE && main::MEDIASUPPORT) ? getMediaDirs('image') : [];
 }
 
 sub getDirsPref {

@@ -24,7 +24,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 sub initPlugin {
 	my $class = shift;
 	
-	return if $main::noupnp; # not checking the noupnp pref here, it's a web UI setting for the old client only
+	# return quickly if UPnP has been disabled on the command line
+	return if main::NOUPNP;
 	
 	if ( !defined $prefs->get('maxUPnPImageSize')) {
 		$prefs->set('maxUPnPImageSize', 1920);
@@ -48,12 +49,15 @@ sub initPlugin {
 	
 	require Slim::Plugin::UPnP::MediaRenderer;
 	Slim::Plugin::UPnP::MediaRenderer->init;
+
+	Slim::Control::Request::addDispatch(['video_titles',   '_index', '_quantity'], [0, 1, 1, \&Slim::Control::Queries::videoTitlesQuery]) if main::VIDEO;
+	Slim::Control::Request::addDispatch(['image_titles',   '_index', '_quantity'], [0, 1, 1, \&Slim::Control::Queries::imageTitlesQuery]) if main::IMAGE;
 }
 
 sub shutdownPlugin {
 	my $class = shift;
 	
-	return if $main::noupnp;
+	return if main::NOUPNP;
 	
 	Slim::Plugin::UPnP::MediaServer->shutdown;
 	Slim::Plugin::UPnP::MediaRenderer->shutdown;

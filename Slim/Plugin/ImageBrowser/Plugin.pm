@@ -52,8 +52,7 @@ sub condition {
 	
 	return $enabled if defined $enabled;
 	
-	# not checking the noupnp pref here, it's a web UI setting for the old client only
- 	if ( !main::IMAGE || !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ) {
+ 	if ( !(main::IMAGE && main::MEDIASUPPORT) ) {
 		$enabled = 0;
 		return 0;
 	}	

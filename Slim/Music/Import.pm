@@ -120,9 +120,8 @@ sub launchScan {
 		$args->{"logdir=$::logdir"} = 1;
 	}
 	
-	my $noUPnP = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 0 : 1;
-	$args->{'noimage'} = 1 if !main::IMAGE || $noUPnP;
-	$args->{'novideo'} = 1 if !main::VIDEO || $noUPnP;
+	$args->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
+	$args->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 
 	# Set scanner priority.  Use the current server priority unless 
 	# scannerPriority has been specified.

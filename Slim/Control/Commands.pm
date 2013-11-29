@@ -2589,7 +2589,7 @@ sub rescanCommand {
 				@dirs = grep { /$singledir/ } @dirs;
 			}
 
-			if ( (main::IMAGE || main::VIDEO) && scalar @dirs && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') && $mode ne 'playlists' ) {
+			if ( main::MEDIASUPPORT && scalar @dirs && $mode ne 'playlists' ) {
 				require Slim::Utils::Scanner::LMS;
 
 				# XXX - we need a better way to handle the async mode, eg. passing the exception list together with the folder list to Media::Scan

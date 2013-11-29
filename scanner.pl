@@ -28,6 +28,7 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> 0;
 use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
 use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
+use constant MEDIASUPPORT => IMAGE || VIDEO;
 use constant WEBUI        => 0;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;

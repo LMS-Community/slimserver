@@ -5147,7 +5147,7 @@ sub _getTagDataForTracks {
 ### Video support
 
 # XXX needs to be more like titlesQuery, was originally copied from albumsQuery
-sub videoTitlesQuery {
+sub videoTitlesQuery { if (main::VIDEO && main::MEDIASUPPORT) {
 	my $request = shift;
 
 	if (!Slim::Schema::hasLibrary()) {
@@ -5314,9 +5314,9 @@ sub videoTitlesQuery {
 	$request->addResult('count', $totalCount);
 	
 	$request->setStatusDone();
-}
+} }
 
-sub _videoData {
+sub _videoData { if (main::VIDEO && main::MEDIASUPPORT) {
 	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
 
 	utf8::decode( $c->{'videos.title'} ) if exists $c->{'videos.title'};
@@ -5335,10 +5335,10 @@ sub _videoData {
 	$tags =~ /U/ && $request->addResultLoop($loopname, $chunkCount, 'updated_time', $c->{'videos.updated_time'});
 	$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $c->{'videos.album'});
 	$tags =~ /J/ && $request->addResultLoop($loopname, $chunkCount, 'hash', $c->{'videos.hash'});
-}
+} }
 
 # XXX needs to be more like titlesQuery, was originally copied from albumsQuery
-sub imageTitlesQuery {
+sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 	my $request = shift;
 
 	if (!Slim::Schema::hasLibrary()) {
@@ -5575,10 +5575,10 @@ sub imageTitlesQuery {
 	$request->addResult('count', $totalCount);
 	
 	$request->setStatusDone();
-}
+} }
 
 
-sub _imageData {
+sub _imageData { if (main::IMAGE && main::MEDIASUPPORT) {
 	my ($request, $loopname, $chunkCount, $tags, $c) = @_;
 
 	$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $c->{'title'});
@@ -5598,7 +5598,7 @@ sub _imageData {
 	$c->{year} && $request->addResultLoop($loopname, $chunkCount, 'year', $c->{'year'});
 	$c->{month} && $request->addResultLoop($loopname, $chunkCount, 'month', $c->{'month'});
 	$c->{day} && $request->addResultLoop($loopname, $chunkCount, 'day', $c->{'day'});
-}
+} }
 
 
 =head1 SEE ALSO

@@ -635,8 +635,6 @@ sub init {
 	addDispatch(['artwork',        '_artworkid'],                                                      [0, 0, 0, \&Slim::Control::Queries::showArtwork]);
 	addDispatch(['rating',         '_item',          '?'],                                             [0, 1, 0, \&Slim::Control::Commands::ratingCommand]);
 	addDispatch(['rating',         '_item',          '_rating'],                                       [0, 0, 0, \&Slim::Control::Commands::ratingCommand]);
-	addDispatch(['video_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::videoTitlesQuery]);
-	addDispatch(['image_titles',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::imageTitlesQuery]);
 
 # NOTIFICATIONS
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);

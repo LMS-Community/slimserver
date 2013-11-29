@@ -24,8 +24,9 @@ use constant INFOLOG      => ( grep { /--noinfolog/ } @ARGV ) ? 0 : 1;
 use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
-use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : 1;
-use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : 1;
+use constant NOUPNP       => ( grep { /--noupnp/ } @ARGV ) ? 1 : 0;
+use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : !NOUPNP;
+use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !NOUPNP;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
@@ -164,6 +165,18 @@ sub HAS_AIO {
 	
 	return $HAS_AIO;
 }
+
+my $MEDIASUPPORT;
+sub MEDIASUPPORT {
+	return $MEDIASUPPORT if defined $MEDIASUPPORT;
+
+	eval {
+		$MEDIASUPPORT = (main::IMAGE || main::VIDEO) && !main::NOUPNP && (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 1 : 0);
+	};
+		
+	return $MEDIASUPPORT;
+}
+
 
 # Force XML::Simple to use XML::Parser for speed. This is done
 # here so other packages don't have to worry about it. If we
@@ -514,7 +527,7 @@ sub init {
 	Slim::Schema->init();
 	Slim::Schema::RemoteTrack->init();
 
-	unless ( $noupnp || $prefs->get('noupnp') ) {
+	unless ( main::NOUPNP || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");
 		require Slim::Utils::UPnPMediaServer;
 		Slim::Utils::UPnPMediaServer::init();

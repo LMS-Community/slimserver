@@ -149,9 +149,8 @@ sub handler {
 		path  => '',
 	};
 
-	my $noUPnP = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::UPnP::Plugin') ? 0 : 1;
-	$paramRef->{'noimage'} = 1 if !main::IMAGE || $noUPnP;
-	$paramRef->{'novideo'} = 1 if !main::VIDEO || $noUPnP;
+	$paramRef->{'noimage'} = 1 if !(main::IMAGE && main::MEDIASUPPORT);
+	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 
 	Slim::Music::Import->doQueueScanTasks(0);
 	Slim::Music::Import->nextScanTask();
