@@ -678,7 +678,13 @@ sub handleFeed {
 			}
 
 			if ( @itemActions ) {
+				my $i;
 				foreach my $actionItem (@itemActions) {
+					# if this isn't the first item, then we'll have to add the rest to the end of the list
+					if ($i++ && $actionItem->{fixedParams}->{cmd} =~ /load/i) {
+						$actionItem->{fixedParams}->{cmd} = 'add';
+					}
+
 					my $command = $actionItem->{command};
 					push @$command, map {
 						"$_:" . $actionItem->{fixedParams}->{$_}
