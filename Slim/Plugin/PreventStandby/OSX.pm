@@ -24,15 +24,18 @@ my $process;
 sub new {
 	my ($class, $i) = @_;
 
-	$command = Slim::Utils::Misc::findbin('pmset');
-	
-	if ($command) {
+	if ( $command = Slim::Utils::Misc::findbin('caffeinate') ) {
+		$command .= ' -s';
+	}
+	elsif ( $command = Slim::Utils::Misc::findbin('pmset') ) {
 		$command .= ' noidle';
 	}
 	else {
 		$log->warn("Didn't find pmset tool - standby can't be prevented!");
 		return;
 	}
+	
+	main::DEBUGLOG && $log->debug("Going to use '$command' to prevent standby");
 	
 	return $class;
 }

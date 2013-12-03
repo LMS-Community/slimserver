@@ -14,6 +14,7 @@ use strict;
 use URI::Escape qw(uri_unescape uri_escape_utf8);
 use List::Util qw(min);
 
+use Slim::Control::XMLBrowser;
 use Slim::Formats::XML;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Cache;
@@ -636,7 +637,7 @@ sub handleFeed {
 	elsif ( $client && $action && $action =~ /^(playall|addall|insert|remove)$/ ) {
 		$action =~ s/all$//;
 		
-		my @urls;
+		my (@urls, @itemActions);
 		# XXX: Why is $stash->{streaminfo}->{item} added on here, it seems to be undef?
 		for my $item ( @{ $stash->{'items'} }, $streamItem ) {
 			my $url;
@@ -648,6 +649,9 @@ sub handleFeed {
 			}
 			elsif ( $item->{'play'} ) {
 				$url = $item->{'play'};
+			}
+			elsif ( my $itemAction = Slim::Control::XMLBrowser::findAction(undef, $item, $action) ) {
+				push @itemActions, $itemAction if $itemAction->{command} && $itemAction->{fixedParams};
 			}
 			
 			next if !$url;
@@ -667,12 +671,28 @@ sub handleFeed {
 			push @urls, $url;
 		}
 		
-		if ( @urls ) {
+		if ( @urls || @itemActions ) {
 
 			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+				$log->info(sprintf("Playing/adding all items:\n%s", Data::Dump::dump(@urls, @itemActions)));
 			}
-			if ($action eq 'insert') {
+
+			if ( @itemActions ) {
+				my $i;
+				foreach my $actionItem (@itemActions) {
+					# if this isn't the first item, then we'll have to add the rest to the end of the list
+					if ($i++ && $actionItem->{fixedParams}->{cmd} =~ /load/i) {
+						$actionItem->{fixedParams}->{cmd} = 'add';
+					}
+
+					my $command = $actionItem->{command};
+					push @$command, map {
+						"$_:" . $actionItem->{fixedParams}->{$_}
+					} keys %{ $actionItem->{fixedParams} };
+					
+					$client->execute($command);
+				}
+			} elsif ($action eq 'insert') {
 				$client->execute([ 'playlist', 'inserttracks', 'listRef', \@urls ]);
 			} elsif ($action eq 'remove') {
 				$client->execute([ 'playlist', 'deletetracks', 'listRef', \@urls ]);
