@@ -88,6 +88,13 @@ $prefs->setChange( sub { my $client = $_[2]; $client->treble($_[1]); }, 'treble'
 
 $prefs->setChange( sub { $_[2]->pitch($_[1]); }, 'pitch');
 
+# only clients with digital out can disable volume control
+$prefs->setValidate({
+	validator => sub {
+		return $_[4]->hasDigitalOut || $_[1];
+	} 
+}, 'digitalVolumeControl');
+
 sub new {
 	my ($class, $id, $paddr, $rev, $s, $deviceid, $uuid) = @_;
 
@@ -134,6 +141,12 @@ sub initPrefs {
 	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::initPrefs();
+	
+	# make sure digitalVolumeControl is set for players which don't have digital out
+	# some players ended up with their volume locked at 100% and no way to change it
+	if (!$client->hasDigitalOut && !$prefs->client($client)->get('digitalVolumeControl')) {
+		$prefs->client($client)->set('digitalVolumeControl', 1);
+	}
 }
 
 # usage	- float	buffer fullness as a fraction
