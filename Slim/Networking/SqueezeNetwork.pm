@@ -188,11 +188,10 @@ sub _init_done {
 	
 	# Init stats - don't even load the module unless stats are enabled
 	# let's not bother about re-initialising if pref is changed - there's no user-noticeable effect anyway 
-	if (!$prefs->get('sn_disable_stats')) {
-		require Slim::Networking::SqueezeNetwork::Stats;
-		Slim::Networking::SqueezeNetwork::Stats->init( $json );
-	}
-
+#	if (!$prefs->get('sn_disable_stats')) {
+#		require Slim::Networking::SqueezeNetwork::Stats;
+#		Slim::Networking::SqueezeNetwork::Stats->init( $json );
+#	}
 	
 	# add link to mysb.com favorites to our local favorites list
 	if ( !main::SLIM_SERVICE && $json->{favorites_url} ) {
@@ -267,9 +266,9 @@ sub shutdown {
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
 	
 	# Shutdown stats
-	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::Stats', 'shutdown') ) {
-		Slim::Networking::SqueezeNetwork::Stats->shutdown();
-	}
+#	if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::Stats', 'shutdown') ) {
+#		Slim::Networking::SqueezeNetwork::Stats->shutdown();
+#	}
 }
 
 # Return a correct URL for mysqueezebox.com
