@@ -305,10 +305,19 @@ sub _screensaver_request {
 	if ($client && (my $song = $client->playingSong()) ) {
 		my $track = $song->track();
 		$artist = $track->artistName() if $track;
+	
+		if ( !$artist && $track ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+			
+			if ( $handler && $handler->can('getMetadataFor') ) {
+				my $meta = $handler->getMetadataFor( $client, $track->url );
+				$artist = $meta->{artist};
+			}
+		}
 	}
 
 	# if nothing's playing, let's take some random artist...
-	if (!$artist) {
+	if (!$artist && !main::SLIM_SERVICE) {
 		my $randomFunc = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction();
 		my @results;
 

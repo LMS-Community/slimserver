@@ -16,7 +16,7 @@ if ( !main::SLIM_SERVICE && !main::SCANNER && main::LOCAL_PLAYERS ) {
 	# init() is never called on SN so these aren't used
 	require Slim::Networking::SqueezeNetwork::Players;
 	require Slim::Networking::SqueezeNetwork::PrefSync;
-	require Slim::Networking::SqueezeNetwork::Stats;
+#	require Slim::Networking::SqueezeNetwork::Stats;
 }
 
 use Slim::Utils::IPDetect;
@@ -191,7 +191,7 @@ sub _init_done {
 	Slim::Networking::SqueezeNetwork::Players->init() if main::LOCAL_PLAYERS;
 	
 	# Init stats
-	Slim::Networking::SqueezeNetwork::Stats->init( $json ) if main::LOCAL_PLAYERS;
+#	Slim::Networking::SqueezeNetwork::Stats->init( $json ) if main::LOCAL_PLAYERS;
 
 	
 	# add link to mysb.com favorites to our local favorites list
@@ -265,7 +265,7 @@ sub shutdown {
 	Slim::Networking::SqueezeNetwork::Players->shutdown() if main::LOCAL_PLAYERS;
 	
 	# Shutdown stats
-	Slim::Networking::SqueezeNetwork::Stats->shutdown() if main::LOCAL_PLAYERS;
+#	Slim::Networking::SqueezeNetwork::Stats->shutdown() if main::LOCAL_PLAYERS;
 }
 
 # Return a correct URL for mysqueezebox.com

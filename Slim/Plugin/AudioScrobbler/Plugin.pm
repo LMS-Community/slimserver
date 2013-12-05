@@ -346,7 +346,7 @@ sub _handshakeOK {
 	}
 	
 	if ( $error ) {
-		$log->error($error);
+		$log->error($error) unless main::SLIM_SERVICE;	# error message comes without username - useless noise on mysb.com
 		if ( $params->{ecb} ) {
 			$params->{ecb}->($error);
 		}
