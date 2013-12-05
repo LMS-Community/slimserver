@@ -369,6 +369,11 @@ sub readRemoteHeaders {
 		$type = $1;
 	}
 	
+	# KWMR misconfiguration
+	elsif ( $type eq 'wma' && $url =~ /\.(m3u)$/i ) {
+		$type = $1;
+	}
+	
 	# fall back to m3u for html and text
 	elsif ( $type =~ /(?:htm|txt)/ ) {
 		$type = 'm3u';
