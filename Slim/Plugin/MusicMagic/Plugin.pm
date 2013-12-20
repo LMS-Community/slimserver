@@ -1537,6 +1537,9 @@ sub _syncHTTPRequest {
 sub checkSingleTrack {
 	my ( $trackid, $url ) = @_;
 	
+	require Slim::Plugin::MusicMagic::Importer;
+	Slim::Plugin::MusicMagic::Importer->initPlugin();
+	
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
 	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
 	
