@@ -2512,7 +2512,7 @@ sub _persistState { if ( main::SLIM_SERVICE ) {
 	Slim::Utils::Timers::killTimers( $self, \&_bufferPersistState );
 	Slim::Utils::Timers::setTimer(
 		$self,
-		Time::HiRes::time() + 0.500,
+		Time::HiRes::time() + 5,
 		\&_bufferPersistState,
 	);
 }
