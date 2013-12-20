@@ -697,7 +697,8 @@ sub pluginData {
 	else {
 		if ( defined $value ) {
 			$self->_pluginData()->{$key} = $value;
-			$dirty = 1;
+			# XXX - experimental: don't persist cover information, it's being updated upon the next track change anyway
+			$dirty = $key =~ /\b(?:httpCover|stationLogo)\b/i ? 0 : 1;
 		}
 		
 		$ret = $self->_pluginData()->{$key};
