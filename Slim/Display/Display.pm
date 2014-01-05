@@ -508,7 +508,7 @@ sub curLines {
 		} while ($sub && $sub =~ /Slim::Display|Slim::Player::Player::update|Slim::Player::Player::push/);
 
 		main::INFOLOG && $log->info(sprintf "lines $source [%s($line)]", join(", ", @subs));
-		main::DEBUGLOG && $log->debug( Data::Dump::dump($parts) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( Data::Dump::dump($parts) );
 	}
 
 	return $parts;

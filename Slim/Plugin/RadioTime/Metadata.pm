@@ -354,7 +354,7 @@ sub _fetchArtwork {
 	if ( $handler && $handler->can('getMetadataFor') ) {
 		my $track = $handler->getMetadataFor( $client, $url );
 
-		main::DEBUGLOG && $log->debug( 'Getting TuneIn artwork based on metadata:', Data::Dump::dump($track) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Getting TuneIn artwork based on metadata:', Data::Dump::dump($track) );
 		
 		# keep track of the station logo in case we don't get track artwork
 		#                                             [ps] => podcast or station
@@ -416,7 +416,7 @@ sub _gotArtwork {
 		main::DEBUGLOG && $log->debug( "Error fetching TuneIn artwork: $@" );
 	}
 	else  {
-		main::DEBUGLOG && $log->debug( 'Received TuneIn track artwork information: ', Data::Dump::dump($feed) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( 'Received TuneIn track artwork information: ', Data::Dump::dump($feed) );
 	}
 	
 	if ( $feed && $feed->{items} && $feed->{items}->[0] && (my $key = $feed->{items}->[0]->{album_art} || $feed->{items}->[0]->{artist_art}) ) {

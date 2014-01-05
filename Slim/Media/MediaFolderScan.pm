@@ -59,7 +59,7 @@ sub startScan {
 	
 	# XXX until libmediascan supports audio, run the audio scanner first
 	if ( ($dirs = Slim::Utils::Misc::getAudioDirs()) && scalar @{$dirs} ) {
-		main::INFOLOG && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
+		main::INFOLOG && $log->is_info && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
 		
 		my $c = Slim::Utils::Scanner::Local->rescan( $dirs, {
 			types    => 'audio',

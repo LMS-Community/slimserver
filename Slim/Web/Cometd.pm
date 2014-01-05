@@ -135,7 +135,7 @@ sub handler {
 	
 	if ( ref $objs ne 'ARRAY' ) {
 		if ( $log->is_warn ) {
-			$log->warn( 'Got Cometd request that is not an array: ', main::DEBUGLOG ? Data::Dump::dump($objs) : '' );
+			$log->warn( 'Got Cometd request that is not an array: ', (main::DEBUGLOG && $log->is_debug) ? Data::Dump::dump($objs) : '' );
 		}
 		
 		sendResponse( 

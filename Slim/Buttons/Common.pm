@@ -841,7 +841,7 @@ our %functions = (
 
 					$log->error("Error: No valid url found, not adding favorite!");
 
-					if (main::DEBUGLOG && $obj) {
+					if (main::DEBUGLOG && $log->is_debug && $obj) {
 						$log->error(Data::Dump::dump($obj));
 					} else {
 						$log->logBacktrace;

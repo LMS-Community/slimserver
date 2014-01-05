@@ -115,7 +115,7 @@ sub playerMenu { }
 sub parseMenu {
 	my ($class, $opml) = @_;
 	
-	if ( $log->is_debug ) {
+	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( 'Got radio menu from TuneIn: ' . Data::Dump::dump($opml) );
 	}
 

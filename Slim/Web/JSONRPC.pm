@@ -215,7 +215,7 @@ sub handleURI {
 		if ( $log->is_error ) {
 			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 			$log->error("While trying to run function coderef [$funcName]: [$@]");
-			main::DEBUGLOG && $log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
+			main::DEBUGLOG && $log->is_debug && $log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
 		}
 		Slim::Web::HTTP::closeHTTPSocket($httpClient);
 		return;

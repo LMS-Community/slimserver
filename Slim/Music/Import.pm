@@ -709,7 +709,7 @@ sub nextScanTask {
 
 	$next->execute() if $next;
 
-	main::DEBUGLOG && $log->debug('remaining scans in queue:' . Data::Dump::dump(%scanQueue));
+	main::DEBUGLOG && $log->is_debug && $log->debug('remaining scans in queue:' . Data::Dump::dump(%scanQueue));
 }
 
 sub queueScanTask {
@@ -764,7 +764,7 @@ sub queueScanTask {
 }
 
 sub clearScanQueue {
-	main::DEBUGLOG && $log->debug('clearing queue:' . Data::Dump::dump(%scanQueue));
+	main::DEBUGLOG && $log->is_debug && $log->debug('clearing queue:' . Data::Dump::dump(%scanQueue));
 	%scanQueue = () if %scanQueue;
 }
 
