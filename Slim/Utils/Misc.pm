@@ -844,8 +844,11 @@ sub fileFilter {
 	
 	return 0 unless (-l _ || -d _ || -f _);
 
-	# Make sure we can read the file.
-	return 0 if !-r _;
+	# Make sure we can read the file, honoring ACLs.
+	{
+		use filetest 'access';
+		return 0 if ! -r $fullpath;
+	}
 
 	my $target;
  
