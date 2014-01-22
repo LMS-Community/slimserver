@@ -833,10 +833,10 @@ sub playRandom {
 
 		# Don't do showBrieflys if visualiser screensavers are running as 
 		# the display messes up
-		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
+		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./ && !$client->pluginData('disableMix')) {
 
 			$client->showBriefly( {
-				jive => $client->pluginData('disableMix') ? string('PLUGIN_RANDOM_DISABLED') : undef,
+				jive => string('PLUGIN_RANDOM_DISABLED'),
 				'line' => [ string('PLUGIN_RANDOMPLAY'), string('PLUGIN_RANDOM_DISABLED') ]
 			} );
 			
