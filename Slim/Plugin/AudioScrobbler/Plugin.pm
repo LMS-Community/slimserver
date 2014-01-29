@@ -554,41 +554,24 @@ sub submitNowPlaying {
 		return;
 	}
 	
-	my $artist   = $track->artistName || '';
-	my $album    = $track->album  ? $track->album->name  : '';
-	my $title    = $track->title;
-	my $tracknum = $track->tracknum || '';
-	my $duration = $track->secs;
+	my $meta = _getMetadata($client, $track);
 	
-	if ( $track->remote ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta  = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );
-			$artist   = $meta->{artist};
-			$album    = $meta->{album} || '';
-			$title    = $meta->{title};
-			$tracknum = $meta->{tracknum} || '';
-			$duration = $meta->{duration} || $track->secs;
-			
-			# Handler must return at least artist and title
-			unless ( $meta->{artist} && $meta->{title} ) {
-				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
-				return;
-			}
-		}
-		else {
-			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
-			return;
-		}
+	if (!$meta) {
+		main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $track->url );
+		return;
+	}
+		
+	elsif ( $meta->{msg} ) {
+		main::DEBUGLOG && $log->debug( $meta->{msg} );
+		return;
 	}
 	
 	my $post = 's=' . $client->master->pluginData('session_id')
-		. '&a=' . uri_escape_utf8( $artist )
-		. '&t=' . uri_escape_utf8( $title )
-		. '&b=' . uri_escape_utf8( $album )
-		. '&l=' . ( $duration ? int( $duration ) : '' )
-		. '&n=' . $tracknum
+		. '&a=' . uri_escape_utf8( $meta->{artist} )
+		. '&t=' . uri_escape_utf8( $meta->{title} )
+		. '&b=' . uri_escape_utf8( $meta->{album} )
+		. '&l=' . ( $meta->{duration} ? int( $meta->{duration} ) : '' )
+		. '&n=' . $meta->{tracknum}
 		. '&m=' . ( $track->musicbrainz_id || '' );
 	
 	main::DEBUGLOG && $log->debug("Submitting Now Playing track to Last.fm: $post");
@@ -685,60 +668,48 @@ sub checkScrobble {
 	# Make sure the track is still the currently playing track
 	my $cururl = Slim::Player::Playlist::url($client);
 	
-	my $artist   = $track->artistName || '';
-	my $album    = $track->album  ? $track->album->name  : '';
-	my $title    = $track->title;
-	my $tracknum = $track->tracknum || '';
-	my $duration = $track->secs;
-	my $source   = 'P';
+	my $meta = _getMetadata($client, $track, $cururl);
+	
+	my $source = 'P';
 	
 	if ( $track->remote ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $cururl );
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta  = $handler->getMetadataFor( $client, $cururl, 'forceCurrent' );			
-			$artist   = $meta->{artist};
-			$album    = $meta->{album} || '';
-			$title    = $meta->{title};
-			$tracknum = $meta->{tracknum} || '';
-			$duration = $meta->{duration} || $track->secs;
-			
-			# Handler must return at least artist and title
-			unless ( $meta->{artist} && $meta->{title} ) {
-				main::DEBUGLOG && $log->debug( "Protocol Handler didn't return an artist and title for $cururl, ignoring" );
-				return;
-			}
-			
-			# Make sure user is still listening to the same track
-			if ( $track->stash->{_plugin_title} && $title ne $track->stash->{_plugin_title} ) {
-				main::DEBUGLOG && $log->debug( $track->stash->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
-				return;
-			}
-			
-			# Get the source type from the plugin
-			if ( $handler->can('audioScrobblerSource') ) {
-				$source = $handler->audioScrobblerSource( $client, $cururl );
-				
-				# Ignore radio tracks if requested, unless rating = L
-				if ( !defined $rating || $rating ne 'L' ) {
-					my $include_radio;
-					if ( main::SLIM_SERVICE ) {
-						$include_radio = $prefs->client($client)->get( 'include_radio', undef, 'UserPref' );
-					}
-					else {
-						$include_radio = $prefs->get('include_radio');
-					}
-					
-					if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
-						main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
-						return;
-					}
-				}
-			}
-		}
-		else {
+		if (!$meta) {
 			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $cururl );
 			return;
+		}
+			
+		# Handler must return at least artist and title
+		elsif ( $meta->{msg} ) {
+			main::DEBUGLOG && $log->debug( $meta->{msg} );
+			return;
+		}
+			
+		# Make sure user is still listening to the same track
+		elsif ( $track->stash->{_plugin_title} && $meta->{title} ne $track->stash->{_plugin_title} ) {
+			main::DEBUGLOG && $log->debug( $track->stash->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
+			return;
+		}
+		
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $cururl );
+		# Get the source type from the plugin
+		if ( $handler->can('audioScrobblerSource') ) {
+			$source = $handler->audioScrobblerSource( $client, $cururl );
+			
+			# Ignore radio tracks if requested, unless rating = L
+			if ( !defined $rating || $rating ne 'L' ) {
+				my $include_radio;
+				if ( main::SLIM_SERVICE ) {
+					$include_radio = $prefs->client($client)->get( 'include_radio', undef, 'UserPref' );
+				}
+				else {
+					$include_radio = $prefs->get('include_radio');
+				}
+				
+				if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
+					main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
+					return;
+				}
+			}
 		}
 	}
 	elsif ( $cururl ne $track->url ) {
@@ -754,7 +725,7 @@ sub checkScrobble {
 	if ( $songtime < $checktime ) {
 		my $diff = $checktime - $songtime;
 		
-		main::DEBUGLOG && $log->debug( "$title - Not yet reached $checktime playback seconds, waiting $diff more seconds" );
+		main::DEBUGLOG && $log->debug( $meta->{title} . " - Not yet reached $checktime playback seconds, waiting $diff more seconds" );
 		
 		Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 		Slim::Utils::Timers::setTimer(
@@ -769,20 +740,20 @@ sub checkScrobble {
 		return;
 	}
 	
-	main::DEBUGLOG && $log->debug( "$title - Queueing track for scrobbling in $checktime seconds" );
+	main::DEBUGLOG && $log->debug( $meta->{title} . " - Queueing track for scrobbling in $checktime seconds" );
 	
 	my $queue = getQueue($client);
 	
 	push @{$queue}, {
 		_url => $cururl,
-		a    => uri_escape_utf8( $artist ),
-		t    => uri_escape_utf8( $title ),
+		a    => uri_escape_utf8( $meta->{artist} ),
+		t    => uri_escape_utf8( $meta->{title} ),
 		i    => int( $client->currentPlaylistChangeTime() ),
 		o    => $source,
 		r    => $rating || '', # L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
-		l    => ( $duration ? int( $duration ) : '' ),
-		b    => uri_escape_utf8( $album ),
-		n    => $tracknum,
+		l    => ( $meta->{duration} ? int( $meta->{duration} ) : '' ),
+		b    => uri_escape_utf8( $meta->{album} ),
+		n    => $meta->{tracknum},
 		m    => ( $track->musicbrainz_id || '' ),
 	};
 	
@@ -934,37 +905,65 @@ sub submitScrobble {
 sub stillPlaying {
 	my ( $client, $track, $item ) = @_;
 	
-	my $artist   = $track->artistName || '';
-	my $album    = $track->album  ? $track->album->name  : '';
-	my $title    = $track->title;
-	
 	# Bug 12240: if we have stopped (probably at the end of the playlist) then we are not still playing
 	if ($client->isStopped()) {
 		return 0;
 	}
+
+	my $meta = _getMetadata($client, $track) || return 1;
 	
-	if ( $track->remote ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta  = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );			
-			$artist   = $meta->{artist};
-			$album    = $meta->{album};
-			$title    = $meta->{title};
-		}
-	}
-	
-	if ( $title ne uri_unescape( $item->{t} ) ) {
+	if ( $meta->{title} ne uri_unescape( $item->{t} ) ) {
 		return 0;
 	}
-	elsif ( $album ne uri_unescape( $item->{b} ) ) {
+	elsif ( $meta->{album} ne uri_unescape( $item->{b} ) ) {
 		return 0;
 	}
-	elsif ( $artist ne uri_unescape( $item->{a} ) ) {
+	elsif ( $meta->{artist} ne uri_unescape( $item->{a} ) ) {
 		return 0;
 	}
 	
 	return 1;
+}
+
+sub _getMetadata {
+	my ($client, $track, $url) = @_;
+	
+	$url ||= $track->url;
+
+	my $meta = {
+		artist   => $track->artistName || '',
+		album    => ($track->album && $track->album->get_column('title')) || '',
+		title    => $track->title,
+		tracknum => $track->tracknum || '',
+		duration => $track->secs,
+	};	
+	
+	if ( $track->remote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			# this plugin provides track metadata, i.e. Pandora, Rhapsody
+			my $meta2 = $handler->getMetadataFor( $client, $url, 'forceCurrent' );	
+			
+			# Handler must return at least artist and title
+			unless ( $meta2->{artist} && $meta2->{title} ) {
+				return {
+					msg => "Protocol Handler didn't return an artist and title for $url, ignoring"
+				};
+			}
+			
+			$meta->{artist}   = $meta2->{artist};
+			$meta->{album}    = $meta2->{album} || '';
+			$meta->{title}    = $meta2->{title};
+			$meta->{tracknum} = $meta2->{tracknum} || '';
+			$meta->{duration} = $meta2->{duration} || $track->secs;
+		}
+		else {
+			main::DEBUGLOG && $log->debug( 'Ignoring remote URL ' . $url );
+			return;
+		}
+	}
+
+	return $meta;
 }
 
 sub _submitScrobbleOK {
