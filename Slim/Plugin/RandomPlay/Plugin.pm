@@ -126,9 +126,11 @@ sub weight { MENU_WEIGHT }
 
 sub initPlugin {
 	my $class = shift;
+
+	$genres = undef;
 	
 	# Regenerate the genre map after a rescan.
-	Slim::Control::Request::subscribe(\&_libraryChanged, [['library'], ['changed']]);
+	Slim::Control::Request::subscribe(\&_libraryChanged, [['library','rescan'], ['changed','done']]);
 	
 	return if $initialized || !Slim::Schema::hasLibrary();
 	
@@ -336,7 +338,7 @@ sub shutdownPlugin {
 sub _libraryChanged {
 	my $request = shift;
 	
-	if ($request->getParam('_newvalue')) {
+	if ( $request->getParam('_newvalue') || $request->isCommand([['rescan'],['done']]) ) {
 		__PACKAGE__->initPlugin();
 	} else {
 		_shutdown();
