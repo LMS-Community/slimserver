@@ -462,14 +462,17 @@ sub _parseXML {
 				} else {
 					$new->{'title'} = $entry->{'name'};
 				}
-				
+				$new->{title} = '' if ref $new->{title};
+
 				if ($entry->{'desc'} && ref $entry->{'desc'} eq 'HASH') {
 					$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
 				}
+				$new->{desc} = '' if ref $new->{desc};
 				
 				if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
 					$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
 				}
+				$new->{changes} = '' if ref $new->{changes};
 
 				$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 				$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
