@@ -28,6 +28,7 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
+	my ($secs, $artist, $album, $title, $trackurl);
 	my $foundBOM = 0;
 	my $fh;
 	my $mediadirs;
@@ -51,8 +52,6 @@ sub read {
 	main::INFOLOG && $log->info("Parsing M3U: $url");
 
 	while (my $entry = <$fh>) {
-	
-		my ($secs, $artist, $album, $title, $trackurl);
 
 		chomp($entry);
 
@@ -139,14 +138,8 @@ sub read {
 		
 		if ($class->playlistEntryIsValid($trackurl, $url)) {
 
-			main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
+			push @items, $class->_item($trackurl, $artist, $album, $title, $secs);
 
-			push @items, $class->_updateMetaData( $trackurl, {
-				'TITLE'  => $title,
-				'ALBUM'  => $album,
-				'ARTIST' => $artist,
-				'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
-			} );
 		}
 		else {
 			# Check if the playlist entry is relative to audiodir
@@ -156,23 +149,16 @@ sub read {
 				$trackurl = Slim::Utils::Misc::fixPath($entry, $audiodir);
 				
 				if ($class->playlistEntryIsValid($trackurl, $url)) {
-	
-					main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
-	
-					push @items, $class->_updateMetaData( $trackurl, {
-						'TITLE'  => $title,
-						'ALBUM'  => $album,
-						'ARTIST' => $artist,
-						'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
-					} );
+
+					push @items, $class->_item($trackurl, $artist, $album, $title, $secs);
 					
 					last;
 				}
-	
-				# reset the title
-				($secs, $artist, $album, $title, $trackurl) = ();
 			}
 		}
+
+		# reset the title
+		($secs, $artist, $album, $title, $trackurl) = ();
 	}
 
 	if ( main::INFOLOG && $log->is_info ) {
@@ -182,6 +168,19 @@ sub read {
 	close($fh);
 
 	return @items;
+}
+
+sub _item {
+	my ($class, $trackurl, $artist, $album, $title, $secs) = @_;
+
+	main::DEBUGLOG && $log->debug("    valid entry: $trackurl");
+	
+	return $class->_updateMetaData( $trackurl, {
+		'TITLE'  => $title,
+		'ALBUM'  => $album,
+		'ARTIST' => $artist,
+		'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
+	} );
 }
 
 sub readCurTrackForM3U {
