@@ -555,6 +555,9 @@ sub getMetadataFor {
 	my $meta      = $cache->get( 'deezer_meta_' . $trackId );
 	
 	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+
+		$client->master->pluginData( fetchingMeta => 1 );
+		
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
 		
@@ -571,8 +574,6 @@ sub getMetadataFor {
 		if ( main::DEBUGLOG && $log->is_debug ) {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
-		
-		$client->master->pluginData( fetchingMeta => 1 );
 		
 		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
 			"/api/deezer/v1/playback/getBulkMetadata"
