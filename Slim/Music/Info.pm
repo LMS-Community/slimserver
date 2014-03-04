@@ -1458,7 +1458,7 @@ sub typeFromPath {
 		elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
 			$type = $suffixes{$1};
 		} 
-		elsif ( $fullpath =~ /^(?:radioio|live365)/ ) {
+		elsif ( $fullpath =~ /^(?:live365)/ ) {
 			# Force mp3 for protocol handlers
 			return 'mp3';
 		}
