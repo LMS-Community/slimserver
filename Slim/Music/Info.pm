@@ -483,7 +483,7 @@ sub setRemoteMetadata {
 	}
 	
 	if ( $meta->{cover} && $url =~ m|^http| ) {
-		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, 'never');
+		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, '30 days');
 	}
 	
 	return $track;

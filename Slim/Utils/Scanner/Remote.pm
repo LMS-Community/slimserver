@@ -309,7 +309,7 @@ sub handleRedirect {
 	# Keep track of artwork or station icon across redirects
 	my $cache = Slim::Utils::Cache->new();
 	if ( my $icon = $cache->get("remote_image_" . $track->url) ) {
-		$cache->set("remote_image_" . $request->uri, $icon, 'never');
+		$cache->set("remote_image_" . $request->uri, $icon, '30 days');
 	}
 	
 	return $request;
