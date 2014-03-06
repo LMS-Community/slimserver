@@ -79,9 +79,9 @@ sub registerHandler {
 }
 
 sub registerIconHandler {
-        my ($class, $regex, $ref) = @_;
+	my ($class, $regex, $ref) = @_;
 
-        $iconHandlers{$regex} = $ref;
+	$iconHandlers{$regex} = $ref;
 }
 
 
@@ -134,7 +134,7 @@ sub iconForURL {
 	if (my $handler = $class->handlerForURL($url)) {
 		if ($client && $handler->can('getMetadataFor')) {
 			if ( my $meta = $handler->getMetadataFor($client, $url) ) {
-				return $meta->{cover};
+				return $meta->{cover} if $meta->{cover};
 			}
 		}
 		

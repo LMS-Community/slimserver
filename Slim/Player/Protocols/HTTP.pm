@@ -782,6 +782,7 @@ sub getMetadataFor {
 			};
 		}
 	}
+=pod XXX - no longer needed with RadioIO metadata handling in its own plugin
 	elsif ( $playlistURL =~ /radioio/i ) {
 		if ( main::SLIM_SERVICE || Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
 			# RadioIO
@@ -798,6 +799,7 @@ sub getMetadataFor {
 			};
 		}
 	}
+=cut
 	else {	
 
 		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS)$/ )  {
@@ -806,10 +808,9 @@ sub getMetadataFor {
 			}
 		}	
 
-		my $type = uc( $track->content_type ) . ' '
-			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
+		my $type = uc( $track->content_type ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
 		
-		my $icon = $class->getIcon($playlistURL, 'no fallback artwork') || $class->getIcon($url);
+		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
 		
 		return {
 			artist   => $artist,

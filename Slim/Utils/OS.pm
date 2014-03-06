@@ -59,7 +59,7 @@ sub sqlHelperClass {
 
 # Skip obsolete plugins, they should be deleted by installers
 sub skipPlugins {
-	my @skip = (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));
+	my @skip = (qw(Picks ShoutcastBrowser Webcasters Health));
 	
 	if ( !main::SERVICES ) {
 		# Skip all music service plugins when running in UEML mode
