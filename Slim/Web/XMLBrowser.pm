@@ -621,7 +621,7 @@ sub handleFeed {
 				ct      => $streamItem->{'mime'},
 				secs    => $streamItem->{'duration'},
 				bitrate => $streamItem->{'bitrate'},
-				cover   => $streamItem->{'image'} || $streamItem->{'cover'},
+				cover   => $streamItem->{'cover'} || $streamItem->{'image'} || $streamItem->{'icon'},
 			} );
 		
 			$client->execute([ 'playlist', $action, $url ]);
@@ -663,7 +663,7 @@ sub handleFeed {
 				ct      => $item->{'mime'},
 				secs    => $item->{'duration'},
 				bitrate => $item->{'bitrate'},
-				cover   => $item->{'image'} || $item->{'cover'},
+				cover   => $item->{'cover'} || $item->{'image'} || $item->{'icon'},
 			} );
 			
 			main::idleStreams();

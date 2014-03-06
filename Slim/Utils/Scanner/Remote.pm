@@ -306,16 +306,11 @@ sub handleRedirect {
 		addWMAHeaders( $request );
 	}
 	
-	# Maintain title across redirects
-	# XXX: not sure we want to do this anymore
-=pod
-	my $title = Slim::Music::Info::title( $track->url );
-	Slim::Music::Info::setTitle( $request->uri->as_string, $title );
-
-	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug( "Server redirected, copying title $title from " . $track->url . " to " . $request->uri );
+	# Keep track of artwork or station icon across redirects
+	my $cache = Slim::Utils::Cache->new();
+	if ( my $icon = $cache->get("remote_image_" . $track->url) ) {
+		$cache->set("remote_image_" . $request->uri, $icon, '30 days');
 	}
-=cut
 	
 	return $request;
 }

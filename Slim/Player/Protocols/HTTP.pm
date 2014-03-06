@@ -766,6 +766,7 @@ sub getMetadataFor {
 			};
 		}
 	}
+=pod XXX - no longer needed with RadioIO metadata handling in its own plugin
 	elsif ( $playlistURL =~ /radioio/i ) {
 		if ( main::SLIM_SERVICE || Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
 			# RadioIO
@@ -782,6 +783,7 @@ sub getMetadataFor {
 			};
 		}
 	}
+=cut
 	else {	
 
 		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) !~ /^(?:$class|Slim::Player::Protocols::MMS)$/ )  {
@@ -790,8 +792,9 @@ sub getMetadataFor {
 			}
 		}	
 
-		my $type = uc( $track->content_type ) . ' '
-			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
+		my $type = uc( $track->content_type ) . ' ' . Slim::Utils::Strings::cstring($client, 'RADIO');
+		
+		my $icon = $class->getIcon($url, 'no fallback artwork') || $class->getIcon($playlistURL);
 		
 		return {
 			artist   => $artist,
@@ -799,7 +802,8 @@ sub getMetadataFor {
 			type     => $type,
 			bitrate  => $track->prettyBitRate,
 			duration => $track->secs,
-			cover    => $cover,
+			icon     => $icon,
+			cover    => $cover || $icon,
 		};
 	}
 	
@@ -807,7 +811,7 @@ sub getMetadataFor {
 }
 
 sub getIcon {
-	my ( $class, $url ) = @_;
+	my ( $class, $url, $noFallback ) = @_;
 
 	my $handler;
 
@@ -815,11 +819,11 @@ sub getIcon {
 		return &{$handler};
 	}
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && !$noFallback ) {
 		return Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external');
 	}
 
-	return 'html/images/radio.png';
+	return $noFallback ? '' : 'html/images/radio.png';
 }
 
 sub canSeek {

@@ -692,7 +692,7 @@ sub _cliQuery_done {
 						ct      => $subFeed->{'mime'},
 						secs    => $subFeed->{'duration'},
 						bitrate => $subFeed->{'bitrate'},
-						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $request->getParam('icon'),
+						cover   => $subFeed->{'image'} || $subFeed->{'cover'} || $subFeed->{'icon'} || $request->getParam('icon'),
 					} );
 				
 					$client->execute([ 'playlist', $method, $url ]);

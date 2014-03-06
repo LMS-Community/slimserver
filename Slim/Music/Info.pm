@@ -478,7 +478,7 @@ sub setRemoteMetadata {
 	}
 	
 	if ( $meta->{cover} && $url =~ m|^http| ) {
-		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, 'never');
+		Slim::Utils::Cache->new->set("remote_image_$url", $meta->{cover}, '30 days');
 	}
 	
 	return $track;
@@ -1465,7 +1465,7 @@ sub typeFromPath {
 		elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
 			$type = $suffixes{$1};
 		} 
-		elsif ( $fullpath =~ /^(?:radioio|live365)/ ) {
+		elsif ( $fullpath =~ /^(?:live365)/ ) {
 			# Force mp3 for protocol handlers
 			return 'mp3';
 		}

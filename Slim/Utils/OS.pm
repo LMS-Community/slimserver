@@ -58,7 +58,7 @@ sub sqlHelperClass {
 }
 
 # Skip obsolete plugins, they should be deleted by installers
-sub skipPlugins {return (qw(Picks RadioIO ShoutcastBrowser Webcasters Health));}
+sub skipPlugins {return (qw(Picks ShoutcastBrowser Webcasters Health));}
 
 =head2 initSearchPath( )
 
