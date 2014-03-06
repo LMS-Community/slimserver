@@ -471,11 +471,6 @@ sub setRemoteMetadata {
 		# set current title, after setting track->title so that calls to displayText do not cache empty title
 		setCurrentTitle( $url, $meta->{title} );
 	}
-	
-	if ( $meta->{cover} ) {
-		my $cache = Slim::Utils::Cache->new();
-		$cache->set( "remote_image_$url", $meta->{cover}, 3600 );
-	}
 
 	if ( $meta->{bitrate} ) {
 		# Cache the bitrate string so it will appear in TrackInfo
