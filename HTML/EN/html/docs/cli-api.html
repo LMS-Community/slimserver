@@ -2631,6 +2631,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#years">years</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#musicfolder">mediafolder</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#musicfolder">musicfolder</a></code></strong>
 	</li>
 	<li>
@@ -3809,11 +3812,21 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
 		</code>
+		<br/>
+		<code>
+			mediafolder
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
 	</strong>
 </p>
 <p>
 	The &quot;musicfolder&quot; query returns the content of a given music
 	folder, starting from the top level directory configured in the server.
+</p>
+<p>
+	&quot;mediafolder&quot; is an alias to &quot;musicfolder&quot;. 
 </p>
 <p>
 	Accepted tagged parameters:
@@ -3855,6 +3868,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			<br>
 			&quot;url&quot; has precedence over &quot;folder_id&quot; if both are
 			provided.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			type
+		</td>
+		<td>
+			One of "audio", "list", "video", or "image". Select the media type you 
+			want to browse in the given folder.
 		</td>
 	</tr>
 	<tr>
