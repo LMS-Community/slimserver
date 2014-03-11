@@ -142,7 +142,6 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Common;
 use Slim::Buttons::Home;
 use Slim::Buttons::Power;
-use Slim::Buttons::Search;
 use Slim::Buttons::ScreenSaver;
 use Slim::Utils::PluginManager;
 use Slim::Buttons::Synchronize;

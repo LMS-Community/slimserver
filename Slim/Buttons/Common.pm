@@ -129,7 +129,6 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::GlobalSearch::init();
-	Slim::Buttons::Search::init();
 	Slim::Buttons::SqueezeNetwork::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
@@ -484,30 +483,6 @@ our %functions = (
 			$jump = 'SETTINGS';
 
 			Slim::Buttons::Common::pushModeLeft($client, 'synchronize');
-
-		} elsif ($button eq 'menu_search_artist') {
-
-			my %params = Slim::Buttons::Search::searchFor($client, 'ARTISTS');
-
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
-
-			$jump = 'SEARCH_FOR_ARTISTS';
-
-		} elsif ($button eq 'menu_search_album') {
-
-			my %params = Slim::Buttons::Search::searchFor($client, 'ALBUMS');
-
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
-
-			$jump = 'SEARCH_FOR_ALBUMS';
-
-		} elsif ($button eq 'menu_search_song') {
-
-			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
-
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
-
-			$jump = 'SEARCH_FOR_SONGS';
 
 		} elsif ($buttonarg =~ /^plugin/i) {
 
