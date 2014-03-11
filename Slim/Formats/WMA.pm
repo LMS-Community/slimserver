@@ -40,6 +40,14 @@ my %tagMapping = (
 	'WM/Comments'           => 'COMMENT',
 	'WM/Lyrics'             => 'LYRICS',
 	'WM/Year'               => 'YEAR',
+
+	'MusicBrainz/Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
+	'MusicBrainz/Album Id'        => 'MUSICBRAINZ_ALBUM_ID',
+	'MusicBrainz/Album Status'    => 'MUSICBRAINZ_ALBUM_STATUS',
+	'MusicBrainz/Album Type'      => 'MUSICBRAINZ_ALBUM_TYPE',
+	'MusicBrainz/Artist Id'       => 'MUSICBRAINZ_ARTIST_ID',
+	'MusicBrainz/Track Id'        => 'MUSICBRAINZ_ID',
+	'MusicBrainz/TRM Id'          => 'MUSICBRAINZ_TRM_ID',
 );
 
 sub getTag {

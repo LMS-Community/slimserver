@@ -126,8 +126,11 @@ sub _doTagMapping {
 
 	# map the existing tag names to the expected tag names
 	while ( my ($old, $new) = each %tagMapping ) {
-		if ( exists $tags->{$old} ) {
-			$tags->{$new} = delete $tags->{$old};
+		foreach ($old, uc($old)) {
+			if ( exists $tags->{$_} ) {
+				$tags->{$new} = delete $tags->{$_};
+				last;
+			}
 		}
 	}
 
