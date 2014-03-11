@@ -564,7 +564,6 @@ sub forgetClient {
 		Slim::Buttons::Home::forgetClient($client);
 		Slim::Buttons::Input::Choice::forgetClient($client);
 		Slim::Buttons::Playlist::forgetClient($client);
-		Slim::Buttons::Search::forgetClient($client);
 		Slim::Utils::Alarm->forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		

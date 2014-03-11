@@ -27,7 +27,7 @@ Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
 
 L<Slim::Buttons::Input::Text> is a reusable Logitech Media Server module for creating a standard UI
 for inputting Text. Client parameters may determine the character sets available, and set
-any actions done on the resulting text. Callers include Slim::Buttons::Search.
+any actions done on the resulting text.
 
 The following params may be set when pushing into INPUT.Text, together with their defaults:
 
@@ -490,8 +490,6 @@ sub init {
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
-
-L<Slim::Buttons::Search>
 
 =cut
 
