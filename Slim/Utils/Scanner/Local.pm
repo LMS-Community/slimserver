@@ -1021,6 +1021,12 @@ sub markDone {
 	my ( $path, $type, $changes, $args ) = @_;
 	
 	$type && $path && main::DEBUGLOG && $log->is_debug && $log->debug("Finished scan type $type for $path");
+
+	# Update the last rescan time if any changes were made
+	if (!main::SCANNER && $changes) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
+		Slim::Music::Import->setLastScanTime();
+	}
 	
 	$pending{$path} &= ~$type if $type;
 	
