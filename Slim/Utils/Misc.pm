@@ -65,16 +65,13 @@ my $scannerlog = logger('scan.scanner');
 
 my $canFollowAlias = 0;
 
-if ( !main::SLIM_SERVICE ) {
-	if (main::ISWINDOWS) {
-		require Win32::File;
-		require Slim::Utils::OS::Win32;
-	}
-	
-	elsif ($^O =~/darwin/i) {
-		# OSX 10.3 doesn't have the modules needed to follow aliases
-		$canFollowAlias = Slim::Utils::OS::OSX->canFollowAlias();
-	}
+if (main::ISWINDOWS) {
+	require Win32::File;
+	require Slim::Utils::OS::Win32;
+}
+elsif ($^O =~/darwin/i) {
+	# OSX 10.3 doesn't have the modules needed to follow aliases
+	$canFollowAlias = Slim::Utils::OS::OSX->canFollowAlias();
 }
 
 # Cache our user agent string.
@@ -506,11 +503,6 @@ sub fixPath {
 		}
 
 		return $uri->as_string;
-	}
-	
-	if ( main::SLIM_SERVICE ) {
-		# Abort early if on SN
-		return $file;
 	}
 	
 	# sometimes a playlist parser would send us invalid data like html/xml code - skip it
@@ -1157,7 +1149,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter, Squeezebox Server, Logitech Media Server',
+		'SqueezeCenter, Squeezebox Server, Logitech Media Server',
 	);
 
 	return $userAgentString;
@@ -1411,18 +1403,8 @@ sub shouldCacheURL {
 	
 	return 0 if $host !~ /\./;
 	
-	if ( main::SLIM_SERVICE ) {
-		# Don't cache URLs local to SN, it can break translations, etc
-		return 0 if $host =~ /(?:mysqueezebox|squeezenetwork)/;
-	}
-	
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
-	
-	if ( $ENV{SN_DEV} && $host eq '127.0.0.1' ) {
-		# Force caching in SN dev mode
-		return 1;
-	}
 	
 	if ( Slim::Utils::Network::ip_is_private($host) ) {
 		return 0;

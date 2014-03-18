@@ -18,8 +18,6 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-use constant SN_DEBUG => 0;
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
@@ -178,12 +176,6 @@ sub handleDirectError {
 	
 	main::DEBUGLOG && $log->debug("Direct stream failed: [$response] $status_line\n");
 	
-	if ( main::SLIM_SERVICE && SN_DEBUG ) {
-		SDI::Service::EventLog->log(
-			$client, 'rhapsody_error', "$response - $status_line"
-		);
-	}
-	
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
 }
 
@@ -210,32 +202,6 @@ sub getNextTrack {
 	$song->pluginData( radioTitle    => undef );
 	$song->pluginData( radioTrack    => undef );
 	$song->pluginData( abandonSong   => 0 );
-	
-	if ( main::SLIM_SERVICE ) {
-		# Fail if firmware doesn't support mp3
-		my $old;
-		
-		my $deviceid = $client->deviceid;
-		my $rev      = $client->revision;
-		
-		if ( $deviceid == 4 && $rev < 119 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 5 && $rev < 69 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 7 && $rev < 54 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 10 && $rev < 39 ) {
-			$old = 1;
-		}
-		
-		if ( $old ) {
-			$errorCb->('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED');
-			return;
-		}
-	}
 	
 	foreach ($client->syncGroupActiveMembers()) {
 		if (!$_->canDecodeRhapsody()) {
@@ -470,12 +436,6 @@ sub _gotTrackError {
 	main::DEBUGLOG && $log->debug("Error during getTrackInfo: $error");
 
 	return if $params->{'song'}->pluginData('abandonSong');
-    
-	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog->log(
-			$client, 'rhapsody_track_error', $error
-		);
-	}
 
 	_handleClientError( $error, $client, $params );
 }
@@ -844,39 +804,5 @@ sub getSeekData {
 		ealength           => $ealength,
 	};
 }
-
-# SN only, re-init upon reconnection
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	# Reset song duration/progress bar
-	my $currentURL = $song->streamUrl();
-	
-	main::DEBUGLOG && $log->debug("Re-init Rhapsody - $currentURL");
-	
-	if ( my $length = $client->master->pluginData('length') ) {			
-		# On a timer because $client->currentsongqueue does not exist yet
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time(),
-			sub {
-				my $client = shift;
-				
-				$client->streamingProgressBar( {
-					url     => $currentURL,
-					length  => $length,
-					bitrate => 192000,
-				} );
-				
-				# Back to Now Playing
-				# This is within the timer because otherwise it will run before
-				# addtracks adds all the tracks, and not jump to the correct playing item
-				Slim::Buttons::Common::pushMode( $client, 'playlist' );
-			},
-		);
-	}
-	
-	return 1;
-} }
 
 1;

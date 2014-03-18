@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 
-use constant PROGRESS_INTERVAL => main::SLIM_SERVICE ? 15 : 5;     # update progress tracker every x seconds
+use constant PROGRESS_INTERVAL => 5;     # update progress tracker every x seconds
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.podcast',
@@ -82,7 +82,6 @@ sub handleFeed {
 
 	my $items = [];
 	
-#	my @feeds = main::SLIM_SERVICE ? feedsForClient($client) : @{$prefs->get('feeds')}; 
 	my @feeds = @{$prefs->get('feeds')}; 
 	
 	foreach ( @feeds ) {
@@ -202,43 +201,5 @@ sub trackInfoMenu {
 	
 	return;
 }
-
-
-# SN only
-# XXX - do we still run this plugin on SN?
-=pod
-sub feedsForClient { if (main::SLIM_SERVICE) {
-	my $client = shift;
-	
-	my $userid = $client->playerData->userid->id;
-	
-	my @f = SDI::Service::Model::FavoritePodcast->search(
-		userid => $userid,
-		{ order_by => 'num' }
-	);
-													  
-	my @feeds = map { 
-		{ 
-			name  => $_->title, 
-			value => $_->url,
-		}
-	} @f;
-	
-	# check if the user deleted feeds so we don't load the defaults
-	my $deletedFeeds = preferences('server')->client($client)->get('deleted_podcasts');
-	
-	# Populate with all default feeds
-	if ( !scalar @feeds && !$deletedFeeds ) {
-		@feeds = map { 
-			{ 
-				name  => $_->title, 
-				value => $_->url,
-			}
-		} SDI::Service::Model::FavoritePodcast->addDefaults( $userid );
-	}
-	
-	return @feeds;
-} }
-=cut
 
 1;

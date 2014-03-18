@@ -66,7 +66,7 @@ sub init {
 	my $class = shift;
 	
 	# Wipe cached data after rescan
-	if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	if ( !main::SCANNER ) {
 		Slim::Control::Request::subscribe( sub {
 			$class->wipeCaches;
 		}, [['rescan'], ['done']] );
@@ -3305,11 +3305,6 @@ sub statusQuery {
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
-			
-		if ( main::SLIM_SERVICE ) {
-			# Bug 7437, No Playlist Save on SN
-			$menuCount--;
-		}
 		
 		$request->addResult("count", $menuCount);
 		
@@ -3968,12 +3963,7 @@ sub dynamicAutoQuery {
 				logError("While trying to run function coderef: [$@]");
 				$request->setStatusBadDispatch();
 				$request->dump('Request');
-				
-				if ( main::SLIM_SERVICE ) {
-					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcptr);
-					$@ =~ s/"/'/g;
-					SDI::Util::Syslog::error("service=SS-Queries method=${name} error=\"$@\"");
-				}
+
 			}
 		}
 		
@@ -4059,22 +4049,12 @@ sub _addJivePlaylistControls {
 			nextWindow => 'home',
 		},
 	);
-	
-	my $clearicon = main::SLIM_SERVICE
-		? Slim::Networking::SqueezeNetwork->url('/static/images/icons/playlistclear.png', 'external')
-		: '/html/images/playlistclear.png';
 
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon-id', $clearicon);
+	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/playlistclear.png');
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Bug 7110, move images
-		use Slim::Networking::SqueezeNetwork;
-		$request->addResultLoop( $loop, $count, 'icon', Slim::Networking::SqueezeNetwork->url('/static/jive/images/blank.png', 1) );
-	}
 
 	# save playlist
 	my $input = {
@@ -4096,14 +4076,12 @@ sub _addJivePlaylistControls {
 	};
 	$count++;
 
-	# Bug 7437, don't display Save Playlist on SN
-	if ( !main::SLIM_SERVICE ) {
-		$text = $client->string('SAVE_PLAYLIST');
-		$request->addResultLoop($loop, $count, 'text', $text);
-		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/playlistsave.png');
-		$request->addResultLoop($loop, $count, 'input', $input);
-		$request->addResultLoop($loop, $count, 'actions', $actions);
-	}
+	# Save Playlist item
+	$text = $client->string('SAVE_PLAYLIST');
+	$request->addResultLoop($loop, $count, 'text', $text);
+	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/playlistsave.png');
+	$request->addResultLoop($loop, $count, 'input', $input);
+	$request->addResultLoop($loop, $count, 'actions', $actions);
 }
 
 # **********************************************************************
@@ -4176,12 +4154,6 @@ sub _addJiveSong {
 	
 	if ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', proxiedImage($songData->{artwork_url}) );
-	}
-	elsif ( main::SLIM_SERVICE ) {
-		# send radio placeholder art when on mysb.com
-		$request->addResultLoop($loop, $count, 'icon-id',
-			Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external')
-		);
 	}
 	elsif ( defined $iconId ) {
 		$request->addResultLoop($loop, $count, 'icon-id', proxiedImage($iconId));
@@ -4479,7 +4451,7 @@ sub _songData {
 				next;
 			}
 			
-			if ( defined(my $submethod = $tagref->[3]) && !main::SLIM_SERVICE ) {
+			if ( defined(my $submethod = $tagref->[3]) ) {
 				
 				my $postfix = ($tag eq 'S')?"_ids":"";
 			

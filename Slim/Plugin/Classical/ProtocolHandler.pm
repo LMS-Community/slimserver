@@ -365,40 +365,4 @@ sub getIcon {
 	return Slim::Plugin::Classical::Plugin->_pluginDataFor('icon');
 }
 
-# SN only
-# Re-init when a player reconnects
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-
-	my $url = $song->currentTrack->url();
-	
-	main::DEBUGLOG && $log->debug("Re-init Classical - $url");
-
-	if ( my $track = $song->pluginData() ) {
-		# We have previous data about the currently-playing song
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Reset song duration/progress bar
-		if ( $track->{Length} ) {
-			# On a timer because $client->currentsongqueue does not exist yet
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					
-					$client->streamingProgressBar( {
-						url      => $url,
-						duration => $track->{Length},
-					} );
-				},
-			);
-		}
-	}
-	
-	return 1;
-} }
-
 1;

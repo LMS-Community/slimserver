@@ -78,16 +78,14 @@ sub getDisplayName {
 }
 
 sub initPlugin {
-	if ( !main::SLIM_SERVICE ) {
-		if (main::ISWINDOWS) {
-			require Slim::Plugin::PreventStandby::Win32;
-			$handler = Slim::Plugin::PreventStandby::Win32->new();
-		}
-		
-		elsif ($^O =~/darwin/i) {
-			require Slim::Plugin::PreventStandby::OSX;
-			$handler = Slim::Plugin::PreventStandby::OSX->new();
-		}
+	if (main::ISWINDOWS) {
+		require Slim::Plugin::PreventStandby::Win32;
+		$handler = Slim::Plugin::PreventStandby::Win32->new();
+	}
+	
+	elsif ($^O =~/darwin/i) {
+		require Slim::Plugin::PreventStandby::OSX;
+		$handler = Slim::Plugin::PreventStandby::OSX->new();
 	}
 	
 	if (!$handler) {

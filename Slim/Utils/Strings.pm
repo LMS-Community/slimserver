@@ -251,11 +251,6 @@ sub stringsFiles {
 	for my $path ( @pluginDirs ) {
 		push @files, catdir($path, 'custom-strings.txt');
 	}
-	
-	if ( main::SLIM_SERVICE ) {
-		push @files, catdir($serverPath, 'slimservice-strings.txt');
-		push @files, catdir($main::SN_PATH, 'docroot', 'strings.txt');
-	}
 
 	# prune out files which don't exist and find newest
 	my $i = 0;
@@ -364,14 +359,6 @@ sub storeString {
 	my $args = shift;
 
 	return if ($name eq 'LANGUAGE_CHOICES');
-	
-	if ( main::SLIM_SERVICE ) {
-		# Store all languages so we can have per-client language settings
-		for my $lang ( keys %{ $strings->{langchoices} } ) {
-			$strings->{$lang}->{$name} = $curString->{$lang} || $curString->{$failsafeLang};
-		}
-		return;
-	}
 
 	if ($log->is_info && defined $strings->{$currentLang}->{$name} && defined $curString->{$currentLang} && 
 			$strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
@@ -609,14 +596,6 @@ sub failsafeLanguage {
 
 sub clientStrings {
 	my $client = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		if ( my $override = $client->languageOverride ) {
-			return $strings->{ $override } || $strings->{ $failsafeLang };
-		}
-		
-		return $strings->{ $prefs->client($client)->get('language') } || $strings->{$failsafeLang};
-	}
 	
 	my $display = $client->display;
 

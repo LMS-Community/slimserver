@@ -21,14 +21,8 @@ my $prefs = preferences('server');
 my $log = logger('network.protocol.slimproto');
 
 BEGIN {
-	if ( main::SLIM_SERVICE ) {
-		require SDI::Service::Player::SqueezeNetworkClient;
-		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
-	}
-	else {
-		require Slim::Player::Squeezebox2;
-		push @ISA, qw(Slim::Player::Squeezebox2);
-	}
+	require Slim::Player::Squeezebox2;
+	push @ISA, qw(Slim::Player::Squeezebox2);
 }
 
 {

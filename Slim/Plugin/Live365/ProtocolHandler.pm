@@ -276,32 +276,4 @@ sub getIcon {
 	return Slim::Plugin::Live365::Plugin->_pluginDataFor('icon');
 }
 
-# SN only
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	my $url = $song->currentTrack->url();
-	
-	main::DEBUGLOG && $log->debug("Re-init Live365 - $url");
-	
-	# Back to Now Playing
-	Slim::Buttons::Common::pushMode( $client, 'playlist' );
-	
-	# Trigger event logging timer for this stream
-	Slim::Control::Request::notifyFromArray(
-		$client,
-		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $url ), 0 ]
-	);
-	
-	# Restart metadata timer
-	Slim::Utils::Timers::killTimers( $song, \&getPlaylist );
-	Slim::Utils::Timers::setTimer(
-		$song,
-		Time::HiRes::time(),
-		\&getPlaylist,
-	);
-	
-	return 1;
-} }
-
 1;

@@ -255,26 +255,24 @@ sub parseMetadata {
 sub canDirectStream {
 	my ($classOrSelf, $client, $url, $inType) = @_;
 	
-	if ( !main::SLIM_SERVICE ) {
-		# When synced, we don't direct stream so that the server can proxy a single
-		# stream for all players
-		if ( $client->isSynced(1) ) {
+	# When synced, we don't direct stream so that the server can proxy a single
+	# stream for all players
+	if ( $client->isSynced(1) ) {
 
-			if ( main::INFOLOG && $directlog->is_info ) {
-				$directlog->info(sprintf(
-					"[%s] Not direct streaming because player is synced", $client->id
-				));
-			}
-
-			return 0;
+		if ( main::INFOLOG && $directlog->is_info ) {
+			$directlog->info(sprintf(
+				"[%s] Not direct streaming because player is synced", $client->id
+			));
 		}
 
-		# Allow user pref to select the method for streaming
-		if ( my $method = $prefs->client($client)->get('mp3StreamingMethod') ) {
-			if ( $method == 1 ) {
-				main::DEBUGLOG && $directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
-				return 0;
-			}
+		return 0;
+	}
+
+	# Allow user pref to select the method for streaming
+	if ( my $method = $prefs->client($client)->get('mp3StreamingMethod') ) {
+		if ( $method == 1 ) {
+			main::DEBUGLOG && $directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
+			return 0;
 		}
 	}
 	
@@ -547,15 +545,7 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  
 	# Use full path for proxy servers
-	my $proxy;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Let user specify their own proxy to use
-		$proxy = $prefs->client($client)->get('webproxy');
-	}
-	else {
-		$proxy = $prefs->get('webproxy');
-	}
+	my $proxy = $prefs->get('webproxy');
 	
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
@@ -618,23 +608,21 @@ sub requestString {
 	}
 	
 	# Bug 5858, add cookies to the request
-	if ( !main::SLIM_SERVICE ) {
-		my $request_object = HTTP::Request->parse($request);
-		$request_object->uri($url);
-		Slim::Networking::Async::HTTP::cookie_jar->add_cookie_header( $request_object );
-		$request_object->uri($path);
-			
-		# Bug 9709, strip long cookies from the request
-		$request_object->headers->scan( sub {
-			if ( $_[0] eq 'Cookie' ) {
-				if ( length($_[1]) > 512 ) {
-					$request_object->headers->remove_header('Cookie');
-				}
-			}
-		} );
+	my $request_object = HTTP::Request->parse($request);
+	$request_object->uri($url);
+	Slim::Networking::Async::HTTP::cookie_jar->add_cookie_header( $request_object );
+	$request_object->uri($path);
 		
-		$request = $request_object->as_string( $CRLF );				
-	}
+	# Bug 9709, strip long cookies from the request
+	$request_object->headers->scan( sub {
+		if ( $_[0] eq 'Cookie' ) {
+			if ( length($_[1]) > 512 ) {
+				$request_object->headers->remove_header('Cookie');
+			}
+		}
+	} );
+	
+	$request = $request_object->as_string( $CRLF );				
 
 	return $request;
 }
@@ -716,22 +704,7 @@ sub getMetadataFor {
 	
 	# Check for radio URLs with cached covers
 	my $cache = Slim::Utils::Cache->new();
-	my $cover;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Only try to fetch from cache once to avoid spamming memcached
-		# This makes sense for SBS too but I'm not sure if it will
-		# break something, i.e. delayed metadata after the first call
-		if ( my $song = $client->playingSong() ) {
-			$cover = $song->pluginData('httpCover');
-			if ( !defined $cover ) {
-				$cover = $song->pluginData( httpCover => $cache->get( "remote_image_$url" ) || '' );
-			}
-		}
-	}
-	else {		
-		$cover = $cache->get( "remote_image_$url" );
-	}
+	my $cover = $cache->get( "remote_image_$url" );
 	
 	# Item may be a playlist, so get the real URL playing
 	if ( Slim::Music::Info::isPlaylist($url) ) {
@@ -768,11 +741,9 @@ sub getMetadataFor {
 	}
 =pod XXX - no longer needed with RadioIO metadata handling in its own plugin
 	elsif ( $playlistURL =~ /radioio/i ) {
-		if ( main::SLIM_SERVICE || Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
+		if ( Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
 			# RadioIO
-			my $icon = main::SLIM_SERVICE
-				? 'http://www.squeezenetwork.com/static/images/icons/radioio.png'
-				: Slim::Plugin::InternetRadio::Plugin::RadioIO->_pluginDataFor('icon');
+			my $icon = Slim::Plugin::InternetRadio::Plugin::RadioIO->_pluginDataFor('icon');
 				
 			return {
 				artist   => $artist,
@@ -817,10 +788,6 @@ sub getIcon {
 
 	if ( ($handler = Slim::Player::ProtocolHandlers->iconHandlerForURL($url)) && ref $handler eq 'CODE' ) {
 		return &{$handler};
-	}
-	
-	if ( main::SLIM_SERVICE && !$noFallback ) {
-		return Slim::Networking::SqueezeNetwork->url('/static/images/icons/radio.png', 'external');
 	}
 
 	return $noFallback ? '' : 'html/images/radio.png';
@@ -888,26 +855,6 @@ sub getSeekDataByPosition {
 	my $seekdata = $song->seekdata() || {};
 	
 	return {%$seekdata, restartOffset => $bytesReceived};
-}
-
-# reinit is used on SN to maintain seamless playback when bumped to another instance
-sub reinit {
-	if ( main::SLIM_SERVICE ) {
-		my ( $class, $client, $song ) = @_;
-		
-		main::DEBUGLOG && $log->debug("Re-init HTTP");
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Trigger event logging timer for this stream
-		Slim::Control::Request::notifyFromArray(
-			$client,
-			[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $song->streamUrl() ), 0 ]
-		);
-		
-		return 1;
-	}
 }
 
 1;

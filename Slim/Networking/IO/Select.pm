@@ -16,10 +16,6 @@ use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
-if ( main::SLIM_SERVICE ) {
-	require SDI::Util::Syslog;
-}
-
 our @EXPORT = qw(addRead addWrite addError removeRead removeWrite removeError);
 
 my $depth = 0;
@@ -122,19 +118,7 @@ sub _add {
 					
 			eval { 
 				# This die handler lets us get a correct backtrace if callback crashes
-				local $SIG{__DIE__} = main::SLIM_SERVICE ? sub {
-					my $msg = shift;
-									
-					# Only notify if eval_depth is 2, this avoids logging for errors inside
-					# nested evals
-					
-					if ( _eval_depth() == 2 ) {
-						my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($cb);
-						
-						$msg =~ s/"/'/g;
-						SDI::Util::Syslog::error("service=SS-IO method=${func} error=\"${msg}\"");
-					}
-				} : 'DEFAULT';
+				local $SIG{__DIE__} = 'DEFAULT';
 				
 				$cb->( $fh, @{ ${*$fh}{passthrough} || [] } );
 			};
@@ -185,19 +169,6 @@ sub loop {
 	
 	$depth--;
 }
-
-sub _eval_depth { if ( main::SLIM_SERVICE ) {
-	my $eval_depth = 0;
-	my $frame      = 0;
-
-	while ( my @caller_info = caller( $frame++ ) ) {
-		if ( $caller_info[3] eq '(eval)' ) {
-			$eval_depth++;
-		}
-	}
-
-	return $eval_depth;
-} }
 
 =head1 SEE ALSO
 

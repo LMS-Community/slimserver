@@ -228,13 +228,7 @@ sub fetchMetadata {
 	
 	$client->master->pluginData( fetchingMeta => 1 );
 	
-	my %headers;
-	if ( main::SLIM_SERVICE ) {
-		# Add real client IP for Radiotime so they can do proper geo-location
-		$headers{'X-Forwarded-For'} = $client->ip;
-	}
-	
-	$http->get( $metaUrl, %headers );
+	$http->get( $metaUrl );
 }
 
 sub _gotMetadata {

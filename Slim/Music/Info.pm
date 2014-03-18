@@ -690,8 +690,8 @@ sub standardTitle {
 	my $meta      = shift; # optional remote metadata to format
 	my $format    = shift; # caller may specify format 
 	
-	# Short-circuit if we have metadata or are on SN
-	if ( $meta || main::SLIM_SERVICE ) {
+	# Short-circuit if we have metadata
+	if ( $meta ) {
 		my $format = standardTitleFormat($client) || 'TITLE';
 		return displayText($client, undef, $format, $meta);
 	}

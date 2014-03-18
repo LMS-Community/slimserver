@@ -58,20 +58,6 @@ sub initPlugin {
 		is_app    => 1,
 	);
 	
-	if ( main::SLIM_SERVICE ) {
-		# Also add to the Radio menu
-		my $radio_menu = {
-			useMode => sub { $class->setMode(@_) },
-			header  => 'PLUGIN_PANDORA_MODULE_NAME',
-		};
-		
-		# Add as top-level item choice
-		Slim::Buttons::Home::addMenuOption(
-			'PLUGIN_PANDORA_MODULE_NAME',
-			$radio_menu,
-		);
-	}
-	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::Pages->addPageFunction( 

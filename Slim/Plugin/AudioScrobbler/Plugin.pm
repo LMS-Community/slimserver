@@ -55,7 +55,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 } );
 
 use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
-use constant CLIENT_ID     => main::SLIM_SERVICE ? 'snw' : 'ss7';
+use constant CLIENT_ID     => 'ss7';
 use constant CLIENT_VER    => 'sc' . $::VERSION;
 
 sub getDisplayName {
@@ -346,7 +346,7 @@ sub _handshakeOK {
 	}
 	
 	if ( $error ) {
-		$log->error($error) unless main::SLIM_SERVICE;	# error message comes without username - useless noise on mysb.com
+		$log->error($error);
 		if ( $params->{ecb} ) {
 			$params->{ecb}->($error);
 		}
@@ -403,10 +403,6 @@ sub newsongCallback {
 
 	# Check if this player has an account selected
 	if ( ! (my $account = $prefs->client($client)->get('account')) ) {
-		
-		# set a zero value so we don't need to query the DB any more in the future
-		$prefs->client($client)->set('account', 0) if main::SLIM_SERVICE && !defined $account;
-		
 		return ;
 	}
 	
@@ -415,19 +411,7 @@ sub newsongCallback {
 		return unless Slim::Player::Sync::isMaster($client);
 	}
 	
-	my $accounts = getAccounts($client);
-	
-	my $enable_scrobbling;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Get enable_scrobbling from the user_prefs table
-		$enable_scrobbling = $prefs->client($client)->get( 'enable_scrobbling', undef, 'UserPref' );
-	}
-	else {
-		$enable_scrobbling = $prefs->get('enable_scrobbling');
-	}
-	
-	return unless $enable_scrobbling && scalar @{$accounts};
+	return unless $prefs->get('enable_scrobbling') && scalar @{ getAccounts($client) };
 
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
@@ -697,13 +681,7 @@ sub checkScrobble {
 			
 			# Ignore radio tracks if requested, unless rating = L
 			if ( !defined $rating || $rating ne 'L' ) {
-				my $include_radio;
-				if ( main::SLIM_SERVICE ) {
-					$include_radio = $prefs->client($client)->get( 'include_radio', undef, 'UserPref' );
-				}
-				else {
-					$include_radio = $prefs->get('include_radio');
-				}
+				my $include_radio = $prefs->get('include_radio');
 				
 				if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
 					main::DEBUGLOG && $log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
@@ -1050,15 +1028,7 @@ sub loveTrack {
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
 	
-	my $enable_scrobbling;
-	if ( main::SLIM_SERVICE ) {
-		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
-	}
-	else {
-		$enable_scrobbling  = $prefs->get('enable_scrobbling');
-	}
-	
-	return unless $enable_scrobbling;
+	return unless $prefs->get('enable_scrobbling');
 	
 	main::DEBUGLOG && $log->debug( "Loved: $url" );
 	
@@ -1150,15 +1120,7 @@ sub banTrack {
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
 	
-	my $enable_scrobbling;
-	if ( main::SLIM_SERVICE ) {
-		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
-	}
-	else {
-		$enable_scrobbling  = $prefs->get('enable_scrobbling');
-	}
-	
-	return unless $enable_scrobbling;
+	return unless $prefs->get('enable_scrobbling');
 
 	main::DEBUGLOG && $log->debug( "Banned: $url" );
 	
@@ -1193,16 +1155,8 @@ sub canScrobble {
 	
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
-
-	my $enable_scrobbling;
-	if ( main::SLIM_SERVICE ) {
-		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
-	}
-	else {
-		$enable_scrobbling  = $prefs->get('enable_scrobbling');
-	}
 	
-	return unless $enable_scrobbling;
+	return unless $prefs->get('enable_scrobbling');
 	
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
@@ -1238,46 +1192,19 @@ sub canScrobble {
 sub getAccounts {
 	my $client = shift;
 	
-	my $accounts;
-	
-	if ( main::SLIM_SERVICE ) {
-		$accounts = $prefs->client($client)->get( 'accounts', undef, 'UserPref' ) || [];
-	
-		if ( !ref $accounts ) {
-			$accounts = from_json( $accounts );
-		}
-	}
-	else {	
-		$accounts = $prefs->get('accounts') || [];
-	}
-	
-	return $accounts;
+	return $prefs->get('accounts') || [];
 }
 
 sub getQueue {
 	my $client = shift;
 	
-	my $queue;
-	
-	if ( main::SLIM_SERVICE ) {
-		$queue = SDI::Service::Model::ScrobbleQueue->get( $client->playerData->id );
-	}
-	else {
-		$queue = $prefs->client($client)->get('queue') || [];
-	}
-	
-	return $queue;
+	return $prefs->client($client)->get('queue') || [];
 }
 
 sub setQueue {
 	my ( $client, $queue ) = @_;
 	
-	if ( main::SLIM_SERVICE ) {
-		SDI::Service::Model::ScrobbleQueue->set( $client->playerData->id, $queue );
-	}
-	else {
-		$prefs->client($client)->set( queue => $queue );
-	}
+	$prefs->client($client)->set( queue => $queue );
 }
 
 sub infoLoveTrack {

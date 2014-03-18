@@ -14,6 +14,7 @@
 require 5.008_001;
 use strict;
 
+# leaving this flag in for the moment - unlikely but possibly some 3rd party plugin is referring to it
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
 use constant RESIZER      => 0;
@@ -688,7 +689,7 @@ sub idle {
 		# empty notifcation queue, only if no IR events are pending
 		$pendingEvents = Slim::Control::Request::checkNotifications();
 		
-		if ( !main::SLIM_SERVICE && !$pendingEvents ) {
+		if ( !$pendingEvents ) {
 			# run scheduled tasks, only if no other events are pending
 			$pendingEvents = Slim::Utils::Scheduler::run_tasks();
 		}

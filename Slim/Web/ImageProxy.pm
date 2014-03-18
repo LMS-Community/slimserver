@@ -27,7 +27,7 @@ my $cache;
 my %queue;
 
 sub init {
- 	$cache ||= Slim::Web::ImageProxy::Cache->new() unless main::SLIM_SERVICE;
+ 	$cache ||= Slim::Web::ImageProxy::Cache->new();
 
 	# clean up  stale cache files
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^imgproxy_[a-f0-9]+$/i);			
@@ -250,9 +250,6 @@ sub _artworkError {
 sub proxiedImage {
 	my ($url, $force) = @_;
 
-	# use external proxy on mysb.com
-	return $url if main::SLIM_SERVICE;
-
 	# only proxy external URLs
 	return $url unless $force || ($url && $url =~ /^https?:/);
 
@@ -274,9 +271,6 @@ sub proxiedImage {
 # allow plugins to register custom handlers for the image url
 sub registerHandler {
 	my ( $class, %params ) = @_;
-	
-	# not available on SN
-	return if main::SLIM_SERVICE;
 	
 	if ( ref $params{match} ne 'Regexp' ) {
 		$log->error( 'registerProvider called without a regular expression ' . ref $params{match} );
@@ -351,7 +345,7 @@ sub new {
 	if ( !$cache ) {
 		$cache = $class->SUPER::new($root, 'imgproxy', 86400*30);
 
-		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+		if ( !main::SCANNER ) {
 			# start purge routine in a few seconds
 			require Slim::Utils::Timers;
 			Slim::Utils::Timers::setTimer( undef, time() + 10 + int(rand(5)), \&cleanup, 1 );

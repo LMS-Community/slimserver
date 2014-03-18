@@ -34,12 +34,6 @@ use Slim::Utils::Network;
 my $log = logger('menu.systeminfo');
 my $prefs = preferences('server');
 
-# some SN values
-my $_ss_version = 'r0';
-my $_sn_version = 'r0';
-my $_versions_mtime = 0;
-my $_versions_last_checked = 0;
-
 sub init {
 	my $class = shift;
 	$class->SUPER::init();
@@ -63,56 +57,41 @@ sub registerDefaultInfoProviders {
 	my $class = shift;
 
 	$class->SUPER::registerDefaultInfoProviders();
+
+	$class->registerInfoProvider( server => (
+		after => 'top',
+		func  => \&infoServer,
+	) );
+
+	$class->registerInfoProvider( library => (
+		after => 'server',
+		func  => \&infoLibrary,
+	) );
 	
-	if ( main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( squeezenetwork => (
-			after => 'top',
-			func  => \&infoSqueezeNetwork,
-		) );
+	$class->registerInfoProvider( currentplayer => (
+		after => 'library',
+		func  => \&infoCurrentPlayer,
+	) );
 	
-		$class->registerInfoProvider( currentplayer => (
-			after => 'squeezenetwork',
-			func  => \&infoCurrentPlayer,
-		) );
-	}
+	$class->registerInfoProvider( players => (
+		after => 'currentplayer',
+		func  => \&infoPlayers,
+	) );
 	
-	else {		
-		$class->registerInfoProvider( server => (
-			after => 'top',
-			func  => \&infoServer,
-		) );
+	$class->registerInfoProvider( dirs => (
+		after => 'players',
+		func  => \&infoDirs,
+	) );
 	
-		$class->registerInfoProvider( library => (
-			after => 'server',
-			func  => \&infoLibrary,
-		) );
-		
-		$class->registerInfoProvider( currentplayer => (
-			after => 'library',
-			func  => \&infoCurrentPlayer,
-		) );
-		
-		$class->registerInfoProvider( players => (
-			after => 'currentplayer',
-			func  => \&infoPlayers,
-		) );
-		
-		$class->registerInfoProvider( dirs => (
-			after => 'players',
-			func  => \&infoDirs,
-		) );
-		
-		$class->registerInfoProvider( logs => (
-			after => 'dirs',
-			func  => \&infoLogs,
-		) );
-		
-		$class->registerInfoProvider( plugins => (
-			after => 'logs',
-			func  => \&infoPlugins,
-		) );
-	}
+	$class->registerInfoProvider( logs => (
+		after => 'dirs',
+		func  => \&infoLogs,
+	) );
 	
+	$class->registerInfoProvider( plugins => (
+		after => 'logs',
+		func  => \&infoPlugins,
+	) );
 }
 
 sub infoPlayers {
@@ -483,85 +462,6 @@ sub infoLogs {
 			type => 'text',
 			name => cstring($client, "SETUP_DEBUG_${key}_LOG") . cstring($client, 'COLON') . ' ' . $value
 		}
-	}
-	
-	return $item;
-}
-
-sub infoSqueezeNetwork {
-	my $client = shift;
-	my $item;
-	
-	if ( main::SLIM_SERVICE ) {
-
-		my $time = time();
-
-		if ( ($time - $_versions_last_checked) > 60 ) {
-			$_versions_last_checked = $time;
-
-			my @stats = stat('/etc/sn/versions');
-			my $mtime = $stats[9] || -1;
-
-			if ( $mtime != $_versions_mtime ) {
-				$_versions_mtime = $mtime;
-
-				my $ok = open(my $vfile, '<', '/etc/sn/versions');
-				
-				if ($ok) {
-					local $_;
-					while(<$vfile>) {
-						chomp;
-						next unless /^(S[NS]):([^:]+)$/;
-						$_sn_version = $2 if $1 eq 'SN';
-
-						# SS version is only read once because this instance may
-						# be running an older version than the server has
-						if ( $_ss_version eq 'r0' ) {
-							$_ss_version = $2 if $1 eq 'SS';
-						}
-					}
-					
-					close($vfile);
-				}
-			}
-		}
-
-		my $config = SDI::Util::SNConfig::get_config();
-		my $dcname = $config->{dcname};
-		my $dcdesc = $config->{datacenter_info}->{$dcname}->{desc} || 'Unknown';
-
-		$item = {
-			name  => cstring($client, 'INFORMATION_MENU_SERVER'),
-			items => [
-				{
-					type => 'text',
-					name => sprintf('%s SS%s %s, SN%s %s',
-						cstring($client, 'SERVER_VERSION'),
-						cstring($client, 'COLON'),
-						$_ss_version,
-						cstring($client, 'COLON'),
-						$_sn_version					
-					)
-				},
-				
-				{
-					type => 'text',
-					name => cstring($client, 'INFORMATION_DATACENTER') . cstring($client, 'COLON') . ' ' . $dcdesc,
-				},
-				
-				{
-					type => 'text',
-					# don't show the anonymous account information
-					name => cstring($client, 'INFORMATION_SN_ACCOUNT') . cstring($client, 'COLON') . ' ' . 
-						( $client->playerData->userid->email =~ /^!anonymous_[\da-f]+$/i 
-							? cstring($client, 'NONE') 
-							: $client->playerData->userid->email
-						),
-				}
-				
-			]
-		};
-		
 	}
 	
 	return $item;

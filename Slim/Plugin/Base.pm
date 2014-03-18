@@ -72,10 +72,8 @@ sub initPlugin {
 		}
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		if ($class->_pluginDataFor('icon')) {
-			Slim::Web::Pages->addPageLinks("icons", { $name => $class->_pluginDataFor('icon') });
-		}
+	if ($class->_pluginDataFor('icon')) {
+		Slim::Web::Pages->addPageLinks("icons", { $name => $class->_pluginDataFor('icon') });
 	}
 
 	if ($class->can('defaultMap') && !main::SCANNER) {
@@ -118,13 +116,6 @@ sub _pluginDataFor {
 	my $pluginData = Slim::Utils::PluginManager->dataForPlugin($class);
 
 	if ($pluginData && ref($pluginData) && $pluginData->{$key}) {
-		
-		# Bug 7110, on SN provide a full path for icons
-		if ( main::SLIM_SERVICE && $key eq 'icon' ) {
-			use Slim::Networking::SqueezeNetwork;			
-			return Slim::Networking::SqueezeNetwork->url( '/static/jive/' . $pluginData->{$key}, 1 );
-		}
-
 		return $pluginData->{$key};
 	}
 
@@ -152,7 +143,7 @@ sub addNonSNApp {
 }
 
 sub nonSNApps {
-	return !main::SLIM_SERVICE && $nonSNApps
+	return $nonSNApps
 }
 
 1;
