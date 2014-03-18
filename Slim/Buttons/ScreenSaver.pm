@@ -217,13 +217,7 @@ sub screenSaver {
 	}
 
 	# Call ourselves again after 1 second
-	my $interval = 1;
-	
-	if ( main::SLIM_SERVICE ) {
-		$interval = 10;
-	}
-	
-	Slim::Utils::Timers::setTimer($client, ($now + $interval), \&screenSaver);
+	Slim::Utils::Timers::setTimer($client, ($now + 1), \&screenSaver);
 }
 
 sub wakeup {

@@ -62,11 +62,6 @@ sub migrate {
 			if ( $self->{parent}->{'migratecb'}->{ $version }->($self, $client)) {
 				
 				main::INFOLOG && $log->info("migrating client prefs $self->{parent}->{'namespace'}:$self->{'clientid'} to version $version");
-				
-				if ( main::SLIM_SERVICE ) {
-					# Store _version in the database on SN
-					$self->set( '_version' => $version );
-				}
 
 				$self->{'prefs'}->{'_version'} = $version;
 				

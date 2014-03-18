@@ -12,8 +12,6 @@ use Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 
 use URI::Escape qw(uri_escape_utf8);
 
-use constant SN_DEBUG => 0;
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
@@ -51,34 +49,6 @@ sub initPlugin {
 		weight => 20,
 		is_app => 1,
 	);
-	
-	if ( main::SLIM_SERVICE ) {
-		# Also add to the My Music menu
-		my $my_menu = {
-			useMode => sub { $class->myLibraryMode(@_) },
-			header  => 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
-		};
-		
-		Slim::Buttons::Home::addSubMenu( 
-			'MY_MUSIC',
-			'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
-			$my_menu,
-		);
-		
-		# Add as top-level item choice
-		Slim::Buttons::Home::addMenuOption(
-			'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
-			$my_menu,
-		);
-		
-		# Setup additional CLI methods for this menu
-		$class->initCLI(
-			feed         => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml/library/getLastDateLibraryUpdated'),
-			tag          => 'rhapsody_library',
-			menu         => 'my_music',
-			display_name => 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
-		);
-	}
 	
 	if ( main::WEBUI ) {
 		# Add a function to view trackinfo in the web
@@ -149,37 +119,6 @@ sub getDisplayName () {
 # Don't add this item to any menu
 sub playerMenu { }
 
-# SLIM_SERVICE
-sub myLibraryMode { if (main::SLIM_SERVICE) {
-	my ( $class, $client, $method ) = @_;
-
-	if ($method eq 'pop') {
-
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	# use INPUT.Choice to display the list of feeds
-	my $name = 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY';
-	if ($client->isAppEnabled('rhapsodyeu')) {
-		$name = 'PLUGIN_RHAPSODY_EU_MY_RHAPSODY_LIBRARY';
-	}
-	
-	my %params = (
-		header   => $name,
-		modeName => $name,
-		url      => $class->feed() . '/library/getLastDateLibraryUpdated',
-		title    => $client->string( $name ),
-		timeout  => 35,
-	);
-
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-
-	# we'll handle the push in a callback
-	$client->modeParam( handledTransition => 1 );
-} }
-# /SLIM_SERVICE
-
 sub handleError {
 	my ( $error, $client ) = @_;
 	
@@ -197,21 +136,7 @@ sub handleError {
 			header  => '{PLUGIN_RHAPSODY_DIRECT_ERROR}',
 			listRef => [ $error ],
 		} );
-		
-		if ( main::SLIM_SERVICE ) {
-		    logError( $client, $error );
-		}
 	}
-}
-
-sub logError {
-	my ( $client, $error ) = @_;
-	
-	return unless SN_DEBUG;
-	
-	SDI::Service::EventLog->log( 
-		$client, 'rhapsody_error', $error,
-	);
 }
 
 sub createPlaylist {
@@ -323,9 +248,6 @@ sub rpds_handler {
 	
 	# Check for specific decoding error codes
 	if ( $got_cmd >= 100 && $got_cmd < 200 ) {
-		if ( main::SLIM_SERVICE && SN_DEBUG ) {
-			logError( $client, "decoding failure: code $got_cmd" );
-		}
 		$log->error( $client->id . " Rhapsody decoding failure: code $got_cmd" );
 		
 		# bug 10612 - tell StreamingController so that play can restart
@@ -341,10 +263,6 @@ sub rpds_handler {
 		
 		if ( $log->is_warn ) {
 			$log->warn( $client->id . " Received RPDS fault: $faultCode - $faultString");
-		}
-		
-		if ( main::SLIM_SERVICE && SN_DEBUG ) {
-			logError( $client, 'RPDS_FAULT', $faultString );
 		}
 		
 		my $error = $faultString;

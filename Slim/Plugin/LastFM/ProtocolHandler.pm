@@ -77,14 +77,6 @@ sub audioScrobblerSource {
 	return;
 }
 
-sub logError { if (main::SLIM_SERVICE) {
-	my ( $client, $error ) = @_;
-	
-	SDI::Service::EventLog->log( 
-		$client, 'lastfm_error', $error,
-	);
-} }
-
 sub scanUrl {
 	my ($class, $url, $args) = @_;
 	$args->{'cb'}->($args->{'song'}->currentTrack());
@@ -96,13 +88,7 @@ sub getNextTrack {
 	my $client = $song->master();
 
 	# Get Scrobbling prefs
-	my $enable_scrobbling;
-	if ( main::SLIM_SERVICE ) {
-		$enable_scrobbling = $prefs->client($client)->get('enable_scrobbling');
-	}
-	else {
-		$enable_scrobbling = $prefs->get('enable_scrobbling');
-	}
+	my $enable_scrobbling = $prefs->get('enable_scrobbling');
 	
 	my $account      = $prefs->client($client)->get('account');
 	my $isScrobbling = ( $account && $enable_scrobbling ) ? 1 : 0;
@@ -170,10 +156,6 @@ sub _gotNextTrackError {
 	my $http   = shift;
 	
 	$http->params->{'params'}->{'errorCallback'}->('PLUGIN_LFM_ERROR', $http->error);
-
-	if ( main::SLIM_SERVICE ) {
-	    logError( $http->params('client'), $http->error );
-	}
 }
 
 
@@ -357,7 +339,7 @@ sub getMetadataFor {
 
 				# replace repeat with Love
 				repeat  => {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/love_button.png' : 'html/images/btn_lastfm_love.gif',
+					icon    => 'html/images/btn_lastfm_love.gif',
 					jiveStyle => 'love',
 					tooltip => $client->string('PLUGIN_LFM_LOVE'),
 					command => [ 'lfm', 'rate', 'L' ],
@@ -365,7 +347,7 @@ sub getMetadataFor {
 
 				# replace shuffle with Ban
 				shuffle => {
-					icon    => main::SLIM_SERVICE ? 'static/images/playerControl/ban_button.png' : 'html/images/btn_lastfm_ban.gif',
+					icon    => 'html/images/btn_lastfm_ban.gif',
 					jiveStyle => 'hate',
 					tooltip => $client->string('PLUGIN_LFM_BAN'),
 					command => [ 'lfm', 'rate', 'B' ],
@@ -389,45 +371,5 @@ sub getIcon {
 
 	return Slim::Plugin::LastFM::Plugin->_pluginDataFor('icon');
 }
-
-# SN only
-# Re-init Last.fm when a player reconnects
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	if ( my $track = $song->pluginData() ) {
-		# We have previous data about the currently-playing song
-		
-		main::DEBUGLOG && $log->debug("Re-init Last.fm");
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-		
-		# Reset song duration/progress bar
-		if ( $track->{secs} ) {
-			# On a timer because $client->currentsongqueue does not exist yet
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					
-					$client->streamingProgressBar( {
-						url      => $song->currentTrack->url(),
-						duration => $track->{secs},
-					} );
-				},
-			);
-		}
-	}
-	else {
-		# No data, just restart the current station
-		main::DEBUGLOG && $log->debug("No data about playing track, restarting station");
-
-		$client->execute( [ 'playlist', 'play', $song->currentTrack->url() ] );
-	}
-	
-	return 1;
-} }
 
 1;

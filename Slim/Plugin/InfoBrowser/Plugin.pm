@@ -75,12 +75,10 @@ sub initPlugin {
 		Slim::Plugin::InfoBrowser::Settings->new($class);
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		$menuUrl    = $class->_menuUrl;
-		@searchDirs = $class->_searchDirs;
-		
-		$class->importNewMenuFiles;
-	}
+	$menuUrl    = $class->_menuUrl;
+	@searchDirs = $class->_searchDirs;
+	
+	$class->importNewMenuFiles;
 
 	$class->SUPER::initPlugin;
 
@@ -123,16 +121,6 @@ sub webPages {
 
 sub cliQuery {
 	my $request = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		my $client = $request->client;
-		
-		use Slim::Networking::SqueezeNetwork;
-		my $url = Slim::Networking::SqueezeNetwork->url( '/public/opml/' . $client->playerData->userid->emailHash . '/rss.opml' );
-		
-		Slim::Control::XMLBrowser::cliQuery('infobrowser', $url, $request);
-		return;
-	}
 
 	Slim::Control::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
 }

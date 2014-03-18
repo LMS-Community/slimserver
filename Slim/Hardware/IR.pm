@@ -374,11 +374,6 @@ sub loadIRFile {
 	delete $irCodes{$file};
 
 	my @lines = file($file)->slurp('chomp' => 1);
-	
-	if ( main::SLIM_SERVICE ) {
-		# On SN, we want to store codes using only the basename, not the full path
-		$file = basename($file);
-	}
 
 	for (@lines) {
 
@@ -653,16 +648,6 @@ sub processIR {
 		Slim::Control::Request::notifyFromArray($client, ['unknownir', $irCodeBytes, $irTime]);
 
 		return;
-	}
-	
-	# Add button is diabled for some SN accounts
-	if ( main::SLIM_SERVICE ) {
-		if ( $code eq 'add' ) {
-			return if $client->blocksAddButton;
-		}
-		elsif ( $code eq 'search' || $code eq 'search_2' ) {
-			return if $client->blocksSearchButton;
-		}
 	}
 
 	my $timediff = $irTime - $client->lastirtime();

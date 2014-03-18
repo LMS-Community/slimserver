@@ -298,11 +298,6 @@ Trigger saving of this namespace's preferences.  This is delayed by 10 seconds t
 
 sub save {
 	my $class = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		# No prefs files on SN
-		return;
-	}
 
 	return if ($class->{'writepending'});
 	

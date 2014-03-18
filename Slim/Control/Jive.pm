@@ -198,15 +198,6 @@ sub menuQuery {
 		
 		# Check if this is a disconnected player request
 		if ( my $id = $request->disconnectedClientID ) {
-			# On SN, if the player does not exist in the database this is a fatal error
-			if ( main::SLIM_SERVICE ) {
-				my ($player) = SDI::Service::Model::Player->search( { mac => $id } );
-				if ( !$player ) {
-					main::INFOLOG && $log->is_info && $log->info("Player $id does not exist in SN database");
-					$request->setStatusBadDispatch();
-					return;
-				}
-			}
 			
 			$client = Slim::Player::Disconnected->new($id);
 			$disconnected = 1;
@@ -266,21 +257,7 @@ sub mainMenu {
 	my @menu = map {
 		_localizeMenuItemText( $client, $_ );
 	}(
-		( main::SLIM_SERVICE && $client->model eq 'baby' && $prefs->client($client)->get('enable_radio2sr_migration', 'force') ) ? {
-			stringToken => 'MIGRATE_PLAYER',
-			weight      => 1,
-			id          => 'makeMeSmart',
-			node        => 'home',
-			actions     => {
-				go => {
-					cmd => ['smartradio_upgrade'],
-				}
-			},
-			window => {
-				'icon-id' => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/ue.png', 'external' ),
-			},
-		} : (),
-		main::SLIM_SERVICE ? () : {
+		{
 			stringToken    => 'MY_MUSIC',
 			weight         => 11,
 			id             => 'myMusic',
@@ -330,9 +307,9 @@ sub mainMenu {
 			}
 		},
 		@{internetRadioMenu($client)},
-		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
-		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
-		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
+		@{albumSortSettingsItem($client, 1)},
+		@{myMusicMenu(1, $client)},
+		@{recentSearchMenu($client, 1)},
 		@{appMenus($client, 1)},
 
 		@{globalSearchMenu($client)},		
@@ -589,8 +566,6 @@ sub deleteAllMenuItems {
 	for my $menu ( @pluginMenus, @appMenus ) {
 		push @menuDelete, { id => $menu->{id} };
 	}
-
-	push @menuDelete, { id => 'makeMeSmart' } if main::SLIM_SERVICE;
 	
 	main::INFOLOG && $log->is_info && $log->info( $client->id . ' removing menu items: ' . Data::Dump::dump(\@menuDelete) );
 	
@@ -1691,33 +1666,6 @@ sub playerSettingsMenu {
 			},
 		},
 	}
-	
-	# allow player linked to anonymous user accounts to be assigned to existing/new named user account
-	if ( main::SLIM_SERVICE && $client->hasAnonymousAccount ) {
-		push @menu, {
-			text           => $client->string("SB_ACCOUNT"),
-			actions => {
-				go => {
-					cmd    => [ 'opml_generic', 'items' ],
-					params => {
-						menu     => 'opml_generic',
-						opml_url => Slim::Networking::SqueezeNetwork->url( '/api/register/v1/opml' ),
-					},
-					player => 0,
-				},
-			},
-			id             => 'registerPlayer',
-			node           => 'settings',
-			weight         => 99,
-			window         => {
-				# XXX - need own icon
-				'icon-id'  => Slim::Networking::SqueezeNetwork->url( '/static/images/icons/register.png', 'external' ),
-			},
-		};
-	}
-	elsif ( main::SLIM_SERVICE ) {
-		_notifyJive([ { id => 'registerPlayer' } ], $client, 'remove');
-	}
 
 	if ($batch) {
 		return \@menu;
@@ -2027,32 +1975,11 @@ sub howManyPlayersToSyncWith {
 	my @playerSyncList = Slim::Player::Client::clients();
 	my $synchablePlayers = 0;
 	
-	# Restrict based on players with same userid on SN
-	my $userid;
-	if ( main::SLIM_SERVICE ) {
-		$userid = $client->playerData->userid;
-	}
-	
 	for my $player (@playerSyncList) {
 		# skip ourself
 		next if ($client eq $player);
 		# we only sync slimproto devices
 		next if (!$player->isPlayer());
-		
-		# On SN, only sync with players on the current account
-		if ( main::SLIM_SERVICE ) {
-			next if $userid == 1;
-			next if $userid != $player->playerData->userid;
-			
-			# Skip players with old firmware
-			if (
-				( $player->model eq 'squeezebox2' && $player->revision < 82 )
-				||
-				( $player->model eq 'transporter' && $player->revision < 32 )
-			) {
-				next;
-			}
-		}
 		
 		$synchablePlayers++;
 	}
@@ -2062,12 +1989,6 @@ sub howManyPlayersToSyncWith {
 sub getPlayersToSyncWith() {
 	my $client = shift;
 	my @return = ();
-	
-	# Restrict based on players with same userid on SN
-	my $userid;
-	if ( main::SLIM_SERVICE ) {
-		$userid = $client->playerData->userid;
-	}
 	
 	# first add a descriptive line for this player
 	push @return, {
@@ -2086,14 +2007,12 @@ sub getPlayersToSyncWith() {
 	
 	# the logic is a little tricky here...first make a pass at any sync groups that include $client
 	if ($client->isSynced()) {
-		if (_syncSNCheck($userid, $client)) {
-			$syncList[$cnt] = {};
-			$syncList[$cnt]->{'id'}           = $client->id();
-			$syncList[$cnt]->{'name'}         = $client->syncedWithNames(0);
-			$currentlySyncedWith                = $client->syncedWithNames(0);
-			$syncList[$cnt]->{'isSyncedWith'} = 1;
-			$cnt++;
-		}
+		$syncList[$cnt] = {};
+		$syncList[$cnt]->{'id'}           = $client->id();
+		$syncList[$cnt]->{'name'}         = $client->syncedWithNames(0);
+		$currentlySyncedWith                = $client->syncedWithNames(0);
+		$syncList[$cnt]->{'isSyncedWith'} = 1;
+		$cnt++;
 	}
 
 	# then grab groups or players that are not currently synced with $client
@@ -2101,7 +2020,7 @@ sub getPlayersToSyncWith() {
 		for my $eachclient (@players) {
 			next if !$eachclient->isPlayer();
 			next if $eachclient->isSyncedWith($client);
-			next unless _syncSNCheck($userid, $eachclient);
+
 			if ($eachclient->isSynced() && Slim::Player::Sync::isMaster($eachclient)) {
 				$syncList[$cnt] = {};
 				$syncList[$cnt]->{'id'}           = $eachclient->id();
@@ -2160,25 +2079,6 @@ sub getPlayersToSyncWith() {
 	}
 
 	return \@return;
-}
-
-sub _syncSNCheck {
-	my ($userid, $player) = @_;
-	# On SN, only sync with players on the current account
-	if ( main::SLIM_SERVICE ) {
-		return undef if $userid == 1;
-		return undef if $userid != $player->playerData->userid;
-		
-		# Skip players with old firmware
-		if (
-			( $player->model eq 'squeezebox2' && $player->revision < 82 )
-			||
-			( $player->model eq 'transporter' && $player->revision < 32 )
-		) {
-			return undef;
-		}
-	}
-	return 1;
 }
 	
 sub jiveSyncCommand {
@@ -2802,9 +2702,6 @@ sub _jiveNoResults {
 sub cacheSearch {
 	my $request = shift;
 	my $search  = shift;
-	
-	# Don't cache searches on SN
-	return if main::SLIM_SERVICE;
 
 	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
 		unshift (@recentSearches, $search);

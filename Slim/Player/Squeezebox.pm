@@ -56,45 +56,8 @@ sub reconnect {
 		$client->sendFrame('vers', \$::VERSION);
 	}
 	
-	if ( main::SLIM_SERVICE ) {
-		# XXX Somehow we can get here without a controller
-		if ( !$client->controller ) {
-			$client->controller(Slim::Player::StreamingController->new($client));
-		}
-	}
-	
 	# check if there is a sync group to restore
-	Slim::Player::Sync::restoreSync($client, $syncgroupid, (main::SLIM_SERVICE && $reconnect));
-	
-	if ( main::SLIM_SERVICE ) {
-		# SN supports reconnecting from another instance
-		# without stopping the audio.  If the database contains
-		# stale data, this is caught by a timer that checks the buffer
-		# level after a STAT call to make sure the player is really
-		# playing/paused.
-	    
-		my $state = $client->playerData->playmode;
-		if ( $state && $state =~ /^(?:PLAYING|PAUSED)/ ) {
-			main::INFOLOG && $sourcelog->is_info && $sourcelog->info( $client->id . " current state is $state, resuming" );
-			
-			$reconnect = 1;
-			
-			my $controller = $client->controller();
-			
-			$controller->setState($state);
-			
-			$controller->playerActive($client);
-			
-			# Bug 16046, statHandler will ignore all packets without a $client->streamStartTimestamp()
-			# The value doesn't matter so we'll just set it to 1 here
-			$client->streamStartTimestamp(1);
-			
-			# SqueezeNetworkClient handles the following in it's reconnect():
-			# Restoring the playlist
-			# Calling reinit in protocol handler if necessary
-			# Restoring SongStreamController
-		}
-	}
+	Slim::Player::Sync::restoreSync($client, $syncgroupid);
 
 	# The reconnect bit for Squeezebox means that we're
 	# reconnecting after the control connection went down, but we
@@ -159,11 +122,9 @@ sub connected {
 }
 
 sub closeStream {
-	if ( !main::SLIM_SERVICE ) {
-		my $client = shift;
-		Slim::Web::HTTP::forgetClient($client);
-		@{$client->chunks} = (); # Bug 15477: flush old data
-	}
+	my $client = shift;
+	Slim::Web::HTTP::forgetClient($client);
+	@{$client->chunks} = (); # Bug 15477: flush old data
 }
 
 sub ticspersec {
@@ -180,10 +141,6 @@ sub play {
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
 		my $bufferSecs = $prefs->get('bufferSecs') || 3;
-		if ( main::SLIM_SERVICE ) {
-			# Per-client buffer secs pref on SN
-			$bufferSecs = $prefs->client($client)->get('bufferSecs') || 3;
-		}
 			
 		# begin playback once we have this much data in the decode buffer (in KB)
 		$params->{bufferThreshold} = 20;
@@ -823,13 +780,7 @@ sub stream_s {
 		my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 				
 		# If a proxy server is set, change ip/port
-		my $proxy;
-		if ( main::SLIM_SERVICE ) {
-			$proxy = $prefs->client($client)->get('webproxy');
-		}
-		else {
-			$proxy = $prefs->get('webproxy');
-		}
+		my $proxy = $prefs->get('webproxy');
 		
 		if ( $proxy ) {
 			my ($pserver, $pport) = split (/:/, $proxy);
@@ -1138,43 +1089,7 @@ sub sendFrame {
 
 	assert(length($type) == 4);
 	
-	my $frame;
-	
-	# Compress all graphic frames on SN, saves a huge amount of bandwidth
-	if ( main::SLIM_SERVICE && ($type eq 'grfe' || $type eq 'grfg') && $client->hasCompression ) {
-		# Bug 8250, firmware bug in TP breaks if compressed frame sent for screen 2
-		# so for now disable all compression for TP
-		if ( $client->deviceid == 5 ) {
-			$frame = pack('n', $len + 4) . $type . $$dataRef;
-		}
-		else {		
-			# Compress only graphic frames, other frames are very small
-			# or don't compress well.
-			my $compressed = Compress::LZF::compress($$dataRef);
-		
-			# XXX: This should be fixed in a future version of Compress::LZF
-			# Replace Perl header with C header so we can decompress
-			# properly in the firmware
-			if ( ord( substr $compressed, 0, 1 ) == 0 ) {
-				# The data wasn't able to be compressed
-				my $c_header = "ZV\0" . pack('n', $len);
-				substr $compressed, 0, 1, $c_header;
-			}
-			else {
-				my $csize = length($compressed) - 2;
-				my $c_header = "ZV\1" . pack('n', $csize) . pack('n', $len);
-				substr $compressed, 0, 2, $c_header;
-			}
-		
-			$frame
-				= pack( 'n', length($compressed) + 4 ) 
-				. ( $type | pack( 'N', 0x80000000 ) )
-				. $compressed;
-		}
-	}
-	else {
-		$frame = pack('n', $len + 4) . $type . $$dataRef;
-	}
+	my $frame = pack('n', $len + 4) . $type . $$dataRef;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("sending squeezebox frame: $type, length: $len");
 

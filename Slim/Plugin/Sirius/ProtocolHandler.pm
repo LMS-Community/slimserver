@@ -53,33 +53,6 @@ sub new {
 sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
-	if ( main::SLIM_SERVICE ) {
-		# Fail if firmware doesn't support metadata
-		my $client = $song->master();
-		my $old;
-		
-		my $deviceid = $client->deviceid;
-		my $rev      = $client->revision;
-		
-		if ( $deviceid == 4 && $rev < 119 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 5 && $rev < 69 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 7 && $rev < 54 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 10 && $rev < 39 ) {
-			$old = 1;
-		}
-		
-		if ( $old ) {
-			$errorCb->('PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED');
-			return;
-		}
-	}
-	
 	my ($channelId) = $song->currentTrack()->url =~ m{^sirius://(.+)};
 	
 	# Talk to SN and get the channel info for this station
@@ -449,54 +422,5 @@ sub getMetadataFor {
 sub getIcon {
 	return Slim::Plugin::Sirius::Plugin->_pluginDataFor('icon');
 }
-
-# SN only
-sub reinit { if ( main::SLIM_SERVICE ) {
-	my ( $class, $client, $song ) = @_;
-	
-	my $url = $song->currentTrack->url();
-	
-	# To properly re-init Sirius we need to:
-	# * Restart pollStatus timer
-	# * Restart checkActivity timer
-	
-	main::DEBUGLOG && $log->is_debug && $log->debug( "Reinit Sirius for $url" );
-	
-	# Ignore the check for playing status
-	$client->ignoreCheckPlayingStatus(1);
-	
-	if ( my $status = $song->pluginData('status') ) {
-		# Start a timer to check status at the defined interval
-		main::DEBUGLOG && $log->debug( 'Polling status in ' . $status->{PollingInterval} . ' seconds' );
-		Slim::Utils::Timers::killTimers( $song, \&pollStatus );
-		Slim::Utils::Timers::setTimer( 
-			$song,
-			Time::HiRes::time() + $status->{PollingInterval},
-			\&pollStatus,
-			$status,
-		);
-
-		# Start a timer to make sure the user remains active
-		if ( my $activityInterval = $song->pluginData('activityInterval') ) {
-			main::DEBUGLOG && $log->debug( "Checking activity in $activityInterval seconds" );
-			Slim::Utils::Timers::killTimers( $song, \&checkActivity );
-			Slim::Utils::Timers::setTimer(
-				$song,
-				Time::HiRes::time() + $activityInterval,
-				\&checkActivity,
-				$activityInterval,
-			);
-		}
-		
-		# Back to Now Playing
-		Slim::Buttons::Common::pushMode( $client, 'playlist' );
-	}
-	else {
-		# Restart the stream
-		$client->execute( [ 'playlist', 'play', $url ] );
-	}
-	
-	return 1;
-} }
 
 1;

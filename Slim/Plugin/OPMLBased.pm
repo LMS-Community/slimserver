@@ -36,11 +36,8 @@ sub initPlugin {
 		*{$class.'::'.'type'}   = sub { $args{type} || 'link' };
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		if (!$class->_pluginDataFor('icon')) {
-
-			Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
-		}
+	if (!$class->_pluginDataFor('icon')) {
+		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}
 	
 	$class->initCLI( %args );
@@ -256,11 +253,6 @@ sub cliRadiosQuery {
 					},
 				};
 			}
-			
-			if ( main::SLIM_SERVICE ) {
-				# Bug 7110, icons are full URLs so we must use icon not icon-id
-				$data->{icon} = delete $data->{'icon-id'};
-			}
 		}
 		else {
 			my $type = $class->type;
@@ -282,18 +274,6 @@ sub cliRadiosQuery {
 		
 		# Exclude disabled plugins
 		my $disabled = $prefs->get('sn_disabled_plugins');
-		
-		if ( main::SLIM_SERVICE ) {
-			my $client = $request->client();
-			if ( $client && $client->playerData ) {
-				$disabled  = [ keys %{ $client->playerData->userid->allowedServices->{disabled} } ];
-			
-				# Hide plugins if necessary (private, beta, etc)
-				if ( !$client->canSeePlugin($tag) ) {
-					$data = {};
-				}
-			}
-		}
 		
 		if ( $disabled ) {
 			for my $plugin ( @{$disabled} ) {

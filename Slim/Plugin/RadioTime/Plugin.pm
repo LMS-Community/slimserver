@@ -255,26 +255,14 @@ sub getSerial {
 
 sub getUsername {
 	my ( $class, $client ) = @_;
-	
-	if ( main::SLIM_SERVICE && $client ) {
-		if ( my $json = preferences('server')->client($client)->get( 'plugin_radiotime_accounts', 'force', 'UserPref' ) ) {
-			if ( my $accounts = eval { from_json($json) } ) {
-				if ( my $username = $accounts->[0]->{username} ) {
-					return $username;
-				}
-			}
-		}
-	}
-	else {
-		return $prefs->get('username');
-	}
+	return $prefs->get('username');
 }
 
 # set username as parsed form mysb.com url (unless it's already defined)
 sub setUsername {
 	my ( $class, $username ) = @_;
 	
-	return if main::SLIM_SERVICE || !$username || $prefs->get('username');
+	return if !$username || $prefs->get('username');
 	
 	$prefs->set('username', $username);
 }
@@ -306,12 +294,6 @@ sub reportError {
 		);
 	
 		$http->get($reportUrl);
-		
-		if ( main::SLIM_SERVICE ) {
-			# Let's log these on SN too
-			$error =~ s/"/'/g;
-			SDI::Util::Syslog::error("service=RadioTime-Error rtid=${id} error=\"${error}\"");
-		}
 	}
 }
 

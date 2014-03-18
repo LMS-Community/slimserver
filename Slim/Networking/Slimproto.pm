@@ -23,10 +23,6 @@ use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
-if ( main::SLIM_SERVICE ) {
-	require SDI::Service::Player::SqueezeNetworkClient;
-}
-
 use constant SLIMPROTO_PORT   => 3483;
 
 our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
@@ -38,29 +34,15 @@ my $synclog   = logger('player.sync');
 my $firmlog   = logger('player.firmware');
 my $psdlog    = logger('player.streaming.direct');
 
-if ( main::SLIM_SERVICE ) {
-	# SN only allows SB2 or higher to connect
-	$deviceids[2] = undef;
-}
-
 # Bug 10443: Increase this from 60s to 300s to allow recovery during the full extent of buffered data
 my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
 
 my $check_all_clients_time = 5; # how often to look for disconnected clients
 my $check_time;                 # time scheduled for next check_all_clients
 
-if ( main::SLIM_SERVICE ) {
-	# don't check as often on SN
-	$check_all_clients_time = 30;
-	
-	# And forget immediately upon disconnect
-	$forget_disconnected_time = 5;
-}
-
 our $slimproto_socket;
 
 our %ipport;		     # ascii IP:PORT, per socket
-our %prxy_seen;		     # PRXY msg already seen, per socket
 our %sock2client;	     # reference to client for each sonnected sock
 our %heartbeat;          # the last time we heard from a client
 our %status;
@@ -71,7 +53,6 @@ our %message_handlers = (
 	# These two are special-case in client_readable, and shouldn't
 	#   be "handled" during established communications with a $client
 	# 'HELO' => \&_hello_handler,
-	# 'PRXY' => \&_proxy_handler,			# slimprox, not to be used by clients.
 	'ANIC' => \&_animation_complete_handler,	# SB2+
 	'BODY' => \&_http_body_handler,				# SB2+
 	'BUTN' => \&_button_handler,				# SB2+ (TP, Boom)
@@ -132,11 +113,6 @@ sub clearCallbackRAWI {
 
 sub init {
 	my $listenerport = SLIMPROTO_PORT;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Let SlimService run on any port
-		$listenerport = $main::SLIMPROTO_PORT;
-	}
 
 	# Some combinations of Perl / OSes don't define this Macro. Yet it is
 	# near constant on all machines. Define if we don't have it.
@@ -280,10 +256,6 @@ sub slimproto_close {
 	$clientsock->close();
 
 	if ( my $client = $sock2client{$clientsock} ) {
-		if ( main::SLIM_SERVICE ) {
-			$client->savePluginData;
-		}
-		
 		delete $heartbeat{ $client->id };
 		
 		$client->tcpsock(undef);
@@ -321,7 +293,6 @@ sub slimproto_close {
 
 	# forget state
 	delete($ipport{$clientsock});
-	delete($prxy_seen{$clientsock});
 	delete($sock2client{$clientsock});
 }		
 
@@ -438,9 +409,6 @@ sub client_readable {
 					else {
 						if ( $op eq 'HELO' ) {
 							_hello_handler( $s, \$data );
-						}
-						elsif ( main::SLIM_SERVICE && $op eq 'PRXY' ) {
-							_proxy_handler( $s, \$data );
 						}
 						else {
 							if ( $s->peeraddr ) {
@@ -620,13 +588,6 @@ sub _disco_handler {
 	my $reason = unpack('C', $$data_ref);
 
 	main::INFOLOG && $log->info("Squeezebox got disconnection on the data channel: $reasons{$reason}");
-	
-	# SN may want to log connection errors
-	if ( main::SLIM_SERVICE ) {
-		if ( $reason > 0 ) {
-			$client->logStreamEvent( 'disconnect', { reason => $reasons{$reason} } );
-		}
-	}
 	
 	if ($reason) {
 		$log->warn('Unexpected data stream disconnect type: ', $reasons{$reason});
@@ -890,16 +851,6 @@ sub _stat_handler {
 	}
 	
 	$client->statHandler($stat->{'event_code'}, $stat->{'jiffies'}, $stat->{'error_code'});
-
-=pod XXX This is wasteful
-	if ( main::SLIM_SERVICE ) {
-		# Bug 8995, Update signal strength on SN
-		if ( !$client->playerData->signal ) {
-			$client->playerData->signal( $stat->{signal_strength} );
-			$client->playerData->update;
-		}
-	}
-=cut
 }
 
 sub getPlayPointData {
@@ -918,22 +869,6 @@ sub _update_request_handler {
 	
 	# Bug 3881, stop watching this client
 	delete $heartbeat{ $client->id };
-	
-	# On SN, if the player requests a firmware update, send the latest version available
-	# not just the current version as SlimServer does
-	if ( main::SLIM_SERVICE ) {
-		# Wipe cached needsUpgrade value
-		$client->_needsUpgrade(undef);
-		
-		if ( $client->deviceid == 10 && $client->revision >= 30 ) {
-			# Special case, Boom 2-stage upgrade can't use 1, must use 30 as lowest
-			$client->revision(30);
-		}
-		else {
-			# Set client revision to 1 to force an upgrade
-			$client->revision(1);
-		}
-	}
 	
 	$client->upgradeFirmware();
 }
@@ -975,20 +910,6 @@ sub _bye_handler {
 		$client->upgradeFirmware();
 	}
 }
-
-sub _proxy_handler { if (main::SLIM_SERVICE) {
-	my $s = shift;
-	my $data_ref = shift;
-
-	if( length($$data_ref) != 6 ) {
-		$log->error( 'Invalid PRXY message from ', inet_ntoa($s->peeraddr) );
-		slimproto_close($s);
-	}
-	elsif( ! exists($prxy_seen{$s}) ) { # prevent double-PRXY
-		$ipport{$s} = sprintf("%u.%u.%u.%u:%u", unpack("CCCCn", $$data_ref));
-		$prxy_seen{$s} = 1;
-	}
-} }
 
 sub _shut_handler {
 	my $client = shift;
@@ -1173,14 +1094,6 @@ sub _hello_handler {
 		slimproto_close($s);
 		return;
 	}
-	
-	if ( main::SLIM_SERVICE ) {		
-		# mysqueezebox.com clients use a different client class
-		# Note: Other player classes use SNClient directly
-		if ( $client_class eq 'Slim::Player::Squeezebox2' ) {
-			$client_class = 'SDI::Service::Player::SqueezeNetworkClient';
-		}
-	}
 
 	if (defined $client && blessed($client) && blessed($client) ne $client_class) {
 
@@ -1232,17 +1145,12 @@ sub _hello_handler {
 			$log->logBacktrace;
 			$log->logdie("FATAL: Couldn't load module: $display_class: [$@]");
 		}
-		
-		# Set language from firmware language on SN
-		if ( main::SLIM_SERVICE ) {
-			preferences('server')->client($client)->set( language => $lang );
-		}
 
 		$client->display( $display_class->new($client) );
 
 		$client->macaddress($mac);
 		$client->init($deviceids[$deviceid], $capabilities, $syncgroupid);
-		$client->reconnect($paddr, $revision, $s, (main::SLIM_SERVICE && $reconnect), undef, $syncgroupid);  # don't "reconnect" if the player is new except on SN.
+		$client->reconnect($paddr, $revision, $s, undef, undef, $syncgroupid);
 
 	} else {
 
@@ -1288,54 +1196,6 @@ sub _hello_handler {
 	
 	# add the player to the list of clients we're watching for signs of life
 	$heartbeat{ $client->id } = Time::HiRes::time();
-	
-	if ( main::SLIM_SERVICE ) {
-		# Bug 6979, if this is a Ray and is on the same account as an MP Jive,
-		# workaround short timeout issue by not updating firmware yet
-		if ( $client->deviceid == 7 && $client->needsUpgrade ) {
-			
-			# workaround to handle multiple firmware versions causing blocking modes to stack
-			while (Slim::Buttons::Common::mode($client) eq 'block') {
-				$client->unblock();
-			}
-
-			# make sure volume is set, without changing temp setting
-			$client->audio_outputs_enable($client->power());
-			$client->volume($client->volume(), defined($client->tempVolume()));
-			
-			# There is a possible race condition between when jived links a new Ray to Jive
-			# and when the Ray connects to SN, so we want to impose a bit of a delay here before checking
-			# if we should do a firmware update.
-			Slim::Utils::Timers::setTimer(
-				undef,
-				time() + 3,
-				sub {
-					my $jives = $client->playerData->active_jives();
-			
-					if ( main::DEBUGLOG && $firmlog->is_debug ) {
-						$firmlog->debug(
-							"Ray needs upgrade, active jives: " . Data::Dump::dump($jives)
-						)
-					}
-			
-					for my $jive ( @{$jives} ) {
-						if ( $jive->{rev} =~ /r(?:1220|1425)$/ ) { # MP firmware
-							main::DEBUGLOG && $firmlog->debug('Not updating Ray, MP Jive is connected');
-							return;
-						}
-					}
-					
-					# Tell Ray to update now, unless we're already updating
-					if ( $client->revision != 1 ) {
-						$client->execute( [ 'stop' ] );
-						$client->sendFrame('ureq');
-					}
-				},
-			);
-			
-			return;			
-		}
-	}
 
 	if ($client->needsUpgrade()) {
 
@@ -1353,9 +1213,6 @@ sub _hello_handler {
 		
 		$client->controller()->playerInactive($client);
 		
-		# Don't animate the upgrade screen on SN
-		my $static = main::SLIM_SERVICE ? 1 : 0;
-		
 		$client->block( {
 			'screen1' => {
 				'line' => [
@@ -1370,7 +1227,7 @@ sub _hello_handler {
 				}
 			},
 			'screen2' => {},
-		}, 'upgrade', $static );
+		}, 'upgrade', 0 );
 
 	} else {
 

@@ -927,11 +927,11 @@ sub handleSearch {
 		my $searchURL    = $item->{'url'};
 		my $searchString = ${ $client->modeParam('valueRef') };
 		
-		if ( main::SLIM_SERVICE ) {
-			# XXX: not sure why this is only needed on SN
-			my $rightarrow = $client->symbols('rightarrow');
-			$searchString  =~ s/$rightarrow//;
-		}
+#		if ( main::SLIM_SERVICE ) {
+#			# XXX: not sure why this is only needed on SN
+#			my $rightarrow = $client->symbols('rightarrow');
+#			$searchString  =~ s/$rightarrow//;
+#		}
 		
 		# Don't allow null search string
 		return $client->bumpRight if $searchString eq '';

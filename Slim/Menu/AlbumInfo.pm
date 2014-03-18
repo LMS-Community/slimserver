@@ -79,18 +79,15 @@ sub registerDefaultInfoProviders {
 #		func      => \&showArtwork,
 #	) );
 
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( contributors => (
-			after => 'top',
-			func  => \&infoContributors,
-		) );
-	}
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( year => (
-			after => 'top',
-			func  => \&infoYear,
-		) );
-	}
+	$class->registerInfoProvider( contributors => (
+		after => 'top',
+		func  => \&infoContributors,
+	) );
+
+	$class->registerInfoProvider( year => (
+		after => 'top',
+		func  => \&infoYear,
+	) );
 
 	$class->registerInfoProvider( duration => (
 		after    => 'year',
@@ -102,20 +99,15 @@ sub registerDefaultInfoProviders {
 		func     => \&infoReplayGain,
 	) );
 
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( disc => (
-			after => 'year',
-			func  => \&infoDisc,
-		) );
-	}
+	$class->registerInfoProvider( disc => (
+		after => 'year',
+		func  => \&infoDisc,
+	) );
 
-	if ( !main::SLIM_SERVICE ) {
-		$class->registerInfoProvider( compilation => (
-			after => 'year',
-			func  => \&infoCompilation,
-		) );
-	}
-	
+	$class->registerInfoProvider( compilation => (
+		after => 'year',
+		func  => \&infoCompilation,
+	) );
 }
 
 sub menu {
