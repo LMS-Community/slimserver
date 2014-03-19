@@ -150,7 +150,7 @@ sub setChange {
 	my $class  = shift;
 	my $change = shift;
 
-	$first = 1;
+	my $first = 1;
 	while (my $pref = shift) {
 
 		if ( main::DEBUGLOG && $log->isInitialized && $log->is_debug ) {
