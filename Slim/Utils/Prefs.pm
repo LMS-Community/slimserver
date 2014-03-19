@@ -907,11 +907,6 @@ sub init {
 		my $client = $_[2] || return;
 		Slim::Player::Transporter::updateEffectsLoop($client);
 	}, 'fxloopSource');
-
-	$prefs->setChange( sub {
-		my $client = $_[2] || return;
-		Slim::Player::Transporter::updateEffectsLoop($client);
-	}, 'fxloopClock');
 	
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
