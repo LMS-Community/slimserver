@@ -147,8 +147,10 @@ prefname, new value, undef or $client
 =cut
 
 sub setChange {
-	my ($class, $change, $first) = @_;
+	my $class  = shift;
+	my $change = shift;
 
+	$first = 1;
 	while (my $pref = shift) {
 
 		if ( main::DEBUGLOG && $log->isInitialized && $log->is_debug ) {
@@ -163,6 +165,8 @@ sub setChange {
 		} else {
 			push @{ $class->{'onchange'}->{ $pref } }, $change;
 		}
+		
+		$first = 0;
 	}
 }
 
