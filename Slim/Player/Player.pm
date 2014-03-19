@@ -73,12 +73,6 @@ our $defaultPrefs = {
 	'playDelay'            => 0,	# ms
 };
 
-$prefs->migrateClient(9, sub {
-	my $cprefs = shift;
-	$cprefs->set('irmap' => Slim::Hardware::IR::defaultMapFile()) if $cprefs->get('irmap') =~ /SqueezeCenter/i;
-	1;
-});
-
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
 
 $prefs->setChange( sub { $_[2]->volume( $_[2]->volume ); }, 'digitalVolumeControl');

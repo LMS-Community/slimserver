@@ -26,6 +26,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.itunes');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('itunes',          Slim::Utils::Prefs::OldPrefs->get('itunes'));
 	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('itunesscaninterval')   || 3600      );
 	$prefs->set('ignore_disabled', Slim::Utils::Prefs::OldPrefs->get('ignoredisableditunestracks') || 0   );

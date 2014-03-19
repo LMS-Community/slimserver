@@ -67,6 +67,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.cli');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('cliport', Slim::Utils::Prefs::OldPrefs->get('cliport') || 9090); 1;
 });
 

@@ -217,7 +217,7 @@ $prefs->client($client)->get('pref1');
 sub client {
 	# opimised due to frequency of being called
 	return unless $_[1];
-	
+
 	if ( my $client = $_[0]->{'clients'}->{ $_[1]->id } ) {
 		return $client;
 	}

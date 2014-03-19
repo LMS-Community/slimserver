@@ -44,6 +44,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.musicip');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
 	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || 3600            );
 	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0                    );
@@ -129,6 +130,8 @@ $prefs->setChange(
 
 $prefs->migrateClient(1, sub {
 	my ($clientprefs, $client) = @_;
+	
+	require Slim::Utils::Prefs::OldPrefs;
 	
 	$clientprefs->set('mix_filter',  Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMFilter')     );
 	$clientprefs->set('reject_size', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMRejectSize') );

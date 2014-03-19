@@ -236,7 +236,7 @@ sub stringsFiles {
 	# server string file
 	my $serverPath = Slim::Utils::OSDetect::dirsFor('strings');
 	my @pluginDirs = Slim::Utils::PluginManager->dirsFor('strings');
-
+	
 	push @files, catdir($serverPath, 'strings.txt');
 
 	# plugin string files

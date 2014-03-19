@@ -149,6 +149,8 @@ sub _loadOldFavorites {
 
 	main::INFOLOG && $log->info("No opml favorites file found - loading old favorites");
 
+	require Slim::Utils::Prefs::OldPrefs;
+
 	my @urls   = @{Slim::Utils::Prefs::OldPrefs->get('favorite_urls')   || []};
 	my @titles = @{Slim::Utils::Prefs::OldPrefs->get('favorite_titles') || []} ;
 	my @hotkeys= (1..9, 0);

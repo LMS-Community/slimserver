@@ -66,6 +66,9 @@ my $cache;
 my $initialized = 0;
 
 $prefs->migrate( 1, sub {
+
+	require Slim::Utils::Prefs::OldPrefs;
+
 	my $newtracks = Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks');
 	if ( !defined $newtracks ) {
 		$newtracks = 10;

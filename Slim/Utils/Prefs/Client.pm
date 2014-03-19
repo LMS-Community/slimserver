@@ -55,7 +55,26 @@ sub migrate {
 	
 	my $cversion = $self->get( '_version', 'force' ) || 0; # On SN, force _version to come from the DB
 
-	for my $version (sort keys %{ $self->{parent}->{'migratecb'}}) {
+	# Migration code for server.prefs is not loaded unless needed.
+	# Dynamically load any potential migration module needed.
+
+	if ( $self->{parent}->{namespace} eq 'server' ) {
+		for (my $version = $cversion+1;; $version++) {
+			# we've alread initialized this mgiration code - move along
+			last if defined $self->{parent}->{migratecb}->{ $version };
+			
+			my $module = "Slim::Utils::Prefs::Migration::ClientV$version";
+	
+			eval "use $module";
+				
+			# module does not exits - stop here.
+			last if $@;
+
+			$module->init($self->{parent});
+		}
+	}
+
+	for my $version (sort { $a <=> $b } keys %{ $self->{parent}->{'migratecb'}}) {
 		
 		if ( $cversion < $version ) {
 			
