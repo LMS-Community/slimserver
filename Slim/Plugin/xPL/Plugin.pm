@@ -46,6 +46,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.xpl');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('interval', Slim::Utils::Prefs::OldPrefs->get('xplinterval') || 5);
 	$prefs->set('ir', Slim::Utils::Prefs::OldPrefs->get('xplir') || 'none');
 	1;

@@ -56,6 +56,7 @@ my ($handler, $pollInterval);
 my $prefs = preferences('plugin.preventstandby');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('idletime', Slim::Utils::Prefs::OldPrefs->get('idletime') || 20);
 	$prefs->set('checkpower', Slim::Utils::Prefs::OldPrefs->get('checkpower') || 0);
 	1;

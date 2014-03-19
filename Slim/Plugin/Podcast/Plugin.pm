@@ -34,6 +34,7 @@ $prefs->init({
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names') || [] };
 	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_feeds') || [] };
 	my @feeds;

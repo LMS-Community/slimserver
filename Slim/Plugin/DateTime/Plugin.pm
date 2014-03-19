@@ -17,6 +17,7 @@ if ( main::WEBUI ) {
 my $prefs = preferences('plugin.datetime');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '');
 	$prefs->set('dateformat', Slim::Utils::Prefs::OldPrefs->get('screensaverDateFormat') || '');
 	1;

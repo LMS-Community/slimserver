@@ -29,6 +29,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.rescan');
 
 $prefs->migrate(1, sub {
+	require Slim::Utils::Prefs::OldPrefs;
 	$prefs->set('time',      Slim::Utils::Prefs::OldPrefs->get('rescan-time')      || 9 * 60 * 60 );
 	$prefs->set('scheduled', Slim::Utils::Prefs::OldPrefs->get('rescan-scheduled') || 0           );
 	$prefs->set('type',      Slim::Utils::Prefs::OldPrefs->get('rescan-type')      || '1rescan'   );

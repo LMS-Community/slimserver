@@ -66,6 +66,9 @@ sub DEFAULT_FEEDS {[
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
+
+	require Slim::Utils::Prefs::OldPrefs;
+
 	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names') || [] };
 	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds') || [] };
 	my @feeds;
