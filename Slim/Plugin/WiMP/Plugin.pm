@@ -46,9 +46,25 @@ sub initPlugin {
 			'plugins/wimp/trackinfo.html',
 			sub {
 				my $client = $_[0];
+				my $params = $_[1] || {};
 				
-				my $url = Slim::Player::Playlist::url($client);
+				my $url;
 				
+				my $id = $params->{sess} || $params->{item};
+				
+				if ( $id ) {
+					# The user clicked on a different URL than is currently playing
+					if ( my $track = Slim::Schema->find( Track => $id ) ) {
+						$url = $track->url;
+					}
+					
+					# Pass-through track ID as sess param
+					$params->{sess} = $id;
+				}
+				else {
+					$url = Slim::Player::Playlist::url($client);
+				}
+			
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					client  => $client,
 					feed    => Slim::Plugin::WiMP::ProtocolHandler->trackInfoURL( $client, $url ),
