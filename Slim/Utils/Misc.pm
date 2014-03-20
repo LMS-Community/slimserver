@@ -31,15 +31,12 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(assert bt msg msgf errorMsg specified);
+our @EXPORT = qw(assert msg msgf errorMsg specified);
 
-use Config;
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
-use File::Which ();
 use File::Slurp;
 use FindBin qw($Bin);
-use Log::Log4perl;
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -181,14 +178,14 @@ Return the filepath for a given Mac Alias
 
 =cut
 
-sub pathFromMacAlias {
+sub pathFromMacAlias { if (main::ISMAC) {
 	my $fullpath = shift;
 	my $path = '';
 
 	return $path unless $fullpath && $canFollowAlias;
 	
 	return Slim::Utils::OS::OSX->pathFromMacAlias($fullpath);
-}
+} }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
 
@@ -353,6 +350,7 @@ sub unescape {
 }
 
 # See http://www.onlamp.com/pub/a/onlamp/2006/02/23/canary_trap.html
+# XXX - no longer used?
 sub removeCanary {
 	my $string = shift;
 
@@ -737,10 +735,12 @@ sub inMediaFolder {
 =cut
 
 # XXX - is this function even used any more? Can't find any caller...
+=pod
 sub inAudioFolder {
 	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead');
 	return inMediaFolder(shift);
 }
+=cut
 
 =head2 inPlaylistFolder( $)
 
@@ -1101,13 +1101,13 @@ No low-level check is done whether the drive actually exists.
 
 =cut
 
-sub isWinDrive {
+sub isWinDrive { if (main::ISWINDOWS) {
 	my $path = shift;
 
-	return 0 if (!main::ISWINDOWS || length($path) > 3);
+	return 0 if length($path) > 3;
 
 	return $path =~ /^[a-z]{1}:[\\]?$/i;
-}
+} }
 
 =head2 parseRevision( )
 
@@ -1162,6 +1162,7 @@ sub userAgentString {
 =cut
 
 # XXXX - this sub is no longer used by SC core code, since system information is available in Slim::Menu::SystemInfo
+=pod
 sub settingsDiagString {
 
 	require Slim::Utils::Network;
@@ -1211,6 +1212,7 @@ sub settingsDiagString {
 
 	return wantarray ? @diagString : join ( ', ', @diagString );
 }
+=cut
 
 =head2 assert ( $exp, $msg )
 
@@ -1419,14 +1421,14 @@ Returns true if running as a Windows service.
 
 =cut
 
-sub runningAsService {
+sub runningAsService { if (main::ISWINDOWS) {
 
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
 		return 1;
 	}
 
 	return 0;
-}
+} }
 
 =head2 validMacAddress ( )
 
