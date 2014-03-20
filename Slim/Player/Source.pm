@@ -84,8 +84,7 @@ sub playmode {
 		if (!$client->power()) {$client->power(1);}
 		$controller->resume($fadeIn);
 	} else {
-		$log->error($client->id . " unknown playmode: $newmode");
-		bt();
+		logBacktrace($client->id . " unknown playmode: $newmode");
 	}
 	
 	# bug 6971

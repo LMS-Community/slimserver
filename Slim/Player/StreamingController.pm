@@ -318,14 +318,14 @@ sub _BadState {
 	my ($self, $event) = @_;
 	$log->error(sprintf("%s: event %s received while in invalid state %s-%s", $self->{'masterId'}, $event,
 		$PlayingStateName[$self->{'playingState'}], $StreamingStateName[$self->{'streamingState'}]));
-	bt() if $log->is_warn;
+	logBacktrace('') if $log->is_warn;
 }
 
 sub _Invalid {
 	my ($self, $event) = @_;
 	$log->warn(sprintf("%s: event %s received while in invalid state %s-%s", $self->{'masterId'}, $event,
 		$PlayingStateName[$self->{'playingState'}], $StreamingStateName[$self->{'streamingState'}]));
-	bt() if $log->is_warn;
+	logBacktrace('') if $log->is_warn;
 }
 
 sub _Buffering {_setPlayingState($_[0], BUFFERING);}
@@ -1874,7 +1874,7 @@ sub sync {
 		_stopClient($player);
 	}
 
-	main::INFOLOG && $synclog->info($self->{'masterId'} . " adding to syncGroup: " . $player->id()); # bt();
+	main::INFOLOG && $synclog->info($self->{'masterId'} . " adding to syncGroup: " . $player->id());
 	
 	assert (@{$player->controller()->{'allPlayers'}} == 1); # can only add un-synced player
 	
@@ -1937,7 +1937,7 @@ sub unsync {
 	
 	if (@{$self->{'allPlayers'}} < 2) {return;}
 	
-	main::INFOLOG && $synclog->info($self->{'masterId'} . " unsync " . $player->id()); # bt();
+	main::INFOLOG && $synclog->info($self->{'masterId'} . " unsync " . $player->id());
 		
 	# remove player from the lists
 	my $i = 0;

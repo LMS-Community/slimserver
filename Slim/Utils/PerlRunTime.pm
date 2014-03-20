@@ -28,6 +28,7 @@ Watch a variable using L<Tie::Watch>
 =cut
 
 # Use Tie::Watch to keep track of a variable, and report when it changes.
+=pod
 sub watchVariable {
 	my $var = shift;
 
@@ -77,6 +78,7 @@ sub watchVariable {
 		},
 	);
 }
+=cut
 
 =head2 deparseCoderef( $coderef )
 
@@ -84,6 +86,7 @@ Use L<B::Deparse> to turn a $coderef into an approximation of the original code.
 
 =cut
 
+=pod
 sub deparseCoderef {
 	my $coderef = shift;
 
@@ -96,6 +99,7 @@ sub deparseCoderef {
 
 	return "sub $name $body";
 }
+=cut
 
 =head2 realNameForCodeRef( $coderef )
 
