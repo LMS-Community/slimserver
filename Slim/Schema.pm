@@ -2462,15 +2462,15 @@ sub _preCheckAttributes {
 	my $deferredAttributes = {};
 
 	# Copy the incoming hash, so we don't modify it
-	# XXX why do we need to copy?
-	my $attributes = { %{ $args->{'attributes'} } };
+	my $attributes = {};
 
 	# Normalize attribute names
-	while (my ($key, $val) = each %$attributes) {
-
-		if (exists $tagMapping{lc $key}) {
-
-			$attributes->{ uc($tagMapping{lc $key}) } = delete $attributes->{$key};
+	while ( my ($key, $val) = each %{ $args->{'attributes'} } ) {
+		if ( my $mappedKey = $tagMapping{lc($key)} ) {
+			$attributes->{ uc($mappedKey) } = $val;
+		}
+		else {
+			$attributes->{ $key } = $val;
 		}
 	}
 	
