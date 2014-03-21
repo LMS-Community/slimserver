@@ -16,7 +16,6 @@ if ( !main::SCANNER ) {
 	require Slim::Networking::SqueezeNetwork::Players;
 }
 
-use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;

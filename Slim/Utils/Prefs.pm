@@ -805,7 +805,12 @@ sub init {
 	}, 'ignoredarticles');
 
 	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
-		$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
+		$prefs->setChange( sub {
+			if ( $_[1] ) {
+				require Slim::Utils::Update;
+				Slim::Utils::Update::checkVersion();
+			}
+		}, 'checkVersion' );
 
 		if ( !main::SCANNER ) {
 			$prefs->setChange( sub {
