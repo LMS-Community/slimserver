@@ -2,14 +2,14 @@ package Slim::Utils::Prefs::Migration::V1;
 
 use strict;
 
+use base qw(Slim::Utils::Prefs::Migration);
+
 use Slim::Utils::Prefs::OldPrefs;
 
-sub init {
-	my ($class, $prefs, $defaults, $path) = @_;
+sub migrate {
+	my ($class, $prefs, $defaults) = @_;
 	
 	$prefs->migrate(1, sub {
-		unless (-d $path) { mkdir $path; }
-		unless (-d $path) { logError("can't create new preferences directory at $path"); }
 	
 		for my $pref (keys %$defaults) {
 			my $old = Slim::Utils::Prefs::OldPrefs->get($pref);

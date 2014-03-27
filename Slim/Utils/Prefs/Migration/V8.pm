@@ -2,7 +2,9 @@ package Slim::Utils::Prefs::Migration::V8;
 
 use strict;
 
-sub init {
+use base qw(Slim::Utils::Prefs::Migration);
+
+sub migrate {
 	my ($class, $prefs) = @_;
 	
 	# on Windows we don't provide a means to disable the autoprefs value any longer

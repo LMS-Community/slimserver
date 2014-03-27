@@ -17,7 +17,7 @@ sub init {
 		if ( Slim::Utils::Favorites->enabled ) {
 			my $fav = Slim::Utils::Favorites->new($client);
 
-			my $uuid    = main::SLIM_SERVICE ? undef : $prefs->get('server_uuid');
+			my $uuid    = $prefs->get('server_uuid');
 			my $presets = [];
 
 			for my $hotkey ( @{ $fav->hotkeys } ) {

@@ -2,7 +2,9 @@ package Slim::Utils::Prefs::Migration::V2;
 
 use strict;
 
-sub init {
+use base qw(Slim::Utils::Prefs::Migration);
+
+sub migrate {
 	my ($class, $prefs) = @_;
 	
 	# rank of Staff Picks has changed

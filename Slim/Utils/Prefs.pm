@@ -269,39 +269,13 @@ sub init {
 		Slim::Control::Request::addDispatch(['prefset', '_namespace', '_prefname', '_newvalue'], [0, 0, 1, undef]);
 	}
 
-	if ( !main::SLIM_SERVICE && !$prefs->get('_version') ) {
-		# migrate old prefs across
-		require Slim::Utils::Prefs::Migration::V1;
-		Slim::Utils::Prefs::Migration::V1->init($prefs, \%defaults, $path);
-	}
-	
+	unless (-d $path) { mkdir $path; }
 	unless (-d $path && -w $path) {
 		logError("unable to write to preferences directory $path");
 	}
-	
-	for (my $v = $prefs->get('_version') + 1;; $v++) {
-
-		next if $v >= 5 && $v <= 7;	# for whatever reasons we don't have versions 5-7
-		
-		my $module = "Slim::Utils::Prefs::Migration::V$v";
-		
-		eval "use $module";
-		
-		if ($@) {
-			#main::DEBUGLOG && $log && $log->debug($@);
-			last;
-		}
-		else {
-			main::DEBUGLOG && $log && $log->is_debug && $log->debug("Initializing migration code: $module");
-			$module->init($prefs);
-		};
-		
-	}
-
-	# migrateClient 15 is in Slim::Plugin::DateTime::Plugin
 
 	# initialise any new prefs
-	$prefs->init(\%defaults);
+	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
 	
 	# perform OS-specific post-init steps
 	Slim::Utils::OSDetect::getOS->postInitPrefs($prefs);

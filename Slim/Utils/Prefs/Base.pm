@@ -26,8 +26,6 @@ use Storable;
 
 use Slim::Utils::Log;
 
-my $optimiseAccessors = 1;
-
 my $log = logger('prefs');
 
 =head2 get( $prefname )
@@ -38,9 +36,7 @@ Returns the current value of preference $prefname.
 
 =cut
 
-*get = \&get_SC;
-
-sub get_SC {
+sub get {
 	$_[0]->{prefs}->{ $_[1] };
 }
 
@@ -182,6 +178,19 @@ Hash is of the format: { 'prefname' => 'initial value' }
 sub init {
 	my $class = shift;
 	my $hash  = shift;
+	my $migrationClass = shift;
+	
+	$class->{migrationClass} ||= $migrationClass;
+	
+	if ( $class->{migrationClass} ) {
+		eval "use $class->{migrationClass}";
+		if ($@) {
+			$log->error("Unable to load migration class: $@");
+		}
+		else {
+			$class->{migrationClass}->init($class, $hash);
+		}
+	}
 
 	my $changed = 0;
 
@@ -318,19 +327,16 @@ sub AUTOLOAD {
 
 	return if (!$pref || $pref eq 'DESTROY');
 
-	if ($optimiseAccessors) {
-
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug(
-				  "creating accessor for " 
-				. $class->_root->{'namespace'} . ":" 
-				. ($class->{'clientid'} || '') . ":" . $pref
-			);
-		}
-
-		no strict 'refs';
-		*{ $AUTOLOAD } = sub { @_ == 1 ? $_[0]->{'prefs'}->{ $pref } : $_[0]->set($pref, $_[1]) };
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug(
+			  "creating accessor for " 
+			. $class->_root->{'namespace'} . ":" 
+			. ($class->{'clientid'} || '') . ":" . $pref
+		);
 	}
+
+	no strict 'refs';
+	*{ $AUTOLOAD } = sub { @_ == 1 ? $_[0]->{'prefs'}->{ $pref } : $_[0]->set($pref, $_[1]) };
 
 	return @_ == 0 ? $class->{'prefs'}->{ $pref } : $class->set($pref, shift);
 }
