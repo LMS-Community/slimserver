@@ -1,9 +1,12 @@
 package Slim::Utils::Prefs::Migration::V3;
 
 use strict;
+
+use base qw(Slim::Utils::Prefs::Migration);
+
 use Slim::Utils::Prefs;
 
-sub init {
+sub migrate {
 	my ($class, $prefs) = @_;
 	
 	$prefs->migrate( 3, sub {

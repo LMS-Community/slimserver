@@ -58,12 +58,13 @@ sub migrate {
 	# Migration code for server.prefs is not loaded unless needed.
 	# Dynamically load any potential migration module needed.
 
-	if ( $self->{parent}->{namespace} eq 'server' ) {
+	if ( my $migrationClass = $self->{parent}->{migrationClass} ) {
 		for (my $version = $cversion+1;; $version++) {
+
 			# we've alread initialized this mgiration code - move along
 			last if defined $self->{parent}->{migratecb}->{ $version };
 			
-			my $module = "Slim::Utils::Prefs::Migration::ClientV$version";
+			my $module = $migrationClass . '::ClientV' . $version;
 	
 			eval "use $module";
 				
