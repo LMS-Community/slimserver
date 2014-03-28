@@ -128,12 +128,13 @@ sub set {
 		my $client = $clientid ? Slim::Player::Client::getClient($clientid) : undef;
 		
 		if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
+			my $obj = $class->_obj;
 			for my $func ( @{$change} ) {
 				if ( main::DEBUGLOG && $log->is_debug ) {
 					$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
 				}
 			
-				$func->($pref, $new, $class->_obj, $old);
+				$func->($pref, $new, $obj, $old);
 			}
 		}
 
