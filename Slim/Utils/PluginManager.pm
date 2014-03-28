@@ -70,6 +70,8 @@ sub init {
 			$downloader = 'Slim::Utils::PluginDownloader';
 			$downloader->init;
 		};
+		
+		$@ && $log->error("Failed to load plugin downloader: $@");
 	}
 
 	my $pendingOps;

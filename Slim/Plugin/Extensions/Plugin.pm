@@ -273,7 +273,7 @@ sub _appsQueryCB {
 
 	} else {
 
-		$request->addResult('updates', scalar keys %$actions);
+		$request->addResult('updates', join(',', keys %$actions));
 	}
 
 	$request->setStatusDone();
