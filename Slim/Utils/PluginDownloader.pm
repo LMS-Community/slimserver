@@ -271,7 +271,14 @@ sub _handleResponse {
 	my $updates = $request->getResult('updates');
 	my $actions = $request->getResult('actions');
 
-	Slim::Utils::PluginManager->message($updates ? Slim::Utils::Strings::string('PLUGINS_UPDATES_AVAILABLE') : undef);
+	if ( $updates ) {
+		Slim::Utils::PluginManager->message(
+			sprintf( "%s (%s)", Slim::Utils::Strings::string('PLUGINS_UPDATES_AVAILABLE'), $updates )
+		);
+		
+		# $updates is only set if we don't want to auto-update
+		return;
+	}
 
 	for my $plugin (keys %{ $actions || {} }) {
 
