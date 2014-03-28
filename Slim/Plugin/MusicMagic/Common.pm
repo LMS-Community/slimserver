@@ -21,47 +21,57 @@ use Slim::Utils::Unicode;
 
 my $log = logger('plugin.musicip');
 
+my %filterHash = ();
+
 my $prefs = preferences('plugin.musicip');
 
-my %filterHash = ();
+$prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
+
+$prefs->setChange(
+	sub {
+		my $newval = $_[1];
+		
+		if ($newval) {
+			Slim::Plugin::MusicMagic::Plugin->initPlugin();
+		}
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
+
+		for my $c (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($c);
+		}
+	},
+	'musicip',
+);
+
+$prefs->setChange(
+	sub {
+		Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
+		
+		my $interval = $prefs->get('scan_interval') || 3600;
+		
+		main::INFOLOG && $log->info("re-setting scaninterval to $interval seconds.");
+		
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 120, \&Slim::Plugin::MusicMagic::Plugin::checker);
+	},
+'scan_interval');
 
 sub checkDefaults {
 
-	if (!defined $prefs->get('musicip')) {
-		$prefs->set('musicip',0)
-	}
-
-	if (!defined $prefs->get('mix_type')) {
-		$prefs->set('mix_type',0)
-	}
-
-	if (!defined $prefs->get('mix_style')) {
-		$prefs->set('mix_style',0);
-	}
-
-	if (!defined $prefs->get('mix_variety')) {
-		$prefs->set('mix_variety',0);
-	}
-
-	if (!defined $prefs->get('mix_size')) {
-		$prefs->set('mix_size',12);
-	}
-
-	if (!defined $prefs->get('playlist_prefix')) {
-		$prefs->set('playlist_prefix','');
-	}
-
-	if (!defined $prefs->get('playlist_suffix')) {
-		$prefs->set('playlist_suffix','');
-	}
-
-	if (!defined $prefs->get('scan_interval')) {
-		$prefs->set('scan_interval',3600);
-	}
-
-	if (!defined $prefs->get('port')) {
-		$prefs->set('port',10002);
-	}
+	$prefs->init({
+		musicip         => 0,
+		mix_type        => 0,
+		mix_style       => 20,
+		mix_variety     => 0,
+		mix_genre       => 0,
+		mix_size        => 12,
+		reject_size     => 12,
+		reject_type     => 0,
+		playlist_prefix => '',
+		playlist_suffix => '',
+		scan_interval   => 3600,
+		port            => 10002,
+	}, 'Slim::Plugin::MusicMagic::Prefs');
 }
 
 sub grabFilters {
