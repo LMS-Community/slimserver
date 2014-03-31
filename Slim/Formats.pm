@@ -9,7 +9,9 @@ package Slim::Formats;
 
 use strict;
 use base qw(Class::Data::Inheritable);
-	
+
+use Audio::Scan;
+
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -76,6 +78,11 @@ sub init {
 		'xml' => 'Slim::Formats::Playlists::XML',
 		'xpf' => 'Slim::Formats::Playlists::XSPF',
 	);
+
+	if ($Audio::Scan::VERSION eq '0.94') {
+		$tagClasses{'dff'} = 'Slim::Formats::DFF';
+		$tagClasses{'dsf'} = 'Slim::Formats::DSF';
+	}
 
 	$init = 1;
 
