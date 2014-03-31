@@ -248,28 +248,31 @@ Called if firmware download failed.  Checks if another firmware exists in cache.
 sub init_fw_error {	
 	my $model = shift || 'jive';
 	
-	# Check if we have a usable Jive firmware
-	my $version_file = catdir( $updatesDir, "$model.version" );
+	for my $path ($updatesDir, $dir) {
+		# Check if we have a usable Jive firmware
+		my $version_file = catdir( $path, "$model.version" );
+		
+		if ( -e $version_file ) {
+			my $version = read_file($version_file);
+			my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 	
-	if ( -e $version_file ) {
-		my $version = read_file($version_file);
+			my $fw_file = catdir( $path, "${model}_${ver}_r${rev}.bin" );
 
-		my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
-
-		my $fw_file = catdir( $updatesDir, "${model}_${ver}_r${rev}.bin" );
-
-		if ( -e $fw_file ) {
-			main::INFOLOG && $log->info("$model firmware download had an error, using existing firmware: $fw_file");
-			$firmwares->{$model} = {
-				version  => $ver,
-				revision => $rev,
-				file     => $fw_file,
-			};
-			
-			Slim::Web::Pages->addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
-
-			# send a notification that this firmware is downloaded
-			Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
+			if ( -e $fw_file ) {
+				main::INFOLOG && $log->info("$model firmware download had an error, using existing firmware: $fw_file");
+				$firmwares->{$model} = {
+					version  => $ver,
+					revision => $rev,
+					file     => $fw_file,
+				};
+				
+				Slim::Web::Pages->addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
+	
+				# send a notification that this firmware is downloaded
+				Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
+				
+				last;
+			}
 		}
 	}
 	
