@@ -11821,6 +11821,12 @@ OGF
 	PL	Ogg FLAC
 	RU	Ogg FLAC
 	SV	Ogg FLAC
+ 
+DFF
+	EN	DFF
+
+DSF
+	EN	DSF
 
 MODIFIED
 	CS	Upraveno

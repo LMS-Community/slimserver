@@ -593,7 +593,7 @@ sub stream_s {
 
 		my $track = Slim::Schema->objectForUrl({
 			'url' => $params->{url},
-		});
+		}) || $track;
 
 		$formatbyte      = 'p';
 		$pcmsamplesize   = 1;
@@ -702,6 +702,15 @@ sub stream_s {
 		
 		$pcmsamplesize   = Slim::Music::Info::contentType($track) =~ /^(?:mp4|sls)$/ ? '5' : '2';
 		
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 0;
+
+	} elsif ($format eq 'dff' || $format eq 'dsf') {
+
+		$formatbyte      = 'd';
+		$pcmsamplesize   = '?';
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
