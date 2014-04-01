@@ -359,7 +359,9 @@ sub migrate {
 	my $callback = shift;
 
 	if ($version > $class->{'prefs'}->{'_version'} && ref $callback eq 'CODE') {
-
+		
+		require Slim::Utils::Prefs::OldPrefs;
+		
 		if ($callback->($class)) {
 
 			main::INFOLOG && $log->info("migrated prefs for $class->{'namespace'} to version $version");
