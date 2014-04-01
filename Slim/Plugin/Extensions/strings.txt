@@ -313,36 +313,6 @@ PLUGIN_EXTENSIONS_AUTO_DESC
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
 	SV	Tillåt Logitech Media Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner den som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
 
-PLUGIN_EXTENSIONS_OTHERREPO
-	CS	Zobrazit veškeré zásuvné moduly třetích stran
-	DA	Vis alle udvidelsesmoduler fra tredjepart
-	DE	Alle Plugins anderer Hersteller anzeigen
-	EN	Show all 3rd party plugins
-	ES	Mostrar todos los complementos de terceros
-	FI	Näytä kaikki muiden valmistajien laajennukset
-	FR	Afficher tous les plugins tiers
-	IT	Mostra tutti i plugin di terzi
-	NL	Alle plug-ins van derden weergeven
-	NO	Vis alle tredjeparts plugin-moduler
-	PL	Pokaż wszystkie dodatki innych firm
-	RU	Показать все подключаемые модули сторонних изготовителей
-	SV	Visa alla plugin-program från tredje part
-
-PLUGIN_EXTENSIONS_OTHERREPO_DESC
-	CS	Zobrazit všechny zásuvné moduly třetích stran, které pochází od členů komunity Squeezebox. Mějte na paměti, že tyto zásuvné moduly nejsou podporovány a měly by být používány jen na vlastní riziko.
-	DA	Vis alle andre udvidelsesmoduler fra tredjeparter som er lavet af Squeezebox-brugergruppen. Bemærk at der ikke ydes support til disse udvidelsesmoduler, så du bruger dem på eget ansvar.
-	DE	Zeigen Sie alle Plugins anderer Hersteller an, die von Mitgliedern der Squeezebox-Community beigetragen wurden. Diese Plugins werden nicht unterstützt. Die Nutzung dieser Plugins erfolgt auf eigene Gefahr.
-	EN	Show all other 3rd party plugins contributed by members of the Squeezebox community.  Note these plugins are unsupported and should be used at your own risk.
-	ES	Muestra los complementos de terceros proporcionados por los miembros de la comunidad de Squeezebox. Tenga en cuenta que estos complementos no son compatibles y que usted los utiliza por su cuenta y riesgo.
-	FI	Näytä kaikki muut muiden valmistajien tekemät laajennukset. Niistä ovat vastanneet Squeezebox-yhteisön jäsenet. Huomaa, että näitä laajennuksia ei tueta ja että käyttäjät käyttävät niitä omalla vastuullaan.
-	FR	Afficher tous les autres plugins tiers provenant de membres de la communauté Squeezebox. Notez que ces plugins ne sont pas pris en charge et que vous les utilisez à vos propres risques.
-	IT	Mostra tutti gli altri plugin di terzi forniti dai membri della community Squeezebox. Tenere presente che tali plugin non sono supportati e pertanto vanno utilizzati a proprio rischio.
-	NL	Alle andere plug-ins van derden weergeven die leden van de Squeezebox-community hebben bijgedragen. N.B. Deze plug-ins worden niet ondersteund en worden op eigen risico gebruikt.
-	NO	Vis alle andre tredjeparts plugin-moduler som er laget av Squeezebox-brukere. Merk: disse plugin-modulene støttes ikke, og du bruker dem på egen risiko.
-	PL	Wyświetla wszystkie pozostałe dodatki innych firm opracowane przez społeczność usługi Squeezebox. Należy pamiętać, że te dodatki są nieobsługiwane i powinny być używane na własną odpowiedzialność.
-	RU	Показать все остальные подключаемые модули сторонних изготовителей, предлагаемые участниками сообщества Squeezebox. Следует помнить, что такие подключаемые модули не поддерживаются и ответственность за их использование должен нести пользователь.
-	SV	Visa alla andra plugin-program från tredje part som medlemmar i Squeezebox-communityn har bidragit med. Observera att dessa plugin-program inte stöds och används på egen risk.
-
 PLUGIN_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	CS	Vezměte prosím na vědomí, že zásuvné moduly třetích stran nejsou podporovány společností Logitech a měly by být používány na vaše vlastní riziko. Pro podporu se prosím obraťte na tvůrce zásuvných modulů.
 	DA	Bemærk at Logitech ikke yder support til udvidelsesmoduler fra tredjepart, og disse bruges på eget ansvar. Hvis du har brug for support, må du kontakte dem som har lavet udvidelsesmodulet.
@@ -377,18 +347,18 @@ PLUGIN_EXTENSIONS_RECOMMENDED_REPOSITORIES
 PLUGIN_EXTENSIONS_OTHER_REPOSITORIES
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)
 	CS	Jiné pluginy třetích stran
-	DA	Andre udvidelsesmoduler fra tredjepart
-	DE	Andere Plugins von Drittanbietern
-	EN	Other 3rd party plugins
-	ES	Otros complementos de terceros
-	FI	Muiden valmistajien laajennukset
-	FR	Autres plugins tiers
-	IT	Altri plugin di terzi
-	NL	Andere plug-ins van derden
-	NO	Andre tredjeparts plugin-moduler
+	DA	Udvidelsesmoduler fra tredjepart
+	DE	Plugins von Drittanbietern
+	EN	3rd party plugins
+	ES	Complementos de terceros
+	FI	Valmistajien laajennukset
+	FR	Plugins tiers
+	IT	Plugin di terzi
+	NL	Plug-ins van derden
+	NO	Tredjeparts plugin-moduler
 	PL	Pozostałe dodatki innych firm
 	RU	Другие подключаемые модули сторонних изготовителей
-	SV	Andra tillägg från tredje part
+	SV	Tillägg från tredje part
 
 PLUGIN_EXTENSIONS_LOGITECH_REPOSITORY
 # These strings aren't used by the plugin itself, but in the repository XML files (https://svn.slimdevices.com/slim/vendor/plugins/)

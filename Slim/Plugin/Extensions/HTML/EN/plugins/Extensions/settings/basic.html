@@ -159,10 +159,6 @@
 		<input type="checkbox" name="auto" id="auto" [% IF auto %] checked="1" [% END %] />
 	[% END %]
 
-	[% WRAPPER setting title="PLUGIN_EXTENSIONS_OTHERREPO" desc="PLUGIN_EXTENSIONS_OTHERREPO_DESC" %]
-		<input type="checkbox" name="otherrepo" id="otherrepo" [% IF otherrepo %] checked="1" [% ELSE %] class="otherrepo" [% END %] />
-	[% END %]
-
 	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="" %]
 		<div>[% "PLUGIN_EXTENSIONS_REPOS_DESC" | string %]</div>
 		<div>[% "PLUGIN_EXTENSIONS_REPOS_WARNING" | string %]</div>

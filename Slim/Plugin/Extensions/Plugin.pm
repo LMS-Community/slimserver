@@ -103,7 +103,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.extensions');
 
-$prefs->init({ repos => [], plugin => {}, auto => 0, otherrepo => 0 });
+$prefs->init({ repos => [], plugin => {}, auto => 0 });
 
 $prefs->migrate(2, 
 				sub {
@@ -128,11 +128,8 @@ $prefs->migrate(3,
 
 my %repos = (
 	# default repos mapped to weight which defines the order they are sorted in
-	Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml')   => 1,
-	Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml') => 2,
+	'http://repos.squeezecommunity.org/extensions.xml' => 1,
 );
-
-my $otherRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/other.xml');
 
 sub initPlugin {
 	my $class = shift;
@@ -143,14 +140,7 @@ sub initPlugin {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
 	}
 
-	# other repo available always available as an option from jive
-	Slim::Control::Jive::registerExtensionProvider($otherRepo, \&getExtensions, 'other');
-
 	if ( main::WEBUI ) {
-
-		if ($prefs->get('otherrepo')) {
-			$class->addRepo({ other => 1 });
-		}
 
 		for my $repo ( @{$prefs->get('repos')} ) {
 			$class->addRepo({ repo => $repo });
@@ -183,31 +173,23 @@ sub addRepo {
 	my $class = shift;
 	my $args = shift;
 
-	my $repo   = $args->{'other'} ? $otherRepo : $args->{'repo'};
-	my $weight = $args->{'other'} ? 5 : 10;
+	my $repo   = $args->{'repo'};
+	my $weight = 10;
 
 	main::INFOLOG && $log->info("adding repository $repo weight $weight");
 
 	$repos{$repo} = $weight;
-
-	unless ($args->{'other'}) {
-		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions, 'user');
-	}
 }
 
 sub removeRepo {
 	my $class = shift;
 	my $args = shift;
 
-	my $repo = $args->{'other'} ? $otherRepo : $args->{'repo'};
+	my $repo = $args->{'repo'};
 
 	main::INFOLOG && $log->info("removing repository $repo");
 
 	delete $repos{$repo};
-
-	unless ($args->{'other'}) {
-		Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
-	}
 }
 
 sub repos {

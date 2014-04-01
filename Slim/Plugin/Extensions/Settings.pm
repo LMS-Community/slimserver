@@ -67,17 +67,6 @@ sub handler {
 
 		$prefs->set('repos', \@new) if $changed;
 
-		if ($params->{'otherrepo'} && !$prefs->get('otherrepo')) {
-
-			Slim::Plugin::Extensions::Plugin->addRepo({ other => 1 });
-			$prefs->set('otherrepo', 1);
-
-		} elsif (!$params->{'otherrepo'} && $prefs->get('otherrepo')) {
-
-			Slim::Plugin::Extensions::Plugin->removeRepo({ other => 1 });
-			$prefs->set('otherrepo', 0);
-		}
-
 		# set policy for which plugins are installed/uninstalled etc
 
 		my $plugin = $prefs->get('plugin');
@@ -271,7 +260,6 @@ sub _addInfo {
 	$params->{'inactive'} = \@inactive;
 	$params->{'avail'}    = \@results;
 	$params->{'repos'}    = \@repos;
-	$params->{'otherrepo'}= $prefs->get('otherrepo');
 	$params->{'auto'}     = $prefs->get('auto');
 	$params->{'rand'}     = $rand;
 
