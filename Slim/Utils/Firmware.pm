@@ -127,7 +127,11 @@ sub init_firmware_download {
 	}
 
 	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
-	return unless $prefs->get('checkVersion');
+	if ( !$prefs->get('checkVersion') ) {
+		main::INFOLOG && $log->info("Not downloading firmware for $model - update check has been disabled in Settings/Advanced/Software Updates");
+		get_fw_locally($model);
+		return;
+	}
 
 	main::INFOLOG && $log->is_info && $log->info("Downloading $model.version file...");
 
@@ -247,6 +251,16 @@ Called if firmware download failed.  Checks if another firmware exists in cache.
 
 sub init_fw_error {	
 	my $model = shift || 'jive';
+
+	main::INFOLOG && $log->info("$model firmware download had an error");
+
+	get_fw_locally( $model );
+	
+	# Note: Server will keep trying to download a new one
+}
+
+sub get_fw_locally {
+	my $model = shift || 'jive';
 	
 	for my $path ($updatesDir, $dir) {
 		# Check if we have a usable Jive firmware
@@ -259,7 +273,7 @@ sub init_fw_error {
 			my $fw_file = catdir( $path, "${model}_${ver}_r${rev}.bin" );
 
 			if ( -e $fw_file ) {
-				main::INFOLOG && $log->info("$model firmware download had an error, using existing firmware: $fw_file");
+				main::INFOLOG && $log->info("Using existing firmware for $model: $fw_file");
 				$firmwares->{$model} = {
 					version  => $ver,
 					revision => $rev,
@@ -275,8 +289,6 @@ sub init_fw_error {
 			}
 		}
 	}
-	
-	# Note: Server will keep trying to download a new one
 }
 
 =head2 url()
