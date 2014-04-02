@@ -339,6 +339,12 @@ sub infoServer {
 			name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
 						. $Config{'version'} . ' - ' . $Config{'archname'},
 		},
+		
+		# XXX - let's show the Audio::Scan version until we've updated them all
+		{
+			type => 'text',
+			name => 'Audio::Scan' . cstring($client, 'COLON') . ' ' . $Audio::Scan::VERSION,
+		},
 	];
 	
 	if ( Slim::Schema::hasLibrary() ) {
