@@ -71,10 +71,9 @@ sub initSearchPath {
 	# Initialise search path for findbin - called later in initialisation than init above
 
 	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS. 
-	$class->{osDetails}->{'binArch'} = $Config::Config{'archname'};
-	$class->{osDetails}->{'binArch'} =~ s/^x86_64-([^-]+).*/x86_64-$1/;
-	$class->{osDetails}->{'binArch'} =~ s/^i[3456]86-([^-]+).*/i386-$1/;
-
+	my $binArch = $class->{osDetails}->{'binArch'} = $Config::Config{'archname'};
+	$class->{osDetails}->{'binArch'} =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
+	
 	# Reduce ARM to arm-linux
 	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
@@ -86,6 +85,11 @@ sub initSearchPath {
 	}
 
 	my @paths = ( catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'}), catdir($class->dirsFor('Bin'), $^O), $class->dirsFor('Bin') );
+
+	# Linux x86_64 should check its native folder first
+	if ( $binArch =~ s/^x86_64-([^-]+).*/x86_64-$1/ ) {
+		unshift @paths, catdir($class->dirsFor('Bin'), $binArch);
+	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 
