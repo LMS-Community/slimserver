@@ -559,6 +559,7 @@ sub trackGain {
 }
 
 # Track Info menu
+=pod XXX - legacy track info menu from before Slim::Menu::TrackInfo times?
 sub trackInfo {
 	my ( $class, $client, $track ) = @_;
 	
@@ -589,6 +590,7 @@ sub trackInfo {
 	
 	$client->modeParam( 'handledTransition', 1 );
 }
+=cut
 
 # URL used for CLI trackinfo queries
 sub trackInfoURL {

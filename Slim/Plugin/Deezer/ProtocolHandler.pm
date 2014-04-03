@@ -504,6 +504,7 @@ sub trackInfoURL {
 }
 
 # Track Info menu
+=pod XXX - legacy track info menu from before Slim::Menu::TrackInfo times?
 sub trackInfo {
 	my ( $class, $client, $track ) = @_;
 	
@@ -524,6 +525,7 @@ sub trackInfo {
 	
 	$client->modeParam( 'handledTransition', 1 );
 }
+=cut
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
