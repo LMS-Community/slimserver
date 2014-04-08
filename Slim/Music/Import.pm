@@ -445,15 +445,6 @@ Code reference to reset the state of the importer.
 
 True if the importer supports scanning playlists only.
 
-=item * mixer => \&mixerFunction
-
-Generate a mix using criteria from the client's parentParams or
-modeParamStack.
-
-=item * mixerlink => \&mixerlink
-
-Generate an HTML link for invoking the mixer.
-
 =back
 
 =cut

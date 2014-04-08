@@ -1,7 +1,3 @@
-[% IF mixeritems && !item.musicmagic_mixable %]
-	[%- tmpitem = item -%][%# store item object so we don't lose it for good %]
-	[%- item = mixeritems -%]
-[% END %]
 [%- IF item.musicmagic_mixable %]
 	[% WRAPPER cmdlink cmdimage='b_mmmix.gif' cmdtitle='MUSICMAGIC_MIX' %]
 		href="[% webroot %]plugins/MusicMagic/musicmagic_mix.html?[% IF item.playlist %]playlist=[% item.item | uri %]&amp;[% ELSIF item.mmmixable_not_descend %]song=[% item.item | uri %]&amp;[% ELSIF item.levelName == "year" %]year=[% item.text | uri %]&amp;[% END %][% IF item.genre %]genre=[% item.genre | uri %]&amp;[% END %][% IF item.levelName == "age" %]album=[% item.age %][% ELSE %][% IF item.contributor %]artist=[% item.contributor | uri %]&amp;[% END %][% IF item.artist %]artist=[% item.artist.id | uri %]&amp;[% END %][% END %][% IF item.album %]album=[% item.album | uri %]&amp;[% END %]player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]

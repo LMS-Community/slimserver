@@ -183,10 +183,8 @@ sub initPlugin {
 
 		checker($initialized);
 
-		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
+		# addImporter for Plugins, may include mixer function, setup function reference and use on/off.
 		Slim::Music::Import->addImporter($class, {
-			'mixer'     => \&mixerFunction,
-			'mixerlink' => \&mixerlink,
 			'use'       => $prefs->get('musicip'),
 			'cliBase'   => {
 					player => 0,
@@ -722,38 +720,6 @@ sub mixerFunction {
 		# don't do anything if nothing is mixable
 		$client->bumpRight;
 	}
-}
-
-sub mixerlink {
-	my $item = shift;
-	my $form = shift;
-	my $descend = shift;
-
-	if ($descend) {
-		$form->{'mmmixable_descend'} = 1;
-	} else {
-		$form->{'mmmixable_not_descend'} = 1;
-	}
-
-	if ( main::WEBUI ) {
-		Slim::Web::HTTP::CSRF->protectURI('plugins/MusicMagic/.*\.html');
-	}
-	
-	# only add link if enabled and usable
-	if (canUseMusicMagic() && $prefs->get('musicip')) {
-
-		# set up a musicip link
-		$form->{'mixerlinks'}{Slim::Plugin::MusicMagic::Plugin->title()} = "plugins/MusicMagic/mixerlink.html";
-		
-		# flag if mixable
-		if (($item->can('musicmagic_mixable') && $item->musicmagic_mixable) ||
-			($canPowerSearch && defined $form->{'levelName'} && $form->{'levelName'} eq 'year')) {
-
-			$form->{'musicmagic_mixable'} = 1;
-		}
-	}
-
-	return $form;
 }
 
 sub mixExitHandler {
@@ -1397,9 +1363,7 @@ sub _objectInfoHandler {
 			},
 
 			web  => {
-				group => 'mixers',
 				url   => 'plugins/MusicMagic/musicmagic_mix.html?' . $special->{urlKey} . '=' . $obj->id,
-				item  => mixerlink($obj),
 			},
 		};
 	}

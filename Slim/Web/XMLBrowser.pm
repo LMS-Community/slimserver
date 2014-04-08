@@ -825,7 +825,6 @@ sub handleFeed {
 		
 		{
 			my $details = {};
-			my $mixerlinks = {};
 			my $i = 0;
 			
 			my $roles = join ('|', Slim::Schema::Contributor->contributorRoles());
@@ -848,24 +847,6 @@ sub handleFeed {
 						};
 						
 						$item->{'ignore'} = 1;
-					}
-
-					elsif ($label eq 'mixers') {
-						
-						$details->{'mixers'} ||= [];
-						
-						my $mixer = {
-							item => $stash->{'sess'}
-						};
-						
-						my ($mixerkey, $mixerlink) = each %{ $item->{'web'}->{'item'}->{'mixerlinks'} };
-						$stash->{'mixerlinks'}->{$mixerkey} = $mixerlink;
-						
-						foreach ( keys %{ $item->{'web'}->{'item'}} ) {
-							$mixer->{$_} = $item->{'web'}->{'item'}->{$_};
-						}
-
-						push @{ $details->{'mixers'} }, $mixer;
 					}
 
 					elsif ($label eq 'GENRE') { 

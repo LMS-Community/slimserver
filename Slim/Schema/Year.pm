@@ -49,15 +49,6 @@ sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
 	$form->{'text'} = $self->name;
-
-	my $Imports = Slim::Music::Import->importers;
-
-	for my $mixer (keys %{$Imports}) {
-
-		if (defined $Imports->{$mixer}->{'mixerlink'}) {
-			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend); 	 
-		}
-	}
 }
 
 # Rescan this year.  Make sure at least 1 track from this year exists, otherwise

@@ -95,9 +95,6 @@
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 			[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
-			[% FOREACH mixer = mixerlinks.values.sort -%]
-				[% PROCESS $mixer %]
-			[% END %]
 		[%- END %]
 	[%- END %]
 

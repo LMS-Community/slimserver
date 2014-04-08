@@ -509,15 +509,6 @@ sub displayAsHTML {
 
 	$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
 	$form->{'noAlbum'}  = Slim::Utils::Strings::string('NO_ALBUM');
-
-	my $Imports = Slim::Music::Import->importers;
-
-	for my $mixer (keys %{$Imports}) {
-
-		if (defined $Imports->{$mixer}->{'mixerlink'}) {
-			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, 0);
-		}
-	}
 }
 
 sub retrievePersistent {
