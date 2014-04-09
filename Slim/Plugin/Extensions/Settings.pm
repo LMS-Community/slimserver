@@ -151,6 +151,10 @@ sub _addInfo {
 	for my $plugin (keys %$plugins) {
 
 		my $entry = $plugins->{$plugin};
+
+		# don't show enforced plugins
+		next if $entry->{'enforce'};
+
 		my $state = $states->get($plugin);
 
 		my $entry = {
