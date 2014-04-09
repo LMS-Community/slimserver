@@ -9,43 +9,39 @@ package Slim::Web::Pages::Home;
 
 use strict;
 
-use POSIX ();
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
-
-use base qw(Slim::Web::Pages);
 
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Networking::Discovery::Server;
 use Slim::Networking::SqueezeNetwork;
-
-require Slim::Plugin::Base;
+use Slim::Plugin::Base;
 
 my $prefs = preferences('server');
 
 sub init {
-	my $class = shift;
+	Slim::Web::Pages->addPageFunction(qr/^$/, \&home);
+	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, \&home);
+	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, \&home);
+	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, \&switchServer);
 	
-	Slim::Web::Pages->addPageFunction(qr/^$/, sub {$class->home(@_)});
-	Slim::Web::Pages->addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
-	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
-	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, sub {$class->switchServer(@_)});
+	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') });
 
-	$class->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html"});
-	$class->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-#	$class->addPageLinks("help", { 'FAQ' => "http://mysqueezebox.com/support"},1);
-	$class->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html"});
-	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
+	Slim::Web::Pages->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html" });
+	Slim::Web::Pages->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html" });
+	Slim::Web::Pages->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html" });
+	Slim::Web::Pages->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com" });
+	Slim::Web::Pages->addPageLinks("help", { 'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 
-	$class->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
+	Slim::Web::Pages->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
 
-	$class->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
-	$class->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
-	$class->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
+	Slim::Web::Pages->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
+	Slim::Web::Pages->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
+	Slim::Web::Pages->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
 }
 
 sub home {
-	my ($class, $client, $params, $gugus, $httpClient, $response) = @_;
+	my ($client, $params, undef, $httpClient, $response) = @_;
 
 	my $template = $params->{"path"} =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 
@@ -64,8 +60,6 @@ sub home {
 		return Slim::Web::HTTP::filltemplatefile($template, $params);
 	}
 
-	my %listform = %$params;
-
 	$params->{'nosetup'}  = 1 if $::nosetup;
 	$params->{'noserver'} = 1 if $::noserver;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
@@ -75,28 +69,6 @@ sub home {
 		$params->{'hasLibrary'} = 1;
 	} else {
 		$params->{'hasLibrary'} = 0;
-	}
-
-	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
-		$class->addPageLinks("help", {'HELP_REMOTE' => "html/docs/remote.html"});
-		$class->addPageLinks("help", {'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-		$class->addPageLinks("help", {'FAQ' => "html/docs/faq.html"});
-		$class->addPageLinks("help", {'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-		$class->addPageLinks("help", {'TECHNICAL_INFORMATION' => "html/docs/index.html"});
-	}
-	
-	$class->addPageLinks( 'my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url( '/appgallery' )} );
-
-	# fill out the client setup choices
-	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
-
-		# every player gets a page.
-		# next if (!$player->isPlayer());
-		$listform{'playername'}   = $player->name();
-		$listform{'playerid'}     = $player->id();
-		$listform{'player'}       = $params->{'player'};
-		$listform{'skinOverride'} = $params->{'skinOverride'};
-		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
 
 	# More leakage from the DigitalInput 'plugin'
@@ -122,9 +94,7 @@ sub home {
 	}
 	
 	# Bug 4125, sort all additionalLinks submenus properly
-	# XXX: non-Default templates will need to be updated to use this sort order
 	$params->{additionalLinkOrder} = {};
-	
 	$params->{additionalLinks} = {};
 	
 	# Get sort order for plugins
@@ -174,14 +144,16 @@ sub home {
 		};
 	}
 
-	Slim::Web::Pages::Common->addPlayerList($client, $params);
-	Slim::Web::Pages::Common->addLibraryStats($params);
+	if ( !($params->{page} && $params->{page} eq 'help') ) {
+		Slim::Web::Pages::Common->addPlayerList($client, $params);
+		Slim::Web::Pages::Common->addLibraryStats($params);
+	}
 	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }
 
 sub switchServer {
-	my ($class, $client, $params) = @_;
+	my ($client, $params) = @_;
 
 	if (lc($params->{'switchto'}) eq 'squeezenetwork' 
 		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK')) {
