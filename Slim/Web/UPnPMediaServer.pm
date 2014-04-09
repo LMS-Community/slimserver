@@ -17,6 +17,9 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
 sub init {
+	require Slim::Web::Pages::BrowseDB;
+	Slim::Web::Pages::BrowseDB->init();
+
 	Slim::Web::Pages->addPageFunction( qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP );
 	Slim::Web::Pages->addPageFunction( qr/^upnpinfo\.(?:htm|xml)/, \&browseUPnP );
 }

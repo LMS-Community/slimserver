@@ -34,7 +34,6 @@ sub init {
 		
 	require Slim::Web::Pages::Common;
 	require Slim::Web::Pages::Home;
-	require Slim::Web::Pages::BrowseDB;
 	require Slim::Web::Pages::Status;
 	require Slim::Web::Pages::EditPlaylist;
 	require Slim::Web::Pages::Playlist;
@@ -45,7 +44,6 @@ sub init {
 
 	Slim::Web::Pages::Common->init();
 	Slim::Web::Pages::Home->init();
-	Slim::Web::Pages::BrowseDB->init();
 	Slim::Web::Pages::Status->init();
 	Slim::Web::Pages::EditPlaylist->init();
 	Slim::Web::Pages::Playlist->init();
