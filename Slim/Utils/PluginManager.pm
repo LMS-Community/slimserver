@@ -537,7 +537,9 @@ sub message {
 
 	$message = shift if @_;
 
-	return ($class->needsRestart && Slim::Utils::Strings::string('PLUGINS_RESTART_MSG')) || $message;
+	return $class->needsRestart 
+		? Slim::Utils::Strings::string('PLUGINS_RESTART_MSG') . ' (' . join(', ', grep { $prefs->get($_) =~ /needs/ } keys %{$prefs->all}) . ')'
+		: $message;
 }
 
 sub _pluginCacheFile {
