@@ -152,7 +152,7 @@ sub getPlaylist {
 	my $client = $song->master();
 	my $url    = $song->currentTrack()->url;
 
-	if ( $song != $client->streamingSong() ||  $client->isStopped() ) {
+	if ( $song != $client->streamingSong() || $client->isStopped() || $client->isPaused() ) {
 		main::DEBUGLOG && $log->debug( "Track changed, stopping playlist fetch" );
 		return;
 	}
