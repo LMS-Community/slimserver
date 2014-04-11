@@ -159,10 +159,10 @@ sub utf8decode_guess {
 	if ( @preferedEncodings ) {
 		for my $encoding (@preferedEncodings) {
 
-			$string = eval { Encode::decode($encoding, $string, $FB_QUIET) };
+			my $test_decode = eval { Encode::decode($encoding, $string, $FB_CROAK) };
 
-			if ( !$@ && utf8::is_utf8($string) ) {
-				return $string;
+			if ( !$@ && utf8::is_utf8($test_decode) ) {
+				return $test_decode;
 			}
 		}
 	}
