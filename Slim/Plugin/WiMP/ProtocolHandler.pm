@@ -413,6 +413,9 @@ sub getMetadataFor {
 	my $meta = $cache->get( 'wimp_meta_' . ($trackId || '') );
 	
 	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+
+		$client->master->pluginData( fetchingMeta => 1 );
+
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my %need;
 		
@@ -429,7 +432,6 @@ sub getMetadataFor {
 			if ( main::DEBUGLOG && $log->is_debug ) {
 				$log->debug( "Need to fetch metadata for: " . join( ', ', keys %need ) );
 			}
-			$client->master->pluginData( fetchingMeta => 1 );
 			
 			my $metaUrl = Slim::Networking::SqueezeNetwork->url(
 				"/api/wimp/v1/playback/getBulkMetadata"
@@ -449,6 +451,9 @@ sub getMetadataFor {
 				'Content-Type' => 'application/x-www-form-urlencoded',
 				'trackIds=' . join( ',', keys %need ),
 			);
+		}
+		else {
+			$client->master->pluginData( fetchingMeta => 0 );
 		}
 	}
 	
