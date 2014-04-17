@@ -1655,7 +1655,8 @@ sub mediafolderQuery {
 	my ($topLevelObj, $items, $count, $topPath, $realName);
 				
 	my $filter = sub {
-		my ($filename, $topPath) = @_;
+		# if a $sth is passed, we'll do a quick lookup to check existence only, not returning an actual object if possible
+		my ($filename, $topPath, $sth) = @_;
 		
 		my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || '';
 
@@ -1670,6 +1671,13 @@ sub mediafolderQuery {
 			if ( my $alias = Slim::Utils::Misc::pathFromMacAlias($url) ) {
 				$url = $alias;
 			}
+		}
+
+		if ($sth && $url) {
+			$sth->execute($url);
+			
+			my $itemDetails = $sth->fetchrow_hashref;
+			return 1 if $itemDetails && $itemDetails->{content_type};
 		}
 
 		my $item = Slim::Schema->objectForUrl({
@@ -1729,9 +1737,13 @@ sub mediafolderQuery {
 
 			$topPath = blessed($topLevelObj) ? $topLevelObj->path : '';
 			
+			my $sth = (!$type || $type eq 'audio') ? Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE url = ?') : undef;
+			
 			$items = [ grep {
-				$filter->($_, $topPath);
+				$filter->($_, $topPath, $sth);
 			} @$files ];
+
+			$sth->finish() if $sth;
 
 			$count = scalar @$items;
 		
