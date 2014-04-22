@@ -9,6 +9,7 @@
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
+	<enforce>1</enforce>
 	<targetApplication>
 		<id>Logitech Media Server</id>
 		<minVersion>7.3</minVersion>
