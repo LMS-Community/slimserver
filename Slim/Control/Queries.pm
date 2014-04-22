@@ -1678,6 +1678,11 @@ sub mediafolderQuery {
 			
 			my $itemDetails = $sth->fetchrow_hashref;
 			return 1 if $itemDetails && $itemDetails->{content_type};
+			
+			# don't create the dir objects in the first pass - we can create them later when paging through the list
+			# only run a quick, relatively cheap test on the type of the URL
+			my $type = Slim::Music::Info::typeFromPath($url) || 'nada';
+			return 1 if $type eq 'dir'; 
 		}
 
 		my $item = Slim::Schema->objectForUrl({
@@ -1739,7 +1744,9 @@ sub mediafolderQuery {
 			
 			my $sth = (!$type || $type eq 'audio') ? Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE url = ?') : undef;
 			
+			my $chunkCount = 0;
 			$items = [ grep {
+				main::idleStreams() unless ++$chunkCount % 20;
 				$filter->($_, $topPath, $sth);
 			} @$files ];
 
@@ -1795,6 +1802,7 @@ sub mediafolderQuery {
 			}
 
 			$x++;
+			main::idleStreams() unless $x % 20;
 			
 			$id += 0;
 
