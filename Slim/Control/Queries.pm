@@ -315,6 +315,10 @@ sub albumsQuery {
 				my $ids = $cache->{'newAlbumIds'} || [];
 				
 				if (!scalar @$ids) {
+					my $cacheKey = 'newAlbumIds' . Slim::Music::Import->lastScanTime;
+					my $_cache = Slim::Utils::Cache->new;
+					$ids = $_cache->get($cacheKey) || [];
+
 					# get the list of album IDs ordered by timestamp
 					$ids = Slim::Schema->dbh->selectcol_arrayref( qq{
 						SELECT tracks.album
@@ -322,9 +326,10 @@ sub albumsQuery {
 						WHERE tracks.album > 0
 						GROUP BY tracks.album
 						ORDER BY tracks.timestamp DESC
-					}, { Slice => {} } );
+					}, { Slice => {} } ) unless scalar @$ids;
 					
 					$cache->{newAlbumIds} = $ids;
+					$_cache->set($cacheKey, $ids, 86400 * 7) if scalar @$ids;
 				}
 
 				my $start = scalar($index);
