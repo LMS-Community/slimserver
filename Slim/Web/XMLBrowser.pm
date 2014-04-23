@@ -1150,7 +1150,11 @@ sub handleSubFeed {
 }
 
 sub processTemplate {
-	return Slim::Web::HTTP::filltemplatefile( @_ );
+	my $page = Slim::Web::HTTP::filltemplatefile( @_ );
+	
+	Slim::Utils::Cache->new->set($_[1]->{renderCacheKey}, $page, 86400 * 7) if $page && $_[1]->{renderCacheKey};
+
+	return $page;
 }
 
 sub init {
@@ -1176,9 +1180,7 @@ sub _webLinkDone {
 }
 
 sub webLink {
-	my $client  = $_[0];
-	my $args    = $_[1];
-	my $response= $_[4];
+	my ( $client, $args, $callback, $httpClient, $response ) = @_;
 	my $allArgs = \@_;
 
 	# get parameters and construct CLI command
@@ -1228,6 +1230,19 @@ sub webLink {
 	push @verbs, 'wantIndex:1';	# We always want everything we can get
 	
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
+
+	my $renderCacheKey;
+	if ( scalar grep(/\b(?:browselibrary|items|mode)\b/, @verbs) == 3 ) {
+		$renderCacheKey = 'web_' . join(':', grep { $_ !~ /^(?:feedMode|wantMetadata|wantIndex)/ } @verbs, Slim::Music::Import->lastScanTime);
+	}
+	
+	if ( $renderCacheKey && (my $cached = Slim::Utils::Cache->new->get($renderCacheKey)) ) {
+		main::DEBUGLOG && $log->debug("Returning cached copy of rendered HTML page.");
+		$callback->( $client, $args, $cached, $httpClient, $response );
+		return;
+	}
+	
+	$args->{renderCacheKey} = $renderCacheKey;
 
 	# execute CLI command
 	main::INFOLOG && $log->is_info && $log->info('Use CLI: ', join(' ', (defined $client ? $client->id : 'noClient'), @verbs));
