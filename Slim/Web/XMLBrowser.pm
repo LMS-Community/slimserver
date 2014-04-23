@@ -1152,7 +1152,7 @@ sub handleSubFeed {
 sub processTemplate {
 	my $page = Slim::Web::HTTP::filltemplatefile( @_ );
 	
-	Slim::Utils::Cache->new->set($_[1]->{renderCacheKey}, $page, 86400 * 7) if $page && $_[1]->{renderCacheKey};
+	Slim::Utils::Cache->new->set($_[1]->{renderCacheKey}, $page, 86400) if $page && $_[1]->{renderCacheKey};
 
 	return $page;
 }
@@ -1233,7 +1233,7 @@ sub webLink {
 
 	my $renderCacheKey;
 	if ( scalar grep(/\b(?:browselibrary|items|mode)\b/, @verbs) == 3 ) {
-		$renderCacheKey = 'web_' . join(':', grep { $_ !~ /^(?:feedMode|wantMetadata|wantIndex)/ } @verbs, Slim::Music::Import->lastScanTime);
+		$renderCacheKey = 'web_' . join(':', $args->{path}, $args->{url_query} || '', Slim::Music::Import->lastScanTime);
 	}
 	
 	if ( $renderCacheKey && (my $cached = Slim::Utils::Cache->new->get($renderCacheKey)) ) {
