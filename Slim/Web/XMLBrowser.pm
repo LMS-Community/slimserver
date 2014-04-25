@@ -1232,7 +1232,7 @@ sub webLink {
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
 
 	my $renderCacheKey;
-	if ( $args->{path} =~ /\bbrowselibrary\b.*?\bmode=(?:artists|albums|genres|years)\b/ ) {
+	if ( $args->{path} =~ /\bbrowselibrary\b.*?\bmode=(?:artists|albums|genres|years)\b/ && $args->{url_query} !~ /\baction=/ ) {
 		# cache key needs to make sure we respect the various prefs and cookies which control the display mode...
 		$renderCacheKey = join(':', 'blweb', Slim::Music::Import->lastScanTime, $index, $quantity, $params{mode}, $params{sort}, map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy) );
 
