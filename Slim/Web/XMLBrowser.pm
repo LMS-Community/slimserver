@@ -1232,16 +1232,17 @@ sub webLink {
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
 
 	my $renderCacheKey;
-	if ( scalar grep(/\b(?:browselibrary|items|mode)\b/, @verbs) == 3 ) {
-		$renderCacheKey = 'web_' . join(':', $args->{path}, $args->{url_query} || '', Slim::Music::Import->lastScanTime);
+	if ( $args->{path} =~ /\bbrowselibrary\b.*?\bmode=(?:artists|albums|genres|years)\b/ ) {
+		# cache key needs to make sure we respect the various prefs and cookies which control the display mode...
+		$renderCacheKey = join(':', 'blweb', Slim::Music::Import->lastScanTime, $index, $quantity, $params{mode}, map { $args->{$_} || $params{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy) );
+
+		if ( my $cached = Slim::Utils::Cache->new->get($renderCacheKey) ) {
+			main::DEBUGLOG && $log->debug("Returning cached copy of rendered HTML page.");
+			$callback->( $client, $args, $cached, $httpClient, $response );
+			return;
+		}
 	}
-	
-	if ( $renderCacheKey && (my $cached = Slim::Utils::Cache->new->get($renderCacheKey)) ) {
-		main::DEBUGLOG && $log->debug("Returning cached copy of rendered HTML page.");
-		$callback->( $client, $args, $cached, $httpClient, $response );
-		return;
-	}
-	
+		
 	$args->{renderCacheKey} = $renderCacheKey;
 
 	# execute CLI command
