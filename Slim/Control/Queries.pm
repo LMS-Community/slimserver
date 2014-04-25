@@ -1879,6 +1879,7 @@ sub mediafolderQuery {
 	# this is not always needed, but if only single tracks were added through BMF,
 	# the caches would get out of sync
 	Slim::Schema->wipeCaches;
+	Slim::Music::Import->setLastScanTime();
 	
 	$request->setStatusDone();
 }
