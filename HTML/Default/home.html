@@ -125,13 +125,13 @@ ELSE %]
 	[% BLOCK menuItem %]
 		<div class="selectorMarker [% expandable %]" onmouseover="Highlighter.highlight(this [% IF expandable %], Home.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-				<div class="homeMenuItem" id="[% link.key %]">
+				<div class="homeMenuItem [% expanded ? "homeMenuItem_expanded" : '' %]" id="[% link.key %]">
 					[% string   = link.key;
 					   stringUC = link.key | upper;
 					   IF string == stringUC; string = link.key | getstring; END;
 					%]
 					[% IF expandable %]
-						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
+						<img class="disclosure_home [% expanded ? "disclosure_expanded" : '' %]" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %]" class="browseItemLink" [% IF link.target; 'target="' _ link.target _ '"'; END %]>
 					[% END %]
@@ -167,19 +167,23 @@ ELSE %]
 	[% menu = BLOCK %]
 	<div class="homeMenuSection" id="homeMenu">
 		[% IF hasLibrary %]
+			[% expanded = cookies.${"Squeezebox-expanded-MY_MUSIC"}.value %]
 			[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" noIcon=1 %]
-			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
+			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- my_musicItems -%]</div>
 		[% END %]
 		
+		[% expanded = cookies.${"Squeezebox-expanded-RADIO"}.value %]
 		[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
-		<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+		<div id="RADIO_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- radioItems -%]</div>
 	
 		[% IF additionalLinks.my_apps %]
+			[% expanded = cookies.${"Squeezebox-expanded-PLUGIN_MY_APPS_MODULE_NAME"}.value %]
 			[% PROCESS menuItem link.key="PLUGIN_MY_APPS_MODULE_NAME" link.value="home.html?" expandable="my_apps" noIcon=1 %]
-			<div id="PLUGIN_MY_APPS_MODULE_NAME_expanded" class="expandableHomeMenuItem">[%- my_appsItems -%]</div>
+			<div id="PLUGIN_MY_APPS_MODULE_NAME_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- my_appsItems -%]</div>
 		[% END %]
 
 		[% IF favorites;
+			expanded = cookies.${"Squeezebox-expanded-FAVORITES"}.value;
 			control = BLOCK; 
 				WRAPPER editlink noTarget=1;
 					'href="' _ webroot _ 'plugins/Favorites/index.html?fav"';
@@ -192,7 +196,7 @@ ELSE %]
 					value = additionalLinks.browse.FAVORITES
 				} 
 			%]
-			<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
+			<div id="FAVORITES_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>
 			[% 
 				expandable = 0;
 				dontGetString = 1;
@@ -225,8 +229,9 @@ ELSE %]
 		[% END %]
 
 		[% IF additionalLinks.plugins %]
+			[% expanded = cookies.${"Squeezebox-expanded-PLUGINS"}.value %]
 			[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins"; expandable = 0 %]
-			<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+			<div id="PLUGINS_expanded" class="expandableHomeMenuItem [% expanded ? "homeMenuSection_expanded" : '' %]" [% expanded ? 'style="display:block"' : '' %]>[%- pluginsItems -%]</div>
 		[% END %]
 	</div>
 	[% END %]
