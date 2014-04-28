@@ -212,15 +212,21 @@ sub rescan {
 		};
 		
 		# 2. Files that are new and not in the database.
+    	$dbh->do( qq{
+    		CREATE TEMPORARY TABLE diskonly AS 
+				SELECT          DISTINCT(url) as url
+				FROM            scanned_files
+				WHERE           url NOT IN (
+					SELECT url FROM tracks
+					WHERE id <= $maxTrackId
+				)
+				AND             url LIKE '$basedir%'
+				AND             filesize != 0
+    	} );
+
 		my $onDiskOnlySQL = qq{
-			SELECT DISTINCT(url)
-			FROM            scanned_files
-			WHERE           url NOT IN (
-				SELECT url FROM tracks
-				WHERE id <= $maxTrackId
-			)
-			AND             url LIKE '$basedir%'
-			AND             filesize != 0
+			SELECT          url
+			FROM            diskonly
 		};
 		
 		# 3. Files that have changed mtime or size.
@@ -380,6 +386,8 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$onDiskOnlySth->rows ) {
+						$dbh->do('DROP TABLE diskonly');
+						
 						if ( !$args->{no_async} ) {
 							$args->{paths} = $paths;
 							markDone( $next => PENDING_NEW, $changes, $args );
