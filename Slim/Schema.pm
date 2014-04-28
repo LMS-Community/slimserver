@@ -1941,19 +1941,34 @@ sub mergeSingleVAAlbum {
 	my $isInfo    = main::INFOLOG && $importlog->is_info;
 	
 	my $dbh  = $class->dbh;
-	my $role = Slim::Schema::Contributor->typeToRole('ARTIST');
+	my ($is_comp, $is_comp_db);
 	
-	my $is_comp;
+	# if album already is flagged as a compilation, we don't need to continue the evaluation
+	if ($returnIsComp) {
+		my $iscomp_sth = $dbh->prepare_cached( qq{
+			SELECT compilation
+			FROM   albums
+			WHERE  id = ?
+		} );
+		
+		$iscomp_sth->execute($albumid);
+		($is_comp_db) = $iscomp_sth->fetchrow_array;
+		$iscomp_sth->finish;
+		
+		return 1 if $is_comp_db;
+	}
+	
+	my $role = Slim::Schema::Contributor->typeToRole('ARTIST');
 	
 	my $track_contribs_sth = $dbh->prepare_cached( qq{
 		SELECT contributor, track
 		FROM   contributor_track
-		WHERE  role = ?
-		AND    track IN (
+		WHERE  track IN (
 			SELECT id
 			FROM tracks
 			WHERE album = ?
-		)
+		) 
+		AND	  role = ?
 		ORDER BY contributor, track
 	} );
 	
@@ -1961,7 +1976,7 @@ sub mergeSingleVAAlbum {
 	my ($contributor, $trackid);
 	my %track_contribs;
 	
-	$track_contribs_sth->execute( $role, $albumid );
+	$track_contribs_sth->execute( $albumid, $role );
 	$track_contribs_sth->bind_columns( \$contributor, \$trackid );
 	
 	while ( $track_contribs_sth->fetch ) {
@@ -1993,7 +2008,8 @@ sub mergeSingleVAAlbum {
 		# Flag as a compilation, set primary contrib to Various Artists
 		$comp_sth->execute( $class->variousArtistsObject->id, $albumid );
 	}
-	else {
+	# only update if the flag is not set yet
+	elsif (!defined $is_comp_db) {
 		my $not_comp_sth = $dbh->prepare_cached( qq{
 			UPDATE albums
 			SET    compilation = 0
