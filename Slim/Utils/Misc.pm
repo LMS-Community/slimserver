@@ -837,9 +837,12 @@ sub fileFilter {
 	return 0 unless (-l _ || -d _ || -f _);
 
 	# Make sure we can read the file, honoring ACLs.
-	{
+	if ( !main::ISWINDOWS ){
 		use filetest 'access';
 		return 0 if ! -r $fullpath;
+	}
+	else {
+		return 0 if ! -r _;
 	}
 
 	my $target;
