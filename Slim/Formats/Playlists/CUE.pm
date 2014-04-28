@@ -75,9 +75,19 @@ sub parse {
 
 			$cuesheet->{'ARTIST'} = $1;
 			
-		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|DISC|DISCC|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
 
 			$cuesheet->{uc($1)} = $2;
+
+		} elsif ($line =~ /^(?:REM\s+)?(?:DISC|DISCNUMBER)\s+\"?([^\"]+)\"?/i) {
+
+			# Some Cue sheets may not bother with quotes around a number
+			$cuesheet->{'DISC'} = $1;
+
+		} elsif ($line =~ /^(?:REM\s+)?(?:DISCC|DISCTOTAL|TOTALDISCS)\s+\"?([^\"]+)\"?/i) {
+
+			# Some Cue sheets may not bother with quotes around a number
+			$cuesheet->{'DISCC'} = $1;
 
 		} elsif ($line =~ /^(?:REM\s+)?(DATE)\s+(.*)/i) {
 
@@ -132,9 +142,23 @@ sub parse {
 			
 		} elsif (defined $currtrack and
 
-			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
+			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{uc $1} = $2;
+
+		} elsif (defined $currtrack and
+
+			$line =~ /^(?:\s+REM )?\s*(?:DISC|DISCNUMBER)\s+\"?([^\"]+)\"?/i) {
+
+			# Some Cue sheets may not bother with quotes around a number
+			$tracks->{$currtrack}->{'DISC'} = $1;
+
+		} elsif (defined $currtrack and
+
+			$line =~ /^(?:\s+REM )?\s*(?:DISCC|DISCTOTAL|TOTALDISCS)\s+\"?([^\"]+)\"?/i) {
+
+			# Some Cue sheets may not bother with quotes around a number
+			$tracks->{$currtrack}->{'DISCC'} = $1;
 
 		} elsif (defined $currtrack and $line =~ /^\s*INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
 
@@ -202,11 +226,18 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $file_attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+
+			my $attribute = $file_attribute;
+			if ($file_attribute eq 'DISCNUMBER') {
+				$attribute = 'DISC';
+			} elsif ($file_attribute eq 'TOTALDISCS' or $file_attribute eq 'DISCTOTAL') {
+				$attribute = 'DISCC';
+			}
 
 			if (!$cuesheet->{$attribute}) {
 
-				my $fromFile = $tags->{$attribute};
+				my $fromFile = $tags->{$file_attribute};
 
 				if (defined $fromFile) {
 					$cuesheet->{$attribute} = $fromFile;
@@ -269,7 +300,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
