@@ -1168,6 +1168,8 @@ sub infoTagDump {
 sub tagDump {
 	my ( $client, $callback, undef, $path ) = @_;
 	
+	return unless $callback && $path;
+	
 	my $menu = [];
 	
 	require Audio::Scan;
