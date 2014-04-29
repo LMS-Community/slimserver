@@ -208,6 +208,8 @@ sub readTags {
 			$tags->{'DISCC'} = int($2) if defined $2;
 		}
 
+		Slim::Utils::Misc::checkForBoxSet($tags);
+
 		if (!defined $tags->{'TITLE'}) {
 
 			main::INFOLOG && $log->is_info && $log->info("No title found, using plain title for $file");

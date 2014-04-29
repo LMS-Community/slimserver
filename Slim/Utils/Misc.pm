@@ -1504,6 +1504,80 @@ L<URI>, L<URI::file>, L<URI::Escape>
 
 =cut
 
+# Try to guess disc # if this looks like it might be part of a box set
+sub checkForBoxSet {
+	my $tags = shift;
+
+	# TODO: Check for global option or make this a plugin.
+
+	# For testing purposes, make this a tunable along with the patterns below
+	my $boxSetSuffix = 'boxxx';
+
+	# Look for things like (disc 1 of 2), CD #1, etc.  Make sure there
+	# are enough variations that the search isn't too picky yet doesn't
+	# return any false matches.
+	my $album = $tags->{'ALBUM'};
+	my $discnum = $tags->{'DISC'};
+	if (defined $album and !defined $discnum and
+			$album =~ m/(?:^|[^a-zA-Z]) ((?:CD|disc) [\#\.\-_\s]* (\d+) (?:\s* (?:of|\/) \s* (\d+))?)/xi) {
+		my $discpat = $1;
+		$discnum = $2;
+		my $disctotal = $3;
+
+		# Remove the original pattern - this may leave strange patterns
+		# in the album name.  These are ugly and can interfere with combining
+		# the discs in a single collection.
+		$album =~ s/\Q$discpat//;
+
+		# Remove any empty brackets (e.g (), [], etc.) which may have
+		# enclosed the disc pattern.
+		$album =~ s/ [\[\(\{] \s* [\}\)\]]//x;
+
+		# Remove any trailing spaces, leading spaces or dangling punctuation.
+		$album =~ s/\s*$//;
+		$album =~ s/\s* [,\-_:] $//x;
+		$album =~ s/^\s*//;
+		$album =~ s/^ [,\-_:] \s*//x;
+
+		# Remove any mismatched punctionation when the disc number is adjacent
+		# to a bracket, parenthesis, etc.
+		$album =~ s/\s* [\-,:] \s* ([:\)\-\]])/\1/x;
+		$album =~ s/([:\(\-\[]) \s* [\-,:] \s*/\1/x;
+
+		# Remove any double spaces.
+		$album =~ tr/  / /s;
+
+		# Remove leading zero in disc number.
+		$discnum =~ s/^0(\d)/$1/;
+
+		# Optionally flag this album as being part of a box since we have removed
+		# the disc number.  This makes it easy to search for box sets as well
+		# as review how well this code is working.
+		$album .= " - $boxSetSuffix" if $boxSetSuffix ne '';
+
+		$tags->{'ALBUM'} = $album;
+		$tags->{'DISC'} = $discnum;
+		$tags->{'DISCC'} = $disctotal if defined $disctotal;
+	}
+  
+	# Optionally allow overriding of the ALBUM name with a BOXSETNAME.
+	# This can be useful in case the box set name isn't simply the name
+	# of the album without the disc number.
+	# So that this works the same with different file types, look for
+	# BOXSETNAME (case insensitive)in the COMMENT tag.
+	# Note: disc number should really be set at this point for a box set name
+	# to be useful (though there is probably no need to enforce this).
+	my $comment = $tags->{'COMMENT'};
+	if (defined $comment and $comment =~ m/BOXSETNAME \s+ ([^\s]+)/xi) {
+		# Should we remove the boxsetname pattern from the comment tag?
+		$tags->{'ALBUM'} = $1;
+		# Note: we probably shouldn't automatically add any box set suffix
+		# to the box set name as it could be superfluous.
+	}
+
+	return;
+}
+
 1;
 
 __END__
