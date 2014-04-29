@@ -162,13 +162,14 @@ sub ignoreCaseArticles {
 		# strip leading & trailing spaces
 		$value =~ s/^ +//o;
 		$value =~ s/ +$//o;
+
+		$caseArticlesCache{$s . '0'} = $value;
 		
 		if ($transliterate) {
 			# Bug 16956, Transliterate Unicode characters
 			$value = Slim::Utils::Unicode::utf8toLatin1Transliterate($value);
+			$caseArticlesCache{$s . '1'} = $value;
 		}
-		
-		$caseArticlesCache{$key} = $value;
 	}
 
 	return $caseArticlesCache{$key};
