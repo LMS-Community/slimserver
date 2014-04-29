@@ -178,6 +178,9 @@ sub rescan {
 	# we need to udpate lastRescanTime
 	my $changes = 0;
 	
+	# remove any data from previous scan
+	Slim::Schema->dbh->do("DELETE FROM scanned_files");
+	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
@@ -250,15 +253,16 @@ sub rescan {
 		my $inDBOnlyCount = 0;
 		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
-		} ) if $args->{types} =~ /audio/;
+		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio/;
     	
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 		
-		my ($changedOnlyCount) = $dbh->selectrow_array( qq{
+		my $changedOnlyCount = 0;
+		$changedOnlyCount = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
-		} );
+		} ) if !(main::SCANNER && $main::wipe);
 		
 		$log->error( "Removing deleted audio files ($inDBOnlyCount)" ) unless main::SCANNER && $main::progress;
 		
