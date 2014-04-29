@@ -944,7 +944,7 @@ sub readDirectory {
 
 	main::INFOLOG && $log->info("Reading directory: $dirname");
 
-	for my $item (readdir(DIR)) {
+	while (defined (my $item = readdir(DIR)) ) {
 		# call idle streams to service timers - used for blocking animation.
 		if (scalar @diritems % 3) {
 			main::idleStreams();
