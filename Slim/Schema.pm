@@ -67,7 +67,7 @@ our $lastAlbum = {};
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
 
 # For the VA album merging & scheduler globals.
-my ($variousAlbumIds, $vaObj);
+my ($variousAlbumIds, $vaObj, $vaObjId);
 
 # Map the tags we get from metadata onto the database
 my %tagMapping = (
@@ -888,7 +888,7 @@ sub _createOrUpdateAlbum {
 				titlesearch => Slim::Utils::Text::ignoreCaseArticles($sortkey, 1),
 				compilation => 0, # Will be set to 1 below, if needed
 				year        => 0,
-				contributor => $self->variousArtistsObject->id,
+				contributor => $vaObjId || $self->variousArtistsObject->id,
 			};
 			
 			$_unknownAlbumId = $self->_insertHash( albums => $albumHash );
@@ -1002,7 +1002,7 @@ sub _createOrUpdateAlbum {
 					# have the same title
 					my $contributor = $contributorId;
 					if ( $isCompilation && !$hasAlbumArtist ) {
-						$contributor = $self->variousArtistsObject->id;
+						$contributor = $vaObjId || $self->variousArtistsObject->id;
 					}
 					
 					push @{$search}, 'albums.contributor = ?';
@@ -1022,7 +1022,7 @@ sub _createOrUpdateAlbum {
 					# have the same title
 					my $contributor = $contributorId;
 					if ( $isCompilation && !$hasAlbumArtist ) {
-						$contributor = $self->variousArtistsObject->id;
+						$contributor = $vaObjId || $self->variousArtistsObject->id;
 					}
 					
 					push @{$search}, 'albums.contributor = ?';
@@ -1133,7 +1133,7 @@ sub _createOrUpdateAlbum {
 	$albumHash->{compilation} = $isCompilation;
 
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
-	my $vaObjId = $self->variousArtistsObject->id;
+	my $vaObjId = $vaObjId || $self->variousArtistsObject->id;
 	
 	if ( $isCompilation && !$hasAlbumArtist ) {
 		$albumHash->{contributor} = $vaObjId
@@ -1250,7 +1250,7 @@ sub _createOrUpdateAlbum {
 		
 		if ( $is_comp ) {
 			$albumHash->{compilation} = 1;
-			$albumHash->{contributor} = $self->variousArtistsObject->id;
+			$albumHash->{contributor} = $vaObjId || $self->variousArtistsObject->id;
 			
 			main::DEBUGLOG && $isDebug && $log->debug( "Is a Comp : " . $albumHash->{title} );
 		}
@@ -1834,6 +1834,8 @@ Returns a singleton object representing the artist 'Various Artists'
 sub variousArtistsObject {
 	my $class = shift;
 
+	return $vaObj if main::SCANNER && $vaObj;
+
 	my $vaString = Slim::Music::Info::variousArtistString();
 
 	# Fetch a VA object and/or update it's name if the user has changed it.
@@ -1855,6 +1857,9 @@ sub variousArtistsObject {
 		$vaObj->namesort( Slim::Utils::Text::ignoreCaseArticles($vaString) );
 		$vaObj->namesearch( Slim::Utils::Text::ignoreCaseArticles($vaString, 1) );
 		$vaObj->update;
+		
+		# this will not change while in the external scanner
+		$vaObjId = $vaObj->id if main::SCANNER;
 	}
 
 	return $vaObj;
@@ -2006,7 +2011,7 @@ sub mergeSingleVAAlbum {
 		} );
 				
 		# Flag as a compilation, set primary contrib to Various Artists
-		$comp_sth->execute( $class->variousArtistsObject->id, $albumid );
+		$comp_sth->execute( $vaObjId || $class->variousArtistsObject->id, $albumid );
 	}
 	# only update if the flag is not set yet
 	elsif (!defined $is_comp_db) {
