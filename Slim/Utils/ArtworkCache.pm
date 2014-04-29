@@ -21,6 +21,10 @@ sub new {
 	return $singleton;
 }
 
+sub commit {
+	$singleton->commit if $singleton;
+}
+
 1;
 
 package Slim::Utils::DbArtworkCache;
@@ -49,6 +53,7 @@ sub new {
 		namespace => $namespace || 'artwork',
 		noexpiry  => $expires ? 0 : 1,
 		default_expires_in => $expires,
+		auto_commit        => main::SCANNER ? 0 : 1,
 	});
 }
 

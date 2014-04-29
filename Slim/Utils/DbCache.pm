@@ -32,6 +32,7 @@ sub new {
 	}
 	
 	$args->{default_expires_in} ||= DEFAULT_EXPIRES_TIME;
+	$args->{auto_commit}          = 1 unless defined $args->{auto_commit};
 	
 	return bless $args, $self;
 }
@@ -140,6 +141,20 @@ sub pragma {
 	}
 }
 
+sub commit {
+	my ( $self ) = @_;
+	
+	if (!$self->{dbh}->{'AutoCommit'}) {
+
+		eval { $self->{dbh}->commit };
+
+		if ($@) {
+			require Slim::Utils::Log;
+			logWarning("Couldn't commit transactions to DB: [$@]");
+		}
+	}
+}
+
 sub close {
 	my $self = shift;
 	
@@ -211,7 +226,7 @@ sub _init_db {
 	
 	eval {
 		$dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
-			AutoCommit => 1,
+			AutoCommit => $self->{auto_commit} ? 1 : 0,
 			PrintError => 0,
 			RaiseError => 1,
 			sqlite_use_immediate_transaction => 1,
@@ -291,6 +306,8 @@ sub _close_db {
 		$self->{set_sth}->finish;
 		$self->{get_sth}->finish;
 		$self->{delete_sth}->finish;
+
+		$self->commit;
 		
 		$self->{dbh}->disconnect;
 	

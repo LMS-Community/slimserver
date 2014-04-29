@@ -671,6 +671,7 @@ sub precacheAllArtwork {
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
+					Slim::Utils::ArtworkCache->commit;
 				}
 				
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
@@ -698,7 +699,7 @@ sub precacheAllArtwork {
 		}
 		
 		# for albums where we have different track artwork, use the first track's cover as the album artwork
-		my $sth_get_album_art = $dbh->prepare( qq{
+		my $sth_get_album_art = $dbh->prepare_cached( qq{
 			SELECT tracks.coverid
 			FROM   tracks
 			WHERE  tracks.album = ?
@@ -727,6 +728,8 @@ sub precacheAllArtwork {
 		$log->error( "precacheArtwork finished in " . $progress->duration );
 		
 		$cb && $cb->();
+
+		$sth_get_album_art->finish;
 
 		# wipe internal cache
 		%findArtCache = ();		
