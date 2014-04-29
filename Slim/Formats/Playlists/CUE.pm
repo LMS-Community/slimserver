@@ -75,7 +75,7 @@ sub parse {
 
 			$cuesheet->{'ARTIST'} = $1;
 			
-		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION|BOXSET)\s+\"(.*)\"/i) {
 
 			$cuesheet->{uc($1)} = $2;
 
@@ -142,7 +142,7 @@ sub parse {
 			
 		} elsif (defined $currtrack and
 
-			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
+			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|BOXSET)\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{uc $1} = $2;
 
@@ -226,7 +226,7 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $file_attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $file_attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS BOXSET REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			my $attribute = $file_attribute;
 			if ($file_attribute eq 'DISCNUMBER') {
@@ -262,6 +262,69 @@ sub parse {
 		#defer pregap handling until we have continuous play through consecutive tracks
 		#$lastpos = (exists $track->{'PREGAP'}) ? $track->{'PREGAP'} : $track->{'START'};
 		$lastpos = $track->{'START'};
+	}
+
+	# Try to guess disc # if this looks like it might be part of a box set
+
+	# It would be nice if these was done somewhere else so that mp3s, flacs, etc.
+	# could use this as well...
+
+	if (!defined $cuesheet->{'DISC'}) {
+		my $l = $cuesheet->{'ALBUM'};
+		# Look for things like (disc 1 of 2), CD #1, etc.  Make sure there
+		# are enough variations that the search isn't too picky yet doesn't
+		# return any false matches.
+		if ($l =~ m/[^a-zA-Z] ((?:CD|disc) [\#\.\-_\s]* (\d+) (?:\s* (?:of|\/) \s* (\d+))?)/xi) {
+			my $discpat = $1;
+			my $discnum = $2;
+			my $disctotal = $3;
+			# Remove the original pattern - this may leave strange patterns.
+			# in the album name.  These are ugly and can interfere with combining
+			# the discs in a single collection.
+			$l =~ s/\Q$discpat//;
+
+			# Try to cleanup the album.
+
+			# Remove any empty brackets (e.g (), [], etc.) which may have
+			# enclosed the disc pattern.
+			$l =~ s/ [\[\(\{] \s* [\}\)\]]//x;
+
+			# Remove any trailing spaces, leading spaces or dangling punctuation.
+			$l =~ s/\s*$//;
+			$l =~ s/\s* [,\-_:] $//x;
+			$l =~ s/^\s*//;
+			$l =~ s/^ [,\-_:] \s*//x;
+
+			# Remove any mismatched punctionation when the disc number is adjacent
+			# to a bracket, parenthesis, etc.
+			$l =~ s/\s* [\-,:] \s* ([:\)\-\]])/\1/x;
+			$l =~ s/([:\(\-\[]) \s* [\-,:] \s*/\1/x;
+
+			# Remove any double spaces.
+			$l =~ tr/  / /s;
+
+			$cuesheet->{'ALBUM'} = $l;
+
+			# Remove leading zero in disc number.
+			$discnum =~ s/^0(\d)/$1/;
+			$cuesheet->{'DISC'} = $discnum;
+
+			# Record disk total, if present.  Not a big deal if it is missing.
+			if (defined($disctotal)) {
+				$cuesheet->{'DISCC'} = $disctotal;
+			}
+
+			# Flag this album as being part of a box since we have removed
+			# the disc number.  Makes it easy to search for boxes as well
+			# as review how well this code is working.
+			$cuesheet->{'ALBUM'} .= ' - Box';
+		}
+	}
+
+	# Optionally allow overriding of the ALBUM name, in case the box set name
+	# isn't simply the name of the album without the disc number.
+	if (defined $cuesheet->{'BOXSET'}) {
+		$cuesheet->{'ALBUM'} = $cuesheet->{'BOXSET'} . ' - Box';
 	}
 
 	for my $key (sort {$a <=> $b} keys %$tracks) {
@@ -300,7 +363,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCC BOXSET COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
