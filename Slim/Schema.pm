@@ -2907,7 +2907,12 @@ sub _createContributorRoleRelationships {
 	# Wipe track contributors for this track, this is necessary to handle
 	# a changed track where contributors have been removed.  Current contributors
 	# will be re-added by below
-	$self->dbh->do( 'DELETE FROM contributor_track WHERE track = ?', undef, $trackId );
+	my $sth_delete_tracks = $self->dbh->prepare_cached( qq{
+		DELETE 
+		FROM contributor_track 
+		WHERE track = ?
+	} );
+	$sth_delete_tracks->execute($trackId);
 
 	# Using native DBI here to improve performance during scanning
 	
