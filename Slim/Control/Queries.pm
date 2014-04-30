@@ -533,10 +533,19 @@ sub albumsQuery {
 	
 	my $countsql = $sql;
 	$countsql .= ' LIMIT ' . $limit if $limit;
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $countsql ) AS t1
-	}, undef, @{$p} );
 	
+	my $count = $cache->{$cacheKey};
+	
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $countsql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
+
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
 	}
@@ -814,7 +823,11 @@ sub artistsQuery {
 			$sqllog->debug( "Artists query VA count: $sql_va / " . Data::Dump::dump($p_va) );
 		}
 		
-		($count_va) = $dbh->selectrow_array( $sql_va, undef, @{$p_va} );
+		my $total_sth = $dbh->prepare_cached( $sql_va );
+		
+		$total_sth->execute( @{$p_va} );
+		($count_va) = $total_sth->fetchrow_array();
+		$total_sth->finish;
 	}
 
 	my $indexList;
@@ -840,9 +853,17 @@ sub artistsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	$cacheKey = $sql . join( '', @{$p} );
 	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
+	my $count = $cache->{$cacheKey};
+	
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
 	
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
@@ -1406,10 +1427,17 @@ sub genresQuery {
 	
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
-	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
+		
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
 	
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
@@ -3851,9 +3879,16 @@ sub yearsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
 	
 	$sql .= "ORDER BY $key";
 
@@ -4970,9 +5005,13 @@ sub _getTagDataForTracks {
 	if ( my $limit = $args->{limit} ) {
 		# Let the caller worry about the limit values
 		
-		($total) = $dbh->selectrow_array( qq{
-			SELECT COUNT(*) FROM ( $sql ) AS t1
-		}, undef, @{$p} );
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+			
+		$total_sth->execute( @{$p} );
+		($total) = $total_sth->fetchrow_array();
+		$total_sth->finish;
 		
 		my ($valid, $start, $end) = $limit->($total);
 		
@@ -5252,9 +5291,16 @@ sub videoTitlesQuery { if (main::VIDEO && main::MEDIASUPPORT) {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
 	
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
@@ -5508,9 +5554,16 @@ sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
-	my ($count) = $cache->{$cacheKey} || $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
-	}, undef, @{$p} );
+	my $count = $cache->{$cacheKey};
+	if ( !$count ) {
+		my $total_sth = $dbh->prepare_cached( qq{
+			SELECT COUNT(1) FROM ( $sql ) AS t1
+		} );
+		
+		$total_sth->execute( @{$p} );
+		($count) = $total_sth->fetchrow_array();
+		$total_sth->finish;
+	}
 	
 	if ( !$stillScanning ) {
 		$cache->{$cacheKey} = $count;
