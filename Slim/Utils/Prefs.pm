@@ -93,7 +93,8 @@ $::prefsdir = $path;
 
 $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 
-Slim::Utils::OSDetect->getOS()->migratePrefsFolder($path);
+my $os = Slim::Utils::OSDetect->getOS();
+$os->migratePrefsFolder($path);
 
 my $prefs = preferences('server');
 
@@ -126,7 +127,7 @@ sub namespaces {
 }
 
 sub init {
-	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
+	my $sqlHelperClass = $os->sqlHelperClass();
 	my $default_dbsource = $sqlHelperClass->default_dbsource();
 	
 	my %defaults = (
@@ -135,7 +136,7 @@ sub init {
 		'dbsource'              => $default_dbsource,
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
-		'dbhighmem'             => 0,
+		'dbhighmem'             => sub { $os->{osDetails}->{'osArch'} =~ /[x3456]86/ ? 1 : 0 },
 		'cachedir'              => \&defaultCacheDir,
 		'librarycachedir'       => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,
@@ -166,7 +167,7 @@ sub init {
 		'checkVersion'          => 1,
 		'checkVersionInterval'	=> 60*60*24,
 		# enable auto download of SC updates on Windows only (for now)
-		'autoDownloadUpdate'    => sub { Slim::Utils::OSDetect::getOS->canAutoUpdate() },
+		'autoDownloadUpdate'    => sub { $os->canAutoUpdate() },
 		'noGenreFilter'         => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
@@ -261,7 +262,7 @@ sub init {
 	);
 
 	# we can have different defaults depending on the OS 
-	Slim::Utils::OSDetect::getOS->initPrefs(\%defaults);
+	$os->initPrefs(\%defaults);
 	
 	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
 	# this is required as Slim::Control::Request::init will not have run at this point
@@ -278,7 +279,7 @@ sub init {
 	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
 	
 	# perform OS-specific post-init steps
-	Slim::Utils::OSDetect::getOS->postInitPrefs($prefs);
+	$os->postInitPrefs($prefs);
 
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
