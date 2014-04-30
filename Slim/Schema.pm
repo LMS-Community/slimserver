@@ -2939,8 +2939,16 @@ sub _createContributorRoleRelationships {
 	}
 }
 
+my %lastTrackOrUrl = (
+	obj => ''
+);
+
 sub _validTrackOrURL {
 	my $urlOrObj = shift;
+	
+	if ($lastTrackOrUrl{obj} eq $urlOrObj) {
+		return ($lastTrackOrUrl{track}, $lastTrackOrUrl{url}, $lastTrackOrUrl{blessed});
+	}
 
 	my $track   = undef;
 	my $url     = undef;
@@ -2961,6 +2969,13 @@ sub _validTrackOrURL {
 			$url = $urlOrObj;
 		}
 	}
+	
+	%lastTrackOrUrl = (
+		obj => $urlOrObj,
+		track => $track,
+		url => $url,
+		blessed => $blessed
+	) unless ref $urlOrObj;
 
 	return ($track, $url, $blessed);
 }
