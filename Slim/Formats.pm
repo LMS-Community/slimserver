@@ -137,6 +137,8 @@ Read and return the tags for any file we're handed.
 
 =cut
 
+my %tagCache;
+
 sub readTags {
 	my $class = shift;
 	my $file  = shift || return {};
@@ -245,7 +247,7 @@ sub readTags {
 
 	if (-e $filepath) {
 		# cache the file size & date
-		($tags->{'FILESIZE'}, $tags->{'TIMESTAMP'}) = (stat($filepath))[7,9];
+		($tags->{'FILESIZE'}, $tags->{'TIMESTAMP'}) = (stat(_))[7,9];
 	}
 
 	# Only set if we couldn't read it from the file.
@@ -261,10 +263,14 @@ sub readTags {
 	while (my ($tag, $value) = each %{$tags}) {
 
 		if (defined $value) {
+			my $original = $value;
 
 			use bytes;
+			if ( my $cached = $tagCache{$value} ) {
+				$tags->{$tag} = $cached;
+				next;
 
-			if (ref($value) eq 'ARRAY') {
+			} elsif (ref($value) eq 'ARRAY') {
 
 				for (my $i = 0; $i < scalar @{$value}; $i++) {
 
@@ -298,9 +304,15 @@ sub readTags {
 				}
 				$tags->{$tag} = $value;
 			}
+
+			$tagCache{$original} = $value;
 		}
 		
 		main::DEBUGLOG && $isDebug && $value && $log->debug(". $tag : $value");
+	}
+			
+	if (scalar (keys %tagCache) > 50) {
+		%tagCache = ();
 	}
 
 	return $tags;
