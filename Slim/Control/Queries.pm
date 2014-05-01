@@ -4776,17 +4776,17 @@ sub _getTagDataForTracks {
 		if ( $search =~ s/^sql=// ) {
 			# Raw SQL search query
 			$search =~ s/;//g; # strip out any attempt at combining SQL statements
-			push @{$w}, $search;
+			unshift @{$w}, $search;
 		}
 		else {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
-				push @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-				push @{$p}, @{ $strings->[0] };
+				unshift @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+				unshift @{$p}, @{ $strings->[0] };
 			}
 			else {		
-				push @{$w}, 'tracks.titlesearch LIKE ?';
-				push @{$p}, @{$strings};
+				unshift @{$w}, 'tracks.titlesearch LIKE ?';
+				unshift @{$p}, @{$strings};
 			}
 		}
 	}
