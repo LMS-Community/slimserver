@@ -74,6 +74,7 @@ sub parse {
 		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
 
 			$cuesheet->{'ARTIST'} = $1;
+			$cuesheet->{'ALBUMARTIST'} = $1;
 			
 		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
 
@@ -131,6 +132,12 @@ sub parse {
 		} elsif (defined $currtrack and $line =~ /^\s*PERFORMER\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{'ARTIST'} = $1;
+
+			# Automatically flag a compilation album (if it hasn't been already)
+			# since we are setting the album artist.
+			if (defined($cuesheet->{'ALBUMARTIST'}) and ($1 ne $cuesheet->{'ALBUMARTIST'})) {
+				$cuesheet->{'COMPILATION'} = '1' if not defined($cuesheet->{'COMPILATION'});
+			}
 
 		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_GAIN\s+(.*)dB/i) {
 
@@ -226,7 +233,7 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $file_attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $file_attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE COMMENT DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			my $attribute = $file_attribute;
 			if ($file_attribute eq 'DISCNUMBER') {
@@ -300,7 +307,7 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(CONTENT_TYPE ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
@@ -317,6 +324,8 @@ sub parse {
 
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
+
+		Slim::Utils::Misc::checkForBoxSet($track);
 	}
 	
 	# Bug 8443, if no tracks contain a URI element, it's an invalid cue
