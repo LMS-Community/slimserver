@@ -119,6 +119,7 @@ sub on_connect_do {
 
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
 	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
+	push @{$sql}, 'PRAGMA persistentdb.cache_size = 20000' if $prefs->get('dbhighmem');
 	
 	return $sql;
 }
