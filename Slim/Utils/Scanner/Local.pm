@@ -215,6 +215,7 @@ sub rescan {
 		};
 		
 		# 2. Files that are new and not in the database.
+		$dbh->do('DROP TABLE IF EXISTS diskonly');
     	$dbh->do( qq{
     		CREATE TEMPORARY TABLE diskonly AS 
 				SELECT          DISTINCT(url) as url
@@ -515,16 +516,18 @@ sub rescan {
 				else {
 					markDone( undef, undef, $changes, $args );
 
-					Slim::Music::Import->setIsScanning(0);
-			
-					if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
-						$handler->(0);
-					}
-			
-					Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
-			
-					if ( $args->{onFinished} ) {
-						$args->{onFinished}->();
+					if (main::SCANNER) {
+						Slim::Music::Import->setIsScanning(0);
+				
+						if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
+							$handler->(0);
+						}
+				
+						Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+				
+						if ( $args->{onFinished} ) {
+							$args->{onFinished}->();
+						}
 					}
 				}
 			}
