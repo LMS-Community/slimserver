@@ -3030,7 +3030,7 @@ sub _insertHash {
 	my $colstring = join( ',', @cols );
 	my $ph        = join( ',', map { '?' } @cols );
 	
-	my $sth = $dbh->prepare_cached("INSERT INTO $table ($colstring) VALUES ($ph)");
+	my $sth = $dbh->prepare("INSERT INTO $table ($colstring) VALUES ($ph)");
 	$sth->execute( map { $hash->{$_} } @cols );
 	
 	return $dbh->last_insert_id(undef, undef, undef, undef);
@@ -3045,7 +3045,7 @@ sub _updateHash {
 	my @cols      = keys %{$hash};
 	my $colstring = join( ', ', map { $_ . (defined $hash->{$_} ? ' = ?' : ' = NULL') } @cols );
 	
-	my $sth = $class->dbh->prepare_cached("UPDATE $table SET $colstring WHERE $pk = ?");
+	my $sth = $class->dbh->prepare("UPDATE $table SET $colstring WHERE $pk = ?");
 	$sth->execute( (grep { defined $_ } map { $hash->{$_} } @cols), $id );
 	
 	$hash->{$pk} = $id;
