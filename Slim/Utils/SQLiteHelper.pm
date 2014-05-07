@@ -40,6 +40,8 @@ my $log = logger('database.info');
 
 my $prefs = preferences('server');
 
+$prefs->setChange( \&setCacheSize, 'dbhighmem' );
+
 sub storageClass { 'DBIx::Class::Storage::DBI::SQLite' };
 
 sub default_dbsource { 'dbi:SQLite:dbname=%s' }
@@ -96,19 +98,15 @@ sub on_connect_do {
 		'PRAGMA journal_mode = WAL',
 		'PRAGMA foreign_keys = ON',
 		'PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200),
-	];
-	
-	# Wweak some memory-related pragmas if dbhighmem is enabled
-	if ( $prefs->get('dbhighmem') ) {
 		# Default cache_size is 2000 pages, a page is normally 1K but may be different
 		# depending on the OS/filesystem.  So default is usually 2MB.
-		# Highmem we will try 20M
-		push @{$sql}, 'PRAGMA cache_size = 20000';
-		
-		# Default temp_store is to create disk files to save memory
-		# Highmem we'll let it use memory
-		push @{$sql}, 'PRAGMA temp_store = MEMORY';
-	}
+		# Highmem we will try 20M (high) or 500M (max)
+		'PRAGMA cache_size = ' . $class->_cacheSize,
+	];
+	
+	# Default temp_store is to create disk files to save memory
+	# Highmem we'll let it use memory
+	push @{$sql}, 'PRAGMA temp_store = MEMORY' if $prefs->get('dbhighmem');
 	
 	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file
@@ -119,9 +117,31 @@ sub on_connect_do {
 
 	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
 	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
-	push @{$sql}, 'PRAGMA persistentdb.cache_size = 20000' if $prefs->get('dbhighmem');
+	push @{$sql}, 'PRAGMA persistentdb.cache_size = ' . $class->_cacheSize;
 	
 	return $sql;
+}
+
+sub setCacheSize {
+	my $class = shift;
+
+	my $cache_size = $class->_cacheSize;
+	
+	my $dbh = Slim::Schema->dbh;
+	$dbh->do("PRAGMA cache_size = $cache_size");
+	$dbh->do("PRAGMA persistentdb.cache_size = $cache_size");
+}
+
+sub _cacheSize {
+	my $high = $prefs->get('dbhighmem');
+
+	return 2000 if !$high;
+	
+	# scanner doesn't take advantage of a huge buffer
+	return 20000 if main::SCANNER || $high == 1;
+	
+	# maximum memory usage for large collections and lots of memory
+	return 500_000;
 }
 
 sub _migrateDBFile {

@@ -8190,6 +8190,10 @@ SETUP_DBHIGHMEM_HIGH
 	RU	Высокое (рекомендовано для компьютеров с объемом ОЗУ не менее 1 Гб)
 	SV	Hög (rekommenderas för datorer med mer än 1 GB RAM)
 
+SETUP_DBHIGHMEM_MAX
+	DE	Maximum (empfohlen für Sammlungen mit mehr als 50'000 Titeln und Computer mit 2 GB RAM und mehr)
+	EN	Maximum (recommended for libraries with more than 50'000 tracks and machines with 2+ GB RAM)
+
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
 	DA	Statistik for bibliotek
