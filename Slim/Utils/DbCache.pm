@@ -237,6 +237,12 @@ sub _init_db {
 		# scanner is heavy on writes, server on reads - tweak accordingly
 		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
 
+		# caches do see a lot of updates/writes/deletes - enable auto_vacuum
+		if ( !$dbh->selectrow_array('PRAGMA auto_vacuum') ) {
+			$dbh->do('PRAGMA auto_vacuum = FULL');
+			$dbh->do('VACUUM');
+		}
+
 		require Slim::Utils::Prefs;
 	
 		# Increase cache size when using dbhighmem, and reduce it to 300K otherwise
