@@ -295,6 +295,22 @@ sub afterScan {
 	$class->updateProgress('end');
 }
 
+=head2 wipeDB()
+
+Called during the Schema->wipeDB call to run some DB specific cleanup tasks
+
+=cut
+
+sub wipeDB {
+	my $class = shift;
+	
+	# only run VACUUM in the scanner, as it can block the process for a while
+	return unless main::SCANNER;
+	
+	$class->vacuum('library.db');       # always VACUUM library.db, as it should be mostly empty at this point anyway
+	$class->vacuum('persist.db', 1);	# optional for persist.db: only VACUUM if fragmented
+}
+
 =head2 exitScan()
 
 Called as the scanner process exits. Used by main process to detect scanner crashes.
@@ -436,6 +452,41 @@ sub pragma {
 	
 	# Pass the pragma to the ArtworkCache database
 	Slim::Utils::ArtworkCache->new->pragma($pragma);
+}
+
+=head2 vacuum()
+
+VACUUM a given database.
+
+If the $optional parameter is passed, the VACUUM will only happen if there's a certain fragmentation.
+
+=cut
+
+sub vacuum {
+	my ( $class, $db, $optional ) = @_;
+
+	my $dbFile = catfile( $prefs->get('librarycachedir'), ($db || 'library.db') );
+	
+	return unless -f $dbFile;
+	
+	my $source = sprintf( $prefs->get('dbsource'), $dbFile );
+
+	# this can't be run from the schema_cleanup.sql, as VACUUM doesn't work inside a transaction
+	my $dbh = DBI->connect($source);
+
+	if ($optional) {
+		my $pages = $dbh->selectrow_array('PRAGMA page_count;');
+		my $free  = $dbh->selectrow_array('PRAGMA freelist_count;');
+		my $frag  = ($pages && $free) ? $free / $pages : 0;
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("$dbFile: Pages: $pages; Free: $free; Fragmentation: $frag");
+
+		# skip this vacuum if fragmentation is lower than 20%;
+		$optional = 0 if $frag > 0.2;
+	}
+
+	$dbh->do('VACUUM') unless $optional;
+	$dbh->disconnect;
 }
 
 sub _dbFile {

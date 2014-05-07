@@ -634,6 +634,8 @@ sub afterScan { }
 
 sub exitScan { }
 
+sub wipeDB { }
+
 sub updateProgress { }
 
 sub postConnect { }

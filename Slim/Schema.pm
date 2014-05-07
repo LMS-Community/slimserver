@@ -376,6 +376,10 @@ sub wipeDB {
 		);
 
 		$class->migrateDB;
+	
+		$class->forceCommit;
+
+		Slim::Utils::OSDetect->getOS()->sqlHelperClass()->wipeDB();
 	};
 
 	if ($@) {
