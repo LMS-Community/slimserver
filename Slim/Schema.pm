@@ -1925,16 +1925,18 @@ Returns the total (cumulative) time in seconds of all audio tracks in the databa
 sub totalTime {
 	my $self = shift;
 
-	return 0 unless $self->trackCount();
-
-	# Pull out the total time dynamically.
-	# What a breath of fresh air. :)
-	return $self->search('Track', { 'audio' => 1 }, {
-
-		'select' => [ \'SUM(secs)' ],
-		'as'     => [ 'sum' ],
-
-	})->single->get_column('sum');
+	if (!$TOTAL_CACHE{totalTime}) {
+		return 0 unless $TOTAL_CACHE{track} || $self->trackCount();
+	
+		$TOTAL_CACHE{totalTime} = $self->search('Track', { 'audio' => 1 }, {
+	
+			'select' => [ \'SUM(secs)' ],
+			'as'     => [ 'sum' ],
+	
+		})->single->get_column('sum');
+	}
+	
+	return $TOTAL_CACHE{totalTime};
 }
 
 =head2 mergeSingleVAAlbum($albumid)
