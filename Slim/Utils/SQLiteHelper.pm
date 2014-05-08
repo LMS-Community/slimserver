@@ -489,7 +489,7 @@ sub vacuum {
 	
 	return unless -f $dbFile;
 	
-	my $source = sprintf( $prefs->get('dbsource'), $dbFile );
+	my $source = sprintf( $class->default_dbsource(), $dbFile );
 
 	# this can't be run from the schema_cleanup.sql, as VACUUM doesn't work inside a transaction
 	my $dbh = DBI->connect($source);
