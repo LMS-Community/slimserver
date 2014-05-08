@@ -17,9 +17,9 @@ END %]
 			[% END -%]
 
 			[% BLOCK helpTopic %]
-				<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+				<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="[% href %]">
 					<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
 						<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http:') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
 					</div>
-				</div></div></div></div></div>
+				</div>
 			[% END -%]

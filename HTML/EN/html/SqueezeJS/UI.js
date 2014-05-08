@@ -971,7 +971,7 @@ if (Ext.dd && Ext.dd.ScrollManager && Ext.dd.DDProxy) {
 			}
 	
 			dragEl.applyStyles({'z-index':2000});
-			dragEl.update(el.child('div').dom.innerHTML);
+			dragEl.update(el.dom.innerHTML);
 			dragEl.addClass(el.dom.className + ' dd-proxy');
 		},
 	
