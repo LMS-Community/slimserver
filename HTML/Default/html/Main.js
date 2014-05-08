@@ -79,6 +79,13 @@ Main = {
 			collapsible: true,
 			collapseMode: 'mini',
 			minSize: 400,
+			listeners: {
+				expand: function() {
+					this.playlist.onResize();
+					new Ext.util.DelayedTask(function(){ this.playlist.onResize(); }, this).delay(250);
+				},
+				scope: this
+			},
 			width: '50%',
 			stateId: 'Squeezebox-panelWidth',
 			stateful: false && !Ext.isIE,
