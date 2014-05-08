@@ -327,8 +327,8 @@ sub optimizeDB {
 	# only run VACUUM in the scanner, or if no player is active
 	return if !main::SCANNER && grep { $_->power() } Slim::Player::Client::clients();
 	
-	$class->vacuum('library.db', 1);
-	$class->vacuum('persist.db', 1);
+	$class->vacuum('library.db');
+	$class->vacuum('persist.db');
 }
 
 =head2 exitScan()
@@ -501,8 +501,8 @@ sub vacuum {
 
 		main::DEBUGLOG && $log->is_debug && $log->debug("$dbFile: Pages: $pages; Free: $free; Fragmentation: $frag");
 
-		# skip this vacuum if fragmentation is lower than 20%;
-		$optional = 0 if $frag > 0.2;
+		# skip this vacuum if fragmentation is lower than 10%;
+		$optional = 0 if $frag > 0.1;
 	}
 
 	$dbh->do('VACUUM') unless $optional;
