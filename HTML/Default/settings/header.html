@@ -8,7 +8,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=7" />
 		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css?r=[% revision %]" />
@@ -128,13 +127,6 @@
 			}
 		[%- END %]
 		</style>
-
-		<!--[if lte IE 6]>
-		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
-		<!--[if IE 7]>
-		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
 	</head>
 
 	<body class="[% bodyClass || "settings" %]">

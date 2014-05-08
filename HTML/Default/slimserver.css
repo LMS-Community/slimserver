@@ -196,14 +196,17 @@ img#background {
 	margin: 0;
 	padding: 0;
 	font-size: 0px;
+	background-color: #404040;
 }
 
 .inner_top_left {
+	border-radius: 12px 0 0 0;
 	left: 0;
 	top: 0;
 }
 
 .inner_top_right {
+	border-radius: 0 12px 0 0;
 	right: 0;
 	top: 0;
 }
@@ -212,28 +215,29 @@ img#background {
 
 .inner_bottom_left {
 	height: 12px;
-	background: no-repeat bottom left;
+	border-radius: 0 0 0 12px;
 	left: 0;
 	bottom: 0;
 }
 
 .inner_bottom_right {
 	height: 12px;
-	background: no-repeat bottom right;
+	border-radius: 0 0 12px 0;
 	right: 0;
 	bottom: 0;
 }
 
-.inner_top_left, .inner_top_right,
-.inner_bottom_left, .inner_bottom_right {
+/*.inner_top_left, .inner_top_right,
+.inner_bottom_left, .inner_bottom_rightXX {
 	background-image: url(html/images/inner_edges.gif);
-}
+}*/
 
 #leftcontent {
 	width: 100%;
 	height: 100%;
 }
 
+/*
 #inner_footer .inner_bottom_left,
 #leftfooter .inner_bottom_left {
 	background-position: 0 -24px;
@@ -254,6 +258,7 @@ img#background {
 
 .inner_top_left { background-position: 0 0; }
 .inner_top_right { background-position: 0 -12px; }
+*/
 
 #footer_content {
 	height: 16px;
@@ -1348,6 +1353,14 @@ ul.x-tree-node-ct {
 	background: none;
 }
 
+.ext-strict .ext-ie6 .x-layout-split {
+	background-color: transparent !important;
+}
+
+.x-layout-mini.x-layout-mini-east {
+	background-color: white;
+	background-radius: 2px;
+}
 
 .x-tree-node-leaf .x-tree-node-alwayscollapsed {
 	background-image:url(/html/ext/resources/images/default/tree/folder.gif);

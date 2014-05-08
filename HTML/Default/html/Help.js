@@ -59,10 +59,10 @@ Help = {
 
 		// cache the offsets we're going to use to resize the background image
 		this.offsets = [
-			(Ext.isIE7 ? this.background.getTop() + 3 : this.background.getTop() * 2),
-			(Ext.isIE7 ? this.background.getLeft() + 3 : this.background.getLeft() * 2),
+			this.background.getTop() * 2,
+			this.background.getLeft() * 2,
 			this.maincontent.getTop() + this.body.getHeight() - Ext.get('inner_footer').getTop()
-		]
+		];
 
 		new Ext.Button({
 			renderTo: 'close',
