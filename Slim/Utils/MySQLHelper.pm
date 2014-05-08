@@ -634,7 +634,7 @@ sub afterScan { }
 
 sub exitScan { }
 
-sub wipeDB { }
+sub optimizeDB { }
 
 sub updateProgress { }
 

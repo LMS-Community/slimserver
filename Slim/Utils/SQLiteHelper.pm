@@ -315,20 +315,20 @@ sub afterScan {
 	$class->updateProgress('end');
 }
 
-=head2 wipeDB()
+=head2 optimizeDB()
 
-Called during the Schema->wipeDB call to run some DB specific cleanup tasks
+Called during the Slim::Schema->optimizeDB call to run some DB specific cleanup tasks
 
 =cut
 
-sub wipeDB {
+sub optimizeDB {
 	my $class = shift;
 	
-	# only run VACUUM in the scanner, as it can block the process for a while
-	return unless main::SCANNER;
+	# only run VACUUM in the scanner, or if no player is active
+	return if !main::SCANNER && grep { $_->power() } Slim::Player::Client::clients();
 	
-	$class->vacuum('library.db');       # always VACUUM library.db, as it should be mostly empty at this point anyway
-	$class->vacuum('persist.db', 1);	# optional for persist.db: only VACUUM if fragmented
+	$class->vacuum('library.db', 1);
+	$class->vacuum('persist.db', 1);
 }
 
 =head2 exitScan()

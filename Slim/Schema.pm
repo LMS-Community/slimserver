@@ -376,10 +376,6 @@ sub wipeDB {
 		);
 
 		$class->migrateDB;
-	
-		$class->forceCommit;
-
-		Slim::Utils::OSDetect->getOS()->sqlHelperClass()->wipeDB();
 	};
 
 	if ($@) {
@@ -408,6 +404,10 @@ sub optimizeDB {
 		Slim::Utils::SQLHelper->executeSQLFile(
 			$driver, $class->storage->dbh, "schema_optimize.sql"
 		);
+	
+		$class->forceCommit;
+
+		Slim::Utils::OSDetect->getOS()->sqlHelperClass()->optimizeDB();
 	};
 
 	if ($@) {
