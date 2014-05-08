@@ -38,13 +38,6 @@
 				[% item.current_title | html %]
 			</div>
 			[% END %]
-			[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
-				<div class="playlistSongDetail">
-					[% IF item.itemobj.album %]
-					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% (item.itemobj.album.title || item.plugin_meta.album) | html %]</span></a>
-					[% ELSE; item.plugin_meta.album; END %]
-				</div>
-			[% END %]
 			<div class="playlistSongDetail">
 				[% IF item.includeArtist;
 					IF item.artist && item.artist != item.noArtist; 
@@ -54,6 +47,13 @@
 					END;
 				END %]
 			</div>
+			[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
+				<div class="playlistSongDetail">
+					[% IF item.itemobj.album %]
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% (item.itemobj.album.title || item.plugin_meta.album) | html %]</span></a>
+					[% ELSE; item.plugin_meta.album; END %]
+				</div>
+			[% END %]
 		[% END %]
 		<div class="playlistControls">
 			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
