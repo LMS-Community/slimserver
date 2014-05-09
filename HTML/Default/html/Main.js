@@ -88,7 +88,7 @@ Main = {
 			},
 			width: '50%',
 			stateId: 'Squeezebox-panelWidth',
-			stateful: !Ext.isIE,
+			stateful: true,
 			header: false
 		};
 
