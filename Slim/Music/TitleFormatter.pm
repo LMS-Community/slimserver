@@ -54,6 +54,9 @@ sub init {
 			return (defined $output ? $output : '');
 		};
 	}
+	
+	# Our documentation says this was "CT", but we actually register "CONTENT_TYPE"
+	$parsedFormats{'CT'} = $parsedFormats{'CONTENT_TYPE'};
 
 	# Override album
 	$parsedFormats{'ALBUM'} = sub {
