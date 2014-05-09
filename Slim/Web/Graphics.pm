@@ -93,7 +93,7 @@ sub artworkRequest {
 	# XXX remote URLs (from protocol handler icon)
 	
 	# Check cache for this path
-	if ( my $c = _cached($path) ) {
+	if ( $path !~ m{^imageproxy/} && (my $c = _cached($path)) ) {
 		my $ct = 'image/' . $c->{content_type};
 		$ct =~ s/jpg/jpeg/;
 		$response->content_type($ct);
