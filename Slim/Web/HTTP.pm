@@ -976,7 +976,7 @@ sub generateHTTPResponse {
 		$contentType = 'application/octet-stream';
 	}
 	
-	if ( $path =~ /(?:music|video|image)\/[0-9a-f]+\/download/ ) {
+	if ( $path =~ /(?:music|video|image)\/[0-9a-f]+\/(?:download|cover)/ || $path =~ /^imageproxy\// ) {
 		# Avoid generating templates for download URLs
 		$contentType = 'application/octet-stream';
 	}
@@ -1036,7 +1036,7 @@ sub generateHTTPResponse {
 		$response->header('Cache-Control' => 'max-age=' . $max);
 	}
 
-	if ($contentType =~ /text/ && $path !~ /(?:json|memoryusage)/) {
+	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage|html\/js-)/) {
 
 		$params->{'params'} = {};
 
