@@ -150,7 +150,7 @@ sub commit {
 
 		if ($@) {
 			require Slim::Utils::Log;
-			logWarning("Couldn't commit transactions to DB: [$@]");
+			Slim::Utils::Log::logWarning("Couldn't commit transactions to DB: [$@]");
 		}
 	}
 }
