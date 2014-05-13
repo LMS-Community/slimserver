@@ -2570,7 +2570,7 @@ sub rescanCommand {
 			@dirs = grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() };
 			
 			if ($singledir) {
-				@dirs = grep { /$singledir/ } @dirs;
+				@dirs = grep { /\Q$singledir\E/ } @dirs;
 			}
 
 			if ( main::MEDIASUPPORT && scalar @dirs && $mode ne 'playlists' ) {
@@ -2597,7 +2597,7 @@ sub rescanCommand {
 					my $audiodirs = Slim::Utils::Misc::getAudioDirs();
 					
 					if ($singledir) {
-						$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
+						$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
 					}
 					elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
 						# scan playlist folder too
