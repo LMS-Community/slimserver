@@ -62,6 +62,7 @@ sub _generateContentFromFile {
 	$params->{'thumbSize'} = $prefs->get('thumbSize') unless defined $params->{'thumbSize'};
 	$params->{'systemSkin'} = $skin;
 	$params->{'systemLanguage'} = $prefs->get('language');
+	$params->{'allLinks'} = $prefs->get('additionalPlaylistButtons');
 
 	main::INFOLOG && $log->is_info && $log->info("generating from $path with type: $type");
 	

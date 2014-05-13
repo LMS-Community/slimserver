@@ -7615,19 +7615,19 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS
 	SV	Ytterligare spellisteknappar
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
-	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávání, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".<br/><br/>Nezapomeňte prosím, že tato předvolba je uložena pouze ve vašem prohlížeči - budete muset ji nastavit ve všech prohlížečích, ve kterých ji chcete používat.
-	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.<br/><br/>Bemærk: Denne indstilling gemmes kun i browseren, så du skal indstille den i samtlige browsere hvor den skal bruges.
-	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.<br/><br/>Beachten Sie, dass diese Einstellung nur im aktuellen Browser gespeichert wird. Wenn Sie einen anderen Browser verwenden, müssen Sie sie dort ebenfalls ändern.
-	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".<br/><br/>Please note: this preference is stored in your browser only - you'll have to set it on all browsers you want to use it.
-	ES	Algunas máscaras ofrecen la opción de mostrar botones adicionales para los elementos que se pueden reproducir, como por ejemplo "Reproducir a continuación" o "Quitar de la lista de reproducción".<br/><br/>Tenga en cuenta que: esta preferencia sólo se guarda en su navegador (deberá elegirla en todos los navegadores que vaya a utilizar).
-	FI	Jotkin olemukset voivat näyttää valinnaisesti lisäpainikkeita soitettaville kohteille, esimerkiksi Soita seuraava tai Poista soittoluettelosta.<br/><br/>Huomautus: asetus tallennetaan ainoastaan selaimeen - se täytyy määrittää erikseen kaikissa selaimissa, joita haluat käyttää.
-	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que Lire à la suite ou Enlever de la liste de lecture.<br/><br/>Notez que cette préférence est stockée uniquement dans votre navigateur. Vous devrez la définir sur tous les navigateurs sur lesquels vous voulez l'utiliser.
-	IT	In alcune skin è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dalla playlist.<br/><br/>Nota: poiché questa impostazione viene salvata nel browser, è necessario specificarla individualmente in ogni browser che si intende utilizzare.
-	NL	Sommige skins kunnen desgewenst extra knoppen voor afspeelbare items weergeven, zoals 'Volgende afspelen' of 'Uit playlist verwijderen'.<br/><br/>N.B. Deze voorkeursinstelling wordt alleen in je browser opgeslagen. Als je de instelling op andere browsers wilt gebruiken, moet je deze apart instellen.
-	NO	Noen maler kan vise tilleggsknapper for spillbare elementer, for eksempel Spill av neste eller Fjern fra spillelisten.<br/><br/>Merk: Denne innstillingen lagres kun i leseren, så du må konfigurere denne innstillingen i alle lesere du vil bruke den på.
-	PL	Niektóre karnacje mogą opcjonalnie zawierać dodatkowe przyciski dotyczące odtwarzalnych elementów, np. „Odtwórz następny” lub „Usuń z listy odtwarzania”.<br/><br/>Uwaga: ta opcja jest zapisana tylko w przeglądarce; wymagane jest jej skonfigurowanie w każdej przeglądarce, w której ma być używana.
-	RU	В некоторых обложках могут отображаться дополнительные кнопки для воспроизводимых элементов, например "Воспроизвести следующую" или "Удалить из плей-листа".<br/><br/>Обратите внимание: эта настройка сохраняется только в вашем браузере. Если планируется использовать ее в других браузерах, необходимо выбрать эту настройку и в них.
-	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.<br/><br/>Observera att det här alternativet endast sparas i webbläsaren. Du måste alltså ställa in varje webbläsare som du vill använda separat.
+	CS	Některé skiny mohou volitelně zobrazovat další tlačítka pro přehrávání, například "Přehrát další" nebo "Odstranit ze seznamu skladeb".
+	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.
+	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.
+	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".
+	ES	Algunas máscaras ofrecen la opción de mostrar botones adicionales para los elementos que se pueden reproducir, como por ejemplo "Reproducir a continuación" o "Quitar de la lista de reproducción".
+	FI	Jotkin olemukset voivat näyttää valinnaisesti lisäpainikkeita soitettaville kohteille, esimerkiksi Soita seuraava tai Poista soittoluettelosta.
+	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que Lire à la suite ou Enlever de la liste de lecture.
+	IT	In alcune skin è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dalla playlist.
+	NL	Sommige skins kunnen desgewenst extra knoppen voor afspeelbare items weergeven, zoals 'Volgende afspelen' of 'Uit playlist verwijderen'.
+	NO	Noen maler kan vise tilleggsknapper for spillbare elementer, for eksempel Spill av neste eller Fjern fra spillelisten.
+	PL	Niektóre karnacje mogą opcjonalnie zawierać dodatkowe przyciski dotyczące odtwarzalnych elementów, np. „Odtwórz następny” lub „Usuń z listy odtwarzania”.
+	RU	В некоторых обложках могут отображаться дополнительные кнопки для воспроизводимых элементов, например "Воспроизвести следующую" или "Удалить из плей-листа".
+	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.
 
 SETUP_SEARCHSUBSTRING
 	CS	Hledat ve slovech

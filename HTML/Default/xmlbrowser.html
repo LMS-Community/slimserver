@@ -5,11 +5,6 @@ container = 'contentcontainer';
 artwork = artwork ? artwork : 0;
 useAllControl = 1;
 
-UNLESS allLinks;
-	allLinks = 'Squeezebox-allLinks';
-	allLinks = cookies.$allLinks.value;
-END;
-
 IF ajaxUpdate && ajaxUpdate >= 1;
 	container = 'dummycontainer';
 END;

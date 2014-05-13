@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize
+	return ($prefs, qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize additionalPlaylistButtons
 					   longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
 }
 

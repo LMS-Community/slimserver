@@ -1240,7 +1240,9 @@ sub webLink {
 			$index, 
 			$quantity, 
 			(map { $params{$_} || '' } qw(mode sort artist_id album_id year index)),
-			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy))
+			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy)),
+			(map { $prefs->get($_) || '' } qw(itemsPerPage thumbSize showArtist showYear)),
+			$prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ] || '',
 		);
 
 		if ( my $cached = Slim::Utils::Cache->new->get($renderCacheKey) ) {

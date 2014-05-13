@@ -45,7 +45,7 @@
 
 	[% IF useExtJS %]   
 		[% WRAPPER setting title="SETUP_ADDITIONAL_PLAYLIST_BUTTONS" desc="SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC"%]
-		<input type=checkbox [% IF cookies.${'Squeezebox-allLinks'}.value %]checked [% END %] class="stdedit" id="additionalPlaylistButtons" value="1" onChange="SqueezeJS.setCookie( 'Squeezebox-allLinks', this.checked ? '1' : '')" />
+		<input type=checkbox [% IF prefs.pref_additionalPlaylistButtons %]checked="1" [% END %] class="stdedit" name="pref_additionalPlaylistButtons" id="additionalPlaylistButtons" value="1" />
 		[% END %]
 	[% END %]
 
