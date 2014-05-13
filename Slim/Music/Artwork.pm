@@ -671,7 +671,6 @@ sub precacheAllArtwork {
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
-					Slim::Utils::ArtworkCache->commit;
 				}
 				
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;

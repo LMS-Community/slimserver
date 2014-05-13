@@ -32,7 +32,6 @@ sub new {
 	}
 	
 	$args->{default_expires_in} ||= DEFAULT_EXPIRES_TIME;
-	$args->{auto_commit}          = 1 unless defined $args->{auto_commit};
 	
 	return bless $args, $self;
 }
@@ -141,20 +140,6 @@ sub pragma {
 	}
 }
 
-sub commit {
-	my ( $self ) = @_;
-	
-	if (!$self->{dbh}->{'AutoCommit'}) {
-
-		eval { $self->{dbh}->commit };
-
-		if ($@) {
-			require Slim::Utils::Log;
-			Slim::Utils::Log::logWarning("Couldn't commit transactions to DB: [$@]");
-		}
-	}
-}
-
 sub close {
 	my $self = shift;
 	
@@ -226,22 +211,24 @@ sub _init_db {
 	
 	eval {
 		$dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", '', '', {
-			AutoCommit => $self->{auto_commit} ? 1 : 0,
+			AutoCommit => 1,
 			PrintError => 0,
 			RaiseError => 1,
 			sqlite_use_immediate_transaction => 1,
 		} );
-
-		# caches do see a lot of updates/writes/deletes - enable auto_vacuum
-		if ( !$dbh->selectrow_array('PRAGMA auto_vacuum') ) {
-			$dbh->do('PRAGMA auto_vacuum = FULL');
-			$dbh->do('VACUUM');
-		}
 		
 		$dbh->do('PRAGMA synchronous = OFF');
 		$dbh->do('PRAGMA journal_mode = WAL');
 		# scanner is heavy on writes, server on reads - tweak accordingly
 		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
+
+		# caches do see a lot of updates/writes/deletes - enable auto_vacuum
+		if ( !$dbh->selectrow_array('PRAGMA auto_vacuum') ) {
+			$dbh->do('PRAGMA auto_vacuum = FULL');
+			# XXX - running a vacuum automatically might take a long time on larger cache files
+			# only enable auto_vacuum when a file is newly created
+			#$dbh->do('VACUUM');
+		}
 
 		require Slim::Utils::Prefs;
 	
@@ -312,8 +299,6 @@ sub _close_db {
 		$self->{set_sth}->finish;
 		$self->{get_sth}->finish;
 		$self->{delete_sth}->finish;
-
-		$self->commit;
 		
 		$self->{dbh}->disconnect;
 	
