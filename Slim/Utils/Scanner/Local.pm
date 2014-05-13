@@ -147,6 +147,9 @@ sub rescan {
 	# Strip trailing slashes
 	$next =~ s{/$}{};
 	
+	# don't continue if our path is empty!
+	return unless $next;
+	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Rescanning $next");
 	
 	$pending{$next} = 0;
@@ -305,6 +308,7 @@ sub rescan {
 					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($deleted) );
 					$changes++;
 					
+#warn Data::Dump::dump($deleted, $basedir);
 					deleted($deleted);
 					
 					return 1;

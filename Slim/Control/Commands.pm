@@ -2629,7 +2629,7 @@ sub rescanCommand {
 				my $audiodirs = Slim::Utils::Misc::getAudioDirs();
 				
 				if ($singledir) {
-					$audiodirs = [ grep { /$singledir/ } @{$audiodirs} ];
+					$audiodirs = [ grep { /\Q$singledir\E/ } @{$audiodirs} ];
 				}
 				elsif (my $playlistdir = Slim::Utils::Misc::getPlaylistDir()) {
 					# scan playlist folder too
@@ -2641,7 +2641,7 @@ sub rescanCommand {
 					types    => 'list|audio',
 					scanName => 'directory',
 					progress => 1,
-				} );
+				} ) if scalar @$audiodirs;
 			}
 		}
 	}
