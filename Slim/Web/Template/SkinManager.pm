@@ -307,6 +307,7 @@ sub _resizeImage {
 }
 
 
+my %empty;
 sub _fillTemplate {
 	my ($class, $params, $path, $skin) = @_;
 	
@@ -318,11 +319,16 @@ sub _fillTemplate {
 	$params->{'LOCALE'} = 'utf-8';
 
 	$path = $class->fixHttpPath($skin, $path);
+	
+	return \'' if $empty{$path}; 
 
 	if (!$template->process($path, $params, \$output)) {
 
 		logError($template->error);
 	}
+
+	# don't re-read potentially empty files over and over again
+	$empty{$path} = 1 if !$output && $path =~ /include\.html/;
 
 	return \$output;
 }
