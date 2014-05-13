@@ -55,8 +55,18 @@ sub init {
 		};
 	}
 	
-	# Our documentation says this was "CT", but we actually register "CONTENT_TYPE"
-	$parsedFormats{'CT'} = $parsedFormats{'CONTENT_TYPE'};
+	# localize content type where possible
+	$parsedFormats{'CT'} = sub {
+		my $output = $parsedFormats{'CONTENT_TYPE'}->(@_);
+		
+		if (!$output && ref $_[0] eq 'HASH' ) {
+			$output = $_[0]->{ct} || $_[0]->{ 'tracks.ct' } || '';
+		}
+		
+		$output = Slim::Utils::Strings::getString( uc($output) ) if $output;
+		
+		return $output;
+	};
 
 	# Override album
 	$parsedFormats{'ALBUM'} = sub {
