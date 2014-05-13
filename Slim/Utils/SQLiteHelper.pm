@@ -40,7 +40,7 @@ my $log = logger('database.info');
 
 my $prefs = preferences('server');
 
-$prefs->setChange( \&setCacheSize, 'dbhighmem' );
+$prefs->setChange( \&setCacheSize, 'dbhighmem' ) unless main::SCANNER;
 
 sub storageClass { 'DBIx::Class::Storage::DBI::SQLite' };
 
@@ -123,9 +123,7 @@ sub on_connect_do {
 }
 
 sub setCacheSize {
-	my $class = shift;
-
-	my $cache_size = $class->_cacheSize;
+	my $cache_size = __PACKAGE__->_cacheSize;
 	
 	my $dbh = Slim::Schema->dbh;
 	$dbh->do("PRAGMA cache_size = $cache_size");
