@@ -971,7 +971,7 @@ if (Ext.dd && Ext.dd.ScrollManager && Ext.dd.DDProxy) {
 			}
 	
 			dragEl.applyStyles({'z-index':2000});
-			dragEl.update(el.child('div').dom.innerHTML);
+			dragEl.update(el.dom.innerHTML);
 			dragEl.addClass(el.dom.className + ' dd-proxy');
 		},
 	
@@ -1670,7 +1670,15 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 	onPlaytimeUpdate : function(playtime){
 		if (this.el && playtime) {
 			var left;
-			var max = this.el.getWidth() - this.fixedWidth - 1; // total of left/right/indicator width
+			var max = this.el.getWidth() - this.fixedWidth;
+
+			if (isNaN(this.offset))
+				this.offset = max > 0 ? 1 : 11;
+
+			if (max == 0)
+				return;
+			
+			max -= this.offset; // total of left/right/indicator width
 
 			// if we don't know the total play time, just put the indicator in the middle
 			if (!playtime.duration)

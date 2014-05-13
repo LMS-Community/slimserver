@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=7" />
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext[% useSpecialExt || "-all" %].css?r=[% revision %]" />
 
 		[% PROCESS standardheader.html %]
@@ -83,13 +83,6 @@
 			}
 		</style>
 		[% END %]
-
-		<!--[if lte IE 6]>
-		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
-		<!--[if IE 7]>
-		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
 	</head>
 	<body [% IF bodyscript && NOT extJsScripts; bodyscript; END %] [% IF page == 'help' %]class="helpPage"[% END %]>
 		<div id="inner_header">

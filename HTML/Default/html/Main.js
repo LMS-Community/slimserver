@@ -76,10 +76,20 @@ Main = {
 			],
 			border: false,
 			split: true,
+			collapsible: true,
+			collapseMode: 'mini',
 			minSize: 400,
+			listeners: {
+				expand: function() {
+					this.playlist.onResize();
+					new Ext.util.DelayedTask(function(){ this.playlist.onResize(); }, this).delay(250);
+				},
+				scope: this
+			},
 			width: '50%',
 			stateId: 'Squeezebox-panelWidth',
-			stateful: !Ext.isIE
+			stateful: true,
+			header: false
 		};
 
 		var mainpanel = {
@@ -167,9 +177,9 @@ Main = {
 
 		// cache the offsets we're going to use to resize the background image
 		this.offsets = [
-			(Ext.isIE7 ? this.background.getTop() + 3 : this.background.getTop() * 2),
-			(Ext.isIE7 ? this.background.getLeft() + 3 : this.background.getLeft() * 2),
-		]
+			this.background.getTop() * 2,
+			this.background.getLeft() * 2
+		];
 
 		Ext.EventManager.onWindowResize(this.onResize, this);
 		this.onResize(this.body.getWidth(), this.body.getHeight());

@@ -32,7 +32,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id.defined %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id.defined %]id="db[% itemobj.id | uri %]_selector"[% END %]>
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (hasArtwork && !artwork) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
@@ -40,14 +40,14 @@
 				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
 				[%- IF controls; PROCESS $controls; END %]
 			</span>
-		</div></div></div></div></div>
+		</div>
 	</div>
 	[%- END %]
 
 
 	[% BLOCK galleryitem -%]
 	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% item.size + 20 %]px;">
-		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
+		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;">
 				[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
@@ -69,7 +69,7 @@
 				[%- content | indent(4) %]
 			</span></div>
 
-		</div></div></div></div></div></div>
+		</div></div>
 	</li>
 	[%- END %]
 

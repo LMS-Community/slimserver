@@ -181,52 +181,16 @@ img#background {
 } 
 
 .inner_top, .inner_bottom {
+	border-radius: 12px 12px 0 0;
 	height: 12px;
-	margin: 0 12px;
 	background-color: #404040;
 }
 
 #mainSpacer { width: 10px; }
 
-.inner_top_left, .inner_top_right,
-.inner_bottom_left, .inner_bottom_right {
-	position: absolute;
-	height: 12px;
-	width: 12px;
-	margin: 0;
-	padding: 0;
-	font-size: 0px;
-}
-
-.inner_top_left {
-	left: 0;
-	top: 0;
-}
-
-.inner_top_right {
-	right: 0;
-	top: 0;
-}
-
-.inner_bottom { bottom: 0; }
-
-.inner_bottom_left {
-	height: 12px;
-	background: no-repeat bottom left;
-	left: 0;
+.inner_bottom {
+	border-radius: 0 0 12px 12px;
 	bottom: 0;
-}
-
-.inner_bottom_right {
-	height: 12px;
-	background: no-repeat bottom right;
-	right: 0;
-	bottom: 0;
-}
-
-.inner_top_left, .inner_top_right,
-.inner_bottom_left, .inner_bottom_right {
-	background-image: url(html/images/inner_edges.gif);
 }
 
 #leftcontent {
@@ -234,6 +198,7 @@ img#background {
 	height: 100%;
 }
 
+/*
 #inner_footer .inner_bottom_left,
 #leftfooter .inner_bottom_left {
 	background-position: 0 -24px;
@@ -251,9 +216,7 @@ img#background {
 #rightfooter .inner_bottom_right {
 	background-position: 0 -60px;
 }
-
-.inner_top_left { background-position: 0 0; }
-.inner_top_right { background-position: 0 -12px; }
+*/
 
 #footer_content {
 	height: 16px;
@@ -324,6 +287,10 @@ img#background {
 .wz_page .pagetitle, #inner_header, #infoTab, #playlistTab {
 	background-color: #404040;
 	color: #dddddd;
+}
+
+.x-panel-body #inner_header {
+	border-radius: 12px 12px 0 0;
 }
 
 .wz_page .pagetitle, #inner_header {
@@ -702,8 +669,8 @@ div.thumbwrap {
 
 /* list selector */
 .mouseOver, .selectedItem, .selectorMarker {
-	padding-top: 0;
-	padding-bottom: 0;
+	padding-top: 7px;
+	padding-bottom: 5px;
 }
 
 .mouseOver .browseItemDetail,
@@ -715,47 +682,26 @@ div.thumbwrap {
 	text-weight: bold;
 }
 
-.mouseOver .selector_topRight {
-	background: #999 url(html/images/selector_top_right.gif) no-repeat top right;
+.mouseOver {
+	background-color: #999;
+	border-radius: 5px;
 }
 
-.mouseOver .selector_topLeft {
-	background: transparent url(html/images/selector_top_left.gif) no-repeat top left;
-}
-
-.mouseOver .selector_bottomRight {
-	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right;
-}
-
-.mouseOver .selector_bottomLeft {
-	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
-}
-
-.selectorMarker,
-.selector_topRight, .selector_topLeft,
-.selector_bottomRight, .selector_bottomLeft {
+.selectorMarker {
 	background: none;
 }
 
-.selector_topLeft {
-	padding-top: 7px;
-}
-
-.selector_bottomLeft {
-	padding-bottom: 5px;
-}
-
-.dragUp .selector_topLeft {
+.dragUp.selectorMarker {
 	border-top: 1px black solid;
 	padding-top: 6px;
 }
 
-.dragDown .selector_bottomLeft {
+.dragDown.selectorMarker {
 	border-bottom: 1px black solid;
 	padding-bottom: 4px;
 }
 
-.dragOver .selector_topLeft {
+.dragOver.selectorMarker {
 	background-color: #aaa;
 	font-color: white;
 }
@@ -1348,6 +1294,14 @@ ul.x-tree-node-ct {
 	background: none;
 }
 
+.ext-strict .ext-ie6 .x-layout-split {
+	background-color: transparent !important;
+}
+
+.x-layout-mini.x-layout-mini-east {
+	background-color: white;
+	border-radius: 2px;
+}
 
 .x-tree-node-leaf .x-tree-node-alwayscollapsed {
 	background-image:url(/html/ext/resources/images/default/tree/folder.gif);

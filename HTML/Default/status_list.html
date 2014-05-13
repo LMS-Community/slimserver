@@ -1,4 +1,4 @@
-<div class="draggableSong selectorMarker[% IF noPlaylistCover %]itemWithoutCover[% END %] [% IF item.currentsong %]currentSong[% END %]" id="playlistSong[% item.num %]" onmouseover="Main.playlist.Highlighter.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+<div class="draggableSong selectorMarker[% IF noPlaylistCover %]itemWithoutCover[% END %] [% IF item.currentsong %]currentSong[% END %]" id="playlistSong[% item.num %]" onmouseover="Main.playlist.Highlighter.highlight(this);">
 	<div class="browsedbListItem [% IF !noPlaylistCover %]itemWithCover[% END %]">
 		[%# Plugins can provide their own songinfo links %]
 		[% info_link = item.plugin_meta.info_link || 'songinfo.html' %]
@@ -64,4 +64,4 @@
 			[% IF item.currentsong %]<img src="[% webroot %]html/images/spacer.gif" class="nowPlayingIcon"/>[% END %]
 		</div>
 	</div>
-</div></div></div></div></div>
+</div>

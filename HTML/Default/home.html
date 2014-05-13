@@ -124,43 +124,41 @@ ELSE %]
 
 	[% BLOCK menuItem %]
 		<div class="selectorMarker [% expandable %]" onmouseover="Highlighter.highlight(this [% IF expandable %], Home.onSelectorClicked[% END %]);">
-			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-				<div class="homeMenuItem [% expanded ? "homeMenuItem_expanded" : '' %]" id="[% link.key %]">
-					[% string   = link.key;
-					   stringUC = link.key | upper;
-					   IF string == stringUC; string = link.key | getstring; END;
-					%]
-					[% IF expandable %]
-						<img class="disclosure_home [% expanded ? "disclosure_expanded" : '' %]" src="[% webroot %]html/images/spacer.gif"/>
-					[% ELSE %]
-						<a href="[% link.value %]player=[% player %]" class="browseItemLink" [% IF link.target; 'target="' _ link.target _ '"'; END %]>
-					[% END %]
+			<div class="homeMenuItem [% expanded ? "homeMenuItem_expanded" : '' %]" id="[% link.key %]">
+				[% string   = link.key;
+				   stringUC = link.key | upper;
+				   IF string == stringUC; string = link.key | getstring; END;
+				%]
+				[% IF expandable %]
+					<img class="disclosure_home [% expanded ? "disclosure_expanded" : '' %]" src="[% webroot %]html/images/spacer.gif"/>
+				[% ELSE %]
+					<a href="[% link.value %]player=[% player %]" class="browseItemLink" [% IF link.target; 'target="' _ link.target _ '"'; END %]>
+				[% END %]
 
-					[% IF (additionalLinks.icons.item(link.key) || link.icon) && !noIcon;
-						link.icon = additionalLinks.icons.item(link.key) || link.icon;
-					%]
-						<span class="browseCover">
-							<img src="[% link.icon | resizeimage(25, 25) %]" width="25" border="0" alt="[% string %]">
-						</span>
-						<div class="smallBrowseItemDetail">
-					[% END %]
-					[% IF dontGetString; link.key; ELSE; string; END %]
-					[% IF link.icon && !noIcon %]
-						</div>
-					[% END %]
+				[% IF (additionalLinks.icons.item(link.key) || link.icon) && !noIcon;
+					link.icon = additionalLinks.icons.item(link.key) || link.icon;
+				%]
+					<span class="browseCover">
+						<img src="[% link.icon | resizeimage(25, 25) %]" width="25" border="0" alt="[% string %]">
+					</span>
+					<div class="smallBrowseItemDetail">
+				[% END %]
+				[% IF dontGetString; link.key; ELSE; string; END %]
+				[% IF link.icon && !noIcon %]
+					</div>
+				[% END %]
 
-					[% IF !expandable %]
-						</a>
-					[% END %]
-	
-					[% IF control %]
-						<span class="browsedbControls">
-							[% control %]
-						</span>					
-					[% END %]
-				</div>
+				[% IF !expandable %]
+					</a>
+				[% END %]
+
+				[% IF control %]
+					<span class="browsedbControls">
+						[% control %]
+					</span>					
+				[% END %]
 			</div>
-		</div></div></div></div>
+		</div>
 	[% control=''; END %]
 
 	[% pagetitle = "HOME" | string %]

@@ -67,10 +67,10 @@ Settings = {
 
 		// cache the offsets we're going to use to resize the background image
 		this.offsets = [
-			(Ext.isIE7 ? this.background.getTop() + 3 : this.background.getTop() * 2),
-			(Ext.isIE7 ? this.background.getLeft() + 3 : this.background.getLeft() * 2),
+			this.background.getTop() * 2,
+			this.background.getLeft() * 2,
 			this.maincontent.getTop() + this.body.getHeight() - Ext.get('inner_footer').getTop()
-		]
+		];
 
 		this.tp = new Ext.TabPanel({
 			renderTo: 'settingsTabs',
@@ -252,12 +252,6 @@ Settings.Page = function(){
 			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
 
-			// bug 9754 - don't resize drop-down, IE6/7 don't know max-height anyway
-			if (! (Ext.isIE6 || Ext.isIE7)) {
-				this.onResize(0, Ext.lib.Dom.getViewHeight());
-				Ext.EventManager.onWindowResize(this.onResize);
-			}
-
 			var items = Ext.query('input');
 			for (var i = 0; i < items.length; i++) {
 				var inputEl;
@@ -397,10 +391,6 @@ Settings.Page = function(){
 		},
 		
 		initSliders : function() {
-			// sliders are broken in IE6 - don't use them
-			if (Ext.isIE6)
-				return;
-	
 			var items = Ext.query('input[class*=sliderInput_]');
 			var inputEl;
 			

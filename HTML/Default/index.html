@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=7" />
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
 		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
 		[% USE Prefs %][% IF Prefs.preferences('server').get('language') == 'HE' %]
@@ -54,13 +54,6 @@
 			}
 			[% END %]
 		</style>
-
-		<!--[if lte IE 6]>
-		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
-		<!--[if IE 7]>
-		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->
 
 		<link rel="apple-touch-icon" href="[% webroot %]html/images/apple-touch-icon.png"/>
 	</head>
@@ -118,8 +111,6 @@
 		<div id="leftheader">
 			<div class="inner">
 				<div class="inner_top"></div>
-				<div class="inner_top_left">&nbsp;</div>
-				<div class="inner_top_right">&nbsp;</div>
 			</div>
 		</div>
 
@@ -128,8 +119,6 @@
 		<div id="leftfooter">
 			<div class="inner">
 				<div class="inner_bottom"></div>
-				<div class="inner_bottom_left">&nbsp;</div>
-				<div class="inner_bottom_right">&nbsp;</div>
 			</div>
 		</div>
 
@@ -137,8 +126,6 @@
 		<div id="rightheader">
 			<div class="inner">
 				<div class="inner_top"></div>
-				<div class="inner_top_left">&nbsp;</div>
-				<div class="inner_top_right">&nbsp;</div>
 			</div>
 		</div>
 
@@ -159,8 +146,6 @@
 		<div id="rightfooter">
 			<div class="inner">
 				<div class="inner_bottom"></div>
-				<div class="inner_bottom_left">&nbsp;</div>
-				<div class="inner_bottom_right">&nbsp;</div>
 			</div>
 		</div>
 
