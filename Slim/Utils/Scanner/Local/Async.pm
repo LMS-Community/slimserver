@@ -143,6 +143,8 @@ sub find {
 		
 		$file = File::Spec->canonpath($file);
 		
+		main::DEBUGLOG && $log->is_debug && $log->debug("Found $file");
+		
 		$count++;
 		
 		# XXX Not sure why, but sometimes there is no cached stat data available?!
