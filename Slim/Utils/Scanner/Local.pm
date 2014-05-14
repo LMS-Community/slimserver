@@ -273,7 +273,7 @@ sub rescan {
 		
 		$log->error("Get changed tracks count");
 		my $changedOnlyCount = 0;
-		$changedOnlyCount = $dbh->selectrow_array( qq{
+		($changedOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe);
 		
