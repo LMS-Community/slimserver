@@ -181,9 +181,6 @@ sub rescan {
 	# we need to udpate lastRescanTime
 	my $changes = 0;
 	
-	# remove any data from previous scan
-	Slim::Schema->dbh->do("DELETE FROM scanned_files");
-	
 	# Get list of files within this path
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
@@ -403,7 +400,7 @@ sub rescan {
 					my $more = 1;
 					
 					if ( !$onDiskOnlySth->rows ) {
-						$dbh->do('DROP TABLE diskonly');
+						$dbh->do('DROP TABLE IF EXISTS diskonly');
 						
 						if ( !$args->{no_async} ) {
 							$args->{paths} = $paths;
