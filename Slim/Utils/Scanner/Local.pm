@@ -188,14 +188,18 @@ sub rescan {
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
 		
+		$log->error("Start processing found tracks");
+		
 		# Save any other dirs we need to scan (shortcuts/aliases)
 		my $others = shift || [];
 		push @{$paths}, @{$others};
 		
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
+		$log->error("Connect do DB");
 		my $dbh = Slim::Schema->dbh;
 		
+		$log->error("Get latest ID");
 		# Use the most recent existing track ID to prevent paged onDiskOnly query
 		# from missing any files. This will be 0 during a wipe
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
@@ -217,8 +221,10 @@ sub rescan {
 			AND             content_type != 'dir'
 		};
 		
+		$log->error("Delete temporary table if exists");
 		# 2. Files that are new and not in the database.
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
+		$log->error("Re-build temporary table");
     	$dbh->do( qq{
     		CREATE TEMPORARY TABLE diskonly AS 
 				SELECT          DISTINCT(url) as url
@@ -253,16 +259,19 @@ sub rescan {
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
 		
+		$log->error("Get deleted tracks count");
 		# only remove missing tracks when looking for audio tracks
 		my $inDBOnlyCount = 0;
 		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio/;
     	
+		$log->error("Get new tracks count");
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 		
+		$log->error("Get changed tracks count");
 		my $changedOnlyCount = 0;
 		$changedOnlyCount = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1
@@ -308,7 +317,6 @@ sub rescan {
 					$progress && $progress->update( Slim::Utils::Misc::pathFromFileURL($deleted) );
 					$changes++;
 					
-#warn Data::Dump::dump($deleted, $basedir);
 					deleted($deleted);
 					
 					return 1;
