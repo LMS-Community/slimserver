@@ -1017,6 +1017,22 @@ form#advSearchForm.resultsPage {
 	padding-right: 5px;
 }
 
+#headerSearchBtn {
+	background-image: url('html/images/b_search.gif');
+}
+
+#btn_help_image {
+	background-image: url('html/images/btn_help.gif');
+}
+
+#btn_settings_image {
+	background-image: url('html/images/btn_settings.gif');
+}
+
+img.btn_info_image {
+	background-image: url('html/images/btn_info.gif');
+}
+
 #songInfoItems {
 	display: table;
 }

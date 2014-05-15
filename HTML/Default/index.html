@@ -154,13 +154,13 @@
 			<div id="footer_content">
 				<span id="helpInfoSection">
 					<span id="helpLink">
-						<a href="[% webroot %]html/docs/help.html" target="sc_help"><img src="[% webroot %]html/images/btn_help.gif"/></a>
+						<a href="[% webroot %]html/docs/help.html" target="sc_help"><img src="[% webroot %]html/images/spacer.gif" width="22" height="22" id="btn_help_image"/></a>
 						<a href="[% webroot %]html/docs/help.html" target="sc_help">[% "HELP" | string %]</a>
 					</span>
 
 					<span id="footerInfo">
 						<span id="scanWarning" style="display:none;">
-							<a href="[% webroot %]progress.html?type=importer" target="browser"><img src="[% webroot %]html/images/btn_info.gif"/></a>
+							<a href="[% webroot %]progress.html?type=importer" target="browser"><img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/></a>
 							<a href="[% webroot %]progress.html?type=importer" target="browser">
 								[% "RESCANNING_SHORT" | string %]
 								<span id="progressInfo" class="link" style="display:none;">
@@ -174,13 +174,13 @@
 
 						[% IF newVersion %]
 							<span id="newVersion">
-								<img src="[% webroot %]html/images/btn_info.gif"/> [% newVersion %]
+								<img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/> [% newVersion %]
 							</span>
 						[% END %]
 
 						[% IF newPlugins %]
 							<span id="newPlugins">
-								<img src="[% webroot %]html/images/btn_info.gif"/> <a href="[% webroot %]settings/index.html?activePage=SETUP_PLUGINS" target="sc_settings">[% newPlugins %]</a>
+								<img src="[% webroot %]html/images/spacer.gif" width="22" height="22" class="btn_info_image"/> <a href="[% webroot %]settings/index.html?activePage=SETUP_PLUGINS" target="sc_settings">[% newPlugins %]</a>
 							</span>
 						[% END %]
 
@@ -191,7 +191,7 @@
 
 				<span id="settingsLink">
 					[% IF NOT (nosetup || noserver) %]
-						<a id="settingsBtn"  href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings"><img src="[% webroot %]html/images/btn_settings.gif"/></a>
+						<a id="settingsBtn"  href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings"><img src="[% webroot %]html/images/spacer.gif" width="22" height="22" id="btn_settings_image"/></a>
 						<a id="settingsHRef" href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings">[% "SETTINGS" | string %]</a>
 					[% END %]
 				</span>
