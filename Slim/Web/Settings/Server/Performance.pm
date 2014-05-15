@@ -60,7 +60,7 @@ sub handler {
 	my $curmem = $prefs->get('dbhighmem') || 0;
 	if ( $paramRef->{pref_dbhighmem} && $paramRef->{pref_dbhighmem} != $curmem ) {
 		# Trigger restart required message
-		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED'));
+		$paramRef = Slim::Web::Settings::Server::Plugins->getRestartMessage($paramRef, Slim::Utils::Strings::string('CLEANUP_PLEASE_RESTART_SC'));
 	}
 	
 	# Restart if restart=1 param is set
