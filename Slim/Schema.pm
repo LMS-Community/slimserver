@@ -415,6 +415,23 @@ sub optimizeDB {
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
+
+	my $stats_sth = $class->dbh->prepare( qq{
+		SELECT idx, stat
+		FROM   sqlite_stat1
+		WHERE  idx IS NOT NULL
+		AND    idx NOT LIKE 'sqlite_auto%'
+		ORDER BY tbl
+	} );
+	
+	my ($idx, $stats);
+	
+	$stats_sth->execute;
+	$stats_sth->bind_columns( \$idx, \$stats );
+	
+	while ( $stats_sth->fetch ) {
+		$log->error( sprintf('%30s: %s', $idx, $stats) );
+	}
 }
 
 =head2 migrateDB()
