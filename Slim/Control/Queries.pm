@@ -2650,58 +2650,79 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search     = Slim::Utils::Text::searchStringSplit($query);
-	my %results    = ();
-	my @types      = Slim::Schema->searchTypes;
+	my $search = Slim::Utils::Text::searchStringSplit($query);
+		
+	my $dbh = Slim::Schema->dbh;
+	
+	my $doSearch = sub {
+		my ($type, $name, $w, $p) = @_;
+	
+		# contributors first
+		my $sql = "SELECT id, $name FROM ${type}s ";
+		if ( ref $search->[0] eq 'ARRAY' ) {
+			push @{$w}, '(' . join( ' OR ', map { "${name}search LIKE ?" } @{ $search->[0] } ) . ')';
+			push @{$p}, @{ $search->[0] };
+		}
+		else {		
+			push @{$w}, "${name}search LIKE ?";
+			push @{$p}, @{$search};
+		}
+		
+		if ( @{$w} ) {
+			$sql .= 'WHERE ';
+			my $s = join( ' AND ', @{$w} );
+			$s =~ s/\%/\%\%/g;
+			$sql .= $s . ' ';
+		}
+	
+#		$sql .= "ORDER BY ${name}sort " . Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-	# Ugh - we need two loops here, as "count" needs to come first.
+		my ($count) = $dbh->selectrow_array( qq{SELECT COUNT(1) FROM ($sql) AS t1}, undef, @$p );
 	
-	if (Slim::Schema::hasLibrary()) {
-		for my $type (@types) {
-
-			my $rs      = Slim::Schema->rs($type)->searchNames($search);
-			my $count   = $rs->count || 0;
+		$count += 0;
 	
-			$results{$type}->{'rs'}    = $rs;
-			$results{$type}->{'count'} = $count;
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 	
-			$totalCount += $count;
+		if ($valid) {
+			$request->addResult("${type}s_count", $count);
 			
-			main::idleStreams();
-		}
-	}
-
-	$totalCount += 0;
-	$request->addResult('count', $totalCount);
-
-	if (Slim::Schema::hasLibrary()) {
-		for my $type (@types) {
-	
-			my $count = $results{$type}->{'count'};
-	
-			$count += 0;
-	
-			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	
-			if ($valid) {
-				$request->addResult("${type}s_count", $count);
+			# Limit the real query
+			$sql .= "LIMIT $index, $quantity";
 		
-				my $loopName  = "${type}s_loop";
-				my $loopCount = 0;
+			my $sth = $dbh->prepare_cached($sql);
+			$sth->execute( @{$p} );
+				
+			my ($id, $title);
+			$sth->bind_columns( \$id, \$title );
 		
-				for my $result ($results{$type}->{'rs'}->slice($start, $end)) {
+			my $chunkCount = 0;
+			my $loopname   = "${type}s_loop";
+			while ( $sth->fetch ) {
+				
+				last if $chunkCount >= $quantity;
+				
+				$id += 0;
+				
+				utf8::decode($title);
 		
-					# add result to loop
-					$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
-					$request->addResultLoop($loopName, $loopCount, $type, $result->name);
+				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $id);
+				$request->addResultLoop($loopname, $chunkCount, "${type}", $title);
 		
-					$loopCount++;
-					
-					main::idleStreams() if !($loopCount % 5);
-				}
+				$chunkCount++;
+				
+				main::idleStreams() if !($chunkCount % 10);
 			}
+			
+			$sth->finish;
 		}
-	}
+	};
+
+	$doSearch->('contributor', 'name');
+	$doSearch->('album', 'title');
+	$doSearch->('genre', 'name');
+	$doSearch->('track', 'title', ['audio = ?'], ['1']);
+	
+	# XXX - should we search for playlists, too?
 	
 	$request->setStatusDone();
 }
