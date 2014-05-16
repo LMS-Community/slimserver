@@ -1080,14 +1080,14 @@ sub checkDataSource {
 	
 	# Count entries for all media types, run scan if all are empty
 	my $dbh = Slim::Schema->dbh;
-	my ($tc, $vc, $ic) = $dbh->selectrow_array( qq{
+	my ($gc, $vc, $ic) = $dbh->selectrow_array( qq{
 		SELECT
-			(SELECT COUNT(*) FROM tracks where audio = 1) as tc,
-			(SELECT COUNT(*) FROM videos) as vc,
-			(SELECT COUNT(*) FROM images) as ic
+			(SELECT COUNT(1) FROM genres) as gc,
+			(SELECT COUNT(1) FROM videos) as vc,
+			(SELECT COUNT(1) FROM images) as ic
 	} );
 
-	if (Slim::Schema->schemaUpdated || (!$tc && !$vc && !$ic)) {
+	if (Slim::Schema->schemaUpdated || (!$gc && !$vc && !$ic)) {
 
 		logWarning("Schema updated or no media found in the database, initiating scan.");
 
