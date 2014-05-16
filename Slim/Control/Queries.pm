@@ -270,7 +270,8 @@ sub albumsQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
-	my $to_cache      = $request->getParam('cache');
+
+	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 	
 	# FIXME: missing genrealbum, genreartistalbum
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
@@ -311,7 +312,7 @@ sub albumsQuery {
 			}
 
 			# cache the most recent album IDs - need to query the tracks table, which is expensive
-			if ( !$search && !Slim::Music::Import->stillScanning() ) {
+			if ( !$ignoreNewAlbumsCache ) {
 				my $ids = $cache->{'newAlbumIds'} || [];
 				
 				if (!scalar @$ids) {
@@ -524,7 +525,7 @@ sub albumsQuery {
 	# Get count of all results, the count is cached until the next rescan done event
 	my $cacheKey = $sql . join( '', @{$p} );
 	
-	if ( $sort eq 'new' && $cache->{newAlbumIds} && !$search ) {
+	if ( $sort eq 'new' && $cache->{newAlbumIds} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{newAlbumIds}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
@@ -683,7 +684,6 @@ sub artistsQuery {
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
-	my $to_cache = $request->getParam('cache');
 	my $tags     = $request->getParam('tags') || '';
 	
 	my $va_pref = $prefs->get('variousArtistAutoIdentification');
