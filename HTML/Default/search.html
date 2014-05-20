@@ -1,6 +1,7 @@
 [%- pagetitle = 'SEARCHMUSIC' | string %]
 [%- pageicon = icons.SEARCHMUSIC %]
 [% extJsScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/LiveSearch.js?r=[% revision %]"></script>
 	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 	<script type="text/javascript">
 		Ext.onReady(function(){
