@@ -2635,6 +2635,7 @@ sub searchQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
+	my $extended = $request->getParam('extended');
 
 	# transliterate umlauts and accented characters
 	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
@@ -2655,10 +2656,14 @@ sub searchQuery {
 	my $dbh = Slim::Schema->dbh;
 	
 	my $doSearch = sub {
-		my ($type, $name, $w, $p) = @_;
+		my ($type, $name, $w, $p, $c) = @_;
 	
 		# contributors first
-		my $sql = "SELECT id, $name FROM ${type}s ";
+		my $cols = "id, $name";
+		
+		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
+		
+		my $sql = "SELECT $cols FROM ${type}s ";
 		if ( ref $search->[0] eq 'ARRAY' ) {
 			push @{$w}, '(' . join( ' OR ', map { "${name}search LIKE ?" } @{ $search->[0] } ) . ')';
 			push @{$p}, @{ $search->[0] };
@@ -2692,21 +2697,23 @@ sub searchQuery {
 			my $sth = $dbh->prepare_cached($sql);
 			$sth->execute( @{$p} );
 				
-			my ($id, $title);
-			$sth->bind_columns( \$id, \$title );
-		
 			my $chunkCount = 0;
 			my $loopname   = "${type}s_loop";
-			while ( $sth->fetch ) {
+			while ( my $result = $sth->fetchrow_hashref ) {
 				
 				last if $chunkCount >= $quantity;
 				
-				$id += 0;
+				$result->{id} += 0;
+				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $result->{id});
+
+				utf8::decode($result->{$name});
+				$request->addResultLoop($loopname, $chunkCount, "${type}", $result->{$name});
 				
-				utf8::decode($title);
-		
-				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $id);
-				$request->addResultLoop($loopname, $chunkCount, "${type}", $title);
+				# any additional column
+				foreach (@$c) {
+					utf8::decode($result->{$_});
+					$request->addResultLoop($loopname, $chunkCount, $_, $result->{$_});
+				}
 		
 				$chunkCount++;
 				
@@ -2718,9 +2725,9 @@ sub searchQuery {
 	};
 
 	$doSearch->('contributor', 'name');
-	$doSearch->('album', 'title');
+	$doSearch->('album', 'title', undef, undef, ['artwork']);
 	$doSearch->('genre', 'name');
-	$doSearch->('track', 'title', ['audio = ?'], ['1']);
+	$doSearch->('track', 'title', ['audio = ?'], ['1'], ['coverid']);
 	
 	# XXX - should we search for playlists, too?
 	
