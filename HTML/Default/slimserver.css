@@ -494,6 +494,12 @@ div.pagetitleWithIcon {
 	right: 6px;
 }
 
+.x-menu-item-active .browsedbControls {
+	visibility: visible;
+	top: 2px;
+	right: 2px;
+}
+
 .homeMenuSection .browsedbControls,
 #playList .playlistControls {
 	top: -2px;
