@@ -102,7 +102,7 @@ LiveSearch = {
 							
 							location = self.links[type].apply({
 								id: menuItem.track_id || menuItem.album_id || menuItem.contributor_id || menuItem.search_id,
-								title: encodeURIComponent(menuItem.search_id != null ? input.dom.value : menuItem.text),
+								title: encodeURIComponent(menuItem.search_id != null ? input.dom.value : menuItem.title),
 								player: SqueezeJS.getPlayer()
 							});
 						},
@@ -145,6 +145,7 @@ LiveSearch = {
 													title: item.contributor,
 													id: 'contributor_id:' + item.contributor_id
 												}),
+												title: item.contributor,
 												contributor_id: item.contributor_id
 											});
 										}, this);
@@ -166,6 +167,7 @@ LiveSearch = {
 													title: item.album,
 													id: 'album_id:' + item.album_id
 												}),
+												title: item.album,
 												icon: '/music/' + (item.artwork || 0) + '/cover_50x50_o',
 												album_id: item.album_id
 											});
@@ -188,6 +190,7 @@ LiveSearch = {
 													title: item.track,
 													id: 'track_id:' + item.track_id
 												}),
+												title: item.track,
 												icon: '/music/' + (item.coverid || 0) + '/cover_50x50_o',
 												track_id: item.track_id
 											});
@@ -227,7 +230,7 @@ LiveSearch = {
 					}
 				}
 			});
-
+			
 			hideSearchTimer = new Ext.util.DelayedTask(function(){
 				if (sinput && sinput.searchMenu && sinput.searchMenu.isVisible()) {
 					hideSearchTimer.delay(2000);
