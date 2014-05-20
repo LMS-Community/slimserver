@@ -1,8 +1,6 @@
 [%- pagetitle = 'SEARCHMUSIC' | string %]
 [%- pageicon = icons.SEARCHMUSIC %]
 [% extJsScripts = BLOCK %]
-	<script type="text/javascript" src="[% webroot %]html/LiveSearch.js?r=[% revision %]"></script>
-	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
 	<script type="text/javascript">
 		Ext.onReady(function(){
 			var sinput = new Ext.form.TextField({
@@ -101,7 +99,7 @@
 [% pwd_list = BLOCK %]
 	<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
 [% END %]
-[% PROCESS pageheader.html dontscroll=browse_items.size %]
+[% PROCESS pageheader.html dontscroll=browse_items.size useSpecialExt="-browse" %]
 
 	<div class="searchHeader">
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
