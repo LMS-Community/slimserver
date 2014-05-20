@@ -73,6 +73,9 @@ Browse = {
 				arrowTooltip: SqueezeJS.string('display_options')
 			});
 		}
+		
+		if (LiveSearch)
+			LiveSearch.init();
 	},
 
 	gotoAnchor : function(anchor){
@@ -211,4 +214,4 @@ Browse.XMLBrowser = {
 			showBriefly
 		);
 	}
-}
+};

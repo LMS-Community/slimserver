@@ -23,7 +23,7 @@
 					highlight: function(){}
 				};
 
-				function _init() {
+				Ext.onReady(function() {
 					// overwrite default Ext Button layout
 					SqueezeJS.UI.buttonTemplate = new Ext.Template(
 						'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
@@ -45,29 +45,7 @@
 						});		
 						SqueezeJS.UI.ScrollPanel.init();
 					}
-
-					var input = Ext.get('headerSearchInput');
-					var button = Ext.get('headerSearchBtn');
-					if (input && button) {
-						if (!hideSearchTimer)
-							hideSearchTimer = new Ext.util.DelayedTask(function(){ input.setDisplayed(false); });
-
-						button.on({
-							mouseover: function(){
-								input.setDisplayed(true);
-								input.focus();
-							}
-						});
-
-						input.on({
-							click: hideSearchTimer.cancel,
-							focus: hideSearchTimer.cancel,
-							blur: function(){ hideSearchTimer.delay(2000); }
-						});
-					}
-				}
-				
-				Ext.onReady(_init);
+				});
 			</script>
 
 			[% extJsScripts %]
@@ -98,7 +76,7 @@
 				<span id="headerSearch">
 					<form method="GET" action="[% webroot %]search.html">
 						<input type="hidden" name="player" value="[% playerid %]">
-						<input type="text" id="headerSearchInput" name="query" 
+						<input type="text" id="headerSearchInput" autocomplete="off" name="query" 
 						id="search" class="x-form-focus searchInput" style="display:none" size="30">&nbsp;<input type="image" 
 						id="headerSearchBtn" src="[% webroot %]html/images/spacer.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
 					</form>

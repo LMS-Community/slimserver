@@ -28,6 +28,9 @@ var Home = {
 				Home.tuneInUrl('play')
 			}
 		});
+		
+		if (LiveSearch)
+			LiveSearch.init();
 	},
 
 	onSelectorClicked : function(ev, target){

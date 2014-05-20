@@ -870,6 +870,21 @@
             "path": "src/widgets/form/"
         }]
     },{
+        "name": "Forms Text Input",
+        "file": "pkgs/pkg-forms-textinput.js",
+        "isDebug": true,
+        "pkgs": ["pkgs/cmp-foundation.js"],
+        "fileIncludes": [{
+            "text": "Field.js",
+            "path": "src/widgets/form/"
+        },{
+            "text": "TextField.js",
+            "path": "src/widgets/form/"
+        },{
+            "text": "TriggerField.js",
+            "path": "src/widgets/form/"
+        }]
+    },{
         "name": "Grid Foundation",
         "file": "pkgs/pkg-grid-foundation.js",
         "isDebug": true,
@@ -1049,7 +1064,8 @@
             "pkgs/state.js",
             "pkgs/cmp-foundation-browse.js",
             "pkgs/pkg-buttons.js",
-            "pkgs/pkg-menu.js"
+            "pkgs/pkg-menu.js",
+            "pkgs/pkg-forms-textinput.js"
         ],
         "fileIncludes": []
     },{
