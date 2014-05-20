@@ -57,14 +57,31 @@ LiveSearch = {
 					},
 
 					links : {
-						track : new Ext.Template( webroot + 'songinfo.html?player={player}&item={id}'),
-						album : new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('album') + '%20({title})&album_id={id}&player={player}/index.html?index=0'),
-						contributor : new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('artist') + '%20({title})&artist_id={id}&player={player}/'),
-						search : new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&linktitle=' + SqueezeJS.string('search') + '&mode=search/index.html?player={player}&index={id}&submit=Search&q={title}')
+						track: new Ext.Template( webroot + 'songinfo.html?player={player}&item={id}'),
+						album: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('album') + '%20({title})&album_id={id}&player={player}/index.html?index=0'),
+						contributor: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('artist') + '%20({title})&artist_id={id}&player={player}/'),
+						search: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&linktitle=' + SqueezeJS.string('search') + '&mode=search/index.html?player={player}&index={id}&submit=Search&q={title}'),
+						item: new Ext.Template( '<div>{title}<span class="browsedbControls"><img src="' + webroot + 'html/images/b_play.gif" id="play:{id}:{title}">&nbsp;<img src="' + webroot + 'html/images/b_add.gif" id="add:{id}:{title}"></span></div>')
 					},
 					
 					listeners: {
 						click: function(self, menuItem, e) {
+							var target = e.getTarget();
+							
+							// check whether user clicked one of the playlist controls
+							if ( target && Ext.id(target).match(/^(add|play)/) ) {
+								var params = Ext.id(target).split(':');
+
+								SqueezeJS.Controller.playerRequest({
+									params: ['playlistcontrol', 'cmd:' + (params[0] == 'play' ? 'load' : params[0]), (params[1] == 'contributor_id' ? 'artist_id' : params[1]) + ':' + params[2] ],
+									showBriefly: params[3]
+								});
+								
+								self.playActionTriggered = true;
+
+								return;
+							}
+							
 							var type;
 							if (menuItem.track_id) {
 								type = 'track';
@@ -88,6 +105,14 @@ LiveSearch = {
 								title: encodeURIComponent(menuItem.search_id != null ? input.dom.value : menuItem.text),
 								player: SqueezeJS.getPlayer()
 							});
+						},
+						
+						// don't hide the menu if add/play was pressed, the user might want to add more
+						beforehide: function(self) {
+							if (self.playActionTriggered) {
+								delete self.playActionTriggered;
+								return false;
+							}
 						}
 					}
 				}),
@@ -102,6 +127,7 @@ LiveSearch = {
 								if (response && response.responseText) {
 									response = Ext.util.JSON.decode(response.responseText);
 									var result = response.result;
+									var tpl = this.searchMenu.links['item'];
 									
 									if (result.contributors_loop) {
 										if (this.searchMenu.items.length > 0)
@@ -115,7 +141,10 @@ LiveSearch = {
 										
 										Ext.each(result.contributors_loop, function(item, index, allItems) {
 											this.searchMenu.addItem({
-												text: item.contributor,
+												text: tpl.apply({
+													title: item.contributor,
+													id: 'contributor_id:' + item.contributor_id
+												}),
 												contributor_id: item.contributor_id
 											});
 										}, this);
@@ -133,7 +162,10 @@ LiveSearch = {
 										
 										Ext.each(result.albums_loop, function(item, index, allItems) {
 											this.searchMenu.addItem({
-												text: item.album,
+												text: tpl.apply({
+													title: item.album,
+													id: 'album_id:' + item.album_id
+												}),
 												icon: '/music/' + (item.artwork || 0) + '/cover_50x50_o',
 												album_id: item.album_id
 											});
@@ -152,7 +184,10 @@ LiveSearch = {
 										
 										Ext.each(result.tracks_loop, function(item, index, allItems) {
 											this.searchMenu.addItem({
-												text: item.track,
+												text: tpl.apply({
+													title: item.track,
+													id: 'track_id:' + item.track_id
+												}),
 												icon: '/music/' + (item.coverid || 0) + '/cover_50x50_o',
 												track_id: item.track_id
 											});
