@@ -128,7 +128,6 @@ LiveSearch = {
 										if (item) {
 											self.playAddAction(item.child(selector));
 										}
-										
 									}
 								}
 							});
@@ -141,12 +140,14 @@ LiveSearch = {
 						
 						var params = Ext.id(target).split(':');
 
-						SqueezeJS.Controller.playerRequest({
-							params: ['playlistcontrol', 'cmd:' + (params[0] == 'play' ? 'load' : params[0]), (params[1] == 'contributor_id' ? 'artist_id' : params[1]) + ':' + params[2] ],
-							showBriefly: params[3]
-						});
-						
-						self.playActionTriggered = true;
+						if (params.length > 2) {
+							SqueezeJS.Controller.playerRequest({
+								params: ['playlistcontrol', 'cmd:' + (params[0] == 'play' ? 'load' : params[0]), (params[1] == 'contributor_id' ? 'artist_id' : params[1]) + ':' + params[2] ],
+								showBriefly: params.slice(3).join(':')
+							});
+							
+							self.playActionTriggered = true;
+						}
 					}
 				}),
 
