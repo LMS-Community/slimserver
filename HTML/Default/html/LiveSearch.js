@@ -66,7 +66,7 @@ LiveSearch = {
 					
 					listeners: {
 						click: function(self, menuItem, e) {
-							var target = e.getTarget();
+							var target = e ? e.getTarget() : null;
 							
 							// check whether user clicked one of the playlist controls
 							if ( target && Ext.id(target).match(/^(add|play)/) ) {
