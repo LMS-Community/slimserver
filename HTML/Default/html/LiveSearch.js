@@ -61,7 +61,7 @@ LiveSearch = {
 						album: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('album') + '%20({title})&album_id={id}&player={player}/index.html?index=0'),
 						contributor: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&mode=albums&linktitle=' + SqueezeJS.string('artist') + '%20({title})&artist_id={id}&player={player}/'),
 						search: new Ext.Template( webroot + 'clixmlbrowser/clicmd=browselibrary+items&linktitle=' + SqueezeJS.string('search') + '&mode=search/index.html?player={player}&index={id}&submit=Search&q={title}'),
-						item: new Ext.Template( '<div>{title}<span class="browsedbControls"><img src="' + webroot + 'html/images/b_play.gif" id="play:{id}:{title}">&nbsp;<img src="' + webroot + 'html/images/b_add.gif" id="add:{id}:{title}"></span></div>')
+						item: new Ext.Template( '<div>{title}<span class="browsedbControls"><img src="' + webroot + 'html/images/b_play.gif" id="play:{id}:{title}" class="livesearch-play">&nbsp;<img src="' + webroot + 'html/images/b_add.gif" id="add:{id}:{title}" class="livesearch-add"></span></div>')
 					},
 					
 					listeners: {
@@ -70,14 +70,7 @@ LiveSearch = {
 							
 							// check whether user clicked one of the playlist controls
 							if ( target && Ext.id(target).match(/^(add|play)/) ) {
-								var params = Ext.id(target).split(':');
-
-								SqueezeJS.Controller.playerRequest({
-									params: ['playlistcontrol', 'cmd:' + (params[0] == 'play' ? 'load' : params[0]), (params[1] == 'contributor_id' ? 'artist_id' : params[1]) + ':' + params[2] ],
-									showBriefly: params[3]
-								});
-								
-								self.playActionTriggered = true;
+								self.playAddAction(target);
 
 								return;
 							}
@@ -113,7 +106,47 @@ LiveSearch = {
 								delete self.playActionTriggered;
 								return false;
 							}
+						},
+						
+						afterrender: function(self, a, b, c) {
+							new Ext.KeyMap(self.id, {
+								key: 'ap',
+								fn: function(key, e) {
+									if (!e)
+										return;
+									
+									var selector;
+									if (e.getKey() == e.A) {
+										selector = 'img.livesearch-add';
+									}
+									else if (e.getKey() == e.P) {
+										selector = 'img.livesearch-play';
+									}
+
+									if (selector) {
+										var item = e.getTarget(null, null, true);
+										if (item) {
+											self.playAddAction(item.child(selector));
+										}
+										
+									}
+								}
+							});
 						}
+					},
+					
+					playAddAction: function(target) {
+						if (!target)
+							return;
+						
+						var params = Ext.id(target).split(':');
+
+						SqueezeJS.Controller.playerRequest({
+							params: ['playlistcontrol', 'cmd:' + (params[0] == 'play' ? 'load' : params[0]), (params[1] == 'contributor_id' ? 'artist_id' : params[1]) + ':' + params[2] ],
+							showBriefly: params[3]
+						});
+						
+						self.playActionTriggered = true;
 					}
 				}),
 
