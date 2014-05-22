@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<extension>
+	<id>6e5e0a00-e18a-11e3-8b68-0800200c9a66</id>
+	<name>PLUGIN_EXTENDED_BROWSEMODES</name>
+	<module>Slim::Plugin::ExtendedBrowseModes::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_EXTENDED_BROWSEMODES_DESC</description>
+	<creator>Logitech</creator>
+
+	<defaultState>disabled</defaultState>
+        
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<type>2</type>
+
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9.0</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>

@@ -1,0 +1,28 @@
+PLUGIN_EXTENDED_BROWSEMODES
+	EN	Additional Browse Modes
+	
+PLUGIN_EXTENDED_BROWSEMODES_DESC
+	EN	Browse your music library by Album Artists, Composers and more.
+	
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
+	CS	Interpret alba
+	DA	Albumkunstner
+	DE	Album-Interpreten
+	EN	Album Artists
+	ES	Artistas de álbum
+	FI	Levyartisti
+	FR	Artistes, Album
+	HE	מבצע האלבום
+	IT	Artista album
+	NL	Albumartiest
+	NO	Albumartists
+	PL	Wykonawca albumu
+	RU	Исполнитель альбома
+	SV	Albumartist
+	ZH_CN	专辑艺人
+
+PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
+	DE	Komponisten
+	EN	Composers
+
+	

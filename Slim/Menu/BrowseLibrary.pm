@@ -85,7 +85,7 @@ This will default to the value of the C<id> of the menu item.
 If one of C<artists, albums, genres, years, tracks, playlists, playlistTracks, bmf>
 is used then it will override the default method from BrowseLibrary - use with caution.
 
-=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id>
+=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id role_id>
 
 When browsing to a deeper level in the menu hierarchy,
 then any of these values (and only these values)
@@ -575,7 +575,6 @@ sub _registerBaseNodes {
 			params       => {mode => 'playlists'},
 			feed         => \&_playlists,
 			icon         => 'html/images/playlists.png',
-			condition    => \&Slim::Schema::hasLibrary,
 			condition    => sub {
 								return Slim::Utils::Misc::getPlaylistDir() ||
 									# this might be expensive - perhaps need to cache this somehow
@@ -678,7 +677,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id);
+my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id);
 
 sub _topLevel {
 	my ($client, $callback, $args) = @_;
@@ -1041,7 +1040,7 @@ sub _artists {
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
 			my $extra;
-			if (scalar @searchTags) {
+			if (scalar @searchTags && !grep /role_id/, @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
 					name        => cstring($client, 'ALL_ALBUMS'),
