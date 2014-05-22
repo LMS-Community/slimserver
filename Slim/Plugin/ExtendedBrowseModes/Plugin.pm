@@ -5,6 +5,8 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Utils::Log;
+use Slim::Utils::Strings;
+use Slim::Utils::Text;
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -23,6 +25,27 @@ sub initPlugin {
 		icon         => 'html/images/artists.png',
 		id           => 'myMusicComposers',
 		weight       => 12,
+#	},{
+#		name         => 'Classical Music by Conductor',
+#		params       => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
+#		feed         => 'artists',
+#		icon         => 'html/images/artists.png',
+#		id           => 'myMusicConductors',
+#		weight       => 13,
+#	},{
+#		name         => 'Jazz Composers',
+#		params       => { role_id => 'COMPOSER', genre_id => 'Jazz' },
+#		feed         => 'artists',
+#		icon         => 'html/images/artists.png',
+#		id           => 'myMusicJazzComposers',
+#		weight       => 13,
+#	},{
+#		name         => 'Audiobooks',
+#		params       => { genre_id => 'Audiobooks' },
+#		feed         => 'albums',
+#		icon         => 'html/images/albums.png',
+#		id           => 'myMusicAudiobooks',
+#		weight       => 14,
 	});
 
 	foreach (@menus) {
@@ -52,6 +75,25 @@ sub registerBrowseMode {
 	# replace role strings with IDs
 	if ($params->{role_id}) {
 		$params->{role_id} = join(',', (map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $params->{role_id})) );
+	}
+	
+	# replace genre name with ID
+	if ( Slim::Schema::hasLibrary() && $params->{genre_id} && !Slim::Schema->rs('Genre')->find($params->{genre_id}) 
+		&& (my $genre = Slim::Schema->rs('Genre')->search({ 'name' => $params->{genre_id} })->first) ) 
+	{
+		$params->{genre_id} = $genre->id;
+	}
+	
+	# create string token if it doesn't exist already
+	if ( !Slim::Utils::Strings::stringExists($name) ) {
+		my $token = Slim::Utils::Text::ignoreCaseArticles($name, 1);
+		$token =~ s/\s/_/g;
+		$token = 'PLUGIN_EXTENDED_BROWSEMODES_' . $token; 
+		Slim::Utils::Strings::storeExtraStrings([{
+			strings => { EN => $name},
+			token   => $token,
+		}]);
+		$name = $token;
 	}
 
 	my $addSearchTags = '';
