@@ -11,16 +11,15 @@ sub initPlugin {
 
 	my @menus = ({
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
-		role_id      => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-		feed         => 'Slim::Menu::BrowseLibrary::_artists',
+		params       => { role_id => 'ALBUMARTIST' },
+		feed         => 'artists',
 		icon         => 'html/images/artists.png',
 		id           => 'myMusicAlbumArtists',
 		weight       => 11,
-	},
-	{
+	},{
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
-		role_id      => Slim::Schema::Contributor->typeToRole('COMPOSER'),
-		feed         => 'Slim::Menu::BrowseLibrary::_artists',
+		params       => { role_id => 'COMPOSER' },
+		feed         => 'artists',
 		icon         => 'html/images/artists.png',
 		id           => 'myMusicComposers',
 		weight       => 12,
@@ -43,12 +42,32 @@ sub registerBrowseMode {
 	my $weight   = $item->{weight};
 	my $icon     = $item->{icon};
 	my $role_id  = $item->{role_id};
+	my $params   = $item->{params};
+	
+	# replace feed placeholders
+	if ($feed !~ /^Slim::Menu::BrowseLibrary/) {
+		$feed = "Slim::Menu::BrowseLibrary::_$feed";
+	}
+	
+	# replace role strings with IDs
+	if ($params->{role_id}) {
+		$params->{role_id} = join(',', (map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $params->{role_id})) );
+	}
+
+	my $addSearchTags = '';
+	while ( my ($key, $value) = each(%$params) ) {
+		$addSearchTags .= qq{
+			push \@{\$pt->{searchTags}}, '$key:$value' unless grep /$key/, \@{\$pt->{searchTags}};
+		};
+	}
 
 	my $code = qq{
 package ${package}::${subclass};
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
+
+use Slim::Menu::BrowseLibrary;
 
 sub initPlugin {
 	my \$class = shift;
@@ -61,8 +80,8 @@ sub initPlugin {
 			\$pt ||= {};
 			\$pt->{searchTags} ||= [];
 			
-			push \@{\$pt->{searchTags}}, 'role_id:$role_id' unless grep /role_id/, \@{\$pt->{searchTags}};
-			
+			$addSearchTags
+
 			$feed(\$client, \$callback, \$args, \$pt);
 		},
 		node   => 'myMusic',
