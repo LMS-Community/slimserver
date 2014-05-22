@@ -46,6 +46,13 @@ sub initPlugin {
 #		icon         => 'html/images/albums.png',
 #		id           => 'myMusicAudiobooks',
 #		weight       => 14,
+	},{
+		name         => Slim::Music::Info::variousArtistString(),
+		params       => { artist_id => Slim::Music::Info::variousArtistString() },
+		feed         => 'albums',
+		icon         => 'html/images/albums.png',
+		id           => 'myMusicVariousArtists',
+		weight       => 22,
 	});
 
 	foreach (@menus) {
@@ -82,6 +89,13 @@ sub registerBrowseMode {
 		&& (my $genre = Slim::Schema->rs('Genre')->search({ 'name' => $params->{genre_id} })->first) ) 
 	{
 		$params->{genre_id} = $genre->id;
+	}
+	
+	# replace artist name with ID
+	if ( Slim::Schema::hasLibrary() && $params->{artist_id} && !Slim::Schema->rs('Contributor')->find($params->{artist_id}) 
+		&& (my $artist = Slim::Schema->rs('Contributor')->search({ 'name' => $params->{artist_id} })->first) ) 
+	{
+		$params->{artist_id} = $artist->id;
 	}
 	
 	# create string token if it doesn't exist already
