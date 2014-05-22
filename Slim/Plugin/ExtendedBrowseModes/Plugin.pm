@@ -71,7 +71,6 @@ sub registerBrowseMode {
 	my $feed     = $item->{feed};
 	my $weight   = $item->{weight};
 	my $icon     = $item->{icon};
-	my $role_id  = $item->{role_id};
 	my $params   = $item->{params};
 	
 	# replace feed placeholders
@@ -82,20 +81,6 @@ sub registerBrowseMode {
 	# replace role strings with IDs
 	if ($params->{role_id}) {
 		$params->{role_id} = join(',', (map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $params->{role_id})) );
-	}
-	
-	# replace genre name with ID
-	if ( Slim::Schema::hasLibrary() && $params->{genre_id} && !Slim::Schema->rs('Genre')->find($params->{genre_id}) 
-		&& (my $genre = Slim::Schema->rs('Genre')->search({ 'name' => $params->{genre_id} })->first) ) 
-	{
-		$params->{genre_id} = $genre->id;
-	}
-	
-	# replace artist name with ID
-	if ( Slim::Schema::hasLibrary() && $params->{artist_id} && !Slim::Schema->rs('Contributor')->find($params->{artist_id}) 
-		&& (my $artist = Slim::Schema->rs('Contributor')->search({ 'name' => $params->{artist_id} })->first) ) 
-	{
-		$params->{artist_id} = $artist->id;
 	}
 	
 	# create string token if it doesn't exist already
@@ -113,7 +98,7 @@ sub registerBrowseMode {
 	my $addSearchTags = '';
 	while ( my ($key, $value) = each(%$params) ) {
 		$addSearchTags .= qq{
-			push \@{\$pt->{searchTags}}, '$key:$value' unless grep /$key/, \@{\$pt->{searchTags}};
+			push \@{\$pt->{searchTags}}, '$key:' . Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId('$value', '$key') unless grep /$key/, \@{\$pt->{searchTags}};
 		};
 	}
 
@@ -123,6 +108,7 @@ package ${package}::${subclass};
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Slim::Plugin::ExtendedBrowseModes::Plugin;
 use Slim::Menu::BrowseLibrary;
 
 sub initPlugin {
@@ -173,5 +159,31 @@ sub _pluginDataFor {
 
 	$subclass->initPlugin();
 }
+
+# transform genre_id/artist_id into real IDs if a text is used (eg. "Various Artists")
+sub valueToId {
+	my ($class, $value, $key) = @_;
+	
+	return (defined $value ? $value : 0) unless $value && $key =~ /^(genre|artist)_id/;
+	
+	my $category = $1;
+	
+	my $schema;
+	if ($category eq 'genre') {
+		$schema = 'Genre';
+	}
+	elsif ($category eq 'artist') {
+		$schema = 'Contributor';
+	}
+	
+	# replace artist name with ID
+	if ( $schema && Slim::Schema::hasLibrary() && !Slim::Schema->rs($schema)->find($value) 
+		&& (my $item = Slim::Schema->rs($schema)->search({ 'name' => $value })->first) ) 
+	{
+		$value = $item->id;
+	}
+	
+	return $value;
+}	
 
 1;
