@@ -1,0 +1,57 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES" desc="" %]
+		<table width="100%">
+			<tr>
+				<th>[% "ENABLE" | string %]</th>
+				<th>[% "TITLE" | string %]</th>
+				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
+				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_RULE" | string(1) %]</th>
+				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_RULE" | string(2) %]</th>
+				<th>&nbsp;</th>
+			</tr>
+		[% FOREACH menu = extended_menus; menu_no = loop.count %]
+			<tr>
+				<td>
+					<input type="checkbox" name="pref_enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] />
+				</td>
+				[% IF menu.dontEdit %]
+					<td colspan="5">[% menu.name | getstring %]</td>
+				[% ELSE %]
+					<td width="50%">
+						<input type="text" name="pref_name[% menu_no %]" value="[% menu.name %]" style="width: 100%;"/>
+					</td>
+					<td>
+						<select class="stdedit" name="pref_feed[% menu_no %]">
+							<option value="0">&nbsp;</option>
+							<option value="albums" [% IF menu.feed == 'albums' %]selected[% END %]>[% "ALBUMS" | string %]</option>
+							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
+						</select>
+					</td>
+					[% params = menu.params.keys %]
+					[% FOREACH x = [0, 1] %]
+					<td>
+						[% param = params.$x %]
+						<select class="stdedit" name="pref_param[% x %]_[% menu_no %]">
+							<option value="">&nbsp;</option>
+							<optgroup label="[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]">
+								[% FOREACH role = roles.keys %]
+									<option value="[% roles.$role %]" [% IF param && param == 'role_id' && (menu.params.$param == role || menu.params.$param == roles.$role) %]selected[% END %]>[% role | string %]</option>
+								[% END %]
+							</optgroup>
+							<optgroup label="[% "GENRES" | string %][% "COLON" | string %]">
+								[% FOREACH genre = genre_list.keys.sort %]
+									<option value="[% genre_list.$genre %]" [% IF param && param == 'genre_id' && (menu.params.$param == genre || menu.params.$param == genre_list.$genre) %]selected[% END %]>[% genre | html %]</option>
+								[% END %]
+							</optgroup>
+						</select>
+					</td>
+					[% END %]
+					<td>[% IF menu.name %]<input type="submit" name="delete[% menu_no %]" value="[% "DELETE" | string %]">[% END %]</td>
+				[% END %]
+			</tr>
+		[% END %]
+		</table>
+	[% END %]
+
+[% PROCESS settings/footer.html %]

@@ -1,62 +1,92 @@
 package Slim::Plugin::ExtendedBrowseModes::Plugin;
 
+# Logitech Media Server Copyright 2001-2014 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 
 use base qw(Slim::Plugin::Base);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Text;
+
+my $prefs = preferences('plugin.extendedbrowsemodes');
+
+$prefs->init({
+	menus => [{
+		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
+		params  => { role_id => 'ALBUMARTIST' },
+		feed    => 'artists',
+		icon    => 'html/images/artists.png',
+		id      => 'myMusicAlbumArtists',
+		weight  => 11,
+		enabled => 1,
+		dontEdit => 1,
+	},{
+		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
+		params  => { role_id => 'COMPOSER' },
+		feed    => 'artists',
+		icon    => 'html/images/artists.png',
+		id      => 'myMusicComposers',
+		weight  => 12,
+		enabled => 1,
+	},{
+		name    => 'Classical Music by Conductor',
+		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
+		feed    => 'artists',
+		icon    => 'html/images/artists.png',
+		id      => 'myMusicConductors',
+		weight  => 13,
+		enabled => 1,
+	},{
+		name    => 'Jazz Composers',
+		params  => { role_id => 'COMPOSER', genre_id => 'Jazz' },
+		feed    => 'artists',
+		icon    => 'html/images/artists.png',
+		id      => 'myMusicJazzComposers',
+		weight  => 13,
+		enabled => 1,
+	},{
+		name    => 'Audiobooks',
+		params  => { genre_id => 'Audiobooks' },
+		feed    => 'albums',
+		icon    => 'html/images/albums.png',
+		id      => 'myMusicAudiobooks',
+		weight  => 14,
+		enabled => 1,
+	},{
+		name    => Slim::Music::Info::variousArtistString(),
+		params  => { artist_id => Slim::Music::Info::variousArtistString() },
+		feed    => 'albums',
+		icon    => 'html/images/albums.png',
+		id      => 'myMusicVariousArtists',
+		weight  => 22,
+		enabled => 1,
+		dontEdit => 1,
+	}]
+});
+
+$prefs->setChange( \&initMenus, 'menus' );
 
 sub initPlugin {
 	my ( $class ) = @_;
 
-	my @menus = ({
-		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
-		params       => { role_id => 'ALBUMARTIST' },
-		feed         => 'artists',
-		icon         => 'html/images/artists.png',
-		id           => 'myMusicAlbumArtists',
-		weight       => 11,
-	},{
-		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
-		params       => { role_id => 'COMPOSER' },
-		feed         => 'artists',
-		icon         => 'html/images/artists.png',
-		id           => 'myMusicComposers',
-		weight       => 12,
-#	},{
-#		name         => 'Classical Music by Conductor',
-#		params       => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
-#		feed         => 'artists',
-#		icon         => 'html/images/artists.png',
-#		id           => 'myMusicConductors',
-#		weight       => 13,
-#	},{
-#		name         => 'Jazz Composers',
-#		params       => { role_id => 'COMPOSER', genre_id => 'Jazz' },
-#		feed         => 'artists',
-#		icon         => 'html/images/artists.png',
-#		id           => 'myMusicJazzComposers',
-#		weight       => 13,
-#	},{
-#		name         => 'Audiobooks',
-#		params       => { genre_id => 'Audiobooks' },
-#		feed         => 'albums',
-#		icon         => 'html/images/albums.png',
-#		id           => 'myMusicAudiobooks',
-#		weight       => 14,
-	},{
-		name         => Slim::Music::Info::variousArtistString(),
-		params       => { artist_id => Slim::Music::Info::variousArtistString() },
-		feed         => 'albums',
-		icon         => 'html/images/albums.png',
-		id           => 'myMusicVariousArtists',
-		weight       => 22,
-	});
+	if ( main::WEBUI ) {
+		require Slim::Plugin::ExtendedBrowseModes::Settings;
+		Slim::Plugin::ExtendedBrowseModes::Settings->new;
+	}
 
-	foreach (@menus) {
-		$class->registerBrowseMode($_);
+	$class->initMenus();
+}
+
+sub initMenus {
+	foreach (@{$prefs->get('menus') || []}) {
+		next unless $_->{enabled};
+		__PACKAGE__->registerBrowseMode($_);
 	}
 }
 
