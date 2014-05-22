@@ -11,22 +11,16 @@ sub initPlugin {
 
 	my @menus = ({
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
-		params       => {
-			mode => 'albumartists',
-			role_id => Slim::Schema::Contributor->typeToRole('ALBUMARTIST')
-		},
-		feed         => \&Slim::Menu::BrowseLibrary::_artists,
+		role_id      => Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
+		feed         => 'Slim::Menu::BrowseLibrary::_artists',
 		icon         => 'html/images/artists.png',
 		id           => 'myMusicAlbumArtists',
 		weight       => 11,
 	},
 	{
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
-		params       => {
-			mode => 'composers',
-			role_id => Slim::Schema::Contributor->typeToRole('COMPOSER')
-		},
-		feed         => sub \&Slim::Menu::BrowseLibrary::_artists,
+		role_id      => Slim::Schema::Contributor->typeToRole('COMPOSER'),
+		feed         => 'Slim::Menu::BrowseLibrary::_artists',
 		icon         => 'html/images/artists.png',
 		id           => 'myMusicComposers',
 		weight       => 12,
@@ -44,10 +38,11 @@ sub generate {
 
 	my $package  = __PACKAGE__;
 	my $tag      = lc($subclass);
-	my $name     = $item->{name};    # a string token
+	my $name     = $item->{name};
 	my $feed     = $item->{feed};
 	my $weight   = $item->{weight};
 	my $icon     = $item->{icon};
+	my $role_id  = $item->{role_id};
 
 	my $code = qq{
 package ${package}::${subclass};
@@ -60,7 +55,16 @@ sub initPlugin {
 	
 	\$class->SUPER::initPlugin(
 		tag    => '$tag',
-		feed   => \$feed,
+		feed   => sub {
+			my (\$client, \$callback, \$args, \$pt) = \@_;
+			
+			\$pt ||= {};
+			\$pt->{searchTags} ||= [];
+			
+			push \@{\$pt->{searchTags}}, 'role_id:$role_id' unless grep /role_id/, \@{\$pt->{searchTags}};
+			
+			$feed(\$client, \$callback, \$args, \$pt);
+		},
 		node   => 'myMusic',
 		menu   => 'browse',
 		weight => $weight,
