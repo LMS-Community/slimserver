@@ -27,11 +27,11 @@ sub initPlugin {
 	});
 
 	foreach (@menus) {
-		$class->generate($_);
+		$class->registerBrowseMode($_);
 	}
 }
 
-sub generate {
+sub registerBrowseMode {
 	my ($class, $item) = @_;
 
 	my $subclass = $item->{id} || return;
