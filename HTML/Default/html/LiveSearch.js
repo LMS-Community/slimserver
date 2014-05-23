@@ -27,7 +27,8 @@ LiveSearch = {
 				selectOnFocus: true,
 
 				searchMenu: new Ext.menu.Menu({
-					width: 200,
+					width: 250,
+					autoScroll: false,
 					maxHeight: document.height - 300,
 					items: [],
 					show: function() {
@@ -108,7 +109,7 @@ LiveSearch = {
 							}
 						},
 						
-						afterrender: function(self, a, b, c) {
+						afterrender: function(self) {
 							new Ext.KeyMap(self.id, {
 								key: 'ap',
 								fn: function(key, e) {
@@ -257,6 +258,10 @@ LiveSearch = {
 				},
 				
 				listeners: {
+					// validate as soon as the input gets the focus, so we don't lose the menu if we come back from the menu
+					focus: function() {
+						this.validationTask.delay(0);
+					},
 					specialkey: function(field, e) {
 						if (e.getKey() == e.DOWN) {
 							this.searchMenu.focus();

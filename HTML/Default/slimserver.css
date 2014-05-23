@@ -672,6 +672,10 @@ div.thumbwrap {
 	vertical-align: top;
 }
 
+#headerSearch .searchInput {
+	width: 220px;
+}
+
 form#advSearchForm.resultsPage {
 	display: none;
 }
