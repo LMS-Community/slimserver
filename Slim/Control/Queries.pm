@@ -2659,6 +2659,8 @@ sub searchQuery {
 		
 	my $dbh = Slim::Schema->dbh;
 	
+	my $total = 0;
+	
 	my $doSearch = sub {
 		my ($type, $name, $w, $p, $c) = @_;
 	
@@ -2689,6 +2691,7 @@ sub searchQuery {
 		my ($count) = $dbh->selectrow_array( qq{SELECT COUNT(1) FROM ($sql) AS t1}, undef, @$p );
 	
 		$count += 0;
+		$total += $count;
 	
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 	
@@ -2735,6 +2738,7 @@ sub searchQuery {
 	
 	# XXX - should we search for playlists, too?
 	
+	$request->addResult('count', $total);
 	$request->setStatusDone();
 }
 
