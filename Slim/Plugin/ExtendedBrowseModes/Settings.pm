@@ -49,9 +49,10 @@ sub handler {
 			my ($menu) = $params->{"id$i"} eq '_new_' ? {} : grep { $_->{id} eq $params->{"id$i"} } @$menus;
 
 			next unless $menu;
+
+			$menu->{enabled} = $params->{"enabled$i"};
 			
 			if ($menu->{dontEdit}) {
-				$menu->{enabled} = $params->{"enabled$i"};
 				next;
 			}
 			else {
@@ -59,10 +60,9 @@ sub handler {
 
 				if ( $params->{"id$i"} eq '_new_' ) {
 					
-					$params->{"enabled$i"} = '1';
-					
 					$menu = {
 						id => join('_', $params->{"feed$i"}, $params->{"roleid$i"} || '', $params->{"genreid$i"} || '', time),
+						enabled => 1,
 					};
 					
 					if ( $params->{"feed$i"} eq 'albums' ) {
@@ -81,7 +81,7 @@ sub handler {
 				$menu->{icon} = 'html/images/' . $params->{"feed$i"} . '.png';
 				$menu->{weight} = ($params->{"feed$i"} eq 'albums' ? 25 : 15) unless $menu->{feed} && $menu->{feed} eq $params->{"feed$i"};
 				
-				foreach (qw(enabled feed name)) {
+				foreach (qw(feed name)) {
 					$menu->{$_} = $params->{$_ . $i};
 				}
 				

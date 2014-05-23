@@ -9,6 +9,7 @@ use strict;
 
 use base qw(Slim::Plugin::Base);
 
+use Slim::Menu::BrowseLibrary;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
@@ -19,7 +20,7 @@ my $prefs = preferences('plugin.extendedbrowsemodes');
 $prefs->init({
 	menus => [{
 		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
-		params  => { role_id => 'ALBUMARTIST' },
+		params  => { role_id => 'ALBUMARTIST,ARTIST' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
 		id      => 'myMusicAlbumArtists',
@@ -85,109 +86,66 @@ sub initPlugin {
 
 sub initMenus {
 	foreach (@{$prefs->get('menus') || []}) {
+		# remove menu item before adding it back in - we might have changed its definition
+		Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
+		
 		next unless $_->{enabled};
+		
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
 
 sub registerBrowseMode {
 	my ($class, $item) = @_;
-
-	my $subclass = $item->{id} || return;
-
-	my $package  = __PACKAGE__;
-	my $tag      = lc($subclass);
-	my $name     = $item->{name};
-	my $feed     = $item->{feed};
-	my $weight   = $item->{weight};
-	my $icon     = $item->{icon};
-	my $params   = $item->{params};
-	
-	# replace feed placeholders
-	if ($feed !~ /^Slim::Menu::BrowseLibrary/) {
-		$feed = "Slim::Menu::BrowseLibrary::_$feed";
-	}
-	
-	# replace role strings with IDs
-	if ($params->{role_id}) {
-		$params->{role_id} = join(',', (map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $params->{role_id})) );
-	}
 	
 	# create string token if it doesn't exist already
-	if ( !Slim::Utils::Strings::stringExists($name) ) {
-		my $token = Slim::Utils::Text::ignoreCaseArticles($name, 1);
+	my $nameToken = $class->registerCustomString($item->{name});
+
+	# replace feed placeholders
+	my $feed = \&Slim::Menu::BrowseLibrary::_artists;
+	if ( $item->{feed} !~ /\balbums$/ ) {
+		$feed = \&Slim::Menu::BrowseLibrary::_albums;
+	}
+	
+	my %params = map {
+		$_ => Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($item->{params}->{$_}, $_)
+	} keys %{$item->{params}};
+	
+	Slim::Menu::BrowseLibrary->registerNode({
+		type         => 'link',
+		name         => $nameToken,
+		params       => {
+			mode => $item->{feed},
+			%params,
+		},
+		feed         => $feed,
+		icon         => $item->{icon},
+		jiveIcon     => $item->{icon},
+		homeMenuText => $nameToken,
+		condition    => \&Slim::Schema::hasLibrary,
+		id           => $item->{id},
+		weight       => $item->{weight},
+	});
+}
+
+sub registerCustomString {
+	my ($class, $string) = @_;
+	
+	if ( !Slim::Utils::Strings::stringExists($string) ) {
+		my $token = Slim::Utils::Text::ignoreCaseArticles($string, 1);
+		
 		$token =~ s/\s/_/g;
-		$token = 'PLUGIN_EXTENDED_BROWSEMODES_' . $token; 
+		$token = 'PLUGIN_EXTENDED_BROWSEMODES_' . $token;
+		 
 		Slim::Utils::Strings::storeExtraStrings([{
-			strings => { EN => $name},
+			strings => { EN => $string},
 			token   => $token,
 		}]);
-		$name = $token;
+
+		return $token;
 	}
-
-	my $addSearchTags = '';
-	while ( my ($key, $value) = each(%$params) ) {
-		$addSearchTags .= qq{
-			push \@{\$pt->{searchTags}}, '$key:' . Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId('$value', '$key') unless grep /$key/, \@{\$pt->{searchTags}};
-		};
-	}
-
-	my $code = qq{
-package ${package}::${subclass};
-
-use strict;
-use base qw(Slim::Plugin::OPMLBased);
-
-use Slim::Plugin::ExtendedBrowseModes::Plugin;
-use Slim::Menu::BrowseLibrary;
-
-sub initPlugin {
-	my \$class = shift;
 	
-	\$class->SUPER::initPlugin(
-		tag    => '$tag',
-		feed   => sub {
-			my (\$client, \$callback, \$args, \$pt) = \@_;
-			
-			\$pt ||= {};
-			\$pt->{searchTags} ||= [];
-			
-			$addSearchTags
-
-			$feed(\$client, \$callback, \$args, \$pt);
-		},
-		node   => 'myMusic',
-		menu   => 'browse',
-		weight => $weight,
-		type   => 'link',
-		icon   => '$icon',
-	);
-}
-
-sub getDisplayName { '$name' }
-
-sub icon { '$icon' }
-
-sub _pluginDataFor {
-	my ( \$class, \$key ) = \@_;
-
-	return \$class->icon if \$key eq 'icon';
-	
-	return \$class->SUPER::_pluginDataFor(\$key);
-}
-
-1;
-	};
-
-	eval $code;
-	if ( $@ ) {
-		logError( "Unable to dynamically create radio class $subclass: $@" );
-		next;
-	}
-
-	$subclass = "${package}::${subclass}";
-
-	$subclass->initPlugin();
+	return $string;
 }
 
 # transform genre_id/artist_id into real IDs if a text is used (eg. "Various Artists")
