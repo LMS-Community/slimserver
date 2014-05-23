@@ -1040,7 +1040,7 @@ sub _artists {
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			}
 			my $extra;
-			if (scalar @searchTags && !grep /role_id/, @searchTags) {
+			if (scalar grep { $_ !~ /role_id/ } @searchTags) {
 				my $params = _tagsToParams(\@searchTags);
 				$extra = [ {
 					name        => cstring($client, 'ALL_ALBUMS'),
