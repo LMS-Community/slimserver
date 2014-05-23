@@ -23,16 +23,16 @@ $prefs->init({
 		params  => { role_id => 'ALBUMARTIST,ARTIST' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
-		id      => 'myMusicAlbumArtists',
+		id      => 'myMusicArtistsAlbumArtists',
 		weight  => 11,
-		enabled => 1,
+		enabled => 0,
 		dontEdit => 1,
 	},{
 		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
-		id      => 'myMusicComposers',
+		id      => 'myMusicArtistsComposers',
 		weight  => 12,
 		enabled => 1,
 	},{
@@ -40,17 +40,17 @@ $prefs->init({
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
-		id      => 'myMusicConductors',
+		id      => 'myMusicArtistsConductors',
 		weight  => 13,
-		enabled => 1,
+		enabled => 0,
 	},{
 		name    => 'Jazz Composers',
 		params  => { role_id => 'COMPOSER', genre_id => 'Jazz' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
-		id      => 'myMusicJazzComposers',
+		id      => 'myMusicArtistsJazzComposers',
 		weight  => 13,
-		enabled => 1,
+		enabled => 0,
 	},{
 		name    => 'Audiobooks',
 		params  => { genre_id => 'Audiobooks' },
@@ -58,13 +58,13 @@ $prefs->init({
 		icon    => 'html/images/albums.png',
 		id      => 'myMusicAudiobooks',
 		weight  => 14,
-		enabled => 1,
+		enabled => 0,
 	},{
 		name    => Slim::Music::Info::variousArtistString(),
 		params  => { artist_id => Slim::Music::Info::variousArtistString() },
 		feed    => 'albums',
 		icon    => 'html/images/albums.png',
-		id      => 'myMusicVariousArtists',
+		id      => 'myMusicArtistsVariousArtists',
 		weight  => 22,
 		enabled => 1,
 		dontEdit => 1,
@@ -103,7 +103,7 @@ sub registerBrowseMode {
 
 	# replace feed placeholders
 	my $feed = \&Slim::Menu::BrowseLibrary::_artists;
-	if ( $item->{feed} !~ /\balbums$/ ) {
+	if ( $item->{feed} =~ /\balbums$/ ) {
 		$feed = \&Slim::Menu::BrowseLibrary::_albums;
 	}
 	

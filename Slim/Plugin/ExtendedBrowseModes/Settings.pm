@@ -49,6 +49,24 @@ sub handler {
 			my ($menu) = $params->{"id$i"} eq '_new_' ? {} : grep { $_->{id} eq $params->{"id$i"} } @$menus;
 
 			next unless $menu;
+			
+			# special treatment for the AA browse mode: re-configure "Artists" menu to show all artists if AA is enabled
+			if ( $menu->{id} eq 'myMusicArtistsAlbumArtists' && $menu->{enabled} != $params->{"enabled$i"} ) {
+				my $serverPrefs = preferences('server');
+
+				# AA was disabled - restore saved settings 
+				if ($menu->{enabled}) {
+					foreach (qw(composerInArtists conductorInArtists bandInArtists)) {
+						$serverPrefs->set($_, $prefs->get($_) ? 1 : 0);
+					}
+				}
+				else {
+					foreach (qw(composerInArtists conductorInArtists bandInArtists)) {
+						$prefs->set($_, $serverPrefs->get($_) ? 1 : 0);
+						$serverPrefs->set($_, 1);
+					}
+				}
+			}
 
 			$menu->{enabled} = $params->{"enabled$i"};
 			
