@@ -32,6 +32,16 @@ use constant CACHE_TIME => 3600; # how long to cache browse sessions
 
 my $log = logger('formats.xml');
 my $prefs = preferences('server');
+	
+# use a timestamp to let cached pages expire on certain events
+my $cacheTimestamp; 
+if ( !main::SCANNER ) {
+	# Wipe cached data after rescan
+	Slim::Control::Request::subscribe( \&wipeCaches, [['rescan'], ['done']] );
+
+	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
+				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language) );
+}
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
@@ -1233,17 +1243,18 @@ sub webLink {
 
 	my $renderCacheKey;
 	if ( $args->{path} =~ /\bbrowselibrary\b.*?\bmode=(?:artists|albums|genres|years)\b/ && $args->{url_query} !~ /\baction=/ ) {
+		
+		# let cache expire between server restarts
+		$cacheTimestamp ||= time();
+		
 		# cache key needs to make sure we respect the various prefs and cookies which control the display mode...
 		$renderCacheKey = join(':', 
 			'blweb', 
-			Slim::Music::Import->lastScanTime, 
+			$cacheTimestamp, 
 			$index, 
 			$quantity, 
 			(map { $params{$_} || '' } qw(mode sort artist_id album_id year index)),
 			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy)),
-			(map { $prefs->get($_) || '' } qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
-												composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist)),
-			$prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ] || '',
 		);
 
 		if ( my $cached = Slim::Utils::Cache->new->get($renderCacheKey) ) {
@@ -1266,6 +1277,10 @@ sub webLink {
 	} else {
 		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
 	}
+}
+
+sub wipeCaches {
+	$cacheTimestamp = time();
 }
 
 sub _makeWebLink {
