@@ -837,7 +837,8 @@ sub fileFilter {
 	return 0 unless (-l _ || -d _ || -f _);
 
 	# Make sure we can read the file, honoring ACLs.
-	if ( !main::ISWINDOWS ){
+	# don't use on Windows/Mac - it's not compatible with all versions
+	if ( !main::ISWINDOWS && !main::ISMAC ){
 		use filetest 'access';
 		return 0 if ! -r $fullpath;
 	}
