@@ -60,7 +60,7 @@ $prefs->init({
 		weight  => 14,
 		enabled => 0,
 	},{
-		name    => Slim::Music::Info::variousArtistString(),
+		name    => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
 		params  => { artist_id => Slim::Music::Info::variousArtistString() },
 		feed    => 'albums',
 		icon    => 'html/images/albums.png',

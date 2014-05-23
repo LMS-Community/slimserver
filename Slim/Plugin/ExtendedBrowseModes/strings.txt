@@ -31,4 +31,21 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	EN	Browse by
-	
+
+PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
+	CS	Sbírka
+	DA	Kompilationer
+	DE	Kompilationen
+	EN	Compilations
+	ES	Recopilaciones
+	FI	Kokoelmat
+	FR	Compilations
+	HE	אוספים
+	IT	Compilation
+	NL	Verzamelingen
+	NO	Samlinger
+	PL	Kompilacje
+	RU	Сборки
+	SV	Samlingar
+	ZH_CN	合辑
+
