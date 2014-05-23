@@ -1,3 +1,8 @@
+[% extJsScripts = BLOCK %]
+<script TYPE="text/javascript">
+	Ext.onReady(LiveSearch.init);
+</script>
+[% END %]
 [% IF browse_items.size %]
 	[% extJsScripts = BLOCK %]
 	<script TYPE="text/javascript">
@@ -17,6 +22,8 @@
 					} 
 				})
 			}
+			
+			LiveSearch.init();
 		});
 	</script>
 	[% END %]
