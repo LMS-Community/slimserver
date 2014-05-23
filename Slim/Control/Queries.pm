@@ -404,22 +404,18 @@ sub albumsQuery {
 					@roles = split /,/, $roleID;
 				}
 				else {
-					@roles = (
-						Slim::Schema::Contributor->typeToRole('ARTIST'), 
-						Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
-						Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-					);
+					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
 			
 					# Loop through each pref to see if the user wants to show that contributor role.
 					foreach (Slim::Schema::Contributor->contributorRoles) {
 						if ($prefs->get(lc($_) . 'InArtists')) {
-							push @roles, Slim::Schema::Contributor->typeToRole($_);
+							push @roles, $_;
 						}
 					}
 				}
 					
 				my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
-				push @{$p}, @roles;
+				push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 				push @{$w}, $cond;
 			}	
 		}
@@ -717,7 +713,7 @@ sub artistsQuery {
 		push @{$p}, $artistID;
 	}
 	else {
-		my $roles = ($roleID ? [ split /,/, $roleID ] : undef) || Slim::Schema->artistOnlyRoles || [];
+		my $roles = ($roleID ? [ Slim::Schema::Contributor->typeToRole(split /,/, $roleID) ] : undef) || Slim::Schema->artistOnlyRoles || [];
 		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
@@ -4971,21 +4967,17 @@ sub _getTagDataForTracks {
 		else {
 			# Tag 'a' returns either ARTIST or TRACKARTIST role
 			# Bug 16791: Need to include ALBUMARTIST too
-			@roles = (
-				Slim::Schema::Contributor->typeToRole('ARTIST'), 
-				Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
-				Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-			);
+			@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
 	
 			# Loop through each pref to see if the user wants to show that contributor role.
 			foreach (Slim::Schema::Contributor->contributorRoles) {
 				if ($prefs->get(lc($_) . 'InArtists')) {
-					push @roles, Slim::Schema::Contributor->typeToRole($_);
+					push @roles, $_;
 				}
 			}
 		}
 
-		push @{$p}, @roles;
+		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 		push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
 	};
 	
