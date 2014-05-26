@@ -40,7 +40,7 @@ if ( !main::SCANNER ) {
 	Slim::Control::Request::subscribe( \&wipeCaches, [['rescan'], ['done']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
-				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language) );
+				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
 }
 
 sub handleWebIndex {

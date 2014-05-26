@@ -19,15 +19,6 @@ my $prefs = preferences('plugin.extendedbrowsemodes');
 
 $prefs->init({
 	menus => [{
-		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST',
-		params  => { role_id => 'ALBUMARTIST,ARTIST' },
-		feed    => 'artists',
-		icon    => 'html/images/artists.png',
-		id      => 'myMusicArtistsAlbumArtists',
-		weight  => 11,
-		enabled => 0,
-		dontEdit => 1,
-	},{
 		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
@@ -86,6 +77,8 @@ sub initPlugin {
 
 sub initMenus {
 	foreach (@{$prefs->get('menus') || []}) {
+		next if $_->{id} =~ /AlbumArtists/;
+		
 		# remove menu item before adding it back in - we might have changed its definition
 		Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
 		

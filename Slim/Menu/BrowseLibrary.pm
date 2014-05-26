@@ -498,10 +498,19 @@ sub _getNodeList {
 	return [values %nodes];
 }
 
+sub isEnabledNode {
+	my ($client, $nodeId) = @_;
+
+	return if $prefs->get('disabled_' . $nodeId);
+	
+	return Slim::Schema::hasLibrary();
+}
+
 sub _registerBaseNodes {
 	my $class = shift;
 	
 	my @topLevel = (
+		# user configurable list of artists
 		{
 			type         => 'link',
 			name         => 'BROWSE_BY_ARTIST',
@@ -509,9 +518,39 @@ sub _registerBaseNodes {
 			feed         => \&_artists,
 			icon         => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ARTISTS',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => sub { isEnabledNode(@_) && $prefs->get('useUnifiedArtistsList') },
 			id           => 'myMusicArtists',
 			weight       => 10,
+		},
+		# Album artists only
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_ALBUMARTIST',
+			params       => {
+				mode => 'artists',
+				role_id => 'ALBUMARTIST,ARTIST'
+			},
+			feed         => \&_artists,
+			icon         => 'html/images/artists.png',
+			homeMenuText => 'BROWSE_ALBUMARTISTS',
+			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
+			id           => 'myMusicArtistsAlbumArtists',
+			weight       => 9,
+		},
+		# All artists of all roles
+		{
+			type         => 'link',
+			name         => 'BROWSE_BY_ALL_ARTISTS',
+			params       => {
+				mode => 'artists',
+				role_id => join ',', Slim::Schema::Contributor->contributorRoles(),
+			},
+			feed         => \&_artists,
+			icon         => 'html/images/artists.png',
+			homeMenuText => 'BROWSE_ARTISTS',
+			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
+			id           => 'myMusicArtistsAllArtists',
+			weight       => 11,
 		},
 		{
 			type         => 'link',
@@ -520,7 +559,7 @@ sub _registerBaseNodes {
 			feed         => \&_albums,
 			icon         => 'html/images/albums.png',
 			homeMenuText => 'BROWSE_ALBUMS',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => \&isEnabledNode,
 			id           => 'myMusicAlbums',
 			weight       => 20,
 		},
@@ -531,7 +570,7 @@ sub _registerBaseNodes {
 			feed         => \&_genres,
 			icon         => 'html/images/genres.png',
 			homeMenuText => 'BROWSE_GENRES',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => \&isEnabledNode,
 			id           => 'myMusicGenres',
 			weight       => 30,
 		},
@@ -542,7 +581,7 @@ sub _registerBaseNodes {
 			feed         => \&_years,
 			icon         => 'html/images/years.png',
 			homeMenuText => 'BROWSE_YEARS',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => \&isEnabledNode,
 			id           => 'myMusicYears',
 			weight       => 40,
 		},
@@ -554,7 +593,7 @@ sub _registerBaseNodes {
 			                                                  # including wantMetadata is a hack for ip3k
 			feed         => \&_albums,
 			homeMenuText => 'BROWSE_NEW_MUSIC',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => \&isEnabledNode,
 			id           => 'myMusicNewMusic',
 			weight       => 50,
 		},
@@ -565,7 +604,7 @@ sub _registerBaseNodes {
 			feed         => \&_bmf,
 			icon         => 'html/images/musicfolder.png',
 			homeMenuText => 'BROWSE_MUSIC_FOLDER',
-			condition    => sub {return Slim::Schema::hasLibrary && scalar @{ Slim::Utils::Misc::getAudioDirs() };},
+			condition    => sub {return isEnabledNode(@_) && scalar @{ Slim::Utils::Misc::getAudioDirs() };},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
 		},
@@ -578,7 +617,7 @@ sub _registerBaseNodes {
 			condition    => sub {
 								return Slim::Utils::Misc::getPlaylistDir() ||
 									# this might be expensive - perhaps need to cache this somehow
-					 				(Slim::Schema::hasLibrary && Slim::Schema->rs('Playlist')->getPlaylists->count);
+					 				(isEnabledNode(@_) && Slim::Schema->rs('Playlist')->getPlaylists->count);
 							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
@@ -589,7 +628,7 @@ sub _registerBaseNodes {
 			params       => {mode => 'search'},
 			feed         => \&_search,
 			icon         => 'html/images/search.png',
-			condition    => \&Slim::Schema::hasLibrary,
+			condition    => \&isEnabledNode,
 			id           => 'myMusicSearch',
 			weight       => 90,
 		},

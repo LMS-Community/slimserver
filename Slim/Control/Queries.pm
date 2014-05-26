@@ -713,7 +713,7 @@ sub artistsQuery {
 		push @{$p}, $artistID;
 	}
 	else {
-		my $roles = ($roleID ? [ Slim::Schema::Contributor->typeToRole(split /,/, $roleID) ] : undef) || Slim::Schema->artistOnlyRoles || [];
+		my $roles = ($roleID ? [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ] : undef) || Slim::Schema->artistOnlyRoles || [];
 		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';

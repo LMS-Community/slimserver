@@ -1,6 +1,16 @@
 [% PROCESS settings/header.html %]
-
 	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_ARTISTS_BROWSE_MODES" desc="SETUP_ARTISTS_BROWSE_MODES" %]
+			<select class="stdedit" name="pref_useUnifiedArtistsList" id="useUnifiedArtistsList">[% prefs.pref_useUnifiedArtistsList %]
+	
+				<option [% IF prefs.pref_useUnifiedArtistsList %]selected [% END %]value="1">[% 'SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON' | string %]</option>
+				<option [% IF NOT prefs.pref_useUnifiedArtistsList%]selected [% END %]value="0">[% 'SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF' | string %]</option>
+			
+			</select>
+		[% END %]
+	[% END %]
+
+	[% IF pref_useUnifiedArtistsList; WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_COMPOSERINARTISTS" desc="SETUP_COMPOSERINARTISTS_DESC" %]
 			<input type=checkbox [% IF prefs.pref_composerInArtists %]checked="1" [% END %] class="stdedit" name="pref_composerInArtists" id="composerInArtists" value="1" />
 			<label for="composerInArtists" class="stdlabel">[% "COMPOSER" | string %]</label><br>
@@ -11,18 +21,20 @@
 			<input type=checkbox [% IF prefs.pref_bandInArtists %]checked="1" [% END %] class="stdedit" name="pref_bandInArtists" id="bandInArtists" value="1" />
 			<label for="bandInArtists" class="stdlabel">[% "BAND" | string %]</label>
 		[% END %]
-	[% END %]
+	[% END; END %]
 
 
 	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_VARIOUSARTISTS" desc="SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC"%]
-			<input type="radio" name="pref_variousArtistAutoIdentification" value="0" [% IF NOT prefs.pref_variousArtistAutoIdentification %]checked="checked"[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</input><br/>
-			<input type="radio" name="pref_variousArtistAutoIdentification" value="1" [% IF prefs.pref_variousArtistAutoIdentification %]checked="checked"[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]
-		[% END %]
-
-		[% WRAPPER settingGroup title="" desc="SETUP_USEBANDASALBUMARTIST_DESC"%]
-			<input type="radio" name="pref_useBandAsAlbumArtist" value="0" [% IF NOT prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]<br/>
-			<input type="radio" name="pref_useBandAsAlbumArtist" value="1" [% IF prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]
+		[% IF pref_useUnifiedArtistsList %]
+			[% WRAPPER settingGroup title="SETUP_VARIOUSARTISTS" desc="SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC"%]
+				<input type="radio" name="pref_variousArtistAutoIdentification" value="0" [% IF NOT prefs.pref_variousArtistAutoIdentification %]checked="checked"[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</input><br/>
+				<input type="radio" name="pref_variousArtistAutoIdentification" value="1" [% IF prefs.pref_variousArtistAutoIdentification %]checked="checked"[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]
+			[% END %]
+	
+			[% WRAPPER settingGroup title="" desc="SETUP_USEBANDASALBUMARTIST_DESC"%]
+				<input type="radio" name="pref_useBandAsAlbumArtist" value="0" [% IF NOT prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]<br/>
+				<input type="radio" name="pref_useBandAsAlbumArtist" value="1" [% IF prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]
+			[% END %]
 		[% END %]
 		
 		[% WRAPPER settingGroup title="" desc="SETUP_USETPE2ASALBUMARTIST_DESC"%]
