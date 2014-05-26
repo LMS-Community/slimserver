@@ -43,6 +43,12 @@ sub resize {
 	
 	$debug      = $args{debug} if defined $args{debug};
 	
+	# if $file is a scalar ref, then it's the image data itself
+	if ( ref $file && ref $file eq 'SCALAR' ) {
+		$origref = $file;
+		$file    = undef;
+	}
+	
 	my ($offset, $length) = (0, 0); # used if an audio file is passed in
 	
 	if ( $file && !-e $file ) {
@@ -486,9 +492,10 @@ sub gdresize {
 		# XXX If cache is available, pull pre-cached size values from cache
 		# to see if we can use a smaller version of this image than the source
 		# to reduce resizing time.
-		
-		my ($ref, $format) = eval {
-			$class->resize(
+
+		my ($ref, $format);
+		eval {
+			($ref, $format) = $class->resize(
 				file    => $file,
 				width   => $width,
 				height  => $height,
@@ -497,6 +504,8 @@ sub gdresize {
 				format  => $ext,
 				debug   => $debug,
 			);
+			
+			$file = undef if ref $file;
 		};
 		
 		if ( $@ ) {
@@ -508,6 +517,8 @@ sub gdresize {
 			# XXX Don't cache images that aren't resized, i.e. /cover.jpg
 			_cache( $cache, $cachekey, $ref, $file, $format );
 		}
+
+		return ($ref, $format);
 	}
 }
 
@@ -516,7 +527,7 @@ sub _cache {
 	
 	my $cached = {
 		content_type  => $ct,
-		mtime         => (stat($file))[9],
+		mtime         => $file ? (stat($file))[9] : 0,
 		original_path => $file,
 		data_ref      => $imgref,
 	};

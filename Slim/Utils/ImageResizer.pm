@@ -21,6 +21,15 @@ my $log   = logger('artwork');
 my ($gdresizein, $gdresizeout, $gdresizeproc);
 
 my $pending_requests = 0;
+my $hasDaemon; 
+
+sub hasDaemon {
+	if (!defined $hasDaemon) {
+		$hasDaemon = !main::SCANNER && !main::ISWINDOWS && -r SOCKET_PATH && -w _;
+	}
+	
+	return $hasDaemon;
+}
 
 sub resize {
 	my ($class, $file, $cachekey, $specs, $callback, $cache) = @_;
@@ -28,9 +37,7 @@ sub resize {
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
 	# Check for callback, and that the gdresized daemon running and read/writable
-	my $hasDaemon = !main::SCANNER && !main::ISWINDOWS && $callback && -r SOCKET_PATH && -w _;
-	
-	if ($hasDaemon) {
+	if (hasDaemon() && $callback) {
 		require AnyEvent::Socket;
 		require AnyEvent::Handle;
 		
@@ -116,9 +123,11 @@ sub sync_resize {
 	
 	my $isDebug = main::DEBUGLOG && $log->is_debug;
 	
+	my ($ref, $format);
+	
 	my @spec = split(',', $specs);
 	eval {
-		Slim::Utils::GDResizer->gdresize(
+		($ref, $format) = Slim::Utils::GDResizer->gdresize(
 			file      => $file,
 			spec      => \@spec,
 			cache     => $cache || Slim::Utils::ArtworkCache->new(),
@@ -128,10 +137,11 @@ sub sync_resize {
 	};
 	
 	if ( main::DEBUGLOG && $isDebug && $@ ) {
+		$file = '' if ref $file;
 		$log->error("Error resizing $file: $@");
 	}
 	
-	$callback && $callback->();
+	$callback && $callback->($ref, $format);
 	
 	return $@ ? 0 : 1;
 }

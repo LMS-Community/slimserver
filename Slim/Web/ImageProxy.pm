@@ -141,12 +141,17 @@ sub _gotArtwork {
 	# if we wanted other sizes of the same url
 	my $fullpath = catdir( $prefs->get('cachedir'), 'imgproxy_' . Digest::MD5::md5_hex($url) );
 
-	# Unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
-	File::Slurp::write_file($fullpath, $http->contentRef);
-
-	_resizeFromFile($http->url, $fullpath);
-
-	unlink $fullpath;
+	if ( Slim::Utils::ImageResizer::hasDaemon() ) {
+		# Unfortunately we have to write the data to a file, in case LMS was using an external image resizer (TinyLMS)
+		File::Slurp::write_file($fullpath, $http->contentRef);
+	
+		_resizeFromFile($http->url, $fullpath);
+	
+		unlink $fullpath;
+	}
+	else {
+		_resizeFromFile($http->url, $http->contentRef);
+	}
 }
 
 sub _gotArtworkError {
@@ -183,26 +188,30 @@ sub _resizeFromFile {
 		my $cachekey = $item->{cachekey};
 		
 		Slim::Utils::ImageResizer->resize($fullpath, $cachekey, $spec, sub {
+			my ($body, $format) = @_;
+
 			# Resized image should now be in cache
-			my $body;
 			my $response = $args->[1];
-		
-			if ( my $c = $cache->get($cachekey) ) {
+			
+			if ( !($body && $format && ref $body eq 'SCALAR') && (my $c = $cache->get($cachekey)) ) {
 				$body = $c->{data_ref};
-				
-				my $ct = 'image/' . $c->{content_type};
-				$ct =~ s/jpg/jpeg/;
-				$response->content_type($ct);
-				$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
-				$response->expires( time() + ONE_YEAR );
+				$format = $c->{content_type};
 			}
-			else {
+			elsif ( !($body && $format && ref $body eq 'SCALAR') ) {
 				# resize command failed, return 500
 				main::INFOLOG && $log->info("  Resize failed, returning 500");
 				$log->error("Artwork resize for $cachekey failed");
 				
 				_artworkError( $client, $params, $spec, 500, $callback, @$args );
 				return;
+			}
+
+			if ($body && $format) {
+				my $ct = 'image/' . $format;
+				$ct =~ s/jpg/jpeg/;
+				$response->content_type($ct);
+				$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
+				$response->expires( time() + ONE_YEAR );
 			}
 		
 			$callback && $callback->( $client, $params, $body, @$args );
