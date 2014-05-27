@@ -12941,7 +12941,7 @@ BROWSE_BY_ALBUMARTIST
 	RU	Исполнитель альбома
 	SV	Albumartister
 
-BROWSE_ALBUMARTISTs
+BROWSE_ALBUMARTISTS
 	CS	Procházet interprets alba
 	DA	Gennemse albumkunstnere
 	DE	Album-Interpreten durchsuchen
