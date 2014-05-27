@@ -43,6 +43,7 @@ sub handler {
 		for (my $i = 1; defined $params->{"id$i"}; $i++) {
 			
 			if ( $params->{"delete$i"} ) {
+				Slim::Menu::BrowseLibrary->deregisterNode($params->{"id$i"});
 				$menus = [ grep { $_->{id} ne $params->{"id$i"} } @$menus ];
 				next;
 			}
