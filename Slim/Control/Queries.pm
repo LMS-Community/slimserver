@@ -403,7 +403,7 @@ sub albumsQuery {
 				if ($roleID) {
 					@roles = split /,/, $roleID;
 				}
-				else {
+				elsif ($prefs->get('useUnifiedArtistsList')) {
 					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
 			
 					# Loop through each pref to see if the user wants to show that contributor role.
@@ -412,6 +412,9 @@ sub albumsQuery {
 							push @roles, $_;
 						}
 					}
+				}
+				else {
+					@roles = Slim::Schema::Contributor->contributorRoles();
 				}
 					
 				my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
@@ -713,7 +716,16 @@ sub artistsQuery {
 		push @{$p}, $artistID;
 	}
 	else {
-		my $roles = ($roleID ? [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ] : undef) || Slim::Schema->artistOnlyRoles || [];
+		my $roles;
+		if ($roleID) {
+			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ];
+		}
+		elsif ($prefs->get('useUnifiedArtistsList')) {
+			$roles = Slim::Schema->artistOnlyRoles();
+		}
+		else {
+			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->contributorRoles() ];
+		}
 		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
@@ -4968,7 +4980,7 @@ sub _getTagDataForTracks {
 		if ($args->{roleId}) {
 			@roles = split /,/, $args->{roleId};
 		}
-		else {
+		elsif ($prefs->get('useUnifiedArtistsList')) {
 			# Tag 'a' returns either ARTIST or TRACKARTIST role
 			# Bug 16791: Need to include ALBUMARTIST too
 			@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
@@ -4979,6 +4991,9 @@ sub _getTagDataForTracks {
 					push @roles, $_;
 				}
 			}
+		}
+		else {
+			@roles = Slim::Schema::Contributor->contributorRoles();
 		}
 
 		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
