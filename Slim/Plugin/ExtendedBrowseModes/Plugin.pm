@@ -69,7 +69,7 @@ sub initPlugin {
 		params  => { artist_id => Slim::Music::Info::variousArtistString() },
 		feed    => 'albums',
 		icon    => 'html/images/albums.png',
-		id      => 'myMusicArtistsVariousArtists',
+		id      => 'myMusicAlbumsVariousArtists',
 		weight  => 22,
 	});
 
