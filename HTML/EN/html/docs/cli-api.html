@@ -3049,7 +3049,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Limit results to the genre identified by 
-			&quot;genre_id&quot;. If present, other filters are ignored.
+			&quot;genre_id&quot;. The genre_id may be a list of comma separated IDs.
+			If present, other filters are ignored.
 		</td>
 	</tr>
 	<tr>
@@ -3218,7 +3219,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Genre ID, to restrict the results to those artists with songs of 
-			that genre.
+			that genre. The genre_id may be a list of comma separated IDs.
 		</td>
 	</tr>
 	<tr>
@@ -3255,7 +3256,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Contributor role ID, to restrict the results to the artist of 
-			&quot;role_id&quot;.
+			&quot;role_id&quot;. This parameter must be a comma separated list
+			of role IDs, or a comma separated list of role tokens (eg. ALBUMARTIST, ARTIST)
 		</td>
 	</tr>
 	<tr>
@@ -3417,7 +3419,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Genre ID, to restrict the results to those albums with 
-			songs of that genre.
+			songs of that genre. The genre_id may be a list of comma separated IDs.
 		</td>
 	</tr>
 	<tr>
@@ -3454,7 +3456,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Contributor role ID, to restrict the results to those albums
-			by artist of role &quot;role_id&quot;.
+			by artist of role &quot;role_id&quot;. This parameter must be a comma separated list
+			of role IDs, or a comma separated list of role tokens (eg. ALBUMARTIST, ARTIST)
 		</td>
 	</tr>
 	<tr>
@@ -5186,7 +5189,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Contributor role ID, to restrict the results to the artist of role
-			&quot;role_id&quot;.
+			&quot;role_id&quot;. This parameter must be a comma separated list
+			of role IDs, or a comma separated list of role tokens (eg. ALBUMARTIST, ARTIST)
 		</td>
 	</tr>
 	<tr>

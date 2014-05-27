@@ -12,16 +12,14 @@
 			</tr>
 		[% FOREACH menu = menu_items; menu_no = loop.count %]
 			<tr>
-				<td>
+				<td style="text-align:center;">
 					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" />[% END %]
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
-				[% UNLESS menu.feed %]
+				[% IF !menu.feed && menu.id != '_new_' %]
 					<td colspan="5">[% menu.name | getstring %]</td>
 				[% ELSE %]
-					<td width="50%">
-						<input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 100%;"/>
-					</td>
+					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 100%;" /></td>
 					<td>
 						<select class="stdedit" name="feed[% menu_no %]">
 							<option value="0">&nbsp;</option>
@@ -29,26 +27,14 @@
 							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
 						</select>
 					</td>
-					<td>
-						<select class="stdedit" name="roleid[% menu_no %]">
-							<option value="">&nbsp;</option>
-							[% FOREACH role = roles.keys %]
-								<option value="[% roles.$role %]" [% IF menu.params.role_id && (menu.params.role_id == role || menu.params.role_id == roles.$role) %]selected="selected"[% END %]>[% role | string %]</option>
-							[% END %]
-						</select>
-					</td>
-					<td>
-						<select class="stdedit" name="genreid[% menu_no %]">
-							<option value="">&nbsp;</option>
-							[% FOREACH genre = genre_list.keys.sort %]
-								<option value="[% genre_list.$genre %]" [% IF menu.params.genre_id && (menu.params.genre_id == genre || menu.params.genre_id == genre_list.$genre) %]selected[% END %]>[% genre | html %]</option>
-							[% END %]
-						</select>
-					</td>
-					<td>[% IF menu.name %]<input type="checkbox" name="delete[% menu_no %]">[% END %]</td>
+					<td><input type="text" name="roleid[% menu_no %]" value="[% menu.params.role_id %]" /></td>
+					<td width="30%"><input type="text" name="genreid[% menu_no %]" value="[% menu.params.genre_id %]" style="width: 100%;" /></td>
+					<td style="text-align:center;">[% IF menu.name %]<input type="checkbox" name="delete[% menu_no %]">[% END %]</td>
 				[% END %]
 			</tr>
 		[% END %]
+			<tr><td>&nbsp;</td><td colspan="5">[% "PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT" | string %] [% roles.join(', ') %]</td></tr>
+			<tr><td>&nbsp;</td><td colspan="5">[% "GENRES" | string %][% "COLON" | string %] [% genre_list.join(', ') %]</td></tr>
 		</table>
 	[% END %]
 

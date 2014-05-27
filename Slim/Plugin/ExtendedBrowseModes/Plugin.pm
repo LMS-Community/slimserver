@@ -20,7 +20,7 @@ my $serverPrefs = preferences('server');
 
 $prefs->init({
 	additionalMenuItems => [{
-		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
+		name    => Slim::Utils::Strings::string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS'),
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
@@ -45,7 +45,7 @@ $prefs->init({
 		enabled => 0,
 	},{
 		name    => 'Audiobooks',
-		params  => { genre_id => 'Audiobooks' },
+		params  => { genre_id => 'Audiobooks, Spoken, Speech' },
 		feed    => 'albums',
 		icon    => 'html/images/albums.png',
 		id      => 'myMusicAudiobooks',
@@ -54,7 +54,7 @@ $prefs->init({
 	}]
 });
 
-$prefs->setChange( \&menusChanged, 'additionalMenuItems' );
+$prefs->setChange( \&initMenus, 'additionalMenuItems' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -76,23 +76,13 @@ sub initPlugin {
 	$class->initMenus();
 }
 
-sub menusChanged {
-	
-	foreach ( @{$prefs->get('additionalMenuItems') || []} ) {
-		next if $_->{id} =~ /AlbumArtists/;
-
-		$serverPrefs->set('disabled_' . $_->{id}, $_->{enabled} ? 0 : 1);
-	}
-	
-	initMenus();
-}
-
 sub initMenus {
 	foreach (@{$prefs->get('additionalMenuItems') || []}) {
 		next if $_->{id} =~ /AlbumArtists/;
 
 		# remove menu item before adding it back in - we might have changed its definition
 		Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
+		$serverPrefs->set('disabled_' . $_->{id}, $_->{enabled} ? 0 : 1);
 		
 		__PACKAGE__->registerBrowseMode($_);
 	}
@@ -155,6 +145,16 @@ sub registerCustomString {
 sub valueToId {
 	my ($class, $value, $key) = @_;
 	
+	if ($key eq 'role_id') {
+		return join(',', grep {
+			$_ !~ /\D/
+		} map {
+			s/^\s+|\s+$//g; 
+			uc($_);
+			Slim::Schema::Contributor->typeToRole($_);
+		} split(/,/, $value) );
+	}
+	
 	return (defined $value ? $value : 0) unless $value && $key =~ /^(genre|artist)_id/;
 	
 	my $category = $1;
@@ -167,14 +167,25 @@ sub valueToId {
 		$schema = 'Contributor';
 	}
 	
-	# replace artist name with ID
-	if ( $schema && Slim::Schema::hasLibrary() && !Slim::Schema->rs($schema)->find($value) 
-		&& (my $item = Slim::Schema->rs($schema)->search({ 'name' => $value })->first) ) 
-	{
-		$value = $item->id;
+	# replace names with IDs
+	if ( $schema && Slim::Schema::hasLibrary() ) {
+		$value = join(',', grep {
+			$_ !~ /\D/
+		} map {
+			s/^\s+|\s+$//g; 
+
+			$_ = Slim::Utils::Unicode::utf8decode_locale($_);
+			$_ = Slim::Utils::Text::ignoreCaseArticles($_, 1);
+			
+			if ( !Slim::Schema->rs($schema)->find($_) && (my $item = Slim::Schema->rs($schema)->search({ 'namesearch' => $_ })->first) ) {
+				$_ = $item->id;
+			}
+			
+			$_;
+		} split(/,/, $value) );
 	}
-	
-	return $value;
+
+	return $value || -1;
 }	
 
 1;

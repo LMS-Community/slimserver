@@ -117,21 +117,8 @@ sub handler {
 #		$params = Slim::Web::Settings::Server::Plugins->getRestartMessage($params, Slim::Utils::Strings::string('CLEANUP_PLEASE_RESTART_SC'));
 	}
 
-	my $rs = Slim::Schema->search('Genre');
-	
-	# Extract each genre name into a hash
-	$params->{genre_list} = {};
-
-	while (my $genre = $rs->next) {
-
-		my $name = $genre->name;
-
-		# Put the name here as well so the hash can be passed to
-		# INPUT.Choice as part of listRef later on
-		$params->{genre_list}->{$genre->name} = $genre->id;
-	}
-	
-	$params->{roles} = { map { $_ => Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->contributorRoles };
+	$params->{genre_list} = [ map { $_->name } Slim::Schema->search('Genre')->all ];
+	$params->{roles} = [ Slim::Schema::Contributor->contributorRoles ];
 
 	my %ids;
 	$params->{menu_items} = [ map {

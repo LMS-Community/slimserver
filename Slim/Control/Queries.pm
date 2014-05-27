@@ -424,10 +424,11 @@ sub albumsQuery {
 		}
 	
 		if (defined $genreID) {
+			my @genreIDs = split(/,/, $genreID);
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
-			push @{$w}, 'genre_track.genre = ?';
-			push @{$p}, $genreID;
+			push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+			push @{$p}, @genreIDs;
 		}
 	
 		if (defined $compilation) {
@@ -728,11 +729,13 @@ sub artistsQuery {
 		}
 		
 		if ( defined $genreID ) {
+			my @genreIDs = split(/,/, $genreID);
+
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
 			$sql .= 'JOIN tracks ON tracks.id = contributor_track.track ';
 			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
-			push @{$w}, 'genre_track.genre = ?';
-			push @{$p}, $genreID;
+			push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+			push @{$p}, @genreIDs;
 			
 			# Adjust VA check to check for VA artists in this genre
 			$sql_va .= 'JOIN tracks ON tracks.album = albums.id ';
@@ -1373,8 +1376,9 @@ sub genresQuery {
 		push @{$p}, $trackID;
 	}
 	elsif (defined $genreID) {
-		push @{$w}, 'genres.id = ?';
-		push @{$p}, $genreID;
+		my @genreIDs = split(/,/, $genreID);
+		push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+		push @{$p}, @genreIDs;
 	}
 	else {
 		# ignore those if we have a track.
@@ -4905,8 +4909,11 @@ sub _getTagDataForTracks {
 	
 	if ( my $genreId = $args->{genreId} ) {
 		$join_genre_track->();
-		push @{$w}, 'genre_track.genre = ?';
-		push @{$p}, $genreId;
+
+		my @genreIDs = split(/,/, $genreId);
+
+		push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
+		push @{$p}, @genreIDs;
 	}
 	
 	if ( my $contributorId = $args->{contributorId} ) {
