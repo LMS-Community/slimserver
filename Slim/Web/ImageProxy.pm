@@ -265,7 +265,7 @@ sub proxiedImage {
 	# don't use for all external URLs just yet, but only for URLs which have a handler defined
 	return $url unless $force || $prefs->get('useLocalImageproxy') || __PACKAGE__->getHandlerFor($url);
 
-	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
+#	main::DEBUGLOG && $log->debug("Use proxied image URL for: $url");
 	
 	my $ext = '.png';
 	

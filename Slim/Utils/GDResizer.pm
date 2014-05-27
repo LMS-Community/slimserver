@@ -140,7 +140,19 @@ sub resize {
 				$format = 'png';
 			}
 		}
-			
+
+		# requested size is larger than original - don't upscale
+		if ( $width > $in_width && $height > $in_height ) {
+			if ( $in_height / $in_width > 1 ) {
+				$height = $height * ($in_width / $width);
+				$width  = $in_width;
+			}
+			else {
+				$width  = $width * ($in_height / $height);
+				$height = $in_height;
+			}
+		}
+	
 		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}x${height} $format\n";
 		
 		$im->resize( {
@@ -175,6 +187,15 @@ sub resize {
 
 	else { # mode 'o', only use the width
 		$debug && warn "Resizing from ${in_width}x${in_height} $in_format @ ${offset} to ${width}xX $format\n";
+
+		if ( $width > $in_width && $height > $in_height ) {
+			if ( $in_height / $in_width > 1 ) {
+				$width = $width * ($in_height / $height);
+			}
+			else {
+				$width = $in_width;
+			}
+		}
 		
 		$im->resize( {
 			width => $width,
