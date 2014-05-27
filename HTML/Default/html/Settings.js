@@ -104,6 +104,10 @@ Settings = {
 					}
 
 					this._resetModified();
+
+					if (btn == 'no') {
+						tb.activate(tab);
+					}
 				}
 
 			}.createDelegate(this));
