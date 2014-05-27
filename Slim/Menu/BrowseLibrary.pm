@@ -531,6 +531,7 @@ sub _registerBaseNodes {
 				role_id => 'ALBUMARTIST,ARTIST'
 			},
 			feed         => \&_artists,
+			jiveIcon     => 'html/images/artists.png',
 			icon         => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ALBUMARTISTS',
 			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
@@ -546,6 +547,7 @@ sub _registerBaseNodes {
 				role_id => join ',', Slim::Schema::Contributor->contributorRoles(),
 			},
 			feed         => \&_artists,
+			jiveIcon     => 'html/images/artists.png',
 			icon         => 'html/images/artists.png',
 			homeMenuText => 'BROWSE_ARTISTS',
 			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
