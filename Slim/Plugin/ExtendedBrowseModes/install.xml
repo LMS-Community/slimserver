@@ -8,7 +8,7 @@
 	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
-        
+	<optionsURL>plugins/ExtendedBrowseModes/settings/browsemodes.html</optionsURL>        
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type>
 
