@@ -16,16 +16,17 @@ use Slim::Utils::Strings;
 use Slim::Utils::Text;
 
 my $prefs = preferences('plugin.extendedbrowsemodes');
+my $serverPrefs = preferences('server');
 
 $prefs->init({
-	menus => [{
+	additionalMenuItems => [{
 		name    => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS',
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
 		icon    => 'html/images/artists.png',
 		id      => 'myMusicArtistsComposers',
 		weight  => 12,
-		enabled => 1,
+		enabled => 0,
 	},{
 		name    => 'Classical Music by Conductor',
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
@@ -50,19 +51,10 @@ $prefs->init({
 		id      => 'myMusicAudiobooks',
 		weight  => 14,
 		enabled => 0,
-	},{
-		name    => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
-		params  => { artist_id => Slim::Music::Info::variousArtistString() },
-		feed    => 'albums',
-		icon    => 'html/images/albums.png',
-		id      => 'myMusicArtistsVariousArtists',
-		weight  => 22,
-		enabled => 1,
-		dontEdit => 1,
 	}]
 });
 
-$prefs->setChange( \&initMenus, 'menus' );
+$prefs->setChange( \&menusChanged, 'additionalMenuItems' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -71,18 +63,36 @@ sub initPlugin {
 		require Slim::Plugin::ExtendedBrowseModes::Settings;
 		Slim::Plugin::ExtendedBrowseModes::Settings->new;
 	}
+	
+	$class->registerBrowseMode({
+		name    => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
+		params  => { artist_id => Slim::Music::Info::variousArtistString() },
+		feed    => 'albums',
+		icon    => 'html/images/albums.png',
+		id      => 'myMusicArtistsVariousArtists',
+		weight  => 22,
+	});
 
 	$class->initMenus();
 }
 
-sub initMenus {
-	foreach (@{$prefs->get('menus') || []}) {
+sub menusChanged {
+	
+	foreach ( @{$prefs->get('additionalMenuItems') || []} ) {
 		next if $_->{id} =~ /AlbumArtists/;
-		
+
+		$serverPrefs->set('disabled_' . $_->{id}, $_->{enabled} ? 0 : 1);
+	}
+	
+	initMenus();
+}
+
+sub initMenus {
+	foreach (@{$prefs->get('additionalMenuItems') || []}) {
+		next if $_->{id} =~ /AlbumArtists/;
+
 		# remove menu item before adding it back in - we might have changed its definition
 		Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
-		
-		next unless $_->{enabled};
 		
 		__PACKAGE__->registerBrowseMode($_);
 	}
@@ -115,7 +125,7 @@ sub registerBrowseMode {
 		icon         => $item->{icon},
 		jiveIcon     => $item->{icon},
 		homeMenuText => $nameToken,
-		condition    => \&Slim::Schema::hasLibrary,
+		condition    => $item->{condition} || \&Slim::Menu::BrowseLibrary::isEnabledNode,
 		id           => $item->{id},
 		weight       => $item->{weight},
 	});

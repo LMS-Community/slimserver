@@ -10,13 +10,13 @@
 				<th>[% "GENRES" | string %][% "COLON" | string %]</th>
 				<th>[% "DELETE" | string %]</th>
 			</tr>
-		[% FOREACH menu = extended_menus; menu_no = loop.count %]
+		[% FOREACH menu = menu_items; menu_no = loop.count %]
 			<tr>
 				<td>
 					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" />[% END %]
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
-				[% IF menu.dontEdit %]
+				[% UNLESS menu.feed %]
 					<td colspan="5">[% menu.name | getstring %]</td>
 				[% ELSE %]
 					<td width="50%">
