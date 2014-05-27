@@ -8097,6 +8097,29 @@ SETUP_SPLITLIST_DESC
 	RU	Logitech Media Server может извлекать из тегов музыкальных файлов имена исполнителей, названия альбомов и жанры, даже если их несколько. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей и под именем "И. С. Бах", и под именем "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
 	SV	Logitech Media Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
+SETUP_ARTISTS_BROWSE_MODES
+	CS	Procházet interprety
+	DA	Gennemse kunstnere
+	DE	Künstler durchsuchen
+	EN	Browse Artists
+	ES	Examinar artistas
+	FI	Etsi artisteja
+	FR	Parcourir les artistes
+	IT	Sfoglia artisti
+	NL	Artiesten bekijken
+	NO	Bla i artister
+	PL	Przeglądaj wykonawców
+	RU	Просмотр исполнителей
+	SV	Bläddra efter artister
+
+SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
+	DE	Eine konfigurierbare Liste mit Künstlern verwenden
+	EN	Use single, configurable list of artists
+
+SETUP_ARTISTS_BROWSE_MODES_UNIFIED_OFF
+	DE	Verwende getrennte Listen für Album-Interpreten und Alle Künstler
+	EN	Use two separate lists for Album Artists and All Artists
+
 SETUP_BROWSEAGELIMIT
 	CS	Omezení nové hudby
 	DA	Grænse for ny musik
@@ -12882,6 +12905,56 @@ BROWSE_ARTISTS
 	PL	Przeglądaj wykonawców
 	RU	Просмотр исполнителей
 	SV	Bläddra efter artister
+
+BROWSE_BY_ALL_ARTISTS
+	CS	Interpreti
+	DA	Kunstnere
+	DE	Interpreten
+	EN	Artists
+	ES	Artistas
+	FI	Artistit
+	FR	Artistes
+	HE	מבצעים
+	IT	Artisti
+	JA	アーチストをブラウズする
+	NL	Artiesten
+	NO	Artister
+	PL	Wykonawcy
+	PT	Escolher por Artista
+	RU	Исполнители
+	SV	Artister
+	ZH_CN	浏览艺人
+
+BROWSE_BY_ALBUMARTIST
+	CS	Interprets alba
+	DA	Albumkunstnere
+	DE	Album-Interpreten
+	EN	Album Artists
+	ES	Artistas de álbum
+	FI	Levyartisti
+	FR	Artistes, Album
+	HE	מבצע האלבום
+	IT	Artistas album
+	NL	Albumartiesten
+	NO	Albumartister
+	PL	Wykonawca albumu
+	RU	Исполнитель альбома
+	SV	Albumartister
+
+BROWSE_ALBUMARTISTs
+	CS	Procházet interprets alba
+	DA	Gennemse albumkunstnere
+	DE	Album-Interpreten durchsuchen
+	EN	Browse Album Artists
+	ES	Examinar artistas de álbum
+	FI	Hae levyartisti
+	FR	Parcourir les artistes, Album
+	IT	Sfoglia artistas album
+	NL	Albumartiesten bekijken
+	NO	Bla i albumartister
+	PL	Przeglądaj wykonawca albumu
+	RU	Просмотр Исполнитель альбома
+	SV	Bläddra efter albumartister
 
 BROWSE_ALBUMS
 	CS	Procházet alba

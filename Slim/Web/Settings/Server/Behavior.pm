@@ -25,7 +25,7 @@ sub prefs {
 			qw(noGenreFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
 			   conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist 
-			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation)
+			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList)
 		   );
 }
 

@@ -268,6 +268,7 @@ sub albumsQuery {
 	my $genreID       = $request->getParam('genre_id');
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
+	my $roleID        = $request->getParam('role_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
 
@@ -397,23 +398,25 @@ sub albumsQuery {
 				push @{$w}, 'contributor_album.contributor = ?';
 				push @{$p}, $contributorID;
 
-				my $cond = 'contributor_album.role IN (?, ?, ?';
-				
-				push @{$p}, (
-					Slim::Schema::Contributor->typeToRole('ARTIST'), 
-					Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
-					Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-				);
-		
-				# Loop through each pref to see if the user wants to show that contributor role.
-				foreach (Slim::Schema::Contributor->contributorRoles) {
-					if ($prefs->get(lc($_) . 'InArtists')) {
-						$cond .= ', ?';
-						push @{$p}, Slim::Schema::Contributor->typeToRole($_);
+				# only albums on which the contributor has a specific role?
+				my @roles;
+				if ($roleID) {
+					@roles = split /,/, $roleID;
+				}
+				else {
+					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
+			
+					# Loop through each pref to see if the user wants to show that contributor role.
+					foreach (Slim::Schema::Contributor->contributorRoles) {
+						if ($prefs->get(lc($_) . 'InArtists')) {
+							push @roles, $_;
+						}
 					}
 				}
-				
-				push @{$w}, ($cond . ')');
+					
+				my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
+				push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+				push @{$w}, $cond;
 			}	
 		}
 	
@@ -684,6 +687,7 @@ sub artistsQuery {
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
+	my $roleID   = $request->getParam('role_id');
 	my $tags     = $request->getParam('tags') || '';
 	
 	my $va_pref = $prefs->get('variousArtistAutoIdentification');
@@ -709,7 +713,7 @@ sub artistsQuery {
 		push @{$p}, $artistID;
 	}
 	else {
-		my $roles = Slim::Schema->artistOnlyRoles || [];
+		my $roles = ($roleID ? [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ] : undef) || Slim::Schema->artistOnlyRoles || [];
 		
 		if ( defined $genreID ) {
 			$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
@@ -740,7 +744,7 @@ sub artistsQuery {
 				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			
-			if ( $va_pref ) {
+			if ( $va_pref && !$roleID ) {
 				# Don't include artists that only appear on compilations
 				if ( $sql =~ /JOIN tracks/ ) {
 					# If doing an artists-in-genre query, we are much better off joining through albums
@@ -811,7 +815,7 @@ sub artistsQuery {
 	# searching, or if we have a track
 	my $count_va = 0;
 
-	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID ) {
+	if ( $va_pref && !defined $search && !defined $trackID && !defined $artistID && !$roleID ) {
 		# Only show VA item if there are any
 		if ( @{$w_va} ) {
 			$sql_va .= 'WHERE ';
@@ -3763,6 +3767,7 @@ sub titlesQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
+	my $roleID        = $request->getParam('role_id');
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -3807,6 +3812,7 @@ sub titlesQuery {
 		genreId       => $genreID,
 		contributorId => $contributorID,
 		trackId       => $trackID,
+		roleId        => $roleID,
 		limit         => sub {
 			$count = shift;
 			
@@ -4957,25 +4963,26 @@ sub _getTagDataForTracks {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1;
 		
-		my $cond = 'contributor_track.role IN (?, ?, ?';
-		
-		# Tag 'a' returns either ARTIST or TRACKARTIST role
-		# Bug 16791: Need to include ALBUMARTIST too
-		push @{$p}, (
-			Slim::Schema::Contributor->typeToRole('ARTIST'), 
-			Slim::Schema::Contributor->typeToRole('TRACKARTIST'),
-			Slim::Schema::Contributor->typeToRole('ALBUMARTIST'),
-		);
-
-		# Loop through each pref to see if the user wants to show that contributor role.
-		foreach (Slim::Schema::Contributor->contributorRoles) {
-			if ($prefs->get(lc($_) . 'InArtists')) {
-				$cond .= ', ?';
-				push @{$p}, Slim::Schema::Contributor->typeToRole($_);
+		# only albums on which the contributor has a specific role?
+		my @roles;
+		if ($args->{roleId}) {
+			@roles = split /,/, $args->{roleId};
+		}
+		else {
+			# Tag 'a' returns either ARTIST or TRACKARTIST role
+			# Bug 16791: Need to include ALBUMARTIST too
+			@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
+	
+			# Loop through each pref to see if the user wants to show that contributor role.
+			foreach (Slim::Schema::Contributor->contributorRoles) {
+				if ($prefs->get(lc($_) . 'InArtists')) {
+					push @roles, $_;
+				}
 			}
 		}
-		
-		push @{$w}, ($cond . ')');
+
+		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+		push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
 	};
 	
 	$tags =~ /s/ && do {

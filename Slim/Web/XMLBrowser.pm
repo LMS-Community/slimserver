@@ -40,7 +40,7 @@ if ( !main::SCANNER ) {
 	Slim::Control::Request::subscribe( \&wipeCaches, [['rescan'], ['done']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
-				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language) );
+				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
 }
 
 sub handleWebIndex {
@@ -1253,7 +1253,7 @@ sub webLink {
 			$cacheTimestamp, 
 			$index, 
 			$quantity, 
-			(map { $params{$_} || '' } qw(mode sort artist_id album_id year index)),
+			(map { $params{$_} || '' } qw(mode sort artist_id album_id role_id year index)),
 			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy)),
 		);
 
