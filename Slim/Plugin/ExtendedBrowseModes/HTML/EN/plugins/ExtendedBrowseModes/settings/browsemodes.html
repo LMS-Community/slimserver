@@ -13,15 +13,15 @@
 		[% FOREACH menu = menu_items; menu_no = loop.count %]
 			<tr>
 				<td style="text-align:center;">
-					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" />[% END %]
-					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" class="stdedit" />
+					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
+					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
 				[% IF !menu.feed && menu.id != '_new_' %]
 					<td colspan="5">[% menu.name | getstring %]</td>
 				[% ELSE %]
-					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 100%;" /></td>
+					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 100%;" class="stdedit" /></td>
 					<td>
-						<select class="stdedit" name="feed[% menu_no %]" class="stdedit">
+						<select class="stdedit" name="feed[% menu_no %]">
 							<option value="0">&nbsp;</option>
 							<option value="albums" [% IF menu.feed == 'albums' %]selected[% END %]>[% "ALBUMS" | string %]</option>
 							<option value="artists" [% IF menu.feed == 'artists' %]selected[% END %]>[% "ARTISTS" | string %]</option>
