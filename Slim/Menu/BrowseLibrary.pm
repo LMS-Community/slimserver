@@ -528,7 +528,7 @@ sub _registerBaseNodes {
 			name         => 'BROWSE_BY_ALBUMARTIST',
 			params       => {
 				mode => 'artists',
-				role_id => 'ALBUMARTIST,ARTIST'
+				role_id => 'ALBUMARTIST'
 			},
 			feed         => \&_artists,
 			jiveIcon     => 'html/images/artists.png',
@@ -549,7 +549,7 @@ sub _registerBaseNodes {
 			feed         => \&_artists,
 			jiveIcon     => 'html/images/artists.png',
 			icon         => 'html/images/artists.png',
-			homeMenuText => 'BROWSE_ARTISTS',
+			homeMenuText => 'ALL_ARTISTS',
 			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
 			id           => 'myMusicArtistsAllArtists',
 			weight       => 11,

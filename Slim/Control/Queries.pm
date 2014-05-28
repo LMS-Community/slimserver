@@ -402,6 +402,7 @@ sub albumsQuery {
 				my @roles;
 				if ($roleID) {
 					@roles = split /,/, $roleID;
+					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 				}
 				elsif ($prefs->get('useUnifiedArtistsList')) {
 					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
@@ -694,7 +695,10 @@ sub artistsQuery {
 	my $roleID   = $request->getParam('role_id');
 	my $tags     = $request->getParam('tags') || '';
 	
-	my $va_pref = $prefs->get('variousArtistAutoIdentification');
+	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
+	my $aa_merge = $roleID && $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
+
+	my $va_pref  = $prefs->get('variousArtistAutoIdentification') && $prefs->get('useUnifiedArtistsList');
 	
 	my $sql    = 'SELECT %s FROM contributors ';
 	my $sql_va = 'SELECT COUNT(*) FROM albums ';
@@ -719,6 +723,7 @@ sub artistsQuery {
 	else {
 		my $roles;
 		if ($roleID) {
+			$roleID .= ',ARTIST' if $aa_merge;
 			$roles = [ map { Slim::Schema::Contributor->typeToRole($_) } split(/,/, $roleID ) ];
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
@@ -759,7 +764,7 @@ sub artistsQuery {
 				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			
-			if ( $va_pref && !$roleID ) {
+			if ( $va_pref || $aa_merge ) {
 				# Don't include artists that only appear on compilations
 				if ( $sql =~ /JOIN tracks/ ) {
 					# If doing an artists-in-genre query, we are much better off joining through albums
@@ -4986,6 +4991,7 @@ sub _getTagDataForTracks {
 		my @roles;
 		if ($args->{roleId}) {
 			@roles = split /,/, $args->{roleId};
+			push @roles, 'ARTIST' if $args->{roleId} eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 		}
 		elsif ($prefs->get('useUnifiedArtistsList')) {
 			# Tag 'a' returns either ARTIST or TRACKARTIST role

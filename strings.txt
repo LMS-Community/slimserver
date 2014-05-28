@@ -12907,23 +12907,22 @@ BROWSE_ARTISTS
 	SV	Bläddra efter artister
 
 BROWSE_BY_ALL_ARTISTS
-	CS	Interpreti
-	DA	Kunstnere
-	DE	Interpreten
-	EN	Artists
-	ES	Artistas
-	FI	Artistit
-	FR	Artistes
-	HE	מבצעים
-	IT	Artisti
-	JA	アーチストをブラウズする
-	NL	Artiesten
-	NO	Artister
-	PL	Wykonawcy
-	PT	Escolher por Artista
-	RU	Исполнители
-	SV	Artister
-	ZH_CN	浏览艺人
+	CS	Všichni interpreti
+	DA	Alle kunstnere
+	DE	Alle Interpreten
+	EN	All Artists
+	ES	Todos los artistas
+	FI	Kaikki artistit
+	FR	Tous les Artistes
+	HE	כל המבצעים
+	IT	Tutti gli artisti
+	JA	全てのアーチスト
+	NL	Alle artiesten
+	NO	Alle artister
+	PL	Wszyscy wykonawcy
+	RU	Все исполнители
+	SV	Alla artister
+	ZH_CN	所有艺人
 
 BROWSE_BY_ALBUMARTIST
 	CS	Interprets alba
