@@ -135,7 +135,8 @@ sub handler {
 		$a->{weight} <=> $b->{weight}
 	# don't allow to disable some select browse menus
 	} grep {
-		$_->{id} !~ /^(?:myMusicArtists|myMusicArtistsAlbumArtists|myMusicArtistsAllArtists|myMusicAlbums)$/ && !$ids{$_->{id}}
+		#$_->{id} !~ /^(?:myMusicArtists|myMusicArtistsAlbumArtists|myMusicArtistsAllArtists|myMusicAlbums)$/ && 
+		!$ids{$_->{id}}
 	} @{Slim::Menu::BrowseLibrary->_getNodeList()};
 	
 
