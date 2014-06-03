@@ -31,11 +31,6 @@ sub prefs {
 
 sub handler {
 	my ($class, $client, $params) = @_;
-	
-	# Restart if restart=1 param is set
-	if ( $params->{restart} ) {
-		$params = Slim::Web::Settings::Server::Plugins->restartServer($params, 1);
-	}
 
 	if ($params->{'saveSettings'}) {
 		my $menus = $prefs->get('additionalMenuItems');
@@ -113,9 +108,6 @@ sub handler {
 		}
 		
 		$prefs->set('additionalMenuItems', $menus);
-
-		# XXX - we don't really need to restart
-#		$params = Slim::Web::Settings::Server::Plugins->getRestartMessage($params, Slim::Utils::Strings::string('CLEANUP_PLEASE_RESTART_SC'));
 	}
 
 	$params->{genre_list} = [ map { $_->name } Slim::Schema->search('Genre')->all ];
