@@ -64,13 +64,27 @@ sub initPlugin {
 		Slim::Plugin::ExtendedBrowseModes::Settings->new;
 	}
 	
-	$class->registerBrowseMode({
-		name    => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
-		params  => { artist_id => Slim::Music::Info::variousArtistString() },
-		feed    => 'albums',
-		icon    => 'html/images/albums.png',
-		id      => 'myMusicAlbumsVariousArtists',
-		weight  => 22,
+	# custom feed: we need to inject the latest VA ID
+	Slim::Menu::BrowseLibrary->registerNode({
+		type         => 'link',
+		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
+		params       => {
+			mode => 'vaalbums',
+		},
+		feed         => sub {
+			my ($client, $callback, $args, $pt) = @_;
+
+			$pt->{searchTags} ||= [];
+			push @{ $pt->{searchTags} }, 'artist_id:' . Slim::Schema->variousArtistsObject->id;
+
+			Slim::Menu::BrowseLibrary::_albums($client, $callback, $args, $pt);
+		},
+		icon         => 'html/images/albums.png',
+		jiveIcon     => 'html/images/albums.png',
+		homeMenuText => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
+		condition    => \&Slim::Menu::BrowseLibrary::isEnabledNode,
+		id           => 'myMusicAlbumsVariousArtists',
+		weight       => 22,
 	});
 
 	$class->initMenus();
