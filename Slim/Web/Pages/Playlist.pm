@@ -152,11 +152,12 @@ sub playlist {
 
 	# This is a hot loop.
 	# But it's better done all at once than through the scheduler.
+	my $totalDuration = 0;
+	my $itemnum = 0;
 
-	for my $itemnum ($start..$end) {
-
+	foreach my $objOrUrl ( @{Slim::Player::Playlist::playList($client)} ) {
+		
 		# These should all be objects - but be safe.
-		my $objOrUrl = Slim::Player::Playlist::song($client, $itemnum);
 		my $track    = $objOrUrl;
 
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
@@ -171,7 +172,7 @@ sub playlist {
 		my %form = ();
 		
 		# See if a protocol handler can provide more metadata
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+		my $handler = $track->remote ? Slim::Player::ProtocolHandlers->handlerForURL( $track->url ) : undef;
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$form{'plugin_meta'} = $handler->getMetadataFor( $client, $track->url );
 			
@@ -181,40 +182,54 @@ sub playlist {
 			}
 		}
 
-		$track->displayAsHTML(\%form);
+		my $duration;
 
-		$form{'num'}       = $itemnum;
-		$form{'levelName'} = 'track';
-		$form{'odd'}       = ($itemnum + $offset) % 2;
-		$form{'artwork_track_id'} = $track->album->artwork if $track->album && !$track->coverid;
+		$duration = $form{'plugin_meta'}->{duration} if $form{'plugin_meta'};
+		$duration ||= $track->secs || 0;
+		$totalDuration += $duration;
 
-		if ($itemnum == $currsongind) {
-			$form{'currentsong'} = "current";
 
-			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-				# For remote streams, add both the current title and the station title if they differ
-				$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, $titleFormat) || $track->url;
-				my $title_only    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, 'TITLE');
-				my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web', $form{'plugin_meta'});
-				if ( $current_title && $current_title ne $form{'title'} && $current_title ne $title_only ) {
-					$form{'current_title'} = $current_title;
+		if ($itemnum >= $start && $itemnum <= $end) {
+	
+			$track->displayAsHTML(\%form);
+	
+			$form{'num'}       = $itemnum;
+			$form{'levelName'} = 'track';
+			$form{'odd'}       = ($itemnum + $offset) % 2;
+			$form{'artwork_track_id'} = $track->album->artwork if $track->album && !$track->coverid;
+	
+			if ($itemnum == $currsongind) {
+				$form{'currentsong'} = "current";
+	
+				if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
+					# For remote streams, add both the current title and the station title if they differ
+					$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, $titleFormat) || $track->url;
+					my $title_only    = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}, 'TITLE');
+					my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web', $form{'plugin_meta'});
+					if ( $current_title && $current_title ne $form{'title'} && $current_title ne $title_only ) {
+						$form{'current_title'} = $current_title;
+					}
+				} else {
+					$form{'title'} = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}) || $track->url;
 				}
+	
 			} else {
-				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track, $form{'plugin_meta'}) || $track->url;
+	
+				$form{'currentsong'} = undef;
+				$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
 			}
-
-		} else {
-
-			$form{'currentsong'} = undef;
-			$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
+			$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
+	
+			push @{$params->{'playlist_items'}}, \%form;
 		}
-		$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 
-		push @{$params->{'playlist_items'}}, \%form;
+		$itemnum++;
 
 		# don't neglect the streams too long
 		main::idleStreams();
 	}
+
+	$params->{'pageinfo'}->{'totalDuration'} = Slim::Utils::DateTime::timeFormat($totalDuration) if $totalDuration;
 
 	main::INFOLOG && $log->info("End playlist build.");
 

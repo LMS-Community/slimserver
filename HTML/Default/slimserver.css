@@ -306,7 +306,7 @@ img#background {
 	padding-bottom: 3px;
 }
 
-#current_playlist_name {
+#current_playlist_name, #total_playtime {
 	margin-right: 65px;
 }
 
