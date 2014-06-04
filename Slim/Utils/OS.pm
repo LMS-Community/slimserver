@@ -413,6 +413,15 @@ sub installerOS { '' };
 # XXX - disable AutoRescan for all but SqueezeOS for now
 sub canAutoRescan { 0 };
 
+# some systems support checking ACLs in addition to simpler file tests
+my $filetest;
+sub aclFiletest {
+	my ($class, $cb) = @_;
+	
+	$filetest = $cb if $cb;
+	
+	return $filetest;
+}
 
 =head2 directFirmwareDownload( )
 

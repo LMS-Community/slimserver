@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<extension>
+	<id>ee753400-eba0-11e3-ac10-0800200c9a66</id>
+	<name>PLUGIN_ACL_FILETEST</name>
+	
+	<module>Slim::Plugin::ACLFiletest::Plugin</module>
+	<importmodule>Slim::Plugin::ACLFiletest::Plugin</importmodule>
+	
+	<version>1.0</version>
+	<description>PLUGIN_ACL_FILETEST_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9.0</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+	<targetPlatform>Darwin</targetPlatform>
+	<targetPlatform>Unix</targetPlatform>
+	<targetPlatform>Linux</targetPlatform>
+</extension>

@@ -836,16 +836,13 @@ sub fileFilter {
 	
 	return 0 unless (-l _ || -d _ || -f _);
 
-# XXX - crashes on too many systems. Need to review this.
-	# Make sure we can read the file, honoring ACLs.
-	# don't use on Windows/Mac - it's not compatible with all versions
-#	if ( !main::ISWINDOWS && !main::ISMAC && canFiletest() ){
-#		use filetest 'access';
-#		return 0 if ! -r $fullpath;
-#	}
-#	else {
+	# Make sure we can read the file, honoring ACLs. This check is optional and provided by a plugin only.
+	if ( !main::ISWINDOWS && (my $filetest = Slim::Utils::OSDetect::getOS->aclFiletest()) ) {
+		return 0 unless $filetest->($fullpath);
+	}
+	else {
 		return 0 if ! -r _;
-#	}
+	}
 
 	my $target;
  
