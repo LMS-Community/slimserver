@@ -18,7 +18,7 @@ sub preinitPlugin {
 			
 		{
 			use filetest 'access';
-			return 0 if ! -r $path;
+			return (! -r $path) ? 0 : 1;
 		}
 	} );
 		
