@@ -71,21 +71,6 @@ elsif ($^O =~/darwin/i) {
 	$canFollowAlias = Slim::Utils::OS::OSX->canFollowAlias();
 }
 
-BEGIN {
-	my $canFiletest;
-	
-	sub canFiletest {
-		return if main::ISWINDOWS || main::ISMAC;
-		return $canFiletest if defined $canFiletest;
-		
-		$canFiletest = 0;
-		eval {
-			use filetest 'access';
-			$canFiletest = 1;
-		}
-	}
-}
-
 # Cache our user agent string.
 my $userAgentString;
 
@@ -851,15 +836,16 @@ sub fileFilter {
 	
 	return 0 unless (-l _ || -d _ || -f _);
 
+# XXX - crashes on too many systems. Need to review this.
 	# Make sure we can read the file, honoring ACLs.
 	# don't use on Windows/Mac - it's not compatible with all versions
-	if ( !main::ISWINDOWS && !main::ISMAC && canFiletest() ){
-		use filetest 'access';
-		return 0 if ! -r $fullpath;
-	}
-	else {
+#	if ( !main::ISWINDOWS && !main::ISMAC && canFiletest() ){
+#		use filetest 'access';
+#		return 0 if ! -r $fullpath;
+#	}
+#	else {
 		return 0 if ! -r _;
-	}
+#	}
 
 	my $target;
  
