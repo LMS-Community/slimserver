@@ -1954,8 +1954,8 @@ sub playlistcontrolCommand {
 		my $what = {};
 		
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
-			$what->{'genre.id'} = $genre_id;
-			$info[0] = Slim::Schema->find('Genre', $genre_id)->name;
+			$what->{'genre.id'} = { 'in' => [ split(/,/, $genre_id) ] };
+			$info[0] = join(', ', map { $_->name } Slim::Schema->search('Genre', { 'id' => { 'in' => [ split(/,/, $genre_id) ] } })->all);
 		}
 
 		if (defined(my $artist_id = $request->getParam('artist_id'))) {
