@@ -2608,7 +2608,8 @@ sub _preCheckAttributes {
 		next unless defined $c;
 		
 		# Bug 15630, ignore strings which have the utf8 flag on but are in fact invalid utf8
-		next if utf8::is_utf8($c) && !Slim::Utils::Unicode::looks_like_utf8($c);
+		# XXX - I can no longer reproduce the issues reported in 15630, but it's causing bug 17863 -michael
+		#next if utf8::is_utf8($c) && !Slim::Utils::Unicode::looks_like_utf8($c);
 
 		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
 		if ($c =~ /SoundJam_CDDB_/ ||
