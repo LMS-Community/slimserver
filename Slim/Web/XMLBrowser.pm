@@ -13,6 +13,7 @@ use strict;
 
 use URI::Escape qw(uri_unescape uri_escape_utf8);
 use List::Util qw(min);
+use Tie::RegexpHash;
 
 use Slim::Control::XMLBrowser;
 use Slim::Formats::XML;
@@ -42,6 +43,8 @@ if ( !main::SCANNER ) {
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
 				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
 }
+
+tie my %cacheables, 'Tie::RegexpHash';
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
@@ -1242,7 +1245,7 @@ sub webLink {
 	push @verbs, 'orderBy:' . $args->{'orderBy'} if $args->{'orderBy'};
 
 	my $renderCacheKey;
-	if ( $args->{path} =~ /\bbrowselibrary\b.*?\bmode=(?:artists|albums|genres|years)\b/ && $args->{url_query} !~ /\baction=/ ) {
+	if ( $cacheables{ $args->{path} } && $args->{url_query} !~ /\baction=/ && !Slim::Music::Import->stillScanning() ) {
 		
 		# let cache expire between server restarts
 		$cacheTimestamp ||= time();
@@ -1277,6 +1280,17 @@ sub webLink {
 	} else {
 		_webLinkDone($client, $proxiedRequest->getResults, $title, $allArgs);
 	}
+}
+
+sub addCacheable {
+	my ( $class, $regex ) = @_;
+	
+	if ( ref $regex ne 'Regexp' ) {
+		$log->error( 'addCacheable called without a regular expression' );
+		return;
+	}
+
+	$cacheables{$regex} = $regex;
 }
 
 sub wipeCaches {

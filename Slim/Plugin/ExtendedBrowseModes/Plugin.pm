@@ -23,7 +23,6 @@ $prefs->init({
 		name    => Slim::Utils::Strings::string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS'),
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
-		icon    => 'html/images/artists.png',
 		id      => 'myMusicArtistsComposers',
 		weight  => 12,
 		enabled => 0,
@@ -31,7 +30,6 @@ $prefs->init({
 		name    => 'Classical Music by Conductor',
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
 		feed    => 'artists',
-		icon    => 'html/images/artists.png',
 		id      => 'myMusicArtistsConductors',
 		weight  => 13,
 		enabled => 0,
@@ -39,7 +37,6 @@ $prefs->init({
 		name    => 'Jazz Composers',
 		params  => { role_id => 'COMPOSER', genre_id => 'Jazz' },
 		feed    => 'artists',
-		icon    => 'html/images/artists.png',
 		id      => 'myMusicArtistsJazzComposers',
 		weight  => 13,
 		enabled => 0,
@@ -47,7 +44,6 @@ $prefs->init({
 		name    => 'Audiobooks',
 		params  => { genre_id => 'Audiobooks, Spoken, Speech' },
 		feed    => 'albums',
-		icon    => 'html/images/albums.png',
 		id      => 'myMusicAudiobooks',
 		weight  => 14,
 		enabled => 0,
@@ -65,8 +61,7 @@ sub initPlugin {
 	}
 	
 	# custom feed: we need to inject the latest VA ID
-	Slim::Menu::BrowseLibrary->registerNode({
-		type         => 'link',
+	$class->registerBrowseMode({
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
 		params       => {
 			mode => 'vaalbums',
@@ -80,9 +75,7 @@ sub initPlugin {
 			Slim::Menu::BrowseLibrary::_albums($client, $callback, $args, $pt);
 		},
 		icon         => 'html/images/albums.png',
-		jiveIcon     => 'html/images/albums.png',
-		homeMenuText => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
-		condition    => \&Slim::Menu::BrowseLibrary::isEnabledNode,
+		enabled      => $serverPrefs->get('disabled_myMusicAlbumsVariousArtists') ? 0 : 1,
 		id           => 'myMusicAlbumsVariousArtists',
 		weight       => 22,
 	});
@@ -92,12 +85,6 @@ sub initPlugin {
 
 sub initMenus {
 	foreach (@{$prefs->get('additionalMenuItems') || []}) {
-		next if $_->{id} =~ /AlbumArtists/;
-
-		# remove menu item before adding it back in - we might have changed its definition
-		Slim::Menu::BrowseLibrary->deregisterNode($_->{id});
-		$serverPrefs->set('disabled_' . $_->{id}, $_->{enabled} ? 0 : 1);
-		
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
@@ -108,30 +95,55 @@ sub registerBrowseMode {
 	# create string token if it doesn't exist already
 	my $nameToken = $class->registerCustomString($item->{name});
 
+	# remove menu item before adding it back in - we might have changed its definition
+	Slim::Menu::BrowseLibrary->deregisterNode($item->{id});
+	$serverPrefs->set('disabled_' . $item->{id}, $item->{enabled} ? 0 : 1);
+	
+	my $icon = $item->{icon};
+
 	# replace feed placeholders
-	my $feed = \&Slim::Menu::BrowseLibrary::_artists;
-	if ( $item->{feed} =~ /\balbums$/ ) {
-		$feed = \&Slim::Menu::BrowseLibrary::_albums;
+	my ($feed, $cb);
+	if ( ref $item->{feed} eq 'CODE' ) {
+		$feed = $item->{feed};
+	}
+	elsif ( $item->{feed} =~ /\balbums$/ ) {
+		$cb = \&Slim::Menu::BrowseLibrary::_albums;
+		$icon = 'html/images/albums.png';
+		$item->{params}->{mode} ||= $item->{id};
+	}
+	else {
+		$cb = \&Slim::Menu::BrowseLibrary::_artists;
+		$icon = 'html/images/artists.png';
+		$item->{params}->{mode} ||= $item->{id};
 	}
 	
-	my %params = map {
-		$_ => Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($item->{params}->{$_}, $_)
-	} keys %{$item->{params}};
+	$feed ||= sub {
+		my ($client, $callback, $args, $pt) = @_;
+
+		# map genre names to IDs etc.
+		@{ $pt->{searchTags} } = map {
+			if ( /^(role_id|genre_id|artist_id):(.*)/ ) {
+				$_ = "$1:" . Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($2, $1);
+			}
+			
+			$_;
+		} @{ $pt->{searchTags} || [] };
+
+		$cb->($client, $callback, $args, $pt);
+	};
 	
 	Slim::Menu::BrowseLibrary->registerNode({
 		type         => 'link',
 		name         => $nameToken,
-		params       => {
-			mode => $item->{feed},
-			%params,
-		},
+		params       => $item->{params},
 		feed         => $feed,
-		icon         => $item->{icon},
-		jiveIcon     => $item->{icon},
+		icon         => $icon,
+		jiveIcon     => $icon,
 		homeMenuText => $nameToken,
 		condition    => $item->{condition} || \&Slim::Menu::BrowseLibrary::isEnabledNode,
 		id           => $item->{id},
 		weight       => $item->{weight},
+		cache        => $item->{nocache} ? 0 : 1,
 	});
 }
 

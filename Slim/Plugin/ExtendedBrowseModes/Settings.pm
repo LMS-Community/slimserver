@@ -84,9 +84,6 @@ sub handler {
 					$menu->{weight} = 15;
 				}
 			}
-
-			# adjust icon and weight if the feed type has changed
-			$menu->{icon} = 'html/images/' . $params->{"feed$i"} . '.png';
 			
 			foreach (qw(feed name)) {
 				$menu->{$_} = $params->{$_ . $i};

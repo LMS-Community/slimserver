@@ -73,6 +73,12 @@ function to determine dynamically whether this menu item should be shown in the 
 
 Hint as to relative position of item in menu
 
+=item C<cache>
+
+Whether the rendered web page may be cached or not. Caching pages can considerably 
+speed up browsing in the web UI. But some modes (like eg. BMF) might need to be 
+processed on every call.
+
 =item C<params>
 
 HASH-ref containing:
@@ -346,6 +352,12 @@ sub _initCLI {
 sub _addWebLink {
 	my ($class, $node) = @_;
 
+	# cache web pages based on the mode parameter
+	if ( $node->{cache} && $node->{params} && $node->{params}->{mode} ) {
+		my $regex = sprintf('\b%s\b.*?\bmode=%s\b', $class->tag, $node->{params}->{mode});
+		Slim::Web::XMLBrowser->addCacheable(qr/$regex/i);
+	}
+
 	my $url = 'clixmlbrowser/clicmd=' . $class->tag() . '+items&linktitle=' . $node->{'name'};
 	$url .= join('&', ('', map {$_ .'=' . $node->{'params'}->{$_}} keys %{$node->{'params'}}));
 	$url .= '/';
@@ -521,6 +533,7 @@ sub _registerBaseNodes {
 			condition    => sub { isEnabledNode(@_) && $prefs->get('useUnifiedArtistsList') },
 			id           => 'myMusicArtists',
 			weight       => 10,
+			cache        => 1,
 		},
 		# Album artists only
 		{
@@ -537,6 +550,7 @@ sub _registerBaseNodes {
 			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
 			id           => 'myMusicArtistsAlbumArtists',
 			weight       => 9,
+			cache        => 1,
 		},
 		# All artists of all roles
 		{
@@ -553,6 +567,7 @@ sub _registerBaseNodes {
 			condition    => sub { isEnabledNode(@_) && !$prefs->get('useUnifiedArtistsList') },
 			id           => 'myMusicArtistsAllArtists',
 			weight       => 11,
+			cache        => 1,
 		},
 		{
 			type         => 'link',
@@ -564,6 +579,7 @@ sub _registerBaseNodes {
 			condition    => \&isEnabledNode,
 			id           => 'myMusicAlbums',
 			weight       => 20,
+			cache        => 1,
 		},
 		{
 			type         => 'link',
@@ -575,6 +591,7 @@ sub _registerBaseNodes {
 			condition    => \&isEnabledNode,
 			id           => 'myMusicGenres',
 			weight       => 30,
+			cache        => 1,
 		},
 		{
 			type         => 'link',
@@ -586,6 +603,7 @@ sub _registerBaseNodes {
 			condition    => \&isEnabledNode,
 			id           => 'myMusicYears',
 			weight       => 40,
+			cache        => 1,
 		},
 		{
 			type         => 'link',
@@ -598,6 +616,7 @@ sub _registerBaseNodes {
 			condition    => \&isEnabledNode,
 			id           => 'myMusicNewMusic',
 			weight       => 50,
+			cache        => 1,
 		},
 		{
 			type         => 'link',
@@ -609,6 +628,7 @@ sub _registerBaseNodes {
 			condition    => sub {return isEnabledNode(@_) && scalar @{ Slim::Utils::Misc::getAudioDirs() };},
 			id           => 'myMusicMusicFolder',
 			weight       => 70,
+			cache        => 0,		# don't cache BMF modes, as it should act on the latest disk content!
 		},
 		{
 			type         => 'link',
@@ -617,9 +637,10 @@ sub _registerBaseNodes {
 			feed         => \&_playlists,
 			icon         => 'html/images/playlists.png',
 			condition    => sub {
+								return unless isEnabledNode(@_);
 								return Slim::Utils::Misc::getPlaylistDir() ||
 									# this might be expensive - perhaps need to cache this somehow
-					 				(isEnabledNode(@_) && Slim::Schema->rs('Playlist')->getPlaylists->count);
+					 				Slim::Schema->rs('Playlist')->getPlaylists->count;
 							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
