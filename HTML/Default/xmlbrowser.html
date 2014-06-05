@@ -418,7 +418,7 @@ useSpecialExt="-browse" %]
 	[%- END %]
 [%- END %]
 
-[%- IF hasPagebar; infoTab = BLOCK -%]
+[%- IF hasPagebar || pageinfo.totalitems; infoTab = BLOCK -%]
 	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
 [%- END; END -%]
 
