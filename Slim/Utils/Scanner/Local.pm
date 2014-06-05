@@ -174,7 +174,7 @@ sub rescan {
 		$pluginHandlers = Slim::Utils::Scanner::API->getHandlers();
 	}
 	
-	$log->error("Discovering audio files in $next");
+	$log->error("Discovering audio files in $next") unless main::SCANNER && $main::progress;
 	
 	# Keep track of the number of changes we've made so we can decide
 	# if we should optimize the database or not, and also so we know if
@@ -185,7 +185,7 @@ sub rescan {
 	Slim::Utils::Scanner::Local->find( $next, $args, sub {
 		my $count  = shift;
 		
-		$log->error("Start processing found tracks");
+		$log->error("Start processing found tracks") unless main::SCANNER && $main::progress;
 		
 		# Save any other dirs we need to scan (shortcuts/aliases)
 		my $others = shift || [];
@@ -193,10 +193,10 @@ sub rescan {
 		
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 		
-		$log->error("Connect do DB");
+		$log->error("Connect do DB") unless main::SCANNER && $main::progress;
 		my $dbh = Slim::Schema->dbh;
 		
-		$log->error("Get latest ID");
+		$log->error("Get latest ID") unless main::SCANNER && $main::progress;
 		# Use the most recent existing track ID to prevent paged onDiskOnly query
 		# from missing any files. This will be 0 during a wipe
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
@@ -218,10 +218,10 @@ sub rescan {
 			AND             content_type != 'dir'
 		};
 		
-		$log->error("Delete temporary table if exists");
+		$log->error("Delete temporary table if exists") unless main::SCANNER && $main::progress;
 		# 2. Files that are new and not in the database.
 		$dbh->do('DROP TABLE IF EXISTS diskonly');
-		$log->error("Re-build temporary table");
+		$log->error("Re-build temporary table") unless main::SCANNER && $main::progress;
     	$dbh->do( qq{
     		CREATE TEMPORARY TABLE diskonly AS 
 				SELECT          DISTINCT(url) as url
@@ -256,19 +256,19 @@ sub rescan {
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
 		
-		$log->error("Get deleted tracks count");
+		$log->error("Get deleted tracks count") unless main::SCANNER && $main::progress;
 		# only remove missing tracks when looking for audio tracks
 		my $inDBOnlyCount = 0;
 		($inDBOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $inDBOnlySQL ) AS t1
 		} ) if !(main::SCANNER && $main::wipe) && $args->{types} =~ /audio/;
     	
-		$log->error("Get new tracks count");
+		$log->error("Get new tracks count") unless main::SCANNER && $main::progress;
 		my ($onDiskOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $onDiskOnlySQL ) AS t1
 		} );
 		
-		$log->error("Get changed tracks count");
+		$log->error("Get changed tracks count") unless main::SCANNER && $main::progress;
 		my $changedOnlyCount = 0;
 		($changedOnlyCount) = $dbh->selectrow_array( qq{
 			SELECT COUNT(*) FROM ( $changedOnlySQL ) AS t1

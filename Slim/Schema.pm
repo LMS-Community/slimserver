@@ -416,6 +416,8 @@ sub optimizeDB {
 
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 
+=pod
+	# print some stats about index usage
 	my $stats_sth = $class->dbh->prepare( qq{
 		SELECT idx, stat
 		FROM   sqlite_stat1
@@ -432,6 +434,7 @@ sub optimizeDB {
 	while ( $stats_sth->fetch ) {
 		$log->error( sprintf('%30s: %s', $idx, $stats) );
 	}
+=cut
 }
 
 =head2 migrateDB()

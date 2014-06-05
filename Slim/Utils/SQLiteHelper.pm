@@ -483,11 +483,11 @@ If the $optional parameter is passed, the VACUUM will only happen if there's a c
 sub vacuum {
 	my ( $class, $db, $optional ) = @_;
 
-	$log->error("Start VACUUM $db");
-
 	my $dbFile = catfile( $prefs->get('librarycachedir'), ($db || 'library.db') );
 	
 	return unless -f $dbFile;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Start VACUUM $db");
 	
 	my $source = sprintf( $class->default_dbsource(), $dbFile );
 
@@ -508,7 +508,7 @@ sub vacuum {
 	$dbh->do('VACUUM') unless $optional;
 	$dbh->disconnect;
 
-	$log->error("VACUUM $db done!");
+	main::DEBUGLOG && $log->is_debug && $log->debug("VACUUM $db done!");
 }
 
 sub _dbFile {
