@@ -269,6 +269,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
 
@@ -367,6 +368,15 @@ sub albumsQuery {
 		elsif ( $sort eq 'yearalbum' ) {
 			$order_by = "albums.year, albums.titlesort $collate";
 			$page_key = "albums.year";
+		}
+
+		if (defined $libraryID) {
+			if ($sql !~ /JOIN tracks/) {
+				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			}
+			$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
 		}
 
 		if (specified($search)) {
@@ -693,6 +703,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
+	my $libraryID= $request->getParam('library_id');
 	my $tags     = $request->getParam('tags') || '';
 	
 	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
@@ -747,6 +758,15 @@ sub artistsQuery {
 			$sql_va .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w_va}, 'genre_track.genre = ?';
 			push @{$p_va}, $genreID;
+		}
+
+		if (defined $libraryID) {
+			if ($sql !~ /JOIN contributor_track/) {
+				$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
+			}
+			$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
 		}
 		
 		if ( !defined $search ) {
@@ -1355,6 +1375,7 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $tags          = $request->getParam('tags') || '';
 	
 	my $sql  = 'SELECT %s FROM genres ';
@@ -1403,6 +1424,16 @@ sub genresQuery {
 				push @{$w}, 'contributor_track.contributor = ?';
 				push @{$p}, $contributorID;
 			}
+		}
+		
+		if ( $libraryID ) {
+			if ($sql !~ /JOIN genre_track/) {
+				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+			}
+			
+			$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
 		}
 	
 		if (defined $albumID || defined $year) {
@@ -3789,6 +3820,7 @@ sub titlesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $roleID        = $request->getParam('role_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -3834,6 +3866,7 @@ sub titlesQuery {
 		contributorId => $contributorID,
 		trackId       => $trackID,
 		roleId        => $roleID,
+		libraryId     => $libraryID,
 		limit         => sub {
 			$count = shift;
 			
@@ -3911,12 +3944,13 @@ sub yearsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
-	my $hasAlbums     = $request->getParam('hasAlbums');
+	my $libraryID     = $request->getParam('library_id');
+	my $hasAlbums     = $request->getParam('hasAlbums') || $request->getParam('library_id');
 	
 	# get them all by default
 	my $where = {};
 	
-	my ($key, $table) = $hasAlbums ? ('year', 'albums') : ('id', 'years');
+	my ($key, $table) = $hasAlbums ? ('albums.year', 'albums') : ('id', 'years');
 	
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];
@@ -3925,6 +3959,13 @@ sub yearsQuery {
 	if (defined $year) {
 		push @{$w}, "$key = ?";
 		push @{$p}, $year;
+	}
+
+	if (defined $libraryID) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryID;
 	}
 
 	if ( @{$w} ) {
@@ -4863,6 +4904,12 @@ sub _getTagDataForTracks {
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
+	}
+
+	if ( my $libraryId = $args->{libraryId} ) {
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryId;
 	}
 	
 	# Some helper functions to setup joins with less code

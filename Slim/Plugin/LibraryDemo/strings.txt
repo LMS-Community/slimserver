@@ -1,0 +1,11 @@
+PLUGIN_LIBRARY_DEMO
+	EN	Sub-Library demo
+
+PLUGIN_LIBRARY_DEMO_DESC
+	EN	Plugin to demo support for multiple (or virtual) libraries. This plugin will create a (useless) library which only consists of somewhat longish tracks (>10mins).
+	
+PLUGIN_LIBRARY_DEMO_ARTISTS
+	EN	Artists doing frickin' long tracks
+
+PLUGIN_LIBRARY_DEMO_ALBUMS
+	EN	Albums with them stupid outros and other longish tracks

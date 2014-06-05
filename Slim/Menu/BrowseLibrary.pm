@@ -91,7 +91,7 @@ This will default to the value of the C<id> of the menu item.
 If one of C<artists, albums, genres, years, tracks, playlists, playlistTracks, bmf>
 is used then it will override the default method from BrowseLibrary - use with caution.
 
-=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id role_id>
+=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id>
 
 When browsing to a deeper level in the menu hierarchy,
 then any of these values (and only these values)
@@ -739,7 +739,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id);
+my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id);
 
 sub _topLevel {
 	my ($client, $callback, $args) = @_;
