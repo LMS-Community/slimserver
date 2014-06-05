@@ -31,6 +31,7 @@ use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !NOUPNP;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
 use constant ISMAC        => ( $^O =~ /darwin/i ) ? 1 : 0;
 use constant LOCALFILE    => ( grep { /--localfile/ } @ARGV ) ? 1 : 0;
+use constant NOBROWSECACHE=> ( grep { /--nobrowsecache/ } @ARGV ) ? 1 : 0;
 
 use Config;
 my %check_inc;
@@ -738,7 +739,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--charset <charset>]
           [--noweb] [--notranscoding] [--nosb1slimp3sync] [--nostatistics] [--norestart]
-          [--noimage] [--novideo]
+          [--noimage] [--novideo] [--nobrowsecache]
           [--logging <logging-spec>] [--noinfolog | --nodebuglog]
           [--localfile]
 
@@ -787,6 +788,7 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
+    --nobrowsecache  => Disable caching of rendered browse pages.
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --failsafe       => Don't load plugins
