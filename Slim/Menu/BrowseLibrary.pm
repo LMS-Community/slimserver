@@ -739,7 +739,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-my @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id);
 
 sub _topLevel {
 	my ($client, $callback, $args) = @_;

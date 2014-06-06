@@ -37,8 +37,8 @@ my $prefs = preferences('server');
 # use a timestamp to let cached pages expire on certain events
 my $cacheTimestamp; 
 if ( !main::SCANNER ) {
-	# Wipe cached data after rescan
-	Slim::Control::Request::subscribe( \&wipeCaches, [['rescan'], ['done']] );
+	# Wipe cached data after rescan or library change
+	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan'], ['changed','done']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
 				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
@@ -1256,7 +1256,7 @@ sub webLink {
 			$cacheTimestamp, 
 			$index, 
 			$quantity, 
-			(map { $params{$_} || '' } qw(mode sort artist_id album_id genre_id role_id year index)),
+			(map { $params{$_} || '' } qw(mode sort index), @Slim::Menu::BrowseLibrary::topLevelArgs),
 			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy)),
 		);
 
