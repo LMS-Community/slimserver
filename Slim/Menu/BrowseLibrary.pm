@@ -644,6 +644,7 @@ sub _registerBaseNodes {
 							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
+			cache        => 1,
 		},
 		{
 			type         => 'link',

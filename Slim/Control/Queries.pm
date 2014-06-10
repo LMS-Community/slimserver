@@ -2193,7 +2193,6 @@ sub playlistXQuery {
 	$request->setStatusDone();
 }
 
-# XXX TODO: merge SQL-based code from 7.6/trunk
 sub playlistsTracksQuery {
 	my $request = shift;
 	
@@ -2219,54 +2218,46 @@ sub playlistsTracksQuery {
 
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
-
-	my $iterator;
-	my @tracks;
-
-	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
-
-	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
-		$iterator = $playlistObj->tracks();
-		$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
-	}
-
-	# now build the result
 	
-	if (Slim::Music::Import->stillScanning()) {
+	my $stillScanning = Slim::Music::Import->stillScanning();
+	
+	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
+		playlistId    => $playlistID,
+		sort          => 'playlist_track.position',
+		limit         => sub {
+			my $count = shift;
+			
+			my $valid;
+			my $start;
+			my $end;
+
+			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+			return ($valid, $index, $quantity);
+		},
+	} );
+
+	if ($stillScanning) {
 		$request->addResult("rescan", 1);
 	}
 
-	if (defined $iterator) {
+	# this is the count of items in this part of the request (e.g., menu 100 200)
+	# not to be confused with $count, which is the count of the entire list
+	my $chunkCount = 0;
 
-		my $count = $iterator->count();
-		$count += 0;
+	if ( scalar @{$itemOrder} ) {
 		
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-		if ($valid || $start == $end) {
-
-
-			my $cur = $start;
-			my $loopname = 'playlisttracks_loop';
-			my $chunkCount = 0;
+		for my $trackId ( @{$itemOrder} ) {
+			my $item = $items->{$trackId};
 			
-			my $list_index = 0;
-			for my $eachitem ($iterator->slice($start, $end)) {
-
-				_addSong($request, $loopname, $chunkCount, $eachitem, $tags, "playlist index", $cur);
-				
-				$cur++;
-				$chunkCount++;
-				
-				main::idleStreams();
-			}
+			_addSong($request, 'playlisttracks_loop', $chunkCount, $item, $tags);
+			
+			$chunkCount++;
 		}
-		$request->addResult("count", $count);
 
-	} else {
-
-		$request->addResult("count", 0);
 	}
+
+	$request->addResult('count', $totalCount);
 
 	$request->setStatusDone();	
 }
@@ -4817,11 +4808,20 @@ sub _getTagDataForTracks {
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
-	my $sql      = 'SELECT %s FROM tracks ';
+	my $sql;
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
+	
+	if ( my $playlistId = $args->{playlistId} ) {
+		$sql = 'SELECT %s FROM playlist_track JOIN tracks ON tracks.url = playlist_track.track ';
+		push @{$w}, 'playlist_track.playlist = ?';
+		push @{$p}, $playlistId;
+	}
+	else {
+		$sql = 'SELECT %s FROM tracks ';
+	}
 	
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
@@ -4906,12 +4906,6 @@ sub _getTagDataForTracks {
 		}
 	};
 	
-	my $join_playlist_track = sub {
-		if ( $sql !~ /JOIN playlist_track/ ) {
-			$sql .= 'JOIN playlist_track ON playlist_track.track = tracks.url ';
-		}
-	};
-	
 	if ( my $genreId = $args->{genreId} ) {
 		$join_genre_track->();
 
@@ -4932,12 +4926,6 @@ sub _getTagDataForTracks {
 			push @{$w}, 'contributor_track.contributor = ?';
 			push @{$p}, $contributorId;
 		}
-	}
-	
-	if ( my $playlistId = $args->{playlistId} ) {
-		$join_playlist_track->();
-		push @{$w}, 'playlist_track.playlist = ?';
-		push @{$p}, $playlistId;
 	}
 	
 	if ( my $trackIds = $args->{trackIds} ) {
