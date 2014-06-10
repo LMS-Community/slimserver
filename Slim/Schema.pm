@@ -179,6 +179,7 @@ sub init {
 		ContributorTrack
 		Genre
 		GenreTrack
+		LibraryTrack
 		MetaInformation
 		Playlist
 		PlaylistTrack
