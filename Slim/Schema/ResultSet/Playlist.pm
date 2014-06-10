@@ -58,17 +58,36 @@ sub getPlaylists {
 
 	return () unless (scalar @playlists);
 
-	my $find = {
-		'content_type' => { 'in' => \@playlists },
-	};
+	my $sql      = 'SELECT tracks.id FROM tracks ';
+	my $w        = [];
+	my $p        = [];
 
 	if (defined $search) {
-		$find->{'titlesearch'} = {'like' => $search};
+		push @$w, 'tracks.titlesearch LIKE ? ';
+		push @$p, $search;
 	}
+
+	push @$w, 'tracks.content_type IN (' . join(',', map { "'$_'" } @playlists) . ') ';
+
+	if ( @{$w} ) {
+		$sql .= 'WHERE ';
+		my $s .= join( ' AND ', @{$w} );
+		$s =~ s/\%/\%\%/g;
+		$sql .= $s . ' ';
+	}
+	
+	my $dbh = Slim::Schema->dbh;
+
+	my $sth = $dbh->prepare_cached( $sql );
+	$sth->execute( @{$p} );
+	my @playlistIDs = map { $_->[0] } @{$sth->fetchall_arrayref()};
+	$sth->finish;
 
 	# Add search criteria for playlists
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $rs = $self->search($find, { 'order_by' => "titlesort $collate" });
+	my $rs = $self->search({
+		id => { in => \@playlistIDs },
+	}, { 'order_by' => "titlesort $collate" });
 
 	return wantarray ? $rs->all : $rs;
 }

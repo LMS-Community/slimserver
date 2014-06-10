@@ -433,7 +433,10 @@ Main = {
 				});
 			}
 		};
-		
+
+		// IE sucks. It needs a special invitation to load the list.
+		if (Ext.isIE)
+			this.playlist.load();
 	},
 
 	collapseExpand : function(ev){

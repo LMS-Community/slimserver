@@ -30,10 +30,12 @@
 			<table id="playlistCommandSpacer"><tr>
 				<td><span id="btnPlaylistToggleArtwork"></span></td>
 				<td width="100%">
-					<span id="total_playtime">[% IF pageinfo.totalDuration; "TOTAL_TIME" | string; "&nbsp;" _ pageinfo.totalDuration; END %]</span>
+					<span id="total_playtime">[% IF pageinfo.totalDuration; "TOTAL_TIME" | string; "&nbsp;" _ pageinfo.totalDuration; END %]</span>&nbsp;
+					<span id="current_playlist_name">
 					[% IF current_playlist %]
-						<span id="current_playlist_name">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %] [% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
+						&nbsp;&nbsp;[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %] [% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]
 					[% END %]&nbsp;
+					</span>
 				</td>
  				<td><span id="btnPlaylistSave"></span></td>
 				<td><span id="btnPlaylistClear"></span></td>
