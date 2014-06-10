@@ -39,6 +39,12 @@ sub initPlugin {
 		feed => \&Slim::Menu::BrowseLibrary::_albums,
 		id   => 'albumsWithFrickinLongTracks',
 		weight => 25,
+#	},{
+#		name => 'Playlists with long tracks',
+#		icon => 'html/images/playlists.png',
+#		feed => \&Slim::Menu::BrowseLibrary::_playlists,
+#		id   => 'playlistsWithFrickinLongTracks',
+#		weight => 85,
 	} );
 	
 	foreach (@menus) {

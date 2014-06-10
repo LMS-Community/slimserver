@@ -2241,6 +2241,7 @@ sub playlistsTracksQuery {
 	my $quantity   = $request->getParam('_quantity');
 	my $tagsprm    = $request->getParam('tags');
 	my $playlistID = $request->getParam('playlist_id');
+	my $libraryID  = $request->getParam('library_id');
 
 	if (!defined $playlistID) {
 		$request->setStatusBadParams();
@@ -2254,6 +2255,7 @@ sub playlistsTracksQuery {
 	
 	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
 		playlistId    => $playlistID,
+		libraryId     => $libraryID,
 		sort          => 'playlist_track.position',
 		limit         => sub {
 			my $count = shift;
@@ -2308,13 +2310,14 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
+	my $libraryId= $request->getParam('library_id');
 	
 	# Normalize any search parameters
 	if (defined $search) {
 		$search = Slim::Utils::Text::searchStringSplit($search);
 	}
 
-	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
+	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search, $libraryId);
 
 	# now build the result
 	my $count = $rs->count;

@@ -35,6 +35,7 @@ sub getPlaylists {
 	my $self   = shift;
 	my $type   = shift || 'all';
 	my $search = shift;
+	my $library_id = shift;
 
 	my @playlists = ();
 
@@ -65,6 +66,12 @@ sub getPlaylists {
 	if (defined $search) {
 		push @$w, 'tracks.titlesearch LIKE ? ';
 		push @$p, $search;
+	}
+	
+	if ($library_id) {
+		$sql .= ', library_track ';
+		push @$w, 'library_track.library = ? AND library_track.track = tracks.id';
+		push @$p, $library_id;
 	}
 
 	push @$w, 'tracks.content_type IN (' . join(',', map { "'$_'" } @playlists) . ') ';
