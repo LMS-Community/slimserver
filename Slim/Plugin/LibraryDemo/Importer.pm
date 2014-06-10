@@ -7,10 +7,17 @@ package Slim::Plugin::LibraryDemo::Importer;
 
 use strict;
 
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
+
+my $library_id;
 
 sub initPlugin {
 	my $class = shift;
+
+	$library_id ||= Slim::Music::VirtualLibraries->registerLibrary({
+		id => 260370,
+	});
 
 	Slim::Music::Import->addImporter($class, {
 		'type'         => 'post',
@@ -28,7 +35,7 @@ sub startScan {
 
 	$dbh->do( qq{
 		INSERT OR IGNORE INTO library_track (library, track)
-			SELECT 260370, tracks.id 
+			SELECT '$library_id', tracks.id 
 			FROM tracks 
 			WHERE tracks.secs > 600
 	} );

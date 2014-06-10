@@ -10,11 +10,19 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Menu::BrowseLibrary;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
 use Slim::Utils::Scanner::API;
 
+my $library_id;
+
 sub initPlugin {
 	my $class = shift;
+	
+	$library_id ||= Slim::Music::VirtualLibraries->registerLibrary({
+		id => 260370,
+		name => Slim::Utils::Strings::string('PLUGIN_LIBRARY_DEMO'),
+	});
 
 	# importer is being used in the standalone scanner
 #	Slim::Music::Import->addImporter('Slim::Plugin::LibraryDemo::Importer', {
@@ -51,7 +59,7 @@ sub initPlugin {
 		Slim::Menu::BrowseLibrary->registerNode({
 			type         => 'link',
 			name         => $_->{name},
-			params       => { library_id => 260370 },
+			params       => { library_id => $library_id },
 			feed         => $_->{feed},
 			icon         => $_->{icon},
 			jiveIcon     => $_->{icon},
@@ -79,10 +87,10 @@ sub checkTrack {
 	
 		my $sth_update_library = $dbh->prepare_cached( qq{
 			INSERT OR IGNORE INTO library_track (library, track)
-			VALUES (260370, ?)
+			VALUES (?, ?)
 		} );
 		
-		$sth_update_library->execute($trackid);
+		$sth_update_library->execute($library_id, $trackid);
 	}	
 }
 

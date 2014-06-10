@@ -147,6 +147,7 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
@@ -752,6 +753,9 @@ sub _topLevel {
 		if ($params->{'query'} && $params->{'query'} =~ /C<$1>=(.*)/) {
 			$params->{$1} = $2;
 		}
+		
+		# check whether we have a global or per player library ID set
+		$params->{'library_id'} ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 		my @searchTags;
 		for (@topLevelArgs) {
@@ -763,6 +767,7 @@ sub _topLevel {
 		$args{'search'}       = $params->{'search'} if $params->{'search'};
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		$args{'wantIndex'}    = $params->{'wantIndex'} if $params->{'wantIndex'};
+		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
