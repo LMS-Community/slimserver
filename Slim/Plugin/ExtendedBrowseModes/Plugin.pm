@@ -104,7 +104,7 @@ sub handleFeed {
 			passthrough => [{
 				library_id => $k,
 			}],
-			nextWindow => 'myMusic'
+			nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
 		};
 	}
 
@@ -115,7 +115,7 @@ sub handleFeed {
 		passthrough => [{
 			library_id => 0,
 		}],
-		nextWindow => 'myMusic'
+		nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
 	};
 
 	$cb->({
@@ -134,7 +134,7 @@ sub setLibrary {
 		items => [{
 			name => Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
 			showBriefly => 1,
-			nextWindow => 'myMusic',
+#			nextWindow => 'myMusic',
 		}]
 	});
 }
