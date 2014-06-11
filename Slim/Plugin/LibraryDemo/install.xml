@@ -7,7 +7,7 @@
 	<version>1.0</version>
 	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
 	<creator>Logitech</creator>
-	<defaultState>disabled</defaultState>
+	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
