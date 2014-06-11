@@ -21,6 +21,7 @@ use Slim::Music::Info;
 my %protocolHandlers = ( 
 	file     => main::LOCALFILE ? qw(Slim::Player::Protocols::LocalFile) : qw(Slim::Player::Protocols::File),
 	http     => qw(Slim::Player::Protocols::HTTP),
+	https    => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	spdr     => qw(Slim::Player::Protocols::SqueezePlayDirect),
