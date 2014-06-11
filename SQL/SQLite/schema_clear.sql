@@ -30,4 +30,6 @@ DELETE FROM videos;
 
 DELETE FROM images;
 
+DELETE FROM library_track;
+
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';

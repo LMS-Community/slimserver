@@ -207,7 +207,7 @@ sub infoLibrary {
 		} 
 	}
 	
-	my $totals = Slim::Schema->totals;
+	my $totals = Slim::Schema->totals($client);
 	
 	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
@@ -240,7 +240,7 @@ sub infoLibrary {
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_TIME') . cstring($client, 'COLON') . ' '
-							. Slim::Utils::DateTime::timeFormat(Slim::Schema->totalTime),
+							. Slim::Utils::DateTime::timeFormat(Slim::Schema->totalTime($client)),
 			},
 		],
 

@@ -38,6 +38,7 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 use Tie::Cache::LRU::Expires;
 
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
@@ -259,6 +260,7 @@ sub albumsQuery {
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
+	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $tags          = $request->getParam('tags') || 'l';
@@ -269,6 +271,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || 'album';
 
@@ -289,6 +292,7 @@ sub albumsQuery {
 	my $order_by = "albums.titlesort $collate, albums.disc"; # XXX old code prepended 0 to titlesort, but not other titlesorts
 	my $limit;
 	my $page_key = "SUBSTR(albums.titlesort,1,1)";
+	my $newAlbumsCacheKey = 'newAlbumIds' . Slim::Music::Import->lastScanTime . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
 	# Normalize and add any search parameters
 	if ( defined $trackID ) {
@@ -314,12 +318,11 @@ sub albumsQuery {
 
 			# cache the most recent album IDs - need to query the tracks table, which is expensive
 			if ( !$ignoreNewAlbumsCache ) {
-				my $ids = $cache->{'newAlbumIds'} || [];
+				my $ids = $cache->{$newAlbumsCacheKey} || [];
 				
 				if (!scalar @$ids) {
-					my $cacheKey = 'newAlbumIds' . Slim::Music::Import->lastScanTime;
 					my $_cache = Slim::Utils::Cache->new;
-					$ids = $_cache->get($cacheKey) || [];
+					$ids = $_cache->get($newAlbumsCacheKey) || [];
 
 					# get the list of album IDs ordered by timestamp
 					$ids = Slim::Schema->dbh->selectcol_arrayref( qq{
@@ -330,8 +333,8 @@ sub albumsQuery {
 						ORDER BY tracks.timestamp DESC
 					}, { Slice => {} } ) unless scalar @$ids;
 					
-					$cache->{newAlbumIds} = $ids;
-					$_cache->set($cacheKey, $ids, 86400 * 7) if scalar @$ids;
+					$cache->{$newAlbumsCacheKey} = $ids;
+					$_cache->set($newAlbumsCacheKey, $ids, 86400 * 7) if scalar @$ids;
 				}
 
 				my $start = scalar($index);
@@ -367,6 +370,15 @@ sub albumsQuery {
 		elsif ( $sort eq 'yearalbum' ) {
 			$order_by = "albums.year, albums.titlesort $collate";
 			$page_key = "albums.year";
+		}
+
+		if (defined $libraryID) {
+			if ($sql !~ /JOIN tracks/) {
+				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			}
+			$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
 		}
 
 		if (specified($search)) {
@@ -426,7 +438,7 @@ sub albumsQuery {
 	
 		if (defined $genreID) {
 			my @genreIDs = split(/,/, $genreID);
-			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
 			$sql .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w}, 'genre_track.genre IN (' . join(', ', map {'?'} @genreIDs) . ')';
 			push @{$p}, @genreIDs;
@@ -531,10 +543,10 @@ sub albumsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
-	if ( $sort eq 'new' && $cache->{newAlbumIds} && !$ignoreNewAlbumsCache ) {
-		my $albumCount = scalar @{$cache->{newAlbumIds}};
+	if ( $sort eq 'new' && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
+		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
 		$albumCount    = $limit if ($limit && $limit < $albumCount);
 		$cache->{$cacheKey} ||= $albumCount;
 		$limit = undef;
@@ -683,6 +695,7 @@ sub artistsQuery {
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
+	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
@@ -693,6 +706,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
+	my $libraryID= $request->getParam('library_id');
 	my $tags     = $request->getParam('tags') || '';
 	
 	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
@@ -747,6 +761,15 @@ sub artistsQuery {
 			$sql_va .= 'JOIN genre_track ON genre_track.track = tracks.id ';
 			push @{$w_va}, 'genre_track.genre = ?';
 			push @{$p_va}, $genreID;
+		}
+
+		if (defined $libraryID) {
+			if ($sql !~ /JOIN contributor_track/) {
+				$sql .= 'JOIN contributor_track ON contributor_track.contributor = contributors.id ';
+			}
+			$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
 		}
 		
 		if ( !defined $search ) {
@@ -875,7 +898,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	$cacheKey = $sql . join( '', @{$p} );
+	$cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
 	my $count = $cache->{$cacheKey};
 	
@@ -1347,6 +1370,7 @@ sub genresQuery {
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
+	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $search        = $request->getParam('search');
@@ -1355,6 +1379,7 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $tags          = $request->getParam('tags') || '';
 	
 	my $sql  = 'SELECT %s FROM genres ';
@@ -1404,6 +1429,16 @@ sub genresQuery {
 				push @{$p}, $contributorID;
 			}
 		}
+		
+		if ( $libraryID ) {
+			if ($sql !~ /JOIN genre_track/) {
+				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
+			}
+			
+			$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
+		}
 	
 		if (defined $albumID || defined $year) {
 			if ( $sql !~ /JOIN genre_track/ ) {
@@ -1451,7 +1486,7 @@ sub genresQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 		
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -1567,7 +1602,7 @@ sub infoTotalQuery {
 		return;
 	}
 	
-	my $totals = Slim::Schema->totals;
+	my $totals = Slim::Schema->totals($request->client);
 	
 	# get our parameters
 	my $entity = $request->getRequest(2);
@@ -1684,6 +1719,7 @@ sub mediafolderQuery {
 	}
 	
 	# get our parameters
+	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
@@ -1786,13 +1822,14 @@ sub mediafolderQuery {
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
-		if (my $cachedItem = $bmfCache{ ($params->{url} || $params->{id} || '') . $type }) {
+		my $cacheKey = ($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		if (my $cachedItem = $bmfCache{$cacheKey}) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
 			$count       = $cachedItem->{count};
 			
 			# bump the timeout on the cache
-			$bmfCache{ ($params->{url} || $params->{id}) . $type } = $cachedItem;
+			$bmfCache{$cacheKey} = $cachedItem;
 		}
 		else {
 			my $files;
@@ -1814,7 +1851,7 @@ sub mediafolderQuery {
 		
 			# cache results in case the same folder is queried again shortly 
 			# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-			$bmfCache{ ($params->{url} || $params->{id}) . $type } = {
+			$bmfCache{$cacheKey} = {
 				items       => $items,
 				topLevelObj => $topLevelObj,
 				count       => $count,
@@ -2210,6 +2247,7 @@ sub playlistsTracksQuery {
 	my $quantity   = $request->getParam('_quantity');
 	my $tagsprm    = $request->getParam('tags');
 	my $playlistID = $request->getParam('playlist_id');
+	my $libraryID  = $request->getParam('library_id');
 
 	if (!defined $playlistID) {
 		$request->setStatusBadParams();
@@ -2223,6 +2261,7 @@ sub playlistsTracksQuery {
 	
 	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
 		playlistId    => $playlistID,
+		libraryId     => $libraryID,
 		sort          => 'playlist_track.position',
 		limit         => sub {
 			my $count = shift;
@@ -2277,13 +2316,14 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
+	my $libraryId= $request->getParam('library_id');
 	
 	# Normalize any search parameters
 	if (defined $search) {
 		$search = Slim::Utils::Text::searchStringSplit($search);
 	}
 
-	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
+	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search, $libraryId);
 
 	# now build the result
 	my $count = $rs->count;
@@ -2843,7 +2883,7 @@ sub serverstatusQuery {
 
 	if (Slim::Schema::hasLibrary()) {
 		# add totals
-		my $totals = Slim::Schema->totals;
+		my $totals = Slim::Schema->totals($request->client);
 		
 		$request->addResult("info total albums", $totals->{album});
 		$request->addResult("info total artists", $totals->{contributor});
@@ -3780,6 +3820,7 @@ sub titlesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $roleID        = $request->getParam('role_id');
+	my $libraryID     = $request->getParam('library_id');
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -3825,6 +3866,7 @@ sub titlesQuery {
 		contributorId => $contributorID,
 		trackId       => $trackID,
 		roleId        => $roleID,
+		libraryId     => $libraryID,
 		limit         => sub {
 			$count = shift;
 			
@@ -3899,15 +3941,17 @@ sub yearsQuery {
 	my $sqllog = main::DEBUGLOG && logger('database.sql');
 	
 	# get our parameters
+	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
+	my $libraryID     = $request->getParam('library_id');
 	my $hasAlbums     = $request->getParam('hasAlbums');
 	
 	# get them all by default
 	my $where = {};
 	
-	my ($key, $table) = $hasAlbums ? ('year', 'albums') : ('id', 'years');
+	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
 	
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];
@@ -3916,6 +3960,13 @@ sub yearsQuery {
 	if (defined $year) {
 		push @{$w}, "$key = ?";
 		push @{$p}, $year;
+	}
+
+	if (defined $libraryID) {
+		$sql .= 'JOIN tracks ON tracks.album = albums.id ';
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryID;
 	}
 
 	if ( @{$w} ) {
@@ -3927,7 +3978,7 @@ sub yearsQuery {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -4863,6 +4914,12 @@ sub _getTagDataForTracks {
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
+	}
+
+	if ( my $libraryId = $args->{libraryId} ) {
+		$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+		push @{$w}, 'library_track.library = ?';
+		push @{$p}, $libraryId;
 	}
 	
 	# Some helper functions to setup joins with less code

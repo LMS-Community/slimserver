@@ -7,12 +7,13 @@ package Slim::Plugin::ExtendedBrowseModes::Plugin;
 
 use strict;
 
-use base qw(Slim::Plugin::Base);
+use base qw(Slim::Plugin::OPMLBased);
 
 use Slim::Menu::BrowseLibrary;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Strings;
+use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Text;
 
 my $prefs = preferences('plugin.extendedbrowsemodes');
@@ -20,7 +21,7 @@ my $serverPrefs = preferences('server');
 
 $prefs->init({
 	additionalMenuItems => [{
-		name    => Slim::Utils::Strings::string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS'),
+		name    => string('PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS'),
 		params  => { role_id => 'COMPOSER' },
 		feed    => 'artists',
 		id      => 'myMusicArtistsComposers',
@@ -81,7 +82,68 @@ sub initPlugin {
 	});
 
 	$class->initMenus();
+	
+	$class->SUPER::initPlugin(
+		feed   => \&handleFeed,
+		tag    => 'selectVirtualLibrary',
+		node   => 'myMusic',
+		menu   => 'browse',
+		weight => 100,
+	);
 }
+
+sub handleFeed {
+	my ($client, $cb, $args) = @_;
+
+	my @items;
+	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
+	while (my ($k, $v) = each %$libraries) {
+		push @items, {
+			name => $v->{name},
+			url  => \&setLibrary,
+			passthrough => [{
+				library_id => $k,
+			}],
+			nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
+		};
+	}
+
+	# hard-coded item to reset the library view
+	push @items, {
+		name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
+		url  => \&setLibrary,
+		passthrough => [{
+			library_id => 0,
+		}],
+		nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
+	};
+
+	$cb->({
+		items => \@items,
+	});
+}
+
+sub setLibrary {
+	my ($client, $cb, $params, $args) = @_;
+
+	$serverPrefs->client($client)->set('libraryId', $args->{library_id});
+
+	$serverPrefs->client($client)->remove('libraryId') unless $args->{library_id};
+
+	$cb->({
+		items => [{
+			name => Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
+			showBriefly => 1,
+#			nextWindow => 'myMusic',
+		}]
+	});
+}
+
+sub condition {
+	Slim::Music::VirtualLibraries->hasLibraries();
+}
+
+sub getDisplayName { 'PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES' }
 
 sub initMenus {
 	foreach (@{$prefs->get('additionalMenuItems') || []}) {

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>91d8fb10-ecbc-11e3-ac10-0800200c9a66</id>
+	<name>PLUGIN_LIBRARY_DEMO</name>
+	<module>Slim::Plugin::LibraryDemo::Plugin</module>
+	<importmodule>Slim::Plugin::LibraryDemo::Importer</importmodule>
+	<version>1.0</version>
+	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
+	<creator>Logitech</creator>
+	<defaultState>disabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9.0</minVersion>
+        <maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

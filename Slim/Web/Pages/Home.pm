@@ -146,7 +146,7 @@ sub home {
 
 	if ( !($params->{page} && $params->{page} eq 'help') ) {
 		Slim::Web::Pages::Common->addPlayerList($client, $params);
-		Slim::Web::Pages::Common->addLibraryStats($params);
+		Slim::Web::Pages::Common->addLibraryStats($params, $client);
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);

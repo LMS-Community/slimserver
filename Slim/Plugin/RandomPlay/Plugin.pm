@@ -15,6 +15,7 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Buttons::Home;
+use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Alarm;
 use Slim::Utils::Cache;
@@ -414,7 +415,7 @@ sub genreSelectAllOrNone {
 	my $client  = $request->client();
 	my $enable  = $request->getParam('');
 	my $value   = $request->getParam('_value');
-	my $genres  = getGenres();
+	my $genres  = getGenres($client);
 
 	my @excluded = ();
 	for my $genre (keys %$genres) {
@@ -440,7 +441,7 @@ sub chooseGenre {
 	my $client    = $request->client();
 	my $genre     = $request->getParam('_genre');
 	my $value     = $request->getParam('_value');
-	my $genres    = getGenres();
+	my $genres    = getGenres($client);
 
 	# in $genres, an enabled genre returns true for $genres->{'enabled'}
 	# so we set enabled to 0 for this genre, then
@@ -465,7 +466,7 @@ sub chooseGenresMenu {
  	}
  	
 	my $client = $request->client();
-	my $genres = getGenres();	
+	my $genres = getGenres($client);	
 
 	my @menu = ();
 
@@ -493,7 +494,7 @@ sub chooseGenresMenu {
 		},
 	};
 	
-	for my $genre ( getSortedGenres() ) {
+	for my $genre ( getSortedGenres($client) ) {
 		my $val = $genres->{$genre}->{'enabled'};
 
 		push @menu, {
@@ -520,13 +521,11 @@ sub findAndAdd {
 	my ($client, $type, $limit, $addOnly) = @_;
 
 	my $idList = $cache->get('rnd_idList_' . $client->id) || [];
-	my $find = {};
 
 	if ( main::INFOLOG && $log->is_info ) {
 		$log->info(sprintf("Starting random selection of %s items for type: $type", defined($limit) ? $limit : 'unlimited'));
 	}
 
-	my @results;
 	if ( !scalar @$idList ) {
 		main::DEBUGLOG && $log->debug('Initialize ID list to be randomized');
 		
@@ -535,155 +534,141 @@ sub findAndAdd {
 
 		# Initialize find to only include user's selected genres.  If they've deselected
 		# all genres, this clause will be ignored by find, so all genres will be used.
-		my $filteredGenres = getFilteredGenres();
-		my $excludedGenres = getFilteredGenres(1);
+		my $filteredGenres = getFilteredGenres($client);
+		my $excludedGenres = getFilteredGenres($client, 1);
+		
+		my %categories = (
+			album       => ['albums', 0, 999_999, 'tags:t'],
+			contributor => ['artists', 0, 999_999],
+			track       => ['titles', 0, 999_999, 'tags:t']
+		);
+		$categories{year}    = $categories{track};
+		$categories{artist} = $categories{contributor};
+
+		my $query = $categories{$type};
 
 		# Only look for genre tracks if we have some, but not all
 		# genres selected. Or no genres selected.
-		if ((scalar @$filteredGenres > 0 && scalar @$excludedGenres != 0) || 
-		     scalar @$filteredGenres != 0 && scalar @$excludedGenres > 0) {
+		if ( (scalar @$filteredGenres > 0 && scalar @$excludedGenres != 0) || 
+		     scalar @$filteredGenres != 0 && scalar @$excludedGenres > 0 ) {
 
-			$find->{'genreTracks.genre'} = { 'in' => $filteredGenres };
+			push @$query, "genre_id:" . join(',', @$filteredGenres);
 
-			# Pull in the right tables to do our searches
-			if ($type =~ /track|year/) {
-				push @joins, 'genreTracks';
-			} 
-			elsif ($type eq 'album') {
-				push @joins, { 'tracks' => 'genreTracks' };
-			} 
-			elsif ($type eq 'contributor') {
-				push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
-			}
 		}
 
-		if ($type eq 'track' || $type eq 'year') {
-
-			# Find only tracks, not directories or remote streams etc
-			$find->{'audio'} = 1;
+		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+			push @$query, 'library_id:' . $library_id;
 		}
 		
 		if ($type eq 'year') {
-			$find->{year} = getRandomYear($client, $filteredGenres);
+			push @$query, 'year:' . getRandomYear($client, $filteredGenres);
 			$type = 'track';
 		}
 
-		# get track IDs for our criteria in random order
-		my $rs = Slim::Schema->rs($type)->search(
-			$find, 
-			{ 
-				'join' => \@joins, 
-				'order_by' => Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction()
-			}
-		);
+		my $request = Slim::Control::Request::executeRequest($client, $query);
 
-		# Get ids for all results from find and store in @$idList so they can be used in repeat calls
-		@$idList = $rs->distinct->get_column('me.id')->all;
+		my $loop = "${type}s_loop";
+		$loop = 'artists_loop' if $type eq 'contributor';
+		$loop = 'titles_loop' if $type eq 'track';
+		
+		$idList = [ map { $_->{id} } @{ $request->getResult($loop) || [] } ];
+		
+		# shuffle ID list
+		Slim::Player::Playlist::fischer_yates_shuffle($idList);
 	}
 	elsif ($type eq 'year') {
 		$type = 'track';
 	}
-	
-	if (scalar @$idList) {
-		my @randomIds = splice @$idList, 0, $limit;
 
-		# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
-		@results = Slim::Schema->rs($type)->search(
-			{ 'id' => { 'in' => \@randomIds } },
-			{ 'order_by' => Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction() }
-		)->all;
-	}
-	
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info(sprintf("Find returned %i items", scalar @results));
-	}
+	# get first ID from our randomized list	
+	my @randomIds = splice @$idList, 0, $limit;
 	
 	$cache->set('rnd_idList_' . $client->id, $idList, 'never');
 
-	# Pull the first track off to add / play it if needed.
-	my $obj = shift @results;
-
-	if (!$obj || !ref($obj)) {
+	if (!scalar @randomIds) {
 
 		logWarning("Didn't get a valid object for findAndAdd()!");
 
 		return undef;
 	}
 
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info(sprintf("%s %s: %s, %d",
-			$addOnly ? 'Adding' : 'Playing', $type, $obj->name, $obj->id
-		));
-	}
+	# Add the items to the end
+	foreach my $id (@randomIds) {
 
-	# Replace the current playlist with the first item / track or add it to end
-	my $request = $client->execute([
-		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
-	]);
-
-	# indicate request source
-	$request->source('PLUGIN_RANDOMPLAY');
-
-	# Add the remaining items to the end
-	if ($type eq 'track') {
-
-		if (!defined $limit || $limit > 1) {
-
-			if ( main::INFOLOG && $log->is_info ) {
-				$log->info(sprintf("Adding %i tracks to end of playlist", scalar @results));
-			}
-
-			$request = $client->execute(['playlist', 'addtracks', 'listRef', \@results ]);
-
-			$request->source('PLUGIN_RANDOMPLAY');
+		if ( main::INFOLOG && $log->is_info ) {
+			$log->info(sprintf("%s %s: #%d",
+				$addOnly ? 'Adding' : 'Playing', $type, $id
+			));
 		}
+	
+		# Replace the current playlist with the first item / track or add it to end
+		my $request = $client->execute([
+			'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $id)
+		]);
+	
+		# indicate request source
+		$request->source('PLUGIN_RANDOMPLAY');
+		
+		$addOnly++;
 	}
-
-	return $find->{year} || $obj->name;
 }
 
 # Returns a hash whose keys are the genres in the db
 sub getGenres {
-	return $genres if keys %$genres;
+	my $client = shift;
 	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $rs = Slim::Schema->search('Genre', undef, { 'order_by' => "me.namesort $collate" });
+	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	
+	$genres ||= {};
+	
+	return $genres->{$library_id} if keys %$genres && $genres->{$library_id};
+	
+	$genres->{$library_id} ||= {};
+	
+	my $query = ['genres', 0, 999_999];
+	
+	push @$query, 'library_id:' . $library_id if $library_id;
+
+	my $request = Slim::Control::Request::executeRequest($client, $query);
 	
 	# Extract each genre name into a hash
 	my %exclude = map { $_ => 1 } @{ $prefs->get('exclude_genres') };
 
-	while (my $genre = $rs->next) {
+	my $i = 0;
+	foreach my $genre ( @{ $request->getResult('genres_loop') || [] } ) {
 
-		my $name = $genre->name;
+		my $name = $genre->{genre};
 
 		# Put the name here as well so the hash can be passed to
 		# INPUT.Choice as part of listRef later on
-		$genres->{$name} = {
+		$genres->{$library_id}->{$name} = {
 			'name'    => $name,
-			'id'      => $genre->id,
+			'id'      => $genre->{id},
 			'enabled' => !$exclude{$name},
-			'namesort'=> $genre->namesort || $name,
+			'sort'    => $i++,
 		};
 	}
 
-	return $genres;
+	return $genres->{$library_id};
 }
 
 sub getSortedGenres {
-	my $genres = getGenres();
+	my $client = shift;
+	
+	my $genres = getGenres($client);
 	return sort { 
-		$genres->{$a}->{namesort} cmp $genres->{$b}->{namesort};
+		$genres->{$a}->{sort} <=> $genres->{$b}->{sort};
 	} keys %$genres;
 }
 
 # Returns an array of the non-excluded genres in the db
 sub getFilteredGenres {
-	my ($returnExcluded, $namesOnly) = @_;
+	my ($client, $returnExcluded, $namesOnly) = @_;
 	
 	# use second arg to set what values we return. we may need list of ids or names
 	my $value = $namesOnly ? 'name' : 'id';
 
-	my $genres = getGenres();
+	my $genres = getGenres($client);
 	
 	return [ map {
 		$genres->{$_}->{$value};
@@ -710,7 +695,15 @@ sub getRandomYear {
 		if (ref($filteredGenres) eq 'ARRAY' && scalar @$filteredGenres > 0) {
 	
 			$cond{'genreTracks.genre'} = $filteredGenres;
-			$attr{'join'}              = 'genreTracks';
+			$attr{'join'}              = ['genreTracks'];
+		}
+
+		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+
+			$cond{'libraryTracks.library'} = $library_id;
+			$attr{'join'}                ||= [];
+			push @{$attr{'join'}}, 'libraryTracks';
+			
 		}
 	
 		$years = [ Slim::Schema->rs('Track')->search(\%cond, \%attr)->get_column('me.year')->all ];
@@ -800,14 +793,12 @@ sub playRandom {
 
 				# Get the tracks.  year is a special case as we do a find for all tracks that match
 				# the previously selected year
-				my $findString = findAndAdd($client,
+				findAndAdd($client,
 				    $type,
 				    $numItems,
 					# 2nd time round just add tracks to end
 					$i == 0 ? $addOnly : 1
 				);
-
-				$string .= $findString;
 			}
 		}
 
@@ -916,7 +907,7 @@ sub getGenreOverlay {
 	my ($client, $item) = @_;
 
 	my $rv     = 0;
-	my $genres = getGenres();	
+	my $genres = getGenres($client);	
 
 	if ($item->{'selectAll'}) {
 
@@ -960,7 +951,7 @@ sub toggleGenreState {
 		$genres->{$item->{'name'}}->{'enabled'} = ! $genres->{$item->{'name'}}->{'enabled'};
 	}
 
-	$prefs->set('exclude_genres', getFilteredGenres(1, 1) );
+	$prefs->set('exclude_genres', getFilteredGenres($client, 1, 1) );
 
 	$client->update;
 }
@@ -1025,7 +1016,7 @@ sub setMode {
 
 			if ($item eq 'genreFilter') {
 
-				my $genres = getGenres();
+				my $genres = getGenres($client);
 
 				# Insert Select All option at top of genre list
 				my @listRef = ({
@@ -1036,7 +1027,7 @@ sub setMode {
 				});
 
 				# Add the genres
-				foreach my $genre ( getSortedGenres() ) {
+				foreach my $genre ( getSortedGenres($client) ) {
 					
 					# HACK: add 'value' so that INPUT.Choice won't complain as much. nasty setup there.
 					$genres->{$genre}->{'value'} = $genres->{$genre}->{'id'};
@@ -1207,7 +1198,7 @@ sub cliRequest {
 	if (my $genre = $request->getParam('genre_id')){
 		my $name = Slim::Schema->find('Genre', $genre)->name;
 		
-		my $genres = getGenres();
+		my $genres = getGenres($client);
 	
 		# in $genres, an enabled genre returns true for $genres->{'enabled'}
 		my @excluded = ();
@@ -1272,9 +1263,9 @@ sub handleWebList {
 
 	if ($client) {
 		# Pass on the current pref values and now playing info
-		my $genres = getGenres();
+		my $genres = getGenres($client);
 		$params->{'pluginRandomGenreList'}     = $genres;
-		$params->{'pluginRandomGenreListSort'} = [ getSortedGenres() ];
+		$params->{'pluginRandomGenreListSort'} = [ getSortedGenres($client) ];
 		$params->{'pluginRandomNumTracks'}     = $prefs->get('newtracks');
 		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks');
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
@@ -1309,7 +1300,7 @@ sub handleWebMix {
 sub handleWebSettings {
 	my ($client, $params) = @_;
 
-	my $genres = getGenres();
+	my $genres = getGenres($client);
 
 	# %$params will contain a key called genre_<genre id> for each ticked checkbox on the page
 	for my $genre (keys %{$genres}) {

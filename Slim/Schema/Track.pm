@@ -48,6 +48,7 @@ our @allColumns = (qw(
 	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
+	$class->has_many('libraryTracks'     => 'Slim::Schema::LibraryTrack');
 
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/title titlesort lyrics/);

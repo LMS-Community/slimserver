@@ -91,7 +91,7 @@ This will default to the value of the C<id> of the menu item.
 If one of C<artists, albums, genres, years, tracks, playlists, playlistTracks, bmf>
 is used then it will override the default method from BrowseLibrary - use with caution.
 
-=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id role_id>
+=item C<sort track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id>
 
 When browsing to a deeper level in the menu hierarchy,
 then any of these values (and only these values)
@@ -147,6 +147,7 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
@@ -740,7 +741,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year folder_id role_id library_id);
 
 sub _topLevel {
 	my ($client, $callback, $args) = @_;
@@ -752,6 +753,9 @@ sub _topLevel {
 		if ($params->{'query'} && $params->{'query'} =~ /C<$1>=(.*)/) {
 			$params->{$1} = $2;
 		}
+		
+		# check whether we have a global or per player library ID set
+		$params->{'library_id'} ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 		my @searchTags;
 		for (@topLevelArgs) {
@@ -763,6 +767,7 @@ sub _topLevel {
 		$args{'search'}       = $params->{'search'} if $params->{'search'};
 		$args{'wantMetadata'} = $params->{'wantMetadata'} if $params->{'wantMetadata'};
 		$args{'wantIndex'}    = $params->{'wantIndex'} if $params->{'wantIndex'};
+		$args{'library_id'}   = $params->{'library_id'} if $params->{'library_id'};
 		
 		if ($params->{'mode'}) {
 			my %entryParams;
