@@ -3947,12 +3947,11 @@ sub yearsQuery {
 	my $year          = $request->getParam('year');
 	my $libraryID     = $request->getParam('library_id');
 	my $hasAlbums     = $request->getParam('hasAlbums');
-	my $hasLibraryID  = $request->getParam('library_id');
 	
 	# get them all by default
 	my $where = {};
 	
-	my ($key, $table) = ($hasAlbums || $hasLibraryID) ? ('albums.year', 'albums') : ('id', 'years');
+	my ($key, $table) = ($hasAlbums || $libraryID) ? ('albums.year', 'albums') : ('id', 'years');
 	
 	my $sql = "SELECT DISTINCT $key FROM $table ";
 	my $w   = ["$key != '0'"];

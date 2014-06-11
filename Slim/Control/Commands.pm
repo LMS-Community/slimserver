@@ -3402,6 +3402,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 		}
 
+		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+			$joinMap{'libraryTracks'} = 'libraryTracks';
+			$find{'libraryTracks.library'} = $library_id;
+		}
+
 		# limit & offset may have been populated above.
 		$attrs{'order_by'} = $sort || $trackSort;
 		$attrs{'join'}     = [ map { $_ } values %joinMap ];
