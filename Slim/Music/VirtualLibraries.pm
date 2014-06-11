@@ -37,6 +37,7 @@ sub registerLibrary {
 		return;
 	}
 	
+	# we use a short hashed version of the real ID
 	my $id  = $args->{id};
 	my $id2 = substr(md5_hex($id), 0, 8);
 	
@@ -57,6 +58,14 @@ sub getLibraries {
 
 sub hasLibraries {
 	return scalar keys %libraries;
+}
+
+# because we store a hashed version of the ID we might need to look it up
+sub getRealId {
+	my ($class, $id) = @_;
+	
+	my ($id2) = grep { $libraries{$_}->{id} eq $id } keys %libraries;
+	return $id2;
 }
 
 # return a library ID set for a client or globally in LMS

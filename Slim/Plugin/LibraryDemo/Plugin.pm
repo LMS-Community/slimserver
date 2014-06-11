@@ -10,30 +10,13 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Menu::BrowseLibrary;
-use Slim::Music::VirtualLibraries;
+use Slim::Plugin::LibraryDemo::Importer;
 use Slim::Utils::Log;
-use Slim::Utils::Scanner::API;
-
-my $library_id;
 
 sub initPlugin {
 	my $class = shift;
 	
-	$library_id ||= Slim::Music::VirtualLibraries->registerLibrary({
-		id => 260370,
-		name => Slim::Utils::Strings::string('PLUGIN_LIBRARY_DEMO'),
-	});
-
-	# importer is being used in the standalone scanner
-#	Slim::Music::Import->addImporter('Slim::Plugin::LibraryDemo::Importer', {
-#		'type'         => 'post',
-#		'weight'       => 85,
-#		'use'          => 1,
-#	});
-
-	# handlers called when a new/changed track is discovered
-	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkTrack } );
-	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkTrack } );
+	Slim::Plugin::LibraryDemo::Importer->initPlugin();
 	
 	my @menus = ( {
 		name => 'PLUGIN_LIBRARY_DEMO_ARTISTS',
@@ -55,11 +38,14 @@ sub initPlugin {
 #		weight => 85,
 	} );
 	
+	# this demonstrates how to make use of libraries without switching 
+	# the full browsing experience to one particular library
+	# create some custom menu items based on one library
 	foreach (@menus) {
 		Slim::Menu::BrowseLibrary->registerNode({
 			type         => 'link',
 			name         => $_->{name},
-			params       => { library_id => $library_id },
+			params       => { library_id => Slim::Music::VirtualLibraries->getRealId('demoLongTracks') },
 			feed         => $_->{feed},
 			icon         => $_->{icon},
 			jiveIcon     => $_->{icon},
@@ -72,26 +58,6 @@ sub initPlugin {
 	}
 	
 	$class->SUPER::initPlugin(@_);
-}
-
-# check single track inside LMS
-sub checkTrack {
-	my ( $trackid, $url ) = @_;
-
-	my $track = Slim::Schema->find('Track', $trackid);
-	
-	return unless $track;
-	
-	if ($track->secs > 600) {
-		my $dbh = Slim::Schema->dbh;
-	
-		my $sth_update_library = $dbh->prepare_cached( qq{
-			INSERT OR IGNORE INTO library_track (library, track)
-			VALUES (?, ?)
-		} );
-		
-		$sth_update_library->execute($library_id, $trackid);
-	}	
 }
 
 1;
