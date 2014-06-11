@@ -39,6 +39,7 @@ use Tie::Cache::LRU::Expires;
 use URI;
 
 use Slim::Formats;
+use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -95,7 +96,7 @@ my $LAST_ERROR = 'Unknown Error';
 my %RS_CACHE = ();
 
 # Cache library totals
-my %TOTAL_CACHE = ();
+my $TOTAL_CACHE = {};
 
 # DB-handle cache
 my $_dbh;
@@ -1944,20 +1945,31 @@ Returns the total (cumulative) time in seconds of all audio tracks in the databa
 =cut
 
 sub totalTime {
-	my $self = shift;
+	my ($self, $client) = @_;
 
-	if (!$TOTAL_CACHE{totalTime}) {
-		return 0 unless $TOTAL_CACHE{track} || $self->trackCount();
+	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 	
-		$TOTAL_CACHE{totalTime} = $self->search('Track', { 'audio' => 1 }, {
-	
-			'select' => [ \'SUM(secs)' ],
-			'as'     => [ 'sum' ],
-	
-		})->single->get_column('sum');
+	$TOTAL_CACHE->{$library_id} ||= {};
+	my $totalCache = $TOTAL_CACHE->{$library_id};
+
+	if (!$totalCache->{totalTime}) {
+		my $dbh = $self->dbh;
+		my $sth;
+		
+		if ($library_id) {
+			$sth = $dbh->prepare_cached('SELECT SUM(secs) FROM tracks, library_track WHERE library_track.library=? AND library_track.track=tracks.id AND tracks.audio=1');
+			$sth->execute($library_id);
+		}
+		else {
+			$sth = $dbh->prepare_cached('SELECT SUM(secs) FROM tracks WHERE tracks.audio=1');
+			$sth->execute();
+		}
+		
+		($totalCache->{totalTime}) = $sth->fetchrow_array;
+		$sth->finish;
 	}
 	
-	return $TOTAL_CACHE{totalTime};
+	return $totalCache->{totalTime};
 }
 
 =head2 mergeSingleVAAlbum($albumid)
@@ -2069,7 +2081,7 @@ sub wipeCaches {
 
 	%contentTypeCache = ();
 	
-	%TOTAL_CACHE = ();
+	$TOTAL_CACHE = {};
 
 	# clear the references to these singletons
 	$vaObj          = undef;
@@ -3026,27 +3038,29 @@ sub clearLastError {
 sub lastError { $LAST_ERROR }
 
 sub totals {
-	my $class = shift;
+	my ($class, $client) = @_;
 	
-	if ( !$TOTAL_CACHE{album} ) {
-		$TOTAL_CACHE{album} = $class->count('Album');
-	}
-	if ( !$TOTAL_CACHE{contributor} ) {
-		$TOTAL_CACHE{contributor} = $class->rs('Contributor')->countTotal;
-	}
-	if ( !$TOTAL_CACHE{genre} ) {
-		$TOTAL_CACHE{genre} = $class->count('Genre');
-	}
-	if ( !$TOTAL_CACHE{track} ) {
-		# Bug 13215, this used to be $class->rs('Track')->browse->count but this generates a slow query
-		my $dbh = Slim::Schema->dbh;
-		my $sth = $dbh->prepare_cached('SELECT COUNT(*) FROM tracks WHERE audio = 1');
-		$sth->execute;
-		($TOTAL_CACHE{track}) = $sth->fetchrow_array;
-		$sth->finish;
+	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	
+	$TOTAL_CACHE->{$library_id} ||= {};
+	my $totalCache = $TOTAL_CACHE->{$library_id};
+	
+	my %categories = (
+		album => ['albums', 0, 1, 'tags:t'],
+		contributor => ['artists', 0, 1],
+		genre => ['genres', 0, 1],
+		track => ['titles', 0, 1, 'tags:t']
+	);
+	
+	while (my ($key, $query) = each %categories) {
+		if ( !$totalCache->{$key} ) {
+			push @$query, 'library_id:' . $library_id if $library_id;
+			my $request = Slim::Control::Request::executeRequest($client, $query);
+			$totalCache->{$key} = $request->getResult('count');
+		}
 	}
 	
-	return \%TOTAL_CACHE;
+	return $totalCache;
 }
 
 sub _insertHash {

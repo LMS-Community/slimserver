@@ -1258,6 +1258,7 @@ sub webLink {
 			$quantity, 
 			(map { $params{$_} || '' } qw(mode sort index), @Slim::Menu::BrowseLibrary::topLevelArgs),
 			(map { $args->{$_} || '' } qw(artwork player sess index start systemSkin skinOverride systemLanguage webroot thumbSize serverResizesArt orderBy)),
+			Slim::Music::VirtualLibraries->getLibraryIdForClient($client),
 		);
 
 		if ( my $cached = Slim::Utils::Cache->new->get($renderCacheKey) ) {

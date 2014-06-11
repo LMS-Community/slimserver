@@ -66,12 +66,20 @@ sub getLibraryIdForClient {
 	return unless keys %libraries;
 	
 	my $id;
-	$id   = $prefs->client($client)->get('library_id') if $client;
-	$id ||= $prefs->get('library_id');
+	$id   = $prefs->client($client)->get('libraryId') if $client;
+	$id ||= $prefs->get('libraryId');
 	
 	return unless $id && $libraries{$id};
 	
-	return $id;
+	return $id || '';
 }
+
+sub getNameForId {
+	my ($class, $id) = @_;
+	
+	return '' unless $libraries{$id};
+	return $libraries{$id}->{name} || '';
+}
+
 
 1;

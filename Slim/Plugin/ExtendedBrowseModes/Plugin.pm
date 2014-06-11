@@ -102,7 +102,7 @@ sub handleFeed {
 			name => $v->{name},
 			url  => \&setLibrary,
 			passthrough => [{
-				library_id => $k
+				library_id => $k,
 			}],
 			nextWindow => 'myMusic'
 		};
@@ -113,7 +113,7 @@ sub handleFeed {
 		name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
 		url  => \&setLibrary,
 		passthrough => [{
-			library_id => 0
+			library_id => 0,
 		}],
 		nextWindow => 'myMusic'
 	};
@@ -125,17 +125,14 @@ sub handleFeed {
 
 sub setLibrary {
 	my ($client, $cb, $params, $args) = @_;
-	
-	if ($args->{library_id}) {
-		$serverPrefs->client($client)->set('library_id', $args->{library_id});
-	}
-	else {
-		$serverPrefs->client($client)->remove('library_id');
-	}
+
+	$serverPrefs->client($client)->set('libraryId', $args->{library_id});
+
+	$serverPrefs->client($client)->remove('libraryId') unless $args->{library_id};
 
 	$cb->({
 		items => [{
-			name => 'yo!',
+			name => Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
 			showBriefly => 1,
 			nextWindow => 'myMusic',
 		}]

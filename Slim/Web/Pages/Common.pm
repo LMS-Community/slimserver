@@ -51,7 +51,7 @@ sub _lcPlural {
 }
 
 sub addLibraryStats {
-	my ($class, $params) = @_;
+	my ($class, $params, $client) = @_;
 	
 	if (!Slim::Schema::hasLibrary()) {
 		return;
@@ -85,7 +85,7 @@ sub addLibraryStats {
 		return;
 	}
 
-	my $totals = Slim::Schema->totals();
+	my $totals = Slim::Schema->totals($client);
 	$params->{'album_count'}  = $class->_lcPlural($totals->{'album'}, 'ALBUM', 'ALBUMS');
 	$params->{'song_count'}   = $class->_lcPlural($totals->{'track'}, 'SONG', 'SONGS');
 	$params->{'artist_count'} = $class->_lcPlural($totals->{'contributor'}, 'ARTIST', 'ARTISTS');
