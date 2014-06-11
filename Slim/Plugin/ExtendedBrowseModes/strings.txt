@@ -55,3 +55,12 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
+
+PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES
+	DE	Bibliotheksansicht umschalten
+	EN	Switch Library View
+
+PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
+	DE	Ganze Musiksammlung (Standard)
+	EN	All Library (Default)
+	

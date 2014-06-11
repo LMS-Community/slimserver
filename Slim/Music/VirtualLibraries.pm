@@ -55,6 +55,10 @@ sub getLibraries {
 	return \%libraries;
 }
 
+sub hasLibraries {
+	return scalar keys %libraries;
+}
+
 # return a library ID set for a client or globally in LMS
 sub getLibraryIdForClient {
 	my ($class, $client) = @_;
