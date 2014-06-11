@@ -996,6 +996,8 @@ sub _createOrUpdateAlbum {
 			push @{$search}, 'albums.title = ?';
 			push @{$values}, $title;
 
+			my $checkContributor;
+			
 			# Add disc to the search criteria if needed
 			if ($checkDisc) {
 				if ($disc) {
@@ -1010,6 +1012,8 @@ sub _createOrUpdateAlbum {
 					push @{$values}, $brainzId;
 					main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $brainzId));
 				}
+				
+				$checkContributor = 1;
 			}
 			elsif ($discc) {
 				# If we're not checking discs - ie: we're in
@@ -1020,18 +1024,7 @@ sub _createOrUpdateAlbum {
 				push @{$search}, 'albums.discc = ?';
 				push @{$values}, $discc;
 				
-				if ( defined $contributorId ) {
-					# Bug 4361, also match on contributor, so we don't group
-					# different multi-disc albums together just because they
-					# have the same title
-					my $contributor = $contributorId;
-					if ( $isCompilation && !$hasAlbumArtist ) {
-						$contributor = $vaObjId || $self->variousArtistsObject->id;
-					}
-					
-					push @{$search}, 'albums.contributor = ?';
-					push @{$values}, $contributor;
-				}
+				$checkContributor = 1;
 			}
 			elsif ( defined $disc && !defined $discc ) {
 
@@ -1040,18 +1033,20 @@ sub _createOrUpdateAlbum {
 				# multidisc _without_ having a discc set.
 				push @{$search}, 'albums.disc IS NOT NULL';
 				
-				if ( defined $contributorId ) {
-					# Bug 4361, also match on contributor, so we don't group
-					# different multi-disc albums together just because they
-					# have the same title
-					my $contributor = $contributorId;
-					if ( $isCompilation && !$hasAlbumArtist ) {
-						$contributor = $vaObjId || $self->variousArtistsObject->id;
-					}
-					
-					push @{$search}, 'albums.contributor = ?';
-					push @{$values}, $contributor;
+				$checkContributor = 1;
+			}
+			
+			if ( $checkContributor && defined $contributorId ) {
+				# Bug 4361, also match on contributor, so we don't group
+				# different multi-disc albums together just because they
+				# have the same title
+				my $contributor = $contributorId;
+				if ( $isCompilation && !$hasAlbumArtist ) {
+					$contributor = $self->variousArtistsObject->id;
 				}
+				
+				push @{$search}, 'albums.contributor = ?';
+				push @{$values}, $contributor;
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
