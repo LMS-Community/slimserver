@@ -1975,6 +1975,10 @@ sub playlistcontrolCommand {
 			$info[0] = $year;
 		}
 
+		if (defined(my $library_id = $request->getParam('library_id'))) {
+			$what->{'libraryTracks.library'} = $library_id;
+		}
+
 		# Fred: form year_id DEPRECATED in 7.0
 		if (defined(my $year_id = $request->getParam('year_id'))) {
 
@@ -3256,6 +3260,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 	}
 
+	my $library_id;
 	while (my ($key, $value) = each %{$terms}) {
 
 		# ignore anti-CSRF token
@@ -3266,6 +3271,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		# Bug: 4063 - don't enforce contributor.role when coming from
 		# the web UI's search.
 		elsif ($key eq 'contributor.role') {
+			next;
+		}
+		
+		elsif ($key eq 'libraryTracks.library') {
+			$library_id = $value;
 			next;
 		}
 
@@ -3402,7 +3412,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 		}
 
-		if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		if ( $library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
 			$joinMap{'libraryTracks'} = 'libraryTracks';
 			$find{'libraryTracks.library'} = $library_id;
 		}
