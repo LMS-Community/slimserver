@@ -227,6 +227,7 @@ use Slim::Menu::GlobalSearch;
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::Info;
 use Slim::Music::Import;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
@@ -526,6 +527,8 @@ sub init {
 	
 	Slim::Schema->init();
 	Slim::Schema::RemoteTrack->init();
+	
+	Slim::Music::VirtualLibraries->init();
 
 	unless ( main::NOUPNP || $prefs->get('noupnp') ) {
 		main::INFOLOG && $log->info("UPnP init...");

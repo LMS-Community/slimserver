@@ -2529,7 +2529,7 @@ sub rescanCommand {
 	# XXX Rewrite iTunes and MusicIP to support async rescan
 	my $importers = Slim::Music::Import->importers();
 	while ( my ($class, $config) = each %{$importers} ) {
-		if ( $class =~ /Plugin/ && $config->{use} ) {
+		if ( $class =~ /(?:Plugin|Slim::Music::VirtualLibraries)/ && $config->{use} ) {
 			$mode = 'external';
 		}
 	}

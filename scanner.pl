@@ -76,6 +76,7 @@ use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Music::VirtualLibraries;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -249,6 +250,8 @@ sub main {
 	
 	main::INFOLOG && $log->info("Cache init...");
 	Slim::Utils::Cache->init();
+	
+	Slim::Music::VirtualLibraries->init();
 
 	if ($playlists) {
 

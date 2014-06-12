@@ -11,7 +11,46 @@ Slim::Music::VirtualLibraries
 
 =head1 DESCRIPTION
 
-Helper class to deal with virtual libraries.
+Helper class to deal with virtual libraries. Plugins can register virtual library handlers to do the actual filtering.
+
+=head1 METHODS
+
+
+	my $class = 'Slim::Plugin::MyVirtualLibrary';
+
+	# Define some virtual libraries.
+	# - id:        the library's ID. Use something specific to your plugin to prevent dupes.
+	# - name:      the user facing name, shown in menus and settings
+	# - sql:       a SQL statement which creates the records in library_track
+	# - scannerCB: a sub ref to some code creating the records in library_track. Use scannerCB
+	#              if your library logic is a bit more complex than a simple SQL statement.
+	
+	# sql and scannerCB are mutually exclusive. scannerCB takes precedence over sql.
+	
+	Slim::Music::VirtualLibraries->registerLibrary( {
+		id => 'demoLongTracks',
+		name => 'Longish tracks only',
+		# %s is being replaced with the library's internal ID
+		sql => qq{
+			INSERT OR IGNORE INTO library_track (library, track)
+				SELECT '%s', tracks.id 
+				FROM tracks 
+				WHERE tracks.secs > 600
+		}
+	} );
+	
+	Slim::Music::VirtualLibraries->registerLibrary( {
+		id => 'demoComplexLibrary',
+		name => 'Library based on some complex processing',
+		scannerCB => sub {
+			my $id = shift;		# use this internal ID rather than yours!
+			
+			# do some serious processing here
+			...
+			
+			# don't forget to update the library_track table with ($id, 'track_id') tuples at some point!
+		}
+	} );
 
 L<Slim::Music::VirtualLibraries>
 
@@ -21,19 +60,28 @@ use strict;
 
 use Digest::MD5 qw(md5_hex);
 
-use Slim::Utils::Log;
+use Slim::Utils::Log qw(logError);
 use Slim::Utils::Prefs;
+use Slim::Music::Import;
 
-my $log   = logger('server');
 my $prefs = preferences('server');
 
 my %libraries;
+
+sub init {
+	my $class = shift;
+	
+	Slim::Music::Import->addImporter( $class, {
+		type   => 'post',
+		weight => 100,
+	} );
+}
 
 sub registerLibrary {
 	my ($class, $args) = @_;
 
 	if ( !$args->{id} ) {
-		$log->error('Invalid parameters: you need to register with a name and a unique ID');
+		logError('Invalid parameters: you need to register with a name and a unique ID');
 		return;
 	}
 	
@@ -42,15 +90,46 @@ sub registerLibrary {
 	my $id2 = substr(md5_hex($id), 0, 8);
 	
 	if ( $libraries{$id2} ) {
-		$log->error('Duplicate library ID: ' . $id);
+		logError('Duplicate library ID: ' . $id);
 		return;
 	}
 	
 	$libraries{$id2} = $args;
 	$libraries{$id2}->{name} ||= $args->{id};
+
+	Slim::Music::Import->useImporter( $class, 1);
 	
 	return $id2;
 }
+
+# called by the scanner module
+sub startScan {
+	return unless hasLibraries();
+	
+	my $dbh = Slim::Schema->dbh;
+	
+	my $count = hasLibraries();
+
+	my $progress = Slim::Utils::Progress->new({ 
+		'type'  => 'importer', 
+		'name'  => 'virtuallibraries', 
+		'total' => $count, 
+		'bar'   => 1
+	});
+
+	while ( my ($id, $args) = each %libraries ) {
+		$progress->update($args->{name});
+		if ( my $cb = $args->{scannerCB} ) {
+			$cb->($id);
+		}
+		elsif ( my $sql = $args->{sql} ) {
+			$dbh->do( sprintf($sql, $id) );
+		}
+	}
+
+	$progress->final($count);
+}
+
 
 sub getLibraries {
 	return \%libraries;

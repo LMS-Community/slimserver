@@ -21187,6 +21187,10 @@ IMPORTER_PROGRESS_DESC
 	RU	Здесь отображается выполнение каждого этапа сканирования.
 	SV	På den här sidan visas förloppet för varje fas i sökningsprocessen.
 
+VIRTUALLIBRARIES_PROGRESS
+	DE	Musiksammlungs-Ansichten erstellen
+	EN	Create library views
+
 RUNNING
 	CS	Spuštěno
 	DA	Kører
