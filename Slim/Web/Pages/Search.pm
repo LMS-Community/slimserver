@@ -219,6 +219,12 @@ sub advancedSearch {
 		push @joins, 'comments';
 	}
 
+	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+
+		push @joins, 'libraryTracks';
+		$query{'libraryTracks.library'} = $library_id;
+	}
+
 	# Disambiguate year
 	if ($query{'year'}) {
 		$query{'me.year'} = delete $query{'year'};
