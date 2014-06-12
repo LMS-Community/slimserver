@@ -44,7 +44,8 @@
 <hr>
 <h4 id="7.9">Changes starting from Squeezebox Server 7.9</h4>
 <ul>
-	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries now accept a library_id parameter to filter the results by virtual libraries.</li>
+	<li>Added support for virtual library views. <a href="#artists">artists</a>, <a href="#albums">albums</a>, <a href="#genres">genres</a>, <a href="#titles">titles</a> etc. queries 
+	now accept a library_id parameter to filter the results by virtual libraries. <a href="#libraries">libraries returns a list of libraries with their name and IDs.</a></li>
 	<li>Added support for these queries to filter by the contributor's role (role_id).</li>
 </ul>
 
@@ -2614,6 +2615,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#wipecache">wipecache</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#libraries">libraries</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#info total genres ?">info total genres ?</a></code></strong>
 	</li>
 	<li>
@@ -2875,6 +2879,52 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;wipecache&lt;LF&gt;&quot;
 		<br>
     	Response: &quot;wipecache&lt;LF&gt;&quot;
+    </p>
+</blockquote>
+
+<br>
+<p id="libraries">
+	<strong>
+		<code>
+			libraries
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;libraries&quot; query returns a list of known library views with
+	their ID to the calle.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;libraries&lt;LF&gt;&quot;
+		<br>
+    	Response: &quot;libraries id:8c7ee510 name:FLAC%20files%20only&lt;LF&gt;&quot;
+    </p>
+</blockquote>
+
+<br>
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt; libraries getid
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;libraries getid&quot; query returns the ID and the name of library set to 
+	be used by the given player. Returns id:0 and no name if no library is active.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;04:20:00:12:23:45 libraries getid&lt;LF&gt;&quot;
+		<br>
+		Request:  &quot;04:20:00:12:23:45 libraries getid id:8c7ee510 name:FLAC%20files%20only&lt;LF&gt;&quot;
     </p>
 </blockquote>
 

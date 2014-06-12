@@ -1641,6 +1641,30 @@ sub irenableQuery {
 	$request->setStatusDone();
 }
 
+sub librariesQuery {
+	my $request = shift;
+	
+	if ($request->isNotQuery([['libraries']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	if ( $request->isQuery([['libraries'], ['getid']]) && (my $client = $request->client) ) {
+		my $id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) || 0;
+		$request->addResult('id', $id);
+		$request->addResult('name', Slim::Music::VirtualLibraries->getNameForId($id)) if $id;
+	}
+	else {
+		my $i = 0;	
+		while ( my ($id, $args) = each %{ Slim::Music::VirtualLibraries->getLibraries() } ) {
+			$request->addResultLoop('folder_loop', $i, 'id', $id);
+			$request->addResultLoop('folder_loop', $i, 'name', $args->{name});
+			$i++;
+		}
+	}
+	
+	$request->setStatusDone();
+}
 
 sub linesperscreenQuery {
 	my $request = shift;
@@ -3240,6 +3264,11 @@ sub statusQuery {
 	}
 	$request->addResult("player_connected", $connected);
 	$request->addResult("player_ip", $client->ipport()) if $connected;
+	
+	if (my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client)) {
+		$request->addResult("library_id", $library_id);
+		$request->addResult("library_name", Slim::Music::VirtualLibraries->getNameForId($library_id));
+	}
 
 	# add showBriefly info
 	if ($client->display->renderCache->{showBriefly}
