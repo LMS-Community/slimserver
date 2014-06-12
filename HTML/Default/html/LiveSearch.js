@@ -154,8 +154,8 @@ LiveSearch = {
 
 				validator: function(value){
 					if (value.length > 0) {
-						SqueezeJS.Controller.request({
-							params: [ '', [ 'search', 0, 5, 'term:' + value, 'extended:1' ]],
+						SqueezeJS.Controller.playerRequest({
+							params: [ 'search', 0, 5, 'term:' + value, 'extended:1' ],
 							success: function(response){
 								this.searchMenu.removeAll();
 								

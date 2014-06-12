@@ -611,7 +611,7 @@ sub init {
 	addDispatch(['rescan',         '_mode',          '_singledir'],                                    [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
 	addDispatch(['rescanprogress'],                                                                    [0, 1, 1, \&Slim::Control::Queries::rescanprogressQuery]);
 	addDispatch(['restartserver'],                                                                     [0, 0, 0, \&Slim::Control::Commands::stopServer]);
-	addDispatch(['search',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);
+	addDispatch(['search',         '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::searchQuery]);
 	addDispatch(['serverstatus',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::serverstatusQuery]);
 	addDispatch(['setsncredentials','_username',     '_password'],                                     [0, 0, 1, \&Slim::Control::Commands::setSNCredentialsCommand]);
 	addDispatch(['show'],                                                                              [1, 0, 1, \&Slim::Control::Commands::showCommand]);

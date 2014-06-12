@@ -2712,10 +2712,12 @@ sub searchQuery {
 		return;
 	}
 
+	my $client   = $request->client;
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
 	my $extended = $request->getParam('extended');
+	my $libraryID= $request->getParam('library_id') || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 	# transliterate umlauts and accented characters
 	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
@@ -2741,17 +2743,38 @@ sub searchQuery {
 		my ($type, $name, $w, $p, $c) = @_;
 	
 		# contributors first
-		my $cols = "id, $name";
-		
+		my $cols = "me.id, me.$name";
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
 		
-		my $sql = "SELECT $cols FROM ${type}s ";
+		my $sql = "SELECT $cols FROM ${type}s me ";
+		
+		if ( $libraryID ) {
+			if ( $type eq 'contributor') {
+				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+			}
+			elsif ( $type eq 'album' ) {
+				$sql .= 'JOIN tracks ON tracks.album = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
+			}
+			elsif ( $type eq 'genre' ) {
+				$sql .= 'JOIN genre_track ON genre_track.genre = me.id ';
+				$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
+			}
+			elsif ( $type eq 'track' ) {
+				$sql .= 'JOIN library_track ON library_track.track = me.id ';
+			}
+			
+			push @{$w}, 'library_track.library = ?';
+			push @{$p}, $libraryID;
+		}
+		
 		if ( ref $search->[0] eq 'ARRAY' ) {
-			push @{$w}, '(' . join( ' OR ', map { "${name}search LIKE ?" } @{ $search->[0] } ) . ')';
+			push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $search->[0] } ) . ')';
 			push @{$p}, @{ $search->[0] };
 		}
 		else {		
-			push @{$w}, "${name}search LIKE ?";
+			push @{$w}, "me.${name}search LIKE ?";
 			push @{$p}, @{$search};
 		}
 		
@@ -2761,6 +2784,8 @@ sub searchQuery {
 			$s =~ s/\%/\%\%/g;
 			$sql .= $s . ' ';
 		}
+			
+		$sql .= "GROUP BY me.id " if $libraryID;
 	
 #		$sql .= "ORDER BY ${name}sort " . Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
