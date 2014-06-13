@@ -9,13 +9,13 @@ use strict;
 use base qw(Slim::Web::Settings);
 use Storable;
 
+use Slim::Plugin::ExtendedBrowseModes::Plugin;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.extendedbrowsemodes');
-my $serverPrefs = preferences('server');
 
 sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_EXTENDED_BROWSEMODES');
@@ -25,12 +25,12 @@ sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('plugins/ExtendedBrowseModes/settings/browsemodes.html');
 }
 
-sub prefs {
-	return ($prefs);
-}
+sub needsClient { 1 }
 
 sub handler {
 	my ($class, $client, $params) = @_;
+
+	my $serverPrefs = preferences('server')->client($client);
 
 	if ($params->{'saveSettings'}) {
 		my $menus = $prefs->get('additionalMenuItems');
@@ -47,7 +47,12 @@ sub handler {
 
 			# reguler menu items
 			if (!$menu) {
-				$serverPrefs->set('disabled_' . $params->{"id$i"}, $params->{"enabled$i"} ? 0 : 1);
+				if ($params->{"enabled$i"}) {
+					$serverPrefs->remove('disabled_' . $params->{"id$i"});
+				}
+				else {
+					$serverPrefs->set('disabled_' . $params->{"id$i"}, 1);
+				}
 				next;
 			}
 
@@ -126,7 +131,11 @@ sub handler {
 	} grep {
 		#$_->{id} !~ /^(?:myMusicArtists|myMusicArtistsAlbumArtists|myMusicArtistsAllArtists|myMusicAlbums)$/ && 
 		!$ids{$_->{id}}
-	} @{Slim::Menu::BrowseLibrary->_getNodeList()};
+	} @{Slim::Menu::BrowseLibrary->_getNodeList()}, { 
+		id => Slim::Plugin::ExtendedBrowseModes::Plugin->tag,
+		name => Slim::Plugin::ExtendedBrowseModes::Plugin->getDisplayName,
+		weight => Slim::Plugin::ExtendedBrowseModes::Plugin->weight,
+	};
 	
 
 	$class->SUPER::handler($client, $params);

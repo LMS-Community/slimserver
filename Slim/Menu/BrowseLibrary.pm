@@ -514,7 +514,7 @@ sub _getNodeList {
 sub isEnabledNode {
 	my ($client, $nodeId) = @_;
 
-	return if $prefs->get('disabled_' . $nodeId);
+	return if $prefs->client($client)->get('disabled_' . $nodeId);
 	
 	return Slim::Schema::hasLibrary();
 }

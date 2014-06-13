@@ -147,7 +147,11 @@ sub setLibrary {
 }
 
 sub condition {
-	Slim::Music::VirtualLibraries->hasLibraries();
+	my ($class, $client) = @_;
+	
+	return unless Slim::Music::VirtualLibraries->hasLibraries();
+	
+	return !$client || !$serverPrefs->client($_[1])->get('disabled_selectVirtualLibrary');
 }
 
 sub getDisplayName { 'PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES' }
@@ -166,7 +170,15 @@ sub registerBrowseMode {
 
 	# remove menu item before adding it back in - we might have changed its definition
 	Slim::Menu::BrowseLibrary->deregisterNode($item->{id});
-	$serverPrefs->set('disabled_' . $item->{id}, $item->{enabled} ? 0 : 1);
+
+	foreach my $clientPref ( $serverPrefs->allClients ) {
+		if ($item->{enabled}) {
+			$clientPref->remove('disabled_' . $item->{id});
+		}
+		else {
+			$clientPref->set('disabled_' . $item->{id}, 1);
+		}
+	}
 	
 	my $icon = $item->{icon};
 

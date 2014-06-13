@@ -19,11 +19,11 @@
 			[% seen = 1; END %]
 			<tr>
 				<td style="text-align:center;">
-					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
+					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" id="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
 				[% IF !menu.feed && menu.id != '_new_' %]
-					<td colspan="5">[% menu.name | getstring %]</td>
+					<td colspan="5"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
 				[% ELSE %]
 					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 98%;" class="stdedit" /></td>
 					<td>
