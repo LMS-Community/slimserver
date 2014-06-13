@@ -138,6 +138,7 @@ sub loadModules {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion),
 		catdir($libPath,'lib'), 
 		catdir($libPath,'CPAN'), 
 		$libPath,
