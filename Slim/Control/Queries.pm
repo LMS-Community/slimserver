@@ -533,7 +533,8 @@ sub albumsQuery {
 		}
 	}
 	
-	$sql .= "GROUP BY albums.id ORDER BY $order_by ";
+	$sql .= "GROUP BY albums.id ";
+	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 	
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
@@ -583,7 +584,7 @@ sub albumsQuery {
 	my $loopname = 'albums_loop';
 	my $chunkCount = 0;
 
-	if ($valid) {
+	if ($valid && $tags ne 'CC') {
 
 		# We need to know the 'No album' name so that those items
 		# which have been grouped together under it do not get the
@@ -915,8 +916,10 @@ sub artistsQuery {
 		}
 	}
 
-	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort, contributors.musicmagic_mixable')
-			. "GROUP BY contributors.id ORDER BY contributors.namesort $collate";
+	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort')
+			. 'GROUP BY contributors.id ';
+			
+	$sql .= "ORDER BY contributors.namesort $collate " unless $tags eq 'CC';
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
@@ -973,7 +976,7 @@ sub artistsQuery {
 	my $loopname = 'artists_loop';
 	my $chunkCount = 0;
 
-	if ($valid) {			
+	if ($valid && $tags ne 'CC') {			
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
 			$sql .= "LIMIT $index, $quantity ";
@@ -986,8 +989,8 @@ sub artistsQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 		
-		my ($id, $name, $namesort, $mixable);
-		$sth->bind_columns( \$id, \$name, \$namesort, \$mixable );
+		my ($id, $name, $namesort);
+		$sth->bind_columns( \$id, \$name, \$namesort );
 		
 		my $process = sub {
 			$id += 0;
@@ -1024,7 +1027,6 @@ sub artistsQuery {
 			$id       = $vaObj->id;
 			$name     = $vaName;
 			$namesort = $vaNamesort;
-			$mixable  = 0;
 			
 			$process->();
 		}
@@ -1503,8 +1505,8 @@ sub genresQuery {
 		}
 	}
 	
-	$sql = sprintf($sql, 'DISTINCT(genres.id), genres.name, genres.namesort, genres.musicmagic_mixable')
-			. "ORDER BY genres.namesort $collate";
+	$sql = sprintf($sql, 'DISTINCT(genres.id), genres.name, genres.namesort');
+	$sql .= "ORDER BY genres.namesort $collate" unless $tags eq 'CC';
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
@@ -1536,7 +1538,7 @@ sub genresQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	if ($valid) {
+	if ($valid && $tags ne 'CC') {
 
 		my $loopname = 'genres_loop';
 		my $chunkCount = 0;
@@ -1553,8 +1555,8 @@ sub genresQuery {
 		my $sth = $dbh->prepare_cached($sql);
 		$sth->execute( @{$p} );
 		
-		my ($id, $name, $namesort, $mixable);
-		$sth->bind_columns( \$id, \$name, \$namesort, \$mixable );
+		my ($id, $name, $namesort);
+		$sth->bind_columns( \$id, \$name, \$namesort );
 		
 		while ( $sth->fetch ) {
 			$id += 0;
@@ -4956,6 +4958,13 @@ sub _getTagDataForTracks {
 	}
 	
 	my $sort = $args->{sort};
+
+	# return count only?
+	my $count_only;
+	if ($tags eq 'CC') {
+		$count_only = 1;
+		$tags = $sort = '';
+	}
 	
 	# Normalize any search parameters
 	my $search = $args->{search};
@@ -5178,7 +5187,7 @@ sub _getTagDataForTracks {
 		$s =~ s/\%/\%\%/g;
 		$sql .= $s . ' ';
 	}
-	$sql .= 'GROUP BY tracks.id ';
+	$sql .= 'GROUP BY tracks.id ' if $sql =~ /JOIN /;
 	
 	if ( $sort ) {
 		$sql .= "ORDER BY $sort ";
@@ -5191,7 +5200,7 @@ sub _getTagDataForTracks {
 	
 	my $dbh = Slim::Schema->dbh;
 	
-	if ( my $limit = $args->{limit} ) {
+	if ( $count_only || (my $limit = $args->{limit}) ) {
 		# Let the caller worry about the limit values
 		
 		my $total_sth = $dbh->prepare_cached( qq{
@@ -5202,9 +5211,10 @@ sub _getTagDataForTracks {
 		($total) = $total_sth->fetchrow_array();
 		$total_sth->finish;
 		
-		my ($valid, $start, $end) = $limit->($total);
+		my ($valid, $start, $end);
+		($valid, $start, $end) = $limit->($total) unless $count_only;
 		
-		if ( !$valid ) {
+		if ( $count_only || !$valid ) {
 			return wantarray ? ( {}, [], $total ) : {};
 		}
 		

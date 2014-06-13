@@ -139,6 +139,11 @@ sub setLibrary {
 #			nextWindow => 'myMusic',
 		}]
 	});
+
+	# pre-cache totals
+	Slim::Utils::Timers::setTimer(__PACKAGE__, Time::HiRes::time() + 0.1, sub {
+		Slim::Schema->totals($client);
+	});
 }
 
 sub condition {

@@ -3041,10 +3041,10 @@ sub totals {
 	my $totalCache = $TOTAL_CACHE->{$library_id};
 	
 	my %categories = (
-		album => ['albums', 0, 1, 'tags:t'],
-		contributor => ['artists', 0, 1],
-		genre => ['genres', 0, 1],
-		track => ['titles', 0, 1, 'tags:t']
+		album => ['albums', 0, 1, 'tags:CC'],
+		contributor => ['artists', 0, 1, 'tags:CC'],
+		genre => ['genres', 0, 1, 'tags:CC'],
+		track => ['titles', 0, 1, 'tags:CC']
 	);
 	
 	while (my ($key, $query) = each %categories) {
@@ -3052,6 +3052,8 @@ sub totals {
 			push @$query, 'library_id:' . $library_id if $library_id;
 			my $request = Slim::Control::Request::executeRequest($client, $query);
 			$totalCache->{$key} = $request->getResult('count');
+
+			main::idleStreams();
 		}
 	}
 	
