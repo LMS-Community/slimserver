@@ -497,7 +497,7 @@ sub handleFeed {
 					}
 
 					# XXX: maybe need to pass orderBy through
-					my %args = (isWeb => 1, wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'});
+					my %args = (isWeb => 1, wantMetadata => 1, wantIndex => 1, search => $search, params => $stash->{'query'}, library_id => $stash->{library_id});
 					my $index = $stash->{'start'};
 
 					if ($depth == $levels) {

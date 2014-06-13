@@ -1083,6 +1083,7 @@ sub _artists {
 	my $search     = $pt->{'search'};
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
 		$search = $args->{'search'};
 	}
 	
@@ -1236,6 +1237,7 @@ sub _genres {
 	my $search     = $pt->{'search'};
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
 		$search = $args->{'search'};
 	}
 		
@@ -1365,6 +1367,7 @@ sub _albums {
 	}
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
 		$search = $args->{'search'};
 	}
 	
@@ -1563,6 +1566,7 @@ sub _tracks {
 	my $tags       = 'dtuxgaAliqyorf';
 	
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
+		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
 		$search = $args->{'search'};
 	}
 	
@@ -1810,6 +1814,7 @@ sub _playlists {
 	my $search     = $pt->{'search'};
 	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
+		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
 		$search = $args->{'search'};
 	}
 

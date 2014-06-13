@@ -770,7 +770,8 @@ sub artistsQuery {
 			}
 		}
 		
-		if ( !defined $search ) {
+		# XXX - why would we not filter by role, as drilling down would filter anyway, potentially leading to empty resultsets? -mh
+		#if ( !defined $search ) {
 			# Filter based on roles unless we're searching
 			if ( $sql =~ /JOIN contributor_track/ ) {
 				push @{$w}, 'contributor_track.role IN (' . join( ',', @{$roles} ) . ') ';
@@ -794,7 +795,7 @@ sub artistsQuery {
 				
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
-		}
+		#}
 		
 		if (defined $albumID || defined $year) {
 			if ( $sql !~ /JOIN contributor_album/ ) {

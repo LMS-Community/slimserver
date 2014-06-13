@@ -35,16 +35,22 @@ use constant MAXRESULTS => 10;
 
 sub search {
 	my ($client, $params) = @_;
+
+	my $library_id = '';
+	if ( $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
+		$params->{'library_id'} ||= $library_id;
+		$library_id = "&library_id=$library_id";
+	}
 	
 	if (my $action = $params->{'action'}) {
-		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+playlist+$action&mode=search/";
+		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+playlist+$action&mode=search$library_id/";
 		return Slim::Web::XMLBrowser::webLink(@_);
 	}
 
 	
 	if ($params->{'ajaxSearch'}) {
 		$params->{'itemsPerPage'} = MAXRESULTS;
-		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search/";
+		$params->{'path'} = "clixmlbrowser/clicmd=browselibrary+items&linktitle=SEARCH&mode=search$library_id/";
 		return Slim::Web::XMLBrowser::webLink(@_);		
 	}
 

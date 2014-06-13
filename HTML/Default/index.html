@@ -88,7 +88,7 @@
 				if (Ext.isGecko)
 					frames.browser.location.href = "about:blank";
 				 
-				frames.browser.location.href = "[% webroot %]home.html?player=[% playerid %]&uid=[% USE date; date.now %]"; 
+				frames.browser.location.href = "[% webroot %][% IF search; "search"; ELSE; "home"; END %].html?player=[% playerid %]&uid=[% USE date; date.now %]&query=[% search | uri %]";
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';
