@@ -242,7 +242,9 @@ ELSE %]
 		[% infoTab = BLOCK %]
 			<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
 			<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
-			<span id="artistcount">[% artist_count %]</span>.
+			<span id="artistcount">[% artist_count %]</span>[% IF library_name; 
+				' (' _ library_name _ ')'; 
+			END %].
 		[% END %]
 	[% END %]
 
