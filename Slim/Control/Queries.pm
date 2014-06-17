@@ -324,14 +324,18 @@ sub albumsQuery {
 					my $_cache = Slim::Utils::Cache->new;
 					$ids = $_cache->get($newAlbumsCacheKey) || [];
 
-					# get the list of album IDs ordered by timestamp
-					$ids = Slim::Schema->dbh->selectcol_arrayref( qq{
+					my $countSQL = qq{
 						SELECT tracks.album
-						FROM tracks
+						FROM tracks } . ($libraryID ? qq{
+							JOIN library_track ON library_track.library = '$libraryID' AND tracks.id = library_track.track
+						} : '') . qq{
 						WHERE tracks.album > 0
 						GROUP BY tracks.album
 						ORDER BY tracks.timestamp DESC
-					}, { Slice => {} } ) unless scalar @$ids;
+					};
+
+					# get the list of album IDs ordered by timestamp
+					$ids = Slim::Schema->dbh->selectcol_arrayref( $countSQL, { Slice => {} } ) unless scalar @$ids;
 					
 					$cache->{$newAlbumsCacheKey} = $ids;
 					$_cache->set($newAlbumsCacheKey, $ids, 86400 * 7) if scalar @$ids;

@@ -1421,7 +1421,7 @@ sub _albums {
 				$_->{'hasMetadata'}   = 'album'
 			}
 			my $extra;
-			if (scalar @searchTags) {
+			if (scalar @searchTags && $sort !~ /:new/) {
 				my $params = _tagsToParams(\@searchTags);
 				my %actions = (
 					allAvailableActionsDefined => 1,
