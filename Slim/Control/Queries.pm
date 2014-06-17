@@ -774,20 +774,17 @@ sub artistsQuery {
 			}
 		}
 		
-		# XXX - why would we not filter by role, as drilling down would filter anyway, potentially leading to empty resultsets? -mh
-		#if ( !defined $search ) {
+		# don't filter searches as we might miss the VA object
+		if ( !defined $search ) {
 			# Filter based on roles unless we're searching
 			if ( $sql =~ /JOIN contributor_track/ ) {
 				push @{$w}, 'contributor_track.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			else {
-				if ( $sql !~ /JOIN contributor_album/ ) {
-					$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
-				}
 				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			
-			if ( $va_pref || $aa_merge ) {
+			if ( !defined $search && ($va_pref || $aa_merge) ) {
 				# Don't include artists that only appear on compilations
 				if ( $sql =~ /JOIN tracks/ ) {
 					# If doing an artists-in-genre query, we are much better off joining through albums
@@ -802,7 +799,7 @@ sub artistsQuery {
 				
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
-		#}
+		}
 		
 		if (defined $albumID || defined $year) {
 			if ( $sql !~ /JOIN contributor_album/ ) {
