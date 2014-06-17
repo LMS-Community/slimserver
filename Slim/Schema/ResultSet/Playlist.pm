@@ -63,7 +63,15 @@ sub getPlaylists {
 	my $w        = [];
 	my $p        = [];
 
-	if (defined $search) {
+	if ( $search && ref $search && ref $search->[0] eq 'ARRAY' ) {
+		unshift @{$w}, '(' . join( ' OR ', map { 'tracks.titlesearch LIKE ?' } @{ $search->[0] } ) . ')';
+		unshift @{$p}, @{ $search->[0] };
+	}
+	elsif ( $search && ref $search ) {
+		unshift @{$w}, 'tracks.titlesearch LIKE ?';
+		unshift @{$p}, @{$search};
+	}
+	elsif (defined $search) {
 		push @$w, 'tracks.titlesearch LIKE ? ';
 		push @$p, $search;
 	}
