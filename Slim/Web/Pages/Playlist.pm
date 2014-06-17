@@ -155,7 +155,7 @@ sub playlist {
 	my $totalDuration = 0;
 	my $itemnum = 0;
 
-	foreach my $objOrUrl ( @{Slim::Player::Playlist::playList($client)} ) {
+	foreach my $objOrUrl ( @{ Slim::Player::Playlist::playList($client) }[ @{Slim::Player::Playlist::shuffleList($client)} ] ) {
 		
 		# These should all be objects - but be safe.
 		my $track    = $objOrUrl;
