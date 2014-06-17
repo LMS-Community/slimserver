@@ -777,6 +777,9 @@ sub artistsQuery {
 				push @{$w}, 'contributor_track.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			else {
+				if ( $sql !~ /JOIN contributor_album/ ) {
+					$sql .= 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+				}
 				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
 			}
 			
