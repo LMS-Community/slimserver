@@ -3200,7 +3200,7 @@ sub statusQuery_filter {
 	# ignore most prefset commands, but e.g. alarmSnoozeSeconds needs to generate a playerstatus update
 	if ( $request->isCommand( [['prefset', 'playerpref']] ) ) {
 		my $prefname = $request->getParam('_prefname');
-		if ( defined($prefname) && ( $prefname eq 'alarmSnoozeSeconds' || $prefname eq 'digitalVolumeControl' ) ) {
+		if ( defined($prefname) && ( $prefname =~ /^(?:alarmSnoozeSeconds|digitalVolumeControl|libraryId)$/ ) ) {
 			# this needs to pass through the filter
 		}
 		else {
