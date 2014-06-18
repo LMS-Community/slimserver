@@ -126,7 +126,15 @@ sub handleFeed {
 sub setLibrary {
 	my ($client, $cb, $params, $args) = @_;
 
-	return unless $client;
+	if (!$client) {
+		$cb->({
+			items => [{
+				name => string('NO_PLAYER_FOUND'),
+			}]
+		});
+		return;
+	}
+	
 
 	$serverPrefs->client($client)->set('libraryId', $args->{library_id});
 
