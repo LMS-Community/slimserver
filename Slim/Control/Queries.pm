@@ -840,33 +840,39 @@ sub artistsQuery {
 		}
 
 		if (defined $libraryID) {
-			my $roles = '';
-
-			# get roles filter from existing conditions
-			@${w} = grep {
-				if (/contributor_(?:track|album).role IN/) {
-					$roles = $_;
-					0;
-				}
-				else {
-					$_
-				}
-			} @$w;
-			
-			$roles =~ s/contributor_album/contributor_track/;
-			$roles .= ' AND ' if $roles;
-
-			push @{$w}, sprintf(qq( 
-				contributors.id IN (
-				   SELECT DISTINCT contributor_track.contributor
-				   FROM contributor_track
-				   WHERE %s contributor_track.track IN (
-				      SELECT library_track.track
-				      FROM library_track
-				      WHERE library_track.library = ?
-				   )
-				)
-			), $roles);
+			if ( $sql =~ /JOIN tracks/ ) {
+				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
+				push @{$w}, 'library_track.library = ?';
+			}
+			else {
+				my $roles = '';
+	
+				# get roles filter from existing conditions
+				@${w} = grep {
+					if (/contributor_(?:track|album).role IN/) {
+						$roles = $_;
+						0;
+					}
+					else {
+						$_
+					}
+				} @$w;
+				
+				$roles =~ s/contributor_album/contributor_track/;
+				$roles .= ' AND ' if $roles;
+	
+				push @{$w}, sprintf(qq( 
+					contributors.id IN (
+					   SELECT DISTINCT contributor_track.contributor
+					   FROM contributor_track
+					   WHERE %s contributor_track.track IN (
+					      SELECT library_track.track
+					      FROM library_track
+					      WHERE library_track.library = ?
+					   )
+					)
+				), $roles);
+			}
 
 			push @{$p}, $libraryID;
 		}
