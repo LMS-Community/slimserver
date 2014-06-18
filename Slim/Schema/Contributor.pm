@@ -165,6 +165,29 @@ sub add {
 	return wantarray ? @contributors : $contributors[0];
 }
 
+sub isInLibrary {
+	my ( $self, $library_id ) = @_;
+	
+	return 1 unless $library_id && $self->id;
+
+	my $dbh = Slim::Schema->dbh;
+	
+	my $sth = $dbh->prepare_cached( qq{
+		SELECT 1 
+		FROM contributor_track, library_track
+		WHERE contributor_track.contributor = ?
+		AND library_track.library = ?
+		AND library_track.track = contributor_track.track
+		LIMIT 1
+	} );
+	
+	$sth->execute($self->id, $library_id);
+	my ($inLibrary) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $inLibrary;
+}
+
 # Rescan list of contributors, this simply means to make sure at least 1 track
 # from this contributor still exists in the database.  If not, delete the contributor.
 sub rescan {

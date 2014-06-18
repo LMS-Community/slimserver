@@ -227,8 +227,13 @@ sub infoContributors {
 		$linkRoles{'ALBUMARTIST'} = 1;
 		
 		# Loop through the contributor types and append
+		my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		
 		for my $role (@roles) {
 			for my $contributor ( $album->artistsForRoles($role) ) {
+				
+				next unless $contributor->isInLibrary($library_id);
+				
 				if ($linkRoles{$role}) {
 					my $id = $contributor->id;
 					
