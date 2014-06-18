@@ -939,7 +939,15 @@ sub _globalSearchMenu {
 	
 	my $items = searchItems($client);
 	
-	foreach (@$items) {$_->{'type'} = 'link'; $_->{'searchParam'} = $tags->{search};}
+	my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	
+	foreach (@$items) {
+		$_->{'type'} = 'link'; 
+		$_->{'searchParam'} = $tags->{search};
+		$_->{'passthrough'} = [
+			{ 'library_id' => $library_id }
+		] if $library_id;
+	}
 
 	return {
 		name  => cstring($client, 'MY_MUSIC'),
@@ -1081,9 +1089,10 @@ sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
-
+	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
-		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
+		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
 	}
 	
@@ -1235,9 +1244,10 @@ sub _genres {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	my $search     = $pt->{'search'};
+	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
-		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
+		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
 	}
 		
@@ -1361,13 +1371,14 @@ sub _albums {
 	my $search     = $pt->{'search'};
 	my $wantMeta   = $pt->{'wantMetadata'};
 	my $tags       = 'ljsaS';
+	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	
 	if (!$sort || $sort ne 'sort:new') {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
-		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
+		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
 	}
 	
@@ -1564,9 +1575,10 @@ sub _tracks {
 	my $offset     = $args->{'index'} || 0;
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
 	my $tags       = 'dtuxgaAliqyorf';
-	
+	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
-		push @searchTags, 'library_id:' . $args->{'library_id'} if $args->{'library_id'};
+		push @searchTags, 'library_id:' . $library_id if $library_id;
 		$search = $args->{'search'};
 	}
 	
