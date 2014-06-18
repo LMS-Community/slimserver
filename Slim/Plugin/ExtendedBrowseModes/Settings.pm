@@ -25,12 +25,10 @@ sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('plugins/ExtendedBrowseModes/settings/browsemodes.html');
 }
 
-sub needsClient { 1 }
-
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	my $serverPrefs = preferences('server')->client($client);
+	my $serverPrefs = $class->getServerPrefs($client);
 
 	if ($params->{'saveSettings'}) {
 		my $menus = $prefs->get('additionalMenuItems');
@@ -45,18 +43,18 @@ sub handler {
 
 			my ($menu) = $params->{"id$i"} eq '_new_' ? {} : grep { $_->{id} eq $params->{"id$i"} } @$menus;
 
-			# reguler menu items
-			if (!$menu) {
-				if ($params->{"enabled$i"}) {
+			# regular menu items
+			if ( !$menu ) {
+				if ( $params->{"enabled$i"} && $serverPrefs ) {
 					$serverPrefs->remove('disabled_' . $params->{"id$i"});
 				}
-				else {
+				elsif ( $serverPrefs ) {
 					$serverPrefs->set('disabled_' . $params->{"id$i"}, 1);
 				}
 				next;
 			}
 
-			$menu->{enabled} = $params->{"enabled$i"} || 0;
+			$menu->{enabled} = $params->{"enabled$i"} || 0 if $serverPrefs;
 			
 			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"});
 
@@ -74,7 +72,7 @@ sub handler {
 			
 			my $feedType = $params->{"feed$i"};
 			if ($params->{"id$i"} !~ /\Q$feedType\E/i) {
-				$serverPrefs->remove('disabled_' . $params->{"id$i"});
+				$serverPrefs->remove('disabled_' . $params->{"id$i"}) if $serverPrefs;
 				Slim::Menu::BrowseLibrary->deregisterNode($params->{"id$i"});
 				
 				$menu->{id} = $params->{"id$i"}; 
@@ -124,7 +122,7 @@ sub handler {
 	unshift @{$params->{menu_items}}, map { {
 		name => $_->{name},
 		id   => $_->{id},
-		enabled => $serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1,
+		enabled => $serverPrefs && $serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1,
 	} } sort { 
 		$a->{weight} <=> $b->{weight}
 	# don't allow to disable some select browse menus
@@ -135,11 +133,12 @@ sub handler {
 		id => Slim::Plugin::ExtendedBrowseModes::Plugin->tag,
 		name => Slim::Plugin::ExtendedBrowseModes::Plugin->getDisplayName,
 		weight => Slim::Plugin::ExtendedBrowseModes::Plugin->weight,
-	};
-	
+	} if $class->needsClient;
 
 	$class->SUPER::handler($client, $params);
 }
+
+sub getServerPrefs {}
 
 1;
 

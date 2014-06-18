@@ -2,15 +2,24 @@
 
 	[% WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES" desc="" %]
 		<table width="100%">
+			[% IF needsClient %]
 			<tr>
 				<th>[% "ENABLE" | string %][% "COLON" | string %]&nbsp;</th>
 				<th>[% "NAME" | string %]</th>
 				<th colspan="4"></th>
 			</tr>
+			[% END %]
 		[% FOREACH menu = menu_items; menu_no = loop.count %]
+			[% IF !needsClient && !menu.feed && menu.id != '_new_'; NEXT; END %]
+			
 			[% IF menu.feed && menu.id != '_new_' && !seen %]
 			<tr>
+				[% IF needsClient %]
 				<th colspan="2">&nbsp;</th>
+				[% ELSE %]
+				<th></th>
+				<th>[% "NAME" | string %]</th>
+				[% END %]
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
 				<th>[% "GENRES" | string %][% "COLON" | string %]</th>
@@ -19,7 +28,7 @@
 			[% seen = 1; END %]
 			<tr>
 				<td style="text-align:center;">
-					[% IF menu.name %]<input type="checkbox" name="enabled[% menu_no %]" id="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
+					[% IF needsClient %]<input type="checkbox" name="enabled[% menu_no %]" id="enabled[% menu_no %]" [% IF menu.enabled %]checked="checked"[% END %] value="1" class="stdedit" />[% END %]
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
 				[% IF !menu.feed && menu.id != '_new_' %]

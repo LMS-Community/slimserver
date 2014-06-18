@@ -58,7 +58,9 @@ sub initPlugin {
 
 	if ( main::WEBUI ) {
 		require Slim::Plugin::ExtendedBrowseModes::Settings;
+		require Slim::Plugin::ExtendedBrowseModes::PlayerSettings;
 		Slim::Plugin::ExtendedBrowseModes::Settings->new;
+		Slim::Plugin::ExtendedBrowseModes::PlayerSettings->new;
 	}
 	
 	# custom feed: we need to inject the latest VA ID
