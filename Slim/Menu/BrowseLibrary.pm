@@ -1266,6 +1266,7 @@ sub _genres {
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
 			};
 			
+			my $params = _tagsToParams(\@searchTags);
 			my %actions = (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [genre_id => 'id'],
@@ -1274,19 +1275,19 @@ sub _genres {
 				},
 				items => {
 					command     => [BROWSELIBRARY, 'items'],
-					fixedParams => {mode => 'artists'},
+					fixedParams => {mode => 'artists', %$params},
 				},
 				play => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
+					fixedParams => {cmd => 'load', %$params},
 				},
 				add => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
+					fixedParams => {cmd => 'add', %$params},
 				},
 				insert => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert'},
+					fixedParams => {cmd => 'insert', %$params},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};
@@ -1301,6 +1302,11 @@ sub _genres {
 sub _years {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
+	
+	if ($library_id && !grep /library_id/, @searchTags) {
+		push @searchTags, 'library_id:' . $library_id if $library_id;
+	}
 	
 	_generic($client, $callback, $args, 'years', [ 'hasAlbums:1', @searchTags ],
 		sub {
@@ -1315,6 +1321,7 @@ sub _years {
 				$_->{'favorites_url'} = 'db:year.id=' . ($_->{'name'} || 0 );
 			};
 			
+			my $params = _tagsToParams(\@searchTags);
 			my %actions = (
 				allAvailableActionsDefined => 1,
 				commonVariables	=> [year => 'name'],
@@ -1325,19 +1332,20 @@ sub _years {
 					command     => [BROWSELIBRARY, 'items'],
 					fixedParams => {
 						mode       => 'albums',
+						%$params
 					},
 				},
 				play => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'load'},
+					fixedParams => {cmd => 'load', %$params},
 				},
 				add => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'add'},
+					fixedParams => {cmd => 'add', %$params},
 				},
 				insert => {
 					command     => ['playlistcontrol'],
-					fixedParams => {cmd => 'insert'},
+					fixedParams => {cmd => 'insert', %$params},
 				},
 			);
 			$actions{'playall'} = $actions{'play'};
