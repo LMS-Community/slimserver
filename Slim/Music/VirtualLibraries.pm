@@ -117,12 +117,18 @@ sub startScan {
 		'bar'   => 1
 	});
 
+	my $delete_sth;
 	while ( my ($id, $args) = each %libraries ) {
 		$progress->update($args->{name});
+		
 		if ( my $cb = $args->{scannerCB} ) {
 			$cb->($id);
 		}
 		elsif ( my $sql = $args->{sql} ) {
+			# SQL code is supposed to re-build the full library. Delete the old values first:
+			$delete_sth ||= $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
+			$delete_sth->execute($id);
+			
 			$dbh->do( sprintf($sql, $id) );
 		}
 	}
