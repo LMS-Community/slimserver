@@ -46,18 +46,22 @@ sub initPlugin {
 		name => 'Lossless Preferred',
 		sql => qq{
 			INSERT OR IGNORE INTO library_track (library, track)
-				SELECT '%s', me.id 
-				FROM tracks me
-				WHERE me.lossless
-				OR 1 NOT IN (
-				   SELECT 1
-				   FROM tracks other
-				   WHERE other.titlesearch = me.titlesearch
-				   AND other.primary_artist = me.primary_artist
-				   AND other.tracknum = me.tracknum
-				   AND other.year = me.year
-				   AND other.secs = me.secs
-				   AND other.lossless
+				SELECT '%s', tracks.id
+				FROM tracks tracks, albums
+				WHERE albums.id = tracks.album 
+				AND (
+					tracks.lossless 
+					OR 1 NOT IN (
+						SELECT 1
+						FROM tracks other
+						JOIN albums otheralbums ON other.album
+						WHERE other.title = tracks.title
+						AND other.lossless
+						AND other.primary_artist = tracks.primary_artist
+						AND other.tracknum = tracks.tracknum
+						AND other.year = tracks.year
+						AND otheralbums.title = albums.title
+					)
 				)
 		}
 	},{
