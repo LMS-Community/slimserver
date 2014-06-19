@@ -42,6 +42,25 @@ sub initPlugin {
 				WHERE tracks.content_type = 'flc'
 		}
 	},{
+		id => 'losslessPreferred',
+		name => 'Lossless Preferred',
+		sql => qq{
+			INSERT OR IGNORE INTO library_track (library, track)
+				SELECT '%s', me.id 
+				FROM tracks me
+				WHERE me.lossless
+				OR 1 NOT IN (
+				   SELECT 1
+				   FROM tracks other
+				   WHERE other.titlesearch = me.titlesearch
+				   AND other.primary_artist = me.primary_artist
+				   AND other.tracknum = me.tracknum
+				   AND other.year = me.year
+				   AND other.secs = me.secs
+				   AND other.lossless
+				)
+		}
+	},{
 		id => 'loveThisDemo',
 		name => 'Love is in the air (and in album/track titles)',
 		scannerCB => sub {
