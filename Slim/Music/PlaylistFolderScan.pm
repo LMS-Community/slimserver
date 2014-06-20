@@ -112,7 +112,7 @@ sub doneScanning {
 
 	$class->stillScanning(0);
 
-	Slim::Music::Import->endImporter('PLAYLIST');
+	Slim::Music::Import->endImporter($class);
 }
 
 =head1 SEE ALSO

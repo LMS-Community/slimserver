@@ -402,15 +402,25 @@ sub optimizeDB {
 
 	my ($driver) = $class->sourceInformation;
 
+	my $progress = Slim::Utils::Progress->new({ 
+		'type'  => 'importer', 
+		'name'  => 'dboptimize', 
+		'total' => 2, 
+		'bar'   => 1
+	});
+
 	eval {
 		Slim::Utils::SQLHelper->executeSQLFile(
 			$driver, $class->storage->dbh, "schema_optimize.sql"
 		);
 	
+		$progress->update();
 		$class->forceCommit;
 
 		Slim::Utils::OSDetect->getOS()->sqlHelperClass()->optimizeDB();
 	};
+
+	$progress->final(2);
 
 	if ($@) {
 		logError("Failed to optimize schema: [$@]");

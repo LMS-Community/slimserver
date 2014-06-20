@@ -104,6 +104,8 @@ sub registerLibrary {
 
 # called by the scanner module
 sub startScan {
+	my $class = shift;
+	
 	return unless hasLibraries();
 	
 	my $dbh = Slim::Schema->dbh;
@@ -120,6 +122,7 @@ sub startScan {
 	my $delete_sth;
 	while ( my ($id, $args) = each %libraries ) {
 		$progress->update($args->{name});
+		Slim::Schema->forceCommit;
 		
 		if ( my $cb = $args->{scannerCB} ) {
 			$cb->($id);
@@ -134,6 +137,8 @@ sub startScan {
 	}
 
 	$progress->final($count);
+
+	Slim::Music::Import->endImporter($class);
 }
 
 

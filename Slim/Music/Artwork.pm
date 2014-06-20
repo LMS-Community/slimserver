@@ -223,12 +223,18 @@ sub updateStandaloneArtwork {
 	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
 	
 	my $i = 0;
+	my $t = 0;
 	
 	my $work = sub {
 		if ( $sth->fetch ) {
 			my $newCoverId;
 			
 			$progress->update( $album_title );
+			
+			if ( $t < time ) {
+				Slim::Schema->forceCommit;
+				$t = time + 5;
+			}
 
 			# check for updated artwork
 			if ( $cover ) {
@@ -282,6 +288,7 @@ sub updateStandaloneArtwork {
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
+					$t = time + 5;
 				}
 				
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
