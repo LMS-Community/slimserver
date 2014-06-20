@@ -24,11 +24,14 @@
 
 	<li>Other:</li>
 	<ul>
-		<li>Use VACUUM to reorganize library files when appropriate. This should help performance with larger collections and libraries which have been updated a lot. Cache files use auto_vacuum, as they change a log more often.</li>
+		<li>Restore the ability to run a single folder scan even if the external scanner needs to run</li>
+		<li>Use VACUUM to reorganize library files when appropriate. This should help performance with larger collections and 
+		    libraries which have been updated a lot. Cache files use auto_vacuum, as they change a log more often.</li>
 		<li>On Windows and x86 CPU based systems we're going to use more memory for buffers etc. to improve performance.</li>
 		<li>Improve My Music browsing performance in the web UI.</li>
 		<li>Improve Browse Music Folder browsing performance.</li>
-		<li>Tweak the web UI to use less graphics and simpler HTML structure. Please note that MSIE users will require version 9 or later, or one of the alternative browsers.</li>
+		<li>Tweak the web UI to use less graphics and simpler HTML structure. Please note that MSIE users will require version 9
+		    or later, or one of the alternative browsers.</li>
 		<li>Remove SlimService specific code. 7.9 will never be run on mysqueezebox.com.</li>
 		<li>Re-factor preference migration code. Only load migration handlers if needed.</li>
 		<li>Add ALBUMARTIST tag support for Cue files (thanks mrthreeplates!).</li>

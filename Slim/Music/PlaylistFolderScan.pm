@@ -60,11 +60,18 @@ sub startScan {
 	my $dir     = shift || Slim::Utils::Misc::getPlaylistDir();
 	my $recurse = shift;
 
+	if (main::SCANNER && scalar @ARGV && !Slim::Music::Import->scanPlaylistsOnly) {
+		main::INFOLOG && $log->info("Skipping playlist folder scan - scanner was called with a single folder to scan.");
+
+		$class->doneScanning();
+		return;
+	}
+
 	if (!defined $dir || !-d $dir) {
 
 		main::INFOLOG && $log->info("Skipping playlist folder scan - playlistdir is undefined.");
 
-		doneScanning();
+		$class->doneScanning();
 		return;
 	}
 

@@ -56,9 +56,12 @@ sub startScan {
 	$class->stillScanning(1);
 
 	my $changes = 0;
+
+	# get singledir parameter from the scanner if available
+	my $singledir = main::SCANNER ? $ARGV[-1] : undef;
 	
 	# XXX until libmediascan supports audio, run the audio scanner first
-	if ( ($dirs = Slim::Utils::Misc::getAudioDirs()) && scalar @{$dirs} ) {
+	if ( ($dirs = Slim::Utils::Misc::getAudioDirs($singledir)) && scalar @{$dirs} ) {
 		main::INFOLOG && $log->is_info && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
 		
 		my $c = Slim::Utils::Scanner::Local->rescan( $dirs, {
@@ -76,7 +79,7 @@ sub startScan {
 
 		# get media folders without audio dirs
 		my %seen = (); # to avoid duplicates
-		$dirs = [ grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs() }, @{ Slim::Utils::Misc::getImageDirs() } ];
+		$dirs = [ grep { !$seen{$_}++ } @{ Slim::Utils::Misc::getVideoDirs($singledir) }, @{ Slim::Utils::Misc::getImageDirs($singledir) } ];
 	
 		# XXX any good reason this doesn't just pass all dirs?
 		for my $dir ( @{$dirs} ) {

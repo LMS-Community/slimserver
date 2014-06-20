@@ -679,6 +679,7 @@ sub getPlaylistDir {
 
 sub getMediaDirs {
 	my $type = shift;
+	my $filter = shift;
 	
 	my $mediadirs = getDirsPref('mediadirs');
 	
@@ -690,21 +691,22 @@ sub getMediaDirs {
 		}->{$type}) } };
 		
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
+		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
 	}
 	
 	return $mediadirs
 }
 
 sub getAudioDirs {
-	return getMediaDirs('audio');
+	return getMediaDirs('audio', shift);
 }
 
 sub getVideoDirs {
-	return (main::VIDEO && main::MEDIASUPPORT) ? getMediaDirs('video') : [];
+	return (main::VIDEO && main::MEDIASUPPORT) ? getMediaDirs('video', shift) : [];
 }
 
 sub getImageDirs {
-	return (main::IMAGE && main::MEDIASUPPORT) ? getMediaDirs('image') : [];
+	return (main::IMAGE && main::MEDIASUPPORT) ? getMediaDirs('image', shift) : [];
 }
 
 sub getDirsPref {
