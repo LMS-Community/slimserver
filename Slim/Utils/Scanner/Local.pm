@@ -546,7 +546,7 @@ sub rescan {
 	# Continue scanning if we had more paths
 	if ( $args->{no_async} ) {	
 		if ( @{$paths} && !Slim::Music::Import->hasAborted() ) {
-			$class->rescan( $paths, $args );
+			$changes += $class->rescan( $paths, $args );
 		}
 			
 		if ( !main::SCANNER ) {
