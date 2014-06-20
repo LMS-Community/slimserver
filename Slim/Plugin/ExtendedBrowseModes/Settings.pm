@@ -110,7 +110,7 @@ sub handler {
 		$prefs->set('additionalMenuItems', $menus);
 	}
 
-	$params->{genre_list} = [ map { $_->name } Slim::Schema->search('Genre')->all ];
+	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
 	$params->{roles} = [ Slim::Schema::Contributor->contributorRoles ];
 
 	my %ids;

@@ -47,7 +47,7 @@ sub initPlugin {
 		sql => qq{
 			INSERT OR IGNORE INTO library_track (library, track)
 				SELECT '%s', tracks.id
-				FROM tracks tracks, albums
+				FROM tracks, albums
 				WHERE albums.id = tracks.album 
 				AND (
 					tracks.lossless 
