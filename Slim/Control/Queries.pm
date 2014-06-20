@@ -774,17 +774,22 @@ sub artistsQuery {
 			}
 		}
 		
-		# don't filter searches as we might miss the VA object
-		if ( !defined $search ) {
-			# Filter based on roles unless we're searching
+		# XXX - why would we not filter by role, as drilling down would filter anyway, potentially leading to empty resultsets?
+		#       make sure we don't miss the VA object, as it might not have any of the roles we're looking for -mh
+		#if ( !defined $search ) {
 			if ( $sql =~ /JOIN contributor_track/ ) {
-				push @{$w}, 'contributor_track.role IN (' . join( ',', @{$roles} ) . ') ';
+				push @{$w}, '(contributor_track.role IN (' . join( ',', @{$roles} ) . ') ' . ($search ? 'OR contributors.id = ? ' : '') . ') ';
 			}
 			else {
-				push @{$w}, 'contributor_album.role IN (' . join( ',', @{$roles} ) . ') ';
+				if ( $sql !~ /JOIN contributor_album/ ) {
+					$sql .= ($search ? 'LEFT ' : '') . 'JOIN contributor_album ON contributor_album.contributor = contributors.id ';
+				}
+				push @{$w}, '(contributor_album.role IN (' . join( ',', @{$roles} ) . ') ' . ($search ? 'OR contributors.id = ? ' : '') . ') ';
 			}
 			
-			if ( !defined $search && ($va_pref || $aa_merge) ) {
+			push @{$p}, Slim::Schema->variousArtistsObject->id if $search;
+			
+			if ( $va_pref || $aa_merge ) {
 				# Don't include artists that only appear on compilations
 				if ( $sql =~ /JOIN tracks/ ) {
 					# If doing an artists-in-genre query, we are much better off joining through albums
@@ -799,7 +804,7 @@ sub artistsQuery {
 				
 				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
 			}
-		}
+		#}
 		
 		if (defined $albumID || defined $year) {
 			if ( $sql !~ /JOIN contributor_album/ ) {
