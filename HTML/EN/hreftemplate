@@ -131,7 +131,7 @@ href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;
 
 [%# this is the href to the primary artist of item %]
 [% BLOCK artistItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% item.artist | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% (item.artist || item.name2) | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]
