@@ -220,6 +220,12 @@ sub registerBrowseMode {
 			$_;
 		} @{ $pt->{searchTags} || [] };
 
+		map {
+			if ( /^(?:role_id|genre_id|artist_id)$/ ) {
+				$args->{params}->{$_} = Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($args->{params}->{$_}, $_);
+			}
+		} keys %{ $args->{params} || {} };
+
 		$cb->($client, $callback, $args, $pt);
 	};
 	
