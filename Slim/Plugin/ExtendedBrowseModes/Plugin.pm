@@ -52,6 +52,8 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
+Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
+Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -62,26 +64,6 @@ sub initPlugin {
 		Slim::Plugin::ExtendedBrowseModes::Settings->new;
 		Slim::Plugin::ExtendedBrowseModes::PlayerSettings->new;
 	}
-	
-	# custom feed: we need to inject the latest VA ID
-	$class->registerBrowseMode({
-		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
-		params       => {
-			mode => 'vaalbums',
-		},
-		feed         => sub {
-			my ($client, $callback, $args, $pt) = @_;
-
-			$pt->{searchTags} ||= [];
-			push @{ $pt->{searchTags} }, 'artist_id:' . Slim::Schema->variousArtistsObject->id;
-
-			Slim::Menu::BrowseLibrary::_albums($client, $callback, $args, $pt);
-		},
-		icon         => 'html/images/albums.png',
-		enabled      => $serverPrefs->get('disabled_myMusicAlbumsVariousArtists') ? 0 : 1,
-		id           => 'myMusicAlbumsVariousArtists',
-		weight       => 22,
-	});
 
 	$class->initMenus();
 	
@@ -167,7 +149,20 @@ sub condition {
 sub getDisplayName { 'PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES' }
 
 sub initMenus {
-	foreach (@{$prefs->get('additionalMenuItems') || []}) {
+	# custom feed: we need to inject the latest VA ID
+	my $compilationsMenu = {
+		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
+		params       => {
+			mode => 'vaalbums',
+			artist_id => Slim::Schema->variousArtistsObject->id,
+		},
+		feed         => 'albums',
+		enabled      => $serverPrefs->get('disabled_myMusicAlbumsVariousArtists') ? 0 : 1,
+		id           => 'myMusicAlbumsVariousArtists',
+		weight       => 22,
+	};
+
+	foreach (@{$prefs->get('additionalMenuItems') || []}, $compilationsMenu) {
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
@@ -193,46 +188,30 @@ sub registerBrowseMode {
 	my $icon = $item->{icon};
 
 	# replace feed placeholders
-	my ($feed, $cb);
+	my $feed;
 	if ( ref $item->{feed} eq 'CODE' ) {
 		$feed = $item->{feed};
 	}
 	elsif ( $item->{feed} =~ /\balbums$/ ) {
-		$cb = \&Slim::Menu::BrowseLibrary::_albums;
+		$feed = \&Slim::Menu::BrowseLibrary::_albums;
 		$icon = 'html/images/albums.png';
 		$item->{params}->{mode} ||= $item->{id};
 	}
 	else {
-		$cb = \&Slim::Menu::BrowseLibrary::_artists;
+		$feed = \&Slim::Menu::BrowseLibrary::_artists;
 		$icon = 'html/images/artists.png';
 		$item->{params}->{mode} ||= $item->{id};
 	}
 	
-	$feed ||= sub {
-		my ($client, $callback, $args, $pt) = @_;
-
-		# map genre names to IDs etc.
-		@{ $pt->{searchTags} } = map {
-			if ( /^(role_id|genre_id|artist_id):(.*)/ ) {
-				$_ = "$1:" . Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($2, $1);
-			}
-			
-			$_;
-		} @{ $pt->{searchTags} || [] };
-
-		map {
-			if ( /^(?:role_id|genre_id|artist_id)$/ ) {
-				$args->{params}->{$_} = Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($args->{params}->{$_}, $_);
-			}
-		} keys %{ $args->{params} || {} };
-
-		$cb->($client, $callback, $args, $pt);
-	};
+	my %params = map {
+		my $v = Slim::Plugin::ExtendedBrowseModes::Plugin->valueToId($item->{params}->{$_}, $_);
+		{ $_ => $v };
+	} keys %{ $item->{params} || {} };
 	
 	Slim::Menu::BrowseLibrary->registerNode({
 		type         => 'link',
 		name         => $nameToken,
-		params       => $item->{params},
+		params       => \%params,
 		feed         => $feed,
 		icon         => $icon,
 		jiveIcon     => $icon,
