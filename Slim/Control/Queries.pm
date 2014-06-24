@@ -273,7 +273,7 @@ sub albumsQuery {
 	my $roleID        = $request->getParam('role_id');
 	my $libraryID     = $request->getParam('library_id');
 	my $year          = $request->getParam('year');
-	my $sort          = $request->getParam('sort') || 'album';
+	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 	
@@ -403,6 +403,7 @@ sub albumsQuery {
 		}
 		
 		# Manage joins
+		my @roles;
 		if (defined $contributorID) {
 			# handle the case where we're asked for the VA id => return compilations
 			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
@@ -415,7 +416,6 @@ sub albumsQuery {
 				push @{$p}, $contributorID;
 
 				# only albums on which the contributor has a specific role?
-				my @roles;
 				if ($roleID) {
 					@roles = split /,/, $roleID;
 					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
@@ -433,11 +433,19 @@ sub albumsQuery {
 				else {
 					@roles = Slim::Schema::Contributor->contributorRoles();
 				}
-					
-				my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
-				push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
-				push @{$w}, $cond;
 			}	
+		}
+		elsif ($roleID) {
+			$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
+
+			@roles = split /,/, $roleID;
+			push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
+		}
+		
+		if (scalar @roles) {
+			my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
+			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+			push @{$w}, $cond;
 		}
 	
 		if (defined $genreID) {
