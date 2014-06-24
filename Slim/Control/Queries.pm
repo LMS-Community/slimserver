@@ -443,9 +443,15 @@ sub albumsQuery {
 		}
 		
 		if (scalar @roles) {
-			my $cond = 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
 			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
-			push @{$w}, $cond;
+			push @{$w}, 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
+			
+			if ( $sql =~ /JOIN contributors/ ) {
+				$sql =~ s/= albums.contributor/= contributor_album.contributor/;
+			}
+			else {
+				$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
+			}
 		}
 	
 		if (defined $genreID) {
