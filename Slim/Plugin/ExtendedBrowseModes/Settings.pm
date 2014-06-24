@@ -78,7 +78,7 @@ sub handler {
 				$menu->{id} = $params->{"id$i"}; 
 				$menu->{id} =~ s/^(?:myMusicAlbums|myMusicArtists)//;
 
-				if ( $params->{"feed$i"} eq 'albums' ) {
+				if ( $feedType eq 'albums' ) {
 					$menu->{id}     = 'myMusicAlbums' . $menu->{id} if $menu->{id} !~ /^myMusic/;
 					$menu->{weight} = 25;
 				}
