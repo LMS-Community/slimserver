@@ -45,7 +45,7 @@ $prefs->init({
 		name    => 'Audiobooks',
 		params  => { genre_id => 'Audiobooks, Spoken, Speech' },
 		feed    => 'albums',
-		id      => 'myMusicAudiobooks',
+		id      => 'myMusicAlbumsAudiobooks',
 		weight  => 14,
 		enabled => 0,
 	}]
