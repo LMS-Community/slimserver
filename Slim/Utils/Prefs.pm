@@ -169,6 +169,7 @@ sub init {
 		# enable auto download of SC updates on Windows only (for now)
 		'autoDownloadUpdate'    => sub { $os->canAutoUpdate() },
 		'noGenreFilter'         => 0,
+		'noRoleFilter'          => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => ';',

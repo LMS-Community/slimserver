@@ -40,7 +40,7 @@ if ( !main::SCANNER ) {
 	# Wipe cached data after rescan or library change
 	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan'], ['changed','done']] );
 
-	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter searchSubString browseagelimit
+	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
 				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
 }
 

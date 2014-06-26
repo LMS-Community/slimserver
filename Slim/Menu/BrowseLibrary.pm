@@ -1096,12 +1096,9 @@ sub _artists {
 		$search = $args->{'search'};
 	}
 	
-	my @ptSearchTags;
-	if ($prefs->get('noGenreFilter')) {
-		@ptSearchTags = grep {$_ !~ /^genre_id:/} @searchTags;
-	} else {
-		@ptSearchTags = @searchTags;
-	}
+	my @ptSearchTags = @searchTags;
+	@ptSearchTags = grep {$_ !~ /^genre_id:/} @ptSearchTags if $prefs->get('noGenreFilter');
+	@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags if $prefs->get('noRoleFilter');
 
 	_generic($client, $callback, $args, 'artists', 
 		[@searchTags, ($search ? 'search:' . $search : undef)],

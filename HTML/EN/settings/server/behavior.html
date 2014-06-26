@@ -69,6 +69,15 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_NOROLEFILTER" desc="SETUP_NOROLEFILTER_DESC"%]
+		<select class="stdedit" name="pref_noRoleFilter" id="noRoleFilter">
+
+			<option [% IF NOT prefs.pref_noRoleFilter %]selected [% END %]value="0">[% 'SETUP_NOROLEFILTER_0' | string %]</option>
+			<option [% IF prefs.pref_noRoleFilter%]selected [% END %]value="1">[% 'SETUP_NOROLEFILTER_1' | string %]</option>
+		
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_SEARCHSUBSTRING" desc="SETUP_SEARCHSUBSTRING_DESC"%]
 		<select class="stdedit" name="pref_searchSubString" id="searchSubString">
 

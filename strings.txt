@@ -7765,6 +7765,22 @@ SETUP_NOGENREFILTER_DESC
 	SV	När du bläddrar efter genre kan du filtrera så att endast låtar och album från den valda genren visas.
 	ZH_CN	您可以在当浏览音乐曲风时过滤并只显示和音乐曲风匹配的专辑和音轨。
 
+SETUP_NOROLEFILTER
+	DE	Interpreten-Rolle auf Album- und Titelebene filtern
+	EN	Filter contributor roles at the album & track level.
+
+SETUP_NOROLEFILTER_1
+	DE	Alle Titel und Alben eines Interpreten anzeigen
+	EN	Show any tracks & albums for an artist
+
+SETUP_NOROLEFILTER_0
+	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
+	EN	Only show tracks or albums matching the selected role for an artist
+
+SETUP_NOROLEFILTER_DESC
+	DE	Beim Durchsuchen von Interpreten können Alben und Titel nach der ausgewählten Rolle (ALBUMARTIST, COMPOSER etc.) gefiltert werden.
+	EN	Filtering can be done when Browsing Artists to only show the albums & tracks that match the selected role (eg. ALBUMARTIST, COMPOSER etc.).
+
 SETUP_COMPOSERINARTISTS
 	CS	Skladatel, Skupina a Orchestr v Interpretech
 	DA	Komponist, band og orkester i Kunstnere
