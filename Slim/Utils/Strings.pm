@@ -451,8 +451,8 @@ Load cached additional strings delivered from SN.
 sub loadExtraStrings {
 	my $extraCache = catdir( $prefs->get('cachedir'), 'extrastrings.json' );
 	
-	my $cache = {};
-	if ( -e $extraCache ) {
+	my $cache = $extraStringsCache || {};
+	if ( !($cache && keys %$cache) && -e $extraCache ) {
 		$cache = eval { from_json( read_file($extraCache) ) };
 	}
 	
