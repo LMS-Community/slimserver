@@ -580,6 +580,10 @@ sub albumsQuery {
 		my $total_sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(1) FROM ( $countsql ) AS t1
 		} );
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Albums totals query: $countsql / " . Data::Dump::dump($p) );
+		}
 		
 		$total_sth->execute( @{$p} );
 		($count) = $total_sth->fetchrow_array();
@@ -5236,6 +5240,10 @@ sub _getTagDataForTracks {
 		my $total_sth = $dbh->prepare_cached( qq{
 			SELECT COUNT(1) FROM ( $sql ) AS t1
 		} );
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Titles totals query: SELECT COUNT(1) FROM ($sql) / " . Data::Dump::dump($p) );
+		}
 			
 		$total_sth->execute( @{$p} );
 		($total) = $total_sth->fetchrow_array();
