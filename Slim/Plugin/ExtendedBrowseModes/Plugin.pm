@@ -157,7 +157,6 @@ sub initMenus {
 			artist_id => Slim::Schema->variousArtistsObject->id,
 		},
 		feed         => 'albums',
-		enabled      => $serverPrefs->get('disabled_myMusicAlbumsVariousArtists') ? 0 : 1,
 		id           => 'myMusicAlbumsVariousArtists',
 		weight       => 22,
 	};
@@ -180,7 +179,7 @@ sub registerBrowseMode {
 		if ($item->{enabled}) {
 			$clientPref->remove('disabled_' . $item->{id});
 		}
-		else {
+		elsif (defined $item->{enabled}) {
 			$clientPref->set('disabled_' . $item->{id}, 1);
 		}
 	}
