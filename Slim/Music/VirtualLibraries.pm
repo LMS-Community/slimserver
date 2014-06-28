@@ -162,7 +162,7 @@ sub getRealId {
 sub getLibraryIdForClient {
 	my ($class, $client) = @_;
 	
-	return unless keys %libraries;
+	return '' unless keys %libraries;
 	
 	my $id;
 	$id   = $prefs->client($client)->get('libraryId') if $client;
