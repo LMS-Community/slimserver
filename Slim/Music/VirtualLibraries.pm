@@ -168,7 +168,7 @@ sub getLibraryIdForClient {
 	$id   = $prefs->client($client)->get('libraryId') if $client;
 	$id ||= $prefs->get('libraryId');
 	
-	return unless $id && $libraries{$id};
+	return '' unless $id && $libraries{$id};
 	
 	return $id || '';
 }
