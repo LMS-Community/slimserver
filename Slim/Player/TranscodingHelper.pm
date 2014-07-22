@@ -133,8 +133,8 @@ sub loadConversionTables {
 # B - can limit bitrate
 #
 # Substitution strings for variable capabilities
-# %f - file path (local files)
-# %F - full URL (remote streams)
+# %f, $FILE$ - file path (local files)
+# %F, $URL$  - full URL (remote streams)
 #
 # %o - stream start byte offset
 # 
@@ -151,6 +151,13 @@ sub loadConversionTables {
 # %B - limit bitrate: kb/s
 # %d - samplerate: samples/s
 # %D - samplerate: ksamples/s
+
+# %c, $CHANNELS$ - channel count
+# %i, $CLIENTID$ - clientid
+# %I, $PLAYER$   - player
+# %Q, $QUALITY$  - quality
+
+# specific combinations match before wildcards
 
 sub _getCapabilities {
 	my ($profile, $capabilities) = @_;
@@ -383,6 +390,9 @@ sub getConvertCommand2 {
 			streamformat => ((split (/-/, $profile))[1]),
 			rateLimit => $rateLimit,
 			samplerateLimit => $samplerateLimit,
+			clientid => do { (my $tmp = $clientid ) =~ s/\Q:\E/-/g; $tmp },,
+			player =>  $player,
+			channels => $track->channels(),
 		};
 		
 		# Check for optional profiles
@@ -501,6 +511,7 @@ sub tokenizeConvertCommand2 {
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
 
+
 	foreach my $v (keys %vars) {
 		my $value;
 		
@@ -518,7 +529,12 @@ sub tokenizeConvertCommand2 {
 		
 		elsif ($v eq 'f') {$value = '"' . $filepath . '"';}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
-		
+
+		elsif ($v eq 'i') {$value = '"' . ($transcoder->{'clientid'} || '*' ) . '"';}
+		elsif ($v eq 'I') {$value = '"' . ($transcoder->{'player'} || '*') . '"';}
+		elsif ($v eq 'c') {$value = ($transcoder->{'channels'} || 2 );}
+		elsif ($v eq 'Q') {$value = $quality;}
+
 		foreach (values %subs) {
 			s/%$v/$value/ge;
 		}
@@ -528,9 +544,12 @@ sub tokenizeConvertCommand2 {
 	# Check to see if we need to flip the endianess on output
 	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 	
-	$subs{'FILE'} = '"' . $filepath . '"';
-	$subs{'URL'} = '"' . $fullpath . '"';
-	$subs{'QUALITY'} = $quality;
+	$subs{'FILE'}     = '"' . $filepath . '"';
+	$subs{'URL'}      = '"' . $fullpath . '"';
+	$subs{'QUALITY'}  = $quality;
+	$subs{'CHANNELS'} = ($transcoder->{'channels'} || 2 );
+	$subs{'CLIENTID'} = ($transcoder->{'clientid'} || '*' );
+	$subs{'PLAYER'}   = '"' . ($transcoder->{'player'} || '*') . '"';
 	
 	foreach (keys %subs) {
 		$command =~ s/\$$_\$/$subs{$_}/g;
