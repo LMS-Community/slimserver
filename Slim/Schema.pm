@@ -2871,7 +2871,7 @@ sub _mergeAndCreateContributors {
 	# If the user has not explictly set a compilation flag, _and_ the user
 	# has explict album artist(s) set, make the artist(s) tags become
 	# TRACKARTIST contributors for this track.
-	if (!defined $isCompilation) {
+	if (!$isCompilation) {
 
 		if ($attributes->{'ARTIST'} && $attributes->{'ALBUMARTIST'}) {
 
