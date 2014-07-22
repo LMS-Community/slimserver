@@ -71,9 +71,9 @@ my $log = logger('server');
 {
 	my @methods = qw(
 		get set
-	#	get_object set_object size
 		clear purge remove 
 	);
+	#	get_object set_object size
 		
 	no strict 'refs';
 	for my $method (@methods) {
