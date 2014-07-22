@@ -7,7 +7,7 @@ our $VERSION;
 require XSLoader;
 
 BEGIN {
-	foreach ('0.95', '0.94', '0.93') {
+	foreach ('0.93', '0.95', '0.94') {
 		eval { XSLoader::load('Audio::Scan', $_); };
 		
 		if (!$@) {
