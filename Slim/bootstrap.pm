@@ -115,7 +115,9 @@ sub loadModules {
 	# can run our binaries, this will fail for some people running invalid versions of Perl
 	# but that's OK, they'd be broken anyway.
 	if ( $arch =~ /^arm.*linux/ ) {
-		$arch = 'arm-linux-gnueabi-thread-multi';
+		$arch = $arch =~ /gnueabihf/ 
+			? 'arm-linux-gnueabihf-thread-multi' 
+			: 'arm-linux-gnueabi-thread-multi';
 		$arch .= '-64int' if $is64bitint;
 	}
 	
@@ -136,6 +138,7 @@ sub loadModules {
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion),
 		catdir($libPath,'lib'), 
 		catdir($libPath,'CPAN'), 
 		$libPath,

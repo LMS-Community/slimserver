@@ -30,6 +30,8 @@ BEGIN {
 
 sub init { }
 
+my $lastResolverReset = 0;
+
 sub resolve {
 	my ( $class, $args ) = @_;
 	
@@ -94,6 +96,14 @@ sub resolve {
 		if ( !$res ) {
 			# Lookup failed
 			main::DEBUGLOG && $log->is_debug && $log->debug("Lookup failed for $host");
+
+			# reset resolver configuration if we fail the lookup - it might be due to a configuration change
+			# Windows resolver initialization is ugly - don't run it too often...
+			if ( !main::SLIM_SERVICE && $host =~ /(?:squeezenetwork|mysqueezebox|radiotime|tunein)/ && $lastResolverReset < time - (main::ISWINDOWS ? 300 : 15) ) {
+				main::DEBUGLOG && $log->is_debug && $log->debug("Reset DNS resolver to pick up new configuration");
+				$lastResolverReset = time;
+				$AnyEvent::DNS::RESOLVER = undef;
+			}
 			
 			$args->{ecb} && $args->{ecb}->( @{ $args->{pt} || [] } );
 			return;

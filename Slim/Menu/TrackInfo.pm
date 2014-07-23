@@ -1168,6 +1168,8 @@ sub infoTagDump {
 sub tagDump {
 	my ( $client, $callback, undef, $path ) = @_;
 	
+	return unless $callback && $path;
+	
 	my $menu = [];
 	
 	require Audio::Scan;
@@ -1290,7 +1292,15 @@ sub cliQuery {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags );
 	} elsif ( $url ) {
 		$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
-	} else {
+	}
+
+	# sometimes we get a $trackId which wouldn't return a valid track object
+	# try the song based on the playlist_index instead
+	if ( !$feed && $playlist_index && (my $song = Slim::Player::Playlist::song( $client, $playlist_index )) ) {
+		$feed = Slim::Menu::TrackInfo->menu( $client, $song->url, $song, $tags);
+	} 
+	
+	if ( !$feed ) {
 		$log->error("Didn't get either valid trackId or url.");
 		$request->setStatusBadParams();
 		return;

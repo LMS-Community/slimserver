@@ -1,6 +1,6 @@
 package Slim::Buttons::Search;
 
-# $Id$
+# XXX - this package is obsolete. It's no longer being loaded, as its functionality has been re-implemented in Slim::Menu::BrowseLibrary. - mh
 
 # Copyright 2001-2011 Logitech.
 # This program is free software; you can redistribute it and/or

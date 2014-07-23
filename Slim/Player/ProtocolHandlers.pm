@@ -29,6 +29,7 @@ if (main::LOCAL_PLAYERS) {
 
 if (main::SERVICES) {
 	$protocolHandlers{'http'} = qw(Slim::Player::Protocols::HTTP);
+	$protocolHandlers{'https'}= qw(Slim::Player::Protocols::HTTP);
 	$protocolHandlers{'icy'}  = qw(Slim::Player::Protocols::HTTP);
 	$protocolHandlers{'mms'}  = qw(Slim::Player::Protocols::MMS);
 	$protocolHandlers{'spdr'} = qw(Slim::Player::Protocols::SqueezePlayDirect);
