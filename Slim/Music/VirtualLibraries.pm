@@ -24,6 +24,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	# - sql:       a SQL statement which creates the records in library_track
 	# - scannerCB: a sub ref to some code creating the records in library_track. Use scannerCB
 	#              if your library logic is a bit more complex than a simple SQL statement.
+	# - priority:  optionally define a numerical priority if you want your library definition
+	#              to be evaluated in a given order. Lower values are built first. Defaults to 0.
 	
 	# sql and scannerCB are mutually exclusive. scannerCB takes precedence over sql.
 	
@@ -102,13 +104,19 @@ sub registerLibrary {
 	return $id2;
 }
 
+sub unregisterLibrary {
+	my ($class, $id) = @_;
+	
+	my $id2 = $class->getRealId($id);
+	
+	delete $libraries{$id2 || $id} if $libraries{$id2 || $id};
+}
+
 # called by the scanner module
 sub startScan {
 	my $class = shift;
 	
 	return unless hasLibraries();
-	
-	my $dbh = Slim::Schema->dbh;
 	
 	my $count = hasLibraries();
 
@@ -120,25 +128,39 @@ sub startScan {
 	});
 
 	my $delete_sth;
-	while ( my ($id, $args) = each %libraries ) {
-		$progress->update($args->{name});
+	foreach my $id ( sort { ($libraries{$a}->{priority} || 0) <=> ($libraries{$b}->{priority} || 0) } keys %libraries ) {
+		$progress->update($libraries{$id}->{name});
 		Slim::Schema->forceCommit;
 		
-		if ( my $cb = $args->{scannerCB} ) {
-			$cb->($id);
-		}
-		elsif ( my $sql = $args->{sql} ) {
-			# SQL code is supposed to re-build the full library. Delete the old values first:
-			$delete_sth ||= $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
-			$delete_sth->execute($id);
-			
-			$dbh->do( sprintf($sql, $id) );
-		}
+		$class->rebuild($id);
 	}
 
 	$progress->final($count);
 
 	Slim::Music::Import->endImporter($class);
+}
+
+sub rebuild {
+	my ($class, $id) = @_;
+	
+	my $args = $libraries{ $class->getRealId($id) || $id };
+
+	return unless $args && ref $args eq 'HASH';
+
+	if ( my $cb = $args->{scannerCB} ) {
+		$cb->($id);
+	}
+	elsif ( my $sql = $args->{sql} ) {
+		my $dbh = Slim::Schema->dbh;
+
+		# SQL code is supposed to re-build the full library. Delete the old values first:
+		my $delete_sth = $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
+		$delete_sth->execute($id);
+		
+		$dbh->do( sprintf($sql, $id) );
+	}
+	
+	return 1;
 }
 
 
