@@ -2,7 +2,7 @@ PLUGIN_LIBRARY_DEMO
 	EN	Sub-Library demo
 
 PLUGIN_LIBRARY_DEMO_DESC
-	EN	Plugin to demo support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries.
+	EN	Plugin to demonstrate support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries. It's mostly intended as an inspiration for plugin developers.
 	
 PLUGIN_LIBRARY_DEMO_ARTISTS
 	EN	Artists loving long tracks

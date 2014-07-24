@@ -53,4 +53,14 @@
 		</table>
 	[% END %]
 
+	[% IF needsClient %]
+		<input type="hidden" name="pref_enableLosslessPreferred" value="[% prefs.pref_enableLosslessPreferred || 0 %]" />
+	[% ELSE; WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS" desc="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC" %]
+		<p>
+			<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF prefs.pref_enableLosslessPreferred %]checked="checked"[% END %] value="1" class="stdedit" />
+			<label for="enableLosslessPreferred">[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED" | string %]</label>
+		</p>
+		<p>[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC" | string %]</p>
+	[% END; END %]
+
 [% PROCESS settings/footer.html %]

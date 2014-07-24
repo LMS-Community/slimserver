@@ -48,12 +48,17 @@ $prefs->init({
 		id      => 'myMusicAlbumsAudiobooks',
 		weight  => 14,
 		enabled => 0,
-	}]
+	}],
+	enableLosslessPreferred => 0,
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
 Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
 Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
+
+$prefs->setChange( sub {
+	__PACKAGE__->initLibraries($_[1] || 0);
+}, 'enableLosslessPreferred' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -66,6 +71,7 @@ sub initPlugin {
 	}
 
 	$class->initMenus();
+	$class->initLibraries();
 	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -105,6 +111,44 @@ sub handleFeed {
 	$cb->({
 		items => \@items,
 	});
+}
+
+sub initLibraries {
+	my ($class, $newValue) = @_;
+	
+	if ( defined $newValue && !$newValue ) {
+		Slim::Music::VirtualLibraries->unregisterLibrary('losslessPreferred');
+	}
+	
+	if ( $prefs->get('enableLosslessPreferred') ) {
+		Slim::Music::VirtualLibraries->registerLibrary({
+			id => 'losslessPreferred',
+			name => string('PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED'),
+			sql => qq{
+				INSERT OR IGNORE INTO library_track (library, track)
+					SELECT '%s', tracks.id
+					FROM tracks, albums
+					WHERE albums.id = tracks.album 
+					AND (
+						tracks.lossless 
+						OR 1 NOT IN (
+							SELECT 1
+							FROM tracks other
+							JOIN albums otheralbums ON other.album
+							WHERE other.title = tracks.title
+							AND other.lossless
+							AND other.primary_artist = tracks.primary_artist
+							AND other.tracknum = tracks.tracknum
+							AND other.year = tracks.year
+							AND otheralbums.title = albums.title
+						)
+					)
+			}
+		});
+		
+		# if we were called on a onChange event, re-build the library
+		Slim::Music::VirtualLibraries->rebuild('losslessPreferred') if $newValue;
+	}
 }
 
 sub setLibrary {
