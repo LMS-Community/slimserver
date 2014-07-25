@@ -148,11 +148,43 @@ sub artworkRequest {
 		# /music/current/cover.jpg (mentioned in CLI docs)
 		if ( $id eq 'current' && $client ) {
 			my $trackObj = Slim::Player::Playlist::song($client);
-			$id = $trackObj->coverid if $trackObj && blessed $trackObj;
 			
-			$path =~ s/current/$id/;
+			if ( $trackObj && blessed $trackObj ) {
+				$id = $trackObj->coverid;
+				
+				# if we're dealing with a remote stream, we'll have to ask a protocol handler to return the cover URL
+				if ( $trackObj->remote ) {
+					my $url     = $trackObj->url;
+					my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+					
+					if ( $handler && $handler->can('getMetadataFor') ) {
+						my $remoteMeta = $handler->getMetadataFor( $client, $url );
 
-			main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
+						if ( $remoteMeta && (my $cover = $remoteMeta->{cover}) ) {
+
+							if ($cover =~ /^http/) {
+								$id = 'imageproxy/' . $remoteMeta->{cover};
+								$path=~ s/music\/current/$id/;
+							}
+							else {
+								# we need to restore the resize specification on the new URL
+								$cover =~ s/(\.(?:jpe?g|jpe|png|gif|bmp))$/_$spec$1/i; 
+								$path = $cover;
+							}
+
+							main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
+							
+							Slim::Web::Graphics::artworkRequest($client, $path, $params, $callback, @args);
+							return;
+						}
+					}
+				}
+				else {
+					$path =~ s/current/$id/;
+				}
+
+				main::INFOLOG && $isInfo && $log->info("  Special path translated to $path");
+			}
 		}
 		
 		# Fetch the url and cover values
