@@ -527,7 +527,7 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'd') {$value = ($transcoder->{'samplerateLimit'} || 44100);}
 		elsif ($v eq 'D') {$value = ($transcoder->{'samplerateLimit'} || 44100) / 1000;}
 		
-		elsif ($v eq 'f') {$value = '"' . $filepath . '"';}
+		elsif ($v eq 'f') {$value = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
 
 		elsif ($v eq 'i') {$value = '"' . ($transcoder->{'clientid'} || '*' ) . '"';}
@@ -544,7 +544,7 @@ sub tokenizeConvertCommand2 {
 	# Check to see if we need to flip the endianess on output
 	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 	
-	$subs{'FILE'}     = '"' . $filepath . '"';
+	$subs{'FILE'}     = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');
 	$subs{'URL'}      = '"' . $fullpath . '"';
 	$subs{'QUALITY'}  = $quality;
 	$subs{'CHANNELS'} = ($transcoder->{'channels'} || 2 );
