@@ -267,6 +267,10 @@ sub main {
 	# Load any plugins that define import modules
 	# useCache is 0 so scanner does not modify the plugin cache file
 	Slim::Utils::PluginManager->init( 'import', 0 );
+
+	# need to re-init the strings, as plugins might have added new tokens
+	Slim::Utils::Strings::init();
+
 	Slim::Utils::PluginManager->load('import');
 
 	checkDataSource();
