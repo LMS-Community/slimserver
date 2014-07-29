@@ -152,10 +152,12 @@ sub loadConversionTables {
 # %d - samplerate: samples/s
 # %D - samplerate: ksamples/s
 
-# %c, $CHANNELS$ - channel count
-# %i, $CLIENTID$ - clientid
-# %I, $PLAYER$   - player
-# %Q, $QUALITY$  - quality
+# %c, $CHANNELS$   - channel count
+# %i, $CLIENTID$   - clientid
+# %I, $PLAYER$     - player
+# %Q, $QUALITY$    - quality
+#     ${FILENAME}$ - contents of {FILENAME} (may contain other $*$ substitutions )
+
 
 # specific combinations match before wildcards
 
@@ -390,7 +392,7 @@ sub getConvertCommand2 {
 			streamformat => ((split (/-/, $profile))[1]),
 			rateLimit => $rateLimit,
 			samplerateLimit => $samplerateLimit,
-			clientid => do { (my $tmp = $clientid ) =~ s/\Q:\E/-/g; $tmp },,
+			clientid => do { (my $tmp = $clientid ) =~ s/\Q:\E/-/g; $tmp },
 			player =>  $player,
 			channels => $track->channels(),
 		};
@@ -496,7 +498,7 @@ sub tokenizeConvertCommand2 {
 		my ($arg, $value) = $capabilities->{$cap} =~ /(\w+)=(.+)/;
 		next unless defined $value;
 		$subs{$arg} = $value;
-		
+
 		# and find what variables they contain
 		foreach ($value =~ m/%(.)/g) {
 			$vars{$_} = 1;
@@ -510,7 +512,6 @@ sub tokenizeConvertCommand2 {
 		$filepath =~ s/([\$\"\`])/\\$1/g;
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
-
 
 	foreach my $v (keys %vars) {
 		my $value;
@@ -540,7 +541,6 @@ sub tokenizeConvertCommand2 {
 		}
 	}
 
-	
 	# Check to see if we need to flip the endianess on output
 	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 	
@@ -555,6 +555,27 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
+	# Find what 'file name to contents' substitutions we need to make
+	my %subs = ();
+	while ($command && $command =~ /\${(.*?)}\$/g) { # ${.....}$
+		if (!exists $binaries{$1}) {
+			if (-e "$1") {
+				open SUB_FILE, "<", $1 or die $!;
+				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ s/\n/ /g; $tmp } ;
+				close(SUB_FILE);
+			} else {
+				$log->warn("   couldn't find file: $1");
+				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
+			}
+		}
+		$subs{$1} = $binaries{$1};
+	}
+
+	foreach (keys %subs) {
+		$command =~ s/\${$_}\$/$subs{$_}/g;
+	}
+
+	
 	$command =~ s/\s+\$\w+\$//g;
 	
 	if (!defined($noPipe)) {
