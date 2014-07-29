@@ -156,7 +156,8 @@ sub loadConversionTables {
 # %c, $CHANNELS$   - channel count
 # %i, $CLIENTID$   - clientid
 # %I, $PLAYER$     - player
-# %Q, $QUALITY$    - quality
+# %q, $QUALITY$    - quality
+# %Q,              - quality ( fractal notation: if = '0' return '01' )
 #     ${FILENAME}$ - contents of {FILENAME} (may contain other $*$ substitutions )
 
 # specific combinations match before wildcards
@@ -534,7 +535,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'i') {$value = '"' . ($transcoder->{'clientid'} || '*' ) . '"';}
 		elsif ($v eq 'I') {$value = '"' . ($transcoder->{'player'} || '*') . '"';}
 		elsif ($v eq 'c') {$value = ($transcoder->{'channels'} || 2 );}
-		elsif ($v eq 'Q') {$value = $quality;}
+		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality);}
+		elsif ($v eq 'q') {$value = $quality;}
 
 		foreach (values %subs) {
 			s/%$v/$value/ge;
