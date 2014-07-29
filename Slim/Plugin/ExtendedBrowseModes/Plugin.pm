@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::VirtualLibraries;
+use Slim::Plugin::ExtendedBrowseModes::Libraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
@@ -121,30 +122,7 @@ sub initLibraries {
 	}
 	
 	if ( $prefs->get('enableLosslessPreferred') ) {
-		Slim::Music::VirtualLibraries->registerLibrary({
-			id => 'losslessPreferred',
-			name => string('PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED'),
-			sql => qq{
-				INSERT OR IGNORE INTO library_track (library, track)
-					SELECT '%s', tracks.id
-					FROM tracks, albums
-					WHERE albums.id = tracks.album 
-					AND (
-						tracks.lossless 
-						OR 1 NOT IN (
-							SELECT 1
-							FROM tracks other
-							JOIN albums otheralbums ON other.album
-							WHERE other.title = tracks.title
-							AND other.lossless
-							AND other.primary_artist = tracks.primary_artist
-							AND other.tracknum = tracks.tracknum
-							AND other.year = tracks.year
-							AND otheralbums.title = albums.title
-						)
-					)
-			}
-		});
+		Slim::Plugin::ExtendedBrowseModes::Libraries->initLibraries();
 		
 		# if we were called on a onChange event, re-build the library
 		Slim::Music::VirtualLibraries->rebuild('losslessPreferred') if $newValue;
