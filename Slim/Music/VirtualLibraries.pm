@@ -107,9 +107,9 @@ sub registerLibrary {
 sub unregisterLibrary {
 	my ($class, $id) = @_;
 	
-	my $id2 = $class->getRealId($id);
+	$id = $class->getRealId($id);
 	
-	delete $libraries{$id2 || $id} if $libraries{$id2 || $id};
+	delete $libraries{$id} if $id && $libraries{$id};
 }
 
 # called by the scanner module
@@ -143,7 +143,9 @@ sub startScan {
 sub rebuild {
 	my ($class, $id) = @_;
 	
-	my $args = $libraries{ $class->getRealId($id) || $id };
+	$id = $class->getRealId($id);
+	
+	my $args = $libraries{$id};
 
 	return unless $args && ref $args eq 'HASH';
 
@@ -176,6 +178,8 @@ sub hasLibraries {
 sub getRealId {
 	my ($class, $id) = @_;
 	
+	return $id if $libraries{$id};
+	
 	my ($id2) = grep { $libraries{$_}->{id} eq $id } keys %libraries;
 	return $id2;
 }
@@ -197,6 +201,8 @@ sub getLibraryIdForClient {
 
 sub getNameForId {
 	my ($class, $id) = @_;
+	
+	$id = $class->getRealId($id);
 	
 	return '' unless $libraries{$id};
 	return $libraries{$id}->{name} || '';
