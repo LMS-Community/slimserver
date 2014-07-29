@@ -154,6 +154,7 @@ sub loadConversionTables {
 # %D - samplerate: ksamples/s
 
 # %c, $CHANNELS$   - channel count
+# %C, $OCHANNELS$  - output channel count
 # %i, $CLIENTID$   - clientid
 # %I, $PLAYER$     - player
 # %q, $QUALITY$    - quality
@@ -385,6 +386,7 @@ sub getConvertCommand2 {
 				next PROFILE;
 		}
 
+
 		$transcoder = {
 			command => $command,
 			profile => $profile,
@@ -396,6 +398,7 @@ sub getConvertCommand2 {
 			clientid => do { (my $tmp = $clientid ) =~ s/\Q:\E/-/g; $tmp },
 			player =>  $player,
 			channels => $track->channels(),
+			outputChannels => $prefs->client($client)->get('outputChannels'),
 		};
 
 		# Check for optional profiles
@@ -535,7 +538,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'i') {$value = '"' . ($transcoder->{'clientid'} || '*' ) . '"';}
 		elsif ($v eq 'I') {$value = '"' . ($transcoder->{'player'} || '*') . '"';}
 		elsif ($v eq 'c') {$value = ($transcoder->{'channels'} || 2 );}
-		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality);}
+		elsif ($v eq 'C') {$value = ($transcoder->{'outputChannels'} || 2 );}
+		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
 		elsif ($v eq 'q') {$value = $quality;}
 
 		foreach (values %subs) {
@@ -550,6 +554,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'URL'}      = '"' . $fullpath . '"';
 	$subs{'QUALITY'}  = $quality;
 	$subs{'CHANNELS'} = ($transcoder->{'channels'} || 2 );
+	$subs{'OCHANNELS'}= ($transcoder->{'outputChannels'} || 2 );
 	$subs{'CLIENTID'} = ($transcoder->{'clientid'} || '*' );
 	$subs{'PLAYER'}   = '"' . ($transcoder->{'player'} || '*') . '"';
 
