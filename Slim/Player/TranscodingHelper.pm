@@ -132,6 +132,8 @@ sub loadConversionTables {
 # D - can downsample 
 # B - can limit bitrate
 #
+# default is "IF"
+
 # Substitution strings for variable capabilities
 # %f, $FILE$ - file path (local files)
 # %F, $URL$  - full URL (remote streams)
@@ -146,7 +148,6 @@ sub loadConversionTables {
 # %v - stream time (m:ss) end offset
 # %w - stream seconds duration
 
-#
 # %b - limit bitrate: b/s
 # %B - limit bitrate: kb/s
 # %d - samplerate: samples/s
@@ -157,7 +158,6 @@ sub loadConversionTables {
 # %I, $PLAYER$     - player
 # %Q, $QUALITY$    - quality
 #     ${FILENAME}$ - contents of {FILENAME} (may contain other $*$ substitutions )
-
 
 # specific combinations match before wildcards
 
