@@ -568,7 +568,7 @@ sub tokenizeConvertCommand2 {
 		if (!exists $binaries{$1}) {
 			if (-e "$1") {
 				open (SUB_FILE, "<".$1 ) || die $!;
-				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ s/\n/ /g; $tmp } ;
+				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
 				close(SUB_FILE);
 			} else {
 				open (SUB_FILE, ">>".$1 ) || die "couldn't create file: $1 $!\n";
