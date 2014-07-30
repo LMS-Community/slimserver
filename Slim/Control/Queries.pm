@@ -539,10 +539,18 @@ sub albumsQuery {
 	}
 	
 	my $dbh = Slim::Schema->dbh;
+
+	$sql .= "GROUP BY albums.id ";
 	
 	if ($page_key && $tags =~ /Z/) {
-		my $pageSql = sprintf($sql, "$page_key, count(distinct albums.id)")
-			 . "GROUP BY $page_key ORDER BY $order_by ";
+		my $pageSql = "SELECT n, count(1) FROM ("
+			. sprintf($sql, "$page_key AS n")
+			. ") GROUP BY n ORDER BY n $collate ";
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
+		}
+
 		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
 		
 		if ($tags =~ /ZZ/) {
@@ -551,7 +559,6 @@ sub albumsQuery {
 		}
 	}
 	
-	$sql .= "GROUP BY albums.id ";
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 	
 	# Add selected columns
