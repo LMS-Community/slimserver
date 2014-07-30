@@ -548,7 +548,7 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'd') {$value = $transcoder->{'samplerateLimit'};}
 		elsif ($v eq 'D') {$value = $transcoder->{'samplerateLimit'} / 1000;}
 
-		elsif ($v eq 'f') {$value = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');}
+		elsif ($v eq 'f') {$value = $subs{'FILE'};}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
 
 		elsif ($v eq 'i') {$value = $transcoder->{'clientid'};}
