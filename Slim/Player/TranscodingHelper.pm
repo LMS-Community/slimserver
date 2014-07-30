@@ -395,8 +395,8 @@ sub getConvertCommand2 {
 			streamformat => ((split (/-/, $profile))[1]),
 			rateLimit => $rateLimit,
 			samplerateLimit => $samplerateLimit,
-			clientid => do { (my $tmp = $clientid ) =~ s/\Q:\E/-/g; $tmp },
-			player =>  $player,
+			clientid => do { (my $tmp = $clientid ) =~ tr/.:/-/; $tmp },
+			player =>   do { (my $tmp = $player ) =~ tr/ /_/; $tmp },
 			channels => $track->channels(),
 			outputChannels => $prefs->client($client)->get('outputChannels'),
 		};
@@ -535,8 +535,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'f') {$value = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
 
-		elsif ($v eq 'i') {$value = '"' . ($transcoder->{'clientid'} || '*' ) . '"';}
-		elsif ($v eq 'I') {$value = '"' . ($transcoder->{'player'} || '*') . '"';}
+		elsif ($v eq 'i') {$value = ($transcoder->{'clientid'} || 'undefined' );}
+		elsif ($v eq 'I') {$value = ($transcoder->{'player'} || 'undefined');}
 		elsif ($v eq 'c') {$value = ($transcoder->{'channels'} || 2 );}
 		elsif ($v eq 'C') {$value = ($transcoder->{'outputChannels'} || 2 );}
 		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
@@ -555,8 +555,8 @@ sub tokenizeConvertCommand2 {
 	$subs{'QUALITY'}  = $quality;
 	$subs{'CHANNELS'} = ($transcoder->{'channels'} || 2 );
 	$subs{'OCHANNELS'}= ($transcoder->{'outputChannels'} || 2 );
-	$subs{'CLIENTID'} = ($transcoder->{'clientid'} || '*' );
-	$subs{'PLAYER'}   = '"' . ($transcoder->{'player'} || '*') . '"';
+	$subs{'CLIENTID'} = ($transcoder->{'clientid'} || 'undefined' );
+	$subs{'PLAYER'}   = ($transcoder->{'player'} || 'undefined');
 
 	foreach (keys %subs) {
 		$command =~ s/\$$_\$/$subs{$_}/g;
@@ -567,10 +567,12 @@ sub tokenizeConvertCommand2 {
 	while ($command && $command =~ /\${(.*?)}\$/g) { # ${.....}$
 		if (!exists $binaries{$1}) {
 			if (-e "$1") {
-				open ( SUB_FILE, "<".$1 ) || die $!;
+				open (SUB_FILE, "<".$1 ) || die $!;
 				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ s/\n/ /g; $tmp } ;
 				close(SUB_FILE);
 			} else {
+				open (SUB_FILE, ">>".$1 ) || die "couldn't create file: $1 $!\n";
+				close(SUB_FILE);
 				$log->warn("   couldn't find file: $1");
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
