@@ -153,10 +153,14 @@ sub loadConversionTables {
 # %d - samplerate: samples/s
 # %D - samplerate: ksamples/s
 
-# %c, $CHANNELS$   - channel count
-# %C, $OCHANNELS$  - output channel count
-# %i, $CLIENTID$   - clientid
-# %I, $PLAYER$     - player
+# %C, $CHANNELS$   - channel count
+# %c, $OCHANNELS$  - output channel count
+# %i               - clientid
+# %I, $CLIENTID$   - clientid     ( : or . replaced by - )
+# %p               - player model
+# %P, $PLAYER$     - player model ( SPACE or QOUTE replaced by _ )
+# %n               - player name
+# %N, $NAME$       - player name  ( SPACE or QOUTE replaced by _ )
 # %q, $QUALITY$    - quality
 # %Q,              - quality ( fractal notation: if = '0' return '01' )
 #     ${FILENAME}$ - contents of {FILENAME} (may contain other $*$ substitutions )
@@ -386,19 +390,19 @@ sub getConvertCommand2 {
 				next PROFILE;
 		}
 
-
 		$transcoder = {
-			command => $command,
-			profile => $profile,
+			command          => $command,
+			profile          => $profile,
 			usedCapabilities => [@$need, @$want],
-			streamMode => $streamMode,
-			streamformat => ((split (/-/, $profile))[1]),
-			rateLimit => $rateLimit,
-			samplerateLimit => $samplerateLimit,
-			clientid => do { (my $tmp = $clientid ) =~ tr/.:/-/; $tmp },
-			player =>   do { (my $tmp = $player ) =~ tr/ /_/; $tmp },
-			channels => $track->channels(),
-			outputChannels => $prefs->client($client)->get('outputChannels'),
+			streamMode       => $streamMode,
+			streamformat     => (split (/-/, $profile))[1],
+			rateLimit        => $rateLimit || 320,
+			samplerateLimit  => $samplerateLimit || 44100,
+			clientid         => $clientid || 'undefined',
+			clientname       => $client->name || 'undefined',
+			player           => $player || 'undefined',
+			channels         => $track->channels() || 2,
+			outputChannels   => $prefs->client($client)->get('outputChannels') || 2,
 		};
 
 		# Check for optional profiles
@@ -517,6 +521,18 @@ sub tokenizeConvertCommand2 {
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
 
+	# Check to see if we need to flip the endianess on output
+	$subs{'-x'}        = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
+
+	$subs{'FILE'}      = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');
+	$subs{'URL'}       = '"' . $fullpath . '"';
+	$subs{'QUALITY'}   = $quality;
+	$subs{'CHANNELS'}  = $transcoder->{'channels'};
+	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
+	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
+	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
+	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /-/; $tmp };
+
 	foreach my $v (keys %vars) {
 		my $value;
 
@@ -526,53 +542,46 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'v') {$value = Slim::Utils::DateTime::fracSecToMinSec($end);}
 		elsif ($v eq 'w') {$value = $end - $start;}
 
-		elsif ($v eq 'b') {$value = ($transcoder->{'rateLimit'} || 320) * 1000;}
-		elsif ($v eq 'B') {$value = ($transcoder->{'rateLimit'} || 320);}
+		elsif ($v eq 'b') {$value = $transcoder->{'rateLimit'} * 1000;}
+		elsif ($v eq 'B') {$value = $transcoder->{'rateLimit'};}
 
-		elsif ($v eq 'd') {$value = ($transcoder->{'samplerateLimit'} || 44100);}
-		elsif ($v eq 'D') {$value = ($transcoder->{'samplerateLimit'} || 44100) / 1000;}
+		elsif ($v eq 'd') {$value = $transcoder->{'samplerateLimit'};}
+		elsif ($v eq 'D') {$value = $transcoder->{'samplerateLimit'} / 1000;}
 
 		elsif ($v eq 'f') {$value = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
 
-		elsif ($v eq 'i') {$value = ($transcoder->{'clientid'} || 'undefined' );}
-		elsif ($v eq 'I') {$value = ($transcoder->{'player'} || 'undefined');}
-		elsif ($v eq 'c') {$value = ($transcoder->{'channels'} || 2 );}
-		elsif ($v eq 'C') {$value = ($transcoder->{'outputChannels'} || 2 );}
-		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
+		elsif ($v eq 'i') {$value = $transcoder->{'clientid'};}
+		elsif ($v eq 'I') {$value = $subs{'CLIENTID'};}
+		elsif ($v eq 'p') {$value = $transcoder->{'player'};}
+		elsif ($v eq 'P') {$value = $subs{'PLAYER'};}
+		elsif ($v eq 'n') {$value = $transcoder->{'clientname'};}
+		elsif ($v eq 'N') {$value = $subs{'NAME'};}
+		elsif ($v eq 'C') {$value = $transcoder->{'channels'};}
+		elsif ($v eq 'c') {$value = $transcoder->{'outputChannels'};}
 		elsif ($v eq 'q') {$value = $quality;}
+		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
 
 		foreach (values %subs) {
 			s/%$v/$value/ge;
 		}
 	}
 
-	# Check to see if we need to flip the endianess on output
-	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
-
-	$subs{'FILE'}     = ($filepath eq '-' ? $filepath : '"' . $filepath . '"');
-	$subs{'URL'}      = '"' . $fullpath . '"';
-	$subs{'QUALITY'}  = $quality;
-	$subs{'CHANNELS'} = ($transcoder->{'channels'} || 2 );
-	$subs{'OCHANNELS'}= ($transcoder->{'outputChannels'} || 2 );
-	$subs{'CLIENTID'} = ($transcoder->{'clientid'} || 'undefined' );
-	$subs{'PLAYER'}   = ($transcoder->{'player'} || 'undefined');
-
+	# replace subs
 	foreach (keys %subs) {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# Find what 'file name to contents' substitutions we need to make
+	# Find what 'file name to contents' substitutions we need to make '${*}$'
 	my %subs = ();
-	while ($command && $command =~ /\${(.*?)}\$/g) { # ${.....}$
+	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
 			if (-e "$1") {
 				open (SUB_FILE, "<".$1 ) || die $!;
 				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
 				close(SUB_FILE);
 			} else {
-				open (SUB_FILE, ">>".$1 ) || die "couldn't create file: $1 $!\n";
-				close(SUB_FILE);
+				open (SUB_FILE, ">>".$1 ) && close(SUB_FILE) || die "couldn't create file: $1 $!\n";
 				$log->warn("   couldn't find file: $1");
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
@@ -585,6 +594,7 @@ sub tokenizeConvertCommand2 {
 	}
 
 
+	# clean all remaining '$*$'
 	$command =~ s/\s+\$\w+\$//g;
 
 	if (!defined($noPipe)) {
