@@ -827,7 +827,7 @@ sub artistsQuery {
 					$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
 				}
 				
-				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
+				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0' . ($va_pref ? '' : ' OR contributors.id = ' . Slim::Schema->variousArtistsObject->id) . ')';
 			}
 		#}
 		
