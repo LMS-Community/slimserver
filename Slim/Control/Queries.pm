@@ -664,6 +664,8 @@ sub albumsQuery {
 			ORDER BY contributor_album.role DESC
 		}, map { Slim::Schema::Contributor->typeToRole($_) } ('ALBUMARTIST', 'ARTIST'));
 		
+		my $vaObjId = Slim::Schema->variousArtistsObject->id;
+		
 		while ( $sth->fetch ) {
 			
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
@@ -679,6 +681,7 @@ sub albumsQuery {
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
 			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
+
 			if ($tags =~ /a/) {
 				# Bug 15313, this used to use $eachitem->artists which
 				# contains a lot of extra logic.
@@ -691,6 +694,7 @@ sub albumsQuery {
 
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
+
 			if ($tags =~ /s/) {
 				#FIXME: see if multiple char textkey is doable for year/genre sort
 				my $textKey;
@@ -703,8 +707,9 @@ sub albumsQuery {
 				}
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 			}
+
 			# want multiple artists?
-			if ( $tags =~ /(?:aa|SS)/ ) {
+			if ( $tags =~ /(?:aa|SS)/ && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
 				my $sth = $dbh->prepare_cached($contributorSql);
 				$sth->execute($c->{'albums.id'});
 				
