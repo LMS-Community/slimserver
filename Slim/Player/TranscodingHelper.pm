@@ -468,7 +468,7 @@ sub tokenizeConvertCommand2 {
 	use bytes;
 
 	my $command = $transcoder->{'command'};
-	$log->warn("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
+	#main::INFOLOG && $log->info("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
@@ -590,7 +590,7 @@ sub tokenizeConvertCommand2 {
 					$log->error("Couldn't create empty file: $1");
 				} else {
 					close(SUB_FILE);
-					$log->info("Created empty file: $1");
+					main::INFOLOG && $log->info("Created empty file: $1");
 				}
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
@@ -612,7 +612,7 @@ sub tokenizeConvertCommand2 {
 	}
 
 	#main::DEBUGLOG && $log->debug("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
-	$log->warn("Tokenized command: ", Slim::Utils::Unicode::utf8decode_locale($command));
+	main::INFOLOG && $log->info("Tokenized command: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	return $command;
 }
