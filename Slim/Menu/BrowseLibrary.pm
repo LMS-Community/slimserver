@@ -1375,7 +1375,9 @@ sub _albums {
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $wantMeta   = $pt->{'wantMetadata'};
-	my $tags       = 'ljsaS';
+	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
+	# XXX - make the full list of items optional!
+	my $tags       = 'ljsaaSS';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	
 	if (!$sort || $sort ne 'sort:new') {
@@ -1422,16 +1424,26 @@ sub _albums {
 				# title is a really stupid thing to use, since there's no assurance it's unique
 				$_->{'favorites_url'} = 'db:album.title=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
+						
+				if ($_->{'artist_ids'}) {
+					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
+					$_->{'artist_ids'} = [ split /,/, $_->{'artist_ids'} ];
+				}
+				else {
+					$_->{'artists'}    = [ $_->{'artist'} ];
+					$_->{'artist_ids'} = [ $_->{'id'} ];
+				}
 				
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'artist_id'}) {
-					$_->{'name2'} = $_->{'artist'};
+					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 				}
 
 				if (!$wantMeta) {
 					delete $_->{'artist'};
+					delete $_->{'artists'};
 				}
 				
 				$_->{'hasMetadata'}   = 'album'

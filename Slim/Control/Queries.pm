@@ -655,6 +655,14 @@ sub albumsQuery {
 				$c->{'albums.title'}, $c->{'albums.disc'}, $c->{'albums.discc'}
 			);
 		};
+
+		my $contributorSql = sprintf(qq{
+			SELECT contributors.name AS name, contributors.id AS id, contributor_album.role AS role
+			FROM contributor_album
+			JOIN contributors ON contributors.id = contributor_album.contributor
+			WHERE contributor_album.album = ? AND contributor_album.role IN (%s, %s) 
+			ORDER BY contributor_album.role DESC
+		}, map { Slim::Schema::Contributor->typeToRole($_) } ('ALBUMARTIST', 'ARTIST'));
 		
 		while ( $sth->fetch ) {
 			
@@ -670,7 +678,7 @@ sub albumsQuery {
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
-			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
+			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
 			if ($tags =~ /a/) {
 				# Bug 15313, this used to use $eachitem->artists which
 				# contains a lot of extra logic.
@@ -694,6 +702,28 @@ sub albumsQuery {
 					$textKey = substr $c->{'albums.titlesort'}, 0, 1;
 				}
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+			}
+			# want multiple artists?
+			if ( $tags =~ /(?:aa|SS)/ ) {
+				my $sth = $dbh->prepare_cached($contributorSql);
+				$sth->execute($c->{'albums.id'});
+				
+				my (@ids, @artists, $role);
+				
+				while ( my $contributor = $sth->fetchrow_hashref ) {
+					last if defined $role && $role != $contributor->{role};
+					$role ||= $contributor->{role};
+					
+					push @ids, $contributor->{id};
+					utf8::decode($contributor->{name}) if exists $contributor->{name};
+					push @artists, $contributor->{name};
+				}
+				
+				$sth->finish;
+				
+				# XXX - what if the artist name itself contains ','?
+				$tags =~ /aa/ && @artists && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', join(',', @artists));
+				$tags =~ /SS/ && @ids && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', join(',', @ids));
 			}
 			
 			$chunkCount++;
