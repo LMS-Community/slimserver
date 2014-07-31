@@ -24,7 +24,7 @@ sub prefs {
 	return (preferences('server'),
 			qw(noGenreFilter noRoleFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
-			   conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist 
+			   conductorInArtists bandInArtists variousArtistAutoIdentification 
 			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList)
 		   );
 }

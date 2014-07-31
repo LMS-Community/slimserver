@@ -18183,40 +18183,6 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	RU	Альбомы песен с тегами группы могут быть перечислены в списке с названием этой группы или другими исполнителями данного альбома. Тег группы также называется TPE2 и в некоторых программах может отображаться как "Исполнитель альбома".
 	SV	Album som innehåller låtar som taggats med ett bandnamn kan listas under bandnamnet eller tillsammans med de andra artisterna på albumet. Bandtaggen kallas också TPE2, och visas i vissa program som Albumartist.
 
-SETUP_USEBANDASALBUMARTIST_1
-	CS	Vypsat alba podle skupin
-	DA	Vis album efter band
-	DE	Alben nach Band ordnen
-	EN	List albums by band
-	ES	Lista de álbumes por banda
-	FI	Luetteloi levyt yhtyeen mukaan
-	FR	Lister les albums par groupe
-	HE	סידור אלבומים ברשימה לפי להקה
-	IT	Elenca gli album per gruppo
-	NL	Albums bij band weergeven
-	NO	Vis album etter gruppe
-	PL	Wyświetl albumy według zespołu
-	RU	Список альбомов по группе
-	SV	Lista album efter band
-	ZH_CN	专辑按团体列出
-
-SETUP_USEBANDASALBUMARTIST_0
-	CS	Vypsat alba podle všech interpretů tohoto alba
-	DA	Vis album efter alle kunstnere på albumet
-	DE	Alben nach allen Interpreten des Albums ordnen
-	EN	List albums by all artists for that album
-	ES	Lista de álbumes con todos los artistas de ese álbum
-	FI	Luetteloi levyt kaikkien levyllä olevien artistien mukaan
-	FR	Lister les albums par tous les artistes
-	HE	סידור אלבומים ברשימה לפי כל המבצעים באותו אלבום
-	IT	Elenca gli album per artisti dell'album
-	NL	Albums bij alle artiesten voor dat album weergeven
-	NO	Vis album med alle artister i albumet
-	PL	Wyświetl albumy według wszystkich wykonawców tego albumu
-	RU	Альбомы по всем исполнителям этого альбома
-	SV	Lista album efter alla albumets artister
-	ZH_CN	专辑按艺人列出
-
 SETUP_USETPE2ASALBUMARTIST_DESC
 	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam "Skupina/orchestr". Zvolte význam, který má Logitech Media Server používat. Po změně tohoto nastavení začne opakované prohledávání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Logitech Media Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
