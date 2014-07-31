@@ -244,10 +244,10 @@ sub checkBin {
 	# if the user's disabled the profile, then skip it unless we're changing the prefs...
 	return undef unless $command && ( defined($ignoreprefsettings) || enabledFormat($profile) );
 
-	main::DEBUGLOG && $log->debug("   enabled");
+	main::DEBUGLOG && $log->debug("enabled");
 
 	if ($command) {
-		main::DEBUGLOG && $log->debug("  Found command: $command");
+		main::DEBUGLOG && $log->debug("Found command: $command");
 	}
 
 	# if we don't have one or more of the requisite binaries, then move on.
@@ -269,7 +269,7 @@ sub checkBin {
 
 			$@ = $1;
 
-			$log->warn("   couldn't find binary for: $1");
+			$log->error("Couldn't find binary for: $1");
 		}
 	}
 
@@ -468,6 +468,7 @@ sub tokenizeConvertCommand2 {
 	use bytes;
 
 	my $command = $transcoder->{'command'};
+	$log->warn("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
@@ -577,12 +578,20 @@ sub tokenizeConvertCommand2 {
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
 			if (-e "$1") {
-				open (SUB_FILE, "<".$1 ) || die $!;
-				$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
-				close(SUB_FILE);
+				if ( !open (SUB_FILE, "<".$1 )) {
+					$log->error("Couldn't open file for reading: $1");
+				} else {
+					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
+					close(SUB_FILE);
+				}
 			} else {
-				open (SUB_FILE, ">>".$1 ) && close(SUB_FILE) || die "couldn't create file: $1 $!\n";
-				$log->warn("   couldn't find file: $1");
+				$log->warn("Couldn't find file: $1");
+				if ( !open (SUB_FILE, ">>".$1 ) ) {
+					$log->error("Couldn't create empty file: $1");
+				} else {
+					close(SUB_FILE);
+					$log->info("Created empty file: $1");
+				}
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
 		}
@@ -602,7 +611,8 @@ sub tokenizeConvertCommand2 {
 		$command .= ' |';
 	}
 
-	main::DEBUGLOG && $log->debug("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
+	#main::DEBUGLOG && $log->debug("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
+	$log->warn("Tokenized command: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	return $command;
 }
