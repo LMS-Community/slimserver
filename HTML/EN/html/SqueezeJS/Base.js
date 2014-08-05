@@ -243,6 +243,7 @@ function _init() {
 				rescan: 0,
 				canSeek: false
 			}
+			this.playerStatus['playlist repeat'] = 0;
 		},
 
 		addObserver : function(config){
@@ -393,6 +394,7 @@ function _init() {
 				duration:  parseInt(response.duration) || 0,
 				canSeek:   response.can_seek ? true : false,
 				playtime:  parseInt(response.time),
+				repeat:    parseInt(response['playlist repeat']) || 0,
 				timestamp: response.playlist_timestamp
 			};
 
@@ -424,6 +426,7 @@ function _init() {
 			needUpdate |= (result.playlist_tracks < 1 && this.playerStatus.track);                                          // there's a player, but no song in the playlist
 			needUpdate |= (result.playlist_tracks > 0 && !this.playerStatus.track);                                         // track in playlist changed
 			needUpdate |= (result.rate != null && result.rate != this.playerStatus.rate);                                   // song is scanning (ffwd/frwd)
+			needUpdate |= (result['playlist repeat'] != null && result['playlist repeat'] != this.playerStatus.repeat);
 	
 			return needUpdate;
 		},
