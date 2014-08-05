@@ -669,7 +669,7 @@ sub albumsQuery {
 				}
 			}
 
-			my $contributorSql = sprintf( qq{
+			$contributorSql = sprintf( qq{
 				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id, contributor_album.role AS role
 				FROM contributor_album
 				JOIN contributors ON contributors.id = contributor_album.contributor
