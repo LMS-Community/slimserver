@@ -1591,7 +1591,7 @@ sub _tracks {
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
-	my $tags       = 'dtuxgaAliqyorf';
+	my $tags       = 'dtuxgaAsSliqyorf';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
@@ -1638,7 +1638,19 @@ sub _tracks {
 				$_->{'play_index'}    = $offset++;
 				
 				# bug 17340 - in track lists we give the trackartist precedence over the artist
-				$_->{'artist'} = $_->{'trackartist'} if $_->{'trackartist'};
+				if ( $_->{'trackartist'} ) {
+					$_->{'artist'} = $_->{'trackartist'};
+				}
+				# if the track doesn't have an ARTIST or TRACKARTIST tag, use all contributors of whatever other role is defined
+				elsif ( !$_->{'artist_ids'} ) {
+					my $artist_id = $_->{'artist_id'};
+					foreach my $role ('albumartist', 'band') {
+						my $id = $role . '_ids';
+						if ( $_->{$id} && $_->{$id} =~ /$artist_id/ ) {
+							$_->{'artist'} = $_->{$role};
+						}
+					}
+				}
 				
 				my $name2;
 				$name2 = $_->{'artist'} if $addArtistToName2;
