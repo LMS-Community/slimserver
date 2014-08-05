@@ -732,8 +732,15 @@ sub albumsQuery {
 				$sth->finish;
 				
 				# XXX - what if the artist name itself contains ','?
-				$tags =~ /aa/ && $contributor->{name} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $contributor->{name});
-				$tags =~ /SS/ && $contributor->{id} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				if ( $tags =~ /aa/ && $contributor->{name} ) {
+					utf8::decode($contributor->{name});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $contributor->{name});
+				}
+
+				if ( $tags =~ /SS/ && $contributor->{id} ) {
+					utf8::decode($contributor->{id});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				}
 			}
 			
 			$chunkCount++;
