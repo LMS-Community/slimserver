@@ -3310,6 +3310,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		# on search, only grab audio items.
 		$find{'audio'} = 1;
+		
+		my $vaObjId = Slim::Schema->variousArtistsObject->id;
+
+		if ($find{'contributor.id'} && $find{'contributor.id'} == $vaObjId) {
+
+			$find{'album.compilation'} = 1;
+			$joinMap{'albums'} = 'album';
+		}
 
 		# Bug 2271 - allow VA albums.
 		if (defined $find{'album.compilation'} && $find{'album.compilation'} == 1) {
@@ -3318,7 +3326,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 
 		if ($find{'me.album'} && $find{'contributor.id'} && 
-			$find{'contributor.id'} == Slim::Schema->variousArtistsObject->id) {
+			$find{'contributor.id'} == $vaObjId) {
 
 			delete $find{'contributor.id'};
 		}
