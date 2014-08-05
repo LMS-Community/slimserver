@@ -656,13 +656,28 @@ sub albumsQuery {
 			);
 		};
 
-		my $contributorSql = sprintf(qq{
-			SELECT contributors.name AS name, contributors.id AS id, contributor_album.role AS role
-			FROM contributor_album
-			JOIN contributors ON contributors.id = contributor_album.contributor
-			WHERE contributor_album.album = ? AND contributor_album.role IN (%s, %s) 
-			ORDER BY contributor_album.role DESC
-		}, map { Slim::Schema::Contributor->typeToRole($_) } ('ALBUMARTIST', 'ARTIST'));
+		my $contributorSql;
+		if ( $tags =~ /(?:aa|SS)/ ) {
+			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
+			
+			if ($prefs->get('useUnifiedArtistsList')) {
+				# Loop through each pref to see if the user wants to show that contributor role.
+				foreach (Slim::Schema::Contributor->contributorRoles) {
+					if ($prefs->get(lc($_) . 'InArtists')) {
+						push @roles, $_;
+					}
+				}
+			}
+
+			my $contributorSql = sprintf( qq{
+				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id, contributor_album.role AS role
+				FROM contributor_album
+				JOIN contributors ON contributors.id = contributor_album.contributor
+				WHERE contributor_album.album = ? AND contributor_album.role IN (%s) 
+				GROUP BY contributor_album.role
+				ORDER BY contributor_album.role DESC
+			}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
+		}
 		
 		my $vaObjId = Slim::Schema->variousArtistsObject->id;
 		
@@ -709,26 +724,16 @@ sub albumsQuery {
 			}
 
 			# want multiple artists?
-			if ( $tags =~ /(?:aa|SS)/ && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
+			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
 				my $sth = $dbh->prepare_cached($contributorSql);
 				$sth->execute($c->{'albums.id'});
 				
-				my (@ids, @artists, $role);
-				
-				while ( my $contributor = $sth->fetchrow_hashref ) {
-					last if defined $role && $role != $contributor->{role};
-					$role ||= $contributor->{role};
-					
-					push @ids, $contributor->{id};
-					utf8::decode($contributor->{name}) if exists $contributor->{name};
-					push @artists, $contributor->{name};
-				}
-				
+				my $contributor = $sth->fetchrow_hashref;
 				$sth->finish;
 				
 				# XXX - what if the artist name itself contains ','?
-				$tags =~ /aa/ && @artists && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', join(',', @artists));
-				$tags =~ /SS/ && @ids && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', join(',', @ids));
+				$tags =~ /aa/ && $contributor->{name} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $contributor->{name});
+				$tags =~ /SS/ && $contributor->{id} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
 			}
 			
 			$chunkCount++;
