@@ -4158,7 +4158,7 @@ sub yearsQuery {
 		$total_sth->finish;
 	}
 	
-	$sql .= "ORDER BY $key";
+	$sql .= "ORDER BY $key DESC";
 
 	# now build the result
 	
