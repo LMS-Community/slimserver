@@ -16,11 +16,11 @@ use Slim::Utils::Log;
 
 my $log = logger('formats.metadata');
 
-# Keep a cache of up to 100 remote tracks at a time.
-my $cacheSize = 100;
+# Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
+use constant CACHE_SIZE => preferences('server')->get('dbhighmem') ? 500 : 100;
 
-tie our %Cache, 'Tie::Cache::LRU', $cacheSize;
-tie our %idIndex, 'Tie::Cache::LRU', $cacheSize;
+tie our %Cache, 'Tie::Cache::LRU', CACHE_SIZE;
+tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
 
 my @allAttributes = (qw(
 	_url
@@ -36,7 +36,7 @@ my @allAttributes = (qw(
 	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id lossless lyrics replay_gain replay_peak extid
 	
-	rating lastplayed playcount
+	rating lastplayed playcount virtual
 	
 	comment genre
 	
@@ -87,7 +87,15 @@ sub coverArtExists {0}
 
 sub isRemoteURL {shift->remote();}
 
-sub path { shift->_url(); }
+sub path { 
+	my $url = shift->_url();
+	
+	if ( $url =~ s/^tmp/file/ ) {
+		return Slim::Utils::Misc::pathFromFileURL($url);
+	}
+	
+	return $url;
+}
 
 sub contributorsOfType {}
 
@@ -216,8 +224,12 @@ my %localTagMapping = (
 	urlmd5                 => undef,
 );
 
+my %availableTags;
+
 sub setAttributes {
 	my ($self, $attributes) = @_;
+	
+	%availableTags = map { $_ => 1 } @allAttributes unless keys %availableTags;
 	
 #	main::DEBUGLOG && $log->debug("$url: $self => ", Data::Dump::dump($attributes));
 	
@@ -226,6 +238,7 @@ sub setAttributes {
 		$key = lc($key);
 		$key = $localTagMapping{$key} if exists $localTagMapping{$key};
 		next if !defined($key) || $key eq 'url';
+		next unless $availableTags{$key};
 		
 		main::DEBUGLOG && $log->is_debug && defined $self->$key() && $self->$key() ne $value &&
 			$log->debug("$key: ", $self->$key(), "=>$value");

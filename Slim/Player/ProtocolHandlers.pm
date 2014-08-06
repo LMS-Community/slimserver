@@ -20,6 +20,7 @@ use Slim::Music::Info;
 # have a zero value
 my %protocolHandlers = ( 
 	file     => main::LOCALFILE ? qw(Slim::Player::Protocols::LocalFile) : qw(Slim::Player::Protocols::File),
+	tmp      => qw(Slim::Player::Protocols::TempFile),
 	http     => qw(Slim::Player::Protocols::HTTP),
 	https    => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),

@@ -1865,18 +1865,19 @@ sub mediafolderQuery {
 	my $type     = $request->getParam('type') || '';
 	my $tags     = $request->getParam('tags') || '';
 	
-	my $sql;		
+	my ($sql, $tmp);		
 	
 	# Bug 17436, don't allow BMF if a scan is running
 	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-		$request->addResult('count', 1);
-		
-		$request->addResultLoop('folder_loop', 0, 'filename', $request->string('BROWSE_MUSIC_FOLDER_WHILE_SCANNING'));
-		$request->addResultLoop('folder_loop', 0, 'type', 'text');
-		
-		$request->setStatusDone();
-		return;
+#		$request->addResult('rescan', 1);
+#		$request->addResult('count', 1);
+#		
+#		$request->addResultLoop('folder_loop', 0, 'filename', $request->string('BROWSE_MUSIC_FOLDER_WHILE_SCANNING'));
+#		$request->addResultLoop('folder_loop', 0, 'type', 'text');
+#		
+#		$request->setStatusDone();
+#		return;
+		$tmp = 1;
 	}
 	
 	# url overrides any folderId
@@ -1915,6 +1916,8 @@ sub mediafolderQuery {
 			my $type = Slim::Music::Info::typeFromPath($url) || 'nada';
 			return 1 if $type eq 'dir'; 
 		}
+		
+		$url =~ s/^file/tmp/ if $tmp;
 
 		my $item = Slim::Schema->objectForUrl({
 			'url'      => $url,
@@ -1939,6 +1942,7 @@ sub mediafolderQuery {
 		if (defined $url) {
 			$params->{'url'} = $url;
 		}
+		# temporary item is stored as a RemoteTrack
 		elsif ($folderId) {
 			$params->{'id'} = $folderId;
 		}
@@ -2040,23 +2044,27 @@ sub mediafolderQuery {
 
 			my $url = $item->url;
 			
-			$realName ||= Slim::Music::Info::fileName($url);
+			# if we're dealing with temporary items, store the real URL in $tmp
+			$tmp = $url if $tmp;
+			$tmp =~ s/^tmp/file/;
+			
+			$realName ||= Slim::Music::Info::fileName($tmp || $url);
 
 			my $textKey = uc(substr($realName, 0, 1));
 			
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'filename', $realName);
 		
-			if (Slim::Music::Info::isDir($item)) {
+			if (Slim::Music::Info::isDir($tmp || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
-			} elsif (Slim::Music::Info::isPlaylist($item)) {
+			} elsif (Slim::Music::Info::isPlaylist($tmp || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
 			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
 			
 				# only do this for images & videos where we'll need the hash for the artwork
 				if ($sth) {
-					$sth->execute($url);
+					$sth->execute($tmp || $url);
 					
 					my $itemDetails = $sth->fetchrow_hashref;
 					
@@ -2080,9 +2088,9 @@ sub mediafolderQuery {
 	
 				}
 				
-			} elsif (Slim::Music::Info::isSong($item) && $type ne 'video') {
+			} elsif (Slim::Music::Info::isSong($tmp || $item) && $type ne 'video') {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
-			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
+			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($tmp || $url)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} else {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
@@ -2106,8 +2114,10 @@ sub mediafolderQuery {
 	
 	# this is not always needed, but if only single tracks were added through BMF,
 	# the caches would get out of sync
-	Slim::Schema->wipeCaches;
-	Slim::Music::Import->setLastScanTime();
+	if (!$tmp) {
+		Slim::Schema->wipeCaches;
+		Slim::Music::Import->setLastScanTime();
+	}
 	
 	$request->setStatusDone();
 }
@@ -4825,6 +4835,8 @@ sub _songData {
 					# array returned/genre
 					if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
 						$value = join(', ', map { $_ = $_->$submethod() } $related->all);
+					} elsif ( $isRemote ) {
+						$value = $related;
 					} else {
 						$value = $related->$submethod();
 					}
