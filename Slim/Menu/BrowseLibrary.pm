@@ -1791,11 +1791,14 @@ sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'musicfolder', ['tags:dus', @searchTags],
+	_generic($client, $callback, $args, 'musicfolder', ['tags:cdus', @searchTags],
 		sub {
 			my $results = shift;
 			my $gotsubfolder = 0;
 			my $items = $results->{'folder_loop'};
+			
+			my $cover;
+			
 			foreach (@$items) {
 				$_->{'name'} = $_->{'filename'};
 				if ($_->{'type'} eq 'folder') {
@@ -1824,12 +1827,19 @@ sub _bmf {
 				}  elsif ($_->{'type'} eq 'track') {
 					$_->{'type'}        = 'audio';
 					$_->{'playall'}     = 1;
+
 					$_->{'itemActions'} = {
 						info => {
 							command     => ['trackinfo', 'items'],
 							fixedParams => {track_id =>  $_->{'id'}},
 						},
 					};
+					
+					if ( $_->{'coverid'} ) {
+						$_->{'image'} = 'music/' . $_->{'coverid'} . '/cover';
+						$_->{'artwork_track_id'} = $_->{'coverid'};
+						$cover ||= $_->{'image'};
+					}
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {
@@ -1844,7 +1854,7 @@ sub _bmf {
 					$_->{'type'}        = 'text';
 				}
 			}
-			return {items => $items, sorted => 1}, undef;
+			return {items => $items, sorted => 1, cover => $cover }, undef;
 		},
 	);
 }

@@ -2088,6 +2088,7 @@ sub mediafolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 			}
 
+			$tags =~ /c/ && $request->addResultLoop($loopname, $chunkCount, 'coverid', $item->coverid);
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
