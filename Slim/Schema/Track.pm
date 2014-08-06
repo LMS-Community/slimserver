@@ -482,14 +482,14 @@ sub displayAsHTML {
 
 		if (my $contributors = $self->contributorsOfType(qw(ARTIST TRACKARTIST))) {
 
-			my $artist = $contributors->first;
-
-			$form->{'includeArtist'} = 1;
-			$form->{'artist'} = $artist;
-
 			my @info;
 
 			for my $contributor ($contributors->all) {
+				if (!$form->{'artist'}) {
+					$form->{'includeArtist'} = 1;
+					$form->{'artist'} = $contributor;
+				}
+
 				push @info, {
 					'artist'     => $contributor,
 					'name'       => $contributor->name,

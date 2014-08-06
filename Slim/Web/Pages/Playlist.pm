@@ -68,15 +68,15 @@ sub playlist {
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 	}
 
-	if ($log->is_debug && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
+	if (main::DEBUGLOG && $log->is_debug && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
-		main::DEBUGLOG && $log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
-		main::DEBUGLOG && $log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
-		main::DEBUGLOG && $log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
-		main::DEBUGLOG && $log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
+		$log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
+		$log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
+		$log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
+		$log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
 
-		main::DEBUGLOG && $log->debug("skinOverride: $params->{'skinOverride'}");
-		main::DEBUGLOG && $log->debug("start: $params->{'start'}");
+		$log->debug("skinOverride: $params->{'skinOverride'}");
+		$log->debug("start: $params->{'start'}");
 	}
 
 	# Only build if we need to - try to return cached html or build page from cached info
@@ -87,7 +87,7 @@ sub playlist {
 		defined $params->{'start'} &&
 		$cachedRender && ref($cachedRender) eq 'ARRAY' &&
 		$client->currentPlaylistChangeTime() &&
-		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0] &&
+		$client->currentPlaylistChangeTime() < $cachedRender->[0] &&
 		$cachedRender->[1] eq $params->{'skinOverride'} &&
 		$cachedRender->[2] eq $params->{'start'} ) {
 
@@ -99,7 +99,7 @@ sub playlist {
 			Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
 			Slim::Utils::Timers::setTimer($client, time() + CACHE_TIME, \&flushCachedHTML);
 
-			return $client->currentPlaylistRender()->[5];
+			return $cachedRender->[5];
 
 		} else {
 
@@ -109,8 +109,8 @@ sub playlist {
 				$params->{'cansave'} = 1;
 			}
 
-			$params->{'playlist_items'}   = $client->currentPlaylistRender()->[3];
-			$params->{'pageinfo'}         = $client->currentPlaylistRender()->[4];
+			$params->{'playlist_items'}   = $cachedRender->[3];
+			$params->{'pageinfo'}         = $cachedRender->[4];
 
 			return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 		}
@@ -200,7 +200,10 @@ sub playlist {
 			$form{'num'}       = $itemnum;
 			$form{'levelName'} = 'track';
 			$form{'odd'}       = ($itemnum + $offset) % 2;
-			$form{'artwork_track_id'} = $track->album->artwork if $track->album && !$track->coverid;
+			
+			if ( !$track->coverid && (my $album = $track->album) ) {
+				$form{'artwork_track_id'} = $album->artwork;
+			}
 	
 			if ($itemnum == $currsongind) {
 				$form{'currentsong'} = "current";
@@ -242,7 +245,7 @@ sub playlist {
 	if ($client) {
 
 		# Cache to reduce cpu spike seen when playlist refreshes
-		# For the moment cache html for Default, other skins only cache params
+		# For the moment cache html for Classic, other skins only cache params
 		# Later consider caching as html unless an ajaxRequest
 		# my $cacheHtml = !$params->{'ajaxRequest'};
 		my $cacheHtml = (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Classic');
