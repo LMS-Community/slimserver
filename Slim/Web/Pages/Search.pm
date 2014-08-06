@@ -21,6 +21,8 @@ use Slim::Web::Pages;
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
+use constant MAX_ADV_RESULTS => 200;
+
 my $log = logger('network.http');
 
 sub init {
@@ -310,12 +312,11 @@ sub fillInSearchResults {
 		};
 	}
 
-	# No limit or pagebar on advanced search
+	my $offset = ($params->{'start'} || 0);
+	my $limit  = $offset + ($params->{'itemsPerPage'} || 50) - 1;
+
+	# No pagebar on advanced search - return more items instead, without killing the server with thousands of results
 	if (!$advancedSearch) {
-
-		my $offset = ($params->{'start'} || 0);
-		my $limit  = $offset + ($params->{'itemsPerPage'} || 10) - 1;
-
 		$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 
 			'itemCount'    => $params->{'numresults'},
@@ -326,10 +327,10 @@ sub fillInSearchResults {
 		});
 
 		$params->{'start'} = $params->{'pageinfo'}{'startitem'};
-	
-		# Get just the items we need for this loop.
-		$rs = $rs->slice($offset, $limit);
 	}
+	
+	# Get just the items we need for this loop.
+	$rs = $rs->slice($offset, $limit);
 
 	my $itemCount  = 1;
 	my $lastAnchor = '';

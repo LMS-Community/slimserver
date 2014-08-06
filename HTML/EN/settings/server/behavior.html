@@ -26,7 +26,6 @@
 		<input type="hidden" name="pref_conductorInArtists" value="[% prefs.pref_conductorInArtists %]" />
 		<input type="hidden" name="pref_bandInArtists" value="[% prefs.pref_bandInArtists %]" />
 		<input type="hidden" name="pref_variousArtistAutoIdentification" value="[% prefs.pref_variousArtistAutoIdentification %]" />
-		<input type="hidden" name="pref_useBandAsAlbumArtist" value="[% prefs.pref_useBandAsAlbumArtist %]" />
 	[% END %]
 
 
@@ -37,13 +36,6 @@
 				<label for="pref_variousArtistAutoIdentification0" class="stdlabel">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</label><br/>
 				<input type="radio" name="pref_variousArtistAutoIdentification" id="pref_variousArtistAutoIdentification1" value="1" [% IF prefs.pref_variousArtistAutoIdentification %]checked="checked"[% END %] />
 				<label for="pref_variousArtistAutoIdentification1" class="stdlabel">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]</label>
-			[% END %]
-	
-			[% WRAPPER settingGroup title="" desc="SETUP_USEBANDASALBUMARTIST_DESC"%]
-				<input type="radio" name="pref_useBandAsAlbumArtist" id="pref_useBandAsAlbumArtist0" value="0" [% IF NOT prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %] /> 
-				<label for="pref_useBandAsAlbumArtist0" class="stdlabel">[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]</label><br/>
-				<input type="radio" name="pref_useBandAsAlbumArtist" id="pref_useBandAsAlbumArtist1" value="1" [% IF prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %] />
-				<label for="pref_useBandAsAlbumArtist1" class="stdlabel">[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]</label>
 			[% END %]
 		[% END %]
 		

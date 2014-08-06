@@ -21,6 +21,10 @@ sub name {
 	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_EXTENDED_BROWSEMODES');
 }
 
+sub prefs {
+	return ( $prefs, qw(enableLosslessPreferred) );
+}
+
 sub page {
 	return Slim::Web::HTTP::CSRF->protectURI('plugins/ExtendedBrowseModes/settings/browsemodes.html');
 }

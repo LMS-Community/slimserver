@@ -82,7 +82,7 @@ sub _gotConfig {
 	}
 	elsif ( $feed && $feed->{items} && (my $config = $feed->{items}->[0]) ) {
 		if ( (my $lookup = $config->{'albumart.lookupurl'}) && (my $url = $config->{'albumart.url'}) ) {
-			$client->pluginData( artworkConfig => {
+			$client->master->pluginData( artworkConfig => {
 				lookupurl   => $lookup,
 				albumarturl => $url,
 			} );
@@ -104,6 +104,8 @@ sub defaultMeta {
 sub parser {
 	my ( $client, $url, $metadata ) = @_;
 	
+	$client = $client->master if $client;
+	
 	if ( $client && !$client->pluginData('artworkConfig') ) {
 		getConfig($client);
 	}
@@ -112,11 +114,11 @@ sub parser {
 	# provided by RadioTime
 	if ( $metadata =~ /StreamTitle=\'([^']+)\'/ ) {
 		if ( $1 ) {
-			if ( $client->master->pluginData('metadata' ) ) {
+			if ( $client->pluginData('metadata' ) ) {
 				main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-				$client->master->pluginData( metadata => undef );
+				$client->pluginData( metadata => undef );
 			}
 
 			# Check for an image URL in the metadata.
@@ -132,7 +134,7 @@ sub parser {
 			fetchArtwork($client, $url, 'delayed') unless $artworkUrl;
 			
 			# Let the default metadata handler process the Icy metadata
-			$client->master->pluginData( hasIcy => $url );
+			$client->pluginData( hasIcy => $url );
 			return;
 		}
 	}
@@ -140,17 +142,17 @@ sub parser {
 	# If a station is providing WMA metadata, disable metadata
 	# provided by RadioTime
 	elsif ( $metadata =~ /(?:CAPTION|artist|type=SONG)/ ) {
-		if ( $client->master->pluginData('metadata' ) ) {
+		if ( $client->pluginData('metadata' ) ) {
 			main::DEBUGLOG && $log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
 			
 			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-			$client->master->pluginData( metadata => undef );
+			$client->pluginData( metadata => undef );
 		}
 
 		fetchArtwork($client, $url, 'delayed');
 		
 		# Let the default metadata handler process the WMA metadata
-		$client->master->pluginData( hasIcy => $url );
+		$client->pluginData( hasIcy => $url );
 		return;
 	}
 	
@@ -160,10 +162,12 @@ sub parser {
 sub provider {
 	my ( $client, $url ) = @_;
 	
-	my $hasIcy = $client->master->pluginData('hasIcy');
+	$client = $client->master;
+	
+	my $hasIcy = $client->pluginData('hasIcy');
 	
 	if ( $hasIcy && $hasIcy ne $url ) {
-		$client->master->pluginData( hasIcy => 0 );
+		$client->pluginData( hasIcy => 0 );
 		$hasIcy = undef;
 	}
 	
@@ -173,7 +177,7 @@ sub provider {
 		return defaultMeta( $client, $url );
 	}
 	
-	if ( my $meta = $client->master->pluginData('metadata') ) {
+	if ( my $meta = $client->pluginData('metadata') ) {
 		if ( $meta->{_url} eq $url ) {
 			if ( !$meta->{title} ) {
 				$meta->{title} = Slim::Music::Info::getCurrentTitle($url);
@@ -183,7 +187,7 @@ sub provider {
 		}
 	}
 	
-	if ( !$client->master->pluginData('fetchingMeta') ) {
+	if ( !$client->pluginData('fetchingMeta') ) {
 		# Fetch metadata in the background
 		Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 		fetchMetadata( $client, $url );
@@ -196,6 +200,8 @@ sub fetchMetadata {
 	my ( $client, $url ) = @_;
 	
 	return unless $client;
+	
+	$client = $client->master;
 	
 	# Make sure client is still playing this station
 	if ( Slim::Player::Playlist::url($client) ne $url ) {
@@ -226,7 +232,7 @@ sub fetchMetadata {
 		},
 	);
 	
-	$client->master->pluginData( fetchingMeta => 1 );
+	$client->pluginData( fetchingMeta => 1 );
 	
 	$http->get( $metaUrl );
 }
@@ -244,7 +250,8 @@ sub _gotMetadata {
 		return;
 	}
 	
-	$client->master->pluginData( fetchingMeta => 0 );
+	$client = $client->master;
+	$client->pluginData( fetchingMeta => 0 );
 	
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug( "Raw RadioTime metadata: " . Data::Dump::dump($feed) );
@@ -286,7 +293,7 @@ sub _gotMetadata {
 		$log->debug( "Saved RadioTime metadata: " . Data::Dump::dump($meta) );
 	}
 	
-	$client->master->pluginData( metadata => $meta );
+	$client->pluginData( metadata => $meta );
 	
 	fetchArtwork($client, $url);
 	
@@ -308,19 +315,22 @@ sub _gotMetadataError {
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug( "Error fetching RadioTime metadata: $error" );
 	
-	$client->master->pluginData( fetchingMeta => 0 );
+	$client = $client->master;
+	$client->pluginData( fetchingMeta => 0 );
 	
 	# To avoid flooding the RT servers in the case of errors, we just ignore further
 	# metadata for this station if we get an error
 	my $meta = defaultMeta( $client, $url );
 	$meta->{_url} = $url;
 	
-	$client->master->pluginData( metadata => $meta );
+	$client->pluginData( metadata => $meta );
 }
 
 
 sub fetchArtwork {
 	my ($client, $url, $delayed) = @_;
+	
+	$client = $client->master if $client;
 	
 	main::DEBUGLOG && $log->debug( "Getting artwork for $url" );
 	
@@ -344,6 +354,8 @@ sub fetchArtwork {
 
 sub _fetchArtwork {
 	my ( $client, $url ) = @_;
+	
+	$client = $client->master;
 	
 	my $config  = $client->pluginData('artworkConfig') || return;
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
@@ -377,9 +389,9 @@ sub _fetchArtwork {
 				$track->{title},
 			);
 			
-			return if $client->master->pluginData('fetchingArtwork') && $client->master->pluginData('fetchingArtwork') eq $lookupurl;
+			return if $client->pluginData('fetchingArtwork') && $client->pluginData('fetchingArtwork') eq $lookupurl;
 			
-			$client->master->pluginData( fetchingArtwork => $lookupurl );
+			$client->pluginData( fetchingArtwork => $lookupurl );
 	
 			my $http = Slim::Networking::SimpleAsyncHTTP->new(
 				\&_gotArtwork,
@@ -405,7 +417,9 @@ sub _gotArtwork {
 	my $client = $http->params('client');
 	my $url    = $http->params('url');
 	
-	$client->master->pluginData( fetchingArtwork => 0 );
+	$client = $client->master;
+
+	$client->pluginData( fetchingArtwork => 0 );
 
 	my $feed = eval { Slim::Formats::XML::parseXMLIntoFeed( $http->contentRef ) };
 	
@@ -431,6 +445,8 @@ sub _gotArtwork {
 
 sub setArtwork {
 	my ($client, $url, $artworkUrl) = @_;
+	
+	$client = $client->master if $client;
 			
 	my $cache = Slim::Utils::Cache->new();
 	$cache->set( "remote_image_$url", $artworkUrl, 3600 );

@@ -41,7 +41,7 @@ if ( !main::SCANNER ) {
 	Slim::Control::Request::subscribe( \&wipeCaches, [['library','rescan'], ['changed','done']] );
 
 	$prefs->setChange( \&wipeCaches, qw(itemsPerPage thumbSize showArtist showYear additionalPlaylistButtons noGenreFilter noRoleFilter searchSubString browseagelimit
-				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist titleFormat titleFormatWeb language useUnifiedArtistsList) );
+				composerInArtists conductorInArtists bandInArtists variousArtistAutoIdentification titleFormat titleFormatWeb language useUnifiedArtistsList) );
 }
 
 tie my %cacheables, 'Tie::RegexpHash';

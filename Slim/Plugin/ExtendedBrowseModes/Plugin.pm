@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use Slim::Menu::BrowseLibrary;
 use Slim::Music::VirtualLibraries;
+use Slim::Plugin::ExtendedBrowseModes::Libraries;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
@@ -48,12 +49,17 @@ $prefs->init({
 		id      => 'myMusicAlbumsAudiobooks',
 		weight  => 14,
 		enabled => 0,
-	}]
+	}],
+	enableLosslessPreferred => 0,
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
 Slim::Control::Request::subscribe( \&initMenus, [['library'], ['changed']] );
 Slim::Control::Request::subscribe( \&initMenus, [['rescan'], ['done']] );
+
+$prefs->setChange( sub {
+	__PACKAGE__->initLibraries($_[1] || 0);
+}, 'enableLosslessPreferred' );
 
 sub initPlugin {
 	my ( $class ) = @_;
@@ -66,6 +72,7 @@ sub initPlugin {
 	}
 
 	$class->initMenus();
+	$class->initLibraries();
 	
 	$class->SUPER::initPlugin(
 		feed   => \&handleFeed,
@@ -105,6 +112,21 @@ sub handleFeed {
 	$cb->({
 		items => \@items,
 	});
+}
+
+sub initLibraries {
+	my ($class, $newValue) = @_;
+	
+	if ( defined $newValue && !$newValue ) {
+		Slim::Music::VirtualLibraries->unregisterLibrary('losslessPreferred');
+	}
+	
+	if ( $prefs->get('enableLosslessPreferred') ) {
+		Slim::Plugin::ExtendedBrowseModes::Libraries->initLibraries();
+		
+		# if we were called on a onChange event, re-build the library
+		Slim::Music::VirtualLibraries->rebuild('losslessPreferred') if $newValue;
+	}
 }
 
 sub setLibrary {

@@ -206,9 +206,9 @@ NOTE:
 If you're running some unsupported Linux/Unix platform, please use the buildme.sh 
 script located here:
 
-https://github.com/Logitech/slimserver-vendor/tree/public/7.8/CPAN
+https://github.com/Logitech/slimserver-vendor/tree/public/7.9/CPAN
 
-If 7.8 is outdated by the time you read this, Replace "7.8" with the major version
+If 7.9 is outdated by the time you read this, Replace "7.9" with the major version
 You should never need to do this if you're on Windows or Mac OSX. If the installers
 don't work for you, ask for help and/or report a bug.
 

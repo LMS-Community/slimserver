@@ -1375,7 +1375,9 @@ sub _albums {
 	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $wantMeta   = $pt->{'wantMetadata'};
-	my $tags       = 'ljsaS';
+	# aa & SS will get all contributors and IDs in addition to the main contributor (albums.contributor) - slower but more accurate
+	# XXX - make the full list of items optional!
+	my $tags       = 'ljsaaSS';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	
 	if (!$sort || $sort ne 'sort:new') {
@@ -1422,16 +1424,26 @@ sub _albums {
 				# title is a really stupid thing to use, since there's no assurance it's unique
 				$_->{'favorites_url'} = 'db:album.title=' .
 						URI::Escape::uri_escape_utf8( $_->{'name'} );
+						
+				if ($_->{'artist_ids'}) {
+					$_->{'artists'} = $_->{'artist_ids'} =~ /,/ ? [ split /(?<!\s),(?!\s)/, $_->{'artists'} ] : [ $_->{'artists'} ];
+					$_->{'artist_ids'} = [ split /,/, $_->{'artist_ids'} ];
+				}
+				else {
+					$_->{'artists'}    = [ $_->{'artist'} ];
+					$_->{'artist_ids'} = [ $_->{'id'} ];
+				}
 				
 				# If an artist was not used in the selection criteria or if one was
 				# used but is different to that of the primary artist, then provide 
 				# the primary artist name in name2.
 				if (!$artistId || $artistId != $_->{'artist_id'}) {
-					$_->{'name2'} = $_->{'artist'};
+					$_->{'name2'} = join(', ', @{$_->{'artists'} || []}) || $_->{'artist'};
 				}
 
 				if (!$wantMeta) {
 					delete $_->{'artist'};
+					delete $_->{'artists'};
 				}
 				
 				$_->{'hasMetadata'}   = 'album'
@@ -1579,7 +1591,7 @@ sub _tracks {
 	my $search     = $pt->{'search'};
 	my $offset     = $args->{'index'} || 0;
 	my $getMetadata= $pt->{'wantMetadata'} && grep {/album_id:/} @searchTags;
-	my $tags       = 'dtuxgaAliqyorf';
+	my $tags       = 'dtuxgaAsSliqyorf';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 
 	if (!defined $search && !scalar @searchTags && defined $args->{'search'}) {
@@ -1626,7 +1638,19 @@ sub _tracks {
 				$_->{'play_index'}    = $offset++;
 				
 				# bug 17340 - in track lists we give the trackartist precedence over the artist
-				$_->{'artist'} = $_->{'trackartist'} if $_->{'trackartist'};
+				if ( $_->{'trackartist'} ) {
+					$_->{'artist'} = $_->{'trackartist'};
+				}
+				# if the track doesn't have an ARTIST or TRACKARTIST tag, use all contributors of whatever other role is defined
+				elsif ( !$_->{'artist_ids'} ) {
+					my $artist_id = $_->{'artist_id'};
+					foreach my $role ('albumartist', 'band') {
+						my $id = $role . '_ids';
+						if ( $_->{$id} && $_->{$id} =~ /$artist_id/ ) {
+							$_->{'artist'} = $_->{$role};
+						}
+					}
+				}
 				
 				my $name2;
 				$name2 = $_->{'artist'} if $addArtistToName2;
@@ -1767,11 +1791,14 @@ sub _bmf {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
 	
-	_generic($client, $callback, $args, 'musicfolder', ['tags:dus', @searchTags],
+	_generic($client, $callback, $args, 'musicfolder', ['tags:cdus', @searchTags],
 		sub {
 			my $results = shift;
 			my $gotsubfolder = 0;
 			my $items = $results->{'folder_loop'};
+			
+			my $cover;
+			
 			foreach (@$items) {
 				$_->{'name'} = $_->{'filename'};
 				if ($_->{'type'} eq 'folder') {
@@ -1800,12 +1827,19 @@ sub _bmf {
 				}  elsif ($_->{'type'} eq 'track') {
 					$_->{'type'}        = 'audio';
 					$_->{'playall'}     = 1;
+
 					$_->{'itemActions'} = {
 						info => {
 							command     => ['trackinfo', 'items'],
 							fixedParams => {track_id =>  $_->{'id'}},
 						},
 					};
+					
+					if ( $_->{'coverid'} ) {
+						$_->{'image'} = 'music/' . $_->{'coverid'} . '/cover';
+						$_->{'artwork_track_id'} = $_->{'coverid'};
+						$cover ||= $_->{'image'};
+					}
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {
@@ -1820,7 +1854,7 @@ sub _bmf {
 					$_->{'type'}        = 'text';
 				}
 			}
-			return {items => $items, sorted => 1}, undef;
+			return {items => $items, sorted => 1, cover => $cover }, undef;
 		},
 	);
 }

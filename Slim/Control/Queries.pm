@@ -539,10 +539,18 @@ sub albumsQuery {
 	}
 	
 	my $dbh = Slim::Schema->dbh;
+
+	$sql .= "GROUP BY albums.id ";
 	
 	if ($page_key && $tags =~ /Z/) {
-		my $pageSql = sprintf($sql, "$page_key, count(distinct albums.id)")
-			 . "GROUP BY $page_key ORDER BY $order_by ";
+		my $pageSql = "SELECT n, count(1) FROM ("
+			. sprintf($sql, "$page_key AS n")
+			. ") GROUP BY n ORDER BY n $collate ";
+
+		if ( main::DEBUGLOG && $sqllog->is_debug ) {
+			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
+		}
+
 		$request->addResult('indexList', $dbh->selectall_arrayref($pageSql, undef, @{$p}));
 		
 		if ($tags =~ /ZZ/) {
@@ -551,7 +559,6 @@ sub albumsQuery {
 		}
 	}
 	
-	$sql .= "GROUP BY albums.id ";
 	$sql .= "ORDER BY $order_by " unless $tags eq 'CC';
 	
 	# Add selected columns
@@ -648,6 +655,31 @@ sub albumsQuery {
 				$c->{'albums.title'}, $c->{'albums.disc'}, $c->{'albums.discc'}
 			);
 		};
+
+		my $contributorSql;
+		if ( $tags =~ /(?:aa|SS)/ ) {
+			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
+			
+			if ($prefs->get('useUnifiedArtistsList')) {
+				# Loop through each pref to see if the user wants to show that contributor role.
+				foreach (Slim::Schema::Contributor->contributorRoles) {
+					if ($prefs->get(lc($_) . 'InArtists')) {
+						push @roles, $_;
+					}
+				}
+			}
+
+			$contributorSql = sprintf( qq{
+				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id, contributor_album.role AS role
+				FROM contributor_album
+				JOIN contributors ON contributors.id = contributor_album.contributor
+				WHERE contributor_album.album = ? AND contributor_album.role IN (%s) 
+				GROUP BY contributor_album.role
+				ORDER BY contributor_album.role DESC
+			}, join(',', map { Slim::Schema::Contributor->typeToRole($_) } @roles) );
+		}
+		
+		my $vaObjId = Slim::Schema->variousArtistsObject->id;
 		
 		while ( $sth->fetch ) {
 			
@@ -663,7 +695,8 @@ sub albumsQuery {
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $c->{'albums.discc'});
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $c->{'albums.compilation'});
 			$tags =~ /X/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'album_replay_gain', $c->{'albums.replay_gain'});
-			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
+			$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $contributorID || $c->{'albums.contributor'});
+
 			if ($tags =~ /a/) {
 				# Bug 15313, this used to use $eachitem->artists which
 				# contains a lot of extra logic.
@@ -676,6 +709,7 @@ sub albumsQuery {
 
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
+
 			if ($tags =~ /s/) {
 				#FIXME: see if multiple char textkey is doable for year/genre sort
 				my $textKey;
@@ -687,6 +721,26 @@ sub albumsQuery {
 					$textKey = substr $c->{'albums.titlesort'}, 0, 1;
 				}
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+			}
+
+			# want multiple artists?
+			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
+				my $sth = $dbh->prepare_cached($contributorSql);
+				$sth->execute($c->{'albums.id'});
+				
+				my $contributor = $sth->fetchrow_hashref;
+				$sth->finish;
+				
+				# XXX - what if the artist name itself contains ','?
+				if ( $tags =~ /aa/ && $contributor->{name} ) {
+					utf8::decode($contributor->{name});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artists', $contributor->{name});
+				}
+
+				if ( $tags =~ /SS/ && $contributor->{id} ) {
+					utf8::decode($contributor->{id});
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
+				}
 			}
 			
 			$chunkCount++;
@@ -820,7 +874,7 @@ sub artistsQuery {
 					$sql .= 'JOIN albums ON contributor_album.album = albums.id ';
 				}
 				
-				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0)';
+				push @{$w}, '(albums.compilation IS NULL OR albums.compilation = 0' . ($va_pref ? '' : ' OR contributors.id = ' . Slim::Schema->variousArtistsObject->id) . ')';
 			}
 		#}
 		
@@ -2034,6 +2088,7 @@ sub mediafolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 			}
 
+			$tags =~ /c/ && $request->addResultLoop($loopname, $chunkCount, 'coverid', $item->coverid);
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
@@ -4104,7 +4159,7 @@ sub yearsQuery {
 		$total_sth->finish;
 	}
 	
-	$sql .= "ORDER BY $key";
+	$sql .= "ORDER BY $key DESC";
 
 	# now build the result
 	

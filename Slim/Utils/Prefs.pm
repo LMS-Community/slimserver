@@ -184,7 +184,6 @@ sub init {
 		'bandInArtists'         => 0,
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
-		'useBandAsAlbumArtist'  => 0,
 		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
 		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',

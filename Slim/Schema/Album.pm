@@ -174,8 +174,8 @@ sub artists {
 	# First try to fetch an explict album artist
 	my @artists = $self->artistsForRoles('ALBUMARTIST');
 
-	# If the user wants to use TPE2 as album artist, pull that.
-	if (scalar @artists == 0 && $prefs->get('useBandAsAlbumArtist')) {
+	# If the user wants to use BAND as album artist, pull that.
+	if (scalar @artists == 0 && $prefs->get('bandInArtists')) {
 
 		@artists = $self->artistsForRoles('BAND');
 	}

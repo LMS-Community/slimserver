@@ -216,11 +216,6 @@ sub _init_db {
 			RaiseError => 1,
 			sqlite_use_immediate_transaction => 1,
 		} );
-		
-		$dbh->do('PRAGMA synchronous = OFF');
-		$dbh->do('PRAGMA journal_mode = WAL');
-		# scanner is heavy on writes, server on reads - tweak accordingly
-		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
 
 		# caches do see a lot of updates/writes/deletes - enable auto_vacuum
 		if ( !$dbh->selectrow_array('PRAGMA auto_vacuum') ) {
@@ -229,6 +224,11 @@ sub _init_db {
 			# only enable auto_vacuum when a file is newly created
 			#$dbh->do('VACUUM');
 		}
+		
+		$dbh->do('PRAGMA synchronous = OFF');
+		$dbh->do('PRAGMA journal_mode = WAL');
+		# scanner is heavy on writes, server on reads - tweak accordingly
+		$dbh->do('PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200));
 
 		require Slim::Utils::Prefs;
 	

@@ -14,8 +14,11 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=596">#596</a> - Display total duration of a playlist in the web UI.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=709">#709</a> - Add support for "Browse Composers".</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5108">#5108</a> - Track artist roles become artist roles when COMPILATION=0.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5715">#5715</a> - Advanced search doesn't limit results, can freeze the server.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=11556">#11556</a> - Resizing of left/right pane doesn't work in IE8.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15604">#15604</a> - Provide a Browse Compilations browse mode.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=16506">#16506</a> - Honor read access given by ACLs (thanks htgoebel!).</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17526">#17526</a> - Push any firmware found in cache/updates to players, even if "Check for Updates" is disabled.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=17770">#17770</a> - DISC and DISCC TAGS in cue sheets are not recognized (thanks mrthreeplates!).</li>
@@ -36,6 +39,9 @@
 		<li>Remove SlimService specific code. 7.9 will never be run on mysqueezebox.com.</li>
 		<li>Re-factor preference migration code. Only load migration handlers if needed.</li>
 		<li>Add ALBUMARTIST tag support for Cue files (thanks mrthreeplates!).</li>
+		<li>Disable cross-fading between tracks with different sample rates (thanks hickinbottoms!)</li>
+		<li>Enhance string substitution to improve 3rd party transcoding support (thanks LMS0815!)</li>
+		<li>The "mediafolder" query for music files optionally returns coverid (if available). Use the new 'c' tag.</li>
 	</ul>
 	<br />
 </ul>
@@ -60,6 +66,7 @@
 	<ul>
 		<li>Allow firmware updater to pick up player firmware from the installation's Firmware folder</li>
 		<li>Correctly deal albums of same name and with disc number when "Treat multi-disc sets as multiple album." is set.</li>
+		<li>The special /music/current/cover URL now returns artwork for remote streams, too (if possible).</li>
 	</ul>
 	<br />
 </ul>
@@ -132,6 +139,12 @@
 		<li>Minor changes to the EN skin to improve usability on mobile devices.</li>
 	</ul>
 	<br />
+	
+	<li>Platform Support:</li>
+	<ul>
+		<li>Add support for Mac OSX 10.10 Yosemite (Perl 5.18).</li>
+	</ul>
+	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
@@ -147,6 +160,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18053">#18053</a> - Server does not sleep even if SB is turned off</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18084">#18084</a> - Live 365 pause function don’t stop meta data update</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18089">#18089</a> - "View Tags" for the file without any tags breaks the web UI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=18111">#18111</a> - Problem with "Various Artists" play controls in certain menus</li>
 		<li>Under certain circumstances the scanner wouldn't pick up new artwork, even if music file was changed.</li>
 		<li>PreventStandby plugin: use caffeinate instead of pmset on OSX versions which support it (10.8+)</li>
 		<li>Folders can't be played in Browse Music Folder mode if there are sub-folders and the Classic skin is being used</li>

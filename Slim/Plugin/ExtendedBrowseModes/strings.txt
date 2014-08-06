@@ -64,3 +64,18 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
 	
+PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS
+	DE	Bibliotheksansichten
+	EN	Library Views
+
+PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC
+	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Eigene Musik Menü auswählen.
+	EN	Library views allow you to use the My Music menu on a filtered selection of tracks. When views are enabled, you'll be able to switch between them from a sub-menu in My Music.
+
+PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
+	DE	Keine verlustbehafteten Duplikate anzeigen
+	EN	Hide lossy duplicates if lossless track is available
+
+PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
+	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
+	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).

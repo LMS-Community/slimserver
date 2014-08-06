@@ -5,6 +5,15 @@
 [% IF browselist_header %][% browselist_header %][% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
+[% BLOCK browsecontrols %]
+	[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
+	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+	[% IF itemobj && itemobj.id; WRAPPER cmdlink cmdimage='b_mmmix.gif' cmdtitle='MORE' %]
+		href="[% webroot %]songinfo.html?item=[% itemobj.id %]&player=[% playerURI %]"
+	[% END; END %]
+[%- END %]
+
 [% WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
