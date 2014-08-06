@@ -10,6 +10,8 @@ package Slim::Player::TranscodingHelper;
 use strict;
 
 use File::Spec::Functions qw(catdir);
+#use File::Basename;
+
 use Scalar::Util qw(blessed);
 
 use Slim::Player::CapabilitiesHelper;
@@ -472,7 +474,13 @@ sub tokenizeConvertCommand2 {
 	
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
-	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+	
+	my $binaryfile = ($command =~ /\[([^\]]+)\]/ )[0];
+	if (!exists $binaries{$binaryfile}) {
+		$binaries{$binaryfile} = Slim::Utils::Misc::findbin($binaryfile);
+	} 
+	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$binaryfile} . '"'/eg;
+
 	
 	my ($start, $end);
 	
@@ -532,7 +540,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
-	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /-/; $tmp };
+	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
 
 	foreach my $v (keys %vars) {
 		my $value;
@@ -578,16 +586,16 @@ sub tokenizeConvertCommand2 {
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
 			if (-e "$1") {
-				if ( !open (SUB_FILE, "<".$1 )) {
-					$log->error("Couldn't open file for reading: $1");
+				if ( !open (SUB_FILE, "<". File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1))) {
+					$log->error("Couldn't open file for reading: ".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1));
 				} else {
 					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
 					close(SUB_FILE);
 				}
 			} else {
 				$log->warn("Couldn't find file: $1");
-				if ( !open (SUB_FILE, ">>".$1 ) ) {
-					$log->error("Couldn't create empty file: $1");
+				if ( !open (SUB_FILE, ">>".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1) ) ) {
+					$log->error("Couldn't create empty file: ".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1));
 				} else {
 					close(SUB_FILE);
 					main::INFOLOG && $log->info("Created empty file: $1");
