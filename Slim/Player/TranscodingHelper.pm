@@ -585,20 +585,21 @@ sub tokenizeConvertCommand2 {
 	my %subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
-			if (-e "$1") {
-				if ( !open (SUB_FILE, "<". File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1))) {
-					$log->error("Couldn't open file for reading: ".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1));
+			my $subfile = File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1);
+			if (-e "$subfile") {
+				if ( !open (SUB_FILE, "<" . $subfile)) {
+					$log->error("Couldn't open file for reading: " . $subfile);
 				} else {
-					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
+					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp };
 					close(SUB_FILE);
 				}
 			} else {
-				$log->warn("Couldn't find file: $1");
-				if ( !open (SUB_FILE, ">>".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1) ) ) {
-					$log->error("Couldn't create empty file: ".File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1));
+				$log->warn("Couldn't find file: $subfile");
+				if ( !open (SUB_FILE, ">>" . $subfile ) ) {
+					$log->error("Couldn't create empty file: " . $subfile);
 				} else {
 					close(SUB_FILE);
-					main::INFOLOG && $log->info("Created empty file: $1");
+					main::INFOLOG && $log->info("Created empty file: " . $subfile);
 				}
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
