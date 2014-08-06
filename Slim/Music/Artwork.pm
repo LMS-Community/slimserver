@@ -767,7 +767,6 @@ sub getResizeSpecs {
 		
 		push(@specs, 
 			"${thumbSize}x${thumbSize}_o", # Web UI large thumbnails
-			'75x75_p',  # iPeng, Controller App (high-res displays) 
 			'50x50_o',	# Web UI small thumbnails, Controller App (low-res display)
 		);
 		
