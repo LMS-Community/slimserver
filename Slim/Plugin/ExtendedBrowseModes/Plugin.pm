@@ -340,8 +340,9 @@ sub _browseFS {
 			
 			foreach (@$items) {
 				if ($_->{'isfolder'}) {
-					my $url = Slim::Utils::Misc::fixPath($_->{path});
+					my $url = Slim::Utils::Misc::fileURLFromPath($_->{path});
 					$url =~ s/^file/tmp/;
+					$url .= '/' unless $url =~ m|/$|;
 					
 					$_->{'url'}         = \&Slim::Menu::BrowseLibrary::_bmf;
 					$_->{'passthrough'} = [ { searchTags => [ "url:$url" ] } ];
