@@ -1880,6 +1880,8 @@ sub mediafolderQuery {
 		$volatileFile = 1;
 	}
 	
+	$volatileFile = 1 if $url =~ /^tmp:/;
+	
 	# url overrides any folderId
 	my $params = ();
 	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
@@ -1929,6 +1931,7 @@ sub mediafolderQuery {
 
 			# when dealing with a volatile file, read tags, as above objectForUrl() would not scan remote files
 			if ( $volatileFile ) {
+				require Slim::Player::Protocols::Volatile;
 				Slim::Player::Protocols::Volatile->getMetadataFor($client, $url);
 			}
 			
