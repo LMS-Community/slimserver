@@ -47,18 +47,24 @@ sub handler {
 
 			my ($menu) = $params->{"id$i"} eq '_new_' ? {} : grep { $_->{id} eq $params->{"id$i"} } @$menus;
 
-			# regular menu items
-			if ( !$menu ) {
-				if ( $params->{"enabled$i"} && $serverPrefs ) {
-					$serverPrefs->remove('disabled_' . $params->{"id$i"});
+			if ( $class->needsClient && $serverPrefs ) {
+				# regular menu items: keep the flag around, don't delete it
+				if ( !$menu ) {
+					$serverPrefs->set('disabled_' . $params->{"id$i"}, $params->{"enabled$i"} ? 0 : 1);
+					next;
 				}
-				elsif ( $serverPrefs ) {
-					$serverPrefs->set('disabled_' . $params->{"id$i"}, 1);
+				# custom menus: remove the flag, we don't want to end up with tons of orphans
+				else {
+					if ($params->{"enabled$i"}) {
+						$serverPrefs->remove('disabled_' . $params->{"id$i"});
+					}
+					else {
+						$serverPrefs->set('disabled_' . $params->{"id$i"}, 1);
+					}
 				}
-				next;
 			}
 
-			$menu->{enabled} = $params->{"enabled$i"} || 0 if $serverPrefs;
+			delete $menu->{enabled} if $serverPrefs;
 			
 			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"});
 
@@ -120,6 +126,7 @@ sub handler {
 	my %ids;
 	$params->{menu_items} = [ map {
 		$ids{$_->{id}}++;
+		$_->{enabled} = $serverPrefs && $serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1;
 		$_;
 	} @{Storable::dclone($prefs->get('additionalMenuItems'))}, { id => '_new_' } ];
 	
