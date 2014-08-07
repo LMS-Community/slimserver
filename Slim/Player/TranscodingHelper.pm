@@ -472,7 +472,13 @@ sub tokenizeConvertCommand2 {
 	
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
-	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+	
+	my $binaryfile = ($command =~ /\[([^\]]+)\]/ )[0];
+	if (!exists $binaries{$binaryfile}) {
+		$binaries{$binaryfile} = Slim::Utils::Misc::findbin($binaryfile);
+	} 
+	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$binaryfile} . '"'/eg;
+
 	
 	my ($start, $end);
 	
@@ -532,7 +538,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
-	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /-/; $tmp };
+	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
 
 	foreach my $v (keys %vars) {
 		my $value;
@@ -577,20 +583,21 @@ sub tokenizeConvertCommand2 {
 	my %subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
-			if (-e "$1") {
-				if ( !open (SUB_FILE, "<".$1 )) {
-					$log->error("Couldn't open file for reading: $1");
+			my $subfile = File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1);
+			if (-e "$subfile") {
+				if ( !open (SUB_FILE, "<" . $subfile)) {
+					$log->error("Couldn't open file for reading: " . $subfile);
 				} else {
-					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp } ;
+					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp };
 					close(SUB_FILE);
 				}
 			} else {
-				$log->warn("Couldn't find file: $1");
-				if ( !open (SUB_FILE, ">>".$1 ) ) {
-					$log->error("Couldn't create empty file: $1");
+				$log->warn("Couldn't find file: $subfile");
+				if ( !open (SUB_FILE, ">>" . $subfile ) ) {
+					$log->error("Couldn't create empty file: " . $subfile);
 				} else {
 					close(SUB_FILE);
-					main::INFOLOG && $log->info("Created empty file: $1");
+					main::INFOLOG && $log->info("Created empty file: " . $subfile);
 				}
 				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
 			}
