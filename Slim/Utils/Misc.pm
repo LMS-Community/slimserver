@@ -1052,7 +1052,7 @@ sub findAndScanDirectoryTree {
 	
 	main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
 
-	if ($fsMTime != $dbMTime) {
+	if ($fsMTime != $dbMTime && !$topLevelObj->remote) {
 
 		if ( main::INFOLOG && $scannerlog->is_info ) {
 			$scannerlog->info("mtime db: $dbMTime : " . localtime($dbMTime));

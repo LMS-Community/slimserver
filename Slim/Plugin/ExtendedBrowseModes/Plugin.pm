@@ -27,7 +27,7 @@ $prefs->init({
 		feed    => 'artists',
 		id      => 'myMusicArtistsComposers',
 		weight  => 12,
-		enabled => 0,
+		enabled => 1,
 	},{
 		name    => 'Classical Music by Conductor',
 		params  => { role_id => 'CONDUCTOR', genre_id => 'Classical' },
@@ -150,7 +150,6 @@ sub setLibrary {
 		items => [{
 			name => Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
 			showBriefly => 1,
-#			nextWindow => 'myMusic',
 		}]
 	});
 
@@ -171,19 +170,31 @@ sub condition {
 sub getDisplayName { 'PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES' }
 
 sub initMenus {
-	# custom feed: we need to inject the latest VA ID
-	my $compilationsMenu = {
+	my @additionalStaticMenuItems = ({
 		name         => 'PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS',
 		params       => {
 			mode => 'vaalbums',
+			# we need to inject the latest VA ID
 			artist_id => Slim::Schema->variousArtistsObject->id,
 		},
 		feed         => 'albums',
 		id           => 'myMusicAlbumsVariousArtists',
 		weight       => 22,
-	};
+		static       => 1,		# this menu is not user-defined
+		enabled      => 1,
+	},{
+		name         => 'PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS',
+		params       => {
+			mode => 'filesystem',
+		},
+		feed         => \&_browseFS,
+		id           => 'myMusicFileSystem',
+		icon         => 'plugins/ExtendedBrowseModes/html/icon_folder.png',
+		weight       => 75,
+		static       => 1,
+	});
 
-	foreach (@{$prefs->get('additionalMenuItems') || []}, $compilationsMenu) {
+	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
 		__PACKAGE__->registerBrowseMode($_);
 	}
 }
@@ -198,11 +209,18 @@ sub registerBrowseMode {
 	Slim::Menu::BrowseLibrary->deregisterNode($item->{id});
 
 	foreach my $clientPref ( $serverPrefs->allClients ) {
-		if ($item->{enabled}) {
-			$clientPref->remove('disabled_' . $item->{id});
+		if ($item->{static}) {
+			$clientPref->init({
+				'disabled_' . $item->{id} => $item->{enabled} ? 0 : 1
+			});
 		}
-		elsif (defined $item->{enabled}) {
-			$clientPref->set('disabled_' . $item->{id}, 1);
+		else {
+			if ($item->{enabled}) {
+				$clientPref->remove('disabled_' . $item->{id});
+			}
+			elsif (defined $item->{enabled}) {
+				$clientPref->set('disabled_' . $item->{id}, 1);
+			}
 		}
 	}
 	
@@ -309,6 +327,37 @@ sub valueToId {
 	}
 
 	return $value || -1;
-}	
+}
+
+sub _browseFS {
+	my ($client, $callback, $args, $pt) = @_;
+	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+	
+	Slim::Menu::BrowseLibrary::_generic($client, $callback, $args, 'readdirectory', ['folder:/', 'filter:foldersonly'],
+		sub {
+			my $results = shift;
+			my $items = $results->{'fsitems_loop'};
+			
+			foreach (@$items) {
+				if ($_->{'isfolder'}) {
+					my $url = Slim::Utils::Misc::fileURLFromPath($_->{path});
+					$url =~ s/^file/tmp/;
+					$url .= '/' unless $url =~ m|/$|;
+					
+					$_->{'url'}         = \&Slim::Menu::BrowseLibrary::_bmf;
+					$_->{'passthrough'} = [ { searchTags => [ "url:$url" ] } ];
+					$_->{'itemActions'} = {
+						info => {
+							command     => ['folderinfo', 'items'],
+							fixedParams => {url =>  $url},
+						},
+					};
+				}
+			}
+			return { items => $items, sorted => 1 }, undef;
+		},
+	);
+}
+
 
 1;
