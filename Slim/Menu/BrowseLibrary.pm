@@ -645,7 +645,7 @@ sub _registerBaseNodes {
 							},
 			id           => 'myMusicPlaylists',
 			weight       => 80,
-			cache        => 1,
+			cache        => 0,		# playlist pages can change as you can manipulate them without a rescan - don't cache
 		},
 		{
 			type         => 'link',

@@ -2432,6 +2432,9 @@ sub playlistsTracksQuery {
 			$chunkCount++;
 		}
 
+		if ( my $playlistObj = Slim::Schema->find('Playlist', $playlistID) ) {
+			$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
+		}
 	}
 
 	$request->addResult('count', $totalCount);
