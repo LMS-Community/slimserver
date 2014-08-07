@@ -1865,7 +1865,7 @@ sub mediafolderQuery {
 	my $type     = $request->getParam('type') || '';
 	my $tags     = $request->getParam('tags') || '';
 	
-	my ($sql, $tmp);		
+	my ($sql, $volatileFile);		
 	
 	# Bug 17436, don't allow BMF if a scan is running
 	if (Slim::Music::Import->stillScanning()) {
@@ -1877,7 +1877,7 @@ sub mediafolderQuery {
 #		
 #		$request->setStatusDone();
 #		return;
-		$tmp = 1;
+		$volatileFile = 1;
 	}
 	
 	# url overrides any folderId
@@ -1917,7 +1917,7 @@ sub mediafolderQuery {
 			return 1 if $type eq 'dir'; 
 		}
 		
-		$url =~ s/^file/tmp/ if $tmp;
+		$url =~ s/^file/tmp/ if $volatileFile;
 
 		my $item = Slim::Schema->objectForUrl({
 			'url'      => $url,
@@ -1926,6 +1926,12 @@ sub mediafolderQuery {
 		}) if $url;
 
 		if ( (blessed($item) && $item->can('content_type')) || ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) ) {
+
+			# when dealing with a volatile file, read tags, as above objectForUrl() would not scan remote files
+			if ( $volatileFile ) {
+				Slim::Player::Protocols::Volatile->getMetadataFor($client, $url);
+			}
+			
 			return $item;
 		}
 	};
@@ -2044,27 +2050,27 @@ sub mediafolderQuery {
 
 			my $url = $item->url;
 			
-			# if we're dealing with temporary items, store the real URL in $tmp
-			$tmp = $url if $tmp;
-			$tmp =~ s/^tmp/file/;
+			# if we're dealing with temporary items, store the real URL in $volatileFile
+			$volatileFile = $url if $volatileFile;
+			$volatileFile =~ s/^tmp/file/;
 			
-			$realName ||= Slim::Music::Info::fileName($tmp || $url);
+			$realName ||= Slim::Music::Info::fileName($volatileFile || $url);
 
 			my $textKey = uc(substr($realName, 0, 1));
 			
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'filename', $realName);
 		
-			if (Slim::Music::Info::isDir($tmp || $item)) {
+			if (Slim::Music::Info::isDir($volatileFile || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
-			} elsif (Slim::Music::Info::isPlaylist($tmp || $item)) {
+			} elsif (Slim::Music::Info::isPlaylist($volatileFile || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
 			} elsif ($params->{typeRegEx} && $filename =~ $params->{typeRegEx}) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', $type);
 			
 				# only do this for images & videos where we'll need the hash for the artwork
 				if ($sth) {
-					$sth->execute($tmp || $url);
+					$sth->execute($volatileFile || $url);
 					
 					my $itemDetails = $sth->fetchrow_hashref;
 					
@@ -2088,9 +2094,9 @@ sub mediafolderQuery {
 	
 				}
 				
-			} elsif (Slim::Music::Info::isSong($tmp || $item) && $type ne 'video') {
+			} elsif (Slim::Music::Info::isSong($volatileFile || $item) && $type ne 'video') {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
-			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($tmp || $url)) {
+			} elsif (-d Slim::Utils::Misc::pathFromMacAlias($volatileFile || $url)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} else {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
@@ -2114,7 +2120,7 @@ sub mediafolderQuery {
 	
 	# this is not always needed, but if only single tracks were added through BMF,
 	# the caches would get out of sync
-	if (!$tmp) {
+	if (!$volatileFile) {
 		Slim::Schema->wipeCaches;
 		Slim::Music::Import->setLastScanTime();
 	}

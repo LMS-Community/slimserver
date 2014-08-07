@@ -1,11 +1,11 @@
-package Slim::Player::Protocols::TempFile;
+package Slim::Player::Protocols::Volatile;
 
 # Logitech Media Server Copyright 2001-2011 Logitech, Vidur Apparao.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.  
 
-# Subclass of file: protocol handler to allow files to be played without being stored in the database.
+# Subclass of file:// protocol handler to allow files to be played without being stored in the database.
 # This can be used to eg. browse music folder while a scan is running, or play files from removable media.
 
 use strict;
@@ -43,7 +43,7 @@ sub getMetadataFor {
 		$class->getArtwork($track, $path);
 	}
 	
-	warn Data::Dump::dump($track);
+#	warn Data::Dump::dump($track);
 	
 	return {
 		title     => $track->title,
