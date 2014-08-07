@@ -10,6 +10,7 @@ package Slim::Player::Protocols::TempFile;
 
 use strict;
 
+use Slim::Music::Artwork;
 use Slim::Utils::Log;
 use base qw(Slim::Player::Protocols::File);
 
@@ -28,49 +29,62 @@ sub getMetadataFor {
 	my $track = Slim::Schema::RemoteTrack->fetch($url);
 	
 	$url =~ s/^tmp/file/;
+	my $path = $class->pathFromFileURL($url);
 	
 	if ( ! ($track->title && $track->artistName && $track->duration) ) {
-		my $path = $class->pathFromFileURL($url);
 		my $attributes = Slim::Formats->readTags( $path );
 		$track->setAttributes($attributes) if $attributes && keys %$attributes;
 		
-		# Try to read a cover image from the tags first.
-		my ($body, $contentType);
-	
-		eval {
-			($body, $contentType) = $class->_readCoverArtTags($track, $path);
-		
-			# Nothing there? Look on the file system.
-			if (!defined $body) {
-				($body, $contentType) = $class->_readCoverArtFiles($track, $path);
-			}
-		};
-		
-		if ($body) {
-			my $cache = Slim::Utils::Cache->new();
-			$cache->set( 'cover_' . $track->url, {
-				image => $body,
-				type  => $contentType || 'image/jpeg',
-			}, 86400 * 7 );
-		}
+		$class->getArtwork($track, $path)
 	}
 	
-#	warn Data::Dump::dump($track);
+	# artwork might have been purged from cache - re-read it
+	if ( $track->cover && !$track->coverArt ) {
+		$class->getArtwork($track, $path);
+	}
+	
+	warn Data::Dump::dump($track);
 	
 	return {
 		title     => $track->title,
 		artist    => $track->artistName,
 		album     => $track->albumname,
 		duration  => $track->duration,
-		cover     => $track->coverArt,
 		coverid   => $track->coverid,
-		'icon-id' => $track->coverid,
-		icon      => $class->getIcon($url),
+		icon      => $track->cover && 'music/' . $track->coverid . '/cover.png',
 		bitrate   => $track->prettyBitRate,
 		genre     => $track->genre,
 #		info_link => 'plugins/spotifylogi/trackinfo.html',
-#		type      => 'Ogg Vorbis (Spotify)',
+		type      => $track->content_type,
 	};
+}
+
+sub getArtwork {
+	my ($class, $track, $path) = @_;
+	
+	# Try to read a cover image from the tags first.
+	my ($body, $contentType, $file);
+	
+	eval {
+		($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtTags($track, $path);
+	
+		# Nothing there? Look on the file system.
+		if (!defined $body) {
+			($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtFiles($track, $path);
+		}
+	};
+	
+	if ($body && defined $file) {
+		Slim::Utils::Cache->new->set( 'cover_' . $track->url, {
+			image => $body,
+			type  => $contentType || 'image/jpeg',
+		}, 86400 * 7 );
+		
+		$track->cover($file);
+	}
+	elsif ($track->cover) {
+		$track->cover(0)
+	}
 }
 
 1;
