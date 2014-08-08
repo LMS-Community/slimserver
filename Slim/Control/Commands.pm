@@ -1128,6 +1128,12 @@ sub playlistSaveCommand {
 		$request->setStatusBadConfig();
 		return;
 	}
+	
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('writeError', 1);
+		$request->setStatusDone();
+		return;
+	}
 
 	# get the parameters
 	my $client = $request->client();

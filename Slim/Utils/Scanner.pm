@@ -67,7 +67,21 @@ sub scanPathOrURL {
 		return $cb->( [] );
 	};
 
-	if ( Slim::Music::Info::isRemoteURL($pathOrUrl) ) {
+	# Volatile local tracks are dealt with like remote files. Use the mediafolder query to resolve a folder into its content.
+	# We can't rely on the remote URL scanner, as we would want inject the list of files instead of a folder item.
+	if ( $pathOrUrl =~ /^tmp:/ ) {
+		my $items;
+
+		my $request = Slim::Control::Request::executeRequest( undef, ['mediafolder', 0, 500, "url:$pathOrUrl", 'tags:u'] );
+		my $results = $request->getResults();
+			
+		if ( $results && $results->{folder_loop} ) {
+			$items = [ map { $_->{url} } grep { $_->{type} eq 'track' } @{$results->{folder_loop}} ];
+		}
+
+		return $cb->( $items || [ $pathOrUrl ] );
+		
+	} elsif ( Slim::Music::Info::isRemoteURL($pathOrUrl) ) {
 
 		# Do not scan remote URLs now, they will be scanned right before playback by
 		# an onJump handler.

@@ -10,8 +10,6 @@ package Slim::Player::TranscodingHelper;
 use strict;
 
 use File::Spec::Functions qw(catdir);
-#use File::Basename;
-
 use Scalar::Util qw(blessed);
 
 use Slim::Player::CapabilitiesHelper;
@@ -475,12 +473,10 @@ sub tokenizeConvertCommand2 {
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	
-	my $binaryfile = ($command =~ /\[([^\]]+)\]/ )[0];
-	if (!exists $binaries{$binaryfile}) {
-		$binaries{$binaryfile} = Slim::Utils::Misc::findbin($binaryfile);
-	} 
-	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$binaryfile} . '"'/eg;
-
+	while ( $command =~ /\[([^\]]+)\]/g ) {
+		$binaries{$1} = Slim::Utils::Misc::findbin($1) unless $binaries{$1};
+	}
+	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$1} . '"'/eg;
 	
 	my ($start, $end);
 	
@@ -582,6 +578,7 @@ sub tokenizeConvertCommand2 {
 	}
 
 	# Find what 'file name to contents' substitutions we need to make '${*}$'
+=pod
 	my %subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
@@ -610,7 +607,7 @@ sub tokenizeConvertCommand2 {
 	foreach (keys %subs) {
 		$command =~ s/\${$_}\$/$subs{$_}/g;
 	}
-
+=cut
 
 	# clean all remaining '$*$'
 	$command =~ s/\s+\$\w+\$//g;
@@ -620,7 +617,7 @@ sub tokenizeConvertCommand2 {
 		$command .= ' |';
 	}
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
+	main::INFOLOG && $log->is_info && $log->info("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
 
 	return $command;
 }
