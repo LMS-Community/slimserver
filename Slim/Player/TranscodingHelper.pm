@@ -476,10 +476,8 @@ sub tokenizeConvertCommand2 {
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	
-	my $binarydir;
 	while ( $command =~ /\[([^\]]+)\]/g ) {
 		$binaries{$1} = Slim::Utils::Misc::findbin($1) unless $binaries{$1};
-		$binarydir = File::Basename::dirname($binaries{$1}) unless $binarydir;
 	}
 	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$1} . '"'/eg;
 	
@@ -589,7 +587,7 @@ sub tokenizeConvertCommand2 {
 	my %subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
-			my $subfile = File::Spec->catfile($binarydir || '.', $1);
+			my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $1);
 			if (-e "$subfile") {
 				if ( !open (SUB_FILE, "<" . $subfile)) {
 					$log->error("Couldn't open file for reading: " . $subfile);
