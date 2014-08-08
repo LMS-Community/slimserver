@@ -160,6 +160,8 @@ sub loadConversionTables {
 # %I, $CLIENTID$   - clientid     ( : or . replaced by - )
 # %p               - player model
 # %P, $PLAYER$     - player model ( SPACE or QOUTE replaced by _ )
+# %g               - groupid
+# %G, $GROUPID$    - groupid     ( formatted as MAC. if no group is present use CLIENTID )
 # %n               - player name
 # %N, $NAME$       - player name  ( SPACE or QOUTE replaced by _ )
 # %q, $QUALITY$    - quality
@@ -400,6 +402,7 @@ sub getConvertCommand2 {
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || 44100,
 			clientid         => $clientid || 'undefined',
+			groupid          => $prefs->client($client)->get('syncgroupid') || 0,
 			clientname       => $client->name || 'undefined',
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
@@ -473,8 +476,10 @@ sub tokenizeConvertCommand2 {
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	
+	my $binarydir;
 	while ( $command =~ /\[([^\]]+)\]/g ) {
 		$binaries{$1} = Slim::Utils::Misc::findbin($1) unless $binaries{$1};
+		$binarydir = File::Basename::dirname($binaries{$1}) unless $binarydir;
 	}
 	$command =~ s/\[([^\]]+)\]/'"' . $binaries{$1} . '"'/eg;
 	
@@ -537,6 +542,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
 	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
+	$subs{'GROUPID'}   = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
 
 	foreach my $v (keys %vars) {
 		my $value;
@@ -566,6 +572,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'c') {$value = $transcoder->{'outputChannels'};}
 		elsif ($v eq 'q') {$value = $quality;}
 		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
+		elsif ($v eq 'g') {$value = $transcoder->{'groupid'};}
+		elsif ($v eq 'G') {$value = $subs{'GROUPID'};}
 
 		foreach (values %subs) {
 			s/%$v/$value/ge;
@@ -578,11 +586,10 @@ sub tokenizeConvertCommand2 {
 	}
 
 	# Find what 'file name to contents' substitutions we need to make '${*}$'
-=pod
 	my %subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		if (!exists $binaries{$1}) {
-			my $subfile = File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1);
+			my $subfile = File::Spec->catfile($binarydir || '.', $1);
 			if (-e "$subfile") {
 				if ( !open (SUB_FILE, "<" . $subfile)) {
 					$log->error("Couldn't open file for reading: " . $subfile);
@@ -607,7 +614,6 @@ sub tokenizeConvertCommand2 {
 	foreach (keys %subs) {
 		$command =~ s/\${$_}\$/$subs{$_}/g;
 	}
-=cut
 
 	# clean all remaining '$*$'
 	$command =~ s/\s+\$\w+\$//g;
