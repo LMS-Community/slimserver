@@ -4761,6 +4761,7 @@ sub _songData {
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
 			$remoteMeta->{l} = $remoteMeta->{album};
+			$remoteMeta->{i} = $remoteMeta->{disc};
 			$remoteMeta->{K} = $remoteMeta->{cover};
 			$remoteMeta->{d} = ( $remoteMeta->{duration} || 0 ) + 0;
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
@@ -4768,6 +4769,7 @@ sub _songData {
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
 			$remoteMeta->{B} = $remoteMeta->{buttons};
 			$remoteMeta->{L} = $remoteMeta->{info_link};
+			$remoteMeta->{t} = $remoteMeta->{tracknum};
 		}
 	}
 	
