@@ -79,7 +79,7 @@ sub scanPathOrURL {
 			$items = [ map { $_->{url} } grep { $_->{type} eq 'track' } @{$results->{folder_loop}} ];
 		}
 
-		return $cb->( $items || [] );
+		return $cb->( $items || [ $pathOrUrl ] );
 		
 	} elsif ( Slim::Music::Info::isRemoteURL($pathOrUrl) ) {
 
