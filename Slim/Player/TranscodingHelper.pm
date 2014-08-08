@@ -587,10 +587,11 @@ sub tokenizeConvertCommand2 {
 			
 			my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
 			
-			my $content = read_file($subfile, array_ref => 1);
+			my $content = read_file($subfile);
 			
-			if ( scalar @$content ) {
-				$binaries{$placeholder} = join(' ', @$content);
+			if ( defined $content ) {
+				$content =~ s/\s+/ /sg;
+				$binaries{$placeholder} = $content;
 			}
 			else {
 				$log->error("Couldn't read file: " . $subfile);
