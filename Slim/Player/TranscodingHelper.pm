@@ -10,6 +10,7 @@ package Slim::Player::TranscodingHelper;
 use strict;
 
 use File::Spec::Functions qw(catdir);
+use File::Slurp;
 use Scalar::Util qw(blessed);
 
 use Slim::Player::CapabilitiesHelper;
@@ -577,37 +578,31 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# Find what 'file name to contents' substitutions we need to make '${*}$'
-=pod
-	my %subs = ();
+	# Try to read parameters/scripts from file referenced in the command's placeholder '${*}$'
+	%subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
-		if (!exists $binaries{$1}) {
-			my $subfile = File::Spec->catfile( File::Basename::dirname($binaries{$binaryfile}), $1);
-			if (-e "$subfile") {
-				if ( !open (SUB_FILE, "<" . $subfile)) {
-					$log->error("Couldn't open file for reading: " . $subfile);
-				} else {
-					$binaries{$1} = do { (my $tmp = join( " ", <SUB_FILE> ) ) =~ tr/\r\t\n/ /; $tmp };
-					close(SUB_FILE);
-				}
-			} else {
-				$log->warn("Couldn't find file: $subfile");
-				if ( !open (SUB_FILE, ">>" . $subfile ) ) {
-					$log->error("Couldn't create empty file: " . $subfile);
-				} else {
-					close(SUB_FILE);
-					main::INFOLOG && $log->info("Created empty file: " . $subfile);
-				}
-				$binaries{$1} = ''; # for speed improvement we store the contents even if non was found
+		my $placeholder = $1;
+		
+		if (!exists $binaries{$placeholder}) {
+			
+			my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
+			
+			my $content = read_file($subfile, array_ref => 1);
+			
+			if ( scalar @$content ) {
+				$binaries{$placeholder} = join(' ', @$content);
+			}
+			else {
+				$log->error("Couldn't read file: " . $subfile);
 			}
 		}
-		$subs{$1} = $binaries{$1};
+		
+		$subs{$placeholder} = $binaries{$placeholder} || '';
 	}
 
 	foreach (keys %subs) {
 		$command =~ s/\${$_}\$/$subs{$_}/g;
 	}
-=cut
 
 	# clean all remaining '$*$'
 	$command =~ s/\s+\$\w+\$//g;
