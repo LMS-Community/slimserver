@@ -49,7 +49,7 @@ sub getMetadataFor {
 		title     => $track->title,
 		artist    => $track->artistName,
 		album     => $track->albumname,
-		duration  => $track->duration,
+		secs      => $track->duration,
 		coverid   => $track->coverid,
 		icon      => $track->cover && 'music/' . $track->coverid . '/cover.png',
 		bitrate   => $track->prettyBitRate,
