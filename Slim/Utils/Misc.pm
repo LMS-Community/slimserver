@@ -709,6 +709,23 @@ sub getImageDirs {
 	return (main::IMAGE && main::MEDIASUPPORT) ? getMediaDirs('image', shift) : [];
 }
 
+# get list of folders which are disabled for all media
+sub getInactiveDirs {
+	my @mediadirs = @{ getDirsPref('ignoreInAudioScan') };
+	
+	if (main::IMAGE && main::MEDIASUPPORT && scalar @mediadirs) {
+		my $ignoreList = { map { $_, 1 } @{ getImageDirs() } };
+		@mediadirs = grep { !$ignoreList->{$_} } @mediadirs; 
+	}
+
+	if (main::VIDEO && main::MEDIASUPPORT && scalar @mediadirs) {
+		my $ignoreList = { map { $_, 1 } @{ getVideoDirs() } };
+		@mediadirs = grep { !$ignoreList->{$_} } @mediadirs; 
+	}
+	
+	return \@mediadirs;
+}
+
 sub getDirsPref {
 	return [ map { Slim::Utils::Unicode::encode_locale($_) } @{ $prefs->get($_[0]) || [''] } ];
 }
@@ -1113,7 +1130,7 @@ sub isWinDrive { if (main::ISWINDOWS) {
 
 	return 0 if length($path) > 3;
 
-	return $path =~ /^[a-z]{1}:[\\]?$/i;
+	return $path =~ /^[a-z]{1}:[\\\/]?$/i;
 } }
 
 =head2 parseRevision( )
