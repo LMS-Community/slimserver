@@ -1797,6 +1797,25 @@ sub _bmf {
 			my $gotsubfolder = 0;
 			my $items = $results->{'folder_loop'};
 			
+			my $extra;
+			
+			# if the user has folders where music scanning is disabled, let him browse them anyway
+			if ( !scalar @searchTags ) {
+				foreach ( @{ Slim::Utils::Misc::getInactiveDirs() } ) {
+					my $url = Slim::Utils::Misc::fileURLFromPath($_);
+					$url =~ s/^file/tmp/;
+
+					$extra ||= [];
+					
+					push @$extra, {
+						'name' => '[' . Slim::Music::Info::fileName($_) . ']',
+						'type' => 'playlist',
+						'passthrough' => [ { searchTags => [ "url:" . $url ] } ],
+						'url'  => \&_bmf,
+					};
+				}
+			}
+			
 			my $cover;
 			
 			foreach (@$items) {
@@ -1854,7 +1873,8 @@ sub _bmf {
 					$_->{'type'}        = 'text';
 				}
 			}
-			return {items => $items, sorted => 1, cover => $cover }, undef;
+
+			return {items => $items, sorted => 1, cover => $cover }, $extra;
 		},
 	);
 }

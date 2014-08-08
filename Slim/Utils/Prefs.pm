@@ -362,7 +362,10 @@ sub init {
 			return 0 if scalar ( grep { !$seen{$_}++ } @{$new} ) != scalar @$new;
 			
 			foreach (@{ $new }) {
-				if (! (-d $_ || (main::ISWINDOWS && -d Win32::GetANSIPathName($_)) || -d Slim::Utils::Unicode::encode_locale($_)) ) {
+				if (Slim::Utils::Misc::isWinDrive($_)) {
+					# do nothing - on Windows we're going to accept a drive letter without folder
+				}
+				elsif (! (-d $_ || (main::ISWINDOWS && -d Win32::GetANSIPathName($_)) || -d Slim::Utils::Unicode::encode_locale($_)) ) {
 					return 0;
 				}
 			}

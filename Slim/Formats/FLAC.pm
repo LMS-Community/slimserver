@@ -241,6 +241,12 @@ sub _doTagMapping {
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
 	if (defined $tags->{DATE} && !defined $tags->{YEAR}) {
+		# bug 18112 - Sometimes we get a list of dates. Pick the first.
+		if (ref $tags->{DATE} eq 'ARRAY') {
+			my @years = sort @{$tags->{DATE}};
+			$tags->{DATE} = $years[0];
+		}
+		
 		($tags->{YEAR} = $tags->{DATE}) =~ s/.*(\d\d\d\d).*/$1/;
 	}
 }
