@@ -105,7 +105,7 @@ sub playlist {
 
 			main::INFOLOG && $log->info("Rebuilding playlist from cached params.");
 
-			if (Slim::Utils::Misc::getPlaylistDir()) {
+			if (Slim::Utils::Misc::getPlaylistDir() && !Slim::Music::Import->stillScanning()) {
 				$params->{'cansave'} = 1;
 			}
 
@@ -123,7 +123,9 @@ sub playlist {
 	my $item;
 	my %form;
 
-	$params->{'cansave'} = 1;
+	if (Slim::Utils::Misc::getPlaylistDir() && !Slim::Music::Import->stillScanning()) {
+		$params->{'cansave'} = 1;
+	}
 	
 	$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
 				'itemCount'    => $songcount,
