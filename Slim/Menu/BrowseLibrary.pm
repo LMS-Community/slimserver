@@ -1808,7 +1808,7 @@ sub _bmf {
 					$extra ||= [];
 					
 					push @$extra, {
-						'name' => Slim::Music::Info::fileName($_),
+						'name' => '[' . Slim::Music::Info::fileName($_) . ']',
 						'type' => 'playlist',
 						'passthrough' => [ { searchTags => [ "url:" . $url ] } ],
 						'url'  => \&_bmf,
