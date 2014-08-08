@@ -427,6 +427,7 @@ function _init() {
 			needUpdate |= (result.playlist_tracks > 0 && !this.playerStatus.track);                                         // track in playlist changed
 			needUpdate |= (result.rate != null && result.rate != this.playerStatus.rate);                                   // song is scanning (ffwd/frwd)
 			needUpdate |= (result['playlist repeat'] != null && result['playlist repeat'] != this.playerStatus.repeat);
+			needUpdate |= (result.playlist_tracks != this.playerStatus.playlist_tracks);
 	
 			return needUpdate;
 		},
