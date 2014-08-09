@@ -192,6 +192,7 @@ sub initMenus {
 		icon         => 'plugins/ExtendedBrowseModes/html/icon_folder.png',
 		weight       => 75,
 		static       => 1,
+		nocache      => 1,
 	});
 
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
