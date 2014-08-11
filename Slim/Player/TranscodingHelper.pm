@@ -583,7 +583,7 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# Try to read parameters from file referenced in the command's placeholder '${PRE-FFILE.KEY}$' 
+	# Try to read parameters from file referenced in the command's placeholder '${PREFS-FILE.KEY}$' 
 	%subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		my $placeholder = $1;
