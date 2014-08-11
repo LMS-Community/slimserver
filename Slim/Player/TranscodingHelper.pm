@@ -598,11 +598,7 @@ sub tokenizeConvertCommand2 {
 				$binaries{$placeholder} = $content;
 			} else {
 				$log->warn("Couldn't find file: $subfile");
-				if ( !write_file ( $subfile, '' ) ) {
-					$log->error("Couldn't create empty file: " . $subfile);
-				} else {
-					main::INFOLOG && $log->info("Created empty file: " . $subfile);
-				}
+				main::DEBUGLOG && write_file ( $subfile, '' ) && $log->debug("Created empty file: " . $subfile);
 				$binaries{$placeholder} = '';
 			}
 		}
