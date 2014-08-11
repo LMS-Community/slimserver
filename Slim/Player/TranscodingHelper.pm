@@ -589,7 +589,7 @@ sub tokenizeConvertCommand2 {
 		my $placeholder = $1;
 		
 		if (!exists $binaries{$placeholder}) {
-			 my @values = split('\.', $placeholder);
+			 my @values = split(/\.([^\.]+)$/,$placeholder);
 			 if (  @values  eq 2 ) {
 				$binaries{$placeholder} = preferences(@values[0])->get(@values[1]) || '';
 				 if ( '' eq $binaries{$placeholder}) {
