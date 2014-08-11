@@ -173,6 +173,8 @@ sub url {
 		
 		$self->_url($new);
 		$Cache{$new} = $self;
+	
+		$cache->set('rt_' . $self->id, $new);
 	}
 	
 	return $self->_url;
@@ -215,6 +217,8 @@ sub new {
 	$Cache{$url} = $self;
 	$idIndex{$self->id} = $self;
 	
+	$cache->set('rt_' . $self->id, $url);
+	
 	return $self;
 }
 
@@ -252,12 +256,6 @@ sub setAttributes {
 		
 		$self->$key($value);
 	}
-	
-	$cache->set('rt_' . $self->id, $self->url) if _isLocal($self->url);
-}
-
-sub _isLocal {
-	$_[0] =~ /^tmp/ ? 1 : 0;
 }
 
 sub updateOrCreate {
