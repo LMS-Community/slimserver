@@ -589,20 +589,23 @@ sub tokenizeConvertCommand2 {
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		my $placeholder = $1;
 		
-		if (!exists $binaries{$placeholder}) {
-			
-			my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
-			if (-e $subfile) {
-				my $content = read_file($subfile);
-				$content =~ tr/\r\t\n/ /;
-				$binaries{$placeholder} = $content;
-			} else {
-				$log->warn("Couldn't find file: $subfile");
-				main::DEBUGLOG && write_file ( $subfile, '' ) && $log->debug("Created empty file: " . $subfile);
-				$binaries{$placeholder} = '';
+		if (!exists $binaries{$placeholder}) { # read from transcoding plugin preferences
+			if ( substr ( $placeholder,-7 ) eq '.plugin' ) {
+				$binaries{$placeholder} = preferences('plugin.transcoding')->get(substr($placeholder,0,-7)) 
+					|| preferences('plugin.transcoding')->set(substr($placeholder,0,-7),' ');
+				$binaries{$placeholder} =~ tr/\r\t\n/ /;
+			} else { # read from file
+				my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
+				if (-e $subfile) {
+					$binaries{$placeholder} = read_file($subfile);
+					$binaries{$placeholder} =~ tr/\r\t\n/ /;
+				} else {
+					$log->warn("Couldn't find file: $subfile");
+					main::DEBUGLOG && write_file ( $subfile, '' ) && $log->debug("Created empty file: " . $subfile);
+					$binaries{$placeholder} = '';
+				}
 			}
 		}
-		
 		$subs{$placeholder} = $binaries{$placeholder} || '';
 	}
 
