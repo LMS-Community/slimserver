@@ -608,6 +608,7 @@ sub tokenizeConvertCommand2 {
 				$binaries{$placeholder} = '';
 			}
 		}
+
 		$subs{$placeholder} = $binaries{$placeholder} || '';
 	}
 
