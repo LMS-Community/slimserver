@@ -10,7 +10,6 @@ package Slim::Player::TranscodingHelper;
 use strict;
 
 use File::Spec::Functions qw(catdir);
-use File::Slurp;
 use Scalar::Util qw(blessed);
 
 use Slim::Player::CapabilitiesHelper;
@@ -584,26 +583,28 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# Try to read parameters/scripts from file referenced in the command's placeholder '${*}$'
+	# Try to read parameters from file referenced in the command's placeholder '${PRE-FFILE.KEY}$' 
 	%subs = ();
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		my $placeholder = $1;
 		
-		if (!exists $binaries{$placeholder}) { # read from transcoding plugin preferences
-			if ( substr ( $placeholder,-7 ) eq '.plugin' ) {
-				$binaries{$placeholder} = preferences('plugin.transcoding')->get(substr($placeholder,0,-7)) 
-					|| preferences('plugin.transcoding')->set(substr($placeholder,0,-7),' ');
+		if (!exists $binaries{$placeholder}) {
+			 my @values = split('\.', $placeholder);
+			 if (  @values  eq 2 ) {
+				$binaries{$placeholder} = preferences(@values[0])->get(@values[1]) || '';
+				 if ( '' eq $binaries{$placeholder}) {
+					my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.',  @values[0]. '\.pref' );
+					if ( -e $subfile ) {
+						preferences(@values[0])->set(@values[1],' ');
+						$log->warn("key @values[1] created in file: @values[0]\.pref");
+					} else {
+						$log->warn("substitition error for '$placeholder' file: '@values[0]\.pref' not found");
+					}
+				}
 				$binaries{$placeholder} =~ tr/\r\t\n/ /;
 			} else { # read from file
-				my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
-				if (-e $subfile) {
-					$binaries{$placeholder} = read_file($subfile);
-					$binaries{$placeholder} =~ tr/\r\t\n/ /;
-				} else {
-					$log->warn("Couldn't find file: $subfile");
-					main::DEBUGLOG && write_file ( $subfile, '' ) && $log->debug("Created empty file: " . $subfile);
-					$binaries{$placeholder} = '';
-				}
+				$log->warn("couldn't find file preferences for: $placeholder");
+				$binaries{$placeholder} = '';
 			}
 		}
 		$subs{$placeholder} = $binaries{$placeholder} || '';
