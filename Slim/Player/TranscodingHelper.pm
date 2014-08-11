@@ -620,7 +620,7 @@ sub tokenizeConvertCommand2 {
 	
 	if (!defined($noPipe)) {
 		$command .= (main::ISWINDOWS) ? '' : ' &';
-8		$command .= ' |';
+		$command .= ' |';
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
