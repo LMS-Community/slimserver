@@ -2402,6 +2402,8 @@ sub playlistXQuery {
 	$request->setStatusDone();
 }
 
+# XXX TODO: merge SQL-based code from 7.6/trunk
+# Can't use _getTagDataForTracks as is, as we have to deal with remote URLs, too
 sub playlistsTracksQuery {
 	my $request = shift;
 	
@@ -2419,7 +2421,6 @@ sub playlistsTracksQuery {
 	my $quantity   = $request->getParam('_quantity');
 	my $tagsprm    = $request->getParam('tags');
 	my $playlistID = $request->getParam('playlist_id');
-	my $libraryID  = $request->getParam('library_id');
 
 	if (!defined $playlistID) {
 		$request->setStatusBadParams();
@@ -2428,50 +2429,54 @@ sub playlistsTracksQuery {
 
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
+
+	my $iterator;
+	my @tracks;
+
+	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
+
+	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
+		$iterator = $playlistObj->tracks();
+		$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
+	}
+
+	# now build the result
 	
-	my $stillScanning = Slim::Music::Import->stillScanning();
-	
-	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, {
-		playlistId    => $playlistID,
-		libraryId     => $libraryID,
-		sort          => 'playlist_track.position',
-		limit         => sub {
-			my $count = shift;
-			
-			my $valid;
-			my $start;
-			my $end;
-
-			($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-			return ($valid, $index, $quantity);
-		},
-	} );
-
-	if ($stillScanning) {
+	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	# this is the count of items in this part of the request (e.g., menu 100 200)
-	# not to be confused with $count, which is the count of the entire list
-	my $chunkCount = 0;
+	if (defined $iterator) {
 
-	if ( scalar @{$itemOrder} ) {
+		my $count = $iterator->count();
+		$count += 0;
 		
-		for my $trackId ( @{$itemOrder} ) {
-			my $item = $items->{$trackId};
-			
-			_addSong($request, 'playlisttracks_loop', $chunkCount, $item, $tags);
-			
-			$chunkCount++;
-		}
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-		if ( my $playlistObj = Slim::Schema->find('Playlist', $playlistID) ) {
-			$request->addResult("__playlistTitle", $playlistObj->name) if $playlistObj->name;
+		if ($valid || $start == $end) {
+
+
+			my $cur = $start;
+			my $loopname = 'playlisttracks_loop';
+			my $chunkCount = 0;
+			
+			my $list_index = 0;
+			for my $eachitem ($iterator->slice($start, $end)) {
+
+				_addSong($request, $loopname, $chunkCount, $eachitem, $tags, "playlist index", $cur);
+				
+				$cur++;
+				$chunkCount++;
+				
+				main::idleStreams();
+			}
 		}
+		$request->addResult("count", $count);
+
+	} else {
+
+		$request->addResult("count", 0);
 	}
-
-	$request->addResult('count', $totalCount);
 
 	$request->setStatusDone();	
 }
@@ -5068,20 +5073,11 @@ sub _getTagDataForTracks {
 	
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	
-	my $sql;
+	my $sql      = 'SELECT %s FROM tracks ';
 	my $c        = { 'tracks.id' => 1, 'tracks.title' => 1 };
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
-	
-	if ( my $playlistId = $args->{playlistId} ) {
-		$sql = 'SELECT %s FROM playlist_track JOIN tracks ON tracks.url = playlist_track.track ';
-		push @{$w}, 'playlist_track.playlist = ?';
-		push @{$p}, $playlistId;
-	}
-	else {
-		$sql = 'SELECT %s FROM tracks ';
-	}
 	
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
