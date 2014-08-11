@@ -11,13 +11,15 @@ use base qw(Slim::Utils::Accessor);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
+use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $log = logger('formats.metadata');
+my $cache = Slim::Utils::Cache->new;
 
 # Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
-use constant CACHE_SIZE => preferences('server')->get('dbhighmem') ? 500 : 100;
+use constant CACHE_SIZE => 500;
 
 tie our %Cache, 'Tie::Cache::LRU', CACHE_SIZE;
 tie our %idIndex, 'Tie::Cache::LRU', CACHE_SIZE;
@@ -63,9 +65,15 @@ sub init {
 	my $maxPlaylistLengthCB = sub {
 		my ($pref, $max) = @_;
 		
-		$max ||= 500;
-		$max = 500 if $max > 500;
-		$max = 100 if $max < 100;
+		if (preferences('server')->get('dbhighmem')) {
+			$max ||= 2000;
+			$max = 2000 if $max < 2000;
+		}
+		else {
+			$max ||= 500;
+			$max = 500 if $max > 500;
+			$max = 100 if $max < 100;
+		}
 
 		my $cacheObj = tied %Cache;
 		if ($cacheObj->max_size != $max) {
@@ -137,7 +145,6 @@ sub coverArt {
 #	return undef if defined $cover && !$cover;
 	
 	# Remote files may have embedded cover art
-	my $cache = Slim::Utils::Cache->new();
 	my $image = $cache->get( 'cover_' . $self->_url );
 	
 	return undef if !$image;
@@ -245,6 +252,12 @@ sub setAttributes {
 		
 		$self->$key($value);
 	}
+	
+	$cache->set('rt_' . $self->id, $self->url) if _isLocal($self->url);
+}
+
+sub _isLocal {
+	$_[0] =~ /^tmp/ ? 1 : 0;
 }
 
 sub updateOrCreate {
@@ -291,7 +304,15 @@ sub fetch {
 sub fetchById {
 	my ($class, $id) = @_;
 	
-	return $idIndex{$id};
+	my $self = $idIndex{$id};
+	
+	# try to get the URL from the disk cache - might be needed for BMF of volatile tracks
+	if (!$self) {
+		my $url = $cache->get('rt_' . $id);
+		$self = $class->new($url) if $url;
+	}
+	
+	return $self;
 }
 
 sub get {
