@@ -588,7 +588,6 @@ sub tokenizeConvertCommand2 {
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		my $placeholder = $1;
 		
-		
 		if (!exists $binaries{$placeholder}) {
 			 my @values = split(/\.([^\.]+)$/,$placeholder);
 			 if (  @values  eq 2 ) {
@@ -621,7 +620,7 @@ sub tokenizeConvertCommand2 {
 	
 	if (!defined($noPipe)) {
 		$command .= (main::ISWINDOWS) ? '' : ' &';
-		$command .= ' |';
+8		$command .= ' |';
 	}
 
 	main::INFOLOG && $log->is_info && $log->info("Using command for conversion: ", Slim::Utils::Unicode::utf8decode_locale($command));
