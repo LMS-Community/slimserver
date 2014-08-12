@@ -43,8 +43,6 @@ sub getMetadataFor {
 		$class->getArtwork($track, $path);
 	}
 	
-#	warn Data::Dump::dump($track);
-	
 	return {
 		title     => $track->title,
 		artist    => $track->artistName,
@@ -57,13 +55,14 @@ sub getMetadataFor {
 		bitrate   => $track->prettyBitRate,
 		genre     => $track->genre,
 		replay_gain=> $track->replay_gain,
-#		info_link => 'plugins/spotifylogi/trackinfo.html',
 		type      => $track->content_type,
 	};
 }
 
 sub getArtwork {
 	my ($class, $track, $path) = @_;
+
+	return if -d $path;
 	
 	# Try to read a cover image from the tags first.
 	my ($body, $contentType, $file);

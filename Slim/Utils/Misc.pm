@@ -59,6 +59,8 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 my $scannerlog = logger('scan.scanner');
+my $ospathslog = logger('os.paths');
+my $osfileslog = logger('os.files');
 
 my $canFollowAlias = 0;
 
@@ -89,9 +91,7 @@ my @findBinPaths    = ();
 sub findbin {
 	my $executable = shift;
 
-	my $log = logger('os.paths');
-
-	main::DEBUGLOG && $log->debug("Looking for executable: [$executable]");
+	main::DEBUGLOG && $ospathslog->is_debug && $ospathslog->debug("Looking for executable: [$executable]");
 
 	if (main::ISWINDOWS && $executable !~ /\.\w{3}$/) {
 
@@ -102,11 +102,11 @@ sub findbin {
 
 		my $path = catdir($search, $executable);
 
-		main::DEBUGLOG && $log->debug("Checking for $executable in $path");
+		main::DEBUGLOG && $ospathslog->is_debug && $ospathslog->debug("Checking for $executable in $path");
 
 		if (-x $path) {
 
-			main::INFOLOG && $log->info("Found binary $path for $executable");
+			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("Found binary $path for $executable");
 
 			return $path;
 		}
@@ -115,13 +115,13 @@ sub findbin {
 	# For Windows we don't include the path in @findBinPaths so now search this
 	if (main::ISWINDOWS && (my $path = File::Which::which($executable))) {
 
-		main::INFOLOG && $log->info("Found binary $path for $executable");
+		main::INFOLOG && $ospathslog->is_info && $ospathslog->info("Found binary $path for $executable");
 
 		return $path;
 
 	} else {
 
-		main::INFOLOG && $log->info("Didn't find binary for $executable");
+		main::INFOLOG && $ospathslog->is_info && $ospathslog->info("Didn't find binary for $executable");
 
 		return undef;
 	}
@@ -134,19 +134,17 @@ Add $path1, $path2 etc to paths searched by findbin
 =cut
 sub addFindBinPaths {
 
-	my $log = logger('os.paths');
-
 	while (my $path = shift) {
 
 		if (-d $path) {
 
-			main::INFOLOG && $log->info("adding $path");
+			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("adding $path");
 
 			push @findBinPaths, $path;
 
 		} else {
 
-			main::INFOLOG && $log->info("not adding $path - does not exist");
+			main::INFOLOG && $ospathslog->is_info && $ospathslog->info("not adding $path - does not exist");
 		}
 	}
 }
@@ -239,11 +237,11 @@ sub pathFromFileURL {
 	#
 	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
 	my $path = $uri->path;
-	my $log  = logger('os.files');
 
-	if (Slim::Utils::Log->isInitialized) {
+	my $canLog = Slim::Utils::Log->isInitialized;
+	if ($canLog) {
 
-		main::INFOLOG && $log->info("Got $path from file url $url");
+		main::INFOLOG && $osfileslog->is_info && $osfileslog->info("Got $path from file url $url");
 	}
 
 	# only allow absolute file URLs and don't allow .. in files...
@@ -253,12 +251,12 @@ sub pathFromFileURL {
 		$file = fixPathCase($file);
 	}
 
-	if (Slim::Utils::Log->isInitialized) {
+	if ($canLog) {
 
 		if (!defined($file))  {
-			$log->warn("Bad file: url $url");
+			$osfileslog->warn("Bad file: url $url");
 		} else {
-			main::INFOLOG && $log->info("Extracted: $file from $url");
+			main::INFOLOG && $osfileslog->is_info && $osfileslog->info("Extracted: $file from $url");
 		}
 	}
 
@@ -408,12 +406,10 @@ sub crackURL {
 	$path ||= '/';
 	$port ||= 80;
 
-	my $log = logger('os.paths');
-
-	if ( main::DEBUGLOG && $log->is_debug ) {
-		$log->debug("Cracked: $string with [$host],[$port],[$path]");
-		$log->debug("   user: [$user]") if $user;
-		$log->debug("   pass: [$pass]") if $pass;
+	if ( main::DEBUGLOG && $ospathslog->is_debug ) {
+		$ospathslog->debug("Cracked: $string with [$host],[$port],[$path]");
+		$ospathslog->debug("   user: [$user]") if $user;
+		$ospathslog->debug("   pass: [$pass]") if $pass;
 	}
 
 	return ($host, $port, $path, $user, $pass);
@@ -589,18 +585,18 @@ sub fixPath {
 		$fixed = canonpath(fixPathCase($fixed));
 
 		# Fixes Bug: 2757, but breaks a lot more: 3681, 3682 & 3683
-		if (-l $fixed) {
-
-			#$fixed = readlink($fixed);
-		}
+#		if (-l $fixed) {
+#
+#			#$fixed = readlink($fixed);
+#		}
 	}
 
-	if ($file ne $fixed) {
+	if (main::INFOLOG && $file ne $fixed && $ospathslog->is_info) {
 
-		main::INFOLOG && logger('os.paths')->info("Fixed: $file to $fixed");
+		$ospathslog->info("Fixed: $file to $fixed");
 
 		if ($base) {
-			main::INFOLOG && logger('os.paths')->info("Base: $base");
+			$ospathslog->info("Base: $base");
 		}
 	}
 
@@ -614,13 +610,13 @@ sub fixPath {
 sub stripRel {
 	my $file = shift;
 	
-	main::INFOLOG && logger('os.paths')->info("Original: $file");
+	main::INFOLOG && $ospathslog->is_info && $ospathslog->info("Original: $file");
 
 	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
 		$file =~ s#[^\/\\]+[\/\\]\.\.[\/\\]##sg;
 	}
 	
-	main::INFOLOG && logger('os.paths')->info("Stripped: $file");
+	main::INFOLOG && $ospathslog->is_info && $ospathslog->info("Stripped: $file");
 
 	return $file;
 }
@@ -677,9 +673,17 @@ sub getPlaylistDir {
 
 =cut
 
+my $mediadirsCache;
 sub getMediaDirs {
-	my $type = shift;
+	my $type = shift || '';
 	my $filter = shift;
+	
+	if (!defined $mediadirsCache) {
+		$prefs->setChange(sub { $mediadirsCache = {} }, 'mediadirs');
+		$mediadirsCache = {};
+	}
+	
+	return $mediadirsCache->{$type} if !$filter && $mediadirsCache->{$type};
 	
 	my $mediadirs = getDirsPref('mediadirs');
 	
@@ -693,6 +697,8 @@ sub getMediaDirs {
 		$mediadirs = [ grep { !$ignoreList->{$_} } @$mediadirs ];
 		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
 	}
+	
+	$mediadirsCache->{$type} = $mediadirs unless $filter;
 	
 	return $mediadirs
 }
@@ -938,7 +944,6 @@ sub readDirectory {
 	my $dirname  = shift;
 	my $validRE  = shift || Slim::Music::Info::validTypeExtensions();
 	my @diritems = ();
-	my $log      = logger('os.files');
 
 	my $native_dirname = Slim::Utils::Unicode::encode_locale($dirname);
 	
@@ -947,7 +952,7 @@ sub readDirectory {
 
 		if ($volume && isWinDrive($volume) && !Slim::Utils::OS::Win32->isDriveReady($volume)) {
 			
-			main::DEBUGLOG && $log->debug("drive [$dirname] not ready");
+			main::DEBUGLOG && $osfileslog->is_debug && $osfileslog->debug("drive [$dirname] not ready");
 
 			return @diritems;
 		}
@@ -955,12 +960,12 @@ sub readDirectory {
 
 	opendir(DIR, $native_dirname) || do {
 
-		main::DEBUGLOG && $log->debug("opendir on [$dirname] failed: $!");
+		main::DEBUGLOG && $osfileslog->is_debug && $osfileslog->debug("opendir on [$dirname] failed: $!");
 
 		return @diritems;
 	};
 
-	main::INFOLOG && $log->info("Reading directory: $dirname");
+	main::INFOLOG && $osfileslog->is_info && $osfileslog->info("Reading directory: $dirname");
 
 	while (defined (my $item = readdir(DIR)) ) {
 		# call idle streams to service timers - used for blocking animation.
@@ -986,8 +991,8 @@ sub readDirectory {
 
 	closedir(DIR);
 
-	if ( main::INFOLOG && $log->is_info ) {
-		$log->info("Directory contains " . scalar(@diritems) . " items");
+	if ( main::INFOLOG && $osfileslog->is_info ) {
+		$osfileslog->info("Directory contains " . scalar(@diritems) . " items");
 	}
 
 	return Slim::Music::Info::sortFilename(@diritems);
