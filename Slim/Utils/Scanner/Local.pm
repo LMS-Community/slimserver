@@ -598,14 +598,28 @@ sub deleted {
 		
 		if ( $track ) {
 			$work = sub {
+				my $trackId  = $track->id;
 				my $album    = $track->album;
-				my @contribs = $track->contributors->all;
+
+				my $sth_contribs = $dbh->prepare_cached( qq{
+					SELECT DISTINCT(contributor) FROM contributor_track
+					WHERE track = ?
+				} );
+				$sth_contribs->execute( $trackId );
+				my $contribs = $sth_contribs->fetchall_arrayref();
+
 				my $year     = $track->year;
-				my @genres   = map { $_->id } $track->genres;
+
+				my $sth_genres = $dbh->prepare_cached( qq{
+					SELECT DISTINCT(genre) FROM genre_track
+					WHERE track = ?
+				} );
+				$sth_genres->execute( $trackId );
+				my @genres = map { $_->[0] } @{ $sth_genres->fetchall_arrayref()};
 				
 				# plugin hook
 				if ( my $handler = $pluginHandlers->{onDeletedTrackHandler} ) {
-					$handler->( { id => $track->id, obj => $track, url => $url } );
+					$handler->( { id => $trackId, obj => $track, url => $url } );
 				}
 		
 				# delete() will cascade to:
@@ -616,8 +630,8 @@ sub deleted {
 			
 				# Tell Contributors to rescan, if no other tracks left, remove contributor.
 				# This will also remove entries from contributor_track and contributor_album
-				for my $contrib ( @contribs ) {
-					Slim::Schema::Contributor->rescan( $contrib->id );
+				for ( @$contribs ) {
+					Slim::Schema::Contributor->rescan( $_->[0] );
 				}
 
 				
