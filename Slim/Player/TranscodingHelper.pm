@@ -589,20 +589,18 @@ sub tokenizeConvertCommand2 {
 		my $placeholder = $1;
 		
 		if (!exists $binaries{$placeholder}) {
-			 my @values = split(/\.([^\.]+)$/,$placeholder);
-			 if (  @values  eq 2 ) {
-				$binaries{$placeholder} = preferences(@values[0])->get(@values[1]) || '';
-				 if ( '' eq $binaries{$placeholder}) {
-					my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.',  @values[0]. '\.pref' );
-					if ( -e $subfile ) {
-						preferences(@values[0])->set(@values[1],' ');
-						$log->warn("key @values[1] created in file: @values[0]\.pref");
-					} else {
-						$log->warn("substitition error for '$placeholder' file: '@values[0]\.pref' not found");
-					}
-				}
-				$binaries{$placeholder} =~ tr/\r\t\n/ /;
-			} else { # read from file
+				my ($file, $pref) = $placeholder =~ /(.*)\.([^\.]+)$/;
+				if ($file && $pref) {
+					my $prefs = preferences($file);
+					my $transcoding = {};
+					$transcoding = $prefs->get('transcoding') || {};
+					$binaries{$placeholder} = $transcoding->{$pref} || '';
+					if (main::DEBUGLOG && $binaries{$placeholder} eq '' ) {
+						$transcoding->{$pref} = ' ';
+						$prefs->set('transcoding',$transcoding);	
+					};
+					$binaries{$placeholder} =~ tr/\r\t\n/ /;
+				} else { # read from file
 				$log->warn("couldn't find file preferences for: $placeholder");
 				$binaries{$placeholder} = '';
 			}
