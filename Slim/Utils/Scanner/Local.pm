@@ -622,11 +622,29 @@ sub deleted {
 					$handler->( { id => $trackId, obj => $track, url => $url } );
 				}
 		
-				# delete() will cascade to:
-				#   contributor_track
-				#   genre_track
-				#   comments
-				$track->delete;
+				my $sth_del_contribs = $dbh->prepare_cached( qq{
+					DELETE FROM contributor_track
+					WHERE track = ?
+				} );
+				$sth_del_contribs->execute( $trackId );
+
+				my $sth_del_genres = $dbh->prepare_cached( qq{
+					DELETE FROM genre_track
+					WHERE track = ?
+				} );
+				$sth_del_genres->execute( $trackId );
+
+				my $sth_del_comments = $dbh->prepare_cached( qq{
+					DELETE FROM comments
+					WHERE track = ?
+				} );
+				$sth_del_comments->execute( $trackId );
+
+				my $sth_del_tracks = $dbh->prepare_cached( qq{
+					DELETE FROM tracks
+					WHERE id = ?
+				} );
+				$sth_del_tracks->execute( $trackId );
 			
 				# Tell Contributors to rescan, if no other tracks left, remove contributor.
 				# This will also remove entries from contributor_track and contributor_album
