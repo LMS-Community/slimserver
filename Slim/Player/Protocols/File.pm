@@ -60,7 +60,7 @@ sub open {
 	
 	my $seekoffset = 0;
 
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
+	my $filepath = $class->pathFromFileURL($url);
 
 	my ($size, $duration, $offset, $samplerate, $samplesize, $channels, $blockalign, $endian, $drm) =
 		(0, 0, 0, 0, 0, 0, 0, undef, undef);
@@ -239,6 +239,11 @@ sub open {
 	}
 
 	return $sock;
+}
+
+# make this conversion accessible to sub-classes
+sub pathFromFileURL {
+	Slim::Utils::Misc::pathFromFileURL($_[1]);
 }
 
 sub sysread {
