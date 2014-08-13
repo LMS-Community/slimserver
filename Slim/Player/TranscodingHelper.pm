@@ -10,7 +10,6 @@ package Slim::Player::TranscodingHelper;
 use strict;
 
 use File::Spec::Functions qw(catdir);
-use File::Slurp;
 use Scalar::Util qw(blessed);
 
 use Slim::Player::CapabilitiesHelper;
@@ -161,6 +160,8 @@ sub loadConversionTables {
 # %I, $CLIENTID$   - clientid     ( : or . replaced by - )
 # %p               - player model
 # %P, $PLAYER$     - player model ( SPACE or QOUTE replaced by _ )
+# %g               - groupid
+# %G, $GROUPID$    - groupid     ( formatted as MAC. if no group is present use CLIENTID )
 # %n               - player name
 # %N, $NAME$       - player name  ( SPACE or QOUTE replaced by _ )
 # %q, $QUALITY$    - quality
@@ -401,6 +402,7 @@ sub getConvertCommand2 {
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || 44100,
 			clientid         => $clientid || 'undefined',
+			groupid          => $prefs->client($client)->get('syncgroupid') || 0,
 			clientname       => $client->name || 'undefined',
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
@@ -538,6 +540,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
 	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
+	$subs{'GROUPID'}   = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
 
 	foreach my $v (keys %vars) {
 		my $value;
@@ -567,6 +570,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'c') {$value = $transcoder->{'outputChannels'};}
 		elsif ($v eq 'q') {$value = $quality;}
 		elsif ($v eq 'Q') {$value = ($quality eq '0' ? '01' : $quality . '0');}
+		elsif ($v eq 'g') {$value = $transcoder->{'groupid'};}
+		elsif ($v eq 'G') {$value = $subs{'GROUPID'};}
 
 		foreach (values %subs) {
 			s/%$v/$value/ge;
@@ -578,31 +583,26 @@ sub tokenizeConvertCommand2 {
 		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
-	# Try to read parameters/scripts from file referenced in the command's placeholder '${*}$'
-	%subs = ();
+	# Try to read parameters from file referenced in the command's placeholder '${PREF-FILE.KEY}$' 
 	while ($command && $command =~ /\${(.*?)}\$/g) {
 		my $placeholder = $1;
+		my $transcoder  = $binaries{$placeholder} || '';
 		
 		if (!exists $binaries{$placeholder}) {
+			my ($file, $pref) = $placeholder =~ /(.*)\.([^\.]+)$/;
 			
-			my $subfile = File::Spec->catfile(Slim::Utils::OSDetect::dirsFor('prefs') || '.', $placeholder);
-			
-			my $content = read_file($subfile);
-			
-			if ( defined $content ) {
-				$content =~ s/\s+/ /sg;
-				$binaries{$placeholder} = $content;
-			}
+			if ($file && $pref) {
+				$transcoder = preferences($file)->get($pref) || '';
+				$transcoder =~ s/\s+/ /;
+			} 
 			else {
-				$log->error("Couldn't read file: " . $subfile);
+				$log->warn("couldn't find file preferences for: $placeholder");
 			}
+
+			$binaries{$placeholder} = $transcoder;
 		}
 		
-		$subs{$placeholder} = $binaries{$placeholder} || '';
-	}
-
-	foreach (keys %subs) {
-		$command =~ s/\${$_}\$/$subs{$_}/g;
+		$command =~ s/\${$placeholder}\$/$transcoder/g;
 	}
 
 	# clean all remaining '$*$'
