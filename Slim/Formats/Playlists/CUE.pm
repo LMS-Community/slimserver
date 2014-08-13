@@ -76,7 +76,7 @@ sub parse {
 			$cuesheet->{'ARTIST'} = $1;
 			$cuesheet->{'ALBUMARTIST'} = $1;
 			
-		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
 
 			$cuesheet->{uc($1)} = $2;
 
@@ -135,7 +135,7 @@ sub parse {
 
 			# Automatically flag a compilation album (if it hasn't been already)
 			# since we are setting the album artist.
-			if (defined($cuesheet->{'ALBUMARTIST'}) and ($1 ne $cuesheet->{'ALBUMARTIST'})) {
+			if (defined($cuesheet->{'ALBUMARTIST'}) && ($1 ne $cuesheet->{'ALBUMARTIST'})) {
 				$cuesheet->{'COMPILATION'} = '1' if not defined($cuesheet->{'COMPILATION'});
 			}
 
@@ -233,7 +233,8 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $file_attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $file_attribute ( qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS 
+			                        REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION)) {
 
 			my $attribute = $file_attribute;
 			if ($file_attribute eq 'DISCNUMBER') {
@@ -291,7 +292,7 @@ sub parse {
 		# Don't use $track->{'URL'} or the db will break
 		$track->{'URI'} = "$file#".$track->{'START'}."-".$track->{'END'};
 
-		main::DEBUGLOG && $log->debug("    URL: $track->{'URI'}");
+		main::DEBUGLOG && $log->debug("URL: $track->{'URI'}");
 
 		$track->{'TRACKNUM'} = $key;
 
@@ -307,9 +308,13 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT 
+			                  REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION)) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
+					
+				# Bug 18110 - only merge ALBUMARTIST/ARTISTSORT if the track's ALBUMARTIST/ARTIST is the same as the album's
+				next if $attribute =~ /(.*)SORT$/ && $track->{$1} ne $cuesheet->{$1};
 
 				$track->{$attribute} = $cuesheet->{$attribute};
 
