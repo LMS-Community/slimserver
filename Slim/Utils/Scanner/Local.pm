@@ -601,50 +601,50 @@ sub deleted {
 				my $trackId  = $track->id;
 				my $album    = $track->album;
 
-				my $sth_contribs = $dbh->prepare_cached( qq{
+				my $sth = $dbh->prepare_cached( qq{
 					SELECT DISTINCT(contributor) FROM contributor_track
 					WHERE track = ?
 				} );
-				$sth_contribs->execute( $trackId );
-				my $contribs = $sth_contribs->fetchall_arrayref();
+				$sth->execute( $trackId );
+				my $contribs = $sth->fetchall_arrayref();
 
 				my $year     = $track->year;
 
-				my $sth_genres = $dbh->prepare_cached( qq{
+				$sth = $dbh->prepare_cached( qq{
 					SELECT DISTINCT(genre) FROM genre_track
 					WHERE track = ?
 				} );
-				$sth_genres->execute( $trackId );
-				my @genres = map { $_->[0] } @{ $sth_genres->fetchall_arrayref()};
+				$sth->execute( $trackId );
+				my @genres = map { $_->[0] } @{ $sth->fetchall_arrayref()};
 				
 				# plugin hook
 				if ( my $handler = $pluginHandlers->{onDeletedTrackHandler} ) {
 					$handler->( { id => $trackId, obj => $track, url => $url } );
 				}
 		
-				my $sth_del_contribs = $dbh->prepare_cached( qq{
+				$sth = $dbh->prepare_cached( qq{
 					DELETE FROM contributor_track
 					WHERE track = ?
 				} );
-				$sth_del_contribs->execute( $trackId );
+				$sth->execute( $trackId );
 
-				my $sth_del_genres = $dbh->prepare_cached( qq{
+				$sth = $dbh->prepare_cached( qq{
 					DELETE FROM genre_track
 					WHERE track = ?
 				} );
-				$sth_del_genres->execute( $trackId );
+				$sth->execute( $trackId );
 
-				my $sth_del_comments = $dbh->prepare_cached( qq{
+				$sth = $dbh->prepare_cached( qq{
 					DELETE FROM comments
 					WHERE track = ?
 				} );
-				$sth_del_comments->execute( $trackId );
+				$sth->execute( $trackId );
 
-				my $sth_del_tracks = $dbh->prepare_cached( qq{
+				$sth = $dbh->prepare_cached( qq{
 					DELETE FROM tracks
 					WHERE id = ?
 				} );
-				$sth_del_tracks->execute( $trackId );
+				$sth->execute( $trackId );
 			
 				# Tell Contributors to rescan, if no other tracks left, remove contributor.
 				# This will also remove entries from contributor_track and contributor_album
@@ -1031,14 +1031,14 @@ sub changed {
 			my $newGenres  = join( ',', sort map { $_->id } $track->genres );
 			
 			if ( $origGenres ne $newGenres ) {
-				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed genre(s) $origGenres -> $newGenres" );
+				$isDebug && $log->debug( "Rescanning changed genre(s) $origGenres -> $newGenres" );
 				
 				Slim::Schema::Genre->rescan( map { $_->{genre} } @{ $orig->{genres} } );
 			}
 			
 			# Bug 8034, Rescan years if year value changed, to remove the old year
 			if ( $orig->{year} != $track->year ) {
-				main::DEBUGLOG && $isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
+				$isDebug && $log->debug( "Rescanning changed year " . $orig->{year} . " -> " . $track->year );
 				
 				Slim::Schema::Year->rescan( $orig->{year} );
 			}
