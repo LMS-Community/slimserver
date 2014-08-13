@@ -1865,6 +1865,9 @@ sub mediafolderQuery {
 	my $type     = $request->getParam('type') || '';
 	my $tags     = $request->getParam('tags') || '';
 	
+	# duration is not available for anything but audio files
+	$tags =~ s/d// if $type && $type ne 'audio';
+	
 	my ($sql, $volatileUrl);
 	
 	# Bug 17436, don't allow BMF if a scan is running
@@ -2121,6 +2124,7 @@ sub mediafolderQuery {
 			}
 
 			$tags =~ /c/ && $request->addResultLoop($loopname, $chunkCount, 'coverid', $item->coverid);
+			$tags =~ /d/ && $request->addResultLoop($loopname, $chunkCount, 'duration', $item->duration);
 			$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, 'url', $url);
 			$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $realName);
