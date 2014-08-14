@@ -28,7 +28,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
-our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache);
+our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache, %formatCache);
 
 my $log = logger('database.info');
 
@@ -634,11 +634,17 @@ sub infoFormat {
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
 	if ($str && $] > 5.007) {
+		
+		my $old = $str;
+		if ( !($str = $formatCache{$old}) ) {
+			$str = $old;
+			eval {
+				Encode::from_to($str, Slim::Utils::Unicode::currentLocale(), 'UTF-8');
+				$str = Encode::decode('UTF-8', $str);
+			};
+			$formatCache{$old} = $str;
+		}
 
-		eval {
-			Encode::from_to($str, Slim::Utils::Unicode::currentLocale(), 'UTF-8');
-			$str = Encode::decode('UTF-8', $str);
-		};
 
 	} elsif (!defined $str) {
 

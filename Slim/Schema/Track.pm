@@ -7,6 +7,7 @@ use base 'Slim::Schema::DBI';
 
 use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
+use Tie::Cache::LRU::Expires;
 
 use Slim::Schema::ResultSet::Track;
 
@@ -19,6 +20,10 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 my $log = logger('database.info');
+
+# rendering the playlist will call displayAsHTML repeatedly, often requesting the same artist(s) over and over again
+# keep a small cache of contributor objects for a short period of time, while we're looping the playlist items
+tie my %contributorCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 15;
 
 our @allColumns = (qw(
 	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
@@ -186,7 +191,8 @@ sub artistsWithAttributes {
 		for my $contributor ($self->contributorsOfType($type)->all) {
 
 			push @objs, {
-				'artist'     => $contributor,
+#				'artist'     => $contributor,
+				'artistId'   => $contributor->id,
 				'name'       => $contributor->name,
 				'attributes' => join('&', 
 					join('=', 'contributor.id', $contributor->id),
@@ -470,36 +476,51 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+	my $format = Slim::Music::Info::standardTitleFormat();;
 
 	# Go directly to infoFormat, as standardTitle is more client oriented.
 	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE', $form->{'plugin_meta'});
 	$form->{'item'}     = $self->id;
 	$form->{'itemobj'}  = $self;
+	$form->{'coverid'}  = $self->coverid;
 
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
 	if ($format !~ /ARTIST/) {
 
-		if (my $contributors = $self->contributorsOfType(qw(ARTIST TRACKARTIST))) {
+		my $dbh = Slim::Schema->dbh;
+		my $sth = $dbh->prepare_cached(sprintf(qq(
+			SELECT DISTINCT(contributor_track.contributor) 
+			FROM contributor_track 
+			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s)
+		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
+		
+		my $contributorId;
+		$sth->execute($self->id);
+		$sth->bind_col( 1, \$contributorId );
 
-			my @info;
+		my @info;
 
-			for my $contributor ($contributors->all) {
-				if (!$form->{'artist'}) {
-					$form->{'includeArtist'} = 1;
-					$form->{'artist'} = $contributor;
-				}
+		while ($sth->fetch) {
+			my $contributor = $contributorCache{$contributorId} || Slim::Schema->find('Contributor', $contributorId);
 
-				push @info, {
-					'artist'     => $contributor,
-					'name'       => $contributor->name,
-					'attributes' => 'contributor.id=' . $contributor->id,
-				};
+			if (!$form->{'artist'}) {
+				$form->{'includeArtist'} = 1;
+				$form->{'artist'} = $contributor;
 			}
 
-			$form->{'artistsWithAttributes'} = \@info;
+			push @info, {
+#				'artist'     => $contributor,
+				'artistId'   => $contributorId,
+				'name'       => $contributor->name,
+				'attributes' => 'contributor.id=' . $contributorId,
+			};
+			
+			$contributorCache{$contributorId} = $contributor;
 		}
-		elsif ($form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'}) {
+
+		$form->{'artistsWithAttributes'} = \@info if scalar @info;
+		
+		if (!$form->{'includeArtist'} && $form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'}) {
 			$form->{'includeArtist'} = 1;
 		}
 	}

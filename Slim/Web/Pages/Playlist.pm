@@ -203,7 +203,14 @@ sub playlist {
 			$form{'levelName'} = 'track';
 			$form{'odd'}       = ($itemnum + $offset) % 2;
 			
-			if ( !$track->coverid && (my $album = $track->album) ) {
+			my $album          = ($form{'includeAlbum'} || !$form{'coverid'}) && $track->album;
+			
+			if ( $form{'includeAlbum'} && $album ) {
+				$form{'albumId'}    = $album->id;
+				$form{'albumTitle'} = $album->title;
+			}
+			
+			if ( !$form{'coverid'} && $album ) {
 				$form{'artwork_track_id'} = $album->artwork;
 			}
 	
@@ -225,7 +232,7 @@ sub playlist {
 			} else {
 	
 				$form{'currentsong'} = undef;
-				$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
+				$form{'title'}    = $form{text} || Slim::Music::TitleFormatter::infoFormat($track, $titleFormat, undef, $form{'plugin_meta'});
 			}
 			$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 	

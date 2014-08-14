@@ -26,6 +26,8 @@ use Slim::Web::ImageProxy;
 BEGIN {
 	# Use our custom Template::Context subclass
 	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
+	# Use Profiler instead if you want to investigate page rendering performance
+#	$Template::Config::CONTEXT = 'Slim::Web::Template::Profiler';
 	$Template::Provider::MAX_DIRS = 128;
 }
 
