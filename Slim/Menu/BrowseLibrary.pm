@@ -1443,7 +1443,6 @@ sub _albums {
 
 				if (!$wantMeta) {
 					delete $_->{'artist'};
-					delete $_->{'artists'};
 				}
 				
 				$_->{'hasMetadata'}   = 'album'
