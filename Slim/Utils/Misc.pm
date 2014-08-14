@@ -78,7 +78,11 @@ my $userAgentString;
 
 my %pathToFileCache = ();
 my %fileToPathCache = ();
+my %mediadirsCache  = ();
+my %fixPathCache    = ();
 my @findBinPaths    = ();
+
+$prefs->setChange(sub { %mediadirsCache = () }, 'mediadirs');
 
 =head1 METHODS
 
@@ -478,12 +482,19 @@ sub hasXSCwd {
 sub fixPath {
 	# Only using encode_locale() here as a safety measure because
 	# it should be a no-op.
-	my $file = Slim::Utils::Unicode::encode_locale(shift);
-	my $base = Slim::Utils::Unicode::encode_locale(shift);
+	my $file = Slim::Utils::Unicode::encode_locale($_[0]);
 
 	if (!defined($file)) {
 		return;
 	}
+
+	my $base = $_[1] && ( $fixPathCache{$_[1]} || Slim::Utils::Unicode::encode_locale($_[1]) );
+	
+	if (scalar keys %fixPathCache > 32) {
+		%fixPathCache = ();
+	}
+	
+	$fixPathCache{$_[1]} ||= $base if $base;
 
 	my $fixed;
 
@@ -664,7 +675,8 @@ sub getAudioDir {
 =cut
 
 sub getPlaylistDir {
-	return Slim::Utils::Unicode::encode_locale($prefs->get('playlistdir'));
+	$mediadirsCache{playlist} = Slim::Utils::Unicode::encode_locale($prefs->get('playlistdir')) if !defined $mediadirsCache{playlist};
+	return $mediadirsCache{playlist};
 }
 
 =head2 getMediaDirs()
@@ -673,17 +685,11 @@ sub getPlaylistDir {
 
 =cut
 
-my $mediadirsCache;
 sub getMediaDirs {
 	my $type = shift || '';
 	my $filter = shift;
 	
-	if (!defined $mediadirsCache) {
-		$prefs->setChange(sub { $mediadirsCache = {} }, 'mediadirs');
-		$mediadirsCache = {};
-	}
-	
-	return $mediadirsCache->{$type} if !$filter && $mediadirsCache->{$type};
+	return $mediadirsCache{$type} if !$filter && $mediadirsCache{$type};
 	
 	my $mediadirs = getDirsPref('mediadirs');
 	
@@ -698,7 +704,7 @@ sub getMediaDirs {
 		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
 	}
 	
-	$mediadirsCache->{$type} = $mediadirs unless $filter;
+	$mediadirsCache{$type} = $mediadirs unless $filter;
 	
 	return $mediadirs
 }
