@@ -539,7 +539,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'OCHANNELS'} = $transcoder->{'outputChannels'};
 	$subs{'CLIENTID'}  = do { (my $tmp = $transcoder->{'clientid'}) =~ tr/.:/-/;  $tmp };
 	$subs{'PLAYER'}    = do { (my $tmp = $transcoder->{'player'}  ) =~ tr/\" /_/; $tmp };
-	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'name'}    ) =~ tr/\" /_/; $tmp };
+	$subs{'NAME'}      = do { (my $tmp = $transcoder->{'clientname'}    ) =~ tr/\" /_/; $tmp };
 	$subs{'GROUPID'}   = $transcoder->{'groupid'} eq 0 ? $subs{'CLIENTID'} : do { (my $tmp = sprintf ( "g%011x", $transcoder->{'groupid'}) ) =~ s/..\K(?=.)/-/g; $tmp};
 
 	foreach my $v (keys %vars) {
@@ -596,7 +596,7 @@ sub tokenizeConvertCommand2 {
 				$transcoder =~ s/\s+/ /;
 			} 
 			else {
-				$log->warn("couldn't find file preferences for: $placeholder");
+				main::INFOLOG && $log->is_info && $log->info("Couldn't find preferences for: $placeholder");
 			}
 
 			$binaries{$placeholder} = $transcoder;
