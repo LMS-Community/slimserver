@@ -261,6 +261,9 @@ sub _init_db {
 		
 		warn "$@Delete the file $dbfile and start from scratch.\n";
 		
+		# Make sure cachedir exists
+		Slim::Utils::Prefs::makeCacheDir();
+		
 		# Something was wrong with the database, delete it and try again
 		unlink $dbfile;
 		

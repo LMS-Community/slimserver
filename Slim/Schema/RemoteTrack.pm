@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $log = logger('formats.metadata');
-my $cache = Slim::Utils::Cache->new;
+my $cache;
 
 # Keep a cache of up to x remote tracks at a time - allow more if user claims to have lots of memory.
 use constant CACHE_SIZE => 500;
@@ -62,6 +62,8 @@ my @allAttributes = (qw(
 }
 
 sub init {
+	$cache = Slim::Utils::Cache->new;
+	
 	my $maxPlaylistLengthCB = sub {
 		my ($pref, $max) = @_;
 		
