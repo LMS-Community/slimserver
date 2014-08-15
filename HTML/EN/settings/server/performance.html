@@ -9,6 +9,15 @@
 
 		</select>
 	[% END %]
+	
+	[% WRAPPER setting title="SETUP_SCAN_ON_PREF_CHANGE" desc="SETUP_SCAN_ON_PREF_CHANGE_DESC" %]
+		<select class="stdedit" name="pref_dontTriggerScanOnPrefChange" id="dontTriggerScanOnPrefChange">
+
+			<option [% IF NOT prefs.pref_dontTriggerScanOnPrefChange %]selected [% END %]value="0">[% 'SETUP_SCAN_ON_PREF_CHANGE_ON' | getstring %]</option>
+			<option [% IF prefs.pref_dontTriggerScanOnPrefChange %]selected [% END %]value="1">[% 'SETUP_SCAN_ON_PREF_CHANGE_OFF' | getstring %]</option>
+
+		</select>
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_DISABLESTATISTICS" desc="SETUP_DISABLESTATISTICS_DESC" %]
 		<select class="stdedit" name="pref_disableStatistics" id="disableStatistics">

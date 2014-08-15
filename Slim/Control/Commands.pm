@@ -2520,8 +2520,12 @@ sub rescanCommand {
 	}
 
 	# if scan is running or we're told to queue up requests, return quickly
-	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks ) {
+	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks() || Slim::Music::Import->hasScanTask() ) {
 		Slim::Music::Import->queueScanTask($request);
+		
+		# trigger the scan queue if we're not scanning yet
+		Slim::Music::Import->nextScanTask() unless Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks();
+		
 		$request->setStatusDone();
 		return;
 	}
@@ -3002,11 +3006,11 @@ sub wipecacheCommand {
 		return;
 	}
 
-	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks ) {
+	# if we're scanning already, don't do it twice
+	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks || $request->getParam('_queue') ) {
 		Slim::Music::Import->queueScanTask($request);
 	}
 	
-	# if we're scanning already, don't do it twice
 	else {
 
 		# Clear all the active clients's playlists

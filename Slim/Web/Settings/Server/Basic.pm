@@ -33,6 +33,7 @@ sub handler {
 	# tell the server not to trigger a rescan immediately, but let it queue up requests
 	# this is neede to prevent multiple scans to be triggered by change handlers for paths etc.
 	Slim::Music::Import->doQueueScanTasks(1);
+	my $runScan;
 
 	if ($paramRef->{'pref_rescan'}) {
 
@@ -65,6 +66,7 @@ sub handler {
 		}
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
+		$runScan = 1;
 	}
 	
 	if ( $paramRef->{'saveSettings'} ) {
@@ -122,6 +124,7 @@ sub handler {
 		# only run single folder scan if the paths haven't changed (which would trigger a rescan anyway)
 		elsif ( $singleDirScan ) {
 			Slim::Control::Request::executeRequest( undef, [ 'rescan', 'full', $singleDirScan ] );
+			$runScan = 1;
 		}
 	}
 
@@ -153,7 +156,7 @@ sub handler {
 	$paramRef->{'novideo'} = 1 if !(main::VIDEO && main::MEDIASUPPORT);
 
 	Slim::Music::Import->doQueueScanTasks(0);
-	Slim::Music::Import->nextScanTask();
+	Slim::Music::Import->nextScanTask() if $runScan || !$prefs->get('dontTriggerScanOnPrefChange');
 
 	return $class->SUPER::handler($client, $paramRef);
 }

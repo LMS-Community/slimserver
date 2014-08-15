@@ -702,6 +702,10 @@ sub nextScanTask {
 	main::DEBUGLOG && $log->is_debug && $log->debug('remaining scans in queue:' . Data::Dump::dump(%scanQueue));
 }
 
+sub hasScanTask {
+	scalar keys %scanQueue ? 1 : 0;
+}
+
 sub queueScanTask {
 	my ($class, $request) = @_;
 	
@@ -746,6 +750,8 @@ sub queueScanTask {
 		# wipecache removes all existing rescans from the queue
 		$class->clearScanQueue;
 
+		# remove the queue flag, or this task will never be run, but queued up again
+		$request->deleteParam('_queue');
 		$scanQueue{wipecache} = $request->virginCopy();
 	}
 	else {

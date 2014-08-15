@@ -162,6 +162,7 @@ sub init {
 		'playlistdir'           => \&defaultPlaylistDir,
 		'autorescan'            => 0,
 		'autorescan_stat_interval' => 10,
+		'dontTriggerScanOnPrefChange' => 1,
 		# Server Settings - Behaviour
 		'displaytexttimeout'    => 1,
 		'checkVersion'          => 1,
@@ -381,7 +382,7 @@ sub init {
 	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 
 	$prefs->setChange( 
-		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
+		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
 		qw(splitList groupdiscs useTPE2AsAlbumArtist)
 	);
 
@@ -389,7 +390,7 @@ sub init {
 
 	$prefs->setChange( sub {
 		Slim::Utils::Text::clearCaseArticleCache();
-		Slim::Control::Request::executeRequest(undef, ['wipecache'])
+		Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef])
 	}, 'ignoredarticles');
 
 	if ( !Slim::Utils::OSDetect::isSqueezeOS() ) {
@@ -421,6 +422,12 @@ sub init {
 					}, 1);
 				}
 			}, 'customArtSpecs');
+			
+			$prefs->setChange( sub {
+				my $new = $_[1];
+				my $old = $_[3];
+				Slim::Music::Import->nextScanTask if $old && !$new;
+			}, 'dontTriggerScanOnPrefChange' );
 		}
 	}
 
@@ -439,7 +446,7 @@ sub init {
 			# in order to get rid of stale entries trigger full rescan if path has been removed
 			if (scalar @old) {
 				main::INFOLOG && logger('scan.scanner')->info('removed folder from mediadirs - trigger wipecache: ' . Data::Dump::dump(@old));
-				Slim::Control::Request::executeRequest(undef, ['wipecache']);
+				Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
 			}
 
 			# if only new paths were added, only scan those folders
@@ -471,7 +478,7 @@ sub init {
 				}
 				else {
 					main::INFOLOG && logger('scan.scanner')->info('added folder to exclusion list - trigger wipecache: ' . Data::Dump::dump(@new));
-					Slim::Control::Request::executeRequest(undef, ['wipecache']);
+					Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]);
 				}
 			}
 

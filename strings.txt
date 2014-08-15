@@ -8169,6 +8169,26 @@ SETUP_BROWSEAGELIMIT_DESC
 	RU	Выберите число последних альбомов, отображаемых при просмотре новой музыки. По умолчанию — 100
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
 
+SETUP_SCAN_ON_PREF_CHANGE
+	DE	Bei Einstellungesänderungen Sammlung durchsuchen
+	EN	Trigger Scan on Preference Changes
+	
+SETUP_SCAN_ON_PREF_CHANGE_DESC
+	DE	Einige Einstellungen erfordern ein erneutes Einlesen der Mediensammlung. Dieser Scan kann automatisch ausgelöst werden. Allerdings kann dies zur Folge haben, dass mehrere Durchsuchen-Läufe hintereinander gestartet werden, falls mehrere Einstellungen geändert werden.
+	EN	Some preferences need a full wipe & rescan of your media library to take effect. This scan can be triggered automatically if you wish. But it could cause multiple scans to be queued up if you change several preferences at once.
+
+SETUP_SCAN_ON_PREF_CHANGE_ON
+	DE	Durchsuchen automatisch starten
+	EN	Trigger scan automatically
+
+SETUP_SCAN_ON_PREF_CHANGE_OFF
+	DE	Zum Durchsuchen auffordern, aber nicht automatisch starten
+	EN	Prompt to scan, but don't trigger it automatically
+
+SETUP_SCAN_ON_PREF_CHANGE_PROMPT
+	DE	Einige Einstellungsänderungern erfordern ein erneutes Durchsuchen ihrer Mediensammlung. <a href="%s">Klicken Sie hier, um die Sammlung neu zu durchsuchen.</a>
+	EN	Some settings require a rescan of your library to take effect. <a href="%s">Click here to start the scan.</a>
+
 SETUP_DBHIGHMEM
 	CS	Konfigurovat paměť databáze
 	DA	Konfiguration af databasehukommelse
@@ -21312,7 +21332,7 @@ PLUGINS_CHANGED
 PLUGINS_CHANGED_NEED_RESTART
 	CS	Změny se projeví při příštím spuštění aplikace. <a href="%s">K restartování serveru klikněte sem.</a>
 	DA	Ændringerne vil træde i kraft næste gang programmet startes. <a href="%s">Klik her for at genstarte serveren nu.</a>
-	DE	Beim nächsten Neustart der Anwendung werden die Änderungen wirksam.<a href="%s">Klicken Sie hier, um den Server jetzt neu zu starten.</a>
+	DE	Beim nächsten Neustart der Anwendung werden die Änderungen wirksam. <a href="%s">Klicken Sie hier, um den Server jetzt neu zu starten.</a>
 	EN	Changes will take place at the next application restart. <a href="%s">Please click here to restart the server now.</a>
 	ES	Los cambios entrarán en vigor la próxima vez que se reinicie la aplicación. <a href="%s">Haga clic aquí para reiniciar el servidor ahora.</a>
 	FI	Muutokset tulevat voimaan, kun sovellus käynnistetään seuraavan kerran uudestaan. <a href="%s">Käynnistä palvelin uudelleen nyt napsauttamalla tästä.</a>
