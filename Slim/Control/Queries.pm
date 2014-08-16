@@ -1971,6 +1971,22 @@ sub mediafolderQuery {
 			$params->{'id'} = $folderId;
 			$volatileUrl = 1 if $folderId < 0;
 		}
+		# no path given and in volatile mode - we've been called for the root during a scan
+		elsif ($volatileUrl && scalar @$mediaDirs) {
+			my $url = $mediaDirs->[0];
+
+			if (!Slim::Music::Info::isURL($url)) {
+				$url = Slim::Utils::Misc::fileURLFromPath($url);
+			}
+			$url =~ s/^file/tmp/;
+
+			my $item = Slim::Schema->objectForUrl({
+				'url'      => $url,
+				'create'   => 1,
+			});
+
+			$params->{'id'} = $item->id;
+		}
 		elsif (scalar @$mediaDirs) {
 			$params->{'url'} = $mediaDirs->[0];
 		}

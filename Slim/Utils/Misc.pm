@@ -82,7 +82,9 @@ my %mediadirsCache  = ();
 my %fixPathCache    = ();
 my @findBinPaths    = ();
 
-$prefs->setChange(sub { %mediadirsCache = () }, 'mediadirs');
+$prefs->setChange( sub { 
+	%mediadirsCache = ();
+}, 'mediadirs', 'ignoreInAudioScan', 'ignoreInVideoScan', 'ignoreInImageScan');
 
 =head1 METHODS
 
