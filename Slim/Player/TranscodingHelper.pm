@@ -39,7 +39,11 @@ sub Conversions {
 	return \%commandTable;
 }
 
-my $log = logger('player.source');
+my $log = Slim::Utils::Log->addLogCategory( {
+	category     => 'player.transcoder',
+	defaultLevel => 'ERROR',
+	description  => 'DEBUG_TRANSCODING',
+} );
 
 my $prefs = preferences('server');
 
@@ -594,6 +598,10 @@ sub tokenizeConvertCommand2 {
 			if ($file && $pref) {
 				$transcoder = preferences($file)->get($pref) || '';
 				$transcoder =~ s/\s+/ /;
+				if ( main::INFOLOG && $log->is_info ) {
+					$transcoder eq '' &&  preferences($file)->set($pref,' ');
+					$log->info("Using: $placeholder \<\= $transcoder");
+				}
 			} 
 			else {
 				main::INFOLOG && $log->is_info && $log->info("Couldn't find preferences for: $placeholder");
