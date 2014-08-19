@@ -3650,7 +3650,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	CS	Neaktivní položky nabídky:
 	DA	Inaktive menupunkter:
 	DE	Inaktive Menüeinträge:
-	EN	Inactive menu items:
+	EN	Inactive Menu Items:
 	ES	Elementos de menú inactivos:
 	FI	Passiiviset valikkokohdat:
 	FR	Eléments de menu inactifs:
@@ -5525,7 +5525,7 @@ SETUP_REPLAYGAINMODE_DESC
 
 SETUP_REPLAYGAIN_REMOTE
 	DE	Anpassung für Internet-Streams
-	EN	Default adjustment for remote streams
+	EN	Default Adjustment for Remote Streams
 	
 SETUP_REPLAYGAIN_REMOTE_DESC
 	DE	Internet Streaming Dienst haben stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
@@ -5825,7 +5825,7 @@ SETUP_TRANSITIONDURATION
 	CS	Doba trvání Prolínání
 	DA	Længde af blød overgang
 	DE	Dauer der Überblendung
-	EN	Crossfade duration
+	EN	Crossfade Duration
 	ES	Duración del encadenado
 	FI	Ristihäivytyksen kesto
 	FR	Durée transition
@@ -6333,7 +6333,7 @@ SETUP_LIBRARY_NAME
 	CS	Název knihovny médií
 	DA	Navn på mediebibliotek
 	DE	Name der Medienbibliothek
-	EN	Media library name
+	EN	Media Library Name
 	ES	Nombre de biblioteca multimedia
 	FI	Mediakirjaston nimi
 	FR	Nom de la bibliothèque multimédia
@@ -7290,7 +7290,7 @@ SETUP_AUTO_DOWNLOAD
 	CS	Automatické stahování
 	DA	Hent automatisk
 	DE	Automatischer Download
-	EN	Automatic download
+	EN	Automatic Download
 	ES	Descarga automática
 	FI	Automaattinen lataaminen
 	FR	Téléchargement automatique
@@ -7701,7 +7701,7 @@ SETUP_NOGENREFILTER
 	CS	Filtrovat žánry na úrovni alba a stopy.
 	DA	Filtrer genrer på album- og nummernivau.
 	DE	Stilrichtungen auf Album- und Titelebene filtern
-	EN	Filter genres at the album & track level.
+	EN	Filter Genres at the Album & Track Level.
 	ES	Filtrar géneros por álbum y pista.
 	FI	Suodata genret levy- ja raitatasolla.
 	FR	Filtrer les genres au niveau des albums et des morceaux
@@ -7718,7 +7718,7 @@ SETUP_NOGENREFILTER_1
 	CS	Zobrazit všechny stopy a alba interpreta
 	DA	Vis alle spor og album for en kunstner
 	DE	Alle Titel und Alben eines Interpreten anzeigen
-	EN	Show any tracks & albums for an artist
+	EN	Show all albums and tracks for an artist
 	ES	Mostrar cualquier pista y álbum de un artista
 	FI	Näytä artistin kappaleet ja levyt
 	FR	Afficher tous les albums et morceaux de l'artiste
@@ -7767,11 +7767,11 @@ SETUP_NOGENREFILTER_DESC
 
 SETUP_NOROLEFILTER
 	DE	Interpreten-Rolle auf Album- und Titelebene filtern
-	EN	Filter contributor roles at the album & track level.
+	EN	Filter Contributor Roles at the Album & Track Level
 
 SETUP_NOROLEFILTER_1
 	DE	Alle Titel und Alben eines Interpreten anzeigen
-	EN	Show any tracks & albums for an artist
+	EN	Show all albums and tracks for an artist
 
 SETUP_NOROLEFILTER_0
 	DE	Nur zur gewählten Rolle passende Alben und Titel anzeigen
@@ -8051,7 +8051,7 @@ SETUP_IGNOREDARTICLES
 	CS	Ignorované členy při řazení
 	DA	Ord der skal ignoreres ved sortering
 	DE	Artikel, die bei der Sortierung nicht berücksichtigt werden sollen
-	EN	Articles To Ignore When Sorting
+	EN	Articles to Ignore When Sorting
 	ES	Artículos a omitir al ordenar
 	FI	Ohitettavat kohteet lajittelun aikana
 	FR	Articles à ignorer lors du tri
@@ -8251,7 +8251,7 @@ SETUP_DBHIGHMEM_HIGH
 
 SETUP_DBHIGHMEM_MAX
 	DE	Maximum (empfohlen für Sammlungen mit mehr als 50'000 Titeln und Computer mit 2 GB RAM und mehr)
-	EN	Maximum (recommended for libraries with more than 50'000 tracks and machines with 2+ GB RAM)
+	EN	Maximum (recommended for libraries with more than 50,000 tracks and machines with 2+ GB RAM)
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -18724,7 +18724,7 @@ SETUP_FXLOOPSOURCE
 	CS	Vstup efektové smyčky
 	DA	Input til effektsløjfe
 	DE	Effektschleifen-Eingabe
-	EN	Effects loop input
+	EN	Effects Loop Input
 	ES	Entrada de bucle de efectos
 	FI	Tehostesilmukan tulo
 	FR	Entrée de boucle d'effets
@@ -18769,7 +18769,7 @@ SETUP_FXLOOPCLOCK
 	CS	Režim hodin efektové smyčky
 	DA	Clockfunktion til effektsløjfer
 	DE	Taktmodus für Effektschleife
-	EN	Effects loop clock mode
+	EN	Effects Loop Clock Mode
 	ES	Modo de reloj de bucle de efectos
 	FI	Tehosteiden silmukan kellotila
 	FR	Mode horloge de boucle d'effets
@@ -19331,7 +19331,7 @@ SETUP_WORDCLOCKOUTPUT
 	CS	Signál taktu (Word Clock) na výstupech S/PDIF
 	DA	Wordclock på S/PDIF-udgangen
 	DE	Word Clock an S/PDIF-Ausgängen
-	EN	Word Clock On S/PDIF Outputs
+	EN	Word Clock on S/PDIF Outputs
 	ES	Reloj de palabras en salidas S/PDIF
 	FI	Word Clock päällä S/PDIF-lähdöissä
 	FR	Word Clock sur les sorties S/PDIF
