@@ -176,7 +176,7 @@ sub url {
 		$self->_url($new);
 		$Cache{$new} = $self;
 	
-		$cache->set('rt_' . $self->id, $new);
+		$cache->set('rt_' . $self->id, $new) unless main::SCANNER;
 	}
 	
 	return $self->_url;
@@ -219,7 +219,7 @@ sub new {
 	$Cache{$url} = $self;
 	$idIndex{$self->id} = $self;
 	
-	$cache->set('rt_' . $self->id, $url);
+	$cache->set('rt_' . $self->id, $url) unless main::SCANNER;
 	
 	return $self;
 }
@@ -307,7 +307,7 @@ sub fetchById {
 	my $self = $idIndex{$id};
 	
 	# try to get the URL from the disk cache - might be needed for BMF of volatile tracks
-	if (!$self) {
+	if (!main::SCANNER && !$self) {
 		my $url = $cache->get('rt_' . $id);
 		$self = $class->new($url) if $url;
 	}
