@@ -501,11 +501,14 @@ sub vacuum {
 
 		main::DEBUGLOG && $log->is_debug && $log->debug("$dbFile: Pages: $pages; Free: $free; Fragmentation: $frag");
 
-		# skip this vacuum if fragmentation is lower than 10%;
+		# don't skip this vacuum if fragmentation is higher than 10%;
 		$optional = 0 if $frag > 0.1;
 	}
 
-	$dbh->do('VACUUM') unless $optional;
+	if ( !$optional ) {
+		$dbh->do('PRAGMA temp_store = MEMORY') if $prefs->get('dbhighmem');
+		$dbh->do('VACUUM');
+	}
 	$dbh->disconnect;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("VACUUM $db done!");
