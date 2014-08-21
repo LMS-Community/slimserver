@@ -1891,8 +1891,15 @@ sub mediafolderQuery {
 	
 	# url overrides any folderId
 	my $params = ();
-	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
-
+	my $mediaDirs = Storable::dclone( Slim::Utils::Misc::getMediaDirs($type || 'audio') );
+	
+	# add "volatile" folders which are not scanned, to be browsed and played on the fly
+	push @$mediaDirs, map { 
+		my $url = Slim::Utils::Misc::fileURLFromPath($_);
+		$url =~ s/^file/tmp/;
+		$url;
+	} @{ Slim::Utils::Misc::getInactiveDirs() } if !$type || $type eq 'audio';
+	
 	my ($topLevelObj, $items, $count, $topPath, $realName);
 				
 	my $filter = sub {
@@ -2092,13 +2099,22 @@ sub mediafolderQuery {
 			}
 			
 			$realName ||= Slim::Music::Info::fileName($volatileUrl || $url);
+			
+			# volatile folder in browse root?
+			my $isDir;
+			if (!$realName || $realName =~ /^tmp/ && $id < 0) {
+				my $url2 = $url;
+				$url2 =~ s/^tmp/file/;
+				$realName = '[' . Slim::Music::Info::fileName($url2) . ']';
+				$isDir = Slim::Music::Info::isDir($url2);
+			}
 
 			my $textKey = uc(substr($realName, 0, 1));
 			
 			$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 			$request->addResultLoop($loopname, $chunkCount, 'filename', $realName);
 		
-			if (Slim::Music::Info::isDir($volatileUrl || $item)) {
+			if ($isDir || Slim::Music::Info::isDir($volatileUrl || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 			} elsif (Slim::Music::Info::isPlaylist($volatileUrl || $item)) {
 				$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
