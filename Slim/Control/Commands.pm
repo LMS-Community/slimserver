@@ -1835,7 +1835,7 @@ sub playlistcontrolCommand {
 			return;
 		}
 		
-		my $folder = Slim::Schema->find('Track', $folderId);
+		my $folder = Slim::Schema->find($folderId < 0 ? 'RemoteTrack' : 'Track', $folderId);
 		
 		# make sure it's a folder
 		if (!blessed($folder) || !$folder->can('url') || !$folder->can('content_type') || $folder->content_type() ne 'dir') {
@@ -1948,10 +1948,18 @@ sub playlistcontrolCommand {
 		# find the tracks
 		my @rawtracks = Slim::Schema->search('Track', { 'id' => { 'in' => \@track_ids } })->all;
 		
+		# we might have remote tracks (negative ID) in the list
+		foreach ( grep /-\d/, @track_ids ) {
+			# We don't have a Slim::Schema::ResultSet::RemoteTrack...
+			if ( my $track = Slim::Schema::RemoteTrack->fetchById($_) ) {
+				push @rawtracks, $track;
+			}
+		}
+		
 		# sort them back!
 		@tracks = sort { $track_ids_order{$a->id()} <=> $track_ids_order{$b->id()} } @rawtracks;
 
-		$artwork = $tracks[0]->album->artwork || 0 if scalar @tracks == 1;
+		$artwork = $tracks[0]->album->artwork || 0 if scalar @tracks == 1 && $tracks[0]->album;
 
 	} else {
 
