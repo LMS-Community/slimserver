@@ -691,7 +691,8 @@ sub getMediaDirs {
 	my $type = shift || '';
 	my $filter = shift;
 	
-	return $mediadirsCache{$type} if !$filter && $mediadirsCache{$type};
+	# need to clone the cached value, as the caller might be modifying it
+	return [ map { $_ } @{$mediadirsCache{$type}} ] if !$filter && $mediadirsCache{$type};
 	
 	my $mediadirs = getDirsPref('mediadirs');
 	
@@ -706,7 +707,7 @@ sub getMediaDirs {
 		$mediadirs = [ grep /^\Q$filter\E$/, @$mediadirs] if $filter;
 	}
 	
-	$mediadirsCache{$type} = $mediadirs unless $filter;
+	$mediadirsCache{$type} = [ map { $_ } @$mediadirs ] unless $filter;
 	
 	return $mediadirs
 }

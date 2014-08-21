@@ -1891,7 +1891,7 @@ sub mediafolderQuery {
 	
 	# url overrides any folderId
 	my $params = ();
-	my $mediaDirs = Storable::dclone( Slim::Utils::Misc::getMediaDirs($type || 'audio') );
+	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
 	
 	# add "volatile" folders which are not scanned, to be browsed and played on the fly
 	push @$mediaDirs, map { 
