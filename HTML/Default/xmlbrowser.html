@@ -33,7 +33,9 @@ ELSIF hasArtwork && ajaxSearch;
 END;
 
 USE Prefs;
-includeArtist = !Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')}.match('ARTIST');
+titleFormat = Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')};
+includeArtist = !titleFormat.match('ARTIST');
+includeAlbum  = !titleFormat.match('ALBUM');
 
 IF slideshow;
 	slideshowHelpers = 'class="slideImage" onClick="return false;"';
@@ -396,10 +398,10 @@ useSpecialExt="-browse" %]
 								[% artwork != 2 && !ajaxSearch ? '<br>' : '' %]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 							[% END %]
 						[% END %]
-						[% IF playlist_id && !item.name.match(item.album) %]
+						[% IF playlist_id && includeAlbum %]
 							[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'FROM' | string %] [% END; item.album %]
 						[% END %]
-						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) || (playlist_id && item.name2 && !item.name.match(item.name2)) %]
+						[% IF (item.showArtist && item.artist) || (item.hasMetadata == "album" && item.name2) || (playlist_id && item.name2 && includeArtist) %]
 							[% IF item.artist_id %]
 								[% IF artwork != 2 && !ajaxSearch; '<br>'; ELSE %][% 'BY' | string %][% END %]
 								[% FOREACH artist IN item.artists %]
