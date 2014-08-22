@@ -87,18 +87,20 @@ sub registerDefaultInfoProviders {
 			func  => \&infoLibrary,
 		) );
 		
-		$class->registerInfoProvider( currentplayer => (
-			after => 'library',
-			func  => \&infoCurrentPlayer,
-		) );
+		if (main::LOCAL_PLAYERS) {
+			$class->registerInfoProvider( currentplayer => (
+				after => 'library',
+				func  => \&infoCurrentPlayer,
+			) );
 		
-		$class->registerInfoProvider( players => (
-			after => 'currentplayer',
-			func  => \&infoPlayers,
-		) );
+			$class->registerInfoProvider( players => (
+				after => 'currentplayer',
+				func  => \&infoPlayers,
+			) );
+		}
 		
 		$class->registerInfoProvider( dirs => (
-			after => 'players',
+			after => main::LOCAL_PLAYERS ? 'players' : 'server',
 			func  => \&infoDirs,
 		) );
 		
