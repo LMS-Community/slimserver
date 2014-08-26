@@ -2527,6 +2527,22 @@ sub rescanCommand {
 		return;
 	}
 
+	# get our parameters
+	my $originalMode;
+	my $mode = $originalMode = $request->getParam('_mode') || 'full';
+	my $singledir = $request->getParam('_singledir');
+	
+	if ($singledir) {
+		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
+		
+		# don't run scan if newly added entry is disabled for all media types
+		if ( grep { /\Q$singledir\E/ } @{ Slim::Utils::Misc::getInactiveMediaDirs() }) {
+			main::INFOLOG && $log->info("Ignore scan request for folder, it's disabled for all media types: $singledir");
+			$request->setStatusDone();
+			return;
+		}
+	}
+
 	# if scan is running or we're told to queue up requests, return quickly
 	if ( Slim::Music::Import->stillScanning() || Slim::Music::Import->doQueueScanTasks() || Slim::Music::Import->hasScanTask() ) {
 		Slim::Music::Import->queueScanTask($request);
@@ -2536,15 +2552,6 @@ sub rescanCommand {
 		
 		$request->setStatusDone();
 		return;
-	}
-
-	# get our parameters
-	my $originalMode;
-	my $mode = $originalMode = $request->getParam('_mode') || 'full';
-	my $singledir = $request->getParam('_singledir');
-	
-	if ($singledir) {
-		$singledir = Slim::Utils::Misc::pathFromFileURL($singledir);
 	}
 	
 	# Bug 17358, if any plugin importers are enabled such as iTunes/MusicIP, run an old-style external rescan

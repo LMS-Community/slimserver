@@ -725,7 +725,7 @@ sub getImageDirs {
 }
 
 # get list of folders which are disabled for all media
-sub getInactiveDirs {
+sub getInactiveMediaDirs {
 	my @mediadirs = @{ getDirsPref('ignoreInAudioScan') };
 	
 	if (main::IMAGE && main::MEDIASUPPORT && scalar @mediadirs) {

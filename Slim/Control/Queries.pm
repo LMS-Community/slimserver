@@ -1898,7 +1898,7 @@ sub mediafolderQuery {
 		my $url = Slim::Utils::Misc::fileURLFromPath($_);
 		$url =~ s/^file/tmp/;
 		$url;
-	} @{ Slim::Utils::Misc::getInactiveDirs() } if !$type || $type eq 'audio';
+	} @{ Slim::Utils::Misc::getInactiveMediaDirs() } if !$type || $type eq 'audio';
 	
 	my ($topLevelObj, $items, $count, $topPath, $realName);
 				
