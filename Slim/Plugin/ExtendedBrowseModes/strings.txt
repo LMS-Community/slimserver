@@ -88,7 +88,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	CS	Náhodně zvolená alba
 	DA	Miks baseret på tilfældige album
 	DE	Zufällige Alben
-	EN	Random albums
+	EN	Random Albums
 	ES	Álbumes aleatorios
 	FI	Satunnaiset levyt
 	FR	Albums aléatoires
