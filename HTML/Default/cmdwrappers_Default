@@ -53,6 +53,8 @@
 				[%- itemImg = (item.image || item.icon) ? "thumbnailItemImg" : "dummyItemImg" %]
 				[% IF item.weblink %]
 					<a href="[% item.weblink %]" target="_blank" [% slideshowHelpers %]>
+				[% ELSIF item.simpleAlbumLink %]
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% player | uri %]/" class="browseItemLink">
 				[% ELSIF item.type != 'text' %]
 					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %][% IF sess %]&amp;sess=[% sess; END %]" class="browseItemLink">
 				[% ELSIF item.type == "text" && item.image %]

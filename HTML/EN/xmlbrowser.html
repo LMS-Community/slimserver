@@ -244,6 +244,8 @@
 							<a href="[% webroot %][% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
 							[% ELSE; NEXT %]
 							[% END %]
+						[% ELSIF item.simpleAlbumLink %]
+							<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% player | uri %]/">
 						[% ELSIF !item.type.match('^text') %]
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]

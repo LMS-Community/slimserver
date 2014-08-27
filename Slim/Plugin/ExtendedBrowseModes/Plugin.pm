@@ -193,6 +193,18 @@ sub initMenus {
 		weight       => 75,
 		static       => 1,
 		nocache      => 1,
+	},{
+		name         => 'PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS',
+		params       => {
+			mode => 'randomalbums',
+			sort => 'random',
+		},
+		feed         => \&_randomAlbums,
+		id           => 'myMusicRandomAlbums',
+		icon         => 'html/images/albums.png',
+		weight       => 21,
+		static       => 1,
+		nocache      => 1,
 	});
 
 	foreach (@{$prefs->get('additionalMenuItems') || []}, @additionalStaticMenuItems) {
@@ -360,5 +372,24 @@ sub _browseFS {
 	);
 }
 
+# Small wrapper around Slim::Menu::BrowseLibrary::_albums to add the simpleAlbumLink flag.
+# We can't use the regular drill-down links in the web UI, as this would call the randomized
+# list again, resulting in the wrong album being browsed into.
+sub _randomAlbums {
+	my ($client, $callback, $args, $pt) = @_;
+
+	Slim::Menu::BrowseLibrary::_albums( $client, sub {
+		my ($result) = @_;
+
+		$result->{items} = [ 
+			map { 
+				$_->{simpleAlbumLink} = 1; 
+				$_;
+			} @{$result->{items}} 
+		] if $result->{items};
+		
+		$callback->(@_);
+	}, $args, $pt );
+}
 
 1;

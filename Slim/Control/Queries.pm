@@ -278,7 +278,7 @@ sub albumsQuery {
 	my $ignoreNewAlbumsCache = $search || $compilation || $contributorID || $genreID || $trackID || $albumID || $year || Slim::Music::Import->stillScanning();
 	
 	# FIXME: missing genrealbum, genreartistalbum
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum', 'random' ])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -374,6 +374,17 @@ sub albumsQuery {
 		elsif ( $sort eq 'yearalbum' ) {
 			$order_by = "albums.year, albums.titlesort $collate";
 			$page_key = "albums.year";
+		}
+		elsif ( $sort eq 'random' ) {
+			$limit = $prefs->get('browseagelimit') || 100;
+			
+			# Force quantity to not exceed max
+			if ( $quantity && $quantity > $limit ) {
+				$quantity = $limit;
+			}
+
+			$order_by = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->randomFunction();
+			$page_key = undef;
 		}
 
 		if (defined $libraryID) {

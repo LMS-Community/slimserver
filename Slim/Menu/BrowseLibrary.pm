@@ -1380,7 +1380,7 @@ sub _albums {
 	my $tags       = 'ljsaaSS';
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	
-	if (!$sort || $sort ne 'sort:new') {
+	if (!$sort || $sort !~ /^sort:(?:random|new)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
 
@@ -1404,7 +1404,7 @@ sub _albums {
 		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
 			$sort = 'sort:' . $mapped;
 		}
-		$sort = undef unless grep {$_ eq $1} ('new', values %orderByList);
+		$sort = undef unless grep {$_ eq $1} ('new', 'random', values %orderByList);
 	} 
 	
 	_generic($client, $callback, $args, 'albums',
@@ -1448,7 +1448,7 @@ sub _albums {
 				$_->{'hasMetadata'}   = 'album'
 			}
 			my $extra;
-			if (scalar @searchTags && $sort !~ /:new/) {
+			if (scalar @searchTags && $sort !~ /:(?:new|random)/) {
 				my $params = _tagsToParams(\@searchTags);
 				my %actions = (
 					allAvailableActionsDefined => 1,
@@ -1573,12 +1573,12 @@ sub _albums {
 			return {
 				items       => $items,
 				actions     => \%actions,
-				sorted      => (($sort && $sort eq 'sort:new') ? 0 : 1),
-				orderByList => (($sort && $sort eq 'sort:new') ? undef : \%orderByList),
+				sorted      => (($sort && $sort =~ /^sort:(?:random|new)$/) ? 0 : 1),
+				orderByList => (($sort && $sort =~ /^sort:(?:random|new)$/) ? undef : \%orderByList),
 			}, $extra;
 		},
 		# no need for an index bar in New Music mode
-		$tags, $pt->{'wantIndex'} && !($sort && $sort eq 'sort:new'),
+		$tags, $pt->{'wantIndex'} && !($sort && $sort =~ /^sort:(random|new)$/),
 	);
 }
 
