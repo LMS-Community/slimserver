@@ -87,8 +87,26 @@
 				// Firefox wouldn't load the frame on first attempt. Have it load an empty page first, before the home.html 
 				if (Ext.isGecko)
 					frames.browser.location.href = "about:blank";
+				
+				var navigationUrl = "[% webroot %][% IF search; "search"; ELSE; "home"; END %].html?player=[% playerid %]&uid=[% USE date; date.now %]&query=[% search | uri %]";
+				
+				// we're parsing our URL to see whether the user wants to open it with a given URL in the left hand pane
+				var extendedUrl = document.URL.split('index.html/');
+				if (extendedUrl.length == 2) {
+					extendedUrl = extendedUrl[1].split('?');
+					if (extendedUrl.length == 2) {
+						var doc = extendedUrl[0];
+						var params = Ext.urlDecode(extendedUrl[1]);
+						
+						// some parameters we don't want to carry along
+						delete params.player;
+						delete params.sess;
+						
+						navigationUrl = (doc.match(/^http/) ? '' : '[% webroot %]') + doc + '?' + Ext.urlEncode(params);
+					}
+				}
 				 
-				frames.browser.location.href = "[% webroot %][% IF search; "search"; ELSE; "home"; END %].html?player=[% playerid %]&uid=[% USE date; date.now %]&query=[% search | uri %]";
+				frames.browser.location.href = navigationUrl; 
 
 				if (Ext.ux.Lightbox) {
 					Ext.ux.Lightbox.labelOf = '[% "OF" | string %]';
