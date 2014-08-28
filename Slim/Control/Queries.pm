@@ -376,7 +376,7 @@ sub albumsQuery {
 			$page_key = "albums.year";
 		}
 		elsif ( $sort eq 'random' ) {
-			$limit = $prefs->get('browseagelimit') || 100;
+			$limit = $prefs->get('itemsPerPage');
 			
 			# Force quantity to not exceed max
 			if ( $quantity && $quantity > $limit ) {
