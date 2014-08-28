@@ -20,7 +20,7 @@
 			#loading-mask {
 				width: 120%;
 				height: 100%;
-				background-image: url(html/images/background.png);
+				background-image: url([% webroot %]html/images/background.png);
 				position: absolute;
 				z-index: 20000;
 				left: 0;
@@ -42,7 +42,7 @@
 			#noJS a, #noJS a:visited { color: yellow; }
 			
 			.loading-indicator {
-				background-image: url(html/images/loading.gif);
+				background-image: url([% webroot %]html/images/loading.gif);
 			}
 
 			[% IF debug %]

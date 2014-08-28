@@ -1652,7 +1652,7 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 
 		var el = Ext.get(this.applyTo);
 		el.update( '<img src="/html/images/spacer.gif" class="progressLeft"/><img src="/html/images/spacer.gif" class="progressFillLeft"/>'
-			+ '<img src="/html/images/spacer.gif" class="progressIndicator"/><img src="html/images/spacer.gif" class="progressFillRight"/>'
+			+ '<img src="/html/images/spacer.gif" class="progressIndicator"/><img src="/html/images/spacer.gif" class="progressFillRight"/>'
 			+ '<img src="/html/images/spacer.gif" class="progressRight"/>' );	
 
 		// store the DOM elements to reduce flicker
