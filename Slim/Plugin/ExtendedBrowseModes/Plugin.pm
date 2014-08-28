@@ -222,19 +222,9 @@ sub registerBrowseMode {
 	Slim::Menu::BrowseLibrary->deregisterNode($item->{id});
 
 	foreach my $clientPref ( $serverPrefs->allClients ) {
-		if ($item->{static}) {
-			$clientPref->init({
-				'disabled_' . $item->{id} => $item->{enabled} ? 0 : 1
-			});
-		}
-		else {
-			if ($item->{enabled}) {
-				$clientPref->remove('disabled_' . $item->{id});
-			}
-			elsif (defined $item->{enabled}) {
-				$clientPref->set('disabled_' . $item->{id}, 1);
-			}
-		}
+		$clientPref->init({
+			'disabled_' . $item->{id} => $item->{enabled} ? 0 : 1
+		});
 	}
 	
 	my $icon = $item->{icon};

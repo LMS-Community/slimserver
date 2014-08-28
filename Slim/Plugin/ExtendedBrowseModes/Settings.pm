@@ -41,6 +41,14 @@ sub handler {
 			
 			if ( $params->{"delete$i"} ) {
 				Slim::Menu::BrowseLibrary->deregisterNode($params->{"id$i"});
+				my $serverPrefs = preferences('server');
+				
+				# remove prefs related to this menu item
+				foreach my $clientPref ( $serverPrefs->allClients ) {
+					$clientPref->remove('disabled_' . $params->{"id$i"});
+				}
+				$serverPrefs->remove('disabled_' . $params->{"id$i"});
+				
 				$menus = [ grep { $_->{id} ne $params->{"id$i"} } @$menus ];
 				next;
 			}
@@ -48,20 +56,7 @@ sub handler {
 			my ($menu) = $params->{"id$i"} eq '_new_' ? {} : grep { $_->{id} eq $params->{"id$i"} } @$menus;
 
 			if ( $class->needsClient && $serverPrefs ) {
-				# regular menu items: keep the flag around, don't delete it
-				if ( !$menu ) {
-					$serverPrefs->set('disabled_' . $params->{"id$i"}, $params->{"enabled$i"} ? 0 : 1);
-					next;
-				}
-				# custom menus: remove the flag, we don't want to end up with tons of orphans
-				else {
-					if ($params->{"enabled$i"}) {
-						$serverPrefs->remove('disabled_' . $params->{"id$i"});
-					}
-					else {
-						$serverPrefs->set('disabled_' . $params->{"id$i"}, 1);
-					}
-				}
+				$serverPrefs->set('disabled_' . $params->{"id$i"}, $params->{"enabled$i"} ? 0 : 1);
 			}
 
 			delete $menu->{enabled} if $serverPrefs;
@@ -69,7 +64,6 @@ sub handler {
 			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"});
 
 			if ( $params->{"id$i"} eq '_new_' ) {
-				
 				$menu = {
 					id => Time::HiRes::time(),
 					enabled => 1,
