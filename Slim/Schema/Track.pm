@@ -473,6 +473,9 @@ sub contributorRoles {
 	return Slim::Schema::Contributor->contributorRoles;
 }
 
+# displayAsHTML is called pretty often when rendering the right hand side playlist
+my $contributor_sth;
+
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
@@ -487,35 +490,40 @@ sub displayAsHTML {
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
 	if ($format !~ /ARTIST/) {
 
-		my $dbh = Slim::Schema->dbh;
-		my $sth = $dbh->prepare_cached(sprintf(qq(
+		$contributor_sth ||= Slim::Schema->dbh->prepare_cached(sprintf(qq(
 			SELECT DISTINCT(contributor_track.contributor) 
 			FROM contributor_track 
 			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s)
 		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
 		
 		my $contributorId;
-		$sth->execute($self->id);
-		$sth->bind_col( 1, \$contributorId );
+		$contributor_sth->execute($self->id);
+		$contributor_sth->bind_col( 1, \$contributorId );
 
 		my @info;
 
-		while ($sth->fetch) {
-			my $contributor = $contributorCache{$contributorId} || Slim::Schema->find('Contributor', $contributorId);
+		while ($contributor_sth->fetch) {
+			my $contributor = $contributorCache{$contributorId};
+			
+			if (!$contributor) {
+				$contributor = {};
+				$contributor->{obj} = Slim::Schema->find('Contributor', $contributorId);
+				
+				$contributor->{data} = {
+					'artistId'   => $contributorId,
+					'name'       => $contributor->{obj}->name,
+					'attributes' => 'contributor.id=' . $contributorId,
+				};
+
+				$contributorCache{$contributorId} = $contributor;
+			};
 
 			if (!$form->{'artist'}) {
 				$form->{'includeArtist'} = 1;
-				$form->{'artist'} = $contributor;
+				$form->{'artist'} = $contributor->{obj};
 			}
 
-			push @info, {
-#				'artist'     => $contributor,
-				'artistId'   => $contributorId,
-				'name'       => $contributor->name,
-				'attributes' => 'contributor.id=' . $contributorId,
-			};
-			
-			$contributorCache{$contributorId} = $contributor;
+			push @info, $contributor->{data};
 		}
 
 		$form->{'artistsWithAttributes'} = \@info if scalar @info;

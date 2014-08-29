@@ -115,6 +115,7 @@ sub init {
 		return (defined $output ? $output : '');
 	};
 
+	my $albumDiscc_sth;
 	$parsedFormats{'DISC'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
@@ -124,17 +125,17 @@ sub init {
 		my $disc = $_[0]->disc;
 
 		if ($disc && $disc == 1) {
+			
+			$albumDiscc_sth ||= Slim::Schema->dbh->prepare_cached("SELECT discc FROM albums WHERE id = ?");
+	
+			$albumDiscc_sth->execute($_[0]->albumid);
 
-			my $album = $_[0]->album;
+			my ($discc) = $albumDiscc_sth->fetchrow_array;
+			$albumDiscc_sth->finish;
 
-			if ($album) {
-
-				my $discc = $album->discc;
-
-				# suppress disc when only 1 disc in set
-				if (!$discc || $discc < 2) {
-					$disc = '';
-				}
+			# suppress disc when only 1 disc in set
+			if (!$discc || $discc < 2) {
+				$disc = '';
 			}
 		}
 

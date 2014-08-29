@@ -17,6 +17,14 @@
 			</div>
 		[% ELSE %]
 			[% IF playlist_items %]
+				[%
+					playString   = 'PLAY' | string;
+					fromString   = 'FROM' | string;
+					moreString   = 'MORE' | string;
+					removeString = 'REMOVE_FROM_PLAYLIST' | string;
+					artistString = 'ARTIST' | string;
+					albumString  = 'ALBUM' | string;
+				%]
 				[% FOREACH item = playlist_items %]
 					[% PROCESS status_list.html %]
 				[% END %]<div id="offset" style="display:none">[% start %]</div>

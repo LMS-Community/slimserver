@@ -12,6 +12,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
+use Tie::Cache::LRU::Expires;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -24,6 +25,8 @@ my $log = logger('player.playlist');
 my $prefs = preferences('server');
 
 use constant CACHE_TIME => 300;
+
+tie my %albumCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 5;
 
 sub init {
 	
@@ -203,17 +206,34 @@ sub playlist {
 			$form{'levelName'} = 'track';
 			$form{'odd'}       = ($itemnum + $offset) % 2;
 			
-			my $album          = ($form{'includeAlbum'} || !$form{'coverid'}) && $track->album;
-			
-			if ( $form{'includeAlbum'} && $album ) {
-				$form{'albumId'}    = $album->id;
-				$form{'albumTitle'} = $album->title;
+			if ( $form{'includeAlbum'} || !$form{'coverid'} ) {
+				my $albumId = $track->albumid;
+				my $albumDetails = $albumCache{$albumId};
+				
+				if (!$albumDetails) {
+					my $sth = Slim::Schema->dbh->prepare_cached("SELECT title, artwork FROM albums WHERE id = ?");
+					
+					$sth->execute($albumId);
+					
+					$albumDetails = $sth->fetchrow_hashref || {};
+					$albumDetails->{id} = $albumId;
+					utf8::decode($albumDetails->{title});
+					
+					$sth->finish;
+
+					$albumCache{$albumId} = $albumDetails;
+				}
+				
+				if ( $form{'includeAlbum'} ) {
+					$form{'albumId'}    = $albumId;
+					$form{'albumTitle'} = $albumDetails->{title};
+				}
+				
+				if ( !$form{'coverid'} ) {
+					$form{'artwork_track_id'} = $albumDetails->{artwork};
+				}
 			}
 			
-			if ( !$form{'coverid'} && $album ) {
-				$form{'artwork_track_id'} = $album->artwork;
-			}
-	
 			if ($itemnum == $currsongind) {
 				$form{'currentsong'} = "current";
 	
@@ -242,7 +262,7 @@ sub playlist {
 		$itemnum++;
 
 		# don't neglect the streams too long
-		main::idleStreams();
+		main::idleStreams() if !($itemnum % 5);
 	}
 
 	$params->{'pageinfo'}->{'totalDuration'} = Slim::Utils::DateTime::timeFormat($totalDuration) if $totalDuration;
