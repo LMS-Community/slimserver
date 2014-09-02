@@ -94,7 +94,7 @@
 				var extendedUrl = document.URL.split('index.html/');
 				if (extendedUrl.length == 2) {
 					extendedUrl = extendedUrl[1].split('?');
-					if (extendedUrl.length == 2) {
+					if (extendedUrl.length >= 1) {
 						var doc = extendedUrl[0];
 						var params = Ext.urlDecode(extendedUrl[1]);
 						
