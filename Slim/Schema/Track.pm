@@ -473,9 +473,6 @@ sub contributorRoles {
 	return Slim::Schema::Contributor->contributorRoles;
 }
 
-# displayAsHTML is called pretty often when rendering the right hand side playlist
-my $contributor_sth;
-
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
@@ -490,7 +487,7 @@ sub displayAsHTML {
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
 	if ($format !~ /ARTIST/) {
 
-		$contributor_sth ||= Slim::Schema->dbh->prepare_cached(sprintf(qq(
+		my $contributor_sth = Slim::Schema->dbh->prepare_cached(sprintf(qq(
 			SELECT DISTINCT(contributor_track.contributor) 
 			FROM contributor_track 
 			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s)
