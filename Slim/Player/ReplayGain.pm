@@ -44,7 +44,7 @@ sub fetchGainMode {
 	}
 	
 	# only support track gain for remote streams
-	if ($track->remote) {
+	if ($track->remote && $handler ne 'Slim::Player::Protocols::Volatile') {
 		return preventClipping( $track->replay_gain() || $prefs->client($client)->get('remoteReplayGain'), $track->replay_peak() );
 	}
 
