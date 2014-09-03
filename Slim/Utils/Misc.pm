@@ -575,7 +575,7 @@ sub fixPath {
 			}
 		}
 
-	} elsif (file_name_is_absolute($file)) {
+	} elsif (file_name_is_absolute($file) || !Slim::Music::Info::isFileURL($file)) {
 
 		$fixed = $file;
 
