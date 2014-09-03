@@ -51,7 +51,7 @@ sub getMetadataFor {
 		disc      => $track->disc,
 		secs      => $track->duration,
 		coverid   => $track->coverid,
-		icon      => $track->cover && 'music/' . $track->coverid . '/cover.png',
+		icon      => $track->cover && '/music/' . $track->coverid . '/cover.png',
 		bitrate   => $track->prettyBitRate,
 		genre     => $track->genre,
 		replay_gain=> $track->replay_gain,

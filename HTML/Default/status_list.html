@@ -26,9 +26,9 @@
 				[% IF item.plugin_meta.cover || item.plugin_meta.icon %]
 					[%# Display plugin cover or icon %]
 					[% IF item.plugin_meta.cover %]
-					<img src="[% webroot %][% item.plugin_meta.cover | resizeimage(50, 50) %]" width="50" height="50" onLoad="resize(this, 50)">
+					<img src="[% item.plugin_meta.cover | resizeimage(50, 50) %]" width="50" height="50" onLoad="resize(this, 50)">
 					[% ELSIF item.plugin_meta.icon %]
-					<img src="[% webroot %][% item.plugin_meta.icon | resizeimage(50, 50, resizeParam) %]" onLoad="resize(this, 50)">
+					<img src="[% item.plugin_meta.icon | resizeimage(50, 50, resizeParam) %]" onLoad="resize(this, 50)">
 					[% END %]
 				[% ELSE %]
 					<img src="[% ("/music/" _ (item.coverid || item.artwork_track_id || 0) _ "/cover") | resizeimage(50, 50) %]" onLoad="resize(this, 50)">

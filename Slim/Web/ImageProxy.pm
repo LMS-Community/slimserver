@@ -274,7 +274,7 @@ sub proxiedImage {
 		$ext =~ s/jpeg/jpg/;
 	}
 	
-	return 'imageproxy/' . uri_escape_utf8($url) . '/image' . $ext;
+	return '/imageproxy/' . uri_escape_utf8($url) . '/image' . $ext;
 }
 
 # allow plugins to register custom handlers for the image url
