@@ -225,10 +225,16 @@ sub lastScanTime {
 
 	# May not have a DB
 	return 0 if !Slim::Schema::hasLibrary();
-	
-	my $last  = Slim::Schema->single('MetaInformation', { 'name' => $name });
 
-	return blessed($last) ? $last->value : 0;
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		"SELECT value FROM metainformation WHERE name = ?"
+	);
+
+	$sth->execute;
+	my ($last) = $sth->fetchrow_array;
+	$sth->finish;
+	
+	return $last || 0;
 }
 
 =head2 setLastScanTime()
