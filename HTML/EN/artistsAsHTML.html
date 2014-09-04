@@ -1,4 +1,4 @@
-[% UNLESS noby %][% "BY" | string %] [% END %]
+[% " " _ stringBY _ " " %]
 [%- FILTER null %]
 [% contributorsHTML = [] %]
 
@@ -15,7 +15,7 @@
 	[% contrib = contributorTuple.name | html %]
 	
 	[% IF artwork || artwork == 0; artparam = "&amp;artwork=$artwork"; END %]
-	[% contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;[% artparam %]&amp;player=[% playerURI %]/" [% target %] class="browseItemLink"><span style="display:inline">[% contrib %]</span></a>[% END %]
+	[% contributorHTMLFrag = BLOCK %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;[% artparam %]&amp;player=[% playerURI %]/" [% target %] class="browseItemLink"><span style="display:inline">[% contrib %]</span></a>[% END %]
 
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 

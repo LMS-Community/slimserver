@@ -8,12 +8,12 @@
 					<td>[% menuItemNames.$option %]&nbsp;&nbsp;</td>
 					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Up">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_up.gif" border=0 align="center">[% ELSE %][% "MOVEUP" | string %][% END %]</a>&nbsp;</td>
 					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Down">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_down.gif" border=0 align="center">[% ELSE %][% "MOVEDOWN" | string %][% END %]</a>&nbsp;</td>
-					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% "DELETE" | string %][% END %]</a>&nbsp;</td>
+					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% stringDELETE %][% END %]</a>&nbsp;</td>
 					<td><input type=checkbox class="stdedit" name="menuItemRemove[% loop.index %]" id="menuItemRemove[% loop.index %]" value="1" /></td>
 				</tr>
 			[%- END -%]
 		</table>
-		<p><input name="removeItems" type="submit" class="stdclick" value="[% "DELETE" | string %]"></p>
+		<p><input name="removeItems" type="submit" class="stdclick" value="[% stringDELETE %]"></p>
 	[% END %]
 
 
@@ -29,7 +29,7 @@
 	</table>
 
 	<p>
-		<input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]">
+		<input name="addItems" type="submit" class="stdclick" value="[% stringADD %]">
 		<input type=hidden name="nonMenuItems" value="[% nonMenuItems.keys.max %]" />
 	</p>
 	[% END %]

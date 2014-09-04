@@ -258,9 +258,9 @@
 	
 				[% PROCESS jsString id='NONE' jsId='summary_none' %]
 				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
-				SqueezeJS.Strings['summary_audiodir'] += '[% "COLON" | string %]';
+				SqueezeJS.Strings['summary_audiodir'] += '[% stringCOLON %]';
 				[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
-				SqueezeJS.Strings['summary_playlistdir'] += '[% "COLON" | string %]';
+				SqueezeJS.Strings['summary_playlistdir'] += '[% stringCOLON %]';
 				[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
 				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicip' %]
 
@@ -358,14 +358,14 @@
 								<p>[% "SETUP_WIZARD_SQN_PLEASE" | string %]<br/>&nbsp;</p>
 								<table>
 									<tr>
-										<td align="right" style="white-space:nowrap">[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]&nbsp;</td>
+										<td align="right" style="white-space:nowrap">[% "SETUP_SN_EMAIL" | string %][% stringCOLON %]&nbsp;</td>
 										<td>
 											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="30">
 											<p id="sn_result" style="color:red">&nbsp;</p>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
+										<td align="right">[% "SETUP_SN_PASSWORD" | string %][% stringCOLON %]&nbsp;</td>
 										<td>
 											<input type="password" name="sn_password_sha" id="sn_password_sha" value="[% prefs.sn_password_sha %]" size="30">
 											<p><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></p>
@@ -491,7 +491,7 @@
 						</ul>
 						<br/>
 				
-						<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</h4>
+						<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% stringCOLON %]</h4>
 						<ul class="wz_summary_list" id="summary"></ul>
 				
 						<div style="height: 30px">&nbsp;</div>

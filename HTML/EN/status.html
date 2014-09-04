@@ -13,24 +13,24 @@
     [% IF modeplay %][% "PLAYING" | string %][% END %]
     [% IF modepause %][% "PAUSED_ON" | string %][% END %]
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
-    [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]
+    [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% stringCOLON %]
    </div>
    <div class="playingSong"><a [% songinfoHRef %] target="browser">[% songtitle %]</a>
    [% IF itemobj.album.title && itemobj.album.title != noAlbum %]
-    [% "FROM" | string %] <a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>
+    [% stringFROM %] <a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>
    [%- END %]
    [% IF itemobj.artist && itemobj.artist != noArtist %]
     [% PROCESS artistsAsHTML.html %]
    [%- END %]
    [%- IF songcount %]
-    <span class="playingSongControls"><a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]&amp;start=[% start %]"><span>([% "DELETE" | string %])</span></a></span>
+    <span class="playingSongControls"><a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]&amp;start=[% start %]"><span>([% stringDELETE %])</span></a></span>
    [%- ELSE %]
     [% "NOTHING" | string %]
    [%- END %]
    </div>
 <hr><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=-1&amp;player=[% playerURI %]">[% "PREV" | string %]</a>
 <a href="status.html?p0=playlist&amp;p1=jump&amp;p2=%2b1&amp;player=[% playerURI %]">[% "SKIP" | string %]</a>
-    [% IF not modeplay %]<a href="status.html?p0=play&amp;player=[% playerURI %]">[% END %][% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %][% IF not modeplay %]</a>[% END %]
+    [% IF not modeplay %]<a href="status.html?p0=play&amp;player=[% playerURI %]">[% END %][% IF modeplay %]<b>[% END %][% stringPLAY %][% IF modeplay %]</b>[% END %][% IF not modeplay %]</a>[% END %]
     <a href="status.html?p0=pause&amp;player=[% playerURI %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a>
     [% IF not modestop %]<a href="status.html?p0=stop&amp;player=[% playerURI %]">[% END %][% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %][% IF not modestop %]</a>[% END %]
 
@@ -39,7 +39,7 @@
 
 [% IF isplayer %]<br>
 
-    [% "PLAYER" | string %][% "COLON" | string %]
+    [% "PLAYER" | string %][% stringCOLON %]
                [% IF mode == 'off' %]<a target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=1">[% END %][% IF mode != 'off' %]<b>[% END %][% "ON" | string %][% IF mode != 'off' %]</b>[% END %][% IF mode == 'off' %]</a>[% END %]/[% IF mode != 'off' %]<a
                target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=0">[% END %][% IF mode == 'off' %]<b>[% END %][% "OFF" | string %][% IF mode == 'off' %]</b>[% END %][% IF mode != 'off' %]</a>[% END %]
 

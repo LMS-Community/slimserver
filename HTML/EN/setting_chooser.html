@@ -45,7 +45,7 @@ END %]
 <form id="setup_chooser" name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
 <input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
 	<select ID="choose_setting" NAME="choose_setting" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
-		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
+		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% stringHOME %]">[% stringHOME %]</option>[% END %]
 		[% PROCESS addSetupLinks %]
 	</select>
 	<input type=hidden value="[% page %]" name="page">

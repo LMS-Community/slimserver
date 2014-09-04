@@ -1,6 +1,6 @@
 [% IF song_count; pageHeaderInfo = BLOCK %]
-	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]
-	[% IF albumDuration %]([% "LENGTH" | string %][% "COLON" | string %] [% albumDuration %])[% END %]
+	[% album_count %] [% "WITH" | string %] [% song_count %] [% stringBY %] [% artist_count %]
+	[% IF albumDuration %]([% "LENGTH" | string %][% stringCOLON %] [% albumDuration %])[% END %]
 [% END; END %]  
 
 [% pagetitle = browseby | string; noSpacer = 1 %]

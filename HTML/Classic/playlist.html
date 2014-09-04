@@ -13,7 +13,7 @@
 <div id="playList">
 	[% IF playercount == '0' %]
 	[% ELSE %]
-		<span id="currentPlaylistLabel">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</span>
+		<span id="currentPlaylistLabel">[% "CURRENT_PLAYLIST" | string %][% stringCOLON %][% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</span>
 		<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</span> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</span> [% PROCESS clearPlaylistLink %]</span>
 	[% END %]
 	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]

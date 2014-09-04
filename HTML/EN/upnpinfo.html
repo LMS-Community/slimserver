@@ -15,42 +15,42 @@
 			</li>
 		[% END %]
 		
-		<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
+		<li><div class="songInfoTitle">[% "TITLE" | string; stringCOLON %]</div>
 			<div class="songInfoText">[% itemobj.title | html %]</div>
 		</li>
 		
 		[% IF itemobj.artist %] 
-			<li><div class="songInfoTitle">[% "ARTIST" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% stringARTIST; stringCOLON %]</div>
 				<div class="songInfoText">[% itemobj.artist | html %]</div>
 			</li>
 		[% END %]
 		
 		[% IF itemobj.album %] 
-			<li><div class="songInfoTitle">[% "ALBUM" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% stringALBUM; stringCOLON %]</div>
 				<div class="songInfoText">[% itemobj.album | html %]</div>
 			</li>
 		[% END %]
 		
 		[% IF itemobj.genre %] 
-			<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% "GENRE" | string; stringCOLON %]</div>
 				<div class="songInfoText">[% itemobj.genre | html %]</div>
 			</li>
 		[% END %]
 		
 		[% IF itemobj.duration %] 
-			<li><div class="songInfoTitle">[% "LENGTH" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% "LENGTH" | string; stringCOLON %]</div>
 				<div class="songInfoText">[% itemobj.duration | html %]</div>
 			</li>
 		[% END %]
 		
 		[% IF itemobj.url %]
-			<li><div class="songInfoTitle">[% "URL" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% "URL" | string; stringCOLON %]</div>
 				<div class="songInfoText"><a href="[% itemobj.url %]" target="_new">[% itemobj.url | html %]</a></div>
 			</li>
 		[% END %]
 		
 		[% IF itemobj.blurbText %]
-			<li><div class="songInfoTitle">[% "COMMENT" | string; "COLON" | string %]</div>
+			<li><div class="songInfoTitle">[% "COMMENT" | string; stringCOLON %]</div>
 				<div class="songInfoText">[% itemobj.blurbText | html_line_break %]</div>
 			</li>
 		[% END %]

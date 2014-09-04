@@ -64,7 +64,7 @@
 		[% progress %]
 		[% IF scanning && !abortScan %]
 			<div id="abortscanlink"><br/>
-				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a>[%# "COLON" | string %] [%# scanning | string %]
+				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a>[%# stringCOLON %] [%# scanning | string %]
 			</div>
 		[% END %]
 	[% END %]
@@ -79,7 +79,7 @@
 		[% WRAPPER setting title = client.name %]
 			[% FOREACH item IN client.web.items; item.key %]
 				[% IF item.values.0 %]
-					<div>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</div>
+					<div>[% item.keys.0 | string %][% stringCOLON %] [% item.values.0 %]</div>
 				[% END %]
 			[% END %]
 		[% END %]

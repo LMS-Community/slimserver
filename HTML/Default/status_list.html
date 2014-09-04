@@ -6,13 +6,13 @@
 		[% IF noPlaylistCover %]
 			<a href="[% webroot _ info_link %]?item=[% item.item %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
 			[% IF item.includeAlbum && albumTitle && albumTitle != item.noAlbum %]
-				[% fromString %]
-				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% albumString %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink">[% albumTitle | html %]</a>
+				[% stringFROM %]
+				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink">[% albumTitle | html %]</a>
 			[% END %]
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist %]
-				[% "BY" | string %] 
+				[% stringBY %] 
 				[% FOREACH contributorTuple IN item.artistsWithAttributes %]
-					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% artistString %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;player=[% playerURI %]/" target="browser" class="browseItemLink"><span style="display:inline">[% contributorTuple.name | html %][% loop.last ? "" : ", " %]</span></a>
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;player=[% playerURI %]/" target="browser" class="browseItemLink"><span style="display:inline">[% contributorTuple.name | html %][% loop.last ? "" : ", " %]</span></a>
 				[% END %]
 			[% END %]
 			[%# current_title is for radio streams %]
@@ -22,7 +22,7 @@
 			[% END %]
 		[% ELSE %]
 			<span class="playlistCover">
-				[% IF albumId %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% albumString %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% END %]
+				[% IF albumId %]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% END %]
 				[% IF item.plugin_meta.cover || item.plugin_meta.icon %]
 					[%# Display plugin cover or icon %]
 					[% IF item.plugin_meta.cover %]
@@ -48,7 +48,7 @@
 				[% IF item.includeArtist;
 					IF item.artist && item.artist != item.noArtist;
 						FOREACH contributorTuple IN item.artistsWithAttributes;
-							%]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% artistString %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;player=[% playerURI %]/" target="browser" class="browseItemLink"><span style="display:inline">[% contributorTuple.name | html %][% loop.last ? "" : ", " %]</span></a>[%
+							%]<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;player=[% playerURI %]/" target="browser" class="browseItemLink"><span style="display:inline">[% contributorTuple.name | html %][% loop.last ? "" : ", " %]</span></a>[%
 						END;
 					ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
 						item.plugin_meta.artist;
@@ -58,16 +58,16 @@
 			[% IF item.includeAlbum && (albumTitle || item.plugin_meta) && (albumTitle || item.plugin_meta.album) != item.noAlbum && (albumTitle || item.plugin_meta.album) != "" %]
 				<div class="playlistSongDetail">
 					[% IF albumTitle %]
-					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% albumString %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% (albumTitle || item.plugin_meta.album) | html %]</span></a>
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% (albumTitle || item.plugin_meta.album) | html %]</span></a>
 					[% ELSE; item.plugin_meta.album; END %]
 				</div>
 			[% END %]
 		[% END %]
 		<div class="playlistControls">
-			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% playString %]" title="[% playString %]">
-			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% removeString %]" title="[% removeString %]"></a>
+			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringPLAY %]" title="[% stringPLAY %]">
+			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringREMOVE_FROM_PLAYLIST %]" title="[% stringREMOVE_FROM_PLAYLIST %]"></a>
 			<a href="[% webroot _ info_link %]?item=[% item.item %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">
-				<img src="[% webroot %]html/images/b_mmmix.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% moreString %]" title="[% moreString %]">
+				<img src="[% webroot %]html/images/b_mmmix.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% stringMORE %]" title="[% stringMORE %]">
 			</a>
 			[% IF item.currentsong %]<img src="[% webroot %]html/images/spacer.gif" class="nowPlayingIcon"/>[% END %]
 		</div>

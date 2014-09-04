@@ -161,7 +161,7 @@ ELSE %]
 		</div>
 	[% control=''; END %]
 
-	[% pagetitle = "HOME" | string %]
+	[% pagetitle = stringHOME %]
 	[% menu = BLOCK %]
 	<div class="homeMenuSection" id="homeMenu">
 		[% IF hasLibrary %]
@@ -202,10 +202,10 @@ ELSE %]
 					control = BLOCK;
 						IF entry.type == "audio" || entry.type == "playlist";
 							WRAPPER playlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
+								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% playerURI %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 							WRAPPER addlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
+								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% playerURI %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 						ELSE;
 							PROCESS dummylink;
@@ -241,7 +241,7 @@ ELSE %]
 	[% IF NOT warn AND (album_count OR artistcount OR song_count) %]
 		[% infoTab = BLOCK %]
 			<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
-			<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
+			<span id="songcount">[%- song_count %]</span> [% stringBY -%]
 			<span id="artistcount">[% artist_count %]</span>[% IF library_name; 
 				' (' _ library_name _ ')'; 
 			END %].

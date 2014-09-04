@@ -81,7 +81,7 @@
 		[% WRAPPER setting title="SETUP_DOUBLESIZE" desc="SETUP_DOUBLESIZE_DESC" %]
 			<table>
 				<tr>
-					<td><label for="doublesize" class="stdlabel">[% "SETUP_DOUBLESIZE" | string %][% "COLON" | string %]</label></td>
+					<td><label for="doublesize" class="stdlabel">[% "SETUP_DOUBLESIZE" | string %][% stringCOLON %]</label></td>
 					<td>
 						<select class="stdedit" name="pref_doublesize" id="doublesize">
 							[% FOREACH option = {
@@ -95,7 +95,7 @@
 				</tr>
 		
 				<tr>
-					<td><label for="offDisplaySize" class="stdlabel">[% "SETUP_OFFDISPLAYSIZE" | string %][% "COLON" | string %]</label></td>
+					<td><label for="offDisplaySize" class="stdlabel">[% "SETUP_OFFDISPLAYSIZE" | string %][% stringCOLON %]</label></td>
 					<td>
 						<select class="stdedit" name="pref_offDisplaySize" id="offDisplaySize">
 							[% FOREACH option = {
@@ -154,12 +154,12 @@
 			[% WRAPPER settingGroup title="SETUP_SCROLLRATE" desc="SETUP_SCROLLRATE_DESC" %]
 				<table>
 					<tr>
-						<td><label for="scrollRate" class="stdlabel">[% "SETUP_SCROLLRATE" | string %][% "COLON" | string %]</label></td>
+						<td><label for="scrollRate" class="stdlabel">[% "SETUP_SCROLLRATE" | string %][% stringCOLON %]</label></td>
 						<td><input type="text" class="stdedit" name="pref_scrollRate" id="scrollRate" value="[% prefs.pref_scrollRate %]" size="15"></td>
 					</tr>
 			
 					<tr>
-						<td><label for="scrollRateDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLRATE" | string %][% "COLON" | string %]</label></td>
+						<td><label for="scrollRateDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLRATE" | string %][% stringCOLON %]</label></td>
 						<td><input type="text" class="stdedit" name="pref_scrollRateDouble" id="scrollRateDouble" value="[% prefs.pref_scrollRateDouble %]" size="15"></td>
 					</tr>
 				</table>	
@@ -168,12 +168,12 @@
 			[% WRAPPER settingGroup title="SETUP_SCROLLPAUSE" desc="SETUP_SCROLLPAUSE_DESC" %]
 				<table>
 					<tr>
-						<td><label for="scrollPause" class="stdlabel">[% "SETUP_SCROLLPAUSE" | string %][% "COLON" | string %]</label></td>
+						<td><label for="scrollPause" class="stdlabel">[% "SETUP_SCROLLPAUSE" | string %][% stringCOLON %]</label></td>
 						<td><input type="text" class="stdedit" name="pref_scrollPause" id="scrollPause" value="[% prefs.pref_scrollPause %]" size="15"></td>
 					</tr>
 	
 					<tr>
-						<td><label for="scrollPauseDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPAUSE" | string %][% "COLON" | string %]</label></td>
+						<td><label for="scrollPauseDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPAUSE" | string %][% stringCOLON %]</label></td>
 						<td><input type="text" class="stdedit" name="pref_scrollPauseDouble" id="scrollPauseDouble" value="[% prefs.pref_scrollPauseDouble %]" size="15"></td>
 					</tr>
 				</table>	
@@ -183,12 +183,12 @@
 				[% WRAPPER settingGroup title="SETUP_SCROLLPIXELS" desc="SETUP_SCROLLPIXELS_DESC" %]
 					<table>
 						<tr>
-							<td><label for="scrollPixels" class="stdlabel">[% "SETUP_SCROLLPIXELS" | string %][% "COLON" | string %]</label></td>
+							<td><label for="scrollPixels" class="stdlabel">[% "SETUP_SCROLLPIXELS" | string %][% stringCOLON %]</label></td>
 							<td><input type="text" class="stdedit" name="pref_scrollPixels" id="scrollPixels" value="[% prefs.pref_scrollPixels %]" size="15"></td>
 						</tr>
 		
 						<tr>
-							<td><label for="scrollPixelsDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPIXELS" | string %][% "COLON" | string %]</label></td>
+							<td><label for="scrollPixelsDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPIXELS" | string %][% stringCOLON %]</label></td>
 							<td><input type="text" class="stdedit" name="pref_scrollPixelsDouble" id="scrollPixelsDouble" value="[% prefs.pref_scrollPixelsDouble %]" size="15"></td>
 						</tr>
 					</table>

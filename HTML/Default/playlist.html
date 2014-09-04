@@ -17,14 +17,6 @@
 			</div>
 		[% ELSE %]
 			[% IF playlist_items %]
-				[%
-					playString   = 'PLAY' | string;
-					fromString   = 'FROM' | string;
-					moreString   = 'MORE' | string;
-					removeString = 'REMOVE_FROM_PLAYLIST' | string;
-					artistString = 'ARTIST' | string;
-					albumString  = 'ALBUM' | string;
-				%]
 				[% FOREACH item = playlist_items %]
 					[% PROCESS status_list.html %]
 				[% END %]<div id="offset" style="display:none">[% start %]</div>
@@ -41,7 +33,7 @@
 					<span id="total_playtime">[% IF pageinfo.totalDuration; "TOTAL_TIME" | string; "&nbsp;" _ pageinfo.totalDuration; END %]</span>&nbsp;
 					<span id="current_playlist_name">
 					[% IF current_playlist %]
-						&nbsp;&nbsp;[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %] [% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]
+						&nbsp;&nbsp;[% "CURRENT_PLAYLIST" | string %][% stringCOLON %] [% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]
 					[% END %]&nbsp;
 					</span>
 				</td>

@@ -4,7 +4,7 @@
 	</pre>
 [%- ELSE -%]
 [% FILTER null %]
-[% pagetitle = "HOME" | string; noSpacer = 1; noHomeLink = 1 %]
+[% pagetitle = stringHOME; noSpacer = 1; noHomeLink = 1 %]
 
 [% IF warn %]
 	[% bodyscript = 'onload="doLoad(1);"' %]
@@ -17,7 +17,7 @@
 
 		<div id="libraryInfo" [% IF warn OR NOT (album_count OR artistcount OR song_count) %]style="display:none"[% END %]>
 			[%- "LIBRARY_CONTAINS" | string %]&nbsp;<span id="albumcount">[% album_count %]</span>&nbsp;[% "WITH" | string -%]
-			<span id="songcount">[%- song_count %]</span>&nbsp;[% "BY" | string %]&nbsp;<span id="artistcount">[% artist_count %]</span>.
+			<span id="songcount">[%- song_count %]</span>&nbsp;[% stringBY %]&nbsp;<span id="artistcount">[% artist_count %]</span>.
 		</div>
 
 		<div id="newVersion">

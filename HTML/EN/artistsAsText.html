@@ -1,5 +1,6 @@
-[% UNLESS noby %] [% "BY" | string %] [% END %]
+[% " " _ stringBY _ " " %]
 [%- FILTER null %]
+[% IF item.artists; contributorsText = item.artists; ELSE %]
 [% contributorsText = [ item.artist ] %]
 
 [% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
@@ -9,5 +10,5 @@
 	[% contributorsText.push(contributorTuple.name) %]
 
 [% END %]
-[% END -%]
+[% END; END -%]
 [% contributorsText.join(', ') %]

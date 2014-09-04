@@ -1,4 +1,4 @@
-[% IF NOT notext %][% state | string %][% "COLON" | string %][% END %]
+[% IF NOT notext %][% state | string %][% stringCOLON %][% END %]
 
 [%- FOREACH type IN modes -%]
 	[%- IF $state!=loop.index || activelink %]<a [% IF classdef %]class=[% classdef %][% END %]href="status.html?p0=playlist&amp;p1=[% state %]&amp;p2=[% loop.index %]&amp;player=[% playerURI %]&amp;start=[% start %]">[% END %][% IF $state==loop.index %][% activeon || '<b>' %][% END %][% IF nolower %][%- type|string -%][% ELSE %][%- type|string|lower -%][% END %][% IF $state==loop.index %][% activeoff || '</b>' %][% END -%][%- IF $state!=loop.index || activelink-%]</a>[% END %][%- IF !loop.last %][% IF separator %][% separator %][% ELSE %]/[% END -%][% END -%]

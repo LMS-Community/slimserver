@@ -20,7 +20,7 @@
 [% PROCESS jsString id='REPEAT_ALL' jsId='repeat2' %]
 
 [% PROCESS jsString id='VOLUME' jsId='volume' %]
-SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
+SqueezeJS.Strings['volume'] += '[% stringCOLON %]';
 [% PROCESS jsString id='VOLUME_LOUDER' jsId='volumeup' %]
 [% PROCESS jsString id='VOLUME_SOFTER' jsId='volumedown' %]
 

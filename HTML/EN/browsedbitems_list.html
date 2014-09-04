@@ -7,7 +7,7 @@ END;
 -%]
 [%- IF item.heading %]
 	<div class="searchHeader">
-		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
+		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% stringCOLON %][% item.numresults %]
 	</div>
 [%- ELSE -%]
 	[% WRAPPER $contentwrapper

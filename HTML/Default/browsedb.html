@@ -14,7 +14,7 @@
 		var orderByList;
 		[% IF levelName == 'album' %]
 			orderByList = {
-				'[% "ALBUM" | string %]'                : 'album.titlesort',
+				'[% stringALBUM %]'                     : 'album.titlesort',
 				'[% "SORT_YEARALBUM" | string %]'       : 'album.year,album.titlesort',
 				'[% "SORT_YEARARTISTALBUM" | string %]' : 'album.year,contributor.namesort,album.titlesort',
 				'[% "SORT_ARTISTALBUM" | string %]'     : 'contributor.namesort,album.titlesort',
@@ -49,7 +49,7 @@
 		END %]
 
 	[%- IF song_count; infoTab = BLOCK -%]
-		<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
+		<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% stringBY %] [% artist_count %].</div>
 	[%- END; END -%]
 
 	[%- WRAPPER $container %]

@@ -27,8 +27,8 @@
 	[% END %]
 [%- END %]
 
-[% BLOCK homelink; homeString = "HOME" | string;
-	"<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; $target; "\""; END; ">"; img or homeString; "</a>";
+[% BLOCK homelink;
+	"<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; $target; "\""; END; ">"; img or stringHOME; "</a>";
 END %]
 
 [%- BLOCK playlistcontrols %]
@@ -80,7 +80,7 @@ END %]
 
 		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 
-			[% "FROM" | string %]
+			[% stringFROM %]
 			<a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a>
 		[% END %]
 
@@ -92,8 +92,8 @@ END %]
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
 <div class="pagebar">
-[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" title="[% "FIRST" | string %]" width="17" height="13" align="top"></a> [% END %]
-[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" title="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% stringFIRST %]" title="[% stringFIRST %]" width="17" height="13" align="top"></a> [% END %]
+[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% stringPREVIOUS %]" title="[% stringPREVIOUS %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphaindex -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
@@ -106,8 +106,8 @@ END %]
  [%- END %]
 [% END %]
 [%- END %]
-[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
-[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" title="[% "LAST" | string %]" width="17" height="13" align="top"></a> [% END %]
+[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% stringNEXT %]" title="[% stringNEXT %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %][% IF sess %]&amp;sess=[% sess; END %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% stringLAST %]" title="[% stringLAST %]" width="17" height="13" align="top"></a> [% END %]
 </div>
 [% END %]
 

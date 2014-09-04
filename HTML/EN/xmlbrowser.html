@@ -48,7 +48,7 @@
 [% IF streaminfo %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url %]
 	<div id="songInfoHeader">
-		[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %] [% "PLAY" | string %]<br />
+		[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %] [% stringPLAY %]<br />
 		[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %] [% "ADD_TO_PLAYLIST" | string %]
 	</div>
 	[% END %]
@@ -121,7 +121,7 @@
 			<input type="hidden" name="playlist_id" value=[% playlist_id %]>
 			[%- IF item.remote %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.title | html %]">[% END %]
 			<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.url %]">
-			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
+			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% stringSAVE %]>
 			<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
 		</form>
 	[% END %]
@@ -132,11 +132,11 @@
 				<table>
 					<tr>
 						<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlistTitle; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
-						<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
-						<td><input class="stdclick" name="submit" type=submit value="[% "ADD" | string %]" onclick='this.form.addItem.value=1'></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% stringSAVE %]" onclick='this.form.renamePlaylist.value=1'></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% stringADD %]" onclick='this.form.addItem.value=1'></td>
 						<td>
 							[% IF playlistTitle %]
-								<input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'>
+								<input class="stdclick" type="submit" value="[% stringDELETE %]" onclick='this.form.deletePlaylist.value=1'>
 							[% END %]
 						</td>
 					</tr>
@@ -235,7 +235,7 @@
 					[% ELSE %]
 						[% IF item.label %]
 							[% item.label | string %]
-							[%- "COLON" | string %]
+							[%- stringCOLON %]
 						[% END %]	
 						[% IF item.weblink %]
 							<a href="[% item.weblink %]" target="_blank">
@@ -245,7 +245,7 @@
 							[% ELSE; NEXT %]
 							[% END %]
 						[% ELSIF item.simpleAlbumLink %]
-							<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% player | uri %]/">
+							<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.id %]&amp;player=[% player | uri %]/">
 						[% ELSIF !item.type.match('^text') %]
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
@@ -260,7 +260,7 @@
 								<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
 							[% END %]
 						[% IF item.showArtist && item.artist %]
-							[% UNLESS noby %][% "BY" | string %] [% END %]
+							[% stringBY %]
 							[% IF item.artist_id %]
 								<a [% PROCESS artistItemHRef %] class="browseItemLink">[% item.artist %]</a>
 							[% ELSE %]

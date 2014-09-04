@@ -154,7 +154,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" desc="" %]
 		[% FOREACH item IN playerinfo; item.key %]
 			[% IF item.values.0 %]
-				<p>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</p>
+				<p>[% item.keys.0 | string %][% stringCOLON %] [% item.values.0 %]</p>
 			[% END %]
 		[% END %]
 	[% END %]

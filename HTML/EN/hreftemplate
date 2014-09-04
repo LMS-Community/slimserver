@@ -1,8 +1,28 @@
 [%- FILTER null %]
 [% 
+stringBY    = "BY" | string;
+stringFROM  = "FROM" | string;
+stringHOME  = "HOME" | string;
+stringFIRST = "FIRST" | string;
+stringLAST  = "LAST" | string;
+stringNEXT  = "NEXT" | string;
+stringUP    = "UP" | string;
+stringDOWN  = "DOWN" | string;
+stringPREVIOUS = "PREVIOUS" | string;
+stringSAVE  = "SAVE" | string;
+stringCOLON = "COLON" | string;
+stringPLAY  = "PLAY" | string;
+stringREMOVE_FROM_PLAYLIST = "REMOVE_FROM_PLAYLIST" | string;
+stringADD   = "ADD" | string;
+stringDELETE= "DELETE" | string;
+
+stringALBUM = "ALBUM" | string;
+stringARTIST= "ARTIST" | string;
+stringYEAR  = "YEAR" | string;
+
 playerURI = player | uri;
-albumHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% itemobj.album.title | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/"[% END;
-yearHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% itemobj.year %])&amp;year=[% itemobj.year %]&amp;player=[% playerURI %]/"[% END;
+albumHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% itemobj.album.title | uri %])&amp;album_id=[% itemobj.album.id %]&amp;player=[% playerURI %]/"[% END;
+yearHRef = BLOCK %]href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringYEAR %]%20([% itemobj.year %])&amp;year=[% itemobj.year %]&amp;player=[% playerURI %]/"[% END;
 songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$playerURI\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
 MoveUp   = "%2D1"; # -1
@@ -14,15 +34,15 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 %]
 
 [%# href for home page %]
-[% BLOCK homeLink; homeString = "HOME" | string -%]
+[% BLOCK homeLink -%]
 	[% "<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; target; "\""; END; ">" %]
-	[% IF img; "<img src=\"html/images/";img;"\" >";ELSE; homeString; END;"</a>" -%]
+	[% IF img; "<img src=\"html/images/";img;"\" >";ELSE; stringHOME; END;"</a>" -%]
 [%- END %]
 
 [%# href for save playlist command %]
-[% BLOCK savePlaylistLink; saveString = "SAVE" | string -%] 
+[% BLOCK savePlaylistLink -%] 
 	[% "<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >" %]
-	[% IF img; "<img alt=\"";saveString;"\" src=\"html/images/";img;"\" >";ELSE; saveString; END;"</a>" -%]
+	[% IF img; "<img alt=\"";stringSAVE;"\" src=\"html/images/";img;"\" >";ELSE; stringSAVE; END;"</a>" -%]
 [%- END %]
 
 [%#href for downloading the current playlist %]
@@ -41,7 +61,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [% BLOCK statusImg -%][% IF NOT height; height = thumbSize || 100; END %][% IF NOT width; width = height; END %]
 	[% "<span style=\"width:";height;"px; height:";height;"px;\"><img src=\"/music/$coverThumb/cover_";width;"x"; height;"_f_000000.jpg\""; IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END;
 		"id=\"coverartpath\"
-		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
+		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; stringFROM; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
 		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\"></span>" -%]
 [%- END %]
 
@@ -121,17 +141,17 @@ this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 
 
 [%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.id | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.itemobj.album.id | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the year of item %]
 [% BLOCK yearItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'YEAR' | string %]%20([% item.year %])&amp;year=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringYEAR %]%20([% item.year %])&amp;year=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the primary artist of item %]
 [% BLOCK artistItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ARTIST' | string %]%20([% (item.artist || item.name2) | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% (item.artist || item.name2) | uri %])&amp;artist_id=[% item.artist_id %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]
@@ -146,7 +166,7 @@ href="/music/[% item.coverArt %]/cover.jpg"
 
 [%# this is the link tree for the setup pages %]
 [% BLOCK setupItemHRef -%]
-href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid | uri %][% END %]"
+href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% IF playerid %]&amp;playerid=[% playeridURI %][% END %]"
 [%- END %]
 
 [%# this is the href to the browse page for a upnp item %]
@@ -178,7 +198,7 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 		[% IF item.image %]
 		"[% item.image | resizeimage(height, height, '-', webroot) %]"
 		[% ELSIF item.coverThumb %]
-		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% END %]"
+		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %]"
 		[% ELSIF item.icon %]
 		"[% item.icon | resizeimage(height, height, '-', webroot) %]"
 		[% END %]
@@ -191,25 +211,7 @@ href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% i
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK dummyItemImg -%]
-	[%- FILTER collapse %][%# collapse all whitespace and newlines into single space %]
-	[% artistlist = '' %]
-	[%- IF NOT height %][% height = thumbSize || 100 %][% END %]
-	[% IF item.artist %]
-		[% itemobj=item.itemobj %]
-		[% artistlist = PROCESS artistsAsText.html %]
-	[% END %]
-	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p" 
-		height="[% height %]"
-		alt="[% item.text | html %] [% artistlist | html %]
-			[% IF item.year %]
-				([% item.year %])
-			[% END %]" 
-		title="[% item.text| html %] [% artistlist | html %]
-			[% IF item.year %]
-				([% item.year %])
-			[% END %]"
-		>
-	[% END -%]
+	[% PROCESS thumbnailItemImg item.image = "/music/0/cover" %]
 [%- END %]
 
 [% BLOCK pagebarcalc;

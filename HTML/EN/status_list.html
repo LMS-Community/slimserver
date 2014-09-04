@@ -8,16 +8,16 @@
 		[% END %]
 		<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
 		[% IF item.includeAlbum && (item.itemobj.album || item.plugin_meta) && (item.itemobj.album.title || item.plugin_meta.album) != item.noAlbum && (item.itemobj.album.title || item.plugin_meta.album) != "" %]
-			[% "FROM" | string %]
+			[% stringFROM %]
 			[% IF item.itemobj.album %]
-				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% 'ALBUM' | string %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.itemobj.album.title | html %]</a>
+				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.itemobj.album.title | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser">[% item.itemobj.album.title | html %]</a>
 			[% ELSE; item.plugin_meta.album; END %]
 		[% END %]
 		[% IF item.includeArtist;
 			IF item.artist && item.artist != item.noArtist; 
 				PROCESS artistsAsHTML.html itemobj = item.itemobj;
 			ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
-				"BY" | string;
+				stringBY;
 				" ";
 				item.plugin_meta.artist;
 			END;
@@ -29,10 +29,10 @@
 			[% item.current_title | html %]
 		[% END %]
 		<div class="playlistControls">
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "PLAY" | string %]</a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "DOWN" | string %]</a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "UP" | string %]</a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "REMOVE_FROM_PLAYLIST" | string %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% stringPLAY %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% stringDOWN %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% stringUP %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% stringREMOVE_FROM_PLAYLIST %]</a>
 		</div>
 	</div>
 </div>

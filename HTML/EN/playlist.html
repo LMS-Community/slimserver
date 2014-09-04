@@ -2,7 +2,7 @@
 	[% IF playercount == '0' %]
 	[% ELSE %]
 		<div id="currentPlaylistLabel">
-		[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</span> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</span> [% PROCESS clearPlaylistLink %]
+		[% "CURRENT_PLAYLIST" | string %][% stringCOLON %]<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</span> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</span> [% PROCESS clearPlaylistLink %]
 		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 		</span></div>
 	[% END %]
