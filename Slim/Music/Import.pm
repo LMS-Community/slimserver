@@ -230,7 +230,7 @@ sub lastScanTime {
 		"SELECT value FROM metainformation WHERE name = ?"
 	);
 
-	$sth->execute;
+	$sth->execute($name);
 	my ($last) = $sth->fetchrow_array;
 	$sth->finish;
 	
