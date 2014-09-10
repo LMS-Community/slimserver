@@ -639,7 +639,8 @@ sub albumsQuery {
 			$index ||= "0";
 		}
 		if ( $index =~ /^\d+$/ && defined $quantity && $quantity =~ /^\d+$/ ) {
-			$sql .= "LIMIT $index, $quantity ";
+			$sql .= "LIMIT ?,? ";
+			push @$p, $index, $quantity;
 		}
 
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
@@ -657,17 +658,15 @@ sub albumsQuery {
 
 		# Little function to construct nice title from title/disc counts
 		my $groupdiscs_pref = $prefs->get('groupdiscs');
-		my $construct_title = sub {
-			if ( $groupdiscs_pref ) {
-				return $c->{'albums.title'};
-			}
-			
+		my $construct_title = $groupdiscs_pref ? sub {
+			return $c->{'albums.title'};
+		} : sub {
 			return Slim::Music::Info::addDiscNumberToAlbumTitle(
 				$c->{'albums.title'}, $c->{'albums.disc'}, $c->{'albums.discc'}
 			);
 		};
 
-		my $contributorSql;
+		my ($contributorSql, $contributorSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 			
@@ -681,7 +680,7 @@ sub albumsQuery {
 			}
 
 			$contributorSql = sprintf( qq{
-				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id, contributor_album.role AS role
+				SELECT GROUP_CONCAT(contributors.name, ',') AS name, GROUP_CONCAT(contributors.id, ',') AS id
 				FROM contributor_album
 				JOIN contributors ON contributors.id = contributor_album.contributor
 				WHERE contributor_album.album = ? AND contributor_album.role IN (%s) 
@@ -736,11 +735,11 @@ sub albumsQuery {
 
 			# want multiple artists?
 			if ( $contributorSql && $c->{'albums.contributor'} != $vaObjId && !$c->{'albums.compilation'} ) {
-				my $sth = $dbh->prepare_cached($contributorSql);
-				$sth->execute($c->{'albums.id'});
+				$contributorSth ||= $dbh->prepare_cached($contributorSql);
+				$contributorSth->execute($c->{'albums.id'});
 				
-				my $contributor = $sth->fetchrow_hashref;
-				$sth->finish;
+				my $contributor = $contributorSth->fetchrow_hashref;
+				$contributorSth->finish;
 				
 				# XXX - what if the artist name itself contains ','?
 				if ( $tags =~ /aa/ && $contributor->{name} ) {
@@ -749,7 +748,6 @@ sub albumsQuery {
 				}
 
 				if ( $tags =~ /SS/ && $contributor->{id} ) {
-					utf8::decode($contributor->{id});
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_ids', $contributor->{id});
 				}
 			}
@@ -1078,7 +1076,8 @@ sub artistsQuery {
 	if ($valid && $tags ne 'CC') {			
 		# Limit the real query
 		if ( $index =~ /^\d+$/ && $quantity =~ /^\d+$/ ) {
-			$sql .= "LIMIT $index, $quantity ";
+			$sql .= "LIMIT ?,? ";
+			push @$p, $index, $quantity;
 		}
 
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
@@ -2992,7 +2991,10 @@ sub searchQuery {
 	
 #		$sql .= "ORDER BY ${name}sort " . Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
-		my ($count) = $dbh->selectrow_array( qq{SELECT COUNT(1) FROM ($sql) AS t1}, undef, @$p );
+		my $sth = $dbh->prepare_cached( qq{SELECT COUNT(1) FROM ($sql) AS t1} );
+		$sth->execute(@$p);
+		my ($count) = $sth->fetchrow_array;
+		$sth->finish;
 	
 		$count += 0;
 		$total += $count;
@@ -3003,27 +3005,39 @@ sub searchQuery {
 			$request->addResult("${type}s_count", $count);
 			
 			# Limit the real query
-			$sql .= "LIMIT $index, $quantity";
+			$sql .= "LIMIT ?,?";
 		
 			my $sth = $dbh->prepare_cached($sql);
-			$sth->execute( @{$p} );
+			$sth->execute( @{$p}, $index, $quantity );
+			
+			my ($id, $title, %additionalCols);
+			$sth->bind_col(1, \$id);
+			$sth->bind_col(2, \$title);
+			
+			if ($c) {
+				my $i = 2;
+				foreach (@$c) {
+					$sth->bind_col(++$i, \$additionalCols{$_});
+				}
+			}
 				
 			my $chunkCount = 0;
 			my $loopname   = "${type}s_loop";
-			while ( my $result = $sth->fetchrow_hashref ) {
+			while ( $sth->fetch ) {
 				
 				last if $chunkCount >= $quantity;
 				
-				$result->{id} += 0;
-				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $result->{id});
+				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $id+0);
 
-				utf8::decode($result->{$name});
-				$request->addResultLoop($loopname, $chunkCount, "${type}", $result->{$name});
+				utf8::decode($title);
+				$request->addResultLoop($loopname, $chunkCount, "${type}", $title);
 				
 				# any additional column
-				foreach (@$c) {
-					utf8::decode($result->{$_});
-					$request->addResultLoop($loopname, $chunkCount, $_, $result->{$_});
+				if ($c) {
+					foreach (@$c) {
+						utf8::decode($additionalCols{$_});
+						$request->addResultLoop($loopname, $chunkCount, $_, $additionalCols{$_});
+					}
 				}
 		
 				$chunkCount++;
