@@ -365,8 +365,12 @@ sub postConnect {
 		my ($count) = eval { $dbh->selectrow_array( "SELECT COUNT(*) FROM sqlite_stat1 WHERE tbl = 'tracks'", undef, () ) };
 		
 		if (!$count) {
-			$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');			
-			Slim::Schema->optimizeDB();
+			my ($table) = eval { $dbh->selectrow_array('SELECT name FROM sqlite_master WHERE type="table" AND name="tracks"') };
+			
+			if ($table) {
+				$log->error('Optimizing DB because of missing or empty sqlite_stat1 table');			
+				Slim::Schema->optimizeDB();
+			}
 		}
 	}
 }
