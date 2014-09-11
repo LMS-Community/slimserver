@@ -324,6 +324,14 @@ sub albumsQuery {
 					my $_cache = Slim::Utils::Cache->new;
 					$ids = $_cache->get($newAlbumsCacheKey) || [];
 
+					# get rid of stale cache entries
+					my @oldCacheKeys = grep /newAlbumIds/, keys %$cache;
+					foreach (@oldCacheKeys) {
+						next if $_ eq $newAlbumsCacheKey;
+						$_cache->remove($_);
+						delete $cache->{$_};
+					}
+
 					my $countSQL = qq{
 						SELECT tracks.album
 						FROM tracks } . ($libraryID ? qq{
