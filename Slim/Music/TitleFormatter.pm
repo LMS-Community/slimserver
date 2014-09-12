@@ -115,7 +115,6 @@ sub init {
 		return (defined $output ? $output : '');
 	};
 
-	my $albumDiscc_sth;
 	$parsedFormats{'DISC'} = sub {
 		
 		if ( ref $_[0] eq 'HASH' ) {
@@ -126,8 +125,8 @@ sub init {
 
 		if ($disc && $disc == 1) {
 			
-			$albumDiscc_sth ||= Slim::Schema->dbh->prepare_cached("SELECT discc FROM albums WHERE id = ?");
-	
+			my $albumDiscc_sth = Slim::Schema->dbh->prepare_cached("SELECT discc FROM albums WHERE id = ?");
+
 			$albumDiscc_sth->execute($_[0]->albumid);
 
 			my ($discc) = $albumDiscc_sth->fetchrow_array;
