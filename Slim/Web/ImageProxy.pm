@@ -157,7 +157,9 @@ sub getImage {
 				if ( $external->{func} && $url !~ m|^https?:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}| ) {
 					my $url2 = $external->{func}->($url, $spec);
 					$url = $url2 if $url2;
-					$pre_shrunk = 1; 
+					$pre_shrunk = 1;
+					 
+					main::DEBUGLOG && $log->debug("Using custom image proxy: $url");
 				}
 			}
 		}
@@ -211,7 +213,7 @@ sub _gotArtwork {
 	my $url  = $http->url;
 	
 	if (main::DEBUGLOG && $log->is_debug) {
-		$log->debug('Received artwork of type ' . $http->headers->content_type . ' and ' . $http->headers->content_length . ' bytes length' );
+		$log->debug('Received artwork of type ' . $http->headers->content_type . ' and ' . ($http->headers->content_length || length(${$http->contentRef})) . ' bytes length' );
 	}
 
 	if ( Slim::Utils::ImageResizer::hasDaemon() ) {
