@@ -60,8 +60,9 @@
 	[% WRAPPER setting title="SETUP_IMAGEPROXY" desc="SETUP_IMAGEPROXY_DESC" %]
 		<select class="stdedit" name="pref_useLocalImageproxy" id="useLocalImageproxy">
 
-			<option [% IF NOT prefs.pref_useLocalImageproxy %]selected [% END %]value="0">[% 'SETUP_IMAGEPROXY_REMOTE' | getstring %]</option>
-			<option [% IF prefs.pref_useLocalImageproxy %]selected [% END %]value="1">[% 'SETUP_IMAGEPROXY_LOCAL' | getstring %]</option>
+			[% FOREACH id = imageproxies.keys.sort %]
+			<option [% IF prefs.pref_useLocalImageproxy == id %]selected [% END %]value="[% id %]">[% imageproxies.$id %]</option>
+			[% END %]
 		
 		</select>
 	[% END %]

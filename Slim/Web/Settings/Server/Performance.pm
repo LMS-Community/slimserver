@@ -67,6 +67,16 @@ sub handler {
 	if ( $paramRef->{restart} ) {
 		$paramRef = Slim::Web::Settings::Server::Plugins->restartServer($paramRef, 1);
 	}
+	
+	$paramRef->{imageproxies} = {
+		0 => Slim::Utils::Strings::string('SETUP_IMAGEPROXY_REMOTE'),
+		1 => Slim::Utils::Strings::string('SETUP_IMAGEPROXY_LOCAL'),
+	};
+	
+	my $externalImageProxies = Slim::Web::ImageProxy->getExternalHandlers();
+	foreach (keys %$externalImageProxies) {
+		$paramRef->{imageproxies}->{$_} = $externalImageProxies->{$_}->{desc};
+	}
 
 	$paramRef->{'options'} = {
 		''   => 'SETUP_PRIORITY_CURRENT',
