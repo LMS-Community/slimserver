@@ -152,7 +152,7 @@ sub getImage {
 
 		my $pre_shrunk;
 		# use external image proxy if one is defined
-		if ( $url =~ /^https?:/ && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
+		if ( $url =~ /^https?:/ && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
 			if ( my $external = $externalHandlers{$imageproxy} ) {
 				if ( $external->{func} && $url !~ m|^https?:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}| ) {
 					my $url2 = $external->{func}->($url, $spec);
@@ -267,15 +267,20 @@ sub _resizeFromFile {
 		my $cachekey = $item->{cachekey};
 		
 		# no need to resize data if we've got it from an external image proxy
-		if ( $item->{pre_shrunk} && $http && $http->headers->content_type =~ /image\/(png|jpe?g)/ ) {
+		if ( ($spec =~ /^\.(?:png|jpe?g)/i || $item->{pre_shrunk}) && $http && $http->headers->content_type =~ /image\/(png|jpe?g)/ ) {
+			main::DEBUGLOG && $log->debug("No resizing required - already resized remotely, or original size requested");
+
+			my $ct = $1;
+			$ct =~ s/jpeg/jpg/;
+
 			$cache->set( $cachekey, {
-				content_type  => $1,
+				content_type  => $ct,
 				mtime         => 0,
 				original_path => undef,
 				data_ref      => $fullpath,
 			} );
 			
-			_setHeaders($args->[1], $1);
+			_setHeaders($args->[1], $ct);
 
 			$callback && $callback->( $client, $params, $fullpath, @$args );
 		}
@@ -314,8 +319,9 @@ sub _resizeFromFile {
 sub _setHeaders {
 	my ($response, $format) = @_;
 
-	my $ct = 'image/' . $format;
+	my $ct = $format =~ /image/ ? $format : "image/$format";
 	$ct =~ s/jpg/jpeg/;
+
 	$response->content_type($ct);
 	$response->header( 'Cache-Control' => 'max-age=' . ONE_YEAR );
 	$response->expires( time() + ONE_YEAR );
