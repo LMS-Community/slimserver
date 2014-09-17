@@ -152,7 +152,7 @@ sub getImage {
 
 		my $pre_shrunk;
 		# use external image proxy if one is defined
-		if ( $url =~ /^https?:/ && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
+		if ( $url =~ /^https?:/ && $spec && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
 			if ( my $external = $externalHandlers{$imageproxy} ) {
 				if ( $external->{func} && $url !~ m|^https?:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}| ) {
 					my $url2 = $external->{func}->($url, $spec);
