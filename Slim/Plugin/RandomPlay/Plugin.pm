@@ -368,7 +368,7 @@ sub _genreInfoMenu {
 				items => $action,
 			},
 			nextWindow  => 'nowPlaying',
-			type        => 'audio',
+			type        => 'play',
 			name        => sprintf('%s %s %s %s', 
 				cstring($client, 'PLUGIN_RANDOMPLAY'),
 				cstring($client, 'GENRE'),
