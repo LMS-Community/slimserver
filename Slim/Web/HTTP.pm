@@ -1443,7 +1443,7 @@ sub generateHTTPResponse {
 }
 
 sub sendStreamingFile {
-	my ( $httpClient, $response, $contentType, $file, $objOrHash ) = @_;
+	my ( $httpClient, $response, $contentType, $file, $objOrHash, $showInBrowser ) = @_;
 	
 	# Send the file down - and hint to the browser
 	# the correct filename to save it as.
@@ -1453,7 +1453,7 @@ sub sendStreamingFile {
 	$response->content_length( $size );
 	$response->header('Content-Disposition', 
 		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
-	);
+	) unless $showInBrowser;
 	
 	my $fh = FileHandle->new($file);
 	
