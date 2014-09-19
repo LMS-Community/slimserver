@@ -155,7 +155,7 @@ sub getImage {
 		if ( $url =~ /^https?:/ && $spec && $spec !~ /^\.(png|jpe?g)/i && (my $imageproxy = $prefs->get('useLocalImageproxy')) ) {
 			if ( my $external = $externalHandlers{$imageproxy} ) {
 				if ( $external->{func} && $url !~ m|^https?:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}| ) {
-					my $url2 = $external->{func}->($url, $spec);
+					my $url2 = $external->{func}->(uri_escape_utf8($url), $spec);
 					$url = $url2 if $url2;
 					$pre_shrunk = 1;
 					 
