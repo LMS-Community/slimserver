@@ -13422,6 +13422,10 @@ MOSTPLAYED
 	SV	Mest spelade låtar
 	ZH_CN	最常播的歌曲
 
+PLAYCOUNT
+	DE	Anzahl Wiedergaben
+	EN	Play Count
+
 ALBUM_INFO
 	CS	Info o Albu
 	DA	Oplysninger om album
@@ -15469,11 +15473,11 @@ SEARCHFOR
 
 TEXTSEARCH
 	DE	Textsuche
-	EN	Text Search
+	EN	text search
 
 NOT_IN_TEXTSEARCH
-	DE	Nicht in Textsuche
-	EN	Not in Text Search
+	DE	nicht in Textsuche
+	EN	not in text search
 
 SEARCHFOR_ARTIST
 	CS	Hledat interpreta
@@ -17593,11 +17597,11 @@ NOT
 
 RANGE
 	DE	Bereich
-	EN	Range
+	EN	range
 
 NOT_IN_RANGE
-	DE	Nicht im Bereich
-	EN	Not in Range
+	DE	nicht im Bereich
+	EN	not in range
 
 # The space before the French : is there on purpose.
 

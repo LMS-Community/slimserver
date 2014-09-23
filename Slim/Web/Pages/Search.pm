@@ -113,6 +113,8 @@ sub advancedSearch {
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
+			$newKey =~ s/_(rating|playcount)\b/\.$1/;
+
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
 			push @qstring, join('=', $key, $params->{$key});
@@ -143,6 +145,15 @@ sub advancedSearch {
 				$query{$newKey}->{'>'} = '0';
 			}
 
+			if ($newKey eq 'persistent.rating' && $op eq '<') {
+				$query{$newKey} = {
+					'or' => [
+						$newKey => { '=' => undef },
+						$newKey => $query{$newKey},
+					],
+				};
+			}
+
 			delete $params->{$key};
 
 			next;
@@ -159,6 +170,8 @@ sub advancedSearch {
 
 			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
+
+		$newKey =~ s/_(rating|playcount)\b/\.$1/;
 
 		# Wildcard searches
 		if ($newKey =~ /lyrics/) {
@@ -188,7 +201,8 @@ sub advancedSearch {
 	
 	# load up the genres we know about.
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$params->{'genres'}    = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
+	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
+	$params->{'statistics'} = 1 if main::STATISTICS;
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -252,6 +266,10 @@ sub advancedSearch {
 	if ($query{'comments.value'}) {
 
 		push @joins, 'comments';
+	}
+	
+	if ( main::STATISTICS && $query{'persistent.rating'} || $query{'persistent.playcount'} ) {
+		push @joins, 'persistent';
 	}
 
 	if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {

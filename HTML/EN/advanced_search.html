@@ -124,6 +124,18 @@
 	<input name="search.year" value="[% search.year.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
 [% END %]
 
+[% IF statistics; WRAPPER field title='PLAYCOUNT' %]
+	[% logicalSelectionBlock(name='search.persistent_playcount.op', withRange=1) %]
+
+	<input name="search.persistent_playcount" value="[% search.persistent_playcount.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
+[% END; END %]
+
+[% IF statistics; WRAPPER field title='RATING' %]
+	[% logicalSelectionBlock(name='search.persistent_rating.op', withRange=1) %]
+
+	<input name="search.persistent_rating" value="[% search.persistent_rating.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
+[% END; END %]
+
 [% WRAPPER field title='MODTIME' %]
 	[% timeSelectionBlock(name='search.timestamp.op') %]
 
