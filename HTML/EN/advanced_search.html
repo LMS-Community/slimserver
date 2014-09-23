@@ -83,9 +83,19 @@
 	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
-[% WRAPPER field title='ARTIST' %]
+<tr>
+	<td class="content" align="right" valign="top" style="vertical-align: top; padding-top: 2px" width="30%">[% "ARTIST" | string %]&nbsp;</td>
+	<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
 	<input name="search.contributor_namesearch" value="[% search.contributor_namesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
-[% END %]
+	<table>
+		[% FOREACH role = roles.keys.sort %]
+			[% IF loop.count % 2 > 0 %]<tr>[% END %]
+			<td><input type="checkbox" name="roleActive_[% role %]" value="1" [% IF activeRoles.$role %]checked="checked"[% END %]>&nbsp;[% roles.$role | string %]&nbsp;&nbsp;</td>
+			[% IF loop.last OR loop.count+1 % 2 == 0 %]</tr>[% END %]
+		[% END %]
+	</table>
+	</td>
+</tr>
 
 [% WRAPPER field title='ALBUM' %]
 	<input name="search.album_titlesearch" value="[% search.album_titlesearch.value | html %]" size="[% size %]" maxlength="100" type="text">

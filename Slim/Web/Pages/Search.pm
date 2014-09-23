@@ -203,6 +203,8 @@ sub advancedSearch {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 	$params->{'statistics'} = 1 if main::STATISTICS;
+	$params->{'activeRoles'}= { map { $_ => 1 } @{ Slim::Schema->artistOnlyRoles } };
+	$params->{'roles'}      = \%Slim::Schema::Contributor::roleToContributorMap;
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -213,12 +215,18 @@ sub advancedSearch {
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
 	my @joins = ();
-	my $roles = Slim::Schema->artistOnlyRoles;
+	$params->{'activeRoles'} = {};
+	
+	foreach (keys %Slim::Schema::Contributor::roleToContributorMap) {
+		$params->{'activeRoles'}->{$_} = $params->{'roleActive_' . $_} ? 1 : 0;
+	}
 
-	if ($roles || $query{'contributor.namesearch'}) {
+	$params->{'activeRoles'}= { map { $_ => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{ $params->{'activeRoles'} };
 
-		if ($roles) {
-			$query{'contributorTracks.role'} = $roles;
+	if ($params->{'activeRoles'} || $query{'contributor.namesearch'}) {
+
+		if ($params->{'activeRoles'}) {
+			$query{'contributorTracks.role'} = [ grep { $params->{'activeRoles'}->{$_} } keys %{$params->{'activeRoles'}} ];
 		}
 
 		if ($query{'contributor.namesearch'}) {
