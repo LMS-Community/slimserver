@@ -1340,8 +1340,8 @@ sub generateHTTPResponse {
 			}
 			
 		} elsif ( $path =~ /anyurl/ ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug('anyurl - parameters processed, return dummy content to prevent 404');
-			$$body = 'anyurl processed';
+			main::DEBUGLOG && $log->is_debug && $log->debug('anyurl - parameters processed, redirect to status page if needed');
+			$body = filltemplatefile('xmlbrowser_redirect.html', $params);
 			
 		} else {
 			# who knows why we're here, we just know that something ain't right

@@ -197,7 +197,11 @@
 			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
 
 			[%- BLOCK gencontrol -%]
-				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
+				[% IF item.simpleAlbumLink && (item.playLink  || item.insertLink || item.addLink || item.removeLink) %]
+					[% IF item.playLink; WRAPPER playlink %]href="[% webroot %][% item.playLink %]&player=[% playerURI %]"[% END; END %]
+					[% IF item.addLink; WRAPPER addlink %]href="[% webroot %][% item.addLink %]&player=[% playerURI %]"[% END; END %]
+					[% IF item.mixersLink; WRAPPER cmdlink cmdimage='b_mix.gif' cmdtitle='MORE' %]href="[% webroot %][% item.mixersLink %]?player=[% playerURI %]" target="[% browserTarget %][% END; END %]
+				[% ELSIF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
 					[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 					[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
 					[% IF item.mixersLink; WRAPPER cmdlink cmdimage='b_mix.gif' cmdtitle='MORE' %]
