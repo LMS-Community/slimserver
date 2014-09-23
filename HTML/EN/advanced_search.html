@@ -1,32 +1,34 @@
 [% extJsScripts = BLOCK %]
 <script TYPE="text/javascript">
-	Ext.onReady(LiveSearch.init);
+	Ext.onReady(function() {
+		[% IF browse_items.size %]
+		var el = Ext.get('advLink');
+		if (el) {
+			var link = el.dom.href;
+			el.dom.href='javascript:void(0);';
+			el.on('click', function(){ 
+				var f = Ext.get('advSearchForm');
+				
+				if (f.isVisible())
+					location = link;
+				else {
+					f.show();
+					SqueezeJS.UI.ScrollPanel.init();
+				} 
+			});
+		}
+		[% END %]
+		
+		var el = Ext.get('genre');
+		if (el) {
+			el.on('change', function(ev, el, o){
+				Ext.get('genre_name_input').setDisplayed(el.value < 0 ? true : false);
+			});
+		}
+		
+		LiveSearch.init();
+	});
 </script>
-[% END %]
-[% IF browse_items.size %]
-	[% extJsScripts = BLOCK %]
-	<script TYPE="text/javascript">
-		Ext.onReady(function(){
-			var el = Ext.get('advLink');
-			if (el) {
-				var link = el.dom.href;
-				el.dom.href='javascript:void(0);';
-				el.on('click', function(){ 
-					var f = Ext.get('advSearchForm');
-					
-					if (f.isVisible())
-						location = link;
-					else {
-						f.show();
-						SqueezeJS.UI.ScrollPanel.init();
-					} 
-				})
-			}
-			
-			LiveSearch.init();
-		});
-	</script>
-	[% END %]
 [% END %]
 [% pagetitle = 'ADVANCEDSEARCH' | string %]
 [% pageicon = icons.SEARCHMUSIC %]
@@ -41,6 +43,10 @@
 		<option [% IF $name == "<" %]selected[% END %] value="&lt;" >[% "LESSTHAN" | string %]</option>
 		<option [% IF $name == ">" %]selected[% END %] value="&gt;" >[% "GREATERTHAN" | string %]</option>
 		<option [% IF $name == "!=" %]selected[% END %] value="!=" >[% "NOT" | string %]</option>
+		[% IF withRange %]
+		<option [% IF $name == "BETWEEN" %]selected[% END %] value="BETWEEN" >[% "RANGE" | string %]</option>
+		<option [% IF $name == "NOT BETWEEN" %]selected[% END %] value="NOT BETWEEN" >[% "NOT_IN_RANGE" | string %]</option>
+		[% END %]
 	</select>
 [% END %]
 
@@ -51,13 +57,17 @@
 		<option [% IF $name == "=" %]selected[% END %] value="=" >[% "IS" | string %]</option>
 		<option [% IF $name == "<" %]selected[% END %] value="&lt;" >[% "BEFORE" | string %]</option>
 		<option [% IF $name == ">" %]selected[% END %] value="&gt;" >[% "AFTER" | string %]</option>
+		[% IF withRange %]
+		<option [% IF $name == "BETWEEN" %]selected[% END %] value="BETWEEN" >[% "RANGE" | string %]</option>
+		<option [% IF $name == "NOT BETWEEN" %]selected[% END %] value="NOT BETWEEN" >[% "NOT_IN_RANGE" | string %]</option>
+		[% END %]
 	</select>
 [% END %]
 
-[% BLOCK  field %]
+[% BLOCK field %]
 	<tr>
-		<td class="content" align="right" valign="middle" width="30%">[% title | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" width="70%">
+		<td class="content" align="right" valign="middle" style="vertical-align: middle" width="30%">[% title | string %]&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
 		  [% content %]
 		</td>
 	</tr>
@@ -82,20 +92,23 @@
 [% END %]
 
 [% WRAPPER field title='GENRE' %]
-	<select name="search.genre">
+	<select name="search.genre" id="genre">
 		<option value="">[% "ANY_GENRE" | string %]</option>
+		<option value="-1" [% IF search.genre.value == -1 %]selected[% END %]>- [% "TEXTSEARCH" | string %]</option>
+		<option value="-2" [% IF search.genre.value == -2 %]selected[% END %]>- [% "NOT_IN_TEXTSEARCH" | string %]</option>
 
 		[%- WHILE (genre = genres.next) -%]
 			[%- NEXT IF NOT genre.name -%]
 			<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name | html %]</option>
 		[% END -%]
-	</select>
+	</select><br>
+	<input name="search.genre_name" value="[% search.genre_name.value | html %]" size="[% size %]" maxlength="100" type="text" id="genre_name_input" [% IF search.genre.value != -1 %]style="display:none"[% END %]>
 [% END %]
 
 [% WRAPPER field title='LENGTH' %]
-	[% logicalSelectionBlock(name='search.secs.op') %]
+	[% logicalSelectionBlock(name='search.secs.op', withRange=1) %]
 
-	<input name="search.secs" value="[% search.secs.value %]" size="4" maxlength="4" style="text-align: right;" type="text">
+	<input name="search.secs" value="[% search.secs.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
 	[% "SECONDS" | string %]
 [% END %]
 
@@ -106,9 +119,9 @@
 [% END %]
 
 [% WRAPPER field title='YEAR' %]
-	[% timeSelectionBlock(name='search.year.op') %]
+	[% timeSelectionBlock(name='search.year.op', withRange=1) %]
 
-	<input name="search.year" value="[% search.year.value %]" size="4" maxlength="4" style="text-align: right;" type="text">
+	<input name="search.year" value="[% search.year.value %]" size="10" maxlength="10" style="text-align: right;" type="text">
 [% END %]
 
 [% WRAPPER field title='MODTIME' %]
@@ -133,8 +146,8 @@
 
 <!--
 	<tr>
-		<td class="content" align="right" valign="middle" width="30%">[% 'SAMPLERATE' | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" width="70%">
+		<td class="content" align="right" valign="middle" style="vertical-align: middle" width="30%">[% 'SAMPLERATE' | string %]&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
 
 			[% logicalSelectionBlock(name='search.samplerate.op') %]
 
@@ -162,22 +175,22 @@
 [% END %]
 
 [% WRAPPER field title='FILELENGTH' %]
-	[% logicalSelectionBlock(name='search.filesize.op') %]
+	[% logicalSelectionBlock(name='search.filesize.op', withRange=1) %]
 
-	<input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="12" style="text-align: right;" type="text">
+	<input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="30" style="text-align: right;" type="text">
 	[% "BYTES" | string %]
 [% END %]
 
 	<tr>
-		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" width="75%">
+		<td class="content" align="right" nowrap="nowrap" valign="middle" style="vertical-align: middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="75%">
 			<input name="search.comments_value" value="[% search.comments_value.value %]" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
 
 	<tr>
-		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "LYRICS" | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" width="75%">
+		<td class="content" align="right" nowrap="nowrap" valign="middle" style="vertical-align: middle" width="25%">[% "LYRICS" | string %]&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="75%">
 		  <input name="search.lyrics" value="[% search.lyrics.value %]" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>

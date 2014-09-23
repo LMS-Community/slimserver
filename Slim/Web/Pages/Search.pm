@@ -127,6 +127,12 @@ sub advancedSearch {
 				$params->{$key} = str2time($params->{$key});
 			}
 
+			# BETWEEN values can be something like "1970-1990" but expects an arrayref
+			if ($op =~ /BETWEEN/) {
+				$params->{$key} = [ split(/[,\-: ]/, $params->{$key}), '', '' ];
+				splice(@{$params->{$key}}, 2);
+			}
+
 			# Map the type to the query
 			# This will be handed to SQL::Abstract
 			$query{$newKey} = { $op => $params->{$key} };
@@ -212,9 +218,30 @@ sub advancedSearch {
 	}
 
 	# Pull in the required joins
-	if ($query{'genre'}) {
 
-		push @joins, 'genreTracks';
+	# create sub-query to get text based genre matches (if needed)
+	my $namesearch = delete $query{'genre_name'};
+	if ($query{'genre'}) {
+		if ($query{'genre'} < 0) {
+			if ($namesearch) {
+				my @tokens = map {
+					s/^\s*//;
+					s/\s+$//;
+					@{Slim::Utils::Text::searchStringSplit($_)};
+				} split /,/, $namesearch;
+				
+				$query{'genre'} = { 
+					($query{'genre'} == -2 ? 'not_in' : 'in') => Slim::Schema->search('Genre', {
+						'namesearch' => { 'like' => \@tokens }
+					})->get_column('id')->as_query
+				};
+			}
+			else {
+				delete $query{'genre'};
+			}
+		}
+
+		push @joins, 'genreTracks' if $query{'genre'} || $query{'genres.namesearch'};
 	}
 
 	if ($query{'album.titlesearch'}) {

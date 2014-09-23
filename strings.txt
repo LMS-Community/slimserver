@@ -15467,6 +15467,14 @@ SEARCHFOR
 	SV	Sök efter
 	ZH_CN	搜查
 
+TEXTSEARCH
+	DE	Textsuche
+	EN	Text Search
+
+NOT_IN_TEXTSEARCH
+	DE	Nicht in Textsuche
+	EN	Not in Text Search
+
 SEARCHFOR_ARTIST
 	CS	Hledat interpreta
 	DA	Søg efter kunstner
@@ -17582,6 +17590,14 @@ NOT
 	RU	не
 	SV	inte
 	ZH_CN	不
+
+RANGE
+	DE	Bereich
+	EN	Range
+
+NOT_IN_RANGE
+	DE	Nicht im Bereich
+	EN	Not in Range
 
 # The space before the French : is there on purpose.
 
