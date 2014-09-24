@@ -500,6 +500,10 @@ div.pagetitleWithIcon {
 	right: 2px;
 }
 
+#advSearchMenuItem {
+	visibility: hidden;
+}
+
 .homeMenuSection .browsedbControls,
 #playList .playlistControls {
 	top: -2px;
@@ -518,7 +522,7 @@ div.pagetitleWithIcon {
 	padding-left: 30px;
 }
 
-.mouseOver .browsedbControls, .mouseOver .playlistControls,
+.mouseOver #advSearchMenuItem, .mouseOver .browsedbControls, .mouseOver .playlistControls,
 .mouseOver .browsedbRightControls, .mouseOver .browsedbLeftControls {
 	visibility: visible;
 }

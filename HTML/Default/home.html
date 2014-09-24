@@ -32,16 +32,30 @@ ELSE %]
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				IF link.key == 'FAVORITES';
 					useFavorites = 1;
-				ELSIF link.key == 'SEARCH';
-					control = BLOCK %]
- 						<form method="GET" action="[% webroot %]search.html">
-							<input type="hidden" name="player" value="[% playerid %]">
-							<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
-							<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
-						</form>
-					[% END;
-					PROCESS menuItem;
-				ELSE;
+				ELSIF link.key == 'SEARCH' %]
+					<div class="selectorMarker" onmouseover="Highlighter.highlight(this);">
+						<div class="homeMenuItem" id="SEARCH">
+							[% title = link.key | getstring %]
+							<a href="[% link.value %]player=[% player %]" class="browseItemLink">
+								<span class="browseCover">
+									<img src="[% additionalLinks.icons.item(link.key) | resizeimage(25, 25) %]" width="25" border="0" alt="[% title %]">
+								</span>
+							</a>
+							<div class="smallBrowseItemDetail">
+								<a href="[% link.value %]player=[% player %]" class="browseItemLink">[% title %]</a>
+								<span id="advSearchMenuItem">(<a href="[% webroot %]advanced_search.html">[% "ADVANCEDSEARCH" | string %]</a>)</span>
+							</div>
+			
+							<span class="browsedbControls">
+		 						<form method="GET" action="[% webroot %]search.html">
+									<input type="hidden" name="player" value="[% playerid %]">
+									<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
+									<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
+								</form>
+							</span>					
+						</div>
+					</div>
+				[% ELSE;
 					PROCESS menuItem;
 				END;
 			END;
