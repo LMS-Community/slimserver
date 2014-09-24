@@ -11,16 +11,17 @@ use strict;
 
 use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
+use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
 use Storable;
 
-use Slim::Utils::DateTime;
+use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
-use Slim::Web::Pages;
-use Slim::Utils::Prefs;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+use Slim::Web::Pages;
 
 use constant MAX_ADV_RESULTS => 200;
 
@@ -33,6 +34,17 @@ sub init {
 	Slim::Web::Pages->addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
 	
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+	
+	foreach my $vlid ( @{_getLibraryViews()} ) {
+		my $vl = $prefs->get($vlid);
+		Slim::Music::VirtualLibraries->registerLibrary( {
+			id => $vlid,
+			name => $vl->{name},
+			# %s is being replaced with the library's internal ID
+			sql => "INSERT OR IGNORE INTO library_track (library, track) " . $vl->{sql},
+			unregisterCB => \&_removeLibraryView,
+		} );
+	}
 }
 
 use constant MAXRESULTS => 10;
@@ -84,13 +96,13 @@ sub advancedSearch {
 	$params->{'browse_items'} = [];
 	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
 	
-	if ( $params->{'deleteSavedSearch'} ) {
+	if ( $params->{'action'} && $params->{'action'} eq 'deleteSaved' ) {
 		$prefs->remove($params->{'savedSearch'});
 		delete $params->{'deleteSavedSearch'};
 		$params->{'resetAdvSearch'} = 1;
 	}
 
-	if ( $params->{'loadSaved'} && $params->{'savedSearch'} && (my $searchParams = $prefs->get($params->{'savedSearch'})) ) {
+	if ( $params->{'action'} && $params->{'action'} eq 'loadSaved' && $params->{'savedSearch'} && (my $searchParams = $prefs->get($params->{'savedSearch'})) ) {
 		if (ref $searchParams eq 'HASH') {
 			$params->{search} = Storable::dclone($searchParams);
 			$params->{'resetAdvSearch'} = 1;
@@ -214,7 +226,7 @@ sub advancedSearch {
 		$query{$newKey} = $params->{$key};
 	}
 
-	if ( keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
+	if ( $params->{'action'} && $params->{'action'} eq 'saveSearch' && keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
 		# don't store operators when there's no value
 		foreach my $k (keys %searchParams) {
 			delete $searchParams{$k} unless $searchParams{$k}->{value};
@@ -246,7 +258,7 @@ sub advancedSearch {
 	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 	$params->{'statistics'} = 1 if main::STATISTICS;
 	$params->{'roles'}      = \%Slim::Schema::Contributor::roleToContributorMap;
-	$params->{'searches'}   = [ keys %{$prefs->all} ];
+	$params->{'searches'}   = _getSavedSearches();
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -287,6 +299,17 @@ sub advancedSearch {
 	# create sub-query to get text based genre matches (if needed)
 	my $namesearch = delete $query{'genre_name'};
 	if ($query{'genre'}) {
+		
+		# IDs can change. When we want to save a library definition we better use the genre name.
+		if ( $query{'genre'} >= 0 && $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
+			$namesearch = Slim::Schema->search('Genre', { id => $query{'genre'} })->get_column('name')->first;
+			$query{'genre'} = { 
+				'in' => Slim::Schema->search('Genre', {
+					'me.namesearch' => { 'like' => Slim::Utils::Text::searchStringSplit($namesearch) }
+				})->get_column('id')->as_query
+			} if $namesearch;
+		}
+
 		if ($query{'genre'} < 0) {
 			if ($namesearch) {
 				my @tokens = map {
@@ -297,7 +320,7 @@ sub advancedSearch {
 				
 				$query{'genre'} = { 
 					($query{'genre'} == -2 ? 'not_in' : 'in') => Slim::Schema->search('Genre', {
-						'namesearch' => { 'like' => \@tokens }
+						'me.namesearch' => { 'like' => \@tokens }
 					})->get_column('id')->as_query
 				};
 			}
@@ -345,6 +368,37 @@ sub advancedSearch {
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $rs  = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
+	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
+		my $sqlQuery = $rs->as_query;
+		my $sql = $$sqlQuery->[0];
+		#my $sqlParams = $$sqlQuery->[1];
+		#	warn Data::Dump::dump($sqlQuery);
+		
+		# XXX - need some smarter way to interpolate variables in the query...
+		for (my $i = 1; $i < scalar @{$$sqlQuery}; $i++) {
+			my $v = $$sqlQuery->[$i]->[1];
+			$v = "\"$v\"";
+			$sql =~ s/ \? / $v /;
+		}
+		
+		my $vlid = 'asvl_' . md5_hex($saveSearch);
+		my $vl = {
+			name => $saveSearch,
+			sql  => "SELECT '%s', id FROM $sql",
+		};
+		
+		$prefs->set($vlid, $vl);
+
+		Slim::Music::VirtualLibraries->registerLibrary( {
+			id => $vlid,
+			name => $vl->{name},
+			# %s is being replaced with the library's internal ID
+			sql => "INSERT OR IGNORE INTO library_track (library, track) " . $vl->{sql},
+			unregisterCB => \&_removeLibraryView,
+		} );
+		Slim::Music::VirtualLibraries->rebuild($vlid);
+	}
+
 	if (defined $client && !$params->{'start'}) {
 
 		# stash parameters used to generate this query, so if the user
@@ -369,6 +423,19 @@ sub _initActiveRoles {
 	}
 
 	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
+}
+
+sub _removeLibraryView {
+	my $id = shift;
+	$prefs->remove($id);	
+}
+
+sub _getSavedSearches {
+	return [ grep { $_ !~ /^asvl_[\da-f]+$/} keys %{$prefs->all} ];
+}
+
+sub _getLibraryViews {
+	return [ grep /^asvl_[\da-f]+$/, keys %{$prefs->all} ];
 }
 
 sub fillInSearchResults {

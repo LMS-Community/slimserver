@@ -21232,6 +21232,10 @@ VIRTUALLIBRARIES_PROGRESS
 	DE	Musiksammlungs-Ansichten erstellen
 	EN	Create library views
 
+AS_VIRTUAL_LIBRARY
+	DE	Als Ansicht
+	EN	As Library View
+
 RUNNING
 	CS	Spuštěno
 	DA	Kører
@@ -22239,9 +22243,9 @@ RECENT_SEARCHES
 	RU	Недавние поисковые запросы
 	SV	Nyligen gjorda sökningar
 
-SAVED_SEARCHES
-	DE	Gespeicherte Suchvorgänge
-	EN	Saved Searches
+SAVED_SEARCH
+	DE	Gespeicherte Suche
+	EN	Saved Search
 
 ALBUMS_SORT_METHOD
 	CS	Způsob řazení alb

@@ -75,7 +75,7 @@
 [% END %]
 	<form action="advanced_search.html" method="GET" name="searchForm" id="advSearchForm" [% IF resultClass || browse_items.size %]class="[% resultClass || "resultsPage" %]"[% END %]><br>
 	<input type="hidden" value="[% player %]" name="player">
-	<input type="hidden" value="" name="loadSaved">
+	<input type="hidden" value="" name="action">
 
 	<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
 		<tbody>
@@ -84,13 +84,13 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
-			<select name="savedSearch" onchange='this.form.loadSaved.value = this.value; this.form.submit()'>
-				<option value="">[% "SAVED_SEARCHES" | string | html %]</option>
+			<select name="savedSearch" onchange='this.form.action.value = "loadSaved"; this.form.submit()'>
+				<option value="">[% "SAVED_SEARCH" | string | html %]</option>
 				[%- FOREACH saved = searches -%]
 					<option value="[% saved %]" [% IF savedSearch == saved %]selected="selected"[% END %]>[% saved | html %]</option>
 				[% END -%]
 			</select>
-			[% IF savedSearch %]<input value="[% "DELETE" | string %]" name="deleteSavedSearch" type="submit">[% END %]
+			[% IF savedSearch %]<input value="[% "DELETE" | string %]" name="deleteSavedSearch" type="button" onclick='this.form.action.value = "deleteSaved"; this.form.submit()'>[% END %]
 		</td>
 	</tr>
 [% END %]
@@ -232,7 +232,9 @@
 		<td class="content" align="right" valign="middle" style="vertical-align: middle" width="30%"><br>[% "SAVE_AS" | string %]&nbsp;</td>
 		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
 			<br>
-			<input name="saveSearch" value="[% saveSearch | html %]" size="[% size %]" maxlength="100" type="text">
+			<input name="saveSearch" value="[% saveSearch | html %]" size="[% size / 2.5 %]" maxlength="100" type="text">
+			<input value="[% "SAVED_SEARCH" | string %]" name="saveAdvSearch" type="button" onclick='this.form.action.value = "saveSearch"; this.form.submit()'>
+			<input value="[% "AS_VIRTUAL_LIBRARY"  | string %]" name="saveLibraryView" type="button" onclick='this.form.action.value = "saveLibraryView"; this.form.submit()'>
 		</td>
 	</tr>
 [% END %]

@@ -26,6 +26,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	#              if your library logic is a bit more complex than a simple SQL statement.
 	# - priority:  optionally define a numerical priority if you want your library definition
 	#              to be evaluated in a given order. Lower values are built first. Defaults to 0.
+	# - unregisterCB: optionally define a callback to be executed before a library view is
+	#              being removed. Can eg. be used to clean up some plugin specific data.
 	
 	# sql and scannerCB are mutually exclusive. scannerCB takes precedence over sql.
 	
@@ -38,6 +40,11 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 				SELECT '%s', tracks.id 
 				FROM tracks 
 				WHERE tracks.secs > 600
+		},
+		unregisterCB => sub {
+			my $id = shift;
+			# do something useful wehn this library is being unregistered
+			$prefs->remove('library_' . $id);
 		}
 	} );
 	
@@ -109,7 +116,18 @@ sub unregisterLibrary {
 	
 	$id = $class->getRealId($id);
 	
-	delete $libraries{$id} if $id && $libraries{$id};
+	return unless $id && $libraries{$id};
+	
+	if ($libraries{$id}->{unregisterCB}) {
+		$libraries{$id}->{unregisterCB}->($libraries{$id}->{id});
+	}
+
+	# make sure noone is using this library any more
+	foreach my $clientPref ( $prefs->allClients ) {
+		$clientPref->remove('libraryId');
+	}
+	
+	delete $libraries{$id};
 }
 
 # called by the scanner module
