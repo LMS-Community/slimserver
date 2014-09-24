@@ -12,6 +12,7 @@ use strict;
 use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
+use Storable;
 
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
@@ -24,6 +25,7 @@ use Slim::Utils::Log;
 use constant MAX_ADV_RESULTS => 200;
 
 my $log = logger('network.http');
+my $prefs = preferences('advancedSearch');
 
 sub init {
 	
@@ -81,6 +83,22 @@ sub advancedSearch {
 	$params->{'liveSearch'}   = 0;
 	$params->{'browse_items'} = [];
 	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
+	
+	if ( $params->{'deleteSavedSearch'} ) {
+		$prefs->remove($params->{'savedSearch'});
+		delete $params->{'deleteSavedSearch'};
+		$params->{'resetAdvSearch'} = 1;
+	}
+
+	if ( $params->{'loadSaved'} && $params->{'savedSearch'} && (my $searchParams = $prefs->get($params->{'savedSearch'})) ) {
+		if (ref $searchParams eq 'HASH') {
+			$params->{search} = Storable::dclone($searchParams);
+			$params->{'resetAdvSearch'} = 1;
+		}
+	}
+	
+	# keep a copy of the search params to be stored in a saved search
+	my %searchParams;
 
 	# Check for valid search terms
 	for my $key (sort keys %$params) {
@@ -107,6 +125,9 @@ sub advancedSearch {
 
 			$key    =~ s/\.op$//;
 			$newKey =~ s/\.op$//;
+
+			$searchParams{$newKey} ||= {};
+			$searchParams{$newKey}->{op} = $op; 
 
 			next unless $params->{$key} || ($newKey eq 'year' && $params->{$key} eq '0');
 
@@ -145,6 +166,7 @@ sub advancedSearch {
 				$query{$newKey}->{'>'} = '0';
 			}
 
+=pod Shall we treat an undefined rating the same as 0?
 			if ($newKey eq 'persistent.rating' && $op eq '<') {
 				$query{$newKey} = {
 					'or' => [
@@ -153,11 +175,21 @@ sub advancedSearch {
 					],
 				};
 			}
+=cut
 
 			delete $params->{$key};
 
 			next;
 		}
+		elsif ($key =~ /search\.(.*)\.(active\d+)$/) {
+			$searchParams{$1} ||= {};
+			$searchParams{$1}->{$2} = $params->{$key}; 
+
+			next;
+		}
+
+		$searchParams{$newKey} ||= {};
+		$searchParams{$newKey}->{value} = $params->{$key}; 
 
 		# Append to the query string
 		push @qstring, join('=', $key, Slim::Utils::Misc::escape($params->{$key}));
@@ -182,6 +214,16 @@ sub advancedSearch {
 		$query{$newKey} = $params->{$key};
 	}
 
+	if ( keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
+		# don't store operators when there's no value
+		foreach my $k (keys %searchParams) {
+			delete $searchParams{$k} unless $searchParams{$k}->{value};
+		}
+		$prefs->set($saveSearch, \%searchParams);
+		
+		delete $params->{saveSearch};
+	}
+
 	# XXX - need another way to get this list if not transcoding
 	if (main::TRANSCODING) {
 		# Turn our conversion list into a nice type => name hash.
@@ -203,30 +245,31 @@ sub advancedSearch {
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 	$params->{'statistics'} = 1 if main::STATISTICS;
-	$params->{'activeRoles'}= { map { $_ => 1 } @{ Slim::Schema->artistOnlyRoles } };
 	$params->{'roles'}      = \%Slim::Schema::Contributor::roleToContributorMap;
+	$params->{'searches'}   = [ keys %{$prefs->all} ];
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
 		$params->{'numresults'} = -1;
 
+		_initActiveRoles($params);
+
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
-	# Bug: 2479 - Don't include roles if the user has them unchecked.
 	my @joins = ();
-	$params->{'activeRoles'} = {};
-	
-	foreach (keys %Slim::Schema::Contributor::roleToContributorMap) {
-		$params->{'activeRoles'}->{$_} = $params->{'roleActive_' . $_} ? 1 : 0;
-	}
+	_initActiveRoles($params);
 
-	$params->{'activeRoles'}= { map { $_ => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{ $params->{'activeRoles'} };
+	if ($query{'contributor.namesearch'}) {
 
-	if ($params->{'activeRoles'} || $query{'contributor.namesearch'}) {
-
-		if ($params->{'activeRoles'}) {
-			$query{'contributorTracks.role'} = [ grep { $params->{'activeRoles'}->{$_} } keys %{$params->{'activeRoles'}} ];
+		if (keys %{$params->{'search'}->{'contributor_namesearch'}}) {
+			my @roles;
+			foreach my $k (keys %{$params->{'search'}->{'contributor_namesearch'}}) {
+				if ($k =~ /active(\d+)$/) {
+					push @roles, $1;
+				}
+			}
+			$query{'contributorTracks.role'} = \@roles if @roles;
 		}
 
 		if ($query{'contributor.namesearch'}) {
@@ -309,10 +352,23 @@ sub advancedSearch {
 		# keeping all the tracks in memory twice.
 		$client->modeParam('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
 	}
-
+	
 	fillInSearchResults($params, $rs, \@qstring, 1, $client);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
+}
+
+sub _initActiveRoles {
+	my $params = shift;
+
+	$params->{'search'} ||= {};
+	$params->{'search'}->{'contributor_namesearch'} ||= {};
+
+	foreach (keys %Slim::Schema::Contributor::roleToContributorMap) {
+		$params->{'search'}->{'contributor_namesearch'}->{'active' . $_} = 1 if $params->{'search.contributor_namesearch.active' . $_};
+	}
+
+	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
 sub fillInSearchResults {

@@ -10940,6 +10940,25 @@ SAVE
 	SV	Spara
 	ZH_CN	保存
 
+SAVE_AS
+	CS	Uložit
+	DA	Gem
+	DE	Speichern unter
+	EN	Save as
+	ES	Guardar
+	FI	Tallenna
+	FR	Enregistrer
+	HE	שמור
+	IT	Salva
+	JA	保存
+	NL	Opslaan
+	NO	Lagre
+	PL	Zapisz
+	PT	Gravar
+	RU	Сохранить
+	SV	Spara
+	ZH_CN	保存
+
 RENAME
 	CS	Přejmenovat
 	DA	Omdøb
@@ -22219,6 +22238,10 @@ RECENT_SEARCHES
 	PL	Ostatnie wyszukiwania
 	RU	Недавние поисковые запросы
 	SV	Nyligen gjorda sökningar
+
+SAVED_SEARCHES
+	DE	Gespeicherte Suchvorgänge
+	EN	Saved Searches
 
 ALBUMS_SORT_METHOD
 	CS	Způsob řazení alb

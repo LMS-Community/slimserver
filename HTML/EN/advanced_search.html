@@ -75,9 +75,25 @@
 [% END %]
 	<form action="advanced_search.html" method="GET" name="searchForm" id="advSearchForm" [% IF resultClass || browse_items.size %]class="[% resultClass || "resultsPage" %]"[% END %]><br>
 	<input type="hidden" value="[% player %]" name="player">
+	<input type="hidden" value="" name="loadSaved">
 
 	<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
 		<tbody>
+
+[% IF searches.size %]
+	<tr>
+		<td>&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
+			<select name="savedSearch" onchange='this.form.loadSaved.value = this.value; this.form.submit()'>
+				<option value="">[% "SAVED_SEARCHES" | string | html %]</option>
+				[%- FOREACH saved = searches -%]
+					<option value="[% saved %]" [% IF savedSearch == saved %]selected="selected"[% END %]>[% saved | html %]</option>
+				[% END -%]
+			</select>
+			[% IF savedSearch %]<input value="[% "DELETE" | string %]" name="deleteSavedSearch" type="submit">[% END %]
+		</td>
+	</tr>
+[% END %]
 
 [% WRAPPER field title='TRACK' %]
 	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value | html %]" size="[% size %]" maxlength="100" type="text">
@@ -90,7 +106,7 @@
 	<table>
 		[% FOREACH role = roles.keys.sort %]
 			[% IF loop.count % 2 > 0 %]<tr>[% END %]
-			<td><input type="checkbox" name="roleActive_[% role %]" value="1" [% IF activeRoles.$role %]checked="checked"[% END %]>&nbsp;[% roles.$role | string %]&nbsp;&nbsp;</td>
+			<td><input type="checkbox" name="search.contributor_namesearch.active[% role %]" value="1" [% val = "active" _ role; IF search.contributor_namesearch.$val %]checked="checked"[% END %]>&nbsp;[% roles.$role | string %]&nbsp;&nbsp;</td>
 			[% IF loop.last OR loop.count+1 % 2 == 0 %]</tr>[% END %]
 		[% END %]
 	</table>
@@ -203,19 +219,23 @@
 	[% "BYTES" | string %]
 [% END %]
 
-	<tr>
-		<td class="content" align="right" nowrap="nowrap" valign="middle" style="vertical-align: middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="75%">
-			<input name="search.comments_value" value="[% search.comments_value.value %]" size="[% size %]" maxlength="1000" type="text">
-		</td>
-	</tr>
+[% WRAPPER field title='COMMENT' %]
+	<input name="search.comments_value" value="[% search.comments_value.value %]" size="[% size %]" maxlength="1000" type="text">
+[% END %]
 
+[% WRAPPER field title='LYRICS' %]
+	<input name="search.lyrics" value="[% search.lyrics.value %]" size="[% size %]" maxlength="1000" type="text">
+[% END %]
+
+[% IF browse_items.size %]
 	<tr>
-		<td class="content" align="right" nowrap="nowrap" valign="middle" style="vertical-align: middle" width="25%">[% "LYRICS" | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="75%">
-		  <input name="search.lyrics" value="[% search.lyrics.value %]" size="[% size %]" maxlength="1000" type="text">
+		<td class="content" align="right" valign="middle" style="vertical-align: middle" width="30%"><br>[% "SAVE_AS" | string %]&nbsp;</td>
+		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
+			<br>
+			<input name="saveSearch" value="[% saveSearch | html %]" size="[% size %]" maxlength="100" type="text">
 		</td>
 	</tr>
+[% END %]
 
 	<tr>
 		<td>&nbsp;</td>
