@@ -91,13 +91,26 @@ sub handleFeed {
 	while (my ($k, $v) = each %$libraries) {
 		push @items, {
 			name => $v->{name},
-			url  => \&setLibrary,
-			passthrough => [{
-				library_id => $k,
-			}],
-			nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
+			type => 'outline',
+			items => [{
+				name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USE_X', $v->{name}),
+				url  => \&setLibrary,
+				passthrough => [{
+					library_id => $k,
+				}],
+				nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
+			},{
+				name => cstring($client, 'DELETE'),
+				url  => \&unregisterLibrary,
+				passthrough => [{
+					library_id => $k,
+				}],
+				nextWindow => $args->{isControl} ? 'myMusic' : 'parent',
+			}]
 		};
 	}
+	
+	@items = sort { $a->{name} cmp $b->{name} } @items;
 
 	# hard-coded item to reset the library view
 	push @items, {
@@ -148,7 +161,7 @@ sub setLibrary {
 
 	$cb->({
 		items => [{
-			name => Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
+			name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USING_X', (Slim::Music::VirtualLibraries->getNameForId($args->{library_id}) || cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'))),
 			showBriefly => 1,
 		}]
 	});
@@ -156,6 +169,19 @@ sub setLibrary {
 	# pre-cache totals
 	Slim::Utils::Timers::setTimer(__PACKAGE__, Time::HiRes::time() + 0.1, sub {
 		Slim::Schema->totals($client);
+	});
+}
+
+sub unregisterLibrary {
+	my ($client, $cb, $params, $args) = @_;
+
+	Slim::Music::VirtualLibraries->unregisterLibrary($args->{library_id});
+
+	$cb->({
+		items => [{
+			name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_DELETED'),
+			showBriefly => 1,
+		}]
 	});
 }
 

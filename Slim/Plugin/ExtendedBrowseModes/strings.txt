@@ -99,3 +99,16 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	PL	Losowe albumy
 	RU	Произвольные альбомы
 	SV	Slumpmässigt valda album
+
+PLUGIN_EXTENDED_BROWSEMODES_USE_X
+	DE	'%s' verwenden
+	EN	Use '%s'
+
+PLUGIN_EXTENDED_BROWSEMODES_USING_X
+	DE	Verwende nun '%s'
+	EN	Now using '%s'
+
+PLUGIN_EXTENDED_BROWSEMODES_DELETED
+	DE	Bibliotheksansict gelöscht
+	EN	Library View Deleted
+	
