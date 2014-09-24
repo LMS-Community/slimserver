@@ -274,6 +274,8 @@ sub readTags {
 
 				for (my $i = 0; $i < scalar @{$value}; $i++) {
 
+					next unless defined $value->[$i];
+
 					$value->[$i] =~ s/$Slim::Utils::Unicode::bomRE//;
 					$value->[$i] =~ s/\000$//;
 				}
