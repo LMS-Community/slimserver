@@ -61,8 +61,8 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	EN	Contributor roles:
 
 PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES
-	DE	Bibliotheksansicht umschalten
-	EN	Switch Library View
+	DE	Bibliotheksansichten
+	EN	Library Views
 
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
