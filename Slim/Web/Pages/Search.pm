@@ -283,6 +283,7 @@ sub advancedSearch {
 			foreach my $k (keys %{$params->{'search'}->{'contributor_namesearch'}}) {
 				if ($k =~ /active(\d+)$/) {
 					push @roles, $1;
+					push @qstring, join('=', "search.contributor_namesearch.$k", 1);
 				}
 			}
 			$query{'contributorTracks.role'} = \@roles if @roles;
@@ -375,8 +376,6 @@ sub advancedSearch {
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		my $sqlQuery = $rs->as_query;
 		my $sql = $$sqlQuery->[0];
-		#my $sqlParams = $$sqlQuery->[1];
-		#	warn Data::Dump::dump($sqlQuery);
 		
 		# XXX - need some smarter way to interpolate variables in the query...
 		for (my $i = 1; $i < scalar @{$$sqlQuery}; $i++) {
