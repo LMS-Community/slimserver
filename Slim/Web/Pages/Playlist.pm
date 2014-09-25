@@ -206,31 +206,25 @@ sub playlist {
 			$form{'levelName'} = 'track';
 			$form{'odd'}       = ($itemnum + $offset) % 2;
 			
-			if ( $form{'includeAlbum'} || !$form{'coverid'} ) {
-				my $albumId = $track->albumid;
-				my $albumDetails = $albumCache{$albumId};
+			if ( !$form{'coverid'} && !$form{'artwork_track_id'} ) {
+				$form{'artwork_track_id'} = $form{'album'}->{'artwork'} if $form{'album'};
+
+				my $albumId;
+				if (!$form{'artwork_track_id'}) {
+					$albumId = $track->albumid;
+					$form{'artwork_track_id'} = $albumCache{$albumId};
+				}
 				
-				if (!$albumDetails) {
-					my $sth = Slim::Schema->dbh->prepare_cached("SELECT title, artwork FROM albums WHERE id = ?");
+				if (!$form{'artwork_track_id'}) {
+					my $sth = Slim::Schema->dbh->prepare_cached("SELECT artwork FROM albums WHERE id = ?");
 					
 					$sth->execute($albumId);
 					
-					$albumDetails = $sth->fetchrow_hashref || {};
-					$albumDetails->{id} = $albumId;
-					utf8::decode($albumDetails->{title});
+					($form{'artwork_track_id'}) = $sth->fetchrow_array;
 					
 					$sth->finish;
 
-					$albumCache{$albumId} = $albumDetails;
-				}
-				
-				if ( $form{'includeAlbum'} ) {
-					$form{'albumId'}    = $albumId;
-					$form{'albumTitle'} = $albumDetails->{title};
-				}
-				
-				if ( !$form{'coverid'} ) {
-					$form{'artwork_track_id'} = $albumDetails->{artwork};
+					$albumCache{$albumId} = $form{'artwork_track_id'};
 				}
 			}
 			

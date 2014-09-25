@@ -287,10 +287,10 @@ END %]
 		[% item.text | html %]
 	[% END %]
 	
-	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	[% IF item.includeArtist && (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
-	[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %][% stringFROM %]
-	<i><a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a></i>[% END %]
+	[% IF item.includeAlbum && (albumTitle = item.albumTitle || (item.itemobj.album && item.itemobj.album.title)) && albumTitle != item.noAlbum && albumTitle != "" %][% stringFROM %]
+	<i><a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% albumTitle | html %]</a></i>[% END %]
 	[% IF item.currentsong %]</b>[% END %]
 [% END %]
 

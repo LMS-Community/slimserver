@@ -141,7 +141,7 @@ this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 
 
 [%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
-href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% item.itemobj.album.id | uri %])&amp;album_id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]/"
+href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=tracks&amp;linktitle=[% stringALBUM %]%20([% (item.albumId || item.itemobj.album.id) | uri %])&amp;album_id=[% (item.albumId || item.itemobj.album.id) %]&amp;player=[% playerURI %]/"
 [%- END %]
 
 [%# this is the href to the year of item %]
@@ -156,7 +156,7 @@ href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;
 
 [%# this is the href to the songinfo for item %]
 [% BLOCK songinfoItemHRef -%]
-href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]"
+href="[% webroot %]songinfo.html?item=[% item.item || item.itemobj.id %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the cover art for item %]

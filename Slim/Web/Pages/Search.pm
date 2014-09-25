@@ -495,10 +495,9 @@ sub fillInSearchResults {
 	my $offset = ($params->{'start'} || 0);
 	my $limit  = $offset + ($params->{'itemsPerPage'} || 50) - 1;
 
-	# No pagebar on advanced search - return more items instead, without killing the server with thousands of results
-	if (!$advancedSearch) {
+#	# No pagebar on advanced search - return more items instead, without killing the server with thousands of results
+#	if (!$advancedSearch) {
 		$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
-
 			'itemCount'    => $params->{'numresults'},
 			'path'         => $params->{'path'},
 			'otherParams'  => $otherParams,
@@ -507,16 +506,16 @@ sub fillInSearchResults {
 		});
 
 		$params->{'start'} = $params->{'pageinfo'}{'startitem'};
-	}
+#	}
 	
 	# Get just the items we need for this loop.
 	$rs = $rs->slice($offset, $limit);
 
-	my $itemCount  = 1;
-	my $lastAnchor = '';
+	my $itemCount  = 0;
 	my $descend    = $type eq 'track' ? 0 : 1;
 
 	$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
+	my $favorites = $params->{favoritesEnabled} ? Slim::Utils::Favorites->new($client) : undef;
 
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
@@ -525,15 +524,15 @@ sub fillInSearchResults {
 			'levelName'    => $type,
 			'hreftype'     => 'browseDb',
 			'descend'      => $descend,
-			'odd'          => ($itemCount + 1) % 2,
+			'odd'          => $itemCount % 2,
 			'skinOverride' => $params->{'skinOverride'},
 			'player'       => $params->{'player'},
 			'itemobj'      => $obj,
 			'level'        => 1,
-			'attributes'   => sprintf('&%s.id=%d', $type, $obj->id),
-			$type          => $obj->id,
+			'searchResult' => 1,
 		);
 
+=pod
 		if ($type eq 'contributor') {
 
 			$form{'attributes'} .= '&contributor.role=ALL';
@@ -547,24 +546,24 @@ sub fillInSearchResults {
 		
 			$form{'hierarchy'} = 'genre,contributor,album,track';
 		}
+=cut
 
-		if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($obj->url)) {
-			$form{'isFavorite'} = defined Slim::Utils::Favorites->new($client)->findUrl($obj->url);
-		}
+		if ($favorites && (my $url = $obj->url) ) {
+			if (Slim::Music::Info::isURL($url)) {
+				$form{'isFavorite'} = defined $favorites->findUrl($url);
+			}
+ 		}
 
 		$obj->displayAsHTML(\%form, $descend);
+		
+		$form{$type}        = $form{'item'};
+		$form{'attributes'} = sprintf('&%s.id=%d', $type, $form{'item'});
 
 		$itemCount++;
 
-		my $anchor = substr($obj->namesort, 0, 1);
-
-		if ($lastAnchor ne $anchor) {
-			$form{'anchor'} = $lastAnchor = $anchor;
-		}
-
 		push @{$params->{'browse_items'}}, \%form;
 		
-		main::idleStreams();
+		main::idleStreams() unless $itemCount % 5;
 	}
 }
 

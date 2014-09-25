@@ -84,7 +84,7 @@ END %]
 			<a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a>
 		[% END %]
 
-		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		[% IF item.includeArtist && (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 
 		</span>
 [% END %]

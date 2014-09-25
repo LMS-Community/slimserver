@@ -14,7 +14,7 @@
 			[% ELSE; item.plugin_meta.album; END %]
 		[% END %]
 		[% IF item.includeArtist;
-			IF item.artist && item.artist != item.noArtist; 
+			IF (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist; 
 				PROCESS artistsAsHTML.html itemobj = item.itemobj;
 			ELSIF item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist;
 				stringBY;

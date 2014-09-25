@@ -61,14 +61,9 @@
 	[%- END %]
 
 	[% BLOCK cmdHRef -%]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.playlistRequest('[%
-		# single quotes aren't url encoded, but can con fuse JS
-		IF itemobj.url && itemobj.url.search("'");
-			itemobj.url = itemobj.url | replace("'", "%27");
-		END;
-
 		IF numcmdFor.$cmdType; # better way to determine this?
 			PROCESS cmdNumericQuery;
-		ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		ELSIF (!item.searchResult && (itemobj.isRemoteURL || !attributes || itemobj.content_type() == 'dir'));
 			PROCESS cmdRemoteURLQuery;
 		ELSE;
 			PROCESS cmdLocalQuery;
@@ -77,7 +72,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id.defined %]id="db[% itemobj.id | uri %]_selector"[% END %]>
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF item.item || itemobj.id.defined %]id="db[% (item.item || itemobj.id) | uri %]_selector"[% END %]>
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (hasArtwork && !artwork) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content %]</div>
 			<span class="browsedbControls">

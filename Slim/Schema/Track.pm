@@ -21,9 +21,9 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 my $log = logger('database.info');
 
-# rendering the playlist will call displayAsHTML repeatedly, often requesting the same artist(s) over and over again
+# rendering the playlist will call displayAsHTML repeatedly, often requesting the same artists and albums over and over again
 # keep a small cache of contributor objects for a short period of time, while we're looping the playlist items
-tie my %contributorCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 15;
+tie my %albumCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 15;
 
 our @allColumns = (qw(
 	id urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
@@ -488,18 +488,21 @@ sub displayAsHTML {
 	if ($format !~ /ARTIST/) {
 
 		my $contributor_sth = Slim::Schema->dbh->prepare_cached(sprintf(qq(
-			SELECT DISTINCT(contributor_track.contributor) 
-			FROM contributor_track 
-			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s)
+			SELECT DISTINCT(contributor_track.contributor), contributors.name
+			FROM contributor_track, contributors
+			WHERE contributor_track.track = ? AND contributor_track.role IN (%s,%s) AND contributors.id = contributor_track.contributor
 		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
 		
-		my $contributorId;
-		$contributor_sth->execute($self->id);
+		my ($contributorId, $contributorName);
+		$contributor_sth->execute($form->{'item'});
 		$contributor_sth->bind_col( 1, \$contributorId );
+		$contributor_sth->bind_col( 2, \$contributorName );
 
 		my @info;
 
 		while ($contributor_sth->fetch) {
+=pod
+XXX - I'm pretty sure we don't need the album object in our skins any more. Replace with faster SQL.
 			my $contributor = $contributorCache{$contributorId};
 			
 			if (!$contributor) {
@@ -520,10 +523,22 @@ sub displayAsHTML {
 				$form->{'artist'} = $contributor->{obj};
 			}
 
-			push @info, $contributor->{data};
+#			push @info, $contributor->{data};
+=cut
+
+			utf8::decode($contributorName);
+
+			push @info, {
+				'artistId'   => $contributorId,
+				'name'       => $contributorName,
+				'attributes' => 'contributor.id=' . $contributorId,
+			};
 		}
 
-		$form->{'artistsWithAttributes'} = \@info if scalar @info;
+		if (scalar @info) {
+			$form->{'includeArtist'} = 1;
+			$form->{'artistsWithAttributes'} = \@info;
+		}
 		
 		if (!$form->{'includeArtist'} && $form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'}) {
 			$form->{'includeArtist'} = 1;
@@ -532,6 +547,25 @@ sub displayAsHTML {
 
 	if ($format !~ /ALBUM/) {
 		$form->{'includeAlbum'}  = 1;
+		
+		my $albumId = $self->albumid;
+		my $albumDetails = $albumCache{$albumId};
+		
+		if ( !$albumDetails ) {
+			my $sth = Slim::Schema->dbh->prepare_cached("SELECT title, artwork FROM albums WHERE id = ?");
+			
+			$sth->execute($albumId);
+			$albumDetails = $sth->fetchrow_hashref || {};
+			$sth->finish;
+
+			utf8::decode($albumDetails->{title});
+	
+			$albumCache{$albumId} = $albumDetails;
+		}
+
+		$form->{'albumId'} = $albumId;
+		$form->{'albumTitle'} = $albumDetails->{title};
+		$form->{'artwork_track_id'} = $albumDetails->{artwork};
 	}
 
 	$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');

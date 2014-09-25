@@ -273,6 +273,4 @@
 
 	[% END %]
 
-[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
-
 [% IF not ajaxUpdate; PROCESS pagefooter.html; END %]
