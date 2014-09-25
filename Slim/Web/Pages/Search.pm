@@ -35,6 +35,7 @@ sub init {
 	
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	
+	# register saved searches as virtual libraries
 	foreach my $vlid ( @{_getLibraryViews()} ) {
 		my $vl = $prefs->get($vlid);
 		Slim::Music::VirtualLibraries->registerLibrary( {
@@ -107,6 +108,9 @@ sub advancedSearch {
 			$params->{search} = Storable::dclone($searchParams);
 			$params->{'resetAdvSearch'} = 1;
 		}
+	}
+	elsif ( $params->{'resetAdvSearch'} ) {
+		delete $params->{savedSearch};
 	}
 	
 	# keep a copy of the search params to be stored in a saved search
