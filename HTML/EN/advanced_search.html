@@ -13,9 +13,29 @@
 					location = link;
 				else {
 					f.show();
+					
+					SqueezeJS.UI.ScrollPanel.offset2 += f.getHeight();
 					SqueezeJS.UI.ScrollPanel.init();
 				} 
 			});
+		}
+		
+		// advanced search somehow ends up with two scrolling panels - override default ScrollPanel
+		if ( ((el = Ext.get('content')) && el.hasClass('scrollingPanel')) ) {
+			var sp = SqueezeJS.UI.ScrollPanel;
+			
+			sp.el2 = el;
+			sp.offset2 = -5;
+
+			if (el = Ext.get('infoTab'))
+				sp.offset2 += el.getHeight();
+	
+			sp.onResize = function() {
+				this.el.setHeight( Ext.fly(document.body).getViewSize().height - this.offset );
+				this.el2.setHeight( Ext.fly(document.body).getViewSize().height - this.offset + this.offset2 );
+			};
+
+			sp.onResize();
 		}
 		[% END %]
 		
@@ -272,5 +292,9 @@
 		[% "NO_SEARCH_RESULTS" | string %]
 
 	[% END %]
+
+[%- IF pageinfo.totalitems; infoTab = BLOCK -%]
+	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
+[%- END; END -%]
 
 [% IF not ajaxUpdate; PROCESS pagefooter.html; END %]
