@@ -25,11 +25,16 @@
 			var sp = SqueezeJS.UI.ScrollPanel;
 			
 			sp.el2 = el;
-			sp.offset2 = -5;
-
+			
+			// where is this value coming from? We shouldn't need to hard-code it
+			sp.offset2 = -18;
+			
 			if (el = Ext.get('infoTab'))
 				sp.offset2 += el.getHeight();
-	
+			
+			if (el = Ext.get('pagebar'))
+				sp.offset2 += el.getHeight();
+
 			sp.onResize = function() {
 				this.el.setHeight( Ext.fly(document.body).getViewSize().height - this.offset );
 				this.el2.setHeight( Ext.fly(document.body).getViewSize().height - this.offset + this.offset2 );
