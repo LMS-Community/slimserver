@@ -374,7 +374,7 @@ sub advancedSearch {
 	my $rs  = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
-		my $sqlQuery = $rs->as_query;
+		my $sqlQuery = $rs->get_column('id')->as_query;
 		my $sql = $$sqlQuery->[0];
 		
 		# XXX - need some smarter way to interpolate variables in the query...
