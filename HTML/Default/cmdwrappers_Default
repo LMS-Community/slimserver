@@ -114,12 +114,6 @@
 	</li>
 	[%- END %]
 
-
-	[% BLOCK iteminfo -%]
-		[% PROCESS trackinfo %]
-	[%- END %]
-
-
 	[% BLOCK browsecontrols %]
 		[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
 		[% IF showplayall -%]

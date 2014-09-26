@@ -1,17 +1,5 @@
-[%- IF artwork == 1 && tree != 1 && (item.levelName == 'album' || item.levelName == 'age') && !query;
-	contentwrapper = 'galleryitem';
-	maxContributors = 3;
-ELSE;
-	contentwrapper = 'contentitem';
-END;
--%]
-[%- IF item.heading %]
-	<div class="searchHeader">
-		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% stringCOLON %][% item.numresults %]
-	</div>
-[%- ELSE -%]
-	[% WRAPPER $contentwrapper
-			controls    = 'browsecontrols'
+	[% WRAPPER contentitem
+			leftcontrols= 'browsecontrols'
 			itemobj     = item.itemobj
 			attributes  = item.attributes
 			odd         = item.odd
@@ -22,6 +10,5 @@ END;
 			playallhref = item.playallhref
 			addallhref  = item.addallhref
 			href        = item.href %]
-	[% PROCESS iteminfo %]
+	[% UNLESS itemInfoTemplate; itemInfoTemplate = 'iteminfo'; END; PROCESS $itemInfoTemplate %]
 	[% END -%]
-[%- END %]

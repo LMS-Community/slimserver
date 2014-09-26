@@ -290,13 +290,26 @@ END %]
 	[% IF item.includeArtist && (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
 	[% IF item.includeAlbum && (albumTitle = item.albumTitle || (item.itemobj.album && item.itemobj.album.title)) && albumTitle != item.noAlbum && albumTitle != "" %][% stringFROM %]
-	<i><a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% albumTitle | html %]</a></i>[% END %]
+	<a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% albumTitle | html %]</a>[% END %]
 	[% IF item.currentsong %]</b>[% END %]
 [% END %]
 
-[% BLOCK iteminfo -%]
-	[% PROCESS trackinfo %]
-[%- END %]
+[% BLOCK albuminfo %]
+	<a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% item.text | html %]</a>
+
+	[% IF item.showYear %]
+		<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
+	[% END %]
+	
+	[% IF item.includeArtist && (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[% END %]
+
+[% BLOCK iteminfo;
+	IF item.levelName == 'album';
+		PROCESS albuminfo;
+	ELSE;
+		PROCESS trackinfo;
+END; END %]
 
 [% BLOCK songInfoPlayLinks %]
 	<div id="songInfoPlayLinks">

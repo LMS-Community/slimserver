@@ -264,6 +264,10 @@
 		<td class="content" valign="middle">
 			<br>
 			<input value="[% "SEARCH" | string %]" name="submitAdvSearch" id="submitAdvSearch" type="submit">
+			<select name="searchType">
+				<option value="Track">[% "SONGS" | string %]</option>
+				<option [% IF searchType == "Album" %]selected[% END %] value="Album">[% "ALBUMS" | string %]</option>
+			</select>
 			<input value="[% "CLEAR"  | string %]" name="resetAdvSearch" type="submit">
 		</td>
 	</tr>
@@ -281,6 +285,12 @@
 		
 	[% IF browse_items.size %]
 		<div id="browsedbList">
+
+			[% IF searchType == 'Album';
+				itemInfoTemplate = 'albuminfo';
+			ELSE;
+				itemInfoTemplate = 'trackinfo';
+			END %]
 
 			[% FOREACH item = browse_items %]
 				[% PROCESS browsedbitems_list.html %]

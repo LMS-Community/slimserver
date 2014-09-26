@@ -101,6 +101,8 @@ sub advancedSearch {
 		delete $params->{savedSearch};
 	}
 	
+	my $type = ($params->{'searchType'} || '') =~ /^(Track|Album)$/ ? $1 : 'Track';
+	
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
 
@@ -111,6 +113,8 @@ sub advancedSearch {
 		next unless $params->{$key};
 
 		my $newKey = $1;
+		
+		$newKey =~ s/album_/me_/ if $type eq 'Album';
 
 		if ($params->{'resetAdvSearch'}) {
 			delete $params->{$key};
@@ -289,16 +293,16 @@ sub advancedSearch {
 					push @qstring, join('=', "search.contributor_namesearch.$k", 1);
 				}
 			}
-			$query{'contributorTracks.role'} = \@roles if @roles;
+			$query{"contributor${type}s.role"} = \@roles if @roles;
 		}
 
 		if ($query{'contributor.namesearch'}) {
 
-			push @joins, { 'contributorTracks' => 'contributor' };
+			push @joins, { "contributor${type}s" => 'contributor' };
 
 		} else {
 
-			push @joins, 'contributorTracks';
+			push @joins, "contributor${type}s";
 		}
 	}
 
@@ -339,8 +343,15 @@ sub advancedSearch {
 
 		push @joins, 'genreTracks' if $query{'genre'} || $query{'genres.namesearch'};
 	}
+	
+	if ($type ne 'Track') {
+		push @joins, 'tracks';
+	}
+	else {
+		$query{'me.audio'} = 1;
+	}
 
-	if ($query{'album.titlesearch'}) {
+	if ($type ne 'Album' && $query{'album.titlesearch'}) {
 
 		push @joins, 'album';
 	}
@@ -368,17 +379,17 @@ sub advancedSearch {
 	# XXXX - for some reason, the 'join' key isn't preserved when passed
 	# along as a ref. Perl bug because 'join' is a keyword? Use 'joins' as well.
 	my %attrs = (
-		'order_by' => "me.disc, me.titlesort $collate",
+		'order_by' => $type eq 'Album' ? "me.titlesort $collate" : "me.disc, me.titlesort $collate",
 		'join'     => \@joins,
 		'joins'    => \@joins,
 	);
 
 	# Create a resultset - have fillInSearchResults do the actual search.
-	my $rs  = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
+	my $rs  = Slim::Schema->search($type, \%query, \%attrs)->distinct;
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted
-		my $rs = Slim::Schema->search('Track', \%query, {
+		my $rs = Slim::Schema->search($type, \%query, {
 			'join'     => \@joins,
 			'joins'    => \@joins,
 		});
@@ -411,10 +422,10 @@ sub advancedSearch {
 		# stash parameters used to generate this query, so if the user
 		# wants to play All Songs, we can run it again, but without
 		# keeping all the tracks in memory twice.
-		$client->modeParam('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
+		$client->modeParam("search${type}Results", { 'cond' => \%query, 'attr' => \%attrs });
 	}
 	
-	fillInSearchResults($params, $rs, \@qstring, 1, $client);
+	fillInSearchResults($params, $rs, \@qstring, $client);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
@@ -437,7 +448,7 @@ sub _getSavedSearches {
 }
 
 sub fillInSearchResults {
-	my ($params, $rs, $qstring, $advancedSearch, $client) = @_;
+	my ($params, $rs, $qstring, $client) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = defined($params->{'query'}) ? $params->{'query'} : '';
@@ -455,28 +466,12 @@ sub fillInSearchResults {
 			  '&' .
 			  join('&', @$qstring);
 
-	# Put in the type separator
-	if (!$advancedSearch && $count) {
-
-		# add reduced item for type headings
-		push @{$params->{'browse_items'}}, {
-			'numresults' => $count,
-			'query'      => $query,
-			'heading'    => $type,
-			'odd'        => 0,
-		};
-	}
-
 	# Add in ALL
 	if ($count > 1) {
 
 		my $attributes = '';
 
-		if ($advancedSearch) {
-			$attributes = sprintf('&searchRef=search%sResults', ucfirst($type));
-		} else {
-			$attributes = sprintf('&%s.%s=%s', $type, $rs->searchColumn, $query);
-		}
+		$attributes = sprintf('&searchRef=search%sResults', ucfirst($type));
 
 		push @{$params->{'browse_items'}}, {
 			'text'       => string('ALL_SONGS'),
@@ -489,18 +484,15 @@ sub fillInSearchResults {
 	my $offset = ($params->{'start'} || 0);
 	my $limit  = $offset + ($params->{'itemsPerPage'} || 50) - 1;
 
-#	# No pagebar on advanced search - return more items instead, without killing the server with thousands of results
-#	if (!$advancedSearch) {
-		$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
-			'itemCount'    => $params->{'numresults'},
-			'path'         => $params->{'path'},
-			'otherParams'  => $otherParams,
-			'start'        => $params->{'start'},
-			'perPage'      => $params->{'itemsPerPage'},
-		});
+	$params->{'pageinfo'} = Slim::Web::Pages::Common->pageInfo({
+		'itemCount'    => $params->{'numresults'},
+		'path'         => $params->{'path'},
+		'otherParams'  => $otherParams,
+		'start'        => $params->{'start'},
+		'perPage'      => $params->{'itemsPerPage'},
+	});
 
-		$params->{'start'} = $params->{'pageinfo'}{'startitem'};
-#	}
+	$params->{'start'} = $params->{'pageinfo'}{'startitem'};
 	
 	# Get just the items we need for this loop.
 	$rs = $rs->slice($offset, $limit);
@@ -551,7 +543,7 @@ sub fillInSearchResults {
 		$obj->displayAsHTML(\%form, $descend);
 		
 		$form{$type}        = $form{'item'};
-		$form{'attributes'} = sprintf('&%s.id=%d', $type, $form{'item'});
+		$form{'attributes'} ||= sprintf('&%s.id=%d', $type, $form{'item'});
 
 		$itemCount++;
 

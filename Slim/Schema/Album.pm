@@ -109,12 +109,13 @@ sub displayAsHTML {
 	$form->{'text'}       = $self->title;
 	$form->{'coverThumb'} = $self->artwork || 0;
 	$form->{'size'}       = $prefs->get('thumbSize');
-
-	$form->{'item'}       = $self->title;
+	$form->{'albumId'}    = $self->id;
+	$form->{'item'}       = $form->{'text'};
+	$form->{'albumTitle'} = $form->{'text'};
+	$form->{'attributes'} = "&album.id=" . $form->{'albumId'};
 
 	# Show the year if pref set or storted by year first
 	if (my $showYear = $prefs->get('showYear') || ($sort && $sort =~ /^album\.year/)) {
-
 		$form->{'showYear'} = $showYear;
 		$form->{'year'}     = $self->year;
 	}
@@ -123,37 +124,33 @@ sub displayAsHTML {
 	my $showArtists = ($sort && $sort =~ /^contributor\.namesort/);
 
 	if ($prefs->get('showArtist') || $showArtists) {
-
-		# XXX - only show the contributor when there are multiple
-		# contributors in the album view.
-		# if ($form->{'hierarchy'} ne 'contributor,album,track') {
-
-		my @artists = $self->artists;
-
-		if (@artists) {
-
-			$form->{'artist'}   = $artists[0];
-			#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
-			$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
-
-			if ($showArtists) {
-				# override default field for anchors with contributor.namesort
-				$$anchortextRef = $artists[0]->namesort;
-			}
-		}
+		my $contributor_sth = Slim::Schema->dbh->prepare_cached(sprintf(qq(
+			SELECT DISTINCT(contributor_album.contributor), contributors.name
+			FROM contributor_album, contributors
+			WHERE contributor_album.album = ? AND contributor_album.role IN (%s,%s) AND contributors.id = contributor_album.contributor
+		), map { Slim::Schema::Contributor->typeToRole($_) } qw(ARTIST TRACKARTIST)) );
+		
+		my ($contributorId, $contributorName);
+		$contributor_sth->execute($form->{'albumId'});
+		$contributor_sth->bind_col( 1, \$contributorId );
+		$contributor_sth->bind_col( 2, \$contributorName );
 
 		my @info;
-		my $vaString = Slim::Music::Info::variousArtistString();
 
-		for my $contributor (@artists) {
+		while ($contributor_sth->fetch) {
+			utf8::decode($contributorName);
+
 			push @info, {
-				'artist'     => $contributor,
-				'name'       => $contributor->name,
-				'attributes' => 'contributor.id=' . $contributor->id . ($contributor->name eq $vaString ? "&album.compilation=1" : ''),
+				'artistId'   => $contributorId,
+				'name'       => $contributorName,
+				'attributes' => 'contributor.id=' . $contributorId,
 			};
 		}
 
-		$form->{'artistsWithAttributes'} = \@info;
+		if (scalar @info) {
+			$form->{'includeArtist'} = 1;
+			$form->{'artistsWithAttributes'} = \@info;
+		}
 	}
 }
 
