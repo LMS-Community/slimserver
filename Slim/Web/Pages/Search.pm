@@ -218,16 +218,6 @@ sub advancedSearch {
 		$query{$newKey} = $params->{$key};
 	}
 
-	if ( $params->{'action'} && $params->{'action'} eq 'saveSearch' && keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
-		# don't store operators when there's no value
-		foreach my $k (keys %searchParams) {
-			delete $searchParams{$k} unless $searchParams{$k}->{value};
-		}
-		$prefs->set($saveSearch, \%searchParams);
-		
-		delete $params->{saveSearch};
-	}
-
 	# XXX - need another way to get this list if not transcoding
 	if (main::TRANSCODING) {
 		# Turn our conversion list into a nice type => name hash.
@@ -250,7 +240,32 @@ sub advancedSearch {
 	$params->{'genres'}     = Slim::Schema->search('Genre', undef, { 'order_by' => "namesort $collate" });
 	$params->{'statistics'} = 1 if main::STATISTICS;
 	$params->{'roles'}      = \%Slim::Schema::Contributor::roleToContributorMap;
-	$params->{'searches'}   = _getSavedSearches();
+
+	if ( $params->{'action'} && $params->{'action'} eq 'saveSearch' && keys %searchParams && (my $saveSearch = $params->{saveSearch}) ) {
+		# don't store operators when there's no value
+		if ( my $genreSearch = $searchParams{genre} ) {
+			if (ref $genreSearch eq 'HASH' && $genreSearch->{value} > 0) {
+
+				my $genreId = $genreSearch->{value};
+				my $genre   = $params->{'genres'}->find({ id => $genreId })->name;
+				
+				if ($genre) {
+					$searchParams{'genre'}      = { value => -1 };
+					$searchParams{'genre_name'} = {	value => $genre };
+				}
+			}
+		}
+		
+		foreach my $k (keys %searchParams) {
+			delete $searchParams{$k} unless $searchParams{$k}->{value};
+		}
+
+		$prefs->set($saveSearch, \%searchParams);
+		
+		delete $params->{saveSearch};
+	}
+
+	$params->{'searches'} = _getSavedSearches();
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
