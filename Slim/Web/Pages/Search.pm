@@ -392,7 +392,14 @@ sub advancedSearch {
 		my $rs = Slim::Schema->search($type, \%query, {
 			'join'     => \@joins,
 			'joins'    => \@joins,
-		});
+		})->distinct;
+		
+		# libraries are all based on tracks - need to get them for the albums found
+		if ( $type eq 'Album' ) {
+			$rs = Slim::Schema->search('Track', {
+				album => { 'in' => $rs->get_column('id')->as_query }
+			});
+		} 
 		
 		my $sqlQuery = $rs->get_column('id')->as_query;
 		my $sql = $$sqlQuery->[0];
