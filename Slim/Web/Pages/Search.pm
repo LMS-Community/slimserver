@@ -114,7 +114,10 @@ sub advancedSearch {
 
 		my $newKey = $1;
 		
-		$newKey =~ s/album_/me_/ if $type eq 'Album';
+		if ($type eq 'Album') {
+			$newKey =~ s/me_/tracks_/;
+			$newKey =~ s/album_/me_/;
+		}
 
 		if ($params->{'resetAdvSearch'}) {
 			delete $params->{$key};
