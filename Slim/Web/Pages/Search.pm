@@ -34,18 +34,6 @@ sub init {
 	Slim::Web::Pages->addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch );
 	
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
-	
-	# register saved searches as virtual libraries
-	foreach my $vlid ( @{_getLibraryViews()} ) {
-		my $vl = $prefs->get($vlid);
-		Slim::Music::VirtualLibraries->registerLibrary( {
-			id => $vlid,
-			name => $vl->{name},
-			# %s is being replaced with the library's internal ID
-			sql => "INSERT OR IGNORE INTO library_track (library, track) " . $vl->{sql},
-			unregisterCB => \&_removeLibraryView,
-		} );
-	}
 }
 
 use constant MAXRESULTS => 10;
@@ -374,6 +362,12 @@ sub advancedSearch {
 	my $rs  = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
+		# build our own resultset, as we don't want the result to be sorted
+		my $rs = Slim::Schema->search('Track', \%query, {
+			'join'     => \@joins,
+			'joins'    => \@joins,
+		});
+		
 		my $sqlQuery = $rs->get_column('id')->as_query;
 		my $sql = $$sqlQuery->[0];
 		
@@ -384,21 +378,16 @@ sub advancedSearch {
 			$sql =~ s/ \? / $v /;
 		}
 		
-		my $vlid = 'asvl_' . md5_hex($saveSearch);
-		my $vl = {
-			name => $saveSearch,
-			sql  => "SELECT '%s', id FROM $sql",
-		};
+		my $vlid = 'advSrch_' . time;
 		
-		$prefs->set($vlid, $vl);
-
 		Slim::Music::VirtualLibraries->registerLibrary( {
-			id => $vlid,
-			name => $vl->{name},
+			id      => $vlid,
+			name    => $saveSearch,
 			# %s is being replaced with the library's internal ID
-			sql => "INSERT OR IGNORE INTO library_track (library, track) " . $vl->{sql},
-			unregisterCB => \&_removeLibraryView,
+			sql     => $sql,
+			persist => 1,
 		} );
+
 		Slim::Music::VirtualLibraries->rebuild($vlid);
 	}
 
@@ -428,17 +417,8 @@ sub _initActiveRoles {
 	$params->{'search'}->{'contributor_namesearch'} = { map { ('active' . $_) => 1 } @{ Slim::Schema->artistOnlyRoles } } unless keys %{$params->{'search'}->{'contributor_namesearch'}};
 }
 
-sub _removeLibraryView {
-	my $id = shift;
-	$prefs->remove($id);	
-}
-
 sub _getSavedSearches {
 	return [ grep { $_ !~ /^asvl_[\da-f]+$/} keys %{$prefs->all} ];
-}
-
-sub _getLibraryViews {
-	return [ grep /^asvl_[\da-f]+$/, keys %{$prefs->all} ];
 }
 
 sub fillInSearchResults {
