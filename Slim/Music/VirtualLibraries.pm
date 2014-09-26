@@ -139,6 +139,12 @@ sub registerLibrary {
 			main::DEBUGLOG && $log->debug("Using: " . $args->{sql});
 		}
 	}
+
+	if ( $class->getIdForName($args->{name}) ) {
+		my $timeFormat = $serverPrefs->get('timeFormat');
+		$timeFormat =~ s/%M/%M.%S/;
+		$args->{name} .= ' - ' . Slim::Utils::DateTime::shortDateF() . ' '. Slim::Utils::DateTime::timeF(time, $timeFormat);
+	}
 	
 	$libraries{$id2} = $args;
 	$libraries{$id2}->{name} ||= $args->{id};
@@ -261,6 +267,16 @@ sub getNameForId {
 	
 	return '' unless $libraries{$id};
 	return $libraries{$id}->{name} || '';
+}
+
+sub getIdForName {
+	my ($class, $name) = @_;
+	
+	return '' unless keys %libraries;
+	
+	my ($id) = grep { $libraries{$_}->{name} eq $name } keys %libraries;
+	
+	return $id || ''; 
 }
 
 
