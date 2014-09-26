@@ -22,6 +22,8 @@ Helper class to deal with virtual libraries. Plugins can register virtual librar
 	# - id:        the library's ID. Use something specific to your plugin to prevent dupes.
 	# - name:      the user facing name, shown in menus and settings
 	# - sql:       a SQL statement which creates the records in library_track
+	# - persist:   keep track of the library definition without the caller's help. This option
+	#              is invalid if you use any of the callback parameters.
 	# - scannerCB: a sub ref to some code creating the records in library_track. Use scannerCB
 	#              if your library logic is a bit more complex than a simple SQL statement.
 	# - priority:  optionally define a numerical priority if you want your library definition
@@ -69,16 +71,26 @@ use strict;
 
 use Digest::MD5 qw(md5_hex);
 
-use Slim::Utils::Log qw(logError);
+use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Music::Import;
 
-my $prefs = preferences('server');
+my $serverPrefs = preferences('server');
+my $prefs = preferences('virtualLibraries');
+
+my $log = logger('database.virtuallibraries');
 
 my %libraries;
 
 sub init {
 	my $class = shift;
+	
+	# restore virtual libraries
+	foreach my $vlid ( grep /^vlid_[\da-f]+$/, keys %{$prefs->all} ) {
+		my $vl = $prefs->get($vlid);
+
+		$class->registerLibrary( $vl ) if $vl && ref $vl eq 'HASH';
+	}
 	
 	Slim::Music::Import->addImporter( $class, {
 		type   => 'post',
@@ -90,7 +102,7 @@ sub registerLibrary {
 	my ($class, $args) = @_;
 
 	if ( !$args->{id} ) {
-		logError('Invalid parameters: you need to register with a name and a unique ID');
+		$log->error('Invalid parameters: you need to register with a name and a unique ID');
 		return;
 	}
 	
@@ -98,9 +110,34 @@ sub registerLibrary {
 	my $id  = $args->{id};
 	my $id2 = substr(md5_hex($id), 0, 8);
 	
+	if ( $args->{persist} ) {
+		if ( $args->{scannerCB} || $args->{unregisterCB} ) {
+			$log->error('Invalid parameters: you cannot persist a library definition with callbacks: ' . Data::Dump::dump($args));
+			return;
+		}
+		
+		delete $args->{persist};
+		
+		$prefs->set('vlid_' . $id2, $args);
+	}
+	
 	if ( $libraries{$id2} ) {
-		logError('Duplicate library ID: ' . $id);
+		$log->error('Duplicate library ID: ' . $id);
 		return;
+	}
+	
+	if ( $args->{sql} ) {
+		if ( $args->{sql} !~ /SELECT .*\%s/si ) {
+			main::INFOLOG && $log->info("Missing library ID placeholder: " . $args->{sql});
+			$args->{sql} = "INSERT OR IGNORE INTO library_track (library, track) SELECT '%s', id FROM (" . $args->{sql} . ")";
+			main::DEBUGLOG && $log->debug("Using: " . $args->{sql});
+		}
+		
+		if ( $args->{sql} !~ /INSERT/i ) {
+			main::INFOLOG && $log->info("Missing INSERT statement in SQL: " . $args->{sql});
+			$args->{sql} = 'INSERT OR IGNORE INTO library_track (library, track) ' . $args->{sql};
+			main::DEBUGLOG && $log->debug("Using: " . $args->{sql});
+		}
 	}
 	
 	$libraries{$id2} = $args;
@@ -123,11 +160,12 @@ sub unregisterLibrary {
 	}
 
 	# make sure noone is using this library any more
-	foreach my $clientPref ( $prefs->allClients ) {
+	foreach my $clientPref ( $serverPrefs->allClients ) {
 		$clientPref->remove('libraryId');
 	}
 	
 	delete $libraries{$id};
+	$prefs->remove('vlid_'  . $id);	
 }
 
 # called by the scanner module
@@ -145,7 +183,6 @@ sub startScan {
 		'bar'   => 1
 	});
 
-	my $delete_sth;
 	foreach my $id ( sort { ($libraries{$a}->{priority} || 0) <=> ($libraries{$b}->{priority} || 0) } keys %libraries ) {
 		$progress->update($libraries{$id}->{name});
 		Slim::Schema->forceCommit;
@@ -209,8 +246,8 @@ sub getLibraryIdForClient {
 	return '' unless keys %libraries;
 	
 	my $id;
-	$id   = $prefs->client($client)->get('libraryId') if $client;
-	$id ||= $prefs->get('libraryId');
+	$id   = $serverPrefs->client($client)->get('libraryId') if $client;
+	$id ||= $serverPrefs->get('libraryId');
 	
 	return '' unless $id && $libraries{$id};
 	

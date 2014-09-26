@@ -893,6 +893,7 @@ sub logLevels {
 		'database.info'              => 'ERROR',
 		'database.mysql'             => 'ERROR',
 		'database.sql'               => 'ERROR',
+		'database.virtuallibraries'  => 'ERROR',
 
 		'os.files'                   => 'ERROR',
 		'os.paths'                   => 'ERROR',
