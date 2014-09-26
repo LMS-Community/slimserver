@@ -293,8 +293,9 @@
 
 	[% END %]
 
-[%- IF pageinfo.totalitems; infoTab = BLOCK -%]
+[%- IF pageinfo.totalitems && useExtJS; infoTab = BLOCK -%]
 	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
-[%- END; END -%]
+[%- END %]
+[% ELSIF pageinfo.totalpages && pageinfo.totalpages > 1; PROCESS pagebar; END %]
 
 [% IF not ajaxUpdate; PROCESS pagefooter.html; END %]

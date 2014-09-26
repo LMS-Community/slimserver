@@ -47,6 +47,9 @@
 	[%- FOREACH item = additionalLinkOrder.browse %]
 		[%- IF additionalLinks.browse.exists(item) %]	
 		<li><a href="[% additionalLinks.browse.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
+		[% IF item == 'SEARCH' && additionalLinks.search.ADVANCEDSEARCH %]
+		<li><a href="[% additionalLinks.search.ADVANCEDSEARCH | html %]player=[% playerURI %]">[% "ADVANCEDSEARCH" | getstring | html %]</a></li>
+		[% END %]
 		[%- END %]
 	[%- END %]
 	[%- FOREACH link = additionalLinks.browse; IF !additionalLinkOrder.browse.grep(link.key).size %]
