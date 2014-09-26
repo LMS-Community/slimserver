@@ -26,6 +26,7 @@ use Slim::Web::Pages;
 use constant MAX_ADV_RESULTS => 200;
 
 my $log = logger('network.http');
+my $sqlLog = logger('database.sql');
 my $prefs = preferences('advancedSearch');
 
 sub init {
@@ -344,11 +345,18 @@ sub advancedSearch {
 			}
 		}
 
-		push @joins, 'genreTracks' if $query{'genre'} || $query{'genres.namesearch'};
+		if ( $query{'genre'} || $query{'genres.namesearch'} ) {
+			if ($type eq 'Album') {
+				push @joins, { 'tracks' => 'genreTracks' };
+			}
+			else {
+				push @joins, 'genreTracks';
+			}
+		}
 	}
 	
 	if ($type ne 'Track') {
-		push @joins, 'tracks';
+		unshift @joins, 'tracks';
 	}
 	else {
 		$query{'me.audio'} = 1;
@@ -386,9 +394,13 @@ sub advancedSearch {
 		'join'     => \@joins,
 		'joins'    => \@joins,
 	);
+	
+	main::DEBUGLOG && $sqlLog->is_debug && $sqlLog->debug("Creating result set for $type using query: " . Data::Dump::dump({ query => \%query, attrs => \%attrs}));
 
 	# Create a resultset - have fillInSearchResults do the actual search.
-	my $rs  = Slim::Schema->search($type, \%query, \%attrs)->distinct;
+	my $rs = Slim::Schema->search($type, \%query, \%attrs)->distinct;
+
+	main::DEBUGLOG && $sqlLog->is_debug && $sqlLog->debug($rs->as_query);
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted
