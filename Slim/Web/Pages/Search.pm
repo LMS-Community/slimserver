@@ -114,11 +114,6 @@ sub advancedSearch {
 		next unless $params->{$key};
 
 		my $newKey = $1;
-		
-		if ($type eq 'Album') {
-			$newKey =~ s/me_/tracks_/;
-			$newKey =~ s/album_/me_/;
-		}
 
 		if ($params->{'resetAdvSearch'}) {
 			delete $params->{$key};
@@ -225,23 +220,20 @@ sub advancedSearch {
 
 		$query{$newKey} = $params->{$key};
 	}
-
-	# XXX - need another way to get this list if not transcoding
-	if (main::TRANSCODING) {
-		# Turn our conversion list into a nice type => name hash.
-		my %types  = ();
-		
-		for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
 	
-			$type = (split /-/, $type)[0];
-			
-			next if $type =~ /^(?:SPDR|TEST)$/i;
+	# show list of file types we have in the DB
+	my $types = (); 
+	my $ct;
 	
-			$types{$type} = string($type);
-		}
+	my $sth = Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE audio = 1 GROUP BY content_type');
+	$sth->bind_col(1, \$ct);
+	$sth->execute();
 	
-		$params->{'fileTypes'} = \%types;
+	while ($sth->fetch) {
+		$types->{lc($ct)} = string(uc($ct));
 	}
+	
+	$params->{'fileTypes'} = $types;
 	
 	# load up the genres we know about.
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
@@ -297,16 +289,16 @@ sub advancedSearch {
 					push @qstring, join('=', "search.contributor_namesearch.$k", 1);
 				}
 			}
-			$query{"contributor${type}s.role"} = \@roles if @roles;
+			$query{"contributorTracks.role"} = \@roles if @roles;
 		}
 
 		if ($query{'contributor.namesearch'}) {
 
-			push @joins, { "contributor${type}s" => 'contributor' };
+			push @joins, { "contributorTracks" => 'contributor' };
 
 		} else {
 
-			push @joins, "contributor${type}s";
+			push @joins, "contributorTracks";
 		}
 	}
 
@@ -344,25 +336,13 @@ sub advancedSearch {
 				delete $query{'genre'};
 			}
 		}
-
-		if ( $query{'genre'} || $query{'genres.namesearch'} ) {
-			if ($type eq 'Album') {
-				push @joins, { 'tracks' => 'genreTracks' };
-			}
-			else {
-				push @joins, 'genreTracks';
-			}
-		}
+		
+		push @joins, 'genreTracks' if $query{'genre'} || $query{'genres.namesearch'};
 	}
 	
-	if ($type ne 'Track') {
-		unshift @joins, 'tracks';
-	}
-	else {
-		$query{'me.audio'} = 1;
-	}
+	$query{'me.audio'} = 1;
 
-	if ($type ne 'Album' && $query{'album.titlesearch'}) {
+	if ($query{'album.titlesearch'}) {
 
 		push @joins, 'album';
 	}
@@ -390,17 +370,23 @@ sub advancedSearch {
 	# XXXX - for some reason, the 'join' key isn't preserved when passed
 	# along as a ref. Perl bug because 'join' is a keyword? Use 'joins' as well.
 	my %attrs = (
-		'order_by' => $type eq 'Album' ? "me.titlesort $collate" : "me.disc, me.titlesort $collate",
-		'join'     => \@joins,
-		'joins'    => \@joins,
+		'join'  => \@joins,
+		'joins' => \@joins,
 	);
 	
-	main::DEBUGLOG && $sqlLog->is_debug && $sqlLog->debug("Creating result set for $type using query: " . Data::Dump::dump({ query => \%query, attrs => \%attrs}));
-
+	$attrs{'order_by'} = "me.disc, me.titlesort $collate" if $type eq 'Track';
+	
 	# Create a resultset - have fillInSearchResults do the actual search.
-	my $rs = Slim::Schema->search($type, \%query, \%attrs)->distinct;
-
-	main::DEBUGLOG && $sqlLog->is_debug && $sqlLog->debug($rs->as_query);
+	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
+	
+	my $rs;
+	if ( $type eq 'Album' ) {
+		$rs = Slim::Schema->search('Album', {
+			'id' => { 'in' => $tracksRs->get_column('album')->as_query },
+		},{
+			'order_by' => "me.disc, me.titlesort $collate",
+		});
+	}
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted
@@ -408,13 +394,6 @@ sub advancedSearch {
 			'join'     => \@joins,
 			'joins'    => \@joins,
 		})->distinct;
-		
-		# libraries are all based on tracks - need to get them for the albums found
-		if ( $type eq 'Album' ) {
-			$rs = Slim::Schema->search('Track', {
-				album => { 'in' => $rs->get_column('id')->as_query }
-			});
-		} 
 		
 		my $sqlQuery = $rs->get_column('id')->as_query;
 		my $sql = $$sqlQuery->[0];
@@ -447,7 +426,7 @@ sub advancedSearch {
 		$client->modeParam("search${type}Results", { 'cond' => \%query, 'attr' => \%attrs });
 	}
 	
-	fillInSearchResults($params, $rs, \@qstring, $client);
+	fillInSearchResults($params, $rs || $tracksRs, \@qstring, $client);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
