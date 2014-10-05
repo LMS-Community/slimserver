@@ -3022,7 +3022,7 @@ sub searchQuery {
 			$sth->bind_col(1, \$id);
 			$sth->bind_col(2, \$title);
 			
-			if ($c) {
+			if ($extended && $c) {
 				my $i = 2;
 				foreach (@$c) {
 					$sth->bind_col(++$i, \$additionalCols{$_});
@@ -3041,7 +3041,7 @@ sub searchQuery {
 				$request->addResultLoop($loopname, $chunkCount, "${type}", $title);
 				
 				# any additional column
-				if ($c) {
+				if ($extended && $c) {
 					foreach (@$c) {
 						utf8::decode($additionalCols{$_});
 						$request->addResultLoop($loopname, $chunkCount, $_, $additionalCols{$_});
