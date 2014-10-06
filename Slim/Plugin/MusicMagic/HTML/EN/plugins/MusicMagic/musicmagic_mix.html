@@ -1,5 +1,12 @@
 [%- pagetitle = "MUSICMAGIC_MIX" | string -%]
-[%- IF !ajaxUpdate; PROCESS pageheader.html; END %] 
+[% extJsScripts = BLOCK %]
+<script TYPE="text/javascript">
+	Ext.onReady(function() {
+		LiveSearch.init();
+	});
+</script>
+[% END %]
+[%- IF !ajaxUpdate; PROCESS pageheader.html useSpecialExt="-browse"; END %] 
 
 [% IF warn %]<p>[% warn %]</p>[% END %]
 [% IF browselist_header %][% browselist_header %][% END %]
