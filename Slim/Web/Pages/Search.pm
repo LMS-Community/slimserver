@@ -94,7 +94,8 @@ sub advancedSearch {
 
 	if ( $params->{'action'} && $params->{'action'} eq 'loadSaved' && $params->{'savedSearch'} && (my $searchParams = $prefs->get($params->{'savedSearch'})) ) {
 		if (ref $searchParams eq 'HASH') {
-			$params->{search} = Storable::dclone($searchParams);
+			$params->{'search'}         = Storable::dclone($searchParams);
+			$params->{'searchType'}     = delete $params->{'search'}->{'searchType'};
 			$params->{'resetAdvSearch'} = 1;
 		}
 	}
@@ -259,6 +260,8 @@ sub advancedSearch {
 		foreach my $k (keys %searchParams) {
 			delete $searchParams{$k} unless $searchParams{$k}->{value};
 		}
+		
+		$searchParams{'searchType'} = $type;
 
 		$prefs->set($saveSearch, \%searchParams);
 		
