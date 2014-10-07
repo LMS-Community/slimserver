@@ -22,7 +22,7 @@ use Slim::Utils::Versions;
 our (%tagClasses, %loadedTagClasses);
 
 my $init = 0;
-my $log  = logger('formats');
+my $log  = logger('formats.audio');
 
 =head1 NAME
 
