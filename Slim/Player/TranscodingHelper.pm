@@ -403,7 +403,7 @@ sub getConvertCommand2 {
 			samplerateLimit  => $samplerateLimit || 44100,
 			clientid         => $clientid || 'undefined',
 			groupid          => $prefs->client($client)->get('syncgroupid') || 0,
-			clientname       => $client->name || 'undefined',
+			name             => $client->name || 'undefined',
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
 			outputChannels   => $prefs->client($client)->get('outputChannels') || 2,
