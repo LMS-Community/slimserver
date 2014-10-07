@@ -456,7 +456,7 @@ sub removeMultipleTracks {
 		#check if this file meets all criteria specified
 		my $thisTrack = ${playList($client)}[$i];
 
-		if ($trackEntries{$thisTrack->url}) {
+		if (blessed($thisTrack) ? $trackEntries{$thisTrack->url} : $trackEntries{$thisTrack}) {
 
 			splice(@{playList($client)}, $i, 1);
 
