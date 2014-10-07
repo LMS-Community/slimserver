@@ -1665,6 +1665,29 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 		this.fixedWidth += el.child('img.progressIndicator').getWidth();
 
 		Ext.get(this.applyTo).on('click', this.onClick);
+
+		if (Ext.ToolTip) {
+			this.tooltip = new Ext.ToolTip({
+				target: 'ctrlProgress',
+				anchor: 'bottom',
+				dismissDelay: 30000,
+				hideDelay: 0,
+				showDelay: 0,
+				trackMouse: true,
+				listeners: {
+					'move': {
+						fn: function(tooltip, x, y) {
+							// don't know why we need the additional 10px offset...
+							var pos = Math.max(x - this.el.getX() + this.fixedWidth + this.offset + 10, 0);
+							pos = pos / Math.max(this.el.getWidth(), pos);
+
+							tooltip.update(SqueezeJS.Utils.formatTime(pos * SqueezeJS.Controller.playerStatus.duration));
+						},
+						scope: this
+					}
+				}
+			});
+		}
 	},
 
 	onPlaytimeUpdate : function(playtime){
@@ -1681,16 +1704,22 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 			max -= this.offset; // total of left/right/indicator width
 
 			// if we don't know the total play time, just put the indicator in the middle
-			if (!playtime.duration)
+			if (!playtime.duration) {
 				left = 0;
-
+				if (this.tooltip)
+					this.tooltip.disable();
+			}
 			// calculate left/right percentage
-			else
+			else {
 				left = Math.max(
 						Math.min(
 							Math.floor(playtime.current / playtime.duration * max)
 						, max)
 					, 1);
+
+				if (this.tooltip)
+					this.tooltip.enable();
+			}
 
 			this.remaining.setWidth(max - left);
 			this.playtime.setWidth(left);
@@ -1702,7 +1731,8 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 			return;
  
 		var pos = Math.max(ev.xy[0] - this.getX(), 0);
-		pos = pos / Math.max(this.getWidth(), pos)
+		pos = pos / Math.max(this.getWidth(), pos);
+		
 		SqueezeJS.Controller.playerControl(['time', pos * SqueezeJS.Controller.playerStatus.duration]);
 	}
 });
