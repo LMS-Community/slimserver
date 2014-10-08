@@ -299,6 +299,7 @@ sub getConvertCommand2 {
 	
 	my $player     = $client ? $client->model() : undef;
 	my $clientid   = $client ? $client->id() : undef;
+	my $clientprefs= $client ? $prefs->client($client) : undef;
 	my $transcoder = undef;
 	my $error;
 	my $backupTranscoder = undef;
@@ -402,11 +403,11 @@ sub getConvertCommand2 {
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || 44100,
 			clientid         => $clientid || 'undefined',
-			groupid          => $prefs->client($client)->get('syncgroupid') || 0,
-			name             => $client->name || 'undefined',
+			groupid          => $clientprefs ? ($clientprefs->get('syncgroupid') || 0) : 0,
+			name             => $client ? $client->name : 'undefined',
 			player           => $player || 'undefined',
 			channels         => $track->channels() || 2,
-			outputChannels   => $prefs->client($client)->get('outputChannels') || 2,
+			outputChannels   => $clientprefs ? ($clientprefs->get('outputChannels') || 2) : 2,
 		};
 		
 		# Check for optional profiles
