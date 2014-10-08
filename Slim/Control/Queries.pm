@@ -306,6 +306,55 @@ sub albumsQuery {
 	}
 	# ignore everything if $track_id or $album_id was specified
 	else {
+		my @roles;
+		if (defined $contributorID) {
+			# handle the case where we're asked for the VA id => return compilations
+			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+				$compilation = 1;
+			}
+			else {
+
+				$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
+				push @{$w}, 'contributor_album.contributor = ?';
+				push @{$p}, $contributorID;
+
+				# only albums on which the contributor has a specific role?
+				if ($roleID) {
+					@roles = split /,/, $roleID;
+					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
+				}
+				elsif ($prefs->get('useUnifiedArtistsList')) {
+					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
+			
+					# Loop through each pref to see if the user wants to show that contributor role.
+					foreach (Slim::Schema::Contributor->contributorRoles) {
+						if ($prefs->get(lc($_) . 'InArtists')) {
+							push @roles, $_;
+						}
+					}
+				}
+				else {
+					@roles = Slim::Schema::Contributor->contributorRoles();
+				}
+			}	
+		}
+		elsif ($roleID) {
+			$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
+
+			@roles = split /,/, $roleID;
+			push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
+		}
+		
+		if (scalar @roles) {
+			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
+			push @{$w}, 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
+			
+			$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
+		}
+		elsif ( $sort =~ /artflow|artistalbum/) {
+			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
+		}
+	
 		if ( $sort eq 'new' ) {
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ';
 			$limit = $prefs->get('browseagelimit') || 100;
@@ -363,19 +412,16 @@ sub albumsQuery {
 			$page_key = undef;
 		}
 		elsif ( $sort eq 'artflow' ) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.year, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
 			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'artistalbum' ) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "contributors.namesort $collate, albums.titlesort $collate";
 			$c->{'contributors.namesort'} = 1;
 			$page_key = "SUBSTR(contributors.namesort,1,1)";
 		}
 		elsif ( $sort eq 'yearartistalbum' ) {
-			$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 			$order_by = "albums.year, contributors.namesort $collate, albums.titlesort $collate";
 			$page_key = "albums.year";
 		}
@@ -421,58 +467,6 @@ sub albumsQuery {
 			push @{$p}, $year;
 		}
 		
-		# Manage joins
-		my @roles;
-		if (defined $contributorID) {
-			# handle the case where we're asked for the VA id => return compilations
-			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
-				$compilation = 1;
-			}
-			else {
-
-				$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
-				push @{$w}, 'contributor_album.contributor = ?';
-				push @{$p}, $contributorID;
-
-				# only albums on which the contributor has a specific role?
-				if ($roleID) {
-					@roles = split /,/, $roleID;
-					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
-				}
-				elsif ($prefs->get('useUnifiedArtistsList')) {
-					@roles = ( 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST' );
-			
-					# Loop through each pref to see if the user wants to show that contributor role.
-					foreach (Slim::Schema::Contributor->contributorRoles) {
-						if ($prefs->get(lc($_) . 'InArtists')) {
-							push @roles, $_;
-						}
-					}
-				}
-				else {
-					@roles = Slim::Schema::Contributor->contributorRoles();
-				}
-			}	
-		}
-		elsif ($roleID) {
-			$sql .= 'JOIN contributor_album ON contributor_album.album = albums.id ';
-
-			@roles = split /,/, $roleID;
-			push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
-		}
-		
-		if (scalar @roles) {
-			push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
-			push @{$w}, 'contributor_album.role IN (' . join(', ', map {'?'} @roles) . ')';
-			
-			if ( $sql =~ /JOIN contributors/ ) {
-				$sql =~ s/= albums.contributor/= contributor_album.contributor/;
-			}
-			else {
-				$sql .= 'JOIN contributors ON contributors.id = contributor_album.contributor ';
-			}
-		}
-	
 		if (defined $genreID) {
 			my @genreIDs = split(/,/, $genreID);
 			$sql .= 'JOIN tracks ON tracks.album = albums.id ' unless $sql =~ /JOIN tracks/;
@@ -564,7 +558,7 @@ sub albumsQuery {
 	if ($page_key && $tags =~ /Z/) {
 		my $pageSql = "SELECT n, count(1) FROM ("
 			. sprintf($sql, "$page_key AS n")
-			. ") GROUP BY n ORDER BY n $collate ";
+			. ") AS pk GROUP BY n ORDER BY n " . ($sort !~ /year/ ? "$collate " : '');
 
 		if ( main::DEBUGLOG && $sqllog->is_debug ) {
 			$sqllog->debug( "Albums indexList query: $pageSql / " . Data::Dump::dump($p) );
