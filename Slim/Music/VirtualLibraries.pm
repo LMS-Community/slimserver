@@ -127,6 +127,12 @@ sub registerLibrary {
 	}
 	
 	if ( $args->{sql} ) {
+		# SQL can be a list ref as returned by $rs->as_query
+		if ( ref $args->{sql} ) {
+			$args->{params} = [ map { $_->[1] } splice @{$args->{sql}}, 1 ];
+			$args->{sql}    = shift @{$args->{sql}};
+		}
+		
 		if ( $args->{sql} !~ /SELECT .*\%s/si ) {
 			main::INFOLOG && $log->info("Missing library ID placeholder: " . $args->{sql});
 			$args->{sql} = "INSERT OR IGNORE INTO library_track (library, track) SELECT '%s', id FROM (" . $args->{sql} . ")";
@@ -220,7 +226,7 @@ sub rebuild {
 		my $delete_sth = $dbh->prepare_cached('DELETE FROM library_track WHERE library = ?');
 		$delete_sth->execute($id);
 		
-		$dbh->do( sprintf($sql, $id) );
+		$dbh->do( sprintf($sql, $id), undef, @{ $args->{params} || [] } );
 	}
 	
 	return 1;
@@ -279,5 +285,20 @@ sub getIdForName {
 	return $id || ''; 
 }
 
+sub getTrackCount {
+	my ($class, $id) = @_;
+	
+	$id = $class->getRealId($id);
+	
+	return 0 unless $libraries{$id};
+
+	my $sth = Slim::Schema->dbh->prepare_cached('SELECT COUNT(1) FROM library_track WHERE library = ? GROUP BY library');
+	
+	$sth->execute($id);
+	my ($count) = $sth->fetchrow_array();
+	$sth->finish;
+	
+	return $count || 0;
+}
 
 1;

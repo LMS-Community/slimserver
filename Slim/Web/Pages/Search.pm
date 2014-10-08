@@ -393,28 +393,19 @@ sub advancedSearch {
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted
-		my $rs = Slim::Schema->search($type, \%query, {
+		my $rs = Slim::Schema->search('Track', \%query, {
 			'join'     => \@joins,
 			'joins'    => \@joins,
 		})->distinct;
 		
 		my $sqlQuery = $rs->get_column('id')->as_query;
-		my $sql = $$sqlQuery->[0];
-		
-		# XXX - need some smarter way to interpolate variables in the query...
-		for (my $i = 1; $i < scalar @{$$sqlQuery}; $i++) {
-			my $v = $$sqlQuery->[$i]->[1];
-			$v = "\"$v\"";
-			$sql =~ s/ \? / $v /;
-		}
 		
 		my $vlid = 'advSrch_' . time;
 		
 		Slim::Music::VirtualLibraries->registerLibrary( {
 			id      => $vlid,
 			name    => $saveSearch,
-			# %s is being replaced with the library's internal ID
-			sql     => $sql,
+			sql     => $$sqlQuery,
 			persist => 1,
 		} );
 
