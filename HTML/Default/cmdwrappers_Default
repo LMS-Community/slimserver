@@ -72,7 +72,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF (item.keys && item.item) || itemobj.id.defined %]id="db[% (item.item || itemobj.id) | uri %]_selector"[% END %]>
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF (item.keys && (item.item || item.albumId)) || itemobj.id.defined %]id="db[% (item.albumId || item.item || itemobj.id) | uri %]_selector"[% END %]>
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (hasArtwork && !artwork) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content %]</div>
 			<span class="browsedbControls">
