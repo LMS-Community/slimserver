@@ -115,7 +115,29 @@ sub delete {}
 sub retrievePersistent {}
 
 sub displayAsHTML {
-	return Slim::Schema::Track::displayAsHTML(@_);
+	my ($self, $form, $descend, $sort) = @_;
+
+	my $format = Slim::Music::Info::standardTitleFormat();
+
+	$form->{'plugin_meta'}->{'title'} ||= $self->name;
+
+	# Go directly to infoFormat, as standardTitle is more client oriented.
+	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE', $form->{'plugin_meta'});
+	$form->{'item'}     = $self->id;
+	$form->{'itemobj'}  = $self;
+	$form->{'coverid'}  = $self->coverid;
+
+	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
+	if ( $format !~ /ARTIST/ && $form->{'plugin_meta'} && $form->{'plugin_meta'}->{'artist'} ) {
+		$form->{'includeArtist'} = 1;
+	}
+
+	if ( $format !~ /ALBUM/ && $form->{'plugin_meta'} && $form->{'plugin_meta'}->{'album'} ) {
+		$form->{'includeAlbum'}  = 1;
+	}
+
+	$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
+	$form->{'noAlbum'}  = Slim::Utils::Strings::string('NO_ALBUM');
 }
 
 sub name {

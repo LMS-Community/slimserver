@@ -9,11 +9,14 @@
 				[% stringFROM %]
 				<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% albumTitle | uri %])&amp;album_id=[% albumId %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink">[% albumTitle | html %]</a>
 			[% END %]
-			[% IF (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist %]
+			[% IF item.includeAlbum && (artist = item.artistsWithAttributes ? item.artistsWithAttributes.0 : item.itemobj.artist) && artist.name != item.noArtist %]
 				[% stringBY %]
 				[% FOREACH contributorTuple IN item.artistsWithAttributes %]
 					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringARTIST %]%20([% contributorTuple.name | uri %])&amp;artist_id=[% contributorTuple.artistId %]&amp;player=[% playerURI %]/" target="browser" class="browseItemLink"><span style="display:inline">[% contributorTuple.name | html %][% loop.last ? "" : ", " %]</span></a>
 				[% END %]
+			[% ELSIF item.includeAlbum && item.plugin_meta && item.plugin_meta.artist && item.plugin_meta.artist != item.noArtist %]
+				[% stringBY %]
+				[% item.plugin_meta.artist %]
 			[% END %]
 			[%# current_title is for radio streams %]
 			[% IF item.current_title %]

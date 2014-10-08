@@ -476,7 +476,7 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	my $format = Slim::Music::Info::standardTitleFormat();;
+	my $format = Slim::Music::Info::standardTitleFormat();
 
 	# Go directly to infoFormat, as standardTitle is more client oriented.
 	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE', $form->{'plugin_meta'});
