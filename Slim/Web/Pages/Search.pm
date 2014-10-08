@@ -96,7 +96,29 @@ sub advancedSearch {
 		if (ref $searchParams eq 'HASH') {
 			$params->{'search'}         = Storable::dclone($searchParams);
 			$params->{'searchType'}     = delete $params->{'search'}->{'searchType'};
-			$params->{'resetAdvSearch'} = 1;
+
+			# reset old parameters - to be replaced with restored values from saved search
+			for my $key (keys %$params) {
+				if ( $key =~ /^search\.(\S+)/ && $params->{$key} ) {
+					delete $params->{$key};
+				}
+			}
+			
+			while ( my ($k, $v) = each %{$params->{'search'}} ) {
+				if (ref $v && ref $v eq 'HASH') {
+					while ( my ($k2, $v2) = each %$v ) {
+						if ($k2 eq 'value') {
+							$params->{"search.$k"} = $v2;
+						}
+						else {
+							$params->{"search.$k.$k2"} = $v2;
+						}
+					}
+				}
+				elsif (!ref $v) {
+					$params->{"search.$k"} = $v;
+				}
+			}
 		}
 	}
 	elsif ( $params->{'resetAdvSearch'} ) {
