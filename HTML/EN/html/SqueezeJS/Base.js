@@ -749,7 +749,10 @@ SqueezeJS.SonginfoParser = {
 				link = result.playlist_loop[0].info_link || 'songinfo.html';
 			}
 		}
-
+		
+		if (coverart.search(/^http/) == -1 && coverart.search(/^\//) == -1)
+			coverart = webroot + coverart;
+		
 		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,

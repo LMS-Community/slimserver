@@ -303,6 +303,7 @@ sub _resizeImage {
 		$resizeParams .= "_$mode" if $mode;
 	
 		$url =~ s/(\.png|\.gif|\.jpe?g|)$/$resizeParams$1/i;
+		$url = '/' . $url unless $url =~ m{^(?:/|http)};
 		
 		return $url; 
 	};
