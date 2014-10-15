@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::Favorites::Opml);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
+use Slim::Menu::BrowseLibrary;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
@@ -18,6 +19,7 @@ use Slim::Utils::Prefs;
 
 my $log = logger('favorites');
 
+my $prefs = preferences('plugin.favorites');
 my $prefsServer = preferences('server');
 
 my $favs; # single instance for all callers
@@ -177,14 +179,83 @@ sub _loadOldFavorites {
 	$class->save;
 }
 
+my $dbBrowseModes;
+
 sub xmlbrowser {
 	my $class = shift;
 
 	my $hash = $class->SUPER::xmlbrowser;
 
+	# optionally let the user browse into local favorite items
+	if ( !$prefs->get('dont_browsedb')) {
+		$hash->{'items'} = [ map {
+			if ( $_->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
+				my ($class, $key, $value) = ($1, $2, $3);
+				
+				$class = ucfirst($class);
+	
+				$dbBrowseModes ||= {
+					Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks ],
+					Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
+					Genre       => [ 'genre_id', sub {
+						# some plugins do replace artist browse modes - make sure we go to the right place
+						my ($artistHandler) = grep { $_->{id} eq 'myMusicArtists' } @{ Slim::Menu::BrowseLibrary->_getNodeList() };
+						$artistHandler->{feed}->(@_);
+					} ],
+				};
+				
+				if ( $dbBrowseModes->{$class} ) {
+					$_->{'type'} = 'playlist';
+					$_->{'play'} = $_->{'url'};
+					$_->{'url'}  = \&_dbItem;
+					$_->{'passthrough'} = [{
+						class => $class,
+						key   => $key,
+						value => $value,
+					}];
+				}
+			}
+			$_;
+		} @{ $hash->{'items'} } ];
+	}
+	
 	$hash->{'favorites'} = 1;
 
 	return $hash;
+}
+
+sub _dbItem {
+	my ($client, $callback, $args, $pt) = @_;
+	
+	my $class  = ucfirst( delete $pt->{'class'} );
+	my $key   = URI::Escape::uri_unescape(delete $pt->{'key'});
+	my $value = URI::Escape::uri_unescape(delete $pt->{'value'});
+
+	if (!utf8::is_utf8($value) && !utf8::decode($value)) { $log->warn("The following value is not UTF-8 encoded: $value"); }
+
+	if (utf8::is_utf8($value)) {
+		utf8::decode($value);
+		utf8::encode($value);
+	}
+	
+	if ( my $dbBrowseMode = $dbBrowseModes->{$class} ) {
+		my $obj = Slim::Schema->single( ucfirst($class), { $key => $value } );
+	
+		if ($obj && $obj->id) {
+			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id ];
+			return $dbBrowseMode->[1]->($client, $callback, $args, $pt);
+		}
+	}
+	
+	# something went wrong
+	# XXX - better error handling
+	$callback->({
+		items => [ {
+			type  => 'text',
+			title => Slim::Utils::Strings::cstring($client, 'EMPTY'),
+		} ],
+		total => 1
+	});
 }
 
 sub all {

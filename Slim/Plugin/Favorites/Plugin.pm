@@ -115,13 +115,13 @@ sub setMode {
 		return;
 	}
 	
-	my $url = Slim::Plugin::Favorites::OpmlFavorites->new($client)->fileurl;
+	my $opml = Slim::Plugin::Favorites::OpmlFavorites->new($client)->xmlbrowser;
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header   => 'PLUGIN_FAVORITES_LOADING',
 		modeName => 'Favorites.Browser',
-		url      => $url,
+		opml     => $opml,
 		title    => $client->string('FAVORITES'),
 	);
 

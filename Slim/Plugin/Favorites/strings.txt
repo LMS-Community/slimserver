@@ -580,3 +580,15 @@ PLUGIN_FAVORITES_REMOVE
 	PL	Usuń z ulubionych
 	RU	Удалить из выбранного
 	SV	Ta bort från favoriter
+
+PLUGIN_FAVORITES_DONT_BROWSEDB
+	DE	Verhalten mit lokaler Musik
+	EN	Local music items behaviour
+
+PLUGIN_FAVORITES_DONT_BROWSEDB_ON
+	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
+	EN	Don't browse items whene selected, just play them (old behaviour)
+
+PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
+	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen
+	EN	When you select a favorite contributor, genre or album, drill down to its content

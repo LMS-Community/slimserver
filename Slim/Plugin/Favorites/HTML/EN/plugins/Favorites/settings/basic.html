@@ -1,5 +1,16 @@
 [% PROCESS settings/header.html %]
 
+	[% WRAPPER setting title="PLUGIN_FAVORITES_DONT_BROWSEDB" desc="" %]
+		<select class="stdedit" name="pref_dont_browsedb" id="dont_browsedb">
+			<option value="1">
+				[% 'PLUGIN_FAVORITES_DONT_BROWSEDB_ON' | string %]
+			</option>
+			<option [% IF prefs.pref_dont_browsedb != 1 %]selected="selected" [% END %]value="0">
+				[% 'PLUGIN_FAVORITES_DONT_BROWSEDB_OFF' | string %]
+			</option>
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="PLUGIN_FAVORITES_PLAYLIST_EDITOR" desc="" %]
 		<div class="prefDesc">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC" | string %]</div>
 

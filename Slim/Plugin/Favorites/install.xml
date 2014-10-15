@@ -4,7 +4,7 @@
 	<id>B9145737-A509-4DD9-8DCA-A2D31D0FF1B5</id>
 	<name>FAVORITES</name>
 	<module>Slim::Plugin::Favorites::Plugin</module>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLUGIN_FAVORITES_DESC</description>
 	<creator>Logitech</creator>
 

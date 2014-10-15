@@ -21,7 +21,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, 'opmleditor');
+	return ($prefs, 'opmleditor', 'dont_browsedb');
 }
 
 sub handler {
