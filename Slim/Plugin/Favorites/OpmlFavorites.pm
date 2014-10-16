@@ -179,8 +179,6 @@ sub _loadOldFavorites {
 	$class->save;
 }
 
-my $dbBrowseModes;
-
 sub xmlbrowser {
 	my $class = shift;
 
@@ -188,40 +186,50 @@ sub xmlbrowser {
 
 	# optionally let the user browse into local favorite items
 	if ( !$prefs->get('dont_browsedb')) {
-		$hash->{'items'} = [ map {
-			if ( $_->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
-				my ($class, $key, $value) = ($1, $2, $3);
-				
-				$class = ucfirst($class);
-	
-				$dbBrowseModes ||= {
-					Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks ],
-					Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
-					Genre       => [ 'genre_id', sub {
-						# some plugins do replace artist browse modes - make sure we go to the right place
-						my ($artistHandler) = grep { $_->{id} eq 'myMusicArtists' } @{ Slim::Menu::BrowseLibrary->_getNodeList() };
-						$artistHandler->{feed}->(@_);
-					} ],
-				};
-				
-				if ( $dbBrowseModes->{$class} ) {
-					$_->{'type'} = 'playlist';
-					$_->{'play'} = $_->{'url'};
-					$_->{'url'}  = \&_dbItem;
-					$_->{'passthrough'} = [{
-						class => $class,
-						key   => $key,
-						value => $value,
-					}];
-				}
-			}
-			$_;
-		} @{ $hash->{'items'} } ];
+		$class->_prepareDbItems($hash->{'items'});
 	}
 	
 	$hash->{'favorites'} = 1;
 
 	return $hash;
+}
+
+my $dbBrowseModes;
+
+sub _prepareDbItems {
+	my ( $class, $items ) = @_;
+
+	foreach my $item (@$items) {
+		if ( $item->{'url'} =~ /^db:(\w+)\.(\w+)=(.+)/ ) {
+			my ($class, $key, $value) = ($1, $2, $3);
+			
+			$class = ucfirst($class);
+
+			$dbBrowseModes ||= {
+				Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks ],
+				Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
+				Genre       => [ 'genre_id', sub {
+					# some plugins do replace artist browse modes - make sure we go to the right place
+					my ($artistHandler) = grep { $_->{id} eq 'myMusicArtists' } @{ Slim::Menu::BrowseLibrary->_getNodeList() };
+					$artistHandler->{feed}->(@_) if $artistHandler;
+				} ],
+			};
+			
+			if ( $dbBrowseModes->{$class} ) {
+				$item->{'type'} = 'playlist';
+				$item->{'play'} = $item->{'url'};
+				$item->{'url'}  = \&_dbItem;
+				$item->{'passthrough'} = [{
+					class => $class,
+					key   => $key,
+					value => $value,
+				}];
+			}
+		}
+		elsif ( $item->{'items'} && ref $item->{'items'} eq 'ARRAY' && scalar @{$item->{'items'}} ) {
+			$class->_prepareDbItems($item->{'items'});
+		}
+	}
 }
 
 sub _dbItem {
