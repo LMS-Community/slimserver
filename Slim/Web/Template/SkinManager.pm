@@ -252,7 +252,7 @@ sub _resizeImage {
 	
 	$height ||= '';
 	$mode   ||= '';
-	$prefix ||= '';
+	$prefix ||= '/';
 	
 	return sub {
 		my $url = shift;

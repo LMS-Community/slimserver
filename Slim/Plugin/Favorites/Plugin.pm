@@ -626,7 +626,8 @@ sub indexHandler {
 			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} =~ /audio|playlist/) ? 1 : 0,
 			'outline' => $opmlEntry->{'outline'},
 			'edit'    => (defined $edit && $edit == $i) ? 1 : 0,
-			'index'   => join '.', (@indexPrefix, $i++),
+			'index'   => join('.', (@indexPrefix, $i++)),
+			'icon'    => $opmlEntry->{'icon'},
 		};
 
 		if ($favs && $entry->{'url'}) {

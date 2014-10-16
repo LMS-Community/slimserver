@@ -1,0 +1,7 @@
+[% BLOCK entryItem %]
+	<span class="browseCover">
+		<img src="[% entry.icon | resizeimage(25, 25) %]" width="25" border="0" alt="[% entry.title | html %]">
+	</span>
+	<div class="smallBrowseItemDetail">[% content %]</div>
+[% END %]
+		

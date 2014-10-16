@@ -119,11 +119,14 @@ function(){
 	[%- END -%]
 [% END %]
 
+[% PROCESS plugins/Favorites/icon.html %]
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' itemobj.id = entry.index %]
-		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
-			<span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %]</span>
-		</a>
+		[% WRAPPER entryItem %]
+			<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
+				<span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title | html %]</span>
+			</a>
+		[% END %]
 	[% END -%]
 [% END %]
 	
@@ -180,7 +183,7 @@ function(){
 [% WRAPPER contentcontainer %]
 	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
 	[% FOREACH entry = entries %]
-		<li id="dragitem_[% entry.index %]" class="[% IF entry.edit -%]dontdrag [% END %][% IF !(entry.url || entry.audio) -%]droptarget [% END %]"
+		<li id="dragitem_[% entry.index %]" class="[% IF entry.edit -%]dontdrag [% END %][% IF !(entry.url || entry.audio) -%]droptarget [% END %] smallIcon"
 			[% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"
 			onMouseOver="showElements(['editcontrols[% entry.index %]'], 'inline');"
 			onMouseOut="hideElements(['editcontrols[% entry.index %]'])"[% END %]>
