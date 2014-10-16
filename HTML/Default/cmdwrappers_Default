@@ -72,7 +72,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF (item.keys && (item.item || item.albumId)) || itemobj.id.defined %]id="db[% (item.albumId || item.item || itemobj.id) | uri %]_selector"[% END %]>
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" id="db[% loop.count %]_selector">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (hasArtwork && !artwork) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content %]</div>
 			<span class="browsedbControls">
@@ -87,7 +87,7 @@
 
 	[% BLOCK galleryitem; itemSize = item.size -%]
 	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% itemSize + 20 %]px;">
-		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="thumbwrap">
+		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% loop.count %]_selector"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% itemSize %]px;height:[% itemSize %]px;">
 				[% IF item.weblink %]
