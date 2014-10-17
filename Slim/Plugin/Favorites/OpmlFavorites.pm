@@ -206,7 +206,10 @@ sub _prepareDbItems {
 			$class = ucfirst($class);
 
 			$dbBrowseModes ||= {
-				Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks ],
+				Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks, {
+					wantMetadata => 1,
+					wantIndex    => 1,
+				} ],
 				Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
 				Genre       => [ 'genre_id', sub {
 					# some plugins do replace artist browse modes - make sure we go to the right place
@@ -251,6 +254,11 @@ sub _dbItem {
 	
 		if ($obj && $obj->id) {
 			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id ];
+			
+			while ( my ($k, $v) = each %{ $dbBrowseMode->[2] || {} } ) {
+				$pt->{$k} = $v
+			}
+			
 			return $dbBrowseMode->[1]->($client, $callback, $args, $pt);
 		}
 	}
