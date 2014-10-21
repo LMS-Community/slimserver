@@ -63,6 +63,8 @@ my $cache = {};
 # small, short lived cache of folder entries to prevent repeated disk reads on BMF
 tie my %bmfCache, 'Tie::Cache::LRU::Expires', EXPIRES => 15, ENTRIES => 5;
 
+our $canFulltextSearch;
+
 sub init {
 	my $class = shift;
 	
@@ -2937,7 +2939,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search = Slim::Utils::Text::searchStringSplit($query);
+	my $search = $canFulltextSearch ? join(' AND ', map { "*$_*" } split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
 		
 	my $dbh = Slim::Schema->dbh;
 	
@@ -2950,7 +2952,18 @@ sub searchQuery {
 		my $cols = "me.id, me.$name";
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
 		
-		my $sql = "SELECT $cols FROM ${type}s me ";
+		my $sql;
+
+		if ( $canFulltextSearch ) {
+			$sql = qq{
+				SELECT $cols FROM (
+					SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, $cols FROM fulltext, ${type}s me WHERE fulltext MATCH 'type:$type $search' AND me.id = fulltext.id ORDER BY w
+				) AS me
+			};
+		}
+		else {
+			$sql = "SELECT $cols FROM ${type}s me ";
+		}
 		
 		if ( $libraryID ) {
 			if ( $type eq 'contributor') {
@@ -2973,16 +2986,18 @@ sub searchQuery {
 			push @{$p}, $libraryID;
 		}
 		
-		if ( ref $search->[0] eq 'ARRAY' ) {
-			push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $search->[0] } ) . ')';
-			push @{$p}, @{ $search->[0] };
-		}
-		else {		
-			push @{$w}, "me.${name}search LIKE ?";
-			push @{$p}, @{$search};
+		if ( !$canFulltextSearch ) {
+			if ( ref $search->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $search->[0] } ) . ')';
+				push @{$p}, @{ $search->[0] };
+			}
+			else {
+				push @{$w}, "me.${name}search LIKE ?";
+				push @{$p}, @{$search};
+			}
 		}
 		
-		if ( @{$w} ) {
+		if ( $w && @{$w} ) {
 			$sql .= 'WHERE ';
 			my $s = join( ' AND ', @{$w} );
 			$s =~ s/\%/\%\%/g;
@@ -2990,8 +3005,6 @@ sub searchQuery {
 		}
 			
 		$sql .= "GROUP BY me.id " if $libraryID;
-	
-#		$sql .= "ORDER BY ${name}sort " . Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 		my $sth = $dbh->prepare_cached( qq{SELECT COUNT(1) FROM ($sql) AS t1} );
 		$sth->execute(@$p);
@@ -3052,9 +3065,9 @@ sub searchQuery {
 	};
 
 	$doSearch->('contributor', 'name');
-	$doSearch->('album', 'title', undef, undef, ['artwork']);
+	$doSearch->('album', 'title', undef, undef, ['me.artwork']);
 	$doSearch->('genre', 'name');
-	$doSearch->('track', 'title', ['audio = ?'], ['1'], ['coverid']);
+	$doSearch->('track', 'title', ['me.audio = ?'], ['1'], ['me.coverid', 'me.audio']);
 	
 	# XXX - should we search for playlists, too?
 	
@@ -5162,6 +5175,21 @@ sub _getTagDataForTracks {
 			# Raw SQL search query
 			$search =~ s/;//g; # strip out any attempt at combining SQL statements
 			unshift @{$w}, $search;
+		}
+		# we need to adjust SQL when using fulltext search
+		elsif ( $canFulltextSearch ) {
+			my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+			
+			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
+			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens'");
+			
+			$sql = 'SELECT %s FROM tracksSearch, tracks ';
+			unshift @{$w}, "tracks.id = tracksSearch.id";
+			
+			if (!$count_only) {
+				$c->{'tracksSearch.fulltextweight'};
+				$sort = "tracksSearch.fulltextweight DESC";
+			}
 		}
 		else {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);

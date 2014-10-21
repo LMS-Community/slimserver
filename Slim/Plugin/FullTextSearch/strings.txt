@@ -1,0 +1,3 @@
+PLUGIN_FULLTEXT
+	DE	Volltextsuche
+	EN	Full text search

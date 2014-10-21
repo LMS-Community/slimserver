@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>7d1c0210-55fa-11e4-8ed6-0800200c9a66</id>
+	<name>PLUGIN_FULLTEXT</name>
+	<module>Slim::Plugin::FullTextSearch::Plugin</module>
+	<version>0.1.0</version>
+	<description>PLUGIN_FULLTEXT</description>
+	<creator>Logitech</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
