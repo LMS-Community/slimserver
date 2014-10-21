@@ -44,6 +44,10 @@
 										Highlighter.init();
 										SqueezeJS.UI.ScrollPanel.init();
 
+										var div = Ext.DomQuery.select("div[class=selectorMarker ]", options.thisSearch.id);
+										Ext.each(div, function(item) {
+											item.id = item.id + options.thisSearch.id;
+										});
 
 										// we need to fix the URL, as the returned values are relative to the search path
 										var a = Ext.DomQuery.select("a[class=browseItemLink]", options.thisSearch.id);
