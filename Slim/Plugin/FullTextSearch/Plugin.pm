@@ -16,7 +16,11 @@ sub initPlugin {
 	$Slim::Control::Queries::canFulltextSearch = 1;
 
 	my $dbh = Slim::Schema->dbh;
+	
+	# some custom functions to get good data
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
+	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
+	
 	# XXX - printf is only available in SQLite 3.8.3
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
 
@@ -230,6 +234,38 @@ sub _getWeight {
 	return $w; 
 }
 
+sub _getContributorRole {
+	my ($workId, $contributors, $type) = @_;
+	
+	my ($col) = $type =~ /contributor_(.*)/;
+	
+	return '' unless $workId && $contributors && $type && $col;
+	
+	my $dbh = Slim::Schema->dbh;
+	my $sth = $dbh->prepare_cached("SELECT name, namesearch, role FROM contributors, $type WHERE contributors.id = ? AND $type.contributor = ? AND $type.$col = ? GROUP BY role");
+
+	my ($name, $namesearch, $role);
+	
+	my $tuples = '';
+	
+	foreach my $contributor ( split /,/, $contributors ) {
+		$sth->execute($contributor, $contributor, $workId);
+		$sth->bind_columns(\$name, \$namesearch, \$role);
+
+		while ( $sth->fetch ) {
+			$role = Slim::Schema::Contributor->roleToType($role);
+			my $localized = Slim::Utils::Strings::string($role);
+
+			utf8::decode($name);
+			
+			$tuples .= "$role:$name $localized:$name " if $name;
+			$tuples .= "$role:$namesearch $localized:$namesearch " if $namesearch;
+		}
+	}
+
+	return $tuples;
+}
+
 sub _triggerIndexRebuild {
 	
 	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
@@ -272,15 +308,16 @@ sub _rebuildIndex {
 			-- weight 10
 			IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, ''),
 			-- weight 5
-			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' ') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
-			-- weight 3
-			IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
+--			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' ') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
+			-- weight 3 - contributors create multiple hits, therefore only w3
+			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
 			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || tracks.url
 			 
 			FROM tracks
 			LEFT JOIN contributor_track ON contributor_track.track = tracks.id
-			LEFT JOIN contributors ON contributors.id = contributor_track.contributor
+--			LEFT JOIN contributors ON contributors.id = contributor_track.contributor
 			LEFT JOIN albums ON albums.id = tracks.album
 			LEFT JOIN genre_track ON genre_track.track = tracks.id
 			LEFT JOIN genres ON genres.id = genre_track.genre
@@ -294,9 +331,10 @@ sub _rebuildIndex {
 			-- weight 10
 			IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' || IFNULL(albums.musicbrainz_id, ''),
 			-- weight 5
-			IFNULL(albums.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' '),
+			IFNULL(albums.year, ''),
+--			IFNULL(albums.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' '),
 			-- weight 3
-			'',
+			CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
 			-- weight 1
 			CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
 			 
@@ -313,17 +351,12 @@ sub _rebuildIndex {
 			-- weight 10
 			IFNULL(contributors.name, '') || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '') || ' ' || IFNULL(contributors.musicbrainz_id, ''),
 			-- weight 5
-			-- XXX - how to deal with roles?
 			'',
-		--	GROUP_CONCAT(contributor_track.role, ' '),
 			-- weight 3
 			'',
 			-- weight 1
 			''
-			 
 			FROM contributors
-		--	JOIN contributor_track ON contributor_track.contributor = contributors.id
-		--	GROUP BY contributors.id
 		;
 		
 		-- genres
