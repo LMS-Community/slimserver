@@ -71,6 +71,15 @@ sub getPlaylists {
 		unshift @{$w}, 'tracks.titlesearch LIKE ?';
 		unshift @{$p}, @{$search};
 	}
+	elsif ( $search && Slim::Schema->canFulltextSearch ) {
+		my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+		
+		Slim::Schema->dbh->do("DROP TABLE IF EXISTS playlistSearch");
+		Slim::Schema->dbh->do("CREATE TEMPORARY TABLE playlistSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:playlist $tokens'");
+		
+		$sql = 'SELECT tracks.id FROM playlistSearch, tracks ';
+		unshift @$w, "tracks.id = playlistSearch.id";
+	}
 	elsif (defined $search) {
 		push @$w, 'tracks.titlesearch LIKE ? ';
 		push @$p, $search;

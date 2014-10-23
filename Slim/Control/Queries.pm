@@ -63,8 +63,6 @@ my $cache = {};
 # small, short lived cache of folder entries to prevent repeated disk reads on BMF
 tie my %bmfCache, 'Tie::Cache::LRU::Expires', EXPIRES => 15, ENTRIES => 5;
 
-our $canFulltextSearch;
-
 sub init {
 	my $class = shift;
 	
@@ -308,6 +306,34 @@ sub albumsQuery {
 	}
 	# ignore everything if $track_id or $album_id was specified
 	else {
+		if (specified($search)) {
+			if ( Slim::Schema->canFulltextSearch ) {
+				my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+				
+				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
+				Slim::Schema->dbh->do("CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'");
+				
+				$sql = 'SELECT %s FROM albumsSearch, albums ';
+				unshift @{$w}, "albums.id = albumsSearch.id";
+				
+				if ($tags ne 'CC') {
+					$c->{'albumsSearch.fulltextweight'};
+					$sort = "albumsSearch.fulltextweight DESC, $sort";
+				}
+			}
+			else {
+				my $strings = Slim::Utils::Text::searchStringSplit($search);
+				if ( ref $strings->[0] eq 'ARRAY' ) {
+					push @{$w}, '(' . join( ' OR ', map { 'albums.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
+					push @{$p}, @{ $strings->[0] };
+				}
+				else {		
+					push @{$w}, 'albums.titlesearch LIKE ?';
+					push @{$p}, @{$strings};
+				}
+			}
+		}
+
 		my @roles;
 		if (defined $contributorID) {
 			# handle the case where we're asked for the VA id => return compilations
@@ -450,18 +476,6 @@ sub albumsQuery {
 			$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
 			push @{$w}, 'library_track.library = ?';
 			push @{$p}, $libraryID;
-		}
-
-		if (specified($search)) {
-			my $strings = Slim::Utils::Text::searchStringSplit($search);
-			if ( ref $strings->[0] eq 'ARRAY' ) {
-				push @{$w}, '(' . join( ' OR ', map { 'albums.titlesearch LIKE ?' } @{ $strings->[0] } ) . ')';
-				push @{$p}, @{ $strings->[0] };
-			}
-			else {		
-				push @{$w}, 'albums.titlesearch LIKE ?';
-				push @{$p}, @{$strings};
-			}
 		}
 		
 		if (defined $year) {
@@ -2549,7 +2563,7 @@ sub playlistsQuery {
 	my $libraryId= $request->getParam('library_id');
 	
 	# Normalize any search parameters
-	if (defined $search) {
+	if (defined $search && !Slim::Schema->canFulltextSearch) {
 		$search = Slim::Utils::Text::searchStringSplit($search);
 	}
 
@@ -2939,7 +2953,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search = $canFulltextSearch ? join(' AND ', map { "*$_*" } split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
+	my $search = Slim::Schema->canFulltextSearch ? join(' AND ', map { "*$_*" } split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
 		
 	my $dbh = Slim::Schema->dbh;
 	
@@ -2954,7 +2968,7 @@ sub searchQuery {
 		
 		my $sql;
 
-		if ( $canFulltextSearch ) {
+		if ( Slim::Schema->canFulltextSearch ) {
 			$sql = qq{
 				SELECT $cols FROM (
 					SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, $cols FROM fulltext, ${type}s me WHERE fulltext MATCH 'type:$type $search' AND me.id = fulltext.id ORDER BY w
@@ -2986,7 +3000,7 @@ sub searchQuery {
 			push @{$p}, $libraryID;
 		}
 		
-		if ( !$canFulltextSearch ) {
+		if ( !Slim::Schema->canFulltextSearch ) {
 			if ( ref $search->[0] eq 'ARRAY' ) {
 				push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $search->[0] } ) . ')';
 				push @{$p}, @{ $search->[0] };
@@ -5177,7 +5191,7 @@ sub _getTagDataForTracks {
 			unshift @{$w}, $search;
 		}
 		# we need to adjust SQL when using fulltext search
-		elsif ( $canFulltextSearch ) {
+		elsif ( Slim::Schema->canFulltextSearch ) {
 			my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
@@ -5187,8 +5201,7 @@ sub _getTagDataForTracks {
 			unshift @{$w}, "tracks.id = tracksSearch.id";
 			
 			if (!$count_only) {
-				$c->{'tracksSearch.fulltextweight'};
-				$sort = "tracksSearch.fulltextweight DESC";
+				$sort = "tracksSearch.fulltextweight DESC, $sort";
 			}
 		}
 		else {

@@ -3102,6 +3102,14 @@ sub _updateHash {
 	return 1;
 }
 
+my $canFulltextSearch;
+sub canFulltextSearch {
+	return $canFulltextSearch if defined $canFulltextSearch;
+	
+	$canFulltextSearch = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::FullTextSearch::Plugin') && Slim::Plugin::FullTextSearch::Plugin->canFulltextSearch;
+	return $canFulltextSearch; 
+}
+
 =head1 SEE ALSO
 
 L<DBIx::Class>
