@@ -2969,9 +2969,12 @@ sub searchQuery {
 		my $sql;
 
 		if ( Slim::Schema->canFulltextSearch ) {
+			my $additionalCols = join(', ', map { /(me\.\w+)/; $1 } grep /(me\.\w+)/, @{$w || []});
+			$additionalCols = ', ' . $additionalCols if $additionalCols;
+
 			$sql = qq{
 				SELECT $cols FROM (
-					SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, $cols FROM fulltext, ${type}s me WHERE fulltext MATCH 'type:$type $search' AND me.id = fulltext.id ORDER BY w
+					SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, $cols $additionalCols FROM fulltext, ${type}s me WHERE fulltext MATCH 'type:$type $search' AND me.id = fulltext.id ORDER BY w
 				) AS me
 			};
 		}
