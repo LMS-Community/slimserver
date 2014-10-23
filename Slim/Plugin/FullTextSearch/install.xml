@@ -6,7 +6,7 @@
 	<module>Slim::Plugin::FullTextSearch::Plugin</module>
 	<importmodule>Slim::Plugin::FullTextSearch::Plugin</importmodule>
 	<version>1.0.0</version>
-	<description>PLUGIN_FULLTEXT</description>
+	<description>PLUGIN_FULLTEXT_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
