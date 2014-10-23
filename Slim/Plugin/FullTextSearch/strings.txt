@@ -1,3 +1,7 @@
 PLUGIN_FULLTEXT
 	DE	Volltextsuche
 	EN	Full text search
+	
+PLUGIN_FULLTEXT_PROGRESS
+	DE	Volltext Index erstellen
+	EN	Building full text index

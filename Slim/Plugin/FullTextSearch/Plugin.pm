@@ -1,8 +1,12 @@
 package Slim::Plugin::FullTextSearch::Plugin;
 
+use strict;
+
 use Slim::Control::Queries;
 use Slim::Control::Request;
 use Slim::Utils::Log;
+
+use constant BUILD_STEPS => 5;
 
 my $log = logger('scan');
 
@@ -12,8 +16,12 @@ sub initPlugin {
 	my $class = shift;
 	
 	return unless $class->canFulltextSearch;
-	
-	$Slim::Control::Queries::canFulltextSearch = 1;
+
+	Slim::Music::Import->addImporter('Slim::Plugin::FullTextSearch::Plugin', {
+		'type'         => 'post',
+		'weight'       => 90,
+		'use'          => 1,
+	});
 
 	my $dbh = Slim::Schema->dbh;
 	
@@ -23,6 +31,9 @@ sub initPlugin {
 	
 	# XXX - printf is only available in SQLite 3.8.3
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
+
+	# no need to continue in scanner mode
+	return if main::SCANNER;
 
 	Slim::Control::Request::subscribe( sub {
 		Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
@@ -40,20 +51,34 @@ sub initPlugin {
 	my ($ftExists) = $sth->fetchrow_array;
 	$sth->finish;
 	
-	if (!$ftExists) {
-		_rebuildIndex();
-	}
+	# trigger rescan if our index is older than the last scan
+	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => 'lastFulltextIndex'
+	} );
 	
-=pod
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
+	if (!$ftExists || ($lastIndex->value && $lastIndex->value < Slim::Music::Import->lastScanTime) ) {
+		$log->warn("Fulltext index missing or outdated - re-building");
+		
+		_rebuildIndex();
+		$lastIndex->value(time);
+		$lastIndex->update();
+	}
+}
 
-    Slim::Control::Request::addDispatch(['fulltextsearch', '_index', '_quantity'], 
-        [1, 1, 1, \&fulltextsearchQuery]);
-=cut
+# importer modules, run in the scanner
+sub startScan { 
+	my $class = shift;
+
+	my $progress = Slim::Utils::Progress->new({ 
+		'type'  => 'importer',
+		'name'  => 'plugin_fulltext',
+		'total' => BUILD_STEPS,		# number of SQL queries - to be adjusted if there are more
+		'bar'   => 1
+	});
+
+	_rebuildIndex($progress);
+
+	Slim::Music::Import->endImporter(__PACKAGE__);
 }
 
 
@@ -64,155 +89,10 @@ sub canFulltextSearch {
 	return 1 if $sqlVersion =~ /SQLite/i;
 	
 	$log->warn("We don't support fulltext search on your SQL engine: $sqlVersion");
-	return 
+	
+	return 0;
 }
 
-=pod
-sub fulltextsearchQuery {
-	my $request = shift;
-
-warn Data::Dump::dump('yo');
-	# check this is the correct query
-	if ($request->isNotQuery([['fulltextsearch', 'search']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $client    = $request->client;
-	my $index     = $request->getParam('_index');
-	my $quantity  = $request->getParam('_quantity');
-	my $query     = $request->getParam('term');
-	my $libraryID = $request->getParam('library_id') || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
-	
-	# transliterate umlauts and accented characters
-	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
-	$query = Slim::Utils::Text::matchCase($query);
-
-	if (!defined $query || $query eq '') {
-		$request->setStatusBadParams();
-		return;
-	}
-
-	if (Slim::Music::Import->stillScanning) {
-		$request->addResult('rescan', 1);
-	}
-
-	my $totalCount = 0;
-		
-	my $total = 0;
-	
-	my $doSearch = sub {
-		my ($type, $name, $w, $p, $c) = @_;
-
-		# contributors first
-		my $cols = "me.id, me.$name";
-		$cols    = join(', ', $cols, @$c) if $c;
-		
-		my $sql = "SELECT $cols FROM ${type}s me ";
-		
-		if ( $libraryID ) {
-			if ( $type eq 'contributor') {
-				$sql .= 'JOIN contributor_track ON contributor_track.contributor = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
-			}
-			elsif ( $type eq 'album' ) {
-				$sql .= 'JOIN tracks ON tracks.album = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-			}
-			elsif ( $type eq 'genre' ) {
-				$sql .= 'JOIN genre_track ON genre_track.genre = me.id ';
-				$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
-			}
-			elsif ( $type eq 'track' ) {
-				$sql .= 'JOIN library_track ON library_track.track = me.id ';
-			}
-			
-			push @{$w}, 'library_track.library = ?';
-			push @{$p}, $libraryID;
-		}
-		
-		my @tokens = map { "*$_*" } split(/\s/, $query);
-		# XXX - DBI is getting confused when using the MATCH operator with a placeholder
-		unshift @{$w}, "me.id IN (SELECT t.id FROM (SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, fulltext.id FROM fulltext WHERE fulltext MATCH 'type:$type " . join(' AND ', @tokens) . "' ORDER BY w) AS t) ";
-		
-		if ( @{$w} ) {
-			$sql .= 'WHERE ';
-			my $s = join( ' AND ', @{$w} );
-			$s =~ s/\%/\*/g;
-			$sql .= $s . ' ';
-		}
-		
-		my $sth = $dbh->prepare( qq{SELECT COUNT(1) FROM ($sql) AS t1} );
-		$sth->execute(@$p);
-		my ($count) = $sth->fetchrow_array;
-		$sth->finish;
-	
-		$count += 0;
-		$total += $count;
-	
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	
-		if ($valid) {
-			$request->addResult("${type}s_count", $count);
-			
-			# Limit the real query
-			$sql .= "LIMIT ?,?";
-
-#warn $sql;
-		
-			my $sth = $dbh->prepare_cached($sql);
-			$sth->execute( @{$p}, $index, $quantity );
-			
-			my ($id, $title, %additionalCols);
-			$sth->bind_col(1, \$id);
-			$sth->bind_col(2, \$title);
-			
-			if ($c) {
-				my $i = 2;
-				foreach (@$c) {
-					$sth->bind_col(++$i, \$additionalCols{$_});
-				}
-			}
-				
-			my $chunkCount = 0;
-			my $loopname   = "${type}s_loop";
-			while ( $sth->fetch ) {
-				
-				last if $chunkCount >= $quantity;
-				
-				$request->addResultLoop($loopname, $chunkCount, "${type}_id", $id+0);
-
-				utf8::decode($title);
-				$request->addResultLoop($loopname, $chunkCount, "${type}", $title);
-				
-				# any additional column
-				if ($c) {
-					foreach (@$c) {
-						utf8::decode($additionalCols{$_});
-						$request->addResultLoop($loopname, $chunkCount, $_, $additionalCols{$_});
-					}
-				}
-		
-				$chunkCount++;
-				
-				main::idleStreams() if !($chunkCount % 10);
-			}
-			
-			$sth->finish;
-		}
-	};
-
-	$doSearch->('contributor', 'name');
-	$doSearch->('album', 'title', undef, undef, ['artwork']);
-	$doSearch->('genre', 'name');
-	$doSearch->('track', 'title', ['audio = ?'], ['1'], ['coverid']);
-	
-	# XXX - should we search for playlists, too?
-	
-	$request->addResult('count', $total);
-	$request->setStatusDone();
-}
-=cut
 
 sub _getWeight {
 	my $v = shift;
@@ -273,7 +153,7 @@ sub _triggerIndexRebuild {
 	my $pollInterval = 0;
 
 	for my $client (Slim::Player::Client::clients()) {
-		if ( $client->isUpgrading() || $client->isPlaying() || (Time::HiRes::time() - $client->lastActivityTime <= INTERVAL) ) {
+		if ( $client->isUpgrading() || $client->isPlaying() ) {
 			$pollInterval = 300;
 		}
 	}
@@ -292,17 +172,22 @@ sub _triggerIndexRebuild {
 }
 
 sub _rebuildIndex {
+	my $progress = shift;
+	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Starting fulltext index build...");
 
 	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
 
 	my $dbh = Slim::Schema->dbh;
 
-	foreach (split /;/sg, qq{
-		DROP TABLE IF EXISTS fulltext;
-		CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1); 
-		
-		-- tracks
+	main::DEBUGLOG && $log->is_debug && $log->debug("Initialize fulltext table...");
+	
+	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $log->error($dbh->errstr);
+	$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $log->error($dbh->errstr);
+	Slim::Schema->forceCommit if main::SCANNER;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for tracks...");
+	$dbh->do(qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT tracks.id, 'track', 
 			-- weight 10
@@ -324,15 +209,17 @@ sub _rebuildIndex {
 			LEFT JOIN comments ON comments.track = tracks.id
 		
 			GROUP BY tracks.id;
+	}) or $log->error($dbh->errstr);
+	Slim::Schema->forceCommit if main::SCANNER;
 		
-		-- albums
+	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for albums...");
+	$dbh->do(qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT albums.id, 'album', 
 			-- weight 10
 			IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' || IFNULL(albums.musicbrainz_id, ''),
 			-- weight 5
 			IFNULL(albums.year, ''),
---			IFNULL(albums.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' '),
 			-- weight 3
 			CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
 			-- weight 1
@@ -343,9 +230,11 @@ sub _rebuildIndex {
 			LEFT JOIN contributors ON contributors.id = contributor_album.contributor
 		
 			GROUP BY albums.id;
+	}) or $log->error($dbh->errstr);
+	Slim::Schema->forceCommit if main::SCANNER;
 		
-		
-		-- contributors
+	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for contributors...");
+	$dbh->do(qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT contributors.id, 'contributor', 
 			-- weight 10
@@ -356,18 +245,41 @@ sub _rebuildIndex {
 			'',
 			-- weight 1
 			''
-			FROM contributors
-		;
+			FROM contributors;
+	}) or $log->error($dbh->errstr);
+	Slim::Schema->forceCommit if main::SCANNER;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for playlists...");
+
+	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
+	my $plSth = $dbh->prepare_cached("SELECT track FROM playlist_track WHERE playlist = ?");
+	my $sth   = $dbh->prepare_cached("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'type:track' AND fulltext.id = tracks.id");
+	my $inSth = $dbh->prepare_cached("INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)");
+
+	# use fulltext information for tracks to populate a playlist's record with track information
+	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
+	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
+		$plSth->execute($playlist->id);
+		my $tracks = $plSth->fetchall_arrayref;
 		
-		-- genres
-		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-			SELECT genres.id, 'genre', IFNULL(genres.name, '') || ' ' || IFNULL(genres.namesearch, ''), '', '', ''
-			FROM genres
-			WHERE genres.name != '';
-	}) {
-		$dbh->do($_) or warn $dbh->errstr;
-	};
+		my $w1 = '';
 		
+		foreach my $track ( map { $_->[0] } @$tracks ) {
+			$sth->execute($track);
+			my $trackInfo = $sth->fetchall_arrayref;
+			
+			$w1 .= $trackInfo->[0]->[0] . ' ';
+			$w1 .= $trackInfo->[0]->[1] . ' ';
+			$w1 .= $trackInfo->[0]->[2] . ' ';
+			$w1 .= $trackInfo->[0]->[3] . ' ';
+		}
+		
+		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
+	}
+	
+	$progress->final(BUILD_STEPS) if $progress;
+	Slim::Schema->forceCommit if main::SCANNER;
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Fulltext index build done!");
 }
 
