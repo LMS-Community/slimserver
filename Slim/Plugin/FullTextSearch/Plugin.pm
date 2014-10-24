@@ -205,7 +205,7 @@ sub _rebuildIndex {
 	main::idleStreams() unless main::SCANNER;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for tracks...");
-	$progress && $progress->update(string('TRACKS'));
+	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	$dbh->do(qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
