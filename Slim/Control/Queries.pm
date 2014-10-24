@@ -308,7 +308,7 @@ sub albumsQuery {
 	else {
 		if (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
-				my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
+				my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'album');
 				
 				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
 				Slim::Schema->dbh->do("CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'");
@@ -845,7 +845,7 @@ sub artistsQuery {
 	}
 	else {
 		if ( $search && Slim::Schema->canFulltextSearch ) {
-			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
+			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'contributor');
 
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch");
 			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'");
@@ -2972,7 +2972,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search = Slim::Schema->canFulltextSearch ? Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($query) : Slim::Utils::Text::searchStringSplit($query);
+	my $search = Slim::Schema->canFulltextSearch ? $query : Slim::Utils::Text::searchStringSplit($query);
 		
 	my $dbh = Slim::Schema->dbh;
 	
@@ -2988,13 +2988,18 @@ sub searchQuery {
 		my $sql;
 
 		if ( Slim::Schema->canFulltextSearch ) {
+			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, $type);
+			
 			my $additionalCols = join(', ', map { /(me\.\w+)/; $1 } grep /(me\.\w+)/, @{$w || []});
 			$additionalCols = ', ' . $additionalCols if $additionalCols;
+
+			# when dealing with large data sets, only return a sub-set of search results
+			my $orderOrLimit = ($isLarge && $isLarge < ($index + $quantity)) ? 'LIMIT ' . $isLarge : 'ORDER BY w';
 
 			$sql = qq{
 				SELECT $cols FROM (
 					SELECT $cols $additionalCols FROM (
-						SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $search' ORDER BY w LIMIT 1000
+						SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit
 					) AS fts, ${type}s me WHERE me.id = fts.id ORDER BY fts.w
 				) AS me
 			};
@@ -5216,10 +5221,12 @@ sub _getTagDataForTracks {
 		}
 		# we need to adjust SQL when using fulltext search
 		elsif ( Slim::Schema->canFulltextSearch ) {
-			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
+			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'track');
+
+			my $orderOrLimit = $isLarge ? 'LIMIT ' . $isLarge : 'ORDER BY fulltextweight';
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
-			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' ORDER BY fulltextweight LIMIT 1000");
+			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit");
 			
 			$sql = 'SELECT %s FROM tracksSearch, tracks ';
 			unshift @{$w}, "tracks.id = tracksSearch.id";

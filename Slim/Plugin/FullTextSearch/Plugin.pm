@@ -8,10 +8,10 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 
 use constant BUILD_STEPS => 6;
+use constant FIRST_COLUMN => 2;
+use constant LARGE_RESULTSET => 1000;
 
 my $log = logger('scan');
-
-use constant FIRST_COLUMN => 2;
 
 sub initPlugin {
 	my $class = shift;
@@ -88,12 +88,20 @@ sub canFulltextSearch {
 }
 
 sub parseSearchTerm {
-	my ($class, $search) = @_;
+	my ($class, $search, $type) = @_;
 
 	# make sure our custom functions are registered
-	_dbh();
+	my $dbh = _dbh();
 	
-	return join(' AND ', split(/\s/, $search));
+	my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+	my $isLargeResultSet;
+	
+	if (wantarray && $type && $tokens) {
+		my ($counts) = $dbh->selectrow_array(sprintf("SELECT count(1) FROM fulltext WHERE fulltext MATCH 'type:%s %s'", $type, $tokens));
+		$isLargeResultSet = LARGE_RESULTSET if $counts && $counts > LARGE_RESULTSET;
+	}
+	
+	return wantarray ? ($tokens, $isLargeResultSet) : $tokens;
 }
 
 sub _getWeight {
