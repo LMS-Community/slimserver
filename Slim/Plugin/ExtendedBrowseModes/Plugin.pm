@@ -93,7 +93,7 @@ sub handleFeed {
 		my $count = Slim::Music::VirtualLibraries->getTrackCount($k);
 		
 		push @items, {
-			name => $v->{name} . sprintf(" ($count %s)", cstring($client, 'TRACKS')),
+			name => $v->{name} . sprintf(" ($count %s)", cstring($client, 'SONGS')),
 			type => 'outline',
 			items => [{
 				name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USE_X', $v->{name}),
