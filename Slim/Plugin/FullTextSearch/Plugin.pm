@@ -24,14 +24,7 @@ sub initPlugin {
 		'use'          => 1,
 	});
 
-	my $dbh = Slim::Schema->dbh;
-	
-	# some custom functions to get good data
-	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
-	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
-	
-	# XXX - printf is only available in SQLite 3.8.3
-	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
+	my $dbh = _dbh();
 
 	# no need to continue in scanner mode
 	return if main::SCANNER;
@@ -96,6 +89,10 @@ sub canFulltextSearch {
 
 sub parseSearchTerm {
 	my ($class, $search) = @_;
+
+	# make sure our custom functions are registered
+	_dbh();
+	
 	return join(' AND ', split(/\s/, $search));
 }
 
@@ -126,7 +123,7 @@ sub _getContributorRole {
 	
 	return '' unless $workId && $contributors && $type && $col;
 	
-	my $dbh = Slim::Schema->dbh;
+	my $dbh = _dbh();
 	my $sth = $dbh->prepare_cached("SELECT name, namesearch, role FROM contributors, $type WHERE contributors.id = ? AND $type.contributor = ? AND $type.$col = ? GROUP BY role");
 
 	my ($name, $namesearch, $role);
@@ -190,7 +187,7 @@ sub _rebuildIndex {
 
 	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
 
-	my $dbh = Slim::Schema->dbh;
+	my $dbh = _dbh();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Initialize fulltext table...");
 	
@@ -309,6 +306,19 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Fulltext index build done!");
+}
+
+sub _dbh {
+	my $dbh = Slim::Schema->dbh;
+	
+	# some custom functions to get good data
+	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
+	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
+	
+	# XXX - printf is only available in SQLite 3.8.3
+	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
+	
+	return $dbh;
 }
 
 1;

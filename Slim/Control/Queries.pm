@@ -2972,7 +2972,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search = Slim::Schema->canFulltextSearch ? join(' AND ', split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
+	my $search = Slim::Schema->canFulltextSearch ? Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($query) : Slim::Utils::Text::searchStringSplit($query);
 		
 	my $dbh = Slim::Schema->dbh;
 	
