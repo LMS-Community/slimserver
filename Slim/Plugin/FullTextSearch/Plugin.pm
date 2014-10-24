@@ -93,7 +93,8 @@ sub parseSearchTerm {
 	# make sure our custom functions are registered
 	my $dbh = _dbh();
 	
-	my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+	my $tokens = join(' AND ', map { "$_*" } split(/\s/, $search));
+
 	my $isLargeResultSet;
 	
 	if (wantarray && $type && $tokens) {
