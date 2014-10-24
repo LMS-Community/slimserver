@@ -308,7 +308,7 @@ sub albumsQuery {
 	else {
 		if (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
-				my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+				my $tokens = join(' AND ', split(/\s/, $search));
 				
 				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
 				Slim::Schema->dbh->do("CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'");
@@ -2953,7 +2953,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-	my $search = Slim::Schema->canFulltextSearch ? join(' AND ', map { "*$_*" } split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
+	my $search = Slim::Schema->canFulltextSearch ? join(' AND ', split(/\s/, $query)) : Slim::Utils::Text::searchStringSplit($query);
 		
 	my $dbh = Slim::Schema->dbh;
 	
@@ -2974,7 +2974,9 @@ sub searchQuery {
 
 			$sql = qq{
 				SELECT $cols FROM (
-					SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, $cols $additionalCols FROM fulltext, ${type}s me WHERE fulltext MATCH 'type:$type $search' AND me.id = fulltext.id ORDER BY w
+					SELECT $cols $additionalCols FROM (
+						SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $search' ORDER BY w LIMIT 1000
+					) AS fts, ${type}s me WHERE me.id = fts.id ORDER BY fts.w
 				) AS me
 			};
 		}
@@ -5195,10 +5197,10 @@ sub _getTagDataForTracks {
 		}
 		# we need to adjust SQL when using fulltext search
 		elsif ( Slim::Schema->canFulltextSearch ) {
-			my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+			my $tokens = join(' AND ', split(/\s/, $search));
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
-			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens'");
+			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' ORDER BY fulltextweight LIMIT 1000");
 			
 			$sql = 'SELECT %s FROM tracksSearch, tracks ';
 			unshift @{$w}, "tracks.id = tracksSearch.id";
