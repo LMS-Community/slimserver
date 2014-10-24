@@ -29,16 +29,15 @@ sub initPlugin {
 	# no need to continue in scanner mode
 	return if main::SCANNER;
 
-	Slim::Control::Request::subscribe( sub {
-		Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
-		Slim::Utils::Timers::setTimer(
-			undef, 
-			time + 30, 
-			\&_triggerIndexRebuild
-		);
-	}, [['rescan'], ['done']] );
-	
-#	my $d = $dbh->selectall_arrayref( qq{ SELECT TRACK_WEIGHT(matchinfo(fulltext)) w, * FROM fulltext WHERE fulltext MATCH 'love bowie 192kbps' ORDER BY w DESC LIMIT 10 } );
+# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
+#	Slim::Control::Request::subscribe( sub {
+#		Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
+#		Slim::Utils::Timers::setTimer(
+#			undef, 
+#			time + 30, 
+#			\&_triggerIndexRebuild
+#		);
+#	}, [['rescan'], ['done']] );
 	
 	my $sth = $dbh->prepare( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	$sth->execute();
@@ -46,16 +45,17 @@ sub initPlugin {
 	$sth->finish;
 	
 	# trigger rescan if our index is older than the last scan
-	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
-		'name' => 'lastFulltextIndex'
-	} );
-	
-	if (!$ftExists || ($lastIndex->value && $lastIndex->value < Slim::Music::Import->lastScanTime) ) {
+#	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
+#		'name' => 'lastFulltextIndex'
+#	} );
+
+#	if (!$ftExists || ($lastIndex->value && $lastIndex->value < Slim::Music::Import->lastScanTime) ) {
+	if (!$ftExists) {
 		$log->warn("Fulltext index missing or outdated - re-building");
 		
 		_rebuildIndex();
-		$lastIndex->value(time);
-		$lastIndex->update();
+#		$lastIndex->value(time);
+#		$lastIndex->update();
 	}
 }
 
@@ -156,44 +156,44 @@ sub _getContributorRole {
 	return $tuples;
 }
 
-sub _triggerIndexRebuild {
-	
-	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
-
-		# trigger rescan if our index is older than the last scan
-	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
-		'name' => 'lastFulltextIndex'
-	} );
-	
-	return if $lastIndex->value && $lastIndex->value >= Slim::Music::Import->lastScanTime;
-	
-	my $pollInterval = 0;
-
-	for my $client (Slim::Player::Client::clients()) {
-		if ( $client->isUpgrading() || $client->isPlaying() ) {
-			$pollInterval = 300;
-		}
-	}
-	
-	if ( Slim::Music::Import->stillScanning() || $pollInterval ) {
-		$pollInterval ||= 1800;
-		Slim::Utils::Timers::setTimer(
-			undef, 
-			time + $pollInterval, 
-			\&_triggerIndexRebuild
-		);
-	}
-	else {
-		_rebuildIndex();
-	}
-}
+#sub _triggerIndexRebuild {
+#	
+#	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
+#
+#		# trigger rescan if our index is older than the last scan
+#	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
+#		'name' => 'lastFulltextIndex'
+#	} );
+#	
+#	return if $lastIndex->value && $lastIndex->value >= Slim::Music::Import->lastScanTime;
+#	
+#	my $pollInterval = 0;
+#
+#	for my $client (Slim::Player::Client::clients()) {
+#		if ( $client->isUpgrading() || $client->isPlaying() ) {
+#			$pollInterval = 300;
+#		}
+#	}
+#	
+#	if ( Slim::Music::Import->stillScanning() || $pollInterval ) {
+#		$pollInterval ||= 1800;
+#		Slim::Utils::Timers::setTimer(
+#			undef, 
+#			time + $pollInterval, 
+#			\&_triggerIndexRebuild
+#		);
+#	}
+#	else {
+#		_rebuildIndex();
+#	}
+#}
 
 sub _rebuildIndex {
 	my $progress = shift;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Starting fulltext index build...");
 
-	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
+#	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
 
 	my $dbh = _dbh();
 
