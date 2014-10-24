@@ -94,6 +94,10 @@ sub canFulltextSearch {
 	return 0;
 }
 
+sub parseSearchTerm {
+	my ($class, $search) = @_;
+	return join(' AND ', split(/\s/, $search));
+}
 
 sub _getWeight {
 	my $v = shift;
@@ -150,6 +154,13 @@ sub _getContributorRole {
 sub _triggerIndexRebuild {
 	
 	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
+
+		# trigger rescan if our index is older than the last scan
+	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => 'lastFulltextIndex'
+	} );
+	
+	return if $lastIndex->value && $lastIndex->value >= Slim::Music::Import->lastScanTime;
 	
 	my $pollInterval = 0;
 

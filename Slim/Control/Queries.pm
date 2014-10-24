@@ -308,7 +308,7 @@ sub albumsQuery {
 	else {
 		if (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
-				my $tokens = join(' AND ', split(/\s/, $search));
+				my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
 				
 				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
 				Slim::Schema->dbh->do("CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'");
@@ -777,6 +777,8 @@ sub albumsQuery {
 
 	}
 
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch") if $search && Slim::Schema->canFulltextSearch;
+
 	$request->addResult('count', $count);
 
 	$request->setStatusDone();
@@ -827,6 +829,9 @@ sub artistsQuery {
 
 	my $rs;
 	my $cacheKey;
+	
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+	my $sort    = "contributors.namesort $collate";
 
 	# Manage joins 
 	if (defined $trackID) {
@@ -839,6 +844,20 @@ sub artistsQuery {
 		push @{$p}, $artistID;
 	}
 	else {
+		if ( $search && Slim::Schema->canFulltextSearch ) {
+			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
+
+			Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch");
+			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'");
+			
+			$sql = 'SELECT %s FROM artistsSearch, contributors ';
+			unshift @{$w}, "contributors.id = artistsSearch.id";
+			
+			if ($tags ne 'CC') {
+				$sort = "artistsSearch.fulltextweight DESC, $sort";
+			}
+		}
+
 		my $roles;
 		if ($roleID) {
 			$roleID .= ',ARTIST' if $aa_merge;
@@ -931,7 +950,7 @@ sub artistsQuery {
 			}
 		}
 
-		if ($search) {
+		if ( $search && !Slim::Schema->canFulltextSearch ) {
 			my $strings = Slim::Utils::Text::searchStringSplit($search);
 			if ( ref $strings->[0] eq 'ARRAY' ) {
 				push @{$w}, '(' . join( ' OR ', map { 'contributors.namesearch LIKE ?' } @{ $strings->[0] } ) . ')';
@@ -990,8 +1009,6 @@ sub artistsQuery {
 	}
 	
 	my $dbh = Slim::Schema->dbh;
-	
-	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
@@ -1034,7 +1051,7 @@ sub artistsQuery {
 	$sql = sprintf($sql, 'contributors.id, contributors.name, contributors.namesort')
 			. 'GROUP BY contributors.id ';
 			
-	$sql .= "ORDER BY contributors.namesort $collate " unless $tags eq 'CC';
+	$sql .= "ORDER BY $sort " unless $tags eq 'CC';
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
@@ -1152,6 +1169,8 @@ sub artistsQuery {
 		}
 		
 	}
+
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch") if $search && Slim::Schema->canFulltextSearch;
 	
 	$request->addResult('indexList', $indexList) if $indexList;
 
@@ -5197,7 +5216,7 @@ sub _getTagDataForTracks {
 		}
 		# we need to adjust SQL when using fulltext search
 		elsif ( Slim::Schema->canFulltextSearch ) {
-			my $tokens = join(' AND ', split(/\s/, $search));
+			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search);
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
 			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' ORDER BY fulltextweight LIMIT 1000");
@@ -5615,6 +5634,8 @@ sub _getTagDataForTracks {
 	if ( !$total ) {
 		$total = scalar @resultOrder;
 	}
+
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch") if $search && Slim::Schema->canFulltextSearch;
 	
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
