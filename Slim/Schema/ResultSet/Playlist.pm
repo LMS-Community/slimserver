@@ -72,7 +72,7 @@ sub getPlaylists {
 		unshift @{$p}, @{$search};
 	}
 	elsif ( $search && Slim::Schema->canFulltextSearch ) {
-		my $tokens = join(' AND ', map { "*$_*" } split(/\s/, $search));
+		my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'playlist');
 		
 		Slim::Schema->dbh->do("DROP TABLE IF EXISTS playlistSearch");
 		Slim::Schema->dbh->do("CREATE TEMPORARY TABLE playlistSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:playlist $tokens'");

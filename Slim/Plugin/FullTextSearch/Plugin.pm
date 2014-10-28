@@ -90,12 +90,29 @@ sub canFulltextSearch {
 sub parseSearchTerm {
 	my ($class, $search, $type) = @_;
 
-	# make sure our custom functions are registered
-	my $dbh = _dbh();
-	
-	my $tokens = join(' AND ', map { "$_*" } split(/\s/, $search));
+	# Check if we have an open double quote and close it if needed
+	my $c = () = $search =~ /"/g;
+	if ( $c % 2 == 1 ) {
+		$search .= '"';
+	}
+
+	# don't pull quoted strings apart!
+	my @quoted;
+	while ($search =~ s/(".+?")//g) {
+		push @quoted, $1;
+	}
+
+	my $tokens = join(' AND ', @quoted, grep {
+		/\w+/
+	} map { 
+		s/['\(\)]/ /g;
+		"$_*";
+	} split(/\s/, $search));
 
 	my $isLargeResultSet;
+
+	# make sure our custom functions are registered
+	my $dbh = _dbh();
 	
 	if (wantarray && $type && $tokens) {
 		my ($counts) = $dbh->selectrow_array(sprintf("SELECT count(1) FROM fulltext WHERE fulltext MATCH 'type:%s %s'", $type, $tokens));
