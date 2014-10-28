@@ -291,6 +291,7 @@ sub _rebuildIndex {
 		
 		# can't bind variables to MATCH parameters - use distinct prepare statements, it's still many times faster than not matching the URL in w1
 		foreach my $track ( map { $_->[0] } @$tracks ) {
+			$track =~ s/(['\(\)])/\\$1/g;
 			my $sth = $dbh->prepare(sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track));
 			$sth->execute;
 			my $trackInfo = $sth->fetchall_arrayref;
