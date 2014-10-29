@@ -33,6 +33,7 @@ use strict;
 
 use Storable;
 use JSON::XS::VersionOneAndTwo;
+use Digest::MD5 qw(md5_hex);
 use MIME::Base64 qw(encode_base64 decode_base64);
 use Scalar::Util qw(blessed);
 use URI::Escape;
@@ -598,7 +599,7 @@ sub albumsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . ($search || ''));
 	
 	if ( $sort eq 'new' && $cache->{$newAlbumsCacheKey} && !$ignoreNewAlbumsCache ) {
 		my $albumCount = scalar @{$cache->{$newAlbumsCacheKey}};
@@ -1056,7 +1057,7 @@ sub artistsQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	$cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	$cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client) . ($search || ''));
 	
 	my $count = $cache->{$cacheKey};
 	
@@ -1646,7 +1647,7 @@ sub genresQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 		
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -2058,7 +2059,7 @@ sub mediafolderQuery {
 		}
 	
 		# if this is a follow up query ($index > 0), try to read from the cache
-		my $cacheKey = ($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		my $cacheKey = md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 		if (my $cachedItem = $bmfCache{$cacheKey}) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
@@ -4307,7 +4308,7 @@ sub yearsQuery {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -5755,7 +5756,7 @@ sub videoTitlesQuery { if (main::VIDEO && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -6018,7 +6019,7 @@ sub imageTitlesQuery { if (main::IMAGE && main::MEDIASUPPORT) {
 	my $dbh = Slim::Schema->dbh;
 	
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = $sql . join( '', @{$p} );
+	my $cacheKey = md5_hex($sql . join( '', @{$p} ));
 	
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
