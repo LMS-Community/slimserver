@@ -20260,6 +20260,10 @@ DEBUG_DATABASE_INFO
 	RU	Ведение журнала метаданных и анализа
 	SV	Loggning av metadata och tolkning
 
+DEBUG_DATABASE_VIRTUALLIBRARIES
+	DE	Musiksammlungs-Ansichten (Virtual Libraries)
+	EN	Library Views (virtual libraries)
+
 DEBUG_OS_FILES
 	CS	Informace o úrovni souborového systému
 	DA	Information på filsystemnivau
