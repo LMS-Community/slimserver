@@ -8128,6 +8128,10 @@ SETUP_ARTISTS_BROWSE_MODES
 	RU	Просмотр исполнителей
 	SV	Bläddra efter artister
 
+SETUP_ARTISTS_BROWSE_MODES_DESC
+	DE	Wählen Sie, ob sie eine einzelne, konfigurierbare List von Interpreten haben wollen, oder eine für Album-Interpreten und eine für Alle Interpreten. Album-Interpreten führt nur Künstler auf, welche für ein Album alleine gespeichert sind, oder im ALBUMARTIST Tag vermerkt sind. Alle Interpreten listet alle Künstler aller Rollen auf (ARTIST, COMPOSER etc.). Die konfigurierbare Interpretenliste lässt Sie festlegen, welche Rollen berücksichtigt werden sollen.
+	EN	Choose whether you want to use a single, configurable artists list, or two lists for Album Artists and All Artists. Album Artists is a list where Album Artist is the sole artist on an album or is the artist specified in the ALBUMARTIST tag. All Artists is a list of every artist that appears in a contributor role tag (ARTIST, COMPOSER etc.). The single, configurable list of artists on the other hand let's you define which contributor roles should be part of the Artists menu.
+
 SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON
 	DE	Eine konfigurierbare Liste mit Künstlern verwenden
 	EN	Use single, configurable list of artists

@@ -1,6 +1,6 @@
 [% PROCESS settings/header.html %]
 	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_ARTISTS_BROWSE_MODES" desc="SETUP_ARTISTS_BROWSE_MODES" %]
+		[% WRAPPER settingGroup title="SETUP_ARTISTS_BROWSE_MODES" desc="SETUP_ARTISTS_BROWSE_MODES_DESC" %]
 			<select class="stdedit" name="pref_useUnifiedArtistsList" id="useUnifiedArtistsList">[% prefs.pref_useUnifiedArtistsList %]
 	
 				<option [% IF prefs.pref_useUnifiedArtistsList %]selected [% END %]value="1">[% 'SETUP_ARTISTS_BROWSE_MODES_UNIFIED_ON' | string %]</option>
