@@ -1575,8 +1575,8 @@ sub playlistXitemCommand {
 				if ( ref $list eq 'ARRAY' ) {
 					push @{$foundItems}, @{$list};
 					
-					# If we had a list of tracks, we already shuffled above
-					$noShuffle = 1;
+					# XXX - we DO need to shuffle, as otherwise the client's shufflelist will not know about the newly added items!
+					#$noShuffle = 1;
 				}
 
 				Slim::Player::Playlist::addTracks($client, $foundItems, 0);
