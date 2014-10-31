@@ -215,6 +215,8 @@ sub _rebuildIndex {
 
 	my $dbh = _dbh();
 
+	my $sqllog = main::DEBUGLOG && logger('database.sql');
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Initialize fulltext table...");
 	
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $log->error($dbh->errstr);
@@ -224,7 +226,8 @@ sub _rebuildIndex {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for tracks...");
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$dbh->do(qq{
+	
+	my $sql = qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT tracks.id, 'track', 
 			-- weight 10
@@ -246,13 +249,16 @@ sub _rebuildIndex {
 			LEFT JOIN comments ON comments.track = tracks.id
 		
 			GROUP BY tracks.id;
-	}) or $log->error($dbh->errstr);
+	};
+
+	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
 	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for albums...");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$dbh->do(qq{
+	$sql = qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT albums.id, 'album', 
 			-- weight 10
@@ -269,13 +275,17 @@ sub _rebuildIndex {
 			LEFT JOIN contributors ON contributors.id = contributor_album.contributor
 		
 			GROUP BY albums.id;
-	}) or $log->error($dbh->errstr);
+	};
+
+	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
 	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for contributors...");
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$dbh->do(qq{
+
+	$sql = qq{
 		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 			SELECT contributors.id, 'contributor', 
 			-- weight 10
@@ -287,7 +297,10 @@ sub _rebuildIndex {
 			-- weight 1
 			''
 			FROM contributors;
-	}) or $log->error($dbh->errstr);
+	};
+
+	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for playlists...");
@@ -295,12 +308,18 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
-	my $plSth = $dbh->prepare_cached("SELECT track FROM playlist_track WHERE playlist = ?");
-	my $inSth = $dbh->prepare_cached("INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)");
+	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
+	my $plSth = $dbh->prepare_cached($plSql);
+	
+	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
+	my $inSth = $dbh->prepare_cached($inSql);
 
 	# use fulltext information for tracks to populate a playlist's record with track information
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
+
+		main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug( $plSql . Data::Dump::dump($playlist->id) );
+
 		$plSth->execute($playlist->id);
 		my $tracks = $plSth->fetchall_arrayref;
 		
@@ -309,7 +328,10 @@ sub _rebuildIndex {
 		# can't bind variables to MATCH parameters - use distinct prepare statements, it's still many times faster than not matching the URL in w1
 		foreach my $track ( map { $_->[0] } @$tracks ) {
 			$track =~ s/(['\(\)])/\\$1/g;
-			my $sth = $dbh->prepare(sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track));
+
+			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track);
+			main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+			my $sth = $dbh->prepare($sql);
 			$sth->execute;
 			my $trackInfo = $sth->fetchall_arrayref;
 			
@@ -319,6 +341,7 @@ sub _rebuildIndex {
 			$w1 .= $trackInfo->[0]->[3] . ' ';
 		}
 		
+		main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
 		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
 	}
 	main::idleStreams() unless main::SCANNER;
