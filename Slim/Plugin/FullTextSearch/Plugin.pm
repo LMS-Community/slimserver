@@ -108,6 +108,9 @@ sub parseSearchTerm {
 		s/['\(\)]/ /g;
 		"$_*";
 	} split(/\s/, $search));
+	
+	# handle exclusions "paul simon -garfunkel"
+	$tokens =~ s/ AND -/ NOT /g;
 
 	my $isLargeResultSet;
 
@@ -133,7 +136,7 @@ sub _getWeight {
 	# Calculate the record's weight: columns are weighed according to their importance
 	# http://www.sqlite.org/fts3.html#matchinfo
 	for (my $i = 0; $i < $p; $i++) {
-		$w += $x[3 * (FIRST_COLUMN + $i * $c)] * 10	# track title etc.
+		$w += $x[3 * (FIRST_COLUMN + $i * $c)] * 100	# track title etc.
 			+ $x[3 * ((FIRST_COLUMN + 1) + $i * $c)] * 5		# track's album title
 			+ $x[3 * ((FIRST_COLUMN + 2) + $i * $c)] * 3		# comments, lyrics
 			+ $x[3 * ((FIRST_COLUMN + 3) + $i * $c)];		# bitrate sample size
