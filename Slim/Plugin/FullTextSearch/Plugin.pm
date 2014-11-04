@@ -5,18 +5,24 @@ use strict;
 use Slim::Control::Queries;
 use Slim::Control::Request;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
-use constant BUILD_STEPS => 6;
+use constant BUILD_STEPS => 7;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
 
 my $log = logger('scan');
+my $prefs = preferences('plugin.fulltext');
 
 sub initPlugin {
 	my $class = shift;
 	
 	return unless $class->canFulltextSearch;
+
+	$prefs->init({
+		popularTerms => ['artist', 'album', 'the']
+	});
 
 	Slim::Music::Import->addImporter('Slim::Plugin::FullTextSearch::Plugin', {
 		'type'         => 'post',
@@ -29,33 +35,26 @@ sub initPlugin {
 	# no need to continue in scanner mode
 	return if main::SCANNER;
 
-# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
-#	Slim::Control::Request::subscribe( sub {
-#		Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
-#		Slim::Utils::Timers::setTimer(
-#			undef, 
-#			time + 30, 
-#			\&_triggerIndexRebuild
-#		);
-#	}, [['rescan'], ['done']] );
+	# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
+	Slim::Control::Request::subscribe( sub {
+		my $terms = Slim::Schema->rs('MetaInformation')->find( {
+			'name' => 'fulltextTerms'
+		} );
+
+		if ($terms && $terms->value =~ /,/) {
+			$prefs->set('popularTerms', [ split /,/, $terms->value ]);
+		}
+	}, [['rescan'], ['done']] );
 	
 	my $sth = $dbh->prepare( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	$sth->execute();
 	my ($ftExists) = $sth->fetchrow_array;
 	$sth->finish;
 	
-	# trigger rescan if our index is older than the last scan
-#	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
-#		'name' => 'lastFulltextIndex'
-#	} );
-
-#	if (!$ftExists || ($lastIndex->value && $lastIndex->value < Slim::Music::Import->lastScanTime) ) {
 	if (!$ftExists) {
 		$log->warn("Fulltext index missing or outdated - re-building");
 		
 		_rebuildIndex();
-#		$lastIndex->value(time);
-#		$lastIndex->update();
 	}
 }
 
@@ -102,7 +101,8 @@ sub parseSearchTerm {
 		push @quoted, $1;
 	}
 
-	my $first = 1;
+	my @tokens = split(/\s/, $search);
+	
 	my $tokens = join(' AND ', @quoted, grep {
 		/\w+/
 	} map { 
@@ -111,7 +111,7 @@ sub parseSearchTerm {
 		my $token = "$_*";
 
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
-		if ($first++ == 1) {
+		if (scalar @tokens == 1) {
 			my $re = qr/\Q$_\E.*/i;
 			if ( length $_ == 1 ) {
 				$token = "w10:$_"; 
@@ -120,15 +120,18 @@ sub parseSearchTerm {
 			elsif ( 'file' =~ $re ) {
 				$token = "w10:$_*";
 			}
+			elsif ( /\d{4}/ ) {
+				# nothing to do here: years can be popular, but we want to be able to search for them
+			}
 			# skip "artist" etc. as they appear in the w5+ columns as "artist:elvis" tuples
 			# only respect once there is eg. "artist:e*"
-			elsif ( $_ !~ /a\w+:\w+/ && ('artist' =~ $re || 'album' =~ $re) ) {
+			elsif ( $_ !~ /a\w+:\w+/ && grep { $_ =~ $re } @{$prefs->get('popularTerms') || []} ) {
 				$token = "w10:$_*";
 			}
 		}
 
 		$token;
-	} split(/\s/, $search));
+	} @tokens);
 	
 	# handle exclusions "paul simon -garfunkel"
 	$tokens =~ s/ AND -/ NOT /g;
@@ -148,6 +151,7 @@ sub parseSearchTerm {
 
 # Calculate the record's weight: columns are weighed according to their importance
 # http://www.sqlite.org/fts3.html#matchinfo
+# http://www.sqlite.org/fts3.html#fts4aux - get information about the index and tokens 
 sub _getWeight {
 	my $v = shift;
 	
@@ -199,44 +203,10 @@ sub _getContributorRole {
 	return $tuples;
 }
 
-#sub _triggerIndexRebuild {
-#	
-#	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
-#
-#		# trigger rescan if our index is older than the last scan
-#	my $lastIndex = Slim::Schema->rs('MetaInformation')->find_or_create( {
-#		'name' => 'lastFulltextIndex'
-#	} );
-#	
-#	return if $lastIndex->value && $lastIndex->value >= Slim::Music::Import->lastScanTime;
-#	
-#	my $pollInterval = 0;
-#
-#	for my $client (Slim::Player::Client::clients()) {
-#		if ( $client->isUpgrading() || $client->isPlaying() ) {
-#			$pollInterval = 300;
-#		}
-#	}
-#	
-#	if ( Slim::Music::Import->stillScanning() || $pollInterval ) {
-#		$pollInterval ||= 1800;
-#		Slim::Utils::Timers::setTimer(
-#			undef, 
-#			time + $pollInterval, 
-#			\&_triggerIndexRebuild
-#		);
-#	}
-#	else {
-#		_rebuildIndex();
-#	}
-#}
-
 sub _rebuildIndex {
 	my $progress = shift;
 	
 	main::DEBUGLOG && $log->is_debug && $log->debug("Starting fulltext index build...");
-
-#	Slim::Utils::Timers::killTimers( undef, \&_triggerIndexRebuild );
 
 	my $dbh = _dbh();
 
@@ -261,7 +231,7 @@ sub _rebuildIndex {
 			-- weight 3 - contributors create multiple hits, therefore only w3
 			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
-			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(tracks.url, 'file://', '')
+			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%20', ' '), 'file://', '')
 			 
 			FROM tracks
 			LEFT JOIN contributor_track ON contributor_track.track = tracks.id
@@ -274,7 +244,7 @@ sub _rebuildIndex {
 			GROUP BY tracks.id;
 	};
 
-	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
+#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
@@ -300,7 +270,7 @@ sub _rebuildIndex {
 			GROUP BY albums.id;
 	};
 
-	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
+#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
@@ -322,7 +292,7 @@ sub _rebuildIndex {
 			FROM contributors;
 	};
 
-	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
+#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
@@ -343,7 +313,7 @@ sub _rebuildIndex {
 
 		main::DEBUGLOG && $log->is_debug && $log->debug( $plSql . Data::Dump::dump($playlist->id) );
 
-		$plSth->execute($playlist->id);
+		$plSth->execute($playlist->id) or $log->error($dbh->errstr);
 		my $tracks = $plSth->fetchall_arrayref;
 		
 		my $w1 = '';
@@ -355,7 +325,7 @@ sub _rebuildIndex {
 			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track);
 			main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 			my $sth = $dbh->prepare($sql);
-			$sth->execute;
+			$sth->execute or $log->error($dbh->errstr);
 			my $trackInfo = $sth->fetchall_arrayref;
 			
 			$w1 .= $trackInfo->[0]->[0] . ' ';
@@ -373,7 +343,28 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$dbh->do("INSERT INTO fulltext(fulltext) VALUES('optimize');");
+	$dbh->do("INSERT INTO fulltext(fulltext) VALUES('optimize');") or $log->error($dbh->errstr);
+
+	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens...");
+	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
+	Slim::Schema->forceCommit if main::SCANNER;
+
+	$dbh->do("DROP TABLE IF EXISTS fulltext_terms;") or $log->error($dbh->errstr);
+	$dbh->do("CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);") or $log->error($dbh->errstr);
+	# get a list of terms which occur more than LARGE_RESULTSET times in our database
+	my $terms = $dbh->selectcol_arrayref( sprintf(qq{
+		SELECT term FROM (
+			SELECT term, SUM(documents) d 
+			FROM fulltext_terms 
+			WHERE NOT col IN ('*', 1, 0) AND LENGTH(term) > 1
+			GROUP BY term 
+			ORDER BY d DESC
+		)
+		WHERE d > %i
+	}, LARGE_RESULTSET) );
+	
+	my $sth = $dbh->prepare("INSERT OR REPLACE INTO metainformation (name, value) VALUES ('fulltextTerms', ?)");
+	$sth->execute(join(',', @$terms));
 	
 	$progress->final(BUILD_STEPS) if $progress;
 	Slim::Schema->forceCommit if main::SCANNER;
