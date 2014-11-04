@@ -3093,9 +3093,12 @@ sub searchQuery {
 				
 				# any additional column
 				if ($extended && $c) {
-					foreach (@$c) {
-						utf8::decode($additionalCols{$_});
-						$request->addResultLoop($loopname, $chunkCount, $_, $additionalCols{$_});
+					foreach my $col (@$c) {
+						my $value = $additionalCols{$col};
+						utf8::decode($value);
+
+						$col =~ s/me\.//;
+						$request->addResultLoop($loopname, $chunkCount, $col, $value);
 					}
 				}
 		
