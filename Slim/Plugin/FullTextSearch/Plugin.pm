@@ -9,7 +9,7 @@ use Slim::Utils::Strings qw(string);
 
 use constant BUILD_STEPS => 6;
 use constant FIRST_COLUMN => 2;
-use constant LARGE_RESULTSET => 1000;
+use constant LARGE_RESULTSET => 500;
 
 my $log = logger('scan');
 
@@ -102,11 +102,32 @@ sub parseSearchTerm {
 		push @quoted, $1;
 	}
 
+	my $first = 1;
 	my $tokens = join(' AND ', @quoted, grep {
 		/\w+/
 	} map { 
 		s/['\(\)]/ /g;
-		"$_*";
+		
+		my $token = "$_*";
+
+		# if this is the first token, then handle a few keywords which might result in a huge list carefully
+		if ($first++ == 1) {
+			my $re = qr/\Q$_\E.*/i;
+			if ( length $_ == 1 ) {
+				$token = "w10:$_"; 
+			}
+			# XXX - can probably remove this, as we remove the "file://" prefix from the url at scan time
+			elsif ( 'file' =~ $re ) {
+				$token = "w10:$_*";
+			}
+			# skip "artist" etc. as they appear in the w5+ columns as "artist:elvis" tuples
+			# only respect once there is eg. "artist:e*"
+			elsif ( $_ !~ /a\w+:\w+/ && ('artist' =~ $re || 'album' =~ $re) ) {
+				$token = "w10:$_*";
+			}
+		}
+
+		$token;
 	} split(/\s/, $search));
 	
 	# handle exclusions "paul simon -garfunkel"
@@ -125,24 +146,25 @@ sub parseSearchTerm {
 	return wantarray ? ($tokens, $isLargeResultSet) : $tokens;
 }
 
+# Calculate the record's weight: columns are weighed according to their importance
+# http://www.sqlite.org/fts3.html#matchinfo
 sub _getWeight {
 	my $v = shift;
 	
-	my ($p, $c) = unpack('LL', $v);
+	my ($phraseCount, $columnCount) = unpack('LL', $v);
 	
-	my @x = unpack(('x' x 8) . ('L' x (3*$p*$c)), $v);
+	my @x = unpack(('x' x 8) . ('L' x (3*$phraseCount*$columnCount)), $v);
 	
-	my $w = 0;
-	# Calculate the record's weight: columns are weighed according to their importance
-	# http://www.sqlite.org/fts3.html#matchinfo
-	for (my $i = 0; $i < $p; $i++) {
-		$w += $x[3 * (FIRST_COLUMN + $i * $c)] * 100	# track title etc.
-			+ $x[3 * ((FIRST_COLUMN + 1) + $i * $c)] * 5		# track's album title
-			+ $x[3 * ((FIRST_COLUMN + 2) + $i * $c)] * 3		# comments, lyrics
-			+ $x[3 * ((FIRST_COLUMN + 3) + $i * $c)];		# bitrate sample size
+	my $weight = 0;
+	# start at second phrase, as the first is the type (track, album, contributor, playlist)
+	for (my $i = 1; $i < $phraseCount; $i++) {
+		$weight += $x[3 * (FIRST_COLUMN + $i * $columnCount)] * 100	# track title etc.
+			+ $x[3 * ((FIRST_COLUMN + 1) + $i * $columnCount)] * 5		# track's album title
+			+ $x[3 * ((FIRST_COLUMN + 2) + $i * $columnCount)] * 3		# comments, lyrics
+			+ $x[3 * ((FIRST_COLUMN + 3) + $i * $columnCount)];		# bitrate sample size
 	}
 	
-	return $w; 
+	return $weight; 
 }
 
 sub _getContributorRole {
@@ -218,8 +240,6 @@ sub _rebuildIndex {
 
 	my $dbh = _dbh();
 
-	my $sqllog = main::DEBUGLOG && logger('database.sql');
-
 	main::DEBUGLOG && $log->is_debug && $log->debug("Initialize fulltext table...");
 	
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $log->error($dbh->errstr);
@@ -241,7 +261,7 @@ sub _rebuildIndex {
 			-- weight 3 - contributors create multiple hits, therefore only w3
 			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
-			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || tracks.url
+			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(tracks.url, 'file://', '')
 			 
 			FROM tracks
 			LEFT JOIN contributor_track ON contributor_track.track = tracks.id
@@ -254,7 +274,7 @@ sub _rebuildIndex {
 			GROUP BY tracks.id;
 	};
 
-	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
@@ -280,7 +300,7 @@ sub _rebuildIndex {
 			GROUP BY albums.id;
 	};
 
-	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
@@ -302,7 +322,7 @@ sub _rebuildIndex {
 			FROM contributors;
 	};
 
-	main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
@@ -321,7 +341,7 @@ sub _rebuildIndex {
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
 
-		main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug( $plSql . Data::Dump::dump($playlist->id) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( $plSql . Data::Dump::dump($playlist->id) );
 
 		$plSth->execute($playlist->id);
 		my $tracks = $plSth->fetchall_arrayref;
@@ -333,7 +353,7 @@ sub _rebuildIndex {
 			$track =~ s/(['\(\)])/\\$1/g;
 
 			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track);
-			main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug($sql);
+			main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 			my $sth = $dbh->prepare($sql);
 			$sth->execute;
 			my $trackInfo = $sth->fetchall_arrayref;
@@ -344,7 +364,7 @@ sub _rebuildIndex {
 			$w1 .= $trackInfo->[0]->[3] . ' ';
 		}
 		
-		main::DEBUGLOG && $sqllog->is_debug && $sqllog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
+		main::DEBUGLOG && $log->is_debug && $log->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
 		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
 	}
 	main::idleStreams() unless main::SCANNER;

@@ -2992,7 +2992,7 @@ sub searchQuery {
 			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, $type);
 
 			# when dealing with large data sets, only return a sub-set of search results
-			my $orderOrLimit = ($isLarge && $isLarge < ($index + $quantity)) ? 'LIMIT ' . $isLarge : '';
+			my $orderOrLimit = ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
 
 			$dbh->do("DROP TABLE IF EXISTS quickSearch");
 			$dbh->do("CREATE TEMPORARY TABLE quickSearch AS SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit");
