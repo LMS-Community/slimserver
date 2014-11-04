@@ -3090,8 +3090,10 @@ sub searchQuery {
 				
 				# any additional column
 				if ($extended && $c) {
-					foreach my $col (@$c) {
-						my $value = $additionalCols{$col};
+					foreach (@$c) {
+						my $col = $_;
+
+						my $value = $additionalCols{$_};
 						utf8::decode($value);
 
 						$col =~ s/me\.//;
