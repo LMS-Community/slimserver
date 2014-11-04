@@ -2990,20 +2990,15 @@ sub searchQuery {
 
 		if ( Slim::Schema->canFulltextSearch ) {
 			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, $type);
-			
-			my $additionalCols = join(', ', map { /(me\.\w+)/; $1 } grep /(me\.\w+)/, @{$w || []});
-			$additionalCols = ', ' . $additionalCols if $additionalCols;
 
 			# when dealing with large data sets, only return a sub-set of search results
-			my $orderOrLimit = ($isLarge && $isLarge < ($index + $quantity)) ? 'LIMIT ' . $isLarge : 'ORDER BY w';
+			my $orderOrLimit = ($isLarge && $isLarge < ($index + $quantity)) ? 'LIMIT ' . $isLarge : '';
 
-			$sql = qq{
-				SELECT $cols FROM (
-					SELECT $cols $additionalCols FROM (
-						SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit
-					) AS fts, ${type}s me WHERE me.id = fts.id ORDER BY fts.w
-				) AS me
-			};
+			$dbh->do("DROP TABLE IF EXISTS quickSearch");
+			$dbh->do("CREATE TEMPORARY TABLE quickSearch AS SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit");
+			
+			$sql = "SELECT $cols, quickSearch.w FROM quickSearch, ${type}s me ";
+			unshift @{$w}, "me.id = quickSearch.id";
 		}
 		else {
 			$sql = "SELECT $cols FROM ${type}s me ";
@@ -3062,6 +3057,8 @@ sub searchQuery {
 	
 		if ($valid) {
 			$request->addResult("${type}s_count", $count);
+
+			$sql .= "ORDER BY quickSearch.w DESC " if Slim::Schema->canFulltextSearch;
 			
 			# Limit the real query
 			$sql .= "LIMIT ?,?";
@@ -3115,6 +3112,8 @@ sub searchQuery {
 	$doSearch->('album', 'title', undef, undef, ['me.artwork']);
 	$doSearch->('genre', 'name');
 	$doSearch->('track', 'title', ['me.audio = ?'], ['1'], ['me.coverid', 'me.audio']);
+
+	$dbh->do("DROP TABLE IF EXISTS quickSearch");
 	
 	# XXX - should we search for playlists, too?
 	
