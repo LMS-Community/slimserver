@@ -2987,8 +2987,11 @@ sub searchQuery {
 		$cols    = join(', ', $cols, @$c) if $extended && $c && @$c;
 		
 		my $sql;
+		
+		my $canFulltextSearch = $type ne 'genre' && Slim::Schema->canFulltextSearch;
 
-		if ( Slim::Schema->canFulltextSearch ) {
+		# we don't have a full text index for genres
+		if ( $canFulltextSearch ) {
 			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, $type);
 
 			# when dealing with large data sets, only return a sub-set of search results
@@ -3025,14 +3028,16 @@ sub searchQuery {
 			push @{$p}, $libraryID;
 		}
 		
-		if ( !Slim::Schema->canFulltextSearch ) {
-			if ( ref $search->[0] eq 'ARRAY' ) {
-				push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $search->[0] } ) . ')';
-				push @{$p}, @{ $search->[0] };
+		if ( !$canFulltextSearch ) {
+			my $s = ref $search ? $search : [ $search ];
+			
+			if ( ref $s->[0] eq 'ARRAY' ) {
+				push @{$w}, '(' . join( ' OR ', map { "me.${name}search LIKE ?" } @{ $s->[0] } ) . ')';
+				push @{$p}, @{ $s->[0] };
 			}
 			else {
 				push @{$w}, "me.${name}search LIKE ?";
-				push @{$p}, @{$search};
+				push @{$p}, @{$s};
 			}
 		}
 		
@@ -3058,7 +3063,7 @@ sub searchQuery {
 		if ($valid) {
 			$request->addResult("${type}s_count", $count);
 
-			$sql .= "ORDER BY quickSearch.w DESC " if Slim::Schema->canFulltextSearch;
+			$sql .= "ORDER BY quickSearch.w DESC " if $canFulltextSearch;
 			
 			# Limit the real query
 			$sql .= "LIMIT ?,?";
@@ -3114,8 +3119,6 @@ sub searchQuery {
 	$doSearch->('album', 'title', undef, undef, ['me.artwork']);
 	$doSearch->('genre', 'name');
 	$doSearch->('track', 'title', ['me.audio = ?'], ['1'], ['me.coverid', 'me.audio']);
-
-	$dbh->do("DROP TABLE IF EXISTS quickSearch");
 	
 	# XXX - should we search for playlists, too?
 	
