@@ -12,6 +12,14 @@ use strict;
 BEGIN {
 	# Force Net::HTTPS to use IO::Socket::SSL
 	use IO::Socket::SSL;
+	
+	# Latest IO::Socket::SSL (2.002) update changes defaults to be more restrictive.
+	# Unfortunately the hostname check fails most SSL protecte web sites...
+	if (main::SERVICE) {
+		IO::Socket::SSL::set_defaults(
+			SSL_verify_mode => SSL_VERIFY_NONE
+		);
+	}
 }
 
 use base qw(Net::HTTPS Slim::Networking::Async::Socket);
