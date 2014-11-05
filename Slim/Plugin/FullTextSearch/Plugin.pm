@@ -320,9 +320,16 @@ sub _rebuildIndex {
 		
 		# can't bind variables to MATCH parameters - use distinct prepare statements, it's still many times faster than not matching the URL in w1
 		foreach my $track ( map { $_->[0] } @$tracks ) {
+			next unless $track =~ /^file:/;
+			
 			$track =~ s/(['\(\)])/\\$1/g;
+			
+			# we don't store the file:// prefix and %20 for spaces in the index
+			my $track2 = $track;
+			$track2 =~ s/%20/ /g;
+			$track2 =~ s/file:\/\///g;
 
-			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track);
+			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'type:track w1:%s' AND fulltext.id = tracks.id", $track, $track2);
 			main::DEBUGLOG && $log->is_debug && $log->debug($sql);
 			my $sth = $dbh->prepare($sql);
 			$sth->execute or $log->error($dbh->errstr);
@@ -333,6 +340,8 @@ sub _rebuildIndex {
 			$w1 .= $trackInfo->[0]->[2] . ' ';
 			$w1 .= $trackInfo->[0]->[3] . ' ';
 		}
+		
+		$w1 =~ s/^ +//;
 		
 		main::DEBUGLOG && $log->is_debug && $log->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
 		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
