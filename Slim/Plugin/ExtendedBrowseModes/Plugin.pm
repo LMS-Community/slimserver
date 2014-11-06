@@ -230,7 +230,7 @@ sub initMenus {
 		},
 		feed         => \&_randomAlbums,
 		id           => 'myMusicRandomAlbums',
-		icon         => 'html/images/albums.png',
+		icon         => 'plugins/ExtendedBrowseModes/html/randomalbums.png',
 		weight       => 21,
 		static       => 1,
 		nocache      => 1,
