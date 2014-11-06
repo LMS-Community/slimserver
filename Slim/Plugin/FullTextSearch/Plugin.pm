@@ -1,6 +1,7 @@
 package Slim::Plugin::FullTextSearch::Plugin;
 
 use strict;
+use Tie::Cache::LRU::Expires;
 
 use Slim::Control::Queries;
 use Slim::Control::Request;
@@ -15,14 +16,13 @@ use constant LARGE_RESULTSET => 500;
 my $log = logger('scan');
 my $prefs = preferences('plugin.fulltext');
 
+# small cache of search term counts to speed up fulltext search
+tie my %ftsCache, 'Tie::Cache::LRU', 100;
+
 sub initPlugin {
 	my $class = shift;
 	
 	return unless $class->canFulltextSearch;
-
-	$prefs->init({
-		popularTerms => ['artist', 'album', 'the']
-	});
 
 	Slim::Music::Import->addImporter('Slim::Plugin::FullTextSearch::Plugin', {
 		'type'         => 'post',
@@ -37,25 +37,21 @@ sub initPlugin {
 
 	# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
 	Slim::Control::Request::subscribe( sub {
-		my $terms = Slim::Schema->rs('MetaInformation')->find( {
-			'name' => 'fulltextTerms'
-		} );
-
-		if ($terms && $terms->value =~ /,/) {
-			$prefs->set('popularTerms', [ split /,/, $terms->value ]);
-		}
+		_initPopularTerms();
+		%ftsCache = ();
 	}, [['rescan'], ['done']] );
 	
-	my $sth = $dbh->prepare( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
-	$sth->execute();
-	my ($ftExists) = $sth->fetchrow_array;
-	$sth->finish;
+	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
+	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
 	
 	if (!$ftExists) {
-		$log->warn("Fulltext index missing or outdated - re-building");
+		$log->error("Fulltext index missing or outdated - re-building");
 		
+		$prefs->remove('popularTerms');
 		_rebuildIndex();
 	}
+
+	_initPopularTerms() unless $prefs->get('popularTerms');
 }
 
 # importer modules, run in the scanner
@@ -116,10 +112,6 @@ sub parseSearchTerm {
 			if ( length $_ == 1 ) {
 				$token = "w10:$_"; 
 			}
-			# XXX - can probably remove this, as we remove the "file://" prefix from the url at scan time
-			elsif ( 'file' =~ $re ) {
-				$token = "w10:$_*";
-			}
 			elsif ( /\d{4}/ ) {
 				# nothing to do here: years can be popular, but we want to be able to search for them
 			}
@@ -142,7 +134,13 @@ sub parseSearchTerm {
 	my $dbh = _dbh();
 	
 	if (wantarray && $type && $tokens) {
-		my ($counts) = $dbh->selectrow_array(sprintf("SELECT count(1) FROM fulltext WHERE fulltext MATCH 'type:%s %s'", $type, $tokens));
+		my $counts = $ftsCache{ $type . '|' . $tokens };
+		
+		if (!defined $counts) {
+			($counts) = $dbh->selectrow_array(sprintf("SELECT count(1) FROM fulltext WHERE fulltext MATCH 'type:%s %s'", $type, $tokens));
+			$ftsCache{ $type . '|' . $tokens } = $counts;
+		}
+
 		$isLargeResultSet = LARGE_RESULTSET if $counts && $counts > LARGE_RESULTSET;
 	}
 	
@@ -206,17 +204,17 @@ sub _getContributorRole {
 sub _rebuildIndex {
 	my $progress = shift;
 	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Starting fulltext index build...");
+	$log->error("Starting fulltext index build");
 
 	my $dbh = _dbh();
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Initialize fulltext table...");
+	$log->error("Initialize fulltext table");
 	
 	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $log->error($dbh->errstr);
 	$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for tracks...");
+	$log->error("Create fulltext index for tracks");
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	
@@ -227,7 +225,6 @@ sub _rebuildIndex {
 			IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, ''),
 			-- weight 5
 			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
---			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(contributors.name, ' ') || ' ' || GROUP_CONCAT(contributors.namesearch, ' ') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
 			-- weight 3 - contributors create multiple hits, therefore only w3
 			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
@@ -235,7 +232,6 @@ sub _rebuildIndex {
 			 
 			FROM tracks
 			LEFT JOIN contributor_track ON contributor_track.track = tracks.id
---			LEFT JOIN contributors ON contributors.id = contributor_track.contributor
 			LEFT JOIN albums ON albums.id = tracks.album
 			LEFT JOIN genre_track ON genre_track.track = tracks.id
 			LEFT JOIN genres ON genres.id = genre_track.genre
@@ -248,7 +244,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
-	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for albums...");
+	$log->error("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	$sql = qq{
@@ -274,7 +270,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
-	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for contributors...");
+	$log->error("Create fulltext index for contributors");
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -296,7 +292,7 @@ sub _rebuildIndex {
 	$dbh->do($sql) or $log->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Create fulltext index for playlists...");
+	$log->error("Create fulltext index for playlists");
 	$progress && $progress->update(string('PLAYLISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -348,21 +344,30 @@ sub _rebuildIndex {
 	}
 	main::idleStreams() unless main::SCANNER;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Optimize fulltext index...");
+	$log->error("Optimize fulltext index");
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	$dbh->do("INSERT INTO fulltext(fulltext) VALUES('optimize');") or $log->error($dbh->errstr);
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens...");
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
 	$dbh->do("DROP TABLE IF EXISTS fulltext_terms;") or $log->error($dbh->errstr);
 	$dbh->do("CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);") or $log->error($dbh->errstr);
+	
+	$progress->final(BUILD_STEPS) if $progress;
+	Slim::Schema->forceCommit if main::SCANNER;
+
+	$log->error("Fulltext index build done!");
+}
+
+sub _initPopularTerms {
+	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
+
 	# get a list of terms which occur more than LARGE_RESULTSET times in our database
-	my $terms = $dbh->selectcol_arrayref( sprintf(qq{
-		SELECT term FROM (
+	my $popularTerms = _dbh()->selectcol_arrayref( sprintf(qq{
+		SELECT term, d FROM (
 			SELECT term, SUM(documents) d 
 			FROM fulltext_terms 
 			WHERE NOT col IN ('*', 1, 0) AND LENGTH(term) > 1
@@ -371,14 +376,10 @@ sub _rebuildIndex {
 		)
 		WHERE d > %i
 	}, LARGE_RESULTSET) );
-	
-	my $sth = $dbh->prepare("INSERT OR REPLACE INTO metainformation (name, value) VALUES ('fulltextTerms', ?)");
-	$sth->execute(join(',', @$terms));
-	
-	$progress->final(BUILD_STEPS) if $progress;
-	Slim::Schema->forceCommit if main::SCANNER;
 
-	main::DEBUGLOG && $log->is_debug && $log->debug("Fulltext index build done!");
+	$prefs->set('popularTerms', $popularTerms);
+
+	main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$popularTerms));
 }
 
 sub _dbh {
@@ -388,7 +389,7 @@ sub _dbh {
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
 	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
 	
-	# XXX - printf is only available in SQLite 3.8.3
+	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
 	
 	return $dbh;
