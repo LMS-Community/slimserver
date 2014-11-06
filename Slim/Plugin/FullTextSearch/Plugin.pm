@@ -18,6 +18,7 @@ my $prefs = preferences('plugin.fulltext');
 
 # small cache of search term counts to speed up fulltext search
 tie my %ftsCache, 'Tie::Cache::LRU', 100;
+my $popularTerms;
 
 sub initPlugin {
 	my $class = shift;
@@ -37,6 +38,7 @@ sub initPlugin {
 
 	# XXXX - need some method to trigger re-build when user uses eg. BMF to add new music
 	Slim::Control::Request::subscribe( sub {
+		$prefs->remove('popularTerms');
 		_initPopularTerms();
 		%ftsCache = ();
 	}, [['rescan'], ['done']] );
@@ -51,7 +53,7 @@ sub initPlugin {
 		_rebuildIndex();
 	}
 
-	_initPopularTerms() unless $prefs->get('popularTerms');
+	_initPopularTerms();
 }
 
 # importer modules, run in the scanner
@@ -108,7 +110,6 @@ sub parseSearchTerm {
 
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
 		if (scalar @tokens == 1) {
-			my $re = qr/\Q$_\E.*/i;
 			if ( length $_ == 1 ) {
 				$token = "w10:$_"; 
 			}
@@ -117,7 +118,7 @@ sub parseSearchTerm {
 			}
 			# skip "artist" etc. as they appear in the w5+ columns as "artist:elvis" tuples
 			# only respect once there is eg. "artist:e*"
-			elsif ( $_ !~ /a\w+:\w+/ && grep { $_ =~ $re } @{$prefs->get('popularTerms') || []} ) {
+			elsif ( $_ !~ /a\w+:\w+/ && $popularTerms =~ /\Q$_\E[^|]*/i ) {
 				$token = "w10:$_*";
 			}
 		}
@@ -363,10 +364,13 @@ sub _rebuildIndex {
 }
 
 sub _initPopularTerms {
+	
+	return if ($popularTerms = join('|', @{ $prefs->get('popularTerms') || [] }));
+
 	main::DEBUGLOG && $log->is_debug && $log->debug("Analyzing most popular tokens");
 
 	# get a list of terms which occur more than LARGE_RESULTSET times in our database
-	my $popularTerms = _dbh()->selectcol_arrayref( sprintf(qq{
+	my $terms = _dbh()->selectcol_arrayref( sprintf(qq{
 		SELECT term, d FROM (
 			SELECT term, SUM(documents) d 
 			FROM fulltext_terms 
@@ -377,9 +381,10 @@ sub _initPopularTerms {
 		WHERE d > %i
 	}, LARGE_RESULTSET) );
 
-	$prefs->set('popularTerms', $popularTerms);
+	$prefs->set('popularTerms', $terms);
+	$popularTerms = join('|', @{$prefs->get('popularTerms')});
 
-	main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$popularTerms));
+	main::DEBUGLOG && $log->is_debug && $log->debug(sprintf("Found %s popular tokens", scalar @$terms));
 }
 
 sub _dbh {
