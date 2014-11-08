@@ -231,8 +231,8 @@ sub getPlayerIcon {
 	
 	my $path = "HTML/EN/html/images/Players/$model.png";
 	unless (File::Spec->file_name_is_absolute($path)) {
-    $path = File::Spec->rel2abs($path);
-  }
+                $path = File::Spec->rel2abs($path);
+        }
 	if (-e $path) {
 		return $model;
 	} else {
