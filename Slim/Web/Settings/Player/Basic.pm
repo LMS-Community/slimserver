@@ -124,7 +124,7 @@ sub handler {
 	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};
 	$paramRef->{'macaddress'} = $client->macaddress;
 		
-	$paramRef->{'playericon'} = $class->getPlayerIcon($client);
+	$paramRef->{'playericon'} = $class->getPlayerIcon($client,$paramRef);
 
 	if ($client->isPlayer && $client->isa('Slim::Player::SqueezePlay')) {
 		$paramRef->{'defeatDestructiveTouchToPlay'} = $prefs->client($client)->get('defeatDestructiveTouchToPlay');
@@ -221,14 +221,17 @@ sub getVisualModes {
 }
 
 sub getPlayerIcon {
-	my ($class, $client) = @_;
+	my ($class, $client, $paramRef) = @_;
 
 	my $model = $client->model(1);
-	
+
 	# default icon for software emulators and media players
 	$model = 'squeezebox' if $model eq 'squeezebox2';
 	$model = 'softsqueeze' if $model =~ /(?:http|squeezeslave)/i;
 	
+	# Check if $model image exists else use 'default'
+	$model = Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png")?$model:'default';
+
 	return $model;
 }
 
