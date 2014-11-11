@@ -232,7 +232,6 @@ sub getPlayerIcon {
 	# Check if the $model (or 'default' ) image exists
 	$model = Slim::Web::HTTP::fixHttpPath($prefs->get('skin') || 'baseSkin', "html/images/Players/$model.png")?$model:
 			 Slim::Web::HTTP::fixHttpPath($prefs->get('skin') || 'baseSkin', 'html/images/Players/default.png')?'default':'';
-	$log->info( "  default: ".$model );
 	return $model;
 }
 
