@@ -300,6 +300,9 @@ sub _rebuildIndex {
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
 	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
 	my $plSth = $dbh->prepare_cached($plSql);
+
+	my $trSql = "SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
+	my $trSth = $dbh->prepare_cached($trSql);
 	
 	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
 	my $inSth = $dbh->prepare_cached($inSql);
@@ -315,17 +318,12 @@ sub _rebuildIndex {
 		
 		my $w1 = '';
 		
-		# can't bind variables to MATCH parameters - use distinct prepare statements, it's still many times faster than not matching the URL in w1
 		foreach my $track ( map { $_->[0] } @$tracks ) {
 			next unless $track =~ /^file:/;
-			
-			$track =~ s/(['\(\)])/\\$1/g;
 
-			$sql = sprintf("SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = '%s' AND fulltext MATCH 'id:' || tracks.id || ' type:track'", $track);
-			main::DEBUGLOG && $log->is_debug && $log->debug($sql);
-			my $sth = $dbh->prepare($sql);
-			$sth->execute or $log->error($dbh->errstr);
-			my $trackInfo = $sth->fetchall_arrayref;
+			main::DEBUGLOG && $log->is_debug && $log->debug($trSql . ' - ' . $track);
+			$trSth->execute($track) or $log->error($dbh->errstr);
+			my $trackInfo = $trSth->fetchall_arrayref;
 			
 			$w1 .= $trackInfo->[0]->[0] . ' ';
 			$w1 .= $trackInfo->[0]->[1] . ' ';
