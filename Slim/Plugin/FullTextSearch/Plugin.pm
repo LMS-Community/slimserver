@@ -335,6 +335,8 @@ sub _rebuildIndex {
 		
 		main::DEBUGLOG && $log->is_debug && $log->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
 		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
+
+		Slim::Schema->forceCommit if main::SCANNER;
 	}
 	main::idleStreams() unless main::SCANNER;
 
