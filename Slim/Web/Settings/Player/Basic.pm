@@ -229,7 +229,7 @@ sub getPlayerIcon {
 	$model = 'squeezebox' if $model eq 'squeezebox2';
 	$model = 'softsqueeze' if $model =~ /(?:http|squeezeslave)/i;
 	
-	# Check if $model image exists else use or 'default'
+	# Check if $model image exists else use 'default'
 	$model = Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png")?$model:'default';
 	return $model;
 }
