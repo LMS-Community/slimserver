@@ -222,15 +222,17 @@ sub getVisualModes {
 
 sub getPlayerIcon {
 	my ($class, $client, $paramRef) = @_;
+	$paramRef ||= {};
 
 	my $model = $client->model(1);
 
 	# default icon for software emulators and media players
 	$model = 'squeezebox' if $model eq 'squeezebox2';
-	$model = 'softsqueeze' if $model =~ /(?:http|squeezeslave)/i;
 	
 	# Check if $model image exists else use 'default'
-	$model = Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png")?$model:'default';
+	$model = Slim::Web::HTTP::fixHttpPath($paramRef->{'skinOverride'} || $prefs->get('skin'), "html/images/Players/$model.png")
+		? $model 
+		: 'softsqueeze';
 
 	return $model;
 }
