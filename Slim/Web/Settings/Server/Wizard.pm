@@ -49,7 +49,7 @@ sub handler {
 		$paramRef->{firstTimeRun} = 1;
 
 		# try to guess the local language setting
-		# only on non-Windows systems, as the Windows installer is setting the language
+		# only on non-Windows systems, as the Windows installer is setting the langugae
 		if (!main::ISWINDOWS && !$paramRef->{saveLanguage}
 			&& defined $response->{_request}->{_headers}->{'accept-language'}) {
 
@@ -161,9 +161,8 @@ sub handler {
 		}
 	}
 	
-	
 	if ($client) {
-		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client,$paramRef);
+		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client);
 		$paramRef->{playertype} = $client->model();
 	}
 
