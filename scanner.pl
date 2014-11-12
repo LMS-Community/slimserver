@@ -88,7 +88,7 @@ if ( INFOLOG || DEBUGLOG ) {
 	require Slim::Utils::PerlRunTime;
 }
 
-our $VERSION     = '7.7.4';
+our $VERSION     = '7.7.5';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
