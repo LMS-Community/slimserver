@@ -15,7 +15,7 @@ BEGIN {
 	
 	# Latest IO::Socket::SSL (2.002) update changes defaults to be more restrictive.
 	# Unfortunately the hostname check fails most SSL protecte web sites...
-	if (main::SERVICE) {
+	if (main::SLIM_SERVICE) {
 		IO::Socket::SSL::set_defaults(
 			SSL_verify_mode => SSL_VERIFY_NONE
 		);
