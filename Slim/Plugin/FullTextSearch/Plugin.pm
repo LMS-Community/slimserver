@@ -209,15 +209,30 @@ sub _getAlbumTracksInfo {
 	
 	my $dbh = _dbh();
 	# XXX - should we include artist information?
-	my $sth = $dbh->prepare_cached("SELECT IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, '') FROM tracks WHERE tracks.album = ?");
+	my $sth = $dbh->prepare_cached(qq{
+		SELECT IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || 
+			IFNULL(tracks.musicbrainz_id, '') || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IGNORE_CASE_ARTICLES(comments.value) 
+		FROM tracks 
+		LEFT JOIN comments ON comments.track = tracks.id
+		WHERE tracks.album = ?
+		GROUP BY tracks.id;
+	});
 
-	my $trackInfo = join(' ', @{ $dbh->selectcol_arrayref($sth, undef, $albumId) });
+	my $trackInfo = join(' ', @{ $dbh->selectcol_arrayref($sth, undef, $albumId) || [] });
 	$sth->finish;
 	
 	$trackInfo =~ s/^ +//;
 	$trackInfo =~ s/ +/ /;
 
 	$trackInfo;
+}
+
+sub _ignoreCaseArticles {
+	my ($text) = @_;
+	
+	return '' unless $text;
+	
+	return $text . ' ' . Slim::Utils::Text::ignoreCaseArticles($text, 1);
 }
 
 sub _rebuildIndex {
@@ -245,7 +260,8 @@ sub _rebuildIndex {
 			-- weight 5
 			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
 			-- weight 3 - contributors create multiple hits, therefore only w3
-			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || 
+			IGNORE_CASE_ARTICLES(comments.value) || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
 			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%20', ' '), 'file://', '')
 			 
@@ -400,6 +416,7 @@ sub _dbh {
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
 	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
 	$dbh->sqlite_create_function( 'CONCAT_ALBUM_TRACKS_INFO', 1, \&_getAlbumTracksInfo );
+	$dbh->sqlite_create_function( 'IGNORE_CASE_ARTICLES', 1, \&_ignoreCaseArticles);
 	
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
