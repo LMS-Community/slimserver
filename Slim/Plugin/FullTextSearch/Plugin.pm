@@ -219,7 +219,6 @@ sub _getAlbumTracksInfo {
 	});
 
 	my $trackInfo = join(' ', @{ $dbh->selectcol_arrayref($sth, undef, $albumId) || [] });
-	$sth->finish;
 	
 	$trackInfo =~ s/^ +//;
 	$trackInfo =~ s/ +/ /;
