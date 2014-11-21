@@ -417,7 +417,9 @@ sub getMetadataFor {
 		$client->master->pluginData( fetchingMeta => 1 );
 
 		# Go fetch metadata for all tracks on the playlist without metadata
-		my %need;
+		my %need = (
+			$trackId => 1
+		);
 		
 		for my $track ( @{ Slim::Player::Playlist::playList($client) } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;

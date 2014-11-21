@@ -202,6 +202,38 @@ sub _getContributorRole {
 	return $tuples;
 }
 
+sub _getAlbumTracksInfo {
+	my ($albumId) = @_;
+	
+	return '' unless $albumId;
+	
+	my $dbh = _dbh();
+	# XXX - should we include artist information?
+	my $sth = $dbh->prepare_cached(qq{
+		SELECT IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || 
+			IFNULL(tracks.musicbrainz_id, '') || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IGNORE_CASE_ARTICLES(comments.value) 
+		FROM tracks 
+		LEFT JOIN comments ON comments.track = tracks.id
+		WHERE tracks.album = ?
+		GROUP BY tracks.id;
+	});
+
+	my $trackInfo = join(' ', @{ $dbh->selectcol_arrayref($sth, undef, $albumId) || [] });
+	
+	$trackInfo =~ s/^ +//;
+	$trackInfo =~ s/ +/ /;
+
+	$trackInfo;
+}
+
+sub _ignoreCaseArticles {
+	my ($text) = @_;
+	
+	return '' unless $text;
+	
+	return $text . ' ' . Slim::Utils::Text::ignoreCaseArticles($text, 1);
+}
+
 sub _rebuildIndex {
 	my $progress = shift;
 	
@@ -227,7 +259,8 @@ sub _rebuildIndex {
 			-- weight 5
 			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
 			-- weight 3 - contributors create multiple hits, therefore only w3
-			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || IFNULL(comments.value, '') || ' ' || IFNULL(tracks.lyrics, '') || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || 
+			IGNORE_CASE_ARTICLES(comments.value) || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
 			-- weight 1
 			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%20', ' '), 'file://', '')
 			 
@@ -258,7 +291,7 @@ sub _rebuildIndex {
 			-- weight 3
 			CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
 			-- weight 1
-			CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
+			CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
 			 
 			FROM albums
 			LEFT JOIN contributor_album ON contributor_album.album = albums.id
@@ -301,7 +334,7 @@ sub _rebuildIndex {
 	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
 	my $plSth = $dbh->prepare_cached($plSql);
 
-	my $trSql = "SELECT w10, w5, w3, w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
+	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
 	my $trSth = $dbh->prepare_cached($trSql);
 	
 	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
@@ -313,25 +346,18 @@ sub _rebuildIndex {
 
 		main::DEBUGLOG && $log->is_debug && $log->debug( $plSql . Data::Dump::dump($playlist->id) );
 
-		$plSth->execute($playlist->id) or $log->error($dbh->errstr);
-		my $tracks = $plSth->fetchall_arrayref;
-		
 		my $w1 = '';
 		
-		foreach my $track ( map { $_->[0] } @$tracks ) {
+		foreach my $track ( @{ $dbh->selectcol_arrayref($plSth, undef, $playlist->id) } ) {
 			next unless $track =~ /^file:/;
 
 			main::DEBUGLOG && $log->is_debug && $log->debug($trSql . ' - ' . $track);
-			$trSth->execute($track) or $log->error($dbh->errstr);
-			my $trackInfo = $trSth->fetchall_arrayref;
-			
-			$w1 .= $trackInfo->[0]->[0] . ' ';
-			$w1 .= $trackInfo->[0]->[1] . ' ';
-			$w1 .= $trackInfo->[0]->[2] . ' ';
-			$w1 .= $trackInfo->[0]->[3] . ' ';
+
+			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSth, undef, $track) });
 		}
 		
 		$w1 =~ s/^ +//;
+		$w1 =~ s/ +/ /;
 		
 		main::DEBUGLOG && $log->is_debug && $log->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
 		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
@@ -388,6 +414,8 @@ sub _dbh {
 	# some custom functions to get good data
 	$dbh->sqlite_create_function( 'FULLTEXTWEIGHT', 1, \&_getWeight );
 	$dbh->sqlite_create_function( 'CONCAT_CONTRIBUTOR_ROLE', 3, \&_getContributorRole );
+	$dbh->sqlite_create_function( 'CONCAT_ALBUM_TRACKS_INFO', 1, \&_getAlbumTracksInfo );
+	$dbh->sqlite_create_function( 'IGNORE_CASE_ARTICLES', 1, \&_ignoreCaseArticles);
 	
 	# XXX - printf is only available in SQLite 3.8.3+
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
