@@ -478,7 +478,7 @@ sub fillInSearchResults {
 
 	# This is handed to pageInfo to generate the pagebar 1 2 3 >> links.
 	my $otherParams = '&player=' . Slim::Utils::Misc::escape($player) . 
-			  ($type ?'&type='. $type : '') . 
+			  ($type ?'&searchType='. ucfirst($type) : '') . 
 			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
 			  '&' .
 			  join('&', @$qstring);
