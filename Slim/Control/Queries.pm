@@ -4187,6 +4187,9 @@ sub titlesQuery {
 		}
 	}
 	
+	$tags .= 'R' if $search =~ /tracks_persistent\.rating/ && $tags !~ /R/;
+	$tags .= 'O' if $search =~ /tracks_persistent\.playcount/ && $tags !~ /O/;
+	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	
 	my $count;
@@ -4727,11 +4730,11 @@ my %tagMap = (
 	# 'z' => ['drm',              '',              'drm'],              #drm
 	  'M' => ['musicmagic_mixable', '',            'musicmagic_mixable'], #musicmagic_mixable
 	                                                                    #musicbrainz_id 
-	                                                                    #playcount 
 	                                                                    #lastplayed 
 	                                                                    #lossless 
 	  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
 	  'R' => ['rating',           'RATING',        'rating'],           #rating 
+	  'O' => ['playcount',        'PLAYCOUNT',     'playcount'],        #playcOunt 
 	  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
 	                                                                    #replay_peak
 
@@ -4794,6 +4797,7 @@ my %colMap = (
 	Y => 'tracks.replay_gain',
 	X => 'albums.replay_gain',
 	R => 'tracks_persistent.rating',
+	O => 'tracks_persistent.playcount',
 	T => 'tracks.samplerate',
 	I => 'tracks.samplesize',
 	u => 'tracks.url',
@@ -5447,6 +5451,13 @@ sub _getTagDataForTracks {
 		if ( main::STATISTICS ) {
 			$join_tracks_persistent->();
 			$c->{'tracks_persistent.rating'} = 1;
+		}
+	};
+	
+	$tags =~ /O/ && do {
+		if ( main::STATISTICS ) {
+			$join_tracks_persistent->();
+			$c->{'tracks_persistent.playcount'} = 1;
 		}
 	};
 	
