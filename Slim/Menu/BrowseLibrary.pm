@@ -1602,6 +1602,7 @@ sub _tracks {
 	if ((!defined $search || !length($search)) && !scalar @searchTags) {
 		$log->error('Invalid request: no search term or album/artist/genre tags');
 		$callback->({title => 'Invalid request: no search term or album/artist/genre tags'});
+		return;
 	}
 
 	$tags .= 'k' if $pt->{'wantMetadata'};
