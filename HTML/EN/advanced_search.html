@@ -44,13 +44,6 @@
 		}
 		[% END %]
 		
-		var el = Ext.get('genre');
-		if (el) {
-			el.on('change', function(ev, el, o){
-				Ext.get('genre_name_input').setDisplayed(el.value < 0 ? true : false);
-			});
-		}
-		
 		LiveSearch.init();
 	});
 </script>
@@ -143,7 +136,7 @@
 [% END %]
 
 [% WRAPPER field title='GENRE' %]
-	<select name="search.genre" id="genre">
+	<select name="search.genre" id="genre" onchange="document.getElementById('genre_name_input').disabled = (this.value >= 0)">
 		<option value="">[% "ANY_GENRE" | string %]</option>
 		<option value="-1" [% IF search.genre.value == -1 %]selected[% END %]>- [% "TEXTSEARCH" | string %]</option>
 		<option value="-2" [% IF search.genre.value == -2 %]selected[% END %]>- [% "NOT_IN_TEXTSEARCH" | string %]</option>
@@ -153,7 +146,7 @@
 			<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name | html %]</option>
 		[% END -%]
 	</select><br>
-	<input name="search.genre_name" value="[% search.genre_name.value | html %]" size="[% size %]" maxlength="100" type="text" id="genre_name_input" [% IF search.genre.value != -1 %]style="display:none"[% END %]>
+	<input name="search.genre_name" value="[% search.genre_name.value | html %]" size="[% size %]" maxlength="1000" type="text" id="genre_name_input" [% IF NOT search.genre.value < 0 %]disabled="disabled"[% END %]>
 [% END %]
 
 [% WRAPPER field title='LENGTH' %]
