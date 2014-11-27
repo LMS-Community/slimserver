@@ -172,7 +172,7 @@ sub getFeedAsync {
 		}
 		
 		# Don't require SN session for public URLs
-		if ( $url !~ /public/ ) {
+		if ( $url !~ m|/public/| ) {
 			main::INFOLOG && $log->is_info && $log->info("URL requires SqueezeNetwork session");
 
 			if ( !$params->{client} ) {
