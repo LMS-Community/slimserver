@@ -40,6 +40,9 @@
 						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
 							<option value="">[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_SUB_LIBRARY" | string %]</option>
 							<option value="-1" [% IF menu.params.library_id == -1 %]selected[% END %]>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_ALL_LIBRARY" | string %]</option>
+							[% FOREACH library = libraries %]
+							<option value="[% library.key %]" [% IF menu.params.library_id == library.key %]selected[% END %]>[% library.value | html %]</option>
+							[% END %]
 						</select>
 					</td>
 					<td>

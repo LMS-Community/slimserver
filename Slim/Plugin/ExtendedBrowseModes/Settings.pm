@@ -9,6 +9,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 use Storable;
 
+use Slim::Music::VirtualLibraries;
 use Slim::Plugin::ExtendedBrowseModes::Plugin;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -61,7 +62,7 @@ sub handler {
 
 			delete $menu->{enabled} if $serverPrefs;
 			
-			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"});
+			next unless $params->{"name$i"} && $params->{"feed$i"} && ($params->{"roleid$i"} || $params->{"genreid$i"} || $params->{"libraryid$i"});
 
 			if ( $params->{"id$i"} eq '_new_' ) {
 				$menu = {
@@ -123,6 +124,13 @@ sub handler {
 
 	$params->{genre_list} = [ sort map { $_->name } Slim::Schema->search('Genre')->all ];
 	$params->{roles} = [ Slim::Schema::Contributor->contributorRoles ];
+
+	$params->{libraries} = {};
+
+	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
+	while (my ($k, $v) = each %$libraries) {
+		$params->{libraries}->{$k} = $v->{name};
+	}
 
 	my %ids;
 	$params->{menu_items} = [ map {
