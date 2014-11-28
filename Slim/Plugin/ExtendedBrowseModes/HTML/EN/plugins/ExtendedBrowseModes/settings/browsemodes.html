@@ -20,6 +20,7 @@
 				<th></th>
 				<th>[% "NAME" | string %]</th>
 				[% END %]
+				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
 				<th>[% "GENRES" | string %][% "COLON" | string %]</th>
@@ -32,9 +33,15 @@
 					<input type="hidden" name="id[% menu_no %]" value="[% menu.id %]" />
 				</td>
 				[% IF !menu.feed && menu.id != '_new_' %]
-					<td colspan="5"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
+					<td colspan="6"><label for="enabled[% menu_no %]">[% menu.name | getstring %]</label></td>
 				[% ELSE %]
 					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 98%;" class="stdedit" /></td>
+					<td>
+						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
+							<option value="">[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_SUB_LIBRARY" | string %]</option>
+							<option value="-1" [% IF menu.params.library_id == -1 %]selected[% END %]>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_ALL_LIBRARY" | string %]</option>
+						</select>
+					</td>
 					<td>
 						<select class="stdedit" name="feed[% menu_no %]" style="margin-top:0">
 							<option value="0">&nbsp;</option>

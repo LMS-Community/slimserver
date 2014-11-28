@@ -810,6 +810,11 @@ sub _generic {
 		$getIndexList   # boolean:   (optional)
 	) = @_;
 	
+	# library_id:-1 is supposed to clear/override the global library_id
+	$queryTags = [ grep {
+		$_ && $_ !~ /library_id\s*:\s*-1/
+	} @$queryTags ];
+	
 	if (!Slim::Schema::hasLibrary()) {
 	
 		$log->warn('Database not fully initialized yet - return dummy placeholder');

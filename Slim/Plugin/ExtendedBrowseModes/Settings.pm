@@ -109,6 +109,13 @@ sub handler {
 			else {
 				delete $menu->{params}->{genre_id};
 			}
+			
+			if ($params->{"libraryid$i"}) {
+				$menu->{params}->{library_id} = $params->{"libraryid$i"}; 
+			}
+			else {
+				delete $menu->{params}->{library_id};
+			}
 		}
 		
 		$prefs->set('additionalMenuItems', $menus);
