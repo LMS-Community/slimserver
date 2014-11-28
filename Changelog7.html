@@ -150,7 +150,7 @@
 </ul>
 
 
-<h2><a name="v7.7.5" id="v7.7.5"></a>Version 7.7.5</h2>
+<h2><a name="v7.7.6" id="v7.7.6"></a>Version 7.7.6</h2>
 <ul>
 	<li>Server Changes:</li>
 	<ul>
@@ -161,6 +161,17 @@
 	<li>Bug Fixes:</li>
 	<ul>
 		<li></li>
+	</ul>
+	<br />
+</ul>
+
+<h2><a name="v7.7.5" id="v7.7.5"></a>Version 7.7.5 - 2014-11-28</h2>
+<ul>
+	<li>Bug Fixes:</li>
+	<ul>
+		<li>Installing plugins on OSX 10.10 (Yosemite) fails. Add missing Compress::Raw::Zlib.</li>
+		<li>Can no longer use https resources, due to failure to load support for IO::Socket::SSL.</li>
+		<li>Various music services: don't hammer mysqueezebox.com requesting metadata for an empty track ID.</li>
 	</ul>
 	<br />
 </ul>
