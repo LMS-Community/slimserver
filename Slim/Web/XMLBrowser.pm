@@ -537,7 +537,7 @@ sub handleFeed {
 			 && !($subFeed->{type} && $subFeed->{type} eq 'search')
 			 && !(ref $subFeed->{'url'}) ) 
 		) {
-			$subFeed->{'image'} ||= Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
+			$subFeed->{'image'} ||= $subFeed->{'cover'} || $subFeed->{'icon'} || Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
 			$subFeed->{'image'} = proxiedImage($subFeed->{'image'});
 
 			$stash->{'streaminfo'} = {
