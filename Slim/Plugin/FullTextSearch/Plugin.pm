@@ -13,7 +13,13 @@ use constant BUILD_STEPS => 7;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
 
-my $log = logger('scan');
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.fulltext',
+	'defaultLevel' => 'WARN',
+	'description'  => 'PLUGIN_FULLTEXT',
+});
+my $scanlog = logger('scan');
+
 my $prefs = preferences('plugin.fulltext');
 
 # small cache of search term counts to speed up fulltext search
@@ -47,7 +53,7 @@ sub initPlugin {
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
 	
 	if (!$ftExists) {
-		$log->error("Fulltext index missing or outdated - re-building");
+		$scanlog->error("Fulltext index missing or outdated - re-building");
 		
 		$prefs->remove('popularTerms');
 		_rebuildIndex();
@@ -120,6 +126,9 @@ sub parseSearchTerm {
 			# only respect once there is eg. "artist:e*"
 			elsif ( $_ !~ /a\w+:\w+/ && $popularTerms =~ /\Q$_\E[^|]*/i ) {
 				$token = "w10:$_*";
+				
+				# log warning about search for popular term (only once)
+				$ftsCache{$token}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
 		}
 
@@ -237,17 +246,17 @@ sub _ignoreCaseArticles {
 sub _rebuildIndex {
 	my $progress = shift;
 	
-	$log->error("Starting fulltext index build");
+	$scanlog->error("Starting fulltext index build");
 
 	my $dbh = _dbh();
 
-	$log->error("Initialize fulltext table");
+	$scanlog->error("Initialize fulltext table");
 	
-	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $log->error($dbh->errstr);
-	$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $log->error($dbh->errstr);
+	$dbh->do("DROP TABLE IF EXISTS fulltext;") or $scanlog->error($dbh->errstr);
+	$dbh->do("CREATE VIRTUAL TABLE fulltext USING fts3(id, type, w10, w5, w3, w1);") or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	$log->error("Create fulltext index for tracks");
+	$scanlog->error("Create fulltext index for tracks");
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	
@@ -274,11 +283,11 @@ sub _rebuildIndex {
 			GROUP BY tracks.id;
 	};
 
-#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
-	$dbh->do($sql) or $log->error($dbh->errstr);
+#	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
+	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
-	$log->error("Create fulltext index for albums");
+	$scanlog->error("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	$sql = qq{
@@ -300,11 +309,11 @@ sub _rebuildIndex {
 			GROUP BY albums.id;
 	};
 
-#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
-	$dbh->do($sql) or $log->error($dbh->errstr);
+#	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
+	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 		
-	$log->error("Create fulltext index for contributors");
+	$scanlog->error("Create fulltext index for contributors");
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -322,11 +331,11 @@ sub _rebuildIndex {
 			FROM contributors;
 	};
 
-#	main::DEBUGLOG && $log->is_debug && $log->debug($sql);
-	$dbh->do($sql) or $log->error($dbh->errstr);
+#	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
+	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
-	$log->error("Create fulltext index for playlists");
+	$scanlog->error("Create fulltext index for playlists");
 	$progress && $progress->update(string('PLAYLISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
@@ -344,14 +353,14 @@ sub _rebuildIndex {
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
 
-		main::DEBUGLOG && $log->is_debug && $log->debug( $plSql . Data::Dump::dump($playlist->id) );
+		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $plSql . Data::Dump::dump($playlist->id) );
 
 		my $w1 = '';
 		
 		foreach my $track ( @{ $dbh->selectcol_arrayref($plSth, undef, $playlist->id) } ) {
 			next unless $track =~ /^file:/;
 
-			main::DEBUGLOG && $log->is_debug && $log->debug($trSql . ' - ' . $track);
+			main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($trSql . ' - ' . $track);
 
 			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSth, undef, $track) });
 		}
@@ -359,29 +368,29 @@ sub _rebuildIndex {
 		$w1 =~ s/^ +//;
 		$w1 =~ s/ +/ /;
 		
-		main::DEBUGLOG && $log->is_debug && $log->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
-		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $log->error($dbh->errstr);
+		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
+		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $scanlog->error($dbh->errstr);
 
 		Slim::Schema->forceCommit if main::SCANNER;
 	}
 	main::idleStreams() unless main::SCANNER;
 
-	$log->error("Optimize fulltext index");
+	$scanlog->error("Optimize fulltext index");
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$dbh->do("INSERT INTO fulltext(fulltext) VALUES('optimize');") or $log->error($dbh->errstr);
+	$dbh->do("INSERT INTO fulltext(fulltext) VALUES('optimize');") or $scanlog->error($dbh->errstr);
 
 	$progress && $progress->update(string('DBOPTIMIZE_PROGRESS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$dbh->do("DROP TABLE IF EXISTS fulltext_terms;") or $log->error($dbh->errstr);
-	$dbh->do("CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);") or $log->error($dbh->errstr);
+	$dbh->do("DROP TABLE IF EXISTS fulltext_terms;") or $scanlog->error($dbh->errstr);
+	$dbh->do("CREATE VIRTUAL TABLE fulltext_terms USING fts4aux(fulltext);") or $scanlog->error($dbh->errstr);
 	
 	$progress->final(BUILD_STEPS) if $progress;
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$log->error("Fulltext index build done!");
+	$scanlog->error("Fulltext index build done!");
 }
 
 sub _initPopularTerms {

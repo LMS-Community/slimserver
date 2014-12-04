@@ -312,7 +312,13 @@ sub albumsQuery {
 				my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'album');
 				
 				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
-				Slim::Schema->dbh->do("CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'");
+				
+				my $albumsSearchSQL = "CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'";
+				if ( main::DEBUGLOG && $sqllog->is_debug ) {
+					$sqllog->debug( "Albums fulltext search temporary table query: $albumsSearchSQL" );
+				}
+				
+				Slim::Schema->dbh->do($albumsSearchSQL);
 				
 				$sql = 'SELECT %s FROM albumsSearch, albums ';
 				unshift @{$w}, "albums.id = albumsSearch.id";
@@ -849,7 +855,12 @@ sub artistsQuery {
 			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'contributor');
 
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch");
-			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'");
+
+			my $artistsSearchSQL = "CREATE TEMPORARY TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'";
+			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+				$sqllog->debug( "Artists fulltext search temporary table query: $artistsSearchSQL" );
+			}
+			Slim::Schema->dbh->do($artistsSearchSQL);
 			
 			$sql = 'SELECT %s FROM artistsSearch, contributors ';
 			unshift @{$w}, "contributors.id = artistsSearch.id";
@@ -2998,7 +3009,14 @@ sub searchQuery {
 			my $orderOrLimit = ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
 
 			$dbh->do("DROP TABLE IF EXISTS quickSearch");
-			$dbh->do("CREATE TEMPORARY TABLE quickSearch AS SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit");
+
+			my $quickSearchSQL = "CREATE TEMPORARY TABLE quickSearch AS SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
+			if ( main::DEBUGLOG ) {
+				my $sqllog = logger('database.sql');
+				$sqllog->is_debug && $sqllog->debug( "Quicksearch temporary fulltext table query: $quickSearchSQL" );
+			}
+			
+			$dbh->do($quickSearchSQL);
 			
 			$sql = "SELECT $cols, quickSearch.w FROM quickSearch, ${type}s me ";
 			unshift @{$w}, "me.id = quickSearch.id";
@@ -5238,7 +5256,12 @@ sub _getTagDataForTracks {
 			my $orderOrLimit = $isLarge ? 'LIMIT ' . $isLarge : 'ORDER BY fulltextweight';
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
-			Slim::Schema->dbh->do("CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit");
+			
+			my $tracksSearchSQL = "CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit";
+			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+				$sqllog->debug( "Track search temporary fulltext table query: $tracksSearchSQL" );
+			}
+			Slim::Schema->dbh->do($tracksSearchSQL);
 			
 			$sql = 'SELECT %s FROM tracksSearch, tracks ';
 			unshift @{$w}, "tracks.id = tracksSearch.id";
