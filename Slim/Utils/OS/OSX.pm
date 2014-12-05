@@ -42,7 +42,7 @@ sub initDetails {
 		close SYS;
 
 		# CPU Type / Processor Name
-		open(SYS, '/usr/sbin/system_profiler SPHardwareDataType |') or return;
+		open(SYS, '/usr/sbin/system_profiler SPHardwareDataType 2>/dev/null |') or return;
 
 		while (<SYS>) {
 
