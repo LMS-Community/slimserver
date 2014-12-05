@@ -21244,6 +21244,18 @@ AS_VIRTUAL_LIBRARY
 	DE	Als Ansicht
 	EN	As Library View
 
+VIRTUALLIBRARIES
+	DE	Bibliotheksansichten
+	EN	Library Views
+
+ALL_LIBRARY
+	DE	Ganze Musiksammlung
+	EN	All music library
+	
+SUB_LIBRARY
+	DE	Aktive Bibliotheksansicht
+	EN	Selected library view
+
 RUNNING
 	CS	Spuštěno
 	DA	Kører

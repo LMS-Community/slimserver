@@ -337,6 +337,10 @@ PLUGIN_RANDOM_SELECT_NONE
 	RU	Не выбирать ничего
 	SV	Välj ingen
 
+PLUGIN_RANDOM_LIBRARY_FILTER
+	DE	Bibliotheksansicht verwenden
+	EN	Use library view
+
 PLUGIN_RANDOM_CHOOSE_BELOW
 	CS	Vybrat náhodně zvolený mix hudby z vaší knihovny:
 	DA	Vælg en tilfældig blanding af musik fra dit bibliotek:

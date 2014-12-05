@@ -194,11 +194,22 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 			}
 
 			// Write the button using js, so it won't appear if js isn't enabled/available
-			document.write('<input type="button" value="'
+			document.write('<p><input type="button" value="'
 						   + (numSelected == numCheckBoxes ? selectNoneString : selectAllString)
-										 + '" id="selectAllButton" onclick="selectAll()">');
+										 + '" id="selectAllButton" onclick="selectAll()"></p>');
 		// -->
 		</script>
+
+		[% IF libraries %]
+			<p>[% "PLUGIN_RANDOM_LIBRARY_FILTER" | string %][% "COLON" | string %]
+				<select class="stdedit" name="useLibrary" id="useLibrary">
+					<option value="">&nbsp;</option>
+					[% FOREACH value = libraries.keys %]
+					<option [% IF value == pluginRandomUseLibrary %]selected[% END %] value="[% value %]">[% libraries.$value %]</option>
+					[% END %]
+				</select>
+			</p>
+		[% END %]
 
 		<p>
 			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]

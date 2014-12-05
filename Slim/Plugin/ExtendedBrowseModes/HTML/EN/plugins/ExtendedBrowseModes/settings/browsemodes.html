@@ -38,8 +38,8 @@
 					<td width="30%"><input type="text" name="name[% menu_no %]" value="[% menu.name %]" style="width: 98%;" class="stdedit" /></td>
 					<td>
 						<select class="stdedit" name="libraryid[% menu_no %]" style="margin-top:0">
-							<option value="">[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_SUB_LIBRARY" | string %]</option>
-							<option value="-1" [% IF menu.params.library_id == -1 %]selected[% END %]>[% "PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_ALL_LIBRARY" | string %]</option>
+							<option value="">[% "SUB_LIBRARY" | string %]</option>
+							<option value="-1" [% IF menu.params.library_id == -1 %]selected[% END %]>[% "ALL_LIBRARY" | string %]</option>
 							[% FOREACH library = libraries %]
 							<option value="[% library.key %]" [% IF menu.params.library_id == library.key %]selected[% END %]>[% library.value | html %]</option>
 							[% END %]
@@ -65,7 +65,7 @@
 
 	[% IF needsClient %]
 		<input type="hidden" name="pref_enableLosslessPreferred" value="[% prefs.pref_enableLosslessPreferred || 0 %]" />
-	[% ELSE; WRAPPER setting title="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS" desc="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC" %]
+	[% ELSE; WRAPPER setting title="VIRTUALLIBRARIES" desc="PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC" %]
 		<p>
 			<input type="checkbox" name="pref_enableLosslessPreferred" id="enableLosslessPreferred" [% IF prefs.pref_enableLosslessPreferred %]checked="checked"[% END %] value="1" class="stdedit" />
 			<label for="enableLosslessPreferred">[% "PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED" | string %]</label>

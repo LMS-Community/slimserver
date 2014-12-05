@@ -196,7 +196,7 @@ sub condition {
 	return !$client || !$serverPrefs->client($_[1])->get('disabled_selectVirtualLibrary');
 }
 
-sub getDisplayName { 'PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES' }
+sub getDisplayName { 'VIRTUALLIBRARIES' }
 
 sub initMenus {
 	my @additionalStaticMenuItems = ({

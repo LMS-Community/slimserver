@@ -39,14 +39,6 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	DE	Anwenden auf:
 	EN	Apply to:
 
-PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_ALL_LIBRARY
-	DE	Ganze Musiksammlung
-	EN	All music library
-	
-PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO_SUB_LIBRARY
-	DE	Aktive Bibliotheksansicht
-	EN	Selected library view
-
 PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	CS	Sbírka
 	DA	Kompilationer
@@ -72,17 +64,9 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	DE	Künstler-Rollen:
 	EN	Contributor roles:
 
-PLUGIN_EXTENDED_BROWSEMODES_LIBRARIES
-	DE	Bibliotheksansichten
-	EN	Library Views
-
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	DE	Ganze Musiksammlung (Standard)
 	EN	All Library (Default)
-	
-PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS
-	DE	Bibliotheksansichten
-	EN	Library Views
 
 PLUGIN_EXTENDED_BROWSEMODES_LIBRARY_VIEWS_DESC
 	DE	Bibliotheksansichten erlauben es, die Auswahl in Eigene Musik zu filtern. Falls Ansichten aktiviert sind, so können Sie diese im Eigene Musik Menü auswählen.
