@@ -1258,6 +1258,9 @@ sub _genres {
 		sub {
 			my $results = shift;
 			my $items = $results->{'genres_loop'};
+			
+			push @searchTags, "role_id:ALBUMARTIST" if !$prefs->get('useUnifiedArtistsList');
+			
 			foreach (@$items) {
 				$_->{'name'}          = $_->{'genre'};
 				$_->{'type'}          = 'playlist';
