@@ -1064,12 +1064,12 @@ sub _fixupAppenders {
 
 	if ($::LogTimestamp) {
 
-		$pattern    = '[%d{yy-MM-dd HH:mm:ss.SSSS}] %M (%L) %m%n';
+		$pattern    = '[%d{yy-MM-dd HH:mm:ss.SSSS}] %M (' . (main::SLIM_SERVICE ? '%P:' : '') . '%L) %m%n';
 		$rawpattern = '[%d{yy-MM-dd HH:mm:ss.SSSS}] %m%n';
 
 	} else {
 
-		$pattern = '%M (%L) %m%n';
+		$pattern = '%M (' . (main::SLIM_SERVICE ? '%P:' : '') . '%L) %m%n';
 		$rawpattern = '%m%n';
 	}
 
