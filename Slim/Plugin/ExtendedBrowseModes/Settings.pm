@@ -82,13 +82,17 @@ sub handler {
 				my $oldId = $menu->{id} = $params->{"id$i"}; 
 				$menu->{id} =~ s/^(?:myMusicAlbums|myMusicArtists)//;
 
+				# use the timestamp part of the id to make the sort order stick
+				my ($ts)  = $menu->{id};
+				$ts =~ s/\D//g;
+
 				if ( $feedType eq 'albums' ) {
 					$menu->{id}     = 'myMusicAlbums' . $menu->{id} if $menu->{id} !~ /^myMusic/;
-					$menu->{weight} = 25;
+					$menu->{weight} = "25.$ts" * 1;
 				}
 				else {
 					$menu->{id}     = 'myMusicArtists' . $menu->{id} if $menu->{id} !~ /^myMusic/;
-					$menu->{weight} = 15;
+					$menu->{weight} = "15.$ts" * 1;
 				}
 
 				# need to migrate the enabled flag
