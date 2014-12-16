@@ -12,7 +12,7 @@
 		[% FOREACH menu = menu_items; menu_no = loop.count %]
 			[% IF !needsClient && !menu.feed && menu.id != '_new_'; NEXT; END %]
 			
-			[% IF menu.feed && menu.id != '_new_' && !seen %]
+			[% IF (menu.feed || menu.id == '_new_') && !seen %]
 			<tr>
 				[% IF needsClient %]
 				<th colspan="2">&nbsp;</th>
@@ -24,7 +24,7 @@
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY" | string %]</th>
 				<th>[% "PLUGIN_EXTENDED_BROWSEMODES_ROLES" | string %]</th>
 				<th>[% "GENRES" | string %][% "COLON" | string %]</th>
-				<th>[% "DELETE" | string %][% "COLON" | string %]</th>
+				<th>[% IF menu.id != '_new_' %][% "DELETE" | string %][% "COLON" | string %][% END %]</th>
 			</tr>
 			[% seen = 1; END %]
 			<tr>
