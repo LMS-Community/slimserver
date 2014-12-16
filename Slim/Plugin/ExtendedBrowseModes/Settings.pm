@@ -77,10 +77,9 @@ sub handler {
 			
 			my $feedType = $params->{"feed$i"};
 			if ($params->{"id$i"} !~ /\Q$feedType\E/i) {
-				$serverPrefs->remove('disabled_' . $params->{"id$i"}) if $serverPrefs;
 				Slim::Menu::BrowseLibrary->deregisterNode($params->{"id$i"});
 				
-				$menu->{id} = $params->{"id$i"}; 
+				my $oldId = $menu->{id} = $params->{"id$i"}; 
 				$menu->{id} =~ s/^(?:myMusicAlbums|myMusicArtists)//;
 
 				if ( $feedType eq 'albums' ) {
@@ -91,6 +90,17 @@ sub handler {
 					$menu->{id}     = 'myMusicArtists' . $menu->{id} if $menu->{id} !~ /^myMusic/;
 					$menu->{weight} = 15;
 				}
+
+				# need to migrate the enabled flag
+				my $serverPrefs = preferences('server');
+				
+				# remove prefs related to this menu item
+				foreach my $clientPref ( $serverPrefs->allClients ) {
+					my $oldPref = $clientPref->get('disabled_' . $oldId);
+					$clientPref->remove('disabled_' . $oldId);
+					$clientPref->set('disabled_' . $menu->{id}, $oldPref);
+				}
+				$serverPrefs->remove('disabled_' . $oldId);
 			}
 			
 			foreach (qw(feed name)) {
@@ -135,14 +145,14 @@ sub handler {
 	my %ids;
 	$params->{menu_items} = [ map {
 		$ids{$_->{id}}++;
-		$_->{enabled} = $serverPrefs && $serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1;
+		$_->{enabled} = $serverPrefs ? ($serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1) : 1;
 		$_;
 	} @{Storable::dclone($prefs->get('additionalMenuItems'))}, { id => '_new_' } ];
 	
 	unshift @{$params->{menu_items}}, map { {
 		name => $_->{name},
 		id   => $_->{id},
-		enabled => $serverPrefs && $serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1,
+		enabled => $serverPrefs ? ($serverPrefs->get('disabled_' . $_->{id}) ? 0 : 1) : 1,
 	} } sort { 
 		$a->{weight} <=> $b->{weight}
 	# don't allow to disable some select browse menus
