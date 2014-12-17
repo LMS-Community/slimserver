@@ -99,19 +99,14 @@ sub getPlaylists {
 		$s =~ s/\%/\%\%/g;
 		$sql .= $s . ' ';
 	}
-	
-	my $dbh = Slim::Schema->dbh;
-
-	my $sth = $dbh->prepare_cached( $sql );
-	$sth->execute( @{$p} );
-	my @playlistIDs = map { $_->[0] } @{$sth->fetchall_arrayref()};
-	$sth->finish;
 
 	# Add search criteria for playlists
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	my $rs = $self->search({
-		id => { in => \@playlistIDs },
-	}, { 'order_by' => "titlesort $collate" });
+	my $rs = $self->search_literal(
+		"id IN ($sql)", 
+		@$p, 
+		{ 'order_by' => "titlesort $collate" }
+	);
 
 	return wantarray ? $rs->all : $rs;
 }

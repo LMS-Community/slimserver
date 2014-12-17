@@ -353,7 +353,7 @@ sub _rebuildIndex {
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
 	foreach my $playlist ( Slim::Schema->rs('Playlist')->getPlaylists('all')->all ) {
 
-		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $plSql . Data::Dump::dump($playlist->id) );
+		main::DEBUGLOG && $scanlog->is_debug && $scanlog->error( $plSql . ' [' . Data::Dump::dump($playlist->id) .']' );
 
 		my $w1 = '';
 		
