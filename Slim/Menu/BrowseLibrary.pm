@@ -1103,7 +1103,29 @@ sub _artists {
 	
 	my @ptSearchTags = @searchTags;
 	@ptSearchTags = grep {$_ !~ /^genre_id:/} @ptSearchTags if $prefs->get('noGenreFilter');
-	@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags if $prefs->get('noRoleFilter');
+	
+	if ( $prefs->get('noRoleFilter') && (my (@roles) = grep /^role_id:/, @ptSearchTags) ) {
+		@ptSearchTags = grep {$_ !~ /^role_id:/} @ptSearchTags;
+		
+		# "no role filter" means the default role list _plus_ what we specifically want
+		if ( $prefs->get('useUnifiedArtistsList') ) {
+			@roles = map {
+				/role_id:(.*)/;
+				Slim::Schema::Contributor->roleToType($1);
+			} @roles;
+			
+			push @roles, 'ARTIST', 'TRACKARTIST', 'ALBUMARTIST';
+	
+			# Loop through each pref to see if the user wants to show that contributor role.
+			foreach (Slim::Schema::Contributor->contributorRoles) {
+				if ($prefs->get(lc($_) . 'InArtists')) {
+					push @roles, $_;
+				}
+			}
+			
+			push @ptSearchTags, 'role_id:' . join(',', @roles);
+		}
+	}
 
 	_generic($client, $callback, $args, 'artists', 
 		[@searchTags, ($search ? 'search:' . $search : undef)],
