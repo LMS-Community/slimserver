@@ -933,9 +933,7 @@ sub changed {
 				JOIN   albums ON (tracks.album = albums.id)
 				WHERE  tracks.url = ?
 			} );
-			$sth->execute($url);
-			my $origTrack = $sth->fetchrow_hashref;
-			$sth->finish;
+			my $origTrack = $dbh->selectrow_hashref($sth, undef, $url);
 			
 			my $orig = {
 				year => $origTrack->{year},
@@ -945,18 +943,14 @@ sub changed {
 			$sth = $dbh->prepare_cached( qq{
 				SELECT DISTINCT(contributor) FROM contributor_track WHERE track = ?
 			} );
-			$sth->execute( $origTrack->{id} );
-			$orig->{contribs} = $sth->fetchall_arrayref( {} );
-			$sth->finish;
+			$orig->{contribs} = $dbh->selectall_arrayref( $sth, { Slice => {} }, $origTrack->{id} );
 			
 			# Fetch all genres used on the original track
 			$sth = $dbh->prepare_cached( qq{
 				SELECT genre FROM genre_track WHERE track = ?
 			} );
-			$sth->execute( $origTrack->{id} );
-			$orig->{genres} = $sth->fetchall_arrayref( {} );
-			$sth->finish;
-			
+			$orig->{genres} = $dbh->selectall_arrayref( $sth, { Slice => {} }, $origTrack->{id} );
+
 			# Scan tags & update track row
 			# XXX no DBIC objects
 			my $track = Slim::Schema->updateOrCreate( {

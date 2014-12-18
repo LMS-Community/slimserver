@@ -7,11 +7,73 @@ use Slim::Control::Queries;
 use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Scanner::API;
 use Slim::Utils::Strings qw(string);
 
 use constant BUILD_STEPS => 7;
 use constant FIRST_COLUMN => 2;
 use constant LARGE_RESULTSET => 500;
+
+use constant SQL_CREATE_TRACK_ITEM => q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT tracks.id, 'track', 
+		-- weight 10
+		IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, ''),
+		-- weight 5
+		IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
+		-- weight 3 - contributors create multiple hits, therefore only w3
+		CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || 
+		IGNORE_CASE_ARTICLES(comments.value) || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
+		-- weight 1
+		printf('%%i', tracks.bitrate) || ' ' || printf('%%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%%20', ' '), 'file://', '')
+		 
+		FROM tracks
+		LEFT JOIN contributor_track ON contributor_track.track = tracks.id
+		LEFT JOIN albums ON albums.id = tracks.album
+		LEFT JOIN genre_track ON genre_track.track = tracks.id
+		LEFT JOIN genres ON genres.id = genre_track.genre
+		LEFT JOIN comments ON comments.track = tracks.id
+	
+		%s
+		
+		GROUP BY tracks.id;
+};
+
+use constant SQL_CREATE_ALBUM_ITEM => q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT albums.id, 'album', 
+		-- weight 10
+		IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' || IFNULL(albums.musicbrainz_id, ''),
+		-- weight 5
+		IFNULL(albums.year, ''),
+		-- weight 3
+		CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
+		-- weight 1
+		CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
+		 
+		FROM albums
+		LEFT JOIN contributor_album ON contributor_album.album = albums.id
+		LEFT JOIN contributors ON contributors.id = contributor_album.contributor
+	
+		%s
+		
+		GROUP BY albums.id;
+};
+
+use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
+	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT contributors.id, 'contributor', 
+		-- weight 10
+		IFNULL(contributors.name, '') || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '') || ' ' || IFNULL(contributors.musicbrainz_id, ''),
+		-- weight 5
+		'',
+		-- weight 3
+		'',
+		-- weight 1
+		''
+		FROM contributors
+		%s;
+};
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.fulltext',
@@ -48,6 +110,9 @@ sub initPlugin {
 		_initPopularTerms();
 		%ftsCache = ();
 	}, [['rescan'], ['done']] );
+
+	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack, want_object => 1 } );
+	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack, want_object => 1 } );
 	
 	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
@@ -78,6 +143,19 @@ sub startScan {
 	Slim::Music::Import->endImporter(__PACKAGE__);
 }
 
+# create/update index item for single tracks (as found by BMF)
+# this won't do any cleanup, might leave stale entries behind
+sub checkSingleTrack {
+	my ( $trackObj, $url ) = @_;
+	
+	return unless $trackObj->id;
+	
+	my $dbh = _dbh();
+
+	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
+	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
+	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'OR REPLACE', 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+}
 
 sub canFulltextSearch {
 	# we only support fulltext search with sqlite
@@ -85,7 +163,9 @@ sub canFulltextSearch {
 	
 	return 1 if $sqlVersion =~ /SQLite/i;
 	
-	$log->warn("We don't support fulltext search on your SQL engine: $sqlVersion");
+	$log->error("We don't support fulltext search on your SQL engine: $sqlVersion");
+	
+	Slim::Utils::PluginManager->disablePlugin('FullTextSearch');
 	
 	return 0;
 }
@@ -260,28 +340,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 	
-	my $sql = qq{
-		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-			SELECT tracks.id, 'track', 
-			-- weight 10
-			IFNULL(tracks.title, '') || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '') || ' ' || IFNULL(tracks.musicbrainz_id, ''),
-			-- weight 5
-			IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' ' || GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' '),
-			-- weight 3 - contributors create multiple hits, therefore only w3
-			CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' ' || 
-			IGNORE_CASE_ARTICLES(comments.value) || ' ' || IGNORE_CASE_ARTICLES(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' ' || CASE WHEN tracks.channels = 1 THEN 'mono' WHEN tracks.channels = 2 THEN 'stereo' END,
-			-- weight 1
-			printf('%i', tracks.bitrate) || ' ' || printf('%ikbps', tracks.bitrate / 1000) || ' ' || IFNULL(tracks.samplerate, '') || ' ' || (round(tracks.samplerate, 0) / 1000) || ' ' || IFNULL(tracks.samplesize, '') || ' ' || replace(replace(tracks.url, '%20', ' '), 'file://', '')
-			 
-			FROM tracks
-			LEFT JOIN contributor_track ON contributor_track.track = tracks.id
-			LEFT JOIN albums ON albums.id = tracks.album
-			LEFT JOIN genre_track ON genre_track.track = tracks.id
-			LEFT JOIN genres ON genres.id = genre_track.genre
-			LEFT JOIN comments ON comments.track = tracks.id
-		
-			GROUP BY tracks.id;
-	};
+	my $sql = sprintf(SQL_CREATE_TRACK_ITEM, '', '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -290,24 +349,7 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$sql = qq{
-		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-			SELECT albums.id, 'album', 
-			-- weight 10
-			IFNULL(albums.title, '') || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' ' || IFNULL(albums.musicbrainz_id, ''),
-			-- weight 5
-			IFNULL(albums.year, ''),
-			-- weight 3
-			CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album'),
-			-- weight 1
-			CONCAT_ALBUM_TRACKS_INFO(albums.id) || ' ' || CASE WHEN albums.compilation THEN 'compilation' ELSE '' END
-			 
-			FROM albums
-			LEFT JOIN contributor_album ON contributor_album.album = albums.id
-			LEFT JOIN contributors ON contributors.id = contributor_album.contributor
-		
-			GROUP BY albums.id;
-	};
+	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '', '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -317,19 +359,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$sql = qq{
-		INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-			SELECT contributors.id, 'contributor', 
-			-- weight 10
-			IFNULL(contributors.name, '') || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '') || ' ' || IFNULL(contributors.musicbrainz_id, ''),
-			-- weight 5
-			'',
-			-- weight 3
-			'',
-			-- weight 1
-			''
-			FROM contributors;
-	};
+	$sql = sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, '', '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
