@@ -93,6 +93,9 @@ sub initSearchPath {
 	if ( $binArch =~ s/^x86_64-([^-]+).*/x86_64-$1/ ) {
 		unshift @paths, catdir($class->dirsFor('Bin'), $binArch);
 	}
+	elsif ( $class->{osDetails}->{'binArch'} eq 'armhf-linux' ) {
+		push @paths, catdir($class->dirsFor('Bin'), 'arm-linux');
+	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
 
