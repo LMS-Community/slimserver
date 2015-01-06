@@ -75,7 +75,10 @@ sub initSearchPath {
 	$class->{osDetails}->{'binArch'} =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
 	
 	# Reduce ARM to arm-linux
-	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
+	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux.*?gnueabihf/ ) {
+		$class->{osDetails}->{'binArch'} = 'armhf-linux';
+	}
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
 	}
 	
