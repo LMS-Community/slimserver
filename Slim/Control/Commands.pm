@@ -1263,7 +1263,7 @@ sub playlistXalbumCommand {
 		$find->{'me.title'} = _playlistXalbum_singletonRef($title);
 	}
 
-	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find);
+	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find, $cmd);
 
 	$cmd =~ s/album/tracks/;
 
@@ -1676,7 +1676,7 @@ sub playlistXtracksCommand {
 
 	} else {
 
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
 	my $size;
@@ -1999,7 +1999,7 @@ sub playlistcontrolCommand {
 			$what->{'year.id'} = $year_id;
 		}
 		
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
 	# don't call Xtracks if we got no songs
@@ -3231,6 +3231,7 @@ sub _playlistXalbum_singletonRef {
 sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
+	my $cmd    = shift;
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
@@ -3385,7 +3386,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			$client->currentPlaylist($playlist);
+			$client->currentPlaylist($playlist) if $cmd && $cmd =~ /^(?:play|load)/;
 
 			return $playlist->tracks;
 		}
