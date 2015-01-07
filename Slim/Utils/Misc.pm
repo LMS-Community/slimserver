@@ -155,6 +155,9 @@ sub addFindBinPaths {
 	}
 }
 
+sub getBinPaths {
+	return wantarray ? @findBinPaths : \@findBinPaths;
+}
 
 =head2 setPriority( $priority )
 
