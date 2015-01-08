@@ -17086,6 +17086,10 @@ INFORMATION_PLUGINDIRS
 	RU	Папки подключаемых модулей
 	SV	Mappar för plugin-program
 
+INFORMATION_BINDIRS
+	DE	Ordner für Hilfsprogramme
+	EN	Helper Applications Folder
+
 INFORMATION_ARCHITECTURE
 	CS	Architektura platformy
 	DA	Platformarkitektur
