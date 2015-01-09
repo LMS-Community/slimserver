@@ -235,7 +235,7 @@ img#background {
 }
 
 #helpLink a, #footerInfo a, #settingsLink a  {
-	position: relative;
+/*	position: relative; Bug 18093 */
 	color: white;
 }
 
@@ -1264,7 +1264,7 @@ ul.x-tree-node-ct {
 
 
 /* these styles overwrites the default ExtJS stylesheet */
-.x-panel-body {
+.x-panel-bodyX {
 	background: none;
 }
 
