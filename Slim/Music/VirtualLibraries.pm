@@ -245,6 +245,8 @@ sub hasLibraries {
 sub getRealId {
 	my ($class, $id) = @_;
 	
+	return if !$id || $id == -1;
+	
 	return $id if $libraries{$id};
 	
 	my ($id2) = grep { $libraries{$_}->{id} eq $id } keys %libraries;

@@ -272,7 +272,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 
@@ -819,7 +819,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
-	my $libraryID= $request->getParam('library_id');
+	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags     = $request->getParam('tags') || '';
 	
 	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
@@ -1551,7 +1551,7 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags          = $request->getParam('tags') || '';
 	
 	my $sql  = 'SELECT %s FROM genres ';
@@ -2591,7 +2591,7 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
-	my $libraryId= $request->getParam('library_id');
+	my $libraryId= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	
 	# Normalize any search parameters
 	if (defined $search && !Slim::Schema->canFulltextSearch) {
@@ -2968,7 +2968,7 @@ sub searchQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
 	my $extended = $request->getParam('extended');
-	my $libraryID= $request->getParam('library_id') || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id')) || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 	# transliterate umlauts and accented characters
 	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
@@ -4175,7 +4175,7 @@ sub titlesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $roleID        = $request->getParam('role_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -4303,7 +4303,7 @@ sub yearsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
 	
 	# get them all by default

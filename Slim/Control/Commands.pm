@@ -3447,8 +3447,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 
 		if ( $library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-			$joinMap{'libraryTracks'} = 'libraryTracks';
-			$find{'libraryTracks.library'} = $library_id;
+			if ( Slim::Music::VirtualLibraries->getRealId($library_id) ) {
+				$joinMap{'libraryTracks'} = 'libraryTracks';
+				$find{'libraryTracks.library'} = $library_id;
+			}
 		}
 
 		# limit & offset may have been populated above.
