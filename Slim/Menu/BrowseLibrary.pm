@@ -857,6 +857,13 @@ sub _generic {
 		# find where our index starts and then where it needs to end
 		if ($indexList = $request->getResult('indexList')) {
 			my $total = 0;
+
+			map { $total += $_->[1] } @$indexList;
+			
+			# don't browse beyond the end
+			$index = 0 if $total <= $index;
+			$total = 0;
+			
 			foreach (@$indexList) {
 				$total += $_->[1];
 				if ($total >= $index + $quantity) {
