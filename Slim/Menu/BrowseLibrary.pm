@@ -1870,6 +1870,12 @@ sub _bmf {
 						$_->{'artwork_track_id'} = $_->{'coverid'};
 						$cover ||= $_->{'image'};
 					}
+				} 
+				elsif ($_->{'type'} eq 'playlist' && Slim::Music::Info::isCUE($_->{'url'})) {
+					$_->{'favorites_url'} =	$_->{'url'};
+					$_->{'playlist'}	  = \&_playlistTracks;
+					$_->{'url'}           = \&_playlistTracks;
+					$_->{'passthrough'}   = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {

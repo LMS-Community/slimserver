@@ -1929,16 +1929,8 @@ sub mediafolderQuery {
 	
 	my ($sql, $volatileUrl);
 	
-	# Bug 17436, don't allow BMF if a scan is running
+	# Bug 17436, don't allow BMF if a scan is running, browse without storing tracks in database instead
 	if (Slim::Music::Import->stillScanning()) {
-#		$request->addResult('rescan', 1);
-#		$request->addResult('count', 1);
-#		
-#		$request->addResultLoop('folder_loop', 0, 'filename', $request->string('BROWSE_MUSIC_FOLDER_WHILE_SCANNING'));
-#		$request->addResultLoop('folder_loop', 0, 'type', 'text');
-#		
-#		$request->setStatusDone();
-#		return;
 		$volatileUrl = 1;
 	}
 

@@ -1488,9 +1488,15 @@ sub playlistXitemCommand {
 		$client->currentPlaylistModified(1);
 	}
 
+	# is this a track referenced from a cue sheet?
+	my $isReferenced;
+	
 	if (!Slim::Music::Info::isRemoteURL( $fixedPath ) && Slim::Music::Info::isFileURL( $fixedPath ) ) {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($fixedPath);
+		
+		# referenced tracks come with a #start-end postfix in the url
+		$isReferenced = ($fixedPath =~ /#\d+.*\d+$/ && $path !~ /#\d+.*\d+$/) ? 1 : 0;
 
 		main::INFOLOG && $log->info("path: $path");
 	}
@@ -1563,13 +1569,18 @@ sub playlistXitemCommand {
 			} );
 		}
 		Slim::Utils::Scanner->scanPathOrURL({
-			'url'      => $path,
+			'url'      => $isReferenced ? $url : $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
 			'client'   => $client,
 			'cmd'      => $cmd,
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
 				
+				# tracks referenced from cue sheet would not be found due to their special content type - add the raw URL back in
+				if ( ref $foundItems eq 'ARRAY' && !scalar @$foundItems && $isReferenced ) {
+					push @$foundItems, $url;
+				}
+
 				# If we are playing a list of URLs, add the other items now
 				my $noShuffle = 0;
 				if ( ref $list eq 'ARRAY' ) {
