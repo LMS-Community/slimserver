@@ -477,11 +477,7 @@ sub albumsQuery {
 		}
 
 		if (defined $libraryID) {
-			if ($sql !~ /JOIN tracks/) {
-				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
-			}
-			$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-			push @{$w}, 'library_track.library = ?';
+			push @{$w}, 'albums.id IN (SELECT tracks.album FROM library_track, tracks WHERE library_track.library = ? AND tracks.id = library_track.track GROUP BY tracks.album)';
 			push @{$p}, $libraryID;
 		}
 		
