@@ -208,7 +208,7 @@ sub infoLibrary {
 		} 
 	}
 	
-	my $totals = Slim::Schema->totals($client);
+	my $totals = Slim::Schema->totals();
 	
 	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
