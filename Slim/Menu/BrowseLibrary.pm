@@ -1882,7 +1882,10 @@ sub _bmf {
 					$_->{'favorites_url'} =	$_->{'url'};
 					$_->{'playlist'}	  = \&_playlistTracks;
 					$_->{'url'}           = \&_playlistTracks;
-					$_->{'passthrough'}   = [ { searchTags => [ "playlist_id:" . $_->{'id'} ] } ];					
+					$_->{'passthrough'}   = [ { 
+						searchTags => [ "playlist_id:" . $_->{'id'} ],
+						noEdit     => 1, 
+					} ];					
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {
@@ -1968,6 +1971,8 @@ sub _playlistTracks {
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $offset     = $args->{'index'} || 0;
 	
+	my $noEdit     = delete $pt->{noEdit} if defined $pt->{noEdit};
+	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
 		['tags:dtuxgaliqykorfcJK', $menuStyle, @searchTags],
 		sub {
@@ -2023,8 +2028,9 @@ sub _playlistTracks {
 				items       => $items,
 				actions     => \%actions,
 				sorted      => 0,
-				playlist_id => (&_tagsToParams(\@searchTags))->{'playlist_id'},
 			);
+			
+			$hash{'playlist_id'}   = (&_tagsToParams(\@searchTags))->{'playlist_id'} unless $noEdit;
 			$hash{'playlistTitle'} = $results->{'__playlistTitle'} if defined $results->{'__playlistTitle'};
 
 			return \%hash, undef;
