@@ -94,7 +94,7 @@ sub handleFeed {
 	my $bullet = "\x{2022} ";
 
 	while (my ($k, $v) = each %$libraries) {
-		my $count = Slim::Music::VirtualLibraries->getTrackCount($k);
+		my $count = Slim::Utils::Misc::delimitThousands(Slim::Music::VirtualLibraries->getTrackCount($k));
 	
 		my $libraryPrefix = '';
 		if ($currentLibrary eq $k) {
