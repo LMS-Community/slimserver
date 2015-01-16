@@ -217,7 +217,8 @@ sub init {
 	# instead of waiting until the first time it's called, for example through artistsQuery.
 	$class->variousArtistsObject;
 
-	$class->schemaUpdated($update);
+	# Don't reset the schemaUpdated flag without a scan, or we might miss a schema change
+	$class->schemaUpdated($update) unless $class->schemaUpdated;
 
 	# Migrate the old Mov content type to mp4 and aac - done here as at pref migration time, the database is not loaded
 	if ( !main::SCANNER &&
@@ -2124,6 +2125,7 @@ Wipe all data in the database. Encapsulates L<wipeDB> and L<wipeCaches>
 sub wipeAllData {
 	my $self = shift;
 
+	$self->schemaUpdated(undef);
 	$self->wipeCaches;
 	$self->wipeDB;
 	
