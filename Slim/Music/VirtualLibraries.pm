@@ -85,17 +85,17 @@ my %libraries;
 sub init {
 	my $class = shift;
 	
+	Slim::Music::Import->addImporter( $class, {
+		type   => 'post',
+		weight => 100,
+	} );
+	
 	# restore virtual libraries
 	foreach my $vlid ( grep /^vlid_[\da-f]+$/, keys %{$prefs->all} ) {
 		my $vl = $prefs->get($vlid);
 
 		$class->registerLibrary( $vl ) if $vl && ref $vl eq 'HASH';
 	}
-	
-	Slim::Music::Import->addImporter( $class, {
-		type   => 'post',
-		weight => 100,
-	} );
 }
 
 sub registerLibrary {
