@@ -371,13 +371,8 @@ sub _rebuildIndex {
 
 	# building fulltext information for playlists is a bit more involved, as we want to have its tracks' information, too
 	my $plSql = "SELECT track FROM playlist_track WHERE playlist = ?";
-	my $plSth = $dbh->prepare_cached($plSql);
-
 	my $trSql = "SELECT w10 || ' ' || w5 || ' ' || w3 || ' ' || w1 FROM tracks,fulltext WHERE tracks.url = ? AND fulltext MATCH 'id:' || tracks.id || ' type:track'";
-	my $trSth = $dbh->prepare_cached($trSql);
-	
 	my $inSql = "INSERT INTO fulltext (id, type, w10, w5, w3, w1) VALUES (?, 'playlist', ?, '', '', ?)";
-	my $inSth = $dbh->prepare_cached($inSql);
 
 	# use fulltext information for tracks to populate a playlist's record with track information
 	# this should allow us to find playlists not only based on the playlist title, but its tracks, too
@@ -387,19 +382,19 @@ sub _rebuildIndex {
 
 		my $w1 = '';
 		
-		foreach my $track ( @{ $dbh->selectcol_arrayref($plSth, undef, $playlist->id) } ) {
+		foreach my $track ( @{ $dbh->selectcol_arrayref($plSql, undef, $playlist->id) } ) {
 			next unless $track =~ /^file:/;
 
 			main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($trSql . ' - ' . $track);
 
-			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSth, undef, $track) });
+			$w1 .= join(' ', @{ $dbh->selectcol_arrayref($trSql, undef, $track) });
 		}
 		
 		$w1 =~ s/^ +//;
 		$w1 =~ s/ +/ /;
 		
 		main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug( $inSql . Data::Dump::dump($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) );
-		$inSth->execute($playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $scanlog->error($dbh->errstr);
+		$dbh->do($inSql, undef, $playlist->id, $playlist->title . ' ' . $playlist->titlesearch,	$w1) or $scanlog->error($dbh->errstr);
 
 		Slim::Schema->forceCommit if main::SCANNER;
 	}
