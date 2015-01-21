@@ -362,7 +362,7 @@ sub postConnect {
 	# Check if the DB has been optimized (stats analysis)
 	if ( !main::SCANNER ) {
 		# Check for the presence of the sqlite_stat1 table
-		my ($count) = eval { $dbh->selectrow_array( "SELECT COUNT(*) FROM sqlite_stat1 WHERE tbl = 'tracks'", undef, () ) };
+		my ($count) = eval { $dbh->selectrow_array( "SELECT COUNT(*) FROM sqlite_stat1 WHERE tbl = 'tracks' OR tbl = 'images' OR tbl = 'videos'", undef, () ) };
 		
 		if (!$count) {
 			my ($table) = eval { $dbh->selectrow_array('SELECT name FROM sqlite_master WHERE type="table" AND name="tracks"') };
