@@ -160,7 +160,10 @@ sub init {
 	
 }
 
-sub _libraryChanged {
+# keep this around for backwards compatibility - should not be needed...
+*_libraryChanged = \&libraryChanged;
+
+sub libraryChanged {
 	foreach ( Slim::Player::Client::clients() ) {
 		myMusicMenu(0, $_);
 	}
@@ -2333,7 +2336,7 @@ sub myMusicMenu {
 	my $batch = shift;
 	my $client = shift;
 
-	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&_libraryChanged);
+	my $myMusicMenu = Slim::Menu::BrowseLibrary::getJiveMenu($client, 'myMusic', \&libraryChanged);
 	
 	
 	if (!$batch) {

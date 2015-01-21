@@ -425,7 +425,7 @@ sub _initModes {
 	}
 }
 
-my $jiveUpdateCallback = undef;
+my $jiveUpdateCallback = \&Slim::Control::Jive::libraryChanged;
 
 sub _libraryChanged {
 	if ($jiveUpdateCallback) {
