@@ -1084,7 +1084,11 @@ sub generateHTTPResponse {
 	if ( $isStatic ) {
 		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
 
-		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+		if ( !($mtime || $inode || $size || $body) ) {
+			$response->code(RC_NOT_FOUND);
+			$body = filltemplatefile('html/errors/404.html', $params);
+		}
+		elsif (contentHasBeenModified($response, $mtime, $inode, $size)) {
 
 			$params->{contentAsFh} = 1;
 
