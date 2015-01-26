@@ -1,0 +1,11 @@
+PLUGIN_MC2_LIBRARY
+	EN	Virtual Library Definition
+
+PLUGIN_MC2_LIBRARY_DESC
+	EN	Plugin based upon the LIBRARY DEMO PLUGIN by LOGITECH. This plugin will create some virtual libraries.
+	
+PLUGIN_MC2_LIBRARY_CLASSICAL_ARTISTS
+	EN	Classica: Artists
+
+PLUGIN_MC2_LIBRARY_CLASSICAL_ALBUMS
+	EN	Classica: Albums

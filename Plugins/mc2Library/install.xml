@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>91d8fb10-mc2c-11e3-ac10-0800200c9a66</id>
+	<name>PLUGIN_MC2_LIBRARY</name>
+	<module>Plugins::mc2Library::Plugin</module>
+	<importmodule>Plugins::mc2Library::Plugin</importmodule>
+	<version>1.0</version>
+	<description>PLUGIN_MC2_LIBRARY_DESC</description>
+	<creator>marcoc1712</creator>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<targetApplication>
+		<id>Logitech Media Server</id>
+		<minVersion>7.9.0</minVersion>
+        <maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
