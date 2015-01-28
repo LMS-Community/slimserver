@@ -325,7 +325,7 @@ sub albumsQuery {
 				
 				if ($tags ne 'CC') {
 					$c->{'albumsSearch.fulltextweight'};
-					$sort = "albumsSearch.fulltextweight DESC, $sort";
+					$order_by = $sort = "albumsSearch.fulltextweight DESC";
 				}
 			}
 			else {
