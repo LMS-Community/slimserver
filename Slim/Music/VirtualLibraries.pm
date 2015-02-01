@@ -81,6 +81,7 @@ my $prefs = preferences('virtualLibraries');
 my $log = logger('database.virtuallibraries');
 
 my %libraries;
+my %totals;
 
 sub init {
 	my $class = shift;
@@ -95,6 +96,13 @@ sub init {
 		my $vl = $prefs->get($vlid);
 
 		$class->registerLibrary( $vl ) if $vl && ref $vl eq 'HASH';
+	}
+
+	if (!main::SCANNER) {
+		# Wipe cached data after rescan or library change
+		Slim::Control::Request::subscribe( sub {
+			%totals = ();
+		}, [['library','rescan'], ['changed','done']] );
 	}
 }
 
@@ -227,6 +235,46 @@ sub rebuild {
 		$delete_sth->execute($id);
 		
 		$dbh->do( sprintf($sql, $id), undef, @{ $args->{params} || [] } );
+		
+		# create helper records for contributors and albums
+		$delete_sth = $dbh->prepare_cached('DELETE FROM library_album WHERE library = ?');
+		$delete_sth->execute($id);
+
+		my $albums_sth = $dbh->prepare_cached(qq{
+			INSERT OR IGNORE INTO library_album (library, album) 
+				SELECT ?, tracks.album 
+				FROM library_track, tracks 
+				WHERE library_track.library = ? AND tracks.id = library_track.track 
+				GROUP BY tracks.album
+		});
+		$albums_sth->execute($id, $id);
+
+		$delete_sth = $dbh->prepare_cached('DELETE FROM library_contributor WHERE library = ?');
+		$delete_sth->execute($id);
+
+		my $contributors_sth = $dbh->prepare_cached(qq{
+			INSERT OR IGNORE INTO library_contributor (library, contributor) 
+				SELECT DISTINCT ?, contributor_track.contributor
+				FROM contributor_track
+				WHERE contributor_track.track IN (
+					SELECT library_track.track
+					FROM library_track
+					WHERE library_track.library = ?
+				)
+		});
+		$contributors_sth->execute($id, $id);
+
+		$delete_sth = $dbh->prepare_cached('DELETE FROM library_genre WHERE library = ?');
+		$delete_sth->execute($id);
+
+		my $genres_sth = $dbh->prepare_cached(qq{
+			INSERT OR IGNORE INTO library_genre (library, genre) 
+				SELECT DISTINCT ?, genre_track.genre
+				FROM genre_track, library_track 
+				WHERE library_track.library = ? AND library_track.track = genre_track.track
+				GROUP BY genre_track.genre
+		});
+		$genres_sth->execute($id, $id);
 	}
 	
 	return 1;
@@ -245,7 +293,7 @@ sub hasLibraries {
 sub getRealId {
 	my ($class, $id) = @_;
 	
-	return if !$id || $id == -1;
+	return if !$id || $id eq '-1';
 	
 	return $id if $libraries{$id};
 	
@@ -294,13 +342,13 @@ sub getTrackCount {
 	
 	return 0 unless $libraries{$id};
 
-	my $sth = Slim::Schema->dbh->prepare_cached('SELECT COUNT(1) FROM library_track WHERE library = ? GROUP BY library');
+	if ( !$totals{$id} ) {
+		foreach ( @{ Slim::Schema->dbh->selectall_arrayref('SELECT library AS id, COUNT(1) AS count FROM library_track GROUP BY library', { Slice => {} }) } ) {
+			$totals{$_->{id}} = $_->{count}
+		}
+	}
 	
-	$sth->execute($id);
-	my ($count) = $sth->fetchrow_array();
-	$sth->finish;
-	
-	return $count || 0;
+	return $totals{$id} || 0;
 }
 
 1;

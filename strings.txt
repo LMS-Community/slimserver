@@ -19742,11 +19742,11 @@ SETUP_POLARITYINVERSION_DESC
 	DA	Transporter kan invertere lydsignalets polaritet.
 	DE	Der Player kann die Polarität des Audiosignals umkehren.
 	EN	The player can invert the polarity of the audio signal.
-	ES	Transporter puede invertir la polaridad de la señal de audio.
+	ES	Un reproductor puede invertir la polaridad de la señal de audio.
 	FI	Transporter voi kääntää äänisignaalin napaisuuden.
 	FR	La platine peut inverser la polarité du signal audio.
 	HE	Transporter יכול להפוך את הקוטביות של אות השמע.
-	IT	Transporter consente di invertire la polarità del segnale audio.
+	IT	Il lettore inverte la fase del segnale audio.
 	NL	De Transporter kan de polariteit van het audiosignaal omkeren.
 	NO	Transporter kan endre polariteten til lydsignalet.
 	PL	Urządzenie Transporter może odwrócić polaryzację sygnału audio.

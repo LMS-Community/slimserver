@@ -297,7 +297,7 @@ sub rescan {
 			my $totalChanges = $changes + _getChangeCount();
 			if ( $totalChanges >= OPTIMIZE_THRESHOLD ) {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Scan change count reached $changes, optimizing database");
-				Slim::Schema->optimizeDB();
+				Slim::Schema->optimizeDB() if main::SCANNER;		# in the standalone scanner optimize will always be run at the end
 				_setChangeCount(0);
 			}
 			else {

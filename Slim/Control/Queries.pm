@@ -325,7 +325,7 @@ sub albumsQuery {
 				
 				if ($tags ne 'CC') {
 					$c->{'albumsSearch.fulltextweight'};
-					$sort = "albumsSearch.fulltextweight DESC, $sort";
+					$order_by = $sort = "albumsSearch.fulltextweight DESC";
 				}
 			}
 			else {
@@ -477,7 +477,7 @@ sub albumsQuery {
 		}
 
 		if (defined $libraryID) {
-			push @{$w}, 'albums.id IN (SELECT tracks.album FROM library_track, tracks WHERE library_track.library = ? AND tracks.id = library_track.track GROUP BY tracks.album)';
+			push @{$w}, 'albums.id IN (SELECT library_album.album FROM library_album WHERE library_album.library = ?)';
 			push @{$p}, $libraryID;
 		}
 		
@@ -971,40 +971,8 @@ sub artistsQuery {
 		}
 
 		if (defined $libraryID) {
-			if ( $sql =~ /JOIN tracks/ ) {
-				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
-				push @{$w}, 'library_track.library = ?';
-			}
-			else {
-				my $roles = '';
-	
-				# get roles filter from existing conditions
-				@${w} = grep {
-					if (/contributor_(?:track|album).role IN/) {
-						$roles = $_;
-						0;
-					}
-					else {
-						$_
-					}
-				} @$w;
-				
-				$roles =~ s/contributor_album/contributor_track/;
-				$roles .= ' AND ' if $roles;
-	
-				push @{$w}, sprintf(qq( 
-					contributors.id IN (
-					   SELECT DISTINCT contributor_track.contributor
-					   FROM contributor_track
-					   WHERE %s contributor_track.track IN (
-					      SELECT library_track.track
-					      FROM library_track
-					      WHERE library_track.library = ?
-					   )
-					)
-				), $roles);
-			}
-
+			$sql .= 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
+			push @{$w}, 'library_contributor.library = ?';
 			push @{$p}, $libraryID;
 		}
 	}
@@ -1599,12 +1567,8 @@ sub genresQuery {
 		}
 		
 		if ( $libraryID ) {
-			if ($sql !~ /JOIN genre_track/) {
-				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
-			}
-			
-			$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
-			push @{$w}, 'library_track.library = ?';
+			$sql .= 'JOIN library_genre ON library_genre.genre = genres.id ';
+			push @{$w}, 'library_genre.library = ?';
 			push @{$p}, $libraryID;
 		}
 	
