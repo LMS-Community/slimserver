@@ -1706,12 +1706,15 @@ sub _tracks {
 				}
 			}
 			
+			my $params = _tagsToParams(\@searchTags);
+
 			my %actions = (
 				commonVariables	=> [track_id => 'id'],
 				allAvailableActionsDefined => 1,
 				
 				info => {
 					command     => ['trackinfo', 'items'],
+					fixedParams => $params,
 				},
 				play => {
 					command     => ['playlistcontrol'],
@@ -1804,7 +1807,7 @@ sub _tracks {
 				my ($albumId) = grep {/album_id:/} @searchTags;
 				$albumId =~ s/album_id:// if $albumId;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id } ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 				
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;

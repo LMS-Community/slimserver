@@ -3311,7 +3311,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			next;
 		}
 		
-		elsif ($key eq 'libraryTracks.library') {
+		elsif (lc($key) eq 'librarytracks.library') {
 			$library_id = $value;
 			next;
 		}
@@ -3562,7 +3562,13 @@ sub _playlistXtracksCommand_parseDbItem {
 				}
 
 				$class = ucfirst($1);
-				$obj   = Slim::Schema->single( $class, { $key => $value } );
+				
+				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
+					$obj = -1;
+				}
+				else {
+					$obj = Slim::Schema->single( $class, { $key => $value } );
+				}
 				
 				$classes{$class} = $obj;
 			}
@@ -3596,11 +3602,16 @@ sub _playlistXtracksCommand_parseDbItem {
 			$class eq 'Contributor' || 
 			$class eq 'Genre' ||
 			$class eq 'Year' ||
-			( $obj->can('content_type') && $obj->content_type ne 'dir') 
+			( blessed $obj && $obj->can('content_type') && $obj->content_type ne 'dir') 
 		) ) {
 			$terms .= "&" if ( $terms ne "" );
 			$terms .= sprintf( '%s.id=%d', lc($class), $obj->id );
 		}
+	}
+	
+	if ( $classes{LibraryTracks} ) {
+		$terms .= "&" if ( $terms ne "" );
+		$terms .= sprintf( 'librarytracks.library=%d', $classes{LibraryTracks} );
 	}
 	
 	if ( $terms ne "" ) {
