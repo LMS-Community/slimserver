@@ -169,15 +169,15 @@ sub isInLibrary {
 	my ( $self, $library_id ) = @_;
 	
 	return 1 unless $library_id && $self->id;
+	return 1 if $library_id == -1;
 
 	my $dbh = Slim::Schema->dbh;
 	
 	my $sth = $dbh->prepare_cached( qq{
 		SELECT 1 
-		FROM contributor_track, library_track
-		WHERE contributor_track.contributor = ?
-		AND library_track.library = ?
-		AND library_track.track = contributor_track.track
+		FROM library_contributor
+		WHERE contributor = ?
+		AND library = ?
 		LIMIT 1
 	} );
 	
