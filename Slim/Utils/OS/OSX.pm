@@ -436,12 +436,16 @@ sub canAutoUpdate { 1 }
 sub installerExtension { 'pkg' }; 
 sub installerOS { 'osx' }
 
+sub canRestartServer {
+	# we can't restart if LMS is being started as a system service
+	return ( -f '/Library/LaunchDaemons/Squeezebox.plist' ) ? 0 : 1;
+}
+
 sub restartServer {
 	my $class  = shift;
 	my $helper = Slim::Utils::Misc::findbin('restart-server.sh');
 
 	system("'$helper' &") if $helper;
 }
-
 
 1;
