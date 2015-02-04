@@ -34,14 +34,31 @@ my $prefs = preferences('server');
 # here as an alternate source of CDRWIN help: 
 # http://digitalx.org/cue-sheet/syntax/
 #
-my @standardCueCommands = qw(CATALOG CDTEXTFILE FILE FLAGS INDEX ISRC PERFORMER
-                             POSTGAP PREGAP REM SONGWRITER TITLE TRACK);
+
+my %standardCueCommands = (
+    CATALOG => 1,
+    CDTEXTFILE => 1,
+    FILE => 1,
+    FLAGS => 1,
+    INDEX => 1,
+    ISRC => 1,
+    PERFORMER => 1,
+    POSTGAP => 1,
+    PREGAP => 1,
+    REM => 1,
+    SONGWRITER => 1,
+    TITLE => 1,
+    TRACK => 1);
 
 # List of valid commands we want to ignore.
 # PREGAP is calulated when INDEX = 00 (not sure is correct, but it does'nt hurt). 
 # POSTGAP FLAGS CDTEXTFILE are just ignored by slimserver.
 #
-my @refusedCueCommands = qw(PREGAP POSTGAP FLAGS CDTEXTFILE);
+my %refusedCueCommands = (
+    CATALOG => 1,
+    CDTEXTFILE => 1,
+    FILE => 1,
+    FLAGS => 1);
 
 # List of rem commands or INFO we must get from standard commands or
 # reading info from audiofile. Kind of 'reserved' words.
@@ -49,13 +66,30 @@ my @refusedCueCommands = qw(PREGAP POSTGAP FLAGS CDTEXTFILE);
 # refused commands (see above) dont need to be inclued here.
 # Standard accepted commands are accepted also if issued as REM commands
 # this is questionable, but does not hurt (the first found is stored).
-#
-my @refusedRemCommands =qw(URI FILENAME CONTENT_TYPE AUDIO LOSSLESS
-                           VIRTUAL START FILE TRACK INDEX SECS OFFSET
-                           TIMESTAMP SIZE FILESIZE DRM ALBUM TITLESORT);
+
+my %refusedRemCommands =(
+    ALBUM => 1,
+    AUDIO => 1,
+    CONTENT_TYPE => 1,
+    DRM => 1,
+    FILE => 1,
+    FILENAME => 1,
+    FILESIZE => 1,
+    INDEX => 1,
+    LOSSLESS => 1,
+    OFFSET => 1,
+    SECS => 1,
+    SIZE => 1,
+    START => 1,
+    TIMESTAMP => 1,
+    TITLESORT => 1,
+    TRACK => 1,
+    URI => 1,
+    VIRTUAL => 1);
 
 # This now just processes the cuesheet into tags. The calling process is
 # responsible for adding the tracks into the datastore.
+
 sub parse {
 	my $class    = shift;
 	my $lines    = shift;
@@ -126,27 +160,27 @@ sub parse {
                     
                     #No commads in line, skipping;
 
-                    #my $msg = {};
-                    #$msg->{'message'}  = 'Skipping the line';
-                    #$msg->{'line'}  = $line;
-                    #$msg->{'command'}   = $command;
-                    #$msg->{'value'} = $value;
-
-                    #dump $msg;
-                    main::DEBUGLOG && $log->debug("No command in line : $line");
+                    my $msg = {};
+                    $msg->{'message'}   = 'No command in line: Skipping';
+                    $msg->{'line'}      = $line;
+                    $msg->{'command'}   = $command;
+                    $msg->{'value'}     = $value;
+                    
+                    dump $msg;
+                    main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
   
                 } elsif (!_isCommandAccepted($command)){
 
                     #Command refused;
 
-                    #my $msg = {};
-                    #$msg->{'message'}  = 'Command refused';
-                    #$msg->{'line'}  = $line;
-                    #$msg->{'command'}   = $command;
-                    #$msg->{'value'} = $value;
-
-                    #dump $msg;
-                    main::DEBUGLOG && $log->debug("Command refused: $command");
+                    my $msg = {};
+                    $msg->{'message'}   = 'Command refused';
+                    $msg->{'line'}      = $line;
+                    $msg->{'command'}   = $command;
+                    $msg->{'value'}     = $value;
+                    
+                    dump $msg;
+                    main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
                 
                 } elsif ($command eq 'TRACK'){
                     
@@ -171,13 +205,13 @@ sub parse {
                     }elsif ($value =~ /^00\s+(\d+):(\d+):(\d+)/i) {  
                 
 			$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
-                    
-                    } elsif ($value =~ /^01\s+(\d+):(\d+):(\d+)/i){
+
+                    }elsif ($value =~ /^01\s+(\d+):(\d+):(\d+)/i){
 
 			$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
                     }
 
-		} elsif ($command eq 'REM') {
+		}elsif ($command eq 'REM') {
                         
                         my($remCommand,$remValue)= _getRemCommandFromLine($value);
                         
@@ -185,33 +219,33 @@ sub parse {
                     
                             #No commads in rem, skipping;
 
-                            #my $msg = {};
-                            #$msg->{'message'}  = 'No commads in rem, skipping';
-                            #$msg->{'line'}  = $line;
-                            #$msg->{'command'}   = $command;
-                            #$msg->{'value'} = $value;
-                            #$msg->{'remCommand'}   = $remCommand;
-                            #$msg->{'remValue'} = $remValue;
+                            my $msg = {};
+                            $msg->{'message'}  = 'No commads in rem, skipping';
+                            $msg->{'line'}  = $line;
+                            $msg->{'command'}   = $command;
+                            $msg->{'value'} = $value;
+                            $msg->{'remCommand'}   = $remCommand;
+                            $msg->{'remValue'} = $remValue;
 
-                            #dump $msg;
-                            main::DEBUGLOG && $log->debug("No command in rem : $line"); 
+                            dump $msg;
+                            main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
 
-                        } elsif (!_isRemCommandAccepted($remCommand)){
+                        }elsif (!_isRemCommandAccepted($remCommand)){
                         
                             #Rem command refused;
 
-                            #my $msg = {};
-                            #$msg->{'message'}      = 'Rem command refused';
-                            #$msg->{'inAlbum'}      = $inAlbum;
-                            #$msg->{'currtrack'}    = $currtrack;
-                            #$msg->{'line'}         = $line;
-                            #$msg->{'command'}      = $command;
-                            #$msg->{'value'}        = $value;
-                            #$msg->{'remCommand'}   = $remCommand;
-                            #$msg->{'remValue'}     = $remValue;
+                            my $msg = {};
+                            $msg->{'message'}      = 'Rem command refused';
+                            $msg->{'inAlbum'}      = $inAlbum;
+                            $msg->{'currtrack'}    = $currtrack;
+                            $msg->{'line'}         = $line;
+                            $msg->{'command'}      = $command;
+                            $msg->{'value'}        = $value;
+                            $msg->{'remCommand'}   = $remCommand;
+                            $msg->{'remValue'}     = $remValue;
 
-                            #dump $msg;
-                            main::DEBUGLOG && $log->debug("Rem Command refused: $line");
+                            dump $msg;
+                            main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
                             
                         } elsif ($remCommand eq 'END'){
                             
@@ -229,6 +263,7 @@ sub parse {
                                 # occur if passing in MM:SS:FF format			
                                 $tracks->{$currtrack}->{'END'} = $1;
                             }
+
                         } elsif ($remCommand eq 'REPLAYGAIN_ALBUM_GAIN'){
                                 
                             if ($remValue =~ /^\"(.*)dB\"/i) {#"
@@ -270,6 +305,7 @@ sub parse {
                                                                  $remCommand,
                                                                  $1);
                             }
+
                         } elsif ($remCommand eq 'COMPILATION'){
 
                             if(_validateBoolean($remValue)){
@@ -286,17 +322,18 @@ sub parse {
 
                             # handle remaning REM commans as a list of keys and values.
                             
-                            #my $msg = {};
-                            #$msg->{'message'}       = 'REM commans';
-                            #$msg->{'inAlbum'}       = $inAlbum;
-                            #$msg->{'currtrack'}     = $currtrack;
-                            #$msg->{'line'}          = $line;
-                            #$msg->{'command'}       = $command;
-                            #$msg->{'value'}         = $value;
-                            #$msg->{'remCommand'}    = $remCommand;
-                            #$msg->{'remValue'}      = $remValue;
+                            my $msg = {};
+                            $msg->{'message'}       = 'REM commans';
+                            $msg->{'inAlbum'}       = $inAlbum;
+                            $msg->{'currtrack'}     = $currtrack;
+                            $msg->{'line'}          = $line;
+                            $msg->{'command'}       = $command;
+                            $msg->{'value'}         = $value;
+                            $msg->{'remCommand'}    = $remCommand;
+                            $msg->{'remValue'}      = $remValue;
 
-                            #dump $msg;
+                            dump $msg;
+                            main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
 
                             ($cuesheet, $tracks)=_addCommand($cuesheet, 
                                                              $tracks,
@@ -315,15 +352,16 @@ sub parse {
                         # Watch out for cue sheets with multiple FILE entries
                         $filesSeen++;
                         
-                        #my $msg = {};
-                        #$msg->{'message'}   = 'filename with quotes';
-                        #$msg->{'line'}      = $line;
-                        #$msg->{'command'}   = $command;
-                        #$msg->{'value'}     = $value;
-                        #$msg->{'filename'}  = $filename;
-                        #$msg->{'val'}       = $1;
+                        my $msg = {};
+                        $msg->{'message'}   = 'filename with quotes';
+                        $msg->{'line'}      = $line;
+                        $msg->{'command'}   = $command;
+                        $msg->{'value'}     = $value;
+                        $msg->{'filename'}  = $filename;
+                        $msg->{'val'}       = $1;
     
-                        #dump $msg;
+                        dump $msg;
+                        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
 
                     } elsif ($inAlbum and $value =~ /^\"?(\S+)\"?/i) {
 
@@ -334,28 +372,29 @@ sub parse {
 
                         $filesSeen++;
                         
-                        #my $msg = {};
-                        #$msg->{'message'}   = 'filename with no quotes';
-                        #$msg->{'line'}      = $line;
-                        #$msg->{'command'}   = $command;
-                        #$msg->{'value'}     = $value;
-                        #$msg->{'filename'}  = $filename;
-                        #$msg->{'val'}       = $1;
+                        my $msg = {};
+                        $msg->{'message'}   = 'filename with no quotes';
+                        $msg->{'line'}      = $line;
+                        $msg->{'command'}   = $command;
+                        $msg->{'value'}     = $value;
+                        $msg->{'filename'}  = $filename;
+                        $msg->{'val'}       = $1;
 
-                        #dump $msg;
+                        dump $msg;
+                        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
 
                     } elsif ($inAlbum){
                        
                         # Invalid filename, skipped.
 
-                        #my $msg = {};
-                        #$msg->{'message'}  = 'Invalid filename';
-                        #$msg->{'line'}  = $line;
-                        #$msg->{'command'}   = $command;
-                        #$msg->{'value'} = $value;
+                        my $msg = {};
+                        $msg->{'message'}  = 'Invalid filename';
+                        $msg->{'line'}  = $line;
+                        $msg->{'command'}   = $command;
+                        $msg->{'value'} = $value;
 
-                        #dump $msg;
-                        main::DEBUGLOG && $log->debug("Invalid filename: $value");
+                        dump $msg;
+                        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$msg}));
                         
                     } elsif (defined $currtrack and defined $filename){
                         
@@ -389,16 +428,19 @@ sub parse {
                                                      _removeQuotes($value));
                 }   
         }
-
         #dump $cuesheet;
         #dump $tracks;
         #dump $filename;
-
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$cuesheet}));
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$tracks}));
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$filename}));
+        
 	# Bug 5735, skip cue sheets with multiple FILE entries
 	if ( $filesSeen > 1 ) {
 		$log->warn('Skipping cuesheet with multiple FILE entries');
 		return;
 	}
+
         # Here controls on the entyre cuesheet structure, moving attributes
         # to the correct level, preventing duplicates and renaming when needed.
         #
@@ -406,47 +448,58 @@ sub parse {
             $cuesheet->{'ALBUM'} = $cuesheet->{'TITLE'};
             delete $cuesheet->{'TITLE'};
         }
+
         if (defined $cuesheet->{'PERFORMER'}){
             
             $cuesheet->{'ARTIST'} = $cuesheet->{'PERFORMER'};
             $cuesheet->{'ALBUMARTIST'} = $cuesheet->{'PERFORMER'};
             delete $cuesheet->{'PERFORMER'};
         }
+
         if (defined $cuesheet->{'SONGWRITER'}){
             
             # Songwriiter is the standard command for composer
             $cuesheet->{'COMPOSER'} = $cuesheet->{'SONGWRITER'};
             delete $cuesheet->{'SONGWRITER'};
         }
+
         if (defined $cuesheet->{'DISCNUMBER'}){
 
             if (!defined $cuesheet->{'DISC'}){
                 $cuesheet->{'DISC'} = $cuesheet->{'DISCNUMBER'};
-            }   
+            } 
+  
             delete $cuesheet->{'DISCNUMBER'};
         }
+
         if (defined $cuesheet->{'DISCTOTAL'}){
             
             if (!defined $cuesheet->{'DISCC'}){
                 $cuesheet->{'DISCC'} = $cuesheet->{'DISCTOTAL'};
             }
+
             delete $cuesheet->{'DISCTOTAL'};
         }
+
         if (defined $cuesheet->{'TOTALDISCS'}){
             
             if (!defined $cuesheet->{'DISCC'}){
                 $cuesheet->{'DISCC'} = $cuesheet->{'TOTALDISCS'};
             }
+
             delete $cuesheet->{'TOTALDISCS'};
         }
+
         if (defined $cuesheet->{'DATE'}){
 
             # EAC CUE sheet has REM DATE not REM YEAR, and no quotes	
             if (!defined $cuesheet->{'YEAR'}) {
                 $cuesheet->{'YEAR'} = $cuesheet->{'DATE'};
             }
+
             delete $cuesheet->{'DATE'};
         } 
+
         for my $key (sort {$a <=> $b} keys %$tracks) {
 
             my $track = $tracks->{$key};
@@ -457,8 +510,10 @@ sub parse {
                 if (!defined $cuesheet->{'ALBUMARTIST'}){
                     $cuesheet->{'ALBUMARTIST'} = $track->{'ALBUMARTIST'};
                 }
+
                 delete $track->{'ALBUMARTIST'};
             }
+
             if (defined $track->{'PERFORMER'}) {
 
 		$track->{'ARTIST'} = $track->{'PERFORMER'};
@@ -466,6 +521,7 @@ sub parse {
 
                 # Automatically flag a compilation album
 		# since we are setting the artist.
+
 		if (defined($cuesheet->{'ALBUMARTIST'}) && 
                     ($track->{'PERFORMER'} ne $cuesheet->{'ALBUMARTIST'})) {
                         
@@ -477,26 +533,31 @@ sub parse {
 
                 delete $track->{'PERFORMER'};
             }
+
             if (defined $track->{'SONGWRITER'}){
             
                 # Songwriiter is the standard command for composer
                 $track->{'COMPOSER'} = $track->{'SONGWRITER'};
                 delete $track->{'SONGWRITER'};
             }
+
             if (defined $track->{'CATALOG'}){
                 
                 # CATALOG is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'CATALOG'}){
                     $cuesheet->{'CATALOG'} = $track->{'CATALOG'};
                 }
+
                 delete $track->{'CATALOG'};
             }
+
             if (defined $track->{'ISRC'}){
                 
                 # ISRC is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'ISRC'}){
                     $cuesheet->{'ISRC'} = $track->{'ISRC'};
                 }
+
                 delete $track->{'ISRC'};
             }
             
@@ -506,109 +567,136 @@ sub parse {
                 if (!defined $cuesheet->{'ALBUMARTISTSORT'}){
                     $cuesheet->{'ALBUMARTISTSORT'} = $track->{'ALBUMARTISTSORT'};
                 }
+
                 delete $track->{'ALBUMARTISTSORT'};
             }
+
             if (defined $track->{'ALBUMSORT'}){
                 
                 # ALBUMSORT is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'ALBUMSORT'}){
                     $cuesheet->{'ALBUMSORT'} = $track->{'ALBUMSORT'};
                 }
+
                 delete $track->{'ALBUMSORT'};
             }
+
             if (defined $track->{'COMPILATION'}){
                 
                 # COMPILATION is valid only at ALBUM level, 1 if 1 in any trace.
                 if (!defined $cuesheet->{'COMPILATION'}){
                     $cuesheet->{'COMPILATION'} = $track->{'COMPILATION'};
                 }
+
                 delete $track->{'COMPILATION'};
             }
+
             if (defined $track->{'MUSICBRAINZ_ALBUM_ID'}){
                 
                 # MUSICBRAINZ_ALBUM_ID is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'MUSICBRAINZ_ALBUM_ID'}){
                     $cuesheet->{'MUSICBRAINZ_ALBUM_ID'} = $track->{'MUSICBRAINZ_ALBUM_ID'};
                 }
+
                 delete $track->{'MUSICBRAINZ_ALBUM_ID'};
             }
+
             if (defined $track->{'MUSICBRAINZ_ALBUMARTIST_ID'}){
                 
                 # MUSICBRAINZ_ALBUMARTIST_ID is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'MUSICBRAINZ_ALBUMARTIST_ID'}){
                     $cuesheet->{'MUSICBRAINZ_ALBUMARTIST_ID'} = $track->{'MUSICBRAINZ_ALBUMARTIST_ID'};
                 }
+
                 delete $track->{'MUSICBRAINZ_ALBUMARTIST_ID'};
             }
+
             if (defined $track->{'MUSICBRAINZ_ALBUM_TYPE'}){
                 
                 # MUSICBRAINZ_ALBUM_TYPE is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'MUSICBRAINZ_ALBUM_TYPE'}){
                     $cuesheet->{'MUSICBRAINZ_ALBUM_TYPE'} = $track->{'MUSICBRAINZ_ALBUM_TYPE'};
                 }
+
                 delete $track->{'MUSICBRAINZ_ALBUM_TYPE'};
             }
+
             if (defined $track->{'MUSICBRAINZ_ALBUM_STATUS'}){
                 
                 # MUSICBRAINZ_ALBUM_STATUS is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'MUSICBRAINZ_ALBUM_STATUS'}){
                     $cuesheet->{'MUSICBRAINZ_ALBUM_STATUS'} = $track->{'MUSICBRAINZ_ALBUM_STATUS'};
                 }
+
                 delete $track->{'MUSICBRAINZ_ALBUM_STATUS'};
             }
+
             if (defined $track->{'DISCC'}){
                 
                 # DISCC is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'DISCC'}){
                     $cuesheet->{'DISCC'} = $track->{'DISCC'};
                 }
+
                 delete $track->{'DISCC'};
             }
+
             if (defined $track->{'DISCTOTAL'}){
                 
                 # DISCC is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'DISCC'}){
                     $cuesheet->{'DISCC'} = $track->{'DISCTOTAL'};
                 }
+
                 delete $track->{'DISCTOTAL'};
             }
+
             if (defined $track->{'TOTALDISCS'}){
                 
                 # DISCC is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'DISCC'}){
                     $cuesheet->{'DISCC'} = $track->{'TOTALDISCS'};
                 }
+
                 delete $track->{'TOTALDISCS'};
             }
+
             if (defined $track->{'REPLAYGAIN_ALBUM_GAIN'}){
                 
                 # REPLAYGAIN_ALBUM_GAIN is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'REPLAYGAIN_ALBUM_GAIN'}){
                     $cuesheet->{'REPLAYGAIN_ALBUM_GAIN'} = $track->{'REPLAYGAIN_ALBUM_GAIN'};
                 }
+
                 delete $track->{'REPLAYGAIN_ALBUM_GAIN'};
             }
+
             if (defined $track->{'REPLAYGAIN_ALBUM_PEAK'}){
                 
                 # REPLAYGAIN_ALBUM_PEAK is valid only at ALBUM level, keep the first found.
                 if (!defined $cuesheet->{'REPLAYGAIN_ALBUM_PEAK'}){
                     $cuesheet->{'REPLAYGAIN_ALBUM_PEAK'} = $track->{'REPLAYGAIN_ALBUM_PEAK'};
                 }
+
                 delete $track->{'REPLAYGAIN_ALBUM_PEAK'};
             }
+
             if (defined $track->{'DATE'}){
 
                 # EAC CUE sheet has REM DATE not REM YEAR, and no quotes	
                 if (!defined $track->{'YEAR'}) {
                     $track->{'YEAR'} = $track->{'DATE'};
                 }
+
                 delete $track->{'DATE'};
             }
+
             if (defined $track->{'DISCNUMBER'}){
 
                 if (!defined $track->{'DISC'}) {
                     $track->{'DISC'} = $track->{'DISCNUMBER'};
                 }
+
                 delete $track->{'DISCNUMBER'};
             }
             
@@ -618,9 +706,13 @@ sub parse {
         # WARNING: Compilation could be false if Album Artist is not defined,
         # even if artist is not the same in all the tracks. See my note below.
         #
+
         #dump $cuesheet;
         #dump $tracks;
         #dump $filename;
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$cuesheet}));
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$tracks}));
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$filename}));
 
 	# Check to make sure that the files are actually on disk - so we don't
 	# create bogus database entries.
@@ -634,6 +726,7 @@ sub parse {
 
 			delete $tracks->{$key};
 		}
+
 	}
 
 	if (scalar keys %$tracks == 0 || (!$currtrack || $currtrack < 1 || !$filename)) {
@@ -739,14 +832,14 @@ sub parse {
 			}
 		}
 
-		# Merge in file level attributes
+                # Merge in file level attributes
                 # Removed in order to consider all the attributes at Album level.
                 #
                 # for my $attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT 
-		#	                  REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION))
+                #	                  REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION))
                 for my $attribute (keys %$cuesheet){
-            
-                    if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
+
+                if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
                         # Bug 18110 - only merge ALBUMARTIST/ARTISTSORT if the track's ALBUMARTIST/ARTIST is the same as the album's
                         next if $attribute =~ /(.*)SORT$/ && $track->{$1} ne $cuesheet->{$1};
@@ -771,9 +864,9 @@ sub parse {
 		main::DEBUGLOG && $log->debug('Invalid cue sheet detected');
 		return;
 	}
-
         #dump $tracks;
-	return $tracks;
+        main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({$tracks}));
+        return $tracks;
 }
 sub _addCommand{
         my $cuesheet        = shift;
@@ -788,61 +881,44 @@ sub _addCommand{
         } elsif (defined $currtrack and !defined $tracks->{$currtrack}->{$command}){
             $tracks->{$currtrack}->{$command} = $value;
         }
+
         return ($cuesheet,$tracks);
 }
 sub _isRemCommandAccepted {
         
         my $remCommand  = shift;
-
-        for my $attribute (@refusedRemCommands){
-
-            if ($remCommand eq $attribute){
-              
-                return 0;
-            }
-        }
-        # we don't want to accept from a REM a command to be ignored.
-        if (_isCommandToIgnore($remCommand)){
-        
+        if (defined $refusedRemCommands{$remCommand}){      
             return 0;
         }
+
+        # we don't want to accept from a REM a command to be ignored.
+        if (_isCommandToIgnore($remCommand)){
+            return 0;
+        }
+
         return 1;
 }
 sub _isCommandAccepted{
         my $command  = shift;
     
         if (!_isStandardCommand($command)){
-        
-            return 0;
+            dump "!_isStandardCommand"; return 0;
         }
+
         if (_isCommandToIgnore($command)){
-        
-            return 0;
+            dump "_isCommandToIgnore";return 0;
         }
+
         return 1;
 }
 sub _isStandardCommand{
         my $command  = shift;
-
-        for my $attribute (@standardCueCommands){
-
-            if ($command eq $attribute){
-                return 1;
-            }
-        }
-        return 0;
+        dump $command;
+        dump (defined $standardCueCommands{$command});
+        return (defined $standardCueCommands{$command});
 }
 sub _isCommandToIgnore{
-        my $command  = shift;
-
-        for my $attribute (@refusedCueCommands){
-
-            if ($command eq $attribute){
-            
-                return 1;
-            }
-        }
-        return 0;
+        return (defined $refusedCueCommands{shift});
 }
 sub _getCommandFromLine{
         my $line  = shift;
@@ -851,6 +927,7 @@ sub _getCommandFromLine{
 
             return ($1,$2);
         }
+
         return (undef,undef);
 
 }
@@ -864,23 +941,36 @@ sub _getRemCommandFromLine{
 
             return ($1,$2);
         }
+
         return (undef,undef);
 
 }
 sub _removeQuotes{
         my $line  = shift;
-
-        if ($line =~ /^\"(.*)\"/i){ #"
-            
-            return ($1);
-        }
+        
+        # the condition is not required as in case of a mismatch the $line would 
+        # not be altered. I added the question mark to make this search 
+        # non-greedy: the match would stop at the first quote.
+        
+        #if ($line =~ /^\"(.*)\"/i){ #"
+  
+        #    return ($1);
+        #}
+        
+        $line =~ s/^\"(.*?)\".*/$1/i;#"
         return $line;
 }
 sub _validateBoolean{
         my $value  = shift;
         
-        if (!defined $value){return 0;}
-        if (uc($value) =~ qw(1|YES|Y)){return 1;}
+        if (!defined $value){
+            return 0;
+        }
+
+        if (uc($value) =~ qw(1|YES|Y)){
+            return 1;
+        }
+
         return 0;
 }
 sub read {
