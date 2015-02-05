@@ -159,20 +159,20 @@ sub parse {
 			#No commads in line, skipping;
 
 			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-				message	= 'No command in line: Skipping',
-				line	= $line,
-				command = $command,
-				value	= $value
+				message	=> 'No command in line: Skipping',
+				line	=> $line,
+				command => $command,
+				value	=> $value
 			}));
 
 		} elsif (!_isCommandAccepted($command)){
 
 			#Command refused;
 			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-				message	= 'Command refused',
-				line	= $line,
-				command = $command,
-				value	= $value
+				message	=> 'Command refused',
+				line	=> $line,
+				command => $command,
+				value	=> $value
 			}));
 
 		} elsif ($command eq 'TRACK'){
@@ -212,29 +212,27 @@ sub parse {
 
 				#No commads in rem, skipping;
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'No commads in rem, skipping',
-					line		= $line,
-					command		= $command,
-					value		= $value,
-					remCommand	= $remCommand,
-					remValue	= $remValue
+					message		=> 'No commads in rem, skipping',
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
 				}));
 
 			}elsif (!_isRemCommandAccepted($remCommand)){
 
 				#Rem command refused;
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'Rem command refused',
-					inAlbum		= $inAlbum,
-					currtrack	= $currtrack,
-					line		= $line,
-					command		= $command,
-					value		= $value,
-					remCommand	= $remCommand,
-					remValue	= $remValue
+					message		=> 'Rem command refused',
+					inAlbum		=> $inAlbum,
+					currtrack	=> $currtrack,
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
 				}));
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
 
 			} elsif ($remCommand eq 'END'){
 
@@ -312,14 +310,14 @@ sub parse {
 				# handle remaning REM commans as a list of keys and values.
 
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'Rem command',
-					inAlbum		= $inAlbum,
-					currtrack	= $currtrack,
-					line		= $line,
-					command		= $command,
-					value		= $value,
-					remCommand	= $remCommand,
-					remValue	= $remValue
+					message		=> 'Rem command',
+					inAlbum		=> $inAlbum,
+					currtrack	=> $currtrack,
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
 				}));
 				
 				($cuesheet, $tracks)=_addCommand($cuesheet, 
@@ -340,12 +338,12 @@ sub parse {
 				$filesSeen++;
 				
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'filename with quotes',
-					line		= $line,
-					command		= $command,
-					value		= $value,
-					filename	= $filename,
-					returned	= $1
+					message		=> 'filename with quotes',
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					filename	=> $filename,
+					returned	=> $1
 				}));
 
 			} elsif ($inAlbum and $value =~ /^\"?(\S+)\"?/i) {
@@ -358,22 +356,22 @@ sub parse {
 				$filesSeen++;
 				
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'filename with no quotes',
-					line		= $line,
-					command		= $command,
-					value		= $value,
-					filename	= $filename,
-					returned	= $1
+					message		=> 'filename with no quotes',
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					filename	=> $filename,
+					returned	=> $1
 				}));
 
 			} elsif ($inAlbum){
 
 				# Invalid filename, skipped.
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-					message		= 'Invalid filename',
-					line		= $line,
-					command		= $command,
-					value		= $value
+					message		=> 'Invalid filename',
+					line		=> $line,
+					command		=> $command,
+					value		=> $value
 				}));
 
 			} elsif (defined $currtrack and defined $filename){
@@ -410,10 +408,10 @@ sub parse {
 		}
 	}
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-		message		= 'after line parsing',
-		cuesheet	= $cuesheet,
-		tracks		= $tracks,
-		filename	= $filename
+		message		=> 'after line parsing',
+		cuesheet	=> $cuesheet,
+		tracks		=> $tracks,
+		filename	=> $filename
 	}));
 
 	# Bug 5735, skip cue sheets with multiple FILE entries
@@ -690,10 +688,10 @@ sub parse {
 	#
 
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-		message		= 'before marge',
-		cuesheet	= $cuesheet,
-		tracks		= $tracks,
-		filename	= $filename
+		message		=> 'before marge',
+		cuesheet	=> $cuesheet,
+		tracks		=> $tracks,
+		filename	=> $filename
 	}));
 	
 	# Check to make sure that the files are actually on disk - so we don't
@@ -851,8 +849,8 @@ sub parse {
 	}
 
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
-		message		= 'end of parse',
-		tracks		= $tracks
+		message		=> 'end of parse',
+		tracks		=> $tracks
 	}));
 
 	return $tracks;
