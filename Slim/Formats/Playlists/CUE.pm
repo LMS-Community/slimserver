@@ -158,25 +158,22 @@ sub parse {
 
 			#No commads in line, skipping;
 
-			my $msg = {};
-			$msg->{'message'}	= 'No command in line: Skipping';
-			$msg->{'line'}		= $line;
-			$msg->{'command'}	= $command;
-			$msg->{'value'}		= $value;
-
-			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+				message	= 'No command in line: Skipping',
+				line	= $line,
+				command = $command,
+				value	= $value
+			}));
 
 		} elsif (!_isCommandAccepted($command)){
 
 			#Command refused;
-
-			my $msg = {};
-			$msg->{'message'}	= 'Command refused';
-			$msg->{'line'}		= $line;
-			$msg->{'command'}	= $command;
-			$msg->{'value'}		= $value;
-
-			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+				message	= 'Command refused',
+				line	= $line,
+				command = $command,
+				value	= $value
+			}));
 
 		} elsif ($command eq 'TRACK'){
 
@@ -214,30 +211,28 @@ sub parse {
 			if (!defined $remCommand or !defined $remValue){
 
 				#No commads in rem, skipping;
-
-				my $msg = {};
-				$msg->{'message'}	= 'No commads in rem, skipping';
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-				$msg->{'remCommand'}	= $remCommand;
-				$msg->{'remValue'}	= $remValue;
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'No commads in rem, skipping',
+					line		= $line,
+					command		= $command,
+					value		= $value,
+					remCommand	= $remCommand,
+					remValue	= $remValue
+				}));
 
 			}elsif (!_isRemCommandAccepted($remCommand)){
 
 				#Rem command refused;
-
-				my $msg = {};
-				$msg->{'message'}	= 'Rem command refused';
-				$msg->{'inAlbum'}	= $inAlbum;
-				$msg->{'currtrack'}	= $currtrack;
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-				$msg->{'remCommand'}	= $remCommand;
-				$msg->{'remValue'}	= $remValue;
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'Rem command refused',
+					inAlbum		= $inAlbum,
+					currtrack	= $currtrack,
+					line		= $line,
+					command		= $command,
+					value		= $value,
+					remCommand	= $remCommand,
+					remValue	= $remValue
+				}));
 
 				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
 
@@ -316,18 +311,17 @@ sub parse {
 
 				# handle remaning REM commans as a list of keys and values.
 
-				my $msg = {};
-				$msg->{'message'}	= 'REM commans';
-				$msg->{'inAlbum'}	= $inAlbum;
-				$msg->{'currtrack'}	= $currtrack;
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-				$msg->{'remCommand'}	= $remCommand;
-				$msg->{'remValue'}	= $remValue;
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
-
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'Rem command',
+					inAlbum		= $inAlbum,
+					currtrack	= $currtrack,
+					line		= $line,
+					command		= $command,
+					value		= $value,
+					remCommand	= $remCommand,
+					remValue	= $remValue
+				}));
+				
 				($cuesheet, $tracks)=_addCommand($cuesheet, 
 												 $tracks,
 												 $inAlbum,
@@ -344,16 +338,15 @@ sub parse {
 
 				# Watch out for cue sheets with multiple FILE entries
 				$filesSeen++;
-
-				my $msg = {};
-				$msg->{'message'}	= 'filename with quotes';
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-				$msg->{'filename'}	= $filename;
-				$msg->{'val'}		= $1;
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'filename with quotes',
+					line		= $line,
+					command		= $command,
+					value		= $value,
+					filename	= $filename,
+					returned	= $1
+				}));
 
 			} elsif ($inAlbum and $value =~ /^\"?(\S+)\"?/i) {
 
@@ -363,28 +356,25 @@ sub parse {
 				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 
 				$filesSeen++;
-
-				my $msg = {};
-				$msg->{'message'}	= 'filename with no quotes';
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-				$msg->{'filename'}	= $filename;
-				$msg->{'val'}		= $1;
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'filename with no quotes',
+					line		= $line,
+					command		= $command,
+					value		= $value,
+					filename	= $filename,
+					returned	= $1
+				}));
 
 			} elsif ($inAlbum){
 
 				# Invalid filename, skipped.
-
-				my $msg = {};
-				$msg->{'message'}	= 'Invalid filename';
-				$msg->{'line'}		= $line;
-				$msg->{'command'}	= $command;
-				$msg->{'value'}		= $value;
-
-				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+				main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+					message		= 'Invalid filename',
+					line		= $line,
+					command		= $command,
+					value		= $value
+				}));
 
 			} elsif (defined $currtrack and defined $filename){
 
@@ -419,12 +409,12 @@ sub parse {
 											 _removeQuotes($value));
 		}
 	}
-	my $msg = {};
-	$msg->{'message'}	= 'after line parsing';
-	$msg->{'cuesheet'}	= $cuesheet;
-	$msg->{'tracks'}		= $tracks;
-	$msg->{'filename'}	= $filename;
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+		message		= 'after line parsing',
+		cuesheet	= $cuesheet,
+		tracks		= $tracks,
+		filename	= $filename
+	}));
 
 	# Bug 5735, skip cue sheets with multiple FILE entries
 	if ( $filesSeen > 1 ) {
@@ -699,13 +689,13 @@ sub parse {
 	# even if artist is not the same in all the tracks. See my note below.
 	#
 
-	my $msg = {};
-	$msg->{'message'}	= 'before marge';
-	$msg->{'cuesheet'}	= $cuesheet;
-	$msg->{'tracks'}		= $tracks;
-	$msg->{'filename'}	= $filename;
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));
-
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+		message		= 'before marge',
+		cuesheet	= $cuesheet,
+		tracks		= $tracks,
+		filename	= $filename
+	}));
+	
 	# Check to make sure that the files are actually on disk - so we don't
 	# create bogus database entries.
 	for my $key (sort {$b <=> $a} keys %$tracks) {
@@ -860,10 +850,10 @@ sub parse {
 		return;
 	}
 
-	my $msg = {};
-	$msg->{'message'}	= 'end of parse';
-	$msg->{'tracks'}		= $tracks;
-	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));return $tracks;
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump({
+		message		= 'end of parse',
+		tracks		= $tracks
+	}));
 
 	return $tracks;
 }
@@ -876,7 +866,7 @@ sub _addCommand{
 	my $command		= shift;
 	my $value		= shift;
 
-	if ($inAlbum and !defined $cuesheet->{$command}){
+	if ($inAlbum && !defined $cuesheet->{$command}){
 		$cuesheet->{$command} = $value;
 	} elsif (defined $currtrack and !defined $tracks->{$currtrack}->{$command}){
 		$tracks->{$currtrack}->{$command} = $value;
@@ -960,16 +950,7 @@ sub _removeQuotes{
 
 sub _validateBoolean{
 	my $value	= shift;
-
-	if (!defined $value){
-		return 0;
-	}
-
-	if (uc($value) =~ qw(1|YES|Y)){
-		return 1;
-	}
-
-	return 0;
+	return $value && $value =~ /1|YES|Y/i;
 }
 
 sub read {
