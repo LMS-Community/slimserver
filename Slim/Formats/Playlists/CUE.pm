@@ -864,6 +864,8 @@ sub parse {
 	$msg->{'message'}	= 'end of parse';
 	$msg->{'tracks'}		= $tracks;
 	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($msg));return $tracks;
+
+	return $tracks;
 }
 
 sub _addCommand{
