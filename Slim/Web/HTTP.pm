@@ -53,26 +53,6 @@ use Slim::Web::JSONRPC;
 use Slim::Web::Cometd;
 use Slim::Utils::Prefs;
 
-BEGIN {
-	# Use Cookie::XS if available
-	my $hasCookieXS;
-
-	sub hasCookieXS {
-		# Bug 9830, disable Cookie::XS for now as it has a bug
-		return 0;
-		
-		return $hasCookieXS if defined $hasCookieXS;
-
-		$hasCookieXS = 0;
-		eval {
-			require Cookie::XS;
-			$hasCookieXS = 1;
-		};
-
-		return $hasCookieXS;
-	}
-}
-
 use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
 use constant METADATAINTERVAL => 32768;
@@ -518,22 +498,7 @@ sub processHTTP {
 		# Dont' process cookies for graphics
 		if ($path && $path !~ m/(gif|png)$/i) {
 			if ( my $cookie = $request->header('Cookie') ) {
-				if ( hasCookieXS() ) {
-					# Parsing cookies this way is about 8x faster than using CGI::Cookie directly
-					my $cookies = Cookie::XS->parse($cookie);
-					$params->{'cookies'} = {
-						map {
-							$_ => bless {
-								name  => $_,
-								path  => '/',
-								value => $cookies->{ $_ },
-							}, 'CGI::Cookie';
-						} keys %{ $cookies }
-					};
-				}
-				else {
-					$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
-				}
+				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
 			}
 		}
 		
@@ -1012,13 +977,15 @@ sub generateHTTPResponse {
 		$params->{'player'} = $client->id();
 		$params->{'myClientState'} = $client;
 		
-		# save the player id in a cookie
-		my $cookie = CGI::Cookie->new(
-			-name    => 'Squeezebox-player',
-			-value   => $params->{'player'},
-			-expires => '+1y',
-		);
-		$response->headers->push_header( 'Set-Cookie' => $cookie );
+		if ( $path !~ m{(?:^progress\.|settings/)} ) {
+			# save the player id in a cookie
+			my $cookie = CGI::Cookie->new(
+				-name    => 'Squeezebox-player',
+				-value   => $params->{'player'},
+				-expires => '+1y',
+			);
+			$response->headers->push_header( 'Set-Cookie' => $cookie );
+		}
 	}
 
 	# this might do well to break up into methods
@@ -1073,7 +1040,11 @@ sub generateHTTPResponse {
 	if ( $isStatic ) {
 		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
 
-		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+		if ( !($mtime || $inode || $size || $body) ) {
+			$response->code(RC_NOT_FOUND);
+			$body = filltemplatefile('html/errors/404.html', $params);
+		}
+		elsif (contentHasBeenModified($response, $mtime, $inode, $size)) {
 
 			$params->{contentAsFh} = 1;
 

@@ -107,7 +107,7 @@ sub loadTagFormatForType {
 	eval "use $tagClasses{$type}";
 	
 	if ( $@ ) {
-		logBacktrace("Couldn't load module: $tagClasses{$type} : [$@]");
+		logBacktrace("Couldn't load module: $tagClasses{$type} ($type) : [$@]");
 		return 0;
 	}
 	

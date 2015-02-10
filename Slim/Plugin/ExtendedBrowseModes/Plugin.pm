@@ -89,11 +89,22 @@ sub handleFeed {
 	my @items;
 	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
 	
+	my $currentLibrary = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	
+	my $bullet = "\x{2022} ";
+
 	while (my ($k, $v) = each %$libraries) {
-		my $count = Slim::Music::VirtualLibraries->getTrackCount($k);
+		my $count = Slim::Utils::Misc::delimitThousands(Slim::Music::VirtualLibraries->getTrackCount($k));
+	
+		my $libraryPrefix = '';
+		if ($currentLibrary eq $k) {
+			$libraryPrefix = $bullet;
+			$currentLibrary = '';
+		}
 		
 		push @items, {
-			name => $v->{name} . sprintf(" ($count %s)", cstring($client, 'SONGS')),
+			name => $libraryPrefix . $v->{name} . sprintf(" ($count %s)", cstring($client, 'SONGS')),
+			sortName => $v->{name},
 			type => 'outline',
 			items => [{
 				name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_USE_X', $v->{name}),
@@ -113,11 +124,11 @@ sub handleFeed {
 		};
 	}
 	
-	@items = sort { $a->{name} cmp $b->{name} } @items;
+	@items = sort { $a->{sortName} cmp $b->{sortName} } @items;
 
 	# hard-coded item to reset the library view
 	push @items, {
-		name => cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
+		name => ($currentLibrary ? "\x{2022} " : '') . cstring($client, 'PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY'),
 		url  => \&setLibrary,
 		passthrough => [{
 			library_id => 0,

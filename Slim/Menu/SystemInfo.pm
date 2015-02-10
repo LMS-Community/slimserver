@@ -208,7 +208,7 @@ sub infoLibrary {
 		} 
 	}
 	
-	my $totals = Slim::Schema->totals($client);
+	my $totals = Slim::Schema->totals();
 	
 	my $items = {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
@@ -376,6 +376,7 @@ sub infoDirs {
 		{ INFORMATION_PREFSDIR   => Slim::Utils::Prefs::dir() },
 		# don't display SC's own plugin folder - the user shouldn't care about it
 		{ INFORMATION_PLUGINDIRS => join(", ", grep {$_ !~ m|Slim/Plugin|} Slim::Utils::OSDetect::dirsFor('Plugins')) },
+		{ INFORMATION_BINDIRS => join(", ", Slim::Utils::Misc::getBinPaths()) },
 	];
 	
 	my $item = {

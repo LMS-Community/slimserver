@@ -425,7 +425,7 @@ sub _initModes {
 	}
 }
 
-my $jiveUpdateCallback = undef;
+my $jiveUpdateCallback = \&Slim::Control::Jive::libraryChanged;
 
 sub _libraryChanged {
 	if ($jiveUpdateCallback) {
@@ -857,6 +857,13 @@ sub _generic {
 		# find where our index starts and then where it needs to end
 		if ($indexList = $request->getResult('indexList')) {
 			my $total = 0;
+
+			map { $total += $_->[1] } @$indexList;
+			
+			# don't browse beyond the end
+			$index = 0 if $total <= $index;
+			$total = 0;
+			
 			foreach (@$indexList) {
 				$total += $_->[1];
 				if ($total >= $index + $quantity) {
@@ -1699,12 +1706,15 @@ sub _tracks {
 				}
 			}
 			
+			my $params = _tagsToParams(\@searchTags);
+
 			my %actions = (
 				commonVariables	=> [track_id => 'id'],
 				allAvailableActionsDefined => 1,
 				
 				info => {
 					command     => ['trackinfo', 'items'],
+					fixedParams => $params,
 				},
 				play => {
 					command     => ['playlistcontrol'],
@@ -1797,7 +1807,7 @@ sub _tracks {
 				my ($albumId) = grep {/album_id:/} @searchTags;
 				$albumId =~ s/album_id:// if $albumId;
 				my $album = Slim::Schema->find( Album => $albumId );
-				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef ) if $album;
+				my $feed  = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, undef, { library_id => $library_id } ) if $album;
 				$albumMetadata = $feed->{'items'} if $feed;
 				
 				$image = 'music/' . $album->artwork . '/cover' if $album && $album->artwork;
@@ -1870,6 +1880,15 @@ sub _bmf {
 						$_->{'artwork_track_id'} = $_->{'coverid'};
 						$cover ||= $_->{'image'};
 					}
+				} 
+				elsif ($_->{'type'} eq 'playlist' && Slim::Music::Info::isCUE($_->{'url'})) {
+					$_->{'favorites_url'} =	$_->{'url'};
+					$_->{'playlist'}	  = \&_playlistTracks;
+					$_->{'url'}           = \&_playlistTracks;
+					$_->{'passthrough'}   = [ { 
+						searchTags => [ "playlist_id:" . $_->{'id'} ],
+						noEdit     => 1, 
+					} ];					
 				}
 				# Cannot do anything useful with a playlist in BMF
 #				elsif ($_->{'type'} eq 'playlist') {
@@ -1955,6 +1974,8 @@ sub _playlistTracks {
 	my $menuStyle  = $pt->{'menuStyle'} || 'menuStyle:album';
 	my $offset     = $args->{'index'} || 0;
 	
+	my $noEdit     = delete $pt->{noEdit} if defined $pt->{noEdit};
+	
 	_generic($client, $callback, $args, ['playlists', 'tracks'], 
 		['tags:dtuxgaliqykorfcJK', $menuStyle, @searchTags],
 		sub {
@@ -2010,8 +2031,9 @@ sub _playlistTracks {
 				items       => $items,
 				actions     => \%actions,
 				sorted      => 0,
-				playlist_id => (&_tagsToParams(\@searchTags))->{'playlist_id'},
 			);
+			
+			$hash{'playlist_id'}   = (&_tagsToParams(\@searchTags))->{'playlist_id'} unless $noEdit;
 			$hash{'playlistTitle'} = $results->{'__playlistTitle'} if defined $results->{'__playlistTitle'};
 
 			return \%hash, undef;

@@ -11,10 +11,7 @@ package Slim::Formats::Playlists::CUE;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
-use Audio::Scan;
 use File::Slurp;
-use File::Spec::Functions qw(catdir);
-use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::Log;
@@ -24,6 +21,73 @@ use Slim::Utils::Unicode;
 
 my $log = logger('formats.playlists');
 my $prefs = preferences('server');
+
+#List of the standard cuesheet commands.
+# see http://en.wikipedia.org/wiki/Cue_sheet_%28computing%29
+#     http://wiki.hydrogenaud.io/index.php?title=Cue_sheet
+#
+# here as an alternate source of CDRWIN help: 
+# http://digitalx.org/cue-sheet/syntax/
+
+my %standardCueCommands = (
+	CATALOG    => 1,
+	CDTEXTFILE => 1,
+	FILE       => 1,
+	FLAGS      => 1,
+	INDEX      => 1,
+	ISRC       => 1,
+	PERFORMER  => 1,
+	POSTGAP    => 1,
+	PREGAP     => 1,
+	REM        => 1,
+	SONGWRITER => 1,
+	TITLE      => 1,
+	TRACK      => 1
+);
+
+# List of valid commands we want to ignore.
+# PREGAP is calulated when INDEX = 00 (not sure is correct, but it does'nt hurt). 
+# POSTGAP FLAGS CDTEXTFILE are just ignored by slimserver.
+
+my %refusedCueCommands = (
+	CDTEXTFILE => 1,
+	FLAGS      => 1,
+	PREGAP     => 1,
+	POSTGAP    => 1
+);
+
+# List of rem commands or INFO we must get from standard commands or
+# reading info from audiofile. Kind of 'reserved' words.
+#
+# refused commands (see above) dont need to be inclued here.
+# Standard accepted commands are accepted also if issued as REM commands
+# this is questionable, but does not hurt (the first found is stored).
+
+my %refusedRemCommands = (
+	ALBUM        => 1,
+	AUDIO        => 1,
+	CONTENT_TYPE => 1,
+	DRM          => 1,
+	FILE         => 1,
+	FILENAME     => 1,
+	FILESIZE     => 1,
+	INDEX        => 1,
+	LOSSLESS     => 1,
+	OFFSET       => 1,
+	SECS         => 1,
+	SIZE         => 1,
+	START        => 1,
+	TIMESTAMP    => 1,
+	TITLESORT    => 1,
+	TRACK        => 1,
+	URI          => 1,
+	VIRTUAL      => 1
+);
+
+# the following values are only valid at the album level
+my @albumOnlyCommands = qw(ALBUMARTIST ALBUMARTISTSORT ALBUMSORT COMPILATION DISCC CATALOG ISRC 
+							MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS 
+							REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK);
 
 # This now just processes the cuesheet into tags. The calling process is
 # responsible for adding the tracks into the datastore.
@@ -50,6 +114,7 @@ sub parse {
 	# Bug 11289, strip BOM from first line
 	$lines->[0] = Slim::Utils::Unicode::stripBOM($lines->[0]);
 
+	my $inAlbum = 1;
 	for my $line (@$lines) {
 
 		my $enc = Slim::Utils::Unicode::encodingFromString($line);
@@ -60,144 +125,346 @@ sub parse {
 		# strip whitespace from end
 		$line =~ s/\s*$//;
 
-		if ($line =~ /^TITLE\s+\"(.*)\"/i) {
+		# Most of the test were trusting on the absence of leading spaces
+		# to determinate if the command was related to ALBUM or TRACK.
+		# According with CUE SHEET specification, this is not enought:
+		# Spaces or tabs can be used to indent; they're ignored but can 
+		# make the file easier to understand when viewing or manually editing
+		# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
+		#
+		# $currtrack was used to relate Commands to a specific Track or 
+		# to Album if not defined, but if a Non Audio Track was encountered, 
+		# subseguent commands were applied to the previous track.
+		# 
+		# $inAlbum variable was introduced: is turned on before the loop start
+		# and turned off when the first TRACK command is encountered.
+		#
+		# $currentTrack is setted when a TRACK command with AUDIO is encountered.
+		# if the TRACK command is not related to AUDIO, then $currentTrack is cleared.
+		#
+		# This way, any command issued after a NON AUDIO TRACK and before a valid
+		# AUDIO TRACK is skipped, also if the NON AUDIO track is the first one,
+		# instead of storing them as album / previous Track related as before.
+		#
+		# All checks on values that imply a lookup to other has been delayed at the
+		# step after the line loop. 
+		#
+		# Here some basic validation check on single commands when:
+		# 1. relative position has a meaning (i.e TRACK, INDEX, REM END, FILE)
+		# 2. special syntax validation is needed (i.e. REPLAYGAIN, COMPILATION).
+		#
+		# Most of what was done here before has been moved after the line loop.
+		# 
+		my ($command, $value);
 
-			if (defined $currtrack) {
+		if ($line =~ /^\s*(\S+)\s+(.*)/i) {
+			$command = $1;
+			$value   = $2;
+		}
 
-				$tracks->{$currtrack}->{'TITLE'} = $1;
+		if (!defined $command || !defined $value) {
+
+			#No commads in line, skipping;
+
+			main::DEBUGLOG && $log->is_debug && $log->debug('No command in line: Skipping ' . Data::Dump::dump({
+				line	=> $line,
+				command => $command,
+				value	=> $value
+			}));
+
+		} elsif (!$standardCueCommands{$command} || $refusedCueCommands{$command}) {
+
+			#Command refused;
+			main::DEBUGLOG && $log->is_debug && $log->debug('Command refused ' . Data::Dump::dump({
+				line	=> $line,
+				command => $command,
+				value	=> $value
+			}));
+
+		} elsif ($command eq 'TRACK') {
+
+			$inAlbum = 0;
+
+			#Skipping non audio tracks.
+			if ($value =~ /^(\d+)\s+AUDIO/i) {
+
+				$currtrack = int($1);
+
+			} elsif ($value =~ /^(\d+)\s+.*/i) {
+
+				$currtrack = undef;
+			}
+
+		} elsif ($command eq 'INDEX') {
+
+			if (!defined $currtrack) {
+				#Ignored
+				main::DEBUGLOG && $log->debug("Index found for missing Track");
+
+			} elsif ($value =~ /^00\s+(\d+):(\d+):(\d+)/i) {
+
+				$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
+
+			} elsif ($value =~ /^01\s+(\d+):(\d+):(\d+)/i) {
+
+				$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
+			}
+
+		} elsif ($command eq 'REM') {
+
+			my ($remCommand, $remValue);
+	
+			if ($value =~ /^\"(.*)\"/i) {
+				$remValue = $1;
+			} 
+			elsif ($value =~ /^\s*(\S+)\s+(.*)/i) {
+				$remCommand = $1;
+				$remValue   = $2;
+			}
+
+			if (!defined $remCommand || !defined $remValue) {
+
+				#No commads in rem, skipping;
+				main::DEBUGLOG && $log->is_debug && $log->debug('No commads in rem, skipping ' . Data::Dump::dump({
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
+				}));
+
+			} elsif ($refusedRemCommands{$remCommand} || $refusedCueCommands{$remCommand}) {
+
+				#Rem command refused;
+				main::DEBUGLOG && $log->is_debug && $log->debug('Rem command refused ' . Data::Dump::dump({
+					inAlbum		=> $inAlbum,
+					currtrack	=> $currtrack,
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
+				}));
+
+			} elsif ($remCommand eq 'END') {
+
+				if (!defined $currtrack) {
+					#Ignored
+					main::DEBUGLOG && $log->debug("End found for missing Track");
+
+				} elsif ($remValue =~ /^(\d+):(\d+):(\d+)/i) {
+
+					$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
+
+				} elsif ($remValue =~ /^(.+)/i) {
+
+					# Bug 11950, pass absolute end time in seconds (FLAC), since some loss of accuracy would
+					# occur if passing in MM:SS:FF format			
+					$tracks->{$currtrack}->{'END'} = $1;
+				}
+
+			} elsif ($remCommand eq 'REPLAYGAIN_ALBUM_GAIN' || $remCommand eq 'REPLAYGAIN_TRACK_GAIN') {
+
+				if ($remValue =~ /^\"?(.*)dB/i) {
+
+					($cuesheet, $tracks) = _addCommand($cuesheet, 
+													 $tracks,
+													 $inAlbum,
+													 $currtrack,
+													 $remCommand,
+													 $1);
+				} 
+
+			} elsif ($remCommand eq 'COMPILATION') {
+
+				if ($remValue && $remValue =~ /1|YES|Y/i) {
+
+					($cuesheet, $tracks) = _addCommand($cuesheet, 
+													 $tracks,
+													 $inAlbum,
+													 $currtrack,
+													 $remCommand,
+													 '1');
+				}
 
 			} else {
 
-				$cuesheet->{'ALBUM'} = $1;
+				# handle remaning REM commans as a list of keys and values.
+
+				main::DEBUGLOG && $log->is_debug && $log->debug('Rem command ' . Data::Dump::dump({
+					inAlbum		=> $inAlbum,
+					currtrack	=> $currtrack,
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					remCommand	=> $remCommand,
+					remValue	=> $remValue
+				}));
+				
+				($cuesheet, $tracks) = _addCommand($cuesheet, 
+												 $tracks,
+												 $inAlbum,
+												 $currtrack,
+												 $remCommand,
+												 _removeQuotes($remValue));
 			}
 
-		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
+		} elsif ($command eq 'FILE') {
 
-			$cuesheet->{'ARTIST'} = $1;
-			$cuesheet->{'ALBUMARTIST'} = $1;
+			if ($inAlbum && $value =~ /^\"(.*)\"/i) {
+				$filename = $embedded || $1;
+				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+
+				# Watch out for cue sheets with multiple FILE entries
+				$filesSeen++;
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug('Filename with quotes ' . Data::Dump::dump({
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					filename	=> $filename,
+					returned	=> $1
+				}));
+
+			} elsif ($inAlbum && $value =~ /^\"?(\S+)\"?/i) {
+
+				# Some cue sheets may not have quotes. Allow that, but
+				# the filenames can't have any spaces in them."
+				$filename = $embedded || $1;
+				$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+
+				$filesSeen++;
+				
+				main::DEBUGLOG && $log->is_debug && $log->debug('Filename with no quotes ' . Data::Dump::dump({
+					line		=> $line,
+					command		=> $command,
+					value		=> $value,
+					filename	=> $filename,
+					returned	=> $1
+				}));
+
+			} elsif ($inAlbum) {
+
+				# Invalid filename, skipped.
+				main::DEBUGLOG && $log->is_debug && $log->debug('Invalid filename ' . Data::Dump::dump({
+					line		=> $line,
+					command		=> $command,
+					value		=> $value
+				}));
+
+			} elsif (defined $currtrack && defined $filename) {
+
+				# Better remove this point.
+				# To me it doesn't do what its was meant to do.
+				#
+				# In any case it will not take effect due to 
+				# the patch below marked : 
+				#
+				# Bug 5735, skip cue sheets with multiple FILE entries.
+				# 
+				# Here original comments:
+				#
+				# Each track in a cue sheet can have a different
+				# filename. See Bug 2126 &
+				# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
 			
-		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|COMMENT|ARTISTSORT|ALBUMARTISTSORT|ALBUMSORT|COMPILATION)\s+\"(.*)\"/i) {
-
-			$cuesheet->{uc($1)} = $2;
-
-		} elsif ($line =~ /^(?:REM\s+)?(?:DISC|DISCNUMBER)\s+\"?([^\"]+)\"?/i) {
-
-			# Some Cue sheets may not bother with quotes around a number
-			$cuesheet->{'DISC'} = $1;
-
-		} elsif ($line =~ /^(?:REM\s+)?(?:DISCC|DISCTOTAL|TOTALDISCS)\s+\"?([^\"]+)\"?/i) {
-
-			# Some Cue sheets may not bother with quotes around a number
-			$cuesheet->{'DISCC'} = $1;
-
-		} elsif ($line =~ /^(?:REM\s+)?(DATE)\s+(.*)/i) {
-
-			# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
-			$cuesheet->{'YEAR'} = $2;
-
-		} elsif ($line =~ /^(?:REM\s+)?(GENRE)\s+(.*)/i) {
-
-			# Single worded GENRE doesn't have quotes
-			$cuesheet->{uc($1)} = $2;
-
-		} elsif ($line =~ /^(?:REM\s+)?(REPLAYGAIN_ALBUM_GAIN)\s+(.*)dB/i) {
-
-			$cuesheet->{uc($1)} = $2;
-
-		} elsif ($line =~ /^(?:REM\s+)?(REPLAYGAIN_ALBUM_PEAK)\s+(.*)/i) {
-
-			$cuesheet->{uc($1)} = $2;
-
-		} elsif ($line =~ /^FILE\s+\"(.*)\"/i) {
-
-			$filename = $embedded || $1;
-			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+				$tracks->{$currtrack}->{'FILENAME'} = $filename;
+			} 
 			
-			# Watch out for cue sheets with multiple FILE entries
-			$filesSeen++;
-
-		} elsif ($line =~ /^FILE\s+\"?(\S+)\"?/i) {
-
-			# Some cue sheets may not have quotes. Allow that, but
-			# the filenames can't have any spaces in them.
-			$filename = $embedded || $1;
-			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
-			
-			$filesSeen++;
-
-		} elsif ($line =~ /^\s*TRACK\s+(\d+)\s+AUDIO/i) {
-
-			$currtrack = int($1);
-
-		} elsif (defined $currtrack and $line =~ /^\s*PERFORMER\s+\"(.*)\"/i) {
-
-			$tracks->{$currtrack}->{'ARTIST'} = $1;
-
-			# Automatically flag a compilation album (if it hasn't been already)
-			# since we are setting the album artist.
-			if (defined($cuesheet->{'ALBUMARTIST'}) && ($1 ne $cuesheet->{'ALBUMARTIST'})) {
-				$cuesheet->{'COMPILATION'} = '1' if not defined($cuesheet->{'COMPILATION'});
-			}
-
-		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_GAIN\s+(.*)dB/i) {
-
-			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_GAIN'} = $1;
-
-		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_PEAK\s+(.*)/i) {
-
-			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_PEAK'} = $1;
-			
-		} elsif (defined $currtrack and
-
-			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
-
-			$tracks->{$currtrack}->{uc $1} = $2;
-
-		} elsif (defined $currtrack and
-
-			$line =~ /^(?:\s+REM )?\s*(?:DISC|DISCNUMBER)\s+\"?([^\"]+)\"?/i) {
-
-			# Some Cue sheets may not bother with quotes around a number
-			$tracks->{$currtrack}->{'DISC'} = $1;
-
-		} elsif (defined $currtrack and
-
-			$line =~ /^(?:\s+REM )?\s*(?:DISCC|DISCTOTAL|TOTALDISCS)\s+\"?([^\"]+)\"?/i) {
-
-			# Some Cue sheets may not bother with quotes around a number
-			$tracks->{$currtrack}->{'DISCC'} = $1;
-
-		} elsif (defined $currtrack and $line =~ /^\s*INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
-
-			$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
-
-		} elsif (defined $currtrack and $line =~ /^\s*INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
-
-			$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
-
-		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
-
-			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
-		
-		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(.+)/i) {
-			# Bug 11950, pass absolute end time in seconds (FLAC), since some loss of accuracy would
-			# occur if passing in MM:SS:FF format			
-			$tracks->{$currtrack}->{'END'} = $1;
-
-		} elsif (defined $currtrack and defined $filename) {
-			# Each track in a cue sheet can have a different
-			# filename. See Bug 2126 &
+			# TODO: Correctly Handle Multiple file cue sheet.
 			# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
-			$tracks->{$currtrack}->{'FILENAME'} = $filename;
+
+		} else {
+
+			# handle remaning Commands as a list of keys and values.
+			($cuesheet, $tracks) = _addCommand($cuesheet, 
+											 $tracks,
+											 $inAlbum,
+											 $currtrack,
+											 $command,
+											 _removeQuotes($value));
 		}
 	}
 	
+	main::DEBUGLOG && $log->is_debug && $log->debug('After line parsing ' . Data::Dump::dump({
+		cuesheet	=> $cuesheet,
+		tracks		=> $tracks,
+		filename	=> $filename
+	}));
+
 	# Bug 5735, skip cue sheets with multiple FILE entries
 	if ( $filesSeen > 1 ) {
 		$log->warn('Skipping cuesheet with multiple FILE entries');
 		return;
 	}
 
+	# Here controls on the entire cuesheet structure, moving attributes
+	# to the correct level, preventing duplicates and renaming when needed.
+
+	_mergeCommand('TITLE', 'ALBUM', $cuesheet, $cuesheet);
+	
+	_mergeCommand('PERFORMER', 'ALBUMARTIST', $cuesheet, $cuesheet);
+	$cuesheet->{'ARTIST'} = $cuesheet->{'ALBUMARTIST'} if !defined $cuesheet->{'ARTIST'};
+
+	# Songwriter is the standard command for composer
+	_mergeCommand('SONGWRITER', 'COMPOSER', $cuesheet, $cuesheet);
+
+	_mergeCommand('DISCNUMBER', 'DISC', $cuesheet, $cuesheet);
+	_mergeCommand('DISCTOTAL', 'DISCC', $cuesheet, $cuesheet);
+	_mergeCommand('TOTALDISCS', 'DISCC', $cuesheet, $cuesheet);
+	
+	# EAC CUE sheet has REM DATE not REM YEAR, and no quotes	
+	_mergeCommand('DATE', 'YEAR', $cuesheet, $cuesheet);
+
+	for my $key (sort {$a <=> $b} keys %$tracks) {
+
+		my $track = $tracks->{$key};
+		
+		# some values are only valid at the album level, keep the first found.
+		foreach ( @albumOnlyCommands ) {
+			_mergeCommand($_, $_, $track, $cuesheet);
+		}
+
+		my $performer = delete $track->{'PERFORMER'};
+		if (defined $performer) {
+
+			$track->{'ARTIST'}      = $performer;
+			$track->{'TRACKARTIST'} = $performer;
+
+			# Automatically flag a compilation album
+			# since we are setting the artist.
+
+			if (defined($cuesheet->{'ALBUMARTIST'}) && $cuesheet->{'ALBUMARTIST'} ne $performer) {
+				$cuesheet->{'COMPILATION'} = '1';
+				# Deleted the condition on 'defined', it could be defined
+				# but equal NO, N, 0,... or what else.
+				# we want it to be = 1 in this case.
+			}
+		}
+
+		# Songwriter is the standard command for composer
+		_mergeCommand('SONGWRITER', 'COMPOSER', $track, $track);
+
+		_mergeCommand('DISCTOTAL', 'DISCC', $track, $cuesheet);
+		_mergeCommand('TOTALDISCS', 'DISCC', $track, $cuesheet);
+
+		# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
+		_mergeCommand('DATE', 'YEAR', $track, $track);
+
+		_mergeCommand('DISCNUMBER', 'DISC', $track, $track);
+	}
+
+	#
+	# WARNING: Compilation could be false if Album Artist is not defined,
+	# even if artist is not the same in all the tracks. See my note below.
+	#
+
+	main::DEBUGLOG && $log->is_debug && $log->debug('Before merging ' . Data::Dump::dump({
+		cuesheet	=> $cuesheet,
+		tracks		=> $tracks,
+		filename	=> $filename
+	}));
+	
 	# Check to make sure that the files are actually on disk - so we don't
 	# create bogus database entries.
 	for my $key (sort {$b <=> $a} keys %$tracks) {
@@ -233,8 +500,10 @@ sub parse {
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
-		for my $file_attribute ( qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS 
-			                        REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $file_attribute ( qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR  
+							GENRE DISC DISCNUMBER DISCC DISCTOTAL TOTALDISCS 
+							REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK 
+							ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION)) {
 
 			my $attribute = $file_attribute;
 			if ($file_attribute eq 'DISCNUMBER') {
@@ -253,7 +522,14 @@ sub parse {
 			}
 		}
 	}
-
+	# WARNING: 
+	# if the Album artist was not defined in cue sheet, Compilation could be 
+	# false, even if all the tracks are from different artists and Abum artist 
+	# was defined in Audio file. 
+	#
+	# Lived untouched, sounds like an error to me, but different people 
+	# use compilation with different meaning, so better stay as it was before.
+	#
 	if (!$lastpos) {
 
 		logError("Couldn't get duration of $filename");
@@ -296,20 +572,19 @@ sub parse {
 
 		$track->{'TRACKNUM'} = $key;
 
-		main::DEBUGLOG && $log->debug("    TRACKNUM: $track->{'TRACKNUM'}");
-
-		for my $attribute (Slim::Schema::Contributor->contributorRoles,
-			qw(TITLE ALBUM YEAR GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
-
-			if (exists $track->{$attribute}) {
-
-				main::DEBUGLOG && $log->debug("    $attribute: $track->{$attribute}");
+		# This loop is just for debugging purpose...
+		if (main::DEBUGLOG && $log->is_debug) {
+			for my $attribute ('TRACKNUM', Slim::Schema::Contributor->contributorRoles,
+				qw(TITLE ALBUM YEAR GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
+	
+				if (exists $track->{$attribute}) {
+					$log->debug("    $attribute: $track->{$attribute}");
+				}
 			}
 		}
 
 		# Merge in file level attributes
-		for my $attribute (qw(CONTENT_TYPE ALBUMARTIST ARTIST ALBUM YEAR GENRE DISC DISCC COMMENT 
-			                  REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK ARTISTSORT ALBUMARTISTSORT ALBUMSORT COMPILATION)) {
+		for my $attribute (keys %$cuesheet) {
 
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 					
@@ -337,7 +612,44 @@ sub parse {
 		return;
 	}
 
+	main::DEBUGLOG && $log->is_debug && $log->debug('End of CUE sheet parsing ' . Data::Dump::dump($tracks));
+
 	return $tracks;
+}
+
+sub _addCommand {
+	my $cuesheet	= shift;
+	my $tracks		= shift;
+	my $inAlbum		= shift;
+	my $currtrack	= shift;
+	my $command		= shift;
+	my $value		= shift;
+
+	if ($inAlbum && !defined $cuesheet->{$command}) {
+		$cuesheet->{$command} = $value;
+	} elsif (defined $currtrack && !defined $tracks->{$currtrack}->{$command}) {
+		$tracks->{$currtrack}->{$command} = $value;
+	}
+
+	return ($cuesheet,$tracks);
+}
+
+# little helper method to merge alternative command names
+sub _mergeCommand {
+	my ($oldCommand, $newCommand, $oldContext, $newContext) = @_;
+	
+	my $value = delete $oldContext->{$oldCommand};
+	
+	if (defined $value && !defined $newContext->{$newCommand}) {
+		$newContext->{$newCommand} = $value;
+	}
+}
+
+sub _removeQuotes {
+	my $line	= shift;
+
+	$line =~ s/^\"(.*?)\".*/$1/i;
+	return $line;
 }
 
 sub read {
@@ -479,6 +791,8 @@ sub processAnchor {
 			$attributesHash->{'OFFSET'} = $header;
 			
 			if ( $ct eq 'mp3' && $attributesHash->{LAYER_ID} == 1 ) { # LAYER_ID 1 == mp3
+				require Audio::Scan;
+				
 				# MP3 only - We need to skip past the LAME header so the first chunk
 				# doesn't get truncated by the firmware thinking it needs to remove encoder padding
 				seek $fh, 0, 0;
@@ -492,12 +806,13 @@ sub processAnchor {
 					# Pre-scan the file with MP3::Cut::Gapless to create frame data cache file
 					# that will be used during playback
 					require MP3::Cut::Gapless;
+					require File::Spec::Functions;
 				
 					main::INFOLOG && $log->is_info && $log->info("Pre-caching MP3 gapless split data for $path");
 				
 					MP3::Cut::Gapless->new(
 						file      => $path,
-						cache_dir => catdir( $prefs->get('librarycachedir'), 'mp3cut' ),
+						cache_dir => File::Spec::Functions::catdir( $prefs->get('librarycachedir'), 'mp3cut' ),
 					);
 				};
 				if ($@) {

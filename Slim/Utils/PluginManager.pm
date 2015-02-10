@@ -344,6 +344,9 @@ sub load {
 					unshift @paths, catdir($binDir, $arch);
 				}
 			}
+			elsif ( $binArch && $binArch eq 'armhf-linux' ) {
+				push @paths, catdir($binDir, 'arm-linux');
+			}
 
 			Slim::Utils::Misc::addFindBinPaths( @paths );
 		}

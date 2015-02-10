@@ -38,6 +38,7 @@ BEGIN {
 		hasDigitalOut
 		hasPreAmp
 		hasDisableDac
+		hasPolarityInversion
 		spDirectHandlers
 		proxyAddress
 	));
@@ -60,6 +61,7 @@ sub new {
 		hasDigitalOut           => 0,
 		hasPreAmp               => 0,
 		hasDisableDac           => 0,
+		hasPolarityInversion    => 0,
 		spDirectHandlers        => undef,
 		proxyAddress            => undef,
 	);
@@ -80,6 +82,7 @@ my %CapabilitiesMap = (
 	HasDigitalOut           => 'hasDigitalOut',
 	HasPreAmp               => 'hasPreAmp',
 	HasDisableDac           => 'hasDisableDac',
+	HasPolarityInversion    => 'hasPolarityInversion',
 	SyncgroupID             => undef,
 	Spdirect                => 'spDirectHandlers',
 	Proxy                   => 'proxyAddress',

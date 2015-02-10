@@ -209,6 +209,7 @@ sub _prepareDbItems {
 				Album       => [ 'album_id', \&Slim::Menu::BrowseLibrary::_tracks, {
 					wantMetadata => 1,
 					wantIndex    => 1,
+					library_id   => -1,
 				} ],
 				Contributor => [ 'artist_id', \&Slim::Menu::BrowseLibrary::_albums ],
 				Genre       => [ 'genre_id', sub {
@@ -220,7 +221,7 @@ sub _prepareDbItems {
 			
 			if ( $dbBrowseModes->{$class} ) {
 				$item->{'type'} = 'playlist';
-				$item->{'play'} = $item->{'url'};
+				$item->{'play'} = $item->{'url'} . '&libraryTracks.library=-1';
 				$item->{'url'}  = \&_dbItem;
 				$item->{'passthrough'} = [{
 					class => $class,
@@ -253,7 +254,7 @@ sub _dbItem {
 		my $obj = Slim::Schema->single( ucfirst($class), { $key => $value } );
 	
 		if ($obj && $obj->id) {
-			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id ];
+			$pt->{'searchTags'} = [ $dbBrowseMode->[0] . ':' . $obj->id, 'library_id:-1' ];
 			
 			while ( my ($k, $v) = each %{ $dbBrowseMode->[2] || {} } ) {
 				$pt->{$k} = $v

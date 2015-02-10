@@ -501,30 +501,6 @@ sub displayAsHTML {
 		my @info;
 
 		while ($contributor_sth->fetch) {
-=pod
-XXX - I'm pretty sure we don't need the album object in our skins any more. Replace with faster SQL.
-			my $contributor = $contributorCache{$contributorId};
-			
-			if (!$contributor) {
-				$contributor = {};
-				$contributor->{obj} = Slim::Schema->find('Contributor', $contributorId);
-				
-				$contributor->{data} = {
-					'artistId'   => $contributorId,
-					'name'       => $contributor->{obj}->name,
-					'attributes' => 'contributor.id=' . $contributorId,
-				};
-
-				$contributorCache{$contributorId} = $contributor;
-			};
-
-			if (!$form->{'artist'}) {
-				$form->{'includeArtist'} = 1;
-				$form->{'artist'} = $contributor->{obj};
-			}
-
-#			push @info, $contributor->{data};
-=cut
 
 			utf8::decode($contributorName);
 

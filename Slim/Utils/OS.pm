@@ -74,8 +74,16 @@ sub initSearchPath {
 	my $binArch = $class->{osDetails}->{'binArch'} = $Config::Config{'archname'};
 	$class->{osDetails}->{'binArch'} =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
 	
-	# Reduce ARM to arm-linux
-	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
+	# Reduce ARM to arm(hf)-linux
+	if ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux.*gnueabihf/ ||
+		($class->{osDetails}->{'binArch'} =~ /arm/ && (
+			$Config::Config{'lddlflags'} =~ /\-mfloat\-abi=hard/ ||
+			$Config::Config{'config_args'} =~ /\-mfloat\-abi=hard/
+		))
+	) {
+		$class->{osDetails}->{'binArch'} = 'armhf-linux';
+	}
+	elsif ( $class->{osDetails}->{'binArch'} =~ /^arm.*linux/ ) {
 		$class->{osDetails}->{'binArch'} = 'arm-linux';
 	}
 	
@@ -89,6 +97,9 @@ sub initSearchPath {
 	# Linux x86_64 should check its native folder first
 	if ( $binArch =~ s/^x86_64-([^-]+).*/x86_64-$1/ ) {
 		unshift @paths, catdir($class->dirsFor('Bin'), $binArch);
+	}
+	elsif ( $class->{osDetails}->{'binArch'} eq 'armhf-linux' ) {
+		push @paths, catdir($class->dirsFor('Bin'), 'arm-linux');
 	}
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);

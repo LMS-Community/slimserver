@@ -1263,7 +1263,7 @@ sub playlistXalbumCommand {
 		$find->{'me.title'} = _playlistXalbum_singletonRef($title);
 	}
 
-	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find);
+	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find, $cmd);
 
 	$cmd =~ s/album/tracks/;
 
@@ -1488,9 +1488,15 @@ sub playlistXitemCommand {
 		$client->currentPlaylistModified(1);
 	}
 
+	# is this a track referenced from a cue sheet?
+	my $isReferenced;
+	
 	if (!Slim::Music::Info::isRemoteURL( $fixedPath ) && Slim::Music::Info::isFileURL( $fixedPath ) ) {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($fixedPath);
+		
+		# referenced tracks come with a #start-end postfix in the url
+		$isReferenced = ($fixedPath =~ /#\d+.*\d+$/ && $path !~ /#\d+.*\d+$/) ? 1 : 0;
 
 		main::INFOLOG && $log->info("path: $path");
 	}
@@ -1563,13 +1569,18 @@ sub playlistXitemCommand {
 			} );
 		}
 		Slim::Utils::Scanner->scanPathOrURL({
-			'url'      => $path,
+			'url'      => $isReferenced ? $url : $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
 			'client'   => $client,
 			'cmd'      => $cmd,
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
 				
+				# tracks referenced from cue sheet would not be found due to their special content type - add the raw URL back in
+				if ( ref $foundItems eq 'ARRAY' && !scalar @$foundItems && $isReferenced ) {
+					push @$foundItems, $url;
+				}
+
 				# If we are playing a list of URLs, add the other items now
 				my $noShuffle = 0;
 				if ( ref $list eq 'ARRAY' ) {
@@ -1676,7 +1687,7 @@ sub playlistXtracksCommand {
 
 	} else {
 
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
 	my $size;
@@ -1999,7 +2010,7 @@ sub playlistcontrolCommand {
 			$what->{'year.id'} = $year_id;
 		}
 		
-		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what, $cmd);
 	}
 
 	# don't call Xtracks if we got no songs
@@ -3231,6 +3242,7 @@ sub _playlistXalbum_singletonRef {
 sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
+	my $cmd    = shift;
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
@@ -3299,7 +3311,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			next;
 		}
 		
-		elsif ($key eq 'libraryTracks.library') {
+		elsif (lc($key) eq 'librarytracks.library') {
 			$library_id = $value;
 			next;
 		}
@@ -3385,7 +3397,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			$client->currentPlaylist($playlist);
+			$client->currentPlaylist($playlist) if $cmd && $cmd =~ /^(?:play|load)/;
 
 			return $playlist->tracks;
 		}
@@ -3446,8 +3458,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 
 		if ( $library_id ||= Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-			$joinMap{'libraryTracks'} = 'libraryTracks';
-			$find{'libraryTracks.library'} = $library_id;
+			if ( Slim::Music::VirtualLibraries->getRealId($library_id) ) {
+				$joinMap{'libraryTracks'} = 'libraryTracks';
+				$find{'libraryTracks.library'} = $library_id;
+			}
 		}
 
 		# limit & offset may have been populated above.
@@ -3548,7 +3562,13 @@ sub _playlistXtracksCommand_parseDbItem {
 				}
 
 				$class = ucfirst($1);
-				$obj   = Slim::Schema->single( $class, { $key => $value } );
+				
+				if ( $class eq 'LibraryTracks' && $key eq 'library' && $value eq '-1' ) {
+					$obj = -1;
+				}
+				else {
+					$obj = Slim::Schema->single( $class, { $key => $value } );
+				}
 				
 				$classes{$class} = $obj;
 			}
@@ -3582,11 +3602,16 @@ sub _playlistXtracksCommand_parseDbItem {
 			$class eq 'Contributor' || 
 			$class eq 'Genre' ||
 			$class eq 'Year' ||
-			( $obj->can('content_type') && $obj->content_type ne 'dir') 
+			( blessed $obj && $obj->can('content_type') && $obj->content_type ne 'dir') 
 		) ) {
 			$terms .= "&" if ( $terms ne "" );
 			$terms .= sprintf( '%s.id=%d', lc($class), $obj->id );
 		}
+	}
+	
+	if ( $classes{LibraryTracks} ) {
+		$terms .= "&" if ( $terms ne "" );
+		$terms .= sprintf( 'librarytracks.library=%d', $classes{LibraryTracks} );
 	}
 	
 	if ( $terms ne "" ) {

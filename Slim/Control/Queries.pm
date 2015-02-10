@@ -272,7 +272,7 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $albumID       = $request->getParam('album_id');
 	my $roleID        = $request->getParam('role_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort') || ($roleID ? 'artistalbum' : 'album');
 
@@ -325,7 +325,7 @@ sub albumsQuery {
 				
 				if ($tags ne 'CC') {
 					$c->{'albumsSearch.fulltextweight'};
-					$sort = "albumsSearch.fulltextweight DESC, $sort";
+					$order_by = $sort = "albumsSearch.fulltextweight DESC";
 				}
 			}
 			else {
@@ -477,11 +477,7 @@ sub albumsQuery {
 		}
 
 		if (defined $libraryID) {
-			if ($sql !~ /JOIN tracks/) {
-				$sql .= 'JOIN tracks ON tracks.album = albums.id ';
-			}
-			$sql .= 'JOIN library_track ON library_track.track = tracks.id ';
-			push @{$w}, 'library_track.library = ?';
+			push @{$w}, 'albums.id IN (SELECT library_album.album FROM library_album WHERE library_album.library = ?)';
 			push @{$p}, $libraryID;
 		}
 		
@@ -819,7 +815,7 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $artistID = $request->getParam('artist_id');
 	my $roleID   = $request->getParam('role_id');
-	my $libraryID= $request->getParam('library_id');
+	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags     = $request->getParam('tags') || '';
 	
 	# treat contributors for albums with only one ARTIST but no ALBUMARTIST the same
@@ -975,40 +971,8 @@ sub artistsQuery {
 		}
 
 		if (defined $libraryID) {
-			if ( $sql =~ /JOIN tracks/ ) {
-				$sql .= 'JOIN library_track ON library_track.track = contributor_track.track ';
-				push @{$w}, 'library_track.library = ?';
-			}
-			else {
-				my $roles = '';
-	
-				# get roles filter from existing conditions
-				@${w} = grep {
-					if (/contributor_(?:track|album).role IN/) {
-						$roles = $_;
-						0;
-					}
-					else {
-						$_
-					}
-				} @$w;
-				
-				$roles =~ s/contributor_album/contributor_track/;
-				$roles .= ' AND ' if $roles;
-	
-				push @{$w}, sprintf(qq( 
-					contributors.id IN (
-					   SELECT DISTINCT contributor_track.contributor
-					   FROM contributor_track
-					   WHERE %s contributor_track.track IN (
-					      SELECT library_track.track
-					      FROM library_track
-					      WHERE library_track.library = ?
-					   )
-					)
-				), $roles);
-			}
-
+			$sql .= 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
+			push @{$w}, 'library_contributor.library = ?';
 			push @{$p}, $libraryID;
 		}
 	}
@@ -1551,7 +1515,7 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $tags          = $request->getParam('tags') || '';
 	
 	my $sql  = 'SELECT %s FROM genres ';
@@ -1603,12 +1567,8 @@ sub genresQuery {
 		}
 		
 		if ( $libraryID ) {
-			if ($sql !~ /JOIN genre_track/) {
-				$sql .= 'JOIN genre_track ON genres.id = genre_track.genre ';
-			}
-			
-			$sql .= 'JOIN library_track ON library_track.track = genre_track.track ';
-			push @{$w}, 'library_track.library = ?';
+			$sql .= 'JOIN library_genre ON library_genre.genre = genres.id ';
+			push @{$w}, 'library_genre.library = ?';
 			push @{$p}, $libraryID;
 		}
 	
@@ -1929,16 +1889,8 @@ sub mediafolderQuery {
 	
 	my ($sql, $volatileUrl);
 	
-	# Bug 17436, don't allow BMF if a scan is running
+	# Bug 17436, don't allow BMF if a scan is running, browse without storing tracks in database instead
 	if (Slim::Music::Import->stillScanning()) {
-#		$request->addResult('rescan', 1);
-#		$request->addResult('count', 1);
-#		
-#		$request->addResultLoop('folder_loop', 0, 'filename', $request->string('BROWSE_MUSIC_FOLDER_WHILE_SCANNING'));
-#		$request->addResultLoop('folder_loop', 0, 'type', 'text');
-#		
-#		$request->setStatusDone();
-#		return;
 		$volatileUrl = 1;
 	}
 
@@ -2591,7 +2543,7 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
-	my $libraryId= $request->getParam('library_id');
+	my $libraryId= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	
 	# Normalize any search parameters
 	if (defined $search && !Slim::Schema->canFulltextSearch) {
@@ -2968,7 +2920,7 @@ sub searchQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
 	my $extended = $request->getParam('extended');
-	my $libraryID= $request->getParam('library_id') || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+	my $libraryID= Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id')) || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 
 	# transliterate umlauts and accented characters
 	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
@@ -4175,7 +4127,7 @@ sub titlesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $roleID        = $request->getParam('role_id');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
 
@@ -4303,7 +4255,7 @@ sub yearsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $year          = $request->getParam('year');
-	my $libraryID     = $request->getParam('library_id');
+	my $libraryID     = Slim::Music::VirtualLibraries->getRealId($request->getParam('library_id'));
 	my $hasAlbums     = $request->getParam('hasAlbums');
 	
 	# get them all by default

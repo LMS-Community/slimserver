@@ -206,9 +206,10 @@ sub menu {
 }
 
 sub infoContributors {
-	my ( $client, $url, $album, $remoteMeta ) = @_;
+	my ( $client, $url, $album, $remoteMeta, $tags, $filter ) = @_;
 	
 	my $items = [];
+	$filter ||= {};
 	
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
@@ -226,9 +227,9 @@ sub infoContributors {
 		$linkRoles{'TRACKARTIST'} = 1;
 		$linkRoles{'ALBUMARTIST'} = 1;
 		
-		# Loop through the contributor types and append
-		my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
+		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
 		
+		# Loop through the contributor types and append
 		for my $role (@roles) {
 			for my $contributor ( $album->artistsForRoles($role) ) {
 				
@@ -241,23 +242,23 @@ sub infoContributors {
 						allAvailableActionsDefined => 1,
 						items => {
 							command     => ['browselibrary', 'items'],
-							fixedParams => { mode => 'albums', artist_id => $id },
+							fixedParams => { mode => 'albums', artist_id => $id, library_id => $library_id },
 						},
 						play => {
 							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'load', artist_id => $id},
+							fixedParams => { cmd => 'load', artist_id => $id, library_id => $library_id },
 						},
 						add => {
 							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'add', artist_id => $id},
+							fixedParams => { cmd => 'add', artist_id => $id, library_id => $library_id },
 						},
 						insert => {
 							command     => ['playlistcontrol'],
-							fixedParams => {cmd => 'insert', artist_id => $id},
+							fixedParams => { cmd => 'insert', artist_id => $id, library_id => $library_id },
 						},								
 						info => {
 							command     => ['artistinfo', 'items'],
-							fixedParams => {artist_id => $id},
+							fixedParams => { artist_id => $id, library_id => $library_id },
 						},								
 					);
 					$actions{'playall'} = $actions{'play'};
@@ -512,7 +513,7 @@ sub cliQuery {
 	my $connectionId   = $request->connectionID;
 	
 	my %filter;
-	foreach (qw(artist_id genre_id year)) {
+	foreach (qw(artist_id genre_id year library_id)) {
 		if (my $arg = $request->getParam($_)) {
 			$filter{$_} = $arg;
 		}

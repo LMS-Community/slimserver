@@ -187,8 +187,9 @@ sub out
 {
     my $self = shift;
     my $text = shift;
-
-    $text =~ tr/\xA0\xAD/ /d;
+# don't corrupt multi-byte Unicode characters
+# https://rt.cpan.org/Public/Bug/Display.html?id=9700
+#    $text =~ tr/\xA0\xAD/ /d;
 
     if ($text =~ /^\s*$/) {
 	$self->{hspace} = 1;
