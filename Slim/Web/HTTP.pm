@@ -1012,13 +1012,15 @@ sub generateHTTPResponse {
 		$params->{'player'} = $client->id();
 		$params->{'myClientState'} = $client;
 		
-		# save the player id in a cookie
-		my $cookie = CGI::Cookie->new(
-			-name    => 'Squeezebox-player',
-			-value   => $params->{'player'},
-			-expires => '+1y',
-		);
-		$response->headers->push_header( 'Set-Cookie' => $cookie );
+		if ( $path !~ m{(?:^progress\.|settings/)} ) {
+			# save the player id in a cookie
+			my $cookie = CGI::Cookie->new(
+				-name    => 'Squeezebox-player',
+				-value   => $params->{'player'},
+				-expires => '+1y',
+			);
+			$response->headers->push_header( 'Set-Cookie' => $cookie );
+		}
 	}
 
 	# this might do well to break up into methods
