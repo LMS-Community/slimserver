@@ -205,7 +205,9 @@ sub open {
 	
 	$song->streamLength($streamLength);
 	
-	if ( $format eq 'mp3' && $track->virtual ) {
+	# Bug 17727 - playback issues with mp3 + cue sheets on Windows
+	# there's a bug in MP3::Cut::Gapless which fails the cache file check on Windows
+	if ( !main::ISWINDOWS && $format eq 'mp3' && $track->virtual ) {
 		eval {
 			# Return a gapless MP3 stream for cue sheet tracks
 			# XXX avoid calling the above stuff for these tracks, it's just wasted
