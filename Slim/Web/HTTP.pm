@@ -53,26 +53,6 @@ use Slim::Web::JSONRPC;
 use Slim::Web::Cometd;
 use Slim::Utils::Prefs;
 
-BEGIN {
-	# Use Cookie::XS if available
-	my $hasCookieXS;
-
-	sub hasCookieXS {
-		# Bug 9830, disable Cookie::XS for now as it has a bug
-		return 0;
-		
-		return $hasCookieXS if defined $hasCookieXS;
-
-		$hasCookieXS = 0;
-		eval {
-			require Cookie::XS;
-			$hasCookieXS = 1;
-		};
-
-		return $hasCookieXS;
-	}
-}
-
 use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
 use constant METADATAINTERVAL => 32768;
@@ -518,22 +498,7 @@ sub processHTTP {
 		# Dont' process cookies for graphics
 		if ($path && $path !~ m/(gif|png)$/i) {
 			if ( my $cookie = $request->header('Cookie') ) {
-				if ( hasCookieXS() ) {
-					# Parsing cookies this way is about 8x faster than using CGI::Cookie directly
-					my $cookies = Cookie::XS->parse($cookie);
-					$params->{'cookies'} = {
-						map {
-							$_ => bless {
-								name  => $_,
-								path  => '/',
-								value => $cookies->{ $_ },
-							}, 'CGI::Cookie';
-						} keys %{ $cookies }
-					};
-				}
-				else {
-					$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
-				}
+				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
 			}
 		}
 		
