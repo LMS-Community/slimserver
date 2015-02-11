@@ -3039,10 +3039,10 @@ sub wipecacheCommand {
 	
 	else {
 
-		# Clear all the active clients's playlists
+		# replace local tracks with volatile versions - we're gong to wipe the database
 		for my $client (Slim::Player::Client::clients()) {
 
-			$client->execute([qw(playlist clear)]);
+			Slim::Player::Playlist::makeVolatile($client);
 		}
 		
 		if ( Slim::Utils::OSDetect::getOS->canAutoRescan && $prefs->get('autorescan') ) {

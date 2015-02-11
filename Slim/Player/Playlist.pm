@@ -611,6 +611,48 @@ sub moveSong {
 	}
 }
 
+# iterate over the current playlist to replace local file:// urls with volatile tmp:// versions
+sub makeVolatile {
+	my $client = shift;
+	
+	my $needRestart;
+	
+	my @urls = map {
+		my $url = blessed($_) ? $_->url : $_;
+		
+		if ( $url =~ s/^file/tmp/ ) {
+			Slim::Schema->objectForUrl({
+				'url'      => $url,
+				'create'   => 1,
+				'readTags' => 1,
+			});
+			
+			Slim::Player::Protocols::Volatile->getMetadataFor($client, $url);
+			
+			$needRestart++;
+		}
+		
+		$url;
+	} @{playList($client)};
+	
+	# don't restart playback unless we've been playing local tracks
+	if ($needRestart) {
+		my $position = Slim::Player::Source::playingSongIndex($client);
+		my $cmd      = 'addtracks';
+		my $playtime;
+		
+		if ($client->isPlaying()) {
+			$playtime = Slim::Player::Source::songTime($client);
+			$cmd = 'loadtracks';
+		}
+
+		Slim::Player::Playlist::stopAndClear($client);
+
+		$client->execute([ 'playlist', $cmd, 'listRef', \@urls, 0, $position ]);
+		Slim::Player::Source::gototime($client, $playtime) if $playtime;
+	}
+}
+
 sub stopAndClear {
 	my $client = shift;
 	
