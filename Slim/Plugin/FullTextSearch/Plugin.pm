@@ -225,6 +225,8 @@ sub parseSearchTerm {
 	if ( $c % 2 == 1 ) {
 		$search .= '"';
 	}
+	
+	$search =~ s/""\s*$//;
 
 	# don't pull quoted strings apart!
 	my @quoted;
@@ -269,11 +271,10 @@ sub parseSearchTerm {
 	@quoted = map {
 		my $token = $_;
 		if ($noOfTokens == 1) {
-			$token =~ /"(.*)"/;
-			$token = $1;
+			my ($raw) = $token =~ /"(.*)"/;
 			
-			if ( $popularTerms =~ /\Q$token\E[^|]*/i ) {
-				$token = "w10:$token";
+			if ( $popularTerms =~ /\Q$raw\E[^|]*/i ) {
+				$token = "w10:$raw";
 				
 				# log warning about search for popular term (set flag in cache to only warn once)
 				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
