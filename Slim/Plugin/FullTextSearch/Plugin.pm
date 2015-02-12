@@ -80,7 +80,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 	'description'  => 'PLUGIN_FULLTEXT',
 });
+
 my $scanlog = logger('scan');
+my $sqllog  = logger('database.sql');
 
 my $prefs = preferences('plugin.fulltext');
 
@@ -168,6 +170,51 @@ sub canFulltextSearch {
 	Slim::Utils::PluginManager->disablePlugin('FullTextSearch');
 	
 	return 0;
+}
+
+sub createHelperTable {
+	my ($class, $args) = @_;
+	
+	if (! ($args->{name} && defined $args->{search} && $args->{type}) ) {
+		$log->error("Can't create helper table without a name and search terms");
+		return;
+	}
+	
+	my $name = $args->{name};
+	my $type = $args->{type};
+
+	my ($tokens, $isLarge);
+	my $orderOrLimit = '';
+	
+	if ($args->{checkLargeResultset}) {
+		($tokens, $isLarge) = $class->parseSearchTerm($args->{search}, $type);
+		$orderOrLimit = $args->{checkLargeResultset}->($isLarge);
+	}
+	else {
+		$tokens = $class->parseSearchTerm($args->{search}, $type);
+	}
+
+	my $dbh = _dbh();
+			
+	$dbh->do('DROP TABLE IF EXISTS ' . $name);
+			
+	my $temp = (main::DEBUGLOG && $log->is_debug) ? '' : 'TEMPORARY';
+	
+	$orderOrLimit = 'LIMIT 0' if !$tokens;
+			
+	my $searchSQL = "CREATE $temp TABLE $name AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
+
+	if ( main::DEBUGLOG ) {
+		my $log2 = $sqllog->is_debug ? $sqllog : $log;
+		$log2->is_debug && $log2->debug( "Fulltext search query ($type): $searchSQL" );
+	}
+
+	$dbh->do($searchSQL);
+}
+
+sub dropHelperTable {
+	return if $log->debug;
+	_dbh->do('DROP TABLE IF EXISTS ' . $_[1]);
 }
 
 sub parseSearchTerm {
@@ -466,10 +513,6 @@ sub _dbh {
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
 	
 	return $dbh;
-}
-
-sub isDebug {
-	main::DEBUGLOG && $log->is_debug;
 }
 
 1;

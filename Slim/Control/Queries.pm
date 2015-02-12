@@ -309,18 +309,11 @@ sub albumsQuery {
 	else {
 		if (specified($search)) {
 			if ( Slim::Schema->canFulltextSearch ) {
-				my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'album');
-				
-				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
-				
-				my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
-				
-				my $albumsSearchSQL = "CREATE $temp TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'";
-				if ( main::DEBUGLOG && $sqllog->is_debug ) {
-					$sqllog->debug( "Albums fulltext search temporary table query: $albumsSearchSQL" );
-				}
-				
-				Slim::Schema->dbh->do($albumsSearchSQL);
+				Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+					name   => 'albumsSearch',
+					search => $search,
+					type   => 'album',
+				});
 				
 				$sql = 'SELECT %s FROM albumsSearch, albums ';
 				unshift @{$w}, "albums.id = albumsSearch.id";
@@ -781,8 +774,6 @@ sub albumsQuery {
 
 	}
 
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
-
 	$request->addResult('count', $count);
 
 	$request->setStatusDone();
@@ -849,17 +840,11 @@ sub artistsQuery {
 	}
 	else {
 		if ( $search && Slim::Schema->canFulltextSearch ) {
-			my $tokens = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'contributor');
-
-			Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch");
-
-			my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
-
-			my $artistsSearchSQL = "CREATE $temp TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'";
-			if ( main::DEBUGLOG && $sqllog->is_debug ) {
-				$sqllog->debug( "Artists fulltext search temporary table query: $artistsSearchSQL" );
-			}
-			Slim::Schema->dbh->do($artistsSearchSQL);
+			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+				name   => 'artistsSearch',
+				search => $search,
+				type   => 'contributor',
+			});
 			
 			$sql = 'SELECT %s FROM artistsSearch, contributors ';
 			unshift @{$w}, "contributors.id = artistsSearch.id";
@@ -1148,8 +1133,6 @@ sub artistsQuery {
 		}
 		
 	}
-
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
 	
 	$request->addResult('indexList', $indexList) if $indexList;
 
@@ -2954,26 +2937,21 @@ sub searchQuery {
 		
 		my $sql;
 		
+		# we don't have a full text index for genres
 		my $canFulltextSearch = $type ne 'genre' && Slim::Schema->canFulltextSearch;
 
-		# we don't have a full text index for genres
 		if ( $canFulltextSearch ) {
-			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, $type);
-
-			# when dealing with large data sets, only return a sub-set of search results
-			my $orderOrLimit = ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
-
-			$dbh->do("DROP TABLE IF EXISTS quickSearch");
-
-			my $quickSearchSQL = "CREATE TEMPORARY TABLE quickSearch AS SELECT FULLTEXTWEIGHT(matchinfo(fulltext)) w, id FROM fulltext WHERE fulltext MATCH 'type:$type $tokens' $orderOrLimit";
-			if ( main::DEBUGLOG ) {
-				my $sqllog = logger('database.sql');
-				$sqllog->is_debug && $sqllog->debug( "Quicksearch temporary fulltext table query: $quickSearchSQL" );
-			}
+			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+				name   => 'quickSearch',
+				search => $search,
+				type   => $type,
+				checkLargeResultset => sub {
+					my $isLarge = shift;
+					return ($isLarge && $isLarge > ($index + $quantity)) ? ('LIMIT ' . $isLarge) : '';
+				},
+			});
 			
-			$dbh->do($quickSearchSQL);
-			
-			$sql = "SELECT $cols, quickSearch.w FROM quickSearch, ${type}s me ";
+			$sql = "SELECT $cols, quickSearch.fulltextweight FROM quickSearch, ${type}s me ";
 			unshift @{$w}, "me.id = quickSearch.id";
 		}
 		else {
@@ -3036,7 +3014,7 @@ sub searchQuery {
 		if ($valid) {
 			$request->addResult("${type}s_count", $count);
 
-			$sql .= "ORDER BY quickSearch.w DESC " if $canFulltextSearch;
+			$sql .= "ORDER BY quickSearch.fulltextweight DESC " if $canFulltextSearch;
 			
 			# Limit the real query
 			$sql .= "LIMIT ?,?";
@@ -5206,19 +5184,15 @@ sub _getTagDataForTracks {
 		}
 		# we need to adjust SQL when using fulltext search
 		elsif ( Slim::Schema->canFulltextSearch ) {
-			my ($tokens, $isLarge) = Slim::Plugin::FullTextSearch::Plugin->parseSearchTerm($search, 'track');
-
-			my $orderOrLimit = $isLarge ? 'LIMIT ' . $isLarge : 'ORDER BY fulltextweight';
-			
-			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
-			
-			my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
-			
-			my $tracksSearchSQL = "CREATE $temp TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit";
-			if ( main::DEBUGLOG && $sqllog->is_debug ) {
-				$sqllog->debug( "Track search temporary fulltext table query: $tracksSearchSQL" );
-			}
-			Slim::Schema->dbh->do($tracksSearchSQL);
+			Slim::Plugin::FullTextSearch::Plugin->createHelperTable({
+				name   => 'tracksSearch',
+				search => $search,
+				type   => 'track',
+				checkLargeResultset => sub {
+					my $isLarge = shift;
+					return $isLarge ? "LIMIT $isLarge" : 'ORDER BY fulltextweight'
+				},
+			});
 			
 			$sql = 'SELECT %s FROM tracksSearch, tracks ';
 			unshift @{$w}, "tracks.id = tracksSearch.id";
@@ -5642,7 +5616,7 @@ sub _getTagDataForTracks {
 	}
 
 	# delete the temporary table, as it's stored in memory and can be rather large
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
+	Slim::Plugin::FullTextSearch::Plugin->dropHelperTable('tracksSearch') if $search && Slim::Schema->canFulltextSearch;
 	
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
