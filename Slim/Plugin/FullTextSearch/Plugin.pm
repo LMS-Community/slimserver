@@ -214,7 +214,7 @@ sub createHelperTable {
 
 sub dropHelperTable {
 	return if $log->debug;
-	_dbh->do('DROP TABLE IF EXISTS ' . $_[1]);
+	_dbh()->do('DROP TABLE IF EXISTS ' . $_[1]);
 }
 
 sub parseSearchTerm {
@@ -234,10 +234,8 @@ sub parseSearchTerm {
 
 	my @tokens = grep /\w+/, split(/\s/, $search);
 	my $noOfTokens = scalar(@tokens) + scalar(@quoted);
-	
-	my $tokens = join(' AND ', @quoted, grep {
-		/\w+/
-	} map { 
+
+	my @tokens = map { 
 		s/['\(\)]/ /g;
 		
 		my $token = "$_*";
@@ -257,7 +255,7 @@ sub parseSearchTerm {
 				$token = "w10:$_*";
 				
 				# log warning about search for popular term (set flag in cache to only warn once)
-				$ftsCache{$token}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
+				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
 		}
 		# don't search substrings for single digit numbers
@@ -266,7 +264,26 @@ sub parseSearchTerm {
 		}
 
 		$token;
-	} @tokens);
+	} @tokens;
+	
+	@quoted = map {
+		my $token = $_;
+		if ($noOfTokens == 1) {
+			$token =~ /"(.*)"/;
+			$token = $1;
+			
+			if ( $popularTerms =~ /\Q$token\E[^|]*/i ) {
+				$token = "w10:$token";
+				
+				# log warning about search for popular term (set flag in cache to only warn once)
+				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
+			}
+		}
+		
+		$token;
+	} @quoted;
+	
+	my $tokens = join(' AND ', @quoted, @tokens);
 	
 	# handle exclusions "paul simon -garfunkel"
 	$tokens =~ s/ AND -/ NOT /g;
@@ -277,11 +294,11 @@ sub parseSearchTerm {
 	my $dbh = _dbh();
 	
 	if (wantarray && $type && $tokens) {
-		my $counts = $ftsCache{ $type . '|' . $tokens };
+		my $counts = $ftsCache{ uc($type . '|' . $tokens) };
 		
 		if (!defined $counts) {
 			($counts) = $dbh->selectrow_array(sprintf("SELECT count(1) FROM fulltext WHERE fulltext MATCH 'type:%s %s'", $type, $tokens));
-			$ftsCache{ $type . '|' . $tokens } = $counts;
+			$ftsCache{ uc($type . '|' . $tokens) } = $counts;
 		}
 
 		$isLargeResultSet = LARGE_RESULTSET if $counts && $counts > LARGE_RESULTSET;
