@@ -181,11 +181,12 @@ sub parseSearchTerm {
 
 	# don't pull quoted strings apart!
 	my @quoted;
-	while ($search =~ s/(".+?")//g) {
+	while ($search =~ s/(".+?")//) {
 		push @quoted, $1;
 	}
 
-	my @tokens = split(/\s/, $search);
+	my @tokens = grep /\w+/, split(/\s/, $search);
+	my $noOfTokens = scalar(@tokens) + scalar(@quoted);
 	
 	my $tokens = join(' AND ', @quoted, grep {
 		/\w+/
@@ -195,21 +196,26 @@ sub parseSearchTerm {
 		my $token = "$_*";
 
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
-		if (scalar @tokens == 1) {
+		if ($noOfTokens == 1) {
 			if ( length $_ == 1 ) {
 				$token = "w10:$_"; 
 			}
 			elsif ( /\d{4}/ ) {
 				# nothing to do here: years can be popular, but we want to be able to search for them
+				$token = $_;
 			}
 			# skip "artist" etc. as they appear in the w5+ columns as "artist:elvis" tuples
 			# only respect once there is eg. "artist:e*"
 			elsif ( $_ !~ /a\w+:\w+/ && $popularTerms =~ /\Q$_\E[^|]*/i ) {
 				$token = "w10:$_*";
 				
-				# log warning about search for popular term (only once)
+				# log warning about search for popular term (set flag in cache to only warn once)
 				$ftsCache{$token}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
+		}
+		# don't search substrings for single digit numbers
+		elsif ($_ =~ /^\d$/) {
+			$token = $_;
 		}
 
 		$token;
@@ -234,6 +240,11 @@ sub parseSearchTerm {
 		$isLargeResultSet = LARGE_RESULTSET if $counts && $counts > LARGE_RESULTSET;
 	}
 	
+	if ( main::DEBUGLOG && $log->is_debug ) {
+		$log->debug("Search token ($type): '$tokens'");
+		$log->debug("Large resultset? " . ($isLargeResultSet ? 'yes' : 'no'));
+	};
+	
 	return wantarray ? ($tokens, $isLargeResultSet) : $tokens;
 }
 
@@ -250,10 +261,10 @@ sub _getWeight {
 	my $weight = 0;
 	# start at second phrase, as the first is the type (track, album, contributor, playlist)
 	for (my $i = 1; $i < $phraseCount; $i++) {
-		$weight += $x[3 * (FIRST_COLUMN + $i * $columnCount)] * 100	# track title etc.
-			+ $x[3 * ((FIRST_COLUMN + 1) + $i * $columnCount)] * 5		# track's album title
-			+ $x[3 * ((FIRST_COLUMN + 2) + $i * $columnCount)] * 3		# comments, lyrics
-			+ $x[3 * ((FIRST_COLUMN + 3) + $i * $columnCount)];		# bitrate sample size
+		$weight += ($x[3 * (FIRST_COLUMN + $i * $columnCount)] ? 1 : 0) * 10_000  	# track title etc.
+		         + $x[3 * ((FIRST_COLUMN + 1) + $i * $columnCount)] * 5 	# track's album title
+		         + $x[3 * ((FIRST_COLUMN + 2) + $i * $columnCount)] * 3 	# comments, lyrics
+		         + $x[3 * ((FIRST_COLUMN + 3) + $i * $columnCount)];		# bitrate sample size
 	}
 	
 	return $weight; 
@@ -455,6 +466,10 @@ sub _dbh {
 	$dbh->sqlite_create_function( 'printf', 2, sub { sprintf(shift, shift); } );
 	
 	return $dbh;
+}
+
+sub isDebug {
+	main::DEBUGLOG && $log->is_debug;
 }
 
 1;

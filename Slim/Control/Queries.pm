@@ -313,7 +313,9 @@ sub albumsQuery {
 				
 				Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch");
 				
-				my $albumsSearchSQL = "CREATE TEMPORARY TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'";
+				my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
+				
+				my $albumsSearchSQL = "CREATE $temp TABLE albumsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:album $tokens'";
 				if ( main::DEBUGLOG && $sqllog->is_debug ) {
 					$sqllog->debug( "Albums fulltext search temporary table query: $albumsSearchSQL" );
 				}
@@ -324,8 +326,7 @@ sub albumsQuery {
 				unshift @{$w}, "albums.id = albumsSearch.id";
 				
 				if ($tags ne 'CC') {
-					$c->{'albumsSearch.fulltextweight'};
-					$order_by = $sort = "albumsSearch.fulltextweight DESC";
+					$order_by = $sort = "albumsSearch.fulltextweight DESC, LENGTH(albums.titlesearch)";
 				}
 			}
 			else {
@@ -780,7 +781,7 @@ sub albumsQuery {
 
 	}
 
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch") if $search && Slim::Schema->canFulltextSearch;
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS albumsSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
 
 	$request->addResult('count', $count);
 
@@ -852,7 +853,9 @@ sub artistsQuery {
 
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch");
 
-			my $artistsSearchSQL = "CREATE TEMPORARY TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'";
+			my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
+
+			my $artistsSearchSQL = "CREATE $temp TABLE artistsSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:contributor $tokens'";
 			if ( main::DEBUGLOG && $sqllog->is_debug ) {
 				$sqllog->debug( "Artists fulltext search temporary table query: $artistsSearchSQL" );
 			}
@@ -862,7 +865,7 @@ sub artistsQuery {
 			unshift @{$w}, "contributors.id = artistsSearch.id";
 			
 			if ($tags ne 'CC') {
-				$sort = "artistsSearch.fulltextweight DESC, $sort";
+				$sort = "artistsSearch.fulltextweight DESC, LENGTH(contributors.name), $sort";
 			}
 		}
 
@@ -1146,7 +1149,7 @@ sub artistsQuery {
 		
 	}
 
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch") if $search && Slim::Schema->canFulltextSearch;
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS artistsSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
 	
 	$request->addResult('indexList', $indexList) if $indexList;
 
@@ -5209,7 +5212,9 @@ sub _getTagDataForTracks {
 			
 			Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch");
 			
-			my $tracksSearchSQL = "CREATE TEMPORARY TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit";
+			my $temp = (Slim::Plugin::FullTextSearch::Plugin->isDebug) ? '' : 'TEMPORARY';
+			
+			my $tracksSearchSQL = "CREATE $temp TABLE tracksSearch AS SELECT id, FULLTEXTWEIGHT(matchinfo(fulltext)) AS fulltextweight FROM fulltext WHERE fulltext MATCH 'type:track $tokens' $orderOrLimit";
 			if ( main::DEBUGLOG && $sqllog->is_debug ) {
 				$sqllog->debug( "Track search temporary fulltext table query: $tracksSearchSQL" );
 			}
@@ -5636,7 +5641,8 @@ sub _getTagDataForTracks {
 		$total = scalar @resultOrder;
 	}
 
-	Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch") if $search && Slim::Schema->canFulltextSearch;
+	# delete the temporary table, as it's stored in memory and can be rather large
+	Slim::Schema->dbh->do("DROP TABLE IF EXISTS tracksSearch") if $search && Slim::Schema->canFulltextSearch && !Slim::Plugin::FullTextSearch::Plugin->isDebug;
 	
 	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
 }
