@@ -245,18 +245,15 @@ sub advancedSearch {
 	}
 	
 	# show list of file types we have in the DB
-	my $types = (); 
-	my $ct;
-	
-	my $sth = Slim::Schema->dbh->prepare_cached('SELECT content_type FROM tracks WHERE audio = 1 GROUP BY content_type');
-	$sth->bind_col(1, \$ct);
-	$sth->execute();
-	
-	while ($sth->fetch) {
-		$types->{lc($ct)} = string(uc($ct));
+	my $dbh = Slim::Schema->dbh;
+		
+	foreach my $ct ( @{ $dbh->selectcol_arrayref('SELECT DISTINCT content_type FROM tracks WHERE audio = 1') } ) {
+		$params->{'fileTypes'} ||= {};
+		$params->{'fileTypes'}->{lc($ct)} = string(uc($ct));
 	}
 	
-	$params->{'fileTypes'} = $types;
+	# get available samplerates
+	$params->{samplerates} = $dbh->selectcol_arrayref('SELECT DISTINCT samplerate FROM tracks WHERE samplerate > 0');
 	
 	# load up the genres we know about.
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();

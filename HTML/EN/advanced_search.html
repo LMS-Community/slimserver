@@ -200,23 +200,17 @@
 	</select> [% "KBPS" | string %]
 [% END %]
 
-<!--
-	<tr>
-		<td class="content" align="right" valign="middle" style="vertical-align: middle" width="30%">[% 'SAMPLERATE' | string %]&nbsp;</td>
-		<td class="content" align="left" valign="middle" style="vertical-align: middle" width="70%">
+[% IF samplerates.size; WRAPPER field title='SAMPLERATE' %]
+	[% logicalSelectionBlock(name='search.samplerate.op') %]
 
-			[% logicalSelectionBlock(name='search.samplerate.op') %]
+	<select name="search.samplerate">
+		<option value="">[% "ANY_VALUE" | string %]</option>
 
-			<select name="search.samplerate">
-				<option value="">[% "ANY_VALUE" | string %]</option>
-
-				[% FOREACH sampleRate = [ 32000 44100 ] %]
-					<option value="[% sampleRate %]">[% sampleRate %]</option>
-				[% END %]
-			</select> kHz
-<				/td>
-	</tr>
--->
+		[% FOREACH sampleRate = samplerates %]
+			<option value="[% sampleRate %]">[% (sampleRate / 1000) | format('%.1f') %]</option>
+		[% END %]
+	</select> kHz
+[% END; END %]
 
 [% IF fileTypes %]
 	[% WRAPPER field title='TYPE' %]
