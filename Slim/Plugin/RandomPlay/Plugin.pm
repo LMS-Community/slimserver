@@ -120,7 +120,7 @@ $prefs->setChange(sub {
 	$genres = undef;
 }, 'exclude_genres');
 
-$prefs->setValidate('int', 'newtracks');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 100 }, 'newtracks' );
 
 sub weight { MENU_WEIGHT }
 
