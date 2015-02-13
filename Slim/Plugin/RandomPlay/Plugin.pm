@@ -86,7 +86,7 @@ $prefs->migrateClient(1, sub {
 	1;
 });
 
-$prefs->setValidate('int', 'newtracks' );
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 100 }, 'newtracks' );
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOMPLAY';
