@@ -130,7 +130,7 @@ sub _resetCache {
 	}
 }
 
-$prefs->setValidate('int', 'newtracks');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 100 }, 'newtracks' );
 
 sub weight { MENU_WEIGHT }
 
