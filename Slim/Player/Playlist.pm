@@ -614,6 +614,8 @@ sub moveSong {
 # iterate over the current playlist to replace local file:// urls with volatile tmp:// versions
 sub makeVolatile {
 	my $client = shift;
+
+	require Slim::Player::Protocols::Volatile;
 	
 	my $needRestart;
 	
