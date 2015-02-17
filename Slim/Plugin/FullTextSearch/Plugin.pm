@@ -230,16 +230,16 @@ sub parseSearchTerm {
 
 	# don't pull quoted strings apart!
 	my @quoted;
-	while ($search =~ s/(".+?")//) {
-		push @quoted, $1;
+	while ($search =~ s/"(.+?)"//) {
+		my $quoted = $1;
+		$quoted =~ s/[[:punct:]]/ /g;
+		push @quoted, '"' . $quoted . '"';
 	}
 
-	my @tokens = grep /\w+/, split(/\s/, $search);
+	my @tokens = grep /\w+/, split(/[\s[:punct:]]/, $search);
 	my $noOfTokens = scalar(@tokens) + scalar(@quoted);
 
 	my @tokens = map { 
-		s/['\(\)]/ /g;
-		
 		my $token = "$_*";
 
 		# if this is the first token, then handle a few keywords which might result in a huge list carefully
@@ -260,8 +260,8 @@ sub parseSearchTerm {
 				$ftsCache{uc($token)}++ || $log->warn("Searching for very popular term - limiting to highest weighted column to prevent huge result list: '$token'");
 			}
 		}
-		# don't search substrings for single digit numbers
-		elsif ($_ =~ /^\d$/) {
+		# don't search substrings for single digit numbers or single characters
+		elsif (length $_ == 1) {
 			$token = $_;
 		}
 
