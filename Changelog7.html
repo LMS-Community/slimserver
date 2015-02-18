@@ -2,23 +2,41 @@
 <ul>
 	<li>New Features:</li>
 	<ul>
-		<li>Add option to use two browse modes for Album Artists and All Artists instead of one single, configurable list.</li>
-		<li>Add "Random Album" browse mode, to give access to a random selection of albums.</li>
-		<li>Add a "Browse Filesystem" mode to access files outside the music folder, without storing them in the database.</li>
-		<li>Fulltext search: when searching music the results are no longer limited to a simple title or name search. Fulltext search
-		    includes a lot mor data like artist names, lyrics (if available), file type etc. in the evaluation of the search term.</li>
-		<li>Allow the web UI to be opened with a given navigation for the left hand navigation panel (eg. start with Album Artists).</li>
-		<li>Add infrastructure to allow plugins to easily create "Virtual Libraries" or custom library views.</li>
-		<li>Add Extended Browse Modes plugin to further configure the library browsing experience.</li>
-		<li>Add new, fast live search to the web UI.</li>
-		<li>Improve "Advanced Search": allow searching for ratings, ranges of years, save results, use results as virtual library etc.</li>
+		<li>Improved Library Browsing:
+			<ul>
+				<li>Add option to use two browse modes for Album Artists and All Artists instead of one single, configurable list.</li>
+				<li>Add "Random Album" browse mode, to give access to a random selection of albums.</li>
+				<li>Add a "Browse Filesystem" mode to access files outside the music folder, without storing them in the database.</li>
+				<li>Browse favorite Artists/Genres/Albums instead of just playing them when selected.</li>
+				<li>Add Extended Browse Modes plugin to further configure the library browsing experience.</li>
+				<li>Add support for "Virtual Libraries" or custom library views, to limit the browsing to a sub-set of your overall music collection.</li>
+				<li>Improved Browse Music Folder performance.</li>
+			</ul>
+		</li>
+		
+		<li>UI improvements:
+			<ul>
+				<li>Add new, fast live search to the web UI.</li>
+				<li>Add Fulltext Search: when searching music the results are no longer limited to a simple title or name search. Fulltext search
+				    includes a lot more data like artist names, lyrics (if available), file type etc. in the evaluation of the search term.</li>
+				<li>Improve "Advanced Search": allow searching for ratings, ranges of years, save results, use results as virtual library etc.</li>
+				<li>Allow the web UI's right hand side panel with player control and current playlist to be hidden.</li>
+				<li>Allow the web UI to be opened with a given navigation for the left hand navigation panel (eg. start with Album Artists).</li>
+				<li>Speed up library browsing in the web UI by caching rendered pages</li>
+			</ul>
+		</li>
+		
+		<li>Scanner behaviour improvements:
+			<ul>
+				<li>Allow browsing your music folder while the scanner is running.</li> 
+				<li>Don't stop the music when running a full wipe & rescan.</li>
+				<li>Add an option to disable automatic rescans on certain preference changes.</li>
+				<li>Increased scanning performance.</li>
+			</ul>
+		</li>
+			
 		<li>Add support for DSD/DSF files on some platforms.</li>
-		<li>Allow browsing your music folder while the scanner is running.</li>
-		<li>Allow the web UI's right hand side panel with player control and current playlist to be hidden.</li>
-		<li>Add an option to disable automatic rescans on certain preference changes.</li>
-		<li>Browse favorite Artists/Genres/Albums instead of just playing them when selected.</li>
 		<li>Add new way to read player specific transcoding settings from helper files (eg. for room correction). Thanks LMS0815!</li>
-		<li>Add helper application binaries for ARM hard float systems</li>
 	</ul>
 	<br />
 
@@ -52,10 +70,8 @@
 	<ul>
 		<li>Restore the ability to run a single folder scan even if the external scanner needs to run</li>
 		<li>Use VACUUM to reorganize library files when appropriate. This should help performance with larger collections and 
-		    libraries which have been updated a lot. Cache files use auto_vacuum, as they change a log more often.</li>
+		    libraries which have been updated a lot. Cache files use auto_vacuum, as they change a lot more often.</li>
 		<li>On Windows and x86 CPU based systems we're going to use more memory for buffers etc. to improve performance.</li>
-		<li>Improve My Music browsing performance in the web UI.</li>
-		<li>Improve Browse Music Folder browsing performance.</li>
 		<li>Tweak the web UI to use less graphics and simpler HTML structure. Please note that MSIE users will require version 9
 		    or later, or one of the alternative browsers.</li>
 		<li>Remove SlimService specific code. 7.9 will never be run on mysqueezebox.com.</li>
@@ -67,6 +83,7 @@
 		<li>The "mediafolder" query for music files optionally returns coverid (if available). Use the new 'c' tag.</li>
 		<li>Updated player icons in settings pages, now gracefully falling back to generic squeezeplay symbol if unknown
 		    player is connected. Thanks LMS0815!</li>
+		<li>Add helper application binaries for ARM hard float systems</li>
 	</ul>
 	<br />
 </ul>
