@@ -272,6 +272,15 @@ sub _handleResponse {
 	my $actions = $request->getResult('actions');
 
 	if ( $updates ) {
+		my $plugins = Slim::Utils::PluginManager->allPlugins;
+
+		# localize plugin names
+		$updates = join(', ',
+			map {
+				Slim::Utils::Strings::string($plugins->{$_}->{name});
+			} split(/,/, $updates)
+		);
+
 		Slim::Utils::PluginManager->message(
 			sprintf( "%s (%s)", Slim::Utils::Strings::string('PLUGINS_UPDATES_AVAILABLE'), $updates )
 		);
