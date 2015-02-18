@@ -256,8 +256,6 @@ sub pathFromFileURL {
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
 		$file = $uri->file;
-
-		$file = fixPathCase($file);
 	}
 
 	if ($canLog) {
@@ -298,8 +296,6 @@ sub fileURLFromPath {
 	}
 
 	return $path if (Slim::Music::Info::isURL($path));
-	
-	$path = fixPathCase($path);
 	
 	# All paths should be in raw bytes, warn if it appears to be UTF-8
 	# XXX remove this later, before release
@@ -358,6 +354,7 @@ sub unescape {
 
 # See http://www.onlamp.com/pub/a/onlamp/2006/02/23/canary_trap.html
 # XXX - no longer used?
+=pod
 sub removeCanary {
 	my $string = shift;
 
@@ -372,6 +369,7 @@ sub removeCanary {
 
 	return $string;
 }
+=cut
 
 sub anchorFromURL {
 	my $url = shift;
@@ -423,57 +421,6 @@ sub crackURL {
 
 	return ($host, $port, $path, $user, $pass);
 }
-
-=head2 fixPathCase( $path )
-
-	fixPathCase makes sure that we are using the actual casing of paths in
-	a case-insensitive but case preserving filesystem.
-
-=cut
-
-sub fixPathCase { $_[0] }
-
-=pod
-XXX The old fixPathCase can cause breakage where getcwd() returns a recomposed
-UTF-8 filename while readdir may return a decomposed filename.  Since there is no
-bug number, I'm not sure we need it at all. -andy
-
-sub fixPathCase {
-	my $path = shift;
-	my $orig = $path;
-
-	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
-	# But don't for the bogus path we use with embedded cue sheets.
-	if ($^O eq 'darwin' && $path !~ m|^/BOGUS/PATH|) {
-		# Use fast_abs_path if XS version of abs_path isn't available
-		# PP version of abs_path is horribly slow
-		$path = hasXSCwd() ? Cwd::abs_path($path) : Cwd::fast_abs_path($path);
-		
-		# Cwd brings back the original file path, we need to decode again
-		$path = Slim::Utils::Unicode::utf8decode_locale($path);
-	}
-
-	# At that point, we'd return a bogus value, and start crawling at the
-	# top of the directory tree, which isn't what we want.
-	return $path || $orig;
-}
-
-my $hasXSCwd;
-sub hasXSCwd {
-	return $hasXSCwd if defined $hasXSCwd;
-	
-	require Cwd;
-
-	if ( \&Cwd::abs_path == \&Cwd::_perl_abs_path ) {
-		$hasXSCwd = 0;
-	}
-	else {
-		$hasXSCwd = 1;
-	}
-	
-	return $hasXSCwd;
-}
-=cut
 
 =head2 fixPath( $file, $base)
 
@@ -598,7 +545,7 @@ sub fixPath {
 	# duplicate entries in the database.
 	if (!Slim::Music::Info::isFileURL($fixed)) {
 
-		$fixed = canonpath(fixPathCase($fixed));
+		$fixed = canonpath($fixed);
 
 		# Fixes Bug: 2757, but breaks a lot more: 3681, 3682 & 3683
 #		if (-l $fixed) {
@@ -764,20 +711,6 @@ sub inMediaFolder {
 	
 	return 0;
 }
-
-=head2 inAudioFolder( $)
-
-	Check if argument is an item contained in the music folder tree
-
-=cut
-
-# XXX - is this function even used any more? Can't find any caller...
-=pod
-sub inAudioFolder {
-	logBacktrace('inAudioFolder is deprecated, use inMediaFolder() instead');
-	return inMediaFolder(shift);
-}
-=cut
 
 =head2 inPlaylistFolder( $)
 
@@ -1195,65 +1128,6 @@ sub userAgentString {
 
 	return $userAgentString;
 }
-
-=head2 settingsDiagString( )
-
-	
-
-=cut
-
-# XXXX - this sub is no longer used by SC core code, since system information is available in Slim::Menu::SystemInfo
-=pod
-sub settingsDiagString {
-
-	require Slim::Utils::Network;
-	
-	my $osDetails = Slim::Utils::OSDetect::details();
-	
-	my @diagString;
-
-	# We masquerade as iTunes for radio stations that really want it.
-	push @diagString, sprintf("%s%s %s - %s @ %s - %s - %s - %s",
-
-		Slim::Utils::Strings::string('SERVER_VERSION'),
-		Slim::Utils::Strings::string('COLON'),
-		$::VERSION,
-		$::REVISION,
-		$::BUILDDATE,
-		$osDetails->{'osName'},
-		$prefs->get('language'),
-		Slim::Utils::Unicode::currentLocale(),
-	);
-	
-	push @diagString, sprintf("%s%s %s",
-
-		Slim::Utils::Strings::string('SERVER_IP_ADDRESS'),
-		Slim::Utils::Strings::string('COLON'),
-		Slim::Utils::Network::serverAddr(),
-	);
-
-	# Also display the Perl version and MySQL version
-	push @diagString, sprintf("%s%s %s %s",
-	
-		Slim::Utils::Strings::string('PERL_VERSION'),
-		Slim::Utils::Strings::string('COLON'),
-		$Config{'version'},
-		$Config{'archname'},
-	);
-	
-	if ( my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass ) {
-		my $sqlVersion = $sqlHelperClass->sqlVersionLong( Slim::Schema->dbh );
-		push @diagString, sprintf("%s%s %s",
-	
-			Slim::Utils::Strings::string('DATABASE_VERSION'),
-			Slim::Utils::Strings::string('COLON'),
-			$sqlVersion,
-		);
-	}
-
-	return wantarray ? @diagString : join ( ', ', @diagString );
-}
-=cut
 
 =head2 assert ( $exp, $msg )
 

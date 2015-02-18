@@ -94,9 +94,6 @@ sub scanPathOrURL {
 
 			$pathOrUrl = Slim::Utils::Misc::pathFromFileURL($pathOrUrl);
 
-		} else {
-
-			$pathOrUrl = Slim::Utils::Misc::fixPathCase($pathOrUrl);
 		}
 
 		# Bug 9097, don't try to scan non-remote protocol handlers like randomplay://
