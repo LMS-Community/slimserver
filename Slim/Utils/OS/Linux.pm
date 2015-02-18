@@ -22,6 +22,26 @@ sub initDetails {
 	return $class->{osDetails};
 }
 
+sub canDBHighMem {
+	my $class = shift;
+	
+	require File::Slurp;
+
+	if ( my $meminfo = File::Slurp::read_file('/proc/meminfo') ) {
+		if ( $meminfo =~ /MemTotal:\s+(\d+) (\S+)/sig ) {
+			my ($value, $unit) = ($1, $2);
+			
+			# some 1GB systems grab RAM for the video adapter - enable dbhighmem if > 900MB installed
+			if ( ($unit =~ /KB/i && $value > 900_000) || ($unit =~ /MB/i && $value > 900) ) {
+				return 1;
+			}
+		}
+	}
+	
+	# in case we haven't been able to read /proc/meminfo, enable dbhighmem for x86 systems
+	return $class->{osDetails}->{'osArch'} =~ /[x6]86/ ? 1 : 0;
+}
+
 sub getFlavor {
 	if (-f '/etc/raidiator_version') {
 

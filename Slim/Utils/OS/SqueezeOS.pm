@@ -75,6 +75,8 @@ sub initPrefs {
 	$defaults->{dontTriggerScanOnPrefChange} = 0;
 }
 
+sub canDBHighMem { 0 }
+
 my %prefSyncHandlers = (
 	SQUEEZEPLAY_PREFS . 'SetupLanguage.lua' => sub {
 		my $data = shift;

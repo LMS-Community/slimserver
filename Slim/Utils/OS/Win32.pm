@@ -103,8 +103,9 @@ sub initPrefs {
 	
 	# we now have a binary control panel - don't show the wizard
 	$prefs->{wizardDone} = 1;
-	$prefs->{dbhighmem}  = 1;
 }
+
+sub canDBHighMem { 1 }
 
 sub postInitPrefs {
 	my ($class, $prefs) = @_;

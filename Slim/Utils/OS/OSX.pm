@@ -104,6 +104,8 @@ sub initPrefs {
 	$prefs->{wizardDone} = 1;
 }
 
+sub canDBHighMem { 1 }
+
 sub canFollowAlias { 
 	return $canFollowAlias if defined $canFollowAlias;
 	

@@ -136,7 +136,7 @@ sub init {
 		'dbsource'              => $default_dbsource,
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
-		'dbhighmem'             => sub { $os->{osDetails}->{'osArch'} =~ /[x3456]86/ ? 1 : 0 },
+		'dbhighmem'             => sub { $os->canDBHighMem() },
 		'cachedir'              => \&defaultCacheDir,
 		'librarycachedir'       => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,
