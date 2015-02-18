@@ -151,9 +151,12 @@ sub loadStrings {
 
 		# check for same list of strings files as that stored in stringcache
 		if ($cacheOK && scalar @{$strings->{'files'}} == scalar @$files) {
-			for my $i (0 .. scalar @$files - 1) {
-				if ($strings->{'files'}[$i] ne $files->[$i]) {
+			my %files = map { $_ => 1 } @$files;
+	
+			foreach ( @{ $strings->{'files'} } ) {
+				if (!$files{$_}) {
 					$cacheOK = 0;
+					last;
 				}
 			}
 		} else {
