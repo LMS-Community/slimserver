@@ -589,7 +589,7 @@ sub albumsQuery {
 	
 	# Add selected columns
 	# Bug 15997, AS mapping needed for MySQL
-	my @cols = keys %{$c};
+	my @cols = sort keys %{$c};
 	$sql = sprintf $sql, join( ', ', map { $_ . " AS '" . $_ . "'" } @cols );
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
@@ -681,7 +681,7 @@ sub albumsQuery {
 			);
 		};
 
-		my ($contributorSql, $contributorSth);
+		my ($contributorSql, $contributorSth, $contributorNameSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			my @roles = ( 'ARTIST', 'ALBUMARTIST' );
 			
@@ -709,7 +709,6 @@ sub albumsQuery {
 		while ( $sth->fetch ) {
 			
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
-			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 			
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});				
 			$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $construct_title->());
@@ -729,8 +728,12 @@ sub albumsQuery {
 				# Bug 17542: If the album artist is different from the current track's artist,
 				# use the album artist instead of the track artist (if available)
 				if ($contributorID && $c->{'albums.contributor'} && $contributorID != $c->{'albums.contributor'}) {
-					$c->{'contributors.name'} = Slim::Schema->find('Contributor', $c->{'albums.contributor'})->name || $c->{'contributors.name'};
+					$contributorNameSth ||= $dbh->prepare_cached('SELECT name FROM contributors WHERE id = ?');
+					my ($name) = @{ $dbh->selectcol_arrayref($contributorNameSth, undef, $c->{'albums.contributor'}) };
+					$c->{'contributors.name'} = $name if $name;
 				}
+
+				utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
 
 				$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
 			}
