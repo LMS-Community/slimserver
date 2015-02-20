@@ -38,12 +38,15 @@ sub initSetup {
 		Plugins 
 		Security 
 		Software 
-		SqueezeNetwork 
 		Status 
 		TextFormatting 
 		UserInterface 
 		Wizard
 	);
+	
+	if (!main::NOMYSB) {
+		push @classes, 'Slim::Web::Settings::Server::SqueezeNetwork';
+	}
 	
 	if (main::TRANSCODING) {
 		push @classes, 'Slim::Web::Settings::Server::FileTypes';

@@ -1060,7 +1060,7 @@ sub generateHTTPResponse {
 			
 			$params->{'imageproxy'} = Slim::Networking::SqueezeNetwork->url(
 				"/public/imageproxy"
-			);
+			) if !main::NOMYSB;
 
 			main::PERFMON && (my $startTime = AnyEvent->time);
 

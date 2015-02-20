@@ -20,7 +20,6 @@ use XML::Simple;
 
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
@@ -124,7 +123,7 @@ sub getFeedAsync {
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers or login first
-	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) && !$params->{no_sn} ) {
+	if ( !main::NOMYSB && Slim::Networking::SqueezeNetwork->isSNURL($url) && !$params->{no_sn} ) {
 		
 		# Sometimes from the web we won't have a client, so pick a random one
 		$params->{client} ||= Slim::Player::Client::clientRandom();

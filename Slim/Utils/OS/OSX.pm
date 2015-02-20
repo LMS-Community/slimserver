@@ -362,7 +362,7 @@ sub getUpdateParams {
 	};
 }
 
-sub signalUpdateReady {
+sub signalUpdateReady { if (main::NOMYSB) {
 			
 	my $updater = Slim::Utils::Update::getUpdateInstaller();
 	my $log     = Slim::Utils::Log::logger('server.update');
@@ -384,7 +384,7 @@ sub signalUpdateReady {
 		
 	# don't run the signal immediately, as the prefs are written delayed
 	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 15, \&_signalUpdateReady);
-}
+} }
 
 # don't re-try Growl if it fails to be called
 my $hasGrowl = 1;

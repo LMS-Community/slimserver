@@ -26,6 +26,7 @@ use constant STATISTICS   => ( grep { /--nostatistics/ } @ARGV ) ? 0 : 1;
 use constant SB1SLIMP3SYNC=> ( grep { /--nosb1slimp3sync/ } @ARGV ) ? 0 : 1;
 use constant WEBUI        => ( grep { /--noweb/ } @ARGV ) ? 0 : 1;
 use constant NOUPNP       => ( grep { /--noupnp/ } @ARGV ) ? 1 : 0;
+use constant NOMYSB       => ( grep { /--nomysqueezebox/ } @ARGV ) ? 1 : 0;
 use constant IMAGE        => ( grep { /--noimage/ } @ARGV ) ? 0 : !NOUPNP;
 use constant VIDEO        => ( grep { /--novideo/ } @ARGV ) ? 0 : !NOUPNP;
 use constant ISWINDOWS    => ( $^O =~ /^m?s?win/i ) ? 1 : 0;
@@ -238,7 +239,6 @@ use Slim::Utils::Scanner::Local;
 use Slim::Utils::Scheduler;
 use Slim::Networking::Async::DNS;
 use Slim::Networking::Select;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Networking::UDP;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
@@ -490,8 +490,11 @@ sub init {
 	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
 	
-	main::INFOLOG && $log->info("SqueezeNetwork Init...");
-	Slim::Networking::SqueezeNetwork->init();
+	if (!main::NOMYSB) {
+		main::INFOLOG && $log->info("SqueezeNetwork Init...");
+		require Slim::Networking::SqueezeNetwork;
+		Slim::Networking::SqueezeNetwork->init();
+	}
 	
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
@@ -634,7 +637,7 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	if ( $prefs->get('checkVersion') ) {
+	if ( !main::NOMYSB && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,

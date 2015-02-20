@@ -257,8 +257,8 @@ sub init {
 		'jivealbumsort'		=> 'album',
 		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream
 		# Server Settings - mysqueezebox.com
-		'sn_sync'               => 1,
-		'sn_disable_stats'		=> 1,
+		'sn_sync'               => main::NOMYSB ? undef : 1,
+		'sn_disable_stats'		=> main::NOMYSB ? undef : 1,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
@@ -399,7 +399,7 @@ sub init {
 				require Slim::Utils::Update;
 				Slim::Utils::Update::checkVersion();
 			}
-		}, 'checkVersion' );
+		}, 'checkVersion' ) if !main::NOMYSB;
 
 		if ( !main::SCANNER ) {
 			$prefs->setChange( sub {
@@ -560,31 +560,33 @@ sub init {
 		}
 	}, 'timeFormat');
 
-	# Clear SN cookies from the cookie jar if the session changes
-	$prefs->setChange( sub {
-		# XXX the sn.com hostnames can be removed later
-		my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
-		$cookieJar->clear( 'www.squeezenetwork.com' );
-		$cookieJar->clear( 'www.test.squeezenetwork.com' );
-		$cookieJar->clear( 'www.mysqueezebox.com' );
-		$cookieJar->clear( 'www.test.mysqueezebox.com' );
-		$cookieJar->save();
-		main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
-	}, 'sn_session' );
-	
-	$prefs->setChange( sub {
-		Slim::Utils::Timers::setTimer(
-			$_[1],
-			time() + 30,
-			sub {
-				my $isDisabled = shift;
-				my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
-				
-				$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
-			},
-		);
+	if (!main::NOMYSB) {
+		# Clear SN cookies from the cookie jar if the session changes
+		$prefs->setChange( sub {
+			# XXX the sn.com hostnames can be removed later
+			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
+			$cookieJar->clear( 'www.squeezenetwork.com' );
+			$cookieJar->clear( 'www.test.squeezenetwork.com' );
+			$cookieJar->clear( 'www.mysqueezebox.com' );
+			$cookieJar->clear( 'www.test.mysqueezebox.com' );
+			$cookieJar->save();
+			main::DEBUGLOG && logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
+		}, 'sn_session' );
 		
-	}, 'sn_disable_stats');
+		$prefs->setChange( sub {
+			Slim::Utils::Timers::setTimer(
+				$_[1],
+				time() + 30,
+				sub {
+					my $isDisabled = shift;
+					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
+					
+					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
+				},
+			);
+			
+		}, 'sn_disable_stats');
+	}
 
 	# Reset IR state if preference change
 	$prefs->setChange( sub {

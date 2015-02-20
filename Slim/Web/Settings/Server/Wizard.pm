@@ -14,7 +14,6 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
-use Slim::Networking::SqueezeNetwork;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'wizard',
@@ -34,7 +33,7 @@ sub handler {
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
 	# The hostname for mysqueezebox.com
-	$paramRef->{sn_server} = Slim::Networking::SqueezeNetwork->get_server("sn");
+	$paramRef->{sn_server} = Slim::Networking::SqueezeNetwork->get_server("sn") if !main::NOMYSB;
 
 	# make sure we only enforce the wizard at the very first startup
 	if ($paramRef->{saveSettings}) {
@@ -144,7 +143,8 @@ sub handler {
 	
 	if ( $paramRef->{saveSettings} ) {
 
-		if (   $paramRef->{sn_email}
+		if (   !main::NOMYSB 
+			&& $paramRef->{sn_email}
 			&& $paramRef->{sn_password_sha}
 			&& $serverPrefs->get('sn_sync')
 		) {			

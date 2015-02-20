@@ -4,7 +4,6 @@ use strict;
 use Time::HiRes;
 use File::Spec::Functions qw(splitpath catdir);
 
-use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -23,7 +22,7 @@ my $os = Slim::Utils::OSDetect->getOS();
 
 my $versionFile;
 
-sub checkVersion {
+sub checkVersion { if (main::NOMYSB) { 
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);			
 
@@ -88,10 +87,10 @@ sub checkVersion {
 
 	$prefs->set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
-}
+} }
 
 # called when check version request is complete
-sub checkVersionCB {
+sub checkVersionCB { if (main::NOMYSB) {
 	my $http = shift;
 	
 	# Ignore update check results for users running from svn
@@ -124,10 +123,10 @@ sub checkVersionCB {
 		$::newVersion = 0;
 		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->code));
 	}
-}
+} }
 
 # called only if check version request fails
-sub checkVersionError {
+sub checkVersionError { if (main::NOMYSB) {
 	my $http = shift;
 	
 	# Ignore update check results for users running from svn
@@ -139,11 +138,11 @@ sub checkVersionError {
 		. "\n" . $http->error
 		. ($proxy ? sprintf("\nPlease check your proxy configuration (%s)", $proxy) : '')
 	);
-}
+} }
 
 
 # download the installer
-sub getUpdate {
+sub getUpdate { if (main::NOMYSB) {
 	my $url = shift;
 	
 	my $params = $os->getUpdateParams();
@@ -201,9 +200,9 @@ sub getUpdate {
 	else {
 		$log->error("Didn't receive valid update URL: " . substr($url, 0, 50) . (length($url) > 50 ? '...' : ''));
 	}
-}
+} }
 
-sub downloadAsyncDone {
+sub downloadAsyncDone { if (main::NOMYSB) {
 	my $http = shift;
 	
 	my $file    = $http->params('file');
@@ -245,9 +244,9 @@ sub downloadAsyncDone {
 	}
 
 	cleanup($path, 'tmp');
-}
+} }
 
-sub setUpdateInstaller {
+sub setUpdateInstaller { if (main::NOMYSB) {
 	my $file = shift;
 	
 	if ($file && open(UPDATEFLAG, ">$versionFile")) {
@@ -267,10 +266,10 @@ sub setUpdateInstaller {
 	
 		unlink $versionFile;
 	}
-}
+} }
 
 
-sub getUpdateInstaller {
+sub getUpdateInstaller { if (main::NOMYSB) {
 	
 	return unless $prefs->get('autoDownloadUpdate');
 	
@@ -299,9 +298,9 @@ sub getUpdateInstaller {
 	main::DEBUGLOG && $log->debug("Found update installer path: '$updateInstaller'");
 	
 	return $updateInstaller;
-}
+} }
 
-sub installerIsUpToDate {
+sub installerIsUpToDate { if (main::NOMYSB) {
 	
 	return unless $prefs->get('autoDownloadUpdate');
 
@@ -309,7 +308,7 @@ sub installerIsUpToDate {
 
 	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
 		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision and revision
-}
+} }
 
 sub cleanup {
 	my ($path, $additionalExt) = @_;

@@ -23,7 +23,6 @@ use Slim::Buttons::Alarm;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
-use Slim::Buttons::SqueezeNetwork;
 use Slim::Networking::Discovery::Server;
 
 my $prefs = preferences('server');

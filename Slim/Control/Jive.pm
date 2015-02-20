@@ -2973,7 +2973,7 @@ sub appMenus {
 					
 					# use icon as defined by MySB to allow for white-label solutions
 					if ( my $icon = $apps->{$app}->{icon} ) {
-						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless $icon =~ /^http/;
+						$icon = Slim::Networking::SqueezeNetwork->url( $icon, 'external' ) unless main::NOMYSB || $icon =~ /^http/;
 						$clone->{window}->{'icon-id'} = Slim::Web::ImageProxy::proxiedImage($icon);
 					}
 
@@ -2993,11 +2993,11 @@ sub appMenus {
 			if ( $apps->{$app}->{type} eq 'opml' ) {
 				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
 				
-				my $url = $apps->{$app}->{url} =~ /^http/
+				my $url = ( main::NOMYSB || $apps->{$app}->{url} =~ /^http/ )
 					? $apps->{$app}->{url} 
 					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
 				
-				my $icon = $apps->{$app}->{icon} =~ /^http/
+				my $icon = ( main::NOMYSB || $apps->{$app}->{icon} =~ /^http/ )
 					? $apps->{$app}->{icon} 
 					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
 				
