@@ -5390,7 +5390,8 @@ sub _getTagDataForTracks {
 		}
 
 		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
-		push @{$w}, 'contributors.id = tracks.primary_artist', 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
+		push @{$w}, 'contributors.id = tracks.primary_artist' if $args->{trackIds};
+		push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
 	};
 	
 	$tags =~ /s/ && do {
