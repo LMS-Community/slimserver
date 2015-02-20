@@ -3833,24 +3833,32 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 				
-				my @tracks = Slim::Player::Playlist::songs($client, $start, $end);
-				
-				# Slice and map playlist to get only the requested IDs
-				my @trackIds = grep (defined $_, map { (!defined $_ || $_->remote) ? undef : $_->id } @tracks);
+				my (@tracks, @trackIds);
+				foreach my $track ( Slim::Player::Playlist::songs($client, $start, $end) ) {
+					next unless defined $track;
+					
+					if ( $track->remote ) {
+						push @tracks, $track;
+					}
+					else {
+						push @tracks, $track->id;
+						push @trackIds, $tracks[-1];
+					}
+				}
 				
 				# get hash of tagged data for all tracks
 				my $songData = _getTagDataForTracks( $tags, {
 					trackIds => \@trackIds,
 				} ) if scalar @trackIds;
 				
+				# no need to use Tie::IxHash to preserve order when we return JSON Data
+				my $fast = ($request->source && $request->source =~ m{/slim/request\b|JSONRPC}) ? 1 : 0;
+				
+				# Slice and map playlist to get only the requested IDs
 				$idx = $start;
 				foreach( @tracks ) {
-					# XXX - need to resolve how we get here in the first place
-					# should not need this:
-					next if !defined $_;
-
 					# Use songData for track, if remote use the object directly
-					my $data = $_->remote ? $_ : $songData->{$_->id};
+					my $data = ref $_ ? $_ : $songData->{$_};
 
 					# 17352 - when the db is not fully populated yet, and a stored player playlist
 					# references a track not in the db yet, we can fail
@@ -3866,7 +3874,7 @@ sub statusQuery {
 					else {
 						_addSong(	$request, $loop, $count, 
 									$data, $tags,
-									'playlist index', $idx
+									'playlist index', $idx, $fast
 								);
 					}
 
@@ -4459,14 +4467,20 @@ sub _addSong {
 	my $tags      = shift; # tags to use
 	my $prefixKey = shift; # prefix key, if any
 	my $prefixVal = shift; # prefix value, if any   
-
+	my $fast      = shift;
+	
 	# get the hash with the data	
-	my $hashRef = _songData($request, $pathOrObj, $tags);
+	my $hashRef = _songData($request, $pathOrObj, $tags, $fast);
 	
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
 	if (defined $prefixKey && defined $hashRef) {
-		(tied %{$hashRef})->Unshift($prefixKey => $prefixVal);
+		if ($fast) {
+			$hashRef->{$prefixKey} = $prefixVal;
+		}
+		else {
+			(tied %{$hashRef})->Unshift($prefixKey => $prefixVal);
+		}
 	}
 	
 	# add it directly to the result loop
@@ -4762,10 +4776,12 @@ my %colMap = (
 );
 
 sub _songDataFromHash {
-	my ( $request, $res, $tags ) = @_;
+	my ( $request, $res, $tags, $fast ) = @_;
+	
+	my %returnHash;
 	
 	# define an ordered hash for our results
-	tie (my %returnHash, "Tie::IxHash");
+	tie (%returnHash, "Tie::IxHash") unless $fast;
 	
 	$returnHash{id}    = $res->{'tracks.id'};
 	$returnHash{title} = $res->{'tracks.title'};
@@ -4809,10 +4825,11 @@ sub _songData {
 	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
+	my $fast      = shift; # don't use Tie::IxHash for performance
 	
 	if ( ref $pathOrObj eq 'HASH' ) {
 		# Hash from direct DBI query in titlesQuery
-		return _songDataFromHash($request, $pathOrObj, $tags);
+		return _songDataFromHash($request, $pathOrObj, $tags, $fast);
 	}
 
 	# figure out the track object
@@ -4874,9 +4891,11 @@ sub _songData {
 			}
 		}
 	}
+
+	my %returnHash;
 	
 	# define an ordered hash for our results
-	tie (my %returnHash, "Tie::IxHash");
+	tie (%returnHash, "Tie::IxHash") unless $fast;
 
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
