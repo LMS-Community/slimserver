@@ -69,9 +69,10 @@ sub handler {
 	}
 	
 	$paramRef->{imageproxies} = {
-		0 => Slim::Utils::Strings::string('SETUP_IMAGEPROXY_REMOTE'),
 		1 => Slim::Utils::Strings::string('SETUP_IMAGEPROXY_LOCAL'),
 	};
+	
+	$paramRef->{imageproxies}->{0} = Slim::Utils::Strings::string('SETUP_IMAGEPROXY_REMOTE') unless main::NOMYSB;
 	
 	my $externalImageProxies = Slim::Web::ImageProxy->getExternalHandlers();
 	foreach (keys %$externalImageProxies) {
