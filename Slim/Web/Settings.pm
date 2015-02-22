@@ -215,6 +215,7 @@ sub handler {
 		grep { 
 			if (/ITUNES/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') }
 			elsif (/PLUGIN_PODCAST/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin') }
+			elsif (/SQUEEZENETWORK_SETTINGS/) { !main::NOMYSB }
 			else { 1 }
 		}
 		(

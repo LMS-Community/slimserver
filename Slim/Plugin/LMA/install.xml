@@ -9,6 +9,7 @@
 	<creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
+	<needsMySB>true</needsMySB>
         
 	<homepageURL>http://www.mysqueezebox.com/appgallery/LMA</homepageURL>
 	<icon>plugins/LMA/html/images/icon.png</icon>

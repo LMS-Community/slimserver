@@ -150,6 +150,11 @@ sub _addInfo {
 
 	for my $plugin (keys %$plugins) {
 
+		if ( main::NOMYSB && $plugins->{$plugin}->{needsMySB} ) {
+			main::DEBUGLOG && $log->debug("Skipping plugin: $plugin - requires mysqueezebox.com, but support for mysqueezebox.com is disabled.");
+			next;
+		}
+
 		my $entry = $plugins->{$plugin};
 
 		# don't show enforced plugins

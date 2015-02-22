@@ -9,6 +9,7 @@
     <creator>Logitech</creator>
 
 	<defaultState>enabled</defaultState>
+	<needsMySB>true</needsMySB>
 	
 	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
 	<type>2</type><!-- type=extension -->

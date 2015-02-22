@@ -19,7 +19,7 @@ sub initPlugin {
 sub feed {
 	my $client = shift;
 
-	my $feedUrl = Slim::Networking::SqueezeNetwork->url('/api/myapps/v1/opml');
+	my $feedUrl = main::NOMYSB ? '' : Slim::Networking::SqueezeNetwork->url('/api/myapps/v1/opml');
 
 	if (my $nonSNApps = Slim::Plugin::Base->nonSNApps) {
 
