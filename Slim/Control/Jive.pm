@@ -2963,7 +2963,7 @@ sub appMenus {
 					my $clone = Storable::dclone($globalMenu);
 
 					# Set node to home or null
-					$clone->{node} = $apps->{$app}->{home_menu} == 1 ? 'home' : '';
+					$clone->{node} = ($apps->{$app}->{home_menu} && $apps->{$app}->{home_menu} == 1) ? 'home' : '';
 
 					# Use title from app list
 					$clone->{stringToken} = $apps->{$app}->{title};
@@ -2990,7 +2990,7 @@ sub appMenus {
 		}
 		else {			
 			# For type=opml, use generic handler
-			if ( $apps->{$app}->{type} eq 'opml' ) {
+			if ( $apps->{$app}->{type} && $apps->{$app}->{type} eq 'opml' ) {
 				main::INFOLOG && $isInfo && $log->info( "App: $app, using generic OPML handler" );
 				
 				my $url = $apps->{$app}->{url} =~ /^http/

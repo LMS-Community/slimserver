@@ -4149,8 +4149,8 @@ sub titlesQuery {
 		}
 	}
 	
-	$tags .= 'R' if $search =~ /tracks_persistent\.rating/ && $tags !~ /R/;
-	$tags .= 'O' if $search =~ /tracks_persistent\.playcount/ && $tags !~ /O/;
+	$tags .= 'R' if $search && $search =~ /tracks_persistent\.rating/ && $tags !~ /R/;
+	$tags .= 'O' if $search && $search =~ /tracks_persistent\.playcount/ && $tags !~ /O/;
 	
 	my $stillScanning = Slim::Music::Import->stillScanning();
 	

@@ -1428,7 +1428,7 @@ sub mimeToType {
 sub contentType { 
 	my $url = shift;
 
-	return Slim::Schema->contentType($url); 
+	return Slim::Schema->contentType($url) || '';
 }
 
 sub typeFromSuffix {

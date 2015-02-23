@@ -1337,7 +1337,7 @@ sub _cliQuery_done {
 						
 						if (exists $hash{'actions'} && scalar keys %{$hash{'actions'}}) {
 							delete $hash{'action'};
-							delete $hash{'style'} if $hash{'style'} eq 'itemNoAction';
+							delete $hash{'style'} if $hash{'style'} && $hash{'style'} eq 'itemNoAction';
 						}
 						
 						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
