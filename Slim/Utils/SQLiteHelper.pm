@@ -125,6 +125,8 @@ sub on_connect_do {
 sub setCacheSize {
 	my $cache_size = __PACKAGE__->_cacheSize;
 	
+	return unless Slim::Schema->hasLibrary;
+	
 	my $dbh = Slim::Schema->dbh;
 	$dbh->do("PRAGMA cache_size = $cache_size");
 	$dbh->do("PRAGMA persistentdb.cache_size = $cache_size");
