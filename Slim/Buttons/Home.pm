@@ -806,7 +806,7 @@ sub updateMenu {
 	
 	for my $app ( keys %{$apps} ) {
 		# Skip non home-menu apps
-		next unless $apps->{$app}->{home_menu} == 1;
+		next unless $apps->{$app}->{home_menu} && $apps->{$app}->{home_menu} == 1;
 		
 		my $title = $apps->{$app}->{title};
 		next unless $title;

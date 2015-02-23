@@ -461,8 +461,6 @@ use base 'Slim::Utils::DbArtworkCache';
 
 use strict;
 
-my $cache;
-
 sub new {
 	my $class = shift;
 	my $root = shift;

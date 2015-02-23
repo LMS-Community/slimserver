@@ -189,7 +189,7 @@ sub _players_done {
 					_updateWebLink($plugin->{name}, $app, $info);
 				}
 			}
-			elsif ( $info->{type} eq 'opml' ) {
+			elsif ( $info->{type} && $info->{type} eq 'opml' ) {
 				# Setup a generic OPML menu for this app
 
 				my $icon = $info->{icon};
