@@ -794,6 +794,8 @@ Usage: $0 [--diag] [--daemon] [--stdio]
     --noimage        => Disable scanning for images.
     --novideo        => Disable scanning for videos.
     --noupnp         => Disable UPnP subsystem
+    --nomysqueezebox => Disable mysqueezebox.com integration.
+                        Warning: This effectively disables all music services provided by Logitech apps.
     --nobrowsecache  => Disable caching of rendered browse pages.
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
