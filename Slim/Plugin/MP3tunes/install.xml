@@ -7,6 +7,7 @@
 	<description>PLUGIN_MP3TUNES_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
+	<needsMySB>true</needsMySB>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/MP3tunes</homepageURL>
 	<icon>plugins/MP3tunes/html/images/icon.png</icon>
 	<type>2</type>

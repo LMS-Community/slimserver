@@ -86,17 +86,19 @@ sub initPlugin {
 	);
 	
 	# Track Info item for loving tracks
-	Slim::Menu::TrackInfo->registerInfoProvider( lfm_love => (
-		before => 'top',
-		func   => \&infoLoveTrack,
-	) );
-	
-	# A way for other things to notify us the user loves a track
-	Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
-		[0, 1, 1, \&loveTrack]);
-	
-	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url', '_skip'],
-		[0, 1, 1, \&banTrack]);
+	if (!main::NOMYSB) {
+		Slim::Menu::TrackInfo->registerInfoProvider( lfm_love => (
+			before => 'top',
+			func   => \&infoLoveTrack,
+		) );
+		
+		# A way for other things to notify us the user loves a track
+		Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
+			[0, 1, 1, \&loveTrack]);
+		
+		Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url', '_skip'],
+			[0, 1, 1, \&banTrack]);
+	}
 	
 	Slim::Control::Request::addDispatch([ 'audioscrobbler', 'settings' ],
 		[1, 1, 0, \&jiveSettingsMenu]);
@@ -738,7 +740,7 @@ sub checkScrobble {
 	setQueue( $client, $queue );
 	
 	# If the URL wasn't a Last.fm station and the user loved the track, report the Love
-	if ( $rating && $rating eq 'L' && $cururl !~ /^lfm/ ) {
+	if ( !main::NOMYSB && $rating && $rating eq 'L' && $cururl !~ /^lfm/ ) {
 		submitLoveTrack( $client, $queue->[-1] );
 	}
 	
@@ -1020,7 +1022,7 @@ sub _submitScrobbleError {
 	);
 }
 
-sub loveTrack {
+sub loveTrack { if (!main::NOMYSB) {
 	my $request = shift;
 	my $client  = $request->client || return;
 	my $url     = $request->getParam('_url');
@@ -1060,9 +1062,9 @@ sub loveTrack {
 	checkScrobble( $client, $track, 0, 'L' );
 	
 	return 1;
-}
+} }
 
-sub submitLoveTrack {
+sub submitLoveTrack { if (!main::NOMYSB) {
 	my ( $client, $item ) = @_;
 	
 	my $username = $prefs->client($client)->get('account');
@@ -1101,9 +1103,9 @@ sub submitLoveTrack {
 	main::DEBUGLOG && $log->debug( 'Submitting loved track to Last.fm' );
 	
 	$http->get( $url );
-}
+} }
 
-sub banTrack {
+sub banTrack { if (!main::NOMYSB) {
 	my $request = shift;
 	my $client  = $request->client || return;
 	my $url     = $request->getParam('_url');
@@ -1147,7 +1149,7 @@ sub banTrack {
 	checkScrobble( $client, $track, 0, 'B' );
 	
 	return 1;
-}	
+} }
 
 # Return whether or not the given track will be scrobbled
 sub canScrobble {
@@ -1207,7 +1209,7 @@ sub setQueue {
 	$prefs->client($client)->set( queue => $queue );
 }
 
-sub infoLoveTrack {
+sub infoLoveTrack { if (!main::NOMYSB) {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 
 	return unless $client;
@@ -1230,9 +1232,9 @@ sub infoLoveTrack {
 		passthrough => [ $url ],
 		favorites   => 0,
 	};
-}
+} }
 
-sub infoLoveTrackSubmit {
+sub infoLoveTrackSubmit { if (!main::NOMYSB) {
 	my ( $client, $callback, undef, $url ) = @_;
 	
 	$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
@@ -1243,7 +1245,7 @@ sub infoLoveTrackSubmit {
 		showBriefly => 0,
 		favorites   => 0,
 	} );
-}
+} }
 		
 sub jiveSettings {
 

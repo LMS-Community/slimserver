@@ -39,7 +39,6 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Buttons::Alarm;
-use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::Volume;
 use Slim::Buttons::GlobalSearch;
 use Slim::Buttons::XMLBrowser;
@@ -124,7 +123,12 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::GlobalSearch::init();
-	Slim::Buttons::SqueezeNetwork::init();
+	
+	if (!main::NOMYSB) {
+		require Slim::Buttons::SqueezeNetwork;
+		Slim::Buttons::SqueezeNetwork::init();
+	}
+	
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();

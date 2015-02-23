@@ -14,7 +14,6 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Networking::Discovery::Server;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::Base;
 
 my $prefs = preferences('server');
@@ -25,7 +24,7 @@ sub init {
 	Slim::Web::Pages->addPageFunction(qr/^index\.(?:htm|xml)/, \&home);
 	Slim::Web::Pages->addPageFunction(qr/^switchserver\.(?:htm|xml)/, \&switchServer);
 	
-	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') });
+	Slim::Web::Pages->addPageLinks('my_apps', {'PLUGIN_APP_GALLERY_MODULE_NAME' => Slim::Networking::SqueezeNetwork->url('/appgallery') }) if !main::NOMYSB;
 
 	Slim::Web::Pages->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html" });
 	Slim::Web::Pages->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html" });
@@ -159,8 +158,8 @@ sub home {
 sub switchServer {
 	my ($client, $params) = @_;
 
-	if (lc($params->{'switchto'}) eq 'squeezenetwork' 
-		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK')) {
+	if ( !main::NOMYSB && ( lc($params->{'switchto'}) eq 'squeezenetwork' 
+		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK') ) ) {
 
 		if ( _canSwitch($client) ) {
 			Slim::Utils::Timers::setTimer(
@@ -193,7 +192,7 @@ sub switchServer {
 	else {
 		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();
 
-		if ( _canSwitch($client) ) {
+		if ( !main::NOMYSB && _canSwitch($client) ) {
 			$params->{servers}->{'SQUEEZENETWORK'} = {
 				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
 			}; 
@@ -207,11 +206,11 @@ sub switchServer {
 }
 
 # Bug 7254, don't tell Ray to reconnect to SN unless it's known to be attached to the user's account
-sub _canSwitch {
+sub _canSwitch { if (main::NOMYSB) {
 	my $client = shift;
 	
 	return ( ($client->deviceid != 7) || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) );
-}
+} }
 
 1;
 

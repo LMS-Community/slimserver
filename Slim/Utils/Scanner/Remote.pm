@@ -168,7 +168,7 @@ sub scanURL {
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers
-	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
+	if ( !main::NOMYSB && Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
 		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders($client);
 		while ( my ($k, $v) = each %snHeaders ) {
 			$request->header( $k => $v );

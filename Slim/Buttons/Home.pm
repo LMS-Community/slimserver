@@ -832,7 +832,7 @@ sub updateMenu {
 				text => $title,
 			};
 			
-			my $url = $apps->{$app}->{url} =~ /^http/
+			my $url = ( main::NOMYSB || $apps->{$app}->{url} =~ /^http/ )
 				? $apps->{$app}->{url} 
 				: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
 			

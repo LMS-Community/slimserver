@@ -19,7 +19,6 @@ use Scalar::Util qw(blessed);
 
 use base qw(Slim::Player::Client);
 
-use Slim::Buttons::SqueezeNetwork;
 use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Player::Source;

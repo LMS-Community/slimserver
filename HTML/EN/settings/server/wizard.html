@@ -254,7 +254,7 @@
 				[% PROCESS jsString id='SETUP_WIZARD_SKIP' jsId='skip' %]
 				[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
 				[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
-				[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
+				[% IF sn_server; PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success'; END %]
 	
 				[% PROCESS jsString id='NONE' jsId='summary_none' %]
 				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
@@ -339,6 +339,7 @@
 		[% UNLESS wizardDone %]
 
 		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
+			[% IF sn_server %]
 			<div id="sqn_p" class="wz_page wz_canskip">
 				<div id="sqn_p" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
@@ -399,6 +400,7 @@
 					
 				</div>
 			</div>
+			[% END %]
 
 			<div id="audiodir_p" class="wz_page">
 				<div id="audiodir_h" class="pagetitle">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
@@ -485,11 +487,13 @@
 					<div class="box rightbox">				
 						<h1>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</h1>
 					
+						[% IF sn_server %]
 						<h4>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</h4>
 						<ul class="wz_summary_list">
 							<li><span id="sn_email_summary"></span> <span id="sn_result_summary">[% "NONE" | string %]</span></li>
 						</ul>
 						<br/>
+						[% END %]
 				
 						<h4>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% stringCOLON %]</h4>
 						<ul class="wz_summary_list" id="summary"></ul>

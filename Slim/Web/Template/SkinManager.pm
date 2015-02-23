@@ -267,7 +267,7 @@ sub _resizeImage {
 		}
 		
 		# fall back to using external image proxy for external resources
-		elsif ( $url =~ m{^https?://} ) {
+		elsif ( !main::NOMYSB && $url =~ m{^https?://} ) {
 			return Slim::Networking::SqueezeNetwork->url(
 				"/public/imageproxy?w=$width&h=$height&u=" . uri_escape($url)
 			);

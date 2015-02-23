@@ -3263,37 +3263,39 @@ sub serverstatusQuery {
 
 	}
 
-	# return list of players connected to SN
-	my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
-
-	$count = scalar @sn_players || 0;
-
-	$request->addResult('sn player count', $count);
-
-	($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-
-		my $sn_cnt = 0;
-			
-		for my $player ( @sn_players ) {
-			$request->addResultLoop(
-				'sn_players_loop', $sn_cnt, 'id', $player->{id}
-			);
-			
-			$request->addResultLoop( 
-				'sn_players_loop', $sn_cnt, 'name', $player->{name}
-			);
-			
-			$request->addResultLoop(
-				'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
-			);
-			
-			$request->addResultLoop(
-				'sn_players_loop', $sn_cnt, 'model', $player->{model}
-			);
+	if (!main::NOMYSB) {
+		# return list of players connected to SN
+		my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
+	
+		$count = scalar @sn_players || 0;
+	
+		$request->addResult('sn player count', $count);
+	
+		($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	
+		if ($valid) {
+	
+			my $sn_cnt = 0;
 				
-			$sn_cnt++;
+			for my $player ( @sn_players ) {
+				$request->addResultLoop(
+					'sn_players_loop', $sn_cnt, 'id', $player->{id}
+				);
+				
+				$request->addResultLoop( 
+					'sn_players_loop', $sn_cnt, 'name', $player->{name}
+				);
+				
+				$request->addResultLoop(
+					'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
+				);
+				
+				$request->addResultLoop(
+					'sn_players_loop', $sn_cnt, 'model', $player->{model}
+				);
+					
+				$sn_cnt++;
+			}
 		}
 	}
 

@@ -298,8 +298,12 @@ sub buttonCommand {
 sub clientConnectCommand {
 	my $request = shift;
 	my $client  = $request->client();
-
-	if ( $client->hasServ() ) {
+	
+	if (main::NOMYSB) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	elsif ( !main::NOMYSB && $client->hasServ() ) {
 		my ($host, $packed);
 		$host = $request->getParam('_where');
 		
@@ -2691,73 +2695,75 @@ sub rescanCommand {
 
 sub setSNCredentialsCommand {
 	my $request = shift;
-
-	if ($request->isNotCommand([['setsncredentials']])) {
+	
+	if ( main::NOMYSB || $request->isNotCommand([['setsncredentials']]) ) {
 		$request->setStatusBadDispatch();
 		return;
 	}
-
-	# get our parameters
-	my $username = $request->getParam('_username');
-	my $password = $request->getParam('_password');
-	my $sync     = $request->getParam('sync');
-	my $client   = $request->client;
+	elsif ( !main::NOMYSB ) {
+		
+		# get our parameters
+		my $username = $request->getParam('_username');
+		my $password = $request->getParam('_password');
+		my $sync     = $request->getParam('sync');
+		my $client   = $request->client;
+		
+		# Sync can be toggled without username/password
+		if ( defined $sync ) {
+			$prefs->set('sn_sync', $sync);
+		
+			if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
+				Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			}
+			
+			if ( $sync ) {
+				require Slim::Networking::SqueezeNetwork::PrefSync;
+				Slim::Networking::SqueezeNetwork::PrefSync->init();
+			}
+		}
 	
-	# Sync can be toggled without username/password
-	if ( defined $sync ) {
-		$prefs->set('sn_sync', $sync);
+		$password = sha1_base64($password);
+		
+		# Verify username/password
+		if ($username) {
+		
+			$request->setStatusProcessing();
 	
-		if ( UNIVERSAL::can('Slim::Networking::SqueezeNetwork::PrefSync', 'shutdown') ) {
-			Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+			Slim::Networking::SqueezeNetwork->login(
+				username => $username,
+				password => $password,
+				client   => $client,
+				cb       => sub {
+					$request->addResult('validated', 1);
+					$request->addResult('warning', $request->cstring('SETUP_SN_VALID_LOGIN'));
+		
+					# Shut down all SN activity
+					Slim::Networking::SqueezeNetwork->shutdown();
+				
+					$prefs->set('sn_email', $username);
+					$prefs->set('sn_password_sha', $password);
+					
+					# Start it up again if the user enabled it
+					Slim::Networking::SqueezeNetwork->init();
+		
+					$request->setStatusDone();
+				},
+				ecb      => sub {
+					$request->addResult('validated', 0);
+					$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN'));
+		
+					$request->setStatusDone();
+				},
+			);
 		}
 		
-		if ( $sync ) {
-			require Slim::Networking::SqueezeNetwork::PrefSync;
-			Slim::Networking::SqueezeNetwork::PrefSync->init();
+		# stop SN integration if either mail or password is undefined
+		else {
+			$request->addResult('validated', 1);
+			$prefs->set('sn_email', '');
+			$prefs->set('sn_password_sha', '');
+			Slim::Networking::SqueezeNetwork->shutdown();
 		}
-	}
-
-	$password = sha1_base64($password);
-	
-	# Verify username/password
-	if ($username) {
-	
-		$request->setStatusProcessing();
-
-		Slim::Networking::SqueezeNetwork->login(
-			username => $username,
-			password => $password,
-			client   => $client,
-			cb       => sub {
-				$request->addResult('validated', 1);
-				$request->addResult('warning', $request->cstring('SETUP_SN_VALID_LOGIN'));
-	
-				# Shut down all SN activity
-				Slim::Networking::SqueezeNetwork->shutdown();
-			
-				$prefs->set('sn_email', $username);
-				$prefs->set('sn_password_sha', $password);
-				
-				# Start it up again if the user enabled it
-				Slim::Networking::SqueezeNetwork->init();
-	
-				$request->setStatusDone();
-			},
-			ecb      => sub {
-				$request->addResult('validated', 0);
-				$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN'));
-	
-				$request->setStatusDone();
-			},
-		);
-	}
-	
-	# stop SN integration if either mail or password is undefined
-	else {
-		$request->addResult('validated', 1);
-		$prefs->set('sn_email', '');
-		$prefs->set('sn_password_sha', '');
-		Slim::Networking::SqueezeNetwork->shutdown();
 	}
 }
 

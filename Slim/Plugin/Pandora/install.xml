@@ -7,6 +7,7 @@
 	<description>PLUGIN_PANDORA_MODULE_NAME_DESC</description>
 	<creator>Logitech</creator>
 	<defaultState>enabled</defaultState>
+	<needsMySB>true</needsMySB>
 	<homepageURL>http://www.mysqueezebox.com/appgallery/Pandora</homepageURL>
 	<icon>plugins/Pandora/html/images/icon.png</icon>
 	<type>2</type>
