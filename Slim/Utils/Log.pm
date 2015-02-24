@@ -817,6 +817,7 @@ sub logGroups {
 				'scan.scanner'           => 'DEBUG',
 				'scan.import'            => 'DEBUG',
 				'artwork'                => 'DEBUG',
+				'database.info'          => 'DEBUG',
 				'plugin.itunes'          => 'DEBUG',
 				'plugin.musicip'         => 'DEBUG',
 			},
