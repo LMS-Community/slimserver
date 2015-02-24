@@ -1,4 +1,5 @@
 -- Schema 19 unfortunately got the order of the columns in the primary key wrong
+DROP INDEX IF EXISTS libraryTrackIndex;
 CREATE INDEX libraryTrackIndex ON library_track (library);
 
 

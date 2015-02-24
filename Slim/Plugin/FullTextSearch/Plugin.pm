@@ -115,7 +115,10 @@ sub initPlugin {
 
 	Slim::Utils::Scanner::API->onNewTrack( { cb => \&checkSingleTrack, want_object => 1 } );
 	Slim::Utils::Scanner::API->onChangedTrack( { cb => \&checkSingleTrack, want_object => 1 } );
-	
+
+	# don't continue if the library hasn't been initialized yet, or if a schema change is going to trigger a rescan anyway
+	return unless Slim::Schema->hasLibrary() && !Slim::Schema->schemaUpdated;
+		
 	my ($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext' } );
 	($ftExists) = $dbh->selectrow_array( qq{ SELECT name FROM sqlite_master WHERE type='table' AND name='fulltext_terms' } ) if $ftExists;
 	
