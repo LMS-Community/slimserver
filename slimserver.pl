@@ -267,6 +267,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Networking::Repositories;
 use Slim::Utils::Firmware;
 use Slim::Control::Jive;
 use Slim::Formats::RemoteMetadata;
@@ -517,6 +518,9 @@ sub init {
 		require Slim::Networking::SqueezeNetwork;
 		Slim::Networking::SqueezeNetwork->init();
 	}
+	
+	main::INFOLOG && $log->info("Download repositories init...");
+	Slim::Networking::Repositories->init();
 	
 	main::INFOLOG && $log->info("Firmware init...");
 	Slim::Utils::Firmware->init;

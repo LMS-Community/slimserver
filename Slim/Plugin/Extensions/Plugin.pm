@@ -84,7 +84,7 @@ use base qw(Slim::Plugin::Base);
 
 use XML::Simple;
 
-use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Networking::Repositories;
 use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -137,6 +137,7 @@ sub initPlugin {
 
 	for my $repo (keys %repos) {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
+		Slim::Networking::Repositories->add('extensions', $repo);
 	}
 
 	if ( main::WEBUI ) {
@@ -329,9 +330,12 @@ sub getExtensions {
 	
 		main::DEBUGLOG && $log->debug("fetching extensions xml $args->{name}");
 
-		Slim::Networking::SimpleAsyncHTTP->new(
-			\&_parseResponse, \&_noResponse, { 'args' => $args, 'cache' => 1 }
-		)->get( $args->{'name'} );
+		Slim::Networking::Repositories->get(
+			$args->{'name'},
+			\&_parseResponse,
+			\&_noResponse,
+			{ args => $args, cache => 1 }
+		);
 	}
 }
 
