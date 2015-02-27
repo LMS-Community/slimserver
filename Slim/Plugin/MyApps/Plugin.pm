@@ -79,16 +79,32 @@ sub feed {
 				$callback->($feed);
 			};
 				
-			Slim::Formats::XML->getFeedAsync(
-
-				$mergeCB, 
-
-				sub { $mergeCB->({ items => [] }) },	
-
-				{ client => $client, url => $feedUrl, timeout => 35 },
-			);
+			if (main::NOMYSB) {
+				$mergeCB->({ items => [] });
+			}
+			else {
+				Slim::Formats::XML->getFeedAsync(
+	
+					$mergeCB, 
+	
+					sub { $mergeCB->({ items => [] }) },	
+	
+					{ client => $client, url => $feedUrl, timeout => 35 },
+				);
+			}
 		}
 			
+	} elsif (main::NOMYSB) {
+		
+		return sub {
+			my ($client, $callback, $args) = @_;
+
+			$callback->({ items => [ {
+				name => $client->string('PLUGIN_MY_APPS_NO_APPS'),
+				type => 'text'
+			} ] });
+		}
+		
 	} else {
 
 		return $feedUrl;
