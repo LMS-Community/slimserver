@@ -103,7 +103,7 @@ sub home {
 	
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
 		
-		next if $menu eq 'apps';
+		next if $menu eq 'apps' && !main::NOMYSB;
 
 		my @sorted = sort {
 			(
@@ -113,11 +113,11 @@ sub home {
 			)
 			|| 
 			(
-				$menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
+				!main::NOMYSB && $menu =~ /(?:my_apps)/ && $a eq 'PLUGIN_APP_GALLERY_MODULE_NAME' && -1
 			)
 			|| 
 			(
-				$menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
+				!main::NOMYSB && $menu =~ /(?:my_apps)/ && $b eq 'PLUGIN_APP_GALLERY_MODULE_NAME'
 			)
 			|| 
 			(
@@ -141,6 +141,11 @@ sub home {
 			}
 			keys %{ $Slim::Web::Pages::additionalLinks{ $menu } }
 		};
+	}
+
+	if (main::NOMYSB) {
+		$params->{additionalLinks}->{my_apps} = delete $params->{additionalLinks}->{apps};
+		$params->{additionalLinkOrder}->{my_apps} = delete $params->{additionalLinkOrder}->{apps};
 	}
 
 	if ( !($params->{page} && $params->{page} eq 'help') ) {
