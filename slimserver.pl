@@ -14,6 +14,28 @@
 require 5.008_001;
 use strict;
 
+# Bug 7491 - bug in PerlSvc: ARGV is not populated when executable is run in service mode.
+# Try to work around this limitation by reading the command line from the registry. Ugh...
+BEGIN {
+	if ($PerlSvc::VERSION && $^O =~ /^m?s?win/i && !@ARGV) {
+		eval {
+			require Win32::TieRegistry;
+			my $swKey = $Win32::TieRegistry::Registry->Open(
+				'LMachine/System/ControlSet001/services/squeezesvc', 
+				{ 
+					Access => Win32::TieRegistry::KEY_READ(), 
+					Delimiter =>'/' 
+				}
+			);
+			
+			if ($swKey) {
+				push @ARGV, split(" ", $swKey->{ImagePath});
+				shift @ARGV;	# remove script name
+			}
+		};
+	}
+}
+
 # leaving this flag in for the moment - unlikely but possibly some 3rd party plugin is referring to it
 use constant SLIM_SERVICE => 0;
 use constant SCANNER      => 0;
