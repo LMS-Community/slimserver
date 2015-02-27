@@ -21,6 +21,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+if ( main::NOMYSB ) {
+	logBacktrace("Support for mysqueezebox.com has been disabled. Please update your code: don't call me if main::NOMYSB.");
+}
+
 use constant SNTIME_POLL_INTERVAL => 3600;
 
 my $log   = logger('network.squeezenetwork');
