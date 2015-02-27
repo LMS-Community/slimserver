@@ -85,7 +85,6 @@ use base qw(Slim::Plugin::Base);
 use XML::Simple;
 
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Networking::SqueezeNetwork;
 use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
