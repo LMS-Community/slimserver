@@ -487,7 +487,7 @@ sub init {
 	addDispatch(['artworkspec',    'add',            '_spec',      '_name'],                           [0, 0, 0, \&Slim::Control::Commands::artworkspecCommand]);
 	addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
-	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]) unless main::NOMYSB;
+	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['contextmenu',    '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::contextMenuQuery]);
 	addDispatch(['current_title',  '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);

@@ -295,7 +295,7 @@ sub buttonCommand {
 }
 
 
-sub clientConnectCommand { if (!main::NOMYSB) {
+sub clientConnectCommand {
 	my $request = shift;
 	my $client  = $request->client();
 
@@ -304,15 +304,19 @@ sub clientConnectCommand { if (!main::NOMYSB) {
 		$host = $request->getParam('_where');
 		
 		# Bug 14224, if we get jive/baby/fab4.squeezenetwork.com, use the configured prod SN hostname
-		if ( $host =~ /^(?:jive|baby|fab4)/i ) {
+		if ( !main::NOMYSB && $host =~ /^(?:jive|baby|fab4)/i ) {
 			$host = Slim::Networking::SqueezeNetwork->get_server('sn');
 		}
 		
-		if ( $host =~ /^www\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
+		if ( !main::NOMYSB && $host =~ /^www\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
 			$host = 1;
 		}
-		elsif ( $host =~ /^www\.test\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
+		elsif ( !main::NOMYSB && $host =~ /^www\.test\.(?:squeezenetwork|mysqueezebox)\.com$/i ) {
 			$host = 2;
+		}
+		elsif ( main::NOMYSB && $host =~ /(?:squeezenetwork|mysqueezebox)\.com$/i ) {
+			$request->setStatusBadParams();
+			return;
 		}
 		elsif ( $host eq '0' ) {
 			# Logitech Media Server (used on SN)
@@ -356,7 +360,7 @@ sub clientConnectCommand { if (!main::NOMYSB) {
 	}
 	
 	$request->setStatusDone();
-} }
+}
 
 sub clientForgetCommand {
 	my $request = shift;
