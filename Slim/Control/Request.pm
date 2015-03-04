@@ -487,7 +487,7 @@ sub init {
 	addDispatch(['artworkspec',    'add',            '_spec',      '_name'],                           [0, 0, 0, \&Slim::Control::Commands::artworkspecCommand]);
 	addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
-	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
+	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]) unless main::NOMYSB;
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['contextmenu',    '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::contextMenuQuery]);
 	addDispatch(['current_title',  '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
@@ -613,7 +613,7 @@ sub init {
 	addDispatch(['restartserver'],                                                                     [0, 0, 0, \&Slim::Control::Commands::stopServer]);
 	addDispatch(['search',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);
 	addDispatch(['serverstatus',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::serverstatusQuery]);
-	addDispatch(['setsncredentials','_username',     '_password'],                                     [0, 0, 1, \&Slim::Control::Commands::setSNCredentialsCommand]);
+	addDispatch(['setsncredentials','_username',     '_password'],                                     [0, 0, 1, \&Slim::Control::Commands::setSNCredentialsCommand]) unless main::NOMYSB;
 	addDispatch(['show'],                                                                              [1, 0, 1, \&Slim::Control::Commands::showCommand]);
 	addDispatch(['signalstrength', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
 	addDispatch(['sleep',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);

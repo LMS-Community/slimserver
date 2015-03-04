@@ -256,12 +256,15 @@ sub init {
 		# Server Settings - jive UI
 		'jivealbumsort'		=> 'album',
 		'defeatDestructiveTouchToPlay' => 4, # 4 => defeat only if playing and current item not a radio stream
-		# Server Settings - mysqueezebox.com
-		'sn_sync'               => main::NOMYSB ? undef : 1,
-		'sn_disable_stats'		=> main::NOMYSB ? undef : 1,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
+	
+	if (!main::NOMYSB) {
+		# Server Settings - mysqueezebox.com
+		$defaults{'sn_sync'} = 1;
+		$defaults{'sn_disable_stats'} = 1;
+	}
 
 	# we can have different defaults depending on the OS 
 	$os->initPrefs(\%defaults);
