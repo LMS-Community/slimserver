@@ -663,7 +663,7 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	if ( !main::NOMYSB && $prefs->get('checkVersion') ) {
+	if ( $REVISION ne 'TRUNK' && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,

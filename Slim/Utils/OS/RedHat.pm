@@ -95,5 +95,7 @@ sub scanner {
 	return '/usr/libexec/squeezeboxserver-scanner';
 }
 
+sub installerOS { 'rpm' }
+
 
 1;

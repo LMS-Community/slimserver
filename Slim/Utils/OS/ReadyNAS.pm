@@ -130,4 +130,21 @@ sub ignoredItems {
 	);
 }
 
+sub installerOS {
+	my $class = shift;
+	
+	if ($class->{osDetails}->{osArch} =~ /sparc/) {
+		return 'readynas';	
+	}
+	elsif ($class->{osDetails}->{osArch} =~ /arm/) {
+		return 'readynasv2';
+	}
+	elsif ($class->{osDetails}->{osArch} =~ /86/) {
+		# good luck with that...
+		return 'readynaspro';
+	}
+	
+	return '';
+}
+
 1;

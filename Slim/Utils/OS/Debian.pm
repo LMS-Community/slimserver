@@ -106,5 +106,6 @@ sub scanner {
 	return '/usr/sbin/squeezeboxserver-scanner';
 }
 
+sub installerOS { 'deb' }
 
 1;

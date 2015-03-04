@@ -402,7 +402,7 @@ sub init {
 				require Slim::Utils::Update;
 				Slim::Utils::Update::checkVersion();
 			}
-		}, 'checkVersion' ) if !main::NOMYSB;
+		}, 'checkVersion' );
 
 		if ( !main::SCANNER ) {
 			$prefs->setChange( sub {

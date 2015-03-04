@@ -37,6 +37,7 @@ sub initSetup {
 		Performance 
 		Plugins 
 		Security 
+		Software 
 		Status 
 		TextFormatting 
 		UserInterface 
@@ -44,7 +45,6 @@ sub initSetup {
 	);
 	
 	if (!main::NOMYSB) {
-		push @classes, 'Slim::Web::Settings::Server::Software';
 		push @classes, 'Slim::Web::Settings::Server::SqueezeNetwork';
 	}
 	

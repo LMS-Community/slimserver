@@ -11,6 +11,11 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
+if (main::NOMYSB) {
+	require Slim::Networking::Repositories;
+	Slim::Networking::Repositories->add('servers', 'http://repos.squeezecommunity.org/');
+}
+
 my $prefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -22,9 +27,11 @@ my $os = Slim::Utils::OSDetect->getOS();
 
 my $versionFile;
 
-sub checkVersion { if (main::NOMYSB) { 
+sub checkVersion {
 	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);			
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter|LogitechMediaServer).*\.(pkg|dmg|exe)(\.tmp)?$/i);
+
+	Slim::Utils::Timers::killTimers(0, \&checkVersion);			
 
 	return unless $prefs->get('checkVersion');
 
@@ -65,42 +72,72 @@ sub checkVersion { if (main::NOMYSB) {
 
 	main::INFOLOG && $log->info("Checking version now.");
 
-	my $url = Slim::Networking::SqueezeNetwork->url(
-		sprintf(
-			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
-			$::VERSION, 
-			$::REVISION, 
-			Slim::Utils::Strings::getLanguage(),
-			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
-			$os->installerOS(),
-			$prefs->get('server_uuid'),
-			Slim::Player::Client::clientCount(),
-		)
+	my $url = main::NOMYSB ? (Slim::Networking::Repositories->getUrlForRepository('servers') . "$::VERSION/servers.xml") : (Slim::Networking::SqueezeNetwork->url('') . '/update/');
+	
+	$url .= sprintf(
+		"?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s&pcount=%d", 
+		$::VERSION, 
+		$::REVISION, 
+		Slim::Utils::Strings::getLanguage(),
+		$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '0',
+		$os->canAutoUpdate() ? $os->installerOS() : '',
+		$prefs->get('server_uuid'),
+		Slim::Player::Client::clientCount(),
 	);
 	
 	main::DEBUGLOG && $log->debug("Using URL: $url");
 	
-	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
-
-	# will call checkVersionCB when complete
+	my $http = main::NOMYSB 
+		? Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError)
+		: Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
+		
 	$http->get($url);
 
 	$prefs->set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
-} }
+}
 
 # called when check version request is complete
-sub checkVersionCB { if (main::NOMYSB) {
+sub checkVersionCB {
 	my $http = shift;
-	
-	# Ignore update check results for users running from svn
-	return if $::REVISION eq 'TRUNK';
 
 	# store result in global variable, to be displayed by browser
 	if ($http->code =~ /^2\d\d/) {
 
-		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
-		chomp($version);
+		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
+		my $version;
+		
+		# Update checker logic is hosted on mysb.com. Once this is gone, we'll have to deal with it on our own.
+		if (main::NOMYSB) {
+			require XML::Simple;
+			my $versions = XML::Simple::XMLin($content);
+			
+			my $osID = $os->installerOS() || 'default';
+			
+			main::DEBUGLOG && $log->is_debug && $log->debug("Got list of installers:\n" . Data::Dump::dump($versions));
+			
+			if ( my $update = $versions->{ $osID } ) {
+				if ( $update->{version} && $update->{revision} ) {
+					if ( Slim::Utils::Versions->compareVersions($update->{version}, $::VERSION) > 0 || $update->{revision} > $::REVISION ) {
+						if ( $osID ne 'default' && $prefs->get('autoDownloadUpdate') ) {
+							$version = $update->{url};
+							
+							# prepend URL with our download host if we didn't get an absolute URL
+							$version = Slim::Networking::Repositories->getUrlForRepository('servers') . $version unless $version =~ /^http/;
+						}
+						else {
+							$version = Slim::Utils::Strings::string('SERVER_UPDATE_AVAILABLE', $update->{version}, $update->{url});
+						}
+					}
+				}
+			}
+		}
+		else {
+			chomp($content);
+			$version = $content;
+		}
+		
+		$version ||= 0;
 		
 		main::DEBUGLOG && $log->debug($version || 'No new Logitech Media Server version available');
 
@@ -123,14 +160,11 @@ sub checkVersionCB { if (main::NOMYSB) {
 		$::newVersion = 0;
 		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->code));
 	}
-} }
+}
 
 # called only if check version request fails
-sub checkVersionError { if (main::NOMYSB) {
+sub checkVersionError {
 	my $http = shift;
-	
-	# Ignore update check results for users running from svn
-	return if $::REVISION eq 'TRUNK';
 
 	my $proxy = $prefs->get('webproxy');
 
@@ -138,11 +172,11 @@ sub checkVersionError { if (main::NOMYSB) {
 		. "\n" . $http->error
 		. ($proxy ? sprintf("\nPlease check your proxy configuration (%s)", $proxy) : '')
 	);
-} }
+}
 
 
 # download the installer
-sub getUpdate { if (main::NOMYSB) {
+sub getUpdate {
 	my $url = shift;
 	
 	my $params = $os->getUpdateParams();
@@ -200,9 +234,9 @@ sub getUpdate { if (main::NOMYSB) {
 	else {
 		$log->error("Didn't receive valid update URL: " . substr($url, 0, 50) . (length($url) > 50 ? '...' : ''));
 	}
-} }
+}
 
-sub downloadAsyncDone { if (main::NOMYSB) {
+sub downloadAsyncDone {
 	my $http = shift;
 	
 	my $file    = $http->params('file');
@@ -244,9 +278,9 @@ sub downloadAsyncDone { if (main::NOMYSB) {
 	}
 
 	cleanup($path, 'tmp');
-} }
+}
 
-sub setUpdateInstaller { if (main::NOMYSB) {
+sub setUpdateInstaller {
 	my $file = shift;
 	
 	if ($file && open(UPDATEFLAG, ">$versionFile")) {
@@ -266,10 +300,10 @@ sub setUpdateInstaller { if (main::NOMYSB) {
 	
 		unlink $versionFile;
 	}
-} }
+}
 
 
-sub getUpdateInstaller { if (main::NOMYSB) {
+sub getUpdateInstaller {
 	
 	return unless $prefs->get('autoDownloadUpdate');
 	
@@ -298,17 +332,16 @@ sub getUpdateInstaller { if (main::NOMYSB) {
 	main::DEBUGLOG && $log->debug("Found update installer path: '$updateInstaller'");
 	
 	return $updateInstaller;
-} }
+}
 
-sub installerIsUpToDate { if (main::NOMYSB) {
+sub installerIsUpToDate {
 	
 	return unless $prefs->get('autoDownloadUpdate');
 
 	my $installer = shift || '';
 
-	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
-		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision and revision
-} }
+	return ( $installer =~ /$::REVISION/ && $installer =~ /$::VERSION/ );	# same revision and revision
+}
 
 sub cleanup {
 	my ($path, $additionalExt) = @_;

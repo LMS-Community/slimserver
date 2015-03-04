@@ -14124,6 +14124,10 @@ DEBUG_NETWORK_SQUEEZENETWORK
 	RU	Ведение журнала mysqueesebox.com
 	SV	mysqueezebox.com-loggning
 
+DEBUG_NETWORK_REPOSITORIES
+	DE	Download Verzeichnisse für Erweiterungen, Aktualisierungen etc.
+	EN	Download repositories for extensions, update etc.
+
 DEBUG_PLAYER_JIVE
 	CS	Podpora pro zařízení založené na Squeezplay
 	DA	Hjælp til Squeezplay-baserede enheder
@@ -24170,3 +24174,18 @@ ON_MYSB
 	PL	W witrynie mysqueezebox.com
 	RU	На mysqueezebox.com
 	SV	På mysqueezebox.com
+
+SERVER_UPDATE_AVAILABLE
+	CS	K dispozici je nová verze Logitech Media Server (%s). <a href="%s" target="update">Pro stažení klikněte na zde</a>.
+	DA	Der findes en ny version af Logitech Media Server (%s). <a href="%s" target="update">Klik her for at hente den</a>.
+	DE	Eine neue Version von Logitech Media Server ist verfügbar (%s). <a href="%s" target="update">Klicken Sie hier, um sie herunterzuladen</a>.
+	EN	A new version of Logitech Media Server is available (%s). <a href="%s" target="update">Click here to download</a>.
+	ES	Hay disponible una nueva versión de Logitech Media Server (%s). <a href="%s" target="update">Haga clic aquí para descargarla</a>.
+	FI	Logitech Media Serveristä on tarjolla uusi versio (%s). <a href="%s" target="update">Lataa se napsauttamalla tässä</a>.
+	FR	Une nouvelle version de Logitech Media Server est disponible (%s). <a href="%s" target="update">Cliquez ici pour la télécharger</a>.
+	IT	È disponibile una nuova versione di Logitech Media Server (%s). <a href="%s" target="update">Fare clic qui per scaricarla</a>.
+	NL	Er is een nieuwe versie van Logitech Media Server beschikbaar (%s). <a href="%s" target="update">Klik op hier om deze te downloaden</a>.
+	NO	En ny versjon av Logitech Media Server er tilgjengelig (%s). <a href="%s" target="update">Klikk her for å laste den ned</a>.
+	PL	Dostępna jest nowa wersja oprogramowania Logitech Media Server (%s). <a href="%s" target="update">Kliknij tutaj, aby pobrać</a>.
+	RU	Доступна новая версия Logitech Media Server (%s). <a href="%s" target="update">Для загрузки щелкните здесь</a>.
+	SV	Det finns en ny version av Logitech Media Server (%s). <a href="%s" target="update">Klicka här för att ladda ner den</a>.
