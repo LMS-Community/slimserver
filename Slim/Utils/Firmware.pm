@@ -34,6 +34,7 @@ use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 
+use Slim::Networking::Repositories;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -50,11 +51,9 @@ my $dir;
 my $updatesDir;
 
 # Download location
-sub BASE { if (main::NOMYSB) { '' } else {
-	'http://'
-	. Slim::Networking::SqueezeNetwork->get_server("update")
-	. '/update/firmware';
-} }
+sub BASE {
+	return Slim::Networking::Repositories->getUrlForRepository('firmware');
+}
 
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = INITIAL_RETRY_TIME;
@@ -74,6 +73,7 @@ download().
 =cut
 
 sub init {
+	Slim::Networking::Repositories->add('firmware', 'http://update.slimdevices.com/update/firmware/');
 	
 	# Must initialize these here, not in declaration so that options have been parsed.
 	$dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
@@ -126,25 +126,23 @@ sub init_firmware_download {
 	}
 
 	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
-	if ( main::NOMYSB || !$prefs->get('checkVersion') ) {
+	if ( !$prefs->get('checkVersion') ) {
 		main::INFOLOG && $log->info("Not downloading firmware for $model - update check has been disabled in Settings/Advanced/Software Updates");
 		get_fw_locally($model);
 		return;
 	}
 
-	if ( !main::NOMYSB ) {
-		main::INFOLOG && $log->is_info && $log->info("Downloading $model.version file...");
-	
-		# Any async downloads in init must be started on a timer so they don't
-		# time out from other slow init things
-		Slim::Utils::Timers::setTimer(
-			undef,
-			time(),
-			sub {
-				downloadAsync( $version_file, {cb => \&init_version_done, pt => [$version_file, $model]} );
-			},
-		);
-	}
+	main::INFOLOG && $log->is_info && $log->info("Downloading $model.version file...");
+
+	# Any async downloads in init must be started on a timer so they don't
+	# time out from other slow init things
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time(),
+		sub {
+			downloadAsync( $version_file, {cb => \&init_version_done, pt => [$version_file, $model]} );
+		},
+	);
 }
 
 =head2 init_version_done($version_file, $model)
@@ -155,7 +153,7 @@ in 1 day.
 
 =cut
 
-sub init_version_done { if (!main::NOMYSB) {
+sub init_version_done {
 	my $version_file = shift;
 	my $model        = shift || 'jive';
 			
@@ -212,7 +210,7 @@ sub init_version_done { if (!main::NOMYSB) {
 			init_firmware_download($model);
 		},
 	);
-} }
+}
 
 =head2 init_fw_done($fw_file, $model)
 
@@ -222,7 +220,7 @@ Removes old firmware file if one exists.
 
 =cut
 
-sub init_fw_done { if (!main::NOMYSB) {
+sub init_fw_done {
 	my $fw_file = shift;
 	my $model   = shift;
 		
@@ -242,7 +240,7 @@ sub init_fw_done { if (!main::NOMYSB) {
 
 	# send a notification that this firmware is downloaded
 	Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
-} }
+}
 
 =head2 init_fw_error($model)
 
@@ -250,7 +248,7 @@ Called if firmware download failed.  Checks if another firmware exists in cache.
 
 =cut
 
-sub init_fw_error { if (!main::NOMYSB) {	
+sub init_fw_error {	
 	my $model = shift || 'jive';
 
 	main::INFOLOG && $log->info("$model firmware download had an error");
@@ -258,7 +256,7 @@ sub init_fw_error { if (!main::NOMYSB) {
 	get_fw_locally( $model );
 	
 	# Note: Server will keep trying to download a new one
-} }
+}
 
 sub get_fw_locally {
 	my $model = shift || 'jive';
@@ -299,7 +297,7 @@ undef if firmware has not been downloaded.
 
 =cut
 
-sub url { if (!main::NOMYSB) {
+sub url {
 	my $class = shift;
 	my $model = shift || 'jive';
 
@@ -312,7 +310,7 @@ sub url { if (!main::NOMYSB) {
 
 	# when running on SqueezeOS, return the direct link from SqueezeNetwork
 	if ( Slim::Utils::OSDetect->getOS()->directFirmwareDownload() ) {
-		return BASE() . '/' . $::VERSION . '/' . $model
+		return BASE() . $::VERSION . '/' . $model
 			. '_' . $firmwares->{$model}->{version} 
 			. '_r' . $firmwares->{$model}->{revision} 
 			. '.bin';
@@ -324,7 +322,7 @@ sub url { if (!main::NOMYSB) {
 		. Slim::Utils::Network::serverAddr() . ':'
 		. preferences('server')->get('httpport')
 		. '/firmware/' . basename($firmwares->{$model}->{file});
-} }
+}
 
 =head2 need_upgrade( $current_version, $model )
 
@@ -374,7 +372,7 @@ $file must be an absolute path.
 
 =cut
 
-sub download { if (!main::NOMYSB) {
+sub download {
 	my ( $url, $file ) = @_;
 	
 	require LWP::UserAgent;
@@ -430,7 +428,7 @@ sub download { if (!main::NOMYSB) {
 	logError("Unable to download firmware from $url: $error");
 
 	return 0;
-} }
+}
 
 =head2 downloadAsync($file)
 
@@ -441,7 +439,7 @@ This timer tries to download any missing firmware in the background every 10 min
 # Keep track of what files are being downloaded and their callbacks
 my %filesDownloading;
 
-sub downloadAsync { if (!main::NOMYSB) {
+sub downloadAsync {
 	my ($file, $args) = @_;
 	$args ||= {};
 		
@@ -460,7 +458,7 @@ sub downloadAsync { if (!main::NOMYSB) {
 	$filesDownloading{$file} ||= [];
 	
 	# URL to download
-	my $url = BASE() . '/' . $::VERSION . '/' . basename($file);
+	my $url = BASE() . $::VERSION . '/' . basename($file);
 	
 	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
@@ -476,7 +474,7 @@ sub downloadAsync { if (!main::NOMYSB) {
 	main::INFOLOG && $log->info("Downloading in the background: $url -> $file");
 	
 	$http->get( $url );
-} }
+}
 
 =head2 downloadAsyncDone($http)
 
@@ -484,7 +482,7 @@ Callback after our firmware file has been downloaded.
 
 =cut
 
-sub downloadAsyncDone { if (!main::NOMYSB) {
+sub downloadAsyncDone {
 	my $http = shift;
 	my $args = $http->params();
 	my $file = $args->{'file'};
@@ -506,7 +504,7 @@ sub downloadAsyncDone { if (!main::NOMYSB) {
 	);
 	
 	$http->get( $url . '.sha' );
-} }
+}
 
 =head2 downloadAsyncSHADone($http)
 
@@ -514,7 +512,7 @@ Callback after our firmware's SHA checksum file has been downloaded.
 
 =cut
 
-sub downloadAsyncSHADone { if (!main::NOMYSB) {
+sub downloadAsyncSHADone {
 	my $http = shift;
 	my $args = $http->params();
 	my $file = $args->{'file'};
@@ -558,7 +556,7 @@ sub downloadAsyncSHADone { if (!main::NOMYSB) {
 	else {
 		downloadAsyncError( $http, "Validation of firmware $file failed, SHA1 checksum did not match" );
 	}
-} }
+}
 
 =head2 downloadAsyncError( $http, $error )
 
@@ -567,7 +565,7 @@ file and resets the check timer.
 
 =cut
 
-sub downloadAsyncError { if (!main::NOMYSB) {
+sub downloadAsyncError {
 	my ( $http, $error ) = @_;
 	my $file = $http->params('file');
 	my $cb   = $http->params('cb');
@@ -618,7 +616,7 @@ sub downloadAsyncError { if (!main::NOMYSB) {
 	if ( $file =~ /$model/ ) {
 		init_fw_error($model);
 	}
-} }
+}
 
 =head2 fatal($msg)
 
