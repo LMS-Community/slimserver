@@ -145,10 +145,10 @@ sub measureLatency {
 	my $repository = shift;
 
 	Slim::Utils::Timers::killTimers($repository, \&measureLatency);
+
+	return unless keys %{$repositories{$repository}} > 1;
 	
-	return unless keys $repositories{$repository} > 1;
-	
-	for my $repo ( keys $repositories{$repository} ) {
+	for my $repo ( keys %{$repositories{$repository}} ) {
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_measureLatencyDone, 
 			\&_measureLatencyDone, 
