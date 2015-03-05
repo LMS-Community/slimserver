@@ -73,8 +73,6 @@ download().
 =cut
 
 sub init {
-	Slim::Networking::Repositories->add('firmware', 'http://update.slimdevices.com/update/firmware/');
-	
 	# Must initialize these here, not in declaration so that options have been parsed.
 	$dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
 	$updatesDir = Slim::Utils::OSDetect::dirsFor('updates');

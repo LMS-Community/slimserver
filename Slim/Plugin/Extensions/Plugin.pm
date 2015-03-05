@@ -137,7 +137,6 @@ sub initPlugin {
 
 	for my $repo (keys %repos) {
 		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
-		Slim::Networking::Repositories->add('extensions', $repo);
 	}
 
 	if ( main::WEBUI ) {

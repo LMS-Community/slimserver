@@ -31,21 +31,17 @@ index is disabled will fail the latency check! In such a case please put a
 minimalistic index.html in the folder.
 
 =head1 METHODS
-
-	# register two URLs for the "downloads" repository
-	Slim::Music::Repositories->add('downloads', 'http://downloads.myserver.com/repository.xml');
-	Slim::Music::Repositories->add('downloads', 'http://downloads.mymirror.com/repository.xml');
 	
 	# get the repository file from the "best" mirror:
 	Slim::Networking::Repositories->get(
-		'downloads',
+		'servers',
 		\&_handleDownloads,
 		\&_handleError,
 		{ ... },		# params passed through to the callbacks
 	);
 	
 	# ... or get the best URL to further deal with:
-	Slim::Networking::Repositories->getUrlForRepository('downloads');
+	Slim::Networking::Repositories->getUrlForRepository('servers');
 	
 	# ... or get a mirror (or self) for a given URL:
 	Slim::Networking::Repositories->getMirrorForUrl('http://downloads.myserver.com/repository.xml');
@@ -70,10 +66,18 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 my $prefs = preferences('server');
 
+# TODO - add a mechanism to override/add to the list of repositories. 
+# Eg. a mirrors.json file in the server's root? Don't allow to change the list 
+# programmatically from the code to reduce the risk of abuse.
+
 # These lists are hashes instead of simple lists to facilitate
 # weighting. The default of 1 would be replaced with the latency in order to
 # allow latency based load balancing.
-my %repositories;
+my %repositories = (
+	servers    => { 'http://repos.squeezecommunity.org/' => 1 },
+	firmware   => { 'http://update.slimdevices.com/update/firmware/' => 1 },
+	extensions => { 'http://repos.squeezecommunity.org/extensions.xml' => 1 }, 
+);
 
 sub init {
 	foreach (keys %repositories) {
@@ -89,25 +93,6 @@ sub get {
 	my $url = $item =~ /^https?:/ ? $class->getMirrorForUrl($item) : $class->getUrlForRepository($item);
 	
 	Slim::Networking::SimpleAsyncHTTP->new( @_ )->get( $url );
-}
-
-sub add {
-	my ($class, $repository, $url) = @_;
-	
-	if ( !($repository && $url) ) {
-		$log->error("Invalid repository definition: need a repository name and a URL value.");
-		return;
-	}
-	
-	main::DEBUGLOG && $log->is_debug && $log->debug("Adding repository for repository '$repository': $url");
-	
-	$repositories{$repository} ||= {};
-	$repositories{$repository}->{$url} = 1;
-
-	# run check on a timer, as there might be more additions
-	Slim::Utils::Timers::setTimer($repository, time() + rand(2), \&measureLatency);
-	
-	return 1;
 }
 
 sub getUrlForRepository {

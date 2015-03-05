@@ -13,7 +13,6 @@ use Slim::Utils::Unicode;
 
 if (main::NOMYSB) {
 	require Slim::Networking::Repositories;
-	Slim::Networking::Repositories->add('servers', 'http://repos.squeezecommunity.org/');
 }
 
 my $prefs = preferences('server');
