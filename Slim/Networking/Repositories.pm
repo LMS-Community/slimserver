@@ -77,10 +77,6 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 my $prefs = preferences('server');
 
-# TODO - add a mechanism to override/add to the list of repositories. 
-# Eg. a mirrors.json file in the server's root? Don't allow to change the list 
-# programmatically from the code to reduce the risk of abuse.
-
 # These lists are hashes instead of simple lists to facilitate
 # weighting. The default of 1 would be replaced with the latency in order to
 # allow latency based load balancing.
