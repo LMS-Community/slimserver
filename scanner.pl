@@ -83,7 +83,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::PluginManager;
 use Slim::Utils::Progress;
-use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 use Slim::Media::MediaFolderScan;
 

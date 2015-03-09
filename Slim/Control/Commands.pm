@@ -37,7 +37,6 @@ use JSON::XS::VersionOneAndTwo;
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Scanner;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scanner::Local;
@@ -894,6 +893,7 @@ sub playlistDeleteitemCommand {
 		Slim::Player::Playlist::removeMultipleTracks($client, [$absitem]);
 
 	} elsif (Slim::Music::Info::isDir($absitem)) {
+		require Slim::Utils::Scanner;
 		
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => Slim::Utils::Misc::pathFromFileURL($absitem),
@@ -1522,6 +1522,8 @@ sub playlistXitemCommand {
 
 		my @dirItems     = ();
 
+		require Slim::Utils::Scanner;
+
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
 			'listRef'  => \@dirItems,
@@ -1572,6 +1574,9 @@ sub playlistXitemCommand {
 				},
 			} );
 		}
+
+		require Slim::Utils::Scanner;
+		
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $isReferenced ? $url : $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
