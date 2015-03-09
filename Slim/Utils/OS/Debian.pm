@@ -55,7 +55,7 @@ sub dirsFor {
 		push @dirs, $class->SUPER::dirsFor($dir);
 		push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezeboxserver/Plugins";
 		
-	} elsif ($dir =~ /^(?:strings|revision)$/) {
+	} elsif ($dir =~ /^(?:strings|revision|repositories)$/) {
 
 		push @dirs, "/usr/share/squeezeboxserver";
 

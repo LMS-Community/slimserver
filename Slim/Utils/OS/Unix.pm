@@ -52,7 +52,7 @@ sub dirsFor {
 	my @dirs = $class->SUPER::dirsFor($dir);
 	
 	# some defaults
-	if ($dir =~ /^(?:strings|revision|convert|types)$/) {
+	if ($dir =~ /^(?:strings|revision|convert|types|repositories)$/) {
 
 		push @dirs, $Bin;
 

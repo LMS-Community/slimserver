@@ -48,7 +48,7 @@ sub dirsFor {
 		push @dirs, "/usr/share/squeezeboxserver/Plugins";
 		push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		
-	} elsif ($dir =~ /^(?:strings|revision)$/) {
+	} elsif ($dir =~ /^(?:strings|revision|repositories)$/) {
 
 		push @dirs, "/usr/share/squeezeboxserver";
 

@@ -30,6 +30,16 @@ is pointing to a folder which has no default document and where the directory
 index is disabled will fail the latency check! In such a case please put a 
 minimalistic index.html in the folder.
 
+Optionally there can be a repositories.conf with a list of repositories in 
+the same folder as strings.txt. This must not be writable by the server, as 
+otherwise a malicious plugin could redirect update checks etc.!
+
+repositories.conf:
+
+# sample content of a repositories file
+servers http://downloads.myserver.com/respository.xml
+firmware http://downloads.myserver.com/firmware.xml
+
 =head1 METHODS
 	
 	# get the repository file from the "best" mirror:
@@ -49,6 +59,7 @@ minimalistic index.html in the folder.
 =cut
 
 use strict;
+use File::Spec::Functions qw(catfile);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -80,6 +91,27 @@ my %repositories = (
 );
 
 sub init {
+	# read optional file with additinal repositories
+	my $reposfile = catfile(Slim::Utils::OSDetect::dirsFor('repositories'), 'repositories.conf');
+	
+	if ( -f $reposfile && open(CONVERT, $reposfile) ) {
+		while (my $line = <CONVERT>) {
+
+			# skip comments and whitespace
+			next if $line =~ /^\s*#/;
+			next if $line =~ /^\s*$/;
+
+			# get rid of comments and leading and trailing white space
+			$line =~ s/#.*$//o;
+			$line =~ s/^\s*//o;
+			$line =~ s/\s*$//o;
+	
+			if ( $line =~ m|^([a-z_]+)\s+(https?://\S+)\s*$|i ) {
+				$repositories{$1}->{$2} = 1;
+			}
+		}
+	}
+	
 	foreach (keys %repositories) {
 		Slim::Utils::Timers::setTimer($_, time() + rand(5), \&measureLatency);
 	}
