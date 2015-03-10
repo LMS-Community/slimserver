@@ -495,8 +495,8 @@ sub processHTTP {
 			}
 		}
 		
-		# Dont' process cookies for graphics
-		if ($path && $path !~ m/(gif|png)$/i) {
+		# Dont' process cookies for graphics, stylesheets etc.
+		if ($path && $path !~ m/(?:gif|png|jpe?g|css)$/i && $path !~ m{^/(?:music/[a-f\d]+/cover|imageproxy/.*/image)} ) {
 			if ( my $cookie = $request->header('Cookie') ) {
 				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
 			}
@@ -601,10 +601,6 @@ sub processHTTP {
 		if ($path) {
 
 			$params->{'webroot'} = '/';
-
-			if ($path =~ s{^/slimserver/}{/}i) {
-				$params->{'webroot'} = "/slimserver/"
-			}
 
 			$path =~ s|^/+||;
 

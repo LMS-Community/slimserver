@@ -491,17 +491,14 @@ sub homeExitHandler {
 }
 
 sub cmpString {
-	my $client = shift;
-	my $string = shift;
+#	my $client = shift;
+#	my $string = shift;
 
-	if ( Slim::Utils::Strings::stringExists($string) ) {
-
-		return defined $client
-			? $client->string($string)
-			: Slim::Utils::Strings::string($string);
+	if ( Slim::Utils::Strings::stringExists($_[1]) ) {
+		return Slim::Utils::Strings::cstring($_[0], $_[1]);
 	}
 
-	return $string;
+	return $_[1];
 }
 
 # load the submenu hash keys into an array of valid entries.
