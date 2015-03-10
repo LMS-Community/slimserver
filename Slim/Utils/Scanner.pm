@@ -58,21 +58,9 @@ sub scanPathOrURL {
 		return $cb->( [] );
 	};
 
-	# Volatile local tracks are dealt with like remote files. Use the mediafolder query to resolve a folder into its content.
-	# We can't rely on the remote URL scanner, as we would want inject the list of files instead of a folder item.
-	if ( $pathOrUrl =~ /^tmp:/ ) {
-		my $items;
-
-		my $request = Slim::Control::Request::executeRequest( undef, ['mediafolder', 0, 500, "url:$pathOrUrl", 'tags:u'] );
-		my $results = $request->getResults();
-			
-		if ( $results && $results->{folder_loop} ) {
-			$items = [ map { $_->{url} } grep { $_->{type} eq 'track' } @{$results->{folder_loop}} ];
-		}
-
-		return $cb->( $items || [ $pathOrUrl ] );
-		
-	} elsif ( Slim::Music::Info::isRemoteURL($pathOrUrl) ) {
+	# use the same code for volatile tracks as for regular tracks, but replace the URLs
+	# and create track objects for those temporary items
+	if ( Slim::Music::Info::isRemoteURL($pathOrUrl) && $pathOrUrl !~ /^tmp:/ ) {
 
 		# Do not scan remote URLs now, they will be scanned right before playback by
 		# an onJump handler.
@@ -80,6 +68,16 @@ sub scanPathOrURL {
 		return $cb->( [ $pathOrUrl ] );
 
 	} else {
+		
+		if ( $pathOrUrl =~ /^tmp:/ ) {
+			require Slim::Player::Protocols::Volatile;
+	
+			$args->{'volatile'} = $pathOrUrl;
+
+			$args->{'url'} =~ s/^tmp/file/;
+			$args->{'url'} = $pathOrUrl = Slim::Utils::Misc::pathFromFileURL($args->{'url'});
+		}
+		
 
 		if (Slim::Music::Info::isFileURL($pathOrUrl)) {
 
@@ -96,8 +94,6 @@ sub scanPathOrURL {
 
 		# Always let the user know what's going on..
 		main::INFOLOG && $log->info("Finding valid files in: $pathOrUrl");
-
-		# XXX - can't replace with mediafolder query, yet, as that wouldn't be recursive
 
 		# Non-async directory scan
 		my $foundItems = $class->scanDirectory( $args, 'return' );
@@ -248,6 +244,8 @@ sub scanDirectory {
 		Slim::Schema->clearLastError;
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
+		
+		$url =~ s/^file/tmp/ if $args->{volatile};
 
 		if (Slim::Music::Info::isSong($url)) {
 
@@ -256,18 +254,33 @@ sub scanDirectory {
 			my $track = Slim::Schema->updateOrCreate({
 				'url'        => $url,
 				'readTags'   => 1,
-				'checkMTime' => 1,
+				'checkMTime' => $args->{volatile} ? undef : 1,
+				'create'     => $args->{volatile} ? 1 : undef,
 			});
 			
 			if ( defined $track && $return ) {
-				push @{$foundItems}, $track;
+
+				if ( $args->{volatile} ) {
+					Slim::Player::Protocols::Volatile->getMetadataFor(undef, $url);
+					push @{$foundItems}, $url;
+				}
+				else {
+					push @{$foundItems}, $track;
+				}
+
 			}
 			
 			if ( !defined $track ) {
 				$log->error( "ERROR SCANNING $file: " . Slim::Schema->lastError );
 			}
 
-		} elsif (Slim::Music::Info::isCUE($url) || 
+		} 
+		
+		elsif ($args->{volatile}) {
+			# can't handle volatile playlists (yet?)
+		}
+		
+		elsif (Slim::Music::Info::isCUE($url) || 
 			(Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url))) {
 
 			# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
