@@ -8,7 +8,6 @@ package Slim::Web::Settings::Server::Wizard;
 use strict;
 use base qw(Slim::Web::Settings);
 use Digest::SHA1 qw(sha1_base64);
-use I18N::LangTags qw(extract_language_tags);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Utils::Log;
@@ -54,7 +53,9 @@ sub handler {
 
 			main::DEBUGLOG && $log->debug("Accepted-Languages: " . $response->{_request}->{_headers}->{'accept-language'});
 
-			foreach my $language (extract_language_tags($response->{_request}->{_headers}->{'accept-language'})) {
+			require I18N::LangTags;
+
+			foreach my $language (I18N::LangTags::extract_language_tags($response->{_request}->{_headers}->{'accept-language'})) {
 				$language = uc($language);
 				$language =~ s/-/_/;  # we're using zh_cn, the header says zh-cn
 	
