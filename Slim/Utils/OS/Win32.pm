@@ -674,7 +674,7 @@ sub getScanTimeOffset {
 	my $isDST = (localtime(time()))[8] ? 1 : 0;
 	
 	if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
-		return $isDST ? -3600 : 3600;
+		return $isDST ? 3600 : -3600;
 	}
 	
 	return 0;
