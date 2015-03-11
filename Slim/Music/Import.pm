@@ -268,7 +268,16 @@ We'll need this on Windows, which has a bug handling file's mtime and DST.
 
 sub setLastScanTimeIsDST {
 	my $class = shift;
-	$class->setLastScanTime('lastRescanTimeIsDST', (localtime(time()))[8] ? 1 : 0);
+
+	# May not have a DB to store this in
+	return if !Slim::Schema::hasLibrary();
+	
+	my $last = Slim::Schema->rs('MetaInformation')->find_or_create( {
+		'name' => 'lastRescanTimeIsDST'
+	} );
+
+	$last->value( (localtime(time()))[8] ? 1 : 0 );
+	$last->update;
 }
 
 sub getLastScanTimeIsDST {
