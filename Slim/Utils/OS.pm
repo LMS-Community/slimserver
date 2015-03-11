@@ -410,6 +410,8 @@ sub installerOS { '' };
 # XXX - disable AutoRescan for all but SqueezeOS for now
 sub canAutoRescan { 0 };
 
+# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
+sub getScanTimeOffset { 0 }
 
 =head2 directFirmwareDownload( )
 

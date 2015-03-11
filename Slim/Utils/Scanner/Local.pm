@@ -239,6 +239,10 @@ sub rescan {
 			)
 			WHERE scanned_files.url LIKE '$basedir%'
 		};
+
+		if ( my $offset = Slim::Utils::OSDetect::getOS->getScanTimeOffset() ) {
+			$changedOnlySQL =~ s/(!= tracks.timestamp)/$1 + $offset/;
+		}
 		
 		# only remove missing tracks when looking for audio tracks
 		my $inDBOnlyCount = 0;
@@ -1024,6 +1028,7 @@ sub markDone {
 	if (!main::SCANNER && $changes) {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 		Slim::Music::Import->setLastScanTime();
+		Slim::Music::Import->setLastScanTimeIsDST();
 	}
 	
 	$pending{$path} &= ~$type;
@@ -1063,6 +1068,7 @@ sub markDone {
 				if ($changes) {
 					main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 					Slim::Music::Import->setLastScanTime();
+					Slim::Music::Import->setLastScanTimeIsDST();
 				}
 				
 				# Persist the count of "changes since last optimization"
