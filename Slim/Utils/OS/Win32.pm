@@ -645,6 +645,17 @@ sub getShortcut {
 }
 
 
+sub getScanTimeOffset {
+	my $isDST = (localtime(time()))[8] ? 1 : 0;
+	
+	if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
+		return $isDST ? -3600 : 3600;
+	}
+	
+	return 0;
+}
+
+
 =head2 setPriority( $priority )
 
 Set the priority for the server. $priority should be -20 to 20
