@@ -39,6 +39,7 @@ use constant NOMYSB       => 1;
 # Tell PerlApp to bundle these modules
 if (0) {
 	require 'auto/Compress/Raw/Zlib/autosplit.ix';
+	require Cache::FileCache;
 }
 
 BEGIN {

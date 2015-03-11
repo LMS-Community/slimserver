@@ -146,30 +146,36 @@ sub close {
 	$self->_close_db;
 }
 
+# The following function is mostly borrowed from Cache::BaseCache
+
+# map of expiration formats to their respective time in seconds
+my %_Expiration_Units = ( map(($_,             1), qw(s second seconds sec)),
+                          map(($_,            60), qw(m minute minutes min)),
+                          map(($_,         60*60), qw(h hour hours)),
+                          map(($_,      60*60*24), qw(d day days)),
+                          map(($_,    60*60*24*7), qw(w week weeks)),
+                          map(($_,   60*60*24*30), qw(M month months)),
+                          map(($_,  60*60*24*365), qw(y year years)) );
+
+# turn a string in the form "[number] [unit]" into an explicit number
+# of seconds from the present.  E.g, "10 minutes" returns "600"
 sub _canonicalize_expiration_time {
 	my ( $expiry ) = @_;
 	
-	# see below - 'never' would crash 
-	return -1 if $expiry eq 'never' || $expiry eq '-1';
-	
-	if ( $expiry && $expiry !~ /^[\-]*\d+$/ ) {
-		# Not a number, need to canonicalize it
-		# sometimes this fails on existing code, eg. with 'never'?
-		$expiry = eval { 
-			require Cache::BaseCache;
-			Cache::BaseCache::Canonicalize_Expiration_Time($expiry)
-		};
-		
-		if ($@) {
-			require Slim::Utils::Log;
-			Slim::Utils::Log::logBacktrace($@);
-			Slim::Utils::Log->logger('server')->error('Falling back to default expiry time: ' . DEFAULT_EXPIRES_TIME);
-			
-			$expiry = DEFAULT_EXPIRES_TIME;
-		}
-		
-		# Canonicalize_Expiration_Time would return seconds for eg. 3 months - always add current time
-		$expiry += time() if $expiry >= 0;
+	if ( lc( $expiry ) eq 'now' ) {
+		$expiry = 0;
+	}
+	elsif ( lc( $expiry ) eq 'never' ) {
+		$expiry = -1;
+	}
+	elsif ( $expiry =~ /^\s*([+-]?(?:\d+|\d*\.\d*))\s*$/ ) {
+		$expiry = $1;
+	}
+	elsif ( $expiry =~ /^\s*([+-]?(?:\d+|\d*\.\d*))\s*(\w*)\s*$/ && $_Expiration_Units{ $2 } ) {
+		$expiry = ( $_Expiration_Units{ $2 } ) * $1;
+	}
+	else {
+		$expiry = DEFAULT_EXPIRES_TIME;
 	}
 
 	# "If value is less than 60*60*24*30 (30 days), time is assumed to be
@@ -180,7 +186,6 @@ sub _canonicalize_expiration_time {
 	
 	return $expiry;
 }
-
 
 sub _get_dbfile {
 	my $self = shift;

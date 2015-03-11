@@ -75,6 +75,7 @@ sub Startup {
 	# Tell PerlSvc to bundle these modules
 	if (0) {
 		require 'auto/Compress/Raw/Zlib/autosplit.ix';
+		require Cache::FileCache;
 	}
 	
 	# added to workaround a problem with 5.8 and perlsvc.
