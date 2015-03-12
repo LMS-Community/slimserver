@@ -664,7 +664,7 @@ sub init {
 		Slim::Utils::PerfMon->init($perfwarn);
 	}
 
-	if ( $REVISION ne 'TRUNK' && $prefs->get('checkVersion') ) {
+	if ( $REVISION =~ /^\s*\d+\s*$/ && $prefs->get('checkVersion') ) {
 		require Slim::Utils::Update;
 		Slim::Utils::Timers::setTimer(
 			undef,
