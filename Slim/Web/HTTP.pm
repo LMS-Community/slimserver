@@ -359,7 +359,6 @@ sub processHTTP {
 	# this will hold our context and is used to fill templates
 	my $params = {};
 	$params->{'userAgent'} = $request->header('user-agent');
-	$params->{'browserType'} = $skinMgr->detectBrowser($request);
 
 	# this bundles up all our response headers and content
 	my $response = HTTP::Response->new();
@@ -997,6 +996,9 @@ sub generateHTTPResponse {
  		# static content should expire from cache in one hour
 		$response->expires( time() + $max );
 		$response->header('Cache-Control' => 'max-age=' . $max);
+	}
+	elsif ( $path !~ m{^(?:music|imageproxy)/} ) {
+		$params->{'browserType'} = $skinMgr->detectBrowser($response->request);
 	}
 
 	if ($contentType =~ /text/ && $contentType !~ /(?:css|javascript)/ && $path !~ /(?:json|memoryusage|html\/js-)/) {
