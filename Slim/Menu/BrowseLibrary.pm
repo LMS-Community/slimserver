@@ -1612,7 +1612,7 @@ sub _albums {
 				items       => $items,
 				actions     => \%actions,
 				sorted      => (($sort && $sort =~ /^sort:(?:random|new)$/) ? 0 : 1),
-				orderByList => (($sort && $sort =~ /^sort:(?:random|new)$/) ? undef : \%orderByList),
+				orderByList => (defined($search) || ($sort && $sort =~ /^sort:(?:random|new)$/) ? undef : \%orderByList),
 			}, $extra;
 		},
 		# no need for an index bar in New Music mode
