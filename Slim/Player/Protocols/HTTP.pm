@@ -154,6 +154,11 @@ sub parseMetadata {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Icy metadata received: $metadata");
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1);
+		
+		# Some stations provide TuneIn enhanced metadata (TPID, itunesTrackID, etc.) in the title - remove it
+		if ( $newTitle =~ /(.*?)- text="(.*?)"/ ) {
+			$newTitle = "$1 - $2";
+		}
 
 		# Bug 15896, a stream had CRLF in the metadata
 		$newTitle =~ s/\s*[\r\n]+\s*//g;
