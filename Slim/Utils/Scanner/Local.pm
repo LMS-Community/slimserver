@@ -14,6 +14,7 @@ use FileHandle;
 use Path::Class ();
 use Scalar::Util qw(blessed);
 
+use Slim::Formats::Playlists;
 use Slim::Utils::Misc ();
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
