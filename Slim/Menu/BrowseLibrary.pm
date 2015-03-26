@@ -1864,6 +1864,8 @@ sub _bmf {
 							fixedParams => {cmd => 'insert', folder_id =>  $_->{'id'}},
 						},
 					};
+					$_->{'itemActions'}->{'playall'} = $_->{'itemActions'}->{'play'};
+					$_->{'itemActions'}->{'addall'} = $_->{'itemActions'}->{'add'};
 					$gotsubfolder = 1;
 				}  elsif ($_->{'type'} eq 'track') {
 					$_->{'type'}        = 'audio';

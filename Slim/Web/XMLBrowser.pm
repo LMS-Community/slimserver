@@ -703,6 +703,7 @@ sub handleFeed {
 						"$_:" . $actionItem->{fixedParams}->{$_}
 					} keys %{ $actionItem->{fixedParams} };
 					
+					main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($command));
 					$client->execute($command);
 				}
 			} elsif ($action eq 'insert') {
