@@ -304,11 +304,6 @@ sub parseStrings {
 
 	my $store = $args->{'storeString'} || \&storeString;
 
-	# split on both \r and \n
-	# This caters for unix format (\n), DOS format (\r\n)
-	# and mac format (\r) files
-	# It also obviates the need to strip trailing \n or \r
-	# from the end of lines
 	LINE: for my $line ( <$fh> ) {
 
 		$ln++;
