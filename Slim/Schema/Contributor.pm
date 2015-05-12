@@ -153,7 +153,7 @@ sub add {
 		}
 		else {
 			# Bug 3069: update the namesort only if it's different than namesearch
-			if ( $search ne $sort ) {
+			if ( $search ne Slim::Utils::Unicode::utf8toLatin1Transliterate($sort) ) {
 				$sth = $dbh->prepare_cached('UPDATE contributors SET namesort = ? WHERE id = ?');
 				$sth->execute( $sort, $id );
 			}
