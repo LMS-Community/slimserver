@@ -1225,7 +1225,10 @@ sub generateHTTPResponse {
 		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
 
 			if ( main::WEBUI ) {
-				($contentType, $body) = Slim::Web::Pages::Common->logFile($params, $response, $1);
+				($contentType, $body) = Slim::Web::Pages::Common->logFile($httpClient, $params, $response, $1);
+				
+				# when the full file is requested, then all the streaming is handled in the logFile call. Nothing is returned.
+				return 0 unless $contentType;
 			}
 		
 		} elsif ($path =~ /status\.txt/) {

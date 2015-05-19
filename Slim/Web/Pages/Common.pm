@@ -442,19 +442,27 @@ sub tuneIn {
 }
 
 sub logFile {
-	my ($class, $params, $response, $logfile) = @_;
+	my ($class, $httpClient, $params, $response, $logfile) = @_;
+	
+	$logfile =~ s/log/server/;
+	$logfile .= 'LogFile';
+	
+	my $logFile = Slim::Utils::Log->$logfile;
+	
+	if ( $params->{full} && -f $logFile ) {
+		$response->code(HTTP::Status::RC_OK);
+		Slim::Web::HTTP::sendStreamingFile( $httpClient, $response, 'text/plain', $logFile );
+		return;
+	}
 
 	$response->header("Refresh" => "10; url=" . $params->{path} . ($params->{lines} ? '?lines=' . $params->{lines} : ''));
 	$response->header("Content-Type" => "text/plain; charset=utf-8");
 		
-	$logfile =~ s/log/server/;
-	$logfile .= 'LogFile';
-		
-	my $count = $params->{lines} || 50;
+	my $count = ($params->{lines} * 1) || 50;
 
 	my $body = '';
 
-	my $file = File::ReadBackwards->new(Slim::Utils::Log->$logfile);
+	my $file = File::ReadBackwards->new($logFile);
 		
 	if ($file){
 
