@@ -343,14 +343,19 @@ sub init {
 
 	$prefs->setValidate({
 		validator => sub {
-						if ($_[1] =~ /.+\.([^.]+)$/) {
+						my $regex = $_[1];
+
+						# try to compile the regex to validate it
+						eval { qr/$regex/ };
+						
+						if ($@) {
+							return;
+						} elsif ($regex =~ /.+\.([^.]+)$/) {
 							my $suffix = $1;
-	
-							return grep(/^$suffix$/, qw(jpg gif png jpeg));
-					
-						} else {
-							return 1;
+							return grep(/^$suffix$/i, qw(jpg gif png jpeg));
 						}
+						
+						return 1;
 					}
 		}, 'coverArt',
 	);
