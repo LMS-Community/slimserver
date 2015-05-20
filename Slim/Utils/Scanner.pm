@@ -28,7 +28,7 @@ they say and no more.
 
 use strict;
 
-use FileHandle ();
+#use FileHandle ();
 use File::Next;
 use Path::Class;
 
@@ -112,9 +112,9 @@ Starting at $topDir, uses L<File::Next> to find any files matching our list of s
 sub findFilesMatching {
 	my $class  = shift;
 	my $topDir = shift;
-	my $args   = shift;
+	my $args   = shift || {};
 
-	my $types  = Slim::Music::Info::validTypeExtensions();
+	my $types  = $args->{types} || Slim::Music::Info::validTypeExtensions();
 
 	my $descend_filter = sub {
 		return Slim::Utils::Misc::folderFilter($File::Next::dir, 0, $types);
@@ -123,7 +123,6 @@ sub findFilesMatching {
 	my $file_filter = sub {
 		return Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types);
 	};
-
 
 	$topDir = Slim::Utils::Unicode::encode_locale($topDir);
 
@@ -137,6 +136,11 @@ sub findFilesMatching {
 	my $found = $args->{'foundItems'} || [];
 
 	while (my $file = $iter->()) {
+		# call idle streams to service timers - used for blocking animation.
+		if (!scalar @$found % 3) {
+			main::idleStreams();
+		}
+
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
 		if ( main::ISWINDOWS && $file =~ /\.lnk$/i ) {
@@ -164,6 +168,7 @@ sub findFilesMatching {
 
 				$class->findFilesMatching($file, {
 					'foundItems' => $found,
+					'types'      => $types,
 				});
 
 				next;
@@ -184,6 +189,7 @@ sub findFilesMatching {
 
 				$class->findFilesMatching($file, {
 					'foundItems' => $found,
+					'types'      => $types,
 				});
 
 				next;
@@ -202,6 +208,40 @@ sub findFilesMatching {
 Scan a directory on disk, and depending on the type of file, add it to the database.
 
 =cut
+
+sub scanDirectory {
+	my $class  = shift;
+	my $args   = shift;
+	my $return = shift;	# if caller wants a list of items we found
+
+	my $foundItems = $return && ($args->{foundItems} || []);
+	
+	my $url = $args->{volatile} || $args->{url};
+
+	# Can't do much without a starting point.
+	if (!$url) {
+		return $foundItems;
+	}
+
+	my $request = Slim::Control::Request->new( undef, [ 'musicfolder', 0, 999_999, 'url:' . $url, 'tags:u', 'type:audio', 'recursive:1' ] );
+	$request->execute();
+
+	if ( $request->isStatusError() ) {
+		$log->error($request->getStatusText());
+	}
+	elsif ($return) {
+		foreach ( @{ $request->getResult('folder_loop') || [] } ) {
+			if ($_->{type} =~ /track|audio/) {
+				push @{$foundItems}, $_->{url};
+			}
+		}
+	}
+
+	return $foundItems;
+}
+
+=pod
+Old code has been replaced with code using musicfolder query
 
 sub scanDirectory {
 	my $class  = shift;
@@ -308,6 +348,7 @@ sub scanDirectory {
 
 	return $foundItems;
 }
+=cut
 
 sub scanPlaylistFileHandle {
 	my $class = shift;

@@ -878,16 +878,19 @@ sub cleanupFilename {
 }
 
 
-=head2 readDirectory( $dirname, [ $validRE ])
+=head2 readDirectory( $dirname, [ $validRE, $recursive ])
 
 	Return the contents of a directory $dirname as an array.  Optionally return only 
-	those items that match a regular expression given by $validRE
+	those items that match a regular expression given by $validRE. Optionally do a
+	recursive search.
 
 =cut
 
 sub readDirectory {
 	my $dirname  = shift;
 	my $validRE  = shift || Slim::Music::Info::validTypeExtensions();
+	my $recursive = shift;
+	
 	my @diritems = ();
 
 	my $native_dirname = Slim::Utils::Unicode::encode_locale($dirname);
@@ -903,44 +906,54 @@ sub readDirectory {
 		}
 	}
 
-	opendir(DIR, $native_dirname) || do {
-
-		main::DEBUGLOG && $osfileslog->is_debug && $osfileslog->debug("opendir on [$dirname] failed: $!");
-
-		return @diritems;
-	};
-
-	main::INFOLOG && $osfileslog->is_info && $osfileslog->info("Reading directory: $dirname");
-
-	while (defined (my $item = readdir(DIR)) ) {
-		# call idle streams to service timers - used for blocking animation.
-		if (scalar @diritems % 3) {
-			main::idleStreams();
-		}
-
-        # readdir returns only bytes, so try and decode the
-        # filename to UTF-8 here or the later calls to -d/-f may fail,
-        # causing directories and files to be skipped.
-		# utf8::decode($item);
-		#
-		# This was the wrong fix. The entries returned by this method
-		# should be in native byte-strings. It is likely that the previous problem
-		# was caused by the incoming $dirname having the uft8 flag set,
-		# so that concatenating the dirname and an entry would result in a UTF-8
-		# string that was incorrectly auto-decoded.
-
-		next unless fileFilter($native_dirname, $item, $validRE);
-
-		push @diritems, $item;
+	if ($recursive) {
+		require Slim::Utils::Scanner;
+		push @diritems, @{ Slim::Utils::Scanner->findFilesMatching($dirname, {
+			types => $validRE,
+		}) };
 	}
-
-	closedir(DIR);
+	else {
+		opendir(DIR, $native_dirname) || do {
+	
+			main::DEBUGLOG && $osfileslog->is_debug && $osfileslog->debug("opendir on [$dirname] failed: $!");
+	
+			return @diritems;
+		};
+	
+		main::INFOLOG && $osfileslog->is_info && $osfileslog->info("Reading directory: $dirname");
+	
+		while (defined (my $item = readdir(DIR)) ) {
+			# call idle streams to service timers - used for blocking animation.
+			if (scalar @diritems % 3) {
+				main::idleStreams();
+			}
+	
+	        # readdir returns only bytes, so try and decode the
+	        # filename to UTF-8 here or the later calls to -d/-f may fail,
+	        # causing directories and files to be skipped.
+			# utf8::decode($item);
+			#
+			# This was the wrong fix. The entries returned by this method
+			# should be in native byte-strings. It is likely that the previous problem
+			# was caused by the incoming $dirname having the uft8 flag set,
+			# so that concatenating the dirname and an entry would result in a UTF-8
+			# string that was incorrectly auto-decoded.
+	
+			next unless fileFilter($native_dirname, $item, $validRE);
+	
+			push @diritems, $item;
+		}
+	
+		closedir(DIR);
+		
+		@diritems = Slim::Music::Info::sortFilename(@diritems);
+	}
 
 	if ( main::INFOLOG && $osfileslog->is_info ) {
 		$osfileslog->info("Directory contains " . scalar(@diritems) . " items");
 	}
 
-	return Slim::Music::Info::sortFilename(@diritems);
+	return @diritems;
 }
 
 =head2 findAndScanDirectoryTree($params)
@@ -1039,7 +1052,7 @@ sub findAndScanDirectoryTree {
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ readDirectory($path, $params->{typeRegEx}, $params->{excludeFile}) ];
+	my $items = [ readDirectory($path, $params->{typeRegEx}, $params->{recursive}) ];
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);

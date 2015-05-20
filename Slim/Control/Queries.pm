@@ -1893,6 +1893,8 @@ sub mediafolderQuery {
 	my $params = ();
 	my $mediaDirs = Slim::Utils::Misc::getMediaDirs($type || 'audio');
 	
+	$params->{recursive} = $request->getParam('recursive');
+	
 	# add "volatile" folders which are not scanned, to be browsed and played on the fly
 	push @$mediaDirs, map { 
 		my $url = Slim::Utils::Misc::fileURLFromPath($_);
